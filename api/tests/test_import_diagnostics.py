@@ -790,10 +790,11 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["teledeclarations"], 1)
         self.assertEqual(Teledeclaration.objects.count(), 1)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_error_teledeclare_diagnostics_on_import(self, _):
         """
-        If the wrong teledeclaration status is given, throw error (if blank no)
+        Provide line-by-line errors if the import isn't successful
         """
         user = authenticate.user
         user.is_staff = True
@@ -803,13 +804,36 @@ class TestImportDiagnosticsAPI(APITestCase):
             response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
         body = response.json()
-        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(len(body["errors"]), 2)
         self.assertEqual(
             body["errors"][0]["message"],
             "Champ 'teledeclaration' : 'lol' n'est pas un statut de télédéclaration valid",
         )
+        self.assertEqual(
+            body["errors"][1]["message"],
+            "C'est que possible de télédéclarer pour l'année 2022. Ce diagnostic est pour 2021.",
+        )
         self.assertEqual(Diagnostic.objects.count(), 0)
         self.assertEqual(Teledeclaration.objects.count(), 0)
+
+    @override_settings(ENABLE_TELEDECLARATION=False)
+    @authenticate
+    def test_error_teledeclare_diagnostics_on_import_not_campaign(self, _):
+        """
+        Prevent importing TDs if outside of campagne
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.save()
+        with open("./api/tests/files/teledeclaration_simple.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "Champ 'teledeclaration' : c'est pas possible de télédéclarer des diagnostics hors de campagne",
+        )
 
     @authenticate
     def test_optional_appro_values(self, _):
