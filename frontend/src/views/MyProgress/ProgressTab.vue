@@ -66,6 +66,17 @@
               <v-icon small class="mr-2">$pencil-line</v-icon>
               Modifier mes données
             </v-btn>
+            <v-btn
+              v-else-if="hasActiveTeledeclaration"
+              outlined
+              small
+              color="primary"
+              class="fr-btn--tertiary px-2"
+              :disabled="true"
+            >
+              <v-icon small class="mr-2">$check-line</v-icon>
+              Données télédéclarées
+            </v-btn>
           </v-col>
         </v-row>
         <component

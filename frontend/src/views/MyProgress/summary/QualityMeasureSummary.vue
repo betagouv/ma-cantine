@@ -106,6 +106,18 @@
             <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
           </div>
           <v-btn
+            v-if="hasActiveTeledeclaration"
+            outlined
+            small
+            color="primary"
+            class="fr-btn--tertiary px-2"
+            :disabled="true"
+          >
+            <v-icon small class="mr-2">$check-line</v-icon>
+            Données télédéclarées
+          </v-btn>
+          <v-btn
+            v-else
             outlined
             small
             color="primary"
@@ -230,6 +242,9 @@ export default {
     },
     isDetailedDiagnostic() {
       return this.diagnostic.diagnosticType === "COMPLETE"
+    },
+    hasActiveTeledeclaration() {
+      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
     },
   },
 }
