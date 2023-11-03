@@ -32,7 +32,15 @@
           Commencer
         </v-btn>
       </div>
-      <div v-if="diagnostic || hasCentralDiagnosticForMeasure || isCanteenTab" class="summary">
+      <div v-if="showPurchasesSection">
+        <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
+        <PurchasesSummary
+          :usesCentralDiagnostic="hasCentralDiagnosticForMeasure"
+          :canteen="canteen"
+          :diagnostic="displayDiagnostic"
+        />
+      </div>
+      <div v-else-if="diagnostic || hasCentralDiagnosticForMeasure || isCanteenTab" class="summary">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
         <div
           v-if="!isCanteenTab && usesOtherDiagnosticForMeasure && isSatellite"
@@ -91,7 +99,9 @@ import InformationMeasureSummary from "./summary/InformationMeasureSummary"
 import NoPlasticMeasureSummary from "./summary/NoPlasticMeasureSummary"
 import WasteMeasureSummary from "./summary/WasteMeasureSummary"
 import CanteenSummary from "./summary/CanteenSummary"
+import PurchasesSummary from "./summary/PurchasesSummary"
 import keyMeasures from "@/data/key-measures.json"
+// import { hasDiagnosticApproData, lastYear } from "@/utils"
 
 export default {
   name: "ProgressTab",
@@ -123,6 +133,7 @@ export default {
     NoPlasticMeasureSummary,
     WasteMeasureSummary,
     CanteenSummary,
+    PurchasesSummary,
   },
   data() {
     return {
@@ -196,6 +207,13 @@ export default {
     },
     displayDiagnostic() {
       return this.hasCentralDiagnosticForMeasure ? this.centralDiagnostic : this.diagnostic
+    },
+    showPurchasesSection() {
+      return true
+      // const isCurrentYear = this.year === lastYear() + 1
+      // const managesOwnPurchases = !this.isSatellite
+      // const dataProvidedByDiagnostic = this.diagnostic && hasDiagnosticApproData(this.diagnostic)
+      // return isCurrentYear && managesOwnPurchases && !dataProvidedByDiagnostic
     },
   },
 }
