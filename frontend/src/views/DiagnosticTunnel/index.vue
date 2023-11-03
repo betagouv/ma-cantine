@@ -206,7 +206,7 @@ export default {
     updateProgress() {
       if (this.isSynthesis) this.payload.tunnelQuality = "COMPLETE"
       else if (this.step.isFinal) this.payload.tunnelComplete = true
-      this.payload.tunnelQuality = this.step?.componentName
+      this.payload.tunnelQuality = this.step?.urlSlug
       // TODO: is any error going to fail too silently?
     },
     setPageTitle() {
