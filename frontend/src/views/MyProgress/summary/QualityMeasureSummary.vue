@@ -105,19 +105,7 @@
             </h6>
             <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
           </div>
-          <v-btn
-            outlined
-            small
-            color="primary"
-            class="fr-btn--tertiary px-2 mb-6"
-            :to="{
-              name: 'DiagnosticModification',
-              params: {
-                canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen),
-                year: diagnostic.year,
-              },
-            }"
-          >
+          <v-btn outlined small color="primary" class="fr-btn--tertiary px-2 mb-6" :to="editLink">
             <v-icon small class="mr-2">$pencil-line</v-icon>
             Modifier mes données
           </v-btn>
@@ -228,8 +216,26 @@ export default {
     percentages() {
       return getApproPercentages(this.diagnostic)
     },
+    usingPurchasesSummary() {
+      return !this.diagnostic.id
+    },
     isDetailedDiagnostic() {
-      return this.diagnostic.diagnosticType === "COMPLETE"
+      return this.diagnostic.diagnosticType === "COMPLETE" || this.usingPurchasesSummary
+    },
+    editLink() {
+      if (this.usingPurchasesSummary) {
+        return {
+          name: "PurchasesHome",
+        }
+      } else {
+        return {
+          name: "DiagnosticModification",
+          params: {
+            canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen),
+            year: this.diagnostic.year,
+          },
+        }
+      }
     },
   },
 }

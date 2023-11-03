@@ -31,7 +31,7 @@
           </p>
         </v-row>
       </DsfrCallout>
-      <QualityMeasureSummary :canteen="canteen" :diagnostic="approData" />
+      <QualityMeasureSummary :canteen="canteen" :diagnostic="purchasesSummary" />
     </div>
   </div>
 </template>
@@ -57,7 +57,7 @@ export default {
   data() {
     return {
       year: lastYear() + 1,
-      approData: null,
+      purchasesSummary: null,
     }
   },
   computed: {
@@ -65,13 +65,15 @@ export default {
       return "il y a trois jours"
     },
     noPurchases() {
-      return !this.approData // TODO
+      return !this.purchasesSummary?.valueTotalHt
     },
   },
   methods: {
     fetchPurchasesSummary() {
-      // TODO: get summary from purchases
-      this.approData = this.diagnostic
+      if (this.canteen?.id)
+        fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.year}`)
+          .then((response) => (response.ok ? response.json() : {}))
+          .then((response) => (this.purchasesSummary = response))
     },
   },
   mounted() {
