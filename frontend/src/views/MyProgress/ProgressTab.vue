@@ -1,7 +1,7 @@
 <template>
   <div class="pa-8 pb-4">
     <div>
-      <v-row v-if="(diagnostic || hasCentralDiagnosticForMeasure) && !isCanteenTab">
+      <v-row v-if="displayDiagnostic && !isCanteenTab">
         <v-col cols="12" md="8">
           <h3 class="fr-h6 font-weight-bold mb-0">
             {{ keyMeasure.title }}
@@ -20,7 +20,7 @@
       <h3 v-else class="fr-h6 font-weight-bold mb-4">
         {{ keyMeasure.title }}
       </h3>
-      <div v-if="!isCanteenTab && ((!diagnostic && !hasCentralDiagnosticForMeasure) || showIntro)">
+      <div v-if="!isCanteenTab && (!displayDiagnostic || showIntro)">
         <component :is="`${keyMeasure.baseComponent}Info`" :canteen="canteen" />
         <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
         <v-btn
@@ -32,7 +32,7 @@
           Commencer
         </v-btn>
       </div>
-      <div v-if="diagnostic || hasCentralDiagnosticForMeasure || isCanteenTab" class="summary">
+      <div v-if="displayDiagnostic || isCanteenTab" class="summary">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
         <div
           v-if="!isCanteenTab && usesOtherDiagnosticForMeasure && isSatellite"
@@ -50,19 +50,22 @@
             </span>
           </p>
         </div>
-        <v-row class="mb-4">
-          <v-col class="d-flex align-end">
-            <h4 class="fr-text-sm font-weight-bold my-1">SYNTHÈSE</h4>
+        <v-row class="mb-4 align-center">
+          <v-col class="d-flex align-center">
+            <h4 class="fr-text-sm font-weight-bold my-1 mr-2">SYNTHÈSE</h4>
+            <DsfrBadge v-if="usingLastDiagnostic">
+              <p class="mb-0">Données de {{ displayDiagnostic.year }}</p>
+            </DsfrBadge>
           </v-col>
-          <v-col class="text-right">
-            <v-btn
-              v-if="isCanteenTab || (!hasActiveTeledeclaration && !usesOtherDiagnosticForMeasure)"
-              outlined
-              small
-              color="primary"
-              class="fr-btn--tertiary px-2"
-              :to="modificationLink"
-            >
+          <v-col
+            v-if="isCanteenTab || (!hasActiveTeledeclaration && !usesOtherDiagnosticForMeasure)"
+            class="text-right"
+          >
+            <v-btn v-if="usingLastDiagnostic" color="primary" @click="createDiagnosticAndRedirect">
+              <v-icon small class="mr-2">$pencil-line</v-icon>
+              Méttre à jour
+            </v-btn>
+            <v-btn v-else outlined small color="primary" class="fr-btn--tertiary px-2" :to="modificationLink">
               <v-icon small class="mr-2">$pencil-line</v-icon>
               Modifier mes données
             </v-btn>
@@ -80,6 +83,7 @@
 </template>
 
 <script>
+import DsfrBadge from "@/components/DsfrBadge"
 import QualityMeasureInfo from "./information/QualityMeasureInfo"
 import DiversificationMeasureInfo from "./information/DiversificationMeasureInfo"
 import InformationMeasureInfo from "./information/InformationMeasureInfo"
@@ -112,6 +116,7 @@ export default {
     centralDiagnostic: Object,
   },
   components: {
+    DsfrBadge,
     QualityMeasureInfo,
     DiversificationMeasureInfo,
     InformationMeasureInfo,
@@ -194,8 +199,34 @@ export default {
       if (this.measureId === this.approId) return true
       return this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
     },
+    relativeLastYear() {
+      return this.year - 1
+    },
+    lastYearDiagnostic() {
+      return this.canteen.diagnostics.find((d) => d.year === this.relativeLastYear)
+    },
     displayDiagnostic() {
-      return this.hasCentralDiagnosticForMeasure ? this.centralDiagnostic : this.diagnostic
+      if (this.hasCentralDiagnosticForMeasure) return this.centralDiagnostic
+      if (this.diagnostic) return this.diagnostic
+      return this.lastYearDiagnostic
+    },
+    usingLastDiagnostic() {
+      return this.displayDiagnostic.year === this.relativeLastYear
+    },
+  },
+  methods: {
+    createDiagnosticAndRedirect() {
+      const payload = JSON.parse(JSON.stringify(this.lastYearDiagnostic))
+      payload.year = this.year
+      return this.$store
+        .dispatch("createDiagnostic", {
+          canteenId: this.canteen.id,
+          payload,
+        })
+        .then(() => {
+          this.$router.push({ name: "DiagnosticModification" })
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },
 }
