@@ -771,6 +771,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_teledeclare_diagnostics_on_import(self, _):
         """
@@ -789,6 +790,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 1)
         self.assertEqual(body["teledeclarations"], 1)
         self.assertEqual(Teledeclaration.objects.count(), 1)
+
+    # TODO: test fails for non staff users
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
@@ -811,7 +814,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             body["errors"][1]["message"],
-            "C'est que possible de télédéclarer pour l'année 2022. Ce diagnostic est pour 2021.",
+            "Champ 'teledeclaration' : C'est que possible de télédéclarer pour l'année 2022. Ce diagnostic est pour l'année 2021",
         )
         self.assertEqual(Diagnostic.objects.count(), 0)
         self.assertEqual(Teledeclaration.objects.count(), 0)
@@ -832,7 +835,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(
             body["errors"][0]["message"],
-            "Champ 'teledeclaration' : c'est pas possible de télédéclarer des diagnostics hors de campagne",
+            "Champ 'teledeclaration' : C'est pas possible de télédéclarer hors de la periode de la campagne",
         )
 
     @authenticate

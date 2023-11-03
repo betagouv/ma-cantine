@@ -164,12 +164,12 @@ class ImportDiagnosticsView(ABC, APIView):
         return diagnostic
 
     def _teledeclare_diagnostic(self, diagnostic):
+        Teledeclaration.validate_diagnostic(diagnostic)
         try:
-            Teledeclaration.validate_diagnostic(diagnostic)
             Teledeclaration.create_from_diagnostic(diagnostic, self.request.user)
             self.teledeclarations += 1
         except Exception:
-            pass
+            raise ValidationError("Ce diagnostic n'a pas été télédéclaré")
 
     @staticmethod
     def _should_update_geolocation(canteen, row):
