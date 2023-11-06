@@ -822,7 +822,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             body["errors"][1]["message"],
-            "Champ 'teledeclaration' : C'est uniquement possible de télédéclarer pour l'année 2019. Ce diagnostic est pour l'année 2020",
+            "Champ 'année' : C'est uniquement possible de télédéclarer pour l'année 2019. Ce diagnostic est pour l'année 2020",
         )
         self.assertEqual(Diagnostic.objects.count(), 0)
         self.assertEqual(Teledeclaration.objects.count(), 0)
@@ -843,7 +843,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(
             body["errors"][0]["message"],
-            "Champ 'teledeclaration' : Ce n'est pas possible de télédéclarer hors de la période de la campagne",
+            "Ce n'est pas possible de télédéclarer hors de la période de la campagne",
         )
 
     @authenticate

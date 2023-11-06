@@ -64,9 +64,7 @@ class TeledeclarationCreateView(APIView):
         try:
             Teledeclaration.validate_diagnostic(diagnostic)
         except DjangoValidationError as e:
-            if hasattr(e, "message"):
-                raise ValidationError(e.message) from e
-            raise ValidationError(e)
+            raise TeledeclarationCreateView._parse_diagnostic_validation_error(e) from e
 
         try:
             td = Teledeclaration.create_from_diagnostic(diagnostic, user)
@@ -77,6 +75,15 @@ class TeledeclarationCreateView(APIView):
             else:
                 message = "Il existe déjà une télédéclaration en cours pour cette année"
             raise ValidationError(message) from e
+
+    def _parse_diagnostic_validation_error(e):
+        if hasattr(e, "message"):
+            return ValidationError(e.message)
+        elif hasattr(e, "messages"):
+            return ValidationError(e.messages[0])
+        else:
+            logger.error(f"Unhandled validation error when teledeclaring: {e}")
+            return ValidationError("Unknown error")
 
 
 @extend_schema_view(
