@@ -35,7 +35,7 @@
         :canteen="canteen"
         :diagnostic="diagnostic"
         :stepUrlSlug="stepUrlSlug"
-        @updatePayload="updatePayload"
+        v-on:update-payload="updatePayload"
         @updateSteps="updateSteps"
       />
     </div>

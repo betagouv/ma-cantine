@@ -1,5 +1,5 @@
 <template>
-  <component :is="step.componentName" :canteen="canteen" :diagnostic="diagnostic" @updatePayload="updatePayload" />
+  <component :is="step.componentName" :canteen="canteen" :diagnostic="diagnostic" v-on:update-payload="updatePayload" />
 </template>
 
 <script>
@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     updatePayload(data) {
-      this.$emit("updatePayload", data)
+      this.$emit("update-payload", data)
     },
   },
   mounted() {

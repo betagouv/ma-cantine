@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     updatePayload() {
-      this.$emit("updatePayload", { payload: this.payload, formIsValid: this.formIsValid })
+      this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
     },
   },
 }
