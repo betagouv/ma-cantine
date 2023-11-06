@@ -149,13 +149,13 @@ class Teledeclaration(models.Model):
     def validate_diagnostic(diagnostic):
         if not settings.ENABLE_TELEDECLARATION:
             raise ValidationError(
-                {"teledeclaration": "C'est pas possible de télédéclarer hors de la periode de la campagne"}
+                {"teledeclaration": "Ce n'est pas possible de télédéclarer hors de la période de la campagne"}
             )
         last_year = datetime.now().date().year - 1
         if diagnostic.year != last_year:
             raise ValidationError(
                 {
-                    "teledeclaration": f"C'est que possible de télédéclarer pour l'année {last_year}. Ce diagnostic est pour l'année {diagnostic.year}"
+                    "teledeclaration": f"C'est uniquement possible de télédéclarer pour l'année {last_year}. Ce diagnostic est pour l'année {diagnostic.year}"
                 }
             )
         check_total_value = not Teledeclaration.should_use_central_kitchen_appro(diagnostic)
