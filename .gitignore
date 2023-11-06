@@ -163,4 +163,12 @@ celerybeat-schedule.db
 celerybeat-schedule
 celerybeat-schedule.db
 
+# Stats
+stats/.jupyter_cache/
+stats/bilan/.quarto/
+stats/bilan/_output/
+stats/bilan/data
+stats/bilan/france-geojson
+
 notes/
+

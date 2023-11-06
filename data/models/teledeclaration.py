@@ -3,9 +3,11 @@ import decimal
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import timezone
 from data.models import Canteen, Diagnostic
 
 logger = logging.getLogger(__name__)
@@ -145,6 +147,15 @@ class Teledeclaration(models.Model):
 
     @staticmethod
     def validate_diagnostic(diagnostic):
+        if not settings.ENABLE_TELEDECLARATION:
+            raise ValidationError("Ce n'est pas possible de télédéclarer hors de la période de la campagne")
+        last_year = timezone.now().date().year - 1
+        if diagnostic.year != last_year:
+            raise ValidationError(
+                {
+                    "year": f"C'est uniquement possible de télédéclarer pour l'année {last_year}. Ce diagnostic est pour l'année {diagnostic.year}"
+                }
+            )
         check_total_value = not Teledeclaration.should_use_central_kitchen_appro(diagnostic)
         if check_total_value and not diagnostic.value_total_ht:
             raise ValidationError("Données d'approvisionnement manquantes")

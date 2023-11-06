@@ -82,6 +82,23 @@
             </div>
           </v-card-actions>
         </v-card>
+        <v-card
+          v-else-if="readyToTeledeclare"
+          class="pa-6 mb-4 mr-1 fr-text grey--text text--darken-3 text-center cta-block"
+        >
+          <p class="mb-0">
+            Votre bilan {{ diagnostic.year }} est complet ! Merci d’avoir pris le temps de saisir vos données !
+          </p>
+          <p>
+            Vérifiez-les une dernière fois et télédéclarez-les pour participer au bilan statistique national
+            obligatoire.
+          </p>
+          <v-card-actions class="px-0 pt-0 pb-0 justify-center">
+            <v-btn color="primary" @click="showTeledeclarationPreview = true" class="fr-text font-weight-medium">
+              Vérifier et télédéclarer mes données {{ diagnostic.year }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
         <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
           <fieldset class="fr-text">
             <legend class="font-weight-bold">
@@ -160,6 +177,13 @@
         </DsfrTabsVue>
       </v-col>
     </v-row>
+    <TeledeclarationPreview
+      v-if="diagnostic"
+      :diagnostic="diagnostic"
+      :canteen="canteen"
+      v-model="showTeledeclarationPreview"
+      @teledeclare="submitTeledeclaration"
+    />
   </div>
 </template>
 
@@ -170,8 +194,9 @@ import ProgressTab from "./ProgressTab"
 import DsfrTabsVue from "@/components/DsfrTabs"
 import DsfrSelect from "@/components/DsfrSelect"
 import DownloadLink from "@/components/DownloadLink"
+import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
-import { diagnosticYears, timeAgo, lastYear } from "@/utils"
+import { diagnosticYears, timeAgo, lastYear, hasDiagnosticApproData } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
 
@@ -184,6 +209,7 @@ export default {
     DsfrTabsVue,
     DsfrSelect,
     DownloadLink,
+    TeledeclarationPreview,
     TeledeclarationCancelDialog,
   },
   data() {
@@ -215,6 +241,7 @@ export default {
       centralKitchenDiagnosticMode: null,
       cancelDialog: false,
       campaignEndDate: window.TELEDECLARATION_END_DATE ? new Date(window.TELEDECLARATION_END_DATE) : null,
+      showTeledeclarationPreview: false,
     }
   },
   props: {
@@ -239,6 +266,9 @@ export default {
     },
     inTeledeclarationCampaign() {
       return window.ENABLE_TELEDECLARATION && +this.year === lastYear()
+    },
+    readyToTeledeclare() {
+      return this.diagnostic && this.inTeledeclarationCampaign && hasDiagnosticApproData(this.diagnostic)
     },
   },
   methods: {
@@ -305,6 +335,23 @@ export default {
       return this.usesSatelliteDiagnosticForMeasure(tabItem) ? "grey--text" : "black--text"
     },
     timeAgo,
+    submitTeledeclaration() {
+      return this.$store
+        .dispatch("submitTeledeclaration", { id: this.diagnostic.id })
+        .then((diagnostic) => {
+          this.$store.dispatch("notify", {
+            title: "Télédéclaration prise en compte",
+            status: "success",
+          })
+          this.updateFromServer(diagnostic)
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
+        .finally(() => {
+          this.showTeledeclarationPreview = false
+        })
+    },
     cancelTeledeclaration() {
       if (!this.canteen || !this.diagnostic) return
       return this.$store
@@ -387,11 +434,18 @@ export default {
   outline: 2px solid #3b87ff;
 }
 .v-tab--disabled {
-  opacity: 100%;
+  opacity: 1;
   background-color: #e5e5e5 !important;
   color: #929292 !important;
 }
 .close-icon {
   border-bottom: solid 1px;
+}
+.cta-block {
+  background: #f5f5fe;
+  backdrop-filter: blur(7px);
+  border: 1.5px dashed #000091;
+  border-radius: 5px;
+  color: #3a3a3a;
 }
 </style>
