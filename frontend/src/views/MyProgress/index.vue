@@ -73,13 +73,7 @@
                 <template v-slot:activator="{ on, attrs }">
                   <a class="ml-0 ml-md-4 text-decoration-underline" v-on="on" v-bind="attrs">
                     Annuler ma télédéclaration
-                    <v-icon
-                      color="primary"
-                      size="1rem"
-                      class="ml-0 mb-1 close-icon"
-                      aria-hidden="false"
-                      aria-label="Annuler"
-                    >
+                    <v-icon color="primary" size="1rem" class="ml-0 mb-1 close-icon">
                       $close-line
                     </v-icon>
                   </a>
