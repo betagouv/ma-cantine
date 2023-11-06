@@ -14,6 +14,10 @@ from data.region_choices import Region
 import requests
 import requests_mock
 from .utils import authenticate
+import datetime
+from unittest.mock import patch
+from django.utils import timezone
+import pytz
 
 
 @requests_mock.Mocker()
@@ -783,8 +787,10 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.email = "authenticate@example.com"
         user.save()
         self.assertEqual(Teledeclaration.objects.count(), 0)
-        with open("./api/tests/files/teledeclaration_simple.csv") as diag_file:
-            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+
+        with patch.object(timezone, "now", return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+            with open("./api/tests/files/teledeclaration_simple.csv") as diag_file:
+                response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
         body = response.json()
         self.assertEqual(body["count"], 1)
@@ -803,8 +809,10 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.is_staff = True
         user.email = "authenticate@example.com"
         user.save()
-        with open("./api/tests/files/teledeclaration_error.csv") as diag_file:
-            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+
+        with patch.object(timezone, "now", return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+            with open("./api/tests/files/teledeclaration_error.csv") as diag_file:
+                response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
         body = response.json()
         self.assertEqual(len(body["errors"]), 2)
@@ -814,7 +822,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             body["errors"][1]["message"],
-            "Champ 'teledeclaration' : C'est uniquement possible de télédéclarer pour l'année 2022. Ce diagnostic est pour l'année 2021",
+            "Champ 'teledeclaration' : C'est uniquement possible de télédéclarer pour l'année 2019. Ce diagnostic est pour l'année 2020",
         )
         self.assertEqual(Diagnostic.objects.count(), 0)
         self.assertEqual(Teledeclaration.objects.count(), 0)

@@ -66,7 +66,7 @@ class TeledeclarationCreateView(APIView):
         except DjangoValidationError as e:
             if hasattr(e, "message"):
                 raise ValidationError(e.message) from e
-            raise e
+            raise ValidationError(e)
 
         try:
             td = Teledeclaration.create_from_diagnostic(diagnostic, user)

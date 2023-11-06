@@ -6,6 +6,10 @@ from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, Teled
 from data.models import Teledeclaration, Diagnostic, Canteen
 from django.test.utils import override_settings
 from .utils import authenticate
+import datetime
+from unittest.mock import patch
+from django.utils import timezone
+import pytz
 
 
 class TestTeledeclarationApi(APITestCase):
@@ -66,10 +70,12 @@ class TestTeledeclarationApi(APITestCase):
         manager = UserFactory.create()
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         payload = {"diagnosticId": diagnostic.id}
 
-        response = self.client.post(reverse("teledeclaration_create"), payload)
+        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+            response = self.client.post(reverse("teledeclaration_create"), payload)
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
@@ -81,7 +87,7 @@ class TestTeledeclarationApi(APITestCase):
         manager = UserFactory.create()
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -96,7 +102,7 @@ class TestTeledeclarationApi(APITestCase):
         manager = UserFactory.create()
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
@@ -123,11 +129,30 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create(central_producer_siret=None)
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2022, value_total_ht=None, diagnostic_type="SIMPLE"
+            canteen=canteen, year=2020, value_total_ht=None, diagnostic_type="SIMPLE"
         )
         payload = {"diagnosticId": diagnostic.id}
 
-        response = self.client.post(reverse("teledeclaration_create"), payload)
+        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+            response = self.client.post(reverse("teledeclaration_create"), payload)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_create_bad_year(self):
+        """
+        A diagnostic with a bad year cannot be used to create a teledeclaration
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create(central_producer_siret=None)
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2019, value_total_ht=100, diagnostic_type="SIMPLE")
+        payload = {"diagnosticId": diagnostic.id}
+
+        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+            response = self.client.post(reverse("teledeclaration_create"), payload)
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
@@ -140,11 +165,13 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(
-            value_externality_performance_ht=0, canteen=canteen, year=2022, diagnostic_type="SIMPLE"
+            value_externality_performance_ht=0, canteen=canteen, year=2020, diagnostic_type="SIMPLE"
         )
         payload = {"diagnosticId": diagnostic.id}
 
-        response = self.client.post(reverse("teledeclaration_create"), payload)
+        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+            response = self.client.post(reverse("teledeclaration_create"), payload)
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         body = response.json()
@@ -155,13 +182,13 @@ class TestTeledeclarationApi(APITestCase):
 
         self.assertEqual(teledeclaration.diagnostic, diagnostic)
         self.assertEqual(teledeclaration.canteen, canteen)
-        self.assertEqual(teledeclaration.year, 2022)
+        self.assertEqual(teledeclaration.year, 2020)
         self.assertEqual(teledeclaration.applicant, user)
         self.assertEqual(teledeclaration.canteen_siret, canteen.siret)
         self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
         declared_data = teledeclaration.declared_data
-        self.assertEqual(declared_data["year"], 2022)
+        self.assertEqual(declared_data["year"], 2020)
 
         json_canteen = declared_data["canteen"]
         self.assertEqual(json_canteen["name"], canteen.name)
@@ -232,7 +259,7 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -253,7 +280,7 @@ class TestTeledeclarationApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         diagnostic.delete()
@@ -269,7 +296,7 @@ class TestTeledeclarationApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
