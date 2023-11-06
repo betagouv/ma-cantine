@@ -25,7 +25,7 @@ export default {
       payload: {
         valueTotalHt: this.diagnostic.valueTotalHt,
       },
-      formIsValid: true, // TODO
+      formIsValid: true,
     }
   },
   methods: {

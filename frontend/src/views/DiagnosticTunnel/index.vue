@@ -3,7 +3,6 @@
     <v-row class="header">
       <v-row class="mx-auto constrained pt-6">
         <v-col cols="9">
-          <!-- TODO: section icons -->
           <p class="fr-text-xs text-transform-uppercase mb-0">{{ measure.shortTitle }}</p>
         </v-col>
         <v-col class="text-right">
@@ -19,7 +18,6 @@
         <v-col v-if="step && !step.isSynthesis" cols="12">
           <p class="fr-text-sm">Étape {{ stepIdx + 1 }} sur {{ stepTotal }}</p>
           <h1 class="fr-h6">{{ step.title }}</h1>
-          <!-- TODO: DSFR stepper component which will include everything else in this column as well -->
           <p v-if="nextStep" class="fr-text-xs grey--text text--darken-2">
             <b>Étape suivante</b>
             : {{ nextStep.title }}
@@ -28,8 +26,6 @@
       </v-row>
     </v-row>
     <div v-if="diagnostic" class="mx-auto constrained pa-10">
-      <!-- TODO: padding/centering and sorting out scrolling -->
-      <!-- TODO: question OR synthesis (move existing syntheses to /components/ to reuse) -->
       <component
         :is="`${measure.baseComponent}Steps`"
         :canteen="canteen"
@@ -52,12 +48,10 @@
           <v-row class="py-10 align-center justify-end">
             <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStep">Modifier</router-link></p>
             <p v-else class="mb-0">
-              <!-- TODO: handle previousStep === null properly -->
               <router-link :to="previousStep ? previousStep.to : {}">
                 Revenir à l'étape précédente
               </router-link>
             </p>
-            <!-- TODO: make this tab first instead of Revenir link -->
             <v-btn :disabled="!formIsValid" @click="continueAction" color="primary" class="ml-4">
               {{ continueActionText }}
             </v-btn>
@@ -168,11 +162,9 @@ export default {
       return this.$store.dispatch("fetchCanteen", { id }).then((canteen) => {
         this.$set(this, "canteen", canteen)
       })
-      // TODO: error handling
     },
     fetchDiagnostic() {
       if (!this.canteen) return
-      // TODO: error handling for no diagnostic found
       this.diagnostic = this.canteen.diagnostics.find((d) => d.year === +this.year)
     },
     validateForm() {
@@ -191,7 +183,6 @@ export default {
           // if the save is successful, make sure we are showing the up to date data
           Object.assign(this.diagnostic, this.payload)
         })
-      // TODO: error handling
     },
     continueAction() {
       if (!this.formIsValid) return
@@ -205,7 +196,6 @@ export default {
       if (this.isSynthesis) this.payload.tunnelQuality = "COMPLETE"
       else if (this.step.isFinal) this.payload.tunnelComplete = true
       this.payload.tunnelQuality = this.step?.urlSlug
-      // TODO: is any error going to fail too silently?
     },
     setPageTitle() {
       document.title = `${this.step?.title} - ${this.year} - ${this.canteen?.name} - ${this.$store.state.pageTitleSuffix}`
@@ -226,14 +216,8 @@ export default {
 <style>
 .header {
   background-color: #f5f5fe;
-  /* TODO: sticky */
-  /* position: fixed;
-  top: 0%; */
 }
 .footer {
   background-color: #f5f5fe;
-  /* TODO: sticky */
-  /* position: fixed;
-  bottom: 0%; */
 }
 </style>
