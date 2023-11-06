@@ -107,7 +107,6 @@ export default {
       if (this.stepUrlSlug) {
         idx = this.steps.findIndex((step) => step.urlSlug === this.stepUrlSlug)
         idx = idx > -1 ? idx : 0
-        // TODO: remove query param from URL with a router.replace if it's nonsense ?
       }
       return idx
     },
@@ -197,17 +196,23 @@ export default {
       else if (this.step.isFinal) this.payload.tunnelComplete = true
       this.payload.tunnelQuality = this.step?.urlSlug
     },
-    setPageTitle() {
-      document.title = `${this.step?.title} - ${this.year} - ${this.canteen?.name} - ${this.$store.state.pageTitleSuffix}`
+    updatePageTitle() {
+      document.title = `${this.step.title} - ${this.year} - ${this.canteen.name} - ${this.$store.state.pageTitleSuffix}`
+    },
+    replaceStepInUrlMaybe() {
+      const url = this.$route.query.étape
+      if (url && url !== this.step?.urlSlug) {
+        this.$router.replace({ query: {} })
+      }
     },
   },
   mounted() {
     this.fetchCanteen().then(() => this.fetchDiagnostic())
-    this.setPageTitle()
   },
-  $watch: {
-    step() {
-      this.setPageTitle()
+  watch: {
+    step(newStep) {
+      this.replaceStepInUrlMaybe()
+      if (newStep) this.updatePageTitle()
     },
   },
 }
