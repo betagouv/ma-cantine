@@ -46,7 +46,7 @@
         <v-spacer />
         <v-col>
           <v-row class="py-10 align-center justify-end">
-            <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStep">Modifier</router-link></p>
+            <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
             <p v-else class="mb-0">
               <router-link :to="previousStep ? previousStep.to : {}">
                 Revenir à l'étape précédente
@@ -141,8 +141,8 @@ export default {
         },
       }
     },
-    firstStep() {
-      return { query: {} }
+    firstStepLink() {
+      return { query: { étape: this.steps[0].urlSlug } }
     },
     stepTotal() {
       return this.steps.length
@@ -201,8 +201,8 @@ export default {
     },
     replaceStepInUrlMaybe() {
       const url = this.$route.query.étape
-      if (url && url !== this.step?.urlSlug) {
-        this.$router.replace({ query: {} })
+      if (!url || url !== this.step?.urlSlug) {
+        this.$router.replace(this.firstStepLink)
       }
     },
   },
