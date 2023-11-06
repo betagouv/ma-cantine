@@ -830,7 +830,7 @@ export default {
           this.$store.dispatch("notifyServerError", e)
         })
         .finally(() => {
-          this.openTeledeclarationPreview = false
+          this.showTeledeclarationPreview = false
         })
     },
     cancelTeledeclaration() {
