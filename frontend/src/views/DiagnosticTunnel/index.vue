@@ -32,7 +32,7 @@
         :diagnostic="diagnostic"
         :stepUrlSlug="stepUrlSlug"
         v-on:update-payload="updatePayload"
-        @updateSteps="updateSteps"
+        v-on:update-steps="updateSteps"
       />
     </div>
     <v-row class="footer">

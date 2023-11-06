@@ -47,7 +47,7 @@ export default {
     },
   },
   mounted() {
-    this.$emit("updateSteps", this.steps)
+    this.$emit("update-steps", this.steps)
   },
 }
 </script>
