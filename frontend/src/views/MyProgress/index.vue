@@ -24,7 +24,7 @@
               >
                 <v-list-item-title>
                   {{ year }}
-                  <span v-if="year >= thisYear" class="fr-text-xs font-weight-normal">(prévisionnel)</span>
+                  <span v-if="year >= currentYear" class="fr-text-xs font-weight-normal">(prévisionnel)</span>
                 </v-list-item-title>
               </v-list-item>
             </v-list-item-group>
@@ -224,7 +224,7 @@ export default {
       centralKitchenDiagnosticMode: null,
       cancelDialog: false,
       campaignEndDate: window.TELEDECLARATION_END_DATE ? new Date(window.TELEDECLARATION_END_DATE) : null,
-      thisYear: lastYear() + 1,
+      currentYear: lastYear() + 1,
     }
   },
   props: {
