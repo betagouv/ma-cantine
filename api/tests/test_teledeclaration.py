@@ -4,7 +4,12 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, TeledeclarationFactory, SectorFactory
 from data.models import Teledeclaration, Diagnostic, Canteen
+from django.test.utils import override_settings
 from .utils import authenticate
+import datetime
+from unittest.mock import patch
+from django.utils import timezone
+import pytz
 
 
 class TestTeledeclarationApi(APITestCase):
@@ -26,6 +31,7 @@ class TestTeledeclarationApi(APITestCase):
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": 1}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_create_unexistent_diagnostic(self):
         """
@@ -36,6 +42,7 @@ class TestTeledeclarationApi(APITestCase):
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_cancel_unexistent_teledeclaration(self):
         """
@@ -45,6 +52,7 @@ class TestTeledeclarationApi(APITestCase):
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": 1}), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_generate_pdf_unexistent_teledeclaration(self):
         """
@@ -53,6 +61,7 @@ class TestTeledeclarationApi(APITestCase):
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": 1}))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_create_unauthorized(self):
         """
@@ -64,9 +73,12 @@ class TestTeledeclarationApi(APITestCase):
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         payload = {"diagnosticId": diagnostic.id}
 
-        response = self.client.post(reverse("teledeclaration_create"), payload)
+        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+            response = self.client.post(reverse("teledeclaration_create"), payload)
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_cancel_unauthorized(self):
         """
@@ -81,6 +93,7 @@ class TestTeledeclarationApi(APITestCase):
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_generate_pdf_unauthorized(self):
         """
@@ -95,6 +108,7 @@ class TestTeledeclarationApi(APITestCase):
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_create_missing_diagnostic_id(self):
         """
@@ -104,6 +118,7 @@ class TestTeledeclarationApi(APITestCase):
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_create_incomplete_diagnostic(self):
         """
@@ -118,9 +133,29 @@ class TestTeledeclarationApi(APITestCase):
         )
         payload = {"diagnosticId": diagnostic.id}
 
-        response = self.client.post(reverse("teledeclaration_create"), payload)
+        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+            response = self.client.post(reverse("teledeclaration_create"), payload)
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_create_bad_year(self):
+        """
+        A diagnostic with a bad year cannot be used to create a teledeclaration
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create(central_producer_siret=None)
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2019, value_total_ht=100, diagnostic_type="SIMPLE")
+        payload = {"diagnosticId": diagnostic.id}
+
+        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+            response = self.client.post(reverse("teledeclaration_create"), payload)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_create(self):
         """
@@ -134,7 +169,9 @@ class TestTeledeclarationApi(APITestCase):
         )
         payload = {"diagnosticId": diagnostic.id}
 
-        response = self.client.post(reverse("teledeclaration_create"), payload)
+        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+            response = self.client.post(reverse("teledeclaration_create"), payload)
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         body = response.json()
@@ -213,6 +250,7 @@ class TestTeledeclarationApi(APITestCase):
             diagnostic.communicates_on_food_quality,
         )
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_cancel(self):
         """
@@ -233,6 +271,7 @@ class TestTeledeclarationApi(APITestCase):
         body = response.json()
         self.assertIsNone(body["teledeclaration"])
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_diagnostic_deletion(self):
         """
@@ -249,6 +288,7 @@ class TestTeledeclarationApi(APITestCase):
         self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.CANCELLED)
         self.assertIsNone(teledeclaration.diagnostic)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_generate_pdf(self):
         """
@@ -262,6 +302,7 @@ class TestTeledeclarationApi(APITestCase):
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_generate_pdf_legacy_teledeclaration(self):
         """
@@ -291,6 +332,7 @@ class TestTeledeclarationApi(APITestCase):
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_create_duplicate(self):
         """
@@ -299,13 +341,14 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create(siret="12345678912345")
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
         Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_no_siret(self):
         """
@@ -315,7 +358,7 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create(siret="")
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
         Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         payload = {"diagnosticId": diagnostic.id}
@@ -324,12 +367,13 @@ class TestTeledeclarationApi(APITestCase):
 
         canteen2 = CanteenFactory.create(siret="")
         canteen2.managers.add(user)
-        diagnostic2 = DiagnosticFactory.create(canteen=canteen2, year=2020)
+        diagnostic2 = DiagnosticFactory.create(canteen=canteen2, year=2022)
 
         payload = {"diagnosticId": diagnostic2.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_complete_diagnostic(self):
         """
@@ -339,7 +383,7 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="COMPLETE")
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="COMPLETE")
         payload = {"diagnosticId": diagnostic.id}
 
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -353,13 +397,13 @@ class TestTeledeclarationApi(APITestCase):
 
         self.assertEqual(teledeclaration.diagnostic, diagnostic)
         self.assertEqual(teledeclaration.canteen, canteen)
-        self.assertEqual(teledeclaration.year, 2020)
+        self.assertEqual(teledeclaration.year, 2022)
         self.assertEqual(teledeclaration.applicant, user)
         self.assertEqual(teledeclaration.canteen_siret, canteen.siret)
         self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
         declared_data = teledeclaration.declared_data
-        self.assertEqual(declared_data["year"], 2020)
+        self.assertEqual(declared_data["year"], 2022)
 
         json_canteen = declared_data["canteen"]
         self.assertEqual(json_canteen["name"], canteen.name)
@@ -388,6 +432,7 @@ class TestTeledeclarationApi(APITestCase):
         self.assertIn("value_fruits_et_legumes_short_distribution", json_teledeclaration)
         self.assertIn("value_fruits_et_legumes_local", json_teledeclaration)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_create_incomplete_diagnostic_central_kitchen(self):
         """
@@ -403,7 +448,7 @@ class TestTeledeclarationApi(APITestCase):
 
         DiagnosticFactory.create(
             canteen=central_kitchen,
-            year=2020,
+            year=2022,
             value_total_ht=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
@@ -411,7 +456,7 @@ class TestTeledeclarationApi(APITestCase):
 
         diagnostic = DiagnosticFactory.create(
             canteen=canteen,
-            year=2020,
+            year=2022,
             value_total_ht=None,
             diagnostic_type=None,
         )
@@ -425,6 +470,7 @@ class TestTeledeclarationApi(APITestCase):
             teledeclaration.teledeclaration_mode, Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
         )
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_central_kitchen_contains_satellites(self):
         """
@@ -444,7 +490,7 @@ class TestTeledeclarationApi(APITestCase):
 
         diagnostic = DiagnosticFactory.create(
             canteen=central_kitchen,
-            year=2020,
+            year=2022,
             value_total_ht=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
@@ -472,6 +518,7 @@ class TestTeledeclarationApi(APITestCase):
         self.assertEqual(satellite_2_data["name"], satellite_2.name)
         self.assertEqual(satellite_2_data["siret"], satellite_2.siret)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_does_not_contain_irrelevant_data(self):
         # We create a site canteen that contains irrelevant data "central_producer_siret" and
@@ -486,7 +533,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(
             canteen=canteen,
-            year=2020,
+            year=2022,
             value_total_ht=100,
         )
         payload = {"diagnosticId": diagnostic.id}
@@ -533,6 +580,7 @@ class TestTeledeclarationApi(APITestCase):
         self.assertEqual(teledeclaration.declared_data["central_kitchen_siret"], "18704793618411")
         self.assertEqual(canteen_json["daily_meal_count"], 10)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_dynamically_include_line_ministry(self):
         sector_ministry = SectorFactory.create(has_line_ministry=True)
@@ -547,7 +595,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(
             canteen=canteen,
-            year=2020,
+            year=2022,
             value_total_ht=100,
         )
         payload = {"diagnosticId": diagnostic.id}
