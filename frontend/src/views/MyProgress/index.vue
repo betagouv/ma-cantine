@@ -440,7 +440,7 @@ export default {
   outline: 2px solid #3b87ff;
 }
 .v-tab--disabled {
-  opacity: 100%;
+  opacity: 1;
   background-color: #e5e5e5 !important;
   color: #929292 !important;
 }
