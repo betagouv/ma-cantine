@@ -22,7 +22,10 @@
                 v-for="year in years"
                 :key="year"
               >
-                <v-list-item-title>{{ year }}</v-list-item-title>
+                <v-list-item-title>
+                  {{ year }}
+                  <span v-if="year >= currentYear" class="fr-text-xs font-weight-normal">(prévisionnel)</span>
+                </v-list-item-title>
               </v-list-item>
             </v-list-item-group>
           </v-list>
@@ -237,6 +240,7 @@ export default {
       ],
       canteen: null,
       years: diagnosticYears().map((x) => x.toString()),
+      currentYear: lastYear() + 1,
       centralKitchenDiagnosticModes: Constants.CentralKitchenDiagnosticModes,
       centralKitchenDiagnosticMode: null,
       cancelDialog: false,
