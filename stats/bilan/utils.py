@@ -106,8 +106,10 @@ COLUMNS_TO_SAVE = [
     "teledeclaration.value_meat_poultry_france_ht",
     "teledeclaration.value_fish_ht",
     "teledeclaration.value_fish_egalim_ht",
-    "teledeclaration.cout_denrees",
+    # "teledeclaration.cout_denrees",
 ]
+
+TUNNEL_DATA_ENG = {}
 
 
 def mapper_sector_diff(sector):
@@ -121,7 +123,6 @@ def mapper_sector_diff(sector):
         "Restaurants des armées / police / gendarmerie", "Restaurants des armées/police/gendarmerie"
     )
     return sector
-
 
 ######################
 # Aggregation des TD complètes
@@ -145,22 +146,27 @@ def normalize_sector(secteur):
 ######################
 
 
-def clean_td(td):
+def clean_td(td, year):
     # Suppression de valeurs extremes
-    n_lines = len(td)
     mask = (td['canteen.id'] == 6724) | (td['canteen.id'] == 69589)
     td = td[~mask]
-    print(f"{n_lines - len(td)} lignes ont été supprimées")
+
+    # Save file status
+    TUNNEL_DATA_ENG[year]['Après suppression TD aberrantes'] = len(td)
     return td
 
 
-def transform_td(td_raw):
+def transform_td(td_raw, year):
     """
     Transformation du jeu de données de télédéclarations
     Les traitements sur les dates sont fait plus tard
     """
     # Suppression des diagnostics non soumis
     td = td_raw[td_raw.status == "SUBMITTED"]
+
+    # Save file status
+    TUNNEL_DATA_ENG[year]['Après suppression des TD annulées'] = len(td)
+
     # Keeping only the columns we want
     td = td[COLUMNS_TO_SAVE]
     # Suppression des td sans information appros
@@ -168,58 +174,14 @@ def transform_td(td_raw):
         how="all",
         subset=APPRO_SIMPLIFIED,
     )
-    td = clean_td(td)
+
+    # Save file status
+    TUNNEL_DATA_ENG[year]['Après suppression des TD sans données appro'] = len(td)
+
+    # Fill na for canteen.yearly_meal_count in order to compute "cout denrees"
+    td['canteen.yearly_meal_count'] = td['canteen.yearly_meal_count'].fillna(-1).replace(0, -1)
+    td = clean_td(td, year)
     return td
-
-
-def load_td():
-    url = "https://ma-cantine-metabase.cleverapps.io/api/card/802/query/json"
-    load_dotenv()
-
-    if not os.environ.get("METABASE_TOKEN"):
-        raise Exception("Pas de token Metabase trouvé")
-    header = {
-        "Content-Type": "application/json",
-        "X-Metabase-Session": os.environ.get("METABASE_TOKEN"),
-    }
-    res = requests.post(
-        url,
-        headers=header,
-    )
-    if res.status_code != 200:
-        raise Exception(f"Request failed : {res.status_code}")
-
-    td_raw = pd.DataFrame(res.json())
-    del td_raw["year"]
-    td_raw["declared_data"] = td_raw["declared_data"].apply(json.loads)
-    td_json = pd.json_normalize(td_raw["declared_data"])
-    td_raw = pd.concat([td_raw.drop("declared_data", axis=1), td_json], axis=1)
-    
-    # Deleting line terminator substring that could corrupt the file
-    td_raw['teledeclaration.other_waste_comments'] = td_raw['teledeclaration.other_waste_comments'].replace('\r\n', ' ', regex=True).replace('\n', ' ', regex=True)
-
-    # Save raw file (all years, all status, all columns)
-    td_raw.to_csv("data/export_dataset_stats_campagne_raw.csv", sep=";", index=False)
-    
-    td_raw = aggregation_col(td_raw, "bio", ["_bio"])
-    td_raw = aggregation_col(td_raw, "sustainable", ["_sustainable", "_label_rouge", "_aocaop_igp_stg"])
-    td_raw = aggregation_col(
-        td_raw,
-        "egalim_others",
-        ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
-    )
-    td_raw = aggregation_col(
-        td_raw, "externality_performance", ["_externality_performance", "_performance", "_externalites"]
-    )
-    td_raw["teledeclaration.cout_denrees"] = td_raw.apply(
-        lambda row: row["teledeclaration.value_total_ht"] / row["canteen.yearly_meal_count"], axis=1
-    )
-    
-    td_raw = transform_td(td_raw)
-    return td_raw
-
-
-df = load_td()
 
 
 def add_canteen_info(df, add_carac=True, add_geo=True):
@@ -269,6 +231,59 @@ def split_td_into_years(td_raw):
     tds["2023"] = add_canteen_info(tds["2023"], add_carac=False, add_geo=True)
     return tds
 
+
+def load_td():
+    url = "https://ma-cantine-metabase.cleverapps.io/api/card/802/query/json"
+    load_dotenv()
+
+    if not os.environ.get("METABASE_TOKEN"):
+        raise Exception("Pas de token Metabase trouvé")
+    header = {
+        "Content-Type": "application/json",
+        "X-Metabase-Session": os.environ.get("METABASE_TOKEN"),
+    }
+    res = requests.post(
+        url,
+        headers=header,
+    )
+    if res.status_code != 200:
+        raise Exception(f"Request failed : {res.status_code}")
+
+    td_raw = pd.DataFrame(res.json())
+    del td_raw["year"]
+    td_raw["declared_data"] = td_raw["declared_data"].apply(json.loads)
+    td_json = pd.json_normalize(td_raw["declared_data"])
+    td_raw = pd.concat([td_raw.drop("declared_data", axis=1), td_json], axis=1)
+    
+    # Deleting line terminator substring that could corrupt the file
+    td_raw['teledeclaration.other_waste_comments'] = td_raw['teledeclaration.other_waste_comments'].replace('\r\n', ' ', regex=True).replace('\n', ' ', regex=True)
+    
+    tds = split_td_into_years(td_raw)
+    
+    for year in CAMPAGNES.keys():
+        TUNNEL_DATA_ENG[year] = {}
+        # Save raw file (all years, all status, all columns)
+        tds[year].to_csv(f"data/export_dataset_stats_campagne_raw_{year}.csv", sep=";", index=False)
+        
+        # Save file status
+        TUNNEL_DATA_ENG[year]['Fichier brut'] = len(tds[year])
+
+        tds[year] = aggregation_col(tds[year], "bio", ["_bio"])
+        tds[year] = aggregation_col(tds[year], "sustainable", ["_sustainable", "_label_rouge", "_aocaop_igp_stg"])
+        tds[year] = aggregation_col(
+            tds[year],
+            "egalim_others",
+            ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
+        )
+        tds[year] = aggregation_col(
+            tds[year], "externality_performance", ["_externality_performance", "_performance", "_externalites"]
+        )
+
+        tds[year] = transform_td(tds[year], year)
+        tds[year]["teledeclaration.cout_denrees"] = tds[year].apply(
+            lambda row: row["teledeclaration.value_total_ht"] / row["canteen.yearly_meal_count"], axis=1
+        )
+    return tds
 
 ######################
 # Creation et affichage des indicateurs

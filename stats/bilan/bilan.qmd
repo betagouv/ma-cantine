@@ -58,12 +58,10 @@ Vous pouvez retrouver l'intégralité du code utilisé sur la page [github de ma
 ```{python Main}
 # | echo: false
 
-tds = {}
 cache=False
 
 if not cache:
-    td_raw = utils.load_td()
-    tds = utils.split_td_into_years(td_raw)
+    tds = utils.load_td()
     
     for year in utils.CAMPAGNES.keys():
         # Saving the file 
@@ -77,6 +75,8 @@ if not cache:
                 "teledeclaration.value_bio_ht",
             ],
         )
+        utils.TUNNEL_DATA_ENG[year]['Après application stratégie Je Ne Sais Pas'] = len(tds[f'Campagne {year}'])
+
         tds[f"strat_max_{year}"] = tds[year].dropna(
             how="any",
             subset=[
@@ -147,6 +147,41 @@ for year in ['2022', '2023', 'Campagne 2022', 'Campagne 2023', '2022_strat_hist'
 ## Qualité des données
 
 Avant d'étudier les chiffres clés de la télédéclaration, nous vous présentons des informations sur la disponibilité des données. Ces informations sont importantes pour saisir au mieux la portée des indicateurs.
+
+### Traitements sur les TD 2023
+```{python}
+print(utils.TUNNEL_DATA_ENG['2023'])
+df = pd.DataFrame(utils.TUNNEL_DATA_ENG['2023'].values(), index=utils.TUNNEL_DATA_ENG['2023'].keys(), columns=['values'])
+
+with plt.style.context("fivethirtyeight"):
+    fig = plt.figure(figsize=(12,10))
+
+    plt.fill_betweenx(y=[12,14], x1=[18,18], x2=[0,0], color="dodgerblue");
+
+    plt.fill_betweenx(y=[11,12], x1=[17,18], x2=[1,0], color="dodgerblue", alpha=0.5);
+    plt.fill_betweenx(y=[9,11], x1=[17,17], x2=[1,1], color="dodgerblue");
+
+    plt.fill_betweenx(y=[8,9], x1=[16,17], x2=[2,1], color="dodgerblue", alpha=0.5);
+    plt.fill_betweenx(y=[6,8], x1=[16,16], x2=[2,2], color="dodgerblue");
+
+    plt.fill_betweenx(y=[5,6], x1=[15,16], x2=[3,2], color="dodgerblue", alpha=0.5);
+    plt.fill_betweenx(y=[3,5], x1=[15,15], x2=[3,3], color="dodgerblue");
+
+    plt.fill_betweenx(y=[2,3], x1=[14,15], x2=[4,3], color="dodgerblue", alpha=0.5);
+    plt.fill_betweenx(y=[0,2], x1=[14,14], x2=[4,4], color="dodgerblue");
+
+    plt.yticks([1,4,7,10,13], df.index[::-1]);
+    plt.xticks([],[]);
+
+    plt.ylabel("Stage");
+
+    for y, val in zip([1,4,7,10,13],df["values"][::-1]):
+        plt.text(9,y,val, ha="center", fontsize=16, fontweight="bold", color="white")
+
+    plt.grid(visible=False);
+    plt.title("Chaîne de traitement des télédéclarations", loc="left", fontsize=25, fontweight="bold");
+    plt.show()
+```
 
 ### 📷 Campagne 2022
 
