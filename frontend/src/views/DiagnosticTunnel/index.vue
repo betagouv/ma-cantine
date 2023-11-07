@@ -16,12 +16,25 @@
           </p>
         </v-col>
         <v-col v-if="step && !step.isSynthesis" cols="12">
-          <p class="fr-text-sm">Étape {{ stepIdx + 1 }} sur {{ stepTotal }}</p>
-          <h1 class="fr-h6">{{ step.title }}</h1>
-          <p v-if="nextStep" class="fr-text-xs grey--text text--darken-2">
-            <b>Étape suivante</b>
-            : {{ nextStep.title }}
-          </p>
+          <div>
+            <div class="fr-stepper">
+              <h1 class="fr-stepper__title mb-4">
+                <span class="fr-stepper__state">Étape {{ stepIdx + 1 }} sur {{ stepperStepTotal }}</span>
+                {{ step.title }}
+              </h1>
+              <v-row
+                class="fr-stepper__steps ma-0"
+                :data-fr-current-step="stepIdx + 1"
+                :data-fr-steps="stepperStepTotal"
+              >
+                <v-col v-for="(_, idx) in Array(stepperStepTotal)" :key="idx" :class="stepClass(idx)" />
+              </v-row>
+              <p v-if="nextStep" class="fr-stepper__details mt-4">
+                <span class="font-weight-bold">Étape suivante :</span>
+                {{ nextStep.title }}
+              </p>
+            </div>
+          </div>
         </v-col>
       </v-row>
     </v-row>
@@ -144,8 +157,9 @@ export default {
     firstStepLink() {
       return { query: { étape: this.steps[0].urlSlug } }
     },
-    stepTotal() {
-      return this.steps.length
+    stepperStepTotal() {
+      // we do not count the synthèse as a step, this assumes that all steps will include a final synthèse
+      return this.steps.length - 1
     },
   },
   methods: {
@@ -205,6 +219,10 @@ export default {
         this.$router.replace(this.firstStepLink)
       }
     },
+    stepClass(idx) {
+      const margins = idx === 0 ? "mr-1" : idx === this.stepperStepTotal - 1 ? "ml-1" : "mx-1"
+      return `${margins} mc-stepper__step ${idx <= this.stepIdx ? "completed" : "future"}`
+    },
   },
   mounted() {
     this.fetchCanteen().then(() => this.fetchDiagnostic())
@@ -224,5 +242,56 @@ export default {
 }
 .footer {
   background-color: #f5f5fe;
+}
+/* DSFR STEPPER */
+.fr-stepper {
+  --title-spacing: 0;
+  --text-spacing: 0;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+}
+.fr-stepper__title {
+  --title-spacing: 0 0 0.75rem 0;
+  --text-spacing: 0 0 0.75rem 0;
+  color: #161616;
+  /* color: var(--text-title-grey); */
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.5rem;
+}
+.fr-stepper__state {
+  --title-spacing: 0 0 0.25rem 0;
+  --text-spacing: 0 0 0.25rem 0;
+  color: #666;
+  /* color: var(--text-mention-grey); */
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5rem;
+}
+.fr-stepper__state:after {
+  content: "\a";
+  line-height: 2rem;
+  white-space: pre;
+}
+.fr-stepper__details {
+  color: #666;
+  /* color: var(--text-mention-grey); */
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  margin-top: 0.75rem;
+}
+/* .fr-stepper__steps {
+  height: 6px;
+} */
+.mc-stepper__step {
+  height: 6px;
+  padding: 0;
+}
+.mc-stepper__step.completed {
+  background-color: #000091;
+}
+.mc-stepper__step.future {
+  background-color: #eee;
 }
 </style>
