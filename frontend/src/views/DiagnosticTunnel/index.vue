@@ -16,25 +16,7 @@
           </p>
         </v-col>
         <v-col v-if="step && !step.isSynthesis" cols="12">
-          <div>
-            <div class="fr-stepper">
-              <h1 class="fr-stepper__title mb-4">
-                <span class="fr-stepper__state">Étape {{ stepIdx + 1 }} sur {{ stepperStepTotal }}</span>
-                {{ step.title }}
-              </h1>
-              <v-row
-                class="fr-stepper__steps ma-0"
-                :data-fr-current-step="stepIdx + 1"
-                :data-fr-steps="stepperStepTotal"
-              >
-                <v-col v-for="(_, idx) in Array(stepperStepTotal)" :key="idx" :class="stepClass(idx)" />
-              </v-row>
-              <p v-if="nextStep" class="fr-stepper__details mt-4">
-                <span class="font-weight-bold">Étape suivante :</span>
-                {{ nextStep.title }}
-              </p>
-            </div>
-          </div>
+          <DsfrStepper :steps="stepperSteps" :currentStepIdx="stepIdx" />
         </v-col>
       </v-row>
     </v-row>
@@ -61,7 +43,7 @@
           <v-row class="py-10 align-center justify-end">
             <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
             <p v-else class="mb-0">
-              <router-link :to="previousStep ? previousStep.to : {}">
+              <router-link :to="previousStep ? stepLink(previousStep) : {}">
                 Revenir à l'étape précédente
               </router-link>
             </p>
@@ -77,6 +59,7 @@
 
 <script>
 import keyMeasures from "@/data/key-measures.json"
+import DsfrStepper from "@/components/DsfrStepper"
 import QualityMeasureSteps from "./QualityMeasureSteps"
 import WasteMeasureSteps from "./WasteMeasureSteps"
 
@@ -95,7 +78,7 @@ export default {
       required: true,
     },
   },
-  components: { QualityMeasureSteps, WasteMeasureSteps },
+  components: { DsfrStepper, QualityMeasureSteps, WasteMeasureSteps },
   data() {
     return {
       formIsValid: false,
@@ -155,11 +138,12 @@ export default {
       }
     },
     firstStepLink() {
-      return { query: { étape: this.steps[0].urlSlug } }
+      return this.stepLink(this.steps[0])
     },
-    stepperStepTotal() {
+    stepperSteps() {
       // we do not count the synthèse as a step, this assumes that all steps will include a final synthèse
-      return this.steps.length - 1
+      const synthesisUrl = "synthèse"
+      return this.steps.filter((s) => s.urlSlug !== synthesisUrl)
     },
   },
   methods: {
@@ -219,9 +203,8 @@ export default {
         this.$router.replace(this.firstStepLink)
       }
     },
-    stepClass(idx) {
-      const margins = idx === 0 ? "mr-1" : idx === this.stepperStepTotal - 1 ? "ml-1" : "mx-1"
-      return `${margins} mc-stepper__step ${idx <= this.stepIdx ? "completed" : "future"}`
+    stepLink(step) {
+      return { query: { étape: step.urlSlug } }
     },
   },
   mounted() {
@@ -242,56 +225,5 @@ export default {
 }
 .footer {
   background-color: #f5f5fe;
-}
-/* DSFR STEPPER */
-.fr-stepper {
-  --title-spacing: 0;
-  --text-spacing: 0;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 2rem;
-}
-.fr-stepper__title {
-  --title-spacing: 0 0 0.75rem 0;
-  --text-spacing: 0 0 0.75rem 0;
-  color: #161616;
-  /* color: var(--text-title-grey); */
-  font-size: 1.125rem;
-  font-weight: 700;
-  line-height: 1.5rem;
-}
-.fr-stepper__state {
-  --title-spacing: 0 0 0.25rem 0;
-  --text-spacing: 0 0 0.25rem 0;
-  color: #666;
-  /* color: var(--text-mention-grey); */
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.5rem;
-}
-.fr-stepper__state:after {
-  content: "\a";
-  line-height: 2rem;
-  white-space: pre;
-}
-.fr-stepper__details {
-  color: #666;
-  /* color: var(--text-mention-grey); */
-  font-size: 0.75rem;
-  line-height: 1.25rem;
-  margin-top: 0.75rem;
-}
-/* .fr-stepper__steps {
-  height: 6px;
-} */
-.mc-stepper__step {
-  height: 6px;
-  padding: 0;
-}
-.mc-stepper__step.completed {
-  background-color: #000091;
-}
-.mc-stepper__step.future {
-  background-color: #eee;
 }
 </style>
