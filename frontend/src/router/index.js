@@ -40,6 +40,7 @@ import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import PublishSatellites from "@/views/CanteenEditor/PublishSatellites"
 import DashboardPage from "@/views/CanteenEditor/DashboardPage"
 import DiagnosticEditor from "@/views/DiagnosticEditor"
+import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 import DiagnosticImportPage from "@/views/DiagnosticsImporter/DiagnosticImportPage"
 import PublicCanteenStatisticsPage from "@/views/PublicCanteenStatisticsPage"
@@ -422,6 +423,17 @@ const routes = [
         },
       },
     ],
+  },
+  {
+    path: "/diagnostic-tunnel/:canteenUrlComponent/:year/:measureId",
+    name: "DiagnosticTunnel",
+    component: DiagnosticTunnel,
+    props: true,
+    meta: {
+      title: "Diagnostic",
+      authenticationRequired: true,
+      fullscreen: true,
+    },
   },
   {
     path: "/modifier-mon-diagnostic/:canteenUrlComponent/:year",

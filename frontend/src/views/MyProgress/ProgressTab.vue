@@ -29,10 +29,11 @@
           :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
           class="mt-4"
         >
+          <!-- TODO: change this to an action, which creates the diagnostic then redirects to DiagnosticTunnel -->
           Commencer
         </v-btn>
       </div>
-      <div v-if="diagnostic || hasCentralDiagnosticForMeasure || isCanteenTab" class="summary">
+      <div v-if="diagnostic || hasCentralDiagnosticForMeasure || isCanteenTab">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
         <div
           v-if="!isCanteenTab && usesOtherDiagnosticForMeasure && isSatellite"
@@ -66,6 +67,17 @@
               <v-icon small class="mr-2">$pencil-line</v-icon>
               Modifier mes données
             </v-btn>
+            <v-btn
+              v-else-if="hasActiveTeledeclaration"
+              outlined
+              small
+              color="primary"
+              class="fr-btn--tertiary px-2"
+              :disabled="true"
+            >
+              <v-icon small class="mr-2">$check-line</v-icon>
+              Données télédéclarées
+            </v-btn>
           </v-col>
         </v-row>
         <component
@@ -85,12 +97,12 @@ import DiversificationMeasureInfo from "./information/DiversificationMeasureInfo
 import InformationMeasureInfo from "./information/InformationMeasureInfo"
 import NoPlasticMeasureInfo from "./information/NoPlasticMeasureInfo"
 import WasteMeasureInfo from "./information/WasteMeasureInfo"
-import QualityMeasureSummary from "./summary/QualityMeasureSummary"
-import DiversificationMeasureSummary from "./summary/DiversificationMeasureSummary"
-import InformationMeasureSummary from "./summary/InformationMeasureSummary"
-import NoPlasticMeasureSummary from "./summary/NoPlasticMeasureSummary"
-import WasteMeasureSummary from "./summary/WasteMeasureSummary"
-import CanteenSummary from "./summary/CanteenSummary"
+import QualityMeasureSummary from "@/components/DiagnosticSummary/QualityMeasureSummary"
+import DiversificationMeasureSummary from "@/components/DiagnosticSummary/DiversificationMeasureSummary"
+import InformationMeasureSummary from "@/components/DiagnosticSummary/InformationMeasureSummary"
+import NoPlasticMeasureSummary from "@/components/DiagnosticSummary/NoPlasticMeasureSummary"
+import WasteMeasureSummary from "@/components/DiagnosticSummary/WasteMeasureSummary"
+import CanteenSummary from "@/components/DiagnosticSummary/CanteenSummary"
 import keyMeasures from "@/data/key-measures.json"
 
 export default {
@@ -186,7 +198,14 @@ export default {
     modificationLink() {
       return this.isCanteenTab
         ? { name: "CanteenForm", params: { canteenUrlComponent: this.canteenUrlComponent } }
-        : { name: "DiagnosticModification", params: { canteenUrlComponent: this.canteenUrlComponent, year: this.year } }
+        : {
+            name: "DiagnosticTunnel",
+            params: {
+              canteenUrlComponent: this.canteenUrlComponent,
+              year: this.year,
+              measureId: this.measureId,
+            },
+          }
     },
     hasCentralDiagnosticForMeasure() {
       if (!this.centralDiagnostic) return false
@@ -208,16 +227,5 @@ hr {
   /* Set the hr color */
   color: #ddd; /* old IE */
   background-color: #ddd; /* Modern Browsers */
-}
-.summary >>> ul {
-  list-style-type: none;
-  padding-left: 0;
-}
-.summary >>> li {
-  margin-bottom: 14px;
-  display: flex;
-}
-.summary >>> li .v-icon {
-  align-items: baseline;
 }
 </style>
