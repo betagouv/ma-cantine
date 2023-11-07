@@ -148,7 +148,8 @@ def normalize_sector(secteur):
 def clean_td(td):
     # Suppression de valeurs extremes
     n_lines = len(td)
-    td = td.drop(labels=["1321", "63380"], axis=0)
+    mask = (td['canteen.id'] == 6724) | (td['canteen.id'] == 69589)
+    td = td[~mask]
     print(f"{n_lines - len(td)} lignes ont été supprimées")
     return td
 
@@ -192,7 +193,7 @@ def load_td():
     td_json = pd.json_normalize(td_raw["declared_data"])
     td_raw = pd.concat([td_raw.drop("declared_data", axis=1), td_json], axis=1)
 
-    td = transform_td(td_raw)
+    td_raw = transform_td(td_raw)
 
     td_raw = aggregation_col(td_raw, "bio", ["_bio"])
     td_raw = aggregation_col(td_raw, "sustainable", ["_sustainable", "_label_rouge", "_aocaop_igp_stg"])
@@ -276,9 +277,9 @@ def calcul_indicateur_divers(tds: {}, years=[], col_comparaison=True):
             len(tds[year]) + tds[year]["satellite_canteens_count"].sum()
         )
         cuisines_sur_place = tds[year][tds[year]["canteen.production_type"].isin(["site", "site_cooked_elsewhere"])]
-        indicateurs[year]["Nombre de cantines sur place (sites et satellites)"] = len(cuisines_sur_place)
-
         cuisines_centrales = tds[year][tds[year]["canteen.production_type"].isin(["central_serving", "central"])]
+        
+        indicateurs[year]["Nombre de cantines sur place (sites et satellites)"] = len(cuisines_sur_place)
         indicateurs[year]["Nombre de cantines centrales"] = len(cuisines_centrales)
 
         indicateurs[year]["Nombre de repas moyens par jour pour les cantines sur place"] = int(
@@ -305,7 +306,7 @@ def calcul_indicateur_famille(tds: {}, years=[], col_comparaison=True):
         indicateurs[year] = {}
 
         indicateurs[year]["Nombre de TD prises en compte"] = len(tds[year])
-        indicateurs[year]["Nombre de TD déclarant NSP pour la famille Viande/Volaille 🥩"] = len(
+        indicateurs[year]["Nombre de TD ayant déclaré Je Ne Sais Pas pour la famille Viande/Volaille 🥩"] = len(
             tds[year][tds[year]["teledeclaration.value_meat_poultry_ht"].isna()]
         )
         indicateurs[year]["Taux d'achat alimentaires de la famille Viande/Volaille 🥩"] = int(
@@ -327,7 +328,7 @@ def calcul_indicateur_famille(tds: {}, years=[], col_comparaison=True):
             tds[year]["teledeclaration.value_meat_poultry_france_ht"].sum()
         )
 
-        indicateurs[year]["Nombre de TD déclarant NSP pour la famille Poissons/produits de la mer 🐟"] = len(
+        indicateurs[year]["Nombre de TD ayant déclaré Je Ne Sais Pas pour la famille Poissons/produits de la mer 🐟"] = len(
             tds[year][tds[year]["teledeclaration.value_fish_ht"].isna()]
         )
         indicateurs[year]["Taux d'achat alimentaires de la famille Poissons/produits de la mer 🐟"] = int(
@@ -351,11 +352,18 @@ def calcul_indicateur_famille(tds: {}, years=[], col_comparaison=True):
 def calcul_indicateur_appro(tds: {}, years=[], col_comparaison=True):
     indicateurs = {}
     for year in years if len(years) else tds.keys():
+
         indicateurs[year] = {}
+        cuisines_sur_place = tds[year][tds[year]["canteen.production_type"].isin(["site", "site_cooked_elsewhere"])]
+        cuisines_centrales = tds[year][tds[year]["canteen.production_type"].isin(["central_serving", "central"])]
 
         indicateurs[year]["Montant d'achat alimentaires total"] = int(
             tds[year]["teledeclaration.value_total_ht"].sum()
         )
+        indicateurs[year]["Montant des achats alimentaires cuisines centrales"] = cuisines_centrales["teledeclaration.value_total_ht"].sum()
+        indicateurs[year]["Montant des achats alimentaires cantines satellites"] = cuisines_sur_place["teledeclaration.value_total_ht"].sum()
+        indicateurs[year]["Montant des achats alimentaires cantines gestion concédée"] = tds[year][tds[year]["canteen.management_type"] != "direct"]['teledeclaration.value_total_ht'].sum()
+        indicateurs[year]["Montant des achats alimentaires cantines gestion directe"] = tds[year][tds[year]["canteen.management_type"] == "direct"]['teledeclaration.value_total_ht'].sum()
 
         indicateurs[year]["Taux global des achats en bio"] = (
             tds[year]["teledeclaration.value_bio_ht"].sum() / tds[year]["teledeclaration.value_total_ht"].sum()
@@ -421,7 +429,7 @@ def nombre_formatter(value):
 
 def taux_formatter(value):
     # Your custom formatting logic here
-    return f"{100 * value:.2f} %"
+    return f"{100 * value:.1f} %"
 
 
 def points_formatter(value):
@@ -455,28 +463,32 @@ def apply_formatters(df):
     return df
 
 
-def display_indicateurs(df, transpose=True, format=True):
+def display_indicateurs(df, transpose=True, format=True, col_order=None):
     if isinstance(df, pd.Series):
         df = df.to_frame()
     if format:
         if transpose:
             df = df.T
         try:
+            # df = df
             df = apply_formatters(df)
-        except Exception as e:
+        except Exception:
             pass
         if transpose:
             df = df.T
         if isinstance(df, pd.DataFrame):
             if "Comparaison" in df.columns:
                 df["Comparaison"] = df["Comparaison"].apply(lambda x: x.replace("%", "pts"))
-    print(df.to_html())
+    if col_order:
+        print(df[col_order].to_html())
+    else:
+        print(df.to_html())
 
 
 def display_stacked_bars(df, title="Comparaison entre les campagnes 2022 et 2023", fmt=nombre_formatter, legend=True):
     # Choosing order of bars displaying
 
-    ax = df.plot.barh(color=("#4FC4AF", "#063442"), figsize=(8, 2.0))
+    ax = df.plot.barh(color=("#4FC4AF", "#063442"), figsize=(8, 6.0))
     for bars in ax.containers:
         ax.bar_label(bars, fmt=fmt, label_type="edge")
 

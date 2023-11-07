@@ -59,7 +59,7 @@ Vous pouvez retrouver l'intégralité du code utilisé sur la page [github de ma
 # | echo: false
 
 tds = {}
-cache=True
+cache=False
 
 if not cache:
     td_raw = utils.load_td()
@@ -397,7 +397,7 @@ utils.display_stacked_bars(df_indic_divers.T[divers_colonnes_ratios].T, title='C
 # | output: asis
 
 # Isolate the values with numbers
-appro_colonnes_montants = ['Montant d\'achat alimentaires bio', 'Montant d\'achat alimentaires EGALIM (bio inclus)', 'Montant d\'achat alimentaires total']
+appro_colonnes_montants = ['Montant d\'achat alimentaires bio', 'Montant d\'achat alimentaires EGALIM (bio inclus)', 'Montant d\'achat alimentaires total', "Montant des achats alimentaires cuisines centrales", "Montant des achats alimentaires cantines satellites"]
 utils.display_indicateurs(indic_appro)
 utils.display_stacked_bars(df_indic_appro.T[appro_colonnes_montants].T, title='Comparaison des montants alimentaires dépensés',  fmt=utils.montant_formatter)
 
@@ -422,8 +422,25 @@ Pour le moment, ces chiffres ne décrivent que les télédéclarations de type s
 ```{python Nombre de sites de restauration concernés par la télédéclaration}
 # | echo: false
 # | output: asis
+col_order = [
+"Nombre de TD prises en compte",
+"Nombre de TD ayant déclaré Je Ne Sais Pas pour la famille Viande/Volaille 🥩",
+"Taux d'achat alimentaires de la famille Viande/Volaille 🥩",
+"Montant d'achat alimentaires Viande/Volaille 🥩",
+"Taux d'achat alimentaires Egalim au sein de la famille Viande/Volaille 🥩",
+"Montant d'achat alimentaires Egalim Viande/Volaille 🥩",
+"Taux d'achat alimentaires origine France 🇫🇷 au sein de la famille Viande/Volaille 🥩",
+"Montant d'achat alimentaires origine France 🇫🇷 Viande/Volaille 🥩",
+"Nombre de TD ayant déclaré Je Ne Sais Pas pour la famille Poissons/produits de la mer 🐟",
+"Taux d'achat alimentaires de la famille Poissons/produits de la mer 🐟",
+"Taux d'achat alimentaires Egalim au sein de la famille  Poissons/Produits de la mer 🐟",
+"Montant d'achat alimentaires Poissons/Produits de la mer 🐟",
+"Montant d'achat alimentaires Egalim Poissons/Produits de la mer 🐟"
+]
+
 indic_famille = utils.calcul_indicateur_famille(tds, years=["Campagne 2023"])
-utils.display_indicateurs(indic_famille['Campagne 2023'])
+utils.display_indicateurs(indic_famille['Campagne 2023'][col_order])
+indic_famille['Campagne 2023'][col_order].to_excel('data/Photo-2023-familles.xlsx')
 ```
 
 ## Comparaison isopérimetrique
@@ -434,6 +451,8 @@ utils.display_indicateurs(indic_famille['Campagne 2023'])
 indic_famille = utils.calcul_indicateur_famille(tds_commun, years=["Campagne 2022", "Campagne 2023"])
 indic_famille = utils.ajout_col_comparaison(indic_famille)
 utils.display_indicateurs(indic_famille)
+indic_famille['Campagne 2023'].to_excel('data/isoperimetre-familles.xlsx')
+
 ```
 
 # Répartition des télédéclarants par taille de cantines
@@ -474,6 +493,6 @@ cout_denrees_errors.to_csv('data/cout_denrees_errors.csv', sep=';', index=False)
 cout_denrees_errors.to_html()
 ```
 
-{{< include _secteurs.qmd >}}
+<!-- {{< include _secteurs.qmd >}}
 {{< include _populations.qmd >}}
-{{< include _geo.qmd >}}
+{{< include _geo.qmd >}} -->

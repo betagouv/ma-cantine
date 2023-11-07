@@ -133,6 +133,9 @@ def calcul_indicateurs_secteurs(tds, year, suffix=''):
 
 
     return summary_by_sub_sector
+
+col_order = ['Nombre de TD', 'Taux des TD pris en compte', 'Montant total des achats',	'Taux achats secteurs',	'Coût denrées/repas (moyenne)',	'Montant des achats Bio', 'Taux des achats Bio', 'Montant des achats EGAlim', 'Taux des achats EGAlim',	'Nombre TD gestion directe', 'Taux TD gestion directe',	'Nombre TD gestion concédée', 'Taux TD gestion concédée',	'Taux cuisine centrale', 'Taux satellite']
+summary = calcul_indicateurs_secteurs(tds, 'Campagne 2022')
 ```
 
 ## 📷 2022
@@ -140,8 +143,7 @@ def calcul_indicateurs_secteurs(tds, year, suffix=''):
 # | echo: false
 # | output: asis
 
-summary = calcul_indicateurs_secteurs(tds, 'Campagne 2022')
-utils.display_indicateurs(summary, transpose=False)
+utils.display_indicateurs(summary, transpose=False, col_order=col_order)
 ```
 
 ## 📷 2023
@@ -150,7 +152,7 @@ utils.display_indicateurs(summary, transpose=False)
 # | output: asis
 
 summary = calcul_indicateurs_secteurs(tds, 'Campagne 2023')
-utils.display_indicateurs(summary, transpose=False)
+utils.display_indicateurs(summary, transpose=False, col_order=col_order)
 ```
 
 ```{python}
@@ -159,30 +161,32 @@ utils.display_indicateurs(summary, transpose=False)
 
 summary = calcul_indicateurs_secteurs(tds, 'Campagne 2023')
 
-def display_sub_sector(summary, sector, type='photo_2023'):
+def display_sub_sector(summary, sector, type='photo_2023', col_order=None, file_name=''):
     summary_sector = summary[summary.index.isin([sector], level=0)].copy()
     summary_sector = summary_sector.reset_index(0)
     del summary_sector['sector']
     summary_sector.index = summary_sector.index.set_names('Sous Secteur')
+    if col_order:
+        summary_sector = summary_sector[col_order]
     utils.display_indicateurs(summary_sector, transpose=False)
-    # summary_sector = summary_sector.astype(float)
-    summary_sector.to_excel(f"data/{type}_{sector}.xlsx")
-    # summary_sector.to_csv(f"data/{type}_{sector}.csv", sep=';')
-
+    with pd.ExcelWriter(f'data/{file_name}.xlsx', mode='a', if_sheet_exists='replace') as writer:  
+        summary_sector.to_excel(writer, sheet_name=sector)
+    # summary_sector.to_excel(f"data/{type}_{sector}.xlsx")
+    
 print('### Enseignement')
-display_sub_sector(summary, 'education')
+display_sub_sector(summary, 'education', file_name='photo_2023_secteurs', col_order=col_order)
 
 print('### Médico Social')
-display_sub_sector(summary, 'social')
+display_sub_sector(summary, 'social', file_name='photo_2023_secteurs', col_order=col_order)
 
 print('### Santé')
-display_sub_sector(summary, 'health')
+display_sub_sector(summary, 'health', file_name='photo_2023_secteurs', col_order=col_order)
 
 print('### Administration')
-display_sub_sector(summary, 'administration')
+display_sub_sector(summary, 'administration', file_name='photo_2023_secteurs', col_order=col_order)
 
 print('### Multi Secteurs')
-display_sub_sector(summary, 'multiple_sectors')
+display_sub_sector(summary, 'multiple_sectors', file_name='photo_2023_secteurs', col_order=col_order)
 
 ```
 
@@ -201,18 +205,18 @@ summary = pd.concat([summary_2022, summary_2023], axis=1)
 # | output: asis
 
 print('### Enseignement')
-display_sub_sector(summary, 'education', type='comparaison_isoperimetre')
+display_sub_sector(summary, 'education', type='comparaison_isoperimetre',file_name='isoperimetre_secteurs')
 
 print('### Médico Social')
-display_sub_sector(summary, 'social', type='comparaison_isoperimetre')
+display_sub_sector(summary, 'social', type='comparaison_isoperimetre', file_name='isoperimetre_secteurs')
 
 print('### Santé')
-display_sub_sector(summary, 'health', type='comparaison_isoperimetre')
+display_sub_sector(summary, 'health', type='comparaison_isoperimetre', file_name='isoperimetre_secteurs')
 
 print('### Administration')
-display_sub_sector(summary, 'administration', type='comparaison_isoperimetre')
+display_sub_sector(summary, 'administration', type='comparaison_isoperimetre', file_name='isoperimetre_secteurs')
 
 print('### Multi Secteurs')
-display_sub_sector(summary, 'multiple_sectors', type='comparaison_isoperimetre')
+display_sub_sector(summary, 'multiple_sectors', type='comparaison_isoperimetre', file_name='isoperimetre_secteurs')
 
 ```
