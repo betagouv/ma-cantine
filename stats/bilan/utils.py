@@ -161,6 +161,8 @@ def transform_td(td_raw):
     """
     # Suppression des diagnostics non soumis
     td = td_raw[td_raw.status == "SUBMITTED"]
+    # Keeping only the columns we want
+    td = td[COLUMNS_TO_SAVE]
     # Suppression des td sans information appros
     td = td.copy().dropna(
         how="all",
@@ -192,9 +194,13 @@ def load_td():
     td_raw["declared_data"] = td_raw["declared_data"].apply(json.loads)
     td_json = pd.json_normalize(td_raw["declared_data"])
     td_raw = pd.concat([td_raw.drop("declared_data", axis=1), td_json], axis=1)
+    
+    # Deleting line terminator substring that could corrupt the file
+    td_raw['teledeclaration.other_waste_comments'] = td_raw['teledeclaration.other_waste_comments'].replace('\r\n', ' ', regex=True).replace('\n', ' ', regex=True)
 
-    td_raw = transform_td(td_raw)
-
+    # Save raw file (all years, all status, all columns)
+    td_raw.to_csv("data/export_dataset_stats_campagne_raw.csv", sep=";", index=False)
+    
     td_raw = aggregation_col(td_raw, "bio", ["_bio"])
     td_raw = aggregation_col(td_raw, "sustainable", ["_sustainable", "_label_rouge", "_aocaop_igp_stg"])
     td_raw = aggregation_col(
@@ -208,7 +214,12 @@ def load_td():
     td_raw["teledeclaration.cout_denrees"] = td_raw.apply(
         lambda row: row["teledeclaration.value_total_ht"] / row["canteen.yearly_meal_count"], axis=1
     )
+    
+    td_raw = transform_td(td_raw)
     return td_raw
+
+
+df = load_td()
 
 
 def add_canteen_info(df, add_carac=True, add_geo=True):
@@ -611,3 +622,4 @@ def assert_quality(tds):
         assert len(tds[year]["canteen.id"]) == len(
             tds[year]["canteen.id"].unique()
         ), "Il y a des doublons dans les cantines"
+        

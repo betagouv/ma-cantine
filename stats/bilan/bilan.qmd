@@ -66,48 +66,49 @@ if not cache:
     tds = utils.split_td_into_years(td_raw)
     
     for year in utils.CAMPAGNES.keys():
-        # Deleting line terminator substring that could corrupt the backup file
-        tds[year]['teledeclaration.other_waste_comments'] = tds[year]['teledeclaration.other_waste_comments'].replace('\r\n', ' ', regex=True).replace('\n', ' ', regex=True)
-
         # Saving the file 
-        tds[year].to_csv(f"data/export_dataset_stats_campagne_{year}_raw.csv", sep=";", index=False)
- 
-         # Keeping only the columns we want
-        tds[year] = tds[year][utils.COLUMNS_TO_SAVE] 
-
-        tds[year].to_csv(f"data/export_dataset_stats_campagne_{year}.csv", sep=";", index=False)
+        tds[year].to_csv(f"data/export_dataset_stats_campagne_{year}.csv", sep=';', index=False)
         
+        # Application de la stratégie Je Ne Sais pas
+        tds[f"Campagne {year}"] = tds[year].dropna(
+            how="any",
+            subset=[
+                "teledeclaration.value_total_ht",
+                "teledeclaration.value_bio_ht",
+            ],
+        )
+        tds[f"strat_max_{year}"] = tds[year].dropna(
+            how="any",
+            subset=[
+            "teledeclaration.value_bio_ht",
+            "teledeclaration.value_total_ht",
+            "teledeclaration.value_egalim_others_ht",
+            "teledeclaration.value_sustainable_ht",
+            "teledeclaration.value_externality_performance_ht",
+            ],
+        )
+        tds[f"{year}_strat_hist"] = tds[year].dropna(
+            how="all",
+            subset=utils.APPRO_SIMPLIFIED,
+        )
+
+        # Saving the file stratégie Je Ne Sais Pas
+        tds[f"Campagne {year}"].to_csv(f"data/export_dataset_stats_campagne_{year}_clean.csv", sep=';', index=False)
+
+        # Saving the file stratégie Historique
+        tds[f"{year}_strat_hist"].to_csv(f"data/export_dataset_stats_campagne_{year}_hist.csv", sep=';', index=False)
+
+        # Saving the file stratégie Max
+        tds[f"strat_max_{year}"].to_csv(f"data/export_dataset_stats_campagne_{year}_max.csv", sep=';', index=False)
+
 
 # Whether we use cache or ot, we re-read the file to have consistency in the dataframe
 for year in utils.CAMPAGNES.keys():
     tds[year] = pd.read_csv(f"data/export_dataset_stats_campagne_{year}.csv", sep=";")
+    tds[f"Campagne {year}"] = pd.read_csv(f"data/export_dataset_stats_campagne_{year}_clean.csv", sep=";")
+    tds[f"{year}_strat_hist"] = pd.read_csv(f"data/export_dataset_stats_campagne_{year}_hist.csv", sep=";")
+    tds[f"strat_max_{year}"] = pd.read_csv(f"data/export_dataset_stats_campagne_{year}_max.csv", sep=";")
 
-# Application de la stratégie historique
-for year in utils.CAMPAGNES.keys():
-    tds[f"{year}_strat_hist"] = tds[year].dropna(
-        how="all",
-        subset=utils.APPRO_SIMPLIFIED,
-    )
-
-# Application de la stratégie Je Ne Sais pas
-for year in ['2022', '2023']:
-    tds[f"Campagne {year}"] = tds[year].dropna(
-        how="any",
-        subset=[
-            "teledeclaration.value_total_ht",
-            "teledeclaration.value_bio_ht",
-        ],
-    )
-    tds[f"strat_max_{year}"] = tds[year].dropna(
-        how="any",
-        subset=[
-        "teledeclaration.value_bio_ht",
-        "teledeclaration.value_total_ht",
-        "teledeclaration.value_egalim_others_ht",
-        "teledeclaration.value_sustainable_ht",
-        "teledeclaration.value_externality_performance_ht",
-        ],
-    )
 
 # Définition des populations assidus, entrantes et sortantes
 td_pop = {}
@@ -493,6 +494,6 @@ cout_denrees_errors.to_csv('data/cout_denrees_errors.csv', sep=';', index=False)
 cout_denrees_errors.to_html()
 ```
 
-<!-- {{< include _secteurs.qmd >}}
+{{< include _secteurs.qmd >}}
 {{< include _populations.qmd >}}
-{{< include _geo.qmd >}} -->
+{{< include _geo.qmd >}}
