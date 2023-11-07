@@ -34,16 +34,6 @@ export default {
           urlSlug: "total",
         },
         {
-          title: "Valeurs totales des achats alimentaires",
-          componentName: "QualityTotalStep",
-          urlSlug: "total2",
-        },
-        {
-          title: "Valeurs totales des achats alimentaires",
-          componentName: "QualityTotalStep",
-          urlSlug: "total3",
-        },
-        {
           title: "Synthèse",
           isSynthesis: true,
           componentName: "QualityMeasureSummary",
