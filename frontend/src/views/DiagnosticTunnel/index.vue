@@ -45,7 +45,10 @@
         </v-col>
         <v-spacer />
         <v-col>
-          <v-row class="py-10 align-center justify-end">
+          <v-row class="py-10 px-4 align-center flex-row-reverse">
+            <v-btn :disabled="!formIsValid" @click="continueAction" color="primary" class="ml-4">
+              {{ continueActionText }}
+            </v-btn>
             <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
             <p v-else class="mb-0">
               <router-link v-if="previousStep" :to="previousStep.to">
@@ -55,9 +58,6 @@
                 Revenir à l'étape précédente
               </a>
             </p>
-            <v-btn :disabled="!formIsValid" @click="continueAction" color="primary" class="ml-4">
-              {{ continueActionText }}
-            </v-btn>
           </v-row>
         </v-col>
       </v-row>
