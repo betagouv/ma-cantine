@@ -30,13 +30,22 @@
     />
   </fieldset>
   <div v-else-if="stepUrlSlug === 'plan'">
-    <v-checkbox
-      hide-details="auto"
-      class="mb-4"
-      v-model="payload.hasDiversificationPlan"
-      label="J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales"
-      @change="updatePayload"
-    />
+    <fieldset>
+      <legend class="text-left my-3">
+        J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de
+        protéines végétales
+      </legend>
+      <v-radio-group class="my-0" v-model="payload.hasDiversificationPlan" hide-details @change="updatePayload">
+        <v-row>
+          <v-col>
+            <v-radio label="Oui" :value="true"></v-radio>
+          </v-col>
+          <v-col>
+            <v-radio label="Non" :value="false"></v-radio>
+          </v-col>
+        </v-row>
+      </v-radio-group>
+    </fieldset>
     <fieldset class="my-3">
       <legend class="text-left mb-1 mt-3" :class="{ 'grey--text': !payload.hasDiversificationPlan }">
         Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :
