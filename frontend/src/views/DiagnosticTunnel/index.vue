@@ -8,7 +8,7 @@
         <v-col class="text-right">
           <p class="mb-0">
             <router-link :to="quitLink">
-              Quitter
+              Sauvegarder et quitter
               <v-icon color="primary" size="1rem" class="ml-0 mb-1">
                 $close-line
               </v-icon>
@@ -214,6 +214,12 @@ export default {
       this.replaceStepInUrlMaybe()
       if (newStep) this.updatePageTitle()
     },
+  },
+  beforeRouteLeave(to, from, next) {
+    this.saveDiagnostic().then(() => {
+      next()
+    })
+    return
   },
 }
 </script>
