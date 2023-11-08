@@ -7,12 +7,12 @@
         </v-col>
         <v-col class="text-right">
           <p class="mb-0">
-            <router-link :to="quitLink">
+            <v-btn text plain class="text-decoration-underline" color="primary" @click="saveAndQuit">
               Sauvegarder et quitter
               <v-icon color="primary" size="1rem" class="ml-0 mb-1">
                 $close-line
               </v-icon>
-            </router-link>
+            </v-btn>
           </p>
         </v-col>
         <v-col v-if="step && !step.isSynthesis" cols="12">
@@ -205,6 +205,11 @@ export default {
         this.$router.replace(this.firstStepLink)
       }
     },
+    saveAndQuit() {
+      return this.saveDiagnostic().then(() => {
+        this.$router.push(this.quitLink)
+      })
+    },
   },
   mounted() {
     this.fetchCanteen().then(() => this.fetchDiagnostic())
@@ -215,12 +220,6 @@ export default {
       if (newStep) this.updatePageTitle()
     },
   },
-  beforeRouteLeave(to, from, next) {
-    this.saveDiagnostic().then(() => {
-      next()
-    })
-    return
-  },
 }
 </script>
 
@@ -230,5 +229,8 @@ export default {
 }
 .footer {
   background-color: #f5f5fe;
+}
+.v-btn--plain .v-btn__content {
+  opacity: 1 !important;
 }
 </style>
