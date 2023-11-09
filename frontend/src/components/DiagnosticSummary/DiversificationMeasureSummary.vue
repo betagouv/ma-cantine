@@ -1,26 +1,6 @@
 <template>
   <div class="fr-text">
     <ul role="list">
-      <li v-if="displayDiversificationPlanSegment && diagnostic.hasDiversificationPlan">
-        <v-icon color="primary" class="mr-2">$check-line</v-icon>
-        <div>
-          J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de
-          protéines végétales
-          <ul role="list" class="mt-2" v-if="appliedDiversificationActions && appliedDiversificationActions.length">
-            <li class="fr-text-xs mb-1" v-for="action in appliedDiversificationActions" :key="action">
-              {{ action }}
-            </li>
-          </ul>
-        </div>
-      </li>
-      <li v-else-if="displayDiversificationPlanSegment">
-        <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        <div>
-          Je n'ai pas mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base
-          de protéines végétales
-        </div>
-      </li>
-
       <li v-if="diagnostic.vegetarianWeeklyRecurrence">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
@@ -67,16 +47,23 @@
         </div>
       </li>
 
-      <li v-if="canteen.vegetarianExpeParticipant">
+      <li v-if="displayDiversificationPlanSegment && diagnostic.hasDiversificationPlan">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
-          Je suis volontaire pour l’expérimentation de l’option végétarienne quotidienne
+          J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de
+          protéines végétales
+          <ul role="list" class="mt-2" v-if="appliedDiversificationActions && appliedDiversificationActions.length">
+            <li class="fr-text-xs mb-1" v-for="action in appliedDiversificationActions" :key="action">
+              {{ action }}
+            </li>
+          </ul>
         </div>
       </li>
-      <li v-else>
+      <li v-else-if="displayDiversificationPlanSegment">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
-          Je ne suis pas volontaire pour l’expérimentation de l’option végétarienne quotidienne
+          Je n'ai pas mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base
+          de protéines végétales
         </div>
       </li>
     </ul>

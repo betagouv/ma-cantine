@@ -199,11 +199,12 @@ export default {
       return this.isCanteenTab
         ? { name: "CanteenForm", params: { canteenUrlComponent: this.canteenUrlComponent } }
         : {
-            name: "DiagnosticTunnel",
+            // name: "DiagnosticTunnel",
+            name: "DiagnosticModification",
             params: {
               canteenUrlComponent: this.canteenUrlComponent,
               year: this.year,
-              measureId: this.measureId,
+              // measureId: this.measureId,
             },
           }
     },
