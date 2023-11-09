@@ -40,16 +40,19 @@
         </v-col>
         <v-spacer />
         <v-col>
-          <v-row class="py-10 align-center justify-end">
-            <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
-            <p v-else class="mb-0">
-              <router-link :to="previousStep ? stepLink(previousStep) : {}">
-                Revenir à l'étape précédente
-              </router-link>
-            </p>
+          <v-row class="py-10 px-4 align-center flex-row-reverse">
             <v-btn :disabled="!formIsValid" @click="continueAction" color="primary" class="ml-4">
               {{ continueActionText }}
             </v-btn>
+            <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
+            <p v-else class="mb-0">
+              <router-link v-if="previousStep" :to="stepLink(previousStep)">
+                Revenir à l'étape précédente
+              </router-link>
+              <a v-else class="grey--text text-darken-2" role="link" aria-disabled="true">
+                Revenir à l'étape précédente
+              </a>
+            </p>
           </v-row>
         </v-col>
       </v-row>
@@ -225,5 +228,8 @@ export default {
 }
 .footer {
   background-color: #f5f5fe;
+}
+a[aria-disabled="true"] {
+  cursor: not-allowed;
 }
 </style>
