@@ -24,8 +24,6 @@
       :key="item.value"
       :value="item.value"
       :label="item.label"
-      :readonly="readonly"
-      :disabled="readonly"
       @change="updatePayload"
     />
   </fieldset>
@@ -123,7 +121,29 @@ export default {
           urlSlug: "synthèse",
         },
       ],
-      diversificationPlanActions: Constants.DiversificationPlanActions,
+      diversificationPlanActions: [
+        {
+          label: "Les plats et les produits (diversification, gestion des quantités, recette traditionnelle, goût...)",
+          value: "PRODUCTS",
+        },
+        {
+          label: "La manière dont les aliments sont présentés aux convives (visuellement attrayants)",
+          value: "PRESENTATION",
+        },
+        {
+          label: "La manière dont les menus sont conçus en soulignant attributs positifs des plats",
+          value: "MENU",
+        },
+        {
+          label: "La mise en avant des produits (plats recommandés, dégustation, mode de production...)",
+          value: "PROMOTION",
+        },
+        {
+          label:
+            "La formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
+          value: "TRAINING",
+        },
+      ],
       frequency: Constants.VegetarianRecurrence,
       menuTypes: Constants.VegetarianMenuTypes,
       menuBases: Constants.VegetarianMenuBases,

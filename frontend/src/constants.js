@@ -549,24 +549,25 @@ export default Object.freeze({
   },
   DiversificationPlanActions: [
     {
-      label: "Les plats et les produits (diversification, gestion des quantités, recette traditionnelle, goût...)",
+      label:
+        "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
       value: "PRODUCTS",
     },
     {
-      label: "La manière dont les aliments sont présentés aux convives (visuellement attrayants)",
+      label: "Agir sur la manière dont les aliments sont présentés aux convives (visuellement attrayants)",
       value: "PRESENTATION",
     },
     {
-      label: "La manière dont les menus sont conçus en soulignant attributs positifs des plats",
+      label: "Agir sur la manière dont les menus sont conçus en soulignant attributs positifs des plats",
       value: "MENU",
     },
     {
-      label: "La mise en avant des produits (plats recommandés, dégustation, mode de production...)",
+      label: "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
       value: "PROMOTION",
     },
     {
       label:
-        "La formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
+        "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
       value: "TRAINING",
     },
   ],
