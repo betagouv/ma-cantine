@@ -16,12 +16,7 @@
           </p>
         </v-col>
         <v-col v-if="step && !step.isSynthesis" cols="12">
-          <p class="fr-text-sm">Étape {{ stepIdx + 1 }} sur {{ stepTotal }}</p>
-          <h1 class="fr-h6">{{ step.title }}</h1>
-          <p v-if="nextStep" class="fr-text-xs grey--text text--darken-2">
-            <b>Étape suivante</b>
-            : {{ nextStep.title }}
-          </p>
+          <DsfrStepper :steps="stepperSteps" :currentStepIdx="stepIdx" />
         </v-col>
       </v-row>
     </v-row>
@@ -51,7 +46,7 @@
             </v-btn>
             <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
             <p v-else class="mb-0">
-              <router-link v-if="previousStep" :to="previousStep.to">
+              <router-link v-if="previousStep" :to="stepLink(previousStep)">
                 Revenir à l'étape précédente
               </router-link>
               <a v-else class="grey--text text-darken-2" role="link" aria-disabled="true">
@@ -67,6 +62,7 @@
 
 <script>
 import keyMeasures from "@/data/key-measures.json"
+import DsfrStepper from "@/components/DsfrStepper"
 import QualityMeasureSteps from "./QualityMeasureSteps"
 import WasteMeasureSteps from "./WasteMeasureSteps"
 
@@ -85,7 +81,7 @@ export default {
       required: true,
     },
   },
-  components: { QualityMeasureSteps, WasteMeasureSteps },
+  components: { DsfrStepper, QualityMeasureSteps, WasteMeasureSteps },
   data() {
     return {
       formIsValid: false,
@@ -145,10 +141,12 @@ export default {
       }
     },
     firstStepLink() {
-      return { query: { étape: this.steps[0].urlSlug } }
+      return this.stepLink(this.steps[0])
     },
-    stepTotal() {
-      return this.steps.length
+    stepperSteps() {
+      // we do not count the synthèse as a step, this assumes that all steps will include a final synthèse
+      const synthesisUrl = "synthèse"
+      return this.steps.filter((s) => s.urlSlug !== synthesisUrl)
     },
   },
   methods: {
@@ -207,6 +205,9 @@ export default {
       if (!url || url !== this.step?.urlSlug) {
         this.$router.replace(this.firstStepLink)
       }
+    },
+    stepLink(step) {
+      return { query: { étape: step.urlSlug } }
     },
   },
   mounted() {
