@@ -206,9 +206,11 @@ export default {
       }
     },
     saveAndQuit() {
-      return this.saveDiagnostic().then(() => {
-        this.$router.push(this.quitLink)
-      })
+      return this.saveDiagnostic()
+        .then(() => {
+          this.$router.push(this.quitLink)
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },
   mounted() {
