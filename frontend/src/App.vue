@@ -2,7 +2,7 @@
   <div id="app">
     <v-app>
       <WidgetHeader class="ma-4 mb-0 constrained" v-if="isWidget" />
-      <AppHeader class="mx-auto constrained" v-else />
+      <AppHeader class="mx-auto constrained" v-else-if="!fullscreen" />
 
       <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget }">
         <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner" />
@@ -12,11 +12,11 @@
             style="position: absolute; left: 50%; top: 50%"
             v-if="!initialDataLoaded"
           ></v-progress-circular>
-          <router-view v-else :class="isWidget ? 'ma-4 mt-0 constrained' : 'mx-auto constrained'" />
+          <router-view v-else :class="routerViewClass" />
         </v-container>
       </v-main>
 
-      <AppFooter v-if="!isWidget" />
+      <AppFooter v-if="!isWidget && !fullscreen" />
       <NotificationSnackbar v-if="!isWidget" />
     </v-app>
   </div>
@@ -42,6 +42,7 @@ export default {
   data() {
     return {
       isWidget: window.IS_WIDGET,
+      fullscreen: false,
     }
   },
   computed: {
@@ -50,6 +51,11 @@ export default {
     },
     showWebinaireBanner() {
       return this.$store.state.showWebinaireBanner && !this.isWidget
+    },
+    routerViewClass() {
+      if (this.isWidget) return "ma-4 mt-0 constrained"
+      if (this.fullscreen) return ""
+      return "mx-auto constrained"
     },
   },
   mounted() {
@@ -69,6 +75,7 @@ export default {
       const suffix = "ma cantine"
       document.title = to.meta.title ? to.meta.title + " - " + suffix : suffix
       document.querySelector('meta[property="og:url"]').setAttribute("content", window.location)
+      this.fullscreen = this.$route.meta.fullscreen
     },
     initialDataLoaded() {
       if (!this.$store.state.loggedUser) return

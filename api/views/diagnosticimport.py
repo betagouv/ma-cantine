@@ -164,12 +164,12 @@ class ImportDiagnosticsView(ABC, APIView):
         return diagnostic
 
     def _teledeclare_diagnostic(self, diagnostic):
+        Teledeclaration.validate_diagnostic(diagnostic)
         try:
-            Teledeclaration.validate_diagnostic(diagnostic)
             Teledeclaration.create_from_diagnostic(diagnostic, self.request.user)
             self.teledeclarations += 1
         except Exception:
-            pass
+            raise ValidationError("Ce diagnostic n'a pas été télédéclaré")
 
     @staticmethod
     def _should_update_geolocation(canteen, row):
@@ -407,7 +407,7 @@ class ImportDiagnosticsView(ABC, APIView):
         elif isinstance(e, Sector.DoesNotExist):
             ImportDiagnosticsView._add_error(errors, "Le secteur spécifié ne fait pas partie des options acceptées")
         elif isinstance(e, ValidationError):
-            if e.message_dict:
+            if hasattr(e, "message_dict"):
                 for field, messages in e.message_dict.items():
                     verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(field)
                     for message in messages:
@@ -417,7 +417,8 @@ class ImportDiagnosticsView(ABC, APIView):
                         if field != "__all__":
                             user_message = f"Champ '{verbose_field_name}' : {user_message}"
                         ImportDiagnosticsView._add_error(errors, user_message)
-
+            elif hasattr(e, "message"):
+                ImportDiagnosticsView._add_error(errors, e.message)
             elif hasattr(e, "params"):
                 ImportDiagnosticsView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
             else:

@@ -259,8 +259,10 @@ export const getApproPercentages = (diagnostic) => {
   // two cases: 1) raw data in diagnostic; 2) only percentages in diagnostic
   const valueTotal = diagnostic.percentageValueTotalHt || diagnostic.valueTotalHt
   const valueBio = diagnostic.percentageValueBioHt || diagnostic.valueBioHt
+  const valueMeatPoultryTotal = diagnostic.valueMeatPoultryHt || 1
   const valueMeatPoultryEgalim = diagnostic.percentageValueMeatPoultryEgalimHt || diagnostic.valueMeatPoultryEgalimHt
   const valueMeatPoultryFrance = diagnostic.percentageValueMeatPoultryFranceHt || diagnostic.valueMeatPoultryFranceHt
+  const valueFishTotal = diagnostic.valueFishHt || 1
   const valueFishEgalim = diagnostic.percentageValueFishEgalimHt || diagnostic.valueFishEgalimHt
 
   const allSustainable = getSustainableTotal(diagnostic)
@@ -268,9 +270,9 @@ export const getApproPercentages = (diagnostic) => {
     bio: getPercentage(valueBio, valueTotal),
     allSustainable: getPercentage(allSustainable, valueTotal),
     egalim: getPercentage(valueBio || 0 + allSustainable || 0, valueTotal),
-    meatPoultryEgalim: getPercentage(valueMeatPoultryEgalim, valueTotal),
-    meatPoultryFrance: getPercentage(valueMeatPoultryFrance, valueTotal),
-    fishEgalim: getPercentage(valueFishEgalim, valueTotal),
+    meatPoultryEgalim: getPercentage(valueMeatPoultryEgalim, valueMeatPoultryTotal),
+    meatPoultryFrance: getPercentage(valueMeatPoultryFrance, valueMeatPoultryTotal),
+    fishEgalim: getPercentage(valueFishEgalim, valueFishTotal),
   }
 }
 

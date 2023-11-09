@@ -105,7 +105,31 @@
             </h6>
             <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
           </div>
-          <v-btn outlined small color="primary" class="fr-btn--tertiary px-2 mb-6" :to="editLink">
+          <v-btn
+            v-if="hasActiveTeledeclaration"
+            outlined
+            small
+            color="primary"
+            class="fr-btn--tertiary px-2"
+            :disabled="true"
+          >
+            <v-icon small class="mr-2">$check-line</v-icon>
+            Données télédéclarées
+          </v-btn>
+          <v-btn
+            v-else
+            outlined
+            small
+            color="primary"
+            class="fr-btn--tertiary px-2 mb-6"
+            :to="{
+              name: 'DiagnosticModification',
+              params: {
+                canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen),
+                year: diagnostic.year,
+              },
+            }"
+          >
             <v-icon small class="mr-2">$pencil-line</v-icon>
             Modifier mes données
           </v-btn>
@@ -236,6 +260,9 @@ export default {
           },
         }
       }
+    },
+    hasActiveTeledeclaration() {
+      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
     },
   },
 }
