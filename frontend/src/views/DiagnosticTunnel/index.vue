@@ -7,12 +7,12 @@
         </v-col>
         <v-col class="text-right">
           <p class="mb-0">
-            <router-link :to="quitLink">
-              Quitter
+            <v-btn text plain class="text-decoration-underline" color="primary" @click="saveAndQuit">
+              Sauvegarder et quitter
               <v-icon color="primary" size="1rem" class="ml-0 mb-1">
                 $close-line
               </v-icon>
-            </router-link>
+            </v-btn>
           </p>
         </v-col>
         <v-col v-if="step && !step.isSynthesis" cols="12">
@@ -207,6 +207,13 @@ export default {
         this.$router.replace(this.firstStepLink)
       }
     },
+    saveAndQuit() {
+      return this.saveDiagnostic()
+        .then(() => {
+          this.$router.push(this.quitLink)
+        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
     stepLink(step) {
       return { query: { étape: step.urlSlug } }
     },
@@ -229,6 +236,9 @@ export default {
 }
 .footer {
   background-color: #f5f5fe;
+}
+.v-btn--plain .v-btn__content {
+  opacity: 1 !important;
 }
 a[aria-disabled="true"] {
   cursor: not-allowed;
