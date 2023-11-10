@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import NoPlasticMeasureSummary from "@/components/DiagnosticSummary/NoPlasticMeasureSummary"
 export default {
   name: "NoPlasticMeasureSteps",
   props: {
@@ -54,6 +55,9 @@ export default {
       type: String,
     },
   },
+  components: {
+    NoPlasticMeasureSummary,
+  },
   data() {
     return {
       steps: [
@@ -68,7 +72,7 @@ export default {
         {
           title: "Synthèse",
           isSynthesis: true,
-          componentName: "DiversificationMeasureSummary",
+          componentName: "NoPlasticMeasureSummary",
           urlSlug: "synthèse",
         },
       ],
