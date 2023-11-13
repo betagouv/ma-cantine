@@ -63,7 +63,7 @@
           >
             <v-btn v-if="usingLastDiagnostic" color="primary" @click="createDiagnosticAndRedirect">
               <v-icon small class="mr-2">$pencil-line</v-icon>
-              Méttre à jour
+              Mettre à jour
             </v-btn>
             <v-btn v-else outlined small color="primary" class="fr-btn--tertiary px-2" :to="modificationLink">
               <v-icon small class="mr-2">$pencil-line</v-icon>
