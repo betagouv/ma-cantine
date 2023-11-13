@@ -132,11 +132,9 @@ export default {
   methods: {
     updatePayloadFromComponent(e) {
       this.$set(this, "payload", e.payload)
-      this.formIsValid = e.formIsValid
-      this.updatePayload()
     },
     updatePayload() {
-      this.$emit("update-payload", { payload: this.payload, formIsValid: true })
+      this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
     },
   },
   mounted() {

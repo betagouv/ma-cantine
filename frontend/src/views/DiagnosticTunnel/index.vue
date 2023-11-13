@@ -46,7 +46,7 @@
             </v-btn>
             <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
             <p v-else class="mb-0">
-              <router-link v-if="previousStep" :to="stepLink(previousStep)">
+              <router-link v-if="previousStep && formIsValid" :to="stepLink(previousStep)">
                 Revenir à l'étape précédente
               </router-link>
               <a v-else class="grey--text text-darken-2" role="link" aria-disabled="true">
@@ -85,7 +85,7 @@ export default {
   components: { DsfrStepper, QualityMeasureSteps, WasteMeasureSteps, DiversificationMeasureSteps },
   data() {
     return {
-      formIsValid: false,
+      formIsValid: true,
       canteen: null,
       diagnostic: null,
       payload: {},

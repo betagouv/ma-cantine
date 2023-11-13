@@ -1,7 +1,7 @@
 <template>
   <div>
     <DsfrCurrencyField
-      v-model.number="diagnostic.valueTotalHt"
+      v-model.number="payload.valueTotalHt"
       @blur="updatePayload"
       label="Total (en € HT) de tous mes achats alimentaires"
     />
@@ -25,12 +25,11 @@ export default {
       payload: {
         valueTotalHt: this.diagnostic.valueTotalHt,
       },
-      formIsValid: true,
     }
   },
   methods: {
     updatePayload() {
-      this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
+      this.$emit("update-payload", { payload: this.payload })
     },
   },
 }
