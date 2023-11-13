@@ -2,7 +2,7 @@
   <v-form @submit.prevent v-model="formIsValid">
     <div v-if="stepUrlSlug === 'information-convives'" class="py-4">
       <fieldset>
-        <legend class="text-left my-3">
+        <legend class="my-3">
           J’informe mes convives sur la part de produits de qualité et durables entrant dans la composition des repas
           servis, et sur les démarches d’acquisition de produits issus d’un PAT (projet alimentaire territorial)
         </legend>
@@ -11,7 +11,7 @@
         </v-radio-group>
       </fieldset>
       <fieldset class="mt-8" :disabled="!payload.communicatesOnFoodQuality">
-        <legend class="text-left">Je fais cette information</legend>
+        <legend>Je fais cette information</legend>
         <p class="fr-text-xs mt-1 mb-3">Optionnel</p>
         <v-radio-group class="my-0" v-model="payload.communicationFrequency" hide-details>
           <v-radio
@@ -31,7 +31,7 @@
         <p class="fr-text-xs mt-1 mb-3">Plusieurs choix possibles</p>
         <v-checkbox
           hide-details="auto"
-          class="ml-8 mb-3 mt-0"
+          class="mb-3 mt-0"
           v-model="payload.communicationSupports"
           :multiple="true"
           v-for="support in communicationSupports"
@@ -39,8 +39,8 @@
           :value="support.value"
           :label="support.label"
         />
-        <v-row align="center" class="ml-8 mb-3 mt-6 mr-2">
-          <v-checkbox v-model="otherSupportEnabled" hide-details class="shrink mt-0"></v-checkbox>
+        <v-row class="ml-0 mb-3 mt-0 mr-2">
+          <v-checkbox v-model="otherSupportEnabled" hide-details class="mt-0"></v-checkbox>
           <v-text-field
             class="my-0 py-0"
             hide-details
@@ -53,7 +53,7 @@
     </div>
     <div v-else-if="stepUrlSlug === 'qualite-nutritionnelle'">
       <fieldset>
-        <legend class="text-left my-3">J’informe les convives sur la qualité nutritionnelle des repas</legend>
+        <legend class="my-3">J’informe les convives sur la qualité nutritionnelle des repas</legend>
         <v-radio-group class="my-0" v-model="payload.communicatesOnFoodPlan" hide-details>
           <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
         </v-radio-group>
@@ -61,7 +61,7 @@
     </div>
     <div v-else-if="stepUrlSlug === 'lien-communication'">
       <fieldset>
-        <legend class="text-left">Lien vers le support de communication</legend>
+        <legend>Lien vers le support de communication</legend>
         <p class="fr-text-xs mt-1 mb-3">Optionnel</p>
         <DsfrTextField
           :rules="[validators.urlOrEmpty]"
