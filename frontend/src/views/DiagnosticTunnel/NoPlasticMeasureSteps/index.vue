@@ -1,41 +1,43 @@
 <template>
-  <div v-if="stepUrlSlug === 'contenants-alimentaires'">
-    <fieldset>
-      <legend class="text-left my-3">
-        Je n’utilise plus de contenants alimentaires de cuisson / de réchauffe en plastique
-      </legend>
-      <v-radio-group class="my-0" v-model="payload.cookingPlasticSubstituted" hide-details @change="updatePayload">
-        <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-      </v-radio-group>
-    </fieldset>
-    <fieldset>
-      <legend class="text-left my-3">
-        Je n’utilise plus de contenants alimentaires de service en plastique
-      </legend>
-      <v-radio-group class="my-0" v-model="payload.servingPlasticSubstituted" hide-details @change="updatePayload">
-        <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-      </v-radio-group>
-    </fieldset>
-  </div>
-  <div v-else-if="stepUrlSlug === 'ustensils-et-contenants'">
-    <fieldset>
-      <legend class="text-left my-3">
-        Je ne mets plus à disposition des convives des bouteilles d’eau plate en plastique
-      </legend>
-      <v-radio-group class="my-0" v-model="payload.plasticBottlesSubstituted" hide-details @change="updatePayload">
-        <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-      </v-radio-group>
-    </fieldset>
-    <fieldset>
-      <legend class="text-left my-3">
-        Je ne mets plus à disposition des convives des ustensiles à usage unique en matière plastique
-      </legend>
-      <v-radio-group class="my-0" v-model="payload.plasticTablewareSubstituted" hide-details @change="updatePayload">
-        <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-      </v-radio-group>
-    </fieldset>
-  </div>
-  <component v-else :is="step.componentName" :canteen="canteen" :diagnostic="payload" />
+  <v-form v-model="formIsValid" @submit.prevent>
+    <div v-if="stepUrlSlug === 'contenants-alimentaires'">
+      <fieldset>
+        <legend class="text-left my-3">
+          Je n’utilise plus de contenants alimentaires de cuisson / de réchauffe en plastique
+        </legend>
+        <v-radio-group class="my-0" v-model="payload.cookingPlasticSubstituted" hide-details>
+          <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
+        </v-radio-group>
+      </fieldset>
+      <fieldset>
+        <legend class="text-left my-3">
+          Je n’utilise plus de contenants alimentaires de service en plastique
+        </legend>
+        <v-radio-group class="my-0" v-model="payload.servingPlasticSubstituted" hide-details>
+          <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
+        </v-radio-group>
+      </fieldset>
+    </div>
+    <div v-else-if="stepUrlSlug === 'ustensils-et-contenants'">
+      <fieldset>
+        <legend class="text-left my-3">
+          Je ne mets plus à disposition des convives des bouteilles d’eau plate en plastique
+        </legend>
+        <v-radio-group class="my-0" v-model="payload.plasticBottlesSubstituted" hide-details>
+          <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
+        </v-radio-group>
+      </fieldset>
+      <fieldset>
+        <legend class="text-left my-3">
+          Je ne mets plus à disposition des convives des ustensiles à usage unique en matière plastique
+        </legend>
+        <v-radio-group class="my-0" v-model="payload.plasticTablewareSubstituted" hide-details>
+          <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
+        </v-radio-group>
+      </fieldset>
+    </div>
+    <component v-else :is="step.componentName" :canteen="canteen" :diagnostic="payload" />
+  </v-form>
 </template>
 
 <script>
@@ -60,6 +62,7 @@ export default {
   },
   data() {
     return {
+      formIsValid: true,
       steps: [
         {
           title: "Substitution des contenants alimentaires en plastique",
@@ -108,6 +111,14 @@ export default {
   mounted() {
     this.$emit("update-steps", this.steps)
     this.updatePayload()
+  },
+  watch: {
+    payload() {
+      this.updatePayload()
+    },
+    formIsValid() {
+      this.updatePayload()
+    },
   },
 }
 </script>
