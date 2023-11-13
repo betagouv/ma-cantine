@@ -15,7 +15,7 @@
         </v-radio-group>
       </fieldset>
       <fieldset class="mt-8" :disabled="!payload.hasWasteDiagnostic">
-        <legend class="text-left">J’ai mis en place un plan d’action adapté au diagnostic réalisé</legend>
+        <legend class="mb-3">J’ai mis en place un plan d’action adapté au diagnostic réalisé</legend>
         <v-radio-group class="my-0" v-model="payload.hasWastePlan" hide-details>
           <v-radio
             v-for="item in boolOptions"
@@ -102,7 +102,7 @@
       </fieldset>
       <v-checkbox
         hide-details="auto"
-        class="ml-8 mb-3 mt-0"
+        class="mb-3 mt-0"
         v-model="payload.wasteActions"
         :multiple="true"
         v-for="action in wasteActions"
@@ -110,7 +110,7 @@
         :value="action.value"
         :label="action.label"
       />
-      <v-row align="center" class="ml-8 mb-3 mt-0 mr-2">
+      <v-row align="center" class="ml-0 mb-3 mt-0 mr-2">
         <v-checkbox v-model="otherActionEnabled" hide-details class="shrink mt-0"></v-checkbox>
         <v-text-field
           class="my-0 py-0"
