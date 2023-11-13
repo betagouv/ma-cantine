@@ -42,11 +42,12 @@
         </v-col>
         <v-col cols="12" sm="6">
           <fieldset :disabled="!payload.hasWasteMeasures">
-            <legend class="my-3">
+            <legend class="my-3 font-weight-bold">
               Mesures du gaspillage
+              <span class="font-weight-medium">(facultatif)</span>
             </legend>
-            <v-row class="mt-4">
-              <v-col cols="12" md="6">
+            <v-row>
+              <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.breadLeftovers"
                   :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
@@ -57,7 +58,7 @@
                   :disabled="!payload.hasWasteMeasures"
                 />
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.servedLeftovers"
                   :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
@@ -68,7 +69,7 @@
                   :disabled="!payload.hasWasteMeasures"
                 />
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.unservedLeftovers"
                   :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
@@ -79,7 +80,7 @@
                   :disabled="!payload.hasWasteMeasures"
                 />
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.sideLeftovers"
                   :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
