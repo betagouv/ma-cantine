@@ -2,15 +2,15 @@
   <v-form v-model="formIsValid" @submit.prevent>
     <div v-if="stepUrlSlug === 'contenants-alimentaires'">
       <fieldset>
-        <legend class="text-left my-3">
+        <legend class="mb-3">
           Je n’utilise plus de contenants alimentaires de cuisson / de réchauffe en plastique
         </legend>
         <v-radio-group class="my-0" v-model="payload.cookingPlasticSubstituted" hide-details>
           <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
         </v-radio-group>
       </fieldset>
-      <fieldset>
-        <legend class="text-left my-3">
+      <fieldset class="mt-8">
+        <legend class="mb-3">
           Je n’utilise plus de contenants alimentaires de service en plastique
         </legend>
         <v-radio-group class="my-0" v-model="payload.servingPlasticSubstituted" hide-details>
@@ -20,15 +20,15 @@
     </div>
     <div v-else-if="stepUrlSlug === 'ustensils-et-contenants'">
       <fieldset>
-        <legend class="text-left my-3">
+        <legend class="mb-3">
           Je ne mets plus à disposition des convives des bouteilles d’eau plate en plastique
         </legend>
         <v-radio-group class="my-0" v-model="payload.plasticBottlesSubstituted" hide-details>
           <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
         </v-radio-group>
       </fieldset>
-      <fieldset>
-        <legend class="text-left my-3">
+      <fieldset class="mt-8">
+        <legend class="mb-3">
           Je ne mets plus à disposition des convives des ustensiles à usage unique en matière plastique
         </legend>
         <v-radio-group class="my-0" v-model="payload.plasticTablewareSubstituted" hide-details>
