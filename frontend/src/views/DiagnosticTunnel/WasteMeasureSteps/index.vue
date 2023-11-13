@@ -150,49 +150,48 @@
         </v-col>
       </v-row>
     </div>
-    <div v-else-if="stepUrlSlug === 'expérimentation'">
-      <h3 class="text-h6 font-weight-bold mb-4">
-        Expérimentation réservation de repas
-      </h3>
-
-      <p class="body-2">
+    <div v-else-if="stepUrlSlug === 'expérimentation'" class="fr-text">
+      <p>
         Vous souhaitez réduire le gaspillage alimentaire dans votre établissement et générer des économies :
         <span class="font-weight-bold">la réservation de repas peut être une solution !</span>
       </p>
-      <p class="body-2">
+      <p>
         Pour évaluer ses effets sur le gaspillage alimentaire, la satisfaction de vos convives et le taux de
         fréquentation de votre établissement, nous vous proposons de participer à une expérimentation prévue par la loi
         climat et résilience.
       </p>
-      <p class="body-2">
+      <p>
         Votre candidature à cette expérimentation vous permettra de mettre en place une démarche d’évaluation dont les
         résultats permettront de saisir le potentiel de la solution de réservation de repas.
       </p>
-      <p class="body-2 font-weight-bold">
+      <p class="font-weight-bold">
         Vous avez déjà mis en place une solution de réservation de repas ou souhaitez en adopter une ? Vous pouvez vous
         inscrire dès maintenant !
       </p>
-      <p class="body-2">
+      <p>
         Vous serez amenés à répondre à des questions sur votre structure et la solution de réservation que vous aurez
         mise en place, ainsi qu’à transmettre des données relatives aux évaluations du gaspillage alimentaire, du taux
         de fréquentation et de la satisfaction des usagers sur une période de six mois.
       </p>
-      <p class="body-2">Les inscriptions sont ouvertes jusqu’au 1er juillet 2023.</p>
-      <p class="body-2">
+      <p>Les inscriptions sont ouvertes jusqu’au 1er juillet 2023.</p>
+      <p>
         Les informations relatives aux conditions de mise en œuvre de l’expérimentation sont précisées dans
-        <a href="/static/documents/Guide_pratique_XP_RESERVATION.pdf" target="_blank">le guide pratique</a>
+        <a href="/static/documents/Guide_pratique_XP_RESERVATION.pdf" target="_blank" rel="noopener">
+          le guide pratique
+          <v-icon color="primary" small>mdi-open-in-new</v-icon>
+        </a>
         .
       </p>
       <v-checkbox v-model="canteen.reservationExpeParticipant" @change="onExpeCheckboxChange">
         <template v-slot:label>
-          <span class="body-2 grey--text text--darken-3">
+          <span class="fr-text grey--text text--darken-3">
             Je suis volontaire pour participer à l’expérimentation.
           </span>
         </template>
       </v-checkbox>
       <v-btn
         color="primary"
-        class="body-2 mt-n2 mb-2"
+        class="mt-n2 mb-2"
         v-if="canteen.reservationExpeParticipant"
         outlined
         small
