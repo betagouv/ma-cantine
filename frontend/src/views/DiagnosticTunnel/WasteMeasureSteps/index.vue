@@ -317,9 +317,6 @@ export default {
     validators() {
       return validators
     },
-    applicableRules() {
-      return applicableDiagnosticRules(this.canteen)
-    },
   },
   methods: {
     updatePayload() {
