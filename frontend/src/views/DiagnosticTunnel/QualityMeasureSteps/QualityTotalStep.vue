@@ -1,7 +1,7 @@
 <template>
   <div>
     <DsfrCurrencyField
-      v-model.number="payload.valueTotalHt"
+      v-model.number="diagnostic.valueTotalHt"
       @blur="updatePayload"
       label="Total (en € HT) de tous mes achats alimentaires"
     />
