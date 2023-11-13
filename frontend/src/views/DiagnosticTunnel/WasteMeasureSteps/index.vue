@@ -96,10 +96,8 @@
         </v-col>
       </v-row>
     </div>
-    <div v-else-if="stepUrlSlug === 'actions'">
-      <fieldset>
-        <legend class="my-3">J’ai réalisé les actions de lutte contre le gaspillage alimentaire suivantes :</legend>
-      </fieldset>
+    <fieldset v-else-if="stepUrlSlug === 'actions'">
+      <legend class="my-3">J’ai réalisé les actions de lutte contre le gaspillage alimentaire suivantes :</legend>
       <v-checkbox
         hide-details="auto"
         class="mb-3 mt-0"
@@ -111,7 +109,7 @@
         :label="action.label"
       />
       <v-row align="center" class="ml-0 mb-3 mt-0 mr-2">
-        <v-checkbox v-model="otherActionEnabled" hide-details class="shrink mt-0"></v-checkbox>
+        <v-checkbox v-model="otherActionEnabled" hide-details class="shrink mt-0" aria-label="Autre"></v-checkbox>
         <v-text-field
           class="my-0 py-0"
           hide-details
@@ -120,7 +118,7 @@
           label="Autre : donnez plus d'informations"
         ></v-text-field>
       </v-row>
-    </div>
+    </fieldset>
     <div v-else-if="stepUrlSlug === 'dons-alimentaires'">
       <v-row>
         <v-col cols="12" sm="6">
