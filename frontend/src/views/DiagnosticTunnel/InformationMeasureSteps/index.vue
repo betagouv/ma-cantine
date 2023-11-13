@@ -69,7 +69,6 @@
           placeholder="https://"
           validate-on-blur
           class="mt-2"
-          style="max-width: 384px;"
         />
       </fieldset>
     </div>
