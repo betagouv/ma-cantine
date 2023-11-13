@@ -353,6 +353,6 @@ export default {
 
 <style scoped>
 fieldset:disabled {
-  color: rgba(0, 0, 0, 0.38);
+  color: #929292;
 }
 </style>
