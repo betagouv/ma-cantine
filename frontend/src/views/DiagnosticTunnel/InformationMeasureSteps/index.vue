@@ -72,7 +72,7 @@
         />
       </fieldset>
     </div>
-    <component v-else :is="step.componentName" :canteen="canteen" :diagnostic="payload" />
+    <InformationMeasureSummary v-else :diagnostic="payload" />
   </v-form>
 </template>
 
@@ -131,7 +131,6 @@ export default {
         {
           title: "Synthèse",
           isSynthesis: true,
-          componentName: "InformationMeasureSummary",
           urlSlug: "synthèse",
         },
       ],
