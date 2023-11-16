@@ -131,7 +131,42 @@
             </v-radio-group>
           </fieldset>
         </v-col>
-        <v-col cols="12" sm="6"></v-col>
+        <v-col cols="12" sm="6">
+          <fieldset :disabled="!payload.hasDonationAgreement">
+            <v-row>
+              <v-col cols="12" md="6" class="pb-0">
+                <DsfrTextField
+                  v-model.number="payload.donationFrequency"
+                  :rules="[validators.nonNegativeOrEmpty]"
+                  validate-on-blur
+                  label="Fréquence de dons (optionnel)"
+                  suffix="dons/an"
+                  :readonly="!payload.hasDonationAgreement"
+                  :disabled="!payload.hasDonationAgreement"
+                />
+              </v-col>
+              <v-col cols="12" md="6" class="pb-0">
+                <DsfrTextField
+                  v-model.number="payload.donationQuantity"
+                  :rules="[validators.nonNegativeOrEmpty]"
+                  validate-on-blur
+                  label="Quantité de denrées données (optionnel)"
+                  suffix="kg/an"
+                  :readonly="!payload.hasDonationAgreement"
+                  :disabled="!payload.hasDonationAgreement"
+                />
+              </v-col>
+              <v-col cols="12" class="pb-0">
+                <DsfrTextField
+                  v-model.number="payload.donationFoodType"
+                  label="Type de denrées données (optionnel)"
+                  :readonly="!payload.hasDonationAgreement"
+                  :disabled="!payload.hasDonationAgreement"
+                />
+              </v-col>
+            </v-row>
+          </fieldset>
+        </v-col>
       </v-row>
     </div>
     <div v-else-if="stepUrlSlug === 'autres'">
@@ -253,6 +288,10 @@ export default {
       wasteActions: this.diagnostic.wasteActions,
       otherWasteAction: this.diagnostic.otherWasteAction,
       otherWasteComments: this.diagnostic.otherWasteComments,
+      hasDonationAgreement: this.diagnostic.hasDonationAgreement,
+      donationFrequency: this.diagnostic.donationFrequency,
+      donationQuantity: this.diagnostic.donationQuantity,
+      donationFoodType: this.diagnostic.donationFoodType,
     }
     const steps = [
       {
