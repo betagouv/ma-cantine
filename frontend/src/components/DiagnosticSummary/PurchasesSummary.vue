@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="noPurchases">
+    <div v-if="!hasPurchases">
       <div class="overlay py-8 px-16">
         <h4 class="fr-text font-weight-bold mb-4">Pilotez votre progression tout au long de l’année en cours</h4>
         <p class="fr-text">
@@ -75,8 +75,8 @@ export default {
     lastUpdate() {
       return this.lastPurchaseAddDate ? timeAgo(this.lastPurchaseAddDate, true) : null
     },
-    noPurchases() {
-      return !this.purchasesSummary?.valueTotalHt
+    hasPurchases() {
+      return !!this.purchasesSummary?.valueTotalHt
     },
   },
   methods: {
