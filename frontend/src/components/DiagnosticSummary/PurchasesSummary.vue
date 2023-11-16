@@ -11,7 +11,16 @@
           Pour cela, vous pouvez renseigner tous vos achats au fil de l’eau ou par import en masse, ou bien connecter
           votre outil de gestion habituel si cela est possible pour transférer les données.
         </p>
-        <v-btn large color="primary" :to="{ name: 'PurchasesHome' }">
+        <v-alert v-if="purchasesFetchingError" outlined type="error">
+          <p>{{ purchasesFetchingError }}</p>
+          <p class="mb-0">
+            <v-btn @click="fetchPurchasesSummary" color="primary" class="mr-4">Essayer à nouveau</v-btn>
+            <v-btn outlined color="primary" :to="{ name: 'PurchasesHome' }">
+              Ajouter des achats
+            </v-btn>
+          </p>
+        </v-alert>
+        <v-btn v-else large color="primary" :to="{ name: 'PurchasesHome' }">
           <span class="fr-text-lg">Commencer</span>
         </v-btn>
       </div>
@@ -59,6 +68,7 @@ export default {
       year: lastYear() + 1,
       purchasesSummary: null,
       lastPurchaseAddDate: null,
+      purchasesFetchingError: null,
     }
   },
   computed: {
@@ -71,20 +81,22 @@ export default {
   },
   methods: {
     fetchPurchasesSummary() {
+      this.purchasesSummary = null
+      this.purchasesFetchingError = null
       if (this.canteen?.id) {
         return fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.year}`)
           .then((response) => (response.ok ? response.json() : {}))
           .then((response) => (this.purchasesSummary = response))
+          .catch(() => {
+            this.purchasesFetchingError = "Échec lors du téléchargement des achats"
+          })
       }
     },
     fetchLastAddedPurchase() {
       if (this.canteen?.id) {
         const query = `limit=1&ordering=-creation_date&canteen__id=${this.canteen.id}&date__year=${this.year}`
         return fetch(`/api/v1/purchases/?${query}`)
-          .then((response) => {
-            if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
-            return response.json()
-          })
+          .then((response) => (response.ok ? response.json() : {}))
           .then((response) => {
             const purchases = response.results
             this.lastPurchaseAddDate = purchases.length ? purchases[0].creationDate : null
