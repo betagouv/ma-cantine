@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="noPurchases">
-      <div class="overlay text-center py-8 px-16">
+      <div class="overlay py-8 px-16">
         <h4 class="fr-text font-weight-bold mb-4">Pilotez votre progression tout au long de l’année en cours</h4>
         <p class="fr-text">
           Avec l’outil de suivi d’achats de « ma cantine », pilotez en temps réel la part de vos approvisionnements qui
@@ -11,7 +11,7 @@
           Pour cela, vous pouvez renseigner tous vos achats au fil de l’eau ou par import en masse, ou bien connecter
           votre outil de gestion habituel si cela est possible pour transférer les données.
         </p>
-        <v-alert v-if="purchasesFetchingError" outlined type="error">
+        <v-alert v-if="purchasesFetchingError" outlined type="error" color="#d82b2b" class="mt-6 mb-0">
           <p>Échec lors du téléchargement des achats</p>
           <p class="mb-0">
             <v-btn @click="fetchPurchasesSummary" color="primary" class="mr-4">Essayer à nouveau</v-btn>
@@ -20,7 +20,7 @@
             </v-btn>
           </p>
         </v-alert>
-        <v-btn v-else large color="primary" :to="{ name: 'PurchasesHome' }">
+        <v-btn v-else large color="primary" :to="{ name: 'PurchasesHome' }" class="mt-2">
           <span class="fr-text-lg">Commencer</span>
         </v-btn>
       </div>
