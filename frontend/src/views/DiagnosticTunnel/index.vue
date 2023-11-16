@@ -1,9 +1,21 @@
 <template>
   <div class="text-left">
     <v-row class="header">
-      <v-row class="mx-auto constrained pt-6">
+      <v-row class="mx-auto constrained align-center pt-6">
         <v-col cols="9">
-          <p class="fr-text-xs text-transform-uppercase mb-0">{{ measure.shortTitle }}</p>
+          <v-row>
+            <div v-for="tunnel in tunnels" :key="tunnel.id" class="px-4 header-icon">
+              <div v-if="tunnel.id === measure.id" class="d-flex align-center my-1">
+                <v-icon small color="primary" class="mr-2">{{ measure.mdiIcon }}</v-icon>
+                <p class="fr-text-xs text-uppercase mb-0 grey--text text--darken-2 font-weight-bold">
+                  {{ measure.shortTitle }}
+                </p>
+              </div>
+              <div v-else>
+                <v-icon small color="primary lighten-4">{{ tunnel.icon }}</v-icon>
+              </div>
+            </div>
+          </v-row>
         </v-col>
         <v-col class="text-right">
           <p class="mb-0">
@@ -99,7 +111,9 @@ export default {
       diagnostic: null,
       payload: {},
       steps: [],
-      tunnels: [...keyMeasures.map((km) => ({ id: km.id, title: km.title, shortTitle: km.shortTitle }))],
+      tunnels: [
+        ...keyMeasures.map((km) => ({ id: km.id, title: km.title, shortTitle: km.shortTitle, icon: km.mdiIcon })),
+      ],
     }
   },
   computed: {
@@ -268,5 +282,8 @@ export default {
 }
 a[aria-disabled="true"] {
   cursor: not-allowed;
+}
+.header-icon {
+  border-right: #e5e5e5 solid 1px;
 }
 </style>
