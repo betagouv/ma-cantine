@@ -46,7 +46,7 @@
             </v-btn>
             <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
             <p v-else class="mb-0">
-              <router-link v-if="previousStep" :to="stepLink(previousStep)">
+              <router-link v-if="previousStep && formIsValid" :to="stepLink(previousStep)">
                 Revenir à l'étape précédente
               </router-link>
               <a v-else class="grey--text text-darken-2" role="link" aria-disabled="true">
@@ -67,6 +67,7 @@ import QualityMeasureSteps from "./QualityMeasureSteps"
 import WasteMeasureSteps from "./WasteMeasureSteps"
 import DiversificationMeasureSteps from "./DiversificationMeasureSteps"
 import NoPlasticMeasureSteps from "./NoPlasticMeasureSteps"
+import InformationMeasureSteps from "./InformationMeasureSteps"
 
 export default {
   name: "DiagnosticTunnel",
@@ -89,6 +90,7 @@ export default {
     WasteMeasureSteps,
     DiversificationMeasureSteps,
     NoPlasticMeasureSteps,
+    InformationMeasureSteps,
   },
   data() {
     return {

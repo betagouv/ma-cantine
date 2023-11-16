@@ -665,4 +665,14 @@ export default Object.freeze({
       value: "LESS_THAN_YEARLY",
     },
   ],
+  CommunicationSupports: [
+    {
+      label: "Par affichage sur le lieu de restauration",
+      value: "DISPLAY",
+    },
+    {
+      label: "Par voie électronique (envoi d’e-mail aux convives, sur site internet ou intranet (mairie, pronote))",
+      value: "DIGITAL",
+    },
+  ],
 })
