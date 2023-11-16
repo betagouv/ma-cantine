@@ -17,7 +17,7 @@
             </div>
           </v-row>
         </v-col>
-        <v-col class="text-right">
+        <v-col class="text-right py-0">
           <p class="mb-0">
             <v-btn text plain class="text-decoration-underline" color="primary" @click="saveAndQuit">
               Sauvegarder et quitter
@@ -27,7 +27,7 @@
             </v-btn>
           </p>
         </v-col>
-        <v-col v-if="step && !step.isSynthesis" cols="12">
+        <v-col v-if="step && !step.isSynthesis" cols="12" class="py-0">
           <DsfrStepper :steps="stepperSteps" :currentStepIdx="stepIdx" />
         </v-col>
       </v-row>
