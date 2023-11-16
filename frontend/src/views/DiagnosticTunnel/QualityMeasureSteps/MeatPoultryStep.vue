@@ -100,10 +100,11 @@
 
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
+import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 
 export default {
   name: "MeatPoultryStep",
-  components: { DsfrCurrencyField },
+  components: { DsfrCurrencyField, PurchaseHint },
   props: {
     diagnostic: {
       type: Object,
@@ -114,7 +115,6 @@ export default {
       required: true,
     },
     purchasesSummary: {
-      // TODO Add purchase summaries
       type: Object,
     },
   },

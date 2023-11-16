@@ -17,7 +17,7 @@
       </fieldset>
     </div>
     <div v-if="stepUrlSlug === 'detailed-step-1'">
-      TODO 'detailed-step-1
+      TODO 'detailed-step-1'
     </div>
     <component
       v-else
@@ -25,6 +25,7 @@
       :canteen="canteen"
       :diagnostic="diagnostic"
       :payload="payload"
+      :purchasesSummary="purchasesSummary"
       v-on:update-payload="updatePayloadFromComponent"
     />
   </v-form>
@@ -65,6 +66,7 @@ export default {
   data() {
     return {
       formIsValid: true,
+      purchasesSummary: null,
       diagnosticTypes: Constants.DiagnosticTypes,
       payload: {
         valueTotalHt: this.diagnostic.valueTotalHt,
@@ -146,9 +148,15 @@ export default {
     updatePayload() {
       this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
     },
+    fetchPurchasesSummary() {
+      fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.diagnostic.year}`)
+        .then((response) => (response.ok ? response.json() : {}))
+        .then((response) => this.$set(this, "purchasesSummary", response))
+    },
   },
   mounted() {
     this.$emit("update-steps", this.steps)
+    this.fetchPurchasesSummary()
   },
   watch: {
     payload: {

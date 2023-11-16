@@ -89,11 +89,12 @@
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import labels from "@/data/quality-labels.json"
 import LogoBio from "@/components/LogoBio"
+import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import { toCurrency } from "@/utils"
 
 export default {
   name: "BioSiqoStep",
-  components: { DsfrCurrencyField, LogoBio },
+  components: { DsfrCurrencyField, LogoBio, PurchaseHint },
   props: {
     diagnostic: {
       type: Object,
@@ -104,7 +105,6 @@ export default {
       required: true,
     },
     purchasesSummary: {
-      // TODO Add purchase summaries
       type: Object,
     },
   },

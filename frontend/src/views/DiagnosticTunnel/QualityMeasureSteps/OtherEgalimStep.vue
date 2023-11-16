@@ -157,12 +157,13 @@
 
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
+import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import labels from "@/data/quality-labels.json"
 import { toCurrency } from "@/utils"
 
 export default {
   name: "OtherEgalimStep",
-  components: { DsfrCurrencyField },
+  components: { DsfrCurrencyField, PurchaseHint },
   props: {
     diagnostic: {
       type: Object,
@@ -173,7 +174,6 @@ export default {
       required: true,
     },
     purchasesSummary: {
-      // TODO Add purchase summaries
       type: Object,
     },
   },
