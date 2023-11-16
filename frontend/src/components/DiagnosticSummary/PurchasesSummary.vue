@@ -12,7 +12,7 @@
           votre outil de gestion habituel si cela est possible pour transférer les données.
         </p>
         <v-alert v-if="purchasesFetchingError" outlined type="error">
-          <p>{{ purchasesFetchingError }}</p>
+          <p>Échec lors du téléchargement des achats</p>
           <p class="mb-0">
             <v-btn @click="fetchPurchasesSummary" color="primary" class="mr-4">Essayer à nouveau</v-btn>
             <v-btn outlined color="primary" :to="{ name: 'PurchasesHome' }">
@@ -68,7 +68,7 @@ export default {
       year: lastYear() + 1,
       purchasesSummary: null,
       lastPurchaseAddDate: null,
-      purchasesFetchingError: null,
+      purchasesFetchingError: false,
     }
   },
   computed: {
@@ -82,13 +82,13 @@ export default {
   methods: {
     fetchPurchasesSummary() {
       this.purchasesSummary = null
-      this.purchasesFetchingError = null
+      this.purchasesFetchingError = false
       if (this.canteen?.id) {
         return fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.year}`)
           .then((response) => (response.ok ? response.json() : {}))
           .then((response) => (this.purchasesSummary = response))
           .catch(() => {
-            this.purchasesFetchingError = "Échec lors du téléchargement des achats"
+            this.purchasesFetchingError = true
           })
       }
     },
