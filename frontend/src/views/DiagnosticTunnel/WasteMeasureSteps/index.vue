@@ -236,13 +236,7 @@
         <ExpeReservation v-if="showExpeModal" @close="() => (showExpeModal = false)" :canteen="canteen" />
       </v-dialog>
     </div>
-    <component
-      v-else
-      :is="step.componentName"
-      :canteen="canteen"
-      :diagnostic="diagnostic"
-      v-on:update-payload="updatePayload"
-    />
+    <WasteMeasureSummary v-else :canteen="canteen" :diagnostic="diagnostic" />
   </v-form>
 </template>
 
@@ -321,7 +315,6 @@ export default {
       {
         title: "Synthèse",
         isSynthesis: true,
-        componentName: "WasteMeasureSummary",
         urlSlug: "synthèse",
       },
     ]
