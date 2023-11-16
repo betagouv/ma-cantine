@@ -6,13 +6,15 @@
           Vous avez indiqué que votre établissement servait moins de 200 couverts par jour. C’est pourquoi selon le
           niveau d’information disponible, vous pouvez choisir entre les deux types de saisie suivantes.
         </legend>
-        <v-radio-group class="my-0" v-model="isSimplifiedDiagnostic" hide-details>
-          <v-radio v-for="item in modeOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
+        <v-radio-group class="my-0" v-model="payload.diagnosticType" hide-details>
+          <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
+            <template v-slot:label>
+              <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
+              <span class="body-2 ml-3">{{ type.help }}</span>
+            </template>
+          </v-radio>
         </v-radio-group>
       </fieldset>
-    </div>
-    <div v-else-if="stepUrlSlug === 'valeurs-totales-bio-siqo'">
-      TODO bio siqo
     </div>
     <div v-else-if="stepUrlSlug === 'valeurs-totales-autres'">
       TODO bio siqo
@@ -30,7 +32,8 @@
       v-else
       :is="step.componentName"
       :canteen="canteen"
-      :diagnostic="payload"
+      :diagnostic="diagnostic"
+      :payload="payload"
       v-on:update-payload="updatePayloadFromComponent"
     />
   </v-form>
@@ -39,6 +42,8 @@
 <script>
 import QualityMeasureSummary from "@/components/DiagnosticSummary/QualityMeasureSummary"
 import QualityTotalStep from "./QualityTotalStep"
+import BioSiqoStep from "./BioSiqoStep"
+import Constants from "@/constants"
 
 export default {
   name: "QualitySteps",
@@ -58,23 +63,17 @@ export default {
   components: {
     QualityTotalStep,
     QualityMeasureSummary,
+    BioSiqoStep,
   },
   data() {
     return {
       formIsValid: true,
-      isSimplifiedDiagnostic: true,
-      modeOptions: [
-        {
-          label: "Saisie simplifiée",
-          value: true,
-        },
-        {
-          label: "Saisie complète",
-          value: false,
-        },
-      ],
+      diagnosticTypes: Constants.DiagnosticTypes,
       payload: {
         valueTotalHt: this.diagnostic.valueTotalHt,
+        diagnosticType: this.diagnostic.diagnosticType,
+        valueBioHt: this.diagnostic.valueBioHt,
+        valueSustainableHt: this.diagnostic.valueSustainableHt,
       },
     }
   },
@@ -104,6 +103,7 @@ export default {
       const simplifiedSteps = [
         {
           title: "Valeurs totales des achats Bio et SIQO (AOP/AOC, IGP, STG, Label Rouge)",
+          componentName: "BioSiqoStep",
           urlSlug: "valeurs-totales-bio-siqo",
         },
         {
@@ -128,6 +128,9 @@ export default {
       const intermediarySteps = this.isSimplifiedDiagnostic ? simplifiedSteps : detailedSteps
       return [...firstSteps, ...intermediarySteps, lastStep]
     },
+    isSimplifiedDiagnostic() {
+      return this.payload.diagnosticType !== "COMPLETE"
+    },
   },
   methods: {
     updatePayloadFromComponent(e) {
@@ -141,8 +144,11 @@ export default {
     this.$emit("update-steps", this.steps)
   },
   watch: {
-    payload() {
-      this.updatePayload()
+    payload: {
+      handler() {
+        this.updatePayload()
+      },
+      deep: true,
     },
     formIsValid() {
       this.updatePayload()

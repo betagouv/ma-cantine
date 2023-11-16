@@ -19,13 +19,10 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  data() {
-    return {
-      payload: {
-        valueTotalHt: this.diagnostic.valueTotalHt,
-      },
-    }
+    payload: {
+      type: Object,
+      required: true,
+    },
   },
   methods: {
     updatePayload() {

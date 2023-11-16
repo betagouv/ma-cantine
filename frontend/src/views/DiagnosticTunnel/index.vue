@@ -164,7 +164,7 @@ export default {
       this.steps = steps
     },
     updatePayload({ payload, formIsValid }) {
-      this.payload = payload
+      this.$set(this, "payload", payload)
       this.formIsValid = formIsValid
     },
     fetchCanteen() {

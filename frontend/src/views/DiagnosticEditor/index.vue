@@ -423,18 +423,7 @@ export default {
       cancelDialog: false,
       teledeclarationYear: lastYear(),
       purchasesSummary: null,
-      diagnosticTypes: [
-        {
-          key: "SIMPLE",
-          label: "Télédéclaration - saisie simplifiée",
-          help: "Vous connaissez les valeurs totaux, bio, et de qualité et durable",
-        },
-        {
-          key: "COMPLETE",
-          label: "Télédéclaration - saisie détaillée",
-          help: "Vous connaissez les labels et les familles de produits de vos achats",
-        },
-      ],
+      diagnosticTypes: Constants.DiagnosticTypes,
       centralKitchenDiagnosticModes: Constants.CentralKitchenDiagnosticModes,
       showTeledeclarationPreview: false,
       allowedYears: diagnosticYears().map((year) => {
