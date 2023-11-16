@@ -66,6 +66,8 @@ import DsfrStepper from "@/components/DsfrStepper"
 import QualityMeasureSteps from "./QualityMeasureSteps"
 import WasteMeasureSteps from "./WasteMeasureSteps"
 import DiversificationMeasureSteps from "./DiversificationMeasureSteps"
+import NoPlasticMeasureSteps from "./NoPlasticMeasureSteps"
+import InformationMeasureSteps from "./InformationMeasureSteps"
 
 export default {
   name: "DiagnosticTunnel",
@@ -82,7 +84,14 @@ export default {
       required: true,
     },
   },
-  components: { DsfrStepper, QualityMeasureSteps, WasteMeasureSteps, DiversificationMeasureSteps },
+  components: {
+    DsfrStepper,
+    QualityMeasureSteps,
+    WasteMeasureSteps,
+    DiversificationMeasureSteps,
+    NoPlasticMeasureSteps,
+    InformationMeasureSteps,
+  },
   data() {
     return {
       formIsValid: true,
