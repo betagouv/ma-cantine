@@ -1,8 +1,8 @@
 <template>
   <div class="text-left">
     <v-row class="header">
-      <v-row class="mx-auto constrained align-center pt-6">
-        <v-col cols="9">
+      <v-row class="mx-auto constrained align-center py-6">
+        <v-col cols="9" class="py-4">
           <v-row>
             <div v-for="tunnel in tunnels" :key="tunnel.id" class="px-4 header-icon">
               <div v-if="tunnel.id === measure.id" class="d-flex align-center my-1">
@@ -27,7 +27,7 @@
             </v-btn>
           </p>
         </v-col>
-        <v-col v-if="step && !step.isSynthesis" cols="12" class="py-0">
+        <v-col v-if="step && !step.isSynthesis" cols="12" class="pt-0 mb-n8">
           <DsfrStepper :steps="stepperSteps" :currentStepIdx="stepIdx" />
         </v-col>
       </v-row>
@@ -222,7 +222,10 @@ export default {
         if (this.nextStep) {
           this.$router.push({ query: { étape: this.nextStep.urlSlug } })
         } else if (this.nextTunnel) {
-          this.$router.push({ params: { measureId: this.nextTunnel.id }, query: {} })
+          this.$router.push({
+            name: "MyProgress",
+            params: { measure: this.nextTunnel.id },
+          })
         } else {
           this.$router.push({
             name: "DashboardManager",
