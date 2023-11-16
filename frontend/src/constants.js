@@ -547,6 +547,32 @@ export default Object.freeze({
       colorClass: "green--text text--darken-4",
     },
   },
+  WasteActions: [
+    {
+      label: "Pré-inscription des convives obligatoire",
+      value: "INSCRIPTION",
+    },
+    {
+      label: "Sensibilisation par affichage ou autre média",
+      value: "AWARENESS",
+    },
+    {
+      label: "Formation / information du personnel de restauration",
+      value: "TRAINING",
+    },
+    {
+      label: "Réorganisation de la distribution des composantes du repas",
+      value: "DISTRIBUTION",
+    },
+    {
+      label: "Choix des portions (grande faim, petite faim)",
+      value: "PORTIONS",
+    },
+    {
+      label: "Réutilisation des restes de préparation / surplus",
+      value: "REUSE",
+    },
+  ],
   DiversificationPlanActions: [
     {
       label:
