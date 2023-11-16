@@ -1,7 +1,7 @@
 <template>
   <div class="pa-8 pb-4">
     <div>
-      <v-row v-if="(diagnostic || hasCentralDiagnosticForMeasure) && !isCanteenTab">
+      <v-row v-if="(diagnostic || hasCentralDiagnosticForMeasure || showPurchasesSection) && !isCanteenTab">
         <v-col cols="12" md="8">
           <h3 class="fr-h6 font-weight-bold mb-0">
             {{ keyMeasure.title }}
@@ -20,7 +20,9 @@
       <h3 v-else class="fr-h6 font-weight-bold mb-4">
         {{ keyMeasure.title }}
       </h3>
-      <div v-if="!isCanteenTab && ((!diagnostic && !hasCentralDiagnosticForMeasure) || showIntro)">
+      <div
+        v-if="!isCanteenTab && ((!diagnostic && !hasCentralDiagnosticForMeasure && !showPurchasesSection) || showIntro)"
+      >
         <component :is="`${keyMeasure.baseComponent}Info`" :canteen="canteen" />
         <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
         <v-btn
@@ -32,6 +34,14 @@
           <!-- TODO: change this to an action, which creates the diagnostic then redirects to DiagnosticTunnel -->
           Commencer
         </v-btn>
+      </div>
+      <div v-if="showPurchasesSection">
+        <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
+        <PurchasesSummary
+          :usesCentralDiagnostic="hasCentralDiagnosticForMeasure"
+          :canteen="canteen"
+          :diagnostic="displayDiagnostic"
+        />
       </div>
       <div v-if="diagnostic || hasCentralDiagnosticForMeasure || isCanteenTab">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
@@ -103,7 +113,9 @@ import InformationMeasureSummary from "@/components/DiagnosticSummary/Informatio
 import NoPlasticMeasureSummary from "@/components/DiagnosticSummary/NoPlasticMeasureSummary"
 import WasteMeasureSummary from "@/components/DiagnosticSummary/WasteMeasureSummary"
 import CanteenSummary from "@/components/DiagnosticSummary/CanteenSummary"
+import PurchasesSummary from "@/components/DiagnosticSummary/PurchasesSummary"
 import keyMeasures from "@/data/key-measures.json"
+import { hasDiagnosticApproData, lastYear } from "@/utils"
 
 export default {
   name: "ProgressTab",
@@ -135,6 +147,7 @@ export default {
     NoPlasticMeasureSummary,
     WasteMeasureSummary,
     CanteenSummary,
+    PurchasesSummary,
   },
   data() {
     return {
@@ -144,6 +157,9 @@ export default {
     }
   },
   computed: {
+    isApproTab() {
+      return this.measureId === this.approId
+    },
     isCanteenTab() {
       return this.measureId === this.establishmentId
     },
@@ -169,17 +185,16 @@ export default {
         : "un établissement inconnu"
     },
     usesOtherDiagnosticForMeasure() {
-      const isApproTab = this.measureId === this.approId
       if (this.canteen.productionType === "site") {
         return false
       } else if (this.isSatellite) {
-        if (isApproTab) return !!this.centralDiagnostic
+        if (this.isApproTab) return !!this.centralDiagnostic
         if (this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL") {
           return !!this.centralDiagnostic
         }
       } else {
         // both CC production types
-        if (!isApproTab) {
+        if (!this.isApproTab) {
           const satelliteProvidesOtherMeasures = this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
           return satelliteProvidesOtherMeasures
         }
@@ -211,11 +226,17 @@ export default {
     hasCentralDiagnosticForMeasure() {
       if (!this.centralDiagnostic) return false
       if (this.isCanteenTab) return false
-      if (this.measureId === this.approId) return true
+      if (this.isApproTab) return true
       return this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
     },
     displayDiagnostic() {
       return this.hasCentralDiagnosticForMeasure ? this.centralDiagnostic : this.diagnostic
+    },
+    showPurchasesSection() {
+      const isCurrentYear = this.year === lastYear() + 1
+      const managesOwnPurchases = !this.isSatellite
+      const dataProvidedByDiagnostic = this.diagnostic && hasDiagnosticApproData(this.diagnostic)
+      return this.isApproTab && isCurrentYear && managesOwnPurchases && !dataProvidedByDiagnostic
     },
   },
 }

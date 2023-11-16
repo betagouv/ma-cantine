@@ -174,6 +174,10 @@ export default {
   props: {
     diagnostic: {},
     usesCentralDiagnostic: {},
+    usesPurchasesData: {
+      type: Boolean,
+      required: false,
+    },
     canteen: {
       type: Object,
       required: true,
@@ -241,7 +245,22 @@ export default {
       return getApproPercentages(this.diagnostic)
     },
     isDetailedDiagnostic() {
-      return this.diagnostic.diagnosticType === "COMPLETE"
+      return this.diagnostic.diagnosticType === "COMPLETE" || this.usesPurchasesData
+    },
+    editLink() {
+      if (this.usesPurchasesData) {
+        return {
+          name: "PurchasesHome",
+        }
+      } else {
+        return {
+          name: "DiagnosticModification",
+          params: {
+            canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen),
+            year: this.diagnostic.year,
+          },
+        }
+      }
     },
     hasActiveTeledeclaration() {
       return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
