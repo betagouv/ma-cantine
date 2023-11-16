@@ -31,7 +31,7 @@
           </p>
         </v-row>
       </DsfrCallout>
-      <QualityMeasureSummary :canteen="canteen" :diagnostic="purchasesSummary" />
+      <QualityMeasureSummary :canteen="canteen" :diagnostic="purchasesSummary" :usesPurchaseData="true" />
     </div>
   </div>
 </template>

@@ -174,6 +174,10 @@ export default {
   props: {
     diagnostic: {},
     usesCentralDiagnostic: {},
+    usesPurchasesData: {
+      type: Boolean,
+      required: false,
+    },
     canteen: {
       type: Object,
       required: true,
@@ -240,14 +244,11 @@ export default {
     percentages() {
       return getApproPercentages(this.diagnostic)
     },
-    usingPurchasesSummary() {
-      return !this.diagnostic.id
-    },
     isDetailedDiagnostic() {
-      return this.diagnostic.diagnosticType === "COMPLETE" || this.usingPurchasesSummary
+      return this.diagnostic.diagnosticType === "COMPLETE" || this.usesPurchasesData
     },
     editLink() {
-      if (this.usingPurchasesSummary) {
+      if (this.usesPurchasesData) {
         return {
           name: "PurchasesHome",
         }
