@@ -126,7 +126,7 @@ export default {
           title: "Synthèse",
           isSynthesis: true,
           componentName: "DiversificationMeasureSummary",
-          urlSlug: "synthèse",
+          urlSlug: "complet",
         },
       ],
       diversificationPlanActions: [

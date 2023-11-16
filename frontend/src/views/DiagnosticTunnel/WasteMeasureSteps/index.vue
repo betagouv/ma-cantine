@@ -315,7 +315,7 @@ export default {
       {
         title: "Synthèse",
         isSynthesis: true,
-        urlSlug: "synthèse",
+        urlSlug: "complet",
       },
     ]
     if (!window.ENABLE_XP_RESERVATION) steps.splice(5, 1)
