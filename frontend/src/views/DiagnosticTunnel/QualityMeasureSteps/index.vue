@@ -16,12 +16,6 @@
         </v-radio-group>
       </fieldset>
     </div>
-    <div v-if="stepUrlSlug === 'valeurs-totales-viandes-volailles'">
-      TODO valeurs-totales-viandes-volailles
-    </div>
-    <div v-if="stepUrlSlug === 'valeurs-totales-mer-aquaculture'">
-      TODO valeurs-totales-mer-aquaculture
-    </div>
     <div v-if="stepUrlSlug === 'detailed-step-1'">
       TODO 'detailed-step-1
     </div>
@@ -41,6 +35,8 @@ import QualityMeasureSummary from "@/components/DiagnosticSummary/QualityMeasure
 import QualityTotalStep from "./QualityTotalStep"
 import BioSiqoStep from "./BioSiqoStep"
 import OtherEgalimStep from "./OtherEgalimStep"
+import MeatPoultryStep from "./MeatPoultryStep"
+import FishStep from "./FishStep"
 import Constants from "@/constants"
 
 export default {
@@ -63,6 +59,8 @@ export default {
     QualityMeasureSummary,
     BioSiqoStep,
     OtherEgalimStep,
+    MeatPoultryStep,
+    FishStep,
   },
   data() {
     return {
@@ -75,6 +73,11 @@ export default {
         valueSustainableHt: this.diagnostic.valueSustainableHt,
         valueEgalimOthersHt: this.diagnostic.valueEgalimOthersHt,
         valueExternalityPerformanceHt: this.diagnostic.valueExternalityPerformanceHt,
+        valueMeatPoultryHt: this.diagnostic.valueMeatPoultryHt,
+        valueMeatPoultryEgalimHt: this.diagnostic.valueMeatPoultryEgalimHt,
+        valueMeatPoultryFranceHt: this.diagnostic.valueMeatPoultryFranceHt,
+        valueFishHt: this.diagnostic.valueFishHt,
+        valueFishEgalimHt: this.diagnostic.valueFishEgalimHt,
       },
     }
   },
@@ -114,10 +117,12 @@ export default {
         },
         {
           title: "Zoom sur la famille « viandes et volailles »",
+          componentName: "MeatPoultryStep",
           urlSlug: "valeurs-totales-viandes-volailles",
         },
         {
           title: "Zoom sur la famille « produits de la mer et de l’aquaculture »",
+          componentName: FishStep,
           urlSlug: "valeurs-totales-mer-aquaculture",
         },
       ]
