@@ -31,11 +31,11 @@
       />
     </div>
     <v-row class="footer">
-      <v-row class="mx-auto constrained">
-        <v-col v-if="nextMeasureTitle" cols="5">
-          <p class="fr-text-xs grey--text text--darken-2">
+      <v-row class="mx-auto constrained align-center">
+        <v-col v-if="step && step.isSynthesis && nextTunnelTitle" cols="5">
+          <p class="fr-text-xs grey--text text--darken-2 mb-0">
             Onglet suivant :
-            <b>{{ nextMeasureTitle }}</b>
+            <b>{{ nextTunnelTitle }}</b>
           </p>
         </v-col>
         <v-spacer />
@@ -99,6 +99,7 @@ export default {
       diagnostic: null,
       payload: {},
       steps: [],
+      tunnels: [...keyMeasures.map((km) => ({ id: km.id, title: km.title, shortTitle: km.shortTitle }))],
     }
   },
   computed: {
@@ -129,7 +130,7 @@ export default {
       return this.stepIdx > 0 ? this.steps[this.stepIdx - 1] : null
     },
     continueActionText() {
-      const returnToTable = this.step?.isFinal
+      const returnToTable = !this.nextTunnel
       if (returnToTable) return "Retour au tableau de bord"
       const nextIsNewMeasure = this.step?.isSynthesis
       if (nextIsNewMeasure) return "Passer à l'onglet suivant"
@@ -137,8 +138,15 @@ export default {
       if (nextIsSynthesis) return "Voir la synthèse"
       return "Sauvegarder et continuer"
     },
-    nextMeasureTitle() {
-      return this.nextStep?.measure?.title
+    nextTunnel() {
+      const currentTunnelIdx = this.tunnels.findIndex((t) => t.id === this.measureId)
+      if (currentTunnelIdx <= this.tunnels.length) {
+        return this.tunnels[currentTunnelIdx + 1]
+      }
+      return null
+    },
+    nextTunnelTitle() {
+      return this.nextTunnel?.shortTitle
     },
     quitLink() {
       return {
@@ -199,6 +207,15 @@ export default {
       this.saveDiagnostic().then(() => {
         if (this.nextStep) {
           this.$router.push({ query: { étape: this.nextStep.urlSlug } })
+        } else if (this.nextTunnel) {
+          this.$router.push({ params: { measureId: this.nextTunnel.id }, query: {} })
+        } else {
+          this.$router.push({
+            name: "DashboardManager",
+            params: {
+              canteenUrlComponent: this.canteenUrlComponent,
+            },
+          })
         }
       })
     },
