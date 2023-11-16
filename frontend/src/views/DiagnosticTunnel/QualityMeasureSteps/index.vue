@@ -16,9 +16,6 @@
         </v-radio-group>
       </fieldset>
     </div>
-    <div v-else-if="stepUrlSlug === 'valeurs-totales-autres'">
-      TODO bio siqo
-    </div>
     <div v-if="stepUrlSlug === 'valeurs-totales-viandes-volailles'">
       TODO valeurs-totales-viandes-volailles
     </div>
@@ -43,6 +40,7 @@
 import QualityMeasureSummary from "@/components/DiagnosticSummary/QualityMeasureSummary"
 import QualityTotalStep from "./QualityTotalStep"
 import BioSiqoStep from "./BioSiqoStep"
+import OtherEgalimStep from "./OtherEgalimStep"
 import Constants from "@/constants"
 
 export default {
@@ -64,6 +62,7 @@ export default {
     QualityTotalStep,
     QualityMeasureSummary,
     BioSiqoStep,
+    OtherEgalimStep,
   },
   data() {
     return {
@@ -74,6 +73,8 @@ export default {
         diagnosticType: this.diagnostic.diagnosticType,
         valueBioHt: this.diagnostic.valueBioHt,
         valueSustainableHt: this.diagnostic.valueSustainableHt,
+        valueEgalimOthersHt: this.diagnostic.valueEgalimOthersHt,
+        valueExternalityPerformanceHt: this.diagnostic.valueExternalityPerformanceHt,
       },
     }
   },
@@ -108,6 +109,7 @@ export default {
         },
         {
           title: "Valeurs totales des autres achats EGAlim",
+          componentName: "OtherEgalimStep",
           urlSlug: "valeurs-totales-autres",
         },
         {
