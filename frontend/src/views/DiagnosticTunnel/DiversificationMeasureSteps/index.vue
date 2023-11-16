@@ -1,12 +1,18 @@
 <template>
   <fieldset v-if="stepUrlSlug === 'menu'">
-    <legend class="text-left my-3">J'ai mis en place un menu végétarien dans ma cantine :</legend>
+    <legend class="text-left my-3">
+      J'ai mis en place un menu végétarien dans ma cantine :
+      <span class="fr-hint-text mt-2">Optionnel</span>
+    </legend>
     <v-radio-group class="my-0" v-model="payload.vegetarianWeeklyRecurrence" hide-details @change="updatePayload">
       <v-radio v-for="item in frequency" :key="item.value" :label="item.label" :value="item.value"></v-radio>
     </v-radio-group>
   </fieldset>
   <fieldset v-else-if="stepUrlSlug === 'options'">
-    <legend class="text-left my-3">Le menu végétarien proposé est :</legend>
+    <legend class="text-left my-3">
+      Le menu végétarien proposé est :
+      <span class="fr-hint-text mt-2">Optionnel</span>
+    </legend>
     <v-radio-group class="my-0" v-model="payload.vegetarianMenuType" hide-details @change="updatePayload">
       <v-radio v-for="item in menuTypes" :key="item.value" :label="item.label" :value="item.value"></v-radio>
     </v-radio-group>
@@ -14,6 +20,7 @@
   <fieldset v-else-if="stepUrlSlug === 'composition'">
     <legend class="text-left mb-2 mt-3">
       Le plat principal de mon menu végétarien est majoritairement à base de :
+      <span class="fr-hint-text mt-2">Optionnel</span>
     </legend>
     <v-checkbox
       hide-details="auto"
@@ -47,6 +54,7 @@
     <fieldset class="my-3">
       <legend class="text-left mb-1 mt-3" :class="{ 'grey--text': !payload.hasDiversificationPlan }">
         Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :
+        <span :class="`fr-hint-text mt-2 ${!payload.hasDiversificationPlan && 'grey--text'}`">Optionnel</span>
       </legend>
       <v-checkbox
         hide-details="auto"

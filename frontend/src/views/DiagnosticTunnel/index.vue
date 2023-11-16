@@ -66,6 +66,7 @@ import DsfrStepper from "@/components/DsfrStepper"
 import QualityMeasureSteps from "./QualityMeasureSteps"
 import WasteMeasureSteps from "./WasteMeasureSteps"
 import DiversificationMeasureSteps from "./DiversificationMeasureSteps"
+import NoPlasticMeasureSteps from "./NoPlasticMeasureSteps"
 import InformationMeasureSteps from "./InformationMeasureSteps"
 
 export default {
@@ -88,6 +89,7 @@ export default {
     QualityMeasureSteps,
     WasteMeasureSteps,
     DiversificationMeasureSteps,
+    NoPlasticMeasureSteps,
     InformationMeasureSteps,
   },
   data() {
