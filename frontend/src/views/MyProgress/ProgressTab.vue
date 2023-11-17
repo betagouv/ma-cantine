@@ -1,7 +1,7 @@
 <template>
   <div class="pa-8 pb-4">
     <div>
-      <v-row v-if="!showIntroduction">
+      <v-row v-if="!showIntroduction && !isCanteenTab">
         <v-col cols="12" md="8">
           <h3 class="fr-h6 font-weight-bold mb-0">
             {{ keyMeasure.title }}
