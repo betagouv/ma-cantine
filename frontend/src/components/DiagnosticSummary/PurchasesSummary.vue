@@ -53,7 +53,6 @@ import { lastYear, timeAgo } from "@/utils"
 export default {
   name: "PurchasesSummary",
   props: {
-    diagnostic: {},
     canteen: {
       type: Object,
       required: true,

@@ -23,23 +23,13 @@
       <div v-if="showIntroduction || expandIntro">
         <component :is="`${keyMeasure.baseComponent}Info`" :canteen="canteen" />
         <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
-        <v-btn
-          v-if="showIntroduction"
-          color="primary"
-          :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
-          class="mt-4"
-        >
-          <!-- TODO: change this to an action, which creates the diagnostic then redirects to DiagnosticTunnel -->
+        <v-btn v-if="showIntroduction" color="primary" @click="startTunnel" class="mt-4">
           Commencer
         </v-btn>
       </div>
       <div v-if="showPurchasesSection">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
-        <PurchasesSummary
-          :usesCentralDiagnostic="hasCentralDiagnosticForMeasure"
-          :canteen="canteen"
-          :diagnostic="displayDiagnostic"
-        />
+        <PurchasesSummary :canteen="canteen" />
       </div>
       <div v-else-if="showSynthesis">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
@@ -212,12 +202,11 @@ export default {
       return this.isCanteenTab
         ? { name: "CanteenForm", params: { canteenUrlComponent: this.canteenUrlComponent } }
         : {
-            // name: "DiagnosticTunnel",
-            name: "DiagnosticModification",
+            name: "DiagnosticTunnel",
             params: {
               canteenUrlComponent: this.canteenUrlComponent,
               year: this.year,
-              // measureId: this.measureId,
+              measureId: this.measureId,
             },
           }
     },
@@ -245,6 +234,29 @@ export default {
     },
     showSynthesis() {
       return this.isCanteenTab || this.hasData
+    },
+  },
+  methods: {
+    startTunnel() {
+      if (this.usesOtherDiagnosticForMeasure) return // more explicit error?
+      if (this.diagnostic) {
+        this.$router.push(this.modificationLink)
+      } else {
+        return this.$store
+          .dispatch("createDiagnostic", {
+            canteenId: this.canteen.id,
+            payload: {
+              year: this.year,
+              creationSource: "TUNNEL",
+            },
+          })
+          .then(() => {
+            this.$router.push(this.modificationLink)
+          })
+          .catch((e) => {
+            this.$store.dispatch("notifyServerError", e)
+          })
+      }
     },
   },
 }

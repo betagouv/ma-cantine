@@ -48,6 +48,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
+        "creation_source",
         "tunnel_appro",
         "tunnel_waste",
         "tunnel_plastic",
@@ -63,6 +64,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 "fields": (
                     "canteen",
                     "year",
+                    "creation_source",
                     "diagnostic_type",
                     "central_kitchen_diagnostic_mode",
                 )
