@@ -172,9 +172,9 @@ export default {
         )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
       } else this.totalMeatPoultryErrorMessage = null
       if (this.meatPoultryError) {
-        this.meatPoultryErrorMessage = `Le total des achats viandes et volailles (${totalMeatPoultry}) doit être supérieur à la somme des valeurs par label (${toCurrency(
-          sumMeatPoultry
-        )})`
+        this.meatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
+          totalMeatPoultry
+        )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumMeatPoultry)})`
       } else this.meatPoultryErrorMessage = null
 
       return [this.totalMeatPoultryError, this.meatPoultryError].every((x) => !x)
