@@ -129,31 +129,31 @@ class Diagnostic(models.Model):
     tunnel_appro = models.CharField(
         max_length=50,
         null=True,
-        default=None,
+        blank=True,
         verbose_name="Progrès tunnel appro",
     )
     tunnel_waste = models.CharField(
         max_length=50,
         null=True,
-        default=None,
+        blank=True,
         verbose_name="Progrès tunnel anti-gaspi",
     )
     tunnel_diversification = models.CharField(
         max_length=50,
         null=True,
-        default=None,
+        blank=True,
         verbose_name="Progrès tunnel diversification",
     )
     tunnel_plastic = models.CharField(
         max_length=50,
         null=True,
-        default=None,
+        blank=True,
         verbose_name="Progrès tunnel anti-plastique",
     )
     tunnel_info = models.CharField(
         max_length=50,
         null=True,
-        default=None,
+        blank=True,
         verbose_name="Progrès tunnel information convives",
     )
 
