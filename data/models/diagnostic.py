@@ -19,6 +19,9 @@ class Diagnostic(models.Model):
         SIMPLE = "SIMPLE", "Télédeclaration simple"
         COMPLETE = "COMPLETE", "Télédeclaration complète"
 
+    class CreationSource(models.TextChoices):
+        TUNNEL = "TUNNEL", "Tunnel"
+
     class MenuFrequency(models.TextChoices):
         LOW = "LOW", "Moins d'une fois par semaine"
         MID = "MID", "Une fois par semaine"
@@ -121,6 +124,14 @@ class Diagnostic(models.Model):
         null=True,
         blank=True,
         verbose_name="année",
+    )
+
+    creation_source = models.CharField(
+        max_length=255,
+        choices=CreationSource.choices,
+        blank=True,
+        null=True,
+        verbose_name="comment est-ce que ce diagnostic à été créé ?",
     )
 
     # progress fields

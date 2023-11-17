@@ -172,6 +172,7 @@ META_FIELDS = (
     "year",
     "creation_date",
     "modification_date",
+    "creation_source",
     "diagnostic_type",
     "central_kitchen_diagnostic_mode",
 )
