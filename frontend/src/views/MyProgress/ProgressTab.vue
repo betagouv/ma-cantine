@@ -227,7 +227,7 @@ export default {
     },
     hasData() {
       let hasDiagnostic = this.displayDiagnostic
-      if (this.displayDiagnostic.creationSource === "TUNNEL") {
+      if (this.displayDiagnostic?.creationSource === "TUNNEL") {
         hasDiagnostic = !!this.displayDiagnostic[this.keyMeasure.progressField]
       }
       return this.showPurchasesSection || hasDiagnostic
