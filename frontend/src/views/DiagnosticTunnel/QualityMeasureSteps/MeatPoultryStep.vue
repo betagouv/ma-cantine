@@ -103,7 +103,7 @@
     <ErrorHelper
       class="mt-8"
       :showFields="errorHelperFields"
-      v-if="totalMeatPoultryError || totalFamiliesError"
+      :class="`${totalMeatPoultryError || totalFamiliesError ? '' : 'd-none'}`"
       :diagnostic="payload"
       @check-total="checkTotal"
       :purchasesSummary="purchasesSummary"

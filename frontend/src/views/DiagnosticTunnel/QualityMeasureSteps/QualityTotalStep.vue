@@ -18,9 +18,8 @@
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
     <ErrorHelper
-      class="mt-8"
+      :class="`mt-8 ${hasError ? '' : 'd-none'}`"
       :showFields="errorHelperFields"
-      v-if="hasError"
       :diagnostic="payload"
       @check-total="checkTotal"
       :purchasesSummary="purchasesSummary"

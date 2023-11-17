@@ -86,7 +86,7 @@
     </v-row>
     <ErrorHelper
       :showFields="['valueTotalHt', 'valueEgalimOthersHt', 'valueExternalityPerformanceHt']"
-      v-if="totalError"
+      :class="`${totalError ? '' : 'd-none'}`"
       :diagnostic="payload"
       @check-total="checkTotal"
       :purchasesSummary="purchasesSummary"

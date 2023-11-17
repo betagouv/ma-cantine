@@ -68,7 +68,7 @@
     <ErrorHelper
       class="mt-8"
       :showFields="errorHelperFields"
-      v-if="totalFishError || totalFamiliesError"
+      :class="`${totalFishError || totalFamiliesError ? '' : 'd-none'}`"
       :diagnostic="payload"
       @check-total="checkTotal"
       :purchasesSummary="purchasesSummary"
