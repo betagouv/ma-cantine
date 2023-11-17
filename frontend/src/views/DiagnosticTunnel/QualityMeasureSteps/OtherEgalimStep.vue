@@ -5,6 +5,10 @@
       : la valeur d’achat ne pourra être comptée que dans une seule des catégories.
     </p>
 
+    <DsfrCallout v-if="totalError" color="red lighten-1">
+      {{ totalErrorMessage }}
+    </DsfrCallout>
+
     <!-- Other EGAlim -->
     <v-row class="my-0 my-md-6">
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
@@ -32,8 +36,6 @@
           v-model.number="payload.valueEgalimOthersHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
-          @blur="checkTotal"
-          :messages="totalError ? [totalErrorMessage] : undefined"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
@@ -129,8 +131,6 @@
           v-model.number="payload.valueExternalityPerformanceHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
-          @blur="checkTotal"
-          :messages="totalError ? [totalErrorMessage] : undefined"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
@@ -152,6 +152,12 @@
         </div>
       </v-col>
     </v-row>
+    <ErrorHelper
+      :showFields="['valueTotalHt', 'valueBioHt', 'valueSustainableHt']"
+      v-if="totalError"
+      :diagnostic="payload"
+      @check-total="checkTotal"
+    />
   </div>
 </template>
 
@@ -160,10 +166,12 @@ import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import labels from "@/data/quality-labels.json"
 import { toCurrency } from "@/utils"
+import ErrorHelper from "./ErrorHelper.vue"
+import DsfrCallout from "@/components/DsfrCallout"
 
 export default {
   name: "OtherEgalimStep",
-  components: { DsfrCurrencyField, PurchaseHint },
+  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, DsfrCallout },
   props: {
     diagnostic: {
       type: Object,
@@ -186,7 +194,7 @@ export default {
     ]
     return {
       totalError: false,
-      totalErrorMessage: "",
+      totalErrorMessage: null,
       otherLabels: labels.filter((x) => otherLogos.includes(x.title)),
       valueExternalityPerformanceHtDialog: false,
     }
@@ -198,20 +206,30 @@ export default {
   },
   methods: {
     updatePayload() {
-      this.$emit("update-payload", { payload: this.payload })
+      this.checkTotal()
+      if (!this.totalError) this.$emit("update-payload", { payload: this.payload })
     },
     checkTotal() {
-      const d = this.diagnostic
-      const sumEgalim = (this.payload.valueBioHt || 0) + (this.payload.valueSustainableHt || 0)
+      const d = this.payload
+      const sumEgalim = this.sumAllEgalim()
       const total = d.valueTotalHt
       this.totalError = sumEgalim > total
 
       if (this.totalError) {
-        this.totalErrorMessage = `Le total doit être plus que la somme des valeurs par label, actuellement ${toCurrency(
-          sumEgalim || 0
-        )}`
+        this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
+          d.valueTotalHt
+        )}) doit être plus élévé que la somme des valeurs EGAlim (${toCurrency(sumEgalim || 0)})`
       }
       return !!this.totalError
+    },
+    sumAllEgalim() {
+      const d = this.payload
+      const egalimValues = [d.valueBioHt, d.valueSustainableHt, d.valueExternalityPerformanceHt, d.valueEgalimOthersHt]
+      let total = 0
+      egalimValues.forEach((val) => {
+        total += parseFloat(val) || 0
+      })
+      return total
     },
   },
   watch: {

@@ -6,6 +6,10 @@
       biologique et label rouge ne sera comptabilisé que dans la catégorie 'bio'.
     </p>
 
+    <DsfrCallout v-if="totalError" color="red lighten-1">
+      {{ totalErrorMessage }}
+    </DsfrCallout>
+
     <!-- Bio -->
     <v-row class="my-0 my-md-6">
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
@@ -20,8 +24,6 @@
           v-model.number="payload.valueBioHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
-          @blur="checkTotal"
-          :messages="totalError ? [totalErrorMessage] : undefined"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
@@ -29,6 +31,7 @@
           purchaseType="bio"
           :amount="purchasesSummary.valueBioHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+          @autofill="checkTotal"
         />
       </v-col>
       <v-col md="4" class="d-flex align-center left-border" v-if="$vuetify.breakpoint.mdAndUp">
@@ -59,8 +62,6 @@
           v-model.number="payload.valueSustainableHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
-          @blur="checkTotal"
-          :messages="totalError ? [totalErrorMessage] : undefined"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
@@ -68,6 +69,7 @@
           purchaseType="SIQO"
           :amount="purchasesSummary.valueSustainableHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+          @autofill="checkTotal"
         />
       </v-col>
       <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
@@ -82,11 +84,19 @@
         </div>
       </v-col>
     </v-row>
+    <ErrorHelper
+      :showFields="['valueTotalHt', 'valueEgalimOthersHt', 'valueExternalityPerformanceHt']"
+      v-if="totalError"
+      :diagnostic="payload"
+      @check-total="checkTotal"
+    />
   </div>
 </template>
 
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
+import DsfrCallout from "@/components/DsfrCallout"
+import ErrorHelper from "./ErrorHelper.vue"
 import labels from "@/data/quality-labels.json"
 import LogoBio from "@/components/LogoBio"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
@@ -94,7 +104,7 @@ import { toCurrency } from "@/utils"
 
 export default {
   name: "BioSiqoStep",
-  components: { DsfrCurrencyField, LogoBio, PurchaseHint },
+  components: { DsfrCurrencyField, LogoBio, PurchaseHint, ErrorHelper, DsfrCallout },
   props: {
     diagnostic: {
       type: Object,
@@ -128,20 +138,30 @@ export default {
   },
   methods: {
     updatePayload() {
-      this.$emit("update-payload", { payload: this.payload })
+      this.checkTotal()
+      if (!this.totalError) this.$emit("update-payload", { payload: this.payload })
     },
     checkTotal() {
-      const d = this.diagnostic
-      const sumEgalim = (this.payload.valueBioHt || 0) + (this.payload.valueSustainableHt || 0)
+      const d = this.payload
+      const sumEgalim = this.sumAllEgalim()
       const total = d.valueTotalHt
       this.totalError = sumEgalim > total
 
       if (this.totalError) {
-        this.totalErrorMessage = `Le total doit être plus que la somme des valeurs par label, actuellement ${toCurrency(
-          sumEgalim || 0
-        )}`
+        this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
+          d.valueTotalHt
+        )}) doit être plus élévé que la somme des valeurs EGAlim (${toCurrency(sumEgalim || 0)})`
       }
       return !!this.totalError
+    },
+    sumAllEgalim() {
+      const d = this.payload
+      const egalimValues = [d.valueBioHt, d.valueSustainableHt, d.valueExternalityPerformanceHt, d.valueEgalimOthersHt]
+      let total = 0
+      egalimValues.forEach((val) => {
+        total += parseFloat(val) || 0
+      })
+      return total
     },
   },
   watch: {
