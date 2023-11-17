@@ -106,6 +106,7 @@
       v-if="totalMeatPoultryError || totalFamiliesError"
       :diagnostic="payload"
       @check-total="checkTotal"
+      :purchasesSummary="purchasesSummary"
     />
   </div>
 </template>

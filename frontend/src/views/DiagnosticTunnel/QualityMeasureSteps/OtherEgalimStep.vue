@@ -157,6 +157,7 @@
       v-if="totalError"
       :diagnostic="payload"
       @check-total="checkTotal"
+      :purchasesSummary="purchasesSummary"
     />
   </div>
 </template>

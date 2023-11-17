@@ -71,6 +71,7 @@
       v-if="totalFishError || totalFamiliesError"
       :diagnostic="payload"
       @check-total="checkTotal"
+      :purchasesSummary="purchasesSummary"
     />
   </div>
 </template>
