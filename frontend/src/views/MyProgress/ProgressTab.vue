@@ -1,12 +1,12 @@
 <template>
   <div class="pa-8 pb-4">
     <div>
-      <v-row v-if="(diagnostic || hasCentralDiagnosticForMeasure || showPurchasesSection) && !isCanteenTab">
+      <v-row v-if="!showIntroduction">
         <v-col cols="12" md="8">
           <h3 class="fr-h6 font-weight-bold mb-0">
             {{ keyMeasure.title }}
           </h3>
-          <v-btn text color="primary" class="px-0" @click="() => (showIntro = !showIntro)">
+          <v-btn text color="primary" class="px-0" @click="() => (expandIntro = !expandIntro)">
             En savoir plus
           </v-btn>
         </v-col>
@@ -20,13 +20,11 @@
       <h3 v-else class="fr-h6 font-weight-bold mb-4">
         {{ keyMeasure.title }}
       </h3>
-      <div
-        v-if="!isCanteenTab && ((!diagnostic && !hasCentralDiagnosticForMeasure && !showPurchasesSection) || showIntro)"
-      >
+      <div v-if="showIntroduction || expandIntro">
         <component :is="`${keyMeasure.baseComponent}Info`" :canteen="canteen" />
         <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
         <v-btn
-          v-if="measureId !== establishmentId && !diagnostic && !usesOtherDiagnosticForMeasure"
+          v-if="showIntroduction"
           color="primary"
           :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
           class="mt-4"
@@ -43,7 +41,7 @@
           :diagnostic="displayDiagnostic"
         />
       </div>
-      <div v-if="diagnostic || hasCentralDiagnosticForMeasure || isCanteenTab">
+      <div v-else-if="showSynthesis">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
         <div
           v-if="!isCanteenTab && usesOtherDiagnosticForMeasure && isSatellite"
@@ -153,7 +151,7 @@ export default {
     return {
       approId: "qualite-des-produits",
       establishmentId: "etablissement",
-      showIntro: false,
+      expandIntro: false,
     }
   },
   computed: {
@@ -237,6 +235,16 @@ export default {
       const managesOwnPurchases = !this.isSatellite
       const dataProvidedByDiagnostic = this.diagnostic && hasDiagnosticApproData(this.diagnostic)
       return this.isApproTab && isCurrentYear && managesOwnPurchases && !dataProvidedByDiagnostic
+    },
+    hasData() {
+      const hasDiagnostic = this.diagnostic || this.hasCentralDiagnosticForMeasure
+      return this.showPurchasesSection || hasDiagnostic
+    },
+    showIntroduction() {
+      return !(this.isCanteenTab || this.hasData || this.usesOtherDiagnosticForMeasure)
+    },
+    showSynthesis() {
+      return this.isCanteenTab || this.hasData
     },
   },
 }
