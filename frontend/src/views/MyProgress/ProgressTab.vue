@@ -226,7 +226,10 @@ export default {
       return this.isApproTab && isCurrentYear && managesOwnPurchases && !dataProvidedByDiagnostic
     },
     hasData() {
-      const hasDiagnostic = this.diagnostic || this.hasCentralDiagnosticForMeasure
+      let hasDiagnostic = this.displayDiagnostic
+      if (this.displayDiagnostic.creationSource === "TUNNEL") {
+        hasDiagnostic = !!this.displayDiagnostic[this.keyMeasure.progressField]
+      }
       return this.showPurchasesSection || hasDiagnostic
     },
     showIntroduction() {
