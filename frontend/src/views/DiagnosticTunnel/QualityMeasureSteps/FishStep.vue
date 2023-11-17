@@ -21,7 +21,7 @@
         <DsfrCurrencyField
           :id="'fish-' + diagnostic.year"
           v-model.number="payload.valueFishHt"
-          :error="fishError || totalFishError"
+          :error="hasError"
           @blur="checkTotal"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
@@ -67,8 +67,8 @@
     </v-row>
     <ErrorHelper
       class="mt-8"
-      :showFields="['valueTotalHt']"
-      v-if="totalFishError"
+      :showFields="errorHelperFields"
+      v-if="totalFishError || totalFamiliesError"
       :diagnostic="payload"
       @check-total="checkTotal"
     />
@@ -102,8 +102,10 @@ export default {
     return {
       fishError: false,
       totalFishError: false,
+      totalFamiliesError: false,
       fishTotalErrorMessage: null,
       fishErrorMessage: null,
+      totalFamiliesErrorMessage: null,
     }
   },
   computed: {
@@ -111,10 +113,16 @@ export default {
       return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
     },
     hasError() {
-      return [this.totalFishError, this.fishError].some((x) => !!x)
+      return [this.totalFishError, this.fishError, this.totalFamiliesError].some((x) => !!x)
     },
     errorMessages() {
-      return [this.fishTotalErrorMessage, this.fishErrorMessage].filter((x) => !!x)
+      return [this.fishTotalErrorMessage, this.fishErrorMessage, this.totalFamiliesErrorMessage].filter((x) => !!x)
+    },
+    errorHelperFields() {
+      const fields = []
+      if (this.totalFishError) fields.push("valueTotalHt")
+      if (this.totalFamiliesError) fields.push(...["valueTotalHt", "valueMeatPoultryHt"])
+      return fields
     },
   },
   methods: {
@@ -127,9 +135,12 @@ export default {
       const sumFish = d.valueFishEgalimHt
       const total = d.valueTotalHt
       const totalFish = d.valueFishHt
+      const totalMeatPoultry = d.valueMeatPoultryHt
+      const totalFamilies = totalMeatPoultry + totalFish
 
       this.totalFishError = totalFish > total
       this.fishError = sumFish > totalFish
+      this.totalFamiliesError = totalFamilies > total
 
       if (this.totalFishError) {
         this.fishTotalErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
@@ -142,8 +153,13 @@ export default {
           totalFish
         )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumFish)})`
       } else this.fishErrorMessage = null
+      if (this.totalFamiliesError) {
+        this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
+          totalFamilies
+        )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
+      } else this.totalFamiliesErrorMessage = null
 
-      return [this.totalFishError, this.fishError].every((x) => !x)
+      return [this.totalFishError, this.fishError, this.totalFamiliesError].every((x) => !x)
     },
   },
   watch: {
@@ -153,6 +169,9 @@ export default {
       },
       deep: true,
     },
+  },
+  mounted() {
+    this.checkTotal()
   },
 }
 </script>

@@ -172,6 +172,9 @@ export default {
       deep: true,
     },
   },
+  mounted() {
+    this.checkTotal()
+  },
 }
 </script>
 

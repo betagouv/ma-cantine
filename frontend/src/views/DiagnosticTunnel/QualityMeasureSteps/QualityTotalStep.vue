@@ -5,7 +5,11 @@
         <p class="ma-0">{{ message }}</p>
       </DsfrCallout>
     </div>
-    <DsfrCurrencyField v-model.number="payload.valueTotalHt" label="Total (en € HT) de tous mes achats alimentaires" />
+    <DsfrCurrencyField
+      v-model.number="payload.valueTotalHt"
+      :error="hasError"
+      label="Total (en € HT) de tous mes achats alimentaires"
+    />
     <PurchaseHint
       v-if="displayPurchaseHints"
       v-model="payload.valueTotalHt"
@@ -16,7 +20,7 @@
     <ErrorHelper
       class="mt-8"
       :showFields="errorHelperFields"
-      v-if="totalError"
+      v-if="hasError"
       :diagnostic="payload"
       @check-total="checkTotal"
     />
@@ -57,9 +61,11 @@ export default {
       totalMeatPoultryError: false,
       totalFishError: false,
       totalError: false,
+      totalFamiliesError: false,
       totalErrorMessage: null,
       meatPoultryErrorMessage: null,
       fishErrorMessage: null,
+      totalFamiliesErrorMessage: null,
     }
   },
   computed: {
@@ -67,10 +73,17 @@ export default {
       return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
     },
     errorMessages() {
-      return [this.totalErrorMessage, this.meatPoultryErrorMessage, this.fishErrorMessage].filter((x) => !!x)
+      return [
+        this.totalErrorMessage,
+        this.meatPoultryErrorMessage,
+        this.fishErrorMessage,
+        this.totalFamiliesErrorMessage,
+      ].filter((x) => !!x)
     },
     hasError() {
-      return [this.totalMeatPoultryError, this.totalFishError, this.totalError].some((x) => !!x)
+      return [this.totalMeatPoultryError, this.totalFishError, this.totalError, this.totalFamiliesError].some(
+        (x) => !!x
+      )
     },
     errorHelperFields() {
       const fields = []
@@ -78,6 +91,7 @@ export default {
         fields.push(...["valueBioHt", "valueSustainableHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"])
       if (this.totalMeatPoultryError) fields.push("valueMeatPoultryHt")
       if (this.totalFishError) fields.push("valueFishHt")
+      if (this.totalFamiliesError) fields.push(...["valueMeatPoultryHt", "valueFishHt"])
       return fields
     },
   },
@@ -95,8 +109,9 @@ export default {
       const totalFamilies = totalMeatPoultry + totalFish
 
       this.totalError = sumEgalim > total
-      this.totalMeatPoultryError = totalMeatPoultry > total || totalFamilies > total
-      this.totalFishError = totalFish > total || totalFamilies > total
+      this.totalMeatPoultryError = totalMeatPoultry > total
+      this.totalFishError = totalFish > total
+      this.totalFamiliesError = totalFamilies > total
 
       if (this.totalError) {
         this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${toCurrency(sumEgalim || 0)}`
@@ -107,8 +122,15 @@ export default {
       if (this.totalFishError) {
         this.fishErrorMessage = `${DEFAULT_FISH_TOTAL_ERROR}`
       } else this.fishErrorMessage = null
+      if (this.totalFamiliesError) {
+        this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
+          totalFamilies
+        )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
+      } else this.totalFamiliesErrorMessage = null
 
-      return [this.totalError, this.totalMeatPoultryError, this.totalFishError].every((x) => !x)
+      return [this.totalError, this.totalMeatPoultryError, this.totalFishError, this.totalFamiliesError].every(
+        (x) => !x
+      )
     },
     sumAllEgalim() {
       const d = this.payload
@@ -127,6 +149,9 @@ export default {
       },
       deep: true,
     },
+  },
+  mounted() {
+    this.checkTotal()
   },
 }
 </script>

@@ -24,6 +24,7 @@
           :id="'meat-poultry-' + diagnostic.year"
           v-model.number="payload.valueMeatPoultryHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+          :error="hasError"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
@@ -101,8 +102,8 @@
     </v-row>
     <ErrorHelper
       class="mt-8"
-      :showFields="['valueTotalHt']"
-      v-if="totalMeatPoultryError"
+      :showFields="errorHelperFields"
+      v-if="totalMeatPoultryError || totalFamiliesError"
       :diagnostic="payload"
       @check-total="checkTotal"
     />
@@ -134,10 +135,12 @@ export default {
   },
   data() {
     return {
-      totalMeatPoultryErrorMessage: null,
-      meatPoultryErrorMessage: null,
       totalMeatPoultryError: false,
       meatPoultryError: false,
+      totalFamiliesError: false,
+      totalMeatPoultryErrorMessage: null,
+      meatPoultryErrorMessage: null,
+      totalFamiliesErrorMessage: null,
     }
   },
   computed: {
@@ -145,10 +148,18 @@ export default {
       return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
     },
     hasError() {
-      return [this.totalMeatPoultryError, this.meatPoultryError].some((x) => !!x)
+      return [this.totalMeatPoultryError, this.meatPoultryError, this.totalFamiliesError].some((x) => !!x)
     },
     errorMessages() {
-      return [this.totalMeatPoultryErrorMessage, this.meatPoultryErrorMessage].filter((x) => !!x)
+      return [this.totalMeatPoultryErrorMessage, this.meatPoultryErrorMessage, this.totalFamiliesErrorMessage].filter(
+        (x) => !!x
+      )
+    },
+    errorHelperFields() {
+      const fields = []
+      if (this.totalMeatPoultryError) fields.push("valueTotalHt")
+      if (this.totalFamiliesError) fields.push(...["valueTotalHt", "valueFishHt"])
+      return fields
     },
   },
   methods: {
@@ -162,9 +173,12 @@ export default {
       const sumMeatPoultry = Math.max(d.valueMeatPoultryEgalimHt, d.valueMeatPoultryFranceHt)
       const total = d.valueTotalHt
       const totalMeatPoultry = d.valueMeatPoultryHt
+      const totalFish = d.valueFishHt
+      const totalFamilies = totalMeatPoultry + totalFish
 
       this.totalMeatPoultryError = totalMeatPoultry > total
       this.meatPoultryError = sumMeatPoultry > totalMeatPoultry
+      this.totalFamiliesError = totalFamilies > total
 
       if (this.totalMeatPoultryError) {
         this.totalMeatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
@@ -176,8 +190,13 @@ export default {
           totalMeatPoultry
         )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumMeatPoultry)})`
       } else this.meatPoultryErrorMessage = null
+      if (this.totalFamiliesError) {
+        this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
+          totalFamilies
+        )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
+      } else this.totalFamiliesErrorMessage = null
 
-      return [this.totalMeatPoultryError, this.meatPoultryError].every((x) => !x)
+      return [this.totalMeatPoultryError, this.meatPoultryError, this.totalFamiliesError].every((x) => !x)
     },
   },
   watch: {
@@ -187,6 +206,9 @@ export default {
       },
       deep: true,
     },
+  },
+  mounted() {
+    this.checkTotal()
   },
 }
 </script>
