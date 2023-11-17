@@ -1,8 +1,10 @@
 <template>
   <div>
-    <DsfrCallout v-if="totalError" color="red lighten-1">
-      <p class="ma-0" v-for="message in errorMessages" :key="message">{{ message }}</p>
-    </DsfrCallout>
+    <div v-if="hasError">
+      <DsfrCallout v-for="message in errorMessages" :key="message" color="red lighten-1">
+        <p class="ma-0">{{ message }}</p>
+      </DsfrCallout>
+    </div>
     <DsfrCurrencyField v-model.number="payload.valueTotalHt" label="Total (en € HT) de tous mes achats alimentaires" />
     <PurchaseHint
       v-if="displayPurchaseHints"
@@ -93,21 +95,18 @@ export default {
       const totalFamilies = totalMeatPoultry + totalFish
 
       this.totalError = sumEgalim > total
-      this.totalMeatPoultryError = !this.totalError && (totalMeatPoultry > total || totalFamilies > total)
-      this.totalFishError = !this.totalError && (totalFish > total || totalFamilies > total)
+      this.totalMeatPoultryError = totalMeatPoultry > total || totalFamilies > total
+      this.totalFishError = totalFish > total || totalFamilies > total
 
       if (this.totalError) {
         this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${toCurrency(sumEgalim || 0)}`
-      }
+      } else this.totalErrorMessage = null
       if (this.totalMeatPoultryError) {
         this.meatPoultryErrorMessage = `${DEFAULT_MEAT_POULTRY_TOTAL_ERROR}`
-      }
+      } else this.meatPoultryErrorMessage = null
       if (this.totalFishError) {
         this.fishErrorMessage = `${DEFAULT_FISH_TOTAL_ERROR}`
-      }
-      if (!this.totalError && !this.totalMeatPoultryError && !this.totalFishError) {
-        this.meatPoultryErrorMessage = this.fishErrorMessage = this.totalErrorMessage = ""
-      }
+      } else this.fishErrorMessage = null
 
       return [this.totalError, this.totalMeatPoultryError, this.totalFishError].every((x) => !x)
     },
