@@ -2,20 +2,18 @@
   <div class="text-left">
     <v-row class="header">
       <v-row class="mx-auto constrained align-center py-6">
-        <v-col cols="9" class="py-4">
-          <v-row>
-            <div v-for="tunnel in tunnels" :key="tunnel.id" class="px-4 header-icon">
-              <div v-if="tunnel.id === measure.id" class="d-flex align-center my-1">
-                <v-icon small color="primary" class="mr-2">{{ measure.mdiIcon }}</v-icon>
-                <p class="fr-text-xs text-uppercase mb-0 grey--text text--darken-2 font-weight-bold">
-                  {{ measure.shortTitle }}
-                </p>
-              </div>
-              <div v-else>
-                <v-icon small color="primary lighten-4">{{ tunnel.icon }}</v-icon>
-              </div>
+        <v-col cols="9" class="py-4 d-flex" v-if="$vuetify.breakpoint.smAndUp">
+          <div v-for="tunnel in tunnels" :key="tunnel.id" class="px-4 header-icon">
+            <div v-if="tunnel.id === measure.id" class="d-flex align-center my-1">
+              <v-icon small color="primary" class="mr-2">{{ measure.mdiIcon }}</v-icon>
+              <p class="fr-text-xs text-uppercase mb-0 grey--text text--darken-2 font-weight-bold">
+                {{ measure.shortTitle }}
+              </p>
             </div>
-          </v-row>
+            <div v-else>
+              <v-icon small color="primary lighten-4">{{ tunnel.icon }}</v-icon>
+            </div>
+          </div>
         </v-col>
         <v-col class="text-right py-0">
           <p class="mb-0">
