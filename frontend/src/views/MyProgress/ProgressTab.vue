@@ -23,7 +23,7 @@
       <div v-if="showIntroduction || expandIntro">
         <component :is="`${keyMeasure.baseComponent}Info`" :canteen="canteen" />
         <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
-        <v-btn v-if="showIntroduction" color="primary" @click="startTunnel" class="mt-4">
+        <v-btn v-if="showIntroduction" color="primary" :disabled="requestOngoing" @click="startTunnel" class="mt-4">
           Commencer
         </v-btn>
       </div>
@@ -142,6 +142,7 @@ export default {
       approId: "qualite-des-produits",
       establishmentId: "etablissement",
       expandIntro: false,
+      requestOngoing: false,
     }
   },
   computed: {
@@ -245,6 +246,7 @@ export default {
       if (this.diagnostic) {
         this.$router.push(this.modificationLink)
       } else {
+        this.requestOngoing = true
         return this.$store
           .dispatch("createDiagnostic", {
             canteenId: this.canteen.id,
@@ -259,6 +261,7 @@ export default {
           .catch((e) => {
             this.$store.dispatch("notifyServerError", e)
           })
+          .finally(() => (this.requestOngoing = false))
       }
     },
   },
