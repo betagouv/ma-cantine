@@ -16,9 +16,16 @@
         </v-radio-group>
       </fieldset>
     </div>
-    <div v-if="stepUrlSlug === 'detailed-step-1'">
-      TODO 'detailed-step-1'
-    </div>
+    <component
+      v-else-if="step.characteristicId"
+      :is="step.componentName"
+      :canteen="canteen"
+      :diagnostic="diagnostic"
+      :payload="payload"
+      :purchasesSummary="purchasesSummary"
+      :characteristicId="step.characteristicId"
+      v-on:update-payload="updatePayloadFromComponent"
+    />
     <component
       v-else
       :is="step.componentName"
@@ -38,6 +45,8 @@ import BioSiqoStep from "./BioSiqoStep"
 import OtherEgalimStep from "./OtherEgalimStep"
 import MeatPoultryStep from "./MeatPoultryStep"
 import FishStep from "./FishStep"
+import MeatFishStep from "./MeatFishStep"
+import FamilyFieldsStep from "./FamilyFieldsStep"
 import Constants from "@/constants"
 
 export default {
@@ -62,6 +71,8 @@ export default {
     OtherEgalimStep,
     MeatPoultryStep,
     FishStep,
+    MeatFishStep,
+    FamilyFieldsStep,
   },
   data() {
     return {
@@ -81,6 +92,8 @@ export default {
         valueFishHt: this.diagnostic.valueFishHt,
         valueFishEgalimHt: this.diagnostic.valueFishEgalimHt,
       },
+      characteristics: Constants.TeledeclarationCharacteristics,
+      characteristicGroups: Constants.TeledeclarationCharacteristicGroups,
     }
   },
   computed: {
@@ -130,10 +143,26 @@ export default {
       ]
       const detailedSteps = [
         {
-          title: "Detailed step 1",
-          urlSlug: "detailed-step-1",
+          title: "Valeurs totales par famille de produit",
+          componentName: MeatFishStep,
+          urlSlug: "valeurs-totales-viandes-aquaculture",
         },
       ]
+      for (const groupId in this.characteristicGroups) {
+        // egalim, nonEgalim, outsideLaw
+        const groupCharacteristics = this.characteristicGroups[groupId].characteristics
+        for (const characteristicIdx in groupCharacteristics) {
+          const characteristicId = groupCharacteristics[characteristicIdx]
+          const characteristic = this.characteristics[characteristicId]
+          const urlSlug = characteristicId.toLowerCase() // TODO: replace underscores with hyphens
+          detailedSteps.push({
+            title: characteristic.text,
+            componentName: FamilyFieldsStep,
+            characteristicId: characteristicId,
+            urlSlug,
+          })
+        }
+      }
       const intermediarySteps = this.isSimplifiedDiagnostic ? simplifiedSteps : detailedSteps
       return [...firstSteps, ...intermediarySteps, lastStep]
     },
