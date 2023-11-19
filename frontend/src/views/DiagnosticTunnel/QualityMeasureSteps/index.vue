@@ -19,11 +19,11 @@
     <component
       v-else-if="step.characteristicId"
       :is="step.componentName"
-      :canteen="canteen"
       :diagnostic="diagnostic"
       :payload="payload"
       :purchasesSummary="purchasesSummary"
       :characteristicId="step.characteristicId"
+      :groupId="step.groupId"
       v-on:update-payload="updatePayloadFromComponent"
     />
     <component
@@ -156,9 +156,10 @@ export default {
           const characteristic = this.characteristics[characteristicId]
           const urlSlug = characteristicId.toLowerCase() // TODO: replace underscores with hyphens
           detailedSteps.push({
-            title: characteristic.text,
+            title: `Valeurs totales par famille de produit des achats « ${characteristic.text} »`,
             componentName: FamilyFieldsStep,
             characteristicId: characteristicId,
+            groupId: groupId,
             urlSlug,
           })
         }

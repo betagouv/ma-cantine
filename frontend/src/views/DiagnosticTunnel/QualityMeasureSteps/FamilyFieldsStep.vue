@@ -1,30 +1,48 @@
 <template>
-  <v-row class="mb-2">
-    <v-col v-for="(family, fId) in families" :key="fId" cols="12" md="6">
-      <label :for="inputHtmlId(fId)" class="body-2">
-        {{ family.text }}
-      </label>
+  <div>
+    <p v-if="groupId === 'egalim'">
+      <strong>Produit ayant plusieurs labels</strong>
+      : la valeur d’achat ne pourra être comptée que dans une seule des catégories. Par exemple, un produit à la fois
+      biologique et label rouge ne sera comptabilisé que dans la catégorie « bio ».
+      <!-- TODO: list of prioritisation ? -->
+    </p>
+    <p v-else-if="groupId === 'nonEgalim'">
+      Merci de renseigner les montants des produits hors EGAlim
+    </p>
+    <p v-else-if="groupId === 'outsideLaw'">
+      Ici, vous pouvez affecter le produit dans plusieurs caractéristiques. Par exemple, un produit à la fois biologique
+      et local pourra être comptabilisé dans les deux champs « bio » et « local ».
+    </p>
+    <p v-if="characteristicId === 'LOCAL'">
+      Suivant votre propre définition de « local ».
+    </p>
+    <v-row>
+      <v-col v-for="(family, fId) in families" :key="fId" cols="12" md="6">
+        <label :for="inputHtmlId(fId)" class="body-2">
+          {{ family.text }}
+        </label>
 
-      <DsfrCurrencyField
-        :id="inputHtmlId(fId)"
-        :rules="[
-          validators.nonNegativeOrEmpty,
-          validators.decimalPlaces(2),
-          validators.lteOrEmpty(payload.valueTotalHt),
-        ]"
-        solo
-        v-model.number="payload[diagnosticKey(fId)]"
-        class="mt-2"
-        @blur="checkTotal"
-      />
-      <PurchaseHint
-        v-if="displayPurchaseHints"
-        v-model="payload[diagnosticKey(fId)]"
-        :purchaseType="family.shortText + ' pour ce caractéristique'"
-        :amount="purchasesSummary[diagnosticKey(fId)]"
-      />
-    </v-col>
-  </v-row>
+        <DsfrCurrencyField
+          :id="inputHtmlId(fId)"
+          :rules="[
+            validators.nonNegativeOrEmpty,
+            validators.decimalPlaces(2),
+            validators.lteOrEmpty(payload.valueTotalHt),
+          ]"
+          solo
+          v-model.number="payload[diagnosticKey(fId)]"
+          class="mt-2"
+          @blur="checkTotal"
+        />
+        <PurchaseHint
+          v-if="displayPurchaseHints"
+          v-model="payload[diagnosticKey(fId)]"
+          :purchaseType="family.shortText + ' pour ce caractéristique'"
+          :amount="purchasesSummary[diagnosticKey(fId)]"
+        />
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>
@@ -37,6 +55,10 @@ export default {
   name: "FamilyFieldsStep",
   props: {
     characteristicId: {
+      type: String,
+      required: true,
+    },
+    groupId: {
       type: String,
       required: true,
     },
