@@ -247,7 +247,6 @@ export default {
       if (backendField) {
         this.payload[backendField] = this.step?.urlSlug
       }
-      // TODO: do we also want a single 'tunnel complete' field?
     },
     updatePageTitle() {
       document.title = `${this.step.title} - ${this.year} - ${this.canteen.name} - ${this.$store.state.pageTitleSuffix}`
