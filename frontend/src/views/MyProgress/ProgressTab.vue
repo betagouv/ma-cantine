@@ -1,12 +1,12 @@
 <template>
   <div class="pa-8 pb-4">
     <div>
-      <v-row v-if="(diagnostic || hasCentralDiagnosticForMeasure || showPurchasesSection) && !isCanteenTab">
+      <v-row v-if="!showIntroduction && !isCanteenTab">
         <v-col cols="12" md="8">
           <h3 class="fr-h6 font-weight-bold mb-0">
             {{ keyMeasure.title }}
           </h3>
-          <v-btn text color="primary" class="px-0" @click="() => (showIntro = !showIntro)">
+          <v-btn text color="primary" class="px-0" @click="() => (expandIntro = !expandIntro)">
             En savoir plus
           </v-btn>
         </v-col>
@@ -20,30 +20,18 @@
       <h3 v-else class="fr-h6 font-weight-bold mb-4">
         {{ keyMeasure.title }}
       </h3>
-      <div
-        v-if="!isCanteenTab && ((!diagnostic && !hasCentralDiagnosticForMeasure && !showPurchasesSection) || showIntro)"
-      >
+      <div v-if="showIntroduction || expandIntro">
         <component :is="`${keyMeasure.baseComponent}Info`" :canteen="canteen" />
         <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
-        <v-btn
-          v-if="measureId !== establishmentId && !diagnostic && !usesOtherDiagnosticForMeasure"
-          color="primary"
-          :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
-          class="mt-4"
-        >
-          <!-- TODO: change this to an action, which creates the diagnostic then redirects to DiagnosticTunnel -->
+        <v-btn v-if="showIntroduction" color="primary" :disabled="requestOngoing" @click="startTunnel" class="mt-4">
           Commencer
         </v-btn>
       </div>
       <div v-if="showPurchasesSection">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
-        <PurchasesSummary
-          :usesCentralDiagnostic="hasCentralDiagnosticForMeasure"
-          :canteen="canteen"
-          :diagnostic="displayDiagnostic"
-        />
+        <PurchasesSummary :canteen="canteen" />
       </div>
-      <div v-if="diagnostic || hasCentralDiagnosticForMeasure || isCanteenTab">
+      <div v-else-if="showSynthesis">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
         <div
           v-if="!isCanteenTab && usesOtherDiagnosticForMeasure && isSatellite"
@@ -153,7 +141,8 @@ export default {
     return {
       approId: "qualite-des-produits",
       establishmentId: "etablissement",
-      showIntro: false,
+      expandIntro: false,
+      requestOngoing: false,
     }
   },
   computed: {
@@ -214,12 +203,11 @@ export default {
       return this.isCanteenTab
         ? { name: "CanteenForm", params: { canteenUrlComponent: this.canteenUrlComponent } }
         : {
-            // name: "DiagnosticTunnel",
-            name: "DiagnosticModification",
+            name: "DiagnosticTunnel",
             params: {
               canteenUrlComponent: this.canteenUrlComponent,
               year: this.year,
-              // measureId: this.measureId,
+              measureId: this.measureId,
             },
           }
     },
@@ -237,6 +225,44 @@ export default {
       const managesOwnPurchases = !this.isSatellite
       const dataProvidedByDiagnostic = this.diagnostic && hasDiagnosticApproData(this.diagnostic)
       return this.isApproTab && isCurrentYear && managesOwnPurchases && !dataProvidedByDiagnostic
+    },
+    hasData() {
+      let hasDiagnostic = this.displayDiagnostic
+      if (this.displayDiagnostic?.creationSource === "TUNNEL") {
+        hasDiagnostic = !!this.displayDiagnostic[this.keyMeasure.progressField]
+      }
+      return this.showPurchasesSection || hasDiagnostic
+    },
+    showIntroduction() {
+      return !(this.isCanteenTab || this.hasData || this.usesOtherDiagnosticForMeasure)
+    },
+    showSynthesis() {
+      return this.isCanteenTab || this.hasData
+    },
+  },
+  methods: {
+    startTunnel() {
+      if (this.usesOtherDiagnosticForMeasure) return // more explicit error?
+      if (this.diagnostic) {
+        this.$router.push(this.modificationLink)
+      } else {
+        this.requestOngoing = true
+        return this.$store
+          .dispatch("createDiagnostic", {
+            canteenId: this.canteen.id,
+            payload: {
+              year: this.year,
+              creationSource: "TUNNEL",
+            },
+          })
+          .then(() => {
+            this.$router.push(this.modificationLink)
+          })
+          .catch((e) => {
+            this.$store.dispatch("notifyServerError", e)
+          })
+          .finally(() => (this.requestOngoing = false))
+      }
     },
   },
 }
