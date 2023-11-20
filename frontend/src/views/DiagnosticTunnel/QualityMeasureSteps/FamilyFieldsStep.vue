@@ -18,12 +18,12 @@
     </p>
     <v-row>
       <v-col v-for="(family, fId) in families" :key="fId" cols="12" md="6">
-        <label :for="inputHtmlId(fId)" class="body-2">
+        <label :for="fId" class="body-2">
           {{ family.text }}
         </label>
 
         <DsfrCurrencyField
-          :id="inputHtmlId(fId)"
+          :id="fId"
           :rules="[
             validators.nonNegativeOrEmpty,
             validators.decimalPlaces(2),
@@ -90,9 +90,6 @@ export default {
     },
   },
   methods: {
-    inputHtmlId(fId) {
-      return `${fId}-${this.characteristicId}-${this.payload.year}`
-    },
     checkTotal() {},
     diagnosticKey(family) {
       return this.camelize(`value_${family}_${this.characteristicId}`)
