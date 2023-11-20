@@ -1,11 +1,21 @@
 <template>
   <div class="text-left">
     <v-row class="header">
-      <v-row class="mx-auto constrained pt-6">
-        <v-col cols="9">
-          <p class="fr-text-xs text-transform-uppercase mb-0">{{ measure.shortTitle }}</p>
+      <v-row class="mx-auto constrained align-center py-6">
+        <v-col cols="9" class="py-4 d-flex" v-if="$vuetify.breakpoint.smAndUp">
+          <div v-for="tunnel in tunnels" :key="tunnel.id" class="px-4 header-icon">
+            <div v-if="tunnel.id === measure.id" class="d-flex align-center my-1">
+              <v-icon small color="primary" class="mr-2">{{ measure.mdiIcon }}</v-icon>
+              <p class="fr-text-xs text-uppercase mb-0 grey--text text--darken-2 font-weight-bold">
+                {{ measure.shortTitle }}
+              </p>
+            </div>
+            <div v-else>
+              <v-icon small color="primary lighten-4">{{ tunnel.icon }}</v-icon>
+            </div>
+          </div>
         </v-col>
-        <v-col class="text-right">
+        <v-col class="text-right py-0">
           <p class="mb-0">
             <v-btn text plain class="text-decoration-underline" color="primary" @click="saveAndQuit">
               Sauvegarder et quitter
@@ -15,7 +25,7 @@
             </v-btn>
           </p>
         </v-col>
-        <v-col v-if="step && !step.isSynthesis" cols="12">
+        <v-col v-if="step && !step.isSynthesis" cols="12" class="pt-0 mb-n8">
           <DsfrStepper :steps="stepperSteps" :currentStepIdx="stepIdx" />
         </v-col>
       </v-row>
@@ -31,11 +41,11 @@
       />
     </div>
     <v-row class="footer">
-      <v-row class="mx-auto constrained">
-        <v-col v-if="nextMeasureTitle" cols="5">
-          <p class="fr-text-xs grey--text text--darken-2">
+      <v-row class="mx-auto constrained align-center">
+        <v-col v-if="step && step.isSynthesis && nextTunnelTitle" cols="5">
+          <p class="fr-text-xs grey--text text--darken-2 mb-0">
             Onglet suivant :
-            <b>{{ nextMeasureTitle }}</b>
+            <b>{{ nextTunnelTitle }}</b>
           </p>
         </v-col>
         <v-spacer />
@@ -99,6 +109,9 @@ export default {
       diagnostic: null,
       payload: {},
       steps: [],
+      tunnels: [
+        ...keyMeasures.map((km) => ({ id: km.id, title: km.title, shortTitle: km.shortTitle, icon: km.mdiIcon })),
+      ],
     }
   },
   computed: {
@@ -129,7 +142,7 @@ export default {
       return this.stepIdx > 0 ? this.steps[this.stepIdx - 1] : null
     },
     continueActionText() {
-      const returnToTable = this.step?.isFinal
+      const returnToTable = !this.nextTunnel
       if (returnToTable) return "Retour au tableau de bord"
       const nextIsNewMeasure = this.step?.isSynthesis
       if (nextIsNewMeasure) return "Passer à l'onglet suivant"
@@ -137,8 +150,15 @@ export default {
       if (nextIsSynthesis) return "Voir la synthèse"
       return "Sauvegarder et continuer"
     },
-    nextMeasureTitle() {
-      return this.nextStep?.measure?.title
+    nextTunnel() {
+      const currentTunnelIdx = this.tunnels.findIndex((t) => t.id === this.measureId)
+      if (currentTunnelIdx <= this.tunnels.length) {
+        return this.tunnels[currentTunnelIdx + 1]
+      }
+      return null
+    },
+    nextTunnelTitle() {
+      return this.nextTunnel?.shortTitle
     },
     quitLink() {
       return {
@@ -199,6 +219,18 @@ export default {
       this.saveDiagnostic().then(() => {
         if (this.nextStep) {
           this.$router.push({ query: { étape: this.nextStep.urlSlug } })
+        } else if (this.nextTunnel) {
+          this.$router.push({
+            name: "MyProgress",
+            params: { measure: this.nextTunnel.id },
+          })
+        } else {
+          this.$router.push({
+            name: "DashboardManager",
+            params: {
+              canteenUrlComponent: this.canteenUrlComponent,
+            },
+          })
         }
       })
     },
@@ -251,5 +283,8 @@ export default {
 }
 a[aria-disabled="true"] {
   cursor: not-allowed;
+}
+.header-icon {
+  border-right: #e5e5e5 solid 1px;
 }
 </style>

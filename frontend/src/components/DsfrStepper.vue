@@ -8,7 +8,7 @@
       <v-row class="fr-stepper__steps ma-0" :data-fr-current-step="currentStepIdx + 1" :data-fr-steps="stepTotal">
         <v-col v-for="(_, idx) in steps" :key="idx" :class="stepClass(idx)" />
       </v-row>
-      <p v-if="nextStep" class="fr-stepper__details mt-4">
+      <p v-if="nextStep" class="fr-stepper__details mt-4 mb-0">
         <span class="font-weight-bold">Étape suivante :</span>
         {{ nextStep.title }}
       </p>
