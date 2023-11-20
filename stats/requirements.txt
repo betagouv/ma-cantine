@@ -1,4 +1,4 @@
-pandas==2.0.3
+pandas==2.1.3
 ipykernel==6.25.2
 ydata-profiling==4.6.1
 ipywidgets==8.1.1
