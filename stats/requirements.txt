@@ -5,5 +5,5 @@ ipywidgets==8.1.1
 frictionless==5.16.0
 nbformat==5.9.0
 nbclient==0.9.0
-jupyter-cache==0.6.1
+jupyter-cache==1.0.0
 plotly==5.15.0
