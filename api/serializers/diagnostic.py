@@ -172,8 +172,17 @@ META_FIELDS = (
     "year",
     "creation_date",
     "modification_date",
+    "creation_source",
     "diagnostic_type",
     "central_kitchen_diagnostic_mode",
+)
+
+TUNNEL_PROGRESS_FIELDS = (
+    "tunnel_appro",
+    "tunnel_waste",
+    "tunnel_plastic",
+    "tunnel_diversification",
+    "tunnel_info",
 )
 
 FIELDS = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
@@ -264,10 +273,14 @@ class ManagerDiagnosticSerializer(serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
         read_only_fields = ("id",)
-        fields = FIELDS + (
-            "creation_mtm_source",
-            "creation_mtm_campaign",
-            "creation_mtm_medium",
+        fields = (
+            FIELDS
+            + (
+                "creation_mtm_source",
+                "creation_mtm_campaign",
+                "creation_mtm_medium",
+            )
+            + TUNNEL_PROGRESS_FIELDS
         )
 
     def __init__(self, *args, **kwargs):
@@ -306,7 +319,7 @@ class FullDiagnosticSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Diagnostic
-        fields = FIELDS + ("teledeclaration",)
+        fields = FIELDS + ("teledeclaration",) + TUNNEL_PROGRESS_FIELDS
         read_only_fields = fields
 
 

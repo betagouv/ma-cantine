@@ -19,6 +19,9 @@ class Diagnostic(models.Model):
         SIMPLE = "SIMPLE", "Télédeclaration simple"
         COMPLETE = "COMPLETE", "Télédeclaration complète"
 
+    class CreationSource(models.TextChoices):
+        TUNNEL = "TUNNEL", "Tunnel"
+
     class MenuFrequency(models.TextChoices):
         LOW = "LOW", "Moins d'une fois par semaine"
         MID = "MID", "Une fois par semaine"
@@ -27,7 +30,10 @@ class Diagnostic(models.Model):
 
     class MenuType(models.TextChoices):
         UNIQUE = "UNIQUE", "Un menu végétarien en plat unique, sans choix"
-        SEVERAL = "SEVERAL", "Un menu végétarien composé de plusieurs choix de plats végétariens"
+        SEVERAL = (
+            "SEVERAL",
+            "Un menu végétarien composé de plusieurs choix de plats végétariens",
+        )
         ALTERNATIVES = (
             "ALTERNATIVES",
             "Un menu végétarien au choix, en plus d'autres plats non végétariens",
@@ -86,7 +92,10 @@ class Diagnostic(models.Model):
         READYMADE = "READYMADE", "Plats prêts à l'emploi"
 
     class CentralKitchenDiagnosticMode(models.TextChoices):
-        APPRO = "APPRO", "Ce diagnostic concerne les données d'approvisionnement de toutes les cantines satellites"
+        APPRO = (
+            "APPRO",
+            "Ce diagnostic concerne les données d'approvisionnement de toutes les cantines satellites",
+        )
         ALL = "ALL", "Ce diagnostic concerne toutes les données des cantines satellites"
 
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -115,6 +124,48 @@ class Diagnostic(models.Model):
         null=True,
         blank=True,
         verbose_name="année",
+    )
+
+    creation_source = models.CharField(
+        max_length=255,
+        choices=CreationSource.choices,
+        blank=True,
+        null=True,
+        verbose_name="comment est-ce que ce diagnostic à été créé ?",
+    )
+
+    # progress fields
+    # NB None = tunnel has not been started; "complet" = tunnel has finished
+    # all other values are defined by the front end
+    tunnel_appro = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        verbose_name="Progrès tunnel appro",
+    )
+    tunnel_waste = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        verbose_name="Progrès tunnel anti-gaspi",
+    )
+    tunnel_diversification = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        verbose_name="Progrès tunnel diversification",
+    )
+    tunnel_plastic = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        verbose_name="Progrès tunnel anti-plastique",
+    )
+    tunnel_info = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        verbose_name="Progrès tunnel information convives",
     )
 
     # Product origin
@@ -386,13 +437,19 @@ class Diagnostic(models.Model):
 
     # Campaign tracking
     creation_mtm_source = models.TextField(
-        null=True, blank=True, verbose_name="mtm_source du lien tracké lors de la création"
+        null=True,
+        blank=True,
+        verbose_name="mtm_source du lien tracké lors de la création",
     )
     creation_mtm_campaign = models.TextField(
-        null=True, blank=True, verbose_name="mtm_campaign du lien tracké lors de la création"
+        null=True,
+        blank=True,
+        verbose_name="mtm_campaign du lien tracké lors de la création",
     )
     creation_mtm_medium = models.TextField(
-        null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
+        null=True,
+        blank=True,
+        verbose_name="mtm_medium du lien tracké lors de la création",
     )
 
     # detailed values

@@ -110,7 +110,13 @@ export default {
       payload: {},
       steps: [],
       tunnels: [
-        ...keyMeasures.map((km) => ({ id: km.id, title: km.title, shortTitle: km.shortTitle, icon: km.mdiIcon })),
+        ...keyMeasures.map((km) => ({
+          id: km.id,
+          title: km.title,
+          shortTitle: km.shortTitle,
+          icon: km.mdiIcon,
+          backendField: km.progressField,
+        })),
       ],
     }
   },
@@ -175,7 +181,7 @@ export default {
     },
     stepperSteps() {
       // we do not count the synthèse as a step, this assumes that all steps will include a final synthèse
-      const synthesisUrl = "synthèse"
+      const synthesisUrl = "complet"
       return this.steps.filter((s) => s.urlSlug !== synthesisUrl)
     },
   },
@@ -235,9 +241,10 @@ export default {
       })
     },
     updateProgress() {
-      if (this.isSynthesis) this.payload.tunnelQuality = "COMPLETE"
-      else if (this.step.isFinal) this.payload.tunnelComplete = true
-      this.payload.tunnelQuality = this.step?.urlSlug
+      const backendField = this.tunnels.find((t) => t.id === this.measureId)?.backendField
+      if (backendField) {
+        this.payload[backendField] = this.step?.urlSlug
+      }
     },
     updatePageTitle() {
       document.title = `${this.step.title} - ${this.year} - ${this.canteen.name} - ${this.$store.state.pageTitleSuffix}`

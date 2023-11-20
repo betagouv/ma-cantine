@@ -37,7 +37,7 @@ export default {
           title: "Synthèse",
           isSynthesis: true,
           componentName: "QualityMeasureSummary",
-          urlSlug: "synthèse",
+          urlSlug: "complet",
         },
       ],
     }
