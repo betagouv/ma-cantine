@@ -75,23 +75,17 @@ export default {
     FamilyFieldsStep,
   },
   data() {
+    const payload = { diagnosticType: this.diagnostic.diagnosticType }
+    Object.keys(this.diagnostic).forEach((key) => {
+      if (key.startsWith("value")) {
+        payload[key] = this.diagnostic[key]
+      }
+    })
     return {
       formIsValid: true,
       purchasesSummary: null,
       diagnosticTypes: Constants.DiagnosticTypes,
-      payload: {
-        valueTotalHt: this.diagnostic.valueTotalHt,
-        diagnosticType: this.diagnostic.diagnosticType,
-        valueBioHt: this.diagnostic.valueBioHt,
-        valueSustainableHt: this.diagnostic.valueSustainableHt,
-        valueEgalimOthersHt: this.diagnostic.valueEgalimOthersHt,
-        valueExternalityPerformanceHt: this.diagnostic.valueExternalityPerformanceHt,
-        valueMeatPoultryHt: this.diagnostic.valueMeatPoultryHt,
-        valueMeatPoultryEgalimHt: this.diagnostic.valueMeatPoultryEgalimHt,
-        valueMeatPoultryFranceHt: this.diagnostic.valueMeatPoultryFranceHt,
-        valueFishHt: this.diagnostic.valueFishHt,
-        valueFishEgalimHt: this.diagnostic.valueFishEgalimHt,
-      },
+      payload,
       characteristics: Constants.TeledeclarationCharacteristics,
       characteristicGroups: Constants.TeledeclarationCharacteristicGroups,
     }
@@ -181,7 +175,10 @@ export default {
     fetchPurchasesSummary() {
       fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.diagnostic.year}`)
         .then((response) => (response.ok ? response.json() : {}))
-        .then((response) => this.$set(this, "purchasesSummary", response))
+        .then((response) => {
+          const hasSummary = Object.values(response).some((x) => !!x)
+          if (hasSummary) this.$set(this, "purchasesSummary", response)
+        })
     },
   },
   mounted() {

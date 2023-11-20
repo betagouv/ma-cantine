@@ -86,7 +86,7 @@ export default {
   },
   computed: {
     displayPurchaseHints() {
-      return false
+      return !!this.purchasesSummary
     },
   },
   methods: {
