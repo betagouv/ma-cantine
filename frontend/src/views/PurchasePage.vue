@@ -355,6 +355,7 @@ export default {
             }
             this.$refs.form.resetValidation()
             this.fetchOptions() // if the user added a new product or provider, we need to refresh the options
+            window.scroll(0, 0)
           }
         })
         .catch((e) => {
