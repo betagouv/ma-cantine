@@ -27,12 +27,12 @@
             </v-icon>
           </div>
 
-          <label class="ml-4 ml-md-0" :for="'other-' + diagnostic.year">
+          <label class="ml-4 ml-md-0" for="other">
             La valeur (en HT) des autres achats EGAlim
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'other-' + diagnostic.year"
+          id="other"
           v-model.number="payload.valueEgalimOthersHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
@@ -76,7 +76,7 @@
               mdi-chart-line
             </v-icon>
           </div>
-          <label class="ml-4 ml-md-0" :for="'siqo-' + diagnostic.year">
+          <label class="ml-4 ml-md-0" for="ext-perf">
             Critères d'achat : La valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités
             environnementales ou acquis sur la base de leurs performances en matière environnementale.
             <br />
@@ -127,7 +127,7 @@
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'ext-perf-' + diagnostic.year"
+          id="ext-perf"
           v-model.number="payload.valueExternalityPerformanceHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"

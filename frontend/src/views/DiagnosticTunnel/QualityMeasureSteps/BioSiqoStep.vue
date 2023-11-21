@@ -15,12 +15,12 @@
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
           <LogoBio style="max-height: 30px;" v-if="$vuetify.breakpoint.smAndDown" />
-          <label class="ml-4 ml-md-0" :for="'bio-' + diagnostic.year">
+          <label class="ml-4 ml-md-0" for="bio">
             La valeur (en HT) de mes achats Bio ou en conversion Bio (Optionnel)
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'bio-' + diagnostic.year"
+          id="bio"
           v-model.number="payload.valueBioHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
@@ -53,12 +53,12 @@
               />
             </div>
           </div>
-          <label class="ml-4 ml-md-0" :for="'siqo-' + diagnostic.year">
+          <label class="ml-4 ml-md-0" for="siqo">
             La valeur (en HT) de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'siqo-' + diagnostic.year"
+          id="siqo"
           v-model.number="payload.valueSustainableHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"

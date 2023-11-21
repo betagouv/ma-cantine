@@ -7,12 +7,12 @@
     <v-card-text>
       <!-- TOTAL -->
       <div class="my-2" v-if="showField('valueTotalHt')">
-        <label :for="'total-' + diagnostic.year" class="body-2">
+        <label for="total" class="body-2">
           La valeur (en HT) de mes achats alimentaires total
         </label>
 
         <DsfrCurrencyField
-          :id="'total-' + diagnostic.year"
+          id="total"
           v-model.number="diagnostic.valueTotalHt"
           @blur="$emit('check-total')"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
@@ -29,11 +29,11 @@
 
       <!-- BIO -->
       <div class="my-2" v-if="showField('valueBioHt')">
-        <label class="body-2" :for="'bio-' + diagnostic.year">
+        <label class="body-2" for="bio">
           La valeur (en HT) de mes achats Bio ou en conversion Bio
         </label>
         <DsfrCurrencyField
-          :id="'bio-' + diagnostic.year"
+          id="bio"
           v-model.number="diagnostic.valueBioHt"
           @blur="$emit('check-total')"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
@@ -50,11 +50,11 @@
 
       <!-- SIQO -->
       <div class="my-2" v-if="showField('valueSustainableHt')">
-        <label class="body-2" :for="'siqo-' + diagnostic.year">
+        <label class="body-2" for="siqo">
           La valeur (en HT) de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)
         </label>
         <DsfrCurrencyField
-          :id="'siqo-' + diagnostic.year"
+          id="siqo"
           v-model.number="diagnostic.valueSustainableHt"
           @blur="$emit('check-total')"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
@@ -71,11 +71,11 @@
 
       <!-- Other EGAlim -->
       <div class="my-2" v-if="showField('valueEgalimOthersHt')">
-        <label class="body-2" :for="'other-' + diagnostic.year">
+        <label class="body-2" for="other">
           La valeur (en HT) des autres achats EGAlim
         </label>
         <DsfrCurrencyField
-          :id="'other-' + diagnostic.year"
+          id="other"
           v-model.number="diagnostic.valueEgalimOthersHt"
           @blur="$emit('check-total')"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
@@ -92,12 +92,12 @@
 
       <!-- Performance Externalités -->
       <div class="my-2" v-if="showField('valueExternalityPerformanceHt')">
-        <label class="body-2" :for="'ext-perf-' + diagnostic.year">
+        <label class="body-2" for="ext-perf">
           Critères d'achat : La valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités
           environnementales ou acquis sur la base de leurs performances en matière environnementale.
         </label>
         <DsfrCurrencyField
-          :id="'ext-perf-' + diagnostic.year"
+          id="ext-perf"
           v-model.number="diagnostic.valueExternalityPerformanceHt"
           @blur="$emit('check-total')"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
@@ -114,11 +114,11 @@
 
       <!-- Viande et volailles -->
       <div class="my-2" v-if="showField('valueMeatPoultryHt')">
-        <label class="body-2" :for="'meat-poultry-' + diagnostic.year">
+        <label class="body-2" for="meat-poultry">
           La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total
         </label>
         <DsfrCurrencyField
-          :id="'meat-poultry-' + diagnostic.year"
+          id="meat-poultry"
           v-model.number="diagnostic.valueMeatPoultryHt"
           @blur="$emit('check-total')"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
@@ -133,11 +133,11 @@
         />
       </div>
       <div class="my-2" v-if="showField('valueMeatPoultryEgalimHt')">
-        <label class="body-2" :for="'meat-poultry-egalim-' + diagnostic.year">
+        <label class="body-2" for="meat-poultry-egalim">
           La valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées
         </label>
         <DsfrCurrencyField
-          :id="'meat-poultry-egalim-' + diagnostic.year"
+          id="meat-poultry-egalim"
           v-model.number="diagnostic.valueMeatPoultryEgalimHt"
           @blur="$emit('check-total')"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
@@ -152,11 +152,11 @@
         />
       </div>
       <div class="my-2" v-if="showField('valueMeatPoultryFranceHt')">
-        <label class="body-2" :for="'meat-poultry-france-' + diagnostic.year">
+        <label class="body-2" for="meat-poultry-france">
           La valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées
         </label>
         <DsfrCurrencyField
-          :id="'meat-poultry-france-' + diagnostic.year"
+          id="meat-poultry-france"
           v-model.number="diagnostic.valueMeatPoultryFranceHt"
           @blur="$emit('check-total')"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
@@ -173,11 +173,11 @@
 
       <!-- Poissons -->
       <div class="my-2" v-if="showField('valueFishHt')">
-        <label class="body-2" :for="'fish-' + diagnostic.year">
+        <label class="body-2" for="fish">
           La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total
         </label>
         <DsfrCurrencyField
-          :id="'fish-' + diagnostic.year"
+          id="fish"
           v-model.number="diagnostic.valueFishHt"
           @blur="$emit('check-total')"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
@@ -192,11 +192,11 @@
         />
       </div>
       <div class="my-2" v-if="showField('valueFishEgalimHt')">
-        <label class="body-2" :for="'fish-egalim-' + diagnostic.year">
+        <label class="body-2" for="fish-egalim">
           La valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture
         </label>
         <DsfrCurrencyField
-          :id="'fish-egalim-' + diagnostic.year"
+          id="fish-egalim"
           v-model.number="diagnostic.valueFishEgalimHt"
           @blur="$emit('check-total')"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"

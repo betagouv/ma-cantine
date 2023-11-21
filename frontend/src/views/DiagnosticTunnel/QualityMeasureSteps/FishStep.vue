@@ -14,12 +14,12 @@
               mdi-fish
             </v-icon>
           </div>
-          <label class="body-2 ml-4" :for="'fish-' + diagnostic.year">
+          <label class="body-2 ml-4" for="fish">
             La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'fish-' + diagnostic.year"
+          id="fish"
           v-model.number="payload.valueFishHt"
           :error="hasError"
           @blur="checkTotal"
@@ -44,12 +44,12 @@
               mdi-fish
             </v-icon>
           </div>
-          <label class="body-2 ml-4" :for="'fish-egalim-' + diagnostic.year">
+          <label class="body-2 ml-4" for="fish-egalim">
             La valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'fish-egalim-' + diagnostic.year"
+          id="fish-egalim"
           v-model.number="payload.valueFishEgalimHt"
           :error="fishError"
           @blur="checkTotal"

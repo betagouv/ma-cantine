@@ -16,12 +16,12 @@
               mdi-food-drumstick
             </v-icon>
           </div>
-          <label class="body-2 ml-4" :for="'meat-poultry-' + diagnostic.year">
+          <label class="body-2 ml-4" for="meat-poultry">
             La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'meat-poultry-' + diagnostic.year"
+          id="meat-poultry"
           v-model.number="payload.valueMeatPoultryHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="hasError"
@@ -48,12 +48,12 @@
               mdi-food-drumstick
             </v-icon>
           </div>
-          <label class="body-2 ml-4" :for="'meat-poultry-egalim-' + diagnostic.year">
+          <label class="body-2 ml-4" for="meat-poultry-egalim">
             La valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'meat-poultry-egalim-' + diagnostic.year"
+          id="meat-poultry-egalim"
           v-model.number="payload.valueMeatPoultryEgalimHt"
           :error="meatPoultryError"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
@@ -80,12 +80,12 @@
               mdi-food-drumstick
             </v-icon>
           </div>
-          <label class="body-2 ml-4" :for="'meat-poultry-france-' + diagnostic.year">
+          <label class="body-2 ml-4" for="meat-poultry-france">
             La valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'meat-poultry-france-' + diagnostic.year"
+          id="meat-poultry-france"
           v-model.number="payload.valueMeatPoultryFranceHt"
           :error="meatPoultryError"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
