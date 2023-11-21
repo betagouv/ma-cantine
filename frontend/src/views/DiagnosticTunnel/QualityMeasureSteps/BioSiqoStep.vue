@@ -7,7 +7,7 @@
     </p>
 
     <DsfrCallout v-if="totalError" color="red lighten-1">
-      {{ totalErrorMessage }}
+      <p class="ma-0">{{ totalErrorMessage }}</p>
     </DsfrCallout>
 
     <!-- Bio -->
