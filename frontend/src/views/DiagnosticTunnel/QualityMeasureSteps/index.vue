@@ -69,7 +69,7 @@ export default {
       diagnosticTypes: Constants.DiagnosticTypes,
       payload: {
         valueTotalHt: this.diagnostic.valueTotalHt,
-        diagnosticType: this.diagnostic.diagnosticType,
+        diagnosticType: this.diagnostic.diagnosticType || "SIMPLE",
         valueBioHt: this.diagnostic.valueBioHt,
         valueSustainableHt: this.diagnostic.valueSustainableHt,
         valueEgalimOthersHt: this.diagnostic.valueEgalimOthersHt,
