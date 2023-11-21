@@ -16,7 +16,8 @@
         <div class="d-block d-sm-flex align-center">
           <LogoBio style="max-height: 30px;" v-if="$vuetify.breakpoint.smAndDown" />
           <label class="ml-4 ml-md-0" for="bio">
-            La valeur (en HT) de mes achats Bio ou en conversion Bio (Optionnel)
+            La valeur (en HT) de mes achats Bio ou en conversion Bio
+            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
@@ -55,6 +56,7 @@
           </div>
           <label class="ml-4 ml-md-0" for="siqo">
             La valeur (en HT) de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)
+            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField

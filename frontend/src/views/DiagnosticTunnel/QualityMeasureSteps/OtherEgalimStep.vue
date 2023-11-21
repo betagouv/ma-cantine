@@ -29,6 +29,7 @@
 
           <label class="ml-4 ml-md-0" for="other">
             La valeur (en HT) des autres achats EGAlim
+            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
@@ -124,6 +125,7 @@
                 </v-card-text>
               </v-card>
             </v-dialog>
+            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField

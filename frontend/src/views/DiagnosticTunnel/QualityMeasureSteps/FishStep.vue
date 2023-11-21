@@ -16,6 +16,7 @@
           </div>
           <label class="body-2 ml-4" for="fish">
             La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total
+            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
@@ -46,6 +47,7 @@
           </div>
           <label class="body-2 ml-4" for="fish-egalim">
             La valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture
+            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
