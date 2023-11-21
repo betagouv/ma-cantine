@@ -38,8 +38,43 @@ year = "Campagne 2023"
 decoupage = "region"
 value = "nombre_td"
 
+def display_map_(td, decoupage="department", value="nombre_td"):
+    tds_geo, cmap = utils.aggregate_geo(td, decoupage, value)
+    tds_geo = tds_geo.dropna(subset=f"canteen.{decoupage}")
+    if decoupage == "region":
+        tds_geo[f"canteen.{decoupage}"] = tds_geo[f"canteen.{decoupage}"].apply(lambda x: f"{int(x):02d}")
+    try:
+        sf = gpd.read_file(f"~/workspace/ma-cantine/stats/bilan/france-geojson/{decoupage}s-version-simplifiee.geojson")
+    except Exception:
+        print(
+            "Les contours des départements/régions doivent être téléchargés et déposes dans un dossier france-geojson \n"
+        )
+        print(
+            "Lien Départements : https://github.com/gregoiredavid/france-geojson/blob/master/departements-version-simplifiee.geojson"
+        )
+        print(
+            "Lien Départements : https://github.com/gregoiredavid/france-geojson/blob/master/regions-version-simplifiee.geojson"
+        )
+        return 0
+    sf = pd.merge(tds_geo[[f"canteen.{decoupage}", "value"]], sf, right_on="code", left_on=f"canteen.{decoupage}")
+    sf = gpd.GeoDataFrame(sf, crs="EPSG:4326", geometry=sf.geometry)
+    print(sf)
+    fig, ax = plt.subplots(1, 1, figsize=(10, 8))
+    sf.plot(ax=ax, color='#b2acb5', linewidth=2, edgecolor='0.8')
+
+    for i in sf.index:
+        ax.text(sf.iloc[i].geometry.centroid.x, sf.iloc[i].geometry.centroid.y - 0.2, utils.taux_formatter(sf.iloc[i]['value']/sf['value'].sum()), ha='center', fontsize=12, color='black', weight='bold')
+
+    # Set plot title and show
+    plt.title('Part des télédéclarants par région')
+    plt.axis('off')
+    plt.show()
+
+    # return sf
+
+
 print("#### Carte des régions de France en fonction du nombre de TD")
-utils.display_map_(tds["Campagne 2023"], decoupage, value)
+display_map_(tds["Campagne 2023"], decoupage, value)
 sf, _ = utils.aggregate_geo(tds["Campagne 2023"], decoupage, value)
 sf["libelle"] = sf[f"canteen.{decoupage}"].apply(lambda x: utils.fill_region(f"{int(x):02d}"))
 print(

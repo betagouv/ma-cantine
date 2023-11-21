@@ -326,54 +326,58 @@ def calcul_indicateur_divers(tds: {}, years=[], col_comparaison=True):
     return pd.DataFrame(indicateurs)
 
 
+def calcul_famille(df, famille='meat_poultry'):
+    indicateurs = {}
+    if famille == 'meat_poultry':
+        label = 'Viande/Volaille 🥩'
+    else:
+        label = 'Poissons/Produits de la mer 🐟'
+
+    df_famille = df.copy()[~df[f"teledeclaration.value_{famille}_ht"].isna()]
+    
+    indicateurs[f"Nombre de TD ayant déclaré pour la famille {label}"] = len(
+        df_famille
+    )
+    indicateurs[f"Nombre de TD ayant déclaré la valeur 0€ pour la famille {label}"] = len(
+        df_famille[df_famille[f"teledeclaration.value_{famille}_ht"] == 0]
+    )
+    indicateurs[f"Montant des achats alimentaires totaux pour la famille {label}"] = df_famille["teledeclaration.value_total_ht"].sum()
+    
+    indicateurs[f"Taux d'achat alimentaires de la famille {label}"] = int(
+        df_famille[f"teledeclaration.value_{famille}_ht"].sum()
+    ) / int(df_famille["teledeclaration.value_total_ht"].sum())
+    indicateurs[f"Montant d'achat alimentaires {label}"] = int(
+        df_famille[f"teledeclaration.value_{famille}_ht"].sum()
+    )
+    indicateurs[f"Taux d'achat alimentaires Egalim au sein de la famille {label}"] = int(
+        df_famille[f"teledeclaration.value_{famille}_egalim_ht"].sum()
+    ) / int(df_famille[f"teledeclaration.value_{famille}_ht"].sum())
+    indicateurs[f"Montant d'achat alimentaires Egalim {label}"] = int(
+        df_famille["teledeclaration.value_meat_poultry_egalim_ht"].sum()
+    )
+    if famille == 'meat_poultry':
+        indicateurs[f"Taux d'achat alimentaires origine France 🇫🇷 au sein de la famille {label}"] = int(
+            df_famille[f"teledeclaration.value_{famille}_france_ht"].sum()
+        ) / int(df_famille[f"teledeclaration.value_{famille}_ht"].sum())
+        indicateurs[f"Montant d'achat alimentaires origine France 🇫🇷 {label}"] = int(
+            df_famille[f"teledeclaration.value_{famille}_france_ht"].sum()
+        )
+    return indicateurs
+
+
 def calcul_indicateur_famille(tds: {}, years=[], col_comparaison=True):
     indicateurs = {}
     for year in years if len(years) else tds.keys():
         indicateurs[year] = {}
-
         indicateurs[year]["Nombre de TD prises en compte"] = len(tds[year])
-        indicateurs[year]["Nombre de TD ayant déclaré Je Ne Sais Pas pour la famille Viande/Volaille 🥩"] = len(
-            tds[year][tds[year]["teledeclaration.value_meat_poultry_ht"].isna()]
-        )
-        indicateurs[year]["Taux d'achat alimentaires de la famille Viande/Volaille 🥩"] = int(
-            tds[year]["teledeclaration.value_meat_poultry_ht"].sum()
-        ) / int(tds[year]["teledeclaration.value_total_ht"].sum())
-        indicateurs[year]["Montant d'achat alimentaires Viande/Volaille 🥩"] = int(
-            tds[year]["teledeclaration.value_meat_poultry_ht"].sum()
-        )
-        indicateurs[year]["Taux d'achat alimentaires Egalim au sein de la famille Viande/Volaille 🥩"] = int(
-            tds[year]["teledeclaration.value_meat_poultry_egalim_ht"].sum()
-        ) / int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
-        indicateurs[year]["Montant d'achat alimentaires Egalim Viande/Volaille 🥩"] = int(
-            tds[year]["teledeclaration.value_meat_poultry_egalim_ht"].sum()
-        )
-        indicateurs[year]["Taux d'achat alimentaires origine France 🇫🇷 au sein de la famille Viande/Volaille 🥩"] = int(
-            tds[year]["teledeclaration.value_meat_poultry_france_ht"].sum()
-        ) / int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
-        indicateurs[year]["Montant d'achat alimentaires origine France 🇫🇷 Viande/Volaille 🥩"] = int(
-            tds[year]["teledeclaration.value_meat_poultry_france_ht"].sum()
-        )
-
-        indicateurs[year]["Nombre de TD ayant déclaré Je Ne Sais Pas pour la famille Poissons/produits de la mer 🐟"] = len(
-            tds[year][tds[year]["teledeclaration.value_fish_ht"].isna()]
-        )
-        indicateurs[year]["Taux d'achat alimentaires de la famille Poissons/produits de la mer 🐟"] = int(
-            tds[year]["teledeclaration.value_fish_ht"].sum()
-        ) / int(tds[year]["teledeclaration.value_total_ht"].sum())
-        indicateurs[year][
-            "Taux d'achat alimentaires Egalim au sein de la famille  Poissons/Produits de la mer 🐟"
-        ] = int(tds[year]["teledeclaration.value_fish_egalim_ht"].sum()) / int(
-            tds[year]["teledeclaration.value_fish_ht"].sum()
-        )
-        indicateurs[year]["Montant d'achat alimentaires Poissons/Produits de la mer 🐟"] = int(
-            tds[year]["teledeclaration.value_fish_ht"].sum()
-        )
-        indicateurs[year]["Montant d'achat alimentaires Egalim Poissons/Produits de la mer 🐟"] = int(
-            tds[year]["teledeclaration.value_fish_egalim_ht"].sum()
-        )
+        indicateurs[year].update(calcul_famille(tds[year], 'meat_poultry'))
+        indicateurs[year].update(calcul_famille(tds[year], 'fish'))
 
     return pd.DataFrame(indicateurs)
 
+# tds = {}
+# tds['Campagne 2023'] = pd.read_csv("stats/bilan/data/export_dataset_stats_campagne_clean_2023.csv", sep=";")
+# print(calcul_indicateur_famille(tds, ['Campagne 2023']))
 
 def calcul_indicateur_appro(tds: {}, years=[], col_comparaison=True):
     indicateurs = {}
@@ -511,17 +515,27 @@ def display_indicateurs(df, transpose=True, format=True, col_order=None):
         print(df.to_html())
 
 
-def display_stacked_bars(df, title="Comparaison entre les campagnes 2022 et 2023", fmt=nombre_formatter, legend=True):
+def display_stacked_bars(df, title="Comparaison entre les campagnes 2022 et 2023", fmt=nombre_formatter, legend=True, iso=True):
     # Choosing order of bars displaying
-
-    ax = df.plot.barh(color=("#4FC4AF", "#063442"), figsize=(8, 6.0))
+    if iso:
+        ax = df.plot.barh(color=("#2f7569", "#063442"), figsize=(8, 6.0))
+    else:
+        ax = df.plot.barh(color=("#FFCE30", "#E83845"), figsize=(8, 6.0))
     for bars in ax.containers:
-        ax.bar_label(bars, fmt=fmt, label_type="edge")
+        ax.bar_label(bars, fmt=fmt, label_type="center", color="white", size=12, weight='bold')
 
-    ax.set_title(title)
+    ax.set_title('Distribution des valeurs d\'achats en € totales et bio', fontsize='large')
+    # ax.set_ylabel('Nombre de TD', fontsize='large')
+    # ax.set_xlabel('Valeurs d\'achats en € (en log)', fontsize='large')
+
+    ax.set_title('Distribution des valeurs d\'achats en € totales et bio', fontsize='large')
+    ax.set_ylabel('Secteur', fontsize='large')
+    ax.set_xlabel('Part des télédéclarants', fontsize='large')
+    ax.set_title(title, size=12, weight='bold')
     if not legend:
         legend = ax.legend()
         legend.remove()
+
 
 
 def display_data_coverage(dfs, sub_columns=[], years=[]):

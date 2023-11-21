@@ -58,7 +58,7 @@ Vous pouvez retrouver l'intégralité du code utilisé sur la page [github de ma
 ```{python Main}
 # | echo: false
 
-cache=False
+cache=True
 
 if not cache:
     tds = utils.load_td()
@@ -93,21 +93,22 @@ if not cache:
         )
 
         # Saving the file stratégie Je Ne Sais Pas
-        tds[f"Campagne {year}"].to_csv(f"data/export_dataset_stats_campagne_{year}_clean.csv", sep=';', index=False)
+        tds[f"Campagne {year}"].to_csv(f"data/export_dataset_stats_campagne_clean_{year}.csv", sep=';', index=False)
 
         # Saving the file stratégie Historique
-        tds[f"{year}_strat_hist"].to_csv(f"data/export_dataset_stats_campagne_{year}_hist.csv", sep=';', index=False)
+        tds[f"{year}_strat_hist"].to_csv(f"data/export_dataset_stats_campagne_hist_{year}.csv", sep=';', index=False)
 
         # Saving the file stratégie Max
-        tds[f"strat_max_{year}"].to_csv(f"data/export_dataset_stats_campagne_{year}_max.csv", sep=';', index=False)
+        tds[f"strat_max_{year}"].to_csv(f"data/export_dataset_stats_campagne_max_{year}.csv", sep=';', index=False)
 
 
 # Whether we use cache or ot, we re-read the file to have consistency in the dataframe
+tds={}
 for year in utils.CAMPAGNES.keys():
     tds[year] = pd.read_csv(f"data/export_dataset_stats_campagne_{year}.csv", sep=";")
-    tds[f"Campagne {year}"] = pd.read_csv(f"data/export_dataset_stats_campagne_{year}_clean.csv", sep=";")
-    tds[f"{year}_strat_hist"] = pd.read_csv(f"data/export_dataset_stats_campagne_{year}_hist.csv", sep=";")
-    tds[f"strat_max_{year}"] = pd.read_csv(f"data/export_dataset_stats_campagne_{year}_max.csv", sep=";")
+    tds[f"Campagne {year}"] = pd.read_csv(f"data/export_dataset_stats_campagne_clean_{year}.csv", sep=";")
+    tds[f"{year}_strat_hist"] = pd.read_csv(f"data/export_dataset_stats_campagne_hist_{year}.csv", sep=";")
+    tds[f"strat_max_{year}"] = pd.read_csv(f"data/export_dataset_stats_campagne_max_{year}.csv", sep=";")
 
 
 # Définition des populations assidus, entrantes et sortantes
@@ -130,6 +131,10 @@ for year in ['2022', '2023', 'Campagne 2022', 'Campagne 2023', '2022_strat_hist'
     tds_commun[year] = tds[year][tds[year]["canteen.id"].isin(restants)]
     tds_commun[year] = tds_commun[year].drop_duplicates('canteen.id')
 
+if not cache:
+    utils.TUNNEL_DATA_ENG['2023']['Après séléction des assidus'] = len(tds_commun['2023'])
+
+
 # Filtrage des assidus dont les montants déclarés entre les 2 campganes sont trop différents
 iso = tds_commun['Campagne 2023'].merge(tds_commun['Campagne 2022'], on='canteen.id', suffixes=('_2023', '_2022'))
 iso['evo_montant_achats'] = iso['teledeclaration.value_total_ht_2023'] / iso['teledeclaration.value_total_ht_2022']
@@ -141,6 +146,9 @@ for year in ['2022', '2023', 'Campagne 2022', 'Campagne 2023', '2022_strat_hist'
     tds_commun[year] = tds_commun[year][tds_commun[year]['canteen.id'].isin(asssidus_clean)]
     tds_commun[year].to_csv(f'data/assidus_{year}.csv', sep=';', index=False)
 
+if not cache:
+    utils.TUNNEL_DATA_ENG['2023']['Après filtrage des assidus'] = len(tds_commun['2023'])
+
 ```
 
 
@@ -150,38 +158,42 @@ Avant d'étudier les chiffres clés de la télédéclaration, nous vous présent
 
 ### Traitements sur les TD 2023
 ```{python}
-print(utils.TUNNEL_DATA_ENG['2023'])
-df = pd.DataFrame(utils.TUNNEL_DATA_ENG['2023'].values(), index=utils.TUNNEL_DATA_ENG['2023'].keys(), columns=['values'])
+if not cache:
+    df = pd.DataFrame(utils.TUNNEL_DATA_ENG['2023'].values(), index=utils.TUNNEL_DATA_ENG['2023'].keys(), columns=['values'])
 
-with plt.style.context("fivethirtyeight"):
-    fig = plt.figure(figsize=(12,10))
+    with plt.style.context("fivethirtyeight"):
+        fig = plt.figure(figsize=(3, 9))
 
-    plt.fill_betweenx(y=[12,14], x1=[18,18], x2=[0,0], color="dodgerblue");
+        # y_values = [11, 9, 7, 5, 3, 1]  # Adjust these values for your desired positioning
+        y_values = [1, 3, 5, 7, 9, 11, 13]  # Adjust these values for your desired positioning
+        
+        x1 = 18  # Adjust the starting x1 position
+        x2 = 0   # Adjust the starting x2 position
+        offset = 1
+        for i in range(len(y_values)):
+            if i == 0 or i == 2:
+                color = "dodgerblue"
+            else:
+                color = "purple"
 
-    plt.fill_betweenx(y=[11,12], x1=[17,18], x2=[1,0], color="dodgerblue", alpha=0.5);
-    plt.fill_betweenx(y=[9,11], x1=[17,17], x2=[1,1], color="dodgerblue");
+            plt.fill_betweenx(y=[y_values[i], y_values[i] - 1], x1=[x1, x1], x2=[x2, x2], color=color)
+            plt.fill_betweenx(y=[y_values[i] - 1, y_values[i] - 2], x1=[x1, x1 - offset], x2=[x2, x2 + offset], color=color, alpha=0.5)
+            offset = 1 if i !=1 else 6
+            x1 += offset  # Adjust the next x1 position
+            x2 += - offset  # Adjust the next x2 position
 
-    plt.fill_betweenx(y=[8,9], x1=[16,17], x2=[2,1], color="dodgerblue", alpha=0.5);
-    plt.fill_betweenx(y=[6,8], x1=[16,16], x2=[2,2], color="dodgerblue");
+        plt.yticks([y_values[i] - 0.5 for i in range(len(y_values))], df.index[::-1])
+        plt.xticks([], [])
 
-    plt.fill_betweenx(y=[5,6], x1=[15,16], x2=[3,2], color="dodgerblue", alpha=0.5);
-    plt.fill_betweenx(y=[3,5], x1=[15,15], x2=[3,3], color="dodgerblue");
+        for i, val in enumerate(df["values"][::-1]):
+            plt.text(9, y_values[i] - 0.5, val, ha="center", fontsize=16, fontweight="bold", color="white")
 
-    plt.fill_betweenx(y=[2,3], x1=[14,15], x2=[4,3], color="dodgerblue", alpha=0.5);
-    plt.fill_betweenx(y=[0,2], x1=[14,14], x2=[4,4], color="dodgerblue");
+        plt.grid(visible=False)
+        plt.title("Traitement des télédéclarations", loc="right", fontsize=25, fontweight="bold")
+        plt.show()
 
-    plt.yticks([1,4,7,10,13], df.index[::-1]);
-    plt.xticks([],[]);
-
-    plt.ylabel("Stage");
-
-    for y, val in zip([1,4,7,10,13],df["values"][::-1]):
-        plt.text(9,y,val, ha="center", fontsize=16, fontweight="bold", color="white")
-
-    plt.grid(visible=False);
-    plt.title("Chaîne de traitement des télédéclarations", loc="left", fontsize=25, fontweight="bold");
-    plt.show()
 ```
+
 
 ### 📷 Campagne 2022
 
@@ -459,19 +471,23 @@ Pour le moment, ces chiffres ne décrivent que les télédéclarations de type s
 # | echo: false
 # | output: asis
 col_order = [
-"Nombre de TD prises en compte",
-"Nombre de TD ayant déclaré Je Ne Sais Pas pour la famille Viande/Volaille 🥩",
-"Taux d'achat alimentaires de la famille Viande/Volaille 🥩",
-"Montant d'achat alimentaires Viande/Volaille 🥩",
-"Taux d'achat alimentaires Egalim au sein de la famille Viande/Volaille 🥩",
-"Montant d'achat alimentaires Egalim Viande/Volaille 🥩",
-"Taux d'achat alimentaires origine France 🇫🇷 au sein de la famille Viande/Volaille 🥩",
-"Montant d'achat alimentaires origine France 🇫🇷 Viande/Volaille 🥩",
-"Nombre de TD ayant déclaré Je Ne Sais Pas pour la famille Poissons/produits de la mer 🐟",
-"Taux d'achat alimentaires de la famille Poissons/produits de la mer 🐟",
-"Taux d'achat alimentaires Egalim au sein de la famille  Poissons/Produits de la mer 🐟",
-"Montant d'achat alimentaires Poissons/Produits de la mer 🐟",
-"Montant d'achat alimentaires Egalim Poissons/Produits de la mer 🐟"
+    "Nombre de TD prises en compte",
+    "Nombre de TD ayant déclaré pour la famille Viande/Volaille 🥩",
+    "Nombre de TD ayant déclaré la valeur 0€ pour la famille Viande/Volaille 🥩",
+    "Montant des achats alimentaires totaux pour la famille Viande/Volaille 🥩",
+    "Taux d'achat alimentaires de la famille Viande/Volaille 🥩",
+    "Montant d'achat alimentaires Viande/Volaille 🥩",
+    "Taux d'achat alimentaires Egalim au sein de la famille Viande/Volaille 🥩",
+    "Montant d'achat alimentaires Egalim Viande/Volaille 🥩",
+    "Taux d'achat alimentaires origine France 🇫🇷 au sein de la famille Viande/Volaille 🥩",
+    "Montant d'achat alimentaires origine France 🇫🇷 Viande/Volaille 🥩",
+    "Nombre de TD ayant déclaré pour la famille Poissons/Produits de la mer 🐟",
+    "Nombre de TD ayant déclaré la valeur 0€ pour la famille Poissons/Produits de la mer 🐟",
+    "Montant des achats alimentaires totaux pour la famille Poissons/Produits de la mer 🐟",
+    "Taux d'achat alimentaires de la famille Poissons/Produits de la mer 🐟",
+    "Taux d'achat alimentaires Egalim au sein de la famille Poissons/Produits de la mer 🐟",
+    "Montant d'achat alimentaires Poissons/Produits de la mer 🐟",
+    "Montant d'achat alimentaires Egalim Poissons/Produits de la mer 🐟"
 ]
 
 indic_famille = utils.calcul_indicateur_famille(tds, years=["Campagne 2023"])
@@ -510,10 +526,14 @@ def categorisation_taille(x):
 year = 'Campagne 2023'
 df_taille = tds[year].copy()[['canteen.id', 'canteen.daily_meal_count']]
 df_taille = df_taille.sort_values('canteen.daily_meal_count')
-df_taille['taille'] = df_taille['canteen.daily_meal_count'].apply(lambda x: categorisation_taille(x))
-sns.histplot(df_taille['taille'])
+df_taille['Taille'] = df_taille['canteen.daily_meal_count'].apply(lambda x: categorisation_taille(x))
+ax = sns.histplot(df_taille['Taille'])
 plt.xticks(rotation=60)
-df_taille = df_taille.groupby('taille').count()[['canteen.id']].rename(columns={'canteen.id': 'Nombre'})
+ax.patches[-1].set_facecolor('salmon')   
+ax.set_ylabel('Nombre de télédéclarations',)
+ax.set_title('Distribution des télédéclarants en fonction de la taille des cantines \n(basé sur le nombre de repas servis par jour)')
+   
+df_taille = df_taille.groupby('Taille').count()[['canteen.id']].rename(columns={'canteen.id': 'Nombre'})
 taille_totale = len(tds[year])
 df_taille['Pourcentage'] = df_taille.apply(lambda x: utils.taux_formatter(x['Nombre']/taille_totale), axis=1)
 ```
@@ -523,12 +543,69 @@ df_taille['Pourcentage'] = df_taille.apply(lambda x: utils.taux_formatter(x['Nom
 # | output: asis
 
 # Cout denrées - Données Aberrantes
-cout_denrees_errors = tds['Campagne 2023'][tds['Campagne 2023']['teledeclaration.cout_denrees'] > 10]
-cout_denrees_errors = cout_denrees_errors.sort_values('teledeclaration.cout_denrees', ascending=False)
-cout_denrees_errors.to_csv('data/cout_denrees_errors.csv', sep=';', index=False)
-cout_denrees_errors.to_html()
+df = tds['Campagne 2023'].copy()
+errors = df[(df['teledeclaration.cout_denrees'] > 10) | (((df['teledeclaration.cout_denrees'] > 0) & (df['teledeclaration.cout_denrees'] < 1.5)))]
+errors = errors.sort_values('teledeclaration.cout_denrees', ascending=False)
+errors.to_csv('data/cout_denrees_errors.csv', sep=';', index=False)
+errors.to_html()
 ```
 
 {{< include _secteurs.qmd >}}
 {{< include _populations.qmd >}}
 {{< include _geo.qmd >}}
+
+
+# Evolution des télédéclaration lors de la campagne 2023
+```{python}
+df = tds['Campagne 2023']
+def categorize_taux_bio(row):
+    taux = 100 * row['teledeclaration.value_bio_ht'] / row['teledeclaration.value_total_ht']
+    return taux
+
+def categorize_taux_egalim(row):
+    taux = 100 * (row["teledeclaration.value_egalim_others_ht"]
+            + row["teledeclaration.value_externality_performance_ht"]
+            + row["teledeclaration.value_bio_ht"]
+            + row["teledeclaration.value_sustainable_ht"]) / row['teledeclaration.value_total_ht']
+    return taux
+df['Distribution des taux Bio'] = df.apply(categorize_taux_bio , axis=1)
+df['Distribution des taux Egalim'] = df.apply(categorize_taux_egalim , axis=1)
+
+
+g = sns.displot(df, x='Distribution des taux Bio', bins=20)
+for i, ax in enumerate(g.axes[:, 0]):
+    ax.set_ylabel('Nombre de télédéclarations',)
+    ax.axvline(x = 20,      # Line on x = 2
+           ymin = 0, # Bottom of the plot
+           ymax = 0.8,
+           color='green',
+           linestyle = "dashed",
+           lw=4) # Top of the plot
+    ax.text(25,1300,'Objectif : 20%', color='green')
+g = sns.displot(df, x='Distribution des taux Egalim', bins=20)
+for i, ax in enumerate(g.axes[:, 0]):
+    ax.set_ylabel('Nombre de télédéclarations',)
+    ax.axvline(x = 50,      # Line on x = 2
+        ymin = 0, # Bottom of the plot
+        ymax = 0.8,
+        color='purple',
+        linestyle = "dashed", lw=4) # Top of the plot
+    ax.text(55,150,'Objectif : 50%', color='purple')
+```
+
+## Nombre de télédéclarations ayant rempli les objectifs bio et Egalim
+
+```{python}
+# | echo: false
+# | output: asis
+df = tds['Campagne 2023'].copy()
+df = df[df['Distribution des taux Bio'] >= 20]
+print(f'{len(df)} télédéclarants remplissent les objectifs Bio\n')
+df = tds['Campagne 2023'].copy()
+df = df[df['Distribution des taux Egalim'] >= 50]
+print(f'{len(df)} télédéclarants remplissent les objectifs Egalim\n')
+df = tds['Campagne 2023'].copy()
+df = df[df['Distribution des taux Bio'] >= 20]
+df = df[df['Distribution des taux Egalim'] >= 50]
+print(f'{len(df)} télédéclarants remplissent les objectifs Bio et Egalim')
+```
