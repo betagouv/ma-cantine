@@ -3,8 +3,7 @@
     <div v-if="stepUrlSlug === 'mode-de-saisie'">
       <fieldset>
         <legend class="text-left my-3">
-          Vous avez indiqué que votre établissement servait moins de 200 couverts par jour. C’est pourquoi selon le
-          niveau d’information disponible, vous pouvez choisir entre les deux types de saisie suivantes.
+          Selon le niveau d’information disponible, vous pouvez choisir entre les deux types de saisie suivantes.
         </legend>
         <v-radio-group class="my-0" v-model="payload.diagnosticType" hide-details>
           <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
