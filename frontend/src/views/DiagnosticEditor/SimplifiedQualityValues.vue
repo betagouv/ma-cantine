@@ -427,7 +427,7 @@ export default {
   data() {
     const siqoLogos = [
       "Logo Label Rouge",
-      "Logo Appellation d'origine (AOC/AOP)",
+      "Logo Appellation d'origine (AOC / AOP)",
       "Logo indication géographique",
       "Logo Spécialité traditionnelle garantie",
     ]

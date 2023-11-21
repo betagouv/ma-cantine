@@ -51,7 +51,7 @@
       <!-- SIQO -->
       <div class="my-2" v-if="showField('valueSustainableHt')">
         <label class="fr-text-sm" for="siqo">
-          La valeur (en HT) de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)
+          La valeur (en HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)
         </label>
         <DsfrCurrencyField
           id="siqo"

@@ -55,7 +55,7 @@
             </div>
           </div>
           <label class="ml-4 ml-md-0" for="siqo">
-            La valeur (en HT) de mes achats SIQO (Label Rouge, AOP/AOC, IGP, STG)
+            La valeur (en HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
@@ -124,7 +124,7 @@ export default {
   data() {
     const siqoLogos = [
       "Logo Label Rouge",
-      "Logo Appellation d'origine (AOC/AOP)",
+      "Logo Appellation d'origine (AOC / AOP)",
       "Logo indication géographique",
       "Logo Spécialité traditionnelle garantie",
     ]

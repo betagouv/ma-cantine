@@ -107,7 +107,7 @@ export default {
       }
       const simplifiedSteps = [
         {
-          title: "Valeurs totales des achats Bio et SIQO (AOP/AOC, IGP, STG, Label Rouge)",
+          title: "Valeurs totales des achats Bio et SIQO (Label Rouge, AOC / AOP, IGP, STG)",
           componentName: "BioSiqoStep",
           urlSlug: "valeurs-totales-bio-siqo",
         },
