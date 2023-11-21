@@ -35,10 +35,6 @@ import DsfrCallout from "@/components/DsfrCallout"
 import { toCurrency } from "@/utils"
 
 const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs par label"
-const DEFAULT_MEAT_POULTRY_TOTAL_ERROR =
-  "Le total des achats viandes et volailles ne peut pas excéder le total des achats"
-const DEFAULT_FISH_TOTAL_ERROR =
-  "Le total des achats poissons, produits de la mer et de l'aquaculture ne peut pas excéder le total des achats"
 
 export default {
   name: "QualityTotalStep",
@@ -58,10 +54,6 @@ export default {
   },
   data() {
     return {
-      totalMeatPoultryError: false,
-      totalFishError: false,
-      totalError: false,
-      totalFamiliesError: false,
       totalErrorMessage: null,
       meatPoultryErrorMessage: null,
       fishErrorMessage: null,
@@ -71,6 +63,18 @@ export default {
   computed: {
     displayPurchaseHints() {
       return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
+    },
+    totalMeatPoultryError() {
+      return !!this.totalMeatPoultryErrorMessage
+    },
+    totalFishError() {
+      return !!this.totalFishErrorMessage
+    },
+    totalError() {
+      return !!this.totalErrorMessage
+    },
+    totalFamiliesError() {
+      return !!this.totalFamiliesErrorMessage
     },
     errorMessages() {
       return [
@@ -108,29 +112,24 @@ export default {
       const totalFish = d.valueFishHt
       const totalFamilies = totalMeatPoultry + totalFish
 
-      this.totalError = sumEgalim > total
-      this.totalMeatPoultryError = totalMeatPoultry > total
-      this.totalFishError = totalFish > total
-      this.totalFamiliesError = totalFamilies > total
-
-      if (this.totalError) {
+      if (sumEgalim > total) {
         this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${toCurrency(sumEgalim || 0)}`
       } else this.totalErrorMessage = null
-      if (this.totalMeatPoultryError) {
-        this.meatPoultryErrorMessage = `${DEFAULT_MEAT_POULTRY_TOTAL_ERROR}`
+      if (totalMeatPoultry > total) {
+        this.meatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
+          totalMeatPoultry
+        )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
       } else this.meatPoultryErrorMessage = null
-      if (this.totalFishError) {
-        this.fishErrorMessage = `${DEFAULT_FISH_TOTAL_ERROR}`
+      if (totalFish > total) {
+        this.fishErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
+          totalFish
+        )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
       } else this.fishErrorMessage = null
-      if (this.totalFamiliesError) {
+      if (totalFamilies > total) {
         this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
       } else this.totalFamiliesErrorMessage = null
-
-      return [this.totalError, this.totalMeatPoultryError, this.totalFishError, this.totalFamiliesError].every(
-        (x) => !x
-      )
     },
     sumAllEgalim() {
       const d = this.payload

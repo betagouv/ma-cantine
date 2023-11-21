@@ -103,9 +103,6 @@ export default {
   },
   data() {
     return {
-      fishError: false,
-      totalFishError: false,
-      totalFamiliesError: false,
       fishTotalErrorMessage: null,
       fishErrorMessage: null,
       totalFamiliesErrorMessage: null,
@@ -114,6 +111,15 @@ export default {
   computed: {
     displayPurchaseHints() {
       return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
+    },
+    fishError() {
+      return !!this.fishErrorMessage
+    },
+    totalFishError() {
+      return !!this.fishTotalErrorMessage
+    },
+    totalFamiliesError() {
+      return !!this.totalFamiliesErrorMessage
     },
     hasError() {
       return [this.totalFishError, this.fishError, this.totalFamiliesError].some((x) => !!x)
@@ -141,28 +147,22 @@ export default {
       const totalMeatPoultry = d.valueMeatPoultryHt
       const totalFamilies = totalMeatPoultry + totalFish
 
-      this.totalFishError = totalFish > total
-      this.fishError = sumFish > totalFish
-      this.totalFamiliesError = totalFamilies > total
-
-      if (this.totalFishError) {
+      if (totalFish > total) {
         this.fishTotalErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
           totalFish
         )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
       } else this.fishTotalErrorMessage = null
 
-      if (this.fishError) {
-        this.fishErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
+      if (sumFish > totalFish) {
+        this.fishErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
           totalFish
         )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumFish)})`
       } else this.fishErrorMessage = null
-      if (this.totalFamiliesError) {
+      if (totalFamilies > total) {
         this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
       } else this.totalFamiliesErrorMessage = null
-
-      return [this.totalFishError, this.fishError, this.totalFamiliesError].every((x) => !x)
     },
   },
   watch: {

@@ -196,7 +196,6 @@ export default {
       "Logo Commerce Équitable",
     ]
     return {
-      totalError: false,
       totalErrorMessage: null,
       otherLabels: labels.filter((x) => otherLogos.includes(x.title)),
       valueExternalityPerformanceHtDialog: false,
@@ -205,6 +204,9 @@ export default {
   computed: {
     displayPurchaseHints() {
       return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
+    },
+    totalError() {
+      return !!this.totalErrorMessage
     },
   },
   methods: {
@@ -216,14 +218,12 @@ export default {
       const d = this.payload
       const sumEgalim = this.sumAllEgalim()
       const total = d.valueTotalHt
-      this.totalError = sumEgalim > total
 
-      if (this.totalError) {
+      if (sumEgalim > total) {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
           d.valueTotalHt
         )}) doit être plus élévé que la somme des valeurs EGAlim (${toCurrency(sumEgalim || 0)})`
       } else this.totalErrorMessage = null
-      return !!this.totalError
     },
     sumAllEgalim() {
       const d = this.payload

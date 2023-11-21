@@ -139,9 +139,6 @@ export default {
   },
   data() {
     return {
-      totalMeatPoultryError: false,
-      meatPoultryError: false,
-      totalFamiliesError: false,
       totalMeatPoultryErrorMessage: null,
       meatPoultryErrorMessage: null,
       totalFamiliesErrorMessage: null,
@@ -150,6 +147,15 @@ export default {
   computed: {
     displayPurchaseHints() {
       return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
+    },
+    totalMeatPoultryError() {
+      return !!this.totalMeatPoultryErrorMessage
+    },
+    meatPoultryError() {
+      return !!this.meatPoultryErrorMessage
+    },
+    totalFamiliesError() {
+      return !!this.totalFamiliesErrorMessage
     },
     hasError() {
       return [this.totalMeatPoultryError, this.meatPoultryError, this.totalFamiliesError].some((x) => !!x)
@@ -180,27 +186,21 @@ export default {
       const totalFish = d.valueFishHt
       const totalFamilies = totalMeatPoultry + totalFish
 
-      this.totalMeatPoultryError = totalMeatPoultry > total
-      this.meatPoultryError = sumMeatPoultry > totalMeatPoultry
-      this.totalFamiliesError = totalFamilies > total
-
-      if (this.totalMeatPoultryError) {
+      if (totalMeatPoultry > total) {
         this.totalMeatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
           totalMeatPoultry
         )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
       } else this.totalMeatPoultryErrorMessage = null
-      if (this.meatPoultryError) {
+      if (sumMeatPoultry > totalMeatPoultry) {
         this.meatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
           totalMeatPoultry
         )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumMeatPoultry)})`
       } else this.meatPoultryErrorMessage = null
-      if (this.totalFamiliesError) {
+      if (totalFamilies > total) {
         this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
       } else this.totalFamiliesErrorMessage = null
-
-      return [this.totalMeatPoultryError, this.meatPoultryError, this.totalFamiliesError].every((x) => !x)
     },
   },
   watch: {
