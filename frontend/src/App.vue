@@ -4,9 +4,9 @@
       <WidgetHeader class="ma-4 mb-0 constrained" v-if="isWidget" />
       <AppHeader class="mx-auto constrained" v-else-if="!fullscreen" />
 
-      <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget }">
+      <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget, 'fill-height': fullscreen }">
         <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner" />
-        <v-container fluid :fill-height="!initialDataLoaded">
+        <v-container fluid :fill-height="!initialDataLoaded || fullscreen" :class="{ 'pa-0': fullscreen }">
           <v-progress-circular
             indeterminate
             style="position: absolute; left: 50%; top: 50%"

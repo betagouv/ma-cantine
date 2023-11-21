@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="fr-stepper">
-      <h1 class="fr-stepper__title mb-4">
+      <h1 class="fr-stepper__title mb-2 mb-sm-4">
         <span class="fr-stepper__state">Étape {{ currentStepIdx + 1 }} sur {{ stepTotal }}</span>
         {{ step.title }}
       </h1>
       <v-row class="fr-stepper__steps ma-0" :data-fr-current-step="currentStepIdx + 1" :data-fr-steps="stepTotal">
         <v-col v-for="(_, idx) in steps" :key="idx" :class="stepClass(idx)" />
       </v-row>
-      <p v-if="nextStep" class="fr-stepper__details mt-4">
+      <p v-if="nextStep && $vuetify.breakpoint.smAndUp" class="fr-stepper__details mt-4 mb-0">
         <span class="font-weight-bold">Étape suivante :</span>
         {{ nextStep.title }}
       </p>

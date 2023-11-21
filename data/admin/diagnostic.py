@@ -44,7 +44,17 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "modification_date",
     )
     list_filter = ("year",)
-    readonly_fields = ("creation_mtm_source", "creation_mtm_campaign", "creation_mtm_medium")
+    readonly_fields = (
+        "creation_mtm_source",
+        "creation_mtm_campaign",
+        "creation_mtm_medium",
+        "creation_source",
+        "tunnel_appro",
+        "tunnel_waste",
+        "tunnel_plastic",
+        "tunnel_diversification",
+        "tunnel_info",
+    )
     raw_id_fields = ("canteen",)
 
     fieldsets = (
@@ -54,6 +64,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 "fields": (
                     "canteen",
                     "year",
+                    "creation_source",
                     "diagnostic_type",
                     "central_kitchen_diagnostic_mode",
                 )
@@ -63,6 +74,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             "Plus de produits de qualité et durables dans nos assiettes",
             {
                 "fields": (
+                    "tunnel_appro",
                     "value_total_ht",
                     "value_bio_ht",
                     "value_sustainable_ht",
@@ -80,6 +92,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             "Lutte contre le gaspillage alimentaire et dons alimentaires",
             {
                 "fields": (
+                    "tunnel_waste",
                     "has_waste_diagnostic",
                     "has_waste_plan",
                     "waste_actions",
@@ -100,6 +113,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             "Diversification des sources de protéines et menus végétariens",
             {
                 "fields": (
+                    "tunnel_diversification",
                     "has_diversification_plan",
                     "diversification_plan_actions",
                     "vegetarian_weekly_recurrence",
@@ -112,6 +126,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             "Substitution des plastiques",
             {
                 "fields": (
+                    "tunnel_plastic",
                     "cooking_plastic_substituted",
                     "serving_plastic_substituted",
                     "plastic_bottles_substituted",
@@ -123,6 +138,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             "Information des usagers et convives",
             {
                 "fields": (
+                    "tunnel_info",
                     "communication_supports",
                     "other_communication_support",
                     "communication_support_url",

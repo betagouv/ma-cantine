@@ -7,7 +7,7 @@
     </p>
 
     <DsfrCallout v-if="totalError" color="red lighten-1">
-      {{ totalErrorMessage }}
+      <p class="ma-0">{{ totalErrorMessage }}</p>
     </DsfrCallout>
 
     <!-- Bio -->
@@ -15,12 +15,13 @@
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
           <LogoBio style="max-height: 30px;" v-if="$vuetify.breakpoint.smAndDown" />
-          <label class="ml-4 ml-md-0" :for="'bio-' + diagnostic.year">
-            La valeur (en HT) de mes achats Bio ou en conversion Bio (Optionnel)
+          <label class="ml-4 ml-md-0" for="bio">
+            La valeur (en HT) de mes achats Bio ou en conversion Bio
+            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'bio-' + diagnostic.year"
+          id="bio"
           v-model.number="payload.valueBioHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
@@ -40,25 +41,26 @@
     </v-row>
 
     <!-- SIQO -->
-    <v-row class="mb-8">
+    <v-row>
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
           <div class="d-flex" v-if="$vuetify.breakpoint.smAndDown">
             <div v-for="label in siqoLabels" :key="label.title">
               <img
                 :src="`/static/images/quality-labels/${label.src}`"
-                :alt="label.title"
+                alt=""
                 :title="label.title"
                 style="max-height: 30px;"
               />
             </div>
           </div>
-          <label class="ml-4 ml-md-0" :for="'siqo-' + diagnostic.year">
-            La valeur (en HT) de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)
+          <label class="ml-4 ml-md-0" for="siqo">
+            La valeur (en HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)
+            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'siqo-' + diagnostic.year"
+          id="siqo"
           v-model.number="payload.valueSustainableHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
@@ -76,7 +78,7 @@
         <div v-for="label in siqoLabels" :key="label.title">
           <img
             :src="`/static/images/quality-labels/${label.src}`"
-            :alt="label.title"
+            alt=""
             :title="label.title"
             class="mr-1"
             style="max-height: 40px;"
@@ -97,7 +99,7 @@
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import DsfrCallout from "@/components/DsfrCallout"
-import ErrorHelper from "./ErrorHelper.vue"
+import ErrorHelper from "./ErrorHelper"
 import labels from "@/data/quality-labels.json"
 import LogoBio from "@/components/LogoBio"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
@@ -122,19 +124,21 @@ export default {
   data() {
     const siqoLogos = [
       "Logo Label Rouge",
-      "Logo Appellation d'origine (AOC/AOP)",
+      "Logo Appellation d'origine (AOC / AOP)",
       "Logo indication géographique",
       "Logo Spécialité traditionnelle garantie",
     ]
     return {
-      totalError: false,
       totalErrorMessage: "",
       siqoLabels: labels.filter((x) => siqoLogos.includes(x.title)),
     }
   },
   computed: {
     displayPurchaseHints() {
-      return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
+      return !!this.purchasesSummary
+    },
+    totalError() {
+      return !!this.totalErrorMessage
     },
   },
   methods: {
@@ -146,14 +150,12 @@ export default {
       const d = this.payload
       const sumEgalim = this.sumAllEgalim()
       const total = d.valueTotalHt
-      this.totalError = sumEgalim > total
 
-      if (this.totalError) {
+      if (sumEgalim > total) {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
           d.valueTotalHt
         )}) doit être plus élévé que la somme des valeurs EGAlim (${toCurrency(sumEgalim || 0)})`
       } else this.totalErrorMessage = null
-      return !!this.totalError
     },
     sumAllEgalim() {
       const d = this.payload

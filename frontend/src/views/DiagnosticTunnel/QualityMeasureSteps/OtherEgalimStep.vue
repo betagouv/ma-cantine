@@ -6,7 +6,7 @@
     </p>
 
     <DsfrCallout v-if="totalError" color="red lighten-1">
-      {{ totalErrorMessage }}
+      <p class="ma-0">{{ totalErrorMessage }}</p>
     </DsfrCallout>
 
     <!-- Other EGAlim -->
@@ -22,17 +22,18 @@
                 style="max-height: 30px;"
               />
             </div>
-            <v-icon size="30" color="brown">
+            <v-icon size="30" color="brown" aria-label="Fermier" title="Fermier" aria-hidden="false" role="img">
               mdi-cow
             </v-icon>
           </div>
 
-          <label class="ml-4 ml-md-0" :for="'other-' + diagnostic.year">
+          <label class="ml-4 ml-md-0" for="other">
             La valeur (en HT) des autres achats EGAlim
+            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'other-' + diagnostic.year"
+          id="other"
           v-model.number="payload.valueEgalimOthersHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
@@ -57,7 +58,7 @@
               style="max-height: 40px;"
             />
           </div>
-          <v-icon size="40" color="brown">
+          <v-icon size="40" color="brown" aria-label="Fermier" title="Fermier" aria-hidden="false" role="img">
             mdi-cow
           </v-icon>
         </div>
@@ -65,7 +66,7 @@
     </v-row>
 
     <!-- Externalités -->
-    <v-row class="mb-8">
+    <v-row>
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
           <div class="d-flex" v-if="$vuetify.breakpoint.smAndDown">
@@ -76,7 +77,7 @@
               mdi-chart-line
             </v-icon>
           </div>
-          <label class="ml-4 ml-md-0" :for="'siqo-' + diagnostic.year">
+          <label class="ml-4 ml-md-0" for="ext-perf">
             Critères d'achat : La valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités
             environnementales ou acquis sur la base de leurs performances en matière environnementale.
             <br />
@@ -90,10 +91,10 @@
               <v-card class="text-left">
                 <div class="pa-4 d-flex align-center" style="background-color: #F5F5F5">
                   <div class="d-flex">
-                    <v-icon color="purple">
+                    <v-icon color="purple" alt="" title="Externalités environnementales">
                       mdi-flower-tulip-outline
                     </v-icon>
-                    <v-icon class="ml-1" color="green">
+                    <v-icon class="ml-1" color="green" alt="" title="Performance environnementale">
                       mdi-chart-line
                     </v-icon>
                   </div>
@@ -124,10 +125,11 @@
                 </v-card-text>
               </v-card>
             </v-dialog>
+            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'ext-perf-' + diagnostic.year"
+          id="ext-perf"
           v-model.number="payload.valueExternalityPerformanceHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
@@ -143,10 +145,10 @@
       </v-col>
       <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
         <div class="d-flex">
-          <v-icon size="30" color="purple">
+          <v-icon size="30" color="purple" alt="" title="Externalités environnementales">
             mdi-flower-tulip-outline
           </v-icon>
-          <v-icon size="30" class="ml-2" color="green">
+          <v-icon size="30" class="ml-2" color="green" alt="" title="Performance environnementale">
             mdi-chart-line
           </v-icon>
         </div>
@@ -167,7 +169,7 @@ import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import labels from "@/data/quality-labels.json"
 import { toCurrency } from "@/utils"
-import ErrorHelper from "./ErrorHelper.vue"
+import ErrorHelper from "./ErrorHelper"
 import DsfrCallout from "@/components/DsfrCallout"
 
 export default {
@@ -194,7 +196,6 @@ export default {
       "Logo Commerce Équitable",
     ]
     return {
-      totalError: false,
       totalErrorMessage: null,
       otherLabels: labels.filter((x) => otherLogos.includes(x.title)),
       valueExternalityPerformanceHtDialog: false,
@@ -202,7 +203,10 @@ export default {
   },
   computed: {
     displayPurchaseHints() {
-      return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
+      return !!this.purchasesSummary
+    },
+    totalError() {
+      return !!this.totalErrorMessage
     },
   },
   methods: {
@@ -214,14 +218,12 @@ export default {
       const d = this.payload
       const sumEgalim = this.sumAllEgalim()
       const total = d.valueTotalHt
-      this.totalError = sumEgalim > total
 
-      if (this.totalError) {
+      if (sumEgalim > total) {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
           d.valueTotalHt
         )}) doit être plus élévé que la somme des valeurs EGAlim (${toCurrency(sumEgalim || 0)})`
       } else this.totalErrorMessage = null
-      return !!this.totalError
     },
     sumAllEgalim() {
       const d = this.payload

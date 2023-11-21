@@ -1,11 +1,21 @@
 <template>
-  <div class="text-left">
-    <v-row class="header">
-      <v-row class="mx-auto constrained pt-6">
-        <v-col cols="9">
-          <p class="fr-text-xs text-transform-uppercase mb-0">{{ measure.shortTitle }}</p>
+  <div class="text-left d-flex flex-column my-n5" ref="container" v-resize="onResize" style="width: 100%">
+    <div class="header pa-2">
+      <v-row class="mx-auto constrained align-center my-3 my-sm-6">
+        <v-col cols="9" class="py-4 d-flex" v-if="$vuetify.breakpoint.smAndUp">
+          <div v-for="tunnel in tunnels" :key="tunnel.id" class="px-4 header-icon">
+            <div v-if="tunnel.id === measure.id" class="d-flex align-center my-1">
+              <v-icon small color="primary" class="mr-2">{{ measure.mdiIcon }}</v-icon>
+              <p class="fr-text-xs text-uppercase mb-0 grey--text text--darken-2 font-weight-bold">
+                {{ measure.shortTitle }}
+              </p>
+            </div>
+            <div v-else>
+              <v-icon small color="primary lighten-4">{{ tunnel.icon }}</v-icon>
+            </div>
+          </div>
         </v-col>
-        <v-col class="text-right">
+        <v-col class="text-right py-0">
           <p class="mb-0">
             <v-btn text plain class="text-decoration-underline" color="primary" @click="saveAndQuit">
               Sauvegarder et quitter
@@ -15,12 +25,16 @@
             </v-btn>
           </p>
         </v-col>
-        <v-col v-if="step && !step.isSynthesis" cols="12">
+        <v-col v-if="step && !step.isSynthesis" cols="12" class="pt-0 px-0 mb-n8">
           <DsfrStepper :steps="stepperSteps" :currentStepIdx="stepIdx" />
         </v-col>
       </v-row>
-    </v-row>
-    <div v-if="diagnostic" class="mx-auto constrained pa-10">
+    </div>
+    <div
+      v-if="diagnostic"
+      class="mx-auto constrained px-4 py-10 flex-grow-1"
+      style="width: 100%; overflow-y: scroll; overflow-x: hidden;"
+    >
       <component
         :is="`${measure.baseComponent}Steps`"
         :canteen="canteen"
@@ -30,18 +44,18 @@
         v-on:update-steps="updateSteps"
       />
     </div>
-    <v-row class="footer">
-      <v-row class="mx-auto constrained">
-        <v-col v-if="nextMeasureTitle" cols="5">
-          <p class="fr-text-xs grey--text text--darken-2">
+    <div class="footer pa-2" style="width: 100%">
+      <div class="d-flex mx-auto constrained align-center">
+        <div v-if="step && step.isSynthesis && nextTunnelTitle && $vuetify.breakpoint.smAndUp" cols="5">
+          <p class="fr-text-xs grey--text text--darken-2 mb-0">
             Onglet suivant :
-            <b>{{ nextMeasureTitle }}</b>
+            <b>{{ nextTunnelTitle }}</b>
           </p>
-        </v-col>
-        <v-spacer />
-        <v-col>
-          <v-row class="py-10 px-4 align-center flex-row-reverse">
-            <v-btn :disabled="!formIsValid" @click="continueAction" color="primary" class="ml-4">
+        </div>
+        <v-spacer v-if="$vuetify.breakpoint.smAndUp" />
+        <div>
+          <div class="d-block d-sm-flex pt-5 pt-sm-6 pb-3 pb-sm-16 px-4 align-center flex-row-reverse">
+            <v-btn :disabled="!formIsValid" @click="continueAction" color="primary" class="ml-0 ml-sm-4 mb-4 mb-sm-0">
               {{ continueActionText }}
             </v-btn>
             <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
@@ -53,10 +67,10 @@
                 Revenir à l'étape précédente
               </a>
             </p>
-          </v-row>
-        </v-col>
-      </v-row>
-    </v-row>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -99,6 +113,15 @@ export default {
       diagnostic: null,
       payload: {},
       steps: [],
+      tunnels: [
+        ...keyMeasures.map((km) => ({
+          id: km.id,
+          title: km.title,
+          shortTitle: km.shortTitle,
+          icon: km.mdiIcon,
+          backendField: km.progressField,
+        })),
+      ],
     }
   },
   computed: {
@@ -129,7 +152,7 @@ export default {
       return this.stepIdx > 0 ? this.steps[this.stepIdx - 1] : null
     },
     continueActionText() {
-      const returnToTable = this.step?.isFinal
+      const returnToTable = !this.nextTunnel
       if (returnToTable) return "Retour au tableau de bord"
       const nextIsNewMeasure = this.step?.isSynthesis
       if (nextIsNewMeasure) return "Passer à l'onglet suivant"
@@ -137,8 +160,15 @@ export default {
       if (nextIsSynthesis) return "Voir la synthèse"
       return "Sauvegarder et continuer"
     },
-    nextMeasureTitle() {
-      return this.nextStep?.measure?.title
+    nextTunnel() {
+      const currentTunnelIdx = this.tunnels.findIndex((t) => t.id === this.measureId)
+      if (currentTunnelIdx <= this.tunnels.length) {
+        return this.tunnels[currentTunnelIdx + 1]
+      }
+      return null
+    },
+    nextTunnelTitle() {
+      return this.nextTunnel?.shortTitle
     },
     quitLink() {
       return {
@@ -155,7 +185,7 @@ export default {
     },
     stepperSteps() {
       // we do not count the synthèse as a step, this assumes that all steps will include a final synthèse
-      const synthesisUrl = "synthèse"
+      const synthesisUrl = "complet"
       return this.steps.filter((s) => s.urlSlug !== synthesisUrl)
     },
   },
@@ -199,13 +229,26 @@ export default {
       this.saveDiagnostic().then(() => {
         if (this.nextStep) {
           this.$router.push({ query: { étape: this.nextStep.urlSlug } })
+        } else if (this.nextTunnel) {
+          this.$router.push({
+            name: "MyProgress",
+            params: { measure: this.nextTunnel.id },
+          })
+        } else {
+          this.$router.push({
+            name: "DashboardManager",
+            params: {
+              canteenUrlComponent: this.canteenUrlComponent,
+            },
+          })
         }
       })
     },
     updateProgress() {
-      if (this.isSynthesis) this.payload.tunnelQuality = "COMPLETE"
-      else if (this.step.isFinal) this.payload.tunnelComplete = true
-      this.payload.tunnelQuality = this.step?.urlSlug
+      const backendField = this.tunnels.find((t) => t.id === this.measureId)?.backendField
+      if (backendField) {
+        this.payload[backendField] = this.step?.urlSlug
+      }
     },
     updatePageTitle() {
       document.title = `${this.step.title} - ${this.year} - ${this.canteen.name} - ${this.$store.state.pageTitleSuffix}`
@@ -226,9 +269,15 @@ export default {
     stepLink(step) {
       return { query: { étape: step.urlSlug } }
     },
+    onResize() {
+      const height = window.innerHeight
+      if (!this.$refs.container) return
+      this.$refs.container.style.height = `${height}px`
+    },
   },
   mounted() {
     this.fetchCanteen().then(() => this.fetchDiagnostic())
+    this.onResize()
   },
   watch: {
     step(newStep) {
@@ -252,5 +301,8 @@ export default {
 }
 a[aria-disabled="true"] {
   cursor: not-allowed;
+}
+.header-icon {
+  border-right: #e5e5e5 solid 1px;
 }
 </style>

@@ -3,14 +3,13 @@
     <div v-if="stepUrlSlug === 'mode-de-saisie'">
       <fieldset>
         <legend class="text-left my-3">
-          Vous avez indiqué que votre établissement servait moins de 200 couverts par jour. C’est pourquoi selon le
-          niveau d’information disponible, vous pouvez choisir entre les deux types de saisie suivantes.
+          Selon le niveau d’information disponible, vous pouvez choisir entre les deux types de saisie suivantes.
         </legend>
         <v-radio-group class="my-0" v-model="payload.diagnosticType" hide-details>
           <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
             <template v-slot:label>
               <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
-              <span class="body-2 ml-3">{{ type.help }}</span>
+              <span class="fr-text-sm ml-3">{{ type.help }}</span>
             </template>
           </v-radio>
         </v-radio-group>
@@ -75,7 +74,7 @@ export default {
     FamilyFieldsStep,
   },
   data() {
-    const payload = { diagnosticType: this.diagnostic.diagnosticType }
+    const payload = { diagnosticType: this.diagnostic.diagnosticType || "SIMPLE" }
     Object.keys(this.diagnostic).forEach((key) => {
       if (key.startsWith("value")) {
         payload[key] = this.diagnostic[key]
@@ -111,11 +110,11 @@ export default {
         title: "Synthèse",
         isSynthesis: true,
         componentName: "QualityMeasureSummary",
-        urlSlug: "synthèse",
+        urlSlug: "complet",
       }
       const simplifiedSteps = [
         {
-          title: "Valeurs totales des achats Bio et SIQO (AOP/AOC, IGP, STG, Label Rouge)",
+          title: "Valeurs totales des achats Bio et SIQO (Label Rouge, AOC / AOP, IGP, STG)",
           componentName: "BioSiqoStep",
           urlSlug: "valeurs-totales-bio-siqo",
         },
@@ -131,7 +130,7 @@ export default {
         },
         {
           title: "Zoom sur la famille « produits de la mer et de l’aquaculture »",
-          componentName: FishStep,
+          componentName: "FishStep",
           urlSlug: "valeurs-totales-mer-aquaculture",
         },
       ]
@@ -176,8 +175,9 @@ export default {
       fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.diagnostic.year}`)
         .then((response) => (response.ok ? response.json() : {}))
         .then((response) => {
-          const hasSummary = Object.values(response).some((x) => !!x)
-          if (hasSummary) this.$set(this, "purchasesSummary", response)
+          if (Object.values(response).some((x) => !!x)) {
+            this.$set(this, "purchasesSummary", response)
+          } else this.$set(this, "purchasesSummary", null)
         })
     },
   },

@@ -11,6 +11,7 @@
     "id": "qualite-des-produits",
     "mdiIcon": "mdi-food-apple",
     "mdiIconColor": "red",
+    "progressField": "tunnelAppro",
     "shortTitle": "Qualité des produits",
     "subMeasures": [
       {
@@ -53,6 +54,7 @@
     "id": "gaspillage-alimentaire",
     "mdiIcon": "mdi-offer",
     "mdiIconColor": "orange darken-2",
+    "progressField": "tunnelWaste",
     "shortTitle": "Lutte contre le gaspillage",
     "subMeasures": [
       {
@@ -113,6 +115,7 @@
     "id": "diversification-des-menus",
     "mdiIcon": "$leaf-fill",
     "mdiIconColor": "green darken-1",
+    "progressField": "tunnelDiversification",
     "shortTitle": "Diversification des menus",
     "subMeasures": [
       {
@@ -193,6 +196,7 @@
     "id": "interdiction-du-plastique",
     "mdiIcon": "mdi-weather-windy",
     "mdiIconColor": "blue darken-1",
+    "progressField": "tunnelPlastic",
     "shortTitle": "Interdiction du plastique",
     "subMeasures": [
       {
@@ -293,6 +297,7 @@
     "id": "information-des-usagers",
     "mdiIcon": "mdi-bullhorn",
     "mdiIconColor": "amber darken-2",
+    "progressField": "tunnelInfo",
     "shortTitle": "Information des convives",
     "subMeasures": [
       {

@@ -14,12 +14,13 @@
               mdi-fish
             </v-icon>
           </div>
-          <label class="body-2 ml-4" :for="'fish-' + diagnostic.year">
+          <label class="ml-4" for="fish">
             La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total
+            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'fish-' + diagnostic.year"
+          id="fish"
           v-model.number="payload.valueFishHt"
           :error="hasError"
           @blur="checkTotal"
@@ -44,12 +45,13 @@
               mdi-fish
             </v-icon>
           </div>
-          <label class="body-2 ml-4" :for="'fish-egalim-' + diagnostic.year">
+          <label class="ml-4" for="fish-egalim">
             La valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture
+            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
-          :id="'fish-egalim-' + diagnostic.year"
+          id="fish-egalim"
           v-model.number="payload.valueFishEgalimHt"
           :error="fishError"
           @blur="checkTotal"
@@ -79,7 +81,7 @@
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
-import ErrorHelper from "./ErrorHelper.vue"
+import ErrorHelper from "./ErrorHelper"
 import DsfrCallout from "@/components/DsfrCallout"
 import { toCurrency } from "@/utils"
 
@@ -101,9 +103,6 @@ export default {
   },
   data() {
     return {
-      fishError: false,
-      totalFishError: false,
-      totalFamiliesError: false,
       fishTotalErrorMessage: null,
       fishErrorMessage: null,
       totalFamiliesErrorMessage: null,
@@ -111,7 +110,16 @@ export default {
   },
   computed: {
     displayPurchaseHints() {
-      return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
+      return !!this.purchasesSummary
+    },
+    fishError() {
+      return !!this.fishErrorMessage
+    },
+    totalFishError() {
+      return !!this.fishTotalErrorMessage
+    },
+    totalFamiliesError() {
+      return !!this.totalFamiliesErrorMessage
     },
     hasError() {
       return [this.totalFishError, this.fishError, this.totalFamiliesError].some((x) => !!x)
@@ -139,28 +147,22 @@ export default {
       const totalMeatPoultry = d.valueMeatPoultryHt
       const totalFamilies = totalMeatPoultry + totalFish
 
-      this.totalFishError = totalFish > total
-      this.fishError = sumFish > totalFish
-      this.totalFamiliesError = totalFamilies > total
-
-      if (this.totalFishError) {
+      if (totalFish > total) {
         this.fishTotalErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
           totalFish
         )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
       } else this.fishTotalErrorMessage = null
 
-      if (this.fishError) {
-        this.fishErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
+      if (sumFish > totalFish) {
+        this.fishErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
           totalFish
         )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumFish)})`
       } else this.fishErrorMessage = null
-      if (this.totalFamiliesError) {
+      if (totalFamilies > total) {
         this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
       } else this.totalFamiliesErrorMessage = null
-
-      return [this.totalFishError, this.fishError, this.totalFamiliesError].every((x) => !x)
     },
   },
   watch: {

@@ -131,7 +131,7 @@ export default {
         {
           title: "Synthèse",
           isSynthesis: true,
-          urlSlug: "synthèse",
+          urlSlug: "complet",
         },
       ],
       boolOptions: [
