@@ -99,7 +99,7 @@
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import DsfrCallout from "@/components/DsfrCallout"
-import ErrorHelper from "./ErrorHelper.vue"
+import ErrorHelper from "./ErrorHelper"
 import labels from "@/data/quality-labels.json"
 import LogoBio from "@/components/LogoBio"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"

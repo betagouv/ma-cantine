@@ -169,7 +169,7 @@ import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import labels from "@/data/quality-labels.json"
 import { toCurrency } from "@/utils"
-import ErrorHelper from "./ErrorHelper.vue"
+import ErrorHelper from "./ErrorHelper"
 import DsfrCallout from "@/components/DsfrCallout"
 
 export default {

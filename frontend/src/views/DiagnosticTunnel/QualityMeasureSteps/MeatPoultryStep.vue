@@ -117,7 +117,7 @@
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
-import ErrorHelper from "./ErrorHelper.vue"
+import ErrorHelper from "./ErrorHelper"
 import DsfrCallout from "@/components/DsfrCallout"
 import { toCurrency } from "@/utils"
 
