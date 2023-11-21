@@ -123,7 +123,7 @@ export default {
         },
         {
           title: "Zoom sur la famille « produits de la mer et de l’aquaculture »",
-          componentName: FishStep,
+          componentName: "FishStep",
           urlSlug: "valeurs-totales-mer-aquaculture",
         },
       ]
