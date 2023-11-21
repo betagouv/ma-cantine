@@ -1,7 +1,7 @@
 <template>
-  <div class="text-left">
-    <v-row class="header">
-      <v-row class="mx-auto constrained align-center py-6">
+  <div class="text-left d-flex flex-column my-n5" ref="container" v-resize="onResize" style="width: 100%">
+    <div class="header pa-2">
+      <v-row class="mx-auto constrained align-center my-3 my-sm-6">
         <v-col cols="9" class="py-4 d-flex" v-if="$vuetify.breakpoint.smAndUp">
           <div v-for="tunnel in tunnels" :key="tunnel.id" class="px-4 header-icon">
             <div v-if="tunnel.id === measure.id" class="d-flex align-center my-1">
@@ -25,12 +25,16 @@
             </v-btn>
           </p>
         </v-col>
-        <v-col v-if="step && !step.isSynthesis" cols="12" class="pt-0 mb-n8">
+        <v-col v-if="step && !step.isSynthesis" cols="12" class="pt-0 px-0 mb-n8">
           <DsfrStepper :steps="stepperSteps" :currentStepIdx="stepIdx" />
         </v-col>
       </v-row>
-    </v-row>
-    <div v-if="diagnostic" class="mx-auto constrained pa-10">
+    </div>
+    <div
+      v-if="diagnostic"
+      class="mx-auto constrained px-4 py-10 flex-grow-1"
+      style="width: 100%; overflow-y: scroll; overflow-x: hidden;"
+    >
       <component
         :is="`${measure.baseComponent}Steps`"
         :canteen="canteen"
@@ -40,18 +44,18 @@
         v-on:update-steps="updateSteps"
       />
     </div>
-    <v-row class="footer">
-      <v-row class="mx-auto constrained align-center">
-        <v-col v-if="step && step.isSynthesis && nextTunnelTitle" cols="5">
+    <div class="footer pa-2" style="width: 100%">
+      <div class="d-flex mx-auto constrained align-center">
+        <div v-if="step && step.isSynthesis && nextTunnelTitle && $vuetify.breakpoint.smAndUp" cols="5">
           <p class="fr-text-xs grey--text text--darken-2 mb-0">
             Onglet suivant :
             <b>{{ nextTunnelTitle }}</b>
           </p>
-        </v-col>
-        <v-spacer />
-        <v-col>
-          <v-row class="py-10 px-4 align-center flex-row-reverse">
-            <v-btn :disabled="!formIsValid" @click="continueAction" color="primary" class="ml-4">
+        </div>
+        <v-spacer v-if="$vuetify.breakpoint.smAndUp" />
+        <div>
+          <div class="d-block d-sm-flex pt-5 pt-sm-6 pb-3 pb-sm-16 px-4 align-center flex-row-reverse">
+            <v-btn :disabled="!formIsValid" @click="continueAction" color="primary" class="ml-0 ml-sm-4 mb-4 mb-sm-0">
               {{ continueActionText }}
             </v-btn>
             <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
@@ -63,10 +67,10 @@
                 Revenir à l'étape précédente
               </a>
             </p>
-          </v-row>
-        </v-col>
-      </v-row>
-    </v-row>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -265,9 +269,15 @@ export default {
     stepLink(step) {
       return { query: { étape: step.urlSlug } }
     },
+    onResize() {
+      const height = window.innerHeight
+      if (!this.$refs.container) return
+      this.$refs.container.style.height = `${height}px`
+    },
   },
   mounted() {
     this.fetchCanteen().then(() => this.fetchDiagnostic())
+    this.onResize()
   },
   watch: {
     step(newStep) {

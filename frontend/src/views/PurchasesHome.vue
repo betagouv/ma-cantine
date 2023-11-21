@@ -247,7 +247,7 @@
       >
         <template v-slot:[`item.description`]="{ item }">
           <router-link :to="{ name: 'PurchasePage', params: { id: item.id } }">
-            {{ item.description }}
+            {{ item.description || "[sans description]" }}
             <span class="d-sr-only">, {{ item.date }}</span>
           </router-link>
         </template>
