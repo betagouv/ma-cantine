@@ -174,17 +174,20 @@ export default {
           { param: "valueBoulangerieLabelRouge", label: "Mes achats boulangerie Label Rouge" },
           { param: "valueBoissonsLabelRouge", label: "Mes achats boissons Label Rouge" },
           { param: "valueAutresLabelRouge", label: "Mes autres achats Label Rouge" },
-          { param: "valueViandesVolaillesAocaopIgpStg", label: "Mes achats viandes et volailles AOC/AOP, IGP ou STG" },
+          {
+            param: "valueViandesVolaillesAocaopIgpStg",
+            label: "Mes achats viandes et volailles AOC / AOP, IGP ou STG",
+          },
           {
             param: "valueProduitsDeLaMerAocaopIgpStg",
-            label: "Mes achats poissons, produits de la mer et de l'aquaculture AOC/AOP, IGP ou STG",
+            label: "Mes achats poissons, produits de la mer et de l'aquaculture AOC / AOP, IGP ou STG",
           },
-          { param: "valueFruitsEtLegumesAocaopIgpStg", label: "Mes achats fruits et legumes AOC/AOP, IGP ou STG" },
-          { param: "valueCharcuterieAocaopIgpStg", label: "Mes achats charcuterie AOC/AOP, IGP ou STG" },
-          { param: "valueProduitsLaitiersAocaopIgpStg", label: "Mes achats produits laitiers AOC/AOP, IGP ou STG" },
-          { param: "valueBoulangerieAocaopIgpStg", label: "Mes achats boulangerie AOC/AOP, IGP ou STG" },
-          { param: "valueBoissonsAocaopIgpStg", label: "Mes achats boissons AOC/AOP, IGP ou STG" },
-          { param: "valueAutresAocaopIgpStg", label: "Mes autres achats AOC/AOP, IGP ou STG" },
+          { param: "valueFruitsEtLegumesAocaopIgpStg", label: "Mes achats fruits et legumes AOC / AOP, IGP ou STG" },
+          { param: "valueCharcuterieAocaopIgpStg", label: "Mes achats charcuterie AOC / AOP, IGP ou STG" },
+          { param: "valueProduitsLaitiersAocaopIgpStg", label: "Mes achats produits laitiers AOC / AOP, IGP ou STG" },
+          { param: "valueBoulangerieAocaopIgpStg", label: "Mes achats boulangerie AOC / AOP, IGP ou STG" },
+          { param: "valueBoissonsAocaopIgpStg", label: "Mes achats boissons AOC / AOP, IGP ou STG" },
+          { param: "valueAutresAocaopIgpStg", label: "Mes autres achats AOC / AOP, IGP ou STG" },
           {
             param: "valueViandesVolaillesHve",
             label: "Mes achats viandes et volailles Certification Environnementale de Niveau 2 ou HVE",
@@ -358,7 +361,7 @@ export default {
       return [
         { param: "valueTotalHt", label: "Mes achats alimentaires total" },
         { param: "valueBioHt", label: "Mes achats Bio ou en conversion Bio" },
-        { param: "valueSustainableHt", label: "Mes achats SIQO (AOP/AOC, IGP, STG)" },
+        { param: "valueSustainableHt", label: "Mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)" },
         {
           param: "valueExternalityPerformanceHt",
           label:

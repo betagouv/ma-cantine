@@ -205,7 +205,7 @@ export default {
           key: "valueBioHt",
         },
         {
-          text: "Total (en HT) de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)",
+          text: "Total (en HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
           key: "valueSustainableHt",
         },
         {
