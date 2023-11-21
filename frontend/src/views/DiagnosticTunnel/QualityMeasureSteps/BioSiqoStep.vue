@@ -48,14 +48,14 @@
             <div v-for="label in siqoLabels" :key="label.title">
               <img
                 :src="`/static/images/quality-labels/${label.src}`"
-                :alt="label.title"
+                alt=""
                 :title="label.title"
                 style="max-height: 30px;"
               />
             </div>
           </div>
           <label class="ml-4 ml-md-0" for="siqo">
-            La valeur (en HT) de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)
+            La valeur (en HT) de mes achats SIQO (Label Rouge, AOP/AOC, IGP, STG)
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
@@ -78,7 +78,7 @@
         <div v-for="label in siqoLabels" :key="label.title">
           <img
             :src="`/static/images/quality-labels/${label.src}`"
-            :alt="label.title"
+            alt=""
             :title="label.title"
             class="mr-1"
             style="max-height: 40px;"

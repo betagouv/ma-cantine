@@ -22,7 +22,7 @@
                 style="max-height: 30px;"
               />
             </div>
-            <v-icon size="30" color="brown">
+            <v-icon size="30" color="brown" aria-label="Fermier" title="Fermier" aria-hidden="false" role="img">
               mdi-cow
             </v-icon>
           </div>
@@ -58,7 +58,7 @@
               style="max-height: 40px;"
             />
           </div>
-          <v-icon size="40" color="brown">
+          <v-icon size="40" color="brown" aria-label="Fermier" title="Fermier" aria-hidden="false" role="img">
             mdi-cow
           </v-icon>
         </div>
@@ -91,10 +91,10 @@
               <v-card class="text-left">
                 <div class="pa-4 d-flex align-center" style="background-color: #F5F5F5">
                   <div class="d-flex">
-                    <v-icon color="purple">
+                    <v-icon color="purple" alt="" title="Externalités environnementales">
                       mdi-flower-tulip-outline
                     </v-icon>
-                    <v-icon class="ml-1" color="green">
+                    <v-icon class="ml-1" color="green" alt="" title="Performance environnementale">
                       mdi-chart-line
                     </v-icon>
                   </div>
@@ -145,10 +145,10 @@
       </v-col>
       <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
         <div class="d-flex">
-          <v-icon size="30" color="purple">
+          <v-icon size="30" color="purple" alt="" title="Externalités environnementales">
             mdi-flower-tulip-outline
           </v-icon>
-          <v-icon size="30" class="ml-2" color="green">
+          <v-icon size="30" class="ml-2" color="green" alt="" title="Performance environnementale">
             mdi-chart-line
           </v-icon>
         </div>
