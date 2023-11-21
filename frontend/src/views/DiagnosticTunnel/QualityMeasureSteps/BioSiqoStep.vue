@@ -40,7 +40,7 @@
     </v-row>
 
     <!-- SIQO -->
-    <v-row class="mb-8">
+    <v-row>
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
           <div class="d-flex" v-if="$vuetify.breakpoint.smAndDown">
