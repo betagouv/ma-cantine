@@ -10,7 +10,7 @@
           <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
             <template v-slot:label>
               <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
-              <span class="body-2 ml-3">{{ type.help }}</span>
+              <span class="fr-text-sm ml-3">{{ type.help }}</span>
             </template>
           </v-radio>
         </v-radio-group>

@@ -16,7 +16,7 @@
               mdi-food-drumstick
             </v-icon>
           </div>
-          <label class="body-2 ml-4" for="meat-poultry">
+          <label class="ml-4" for="meat-poultry">
             La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
@@ -49,7 +49,7 @@
               mdi-food-drumstick
             </v-icon>
           </div>
-          <label class="body-2 ml-4" for="meat-poultry-egalim">
+          <label class="ml-4" for="meat-poultry-egalim">
             La valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
@@ -82,7 +82,7 @@
               mdi-food-drumstick
             </v-icon>
           </div>
-          <label class="body-2 ml-4" for="meat-poultry-france">
+          <label class="ml-4" for="meat-poultry-france">
             La valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>

@@ -7,7 +7,7 @@
     <v-card-text>
       <!-- TOTAL -->
       <div class="my-2" v-if="showField('valueTotalHt')">
-        <label for="total" class="body-2">
+        <label for="total" class="fr-text-sm">
           La valeur (en HT) de mes achats alimentaires total
         </label>
 
@@ -29,7 +29,7 @@
 
       <!-- BIO -->
       <div class="my-2" v-if="showField('valueBioHt')">
-        <label class="body-2" for="bio">
+        <label class="fr-text-sm" for="bio">
           La valeur (en HT) de mes achats Bio ou en conversion Bio
         </label>
         <DsfrCurrencyField
@@ -50,7 +50,7 @@
 
       <!-- SIQO -->
       <div class="my-2" v-if="showField('valueSustainableHt')">
-        <label class="body-2" for="siqo">
+        <label class="fr-text-sm" for="siqo">
           La valeur (en HT) de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)
         </label>
         <DsfrCurrencyField
@@ -71,7 +71,7 @@
 
       <!-- Other EGAlim -->
       <div class="my-2" v-if="showField('valueEgalimOthersHt')">
-        <label class="body-2" for="other">
+        <label class="fr-text-sm" for="other">
           La valeur (en HT) des autres achats EGAlim
         </label>
         <DsfrCurrencyField
@@ -92,7 +92,7 @@
 
       <!-- Performance Externalités -->
       <div class="my-2" v-if="showField('valueExternalityPerformanceHt')">
-        <label class="body-2" for="ext-perf">
+        <label class="fr-text-sm" for="ext-perf">
           Critères d'achat : La valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités
           environnementales ou acquis sur la base de leurs performances en matière environnementale.
         </label>
@@ -114,7 +114,7 @@
 
       <!-- Viande et volailles -->
       <div class="my-2" v-if="showField('valueMeatPoultryHt')">
-        <label class="body-2" for="meat-poultry">
+        <label class="fr-text-sm" for="meat-poultry">
           La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total
         </label>
         <DsfrCurrencyField
@@ -133,7 +133,7 @@
         />
       </div>
       <div class="my-2" v-if="showField('valueMeatPoultryEgalimHt')">
-        <label class="body-2" for="meat-poultry-egalim">
+        <label class="fr-text-sm" for="meat-poultry-egalim">
           La valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées
         </label>
         <DsfrCurrencyField
@@ -152,7 +152,7 @@
         />
       </div>
       <div class="my-2" v-if="showField('valueMeatPoultryFranceHt')">
-        <label class="body-2" for="meat-poultry-france">
+        <label class="fr-text-sm" for="meat-poultry-france">
           La valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées
         </label>
         <DsfrCurrencyField
@@ -173,7 +173,7 @@
 
       <!-- Poissons -->
       <div class="my-2" v-if="showField('valueFishHt')">
-        <label class="body-2" for="fish">
+        <label class="fr-text-sm" for="fish">
           La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total
         </label>
         <DsfrCurrencyField
@@ -192,7 +192,7 @@
         />
       </div>
       <div class="my-2" v-if="showField('valueFishEgalimHt')">
-        <label class="body-2" for="fish-egalim">
+        <label class="fr-text-sm" for="fish-egalim">
           La valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture
         </label>
         <DsfrCurrencyField
