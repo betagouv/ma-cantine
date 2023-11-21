@@ -110,7 +110,7 @@ export default {
   },
   computed: {
     displayPurchaseHints() {
-      return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
+      return !!this.purchasesSummary
     },
     fishError() {
       return !!this.fishErrorMessage

@@ -151,7 +151,11 @@ export default {
     fetchPurchasesSummary() {
       fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.diagnostic.year}`)
         .then((response) => (response.ok ? response.json() : {}))
-        .then((response) => this.$set(this, "purchasesSummary", response))
+        .then((response) => {
+          if (Object.values(response).some((x) => !!x)) {
+            this.$set(this, "purchasesSummary", response)
+          } else this.$set(this, "purchasesSummary", null)
+        })
     },
   },
   mounted() {
