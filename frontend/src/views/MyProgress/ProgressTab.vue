@@ -201,7 +201,7 @@ export default {
     },
     modificationLink() {
       return this.isCanteenTab
-        ? { name: "CanteenForm", params: { canteenUrlComponent: this.canteenUrlComponent } }
+        ? { name: "StandaloneCanteenForm", params: { canteenUrlComponent: this.canteenUrlComponent } }
         : {
             name: "DiagnosticTunnel",
             params: {

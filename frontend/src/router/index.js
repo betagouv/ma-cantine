@@ -31,6 +31,7 @@ import ManagementPage from "@/views/ManagementPage"
 import PendingActions from "@/views/PendingActions"
 import CanteenEditor from "@/views/CanteenEditor"
 import CanteenForm from "@/views/CanteenEditor/CanteenForm"
+import StandaloneCanteenForm from "@/views/StandaloneCanteenForm"
 import SatelliteManagement from "@/views/CanteenEditor/SatelliteManagement"
 import DiagnosticList from "@/views/CanteenEditor/DiagnosticList"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
@@ -622,6 +623,15 @@ if (window.ENABLE_DASHBOARD) {
       authenticationRequired: true,
     },
     sitemapGroup: Constants.SitemapGroups.DIAG,
+  })
+  routes.push({
+    path: "/modifier-mon-établissement/:canteenUrlComponent",
+    name: "StandaloneCanteenForm",
+    component: StandaloneCanteenForm,
+    props: true,
+    meta: {
+      authenticationRequired: true,
+    },
   })
 }
 
