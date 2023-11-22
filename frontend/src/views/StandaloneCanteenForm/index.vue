@@ -1,7 +1,7 @@
 <template>
   <div class="text-left">
     <BreadcrumbsNav :links="[{ to: { name: 'ManagementPage' } }]" v-if="isNewCanteen" />
-    <h1 class="font-weight-black text-h4 my-4">
+    <h1 class="fr-h2 my-4">
       {{ isNewCanteen ? "Ajouter ma cantine" : "Modifier ma cantine" }}
     </h1>
 
@@ -12,7 +12,7 @@
     />
 
     <div v-if="$route.query.etape === steps[0]">
-      <h2 class="body-1 font-weight-bold mb-4">Étape 1/2 : Renseignez le SIRET de votre établissement</h2>
+      <h2 class="fr-h3 mb-4">Étape 1/2 : Renseignez le SIRET de votre établissement</h2>
       <p>
         Vous ne le connaissez pas ? Utilisez
         <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
@@ -45,7 +45,7 @@
     </div>
 
     <v-form v-else ref="form" v-model="formIsValid">
-      <h2 class="mb-4" v-if="isNewCanteen">Étape 2/2 : Compléter les informations</h2>
+      <h2 class="fr-h3 mb-4" v-if="isNewCanteen">Étape 2/2 : Compléter les informations</h2>
       <v-row>
         <v-col cols="12" md="8">
           <p>SIRET</p>
@@ -59,18 +59,18 @@
             :rules="[validators.required]"
             validate-on-blur
             v-model="canteen.name"
-            labelClasses="body-2 mb-2"
+            labelClasses="fr-text mb-2"
           />
 
-          <p class="body-2 mt-4 mb-2">Ville</p>
+          <p class="fr-text mt-4 mb-2">Ville</p>
           <CityField :location="canteen" :rules="[validators.required]" @locationUpdate="setLocation" />
         </v-col>
 
         <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
-          <label class="body-2" for="logo">
+          <label class="fr-text" for="logo">
             Logo
           </label>
-          <div v-if="canteen.logo" class="body-2 grey--text text--darken-1">
+          <div v-if="canteen.logo" class="fr-text grey--text text--darken-1">
             Cliquez sur le logo pour changer
           </div>
           <div>
@@ -92,7 +92,7 @@
               </div>
               <div v-else class="d-flex flex-column align-center justify-center fill-height">
                 <v-icon class="pb-2">mdi-shape</v-icon>
-                <p class="ma-0 text-center font-weight-bold body-2 grey--text text--darken-2">Ajoutez un logo</p>
+                <p class="ma-0 text-center font-weight-bold fr-text grey--text text--darken-2">Ajoutez un logo</p>
               </div>
               <div v-if="canteen.logo" style="position: absolute; top: 10px; left: 10px;">
                 <v-btn fab small @click.stop.prevent="changeLogo(null)">
@@ -110,25 +110,27 @@
         </v-col>
 
         <v-col cols="12">
-          <p class="body-1 ml-1 mb-0">Mon établissement...</p>
-          <v-radio-group
-            class="mt-2"
-            v-model="canteen.productionType"
-            hide-details="auto"
-            :rules="[validators.required]"
-          >
-            <v-radio class="ml-0" v-for="item in productionTypes" :key="item.value" :value="item.value">
-              <template v-slot:label>
-                <div class="d-block">
-                  <div class="body-1 grey--text text--darken-4" v-html="item.title"></div>
-                </div>
-              </template>
-            </v-radio>
-          </v-radio-group>
+          <fieldset>
+            <legend class="fr-text">Mon établissement...</legend>
+            <v-radio-group
+              class="mt-2"
+              v-model="canteen.productionType"
+              hide-details="auto"
+              :rules="[validators.required]"
+            >
+              <v-radio class="ml-0" v-for="item in productionTypes" :key="item.value" :value="item.value">
+                <template v-slot:label>
+                  <div class="d-block">
+                    <div class="fr-text grey--text text--darken-4" v-html="item.title"></div>
+                  </div>
+                </template>
+              </v-radio>
+            </v-radio-group>
+          </fieldset>
         </v-col>
 
         <v-col cols="12" md="4" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
-          <label for="daily-meals" class="body-2 mb-2 d-block" :class="{ 'mb-lg-7': isNewCanteen }">
+          <label for="daily-meals" class="fr-text mb-2 d-block">
             Couverts moyen par
             <b>jour</b>
             (convives sur place)
@@ -148,7 +150,7 @@
         <v-col cols="12" md="4">
           <label
             for="yearly-meals"
-            class="body-2 d-block mb-2"
+            class="fr-text d-block mb-2"
             :class="{
               'mb-lg-7': !showSatelliteCanteensCount,
             }"
@@ -179,7 +181,7 @@
             validate-on-blur
             v-model.number="canteen.satelliteCanteensCount"
             prepend-icon="$community-fill"
-            labelClasses="body-2 mb-2"
+            labelClasses="fr-text mb-2"
           />
         </v-col>
 
@@ -233,9 +235,9 @@
           <v-divider></v-divider>
         </v-col>
 
-        <v-col cols="12" md="6">
+        <v-col cols="12" md="8">
           <div>
-            <p class="body-2">Secteurs d'activité</p>
+            <p class="fr-text">Secteurs d'activité</p>
             <DsfrSelect
               multiple
               :items="sectors"
@@ -247,22 +249,8 @@
             />
           </div>
         </v-col>
-        <v-col cols="12" md="6">
-          <div>
-            <p class="body-2">Type d'établissement</p>
-            <DsfrSelect
-              :items="economicModels"
-              solo
-              v-model="canteen.economicModel"
-              :rules="[validators.required]"
-              placeholder="Sélectionnez..."
-              hide-details="auto"
-              clearable
-            />
-          </div>
-        </v-col>
         <v-col v-if="showMinistryField" cols="12">
-          <p class="body-2">Ministère de tutelle</p>
+          <p class="fr-text">Ministère de tutelle</p>
           <DsfrSelect
             :items="ministries"
             v-model="canteen.lineMinistry"
@@ -272,22 +260,39 @@
             clearable
           />
         </v-col>
-
-        <v-col cols="12" sm="6" md="3">
-          <p class="body-2 ml-4">Mode de gestion</p>
-          <v-radio-group v-model="canteen.managementType" :rules="[validators.required]">
-            <v-radio
-              class="ml-8"
-              v-for="item in managementTypes"
-              :key="item.value"
-              :label="item.text"
-              :value="item.value"
-            ></v-radio>
-          </v-radio-group>
+      </v-row>
+      <v-row>
+        <v-col cols="12" sm="6" md="4">
+          <fieldset>
+            <legend class="fr-text">Mode de gestion</legend>
+            <v-radio-group class="mt-2" v-model="canteen.managementType" :rules="[validators.required]">
+              <v-radio v-for="item in managementTypes" :key="item.value" :label="item.text" :value="item.value">
+                <template v-slot:label>
+                  <div class="d-block">
+                    <div class="fr-text grey--text text--darken-4" v-html="item.text"></div>
+                  </div>
+                </template>
+              </v-radio>
+            </v-radio-group>
+          </fieldset>
+        </v-col>
+        <v-col cols="12" sm="6" md="4">
+          <fieldset>
+            <legend class="fr-text">Type d'établissement</legend>
+            <v-radio-group class="mt-2" v-model="canteen.economicModel" :rules="[validators.required]">
+              <v-radio v-for="item in economicModels" :key="item.value" :label="item.text" :value="item.value">
+                <template v-slot:label>
+                  <div class="d-block">
+                    <div class="fr-text grey--text text--darken-4" v-html="item.text"></div>
+                  </div>
+                </template>
+              </v-radio>
+            </v-radio-group>
+          </fieldset>
         </v-col>
       </v-row>
       <div>
-        <label class="body-2" for="images">Images</label>
+        <label class="fr-text" for="images">Images</label>
         <ImagesField class="mt-0 mb-4" :imageArray.sync="canteen.images" id="images" />
       </div>
       <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
