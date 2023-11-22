@@ -1,8 +1,14 @@
 <template>
   <div>
     <div v-if="hasError">
-      <DsfrCallout v-for="message in errorMessages" :key="message" color="red lighten-1">
-        <p class="ma-0">{{ message }}</p>
+      <DsfrCallout v-if="errorMessages.length > 1" color="red lighten-1">
+        <p class="ma-0">Il y a des erreurs dans le formulaire :</p>
+        <ul>
+          <li v-for="message in errorMessages" :key="message">{{ message }}</li>
+        </ul>
+      </DsfrCallout>
+      <DsfrCallout v-else color="red lighten-1">
+        <p class="ma-0">{{ errorMessages[0] }}</p>
       </DsfrCallout>
     </div>
     <DsfrCurrencyField
