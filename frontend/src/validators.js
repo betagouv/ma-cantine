@@ -4,6 +4,12 @@ function email(input) {
   return errorMessage
 }
 
+function isBase10Number(input) {
+  // parseFloat("0x30") === 0 and +"0x30" === 48
+  // NaN === NaN is false
+  return +input === parseFloat(input)
+}
+
 export default {
   required(input) {
     const errorMessage = "Ce champ ne peut pas être vide"
@@ -29,17 +35,20 @@ export default {
   },
   greaterThanZero(input) {
     const errorMessage = "Ce champ doit contenir une chiffre supérieure à zéro"
+    if (!isBase10Number(input)) return errorMessage
     if (parseFloat(input) > 0) return true
     return errorMessage
   },
   nonNegativeOrEmpty(input) {
+    const errorMessage = "Ce champ doit contenir un nombre positif ou rester vide"
+    if (!isBase10Number(input)) return errorMessage
+
     const isEmpty = !input || input.length === 0
     if (isEmpty) return true
 
     const isNonNegative = parseFloat(input) >= 0
     if (isNonNegative) return true
 
-    const errorMessage = "Ce champ doit contenir un nombre positif ou rester vide"
     return errorMessage
   },
   lteOrEmpty(max) {

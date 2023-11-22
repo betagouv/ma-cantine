@@ -13,6 +13,7 @@
     </div>
     <DsfrCurrencyField
       v-model.number="payload.valueTotalHt"
+      :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
       @blur="checkTotal"
       :error="hasError"
       label="Total (en € HT) de tous mes achats alimentaires"
@@ -42,6 +43,7 @@ import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import ErrorHelper from "./ErrorHelper"
 import DsfrCallout from "@/components/DsfrCallout"
 import { toCurrency } from "@/utils"
+import validators from "@/validators"
 
 const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs par label"
 
@@ -72,6 +74,9 @@ export default {
     }
   },
   computed: {
+    validators() {
+      return validators
+    },
     displayPurchaseHints() {
       return !!this.purchasesSummary
     },
@@ -112,6 +117,7 @@ export default {
       this.checkTotal()
     },
     checkTotal() {
+      if (!this.payload.valueTotalHt || this.payload.valueTotalHt < 0) return
       const d = this.payload
       const sumEgalim = this.sumAllEgalim()
       const total = d.valueTotalHt
