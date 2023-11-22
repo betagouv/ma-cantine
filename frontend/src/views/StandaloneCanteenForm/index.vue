@@ -393,9 +393,9 @@ export default {
   },
   mounted() {
     this.fetchCanteen().then(() => {
-      console.log(this.originalCanteen)
       if (this.isNewCanteen) {
         this.$router.push({ name: "NewCanteen", query: this.$route.query })
+        document.title = `Ajouter ma cantine - ${this.$store.state.pageTitleSuffix}`
         return
       }
       const canteen = this.originalCanteen
@@ -411,15 +411,11 @@ export default {
           this.$nextTick(() => this.$refs["siret-check"].validateSiret())
         })
       }
+      document.title = `Modifier - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
     })
   },
   created() {
     window.addEventListener("beforeunload", this.handleUnload)
-    if (this.originalCanteen) {
-      document.title = `Modifier - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
-    } else {
-      document.title = `Ajouter ma cantine - ${this.$store.state.pageTitleSuffix}`
-    }
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.handleUnload)
