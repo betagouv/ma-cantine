@@ -631,6 +631,7 @@ if (window.ENABLE_DASHBOARD) {
     props: true,
     meta: {
       authenticationRequired: true,
+      title: "Modifier ma cantine",
     },
   })
 }

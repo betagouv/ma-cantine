@@ -1,6 +1,10 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav :links="[{ to: { name: 'ManagementPage' } }]" v-if="isNewCanteen" />
+    <BreadcrumbsNav v-if="isNewCanteen" :links="[{ to: { name: 'ManagementPage' } }]" />
+    <BreadcrumbsNav
+      v-else
+      :links="[{ to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' }]"
+    />
     <h1 class="fr-h2 my-4">
       {{ isNewCanteen ? "Ajouter ma cantine" : "Modifier ma cantine" }}
     </h1>
@@ -297,7 +301,7 @@
       </div>
       <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
         <v-spacer></v-spacer>
-        <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
+        <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="cancelLink">
           Annuler
         </v-btn>
         <v-btn x-large color="primary" @click="saveCanteen">
@@ -394,6 +398,11 @@ export default {
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
+    },
+    cancelLink() {
+      return this.isNewCanteen
+        ? { name: "ManagementPage" }
+        : { name: "DashboardManager", params: { canteenUrlComponent: this.canteenUrlComponent } }
     },
   },
   mounted() {
