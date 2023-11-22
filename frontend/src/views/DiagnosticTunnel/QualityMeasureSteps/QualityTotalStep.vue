@@ -13,21 +13,24 @@
     </div>
     <DsfrCurrencyField
       v-model.number="payload.valueTotalHt"
+      @blur="checkTotal"
       :error="hasError"
       label="Total (en € HT) de tous mes achats alimentaires"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
       v-model="payload.valueTotalHt"
+      @autofill="checkTotal"
       purchaseType="totaux"
       :amount="purchasesSummary.valueTotalHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
     <ErrorHelper
-      :class="`mt-8 ${hasError ? '' : 'd-none'}`"
+      v-if="errorHelperFields.length"
+      class="mt-8"
       :showFields="errorHelperFields"
-      :diagnostic="payload"
-      @check-total="checkTotal"
+      :diagnostic="diagnostic"
+      @update-payload="updatePayloadFromComponent"
       :purchasesSummary="purchasesSummary"
     />
   </div>
@@ -64,6 +67,8 @@ export default {
       meatPoultryErrorMessage: null,
       fishErrorMessage: null,
       totalFamiliesErrorMessage: null,
+      errorHelperFields: [],
+      errorHelperUsed: false,
     }
   },
   computed: {
@@ -95,20 +100,16 @@ export default {
         (x) => !!x
       )
     },
-    errorHelperFields() {
-      const fields = []
-      if (this.totalError)
-        fields.push(...["valueBioHt", "valueSustainableHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"])
-      if (this.totalMeatPoultryError) fields.push("valueMeatPoultryHt")
-      if (this.totalFishError) fields.push("valueFishHt")
-      if (this.totalFamiliesError) fields.push(...["valueMeatPoultryHt", "valueFishHt"])
-      return fields
-    },
   },
   methods: {
     updatePayload() {
       this.checkTotal()
       if (!this.hasError) this.$emit("update-payload", { payload: this.payload })
+    },
+    updatePayloadFromComponent(componentPayload) {
+      this.errorHelperUsed = true
+      this.$set(this, "payload", Object.assign(this.payload, componentPayload))
+      this.checkTotal()
     },
     checkTotal() {
       const d = this.payload
@@ -136,6 +137,8 @@ export default {
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
       } else this.totalFamiliesErrorMessage = null
+
+      this.addErrorHelperFields()
     },
     sumAllEgalim() {
       const d = this.payload
@@ -146,13 +149,15 @@ export default {
       })
       return total
     },
-  },
-  watch: {
-    payload: {
-      handler() {
-        this.updatePayload()
-      },
-      deep: true,
+    addErrorHelperFields() {
+      if (!this.errorHelperUsed) this.$set(this, "errorHelperFields", [])
+      if (this.totalError)
+        this.errorHelperFields.push(
+          ...["valueBioHt", "valueSustainableHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"]
+        )
+      if (this.totalMeatPoultryError) this.errorHelperFields.push("valueMeatPoultryHt")
+      if (this.totalFishError) this.errorHelperFields.push("valueFishHt")
+      if (this.totalFamiliesError) this.errorHelperFields.push(...["valueMeatPoultryHt", "valueFishHt"])
     },
   },
   mounted() {

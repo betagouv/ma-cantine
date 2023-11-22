@@ -13,14 +13,14 @@
 
         <DsfrCurrencyField
           id="total"
-          v-model.number="diagnostic.valueTotalHt"
-          @blur="$emit('check-total')"
+          v-model.number="payload.valueTotalHt"
+          @blur="$emit('update-payload', payload)"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="diagnostic.valueTotalHt"
-          @autofill="$emit('check-total')"
+          v-model="payload.valueTotalHt"
+          @autofill="$emit('update-payload', payload)"
           purchaseType="totaux"
           :amount="purchasesSummary.valueTotalHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -34,14 +34,14 @@
         </label>
         <DsfrCurrencyField
           id="bio"
-          v-model.number="diagnostic.valueBioHt"
-          @blur="$emit('check-total')"
+          v-model.number="payload.valueBioHt"
+          @blur="$emit('update-payload', payload)"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="diagnostic.valueBioHt"
-          @autofill="$emit('check-total')"
+          v-model="payload.valueBioHt"
+          @autofill="$emit('update-payload', payload)"
           purchaseType="bio"
           :amount="purchasesSummary.valueBioHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -55,14 +55,14 @@
         </label>
         <DsfrCurrencyField
           id="siqo"
-          v-model.number="diagnostic.valueSustainableHt"
-          @blur="$emit('check-total')"
+          v-model.number="payload.valueSustainableHt"
+          @blur="$emit('update-payload', payload)"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="diagnostic.valueSustainableHt"
-          @autofill="$emit('check-total')"
+          v-model="payload.valueSustainableHt"
+          @autofill="$emit('update-payload', payload)"
           purchaseType="SIQO"
           :amount="purchasesSummary.valueSustainableHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -76,14 +76,14 @@
         </label>
         <DsfrCurrencyField
           id="other"
-          v-model.number="diagnostic.valueEgalimOthersHt"
-          @blur="$emit('check-total')"
+          v-model.number="payload.valueEgalimOthersHt"
+          @blur="$emit('update-payload', payload)"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="diagnostic.valueEgalimOthersHt"
-          @autofill="$emit('check-total')"
+          v-model="payload.valueEgalimOthersHt"
+          @autofill="$emit('update-payload', payload)"
           purchaseType="« autre EGAlim »"
           :amount="purchasesSummary.valueEgalimOthersHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -98,14 +98,14 @@
         </label>
         <DsfrCurrencyField
           id="ext-perf"
-          v-model.number="diagnostic.valueExternalityPerformanceHt"
-          @blur="$emit('check-total')"
+          v-model.number="payload.valueExternalityPerformanceHt"
+          @blur="$emit('update-payload', payload)"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="diagnostic.valueExternalityPerformanceHt"
-          @autofill="$emit('check-total')"
+          v-model="payload.valueExternalityPerformanceHt"
+          @autofill="$emit('update-payload', payload)"
           purchaseType="« critères d'achat »"
           :amount="purchasesSummary.valueExternalityPerformanceHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -119,14 +119,14 @@
         </label>
         <DsfrCurrencyField
           id="meat-poultry"
-          v-model.number="diagnostic.valueMeatPoultryHt"
-          @blur="$emit('check-total')"
+          v-model.number="payload.valueMeatPoultryHt"
+          @blur="$emit('update-payload', payload)"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="diagnostic.valueMeatPoultryHt"
-          @autofill="$emit('check-total')"
+          v-model="payload.valueMeatPoultryHt"
+          @autofill="$emit('update-payload', payload)"
           purchaseType="totaux viandes et volailles"
           :amount="purchasesSummary.valueMeatPoultryHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -138,14 +138,14 @@
         </label>
         <DsfrCurrencyField
           id="meat-poultry-egalim"
-          v-model.number="diagnostic.valueMeatPoultryEgalimHt"
-          @blur="$emit('check-total')"
+          v-model.number="payload.valueMeatPoultryEgalimHt"
+          @blur="$emit('update-payload', payload)"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="diagnostic.valueMeatPoultryEgalimHt"
-          @autofill="$emit('check-total')"
+          v-model="payload.valueMeatPoultryEgalimHt"
+          @autofill="$emit('update-payload', payload)"
           purchaseType="viandes et volailles EGAlim"
           :amount="purchasesSummary.valueMeatPoultryEgalimHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -157,14 +157,14 @@
         </label>
         <DsfrCurrencyField
           id="meat-poultry-france"
-          v-model.number="diagnostic.valueMeatPoultryFranceHt"
-          @blur="$emit('check-total')"
+          v-model.number="payload.valueMeatPoultryFranceHt"
+          @blur="$emit('update-payload', payload)"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="diagnostic.valueMeatPoultryFranceHt"
-          @autofill="$emit('check-total')"
+          v-model="payload.valueMeatPoultryFranceHt"
+          @autofill="$emit('update-payload', payload)"
           purchaseType="viandes et volailles provenance France"
           :amount="purchasesSummary.valueMeatPoultryFranceHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -178,14 +178,14 @@
         </label>
         <DsfrCurrencyField
           id="fish"
-          v-model.number="diagnostic.valueFishHt"
-          @blur="$emit('check-total')"
+          v-model.number="payload.valueFishHt"
+          @blur="$emit('update-payload', payload)"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="diagnostic.valueFishHt"
-          @autofill="$emit('check-total')"
+          v-model="payload.valueFishHt"
+          @autofill="$emit('update-payload', payload)"
           purchaseType="totaux de poissons, produits de la mer et de l'aquaculture"
           :amount="purchasesSummary.valueFishHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -197,14 +197,14 @@
         </label>
         <DsfrCurrencyField
           id="fish-egalim"
-          v-model.number="diagnostic.valueFishEgalimHt"
-          @blur="$emit('check-total')"
+          v-model.number="payload.valueFishEgalimHt"
+          @blur="$emit('update-payload', payload)"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="diagnostic.valueFishEgalimHt"
-          @autofill="$emit('check-total')"
+          v-model="payload.valueFishEgalimHt"
+          @autofill="$emit('update-payload', payload)"
           purchaseType="poissons, produits de la mer et de l'aquaculture EGAlim"
           :amount="purchasesSummary.valueFishEgalimHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -233,6 +233,15 @@ export default {
     purchasesSummary: {
       type: Object,
     },
+  },
+  data() {
+    const payload = {}
+    this.showFields.forEach((field) => {
+      payload[field] = this.diagnostic[field]
+    })
+    return {
+      payload,
+    }
   },
   computed: {
     displayPurchaseHints() {
