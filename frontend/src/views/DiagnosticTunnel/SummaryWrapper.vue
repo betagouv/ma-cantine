@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import QualityMeasureSummary from "@/components/DiagnosticSummary/QualityMeasureSummary"
 import WasteMeasureSummary from "@/components/DiagnosticSummary/WasteMeasureSummary"
 import DiversificationMeasureSummary from "@/components/DiagnosticSummary/DiversificationMeasureSummary"
 import NoPlasticMeasureSummary from "@/components/DiagnosticSummary/NoPlasticMeasureSummary"
@@ -14,6 +15,7 @@ import InformationMeasureSummary from "@/components/DiagnosticSummary/Informatio
 export default {
   name: "SummaryWrapper",
   components: {
+    QualityMeasureSummary,
     WasteMeasureSummary,
     DiversificationMeasureSummary,
     NoPlasticMeasureSummary,

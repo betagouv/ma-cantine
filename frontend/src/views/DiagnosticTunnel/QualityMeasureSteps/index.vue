@@ -1,5 +1,11 @@
 <template>
-  <v-form v-model="formIsValid" @submit.prevent>
+  <SummaryWrapper
+    v-if="step.isSynthesis"
+    componentName="QualityMeasureSummary"
+    :canteen="canteen"
+    :diagnostic="payload"
+  />
+  <v-form v-else v-model="formIsValid" @submit.prevent>
     <div v-if="stepUrlSlug === 'mode-de-saisie'">
       <fieldset>
         <legend class="text-left my-3">
@@ -31,7 +37,7 @@
 </template>
 
 <script>
-import QualityMeasureSummary from "@/components/DiagnosticSummary/QualityMeasureSummary"
+import SummaryWrapper from "../SummaryWrapper"
 import QualityTotalStep from "./QualityTotalStep"
 import BioSiqoStep from "./BioSiqoStep"
 import OtherEgalimStep from "./OtherEgalimStep"
@@ -55,8 +61,8 @@ export default {
     },
   },
   components: {
+    SummaryWrapper,
     QualityTotalStep,
-    QualityMeasureSummary,
     BioSiqoStep,
     OtherEgalimStep,
     MeatPoultryStep,
