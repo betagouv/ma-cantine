@@ -6,11 +6,13 @@
 </template>
 
 <script>
+import WasteMeasureSummary from "@/components/DiagnosticSummary/WasteMeasureSummary"
 import InformationMeasureSummary from "@/components/DiagnosticSummary/InformationMeasureSummary"
 
 export default {
   name: "SummaryWrapper",
   components: {
+    WasteMeasureSummary,
     InformationMeasureSummary,
   },
   props: {

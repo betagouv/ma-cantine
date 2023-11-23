@@ -1,5 +1,11 @@
 <template>
-  <v-form @submit.prevent v-model="formIsValid">
+  <SummaryWrapper
+    v-if="step.isSynthesis"
+    componentName="WasteMeasureSummary"
+    :canteen="canteen"
+    :diagnostic="payload"
+  />
+  <v-form v-else @submit.prevent v-model="formIsValid">
     <div v-if="stepUrlSlug === 'plan-action'">
       <fieldset>
         <legend class="my-3">
@@ -236,13 +242,12 @@
         <ExpeReservation v-if="showExpeModal" @close="() => (showExpeModal = false)" :canteen="canteen" />
       </v-dialog>
     </div>
-    <WasteMeasureSummary v-else :canteen="canteen" :diagnostic="diagnostic" />
   </v-form>
 </template>
 
 <script>
 import { applicableDiagnosticRules } from "@/utils"
-import WasteMeasureSummary from "@/components/DiagnosticSummary/WasteMeasureSummary"
+import SummaryWrapper from "../SummaryWrapper"
 import validators from "@/validators"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
@@ -265,7 +270,7 @@ export default {
     },
   },
   components: {
-    WasteMeasureSummary,
+    SummaryWrapper,
     DsfrTextField,
     DsfrTextarea,
     ExpeReservation,
