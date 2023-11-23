@@ -2,7 +2,7 @@
   <div>
     <div v-if="hasError">
       <DsfrCallout v-if="errorMessages.length > 1" color="red lighten-1">
-        <p class="ma-0">Il y a des erreurs dans le formulaire :</p>
+        <p class="ma-0">Merci de vérifier les erreurs ci dessous :</p>
         <ul>
           <li v-for="message in errorMessages" :key="message">{{ message }}</li>
         </ul>
