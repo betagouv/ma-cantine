@@ -309,7 +309,7 @@
 
 <script>
 import validators from "@/validators"
-import { toBase64, getObjectDiff, sectorsSelectList, readCookie, lastYear } from "@/utils"
+import { toBase64, getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 import TechnicalControlDialog from "./TechnicalControlDialog"
 import ImagesField from "./ImagesField"
@@ -500,25 +500,23 @@ export default {
           this.$emit("updateCanteen", canteenJson)
           if (this.isNewCanteen) {
             const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteenJson)
+            const name = this.showSatelliteCanteensCount
+              ? "SatelliteManagement"
+              : window.ENABLE_DASHBOARD
+              ? "DashboardManager"
+              : "DiagnosticList"
             this.$router.push({
               // form validation ensures that the count will be > 0
-              name: this.showSatelliteCanteensCount ? "SatelliteManagement" : "DiagnosticList",
+              name,
               params: { canteenUrlComponent },
             })
           } else {
-            // encourage TDs by redirecting to diagnostic page if relevant
-            const diag = this.canteen.diagnostics.find((d) => d.year == lastYear())
-            if (diag && diag.teledeclaration?.status !== "SUBMITTED") {
-              this.$router.push({
-                name: "DiagnosticModification",
-                params: {
-                  canteenUrlComponent: this.canteenUrlComponent,
-                  year: lastYear(),
-                },
-              })
-            } else {
-              this.$router.push({ name: "ManagementPage" })
-            }
+            this.$router.push({
+              name: window.ENABLE_DASHBOARD ? "DashboardManager" : "ManagementPage",
+              params: {
+                canteenUrlComponent: this.canteenUrlComponent,
+              },
+            })
           }
         })
         .catch((e) => {
