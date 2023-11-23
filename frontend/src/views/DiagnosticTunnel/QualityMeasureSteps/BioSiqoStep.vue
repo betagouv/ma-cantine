@@ -6,9 +6,7 @@
       biologique et label rouge ne sera comptabilisé que dans la catégorie 'bio'.
     </p>
 
-    <DsfrCallout v-if="totalError" color="red lighten-1">
-      <p class="ma-0">{{ totalErrorMessage }}</p>
-    </DsfrCallout>
+    <FormErrorCallout v-if="totalError" :errorMessages="[totalErrorMessage]" />
 
     <!-- Bio -->
     <v-row class="my-0 my-md-6">
@@ -98,7 +96,7 @@
 
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
-import DsfrCallout from "@/components/DsfrCallout"
+import FormErrorCallout from "@/components/FormErrorCallout"
 import ErrorHelper from "./ErrorHelper"
 import labels from "@/data/quality-labels.json"
 import LogoBio from "@/components/LogoBio"
@@ -107,7 +105,7 @@ import { toCurrency } from "@/utils"
 
 export default {
   name: "BioSiqoStep",
-  components: { DsfrCurrencyField, LogoBio, PurchaseHint, ErrorHelper, DsfrCallout },
+  components: { DsfrCurrencyField, LogoBio, PurchaseHint, ErrorHelper, FormErrorCallout },
   props: {
     diagnostic: {
       type: Object,
