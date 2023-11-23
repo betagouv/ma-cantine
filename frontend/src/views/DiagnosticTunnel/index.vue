@@ -152,7 +152,7 @@ export default {
       return this.stepIdx > 0 ? this.steps[this.stepIdx - 1] : null
     },
     continueActionText() {
-      const returnToTable = !this.nextTunnel
+      const returnToTable = !this.nextTunnel && this.step?.isSynthesis
       if (returnToTable) return "Retour au tableau de bord"
       const nextIsNewMeasure = this.step?.isSynthesis
       if (nextIsNewMeasure) return "Passer à l'onglet suivant"
