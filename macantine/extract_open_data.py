@@ -107,7 +107,7 @@ class ETL(ABC):
 class ETL_CANTEEN(ETL):
     def __init__(self):
         super().__init__()
-        self.dataset_name = 'registre_canteen'
+        self.dataset_name = 'registre_cantines'
         self.schema = json.load(open("data/schemas/schema_cantine.json"))
 
     def extract_dataset(self):
