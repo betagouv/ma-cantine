@@ -358,6 +358,16 @@ export default {
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
         }
       } else if (canteen.action === "20_create_diagnostic" || canteen.action === "18_prefill_diagnostic") {
+        if (window.ENABLE_DASHBOARD) {
+          return {
+            name: "MyProgress",
+            params: {
+              canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen),
+              year: this.year,
+              measure: "qualite-des-produits",
+            },
+          }
+        }
         return {
           name: "NewDiagnosticForCanteen",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
