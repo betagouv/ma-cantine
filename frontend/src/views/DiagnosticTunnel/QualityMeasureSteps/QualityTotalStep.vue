@@ -7,12 +7,14 @@
     </div>
     <DsfrCurrencyField
       v-model.number="payload.valueTotalHt"
+      @blur="updatePayload"
       :error="hasError"
       label="Total (en € HT) de tous mes achats alimentaires"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
       v-model="payload.valueTotalHt"
+      @autofill="updatePayload"
       purchaseType="totaux"
       :amount="purchasesSummary.valueTotalHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -139,14 +141,6 @@ export default {
         total += parseFloat(val) || 0
       })
       return total
-    },
-  },
-  watch: {
-    payload: {
-      handler() {
-        this.updatePayload()
-      },
-      deep: true,
     },
   },
   mounted() {

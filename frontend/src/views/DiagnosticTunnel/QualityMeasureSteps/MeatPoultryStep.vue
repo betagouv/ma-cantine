@@ -24,13 +24,14 @@
         <DsfrCurrencyField
           id="meat-poultry"
           v-model.number="payload.valueMeatPoultryHt"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="hasError"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload.valueMeatPoultryHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="totaux viandes et volailles"
           :amount="purchasesSummary.valueMeatPoultryHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -57,13 +58,14 @@
         <DsfrCurrencyField
           id="meat-poultry-egalim"
           v-model.number="payload.valueMeatPoultryEgalimHt"
+          @blur="updatePayload"
           :error="meatPoultryError"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload.valueMeatPoultryEgalimHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="viandes et volailles EGAlim"
           :amount="purchasesSummary.valueMeatPoultryEgalimHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -90,13 +92,14 @@
         <DsfrCurrencyField
           id="meat-poultry-france"
           v-model.number="payload.valueMeatPoultryFranceHt"
+          @blur="updatePayload"
           :error="meatPoultryError"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload.valueMeatPoultryFranceHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="viandes et volailles provenance France"
           :amount="purchasesSummary.valueMeatPoultryFranceHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -201,14 +204,6 @@ export default {
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
       } else this.totalFamiliesErrorMessage = null
-    },
-  },
-  watch: {
-    payload: {
-      handler() {
-        this.updatePayload()
-      },
-      deep: true,
     },
   },
   mounted() {

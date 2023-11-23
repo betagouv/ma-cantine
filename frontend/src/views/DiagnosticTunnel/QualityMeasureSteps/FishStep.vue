@@ -23,13 +23,13 @@
           id="fish"
           v-model.number="payload.valueFishHt"
           :error="hasError"
-          @blur="checkTotal"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload.valueFishHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="totaux de poissons, produits de la mer et de l'aquaculture"
           :amount="purchasesSummary.valueFishHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -54,13 +54,13 @@
           id="fish-egalim"
           v-model.number="payload.valueFishEgalimHt"
           :error="fishError"
-          @blur="checkTotal"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload.valueFishEgalimHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="poissons, produits de la mer et de l'aquaculture EGAlim"
           :amount="purchasesSummary.valueFishEgalimHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -163,14 +163,6 @@ export default {
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
       } else this.totalFamiliesErrorMessage = null
-    },
-  },
-  watch: {
-    payload: {
-      handler() {
-        this.updatePayload()
-      },
-      deep: true,
     },
   },
   mounted() {
