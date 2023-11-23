@@ -1,6 +1,6 @@
 <template>
   <div class="tunnel text-left d-flex flex-column my-n5" ref="container" v-resize="onResize" style="width: 100%">
-    <div v-if="!step.isSynthesis || $vuetify.breakpoint.smAndUp" class="header pa-2">
+    <div v-if="!step || !step.isSynthesis || $vuetify.breakpoint.smAndUp" class="header pa-2">
       <v-row class="mx-auto constrained align-center my-3 my-sm-6">
         <v-col cols="9" class="py-4 d-flex" v-if="$vuetify.breakpoint.smAndUp">
           <div v-for="tunnel in tunnels" :key="tunnel.id" class="px-4 header-icon">
