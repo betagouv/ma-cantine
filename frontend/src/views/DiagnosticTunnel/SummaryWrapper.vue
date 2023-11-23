@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="fr-text font-weight-bold text-uppercase mb-4">Synthèse</h1>
-    <component :is="componentName" :canteen="canteen" :diagnostic="diagnostic" />
+    <component :is="`${measure.baseComponent}Summary`" :canteen="canteen" :diagnostic="diagnostic" />
   </div>
 </template>
 
@@ -22,8 +22,8 @@ export default {
     InformationMeasureSummary,
   },
   props: {
-    componentName: {
-      type: String,
+    measure: {
+      type: Object,
       required: true,
     },
     canteen: {

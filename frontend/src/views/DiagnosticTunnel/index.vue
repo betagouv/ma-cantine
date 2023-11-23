@@ -1,5 +1,5 @@
 <template>
-  <div class="text-left d-flex flex-column my-n5" ref="container" v-resize="onResize" style="width: 100%">
+  <div class="tunnel text-left d-flex flex-column my-n5" ref="container" v-resize="onResize" style="width: 100%">
     <div class="header pa-2">
       <v-row class="mx-auto constrained align-center my-3 my-sm-6">
         <v-col cols="9" class="py-4 d-flex" v-if="$vuetify.breakpoint.smAndUp">
@@ -30,19 +30,26 @@
         </v-col>
       </v-row>
     </div>
-    <div
-      v-if="diagnostic"
-      class="mx-auto constrained px-4 py-10 flex-grow-1"
-      style="width: 100%; overflow-y: scroll; overflow-x: hidden;"
-    >
-      <component
-        :is="`${measure.baseComponent}Steps`"
-        :canteen="canteen"
-        :diagnostic="diagnostic"
-        :stepUrlSlug="stepUrlSlug"
-        v-on:update-payload="updatePayload"
-        v-on:update-steps="updateSteps"
-      />
+    <div v-if="diagnostic" class="flex-grow-1" style="overflow-y: scroll; overflow-x: hidden;">
+      <div v-if="step && step.isSynthesis" style="height: 100%;">
+        <SummaryWrapper
+          :measure="measure"
+          :canteen="canteen"
+          :diagnostic="diagnostic"
+          class="mx-auto constrained pa-10 summary"
+        />
+      </div>
+      <div v-else style="height: 100%; width: 100%; background: #fff;">
+        <component
+          :is="`${measure.baseComponent}Steps`"
+          :canteen="canteen"
+          :diagnostic="diagnostic"
+          :stepUrlSlug="stepUrlSlug"
+          v-on:update-payload="updatePayload"
+          v-on:update-steps="updateSteps"
+          class="mx-auto constrained px-4 py-10"
+        />
+      </div>
     </div>
     <div class="footer pa-2" style="width: 100%">
       <div class="d-flex mx-auto constrained align-center">
@@ -77,6 +84,7 @@
 <script>
 import keyMeasures from "@/data/key-measures.json"
 import DsfrStepper from "@/components/DsfrStepper"
+import SummaryWrapper from "./SummaryWrapper"
 import QualityMeasureSteps from "./QualityMeasureSteps"
 import WasteMeasureSteps from "./WasteMeasureSteps"
 import DiversificationMeasureSteps from "./DiversificationMeasureSteps"
@@ -100,6 +108,7 @@ export default {
   },
   components: {
     DsfrStepper,
+    SummaryWrapper,
     QualityMeasureSteps,
     WasteMeasureSteps,
     DiversificationMeasureSteps,
@@ -289,11 +298,13 @@ export default {
 </script>
 
 <style>
-.header {
+.tunnel {
   background-color: #f5f5fe;
 }
-.footer {
-  background-color: #f5f5fe;
+.summary {
+  height: 100%;
+  background: #fff;
+  border: 1px solid #ddd;
 }
 .v-btn--plain .v-btn__content {
   opacity: 1 !important;

@@ -1,11 +1,5 @@
 <template>
-  <SummaryWrapper
-    v-if="step.isSynthesis"
-    componentName="QualityMeasureSummary"
-    :canteen="canteen"
-    :diagnostic="payload"
-  />
-  <v-form v-else v-model="formIsValid" @submit.prevent>
+  <v-form v-model="formIsValid" @submit.prevent>
     <div v-if="stepUrlSlug === 'mode-de-saisie'">
       <fieldset>
         <legend class="text-left my-3">
@@ -37,7 +31,6 @@
 </template>
 
 <script>
-import SummaryWrapper from "../SummaryWrapper"
 import QualityTotalStep from "./QualityTotalStep"
 import BioSiqoStep from "./BioSiqoStep"
 import OtherEgalimStep from "./OtherEgalimStep"
@@ -46,7 +39,7 @@ import FishStep from "./FishStep"
 import Constants from "@/constants"
 
 export default {
-  name: "QualitySteps",
+  name: "QualityMeasureSteps",
   props: {
     canteen: {
       type: Object,
@@ -61,7 +54,6 @@ export default {
     },
   },
   components: {
-    SummaryWrapper,
     QualityTotalStep,
     BioSiqoStep,
     OtherEgalimStep,
@@ -108,7 +100,6 @@ export default {
       const lastStep = {
         title: "Synthèse",
         isSynthesis: true,
-        componentName: "QualityMeasureSummary",
         urlSlug: "complet",
       }
       const simplifiedSteps = [
