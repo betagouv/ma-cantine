@@ -44,6 +44,9 @@
       >
         {{ satellites.length ? "Modifier" : "Ajouter mes satellites" }}
       </v-btn>
+      <p class="mb-0 ml-2 fr-text-sm">
+        <router-link :to="{ name: 'PublishSatellites' }">Publier</router-link>
+      </p>
     </v-card-actions>
   </v-card>
 </template>

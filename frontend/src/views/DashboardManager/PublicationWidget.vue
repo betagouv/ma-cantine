@@ -44,6 +44,9 @@
       >
         {{ isPublished ? "Éditer ma vitrine" : "Publier ma cantine" }}
       </v-btn>
+      <p class="mb-0 ml-2 fr-text-sm">
+        <router-link :to="{ name: 'CanteenGeneratePoster' }">Génerer mon affiche</router-link>
+      </p>
       <p v-if="!isPublished && !hasPublicationData" class="grey--text text--darken-1 fr-text-xs mb-0 ml-3">
         Pas de données
       </p>
