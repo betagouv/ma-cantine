@@ -9,9 +9,9 @@
       </h3>
     </v-card-title>
     <v-card-text v-if="needsData">
-      <DataInfoBadge class="py-0 ml-8" />
+      <DataInfoBadge :missingData="true" class="py-0 ml-8" />
     </v-card-text>
-    <v-card-text :class="`mt-n4 pl-12 ${level.colorClass}`" v-else-if="!delegatedToSatellite">
+    <v-card-text v-else-if="level" :class="`mt-n4 pl-12 ${level.colorClass}`">
       <p class="mb-0 mt-2 fr-text-xs">
         NIVEAU :
         <span class="font-weight-black">{{ level.text }}</span>
@@ -32,6 +32,7 @@
 import Constants from "@/constants"
 import DataInfoBadge from "./DataInfoBadge"
 import keyMeasures from "@/data/key-measures.json"
+import { hasDataForMeasure } from "@/utils"
 
 export default {
   name: "DiversificationCard",
@@ -58,7 +59,9 @@ export default {
       return !this.delegatedToCentralKitchen && this.level === Constants.Levels.UNKNOWN
     },
     level() {
-      return Constants.Levels.BEGINNER
+      if (this.delegatedToSatellite) return null
+      if (!hasDataForMeasure(this.diagnostic, this.keyMeasure)) return Constants.Levels.UNKNOWN
+      return null
     },
     cardBody() {
       if (this.delegatedToSatellite) {

@@ -568,3 +568,11 @@ function hasValue(val) {
     return !strictIsNaN(val)
   }
 }
+
+export const hasDataForMeasure = (diagnostic, keyMeasure) => {
+  let hasDiagnostic = diagnostic
+  if (diagnostic?.creationSource === "TUNNEL") {
+    hasDiagnostic = !!diagnostic[keyMeasure.progressField]
+  }
+  return !!hasDiagnostic
+}
