@@ -190,7 +190,7 @@ export default {
       this.$emit("input", false)
       this.$router
         .push({
-          name: "DiagnosticModification",
+          name: "MyProgress",
           params: { canteenUrlComponent: this.canteenUrlComponent, year: this.diagnosticForTD.year },
         })
         .catch(() => {})
