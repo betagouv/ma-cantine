@@ -4,6 +4,14 @@ function email(input) {
   return errorMessage
 }
 
+function isBase10Number(input) {
+  // parseFloat("0x30") === 0 and +"0x30" === 48
+  // NaN === NaN is false
+  return +input === parseFloat(input)
+}
+
+const NUMBER_FORMAT_ERROR = "Pour un chiffre décimale, veuillez utiliser un point, par exemple 100.95"
+
 export default {
   required(input) {
     const errorMessage = "Ce champ ne peut pas être vide"
@@ -29,17 +37,21 @@ export default {
   },
   greaterThanZero(input) {
     const errorMessage = "Ce champ doit contenir une chiffre supérieure à zéro"
+    if (!isBase10Number(input)) return NUMBER_FORMAT_ERROR
     if (parseFloat(input) > 0) return true
     return errorMessage
   },
   nonNegativeOrEmpty(input) {
+    const errorMessage = "Ce champ doit contenir un nombre positif ou rester vide"
+
     const isEmpty = !input || input.length === 0
     if (isEmpty) return true
+
+    if (!isBase10Number(input)) return NUMBER_FORMAT_ERROR
 
     const isNonNegative = parseFloat(input) >= 0
     if (isNonNegative) return true
 
-    const errorMessage = "Ce champ doit contenir un nombre positif ou rester vide"
     return errorMessage
   },
   lteOrEmpty(max) {
@@ -155,6 +167,7 @@ export default {
           // otherwise I think the message is confusing
           return `${max} décimales attendues, par exemple ${tofixed.replace(".", ",")}`
         }
+        if (!isBase10Number(input)) return NUMBER_FORMAT_ERROR
       }
       return true
     }
@@ -169,6 +182,7 @@ export default {
     if (input && !Number.isInteger(input)) {
       return "Un nombre entier attendu"
     }
+    if (!isBase10Number(input)) return NUMBER_FORMAT_ERROR
     return true
   },
 }
