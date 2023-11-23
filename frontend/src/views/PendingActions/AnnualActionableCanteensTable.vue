@@ -347,7 +347,7 @@ export default {
     },
     toCanteen(canteen) {
       return {
-        name: "CanteenModification",
+        name: window.ENABLE_DASHBOARD ? "DashboardManager" : "CanteenModification",
         params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
       }
     },
@@ -364,6 +364,16 @@ export default {
           query: { année: this.year },
         }
       } else if (canteen.action === "30_complete_diagnostic") {
+        if (window.ENABLE_DASHBOARD) {
+          return {
+            name: "MyProgress",
+            params: {
+              canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen),
+              year: this.year,
+              measure: "qualite-des-produits",
+            },
+          }
+        }
         return {
           name: "DiagnosticModification",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen), year: this.year },
