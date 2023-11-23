@@ -8,6 +8,7 @@
 <script>
 import WasteMeasureSummary from "@/components/DiagnosticSummary/WasteMeasureSummary"
 import DiversificationMeasureSummary from "@/components/DiagnosticSummary/DiversificationMeasureSummary"
+import NoPlasticMeasureSummary from "@/components/DiagnosticSummary/NoPlasticMeasureSummary"
 import InformationMeasureSummary from "@/components/DiagnosticSummary/InformationMeasureSummary"
 
 export default {
@@ -15,6 +16,7 @@ export default {
   components: {
     WasteMeasureSummary,
     DiversificationMeasureSummary,
+    NoPlasticMeasureSummary,
     InformationMeasureSummary,
   },
   props: {

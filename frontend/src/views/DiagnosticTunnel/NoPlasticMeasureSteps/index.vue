@@ -1,5 +1,11 @@
 <template>
-  <v-form v-model="formIsValid" @submit.prevent>
+  <SummaryWrapper
+    v-if="step.isSynthesis"
+    componentName="NoPlasticMeasureSummary"
+    :canteen="canteen"
+    :diagnostic="payload"
+  />
+  <v-form v-else v-model="formIsValid" @submit.prevent>
     <div v-if="stepUrlSlug === 'contenants-alimentaires'">
       <fieldset>
         <legend class="mb-3">
@@ -41,7 +47,8 @@
 </template>
 
 <script>
-import NoPlasticMeasureSummary from "@/components/DiagnosticSummary/NoPlasticMeasureSummary"
+import SummaryWrapper from "../SummaryWrapper"
+
 export default {
   name: "NoPlasticMeasureSteps",
   props: {
@@ -58,7 +65,7 @@ export default {
     },
   },
   components: {
-    NoPlasticMeasureSummary,
+    SummaryWrapper,
   },
   data() {
     return {
