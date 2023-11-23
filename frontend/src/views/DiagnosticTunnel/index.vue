@@ -1,6 +1,6 @@
 <template>
   <div class="tunnel text-left d-flex flex-column my-n5" ref="container" v-resize="onResize" style="width: 100%">
-    <div class="header pa-2">
+    <div v-if="!step.isSynthesis || $vuetify.breakpoint.smAndUp" class="header pa-2">
       <v-row class="mx-auto constrained align-center my-3 my-sm-6">
         <v-col cols="9" class="py-4 d-flex" v-if="$vuetify.breakpoint.smAndUp">
           <div v-for="tunnel in tunnels" :key="tunnel.id" class="px-4 header-icon">
@@ -30,13 +30,13 @@
         </v-col>
       </v-row>
     </div>
-    <div v-if="diagnostic" class="flex-grow-1" style="overflow-y: scroll; overflow-x: hidden;">
+    <div v-if="diagnostic" class="flex-grow-1 scroll">
       <div v-if="step && step.isSynthesis" style="height: 100%;">
         <SummaryWrapper
           :measure="measure"
           :canteen="canteen"
           :diagnostic="diagnostic"
-          class="mx-auto constrained pa-10 summary"
+          class="mx-auto constrained pa-10 summary scroll"
         />
       </div>
       <div v-else style="height: 100%; width: 100%; background: #fff;">
@@ -47,7 +47,7 @@
           :stepUrlSlug="stepUrlSlug"
           v-on:update-payload="updatePayload"
           v-on:update-steps="updateSteps"
-          class="mx-auto constrained px-4 py-10"
+          class="mx-auto constrained px-4 py-10 scroll"
         />
       </div>
     </div>
@@ -305,6 +305,11 @@ export default {
   height: 100%;
   background: #fff;
   border: 1px solid #ddd;
+}
+.scroll {
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 .v-btn--plain .v-btn__content {
   opacity: 1 !important;
