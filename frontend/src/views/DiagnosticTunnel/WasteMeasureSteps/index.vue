@@ -1,11 +1,5 @@
 <template>
-  <SummaryWrapper
-    v-if="step.isSynthesis"
-    componentName="WasteMeasureSummary"
-    :canteen="canteen"
-    :diagnostic="payload"
-  />
-  <v-form v-else @submit.prevent v-model="formIsValid">
+  <v-form @submit.prevent v-model="formIsValid">
     <div v-if="stepUrlSlug === 'plan-action'">
       <fieldset>
         <legend class="my-3">
@@ -247,7 +241,6 @@
 
 <script>
 import { applicableDiagnosticRules } from "@/utils"
-import SummaryWrapper from "../SummaryWrapper"
 import validators from "@/validators"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
@@ -270,7 +263,6 @@ export default {
     },
   },
   components: {
-    SummaryWrapper,
     DsfrTextField,
     DsfrTextarea,
     ExpeReservation,

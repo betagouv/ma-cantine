@@ -1,11 +1,5 @@
 <template>
-  <SummaryWrapper
-    v-if="step.isSynthesis"
-    componentName="InformationMeasureSummary"
-    :canteen="canteen"
-    :diagnostic="payload"
-  />
-  <v-form v-else @submit.prevent v-model="formIsValid">
+  <v-form @submit.prevent v-model="formIsValid">
     <div v-if="stepUrlSlug === 'information-convives'" class="py-4">
       <fieldset>
         <legend class="my-3">
@@ -83,7 +77,6 @@
 
 <script>
 import DsfrTextField from "@/components/DsfrTextField"
-import SummaryWrapper from "../SummaryWrapper"
 import validators from "@/validators"
 import Constants from "@/constants"
 
@@ -102,7 +95,7 @@ export default {
       type: String,
     },
   },
-  components: { DsfrTextField, SummaryWrapper },
+  components: { DsfrTextField },
   data() {
     const payload = {
       communicatesOnFoodQuality: this.diagnostic.communicatesOnFoodQuality,

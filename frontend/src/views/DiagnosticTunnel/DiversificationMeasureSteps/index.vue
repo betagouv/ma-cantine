@@ -1,11 +1,5 @@
 <template>
-  <SummaryWrapper
-    v-if="step.isSynthesis"
-    componentName="DiversificationMeasureSummary"
-    :canteen="canteen"
-    :diagnostic="payload"
-  />
-  <v-form v-else @submit.prevent>
+  <v-form @submit.prevent>
     <fieldset v-if="stepUrlSlug === 'menu'">
       <legend class="text-left my-3">
         J'ai mis en place un menu végétarien dans ma cantine :
@@ -82,7 +76,6 @@
 </template>
 
 <script>
-import SummaryWrapper from "../SummaryWrapper"
 import Constants from "@/constants"
 import { applicableDiagnosticRules } from "@/utils"
 
@@ -100,9 +93,6 @@ export default {
     stepUrlSlug: {
       type: String,
     },
-  },
-  components: {
-    SummaryWrapper,
   },
   data() {
     const applicableRules = applicableDiagnosticRules(this.canteen)
