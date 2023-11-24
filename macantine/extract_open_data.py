@@ -124,8 +124,11 @@ class ETL(ABC):
             return 0
 
     def is_valid(self) -> bool:
+        dataset_to_validate_url = f"{os.environ['CELLAR_HOST']}/{os.environ['CELLAR_BUCKET_NAME']}/media/open_data/{self.dataset_name}_to_validate.csv"
+        schema_url = "https://github.com/betagouv/ma-cantine/blob/staging/data/schemas/schema_teledeclaration.json"
+
         res = requests.get(
-            f"https://api.validata.etalab.studio/validate?schema={self.schema_url}&url={self.dataset_to_validate_url}&header_case=true"
+            f"https://api.validata.etalab.studio/validate?schema={schema_url}&url={dataset_to_validate_url}&header_case=true"
         )
         report = json.loads(res.text)["report"]
         if len(report["errors"]) > 0:
@@ -148,7 +151,6 @@ class ETL_CANTEEN(ETL):
     def __init__(self):
         super().__init__()
         self.dataset_name = "registre_cantines"
-        self.dataset_to_validate_url = f"{os.environ['CELLAR_HOST']}/{os.environ['CELLAR_BUCKET_NAME']}/media/open_data/{self.dataset_name}_to_validate.csv"
         self.schema = json.load(open("data/schemas/schema_cantine.json"))
         self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_cantine.json"
 
@@ -197,10 +199,8 @@ class ETL_TD(ETL):
         super().__init__()
         self.year = year
         self.dataset_name = f"campagne_td_{year}"
-        self.dataset_to_validate_url = f"{os.environ['CELLAR_HOST']}/{os.environ['CELLAR_BUCKET_NAME']}/media/open_data/{self.dataset_name}_to_validate.csv"
-
         self.schema = json.load(open("data/schemas/schema_teledeclaration.json"))
-        self.schema_url = "https://github.com/betagouv/ma-cantine/blob/staging/data/schemas/schema_teledeclaration.json"
+        self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_teledeclaration.json"
 
     def extract_dataset(self):
         if self.year == 2021:
