@@ -63,10 +63,6 @@
           >
             Modifier mon établissement
           </v-btn>
-
-          <p class="mb-0 ml-2 fr-text-sm">
-            <router-link :to="{ name: 'CanteenDeletion' }">Supprimer</router-link>
-          </p>
         </v-card-actions>
       </v-col>
     </v-row>
