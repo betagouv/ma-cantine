@@ -271,9 +271,8 @@ def export_datasets():
         'campagne teledeclaration 2021': ETL_TD(2021),
         'cantines': ETL_CANTEEN()
     }
-    for key, value in datasets.items():
+    for key, etl in datasets.items():
         logger.info(f"Starting {key} dataset extraction")
-        etl = value
         etl.extract_dataset()
         etl.export_dataset(stage='to_validate')
         logger.info(f"Validating {key} dataset. Dataset size : {etl.len_dataset()} lines")
@@ -286,4 +285,6 @@ def export_datasets():
         elif os.environ['DEFAULT_FILE_STORAGE'] == 'django.core.files.storage.FileSystemStorage':
             logger.info(f"Saving {key} dataset locally")
             etl.export_dataset()
+        else:
+            logger.info("Exporting the dataset is not possible with the file system configured")
 
