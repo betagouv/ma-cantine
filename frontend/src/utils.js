@@ -266,10 +266,11 @@ export const getApproPercentages = (diagnostic) => {
   const valueFishEgalim = diagnostic.percentageValueFishEgalimHt || diagnostic.valueFishEgalimHt
 
   const allSustainable = getSustainableTotal(diagnostic)
+  const allEgalim = (valueBio || 0) + (allSustainable || 0)
   return {
     bio: getPercentage(valueBio, valueTotal),
     allSustainable: getPercentage(allSustainable, valueTotal),
-    egalim: getPercentage(valueBio || 0 + allSustainable || 0, valueTotal),
+    egalim: getPercentage(allEgalim, valueTotal),
     meatPoultryEgalim: getPercentage(valueMeatPoultryEgalim, valueMeatPoultryTotal),
     meatPoultryFrance: getPercentage(valueMeatPoultryFrance, valueMeatPoultryTotal),
     fishEgalim: getPercentage(valueFishEgalim, valueFishTotal),

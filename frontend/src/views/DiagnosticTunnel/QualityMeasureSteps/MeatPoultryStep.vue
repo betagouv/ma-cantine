@@ -1,10 +1,6 @@
 <template>
   <div>
-    <div v-if="hasError">
-      <DsfrCallout v-for="message in errorMessages" :key="message" color="red lighten-1">
-        <p class="ma-0">{{ message }}</p>
-      </DsfrCallout>
-    </div>
+    <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <v-row>
       <v-col cols="12" md="8">
         <div class="d-block d-sm-flex align-center">
@@ -118,12 +114,12 @@
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import ErrorHelper from "./ErrorHelper"
-import DsfrCallout from "@/components/DsfrCallout"
+import FormErrorCallout from "@/components/FormErrorCallout"
 import { toCurrency } from "@/utils"
 
 export default {
   name: "MeatPoultryStep",
-  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, DsfrCallout },
+  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, FormErrorCallout },
   props: {
     diagnostic: {
       type: Object,

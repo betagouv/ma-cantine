@@ -1,10 +1,6 @@
 <template>
   <div>
-    <div v-if="hasError">
-      <DsfrCallout v-for="message in errorMessages" :key="message" color="red lighten-1">
-        <p class="ma-0">{{ message }}</p>
-      </DsfrCallout>
-    </div>
+    <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <DsfrCurrencyField
       v-model.number="payload.valueTotalHt"
       :error="hasError"
@@ -31,14 +27,14 @@
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import ErrorHelper from "./ErrorHelper"
-import DsfrCallout from "@/components/DsfrCallout"
+import FormErrorCallout from "@/components/FormErrorCallout"
 import { toCurrency } from "@/utils"
 
 const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs par label"
 
 export default {
   name: "QualityTotalStep",
-  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, DsfrCallout },
+  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, FormErrorCallout },
   props: {
     diagnostic: {
       type: Object,
