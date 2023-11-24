@@ -57,12 +57,18 @@ export default {
   },
   computed: {
     homePage() {
-      const authenticationRequired = this.$route.meta?.authenticationRequired
-      if (authenticationRequired)
+      const loggedUser = this.$store.state.loggedUser
+      if (loggedUser && loggedUser.isDev)
+        return {
+          title: "Développement et APIs",
+          to: { name: "DeveloperPage" },
+        }
+      if (loggedUser && !loggedUser.isDev) {
         return {
           title: "Mon tableau de bord",
           to: { name: "ManagementPage" },
         }
+      }
       return {
         title: "Acceuil",
         to: { name: "LandingPage" },
