@@ -44,7 +44,9 @@
           <fieldset :disabled="!payload.hasWasteMeasures">
             <legend class="my-3 font-weight-bold">
               Mesures du gaspillage
-              <span class="font-weight-medium">(facultatif)</span>
+              <span :class="`fr-hint-text mt-2 ${payload.hasWasteMeasures ? '' : 'grey--text'}`">
+                Optionnel
+              </span>
             </legend>
             <v-row>
               <v-col cols="12" md="6" class="pb-0">
@@ -97,7 +99,10 @@
       </v-row>
     </div>
     <fieldset v-else-if="stepUrlSlug === 'actions'">
-      <legend class="my-3">J’ai réalisé les actions de lutte contre le gaspillage alimentaire suivantes :</legend>
+      <legend class="my-3">
+        J’ai réalisé les actions de lutte contre le gaspillage alimentaire suivantes :
+        <span class="fr-hint-text mt-2">Optionnel</span>
+      </legend>
       <v-checkbox
         hide-details="auto"
         class="mb-3 mt-0"
@@ -135,31 +140,49 @@
           <fieldset :disabled="!payload.hasDonationAgreement">
             <v-row>
               <v-col cols="12" md="6" class="pb-0">
+                <label for="donationFrequency">
+                  Fréquence de dons
+                  <span :class="`fr-hint-text my-2 ${payload.hasDonationAgreement ? '' : 'grey--text'}`">
+                    Optionnel
+                  </span>
+                </label>
                 <DsfrTextField
+                  id="donationFrequency"
                   v-model.number="payload.donationFrequency"
                   :rules="[validators.nonNegativeOrEmpty]"
                   validate-on-blur
-                  label="Fréquence de dons (optionnel)"
                   suffix="dons/an"
                   :readonly="!payload.hasDonationAgreement"
                   :disabled="!payload.hasDonationAgreement"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
+                <label for="donationQuantity">
+                  Quantité de denrées données
+                  <span :class="`fr-hint-text my-2 ${payload.hasDonationAgreement ? '' : 'grey--text'}`">
+                    Optionnel
+                  </span>
+                </label>
                 <DsfrTextField
+                  id="donationQuantity"
                   v-model.number="payload.donationQuantity"
                   :rules="[validators.nonNegativeOrEmpty]"
                   validate-on-blur
-                  label="Quantité de denrées données (optionnel)"
                   suffix="kg/an"
                   :readonly="!payload.hasDonationAgreement"
                   :disabled="!payload.hasDonationAgreement"
                 />
               </v-col>
               <v-col cols="12" class="pb-0">
+                <label for="donationFoodType">
+                  Type de denrées données
+                  <span :class="`fr-hint-text my-2 ${payload.hasDonationAgreement ? '' : 'grey--text'}`">
+                    Optionnel
+                  </span>
+                </label>
                 <DsfrTextField
+                  id="donationFoodType"
                   v-model.number="payload.donationFoodType"
-                  label="Type de denrées données (optionnel)"
                   :readonly="!payload.hasDonationAgreement"
                   :disabled="!payload.hasDonationAgreement"
                 />
@@ -173,11 +196,13 @@
       <v-row>
         <v-col cols="12" sm="9" md="7">
           <fieldset>
-            <legend class="my-3">Autres commentaires</legend>
-            <p class="fr-text-xs mt-1 mb-3">
-              Optionnel : toute précision que vous souhaiteriez apporter sur votre situation et/ou sur vos actions mises
-              en place pour lutter contre le gaspillage alimentaire
-            </p>
+            <legend class="my-3">
+              Autres commentaires
+              <span class="fr-hint-text mt-2">
+                Optionnel : toute précision que vous souhaiteriez apporter sur votre situation et/ou sur vos actions
+                mises en place pour lutter contre le gaspillage alimentaire
+              </span>
+            </legend>
             <DsfrTextarea v-model="payload.otherWasteComments" rows="3" class="mt-6" />
           </fieldset>
         </v-col>
