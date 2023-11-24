@@ -227,7 +227,7 @@ export default {
       return this.isApproTab && isCurrentYear && managesOwnPurchases && !dataProvidedByDiagnostic
     },
     hasData() {
-      let hasMeasureData = hasStartedMeasureTunnel(this.displayDiagnostic, this.keyMeasure)
+      const hasMeasureData = hasStartedMeasureTunnel(this.displayDiagnostic, this.keyMeasure)
       return this.showPurchasesSection || hasMeasureData
     },
     showIntroduction() {
