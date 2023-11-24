@@ -32,9 +32,10 @@
     </div>
     <div
       v-if="diagnostic"
-      class="mx-auto constrained px-4 py-10 flex-grow-1 d-flex flex-column justify-center"
+      class="mx-auto constrained px-4 py-10 flex-grow-1 d-flex flex-column"
       style="width: 100%; overflow-y: scroll; overflow-x: hidden;"
     >
+      <v-spacer />
       <component
         :is="`${measure.baseComponent}Steps`"
         :canteen="canteen"
@@ -43,6 +44,7 @@
         v-on:update-payload="updatePayload"
         v-on:update-steps="updateSteps"
       />
+      <v-spacer />
     </div>
     <div class="footer pa-2" style="width: 100%">
       <div class="d-flex mx-auto constrained align-center">
