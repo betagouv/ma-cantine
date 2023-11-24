@@ -261,13 +261,11 @@
         <ExpeReservation v-if="showExpeModal" @close="() => (showExpeModal = false)" :canteen="canteen" />
       </v-dialog>
     </div>
-    <WasteMeasureSummary v-else :canteen="canteen" :diagnostic="diagnostic" />
   </v-form>
 </template>
 
 <script>
 import { applicableDiagnosticRules } from "@/utils"
-import WasteMeasureSummary from "@/components/DiagnosticSummary/WasteMeasureSummary"
 import validators from "@/validators"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
@@ -290,7 +288,6 @@ export default {
     },
   },
   components: {
-    WasteMeasureSummary,
     DsfrTextField,
     DsfrTextarea,
     ExpeReservation,

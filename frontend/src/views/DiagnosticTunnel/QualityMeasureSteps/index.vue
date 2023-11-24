@@ -31,7 +31,6 @@
 </template>
 
 <script>
-import QualityMeasureSummary from "@/components/DiagnosticSummary/QualityMeasureSummary"
 import QualityTotalStep from "./QualityTotalStep"
 import BioSiqoStep from "./BioSiqoStep"
 import OtherEgalimStep from "./OtherEgalimStep"
@@ -41,7 +40,7 @@ import Constants from "@/constants"
 import { getObjectDiff } from "@/utils"
 
 export default {
-  name: "QualitySteps",
+  name: "QualityMeasureSteps",
   props: {
     canteen: {
       type: Object,
@@ -57,7 +56,6 @@ export default {
   },
   components: {
     QualityTotalStep,
-    QualityMeasureSummary,
     BioSiqoStep,
     OtherEgalimStep,
     MeatPoultryStep,
@@ -105,7 +103,6 @@ export default {
       const lastStep = {
         title: "Synthèse",
         isSynthesis: true,
-        componentName: "QualityMeasureSummary",
         urlSlug: "complet",
       }
       const simplifiedSteps = [

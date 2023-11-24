@@ -78,15 +78,13 @@
         />
       </fieldset>
     </div>
-    <InformationMeasureSummary v-else :diagnostic="payload" />
   </v-form>
 </template>
 
 <script>
-import validators from "@/validators"
-import InformationMeasureSummary from "@/components/DiagnosticSummary/InformationMeasureSummary"
-import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
+import validators from "@/validators"
+import Constants from "@/constants"
 
 export default {
   name: "InformationMeasureSteps",
@@ -103,7 +101,7 @@ export default {
       type: String,
     },
   },
-  components: { InformationMeasureSummary, DsfrTextField },
+  components: { DsfrTextField },
   data() {
     const payload = {
       communicatesOnFoodQuality: this.diagnostic.communicatesOnFoodQuality,
