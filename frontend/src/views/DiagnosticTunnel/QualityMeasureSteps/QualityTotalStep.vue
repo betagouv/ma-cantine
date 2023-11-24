@@ -16,10 +16,11 @@
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
     <ErrorHelper
-      :class="`mt-8 ${hasError ? '' : 'd-none'}`"
+      v-if="hasError || errorHelperUsed"
+      class="mt-8"
       :showFields="errorHelperFields"
       :diagnostic="payload"
-      @check-total="checkTotal"
+      @field-update="errorUpdate"
       :purchasesSummary="purchasesSummary"
     />
   </div>
@@ -56,6 +57,7 @@ export default {
       meatPoultryErrorMessage: null,
       fishErrorMessage: null,
       totalFamiliesErrorMessage: null,
+      errorHelperUsed: false,
     }
   },
   computed: {
@@ -137,6 +139,10 @@ export default {
         total += parseFloat(val) || 0
       })
       return total
+    },
+    errorUpdate() {
+      this.errorHelperUsed = true
+      this.checkTotal()
     },
   },
   mounted() {

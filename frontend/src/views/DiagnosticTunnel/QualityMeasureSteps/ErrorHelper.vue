@@ -13,13 +13,13 @@
         <DsfrCurrencyField
           :id="field.name"
           v-model.number="diagnostic[field.name]"
-          @blur="$emit('check-total')"
+          @blur="$emit('field-update')"
           class="mt-2"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="diagnostic[field.name]"
-          @autofill="$emit('check-total')"
+          @autofill="$emit('field-update')"
           :purchaseType="field.purchaseType"
           :amount="purchasesSummary[field.name]"
         />
