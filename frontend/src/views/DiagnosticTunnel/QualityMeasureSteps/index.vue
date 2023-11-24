@@ -38,6 +38,7 @@ import OtherEgalimStep from "./OtherEgalimStep"
 import MeatPoultryStep from "./MeatPoultryStep"
 import FishStep from "./FishStep"
 import Constants from "@/constants"
+import { getObjectDiff } from "@/utils"
 
 export default {
   name: "QualitySteps",
@@ -63,23 +64,25 @@ export default {
     FishStep,
   },
   data() {
+    const originalValues = {
+      valueTotalHt: this.diagnostic.valueTotalHt,
+      diagnosticType: this.diagnostic.diagnosticType || "SIMPLE",
+      valueBioHt: this.diagnostic.valueBioHt,
+      valueSustainableHt: this.diagnostic.valueSustainableHt,
+      valueEgalimOthersHt: this.diagnostic.valueEgalimOthersHt,
+      valueExternalityPerformanceHt: this.diagnostic.valueExternalityPerformanceHt,
+      valueMeatPoultryHt: this.diagnostic.valueMeatPoultryHt,
+      valueMeatPoultryEgalimHt: this.diagnostic.valueMeatPoultryEgalimHt,
+      valueMeatPoultryFranceHt: this.diagnostic.valueMeatPoultryFranceHt,
+      valueFishHt: this.diagnostic.valueFishHt,
+      valueFishEgalimHt: this.diagnostic.valueFishEgalimHt,
+    }
     return {
       formIsValid: true,
       purchasesSummary: null,
       diagnosticTypes: Constants.DiagnosticTypes,
-      payload: {
-        valueTotalHt: this.diagnostic.valueTotalHt,
-        diagnosticType: this.diagnostic.diagnosticType || "SIMPLE",
-        valueBioHt: this.diagnostic.valueBioHt,
-        valueSustainableHt: this.diagnostic.valueSustainableHt,
-        valueEgalimOthersHt: this.diagnostic.valueEgalimOthersHt,
-        valueExternalityPerformanceHt: this.diagnostic.valueExternalityPerformanceHt,
-        valueMeatPoultryHt: this.diagnostic.valueMeatPoultryHt,
-        valueMeatPoultryEgalimHt: this.diagnostic.valueMeatPoultryEgalimHt,
-        valueMeatPoultryFranceHt: this.diagnostic.valueMeatPoultryFranceHt,
-        valueFishHt: this.diagnostic.valueFishHt,
-        valueFishEgalimHt: this.diagnostic.valueFishEgalimHt,
-      },
+      originalValues,
+      payload: JSON.parse(JSON.stringify(originalValues)),
     }
   },
   computed: {
@@ -145,7 +148,8 @@ export default {
       this.$set(this, "payload", e.payload)
     },
     updatePayload() {
-      this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
+      const payloadToSend = getObjectDiff(this.originalValues, this.payload)
+      this.$emit("update-payload", { payload: payloadToSend, formIsValid: this.formIsValid })
     },
     fetchPurchasesSummary() {
       fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.diagnostic.year}`)
