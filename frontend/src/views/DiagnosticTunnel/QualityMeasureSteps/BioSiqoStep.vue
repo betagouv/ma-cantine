@@ -6,9 +6,7 @@
       biologique et label rouge ne sera comptabilisé que dans la catégorie 'bio'.
     </p>
 
-    <DsfrCallout v-if="totalError" color="red lighten-1">
-      <p class="ma-0">{{ totalErrorMessage }}</p>
-    </DsfrCallout>
+    <FormErrorCallout v-if="totalError" :errorMessages="[totalErrorMessage]" />
 
     <!-- Bio -->
     <v-row class="my-0 my-md-6">
@@ -23,6 +21,7 @@
         <DsfrCurrencyField
           id="bio"
           v-model.number="payload.valueBioHt"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
         />
@@ -32,7 +31,7 @@
           purchaseType="bio"
           :amount="purchasesSummary.valueBioHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
         />
       </v-col>
       <v-col md="4" class="d-flex align-center left-border" v-if="$vuetify.breakpoint.mdAndUp">
@@ -62,6 +61,7 @@
         <DsfrCurrencyField
           id="siqo"
           v-model.number="payload.valueSustainableHt"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
         />
@@ -71,7 +71,7 @@
           purchaseType="SIQO"
           :amount="purchasesSummary.valueSustainableHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
         />
       </v-col>
       <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
@@ -98,7 +98,7 @@
 
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
-import DsfrCallout from "@/components/DsfrCallout"
+import FormErrorCallout from "@/components/FormErrorCallout"
 import ErrorHelper from "./ErrorHelper"
 import labels from "@/data/quality-labels.json"
 import LogoBio from "@/components/LogoBio"
@@ -107,7 +107,7 @@ import { toCurrency } from "@/utils"
 
 export default {
   name: "BioSiqoStep",
-  components: { DsfrCurrencyField, LogoBio, PurchaseHint, ErrorHelper, DsfrCallout },
+  components: { DsfrCurrencyField, LogoBio, PurchaseHint, ErrorHelper, FormErrorCallout },
   props: {
     diagnostic: {
       type: Object,
@@ -165,14 +165,6 @@ export default {
         total += parseFloat(val) || 0
       })
       return total
-    },
-  },
-  watch: {
-    payload: {
-      handler() {
-        this.updatePayload()
-      },
-      deep: true,
     },
   },
   mounted() {

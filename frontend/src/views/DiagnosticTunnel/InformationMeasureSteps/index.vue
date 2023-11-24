@@ -11,8 +11,10 @@
         </v-radio-group>
       </fieldset>
       <fieldset class="mt-8" :disabled="!payload.communicatesOnFoodQuality">
-        <legend>Je fais cette information</legend>
-        <p class="fr-text-xs mt-1 mb-3">Optionnel</p>
+        <legend>
+          Je fais cette information
+          <span class="fr-hint-text my-2">Optionnel</span>
+        </legend>
         <v-radio-group class="my-0" v-model="payload.communicationFrequency" hide-details>
           <v-radio
             v-for="item in communicationFrequencies"
@@ -27,8 +29,10 @@
     </div>
     <div v-else-if="stepUrlSlug === 'mode-information'">
       <fieldset>
-        <legend>J’informe les convives sur la qualité des approvisionnements :</legend>
-        <p class="fr-text-xs mt-1 mb-3">Plusieurs choix possibles</p>
+        <legend>
+          J’informe les convives sur la qualité des approvisionnements :
+          <span class="fr-hint-text my-2">Optionnel</span>
+        </legend>
         <v-checkbox
           hide-details="auto"
           class="mb-3 mt-0"
@@ -61,8 +65,10 @@
     </div>
     <div v-else-if="stepUrlSlug === 'lien-communication'">
       <fieldset>
-        <legend>Lien vers le support de communication</legend>
-        <p class="fr-text-xs mt-1 mb-3">Optionnel</p>
+        <legend>
+          Lien vers le support de communication
+          <span class="fr-hint-text mt-2">Optionnel</span>
+        </legend>
         <DsfrTextField
           :rules="[validators.urlOrEmpty]"
           v-model="payload.communicationSupportUrl"
