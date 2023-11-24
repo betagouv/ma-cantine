@@ -32,12 +32,7 @@
     </div>
     <div v-if="diagnostic" class="flex-grow-1 scroll">
       <div v-if="step && step.isSynthesis" style="height: 100%;">
-        <SummaryWrapper
-          :measure="measure"
-          :canteen="canteen"
-          :diagnostic="diagnostic"
-          class="mx-auto constrained pa-10 summary scroll"
-        />
+        <SummaryWrapper class="scroll" :measure="measure" :canteen="canteen" :diagnostic="diagnostic" />
       </div>
       <div v-else style="height: 100%; width: 100%; background: #fff;">
         <component
@@ -300,11 +295,6 @@ export default {
 <style>
 .tunnel {
   background-color: #f5f5fe;
-}
-.summary {
-  height: 100%;
-  background: #fff;
-  border: 1px solid #ddd;
 }
 .scroll {
   height: 100%;

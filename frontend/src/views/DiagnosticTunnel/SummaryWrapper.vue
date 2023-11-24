@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mx-auto constrained pa-10 summary">
     <h1 class="fr-text font-weight-bold text-uppercase mb-4">Synthèse</h1>
     <component :is="`${measure.baseComponent}Summary`" :canteen="canteen" :diagnostic="diagnostic" />
   </div>
@@ -37,3 +37,11 @@ export default {
   },
 }
 </script>
+
+<style>
+.summary {
+  height: 100%;
+  background: #fff;
+  border: 1px solid #ddd;
+}
+</style>
