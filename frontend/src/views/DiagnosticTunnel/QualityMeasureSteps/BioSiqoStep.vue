@@ -21,6 +21,7 @@
         <DsfrCurrencyField
           id="bio"
           v-model.number="payload.valueBioHt"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
         />
@@ -30,7 +31,7 @@
           purchaseType="bio"
           :amount="purchasesSummary.valueBioHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
         />
       </v-col>
       <v-col md="4" class="d-flex align-center left-border" v-if="$vuetify.breakpoint.mdAndUp">
@@ -60,6 +61,7 @@
         <DsfrCurrencyField
           id="siqo"
           v-model.number="payload.valueSustainableHt"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
         />
@@ -69,7 +71,7 @@
           purchaseType="SIQO"
           :amount="purchasesSummary.valueSustainableHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
         />
       </v-col>
       <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
@@ -163,14 +165,6 @@ export default {
         total += parseFloat(val) || 0
       })
       return total
-    },
-  },
-  watch: {
-    payload: {
-      handler() {
-        this.updatePayload()
-      },
-      deep: true,
     },
   },
   mounted() {

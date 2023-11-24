@@ -33,13 +33,14 @@
         <DsfrCurrencyField
           id="other"
           v-model.number="payload.valueEgalimOthersHt"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload.valueEgalimOthersHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="« autre EGAlim »"
           :amount="purchasesSummary.valueEgalimOthersHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -129,13 +130,14 @@
         <DsfrCurrencyField
           id="ext-perf"
           v-model.number="payload.valueExternalityPerformanceHt"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="diagnostic.valueExternalityPerformanceHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="« critères d'achat »"
           :amount="purchasesSummary.valueExternalityPerformanceHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -231,14 +233,6 @@ export default {
         total += parseFloat(val) || 0
       })
       return total
-    },
-  },
-  watch: {
-    payload: {
-      handler() {
-        this.updatePayload()
-      },
-      deep: true,
     },
   },
   mounted() {
