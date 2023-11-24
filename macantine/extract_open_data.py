@@ -5,6 +5,7 @@ import logging
 import os
 import datetime
 
+from validata_core import validate
 from abc import ABC, abstractmethod
 from data.department_choices import Department
 from data.region_choices import Region
@@ -98,9 +99,24 @@ class ETL(ABC):
             return len(self.df)
         else:
             return 0
+        
+    def is_valid(self) -> bool:
+        # We should be able to pass directly the dataframe but there is currently a bug in validata
+        # link to the issue here : https://gitlab.com/validata-table/validata-table/-/issues/138
+        report = validate(f"media/open_data/{self.dataset_name}_to_validate.csv", self.schema)
+        if len(report["errors"]) > 0:
+            logger.error(f'The dataset {self.dataset_name} extraction has errors : ')
+            logger.error(report['errors'])
+            return 0
+        else:
+            return 1
 
-    def export_dataset(self,):
-        with default_storage.open(f"open_data/{self.dataset_name}.csv", "w") as file:
+    def export_dataset(self, stage='to_validate'):
+        if stage == 'to_validate':
+            filename = f"open_data/{self.dataset_name}_to_validate.csv"
+        else:
+            filename = f"open_data/{self.dataset_name}.csv"
+        with default_storage.open(filename, "w") as file:
             self.df.to_csv(file, sep=";", index=False, na_rep="")
 
 
