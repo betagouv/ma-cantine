@@ -1,7 +1,7 @@
 <template>
   <div class="text-left d-flex flex-column my-n5" ref="container" v-resize="onResize" style="width: 100%">
-    <div class="header pa-2">
-      <v-row class="mx-auto constrained align-center my-3 my-sm-6">
+    <div class="header px-2 py-sm-2">
+      <v-row class="mx-auto constrained align-center my-1 my-sm-3">
         <v-col cols="9" class="py-4 d-flex" v-if="$vuetify.breakpoint.smAndUp">
           <div v-for="tunnel in tunnels" :key="tunnel.id" class="px-4 header-icon">
             <div v-if="tunnel.id === measure.id" class="d-flex align-center my-1">
@@ -17,7 +17,7 @@
         </v-col>
         <v-col class="text-right py-0">
           <p class="mb-0">
-            <v-btn text plain class="text-decoration-underline" color="primary" @click="saveAndQuit">
+            <v-btn text plain class="text-decoration-underline px-0" color="primary" @click="saveAndQuit">
               Sauvegarder et quitter
               <v-icon color="primary" size="1rem" class="ml-0 mb-1">
                 $close-line
@@ -32,7 +32,7 @@
     </div>
     <div
       v-if="diagnostic"
-      class="mx-auto constrained px-4 py-10 flex-grow-1"
+      class="mx-auto constrained px-4 py-10 flex-grow-1 d-flex flex-column justify-center"
       style="width: 100%; overflow-y: scroll; overflow-x: hidden;"
     >
       <component
@@ -152,7 +152,7 @@ export default {
       return this.stepIdx > 0 ? this.steps[this.stepIdx - 1] : null
     },
     continueActionText() {
-      const returnToTable = !this.nextTunnel
+      const returnToTable = !this.nextTunnel && this.step?.isSynthesis
       if (returnToTable) return "Retour au tableau de bord"
       const nextIsNewMeasure = this.step?.isSynthesis
       if (nextIsNewMeasure) return "Passer à l'onglet suivant"
