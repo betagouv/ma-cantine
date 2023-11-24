@@ -163,9 +163,7 @@ export default {
       if (number) {
         const tofixed = number.toFixed(max)
         if (number !== Number(tofixed)) {
-          // not using toLocaleString on the number because want to ensure decimal places even in rounding 1,00
-          // otherwise I think the message is confusing
-          return `${max} décimales attendues, par exemple ${tofixed.replace(".", ",")}`
+          return `${max} décimales attendues, par exemple ${tofixed}`
         }
         if (!isBase10Number(input)) return NUMBER_FORMAT_ERROR
       }
