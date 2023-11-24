@@ -295,6 +295,7 @@
         <ImagesField class="mt-0 mb-4" :imageArray.sync="canteen.images" id="images" />
       </div>
       <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
+        <v-btn x-large outlined color="red" :to="{ name: 'CanteenDeletion' }">Supprimer</v-btn>
         <v-spacer></v-spacer>
         <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
           Annuler
