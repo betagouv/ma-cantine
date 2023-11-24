@@ -569,10 +569,7 @@ function hasValue(val) {
   }
 }
 
-export const hasDataForMeasure = (diagnostic, keyMeasure) => {
-  let hasDiagnostic = diagnostic
-  if (diagnostic?.creationSource === "TUNNEL") {
-    hasDiagnostic = !!diagnostic[keyMeasure.progressField]
-  }
-  return !!hasDiagnostic
+export const hasStartedMeasureTunnel = (diagnostic, keyMeasure) => {
+  if (diagnostic?.creationSource === "TUNNEL") return !!diagnostic[keyMeasure.progressField]
+  return !!diagnostic
 }

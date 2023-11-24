@@ -32,7 +32,7 @@
 import Constants from "@/constants"
 import DataInfoBadge from "./DataInfoBadge"
 import keyMeasures from "@/data/key-measures.json"
-import { hasDataForMeasure } from "@/utils"
+import { hasStartedMeasureTunnel } from "@/utils"
 
 export default {
   name: "DiversificationCard",
@@ -60,7 +60,7 @@ export default {
     },
     level() {
       if (this.delegatedToSatellite) return null
-      if (!hasDataForMeasure(this.diagnostic, this.keyMeasure)) return Constants.Levels.UNKNOWN
+      if (!hasStartedMeasureTunnel(this.diagnostic, this.keyMeasure)) return Constants.Levels.UNKNOWN
       return null
     },
     cardBody() {

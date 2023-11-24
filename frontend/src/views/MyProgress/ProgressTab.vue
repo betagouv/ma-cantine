@@ -103,7 +103,7 @@ import WasteMeasureSummary from "@/components/DiagnosticSummary/WasteMeasureSumm
 import CanteenSummary from "@/components/DiagnosticSummary/CanteenSummary"
 import PurchasesSummary from "@/components/DiagnosticSummary/PurchasesSummary"
 import keyMeasures from "@/data/key-measures.json"
-import { hasDiagnosticApproData, lastYear, hasDataForMeasure } from "@/utils"
+import { hasDiagnosticApproData, lastYear, hasStartedMeasureTunnel } from "@/utils"
 
 export default {
   name: "ProgressTab",
@@ -227,7 +227,7 @@ export default {
       return this.isApproTab && isCurrentYear && managesOwnPurchases && !dataProvidedByDiagnostic
     },
     hasData() {
-      let hasMeasureData = hasDataForMeasure(this.displayDiagnostic, this.keyMeasure)
+      let hasMeasureData = hasStartedMeasureTunnel(this.displayDiagnostic, this.keyMeasure)
       return this.showPurchasesSection || hasMeasureData
     },
     showIntroduction() {

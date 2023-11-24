@@ -131,7 +131,7 @@
   </div>
 </template>
 <script>
-import { hasDiagnosticApproData, lastYear, hasDataForMeasure } from "@/utils"
+import { hasDiagnosticApproData, lastYear, hasStartedMeasureTunnel } from "@/utils"
 import Constants from "@/constants"
 import ApproGraph from "@/components/ApproGraph"
 import keyMeasures from "@/data/key-measures.json"
@@ -177,7 +177,7 @@ export default {
     },
     level() {
       if (this.delegatedToSatellite) return null
-      if (!hasDataForMeasure(this.diagnostic, this.keyMeasure)) return Constants.Levels.UNKNOWN
+      if (!hasStartedMeasureTunnel(this.diagnostic, this.keyMeasure)) return Constants.Levels.UNKNOWN
       return null
     },
     hasPurchases() {
