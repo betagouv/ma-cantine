@@ -500,11 +500,11 @@ export default {
           this.$emit("updateCanteen", canteenJson)
           if (this.isNewCanteen) {
             const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteenJson)
-            const name = this.showSatelliteCanteensCount
-              ? "SatelliteManagement"
-              : window.ENABLE_DASHBOARD
-              ? "DashboardManager"
-              : "DiagnosticList"
+
+            let name = "DiagnosticList"
+            if (this.showSatelliteCanteensCount) name = "SatelliteManagement"
+            else if (window.ENABLE_DASHBOARD) name = "DashboardManager"
+
             this.$router.push({
               // form validation ensures that the count will be > 0
               name,
