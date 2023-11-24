@@ -14,7 +14,7 @@
           :id="field.name"
           v-model.number="diagnostic[field.name]"
           @blur="$emit('check-total')"
-          :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+          class="mt-2"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
@@ -22,7 +22,6 @@
           @autofill="$emit('check-total')"
           :purchaseType="field.purchaseType"
           :amount="purchasesSummary[field.name]"
-          :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
       </div>
     </v-card-text>
