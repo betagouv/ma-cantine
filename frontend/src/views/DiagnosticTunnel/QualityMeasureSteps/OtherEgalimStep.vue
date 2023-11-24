@@ -5,9 +5,7 @@
       : la valeur d’achat ne pourra être comptée que dans une seule des catégories.
     </p>
 
-    <DsfrCallout v-if="totalError" color="red lighten-1">
-      <p class="ma-0">{{ totalErrorMessage }}</p>
-    </DsfrCallout>
+    <FormErrorCallout v-if="totalError" :errorMessages="[totalErrorMessage]" />
 
     <!-- Other EGAlim -->
     <v-row class="my-0 my-md-6">
@@ -35,13 +33,14 @@
         <DsfrCurrencyField
           id="other"
           v-model.number="payload.valueEgalimOthersHt"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload.valueEgalimOthersHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="« autre EGAlim »"
           :amount="purchasesSummary.valueEgalimOthersHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -131,13 +130,14 @@
         <DsfrCurrencyField
           id="ext-perf"
           v-model.number="payload.valueExternalityPerformanceHt"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="diagnostic.valueExternalityPerformanceHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="« critères d'achat »"
           :amount="purchasesSummary.valueExternalityPerformanceHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -170,11 +170,11 @@ import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import labels from "@/data/quality-labels.json"
 import { toCurrency } from "@/utils"
 import ErrorHelper from "./ErrorHelper"
-import DsfrCallout from "@/components/DsfrCallout"
+import FormErrorCallout from "@/components/FormErrorCallout"
 
 export default {
   name: "OtherEgalimStep",
-  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, DsfrCallout },
+  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, FormErrorCallout },
   props: {
     diagnostic: {
       type: Object,
@@ -233,14 +233,6 @@ export default {
         total += parseFloat(val) || 0
       })
       return total
-    },
-  },
-  watch: {
-    payload: {
-      handler() {
-        this.updatePayload()
-      },
-      deep: true,
     },
   },
   mounted() {

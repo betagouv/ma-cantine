@@ -1,10 +1,6 @@
 <template>
   <div>
-    <div v-if="hasError">
-      <DsfrCallout v-for="message in errorMessages" :key="message" color="red lighten-1">
-        <p class="ma-0">{{ message }}</p>
-      </DsfrCallout>
-    </div>
+    <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <v-row>
       <v-col cols="12" md="8">
         <!-- Poissons -->
@@ -23,13 +19,13 @@
           id="fish"
           v-model.number="payload.valueFishHt"
           :error="hasError"
-          @blur="checkTotal"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload.valueFishHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="totaux de poissons, produits de la mer et de l'aquaculture"
           :amount="purchasesSummary.valueFishHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -54,13 +50,13 @@
           id="fish-egalim"
           v-model.number="payload.valueFishEgalimHt"
           :error="fishError"
-          @blur="checkTotal"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload.valueFishEgalimHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="poissons, produits de la mer et de l'aquaculture EGAlim"
           :amount="purchasesSummary.valueFishEgalimHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -82,12 +78,12 @@
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import ErrorHelper from "./ErrorHelper"
-import DsfrCallout from "@/components/DsfrCallout"
+import FormErrorCallout from "@/components/FormErrorCallout"
 import { toCurrency } from "@/utils"
 
 export default {
   name: "FishStep",
-  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, DsfrCallout },
+  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, FormErrorCallout },
   props: {
     diagnostic: {
       type: Object,
@@ -163,14 +159,6 @@ export default {
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
       } else this.totalFamiliesErrorMessage = null
-    },
-  },
-  watch: {
-    payload: {
-      handler() {
-        this.updatePayload()
-      },
-      deep: true,
     },
   },
   mounted() {
