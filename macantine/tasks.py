@@ -2,6 +2,7 @@ import logging
 import datetime
 import requests
 import csv
+import os
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
@@ -276,9 +277,13 @@ def export_datasets():
         etl.extract_dataset()
         etl.export_dataset(stage='to_validate')
         logger.info(f"Validating {key} dataset. Dataset size : {etl.len_dataset()} lines")
-        if etl.is_valid():
-            logger.info(f"Saving {key} dataset.")
+        if os.environ['DEFAULT_FILE_STORAGE'] == 'storages.backends.s3boto3.S3Boto3Storage':
+            if etl.is_valid():
+                logger.info(f"Exporting {key} dataset to s3")
+                etl.export_dataset()
+            else:
+                logger.error(f"The dataset {key} is invalid and therefore will not be exported to s3")
+        elif os.environ['DEFAULT_FILE_STORAGE'] == 'django.core.files.storage.FileSystemStorage':
+            logger.info(f"Saving {key} dataset locally")
             etl.export_dataset()
-        else:
-            logger.error(f"The dataset {key} is invalid and therefore will not be saved.")
 

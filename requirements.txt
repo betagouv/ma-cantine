@@ -97,7 +97,7 @@ reportlab==3.6.13
 requests==2.31.0
 requests-mock==1.11.0
 s3transfer==0.7.0
-sentry-sdk==1.31.0
+sentry-sdk==1.27.1
 sib-api-v3-sdk==7.6.0
 six==1.16.0
 sqlparse==0.4.4
@@ -114,7 +114,6 @@ tzlocal==5.0.1
 uritemplate==4.1.1
 uritools==4.0.2
 urllib3==1.26.18
-validata-table==0.10.1
 vine==5.1.0
 wcwidth==0.2.6
 webencodings==0.5.1
