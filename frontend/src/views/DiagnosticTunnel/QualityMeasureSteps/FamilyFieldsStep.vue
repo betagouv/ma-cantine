@@ -31,6 +31,7 @@
           ]"
           solo
           v-model.number="payload[diagnosticKey(fId)]"
+          @blur="populateSimplifiedDiagnostic"
           class="mt-2"
         />
         <PurchaseHint
@@ -49,6 +50,7 @@ import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import Constants from "@/constants"
 import validators from "@/validators"
+import { approTotals } from "@/utils"
 
 export default {
   name: "FamilyFieldsStep",
@@ -99,6 +101,62 @@ export default {
         string += stringArray[index].slice(0, 1).toUpperCase() + stringArray[index].slice(1).toLowerCase()
       }
       return string
+    },
+    populateSimplifiedDiagnostic() {
+      const { bioTotal, siqoTotal, perfExtTotal, egalimOthersTotal } = approTotals(this.payload)
+      this.payload.valueBioHt = bioTotal
+      this.payload.valueSustainableHt = siqoTotal
+      this.payload.valueExternalityPerformanceHt = perfExtTotal
+      this.payload.valueEgalimOthersHt = egalimOthersTotal
+
+      const { meatPoultryEgalim, meatPoultryFrance } = this.meatPoultryTotals()
+      this.payload.valueMeatPoultryEgalimHt = meatPoultryEgalim
+      this.payload.valueMeatPoultryFranceHt = meatPoultryFrance
+
+      const { fishEgalim } = this.fishTotals()
+      this.payload.valueFishEgalimHt = fishEgalim
+    },
+    meatPoultryTotals() {
+      let meatPoultryEgalim = this.payload.valueSustainableHt
+      let meatPoultryFrance = this.payload.valueExternalityPerformanceHt
+      if (this.extendedDiagnostic) {
+        meatPoultryEgalim = 0
+        meatPoultryFrance = 0
+        const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+        const outsideLawFields = Constants.TeledeclarationCharacteristicGroups.outsideLaw.fields
+        const allFields = egalimFields.concat(outsideLawFields)
+
+        allFields.forEach((field) => {
+          const isMeatPoultry = field.includes("ViandesVolailles")
+          const value = parseFloat(this.payload[field])
+          if (!isMeatPoultry || !value) return
+          const isEgalim = egalimFields.includes(field)
+          const isFrance = field.startsWith("value") && field.endsWith("France")
+
+          // Note that it can be both egalim and provenance France
+          if (isEgalim) meatPoultryEgalim += value
+          if (isFrance) meatPoultryFrance += value
+        })
+        meatPoultryEgalim = +meatPoultryEgalim.toFixed(2)
+        meatPoultryFrance = +meatPoultryFrance.toFixed(2)
+      }
+      return { meatPoultryEgalim, meatPoultryFrance }
+    },
+    fishTotals() {
+      let fishEgalim = this.payload.valueSustainableHt
+
+      fishEgalim = 0
+
+      const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+
+      egalimFields.forEach((field) => {
+        const isFish = field.includes("ProduitsDeLaMer")
+        const value = parseFloat(this.payload[field])
+        if (!isFish || !value) return
+        fishEgalim += value
+      })
+      fishEgalim = +fishEgalim.toFixed(2)
+      return { fishEgalim }
     },
   },
 }
