@@ -53,7 +53,10 @@
         <SummaryWrapper :measure="measure" :canteen="canteen" :diagnostic="diagnostic" />
       </div>
     </div>
-    <div class="footer pa-2 d-flex mx-auto constrained align-center" style="width: 100%">
+    <div
+      class="footer pa-2 d-flex mx-auto constrained align-center pt-5 pt-sm-6 pb-3 pb-sm-16 px-4"
+      style="width: 100%"
+    >
       <div v-if="step && step.isSynthesis && nextTunnelTitle && $vuetify.breakpoint.smAndUp" cols="5">
         <p class="fr-text-xs grey--text text--darken-2 mb-0">
           Onglet suivant :
@@ -61,7 +64,7 @@
         </p>
       </div>
       <v-spacer v-if="$vuetify.breakpoint.smAndUp" />
-      <div class="d-block d-sm-flex pt-5 pt-sm-6 pb-3 pb-sm-16 px-4 align-center flex-row-reverse">
+      <div class="d-block d-sm-flex align-center flex-row-reverse">
         <v-btn :disabled="!formIsValid" @click="continueAction" color="primary" class="ml-0 ml-sm-4 mb-4 mb-sm-0">
           {{ continueActionText }}
         </v-btn>
