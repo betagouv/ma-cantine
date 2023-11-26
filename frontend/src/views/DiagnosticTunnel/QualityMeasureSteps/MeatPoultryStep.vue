@@ -1,10 +1,6 @@
 <template>
   <div>
-    <div v-if="hasError">
-      <DsfrCallout v-for="message in errorMessages" :key="message" color="red lighten-1">
-        <p class="ma-0">{{ message }}</p>
-      </DsfrCallout>
-    </div>
+    <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <v-row>
       <v-col cols="12" md="8">
         <div class="d-block d-sm-flex align-center">
@@ -24,13 +20,14 @@
         <DsfrCurrencyField
           id="meat-poultry"
           v-model.number="payload.valueMeatPoultryHt"
+          @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="hasError"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload.valueMeatPoultryHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="totaux viandes et volailles"
           :amount="purchasesSummary.valueMeatPoultryHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -57,13 +54,14 @@
         <DsfrCurrencyField
           id="meat-poultry-egalim"
           v-model.number="payload.valueMeatPoultryEgalimHt"
+          @blur="updatePayload"
           :error="meatPoultryError"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload.valueMeatPoultryEgalimHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="viandes et volailles EGAlim"
           :amount="purchasesSummary.valueMeatPoultryEgalimHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -90,13 +88,14 @@
         <DsfrCurrencyField
           id="meat-poultry-france"
           v-model.number="payload.valueMeatPoultryFranceHt"
+          @blur="updatePayload"
           :error="meatPoultryError"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload.valueMeatPoultryFranceHt"
-          @autofill="checkTotal"
+          @autofill="updatePayload"
           purchaseType="viandes et volailles provenance France"
           :amount="purchasesSummary.valueMeatPoultryFranceHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -118,12 +117,12 @@
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import ErrorHelper from "./ErrorHelper"
-import DsfrCallout from "@/components/DsfrCallout"
+import FormErrorCallout from "@/components/FormErrorCallout"
 import { toCurrency } from "@/utils"
 
 export default {
   name: "MeatPoultryStep",
-  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, DsfrCallout },
+  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, FormErrorCallout },
   props: {
     diagnostic: {
       type: Object,
@@ -201,14 +200,6 @@ export default {
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
       } else this.totalFamiliesErrorMessage = null
-    },
-  },
-  watch: {
-    payload: {
-      handler() {
-        this.updatePayload()
-      },
-      deep: true,
     },
   },
   mounted() {

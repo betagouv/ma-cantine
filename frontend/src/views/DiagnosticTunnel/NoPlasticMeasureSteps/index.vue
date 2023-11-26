@@ -41,7 +41,6 @@
 </template>
 
 <script>
-import NoPlasticMeasureSummary from "@/components/DiagnosticSummary/NoPlasticMeasureSummary"
 export default {
   name: "NoPlasticMeasureSteps",
   props: {
@@ -56,9 +55,6 @@ export default {
     stepUrlSlug: {
       type: String,
     },
-  },
-  components: {
-    NoPlasticMeasureSummary,
   },
   data() {
     return {

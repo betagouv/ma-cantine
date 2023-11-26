@@ -1,7 +1,7 @@
 <template>
-  <div class="text-left d-flex flex-column my-n5" ref="container" v-resize="onResize" style="width: 100%">
-    <div class="header pa-2">
-      <v-row class="mx-auto constrained align-center my-3 my-sm-6">
+  <div class="tunnel text-left d-flex flex-column my-n5" ref="container" v-resize="onResize" style="width: 100%">
+    <div class="header px-2 py-sm-2">
+      <v-row class="mx-auto constrained align-center my-1 my-sm-3">
         <v-col cols="9" class="py-4 d-flex" v-if="$vuetify.breakpoint.smAndUp">
           <div v-for="tunnel in tunnels" :key="tunnel.id" class="px-4 header-icon">
             <div v-if="tunnel.id === measure.id" class="d-flex align-center my-1">
@@ -17,7 +17,7 @@
         </v-col>
         <v-col class="text-right py-0">
           <p class="mb-0">
-            <v-btn text plain class="text-decoration-underline" color="primary" @click="saveAndQuit">
+            <v-btn text plain class="text-decoration-underline px-0" color="primary" @click="saveAndQuit">
               Sauvegarder et quitter
               <v-icon color="primary" size="1rem" class="ml-0 mb-1">
                 $close-line
@@ -31,18 +31,27 @@
       </v-row>
     </div>
     <div
-      v-if="diagnostic"
-      class="mx-auto constrained px-4 py-10 flex-grow-1"
-      style="width: 100%; overflow-y: scroll; overflow-x: hidden;"
+      v-if="diagnostic && !isSynthesis"
+      class="flex-grow-1 d-flex flex-column"
+      style="width: 100%; overflow-y: scroll; overflow-x: hidden; background: #FFF"
     >
-      <component
-        :is="`${measure.baseComponent}Steps`"
-        :canteen="canteen"
-        :diagnostic="diagnostic"
-        :stepUrlSlug="stepUrlSlug"
-        v-on:update-payload="updatePayload"
-        v-on:update-steps="updateSteps"
-      />
+      <v-spacer />
+      <div class="mx-auto constrained px-4 py-10" style="width: 100%">
+        <component
+          :is="`${measure.baseComponent}Steps`"
+          :canteen="canteen"
+          :diagnostic="diagnostic"
+          :stepUrlSlug="stepUrlSlug"
+          v-on:update-payload="updatePayload"
+          v-on:update-steps="updateSteps"
+        />
+      </div>
+      <v-spacer />
+    </div>
+    <div v-else-if="diagnostic" class="flex-grow-1 d-flex flex-column" style="overflow-y: scroll; overflow-x: hidden;">
+      <div class="mx-auto constrained d-flex flex-column flex-grow-1" style="width: 100%; background: #FFF;">
+        <SummaryWrapper :measure="measure" :canteen="canteen" :diagnostic="diagnostic" />
+      </div>
     </div>
     <div class="footer pa-2" style="width: 100%">
       <div class="d-flex mx-auto constrained align-center">
@@ -77,6 +86,7 @@
 <script>
 import keyMeasures from "@/data/key-measures.json"
 import DsfrStepper from "@/components/DsfrStepper"
+import SummaryWrapper from "./SummaryWrapper"
 import QualityMeasureSteps from "./QualityMeasureSteps"
 import WasteMeasureSteps from "./WasteMeasureSteps"
 import DiversificationMeasureSteps from "./DiversificationMeasureSteps"
@@ -100,6 +110,7 @@ export default {
   },
   components: {
     DsfrStepper,
+    SummaryWrapper,
     QualityMeasureSteps,
     WasteMeasureSteps,
     DiversificationMeasureSteps,
@@ -151,8 +162,11 @@ export default {
     previousStep() {
       return this.stepIdx > 0 ? this.steps[this.stepIdx - 1] : null
     },
+    isSynthesis() {
+      return this.step?.isSynthesis
+    },
     continueActionText() {
-      const returnToTable = !this.nextTunnel
+      const returnToTable = !this.nextTunnel && this.step?.isSynthesis
       if (returnToTable) return "Retour au tableau de bord"
       const nextIsNewMeasure = this.step?.isSynthesis
       if (nextIsNewMeasure) return "Passer à l'onglet suivant"
@@ -290,11 +304,13 @@ export default {
 </script>
 
 <style>
-.header {
+.tunnel {
   background-color: #f5f5fe;
 }
-.footer {
-  background-color: #f5f5fe;
+.scroll {
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 .v-btn--plain .v-btn__content {
   opacity: 1 !important;

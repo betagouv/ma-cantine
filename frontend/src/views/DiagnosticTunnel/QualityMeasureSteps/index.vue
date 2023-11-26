@@ -38,7 +38,6 @@
 </template>
 
 <script>
-import QualityMeasureSummary from "@/components/DiagnosticSummary/QualityMeasureSummary"
 import QualityTotalStep from "./QualityTotalStep"
 import BioSiqoStep from "./BioSiqoStep"
 import OtherEgalimStep from "./OtherEgalimStep"
@@ -47,9 +46,10 @@ import FishStep from "./FishStep"
 import MeatFishStep from "./MeatFishStep"
 import FamilyFieldsStep from "./FamilyFieldsStep"
 import Constants from "@/constants"
+import { getObjectDiff } from "@/utils"
 
 export default {
-  name: "QualitySteps",
+  name: "QualityMeasureSteps",
   props: {
     canteen: {
       type: Object,
@@ -65,7 +65,6 @@ export default {
   },
   components: {
     QualityTotalStep,
-    QualityMeasureSummary,
     BioSiqoStep,
     OtherEgalimStep,
     MeatPoultryStep,
@@ -74,17 +73,18 @@ export default {
     FamilyFieldsStep,
   },
   data() {
-    const payload = { diagnosticType: this.diagnostic.diagnosticType || "SIMPLE" }
+    const originalValues = { diagnosticType: this.diagnostic.diagnosticType || "SIMPLE" }
     Object.keys(this.diagnostic).forEach((key) => {
       if (key.startsWith("value")) {
-        payload[key] = this.diagnostic[key]
+        originalValues[key] = this.diagnostic[key]
       }
     })
     return {
       formIsValid: true,
       purchasesSummary: null,
       diagnosticTypes: Constants.DiagnosticTypes,
-      payload,
+      originalValues,
+      payload: JSON.parse(JSON.stringify(originalValues)),
       characteristics: Constants.TeledeclarationCharacteristics,
       characteristicGroups: Constants.TeledeclarationCharacteristicGroups,
     }
@@ -109,7 +109,6 @@ export default {
       const lastStep = {
         title: "Synthèse",
         isSynthesis: true,
-        componentName: "QualityMeasureSummary",
         urlSlug: "complet",
       }
       const simplifiedSteps = [
@@ -169,7 +168,8 @@ export default {
       this.$set(this, "payload", e.payload)
     },
     updatePayload() {
-      this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
+      const payloadToSend = getObjectDiff(this.originalValues, this.payload)
+      this.$emit("update-payload", { payload: payloadToSend, formIsValid: this.formIsValid })
     },
     fetchPurchasesSummary() {
       fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.diagnostic.year}`)

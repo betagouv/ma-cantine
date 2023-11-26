@@ -98,6 +98,10 @@
         </div>
       </li>
     </ul>
+    <div v-if="diagnostic.otherWasteComments" class="mt-4 ml-1">
+      <p class="font-weight-bold mb-2">Autres commentaires</p>
+      <p>{{ diagnostic.otherWasteComments }}</p>
+    </div>
   </div>
 </template>
 
