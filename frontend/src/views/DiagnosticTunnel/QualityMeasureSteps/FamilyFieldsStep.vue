@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mt-n4">
     <p v-if="groupId === 'egalim'">
       <strong>Produit ayant plusieurs labels</strong>
       : la valeur d’achat ne pourra être comptée que dans une seule des catégories. Par exemple, un produit à la fois
@@ -17,8 +17,8 @@
       Suivant votre propre définition de « local ».
     </p>
     <v-row>
-      <v-col v-for="(family, fId) in families" :key="fId" cols="12" md="6">
-        <label :for="fId" class="body-2">
+      <v-col v-for="(family, fId) in families" :key="fId" cols="12" md="6" class="py-2">
+        <label :for="fId" class="fr-text">
           {{ family.text }}
         </label>
 
@@ -32,7 +32,6 @@
           solo
           v-model.number="payload[diagnosticKey(fId)]"
           class="mt-2"
-          @blur="checkTotal"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
@@ -90,7 +89,6 @@ export default {
     },
   },
   methods: {
-    checkTotal() {},
     diagnosticKey(family) {
       return this.camelize(`value_${family}_${this.characteristicId}`)
     },
