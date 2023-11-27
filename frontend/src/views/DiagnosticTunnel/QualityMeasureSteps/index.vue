@@ -73,9 +73,23 @@ export default {
     FamilyFieldsStep,
   },
   data() {
-    const originalValues = { diagnosticType: this.diagnostic.diagnosticType || "SIMPLE" }
+    const originalValues = {
+      valueTotalHt: this.diagnostic.valueTotalHt,
+      diagnosticType: this.diagnostic.diagnosticType || "SIMPLE",
+      valueBioHt: this.diagnostic.valueBioHt,
+      valueSustainableHt: this.diagnostic.valueSustainableHt,
+      valueEgalimOthersHt: this.diagnostic.valueEgalimOthersHt,
+      valueExternalityPerformanceHt: this.diagnostic.valueExternalityPerformanceHt,
+      valueMeatPoultryHt: this.diagnostic.valueMeatPoultryHt,
+      valueMeatPoultryEgalimHt: this.diagnostic.valueMeatPoultryEgalimHt,
+      valueMeatPoultryFranceHt: this.diagnostic.valueMeatPoultryFranceHt,
+      valueFishHt: this.diagnostic.valueFishHt,
+      valueFishEgalimHt: this.diagnostic.valueFishEgalimHt,
+    }
+    const tdGroups = Constants.TeledeclarationCharacteristicGroups
+    const completeTdFields = tdGroups.egalim.fields.concat(tdGroups.nonEgalim.fields).concat(tdGroups.outsideLaw.fields)
     Object.keys(this.diagnostic).forEach((key) => {
-      if (key.startsWith("value")) {
+      if (completeTdFields.indexOf(key) > -1) {
         originalValues[key] = this.diagnostic[key]
       }
     })
