@@ -24,39 +24,33 @@ class ETL(ABC):
         self.schema_url = ""
         self.dataset_name = ""
 
-    def _fill_geo_name(self):
-        departments = {i.value: i.label for i in Department}
-        regions = {i.value: i.label for i in Region}
+    def _fill_geo_name(self, geo_zoom="department"):
+        """
+        Given a dataframe with a column 'department' or 'region', this method maps the name of the location, based on the INSEE code
+        Returns:
+            pd.Series: The names of the location corresponding to an INSEE code, for each line of the dataset
+        """
+        if geo_zoom == "department":
+            geo = {i.value: i.label for i in Department}
+        elif geo_zoom == "region":
+            geo = {i.value: i.label for i in Region}
+        else:
+            logger.warning(
+                "The desired geo zoom for the method _fill_geo_zoom() is not possible. Please choose between 'department' and 'region'"
+            )
+            return 0
 
-        if "department" in self.df.columns:  # Registre cantine dataset
-            dep_col_name = "department"
-            region_col_name = "region"
-        else:  # Td dataset
-            dep_col_name = "canteen_department"
-            region_col_name = "canteen_region"
+        if "department" not in self.df.columns:  # TD dataset
+            geo_zoom = "canteen_" + geo_zoom
 
         # Cleaning col that were created empty from schema
-        del self.df[f"{dep_col_name}_lib"], self.df[f"{region_col_name}_lib"]
+        del self.df[f"{geo_zoom}_lib"]
 
-        self.df.insert(
-            self.df.columns.get_loc(dep_col_name) + 1,
-            f"{dep_col_name}_lib",
-            self.df[dep_col_name].apply(
-                lambda x: departments[x].split("-")[1].lstrip()
-                if isinstance(x, str)
-                else None
-            ),
+        self.df[f"{geo_zoom}_lib"] = self.df[geo_zoom].apply(
+            lambda x: geo[x].split(" - ")[1].lstrip() if isinstance(x, str) else None
         )
-        self.df.insert(
-            self.df.columns.get_loc(region_col_name) + 1,
-            f"{region_col_name}_lib",
-            self.df[region_col_name].apply(
-                lambda x: regions[x].split("-")[1].lstrip()
-                if isinstance(x, str)
-                else None
-            ),
-        )
-        return self.df
+
+        return self.df[f"{geo_zoom}_lib"]
 
     def _clean_dataset(self):
         columns = [
@@ -191,7 +185,8 @@ class ETL_CANTEEN(ETL):
         logger.info("Canteens : Clean dataset...")
         self.df = self._clean_dataset()
         logger.info("Canteens : Fill geo name...")
-        self.df = self._fill_geo_name()
+        self.df["department_lib"] = self._fill_geo_name(geo_zoom="department")
+        self.df["region_lib"] = self._fill_geo_name(geo_zoom="region")
 
 
 class ETL_TD(ETL):
@@ -240,7 +235,8 @@ class ETL_TD(ETL):
         logger.info("TD campagne : Filter by sector...")
         self.df = self._filter_by_sectors()
         logger.info("TD campagne : Fill geo name...")
-        self.df = self._fill_geo_name()
+        self.df["canteen_department_lib"] = self._fill_geo_name(geo_zoom="department")
+        self.df["canteen_region_lib"] = self._fill_geo_name(geo_zoom="region")
 
     def _flatten_declared_data(self):
         tmp_df = pd.json_normalize(self.df["declared_data"])
