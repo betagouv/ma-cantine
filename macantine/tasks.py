@@ -2,6 +2,7 @@ import logging
 import datetime
 import requests
 import csv
+import os
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
@@ -266,16 +267,24 @@ def delete_old_historical_records():
 @app.task()
 def export_datasets():
     logger.info("Starting datasets extractions")
-    # Campagnes de télédéclaration
-    logger.info("A) Starting campagne teledeclaration 2021 dataset extraction")
-    etl_td = ETL_TD(2021)
-    etl_td.extract_dataset()
-    logger.info(f"A) Saving campagne teledeclaration 2021 dataset. Dataset size : {etl_td.len_dataset()} lines")
-    etl_td.export_dataset()
+    datasets = {
+        'campagne teledeclaration 2021': ETL_TD(2021),
+        'cantines': ETL_CANTEEN()
+    }
+    for key, etl in datasets.items():
+        logger.info(f"Starting {key} dataset extraction")
+        etl.extract_dataset()
+        etl.export_dataset(stage='to_validate')
+        logger.info(f"Validating {key} dataset. Dataset size : {etl.len_dataset()} lines")
+        if os.environ['DEFAULT_FILE_STORAGE'] == 'storages.backends.s3boto3.S3Boto3Storage':
+            if etl.is_valid():
+                logger.info(f"Exporting {key} dataset to s3")
+                etl.export_dataset()
+            else:
+                logger.error(f"The dataset {key} is invalid and therefore will not be exported to s3")
+        elif os.environ['DEFAULT_FILE_STORAGE'] == 'django.core.files.storage.FileSystemStorage':
+            logger.info(f"Saving {key} dataset locally")
+            etl.export_dataset()
+        else:
+            logger.info("Exporting the dataset is not possible with the file system configured")
 
-    # Registre des cantines
-    logger.info("B) Starting cantines dataset extraction")
-    etl_canteen = ETL_CANTEEN()
-    etl_canteen.extract_dataset()
-    logger.info(f"B) Saving cantines teledeclaration dataset. Dataset size : {etl_canteen.len_dataset()} lines")
-    etl_canteen.export_dataset()
