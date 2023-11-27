@@ -197,17 +197,16 @@ export default {
           totalMeatPoultry
         )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
         this.errorHelperFields.push("valueTotalHt")
+      } else if (totalFamilies > total) {
+        this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
+          totalFamilies
+        )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
+        this.errorHelperFields.push(...["valueTotalHt", "valueFishHt"])
       }
       if (sumMeatPoultry > totalMeatPoultry) {
         this.meatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
           totalMeatPoultry
         )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumMeatPoultry)})`
-      }
-      if (totalFamilies > total) {
-        this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
-          totalFamilies
-        )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
-        this.errorHelperFields.push(...["valueTotalHt", "valueFishHt"])
       }
     },
     errorUpdate() {
