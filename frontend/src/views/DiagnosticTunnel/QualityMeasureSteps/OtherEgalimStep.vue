@@ -222,6 +222,8 @@ export default {
       if (!this.totalError) this.$emit("update-payload", { payload: this.payload })
     },
     checkTotal() {
+      this.totalErrorMessage = null
+
       const d = this.payload
       const sumEgalim = this.sumAllEgalim()
       const total = d.valueTotalHt
@@ -230,7 +232,7 @@ export default {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
           d.valueTotalHt
         )}) doit être plus élévé que la somme des valeurs EGAlim (${toCurrency(sumEgalim || 0)})`
-      } else this.totalErrorMessage = null
+      }
     },
     sumAllEgalim() {
       const d = this.payload
