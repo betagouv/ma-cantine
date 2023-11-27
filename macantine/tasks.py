@@ -279,12 +279,12 @@ def export_datasets():
         if os.environ['DEFAULT_FILE_STORAGE'] == 'storages.backends.s3boto3.S3Boto3Storage':
             if etl.is_valid():
                 logger.info(f"Exporting {key} dataset to s3")
-                etl.export_dataset()
+                etl.export_dataset(stage='validated')
             else:
                 logger.error(f"The dataset {key} is invalid and therefore will not be exported to s3")
         elif os.environ['DEFAULT_FILE_STORAGE'] == 'django.core.files.storage.FileSystemStorage':
             logger.info(f"Saving {key} dataset locally")
-            etl.export_dataset()
+            etl.export_dataset(stage='validated')
         else:
             logger.info("Exporting the dataset is not possible with the file system configured")
 

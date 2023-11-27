@@ -40,9 +40,6 @@ class ETL(ABC):
             )
             return 0
 
-        # # Cleaning col that were created empty from schema
-        # del self.df[f"{geo_zoom}_lib"]
-
         self.df[f"{geo_zoom}_lib"] = self.df[geo_zoom].apply(
             lambda x: geo[x].split(" - ")[1].lstrip() if isinstance(x, str) else None
         )
@@ -125,8 +122,10 @@ class ETL(ABC):
     def export_dataset(self, stage="to_validate"):
         if stage == "to_validate":
             filename = f"open_data/{self.dataset_name}_to_validate.csv"
-        else:
+        elif stage == 'validated':
             filename = f"open_data/{self.dataset_name}.csv"
+        else:
+            return 0
         with default_storage.open(filename, "w") as file:
             self.df.to_csv(file, sep=";", index=False, na_rep="")
 
