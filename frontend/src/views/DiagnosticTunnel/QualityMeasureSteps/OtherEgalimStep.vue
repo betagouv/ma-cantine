@@ -155,11 +155,13 @@
       </v-col>
     </v-row>
     <ErrorHelper
-      :showFields="['valueTotalHt', 'valueBioHt', 'valueSustainableHt']"
-      :class="`${totalError ? '' : 'd-none'}`"
+      v-if="totalError || errorHelperUsed"
+      :showFields="errorHelperFields"
+      :errorFields="erroringFields"
       :diagnostic="payload"
-      @check-total="checkTotal"
       :purchasesSummary="purchasesSummary"
+      @field-update="errorUpdate"
+      class="mt-8"
     />
   </div>
 </template>
@@ -199,6 +201,8 @@ export default {
       totalErrorMessage: null,
       otherLabels: labels.filter((x) => otherLogos.includes(x.title)),
       valueExternalityPerformanceHtDialog: false,
+      errorHelperUsed: false,
+      errorHelperFields: ["valueTotalHt", "valueBioHt", "valueSustainableHt"],
     }
   },
   computed: {
@@ -207,6 +211,9 @@ export default {
     },
     totalError() {
       return !!this.totalErrorMessage
+    },
+    erroringFields() {
+      return this.totalError ? this.errorHelperFields : []
     },
   },
   methods: {
@@ -233,6 +240,10 @@ export default {
         total += parseFloat(val) || 0
       })
       return total
+    },
+    errorUpdate() {
+      this.errorHelperUsed = true
+      this.checkTotal()
     },
   },
   mounted() {
