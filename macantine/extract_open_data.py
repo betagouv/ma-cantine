@@ -226,6 +226,8 @@ class ETL_TD(ETL):
         self.df["teledeclaration_ratio_egalim_hors_bio"] = (
             self.df["teledeclaration.value_sustainable_ht"] / self.df["teledeclaration.value_total_ht"]
         )
+        self.df["teledeclaration_type"] = self.df["teledeclaration.diagnostic_type"]  # Renaming to match schema
+
         logger.info("TD campagne : Clean dataset...")
         self.df = self._clean_dataset()
         logger.info("TD campagne : Filter by sector...")
