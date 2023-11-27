@@ -55,7 +55,7 @@
           id="meat-poultry-egalim"
           v-model.number="payload.valueMeatPoultryEgalimHt"
           @blur="updatePayload"
-          :error="meatPoultryError"
+          :error="totalEgalimMeatPoultryError"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
@@ -89,7 +89,7 @@
           id="meat-poultry-france"
           v-model.number="payload.valueMeatPoultryFranceHt"
           @blur="updatePayload"
-          :error="meatPoultryError"
+          :error="totalFranceMeatPoultryError"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
@@ -140,7 +140,8 @@ export default {
   data() {
     return {
       totalMeatPoultryErrorMessage: null,
-      meatPoultryErrorMessage: null,
+      totalEgalimMeatPoultryErrorMessage: null,
+      totalFranceMeatPoultryErrorMessage: null,
       totalFamiliesErrorMessage: null,
       errorHelperUsed: false,
       errorHelperFields: [],
@@ -153,19 +154,30 @@ export default {
     totalMeatPoultryError() {
       return !!this.totalMeatPoultryErrorMessage
     },
-    meatPoultryError() {
-      return !!this.meatPoultryErrorMessage
+    totalEgalimMeatPoultryError() {
+      return !!this.totalEgalimMeatPoultryErrorMessage
+    },
+    totalFranceMeatPoultryError() {
+      return !!this.totalFranceMeatPoultryErrorMessage
     },
     totalFamiliesError() {
       return !!this.totalFamiliesErrorMessage
     },
     hasError() {
-      return [this.totalMeatPoultryError, this.meatPoultryError, this.totalFamiliesError].some((x) => !!x)
+      return [
+        this.totalMeatPoultryError,
+        this.totalEgalimMeatPoultryError,
+        this.totalFranceMeatPoultryError,
+        this.totalFamiliesError,
+      ].some((x) => !!x)
     },
     errorMessages() {
-      return [this.totalMeatPoultryErrorMessage, this.meatPoultryErrorMessage, this.totalFamiliesErrorMessage].filter(
-        (x) => !!x
-      )
+      return [
+        this.totalMeatPoultryErrorMessage,
+        this.totalFamiliesErrorMessage,
+        this.totalEgalimMeatPoultryErrorMessage,
+        this.totalFranceMeatPoultryErrorMessage,
+      ].filter((x) => !!x)
     },
     erroringFields() {
       const fields = []
@@ -181,12 +193,11 @@ export default {
     },
     checkTotal() {
       this.totalMeatPoultryErrorMessage = null
-      this.meatPoultryErrorMessage = null
       this.totalFamiliesErrorMessage = null
+      this.totalEgalimMeatPoultryErrorMessage = null
+      this.totalFranceMeatPoultryErrorMessage = null
 
       const d = this.payload
-      // Note that we do Math.max because some meat-poultry may be overlapped : both bio and provenance France
-      const sumMeatPoultry = Math.max(d.valueMeatPoultryEgalimHt, d.valueMeatPoultryFranceHt)
       const total = d.valueTotalHt
       const totalMeatPoultry = d.valueMeatPoultryHt
       const totalFish = d.valueFishHt
@@ -202,20 +213,17 @@ export default {
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
         this.errorHelperFields.push(...["valueTotalHt", "valueFishHt"])
-      }
-      if (sumMeatPoultry > totalMeatPoultry) {
-        let concernedFields = ""
-        if (d.valueMeatPoultryEgalimHt > totalMeatPoultry && d.valueMeatPoultryFranceHt > totalMeatPoultry)
-          concernedFields = `aux champs EGAlim (${toCurrency(
-            d.valueMeatPoultryEgalimHt
-          )}) et provenance France (${toCurrency(d.valueMeatPoultryFranceHt)})`
-        else if (d.valueMeatPoultryEgalimHt > totalMeatPoultry)
-          concernedFields = `au champ EGAlim (${toCurrency(d.valueMeatPoultryEgalimHt)})`
-        else concernedFields = `au champ provenance France (${toCurrency(d.valueMeatPoultryFranceHt)})`
-
-        this.meatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
-          totalMeatPoultry
-        )}) doit être supérieur ${concernedFields}`
+      } else {
+        if (d.valueMeatPoultryEgalimHt > totalMeatPoultry) {
+          this.totalEgalimMeatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
+            totalMeatPoultry
+          )}) doit être supérieur au champ EGAlim (${toCurrency(d.valueMeatPoultryEgalimHt)})`
+        }
+        if (d.valueMeatPoultryFranceHt > totalMeatPoultry) {
+          this.totalFranceMeatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
+            totalMeatPoultry
+          )}) doit être supérieur au champ provenance France (${toCurrency(d.valueMeatPoultryFranceHt)})`
+        }
       }
     },
     errorUpdate() {
