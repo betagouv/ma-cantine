@@ -87,11 +87,13 @@
       </v-col>
     </v-row>
     <ErrorHelper
-      :showFields="['valueTotalHt', 'valueEgalimOthersHt', 'valueExternalityPerformanceHt']"
-      :class="`${totalError ? '' : 'd-none'}`"
+      v-if="totalError || errorHelperUsed"
+      :showFields="errorHelperFields"
+      :errorFields="erroringFields"
       :diagnostic="payload"
-      @check-total="checkTotal"
       :purchasesSummary="purchasesSummary"
+      @field-update="errorUpdate"
+      class="mt-8"
     />
   </div>
 </template>
@@ -131,6 +133,8 @@ export default {
     return {
       totalErrorMessage: "",
       siqoLabels: labels.filter((x) => siqoLogos.includes(x.title)),
+      errorHelperUsed: false,
+      errorHelperFields: ["valueTotalHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"],
     }
   },
   computed: {
@@ -140,6 +144,9 @@ export default {
     totalError() {
       return !!this.totalErrorMessage
     },
+    erroringFields() {
+      return this.totalError ? this.errorHelperFields : []
+    },
   },
   methods: {
     updatePayload() {
@@ -147,6 +154,8 @@ export default {
       if (!this.totalError) this.$emit("update-payload", { payload: this.payload })
     },
     checkTotal() {
+      this.totalErrorMessage = null
+
       const d = this.payload
       const sumEgalim = this.sumAllEgalim()
       const total = d.valueTotalHt
@@ -155,7 +164,7 @@ export default {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
           d.valueTotalHt
         )}) doit être plus élévé que la somme des valeurs EGAlim (${toCurrency(sumEgalim || 0)})`
-      } else this.totalErrorMessage = null
+      }
     },
     sumAllEgalim() {
       const d = this.payload
@@ -165,6 +174,10 @@ export default {
         total += parseFloat(val) || 0
       })
       return total
+    },
+    errorUpdate() {
+      this.errorHelperUsed = true
+      this.checkTotal()
     },
   },
   mounted() {
