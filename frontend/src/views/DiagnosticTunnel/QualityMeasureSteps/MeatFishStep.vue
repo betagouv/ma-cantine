@@ -103,9 +103,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.left-border {
-  border-left: solid #4d4db2;
-}
-</style>
