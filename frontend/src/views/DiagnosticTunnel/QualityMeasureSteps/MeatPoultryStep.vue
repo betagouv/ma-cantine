@@ -204,9 +204,18 @@ export default {
         this.errorHelperFields.push(...["valueTotalHt", "valueFishHt"])
       }
       if (sumMeatPoultry > totalMeatPoultry) {
+        let concernedFields = ""
+        if (d.valueMeatPoultryEgalimHt > totalMeatPoultry && d.valueMeatPoultryFranceHt > totalMeatPoultry)
+          concernedFields = `aux champs EGAlim (${toCurrency(
+            d.valueMeatPoultryEgalimHt
+          )}) et provenance France (${toCurrency(d.valueMeatPoultryFranceHt)})`
+        else if (d.valueMeatPoultryEgalimHt > totalMeatPoultry)
+          concernedFields = `au champ EGAlim (${toCurrency(d.valueMeatPoultryEgalimHt)})`
+        else concernedFields = `au champ provenance France (${toCurrency(d.valueMeatPoultryFranceHt)})`
+
         this.meatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
           totalMeatPoultry
-        )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumMeatPoultry)})`
+        )}) doit être supérieur ${concernedFields}`
       }
     },
     errorUpdate() {
