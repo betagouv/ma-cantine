@@ -15,9 +15,16 @@
         </v-radio-group>
       </fieldset>
     </div>
-    <div v-if="stepUrlSlug === 'detailed-step-1'">
-      TODO 'detailed-step-1'
-    </div>
+    <component
+      v-else-if="step.characteristicId"
+      :is="step.componentName"
+      :diagnostic="diagnostic"
+      :payload="payload"
+      :purchasesSummary="purchasesSummary"
+      :characteristicId="step.characteristicId"
+      :groupId="step.groupId"
+      v-on:update-payload="updatePayloadFromComponent"
+    />
     <component
       v-else
       :is="step.componentName"
@@ -36,6 +43,8 @@ import BioSiqoStep from "./BioSiqoStep"
 import OtherEgalimStep from "./OtherEgalimStep"
 import MeatPoultryStep from "./MeatPoultryStep"
 import FishStep from "./FishStep"
+import MeatFishStep from "./MeatFishStep"
+import FamilyFieldsStep from "./FamilyFieldsStep"
 import Constants from "@/constants"
 import { getObjectDiff } from "@/utils"
 
@@ -60,6 +69,8 @@ export default {
     OtherEgalimStep,
     MeatPoultryStep,
     FishStep,
+    MeatFishStep,
+    FamilyFieldsStep,
   },
   data() {
     const originalValues = {
@@ -75,12 +86,21 @@ export default {
       valueFishHt: this.diagnostic.valueFishHt,
       valueFishEgalimHt: this.diagnostic.valueFishEgalimHt,
     }
+    const tdGroups = Constants.TeledeclarationCharacteristicGroups
+    const completeTdFields = tdGroups.egalim.fields.concat(tdGroups.nonEgalim.fields).concat(tdGroups.outsideLaw.fields)
+    Object.keys(this.diagnostic).forEach((key) => {
+      if (completeTdFields.indexOf(key) > -1) {
+        originalValues[key] = this.diagnostic[key]
+      }
+    })
     return {
       formIsValid: true,
       purchasesSummary: null,
       diagnosticTypes: Constants.DiagnosticTypes,
       originalValues,
       payload: JSON.parse(JSON.stringify(originalValues)),
+      characteristics: Constants.TeledeclarationCharacteristics,
+      characteristicGroups: Constants.TeledeclarationCharacteristicGroups,
     }
   },
   computed: {
@@ -129,10 +149,27 @@ export default {
       ]
       const detailedSteps = [
         {
-          title: "Detailed step 1",
-          urlSlug: "detailed-step-1",
+          title: "Valeurs totales par famille de produit",
+          componentName: MeatFishStep,
+          urlSlug: "valeurs-totales-viandes-aquaculture",
         },
       ]
+      for (const groupId in this.characteristicGroups) {
+        // egalim, nonEgalim, outsideLaw
+        const groupCharacteristics = this.characteristicGroups[groupId].characteristics
+        for (const characteristicIdx in groupCharacteristics) {
+          const characteristicId = groupCharacteristics[characteristicIdx]
+          const characteristic = this.characteristics[characteristicId]
+          const urlSlug = characteristicId.toLowerCase().replace("_", "-")
+          detailedSteps.push({
+            title: `Valeurs totales par famille de produit des achats « ${characteristic.text} »`,
+            componentName: FamilyFieldsStep,
+            characteristicId: characteristicId,
+            groupId: groupId,
+            urlSlug,
+          })
+        }
+      }
       const intermediarySteps = this.isSimplifiedDiagnostic ? simplifiedSteps : detailedSteps
       return [...firstSteps, ...intermediarySteps, lastStep]
     },
