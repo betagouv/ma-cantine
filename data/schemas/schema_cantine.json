@@ -141,13 +141,6 @@
       "type": "string"
     },
     {
-      "description": "Statut de publication de la cantine. Il existe 3 statuts différents : published (cantine publiée), draft (brouillon), deleted (cantine supprimée)",
-      "example": "published",
-      "name": "publication_status",
-      "title": "Statut de publication",
-      "type": "string"
-    },
-    {
       "description": "Logo de la cantine",
       "example": "https://www.mangerlocal.fr/static/img/logo.png",
       "name": "logo",
