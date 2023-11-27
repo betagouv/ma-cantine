@@ -53,31 +53,30 @@
         <SummaryWrapper :measure="measure" :canteen="canteen" :diagnostic="diagnostic" />
       </div>
     </div>
-    <div class="footer pa-2" style="width: 100%">
-      <div class="d-flex mx-auto constrained align-center">
-        <div v-if="step && step.isSynthesis && nextTunnelTitle && $vuetify.breakpoint.smAndUp" cols="5">
-          <p class="fr-text-xs grey--text text--darken-2 mb-0">
-            Onglet suivant :
-            <b>{{ nextTunnelTitle }}</b>
-          </p>
-        </div>
-        <v-spacer v-if="$vuetify.breakpoint.smAndUp" />
-        <div>
-          <div class="d-block d-sm-flex pt-5 pt-sm-6 pb-3 pb-sm-16 px-4 align-center flex-row-reverse">
-            <v-btn :disabled="!formIsValid" @click="continueAction" color="primary" class="ml-0 ml-sm-4 mb-4 mb-sm-0">
-              {{ continueActionText }}
-            </v-btn>
-            <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
-            <p v-else class="mb-0">
-              <router-link v-if="previousStep && formIsValid" :to="stepLink(previousStep)">
-                Revenir à l'étape précédente
-              </router-link>
-              <a v-else class="grey--text text-darken-2" role="link" aria-disabled="true">
-                Revenir à l'étape précédente
-              </a>
-            </p>
-          </div>
-        </div>
+    <div
+      class="footer pa-2 d-flex mx-auto constrained align-center pt-5 pt-sm-6 pb-3 pb-sm-16 px-4"
+      style="width: 100%"
+    >
+      <div v-if="step && step.isSynthesis && nextTunnelTitle && $vuetify.breakpoint.smAndUp" cols="5">
+        <p class="fr-text-xs grey--text text--darken-2 mb-0">
+          Onglet suivant :
+          <b>{{ nextTunnelTitle }}</b>
+        </p>
+      </div>
+      <v-spacer v-if="$vuetify.breakpoint.smAndUp" />
+      <div class="d-block d-sm-flex align-center flex-row-reverse">
+        <v-btn :disabled="!formIsValid" @click="continueAction" color="primary" class="ml-0 ml-sm-4 mb-4 mb-sm-0">
+          {{ continueActionText }}
+        </v-btn>
+        <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
+        <p v-else class="mb-0">
+          <router-link v-if="previousStep && formIsValid" :to="stepLink(previousStep)">
+            Revenir à l'étape précédente
+          </router-link>
+          <a v-else class="grey--text text-darken-2" role="link" aria-disabled="true">
+            Revenir à l'étape précédente
+          </a>
+        </p>
       </div>
     </div>
   </div>
