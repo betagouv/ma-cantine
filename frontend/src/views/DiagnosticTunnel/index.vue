@@ -70,12 +70,14 @@
         </v-btn>
         <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
         <p v-else class="mb-0">
-          <router-link v-if="previousStep && formIsValid" :to="stepLink(previousStep)">
+          <v-btn
+            text
+            @click="previousAction"
+            :disabled="disablePreviousButton"
+            :class="disablePreviousButton ? 'fr-text grey--text text-darken-2' : 'fr-text primary--text'"
+          >
             Revenir à l'étape précédente
-          </router-link>
-          <a v-else class="grey--text text-darken-2" role="link" aria-disabled="true">
-            Revenir à l'étape précédente
-          </a>
+          </v-btn>
         </p>
       </div>
     </div>
@@ -201,6 +203,9 @@ export default {
       const synthesisUrl = "complet"
       return this.steps.filter((s) => s.urlSlug !== synthesisUrl)
     },
+    disablePreviousButton() {
+      return !this.previousStep || !this.formIsValid
+    },
   },
   methods: {
     updateSteps(steps) {
@@ -247,6 +252,21 @@ export default {
             name: "MyProgress",
             params: { measure: this.nextTunnel.id },
           })
+        } else {
+          this.$router.push({
+            name: "DashboardManager",
+            params: {
+              canteenUrlComponent: this.canteenUrlComponent,
+            },
+          })
+        }
+      })
+    },
+    previousAction() {
+      if (!this.formIsValid) return
+      this.saveDiagnostic().then(() => {
+        if (this.previousStep) {
+          this.$router.push({ query: { étape: this.previousStep.urlSlug } })
         } else {
           this.$router.push({
             name: "DashboardManager",
