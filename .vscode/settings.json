@@ -1,37 +1,23 @@
 {
-    "spellright.language": [
-        "fr_FR (modern)"
-    ],
-    "spellright.documentTypes": [
-        "latex",
-        "plaintext",
-        "markdown"
-    ],
-    "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.wrappingIndent": "indent",
-        "editor.tabSize": 2,
-    },
-    "[vue]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.wrappingIndent": "indent",
-        "editor.tabSize": 2,
-    },
-    "prettier.enable": true,
-    "prettier.prettierPath": "./frontend/node_modules/prettier",
-    "prettier.configPath": "./frontend/.prettierrc",
-    "files.eol": "\n",
-    "[python]": {
-        "editor.defaultFormatter": null
-    },
-    "python.linting.enabled": true,
-    "python.linting.pylintEnabled": true,
-    "python.linting.pylintArgs": [
-        "--load-plugins=pylint_django",
-        "--rcfile",
-        "${workspaceRoot}/.pylintrc"
-    ],
-    "python.formatting.provider": "black",
-    "python.formatting.blackPath": "${workspaceRoot}/venv/bin/black",
-    "python.formatting.blackArgs": ["--line-length=119"]
+  "spellright.language": ["fr_FR (modern)"],
+  "spellright.documentTypes": ["latex", "plaintext", "markdown"],
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.wrappingIndent": "indent",
+    "editor.tabSize": 2
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.wrappingIndent": "indent",
+    "editor.tabSize": 2
+  },
+  "prettier.enable": true,
+  "prettier.prettierPath": "./frontend/node_modules/prettier",
+  "prettier.configPath": "./frontend/.prettierrc",
+  "files.eol": "\n",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "black-formatter.args": ["--line-length=119"],
+  "black-formatter.path": ["./venv/bin/black"]
 }
