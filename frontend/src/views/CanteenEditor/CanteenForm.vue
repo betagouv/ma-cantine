@@ -295,7 +295,9 @@
         <ImagesField class="mt-0 mb-4" :imageArray.sync="canteen.images" id="images" />
       </div>
       <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
-        <v-btn x-large outlined color="red" :to="{ name: 'CanteenDeletion' }">Supprimer</v-btn>
+        <v-btn v-if="showDelete" x-large outlined color="red" :to="{ name: 'CanteenDeletion' }">
+          Supprimer
+        </v-btn>
         <v-spacer></v-spacer>
         <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
           Annuler
@@ -394,6 +396,9 @@ export default {
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
+    },
+    showDelete() {
+      return !this.isNewCanteen && window.ENABLE_DASHBOARD
     },
   },
   beforeMount() {
