@@ -17,7 +17,14 @@
         </v-col>
         <v-col class="text-right py-0">
           <p class="mb-0">
-            <v-btn text plain class="text-decoration-underline px-0" color="primary" @click="saveAndQuit">
+            <v-btn
+              text
+              plain
+              class="text-decoration-underline px-0"
+              color="primary"
+              @click="saveAndQuit"
+              :disabled="!formIsValid"
+            >
               Sauvegarder et quitter
               <v-icon color="primary" size="1rem" class="ml-0 mb-1">
                 $close-line
