@@ -71,7 +71,7 @@ pipdeptree==2.13.0
 platformdirs==3.10.0
 pluggy==1.0.0
 prompt-toolkit==3.0.39
-psycopg2==2.9.6
+psycopg2==2.9.9
 py==1.11.0
 pycparser==2.21
 pyHanko==0.20.1
