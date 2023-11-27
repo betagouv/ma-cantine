@@ -91,7 +91,7 @@
               :value="diagnostic[field.key]"
             />
           </div>
-          <div class="my-8">
+          <div class="my-8 mb-0">
             <QualityDiagnosticValue
               v-for="(field, idx) in familyFields"
               :key="`family-${idx}`"
@@ -117,16 +117,17 @@
             Données télédéclarées
           </v-btn>
           <v-btn
-            v-else
+            v-else-if="showEditButton"
             outlined
             small
             color="primary"
             class="fr-btn--tertiary px-2 mb-6"
             :to="{
-              name: 'DiagnosticModification',
+              name: 'DiagnosticTunnel',
               params: {
-                canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen),
+                canteenUrlComponent: this.canteenUrlComponent,
                 year: diagnostic.year,
+                measureId: 'qualite-des-produits',
               },
             }"
           >
@@ -148,12 +149,14 @@
       voir la synthèse de vos données.
     </p>
     <v-btn
+      v-if="showEditButton"
       color="primary"
       :to="{
-        name: 'DiagnosticModification',
+        name: 'DiagnosticTunnel',
         params: {
-          canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen),
+          canteenUrlComponent: this.canteenUrlComponent,
           year: diagnostic.year,
+          measureId: 'qualite-des-produits',
         },
       }"
     >
@@ -181,6 +184,10 @@ export default {
     canteen: {
       type: Object,
       required: true,
+    },
+    showEditButton: {
+      type: Boolean,
+      required: false,
     },
   },
   data() {
@@ -247,23 +254,11 @@ export default {
     isDetailedDiagnostic() {
       return this.diagnostic.diagnosticType === "COMPLETE" || this.usesPurchasesData
     },
-    editLink() {
-      if (this.usesPurchasesData) {
-        return {
-          name: "PurchasesHome",
-        }
-      } else {
-        return {
-          name: "DiagnosticModification",
-          params: {
-            canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen),
-            year: this.diagnostic.year,
-          },
-        }
-      }
-    },
     hasActiveTeledeclaration() {
       return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+    },
+    canteenUrlComponent() {
+      return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
   },
 }

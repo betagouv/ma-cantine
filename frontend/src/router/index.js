@@ -336,6 +336,7 @@ const routes = [
         component: CanteenForm,
         meta: {
           authenticationRequired: true,
+          title: "Modifier ma cantine",
         },
       },
       {
@@ -344,6 +345,7 @@ const routes = [
         component: SatelliteManagement,
         meta: {
           authenticationRequired: true,
+          title: "Gérer mes satellites",
         },
       },
       {
@@ -352,6 +354,7 @@ const routes = [
         component: DiagnosticList,
         meta: {
           authenticationRequired: true,
+          title: "Mes diagnostics",
         },
       },
       {
@@ -360,6 +363,7 @@ const routes = [
         component: CanteenManagers,
         meta: {
           authenticationRequired: true,
+          title: "Gérer mon équipe",
         },
       },
       {
@@ -368,6 +372,7 @@ const routes = [
         component: CanteenGeneratePoster,
         meta: {
           authenticationRequired: true,
+          title: "Génerer mon affiche",
         },
       },
       {
@@ -376,6 +381,7 @@ const routes = [
         component: CanteenDeletion,
         meta: {
           authenticationRequired: true,
+          title: "Supprimer ma cantine",
         },
       },
       {
@@ -384,6 +390,7 @@ const routes = [
         component: PublicationForm,
         meta: {
           authenticationRequired: true,
+          title: "Ma publication",
         },
       },
       {
@@ -392,6 +399,7 @@ const routes = [
         component: PublishSatellites,
         meta: {
           authenticationRequired: true,
+          title: "Publier mes satellites",
         },
       },
       {
@@ -400,6 +408,7 @@ const routes = [
         component: DashboardPage,
         meta: {
           authenticationRequired: true,
+          title: "Améliorer ma cantine",
         },
       },
       {

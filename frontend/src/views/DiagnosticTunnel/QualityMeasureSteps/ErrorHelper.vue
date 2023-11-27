@@ -13,13 +13,14 @@
         <DsfrCurrencyField
           :id="field.name"
           v-model.number="diagnostic[field.name]"
-          @blur="$emit('check-total')"
+          @blur="$emit('field-update')"
+          :error="hasError(field.name)"
           class="mt-2"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="diagnostic[field.name]"
-          @autofill="$emit('check-total')"
+          @autofill="$emit('field-update')"
           :purchaseType="field.purchaseType"
           :amount="purchasesSummary[field.name]"
         />
@@ -37,6 +38,10 @@ export default {
   components: { DsfrCurrencyField, PurchaseHint },
   props: {
     showFields: {
+      type: Array,
+      default: () => [],
+    },
+    errorFields: {
       type: Array,
       default: () => [],
     },
@@ -116,6 +121,9 @@ export default {
   methods: {
     showField(fieldName) {
       return this.showFields.indexOf(fieldName) > -1
+    },
+    hasError(fieldName) {
+      return this.errorFields.indexOf(fieldName) > -1
     },
   },
 }

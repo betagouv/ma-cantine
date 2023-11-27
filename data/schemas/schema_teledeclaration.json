@@ -128,10 +128,11 @@
     },
     {
       "description": "Liste définissant les secteurs d'activités concernés par le télédéclaration. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
-      "example": "[{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}]",
       "name": "canteen_sectors",
       "title": "Secteurs",
-      "type": "array"
+      "type": "array",
+      "delimiter": ",",
+      "example": ["{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}"]
     },
     {
       "description": "Ministère de tutelle de la cantine, s'il y en a un",
@@ -141,18 +142,18 @@
       "type": "string"
     },
     {
-      "description": "Part du bio dans les achats alimentaires de l'année (ratio basé sur le montant des achats en € HT)",
-      "example": "0.1",
+      "description": "Part des achats bio dans les achats alimentaires de l'année (ratio basé sur le montant des achats en € HT)",
       "name": "teledeclaration_ratio_bio",
       "title": "Télédéclaration Ratio Bio",
-      "type": "float"
+      "type": "number",
+      "example": 0.1
     },
     {
-      "description": "Part du bio dans les achats alimentaires de l'année",
-      "example": "0.1",
+      "description": "Part des achats EGAlim dans les achats alimentaires de l'année",
       "name": "teledeclaration_ratio_egalim_hors_bio",
-      "title": "Télédéclaration Ratio Bio",
-      "type": "float"
+      "title": "Télédéclaration Ratio Egalim",
+      "type": "number",
+      "example": 0.3
     }
   ]
 }

@@ -1,6 +1,5 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav :links="[{ to: { name: 'ManagementPage' } }]" v-if="isNewCanteen" />
     <h1 class="font-weight-black text-h4 my-4">
       {{ isNewCanteen ? "Ajouter ma cantine" : "Modifier ma cantine" }}
     </h1>
@@ -296,6 +295,7 @@
         <ImagesField class="mt-0 mb-4" :imageArray.sync="canteen.images" id="images" />
       </div>
       <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
+        <v-btn x-large outlined color="red" :to="{ name: 'CanteenDeletion' }">Supprimer</v-btn>
         <v-spacer></v-spacer>
         <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
           Annuler
@@ -310,7 +310,7 @@
 
 <script>
 import validators from "@/validators"
-import { toBase64, getObjectDiff, sectorsSelectList, readCookie, lastYear } from "@/utils"
+import { toBase64, getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 import TechnicalControlDialog from "./TechnicalControlDialog"
 import ImagesField from "./ImagesField"
@@ -320,7 +320,6 @@ import DsfrTextField from "@/components/DsfrTextField"
 import CityField from "./CityField"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrCallout from "@/components/DsfrCallout"
-import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -335,7 +334,6 @@ export default {
     DsfrSelect,
     DsfrCallout,
     SiretCheck,
-    BreadcrumbsNav,
   },
   props: {
     canteenUrlComponent: {
@@ -503,25 +501,23 @@ export default {
           this.$emit("updateCanteen", canteenJson)
           if (this.isNewCanteen) {
             const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteenJson)
+
+            let name = "DiagnosticList"
+            if (this.showSatelliteCanteensCount) name = "SatelliteManagement"
+            else if (window.ENABLE_DASHBOARD) name = "DashboardManager"
+
             this.$router.push({
               // form validation ensures that the count will be > 0
-              name: this.showSatelliteCanteensCount ? "SatelliteManagement" : "DiagnosticList",
+              name,
               params: { canteenUrlComponent },
             })
           } else {
-            // encourage TDs by redirecting to diagnostic page if relevant
-            const diag = this.canteen.diagnostics.find((d) => d.year == lastYear())
-            if (diag && diag.teledeclaration?.status !== "SUBMITTED") {
-              this.$router.push({
-                name: "DiagnosticModification",
-                params: {
-                  canteenUrlComponent: this.canteenUrlComponent,
-                  year: lastYear(),
-                },
-              })
-            } else {
-              this.$router.push({ name: "ManagementPage" })
-            }
+            this.$router.push({
+              name: window.ENABLE_DASHBOARD ? "DashboardManager" : "ManagementPage",
+              params: {
+                canteenUrlComponent: this.canteenUrlComponent,
+              },
+            })
           }
         })
         .catch((e) => {

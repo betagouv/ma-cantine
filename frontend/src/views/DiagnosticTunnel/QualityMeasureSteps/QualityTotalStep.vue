@@ -16,10 +16,12 @@
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
     <ErrorHelper
-      :class="`mt-8 ${hasError ? '' : 'd-none'}`"
+      v-if="hasError || errorHelperUsed"
+      class="mt-8"
       :showFields="errorHelperFields"
+      :errorFields="erroringFields"
       :diagnostic="payload"
-      @check-total="checkTotal"
+      @field-update="errorUpdate"
       :purchasesSummary="purchasesSummary"
     />
   </div>
@@ -56,6 +58,8 @@ export default {
       meatPoultryErrorMessage: null,
       fishErrorMessage: null,
       totalFamiliesErrorMessage: null,
+      errorHelperUsed: false,
+      errorHelperFields: [],
     }
   },
   computed: {
@@ -87,7 +91,7 @@ export default {
         (x) => !!x
       )
     },
-    errorHelperFields() {
+    erroringFields() {
       const fields = []
       if (this.totalError)
         fields.push(...["valueBioHt", "valueSustainableHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"])
@@ -103,6 +107,11 @@ export default {
       if (!this.hasError) this.$emit("update-payload", { payload: this.payload })
     },
     checkTotal() {
+      this.totalErrorMessage = null
+      this.meatPoultryErrorMessage = null
+      this.fishErrorMessage = null
+      this.totalFamiliesErrorMessage = null
+
       const d = this.payload
       const sumEgalim = this.sumAllEgalim()
       const total = d.valueTotalHt
@@ -112,22 +121,29 @@ export default {
 
       if (sumEgalim > total) {
         this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${toCurrency(sumEgalim || 0)}`
-      } else this.totalErrorMessage = null
-      if (totalMeatPoultry > total) {
-        this.meatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
-          totalMeatPoultry
-        )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
-      } else this.meatPoultryErrorMessage = null
-      if (totalFish > total) {
-        this.fishErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
-          totalFish
-        )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
-      } else this.fishErrorMessage = null
+        this.errorHelperFields.push(
+          ...["valueBioHt", "valueSustainableHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"]
+        )
+      }
       if (totalFamilies > total) {
         this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
-      } else this.totalFamiliesErrorMessage = null
+        this.errorHelperFields.push(...["valueMeatPoultryHt", "valueFishHt"])
+      } else {
+        if (totalMeatPoultry > total) {
+          this.meatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
+            totalMeatPoultry
+          )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
+          this.errorHelperFields.push("valueMeatPoultryHt")
+        }
+        if (totalFish > total) {
+          this.fishErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
+            totalFish
+          )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
+          this.errorHelperFields.push("valueFishHt")
+        }
+      }
     },
     sumAllEgalim() {
       const d = this.payload
@@ -137,6 +153,10 @@ export default {
         total += parseFloat(val) || 0
       })
       return total
+    },
+    errorUpdate() {
+      this.errorHelperUsed = true
+      this.checkTotal()
     },
   },
   mounted() {
