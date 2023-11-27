@@ -1,5 +1,5 @@
 from django.test import TestCase
-from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
+from data.factories import CompleteDiagnosticFactory, DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
 from macantine.extract_open_data import ETL_CANTEEN, ETL_TD
 import json
@@ -34,7 +34,19 @@ class TestExtractionOpenData(TestCase):
         canteen.sectors.clear()
         Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
         etl_td.extract_dataset()
-        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_sectors"], list(), "The sectors should be an empty list")
+        self.assertEqual(
+            etl_td.get_dataset().iloc[0]["canteen_sectors"], list(), "The sectors should be an empty list"
+        )
+
+        canteen = CanteenFactory.create()
+        complete_diagnostic = CompleteDiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
+        etl_td = ETL_TD(complete_diagnostic.year)
+        etl_td.extract_dataset()
+        self.assertGreater(
+            etl_td.get_dataset().iloc[0]["teledeclaration_ratio_bio"], 0, "The bio value is aggregated from bio fields and should be greater than 0"
+        )
+
+
 
     def test_extraction_canteen(self):
         schema = json.load(open("data/schemas/schema_cantine.json"))
@@ -108,5 +120,7 @@ class TestExtractionOpenData(TestCase):
         etl_canteen.extract_dataset()
         canteens = etl_canteen.get_dataset()
         self.assertEqual(
-            etl_canteen.len_dataset(), 0, "There should be one canteen less as this specific sector has to remain private"
+            etl_canteen.len_dataset(),
+            0,
+            "There should be one canteen less as this specific sector has to remain private",
         )
