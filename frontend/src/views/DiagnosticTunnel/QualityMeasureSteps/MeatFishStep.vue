@@ -11,7 +11,7 @@
               mdi-food-drumstick
             </v-icon>
           </div>
-          <label class="body-2 ml-4" :for="'meat-poultry-' + diagnostic.year">
+          <label class="fr-text ml-4" :for="'meat-poultry-' + diagnostic.year">
             La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total
           </label>
         </div>
@@ -31,13 +31,13 @@
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
         <!-- Poissons -->
-        <div class="d-block d-sm-flex align-center">
+        <div class="d-block d-sm-flex align-center mt-8">
           <div class="d-flex">
             <v-icon size="30" color="blue">
               mdi-fish
             </v-icon>
           </div>
-          <label class="body-2 ml-4" :for="'fish-' + diagnostic.year">
+          <label class="fr-text ml-4" :for="'fish-' + diagnostic.year">
             La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total
           </label>
         </div>
