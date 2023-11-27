@@ -83,6 +83,7 @@
           :usesCentralDiagnostic="hasCentralDiagnosticForMeasure"
           :canteen="canteen"
           :diagnostic="displayDiagnostic"
+          :showEditButton="true"
         />
       </div>
     </div>
