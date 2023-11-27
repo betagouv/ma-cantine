@@ -32,6 +32,61 @@
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
+import Constants from "@/constants"
+
+const SIMPLE_FIELDS = [
+  {
+    name: "valueTotalHt",
+    label: "La valeur (en HT) de mes achats alimentaires total",
+    purchaseType: "totaux",
+  },
+  {
+    name: "valueBioHt",
+    label: "La valeur (en HT) de mes achats Bio ou en conversion Bio",
+    purchaseType: "bio",
+  },
+  {
+    name: "valueSustainableHt",
+    label: "La valeur (en HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
+    purchaseType: "SIQO",
+  },
+  {
+    name: "valueEgalimOthersHt",
+    label: "La valeur (en HT) des autres achats EGAlim",
+    purchaseType: "« autre EGAlim »",
+  },
+  {
+    name: "valueExternalityPerformanceHt",
+    label:
+      "Critères d'achat : La valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale.",
+    purchaseType: "« critères d'achat »",
+  },
+  {
+    name: "valueMeatPoultryHt",
+    label: "La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
+    purchaseType: "totaux viandes et volailles",
+  },
+  {
+    name: "valueMeatPoultryEgalimHt",
+    label: "La valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
+    purchaseType: "viandes et volailles EGAlim",
+  },
+  {
+    name: "valueMeatPoultryFranceHt",
+    label: "La valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
+    purchaseType: "viandes et volailles provenance France",
+  },
+  {
+    name: "valueFishHt",
+    label: "La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total",
+    purchaseType: "totaux de poissons, produits de la mer et de l'aquaculture",
+  },
+  {
+    name: "valueFishEgalimHt",
+    label: "La valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
+    purchaseType: "poissons, produits de la mer et de l'aquaculture EGAlim",
+  },
+]
 
 export default {
   name: "ErrorHelper",
@@ -54,67 +109,28 @@ export default {
     },
   },
   data() {
+    const fields = [...SIMPLE_FIELDS]
+    for (let group in Constants.TeledeclarationCharacteristicGroups) {
+      for (let idx in Constants.TeledeclarationCharacteristicGroups[group].fields) {
+        const field = Constants.TeledeclarationCharacteristicGroups[group].fields[idx]
+        fields.push({
+          name: field,
+          label: field,
+          purchaseType: field,
+        })
+      }
+    }
     return {
-      fields: [
-        {
-          name: "valueTotalHt",
-          label: "La valeur (en HT) de mes achats alimentaires total",
-          purchaseType: "totaux",
-        },
-        {
-          name: "valueBioHt",
-          label: "La valeur (en HT) de mes achats Bio ou en conversion Bio",
-          purchaseType: "bio",
-        },
-        {
-          name: "valueSustainableHt",
-          label: "La valeur (en HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
-          purchaseType: "SIQO",
-        },
-        {
-          name: "valueEgalimOthersHt",
-          label: "La valeur (en HT) des autres achats EGAlim",
-          purchaseType: "« autre EGAlim »",
-        },
-        {
-          name: "valueExternalityPerformanceHt",
-          label:
-            "Critères d'achat : La valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale.",
-          purchaseType: "« critères d'achat »",
-        },
-        {
-          name: "valueMeatPoultryHt",
-          label: "La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
-          purchaseType: "totaux viandes et volailles",
-        },
-        {
-          name: "valueMeatPoultryEgalimHt",
-          label: "La valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
-          purchaseType: "viandes et volailles EGAlim",
-        },
-        {
-          name: "valueMeatPoultryFranceHt",
-          label: "La valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
-          purchaseType: "viandes et volailles provenance France",
-        },
-        {
-          name: "valueFishHt",
-          label: "La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total",
-          purchaseType: "totaux de poissons, produits de la mer et de l'aquaculture",
-        },
-        {
-          name: "valueFishEgalimHt",
-          label: "La valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
-          purchaseType: "poissons, produits de la mer et de l'aquaculture EGAlim",
-        },
-      ],
+      fields,
     }
   },
   computed: {
     displayPurchaseHints() {
       return !!this.purchasesSummary
     },
+    // maybe move decision to filter fields to just the defined ones here
     fieldsToShow() {
+      console.log(this.fields.filter((field) => this.showField(field.name)))
       return this.fields.filter((field) => this.showField(field.name))
     },
   },
