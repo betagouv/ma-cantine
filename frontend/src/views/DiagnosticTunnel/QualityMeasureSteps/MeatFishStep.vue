@@ -1,10 +1,5 @@
 <template>
   <div>
-    <!-- <div v-if="hasError">
-      <DsfrCallout v-for="message in errorMessages" :key="message" color="red lighten-1">
-        <p class="ma-0">{{ message }}</p>
-      </DsfrCallout>
-    </div> -->
     <v-row>
       <v-col cols="12" md="8">
         <div class="d-block d-sm-flex align-center">
@@ -23,6 +18,7 @@
         <DsfrCurrencyField
           :id="'meat-poultry-' + diagnostic.year"
           v-model.number="payload.valueMeatPoultryHt"
+          @blur="checkTotal"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="hasError"
         />
@@ -62,28 +58,16 @@
         />
       </v-col>
     </v-row>
-    <ErrorHelper
-      class="mt-8"
-      :showFields="errorHelperFields"
-      :class="`${totalMeatPoultryError || totalFamiliesError ? '' : 'd-none'}`"
-      :diagnostic="payload"
-      @check-total="checkTotal"
-      :purchasesSummary="purchasesSummary"
-    />
   </div>
 </template>
 
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
-import ErrorHelper from "./ErrorHelper.vue"
-// import DsfrCallout from "@/components/DsfrCallout"
-// import { toCurrency } from "@/utils"
 
 export default {
   name: "MeatFishStep",
-  // components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, DsfrCallout },
-  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper },
+  components: { DsfrCurrencyField, PurchaseHint },
   props: {
     diagnostic: {
       type: Object,
@@ -109,70 +93,13 @@ export default {
   },
   computed: {
     displayPurchaseHints() {
-      return false
-      // return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
-    },
-    hasError() {
-      return false
-      // return [this.totalMeatPoultryError, this.meatPoultryError, this.totalFamiliesError].some((x) => !!x)
-    },
-    errorMessages() {
-      // return [this.totalMeatPoultryErrorMessage, this.meatPoultryErrorMessage, this.totalFamiliesErrorMessage].filter(
-      //   (x) => !!x
-      // )
-      return []
-    },
-    errorHelperFields() {
-      const fields = []
-      // if (this.totalMeatPoultryError) fields.push("valueTotalHt")
-      // if (this.totalFamiliesError) fields.push(...["valueTotalHt", "valueFishHt"])
-      return fields
+      return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
     },
   },
   methods: {
-    updatePayload() {
-      this.checkTotal()
-      // if (!this.hasError) this.$emit("update-payload", { payload: this.payload })
-    },
     checkTotal() {
-      // const d = this.payload
-      // // Note that we do Math.max because some meat-poultry may be overlapped : both bio and provenance France
-      // const sumMeatPoultry = Math.max(d.valueMeatPoultryEgalimHt, d.valueMeatPoultryFranceHt)
-      // const total = d.valueTotalHt
-      // const totalMeatPoultry = d.valueMeatPoultryHt
-      // const totalFish = d.valueFishHt
-      // const totalFamilies = totalMeatPoultry + totalFish
-      // this.totalMeatPoultryError = totalMeatPoultry > total
-      // this.meatPoultryError = sumMeatPoultry > totalMeatPoultry
-      // this.totalFamiliesError = totalFamilies > total
-      // if (this.totalMeatPoultryError) {
-      //   this.totalMeatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
-      //     totalMeatPoultry
-      //   )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
-      // } else this.totalMeatPoultryErrorMessage = null
-      // if (this.meatPoultryError) {
-      //   this.meatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
-      //     totalMeatPoultry
-      //   )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumMeatPoultry)})`
-      // } else this.meatPoultryErrorMessage = null
-      // if (this.totalFamiliesError) {
-      //   this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
-      //     totalFamilies
-      //   )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
-      // } else this.totalFamiliesErrorMessage = null
-      // return [this.totalMeatPoultryError, this.meatPoultryError, this.totalFamiliesError].every((x) => !x)
+      // TODO
     },
-  },
-  watch: {
-    payload: {
-      handler() {
-        this.updatePayload()
-      },
-      deep: true,
-    },
-  },
-  mounted() {
-    this.checkTotal()
   },
 }
 </script>
