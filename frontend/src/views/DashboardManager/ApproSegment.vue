@@ -67,7 +67,7 @@
         </v-icon>
         <h3 class="fr-text font-weight-bold">{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
-      <v-card-text :class="`mt-n4 pl-12 py-0 ${level.colorClass}`">
+      <v-card-text v-if="level" :class="`mt-n4 pl-12 py-0 ${level.colorClass}`">
         <p class="mb-0 mt-2 fr-text-xs">
           NIVEAU :
           <span class="font-weight-black">{{ level.text }}</span>
@@ -131,7 +131,7 @@
   </div>
 </template>
 <script>
-import { hasDiagnosticApproData, lastYear } from "@/utils"
+import { hasDiagnosticApproData, lastYear, hasStartedMeasureTunnel } from "@/utils"
 import Constants from "@/constants"
 import ApproGraph from "@/components/ApproGraph"
 import keyMeasures from "@/data/key-measures.json"
@@ -176,7 +176,9 @@ export default {
       return this.year === this.lastYear
     },
     level() {
-      return Constants.Levels.BEGINNER
+      if (this.delegatedToSatellite) return null
+      if (!hasStartedMeasureTunnel(this.diagnostic, this.keyMeasure)) return Constants.Levels.UNKNOWN
+      return null
     },
     hasPurchases() {
       return false
