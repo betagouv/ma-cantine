@@ -146,7 +146,7 @@ export default {
         for (const characteristicIdx in groupCharacteristics) {
           const characteristicId = groupCharacteristics[characteristicIdx]
           const characteristic = this.characteristics[characteristicId]
-          const urlSlug = characteristicId.toLowerCase() // TODO: replace underscores with hyphens
+          const urlSlug = characteristicId.toLowerCase().replace("_", "-")
           detailedSteps.push({
             title: `Valeurs totales par famille de produit des achats « ${characteristic.text} »`,
             componentName: FamilyFieldsStep,
