@@ -30,9 +30,9 @@ class ETL(ABC):
         Returns:
             pd.Series: The names of the location corresponding to an INSEE code, for each line of the dataset
         """
-        if geo_zoom == "department":
+        if "department" in geo_zoom:
             geo = {i.value: i.label for i in Department}
-        elif geo_zoom == "region":
+        elif "region" in geo_zoom:
             geo = {i.value: i.label for i in Region}
         else:
             logger.warning(
@@ -40,17 +40,18 @@ class ETL(ABC):
             )
             return 0
 
-        if "department" not in self.df.columns:  # TD dataset
-            geo_zoom = "canteen_" + geo_zoom
-
-        # Cleaning col that were created empty from schema
-        del self.df[f"{geo_zoom}_lib"]
+        # # Cleaning col that were created empty from schema
+        # del self.df[f"{geo_zoom}_lib"]
 
         self.df[f"{geo_zoom}_lib"] = self.df[geo_zoom].apply(
             lambda x: geo[x].split(" - ")[1].lstrip() if isinstance(x, str) else None
         )
-
-        return self.df[f"{geo_zoom}_lib"]
+    
+    def _fill_geos(self, geo_col_names=["department", "region"]):
+        for geo in geo_col_names:
+            self._fill_geo_name(geo_zoom=geo)
+            col_geo = self.df.pop(f"{geo}_lib")
+            self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
 
     def _clean_dataset(self):
         columns = [i["name"].replace("canteen_", "canteen.") for i in self.schema["fields"]]
@@ -169,9 +170,9 @@ class ETL_CANTEEN(ETL):
 
         logger.info("Canteens : Clean dataset...")
         self.df = self._clean_dataset()
+
         logger.info("Canteens : Fill geo name...")
-        self.df["department_lib"] = self._fill_geo_name(geo_zoom="department")
-        self.df["region_lib"] = self._fill_geo_name(geo_zoom="region")
+        self._fill_geos(geo_col_names=["department", "region"])
 
 
 class ETL_TD(ETL):
@@ -233,8 +234,9 @@ class ETL_TD(ETL):
         logger.info("TD campagne : Filter by sector...")
         self.df = self._filter_by_sectors()
         logger.info("TD campagne : Fill geo name...")
-        self.df["canteen_department_lib"] = self._fill_geo_name(geo_zoom="department")
-        self.df["canteen_region_lib"] = self._fill_geo_name(geo_zoom="region")
+
+        logger.info("TD Camapgne : Fill geo name...")
+        self._fill_geos(geo_col_names=["canteen_department", "canteen_region"])
 
     def _flatten_declared_data(self):
         tmp_df = pd.json_normalize(self.df["declared_data"])
