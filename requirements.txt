@@ -97,7 +97,7 @@ reportlab==3.6.13
 requests==2.31.0
 requests-mock==1.11.0
 s3transfer==0.7.0
-sentry-sdk==1.27.1
+sentry-sdk==1.37.1
 sib-api-v3-sdk==7.6.0
 six==1.16.0
 sqlparse==0.4.4
