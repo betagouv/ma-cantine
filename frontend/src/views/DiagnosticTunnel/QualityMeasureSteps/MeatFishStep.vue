@@ -263,13 +263,13 @@ export default {
         this.errorHelperFields.push(this.totalField)
       }
 
-      if (this.sum(this[`${family}LawFields`]) > familyTotal) {
+      if (!this[`${family}TotalError`] && this.sum(this[`${family}LawFields`]) > familyTotal) {
         this[`${family}LawSubtotalError`] = true
         this.errorHelperFields.push(...this.defined(this[`${family}LawFields`]))
       }
       this[`${family}OutsideLawSubtotalErrors`] = []
       this[`${family}OutsideLawFields`].forEach((field) => {
-        if (d[field] > familyTotal) {
+        if (!this[`${family}TotalError`] && d[field] > familyTotal) {
           this[`${family}OutsideLawSubtotalErrors`].push(field)
           this.errorHelperFields.push(field)
         }
