@@ -33,7 +33,7 @@
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import Constants from "@/constants"
-import { capitalise } from "@/utils"
+import { capitalise, getCharacteristicFromField } from "@/utils"
 
 const FISH = "poissons, produits de la mer et de l'aquaculture"
 const MEAT = "viandes et volailles"
@@ -147,7 +147,7 @@ export default {
           let characteristic = "Inconnu"
           if (field.startsWith(fishField)) {
             family = FISH
-            characteristic = this.characteristic(group, field.split(fishField)[1]).text
+            characteristic = getCharacteristicFromField(field, fishField, group).text
             fishFields.push({
               name: field,
               label: capitalise(`${family} : ${characteristic}`),
@@ -155,7 +155,7 @@ export default {
             })
           } else if (field.startsWith(meatField)) {
             family = MEAT
-            characteristic = this.characteristic(group, field.split(meatField)[1]).text
+            characteristic = getCharacteristicFromField(field, meatField, group).text
             meatFields.push({
               name: field,
               label: capitalise(`${family} : ${characteristic}`),
@@ -165,14 +165,6 @@ export default {
         }
       }
       return meatFields.concat(fishFields)
-    },
-    characteristic(tdGroup, fieldSuffix) {
-      const normalisedGroupCharacteristics = tdGroup.characteristics.map((g) => g.toLowerCase().replace(/_/g, ""))
-      const fieldCharacteristic = fieldSuffix.toLowerCase()
-      const charIdx = normalisedGroupCharacteristics.indexOf(fieldCharacteristic)
-      if (charIdx === -1) return fieldSuffix
-      const originalChar = tdGroup.characteristics[charIdx]
-      return Constants.TeledeclarationCharacteristics[originalChar]
     },
   },
 }
