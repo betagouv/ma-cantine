@@ -13,6 +13,7 @@ from data.models import Canteen, Teledeclaration, Sector
 from api.serializers import SectorSerializer
 from api.views.utils import camelize
 from django.core.files.storage import default_storage
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
@@ -136,22 +137,22 @@ class ETL_CANTEEN(ETL):
         canteens_col_from_db.remove("department_lib")
         canteens_col_from_db.remove("region_lib")
 
-        all_canteens = Canteen.objects.filter(deletion_date__isnull=True)
-        if all_canteens.count() == 0:
+        exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
+        exclude_filter |= Q(deletion_date__isnull=False)  # Filtering out the deleted canteens
+        canteens = Canteen.objects.exclude(exclude_filter)
+        
+        if canteens.count() == 0:
             return pd.DataFrame(columns=canteens_col_from_db)
 
-        active_canteens_id = Canteen.objects.exclude(managers=None).values_list("id", flat=True)
-
         # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
-        self.df = pd.DataFrame(all_canteens.values(*canteens_col_from_db))
+        self.df = pd.DataFrame(canteens.values(*canteens_col_from_db))
 
         # Adding the active_on_ma_cantine column
+        active_canteens_id = Canteen.objects.exclude(managers=None).values_list("id", flat=True)
         self.df["active_on_ma_cantine"] = self.df["id"].apply(lambda x: x in active_canteens_id)
 
         logger.info("Canteens : Extract sectors...")
         self.df = self._extract_sectors()
-        logger.info("Canteens : Filter by sectors...")
-        self._filter_by_sectors()
 
         bucket_url = os.environ.get("CELLAR_HOST")
         bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
@@ -162,15 +163,6 @@ class ETL_CANTEEN(ETL):
 
         logger.info("Canteens : Fill geo name...")
         self._fill_geos(geo_col_names=["department", "region"])
-    
-    def _filter_by_sectors(self):
-        sector_col_name = "sectors" if "sectors" in self.df.columns else "canteen_sectors"
-        self.df = self.df[
-            self.df.apply(
-                lambda x: "Restaurants des armées/police/gendarmerie" not in str(x[sector_col_name]),
-                axis=1,
-            )
-        ]
 
 
 class ETL_TD(ETL):
@@ -232,9 +224,7 @@ class ETL_TD(ETL):
         self._clean_dataset()
         logger.info("TD campagne : Filter by sector...")
         self._filter_by_sectors()
-        logger.info("TD campagne : Fill geo name...")
-
-        logger.info("TD Camapgne : Fill geo name...")
+        logger.info("TD Campagne : Fill geo name...")
         self._fill_geos(geo_col_names=["canteen_department", "canteen_region"])
 
     def _flatten_declared_data(self):
