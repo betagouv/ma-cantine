@@ -33,6 +33,10 @@
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import Constants from "@/constants"
+import { capitalise } from "@/utils"
+
+const FISH = "poissons, produits de la mer et de l'aquaculture"
+const MEAT = "viandes et volailles"
 
 const SIMPLE_FIELDS = [
   {
@@ -109,19 +113,8 @@ export default {
     },
   },
   data() {
-    const fields = [...SIMPLE_FIELDS]
-    for (let group in Constants.TeledeclarationCharacteristicGroups) {
-      for (let idx in Constants.TeledeclarationCharacteristicGroups[group].fields) {
-        const field = Constants.TeledeclarationCharacteristicGroups[group].fields[idx]
-        fields.push({
-          name: field,
-          label: field,
-          purchaseType: field,
-        })
-      }
-    }
     return {
-      fields,
+      fields: SIMPLE_FIELDS.concat(this.completeTdFields()),
     }
   },
   computed: {
@@ -130,7 +123,6 @@ export default {
     },
     // maybe move decision to filter fields to just the defined ones here
     fieldsToShow() {
-      console.log(this.fields.filter((field) => this.showField(field.name)))
       return this.fields.filter((field) => this.showField(field.name))
     },
   },
@@ -140,6 +132,47 @@ export default {
     },
     hasError(fieldName) {
       return this.errorFields.indexOf(fieldName) > -1
+    },
+    completeTdFields() {
+      const fishField = "valueProduitsDeLaMer"
+      const meatField = "valueViandesVolailles"
+      const tdGroups = Constants.TeledeclarationCharacteristicGroups
+      const meatFields = []
+      const fishFields = []
+      for (let groupIdx in tdGroups) {
+        const group = tdGroups[groupIdx]
+        const normalisedGroupCharacteristics = group.characteristics.map((g) => g.toLowerCase().replace(/_/g, ""))
+        for (let idx in group.fields) {
+          const field = group.fields[idx]
+          let family = "Inconnu"
+          let characteristic = "Inconnu"
+          if (field.startsWith(fishField)) {
+            family = FISH
+            characteristic = this.characteristicText(group, normalisedGroupCharacteristics, field.split(fishField)[1])
+            fishFields.push({
+              name: field,
+              label: capitalise(`${family} : ${characteristic}`),
+              purchaseType: `${family} « ${characteristic} »`,
+            })
+          } else if (field.startsWith(meatField)) {
+            family = MEAT
+            characteristic = this.characteristicText(group, normalisedGroupCharacteristics, field.split(meatField)[1])
+            meatFields.push({
+              name: field,
+              label: capitalise(`${family} : ${characteristic}`),
+              purchaseType: `${family} « ${characteristic} »`,
+            })
+          }
+        }
+      }
+      return meatFields.concat(fishFields)
+    },
+    characteristicText(tdGroup, normalisedGroupCharacteristics, fieldSuffix) {
+      const fieldCharacteristic = fieldSuffix.toLowerCase()
+      const charIdx = normalisedGroupCharacteristics.indexOf(fieldCharacteristic)
+      if (charIdx === -1) return fieldSuffix
+      const originalChar = tdGroup.characteristics[charIdx]
+      return Constants.TeledeclarationCharacteristics[originalChar].text
     },
   },
 }
