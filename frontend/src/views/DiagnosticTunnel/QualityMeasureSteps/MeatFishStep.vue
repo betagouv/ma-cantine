@@ -77,7 +77,7 @@ import FormErrorCallout from "@/components/FormErrorCallout"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import ErrorHelper from "./ErrorHelper"
 import Constants from "@/constants"
-import { toCurrency } from "@/utils"
+import { toCurrency, getCharacteristicFromField } from "@/utils"
 
 export default {
   name: "MeatFishStep",
@@ -140,9 +140,9 @@ export default {
       if (this.fishTotalError) fields.push(this.totalField)
       if (this.combinedTotalError) fields.push(this.totalField)
       if (this.meatLawSubtotalError) fields.push(...this.defined(this.meatLawFields))
-      // if (this.meatOutsideLawSubtotalError) fields.push(...this.defined(this.meatOutsideLawFields))
+      fields.push(...this.defined(this.meatOutsideLawSubtotalErrors))
       if (this.fishLawSubtotalError) fields.push(...this.defined(this.fishLawFields))
-      // if (this.fishOutsideLawSubtotalError) fields.push(...this.defined(this.fishOutsideLawFields))
+      fields.push(...this.defined(this.fishOutsideLawSubtotalErrors))
       return fields
     },
     hasError() {
@@ -164,9 +164,9 @@ export default {
         this.fishTotalErrorMessage,
         this.combinedTotalErrorMessage,
         this.meatLawSubtotalErrorMessage,
-        // this.meatOutsideLawSubtotalErrorMessage,
+        ...this.meatOutsideLawSubtotalErrorMessages,
         this.fishLawSubtotalErrorMessage,
-        // this.fishOutsideLawSubtotalErrorMessage,
+        ...this.fishOutsideLawSubtotalErrorMessages,
       ].filter((x) => !!x)
     },
     // error messages text
@@ -196,10 +196,19 @@ export default {
         this.payload.valueMeatPoultryHt
       )}) doit être supérieur à la somme des valeurs par label (${toCurrency(byLabel)})`
     },
-    // meatOutsideLawSubtotalErrorMessage() {
-    //   if (!this.meatOutsideLawSubtotalError) return null
-    //   return "meatOutsideLawSubtotalError"
-    // },
+    meatOutsideLawSubtotalErrorMessages() {
+      const fieldPrefix = "valueViandesVolailles"
+      const outsideLawGroup = Constants.TeledeclarationCharacteristicGroups.outsideLaw
+      const totalField = this.payload.valueMeatPoultryHt
+      return this.meatOutsideLawSubtotalErrors.map((field) => {
+        const characteristic = getCharacteristicFromField(field, fieldPrefix, outsideLawGroup)
+        return `Le total des achats viandes et volailles (${toCurrency(
+          totalField
+        )}) doit être supérieur au champ « viandes et volailles : ${characteristic.text} » (${toCurrency(
+          this.payload[field]
+        )})`
+      })
+    },
     fishLawSubtotalErrorMessage() {
       if (!this.fishLawSubtotalError) return null
       const byLabel = this.sum(this.fishLawFields)
@@ -207,10 +216,19 @@ export default {
         this.payload.valueFishHt
       )}) doit être supérieur à la somme des valeurs par label (${toCurrency(byLabel)})`
     },
-    // fishOutsideLawSubtotalErrorMessage() {
-    //   if (!this.fishOutsideLawSubtotalError) return null
-    //   return "fishOutsideLawSubtotalError"
-    // },
+    fishOutsideLawSubtotalErrorMessages() {
+      const fieldPrefix = "valueProduitsDeLaMer"
+      const outsideLawGroup = Constants.TeledeclarationCharacteristicGroups.outsideLaw
+      const totalField = this.payload.valueFishHt
+      return this.fishOutsideLawSubtotalErrors.map((field) => {
+        const characteristic = getCharacteristicFromField(field, fieldPrefix, outsideLawGroup)
+        return `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
+          totalField
+        )}) doit être supérieur au champ « poissons, produits de la mer et de l'aquaculture : ${
+          characteristic.text
+        } » (${toCurrency(this.payload[field])})`
+      })
+    },
   },
   methods: {
     checkTotal() {
@@ -253,6 +271,7 @@ export default {
       this[`${family}OutsideLawFields`].forEach((field) => {
         if (d[field] > familyTotal) {
           this[`${family}OutsideLawSubtotalErrors`].push(field)
+          this.errorHelperFields.push(field)
         }
       })
     },

@@ -574,3 +574,13 @@ export const hasStartedMeasureTunnel = (diagnostic, keyMeasure) => {
   if (diagnostic?.creationSource === "TUNNEL") return !!diagnostic[keyMeasure.progressField]
   return !!diagnostic
 }
+
+export const getCharacteristicFromField = (fieldName, fieldPrefix, tdGroup) => {
+  const fieldSuffix = fieldName.split(fieldPrefix)[1]
+  const normalisedGroupCharacteristics = tdGroup.characteristics.map((g) => g.toLowerCase().replace(/_/g, ""))
+  const fieldCharacteristic = fieldSuffix.toLowerCase()
+  const charIdx = normalisedGroupCharacteristics.indexOf(fieldCharacteristic)
+  if (charIdx === -1) return fieldSuffix
+  const originalChar = tdGroup.characteristics[charIdx]
+  return Constants.TeledeclarationCharacteristics[originalChar]
+}

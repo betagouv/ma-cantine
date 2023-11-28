@@ -141,14 +141,13 @@ export default {
       const fishFields = []
       for (let groupIdx in tdGroups) {
         const group = tdGroups[groupIdx]
-        const normalisedGroupCharacteristics = group.characteristics.map((g) => g.toLowerCase().replace(/_/g, ""))
         for (let idx in group.fields) {
           const field = group.fields[idx]
           let family = "Inconnu"
           let characteristic = "Inconnu"
           if (field.startsWith(fishField)) {
             family = FISH
-            characteristic = this.characteristicText(group, normalisedGroupCharacteristics, field.split(fishField)[1])
+            characteristic = this.characteristic(group, field.split(fishField)[1]).text
             fishFields.push({
               name: field,
               label: capitalise(`${family} : ${characteristic}`),
@@ -156,7 +155,7 @@ export default {
             })
           } else if (field.startsWith(meatField)) {
             family = MEAT
-            characteristic = this.characteristicText(group, normalisedGroupCharacteristics, field.split(meatField)[1])
+            characteristic = this.characteristic(group, field.split(meatField)[1]).text
             meatFields.push({
               name: field,
               label: capitalise(`${family} : ${characteristic}`),
@@ -167,12 +166,13 @@ export default {
       }
       return meatFields.concat(fishFields)
     },
-    characteristicText(tdGroup, normalisedGroupCharacteristics, fieldSuffix) {
+    characteristic(tdGroup, fieldSuffix) {
+      const normalisedGroupCharacteristics = tdGroup.characteristics.map((g) => g.toLowerCase().replace(/_/g, ""))
       const fieldCharacteristic = fieldSuffix.toLowerCase()
       const charIdx = normalisedGroupCharacteristics.indexOf(fieldCharacteristic)
       if (charIdx === -1) return fieldSuffix
       const originalChar = tdGroup.characteristics[charIdx]
-      return Constants.TeledeclarationCharacteristics[originalChar].text
+      return Constants.TeledeclarationCharacteristics[originalChar]
     },
   },
 }
