@@ -1,11 +1,17 @@
+import datetime
 from django.test import TestCase
 from data.factories import CompleteDiagnosticFactory, DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
 from macantine.extract_open_data import ETL_CANTEEN, ETL_TD
+from freezegun import freeze_time
+
+
 import json
 
 
 class TestExtractionOpenData(TestCase):
+
+    @freeze_time("2022-02-14") # Faking time to mock creation_date
     def test_extraction_teledeclaration(self):
         schema = json.load(open("data/schemas/schema_teledeclaration.json"))
         schema_cols = [i["name"] for i in schema["fields"]]

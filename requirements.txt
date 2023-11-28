@@ -46,6 +46,7 @@ exceptiongroup==1.1.3
 factory-boy==3.3.0
 Faker==19.11.0
 future==0.18.3
+freezegun==1.2.2
 html2text==2020.1.16
 html5lib==1.1
 idna==3.4
