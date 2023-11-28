@@ -67,7 +67,6 @@ class ETL(ABC):
             if col_int["type"] == "float":
                 self.df[col_int["name"]] = self.df[col_int["name"]].round(decimals=4)
         self.df = self.df.replace("<NA>", "")
-        return self.df
 
     def _extract_sectors(self):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
@@ -78,15 +77,6 @@ class ETL(ABC):
         del self.df["sectors"]
 
         return self.df.merge(canteens_sectors, on="id")
-
-    def _filter_by_sectors(self):
-        sector_col_name = "sectors" if "sectors" in self.df.columns else "canteen_sectors"
-        return self.df[
-            self.df.apply(
-                lambda x: "Restaurants des armées/police/gendarmerie" not in str(x[sector_col_name]),
-                axis=1,
-            )
-        ]
 
     @abstractmethod
     def extract_dataset(self):
@@ -161,17 +151,26 @@ class ETL_CANTEEN(ETL):
         logger.info("Canteens : Extract sectors...")
         self.df = self._extract_sectors()
         logger.info("Canteens : Filter by sectors...")
-        self.df = self._filter_by_sectors()
+        self._filter_by_sectors()
 
         bucket_url = os.environ.get("CELLAR_HOST")
         bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
         self.df["logo"] = self.df["logo"].apply(lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else "")
 
         logger.info("Canteens : Clean dataset...")
-        self.df = self._clean_dataset()
+        self._clean_dataset()
 
         logger.info("Canteens : Fill geo name...")
         self._fill_geos(geo_col_names=["department", "region"])
+    
+    def _filter_by_sectors(self):
+        sector_col_name = "sectors" if "sectors" in self.df.columns else "canteen_sectors"
+        self.df = self.df[
+            self.df.apply(
+                lambda x: "Restaurants des armées/police/gendarmerie" not in str(x[sector_col_name]),
+                axis=1,
+            )
+        ]
 
 
 class ETL_TD(ETL):
@@ -190,8 +189,8 @@ class ETL_TD(ETL):
             "externality_performance": ["_externality_performance", "_performance", "_externalites"],
         }
         self.date_campagnes = {
-            2022: {"start_date": datetime.date(2022, 7, 16), "end_date": datetime.date(2023, 12, 5)},
-            2023: {"start_date": datetime.date(2022, 2, 13), "end_date": datetime.date(2023, 6, 30)},
+            2021: {"start_date": datetime.date(2022, 7, 16), "end_date": datetime.date(2023, 12, 5)},
+            2022: {"start_date": datetime.date(2022, 2, 13), "end_date": datetime.date(2023, 6, 30)},
         }
 
     def extract_dataset(self):
@@ -230,9 +229,9 @@ class ETL_TD(ETL):
         self.df["teledeclaration_type"] = self.df["teledeclaration.diagnostic_type"]  # Renaming to match schema
 
         logger.info("TD campagne : Clean dataset...")
-        self.df = self._clean_dataset()
+        self._clean_dataset()
         logger.info("TD campagne : Filter by sector...")
-        self.df = self._filter_by_sectors()
+        self._filter_by_sectors()
         logger.info("TD campagne : Fill geo name...")
 
         logger.info("TD Camapgne : Fill geo name...")
@@ -256,31 +255,11 @@ class ETL_TD(ETL):
         for categ, elements_in_categ in self.categories_to_aggregate.items():
             self._aggregation_col(categ, elements_in_categ)
 
-    # def add_canteen_info(self, add_carac=True, add_geo=True):
-    #     res = requests.post(
-    #         url,
-    #         headers={
-    #             "Content-Type": "application/json",
-    #             "X-Metabase-Session": os.environ.get("METABASE_TOKEN"),
-    #         },
-    #     )
-    #     td_canteen = pd.DataFrame(res.json())
-
-    #     col_to_merge = []
-    #     if add_carac:
-    #         col_to_merge = col_to_merge + [
-    #             "production_type",
-    #             "management_type",
-    #             "yearly_meal_count",
-    #             "daily_meal_count",
-    #             "sectors",
-    #         ]
-    #     if add_geo:
-    #         col_to_merge = col_to_merge + ["region", "department", "city_insee_code"]
-
-    #     for col in col_to_merge:
-    #         del df[f"canteen.{col}"]
-    #     td_canteen = td_canteen.add_prefix("canteen.")
-    #     col_to_merge = ["canteen." + sub for sub in col_to_merge]
-    #     df = df.merge(right=td_canteen[col_to_merge + ["canteen.id"]], on="canteen.id")
-    #     return df
+    def _filter_by_sectors(self):
+        """
+        22, vla'les flics
+        Filtering the sectors of the police and army so they do not appear publicly
+        """
+        canteens_to_filter = Canteen.objects.filter(sectors__id=22)
+        canteens_id_to_filter = [canteen.id for canteen in canteens_to_filter]
+        self.df = self.df[~self.df["canteen_id"].isin(canteens_id_to_filter)]
