@@ -77,6 +77,7 @@ import FormErrorCallout from "@/components/FormErrorCallout"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import ErrorHelper from "./ErrorHelper"
 import Constants from "@/constants"
+import { toCurrency } from "@/utils"
 
 export default {
   name: "MeatFishStep",
@@ -171,19 +172,29 @@ export default {
     // error messages text
     meatTotalErrorMessage() {
       if (!this.meatTotalError) return null
-      return "meatTotalError"
+      return `Le total des achats viandes et volailles (${toCurrency(
+        this.payload.valueMeatPoultryHt
+      )}) ne peut pas excéder le total des achats (${toCurrency(this.payload.valueTotalHt)})`
     },
     fishTotalErrorMessage() {
       if (!this.fishTotalError) return null
-      return "fishTotalError"
+      return `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
+        this.payload.valueFishHt
+      )}) ne peut pas excéder le total des achats (${toCurrency(this.payload.valueTotalHt)})`
     },
     combinedTotalErrorMessage() {
       if (!this.combinedTotalError) return null
-      return "combinedTotalError"
+      const totalFamilies = (this.payload.valueMeatPoultryHt || 0) + (this.payload.valueFishHt || 0)
+      return `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
+        totalFamilies
+      )}) ne doit pas dépasser le total de tous les achats (${toCurrency(this.payload.valueTotalHt)})`
     },
     meatLawSubtotalErrorMessage() {
       if (!this.meatLawSubtotalError) return null
-      return "meatLawSubtotalError"
+      const byLabel = this.sum(this.meatLawFields)
+      return `Le total des achats viandes et volailles (${toCurrency(
+        this.payload.valueMeatPoultryHt
+      )}) doit être supérieur à la somme des valeurs par label (${toCurrency(byLabel)})`
     },
     // meatOutsideLawSubtotalErrorMessage() {
     //   if (!this.meatOutsideLawSubtotalError) return null
@@ -191,7 +202,10 @@ export default {
     // },
     fishLawSubtotalErrorMessage() {
       if (!this.fishLawSubtotalError) return null
-      return "fishLawSubtotalError"
+      const byLabel = this.sum(this.fishLawFields)
+      return `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
+        this.payload.valueFishHt
+      )}) doit être supérieur à la somme des valeurs par label (${toCurrency(byLabel)})`
     },
     // fishOutsideLawSubtotalErrorMessage() {
     //   if (!this.fishOutsideLawSubtotalError) return null
@@ -200,6 +214,9 @@ export default {
   },
   methods: {
     checkTotal() {
+      this.checkFamilyTotal("meat")
+      this.checkFamilyTotal("fish")
+
       this.combinedTotalError = false
 
       const d = this.payload
@@ -207,13 +224,10 @@ export default {
       const meatTotal = d.valueMeatPoultryHt
       const fishTotal = d.valueFishHt
 
-      if (meatTotal + fishTotal > total) {
+      if (!this.meatTotalError && !this.fishTotalError && meatTotal + fishTotal > total) {
         this.combinedTotalError = true
         this.errorHelperFields.push(this.totalField)
       }
-
-      this.checkFamilyTotal("meat")
-      this.checkFamilyTotal("fish")
     },
     checkFamilyTotal(family) {
       // family === "meat" or "fish"
