@@ -189,30 +189,31 @@ class ETL_TD(ETL):
             "egalim_others": ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
             "externality_performance": ["_externality_performance", "_performance", "_externalites"],
         }
+        self.date_campagnes = {
+            2022: {"start_date": datetime.date(2022, 7, 16), "end_date": datetime.date(2023, 12, 5)},
+            2023: {"start_date": datetime.date(2022, 2, 13), "end_date": datetime.date(2023, 6, 30)},
+        }
 
     def extract_dataset(self):
-        if self.year == 2021:
+        if self.year in self.date_campagnes.keys():
             self.df = pd.DataFrame(
                 Teledeclaration.objects.filter(
                     year=self.year,
                     creation_date__range=(
-                        datetime.date(2022, 7, 17),
-                        datetime.date(2022, 12, 15),
+                        self.date_campagnes[self.year]["start_date"],
+                        self.date_campagnes[self.year]["end_date"],
                     ),
                     status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
                     canteen_id__isnull=False,
                 ).values()
             )
         else:
-            self.df = pd.DataFrame(
-                Teledeclaration.objects.filter(
-                    year=self.year,
-                    status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-                ).values()
-            )
+            logger.warning(f"TD campagne dataset does not exist for year : {self.year}")
+            return pd.DataFrame()
+    
         if len(self.df) == 0:
             logger.warning(f"TD campagne dataset is empty for year : {self.year}")
-            return self.df
+            return pd.DataFrame()
 
         logger.info("TD campagne : Flatten declared data...")
         self.df = self._flatten_declared_data()
@@ -254,3 +255,32 @@ class ETL_TD(ETL):
         """
         for categ, elements_in_categ in self.categories_to_aggregate.items():
             self._aggregation_col(categ, elements_in_categ)
+
+    # def add_canteen_info(self, add_carac=True, add_geo=True):
+    #     res = requests.post(
+    #         url,
+    #         headers={
+    #             "Content-Type": "application/json",
+    #             "X-Metabase-Session": os.environ.get("METABASE_TOKEN"),
+    #         },
+    #     )
+    #     td_canteen = pd.DataFrame(res.json())
+
+    #     col_to_merge = []
+    #     if add_carac:
+    #         col_to_merge = col_to_merge + [
+    #             "production_type",
+    #             "management_type",
+    #             "yearly_meal_count",
+    #             "daily_meal_count",
+    #             "sectors",
+    #         ]
+    #     if add_geo:
+    #         col_to_merge = col_to_merge + ["region", "department", "city_insee_code"]
+
+    #     for col in col_to_merge:
+    #         del df[f"canteen.{col}"]
+    #     td_canteen = td_canteen.add_prefix("canteen.")
+    #     col_to_merge = ["canteen." + sub for sub in col_to_merge]
+    #     df = df.merge(right=td_canteen[col_to_merge + ["canteen.id"]], on="canteen.id")
+    #     return df
