@@ -148,8 +148,8 @@ class ETL_CANTEEN(ETL):
         self.df = pd.DataFrame(canteens.values(*canteens_col_from_db))
 
         # Adding the active_on_ma_cantine column
-        active_canteens_id = Canteen.objects.exclude(managers=None).values_list("id", flat=True)
-        self.df["active_on_ma_cantine"] = self.df["id"].apply(lambda x: x in active_canteens_id)
+        non_active_canteens = Canteen.objects.filter(managers=None).values_list("id", flat=True)
+        self.df["active_on_ma_cantine"] = self.df["id"].apply(lambda x: x not in non_active_canteens)
 
         logger.info("Canteens : Extract sectors...")
         self.df = self._extract_sectors()
