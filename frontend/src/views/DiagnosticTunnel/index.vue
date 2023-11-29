@@ -17,7 +17,14 @@
         </v-col>
         <v-col class="text-right py-0">
           <p class="mb-0">
-            <v-btn text plain class="text-decoration-underline px-0" color="primary" @click="saveAndQuit">
+            <v-btn
+              text
+              plain
+              class="text-decoration-underline px-0"
+              color="primary"
+              @click="saveAndQuit"
+              :disabled="!formIsValid"
+            >
               Sauvegarder et quitter
               <v-icon color="primary" size="1rem" class="ml-0 mb-1">
                 $close-line
@@ -70,12 +77,14 @@
         </v-btn>
         <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
         <p v-else class="mb-0">
-          <router-link v-if="previousStep && formIsValid" :to="stepLink(previousStep)">
+          <v-btn
+            text
+            @click="previousAction"
+            :disabled="disablePreviousButton"
+            :class="disablePreviousButton ? 'fr-text grey--text text-darken-2' : 'fr-text primary--text'"
+          >
             Revenir à l'étape précédente
-          </router-link>
-          <a v-else class="grey--text text-darken-2" role="link" aria-disabled="true">
-            Revenir à l'étape précédente
-          </a>
+          </v-btn>
         </p>
       </div>
     </div>
@@ -201,6 +210,9 @@ export default {
       const synthesisUrl = "complet"
       return this.steps.filter((s) => s.urlSlug !== synthesisUrl)
     },
+    disablePreviousButton() {
+      return !this.previousStep || !this.formIsValid
+    },
   },
   methods: {
     updateSteps(steps) {
@@ -252,6 +264,23 @@ export default {
             name: "DashboardManager",
             params: {
               canteenUrlComponent: this.canteenUrlComponent,
+            },
+          })
+        }
+      })
+    },
+    previousAction() {
+      if (!this.formIsValid) return
+      this.saveDiagnostic().then(() => {
+        if (this.previousStep) {
+          this.$router.push({ query: { étape: this.previousStep.urlSlug } })
+        } else {
+          this.$router.push({
+            name: "MyProgress",
+            params: {
+              canteenUrlComponent: this.canteenUrlComponent,
+              year: this.year,
+              measure: this.measureId,
             },
           })
         }
