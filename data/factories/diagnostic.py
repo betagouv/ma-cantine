@@ -49,11 +49,11 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
 
     canteen = factory.SubFactory(CanteenFactory)
     year = factory.Faker("year")
-    diagnostic_type = fuzzy.FuzzyChoice(list(Diagnostic.DiagnosticType))
+    diagnostic_type = Diagnostic.DiagnosticType.COMPLETE
 
     value_total_ht = factory.Faker("random_int", min=6000, max=10000)
-    value_viandes_volailles_bio =factory.Faker("random_int", min=0, max=20)
-    value_boissons_bio =factory.Faker("random_int", min=0, max=20)
+    value_viandes_volailles_bio = factory.Faker("random_int", min=0, max=20)
+    value_boissons_bio = factory.Faker("random_int", min=0, max=20)
 
     value_egalim_others_ht = factory.Faker("random_int", min=0, max=20)
     value_meat_poultry_ht = factory.Faker("random_int", min=0, max=20)
