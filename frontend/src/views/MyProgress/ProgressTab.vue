@@ -10,12 +10,6 @@
             En savoir plus
           </v-btn>
         </v-col>
-        <v-col class="fr-text-xs text-right">
-          <p class="mb-0">Votre niveau : {{ level }}</p>
-          <p class="grey--text text--darken-2 mb-0">
-            {{ levelMessage }}
-          </p>
-        </v-col>
       </v-row>
       <h3 v-else class="fr-h6 font-weight-bold mb-4">
         {{ keyMeasure.title }}
@@ -193,12 +187,6 @@ export default {
     },
     hasActiveTeledeclaration() {
       return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
-    },
-    level() {
-      return "EXPERT"
-    },
-    levelMessage() {
-      return "Vous êtes au point, bravo ! Partagez vos meilleures idées pour inspirer d'autres cantines !"
     },
     modificationLink() {
       return this.isCanteenTab
