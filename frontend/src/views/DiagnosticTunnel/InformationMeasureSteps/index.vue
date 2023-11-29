@@ -48,9 +48,11 @@
           <v-text-field
             class="my-0 py-0"
             hide-details
+            ref="other-support-field"
             :disabled="!otherSupportEnabled"
             v-model="payload.otherCommunicationSupport"
             label="Autre : donnez plus d'informations"
+            :rules="otherSupportEnabled ? [validators.required] : []"
           ></v-text-field>
         </v-row>
       </fieldset>
@@ -171,9 +173,8 @@ export default {
   },
   watch: {
     otherSupportEnabled(val) {
-      if (!val) {
-        this.payload.otherCommunicationSupport = null
-      }
+      if (val) this.$nextTick().then(this.$refs["other-support-field"]?.validate)
+      else this.payload.otherCommunicationSupport = null
     },
     payload() {
       this.updatePayload()

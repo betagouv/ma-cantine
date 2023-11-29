@@ -117,9 +117,11 @@
         <v-checkbox v-model="otherActionEnabled" hide-details class="shrink mt-0" aria-label="Autre"></v-checkbox>
         <v-text-field
           class="my-0 py-0"
+          ref="other-action-field"
           hide-details
           :disabled="!otherActionEnabled"
           v-model="payload.otherWasteAction"
+          :rules="otherActionEnabled ? [validators.required] : []"
           label="Autre : donnez plus d'informations"
         ></v-text-field>
       </v-row>
@@ -398,6 +400,10 @@ export default {
     },
     formIsValid() {
       this.updatePayload()
+    },
+    otherActionEnabled(newValue) {
+      if (newValue) this.$nextTick().then(this.$refs["other-action-field"]?.validate)
+      else this.payload.otherWasteAction = null
     },
   },
 }
