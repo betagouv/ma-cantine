@@ -323,6 +323,7 @@ export default {
     step(newStep) {
       this.replaceStepInUrlMaybe()
       if (newStep) this.updatePageTitle()
+      window.scrollTo(0, 0)
     },
   },
 }

@@ -18,7 +18,7 @@ click==8.1.7
 click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.3.0
-cryptography==41.0.4
+cryptography==41.0.6
 cssselect2==0.7.0
 Deprecated==1.2.14
 dill==0.3.7
@@ -71,7 +71,7 @@ pipdeptree==2.13.0
 platformdirs==3.10.0
 pluggy==1.0.0
 prompt-toolkit==3.0.39
-psycopg2==2.9.6
+psycopg2==2.9.9
 py==1.11.0
 pycparser==2.21
 pyHanko==0.20.1
@@ -117,5 +117,5 @@ urllib3==1.26.18
 vine==5.1.0
 wcwidth==0.2.6
 webencodings==0.5.1
-wrapt==1.15.0
+wrapt==1.16.0
 xhtml2pdf==0.2.11
