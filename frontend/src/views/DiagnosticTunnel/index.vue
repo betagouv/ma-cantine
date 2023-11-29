@@ -332,6 +332,9 @@ export default {
 </script>
 
 <style>
+.constrained {
+  max-width: 1200px !important;
+}
 .tunnel {
   background-color: #f5f5fe;
 }
