@@ -276,9 +276,11 @@ export default {
           this.$router.push({ query: { étape: this.previousStep.urlSlug } })
         } else {
           this.$router.push({
-            name: "DashboardManager",
+            name: "MyProgress",
             params: {
               canteenUrlComponent: this.canteenUrlComponent,
+              year: this.year,
+              measure: this.measureId,
             },
           })
         }
