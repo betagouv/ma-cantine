@@ -30,9 +30,9 @@ class ETL(ABC):
         Returns:
             pd.Series: The names of the location corresponding to an INSEE code, for each line of the dataset
         """
-        if geo_zoom == "department":
+        if "department" in geo_zoom:
             geo = {i.value: i.label for i in Department}
-        elif geo_zoom == "region":
+        elif "region" in geo_zoom:
             geo = {i.value: i.label for i in Region}
         else:
             logger.warning(
@@ -40,22 +40,18 @@ class ETL(ABC):
             )
             return 0
 
-        if "department" not in self.df.columns:  # TD dataset
-            geo_zoom = "canteen_" + geo_zoom
-
-        # Cleaning col that were created empty from schema
-        del self.df[f"{geo_zoom}_lib"]
-
         self.df[f"{geo_zoom}_lib"] = self.df[geo_zoom].apply(
             lambda x: geo[x].split(" - ")[1].lstrip() if isinstance(x, str) else None
         )
-
-        return self.df[f"{geo_zoom}_lib"]
+    
+    def _fill_geos(self, geo_col_names=["department", "region"]):
+        for geo in geo_col_names:
+            self._fill_geo_name(geo_zoom=geo)
+            col_geo = self.df.pop(f"{geo}_lib")
+            self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
 
     def _clean_dataset(self):
-        columns = [
-            i["name"].replace("canteen_", "canteen.") for i in self.schema["fields"]
-        ]
+        columns = [i["name"].replace("canteen_", "canteen.") for i in self.schema["fields"]]
 
         self.df = self.df.loc[:, ~self.df.columns.duplicated()]
 
@@ -76,27 +72,18 @@ class ETL(ABC):
     def _extract_sectors(self):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
         self.df["sectors"] = self.df["sectors"].apply(
-            lambda x: camelize(SectorSerializer(Sector.objects.get(id=x)).data)
-            if (x and not math.isnan(x))
-            else ""
+            lambda x: camelize(SectorSerializer(Sector.objects.get(id=x)).data) if (x and not math.isnan(x)) else ""
         )
-        canteens_sectors = (
-            self.df.groupby("id")["sectors"]
-            .apply(list)
-            .apply(lambda x: x if x != [""] else [])
-        )
+        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [""] else [])
         del self.df["sectors"]
 
         return self.df.merge(canteens_sectors, on="id")
 
     def _filter_by_sectors(self):
-        sector_col_name = (
-            "sectors" if "sectors" in self.df.columns else "canteen_sectors"
-        )
+        sector_col_name = "sectors" if "sectors" in self.df.columns else "canteen_sectors"
         return self.df[
             self.df.apply(
-                lambda x: "Restaurants des armées/police/gendarmerie"
-                not in str(x[sector_col_name]),
+                lambda x: "Restaurants des armées/police/gendarmerie" not in str(x[sector_col_name]),
                 axis=1,
             )
         ]
@@ -135,8 +122,10 @@ class ETL(ABC):
     def export_dataset(self, stage="to_validate"):
         if stage == "to_validate":
             filename = f"open_data/{self.dataset_name}_to_validate.csv"
-        else:
+        elif stage == 'validated':
             filename = f"open_data/{self.dataset_name}.csv"
+        else:
+            return 0
         with default_storage.open(filename, "w") as file:
             self.df.to_csv(file, sep=";", index=False, na_rep="")
 
@@ -146,7 +135,9 @@ class ETL_CANTEEN(ETL):
         super().__init__()
         self.dataset_name = "registre_cantines"
         self.schema = json.load(open("data/schemas/schema_cantine.json"))
-        self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_cantine.json"
+        self.schema_url = (
+            "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_cantine.json"
+        )
 
     def extract_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
@@ -159,17 +150,13 @@ class ETL_CANTEEN(ETL):
         if all_canteens.count() == 0:
             return pd.DataFrame(columns=canteens_col_from_db)
 
-        active_canteens_id = Canteen.objects.exclude(managers=None).values_list(
-            "id", flat=True
-        )
+        active_canteens_id = Canteen.objects.exclude(managers=None).values_list("id", flat=True)
 
         # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
         self.df = pd.DataFrame(all_canteens.values(*canteens_col_from_db))
 
         # Adding the active_on_ma_cantine column
-        self.df["active_on_ma_cantine"] = self.df["id"].apply(
-            lambda x: x in active_canteens_id
-        )
+        self.df["active_on_ma_cantine"] = self.df["id"].apply(lambda x: x in active_canteens_id)
 
         logger.info("Canteens : Extract sectors...")
         self.df = self._extract_sectors()
@@ -178,15 +165,13 @@ class ETL_CANTEEN(ETL):
 
         bucket_url = os.environ.get("CELLAR_HOST")
         bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
-        self.df["logo"] = self.df["logo"].apply(
-            lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else ""
-        )
+        self.df["logo"] = self.df["logo"].apply(lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else "")
 
         logger.info("Canteens : Clean dataset...")
         self.df = self._clean_dataset()
+
         logger.info("Canteens : Fill geo name...")
-        self.df["department_lib"] = self._fill_geo_name(geo_zoom="department")
-        self.df["region_lib"] = self._fill_geo_name(geo_zoom="region")
+        self._fill_geos(geo_col_names=["department", "region"])
 
 
 class ETL_TD(ETL):
@@ -195,7 +180,15 @@ class ETL_TD(ETL):
         self.year = year
         self.dataset_name = f"campagne_td_{year}"
         self.schema = json.load(open("data/schemas/schema_teledeclaration.json"))
-        self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_teledeclaration.json"
+        self.schema_url = (
+            "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_teledeclaration.json"
+        )
+        self.categories_to_aggregate = {
+            "bio": ["_bio"],
+            "sustainable": ["_sustainable", "_label_rouge", "_aocaop_igp_stg"],
+            "egalim_others": ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
+            "externality_performance": ["_externality_performance", "_performance", "_externalites"],
+        }
 
     def extract_dataset(self):
         if self.year == 2021:
@@ -220,25 +213,44 @@ class ETL_TD(ETL):
         if len(self.df) == 0:
             logger.warning(f"TD campagne dataset is empty for year : {self.year}")
             return self.df
+
         logger.info("TD campagne : Flatten declared data...")
         self.df = self._flatten_declared_data()
+
+        logger.info("TD campagne : Aggregate appro data for complete TD...")
+        self._aggregate_complete_td()
+
         self.df["teledeclaration_ratio_bio"] = (
-            self.df["teledeclaration.value_bio_ht"]
-            / self.df["teledeclaration.value_total_ht"]
+            self.df["teledeclaration.value_bio_ht"] / self.df["teledeclaration.value_total_ht"]
         )
         self.df["teledeclaration_ratio_egalim_hors_bio"] = (
-            self.df["teledeclaration.value_sustainable_ht"]
-            / self.df["teledeclaration.value_total_ht"]
+            self.df["teledeclaration.value_sustainable_ht"] / self.df["teledeclaration.value_total_ht"]
         )
+        self.df["teledeclaration_type"] = self.df["teledeclaration.diagnostic_type"]  # Renaming to match schema
+
         logger.info("TD campagne : Clean dataset...")
         self.df = self._clean_dataset()
         logger.info("TD campagne : Filter by sector...")
         self.df = self._filter_by_sectors()
         logger.info("TD campagne : Fill geo name...")
-        self.df["canteen_department_lib"] = self._fill_geo_name(geo_zoom="department")
-        self.df["canteen_region_lib"] = self._fill_geo_name(geo_zoom="region")
+
+        logger.info("TD Camapgne : Fill geo name...")
+        self._fill_geos(geo_col_names=["canteen_department", "canteen_region"])
 
     def _flatten_declared_data(self):
         tmp_df = pd.json_normalize(self.df["declared_data"])
         self.df = pd.concat([self.df.drop("declared_data", axis=1), tmp_df], axis=1)
         return self.df
+
+    def _aggregation_col(self, categ="bio", sub_categ=["_bio"]):
+        pattern = "|".join(sub_categ)
+        self.df[f"teledeclaration.value_{categ}_ht"] = self.df.filter(regex=pattern).sum(
+            axis=1, numeric_only=True, skipna=True, min_count=1
+        )
+
+    def _aggregate_complete_td(self):
+        """
+        Aggregate the columns of a complete TD for an appro category if the total value of this category is not specified.
+        """
+        for categ, elements_in_categ in self.categories_to_aggregate.items():
+            self._aggregation_col(categ, elements_in_categ)
