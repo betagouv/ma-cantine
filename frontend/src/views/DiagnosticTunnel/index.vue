@@ -248,43 +248,65 @@ export default {
           // if the save is successful, make sure we are showing the up to date data
           Object.assign(this.diagnostic, this.payload)
         })
+        .catch((e) => {
+          if (e.jsonPromise) return e.jsonPromise.then(this.showBackendErrorMessage).then(() => Promise.reject())
+          this.$store.dispatch("notifyServerError", e)
+          return Promise.reject()
+        })
     },
     continueAction() {
       if (!this.formIsValid) return
-      this.saveDiagnostic().then(() => {
-        if (this.nextStep) {
-          this.$router.push({ query: { étape: this.nextStep.urlSlug } })
-        } else if (this.nextTunnel) {
-          this.$router.push({
-            name: "MyProgress",
-            params: { measure: this.nextTunnel.id },
-          })
-        } else {
-          this.$router.push({
-            name: "DashboardManager",
-            params: {
-              canteenUrlComponent: this.canteenUrlComponent,
-            },
-          })
-        }
-      })
+      this.saveDiagnostic()
+        .then(() => {
+          if (this.nextStep) {
+            this.$router.push({ query: { étape: this.nextStep.urlSlug } })
+          } else if (this.nextTunnel) {
+            this.$router.push({
+              name: "MyProgress",
+              params: { measure: this.nextTunnel.id },
+            })
+          } else {
+            this.$router.push({
+              name: "DashboardManager",
+              params: {
+                canteenUrlComponent: this.canteenUrlComponent,
+              },
+            })
+          }
+        })
+        .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
     },
     previousAction() {
       if (!this.formIsValid) return
-      this.saveDiagnostic().then(() => {
-        if (this.previousStep) {
-          this.$router.push({ query: { étape: this.previousStep.urlSlug } })
-        } else {
-          this.$router.push({
-            name: "MyProgress",
-            params: {
-              canteenUrlComponent: this.canteenUrlComponent,
-              year: this.year,
-              measure: this.measureId,
-            },
-          })
-        }
-      })
+      this.saveDiagnostic()
+        .then(() => {
+          if (this.previousStep) {
+            this.$router.push({ query: { étape: this.previousStep.urlSlug } })
+          } else {
+            this.$router.push({
+              name: "MyProgress",
+              params: {
+                canteenUrlComponent: this.canteenUrlComponent,
+                year: this.year,
+                measure: this.measureId,
+              },
+            })
+          }
+        })
+        .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
+    },
+    showBackendErrorMessage(error) {
+      try {
+        const messages = Object.values(error)
+        this.$store.dispatch("notify", {
+          title: "Veuillez vérifier les erreurs ci-dessous",
+          message: messages.join("\n"),
+          status: "error",
+          duration: "5000",
+        })
+      } catch (error) {
+        this.$store.dispatch("notifyServerError", error)
+      }
     },
     updateProgress() {
       const backendField = this.tunnels.find((t) => t.id === this.measureId)?.backendField
@@ -306,7 +328,7 @@ export default {
         .then(() => {
           this.$router.push(this.quitLink)
         })
-        .catch((e) => this.$store.dispatch("notifyServerError", e))
+        .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
     },
     stepLink(step) {
       return { query: { étape: step.urlSlug } }

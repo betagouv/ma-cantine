@@ -111,6 +111,7 @@ export default {
       communicationSupports: this.diagnostic.communicationSupports,
       otherCommunicationSupport: this.diagnostic.otherCommunicationSupport,
       communicatesOnFoodPlan: this.diagnostic.communicatesOnFoodPlan,
+      communicationSupportUrl: this.diagnostic.communicationSupportUrl,
     }
     return {
       formIsValid: true,
