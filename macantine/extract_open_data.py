@@ -247,7 +247,6 @@ class ETL_TD(ETL):
 
     def _filter_by_sectors(self):
         """
-        22, vla'les flics
         Filtering the sectors of the police and army so they do not appear publicly
         """
         canteens_to_filter = Canteen.objects.filter(sectors__id=22)
