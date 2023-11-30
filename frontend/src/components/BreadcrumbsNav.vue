@@ -70,7 +70,7 @@ export default {
         }
       }
       return {
-        title: "Acceuil",
+        title: "Accueil",
         to: { name: "LandingPage" },
       }
     },
