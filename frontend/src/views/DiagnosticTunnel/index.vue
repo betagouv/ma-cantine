@@ -101,6 +101,8 @@ import DiversificationMeasureSteps from "./DiversificationMeasureSteps"
 import NoPlasticMeasureSteps from "./NoPlasticMeasureSteps"
 import InformationMeasureSteps from "./InformationMeasureSteps"
 
+const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
+
 export default {
   name: "DiagnosticTunnel",
   props: {
@@ -141,6 +143,7 @@ export default {
           backendField: km.progressField,
         })),
       ],
+      bypassLeaveWarning: false,
     }
   },
   computed: {
@@ -213,6 +216,15 @@ export default {
     disablePreviousButton() {
       return !this.previousStep || !this.formIsValid
     },
+    hasChanged() {
+      let hasChanged = false
+      Object.keys(this.payload).forEach((key) => {
+        if (this.diagnostic[key] !== this.payload[key]) {
+          hasChanged = true
+        }
+      })
+      return hasChanged
+    },
   },
   methods: {
     updateSteps(steps) {
@@ -247,6 +259,7 @@ export default {
         .then(() => {
           // if the save is successful, make sure we are showing the up to date data
           Object.assign(this.diagnostic, this.payload)
+          this.bypassLeaveWarning = true
         })
         .catch((e) => {
           if (e.jsonPromise) return e.jsonPromise.then(this.showBackendErrorMessage).then(() => Promise.reject())
@@ -338,10 +351,38 @@ export default {
       if (!this.$refs.container) return
       this.$refs.container.style.height = `${height}px`
     },
+    handleUnload(e) {
+      if (this.hasChanged && !this.bypassLeaveWarning) {
+        e.preventDefault()
+        e.returnValue = LEAVE_WARNING
+      } else {
+        delete e["returnValue"]
+      }
+    },
+    handleRouteChange(next) {
+      if (!this.hasChanged || this.bypassLeaveWarning) {
+        next()
+        this.payload = {}
+        return
+      }
+      window.confirm(LEAVE_WARNING) ? next() : next(false)
+    },
+  },
+  created() {
+    window.addEventListener("beforeunload", this.handleUnload)
   },
   mounted() {
     this.fetchCanteen().then(() => this.fetchDiagnostic())
     this.onResize()
+  },
+  beforeDestroy() {
+    window.removeEventListener("beforeunload", this.handleUnload)
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.handleRouteChange(next)
+  },
+  beforeRouteLeave(to, from, next) {
+    this.handleRouteChange(next)
   },
   watch: {
     step(newStep) {
