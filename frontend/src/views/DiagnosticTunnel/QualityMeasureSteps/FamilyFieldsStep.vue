@@ -37,7 +37,7 @@
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload[diagnosticKey(fId)]"
-          :purchaseType="family.shortText + ' pour ce caractéristique'"
+          :purchaseType="family.shortText + ' pour cette caractéristique'"
           :amount="purchasesSummary[diagnosticKey(fId)]"
         />
       </v-col>
