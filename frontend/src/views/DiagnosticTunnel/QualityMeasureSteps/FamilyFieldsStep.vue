@@ -95,6 +95,8 @@ export default {
       errorOnLoad: false,
       meatTotalErrorMessage: null,
       fishTotalErrorMessage: null,
+      meatFieldPrefix: "valueViandesVolailles",
+      fishFieldPrefix: "valueProduitsDeLaMer",
     }
   },
   computed: {
@@ -157,7 +159,7 @@ export default {
       let meatPoultryFrance = 0
 
       allFields.forEach((field) => {
-        const isMeatPoultry = field.includes("ViandesVolailles")
+        const isMeatPoultry = field.startsWith(this.meatFieldPrefix)
         const value = parseFloat(this.payload[field])
         if (!isMeatPoultry || !value) return
         const isEgalim = egalimFields.includes(field)
@@ -176,7 +178,7 @@ export default {
       const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
 
       egalimFields.forEach((field) => {
-        const isFish = field.includes("ProduitsDeLaMer")
+        const isFish = field.startsWith(this.fishFieldPrefix)
         const value = parseFloat(this.payload[field])
         if (!isFish || !value) return
         fishEgalim += value
@@ -195,9 +197,9 @@ export default {
       const declaredTotal = +this.payload.valueTotalHt
       const fieldTotal = this.sum(sumFields)
       if (fieldTotal > declaredTotal) {
-        this.fieldTotalErrorMessage = `Le total de tous vos achats ${toCurrency(
+        this.fieldTotalErrorMessage = `Le total de tous vos achats (${toCurrency(
           fieldTotal
-        )} doit être inferieur du total saisi ${toCurrency(declaredTotal)}`
+        )}) doit être inferieur du total saisi (${toCurrency(declaredTotal)})`
       }
       const outsideLaw = {
         FRANCE: "France",
@@ -208,6 +210,25 @@ export default {
         // in the outsideLaw group, a product can be counted in more than one category, so we check if any of the
         // totals for each of the three categories is greater than the main total
         this.checkTotalForCategory(groups.outsideLaw, outsideLaw[this.characteristicId])
+        const meatFieldName = this.meatFieldPrefix + outsideLaw[this.characteristicId]
+        const meatOutsideLaw = this.payload[meatFieldName]
+        const meatTotal = this.payload.valueMeatPoultryHt
+        const char = getCharacteristicFromField(meatFieldName, this.meatFieldPrefix, groups.outsideLaw)
+        if (meatOutsideLaw > meatTotal) {
+          const message = `Le total de vos achats viandes et volailles ${char.text} (${toCurrency(
+            meatOutsideLaw
+          )}) doit être inferieur du, ou égale au, total viandes et volailles saisi (${toCurrency(meatTotal)})`
+          this.outsideLawErrorMessages.push(message)
+        }
+        const fishFieldName = this.fishFieldPrefix + outsideLaw[this.characteristicId]
+        const fishOutsideLaw = this.payload[fishFieldName]
+        const fishTotal = this.payload.valueFishHt
+        if (fishOutsideLaw > fishTotal) {
+          const message = `Le total de vos achats produits aquatiques ${char.text} (${toCurrency(
+            fishOutsideLaw
+          )}) doit être inferieur du, ou égale au, total produits aquatiques saisi (${toCurrency(fishTotal)})`
+          this.outsideLawErrorMessages.push(message)
+        }
       }
 
       // check meat and fish totals
@@ -238,9 +259,9 @@ export default {
       const total = this.sum(fields)
       if (total > this.payload.valueTotalHt) {
         const char = getCharacteristicFromField("_" + fieldSuffix, "_", group)
-        const message = `Le total de vos achats « ${char.text} », ${toCurrency(
+        const message = `Le total de vos achats « ${char.text} » (${toCurrency(
           total
-        )}, doit être inferieur du total saisi ${toCurrency(this.payload.valueTotalHt)}`
+        )}) doit être inferieur du total saisi (${toCurrency(this.payload.valueTotalHt)})`
         this.outsideLawErrorMessages.push(message)
       }
     },
@@ -254,8 +275,8 @@ export default {
       return fields.reduce((acc, field) => acc + (this.payload[field] || 0), 0)
     },
     fieldHasError(fieldName) {
-      if (fieldName.startsWith("valueViandesVolailles") && !!this.meatTotalErrorMessage) return true
-      if (fieldName.startsWith("valueProduitsDeLaMer") && !!this.fishTotalErrorMessage) return true
+      if (fieldName.startsWith(this.meatFieldPrefix) && !!this.meatTotalErrorMessage) return true
+      if (fieldName.startsWith(this.fishFieldPrefix) && !!this.fishTotalErrorMessage) return true
       return !!this.payload[fieldName] && (this.errorOnLoad || this.hasTotalError)
     },
   },
