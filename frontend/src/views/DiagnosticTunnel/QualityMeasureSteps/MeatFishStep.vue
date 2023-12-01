@@ -286,5 +286,8 @@ export default {
       return fields.filter((field) => !!this.payload[field])
     },
   },
+  mounted() {
+    this.checkTotal()
+  },
 }
 </script>
