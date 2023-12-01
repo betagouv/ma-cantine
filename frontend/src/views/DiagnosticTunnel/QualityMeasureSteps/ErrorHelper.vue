@@ -167,9 +167,6 @@ export default {
       }
       return meatFields.concat(fishFields)
     },
-    defined(fields) {
-      return fields.filter((field) => !!this.payload[field])
-    },
   },
 }
 </script>
