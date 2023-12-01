@@ -109,6 +109,9 @@ export default {
         !!this.fishTotalErrorMessage
       )
     },
+    hasTotalError() {
+      return !!this.fieldTotalErrorMessage || !!this.outsideLawErrorMessages.length
+    },
     errorMessages() {
       return [
         this.fieldTotalErrorMessage,
@@ -195,8 +198,6 @@ export default {
         this.fieldTotalErrorMessage = `Le total de tous vos achats ${toCurrency(
           fieldTotal
         )} doit être inferieur du total saisi ${toCurrency(declaredTotal)}`
-        this.updateErroringField()
-        return
       }
       const outsideLaw = {
         FRANCE: "France",
@@ -222,7 +223,7 @@ export default {
       const sumFish = fishEgalim + (this.payload.valueProduitsDeLaMerNonEgalim || 0)
       const totalFish = this.payload.valueFishHt
       if (sumFish > totalFish) {
-        this.fishTotalErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
+        this.fishTotalErrorMessage = `Le total des achats produits aquatiques (${toCurrency(
           totalFish
         )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumFish)})`
       }
@@ -241,7 +242,6 @@ export default {
           total
         )}, doit être inferieur du total saisi ${toCurrency(this.payload.valueTotalHt)}`
         this.outsideLawErrorMessages.push(message)
-        this.updateErroringField()
       }
     },
     fieldUpdate(fieldName) {
@@ -250,33 +250,21 @@ export default {
       this.checkTotal()
       this.populateSimplifiedDiagnostic()
     },
-    updateErroringField() {
-      const hasNewValue = !!this.payload[this.lastUpdatedFieldName]
-      if (hasNewValue) {
-        this.erroringFieldName = this.lastUpdatedFieldName
-      }
-    },
     sum(fields) {
       return fields.reduce((acc, field) => acc + (this.payload[field] || 0), 0)
-    },
-    checkTotalPageLoad() {
-      this.checkTotal()
-      if (this.hasError) {
-        this.errorOnLoad = true
-      }
     },
     fieldHasError(fieldName) {
       if (fieldName.startsWith("valueViandesVolailles") && !!this.meatTotalErrorMessage) return true
       if (fieldName.startsWith("valueProduitsDeLaMer") && !!this.fishTotalErrorMessage) return true
-      return (this.errorOnLoad && !!this.payload[fieldName]) || fieldName === this.erroringFieldName
+      return !!this.payload[fieldName] && (this.errorOnLoad || this.hasTotalError)
     },
   },
   mounted() {
-    this.checkTotalPageLoad()
+    this.checkTotal()
   },
   watch: {
     $route() {
-      this.checkTotalPageLoad()
+      this.checkTotal()
     },
   },
 }
