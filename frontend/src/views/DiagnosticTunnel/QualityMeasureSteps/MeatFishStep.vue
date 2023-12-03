@@ -139,10 +139,10 @@ export default {
       if (this.meatTotalError) fields.push(this.totalField)
       if (this.fishTotalError) fields.push(this.totalField)
       if (this.combinedTotalError) fields.push(this.totalField)
-      if (this.meatLawSubtotalError) fields.push(...this.defined(this.meatLawFields))
-      fields.push(...this.defined(this.meatOutsideLawSubtotalErrors))
-      if (this.fishLawSubtotalError) fields.push(...this.defined(this.fishLawFields))
-      fields.push(...this.defined(this.fishOutsideLawSubtotalErrors))
+      if (this.meatLawSubtotalError) fields.push(...this.meatLawFields)
+      fields.push(...this.meatOutsideLawSubtotalErrors)
+      if (this.fishLawSubtotalError) fields.push(...this.fishLawFields)
+      fields.push(...this.fishOutsideLawSubtotalErrors)
       return fields
     },
     hasError() {
@@ -265,7 +265,7 @@ export default {
 
       if (!this[`${family}TotalError`] && this.sum(this[`${family}LawFields`]) > familyTotal) {
         this[`${family}LawSubtotalError`] = true
-        this.errorHelperFields.push(...this.defined(this[`${family}LawFields`]))
+        this.errorHelperFields.push(...this[`${family}LawFields`])
       }
       this[`${family}OutsideLawSubtotalErrors`] = []
       this[`${family}OutsideLawFields`].forEach((field) => {
@@ -281,9 +281,6 @@ export default {
     },
     sum(fields) {
       return fields.reduce((acc, field) => acc + (this.payload[field] || 0), 0)
-    },
-    defined(fields) {
-      return fields.filter((field) => !!this.payload[field])
     },
   },
 }
