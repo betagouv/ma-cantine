@@ -41,6 +41,7 @@
       v-if="diagnostic && !isSynthesis"
       class="flex-grow-1 d-flex flex-column"
       style="width: 100%; overflow-y: scroll; overflow-x: hidden; background: #FFF"
+      ref="stepWrapper"
     >
       <v-spacer />
       <div class="mx-auto constrained px-4 py-10" style="width: 100%">
@@ -55,7 +56,12 @@
       </div>
       <v-spacer />
     </div>
-    <div v-else-if="diagnostic" class="flex-grow-1 d-flex flex-column" style="overflow-y: scroll; overflow-x: hidden;">
+    <div
+      v-else-if="diagnostic"
+      ref="synthesisWrapper"
+      class="flex-grow-1 d-flex flex-column"
+      style="overflow-y: scroll; overflow-x: hidden;"
+    >
       <div class="mx-auto constrained d-flex flex-column flex-grow-1" style="width: 100%; background: #FFF;">
         <SummaryWrapper :measure="measure" :canteen="canteen" :diagnostic="diagnostic" />
       </div>
@@ -260,6 +266,8 @@ export default {
         .then(() => {
           if (this.nextStep) {
             this.$router.push({ query: { étape: this.nextStep.urlSlug } })
+            this.$refs["stepWrapper"].scrollTop = 0
+            this.$refs["synthesisWrapper"].scrollTop = 0
           } else if (this.nextTunnel) {
             this.$router.push({
               name: "MyProgress",
@@ -282,6 +290,7 @@ export default {
         .then(() => {
           if (this.previousStep) {
             this.$router.push({ query: { étape: this.previousStep.urlSlug } })
+            this.$refs["stepWrapper"].scrollTop = 0
           } else {
             this.$router.push({
               name: "MyProgress",
