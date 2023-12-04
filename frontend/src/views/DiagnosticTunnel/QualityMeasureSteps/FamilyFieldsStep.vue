@@ -10,7 +10,7 @@
           :title="label.title"
           style="max-width: 50px;"
         />
-        <v-icon class="mt-1" :color="label.color" v-else-if="label.icon">
+        <v-icon class="mt-n1" :color="label.color" v-else-if="label.icon" size="44">
           {{ label.icon }}
         </v-icon>
       </div>
