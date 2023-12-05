@@ -198,20 +198,21 @@ export default {
       if (fieldTotal > declaredTotal) {
         this.fieldTotalErrorMessage = this.errorMessage(fieldTotal, declaredTotal, 1)
       }
-      const outsideLaw = {
+      const outsideLawSuffix = {
         FRANCE: "France",
         SHORT_DISTRIBUTION: "ShortDistribution",
         LOCAL: "Local",
-      }
-      if (outsideLaw[this.characteristicId]) {
+      }[this.characteristicId]
+
+      if (outsideLawSuffix) {
         // in the outsideLaw group, a product can be counted in more than one category, so we check if any of the
         // totals for each of the three categories is greater than the main total
-        const totalErrorMessage = this.getOutsideLawTotalErrorMessage(outsideLaw[this.characteristicId])
+        const totalErrorMessage = this.getOutsideLawTotalErrorMessage(outsideLawSuffix)
         if (totalErrorMessage) this.outsideLawErrorMessages.push(totalErrorMessage)
 
-        const char = getCharacteristicFromField(meatFieldName, this.meatFieldPrefix, groups.outsideLaw)
+        const char = getCharacteristicFromField("_" + outsideLawSuffix, "_", groups.outsideLaw)
 
-        const meatFieldName = this.meatFieldPrefix + outsideLaw[this.characteristicId]
+        const meatFieldName = this.meatFieldPrefix + outsideLawSuffix
         const meatOutsideLaw = this.payload[meatFieldName]
         const meatTotal = this.payload.valueMeatPoultryHt
         if (meatOutsideLaw > meatTotal) {
@@ -219,7 +220,7 @@ export default {
           this.outsideLawErrorMessages.push(message)
         }
 
-        const fishFieldName = this.fishFieldPrefix + outsideLaw[this.characteristicId]
+        const fishFieldName = this.fishFieldPrefix + outsideLawSuffix
         const fishOutsideLaw = this.payload[fishFieldName]
         const fishTotal = this.payload.valueFishHt
         if (fishOutsideLaw > fishTotal) {
