@@ -169,7 +169,7 @@ def display_sub_sector(summary, sector, col_order=None, file_name=''):
     if col_order:
         summary_sector = summary_sector[col_order]
     utils.display_indicateurs(summary_sector, transpose=False)
-    with pd.ExcelWriter(f'data/{file_name}.xlsx', mode='a', if_sheet_exists='replace') as writer:  
+    with pd.ExcelWriter(f'data/{file_name}.xlsx', engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:  
         summary_sector.to_excel(writer, sheet_name=sector)
     
 print('### Enseignement')
@@ -211,7 +211,7 @@ def display_sub_sector_iso(summary, sector, col_order=None, file_name=''):
     if col_order:
         summary_sector = summary_sector[col_order]
     utils.display_indicateurs(summary_sector, transpose=False)
-    with pd.ExcelWriter(f'data/{file_name}.xlsx', mode='a', if_sheet_exists='replace') as writer:
+    with pd.ExcelWriter(f'data/{file_name}.xlsx', engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
         for year in utils.CAMPAGNES.keys():
             summary_sector.filter(like=year, axis=1).to_excel(writer, sheet_name=f'{sector}_{year}')
 

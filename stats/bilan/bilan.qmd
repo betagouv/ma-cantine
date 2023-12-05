@@ -13,7 +13,7 @@ format:
     toc-depth: 5
 execute:
   warning: false
-  cache: false
+  cache: true
 ---
 
 # Introduction
@@ -408,6 +408,28 @@ utils.display_indicateurs(indic_divers[['Campagne 2023 - Stratégie "Je Ne Sais 
 # | output: asis
 
 utils.display_indicateurs(indic_appro[['Campagne 2023 - Stratégie "Je Ne Sais Pas"', 'Campagne 2023 - Stratégie "Historique"', "Campagne 2023 - Stratégie Maximale"]])
+```
+
+### Focus par type de management (concédé ou direct)
+#### Chiffre généraux
+```{python Nombre de sites de restauration concernés par la télédéclaration}
+# | echo: false
+# | output: asis
+tds['gestion_directe_2023'] = tds['Campagne 2023'][tds['Campagne 2023']['canteen.management_type'] == 'direct']
+tds['gestion_conceded_2023'] = tds['Campagne 2023'][tds['Campagne 2023']['canteen.management_type'] == 'conceded']
+indic_divers, indic_appro = utils.calcul_indicateur(tds, years=["gestion_directe_2023", "gestion_conceded_2023"])
+
+indic_divers = indic_divers.rename(columns={'gestion_directe_2023': 'Campagne 2023 - Cantines en gestion directe', 'gestion_conceded_2023': 'Campagne 2023 - Cantines en gestion concédée'})
+indic_appro = indic_appro.rename(columns={'gestion_directe_2023': 'Campagne 2023 - Cantines en gestion directe', 'gestion_conceded_2023': 'Campagne 2023 - Cantines en gestion concédée'})
+utils.display_indicateurs(indic_divers[['Campagne 2023 - Cantines en gestion directe', 'Campagne 2023 - Cantines en gestion concédée']])
+```
+
+#### Chiffres appro
+```{python Nombre de sites de restauration concernés par la télédéclaration}
+# | echo: false
+# | output: asis
+
+utils.display_indicateurs(indic_appro[['Campagne 2023 - Cantines en gestion directe', 'Campagne 2023 - Cantines en gestion concédée']])
 ```
 
 ## ⚖️ Comparaison isopérimètre
