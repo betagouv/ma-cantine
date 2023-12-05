@@ -69,14 +69,6 @@
         </v-btn>
       </v-col>
     </v-row>
-
-    <h2 class="mt-10 mb-2 text-h6 font-weight-bold">
-      Mes ressources personalisées
-    </h2>
-    <p class="body-2">
-      Découvrez ci-dessous des articles et des outils pratiques, ainsi que des suggestions de partenaires et des
-      cantines inspirantes sur votre territoire qui correspondent à vos enjeux.
-    </p>
   </div>
 </template>
 
