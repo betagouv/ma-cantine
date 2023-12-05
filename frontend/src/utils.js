@@ -575,8 +575,7 @@ export const hasStartedMeasureTunnel = (diagnostic, keyMeasure) => {
   return !!diagnostic
 }
 
-export const getCharacteristicFromField = (fieldName, fieldPrefix, tdGroup) => {
-  const fieldSuffix = fieldName.split(fieldPrefix)[1]
+export const getCharacteristicFromFieldSuffix = (fieldSuffix, tdGroup) => {
   const normalisedGroupCharacteristics = tdGroup.characteristics.map((g) => g.toLowerCase().replace(/_/g, ""))
   const fieldCharacteristic = fieldSuffix.toLowerCase()
   const charIdx = normalisedGroupCharacteristics.indexOf(fieldCharacteristic)
@@ -585,6 +584,7 @@ export const getCharacteristicFromField = (fieldName, fieldPrefix, tdGroup) => {
   return Constants.TeledeclarationCharacteristics[originalChar]
 }
 
-export const getCharacteristicFromFieldSuffix = (fieldSuffix, tdGroup) => {
-  return getCharacteristicFromField("_" + fieldSuffix, "_", tdGroup)
+export const getCharacteristicFromField = (fieldName, fieldPrefix, tdGroup) => {
+  const fieldSuffix = fieldName.split(fieldPrefix)[1]
+  return getCharacteristicFromFieldSuffix(fieldSuffix, tdGroup)
 }
