@@ -286,7 +286,7 @@ export default {
       totalValue = toCurrency(totalValue)
       if (characteristicText) {
         characteristicText = `« ${characteristicText} » `
-        return `Le total ${familyText}${characteristicText}(${problemValue}) excédent le total ${familyText}saisi ${stepText}(${totalValue})`
+       return `Le total ${familyText}${characteristicText}(${problemValue}) excède le total ${familyText}saisi ${stepText}(${totalValue})`
       }
       return `Les montants détaillés ${familyText}(${problemValue}) excédent le total ${familyText}saisi ${stepText}(${totalValue})`
     },
