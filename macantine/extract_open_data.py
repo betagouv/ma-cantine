@@ -249,6 +249,6 @@ class ETL_TD(ETL):
         """
         Filtering the sectors of the police and army so they do not appear publicly
         """
-        canteens_to_filter = Canteen.objects.filter(sectors__id=22)
+        canteens_to_filter = Canteen.objects.filter(sectors__name='Restaurants des armées / police / gendarmerie')
         canteens_id_to_filter = [canteen.id for canteen in canteens_to_filter]
         self.df = self.df[~self.df["canteen_id"].isin(canteens_id_to_filter)]
