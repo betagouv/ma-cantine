@@ -357,12 +357,14 @@ export default {
         e.returnValue = LEAVE_WARNING
       } else {
         delete e["returnValue"]
+        this.bypassLeaveWarning = false
       }
     },
     handleRouteChange(next) {
       if (!this.hasChanged || this.bypassLeaveWarning) {
         next()
         this.payload = {}
+        this.bypassLeaveWarning = false
         return
       }
       window.confirm(LEAVE_WARNING) ? next() : next(false)

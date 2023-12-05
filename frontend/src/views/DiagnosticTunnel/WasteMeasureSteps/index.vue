@@ -11,6 +11,7 @@
             :key="`hasWasteDiagnostic-${item.value}`"
             :label="item.label"
             :value="item.value"
+            @change="updatePayload"
           ></v-radio>
         </v-radio-group>
       </fieldset>
@@ -24,6 +25,7 @@
             :value="item.value"
             :disabled="!payload.hasWasteDiagnostic"
             :readonly="!payload.hasWasteDiagnostic"
+            @change="updatePayload"
           ></v-radio>
         </v-radio-group>
       </fieldset>
@@ -36,7 +38,13 @@
               J’ai réalisé des mesures de mon gaspillage alimentaire
             </legend>
             <v-radio-group class="my-0" v-model="payload.hasWasteMeasures" hide-details>
-              <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
+              <v-radio
+                v-for="item in boolOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                @change="updatePayload"
+              ></v-radio>
             </v-radio-group>
           </fieldset>
         </v-col>
@@ -58,6 +66,7 @@
                   suffix="kg/an"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  @blur="updatePayload"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -69,6 +78,7 @@
                   suffix="kg/an"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  @blur="updatePayload"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -80,6 +90,7 @@
                   suffix="kg/an"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  @blur="updatePayload"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -91,6 +102,7 @@
                   suffix="kg/an"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  @blur="updatePayload"
                 />
               </v-col>
             </v-row>
@@ -112,6 +124,7 @@
         :key="action.value"
         :value="action.value"
         :label="action.label"
+        @change="updatePayload"
       />
       <v-row align="center" class="ml-0 mb-3 mt-0 mr-2">
         <v-checkbox v-model="otherActionEnabled" hide-details class="shrink mt-0" aria-label="Autre"></v-checkbox>
@@ -123,6 +136,7 @@
           v-model="payload.otherWasteAction"
           :rules="otherActionEnabled ? [validators.required] : []"
           label="Autre : donnez plus d'informations"
+          @blur="updatePayload"
         ></v-text-field>
       </v-row>
     </fieldset>
@@ -134,7 +148,13 @@
               Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire
             </legend>
             <v-radio-group class="my-0" v-model="payload.hasDonationAgreement" hide-details>
-              <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
+              <v-radio
+                v-for="item in boolOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                @change="updatePayload"
+              ></v-radio>
             </v-radio-group>
           </fieldset>
         </v-col>
@@ -156,6 +176,7 @@
                   suffix="dons/an"
                   :readonly="!payload.hasDonationAgreement"
                   :disabled="!payload.hasDonationAgreement"
+                  @blur="updatePayload"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -173,6 +194,7 @@
                   suffix="kg/an"
                   :readonly="!payload.hasDonationAgreement"
                   :disabled="!payload.hasDonationAgreement"
+                  @blur="updatePayload"
                 />
               </v-col>
               <v-col cols="12" class="pb-0">
@@ -187,6 +209,7 @@
                   v-model.number="payload.donationFoodType"
                   :readonly="!payload.hasDonationAgreement"
                   :disabled="!payload.hasDonationAgreement"
+                  @blur="updatePayload"
                 />
               </v-col>
             </v-row>
@@ -205,7 +228,7 @@
                 mises en place pour lutter contre le gaspillage alimentaire
               </span>
             </legend>
-            <DsfrTextarea v-model="payload.otherWasteComments" rows="3" class="mt-6" />
+            <DsfrTextarea v-model="payload.otherWasteComments" rows="3" class="mt-6" @blur="updatePayload" />
           </fieldset>
         </v-col>
       </v-row>
@@ -295,22 +318,6 @@ export default {
     ExpeReservation,
   },
   data() {
-    const payload = {
-      hasWasteDiagnostic: this.diagnostic.hasWasteDiagnostic,
-      hasWastePlan: this.diagnostic.hasWastePlan,
-      hasWasteMeasures: this.diagnostic.hasWasteMeasures,
-      breadLeftovers: this.diagnostic.breadLeftovers,
-      servedLeftovers: this.diagnostic.servedLeftovers,
-      unservedLeftovers: this.diagnostic.unservedLeftovers,
-      sideLeftovers: this.diagnostic.sideLeftovers,
-      wasteActions: this.diagnostic.wasteActions,
-      otherWasteAction: this.diagnostic.otherWasteAction,
-      otherWasteComments: this.diagnostic.otherWasteComments,
-      hasDonationAgreement: this.diagnostic.hasDonationAgreement,
-      donationFrequency: this.diagnostic.donationFrequency,
-      donationQuantity: this.diagnostic.donationQuantity,
-      donationFoodType: this.diagnostic.donationFoodType,
-    }
     const steps = [
       {
         title: "Diagnostic et plan d’action",
@@ -360,7 +367,7 @@ export default {
           value: false,
         },
       ],
-      payload,
+      payload: {},
     }
   },
   computed: {
@@ -373,6 +380,25 @@ export default {
     },
   },
   methods: {
+    initialisePayload() {
+      console.log(this.diagnostic.hasWasteMeasures)
+      this.payload = {
+        hasWasteDiagnostic: this.diagnostic.hasWasteDiagnostic,
+        hasWastePlan: this.diagnostic.hasWastePlan,
+        hasWasteMeasures: this.diagnostic.hasWasteMeasures,
+        breadLeftovers: this.diagnostic.breadLeftovers,
+        servedLeftovers: this.diagnostic.servedLeftovers,
+        unservedLeftovers: this.diagnostic.unservedLeftovers,
+        sideLeftovers: this.diagnostic.sideLeftovers,
+        wasteActions: this.diagnostic.wasteActions,
+        otherWasteAction: this.diagnostic.otherWasteAction,
+        otherWasteComments: this.diagnostic.otherWasteComments,
+        hasDonationAgreement: this.diagnostic.hasDonationAgreement,
+        donationFrequency: this.diagnostic.donationFrequency,
+        donationQuantity: this.diagnostic.donationQuantity,
+        donationFoodType: this.diagnostic.donationFoodType,
+      }
+    },
     updatePayload() {
       this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
     },
@@ -392,12 +418,15 @@ export default {
   },
   mounted() {
     this.$emit("update-steps", this.steps)
+    this.initialisePayload()
     this.updatePayload()
   },
+  onRouteChange() {
+    // it is possible to navigate without saving.
+    // So must initialise payload every step to avoid saving something unintentionally
+    this.initialisePayload()
+  },
   watch: {
-    payload() {
-      this.updatePayload()
-    },
     formIsValid() {
       this.updatePayload()
     },
