@@ -91,7 +91,6 @@ export default {
       fieldTotalErrorMessage: false,
       outsideLawErrorMessages: [],
       erroringFieldName: null,
-      lastUpdatedFieldName: null,
       errorOnLoad: false,
       meatTotalErrorMessage: null,
       fishTotalErrorMessage: null,
@@ -267,7 +266,6 @@ export default {
     },
     fieldUpdate(fieldName) {
       if (this.diagnostic[fieldName] === this.payload[fieldName]) return
-      this.lastUpdatedFieldName = fieldName
       this.checkTotal()
       this.populateSimplifiedDiagnostic()
     },
