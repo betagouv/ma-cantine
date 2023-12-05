@@ -584,3 +584,7 @@ export const getCharacteristicFromField = (fieldName, fieldPrefix, tdGroup) => {
   const originalChar = tdGroup.characteristics[charIdx]
   return Constants.TeledeclarationCharacteristics[originalChar]
 }
+
+export const getCharacteristicFromFieldSuffix = (fieldSuffix, tdGroup) => {
+  return getCharacteristicFromField("_" + fieldSuffix, "_", tdGroup)
+}

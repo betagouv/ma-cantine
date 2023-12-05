@@ -54,7 +54,7 @@ import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import FormErrorCallout from "@/components/FormErrorCallout"
 import Constants from "@/constants"
 import validators from "@/validators"
-import { approTotals, toCurrency, getCharacteristicFromField } from "@/utils"
+import { approTotals, toCurrency, getCharacteristicFromFieldSuffix } from "@/utils"
 
 export default {
   name: "FamilyFieldsStep",
@@ -210,7 +210,7 @@ export default {
         const totalErrorMessage = this.getOutsideLawTotalErrorMessage(outsideLawSuffix)
         if (totalErrorMessage) this.outsideLawErrorMessages.push(totalErrorMessage)
 
-        const char = getCharacteristicFromField("_" + outsideLawSuffix, "_", groups.outsideLaw)
+        const char = getCharacteristicFromFieldSuffix(outsideLawSuffix, groups.outsideLaw)
 
         const meatFieldName = this.meatFieldPrefix + outsideLawSuffix
         const meatOutsideLaw = this.payload[meatFieldName]
@@ -253,7 +253,7 @@ export default {
       const fields = outsideLaw.fields.filter((field) => field.endsWith(fieldSuffix))
       const total = this.sum(fields)
       if (total > this.payload.valueTotalHt) {
-        const char = getCharacteristicFromField("_" + fieldSuffix, "_", outsideLaw)
+        const char = getCharacteristicFromFieldSuffix(fieldSuffix, outsideLaw)
         return this.errorMessage(total, this.payload.valueTotalHt, 1, undefined, char.text)
       }
     },
