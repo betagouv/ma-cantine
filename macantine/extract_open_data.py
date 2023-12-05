@@ -180,19 +180,19 @@ class ETL_TD(ETL):
             "egalim_others": ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
             "externality_performance": ["_externality_performance", "_performance", "_externalites"],
         }
-        self.date_campagnes = {
+        self.campaign_dates = {
             2021: {"start_date": datetime.date(2022, 7, 16), "end_date": datetime.date(2023, 12, 5)},
             2022: {"start_date": datetime.date(2022, 2, 13), "end_date": datetime.date(2023, 6, 30)},
         }
 
     def extract_dataset(self):
-        if self.year in self.date_campagnes.keys():
+        if self.year in self.campaign_dates.keys():
             self.df = pd.DataFrame(
                 Teledeclaration.objects.filter(
                     year=self.year,
                     creation_date__range=(
-                        self.date_campagnes[self.year]["start_date"],
-                        self.date_campagnes[self.year]["end_date"],
+                        self.campaign_dates[self.year]["start_date"],
+                        self.campaign_dates[self.year]["end_date"],
                     ),
                     status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
                     canteen_id__isnull=False,
