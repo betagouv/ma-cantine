@@ -121,9 +121,11 @@ export default {
 
       if (sumEgalim > total) {
         this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${toCurrency(sumEgalim || 0)}`
-        this.errorHelperFields.push(
-          ...["valueBioHt", "valueSustainableHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"]
-        )
+        if (!this.diagnostic.diagnosticType || this.diagnostic.diagnosticType === "SIMPLE") {
+          this.errorHelperFields.push(
+            ...["valueBioHt", "valueSustainableHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"]
+          )
+        }
       }
       if (totalFamilies > total) {
         this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(

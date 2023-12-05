@@ -1,5 +1,21 @@
 <template>
   <div class="mt-n4">
+    <div class="d-flex mb-4 align-center">
+      <LogoBio v-if="characteristicId === 'BIO'" />
+      <div v-else v-for="label in qualityLabels(characteristicId)" :key="label.title || label.icon">
+        <img
+          v-if="label.src"
+          :src="`/static/images/quality-labels/${label.src}`"
+          :alt="label.title"
+          :title="label.title"
+          style="max-width: 50px;"
+        />
+        <v-icon class="mt-n1" :color="label.color" v-else-if="label.icon" size="44">
+          {{ label.icon }}
+        </v-icon>
+      </div>
+      <h2 class="ml-4">{{ characteristicName }}</h2>
+    </div>
     <p v-if="groupId === 'egalim'">
       <strong>Produit ayant plusieurs labels</strong>
       : la valeur d’achat ne pourra être comptée que dans une seule des catégories. Par exemple, un produit à la fois
@@ -39,7 +55,7 @@
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload[diagnosticKey(fId)]"
-          :purchaseType="family.shortText + ' pour ce caractéristique'"
+          :purchaseType="family.shortText + ' pour cette caractéristique'"
           :amount="purchasesSummary[diagnosticKey(fId)]"
           @autofill="fieldUpdate(diagnosticKey(fId))"
         />
@@ -54,6 +70,8 @@ import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import FormErrorCallout from "@/components/FormErrorCallout"
 import Constants from "@/constants"
 import validators from "@/validators"
+import labels from "@/data/quality-labels.json"
+import LogoBio from "@/components/LogoBio"
 import { approTotals, toCurrency, getCharacteristicFromFieldSuffix } from "@/utils"
 
 export default {
@@ -82,6 +100,7 @@ export default {
   components: {
     DsfrCurrencyField,
     PurchaseHint,
+    LogoBio,
     FormErrorCallout,
   },
   data() {
@@ -101,6 +120,9 @@ export default {
   computed: {
     displayPurchaseHints() {
       return !!this.purchasesSummary
+    },
+    characteristicName() {
+      return Constants.TeledeclarationCharacteristics[this.characteristicId]?.text
     },
     hasError() {
       return (
@@ -184,6 +206,38 @@ export default {
       })
       fishEgalim = +fishEgalim.toFixed(2)
       return { fishEgalim }
+    },
+    qualityLabels(characteristicId) {
+      let singleLabel
+      let labelGroup
+      switch (characteristicId) {
+        case "LABEL_ROUGE":
+          singleLabel = labels.find((l) => l.src.startsWith("label-rouge"))
+          break
+        case "AOCAOP_IGP_STG":
+          labelGroup = [
+            labels.find((l) => l.src.startsWith("Logo-AOC")),
+            labels.find((l) => l.src.startsWith("IGP")),
+            labels.find((l) => l.src.startsWith("STG")),
+          ]
+          return labelGroup
+        case "HVE":
+          singleLabel = labels.find((l) => l.src.startsWith("hve"))
+          break
+        case "PECHE_DURABLE":
+          singleLabel = labels.find((l) => l.src.endsWith("peche-durable.png"))
+          break
+        case "RUP":
+          singleLabel = labels.find((l) => l.src.startsWith("rup"))
+          break
+        case "COMMERCE_EQUITABLE":
+          singleLabel = labels.find((l) => l.src.startsWith("commerce-equitable"))
+          break
+      }
+      singleLabel = singleLabel || Constants.MiscLabelIcons[characteristicId]
+      if (singleLabel) {
+        return [singleLabel]
+      }
     },
     checkTotal() {
       this.fieldTotalErrorMessage = null
@@ -286,7 +340,7 @@ export default {
       totalValue = toCurrency(totalValue)
       if (characteristicText) {
         characteristicText = `« ${characteristicText} » `
-       return `Le total ${familyText}${characteristicText}(${problemValue}) excède le total ${familyText}saisi ${stepText}(${totalValue})`
+        return `Le total ${familyText}${characteristicText}(${problemValue}) excède le total ${familyText}saisi ${stepText}(${totalValue})`
       }
       return `Les montants détaillés ${familyText}(${problemValue}) excédent le total ${familyText}saisi ${stepText}(${totalValue})`
     },

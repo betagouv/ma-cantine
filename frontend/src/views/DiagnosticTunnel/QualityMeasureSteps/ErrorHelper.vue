@@ -115,6 +115,7 @@ export default {
   data() {
     return {
       fields: SIMPLE_FIELDS.concat(this.completeTdFields()),
+      originalDiagnostic: JSON.parse(JSON.stringify(this.diagnostic)),
     }
   },
   computed: {
@@ -128,7 +129,7 @@ export default {
   },
   methods: {
     showField(fieldName) {
-      return this.showFields.indexOf(fieldName) > -1
+      return this.showFields.indexOf(fieldName) > -1 && !!this.originalDiagnostic[fieldName]
     },
     hasError(fieldName) {
       return this.errorFields.indexOf(fieldName) > -1
