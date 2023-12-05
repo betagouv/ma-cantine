@@ -206,15 +206,19 @@ export default {
       if (outsideLaw[this.characteristicId]) {
         // in the outsideLaw group, a product can be counted in more than one category, so we check if any of the
         // totals for each of the three categories is greater than the main total
-        this.checkTotalForCategory(groups.outsideLaw, outsideLaw[this.characteristicId])
+        const totalErrorMessage = this.getOutsideLawTotalErrorMessage(outsideLaw[this.characteristicId])
+        if (totalErrorMessage) this.outsideLawErrorMessages.push(totalErrorMessage)
+
+        const char = getCharacteristicFromField(meatFieldName, this.meatFieldPrefix, groups.outsideLaw)
+
         const meatFieldName = this.meatFieldPrefix + outsideLaw[this.characteristicId]
         const meatOutsideLaw = this.payload[meatFieldName]
         const meatTotal = this.payload.valueMeatPoultryHt
-        const char = getCharacteristicFromField(meatFieldName, this.meatFieldPrefix, groups.outsideLaw)
         if (meatOutsideLaw > meatTotal) {
           const message = this.errorMessage(meatOutsideLaw, meatTotal, 3, this.meatFieldPrefix, char.text)
           this.outsideLawErrorMessages.push(message)
         }
+
         const fishFieldName = this.fishFieldPrefix + outsideLaw[this.characteristicId]
         const fishOutsideLaw = this.payload[fishFieldName]
         const fishTotal = this.payload.valueFishHt
@@ -243,13 +247,13 @@ export default {
         this.erroringFieldName = null
       }
     },
-    checkTotalForCategory(group, fieldSuffix) {
-      const fields = group.fields.filter((field) => field.endsWith(fieldSuffix))
+    getOutsideLawTotalErrorMessage(fieldSuffix) {
+      const outsideLaw = Constants.TeledeclarationCharacteristicGroups.outsideLaw
+      const fields = outsideLaw.fields.filter((field) => field.endsWith(fieldSuffix))
       const total = this.sum(fields)
       if (total > this.payload.valueTotalHt) {
-        const char = getCharacteristicFromField("_" + fieldSuffix, "_", group)
-        const message = this.errorMessage(total, this.payload.valueTotalHt, 1, undefined, char.text)
-        this.outsideLawErrorMessages.push(message)
+        const char = getCharacteristicFromField("_" + fieldSuffix, "_", outsideLaw)
+        return this.errorMessage(total, this.payload.valueTotalHt, 1, undefined, char.text)
       }
     },
     fieldUpdate(fieldName) {
