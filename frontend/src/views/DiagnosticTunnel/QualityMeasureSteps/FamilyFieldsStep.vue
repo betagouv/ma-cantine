@@ -196,9 +196,7 @@ export default {
       const declaredTotal = +this.payload.valueTotalHt
       const fieldTotal = this.sum(sumFields)
       if (fieldTotal > declaredTotal) {
-        this.fieldTotalErrorMessage = `Le total de tous vos achats (${toCurrency(
-          fieldTotal
-        )}) doit être inferieur du total saisi (${toCurrency(declaredTotal)})`
+        this.fieldTotalErrorMessage = this.errorMessage(fieldTotal, declaredTotal, 1)
       }
       const outsideLaw = {
         FRANCE: "France",
@@ -214,18 +212,14 @@ export default {
         const meatTotal = this.payload.valueMeatPoultryHt
         const char = getCharacteristicFromField(meatFieldName, this.meatFieldPrefix, groups.outsideLaw)
         if (meatOutsideLaw > meatTotal) {
-          const message = `Le total de vos achats viandes et volailles ${char.text} (${toCurrency(
-            meatOutsideLaw
-          )}) doit être inferieur du, ou égale au, total viandes et volailles saisi (${toCurrency(meatTotal)})`
+          const message = this.errorMessage(meatOutsideLaw, meatTotal, 3, this.meatFieldPrefix, char.text)
           this.outsideLawErrorMessages.push(message)
         }
         const fishFieldName = this.fishFieldPrefix + outsideLaw[this.characteristicId]
         const fishOutsideLaw = this.payload[fishFieldName]
         const fishTotal = this.payload.valueFishHt
         if (fishOutsideLaw > fishTotal) {
-          const message = `Le total de vos achats produits aquatiques ${char.text} (${toCurrency(
-            fishOutsideLaw
-          )}) doit être inferieur du, ou égale au, total produits aquatiques saisi (${toCurrency(fishTotal)})`
+          const message = this.errorMessage(fishOutsideLaw, fishTotal, 3, this.fishFieldPrefix, char.text)
           this.outsideLawErrorMessages.push(message)
         }
       }
@@ -235,17 +229,13 @@ export default {
       const sumMeat = meatPoultryEgalim + (this.payload.valueViandesVolaillesNonEgalim || 0)
       const totalMeat = this.payload.valueMeatPoultryHt
       if (sumMeat > totalMeat) {
-        this.meatTotalErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
-          totalMeat
-        )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumMeat)})`
+        this.meatTotalErrorMessage = this.errorMessage(sumMeat, totalMeat, 3, this.meatFieldPrefix)
       }
       const { fishEgalim } = this.fishTotals()
       const sumFish = fishEgalim + (this.payload.valueProduitsDeLaMerNonEgalim || 0)
       const totalFish = this.payload.valueFishHt
       if (sumFish > totalFish) {
-        this.fishTotalErrorMessage = `Le total des achats produits aquatiques (${toCurrency(
-          totalFish
-        )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumFish)})`
+        this.fishTotalErrorMessage = this.errorMessage(sumFish, totalFish, 3, this.fishFieldPrefix)
       }
 
       if (!this.hasError) {
@@ -258,9 +248,7 @@ export default {
       const total = this.sum(fields)
       if (total > this.payload.valueTotalHt) {
         const char = getCharacteristicFromField("_" + fieldSuffix, "_", group)
-        const message = `Le total de vos achats « ${char.text} » (${toCurrency(
-          total
-        )}) doit être inferieur du total saisi (${toCurrency(this.payload.valueTotalHt)})`
+        const message = this.errorMessage(total, this.payload.valueTotalHt, 1, undefined, char.text)
         this.outsideLawErrorMessages.push(message)
       }
     },
@@ -276,6 +264,26 @@ export default {
       if (fieldName.startsWith(this.meatFieldPrefix) && !!this.meatTotalErrorMessage) return true
       if (fieldName.startsWith(this.fishFieldPrefix) && !!this.fishTotalErrorMessage) return true
       return !!this.payload[fieldName] && (this.errorOnLoad || this.hasTotalError)
+    },
+    errorMessage(problemValue, totalValue, stepNumber, familyFieldPrefix, characteristicText) {
+      // family can be undefined
+      const familyTextChoices = {
+        [this.fishFieldPrefix]: "des produits aquatiques ",
+        [this.meatFieldPrefix]: "des viandes et volailles ",
+      }
+      let familyText = familyTextChoices[familyFieldPrefix] || ""
+      const stepTextChoices = {
+        1: "dans la première étape ",
+        3: "dans la troisième étape ",
+      }
+      const stepText = stepTextChoices[stepNumber] || ""
+      problemValue = toCurrency(problemValue)
+      totalValue = toCurrency(totalValue)
+      if (characteristicText) {
+        characteristicText = `« ${characteristicText} » `
+        return `Le total ${familyText}${characteristicText}(${problemValue}) excédent le total ${familyText}saisi ${stepText}(${totalValue})`
+      }
+      return `Les montants détaillés ${familyText}(${problemValue}) excédent le total ${familyText}saisi ${stepText}(${totalValue})`
     },
   },
   mounted() {
