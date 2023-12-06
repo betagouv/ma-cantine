@@ -105,19 +105,10 @@ export default {
   },
   components: { DsfrTextField },
   data() {
-    const payload = {
-      communicatesOnFoodQuality: this.diagnostic.communicatesOnFoodQuality,
-      communicationFrequency: this.diagnostic.communicationFrequency,
-      communicationSupports: this.diagnostic.communicationSupports,
-      otherCommunicationSupport: this.diagnostic.otherCommunicationSupport,
-      communicatesOnFoodPlan: this.diagnostic.communicatesOnFoodPlan,
-      communicationSupportUrl: this.diagnostic.communicationSupportUrl,
-    }
     return {
       formIsValid: true,
       communicationFrequencies: Constants.CommunicationFrequencies,
       communicationSupports: Constants.CommunicationSupports,
-      otherSupportEnabled: !!payload.otherCommunicationSupport,
       steps: [
         {
           title: "Démarche d’information des convives",
@@ -151,7 +142,8 @@ export default {
           value: false,
         },
       ],
-      payload,
+      payload: {},
+      otherSupportEnabled: undefined,
     }
   },
   computed: {
@@ -167,9 +159,21 @@ export default {
     updatePayload() {
       this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
     },
+    initialisePayload() {
+      this.payload = {
+        communicatesOnFoodQuality: this.diagnostic.communicatesOnFoodQuality,
+        communicationFrequency: this.diagnostic.communicationFrequency,
+        communicationSupports: this.diagnostic.communicationSupports,
+        otherCommunicationSupport: this.diagnostic.otherCommunicationSupport,
+        communicatesOnFoodPlan: this.diagnostic.communicatesOnFoodPlan,
+        communicationSupportUrl: this.diagnostic.communicationSupportUrl,
+      }
+      this.otherSupportEnabled = !!this.payload.otherCommunicationSupport
+    },
   },
   mounted() {
     this.$emit("update-steps", this.steps)
+    this.initialisePayload()
     this.updatePayload()
   },
   watch: {
@@ -177,11 +181,17 @@ export default {
       if (val) this.$nextTick().then(this.$refs["other-support-field"]?.validate)
       else this.payload.otherCommunicationSupport = null
     },
-    payload() {
-      this.updatePayload()
+    payload: {
+      handler() {
+        this.updatePayload()
+      },
+      deep: true,
     },
     formIsValid() {
       this.updatePayload()
+    },
+    $route() {
+      this.initialisePayload()
     },
   },
 }
