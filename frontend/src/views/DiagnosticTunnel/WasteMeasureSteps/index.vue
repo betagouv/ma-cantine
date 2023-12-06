@@ -358,7 +358,6 @@ export default {
   },
   methods: {
     initialisePayload() {
-      console.log(this.diagnostic.hasWasteMeasures)
       this.payload = {
         hasWasteDiagnostic: this.diagnostic.hasWasteDiagnostic,
         hasWastePlan: this.diagnostic.hasWastePlan,
@@ -398,11 +397,6 @@ export default {
     this.initialisePayload()
     this.updatePayload()
   },
-  onRouteChange() {
-    // it is possible to navigate without saving.
-    // So must initialise payload every step to avoid saving something unintentionally
-    this.initialisePayload()
-  },
   watch: {
     formIsValid() {
       this.updatePayload()
@@ -416,6 +410,11 @@ export default {
     otherActionEnabled(newValue) {
       if (newValue) this.$nextTick().then(this.$refs["other-action-field"]?.validate)
       else this.payload.otherWasteAction = null
+    },
+    $route() {
+      // it is possible to navigate without saving.
+      // So must initialise payload every step to avoid saving something unintentionally
+      this.initialisePayload()
     },
   },
 }

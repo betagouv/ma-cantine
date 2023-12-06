@@ -85,12 +85,7 @@ export default {
           value: false,
         },
       ],
-      payload: {
-        cookingPlasticSubstituted: this.diagnostic.cookingPlasticSubstituted,
-        servingPlasticSubstituted: this.diagnostic.servingPlasticSubstituted,
-        plasticBottlesSubstituted: this.diagnostic.plasticBottlesSubstituted,
-        plasticTablewareSubstituted: this.diagnostic.plasticTablewareSubstituted,
-      },
+      payload: {},
     }
   },
   computed: {
@@ -103,17 +98,34 @@ export default {
     updatePayload() {
       this.$emit("update-payload", { payload: this.payload, formIsValid: true })
     },
+    initialisePayload() {
+      this.payload = {
+        cookingPlasticSubstituted: this.diagnostic.cookingPlasticSubstituted,
+        servingPlasticSubstituted: this.diagnostic.servingPlasticSubstituted,
+        plasticBottlesSubstituted: this.diagnostic.plasticBottlesSubstituted,
+        plasticTablewareSubstituted: this.diagnostic.plasticTablewareSubstituted,
+      }
+    },
   },
   mounted() {
     this.$emit("update-steps", this.steps)
+    this.initialisePayload()
     this.updatePayload()
   },
   watch: {
-    payload() {
-      this.updatePayload()
+    payload: {
+      handler() {
+        this.updatePayload()
+      },
+      deep: true,
     },
     formIsValid() {
       this.updatePayload()
+    },
+    $route() {
+      // it is possible to navigate without saving.
+      // So must initialise payload every step to avoid saving something unintentionally
+      this.initialisePayload()
     },
   },
 }
