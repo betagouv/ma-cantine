@@ -32,6 +32,7 @@
     <p v-if="characteristicId === 'LOCAL'">
       Suivant votre propre définition de « local ».
     </p>
+    <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <v-row>
       <v-col v-for="(family, fId) in families" :key="fId" cols="12" md="6" class="py-2">
         <label :for="fId" class="fr-text">
@@ -47,14 +48,16 @@
           ]"
           solo
           v-model.number="payload[diagnosticKey(fId)]"
-          @blur="populateSimplifiedDiagnostic"
+          @blur="fieldUpdate(diagnosticKey(fId))"
           class="mt-2"
+          :error="fieldHasError(diagnosticKey(fId))"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
           v-model="payload[diagnosticKey(fId)]"
           :purchaseType="family.shortText + ' pour cette caractéristique'"
           :amount="purchasesSummary[diagnosticKey(fId)]"
+          @autofill="fieldUpdate(diagnosticKey(fId))"
         />
       </v-col>
     </v-row>
@@ -64,11 +67,12 @@
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
+import FormErrorCallout from "@/components/FormErrorCallout"
 import Constants from "@/constants"
 import validators from "@/validators"
 import labels from "@/data/quality-labels.json"
 import LogoBio from "@/components/LogoBio"
-import { approTotals } from "@/utils"
+import { approTotals, toCurrency, getCharacteristicFromFieldSuffix } from "@/utils"
 
 export default {
   name: "FamilyFieldsStep",
@@ -97,11 +101,20 @@ export default {
     DsfrCurrencyField,
     PurchaseHint,
     LogoBio,
+    FormErrorCallout,
   },
   data() {
     return {
       families: Constants.ProductFamilies,
       validators,
+      fieldTotalErrorMessage: false,
+      outsideLawErrorMessages: [],
+      erroringFieldName: null,
+      errorOnLoad: false,
+      meatTotalErrorMessage: null,
+      fishTotalErrorMessage: null,
+      meatFieldPrefix: "valueViandesVolailles",
+      fishFieldPrefix: "valueProduitsDeLaMer",
     }
   },
   computed: {
@@ -110,6 +123,25 @@ export default {
     },
     characteristicName() {
       return Constants.TeledeclarationCharacteristics[this.characteristicId]?.text
+    },
+    hasError() {
+      return (
+        !!this.fieldTotalErrorMessage ||
+        !!this.outsideLawErrorMessages.length ||
+        !!this.meatTotalErrorMessage ||
+        !!this.fishTotalErrorMessage
+      )
+    },
+    hasTotalError() {
+      return !!this.fieldTotalErrorMessage || !!this.outsideLawErrorMessages.length
+    },
+    errorMessages() {
+      return [
+        this.fieldTotalErrorMessage,
+        ...this.outsideLawErrorMessages,
+        this.meatTotalErrorMessage,
+        this.fishTotalErrorMessage,
+      ].filter((x) => !!x)
     },
   },
   methods: {
@@ -125,6 +157,7 @@ export default {
       return string
     },
     populateSimplifiedDiagnostic() {
+      if (this.hasError) return
       const { bioTotal, siqoTotal, perfExtTotal, egalimOthersTotal } = approTotals(this.payload)
       this.payload.valueBioHt = bioTotal
       this.payload.valueSustainableHt = siqoTotal
@@ -139,40 +172,34 @@ export default {
       this.payload.valueFishEgalimHt = fishEgalim
     },
     meatPoultryTotals() {
-      let meatPoultryEgalim = this.payload.valueSustainableHt
-      let meatPoultryFrance = this.payload.valueExternalityPerformanceHt
-      if (this.extendedDiagnostic) {
-        meatPoultryEgalim = 0
-        meatPoultryFrance = 0
-        const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
-        const outsideLawFields = Constants.TeledeclarationCharacteristicGroups.outsideLaw.fields
-        const allFields = egalimFields.concat(outsideLawFields)
+      const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+      const outsideLawFields = Constants.TeledeclarationCharacteristicGroups.outsideLaw.fields
+      const allFields = egalimFields.concat(outsideLawFields)
 
-        allFields.forEach((field) => {
-          const isMeatPoultry = field.includes("ViandesVolailles")
-          const value = parseFloat(this.payload[field])
-          if (!isMeatPoultry || !value) return
-          const isEgalim = egalimFields.includes(field)
-          const isFrance = field.startsWith("value") && field.endsWith("France")
+      let meatPoultryEgalim = 0
+      let meatPoultryFrance = 0
 
-          // Note that it can be both egalim and provenance France
-          if (isEgalim) meatPoultryEgalim += value
-          if (isFrance) meatPoultryFrance += value
-        })
-        meatPoultryEgalim = +meatPoultryEgalim.toFixed(2)
-        meatPoultryFrance = +meatPoultryFrance.toFixed(2)
-      }
+      allFields.forEach((field) => {
+        const isMeatPoultry = field.startsWith(this.meatFieldPrefix)
+        const value = parseFloat(this.payload[field])
+        if (!isMeatPoultry || !value) return
+        const isEgalim = egalimFields.includes(field)
+
+        // Note that it can be both egalim and provenance France
+        if (isEgalim) meatPoultryEgalim += value
+        if (field.endsWith("France")) meatPoultryFrance = value // only one France meat field
+      })
+      meatPoultryEgalim = +meatPoultryEgalim.toFixed(2)
+      meatPoultryFrance = +meatPoultryFrance.toFixed(2)
       return { meatPoultryEgalim, meatPoultryFrance }
     },
     fishTotals() {
-      let fishEgalim = this.payload.valueSustainableHt
-
-      fishEgalim = 0
+      let fishEgalim = 0
 
       const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
 
       egalimFields.forEach((field) => {
-        const isFish = field.includes("ProduitsDeLaMer")
+        const isFish = field.startsWith(this.fishFieldPrefix)
         const value = parseFloat(this.payload[field])
         if (!isFish || !value) return
         fishEgalim += value
@@ -211,6 +238,119 @@ export default {
       if (singleLabel) {
         return [singleLabel]
       }
+    },
+    checkTotal() {
+      this.fieldTotalErrorMessage = null
+      this.meatTotalErrorMessage = null
+      this.fishTotalErrorMessage = null
+      this.outsideLawErrorMessages = []
+
+      const groups = Constants.TeledeclarationCharacteristicGroups
+      const sumFields = groups.egalim.fields.concat(groups.nonEgalim.fields)
+      const declaredTotal = +this.payload.valueTotalHt
+      const fieldTotal = this.sum(sumFields)
+      if (fieldTotal > declaredTotal) {
+        this.fieldTotalErrorMessage = this.errorMessage(fieldTotal, declaredTotal, 1)
+      }
+      const outsideLawSuffix = {
+        FRANCE: "France",
+        SHORT_DISTRIBUTION: "ShortDistribution",
+        LOCAL: "Local",
+      }[this.characteristicId]
+
+      if (outsideLawSuffix) {
+        // in the outsideLaw group, a product can be counted in more than one category, so we check if any of the
+        // totals for each of the three categories is greater than the main total
+        const totalErrorMessage = this.getOutsideLawTotalErrorMessage(outsideLawSuffix)
+        if (totalErrorMessage) this.outsideLawErrorMessages.push(totalErrorMessage)
+
+        const char = getCharacteristicFromFieldSuffix(outsideLawSuffix, groups.outsideLaw)
+
+        const meatFieldName = this.meatFieldPrefix + outsideLawSuffix
+        const meatOutsideLaw = this.payload[meatFieldName]
+        const meatTotal = this.payload.valueMeatPoultryHt
+        if (meatOutsideLaw > meatTotal) {
+          const message = this.errorMessage(meatOutsideLaw, meatTotal, 3, this.meatFieldPrefix, char.text)
+          this.outsideLawErrorMessages.push(message)
+        }
+
+        const fishFieldName = this.fishFieldPrefix + outsideLawSuffix
+        const fishOutsideLaw = this.payload[fishFieldName]
+        const fishTotal = this.payload.valueFishHt
+        if (fishOutsideLaw > fishTotal) {
+          const message = this.errorMessage(fishOutsideLaw, fishTotal, 3, this.fishFieldPrefix, char.text)
+          this.outsideLawErrorMessages.push(message)
+        }
+      }
+
+      // check meat and fish totals
+      const { meatPoultryEgalim } = this.meatPoultryTotals()
+      const sumMeat = meatPoultryEgalim + (this.payload.valueViandesVolaillesNonEgalim || 0)
+      const totalMeat = this.payload.valueMeatPoultryHt
+      if (sumMeat > totalMeat) {
+        this.meatTotalErrorMessage = this.errorMessage(sumMeat, totalMeat, 3, this.meatFieldPrefix)
+      }
+      const { fishEgalim } = this.fishTotals()
+      const sumFish = fishEgalim + (this.payload.valueProduitsDeLaMerNonEgalim || 0)
+      const totalFish = this.payload.valueFishHt
+      if (sumFish > totalFish) {
+        this.fishTotalErrorMessage = this.errorMessage(sumFish, totalFish, 3, this.fishFieldPrefix)
+      }
+
+      if (!this.hasError) {
+        this.errorOnLoad = false
+        this.erroringFieldName = null
+      }
+    },
+    getOutsideLawTotalErrorMessage(fieldSuffix) {
+      const outsideLaw = Constants.TeledeclarationCharacteristicGroups.outsideLaw
+      const fields = outsideLaw.fields.filter((field) => field.endsWith(fieldSuffix))
+      const total = this.sum(fields)
+      if (total > this.payload.valueTotalHt) {
+        const char = getCharacteristicFromFieldSuffix(fieldSuffix, outsideLaw)
+        return this.errorMessage(total, this.payload.valueTotalHt, 1, undefined, char.text)
+      }
+    },
+    fieldUpdate(fieldName) {
+      if (this.diagnostic[fieldName] === this.payload[fieldName]) return
+      this.checkTotal()
+      this.populateSimplifiedDiagnostic()
+    },
+    sum(fields) {
+      return fields.reduce((acc, field) => acc + (this.payload[field] || 0), 0)
+    },
+    fieldHasError(fieldName) {
+      if (fieldName.startsWith(this.meatFieldPrefix) && !!this.meatTotalErrorMessage) return true
+      if (fieldName.startsWith(this.fishFieldPrefix) && !!this.fishTotalErrorMessage) return true
+      return !!this.payload[fieldName] && (this.errorOnLoad || this.hasTotalError)
+    },
+    errorMessage(problemValue, totalValue, stepNumber, familyFieldPrefix, characteristicText) {
+      // family can be undefined
+      const familyTextChoices = {
+        [this.fishFieldPrefix]: "des produits aquatiques ",
+        [this.meatFieldPrefix]: "des viandes et volailles ",
+      }
+      let familyText = familyTextChoices[familyFieldPrefix] || ""
+      const stepTextChoices = {
+        1: "dans la première étape ",
+        3: "dans la troisième étape ",
+      }
+      const stepText = stepTextChoices[stepNumber] || ""
+      problemValue = toCurrency(problemValue)
+      totalValue = toCurrency(totalValue)
+      if (characteristicText) {
+        characteristicText = `« ${characteristicText} » `
+        return `Le total ${familyText}${characteristicText}(${problemValue}) excède le total ${familyText}saisi ${stepText}(${totalValue})`
+      }
+      return `Les montants détaillés ${familyText}(${problemValue}) excédent le total ${familyText}saisi ${stepText}(${totalValue})`
+    },
+  },
+  mounted() {
+    this.checkTotal()
+  },
+  watch: {
+    $route() {
+      this.checkTotal()
     },
   },
 }

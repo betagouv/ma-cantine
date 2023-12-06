@@ -283,5 +283,8 @@ export default {
       return fields.reduce((acc, field) => acc + (this.payload[field] || 0), 0)
     },
   },
+  mounted() {
+    this.checkTotal()
+  },
 }
 </script>
