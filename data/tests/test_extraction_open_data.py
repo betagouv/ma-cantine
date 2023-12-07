@@ -87,7 +87,7 @@ class TestExtractionOpenData(TestCase):
         )
 
         canteen_1.department = "29"
-        canteen_1.commune = "29021"
+        canteen_1.city_insee_code = "29021"
         canteen_1.save()
         etl_canteen.extract_dataset()
         canteens = etl_canteen.get_dataset()
