@@ -13,6 +13,7 @@ from data.models import Canteen, Teledeclaration, Sector
 from api.serializers import SectorSerializer
 from api.views.utils import camelize
 from django.core.files.storage import default_storage
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +68,6 @@ class ETL(ABC):
             if col_int["type"] == "float":
                 self.df[col_int["name"]] = self.df[col_int["name"]].round(decimals=4)
         self.df = self.df.replace("<NA>", "")
-        return self.df
 
     def _extract_sectors(self):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
@@ -78,15 +78,6 @@ class ETL(ABC):
         del self.df["sectors"]
 
         return self.df.merge(canteens_sectors, on="id")
-
-    def _filter_by_sectors(self):
-        sector_col_name = "sectors" if "sectors" in self.df.columns else "canteen_sectors"
-        return self.df[
-            self.df.apply(
-                lambda x: "Restaurants des armées/police/gendarmerie" not in str(x[sector_col_name]),
-                axis=1,
-            )
-        ]
 
     @abstractmethod
     def extract_dataset(self):
@@ -146,29 +137,29 @@ class ETL_CANTEEN(ETL):
         canteens_col_from_db.remove("department_lib")
         canteens_col_from_db.remove("region_lib")
 
-        all_canteens = Canteen.objects.filter(deletion_date__isnull=True)
-        if all_canteens.count() == 0:
+        exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
+        exclude_filter |= Q(deletion_date__isnull=False)  # Filtering out the deleted canteens
+        canteens = Canteen.objects.exclude(exclude_filter)
+        
+        if canteens.count() == 0:
             return pd.DataFrame(columns=canteens_col_from_db)
 
-        active_canteens_id = Canteen.objects.exclude(managers=None).values_list("id", flat=True)
-
         # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
-        self.df = pd.DataFrame(all_canteens.values(*canteens_col_from_db))
+        self.df = pd.DataFrame(canteens.values(*canteens_col_from_db))
 
         # Adding the active_on_ma_cantine column
-        self.df["active_on_ma_cantine"] = self.df["id"].apply(lambda x: x in active_canteens_id)
+        non_active_canteens = Canteen.objects.filter(managers=None).values_list("id", flat=True)
+        self.df["active_on_ma_cantine"] = self.df["id"].apply(lambda x: x not in non_active_canteens)
 
         logger.info("Canteens : Extract sectors...")
         self.df = self._extract_sectors()
-        logger.info("Canteens : Filter by sectors...")
-        self.df = self._filter_by_sectors()
 
         bucket_url = os.environ.get("CELLAR_HOST")
         bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
         self.df["logo"] = self.df["logo"].apply(lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else "")
 
         logger.info("Canteens : Clean dataset...")
-        self.df = self._clean_dataset()
+        self._clean_dataset()
 
         logger.info("Canteens : Fill geo name...")
         self._fill_geos(geo_col_names=["department", "region"])
@@ -189,30 +180,31 @@ class ETL_TD(ETL):
             "egalim_others": ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
             "externality_performance": ["_externality_performance", "_performance", "_externalites"],
         }
+        self.campaign_dates = {
+            2021: {"start_date": datetime.date(2022, 7, 16), "end_date": datetime.date(2023, 12, 5)},
+            2022: {"start_date": datetime.date(2022, 2, 13), "end_date": datetime.date(2023, 6, 30)},
+        }
 
     def extract_dataset(self):
-        if self.year == 2021:
+        if self.year in self.campaign_dates.keys():
             self.df = pd.DataFrame(
                 Teledeclaration.objects.filter(
                     year=self.year,
                     creation_date__range=(
-                        datetime.date(2022, 7, 17),
-                        datetime.date(2022, 12, 15),
+                        self.campaign_dates[self.year]["start_date"],
+                        self.campaign_dates[self.year]["end_date"],
                     ),
                     status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
                     canteen_id__isnull=False,
                 ).values()
             )
         else:
-            self.df = pd.DataFrame(
-                Teledeclaration.objects.filter(
-                    year=self.year,
-                    status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-                ).values()
-            )
+            logger.warning(f"TD campagne dataset does not exist for year : {self.year}")
+            return pd.DataFrame()
+    
         if len(self.df) == 0:
             logger.warning(f"TD campagne dataset is empty for year : {self.year}")
-            return self.df
+            return pd.DataFrame()
 
         logger.info("TD campagne : Flatten declared data...")
         self.df = self._flatten_declared_data()
@@ -229,12 +221,10 @@ class ETL_TD(ETL):
         self.df["teledeclaration_type"] = self.df["teledeclaration.diagnostic_type"]  # Renaming to match schema
 
         logger.info("TD campagne : Clean dataset...")
-        self.df = self._clean_dataset()
+        self._clean_dataset()
         logger.info("TD campagne : Filter by sector...")
-        self.df = self._filter_by_sectors()
-        logger.info("TD campagne : Fill geo name...")
-
-        logger.info("TD Camapgne : Fill geo name...")
+        self._filter_by_sectors()
+        logger.info("TD Campagne : Fill geo name...")
         self._fill_geos(geo_col_names=["canteen_department", "canteen_region"])
 
     def _flatten_declared_data(self):
@@ -254,3 +244,11 @@ class ETL_TD(ETL):
         """
         for categ, elements_in_categ in self.categories_to_aggregate.items():
             self._aggregation_col(categ, elements_in_categ)
+
+    def _filter_by_sectors(self):
+        """
+        Filtering the sectors of the police and army so they do not appear publicly
+        """
+        canteens_to_filter = Canteen.objects.filter(sectors__name='Restaurants des armées / police / gendarmerie')
+        canteens_id_to_filter = [canteen.id for canteen in canteens_to_filter]
+        self.df = self.df[~self.df["canteen_id"].isin(canteens_id_to_filter)]

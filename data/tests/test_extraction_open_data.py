@@ -1,11 +1,17 @@
+import datetime
 from django.test import TestCase
 from data.factories import CompleteDiagnosticFactory, DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
 from macantine.extract_open_data import ETL_CANTEEN, ETL_TD
+from freezegun import freeze_time
+
+
 import json
 
 
 class TestExtractionOpenData(TestCase):
+
+    @freeze_time("2022-02-14") # Faking time to mock creation_date
     def test_extraction_teledeclaration(self):
         schema = json.load(open("data/schemas/schema_teledeclaration.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
@@ -35,7 +41,7 @@ class TestExtractionOpenData(TestCase):
         Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
         etl_td.extract_dataset()
         self.assertEqual(
-            etl_td.get_dataset().iloc[0]["canteen_sectors"], list(), "The sectors should be an empty list"
+            etl_td.get_dataset().iloc[0]["canteen_sectors"], [], "The sectors should be an empty list"
         )
 
         canteen = CanteenFactory.create()
@@ -45,8 +51,6 @@ class TestExtractionOpenData(TestCase):
         self.assertGreater(
             etl_td.get_dataset().iloc[0]["teledeclaration_ratio_bio"], 0, "The bio value is aggregated from bio fields and should be greater than 0"
         )
-
-
 
     def test_extraction_canteen(self):
         schema = json.load(open("data/schemas/schema_cantine.json"))
@@ -116,7 +120,7 @@ class TestExtractionOpenData(TestCase):
         canteens = etl_canteen.get_dataset()
         self.assertEqual(etl_canteen.len_dataset(), 0, "There should be one canteen less after hard deletion")
 
-        CanteenFactory.create(sectors=[SectorFactory.create(name="Restaurants des armées/police/gendarmerie")])
+        CanteenFactory.create(sectors=[SectorFactory.create(id=22)])
         etl_canteen.extract_dataset()
         canteens = etl_canteen.get_dataset()
         self.assertEqual(
