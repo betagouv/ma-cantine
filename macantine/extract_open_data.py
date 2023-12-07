@@ -44,12 +44,16 @@ class ETL(ABC):
         self.df[f"{geo_zoom}_lib"] = self.df[geo_zoom].apply(
             lambda x: geo[x].split(" - ")[1].lstrip() if isinstance(x, str) else None
         )
-    
-    def _fill_geos(self, geo_col_names=["department", "region"]):
+
+    def transform_geo_data(self, geo_col_names=["department", "region"]):
         for geo in geo_col_names:
             self._fill_geo_name(geo_zoom=geo)
             col_geo = self.df.pop(f"{geo}_lib")
             self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
+        if 'city_insee_code' in self.df.columns:
+            self.df['epci'] = self.df['city_insee_code'].apply(self.find_epci)
+        else:
+            self.df['epci'] = None
 
     def _clean_dataset(self):
         columns = [i["name"].replace("canteen_", "canteen.") for i in self.schema["fields"]]
@@ -120,6 +124,17 @@ class ETL(ABC):
         with default_storage.open(filename, "w") as file:
             self.df.to_csv(file, sep=";", index=False, na_rep="")
 
+    @classmethod
+    def find_epci(code_insee_commune):
+        try:
+            response = requests.get(f"https://geo.api.gouv.fr/communes/{code_insee_commune}", timeout=5)
+            response.raise_for_status()
+            body = response.json()
+            return body['codeEpci']
+        except requests.exceptions.HTTPError:
+            return None
+
+
 
 class ETL_CANTEEN(ETL):
     def __init__(self):
@@ -133,9 +148,8 @@ class ETL_CANTEEN(ETL):
     def extract_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
         canteens_col_from_db = all_canteens_col.copy()
-        canteens_col_from_db.remove("active_on_ma_cantine")
-        canteens_col_from_db.remove("department_lib")
-        canteens_col_from_db.remove("region_lib")
+        for col_processed in ['active_on_ma_cantine', 'department_lib', 'region_lib', 'epci']:
+            canteens_col_from_db.remove(col_processed)
 
         exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
         exclude_filter |= Q(deletion_date__isnull=False)  # Filtering out the deleted canteens
@@ -162,7 +176,7 @@ class ETL_CANTEEN(ETL):
         self._clean_dataset()
 
         logger.info("Canteens : Fill geo name...")
-        self._fill_geos(geo_col_names=["department", "region"])
+        self.transform_geo_data(geo_col_names=["department", "region"])
 
 
 class ETL_TD(ETL):
@@ -225,7 +239,7 @@ class ETL_TD(ETL):
         logger.info("TD campagne : Filter by sector...")
         self._filter_by_sectors()
         logger.info("TD Campagne : Fill geo name...")
-        self._fill_geos(geo_col_names=["canteen_department", "canteen_region"])
+        self.transform_geo_data(geo_col_names=["canteen_department", "canteen_region"])
 
     def _flatten_declared_data(self):
         tmp_df = pd.json_normalize(self.df["declared_data"])
