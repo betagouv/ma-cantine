@@ -5,6 +5,7 @@ import logging
 import requests
 import json
 import os
+import time
 
 from abc import ABC, abstractmethod
 from data.department_choices import Department
@@ -14,18 +15,43 @@ from api.serializers import SectorSerializer
 from api.views.utils import camelize
 from django.core.files.storage import default_storage
 from django.db.models import Q
+from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
+EPCIS_CACHE = {}
 
 
-def find_epci(code_insee_commune):
-    try:
-        response = requests.get(f"https://geo.api.gouv.fr/communes/{code_insee_commune}", timeout=5)
-        response.raise_for_status()
-        body = response.json()
-        return body['codeEpci']
-    except requests.exceptions.HTTPError:
+def fetch_epci(code_insee_commune):
+    """
+    Provide EPCI code for a city
+    """
+    if code_insee_commune:
+        if code_insee_commune in EPCIS_CACHE.keys():
+            return EPCIS_CACHE[code_insee_commune]
+        else:
+            try: 
+                response = requests.get(f"https://geo.api.gouv.fr/communes/{code_insee_commune}", timeout=5)
+                response.raise_for_status()
+                body = response.json()
+                EPCIS_CACHE[code_insee_commune] = body['codeEpci']  # Caching the data
+                return body['codeEpci']
+            except requests.exceptions.HTTPError:
+                return None
+            except KeyError:
+                return None
+    else:
         return None
+
+
+def fetch_sector(sector_id):
+    if (sector_id and not math.isnan(sector_id)):
+        cached_data = cache.get(sector_id)
+        if cached_data:
+            sector = camelize(SectorSerializer(Sector.objects.get(id=sector_id)).data) 
+            cache.set('cached_data_key', sector, timeout=3600)  # Timeout in seconds
+            return sector
+    else:
+        return ""
 
 
 class ETL(ABC):
@@ -61,7 +87,7 @@ class ETL(ABC):
             col_geo = self.df.pop(f"{geo}_lib")
             self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
         if 'city_insee_code' in self.df.columns:
-            self.df['epci'] = self.df['city_insee_code'].apply(find_epci)
+            self.df['epci'] = self.df['city_insee_code'].apply(fetch_epci)
         else:
             self.df['epci'] = None
 
@@ -85,9 +111,7 @@ class ETL(ABC):
 
     def _extract_sectors(self):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
-        self.df["sectors"] = self.df["sectors"].apply(
-            lambda x: camelize(SectorSerializer(Sector.objects.get(id=x)).data) if (x and not math.isnan(x)) else ""
-        )
+        self.df["sectors"] = self.df["sectors"].apply(fetch_sector)
         canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [""] else [])
         del self.df["sectors"]
 
@@ -152,8 +176,10 @@ class ETL_CANTEEN(ETL):
 
         exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
         exclude_filter |= Q(deletion_date__isnull=False)  # Filtering out the deleted canteens
+        start = time.time()
         canteens = Canteen.objects.exclude(exclude_filter)
-        
+        end = time.time()
+        logger.info(f'Time spent on canteens extraction : {end - start}')
         if canteens.count() == 0:
             return pd.DataFrame(columns=canteens_col_from_db)
 
@@ -161,7 +187,10 @@ class ETL_CANTEEN(ETL):
         self.df = pd.DataFrame(canteens.values(*canteens_col_from_db))
 
         # Adding the active_on_ma_cantine column
+        start = time.time()
         non_active_canteens = Canteen.objects.filter(managers=None).values_list("id", flat=True)
+        end = time.time()
+        logger.info(f'Time spent on active canteens : {end - start}')
         self.df["active_on_ma_cantine"] = self.df["id"].apply(lambda x: x not in non_active_canteens)
 
         logger.info("Canteens : Extract sectors...")
@@ -175,7 +204,10 @@ class ETL_CANTEEN(ETL):
         self._clean_dataset()
 
         logger.info("Canteens : Fill geo name...")
+        start = time.time()
         self.transform_geo_data(geo_col_names=["department", "region"])
+        logger.info(f'Time spent on geo data : {end - start}')
+        end = time.time()
 
 
 class ETL_TD(ETL):
