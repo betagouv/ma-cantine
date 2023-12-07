@@ -217,13 +217,8 @@ export default {
       return !this.previousStep || !this.formIsValid
     },
     hasChanged() {
-      let hasChanged = false
-      Object.keys(this.payload).forEach((key) => {
-        if (this.diagnostic[key] !== this.payload[key]) {
-          hasChanged = true
-        }
-      })
-      return hasChanged
+      for (let key in this.payload) if (this.diagnostic[key] !== this.payload[key]) return true
+      return false
     },
   },
   methods: {
