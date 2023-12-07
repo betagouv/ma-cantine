@@ -47,8 +47,10 @@ def fetch_sector(sector_id):
     if (sector_id and not math.isnan(sector_id)):
         cached_data = cache.get(sector_id)
         if cached_data:
+            return cached_data
+        else:
             sector = camelize(SectorSerializer(Sector.objects.get(id=sector_id)).data) 
-            cache.set('cached_data_key', sector, timeout=3600)  # Timeout in seconds
+            cache.set(sector_id, sector, timeout=3600)  # Timeout in seconds
             return sector
     else:
         return ""
@@ -206,8 +208,8 @@ class ETL_CANTEEN(ETL):
         logger.info("Canteens : Fill geo name...")
         start = time.time()
         self.transform_geo_data(geo_col_names=["department", "region"])
-        logger.info(f'Time spent on geo data : {end - start}')
         end = time.time()
+        logger.info(f'Time spent on geo data : {end - start}')
 
 
 class ETL_TD(ETL):
