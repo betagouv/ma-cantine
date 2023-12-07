@@ -87,12 +87,14 @@ class TestExtractionOpenData(TestCase):
         )
 
         canteen_1.department = "29"
+        canteen_1.commune = "29021"
         canteen_1.save()
         etl_canteen.extract_dataset()
         canteens = etl_canteen.get_dataset()
 
         self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["department_lib"], "Finistère")
         self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["region_lib"], "Bretagne")
+        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["epci"], "242900793")
 
         canteen_2.sectors.clear()
 
