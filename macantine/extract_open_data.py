@@ -18,6 +18,16 @@ from django.db.models import Q
 logger = logging.getLogger(__name__)
 
 
+def find_epci(code_insee_commune):
+    try:
+        response = requests.get(f"https://geo.api.gouv.fr/communes/{code_insee_commune}", timeout=5)
+        response.raise_for_status()
+        body = response.json()
+        return body['codeEpci']
+    except requests.exceptions.HTTPError:
+        return None
+
+
 class ETL(ABC):
     def __init__(self):
         self.df = None
@@ -51,7 +61,7 @@ class ETL(ABC):
             col_geo = self.df.pop(f"{geo}_lib")
             self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
         if 'city_insee_code' in self.df.columns:
-            self.df['epci'] = self.df['city_insee_code'].apply(self.find_epci)
+            self.df['epci'] = self.df['city_insee_code'].apply(find_epci)
         else:
             self.df['epci'] = None
 
@@ -123,17 +133,6 @@ class ETL(ABC):
             return 0
         with default_storage.open(filename, "w") as file:
             self.df.to_csv(file, sep=";", index=False, na_rep="")
-
-    @classmethod
-    def find_epci(code_insee_commune):
-        try:
-            response = requests.get(f"https://geo.api.gouv.fr/communes/{code_insee_commune}", timeout=5)
-            response.raise_for_status()
-            body = response.json()
-            return body['codeEpci']
-        except requests.exceptions.HTTPError:
-            return None
-
 
 
 class ETL_CANTEEN(ETL):
