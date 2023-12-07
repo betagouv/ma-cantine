@@ -295,22 +295,6 @@ export default {
     ExpeReservation,
   },
   data() {
-    const payload = {
-      hasWasteDiagnostic: this.diagnostic.hasWasteDiagnostic,
-      hasWastePlan: this.diagnostic.hasWastePlan,
-      hasWasteMeasures: this.diagnostic.hasWasteMeasures,
-      breadLeftovers: this.diagnostic.breadLeftovers,
-      servedLeftovers: this.diagnostic.servedLeftovers,
-      unservedLeftovers: this.diagnostic.unservedLeftovers,
-      sideLeftovers: this.diagnostic.sideLeftovers,
-      wasteActions: this.diagnostic.wasteActions,
-      otherWasteAction: this.diagnostic.otherWasteAction,
-      otherWasteComments: this.diagnostic.otherWasteComments,
-      hasDonationAgreement: this.diagnostic.hasDonationAgreement,
-      donationFrequency: this.diagnostic.donationFrequency,
-      donationQuantity: this.diagnostic.donationQuantity,
-      donationFoodType: this.diagnostic.donationFoodType,
-    }
     const steps = [
       {
         title: "Diagnostic et plan d’action",
@@ -360,7 +344,7 @@ export default {
           value: false,
         },
       ],
-      payload,
+      payload: {},
     }
   },
   computed: {
@@ -373,6 +357,24 @@ export default {
     },
   },
   methods: {
+    initialisePayload() {
+      this.payload = {
+        hasWasteDiagnostic: this.diagnostic.hasWasteDiagnostic,
+        hasWastePlan: this.diagnostic.hasWastePlan,
+        hasWasteMeasures: this.diagnostic.hasWasteMeasures,
+        breadLeftovers: this.diagnostic.breadLeftovers,
+        servedLeftovers: this.diagnostic.servedLeftovers,
+        unservedLeftovers: this.diagnostic.unservedLeftovers,
+        sideLeftovers: this.diagnostic.sideLeftovers,
+        wasteActions: this.diagnostic.wasteActions,
+        otherWasteAction: this.diagnostic.otherWasteAction,
+        otherWasteComments: this.diagnostic.otherWasteComments,
+        hasDonationAgreement: this.diagnostic.hasDonationAgreement,
+        donationFrequency: this.diagnostic.donationFrequency,
+        donationQuantity: this.diagnostic.donationQuantity,
+        donationFoodType: this.diagnostic.donationFoodType,
+      }
+    },
     updatePayload() {
       this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
     },
@@ -392,18 +394,27 @@ export default {
   },
   mounted() {
     this.$emit("update-steps", this.steps)
+    this.initialisePayload()
     this.updatePayload()
   },
   watch: {
-    payload() {
-      this.updatePayload()
-    },
     formIsValid() {
       this.updatePayload()
+    },
+    payload: {
+      handler() {
+        this.updatePayload()
+      },
+      deep: true,
     },
     otherActionEnabled(newValue) {
       if (newValue) this.$nextTick().then(this.$refs["other-action-field"]?.validate)
       else this.payload.otherWasteAction = null
+    },
+    $route() {
+      // it is possible to navigate without saving.
+      // So must initialise payload every step to avoid saving something unintentionally
+      this.initialisePayload()
     },
   },
 }

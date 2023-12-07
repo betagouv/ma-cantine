@@ -27,24 +27,6 @@
         </div>
       </li>
 
-      <li v-if="appliedWasteActions">
-        <v-icon color="primary" class="mr-2">$check-line</v-icon>
-        <div>
-          J’ai mis en place les actions suivantes :
-          <ul role="list" class="mt-2">
-            <li class="fr-text-xs mb-1" v-for="(action, index) in appliedWasteActions" :key="`${action}-${index}`">
-              {{ action }}
-            </li>
-          </ul>
-        </div>
-      </li>
-      <li v-else>
-        <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        <div>
-          Je n’ai pas encore mis en place des actions concrètes contre le gaspillage
-        </div>
-      </li>
-
       <li v-if="diagnostic.hasWasteMeasures">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
@@ -62,6 +44,24 @@
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n’ai pas encore réalisé des mesures de mon gaspillage alimentaire
+        </div>
+      </li>
+
+      <li v-if="appliedWasteActions">
+        <v-icon color="primary" class="mr-2">$check-line</v-icon>
+        <div>
+          J’ai mis en place les actions suivantes :
+          <ul role="list" class="mt-2">
+            <li class="fr-text-xs mb-1" v-for="(action, index) in appliedWasteActions" :key="`${action}-${index}`">
+              {{ action }}
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$close-line</v-icon>
+        <div>
+          Je n’ai pas encore mis en place des actions concrètes contre le gaspillage
         </div>
       </li>
 

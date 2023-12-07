@@ -73,32 +73,12 @@ export default {
     FamilyFieldsStep,
   },
   data() {
-    const originalValues = {
-      valueTotalHt: this.diagnostic.valueTotalHt,
-      diagnosticType: this.diagnostic.diagnosticType || "SIMPLE",
-      valueBioHt: this.diagnostic.valueBioHt,
-      valueSustainableHt: this.diagnostic.valueSustainableHt,
-      valueEgalimOthersHt: this.diagnostic.valueEgalimOthersHt,
-      valueExternalityPerformanceHt: this.diagnostic.valueExternalityPerformanceHt,
-      valueMeatPoultryHt: this.diagnostic.valueMeatPoultryHt,
-      valueMeatPoultryEgalimHt: this.diagnostic.valueMeatPoultryEgalimHt,
-      valueMeatPoultryFranceHt: this.diagnostic.valueMeatPoultryFranceHt,
-      valueFishHt: this.diagnostic.valueFishHt,
-      valueFishEgalimHt: this.diagnostic.valueFishEgalimHt,
-    }
-    const tdGroups = Constants.TeledeclarationCharacteristicGroups
-    const completeTdFields = tdGroups.egalim.fields.concat(tdGroups.nonEgalim.fields).concat(tdGroups.outsideLaw.fields)
-    Object.keys(this.diagnostic).forEach((key) => {
-      if (completeTdFields.indexOf(key) > -1) {
-        originalValues[key] = this.diagnostic[key]
-      }
-    })
     return {
       formIsValid: true,
       purchasesSummary: null,
       diagnosticTypes: Constants.DiagnosticTypes,
-      originalValues,
-      payload: JSON.parse(JSON.stringify(originalValues)),
+      originalValues: {},
+      payload: {},
       characteristics: Constants.TeledeclarationCharacteristics,
       characteristicGroups: Constants.TeledeclarationCharacteristicGroups,
     }
@@ -194,9 +174,36 @@ export default {
           } else this.$set(this, "purchasesSummary", null)
         })
     },
+    initialisePayload() {
+      const originalValues = {
+        valueTotalHt: this.diagnostic.valueTotalHt,
+        diagnosticType: this.diagnostic.diagnosticType || "SIMPLE",
+        valueBioHt: this.diagnostic.valueBioHt,
+        valueSustainableHt: this.diagnostic.valueSustainableHt,
+        valueEgalimOthersHt: this.diagnostic.valueEgalimOthersHt,
+        valueExternalityPerformanceHt: this.diagnostic.valueExternalityPerformanceHt,
+        valueMeatPoultryHt: this.diagnostic.valueMeatPoultryHt,
+        valueMeatPoultryEgalimHt: this.diagnostic.valueMeatPoultryEgalimHt,
+        valueMeatPoultryFranceHt: this.diagnostic.valueMeatPoultryFranceHt,
+        valueFishHt: this.diagnostic.valueFishHt,
+        valueFishEgalimHt: this.diagnostic.valueFishEgalimHt,
+      }
+      const tdGroups = Constants.TeledeclarationCharacteristicGroups
+      const completeTdFields = tdGroups.egalim.fields
+        .concat(tdGroups.nonEgalim.fields)
+        .concat(tdGroups.outsideLaw.fields)
+      Object.keys(this.diagnostic).forEach((key) => {
+        if (completeTdFields.indexOf(key) > -1) {
+          originalValues[key] = this.diagnostic[key]
+        }
+      })
+      this.originalValues = originalValues
+      this.payload = JSON.parse(JSON.stringify(originalValues))
+    },
   },
   mounted() {
     this.$emit("update-steps", this.steps)
+    this.initialisePayload()
     this.fetchPurchasesSummary()
   },
   watch: {
@@ -211,6 +218,9 @@ export default {
     },
     isSimplifiedDiagnostic() {
       this.$emit("update-steps", this.steps)
+    },
+    $route() {
+      this.initialisePayload()
     },
   },
 }

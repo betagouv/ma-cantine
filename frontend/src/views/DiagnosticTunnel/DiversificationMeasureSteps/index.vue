@@ -5,7 +5,7 @@
         J'ai mis en place un menu végétarien dans ma cantine :
         <span class="fr-hint-text mt-2">Optionnel</span>
       </legend>
-      <v-radio-group class="my-0" v-model="payload.vegetarianWeeklyRecurrence" hide-details @change="updatePayload">
+      <v-radio-group class="my-0" v-model="payload.vegetarianWeeklyRecurrence" hide-details>
         <v-radio v-for="item in frequency" :key="item.value" :label="item.label" :value="item.value"></v-radio>
       </v-radio-group>
     </fieldset>
@@ -14,7 +14,7 @@
         Le menu végétarien proposé est :
         <span class="fr-hint-text mt-2">Optionnel</span>
       </legend>
-      <v-radio-group class="my-0" v-model="payload.vegetarianMenuType" hide-details @change="updatePayload">
+      <v-radio-group class="my-0" v-model="payload.vegetarianMenuType" hide-details>
         <v-radio v-for="item in menuTypes" :key="item.value" :label="item.label" :value="item.value"></v-radio>
       </v-radio-group>
     </fieldset>
@@ -32,7 +32,6 @@
         :key="item.value"
         :value="item.value"
         :label="item.label"
-        @change="updatePayload"
       />
     </fieldset>
     <div v-else-if="stepUrlSlug === 'plan'">
@@ -41,7 +40,7 @@
           J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de
           protéines végétales
         </legend>
-        <v-radio-group class="my-0" v-model="payload.hasDiversificationPlan" hide-details @change="updatePayload">
+        <v-radio-group class="my-0" v-model="payload.hasDiversificationPlan" hide-details>
           <v-row>
             <v-col>
               <v-radio label="Oui" :value="true"></v-radio>
@@ -68,7 +67,6 @@
           :label="item.label"
           :readonly="!payload.hasDiversificationPlan"
           :disabled="!payload.hasDiversificationPlan"
-          @change="updatePayload"
         />
       </fieldset>
     </div>
@@ -152,13 +150,7 @@ export default {
       frequency: Constants.VegetarianRecurrence,
       menuTypes: Constants.VegetarianMenuTypes,
       menuBases: Constants.VegetarianMenuBases,
-      payload: {
-        vegetarianWeeklyRecurrence: this.diagnostic.vegetarianWeeklyRecurrence,
-        vegetarianMenuType: this.diagnostic.vegetarianMenuType,
-        vegetarianMenuBases: this.diagnostic.vegetarianMenuBases,
-        hasDiversificationPlan: this.diagnostic.hasDiversificationPlan,
-        diversificationPlanActions: this.diagnostic.diversificationPlanActions,
-      },
+      payload: {},
     }
   },
   computed: {
@@ -171,10 +163,33 @@ export default {
     updatePayload() {
       this.$emit("update-payload", { payload: this.payload, formIsValid: true })
     },
+    initialisePayload() {
+      this.payload = {
+        vegetarianWeeklyRecurrence: this.diagnostic.vegetarianWeeklyRecurrence,
+        vegetarianMenuType: this.diagnostic.vegetarianMenuType,
+        vegetarianMenuBases: this.diagnostic.vegetarianMenuBases,
+        hasDiversificationPlan: this.diagnostic.hasDiversificationPlan,
+        diversificationPlanActions: this.diagnostic.diversificationPlanActions,
+      }
+    },
   },
   mounted() {
     this.$emit("update-steps", this.steps)
+    this.initialisePayload()
     this.updatePayload()
+  },
+  watch: {
+    payload: {
+      handler() {
+        this.updatePayload()
+      },
+      deep: true,
+    },
+    $route() {
+      // it is possible to navigate without saving.
+      // So must initialise payload every step to avoid saving something unintentionally
+      this.initialisePayload()
+    },
   },
 }
 </script>
