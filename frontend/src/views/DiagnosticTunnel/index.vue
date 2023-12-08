@@ -287,6 +287,9 @@ export default {
               params: {
                 canteenUrlComponent: this.canteenUrlComponent,
               },
+              query: {
+                year: this.year,
+              },
             })
           }
         })

@@ -88,10 +88,12 @@ export default {
     },
   },
   data() {
+    const years = diagnosticYears()
     return {
       lastYear: lastYear(),
       year: lastYear(),
-      allowedYears: diagnosticYears().map((year) => ({ text: year, value: year })),
+      diagnosticYears: years,
+      allowedYears: years.map((year) => ({ text: year, value: year })),
     }
   },
   computed: {
@@ -152,6 +154,12 @@ export default {
       }
       return this.canteenDiagnostic && hasDiagnosticApproData(this.canteenDiagnostic)
     },
+  },
+  mounted() {
+    if (this.$route.query?.year && this.diagnosticYears.indexOf(+this.$route.query.year) > -1) {
+      this.year = +this.$route.query.year
+      this.$router.replace({ query: {} })
+    }
   },
 }
 </script>
