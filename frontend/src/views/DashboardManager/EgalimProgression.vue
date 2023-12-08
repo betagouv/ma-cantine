@@ -16,6 +16,7 @@
           :currentYear="isCurrentYear"
           :missingData="needsData"
           :readyToTeledeclare="readyToTeledeclare"
+          :hasActiveTeledeclaration="hasActiveTeledeclaration"
           class="mt-4"
         />
         <hr aria-hidden="true" role="presentation" class="my-6" />
@@ -97,6 +98,9 @@ export default {
     canteenDiagnostic() {
       return this.canteen.diagnostics.find((x) => x.year === this.year)
     },
+    hasActiveTeledeclaration() {
+      return this.canteenDiagnostic?.teledeclaration?.status === "SUBMITTED"
+    },
     lastYearDiagnostic() {
       return this.canteen.diagnostics.find((x) => x.year === this.lastYear)
     },
@@ -139,7 +143,7 @@ export default {
     },
     readyToTeledeclare() {
       const inTdCampaign = window.ENABLE_TELEDECLARATION && this.year === lastYear()
-      if (!inTdCampaign) return false
+      if (!inTdCampaign || this.hasActiveTeledeclaration) return false
       if (this.centralDiagnostic) {
         const noNeedToTd = this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
         const requiresOtherData = !noNeedToTd
