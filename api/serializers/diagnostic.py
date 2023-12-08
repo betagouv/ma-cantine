@@ -239,7 +239,7 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
     """
 
     class Meta:
-        fields = FIELDS
+        fields = FIELDS + TUNNEL_PROGRESS_FIELDS
         read_only_fields = fields
         model = Diagnostic
 
