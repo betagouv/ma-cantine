@@ -172,12 +172,12 @@ META_FIELDS = (
     "year",
     "creation_date",
     "modification_date",
-    "creation_source",
     "diagnostic_type",
     "central_kitchen_diagnostic_mode",
 )
 
 TUNNEL_PROGRESS_FIELDS = (
+    "creation_source",
     "tunnel_appro",
     "tunnel_waste",
     "tunnel_plastic",
@@ -239,7 +239,7 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
     """
 
     class Meta:
-        fields = FIELDS + TUNNEL_PROGRESS_FIELDS
+        fields = FIELDS
         read_only_fields = fields
         model = Diagnostic
 
