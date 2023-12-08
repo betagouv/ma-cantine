@@ -90,6 +90,7 @@ class ETL(ABC):
             self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
         if 'city_insee_code' in self.df.columns:
             self.df['epci'] = self.df['city_insee_code'].apply(fetch_epci)
+            EPCIS_CACHE = {}  # Clean cache
         else:
             self.df['epci'] = None
 
