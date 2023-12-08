@@ -43,6 +43,13 @@
       "type": "string"
     },
     {
+      "description": "Code insee de l'EPCI dans laquelle se trouve la cantine",
+      "example": "50570242900793",
+      "name": "epci",
+      "title": "Code Insee EPCI",
+      "type": "string"
+    },
+    {
       "description": "Code Insee du département dans lequel se trouve la cantine",
       "example": "29",
       "name": "department",
@@ -153,6 +160,20 @@
       "name": "sectors",
       "title": "Secteurs",
       "type": "array"
+    },
+    {
+      "description": "A télédéclaré ses données lors de campagne 2022 (portant sur les données 2021)",
+      "example": "true",
+      "name": "declaration_donnees_2021",
+      "title": "A téléclaré en 2022 sur les données 2021",
+      "type": "boolean"
+    },
+    {
+      "description": "A télédéclaré ses données lors de campagne 2023 (portant sur les données 2022)",
+      "example": "true",
+      "name": "declaration_donnees_2022",
+      "title": "A téléclaré en 2023 sur les données 2022",
+      "type": "boolean"
     },
     {
       "description": "A un gestionnaire sur (email) et a fais au moins une action (à définir) - Indique si la cantine est active sur l'apllication Ma Cantine ou si elle a été importée via une source de données externe",
