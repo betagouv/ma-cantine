@@ -116,7 +116,7 @@ uritemplate==4.1.1
 uritools==4.0.2
 urllib3==1.26.18
 vine==5.1.0
-wcwidth==0.2.6
+wcwidth==0.2.12
 webencodings==0.5.1
 wrapt==1.16.0
 xhtml2pdf==0.2.11
