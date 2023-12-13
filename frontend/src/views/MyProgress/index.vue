@@ -259,7 +259,6 @@ export default {
   },
   computed: {
     mobileSelectItems() {
-      // TODO: filter based on APPRO/ALL
       return this.tabHeaders.map((x, index) => ({ text: x.text, value: index }))
     },
     hasActiveTeledeclaration() {
