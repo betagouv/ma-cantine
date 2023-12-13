@@ -114,6 +114,7 @@
               class="py-0"
               hide-details
               row
+              @change="handleModeChange"
             >
               <v-radio
                 v-for="type in centralKitchenDiagnosticModes"
@@ -156,6 +157,7 @@
                 :canteen="canteen"
                 :diagnostic="diagnostic"
                 :centralDiagnostic="centralDiagnostic"
+                :centralKitchenDiagnosticMode="centralKitchenDiagnosticMode"
               />
               <v-row class="mt-6">
                 <v-col v-if="index > 0">
@@ -293,22 +295,26 @@ export default {
         })
     },
     assignDiagnostic() {
-      this.$set(
-        this,
-        "diagnostic",
-        this.canteen?.diagnostics?.find((x) => +x.year === +this.year)
-      )
-      if (this.canteen?.productionType === "site_cooked_elsewhere") {
-        this.$set(
-          this,
-          "centralDiagnostic",
-          this.canteen?.centralKitchenDiagnostics?.find((x) => +x.year === +this.year)
-        )
+      if (!this.canteen) return
+      const diag = this.canteen.diagnostics?.find((x) => +x.year === +this.year)
+      this.$set(this, "diagnostic", diag)
+      if (this.canteen.productionType === "site_cooked_elsewhere") {
+        const centralDiag = this.canteen.centralKitchenDiagnostics?.find((x) => +x.year === +this.year)
+        this.$set(this, "centralDiagnostic", centralDiag)
       }
-      this.centralKitchenDiagnosticMode = this.diagnostic?.centralKitchenDiagnosticMode
-      this.initialiseTab()
+      this.initialiseMode()
     },
-    initialiseTab() {
+    initialiseMode() {
+      if (this.diagnostic) {
+        this.centralKitchenDiagnosticMode = this.diagnostic.centralKitchenDiagnosticMode
+      } else if (this.isCentralKitchen) {
+        this.centralKitchenDiagnosticMode = this.centralKitchenDiagnosticMode || "ALL"
+      } else {
+        this.centralKitchenDiagnosticMode = null
+      }
+      this.chooseTabToDisplay()
+    },
+    chooseTabToDisplay() {
       const initialTab = this.tabHeaders.find((x) => x.urlSlug === this.measure)
       const approId = "qualite-des-produits"
       if (!initialTab) {
@@ -379,6 +385,20 @@ export default {
         this.assignDiagnostic()
       }
     },
+    handleModeChange() {
+      const mode = this.centralKitchenDiagnosticMode
+      if (!mode || !this.isCentralKitchen || !this.canteen) return
+      if (this.diagnostic?.id) {
+        if (this.diagnostic.centralKitchenDiagnosticMode === mode) return
+        this.diagnostic.centralKitchenDiagnosticMode = mode
+        this.$store.dispatch("updateDiagnostic", {
+          canteenId: this.canteen.id,
+          id: this.diagnostic.id,
+          payload: { centralKitchenDiagnosticMode: mode },
+        })
+      }
+      this.chooseTabToDisplay()
+    },
   },
   watch: {
     canteenUrlComponent() {
@@ -396,19 +416,7 @@ export default {
       this.assignDiagnostic()
     },
     $route() {
-      this.initialiseTab()
-    },
-    centralKitchenDiagnosticMode(newMode) {
-      if (!this.isCentralKitchen || !this.canteen) return
-      if (!this.diagnostic || !this.diagnostic.id) return
-      if (!newMode || this.diagnostic.centralKitchenDiagnosticMode === newMode) return
-      this.diagnostic.centralKitchenDiagnosticMode = newMode
-      this.$store.dispatch("updateDiagnostic", {
-        canteenId: this.canteen.id,
-        id: this.diagnostic.id,
-        payload: { centralKitchenDiagnosticMode: newMode },
-      })
-      this.initialiseTab()
+      this.chooseTabToDisplay()
     },
   },
   beforeMount() {

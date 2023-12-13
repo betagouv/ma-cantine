@@ -117,6 +117,7 @@ export default {
     },
     diagnostic: Object,
     centralDiagnostic: Object,
+    centralKitchenDiagnosticMode: String,
   },
   components: {
     QualityMeasureInfo,
@@ -239,6 +240,7 @@ export default {
             payload: {
               year: this.year,
               creationSource: "TUNNEL",
+              centralKitchenDiagnosticMode: this.centralKitchenDiagnosticMode,
             },
           })
           .then(() => {
