@@ -10,7 +10,7 @@ function isBase10Number(input) {
   return +input === parseFloat(input)
 }
 
-const NUMBER_FORMAT_ERROR = "Pour un chiffre décimale, veuillez utiliser un point, par exemple 100.95"
+const NUMBER_FORMAT_ERROR = "Pour un nombre décimale, veuillez utiliser un point, par exemple 100.95"
 
 export default {
   required(input) {
