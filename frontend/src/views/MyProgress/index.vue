@@ -157,6 +157,7 @@
                 :canteen="canteen"
                 :diagnostic="diagnostic"
                 :centralDiagnostic="centralDiagnostic"
+                :centralKitchenDiagnosticMode="centralKitchenDiagnosticMode"
               />
               <v-row class="mt-6">
                 <v-col v-if="index > 0">
