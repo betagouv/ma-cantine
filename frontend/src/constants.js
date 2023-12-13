@@ -415,7 +415,7 @@ export default Object.freeze({
       urlSlug: "cantines-et-diagnostics-simples",
       title: "Importer des cantines et diagnostics simples",
       label: "Diagnostic simple",
-      help: "Vous connaissez les valeurs totaux, bio, et de qualité et durable",
+      help: "Vous connaissez les valeurs totales de vos achats bio et de qualité",
       icon: "$bar-chart-box-fill",
     },
     {
@@ -679,7 +679,7 @@ export default Object.freeze({
     {
       key: "SIMPLE",
       label: "Télédéclaration - saisie simplifiée",
-      help: "Vous connaissez les valeurs totaux, bio, et de qualité et durable",
+      help: "Vous connaissez les valeurs totales de vos achats bio et de qualité",
     },
     {
       key: "COMPLETE",
