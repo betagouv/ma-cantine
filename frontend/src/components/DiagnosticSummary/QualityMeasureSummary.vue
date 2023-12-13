@@ -59,7 +59,7 @@
         <p class="mb-md-4">
           <v-icon class="mr-2" color="#00A95F">$anchor-line</v-icon>
           <span class="font-weight-bold percentage">{{ percentages.fishEgalim || "—" }} %</span>
-          de produits aquatiques EGAlim
+          de produits de la mer et aquaculture EGAlim
         </p>
       </v-col>
     </v-row>

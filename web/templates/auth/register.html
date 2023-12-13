@@ -26,12 +26,9 @@
     <form role="form" method="post">
         <div class="register-top-text">
             <p>
-                Bienvenue ! Renseignez les champs ci-dessous pour créer un compte gestionnaire de cantine.
-                Munissez-vous de votre <strong>numéro SIRET</strong> pour la prochaine étape : la création de votre ou vos cantines.
-            </p>
-            <p>
-                <label for="{{form.number_of_managed_cantines.id_for_label}}">Combien d'établissements gérez-vous ?</label>
-                {{ form.number_of_managed_cantines }}
+                Renseignez les champs ci-dessous pour créer un compte gestionnaire de cantine.
+                Munissez-vous du <strong>numéro SIRET</strong> de votre ou de vos établissement(s) de restauration pour la prochaine étape :
+                la création de votre ou de vos cantine(s).
             </p>
             <p>
                 {{ form.is_dev }}<label for="{{form.is_dev.id_for_label}}">Je suis une développeuse ou un développeur logiciel et j'ai besoin d'accéder aux APIs</label>
