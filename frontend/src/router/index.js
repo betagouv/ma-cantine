@@ -372,7 +372,7 @@ const routes = [
         component: CanteenGeneratePoster,
         meta: {
           authenticationRequired: true,
-          title: "Génerer mon affiche",
+          title: "Générer mon affiche",
         },
       },
       {
