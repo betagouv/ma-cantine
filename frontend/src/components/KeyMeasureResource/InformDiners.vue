@@ -1,6 +1,6 @@
 <template>
   <p class="mt-4 mb-0 body-1">
-    <router-link :to="{ name: isAuthenticated ? 'CanteenGeneratePoster' : 'GeneratePosterPage' }">
+    <router-link :to="{ name: 'GeneratePosterPage' }">
       Générer votre affiche avec notre outil en ligne
     </router-link>
   </p>
