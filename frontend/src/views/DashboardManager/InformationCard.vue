@@ -67,7 +67,7 @@ export default {
       } else if (this.delegatedToCentralKitchen) {
         return "Votre cuisine centrale a renseigné les données de cette mesure à votre place."
       }
-      return this.keyMeasure.tagline
+      return "Tous les ans, informer les convives et leurs proches de la qualité alimentaire et nutritionnelle des repas servis."
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)

@@ -75,9 +75,9 @@
       </v-card-text>
       <v-card-text class="fr-text-xs" v-if="hasApproData">
         <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
-        <p>
-          Cibler des repas de {{ sustainablePercent }} % de qualité et durables, dont {{ bioPercent }} % bio, pour un
-          offre plus saine et écolo.
+        <p class="mb-0">
+          Composer des repas avec au moins {{ sustainablePercent }} % de produits de qualité et durables, dont
+          {{ bioPercent }} % de bio, pour proposer un alimentation plus saine et écologique à vos convives.
         </p>
       </v-card-text>
       <v-card-text v-else class="fr-text-xs">

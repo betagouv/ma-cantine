@@ -67,7 +67,7 @@ export default {
       } else if (this.delegatedToCentralKitchen) {
         return "Votre cuisine centrale a renseigné les données de cette mesure à votre place."
       }
-      return this.keyMeasure.tagline
+      return "Limiter les matières plastiques dans votre cuisine et dans votre cantine pour réduire vos déchets et protéger l'environnement."
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
