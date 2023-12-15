@@ -183,10 +183,8 @@ export default {
       return this.step?.isSynthesis
     },
     continueActionText() {
-      const returnToTable = !this.nextTunnel && this.step?.isSynthesis
-      if (returnToTable) return "Retour au tableau de bord"
-      const nextIsNewMeasure = this.step?.isSynthesis
-      if (nextIsNewMeasure) return "Passer à l'onglet suivant"
+      const onSynthesisView = this.step?.isSynthesis
+      if (onSynthesisView) return "Passer à l'onglet suivant"
       const nextIsSynthesis = this.nextStep?.isSynthesis
       if (nextIsSynthesis) return "Voir la synthèse"
       return "Sauvegarder et continuer"
@@ -200,6 +198,12 @@ export default {
     },
     nextTunnelTitle() {
       return this.nextTunnel?.shortTitle
+    },
+    declaringApproOnly() {
+      return this.canteen.isCentralCuisine && this.diagnostic.centralKitchenDiagnosticMode === "APPRO"
+    },
+    isLastTunnel() {
+      return !this.nextTunnel || this.declaringApproOnly
     },
     quitLink() {
       return {
@@ -276,6 +280,11 @@ export default {
             this.$router.push({ query: { étape: this.nextStep.urlSlug } })
             this.$refs["stepWrapper"].scrollTop = 0
             this.$refs["synthesisWrapper"].scrollTop = 0
+          } else if (this.isLastTunnel) {
+            this.$router.push({
+              name: "MyProgress",
+              params: { measure: "etablissement" },
+            })
           } else if (this.nextTunnel) {
             this.$router.push({
               name: "MyProgress",
