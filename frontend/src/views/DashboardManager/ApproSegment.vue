@@ -76,8 +76,8 @@
       <v-card-text class="fr-text-xs" v-if="hasApproData">
         <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
         <p>
-          C’est parti ! Découvrez les outils et les ressources personnalisées pour vous aider à atteindre un des deux
-          objectifs EGAlim et passer au niveau suivant !
+          Cibler des repas de {{ sustainablePercent }} % de qualité et durables, dont {{ bioPercent }} % bio, pour un
+          offre plus saine et écolo.
         </p>
       </v-card-text>
       <v-card-text v-else class="fr-text-xs">
@@ -131,7 +131,7 @@
   </div>
 </template>
 <script>
-import { hasDiagnosticApproData, lastYear, hasStartedMeasureTunnel } from "@/utils"
+import { hasDiagnosticApproData, lastYear, hasStartedMeasureTunnel, applicableDiagnosticRules } from "@/utils"
 import Constants from "@/constants"
 import ApproGraph from "@/components/ApproGraph"
 import keyMeasures from "@/data/key-measures.json"
@@ -197,6 +197,15 @@ export default {
       return this.canteen.centralProducerSiret
         ? `l'établissement avec le SIRET ${this.canteen.centralProducerSiret}`
         : "un établissement inconnu"
+    },
+    rules() {
+      return applicableDiagnosticRules(this.canteen)
+    },
+    sustainablePercent() {
+      return this.rules.qualityThreshold
+    },
+    bioPercent() {
+      return this.rules.bioThreshold
     },
   },
 }

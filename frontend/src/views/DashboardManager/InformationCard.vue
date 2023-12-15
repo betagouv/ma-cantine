@@ -67,7 +67,7 @@ export default {
       } else if (this.delegatedToCentralKitchen) {
         return "Votre cuisine centrale a renseigné les données de cette mesure à votre place."
       }
-      return "Vous êtes au point ! N’hésitez pas à utiliser les outils fournis par « ma cantine » pour informer encore plus facilement vos convives de vos actions."
+      return this.keyMeasure.tagline
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
