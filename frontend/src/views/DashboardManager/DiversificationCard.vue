@@ -32,7 +32,7 @@
 import Constants from "@/constants"
 import DataInfoBadge from "./DataInfoBadge"
 import keyMeasures from "@/data/key-measures.json"
-import { hasStartedMeasureTunnel } from "@/utils"
+import { hasStartedMeasureTunnel, applicableDiagnosticRules } from "@/utils"
 
 export default {
   name: "DiversificationCard",
@@ -69,7 +69,11 @@ export default {
       } else if (this.delegatedToCentralKitchen) {
         return "Votre cuisine centrale a renseigné les données de cette mesure à votre place."
       }
-      return "Faites un premier pas : mettez en place un menu végétarien par semaine. Découvrez des recettes et des conseils directement sur « ma cantine » !"
+      const rules = applicableDiagnosticRules(this.canteen)
+      if (rules.hasDiversificationPlan) {
+        return "Proposer plus d'options végétariennes dans vos menus et construire un plan pluriannuel en faveur d'une offre plus durable."
+      }
+      return "Proposer plus d'options végétariennes dans vos menus en faveur d'une offre de restauration plus durable."
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
