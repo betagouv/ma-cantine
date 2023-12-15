@@ -23,7 +23,24 @@
         <p class="fr-text-sm">
           Accédez ci-dessous aux différents outils de gestion de votre établissement sur la plateforme « ma cantine ».
         </p>
-        <v-row>
+        <v-row v-if="isCentralWithSite">
+          <v-col cols="12" md="6">
+            <SatellitesWidget :canteen="canteen" />
+          </v-col>
+          <v-col cols="12" md="6">
+            <PublicationWidget :canteen="canteen" />
+          </v-col>
+          <v-col cols="12">
+            <PurchasesWidget :canteen="canteen" />
+          </v-col>
+          <v-col cols="12" md="8">
+            <CanteenInfoWidget :canteen="canteen" />
+          </v-col>
+          <v-col cols="12" md="4">
+            <TeamWidget :canteen="canteen" />
+          </v-col>
+        </v-row>
+        <v-row v-else>
           <v-col cols="12" md="8">
             <PurchasesWidget :canteen="canteen" />
           </v-col>
@@ -112,6 +129,12 @@ export default {
     },
     canteenPreviews() {
       return this.$store.state.userCanteenPreviews
+    },
+    welcomesGuests() {
+      return this.canteen?.productionType !== "central"
+    },
+    isCentralWithSite() {
+      return this.canteen?.productionType === "central_serving"
     },
   },
   methods: {
