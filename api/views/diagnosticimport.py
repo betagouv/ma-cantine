@@ -3,7 +3,7 @@ import csv
 import time
 import re
 import logging
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from data.models.diagnostic import Diagnostic
 from data.models.teledeclaration import Teledeclaration
 from django.db import IntegrityError, transaction
@@ -511,18 +511,20 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
             values_dict = {}
             value_offset = 0
             for value in value_fields:
+                value_offset = value_offset + 1
+                value_idx = self.year_idx + value_offset
+                if value in mandatory_fields and not row[value_idx]:
+                    error = {}
+                    error[value] = "Ce champ ne peut pas être vide."
+                    raise ValidationError(error)
                 try:
-                    value_offset = value_offset + 1
-                    value_idx = self.year_idx + value_offset
-                    if value in mandatory_fields and not row[value_idx]:
-                        raise Exception
                     values_dict[value] = (
                         None if not row[value_idx] else Decimal(row[value_idx].strip().replace(",", "."))
                     )
-                except Exception:
+                except InvalidOperation:
                     error = {}
                     # TODO: This should take into account more number formats and be factored out to utils
-                    error[value] = "Ce champ doit être un nombre décimal."
+                    error[value] = f"La valeur « {row[value_idx]} » doit être un nombre décimal."
                     raise ValidationError(error)
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
 
@@ -568,8 +570,8 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         # total value is required, handle this case separately to the remaining values which are optional
         try:
             values_dict["value_total_ht"] = Decimal(row[value_idx].strip().replace(",", "."))
-        except Exception:
-            raise ValidationError({"value_total_ht": "Ce champ doit être un nombre décimal."})
+        except InvalidOperation:
+            raise ValidationError({"value_total_ht": "Ce champ ne peut pas être vide."})
         for value in ["value_meat_poultry_ht", "value_fish_ht", *Diagnostic.complete_fields]:
             try:
                 value_idx = value_idx + 1
@@ -578,9 +580,9 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
             except IndexError:
                 # we allow the rest of the fields to be left unspecified because there are so many
                 break
-            except Exception:
+            except InvalidOperation:
                 error = {}
-                error[value] = "Ce champ doit être vide ou un nombre décimal."
+                error[value] = f"La valeur « {row[value_idx]} » doit être vide ou un nombre décimal."
                 raise ValidationError(error)
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.COMPLETE
 
