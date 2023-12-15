@@ -567,7 +567,10 @@ class TestImportDiagnosticsAPI(APITestCase):
         errors = body["errors"]
         self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
-        self.assertEqual(errors[0]["message"], "Champ 'email' : Un adresse email des gestionnaires n'est pas valide.")
+        self.assertEqual(
+            errors[0]["message"],
+            "Champ 'email' : Un adresse email des gestionnaires (gestionnaire1@, gestionnaire2@example.com) n'est pas valide.",
+        )
 
         self.assertEqual(len(mail.outbox), 0)
 

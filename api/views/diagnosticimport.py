@@ -297,7 +297,9 @@ class ImportDiagnosticsView(ABC, APIView):
             if len(row) > self.manager_column_idx + 1 and row[self.manager_column_idx]:
                 manager_emails = ImportDiagnosticsView._get_manager_emails(row[self.manager_column_idx])
         except Exception:
-            raise ValidationError({"email": "Un adresse email des gestionnaires n'est pas valide."})
+            raise ValidationError(
+                {"email": f"Un adresse email des gestionnaires ({row[self.manager_column_idx]}) n'est pas valide."}
+            )
         return manager_emails
 
     def _has_canteen_permission(self, canteen):
