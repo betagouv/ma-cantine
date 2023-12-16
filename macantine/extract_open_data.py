@@ -37,7 +37,7 @@ def fetch_epci(code_insee_commune):
         if len(EPCIS_CACHE.keys()) > 1:
             try:
                 return EPCIS_CACHE[code_insee_commune]
-            except KeyError:
+            except KeyError: # This city is not part of an EPCI
                 return None
         else:
             try:
@@ -216,7 +216,7 @@ class ETL_CANTEEN(ETL):
     def extract_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
         canteens_col_from_db = all_canteens_col.copy()
-        for col_processed in ['active_on_ma_cantine', 'department_lib', 'region_lib', 'epci', 'declaration_donnees_2021', 'declaration_donnees_2022']:
+        for col_processed in ['active_on_ma_cantine', 'department_lib', 'region_lib', 'epci', 'declaration_donnees_2021']:
             canteens_col_from_db.remove(col_processed)
 
         exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
@@ -256,8 +256,6 @@ class ETL_CANTEEN(ETL):
 
         logger.info("Canteens : Fill campaign participation 2021...")
         self.df['declaration_donnees_2021'] = self.df['id'].apply(lambda x: fetch_campaign_participation(x, 2021))
-        logger.info("Canteens : Fill campaign participation 2022...")
-        self.df['declaration_donnees_2022'] = self.df['id'].apply(lambda x: fetch_campaign_participation(x, 2022))
 
 
 class ETL_TD(ETL):
@@ -275,7 +273,6 @@ class ETL_TD(ETL):
             "egalim_others": ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
             "externality_performance": ["_externality_performance", "_performance", "_externalites"],
         }
-
 
     def extract_dataset(self):
         if self.year in CAMPAIGN_DATES.keys():
