@@ -34,18 +34,28 @@ def fetch_epci(code_insee_commune):
     Queries each commune only once, storing the data in cache after
     """
     if code_insee_commune:
-        if code_insee_commune in EPCIS_CACHE.keys():
-            return EPCIS_CACHE[code_insee_commune]
-        else:
-            try: 
-                response = requests.get(f"https://geo.api.gouv.fr/communes/{code_insee_commune}", timeout=5)
-                response.raise_for_status()
-                body = response.json()
-                EPCIS_CACHE[code_insee_commune] = body['codeEpci']  # Caching the data
-                return body['codeEpci']
-            except requests.exceptions.HTTPError:
-                return None
+        if len(EPCIS_CACHE.keys()) > 1:
+            try:
+                return EPCIS_CACHE[code_insee_commune]
             except KeyError:
+                return None
+        else:
+            try:
+                logger.info("Starting communes dl")
+                response = requests.get(f"https://geo.api.gouv.fr/communes", timeout=50)
+                response.raise_for_status()
+                communes = response.json()
+                for commune in communes:
+                    try:
+                        EPCIS_CACHE[commune['code']] = commune['codeEpci']  # Caching the data
+                    except KeyError:
+                        pass
+                return commune['codeEpci']
+            except requests.exceptions.HTTPError as e:
+                print(e)
+                return None
+            except  KeyError as e:
+                print(e)
                 return None
     else:
         return None
@@ -61,7 +71,7 @@ def fetch_sector(sector_id):
         if cached_data:
             return cached_data
         else:
-            sector = camelize(SectorSerializer(Sector.objects.get(id=sector_id)).data) 
+            sector = camelize(SectorSerializer(Sector.objects.get(id=sector_id)).data)
             cache.set(sector_id, sector, timeout=3600)  # Timeout in seconds
             return sector
     else:
@@ -116,10 +126,12 @@ class ETL(ABC):
 
     def transform_geo_data(self, geo_col_names=["department", "region"]):
         for geo in geo_col_names:
+            logger.info("Start filling geo_name")
             self._fill_geo_name(geo_zoom=geo)
             col_geo = self.df.pop(f"{geo}_lib")
             self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
         if 'city_insee_code' in self.df.columns:
+            logger.info("Start fetching EPCI")
             self.df['epci'] = self.df['city_insee_code'].apply(fetch_epci)
         else:
             self.df['epci'] = None
@@ -242,8 +254,9 @@ class ETL_CANTEEN(ETL):
         end = time.time()
         logger.info(f'Time spent on geo data : {end - start}')
 
-        # logger.info("Canteens : Fill campaign participation...")
+        logger.info("Canteens : Fill campaign participation 2021...")
         self.df['declaration_donnees_2021'] = self.df['id'].apply(lambda x: fetch_campaign_participation(x, 2021))
+        logger.info("Canteens : Fill campaign participation 2022...")
         self.df['declaration_donnees_2022'] = self.df['id'].apply(lambda x: fetch_campaign_participation(x, 2022))
 
 
