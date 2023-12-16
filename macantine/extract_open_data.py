@@ -50,12 +50,12 @@ def fetch_epci(code_insee_commune):
                         EPCIS_CACHE[commune['code']] = commune['codeEpci']  # Caching the data
                     except KeyError:
                         pass
-                return commune['codeEpci']
+                return EPCIS_CACHE[code_insee_commune]
             except requests.exceptions.HTTPError as e:
-                print(e)
+                logger.info(e)
                 return None
             except  KeyError as e:
-                print(e)
+                logger.debug('This city doesn\'t have an EPCI')
                 return None
     else:
         return None
