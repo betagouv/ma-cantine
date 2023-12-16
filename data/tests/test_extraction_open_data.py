@@ -101,11 +101,11 @@ class TestExtractionOpenData(TestCase):
         # Checking the campaign participation
         # POURQUOI LA TD ne se sauvegarde pas ?
         applicant = UserFactory.create()
-        diagnostic_2022 = DiagnosticFactory.create(canteen=canteen_1, year=2022, diagnostic_type=None)
-        td = Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
+        diagnostic_2021 = DiagnosticFactory.create(canteen=canteen_1, year=2021, diagnostic_type=None)
+        td = Teledeclaration.create_from_diagnostic(diagnostic_2021, applicant)
         etl_canteen.extract_dataset()
         canteens = etl_canteen.get_dataset()
-        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["declaration_donnees_2022"], True, "The canteen has participated in the campain")
+        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["declaration_donnees_2021"], True, "The canteen has participated in the campain")
 
         canteen_2.sectors.clear()
         etl_canteen.extract_dataset()
