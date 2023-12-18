@@ -72,11 +72,19 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+    <TeledeclarationPreview
+      v-if="canteenDiagnostic"
+      :diagnostic="canteenDiagnostic"
+      :canteen="canteen"
+      v-model="showTeledeclarationPreview"
+      @teledeclare="submitTeledeclaration"
+    />
   </div>
 </template>
 
 <script>
 import DsfrSelect from "@/components/DsfrSelect"
+import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import { lastYear, diagnosticYears, hasDiagnosticApproData } from "@/utils"
 import FoodWasteCard from "./FoodWasteCard"
 import DiversificationCard from "./DiversificationCard"
@@ -89,6 +97,7 @@ export default {
   name: "EgalimProgression",
   components: {
     DsfrSelect,
+    TeledeclarationPreview,
     FoodWasteCard,
     DiversificationCard,
     NoPlasticCard,
@@ -169,6 +178,25 @@ export default {
         return requiresOtherData && hasOtherData
       }
       return this.canteenDiagnostic && hasDiagnosticApproData(this.canteenDiagnostic)
+    },
+  },
+  methods: {
+    submitTeledeclaration() {
+      return this.$store
+        .dispatch("submitTeledeclaration", { id: this.diagnostic.id })
+        .then((diagnostic) => {
+          this.$store.dispatch("notify", {
+            title: "Télédéclaration prise en compte",
+            status: "success",
+          })
+          this.updateFromServer(diagnostic)
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
+        .finally(() => {
+          this.showTeledeclarationPreview = false
+        })
     },
   },
   mounted() {
