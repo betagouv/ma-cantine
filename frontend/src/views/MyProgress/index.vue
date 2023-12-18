@@ -160,18 +160,18 @@
                 :centralKitchenDiagnosticMode="centralKitchenDiagnosticMode"
               />
               <v-row class="mt-6">
-                <v-col v-if="index > 0">
+                <v-col v-if="previousTab(item)">
                   <p class="fr-text-sm">
                     <v-icon small color="primary" class="mr-1">$arrow-left-line</v-icon>
-                    <router-link :to="{ params: { measure: tabHeaders[index - 1].urlSlug } }">
-                      {{ tabHeaders[index - 1].title }}
+                    <router-link :to="{ params: { measure: previousTab(item).urlSlug } }">
+                      {{ previousTab(item).title }}
                     </router-link>
                   </p>
                 </v-col>
-                <v-col v-if="index < tabHeaders.length - 1" class="text-right">
+                <v-col v-if="nextTab(item)" class="text-right">
                   <p class="fr-text-sm">
-                    <router-link :to="{ params: { measure: tabHeaders[index + 1].urlSlug } }">
-                      {{ tabHeaders[index + 1].title }}
+                    <router-link :to="{ params: { measure: nextTab(item).urlSlug } }">
+                      {{ nextTab(item).title }}
                     </router-link>
                     <v-icon small color="primary" class="ml-1">$arrow-right-line</v-icon>
                   </p>
@@ -218,6 +218,7 @@ export default {
     TeledeclarationCancelDialog,
   },
   data() {
+    const establishmentId = "etablissement"
     return {
       tab: null,
       diagnostic: null,
@@ -232,11 +233,11 @@ export default {
         })),
         ...[
           {
-            urlSlug: "etablissement",
+            urlSlug: establishmentId,
             text: "Établissement",
             title: "Établissement",
             icon: "$building-fill",
-            to: { params: { measure: "etablissement" } },
+            to: { params: { measure: establishmentId } },
           },
         ],
       ],
@@ -248,6 +249,8 @@ export default {
       cancelDialog: false,
       campaignEndDate: window.TELEDECLARATION_END_DATE ? new Date(window.TELEDECLARATION_END_DATE) : null,
       showTeledeclarationPreview: false,
+      approId: "qualite-des-produits",
+      establishmentId,
     }
   },
   props: {
@@ -275,6 +278,15 @@ export default {
     },
     readyToTeledeclare() {
       return this.diagnostic && this.inTeledeclarationCampaign && hasDiagnosticApproData(this.diagnostic)
+    },
+    declaringApproOnly() {
+      return this.isCentralKitchen && this.centralKitchenDiagnosticMode === "APPRO"
+    },
+    activeTabHeaders() {
+      if (this.declaringApproOnly) {
+        return this.tabHeaders.filter((t) => t.urlSlug === this.approId || t.urlSlug === this.establishmentId)
+      }
+      return this.tabHeaders
     },
   },
   methods: {
@@ -316,7 +328,6 @@ export default {
     },
     chooseTabToDisplay() {
       const initialTab = this.tabHeaders.find((x) => x.urlSlug === this.measure)
-      const approId = "qualite-des-produits"
       if (!initialTab) {
         this.$router.replace({
           name: this.$route.name,
@@ -326,12 +337,8 @@ export default {
             measure: this.tabHeaders[0].urlSlug,
           },
         })
-      } else if (
-        this.centralKitchenDiagnosticMode === "APPRO" &&
-        this.measure !== approId &&
-        this.measure !== "etablissement"
-      ) {
-        this.$router.replace({ name: "MyProgress", params: { measure: approId } })
+      } else if (this.declaringApproOnly && this.measure !== this.approId && this.measure !== "etablissement") {
+        this.$router.replace({ name: "MyProgress", params: { measure: this.approId } })
       } else {
         this.tab = this.tabHeaders.indexOf(initialTab)
       }
@@ -339,7 +346,15 @@ export default {
     usesSatelliteDiagnosticForMeasure(tabItem) {
       const tabAlwaysShown = tabItem.urlSlug === "qualite-des-produits" || tabItem.urlSlug === "etablissement"
       if (tabAlwaysShown) return false
-      return this.isCentralKitchen && this.centralKitchenDiagnosticMode === "APPRO"
+      return this.declaringApproOnly
+    },
+    previousTab(tabItem) {
+      const idx = this.activeTabHeaders.findIndex((t) => t.urlSlug === tabItem.urlSlug)
+      return this.activeTabHeaders[idx - 1]
+    },
+    nextTab(tabItem) {
+      const idx = this.activeTabHeaders.findIndex((t) => t.urlSlug === tabItem.urlSlug)
+      return this.activeTabHeaders[idx + 1]
     },
     tabTextClasses(tabItem) {
       return this.usesSatelliteDiagnosticForMeasure(tabItem) ? "grey--text" : "black--text"
