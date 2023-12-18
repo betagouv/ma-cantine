@@ -279,7 +279,14 @@ export default {
       return window.ENABLE_TELEDECLARATION && +this.year === lastYear()
     },
     readyToTeledeclare() {
-      return this.diagnostic && this.inTeledeclarationCampaign && hasDiagnosticApproData(this.diagnostic)
+      if (!this.inTeledeclarationCampaign || this.hasActiveTeledeclaration) return false
+      if (this.centralDiagnostic) {
+        const noNeedToTd = this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
+        const requiresOtherData = !noNeedToTd
+        const hasOtherData = !!this.diagnostic
+        return requiresOtherData && hasOtherData
+      }
+      return this.diagnostic && hasDiagnosticApproData(this.diagnostic)
     },
     declaringApproOnly() {
       return this.isCentralKitchen && this.centralKitchenDiagnosticMode === "APPRO"
