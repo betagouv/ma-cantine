@@ -205,6 +205,7 @@ export default {
         params: {
           canteenUrlComponent: this.canteenUrlComponent,
           year: this.canteenDiagnostic.year,
+          measure: this.firstActionableMeasure,
         },
       }
     },
