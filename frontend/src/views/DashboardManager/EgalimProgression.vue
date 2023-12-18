@@ -60,14 +60,28 @@
       </v-col>
     </v-row>
     <v-card v-if="readyToTeledeclare" class="pa-6 my-4 mr-1 fr-text grey--text text--darken-3 text-center cta-block">
-      <p class="mb-0">
-        Votre bilan {{ canteenDiagnostic.year }} est complet ! Merci d’avoir pris le temps de saisir vos données !
-      </p>
-      <p>
-        Vérifiez-les une dernière fois et télédéclarez-les pour participer au bilan statistique national obligatoire.
-      </p>
+      <div v-if="tunnelComplete">
+        <p class="mb-0">
+          Votre bilan {{ canteenDiagnostic.year }} est complet ! Merci d’avoir pris le temps de saisir vos données !
+        </p>
+        <p>
+          Vérifiez-les une dernière fois et télédéclarez-les pour participer au bilan statistique national obligatoire.
+        </p>
+      </div>
+      <div v-else>
+        <p class="mb-0">{{ tunnelProgressMessage }}</p>
+        <p>
+          Completez votre bilan, ou télédéclarez seulement ces données.
+        </p>
+      </div>
       <v-card-actions class="px-0 pt-0 pb-0 justify-center">
-        <v-btn color="primary" @click="showTeledeclarationPreview = true" class="fr-text font-weight-medium">
+        <v-btn v-if="!tunnelComplete" color="primary" :to="completeDiagnosticLink">Complèter mon bilan</v-btn>
+        <v-btn
+          color="primary"
+          :outlined="!tunnelComplete"
+          @click="showTeledeclarationPreview = true"
+          class="fr-text font-weight-medium"
+        >
           Vérifier et télédéclarer mes données {{ canteenDiagnostic.year }}
         </v-btn>
       </v-card-actions>
@@ -85,7 +99,7 @@
 <script>
 import DsfrSelect from "@/components/DsfrSelect"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
-import { lastYear, diagnosticYears, hasDiagnosticApproData } from "@/utils"
+import { lastYear, diagnosticYears, hasDiagnosticApproData, hasFinishedMeasureTunnel } from "@/utils"
 import FoodWasteCard from "./FoodWasteCard"
 import DiversificationCard from "./DiversificationCard"
 import NoPlasticCard from "./NoPlasticCard"
@@ -178,6 +192,21 @@ export default {
         return requiresOtherData && hasOtherData
       }
       return this.canteenDiagnostic && hasDiagnosticApproData(this.canteenDiagnostic)
+    },
+    tunnelComplete() {
+      return this.canteenDiagnostic && hasFinishedMeasureTunnel(this.canteenDiagnostic)
+    },
+    tunnelProgressMessage() {
+      return "Merci d'avoir pris le temps de commencer votre bilan !"
+    },
+    completeDiagnosticLink() {
+      return {
+        name: "MyProgress",
+        params: {
+          canteenUrlComponent: this.canteenUrlComponent,
+          year: this.canteenDiagnostic.year,
+        },
+      }
     },
   },
   methods: {

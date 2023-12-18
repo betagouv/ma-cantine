@@ -575,6 +575,14 @@ export const hasStartedMeasureTunnel = (diagnostic, keyMeasure) => {
   return !!diagnostic
 }
 
+export const hasFinishedMeasureTunnel = (diagnostic) => {
+  if (diagnostic?.creationSource === "TUNNEL") {
+    const measureProgressFields = ["tunnelAppro", "tunnelWaste", "tunnelDiversification", "tunnelPlastic", "tunnelInfo"]
+    return measureProgressFields.every((field) => diagnostic[field] === "complet")
+  }
+  return !!diagnostic
+}
+
 export const getCharacteristicFromFieldSuffix = (fieldSuffix, tdGroup) => {
   const normalisedGroupCharacteristics = tdGroup.characteristics.map((g) => g.toLowerCase().replace(/_/g, ""))
   const fieldCharacteristic = fieldSuffix.toLowerCase()
