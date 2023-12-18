@@ -85,23 +85,6 @@
             </div>
           </v-card-actions>
         </v-card>
-        <v-card
-          v-else-if="readyToTeledeclare"
-          class="pa-6 mb-4 mr-1 fr-text grey--text text--darken-3 text-center cta-block"
-        >
-          <p class="mb-0">
-            Votre bilan {{ diagnostic.year }} est complet ! Merci d’avoir pris le temps de saisir vos données !
-          </p>
-          <p>
-            Vérifiez-les une dernière fois et télédéclarez-les pour participer au bilan statistique national
-            obligatoire.
-          </p>
-          <v-card-actions class="px-0 pt-0 pb-0 justify-center">
-            <v-btn color="primary" @click="showTeledeclarationPreview = true" class="fr-text font-weight-medium">
-              Vérifier et télédéclarer mes données {{ diagnostic.year }}
-            </v-btn>
-          </v-card-actions>
-        </v-card>
         <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
           <fieldset class="fr-text">
             <legend class="font-weight-bold">
@@ -467,12 +450,5 @@ export default {
 }
 .close-icon {
   border-bottom: solid 1px;
-}
-.cta-block {
-  background: #f5f5fe;
-  backdrop-filter: blur(7px);
-  border: 1.5px dashed #000091;
-  border-radius: 5px;
-  color: #3a3a3a;
 }
 </style>
