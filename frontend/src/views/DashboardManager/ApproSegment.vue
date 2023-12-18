@@ -77,7 +77,7 @@
         <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
         <p class="mb-0">
           Composer des repas avec au moins {{ sustainablePercent }} % de produits de qualité et durables, dont
-          {{ bioPercent }} % de bio, pour proposer un alimentation plus saine et écologique à vos convives.
+          {{ bioPercent }} % de bio, pour proposer une alimentation plus saine et écologique à vos convives.
         </p>
       </v-card-text>
       <v-card-text v-else class="fr-text-xs">
