@@ -152,12 +152,31 @@
                   </p>
                 </v-col>
                 <v-col v-if="nextTab(item)" class="text-right">
-                  <p class="fr-text-sm">
+                  <p v-if="index < tabHeaders.length - 1" class="fr-text-sm">
                     <router-link :to="{ params: { measure: nextTab(item).urlSlug } }">
                       {{ nextTab(item).title }}
                     </router-link>
                     <v-icon small color="primary" class="ml-1">$arrow-right-line</v-icon>
                   </p>
+                  <v-btn
+                    v-else-if="hasActiveTeledeclaration"
+                    outlined
+                    small
+                    color="primary"
+                    class="fr-btn--tertiary px-2"
+                    :disabled="true"
+                  >
+                    <v-icon small class="mr-2">$check-line</v-icon>
+                    Données télédéclarées
+                  </v-btn>
+                  <v-btn
+                    v-else-if="readyToTeledeclare"
+                    color="primary"
+                    @click="showTeledeclarationPreview = true"
+                    class="fr-text font-weight-medium"
+                  >
+                    Vérifier et télédéclarer mes données {{ diagnostic.year }}
+                  </v-btn>
                 </v-col>
               </v-row>
             </v-tab-item>
