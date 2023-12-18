@@ -210,15 +210,21 @@ export default {
     },
   },
   methods: {
+    replaceDiagnostic(diagnostic) {
+      const diagnosticIndex = this.canteen.diagnostics.findIndex((x) => x.id === diagnostic.id)
+      if (diagnosticIndex > -1) {
+        this.canteen.diagnostics.splice(diagnosticIndex, 1, diagnostic)
+      }
+    },
     submitTeledeclaration() {
       return this.$store
-        .dispatch("submitTeledeclaration", { id: this.diagnostic.id })
+        .dispatch("submitTeledeclaration", { id: this.canteenDiagnostic.id })
         .then((diagnostic) => {
           this.$store.dispatch("notify", {
             title: "Télédéclaration prise en compte",
             status: "success",
           })
-          this.updateFromServer(diagnostic)
+          this.replaceDiagnostic(diagnostic)
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
