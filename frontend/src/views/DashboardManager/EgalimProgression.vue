@@ -1,68 +1,105 @@
 <template>
-  <v-row style="position: relative;">
-    <v-col cols="12" md="4" class="d-flex flex-column">
-      <v-row>
-        <v-col cols="8">
-          <h2 class="fr-h3 mb-0 mt-1 align-center">
-            Ma progression
-          </h2>
-        </v-col>
-        <v-col cols="4">
-          <DsfrSelect v-model="year" :items="allowedYears" hide-details="auto" placeholder="Année" />
-        </v-col>
-      </v-row>
-      <div>
-        <DataInfoBadge
-          :currentYear="isCurrentYear"
-          :missingData="needsData"
-          :readyToTeledeclare="readyToTeledeclare"
-          :hasActiveTeledeclaration="hasActiveTeledeclaration"
-          class="mt-4"
-        />
-        <hr aria-hidden="true" role="presentation" class="my-6" />
-      </div>
-      <ApproSegment
-        :purchases="null"
-        :diagnostic="approDiagnostic"
-        :lastYearDiagnostic="lastYearDiagnostic"
-        :canteen="canteen"
-        :year="year"
-      />
-    </v-col>
-    <v-col cols="12" md="8">
-      <v-row style="position: relative; height: 100%" class="ma-0">
-        <div class="overlay d-flex align-center justify-center" v-if="!otherMeasuresDiagnostic">
-          <v-btn
-            large
-            color="primary"
-            :to="{
-              name: 'MyProgress',
-              params: { canteenUrlComponent, year: year, measure: firstActionableMeasure },
-            }"
-          >
-            <span class="fr-text-lg">Faire le bilan {{ year }}</span>
-          </v-btn>
+  <div>
+    <v-row style="position: relative;">
+      <v-col cols="12" md="4" class="d-flex flex-column">
+        <v-row>
+          <v-col cols="8">
+            <h2 class="fr-h3 mb-0 mt-1 align-center">
+              Ma progression
+            </h2>
+          </v-col>
+          <v-col cols="4">
+            <DsfrSelect v-model="year" :items="allowedYears" hide-details="auto" placeholder="Année" />
+          </v-col>
+        </v-row>
+        <div>
+          <DataInfoBadge
+            :currentYear="isCurrentYear"
+            :missingData="needsData"
+            :readyToTeledeclare="readyToTeledeclare"
+            :hasActiveTeledeclaration="hasActiveTeledeclaration"
+            class="mt-4"
+          />
+          <hr aria-hidden="true" role="presentation" class="my-6" />
         </div>
-        <v-col cols="12" md="6" class="pt-md-0 px-0 pr-md-3">
-          <FoodWasteCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
-        </v-col>
-        <v-col cols="12" md="6" class="pt-md-0 px-0 pl-md-3">
-          <DiversificationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
-        </v-col>
-        <v-col cols="12" md="6" class="pb-md-0 px-0 pr-md-3">
-          <NoPlasticCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
-        </v-col>
-        <v-col cols="12" md="6" class="pb-md-0 px-0 pl-md-3">
-          <InformationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
-        </v-col>
-      </v-row>
-    </v-col>
-  </v-row>
+        <ApproSegment
+          :purchases="null"
+          :diagnostic="approDiagnostic"
+          :lastYearDiagnostic="lastYearDiagnostic"
+          :canteen="canteen"
+          :year="year"
+        />
+      </v-col>
+      <v-col cols="12" md="8">
+        <v-row style="position: relative; height: 100%" class="ma-0">
+          <div class="overlay d-flex align-center justify-center" v-if="!otherMeasuresDiagnostic">
+            <v-btn
+              large
+              color="primary"
+              :to="{
+                name: 'MyProgress',
+                params: { canteenUrlComponent, year: year, measure: firstActionableMeasure },
+              }"
+            >
+              <span class="fr-text-lg">Faire le bilan {{ year }}</span>
+            </v-btn>
+          </div>
+          <v-col cols="12" md="6" class="pt-md-0 px-0 pr-md-3">
+            <FoodWasteCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
+          </v-col>
+          <v-col cols="12" md="6" class="pt-md-0 px-0 pl-md-3">
+            <DiversificationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
+          </v-col>
+          <v-col cols="12" md="6" class="pb-md-0 px-0 pr-md-3">
+            <NoPlasticCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
+          </v-col>
+          <v-col cols="12" md="6" class="pb-md-0 px-0 pl-md-3">
+            <InformationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-card v-if="readyToTeledeclare" class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block">
+      <div v-if="tunnelComplete">
+        <p class="mb-0">
+          Votre bilan {{ canteenDiagnostic.year }} est complet ! Merci d’avoir pris le temps de saisir vos données !
+        </p>
+        <p>
+          Vérifiez-les une dernière fois et télédéclarez-les pour participer au bilan statistique national obligatoire.
+        </p>
+      </div>
+      <div v-else>
+        <p class="mb-0">{{ tunnelProgressMessage }}</p>
+        <p>
+          Completez votre bilan, ou télédéclarez seulement ces données.
+        </p>
+      </div>
+      <v-card-actions class="px-0 pt-0 pb-0 justify-center">
+        <v-btn v-if="!tunnelComplete" color="primary" :to="completeDiagnosticLink">Complèter mon bilan</v-btn>
+        <v-btn
+          color="primary"
+          :outlined="!tunnelComplete"
+          @click="showTeledeclarationPreview = true"
+          class="fr-text font-weight-medium"
+        >
+          Vérifier et télédéclarer mes données {{ canteenDiagnostic.year }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+    <TeledeclarationPreview
+      v-if="canteenDiagnostic"
+      :diagnostic="canteenDiagnostic"
+      :canteen="canteen"
+      v-model="showTeledeclarationPreview"
+      @teledeclare="submitTeledeclaration"
+    />
+  </div>
 </template>
 
 <script>
 import DsfrSelect from "@/components/DsfrSelect"
-import { lastYear, diagnosticYears, hasDiagnosticApproData } from "@/utils"
+import TeledeclarationPreview from "@/components/TeledeclarationPreview"
+import { lastYear, diagnosticYears, readyToTeledeclare, hasFinishedMeasureTunnel } from "@/utils"
 import FoodWasteCard from "./FoodWasteCard"
 import DiversificationCard from "./DiversificationCard"
 import NoPlasticCard from "./NoPlasticCard"
@@ -74,6 +111,7 @@ export default {
   name: "EgalimProgression",
   components: {
     DsfrSelect,
+    TeledeclarationPreview,
     FoodWasteCard,
     DiversificationCard,
     NoPlasticCard,
@@ -94,6 +132,7 @@ export default {
       year: lastYear(),
       diagnosticYears: years,
       allowedYears: years.map((year) => ({ text: year, value: year })),
+      showTeledeclarationPreview: false,
     }
   },
   computed: {
@@ -144,15 +183,49 @@ export default {
       return !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic)
     },
     readyToTeledeclare() {
-      const inTdCampaign = window.ENABLE_TELEDECLARATION && this.year === lastYear()
-      if (!inTdCampaign || this.hasActiveTeledeclaration) return false
-      if (this.centralDiagnostic) {
-        const noNeedToTd = this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
-        const requiresOtherData = !noNeedToTd
-        const hasOtherData = !!this.canteenDiagnostic
-        return requiresOtherData && hasOtherData
+      return readyToTeledeclare(this.canteen, this.canteenDiagnostic)
+    },
+    tunnelComplete() {
+      return this.canteenDiagnostic && hasFinishedMeasureTunnel(this.canteenDiagnostic)
+    },
+    tunnelProgressMessage() {
+      return "Merci d'avoir pris le temps de commencer votre bilan !"
+    },
+    completeDiagnosticLink() {
+      return {
+        name: "MyProgress",
+        params: {
+          canteenUrlComponent: this.canteenUrlComponent,
+          year: this.canteenDiagnostic.year,
+          measure: this.firstActionableMeasure,
+        },
       }
-      return this.canteenDiagnostic && hasDiagnosticApproData(this.canteenDiagnostic)
+    },
+  },
+  methods: {
+    replaceDiagnostic(diagnostic) {
+      const diagnosticIndex = this.canteen.diagnostics.findIndex((x) => x.id === diagnostic.id)
+      if (diagnosticIndex > -1) {
+        this.canteen.diagnostics.splice(diagnosticIndex, 1, diagnostic)
+      }
+    },
+    submitTeledeclaration() {
+      return this.$store
+        .dispatch("submitTeledeclaration", { id: this.canteenDiagnostic.id })
+        .then((diagnostic) => {
+          this.$store.dispatch("notify", {
+            title: "Télédéclaration prise en compte",
+            status: "success",
+          })
+          this.replaceDiagnostic(diagnostic)
+          window.scrollTo(0, 0)
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
+        .finally(() => {
+          this.showTeledeclarationPreview = false
+        })
     },
   },
   mounted() {
@@ -180,5 +253,12 @@ export default {
 }
 .v-card.dsfr {
   border: solid 1.5px #dddddd;
+}
+.cta-block {
+  background: #f5f5fe;
+  backdrop-filter: blur(7px);
+  border: 1.5px dashed #000091;
+  border-radius: 24px;
+  color: #3a3a3a;
 }
 </style>

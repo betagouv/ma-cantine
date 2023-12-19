@@ -83,23 +83,6 @@
             </div>
           </v-card-actions>
         </v-card>
-        <v-card
-          v-else-if="readyToTeledeclare"
-          class="pa-6 mb-4 mr-1 fr-text grey--text text--darken-3 text-center cta-block"
-        >
-          <p class="mb-0">
-            Votre bilan {{ diagnostic.year }} est complet ! Merci d’avoir pris le temps de saisir vos données !
-          </p>
-          <p>
-            Vérifiez-les une dernière fois et télédéclarez-les pour participer au bilan statistique national
-            obligatoire.
-          </p>
-          <v-card-actions class="px-0 pt-0 pb-0 justify-center">
-            <v-btn color="primary" @click="showTeledeclarationPreview = true" class="fr-text font-weight-medium">
-              Vérifier et télédéclarer mes données {{ diagnostic.year }}
-            </v-btn>
-          </v-card-actions>
-        </v-card>
         <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
           <fieldset class="fr-text">
             <legend class="font-weight-bold">
@@ -157,22 +140,41 @@
                 :centralDiagnostic="centralDiagnostic"
                 :centralKitchenDiagnosticMode="centralKitchenDiagnosticMode"
               />
-              <v-row class="mt-6">
+              <v-row class="mt-6 align-center">
                 <v-col v-if="previousTab(item)">
-                  <p class="fr-text-sm">
+                  <p class="fr-text-sm mb-0">
                     <v-icon small color="primary" class="mr-1">$arrow-left-line</v-icon>
                     <router-link :to="{ params: { measure: previousTab(item).urlSlug } }">
                       {{ previousTab(item).title }}
                     </router-link>
                   </p>
                 </v-col>
-                <v-col v-if="nextTab(item)" class="text-right">
-                  <p class="fr-text-sm">
+                <v-col class="text-right">
+                  <p v-if="nextTab(item)" class="fr-text-sm mb-0">
                     <router-link :to="{ params: { measure: nextTab(item).urlSlug } }">
                       {{ nextTab(item).title }}
                     </router-link>
                     <v-icon small color="primary" class="ml-1">$arrow-right-line</v-icon>
                   </p>
+                  <v-btn
+                    v-else-if="hasActiveTeledeclaration"
+                    outlined
+                    small
+                    color="primary"
+                    class="fr-btn--tertiary px-2"
+                    :disabled="true"
+                  >
+                    <v-icon small class="mr-2">$check-line</v-icon>
+                    Données télédéclarées
+                  </v-btn>
+                  <v-btn
+                    v-else-if="readyToTeledeclare"
+                    color="primary"
+                    @click="showTeledeclarationPreview = true"
+                    class="fr-text font-weight-medium"
+                  >
+                    Vérifier et télédéclarer mes données {{ diagnostic.year }}
+                  </v-btn>
                 </v-col>
               </v-row>
             </v-tab-item>
@@ -199,7 +201,7 @@ import DsfrSelect from "@/components/DsfrSelect"
 import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
-import { diagnosticYears, timeAgo, lastYear, hasDiagnosticApproData } from "@/utils"
+import { diagnosticYears, timeAgo, lastYear, readyToTeledeclare } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
 
@@ -275,7 +277,7 @@ export default {
       return window.ENABLE_TELEDECLARATION && +this.year === lastYear()
     },
     readyToTeledeclare() {
-      return this.diagnostic && this.inTeledeclarationCampaign && hasDiagnosticApproData(this.diagnostic)
+      return readyToTeledeclare(this.canteen, this.diagnostic)
     },
     declaringApproOnly() {
       return this.isCentralKitchen && this.centralKitchenDiagnosticMode === "APPRO"
@@ -367,6 +369,7 @@ export default {
             status: "success",
           })
           this.updateFromServer(diagnostic)
+          window.scrollTo(0, 0)
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
@@ -465,12 +468,5 @@ export default {
 }
 .close-icon {
   border-bottom: solid 1px;
-}
-.cta-block {
-  background: #f5f5fe;
-  backdrop-filter: blur(7px);
-  border: 1.5px dashed #000091;
-  border-radius: 5px;
-  color: #3a3a3a;
 }
 </style>

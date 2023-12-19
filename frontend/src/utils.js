@@ -575,6 +575,14 @@ export const hasStartedMeasureTunnel = (diagnostic, keyMeasure) => {
   return !!diagnostic
 }
 
+export const hasFinishedMeasureTunnel = (diagnostic) => {
+  if (diagnostic?.creationSource === "TUNNEL") {
+    const measureProgressFields = ["tunnelAppro", "tunnelWaste", "tunnelDiversification", "tunnelPlastic", "tunnelInfo"]
+    return measureProgressFields.every((field) => diagnostic[field] === "complet")
+  }
+  return !!diagnostic
+}
+
 export const getCharacteristicFromFieldSuffix = (fieldSuffix, tdGroup) => {
   const normalisedGroupCharacteristics = tdGroup.characteristics.map((g) => g.toLowerCase().replace(/_/g, ""))
   const fieldCharacteristic = fieldSuffix.toLowerCase()
@@ -587,4 +595,30 @@ export const getCharacteristicFromFieldSuffix = (fieldSuffix, tdGroup) => {
 export const getCharacteristicFromField = (fieldName, fieldPrefix, tdGroup) => {
   const fieldSuffix = fieldName.split(fieldPrefix)[1]
   return getCharacteristicFromFieldSuffix(fieldSuffix, tdGroup)
+}
+
+export const readyToTeledeclare = (canteen, diagnostic) => {
+  if (!canteen || !diagnostic) return false
+
+  const tdYear = lastYear()
+  const inTdCampaign = window.ENABLE_TELEDECLARATION && diagnostic.year === tdYear
+  if (!inTdCampaign) return false
+
+  const hasActiveTeledeclaration = diagnostic.teledeclaration?.status === "SUBMITTED"
+  if (hasActiveTeledeclaration) return false
+
+  if (canteen.productionType === "site_cooked_elsewhere") {
+    const ccDiag = canteen.centralKitchenDiagnostics?.find((x) => x.year === tdYear)
+    if (ccDiag) {
+      const noNeedToTd = ccDiag.centralKitchenDiagnosticMode === "ALL"
+      const canSubmitOtherData = !noNeedToTd
+      const hasOtherData = !!diagnostic
+      return canSubmitOtherData && hasOtherData
+    }
+    // satellites can still TD if CCs haven't
+  } else if (canteen.isCentralKitchen) {
+    // TODO: check if satellites in DB == satellite count
+  }
+
+  return hasDiagnosticApproData(diagnostic)
 }
