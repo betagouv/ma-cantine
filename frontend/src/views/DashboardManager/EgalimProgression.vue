@@ -43,16 +43,16 @@
             <span class="fr-text-lg">Faire le bilan {{ year }}</span>
           </v-btn>
         </div>
-        <v-col cols="12" md="6" class="pt-md-0">
+        <v-col cols="12" md="6" class="pt-md-0 px-0 pr-md-3">
           <FoodWasteCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
-        <v-col cols="12" md="6" class="pt-md-0">
+        <v-col cols="12" md="6" class="pt-md-0 px-0 pl-md-3">
           <DiversificationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
-        <v-col cols="12" md="6" class="pb-md-0">
+        <v-col cols="12" md="6" class="pb-md-0 px-0 pr-md-3">
           <NoPlasticCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
-        <v-col cols="12" md="6" class="pb-md-0">
+        <v-col cols="12" md="6" class="pb-md-0 px-0 pl-md-3">
           <InformationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
         </v-col>
       </v-row>
