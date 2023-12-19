@@ -151,8 +151,8 @@
                     </router-link>
                   </p>
                 </v-col>
-                <v-col v-if="nextTab(item)" class="text-right">
-                  <p v-if="index < tabHeaders.length - 1" class="fr-text-sm">
+                <v-col class="text-right">
+                  <p v-if="nextTab(item)" class="fr-text-sm mb-0">
                     <router-link :to="{ params: { measure: nextTab(item).urlSlug } }">
                       {{ nextTab(item).title }}
                     </router-link>
