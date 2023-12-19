@@ -611,9 +611,9 @@ export const readyToTeledeclare = (canteen, diagnostic) => {
     const ccDiag = canteen.centralKitchenDiagnostics?.find((x) => x.year === tdYear)
     if (ccDiag) {
       const noNeedToTd = ccDiag.centralKitchenDiagnosticMode === "ALL"
-      const requiresOtherData = !noNeedToTd
+      const canSubmitOtherData = !noNeedToTd
       const hasOtherData = !!diagnostic
-      return requiresOtherData && hasOtherData
+      return canSubmitOtherData && hasOtherData
     }
     // satellites can still TD if CCs haven't
   } else if (canteen.isCentralKitchen) {
