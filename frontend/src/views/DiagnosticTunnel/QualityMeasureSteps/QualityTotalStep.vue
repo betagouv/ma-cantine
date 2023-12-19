@@ -3,7 +3,7 @@
     <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <DsfrCurrencyField
       v-model.number="payload.valueTotalHt"
-      :rules="[validators.required, validators.decimalPlaces(2)]"
+      :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
       validate-on-blur
       @blur="updatePayload"
       :error="hasError"
@@ -113,6 +113,10 @@ export default {
       if (!this.hasError) this.$emit("update-payload", { payload: this.payload })
     },
     checkTotal() {
+      if (this.payload.valueTotalHt < 0) {
+        return // this error is handled by vuetify validation
+      }
+
       this.totalErrorMessage = null
       this.meatPoultryErrorMessage = null
       this.fishErrorMessage = null
