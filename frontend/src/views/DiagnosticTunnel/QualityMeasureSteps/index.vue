@@ -1,39 +1,41 @@
 <template>
   <v-form v-model="formIsValid" @submit.prevent>
-    <div v-if="stepUrlSlug === 'mode-de-saisie'">
-      <fieldset>
-        <legend class="text-left my-3">
-          Selon le niveau d’information disponible, vous pouvez choisir entre les deux types de saisie suivantes.
-        </legend>
-        <v-radio-group class="my-0" v-model="payload.diagnosticType" hide-details>
-          <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
-            <template v-slot:label>
-              <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
-              <span class="fr-text-sm ml-3">{{ type.help }}</span>
-            </template>
-          </v-radio>
-        </v-radio-group>
-      </fieldset>
+    <div v-if="payload">
+      <div v-if="stepUrlSlug === 'mode-de-saisie'">
+        <fieldset>
+          <legend class="text-left my-3">
+            Selon le niveau d’information disponible, vous pouvez choisir entre les deux types de saisie suivantes.
+          </legend>
+          <v-radio-group class="my-0" v-model="payload.diagnosticType" hide-details>
+            <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
+              <template v-slot:label>
+                <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
+                <span class="fr-text-sm ml-3">{{ type.help }}</span>
+              </template>
+            </v-radio>
+          </v-radio-group>
+        </fieldset>
+      </div>
+      <component
+        v-else-if="step.characteristicId"
+        :is="step.componentName"
+        :diagnostic="diagnostic"
+        :payload="payload"
+        :purchasesSummary="purchasesSummary"
+        :characteristicId="step.characteristicId"
+        :groupId="step.groupId"
+        v-on:update-payload="updatePayloadFromComponent"
+      />
+      <component
+        v-else
+        :is="step.componentName"
+        :canteen="canteen"
+        :diagnostic="diagnostic"
+        :payload="payload"
+        :purchasesSummary="purchasesSummary"
+        v-on:update-payload="updatePayloadFromComponent"
+      />
     </div>
-    <component
-      v-else-if="step.characteristicId"
-      :is="step.componentName"
-      :diagnostic="diagnostic"
-      :payload="payload"
-      :purchasesSummary="purchasesSummary"
-      :characteristicId="step.characteristicId"
-      :groupId="step.groupId"
-      v-on:update-payload="updatePayloadFromComponent"
-    />
-    <component
-      v-else
-      :is="step.componentName"
-      :canteen="canteen"
-      :diagnostic="diagnostic"
-      :payload="payload"
-      :purchasesSummary="purchasesSummary"
-      v-on:update-payload="updatePayloadFromComponent"
-    />
   </v-form>
 </template>
 
@@ -77,8 +79,8 @@ export default {
       formIsValid: true,
       purchasesSummary: null,
       diagnosticTypes: Constants.DiagnosticTypes,
-      originalValues: {},
-      payload: {},
+      originalValues: null,
+      payload: null,
       characteristics: Constants.TeledeclarationCharacteristics,
       characteristicGroups: Constants.TeledeclarationCharacteristicGroups,
     }
@@ -154,7 +156,7 @@ export default {
       return [...firstSteps, ...intermediarySteps, lastStep]
     },
     isSimplifiedDiagnostic() {
-      return this.payload.diagnosticType !== "COMPLETE"
+      return this.payload?.diagnosticType !== "COMPLETE"
     },
   },
   methods: {
