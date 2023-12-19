@@ -61,10 +61,18 @@
           <v-icon color="primary" x-large>$restaurant-line</v-icon>
         </div>
         <div class="mt-n1">
-          <p class="my-0 fr-text-sm grey--text text--darken-1">Couverts moyens par jour</p>
-          <p class="my-0">{{ parseInt(canteen.dailyMealCount).toLocaleString("fr-FR") || "—" }}</p>
+          <div v-if="hasSite">
+            <p class="my-0 fr-text-sm grey--text text--darken-1">Couverts moyens par jour</p>
+            <p class="my-0">{{ parseInt(canteen.dailyMealCount).toLocaleString("fr-FR") || "—" }}</p>
+          </div>
           <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Nombre total de couverts à l’année</p>
           <p class="my-0">{{ parseInt(canteen.yearlyMealCount).toLocaleString("fr-FR") || "—" }}</p>
+          <div v-if="canteen.isCentralCuisine">
+            <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">
+              Nombre de cantines à qui je fournis des repas
+            </p>
+            <p class="my-0">{{ parseInt(canteen.satelliteCanteensCount).toLocaleString("fr-FR") || "—" }}</p>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -100,6 +108,9 @@ export default {
     economicModel() {
       const managementType = Constants.EconomicModels.find((x) => x.value === this.canteen.economicModel)
       return managementType?.text
+    },
+    hasSite() {
+      return this.canteen.productionType !== "central"
     },
   },
 }
