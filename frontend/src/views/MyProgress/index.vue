@@ -369,6 +369,7 @@ export default {
             status: "success",
           })
           this.updateFromServer(diagnostic)
+          window.scrollTo(0, 0)
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
