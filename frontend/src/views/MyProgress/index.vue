@@ -201,7 +201,7 @@ import DsfrSelect from "@/components/DsfrSelect"
 import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
-import { diagnosticYears, timeAgo, lastYear, hasDiagnosticApproData } from "@/utils"
+import { diagnosticYears, timeAgo, lastYear, readyToTeledeclare } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
 
@@ -277,14 +277,7 @@ export default {
       return window.ENABLE_TELEDECLARATION && +this.year === lastYear()
     },
     readyToTeledeclare() {
-      if (!this.inTeledeclarationCampaign || this.hasActiveTeledeclaration) return false
-      if (this.centralDiagnostic) {
-        const noNeedToTd = this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
-        const requiresOtherData = !noNeedToTd
-        const hasOtherData = !!this.diagnostic
-        return requiresOtherData && hasOtherData
-      }
-      return this.diagnostic && hasDiagnosticApproData(this.diagnostic)
+      return readyToTeledeclare(this.canteen, this.diagnostic)
     },
     declaringApproOnly() {
       return this.isCentralKitchen && this.centralKitchenDiagnosticMode === "APPRO"

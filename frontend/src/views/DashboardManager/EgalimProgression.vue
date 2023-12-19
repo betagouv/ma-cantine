@@ -99,7 +99,7 @@
 <script>
 import DsfrSelect from "@/components/DsfrSelect"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
-import { lastYear, diagnosticYears, hasDiagnosticApproData, hasFinishedMeasureTunnel } from "@/utils"
+import { lastYear, diagnosticYears, readyToTeledeclare, hasFinishedMeasureTunnel } from "@/utils"
 import FoodWasteCard from "./FoodWasteCard"
 import DiversificationCard from "./DiversificationCard"
 import NoPlasticCard from "./NoPlasticCard"
@@ -183,15 +183,7 @@ export default {
       return !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic)
     },
     readyToTeledeclare() {
-      const inTdCampaign = window.ENABLE_TELEDECLARATION && this.year === lastYear()
-      if (!inTdCampaign || this.hasActiveTeledeclaration) return false
-      if (this.centralDiagnostic) {
-        const noNeedToTd = this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
-        const requiresOtherData = !noNeedToTd
-        const hasOtherData = !!this.canteenDiagnostic
-        return requiresOtherData && hasOtherData
-      }
-      return this.canteenDiagnostic && hasDiagnosticApproData(this.canteenDiagnostic)
+      return readyToTeledeclare(this.canteen, this.canteenDiagnostic)
     },
     tunnelComplete() {
       return this.canteenDiagnostic && hasFinishedMeasureTunnel(this.canteenDiagnostic)
