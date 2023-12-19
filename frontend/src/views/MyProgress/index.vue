@@ -34,9 +34,7 @@
       </v-col>
       <v-col cols="12" sm="9" md="10">
         <v-card v-if="hasActiveTeledeclaration" class="pa-6 mb-4 mr-1" style="background: #f6f6f6">
-          <p class="fr-text-sm font-weight-bold mb-0">
-            Votre bilan 2023 a bien été télédéclaré.
-          </p>
+          <p class="fr-text-sm font-weight-bold mb-0">Votre bilan {{ diagnostic.year }} a bien été télédéclaré.</p>
           <p class="fr-text-sm">
             Votre bilan a été télédéclaré
             <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
