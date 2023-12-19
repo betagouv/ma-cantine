@@ -59,7 +59,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-card v-if="readyToTeledeclare" class="pa-6 my-4 mr-1 fr-text grey--text text--darken-3 text-center cta-block">
+    <v-card v-if="readyToTeledeclare" class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block">
       <div v-if="tunnelComplete">
         <p class="mb-0">
           Votre bilan {{ canteenDiagnostic.year }} est complet ! Merci d’avoir pris le temps de saisir vos données !
@@ -258,7 +258,7 @@ export default {
   background: #f5f5fe;
   backdrop-filter: blur(7px);
   border: 1.5px dashed #000091;
-  border-radius: 5px;
+  border-radius: 24px;
   color: #3a3a3a;
 }
 </style>
