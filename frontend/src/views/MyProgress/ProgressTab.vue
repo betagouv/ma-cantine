@@ -217,6 +217,7 @@ export default {
       return this.isApproTab && isCurrentYear && managesOwnPurchases && !dataProvidedByDiagnostic
     },
     hasData() {
+      if (this.hasActiveTeledeclaration) return true // if tunnel wasn't started, but diag was TD'd, show synthesis
       const hasMeasureData = hasStartedMeasureTunnel(this.displayDiagnostic, this.keyMeasure)
       return this.showPurchasesSection || hasMeasureData
     },
