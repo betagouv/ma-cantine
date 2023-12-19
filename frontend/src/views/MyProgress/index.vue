@@ -142,9 +142,9 @@
                 :centralDiagnostic="centralDiagnostic"
                 :centralKitchenDiagnosticMode="centralKitchenDiagnosticMode"
               />
-              <v-row class="mt-6">
+              <v-row class="mt-6 align-center">
                 <v-col v-if="previousTab(item)">
-                  <p class="fr-text-sm">
+                  <p class="fr-text-sm mb-0">
                     <v-icon small color="primary" class="mr-1">$arrow-left-line</v-icon>
                     <router-link :to="{ params: { measure: previousTab(item).urlSlug } }">
                       {{ previousTab(item).title }}
