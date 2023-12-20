@@ -49,7 +49,11 @@
       </v-col>
     </v-row>
 
-    <div v-if="errors.length">
+    <p v-if="updatingErrors">
+      <v-progress-circular indeterminate color="primary" />
+      <span>Vérification des données en cours...</span>
+    </p>
+    <div v-else-if="errors.length">
       <h2 class="fr-h2 mt-8">Vérifier les erreurs suivantes</h2>
       <ul>
         <li v-for="(error, errorIdx) in errors" :key="errorIdx">
@@ -63,7 +67,7 @@
         <span>Upload en cours...</span>
       </p>
       <p v-else>
-        <v-btn @click="checkErrors" large color="primary" outlined class="fr-text-lg mt-4">
+        <v-btn @click="uploadFile" large color="primary" outlined class="fr-text-lg mt-4">
           Upload nouveau fichier
         </v-btn>
       </p>
@@ -118,35 +122,73 @@ const DEFAULT_FIELD_ORDER = ["siret", "name"]
 const LOADING_STATUS_ENUM = {
   processingFile: "processingFile",
   importing: "importing",
+  errorCheck: "errorCheck",
 }
 
+const EXAMPLE = {
+  missingData: {
+    file: [
+      ["75461089423143", ""],
+      ["", "Cantine sans SIRET"],
+    ],
+    goodFile: [
+      ["75461089423143", "Cantine de l'avenir"],
+      ["36419155442551", "Cantine avec SIRET"],
+    ],
+    errors: [
+      {
+        field: "name",
+        lineIdx: 0,
+        message: "Faut avoir un nom de la cantine",
+      },
+      {
+        field: "siret",
+        lineIdx: 1,
+        message: "Faut avoir un SIRET",
+        // we could imagine having an errorId field and grouping together errors by id to have less
+        // overwhelming UI, esp when the columns are just in a bad order
+      },
+    ],
+  },
+  differentColumnOrder: {
+    file: [
+      ["Cantine de l'avenir", "75461089423143"],
+      ["Cantine sans SIRET", ""],
+    ],
+    goodFile: [
+      ["Cantine de l'avenir", "75461089423143"],
+      ["Cantine avec SIRET", "36419155442551"],
+    ],
+    errors: [
+      {
+        field: "siret",
+        lineIdx: 0,
+        message: "Mauvais format",
+      },
+      {
+        field: "siret",
+        lineIdx: 1,
+        message: "Mauvais format",
+      },
+    ],
+  },
+}
+
+// in this code I am trying to avoid fundamental assumptions about what type of object we are importing
+// to make it easier to expand this to the purchases import later
 export default {
   name: "EveryoneGetsToImport",
   data() {
+    const scenario = EXAMPLE.differentColumnOrder
     return {
       // constants
       fields: FIELDS,
       defaultFieldOrder: DEFAULT_FIELD_ORDER,
+      scenario,
       // variables
       userFieldOrder: DEFAULT_FIELD_ORDER,
-      processedFileContent: [
-        ["75461089423143", ""],
-        ["", "Cantine sans SIRET"],
-      ],
-      errors: [
-        {
-          field: "name",
-          lineIdx: 0,
-          message: "Faut avoir un nom de la cantine",
-        },
-        {
-          field: "siret",
-          lineIdx: 1,
-          message: "Faut avoir un SIRET",
-          // we could imagine having an errorId field and grouping together errors by id to have less
-          // overwhelming UI, esp when the columns are just in a bad order
-        },
-      ],
+      processedFileContent: scenario.file,
+      errors: scenario.errors,
       errorToBlink: {},
       itemsToCreate: [],
       itemsToModify: [],
@@ -174,6 +216,9 @@ export default {
     },
     importingData() {
       return this.waitingForWhat === LOADING_STATUS_ENUM.importing
+    },
+    updatingErrors() {
+      return this.waitingForWhat === LOADING_STATUS_ENUM.errorCheck
     },
     fieldOptions() {
       return DEFAULT_FIELD_ORDER.map((f) => FIELDS[f])
@@ -211,16 +256,34 @@ export default {
         this.waitingForWhat = null
       }, 1000)
     },
-    checkErrors() {
+    uploadFile() {
       this.waitingForWhat = LOADING_STATUS_ENUM.processingFile
+      this.checkErrors()
+    },
+    checkErrors(demoNewState) {
+      if (!this.waitingForWhat) this.waitingForWhat = LOADING_STATUS_ENUM.errorCheck
+      this.errors = [] // the callback will be responsible for sending through errors
+      // TODO: replace this timeout with a call to some new draft bulk create function
       setTimeout(() => {
-        this.processedFileContent = [
-          ["75461089423143", "Cantine de l'avenir"],
-          ["36419155442551", "Cantine avec SIRET"],
-        ]
-        this.errors = []
+        // instead of doing the "demoNewState" stuff, you'd send the following
+        const objectsToSend = this.processedFileContent.map((line) => {
+          const object = {}
+          this.userFieldOrder.forEach((field, fieldIdx) => {
+            object[field] = line[fieldIdx]
+          })
+          return object
+        })
+        console.log("objectsToSend", objectsToSend)
+        // end of half-finished code to illustrate my point
+        if (demoNewState) demoNewState()
+        else {
+          this.processedFileContent = this.scenario.goodFile
+          this.errors = []
+        }
+        // these variables aren't sufficient for the case of canteens + diags + TD
         this.itemsToCreate = [{ siret: "75461089423143", name: "Cantine de l'avenir" }]
         this.itemsToModify = [{ siret: "36419155442551", name: "Cantine avec SIRET" }]
+        // TODO: could also imagine a line saying how many manager invitation emails will be sent out
         this.waitingForWhat = null
       }, 1000)
     },
@@ -242,6 +305,15 @@ export default {
         this.userFieldOrder[this.idxForField] = this.fieldToMove
         this.userFieldOrder[fieldUsedToBeAtIdx] = fieldBeingReplaced // swap columns
         // TODO: debug error highlighting post column order change
+        this.checkErrors(() => {
+          this.errors = [
+            {
+              field: "siret",
+              lineIdx: 1,
+              message: "Faut avoir un SIRET",
+            },
+          ]
+        })
       }
       this.idxForField = null
       this.fieldToMove = null
