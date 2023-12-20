@@ -39,9 +39,22 @@
 
     <div v-if="errors.length">
       <h2 class="fr-h2 mt-8">Vérifier les erreurs suivants</h2>
-      <v-btn v-for="(error, errorIdx) in errors" :key="errorIdx" @click="goToError(error)" text class="ml-n3">
-        {{ error.message }} sur {{ itemDisplayName(error.lineIdx) }}
-      </v-btn>
+      <ul>
+        <li v-for="(error, errorIdx) in errors" :key="errorIdx">
+          <v-btn @click="goToError(error)" text class="ml-n3">
+            {{ error.message }} sur {{ itemDisplayName(error.lineIdx) }}
+          </v-btn>
+        </li>
+      </ul>
+      <p v-if="processingFile">
+        <v-progress-circular indeterminate color="primary" />
+        <span>Upload en cours...</span>
+      </p>
+      <p v-else>
+        <v-btn @click="checkErrors" large color="primary" outlined class="fr-text-lg mt-4">
+          Upload nouveau fichier
+        </v-btn>
+      </p>
     </div>
     <div v-else-if="importSuccess">
       <h2 class="fr-h2 mt-8">Félicitations !</h2>
@@ -63,9 +76,15 @@
           {{ itemWord(modifyCount) }}
         </li>
       </ul>
-      <!-- checkbox: "Je suis authorisé.e de faire cet import pour l'utilisateur" -->
-      <!-- in the case where it is a team member and there are canteens they don't manage there -->
-      <v-btn @click="completeImport" large color="primary" class="fr-text-lg mt-4">Importer ces données</v-btn>
+      <p v-if="importingData">
+        <v-progress-circular indeterminate color="primary" />
+        <span>Import en cours...</span>
+      </p>
+      <p v-else>
+        <!-- checkbox: "Je suis authorisé.e de faire cet import pour l'utilisateur" -->
+        <!-- in the case where it is a team member and there are canteens they don't manage there -->
+        <v-btn @click="completeImport" large color="primary" class="fr-text-lg mt-4">Importer ces données</v-btn>
+      </p>
     </div>
   </div>
 </template>
@@ -81,6 +100,11 @@ const fields = {
 }
 
 const defaultFieldOrder = ["siret", "name"]
+
+const LOADING_STATUS_ENUM = {
+  processingFile: "processingFile",
+  importing: "importing",
+}
 
 export default {
   name: "EveryoneGetsToImport",
@@ -106,6 +130,7 @@ export default {
       errorToBlink: {},
       itemsToCreate: [],
       itemsToModify: [],
+      waitingForWhat: null,
       importSuccess: false,
     }
   },
@@ -121,6 +146,12 @@ export default {
     },
     modifyCount() {
       return this.itemsToModify.length
+    },
+    processingFile() {
+      return this.waitingForWhat === LOADING_STATUS_ENUM.processingFile
+    },
+    importingData() {
+      return this.waitingForWhat === LOADING_STATUS_ENUM.importing
     },
   },
   methods: {
@@ -148,7 +179,24 @@ export default {
       setTimeout(() => (this.errorToBlink = {}), 1000)
     },
     completeImport() {
-      this.importSuccess = true
+      this.waitingForWhat = LOADING_STATUS_ENUM.importing
+      setTimeout(() => {
+        this.importSuccess = true
+        this.waitingForWhat = null
+      }, 1000)
+    },
+    checkErrors() {
+      this.waitingForWhat = LOADING_STATUS_ENUM.processingFile
+      setTimeout(() => {
+        this.processedFileContent = [
+          ["75461089423143", "Cantine de l'avenir"],
+          ["36419155442551", "Cantine avec SIRET"],
+        ]
+        this.errors = []
+        this.itemsToCreate = [{ siret: "75461089423143", name: "Cantine de l'avenir" }]
+        this.itemsToModify = [{ siret: "36419155442551", name: "Cantine avec SIRET" }]
+        this.waitingForWhat = null
+      }, 1000)
     },
   },
 }
