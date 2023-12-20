@@ -6,7 +6,7 @@
       <v-col><p>Nom du champ</p></v-col>
       <v-col v-for="(_, itemIdx) in processedFileContent" :key="`hr_${itemIdx}`">
         <p class="d-flex justify-space-between">
-          <b>Item #{{ itemIdx + 1 }}</b>
+          <b>{{ itemDisplayName(itemIdx) }}</b>
           <!-- NB: icons should be accessible -->
           <span v-if="itemHasError(itemIdx)">❌</span>
           <span v-else>✔️</span>
@@ -23,13 +23,21 @@
         </p>
       </v-col>
       <v-col
-        v-for="(line, itemIdx) in processedFileContent"
-        :key="itemIdx"
-        :class="{ 'field-error': itemFieldHasError(itemIdx, field) }"
+        v-for="(line, lineIdx) in processedFileContent"
+        :key="lineIdx"
+        :class="{
+          'field-error': itemFieldHasError(lineIdx, field),
+          blink: errorToBlink.lineIdx === lineIdx && errorToBlink.field === field,
+        }"
       >
         <p>{{ line[fieldIdx] }}</p>
       </v-col>
     </v-row>
+
+    <h2 class="fr-h2 mt-8">Vérifier les erreurs suivants</h2>
+    <v-btn v-for="(error, errorIdx) in errors" :key="errorIdx" @click="goToError(error)" text class="ml-n3">
+      {{ error.message }} sur {{ itemDisplayName(error.lineIdx) }}
+    </v-btn>
   </div>
 </template>
 
@@ -57,17 +65,28 @@ export default {
         ["75461089423143", "Cantine de l'avenir"],
         ["", "Cantine sans SIRET"],
       ],
+      errors: [
+        {
+          field: "siret",
+          lineIdx: 1,
+          message: "Faut avoir un SIRET",
+        },
+      ],
+      errorToBlink: {},
     }
   },
   computed: {
     itemsWithErrors() {
-      return [1]
+      return this.errors.map((error) => error.lineIdx)
     },
     fieldsWithErrors() {
-      return ["siret"]
+      return this.errors.map((error) => error.field)
     },
   },
   methods: {
+    itemDisplayName(itemIdx) {
+      return `Cantine #${itemIdx + 1}`
+    },
     itemHasError(itemIdx) {
       return this.itemsWithErrors.indexOf(itemIdx) > -1
     },
@@ -77,6 +96,10 @@ export default {
     itemFieldHasError(itemIdx, fieldName) {
       return this.itemHasError(itemIdx) && this.fieldHasError(fieldName)
     },
+    goToError(error) {
+      this.errorToBlink = error
+      setTimeout(() => (this.errorToBlink = {}), 1000)
+    },
   },
 }
 </script>
@@ -84,5 +107,13 @@ export default {
 <style scoped>
 .field-error {
   background-color: #ff9999;
+}
+.blink {
+  animation: blinker 0.5s step-start infinite;
+}
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
 }
 </style>
