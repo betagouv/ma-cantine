@@ -18,8 +18,17 @@
         <!-- this could become a drop down field with all the column options -->
         <!-- if a column is selected that is already elsewhere, clear the other field -->
         <!-- and require the user to specify what it is -->
-        <p class="d-flex justify-space-between">
-          <b>{{ fields[field].name }}</b>
+        <p class="d-flex">
+          <v-select
+            v-if="idxForField === fieldIdx"
+            v-model="fieldToMove"
+            :items="fieldOptions"
+            item-text="name"
+            @change="updateFieldOrder"
+          />
+          <b v-else>{{ fields[field].name }}</b>
+          <v-spacer />
+          <v-btn v-if="idxForField !== fieldIdx" @click="idxForField = fieldIdx" text small>changer</v-btn>
           <!-- NB: icons should be accessible -->
           <span v-if="fieldHasError(field)">❌</span>
           <span v-else>✔️</span>
@@ -93,16 +102,18 @@
 </template>
 
 <script>
-const fields = {
+const FIELDS = {
   siret: {
+    value: "siret",
     name: "SIRET",
   },
   name: {
+    value: "name",
     name: "Nom de la cantine",
   },
 }
 
-const defaultFieldOrder = ["siret", "name"]
+const DEFAULT_FIELD_ORDER = ["siret", "name"]
 
 const LOADING_STATUS_ENUM = {
   processingFile: "processingFile",
@@ -114,9 +125,10 @@ export default {
   data() {
     return {
       // constants
-      fields,
-      defaultFieldOrder,
+      fields: FIELDS,
+      defaultFieldOrder: DEFAULT_FIELD_ORDER,
       // variables
+      userFieldOrder: DEFAULT_FIELD_ORDER,
       processedFileContent: [
         ["75461089423143", ""],
         ["", "Cantine sans SIRET"],
@@ -140,6 +152,8 @@ export default {
       itemsToModify: [],
       waitingForWhat: null,
       importSuccess: false,
+      idxForField: null,
+      fieldToMove: null,
     }
   },
   computed: {
@@ -160,6 +174,9 @@ export default {
     },
     importingData() {
       return this.waitingForWhat === LOADING_STATUS_ENUM.importing
+    },
+    fieldOptions() {
+      return DEFAULT_FIELD_ORDER.map((f) => FIELDS[f])
     },
   },
   methods: {
@@ -206,6 +223,28 @@ export default {
         this.itemsToModify = [{ siret: "36419155442551", name: "Cantine avec SIRET" }]
         this.waitingForWhat = null
       }, 1000)
+    },
+    updateFieldOrder() {
+      if (!this.fieldToMove) {
+        this.idxForField = null
+        this.fieldToMove = null
+        return
+      }
+      const currentField = this.userFieldOrder[this.idxForField]
+      const fieldHasChanged = currentField !== this.fieldToMove
+      if (fieldHasChanged) {
+        const fieldUsedToBeAtIdx = this.userFieldOrder.indexOf(this.fieldToMove)
+        if (fieldUsedToBeAtIdx === -1) {
+          // if it isn't in array that's weird. Reset?
+          return
+        }
+        const fieldBeingReplaced = this.userFieldOrder[this.idxForField]
+        this.userFieldOrder[this.idxForField] = this.fieldToMove
+        this.userFieldOrder[fieldUsedToBeAtIdx] = fieldBeingReplaced // swap columns
+        // TODO: debug error highlighting post column order change
+      }
+      this.idxForField = null
+      this.fieldToMove = null
     },
   },
 }
