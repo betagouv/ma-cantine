@@ -13,7 +13,7 @@
         </p>
       </v-col>
     </v-row>
-    <v-row v-for="(field, idx) in defaultFieldOrder" :key="field">
+    <v-row v-for="(field, fieldIdx) in defaultFieldOrder" :key="field">
       <v-col>
         <p class="d-flex justify-space-between">
           <b>{{ fields[field].name }}</b>
@@ -22,8 +22,12 @@
           <span v-else>✔️</span>
         </p>
       </v-col>
-      <v-col v-for="(line, itemIdx) in processedFileContent" :key="itemIdx">
-        <p>{{ line[idx] }}</p>
+      <v-col
+        v-for="(line, itemIdx) in processedFileContent"
+        :key="itemIdx"
+        :class="{ 'field-error': itemFieldHasError(itemIdx, field) }"
+      >
+        <p>{{ line[fieldIdx] }}</p>
       </v-col>
     </v-row>
   </div>
@@ -70,6 +74,15 @@ export default {
     fieldHasError(fieldName) {
       return this.fieldsWithErrors.indexOf(fieldName) > -1
     },
+    itemFieldHasError(itemIdx, fieldName) {
+      return this.itemHasError(itemIdx) && this.fieldHasError(fieldName)
+    },
   },
 }
 </script>
+
+<style scoped>
+.field-error {
+  background-color: #ff9999;
+}
+</style>
