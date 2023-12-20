@@ -41,7 +41,7 @@
     </v-row>
 
     <div v-if="errors.length">
-      <h2 class="fr-h2 mt-8">Vérifier les erreurs suivants</h2>
+      <h2 class="fr-h2 mt-8">Vérifier les erreurs suivantes</h2>
       <ul>
         <li v-for="(error, errorIdx) in errors" :key="errorIdx">
           <v-btn @click="goToError(error)" text class="ml-n3">
