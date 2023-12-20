@@ -29,10 +29,13 @@
         v-for="(line, lineIdx) in processedFileContent"
         :key="lineIdx"
         :class="{
-          'field-error': itemFieldHasError(lineIdx, field),
+          'field-error': !!itemFieldError(lineIdx, field),
           blink: errorToBlink.lineIdx === lineIdx && errorToBlink.field === field,
         }"
+        :title="itemFieldError(lineIdx, field) ? itemFieldError(lineIdx, field).message : ''"
       >
+        <!-- TODO: replace problematic tooltip hover text with a toggletip style:
+        https://inclusive-components.design/tooltips-toggletips/ -->
         <p>{{ line[fieldIdx] }}</p>
       </v-col>
     </v-row>
@@ -115,10 +118,15 @@ export default {
       defaultFieldOrder,
       // variables
       processedFileContent: [
-        ["75461089423143", "Cantine de l'avenir"],
+        ["75461089423143", ""],
         ["", "Cantine sans SIRET"],
       ],
       errors: [
+        {
+          field: "name",
+          lineIdx: 0,
+          message: "Faut avoir un nom de la cantine",
+        },
         {
           field: "siret",
           lineIdx: 1,
@@ -171,8 +179,9 @@ export default {
     fieldHasError(fieldName) {
       return this.fieldsWithErrors.indexOf(fieldName) > -1
     },
-    itemFieldHasError(itemIdx, fieldName) {
-      return this.itemHasError(itemIdx) && this.fieldHasError(fieldName)
+    itemFieldError(itemIdx, fieldName) {
+      // potential problems with perf if iterating v large imports, since this is called a few times
+      return this.errors.find((error) => error.lineIdx === itemIdx && error.field === fieldName)
     },
     goToError(error) {
       this.errorToBlink = error
