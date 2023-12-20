@@ -15,6 +15,9 @@
     </v-row>
     <v-row v-for="(field, fieldIdx) in defaultFieldOrder" :key="field">
       <v-col>
+        <!-- this could become a drop down field with all the column options -->
+        <!-- if a column is selected that is already elsewhere, clear the other field -->
+        <!-- and require the user to specify what it is -->
         <p class="d-flex justify-space-between">
           <b>{{ fields[field].name }}</b>
           <!-- NB: icons should be accessible -->
@@ -34,10 +37,36 @@
       </v-col>
     </v-row>
 
-    <h2 class="fr-h2 mt-8">Vérifier les erreurs suivants</h2>
-    <v-btn v-for="(error, errorIdx) in errors" :key="errorIdx" @click="goToError(error)" text class="ml-n3">
-      {{ error.message }} sur {{ itemDisplayName(error.lineIdx) }}
-    </v-btn>
+    <div v-if="errors.length">
+      <h2 class="fr-h2 mt-8">Vérifier les erreurs suivants</h2>
+      <v-btn v-for="(error, errorIdx) in errors" :key="errorIdx" @click="goToError(error)" text class="ml-n3">
+        {{ error.message }} sur {{ itemDisplayName(error.lineIdx) }}
+      </v-btn>
+    </div>
+    <div v-else-if="importSuccess">
+      <h2 class="fr-h2 mt-8">Félicitations !</h2>
+      <v-btn :to="{ name: 'ManagementPage' }" color="primary">Mon tableau de bord</v-btn>
+    </div>
+    <div v-else>
+      <h2 class="fr-h2 mt-8">Vérifier que tout est bon !</h2>
+      <p>Il n'y a pas d'erreurs avec cet import !</p>
+      <p>Vérifiez que les actions suivantes sont attendues :</p>
+      <ul>
+        <li>
+          Je vais créer
+          <b>{{ createCount }}</b>
+          {{ itemWord(createCount) }}
+        </li>
+        <li>
+          Je vais modifier
+          <b>{{ modifyCount }}</b>
+          {{ itemWord(modifyCount) }}
+        </li>
+      </ul>
+      <!-- checkbox: "Je suis authorisé.e de faire cet import pour l'utilisateur" -->
+      <!-- in the case where it is a team member and there are canteens they don't manage there -->
+      <v-btn @click="completeImport" large color="primary" class="fr-text-lg mt-4">Importer ces données</v-btn>
+    </div>
   </div>
 </template>
 
@@ -70,9 +99,14 @@ export default {
           field: "siret",
           lineIdx: 1,
           message: "Faut avoir un SIRET",
+          // we could imagine having an errorId field and grouping together errors by id to have less
+          // overwhelming UI, esp when the columns are just in a bad order
         },
       ],
       errorToBlink: {},
+      itemsToCreate: [],
+      itemsToModify: [],
+      importSuccess: false,
     }
   },
   computed: {
@@ -82,10 +116,23 @@ export default {
     fieldsWithErrors() {
       return this.errors.map((error) => error.field)
     },
+    createCount() {
+      return this.itemsToCreate.length
+    },
+    modifyCount() {
+      return this.itemsToModify.length
+    },
   },
   methods: {
+    itemWord(itemCount) {
+      if (itemCount === 1) {
+        return "cantine"
+      } else {
+        return "cantines"
+      }
+    },
     itemDisplayName(itemIdx) {
-      return `Cantine #${itemIdx + 1}`
+      return `${this.itemWord(1)} #${itemIdx + 1}`
     },
     itemHasError(itemIdx) {
       return this.itemsWithErrors.indexOf(itemIdx) > -1
@@ -99,6 +146,9 @@ export default {
     goToError(error) {
       this.errorToBlink = error
       setTimeout(() => (this.errorToBlink = {}), 1000)
+    },
+    completeImport() {
+      this.importSuccess = true
     },
   },
 }
