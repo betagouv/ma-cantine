@@ -59,6 +59,7 @@ import DashboardManager from "@/views/DashboardManager"
 import TerritoryCanteens from "@/views/TerritoryCanteens"
 import VideoTutorial from "@/views/VideoTutorial"
 import MyProgress from "@/views/MyProgress"
+import EveryoneGetsToImport from "@/views/EveryoneGetsToImport"
 import Constants from "@/constants"
 
 Vue.use(VueRouter)
@@ -631,6 +632,19 @@ if (window.ENABLE_DASHBOARD) {
       authenticationRequired: true,
     },
     sitemapGroup: Constants.SitemapGroups.DIAG,
+  })
+}
+
+if (window.ENABLE_IMPORT_V2) {
+  routes.push({
+    path: "/import-pour-toustes",
+    name: "EveryoneGetsToImport",
+    component: EveryoneGetsToImport,
+    meta: {
+      title: "Import pour tous.tes",
+      authenticationRequired: true,
+    },
+    sitemapGroup: Constants.SitemapGroups.ACTION,
   })
 }
 

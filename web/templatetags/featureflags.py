@@ -32,3 +32,8 @@ def teledeclaration_end_date():
 @register.simple_tag
 def enable_dashboard():
     return getattr(settings, "ENABLE_DASHBOARD", "")
+
+
+@register.simple_tag
+def enable_import_v2():
+    return getattr(settings, "ENABLE_IMPORT_V2", "")

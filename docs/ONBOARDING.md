@@ -105,6 +105,7 @@ ENABLE_PARTNERS= Optionnel - `True` pour afficher nos partenaires sur la page d'
 ENABLE_TELEDECLARATION= Optionnel - `True` pour permettre les utilisateurs de télédéclarer leur diagnostic.
 TELEDECLARATION_END_DATE= Optionnel - Celle-ci n'est pas exactement une feature flag mais fonctionne avec le flag précedent. Il faut indiquer une date pour la fin de la campagne de la télédéclaration (par exemple, `2024-03-15`)
 ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des gestionnaires.
+ENABLE_IMPORT_V2= Optionnel - `True` pour montrer le nouveau import en masse de cantines.
 ```
 
 ### Relances automatiques par email
@@ -114,7 +115,6 @@ TEMPLATE_ID_NO_CANTEEN_FIRST= Optionnel - ID du template SendInBlue pour le prem
 TEMPLATE_ID_NO_CANTEEN_SECOND= Optionnel - ID du template SendInBlue pour le deuzième email envoyé aux utilisateurs n'ayant pas encore créé une cantine. En cas d'absence la relance n'aura pas lieu.
 TEMPLATE_ID_NO_DIAGNOSTIC_FIRST= Optionnel - ID du template SendInBlue pour le premier email envoyé aux utilisateurs ayant une cantine mais pas un diagnostic. En cas d'absence la relance n'aura pas lieu.
 ```
-
 
 #### Trello
 
@@ -142,7 +142,7 @@ Pour créer les fichiers compilés de traduction :
 python manage.py compilemessages
 ```
 
-Notez que cette commande est à effectuer à chaque changement de fichier de traduction *po.
+Notez que cette commande est à effectuer à chaque changement de fichier de traduction \*po.
 
 ## Lancer l'application en mode développement
 
