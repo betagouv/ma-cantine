@@ -604,7 +604,7 @@ export const hasSatelliteInconsistency = (canteen) => {
   return canteen.satelliteCanteensCount !== canteen.satellites.length
 }
 
-export const readyToTeledeclare = (canteen, diagnostic) => {
+export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
   if (!canteen || !diagnostic) return false
 
   const tdYear = lastYear()
@@ -623,9 +623,11 @@ export const readyToTeledeclare = (canteen, diagnostic) => {
       return canSubmitOtherData && hasOtherData
     }
     // satellites can still TD if CCs haven't
-  } else if (canteen.isCentralCuisine) {
-    return !hasSatelliteInconsistency(canteen)
   }
 
   return hasDiagnosticApproData(diagnostic)
+}
+
+export const readyToTeledeclare = (canteen, diagnostic) => {
+  return diagnosticCanBeTeledeclared(canteen, diagnostic) && !hasSatelliteInconsistency(canteen)
 }

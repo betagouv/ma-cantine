@@ -59,7 +59,26 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-card v-if="readyToTeledeclare" class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block">
+    <v-card v-if="hasSatelliteInconsistency" class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block">
+      <p>
+        Vous avez déclaré que votre établissement livre des repas à {{ canteen.satelliteCanteensCount }}
+        {{ canteen.satelliteCanteensCount === 1 ? "cantine" : "cantines" }}, mais il existe
+        {{ canteen.satellites.length }} {{ canteen.satellites.length === 1 ? "cantine" : "cantines" }}
+        dans notre base de données.
+      </p>
+      <v-card-actions class="px-0 pt-0 pb-0 justify-center">
+        <v-btn :to="{ name: 'SatelliteManagement' }" color="primary" class="fr-text font-weight-medium">
+          Gérer mes satellites
+        </v-btn>
+        <v-btn :to="{ name: 'CanteenForm' }" color="primary" outlined class="fr-text font-weight-medium">
+          Changer le nombre de satellites déclaré
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+    <v-card
+      v-else-if="diagnosticCanBeTeledeclared"
+      class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
+    >
       <div v-if="tunnelComplete">
         <p class="mb-0">
           Votre bilan {{ canteenDiagnostic.year }} est complet ! Merci d’avoir pris le temps de saisir vos données !
@@ -99,7 +118,14 @@
 <script>
 import DsfrSelect from "@/components/DsfrSelect"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
-import { lastYear, diagnosticYears, readyToTeledeclare, hasFinishedMeasureTunnel } from "@/utils"
+import {
+  lastYear,
+  diagnosticYears,
+  readyToTeledeclare,
+  diagnosticCanBeTeledeclared,
+  hasSatelliteInconsistency,
+  hasFinishedMeasureTunnel,
+} from "@/utils"
 import FoodWasteCard from "./FoodWasteCard"
 import DiversificationCard from "./DiversificationCard"
 import NoPlasticCard from "./NoPlasticCard"
@@ -181,6 +207,12 @@ export default {
     },
     needsData() {
       return !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic)
+    },
+    diagnosticCanBeTeledeclared() {
+      return diagnosticCanBeTeledeclared(this.canteen, this.canteenDiagnostic)
+    },
+    hasSatelliteInconsistency() {
+      return hasSatelliteInconsistency(this.canteen)
     },
     readyToTeledeclare() {
       return readyToTeledeclare(this.canteen, this.canteenDiagnostic)
