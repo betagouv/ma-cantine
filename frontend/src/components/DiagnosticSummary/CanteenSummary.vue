@@ -85,10 +85,14 @@
       </v-col>
     </v-row>
     <v-row v-if="canteen.isCentralCuisine">
-      <v-col cols="12">
+      <v-col cols="12" class="pb-0">
         <h3 class="fr-h6">Mes satellites</h3>
-        <p class="fr-text-sm mb-0">
-          {{ canteen.satellites.length }} / {{ canteen.satelliteCanteensCount }} satellites renseignés
+        <p class="fr-text-sm mb-1">
+          {{ canteen.satellites.length }} sur {{ canteen.satelliteCanteensCount }} satellites renseignés
+        </p>
+        <p v-if="inTeledeclarationCampaign && hasSatelliteInconsistency" class="fr-text-sm mb-0 d-flex align-center">
+          <v-icon color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
+          Pour télédéclarer le bilan de {{ lastYear }}, le nombre déclaré et le nombre renseigné doivent être les mêmes.
         </p>
       </v-col>
       <v-col cols="12" md="8">
@@ -115,7 +119,7 @@
 <script>
 import DsfrCallout from "@/components/DsfrCallout"
 import Constants from "@/constants"
-import { sectorDisplayString } from "@/utils"
+import { lastYear, sectorDisplayString, hasSatelliteInconsistency } from "@/utils"
 
 export default {
   name: "CanteenSummary",
@@ -132,6 +136,7 @@ export default {
         { text: "Nom", value: "name" },
         { text: "SIRET", value: "siret" },
       ],
+      lastYear: lastYear(),
     }
   },
   computed: {
@@ -152,6 +157,12 @@ export default {
     },
     hasSite() {
       return this.canteen.productionType !== "central"
+    },
+    inTeledeclarationCampaign() {
+      return window.ENABLE_TELEDECLARATION
+    },
+    hasSatelliteInconsistency() {
+      return hasSatelliteInconsistency(this.canteen)
     },
   },
 }
