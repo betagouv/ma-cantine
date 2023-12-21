@@ -601,17 +601,29 @@ export const getCharacteristicFromField = (fieldName, fieldPrefix, tdGroup) => {
   return getCharacteristicFromFieldSuffix(fieldSuffix, tdGroup)
 }
 
-export const readyToTeledeclare = (canteen, diagnostic) => {
+export const hasSatelliteInconsistency = (canteen) => {
+  if (!canteen || !canteen.isCentralCuisine) return false
+  if (!canteen.satelliteCanteensCount) return true
+  if (!canteen.satellites) return true
+  return canteen.satelliteCanteensCount !== canteen.satellites.length
+}
+
+export const inTeledeclarationCampaign = (year) => {
+  const tdYear = lastYear()
+  const inTdCampaign = window.ENABLE_TELEDECLARATION && year === tdYear
+  return inTdCampaign
+}
+
+export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
   if (!canteen || !diagnostic) return false
 
-  const tdYear = lastYear()
-  const inTdCampaign = window.ENABLE_TELEDECLARATION && diagnostic.year === tdYear
-  if (!inTdCampaign) return false
+  if (!inTeledeclarationCampaign(diagnostic.year)) return false
 
   const hasActiveTeledeclaration = diagnostic.teledeclaration?.status === "SUBMITTED"
   if (hasActiveTeledeclaration) return false
 
   if (canteen.productionType === "site_cooked_elsewhere") {
+    const tdYear = lastYear()
     const ccDiag = canteen.centralKitchenDiagnostics?.find((x) => x.year === tdYear)
     if (ccDiag) {
       const noNeedToTd = ccDiag.centralKitchenDiagnosticMode === "ALL"
@@ -620,9 +632,11 @@ export const readyToTeledeclare = (canteen, diagnostic) => {
       return canSubmitOtherData && hasOtherData
     }
     // satellites can still TD if CCs haven't
-  } else if (canteen.isCentralKitchen) {
-    // TODO: check if satellites in DB == satellite count
   }
 
   return hasDiagnosticApproData(diagnostic)
+}
+
+export const readyToTeledeclare = (canteen, diagnostic) => {
+  return diagnosticCanBeTeledeclared(canteen, diagnostic) && !hasSatelliteInconsistency(canteen)
 }
