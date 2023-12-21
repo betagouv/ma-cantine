@@ -103,7 +103,7 @@
       </v-col>
       <v-col cols="12">
         <p>
-          <v-btn :to="SatelliteManagement" outlined small color="primary" class="fr-btn--tertiary px-2">
+          <v-btn :to="{ name: 'SatelliteManagement' }" outlined small color="primary" class="fr-btn--tertiary px-2">
             Gérer mes satellites
           </v-btn>
         </p>
@@ -128,7 +128,10 @@ export default {
   },
   data() {
     return {
-      satelliteHeaders: [{ text: "Nom", value: "name" }],
+      satelliteHeaders: [
+        { text: "Nom", value: "name" },
+        { text: "SIRET", value: "siret" },
+      ],
     }
   },
   computed: {

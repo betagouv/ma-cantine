@@ -56,11 +56,13 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
         model = Canteen
         read_only_fields = (
             "id",
+            "siret",
             "name",
             "publication_status",
         )
         fields = (
             "id",
+            "siret",
             "name",
             "publication_status",
         )
