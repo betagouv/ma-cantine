@@ -70,9 +70,6 @@
         <v-btn :to="{ name: 'SatelliteManagement' }" color="primary" class="fr-text font-weight-medium">
           Gérer mes satellites
         </v-btn>
-        <v-btn :to="{ name: 'CanteenForm' }" color="primary" outlined class="fr-text font-weight-medium">
-          Changer le nombre de satellites déclaré
-        </v-btn>
       </v-card-actions>
     </v-card>
     <v-card
