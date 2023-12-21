@@ -597,6 +597,13 @@ export const getCharacteristicFromField = (fieldName, fieldPrefix, tdGroup) => {
   return getCharacteristicFromFieldSuffix(fieldSuffix, tdGroup)
 }
 
+export const hasSatelliteInconsistency = (canteen) => {
+  if (!canteen || !canteen.isCentralCuisine) return false
+  if (!canteen.satelliteCanteensCount) return true
+  if (!canteen.satellites) return true
+  return canteen.satelliteCanteensCount !== canteen.satellites.length
+}
+
 export const readyToTeledeclare = (canteen, diagnostic) => {
   if (!canteen || !diagnostic) return false
 
@@ -616,8 +623,8 @@ export const readyToTeledeclare = (canteen, diagnostic) => {
       return canSubmitOtherData && hasOtherData
     }
     // satellites can still TD if CCs haven't
-  } else if (canteen.isCentralKitchen) {
-    // TODO: check if satellites in DB == satellite count
+  } else if (canteen.isCentralCuisine) {
+    return !hasSatelliteInconsistency(canteen)
   }
 
   return hasDiagnosticApproData(diagnostic)
