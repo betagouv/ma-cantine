@@ -604,17 +604,22 @@ export const hasSatelliteInconsistency = (canteen) => {
   return canteen.satelliteCanteensCount !== canteen.satellites.length
 }
 
+export const inTeledeclarationCampaign = (year) => {
+  const tdYear = lastYear()
+  const inTdCampaign = window.ENABLE_TELEDECLARATION && year === tdYear
+  return inTdCampaign
+}
+
 export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
   if (!canteen || !diagnostic) return false
 
-  const tdYear = lastYear()
-  const inTdCampaign = window.ENABLE_TELEDECLARATION && diagnostic.year === tdYear
-  if (!inTdCampaign) return false
+  if (!inTeledeclarationCampaign(diagnostic.year)) return false
 
   const hasActiveTeledeclaration = diagnostic.teledeclaration?.status === "SUBMITTED"
   if (hasActiveTeledeclaration) return false
 
   if (canteen.productionType === "site_cooked_elsewhere") {
+    const tdYear = lastYear()
     const ccDiag = canteen.centralKitchenDiagnostics?.find((x) => x.year === tdYear)
     if (ccDiag) {
       const noNeedToTd = ccDiag.centralKitchenDiagnosticMode === "ALL"
