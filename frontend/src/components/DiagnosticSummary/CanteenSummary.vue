@@ -84,6 +84,31 @@
         </div>
       </v-col>
     </v-row>
+    <v-row v-if="canteen.isCentralCuisine">
+      <v-col cols="12">
+        <h3 class="fr-h6">Mes satellites</h3>
+        <p class="fr-text-sm mb-0">
+          {{ canteen.satellites.length }} / {{ canteen.satelliteCanteensCount }} satellites renseignés
+        </p>
+      </v-col>
+      <v-col cols="12" md="8">
+        <v-data-table
+          :items="canteen.satellites"
+          :headers="satelliteHeaders"
+          :hide-default-footer="true"
+          :disable-sort="true"
+          :class="`dsfr-table grey--table`"
+          dense
+        />
+      </v-col>
+      <v-col cols="12">
+        <p>
+          <v-btn :to="SatelliteManagement" outlined small color="primary" class="fr-btn--tertiary px-2">
+            Gérer mes satellites
+          </v-btn>
+        </p>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -100,6 +125,11 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      satelliteHeaders: [{ text: "Nom", value: "name" }],
+    }
   },
   computed: {
     productionType() {
