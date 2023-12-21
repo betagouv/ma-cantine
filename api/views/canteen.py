@@ -37,6 +37,7 @@ from api.serializers import (
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration, Purchase
 from data.region_choices import Region
+from data.department_choices import Department
 from api.permissions import (
     IsCanteenManager,
     IsAuthenticated,
@@ -226,7 +227,13 @@ def filter_by_diagnostic_params(queryset, query_params):
             qs_diag = qs_diag.filter(
                 Q(combined_share__gte=0.5, bio_share__gte=0.2)
                 | Q(canteen__region__in=group_1, combined_share__gte=0.2, bio_share__gte=0.05)
+                | Q(canteen__department=Department.saint_martin, combined_share__gte=0.2, bio_share__gte=0.05)
                 | Q(canteen__region__in=group_2, combined_share__gte=0.05, bio_share__gte=0.02)
+                | Q(
+                    canteen__department=Department.saint_pierre_et_miquelon,
+                    combined_share__gte=0.3,
+                    bio_share__gte=0.1,
+                )
             ).distinct()
         canteen_ids = qs_diag.values_list("canteen", flat=True)
         return queryset.filter(id__in=canteen_ids)
@@ -849,7 +856,9 @@ def badges_for_queryset(diagnostic_year_queryset):
         badge_querysets["appro"] = appro_share_query.filter(
             Q(combined_share__gte=0.5, bio_share__gte=0.2)
             | Q(canteen__region__in=group_1, combined_share__gte=0.2, bio_share__gte=0.05)
+            | Q(canteen__department=Department.saint_martin, combined_share__gte=0.2, bio_share__gte=0.05)
             | Q(canteen__region__in=group_2, combined_share__gte=0.05, bio_share__gte=0.02)
+            | Q(canteen__department=Department.saint_pierre_et_miquelon, combined_share__gte=0.3, bio_share__gte=0.1)
         ).distinct()
 
     # waste

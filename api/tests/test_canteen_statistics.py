@@ -228,6 +228,19 @@ class TestCanteenStatsApi(APITestCase):
             value_externality_performance_ht=None,
             value_egalim_others_ht=0,
         )
+        # same rules as for Guadeloupe, but Saint-Martin is considered a department, not a region (in reality it's neither)
+        saint_martin = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.PUBLISHED.value, department=Department.saint_martin.value
+        )
+        DiagnosticFactory.create(
+            year=2020,
+            canteen=saint_martin,
+            value_total_ht=100,
+            value_bio_ht=5,
+            value_sustainable_ht=15,
+            value_externality_performance_ht=None,
+            value_egalim_others_ht=0,
+        )
         mayotte = CanteenFactory.create(
             publication_status=Canteen.PublicationStatus.PUBLISHED.value, region=Region.mayotte.value
         )
@@ -240,22 +253,35 @@ class TestCanteenStatsApi(APITestCase):
             value_externality_performance_ht=0,
             value_egalim_others_ht=None,
         )
-        # TODO: rules per outre mer territories: Saint-Pierre-et-Miquelon
-        # st_pierre_et_miquelon = CanteenFactory.create(region=Region.st_pierre_et_miquelon.value)
-        # DiagnosticFactory.create(canteen=st_pierre_et_miquelon, value_total_ht=100, value_bio_ht=10, value_sustainable_ht=20)
+        saint_pierre_et_miquelon = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.PUBLISHED.value,
+            department=Department.saint_pierre_et_miquelon.value,
+        )
+        DiagnosticFactory.create(
+            canteen=saint_pierre_et_miquelon,
+            year=2020,
+            value_total_ht=100,
+            value_bio_ht=10,
+            value_sustainable_ht=20,
+            value_externality_performance_ht=0,
+            value_egalim_others_ht=0,
+        )
 
         badges = badges_for_queryset(Diagnostic.objects.all())
 
         appro_badge_qs = badges["appro"]
+        self.assertTrue(appro_badge_qs.filter(canteen=null_sustainable).exists())
         self.assertTrue(appro_badge_qs.filter(canteen=earned).exists())
         self.assertTrue(appro_badge_qs.filter(canteen=guadeloupe).exists())
+        self.assertTrue(appro_badge_qs.filter(canteen=saint_martin).exists())
         self.assertTrue(appro_badge_qs.filter(canteen=mayotte).exists())
-        self.assertTrue(appro_badge_qs.filter(canteen=earned).exists())
-        self.assertEqual(appro_badge_qs.count(), 4)
+        self.assertTrue(appro_badge_qs.filter(canteen=saint_pierre_et_miquelon).exists())
+        self.assertEqual(appro_badge_qs.count(), 6)
 
         response = self.client.get(reverse("canteen_statistics"), {"year": 2020})
         body = response.json()
-        self.assertEqual(body["approPercent"], 57)
+        # there are 3 canteens that do not meet criteria, and 6 which do = 66.6% meet appro, rounded down
+        self.assertEqual(body["approPercent"], 66)
 
     def test_waste_badge_earned(self):
         """
