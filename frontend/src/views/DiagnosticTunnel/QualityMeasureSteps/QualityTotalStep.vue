@@ -3,6 +3,8 @@
     <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <DsfrCurrencyField
       v-model.number="payload.valueTotalHt"
+      :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
+      validate-on-blur
       @blur="updatePayload"
       :error="hasError"
       label="Total (en € HT) de tous mes achats alimentaires"
@@ -33,6 +35,7 @@ import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import ErrorHelper from "./ErrorHelper"
 import FormErrorCallout from "@/components/FormErrorCallout"
 import { toCurrency } from "@/utils"
+import validators from "@/validators"
 
 const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs par label"
 
@@ -63,6 +66,9 @@ export default {
     }
   },
   computed: {
+    validators() {
+      return validators
+    },
     displayPurchaseHints() {
       return !!this.purchasesSummary
     },
@@ -107,6 +113,10 @@ export default {
       if (!this.hasError) this.$emit("update-payload", { payload: this.payload })
     },
     checkTotal() {
+      if (this.payload.valueTotalHt < 0) {
+        return // this error is handled by vuetify validation
+      }
+
       this.totalErrorMessage = null
       this.meatPoultryErrorMessage = null
       this.fishErrorMessage = null

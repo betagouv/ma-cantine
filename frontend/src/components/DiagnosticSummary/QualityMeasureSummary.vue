@@ -59,7 +59,7 @@
         <p class="mb-md-4">
           <v-icon class="mr-2" color="#00A95F">$anchor-line</v-icon>
           <span class="font-weight-bold percentage">{{ percentages.fishEgalim || "—" }} %</span>
-          de produits aquatiques EGAlim
+          de produits de la mer et aquaculture EGAlim
         </p>
       </v-col>
     </v-row>
@@ -143,13 +143,14 @@
       Une synthèse de données sera disponible dès que votre cuisine centrale remplit leur diagnostic.
     </p>
   </div>
-  <div class="fr-text" v-else>
+  <div class="fr-text py-8" v-else>
     <p>
       Renseignez la valeur (en HT) de vos achats alimentaires total et au moins un autre champ par label de produit pour
       voir la synthèse de vos données.
     </p>
     <v-btn
       v-if="showEditButton"
+      class="mt-6"
       color="primary"
       :to="{
         name: 'DiagnosticTunnel',

@@ -170,11 +170,14 @@ META_FIELDS = (
     "id",
     "canteen_id",
     "year",
+    "diagnostic_type",
+    "central_kitchen_diagnostic_mode",
+)
+
+CREATION_META_FIELDS = (
     "creation_date",
     "modification_date",
     "creation_source",
-    "diagnostic_type",
-    "central_kitchen_diagnostic_mode",
 )
 
 TUNNEL_PROGRESS_FIELDS = (
@@ -280,6 +283,7 @@ class ManagerDiagnosticSerializer(serializers.ModelSerializer):
                 "creation_mtm_campaign",
                 "creation_mtm_medium",
             )
+            + CREATION_META_FIELDS
             + TUNNEL_PROGRESS_FIELDS
         )
 
@@ -319,7 +323,7 @@ class FullDiagnosticSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Diagnostic
-        fields = FIELDS + ("teledeclaration",) + TUNNEL_PROGRESS_FIELDS
+        fields = FIELDS + ("teledeclaration",) + CREATION_META_FIELDS + TUNNEL_PROGRESS_FIELDS
         read_only_fields = fields
 
 

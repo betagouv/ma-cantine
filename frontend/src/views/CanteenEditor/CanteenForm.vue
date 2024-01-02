@@ -132,7 +132,7 @@
         </v-col>
 
         <v-col cols="12" md="4" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
-          <label for="daily-meals" class="body-2 mb-2 d-block" :class="{ 'mb-lg-7': isNewCanteen }">
+          <label for="daily-meals" class="body-2 mb-2 mb-md-7 d-block">
             Couverts moyen par
             <b>jour</b>
             (convives sur place)
@@ -154,7 +154,7 @@
             for="yearly-meals"
             class="body-2 d-block mb-2"
             :class="{
-              'mb-lg-7': !showSatelliteCanteensCount,
+              'mb-md-7': !showSatelliteCanteensCount,
             }"
           >
             Nombre total de couverts à

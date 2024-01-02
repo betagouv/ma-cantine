@@ -226,6 +226,13 @@ export default {
           else this.$matomo.trackEvent(eventCategory, eventAction, data.id)
         })
       }
+      // if closed and reopened, require confirmation again
+      this.resetTdConfirmation()
+    },
+    resetTdConfirmation() {
+      this.tdConfirmed = false
+      this.teledeclarationFormIsValid = true
+      this.$refs["teledeclarationForm"].reset()
     },
   },
   mounted() {
@@ -247,9 +254,7 @@ export default {
     },
     idx() {
       // we get here if there are multiple TDs to get through at once
-      this.tdConfirmed = false
-      this.teledeclarationFormIsValid = true
-      this.$refs["teledeclarationForm"].reset()
+      this.resetTdConfirmation()
     },
   },
 }

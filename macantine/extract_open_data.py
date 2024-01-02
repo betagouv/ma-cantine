@@ -17,8 +17,43 @@ from django.core.files.storage import default_storage
 from django.db.models import Q
 from django.core.cache import cache
 
-
 logger = logging.getLogger(__name__)
+EPCIS_CACHE = {}
+
+
+def fetch_epci(code_insee_commune):
+    """
+    Provide EPCI code for a city
+    """
+    if code_insee_commune:
+        if code_insee_commune in EPCIS_CACHE.keys():
+            return EPCIS_CACHE[code_insee_commune]
+        else:
+            try: 
+                response = requests.get(f"https://geo.api.gouv.fr/communes/{code_insee_commune}", timeout=5)
+                response.raise_for_status()
+                body = response.json()
+                EPCIS_CACHE[code_insee_commune] = body['codeEpci']  # Caching the data
+                return body['codeEpci']
+            except requests.exceptions.HTTPError:
+                return None
+            except KeyError:
+                return None
+    else:
+        return None
+
+
+def fetch_sector(sector_id):
+    if (sector_id and not math.isnan(sector_id)):
+        cached_data = cache.get(sector_id)
+        if cached_data:
+            return cached_data
+        else:
+            sector = camelize(SectorSerializer(Sector.objects.get(id=sector_id)).data) 
+            cache.set(sector_id, sector, timeout=3600)  # Timeout in seconds
+            return sector
+    else:
+        return ""
 
 EPCIS_CACHE = {}
 CAMPAIGN_DATES = {
@@ -137,8 +172,8 @@ class ETL(ABC):
             col_geo = self.df.pop(f"{geo}_lib")
             self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
         if 'city_insee_code' in self.df.columns:
-            logger.info("Start fetching EPCI")
             self.df['epci'] = self.df['city_insee_code'].apply(fetch_epci)
+            EPCIS_CACHE = {}  # Clean cache
         else:
             self.df['epci'] = None
 

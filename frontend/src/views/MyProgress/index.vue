@@ -34,9 +34,7 @@
       </v-col>
       <v-col cols="12" sm="9" md="10">
         <v-card v-if="hasActiveTeledeclaration" class="pa-6 mb-4 mr-1" style="background: #f6f6f6">
-          <p class="fr-text-sm font-weight-bold mb-0">
-            Votre bilan 2023 a bien été télédéclaré et ne peut plus être modifié.
-          </p>
+          <p class="fr-text-sm font-weight-bold mb-0">Votre bilan {{ diagnostic.year }} a bien été télédéclaré.</p>
           <p class="fr-text-sm">
             Votre bilan a été télédéclaré
             <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
@@ -85,23 +83,6 @@
             </div>
           </v-card-actions>
         </v-card>
-        <v-card
-          v-else-if="readyToTeledeclare"
-          class="pa-6 mb-4 mr-1 fr-text grey--text text--darken-3 text-center cta-block"
-        >
-          <p class="mb-0">
-            Votre bilan {{ diagnostic.year }} est complet ! Merci d’avoir pris le temps de saisir vos données !
-          </p>
-          <p>
-            Vérifiez-les une dernière fois et télédéclarez-les pour participer au bilan statistique national
-            obligatoire.
-          </p>
-          <v-card-actions class="px-0 pt-0 pb-0 justify-center">
-            <v-btn color="primary" @click="showTeledeclarationPreview = true" class="fr-text font-weight-medium">
-              Vérifier et télédéclarer mes données {{ diagnostic.year }}
-            </v-btn>
-          </v-card-actions>
-        </v-card>
         <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
           <fieldset class="fr-text">
             <legend class="font-weight-bold">
@@ -114,6 +95,7 @@
               class="py-0"
               hide-details
               row
+              @change="handleModeChange"
             >
               <v-radio
                 v-for="type in centralKitchenDiagnosticModes"
@@ -156,23 +138,43 @@
                 :canteen="canteen"
                 :diagnostic="diagnostic"
                 :centralDiagnostic="centralDiagnostic"
+                :centralKitchenDiagnosticMode="centralKitchenDiagnosticMode"
               />
-              <v-row class="mt-6">
-                <v-col v-if="index > 0">
-                  <p class="fr-text-sm">
+              <v-row class="mt-6 align-center">
+                <v-col v-if="previousTab(item)">
+                  <p class="fr-text-sm mb-0">
                     <v-icon small color="primary" class="mr-1">$arrow-left-line</v-icon>
-                    <router-link :to="{ params: { measure: tabHeaders[index - 1].urlSlug } }">
-                      {{ tabHeaders[index - 1].title }}
+                    <router-link :to="{ params: { measure: previousTab(item).urlSlug } }">
+                      {{ previousTab(item).title }}
                     </router-link>
                   </p>
                 </v-col>
-                <v-col v-if="index < tabHeaders.length - 1" class="text-right">
-                  <p class="fr-text-sm">
-                    <router-link :to="{ params: { measure: tabHeaders[index + 1].urlSlug } }">
-                      {{ tabHeaders[index + 1].title }}
+                <v-col class="text-right">
+                  <p v-if="nextTab(item)" class="fr-text-sm mb-0">
+                    <router-link :to="{ params: { measure: nextTab(item).urlSlug } }">
+                      {{ nextTab(item).title }}
                     </router-link>
                     <v-icon small color="primary" class="ml-1">$arrow-right-line</v-icon>
                   </p>
+                  <v-btn
+                    v-else-if="hasActiveTeledeclaration"
+                    outlined
+                    small
+                    color="primary"
+                    class="fr-btn--tertiary px-2"
+                    :disabled="true"
+                  >
+                    <v-icon small class="mr-2">$check-line</v-icon>
+                    Données télédéclarées
+                  </v-btn>
+                  <v-btn
+                    v-else-if="readyToTeledeclare"
+                    color="primary"
+                    @click="showTeledeclarationPreview = true"
+                    class="fr-text font-weight-medium"
+                  >
+                    Vérifier et télédéclarer mes données {{ diagnostic.year }}
+                  </v-btn>
                 </v-col>
               </v-row>
             </v-tab-item>
@@ -199,7 +201,7 @@ import DsfrSelect from "@/components/DsfrSelect"
 import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
-import { diagnosticYears, timeAgo, lastYear, hasDiagnosticApproData } from "@/utils"
+import { diagnosticYears, timeAgo, lastYear, readyToTeledeclare } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
 
@@ -216,6 +218,7 @@ export default {
     TeledeclarationCancelDialog,
   },
   data() {
+    const establishmentId = "etablissement"
     return {
       tab: null,
       diagnostic: null,
@@ -230,11 +233,11 @@ export default {
         })),
         ...[
           {
-            urlSlug: "etablissement",
+            urlSlug: establishmentId,
             text: "Établissement",
             title: "Établissement",
             icon: "$building-fill",
-            to: { params: { measure: "etablissement" } },
+            to: { params: { measure: establishmentId } },
           },
         ],
       ],
@@ -246,6 +249,8 @@ export default {
       cancelDialog: false,
       campaignEndDate: window.TELEDECLARATION_END_DATE ? new Date(window.TELEDECLARATION_END_DATE) : null,
       showTeledeclarationPreview: false,
+      approId: "qualite-des-produits",
+      establishmentId,
     }
   },
   props: {
@@ -272,7 +277,16 @@ export default {
       return window.ENABLE_TELEDECLARATION && +this.year === lastYear()
     },
     readyToTeledeclare() {
-      return this.diagnostic && this.inTeledeclarationCampaign && hasDiagnosticApproData(this.diagnostic)
+      return readyToTeledeclare(this.canteen, this.diagnostic)
+    },
+    declaringApproOnly() {
+      return this.isCentralKitchen && this.centralKitchenDiagnosticMode === "APPRO"
+    },
+    activeTabHeaders() {
+      if (this.declaringApproOnly) {
+        return this.tabHeaders.filter((t) => t.urlSlug === this.approId || t.urlSlug === this.establishmentId)
+      }
+      return this.tabHeaders
     },
   },
   methods: {
@@ -293,24 +307,27 @@ export default {
         })
     },
     assignDiagnostic() {
-      this.$set(
-        this,
-        "diagnostic",
-        this.canteen?.diagnostics?.find((x) => +x.year === +this.year)
-      )
-      if (this.canteen?.productionType === "site_cooked_elsewhere") {
-        this.$set(
-          this,
-          "centralDiagnostic",
-          this.canteen?.centralKitchenDiagnostics?.find((x) => +x.year === +this.year)
-        )
+      if (!this.canteen) return
+      const diag = this.canteen.diagnostics?.find((x) => +x.year === +this.year)
+      this.$set(this, "diagnostic", diag)
+      if (this.canteen.productionType === "site_cooked_elsewhere") {
+        const centralDiag = this.canteen.centralKitchenDiagnostics?.find((x) => +x.year === +this.year)
+        this.$set(this, "centralDiagnostic", centralDiag)
       }
-      this.centralKitchenDiagnosticMode = this.diagnostic?.centralKitchenDiagnosticMode
-      this.initialiseTab()
+      this.initialiseMode()
     },
-    initialiseTab() {
+    initialiseMode() {
+      if (this.diagnostic) {
+        this.centralKitchenDiagnosticMode = this.diagnostic.centralKitchenDiagnosticMode
+      } else if (this.isCentralKitchen) {
+        this.centralKitchenDiagnosticMode = this.centralKitchenDiagnosticMode || "ALL"
+      } else {
+        this.centralKitchenDiagnosticMode = null
+      }
+      this.chooseTabToDisplay()
+    },
+    chooseTabToDisplay() {
       const initialTab = this.tabHeaders.find((x) => x.urlSlug === this.measure)
-      const approId = "qualite-des-produits"
       if (!initialTab) {
         this.$router.replace({
           name: this.$route.name,
@@ -320,12 +337,8 @@ export default {
             measure: this.tabHeaders[0].urlSlug,
           },
         })
-      } else if (
-        this.centralKitchenDiagnosticMode === "APPRO" &&
-        this.measure !== approId &&
-        this.measure !== "etablissement"
-      ) {
-        this.$router.replace({ name: "MyProgress", params: { measure: approId } })
+      } else if (this.declaringApproOnly && this.measure !== this.approId && this.measure !== "etablissement") {
+        this.$router.replace({ name: "MyProgress", params: { measure: this.approId } })
       } else {
         this.tab = this.tabHeaders.indexOf(initialTab)
       }
@@ -333,7 +346,15 @@ export default {
     usesSatelliteDiagnosticForMeasure(tabItem) {
       const tabAlwaysShown = tabItem.urlSlug === "qualite-des-produits" || tabItem.urlSlug === "etablissement"
       if (tabAlwaysShown) return false
-      return this.isCentralKitchen && this.centralKitchenDiagnosticMode === "APPRO"
+      return this.declaringApproOnly
+    },
+    previousTab(tabItem) {
+      const idx = this.activeTabHeaders.findIndex((t) => t.urlSlug === tabItem.urlSlug)
+      return this.activeTabHeaders[idx - 1]
+    },
+    nextTab(tabItem) {
+      const idx = this.activeTabHeaders.findIndex((t) => t.urlSlug === tabItem.urlSlug)
+      return this.activeTabHeaders[idx + 1]
     },
     tabTextClasses(tabItem) {
       return this.usesSatelliteDiagnosticForMeasure(tabItem) ? "grey--text" : "black--text"
@@ -348,6 +369,7 @@ export default {
             status: "success",
           })
           this.updateFromServer(diagnostic)
+          window.scrollTo(0, 0)
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
@@ -379,6 +401,20 @@ export default {
         this.assignDiagnostic()
       }
     },
+    handleModeChange() {
+      const mode = this.centralKitchenDiagnosticMode
+      if (!mode || !this.isCentralKitchen || !this.canteen) return
+      if (this.diagnostic?.id) {
+        if (this.diagnostic.centralKitchenDiagnosticMode === mode) return
+        this.diagnostic.centralKitchenDiagnosticMode = mode
+        this.$store.dispatch("updateDiagnostic", {
+          canteenId: this.canteen.id,
+          id: this.diagnostic.id,
+          payload: { centralKitchenDiagnosticMode: mode },
+        })
+      }
+      this.chooseTabToDisplay()
+    },
   },
   watch: {
     canteenUrlComponent() {
@@ -396,19 +432,7 @@ export default {
       this.assignDiagnostic()
     },
     $route() {
-      this.initialiseTab()
-    },
-    centralKitchenDiagnosticMode(newMode) {
-      if (!this.isCentralKitchen || !this.canteen) return
-      if (!this.diagnostic || !this.diagnostic.id) return
-      if (!newMode || this.diagnostic.centralKitchenDiagnosticMode === newMode) return
-      this.diagnostic.centralKitchenDiagnosticMode = newMode
-      this.$store.dispatch("updateDiagnostic", {
-        canteenId: this.canteen.id,
-        id: this.diagnostic.id,
-        payload: { centralKitchenDiagnosticMode: newMode },
-      })
-      this.initialiseTab()
+      this.chooseTabToDisplay()
     },
   },
   beforeMount() {
@@ -444,12 +468,5 @@ export default {
 }
 .close-icon {
   border-bottom: solid 1px;
-}
-.cta-block {
-  background: #f5f5fe;
-  backdrop-filter: blur(7px);
-  border: 1.5px dashed #000091;
-  border-radius: 5px;
-  color: #3a3a3a;
 }
 </style>

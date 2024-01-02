@@ -204,7 +204,7 @@ export default {
           description: `Options acceptées : ${Object.keys(Constants.Characteristics).map(
             (x) => " <code>" + x + "</code>"
           )}. Spécifiez plusieurs en séparant avec un <code>,</code>.`,
-          type: "Texte (choix unique)",
+          type: "Texte",
           example: `${Object.keys(Constants.Characteristics)[0]},${Object.keys(Constants.Characteristics)[3]}`,
         },
         {

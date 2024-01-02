@@ -51,16 +51,18 @@ class MediaListSerializer(serializers.ListSerializer):
         return media
 
 
-class CentralKitchenPublicSerializer(serializers.ModelSerializer):
+class MinimalCanteenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Canteen
         read_only_fields = (
             "id",
+            "siret",
             "name",
             "publication_status",
         )
         fields = (
             "id",
+            "siret",
             "name",
             "publication_status",
         )
@@ -70,7 +72,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
-    central_kitchen = CentralKitchenPublicSerializer(read_only=True)
+    central_kitchen = MinimalCanteenSerializer(read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
     is_managed_by_user = serializers.SerializerMethodField(read_only=True)
@@ -178,7 +180,8 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
     images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
-    central_kitchen = CentralKitchenPublicSerializer(read_only=True)
+    central_kitchen = MinimalCanteenSerializer(read_only=True)
+    satellites = MinimalCanteenSerializer(many=True, read_only=True)
 
     class Meta:
         model = Canteen
@@ -196,6 +199,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "information_comments",
             "central_kitchen_diagnostics",
             "central_kitchen",
+            "satellites",
             "is_central_cuisine",
             "modification_date",
         )
@@ -214,6 +218,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "siret",
             "central_producer_siret",
             "central_kitchen",
+            "satellites",
             "management_type",
             "production_type",
             "diagnostics",
