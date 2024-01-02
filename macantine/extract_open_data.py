@@ -79,21 +79,27 @@ def fetch_sector(sector_id):
 
 
 def fetch_campaign_participation(canteen_id, year):
-    if year not in TD_CACHE.keys():
-        TD_CACHE[year] = []
-        tds = Teledeclaration.objects.filter(
-                year=year,
-                creation_date__range=(
-                    CAMPAIGN_DATES[year]["start_date"],
-                    CAMPAIGN_DATES[year]["end_date"],
-                ),
-                status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-            ).values("canteen_id", "declared_data")
-        for td in tds:
-            TD_CACHE[year].append(td['canteen_id']) 
-            if 'satellites' in td['declared_data']:
-                for satellite in td['declared_data']['satellites']:
-                    TD_CACHE[year].append(satellite['id'])
+    if year in TD_CACHE.keys():
+        if TD_CACHE[year]:
+            return canteen_id in TD_CACHE[year]
+    TD_CACHE[year] = []
+
+    # Check and fetch Teledeclaration data from the database
+    tds = Teledeclaration.objects.filter(
+            year=year,
+            creation_date__range=(
+                CAMPAIGN_DATES[year]["start_date"],
+                CAMPAIGN_DATES[year]["end_date"],
+            ),
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+        ).values("canteen_id", "declared_data")
+
+    # Populate TD_CACHE for the given year
+    for td in tds:
+        TD_CACHE[year].append(td['canteen_id']) 
+        if 'satellites' in td['declared_data']:
+            for satellite in td['declared_data']['satellites']:
+                TD_CACHE[year].append(satellite['id'])
     return canteen_id in TD_CACHE[year]
 
 

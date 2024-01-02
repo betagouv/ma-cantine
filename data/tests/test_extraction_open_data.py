@@ -52,7 +52,7 @@ class TestExtractionOpenData(TestCase):
             etl_td.get_dataset().iloc[0]["teledeclaration_ratio_bio"], 0, "The bio value is aggregated from bio fields and should be greater than 0"
         )
     
-    @freeze_time("2023-05-14")  # Faking time to mock creation_date, must be in the campaign dates of 2023
+    @freeze_time("2022-08-14")  # Faking time to mock creation_date, must be in the campaign dates of 2023
     def test_extraction_canteen(self):
         schema = json.load(open("data/schemas/schema_cantine.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
@@ -99,7 +99,7 @@ class TestExtractionOpenData(TestCase):
         self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["epci"], "242900793")
 
         # Checking the campaign participation
-        # POURQUOI LA TD ne se sauvegarde pas ?
+        etl_canteen = ETL_CANTEEN()
         applicant = UserFactory.create()
         diagnostic_2021 = DiagnosticFactory.create(canteen=canteen_1, year=2021, diagnostic_type=None)
         td = Teledeclaration.create_from_diagnostic(diagnostic_2021, applicant)
