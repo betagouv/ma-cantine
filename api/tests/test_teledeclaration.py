@@ -11,6 +11,8 @@ from unittest.mock import patch
 from django.utils import timezone
 import pytz
 
+LAST_YEAR = datetime.date.today().year - 1
+
 
 class TestTeledeclarationApi(APITestCase):
     def test_create_unauthenticated(self):
@@ -341,7 +343,7 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create(siret="12345678912345")
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=LAST_YEAR, diagnostic_type="SIMPLE")
         Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         payload = {"diagnosticId": diagnostic.id}
@@ -358,7 +360,7 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create(siret="")
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=LAST_YEAR, diagnostic_type="SIMPLE")
         Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         payload = {"diagnosticId": diagnostic.id}
@@ -367,7 +369,7 @@ class TestTeledeclarationApi(APITestCase):
 
         canteen2 = CanteenFactory.create(siret="")
         canteen2.managers.add(user)
-        diagnostic2 = DiagnosticFactory.create(canteen=canteen2, year=2022)
+        diagnostic2 = DiagnosticFactory.create(canteen=canteen2, year=LAST_YEAR)
 
         payload = {"diagnosticId": diagnostic2.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -383,7 +385,7 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="COMPLETE")
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=LAST_YEAR, diagnostic_type="COMPLETE")
         payload = {"diagnosticId": diagnostic.id}
 
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -397,13 +399,13 @@ class TestTeledeclarationApi(APITestCase):
 
         self.assertEqual(teledeclaration.diagnostic, diagnostic)
         self.assertEqual(teledeclaration.canteen, canteen)
-        self.assertEqual(teledeclaration.year, 2022)
+        self.assertEqual(teledeclaration.year, LAST_YEAR)
         self.assertEqual(teledeclaration.applicant, user)
         self.assertEqual(teledeclaration.canteen_siret, canteen.siret)
         self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
         declared_data = teledeclaration.declared_data
-        self.assertEqual(declared_data["year"], 2022)
+        self.assertEqual(declared_data["year"], LAST_YEAR)
 
         json_canteen = declared_data["canteen"]
         self.assertEqual(json_canteen["name"], canteen.name)
@@ -448,7 +450,7 @@ class TestTeledeclarationApi(APITestCase):
 
         DiagnosticFactory.create(
             canteen=central_kitchen,
-            year=2022,
+            year=LAST_YEAR,
             value_total_ht=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
@@ -456,7 +458,7 @@ class TestTeledeclarationApi(APITestCase):
 
         diagnostic = DiagnosticFactory.create(
             canteen=canteen,
-            year=2022,
+            year=LAST_YEAR,
             value_total_ht=None,
             diagnostic_type=None,
         )
@@ -490,7 +492,7 @@ class TestTeledeclarationApi(APITestCase):
 
         diagnostic = DiagnosticFactory.create(
             canteen=central_kitchen,
-            year=2022,
+            year=LAST_YEAR,
             value_total_ht=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
@@ -533,7 +535,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(
             canteen=canteen,
-            year=2022,
+            year=LAST_YEAR,
             value_total_ht=100,
         )
         payload = {"diagnosticId": diagnostic.id}
@@ -595,7 +597,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(
             canteen=canteen,
-            year=2022,
+            year=LAST_YEAR,
             value_total_ht=100,
         )
         payload = {"diagnosticId": diagnostic.id}
@@ -633,7 +635,7 @@ class TestTeledeclarationApi(APITestCase):
         applicant = UserFactory.create()
         teledeclaration_1 = Teledeclaration(
             canteen=canteen,
-            year=2022,
+            year=LAST_YEAR,
             diagnostic=diagnostic,
             applicant=applicant,
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
@@ -641,7 +643,7 @@ class TestTeledeclarationApi(APITestCase):
         )
         teledeclaration_2 = Teledeclaration(
             canteen=canteen,
-            year=2022,
+            year=LAST_YEAR,
             diagnostic=diagnostic,
             applicant=applicant,
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
@@ -662,7 +664,7 @@ class TestTeledeclarationApi(APITestCase):
         applicant = UserFactory.create()
         teledeclaration_1 = Teledeclaration(
             canteen=canteen,
-            year=2022,
+            year=LAST_YEAR,
             diagnostic=diagnostic,
             applicant=applicant,
             status=Teledeclaration.TeledeclarationStatus.CANCELLED,
@@ -670,7 +672,7 @@ class TestTeledeclarationApi(APITestCase):
         )
         teledeclaration_2 = Teledeclaration(
             canteen=canteen,
-            year=2022,
+            year=LAST_YEAR,
             diagnostic=diagnostic,
             applicant=applicant,
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
@@ -692,7 +694,7 @@ class TestTeledeclarationApi(APITestCase):
         applicant = UserFactory.create()
         teledeclaration_1 = Teledeclaration(
             canteen=None,
-            year=2022,
+            year=LAST_YEAR,
             diagnostic=None,
             applicant=applicant,
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
@@ -700,7 +702,7 @@ class TestTeledeclarationApi(APITestCase):
         )
         teledeclaration_2 = Teledeclaration(
             canteen=None,
-            year=2022,
+            year=LAST_YEAR,
             diagnostic=None,
             applicant=applicant,
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,

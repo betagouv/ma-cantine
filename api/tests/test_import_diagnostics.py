@@ -19,6 +19,8 @@ from unittest.mock import patch
 from django.utils import timezone
 import pytz
 
+NEXT_YEAR = datetime.date.today().year + 1
+
 
 @requests_mock.Mocker()
 class TestImportDiagnosticsAPI(APITestCase):
@@ -373,7 +375,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'année' : L'année doit être comprise entre 2019 et 2024.",
+            f"Champ 'année' : L'année doit être comprise entre 2019 et {NEXT_YEAR}.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -389,7 +391,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'année' : L'année doit être comprise entre 2019 et 2024.",
+            f"Champ 'année' : L'année doit être comprise entre 2019 et {NEXT_YEAR}.",
         )
         self.assertEqual(
             errors.pop(0)["message"],

@@ -27,7 +27,7 @@ django-anymail==10.1
 django-ckeditor==6.7.0
 django-csp==3.7
 django-debug-toolbar==4.2.0
-django-filter==23.3
+django-filter==23.5
 django-js-asset==2.1.0
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@51f4709d8593016ac67428a87bbd2810070ae288
 django-oauth-toolkit==2.3.0
@@ -46,13 +46,13 @@ exceptiongroup==1.1.3
 factory-boy==3.3.0
 Faker==19.11.0
 future==0.18.3
-freezegun==1.3.1
+freezegun==1.4.0
 html2text==2020.1.16
 html5lib==1.1
 idna==3.6
 inflection==0.5.1
 iniconfig==2.0.0
-isort==5.13.1
+isort==5.13.2
 jmespath==1.0.1
 jsonschema==4.20.0
 jwcrypto==1.5.0
@@ -69,7 +69,7 @@ pandas==2.0.3
 pathspec==0.11.2
 Pillow==10.1.0
 pipdeptree==2.13.0
-platformdirs==3.10.0
+platformdirs==4.1.0
 pluggy==1.3.0
 prompt-toolkit==3.0.39
 psycopg2==2.9.9
