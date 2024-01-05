@@ -387,7 +387,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'Valeur totale annuelle HT' : Ce champ doit être un nombre décimal.",
+            "Champ 'Valeur totale annuelle HT' : La valeur « invalid total » doit être un nombre décimal.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -569,7 +569,10 @@ class TestImportDiagnosticsAPI(APITestCase):
         errors = body["errors"]
         self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
-        self.assertEqual(errors[0]["message"], "Champ 'email' : Un adresse email des gestionnaires n'est pas valide.")
+        self.assertEqual(
+            errors[0]["message"],
+            "Champ 'email' : Un adresse email des gestionnaires (gestionnaire1@, gestionnaire2@example.com) n'est pas valide.",
+        )
 
         self.assertEqual(len(mail.outbox), 0)
 
@@ -679,11 +682,11 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'Valeur totale annuelle HT' : Ce champ doit être un nombre décimal.",
+            "Champ 'Valeur totale annuelle HT' : Ce champ ne peut pas être vide.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'Produits aquatiques frais et surgelés, Bio' : Ce champ doit être vide ou un nombre décimal.",
+            "Champ 'Produits aquatiques frais et surgelés, Bio' : La valeur « lol » doit être vide ou un nombre décimal.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -878,7 +881,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         self.assertEqual(
-            body["errors"][0]["message"], "Champ 'Valeur totale annuelle HT' : Ce champ doit être un nombre décimal."
+            body["errors"][0]["message"], "Champ 'Valeur totale annuelle HT' : Ce champ ne peut pas être vide."
         )
 
     @authenticate
