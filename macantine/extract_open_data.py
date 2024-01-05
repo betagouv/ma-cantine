@@ -26,7 +26,6 @@ CAMPAIGN_DATES = {
     2022: {"start_date": datetime.date(2023, 2, 13), "end_date": datetime.date(2023, 6, 30)},
 }
 
-TD_CACHE = {}
 
 
 def fetch_epci(code_insee_commune):
@@ -79,12 +78,10 @@ def fetch_sector(sector_id):
         return ""
 
 
-def fetch_campaign_participation(canteen_id, year):
-    if year in TD_CACHE.keys():
-        if TD_CACHE[year]:
-            return canteen_id in TD_CACHE[year]
-    TD_CACHE[year] = []
-
+def create_cache_campaign_participation(year):
+    """
+    Populate cache for a given year. The cache indicates if one canteen ahs participated in campaign
+    """
     # Check and fetch Teledeclaration data from the database
     tds = Teledeclaration.objects.filter(
             year=year,
@@ -96,12 +93,13 @@ def fetch_campaign_participation(canteen_id, year):
         ).values("canteen_id", "declared_data")
 
     # Populate TD_CACHE for the given year
+    cache_ = []
     for td in tds:
-        TD_CACHE[year].append(td['canteen_id']) 
+        cache_.append(td['canteen_id']) 
         if 'satellites' in td['declared_data']:
             for satellite in td['declared_data']['satellites']:
-                TD_CACHE[year].append(satellite['id'])
-    return canteen_id in TD_CACHE[year]
+                cache_.append(satellite['id'])
+    return cache_
 
 
 class ETL(ABC):
@@ -261,8 +259,10 @@ class ETL_CANTEEN(ETL):
         end = time.time()
         logger.info(f'Time spent on geo data : {end - start}')
 
-        logger.info("Canteens : Fill campaign participation 2021...")
-        self.df['declaration_donnees_2021'] = self.df['id'].apply(lambda x: fetch_campaign_participation(x, 2021))
+        logger.info("Canteens : Fill campaign participations...")
+        for year in [2021]:
+            cache_ = create_cache_campaign_participation(year)
+            self.df['declaration_donnees_2021'] = self.df['id'].apply(lambda x: x in cache_)
 
 
 class ETL_TD(ETL):
