@@ -338,18 +338,22 @@ export const applicableDiagnosticRules = (canteen) => {
   let bioThreshold = 20
   let qualityThreshold = 50
   let hasQualityException = false
-  // group1 : guadeloupe, martinique, guyane, la_reunion, TODO saint_martin
-  const group1 = ["01", "02", "03", "04"]
   if (canteen) {
+    // group1 : guadeloupe, martinique, guyane, la_reunion, saint_martin
+    const group1 = ["01", "02", "03", "04"]
+    const saintMartin = "978"
     hasQualityException = true
-    if (group1.indexOf(canteen.region) > -1) {
+    if (group1.indexOf(canteen.region) > -1 || canteen.department === saintMartin) {
       bioThreshold = 5
       qualityThreshold = 20
     } else if (canteen.region === "06") {
       // group2 : mayotte
       bioThreshold = 2
       qualityThreshold = 5
-      // TODO: group3 : saint_pierre_et_miquelon
+    } else if (canteen.department === "975") {
+      // group3 : saint_pierre_et_miquelon
+      bioThreshold = 10
+      qualityThreshold = 30
     } else {
       hasQualityException = false
     }
@@ -575,6 +579,14 @@ export const hasStartedMeasureTunnel = (diagnostic, keyMeasure) => {
   return !!diagnostic
 }
 
+export const hasFinishedMeasureTunnel = (diagnostic) => {
+  if (diagnostic?.creationSource === "TUNNEL") {
+    const measureProgressFields = ["tunnelAppro", "tunnelWaste", "tunnelDiversification", "tunnelPlastic", "tunnelInfo"]
+    return measureProgressFields.every((field) => diagnostic[field] === "complet")
+  }
+  return !!diagnostic
+}
+
 export const getCharacteristicFromFieldSuffix = (fieldSuffix, tdGroup) => {
   const normalisedGroupCharacteristics = tdGroup.characteristics.map((g) => g.toLowerCase().replace(/_/g, ""))
   const fieldCharacteristic = fieldSuffix.toLowerCase()
@@ -587,4 +599,44 @@ export const getCharacteristicFromFieldSuffix = (fieldSuffix, tdGroup) => {
 export const getCharacteristicFromField = (fieldName, fieldPrefix, tdGroup) => {
   const fieldSuffix = fieldName.split(fieldPrefix)[1]
   return getCharacteristicFromFieldSuffix(fieldSuffix, tdGroup)
+}
+
+export const hasSatelliteInconsistency = (canteen) => {
+  if (!canteen || !canteen.isCentralCuisine) return false
+  if (!canteen.satelliteCanteensCount) return true
+  if (!canteen.satellites) return true
+  return canteen.satelliteCanteensCount !== canteen.satellites.length
+}
+
+export const inTeledeclarationCampaign = (year) => {
+  const tdYear = lastYear()
+  const inTdCampaign = window.ENABLE_TELEDECLARATION && year === tdYear
+  return inTdCampaign
+}
+
+export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
+  if (!canteen || !diagnostic) return false
+
+  if (!inTeledeclarationCampaign(diagnostic.year)) return false
+
+  const hasActiveTeledeclaration = diagnostic.teledeclaration?.status === "SUBMITTED"
+  if (hasActiveTeledeclaration) return false
+
+  if (canteen.productionType === "site_cooked_elsewhere") {
+    const tdYear = lastYear()
+    const ccDiag = canteen.centralKitchenDiagnostics?.find((x) => x.year === tdYear)
+    if (ccDiag) {
+      const noNeedToTd = ccDiag.centralKitchenDiagnosticMode === "ALL"
+      const canSubmitOtherData = !noNeedToTd
+      const hasOtherData = !!diagnostic
+      return canSubmitOtherData && hasOtherData
+    }
+    // satellites can still TD if CCs haven't
+  }
+
+  return hasDiagnosticApproData(diagnostic)
+}
+
+export const readyToTeledeclare = (canteen, diagnostic) => {
+  return diagnosticCanBeTeledeclared(canteen, diagnostic) && !hasSatelliteInconsistency(canteen)
 }

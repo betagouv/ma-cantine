@@ -323,7 +323,7 @@ export default {
           description: `Options acceptées : ${this.$store.state.sectors.map(
             (x) => " <code>" + x.name + "</code>"
           )}. Spécifiez plusieurs en séparant avec un <code>+</code>.`,
-          type: "Texte (choix unique)",
+          type: "Texte",
           example: `${this.$store.state.sectors[0].name}+${this.$store.state.sectors[1].name}`,
         },
         {

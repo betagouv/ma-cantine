@@ -600,10 +600,40 @@
     "regionName": "La Réunion"
   },
   {
+    "departmentCode": "975",
+    "departmentName": "Saint-Pierre-et-Miquelon",
+    "regionCode": null,
+    "regionName": null
+  },
+  {
     "departmentCode": "976",
     "departmentName": "Mayotte",
     "regionCode": "06",
     "regionName": "Mayotte"
+  },
+  {
+    "departmentCode": "977",
+    "departmentName": "Saint-Barthélemy",
+    "regionCode": null,
+    "regionName": null
+  },
+  {
+    "departmentCode": "978",
+    "departmentName": "Saint-Martin",
+    "regionCode": null,
+    "regionName": null
+  },
+  {
+    "departmentCode": "984",
+    "departmentName": "Terres australes et antarctiques françaises",
+    "regionCode": null,
+    "regionName": null
+  },
+  {
+    "departmentCode": "986",
+    "departmentName": "Wallis-et-Futuna",
+    "regionCode": null,
+    "regionName": null
   },
   {
     "departmentCode": "987",

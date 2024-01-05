@@ -143,13 +143,14 @@
       Une synthèse de données sera disponible dès que votre cuisine centrale remplit leur diagnostic.
     </p>
   </div>
-  <div class="fr-text" v-else>
+  <div class="fr-text py-8" v-else>
     <p>
       Renseignez la valeur (en HT) de vos achats alimentaires total et au moins un autre champ par label de produit pour
       voir la synthèse de vos données.
     </p>
     <v-btn
       v-if="showEditButton"
+      class="mt-6"
       color="primary"
       :to="{
         name: 'DiagnosticTunnel',
