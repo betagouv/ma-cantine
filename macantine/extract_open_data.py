@@ -19,7 +19,6 @@ from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
-EPCIS_CACHE = {}
 
 CAMPAIGN_DATES = {
     2021: {"start_date": datetime.date(2022, 7, 16), "end_date": datetime.date(2022, 12, 5)},
@@ -27,36 +26,33 @@ CAMPAIGN_DATES = {
 }
 
 
+def map_epcis_communes():
+    """
+    Create a dict that maps cities with their EPCI code
+    """
+    epcis = {}
+    try:
+        logger.info("Starting communes dl")
+        response = requests.get("https://geo.api.gouv.fr/communes", timeout=50)
+        response.raise_for_status()
+        communes = response.json()
+        for commune in communes:
+            try:
+                epcis[commune['code']] = commune['codeEpci']  # Caching the data
+            except KeyError:  # This commune doesn't have an EPCI code
+                pass
+    except requests.exceptions.HTTPError as e:
+        logger.info(e)
+        return None
+    return epcis
 
-def fetch_epci(code_insee_commune):
+
+def fetch_epci(code_insee_commune, epcis):
     """
     Provide EPCI code for a city, given the insee code of the city
-    Queries each commune only once, storing the data in cache after
     """
-    if code_insee_commune:
-        if len(EPCIS_CACHE.keys()) > 1:
-            try:
-                return EPCIS_CACHE[code_insee_commune]
-            except KeyError:  # This city is not part of an EPCI
-                return None
-        else:
-            try:
-                logger.info("Starting communes dl")
-                response = requests.get(f"https://geo.api.gouv.fr/communes", timeout=50)
-                response.raise_for_status()
-                communes = response.json()
-                for commune in communes:
-                    try:
-                        EPCIS_CACHE[commune['code']] = commune['codeEpci']  # Caching the data
-                    except KeyError:
-                        pass
-                return EPCIS_CACHE[code_insee_commune]
-            except requests.exceptions.HTTPError as e:
-                logger.info(e)
-                return None
-            except  KeyError as e:
-                logger.debug('This city doesn\'t have an EPCI')
-                return None
+    if code_insee_commune and code_insee_commune in epcis.keys():
+        return epcis[code_insee_commune]
     else:
         return None
 
@@ -78,7 +74,7 @@ def fetch_sector(sector_id):
         return ""
 
 
-def create_cache_campaign_participation(year):
+def map_canteens_td(year):
     """
     Populate cache for a given year. The cache indicates if one canteen ahs participated in campaign
     """
@@ -136,8 +132,8 @@ class ETL(ABC):
             col_geo = self.df.pop(f"{geo}_lib")
             self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
         if 'city_insee_code' in self.df.columns:
-            self.df['epci'] = self.df['city_insee_code'].apply(fetch_epci)
-            EPCIS_CACHE = {}  # Clean cache
+            epcis = map_epcis_communes()
+            self.df['epci'] = self.df['city_insee_code'].apply(lambda x: fetch_epci(x, epcis))
         else:
             self.df['epci'] = None
 
@@ -260,9 +256,12 @@ class ETL_CANTEEN(ETL):
         logger.info(f'Time spent on geo data : {end - start}')
 
         logger.info("Canteens : Fill campaign participations...")
+        start = time.time()
         for year in [2021]:
-            campaign_participation = create_cache_campaign_participation(year)
+            campaign_participation = map_canteens_td(year)
             self.df['declaration_donnees_2021'] = self.df['id'].apply(lambda x: x in campaign_participation)
+        end = time.time()
+        logger.info(f'Time spent on campaign participations : {end - start}')
 
 
 class ETL_TD(ETL):
