@@ -88,7 +88,7 @@ def map_canteens_td(year):
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
         ).values("canteen_id", "declared_data")
 
-    # Populate TD_CACHE for the given year
+    # Populate the mapper for the given year
     cache_ = []
     for td in tds:
         cache_.append(td['canteen_id']) 
