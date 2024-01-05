@@ -261,8 +261,8 @@ class ETL_CANTEEN(ETL):
 
         logger.info("Canteens : Fill campaign participations...")
         for year in [2021]:
-            cache_ = create_cache_campaign_participation(year)
-            self.df['declaration_donnees_2021'] = self.df['id'].apply(lambda x: x in cache_)
+            campaign_participation = create_cache_campaign_participation(year)
+            self.df['declaration_donnees_2021'] = self.df['id'].apply(lambda x: x in campaign_participation)
 
 
 class ETL_TD(ETL):
