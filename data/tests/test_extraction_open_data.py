@@ -106,6 +106,7 @@ class TestExtractionOpenData(TestCase):
         etl_canteen.extract_dataset()
         canteens = etl_canteen.get_dataset()
         self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["declaration_donnees_2021"], True, "The canteen has participated in the campain")
+        self.assertEqual(canteens[canteens.id == canteen_2.id].iloc[0]["declaration_donnees_2021"], False, "The canteen hasn't participated in the campain")
 
         canteen_2.sectors.clear()
         etl_canteen.extract_dataset()
