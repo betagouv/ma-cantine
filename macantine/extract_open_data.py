@@ -70,6 +70,16 @@ def map_canteens_td(year):
                 cache_.append(satellite['id'])
     return cache_
 
+def map_sectors():
+    """
+    Populate the details of a sector, given its id
+    """
+    sectors = Sector.objects.all()
+    sectors_mapper = {}
+    for sector in sectors:
+        sector = camelize(SectorSerializer(sector).data)
+        sectors_mapper[sector['id']] = sector
+    return sectors_mapper
 
 def fetch_epci(code_insee_commune, epcis):
     """
@@ -80,20 +90,12 @@ def fetch_epci(code_insee_commune, epcis):
     else:
         return None
 
-
-def fetch_sector(sector_id):
+def fetch_sector(sector_id, sectors):
     """
-    Provide the sector informations, given the sector id
-    Queries each sector only once, storing the data in cache after
+    Provide EPCI code for a city, given the insee code of the city
     """
-    if (sector_id and not math.isnan(sector_id)):
-        cached_data = cache.get(sector_id)
-        if cached_data:
-            return cached_data
-        else:
-            sector = camelize(SectorSerializer(Sector.objects.get(id=sector_id)).data)
-            cache.set(sector_id, sector, timeout=3600)  # Timeout in seconds
-            return sector
+    if sector_id and sector_id in sectors.keys():
+        return sectors[sector_id]
     else:
         return ""
 
@@ -157,7 +159,8 @@ class ETL(ABC):
 
     def _extract_sectors(self):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
-        self.df["sectors"] = self.df["sectors"].apply(fetch_sector)
+        sectors = map_sectors()
+        self.df["sectors"] = self.df["sectors"].apply(lambda x: fetch_sector(x, sectors))
         canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [""] else [])
         del self.df["sectors"]
 
