@@ -15,43 +15,86 @@ from api.serializers import SectorSerializer
 from api.views.utils import camelize
 from django.core.files.storage import default_storage
 from django.db.models import Q
-from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
-EPCIS_CACHE = {}
 
 
-def fetch_epci(code_insee_commune):
+CAMPAIGN_DATES = {
+    2021: {"start_date": datetime.date(2022, 7, 16), "end_date": datetime.date(2022, 12, 5)},
+    2022: {"start_date": datetime.date(2023, 2, 13), "end_date": datetime.date(2023, 6, 30)},
+}
+
+
+def map_epcis_communes():
     """
-    Provide EPCI code for a city
+    Create a dict that maps cities with their EPCI code
     """
-    if code_insee_commune:
-        if code_insee_commune in EPCIS_CACHE.keys():
-            return EPCIS_CACHE[code_insee_commune]
-        else:
-            try: 
-                response = requests.get(f"https://geo.api.gouv.fr/communes/{code_insee_commune}", timeout=5)
-                response.raise_for_status()
-                body = response.json()
-                EPCIS_CACHE[code_insee_commune] = body['codeEpci']  # Caching the data
-                return body['codeEpci']
-            except requests.exceptions.HTTPError:
-                return None
-            except KeyError:
-                return None
+    epcis = {}
+    try:
+        logger.info("Starting communes dl")
+        response = requests.get("https://geo.api.gouv.fr/communes", timeout=50)
+        response.raise_for_status()
+        communes = response.json()
+        for commune in communes:
+            try:
+                epcis[commune['code']] = commune['codeEpci']  # Caching the data
+            except KeyError:  # This commune doesn't have an EPCI code
+                pass
+    except requests.exceptions.HTTPError as e:
+        logger.info(e)
+        return None
+    return epcis
+
+
+def map_canteens_td(year):
+    """
+    Populate mapper for a given year. The mapper indicates if one canteen ahs participated in campaign
+    """
+    # Check and fetch Teledeclaration data from the database
+    tds = Teledeclaration.objects.filter(
+            year=year,
+            creation_date__range=(
+                CAMPAIGN_DATES[year]["start_date"],
+                CAMPAIGN_DATES[year]["end_date"],
+            ),
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+        ).values("canteen_id", "declared_data")
+
+    # Populate the mapper for the given year
+    participation = []
+    for td in tds:
+        participation.append(td['canteen_id']) 
+        if 'satellites' in td['declared_data']:
+            for satellite in td['declared_data']['satellites']:
+                participation.append(satellite['id'])
+    return participation
+
+def map_sectors():
+    """
+    Populate the details of a sector, given its id
+    """
+    sectors = Sector.objects.all()
+    sectors_mapper = {}
+    for sector in sectors:
+        sector = camelize(SectorSerializer(sector).data)
+        sectors_mapper[sector['id']] = sector
+    return sectors_mapper
+
+def fetch_epci(code_insee_commune, epcis):
+    """
+    Provide EPCI code for a city, given the insee code of the city
+    """
+    if code_insee_commune and code_insee_commune in epcis.keys():
+        return epcis[code_insee_commune]
     else:
         return None
 
-
-def fetch_sector(sector_id):
-    if (sector_id and not math.isnan(sector_id)):
-        cached_data = cache.get(sector_id)
-        if cached_data:
-            return cached_data
-        else:
-            sector = camelize(SectorSerializer(Sector.objects.get(id=sector_id)).data) 
-            cache.set(sector_id, sector, timeout=3600)  # Timeout in seconds
-            return sector
+def fetch_sector(sector_id, sectors):
+    """
+    Provide EPCI code for a city, given the insee code of the city
+    """
+    if sector_id and sector_id in sectors.keys():
+        return sectors[sector_id]
     else:
         return ""
 
@@ -85,12 +128,13 @@ class ETL(ABC):
 
     def transform_geo_data(self, geo_col_names=["department", "region"]):
         for geo in geo_col_names:
+            logger.info("Start filling geo_name")
             self._fill_geo_name(geo_zoom=geo)
             col_geo = self.df.pop(f"{geo}_lib")
             self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
         if 'city_insee_code' in self.df.columns:
-            self.df['epci'] = self.df['city_insee_code'].apply(fetch_epci)
-            EPCIS_CACHE = {}  # Clean cache
+            epcis = map_epcis_communes()
+            self.df['epci'] = self.df['city_insee_code'].apply(lambda x: fetch_epci(x, epcis))
         else:
             self.df['epci'] = None
 
@@ -114,7 +158,8 @@ class ETL(ABC):
 
     def _extract_sectors(self):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
-        self.df["sectors"] = self.df["sectors"].apply(fetch_sector)
+        sectors = map_sectors()
+        self.df["sectors"] = self.df["sectors"].apply(lambda x: fetch_sector(x, sectors))
         canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [""] else [])
         del self.df["sectors"]
 
@@ -174,7 +219,7 @@ class ETL_CANTEEN(ETL):
     def extract_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
         canteens_col_from_db = all_canteens_col.copy()
-        for col_processed in ['active_on_ma_cantine', 'department_lib', 'region_lib', 'epci']:
+        for col_processed in ['active_on_ma_cantine', 'department_lib', 'region_lib', 'epci', 'declaration_donnees_2021']:
             canteens_col_from_db.remove(col_processed)
 
         exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
@@ -212,6 +257,14 @@ class ETL_CANTEEN(ETL):
         end = time.time()
         logger.info(f'Time spent on geo data : {end - start}')
 
+        logger.info("Canteens : Fill campaign participations...")
+        start = time.time()
+        for year in [2021]:
+            campaign_participation = map_canteens_td(year)
+            self.df['declaration_donnees_2021'] = self.df['id'].apply(lambda x: x in campaign_participation)
+        end = time.time()
+        logger.info(f'Time spent on campaign participations : {end - start}')
+
 
 class ETL_TD(ETL):
     def __init__(self, year: int):
@@ -228,19 +281,15 @@ class ETL_TD(ETL):
             "egalim_others": ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
             "externality_performance": ["_externality_performance", "_performance", "_externalites"],
         }
-        self.campaign_dates = {
-            2021: {"start_date": datetime.date(2022, 7, 16), "end_date": datetime.date(2023, 12, 5)},
-            2022: {"start_date": datetime.date(2022, 2, 13), "end_date": datetime.date(2023, 6, 30)},
-        }
 
     def extract_dataset(self):
-        if self.year in self.campaign_dates.keys():
+        if self.year in CAMPAIGN_DATES.keys():
             self.df = pd.DataFrame(
                 Teledeclaration.objects.filter(
                     year=self.year,
                     creation_date__range=(
-                        self.campaign_dates[self.year]["start_date"],
-                        self.campaign_dates[self.year]["end_date"],
+                        CAMPAIGN_DATES[self.year]["start_date"],
+                        CAMPAIGN_DATES[self.year]["end_date"],
                     ),
                     status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
                     canteen_id__isnull=False,
