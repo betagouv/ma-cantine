@@ -384,6 +384,8 @@ export default {
         hasWasteDiagnostic: this.diagnostic.hasWasteDiagnostic,
         hasWastePlan: this.diagnostic.hasWastePlan,
         hasWasteMeasures: this.diagnostic.hasWasteMeasures,
+        totalLeftovers: this.diagnostic.totalLeftovers,
+        durationLeftoversMeasurement: this.diagnostic.durationLeftoversMeasurement,
         breadLeftovers: this.diagnostic.breadLeftovers,
         servedLeftovers: this.diagnostic.servedLeftovers,
         unservedLeftovers: this.diagnostic.unservedLeftovers,
