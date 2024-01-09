@@ -15,7 +15,6 @@ from api.serializers import SectorSerializer
 from api.views.utils import camelize
 from django.core.files.storage import default_storage
 from django.db.models import Q
-from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +48,7 @@ def map_epcis_communes():
 
 def map_canteens_td(year):
     """
-    Populate cache for a given year. The cache indicates if one canteen ahs participated in campaign
+    Populate mapper for a given year. The mapper indicates if one canteen ahs participated in campaign
     """
     # Check and fetch Teledeclaration data from the database
     tds = Teledeclaration.objects.filter(
@@ -62,13 +61,13 @@ def map_canteens_td(year):
         ).values("canteen_id", "declared_data")
 
     # Populate the mapper for the given year
-    cache_ = []
+    participation = []
     for td in tds:
-        cache_.append(td['canteen_id']) 
+        participation.append(td['canteen_id']) 
         if 'satellites' in td['declared_data']:
             for satellite in td['declared_data']['satellites']:
-                cache_.append(satellite['id'])
-    return cache_
+                participation.append(satellite['id'])
+    return participation
 
 def map_sectors():
     """
