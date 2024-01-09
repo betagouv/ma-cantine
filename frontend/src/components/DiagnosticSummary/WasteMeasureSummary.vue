@@ -129,6 +129,14 @@ export default {
     wasteMeasures() {
       const diag = this.diagnostic
       return [
+        {
+          label: "Total des déchets alimentaires",
+          value: diag.totalLeftovers ? `${diag.totalLeftovers} tonnes pour l'année` : "—",
+        },
+        {
+          label: "Période de mesurement",
+          value: diag.durationLeftoversMeasurement ? `${diag.durationLeftoversMeasurement} jours` : "—",
+        },
         { label: "Reste de pain", value: diag.breadLeftovers ? `${diag.breadLeftovers} kg/an` : "—" },
         { label: "Reste plateau", value: diag.servedLeftovers ? `${diag.servedLeftovers} kg/an` : "—" },
         { label: "Reste en production", value: diag.unservedLeftovers ? `${diag.unservedLeftovers} kg/an` : "—" },
