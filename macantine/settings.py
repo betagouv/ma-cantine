@@ -475,6 +475,7 @@ if DEBUG:
 CSP_FRAME_SRC = (
     "'self'",
     "ma-cantine.crisp.help",
+    "faq-ma-cantine.crisp.help",
     "ma-cantine-metabase.cleverapps.io",
 )
 if DEBUG:
