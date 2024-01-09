@@ -51,7 +51,7 @@
             <v-row>
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
-                  v-model.number="payload.totalWaste"
+                  v-model.number="payload.totalLeftovers"
                   :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
                   validate-on-blur
                   label="Total des déchets alimentaires"
@@ -62,7 +62,7 @@
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
-                  v-model.number="payload.durationWasteMeasurement"
+                  v-model.number="payload.durationLeftoversMeasurement"
                   :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(0), validators.lteOrEmpty(365)]"
                   validate-on-blur
                   label="Période de mesure"
