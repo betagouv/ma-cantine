@@ -21,17 +21,14 @@
       hide-on-scroll
     >
       <v-toolbar-title class="align-self-center">
-        <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex pl-4">
-          <v-img
-            src="/static/images/Marianne.png"
+        <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex align-left pl-4">
+          <img src="/static/images/Marianne.png" height="90" alt="" />
+          <img
+            v-if="$vuetify.breakpoint.smAndUp"
+            src="/static/images/ma-cantine-logo-light.jpg"
             height="90"
-            contain
-            position="center left"
             alt="Page d'accueil ma cantine"
-          ></v-img>
-          <div v-if="$vuetify.breakpoint.smAndUp" style="height: 90px" class="d-flex align-center">
-            <p id="ma-cantine-header" class="my-0">ma cantine</p>
-          </div>
+          />
         </router-link>
       </v-toolbar-title>
       <div v-if="chipInfo">
@@ -371,12 +368,6 @@ export default {
   height: 60%;
   max-height: 30px;
   border-left: solid 1px #ccc;
-}
-#ma-cantine-header {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-  font-weight: 700;
-  color: rgb(22, 22, 22);
 }
 .mc-tab {
   height: 100%;
