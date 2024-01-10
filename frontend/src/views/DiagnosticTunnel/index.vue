@@ -15,9 +15,23 @@
             </div>
           </div>
         </v-col>
-        <v-col class="text-right py-0">
+        <v-col class="text-right py-0" v-if="step">
           <p class="mb-0">
             <v-btn
+              v-if="step.isSynthesis"
+              text
+              plain
+              class="text-decoration-underline px-0"
+              color="primary"
+              @click="quit"
+            >
+              Quitter
+              <v-icon color="primary" size="1rem" class="ml-0 mb-1">
+                $close-line
+              </v-icon>
+            </v-btn>
+            <v-btn
+              v-else
               text
               plain
               class="text-decoration-underline px-0"
@@ -355,9 +369,12 @@ export default {
     saveAndQuit() {
       return this.saveDiagnostic()
         .then(() => {
-          this.$router.push(this.quitLink)
+          this.quit()
         })
         .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
+    },
+    quit() {
+      this.$router.push(this.quitLink)
     },
     stepLink(step) {
       return { query: { étape: step.urlSlug } }
