@@ -201,7 +201,7 @@ import DsfrSelect from "@/components/DsfrSelect"
 import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
-import { diagnosticYears, timeAgo, lastYear, readyToTeledeclare } from "@/utils"
+import { customDiagnosticYears, diagnosticYears, timeAgo, lastYear, readyToTeledeclare } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
 
@@ -292,6 +292,7 @@ export default {
   methods: {
     updateCanteen(newCanteen) {
       this.$set(this, "canteen", newCanteen)
+      this.years = customDiagnosticYears(newCanteen.diagnostics)
     },
     fetchCanteen() {
       const id = this.canteenUrlComponent.split("--")[0]
