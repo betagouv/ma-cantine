@@ -635,6 +635,10 @@ export default Object.freeze({
   ],
   VegetarianRecurrence: [
     {
+      label: "Je ne propose pas un menu végétarien",
+      value: "NEVER",
+    },
+    {
       label: "Moins d'une fois par semaine",
       value: "LOW",
     },
