@@ -23,6 +23,7 @@ class Diagnostic(models.Model):
         TUNNEL = "TUNNEL", "Tunnel"
 
     class MenuFrequency(models.TextChoices):
+        NEVER = "NEVER", "Jamais"
         LOW = "LOW", "Moins d'une fois par semaine"
         MID = "MID", "Une fois par semaine"
         HIGH = "HIGH", "Plus d'une fois par semaine"
