@@ -651,7 +651,7 @@ export default Object.freeze({
       value: "LOW",
     },
     {
-      label: "Je ne propose pas un menu végétarien",
+      label: "Je ne propose pas de menu végétarien",
       value: "NEVER",
     },
   ],
