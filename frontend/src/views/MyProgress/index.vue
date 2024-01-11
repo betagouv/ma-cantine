@@ -203,7 +203,7 @@
         </div>
         <!-- else : year is <= lastYear or TD campaign is not ongoing -->
         <div v-else>
-          <p>TODO</p>
+          <p>Vous n'avez pas besoin de télédéclarer les données pour cette année.</p>
         </div>
         <p class="mt-4">
           Question, problème ?
