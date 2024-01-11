@@ -128,7 +128,7 @@ import FoodWasteCard from "./FoodWasteCard"
 import DiversificationCard from "./DiversificationCard"
 import NoPlasticCard from "./NoPlasticCard"
 import InformationCard from "./InformationCard"
-import DataInfoBadge from "./DataInfoBadge"
+import DataInfoBadge from "@/components/DataInfoBadge"
 import ApproSegment from "./ApproSegment"
 
 export default {
