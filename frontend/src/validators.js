@@ -37,7 +37,7 @@ export default {
   },
   greaterThanZero(input) {
     const errorMessage = "Ce champ doit contenir une chiffre supérieure à zéro"
-    if (!isBase10Number(input)) return NUMBER_FORMAT_ERROR
+    if (!input || !isBase10Number(input)) return errorMessage
     if (parseFloat(input) > 0) return true
     return errorMessage
   },
