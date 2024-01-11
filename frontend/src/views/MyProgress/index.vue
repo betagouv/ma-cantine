@@ -127,9 +127,9 @@
           </template>
         </DsfrTabsVue>
       </v-col>
-      <v-col cols="9" sm="3" md="2" style="border-left: 1px solid #DDD;">
+      <v-col cols="9" sm="3" md="2" style="border-left: 1px solid #DDD;" class="fr-text-sm">
         <h2 class="fr-h5 mb-2">Télédéclaration</h2>
-        <div v-if="hasActiveTeledeclaration" class="fr-text-sm">
+        <div v-if="hasActiveTeledeclaration">
           <DataInfoBadge class="my-2" :hasActiveTeledeclaration="true" />
           <p>
             Votre bilan a été télédéclaré
@@ -170,12 +170,22 @@
             </template>
           </TeledeclarationCancelDialog>
         </div>
-        <!-- is teledeclared -->
         <!-- satellites who are being declared for -->
-        <!-- Year > lastYear -->
-        <!-- year < lastYear -->
-        <!-- year === lastYear -->
-        <!-- completion status of each tab? If started with tunnel -->
+        <div v-else-if="inTeledeclarationCampaign">
+          <!-- badge : donnees manquants / bilan a teledeclarer -->
+          <div v-if="readyToTeledeclare">
+            <p>TODO: 2 views. 1 for all bilan completed; another for can TD but also encourage completion</p>
+          </div>
+          <div v-else>
+            <p>TODO: what data is missing to allow TD?</p>
+          </div>
+          <!-- completion status of each tab? If started with tunnel -->
+        </div>
+        <!-- year > lastYear -->
+        <!-- else : year is <= lastYear or TD campaign is not ongoing -->
+        <div v-else>
+          <p>TODO</p>
+        </div>
       </v-col>
     </v-row>
     <TeledeclarationPreview
