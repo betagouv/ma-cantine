@@ -428,7 +428,7 @@ export default {
           class: this.isTruthyOrZero(this.diagnostic.totalLeftovers) ? "" : "warn",
         },
         {
-          label: "Période de mesurement (jours)",
+          label: "Période de mesure (jours)",
           isNumber: true,
           value: this.diagnostic.durationLeftoversMeasurement,
           class: this.isTruthyOrZero(this.diagnostic.durationLeftoversMeasurement) ? "" : "warn",

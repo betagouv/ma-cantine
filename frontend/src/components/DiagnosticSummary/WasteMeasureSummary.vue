@@ -134,7 +134,7 @@ export default {
           value: diag.totalLeftovers ? `${diag.totalLeftovers} tonnes pour l'année` : "—",
         },
         {
-          label: "Période de mesurement",
+          label: "Période de mesure",
           value: diag.durationLeftoversMeasurement ? `${diag.durationLeftoversMeasurement} jours` : "—",
         },
         { label: "Reste de pain", value: diag.breadLeftovers ? `${diag.breadLeftovers} kg/an` : "—" },
