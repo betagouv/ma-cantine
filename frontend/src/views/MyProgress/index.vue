@@ -167,11 +167,21 @@
         </div>
         <!-- satellites who are being declared for -->
         <div v-else-if="inTeledeclarationCampaign">
-          <!-- badge : donnees manquants / bilan a teledeclarer -->
           <div v-if="readyToTeledeclare">
-            <p>TODO: 2 views. 1 for all bilan completed; another for can TD but also encourage completion</p>
+            <DataInfoBadge class="my-2" :readyToTeledeclare="true" />
+            <div v-if="hasFinishedMeasureTunnel">
+              <p>Votre bilan est complèt !</p>
+              <v-btn color="primary">Télédéclarer</v-btn>
+            </div>
+            <div v-else>
+              <p>Merci d'avoir pris le temps de saisir les données d'approvisonnement et de votre établissement.</p>
+              <p>Pour aller plus loin, vous pouvez complèter le bilan. Sinon, vous pouvez le télédéclarer.</p>
+              <v-btn color="primary">Complèter mon bilan</v-btn>
+              <v-btn outlined color="primary" class="mt-4">Télédéclarer</v-btn>
+            </div>
           </div>
           <div v-else>
+            <!-- fix width of this badge in this column -->
             <DataInfoBadge class="my-2" :missingData="true" />
             <p>Pour pouvoir télédéclarer, veuillez :</p>
             <ul>
