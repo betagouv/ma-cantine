@@ -152,11 +152,6 @@
               jusqu’à la fin de la campagne.
             </span>
           </p>
-          <p v-else>
-            En cas d'erreur, veuillez
-            <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">nous contacter</router-link>
-            .
-          </p>
           <TeledeclarationCancelDialog
             v-model="cancelDialog"
             v-if="inTeledeclarationCampaign"
@@ -177,7 +172,14 @@
             <p>TODO: 2 views. 1 for all bilan completed; another for can TD but also encourage completion</p>
           </div>
           <div v-else>
-            <p>TODO: what data is missing to allow TD?</p>
+            <DataInfoBadge class="my-2" :missingData="true" />
+            <p>Pour pouvoir télédéclarer, veuillez :</p>
+            <ul>
+              <!-- TODO: maybe always show all relevant steps, with checkmark or cross, to valorise effort put in so far -->
+              <li v-if="missingApproData">Complèter le volet d'approvisonnement</li>
+              <li v-if="missingCanteenData">Complèter les données de votre établissement</li>
+              <li v-if="hasSatelliteInconsistency">Mettre à jour vos satellites</li>
+            </ul>
           </div>
           <!-- completion status of each tab? If started with tunnel -->
         </div>
@@ -186,6 +188,10 @@
         <div v-else>
           <p>TODO</p>
         </div>
+        <p class="mt-4">
+          Question, problème ?
+          <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">Contactez-nous</router-link>
+        </p>
       </v-col>
     </v-row>
     <TeledeclarationPreview
@@ -208,7 +214,15 @@ import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
 import DataInfoBadge from "@/components/DataInfoBadge"
-import { diagnosticYears, timeAgo, lastYear, readyToTeledeclare } from "@/utils"
+import {
+  diagnosticYears,
+  timeAgo,
+  lastYear,
+  readyToTeledeclare,
+  hasDiagnosticApproData,
+  missingCanteenData,
+  hasSatelliteInconsistency,
+} from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
 
@@ -296,6 +310,15 @@ export default {
         return this.tabHeaders.filter((t) => t.urlSlug === this.approId || t.urlSlug === this.establishmentId)
       }
       return this.tabHeaders
+    },
+    missingApproData() {
+      return !this.diagnostic || !hasDiagnosticApproData(this.diagnostic)
+    },
+    missingCanteenData() {
+      return !this.canteen || missingCanteenData(this.canteen, this.$store)
+    },
+    hasSatelliteInconsistency() {
+      return !this.canteen || hasSatelliteInconsistency(this.canteen)
     },
   },
   methods: {
