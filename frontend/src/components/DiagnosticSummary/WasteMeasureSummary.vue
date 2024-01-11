@@ -128,19 +128,23 @@ export default {
     },
     wasteMeasures() {
       const diag = this.diagnostic
+      const isDefined = (value) => value || value === 0
       return [
         {
           label: "Total des déchets alimentaires",
-          value: diag.totalLeftovers ? `${diag.totalLeftovers} tonnes pour l'année` : "—",
+          value: isDefined(diag.totalLeftovers) ? `${diag.totalLeftovers} tonnes pour l'année` : "—",
         },
         {
           label: "Période de mesure",
-          value: diag.durationLeftoversMeasurement ? `${diag.durationLeftoversMeasurement} jours` : "—",
+          value: isDefined(diag.durationLeftoversMeasurement) ? `${diag.durationLeftoversMeasurement} jours` : "—",
         },
-        { label: "Reste de pain", value: diag.breadLeftovers ? `${diag.breadLeftovers} kg/an` : "—" },
-        { label: "Reste plateau", value: diag.servedLeftovers ? `${diag.servedLeftovers} kg/an` : "—" },
-        { label: "Reste en production", value: diag.unservedLeftovers ? `${diag.unservedLeftovers} kg/an` : "—" },
-        { label: "Reste de composantes", value: diag.sideLeftovers ? `${diag.sideLeftovers} kg/an` : "—" },
+        { label: "Reste de pain", value: isDefined(diag.breadLeftovers) ? `${diag.breadLeftovers} kg/an` : "—" },
+        { label: "Reste plateau", value: isDefined(diag.servedLeftovers) ? `${diag.servedLeftovers} kg/an` : "—" },
+        {
+          label: "Reste en production",
+          value: isDefined(diag.unservedLeftovers) ? `${diag.unservedLeftovers} kg/an` : "—",
+        },
+        { label: "Reste de composantes", value: isDefined(diag.sideLeftovers) ? `${diag.sideLeftovers} kg/an` : "—" },
       ]
     },
     displayDonationAgreementSegment() {
