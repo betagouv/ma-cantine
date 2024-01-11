@@ -130,7 +130,7 @@
       <v-col cols="9" sm="3" md="2" style="border-left: 1px solid #DDD;">
         <h2 class="fr-h5 mb-2">Télédéclaration</h2>
         <div v-if="hasActiveTeledeclaration" class="fr-text-sm">
-          <p class="font-weight-bold mb-0">Votre bilan {{ diagnostic.year }} a bien été télédéclaré.</p>
+          <DataInfoBadge class="my-2" :hasActiveTeledeclaration="true" />
           <p>
             Votre bilan a été télédéclaré
             <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
@@ -197,6 +197,7 @@ import DsfrSelect from "@/components/DsfrSelect"
 import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
+import DataInfoBadge from "@/components/DataInfoBadge"
 import { diagnosticYears, timeAgo, lastYear, readyToTeledeclare } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
@@ -212,6 +213,7 @@ export default {
     DownloadLink,
     TeledeclarationPreview,
     TeledeclarationCancelDialog,
+    DataInfoBadge,
   },
   props: {
     canteenUrlComponent: {
