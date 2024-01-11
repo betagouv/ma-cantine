@@ -4,6 +4,7 @@
     <v-row>
       <v-col cols="12" md="9">
         <ProductionTypeTag v-if="canteen" :canteen="canteen" class="mt-n2" />
+        <!-- TODO: put Ma progression text up here -->
         <h1 class="fr-h3 my-2" v-if="canteen">{{ canteen.name }}</h1>
         <v-row v-if="canteenPreviews.length > 1">
           <v-col>
@@ -14,6 +15,7 @@
         </v-row>
       </v-col>
       <v-col cols="12" md="3">
+        <!-- TODO: should this be a nav element? -->
         <p class="body-2 my-2" for="yearSelect">Année</p>
         <DsfrSelect
           ref="yearSelect"
@@ -25,27 +27,6 @@
       </v-col>
     </v-row>
     <v-row v-if="canteen" class="mt-10">
-      <v-col cols="9" sm="3" md="2" style="border-right: 1px solid #DDD;">
-        <h2 class="fr-h5">Ma progression</h2>
-        <nav aria-label="Année du diagnostic" v-if="canteen && $vuetify.breakpoint.smAndUp">
-          <v-list nav class="text-left">
-            <v-list-item-group>
-              <v-list-item
-                :ripple="false"
-                :to="{ name: 'MyProgress', params: { year } }"
-                v-for="year in years"
-                :key="year"
-              >
-                <v-list-item-title>
-                  {{ year }}
-                  <span v-if="year >= currentYear" class="fr-text-xs font-weight-normal">(prévisionnel)</span>
-                </v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </nav>
-        <DsfrSelect hide-details label="Année" :items="years" v-model="year" v-else-if="canteen" />
-      </v-col>
       <v-col cols="12" sm="9" md="10">
         <v-card v-if="hasActiveTeledeclaration" class="pa-6 mb-4 mr-1" style="background: #f6f6f6">
           <p class="fr-text-sm font-weight-bold mb-0">Votre bilan {{ diagnostic.year }} a bien été télédéclaré.</p>
@@ -194,6 +175,10 @@
             </v-tab-item>
           </template>
         </DsfrTabsVue>
+      </v-col>
+      <v-col cols="9" sm="3" md="2" style="border-left: 1px solid #DDD;">
+        <h2 class="fr-h5">Télédéclaration</h2>
+        <p>TODO</p>
       </v-col>
     </v-row>
     <TeledeclarationPreview
