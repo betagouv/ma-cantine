@@ -29,56 +29,6 @@
     </v-row>
     <v-row v-if="canteen" class="mt-10">
       <v-col cols="12" sm="9" md="10">
-        <v-card v-if="hasActiveTeledeclaration" class="pa-6 mb-4 mr-1" style="background: #f6f6f6">
-          <p class="fr-text-sm font-weight-bold mb-0">Votre bilan {{ diagnostic.year }} a bien été télédéclaré.</p>
-          <p class="fr-text-sm">
-            Votre bilan a été télédéclaré
-            <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
-            <span v-if="inTeledeclarationCampaign">
-              En cas d'erreur, vous pouvez annuler votre télédéclaration et modifier vos données
-              <span v-if="campaignEndDate">
-                jusqu’au
-                {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }}.
-              </span>
-              <span v-else>
-                jusqu’à la fin de la campagne.
-              </span>
-            </span>
-            <span v-else>
-              En cas d'erreur, veuillez
-              <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">nous contacter</router-link>
-              .
-            </span>
-          </p>
-          <v-card-actions class="px-0 pt-0 pb-0 align-start d-block d-md-flex">
-            <div>
-              <DownloadLink
-                :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
-                label="Télécharger le justificatif"
-                sizeStr="60 Ko"
-                target="_blank"
-                class="mb-0 mr-4"
-              />
-            </div>
-            <div class="mt-4 mt-md-0">
-              <TeledeclarationCancelDialog
-                v-model="cancelDialog"
-                v-if="inTeledeclarationCampaign"
-                @cancel="cancelTeledeclaration"
-                :diagnostic="diagnostic"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <a class="ml-0 ml-md-4 text-decoration-underline" v-on="on" v-bind="attrs">
-                    Annuler ma télédéclaration
-                    <v-icon color="primary" size="1rem" class="ml-0 mb-1 close-icon">
-                      $close-line
-                    </v-icon>
-                  </a>
-                </template>
-              </TeledeclarationCancelDialog>
-            </div>
-          </v-card-actions>
-        </v-card>
         <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
           <fieldset class="fr-text">
             <legend class="font-weight-bold">
@@ -178,8 +128,48 @@
         </DsfrTabsVue>
       </v-col>
       <v-col cols="9" sm="3" md="2" style="border-left: 1px solid #DDD;">
-        <h2 class="fr-h5">Télédéclaration</h2>
-        <p>TODO</p>
+        <h2 class="fr-h5 mb-2">Télédéclaration</h2>
+        <div v-if="hasActiveTeledeclaration" class="fr-text-sm">
+          <p class="font-weight-bold mb-0">Votre bilan {{ diagnostic.year }} a bien été télédéclaré.</p>
+          <p>
+            Votre bilan a été télédéclaré
+            <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
+          </p>
+          <p v-if="inTeledeclarationCampaign">
+            En cas d'erreur, vous pouvez annuler votre télédéclaration et modifier vos données
+            <span v-if="campaignEndDate">
+              jusqu’au
+              {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }}.
+            </span>
+            <span v-else>
+              jusqu’à la fin de la campagne.
+            </span>
+          </p>
+          <p v-else>
+            En cas d'erreur, veuillez
+            <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">nous contacter</router-link>
+            .
+          </p>
+          <DownloadLink
+            :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
+            label="Télécharger le justificatif"
+            sizeStr="60 Ko"
+            target="_blank"
+            class="mr-4"
+          />
+          <TeledeclarationCancelDialog
+            v-model="cancelDialog"
+            v-if="inTeledeclarationCampaign"
+            @cancel="cancelTeledeclaration"
+            :diagnostic="diagnostic"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn outlined small color="primary" class="fr-btn--tertiary px-2" v-on="on" v-bind="attrs">
+                Annuler ma télédéclaration
+              </v-btn>
+            </template>
+          </TeledeclarationCancelDialog>
+        </div>
         <!-- is teledeclared -->
         <!-- satellites who are being declared for -->
         <!-- Year > lastYear -->
