@@ -59,7 +59,23 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-card v-if="hasSatelliteInconsistency" class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block">
+    <v-card v-if="missingCanteenData" class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block">
+      <p>
+        Il nous manque des données de votre établissement.
+        <span v-if="inTeledeclarationCampaign">
+          Veuillez complèter les infos avant télédéclarer.
+        </span>
+      </p>
+      <v-card-actions class="px-0 pt-0 pb-0 justify-center">
+        <v-btn :to="{ name: 'CanteenForm' }" color="primary" class="fr-text font-weight-medium">
+          Mettre à jour mon établissement
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+    <v-card
+      v-else-if="hasSatelliteInconsistency"
+      class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
+    >
       <p>
         {{ satelliteInconsistencyMessage }}
         <span v-if="inTeledeclarationCampaign">
@@ -121,6 +137,7 @@ import {
   readyToTeledeclare,
   diagnosticCanBeTeledeclared,
   inTeledeclarationCampaign,
+  missingCanteenData,
   hasSatelliteInconsistency,
   hasFinishedMeasureTunnel,
 } from "@/utils"
@@ -209,11 +226,14 @@ export default {
     diagnosticCanBeTeledeclared() {
       return diagnosticCanBeTeledeclared(this.canteen, this.canteenDiagnostic)
     },
-    hasSatelliteInconsistency() {
-      return hasSatelliteInconsistency(this.canteen)
-    },
     inTeledeclarationCampaign() {
       return inTeledeclarationCampaign(this.year)
+    },
+    missingCanteenData() {
+      return missingCanteenData(this.canteen, this.$store)
+    },
+    hasSatelliteInconsistency() {
+      return hasSatelliteInconsistency(this.canteen)
     },
     satelliteInconsistencyMessage() {
       const satelliteCount = this.canteen.satelliteCanteensCount
