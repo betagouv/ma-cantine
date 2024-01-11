@@ -128,7 +128,6 @@ export default {
     },
     wasteMeasures() {
       const diag = this.diagnostic
-      const isDefined = (value) => value || value === 0
       return [
         {
           label: "Total des déchets alimentaires",
@@ -153,13 +152,18 @@ export default {
     donationMeasures() {
       const d = this.diagnostic
       return [
-        { label: "Fréquence de dons", value: d.donationFrequency ? `${d.donationFrequency} dons/an` : "—" },
-        { label: "Quantité des denrées données", value: d.donationQuantity ? `${d.donationQuantity} kg/an` : "—" },
+        { label: "Fréquence de dons", value: isDefined(d.donationFrequency) ? `${d.donationFrequency} dons/an` : "—" },
+        {
+          label: "Quantité des denrées données",
+          value: isDefined(d.donationQuantity) ? `${d.donationQuantity} kg/an` : "—",
+        },
         { label: "Type de denrées données", value: d.donationFoodType ? `${d.donationFoodType}` : "—" },
       ]
     },
   },
 }
+
+const isDefined = (value) => value || value === 0
 </script>
 
 <style scoped>
