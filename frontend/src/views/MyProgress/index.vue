@@ -24,6 +24,7 @@
           hide-details="auto"
           placeholder="Année du diagnostic"
         />
+        <!-- TODO: a little indicator of whether this is the current year/provisional, the TD year, or other -->
       </v-col>
     </v-row>
     <v-row v-if="canteen" class="mt-10">
@@ -179,6 +180,12 @@
       <v-col cols="9" sm="3" md="2" style="border-left: 1px solid #DDD;">
         <h2 class="fr-h5">Télédéclaration</h2>
         <p>TODO</p>
+        <!-- is teledeclared -->
+        <!-- satellites who are being declared for -->
+        <!-- Year > lastYear -->
+        <!-- year < lastYear -->
+        <!-- year === lastYear -->
+        <!-- completion status of each tab? If started with tunnel -->
       </v-col>
     </v-row>
     <TeledeclarationPreview
