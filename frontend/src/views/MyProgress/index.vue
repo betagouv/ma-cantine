@@ -14,21 +14,104 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="12" md="3">
+      <v-col cols="12" sm="5" md="3">
         <!-- TODO: should this be a nav element? -->
         <p class="body-2 my-2" for="yearSelect">Année</p>
         <DsfrSelect
           ref="yearSelect"
           v-model="selectedYear"
           :items="years"
-          hide-details="auto"
+          :hide-details="true"
           placeholder="Année du diagnostic"
         />
         <!-- TODO: a little indicator of whether this is the current year/provisional, the TD year, or other -->
       </v-col>
     </v-row>
-    <v-row v-if="canteen" class="mt-10">
-      <v-col cols="12" sm="9" md="10">
+    <v-row v-if="canteen" class="mt-5 mt-md-10">
+      <v-col cols="9" md="3" lg="2" style="border-left: 1px solid #DDD;" class="fr-text-sm order-md-last">
+        <h2 class="fr-h5 mb-2">Télédéclaration</h2>
+        <div v-if="hasActiveTeledeclaration">
+          <DataInfoBadge class="my-2" :hasActiveTeledeclaration="true" />
+          <p>
+            Votre bilan a été télédéclaré
+            <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
+          </p>
+          <DownloadLink
+            :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
+            label="Télécharger le justificatif"
+            sizeStr="60 Ko"
+            target="_blank"
+            class="mr-4"
+          />
+          <p v-if="inTeledeclarationCampaign">
+            En cas d'erreur, vous pouvez annuler votre télédéclaration et modifier vos données
+            <span v-if="campaignEndDate">
+              jusqu’au
+              {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }}.
+            </span>
+            <span v-else>
+              jusqu’à la fin de la campagne.
+            </span>
+          </p>
+          <TeledeclarationCancelDialog
+            v-model="cancelDialog"
+            v-if="inTeledeclarationCampaign"
+            @cancel="cancelTeledeclaration"
+            :diagnostic="diagnostic"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn outlined small color="primary" class="fr-btn--tertiary px-2" v-on="on" v-bind="attrs">
+                Annuler ma télédéclaration
+              </v-btn>
+            </template>
+          </TeledeclarationCancelDialog>
+        </div>
+        <!-- TODO: satellites who are being declared for -->
+        <div v-else-if="inTeledeclarationCampaign">
+          <div v-if="readyToTeledeclare">
+            <DataInfoBadge class="my-2" :readyToTeledeclare="true" />
+            <div v-if="hasFinishedMeasureTunnel">
+              <p>Votre bilan est complèt !</p>
+              <v-btn color="primary" @click="showTeledeclarationPreview = true">Télédéclarer</v-btn>
+            </div>
+            <div v-else>
+              <p>Merci d'avoir pris le temps de saisir les données d'approvisonnement et de votre établissement.</p>
+              <p>Pour aller plus loin, vous pouvez complèter le bilan. Sinon, vous pouvez le télédéclarer.</p>
+              <v-btn outlined color="primary" @click="showTeledeclarationPreview = true">
+                Télédéclarer
+              </v-btn>
+            </div>
+          </div>
+          <div v-else>
+            <!-- TODO: fix width of this badge in this column -->
+            <DataInfoBadge class="my-2" :missingData="true" />
+            <p>Pour pouvoir télédéclarer, veuillez :</p>
+            <ul>
+              <!-- TODO: maybe always show all relevant steps, with checkmark or cross, to valorise effort put in so far -->
+              <li v-if="missingApproData">Complèter le volet d'approvisonnement</li>
+              <li v-if="missingCanteenData">Complèter les données de votre établissement</li>
+              <li v-if="hasSatelliteInconsistency">Mettre à jour vos satellites</li>
+            </ul>
+          </div>
+          <!-- TODO: completion status of each tab? If started with tunnel -->
+        </div>
+        <div v-else-if="+year >= currentYear">
+          <DataInfoBadge class="my-2" :currentYear="+year === currentYear" />
+          <p>
+            Vous pouvez commencer ce bilan, et le télédéclarer pendant la campagne de télédéclaration en
+            {{ +year + 1 }}.
+          </p>
+        </div>
+        <!-- else : year is <= lastYear or TD campaign is not ongoing -->
+        <div v-else>
+          <p>Vous n'avez pas besoin de télédéclarer les données pour cette année.</p>
+        </div>
+        <p class="mt-4">
+          Question, problème ?
+          <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">Contactez-nous</router-link>
+        </p>
+      </v-col>
+      <v-col cols="12" md="9" lg="10">
         <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
           <fieldset class="fr-text">
             <legend class="font-weight-bold">
@@ -126,89 +209,6 @@
             </v-tab-item>
           </template>
         </DsfrTabsVue>
-      </v-col>
-      <v-col cols="9" sm="3" md="2" style="border-left: 1px solid #DDD;" class="fr-text-sm">
-        <h2 class="fr-h5 mb-2">Télédéclaration</h2>
-        <div v-if="hasActiveTeledeclaration">
-          <DataInfoBadge class="my-2" :hasActiveTeledeclaration="true" />
-          <p>
-            Votre bilan a été télédéclaré
-            <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
-          </p>
-          <DownloadLink
-            :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
-            label="Télécharger le justificatif"
-            sizeStr="60 Ko"
-            target="_blank"
-            class="mr-4"
-          />
-          <p v-if="inTeledeclarationCampaign">
-            En cas d'erreur, vous pouvez annuler votre télédéclaration et modifier vos données
-            <span v-if="campaignEndDate">
-              jusqu’au
-              {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }}.
-            </span>
-            <span v-else>
-              jusqu’à la fin de la campagne.
-            </span>
-          </p>
-          <TeledeclarationCancelDialog
-            v-model="cancelDialog"
-            v-if="inTeledeclarationCampaign"
-            @cancel="cancelTeledeclaration"
-            :diagnostic="diagnostic"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn outlined small color="primary" class="fr-btn--tertiary px-2" v-on="on" v-bind="attrs">
-                Annuler ma télédéclaration
-              </v-btn>
-            </template>
-          </TeledeclarationCancelDialog>
-        </div>
-        <!-- TODO: satellites who are being declared for -->
-        <div v-else-if="inTeledeclarationCampaign">
-          <div v-if="readyToTeledeclare">
-            <DataInfoBadge class="my-2" :readyToTeledeclare="true" />
-            <div v-if="hasFinishedMeasureTunnel">
-              <p>Votre bilan est complèt !</p>
-              <v-btn color="primary" @click="showTeledeclarationPreview = true">Télédéclarer</v-btn>
-            </div>
-            <div v-else>
-              <p>Merci d'avoir pris le temps de saisir les données d'approvisonnement et de votre établissement.</p>
-              <p>Pour aller plus loin, vous pouvez complèter le bilan. Sinon, vous pouvez le télédéclarer.</p>
-              <v-btn outlined color="primary" @click="showTeledeclarationPreview = true">
-                Télédéclarer
-              </v-btn>
-            </div>
-          </div>
-          <div v-else>
-            <!-- TODO: fix width of this badge in this column -->
-            <DataInfoBadge class="my-2" :missingData="true" />
-            <p>Pour pouvoir télédéclarer, veuillez :</p>
-            <ul>
-              <!-- TODO: maybe always show all relevant steps, with checkmark or cross, to valorise effort put in so far -->
-              <li v-if="missingApproData">Complèter le volet d'approvisonnement</li>
-              <li v-if="missingCanteenData">Complèter les données de votre établissement</li>
-              <li v-if="hasSatelliteInconsistency">Mettre à jour vos satellites</li>
-            </ul>
-          </div>
-          <!-- TODO: completion status of each tab? If started with tunnel -->
-        </div>
-        <div v-else-if="+year >= currentYear">
-          <DataInfoBadge class="my-2" :currentYear="+year === currentYear" />
-          <p>
-            Vous pouvez commencer ce bilan, et le télédéclarer pendant la campagne de télédéclaration en
-            {{ +year + 1 }}.
-          </p>
-        </div>
-        <!-- else : year is <= lastYear or TD campaign is not ongoing -->
-        <div v-else>
-          <p>Vous n'avez pas besoin de télédéclarer les données pour cette année.</p>
-        </div>
-        <p class="mt-4">
-          Question, problème ?
-          <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">Contactez-nous</router-link>
-        </p>
       </v-col>
     </v-row>
     <TeledeclarationPreview
