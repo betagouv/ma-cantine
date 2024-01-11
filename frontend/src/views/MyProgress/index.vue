@@ -194,7 +194,13 @@
           </div>
           <!-- TODO: completion status of each tab? If started with tunnel -->
         </div>
-        <!-- year > lastYear -->
+        <div v-else-if="+year >= currentYear">
+          <DataInfoBadge class="my-2" :currentYear="+year === currentYear" />
+          <p>
+            Vous pouvez commencer ce bilan, et le télédéclarer pendant la campagne de télédéclaration en
+            {{ +year + 1 }}.
+          </p>
+        </div>
         <!-- else : year is <= lastYear or TD campaign is not ongoing -->
         <div v-else>
           <p>TODO</p>
