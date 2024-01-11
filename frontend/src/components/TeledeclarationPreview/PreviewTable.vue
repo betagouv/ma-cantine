@@ -591,11 +591,13 @@ export default {
       return items[vegetarianWeeklyRecurrence] || "Non renseigné"
     },
     getVegetarianMenuType(vegetarianMenuType) {
+      if (this.diagnostic.vegetarianWeeklyRecurrence === "NEVER") return "Non applicable"
       if (!vegetarianMenuType) return "Non renseigné"
       const items = selectListToObject(Constants.VegetarianMenuTypes)
       return items[vegetarianMenuType] || "Non renseigné"
     },
     getVegetarianMenuBases(vegetarianMenuBases) {
+      if (this.diagnostic.vegetarianWeeklyRecurrence === "NEVER") return "Non applicable"
       if (!vegetarianMenuBases || !vegetarianMenuBases.length) return "Non renseigné"
       const actionItems = selectListToObject(Constants.VegetarianMenuBases)
       const labels = vegetarianMenuBases.map((x) => actionItems[x]).filter((x) => !!x)
