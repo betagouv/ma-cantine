@@ -1,17 +1,31 @@
 <template>
   <div class="text-left">
     <BreadcrumbsNav :links="[{ to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' }]" />
-    <ProductionTypeTag v-if="canteen" :canteen="canteen" class="mt-n2" />
-    <h1 class="fr-h3 my-2" v-if="canteen">{{ canteen.name }}</h1>
-    <v-row v-if="canteenPreviews.length > 1">
-      <v-col>
-        <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
-          Changer d'établissement
-        </v-btn>
+    <v-row>
+      <v-col cols="12" md="9">
+        <ProductionTypeTag v-if="canteen" :canteen="canteen" class="mt-n2" />
+        <h1 class="fr-h3 my-2" v-if="canteen">{{ canteen.name }}</h1>
+        <v-row v-if="canteenPreviews.length > 1">
+          <v-col>
+            <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
+              Changer d'établissement
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col cols="12" md="3">
+        <p class="body-2 my-2" for="yearSelect">Année</p>
+        <DsfrSelect
+          ref="yearSelect"
+          v-model="selectedYear"
+          :items="years"
+          hide-details="auto"
+          placeholder="Année du diagnostic"
+        />
       </v-col>
     </v-row>
     <v-row v-if="canteen" class="mt-10">
-      <v-col cols="12" sm="3" md="2" style="border-right: 1px solid #DDD;">
+      <v-col cols="9" sm="3" md="2" style="border-right: 1px solid #DDD;">
         <h2 class="fr-h5">Ma progression</h2>
         <nav aria-label="Année du diagnostic" v-if="canteen && $vuetify.breakpoint.smAndUp">
           <v-list nav class="text-left">
@@ -217,6 +231,13 @@ export default {
     TeledeclarationPreview,
     TeledeclarationCancelDialog,
   },
+  props: {
+    canteenUrlComponent: {
+      type: String,
+    },
+    year: {},
+    measure: {},
+  },
   data() {
     const establishmentId = "etablissement"
     return {
@@ -242,8 +263,9 @@ export default {
         ],
       ],
       canteen: null,
-      years: diagnosticYears().map((x) => x.toString()),
+      years: diagnosticYears(),
       currentYear: lastYear() + 1,
+      selectedYear: +this.year,
       centralKitchenDiagnosticModes: Constants.CentralKitchenDiagnosticModes,
       centralKitchenDiagnosticMode: null,
       cancelDialog: false,
@@ -252,13 +274,6 @@ export default {
       approId: "qualite-des-produits",
       establishmentId,
     }
-  },
-  props: {
-    canteenUrlComponent: {
-      type: String,
-    },
-    year: {},
-    measure: {},
   },
   computed: {
     mobileSelectItems() {
@@ -433,6 +448,9 @@ export default {
     },
     $route() {
       this.chooseTabToDisplay()
+    },
+    selectedYear() {
+      this.$router.push({ name: "MyProgress", params: { year: this.selectedYear } })
     },
   },
   beforeMount() {
