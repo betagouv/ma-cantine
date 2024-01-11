@@ -165,23 +165,24 @@
             </template>
           </TeledeclarationCancelDialog>
         </div>
-        <!-- satellites who are being declared for -->
+        <!-- TODO: satellites who are being declared for -->
         <div v-else-if="inTeledeclarationCampaign">
           <div v-if="readyToTeledeclare">
             <DataInfoBadge class="my-2" :readyToTeledeclare="true" />
             <div v-if="hasFinishedMeasureTunnel">
               <p>Votre bilan est complèt !</p>
-              <v-btn color="primary">Télédéclarer</v-btn>
+              <v-btn color="primary" @click="showTeledeclarationPreview = true">Télédéclarer</v-btn>
             </div>
             <div v-else>
               <p>Merci d'avoir pris le temps de saisir les données d'approvisonnement et de votre établissement.</p>
               <p>Pour aller plus loin, vous pouvez complèter le bilan. Sinon, vous pouvez le télédéclarer.</p>
-              <v-btn color="primary">Complèter mon bilan</v-btn>
-              <v-btn outlined color="primary" class="mt-4">Télédéclarer</v-btn>
+              <v-btn outlined color="primary" @click="showTeledeclarationPreview = true">
+                Télédéclarer
+              </v-btn>
             </div>
           </div>
           <div v-else>
-            <!-- fix width of this badge in this column -->
+            <!-- TODO: fix width of this badge in this column -->
             <DataInfoBadge class="my-2" :missingData="true" />
             <p>Pour pouvoir télédéclarer, veuillez :</p>
             <ul>
@@ -191,7 +192,7 @@
               <li v-if="hasSatelliteInconsistency">Mettre à jour vos satellites</li>
             </ul>
           </div>
-          <!-- completion status of each tab? If started with tunnel -->
+          <!-- TODO: completion status of each tab? If started with tunnel -->
         </div>
         <!-- year > lastYear -->
         <!-- else : year is <= lastYear or TD campaign is not ongoing -->
