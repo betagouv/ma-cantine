@@ -135,6 +135,13 @@
             Votre bilan a été télédéclaré
             <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
           </p>
+          <DownloadLink
+            :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
+            label="Télécharger le justificatif"
+            sizeStr="60 Ko"
+            target="_blank"
+            class="mr-4"
+          />
           <p v-if="inTeledeclarationCampaign">
             En cas d'erreur, vous pouvez annuler votre télédéclaration et modifier vos données
             <span v-if="campaignEndDate">
@@ -150,13 +157,6 @@
             <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">nous contacter</router-link>
             .
           </p>
-          <DownloadLink
-            :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
-            label="Télécharger le justificatif"
-            sizeStr="60 Ko"
-            target="_blank"
-            class="mr-4"
-          />
           <TeledeclarationCancelDialog
             v-model="cancelDialog"
             v-if="inTeledeclarationCampaign"
