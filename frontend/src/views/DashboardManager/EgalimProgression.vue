@@ -226,7 +226,7 @@ export default {
       )
     },
     readyToTeledeclare() {
-      return readyToTeledeclare(this.canteen, this.canteenDiagnostic)
+      return readyToTeledeclare(this.canteen, this.canteenDiagnostic, this.$store)
     },
     tunnelComplete() {
       return this.canteenDiagnostic && hasFinishedMeasureTunnel(this.canteenDiagnostic)

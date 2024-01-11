@@ -674,7 +674,10 @@ export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
   return hasDiagnosticApproData(diagnostic)
 }
 
-export const readyToTeledeclare = (canteen, diagnostic) => {
-  // TODO: as well as checking satellites, should check if have all necesssary canteen data
-  return diagnosticCanBeTeledeclared(canteen, diagnostic) && !hasSatelliteInconsistency(canteen)
+export const readyToTeledeclare = (canteen, diagnostic, store) => {
+  return (
+    diagnosticCanBeTeledeclared(canteen, diagnostic) &&
+    !hasSatelliteInconsistency(canteen) &&
+    !missingCanteenData(canteen, store)
+  )
 }

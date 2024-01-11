@@ -317,7 +317,7 @@ export default {
       return window.ENABLE_TELEDECLARATION && +this.year === lastYear()
     },
     readyToTeledeclare() {
-      return readyToTeledeclare(this.canteen, this.diagnostic)
+      return readyToTeledeclare(this.canteen, this.diagnostic, this.$store)
     },
     declaringApproOnly() {
       return this.isCentralKitchen && this.centralKitchenDiagnosticMode === "APPRO"
