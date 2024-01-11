@@ -42,7 +42,6 @@
           color="primary"
           class="px-3"
           :outlined="isPublished || !hasPublicationData"
-          :disabled="!isPublished && !hasPublicationData"
         >
           {{ isPublished ? "Éditer ma vitrine" : "Publier ma cantine" }}
         </v-btn>
@@ -51,9 +50,6 @@
         <v-btn outlined color="primary" class="fr-btn--tertiary px-3" :to="{ name: 'CanteenGeneratePoster' }">
           Générer mon affiche
         </v-btn>
-      </p>
-      <p v-if="!isPublished && !hasPublicationData" class="grey--text text--darken-1 fr-text-xs mb-0 ml-3">
-        Pas de données
       </p>
     </v-card-actions>
   </v-card>
