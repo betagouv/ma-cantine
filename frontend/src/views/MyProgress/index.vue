@@ -71,11 +71,11 @@
           <div v-if="readyToTeledeclare">
             <DataInfoBadge class="my-2" :readyToTeledeclare="true" />
             <div v-if="hasFinishedMeasureTunnel">
-              <p>Votre bilan est complèt !</p>
+              <p>Votre bilan est complet !</p>
               <v-btn color="primary" @click="showTeledeclarationPreview = true">Télédéclarer</v-btn>
             </div>
             <div v-else>
-              <p>Merci d'avoir pris le temps de saisir les données d'approvisonnement et de votre établissement.</p>
+              <p>Merci d'avoir pris le temps de saisir les données d’approvisionnement et de votre établissement.</p>
               <p>Pour aller plus loin, vous pouvez complèter le bilan. Sinon, vous pouvez le télédéclarer.</p>
               <v-btn outlined color="primary" @click="showTeledeclarationPreview = true">
                 Télédéclarer
@@ -88,8 +88,8 @@
             <p>Pour pouvoir télédéclarer, veuillez :</p>
             <ul>
               <!-- TODO: maybe always show all relevant steps, with checkmark or cross, to valorise effort put in so far -->
-              <li v-if="missingApproData">Complèter le volet d'approvisonnement</li>
-              <li v-if="missingCanteenData">Complèter les données de votre établissement</li>
+              <li v-if="missingApproData">Compléter le volet d’approvisionnement</li>
+              <li v-if="missingCanteenData">Compléter les données de votre établissement</li>
               <li v-if="hasSatelliteInconsistency">Mettre à jour vos satellites</li>
             </ul>
           </div>
@@ -98,7 +98,7 @@
         <div v-else-if="+year >= currentYear">
           <DataInfoBadge class="my-2" :currentYear="+year === currentYear" />
           <p>
-            Vous pouvez commencer ce bilan, et le télédéclarer pendant la campagne de télédéclaration en
+            Vous pouvez commencer ce bilan et le télédéclarer pendant la campagne de télédéclaration en
             {{ +year + 1 }}.
           </p>
         </div>
