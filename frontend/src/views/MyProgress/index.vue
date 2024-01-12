@@ -2,9 +2,8 @@
   <div class="text-left">
     <BreadcrumbsNav :links="[{ to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' }]" />
     <v-row>
-      <v-col cols="12" md="9">
+      <v-col cols="12" md="10">
         <ProductionTypeTag v-if="canteen" :canteen="canteen" class="mt-n2" />
-        <!-- TODO: put Ma progression text up here -->
         <h1 class="fr-h3 my-2" v-if="canteen">{{ canteen.name }}</h1>
         <v-row v-if="canteenPreviews.length > 1">
           <v-col>
@@ -14,7 +13,7 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="12" sm="5" md="3">
+      <v-col cols="12" sm="5" md="2">
         <!-- TODO: should this be a nav element? -->
         <p class="body-2 my-2" for="yearSelect">Année</p>
         <DsfrSelect
@@ -65,7 +64,12 @@
             </template>
           </TeledeclarationCancelDialog>
         </div>
-        <!-- TODO: satellites who are being declared for -->
+        <div v-if="isSatellite && !!centralDiagnostic">
+          <p>Votre cuisine centrale va faire le bilan pour votre établissement.</p>
+          <p v-if="centralDiagnostic.centralKitchenDiagnosticMode !== 'ALL'">
+            Pour aller plus loin, vous pouvez complèter les autres volets.
+          </p>
+        </div>
         <div v-else-if="inTeledeclarationCampaign">
           <div v-if="readyToTeledeclare">
             <DataInfoBadge class="my-2" :readyToTeledeclare="true" />
@@ -336,6 +340,9 @@ export default {
     },
     hasFinishedMeasureTunnel() {
       return this.diagnostic && hasFinishedMeasureTunnel(this.diagnostic)
+    },
+    isSatellite() {
+      return this.canteen?.productionType === "site_cooked_elsewhere"
     },
   },
   methods: {
