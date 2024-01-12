@@ -399,11 +399,13 @@ export default {
       return [
         {
           label: "Diagnostic sur le gaspillage alimentaire réalisé",
-          value: this.diagnostic.hasWasteDiagnostic ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.hasWasteDiagnostic),
+          class: this.diagnostic.hasWasteDiagnostic === null ? "warn" : "",
         },
         {
           label: "Plan d'action contre le gaspillage en place",
-          value: this.diagnostic.hasWastePlan ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.hasWastePlan),
+          class: this.diagnostic.hasWastePlan === null ? "warn" : "",
         },
         {
           label: "Actions contre le gaspillage en place",
@@ -415,11 +417,13 @@ export default {
         },
         {
           label: "Propose des dons alimentaires",
-          value: this.diagnostic.hasDonationAgreement ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.hasDonationAgreement),
+          class: this.diagnostic.hasDonationAgreement === null ? "warn" : "",
         },
         {
           label: "Réalise des mesures de gaspillage alimentaire",
-          value: this.diagnostic.hasWasteMeasures ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.hasWasteMeasures),
+          class: this.diagnostic.hasWasteMeasures === null ? "warn" : "",
         },
         {
           label: "Restes de pain kg/an",
@@ -468,7 +472,8 @@ export default {
         },
         {
           label: "Plan de diversification de protéines en place",
-          value: this.diagnostic.hasDiversificationPlan ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.hasDiversificationPlan),
+          class: this.diagnostic.hasDiversificationPlan === null ? "warn" : "",
         },
         {
           label: "Actions incluses dans le plan de diversification des protéines",
@@ -492,19 +497,23 @@ export default {
         },
         {
           label: "Contenants de cuisson en plastique remplacés",
-          value: this.diagnostic.cookingPlasticSubstituted ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.cookingPlasticSubstituted),
+          class: this.diagnostic.cookingPlasticSubstituted === null ? "warn" : "",
         },
         {
           label: "Contenants de service en plastique remplacés",
-          value: this.diagnostic.servingPlasticSubstituted ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.servingPlasticSubstituted),
+          class: this.diagnostic.servingPlasticSubstituted === null ? "warn" : "",
         },
         {
           label: "Bouteilles en plastique remplacées",
-          value: this.diagnostic.plasticBottlesSubstituted ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.plasticBottlesSubstituted),
+          class: this.diagnostic.plasticBottlesSubstituted === null ? "warn" : "",
         },
         {
           label: "Ustensils en plastique remplacés",
-          value: this.diagnostic.plasticTablewareSubstituted ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.plasticTablewareSubstituted),
+          class: this.diagnostic.plasticTablewareSubstituted === null ? "warn" : "",
         },
         {
           label: "Supports de communication utilisés",
@@ -521,11 +530,13 @@ export default {
         },
         {
           label: "Communique sur le plan alimentaire",
-          value: this.diagnostic.communicatesOnFoodPlan ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.communicatesOnFoodPlan),
+          class: this.diagnostic.communicatesOnFoodPlan === null ? "warn" : "",
         },
         {
           label: "Communique sur les démarches qualité/durables/équitables",
-          value: this.diagnostic.communicatesOnFoodQuality ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.communicatesOnFoodQuality),
+          class: this.diagnostic.communicatesOnFoodQuality === null ? "warn" : "",
         },
         {
           label: "Fréquence de communication",
@@ -591,11 +602,13 @@ export default {
       return items[vegetarianWeeklyRecurrence] || "Non renseigné"
     },
     getVegetarianMenuType(vegetarianMenuType) {
+      if (this.diagnostic.vegetarianWeeklyRecurrence === "NEVER") return "Non applicable"
       if (!vegetarianMenuType) return "Non renseigné"
       const items = selectListToObject(Constants.VegetarianMenuTypes)
       return items[vegetarianMenuType] || "Non renseigné"
     },
     getVegetarianMenuBases(vegetarianMenuBases) {
+      if (this.diagnostic.vegetarianWeeklyRecurrence === "NEVER") return "Non applicable"
       if (!vegetarianMenuBases || !vegetarianMenuBases.length) return "Non renseigné"
       const actionItems = selectListToObject(Constants.VegetarianMenuBases)
       const labels = vegetarianMenuBases.map((x) => actionItems[x]).filter((x) => !!x)
@@ -613,6 +626,10 @@ export default {
     },
     isTruthyOrZero(value) {
       return !!value || value === 0
+    },
+    getNullableBooleanLabel(value) {
+      if (value === null) return "Non renseigné"
+      return value ? "Oui" : "Non"
     },
     toCurrency(value) {
       return toCurrency(value)
