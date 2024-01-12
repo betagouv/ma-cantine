@@ -24,7 +24,6 @@
           :hide-details="true"
           placeholder="Année du diagnostic"
         />
-        <!-- TODO: a little indicator of whether this is the current year/provisional, the TD year, or other -->
       </v-col>
     </v-row>
     <v-row v-if="canteen" class="mt-5 mt-md-10">
@@ -83,7 +82,6 @@
             </div>
           </div>
           <div v-else>
-            <!-- TODO: fix width of this badge in this column -->
             <DataInfoBadge class="my-2" :missingData="true" />
             <p>Pour pouvoir télédéclarer, veuillez :</p>
             <ul>
@@ -93,7 +91,6 @@
               <li v-if="hasSatelliteInconsistency">Mettre à jour vos satellites</li>
             </ul>
           </div>
-          <!-- TODO: completion status of each tab? If started with tunnel -->
         </div>
         <div v-else-if="+year >= currentYear">
           <DataInfoBadge class="my-2" :currentYear="+year === currentYear" />
@@ -102,7 +99,6 @@
             {{ +year + 1 }}.
           </p>
         </div>
-        <!-- else : year is <= lastYear or TD campaign is not ongoing -->
         <div v-else>
           <p>Vous n'avez pas besoin de télédéclarer les données pour cette année.</p>
         </div>
