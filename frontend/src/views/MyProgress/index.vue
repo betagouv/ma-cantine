@@ -28,7 +28,7 @@
       </v-col>
     </v-row>
     <v-row v-if="canteen" class="mt-5 mt-md-10">
-      <v-col cols="9" md="3" lg="2" style="border-left: 1px solid #DDD;" class="fr-text-sm order-md-last">
+      <v-col cols="9" md="3" lg="2" style="border-left: 1px solid #DDD;" class="fr-text-sm order-md-last pr-0">
         <h2 class="fr-h5 mb-2">Télédéclaration</h2>
         <div v-if="hasActiveTeledeclaration">
           <DataInfoBadge class="my-2" :hasActiveTeledeclaration="true" />
@@ -239,6 +239,7 @@ import {
   hasDiagnosticApproData,
   missingCanteenData,
   hasSatelliteInconsistency,
+  hasFinishedMeasureTunnel,
 } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
@@ -336,6 +337,9 @@ export default {
     },
     hasSatelliteInconsistency() {
       return !this.canteen || hasSatelliteInconsistency(this.canteen)
+    },
+    hasFinishedMeasureTunnel() {
+      return this.diagnostic && hasFinishedMeasureTunnel(this.diagnostic)
     },
   },
   methods: {
