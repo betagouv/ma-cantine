@@ -79,7 +79,7 @@
             </div>
             <div v-else>
               <p>Merci d'avoir pris le temps de saisir les données d’approvisionnement et de votre établissement.</p>
-              <p>Pour aller plus loin, vous pouvez complèter le bilan. Sinon, vous pouvez le télédéclarer.</p>
+              <p>Pour aller plus loin, complétez les autres volets du bilan. Vous pouvez aussi le télédéclarer dès maintenant.</p>
               <v-btn outlined color="primary" @click="showTeledeclarationPreview = true">
                 Télédéclarer
               </v-btn>
@@ -87,7 +87,7 @@
           </div>
           <div v-else>
             <DataInfoBadge class="my-2" :missingData="true" />
-            <p>Pour pouvoir télédéclarer, veuillez :</p>
+            <p>Pour télédéclarer, veuillez :</p>
             <ul>
               <!-- TODO: maybe always show all relevant steps, with checkmark or cross, to valorise effort put in so far -->
               <li v-if="missingApproData">Compléter le volet d’approvisionnement</li>

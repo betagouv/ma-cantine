@@ -61,7 +61,7 @@
     </v-row>
     <v-card v-if="missingCanteenData" class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block">
       <p>
-        Il nous manque des données de votre établissement.
+        Certaines données de votre établissement manquent.
         <span v-if="inTeledeclarationCampaign">
           Veuillez compléter ces informations avant télédéclarer.
         </span>
