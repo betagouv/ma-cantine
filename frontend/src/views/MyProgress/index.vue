@@ -14,7 +14,6 @@
         </v-row>
       </v-col>
       <v-col cols="12" sm="5" md="2">
-        <!-- TODO: should this be a nav element? -->
         <p class="body-2 my-2" for="yearSelect">Année</p>
         <DsfrSelect
           ref="yearSelect"
@@ -92,7 +91,6 @@
             <DataInfoBadge class="my-2" :missingData="true" />
             <p>Pour télédéclarer, veuillez :</p>
             <ul>
-              <!-- TODO: maybe always show all relevant steps, with checkmark or cross, to valorise effort put in so far -->
               <li v-if="missingApproData">Compléter le volet d’approvisionnement</li>
               <li v-if="missingCanteenData">Compléter les données de votre établissement</li>
               <li v-if="hasSatelliteInconsistency">Mettre à jour vos satellites</li>
@@ -107,7 +105,7 @@
           </p>
         </div>
         <div v-else>
-          <p>Vous n'avez pas besoin de télédéclarer les données pour cette année.</p>
+          <p>La campagne de télédéclaration pour {{ year }} a pris fin. Aucun action n'est requise de votre part.</p>
         </div>
         <p class="mt-4">
           Question, problème ?
