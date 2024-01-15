@@ -32,7 +32,7 @@ from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
 from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, UndoClaimCanteenView, SatelliteListCreateView
 from api.views import ActionableCanteensListView, ActionableCanteenRetrieveView
 from api.views import CanteenStatusView, VideoTutorialListView, DiagnosticsToTeledeclareListView
-from api.views import InitialDataView
+from api.views import InitialDataView, UnlinkSatelliteView
 
 
 urlpatterns = {
@@ -73,6 +73,11 @@ urlpatterns = {
         "canteens/<int:canteen_pk>/satellites/",
         SatelliteListCreateView.as_view(),
         name="list_create_update_satellite",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/satellites/<int:satellite_pk>/unlink",
+        UnlinkSatelliteView.as_view(),
+        name="unlink_satellite",
     ),
     path("canteenStatistics/", CanteenStatisticsView.as_view(), name="canteen_statistics"),
     path("sectors/", SectorListView.as_view(), name="sectors_list"),

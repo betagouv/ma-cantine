@@ -20,7 +20,7 @@ from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework import status
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, NotFound
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -1183,6 +1183,38 @@ class SatelliteListCreateView(ListCreateAPIView):
             return JsonResponse(camelize(serialized_canteen), status=return_status)
         except Sector.DoesNotExist:
             raise BadRequest()
+
+
+@extend_schema_view(
+    post=extend_schema(
+        summary="Enlever une cantine satellite à la cuisine centrale.",
+        description="Si la cuisine centrale contient la cantine satellite, cet endpoint permet de l'enlever",
+    ),
+)
+class UnlinkSatelliteView(APIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    serializer_class = FullCanteenSerializer
+
+    def post(self, request, canteen_pk, satellite_pk):
+        try:
+            central_kitchen = Canteen.objects.get(pk=canteen_pk)
+        except Canteen.DoesNotExist:
+            raise NotFound()
+
+        try:
+            satellite = Canteen.objects.get(pk=satellite_pk)
+        except Canteen.DoesNotExist:
+            serialized_canteen = FullCanteenSerializer(central_kitchen).data
+            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+
+        if satellite.central_producer_siret != central_kitchen.siret:
+            serialized_canteen = FullCanteenSerializer(central_kitchen).data
+            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+
+        satellite.central_producer_siret = None
+        satellite.save()
+        serialized_canteen = FullCanteenSerializer(central_kitchen).data
+        return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
 
 
 class ActionableCanteensListView(ListAPIView):

@@ -323,3 +323,74 @@ class TestRelationCentralSatellite(APITestCase):
 
         satellite_canteen.refresh_from_db()
         self.assertIsNone(satellite_canteen.central_producer_siret)
+
+    def test_remove_added_satellite_unauthenticated(self):
+        """
+        Shouldn't be able to remove satellites if not logged in
+        """
+        central_siret = "08376514425566"
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret=central_siret)
+        satellite = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
+        )
+
+        response = self.client.post(
+            reverse("unlink_satellite", kwargs={"canteen_pk": central_kitchen.id, "satellite_pk": satellite.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_remove_added_satellite_not_manager(self):
+        """
+        Shouldn't be able to remove satellites if the user does not manage the central kitchen
+        """
+        central_siret = "08376514425566"
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret=central_siret)
+        satellite = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
+        )
+
+        response = self.client.post(
+            reverse("unlink_satellite", kwargs={"canteen_pk": central_kitchen.id, "satellite_pk": satellite.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_remove_added_satellite(self):
+        """
+        Should be able to remove satellites from a central kitchen
+        """
+        central_siret = "08376514425566"
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret=central_siret)
+        central_kitchen.managers.add(authenticate.user)
+        satellite = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
+        )
+
+        response = self.client.post(
+            reverse("unlink_satellite", kwargs={"canteen_pk": central_kitchen.id, "satellite_pk": satellite.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        satellite.refresh_from_db()
+        self.assertNotEqual(satellite.central_producer_siret, central_kitchen.siret)
+
+        body = response.json()
+        self.assertEqual(len(body["satellites"]), 0)
+
+    @authenticate
+    def test_remove_unexistent_satellite(self):
+        """
+        Removing a non-linked satellite from a central kitchen should be a transparent operation
+        """
+        central_siret = "08376514425566"
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret=central_siret)
+        central_kitchen.managers.add(authenticate.user)
+        unlinked_satellite_siret = "86891081916867"
+
+        response = self.client.post(
+            reverse(
+                "unlink_satellite", kwargs={"canteen_pk": central_kitchen.id, "satellite_pk": unlinked_satellite_siret}
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
