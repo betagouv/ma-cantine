@@ -614,7 +614,7 @@ export const lineMinistryRequired = (canteen, allSectors) => {
   return canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
 }
 
-export const missingCanteenData = (canteen, store) => {
+export const missingCanteenData = (canteen, sectors) => {
   // TODO: what location data to we require at minimum?
   const requiredFields = ["siret", "name", "cityInseeCode", "productionType", "managementType"]
   const missingFieldLambda = (f) => !canteen[f]
@@ -623,9 +623,7 @@ export const missingCanteenData = (canteen, store) => {
 
   // sectors checks
   if (!canteen.sectors || !canteen.sectors.length) return true
-  if (lineMinistryRequired(canteen, store.state.sectors) && !canteen.lineMinistry) return true
-
-  // siret duplication check?
+  if (lineMinistryRequired(canteen, sectors) && !canteen.lineMinistry) return true
 
   // production type specific checks
   const yearlyMealCountKey = "yearlyMealCount"
@@ -674,10 +672,10 @@ export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
   return hasDiagnosticApproData(diagnostic)
 }
 
-export const readyToTeledeclare = (canteen, diagnostic, store) => {
+export const readyToTeledeclare = (canteen, diagnostic, sectors) => {
   return (
     diagnosticCanBeTeledeclared(canteen, diagnostic) &&
     !hasSatelliteInconsistency(canteen) &&
-    !missingCanteenData(canteen, store)
+    !missingCanteenData(canteen, sectors)
   )
 }

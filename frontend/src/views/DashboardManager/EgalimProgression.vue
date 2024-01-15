@@ -230,7 +230,7 @@ export default {
       return inTeledeclarationCampaign(this.year)
     },
     missingCanteenData() {
-      return missingCanteenData(this.canteen, this.$store)
+      return missingCanteenData(this.canteen, this.$store.state.sectors)
     },
     hasSatelliteInconsistency() {
       return hasSatelliteInconsistency(this.canteen)
@@ -246,7 +246,7 @@ export default {
       )
     },
     readyToTeledeclare() {
-      return readyToTeledeclare(this.canteen, this.canteenDiagnostic, this.$store)
+      return readyToTeledeclare(this.canteen, this.canteenDiagnostic, this.$store.state.sectors)
     },
     tunnelComplete() {
       return this.canteenDiagnostic && hasFinishedMeasureTunnel(this.canteenDiagnostic)

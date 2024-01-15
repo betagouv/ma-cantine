@@ -79,7 +79,10 @@
             </div>
             <div v-else>
               <p>Merci d'avoir pris le temps de saisir les données d’approvisionnement et de votre établissement.</p>
-              <p>Pour aller plus loin, complétez les autres volets du bilan. Vous pouvez aussi le télédéclarer dès maintenant.</p>
+              <p>
+                Pour aller plus loin, complétez les autres volets du bilan. Vous pouvez aussi le télédéclarer dès
+                maintenant.
+              </p>
               <v-btn outlined color="primary" @click="showTeledeclarationPreview = true">
                 Télédéclarer
               </v-btn>
@@ -318,7 +321,7 @@ export default {
       return window.ENABLE_TELEDECLARATION && +this.year === lastYear()
     },
     readyToTeledeclare() {
-      return readyToTeledeclare(this.canteen, this.diagnostic, this.$store)
+      return readyToTeledeclare(this.canteen, this.diagnostic, this.$store.state.sectors)
     },
     declaringApproOnly() {
       return this.isCentralKitchen && this.centralKitchenDiagnosticMode === "APPRO"
@@ -333,7 +336,7 @@ export default {
       return !this.diagnostic || !hasDiagnosticApproData(this.diagnostic)
     },
     missingCanteenData() {
-      return !this.canteen || missingCanteenData(this.canteen, this.$store)
+      return !this.canteen || missingCanteenData(this.canteen, this.$store.state.sectors)
     },
     hasSatelliteInconsistency() {
       return !this.canteen || hasSatelliteInconsistency(this.canteen)
