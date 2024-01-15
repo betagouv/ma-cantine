@@ -8,11 +8,12 @@
       @blur="updatePayload"
       :error="hasError"
       label="Total (en € HT) de tous mes achats alimentaires"
+      ref="totalField"
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
       v-model="payload.valueTotalHt"
-      @autofill="updatePayload"
+      @autofill="onPurchaseAutofill"
       purchaseType="totaux"
       :amount="purchasesSummary.valueTotalHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
@@ -169,6 +170,10 @@ export default {
     errorUpdate() {
       this.errorHelperUsed = true
       this.checkTotal()
+    },
+    onPurchaseAutofill() {
+      this.updatePayload()
+      this.$refs.totalField.validate()
     },
   },
   mounted() {
