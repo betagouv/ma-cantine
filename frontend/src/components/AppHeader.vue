@@ -21,21 +21,19 @@
       hide-on-scroll
     >
       <v-toolbar-title class="align-self-center">
-        <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex align-left pl-4">
+        <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex align-center pl-4">
           <img src="/static/images/Marianne.png" height="90" alt="" />
           <img
             v-if="$vuetify.breakpoint.smAndUp"
             src="/static/images/ma-cantine-logo-light.jpg"
-            height="90"
+            height="65"
             alt="Page d'accueil ma cantine"
           />
+          <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
+            {{ chipInfo.text }}
+          </v-chip>
         </router-link>
       </v-toolbar-title>
-      <div v-if="chipInfo">
-        <v-chip label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
-          {{ chipInfo.text }}
-        </v-chip>
-      </div>
 
       <v-spacer></v-spacer>
 
