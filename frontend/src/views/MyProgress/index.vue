@@ -102,7 +102,7 @@
           </p>
         </div>
         <div v-else>
-          <p>La campagne de télédéclaration pour {{ year }} a pris fin. Aucun action n'est requise de votre part.</p>
+          <p>La campagne de télédéclaration pour {{ year }} a pris fin. Aucune action n'est requise de votre part.</p>
         </div>
         <p class="mt-4">
           Question, problème ?
