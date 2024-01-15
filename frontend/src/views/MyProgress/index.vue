@@ -1,88 +1,115 @@
 <template>
   <div class="text-left">
     <BreadcrumbsNav :links="[{ to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' }]" />
-    <ProductionTypeTag v-if="canteen" :canteen="canteen" class="mt-n2" />
-    <h1 class="fr-h3 my-2" v-if="canteen">{{ canteen.name }}</h1>
-    <v-row v-if="canteenPreviews.length > 1">
-      <v-col>
-        <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
-          Changer d'établissement
-        </v-btn>
+    <v-row>
+      <v-col cols="12" md="10">
+        <ProductionTypeTag v-if="canteen" :canteen="canteen" class="mt-n2" />
+        <h1 class="fr-h3 my-2" v-if="canteen">{{ canteen.name }}</h1>
+        <v-row v-if="canteenPreviews.length > 1">
+          <v-col>
+            <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
+              Changer d'établissement
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col cols="12" sm="5" md="2">
+        <p class="body-2 my-2" for="yearSelect">Année</p>
+        <DsfrSelect
+          ref="yearSelect"
+          v-model="selectedYear"
+          :items="years"
+          :hide-details="true"
+          placeholder="Année du diagnostic"
+        />
       </v-col>
     </v-row>
-    <v-row v-if="canteen" class="mt-10">
-      <v-col cols="12" sm="3" md="2" style="border-right: 1px solid #DDD;">
-        <h2 class="fr-h5">Ma progression</h2>
-        <nav aria-label="Année du diagnostic" v-if="canteen && $vuetify.breakpoint.smAndUp">
-          <v-list nav class="text-left">
-            <v-list-item-group>
-              <v-list-item
-                :ripple="false"
-                :to="{ name: 'MyProgress', params: { year } }"
-                v-for="year in years"
-                :key="year"
-              >
-                <v-list-item-title>
-                  {{ year }}
-                  <span v-if="year >= currentYear" class="fr-text-xs font-weight-normal">(prévisionnel)</span>
-                </v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </nav>
-        <DsfrSelect hide-details label="Année" :items="years" v-model="year" v-else-if="canteen" />
-      </v-col>
-      <v-col cols="12" sm="9" md="10">
-        <v-card v-if="hasActiveTeledeclaration" class="pa-6 mb-4 mr-1" style="background: #f6f6f6">
-          <p class="fr-text-sm font-weight-bold mb-0">Votre bilan {{ diagnostic.year }} a bien été télédéclaré.</p>
-          <p class="fr-text-sm">
+    <v-row v-if="canteen" class="mt-5 mt-md-10">
+      <v-col cols="9" md="3" lg="2" style="border-left: 1px solid #DDD;" class="fr-text-sm order-md-last pr-0">
+        <h2 class="fr-h5 mb-2">Télédéclaration</h2>
+        <div v-if="hasActiveTeledeclaration">
+          <DataInfoBadge class="my-2" :hasActiveTeledeclaration="true" />
+          <p>
             Votre bilan a été télédéclaré
             <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
-            <span v-if="inTeledeclarationCampaign">
-              En cas d'erreur, vous pouvez annuler votre télédéclaration et modifier vos données
-              <span v-if="campaignEndDate">
-                jusqu’au
-                {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }}.
-              </span>
-              <span v-else>
-                jusqu’à la fin de la campagne.
-              </span>
+          </p>
+          <DownloadLink
+            :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
+            label="Télécharger le justificatif"
+            sizeStr="60 Ko"
+            target="_blank"
+            class="mr-4"
+          />
+          <p v-if="inTeledeclarationCampaign">
+            En cas d'erreur, vous pouvez annuler votre télédéclaration et modifier vos données
+            <span v-if="campaignEndDate">
+              jusqu’au
+              {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }}.
             </span>
             <span v-else>
-              En cas d'erreur, veuillez
-              <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">nous contacter</router-link>
-              .
+              jusqu’à la fin de la campagne.
             </span>
           </p>
-          <v-card-actions class="px-0 pt-0 pb-0 align-start d-block d-md-flex">
-            <div>
-              <DownloadLink
-                :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
-                label="Télécharger le justificatif"
-                sizeStr="60 Ko"
-                target="_blank"
-                class="mb-0 mr-4"
-              />
+          <TeledeclarationCancelDialog
+            v-model="cancelDialog"
+            v-if="inTeledeclarationCampaign"
+            @cancel="cancelTeledeclaration"
+            :diagnostic="diagnostic"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn outlined small color="primary" class="fr-btn--tertiary px-2" v-on="on" v-bind="attrs">
+                Annuler ma télédéclaration
+              </v-btn>
+            </template>
+          </TeledeclarationCancelDialog>
+        </div>
+        <div v-if="isSatellite && !!centralDiagnostic">
+          <p>Votre cuisine centrale va faire le bilan pour votre établissement.</p>
+          <p v-if="centralDiagnostic.centralKitchenDiagnosticMode !== 'ALL'">
+            Pour aller plus loin, vous pouvez complèter les autres volets.
+          </p>
+        </div>
+        <div v-else-if="inTeledeclarationCampaign">
+          <div v-if="readyToTeledeclare">
+            <DataInfoBadge class="my-2" :readyToTeledeclare="true" />
+            <div v-if="hasFinishedMeasureTunnel">
+              <p>Votre bilan est complet !</p>
+              <v-btn color="primary" @click="showTeledeclarationPreview = true">Télédéclarer</v-btn>
             </div>
-            <div class="mt-4 mt-md-0">
-              <TeledeclarationCancelDialog
-                v-model="cancelDialog"
-                v-if="inTeledeclarationCampaign"
-                @cancel="cancelTeledeclaration"
-                :diagnostic="diagnostic"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <a class="ml-0 ml-md-4 text-decoration-underline" v-on="on" v-bind="attrs">
-                    Annuler ma télédéclaration
-                    <v-icon color="primary" size="1rem" class="ml-0 mb-1 close-icon">
-                      $close-line
-                    </v-icon>
-                  </a>
-                </template>
-              </TeledeclarationCancelDialog>
+            <div v-else>
+              <p>Vous pouvez télédéclarer dès maintenant.</p>
+              <p>Pour aller plus loin, vous pouvez également compléter les autres volets du bilan.</p>
+              <v-btn outlined color="primary" @click="showTeledeclarationPreview = true">
+                Télédéclarer
+              </v-btn>
             </div>
-          </v-card-actions>
-        </v-card>
+          </div>
+          <div v-else>
+            <DataInfoBadge class="my-2" :missingData="true" />
+            <p>Pour télédéclarer, veuillez :</p>
+            <ul>
+              <li v-if="missingApproData">Compléter le volet d’approvisionnement</li>
+              <li v-if="missingCanteenData">Compléter les données de votre établissement</li>
+              <li v-if="hasSatelliteInconsistency">Mettre à jour vos satellites</li>
+            </ul>
+          </div>
+        </div>
+        <div v-else-if="+year >= currentYear">
+          <DataInfoBadge class="my-2" :currentYear="+year === currentYear" />
+          <p>
+            Vous pouvez commencer ce bilan et le télédéclarer pendant la campagne de télédéclaration en
+            {{ +year + 1 }}.
+          </p>
+        </div>
+        <div v-else>
+          <p>La campagne de télédéclaration pour {{ year }} a pris fin. Aucune action n'est requise de votre part.</p>
+        </div>
+        <p class="mt-4">
+          Question, problème ?
+          <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">Contactez-nous</router-link>
+        </p>
+      </v-col>
+      <v-col cols="12" md="9" lg="10">
         <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
           <fieldset class="fr-text">
             <legend class="font-weight-bold">
@@ -201,7 +228,17 @@ import DsfrSelect from "@/components/DsfrSelect"
 import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
-import { diagnosticYears, timeAgo, lastYear, readyToTeledeclare } from "@/utils"
+import DataInfoBadge from "@/components/DataInfoBadge"
+import {
+  diagnosticYears,
+  timeAgo,
+  lastYear,
+  readyToTeledeclare,
+  hasDiagnosticApproData,
+  missingCanteenData,
+  hasSatelliteInconsistency,
+  hasFinishedMeasureTunnel,
+} from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
 
@@ -216,6 +253,14 @@ export default {
     DownloadLink,
     TeledeclarationPreview,
     TeledeclarationCancelDialog,
+    DataInfoBadge,
+  },
+  props: {
+    canteenUrlComponent: {
+      type: String,
+    },
+    year: {},
+    measure: {},
   },
   data() {
     const establishmentId = "etablissement"
@@ -242,8 +287,9 @@ export default {
         ],
       ],
       canteen: null,
-      years: diagnosticYears().map((x) => x.toString()),
+      years: diagnosticYears(),
       currentYear: lastYear() + 1,
+      selectedYear: +this.year,
       centralKitchenDiagnosticModes: Constants.CentralKitchenDiagnosticModes,
       centralKitchenDiagnosticMode: null,
       cancelDialog: false,
@@ -252,13 +298,6 @@ export default {
       approId: "qualite-des-produits",
       establishmentId,
     }
-  },
-  props: {
-    canteenUrlComponent: {
-      type: String,
-    },
-    year: {},
-    measure: {},
   },
   computed: {
     mobileSelectItems() {
@@ -277,7 +316,7 @@ export default {
       return window.ENABLE_TELEDECLARATION && +this.year === lastYear()
     },
     readyToTeledeclare() {
-      return readyToTeledeclare(this.canteen, this.diagnostic)
+      return readyToTeledeclare(this.canteen, this.diagnostic, this.$store.state.sectors)
     },
     declaringApproOnly() {
       return this.isCentralKitchen && this.centralKitchenDiagnosticMode === "APPRO"
@@ -287,6 +326,21 @@ export default {
         return this.tabHeaders.filter((t) => t.urlSlug === this.approId || t.urlSlug === this.establishmentId)
       }
       return this.tabHeaders
+    },
+    missingApproData() {
+      return !this.diagnostic || !hasDiagnosticApproData(this.diagnostic)
+    },
+    missingCanteenData() {
+      return !this.canteen || missingCanteenData(this.canteen, this.$store.state.sectors)
+    },
+    hasSatelliteInconsistency() {
+      return !this.canteen || hasSatelliteInconsistency(this.canteen)
+    },
+    hasFinishedMeasureTunnel() {
+      return this.diagnostic && hasFinishedMeasureTunnel(this.diagnostic)
+    },
+    isSatellite() {
+      return this.canteen?.productionType === "site_cooked_elsewhere"
     },
   },
   methods: {
@@ -433,6 +487,9 @@ export default {
     },
     $route() {
       this.chooseTabToDisplay()
+    },
+    selectedYear() {
+      this.$router.push({ name: "MyProgress", params: { year: this.selectedYear } })
     },
   },
   beforeMount() {
