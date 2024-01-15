@@ -77,11 +77,8 @@
               <v-btn color="primary" @click="showTeledeclarationPreview = true">Télédéclarer</v-btn>
             </div>
             <div v-else>
-              <p>Merci d'avoir pris le temps de saisir les données d’approvisionnement et de votre établissement.</p>
-              <p>
-                Pour aller plus loin, complétez les autres volets du bilan. Vous pouvez aussi le télédéclarer dès
-                maintenant.
-              </p>
+              <p>Vous pouvez télédéclarer dès maintenant.</p>
+              <p>Pour aller plus loin, vous pouvez également compléter les autres volets du bilan.</p>
               <v-btn outlined color="primary" @click="showTeledeclarationPreview = true">
                 Télédéclarer
               </v-btn>
