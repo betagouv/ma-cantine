@@ -19,6 +19,7 @@
         @mountedAndFetched="mountedAndFetched"
         @paramsChanged="updateRoute"
         @satellitesLoaded="updateSatellitesCount"
+        allowUnlinking
       />
       <v-divider class="my-8"></v-divider>
       <AddSatellite :canteen="canteen" @satelliteAdded="fetchSatellites" />
