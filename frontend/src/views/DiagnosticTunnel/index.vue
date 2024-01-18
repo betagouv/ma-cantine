@@ -18,28 +18,14 @@
         <v-col class="text-right py-0" v-if="step">
           <p class="mb-0">
             <v-btn
-              v-if="step.isSynthesis"
               text
               plain
               class="text-decoration-underline px-0"
               color="primary"
-              @click="quit"
-            >
-              Quitter
-              <v-icon color="primary" size="1rem" class="ml-0 mb-1">
-                $close-line
-              </v-icon>
-            </v-btn>
-            <v-btn
-              v-else
-              text
-              plain
-              class="text-decoration-underline px-0"
-              color="primary"
-              @click="saveAndQuit"
+              @click="step.isSynthesis ? quit() : saveAndQuit()"
               :disabled="!formIsValid"
             >
-              Sauvegarder et quitter
+              {{ step.isSynthesis ? "Quitter" : "Sauvegarder et quitter" }}
               <v-icon color="primary" size="1rem" class="ml-0 mb-1">
                 $close-line
               </v-icon>
