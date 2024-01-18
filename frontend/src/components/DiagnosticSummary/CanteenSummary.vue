@@ -62,12 +62,12 @@
         </div>
         <div class="mt-n1">
           <div v-if="hasSite">
-            <p class="my-0 fr-text-sm grey--text text--darken-1">Couverts moyens par jour</p>
+            <p class="my-0 fr-text-sm grey--text text--darken-1">Nombre moyen de couverts par jour</p>
             <p class="my-0">
               {{ canteen.dailyMealCount ? parseInt(canteen.dailyMealCount).toLocaleString("fr-FR") : "—" }}
             </p>
           </div>
-          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Nombre total de couverts à l’année</p>
+          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Nombre total de couverts par an</p>
           <p class="my-0">
             {{ canteen.yearlyMealCount ? parseInt(canteen.yearlyMealCount).toLocaleString("fr-FR") : "—" }}
           </p>
