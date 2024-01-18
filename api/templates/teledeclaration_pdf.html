@@ -668,6 +668,12 @@
                     Réalise des mesures contre le gaspillage alimentaire
                 </p>
                 <ul>
+                    {% if total_leftovers %}
+                    <li> Total des déchets alimentaires : {{ total_leftovers }} tonnes </li>
+                    {% endif %}
+                    {% if duration_leftovers_measurement %}
+                    <li> Période de mesure : {{ duration_leftovers_measurement }} jours </li>
+                    {% endif %}
                     {% if bread_leftovers %}
                     <li> Reste de pain : {{ bread_leftovers }} kg/an </li>
                     {% endif %}

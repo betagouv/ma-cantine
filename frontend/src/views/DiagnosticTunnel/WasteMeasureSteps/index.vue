@@ -51,6 +51,28 @@
             <v-row>
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
+                  v-model.number="payload.totalLeftovers"
+                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  validate-on-blur
+                  label="Total des déchets alimentaires"
+                  suffix="t"
+                  :readonly="!payload.hasWasteMeasures"
+                  :disabled="!payload.hasWasteMeasures"
+                />
+              </v-col>
+              <v-col cols="12" md="6" class="pb-0">
+                <DsfrTextField
+                  v-model.number="payload.durationLeftoversMeasurement"
+                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(0), validators.lteOrEmpty(365)]"
+                  validate-on-blur
+                  label="Période de mesure"
+                  suffix="jours"
+                  :readonly="!payload.hasWasteMeasures"
+                  :disabled="!payload.hasWasteMeasures"
+                />
+              </v-col>
+              <v-col cols="12" md="6" class="pb-0">
+                <DsfrTextField
                   v-model.number="payload.breadLeftovers"
                   :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
                   validate-on-blur
@@ -362,6 +384,8 @@ export default {
         hasWasteDiagnostic: this.diagnostic.hasWasteDiagnostic,
         hasWastePlan: this.diagnostic.hasWastePlan,
         hasWasteMeasures: this.diagnostic.hasWasteMeasures,
+        totalLeftovers: this.diagnostic.totalLeftovers,
+        durationLeftoversMeasurement: this.diagnostic.durationLeftoversMeasurement,
         breadLeftovers: this.diagnostic.breadLeftovers,
         servedLeftovers: this.diagnostic.servedLeftovers,
         unservedLeftovers: this.diagnostic.unservedLeftovers,

@@ -223,6 +223,10 @@ class TestTeledeclarationApi(APITestCase):
             diagnostic.has_donation_agreement,
         )
         self.assertEqual(json_teledeclaration["has_waste_measures"], diagnostic.has_waste_measures)
+        self.assertEqual(json_teledeclaration["total_leftovers"], diagnostic.total_leftovers)
+        self.assertEqual(
+            json_teledeclaration["duration_leftovers_measurement"], diagnostic.duration_leftovers_measurement
+        )
         self.assertEqual(
             json_teledeclaration["has_diversification_plan"],
             diagnostic.has_diversification_plan,
