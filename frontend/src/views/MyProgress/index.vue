@@ -63,7 +63,7 @@
             </template>
           </TeledeclarationCancelDialog>
         </div>
-        <div v-if="isSatellite && !!centralDiagnostic">
+        <div v-else-if="isSatellite && !!centralDiagnostic">
           <p>Votre cuisine centrale va faire le bilan pour votre établissement.</p>
           <p v-if="centralDiagnostic.centralKitchenDiagnosticMode !== 'ALL'">
             Pour aller plus loin, vous pouvez complèter les autres volets.
