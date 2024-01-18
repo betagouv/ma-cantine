@@ -8,6 +8,7 @@
     suffix="€ HT"
     v-bind="$attrs"
     v-on="$listeners"
+    ref="text-field"
   />
 </template>
 
@@ -21,6 +22,11 @@ export default {
   computed: {
     validators() {
       return validators
+    },
+  },
+  methods: {
+    validate() {
+      return this.$refs["text-field"].validate()
     },
   },
 }
