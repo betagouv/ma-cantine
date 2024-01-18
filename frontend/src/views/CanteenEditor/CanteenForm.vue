@@ -132,8 +132,8 @@
         </v-col>
 
         <v-col cols="12" md="4" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
-          <label for="daily-meals" class="body-2 mb-2 mb-md-7 d-block">
-            Couverts moyen par
+          <label for="daily-meals" class="body-2 mb-2 d-block">
+            Nombre moyen de couverts par
             <b>jour</b>
             (convives sur place)
           </label>
@@ -157,8 +157,8 @@
               'mb-md-7': !showSatelliteCanteensCount,
             }"
           >
-            Nombre total de couverts à
-            <b>l'année</b>
+            Nombre total de couverts par
+            <b>an</b>
             <span v-if="showSatelliteCanteensCount">&nbsp;(y compris les couverts livrés)</span>
           </label>
           <DsfrTextField
