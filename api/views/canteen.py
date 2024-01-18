@@ -1188,7 +1188,7 @@ class SatelliteListCreateView(ListCreateAPIView):
 @extend_schema_view(
     post=extend_schema(
         summary="Enlever une cantine satellite à la cuisine centrale.",
-        description="Si la cuisine centrale contient la cantine satellite, cet endpoint permet de l'enlever",
+        description="Cet endpoint permet d'enlever un satellite d'une cuisine centrale",
     ),
 )
 class UnlinkSatelliteView(APIView):
