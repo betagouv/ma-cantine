@@ -426,6 +426,18 @@ export default {
           class: this.diagnostic.hasWasteMeasures === null ? "warn" : "",
         },
         {
+          label: "Total des déchets alimentaires pour l'année (tonnes)",
+          isNumber: true,
+          value: this.diagnostic.totalLeftovers,
+          class: this.isTruthyOrZero(this.diagnostic.totalLeftovers) ? "" : "warn",
+        },
+        {
+          label: "Période de mesure (jours)",
+          isNumber: true,
+          value: this.diagnostic.durationLeftoversMeasurement,
+          class: this.isTruthyOrZero(this.diagnostic.durationLeftoversMeasurement) ? "" : "warn",
+        },
+        {
           label: "Restes de pain kg/an",
           isNumber: true,
           value: this.diagnostic.breadLeftovers,
