@@ -173,7 +173,7 @@ export default {
     },
     onPurchaseAutofill() {
       this.updatePayload()
-      this.$refs.totalField.validate()
+      this.$nextTick(this.$refs.totalField.validate)
     },
   },
   mounted() {
