@@ -9,6 +9,7 @@ from .utils import authenticate
 import datetime
 from unittest.mock import patch
 from django.utils import timezone
+from freezegun import freeze_time
 import pytz
 
 LAST_YEAR = datetime.date.today().year - 1
@@ -141,6 +142,7 @@ class TestTeledeclarationApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2021-01-20")
     @authenticate
     def test_create_bad_year(self):
         """
@@ -151,13 +153,12 @@ class TestTeledeclarationApi(APITestCase):
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2019, value_total_ht=100, diagnostic_type="SIMPLE")
         payload = {"diagnosticId": diagnostic.id}
-
-        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
-            response = self.client.post(reverse("teledeclaration_create"), payload)
+        response = self.client.post(reverse("teledeclaration_create"), payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2021-01-20")
     @authenticate
     def test_create(self):
         """
@@ -170,9 +171,7 @@ class TestTeledeclarationApi(APITestCase):
             value_externality_performance_ht=0, canteen=canteen, year=2020, diagnostic_type="SIMPLE"
         )
         payload = {"diagnosticId": diagnostic.id}
-
-        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
-            response = self.client.post(reverse("teledeclaration_create"), payload)
+        response = self.client.post(reverse("teledeclaration_create"), payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -223,6 +222,10 @@ class TestTeledeclarationApi(APITestCase):
             diagnostic.has_donation_agreement,
         )
         self.assertEqual(json_teledeclaration["has_waste_measures"], diagnostic.has_waste_measures)
+        self.assertEqual(json_teledeclaration["total_leftovers"], diagnostic.total_leftovers)
+        self.assertEqual(
+            json_teledeclaration["duration_leftovers_measurement"], diagnostic.duration_leftovers_measurement
+        )
         self.assertEqual(
             json_teledeclaration["has_diversification_plan"],
             diagnostic.has_diversification_plan,
@@ -252,7 +255,26 @@ class TestTeledeclarationApi(APITestCase):
             diagnostic.communicates_on_food_quality,
         )
 
+    @override_settings(ENABLE_TELEDECLARATION=False)
+    @freeze_time("2021-01-20")
+    @authenticate
+    def test_create_out_of_campaign(self):
+        """
+        A teledeclaration cannot be created out of a TD campaign
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(
+            value_externality_performance_ht=0, canteen=canteen, year=2020, diagnostic_type="SIMPLE"
+        )
+        payload = {"diagnosticId": diagnostic.id}
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2021-01-14")
     @authenticate
     def test_cancel(self):
         """
@@ -272,6 +294,44 @@ class TestTeledeclarationApi(APITestCase):
 
         body = response.json()
         self.assertIsNone(body["teledeclaration"])
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2023-01-14")
+    @authenticate
+    def test_cancel_previous_year(self):
+        """
+        A submitted teledeclaration cannot be cancelled for a previous campaign
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+
+        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
+        self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
+
+    @override_settings(ENABLE_TELEDECLARATION=False)
+    @freeze_time("2023-01-14")
+    @authenticate
+    def test_cancel_out_of_campaign(self):
+        """
+        A submitted teledeclaration cannot be cancelled after the campaign
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+
+        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
+        self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
