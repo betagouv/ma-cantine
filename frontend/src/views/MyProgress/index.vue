@@ -230,6 +230,7 @@ import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
 import DataInfoBadge from "@/components/DataInfoBadge"
 import {
+  customDiagnosticYears,
   diagnosticYears,
   timeAgo,
   lastYear,
@@ -346,6 +347,7 @@ export default {
   methods: {
     updateCanteen(newCanteen) {
       this.$set(this, "canteen", newCanteen)
+      this.years = customDiagnosticYears(newCanteen.diagnostics)
     },
     fetchCanteen() {
       const id = this.canteenUrlComponent.split("--")[0]
