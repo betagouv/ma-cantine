@@ -6,14 +6,14 @@
       <v-col cols="12" sm="5" class="my-8">
         <QualityMeasureValuesInput
           :originalDiagnostic="previousDiagnostic"
-          :label="`En ${previousDiagnostic.year}, la valeur (en HT) de mes achats alimentaires...`"
+          :label="`En ${previousDiagnostic.year}, la valeur (en € HT) de mes achats alimentaires...`"
         />
       </v-col>
       <v-spacer></v-spacer>
       <v-col cols="12" sm="5" class="my-8">
         <QualityMeasureValuesInput
           :originalDiagnostic="latestDiagnostic"
-          :label="`En ${latestDiagnostic.year}, la valeur (en HT) de mes achats alimentaires...`"
+          :label="`En ${latestDiagnostic.year}, la valeur (en € HT) de mes achats alimentaires...`"
         />
       </v-col>
       <v-spacer></v-spacer>
@@ -31,7 +31,7 @@
         <QualityMeasureValuesInput
           :originalDiagnostic="provisionalYear1Diagnostic"
           :label="
-            `En ${provisionalYear1Diagnostic.year}, la valeur prévisionnelle (en HT) de mes achats alimentaires...`
+            `En ${provisionalYear1Diagnostic.year}, la valeur prévisionnelle (en € HT) de mes achats alimentaires...`
           "
         />
       </v-col>
@@ -40,7 +40,7 @@
         <QualityMeasureValuesInput
           :originalDiagnostic="provisionalYear2Diagnostic"
           :label="
-            `En ${provisionalYear2Diagnostic.year}, la valeur prévisionnelle (en HT) de mes achats alimentaires...`
+            `En ${provisionalYear2Diagnostic.year}, la valeur prévisionnelle (en € HT) de mes achats alimentaires...`
           "
         />
       </v-col>

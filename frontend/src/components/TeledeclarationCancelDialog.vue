@@ -11,8 +11,8 @@
       </v-card-title>
 
       <v-card-text>
-        En l'annulant vous devrez soumettre à nouveau une télédéclaration pour {{ diagnostic.year }}
-        conformément à l'article 24 de la loi EGAlim.
+        En l'annulant vous devez soumettre à nouveau une télédéclaration pour vos achats
+        {{ diagnostic.year }} conformément à l'arrêté du 14 septembre 2022.
       </v-card-text>
 
       <v-divider></v-divider>

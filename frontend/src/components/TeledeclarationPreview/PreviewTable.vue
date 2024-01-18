@@ -132,9 +132,9 @@ export default {
           isNumber: true,
         })
       if (this.showDailyMealCount)
-        items.push({ value: this.canteen.dailyMealCount, label: "Couverts moyen par jour", isNumber: true })
+        items.push({ value: this.canteen.dailyMealCount, label: "Nombre moyen de couverts par jour", isNumber: true })
       items = items.concat([
-        { value: this.canteen.yearlyMealCount, label: "Nombre total de couverts à l'année", isNumber: true },
+        { value: this.canteen.yearlyMealCount, label: "Nombre total de couverts par an", isNumber: true },
         { value: this.sectors, label: "Secteurs d'activité" },
       ])
       if (this.showMinistryField)
