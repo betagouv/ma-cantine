@@ -385,11 +385,11 @@ export default {
         "Valeur d'achats SIQO (hors bio) HT",
         "Valeur (en € HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
         "Valeur (en € HT) des autres achats EGAlim",
-        "Valeur (en € HT) des mes achats en viandes et volailles fraiches ou surgelées total",
-        "Valeur (en € HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
-        "Valeur (en € HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
-        "Valeur (en € HT) des mes achats en poissons, produits de la mer et de l'aquaculture total",
-        "Valeur (en € HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
+        "Valeur (en € HT) de mes achats en viandes et volailles fraiches ou surgelées total",
+        "Valeur (en € HT) de mes achats EGAlim en viandes et volailles fraiches ou surgelées",
+        "Valeur (en € HT) de mes achats provenance France en viandes et volailles fraiches ou surgelées",
+        "Valeur (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture total",
+        "Valeur (en € HT) de mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
       ]
       let valuesArray = simpleValues
       const array = [
@@ -408,8 +408,8 @@ export default {
       ]
       if (this.importLevel === "COMPLETE" || this.importLevel === "CC_COMPLETE") {
         valuesArray = [
-          "La valeur (en € HT) des mes achats en viandes et volailles fraiches ou surgelées total",
-          "La valeur (en € HT) des mes achats en poissons, produits de la mer et de l'aquaculture total",
+          "La valeur (en € HT) de mes achats en viandes et volailles fraiches ou surgelées total",
+          "La valeur (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture total",
           "Bio : Viandes et volailles fraîches et surgelées",
           "Bio : Produits aquatiques frais et surgelés",
           "Bio : Fruits et légumes frais et surgelés",

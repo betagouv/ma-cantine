@@ -67,27 +67,27 @@ const SIMPLE_FIELDS = [
   },
   {
     name: "valueMeatPoultryHt",
-    label: "La valeur (en € HT) des mes achats en viandes et volailles fraiches ou surgelées total",
+    label: "La valeur (en € HT) de mes achats en viandes et volailles fraiches ou surgelées total",
     purchaseType: "totaux viandes et volailles",
   },
   {
     name: "valueMeatPoultryEgalimHt",
-    label: "La valeur (en € HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
+    label: "La valeur (en € HT) de mes achats EGAlim en viandes et volailles fraiches ou surgelées",
     purchaseType: "viandes et volailles EGAlim",
   },
   {
     name: "valueMeatPoultryFranceHt",
-    label: "La valeur (en € HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
+    label: "La valeur (en € HT) de mes achats provenance France en viandes et volailles fraiches ou surgelées",
     purchaseType: "viandes et volailles provenance France",
   },
   {
     name: "valueFishHt",
-    label: "La valeur (en € HT) des mes achats en poissons, produits de la mer et de l'aquaculture total",
+    label: "La valeur (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture total",
     purchaseType: "totaux de poissons, produits de la mer et de l'aquaculture",
   },
   {
     name: "valueFishEgalimHt",
-    label: "La valeur (en € HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
+    label: "La valeur (en € HT) de mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
     purchaseType: "poissons, produits de la mer et de l'aquaculture EGAlim",
   },
 ]

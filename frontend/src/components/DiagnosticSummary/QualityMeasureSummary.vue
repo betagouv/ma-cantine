@@ -199,11 +199,11 @@ export default {
           key: "valueTotalHt",
         },
         {
-          text: "Total (en € HT) des mes achats en viandes et volailles fraiches ou surgelées",
+          text: "Total (en € HT) de mes achats en viandes et volailles fraiches ou surgelées",
           key: "valueMeatPoultryHt",
         },
         {
-          text: "Total (en € HT) des mes achats en poissons, produits de la mer et de l'aquaculture",
+          text: "Total (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture",
           key: "valueFishHt",
         },
       ],
@@ -228,15 +228,15 @@ export default {
       ],
       familyFields: [
         {
-          text: "Total (en € HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
+          text: "Total (en € HT) de mes achats EGAlim en viandes et volailles fraiches ou surgelées",
           key: "valueMeatPoultryEgalimHt",
         },
         {
-          text: "Total (en € HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
+          text: "Total (en € HT) de mes achats provenance France en viandes et volailles fraiches ou surgelées",
           key: "valueMeatPoultryFranceHt",
         },
         {
-          text: "Total (en € HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
+          text: "Total (en € HT) de mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
           key: "valueFishEgalimHt",
         },
       ],
