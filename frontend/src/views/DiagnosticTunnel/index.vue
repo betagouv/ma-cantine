@@ -354,10 +354,8 @@ export default {
     },
     saveAndQuit() {
       return this.saveDiagnostic()
-        .then(() => {
-          this.quit()
-        })
-        .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
+        .then(this.quit)
+        .catch(() => {})
     },
     quit() {
       this.$router.push(this.quitLink)
