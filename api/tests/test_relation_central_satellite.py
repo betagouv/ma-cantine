@@ -394,3 +394,19 @@ class TestRelationCentralSatellite(APITestCase):
             )
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @authenticate
+    def test_remove_unexistent_central_kitchen(self):
+        """
+        Using the ID of a non-existent central kitchen should return a 404
+        """
+        unexistent_central_kitchen_id = 1234
+        unexistent_satellite_id = 2345
+
+        response = self.client.post(
+            reverse(
+                "unlink_satellite",
+                kwargs={"canteen_pk": unexistent_central_kitchen_id, "satellite_pk": unexistent_satellite_id},
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

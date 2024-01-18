@@ -20,7 +20,7 @@ from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework import status
-from rest_framework.exceptions import PermissionDenied, NotFound
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -1196,10 +1196,7 @@ class UnlinkSatelliteView(APIView):
     serializer_class = FullCanteenSerializer
 
     def post(self, request, canteen_pk, satellite_pk):
-        try:
-            central_kitchen = Canteen.objects.get(pk=canteen_pk)
-        except Canteen.DoesNotExist:
-            raise NotFound()
+        central_kitchen = Canteen.objects.get(pk=canteen_pk)
 
         try:
             satellite = Canteen.objects.get(pk=satellite_pk)
