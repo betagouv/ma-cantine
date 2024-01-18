@@ -141,6 +141,8 @@ NON_APPRO_FIELDS = (
     "other_waste_action",
     "has_donation_agreement",
     "has_waste_measures",
+    "total_leftovers",
+    "duration_leftovers_measurement",
     "bread_leftovers",
     "served_leftovers",
     "unserved_leftovers",

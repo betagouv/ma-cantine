@@ -39,7 +39,6 @@ import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import PublishSatellites from "@/views/CanteenEditor/PublishSatellites"
 import DashboardPage from "@/views/CanteenEditor/DashboardPage"
-import DiagnosticEditor from "@/views/DiagnosticEditor"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 import DiagnosticImportPage from "@/views/DiagnosticsImporter/DiagnosticImportPage"
@@ -409,26 +408,6 @@ const routes = [
         meta: {
           authenticationRequired: true,
           title: "Améliorer ma cantine",
-        },
-      },
-      {
-        path: "modifier-mon-diagnostic/:year",
-        name: "DiagnosticModification",
-        component: DiagnosticEditor,
-        props: true,
-        meta: {
-          title: "Modifier mon diagnostic",
-          authenticationRequired: true,
-        },
-      },
-      {
-        path: "nouveau-diagnostic",
-        name: "NewDiagnosticForCanteen",
-        component: DiagnosticEditor,
-        props: true,
-        meta: {
-          title: "Ajouter un nouveau diagnostic",
-          authenticationRequired: true,
         },
       },
     ],

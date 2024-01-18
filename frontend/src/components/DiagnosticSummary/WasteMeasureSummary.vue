@@ -129,10 +129,21 @@ export default {
     wasteMeasures() {
       const diag = this.diagnostic
       return [
-        { label: "Reste de pain", value: diag.breadLeftovers ? `${diag.breadLeftovers} kg/an` : "—" },
-        { label: "Reste plateau", value: diag.servedLeftovers ? `${diag.servedLeftovers} kg/an` : "—" },
-        { label: "Reste en production", value: diag.unservedLeftovers ? `${diag.unservedLeftovers} kg/an` : "—" },
-        { label: "Reste de composantes", value: diag.sideLeftovers ? `${diag.sideLeftovers} kg/an` : "—" },
+        {
+          label: "Total des déchets alimentaires",
+          value: isDefined(diag.totalLeftovers) ? `${diag.totalLeftovers} tonnes pour l'année` : "—",
+        },
+        {
+          label: "Période de mesure",
+          value: isDefined(diag.durationLeftoversMeasurement) ? `${diag.durationLeftoversMeasurement} jours` : "—",
+        },
+        { label: "Reste de pain", value: isDefined(diag.breadLeftovers) ? `${diag.breadLeftovers} kg/an` : "—" },
+        { label: "Reste plateau", value: isDefined(diag.servedLeftovers) ? `${diag.servedLeftovers} kg/an` : "—" },
+        {
+          label: "Reste en production",
+          value: isDefined(diag.unservedLeftovers) ? `${diag.unservedLeftovers} kg/an` : "—",
+        },
+        { label: "Reste de composantes", value: isDefined(diag.sideLeftovers) ? `${diag.sideLeftovers} kg/an` : "—" },
       ]
     },
     displayDonationAgreementSegment() {
@@ -141,13 +152,18 @@ export default {
     donationMeasures() {
       const d = this.diagnostic
       return [
-        { label: "Fréquence de dons", value: d.donationFrequency ? `${d.donationFrequency} dons/an` : "—" },
-        { label: "Quantité des denrées données", value: d.donationQuantity ? `${d.donationQuantity} kg/an` : "—" },
+        { label: "Fréquence de dons", value: isDefined(d.donationFrequency) ? `${d.donationFrequency} dons/an` : "—" },
+        {
+          label: "Quantité des denrées données",
+          value: isDefined(d.donationQuantity) ? `${d.donationQuantity} kg/an` : "—",
+        },
         { label: "Type de denrées données", value: d.donationFoodType ? `${d.donationFoodType}` : "—" },
       ]
     },
   },
 }
+
+const isDefined = (value) => value || value === 0
 </script>
 
 <style scoped>
