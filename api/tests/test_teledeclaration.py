@@ -142,6 +142,7 @@ class TestTeledeclarationApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2021-01-20")
     @authenticate
     def test_create_bad_year(self):
         """
@@ -152,13 +153,12 @@ class TestTeledeclarationApi(APITestCase):
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2019, value_total_ht=100, diagnostic_type="SIMPLE")
         payload = {"diagnosticId": diagnostic.id}
-
-        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
-            response = self.client.post(reverse("teledeclaration_create"), payload)
+        response = self.client.post(reverse("teledeclaration_create"), payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2021-01-20")
     @authenticate
     def test_create(self):
         """
@@ -171,9 +171,7 @@ class TestTeledeclarationApi(APITestCase):
             value_externality_performance_ht=0, canteen=canteen, year=2020, diagnostic_type="SIMPLE"
         )
         payload = {"diagnosticId": diagnostic.id}
-
-        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
-            response = self.client.post(reverse("teledeclaration_create"), payload)
+        response = self.client.post(reverse("teledeclaration_create"), payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -252,6 +250,24 @@ class TestTeledeclarationApi(APITestCase):
             json_teledeclaration["communicates_on_food_quality"],
             diagnostic.communicates_on_food_quality,
         )
+
+    @override_settings(ENABLE_TELEDECLARATION=False)
+    @freeze_time("2021-01-20")
+    @authenticate
+    def test_create_out_of_campaign(self):
+        """
+        A teledeclaration cannot be created out of a TD campaign
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(
+            value_externality_performance_ht=0, canteen=canteen, year=2020, diagnostic_type="SIMPLE"
+        )
+        payload = {"diagnosticId": diagnostic.id}
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @freeze_time("2021-01-14")

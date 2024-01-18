@@ -48,6 +48,8 @@ class TeledeclarationCreateView(APIView):
         diagnostic_id = data.get("diagnostic_id")
         if not diagnostic_id:
             raise ValidationError("diagnosticId manquant")
+        if not settings.ENABLE_TELEDECLARATION:
+            raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
 
         td = TeledeclarationCreateView._teledeclare_diagnostic(diagnostic_id, request.user)
         data = FullDiagnosticSerializer(td.diagnostic).data
