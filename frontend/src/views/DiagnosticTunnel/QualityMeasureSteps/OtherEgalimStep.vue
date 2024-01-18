@@ -26,7 +26,7 @@
           </div>
 
           <label class="ml-4 ml-md-0" for="other">
-            La valeur (en HT) des autres achats EGAlim
+            La valeur (en € HT) des autres achats EGAlim
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
@@ -77,7 +77,7 @@
             </v-icon>
           </div>
           <label class="ml-4 ml-md-0" for="ext-perf">
-            Critères d'achat : La valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités
+            Critères d'achat : La valeur (en € HT) de mes achats prenant en compte les coûts imputés aux externalités
             environnementales ou acquis sur la base de leurs performances en matière environnementale.
             <br />
             <v-dialog v-model="valueExternalityPerformanceHtDialog" max-width="600">

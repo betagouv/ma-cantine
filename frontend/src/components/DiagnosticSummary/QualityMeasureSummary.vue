@@ -145,8 +145,8 @@
   </div>
   <div class="fr-text py-8" v-else>
     <p>
-      Renseignez la valeur (en HT) de vos achats alimentaires total et au moins un autre champ par label de produit pour
-      voir la synthèse de vos données.
+      Renseignez la valeur (en € HT) de vos achats alimentaires total et au moins un autre champ par label de produit
+      pour voir la synthèse de vos données.
     </p>
     <v-btn
       v-if="showEditButton"
@@ -195,29 +195,29 @@ export default {
     return {
       totalFields: [
         {
-          text: "Total (en HT) de mes achats alimentaires",
+          text: "Total (en € HT) de mes achats alimentaires",
           key: "valueTotalHt",
         },
         {
-          text: "Total (en HT) des mes achats en viandes et volailles fraiches ou surgelées",
+          text: "Total (en € HT) des mes achats en viandes et volailles fraiches ou surgelées",
           key: "valueMeatPoultryHt",
         },
         {
-          text: "Total (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture",
+          text: "Total (en € HT) des mes achats en poissons, produits de la mer et de l'aquaculture",
           key: "valueFishHt",
         },
       ],
       egalimFields: [
         {
-          text: "Total (en HT) de mes achats Bio ou en conversion Bio",
+          text: "Total (en € HT) de mes achats Bio ou en conversion Bio",
           key: "valueBioHt",
         },
         {
-          text: "Total (en HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
+          text: "Total (en € HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
           key: "valueSustainableHt",
         },
         {
-          text: "Total (en HT) des autres achats EGAlim",
+          text: "Total (en € HT) des autres achats EGAlim",
           key: "valueEgalimOthersHt",
         },
         {
@@ -228,15 +228,15 @@ export default {
       ],
       familyFields: [
         {
-          text: "Total (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
+          text: "Total (en € HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
           key: "valueMeatPoultryEgalimHt",
         },
         {
-          text: "Total (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
+          text: "Total (en € HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
           key: "valueMeatPoultryFranceHt",
         },
         {
-          text: "Total (en HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
+          text: "Total (en € HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
           key: "valueFishEgalimHt",
         },
       ],
