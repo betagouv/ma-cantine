@@ -1,5 +1,5 @@
 <template>
-  <div class="pa-8 pb-4">
+  <div class="pa-2 pa-md-8 pb-4">
     <div>
       <v-row v-if="!showIntroduction && !isCanteenTab">
         <v-col cols="12" md="8">

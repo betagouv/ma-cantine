@@ -1,6 +1,7 @@
 import datetime
 from decimal import Decimal
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator
 from django.db import models
 from simple_history.models import HistoricalRecords
 from data.fields import ChoiceArrayField
@@ -23,6 +24,7 @@ class Diagnostic(models.Model):
         TUNNEL = "TUNNEL", "Tunnel"
 
     class MenuFrequency(models.TextChoices):
+        NEVER = "NEVER", "Jamais"
         LOW = "LOW", "Moins d'une fois par semaine"
         MID = "MID", "Une fois par semaine"
         HIGH = "HIGH", "Plus d'une fois par semaine"
@@ -302,6 +304,19 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="réalise des mesures de gaspillage alimentaire",
+    )
+    total_leftovers = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="total des déchets alimentaires (t)",
+    )
+    duration_leftovers_measurement = models.IntegerField(
+        blank=True,
+        null=True,
+        validators=[MaxValueValidator(365)],
+        verbose_name="période de mesure (jours)",
     )
     bread_leftovers = models.DecimalField(
         max_digits=20,

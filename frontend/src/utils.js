@@ -618,6 +618,41 @@ export const hasSatelliteInconsistency = (canteen) => {
   return canteen.satelliteCanteensCount !== canteen.satellites.length
 }
 
+export const lineMinistryRequired = (canteen, allSectors) => {
+  const concernedSectors = allSectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
+  if (concernedSectors.length === 0) return false
+  return canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
+}
+
+export const missingCanteenData = (canteen, sectors) => {
+  // TODO: what location data to we require at minimum?
+  const requiredFields = ["siret", "name", "cityInseeCode", "productionType", "managementType"]
+  const missingFieldLambda = (f) => !canteen[f]
+  const missingSharedRequiredData = requiredFields.some(missingFieldLambda)
+  if (missingSharedRequiredData) return true
+
+  // sectors checks
+  if (!canteen.sectors || !canteen.sectors.length) return true
+  if (lineMinistryRequired(canteen, sectors) && !canteen.lineMinistry) return true
+
+  // production type specific checks
+  const yearlyMealCountKey = "yearlyMealCount"
+  const onSiteFields = ["dailyMealCount", yearlyMealCountKey]
+  const centralKitchenFields = [yearlyMealCountKey, "satelliteCanteensCount"]
+  const satelliteFields = ["centralProducerSiret"]
+
+  if (canteen.productionType === "central") {
+    return centralKitchenFields.some(missingFieldLambda)
+  } else if (canteen.productionType === "central_serving") {
+    return centralKitchenFields.some(missingFieldLambda) && onSiteFields.some(missingFieldLambda)
+  } else if (canteen.productionType === "site_cooked_elsewhere") {
+    return onSiteFields.some(missingFieldLambda) && satelliteFields.some(missingFieldLambda)
+  } else if (canteen.productionType === "site") {
+    return onSiteFields.some(missingFieldLambda)
+  }
+  return true // shouldn't get to here, indicates a bug in our logic/data
+}
+
 export const inTeledeclarationCampaign = (year) => {
   const tdYear = lastYear()
   const inTdCampaign = window.ENABLE_TELEDECLARATION && year === tdYear
@@ -647,6 +682,10 @@ export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
   return hasDiagnosticApproData(diagnostic)
 }
 
-export const readyToTeledeclare = (canteen, diagnostic) => {
-  return diagnosticCanBeTeledeclared(canteen, diagnostic) && !hasSatelliteInconsistency(canteen)
+export const readyToTeledeclare = (canteen, diagnostic, sectors) => {
+  return (
+    diagnosticCanBeTeledeclared(canteen, diagnostic) &&
+    !hasSatelliteInconsistency(canteen) &&
+    !missingCanteenData(canteen, sectors)
+  )
 }

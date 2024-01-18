@@ -668,6 +668,12 @@
                     Réalise des mesures contre le gaspillage alimentaire
                 </p>
                 <ul>
+                    {% if total_leftovers %}
+                    <li> Total des déchets alimentaires : {{ total_leftovers }} tonnes </li>
+                    {% endif %}
+                    {% if duration_leftovers_measurement %}
+                    <li> Période de mesure : {{ duration_leftovers_measurement }} jours </li>
+                    {% endif %}
                     {% if bread_leftovers %}
                     <li> Reste de pain : {{ bread_leftovers }} kg/an </li>
                     {% endif %}
@@ -715,32 +721,36 @@
                 </div>
                 {% endif %}
 
-                {% if vegetarian_weekly_recurrence %}
-                <div>
-                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
-                    Fréquence hebdomadaire des menus végétariens : {{ vegetarian_weekly_recurrence }}
-                </div>
-                {% endif %}
-
-                {% if vegetarian_menu_type %}
-                <div>
-                    <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
-                    Type de menu végétarien : {{ vegetarian_menu_type }}
-                </div>
-                {% endif %}
-
-                {% if vegetarian_menu_bases %}
-                <div>
-                    <p>
+                {% if vegetarian_weekly_recurrence == "Jamais" %}
+                    <div>
+                        <img src="{% static '../../web/static/images/close-outline.png' %}" height="14" width="14" />
+                        Fréquence hebdomadaire des menus végétariens : {{ vegetarian_weekly_recurrence }}
+                    </div>
+                {% elif vegetarian_weekly_recurrence %}
+                    <div>
                         <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
-                        Le plat principal du menu végétarien est majoritairement à base de :
-                    </p>
-                    <ul>
-                        {% for base in vegetarian_menu_bases %}
-                        <li>{{ base }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
+                        Fréquence hebdomadaire des menus végétariens : {{ vegetarian_weekly_recurrence }}
+                    </div>
+                    {% if vegetarian_menu_type %}
+                    <div>
+                        <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                        Type de menu végétarien : {{ vegetarian_menu_type }}
+                    </div>
+                    {% endif %}
+
+                    {% if vegetarian_menu_bases %}
+                    <div>
+                        <p>
+                            <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+                            Le plat principal du menu végétarien est majoritairement à base de :
+                        </p>
+                        <ul>
+                            {% for base in vegetarian_menu_bases %}
+                            <li>{{ base }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
                 {% endif %}
 
                 <h3>Substitution des plastiques</h3>
