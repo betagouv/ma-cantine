@@ -312,7 +312,23 @@ export default {
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
     unlinkSatellite(satelliteId) {
-      console.log(`Unlinking satellite ${satelliteId}`)
+      const headers = {
+        "X-CSRFToken": window.CSRF_TOKEN || "",
+        "Content-Type": "application/json",
+      }
+      return fetch(`/api/v1/canteens/${this.canteen.id}/satellites/${satelliteId}/unlink/`, {
+        method: "POST",
+        headers,
+      })
+        .then((response) => {
+          return response.json().then((jsonResponse) => {
+            if (response.status < 200 || response.status >= 400) throw new Error(jsonResponse.detail)
+            return jsonResponse
+          })
+        })
+        .then(this.fetchCurrentPage)
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
+        .finally(() => (this.unlinkConfirmationOpen = false))
     },
   },
   beforeMount() {

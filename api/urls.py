@@ -75,7 +75,7 @@ urlpatterns = {
         name="list_create_update_satellite",
     ),
     path(
-        "canteens/<int:canteen_pk>/satellites/<int:satellite_pk>/unlink",
+        "canteens/<int:canteen_pk>/satellites/<int:satellite_pk>/unlink/",
         UnlinkSatelliteView.as_view(),
         name="unlink_satellite",
     ),
