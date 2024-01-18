@@ -9,6 +9,7 @@ from .utils import authenticate
 import datetime
 from unittest.mock import patch
 from django.utils import timezone
+from freezegun import freeze_time
 import pytz
 
 LAST_YEAR = datetime.date.today().year - 1
@@ -253,6 +254,7 @@ class TestTeledeclarationApi(APITestCase):
         )
 
     @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2021-01-14")
     @authenticate
     def test_cancel(self):
         """
@@ -272,6 +274,44 @@ class TestTeledeclarationApi(APITestCase):
 
         body = response.json()
         self.assertIsNone(body["teledeclaration"])
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2023-01-14")
+    @authenticate
+    def test_cancel_previous_year(self):
+        """
+        A submitted teledeclaration cannot be cancelled for a previous campaign
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+
+        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
+        self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
+
+    @override_settings(ENABLE_TELEDECLARATION=False)
+    @freeze_time("2023-01-14")
+    @authenticate
+    def test_cancel_out_of_campaign(self):
+        """
+        A submitted teledeclaration cannot be cancelled after the campaign
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+
+        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
+        self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
