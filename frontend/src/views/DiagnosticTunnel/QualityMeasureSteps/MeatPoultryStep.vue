@@ -13,7 +13,7 @@
             </v-icon>
           </div>
           <label class="ml-4" for="meat-poultry">
-            La valeur (en € HT) de mes achats en viandes et volailles fraiches ou surgelées total
+            La valeur totale (en € HT) de mes achats en viandes et volailles fraiches ou surgelées
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>

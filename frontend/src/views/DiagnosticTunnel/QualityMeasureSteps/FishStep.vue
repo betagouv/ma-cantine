@@ -11,7 +11,7 @@
             </v-icon>
           </div>
           <label class="ml-4" for="fish">
-            La valeur (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture total
+            La valeur totale (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>

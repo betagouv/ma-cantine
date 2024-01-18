@@ -13,7 +13,7 @@
             </v-icon>
           </div>
           <label class="fr-text ml-4" :for="'meat-poultry-' + diagnostic.year">
-            La valeur (en € HT) de mes achats en viandes et volailles fraiches ou surgelées total
+            La valeur totale (en € HT) de mes achats en viandes et volailles fraiches ou surgelées
           </label>
         </div>
         <DsfrCurrencyField
@@ -39,7 +39,7 @@
             </v-icon>
           </div>
           <label class="fr-text ml-4" :for="'fish-' + diagnostic.year">
-            La valeur (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture total
+            La valeur totale (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture
           </label>
         </div>
         <DsfrCurrencyField

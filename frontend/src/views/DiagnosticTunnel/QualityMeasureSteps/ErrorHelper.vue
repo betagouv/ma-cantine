@@ -41,7 +41,7 @@ const MEAT = "viandes et volailles"
 const SIMPLE_FIELDS = [
   {
     name: "valueTotalHt",
-    label: "La valeur (en € HT) de mes achats alimentaires total",
+    label: "La valeur totale (en € HT) de mes achats alimentaires",
     purchaseType: "totaux",
   },
   {
@@ -67,7 +67,7 @@ const SIMPLE_FIELDS = [
   },
   {
     name: "valueMeatPoultryHt",
-    label: "La valeur (en € HT) de mes achats en viandes et volailles fraiches ou surgelées total",
+    label: "La valeur totale (en € HT) de mes achats en viandes et volailles fraiches ou surgelées",
     purchaseType: "totaux viandes et volailles",
   },
   {
@@ -82,7 +82,7 @@ const SIMPLE_FIELDS = [
   },
   {
     name: "valueFishHt",
-    label: "La valeur (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture total",
+    label: "La valeur totale (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture",
     purchaseType: "totaux de poissons, produits de la mer et de l'aquaculture",
   },
   {

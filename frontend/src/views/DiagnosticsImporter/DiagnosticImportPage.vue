@@ -408,8 +408,8 @@ export default {
       ]
       if (this.importLevel === "COMPLETE" || this.importLevel === "CC_COMPLETE") {
         valuesArray = [
-          "La valeur (en € HT) de mes achats en viandes et volailles fraiches ou surgelées total",
-          "La valeur (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture total",
+          "La valeur totale (en € HT) de mes achats en viandes et volailles fraiches ou surgelées",
+          "La valeur totale (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture",
           "Bio : Viandes et volailles fraîches et surgelées",
           "Bio : Produits aquatiques frais et surgelés",
           "Bio : Fruits et légumes frais et surgelés",
