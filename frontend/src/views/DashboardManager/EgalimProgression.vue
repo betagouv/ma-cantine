@@ -133,7 +133,7 @@ import DsfrSelect from "@/components/DsfrSelect"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import {
   lastYear,
-  diagnosticYears,
+  customDiagnosticYears,
   readyToTeledeclare,
   diagnosticCanBeTeledeclared,
   inTeledeclarationCampaign,
@@ -167,7 +167,7 @@ export default {
     },
   },
   data() {
-    const years = diagnosticYears()
+    const years = customDiagnosticYears(this.canteen.diagnostics)
     return {
       lastYear: lastYear(),
       year: lastYear(),

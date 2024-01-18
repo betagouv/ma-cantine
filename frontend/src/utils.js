@@ -209,7 +209,17 @@ export const lastYear = () => new Date().getFullYear() - 1
 
 export const diagnosticYears = () => {
   const thisYear = new Date().getFullYear()
-  return [thisYear - 2, thisYear - 1, thisYear, thisYear + 1]
+  return [thisYear - 1, thisYear]
+}
+
+export const customDiagnosticYears = (diagnostics) => {
+  const years = diagnostics.map((d) => +d.year)
+  const thisYear = new Date().getFullYear()
+  const lastYear = thisYear - 1
+  if (years.indexOf(thisYear) === -1) years.push(thisYear)
+  if (years.indexOf(lastYear) === -1) years.push(lastYear)
+  years.sort((a, b) => a - b)
+  return years
 }
 
 export const diagnosticsMap = (diagnostics) => {
