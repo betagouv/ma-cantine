@@ -1185,6 +1185,35 @@ class SatelliteListCreateView(ListCreateAPIView):
             raise BadRequest()
 
 
+@extend_schema_view(
+    post=extend_schema(
+        summary="Enlever une cantine satellite à la cuisine centrale.",
+        description="Cet endpoint permet d'enlever un satellite d'une cuisine centrale",
+    ),
+)
+class UnlinkSatelliteView(APIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    serializer_class = FullCanteenSerializer
+
+    def post(self, request, canteen_pk, satellite_pk):
+        central_kitchen = Canteen.objects.get(pk=canteen_pk)
+
+        try:
+            satellite = Canteen.objects.get(pk=satellite_pk)
+        except Canteen.DoesNotExist:
+            serialized_canteen = FullCanteenSerializer(central_kitchen).data
+            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+
+        if satellite.central_producer_siret != central_kitchen.siret:
+            serialized_canteen = FullCanteenSerializer(central_kitchen).data
+            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+
+        satellite.central_producer_siret = None
+        satellite.save()
+        serialized_canteen = FullCanteenSerializer(central_kitchen).data
+        return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+
+
 class ActionableCanteensListView(ListAPIView):
     permission_classes = [IsAuthenticated]
     model = Canteen
