@@ -165,7 +165,7 @@ export default {
     return (input) => {
       const number = Number(input)
       if (number) {
-        if (!isBase10Number(input)) return "Pour un nombre décimale, veuillez utiliser un point, par exemple 100.95"
+        if (!isBase10Number(input)) return "Pour un nombre décimal, veuillez utiliser un point, par exemple 100.95"
         const tofixed = number.toFixed(max)
         if (number !== Number(tofixed)) {
           return `${max} décimales attendues, par exemple ${tofixed}`
@@ -182,7 +182,7 @@ export default {
   },
   isInteger(input) {
     if (input) {
-      if (!isBase10Number(input)) return "Un nombre entier attendu, sans espaces, virgules, et autres caractères"
+      if (!isBase10Number(input)) return "Un nombre entier est attendu : sans espaces, virgules, ni caractères spéciaux"
       if (!Number.isInteger(input)) return "Un nombre entier attendu"
     }
     return true
