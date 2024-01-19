@@ -398,7 +398,7 @@ class TestRelationCentralSatellite(APITestCase):
     @authenticate
     def test_remove_unexistent_central_kitchen(self):
         """
-        Using the ID of a non-existent central kitchen should return a 404
+        Using the ID of a non-existent central kitchen should return a 403
         """
         unexistent_central_kitchen_id = 1234
         unexistent_satellite_id = 2345
