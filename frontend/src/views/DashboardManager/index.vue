@@ -23,7 +23,24 @@
         <p class="fr-text-sm">
           Accédez ci-dessous aux différents outils de gestion de votre établissement sur la plateforme « ma cantine ».
         </p>
-        <v-row>
+        <v-row v-if="isCentralWithSite">
+          <v-col cols="12" md="6">
+            <SatellitesWidget :canteen="canteen" />
+          </v-col>
+          <v-col cols="12" md="6">
+            <PublicationWidget :canteen="canteen" />
+          </v-col>
+          <v-col cols="12">
+            <PurchasesWidget :canteen="canteen" />
+          </v-col>
+          <v-col cols="12" md="8">
+            <CanteenInfoWidget :canteen="canteen" />
+          </v-col>
+          <v-col cols="12" md="4">
+            <TeamWidget :canteen="canteen" />
+          </v-col>
+        </v-row>
+        <v-row v-else>
           <v-col cols="12" md="8">
             <PurchasesWidget :canteen="canteen" />
           </v-col>
@@ -69,14 +86,6 @@
         </v-btn>
       </v-col>
     </v-row>
-
-    <h2 class="mt-10 mb-2 text-h6 font-weight-bold">
-      Mes ressources personalisées
-    </h2>
-    <p class="body-2">
-      Découvrez ci-dessous des articles et des outils pratiques, ainsi que des suggestions de partenaires et des
-      cantines inspirantes sur votre territoire qui correspondent à vos enjeux.
-    </p>
   </div>
 </template>
 
@@ -120,6 +129,12 @@ export default {
     },
     canteenPreviews() {
       return this.$store.state.userCanteenPreviews
+    },
+    welcomesGuests() {
+      return this.canteen?.productionType !== "central"
+    },
+    isCentralWithSite() {
+      return this.canteen?.productionType === "central_serving"
     },
   },
   methods: {

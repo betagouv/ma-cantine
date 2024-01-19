@@ -1,5 +1,3 @@
-> :warning: FICHIER GENERE AUTOMATIQUEMENT. NE PAS MODIFIER. POUR TOUTE MODIFICATION, EDITEZ LE FICHIER schema_cantines.json /////
-
 
 ### Modèle de données
 
@@ -27,5 +25,5 @@
 |modification_date (Date de modification)|chaîne de caractères|Date de dernière modification de la cantine au format ISO 8601|2018-01-01||
 |publication_status (Statut de publication)|chaîne de caractères|Statut de publication de la cantine. Il existe 3 statuts différents : published (cantine publiée), draft (brouillon), deleted (cantine supprimée)|published||
 |logo (Logo)|chaîne de caractères|Logo de la cantine|https://www.mangerlocal.fr/static/img/logo.png||
-|sectors (Secteurs)|liste|Liste définissant les secteurs d'activités de la cantine. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).|[{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}]||
+|sectors (Secteurs)|liste|Liste définissant les secteurs d'activités de la cantine. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).|["{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}"]||
 |active_on_ma_cantine (Actif sur Ma Cantine)|booléen|A un gestionnaire sur (email) et a fais au moins une action (à définir) - Indique si la cantine est active sur l'apllication Ma Cantine ou si elle a été importée via une source de données externe|true||

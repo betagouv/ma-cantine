@@ -285,10 +285,6 @@ export default {
       this.$emit("mountedAndFetched")
     })
   },
-  created() {
-    // this fixes App.vue setting the title back on route change
-    this.$route.meta.title = document.title
-  },
 }
 /*
 Here is some suggested parent config to get you started with this component

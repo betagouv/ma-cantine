@@ -27,24 +27,6 @@
         </div>
       </li>
 
-      <li v-if="appliedWasteActions">
-        <v-icon color="primary" class="mr-2">$check-line</v-icon>
-        <div>
-          J’ai mis en place les actions suivantes :
-          <ul role="list" class="mt-2">
-            <li class="fr-text-xs mb-1" v-for="(action, index) in appliedWasteActions" :key="`${action}-${index}`">
-              {{ action }}
-            </li>
-          </ul>
-        </div>
-      </li>
-      <li v-else>
-        <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        <div>
-          Je n’ai pas encore mis en place des actions concrètes contre le gaspillage
-        </div>
-      </li>
-
       <li v-if="diagnostic.hasWasteMeasures">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
@@ -62,6 +44,24 @@
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n’ai pas encore réalisé des mesures de mon gaspillage alimentaire
+        </div>
+      </li>
+
+      <li v-if="appliedWasteActions">
+        <v-icon color="primary" class="mr-2">$check-line</v-icon>
+        <div>
+          J’ai mis en place les actions suivantes :
+          <ul role="list" class="mt-2">
+            <li class="fr-text-xs mb-1" v-for="(action, index) in appliedWasteActions" :key="`${action}-${index}`">
+              {{ action }}
+            </li>
+          </ul>
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$close-line</v-icon>
+        <div>
+          Je n’ai pas encore mis en place des actions concrètes contre le gaspillage
         </div>
       </li>
 
@@ -98,6 +98,10 @@
         </div>
       </li>
     </ul>
+    <div v-if="diagnostic.otherWasteComments" class="mt-4 ml-1">
+      <p class="font-weight-bold mb-2">Autres commentaires</p>
+      <p>{{ diagnostic.otherWasteComments }}</p>
+    </div>
   </div>
 </template>
 
@@ -125,10 +129,21 @@ export default {
     wasteMeasures() {
       const diag = this.diagnostic
       return [
-        { label: "Reste de pain", value: diag.breadLeftovers ? `${diag.breadLeftovers} kg/an` : "—" },
-        { label: "Reste plateau", value: diag.servedLeftovers ? `${diag.servedLeftovers} kg/an` : "—" },
-        { label: "Reste en production", value: diag.unservedLeftovers ? `${diag.unservedLeftovers} kg/an` : "—" },
-        { label: "Reste de composantes", value: diag.sideLeftovers ? `${diag.sideLeftovers} kg/an` : "—" },
+        {
+          label: "Total des déchets alimentaires",
+          value: isDefined(diag.totalLeftovers) ? `${diag.totalLeftovers} tonnes pour l'année` : "—",
+        },
+        {
+          label: "Période de mesure",
+          value: isDefined(diag.durationLeftoversMeasurement) ? `${diag.durationLeftoversMeasurement} jours` : "—",
+        },
+        { label: "Reste de pain", value: isDefined(diag.breadLeftovers) ? `${diag.breadLeftovers} kg/an` : "—" },
+        { label: "Reste plateau", value: isDefined(diag.servedLeftovers) ? `${diag.servedLeftovers} kg/an` : "—" },
+        {
+          label: "Reste en production",
+          value: isDefined(diag.unservedLeftovers) ? `${diag.unservedLeftovers} kg/an` : "—",
+        },
+        { label: "Reste de composantes", value: isDefined(diag.sideLeftovers) ? `${diag.sideLeftovers} kg/an` : "—" },
       ]
     },
     displayDonationAgreementSegment() {
@@ -137,11 +152,30 @@ export default {
     donationMeasures() {
       const d = this.diagnostic
       return [
-        { label: "Fréquence de dons", value: d.donationFrequency ? `${d.donationFrequency} dons/an` : "—" },
-        { label: "Quantité des denrées données", value: d.donationQuantity ? `${d.donationQuantity} kg/an` : "—" },
+        { label: "Fréquence de dons", value: isDefined(d.donationFrequency) ? `${d.donationFrequency} dons/an` : "—" },
+        {
+          label: "Quantité des denrées données",
+          value: isDefined(d.donationQuantity) ? `${d.donationQuantity} kg/an` : "—",
+        },
         { label: "Type de denrées données", value: d.donationFoodType ? `${d.donationFoodType}` : "—" },
       ]
     },
   },
 }
+
+const isDefined = (value) => value || value === 0
 </script>
+
+<style scoped>
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+li {
+  margin-bottom: 14px;
+  display: flex;
+}
+li .v-icon {
+  align-items: baseline;
+}
+</style>

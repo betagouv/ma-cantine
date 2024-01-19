@@ -9,7 +9,7 @@ Vue.config.productionTip = false
 
 if (window.MATOMO_ID) {
   Vue.use(VueMatomo, {
-    host: "https://stats.data.gouv.fr",
+    host: "https://stats.beta.gouv.fr",
     siteId: window.MATOMO_ID,
     trackerFileName: "matomo",
     router: router,

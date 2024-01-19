@@ -411,7 +411,7 @@ if DEBUG:
 # CSP valid sources of Javascript
 CSP_SCRIPT_SRC = (
     "'self'",
-    "stats.data.gouv.fr",
+    "stats.beta.gouv.fr",
     "'unsafe-inline'",
     "client.crisp.chat",
 )
@@ -424,7 +424,7 @@ CSP_IMG_SRC = (
     "cellar-c2.services.clever-cloud.com",
     "voxusagers.numerique.gouv.fr",
     "'unsafe-inline'",
-    "stats.data.gouv.fr",
+    "stats.beta.gouv.fr",
     "www.w3.org",
     "data:",
     "image.crisp.chat",
@@ -444,7 +444,7 @@ if DEBUG:
 # CSP valid sources of AJAX, WebSockets, EventSources, etc
 CSP_CONNECT_SRC = (
     "'self'",
-    "stats.data.gouv.fr",
+    "stats.beta.gouv.fr",
     "ws:",
     "api-adresse.data.gouv.fr",
     "client.crisp.chat",

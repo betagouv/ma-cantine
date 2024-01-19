@@ -32,20 +32,24 @@
       </p>
     </v-card-text>
     <v-spacer></v-spacer>
-    <v-card-actions class="mx-2 mb-2">
-      <v-btn
-        :to="{
-          name: 'PublicationForm',
-          params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-        }"
-        color="primary"
-        :outlined="isPublished || !hasPublicationData"
-        :disabled="!isPublished && !hasPublicationData"
-      >
-        {{ isPublished ? "Éditer ma vitrine" : "Publier ma cantine" }}
-      </v-btn>
-      <p v-if="!isPublished && !hasPublicationData" class="grey--text text--darken-1 fr-text-xs mb-0 ml-3">
-        Pas de données
+    <v-card-actions class="mx-2 mb-2 flex-md-wrap flex-lg-nowrap">
+      <p class="mb-0 mb-md-2 mb-lg-0 mr-2">
+        <v-btn
+          :to="{
+            name: 'PublicationForm',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+          }"
+          color="primary"
+          class="px-3"
+          :outlined="isPublished || !hasPublicationData"
+        >
+          {{ isPublished ? "Éditer ma vitrine" : "Publier ma cantine" }}
+        </v-btn>
+      </p>
+      <p class="mb-0">
+        <v-btn outlined color="primary" class="fr-btn--tertiary px-3" :to="{ name: 'CanteenGeneratePoster' }">
+          Générer mon affiche
+        </v-btn>
       </p>
     </v-card-actions>
   </v-card>
@@ -98,7 +102,7 @@ export default {
         `${this.canteen.id}--`
       const currentYear = this.year + 1
       const url =
-        "https://stats.data.gouv.fr/index.php?module=API&method=VisitsSummary.getVisits&format=JSON&token_auth=anonymous&period=range&" +
+        "https://stats.beta.gouv.fr/index.php?module=API&method=VisitsSummary.getVisits&format=JSON&token_auth=anonymous&period=range&" +
         `date=${currentYear}-01-01,today&` +
         `idSite=${window.MATOMO_ID}&` +
         `segment=pageUrl=^${encodeURIComponent(pageUrl)}`

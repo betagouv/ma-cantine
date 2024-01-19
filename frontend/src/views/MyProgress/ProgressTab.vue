@@ -1,38 +1,31 @@
 <template>
-  <div class="pa-8 pb-4">
+  <div class="pa-2 pa-md-8 pb-4">
     <div>
-      <v-row v-if="displayDiagnostic && !isCanteenTab">
+      <v-row v-if="!showIntroduction && !isCanteenTab">
         <v-col cols="12" md="8">
           <h3 class="fr-h6 font-weight-bold mb-0">
             {{ keyMeasure.title }}
           </h3>
-          <v-btn text color="primary" class="px-0" @click="() => (showIntro = !showIntro)">
+          <v-btn text color="primary" class="px-0" @click="() => (expandIntro = !expandIntro)">
             En savoir plus
           </v-btn>
-        </v-col>
-        <v-col class="fr-text-xs text-right">
-          <p class="mb-0">Votre niveau : {{ level }}</p>
-          <p class="grey--text text--darken-2 mb-0">
-            {{ levelMessage }}
-          </p>
         </v-col>
       </v-row>
       <h3 v-else class="fr-h6 font-weight-bold mb-4">
         {{ keyMeasure.title }}
       </h3>
-      <div v-if="!isCanteenTab && (!displayDiagnostic || showIntro)">
+      <div v-if="showIntroduction || expandIntro">
         <component :is="`${keyMeasure.baseComponent}Info`" :canteen="canteen" />
         <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
-        <v-btn
-          v-if="measureId !== establishmentId && !diagnostic && !usesOtherDiagnosticForMeasure"
-          color="primary"
-          :to="{ name: 'NewDiagnosticForCanteen', params: { canteenUrlComponent }, query: { année: year } }"
-          class="mt-4"
-        >
+        <v-btn v-if="showIntroduction" color="primary" :disabled="requestOngoing" @click="startTunnel" class="mt-4">
           Commencer
         </v-btn>
       </div>
-      <div v-if="displayDiagnostic || isCanteenTab" class="summary">
+      <div v-if="showPurchasesSection">
+        <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
+        <PurchasesSummary :canteen="canteen" />
+      </div>
+      <div v-else-if="showSynthesis">
         <hr aria-hidden="true" role="presentation" class="mt-4 mb-8" />
         <div
           v-if="!isCanteenTab && usesOtherDiagnosticForMeasure && isSatellite"
@@ -61,7 +54,18 @@
             v-if="isCanteenTab || (!hasActiveTeledeclaration && !usesOtherDiagnosticForMeasure)"
             class="text-right"
           >
-            <v-btn v-if="usingLastDiagnostic" color="primary" @click="createDiagnosticAndRedirect">
+            <v-btn
+              v-if="hasActiveTeledeclaration"
+              outlined
+              small
+              color="primary"
+              class="fr-btn--tertiary px-2"
+              :disabled="true"
+            >
+              <v-icon small class="mr-2">$check-line</v-icon>
+              Données télédéclarées
+            </v-btn>
+            <v-btn v-else-if="usingLastDiagnostic" color="primary" @click="createDiagnosticAndRedirect">
               <v-icon small class="mr-2">$pencil-line</v-icon>
               Mettre à jour
             </v-btn>
@@ -76,6 +80,7 @@
           :usesCentralDiagnostic="hasCentralDiagnosticForMeasure"
           :canteen="canteen"
           :diagnostic="displayDiagnostic"
+          :showEditButton="true"
         />
       </div>
     </div>
@@ -89,13 +94,15 @@ import DiversificationMeasureInfo from "./information/DiversificationMeasureInfo
 import InformationMeasureInfo from "./information/InformationMeasureInfo"
 import NoPlasticMeasureInfo from "./information/NoPlasticMeasureInfo"
 import WasteMeasureInfo from "./information/WasteMeasureInfo"
-import QualityMeasureSummary from "./summary/QualityMeasureSummary"
-import DiversificationMeasureSummary from "./summary/DiversificationMeasureSummary"
-import InformationMeasureSummary from "./summary/InformationMeasureSummary"
-import NoPlasticMeasureSummary from "./summary/NoPlasticMeasureSummary"
-import WasteMeasureSummary from "./summary/WasteMeasureSummary"
-import CanteenSummary from "./summary/CanteenSummary"
+import QualityMeasureSummary from "@/components/DiagnosticSummary/QualityMeasureSummary"
+import DiversificationMeasureSummary from "@/components/DiagnosticSummary/DiversificationMeasureSummary"
+import InformationMeasureSummary from "@/components/DiagnosticSummary/InformationMeasureSummary"
+import NoPlasticMeasureSummary from "@/components/DiagnosticSummary/NoPlasticMeasureSummary"
+import WasteMeasureSummary from "@/components/DiagnosticSummary/WasteMeasureSummary"
+import CanteenSummary from "@/components/DiagnosticSummary/CanteenSummary"
+import PurchasesSummary from "@/components/DiagnosticSummary/PurchasesSummary"
 import keyMeasures from "@/data/key-measures.json"
+import { hasDiagnosticApproData, lastYear, hasStartedMeasureTunnel } from "@/utils"
 
 export default {
   name: "ProgressTab",
@@ -114,6 +121,7 @@ export default {
     },
     diagnostic: Object,
     centralDiagnostic: Object,
+    centralKitchenDiagnosticMode: String,
   },
   components: {
     DsfrBadge,
@@ -128,15 +136,20 @@ export default {
     NoPlasticMeasureSummary,
     WasteMeasureSummary,
     CanteenSummary,
+    PurchasesSummary,
   },
   data() {
     return {
       approId: "qualite-des-produits",
       establishmentId: "etablissement",
-      showIntro: false,
+      expandIntro: false,
+      requestOngoing: false,
     }
   },
   computed: {
+    isApproTab() {
+      return this.measureId === this.approId
+    },
     isCanteenTab() {
       return this.measureId === this.establishmentId
     },
@@ -162,17 +175,16 @@ export default {
         : "un établissement inconnu"
     },
     usesOtherDiagnosticForMeasure() {
-      const isApproTab = this.measureId === this.approId
       if (this.canteen.productionType === "site") {
         return false
       } else if (this.isSatellite) {
-        if (isApproTab) return !!this.centralDiagnostic
+        if (this.isApproTab) return !!this.centralDiagnostic
         if (this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL") {
           return !!this.centralDiagnostic
         }
       } else {
         // both CC production types
-        if (!isApproTab) {
+        if (!this.isApproTab) {
           const satelliteProvidesOtherMeasures = this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
           return satelliteProvidesOtherMeasures
         }
@@ -182,21 +194,22 @@ export default {
     hasActiveTeledeclaration() {
       return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
     },
-    level() {
-      return "EXPERT"
-    },
-    levelMessage() {
-      return "Vous êtes au point, bravo ! Partagez vos meilleures idées pour inspirer d'autres cantines !"
-    },
     modificationLink() {
       return this.isCanteenTab
         ? { name: "CanteenForm", params: { canteenUrlComponent: this.canteenUrlComponent } }
-        : { name: "DiagnosticModification", params: { canteenUrlComponent: this.canteenUrlComponent, year: this.year } }
+        : {
+            name: "DiagnosticTunnel",
+            params: {
+              canteenUrlComponent: this.canteenUrlComponent,
+              year: this.year,
+              measureId: this.measureId,
+            },
+          }
     },
     hasCentralDiagnosticForMeasure() {
       if (!this.centralDiagnostic) return false
       if (this.isCanteenTab) return false
-      if (this.measureId === this.approId) return true
+      if (this.isApproTab) return true
       return this.centralDiagnostic.centralKitchenDiagnosticMode === "ALL"
     },
     relativeLastYear() {
@@ -213,6 +226,23 @@ export default {
     usingLastDiagnostic() {
       return this.displayDiagnostic.year === this.relativeLastYear
     },
+    showPurchasesSection() {
+      const isCurrentYear = this.year === lastYear() + 1
+      const managesOwnPurchases = !this.isSatellite
+      const dataProvidedByDiagnostic = this.diagnostic && hasDiagnosticApproData(this.diagnostic)
+      return this.isApproTab && isCurrentYear && managesOwnPurchases && !dataProvidedByDiagnostic
+    },
+    hasData() {
+      if (this.hasActiveTeledeclaration) return true // if tunnel wasn't started, but diag was TD'd, show synthesis
+      const hasMeasureData = hasStartedMeasureTunnel(this.displayDiagnostic, this.keyMeasure)
+      return this.showPurchasesSection || hasMeasureData
+    },
+    showIntroduction() {
+      return !(this.isCanteenTab || this.hasData || this.usesOtherDiagnosticForMeasure)
+    },
+    showSynthesis() {
+      return this.isCanteenTab || this.hasData
+    },
   },
   methods: {
     createDiagnosticAndRedirect() {
@@ -228,6 +258,30 @@ export default {
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
+    startTunnel() {
+      if (this.usesOtherDiagnosticForMeasure) return // more explicit error?
+      if (this.diagnostic) {
+        this.$router.push(this.modificationLink)
+      } else {
+        this.requestOngoing = true
+        return this.$store
+          .dispatch("createDiagnostic", {
+            canteenId: this.canteen.id,
+            payload: {
+              year: this.year,
+              creationSource: "TUNNEL",
+              centralKitchenDiagnosticMode: this.centralKitchenDiagnosticMode,
+            },
+          })
+          .then(() => {
+            this.$router.push(this.modificationLink)
+          })
+          .catch((e) => {
+            this.$store.dispatch("notifyServerError", e)
+          })
+          .finally(() => (this.requestOngoing = false))
+      }
+    },
   },
 }
 </script>
@@ -239,16 +293,5 @@ hr {
   /* Set the hr color */
   color: #ddd; /* old IE */
   background-color: #ddd; /* Modern Browsers */
-}
-.summary >>> ul {
-  list-style-type: none;
-  padding-left: 0;
-}
-.summary >>> li {
-  margin-bottom: 14px;
-  display: flex;
-}
-.summary >>> li .v-icon {
-  align-items: baseline;
 }
 </style>

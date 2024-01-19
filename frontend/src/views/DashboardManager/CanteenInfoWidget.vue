@@ -36,11 +36,11 @@
             <span class="font-weight-medium">{{ canteen.dailyMealCount || "Non renseigné" }}</span>
           </p>
           <p class="mb-0">
-            <span v-if="canteen.productionType === 'central'">Couverts livrés à l'année :</span>
+            <span v-if="canteen.productionType === 'central'">Couverts livrés par an :</span>
             <span v-else-if="canteen.productionType === 'central_serving'">
-              Couverts à l'année (y compris livrés) :
+              Couverts par an (y compris livrés) :
             </span>
-            <span v-else>Couverts par année :</span>
+            <span v-else>Couverts par an :</span>
             <span class="font-weight-medium ml-1">{{ canteen.yearlyMealCount || "Non renseigné" }}</span>
           </p>
         </v-card-text>

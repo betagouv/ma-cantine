@@ -1,5 +1,6 @@
 import logging
 import os
+from datetime import datetime
 from django.http import JsonResponse, HttpResponse
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.template.loader import get_template
@@ -47,6 +48,8 @@ class TeledeclarationCreateView(APIView):
         diagnostic_id = data.get("diagnostic_id")
         if not diagnostic_id:
             raise ValidationError("diagnosticId manquant")
+        if not settings.ENABLE_TELEDECLARATION:
+            raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
 
         td = TeledeclarationCreateView._teledeclare_diagnostic(diagnostic_id, request.user)
         data = FullDiagnosticSerializer(td.diagnostic).data
@@ -64,7 +67,7 @@ class TeledeclarationCreateView(APIView):
         try:
             Teledeclaration.validate_diagnostic(diagnostic)
         except DjangoValidationError as e:
-            raise ValidationError(e.message) from e
+            raise TeledeclarationCreateView._parse_diagnostic_validation_error(e) from e
 
         try:
             td = Teledeclaration.create_from_diagnostic(diagnostic, user)
@@ -75,6 +78,15 @@ class TeledeclarationCreateView(APIView):
             else:
                 message = "Il existe déjà une télédéclaration en cours pour cette année"
             raise ValidationError(message) from e
+
+    def _parse_diagnostic_validation_error(e):
+        if hasattr(e, "message"):
+            return ValidationError(e.message)
+        elif hasattr(e, "messages"):
+            return ValidationError(e.messages[0])
+        else:
+            logger.error(f"Unhandled validation error when teledeclaring: {e}")
+            return ValidationError("Unknown error")
 
 
 @extend_schema_view(
@@ -93,8 +105,17 @@ class TeledeclarationCancelView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
+            if not settings.ENABLE_TELEDECLARATION:
+                raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
+
             teledeclaration_id = kwargs.get("pk")
             teledeclaration = Teledeclaration.objects.get(pk=teledeclaration_id)
+
+            acceptedYear = datetime.now().year - 1
+            if teledeclaration.year != acceptedYear:
+                raise PermissionDenied(
+                    f"Seules les télédéclarations pour l'année {acceptedYear} peuvent être annulées"
+                )
 
             if request.user not in teledeclaration.canteen.managers.all():
                 raise PermissionDenied()

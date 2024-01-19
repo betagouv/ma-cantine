@@ -39,7 +39,7 @@ import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import PublishSatellites from "@/views/CanteenEditor/PublishSatellites"
 import DashboardPage from "@/views/CanteenEditor/DashboardPage"
-import DiagnosticEditor from "@/views/DiagnosticEditor"
+import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 import DiagnosticImportPage from "@/views/DiagnosticsImporter/DiagnosticImportPage"
 import PublicCanteenStatisticsPage from "@/views/PublicCanteenStatisticsPage"
@@ -335,6 +335,7 @@ const routes = [
         component: CanteenForm,
         meta: {
           authenticationRequired: true,
+          title: "Modifier ma cantine",
         },
       },
       {
@@ -343,6 +344,7 @@ const routes = [
         component: SatelliteManagement,
         meta: {
           authenticationRequired: true,
+          title: "Gérer mes satellites",
         },
       },
       {
@@ -351,6 +353,7 @@ const routes = [
         component: DiagnosticList,
         meta: {
           authenticationRequired: true,
+          title: "Mes diagnostics",
         },
       },
       {
@@ -359,6 +362,7 @@ const routes = [
         component: CanteenManagers,
         meta: {
           authenticationRequired: true,
+          title: "Gérer mon équipe",
         },
       },
       {
@@ -367,6 +371,7 @@ const routes = [
         component: CanteenGeneratePoster,
         meta: {
           authenticationRequired: true,
+          title: "Générer mon affiche",
         },
       },
       {
@@ -375,6 +380,7 @@ const routes = [
         component: CanteenDeletion,
         meta: {
           authenticationRequired: true,
+          title: "Supprimer ma cantine",
         },
       },
       {
@@ -383,6 +389,7 @@ const routes = [
         component: PublicationForm,
         meta: {
           authenticationRequired: true,
+          title: "Ma publication",
         },
       },
       {
@@ -391,6 +398,7 @@ const routes = [
         component: PublishSatellites,
         meta: {
           authenticationRequired: true,
+          title: "Publier mes satellites",
         },
       },
       {
@@ -399,29 +407,21 @@ const routes = [
         component: DashboardPage,
         meta: {
           authenticationRequired: true,
-        },
-      },
-      {
-        path: "modifier-mon-diagnostic/:year",
-        name: "DiagnosticModification",
-        component: DiagnosticEditor,
-        props: true,
-        meta: {
-          title: "Modifier mon diagnostic",
-          authenticationRequired: true,
-        },
-      },
-      {
-        path: "nouveau-diagnostic",
-        name: "NewDiagnosticForCanteen",
-        component: DiagnosticEditor,
-        props: true,
-        meta: {
-          title: "Ajouter un nouveau diagnostic",
-          authenticationRequired: true,
+          title: "Améliorer ma cantine",
         },
       },
     ],
+  },
+  {
+    path: "/diagnostic-tunnel/:canteenUrlComponent/:year/:measureId",
+    name: "DiagnosticTunnel",
+    component: DiagnosticTunnel,
+    props: true,
+    meta: {
+      title: "Diagnostic",
+      authenticationRequired: true,
+      fullscreen: true,
+    },
   },
   {
     path: "/modifier-mon-diagnostic/:canteenUrlComponent/:year",

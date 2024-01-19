@@ -57,7 +57,6 @@
       </v-row>
     </fieldset>
 
-    <!-- TODO: is this question that different from the first? -->
     <v-checkbox
       hide-details="auto"
       v-model="diagnostic.communicatesOnFoodPlan"
@@ -97,16 +96,7 @@ export default {
   data() {
     return {
       communicationFrequencies: Constants.CommunicationFrequencies,
-      communicationSupports: [
-        {
-          label: "Par affichage sur le lieu de restauration",
-          value: "DISPLAY",
-        },
-        {
-          label: "Par voie électronique (envoi d’e-mail aux convives, sur site internet ou intranet (mairie, pronote))",
-          value: "DIGITAL",
-        },
-      ],
+      communicationSupports: Constants.CommunicationSupports,
       otherSupportEnabled: !!this.diagnostic.otherCommunicationSupport,
     }
   },

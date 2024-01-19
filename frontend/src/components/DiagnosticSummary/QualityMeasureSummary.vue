@@ -59,7 +59,7 @@
         <p class="mb-md-4">
           <v-icon class="mr-2" color="#00A95F">$anchor-line</v-icon>
           <span class="font-weight-bold percentage">{{ percentages.fishEgalim || "—" }} %</span>
-          de produits aquatiques EGAlim
+          de produits de la mer et aquaculture EGAlim
         </p>
       </v-col>
     </v-row>
@@ -91,7 +91,7 @@
               :value="diagnostic[field.key]"
             />
           </div>
-          <div class="my-8">
+          <div class="my-8 mb-0">
             <QualityDiagnosticValue
               v-for="(field, idx) in familyFields"
               :key="`family-${idx}`"
@@ -106,15 +106,28 @@
             <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
           </div>
           <v-btn
+            v-if="hasActiveTeledeclaration"
+            outlined
+            small
+            color="primary"
+            class="fr-btn--tertiary px-2"
+            :disabled="true"
+          >
+            <v-icon small class="mr-2">$check-line</v-icon>
+            Données télédéclarées
+          </v-btn>
+          <v-btn
+            v-else-if="showEditButton"
             outlined
             small
             color="primary"
             class="fr-btn--tertiary px-2 mb-6"
             :to="{
-              name: 'DiagnosticModification',
+              name: 'DiagnosticTunnel',
               params: {
-                canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen),
+                canteenUrlComponent: this.canteenUrlComponent,
                 year: diagnostic.year,
+                measureId: 'qualite-des-produits',
               },
             }"
           >
@@ -130,18 +143,21 @@
       Une synthèse de données sera disponible dès que votre cuisine centrale remplit leur diagnostic.
     </p>
   </div>
-  <div class="fr-text" v-else>
+  <div class="fr-text py-8" v-else>
     <p>
-      Renseignez la valeur (en HT) de vos achats alimentaires total et au moins un autre champ par label de produit pour
-      voir la synthèse de vos données.
+      Renseignez la valeur (en € HT) de vos achats alimentaires total et au moins un autre champ par label de produit
+      pour voir la synthèse de vos données.
     </p>
     <v-btn
+      v-if="showEditButton"
+      class="mt-6"
       color="primary"
       :to="{
-        name: 'DiagnosticModification',
+        name: 'DiagnosticTunnel',
         params: {
-          canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen),
+          canteenUrlComponent: this.canteenUrlComponent,
           year: diagnostic.year,
+          measureId: 'qualite-des-produits',
         },
       }"
     >
@@ -162,38 +178,46 @@ export default {
   props: {
     diagnostic: {},
     usesCentralDiagnostic: {},
+    usesPurchasesData: {
+      type: Boolean,
+      required: false,
+    },
     canteen: {
       type: Object,
       required: true,
+    },
+    showEditButton: {
+      type: Boolean,
+      required: false,
     },
   },
   data() {
     return {
       totalFields: [
         {
-          text: "Total (en HT) de mes achats alimentaires",
+          text: "Total (en € HT) de mes achats alimentaires",
           key: "valueTotalHt",
         },
         {
-          text: "Total (en HT) des mes achats en viandes et volailles fraiches ou surgelées",
+          text: "Total (en € HT) de mes achats en viandes et volailles fraiches ou surgelées",
           key: "valueMeatPoultryHt",
         },
         {
-          text: "Total (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture",
+          text: "Total (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture",
           key: "valueFishHt",
         },
       ],
       egalimFields: [
         {
-          text: "Total (en HT) de mes achats Bio ou en conversion Bio",
+          text: "Total (en € HT) de mes achats Bio ou en conversion Bio",
           key: "valueBioHt",
         },
         {
-          text: "Total (en HT) de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)",
+          text: "Total (en € HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
           key: "valueSustainableHt",
         },
         {
-          text: "Total (en HT) des autres achats EGAlim",
+          text: "Total (en € HT) des autres achats EGAlim",
           key: "valueEgalimOthersHt",
         },
         {
@@ -204,15 +228,15 @@ export default {
       ],
       familyFields: [
         {
-          text: "Total (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
+          text: "Total (en € HT) de mes achats EGAlim en viandes et volailles fraiches ou surgelées",
           key: "valueMeatPoultryEgalimHt",
         },
         {
-          text: "Total (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
+          text: "Total (en € HT) de mes achats provenance France en viandes et volailles fraiches ou surgelées",
           key: "valueMeatPoultryFranceHt",
         },
         {
-          text: "Total (en HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
+          text: "Total (en € HT) de mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
           key: "valueFishEgalimHt",
         },
       ],
@@ -229,7 +253,13 @@ export default {
       return getApproPercentages(this.diagnostic)
     },
     isDetailedDiagnostic() {
-      return this.diagnostic.diagnosticType === "COMPLETE"
+      return this.diagnostic.diagnosticType === "COMPLETE" || this.usesPurchasesData
+    },
+    hasActiveTeledeclaration() {
+      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+    },
+    canteenUrlComponent() {
+      return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
   },
 }

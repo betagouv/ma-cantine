@@ -1,5 +1,5 @@
 <template>
-  <DsfrBadge v-if="body">
+  <DsfrBadge v-if="body" :mode="mode">
     <p class="ma-0 pa-0 text-uppercase">{{ body }}</p>
   </DsfrBadge>
   <span v-else></span>
@@ -22,13 +22,22 @@ export default {
       default: false,
       type: Boolean,
     },
+    hasActiveTeledeclaration: {
+      default: false,
+      type: Boolean,
+    },
   },
   computed: {
     body() {
       if (this.currentYear) return "Année en cours"
       if (this.missingData) return "Données à compléter"
       if (this.readyToTeledeclare) return "Bilan à télédéclarer"
+      if (this.hasActiveTeledeclaration) return "Bilan télédéclaré"
       return null
+    },
+    mode() {
+      if (this.hasActiveTeledeclaration) return "SUCCESS"
+      return "INFO"
     },
   },
 }

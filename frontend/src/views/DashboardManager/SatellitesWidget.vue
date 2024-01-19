@@ -34,16 +34,23 @@
     </v-card-text>
     <v-spacer />
     <v-card-actions class="ma-2">
-      <v-btn
-        :to="{
-          name: 'SatelliteManagement',
-          params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-        }"
-        color="primary"
-        :outlined="!!satellites.length"
-      >
-        {{ satellites.length ? "Modifier" : "Ajouter mes satellites" }}
-      </v-btn>
+      <p class="mb-0">
+        <v-btn
+          :to="{
+            name: 'SatelliteManagement',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+          }"
+          color="primary"
+          :outlined="!!satellites.length"
+        >
+          {{ satellites.length ? "Modifier" : "Ajouter mes satellites" }}
+        </v-btn>
+      </p>
+      <p class="mb-0 ml-2">
+        <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'PublishSatellites' }">
+          Publier
+        </v-btn>
+      </p>
     </v-card-actions>
   </v-card>
 </template>

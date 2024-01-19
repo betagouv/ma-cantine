@@ -3,7 +3,7 @@ import csv
 import time
 import re
 import logging
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from data.models.diagnostic import Diagnostic
 from data.models.teledeclaration import Teledeclaration
 from django.db import IntegrityError, transaction
@@ -164,12 +164,12 @@ class ImportDiagnosticsView(ABC, APIView):
         return diagnostic
 
     def _teledeclare_diagnostic(self, diagnostic):
+        Teledeclaration.validate_diagnostic(diagnostic)
         try:
-            Teledeclaration.validate_diagnostic(diagnostic)
             Teledeclaration.create_from_diagnostic(diagnostic, self.request.user)
             self.teledeclarations += 1
         except Exception:
-            pass
+            raise ValidationError("Ce diagnostic n'a pas été télédéclaré")
 
     @staticmethod
     def _should_update_geolocation(canteen, row):
@@ -297,7 +297,9 @@ class ImportDiagnosticsView(ABC, APIView):
             if len(row) > self.manager_column_idx + 1 and row[self.manager_column_idx]:
                 manager_emails = ImportDiagnosticsView._get_manager_emails(row[self.manager_column_idx])
         except Exception:
-            raise ValidationError({"email": "Un adresse email des gestionnaires n'est pas valide."})
+            raise ValidationError(
+                {"email": f"Un adresse email des gestionnaires ({row[self.manager_column_idx]}) n'est pas valide."}
+            )
         return manager_emails
 
     def _has_canteen_permission(self, canteen):
@@ -407,7 +409,7 @@ class ImportDiagnosticsView(ABC, APIView):
         elif isinstance(e, Sector.DoesNotExist):
             ImportDiagnosticsView._add_error(errors, "Le secteur spécifié ne fait pas partie des options acceptées")
         elif isinstance(e, ValidationError):
-            if e.message_dict:
+            if hasattr(e, "message_dict"):
                 for field, messages in e.message_dict.items():
                     verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(field)
                     for message in messages:
@@ -417,7 +419,8 @@ class ImportDiagnosticsView(ABC, APIView):
                         if field != "__all__":
                             user_message = f"Champ '{verbose_field_name}' : {user_message}"
                         ImportDiagnosticsView._add_error(errors, user_message)
-
+            elif hasattr(e, "message"):
+                ImportDiagnosticsView._add_error(errors, e.message)
             elif hasattr(e, "params"):
                 ImportDiagnosticsView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
             else:
@@ -508,18 +511,20 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
             values_dict = {}
             value_offset = 0
             for value in value_fields:
+                value_offset = value_offset + 1
+                value_idx = self.year_idx + value_offset
+                if value in mandatory_fields and not row[value_idx]:
+                    error = {}
+                    error[value] = "Ce champ ne peut pas être vide."
+                    raise ValidationError(error)
                 try:
-                    value_offset = value_offset + 1
-                    value_idx = self.year_idx + value_offset
-                    if value in mandatory_fields and not row[value_idx]:
-                        raise Exception
                     values_dict[value] = (
                         None if not row[value_idx] else Decimal(row[value_idx].strip().replace(",", "."))
                     )
-                except Exception:
+                except InvalidOperation:
                     error = {}
                     # TODO: This should take into account more number formats and be factored out to utils
-                    error[value] = "Ce champ doit être un nombre décimal."
+                    error[value] = f"La valeur « {row[value_idx]} » doit être un nombre décimal."
                     raise ValidationError(error)
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
 
@@ -565,8 +570,8 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         # total value is required, handle this case separately to the remaining values which are optional
         try:
             values_dict["value_total_ht"] = Decimal(row[value_idx].strip().replace(",", "."))
-        except Exception:
-            raise ValidationError({"value_total_ht": "Ce champ doit être un nombre décimal."})
+        except InvalidOperation:
+            raise ValidationError({"value_total_ht": "Ce champ ne peut pas être vide."})
         for value in ["value_meat_poultry_ht", "value_fish_ht", *Diagnostic.complete_fields]:
             try:
                 value_idx = value_idx + 1
@@ -575,9 +580,9 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
             except IndexError:
                 # we allow the rest of the fields to be left unspecified because there are so many
                 break
-            except Exception:
+            except InvalidOperation:
                 error = {}
-                error[value] = "Ce champ doit être vide ou un nombre décimal."
+                error[value] = f"La valeur « {row[value_idx]} » doit être vide ou un nombre décimal."
                 raise ValidationError(error)
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.COMPLETE
 
