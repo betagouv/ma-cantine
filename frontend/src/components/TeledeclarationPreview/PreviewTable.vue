@@ -132,9 +132,9 @@ export default {
           isNumber: true,
         })
       if (this.showDailyMealCount)
-        items.push({ value: this.canteen.dailyMealCount, label: "Couverts moyen par jour", isNumber: true })
+        items.push({ value: this.canteen.dailyMealCount, label: "Nombre moyen de couverts par jour", isNumber: true })
       items = items.concat([
-        { value: this.canteen.yearlyMealCount, label: "Nombre total de couverts à l'année", isNumber: true },
+        { value: this.canteen.yearlyMealCount, label: "Nombre total de couverts par an", isNumber: true },
         { value: this.sectors, label: "Secteurs d'activité" },
       ])
       if (this.showMinistryField)
@@ -424,6 +424,18 @@ export default {
           label: "Réalise des mesures de gaspillage alimentaire",
           value: this.getNullableBooleanLabel(this.diagnostic.hasWasteMeasures),
           class: this.diagnostic.hasWasteMeasures === null ? "warn" : "",
+        },
+        {
+          label: "Total des déchets alimentaires pour l'année (tonnes)",
+          isNumber: true,
+          value: this.diagnostic.totalLeftovers,
+          class: this.isTruthyOrZero(this.diagnostic.totalLeftovers) ? "" : "warn",
+        },
+        {
+          label: "Période de mesure (jours)",
+          isNumber: true,
+          value: this.diagnostic.durationLeftoversMeasurement,
+          class: this.isTruthyOrZero(this.diagnostic.durationLeftoversMeasurement) ? "" : "warn",
         },
         {
           label: "Restes de pain kg/an",

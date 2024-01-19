@@ -28,7 +28,7 @@
 
 <script>
 import Constants from "@/constants"
-import DataInfoBadge from "./DataInfoBadge"
+import DataInfoBadge from "@/components/DataInfoBadge"
 import keyMeasures from "@/data/key-measures.json"
 import { hasStartedMeasureTunnel } from "@/utils"
 

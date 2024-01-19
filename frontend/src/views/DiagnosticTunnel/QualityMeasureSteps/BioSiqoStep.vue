@@ -14,7 +14,7 @@
         <div class="d-block d-sm-flex align-center">
           <LogoBio style="max-height: 30px;" v-if="$vuetify.breakpoint.smAndDown" />
           <label class="ml-4 ml-md-0" for="bio">
-            La valeur (en HT) de mes achats Bio ou en conversion Bio
+            La valeur (en € HT) de mes achats Bio ou en conversion Bio
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
@@ -54,7 +54,7 @@
             </div>
           </div>
           <label class="ml-4 ml-md-0" for="siqo">
-            La valeur (en HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)
+            La valeur (en € HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>

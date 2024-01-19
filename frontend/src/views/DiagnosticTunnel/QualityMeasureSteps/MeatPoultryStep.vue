@@ -13,7 +13,7 @@
             </v-icon>
           </div>
           <label class="ml-4" for="meat-poultry">
-            La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total
+            La valeur totale (en € HT) de mes achats en viandes et volailles fraiches ou surgelées
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
@@ -47,7 +47,7 @@
             </v-icon>
           </div>
           <label class="ml-4" for="meat-poultry-egalim">
-            La valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées
+            La valeur (en € HT) de mes achats EGAlim en viandes et volailles fraiches ou surgelées
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
@@ -81,7 +81,7 @@
             </v-icon>
           </div>
           <label class="ml-4" for="meat-poultry-france">
-            La valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées
+            La valeur (en € HT) de mes achats provenance France en viandes et volailles fraiches ou surgelées
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
