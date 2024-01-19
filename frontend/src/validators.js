@@ -10,7 +10,10 @@ function isBase10Number(input) {
   return +input === parseFloat(input)
 }
 
-const NUMBER_FORMAT_ERROR = "Pour un nombre décimale, veuillez utiliser un point, par exemple 100.95"
+// this error is a graceful fallback that users ideally wouldn't see :
+// numerical value validators should always be called with isInteger or decimalPlaces first, to allow those
+// validators to return a helpful error message for the number format expected if !isBase10Number
+const GENERIC_BASE_10_ERROR = "Une valeur numérique est attendue"
 
 export default {
   required(input) {
@@ -37,7 +40,8 @@ export default {
   },
   greaterThanZero(input) {
     const errorMessage = "Ce champ doit contenir une chiffre supérieure à zéro"
-    if (!isBase10Number(input)) return NUMBER_FORMAT_ERROR
+    if (!input) return errorMessage
+    if (!isBase10Number(input)) return GENERIC_BASE_10_ERROR
     if (parseFloat(input) > 0) return true
     return errorMessage
   },
@@ -47,7 +51,7 @@ export default {
     const isEmpty = !input || input.length === 0
     if (isEmpty) return true
 
-    if (!isBase10Number(input)) return NUMBER_FORMAT_ERROR
+    if (!isBase10Number(input)) return GENERIC_BASE_10_ERROR
 
     const isNonNegative = parseFloat(input) >= 0
     if (isNonNegative) return true
@@ -161,11 +165,11 @@ export default {
     return (input) => {
       const number = Number(input)
       if (number) {
+        if (!isBase10Number(input)) return "Pour un nombre décimal, veuillez utiliser un point, par exemple 100.95"
         const tofixed = number.toFixed(max)
         if (number !== Number(tofixed)) {
           return `${max} décimales attendues, par exemple ${tofixed}`
         }
-        if (!isBase10Number(input)) return NUMBER_FORMAT_ERROR
       }
       return true
     }
@@ -177,10 +181,10 @@ export default {
     }
   },
   isInteger(input) {
-    if (input && !Number.isInteger(input)) {
-      return "Un nombre entier attendu"
+    if (input) {
+      if (!isBase10Number(input)) return "Un nombre entier est attendu : sans espaces, virgules, ni caractères spéciaux"
+      if (!Number.isInteger(input)) return "Un nombre entier attendu"
     }
-    if (!isBase10Number(input)) return NUMBER_FORMAT_ERROR
     return true
   },
 }

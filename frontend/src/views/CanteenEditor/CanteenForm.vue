@@ -164,7 +164,7 @@
           <DsfrTextField
             id="yearly-meals"
             hide-details="auto"
-            :rules="[validators.greaterThanZero, validators.isInteger, greaterThanDailyMealCount]"
+            :rules="[validators.isInteger, validators.greaterThanZero, greaterThanDailyMealCount]"
             validate-on-blur
             v-model.number="canteen.yearlyMealCount"
             prepend-icon="$restaurant-fill"
