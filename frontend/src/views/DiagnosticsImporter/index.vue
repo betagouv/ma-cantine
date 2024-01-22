@@ -1,6 +1,6 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav />
+    <BreadcrumbsNav :links="[{ to: { name: 'ManagementPage' } }]" />
     <h1 class="font-weight-black text-h4 my-6">Importer vos données</h1>
     <p>
       Vous êtes en mesure d'exporter vos données en format CSV ? Utilisez notre outil d'import pour ajouter vos cantines
