@@ -1,5 +1,6 @@
 <template>
   <div class="fr-text" v-if="hasApproData">
+    <p class="fr-text-xs grey--text text--darken-1">La proportion EGAlim de mes achats</p>
     <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
     <v-row>
       <v-col cols="12" md="6">
