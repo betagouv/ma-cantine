@@ -1,5 +1,16 @@
 <template>
   <div>
+    <div class="mb-16" v-if="displayPurchaseHints">
+      <DsfrCallout icon="$money-euro-box-fill">
+        <div>
+          <p>
+            Vous avez effectué des achats en {{ diagnostic.year }}. Cliquez ci-dessous pour remplir vos informations
+            d'approvisionnement à partir de ces achats.
+          </p>
+          <v-btn outlined color="primary" @click="autofillWithPurchases">Remplir automatiquement</v-btn>
+        </div>
+      </DsfrCallout>
+    </div>
     <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <DsfrCurrencyField
       v-model.number="payload.valueTotalHt"
@@ -35,6 +46,7 @@ import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import ErrorHelper from "./ErrorHelper"
 import FormErrorCallout from "@/components/FormErrorCallout"
+import DsfrCallout from "@/components/DsfrCallout"
 import { toCurrency } from "@/utils"
 import validators from "@/validators"
 
@@ -42,7 +54,7 @@ const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs p
 
 export default {
   name: "QualityTotalStep",
-  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, FormErrorCallout },
+  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, FormErrorCallout, DsfrCallout },
   props: {
     diagnostic: {
       type: Object,
@@ -174,6 +186,14 @@ export default {
     onPurchaseAutofill() {
       this.updatePayload()
       this.$nextTick(this.$refs.totalField.validate)
+    },
+    autofillWithPurchases() {
+      Object.assign(this.payload, { diagnosticType: "COMPLETE" }, this.purchasesSummary)
+      this.$emit("full-tunnel-autofill", { payload: this.payload })
+      this.$store.dispatch("notify", {
+        status: "success",
+        message: "Vos achats on été rapportés dans votre bilan.",
+      })
     },
   },
   mounted() {

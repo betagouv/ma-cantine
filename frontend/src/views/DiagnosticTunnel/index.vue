@@ -51,6 +51,7 @@
           :diagnostic="diagnostic"
           :stepUrlSlug="stepUrlSlug"
           v-on:update-payload="updatePayload"
+          v-on:full-tunnel-autofill="onFullTunnelAutofill"
           v-on:update-steps="updateSteps"
         />
       </div>
@@ -359,6 +360,10 @@ export default {
     },
     quit() {
       this.$router.push(this.quitLink)
+    },
+    onFullTunnelAutofill(e) {
+      this.updatePayload({ payload: e.payload, formIsValid: true })
+      this.saveAndQuit()
     },
     stepLink(step) {
       return { query: { étape: step.urlSlug } }
