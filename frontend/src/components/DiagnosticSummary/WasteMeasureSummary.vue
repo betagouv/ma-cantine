@@ -7,23 +7,36 @@
           J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire
         </div>
       </li>
-      <li v-else>
+      <li v-else-if="diagnostic.hasWasteDiagnostic === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n’ai pas encore réalisé un diagnostic sur les causes probables de gaspillage alimentaire
         </div>
       </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Est-ce que vous avez réalisé un diagnostic sur les causes probables de gaspillage alimentaire ?
+        </div>
+      </li>
 
+      <!-- TODO: only show this if hasWasteDiagnostic ? -->
       <li v-if="diagnostic.hasWastePlan">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           J’ai mis en place un plan d’action adapté au diagnostic réalisé
         </div>
       </li>
-      <li v-else>
+      <li v-else-if="diagnostic.hasWastePlan === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n’ai pas encore mis en place un plan d’action adapté au diagnostic réalisé
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Est-ce que vous avez mis en place un plan d’action adapté au diagnostic réalisé ?
         </div>
       </li>
 
@@ -39,11 +52,16 @@
           </ul>
         </div>
       </li>
-
-      <li v-else>
+      <li v-else-if="diagnostic.hasWasteMeasures === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n’ai pas encore réalisé des mesures de mon gaspillage alimentaire
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Est-ce que vous avez réalisé des mesures de votre gaspillage alimentaire ?
         </div>
       </li>
 
