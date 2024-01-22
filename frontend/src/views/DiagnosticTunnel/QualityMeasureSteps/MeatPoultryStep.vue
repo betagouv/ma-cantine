@@ -2,21 +2,11 @@
   <div>
     <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <v-row>
-      <v-col cols="12" md="8">
-        <div class="d-block d-sm-flex align-center">
-          <div class="d-flex">
-            <v-icon size="30" color="brown">
-              mdi-food-steak
-            </v-icon>
-            <v-icon size="30" color="brown">
-              mdi-food-drumstick
-            </v-icon>
-          </div>
-          <label class="ml-4" for="meat-poultry">
-            La valeur totale (en € HT) de mes achats en viandes et volailles fraiches ou surgelées
-            <span class="fr-hint-text mt-2">Optionnel</span>
-          </label>
-        </div>
+      <v-col cols="12" md="4">
+        <label for="meat-poultry">
+          Total (en € HT) de mes achats en viandes et volailles fraiches ou surgelées
+          <span class="fr-hint-text mt-2">Optionnel</span>
+        </label>
         <DsfrCurrencyField
           id="meat-poultry"
           v-model.number="payload.valueMeatPoultryHt"
@@ -32,74 +22,68 @@
           :amount="purchasesSummary.valueMeatPoultryHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
-
-        <!-- Viande et volailles EGALIM -->
-        <div class="d-block d-sm-flex align-center mt-8">
-          <div class="d-flex">
-            <v-icon size="30" color="green">
-              $checkbox-circle-fill
-            </v-icon>
-            <v-icon size="30" color="brown">
-              mdi-food-steak
-            </v-icon>
-            <v-icon size="30" color="brown">
-              mdi-food-drumstick
-            </v-icon>
-          </div>
-          <label class="ml-4" for="meat-poultry-egalim">
-            La valeur (en € HT) de mes achats EGAlim en viandes et volailles fraiches ou surgelées
-            <span class="fr-hint-text mt-2">Optionnel</span>
-          </label>
-        </div>
-        <DsfrCurrencyField
-          id="meat-poultry-egalim"
-          v-model.number="payload.valueMeatPoultryEgalimHt"
-          @blur="updatePayload"
-          :error="totalEgalimMeatPoultryError"
-          :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
-        />
-        <PurchaseHint
-          v-if="displayPurchaseHints"
-          v-model="payload.valueMeatPoultryEgalimHt"
-          @autofill="updatePayload"
-          purchaseType="viandes et volailles EGAlim"
-          :amount="purchasesSummary.valueMeatPoultryEgalimHt"
-          :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-        />
-
-        <!-- Viande et volailles provenance FRANCE -->
-        <div class="d-block d-sm-flex align-center mt-8">
-          <div class="d-flex">
-            <v-icon size="30" color="indigo">
-              $france-line
-            </v-icon>
-            <v-icon size="30" color="brown">
-              mdi-food-steak
-            </v-icon>
-            <v-icon size="30" color="brown">
-              mdi-food-drumstick
-            </v-icon>
-          </div>
-          <label class="ml-4" for="meat-poultry-france">
-            La valeur (en € HT) de mes achats provenance France en viandes et volailles fraiches ou surgelées
-            <span class="fr-hint-text mt-2">Optionnel</span>
-          </label>
-        </div>
-        <DsfrCurrencyField
-          id="meat-poultry-france"
-          v-model.number="payload.valueMeatPoultryFranceHt"
-          @blur="updatePayload"
-          :error="totalFranceMeatPoultryError"
-          :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
-        />
-        <PurchaseHint
-          v-if="displayPurchaseHints"
-          v-model="payload.valueMeatPoultryFranceHt"
-          @autofill="updatePayload"
-          purchaseType="viandes et volailles provenance France"
-          :amount="purchasesSummary.valueMeatPoultryFranceHt"
-          :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-        />
+      </v-col>
+      <v-col cols="12" md="8">
+        <v-row>
+          <v-col cols="4" class="pl-14">
+            <div class="d-flex align-center justify-center left-border fill-height">
+              <v-icon size="25" color="#4d4db2">$award-line</v-icon>
+              <p class="fr-text-xs font-weight-bold mb-0 ml-6">EGALIM</p>
+            </div>
+          </v-col>
+          <v-col cols="6">
+            <!-- Viande et volailles EGALIM -->
+            <label class="mt-8" for="meat-poultry-egalim">
+              Total (en € HT) de mes achats EGAlim en viandes et volailles
+              <span class="fr-hint-text mt-2">Optionnel</span>
+            </label>
+            <DsfrCurrencyField
+              id="meat-poultry-egalim"
+              v-model.number="payload.valueMeatPoultryEgalimHt"
+              @blur="updatePayload"
+              :error="totalEgalimMeatPoultryError"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+            />
+            <PurchaseHint
+              v-if="displayPurchaseHints"
+              v-model="payload.valueMeatPoultryEgalimHt"
+              @autofill="updatePayload"
+              purchaseType="viandes et volailles EGAlim"
+              :amount="purchasesSummary.valueMeatPoultryEgalimHt"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="4" class="pl-14">
+            <div class="d-flex align-center justify-center left-border fill-height">
+              <v-icon size="25" color="#4d4db2">$france-line</v-icon>
+              <p class="fr-text-xs font-weight-bold mb-0 ml-6">FRANCE</p>
+            </div>
+          </v-col>
+          <v-col cols="6">
+            <!-- Viande et volailles provenance FRANCE -->
+            <label class="mt-8" for="meat-poultry-france">
+              Total (en € HT) de mes achats provenance France en viandes et volailles
+              <span class="fr-hint-text mt-2">Optionnel</span>
+            </label>
+            <DsfrCurrencyField
+              id="meat-poultry-france"
+              v-model.number="payload.valueMeatPoultryFranceHt"
+              @blur="updatePayload"
+              :error="totalFranceMeatPoultryError"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+            />
+            <PurchaseHint
+              v-if="displayPurchaseHints"
+              v-model="payload.valueMeatPoultryFranceHt"
+              @autofill="updatePayload"
+              purchaseType="viandes et volailles provenance France"
+              :amount="purchasesSummary.valueMeatPoultryFranceHt"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+            />
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
     <ErrorHelper
