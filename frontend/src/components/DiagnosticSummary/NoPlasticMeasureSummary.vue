@@ -7,10 +7,16 @@
           Je n’utilise plus de contenants alimentaires de cuisson / de réchauffe en plastique
         </div>
       </li>
-      <li v-else>
+      <li v-else-if="diagnostic.cookingPlasticSubstituted === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           J’utilise encore de contenants alimentaires de cuisson / de réchauffe en plastique
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Est-ce que vous avez supprimé les contenants alimentaires de cuisson / de réchauffe en plastique ?
         </div>
       </li>
 
@@ -20,10 +26,16 @@
           Je n’utilise plus de contenants alimentaires de service en plastique
         </div>
       </li>
-      <li v-else>
+      <li v-else-if="diagnostic.servingPlasticSubstituted === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           J’utilise encore de contenants alimentaires de service en plastique
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Est-ce que vous avez supprimé les contenants alimentaires de service en plastique ?
         </div>
       </li>
 
@@ -33,10 +45,16 @@
           Je ne mets plus à disposition des convives des bouteilles d’eau plate en plastique
         </div>
       </li>
-      <li v-else>
+      <li v-else-if="diagnostic.plasticBottlesSubstituted === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je mets encore à disposition des convives des bouteilles d’eau plate en plastique
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Est-ce que vous avez supprimé les bouteilles d’eau plate en plastique ?
         </div>
       </li>
 
@@ -46,10 +64,16 @@
           Je ne mets plus à disposition des convives des ustensiles à usage unique en matière plastique
         </div>
       </li>
-      <li v-else>
+      <li v-else-if="diagnostic.plasticTablewareSubstituted === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je mets encore à disposition des convives des ustensiles à usage unique en matière plastique
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Est-ce que vous avez supprimé les ustensiles à usage unique en matière plastique ?
         </div>
       </li>
     </ul>
