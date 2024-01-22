@@ -11,11 +11,19 @@
           </div>
         </div>
       </li>
-      <li v-else>
+      <li v-else-if="diagnostic.communicatesOnFoodQuality === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n’informe pas mes convives sur la part de produits de qualité et durables, entrant dans la composition des
           repas servis, ni sur les démarches d’acquisition de produits issus d'un PAT (projet alimentaire territorial)
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Est-ce que vous informez vos convives sur la part de produits de qualité et durables, entrant dans la
+          composition des repas servis, et sur les démarches d’acquisition de produits issus d'un PAT (projet
+          alimentaire territorial) ?
         </div>
       </li>
 
@@ -31,7 +39,7 @@
         </div>
       </li>
       <li v-else>
-        <v-icon color="primary" class="mr-2">$close-line</v-icon>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
           Je n'ai pas renseigné les supports utilisés pour communiquer sur la qualité des approvisionnements
         </div>
@@ -43,10 +51,16 @@
           J'informe sur la qualité nutritionnelle des repas
         </div>
       </li>
-      <li v-else>
+      <li v-else-if="diagnostic.communicatesOnFoodPlan === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n'informe pas sur la qualité nutritionnelle des repas
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Est-ce que vous informez sur la qualité nutritionnelle des repas ?
         </div>
       </li>
 
