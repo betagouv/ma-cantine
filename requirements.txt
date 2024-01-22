@@ -83,7 +83,7 @@ pylint-plugin-utils==0.8.2
 pypdf==3.17.2
 PyPDF3==1.0.6
 pypng==0.20220715.0
-pytest==7.4.2
+pytest==7.4.4
 pytest-django==4.5.2
 python-bidi==0.4.2
 python-dateutil==2.8.2
