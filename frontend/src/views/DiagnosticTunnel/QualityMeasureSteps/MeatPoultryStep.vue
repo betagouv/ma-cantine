@@ -25,18 +25,21 @@
       </v-col>
       <v-col cols="12" md="8">
         <v-row>
-          <v-col cols="4" class="pl-14">
+          <v-col v-if="$vuetify.breakpoint.mdAndUp" cols="4" class="pl-14">
             <div class="d-flex align-center justify-center left-border fill-height">
               <v-icon size="25" color="#4d4db2">$award-line</v-icon>
               <p class="fr-text-xs font-weight-bold mb-0 ml-6">EGALIM</p>
             </div>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="12" md="6">
             <!-- Viande et volailles EGALIM -->
-            <label class="mt-8" for="meat-poultry-egalim">
-              Total (en € HT) de mes achats EGAlim en viandes et volailles
-              <span class="fr-hint-text mt-2">Optionnel</span>
-            </label>
+            <div class="d-block d-sm-flex align-center">
+              <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$award-line</v-icon>
+              <label for="meat-poultry-egalim">
+                Total (en € HT) de mes achats EGAlim en viandes et volailles
+                <span class="fr-hint-text mt-2">Optionnel</span>
+              </label>
+            </div>
             <DsfrCurrencyField
               id="meat-poultry-egalim"
               v-model.number="payload.valueMeatPoultryEgalimHt"
@@ -55,18 +58,21 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="4" class="pl-14">
+          <v-col v-if="$vuetify.breakpoint.mdAndUp" cols="4" class="pl-14">
             <div class="d-flex align-center justify-center left-border fill-height">
               <v-icon size="25" color="#4d4db2">$france-line</v-icon>
               <p class="fr-text-xs font-weight-bold mb-0 ml-6">FRANCE</p>
             </div>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="12" md="6">
             <!-- Viande et volailles provenance FRANCE -->
-            <label class="mt-8" for="meat-poultry-france">
-              Total (en € HT) de mes achats provenance France en viandes et volailles
-              <span class="fr-hint-text mt-2">Optionnel</span>
-            </label>
+            <div class="d-block d-sm-flex align-center">
+              <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$france-line</v-icon>
+              <label for="meat-poultry-france">
+                Total (en € HT) de mes achats provenance France en viandes et volailles
+                <span class="fr-hint-text mt-2">Optionnel</span>
+              </label>
+            </div>
             <DsfrCurrencyField
               id="meat-poultry-france"
               v-model.number="payload.valueMeatPoultryFranceHt"
