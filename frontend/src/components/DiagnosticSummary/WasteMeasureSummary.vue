@@ -98,10 +98,17 @@
         </div>
       </li>
 
-      <li v-else-if="displayDonationAgreementSegment">
+      <li v-else-if="displayDonationAgreementSegment && diagnostic.hasDonationAgreement === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je ne propose pas de convention de dons à des associations habilitées d’aide alimentaire
+        </div>
+      </li>
+
+      <li v-else-if="displayDonationAgreementSegment">
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Est-ce que vous proposez une convention de dons à des associations habilitées d’aide alimentaire ?
         </div>
       </li>
 
