@@ -13,7 +13,7 @@
       <div class="fr-collapse" id="breadcrumb-1" v-show="$vuetify.breakpoint.smAndUp || expanded">
         <ol class="fr-breadcrumb__list pl-0">
           <li>
-            <router-link class="fr-breadcrumb__link" :to="homePage.to">{{ homePage.title }}</router-link>
+            <router-link class="fr-breadcrumb__link" :to="{ name: 'LandingPage' }">Accueil</router-link>
           </li>
           <li v-for="link in breadcrumbLinks" :key="link.title">
             <router-link class="fr-breadcrumb__link" :to="link.to">{{ link.title }}</router-link>
@@ -56,24 +56,6 @@ export default {
     }
   },
   computed: {
-    homePage() {
-      const loggedUser = this.$store.state.loggedUser
-      if (loggedUser && loggedUser.isDev)
-        return {
-          title: "Développement et APIs",
-          to: { name: "DeveloperPage" },
-        }
-      if (loggedUser && !loggedUser.isDev) {
-        return {
-          title: "Mon tableau de bord",
-          to: { name: "ManagementPage" },
-        }
-      }
-      return {
-        title: "Accueil",
-        to: { name: "LandingPage" },
-      }
-    },
     pageTitle() {
       return this.title || this.breadcrumbRoutes.find((r) => r.name === this.$route.name)?.meta?.title
     },
