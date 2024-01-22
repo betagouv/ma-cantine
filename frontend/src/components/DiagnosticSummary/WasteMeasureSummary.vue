@@ -20,24 +20,26 @@
         </div>
       </li>
 
-      <!-- TODO: only show this if hasWasteDiagnostic ? -->
-      <li v-if="diagnostic.hasWastePlan">
-        <v-icon color="primary" class="mr-2">$check-line</v-icon>
-        <div>
-          J’ai mis en place un plan d’action adapté au diagnostic réalisé
-        </div>
-      </li>
-      <li v-else-if="diagnostic.hasWastePlan === false">
-        <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        <div>
-          Je n’ai pas encore mis en place un plan d’action adapté au diagnostic réalisé
-        </div>
-      </li>
-      <li v-else>
-        <v-icon color="primary" class="mr-2">$question-line</v-icon>
-        <div>
-          Est-ce que vous avez mis en place un plan d’action adapté au diagnostic réalisé ?
-        </div>
+      <!-- if they have a waste diagnostic, do they have a waste plan? -->
+      <li v-if="diagnostic.hasWasteDiagnostic">
+        <span v-if="diagnostic.hasWastePlan">
+          <v-icon color="primary" class="mr-1">$check-line</v-icon>
+          <span>
+            J’ai mis en place un plan d’action adapté au diagnostic réalisé
+          </span>
+        </span>
+        <span v-else-if="diagnostic.hasWastePlan === false">
+          <v-icon color="primary" class="mr-1">$close-line</v-icon>
+          <span>
+            Je n’ai pas encore mis en place un plan d’action adapté au diagnostic réalisé
+          </span>
+        </span>
+        <span v-else>
+          <v-icon color="primary" class="mr-1">$question-line</v-icon>
+          <span>
+            Est-ce que vous avez mis en place un plan d’action adapté au diagnostic réalisé ?
+          </span>
+        </span>
       </li>
 
       <li v-if="diagnostic.hasWasteMeasures">
