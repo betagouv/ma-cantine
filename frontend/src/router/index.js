@@ -290,7 +290,7 @@ const routes = [
     name: "ManagementPage",
     component: ManagementPage,
     meta: {
-      title: "Gérer mes cantines",
+      title: "Mon tableau de bord",
       authenticationRequired: true,
     },
   },
