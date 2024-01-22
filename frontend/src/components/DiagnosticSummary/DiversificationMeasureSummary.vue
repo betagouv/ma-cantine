@@ -70,7 +70,7 @@
             </ul>
           </span>
         </span>
-        <span v-else-if="diagnostic.hasDiversificationPlan === false">
+        <span v-else-if="nullAsFalse || diagnostic.hasDiversificationPlan === false">
           <v-icon color="primary" class="mr-1">$close-line</v-icon>
           <span>
             Je n'ai pas mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à
@@ -90,7 +90,7 @@
 </template>
 
 <script>
-import { applicableDiagnosticRules, selectListToObject } from "@/utils"
+import { applicableDiagnosticRules, selectListToObject, nullAsFalse } from "@/utils"
 import Constants from "@/constants"
 
 export default {
@@ -122,6 +122,9 @@ export default {
       const diversificationPlanActions = selectListToObject(Constants.DiversificationPlanActions)
       if (!this.diagnostic.diversificationPlanActions?.length) return null
       return this.diagnostic.diversificationPlanActions.map((x) => diversificationPlanActions[x]).filter((x) => !!x)
+    },
+    nullAsFalse() {
+      return nullAsFalse(this.diagnostic)
     },
   },
 }

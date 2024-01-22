@@ -7,7 +7,7 @@
           J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire
         </div>
       </li>
-      <li v-else-if="diagnostic.hasWasteDiagnostic === false">
+      <li v-else-if="nullAsFalse || diagnostic.hasWasteDiagnostic === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n’ai pas encore réalisé un diagnostic sur les causes probables de gaspillage alimentaire
@@ -28,7 +28,7 @@
             J’ai mis en place un plan d’action adapté au diagnostic réalisé
           </span>
         </span>
-        <span v-else-if="diagnostic.hasWastePlan === false">
+        <span v-else-if="nullAsFalse || diagnostic.hasWastePlan === false">
           <v-icon color="primary" class="mr-1">$close-line</v-icon>
           <span>
             Je n’ai pas encore mis en place un plan d’action adapté au diagnostic réalisé
@@ -54,7 +54,7 @@
           </ul>
         </div>
       </li>
-      <li v-else-if="diagnostic.hasWasteMeasures === false">
+      <li v-else-if="nullAsFalse || diagnostic.hasWasteMeasures === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n’ai pas encore réalisé des mesures de mon gaspillage alimentaire
@@ -98,7 +98,7 @@
         </div>
       </li>
 
-      <li v-else-if="displayDonationAgreementSegment && diagnostic.hasDonationAgreement === false">
+      <li v-else-if="displayDonationAgreementSegment && (nullAsFalse || diagnostic.hasDonationAgreement === false)">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je ne propose pas de convention de dons à des associations habilitées d’aide alimentaire
@@ -134,7 +134,7 @@
 
 <script>
 import wasteActions from "@/data/waste-actions.json"
-import { applicableDiagnosticRules } from "@/utils"
+import { applicableDiagnosticRules, nullAsFalse } from "@/utils"
 
 export default {
   name: "WasteMeasureSummary",
@@ -186,6 +186,9 @@ export default {
         },
         { label: "Type de denrées données", value: d.donationFoodType ? `${d.donationFoodType}` : "—" },
       ]
+    },
+    nullAsFalse() {
+      return nullAsFalse(this.diagnostic)
     },
   },
 }
