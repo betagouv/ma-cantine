@@ -16,7 +16,7 @@
       <li v-else>
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Est-ce que vous avez réalisé un diagnostic sur les causes probables de gaspillage alimentaire ?
+          Avez-vous réalisé un diagnostic sur les causes probables de gaspillage alimentaire ?
         </div>
       </li>
 
@@ -37,7 +37,7 @@
         <span v-else>
           <v-icon color="primary" class="mr-1">$question-line</v-icon>
           <span>
-            Est-ce que vous avez mis en place un plan d’action adapté au diagnostic réalisé ?
+            Avez-vous mis en place un plan d’action adapté au diagnostic réalisé ?
           </span>
         </span>
       </li>
@@ -63,7 +63,7 @@
       <li v-else>
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Est-ce que vous avez réalisé des mesures de votre gaspillage alimentaire ?
+          Avez-vous réalisé des mesures de votre gaspillage alimentaire ?
         </div>
       </li>
 
@@ -108,7 +108,7 @@
       <li v-else-if="displayDonationAgreementSegment">
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Est-ce que vous proposez une convention de dons à des associations habilitées d’aide alimentaire ?
+          Proposez-vous une convention de dons à des associations habilitées d’aide alimentaire ?
         </div>
       </li>
 
