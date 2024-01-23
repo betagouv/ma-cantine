@@ -7,7 +7,7 @@
           Je n’utilise plus de contenants alimentaires de cuisson / de réchauffe en plastique
         </div>
       </li>
-      <li v-else-if="nullAsFalse || diagnostic.cookingPlasticSubstituted === false">
+      <li v-else-if="diagnosticUsesNullAsFalse || diagnostic.cookingPlasticSubstituted === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           J’utilise encore de contenants alimentaires de cuisson / de réchauffe en plastique
@@ -26,7 +26,7 @@
           Je n’utilise plus de contenants alimentaires de service en plastique
         </div>
       </li>
-      <li v-else-if="nullAsFalse || diagnostic.servingPlasticSubstituted === false">
+      <li v-else-if="diagnosticUsesNullAsFalse || diagnostic.servingPlasticSubstituted === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           J’utilise encore de contenants alimentaires de service en plastique
@@ -45,7 +45,7 @@
           Je ne mets plus à disposition des convives des bouteilles d’eau plate en plastique
         </div>
       </li>
-      <li v-else-if="nullAsFalse || diagnostic.plasticBottlesSubstituted === false">
+      <li v-else-if="diagnosticUsesNullAsFalse || diagnostic.plasticBottlesSubstituted === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je mets encore à disposition des convives des bouteilles d’eau plate en plastique
@@ -64,7 +64,7 @@
           Je ne mets plus à disposition des convives des ustensiles à usage unique en matière plastique
         </div>
       </li>
-      <li v-else-if="nullAsFalse || diagnostic.plasticTablewareSubstituted === false">
+      <li v-else-if="diagnosticUsesNullAsFalse || diagnostic.plasticTablewareSubstituted === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je mets encore à disposition des convives des ustensiles à usage unique en matière plastique
@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import { nullAsFalse } from "@/utils"
+import { diagnosticUsesNullAsFalse } from "@/utils"
 
 export default {
   name: "NoPlasticMeasureSummary",
@@ -89,8 +89,8 @@ export default {
     diagnostic: {},
   },
   computed: {
-    nullAsFalse() {
-      return nullAsFalse(this.diagnostic)
+    diagnosticUsesNullAsFalse() {
+      return diagnosticUsesNullAsFalse(this.diagnostic)
     },
   },
 }

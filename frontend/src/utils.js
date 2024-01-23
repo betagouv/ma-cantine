@@ -692,6 +692,6 @@ export const readyToTeledeclare = (canteen, diagnostic, sectors) => {
 
 // for diagnostics created before the redesign launched in 2024, many null values
 // were interpreted as false. Since then, we ask for an explicit false value.
-export const nullAsFalse = (diagnostic) => {
+export const diagnosticUsesNullAsFalse = (diagnostic) => {
   return diagnostic.year < 2023
 }

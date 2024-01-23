@@ -11,7 +11,7 @@
           </div>
         </div>
       </li>
-      <li v-else-if="nullAsFalse || diagnostic.communicatesOnFoodQuality === false">
+      <li v-else-if="diagnosticUsesNullAsFalse || diagnostic.communicatesOnFoodQuality === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n’informe pas mes convives sur la part de produits de qualité et durables, entrant dans la composition des
@@ -21,9 +21,8 @@
       <li v-else>
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Informez-vous vos convives sur la part de produits de qualité et durables, entrant dans la
-          composition des repas servis, et sur les démarches d’acquisition de produits issus d'un PAT (projet
-          alimentaire territorial) ?
+          Informez-vous vos convives sur la part de produits de qualité et durables, entrant dans la composition des
+          repas servis, et sur les démarches d’acquisition de produits issus d'un PAT (projet alimentaire territorial) ?
         </div>
       </li>
 
@@ -51,7 +50,7 @@
           J'informe sur la qualité nutritionnelle des repas
         </div>
       </li>
-      <li v-else-if="nullAsFalse || diagnostic.communicatesOnFoodPlan === false">
+      <li v-else-if="diagnosticUsesNullAsFalse || diagnostic.communicatesOnFoodPlan === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n'informe pas sur la qualité nutritionnelle des repas
@@ -90,7 +89,7 @@
 
 <script>
 import communicationSupports from "@/data/communication-supports.json"
-import { selectListToObject, nullAsFalse } from "@/utils"
+import { selectListToObject, diagnosticUsesNullAsFalse } from "@/utils"
 import Constants from "@/constants"
 
 export default {
@@ -110,8 +109,8 @@ export default {
         ...[this.diagnostic.otherCommunicationSupport],
       ].filter((x) => !!x)
     },
-    nullAsFalse() {
-      return nullAsFalse(this.diagnostic)
+    diagnosticUsesNullAsFalse() {
+      return diagnosticUsesNullAsFalse(this.diagnostic)
     },
   },
 }
