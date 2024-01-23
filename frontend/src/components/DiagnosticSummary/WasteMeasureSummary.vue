@@ -7,24 +7,39 @@
           J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire
         </div>
       </li>
-      <li v-else>
+      <li v-else-if="diagnosticUsesNullAsFalse || diagnostic.hasWasteDiagnostic === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n’ai pas encore réalisé un diagnostic sur les causes probables de gaspillage alimentaire
         </div>
       </li>
-
-      <li v-if="diagnostic.hasWastePlan">
-        <v-icon color="primary" class="mr-2">$check-line</v-icon>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          J’ai mis en place un plan d’action adapté au diagnostic réalisé
+          Avez-vous réalisé un diagnostic sur les causes probables de gaspillage alimentaire ?
         </div>
       </li>
-      <li v-else>
-        <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        <div>
-          Je n’ai pas encore mis en place un plan d’action adapté au diagnostic réalisé
-        </div>
+
+      <!-- if they have a waste diagnostic, do they have a waste plan? -->
+      <li v-if="diagnostic.hasWasteDiagnostic">
+        <span v-if="diagnostic.hasWastePlan">
+          <v-icon color="primary" class="mr-1">$check-line</v-icon>
+          <span>
+            J’ai mis en place un plan d’action adapté au diagnostic réalisé
+          </span>
+        </span>
+        <span v-else-if="diagnosticUsesNullAsFalse || diagnostic.hasWastePlan === false">
+          <v-icon color="primary" class="mr-1">$close-line</v-icon>
+          <span>
+            Je n’ai pas encore mis en place un plan d’action adapté au diagnostic réalisé
+          </span>
+        </span>
+        <span v-else>
+          <v-icon color="primary" class="mr-1">$question-line</v-icon>
+          <span>
+            Avez-vous mis en place un plan d’action adapté au diagnostic réalisé ?
+          </span>
+        </span>
       </li>
 
       <li v-if="diagnostic.hasWasteMeasures">
@@ -39,11 +54,16 @@
           </ul>
         </div>
       </li>
-
-      <li v-else>
+      <li v-else-if="diagnosticUsesNullAsFalse || diagnostic.hasWasteMeasures === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n’ai pas encore réalisé des mesures de mon gaspillage alimentaire
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Avez-vous réalisé des mesures de votre gaspillage alimentaire ?
         </div>
       </li>
 
@@ -78,10 +98,21 @@
         </div>
       </li>
 
-      <li v-else-if="displayDonationAgreementSegment">
+      <li
+        v-else-if="
+          displayDonationAgreementSegment && (diagnosticUsesNullAsFalse || diagnostic.hasDonationAgreement === false)
+        "
+      >
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je ne propose pas de convention de dons à des associations habilitées d’aide alimentaire
+        </div>
+      </li>
+
+      <li v-else-if="displayDonationAgreementSegment">
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Proposez-vous une convention de dons à des associations habilitées d’aide alimentaire ?
         </div>
       </li>
 
@@ -107,7 +138,7 @@
 
 <script>
 import wasteActions from "@/data/waste-actions.json"
-import { applicableDiagnosticRules } from "@/utils"
+import { applicableDiagnosticRules, diagnosticUsesNullAsFalse } from "@/utils"
 
 export default {
   name: "WasteMeasureSummary",
@@ -159,6 +190,9 @@ export default {
         },
         { label: "Type de denrées données", value: d.donationFoodType ? `${d.donationFoodType}` : "—" },
       ]
+    },
+    diagnosticUsesNullAsFalse() {
+      return diagnosticUsesNullAsFalse(this.diagnostic)
     },
   },
 }

@@ -11,11 +11,18 @@
           </div>
         </div>
       </li>
-      <li v-else>
+      <li v-else-if="diagnosticUsesNullAsFalse || diagnostic.communicatesOnFoodQuality === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n’informe pas mes convives sur la part de produits de qualité et durables, entrant dans la composition des
           repas servis, ni sur les démarches d’acquisition de produits issus d'un PAT (projet alimentaire territorial)
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Informez-vous vos convives sur la part de produits de qualité et durables, entrant dans la composition des
+          repas servis, et sur les démarches d’acquisition de produits issus d'un PAT (projet alimentaire territorial) ?
         </div>
       </li>
 
@@ -31,7 +38,7 @@
         </div>
       </li>
       <li v-else>
-        <v-icon color="primary" class="mr-2">$close-line</v-icon>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
           Je n'ai pas renseigné les supports utilisés pour communiquer sur la qualité des approvisionnements
         </div>
@@ -43,10 +50,16 @@
           J'informe sur la qualité nutritionnelle des repas
         </div>
       </li>
-      <li v-else>
+      <li v-else-if="diagnosticUsesNullAsFalse || diagnostic.communicatesOnFoodPlan === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
           Je n'informe pas sur la qualité nutritionnelle des repas
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Informez-vous vos convives sur la qualité nutritionnelle des repas ?
         </div>
       </li>
 
@@ -76,7 +89,7 @@
 
 <script>
 import communicationSupports from "@/data/communication-supports.json"
-import { selectListToObject } from "@/utils"
+import { selectListToObject, diagnosticUsesNullAsFalse } from "@/utils"
 import Constants from "@/constants"
 
 export default {
@@ -95,6 +108,9 @@ export default {
         ...this.diagnostic.communicationSupports.map((x) => communicationSupports[x]),
         ...[this.diagnostic.otherCommunicationSupport],
       ].filter((x) => !!x)
+    },
+    diagnosticUsesNullAsFalse() {
+      return diagnosticUsesNullAsFalse(this.diagnostic)
     },
   },
 }
