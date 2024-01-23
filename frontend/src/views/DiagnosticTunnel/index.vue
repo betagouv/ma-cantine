@@ -2,7 +2,7 @@
   <div class="tunnel text-left d-flex flex-column my-n5" ref="container" v-resize="onResize" style="width: 100%">
     <div class="header px-2 py-sm-2">
       <v-row class="mx-auto constrained align-center my-1 my-sm-3">
-        <v-col cols="9" class="py-4 d-flex" v-if="$vuetify.breakpoint.smAndUp">
+        <v-col cols="9" class="py-4 d-flex pl-0 ml-n4" v-if="$vuetify.breakpoint.smAndUp">
           <div v-for="tunnel in tunnels" :key="tunnel.id" class="px-4 header-icon">
             <div v-if="tunnel.id === measure.id" class="d-flex align-center my-1">
               <v-icon small color="primary" class="mr-2">{{ measure.mdiIcon }}</v-icon>
