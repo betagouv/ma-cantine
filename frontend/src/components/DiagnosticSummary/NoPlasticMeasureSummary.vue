@@ -16,7 +16,7 @@
       <li v-else>
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Est-ce que vous avez supprimé les contenants alimentaires de cuisson / de réchauffe en plastique ?
+          Avez-vous supprimé les contenants alimentaires de cuisson / de réchauffe en plastique ?
         </div>
       </li>
 
@@ -35,7 +35,7 @@
       <li v-else>
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Est-ce que vous avez supprimé les contenants alimentaires de service en plastique ?
+          Avez-vous supprimé les contenants alimentaires de service en plastique ?
         </div>
       </li>
 
@@ -54,7 +54,7 @@
       <li v-else>
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Est-ce que vous avez supprimé les bouteilles d’eau plate en plastique ?
+          Avez-vous supprimé les bouteilles d’eau plate en plastique ?
         </div>
       </li>
 
@@ -73,7 +73,7 @@
       <li v-else>
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Est-ce que vous avez supprimé les ustensiles à usage unique en matière plastique ?
+          Avez-vous supprimé les ustensiles à usage unique en matière plastique ?
         </div>
       </li>
     </ul>

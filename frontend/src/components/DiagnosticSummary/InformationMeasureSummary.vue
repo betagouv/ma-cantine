@@ -21,7 +21,7 @@
       <li v-else>
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Est-ce que vous informez vos convives sur la part de produits de qualité et durables, entrant dans la
+          Informez-vous vos convives sur la part de produits de qualité et durables, entrant dans la
           composition des repas servis, et sur les démarches d’acquisition de produits issus d'un PAT (projet
           alimentaire territorial) ?
         </div>
@@ -60,7 +60,7 @@
       <li v-else>
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Est-ce que vous informez sur la qualité nutritionnelle des repas ?
+          Informez-vous vos convives sur la qualité nutritionnelle des repas ?
         </div>
       </li>
 

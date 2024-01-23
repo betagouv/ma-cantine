@@ -80,7 +80,7 @@
         <span v-else>
           <v-icon color="primary" class="mr-1">$question-line</v-icon>
           <span>
-            Est-ce que vous avez mis en place un plan pluriannuel de diversification des protéines incluant des
+            Avez-vous mis en place un plan pluriannuel de diversification des protéines incluant des
             alternatives à base de protéines végétales ?
           </span>
         </span>
