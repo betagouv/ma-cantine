@@ -51,8 +51,8 @@ export default {
       return !this.isNewCanteen && !window.ENABLE_DASHBOARD
     },
     breadcrumbLinks() {
-      if (this.isNewCanteen) return []
-      return [{ to: { name: "DashboardManager" }, title: this.canteen.name }]
+      if (this.isNewCanteen) return [{ to: { name: "ManagementPage" } }]
+      return [{ to: { name: "ManagementPage" } }, { to: { name: "DashboardManager" }, title: this.canteen.name }]
     },
   },
   methods: {

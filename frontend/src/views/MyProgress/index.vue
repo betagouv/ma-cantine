@@ -1,6 +1,11 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav :links="[{ to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' }]" />
+    <BreadcrumbsNav
+      :links="[
+        { to: { name: 'ManagementPage' } },
+        { to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' },
+      ]"
+    />
     <v-row>
       <v-col cols="12" md="10">
         <ProductionTypeTag v-if="canteen" :canteen="canteen" class="mt-n2" />
