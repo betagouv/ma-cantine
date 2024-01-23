@@ -2,19 +2,12 @@
   <div>
     <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <v-row>
-      <v-col cols="12" md="8">
-        <!-- Poissons -->
-        <div class="d-block d-sm-flex align-center">
-          <div class="d-flex">
-            <v-icon size="30" color="blue">
-              mdi-fish
-            </v-icon>
-          </div>
-          <label class="ml-4" for="fish">
-            La valeur totale (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture
-            <span class="fr-hint-text mt-2">Optionnel</span>
-          </label>
-        </div>
+      <v-col cols="12" md="4">
+        <!-- Fish -->
+        <label for="fish">
+          Total (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture
+          <span class="fr-hint-text mt-2">Optionnel</span>
+        </label>
         <DsfrCurrencyField
           id="fish"
           v-model.number="payload.valueFishHt"
@@ -30,19 +23,19 @@
           :amount="purchasesSummary.valueFishHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
-
-        <!-- Poissons EGALIM -->
-        <div class="d-block d-sm-flex align-center mt-8">
-          <div class="d-flex">
-            <v-icon size="30" color="green">
-              $checkbox-circle-fill
-            </v-icon>
-            <v-icon size="30" color="blue">
-              mdi-fish
-            </v-icon>
-          </div>
-          <label class="ml-4" for="fish-egalim">
-            La valeur (en € HT) de mes achats EGAlim en poissons, produits de la mer et de l'aquaculture
+      </v-col>
+      <v-col v-if="$vuetify.breakpoint.mdAndUp" cols="3" class="pl-14">
+        <div class="d-flex align-center justify-center left-border fill-height">
+          <v-icon size="25" color="#4d4db2">$award-line</v-icon>
+          <p class="fr-text-xs font-weight-bold mb-0 ml-6">EGALIM</p>
+        </div>
+      </v-col>
+      <v-col cols="12" md="4">
+        <!-- Fish EGALIM -->
+        <div class="d-block d-sm-flex align-center">
+          <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$award-line</v-icon>
+          <label for="fish-egalim">
+            Total (en € HT) de mes achats EGAlim en poissons, produits de la mer et de l'aquaculture
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
