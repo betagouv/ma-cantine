@@ -34,6 +34,7 @@
         :payload="payload"
         :purchasesSummary="purchasesSummary"
         v-on:update-payload="updatePayloadFromComponent"
+        v-on:full-tunnel-autofill="onFullTunnelAutofill"
       />
     </div>
   </v-form>
@@ -166,6 +167,10 @@ export default {
     updatePayload() {
       const payloadToSend = getObjectDiff(this.originalValues, this.payload)
       this.$emit("update-payload", { payload: payloadToSend, formIsValid: this.formIsValid })
+    },
+    onFullTunnelAutofill(e) {
+      this.$set(this, "payload", e.payload)
+      this.$emit("full-tunnel-autofill", { payload: this.payload })
     },
     fetchPurchasesSummary() {
       fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.diagnostic.year}`)

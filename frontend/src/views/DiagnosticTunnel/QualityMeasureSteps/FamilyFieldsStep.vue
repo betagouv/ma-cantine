@@ -317,7 +317,8 @@ export default {
       this.populateSimplifiedDiagnostic()
     },
     sum(fields) {
-      return fields.reduce((acc, field) => acc + (this.payload[field] || 0), 0)
+      const sum = fields.reduce((acc, field) => acc + (this.payload[field] || 0), 0)
+      return +sum.toFixed(2)
     },
     fieldHasError(fieldName) {
       if (fieldName.startsWith(this.meatFieldPrefix) && !!this.meatTotalErrorMessage) return true

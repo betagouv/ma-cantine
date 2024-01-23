@@ -23,7 +23,7 @@
               class="text-decoration-underline px-0"
               color="primary"
               @click="step.isSynthesis ? quit() : saveAndQuit()"
-              :disabled="!formIsValid"
+              :disabled="!formIsValid && !isSynthesis"
             >
               {{ step.isSynthesis ? "Quitter" : "Sauvegarder et quitter" }}
               <v-icon color="primary" size="1rem" class="ml-0 mb-1">
@@ -51,6 +51,7 @@
           :diagnostic="diagnostic"
           :stepUrlSlug="stepUrlSlug"
           v-on:update-payload="updatePayload"
+          v-on:full-tunnel-autofill="onFullTunnelAutofill"
           v-on:update-steps="updateSteps"
         />
       </div>
@@ -78,7 +79,12 @@
       </div>
       <v-spacer v-if="$vuetify.breakpoint.smAndUp" />
       <div class="d-block d-sm-flex align-center flex-row-reverse">
-        <v-btn :disabled="!formIsValid" @click="continueAction" color="primary" class="ml-0 ml-sm-4 mb-4 mb-sm-0">
+        <v-btn
+          :disabled="!formIsValid && !isSynthesis"
+          @click="continueAction"
+          color="primary"
+          class="ml-0 ml-sm-4 mb-4 mb-sm-0"
+        >
           {{ continueActionText }}
         </v-btn>
         <p v-if="step && step.isSynthesis" class="mb-0"><router-link :to="firstStepLink">Modifier</router-link></p>
@@ -359,6 +365,13 @@ export default {
     },
     quit() {
       this.$router.push(this.quitLink)
+    },
+    onFullTunnelAutofill(e) {
+      this.updatePayload({ payload: e.payload, formIsValid: true })
+      const synthesisStep = this.steps.find((x) => x.isSynthesis)
+      return this.saveDiagnostic()
+        .then(this.$nextTick)
+        .then(() => this.$router.push({ query: { étape: synthesisStep.urlSlug } }))
     },
     stepLink(step) {
       return { query: { étape: step.urlSlug } }
