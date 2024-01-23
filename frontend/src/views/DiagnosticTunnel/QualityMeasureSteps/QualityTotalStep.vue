@@ -4,9 +4,9 @@
       <DsfrCallout icon="$money-euro-box-fill">
         <div>
           <p>
-            Vous avez effectué des achats en {{ diagnostic.year }} pour un total de
+            Vous avez renseigné un total de
             <span class="font-weight-bold">{{ toCurrency(purchasesSummary.valueTotalHt) }}</span>
-            . Voulez-vous compléter votre bilan avec les montants de ces achats ?
+            d'achats en {{ diagnostic.year }}. Voulez-vous compléter votre bilan avec les montants de ces achats ?
           </p>
           <v-btn outlined color="primary" @click="autofillWithPurchases">Compléter avec mes achats</v-btn>
         </div>
