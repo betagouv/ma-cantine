@@ -4,10 +4,11 @@
       <DsfrCallout icon="$money-euro-box-fill">
         <div>
           <p>
-            Vous avez effectué des achats en {{ diagnostic.year }}. Cliquez ci-dessous pour remplir vos informations
-            d'approvisionnement à partir de ces achats.
+            Vous avez effectué des achats en {{ diagnostic.year }} pour un total de
+            <span class="font-weight-bold">{{ toCurrency(purchasesSummary.valueTotalHt) }}</span>
+            . Voulez-vous compléter votre bilan avec les montants de ces achats ?
           </p>
-          <v-btn outlined color="primary" @click="autofillWithPurchases">Remplir automatiquement</v-btn>
+          <v-btn outlined color="primary" @click="autofillWithPurchases">Compléter avec mes achats</v-btn>
         </div>
       </DsfrCallout>
     </div>
@@ -125,6 +126,7 @@ export default {
       this.checkTotal()
       if (!this.hasError) this.$emit("update-payload", { payload: this.payload })
     },
+    toCurrency,
     checkTotal() {
       if (this.payload.valueTotalHt < 0) {
         return // this error is handled by vuetify validation
