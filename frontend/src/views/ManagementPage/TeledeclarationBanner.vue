@@ -11,15 +11,17 @@
           permettant de mieux piloter cette politique publique par l'administration.
         </p>
       </v-card-text>
-      <v-card-actions class="px-4 mt-2">
+      <v-card-actions class="px-4 pb-2 mt-2">
         <p class="mb-0">
-          <v-btn :to="{ name: 'PendingActions' }" color="primary">Télédéclarer mes cantines</v-btn>
+          <v-btn :to="{ name: 'PendingActions' }" color="primary" class="mb-2 mr-4">
+            Télédéclarer mes cantines
+          </v-btn>
           <v-btn
             text
             href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/infos-generales-sur-contexte-r%C3%A9glementaire/master/procedure-campagne-de-remontee-des-donnees-annuelle"
             target="_blank"
             rel="noopener"
-            class="text-decoration-underline"
+            class="text-decoration-underline mb-2 ml-n4 mr-4"
           >
             Le guide de télédéclaration
             <v-icon small class="ml-2">mdi-open-in-new</v-icon>
@@ -29,7 +31,7 @@
             href="https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2FlNPOtFoTKyfj5UnjZKJj%2FEGAlim%20Bilan%20statistique%202023%20d%C3%A9finitif.pdf?alt=media"
             target="_blank"
             rel="noopener"
-            class="text-decoration-underline"
+            class="text-decoration-underline mb-2 ml-n4"
           >
             Bilan EGAlim pour la campagne de 2022
             <v-icon small class="ml-2">mdi-open-in-new</v-icon>
