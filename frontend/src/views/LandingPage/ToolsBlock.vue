@@ -54,7 +54,7 @@ export default {
   components: { DownloadLink },
   data() {
     return {
-      filepath: "/static/documents/Diagnostic approvisionnement v0.7",
+      filepath: "/static/documents/Diagnostic approvisionnement v0.8",
       filesizeStr: "2,9 Mo",
     }
   },
