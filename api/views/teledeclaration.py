@@ -1,5 +1,6 @@
 import logging
 import os
+from api.views.utils import update_change_reason_with_auth
 from datetime import datetime
 from django.http import JsonResponse, HttpResponse
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -52,6 +53,7 @@ class TeledeclarationCreateView(APIView):
             raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
 
         td = TeledeclarationCreateView._teledeclare_diagnostic(diagnostic_id, request.user)
+        update_change_reason_with_auth(self, td)
         data = FullDiagnosticSerializer(td.diagnostic).data
         return JsonResponse(camelize(data), status=status.HTTP_201_CREATED)
 
@@ -122,6 +124,7 @@ class TeledeclarationCancelView(APIView):
 
             teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
             teledeclaration.save()
+            update_change_reason_with_auth(self, teledeclaration)
 
             data = FullDiagnosticSerializer(teledeclaration.diagnostic).data
             return JsonResponse(camelize(data), status=status.HTTP_200_OK)
