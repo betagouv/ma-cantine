@@ -285,6 +285,8 @@ def load_td():
         )
     return tds
 
+
+
 ######################
 # Creation et affichage des indicateurs
 ######################
@@ -375,9 +377,7 @@ def calcul_indicateur_famille(tds: {}, years=[], col_comparaison=True):
 
     return pd.DataFrame(indicateurs)
 
-# tds = {}
-# tds['Campagne 2023'] = pd.read_csv("stats/bilan/data/export_dataset_stats_campagne_clean_2023.csv", sep=";")
-# print(calcul_indicateur_famille(tds, ['Campagne 2023']))
+
 
 def calcul_indicateur_appro(tds: {}, years=[], col_comparaison=True):
     indicateurs = {}
@@ -651,4 +651,3 @@ def assert_quality(tds):
         assert len(tds[year]["canteen.id"]) == len(
             tds[year]["canteen.id"].unique()
         ), "Il y a des doublons dans les cantines"
-        
