@@ -274,7 +274,7 @@ class DiagnosticSerializer(serializers.ModelSerializer):
         return validated_data
 
 
-class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
+class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
     """
     This serializer masks financial data and gives the basic information on appro as percentages
     """
@@ -299,7 +299,7 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
         return representation
 
 
-class PublicDiagnosticSerializer(serializers.ModelSerializer):
+class PublicDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = FIELDS
@@ -365,21 +365,21 @@ class FullDiagnosticSerializer(DiagnosticSerializer):
         read_only_fields = fields
 
 
-class SimpleTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
+class SimpleTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = META_FIELDS + SIMPLE_APPRO_FIELDS + NON_APPRO_FIELDS
         read_only_fields = fields
 
 
-class CompleteTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
+class CompleteTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = META_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
         read_only_fields = fields
 
 
-class ApproDeferredTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
+class ApproDeferredTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = META_FIELDS + NON_APPRO_FIELDS
