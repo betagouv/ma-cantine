@@ -55,7 +55,7 @@
                   :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
                   validate-on-blur
                   label="Total des déchets alimentaires"
-                  suffix="t"
+                  suffix="kg"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
                 />

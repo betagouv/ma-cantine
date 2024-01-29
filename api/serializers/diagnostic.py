@@ -1,7 +1,10 @@
+import logging
 from rest_framework import serializers
 from data.models import Diagnostic
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from .teledeclaration import ShortTeledeclarationSerializer
+
+logger = logging.getLogger(__name__)
 
 SIMPLE_APPRO_FIELDS = (
     "value_total_ht",
@@ -238,6 +241,39 @@ def appro_to_percentages(representation, instance):
     return representation
 
 
+class DiagnosticSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if "total_leftovers" in representation and representation["total_leftovers"] is not None:
+            representation["total_leftovers"] = representation["total_leftovers"] * 1000
+        return representation
+
+    def to_internal_value(self, data):
+        if "total_leftovers" in data and data["total_leftovers"] is not None:
+            try:
+                value = Decimal(repr(data["total_leftovers"]))
+                data["total_leftovers"] = value / 1000
+            except InvalidOperation:
+                raise serializers.ValidationError(
+                    {"total_leftovers": ["Assurez-vous que cette valeur est un chiffre décimal."]}
+                )
+            except Exception as e:
+                logger.exception(e)
+                raise serializers.ValidationError(
+                    {
+                        "total_leftovers": [
+                            "Vous avez découvert une erreur inconnue. Assurez-vous que cette valeur est un chiffre décimal, et contactez-nous si l'erreur persiste."
+                        ]
+                    }
+                )
+            if data["total_leftovers"].as_tuple().exponent < -5:
+                raise serializers.ValidationError(
+                    {"total_leftovers": ["Assurez-vous qu'il n'y a pas plus de 2 chiffres après la virgule."]}
+                )
+        validated_data = super().to_internal_value(data)
+        return validated_data
+
+
 class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
     """
     This serializer masks financial data and gives the basic information on appro as percentages
@@ -274,7 +310,7 @@ class PublicDiagnosticSerializer(serializers.ModelSerializer):
         return appro_to_percentages(representation, instance)
 
 
-class ManagerDiagnosticSerializer(serializers.ModelSerializer):
+class ManagerDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         read_only_fields = ("id",)
@@ -320,7 +356,7 @@ class ManagerDiagnosticSerializer(serializers.ModelSerializer):
             return getattr(serializer.instance, field_name)
 
 
-class FullDiagnosticSerializer(serializers.ModelSerializer):
+class FullDiagnosticSerializer(DiagnosticSerializer):
     teledeclaration = ShortTeledeclarationSerializer(source="latest_submitted_teledeclaration")
 
     class Meta:
