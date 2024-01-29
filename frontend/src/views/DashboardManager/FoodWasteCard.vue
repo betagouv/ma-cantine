@@ -7,9 +7,9 @@
       <h3 class="fr-text font-weight-bold">{{ keyMeasure.shortTitle }}</h3>
     </v-card-title>
     <v-card-text v-if="needsData">
-      <DataInfoBadge :missingData="needsData" class="py-0 ml-8" />
+      <DataInfoBadge :missingData="true" class="py-0 ml-8" />
     </v-card-text>
-    <v-card-text :class="`mt-n4 pl-12 ${level.colorClass}`" v-else-if="!delegatedToSatellite">
+    <v-card-text v-else-if="level" :class="`mt-n4 pl-12 ${level.colorClass}`">
       <p class="mb-0 mt-2 fr-text-xs">
         NIVEAU :
         <span class="font-weight-black">{{ level.text }}</span>
@@ -28,8 +28,9 @@
 
 <script>
 import Constants from "@/constants"
-import DataInfoBadge from "./DataInfoBadge"
+import DataInfoBadge from "@/components/DataInfoBadge"
 import keyMeasures from "@/data/key-measures.json"
+import { hasStartedMeasureTunnel } from "@/utils"
 
 export default {
   name: "FoodWasteCard",
@@ -56,7 +57,9 @@ export default {
       return !this.delegatedToCentralKitchen && this.level === Constants.Levels.UNKNOWN
     },
     level() {
-      return Constants.Levels.EXPERT
+      if (this.delegatedToSatellite) return null
+      if (!hasStartedMeasureTunnel(this.diagnostic, this.keyMeasure)) return Constants.Levels.UNKNOWN
+      return null
     },
     cardBody() {
       if (this.delegatedToSatellite) {
@@ -64,7 +67,7 @@ export default {
       } else if (this.delegatedToCentralKitchen) {
         return "Votre cuisine centrale a renseigné les données de cette mesure à votre place."
       }
-      return "Bravo pour vos actions ! Pour aller plus loin dans la lutte contre le gaspillage, et si vous rendiez la pré-inscription des convives obligatoires ?"
+      return "Analyser votre situation, mettre en place des solutions comme la réservation de repas, et valoriser les restes par des dons aux associations."
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)

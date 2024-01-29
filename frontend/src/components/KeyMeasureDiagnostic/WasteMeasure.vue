@@ -214,6 +214,7 @@
 
 <script>
 import validators from "@/validators"
+import Constants from "@/constants"
 import { applicableDiagnosticRules } from "@/utils"
 import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
 import DsfrTextField from "@/components/DsfrTextField"
@@ -232,32 +233,7 @@ export default {
   data() {
     return {
       showExpeModal: false,
-      wasteActions: [
-        {
-          label: "Pré-inscription des convives obligatoire",
-          value: "INSCRIPTION",
-        },
-        {
-          label: "Sensibilisation par affichage ou autre média",
-          value: "AWARENESS",
-        },
-        {
-          label: "Formation / information du personnel de restauration",
-          value: "TRAINING",
-        },
-        {
-          label: "Réorganisation de la distribution des composantes du repas",
-          value: "DISTRIBUTION",
-        },
-        {
-          label: "Choix des portions (grande faim, petite faim)",
-          value: "PORTIONS",
-        },
-        {
-          label: "Réutilisation des restes de préparation / surplus",
-          value: "REUSE",
-        },
-      ],
+      wasteActions: Constants.WasteActions,
       otherActionEnabled: !!this.diagnostic.otherWasteAction,
     }
   },

@@ -415,7 +415,7 @@ export default Object.freeze({
       urlSlug: "cantines-et-diagnostics-simples",
       title: "Importer des cantines et diagnostics simples",
       label: "Diagnostic simple",
-      help: "Vous connaissez les valeurs totaux, bio, et de qualité et durable",
+      help: "Vous connaissez les valeurs totales de vos achats bio et de qualité",
       icon: "$bar-chart-box-fill",
     },
     {
@@ -482,14 +482,14 @@ export default Object.freeze({
     },
   },
   Ministries: [
-    { value: "premier_ministre", text: "Service du Premier Ministre" },
-    { value: "affaires_etrangeres", text: "Ministère de l’Europe et des Affaires étrangères" },
+    { value: "premier_ministre", text: "Services du Premier Ministre" },
+    { value: "affaires_etrangeres", text: "Ministère en charge des affaires étrangères" },
     { value: "ecologie", text: "Ministère de la Transition écologique" },
-    { value: "jeunesse", text: "Ministère de l’Education Nationale et de la Jeunesse et des Sports" },
-    { value: "economie", text: "Ministère de l’Economie, de la Finance et de la Relance" },
-    { value: "armee", text: "Ministère de l’Armée" },
+    { value: "jeunesse", text: "Ministère en charge de l'Éducation, de la Jeunesse et des Sports" },
+    { value: "economie", text: "Ministère en charge de l'Économie et des finances" },
+    { value: "armee", text: "Ministère des Armées" },
     { value: "interieur", text: "Ministère de l’Intérieur" },
-    { value: "travail", text: "Ministère Travail, de l’Emploi et de l’Insertion" },
+    { value: "travail", text: "Ministère en charge du Travail" },
     { value: "outre_mer", text: "Ministère des Outre-mer" },
     {
       value: "territoires",
@@ -497,13 +497,13 @@ export default Object.freeze({
     },
     { value: "justice", text: "Ministère de la Justice" },
     { value: "culture", text: "Ministère de la Culture" },
-    { value: "sante", text: "Ministère des Solidarités et de la Santé" },
+    { value: "sante", text: "Ministère en charge de la Santé et des Solidarités" },
     { value: "mer", text: "Ministère de la Mer" },
     {
       value: "enseignement_superieur",
-      text: "Ministère de l’Enseignement Supérieur et de la Recherche et de l’Innovation",
+      text: "Ministère en charge de l'Enseignement supérieur et de la Recherche",
     },
-    { value: "agriculture", text: "Ministère de l’Agriculture et de l’Alimentation" },
+    { value: "agriculture", text: "Ministère en charge de l'Agriculture et de l'Alimentation" },
     { value: "transformation", text: "Ministère de la Transformation et de la Fonction Publiques" },
     { value: "autre", text: "Autre" },
   ],
@@ -547,4 +547,148 @@ export default Object.freeze({
       colorClass: "green--text text--darken-4",
     },
   },
+  WasteActions: [
+    {
+      label: "Pré-inscription des convives obligatoire",
+      value: "INSCRIPTION",
+    },
+    {
+      label: "Sensibilisation par affichage ou autre média",
+      value: "AWARENESS",
+    },
+    {
+      label: "Formation / information du personnel de restauration",
+      value: "TRAINING",
+    },
+    {
+      label: "Réorganisation de la distribution des composantes du repas",
+      value: "DISTRIBUTION",
+    },
+    {
+      label: "Choix des portions (grande faim, petite faim)",
+      value: "PORTIONS",
+    },
+    {
+      label: "Réutilisation des restes de préparation / surplus",
+      value: "REUSE",
+    },
+  ],
+  DiversificationPlanActions: [
+    {
+      label:
+        "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
+      value: "PRODUCTS",
+    },
+    {
+      label: "Agir sur la manière dont les aliments sont présentés aux convives (visuellement attrayants)",
+      value: "PRESENTATION",
+    },
+    {
+      label: "Agir sur la manière dont les menus sont conçus en soulignant attributs positifs des plats",
+      value: "MENU",
+    },
+    {
+      label: "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
+      value: "PROMOTION",
+    },
+    {
+      label:
+        "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
+      value: "TRAINING",
+    },
+  ],
+  VegetarianMenuTypes: [
+    {
+      label: "Un menu végétarien en plat unique, sans choix",
+      value: "UNIQUE",
+    },
+    {
+      label: "Un menu végétarien composé de plusieurs choix de plats végétariens",
+      value: "SEVERAL",
+    },
+    {
+      label: "Un menu végétarien au choix, en plus d'autres plats non végétariens",
+      value: "ALTERNATIVES",
+    },
+  ],
+  VegetarianMenuBases: [
+    {
+      label: "De céréales et/ou les légumes secs (hors soja)",
+      value: "GRAIN",
+    },
+    {
+      label: "De soja",
+      value: "SOY",
+    },
+    {
+      label: "De fromage",
+      value: "CHEESE",
+    },
+    {
+      label: "D’œufs",
+      value: "EGG",
+    },
+    {
+      label: "De plats transformés prêts à l'emploi",
+      value: "READYMADE",
+    },
+  ],
+  VegetarianRecurrence: [
+    {
+      label: "De façon quotidienne",
+      value: "DAILY",
+    },
+    {
+      label: "Plus d'une fois par semaine",
+      value: "HIGH",
+    },
+    {
+      label: "Une fois par semaine",
+      value: "MID",
+    },
+    {
+      label: "Moins d'une fois par semaine",
+      value: "LOW",
+    },
+    {
+      label: "Je ne propose pas de menu végétarien",
+      value: "NEVER",
+    },
+  ],
+  CommunicationFrequencies: [
+    {
+      label: "Régulièrement au cours de l’année",
+      value: "REGULARLY",
+    },
+    {
+      label: "Une fois par an",
+      value: "YEARLY",
+    },
+    {
+      label: "Moins d'une fois par an",
+      value: "LESS_THAN_YEARLY",
+    },
+  ],
+  CommunicationSupports: [
+    {
+      label: "Par affichage sur le lieu de restauration",
+      value: "DISPLAY",
+    },
+    {
+      label: "Par voie électronique (envoi d’e-mail aux convives, sur site internet ou intranet (mairie, pronote))",
+      value: "DIGITAL",
+    },
+  ],
+  DiagnosticTypes: [
+    {
+      key: "SIMPLE",
+      label: "Télédéclaration - saisie simplifiée",
+      help: "Vous connaissez les valeurs totales de vos achats bio et de qualité",
+    },
+    {
+      key: "COMPLETE",
+      label: "Télédéclaration - saisie détaillée",
+      help: "Vous connaissez les labels et les familles de produits de vos achats",
+    },
+  ],
 })

@@ -30,7 +30,7 @@
     />
 
     <DownloadLink
-      href="/static/documents/Guide Pratique pour des Prestations Intégrant des Produits Durables et de Qualité.pdf"
+      href="/static/documents/Guide Pratique pour des Prestations Intégrant des Produits Durables et de Qualité.pdf"
       label="Télécharger le guide pratique CNRC à destination des acteurs de la restauration collective en prestation de service"
       sizeStr="2,2 Mo"
       class="mt-4"

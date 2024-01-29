@@ -87,7 +87,7 @@ export default {
       return window.ENABLE_TELEDECLARATION
     },
     canteenLink() {
-      if (window.ENABLE_DASHBOARD && window.ENVIRONMENT === "dev") {
+      if (window.ENABLE_DASHBOARD) {
         return {
           name: "DashboardManager",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },

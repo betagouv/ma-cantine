@@ -1,0 +1,48 @@
+<template>
+  <v-dialog v-model="isOpen" width="500">
+    <slot v-for="(_, name) in $slots" :name="name" :slot="name" />
+    <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">
+      <slot :name="name" v-bind="slotData" />
+    </template>
+
+    <v-card class="text-left">
+      <v-card-title class="font-weight-bold">
+        Voulez-vous vraiment annuler votre télédéclaration pour l'année {{ diagnostic.year }} ?
+      </v-card-title>
+
+      <v-card-text>
+        En l'annulant vous devez soumettre à nouveau une télédéclaration pour vos achats
+        {{ diagnostic.year }} conformément à l'arrêté du 14 septembre 2022.
+      </v-card-text>
+
+      <v-divider></v-divider>
+
+      <v-card-actions class="pa-4">
+        <v-spacer></v-spacer>
+        <v-btn outlined text @click="$emit('input', false)" class="mr-2">
+          Non, revenir en arrière
+        </v-btn>
+        <v-btn outlined color="red darken-2" text @click="$emit('cancel')">
+          Oui, annuler ma télédéclaration
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script>
+export default {
+  name: "TeledeclarationCancelDialog",
+  props: ["value", "diagnostic"],
+  computed: {
+    isOpen: {
+      get() {
+        return this.value
+      },
+      set(newValue) {
+        this.$emit("input", newValue)
+      },
+    },
+  },
+}
+</script>

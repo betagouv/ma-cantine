@@ -9,11 +9,11 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "apexcharts": "^3.44.0",
-    "core-js": "^3.33.1",
+    "apexcharts": "^3.45.2",
+    "core-js": "^3.35.1",
     "html2pdf.js": "^0.10.1",
     "qrcode.vue": "^1.7.0",
-    "vue": "^2.6.14",
+    "vue": "^2.7.16",
     "vue-apexcharts": "^1.6.2",
     "vue-matomo": "^4.2.0",
     "vue-router": "^3.6.5",
@@ -29,16 +29,16 @@
     "@vue/vue2-jest": "^29.2.6",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",
-    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^3.4.1",
-    "eslint-plugin-vue": "^9.17.0",
+    "eslint-plugin-vue": "^9.20.1",
     "prettier": "^1.19.1",
-    "sass": "^1.69.4",
+    "sass": "^1.70.0",
     "sass-loader": "^10.0.0",
     "vue-cli-plugin-vuetify": "~2.5.8",
-    "vue-template-compiler": "^2.6.14",
+    "vue-template-compiler": "^2.7.16",
     "vuetify-loader": "^1.9.2",
-    "webpack-bundle-tracker": "1.8.1"
+    "webpack-bundle-tracker": "3.0.1"
   },
   "browserslist": [
     "> 1%",

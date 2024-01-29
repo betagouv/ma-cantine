@@ -4,6 +4,17 @@ function email(input) {
   return errorMessage
 }
 
+function isBase10Number(input) {
+  // parseFloat("0x30") === 0 and +"0x30" === 48
+  // NaN === NaN is false
+  return +input === parseFloat(input)
+}
+
+// this error is a graceful fallback that users ideally wouldn't see :
+// numerical value validators should always be called with isInteger or decimalPlaces first, to allow those
+// validators to return a helpful error message for the number format expected if !isBase10Number
+const GENERIC_BASE_10_ERROR = "Une valeur numérique est attendue"
+
 export default {
   required(input) {
     const errorMessage = "Ce champ ne peut pas être vide"
@@ -29,17 +40,22 @@ export default {
   },
   greaterThanZero(input) {
     const errorMessage = "Ce champ doit contenir une chiffre supérieure à zéro"
+    if (!input) return errorMessage
+    if (!isBase10Number(input)) return GENERIC_BASE_10_ERROR
     if (parseFloat(input) > 0) return true
     return errorMessage
   },
   nonNegativeOrEmpty(input) {
+    const errorMessage = "Ce champ doit contenir un nombre positif ou rester vide"
+
     const isEmpty = !input || input.length === 0
     if (isEmpty) return true
+
+    if (!isBase10Number(input)) return GENERIC_BASE_10_ERROR
 
     const isNonNegative = parseFloat(input) >= 0
     if (isNonNegative) return true
 
-    const errorMessage = "Ce champ doit contenir un nombre positif ou rester vide"
     return errorMessage
   },
   lteOrEmpty(max) {
@@ -149,11 +165,10 @@ export default {
     return (input) => {
       const number = Number(input)
       if (number) {
+        if (!isBase10Number(input)) return "Pour un nombre décimal, veuillez utiliser un point, par exemple 100.95"
         const tofixed = number.toFixed(max)
         if (number !== Number(tofixed)) {
-          // not using toLocaleString on the number because want to ensure decimal places even in rounding 1,00
-          // otherwise I think the message is confusing
-          return `${max} décimales attendues, par exemple ${tofixed.replace(".", ",")}`
+          return `${max} décimales attendues, par exemple ${tofixed}`
         }
       }
       return true
@@ -166,8 +181,9 @@ export default {
     }
   },
   isInteger(input) {
-    if (input && !Number.isInteger(input)) {
-      return "Un nombre entier attendu"
+    if (input) {
+      if (!isBase10Number(input)) return "Un nombre entier est attendu : sans espaces, virgules, ni caractères spéciaux"
+      if (!Number.isInteger(input)) return "Un nombre entier attendu"
     }
     return true
   },

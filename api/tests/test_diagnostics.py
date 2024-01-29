@@ -57,6 +57,8 @@ class TestDiagnosticsApi(APITestCase):
             "other_waste_action": "We compost things",
             "has_donation_agreement": False,
             "has_waste_measures": True,
+            "total_leftovers": 90.9,
+            "duration_leftovers_measurement": 30,
             "bread_leftovers": 10.1,
             "served_leftovers": 20.2,
             "unserved_leftovers": 30.3,
@@ -207,6 +209,8 @@ class TestDiagnosticsApi(APITestCase):
         self.assertTrue(diagnostic.cooking_plastic_substituted)
         self.assertFalse(diagnostic.has_donation_agreement)
         self.assertIn("AWARENESS", diagnostic.waste_actions)
+        self.assertEqual(diagnostic.total_leftovers, decimal.Decimal("90.90"))
+        self.assertEqual(diagnostic.duration_leftovers_measurement, 30)
         self.assertIn("TRAINING", diagnostic.diversification_plan_actions)
         self.assertEqual("DAILY", diagnostic.vegetarian_weekly_recurrence)
         self.assertIn("GRAIN", diagnostic.vegetarian_menu_bases)

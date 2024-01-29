@@ -5,8 +5,18 @@
       <p class="mb-0">Ajoutez et publiez les cantines que vous livrez</p>
     </v-card-text>
     <v-spacer v-if="!satellites.length" />
-    <v-card-text class="fr-text-xs grey--text text--darken-2 mt-3 pb-0" v-if="canteen.satelliteCanteensCount">
-      <p class="mb-0">{{ satelliteCount }} / {{ canteen.satelliteCanteensCount }} satellites renseignés</p>
+    <v-card-text
+      :class="
+        `fr-text-xs mt-3 pb-0 ${
+          hasSatelliteInconsistency ? 'orange--text text--darken-4' : 'grey--text text--darken-2'
+        }`
+      "
+      v-if="canteen.satelliteCanteensCount"
+    >
+      <p class="mb-0 d-flex">
+        <v-icon small v-if="hasSatelliteInconsistency" class="mr-1 orange--text text--darken-4">$alert-line</v-icon>
+        {{ satelliteCount }} sur {{ canteen.satelliteCanteensCount }} satellites renseignés
+      </p>
     </v-card-text>
     <v-spacer v-if="satellites.length" />
     <v-card-text class="py-0" v-if="satellites.length">
@@ -34,21 +44,30 @@
     </v-card-text>
     <v-spacer />
     <v-card-actions class="ma-2">
-      <v-btn
-        :to="{
-          name: 'SatelliteManagement',
-          params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-        }"
-        color="primary"
-        :outlined="!!satellites.length"
-      >
-        {{ satellites.length ? "Modifier" : "Ajouter mes satellites" }}
-      </v-btn>
+      <p class="mb-0">
+        <v-btn
+          :to="{
+            name: 'SatelliteManagement',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+          }"
+          color="primary"
+          :outlined="!!satellites.length"
+        >
+          {{ satellites.length ? "Modifier" : "Ajouter mes satellites" }}
+        </v-btn>
+      </p>
+      <p class="mb-0 ml-2">
+        <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'PublishSatellites' }">
+          Publier
+        </v-btn>
+      </p>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import { hasSatelliteInconsistency } from "@/utils"
+
 export default {
   name: "SatellitesWidget",
   props: {
@@ -66,6 +85,11 @@ export default {
       ],
       satelliteCount: null,
     }
+  },
+  computed: {
+    hasSatelliteInconsistency() {
+      return hasSatelliteInconsistency(this.canteen)
+    },
   },
   methods: {
     updateSatelliteCount() {

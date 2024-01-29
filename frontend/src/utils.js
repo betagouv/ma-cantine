@@ -209,7 +209,17 @@ export const lastYear = () => new Date().getFullYear() - 1
 
 export const diagnosticYears = () => {
   const thisYear = new Date().getFullYear()
-  return [thisYear - 2, thisYear - 1, thisYear, thisYear + 1]
+  return [thisYear - 1, thisYear]
+}
+
+export const customDiagnosticYears = (diagnostics) => {
+  const years = diagnostics.map((d) => +d.year)
+  const thisYear = new Date().getFullYear()
+  const lastYear = thisYear - 1
+  if (years.indexOf(thisYear) === -1) years.push(thisYear)
+  if (years.indexOf(lastYear) === -1) years.push(lastYear)
+  years.sort((a, b) => a - b)
+  return years
 }
 
 export const diagnosticsMap = (diagnostics) => {
@@ -252,6 +262,29 @@ export const getSustainableTotal = (diagnostic) => {
     (diagnostic.percentageValueExternalityPerformanceHt || 0) +
     (diagnostic.percentageValueEgalimOthersHt || 0)
   return sustainableSum
+}
+
+// returns a dict of integers (null/0-100) for the appro %
+export const getApproPercentages = (diagnostic) => {
+  // two cases: 1) raw data in diagnostic; 2) only percentages in diagnostic
+  const valueTotal = diagnostic.percentageValueTotalHt || diagnostic.valueTotalHt
+  const valueBio = diagnostic.percentageValueBioHt || diagnostic.valueBioHt
+  const valueMeatPoultryTotal = diagnostic.valueMeatPoultryHt || 1
+  const valueMeatPoultryEgalim = diagnostic.percentageValueMeatPoultryEgalimHt || diagnostic.valueMeatPoultryEgalimHt
+  const valueMeatPoultryFrance = diagnostic.percentageValueMeatPoultryFranceHt || diagnostic.valueMeatPoultryFranceHt
+  const valueFishTotal = diagnostic.valueFishHt || 1
+  const valueFishEgalim = diagnostic.percentageValueFishEgalimHt || diagnostic.valueFishEgalimHt
+
+  const allSustainable = getSustainableTotal(diagnostic)
+  const allEgalim = (valueBio || 0) + (allSustainable || 0)
+  return {
+    bio: getPercentage(valueBio, valueTotal),
+    allSustainable: getPercentage(allSustainable, valueTotal),
+    egalim: getPercentage(allEgalim, valueTotal),
+    meatPoultryEgalim: getPercentage(valueMeatPoultryEgalim, valueMeatPoultryTotal),
+    meatPoultryFrance: getPercentage(valueMeatPoultryFrance, valueMeatPoultryTotal),
+    fishEgalim: getPercentage(valueFishEgalim, valueFishTotal),
+  }
 }
 
 export const badges = (canteen, diagnostic, sectors) => {
@@ -315,18 +348,22 @@ export const applicableDiagnosticRules = (canteen) => {
   let bioThreshold = 20
   let qualityThreshold = 50
   let hasQualityException = false
-  // group1 : guadeloupe, martinique, guyane, la_reunion, TODO saint_martin
-  const group1 = ["01", "02", "03", "04"]
   if (canteen) {
+    // group1 : guadeloupe, martinique, guyane, la_reunion, saint_martin
+    const group1 = ["01", "02", "03", "04"]
+    const saintMartin = "978"
     hasQualityException = true
-    if (group1.indexOf(canteen.region) > -1) {
+    if (group1.indexOf(canteen.region) > -1 || canteen.department === saintMartin) {
       bioThreshold = 5
       qualityThreshold = 20
     } else if (canteen.region === "06") {
       // group2 : mayotte
       bioThreshold = 2
       qualityThreshold = 5
-      // TODO: group3 : saint_pierre_et_miquelon
+    } else if (canteen.department === "975") {
+      // group3 : saint_pierre_et_miquelon
+      bioThreshold = 10
+      qualityThreshold = 30
     } else {
       hasQualityException = false
     }
@@ -417,6 +454,14 @@ export const sectorsSelectList = (sectors) => {
   sectors.sort(sortFn("name")) // added benefit of getting the headers to the top of the lists
   sectors.sort(sortFn("sortCategoryValue")) // added benefit of moving sectors without parent to top
   return sectors
+}
+
+export const sectorDisplayString = (canteenSectors, sectors) => {
+  if (!canteenSectors) return ""
+  const sectorDisplay = canteenSectors
+    .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
+    .join(", ")
+  return capitalise(sectorDisplay)
 }
 
 export const readCookie = (name) => {
@@ -524,10 +569,129 @@ export const departmentItems = jsonDepartments.map((x) => ({
   value: x.departmentCode,
 }))
 
+export const selectListToObject = (selectList) => {
+  return selectList.reduce((acc, val) => {
+    acc[val.value] = val.label
+    return acc
+  }, {})
+}
+
 function hasValue(val) {
   if (typeof val === "string") {
     return !!val
   } else {
     return !strictIsNaN(val)
   }
+}
+
+export const hasStartedMeasureTunnel = (diagnostic, keyMeasure) => {
+  if (diagnostic?.creationSource === "TUNNEL") return !!diagnostic[keyMeasure.progressField]
+  return !!diagnostic
+}
+
+export const hasFinishedMeasureTunnel = (diagnostic) => {
+  if (diagnostic?.creationSource === "TUNNEL") {
+    const measureProgressFields = ["tunnelAppro", "tunnelWaste", "tunnelDiversification", "tunnelPlastic", "tunnelInfo"]
+    return measureProgressFields.every((field) => diagnostic[field] === "complet")
+  }
+  return !!diagnostic
+}
+
+export const getCharacteristicFromFieldSuffix = (fieldSuffix, tdGroup) => {
+  const normalisedGroupCharacteristics = tdGroup.characteristics.map((g) => g.toLowerCase().replace(/_/g, ""))
+  const fieldCharacteristic = fieldSuffix.toLowerCase()
+  const charIdx = normalisedGroupCharacteristics.indexOf(fieldCharacteristic)
+  if (charIdx === -1) return fieldSuffix
+  const originalChar = tdGroup.characteristics[charIdx]
+  return Constants.TeledeclarationCharacteristics[originalChar]
+}
+
+export const getCharacteristicFromField = (fieldName, fieldPrefix, tdGroup) => {
+  const fieldSuffix = fieldName.split(fieldPrefix)[1]
+  return getCharacteristicFromFieldSuffix(fieldSuffix, tdGroup)
+}
+
+export const hasSatelliteInconsistency = (canteen) => {
+  if (!canteen || !canteen.isCentralCuisine) return false
+  if (!canteen.satelliteCanteensCount) return true
+  if (!canteen.satellites) return true
+  return canteen.satelliteCanteensCount !== canteen.satellites.length
+}
+
+export const lineMinistryRequired = (canteen, allSectors) => {
+  const concernedSectors = allSectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
+  if (concernedSectors.length === 0) return false
+  return canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
+}
+
+export const missingCanteenData = (canteen, sectors) => {
+  // TODO: what location data to we require at minimum?
+  const requiredFields = ["siret", "name", "cityInseeCode", "productionType", "managementType"]
+  const missingFieldLambda = (f) => !canteen[f]
+  const missingSharedRequiredData = requiredFields.some(missingFieldLambda)
+  if (missingSharedRequiredData) return true
+
+  // sectors checks
+  if (!canteen.sectors || !canteen.sectors.length) return true
+  if (lineMinistryRequired(canteen, sectors) && !canteen.lineMinistry) return true
+
+  // production type specific checks
+  const yearlyMealCountKey = "yearlyMealCount"
+  const onSiteFields = ["dailyMealCount", yearlyMealCountKey]
+  const centralKitchenFields = [yearlyMealCountKey, "satelliteCanteensCount"]
+  const satelliteFields = ["centralProducerSiret"]
+
+  if (canteen.productionType === "central") {
+    return centralKitchenFields.some(missingFieldLambda)
+  } else if (canteen.productionType === "central_serving") {
+    return centralKitchenFields.some(missingFieldLambda) && onSiteFields.some(missingFieldLambda)
+  } else if (canteen.productionType === "site_cooked_elsewhere") {
+    return onSiteFields.some(missingFieldLambda) && satelliteFields.some(missingFieldLambda)
+  } else if (canteen.productionType === "site") {
+    return onSiteFields.some(missingFieldLambda)
+  }
+  return true // shouldn't get to here, indicates a bug in our logic/data
+}
+
+export const inTeledeclarationCampaign = (year) => {
+  const tdYear = lastYear()
+  const inTdCampaign = window.ENABLE_TELEDECLARATION && year === tdYear
+  return inTdCampaign
+}
+
+export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
+  if (!canteen || !diagnostic) return false
+
+  if (!inTeledeclarationCampaign(diagnostic.year)) return false
+
+  const hasActiveTeledeclaration = diagnostic.teledeclaration?.status === "SUBMITTED"
+  if (hasActiveTeledeclaration) return false
+
+  if (canteen.productionType === "site_cooked_elsewhere") {
+    const tdYear = lastYear()
+    const ccDiag = canteen.centralKitchenDiagnostics?.find((x) => x.year === tdYear)
+    if (ccDiag) {
+      const noNeedToTd = ccDiag.centralKitchenDiagnosticMode === "ALL"
+      const canSubmitOtherData = !noNeedToTd
+      const hasOtherData = !!diagnostic
+      return canSubmitOtherData && hasOtherData
+    }
+    // satellites can still TD if CCs haven't
+  }
+
+  return hasDiagnosticApproData(diagnostic)
+}
+
+export const readyToTeledeclare = (canteen, diagnostic, sectors) => {
+  return (
+    diagnosticCanBeTeledeclared(canteen, diagnostic) &&
+    !hasSatelliteInconsistency(canteen) &&
+    !missingCanteenData(canteen, sectors)
+  )
+}
+
+// for diagnostics created before the redesign launched in 2024, many null values
+// were interpreted as false. Since then, we ask for an explicit false value.
+export const diagnosticUsesNullAsFalse = (diagnostic) => {
+  return diagnostic.year < 2023
 }

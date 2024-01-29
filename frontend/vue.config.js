@@ -19,7 +19,7 @@ module.exports = {
   chainWebpack: (config) => {
     config.optimization.splitChunks(false)
 
-    config.plugin("BundleTracker").use(BundleTracker, [{ filename: "../frontend/webpack-stats.json" }])
+    config.plugin("BundleTracker").use(BundleTracker, [{ path: "../frontend/", filename: "webpack-stats.json" }])
 
     config.resolve.alias.set("__STATIC__", "static")
 

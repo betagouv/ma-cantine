@@ -14,6 +14,12 @@ from data.region_choices import Region
 import requests
 import requests_mock
 from .utils import authenticate
+import datetime
+from unittest.mock import patch
+from django.utils import timezone
+import pytz
+
+NEXT_YEAR = datetime.date.today().year + 1
 
 
 @requests_mock.Mocker()
@@ -369,7 +375,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'année' : L'année doit être comprise entre 2019 et 2024.",
+            f"Champ 'année' : L'année doit être comprise entre 2019 et {NEXT_YEAR}.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -381,11 +387,11 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'Valeur totale annuelle HT' : Ce champ doit être un nombre décimal.",
+            "Champ 'Valeur totale annuelle HT' : La valeur « invalid total » doit être un nombre décimal.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'année' : L'année doit être comprise entre 2019 et 2024.",
+            f"Champ 'année' : L'année doit être comprise entre 2019 et {NEXT_YEAR}.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -563,7 +569,10 @@ class TestImportDiagnosticsAPI(APITestCase):
         errors = body["errors"]
         self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
-        self.assertEqual(errors[0]["message"], "Champ 'email' : Un adresse email des gestionnaires n'est pas valide.")
+        self.assertEqual(
+            errors[0]["message"],
+            "Champ 'email' : Un adresse email des gestionnaires (gestionnaire1@, gestionnaire2@example.com) n'est pas valide.",
+        )
 
         self.assertEqual(len(mail.outbox), 0)
 
@@ -673,11 +682,11 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'Valeur totale annuelle HT' : Ce champ doit être un nombre décimal.",
+            "Champ 'Valeur totale annuelle HT' : Ce champ ne peut pas être vide.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'Produits aquatiques frais et surgelés, Bio' : Ce champ doit être vide ou un nombre décimal.",
+            "Champ 'Produits aquatiques frais et surgelés, Bio' : La valeur « lol » doit être vide ou un nombre décimal.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -771,6 +780,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_teledeclare_diagnostics_on_import(self, _):
         """
@@ -782,34 +792,64 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.email = "authenticate@example.com"
         user.save()
         self.assertEqual(Teledeclaration.objects.count(), 0)
-        with open("./api/tests/files/teledeclaration_simple.csv") as diag_file:
-            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+
+        with patch.object(timezone, "now", return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+            with open("./api/tests/files/teledeclaration_simple.csv") as diag_file:
+                response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
         body = response.json()
         self.assertEqual(body["count"], 1)
         self.assertEqual(body["teledeclarations"], 1)
         self.assertEqual(Teledeclaration.objects.count(), 1)
 
+    # TODO: test fails for non staff users
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_error_teledeclare_diagnostics_on_import(self, _):
         """
-        If the wrong teledeclaration status is given, throw error (if blank no)
+        Provide line-by-line errors if the import isn't successful
         """
         user = authenticate.user
         user.is_staff = True
         user.email = "authenticate@example.com"
         user.save()
-        with open("./api/tests/files/teledeclaration_error.csv") as diag_file:
+
+        with patch.object(timezone, "now", return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+            with open("./api/tests/files/teledeclaration_error.csv") as diag_file:
+                response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 2)
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "Champ 'teledeclaration' : 'lol' n'est pas un statut de télédéclaration valid",
+        )
+        self.assertEqual(
+            body["errors"][1]["message"],
+            "Champ 'année' : C'est uniquement possible de télédéclarer pour l'année 2019. Ce diagnostic est pour l'année 2020",
+        )
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        self.assertEqual(Teledeclaration.objects.count(), 0)
+
+    @override_settings(ENABLE_TELEDECLARATION=False)
+    @authenticate
+    def test_error_teledeclare_diagnostics_on_import_not_campaign(self, _):
+        """
+        Prevent importing TDs if outside of campagne
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.save()
+        with open("./api/tests/files/teledeclaration_simple.csv") as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
         body = response.json()
         self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(
             body["errors"][0]["message"],
-            "Champ 'teledeclaration' : 'lol' n'est pas un statut de télédéclaration valid",
+            "Ce n'est pas possible de télédéclarer hors de la période de la campagne",
         )
-        self.assertEqual(Diagnostic.objects.count(), 0)
-        self.assertEqual(Teledeclaration.objects.count(), 0)
 
     @authenticate
     def test_optional_appro_values(self, _):
@@ -841,7 +881,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         self.assertEqual(
-            body["errors"][0]["message"], "Champ 'Valeur totale annuelle HT' : Ce champ doit être un nombre décimal."
+            body["errors"][0]["message"], "Champ 'Valeur totale annuelle HT' : Ce champ ne peut pas être vide."
         )
 
     @authenticate

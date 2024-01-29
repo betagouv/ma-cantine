@@ -1,6 +1,9 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav :links="[{ to: { name: 'DiagnosticsImporter' } }]" :title="type.title" />
+    <BreadcrumbsNav
+      :links="[{ to: { name: 'ManagementPage' } }, { to: { name: 'DiagnosticsImporter' } }]"
+      :title="type.title"
+    />
 
     <v-row class="my-4 mx-0">
       <v-icon large class="mr-4" color="black">{{ type.icon }}</v-icon>
@@ -323,7 +326,7 @@ export default {
           description: `Options acceptées : ${this.$store.state.sectors.map(
             (x) => " <code>" + x.name + "</code>"
           )}. Spécifiez plusieurs en séparant avec un <code>+</code>.`,
-          type: "Texte (choix unique)",
+          type: "Texte",
           example: `${this.$store.state.sectors[0].name}+${this.$store.state.sectors[1].name}`,
         },
         {
@@ -383,13 +386,13 @@ export default {
       const simpleValues = [
         "Valeur d'achats bio HT",
         "Valeur d'achats SIQO (hors bio) HT",
-        "Valeur (en HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
-        "Valeur (en HT) des autres achats EGAlim",
-        "Valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
-        "Valeur (en HT) des mes achats EGAlim en viandes et volailles fraiches ou surgelées",
-        "Valeur (en HT) des mes achats provenance France en viandes et volailles fraiches ou surgelées",
-        "Valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total",
-        "Valeur (en HT) des mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
+        "Valeur (en € HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
+        "Valeur (en € HT) des autres achats EGAlim",
+        "Valeur (en € HT) de mes achats en viandes et volailles fraiches ou surgelées total",
+        "Valeur (en € HT) de mes achats EGAlim en viandes et volailles fraiches ou surgelées",
+        "Valeur (en € HT) de mes achats provenance France en viandes et volailles fraiches ou surgelées",
+        "Valeur (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture total",
+        "Valeur (en € HT) de mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
       ]
       let valuesArray = simpleValues
       const array = [
@@ -408,8 +411,8 @@ export default {
       ]
       if (this.importLevel === "COMPLETE" || this.importLevel === "CC_COMPLETE") {
         valuesArray = [
-          "La valeur (en HT) des mes achats en viandes et volailles fraiches ou surgelées total",
-          "La valeur (en HT) des mes achats en poissons, produits de la mer et de l'aquaculture total",
+          "La valeur totale (en € HT) de mes achats en viandes et volailles fraiches ou surgelées",
+          "La valeur totale (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture",
           "Bio : Viandes et volailles fraîches et surgelées",
           "Bio : Produits aquatiques frais et surgelés",
           "Bio : Fruits et légumes frais et surgelés",

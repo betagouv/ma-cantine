@@ -70,8 +70,8 @@
 
 <script>
 import Constants from "@/constants"
-
-import { capitalise, sectorsSelectList, approSummary, toCurrency } from "@/utils"
+import communicationSupports from "@/data/communication-supports.json"
+import { sectorDisplayString, sectorsSelectList, approSummary, toCurrency, selectListToObject } from "@/utils"
 
 export default {
   props: {
@@ -132,9 +132,9 @@ export default {
           isNumber: true,
         })
       if (this.showDailyMealCount)
-        items.push({ value: this.canteen.dailyMealCount, label: "Couverts moyen par jour", isNumber: true })
+        items.push({ value: this.canteen.dailyMealCount, label: "Nombre moyen de couverts par jour", isNumber: true })
       items = items.concat([
-        { value: this.canteen.yearlyMealCount, label: "Nombre total de couverts à l'année", isNumber: true },
+        { value: this.canteen.yearlyMealCount, label: "Nombre total de couverts par an", isNumber: true },
         { value: this.sectors, label: "Secteurs d'activité" },
       ])
       if (this.showMinistryField)
@@ -174,17 +174,20 @@ export default {
           { param: "valueBoulangerieLabelRouge", label: "Mes achats boulangerie Label Rouge" },
           { param: "valueBoissonsLabelRouge", label: "Mes achats boissons Label Rouge" },
           { param: "valueAutresLabelRouge", label: "Mes autres achats Label Rouge" },
-          { param: "valueViandesVolaillesAocaopIgpStg", label: "Mes achats viandes et volailles AOC/AOP, IGP ou STG" },
+          {
+            param: "valueViandesVolaillesAocaopIgpStg",
+            label: "Mes achats viandes et volailles AOC / AOP, IGP ou STG",
+          },
           {
             param: "valueProduitsDeLaMerAocaopIgpStg",
-            label: "Mes achats poissons, produits de la mer et de l'aquaculture AOC/AOP, IGP ou STG",
+            label: "Mes achats poissons, produits de la mer et de l'aquaculture AOC / AOP, IGP ou STG",
           },
-          { param: "valueFruitsEtLegumesAocaopIgpStg", label: "Mes achats fruits et legumes AOC/AOP, IGP ou STG" },
-          { param: "valueCharcuterieAocaopIgpStg", label: "Mes achats charcuterie AOC/AOP, IGP ou STG" },
-          { param: "valueProduitsLaitiersAocaopIgpStg", label: "Mes achats produits laitiers AOC/AOP, IGP ou STG" },
-          { param: "valueBoulangerieAocaopIgpStg", label: "Mes achats boulangerie AOC/AOP, IGP ou STG" },
-          { param: "valueBoissonsAocaopIgpStg", label: "Mes achats boissons AOC/AOP, IGP ou STG" },
-          { param: "valueAutresAocaopIgpStg", label: "Mes autres achats AOC/AOP, IGP ou STG" },
+          { param: "valueFruitsEtLegumesAocaopIgpStg", label: "Mes achats fruits et legumes AOC / AOP, IGP ou STG" },
+          { param: "valueCharcuterieAocaopIgpStg", label: "Mes achats charcuterie AOC / AOP, IGP ou STG" },
+          { param: "valueProduitsLaitiersAocaopIgpStg", label: "Mes achats produits laitiers AOC / AOP, IGP ou STG" },
+          { param: "valueBoulangerieAocaopIgpStg", label: "Mes achats boulangerie AOC / AOP, IGP ou STG" },
+          { param: "valueBoissonsAocaopIgpStg", label: "Mes achats boissons AOC / AOP, IGP ou STG" },
+          { param: "valueAutresAocaopIgpStg", label: "Mes autres achats AOC / AOP, IGP ou STG" },
           {
             param: "valueViandesVolaillesHve",
             label: "Mes achats viandes et volailles Certification Environnementale de Niveau 2 ou HVE",
@@ -358,7 +361,7 @@ export default {
       return [
         { param: "valueTotalHt", label: "Mes achats alimentaires total" },
         { param: "valueBioHt", label: "Mes achats Bio ou en conversion Bio" },
-        { param: "valueSustainableHt", label: "Mes achats SIQO (AOP/AOC, IGP, STG)" },
+        { param: "valueSustainableHt", label: "Mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)" },
         {
           param: "valueExternalityPerformanceHt",
           label:
@@ -396,11 +399,13 @@ export default {
       return [
         {
           label: "Diagnostic sur le gaspillage alimentaire réalisé",
-          value: this.diagnostic.hasWasteDiagnostic ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.hasWasteDiagnostic),
+          class: this.diagnostic.hasWasteDiagnostic === null ? "warn" : "",
         },
         {
           label: "Plan d'action contre le gaspillage en place",
-          value: this.diagnostic.hasWastePlan ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.hasWastePlan),
+          class: this.diagnostic.hasWastePlan === null ? "warn" : "",
         },
         {
           label: "Actions contre le gaspillage en place",
@@ -412,11 +417,25 @@ export default {
         },
         {
           label: "Propose des dons alimentaires",
-          value: this.diagnostic.hasDonationAgreement ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.hasDonationAgreement),
+          class: this.diagnostic.hasDonationAgreement === null ? "warn" : "",
         },
         {
           label: "Réalise des mesures de gaspillage alimentaire",
-          value: this.diagnostic.hasWasteMeasures ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.hasWasteMeasures),
+          class: this.diagnostic.hasWasteMeasures === null ? "warn" : "",
+        },
+        {
+          label: "Total des déchets alimentaires pour l'année (tonnes)",
+          isNumber: true,
+          value: this.diagnostic.totalLeftovers,
+          class: this.isTruthyOrZero(this.diagnostic.totalLeftovers) ? "" : "warn",
+        },
+        {
+          label: "Période de mesure (jours)",
+          isNumber: true,
+          value: this.diagnostic.durationLeftoversMeasurement,
+          class: this.isTruthyOrZero(this.diagnostic.durationLeftoversMeasurement) ? "" : "warn",
         },
         {
           label: "Restes de pain kg/an",
@@ -465,7 +484,8 @@ export default {
         },
         {
           label: "Plan de diversification de protéines en place",
-          value: this.diagnostic.hasDiversificationPlan ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.hasDiversificationPlan),
+          class: this.diagnostic.hasDiversificationPlan === null ? "warn" : "",
         },
         {
           label: "Actions incluses dans le plan de diversification des protéines",
@@ -489,19 +509,23 @@ export default {
         },
         {
           label: "Contenants de cuisson en plastique remplacés",
-          value: this.diagnostic.cookingPlasticSubstituted ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.cookingPlasticSubstituted),
+          class: this.diagnostic.cookingPlasticSubstituted === null ? "warn" : "",
         },
         {
           label: "Contenants de service en plastique remplacés",
-          value: this.diagnostic.servingPlasticSubstituted ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.servingPlasticSubstituted),
+          class: this.diagnostic.servingPlasticSubstituted === null ? "warn" : "",
         },
         {
           label: "Bouteilles en plastique remplacées",
-          value: this.diagnostic.plasticBottlesSubstituted ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.plasticBottlesSubstituted),
+          class: this.diagnostic.plasticBottlesSubstituted === null ? "warn" : "",
         },
         {
           label: "Ustensils en plastique remplacés",
-          value: this.diagnostic.plasticTablewareSubstituted ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.plasticTablewareSubstituted),
+          class: this.diagnostic.plasticTablewareSubstituted === null ? "warn" : "",
         },
         {
           label: "Supports de communication utilisés",
@@ -518,11 +542,13 @@ export default {
         },
         {
           label: "Communique sur le plan alimentaire",
-          value: this.diagnostic.communicatesOnFoodPlan ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.communicatesOnFoodPlan),
+          class: this.diagnostic.communicatesOnFoodPlan === null ? "warn" : "",
         },
         {
           label: "Communique sur les démarches qualité/durables/équitables",
-          value: this.diagnostic.communicatesOnFoodQuality ? "Oui" : "Non",
+          value: this.getNullableBooleanLabel(this.diagnostic.communicatesOnFoodQuality),
+          class: this.diagnostic.communicatesOnFoodQuality === null ? "warn" : "",
         },
         {
           label: "Fréquence de communication",
@@ -532,12 +558,7 @@ export default {
       ]
     },
     sectors() {
-      if (!this.canteen.sectors) return ""
-      const sectors = this.$store.state.sectors
-      const sectorDisplay = this.canteen.sectors
-        .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
-        .join(", ")
-      return capitalise(sectorDisplay)
+      return sectorDisplayString(this.canteen.sectors, this.$store.state.sectors)
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
@@ -583,72 +604,44 @@ export default {
     },
     getDiversificationPlanActions(diversificationPlanActions) {
       if (!diversificationPlanActions || !diversificationPlanActions.length) return "Non renseigné"
-      const actionItems = {
-        PRODUCTS:
-          "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
-        PRESENTATION: "Agir sur la manière dont les aliments sont présentés aux convives (visuellement attrayants)",
-        MENU: "Agir sur la manière dont les menus sont conçus ces plats en soulignant leurs attributs positifs",
-        PROMOTION: "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
-        TRAINING:
-          "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
-      }
+      const actionItems = selectListToObject(Constants.DiversificationPlanActions)
       const labels = diversificationPlanActions.map((x) => actionItems[x]).filter((x) => !!x)
       return labels.join(", ")
     },
     getVegetarianWeeklyRecurrence(vegetarianWeeklyRecurrence) {
       if (!vegetarianWeeklyRecurrence) return "Non renseigné"
-      const items = {
-        LOW: "Moins d'une fois par semaine",
-        MID: "Une fois par semaine",
-        HIGH: "Plus d'une fois par semaine",
-        DAILY: "De façon quotidienne",
-      }
+      const items = selectListToObject(Constants.VegetarianRecurrence)
       return items[vegetarianWeeklyRecurrence] || "Non renseigné"
     },
     getVegetarianMenuType(vegetarianMenuType) {
+      if (this.diagnostic.vegetarianWeeklyRecurrence === "NEVER") return "Non applicable"
       if (!vegetarianMenuType) return "Non renseigné"
-      const items = {
-        UNIQUE: "Un menu végétarien en plat unique, sans choix",
-        SEVERAL: "Un menu végétarien composé de plusieurs choix de plats végétariens",
-        ALTERNATIVES: "Un menu végétarien au choix, en plus d'autres plats non végétariens",
-      }
+      const items = selectListToObject(Constants.VegetarianMenuTypes)
       return items[vegetarianMenuType] || "Non renseigné"
     },
     getVegetarianMenuBases(vegetarianMenuBases) {
+      if (this.diagnostic.vegetarianWeeklyRecurrence === "NEVER") return "Non applicable"
       if (!vegetarianMenuBases || !vegetarianMenuBases.length) return "Non renseigné"
-      const actionItems = {
-        GRAIN: "De céréales et/ou les légumes secs (hors soja)",
-        SOY: "De soja",
-        CHEESE: "De fromage",
-        EGG: "D’œufs",
-        READYMADE: "Plats prêts à l'emploi",
-      }
+      const actionItems = selectListToObject(Constants.VegetarianMenuBases)
       const labels = vegetarianMenuBases.map((x) => actionItems[x]).filter((x) => !!x)
       return labels.join(", ")
     },
-    getCommunicationSupports(communicationSupports) {
-      if (!communicationSupports || !communicationSupports.length) return "Aucun"
-      const supportItems = {
-        EMAIL: "Envoi d'e-mail aux convives ou à leurs représentants",
-        DISPLAY: "Par affichage sur le lieu de restauration",
-        WEBSITE: "Sur site internet ou intranet (mairie, cantine)",
-        OTHER: "Autres moyens d'affichage et de communication électronique",
-        DIGITAL: "Par voie électronique",
-      }
-      const labels = communicationSupports.map((x) => supportItems[x]).filter((x) => !!x)
+    getCommunicationSupports(supports) {
+      if (!supports || !supports.length) return "Aucun"
+      const labels = supports.map((x) => communicationSupports[x]).filter((x) => !!x)
       return labels.join(", ")
     },
     getCommunicationFrequency(communicationFrequency) {
       if (!communicationFrequency) return "Non renseigné"
-      const items = {
-        REGULARLY: "Régulièrement au cours de l’année",
-        YEARLY: "Une fois par an",
-        LESS_THAN_YEARLY: "Moins d'une fois par an",
-      }
+      const items = selectListToObject(Constants.CommunicationFrequencies)
       return items[communicationFrequency] || "Non renseigné"
     },
     isTruthyOrZero(value) {
       return !!value || value === 0
+    },
+    getNullableBooleanLabel(value) {
+      if (value === null) return "Non renseigné"
+      return value ? "Oui" : "Non"
     },
     toCurrency(value) {
       return toCurrency(value)

@@ -141,6 +141,8 @@ NON_APPRO_FIELDS = (
     "other_waste_action",
     "has_donation_agreement",
     "has_waste_measures",
+    "total_leftovers",
+    "duration_leftovers_measurement",
     "bread_leftovers",
     "served_leftovers",
     "unserved_leftovers",
@@ -170,10 +172,22 @@ META_FIELDS = (
     "id",
     "canteen_id",
     "year",
-    "creation_date",
-    "modification_date",
     "diagnostic_type",
     "central_kitchen_diagnostic_mode",
+)
+
+CREATION_META_FIELDS = (
+    "creation_date",
+    "modification_date",
+    "creation_source",
+)
+
+TUNNEL_PROGRESS_FIELDS = (
+    "tunnel_appro",
+    "tunnel_waste",
+    "tunnel_plastic",
+    "tunnel_diversification",
+    "tunnel_info",
 )
 
 FIELDS = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
@@ -188,12 +202,10 @@ def appro_to_percentages(representation, instance):
         value = representation.get(field)
         if value:
             representation[f"percentage_{field}"] = value / meat_total
-        representation.pop(field, None)
         field = "value_meat_poultry_france_ht"
         value = representation.get(field)
         if value:
             representation[f"percentage_{field}"] = value / meat_total
-        representation.pop(field, None)
 
     fish_total = representation.get("value_fish_ht")
     if fish_total:
@@ -201,7 +213,6 @@ def appro_to_percentages(representation, instance):
         value = representation.get(field)
         if value:
             representation[f"percentage_{field}"] = value / fish_total
-        representation.pop(field, None)
 
     appro_field = (
         "value_total_ht",
@@ -220,6 +231,9 @@ def appro_to_percentages(representation, instance):
 
     representation["percentage_value_total_ht"] = 1
     representation.pop("value_total_ht", None)
+    representation.pop("value_meat_poultry_egalim_ht", None)
+    representation.pop("value_meat_poultry_france_ht", None)
+    representation.pop("value_fish_egalim_ht", None)
 
     return representation
 
@@ -241,11 +255,12 @@ class CentralKitchenDiagnosticSerializer(serializers.ModelSerializer):
         This method pops non-appro fields if that is the case from the JSON representation
         """
         representation = super().to_representation(instance)
+        representation = appro_to_percentages(representation, instance)
         if instance.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
             [representation.pop(field, "") for field in NON_APPRO_FIELDS]
         if instance.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
             [representation.pop(field, "") for field in COMPLETE_APPRO_FIELDS]
-        return appro_to_percentages(representation, instance)
+        return representation
 
 
 class PublicDiagnosticSerializer(serializers.ModelSerializer):
@@ -263,10 +278,15 @@ class ManagerDiagnosticSerializer(serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
         read_only_fields = ("id",)
-        fields = FIELDS + (
-            "creation_mtm_source",
-            "creation_mtm_campaign",
-            "creation_mtm_medium",
+        fields = (
+            FIELDS
+            + (
+                "creation_mtm_source",
+                "creation_mtm_campaign",
+                "creation_mtm_medium",
+            )
+            + CREATION_META_FIELDS
+            + TUNNEL_PROGRESS_FIELDS
         )
 
     def __init__(self, *args, **kwargs):
@@ -305,7 +325,7 @@ class FullDiagnosticSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Diagnostic
-        fields = FIELDS + ("teledeclaration",)
+        fields = FIELDS + ("teledeclaration",) + CREATION_META_FIELDS + TUNNEL_PROGRESS_FIELDS
         read_only_fields = fields
 
 

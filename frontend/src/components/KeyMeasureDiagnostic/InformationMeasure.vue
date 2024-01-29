@@ -57,7 +57,6 @@
       </v-row>
     </fieldset>
 
-    <!-- TODO: is this question that different from the first? -->
     <v-checkbox
       hide-details="auto"
       v-model="diagnostic.communicatesOnFoodPlan"
@@ -83,6 +82,7 @@
 <script>
 import validators from "@/validators"
 import DsfrTextField from "@/components/DsfrTextField"
+import Constants from "@/constants"
 
 export default {
   components: { DsfrTextField },
@@ -95,30 +95,8 @@ export default {
   },
   data() {
     return {
-      communicationFrequencies: [
-        {
-          label: "Régulièrement au cours de l’année",
-          value: "REGULARLY",
-        },
-        {
-          label: "Une fois par an",
-          value: "YEARLY",
-        },
-        {
-          label: "Moins d'une fois par an",
-          value: "LESS_THAN_YEARLY",
-        },
-      ],
-      communicationSupports: [
-        {
-          label: "Par affichage sur le lieu de restauration",
-          value: "DISPLAY",
-        },
-        {
-          label: "Par voie électronique (envoi d’e-mail aux convives, sur site internet ou intranet (mairie, pronote))",
-          value: "DIGITAL",
-        },
-      ],
+      communicationFrequencies: Constants.CommunicationFrequencies,
+      communicationSupports: Constants.CommunicationSupports,
       otherSupportEnabled: !!this.diagnostic.otherCommunicationSupport,
     }
   },

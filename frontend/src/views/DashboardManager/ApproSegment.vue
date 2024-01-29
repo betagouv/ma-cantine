@@ -1,6 +1,18 @@
 <template>
   <div class="fill-height">
-    <v-card v-if="hasCentralKitchen" outlined class="fill-height d-flex flex-column dsfr pa-6">
+    <v-card
+      :to="{
+        name: 'MyProgress',
+        params: {
+          canteenUrlComponent: this.canteenUrlComponent,
+          year: this.diagnostic.year,
+          measure: 'qualite-des-produits',
+        },
+      }"
+      v-if="hasCentralKitchen"
+      outlined
+      class="fill-height d-flex flex-column dsfr pa-6"
+    >
       <v-card-title>
         <v-icon small :color="keyMeasure.mdiIconColor" class="mx-2">
           {{ keyMeasure.mdiIcon }}
@@ -30,6 +42,11 @@
         </div>
         <v-spacer />
       </v-card-text>
+      <v-spacer></v-spacer>
+      <v-card-actions class="px-4">
+        <v-spacer></v-spacer>
+        <v-icon color="primary" class="mr-n1">$arrow-right-line</v-icon>
+      </v-card-actions>
     </v-card>
     <v-card
       :to="{
@@ -50,17 +67,23 @@
         </v-icon>
         <h3 class="fr-text font-weight-bold">{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
-      <v-card-text :class="`mt-n4 pl-12 py-0 ${level.colorClass}`">
+      <v-card-text v-if="level" :class="`mt-n4 pl-12 py-0 ${level.colorClass}`">
         <p class="mb-0 mt-2 fr-text-xs">
           NIVEAU :
           <span class="font-weight-black">{{ level.text }}</span>
         </p>
       </v-card-text>
-      <v-card-text class="fr-text-xs">
+      <v-card-text class="fr-text-xs" v-if="hasApproData">
         <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
+        <p class="mb-0">
+          Composer des repas avec au moins {{ sustainablePercent }} % de produits de qualité et durables, dont
+          {{ bioPercent }} % de bio, pour proposer une alimentation plus saine et écologique à vos convives.
+        </p>
+      </v-card-text>
+      <v-card-text v-else class="fr-text-xs">
         <p>
-          C’est parti ! Découvrez les outils et les ressources personnalisées pour vous aider à atteindre un des deux
-          objectifs EGAlim et passer au niveau suivant !
+          Renseignez la valeur (en € HT) de vos achats alimentaires total et au moins un autre champ par label de
+          produit pour voir la synthèse de vos données.
         </p>
       </v-card-text>
       <v-spacer></v-spacer>
@@ -108,9 +131,9 @@
   </div>
 </template>
 <script>
-import { hasDiagnosticApproData, lastYear } from "@/utils"
+import { hasDiagnosticApproData, lastYear, hasStartedMeasureTunnel, applicableDiagnosticRules } from "@/utils"
 import Constants from "@/constants"
-import ApproGraph from "./ApproGraph"
+import ApproGraph from "@/components/ApproGraph"
 import keyMeasures from "@/data/key-measures.json"
 
 export default {
@@ -153,7 +176,9 @@ export default {
       return this.year === this.lastYear
     },
     level() {
-      return Constants.Levels.BEGINNER
+      if (this.delegatedToSatellite) return null
+      if (!hasStartedMeasureTunnel(this.diagnostic, this.keyMeasure)) return Constants.Levels.UNKNOWN
+      return null
     },
     hasPurchases() {
       return false
@@ -172,6 +197,15 @@ export default {
       return this.canteen.centralProducerSiret
         ? `l'établissement avec le SIRET ${this.canteen.centralProducerSiret}`
         : "un établissement inconnu"
+    },
+    rules() {
+      return applicableDiagnosticRules(this.canteen)
+    },
+    sustainablePercent() {
+      return this.rules.qualityThreshold
+    },
+    bioPercent() {
+      return this.rules.bioThreshold
     },
   },
 }

@@ -37,6 +37,7 @@ from api.serializers import (
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration, Purchase
 from data.region_choices import Region
+from data.department_choices import Department
 from api.permissions import (
     IsCanteenManager,
     IsAuthenticated,
@@ -226,7 +227,13 @@ def filter_by_diagnostic_params(queryset, query_params):
             qs_diag = qs_diag.filter(
                 Q(combined_share__gte=0.5, bio_share__gte=0.2)
                 | Q(canteen__region__in=group_1, combined_share__gte=0.2, bio_share__gte=0.05)
+                | Q(canteen__department=Department.saint_martin, combined_share__gte=0.2, bio_share__gte=0.05)
                 | Q(canteen__region__in=group_2, combined_share__gte=0.05, bio_share__gte=0.02)
+                | Q(
+                    canteen__department=Department.saint_pierre_et_miquelon,
+                    combined_share__gte=0.3,
+                    bio_share__gte=0.1,
+                )
             ).distinct()
         canteen_ids = qs_diag.values_list("canteen", flat=True)
         return queryset.filter(id__in=canteen_ids)
@@ -849,7 +856,9 @@ def badges_for_queryset(diagnostic_year_queryset):
         badge_querysets["appro"] = appro_share_query.filter(
             Q(combined_share__gte=0.5, bio_share__gte=0.2)
             | Q(canteen__region__in=group_1, combined_share__gte=0.2, bio_share__gte=0.05)
+            | Q(canteen__department=Department.saint_martin, combined_share__gte=0.2, bio_share__gte=0.05)
             | Q(canteen__region__in=group_2, combined_share__gte=0.05, bio_share__gte=0.02)
+            | Q(canteen__department=Department.saint_pierre_et_miquelon, combined_share__gte=0.3, bio_share__gte=0.1)
         ).distinct()
 
     # waste
@@ -1174,6 +1183,35 @@ class SatelliteListCreateView(ListCreateAPIView):
             return JsonResponse(camelize(serialized_canteen), status=return_status)
         except Sector.DoesNotExist:
             raise BadRequest()
+
+
+@extend_schema_view(
+    post=extend_schema(
+        summary="Enlever une cantine satellite à la cuisine centrale.",
+        description="Cet endpoint permet d'enlever un satellite d'une cuisine centrale",
+    ),
+)
+class UnlinkSatelliteView(APIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    serializer_class = FullCanteenSerializer
+
+    def post(self, request, canteen_pk, satellite_pk):
+        central_kitchen = Canteen.objects.get(pk=canteen_pk)
+
+        try:
+            satellite = Canteen.objects.get(pk=satellite_pk)
+        except Canteen.DoesNotExist:
+            serialized_canteen = FullCanteenSerializer(central_kitchen).data
+            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+
+        if satellite.central_producer_siret != central_kitchen.siret:
+            serialized_canteen = FullCanteenSerializer(central_kitchen).data
+            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+
+        satellite.central_producer_siret = None
+        satellite.save()
+        serialized_canteen = FullCanteenSerializer(central_kitchen).data
+        return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
 
 
 class ActionableCanteensListView(ListAPIView):

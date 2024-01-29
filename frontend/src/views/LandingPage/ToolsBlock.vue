@@ -54,8 +54,8 @@ export default {
   components: { DownloadLink },
   data() {
     return {
-      filepath: "/static/documents/Diagnostic approvisionnement (ma-cantine-alpha) v0.6VM",
-      filesizeStr: "2,8 Mo",
+      filepath: "/static/documents/Diagnostic approvisionnement v0.8",
+      filesizeStr: "2,9 Mo",
     }
   },
   computed: {

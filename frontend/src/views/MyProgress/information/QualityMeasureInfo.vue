@@ -2,13 +2,13 @@
   <div class="fr-text">
     <p>
       Depuis 2022, les repas doivent comporter au moins {{ applicableRules.qualityThreshold }} % de produits de qualité
-      et durables dont au moins {{ applicableRules.bioThreshold }} % issus de l’agriculture biologique ou en conversion,
-      pour les cantines
+      et durables, dont au moins {{ applicableRules.bioThreshold }} % issus de l’agriculture biologique ou en
+      conversion, pour les cantines
       {{
         applicableRules.hasQualityException ? `dans la région « ${regionDisplayName} »` : "en France métropolitaine"
       }}.
     </p>
-    <p>Faites le bilan de vos achats pour</p>
+    <p>Faites le bilan de vos achats pour :</p>
     <ul class="mb-4">
       <li>
         <b>vous situer</b>
