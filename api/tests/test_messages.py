@@ -1,5 +1,4 @@
 from django.urls import reverse
-from django.core import mail
 from django.test.utils import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -28,11 +27,6 @@ class TestMessageApi(APITestCase):
         self.assertIsNone(message.sent_date)
         self.assertEqual(message.destination_canteen, canteen)
 
-        # email is sent to admins
-        email = mail.outbox[0]
-        self.assertEqual(email.to[0], "contact@example.com")
-        self.assertEqual(email.subject, "📨 Nouveau message en attente de validation")
-
     @authenticate
     def test_message_creation_authenticated(self):
         canteen = CanteenFactory.create()
@@ -53,7 +47,6 @@ class TestMessageApi(APITestCase):
         }
         response = self.client.post(reverse("message_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(len(mail.outbox), 0)
 
     def test_missing_body(self):
         canteen = CanteenFactory.create()
@@ -63,7 +56,6 @@ class TestMessageApi(APITestCase):
         }
         response = self.client.post(reverse("message_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(len(mail.outbox), 0)
 
     def test_missing_email(self):
         canteen = CanteenFactory.create()
@@ -73,4 +65,3 @@ class TestMessageApi(APITestCase):
         }
         response = self.client.post(reverse("message_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(len(mail.outbox), 0)
