@@ -140,7 +140,6 @@ class TestEmail(APITestCase):
         self.assertEqual(len(email.to), 2)
         self.assertIn("mgmt1@example.com", email.to)
         self.assertIn("mgmt2@example.com", email.to)
-        self.assertIn("contact@example.com", email.cc)
         self.assertIn("Please add me to the team", email.body)
         self.assertIn("76494221950672", email.body)
         self.assertIn("Hugo", email.body)
