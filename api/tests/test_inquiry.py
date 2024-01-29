@@ -2,19 +2,17 @@ from django.urls import reverse
 from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
-from unittest.mock import patch
 from django.core import mail
 from data.factories.canteen import CanteenFactory
 from data.factories.user import UserFactory
 from .utils import authenticate
 
 
-@override_settings(TRELLO_LIST_ID_CONTACT="listId")
-@patch("common.utils.create_trello_card")
 class TestInquiry(APITestCase):
-    def test_inquiry(self, mock_create_trello_card):
+    @override_settings(CONTACT_EMAIL="contact@example.com")
+    def test_inquiry(self):
         """
-        Test that an inquiry about functionality hits trello endpoint
+        Test that an inquiry about functionality sends an email to admins
         """
         payload = {
             "from": "test@example.com",
@@ -28,13 +26,18 @@ class TestInquiry(APITestCase):
         }
         response = self.client.post(reverse("inquiry"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        card_title = "test@example.com - fonctionnalité"
-        card_body = "Nom/Prénom\n---\nTester\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
+        title = "Demande de support de test@example.com - fonctionnalité"
+        body = "Nom/Prénom\n---\nTester\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
-        mock_create_trello_card.assert_called_with("listId", card_title, card_body)
+        # email is sent to admins
+        email = mail.outbox[0]
+        self.assertEqual(email.to[0], "contact@example.com")
+        self.assertEqual(email.subject, title)
+        self.assertEqual(email.body, body)
 
     @override_settings(ENVIRONMENT="demo")
-    def test_inquiry_environment_prepend(self, mock_create_trello_card):
+    @override_settings(CONTACT_EMAIL="contact@example.com")
+    def test_inquiry_environment_prepend(self):
         """
         Test that the environment is prepended when we are in "demo" or "staging" mode
         """
@@ -49,12 +52,16 @@ class TestInquiry(APITestCase):
         }
         response = self.client.post(reverse("inquiry"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        card_title = "(DEMO) test@example.com - fonctionnalité"
-        card_body = "Nom/Prénom\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
+        title = "(DEMO) Demande de support de test@example.com - fonctionnalité"
+        body = "Nom/Prénom\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
-        mock_create_trello_card.assert_called_with("listId", card_title, card_body)
+        # email is sent to admins
+        email = mail.outbox[0]
+        self.assertEqual(email.to[0], "contact@example.com")
+        self.assertEqual(email.subject, title)
+        self.assertEqual(email.body, body)
 
-    def test_missing_fields(self, mock_create_trello_card):
+    def test_missing_fields(self):
         """
         Test that a 400 error response with details is returned when the requests is missing fields
         """
@@ -67,7 +74,7 @@ class TestInquiry(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body.get("from"), "Merci d'indiquer une adresse email")
-        mock_create_trello_card.assert_not_called()
+        self.assertEqual(len(mail.outbox), 0)
 
         payload = {}
         response = self.client.post(reverse("inquiry"), payload, format="json")
@@ -75,9 +82,10 @@ class TestInquiry(APITestCase):
         body = response.json()
         self.assertEqual(body.get("from"), "Merci d'indiquer une adresse email")
         self.assertEqual(body.get("message"), "Message manquant dans la requête")
-        mock_create_trello_card.assert_not_called()
+        self.assertEqual(len(mail.outbox), 0)
 
-    def test_misc_inquiry(self, mock_create_trello_card):
+    @override_settings(CONTACT_EMAIL="contact@example.com")
+    def test_misc_inquiry(self):
         """
         Test misc inquiry type displayed in card title
         """
@@ -92,10 +100,14 @@ class TestInquiry(APITestCase):
         }
         response = self.client.post(reverse("inquiry"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        card_title = "test@example.com - cantine SIRET"
-        card_body = "Nom/Prénom\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
+        title = "Demande de support de test@example.com - cantine SIRET"
+        body = "Nom/Prénom\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
-        mock_create_trello_card.assert_called_with("listId", card_title, card_body)
+        # email is sent to admins
+        email = mail.outbox[0]
+        self.assertEqual(email.to[0], "contact@example.com")
+        self.assertEqual(email.subject, title)
+        self.assertEqual(email.body, body)
 
 
 class TestEmail(APITestCase):

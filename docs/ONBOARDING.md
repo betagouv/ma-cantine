@@ -80,10 +80,6 @@ CELLAR_SECRET= Optionnel - le secret du service S3
 CELLAR_BUCKET_NAME= Optionnel - le nom du bucket S3 à utiliser
 DEBUG_PERFORMANCE= Optionnel - à utiliser avec "DEBUG" pour montrer la [Django Debug Toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/)
 ENVIRONMENT= Optionnel - si cette variable est remplie un badge sera visible dans l'application et l'admin changera. Les options sont : `dev` | `staging` | `demo` | `prod`
-TRELLO_API_KEY= Optionnel - Permet la création de cartes Trello suite à une demande de contact de la part de l'utilisateur. Conseils en-dessous pour l'obtenir.
-TRELLO_API_TOKEN= Optionnel - Permet la création de cartes Trello suite à une demande de contact de la part de l'utilisateur. Conseils en-dessous pour l'obtenir.
-TRELLO_LIST_ID_CONTACT= Optionnel - ID de la liste où l'application mettra des cartes suite à une demande de contact de la part de l'utilistauer. Conseils en-dessous pour l'obtenir.
-TRELLO_LIST_ID_PUBLICATION= Optionnel - ID de la liste où l'application mettra des cartes suite à une demande de publication de la part de l'utilistauer. Conseils en-dessous pour l'obtenir.
 REDIS_URL= L'instance redis à utiliser pour les tâches asynchrones et le cache des clés API. Par exemple : 'redis://localhost:6379/0'
 REDIS_PREPEND_KEY= Optionnel - Ajout ce string au début de chaque clé Redis. Utile pour partager la même DB Redis sur plusieurs environnements
 OVERRIDE_TEST_SEED= Optionnel - `seed` utilisé par les tests pour les éléments aléatoires. Utile lors qu'un test échoue et qu'on veut reproduire exactement ce qu'il s'est passé.
@@ -115,15 +111,6 @@ TEMPLATE_ID_NO_CANTEEN_SECOND= Optionnel - ID du template SendInBlue pour le deu
 TEMPLATE_ID_NO_DIAGNOSTIC_FIRST= Optionnel - ID du template SendInBlue pour le premier email envoyé aux utilisateurs ayant une cantine mais pas un diagnostic. En cas d'absence la relance n'aura pas lieu.
 ```
 
-
-#### Trello
-
-Si vous ne connaissez pas les variables trello, suivez [ce guide](https://developer.atlassian.com/cloud/trello/guides/rest-api/api-introduction/) pour identifier votre clé et token.
-
-Après, pour trouver l'ID de la liste pour laquelle vous voulez ajouter des cartes :
-
-`curl 'https://api.trello.com/1/boards/{idBoard}/lists?key={yourKey}&token={yourToken}'`
-
 ### Création des tables / Migration de la base de données
 
 Pour créer les tables nécessaires :
@@ -142,7 +129,7 @@ Pour créer les fichiers compilés de traduction :
 python manage.py compilemessages
 ```
 
-Notez que cette commande est à effectuer à chaque changement de fichier de traduction *po.
+Notez que cette commande est à effectuer à chaque changement de fichier de traduction \*po.
 
 ## Lancer l'application en mode développement
 
