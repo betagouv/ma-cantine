@@ -307,7 +307,7 @@ class Diagnostic(models.Model):
     )
     total_leftovers = models.DecimalField(
         max_digits=20,
-        decimal_places=2,
+        decimal_places=5,
         blank=True,
         null=True,
         verbose_name="total des déchets alimentaires (t)",
