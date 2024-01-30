@@ -4,8 +4,6 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 import logging
-
-# not importing create_trello_card directly because that breaks patching for tests
 import common.utils as utils
 
 logger = logging.getLogger(__name__)
@@ -22,11 +20,7 @@ class InquiryView(APIView):
 
             InquiryView._raise_for_mandatory_fields(email, message)
 
-            title = f"{email} - {inquiry_type}"
-
-            env = getattr(settings, "ENVIRONMENT", "")
-            if env == "demo" or env == "staging":
-                title = f"({env.upper()}) {title}"
+            title = f"Demande de support de {email} - {inquiry_type}"
 
             body = f"Nom/Prénom\n---\n{name or 'Non renseigné'}"
             body += f"\nMessage\n---\n{message}"
@@ -34,7 +28,8 @@ class InquiryView(APIView):
             body += f"\nAdresse : {email}"
             for key, value in meta.items():
                 body += f"\n{key} : {value}"
-            utils.create_trello_card(settings.TRELLO_LIST_ID_CONTACT, title, body)
+
+            utils.send_mail(message=body, subject=title, to=[settings.CONTACT_EMAIL])
 
             return JsonResponse({}, status=status.HTTP_200_OK)
         except ValidationError as e:

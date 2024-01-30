@@ -2,7 +2,6 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 import html2text
-import requests
 
 
 def send_mail(**kwargs):
@@ -38,15 +37,3 @@ def _add_additional_context(context, **kwargs):
     context["repliesToTeam"] = replies_to_team
     if "us" not in context:
         context["us"] = settings.DEFAULT_FROM_EMAIL
-
-
-def create_trello_card(trello_list_id, title, description):
-    trello_api_key = settings.TRELLO_API_KEY
-    trello_token = settings.TRELLO_API_TOKEN
-    if not trello_api_key or not trello_token or not trello_list_id:
-        raise Exception("Trello API key, token, or list ID not set.")
-
-    url = f"https://api.trello.com/1/cards?key={trello_api_key}&token={trello_token}&idList={trello_list_id}"
-    url += f"&name={title}&desc={description}"  # card content
-    url += "&pos=top"  # card meta data
-    requests.post(url)
