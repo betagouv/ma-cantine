@@ -262,7 +262,7 @@ class DiagnosticSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     {
                         "total_leftovers": [
-                            "Vous avez découvert une erreur inconnue. Assurez-vous que cette valeur est un chiffre décimal, et contactez-nous si l'erreur persiste."
+                            "Une erreur est survenue. Assurez-vous que cette valeur est un chiffre décimal, et contactez-nous si l'erreur persiste."
                         ]
                     }
                 )
