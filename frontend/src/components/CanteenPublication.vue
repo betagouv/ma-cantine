@@ -168,30 +168,28 @@
       Nos démarches
     </h2>
     <v-row class="my-6">
-      <div v-for="(badge, key) in earnedBadges" :key="key">
-        <v-col cols="12" v-if="badge.earned">
-          <v-card class="fill-height" elevation="0">
-            <div class="d-flex align-start">
-              <v-img width="40" max-width="40" contain :src="`/static/images/badges/${key}.svg`" alt=""></v-img>
-              <div>
-                <v-card-title class="py-0 text-body-2 font-weight-bold">{{ badge.title }}</v-card-title>
-                <v-card-subtitle
-                  class="pt-4"
-                  v-text="badge.subtitle"
-                  v-if="key !== 'appro' || applicableRules.qualityThreshold === 50"
-                ></v-card-subtitle>
-                <div v-else>
-                  <v-card-subtitle class="pt-0">
-                    Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de
-                    produits durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
-                    <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
-                  </v-card-subtitle>
-                </div>
+      <v-col cols="12" v-for="(badge, key) in earnedBadges" :key="key">
+        <v-card class="fill-height" elevation="0">
+          <div class="d-flex align-start">
+            <v-img width="40" max-width="40" contain :src="`/static/images/badges/${key}.svg`" alt=""></v-img>
+            <div>
+              <v-card-title class="py-0 text-body-2 font-weight-bold">{{ badge.title }}</v-card-title>
+              <v-card-subtitle
+                class="pt-4"
+                v-text="badge.subtitle"
+                v-if="key !== 'appro' || applicableRules.qualityThreshold === 50"
+              ></v-card-subtitle>
+              <div v-else>
+                <v-card-subtitle class="pt-0">
+                  Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de
+                  produits durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
+                  <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+                </v-card-subtitle>
               </div>
             </div>
-          </v-card>
-        </v-col>
-      </div>
+          </div>
+        </v-card>
+      </v-col>
     </v-row>
 
     <div v-if="canteen && canteen.publicationComments">
