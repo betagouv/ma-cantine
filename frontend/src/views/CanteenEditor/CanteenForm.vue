@@ -239,7 +239,7 @@
 
         <v-col cols="12" sm="6" md="4">
           <div>
-            <p class="body-2">Catégories de secteur</p>
+            <p class="body-2">Catégorie de secteur</p>
             <DsfrSelect clearable :items="sectorCategories" v-model="sectorCategory" hide-details="auto" />
           </div>
         </v-col>
