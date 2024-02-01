@@ -114,7 +114,9 @@
                   <v-col cols="12" sm="6" class="py-1" v-for="item in productFamilies" :key="item">
                     <v-radio :value="item" class="mt-2">
                       <template v-slot:label>
-                        <span class="body-2 grey--text text--darken-3">{{ getProductFamilyDisplayText(item) }}</span>
+                        <span class="body-2 grey--text text--darken-4">
+                          {{ getProductFamilyDisplayText(item) }}
+                        </span>
                       </template>
                     </v-radio>
                   </v-col>
@@ -152,10 +154,18 @@
                   :multiple="true"
                   :key="characteristic"
                   :value="characteristic"
+                  :disabled="disabledForFamily(characteristic)"
                 >
                   <template v-slot:label>
-                    <span class="body-2 grey--text text--darken-3">
+                    <span
+                      :class="
+                        `body-2 grey--text ${disabledForFamily(characteristic) ? 'text--darken-1' : 'text--darken-4'}`
+                      "
+                    >
                       {{ getCharacteristicDisplayText(characteristic) }}
+                      <span v-if="disabledForFamily(characteristic)">
+                        &nbsp;(pas applicable pour la famille de produit choisie)
+                      </span>
                     </span>
                   </template>
                 </v-checkbox>
@@ -268,6 +278,7 @@ export default {
       localDefinitions: Object.values(Constants.LocalDefinitions),
       productDescriptions: [],
       providers: [],
+      exceptions: Constants.CharacteristicFamilyExceptions,
     }
   },
   props: {
@@ -401,6 +412,11 @@ export default {
           this.providers = options.providers
         })
       }) // these lists are optional so don't bother with error messages if they fail to load
+    },
+    disabledForFamily(characteristic) {
+      if (!this.purchase.family) return
+      if (!this.exceptions[characteristic]) return
+      return this.exceptions[characteristic].indexOf(this.purchase.family) > -1
     },
   },
   mounted() {
