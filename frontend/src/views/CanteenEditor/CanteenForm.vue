@@ -251,20 +251,6 @@
             />
           </div>
         </v-col>
-        <v-col cols="12" md="6">
-          <div>
-            <p class="body-2">Type d'établissement</p>
-            <DsfrSelect
-              :items="economicModels"
-              solo
-              v-model="canteen.economicModel"
-              :rules="[validators.required]"
-              placeholder="Sélectionnez..."
-              hide-details="auto"
-              clearable
-            />
-          </div>
-        </v-col>
         <v-col v-if="showMinistryField" cols="12">
           <p class="body-2">Ministère de tutelle</p>
           <DsfrSelect
@@ -277,6 +263,20 @@
           />
         </v-col>
 
+        <v-col cols="12" sm="6" md="3">
+          <div>
+            <p class="body-2 ml-4">Type d'établissement</p>
+            <v-radio-group v-model="canteen.economicModel" :rules="[validators.required]">
+              <v-radio
+                class="ml-8"
+                v-for="item in economicModels"
+                :key="item.value"
+                :label="item.text"
+                :value="item.value"
+              ></v-radio>
+            </v-radio-group>
+          </div>
+        </v-col>
         <v-col cols="12" sm="6" md="3">
           <p class="body-2 ml-4">Mode de gestion</p>
           <v-radio-group v-model="canteen.managementType" :rules="[validators.required]">
