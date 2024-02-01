@@ -239,10 +239,16 @@
 
         <v-col cols="12" md="6">
           <div>
+            <p class="body-2">Catégories de secteur</p>
+            <DsfrSelect clearable :items="sectorCategories" v-model="sectorCategory" hide-details="auto" />
+          </div>
+        </v-col>
+        <v-col cols="12" md="6">
+          <div>
             <p class="body-2">Secteurs d'activité</p>
             <DsfrSelect
               multiple
-              :items="sectors"
+              :items="filteredSectors"
               v-model="canteen.sectors"
               :rules="[validators.required]"
               item-text="name"
@@ -364,6 +370,7 @@ export default {
         "Le numéro SIRET de la cuisine centrale ne peut pas être le même que celui de la cantine satellite.",
       productionTypes: Constants.ProductionTypesDetailed,
       economicModels: Constants.EconomicModels,
+      sectorCategory: null,
       ministries: Constants.Ministries,
       centralKitchen: null,
     }
@@ -374,6 +381,23 @@ export default {
     },
     sectors() {
       return sectorsSelectList(this.$store.state.sectors)
+    },
+    filteredSectors() {
+      return sectorsSelectList(this.$store.state.sectors, this.sectorCategory)
+    },
+    sectorCategories() {
+      const displayValueMap = Constants.SectorCategoryTranslations
+      const categoriesInUse = this.$store.state.sectors.map((s) => s.category)
+      const categories = categoriesInUse.map((c) => ({ value: c, text: displayValueMap[c] }))
+      categories.sort((a, b) => {
+        if (a.value === "autres" && b.value === "inconnu") return 0
+        else if (a.value === "autres") return 1
+        else if (a.value === "inconnu") return 1
+        else if (b.value === "autres") return -1
+        else if (b.value === "inconnu") return -1
+        return a.text.localeCompare(b.text)
+      })
+      return categories
     },
     isNewCanteen() {
       return !this.canteenUrlComponent
