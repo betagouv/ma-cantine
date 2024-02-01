@@ -428,7 +428,6 @@ export default {
     showDailyMealCount() {
       return this.canteen.productionType && this.canteen.productionType !== "central"
     },
-    // TODO: ensure this is updating as sectors chosen change
     showMinistryField() {
       const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
       if (concernedSectors.length === 0) return false
@@ -621,9 +620,10 @@ export default {
     addSector(id) {
       if (!id || id < 0) return
       if (!this.canteen.sectors) this.canteen.sectors = []
-      if (this.canteen.sectors.indexOf(id) > -1) return
-      this.canteen.sectors.push(id)
-      // TODO: clear text in select at this point
+      if (this.canteen.sectors.indexOf(id) === -1) this.canteen.sectors.push(id)
+      this.$nextTick(() => {
+        this.chosenSector = null
+      })
     },
     removeSector(id) {
       this.canteen.sectors?.splice(this.canteen.sectors?.indexOf(id), 1)
