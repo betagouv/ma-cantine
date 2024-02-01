@@ -248,7 +248,7 @@
             <p class="body-2">Secteurs d'activité</p>
             <DsfrSelect
               :items="filteredSectors"
-              :rules="[validators.required]"
+              :rules="canteen.sectors && canteen.sectors.length ? [] : [validators.required]"
               @change="addSector"
               v-model="chosenSector"
               item-text="name"
@@ -257,7 +257,6 @@
             />
             <div class="d-flex flex-wrap mt-2">
               <p v-for="id in canteen.sectors" :key="id" class="mb-0">
-                <!-- TODO: consider adding a transition when added and removed -->
                 <v-chip close @click="removeSector(id)" @click:close="removeSector(id)" class="mr-1 mt-1">
                   <strong>{{ sectorName(id) }}</strong>
                 </v-chip>
@@ -266,7 +265,7 @@
           </div>
         </v-col>
         <!-- TODO: change column width for bigger screens -->
-        <v-col v-if="showMinistryField" cols="12">
+        <v-col v-if="showMinistryField" cols="12" md="10">
           <p class="body-2">Ministère de tutelle</p>
           <DsfrSelect
             :items="ministries"
@@ -277,7 +276,8 @@
             clearable
           />
         </v-col>
-
+      </v-row>
+      <v-row>
         <v-col cols="12" sm="6" md="3">
           <div>
             <p class="body-2 ml-4">Type d'établissement</p>
