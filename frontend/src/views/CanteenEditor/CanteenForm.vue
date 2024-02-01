@@ -257,14 +257,19 @@
             />
             <div class="d-flex flex-wrap mt-2">
               <p v-for="id in canteen.sectors" :key="id" class="mb-0">
-                <v-chip close @click="removeSector(id)" @click:close="removeSector(id)" class="mr-1 mt-1">
-                  <strong>{{ sectorName(id) }}</strong>
+                <v-chip
+                  close
+                  @click="removeSector(id)"
+                  @click:close="removeSector(id)"
+                  class="mr-1 mt-1"
+                  color="primary"
+                >
+                  {{ sectorName(id) }}
                 </v-chip>
               </p>
             </div>
           </div>
         </v-col>
-        <!-- TODO: change column width for bigger screens -->
         <v-col v-if="showMinistryField" cols="12" md="10">
           <p class="body-2">Ministère de tutelle</p>
           <DsfrSelect
@@ -616,7 +621,7 @@ export default {
     addSector(id) {
       if (!id || id < 0) return
       if (!this.canteen.sectors) this.canteen.sectors = []
-      // TODO: don't add sector if already in list
+      if (this.canteen.sectors.indexOf(id) > -1) return
       this.canteen.sectors.push(id)
       // TODO: clear text in select at this point
     },
