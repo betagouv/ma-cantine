@@ -112,7 +112,7 @@
               <v-radio-group v-model="purchase.family" class="my-0">
                 <v-row>
                   <v-col cols="12" sm="6" class="py-1" v-for="item in productFamilies" :key="item">
-                    <v-radio :value="item" class="mt-2">
+                    <v-radio :value="item" class="mt-2" @change="familyChange">
                       <template v-slot:label>
                         <span class="body-2 grey--text text--darken-4">
                           {{ getProductFamilyDisplayText(item) }}
@@ -417,6 +417,23 @@ export default {
       if (!this.purchase.family) return
       if (!this.exceptions[characteristic]) return
       return this.exceptions[characteristic].indexOf(this.purchase.family) > -1
+    },
+    familyChange() {
+      this.$nextTick(() => {
+        if (!this.purchase.family) return
+        if (!this.purchase.characteristics) return
+        const characteristicsToRemove = []
+        this.purchase.characteristics.forEach((characteristic) => {
+          if (!this.exceptions[characteristic]) return
+          if (this.exceptions[characteristic].indexOf(this.purchase.family) > -1) {
+            characteristicsToRemove.push(characteristic)
+          }
+        })
+        characteristicsToRemove.forEach((char) => {
+          const idx = this.purchase.characteristics.indexOf(char)
+          this.purchase.characteristics.splice(idx, 1)
+        })
+      })
     },
   },
   mounted() {
