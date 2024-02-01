@@ -237,7 +237,7 @@
           <v-divider></v-divider>
         </v-col>
 
-        <v-col cols="12" md="6">
+        <v-col cols="12" sm="6" md="4">
           <div>
             <p class="body-2">Catégories de secteur</p>
             <DsfrSelect clearable :items="sectorCategories" v-model="sectorCategory" hide-details="auto" />
@@ -247,16 +247,25 @@
           <div>
             <p class="body-2">Secteurs d'activité</p>
             <DsfrSelect
-              multiple
               :items="filteredSectors"
-              v-model="canteen.sectors"
               :rules="[validators.required]"
+              @change="addSector"
+              v-model="chosenSector"
               item-text="name"
               item-value="id"
               hide-details="auto"
             />
+            <div class="d-flex flex-wrap mt-2">
+              <p v-for="id in canteen.sectors" :key="id" class="mb-0">
+                <!-- TODO: consider adding a transition when added and removed -->
+                <v-chip close @click="removeSector(id)" @click:close="removeSector(id)" class="mr-1 mt-1">
+                  <strong>{{ sectorName(id) }}</strong>
+                </v-chip>
+              </p>
+            </div>
           </div>
         </v-col>
+        <!-- TODO: change column width for bigger screens -->
         <v-col v-if="showMinistryField" cols="12">
           <p class="body-2">Ministère de tutelle</p>
           <DsfrSelect
@@ -371,6 +380,7 @@ export default {
       productionTypes: Constants.ProductionTypesDetailed,
       economicModels: Constants.EconomicModels,
       sectorCategory: null,
+      chosenSector: null,
       ministries: Constants.Ministries,
       centralKitchen: null,
     }
@@ -380,14 +390,14 @@ export default {
       return validators
     },
     sectors() {
-      return sectorsSelectList(this.$store.state.sectors)
+      return this.$store.state.sectors
     },
     filteredSectors() {
-      return sectorsSelectList(this.$store.state.sectors, this.sectorCategory)
+      return sectorsSelectList(this.sectors, this.sectorCategory)
     },
     sectorCategories() {
       const displayValueMap = Constants.SectorCategoryTranslations
-      const categoriesInUse = this.$store.state.sectors.map((s) => s.category)
+      const categoriesInUse = this.sectors.map((s) => s.category)
       const categories = categoriesInUse.map((c) => ({ value: c, text: displayValueMap[c] }))
       categories.sort((a, b) => {
         if (a.value === "autres" && b.value === "inconnu") return 0
@@ -413,10 +423,11 @@ export default {
     showDailyMealCount() {
       return this.canteen.productionType && this.canteen.productionType !== "central"
     },
+    // TODO: ensure this is updating as sectors chosen change
     showMinistryField() {
       const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
       if (concernedSectors.length === 0) return false
-      return this.canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
+      return this.canteen.sectors?.some((x) => concernedSectors.indexOf(x) > -1)
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
@@ -598,6 +609,19 @@ export default {
       this.canteen.cityInseeCode = location.cityInseeCode
       this.canteen.postalCode = location.postalCode
       this.canteen.department = location.department
+    },
+    sectorName(id) {
+      return this.sectors.find((s) => s.id === id)?.name || id
+    },
+    addSector(id) {
+      if (!id || id < 0) return
+      if (!this.canteen.sectors) this.canteen.sectors = []
+      // TODO: don't add sector if already in list
+      this.canteen.sectors.push(id)
+      // TODO: clear text in select at this point
+    },
+    removeSector(id) {
+      this.canteen.sectors?.splice(this.canteen.sectors?.indexOf(id), 1)
     },
   },
   beforeRouteLeave(to, from, next) {
