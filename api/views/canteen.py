@@ -912,7 +912,7 @@ class CanteenStatisticsView(APIView):
         try:
             city_insee_codes = CanteenStatisticsView._get_city_insee_codes(epcis)
         except Exception as e:
-            logger.warning(f"Error when fetching postcodes for EPCI for canteen stats: {str(e)}")
+            logger.warning(f"Error when fetching INSEE codes for EPCI for canteen stats: {str(e)}")
             data["epci_error"] = "Une erreur est survenue"
 
         canteens = CanteenStatisticsView._filter_canteens(regions, departments, city_insee_codes, sector_categories)
