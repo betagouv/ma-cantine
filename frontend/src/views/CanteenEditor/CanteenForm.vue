@@ -239,7 +239,7 @@
 
         <v-col cols="12" sm="6" md="4">
           <div>
-            <p class="body-2">Filtrer les secteurs par catégorie</p>
+            <p class="body-2">Catégorie de secteur</p>
             <DsfrSelect clearable :items="sectorCategories" v-model="sectorCategory" hide-details="auto" />
           </div>
         </v-col>
@@ -254,6 +254,7 @@
               item-text="name"
               item-value="id"
               hide-details="auto"
+              no-data-text="Veuillez séléctionner la catégorie de secteur"
             />
             <div class="d-flex flex-wrap mt-2">
               <p v-for="id in canteen.sectors" :key="id" class="mb-0">
@@ -398,6 +399,7 @@ export default {
       return this.$store.state.sectors
     },
     filteredSectors() {
+      if (!this.sectorCategory) return []
       return sectorsSelectList(this.sectors, this.sectorCategory)
     },
     sectorCategories() {
