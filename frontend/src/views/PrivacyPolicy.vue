@@ -330,7 +330,8 @@ h2 {
   margin-top: 1.25em;
   margin-bottom: 0.5em;
 }
-ul {
+ul,
+address {
   margin-bottom: 0.5em;
 }
 li {
