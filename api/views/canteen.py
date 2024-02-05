@@ -1261,6 +1261,7 @@ class ActionableCanteensListView(ListAPIView):
             | Q(siret="")
             | Q(name=None)
             | Q(city_insee_code=None)
+            | Q(city_insee_code="")
             | Q(production_type=None)
             | Q(management_type=None)
             | Q(economic_model=None)
