@@ -64,6 +64,8 @@
             validate-on-blur
             v-model="canteen.name"
             labelClasses="body-2 mb-2"
+            persistent-hint
+            hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple : « École maternelle Olympe de Gouges »"
           />
 
           <p class="body-2 mt-4 mb-2">Ville</p>
