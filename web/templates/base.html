@@ -28,9 +28,10 @@
     <body>
         <main>
             <div id="wrapper" {% if form.uses_columns %}class="columns"{% endif %}>
-                <div id="ma-cantine">
-                    <a href="/">
-                        <img src="{% static 'images/header-logos-extended.png' %}" alt="Ma cantine (aller à l'accueil) - Ministère de l'agriculture et de la souveraineté alimentaire" class="auth_logo" />
+                <div>
+                    <a href="/" aria-label="Ma cantine (aller à l'accueil) - Ministère de l'agriculture et de la souveraineté alimentaire" id="home-logo-link">
+                        <img src="{% static 'images/Marianne.png' %}" alt="" id="marianne" />
+                        <img src="{% static 'images/ma-cantine-logo-light.jpg' %}" alt="" id="ma-cantine-logo" />
                     </a>
                 </div>
                 {% block content %}

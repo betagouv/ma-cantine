@@ -45,9 +45,21 @@ body {
 h2 {
   font-size: 1.17em;
 }
-.auth_logo {
+#home-logo-link {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 20px 0;
+}
+#marianne {
+  max-width: 45%;
+  object-fit: contain;
   max-height: 70px;
-  margin: 20px 0;
+}
+#ma-cantine-logo {
+  max-width: 55%;
+  object-fit: contain;
+  max-height: 70px;
 }
 p {
   font-size: 0.85em;
