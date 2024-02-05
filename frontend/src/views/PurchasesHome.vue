@@ -269,7 +269,7 @@
         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <div class="d-flex justify-center">
-            <v-icon @click.stop="duplicate(item)" color="primary">
+            <v-icon @click.stop="duplicate(item)" color="primary" :title="duplicatePurchaseInstruction(item)">
               $file-add-line
             </v-icon>
           </div>
@@ -636,6 +636,14 @@ export default {
     capitalise: capitalise,
     duplicate(purchase) {
       this.$router.push({ name: "PurchasePage", params: { id: purchase.id }, query: { dupliquer: true } })
+    },
+    duplicatePurchaseInstruction(purchase) {
+      const readableDate = purchase.date.toLocaleString("fr-FR", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+      return `Dupliquer l'achat « ${purchase.description || "sans description"} » du ${readableDate}`
     },
   },
   beforeMount() {
