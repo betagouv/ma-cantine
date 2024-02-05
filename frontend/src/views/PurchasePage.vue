@@ -460,6 +460,7 @@ export default {
             this.purchase.priceHt = null
             this.purchase.date = null
             this.purchase.invoiceFile = null
+            this.purchase.importSource = "Duplication"
           }
         })
       })
