@@ -63,7 +63,7 @@
           />
         </div>
         <p v-else class="fr-text-sm grey--text text--darken-1 mt-2">
-          Il y a pas de produits de cette famille pour cette caractéristique
+          Non applicable pour cette famille de produits
         </p>
       </v-col>
     </v-row>
