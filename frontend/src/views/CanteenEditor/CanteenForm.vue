@@ -237,35 +237,41 @@
           <v-divider></v-divider>
         </v-col>
 
+        <v-col cols="12" sm="6" md="4">
+          <div>
+            <p class="body-2">Catégorie de secteur</p>
+            <DsfrSelect clearable :items="sectorCategories" v-model="sectorCategory" hide-details="auto" />
+          </div>
+        </v-col>
         <v-col cols="12" md="6">
           <div>
             <p class="body-2">Secteurs d'activité</p>
             <DsfrSelect
-              multiple
-              :items="sectors"
-              v-model="canteen.sectors"
-              :rules="[validators.required]"
+              :items="filteredSectors"
+              :rules="canteen.sectors && canteen.sectors.length ? [] : [validators.required]"
+              @change="addSector"
+              v-model="chosenSector"
               item-text="name"
               item-value="id"
               hide-details="auto"
+              no-data-text="Veuillez séléctionner la catégorie de secteur"
             />
+            <div class="d-flex flex-wrap mt-2">
+              <p v-for="id in canteen.sectors" :key="id" class="mb-0">
+                <v-chip
+                  close
+                  @click="removeSector(id)"
+                  @click:close="removeSector(id)"
+                  class="mr-1 mt-1"
+                  color="primary"
+                >
+                  {{ sectorName(id) }}
+                </v-chip>
+              </p>
+            </div>
           </div>
         </v-col>
-        <v-col cols="12" md="6">
-          <div>
-            <p class="body-2">Type d'établissement</p>
-            <DsfrSelect
-              :items="economicModels"
-              solo
-              v-model="canteen.economicModel"
-              :rules="[validators.required]"
-              placeholder="Sélectionnez..."
-              hide-details="auto"
-              clearable
-            />
-          </div>
-        </v-col>
-        <v-col v-if="showMinistryField" cols="12">
+        <v-col v-if="showMinistryField" cols="12" md="10">
           <p class="body-2">Ministère de tutelle</p>
           <DsfrSelect
             :items="ministries"
@@ -276,7 +282,22 @@
             clearable
           />
         </v-col>
-
+      </v-row>
+      <v-row>
+        <v-col cols="12" sm="6" md="3">
+          <div>
+            <p class="body-2 ml-4">Type d'établissement</p>
+            <v-radio-group v-model="canteen.economicModel" :rules="[validators.required]">
+              <v-radio
+                class="ml-8"
+                v-for="item in economicModels"
+                :key="item.value"
+                :label="item.text"
+                :value="item.value"
+              ></v-radio>
+            </v-radio-group>
+          </div>
+        </v-col>
         <v-col cols="12" sm="6" md="3">
           <p class="body-2 ml-4">Mode de gestion</p>
           <v-radio-group v-model="canteen.managementType" :rules="[validators.required]">
@@ -364,6 +385,8 @@ export default {
         "Le numéro SIRET de la cuisine centrale ne peut pas être le même que celui de la cantine satellite.",
       productionTypes: Constants.ProductionTypesDetailed,
       economicModels: Constants.EconomicModels,
+      sectorCategory: null,
+      chosenSector: null,
       ministries: Constants.Ministries,
       centralKitchen: null,
     }
@@ -373,7 +396,25 @@ export default {
       return validators
     },
     sectors() {
-      return sectorsSelectList(this.$store.state.sectors)
+      return this.$store.state.sectors
+    },
+    filteredSectors() {
+      if (!this.sectorCategory) return []
+      return sectorsSelectList(this.sectors, this.sectorCategory)
+    },
+    sectorCategories() {
+      const displayValueMap = Constants.SectorCategoryTranslations
+      const categoriesInUse = this.sectors.map((s) => s.category)
+      const categories = categoriesInUse.map((c) => ({ value: c, text: displayValueMap[c] }))
+      categories.sort((a, b) => {
+        if (a.value === "autres" && b.value === "inconnu") return 0
+        else if (a.value === "autres") return 1
+        else if (a.value === "inconnu") return 1
+        else if (b.value === "autres") return -1
+        else if (b.value === "inconnu") return -1
+        return a.text.localeCompare(b.text)
+      })
+      return categories
     },
     isNewCanteen() {
       return !this.canteenUrlComponent
@@ -392,7 +433,7 @@ export default {
     showMinistryField() {
       const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
       if (concernedSectors.length === 0) return false
-      return this.canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
+      return this.canteen.sectors?.some((x) => concernedSectors.indexOf(x) > -1)
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
@@ -574,6 +615,20 @@ export default {
       this.canteen.cityInseeCode = location.cityInseeCode
       this.canteen.postalCode = location.postalCode
       this.canteen.department = location.department
+    },
+    sectorName(id) {
+      return this.sectors.find((s) => s.id === id)?.name || id
+    },
+    addSector(id) {
+      if (!id || id < 0) return
+      if (!this.canteen.sectors) this.canteen.sectors = []
+      if (this.canteen.sectors.indexOf(id) === -1) this.canteen.sectors.push(id)
+      this.$nextTick(() => {
+        this.chosenSector = null
+      })
+    },
+    removeSector(id) {
+      this.canteen.sectors?.splice(this.canteen.sectors?.indexOf(id), 1)
     },
   },
   beforeRouteLeave(to, from, next) {

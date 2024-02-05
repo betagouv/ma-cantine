@@ -413,8 +413,11 @@ export const formatDate = (dateString) => {
   return date.toLocaleString("fr", options)
 }
 
-export const sectorsSelectList = (sectors) => {
+export const sectorsSelectList = (sectors, category = null) => {
   sectors = JSON.parse(JSON.stringify(sectors))
+  if (category) {
+    sectors = sectors.filter((s) => s.category === category)
+  }
   const categories = sectors.map((s) => s.category)
   // unique filter : https://stackoverflow.com/a/14438954/3845770
   const uniqueCategories = categories.filter((c, idx, self) => c && self.indexOf(c) === idx)
