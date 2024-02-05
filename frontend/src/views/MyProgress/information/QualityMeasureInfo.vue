@@ -33,12 +33,23 @@
       Pour cela, vous avez besoin a minima de connaître la valeur totale de vos achats de l’année, et les valeurs
       totales d’achats bios, de qualité, et durables.
     </p>
+    <p>
+      Pour vous aider à vous préparer à la saisie de vos valeurs d'achat, télécharger notre guide qui liste les données
+      à saisir pour réaliser ce bilan.
+    </p>
+    <DownloadLink
+      href="/static/documents/Antisèche données d'achat - ma cantine.pdf"
+      label="Antisèche : Préparer la saisie de mes données d'achat"
+      sizeStr="642 Ko"
+      class="mt-4"
+    />
   </div>
 </template>
 
 <script>
 import { applicableDiagnosticRules } from "@/utils"
 import regions from "@/regions.json"
+import DownloadLink from "@/components/DownloadLink"
 
 export default {
   name: "QualityMeasureInfo",
@@ -48,6 +59,7 @@ export default {
       required: true,
     },
   },
+  components: { DownloadLink },
   computed: {
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
