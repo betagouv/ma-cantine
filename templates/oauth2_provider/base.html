@@ -51,8 +51,18 @@
         .container {
             margin-top: 64px;
         }
-        header img {
-            margin-top: 10px;
+        #home-logo-link {
+            display: flex;
+            padding: 5px 10px;
+            height: 100%;
+        }
+        #marianne {
+            object-fit: contain;
+            max-height: 80%;
+        }
+        #ma-cantine-logo {
+            object-fit: contain;
+            max-height: 80%;
         }
 
     </style>
@@ -61,8 +71,9 @@
 <body>
 
 <header>
-    <a href="/">
-        <img src="/static/images/header-logos-compact.svg" width="210px" alt="ma cantine logo">
+    <a href="/" aria-label="Ma cantine (aller à l'accueil) - Ministère de l'agriculture et de la souveraineté alimentaire" id="home-logo-link">
+        <img src="/static/images/Marianne.png" alt="" id="marianne" />
+        <img src="/static/images/ma-cantine-logo-light.jpg" alt="" id="ma-cantine-logo" />
     </a>
 </header>
 
