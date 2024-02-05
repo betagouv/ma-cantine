@@ -5,7 +5,7 @@
     <h2>Éditeur de la Plateforme</h2>
     <p>
       La Plateforme
-      <a href="/">https://ma-cantine.agriculture.gouv.fr/</a>
+      <router-link :to="{ name: 'LandingPage' }">https://ma-cantine.agriculture.gouv.fr/</router-link>
       est éditée par la Direction générale de l’alimentation du ministère de l’Agriculture et de la Souveraineté
       Alimentaire.
     </p>
@@ -27,7 +27,7 @@
     </p>
     <p>
       Pour en savoir plus sur la politique d’accessibilité numérique de l’État :
-      <a href="https://accessibilite.numerique.gouv.fr/">
+      <a rel="noopener" href="https://accessibilite.numerique.gouv.fr/">
         https://accessibilite.numerique.gouv.fr/
       </a>
       .
@@ -39,11 +39,11 @@
     <ul>
       <li>
         nous signaler par email :
-        <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
+        <a rel="noopener" href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
       </li>
       <li>
         créer une “issue” sur
-        <a href="https://github.com/betagouv/ma-cantine">le dépôt de code sur GitHub</a>
+        <a rel="noopener" href="https://github.com/betagouv/ma-cantine">le dépôt de code sur GitHub</a>
       </li>
     </ul>
     <p>
@@ -53,14 +53,14 @@
     <h2>Code source</h2>
     <p>
       Le code source est ouvert et les contributions sont bienvenues :
-      <a href="https://github.com/betagouv/ma-cantine">voir le code source</a>
+      <a rel="noopener" href="https://github.com/betagouv/ma-cantine">voir le code source</a>
       .
     </p>
 
     <h2>Signaler un dysfonctionnement ou une question</h2>
     <p>
       Envoyez-nous un courriel à
-      <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
+      <a rel="noopener" href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
       .
     </p>
   </div>
