@@ -27,7 +27,7 @@
         </div>
         <div class="mt-n1">
           <p class="my-0 fr-text-sm grey--text text--darken-1">Commune</p>
-          <p class="my-0">{{ canteen.city || "—" }}</p>
+          <p class="my-0">{{ canteen.city && canteen.cityInseeCode ? canteen.city : "—" }}</p>
         </div>
       </v-col>
     </v-row>
