@@ -903,26 +903,26 @@ class CanteenStatisticsView(APIView):
         departments = request.query_params.getlist("department")
         sector_categories = request.query_params.getlist("sectors")
         epcis = request.query_params.getlist("epci")
-        postal_codes = None
+        city_insee_codes = None
         year = request.query_params.get("year")
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
 
         data = {}
         try:
-            postal_codes = CanteenStatisticsView._get_postal_codes(epcis)
+            city_insee_codes = CanteenStatisticsView._get_city_insee_codes(epcis)
         except Exception as e:
-            logger.warning(f"Error when fetching postcodes for EPCI for canteen stats: {str(e)}")
+            logger.warning(f"Error when fetching INSEE codes for EPCI for canteen stats: {str(e)}")
             data["epci_error"] = "Une erreur est survenue"
 
-        canteens = CanteenStatisticsView._filter_canteens(regions, departments, postal_codes, sector_categories)
+        canteens = CanteenStatisticsView._filter_canteens(regions, departments, city_insee_codes, sector_categories)
         data["canteen_count"] = canteens.count()
         data["published_canteen_count"] = canteens.filter(
             publication_status=Canteen.PublicationStatus.PUBLISHED
         ).count()
 
         diagnostics = CanteenStatisticsView._filter_diagnostics(
-            year, regions, departments, postal_codes, sector_categories
+            year, regions, departments, city_insee_codes, sector_categories
         )
 
         appro_share_query = diagnostics.filter(value_total_ht__gt=0)
@@ -972,20 +972,20 @@ class CanteenStatisticsView(APIView):
         data["sector_categories"] = sector_categories
         return JsonResponse(camelize(data), status=status.HTTP_200_OK)
 
-    def _get_postal_codes(epcis):
-        postal_codes = []
+    def _get_city_insee_codes(epcis):
+        city_insee_codes = []
         for e in epcis:
-            response = requests.get(f"https://geo.api.gouv.fr/epcis/{e}/communes?fields=codesPostaux", timeout=5)
+            response = requests.get(f"https://geo.api.gouv.fr/epcis/{e}/communes?fields=code", timeout=5)
             response.raise_for_status()
             body = response.json()
             for commune in body:
-                postal_codes += commune["codesPostaux"]
-        return postal_codes
+                city_insee_codes.append(commune["code"])
+        return city_insee_codes
 
-    def _filter_canteens(regions, departments, postal_codes, sectors):
+    def _filter_canteens(regions, departments, city_insee_codes, sectors):
         canteens = Canteen.objects
-        if postal_codes:
-            canteens = canteens.filter(postal_code__in=postal_codes)
+        if city_insee_codes:
+            canteens = canteens.filter(city_insee_code__in=city_insee_codes)
         elif departments:
             canteens = canteens.filter(department__in=departments)
         elif regions:
@@ -995,10 +995,10 @@ class CanteenStatisticsView(APIView):
             canteens = canteens.filter(sectors__in=sectors)
         return canteens.distinct()
 
-    def _filter_diagnostics(year, regions, departments, postal_codes, sectors):
+    def _filter_diagnostics(year, regions, departments, city_insee_codes, sectors):
         diagnostics = Diagnostic.objects.filter(year=year)
-        if postal_codes:
-            diagnostics = diagnostics.filter(canteen__postal_code__in=postal_codes)
+        if city_insee_codes:
+            diagnostics = diagnostics.filter(canteen__city_insee_code__in=city_insee_codes)
         elif departments:
             diagnostics = diagnostics.filter(canteen__department__in=departments)
         elif regions:
@@ -1261,6 +1261,7 @@ class ActionableCanteensListView(ListAPIView):
             | Q(siret="")
             | Q(name=None)
             | Q(city_insee_code=None)
+            | Q(city_insee_code="")
             | Q(production_type=None)
             | Q(management_type=None)
             | Q(economic_model=None)
