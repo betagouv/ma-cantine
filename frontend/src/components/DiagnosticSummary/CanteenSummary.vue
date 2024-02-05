@@ -52,6 +52,10 @@
         <div class="mt-n1">
           <p class="my-0 fr-text-sm grey--text text--darken-1">Secteur d'activité</p>
           <p class="my-0">{{ sectors || "—" }}</p>
+          <div v-if="lineMinistryRequired">
+            <p class="my-0 mt-2 fr-text-sm grey--text text--darken-1">Ministère de tutelle</p>
+            <p class="my-0">{{ lineMinistry || "—" }}</p>
+          </div>
           <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Type d'établissement</p>
           <p class="my-0">{{ economicModel || "—" }}</p>
         </div>
@@ -119,7 +123,7 @@
 <script>
 import DsfrCallout from "@/components/DsfrCallout"
 import Constants from "@/constants"
-import { lastYear, sectorDisplayString, hasSatelliteInconsistency } from "@/utils"
+import { lastYear, sectorDisplayString, hasSatelliteInconsistency, lineMinistryRequired } from "@/utils"
 
 export default {
   name: "CanteenSummary",
@@ -150,6 +154,15 @@ export default {
     },
     sectors() {
       return sectorDisplayString(this.canteen.sectors, this.$store.state.sectors)
+    },
+    lineMinistryRequired() {
+      return lineMinistryRequired(this.canteen, this.$store.state.sectors)
+    },
+    lineMinistry() {
+      if (!this.canteen.lineMinistry) return
+      const allMinistries = Constants.Ministries
+      const ministry = allMinistries.find((m) => m.value === this.canteen.lineMinistry)
+      return ministry?.text
     },
     economicModel() {
       const managementType = Constants.EconomicModels.find((x) => x.value === this.canteen.economicModel)
