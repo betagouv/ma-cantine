@@ -164,7 +164,7 @@
                     >
                       {{ getCharacteristicDisplayText(characteristic) }}
                       <span v-if="disabledForFamily(characteristic)">
-                        &nbsp;(pas applicable pour la famille de produit choisie)
+                        &nbsp;(non applicable)
                       </span>
                     </span>
                   </template>
