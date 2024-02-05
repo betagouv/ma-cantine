@@ -413,7 +413,7 @@ export const formatDate = (dateString) => {
   return date.toLocaleString("fr", options)
 }
 
-export const sectorsSelectList = (sectors, category) => {
+export const sectorsSelectList = (sectors, category = null) => {
   sectors = JSON.parse(JSON.stringify(sectors))
   if (category) {
     sectors = sectors.filter((s) => s.category === category)
