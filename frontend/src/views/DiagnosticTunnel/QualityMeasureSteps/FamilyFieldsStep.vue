@@ -35,30 +35,36 @@
     <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <v-row>
       <v-col v-for="(family, fId) in families" :key="fId" cols="12" md="6" class="py-2">
-        <label :for="fId" class="fr-text">
+        <label :for="fId" :class="`fr-text ${!validFamily(fId) ? 'grey--text text--darken-1' : ''}`">
           {{ family.text }}
         </label>
-
-        <DsfrCurrencyField
-          :id="fId"
-          :rules="[
-            validators.nonNegativeOrEmpty,
-            validators.decimalPlaces(2),
-            validators.lteOrEmpty(payload.valueTotalHt),
-          ]"
-          solo
-          v-model.number="payload[diagnosticKey(fId)]"
-          @blur="fieldUpdate(diagnosticKey(fId))"
-          class="mt-2"
-          :error="fieldHasError(diagnosticKey(fId))"
-        />
-        <PurchaseHint
-          v-if="displayPurchaseHints"
-          v-model="payload[diagnosticKey(fId)]"
-          :purchaseType="family.shortText + ' pour cette caractéristique'"
-          :amount="purchasesSummary[diagnosticKey(fId)]"
-          @autofill="fieldUpdate(diagnosticKey(fId))"
-        />
+        <div v-if="validFamily(fId)">
+          <DsfrCurrencyField
+            :id="fId"
+            :rules="[
+              validators.nonNegativeOrEmpty,
+              validators.decimalPlaces(2),
+              validators.lteOrEmpty(payload.valueTotalHt),
+            ]"
+            solo
+            v-model.number="payload[diagnosticKey(fId)]"
+            @blur="fieldUpdate(diagnosticKey(fId))"
+            class="mt-2"
+            :error="fieldHasError(diagnosticKey(fId))"
+            :disabled="!validFamily(fId)"
+            :readonly="!validFamily(fId)"
+          />
+          <PurchaseHint
+            v-if="displayPurchaseHints && validFamily(fId)"
+            v-model="payload[diagnosticKey(fId)]"
+            :purchaseType="family.shortText + ' pour cette caractéristique'"
+            :amount="purchasesSummary[diagnosticKey(fId)]"
+            @autofill="fieldUpdate(diagnosticKey(fId))"
+          />
+        </div>
+        <p v-else class="fr-text-sm grey--text text--darken-1 mt-2">
+          Non applicable
+        </p>
       </v-col>
     </v-row>
   </div>
@@ -142,6 +148,10 @@ export default {
         this.meatTotalErrorMessage,
         this.fishTotalErrorMessage,
       ].filter((x) => !!x)
+    },
+    possibleFamilies() {
+      const exceptions = Constants.CharacteristicFamilyExceptions[this.characteristicId]
+      return Object.keys(this.families).filter((id) => exceptions.indexOf(id) === -1)
     },
   },
   methods: {
@@ -344,6 +354,9 @@ export default {
         return `Le total ${familyText}${characteristicText}(${problemValue}) excède le total ${familyText}saisi ${stepText}(${totalValue})`
       }
       return `Les montants détaillés ${familyText}(${problemValue}) excédent le total ${familyText}saisi ${stepText}(${totalValue})`
+    },
+    validFamily(id) {
+      return this.possibleFamilies.indexOf(id) > -1
     },
   },
   mounted() {

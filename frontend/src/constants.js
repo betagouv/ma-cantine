@@ -330,6 +330,26 @@ export default Object.freeze({
       ],
     },
   },
+  CharacteristicFamilyExceptions: {
+    BIO: [],
+    LABEL_ROUGE: ["BOISSONS"],
+    AOCAOP_IGP_STG: ["VIANDES_VOLAILLES"],
+    HVE: ["AUTRES", "BOISSONS"],
+    PECHE_DURABLE: [
+      "FRUITS_ET_LEGUMES",
+      "CHARCUTERIE",
+      "VIANDES_VOLAILLES",
+      "PRODUITS_LAITIERS",
+      "BOULANGERIE",
+      "AUTRES",
+      "BOISSONS",
+    ],
+    RUP: ["PRODUITS_DE_LA_MER"],
+    COMMERCE_EQUITABLE: [],
+    FERMIER: ["FRUITS_ET_LEGUMES", "PRODUITS_DE_LA_MER", "BOULANGERIE", "AUTRES", "BOISSONS"],
+    EXTERNALITES: [],
+    PERFORMANCE: [],
+  },
   TrackingParams: ["mtm_source", "mtm_campaign", "mtm_medium"],
   Jobs: [
     {
