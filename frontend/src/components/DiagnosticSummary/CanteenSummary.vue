@@ -39,6 +39,15 @@
         <div class="mt-n1">
           <p class="my-0 fr-text-sm grey--text text--darken-1">Type de production</p>
           <p class="my-0">{{ productionType || "—" }}</p>
+          <div v-if="isSatellite">
+            <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">SIRET de la cuisine centrale</p>
+            <p class="my-0">
+              <span v-if="canteen.centralKitchen && canteen.centralKitchen.name">
+                « {{ canteen.centralKitchen.name }} » :
+              </span>
+              {{ canteen.centralProducerSiret || "—" }}
+            </p>
+          </div>
           <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Mode de gestion</p>
           <p class="my-0">{{ managementType || "—" }}</p>
         </div>
@@ -170,6 +179,9 @@ export default {
     },
     hasSite() {
       return this.canteen.productionType !== "central"
+    },
+    isSatellite() {
+      return this.canteen?.productionType === "site_cooked_elsewhere"
     },
     inTeledeclarationCampaign() {
       return window.ENABLE_TELEDECLARATION
