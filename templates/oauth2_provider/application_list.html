@@ -4,6 +4,9 @@
 {% block content %}
     <div class="block-center">
         <h3 class="block-center-heading">{% trans "Your applications" %}</h3>
+
+        {% include "./prod_warning.html" %}
+
         {% if applications %}
             <ul>
                 {% for application in applications %}

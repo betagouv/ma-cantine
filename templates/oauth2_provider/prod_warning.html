@@ -1,0 +1,13 @@
+{% load environment %}
+
+{% environment as env %}
+{% if env == "prod" %}
+    <p>Vous êtes dans l'environnement de <b>production</b> de <i>ma cantine</i>.</p>
+    <p>
+        Si vous êtes en train de tester votre intégration, veuillez utiliser
+        <a href="https://ma-cantine-demo.cleverapps.io">notre site démo</a>
+        pour ne pas embrouiller notre base de données.
+    </p>
+{% elif env == "demo" %}
+    <p>Vous êtes dans l'environnement de <b>démo</b> de <i>ma cantine</i>.</p>
+{% endif %}
