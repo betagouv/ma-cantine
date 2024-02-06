@@ -1,14 +1,14 @@
 <template>
   <div class="fr-text">
-    <p class="my-0 fr-text-sm grey--text text--darken-1">Nom de la cantine</p>
-    <p class="mt-1 mb-4 font-weight-bold">{{ canteen.name }}</p>
     <v-row>
       <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
         <div class="mx-8">
           <v-icon color="primary" x-large>$file-line</v-icon>
         </div>
         <div class="mt-n1">
-          <p class="my-0 fr-text-sm grey--text text--darken-1">SIRET</p>
+          <p class="my-0 fr-text-sm grey--text text--darken-1">Nom de la cantine</p>
+          <p class="my-0">{{ canteen.name }}</p>
+          <p class="my-0 fr-text-sm grey--text text--darken-1 mt-2">SIRET</p>
           <p class="my-0">{{ canteen.siret || "—" }}</p>
         </div>
       </v-col>
