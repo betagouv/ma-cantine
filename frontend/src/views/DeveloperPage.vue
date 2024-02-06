@@ -12,11 +12,21 @@
       </v-btn>
     </div>
     <div v-else-if="loggedUser.isDev">
-      <p>Sur cette page vous pouvez gérer vos applications et consulter la documentation de notre API.</p>
-      <p>
-        Vous pouvez aussi
-        <a @click="toggleDevMode(false)" text>désactiver le mode développeur de votre compte</a>
-        .
+      <p v-if="env === 'prod'">
+        Vous êtes dans l'environnement de
+        <b>production</b>
+        de
+        <i>ma cantine</i>
+        . Veuillez utiliser
+        <a href="https://ma-cantine-demo.cleverapps.io">le site démo</a>
+        pour les tests.
+      </p>
+      <p v-else-if="env === 'demo'">
+        Vous êtes dans l'environnement de
+        <b>démo</b>
+        de
+        <i>ma cantine</i>
+        . Ici vous pouvez envoyer des données fausses pour les tests.
       </p>
       <v-row class="mt-6">
         <v-col cols="12" sm="6">
@@ -62,6 +72,11 @@
         </a>
         . L'application est basée sur Python/Flask et utilise les APIs ma cantine.
       </p>
+      <p>
+        Cette page ne vous parle pas ?
+        <a @click="toggleDevMode(false)" text>Désactiver le mode développeur de votre compte</a>
+        .
+      </p>
       <v-divider class="my-10"></v-divider>
 
       <h2 class="text-h6 font-weight-black mt-10 mb-6">Une question ? Contactez-nous</h2>
@@ -94,6 +109,9 @@ export default {
   computed: {
     loggedUser() {
       return this.$store.state.loggedUser
+    },
+    env() {
+      return window.ENVIRONMENT
     },
   },
   methods: {
