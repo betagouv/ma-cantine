@@ -1,16 +1,21 @@
 <template>
   <div class="mt-n4">
     <div class="d-flex mb-4 align-center">
-      <LogoBio v-if="characteristicId === 'BIO'" />
-      <div v-else v-for="label in qualityLabels(characteristicId)" :key="label.title || label.icon">
+      <LogoBio v-if="characteristicId === 'BIO'" style="max-height: 30px;" />
+      <div
+        v-else
+        v-for="label in qualityLabels(characteristicId)"
+        :key="label.title || label.icon"
+        class="d-flex flex-column justify-center"
+      >
         <img
           v-if="label.src"
           :src="`/static/images/quality-labels/${label.src}`"
           :alt="label.title"
           :title="label.title"
-          style="max-height: 40px;"
+          style="max-height: 30px;"
         />
-        <v-icon class="mt-n1" :color="label.color" v-else-if="label.icon" size="44">
+        <v-icon class="mt-n1" :color="label.color" v-else-if="label.icon" size="30">
           {{ label.icon }}
         </v-icon>
       </div>
