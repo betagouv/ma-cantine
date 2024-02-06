@@ -1,0 +1,58 @@
+{% load static %}
+<h3>Information des usagers et convives</h3>
+<div>
+{% if communicates_on_food_plan %}
+<p>
+    <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+    Communique sur le plan alimentaire
+</p>
+{% else %}
+<p>
+    <img src="{% static '../../../web/static/images/close-outline.png' %}" height="14" width="14" />
+    Ne communique pas sur le plan alimentaire
+</p>
+{% endif %}
+</div>
+
+{% if communication_frequency %}
+<div>
+    <p>
+        <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+        Fréquence de cette communication : {{ communication_frequency }}
+    </p>
+</div>
+{% endif %}
+
+{% if communication_supports %}
+<div>
+    <p>
+        <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+        L'information sur la qualité des approvisionnements se fait :
+    </p>
+    <ul>
+        {% for support in communication_supports %}
+        <li>{{ support }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<p>
+{% if communicates_on_food_quality %}
+<img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+Communique sur les démarches qualité/durables/équitables
+{% else %}
+<img src="{% static '../../../web/static/images/close-outline.png' %}" height="14" width="14" />
+Ne communique pas sur les démarches qualité/durables/équitables
+{% endif %}
+</p>
+
+{% if communication_support_url %}
+<p>
+    <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+    Lien vers le support de communication :
+    <a href="{{ communication_support_url }}">
+        {{ communication_support_url }}
+    </a>
+</p>
+{% endif %}

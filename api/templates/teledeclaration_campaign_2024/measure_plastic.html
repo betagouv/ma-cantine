@@ -1,0 +1,57 @@
+{% load static %}
+<h3>Substitution des plastiques</h3>
+<div>
+{% if cooking_plastic_substituted %}
+<p>
+    <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+    Contenants de cuisson en plastique remplacés
+</p>
+{% else %}
+<p>
+    <img src="{% static '../../../web/static/images/close-outline.png' %}" height="14" width="14" />
+    Contenants de cuisson en plastique non remplacés
+</p>
+{% endif %}
+
+</div>
+<div>
+{% if serving_plastic_substituted %}
+<p>
+    <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+    Contenants de service en plastique remplacés
+</p>
+{% else %}
+<p>
+    <img src="{% static '../../../web/static/images/close-outline.png' %}" height="14" width="14" />
+    Contenants de service en plastique non remplacés
+</p>
+{% endif %}
+</div>
+
+<div>
+{% if plastic_bottles_substituted %}
+<p>
+    <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+    Bouteilles en plastique remplacées
+</p>
+{% else %}
+<p>
+    <img src="{% static '../../../web/static/images/close-outline.png' %}" height="14" width="14" />
+    Bouteilles en plastique non remplacées
+</p>
+{% endif %}
+</div>
+
+<div>
+{% if plastic_tableware_substituted %}
+<p>
+    <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+    Ustensils en plastique remplacés
+</p>
+{% else %}
+<p>
+    <img src="{% static '../../../web/static/images/close-outline.png' %}" height="14" width="14" />
+    Ustensils en plastique non remplacés
+</p>
+{% endif %}
+</div>
