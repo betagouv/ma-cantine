@@ -1,7 +1,7 @@
 <template>
   <div class="tunnel text-left d-flex flex-column my-n5" ref="container" v-resize="onResize" style="width: 100%">
     <div class="header px-2">
-      <v-row class="mx-auto constrained align-center my-1 my-sm-3">
+      <v-row class="mx-auto py-xl-2 constrained align-center my-1 my-sm-3">
         <v-col cols="9" class="py-4 d-flex pl-0 ml-n4" v-if="$vuetify.breakpoint.smAndUp">
           <div v-for="tunnel in tunnels" :key="tunnel.id" class="px-4 header-icon">
             <div v-if="tunnel.id === measure.id" class="d-flex align-center my-1">
@@ -67,7 +67,7 @@
         <SummaryWrapper :measure="measure" :canteen="canteen" :diagnostic="diagnostic" />
       </div>
     </div>
-    <div class="footer pa-4 pr-14 d-flex mx-auto constrained align-center" style="width: 100%">
+    <div class="footer pa-4 pr-14 pr-xl-0 py-xl-8 d-flex mx-auto constrained align-center" style="width: 100%">
       <div v-if="step && step.isSynthesis && nextTunnelTitle && $vuetify.breakpoint.smAndUp" cols="5">
         <p class="fr-text-xs grey--text text--darken-2 mb-0">
           Onglet suivant :
