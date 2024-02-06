@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-n4">
+  <div>
     <div class="d-flex mb-4 align-center">
       <LogoBio v-if="characteristicId === 'BIO'" style="max-height: 30px;" />
       <div
@@ -21,20 +21,20 @@
       </div>
       <h2 class="ml-4">{{ characteristicName }}</h2>
     </div>
-    <p v-if="groupId === 'egalim'">
+    <p v-if="groupId === 'egalim'" class="fr-text-sm">
       <strong>Produit ayant plusieurs labels</strong>
       : la valeur d’achat ne pourra être comptée que dans une seule des catégories. Par exemple, un produit à la fois
       biologique et label rouge ne sera comptabilisé que dans la catégorie « bio ».
       <!-- TODO: list of prioritisation ? -->
     </p>
-    <p v-else-if="groupId === 'nonEgalim'">
+    <p v-else-if="groupId === 'nonEgalim'" class="fr-text-sm">
       Merci de renseigner les montants des produits hors EGAlim
     </p>
-    <p v-else-if="groupId === 'outsideLaw'">
+    <p v-else-if="groupId === 'outsideLaw'" class="fr-text-sm">
       Ici, vous pouvez affecter le produit dans plusieurs caractéristiques. Par exemple, un produit à la fois biologique
       et local pourra être comptabilisé dans les deux champs « bio » et « local ».
     </p>
-    <p v-if="characteristicId === 'LOCAL'">
+    <p v-if="characteristicId === 'LOCAL'" class="fr-text-sm">
       Suivant votre propre définition de « local ».
     </p>
     <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />

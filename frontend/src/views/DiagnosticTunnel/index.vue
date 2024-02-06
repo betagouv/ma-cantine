@@ -44,7 +44,7 @@
       ref="stepWrapper"
     >
       <v-spacer />
-      <div class="mx-auto constrained px-4 py-10" style="width: 100%">
+      <div class="mx-auto constrained px-4 py-2" style="width: 100%">
         <component
           :is="`${measure.baseComponent}Steps`"
           :canteen="canteen"
