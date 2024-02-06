@@ -155,7 +155,7 @@ export default {
       ].filter((x) => !!x)
     },
     possibleFamilies() {
-      const exceptions = Constants.CharacteristicFamilyExceptions[this.characteristicId]
+      const exceptions = Constants.CharacteristicFamilyExceptions[this.characteristicId] || []
       return Object.keys(this.families).filter((id) => exceptions.indexOf(id) === -1)
     },
   },
