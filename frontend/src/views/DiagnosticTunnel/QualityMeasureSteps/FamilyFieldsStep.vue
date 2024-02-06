@@ -8,7 +8,7 @@
           :src="`/static/images/quality-labels/${label.src}`"
           :alt="label.title"
           :title="label.title"
-          style="max-width: 50px;"
+          style="max-height: 40px;"
         />
         <v-icon class="mt-n1" :color="label.color" v-else-if="label.icon" size="44">
           {{ label.icon }}
