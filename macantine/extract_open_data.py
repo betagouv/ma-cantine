@@ -1,6 +1,5 @@
 import pandas as pd
 import datetime
-import math
 import logging
 import requests
 import json
@@ -22,6 +21,7 @@ logger = logging.getLogger(__name__)
 CAMPAIGN_DATES = {
     2021: {"start_date": datetime.date(2022, 7, 16), "end_date": datetime.date(2022, 12, 5)},
     2022: {"start_date": datetime.date(2023, 2, 13), "end_date": datetime.date(2023, 6, 30)},
+    2023: {"start_date": datetime.date(2024, 1, 9), "end_date": datetime.date(2024, 3, 30)},
 }
 
 
@@ -37,7 +37,7 @@ def map_epcis_communes():
         communes = response.json()
         for commune in communes:
             try:
-                epcis[commune['code']] = commune['codeEpci']  # Caching the data
+                epcis[commune["code"]] = commune["codeEpci"]  # Caching the data
             except KeyError:  # This commune doesn't have an EPCI code
                 pass
     except requests.exceptions.HTTPError as e:
@@ -52,22 +52,23 @@ def map_canteens_td(year):
     """
     # Check and fetch Teledeclaration data from the database
     tds = Teledeclaration.objects.filter(
-            year=year,
-            creation_date__range=(
-                CAMPAIGN_DATES[year]["start_date"],
-                CAMPAIGN_DATES[year]["end_date"],
-            ),
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-        ).values("canteen_id", "declared_data")
+        year=year,
+        creation_date__range=(
+            CAMPAIGN_DATES[year]["start_date"],
+            CAMPAIGN_DATES[year]["end_date"],
+        ),
+        status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+    ).values("canteen_id", "declared_data")
 
     # Populate the mapper for the given year
     participation = []
     for td in tds:
-        participation.append(td['canteen_id']) 
-        if 'satellites' in td['declared_data']:
-            for satellite in td['declared_data']['satellites']:
-                participation.append(satellite['id'])
+        participation.append(td["canteen_id"])
+        if "satellites" in td["declared_data"]:
+            for satellite in td["declared_data"]["satellites"]:
+                participation.append(satellite["id"])
     return participation
+
 
 def map_sectors():
     """
@@ -77,8 +78,9 @@ def map_sectors():
     sectors_mapper = {}
     for sector in sectors:
         sector = camelize(SectorSerializer(sector).data)
-        sectors_mapper[sector['id']] = sector
+        sectors_mapper[sector["id"]] = sector
     return sectors_mapper
+
 
 def fetch_epci(code_insee_commune, epcis):
     """
@@ -88,6 +90,7 @@ def fetch_epci(code_insee_commune, epcis):
         return epcis[code_insee_commune]
     else:
         return None
+
 
 def fetch_sector(sector_id, sectors):
     """
@@ -132,11 +135,11 @@ class ETL(ABC):
             self._fill_geo_name(geo_zoom=geo)
             col_geo = self.df.pop(f"{geo}_lib")
             self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
-        if 'city_insee_code' in self.df.columns:
+        if "city_insee_code" in self.df.columns:
             epcis = map_epcis_communes()
-            self.df['epci'] = self.df['city_insee_code'].apply(lambda x: fetch_epci(x, epcis))
+            self.df["epci"] = self.df["city_insee_code"].apply(lambda x: fetch_epci(x, epcis))
         else:
-            self.df['epci'] = None
+            self.df["epci"] = None
 
     def _clean_dataset(self):
         columns = [i["name"].replace("canteen_", "canteen.") for i in self.schema["fields"]]
@@ -199,7 +202,7 @@ class ETL(ABC):
     def export_dataset(self, stage="to_validate"):
         if stage == "to_validate":
             filename = f"open_data/{self.dataset_name}_to_validate.csv"
-        elif stage == 'validated':
+        elif stage == "validated":
             filename = f"open_data/{self.dataset_name}.csv"
         else:
             return 0
@@ -219,7 +222,15 @@ class ETL_CANTEEN(ETL):
     def extract_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
         canteens_col_from_db = all_canteens_col.copy()
-        for col_processed in ['active_on_ma_cantine', 'department_lib', 'region_lib', 'epci', 'declaration_donnees_2021']:
+        for col_processed in [
+            "active_on_ma_cantine",
+            "department_lib",
+            "region_lib",
+            "epci",
+            "declaration_donnees_2021",
+            "declaration_donnees_2022",
+            "declaration_donnees_2023_en_cours",
+        ]:
             canteens_col_from_db.remove(col_processed)
 
         exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
@@ -227,7 +238,7 @@ class ETL_CANTEEN(ETL):
         start = time.time()
         canteens = Canteen.objects.exclude(exclude_filter)
         end = time.time()
-        logger.info(f'Time spent on canteens extraction : {end - start}')
+        logger.info(f"Time spent on canteens extraction : {end - start}")
         if canteens.count() == 0:
             return pd.DataFrame(columns=canteens_col_from_db)
 
@@ -238,7 +249,7 @@ class ETL_CANTEEN(ETL):
         start = time.time()
         non_active_canteens = Canteen.objects.filter(managers=None).values_list("id", flat=True)
         end = time.time()
-        logger.info(f'Time spent on active canteens : {end - start}')
+        logger.info(f"Time spent on active canteens : {end - start}")
         self.df["active_on_ma_cantine"] = self.df["id"].apply(lambda x: x not in non_active_canteens)
 
         logger.info("Canteens : Extract sectors...")
@@ -255,15 +266,19 @@ class ETL_CANTEEN(ETL):
         start = time.time()
         self.transform_geo_data(geo_col_names=["department", "region"])
         end = time.time()
-        logger.info(f'Time spent on geo data : {end - start}')
+        logger.info(f"Time spent on geo data : {end - start}")
 
         logger.info("Canteens : Fill campaign participations...")
         start = time.time()
-        for year in [2021]:
+        for year in [2021, 2022, 2023]:
             campaign_participation = map_canteens_td(year)
-            self.df['declaration_donnees_2021'] = self.df['id'].apply(lambda x: x in campaign_participation)
+            if year == 2023:
+                col_name_campaign = f"declaration_donnees_{year}_en_cours"
+            else:
+                col_name_campaign = f"declaration_donnees_{year}"
+            self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
         end = time.time()
-        logger.info(f'Time spent on campaign participations : {end - start}')
+        logger.info(f"Time spent on campaign participations : {end - start}")
 
 
 class ETL_TD(ETL):
@@ -298,7 +313,7 @@ class ETL_TD(ETL):
         else:
             logger.warning(f"TD campagne dataset does not exist for year : {self.year}")
             return pd.DataFrame()
-    
+
         if len(self.df) == 0:
             logger.warning(f"TD campagne dataset is empty for year : {self.year}")
             return pd.DataFrame()
@@ -346,6 +361,6 @@ class ETL_TD(ETL):
         """
         Filtering the sectors of the police and army so they do not appear publicly
         """
-        canteens_to_filter = Canteen.objects.filter(sectors__name='Restaurants des armées / police / gendarmerie')
+        canteens_to_filter = Canteen.objects.filter(sectors__name="Restaurants des armées / police / gendarmerie")
         canteens_id_to_filter = [canteen.id for canteen in canteens_to_filter]
         self.df = self.df[~self.df["canteen_id"].isin(canteens_id_to_filter)]

@@ -57,6 +57,7 @@
             {{ siret || canteen.siret }}
             <v-btn small @click="goToStep(0)">Modifier</v-btn>
           </p>
+
           <DsfrTextField
             hide-details="auto"
             label="Nom de la cantine"
@@ -64,7 +65,20 @@
             validate-on-blur
             v-model="canteen.name"
             labelClasses="body-2 mb-2"
+            aria-describedby="name-description"
           />
+
+          <div class="mt-3 mb-6">
+            <DsfrCallout>
+              <p class="ma-0 body-2" id="name-description">
+                Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par
+                exemple :
+                <span class="font-italic">
+                  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne...
+                </span>
+              </p>
+            </DsfrCallout>
+          </div>
 
           <p class="body-2 mt-4 mb-2">Ville</p>
           <CityField :location="canteen" :rules="[validators.required]" @locationUpdate="setLocation" />

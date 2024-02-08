@@ -1,35 +1,40 @@
 <template>
-  <div class="mt-n4">
+  <div>
     <div class="d-flex mb-4 align-center">
-      <LogoBio v-if="characteristicId === 'BIO'" />
-      <div v-else v-for="label in qualityLabels(characteristicId)" :key="label.title || label.icon">
+      <LogoBio v-if="characteristicId === 'BIO'" style="max-height: 30px;" />
+      <div
+        v-else
+        v-for="label in qualityLabels(characteristicId)"
+        :key="label.title || label.icon"
+        class="d-flex flex-column justify-center"
+      >
         <img
           v-if="label.src"
           :src="`/static/images/quality-labels/${label.src}`"
           :alt="label.title"
           :title="label.title"
-          style="max-width: 50px;"
+          style="max-height: 30px;"
         />
-        <v-icon class="mt-n1" :color="label.color" v-else-if="label.icon" size="44">
+        <v-icon class="mt-n1" :color="label.color" v-else-if="label.icon" size="30">
           {{ label.icon }}
         </v-icon>
       </div>
       <h2 class="ml-4">{{ characteristicName }}</h2>
     </div>
-    <p v-if="groupId === 'egalim'">
+    <p v-if="groupId === 'egalim'" class="fr-text-sm">
       <strong>Produit ayant plusieurs labels</strong>
       : la valeur d’achat ne pourra être comptée que dans une seule des catégories. Par exemple, un produit à la fois
       biologique et label rouge ne sera comptabilisé que dans la catégorie « bio ».
       <!-- TODO: list of prioritisation ? -->
     </p>
-    <p v-else-if="groupId === 'nonEgalim'">
+    <p v-else-if="groupId === 'nonEgalim'" class="fr-text-sm">
       Merci de renseigner les montants des produits hors EGAlim
     </p>
-    <p v-else-if="groupId === 'outsideLaw'">
+    <p v-else-if="groupId === 'outsideLaw'" class="fr-text-sm">
       Ici, vous pouvez affecter le produit dans plusieurs caractéristiques. Par exemple, un produit à la fois biologique
       et local pourra être comptabilisé dans les deux champs « bio » et « local ».
     </p>
-    <p v-if="characteristicId === 'LOCAL'">
+    <p v-if="characteristicId === 'LOCAL'" class="fr-text-sm">
       Suivant votre propre définition de « local ».
     </p>
     <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
@@ -150,7 +155,7 @@ export default {
       ].filter((x) => !!x)
     },
     possibleFamilies() {
-      const exceptions = Constants.CharacteristicFamilyExceptions[this.characteristicId]
+      const exceptions = Constants.CharacteristicFamilyExceptions[this.characteristicId] || []
       return Object.keys(this.families).filter((id) => exceptions.indexOf(id) === -1)
     },
   },
