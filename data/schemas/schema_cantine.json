@@ -156,7 +156,9 @@
     },
     {
       "description": "Liste définissant les secteurs d'activités de la cantine. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
-      "example": ["{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}"],
+      "example": [
+        "{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}"
+      ],
       "name": "sectors",
       "title": "Secteurs",
       "type": "array"
@@ -173,6 +175,20 @@
       "example": "true",
       "name": "declaration_donnees_2021",
       "title": "A téléclaré en 2022 sur les données 2021",
+      "type": "boolean"
+    },
+    {
+      "description": "A télédéclaré ses données lors de campagne 2023 (portant sur les données 2022)",
+      "example": "true",
+      "name": "declaration_donnees_2022",
+      "title": "A téléclaré en 2023 sur les données 2022",
+      "type": "boolean"
+    },
+    {
+      "description": "A télédéclaré ses données lors de campagne 2024 (portant sur les données 2023). Cette campagne est encore en cours. Les données peuvent donc évoluer",
+      "example": "true",
+      "name": "declaration_donnees_2023_en_cours",
+      "title": "A téléclaré en 2024 sur les données 2023",
       "type": "boolean"
     },
     {
