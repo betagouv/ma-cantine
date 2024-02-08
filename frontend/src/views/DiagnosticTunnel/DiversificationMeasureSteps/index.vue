@@ -153,8 +153,9 @@ export default {
       this.$emit("update-payload", { payload: this.payload, formIsValid: true })
     },
     initialisePayload() {
-      this.payload = {}
-      this.fields.forEach((f) => (this.payload[f] = this.diagnostic[f]))
+      const payload = {}
+      this.fields.forEach((f) => (payload[f] = this.diagnostic[f]))
+      this.$set(this, "payload", payload)
     },
     calulateSteps() {
       const steps = [
