@@ -6,7 +6,7 @@
         :diagnostic="diagnostic"
         :fields="fields"
         @tunnel-autofill="onTunnelAutofill"
-        class="mb-16"
+        class="mb-xs-6 mb-xl-16"
       />
       <fieldset>
         <legend class="my-3">
