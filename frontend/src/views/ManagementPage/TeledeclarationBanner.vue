@@ -2,13 +2,13 @@
   <v-card color="primary lighten-4" elevation="1" shaped class="d-flex align-center">
     <div>
       <v-card-title class="text-body-1 font-weight-bold">
-        <p class="mb-0">CAMPAGNE DE TELEDECLARATION 2023 : du 9 janvier au 31 mars 2024</p>
+        <p class="mb-0">CAMPAGNE DE TELEDECLARATION 2024 : du 9 janvier au 31 mars 2024</p>
       </v-card-title>
       <v-card-text class="pb-0">
         <p class="mb-0">
-          Dans votre espace cantine, remplissez votre diagnostic 2023 et télédéclarez vos données (arrêté ministériel du
-          14 septembre 2022 - en cours de modification). L'objectif : établir un bilan de suivi des mesures EGAlim
-          permettant de mieux piloter cette politique publique par l'administration.
+          Dans votre espace cantine, remplissez votre bilan sur les données d'achat 2023 et télédéclarez vos données
+          (arrêté ministériel du 14 septembre 2022 - en cours de modification). L'objectif : établir un bilan de suivi
+          des mesures EGAlim permettant de mieux piloter cette politique publique par l'administration.
         </p>
       </v-card-text>
       <v-card-actions class="px-4 pb-2 mt-2">
