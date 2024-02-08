@@ -83,7 +83,9 @@
             </div>
             <div v-else>
               <p>Vous pouvez télédéclarer dès maintenant.</p>
-              <p>Pour aller plus loin, vous pouvez également compléter les autres volets du bilan.</p>
+              <p v-if="!isCentralKitchen || diagnostic.centralKitchenDiagnosticMode !== 'APPRO'">
+                Pour aller plus loin, vous pouvez également compléter les autres volets du bilan.
+              </p>
               <v-btn outlined color="primary" @click="showTeledeclarationPreview = true">
                 Télédéclarer
               </v-btn>
