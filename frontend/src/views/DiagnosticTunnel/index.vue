@@ -369,6 +369,9 @@ export default {
     onTunnelAutofill(e) {
       this.updatePayload({ payload: e.payload, formIsValid: true })
       const synthesisStep = this.steps.find((x) => x.isSynthesis)
+      if (this.$matomo) {
+        this.$matomo.trackEvent("tunnel-bilan", "autofill", this.measureId)
+      }
       return this.saveDiagnostic()
         .then(this.$nextTick)
         .then(() => this.$router.push({ query: { étape: synthesisStep.urlSlug } }))
