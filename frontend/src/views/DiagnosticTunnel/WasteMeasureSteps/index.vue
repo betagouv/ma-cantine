@@ -1,17 +1,13 @@
 <template>
   <v-form @submit.prevent v-model="formIsValid">
     <div v-if="stepUrlSlug === 'plan-action'">
-      <div class="mb-16" v-if="lastYearDiagnostic">
-        <DsfrCallout>
-          <div>
-            <p>
-              Voulez-vous completer votre bilan avec les réponses de l'année {{ lastYearDiagnostic.year }} ? Vous pouvez
-              modifier les réponses après.
-            </p>
-            <v-btn outlined color="primary" @click="fillFromLastYear">Compléter les réponses</v-btn>
-          </div>
-        </DsfrCallout>
-      </div>
+      <LastYearAutofillOption
+        :canteen="canteen"
+        :diagnostic="diagnostic"
+        :fields="fields"
+        @tunnel-autofill="onTunnelAutofill"
+        class="mb-16"
+      />
       <fieldset>
         <legend class="my-3">
           J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire
@@ -302,7 +298,7 @@
 <script>
 import { applicableDiagnosticRules } from "@/utils"
 import validators from "@/validators"
-import DsfrCallout from "@/components/DsfrCallout"
+import LastYearAutofillOption from "../LastYearAutofillOption"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
@@ -324,7 +320,7 @@ export default {
     },
   },
   components: {
-    DsfrCallout,
+    LastYearAutofillOption,
     DsfrTextField,
     DsfrTextarea,
     ExpeReservation,
@@ -408,9 +404,6 @@ export default {
     validators() {
       return validators
     },
-    lastYearDiagnostic() {
-      return this.canteen.diagnostics?.find((d) => d.year === this.diagnostic.year - 1)
-    },
   },
   methods: {
     initialisePayload() {
@@ -433,13 +426,9 @@ export default {
 
       if (checked) this.showExpeModal = true
     },
-    fillFromLastYear() {
-      this.fields.forEach((f) => (this.payload[f] = this.lastYearDiagnostic[f]))
+    onTunnelAutofill(e) {
+      this.$set(this, "payload", e.payload)
       this.$emit("tunnel-autofill", { payload: this.payload })
-      this.$store.dispatch("notify", {
-        status: "success",
-        message: "Vos réponses on été rapportés dans votre bilan.",
-      })
     },
   },
   mounted() {
