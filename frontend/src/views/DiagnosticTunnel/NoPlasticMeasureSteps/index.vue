@@ -1,6 +1,13 @@
 <template>
   <v-form v-model="formIsValid" @submit.prevent>
     <div v-if="stepUrlSlug === 'contenants-alimentaires'">
+      <LastYearAutofillOption
+        :canteen="canteen"
+        :diagnostic="diagnostic"
+        :fields="fields"
+        @tunnel-autofill="onTunnelAutofill"
+        class="mb-xs-6 mb-xl-16"
+      />
       <fieldset>
         <legend class="mb-3">
           Je n’utilise plus de contenants alimentaires de cuisson / de réchauffe en plastique
@@ -41,6 +48,8 @@
 </template>
 
 <script>
+import LastYearAutofillOption from "../LastYearAutofillOption"
+
 export default {
   name: "NoPlasticMeasureSteps",
   props: {
@@ -56,6 +65,7 @@ export default {
       type: String,
     },
   },
+  components: { LastYearAutofillOption },
   data() {
     return {
       formIsValid: true,
@@ -86,6 +96,12 @@ export default {
         },
       ],
       payload: {},
+      fields: [
+        "cookingPlasticSubstituted",
+        "servingPlasticSubstituted",
+        "plasticBottlesSubstituted",
+        "plasticTablewareSubstituted",
+      ],
     }
   },
   computed: {
@@ -99,12 +115,13 @@ export default {
       this.$emit("update-payload", { payload: this.payload, formIsValid: true })
     },
     initialisePayload() {
-      this.payload = {
-        cookingPlasticSubstituted: this.diagnostic.cookingPlasticSubstituted,
-        servingPlasticSubstituted: this.diagnostic.servingPlasticSubstituted,
-        plasticBottlesSubstituted: this.diagnostic.plasticBottlesSubstituted,
-        plasticTablewareSubstituted: this.diagnostic.plasticTablewareSubstituted,
-      }
+      const payload = {}
+      this.fields.forEach((f) => (payload[f] = this.diagnostic[f]))
+      this.$set(this, "payload", payload)
+    },
+    onTunnelAutofill(e) {
+      this.$set(this, "payload", e.payload)
+      this.$emit("tunnel-autofill", { payload: this.payload })
     },
   },
   mounted() {

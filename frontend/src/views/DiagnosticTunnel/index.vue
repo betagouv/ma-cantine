@@ -51,7 +51,7 @@
           :diagnostic="diagnostic"
           :stepUrlSlug="stepUrlSlug"
           v-on:update-payload="updatePayload"
-          v-on:full-tunnel-autofill="onFullTunnelAutofill"
+          v-on:tunnel-autofill="onTunnelAutofill"
           v-on:update-steps="updateSteps"
         />
       </div>
@@ -363,9 +363,12 @@ export default {
     quit() {
       this.$router.push(this.quitLink)
     },
-    onFullTunnelAutofill(e) {
+    onTunnelAutofill(e) {
       this.updatePayload({ payload: e.payload, formIsValid: true })
       const synthesisStep = this.steps.find((x) => x.isSynthesis)
+      if (this.$matomo) {
+        this.$matomo.trackEvent("tunnel-bilan", "autofill", this.measureId)
+      }
       return this.saveDiagnostic()
         .then(this.$nextTick)
         .then(() => this.$router.push({ query: { étape: synthesisStep.urlSlug } }))
