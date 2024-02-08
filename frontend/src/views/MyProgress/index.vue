@@ -68,14 +68,18 @@
             </template>
           </TeledeclarationCancelDialog>
         </div>
-        <div v-else-if="isSatellite && !!centralDiagnostic">
+        <div v-else-if="isSatelliteWithCompleteCentralDiagnostic">
           <p>Votre cuisine centrale va faire le bilan pour votre établissement.</p>
-          <p v-if="centralDiagnostic.centralKitchenDiagnosticMode !== 'ALL'">
-            Pour aller plus loin, vous pouvez complèter les autres volets.
-          </p>
         </div>
         <div v-else-if="inTeledeclarationCampaign">
-          <div v-if="readyToTeledeclare">
+          <div v-if="isSatelliteWithApproCentralDiagnostic">
+            <p>Votre cuisine centrale va déclarer les données d'approvisionnement pour votre établissement.</p>
+            <p>Pour aller plus loin, vous pouvez télédéclarer les autres volets du bilan.</p>
+            <v-btn v-if="readyToTeledeclare" outlined color="primary" @click="showTeledeclarationPreview = true">
+              Télédéclarer
+            </v-btn>
+          </div>
+          <div v-else-if="readyToTeledeclare">
             <DataInfoBadge class="my-2" :readyToTeledeclare="true" />
             <div v-if="hasFinishedMeasureTunnel">
               <p>Votre bilan est complet !</p>
@@ -336,6 +340,7 @@ export default {
       return this.tabHeaders
     },
     missingApproData() {
+      if (this.isSatelliteWithApproCentralDiagnostic) return false
       return !this.diagnostic || !hasDiagnosticApproData(this.diagnostic)
     },
     missingCanteenData() {
@@ -349,6 +354,12 @@ export default {
     },
     isSatellite() {
       return this.canteen?.productionType === "site_cooked_elsewhere"
+    },
+    isSatelliteWithCompleteCentralDiagnostic() {
+      return this.isSatellite && this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL"
+    },
+    isSatelliteWithApproCentralDiagnostic() {
+      return this.isSatellite && this.centralDiagnostic?.centralKitchenDiagnosticMode === "APPRO"
     },
   },
   methods: {
