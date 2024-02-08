@@ -1,6 +1,17 @@
 <template>
   <v-form @submit.prevent v-model="formIsValid">
     <div v-if="stepUrlSlug === 'plan-action'">
+      <div class="mb-16" v-if="lastYearDiagnostic">
+        <DsfrCallout>
+          <div>
+            <p>
+              Voulez-vous completer votre bilan avec les réponses de l'année {{ lastYearDiagnostic.year }} ? Vous pouvez
+              modifier les réponses après.
+            </p>
+            <v-btn outlined color="primary" @click="fillFromLastYear">Compléter les réponses</v-btn>
+          </div>
+        </DsfrCallout>
+      </div>
       <fieldset>
         <legend class="my-3">
           J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire
@@ -291,6 +302,7 @@
 <script>
 import { applicableDiagnosticRules } from "@/utils"
 import validators from "@/validators"
+import DsfrCallout from "@/components/DsfrCallout"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
@@ -312,6 +324,7 @@ export default {
     },
   },
   components: {
+    DsfrCallout,
     DsfrTextField,
     DsfrTextarea,
     ExpeReservation,
@@ -367,6 +380,24 @@ export default {
         },
       ],
       payload: {},
+      fields: [
+        "hasWasteDiagnostic",
+        "hasWastePlan",
+        "hasWasteMeasures",
+        "totalLeftovers",
+        "durationLeftoversMeasurement",
+        "breadLeftovers",
+        "servedLeftovers",
+        "unservedLeftovers",
+        "sideLeftovers",
+        "wasteActions",
+        "otherWasteAction",
+        "otherWasteComments",
+        "hasDonationAgreement",
+        "donationFrequency",
+        "donationQuantity",
+        "donationFoodType",
+      ],
     }
   },
   computed: {
@@ -377,27 +408,14 @@ export default {
     validators() {
       return validators
     },
+    lastYearDiagnostic() {
+      return this.canteen.diagnostics?.find((d) => d.year === this.diagnostic.year - 1)
+    },
   },
   methods: {
     initialisePayload() {
-      this.payload = {
-        hasWasteDiagnostic: this.diagnostic.hasWasteDiagnostic,
-        hasWastePlan: this.diagnostic.hasWastePlan,
-        hasWasteMeasures: this.diagnostic.hasWasteMeasures,
-        totalLeftovers: this.diagnostic.totalLeftovers,
-        durationLeftoversMeasurement: this.diagnostic.durationLeftoversMeasurement,
-        breadLeftovers: this.diagnostic.breadLeftovers,
-        servedLeftovers: this.diagnostic.servedLeftovers,
-        unservedLeftovers: this.diagnostic.unservedLeftovers,
-        sideLeftovers: this.diagnostic.sideLeftovers,
-        wasteActions: this.diagnostic.wasteActions,
-        otherWasteAction: this.diagnostic.otherWasteAction,
-        otherWasteComments: this.diagnostic.otherWasteComments,
-        hasDonationAgreement: this.diagnostic.hasDonationAgreement,
-        donationFrequency: this.diagnostic.donationFrequency,
-        donationQuantity: this.diagnostic.donationQuantity,
-        donationFoodType: this.diagnostic.donationFoodType,
-      }
+      this.payload = {}
+      this.fields.forEach((f) => (this.payload[f] = this.diagnostic[f]))
     },
     updatePayload() {
       this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
@@ -414,6 +432,14 @@ export default {
         .catch((e) => this.$store.dispatch("notifyServerError", e))
 
       if (checked) this.showExpeModal = true
+    },
+    fillFromLastYear() {
+      this.fields.forEach((f) => (this.payload[f] = this.lastYearDiagnostic[f]))
+      this.$emit("full-tunnel-autofill", { payload: this.payload })
+      this.$store.dispatch("notify", {
+        status: "success",
+        message: "Vos réponses on été rapportés dans votre bilan.",
+      })
     },
   },
   mounted() {
