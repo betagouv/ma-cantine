@@ -13,7 +13,7 @@
     </div>
     <div v-else-if="loggedUser.isDev">
       <p v-if="env === 'prod'">
-        Vous êtes dans l'environnement de
+        Vous êtes dans l'environnement
         <b>production</b>
         de
         <i>ma cantine</i>
@@ -22,11 +22,11 @@
         pour les tests.
       </p>
       <p v-else-if="env === 'demo'">
-        Vous êtes dans l'environnement de
+        Vous êtes dans l'environnement
         <b>démo</b>
         de
         <i>ma cantine</i>
-        . Ici vous pouvez envoyer des données fausses pour les tests.
+        . Cet environnement est un bac à sable dédié pour les tests.
       </p>
       <v-row class="mt-6">
         <v-col cols="12" sm="6">
