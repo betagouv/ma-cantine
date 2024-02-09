@@ -81,7 +81,7 @@
         <v-col class="pb-sm-0">
           <a :href="exportUrl" class="primary--text body-2 mr-sm-4 text-no-wrap" download>
             <v-icon class="mr-1" color="primary">mdi-microsoft-excel</v-icon>
-            Télécharger
+            Exporter mes achats
           </a>
         </v-col>
       </v-row>
