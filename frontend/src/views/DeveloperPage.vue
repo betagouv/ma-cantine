@@ -26,7 +26,7 @@
         <b>démo</b>
         de
         <i>ma cantine</i>
-        . Cet environnement est un bac à sable dédié pour les tests.
+        . Cet environnement est un bac à sable dédié aux tests.
       </p>
       <v-row class="mt-6">
         <v-col cols="12" sm="6">
