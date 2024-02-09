@@ -347,7 +347,7 @@ export default {
 
       this.$store
         .dispatch(this.isNewPurchase ? "createPurchase" : "updatePurchase", {
-          id: this.duplicating ? null : this.purchase.id,
+          id: this.purchase.id,
           payload,
         })
         .then(() => {
@@ -457,6 +457,7 @@ export default {
           this.originalPurchase = jsonPurchase
           this.purchase = JSON.parse(JSON.stringify(jsonPurchase))
           if (this.duplicating) {
+            this.purchase.id = null
             this.purchase.priceHt = null
             this.purchase.date = null
             this.purchase.invoiceFile = null
