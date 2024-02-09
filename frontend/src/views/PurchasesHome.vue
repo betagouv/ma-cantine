@@ -81,7 +81,7 @@
         <v-col class="pb-sm-0">
           <a :href="exportUrl" class="primary--text body-2 mr-sm-4 text-no-wrap" download>
             <v-icon class="mr-1" color="primary">mdi-microsoft-excel</v-icon>
-            Télécharger
+            Exporter mes achats
           </a>
         </v-col>
       </v-row>
@@ -267,6 +267,13 @@
             mdi-paperclip
           </v-icon>
         </template>
+        <template v-slot:[`item.actions`]="{ item }">
+          <div class="d-flex justify-center">
+            <v-icon @click.stop="duplicate(item)" color="primary" :title="duplicatePurchaseInstruction(item)">
+              $file-add-line
+            </v-icon>
+          </div>
+        </template>
 
         <template v-slot:[`no-data`]>
           <div class="mx-10 my-10">
@@ -359,6 +366,7 @@ export default {
         { text: "Cantine", value: "canteen__name", sortable: true },
         { text: "Prix HT", value: "priceHt", sortable: true, align: "end" },
         { text: "", value: "hasAttachment", sortable: false },
+        { text: "Dupliquer", value: "actions", sortable: false },
       ],
       productFamilies: [],
       characteristics: [],
@@ -626,6 +634,17 @@ export default {
       this.$watch("$route", this.onRouteChange)
     },
     capitalise: capitalise,
+    duplicate(purchase) {
+      this.$router.push({ name: "PurchasePage", params: { id: purchase.id }, query: { dupliquer: true } })
+    },
+    duplicatePurchaseInstruction(purchase) {
+      const readableDate = purchase.date.toLocaleString("fr-FR", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+      return `Dupliquer l'achat « ${purchase.description || "sans description"} » du ${readableDate}`
+    },
   },
   beforeMount() {
     if (!this.$route.query["page"]) this.$router.replace({ query: { page: 1 } })

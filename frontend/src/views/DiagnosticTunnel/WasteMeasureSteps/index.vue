@@ -1,6 +1,13 @@
 <template>
   <v-form @submit.prevent v-model="formIsValid">
     <div v-if="stepUrlSlug === 'plan-action'">
+      <LastYearAutofillOption
+        :canteen="canteen"
+        :diagnostic="diagnostic"
+        :fields="fields"
+        @tunnel-autofill="onTunnelAutofill"
+        class="mb-xs-6 mb-xl-16"
+      />
       <fieldset>
         <legend class="my-3">
           J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire
@@ -291,6 +298,7 @@
 <script>
 import { applicableDiagnosticRules } from "@/utils"
 import validators from "@/validators"
+import LastYearAutofillOption from "../LastYearAutofillOption"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
@@ -312,6 +320,7 @@ export default {
     },
   },
   components: {
+    LastYearAutofillOption,
     DsfrTextField,
     DsfrTextarea,
     ExpeReservation,
@@ -367,6 +376,24 @@ export default {
         },
       ],
       payload: {},
+      fields: [
+        "hasWasteDiagnostic",
+        "hasWastePlan",
+        "hasWasteMeasures",
+        "totalLeftovers",
+        "durationLeftoversMeasurement",
+        "breadLeftovers",
+        "servedLeftovers",
+        "unservedLeftovers",
+        "sideLeftovers",
+        "wasteActions",
+        "otherWasteAction",
+        "otherWasteComments",
+        "hasDonationAgreement",
+        "donationFrequency",
+        "donationQuantity",
+        "donationFoodType",
+      ],
     }
   },
   computed: {
@@ -380,24 +407,9 @@ export default {
   },
   methods: {
     initialisePayload() {
-      this.payload = {
-        hasWasteDiagnostic: this.diagnostic.hasWasteDiagnostic,
-        hasWastePlan: this.diagnostic.hasWastePlan,
-        hasWasteMeasures: this.diagnostic.hasWasteMeasures,
-        totalLeftovers: this.diagnostic.totalLeftovers,
-        durationLeftoversMeasurement: this.diagnostic.durationLeftoversMeasurement,
-        breadLeftovers: this.diagnostic.breadLeftovers,
-        servedLeftovers: this.diagnostic.servedLeftovers,
-        unservedLeftovers: this.diagnostic.unservedLeftovers,
-        sideLeftovers: this.diagnostic.sideLeftovers,
-        wasteActions: this.diagnostic.wasteActions,
-        otherWasteAction: this.diagnostic.otherWasteAction,
-        otherWasteComments: this.diagnostic.otherWasteComments,
-        hasDonationAgreement: this.diagnostic.hasDonationAgreement,
-        donationFrequency: this.diagnostic.donationFrequency,
-        donationQuantity: this.diagnostic.donationQuantity,
-        donationFoodType: this.diagnostic.donationFoodType,
-      }
+      const payload = {}
+      this.fields.forEach((f) => (payload[f] = this.diagnostic[f]))
+      this.$set(this, "payload", payload)
     },
     updatePayload() {
       this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
@@ -414,6 +426,10 @@ export default {
         .catch((e) => this.$store.dispatch("notifyServerError", e))
 
       if (checked) this.showExpeModal = true
+    },
+    onTunnelAutofill(e) {
+      this.$set(this, "payload", e.payload)
+      this.$emit("tunnel-autofill", { payload: this.payload })
     },
   },
   mounted() {
