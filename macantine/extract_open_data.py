@@ -102,6 +102,13 @@ def fetch_sector(sector_id, sectors):
         return ""
 
 
+def remove_timezone(df):
+    date_columns = df.select_dtypes(include=["datetime64[ns, UTC]"]).columns
+    for date_column in date_columns:
+        df[date_column] = df[date_column].dt.date
+    return df
+
+
 class ETL(ABC):
     def __init__(self):
         self.df = None
@@ -201,13 +208,19 @@ class ETL(ABC):
 
     def export_dataset(self, stage="to_validate"):
         if stage == "to_validate":
-            filename = f"open_data/{self.dataset_name}_to_validate.csv"
+            filename = f"open_data/{self.dataset_name}_to_validate"
         elif stage == "validated":
-            filename = f"open_data/{self.dataset_name}.csv"
+            filename = f"open_data/{self.dataset_name}"
         else:
             return 0
-        with default_storage.open(filename, "w") as file:
-            self.df.to_csv(file, sep=";", index=False, na_rep="")
+        with default_storage.open(filename + ".csv", "w") as file:
+            self.df.to_csv(file, sep=";", index=False, na_rep="", encoding="utf_8_sig")
+        with default_storage.open(filename + ".parquet", "w") as file:
+            self.df.to_parquet(file)
+        with default_storage.open(filename + ".xlsx", "w") as file:
+            df_export = self.df.copy()
+            df_export = remove_timezone(df_export)  # Ah Excel !
+            df_export.to_excel(file, index=False)
 
 
 class ETL_CANTEEN(ETL):
