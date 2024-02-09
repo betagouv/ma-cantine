@@ -349,6 +349,7 @@ export default Object.freeze({
     FERMIER: ["FRUITS_ET_LEGUMES", "PRODUITS_DE_LA_MER", "BOULANGERIE", "AUTRES", "BOISSONS"],
     EXTERNALITES: [],
     PERFORMANCE: [],
+    NON_EGALIM: [],
   },
   TrackingParams: ["mtm_source", "mtm_campaign", "mtm_medium"],
   Jobs: [

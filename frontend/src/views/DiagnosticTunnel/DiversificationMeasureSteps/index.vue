@@ -1,14 +1,23 @@
 <template>
   <v-form @submit.prevent>
-    <fieldset v-if="stepUrlSlug === 'menu'">
-      <legend class="text-left my-3">
-        J'ai mis en place un menu végétarien dans ma cantine :
-        <span class="fr-hint-text mt-2">Optionnel</span>
-      </legend>
-      <v-radio-group class="my-0" v-model="payload.vegetarianWeeklyRecurrence" hide-details @change="calulateSteps">
-        <v-radio v-for="item in frequency" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-      </v-radio-group>
-    </fieldset>
+    <div v-if="stepUrlSlug === 'menu'">
+      <LastYearAutofillOption
+        :canteen="canteen"
+        :diagnostic="diagnostic"
+        :fields="fields"
+        @tunnel-autofill="onTunnelAutofill"
+        class="mb-xs-6 mb-xl-16"
+      />
+      <fieldset>
+        <legend class="text-left my-3">
+          J'ai mis en place un menu végétarien dans ma cantine :
+          <span class="fr-hint-text mt-2">Optionnel</span>
+        </legend>
+        <v-radio-group class="my-0" v-model="payload.vegetarianWeeklyRecurrence" hide-details @change="calulateSteps">
+          <v-radio v-for="item in frequency" :key="item.value" :label="item.label" :value="item.value"></v-radio>
+        </v-radio-group>
+      </fieldset>
+    </div>
     <fieldset v-else-if="stepUrlSlug === 'options'">
       <legend class="text-left my-3">
         Le menu végétarien proposé est :
@@ -74,6 +83,7 @@
 </template>
 
 <script>
+import LastYearAutofillOption from "../LastYearAutofillOption"
 import Constants from "@/constants"
 import { applicableDiagnosticRules } from "@/utils"
 
@@ -92,6 +102,7 @@ export default {
       type: String,
     },
   },
+  components: { LastYearAutofillOption },
   data() {
     return {
       steps: [],
@@ -122,6 +133,13 @@ export default {
       menuTypes: Constants.VegetarianMenuTypes,
       menuBases: Constants.VegetarianMenuBases,
       payload: {},
+      fields: [
+        "vegetarianWeeklyRecurrence",
+        "vegetarianMenuType",
+        "vegetarianMenuBases",
+        "hasDiversificationPlan",
+        "diversificationPlanActions",
+      ],
     }
   },
   computed: {
@@ -135,13 +153,9 @@ export default {
       this.$emit("update-payload", { payload: this.payload, formIsValid: true })
     },
     initialisePayload() {
-      this.payload = {
-        vegetarianWeeklyRecurrence: this.diagnostic.vegetarianWeeklyRecurrence,
-        vegetarianMenuType: this.diagnostic.vegetarianMenuType,
-        vegetarianMenuBases: this.diagnostic.vegetarianMenuBases,
-        hasDiversificationPlan: this.diagnostic.hasDiversificationPlan,
-        diversificationPlanActions: this.diagnostic.diversificationPlanActions,
-      }
+      const payload = {}
+      this.fields.forEach((f) => (payload[f] = this.diagnostic[f]))
+      this.$set(this, "payload", payload)
     },
     calulateSteps() {
       const steps = [
@@ -179,6 +193,10 @@ export default {
       })
       this.steps = steps
       this.$emit("update-steps", this.steps)
+    },
+    onTunnelAutofill(e) {
+      this.$set(this, "payload", e.payload)
+      this.$emit("tunnel-autofill", { payload: this.payload })
     },
   },
   mounted() {

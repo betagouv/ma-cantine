@@ -1,6 +1,13 @@
 <template>
   <v-form @submit.prevent v-model="formIsValid">
-    <div v-if="stepUrlSlug === 'information-convives'" class="py-4">
+    <div v-if="stepUrlSlug === 'information-convives'">
+      <LastYearAutofillOption
+        :canteen="canteen"
+        :diagnostic="diagnostic"
+        :fields="fields"
+        @tunnel-autofill="onTunnelAutofill"
+        class="mb-xs-6 mb-xl-16"
+      />
       <fieldset>
         <legend class="my-3">
           J’informe mes convives sur la part de produits de qualité et durables entrant dans la composition des repas
@@ -84,6 +91,7 @@
 </template>
 
 <script>
+import LastYearAutofillOption from "../LastYearAutofillOption"
 import DsfrTextField from "@/components/DsfrTextField"
 import validators from "@/validators"
 import Constants from "@/constants"
@@ -103,7 +111,7 @@ export default {
       type: String,
     },
   },
-  components: { DsfrTextField },
+  components: { LastYearAutofillOption, DsfrTextField },
   data() {
     return {
       formIsValid: true,
@@ -143,6 +151,14 @@ export default {
         },
       ],
       payload: {},
+      fields: [
+        "communicatesOnFoodQuality",
+        "communicationFrequency",
+        "communicationSupports",
+        "otherCommunicationSupport",
+        "communicatesOnFoodPlan",
+        "communicationSupportUrl",
+      ],
       otherSupportEnabled: undefined,
     }
   },
@@ -160,15 +176,14 @@ export default {
       this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
     },
     initialisePayload() {
-      this.payload = {
-        communicatesOnFoodQuality: this.diagnostic.communicatesOnFoodQuality,
-        communicationFrequency: this.diagnostic.communicationFrequency,
-        communicationSupports: this.diagnostic.communicationSupports,
-        otherCommunicationSupport: this.diagnostic.otherCommunicationSupport,
-        communicatesOnFoodPlan: this.diagnostic.communicatesOnFoodPlan,
-        communicationSupportUrl: this.diagnostic.communicationSupportUrl,
-      }
+      const payload = {}
+      this.fields.forEach((f) => (payload[f] = this.diagnostic[f]))
       this.otherSupportEnabled = !!this.payload.otherCommunicationSupport
+      this.$set(this, "payload", payload)
+    },
+    onTunnelAutofill(e) {
+      this.$set(this, "payload", e.payload)
+      this.$emit("tunnel-autofill", { payload: this.payload })
     },
   },
   mounted() {

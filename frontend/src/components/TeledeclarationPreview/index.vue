@@ -113,7 +113,7 @@ export default {
         }
       }
       if (this.showApproItems) {
-        const text = `Votre cout denrées est estimé à ${this.costPerMeal} € par repas servi. S'il s'agit d'une erreur, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
+        const text = `Votre coût denrées est estimé à ${this.costPerMeal} € par repas servi. S'il s'agit d'une erreur, veuillez modifier les données d'achat et/ou le nombre de repas par an.`
         if (this.costPerMeal > this.maxCostPerMealExpected) {
           unusualData.push({
             text,
@@ -151,6 +151,9 @@ export default {
     },
     canteenUrlComponent() {
       return this.canteenForTD ? this.$store.getters.getCanteenUrlComponent(this.canteenForTD) : null
+    },
+    centralKitchenDiagostic() {
+      return this.canteenForTD.centralKitchenDiagnostics?.find((x) => x.year === this.diagnostic.year)
     },
     showApproItems() {
       if (this.canteenForTD.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic) {
