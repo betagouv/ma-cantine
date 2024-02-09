@@ -279,6 +279,7 @@ export default {
       productDescriptions: [],
       providers: [],
       exceptions: Constants.CharacteristicFamilyExceptions,
+      duplicating: this.$route.query.dupliquer,
     }
   },
   props: {
@@ -288,7 +289,7 @@ export default {
   },
   computed: {
     isNewPurchase() {
-      return !this.id
+      return !this.id || this.duplicating
     },
     validators() {
       return validators
@@ -331,7 +332,8 @@ export default {
         this.$store.dispatch("notifyRequiredFieldsError")
         return
       }
-      const payload = this.originalPurchase ? getObjectDiff(this.originalPurchase, this.purchase) : this.purchase
+      const payload =
+        this.originalPurchase && !this.duplicating ? getObjectDiff(this.originalPurchase, this.purchase) : this.purchase
 
       if (this.invoiceFileChanged) {
         if (!this.purchase.invoiceFile) this.payload.invoiceFile = null
@@ -439,7 +441,7 @@ export default {
   mounted() {
     this.fetchOptions()
     if (this.purchase) return
-    if (this.isNewPurchase) {
+    if (this.isNewPurchase && !this.duplicating) {
       this.purchase = {
         characteristics: [],
       }
@@ -454,6 +456,13 @@ export default {
         response.json().then((jsonPurchase) => {
           this.originalPurchase = jsonPurchase
           this.purchase = JSON.parse(JSON.stringify(jsonPurchase))
+          if (this.duplicating) {
+            this.purchase.id = null
+            this.purchase.priceHt = null
+            this.purchase.date = null
+            this.purchase.invoiceFile = null
+            this.purchase.importSource = "Duplication"
+          }
         })
       })
       .catch(() => {
