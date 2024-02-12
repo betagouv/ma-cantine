@@ -2,13 +2,7 @@
 <h3>Diversification des sources de protéines et menus végétariens</h3>
 
 {% if additional_questions.diversification_plan %}
-    {% if has_diversification_plan %}
-        {% include "./response.html" with success=has_diversification_plan text="Plan de diversification en place" only %}
-    {% elif has_diversification_plan == None %}
-        {% include "./response.html" with success=has_diversification_plan text="Plan de diversification en place" value="Inconnu" only %}
-    {% else %}
-        {% include "./response.html" with success=has_diversification_plan text="Pas de plan de diversification en place" only %}
-    {% endif %}
+    {% include "./response.html" with success=has_diversification_plan success_text="Plan de diversification en place" failure_text="Pas de plan de diversification en place" only %}
 
     {% if has_diversification_plan and diversification_plan_actions %}
         Ce plan comporte les actions suivantes :
