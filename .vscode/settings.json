@@ -19,5 +19,6 @@
     "editor.defaultFormatter": "ms-python.black-formatter"
   },
   "black-formatter.args": ["--line-length=119"],
-  "black-formatter.path": ["./venv/bin/black"]
+  "black-formatter.path": ["./venv/bin/black"],
+  "emmet.includeLanguages": {"django-html": "html"}
 }
