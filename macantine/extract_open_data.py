@@ -37,12 +37,10 @@ def map_epcis_communes():
         response_commune.raise_for_status()
         communes = response_commune.json()
         for commune in communes:
-            try:
+            if "codeEpci" in commune.keys():
                 epcis[commune["code"]] = {}
                 epcis[commune["code"]]["epci_code"] = commune["codeEpci"]  # Caching the data
                 epcis[commune["code"]]["epci_lib"] = epcis_libs[commune["codeEpci"]]  # Caching the data
-            except KeyError:  # This commune doesn't have an EPCI code
-                pass
     except requests.exceptions.HTTPError as e:
         logger.info(e)
         return None
@@ -65,7 +63,7 @@ def populate_lib_epci():
 
 def map_canteens_td(year):
     """
-    Populate mapper for a given year. The mapper indicates if one canteen ahs participated in campaign
+    Populate mapper for a given year. The mapper indicates if one canteen has participated in campaign
     """
     # Check and fetch Teledeclaration data from the database
     tds = Teledeclaration.objects.filter(
