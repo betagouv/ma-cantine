@@ -29,7 +29,7 @@ def map_epcis_communes():
     """
     Create a dict that maps cities with their EPCI code
     """
-    epcis = {}
+    commune_to_epci = {}
     epcis_libs = populate_lib_epci()
     try:
         logger.info("Starting communes dl")
@@ -38,13 +38,13 @@ def map_epcis_communes():
         communes = response_commune.json()
         for commune in communes:
             if "codeEpci" in commune.keys():
-                epcis[commune["code"]] = {}
-                epcis[commune["code"]]["epci_code"] = commune["codeEpci"]  # Caching the data
-                epcis[commune["code"]]["epci_lib"] = epcis_libs[commune["codeEpci"]]  # Caching the data
+                commune_to_epci[commune["code"]] = {}
+                commune_to_epci[commune["code"]]["epci_code"] = commune["codeEpci"]  # Caching the data
+                commune_to_epci[commune["code"]]["epci_lib"] = epcis_libs[commune["codeEpci"]]  # Caching the data
     except requests.exceptions.HTTPError as e:
         logger.info(e)
         return None
-    return epcis
+    return commune_to_epci
 
 
 def populate_lib_epci():
