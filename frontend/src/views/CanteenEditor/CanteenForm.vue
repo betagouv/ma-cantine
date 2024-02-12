@@ -456,6 +456,16 @@ export default {
       return !this.isNewCanteen && window.ENABLE_DASHBOARD
     },
   },
+  mounted() {
+    if (this.$route.query && this.$route.query["valider"]) {
+      this.$nextTick(() => {
+        const status = "warning"
+        const message = "Merci de vérifier les champs en rouge ci dessous"
+        const title = null
+        if (!this.$refs.form.validate()) this.$store.dispatch("notify", { title, message, status })
+      })
+    }
+  },
   beforeMount() {
     if (this.isNewCanteen) return
 
@@ -502,7 +512,10 @@ export default {
       this.goToStep(1)
     },
     goToStep(index, addHistory = true) {
-      const params = { path: this.$route.path, query: { etape: this.steps[index] } }
+      const params = {
+        path: this.$route.path,
+        query: { ...(this.$route.query || {}), ...{ etape: this.steps[index] } },
+      }
       if (addHistory) this.$router.push(params).catch(() => {})
       else this.$router.replace(params).catch(() => {})
     },

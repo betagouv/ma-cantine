@@ -99,9 +99,41 @@
             <DataInfoBadge class="my-2" :missingData="true" />
             <p>Pour télédéclarer, veuillez :</p>
             <ul>
-              <li v-if="missingApproData">Compléter le volet d’approvisionnement</li>
-              <li v-if="missingCanteenData">Compléter les données de votre établissement</li>
-              <li v-if="hasSatelliteInconsistency">Mettre à jour vos satellites</li>
+              <li v-if="missingApproData" class="mb-2">
+                <router-link
+                  :to="{
+                    name: 'DiagnosticTunnel',
+                    params: {
+                      canteenUrlComponent: this.canteenUrlComponent,
+                      year: year,
+                      measureId: 'qualite-des-produits',
+                    },
+                  }"
+                >
+                  Compléter le volet d’approvisionnement
+                </router-link>
+              </li>
+              <li v-if="missingCanteenData" class="mb-2">
+                <router-link
+                  :to="{
+                    name: 'CanteenForm',
+                    params: { canteenUrlComponent: this.canteenUrlComponent },
+                    query: { valider: true },
+                  }"
+                >
+                  Compléter les données de votre établissement
+                </router-link>
+              </li>
+              <li v-if="hasSatelliteInconsistency" class="mb-2">
+                <router-link
+                  :to="{
+                    name: 'SatelliteManagement',
+                    params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                  }"
+                >
+                  Mettre à jour vos satellites
+                </router-link>
+              </li>
             </ul>
           </div>
         </div>
