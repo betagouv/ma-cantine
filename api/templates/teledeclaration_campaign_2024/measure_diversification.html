@@ -1,51 +1,54 @@
 {% load static %}
 <h3>Diversification des sources de protéines et menus végétariens</h3>
-
 {% if has_diversification_plan %}
-<div>
-<p>
-    <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
-    Plan de diversification en place
-</p>
-{% if diversification_plan_actions %}
-. Ce plan comporte les actions suivantes :
-<ul>
-    {% for action in diversification_plan_actions %}
-    <li>{{ action }}</li>
-    {% endfor %}
-</ul>
+    <div>
+        <p>
+            <img src="{% static '../../../web/static/images/checkmark-outline.png' %}"
+                 height="14"
+                 width="14" />
+            Plan de diversification en place
+        </p>
+        {% if diversification_plan_actions %}
+            . Ce plan comporte les actions suivantes :
+            <ul>
+                {% for action in diversification_plan_actions %}<li>{{ action }}</li>{% endfor %}
+            </ul>
+        {% endif %}
+    </div>
 {% endif %}
-</div>
-{% endif %}
-
 {% if vegetarian_weekly_recurrence == "Jamais" %}
     <div>
-        <img src="{% static '../../../web/static/images/close-outline.png' %}" height="14" width="14" />
+        <img src="{% static '../../../web/static/images/close-outline.png' %}"
+             height="14"
+             width="14" />
         Fréquence hebdomadaire des menus végétariens : {{ vegetarian_weekly_recurrence }}
     </div>
 {% elif vegetarian_weekly_recurrence %}
     <div>
-        <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
+        <img src="{% static '../../../web/static/images/checkmark-outline.png' %}"
+             height="14"
+             width="14" />
         Fréquence hebdomadaire des menus végétariens : {{ vegetarian_weekly_recurrence }}
     </div>
     {% if vegetarian_menu_type %}
-    <div>
-        <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
-        Type de menu végétarien : {{ vegetarian_menu_type }}
-    </div>
+        <div>
+            <img src="{% static '../../../web/static/images/checkmark-outline.png' %}"
+                 height="14"
+                 width="14" />
+            Type de menu végétarien : {{ vegetarian_menu_type }}
+        </div>
     {% endif %}
-
     {% if vegetarian_menu_bases %}
-    <div>
-        <p>
-            <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
-            Le plat principal du menu végétarien est majoritairement à base de :
-        </p>
-        <ul>
-            {% for base in vegetarian_menu_bases %}
-            <li>{{ base }}</li>
-            {% endfor %}
-        </ul>
-    </div>
+        <div>
+            <p>
+                <img src="{% static '../../../web/static/images/checkmark-outline.png' %}"
+                     height="14"
+                     width="14" />
+                Le plat principal du menu végétarien est majoritairement à base de :
+            </p>
+            <ul>
+                {% for base in vegetarian_menu_bases %}<li>{{ base }}</li>{% endfor %}
+            </ul>
+        </div>
     {% endif %}
 {% endif %}
