@@ -4,6 +4,10 @@
         <img src="{% static '../../../web/static/images/checkmark-outline.png' %}"
              height="14"
              width="14" />
+    {% elif success == None %}
+        <img src="{% static '../../../web/static/images/question-mark.png' %}"
+             height="14"
+             width="14" />
     {% else %}
         <img src="{% static '../../../web/static/images/close-outline.png' %}"
              height="14"
