@@ -164,7 +164,6 @@ class TeledeclarationPdfView(APIView):
             response = HttpResponse(content_type="application/pdf")
             filename = TeledeclarationPdfView.get_filename(teledeclaration)
             response["Content-Disposition"] = f'attachment; filename="{filename}"'
-            template = get_template("teledeclaration_pdf.html")
             declared_data = teledeclaration.declared_data
             is_complete = (
                 declared_data["teledeclaration"].get("diagnostic_type", None) == Diagnostic.DiagnosticType.COMPLETE
@@ -196,6 +195,11 @@ class TeledeclarationPdfView(APIView):
                     "canteen": {**canteen_data, **processed_canteen_data},
                 },
             }
+            template = (
+                get_template("teledeclaration_campaign_2024/index.html")
+                if teledeclaration.year >= 2023
+                else get_template("teledeclaration_pdf.html")
+            )
             html = template.render(context)
             pisa_status = pisa.CreatePDF(html, dest=response, link_callback=TeledeclarationPdfView.link_callback)
 

@@ -1,0 +1,55 @@
+{% load static %}
+<html>
+    <head>
+        {% include "./style.html" %}
+    </head>
+    <body>
+        <div class="image-container">
+            <img src="{% static '../../../web/static/images/logo_transparent_white.png' %}" alt="ma cantine" height="30" width="142" />
+        </div>
+        <h1>Justificatif pour télédéclaration {{ year }}</h1>
+        <h2>Télédéclaration faite le {{ date|date:"l j F Y" }} par {{ applicant }}</h2>
+
+        {% include "./canteen.html" %}
+
+        {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
+            <h3>
+                Vous avez choisi la télédéclaration {{ diagnostic_type }}.
+            </h3>
+        {% endif %}
+
+        <p>
+            L'arrêté du 14 septembre 2022 rend obligatoire la saisie et la transmission des données d'achat de l'année n-1 à l'administration.
+        </p>
+
+        {% include "./diagnostic_mode_description.html" %}
+
+        <p>
+            Pour l'année {{ year }}, les données suivantes ont été télédéclarées le
+            {{ date|date:"l j F Y" }} via la plateforme numérique « ma cantine » :
+        </p>
+        <!-- SIMPLIFIED DECLARATION -->
+        {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
+            {% if not diagnostic_type == "complète" %}
+                {% include "./measure_quality_simple.html" %}
+            {% else %}
+            <!-- COMPLETE DECLARATION -->
+                {% include "./measure_quality_complete.html" %}
+            {% endif %}
+        {% endif %}
+        {% if teledeclaration_mode != "CENTRAL_APPRO" %}
+            <div class="other-measures">
+
+                {% include "./measure_waste.html" %}
+                {% include "./measure_diversification.html" %}
+                {% include "./measure_plastic.html" %}
+                {% include "./measure_info.html" %}
+
+            </div>
+        {% endif %}
+
+        <hr />
+
+        <p>En savoir plus de la loi EGAlim : <a href="https://ma-cantine.agriculture.gouv.fr/">https://ma-cantine.agriculture.gouv.fr/</a></p>
+    </body>
+</html>

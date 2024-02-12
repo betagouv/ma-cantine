@@ -1,0 +1,37 @@
+
+<h3>Informations de mon établissement</h3>
+<ul>
+{% if canteen.name %}
+    <li><span>Nom</span> : {{ canteen.name }}</li>
+{% endif %}
+{% if canteen.siret %}
+    <li><span>SIRET</span> : {{ canteen.siret }}</li>
+{% endif %}
+{% if canteen.production_type %}
+    <li><span>Mode de production</span> : {{ canteen.production_type }}</li>
+{% endif %}
+{% if canteen.city_insee_code %}
+    <li><span>Code Insee</span> : {{ canteen.city_insee_code }}</li>
+{% endif %}
+{% if canteen.central_producer_siret %}
+    <li><span>SIRET de la cuisine centrale</span> : {{ canteen.central_producer_siret }}</li>
+{% endif %}
+{% if canteen.daily_meal_count %}
+    <li><span>Nombre de repas par jour</span> : {{ canteen.daily_meal_count }}</li>
+{% endif %}
+{% if canteen.yearly_meal_count %}
+    <li><span>Nombre de repas par an</span> : {{ canteen.yearly_meal_count }}</li>
+{% endif %}
+{% if canteen.sectors %}
+    <li><span>Secteurs d'activité</span> : {{ canteen.sectors }}</li>
+{% endif %}
+{% if canteen.line_ministry %}
+    <li><span>Ministère de tutelle</span> : {{ canteen.line_ministry }}</li>
+{% endif %}
+{% if canteen.management_type %}
+    <li><span>Mode de gestion</span> : {{ canteen.management_type }}</li>
+{% endif %}
+{% if canteen.economic_model %}
+    <li><span>Type d'établissement</span> : {{ canteen.economic_model }}</li>
+{% endif %}
+</ul>
