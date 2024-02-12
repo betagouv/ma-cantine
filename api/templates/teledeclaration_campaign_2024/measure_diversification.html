@@ -1,51 +1,29 @@
 {% load static %}
 <h3>Diversification des sources de protéines et menus végétariens</h3>
+{% comment %} TODO: should only show if canteen meets criteria for this question {% endcomment %}
+{% comment %} TODO: show false and empty responses too {% endcomment %}
 {% if has_diversification_plan %}
     <div>
-        <p>
-            <img src="{% static '../../../web/static/images/checkmark-outline.png' %}"
-                 height="14"
-                 width="14" />
-            Plan de diversification en place
-        </p>
+        {% include "./response.html" with success=True text="Plan de diversification en place" only %}
         {% if diversification_plan_actions %}
-            . Ce plan comporte les actions suivantes :
+            Ce plan comporte les actions suivantes :
             <ul>
                 {% for action in diversification_plan_actions %}<li>{{ action }}</li>{% endfor %}
             </ul>
+            {% comment %} TODO: remove all the whitespace after this list {% endcomment %}
         {% endif %}
     </div>
 {% endif %}
 {% if vegetarian_weekly_recurrence == "Jamais" %}
-    <div>
-        <img src="{% static '../../../web/static/images/close-outline.png' %}"
-             height="14"
-             width="14" />
-        Fréquence hebdomadaire des menus végétariens : {{ vegetarian_weekly_recurrence }}
-    </div>
+    {% include "./response.html" with success=False text="Fréquence hebdomadaire des menus végétariens" value=vegetarian_weekly_recurrence only %}
 {% elif vegetarian_weekly_recurrence %}
-    <div>
-        <img src="{% static '../../../web/static/images/checkmark-outline.png' %}"
-             height="14"
-             width="14" />
-        Fréquence hebdomadaire des menus végétariens : {{ vegetarian_weekly_recurrence }}
-    </div>
+    {% include "./response.html" with success=True text="Fréquence hebdomadaire des menus végétariens" value=vegetarian_weekly_recurrence only %}
     {% if vegetarian_menu_type %}
-        <div>
-            <img src="{% static '../../../web/static/images/checkmark-outline.png' %}"
-                 height="14"
-                 width="14" />
-            Type de menu végétarien : {{ vegetarian_menu_type }}
-        </div>
+        {% include "./response.html" with success=True text="Type de menu végétarien" value=vegetarian_menu_type only %}
     {% endif %}
     {% if vegetarian_menu_bases %}
         <div>
-            <p>
-                <img src="{% static '../../../web/static/images/checkmark-outline.png' %}"
-                     height="14"
-                     width="14" />
-                Le plat principal du menu végétarien est majoritairement à base de :
-            </p>
+            {% include "./response.html" with success=True text="Le plat principal du menu végétarien est majoritairement à base de :" only %}
             <ul>
                 {% for base in vegetarian_menu_bases %}<li>{{ base }}</li>{% endfor %}
             </ul>
