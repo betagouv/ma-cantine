@@ -6,7 +6,7 @@ Please note that the `staging` and `main` branches are protected and all commits
 
 ### À installer localement
 
-- [Python3](https://www.python.org/downloads/) (de préference 3.8)
+- [Python3](https://www.python.org/downloads/) (de préference 3.11)
 - [pip](https://pip.pypa.io/en/stable/installing/) (souvent installé avec Python)
 - [vitrualenv](https://virtualenv.pypa.io/en/stable/installation.html)
 - [Node et npm](https://nodejs.org/en/download/)
