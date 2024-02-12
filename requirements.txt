@@ -69,7 +69,7 @@ pandas==2.0.3
 pathspec==0.11.2
 Pillow==10.2.0
 pipdeptree==2.13.2
-platformdirs==4.1.0
+platformdirs==4.2.0
 pluggy==1.4.0
 prompt-toolkit==3.0.43
 psycopg2==2.9.9
