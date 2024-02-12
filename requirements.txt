@@ -19,7 +19,9 @@ click==8.1.7
 click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.3.0
+colorama==0.4.6
 cryptography==42.0.0
+cssbeautifier==1.14.11
 cssselect2==0.7.0
 Deprecated==1.2.14
 dill==0.3.7
@@ -39,10 +41,12 @@ django-storages==1.14.2
 django-webpack-loader==3.0.1
 djangorestframework==3.14.0
 djangorestframework-camel-case==1.4.2
+djlint==1.34.1
 drf-base64==2.0
 drf-excel==2.4.0
 drf-spectacular==0.27.0
 drf-spectacular-sidecar==2024.2.1
+EditorConfig==0.12.3
 et-xmlfile==1.1.0
 exceptiongroup==1.1.3
 factory-boy==3.3.0
@@ -50,6 +54,8 @@ Faker==22.2.0
 filelock==3.13.1
 freezegun==1.4.0
 future==0.18.3
+html-tag-names==0.1.2
+html-void-elements==0.1.0
 html2text==2020.1.16
 html5lib==1.1
 identify==2.5.33
@@ -58,6 +64,8 @@ inflection==0.5.1
 iniconfig==2.0.0
 isort==5.13.2
 jmespath==1.0.1
+jsbeautifier==1.14.11
+json5==0.9.14
 jsonschema==4.20.0
 jsonschema-specifications==2023.11.2
 jwcrypto==1.5.1
@@ -73,7 +81,7 @@ openpyxl==3.1.2
 oscrypto==1.3.0
 packaging==23.2
 pandas==2.0.3
-pathspec==0.11.2
+pathspec==0.12.1
 pillow==10.2.0
 pipdeptree==2.13.2
 platformdirs==4.2.0
@@ -126,6 +134,7 @@ uritemplate==4.1.1
 uritools==4.0.2
 urllib3==1.26.18
 vine==5.1.0
+virtualenv==20.25.0
 wcwidth==0.2.12
 webencodings==0.5.1
 wrapt==1.16.0
