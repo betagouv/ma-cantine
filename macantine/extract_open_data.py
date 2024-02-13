@@ -102,10 +102,10 @@ def fetch_sector(sector_id, sectors):
         return ""
 
 
-def remove_timezone(df):
+def datetimes_to_str(df):
     date_columns = df.select_dtypes(include=["datetime64[ns, UTC]"]).columns
     for date_column in date_columns:
-        df[date_column] = df[date_column].dt.date
+        df[date_column] = df[date_column].apply(lambda x: x.strftime("%Y-%m-%d %H:%M"))
     return df
 
 
@@ -219,7 +219,7 @@ class ETL(ABC):
             self.df.to_parquet(file)
         with default_storage.open(filename + ".xlsx", "w") as file:
             df_export = self.df.copy()
-            df_export = remove_timezone(df_export)  # Ah Excel !
+            df_export = datetimes_to_str(df_export)  # Ah Excel !
             df_export.to_excel(file, index=False)
 
 
