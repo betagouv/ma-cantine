@@ -30,7 +30,7 @@ def map_epcis_communes():
     Create a dict that maps cities with their EPCI code
     """
     commune_to_epci = {}
-    epcis_libs = populate_epci_name()
+    epcis_names = populate_epci_name()
     try:
         logger.info("Starting communes dl")
         response_commune = requests.get("https://geo.api.gouv.fr/communes", timeout=50)
@@ -40,7 +40,7 @@ def map_epcis_communes():
             if "codeEpci" in commune.keys():
                 commune_to_epci[commune["code"]] = {}
                 commune_to_epci[commune["code"]]["epci_code"] = commune["codeEpci"]  # Caching the data
-                commune_to_epci[commune["code"]]["epci_lib"] = epcis_libs[commune["codeEpci"]]  # Caching the data
+                commune_to_epci[commune["code"]]["epci_name"] = epcis_names[commune["codeEpci"]]  # Caching the data
     except requests.exceptions.HTTPError as e:
         logger.info(e)
         return None
@@ -107,12 +107,12 @@ def fetch_epci(code_insee_commune, epcis):
         return None
 
 
-def fetch_epci_lib(code_insee_commune, epcis):
+def fetch_epci_name(code_insee_commune, epcis):
     """
     Provide EPCI code for a city, given the insee code of the city
     """
     if code_insee_commune and code_insee_commune in epcis.keys():
-        return epcis[code_insee_commune]["epci_lib"]
+        return epcis[code_insee_commune]["epci_name"]
     else:
         return None
 
@@ -163,7 +163,7 @@ class ETL(ABC):
         if "city_insee_code" in self.df.columns:
             epcis = map_epcis_communes()
             self.df["epci"] = self.df["city_insee_code"].apply(lambda x: fetch_epci(x, epcis))
-            self.df["epci_lib"] = self.df["city_insee_code"].apply(lambda x: fetch_epci_lib(x, epcis))
+            self.df["epci_lib"] = self.df["city_insee_code"].apply(lambda x: fetch_epci_name(x, epcis))
         else:
             self.df["epci"] = None
 
