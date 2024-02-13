@@ -30,7 +30,7 @@ def map_epcis_communes():
     Create a dict that maps cities with their EPCI code
     """
     commune_to_epci = {}
-    epcis_libs = populate_lib_epci()
+    epcis_libs = populate_epci_name()
     try:
         logger.info("Starting communes dl")
         response_commune = requests.get("https://geo.api.gouv.fr/communes", timeout=50)
@@ -47,15 +47,15 @@ def map_epcis_communes():
     return commune_to_epci
 
 
-def populate_lib_epci():
+def populate_epci_name():
     try:
-        epci_libs = {}
+        epci_names = {}
         response = requests.get("https://geo.api.gouv.fr/epcis/?fields=nom", timeout=50)
         response.raise_for_status()
         epcis = response.json()
         for epci in epcis:
-            epci_libs[epci["code"]] = epci["nom"]
-        return epci_libs
+            epci_names[epci["code"]] = epci["nom"]
+        return epci_names
     except requests.exceptions.HTTPError as e:
         logger.info(e)
         return {}
