@@ -9,7 +9,7 @@
       </h3>
     </v-card-title>
     <v-card-text v-if="needsData">
-      <DataInfoBadge v-if="!hasActiveTeledeclaration" :missingData="true" class="py-0 ml-8" />
+      <DataInfoBadge :missingData="true" class="py-0 ml-8" />
     </v-card-text>
     <v-card-text v-else-if="level" :class="`mt-n4 pl-12 ${level.colorClass}`">
       <p class="mb-0 mt-2 fr-text-xs">
@@ -56,7 +56,8 @@ export default {
       return keyMeasures.find((x) => x.id === this.measureId)
     },
     needsData() {
-      return !this.delegatedToCentralKitchen && this.level === Constants.Levels.UNKNOWN
+      const hasActiveTeledeclaration = this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+      return !hasActiveTeledeclaration && !this.delegatedToCentralKitchen && this.level === Constants.Levels.UNKNOWN
     },
     level() {
       if (this.delegatedToSatellite) return null
@@ -97,9 +98,6 @@ export default {
       const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
       const usesCentralDiag = isSatellite && this.diagnostic?.canteenId === this.canteen.centralKitchen?.id
       return usesCentralDiag && this.diagnostic?.centralKitchenDiagnosticMode === "ALL"
-    },
-    hasActiveTeledeclaration() {
-      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
     },
   },
 }
