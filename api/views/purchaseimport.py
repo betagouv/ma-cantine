@@ -13,8 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
 from api.permissions import IsAuthenticated
 from data.models import Purchase, Canteen
-from api.serializers import PurchaseSerializer
-from .utils import normalise_siret, camelize
+from .utils import normalise_siret
 
 logger = logging.getLogger(__name__)
 
@@ -188,13 +187,9 @@ class ImportPurchasesView(APIView):
         self.purchases.append(purchase)
 
     def _get_success_response(self):
-        serialized_purchases = (
-            [] if len(self.errors) else [camelize(PurchaseSerializer(purchase).data) for purchase in self.purchases]
-        )
         return JsonResponse(
             {
-                "purchases": serialized_purchases,
-                "count": len(serialized_purchases),
+                "count": 0 if self.errors else len(self.purchases),
                 "errors": self.errors,
                 "seconds": time.time() - self.start,
             },

@@ -160,9 +160,7 @@ class TestPurchaseImport(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(errors.pop(0)["message"], "Ce fichier a déjà été utilisé pour un import")
-        self.assertEqual(body["count"], 2)
-        purchases = body["purchases"]
-        self.assertIn("Pommes, rouges", str(purchases))
+        self.assertEqual(body["count"], 0)
         # no additional purchases created
         self.assertEqual(Purchase.objects.count(), 2)
 

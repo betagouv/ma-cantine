@@ -219,7 +219,6 @@ export default {
       validators,
       isStaff: user.isStaff,
       duplicateFile: false,
-      purchases: null,
     }
   },
   methods: {
@@ -232,7 +231,6 @@ export default {
           this.importInProgress = false
           this.file = null
           this.purchaseCount = json.count
-          this.purchases = json.purchases
           this.errors = json.errors
           if (this.errors.length && this.errors[0].message === "Ce fichier a déjà été utilisé pour un import") {
             this.duplicateFile = true
