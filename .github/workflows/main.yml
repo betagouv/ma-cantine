@@ -7,14 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.11]
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.8
+      - name: Set up Python 3.11
         uses: actions/setup-python@v1
         with:
-          python-version: 3.8
+          python-version: 3.11
 
       - name: Setup PostgreSQL
         uses: Harmon758/postgresql-action@v1.0.0
@@ -26,7 +26,7 @@ jobs:
       - name: Setup Redis
         uses: zhulik/redis-action@1.1.0
         with:
-          redis version: '5'
+          redis version: "5"
           number of databases: 5
 
       - name: Setup Node
