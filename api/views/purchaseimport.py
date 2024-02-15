@@ -42,11 +42,11 @@ class ImportPurchasesView(APIView):
             with transaction.atomic():
                 self._process_file()
 
-                # If at least an error has been detected, we raise an error to interrupt the 
+                # If at least an error has been detected, we raise an error to interrupt the
                 # transaction and rollback the insertion of any data
                 if self.errors:
                     raise IntegrityError()
-                
+
                 # The duplication check is called after the processing. The cost of eventually processing
                 # the file for nothing appears to be smaller than read the file twice.
                 self._check_duplication()
@@ -78,7 +78,7 @@ class ImportPurchasesView(APIView):
             logger.exception(f"{message}:\n{e}")
             self.errors = [{"row": 0, "status": 400, "message": message}]
             return self._get_success_response()
-        
+
     def _process_file(self):
         file_hash = hashlib.md5()
         chunk = []
@@ -89,7 +89,7 @@ class ImportPurchasesView(APIView):
                 self.dialect = csv.Sniffer().sniff(row.decode())
 
             file_hash.update(row)
-            
+
             # Split into chunks
             chunk.append(row.decode())
 
@@ -188,10 +188,13 @@ class ImportPurchasesView(APIView):
         self.purchases.append(purchase)
 
     def _get_success_response(self):
+        serialized_purchases = (
+            [] if len(self.errors) else [camelize(PurchaseSerializer(purchase).data) for purchase in self.purchases]
+        )
         return JsonResponse(
             {
-                "purchases": camelize(PurchaseSerializer(self.purchases[:10], many=True).data),
-                "count": len(self.purchases),
+                "purchases": serialized_purchases,
+                "count": len(serialized_purchases),
                 "errors": self.errors,
                 "seconds": time.time() - self.start,
             },
