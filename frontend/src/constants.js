@@ -334,7 +334,7 @@ export default Object.freeze({
     BIO: [],
     LABEL_ROUGE: ["BOISSONS"],
     AOCAOP_IGP_STG: ["VIANDES_VOLAILLES"],
-    HVE: ["AUTRES", "BOISSONS"],
+    HVE: ["AUTRES"],
     PECHE_DURABLE: [
       "FRUITS_ET_LEGUMES",
       "CHARCUTERIE",
