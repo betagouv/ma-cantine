@@ -162,7 +162,7 @@ export default {
       return [
         {
           label: "Total des déchets alimentaires",
-          value: isDefined(diag.totalLeftovers) ? `${diag.totalLeftovers} tonnes pour l'année` : "—",
+          value: isDefined(diag.totalLeftovers) ? `${diag.totalLeftovers} kg pour l'année` : "—",
         },
         {
           label: "Période de mesure",
