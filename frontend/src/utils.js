@@ -368,6 +368,7 @@ export const applicableDiagnosticRules = (canteen) => {
       hasQualityException = false
     }
   }
+  // extra questions should correspond to the rules in teledeclaration view : _get_applicable_diagnostic_rules
   return {
     hasDonationAgreement: canteen ? canteen.dailyMealCount >= 3000 : true,
     hasDiversificationPlan: canteen ? canteen.dailyMealCount >= 200 : true,
