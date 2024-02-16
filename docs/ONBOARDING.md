@@ -6,7 +6,7 @@ Please note that the `staging` and `main` branches are protected and all commits
 
 ### À installer localement
 
-- [Python3](https://www.python.org/downloads/) (de préference 3.8)
+- [Python3](https://www.python.org/downloads/) (de préference 3.11)
 - [pip](https://pip.pypa.io/en/stable/installing/) (souvent installé avec Python)
 - [vitrualenv](https://virtualenv.pypa.io/en/stable/installation.html)
 - [Node et npm](https://nodejs.org/en/download/)
@@ -215,3 +215,17 @@ Il faut néanmoins tenir en compte que la mise en page ne sera pas visible et qu
 Celery est un gestionnaire de tâches asynchrone utilisé par exemple pour l'envoi périodique de courriels de rappel et pour le remplissage des donn
 
 Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit être spéficié dans la console CleverCloud sous la variable `CC_PYTHON_CELERY_MODULE=macantine.celery`. La fonctionnalité Celery Beat doit aussi être activée : `CC_PYTHON_CELERY_USE_BEAT=true`, ainsi que le timezone souhaité : `CELERY_TIMEZONE:'Europe/Paris'`
+
+### Visual Studio Code
+
+Des extensions qu'on trouve utile :
+
+- Django
+- EJS Beautify
+- EJS langauge support
+- ESLint
+- Prettier - Code formatter
+- Vue Language Features
+- Vetur
+- vuetify-vscode
+- Spell Right

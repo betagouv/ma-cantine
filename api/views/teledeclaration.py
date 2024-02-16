@@ -180,6 +180,7 @@ class TeledeclarationPdfView(APIView):
             teledeclaration_data = declared_data["teledeclaration"]
             processed_canteen_data = TeledeclarationPdfView._get_canteen_override_data(canteen_data)
             processed_diagnostic_data = TeledeclarationPdfView._get_teledeclaration_override_data(teledeclaration_data)
+            additional_questions = TeledeclarationPdfView._get_applicable_diagnostic_rules(canteen_data)
 
             context = {
                 **{**teledeclaration_data, **processed_diagnostic_data},
@@ -193,6 +194,7 @@ class TeledeclarationPdfView(APIView):
                     "central_kitchen_name": central_kitchen_name,
                     "satellites": declared_data.get("satellites", []),
                     "canteen": {**canteen_data, **processed_canteen_data},
+                    "additional_questions": additional_questions,
                 },
             }
             template = (
@@ -328,4 +330,14 @@ class TeledeclarationPdfView(APIView):
                 else None
             ),
             "communication_supports": combined_communication_supports,
+        }
+
+    # this method should correspond to the rules in frontend utils : applicableDiagnosticRules
+    @staticmethod
+    def _get_applicable_diagnostic_rules(canteen_data):
+        donation_agreement = canteen_data["daily_meal_count"] >= 3000 if "daily_meal_count" in canteen_data else False
+        diversification_plan = canteen_data["daily_meal_count"] >= 200 if "daily_meal_count" in canteen_data else False
+        return {
+            "donation_agreement": donation_agreement,
+            "diversification_plan": diversification_plan,
         }

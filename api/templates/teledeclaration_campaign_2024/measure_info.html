@@ -1,58 +1,31 @@
 {% load static %}
 <h3>Information des usagers et convives</h3>
-<div>
-{% if communicates_on_food_plan %}
-<p>
-    <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
-    Communique sur le plan alimentaire
-</p>
-{% else %}
-<p>
-    <img src="{% static '../../../web/static/images/close-outline.png' %}" height="14" width="14" />
-    Ne communique pas sur le plan alimentaire
-</p>
-{% endif %}
-</div>
+{% include "./response.html" with success=communicates_on_food_plan success_text="Communique sur le plan alimentaire" failure_text="Ne communique pas sur le plan alimentaire" only %}
 
 {% if communication_frequency %}
-<div>
-    <p>
-        <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
-        Fréquence de cette communication : {{ communication_frequency }}
-    </p>
-</div>
+    {% include "./response.html" with success=True text="Fréquence de cette communication" value=communication_frequency only %}
+{% else %}
+    {% include "./response.html" with success=None text="Fréquence de cette communication" value="Inconnu" only %}
 {% endif %}
 
 {% if communication_supports %}
-<div>
-    <p>
-        <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
-        L'information sur la qualité des approvisionnements se fait :
-    </p>
+    {% include "./response.html" with success=True text="L'information sur la qualité des approvisionnements se fait :" only %}
     <ul>
-        {% for support in communication_supports %}
-        <li>{{ support }}</li>
-        {% endfor %}
+        {% for support in communication_supports %}<li>{{ support }}</li>{% endfor %}
     </ul>
-</div>
-{% endif %}
-
-<p>
-{% if communicates_on_food_quality %}
-<img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
-Communique sur les démarches qualité/durables/équitables
 {% else %}
-<img src="{% static '../../../web/static/images/close-outline.png' %}" height="14" width="14" />
-Ne communique pas sur les démarches qualité/durables/équitables
+    {% include "./response.html" with success=None text="L'information sur la qualité des approvisionnements se fait" value="Inconnu" only %}
 {% endif %}
-</p>
+{% include "./response.html" with success=communicates_on_food_quality success_text="Communique sur les démarches qualité/durables/équitables" failure_text="Ne communique pas sur les démarches qualité/durables/équitables" only %}
 
 {% if communication_support_url %}
-<p>
-    <img src="{% static '../../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
-    Lien vers le support de communication :
-    <a href="{{ communication_support_url }}">
-        {{ communication_support_url }}
-    </a>
-</p>
+    <p>
+        <img src="{% static '../../../web/static/images/checkmark-outline.png' %}"
+             height="14"
+             width="14" />
+        Lien vers le support de communication :
+        <a href="{{ communication_support_url }}">{{ communication_support_url }}</a>
+    </p>
+{% else %}
+    {% include "./response.html" with success=False text="Pas de lien vers le support de communication" only %}
 {% endif %}
