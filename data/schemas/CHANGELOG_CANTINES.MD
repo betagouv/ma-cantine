@@ -2,6 +2,13 @@
 
 Tous les changements notables apportés aux jeux de données exposés sur data.gouv.fr vont être documentés ici.
 
+## 2024-02-13
+
+### Ajout
+* Fichier au format parquet
+* Fichier au format xlsx
+
+
 ## 2024-02-07
 
 ### Ajout
