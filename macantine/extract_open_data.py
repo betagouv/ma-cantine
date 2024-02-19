@@ -30,7 +30,6 @@ def map_epcis_communes():
     Create a dict that maps cities with their EPCI code
     """
     commune_to_epci = {}
-    epcis_names = populate_epci_name()
     try:
         logger.info("Starting communes dl")
         response_commune = requests.get("https://geo.api.gouv.fr/communes", timeout=50)
@@ -39,15 +38,14 @@ def map_epcis_communes():
         for commune in communes:
             if "codeEpci" in commune.keys():
                 commune_to_epci[commune["code"]] = {}
-                commune_to_epci[commune["code"]]["epci_code"] = commune["codeEpci"]  # Caching the data
-                commune_to_epci[commune["code"]]["epci_name"] = epcis_names[commune["codeEpci"]]  # Caching the data
+                commune_to_epci[commune["code"]] = commune["codeEpci"]  # Caching the data
     except requests.exceptions.HTTPError as e:
         logger.info(e)
         return None
     return commune_to_epci
 
 
-def populate_epci_name():
+def map_epcis_code_name():
     try:
         epci_names = {}
         response = requests.get("https://geo.api.gouv.fr/epcis/?fields=nom", timeout=50)
@@ -97,22 +95,22 @@ def map_sectors():
     return sectors_mapper
 
 
-def fetch_epci(code_insee_commune, epcis):
+def fetch_epci(code_insee_commune, commune_to_epcis):
     """
     Provide EPCI code for a city, given the insee code of the city
     """
-    if code_insee_commune and code_insee_commune in epcis.keys():
-        return epcis[code_insee_commune]["epci_code"]
+    if code_insee_commune and code_insee_commune in commune_to_epcis.keys():
+        return commune_to_epcis[code_insee_commune]
     else:
         return None
 
 
-def fetch_epci_name(code_insee_commune, epcis):
+def fetch_epci_name(code_insee_epci, epcis_names):
     """
-    Provide EPCI code for a city, given the insee code of the city
+    Provide EPCI code for an epci, given its insee code
     """
-    if code_insee_commune and code_insee_commune in epcis.keys():
-        return epcis[code_insee_commune]["epci_name"]
+    if code_insee_epci and code_insee_epci in epcis_names.keys():
+        return epcis_names[code_insee_epci]
     else:
         return None
 
@@ -170,7 +168,9 @@ class ETL(ABC):
         if "city_insee_code" in self.df.columns:
             epcis = map_epcis_communes()
             self.df["epci"] = self.df["city_insee_code"].apply(lambda x: fetch_epci(x, epcis))
-            self.df["epci_lib"] = self.df["city_insee_code"].apply(lambda x: fetch_epci_name(x, epcis))
+            epcis_names = map_epcis_code_name()
+            self.df["epci_lib"] = self.df["epci"].apply(lambda x: fetch_epci_name(x, epcis_names))
+
         else:
             self.df["epci"] = None
 
