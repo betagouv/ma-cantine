@@ -181,6 +181,7 @@ class TeledeclarationPdfView(APIView):
             processed_canteen_data = TeledeclarationPdfView._get_canteen_override_data(canteen_data)
             processed_diagnostic_data = TeledeclarationPdfView._get_teledeclaration_override_data(teledeclaration_data)
             additional_questions = TeledeclarationPdfView._get_applicable_diagnostic_rules(canteen_data)
+            structure_complete_appro_data = TeledeclarationPdfView._structure_complete_appro_data(teledeclaration_data)
 
             context = {
                 **{**teledeclaration_data, **processed_diagnostic_data},
@@ -195,6 +196,7 @@ class TeledeclarationPdfView(APIView):
                     "satellites": declared_data.get("satellites", []),
                     "canteen": {**canteen_data, **processed_canteen_data},
                     "additional_questions": additional_questions,
+                    "complete_appro": structure_complete_appro_data,
                 },
             }
             template = (
@@ -341,3 +343,41 @@ class TeledeclarationPdfView(APIView):
             "donation_agreement": donation_agreement,
             "diversification_plan": diversification_plan,
         }
+
+    @staticmethod
+    def _structure_complete_appro_data(teledeclaration_data):
+        """
+        This function restructures appro data to reduce template code
+        """
+        labels_variable_to_display = {
+            "bio": "Bio",
+            "label_rouge": "Label Rouge",
+            "aocaop_igp_stg": "AOC/AOP, IGP ou STG",
+            "hve": "Certification Environnementale de Niveau 2 ou HVE",
+            "peche_durable": "Écolabel pêche durable",
+            "rup": "RUP",
+            "commerce_equitable": "Commerce Équitable",
+            "fermier": "Fermier",
+            "externalites": "Externalités environnementales",
+            "performance": "Performance environnementale",
+            "non_egalim": "non-EGAlim",
+            "france": "provenance France",
+            "short_distribution": "circuit-court",
+            "local": "« local »",
+        }
+        family_variable_to_display = {
+            "viandes_volailles": "Viandes et volailles",
+            "produits_de_la_mer": "Poissons, produits de la mer et de l'aquaculture",
+            "fruits_et_legumes": "Fruits et légumes",
+            "charcuterie": "Charcuterie",
+            "produits_laitiers": "Produits laitiers",
+            "boulangerie": "Boulangerie",
+            "boissons": "Boissons",
+            "autres": "Autres produits",
+        }
+        structured_data = {}
+        for label, display_label in labels_variable_to_display.items():
+            structured_data[display_label] = {}
+            for family, display_family in family_variable_to_display.items():
+                structured_data[display_label][display_family] = teledeclaration_data[f"value_{family}_{label}"]
+        return structured_data
