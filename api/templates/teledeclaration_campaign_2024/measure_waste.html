@@ -30,15 +30,12 @@
 <div>
 
     {% if waste_actions %}
-        <p>
-            <img src="{% static '../../../web/static/images/checkmark-outline.png' %}"
-                 height="14"
-                 width="14" />
-            Actions de lutte contre le gaspillage :
-        </p>
+        {% include "./response.html" with success=True success_text="Actions de lutte contre le gaspillage :" %}
         <ul>
             {% for action in waste_actions %}<li>{{ action }}</li>{% endfor %}
         </ul>
+    {% else %}
+        {% include "./response.html" with success=False failure_text="Aucune action de lutte contre le gaspillage renseignée" %}
     {% endif %}
 </div>
 
