@@ -10,20 +10,20 @@
 
     {% if has_waste_measures %}
         <ul>
-
-            {% if total_leftovers %}<li>Total des déchets alimentaires : {{ total_leftovers }} kg</li>{% endif %}
-
-            {% if duration_leftovers_measurement %}
-                <li>Période de mesure : {{ duration_leftovers_measurement }} jours</li>
-            {% endif %}
-
-            {% if bread_leftovers %}<li>Reste de pain : {{ bread_leftovers }} kg/an</li>{% endif %}
-
-            {% if served_leftovers %}<li>Reste plateau : {{ served_leftovers }} kg/an</li>{% endif %}
-
-            {% if unserved_leftovers %}<li>Reste en production (non servi) : {{ unserved_leftovers }} kg/an</li>{% endif %}
-
-            {% if side_leftovers %}<li>Reste de composantes (entrée, plat dessert...) : {{ side_leftovers }} kg/an</li>{% endif %}
+            <li>
+                {% include "./labelled_value.html" with text="Total des déchets alimentaires" value=total_leftovers unit="kg" only %}
+            </li>
+            <li>
+                {% include "./labelled_value.html" with text="Période de mesure" value=duration_leftovers_measurement unit="jours" only %}
+            </li>
+            <li>{% include "./labelled_value.html" with text="Reste de pain" value=bread_leftovers unit="kg/an" only %}</li>
+            <li>{% include "./labelled_value.html" with text="Reste plateau" value=served_leftovers unit="kg/an" only %}</li>
+            <li>
+                {% include "./labelled_value.html" with text="Reste en production (non servi)" value=unserved_leftovers unit="kg/an" only %}
+            </li>
+            <li>
+                {% include "./labelled_value.html" with text="Reste de composantes (entrée, plat dessert...)" value=side_leftovers unit="kg/an" only %}
+            </li>
         </ul>
     {% else %}
         <p>
