@@ -179,3 +179,15 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         body = response.json()
         self.assertEqual(len(body["errors"]), 1)
+
+    @authenticate
+    def test_round_cents(self):
+        """
+        Cents should be rounded to the nearest two digits after the point
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        with open("./api/tests/files/purchases_floating_number.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(Purchase.objects.first().price_ht, Decimal("90.11"))

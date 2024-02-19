@@ -4,6 +4,7 @@ import logging
 import hashlib
 import io
 import uuid
+from decimal import Decimal, ROUND_HALF_DOWN, InvalidOperation
 from django.db import IntegrityError, transaction
 from django.conf import settings
 from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
@@ -42,11 +43,11 @@ class ImportPurchasesView(APIView):
             with transaction.atomic():
                 self._process_file()
 
-                # If at least an error has been detected, we raise an error to interrupt the 
+                # If at least an error has been detected, we raise an error to interrupt the
                 # transaction and rollback the insertion of any data
                 if self.errors:
                     raise IntegrityError()
-                
+
                 # The duplication check is called after the processing. The cost of eventually processing
                 # the file for nothing appears to be smaller than read the file twice.
                 self._check_duplication()
@@ -78,7 +79,7 @@ class ImportPurchasesView(APIView):
             logger.exception(f"{message}:\n{e}")
             self.errors = [{"row": 0, "status": 400, "message": message}]
             return self._get_success_response()
-        
+
     def _process_file(self):
         file_hash = hashlib.md5()
         chunk = []
@@ -89,7 +90,7 @@ class ImportPurchasesView(APIView):
                 self.dialect = csv.Sniffer().sniff(row.decode())
 
             file_hash.update(row)
-            
+
             # Split into chunks
             chunk.append(row.decode())
 
@@ -161,9 +162,18 @@ class ImportPurchasesView(APIView):
         date = row.pop(0)
         if date == "":
             raise ValidationError({"date": "La date ne peut pas être vide"})
-        price = row.pop(0)
+
+        price = row.pop(0).strip()
         if price == "":
             raise ValidationError({"price_ht": "Le prix ne peut pas être vide"})
+
+        # We try to round the price. If we can't, we will let Django's field validation
+        # manage the error - hence the `pass` in the exception handler
+        try:
+            price = Decimal(price.strip()).quantize(Decimal(".01"), rounding=ROUND_HALF_DOWN)
+        except InvalidOperation:
+            pass
+
         family = row.pop(0)
         characteristics = row.pop(0)
         characteristics = [c.strip() for c in characteristics.split(",")]
@@ -178,7 +188,7 @@ class ImportPurchasesView(APIView):
             description=description.strip(),
             provider=provider.strip(),
             date=date.strip(),
-            price_ht=price.strip(),
+            price_ht=price,
             family=family.strip(),
             characteristics=characteristics,
             local_definition=local_definition.strip(),
