@@ -25,15 +25,8 @@
                 {% include "./labelled_value.html" with text="Reste de composantes (entrée, plat dessert...)" value=side_leftovers unit="kg/an" only %}
             </li>
         </ul>
-    {% else %}
-        <p>
-            <img src="{% static '../../../web/static/images/close-outline.png' %}"
-                 height="14"
-                 width="14" />
-            Pas de mesures contre le gaspillage alimentaire
-        </p>
-    </div>
-{% endif %}
+    {% endif %}
+</div>
 <div>
 
     {% if waste_actions %}
