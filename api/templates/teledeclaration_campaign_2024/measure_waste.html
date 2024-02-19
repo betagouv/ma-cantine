@@ -46,38 +46,12 @@
         {% if has_donation_agreement %}
             <ul>
                 <li>
-                    Fréquence de dons :
-                    <span>
-
-                        {% if donation_frequency >= 0 %}
-                            {{ donation_frequency }} dons/an
-                        {% else %}
-                            Inconnu
-                        {% endif %}
-                    </span>
+                    {% include "./labelled_value.html" with text="Fréquence de dons" value=donation_frequency unit="dons/an" only %}
                 </li>
                 <li>
-                    Quantité des denrées données :
-                    <span>
-
-                        {% if donation_quantity >= 0 %}
-                            {{ donation_quantity }} kg/an
-                        {% else %}
-                            Inconnu
-                        {% endif %}
-                    </span>
+                    {% include "./labelled_value.html" with text="Quantité des denrées données" value=donation_quantity unit="kg/an" only %}
                 </li>
-                <li>
-                    Type de denrées données :
-                    <span>
-
-                        {% if donation_food_type %}
-                            {{ donation_food_type }}
-                        {% else %}
-                            Inconnu
-                        {% endif %}
-                    </span>
-                </li>
+                <li>{% include "./labelled_value.html" with text="Type de denrées données" value=donation_food_type only %}</li>
             </ul>
         {% endif %}
     </div>
