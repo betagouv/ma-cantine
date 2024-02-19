@@ -24,13 +24,15 @@ class ImportPurchasesView(APIView):
 
     def __init__(self, **kwargs):
         self.purchases = []
-        self.purchases_count = 0
         self.errors = []
         self.start = None
         self.file_digest = None
         self.tmp_id = uuid.uuid4()
         self.file = None
         self.dialect = None
+        self.is_duplicate_file = False
+        self.duplicate_purchases = []
+        self.duplicate_purchase_count = 0
         super().__init__(**kwargs)
 
     def post(self, request):
@@ -42,11 +44,11 @@ class ImportPurchasesView(APIView):
             with transaction.atomic():
                 self._process_file()
 
-                # If at least an error has been detected, we raise an error to interrupt the 
+                # If at least an error has been detected, we raise an error to interrupt the
                 # transaction and rollback the insertion of any data
                 if self.errors:
                     raise IntegrityError()
-                
+
                 # The duplication check is called after the processing. The cost of eventually processing
                 # the file for nothing appears to be smaller than read the file twice.
                 self._check_duplication()
@@ -78,7 +80,7 @@ class ImportPurchasesView(APIView):
             logger.exception(f"{message}:\n{e}")
             self.errors = [{"row": 0, "status": 400, "message": message}]
             return self._get_success_response()
-        
+
     def _process_file(self):
         file_hash = hashlib.md5()
         chunk = []
@@ -89,7 +91,7 @@ class ImportPurchasesView(APIView):
                 self.dialect = csv.Sniffer().sniff(row.decode())
 
             file_hash.update(row)
-            
+
             # Split into chunks
             chunk.append(row.decode())
 
@@ -113,7 +115,9 @@ class ImportPurchasesView(APIView):
     def _check_duplication(self):
         matching_purchases = Purchase.objects.filter(import_source=self.file_digest)
         if matching_purchases.exists():
-            self.purchases = matching_purchases.all()
+            self.duplicate_purchases = matching_purchases[:10]
+            self.is_duplicate_file = True
+            self.duplicate_purchase_count = matching_purchases.count()
             raise ValidationError("Ce fichier a déjà été utilisé pour un import")
 
     def _process_chunk(self, chunk):
@@ -190,10 +194,12 @@ class ImportPurchasesView(APIView):
     def _get_success_response(self):
         return JsonResponse(
             {
-                "purchases": camelize(PurchaseSerializer(self.purchases[:10], many=True).data),
-                "count": len(self.purchases),
+                "count": 0 if self.errors else len(self.purchases),
                 "errors": self.errors,
                 "seconds": time.time() - self.start,
+                "duplicatePurchases": camelize(PurchaseSerializer(self.duplicate_purchases, many=True).data),
+                "duplicateFile": self.is_duplicate_file,
+                "duplicatePurchaseCount": self.duplicate_purchase_count,
             },
             status=status.HTTP_200_OK,
         )
