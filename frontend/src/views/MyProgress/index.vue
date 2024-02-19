@@ -99,9 +99,57 @@
             <DataInfoBadge class="my-2" :missingData="true" />
             <p>Pour télédéclarer, veuillez :</p>
             <ul>
-              <li v-if="missingApproData">Compléter le volet d’approvisionnement</li>
-              <li v-if="missingCanteenData">Compléter les données de votre établissement</li>
-              <li v-if="hasSatelliteInconsistency">Mettre à jour vos satellites</li>
+              <li v-if="missingApproDiagnostic" class="mb-2">
+                <router-link
+                  custom
+                  :to="{
+                    name: 'DiagnosticTunnel',
+                    params: {
+                      canteenUrlComponent: this.canteenUrlComponent,
+                      year: year,
+                      measureId: 'qualite-des-produits',
+                    },
+                  }"
+                  v-slot="{ href }"
+                >
+                  <a @click.stop.prevent="startApproTunnel" :href="href">Rentrer mes données d'approvisionnement</a>
+                </router-link>
+              </li>
+              <li v-else-if="missingApproData" class="mb-2">
+                <router-link
+                  :to="{
+                    name: 'DiagnosticTunnel',
+                    params: {
+                      canteenUrlComponent: this.canteenUrlComponent,
+                      year: year,
+                      measureId: 'qualite-des-produits',
+                    },
+                  }"
+                >
+                  Compléter le volet d’approvisionnement
+                </router-link>
+              </li>
+              <li v-if="missingCanteenData" class="mb-2">
+                <router-link
+                  :to="{
+                    name: 'CanteenForm',
+                    params: { canteenUrlComponent: this.canteenUrlComponent },
+                    query: { valider: true },
+                  }"
+                >
+                  Compléter les données de votre établissement
+                </router-link>
+              </li>
+              <li v-if="hasSatelliteInconsistency" class="mb-2">
+                <router-link
+                  :to="{
+                    name: 'SatelliteManagement',
+                    params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                  }"
+                >
+                  Mettre à jour vos satellites
+                </router-link>
+              </li>
             </ul>
           </div>
         </div>
@@ -339,6 +387,10 @@ export default {
       }
       return this.tabHeaders
     },
+    missingApproDiagnostic() {
+      if (this.isSatelliteWithApproCentralDiagnostic) return false
+      return !this.diagnostic
+    },
     missingApproData() {
       if (this.isSatelliteWithApproCentralDiagnostic) return false
       return !this.diagnostic || !hasDiagnosticApproData(this.diagnostic)
@@ -488,6 +540,30 @@ export default {
         })
       }
       this.chooseTabToDisplay()
+    },
+    startApproTunnel() {
+      return this.$store
+        .dispatch("createDiagnostic", {
+          canteenId: this.canteen.id,
+          payload: {
+            year: this.year,
+            creationSource: "TUNNEL",
+            centralKitchenDiagnosticMode: this.centralKitchenDiagnosticMode,
+          },
+        })
+        .then(() => {
+          this.$router.push({
+            name: "DiagnosticTunnel",
+            params: {
+              canteenUrlComponent: this.canteenUrlComponent,
+              year: this.year,
+              measureId: "qualite-des-produits",
+            },
+          })
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
     },
   },
   watch: {
