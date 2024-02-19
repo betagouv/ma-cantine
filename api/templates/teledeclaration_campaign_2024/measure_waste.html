@@ -6,19 +6,12 @@
     {% include "./response.html" with success=has_waste_plan success_text="Plan d'action contre le gaspillage en place" failure_text="Pas de plan d'action contre le gaspillage en place" only %}
 {% endif %}
 <div>
+    {% include "./response.html" with success=has_waste_measures success_text="Réalisé des mesures contre le gaspillage alimentaire" failure_text="Ne pas réalisé des mesures contre le gaspillage alimentaire" only %}
 
     {% if has_waste_measures %}
-        <p>
-            <img src="{% static '../../../web/static/images/checkmark-outline.png' %}"
-                 height="14"
-                 width="14" />
-            Réalise des mesures contre le gaspillage alimentaire
-        </p>
-        {% comment %} TODO: show list if has_waste_measures {% endcomment %}
         <ul>
-            {% comment %} TODO: show in kg {% endcomment %}
 
-            {% if total_leftovers %}<li>Total des déchets alimentaires : {{ total_leftovers }} tonnes</li>{% endif %}
+            {% if total_leftovers %}<li>Total des déchets alimentaires : {{ total_leftovers }} kg</li>{% endif %}
 
             {% if duration_leftovers_measurement %}
                 <li>Période de mesure : {{ duration_leftovers_measurement }} jours</li>
