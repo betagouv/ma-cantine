@@ -459,7 +459,6 @@ export default {
   mounted() {
     if (this.$route.query && this.$route.query["valider"]) {
       this.$nextTick(() => {
-        const status = "warning"
         const message = "Merci de vérifier les champs en rouge ci dessous"
         const title = null
         if (!this.$refs.form.validate()) this.$store.dispatch("notify", { title, message, status })

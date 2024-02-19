@@ -35,7 +35,7 @@ export default {
   name: "Notification",
   computed: {
     color() {
-      const colors = { success: "green", error: "red", warning: "orange darken-4" }
+      const colors = { success: "green", error: "red", warning: "amber darken-2" }
       if (!this.show) return "white"
       return Object.prototype.hasOwnProperty.call(colors, this.notification.status)
         ? colors[this.notification.status]
