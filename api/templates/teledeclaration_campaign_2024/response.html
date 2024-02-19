@@ -1,0 +1,26 @@
+{% load static %}
+<p>
+
+    {% if success %}
+        <img src="{% static '../../../web/static/images/checkmark-outline.png' %}"
+             height="14"
+             width="14" />
+
+        {% if success_text %}{{ success_text }}{% endif %}
+    {% elif success == None %}
+        <img src="{% static '../../../web/static/images/question-mark.png' %}"
+             height="14"
+             width="14" />
+
+        {% if text is None %}{{ success_text }} : Inconnu{% endif %}
+    {% else %}
+        <img src="{% static '../../../web/static/images/close-outline.png' %}"
+             height="14"
+             width="14" />
+
+        {% if failure_text %}{{ failure_text }}{% endif %}
+    {% endif %}
+    {{ text }}
+
+    {% if value %}: {{ value }}{% endif %}
+</p>

@@ -16,6 +16,8 @@ class Diagnostic(models.Model):
             models.UniqueConstraint(fields=["canteen", "year"], name="annual_diagnostic"),
         ]
 
+    # NB: if the label of the choice changes, double check that the teledeclaration PDF
+    # doesn't need an update as well, since the logic in the templates is based on the label
     class DiagnosticType(models.TextChoices):
         SIMPLE = "SIMPLE", "Télédeclaration simple"
         COMPLETE = "COMPLETE", "Télédeclaration complète"

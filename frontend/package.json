@@ -9,15 +9,15 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "apexcharts": "^3.45.2",
-    "core-js": "^3.35.1",
+    "apexcharts": "^3.46.0",
+    "core-js": "^3.36.0",
     "html2pdf.js": "^0.10.1",
     "qrcode.vue": "^1.7.0",
     "vue": "^2.7.16",
     "vue-apexcharts": "^1.6.2",
     "vue-matomo": "^4.2.0",
     "vue-router": "^3.6.5",
-    "vuetify": "^2.7.1",
+    "vuetify": "^2.7.2",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
@@ -33,7 +33,7 @@
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-vue": "^9.21.1",
     "prettier": "^1.19.1",
-    "sass": "^1.70.0",
+    "sass": "^1.71.0",
     "sass-loader": "^10.0.0",
     "vue-cli-plugin-vuetify": "~2.5.8",
     "vue-template-compiler": "^2.7.16",
