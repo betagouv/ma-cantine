@@ -1,4 +1,3 @@
-import datetime
 from django.test import TestCase
 from data.factories import CompleteDiagnosticFactory, DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
@@ -10,7 +9,6 @@ import json
 
 
 class TestExtractionOpenData(TestCase):
-
     @freeze_time("2023-05-14")  # Faking time to mock creation_date
     def test_extraction_teledeclaration(self):
         schema = json.load(open("data/schemas/schema_teledeclaration.json"))
@@ -40,18 +38,18 @@ class TestExtractionOpenData(TestCase):
         canteen.sectors.clear()
         Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
         etl_td.extract_dataset()
-        self.assertEqual(
-            etl_td.get_dataset().iloc[0]["canteen_sectors"], [], "The sectors should be an empty list"
-        )
+        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_sectors"], [], "The sectors should be an empty list")
 
         canteen = CanteenFactory.create()
         complete_diagnostic = CompleteDiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
         etl_td = ETL_TD(complete_diagnostic.year)
         etl_td.extract_dataset()
         self.assertGreater(
-            etl_td.get_dataset().iloc[0]["teledeclaration_ratio_bio"], 0, "The bio value is aggregated from bio fields and should be greater than 0"
+            etl_td.get_dataset().iloc[0]["teledeclaration_ratio_bio"],
+            0,
+            "The bio value is aggregated from bio fields and should be greater than 0",
         )
-    
+
     @freeze_time("2022-08-14")  # Faking time to mock creation_date, must be in the campaign dates of 2023
     def test_extraction_canteen(self):
         schema = json.load(open("data/schemas/schema_cantine.json"))
@@ -97,16 +95,27 @@ class TestExtractionOpenData(TestCase):
         self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["department_lib"], "Finistère")
         self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["region_lib"], "Bretagne")
         self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["epci"], "242900793")
+        self.assertEqual(
+            canteens[canteens.id == canteen_1.id].iloc[0]["epci_lib"], "CC Communauté Lesneven Côte des Légendes"
+        )
 
         # Checking the campaign participation
         etl_canteen = ETL_CANTEEN()
         applicant = UserFactory.create()
         diagnostic_2021 = DiagnosticFactory.create(canteen=canteen_1, year=2021, diagnostic_type=None)
-        td = Teledeclaration.create_from_diagnostic(diagnostic_2021, applicant)
+        _ = Teledeclaration.create_from_diagnostic(diagnostic_2021, applicant)
         etl_canteen.extract_dataset()
         canteens = etl_canteen.get_dataset()
-        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["declaration_donnees_2021"], True, "The canteen has participated in the campain")
-        self.assertEqual(canteens[canteens.id == canteen_2.id].iloc[0]["declaration_donnees_2021"], False, "The canteen hasn't participated in the campain")
+        self.assertEqual(
+            canteens[canteens.id == canteen_1.id].iloc[0]["declaration_donnees_2021"],
+            True,
+            "The canteen has participated in the campain",
+        )
+        self.assertEqual(
+            canteens[canteens.id == canteen_2.id].iloc[0]["declaration_donnees_2021"],
+            False,
+            "The canteen hasn't participated in the campain",
+        )
 
         canteen_2.sectors.clear()
         etl_canteen.extract_dataset()
