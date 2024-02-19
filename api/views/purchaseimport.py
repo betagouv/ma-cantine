@@ -13,7 +13,8 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
 from api.permissions import IsAuthenticated
 from data.models import Purchase, Canteen
-from .utils import normalise_siret
+from api.serializers import PurchaseSerializer
+from .utils import normalise_siret, camelize
 
 logger = logging.getLogger(__name__)
 
@@ -23,13 +24,15 @@ class ImportPurchasesView(APIView):
 
     def __init__(self, **kwargs):
         self.purchases = []
-        self.purchases_count = 0
         self.errors = []
         self.start = None
         self.file_digest = None
         self.tmp_id = uuid.uuid4()
         self.file = None
         self.dialect = None
+        self.is_duplicate_file = False
+        self.duplicate_purchases = []
+        self.duplicate_purchase_count = 0
         super().__init__(**kwargs)
 
     def post(self, request):
@@ -112,7 +115,9 @@ class ImportPurchasesView(APIView):
     def _check_duplication(self):
         matching_purchases = Purchase.objects.filter(import_source=self.file_digest)
         if matching_purchases.exists():
-            self.purchases = matching_purchases.all()
+            self.duplicate_purchases = matching_purchases[:10]
+            self.is_duplicate_file = True
+            self.duplicate_purchase_count = matching_purchases.count()
             raise ValidationError("Ce fichier a déjà été utilisé pour un import")
 
     def _process_chunk(self, chunk):
@@ -192,6 +197,9 @@ class ImportPurchasesView(APIView):
                 "count": 0 if self.errors else len(self.purchases),
                 "errors": self.errors,
                 "seconds": time.time() - self.start,
+                "duplicatePurchases": camelize(PurchaseSerializer(self.duplicate_purchases, many=True).data),
+                "duplicateFile": self.is_duplicate_file,
+                "duplicatePurchaseCount": self.duplicate_purchase_count,
             },
             status=status.HTTP_200_OK,
         )

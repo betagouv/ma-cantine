@@ -161,6 +161,10 @@ class TestPurchaseImport(APITestCase):
         errors = body["errors"]
         self.assertEqual(errors.pop(0)["message"], "Ce fichier a déjà été utilisé pour un import")
         self.assertEqual(body["count"], 0)
+        self.assertTrue(body["duplicateFile"])
+        self.assertEqual(len(body["duplicatePurchases"]), 2)
+        self.assertEqual(body["duplicatePurchaseCount"], 2)
+
         # no additional purchases created
         self.assertEqual(Purchase.objects.count(), 2)
 
