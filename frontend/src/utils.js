@@ -229,8 +229,6 @@ export const diagnosticsMap = (diagnostics) => {
   return {
     previous: diagnosticsWithDefault[0],
     latest: diagnosticsWithDefault[1],
-    provisionalYear1: diagnosticsWithDefault[2],
-    provisionalYear2: diagnosticsWithDefault[3],
   }
 }
 
