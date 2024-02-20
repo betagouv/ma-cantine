@@ -478,10 +478,6 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
             raise PermissionDenied(
                 detail=f"Format fichier : {self.final_value_idx + 1} ou 12 colonnes attendues, {len(row)} trouvées."
             )
-
-    def _validate_diagnostic(self, row):
-        # NB: if year is given, appro data is required, else only canteen data required
-        diagnostic_year = values_dict = None
         try:
             diagnostic_year = row[self.year_idx]
             # Flake formatting bug: https://github.com/PyCQA/pycodestyle/issues/373#issuecomment-760190686
@@ -490,7 +486,16 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
         except IndexError:
             pass
 
+    def _validate_diagnostic(self, row):
+        # NB: if year is given, appro data is required, else only canteen data required
+        values_dict = None
+        diagnostic_year = row[self.year_idx] if len(row) > self.year_idx else None
+
         if diagnostic_year:
+            try:
+                diagnostic_year = int(diagnostic_year.strip())
+            except ValueError:
+                raise ValidationError({"year": f"La valeur « {row[self.year_idx]} » doit être un nombre entier."})
             mandatory_fields = [
                 "value_total_ht",
             ]

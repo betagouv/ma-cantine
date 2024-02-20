@@ -371,11 +371,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'année' : La valeur «\xa0.\xa0» doit être un nombre entier.",
-        )
-        self.assertEqual(
-            errors.pop(0)["message"],
-            f"Champ 'année' : L'année doit être comprise entre 2019 et {NEXT_YEAR}.",
+            "Champ 'année' : La valeur « . » doit être un nombre entier.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
