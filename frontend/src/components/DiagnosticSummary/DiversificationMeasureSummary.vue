@@ -12,6 +12,11 @@
                 {{ action }}
               </li>
             </ul>
+            <ul role="list" class="mt-2" v-else>
+              <li class="fr-text-xs mb-1">
+                Aucune action du plan renseignée
+              </li>
+            </ul>
           </span>
         </span>
         <span v-else-if="diagnosticUsesNullAsFalse || diagnostic.hasDiversificationPlan === false">
