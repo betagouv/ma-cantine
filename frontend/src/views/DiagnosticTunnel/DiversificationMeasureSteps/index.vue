@@ -158,32 +158,33 @@ export default {
       this.$set(this, "payload", payload)
     },
     calulateSteps() {
-      const steps = [
-        {
-          title: "Mise en place d’un menu végétarien",
-          urlSlug: "menu",
-        },
-      ]
-      const menuDetailsSteps = [
-        {
-          title: "Options proposées aux convives",
-          urlSlug: "options",
-        },
-        {
-          title: "Composition du plat végétarien principal",
-          urlSlug: "composition",
-        },
-      ]
-      // payload is undefined when this is called from data()
-      if (this.payload?.vegetarianWeeklyRecurrence !== "NEVER") {
-        steps.push(...menuDetailsSteps)
-      }
+      const steps = []
       const applicableRules = applicableDiagnosticRules(this.canteen)
       if (applicableRules.hasDiversificationPlan) {
         steps.push({
           title: "Mise en place d’actions de diversification des protéines",
           urlSlug: "plan",
         })
+      }
+      steps.push([
+        {
+          title: "Mise en place d’un menu végétarien",
+          urlSlug: "menu",
+        },
+      ])
+      // payload is undefined when this is called from data()
+      if (this.payload?.vegetarianWeeklyRecurrence !== "NEVER") {
+        const menuDetailsSteps = [
+          {
+            title: "Options proposées aux convives",
+            urlSlug: "options",
+          },
+          {
+            title: "Composition du plat végétarien principal",
+            urlSlug: "composition",
+          },
+        ]
+        steps.push(...menuDetailsSteps)
       }
       steps.push({
         title: "Synthèse",
