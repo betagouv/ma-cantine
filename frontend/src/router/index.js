@@ -418,7 +418,7 @@ const routes = [
     component: DiagnosticTunnel,
     props: true,
     meta: {
-      title: "Diagnostic",
+      title: "Bilan",
       authenticationRequired: true,
       fullscreen: true,
     },
