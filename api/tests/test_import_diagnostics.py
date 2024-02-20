@@ -7,7 +7,7 @@ from django.core import mail
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.models import Diagnostic, Canteen, ManagerInvitation
-from data.factories import SectorFactory, CanteenFactory, UserFactory
+from data.factories import SectorFactory, CanteenFactory, UserFactory, DiagnosticFactory
 from data.department_choices import Department
 from data.models.teledeclaration import Teledeclaration
 from data.region_choices import Region
@@ -1164,6 +1164,27 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         for satellite in (satellite_2_1, satellite_2_2):
             self.assertEqual(satellite.central_producer_siret, cuisine_centrale_2.siret)
+
+    @authenticate
+    def test_update_existing_diagnostic(self, _):
+        """
+        If a diagnostic already exists for the canteen, update the diag and canteen
+        with data in import file
+        """
+        canteen = CanteenFactory.create(siret="21340172201787", name="Old name")
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, value_total_ht=1, value_bio_ht=0.2)
+
+        with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 0)
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.name, "A canteen")
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.value_total_ht, 1000)
 
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):
