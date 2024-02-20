@@ -130,7 +130,7 @@ class ImportDiagnosticsView(ABC, APIView):
             row, import_source, publication_status, manager_emails, silently_added_manager_emails
         )
         if diagnostic_year:
-            diagnostic = self._create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
+            diagnostic = self._update_or_create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
             if should_teledeclare and self.request.user.is_staff:
                 self._teledeclare_diagnostic(diagnostic)
 
@@ -150,13 +150,16 @@ class ImportDiagnosticsView(ABC, APIView):
 
     # NB: this function should only be called once the data has been validated since by this point a canteen
     # will have been saved to the DB and we don't want partial imports caused by exceptions from this method
-    def _create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
-        diagnostic = Diagnostic(
-            canteen_id=canteen.id,
-            year=diagnostic_year,
-            diagnostic_type=diagnostic_type,
-            **values_dict,
+    def _update_or_create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
+        diagnostic_exists = Diagnostic.objects.filter(canteen=canteen, year=diagnostic_year).exists()
+        diagnostic = (
+            Diagnostic.objects.get(canteen=canteen, year=diagnostic_year)
+            if diagnostic_exists
+            else Diagnostic(canteen_id=canteen.id, year=diagnostic_year)
         )
+        setattr(diagnostic, "diagnostic_type", diagnostic_type)
+        for key, value in values_dict.items():
+            setattr(diagnostic, key, value)
         diagnostic.full_clean()
         diagnostic.save()
         update_change_reason(diagnostic, f"Mass CSV import. {self.__class__.__name__[:100]}")
@@ -414,8 +417,6 @@ class ImportDiagnosticsView(ABC, APIView):
                     verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(field)
                     for message in messages:
                         user_message = message
-                        if user_message == "Un objet Diagnostic avec ces champs Canteen et Année existe déjà.":
-                            user_message = "Un diagnostic pour cette année et cette cantine existe déjà."
                         if field != "__all__":
                             user_message = f"Champ '{verbose_field_name}' : {user_message}"
                         ImportDiagnosticsView._add_error(errors, user_message)

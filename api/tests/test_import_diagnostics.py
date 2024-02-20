@@ -391,10 +391,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Un diagnostic pour cette année et cette cantine existe déjà.",
-        )
-        self.assertEqual(
-            errors.pop(0)["message"],
             "Champ 'Valeur totale annuelle HT' : La somme des valeurs d'approvisionnement, 300, est plus que le total, 20",
         )
         self.assertEqual(
