@@ -1178,6 +1178,46 @@ class TestImportDiagnosticsAPI(APITestCase):
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.value_total_ht, 1000)
 
+    @authenticate
+    def test_update_diagnostic_conditional_on_teledeclaration_status(self, _):
+        """
+        If a diagnostic with a valid TD already exists for the canteen, throw an error
+        If the TD is cancelled, allow update
+        """
+        canteen = CanteenFactory.create(siret="21340172201787", name="Old name")
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, value_total_ht=1, value_bio_ht=0.2)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
+
+        with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "Ce n'est pas possible de modifier un diagnostic télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration.",
+        )
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.name, "Old name")
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.value_total_ht, 1)
+
+        # now test cancelled TD
+        teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
+        teledeclaration.save()
+        with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 0)
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.name, "A canteen")
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.value_total_ht, 1000)
+
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):
     @unittest.skipUnless(os.environ.get("ENVIRONMENT") == "dev", "Not in dev environment")
