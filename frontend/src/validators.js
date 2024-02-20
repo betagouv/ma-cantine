@@ -168,7 +168,7 @@ export default {
         if (!isBase10Number(input)) return "Pour un nombre décimal, veuillez utiliser un point, par exemple 100.95"
         const tofixed = number.toFixed(max)
         if (number !== Number(tofixed)) {
-          return `${max} décimales attendues, par exemple ${tofixed}`
+          return `${max} chiffres après le virgule attendus, par exemple ${tofixed}`
         }
       }
       return true
