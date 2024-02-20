@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-row style="position: relative;">
+    <v-row v-if="year" style="position: relative;">
       <v-col cols="12" md="4" class="d-flex flex-column">
         <v-row>
           <v-col cols="8">
@@ -170,7 +170,7 @@ export default {
     const years = customDiagnosticYears(this.canteen.diagnostics)
     return {
       lastYear: lastYear(),
-      year: lastYear(),
+      year: null,
       diagnosticYears: years,
       allowedYears: years.map((year) => ({ text: year, value: year })),
       showTeledeclarationPreview: false,
@@ -295,7 +295,14 @@ export default {
     if (this.$route.query?.year && this.diagnosticYears.indexOf(+this.$route.query.year) > -1) {
       this.year = +this.$route.query.year
       this.$router.replace({ query: {} })
+    } else {
+      this.year = lastYear()
     }
+  },
+  watch: {
+    year(newYear) {
+      this.$emit("year-update", newYear)
+    },
   },
 }
 </script>

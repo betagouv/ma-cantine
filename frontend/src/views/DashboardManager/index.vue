@@ -13,7 +13,7 @@
 
     <div v-if="canteen">
       <div class="mt-4">
-        <EgalimProgression :canteen="canteen" />
+        <EgalimProgression :canteen="canteen" @year-update="updateYear" />
       </div>
 
       <h2 class="mt-10 mb-2 fr-h2">
@@ -56,7 +56,7 @@
           <TeamWidget :canteen="canteen" />
         </v-col>
       </v-row>
-      <ComparisonSection :canteen="canteen" />
+      <ComparisonSection :canteen="canteen" :year="year" />
     </div>
     <v-row v-else>
       <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
@@ -113,6 +113,7 @@ export default {
   data() {
     return {
       canteen: null,
+      year: null,
       showCanteenSelection: false,
     }
   },
@@ -154,6 +155,9 @@ export default {
             status: "error",
           })
         })
+    },
+    updateYear(year) {
+      this.year = year
     },
   },
   mounted() {

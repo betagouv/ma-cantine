@@ -10,7 +10,7 @@
         <h3 class="fr-h4 mb-2">Qualité de produits en {{ year }}</h3>
       </v-row>
       <div v-if="statistics.diagnosticsCount === 0">
-        <p class="fr-text mt-8 caption">
+        <p class="fr-text mb-8">
           Aucune cantine n'a renseigné des données relatives à la loi EGAlim pour l'année {{ year }}.
         </p>
       </div>
@@ -107,7 +107,6 @@
 <script>
 import keyMeasures from "@/data/key-measures.json"
 import labels from "@/data/quality-labels.json"
-import { lastYear } from "@/utils"
 import Constants from "@/constants"
 import BadgeCard from "@/views/PublicCanteenStatisticsPage/BadgeCard"
 
@@ -115,10 +114,9 @@ export default {
   components: {
     BadgeCard,
   },
-  props: ["canteen"],
+  props: ["canteen", "year"],
   data() {
     return {
-      year: lastYear(),
       statistics: null,
       approMeasure: keyMeasures.find((measure) => measure.badgeId === "appro"),
       otherMeasures: keyMeasures.filter((measure) => measure.badgeId !== "appro"),
@@ -205,8 +203,10 @@ export default {
         })
     },
   },
-  mounted() {
-    this.loadStatistics()
+  watch: {
+    year(newYear) {
+      if (newYear) this.loadStatistics()
+    },
   },
 }
 </script>
