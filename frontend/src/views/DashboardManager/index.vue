@@ -16,48 +16,47 @@
         <EgalimProgression :canteen="canteen" />
       </div>
 
-      <div v-if="canteen">
-        <h2 class="mt-10 mb-2 fr-h2">
-          Mon établissement
-        </h2>
-        <p class="fr-text-sm">
-          Accédez ci-dessous aux différents outils de gestion de votre établissement sur la plateforme « ma cantine ».
-        </p>
-        <v-row v-if="isCentralWithSite">
-          <v-col cols="12" md="6">
-            <SatellitesWidget :canteen="canteen" />
-          </v-col>
-          <v-col cols="12" md="6">
-            <PublicationWidget :canteen="canteen" />
-          </v-col>
-          <v-col cols="12">
-            <PurchasesWidget :canteen="canteen" />
-          </v-col>
-          <v-col cols="12" md="8">
-            <CanteenInfoWidget :canteen="canteen" />
-          </v-col>
-          <v-col cols="12" md="4">
-            <TeamWidget :canteen="canteen" />
-          </v-col>
-        </v-row>
-        <v-row v-else>
-          <v-col cols="12" md="8">
-            <PurchasesWidget :canteen="canteen" />
-          </v-col>
-          <v-col v-if="!canteen.isCentralCuisine" cols="12" md="4">
-            <PublicationWidget :canteen="canteen" />
-          </v-col>
-          <v-col v-else cols="12" md="4">
-            <SatellitesWidget :canteen="canteen" />
-          </v-col>
-          <v-col cols="12" md="8">
-            <CanteenInfoWidget :canteen="canteen" />
-          </v-col>
-          <v-col cols="12" md="4">
-            <TeamWidget :canteen="canteen" />
-          </v-col>
-        </v-row>
-      </div>
+      <h2 class="mt-10 mb-2 fr-h2">
+        Mon établissement
+      </h2>
+      <p class="fr-text-sm">
+        Accédez ci-dessous aux différents outils de gestion de votre établissement sur la plateforme « ma cantine ».
+      </p>
+      <v-row v-if="isCentralWithSite">
+        <v-col cols="12" md="6">
+          <SatellitesWidget :canteen="canteen" />
+        </v-col>
+        <v-col cols="12" md="6">
+          <PublicationWidget :canteen="canteen" />
+        </v-col>
+        <v-col cols="12">
+          <PurchasesWidget :canteen="canteen" />
+        </v-col>
+        <v-col cols="12" md="8">
+          <CanteenInfoWidget :canteen="canteen" />
+        </v-col>
+        <v-col cols="12" md="4">
+          <TeamWidget :canteen="canteen" />
+        </v-col>
+      </v-row>
+      <v-row v-else>
+        <v-col cols="12" md="8">
+          <PurchasesWidget :canteen="canteen" />
+        </v-col>
+        <v-col v-if="!canteen.isCentralCuisine" cols="12" md="4">
+          <PublicationWidget :canteen="canteen" />
+        </v-col>
+        <v-col v-else cols="12" md="4">
+          <SatellitesWidget :canteen="canteen" />
+        </v-col>
+        <v-col cols="12" md="8">
+          <CanteenInfoWidget :canteen="canteen" />
+        </v-col>
+        <v-col cols="12" md="4">
+          <TeamWidget :canteen="canteen" />
+        </v-col>
+      </v-row>
+      <ComparisonSection :canteen="canteen" />
     </div>
     <v-row v-else>
       <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
@@ -96,6 +95,7 @@ import PublicationWidget from "./PublicationWidget"
 import SatellitesWidget from "./SatellitesWidget"
 import CanteenInfoWidget from "./CanteenInfoWidget"
 import TeamWidget from "./TeamWidget"
+import ComparisonSection from "./ComparisonSection"
 import ProductionTypeTag from "@/components/ProductionTypeTag"
 
 export default {
@@ -107,6 +107,7 @@ export default {
     SatellitesWidget,
     CanteenInfoWidget,
     TeamWidget,
+    ComparisonSection,
     ProductionTypeTag,
   },
   data() {
