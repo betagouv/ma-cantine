@@ -1,6 +1,6 @@
 <template>
   <div class="text-left mt-10" v-if="statistics">
-    <h2 class="mt-10 mb-2 fr-h2">
+    <h2 class="mt-10 mb-4 fr-h2">
       Où en sont les cantines similaires à la mienne ?
     </h2>
     <p class="fr-text">Pour les cantines {{ groupingDescription }} :</p>
@@ -108,6 +108,7 @@
 import keyMeasures from "@/data/key-measures.json"
 import labels from "@/data/quality-labels.json"
 import Constants from "@/constants"
+import departments from "@/departments.json"
 import BadgeCard from "@/views/PublicCanteenStatisticsPage/BadgeCard"
 
 export default {
@@ -124,7 +125,7 @@ export default {
     }
   },
   computed: {
-    regionalQueryString() {
+    statsQueryString() {
       if (!this.department && !this.searchSectors.length) return
       let query = `year=${this.year}`
       if (this.department) {
@@ -137,6 +138,14 @@ export default {
     },
     department() {
       return this.canteen.department
+    },
+    departmentString() {
+      if (!this.department) return ""
+      const depInfo = departments.find((d) => d.departmentCode === this.department)
+      if (depInfo?.departmentName) {
+        return `« ${depInfo.departmentName} »`
+      }
+      return this.department
     },
     allSectors() {
       return this.$store.state.sectors
@@ -155,7 +164,7 @@ export default {
     groupingDescription() {
       let description = ""
       if (this.department) {
-        description += `dans le département ${this.department}`
+        description += `dans le département ${this.departmentString}`
         if (this.sectorSpecifierText) {
           description += " et "
         }
@@ -195,8 +204,8 @@ export default {
   },
   methods: {
     loadStatistics() {
-      if (!this.regionalQueryString) return
-      fetch(`/api/v1/canteenStatistics/?${this.regionalQueryString}`)
+      if (!this.statsQueryString) return
+      fetch(`/api/v1/canteenStatistics/?${this.statsQueryString}`)
         .then((response) => response.json())
         .then((data) => {
           this.statistics = data
