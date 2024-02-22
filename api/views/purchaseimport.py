@@ -4,6 +4,7 @@ import logging
 import hashlib
 import io
 import uuid
+from decimal import Decimal, ROUND_HALF_DOWN, InvalidOperation
 from django.db import IntegrityError, transaction
 from django.conf import settings
 from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
@@ -165,9 +166,18 @@ class ImportPurchasesView(APIView):
         date = row.pop(0)
         if date == "":
             raise ValidationError({"date": "La date ne peut pas être vide"})
-        price = row.pop(0)
+
+        price = row.pop(0).strip()
         if price == "":
             raise ValidationError({"price_ht": "Le prix ne peut pas être vide"})
+
+        # We try to round the price. If we can't, we will let Django's field validation
+        # manage the error - hence the `pass` in the exception handler
+        try:
+            price = Decimal(price).quantize(Decimal(".01"), rounding=ROUND_HALF_DOWN)
+        except InvalidOperation:
+            pass
+
         family = row.pop(0)
         characteristics = row.pop(0)
         characteristics = [c.strip() for c in characteristics.split(",")]
@@ -182,7 +192,7 @@ class ImportPurchasesView(APIView):
             description=description.strip(),
             provider=provider.strip(),
             date=date.strip(),
-            price_ht=price.strip(),
+            price_ht=price,
             family=family.strip(),
             characteristics=characteristics,
             local_definition=local_definition.strip(),
