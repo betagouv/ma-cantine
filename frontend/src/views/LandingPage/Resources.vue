@@ -46,7 +46,7 @@ export default {
       resources.push({
         title: "Autodiagnostic",
         icon: "mdi-chart-pie",
-        description: "Simulez un diagnostic avec les données de votre établissement",
+        description: "Simulez un bilan avec les données de votre établissement",
         url: null,
         to: { name: "DiagnosticPage" },
         ctaText: "Rentrer mes données",

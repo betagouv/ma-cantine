@@ -158,11 +158,11 @@
     </v-card>
     <h3 class="my-6">Format du fichier</h3>
     <p>
-      Le fichier CSV doit être encodé avec UTF-8 et contenir un diagnostic par ligne. Chaque ligne doit aussi inclure
-      les informations de la cantine associée.
+      Le fichier CSV doit être encodé avec UTF-8 et contenir un bilan par ligne. Chaque ligne doit aussi inclure les
+      informations de la cantine associée.
     </p>
     <p>Les données doivent être présentées dans l'ordre indiqué ci-dessous.</p>
-    <p>Ce n'est pas possible de modifier les diagnostics télédéclarés.</p>
+    <p>Ce n'est pas possible de modifier les bilans télédéclarés.</p>
     <h4 class="my-6">Colonnes</h4>
     <v-simple-table class="my-6">
       <template v-slot:default>
@@ -397,7 +397,7 @@ export default {
       let valuesArray = simpleValues
       const array = [
         {
-          name: "Année du diagnostic",
+          name: "Année du bilan",
           description: "En format <code>YYYY</code>.",
           type: "Chiffre",
           example: "2020",
@@ -594,7 +594,7 @@ export default {
     },
   },
   created() {
-    document.title = `${this.type.title} - Importer des diagnostics - ${this.$store.state.pageTitleSuffix}`
+    document.title = `${this.type.title} - Importer des bilans - ${this.$store.state.pageTitleSuffix}`
   },
   methods: {
     upload() {

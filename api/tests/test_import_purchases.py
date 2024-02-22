@@ -107,7 +107,9 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         errors = response.json()["errors"]
         self.assertEqual(errors.pop(0)["message"], "Champ 'siret' : Le siret de la cantine ne peut pas être vide")
-        self.assertEqual(errors.pop(0)["message"], "Cantine non trouvée.")
+        self.assertEqual(
+            errors.pop(0)["message"], "Une cantine avec le siret « 86180597100897 » n'existe pas sur la plateforme."
+        )
         self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
         self.assertEqual(
             errors.pop(0)["message"], "Champ 'description du produit' : La description ne peut pas être vide"
@@ -181,3 +183,15 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         body = response.json()
         self.assertEqual(len(body["errors"]), 1)
+
+    @authenticate
+    def test_round_cents(self):
+        """
+        Cents should be rounded to the nearest two digits after the point
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        with open("./api/tests/files/purchases_floating_number.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(Purchase.objects.first().price_ht, Decimal("90.11"))

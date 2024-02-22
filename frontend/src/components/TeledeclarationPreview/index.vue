@@ -147,7 +147,7 @@ export default {
       return unusualData
     },
     fromDiagPage() {
-      return this.$route.name === "DiagnosticModification"
+      return this.$route.name === "MyProgress"
     },
     canteenUrlComponent() {
       return this.canteenForTD ? this.$store.getters.getCanteenUrlComponent(this.canteenForTD) : null
@@ -193,7 +193,7 @@ export default {
       this.$emit("input", false)
       this.$router
         .push({
-          name: window.ENABLE_DASHBOARD ? "MyProgress" : "DiagnosticModification",
+          name: "MyProgress",
           params: { canteenUrlComponent: this.canteenUrlComponent, year: this.diagnosticForTD.year },
         })
         .catch(() => {})

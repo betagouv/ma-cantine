@@ -122,10 +122,10 @@
   {
     "stats": [
       {
-        "explanation": "Une des fonctionnalités principales de la plateforme consiste à pouvoir suivre l'évolution de ses achats en évaluant sa part de produits bio et durables via un diagnostic quantitatif et qualitatif sur plusieurs années. ",
+        "explanation": "Une des fonctionnalités principales de la plateforme consiste à pouvoir suivre l'évolution de ses achats en évaluant sa part de produits bio et durables via un bilan quantitatif et qualitatif sur plusieurs années. ",
         "height": 300,
         "link": "/public/question/4c65cb82-1b71-413a-af04-7b6cc740d6a1",
-        "title": "Nombre de répondants (tous secteurs) par année de diagnostics d'approvisionnement",
+        "title": "Nombre de répondants (tous secteurs) par année de bilans d'approvisionnement",
         "width": 500
       }
     ],
