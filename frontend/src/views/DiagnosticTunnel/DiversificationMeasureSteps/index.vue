@@ -166,12 +166,10 @@ export default {
           urlSlug: "plan",
         })
       }
-      steps.push([
-        {
-          title: "Mise en place d’un menu végétarien",
-          urlSlug: "menu",
-        },
-      ])
+      steps.push({
+        title: "Mise en place d’un menu végétarien",
+        urlSlug: "menu",
+      })
       // payload is undefined when this is called from data()
       if (this.payload?.vegetarianWeeklyRecurrence !== "NEVER") {
         const menuDetailsSteps = [
