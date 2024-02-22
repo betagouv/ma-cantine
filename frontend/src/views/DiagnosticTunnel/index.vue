@@ -110,7 +110,7 @@ import DiversificationMeasureSteps from "./DiversificationMeasureSteps"
 import NoPlasticMeasureSteps from "./NoPlasticMeasureSteps"
 import InformationMeasureSteps from "./InformationMeasureSteps"
 
-const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le diagnostic n'a pas été sauvegardé."
+const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Le bilan n'a pas été sauvegardé."
 
 export default {
   name: "DiagnosticTunnel",

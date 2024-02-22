@@ -25,7 +25,7 @@
               <v-card-actions class="pb-4">
                 <v-btn class="primary ml-2" @click="massDiagnose">
                   <span v-if="toDiagnose.length > 1">Créer {{ toDiagnose.length }} diagnostics</span>
-                  <span v-else>Créer le diagnostic</span>
+                  <span v-else>Créer le bilan</span>
                 </v-btn>
               </v-card-actions>
             </div>
@@ -225,15 +225,15 @@ export default {
           icon: "$community-fill",
         },
         "18_prefill_diagnostic": {
-          display: "Créer le diagnostic " + year,
+          display: "Créer le bilan " + year,
           icon: "$add-circle-fill",
         },
         "20_create_diagnostic": {
-          display: "Créer le diagnostic " + year,
+          display: "Créer le bilan " + year,
           icon: "$add-circle-fill",
         },
         "30_complete_diagnostic": {
-          display: "Compléter le diagnostic " + year,
+          display: "Compléter le bilan " + year,
           icon: "$edit-box-fill",
         },
         "35_fill_canteen_data": {
