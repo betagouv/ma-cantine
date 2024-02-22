@@ -165,7 +165,7 @@ class ImportDiagnosticsView(ABC, APIView):
                 raise ValidationError(
                     "Ce n'est pas possible de modifier un diagnostic télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration."
                 )
-        setattr(diagnostic, "diagnostic_type", diagnostic_type)
+        diagnostic.diagnostic_type = diagnostic_type
         for key, value in values_dict.items():
             setattr(diagnostic, key, value)
         diagnostic.full_clean()
