@@ -170,7 +170,7 @@ class ImportPurchasesView(APIView):
         # We try to round the price. If we can't, we will let Django's field validation
         # manage the error - hence the `pass` in the exception handler
         try:
-            price = Decimal(price.strip()).quantize(Decimal(".01"), rounding=ROUND_HALF_DOWN)
+            price = Decimal(price).quantize(Decimal(".01"), rounding=ROUND_HALF_DOWN)
         except InvalidOperation:
             pass
 
