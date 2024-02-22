@@ -170,8 +170,7 @@ export default {
         title: "Mise en place d’un menu végétarien",
         urlSlug: "menu",
       })
-      // payload is undefined when this is called from data()
-      if (this.payload?.vegetarianWeeklyRecurrence !== "NEVER") {
+      if (this.payload.vegetarianWeeklyRecurrence !== "NEVER") {
         const menuDetailsSteps = [
           {
             title: "Options proposées aux convives",
