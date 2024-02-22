@@ -244,12 +244,16 @@ def appro_to_percentages(representation, instance):
 class DiagnosticSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        if "total_leftovers" in representation and representation["total_leftovers"] is not None:
+        if (
+            "total_leftovers" in representation
+            and representation["total_leftovers"] is not None
+            and representation["total_leftovers"] != ""
+        ):
             representation["total_leftovers"] = representation["total_leftovers"] * 1000
         return representation
 
     def to_internal_value(self, data):
-        if "total_leftovers" in data and data["total_leftovers"] is not None:
+        if "total_leftovers" in data and data["total_leftovers"] is not None and data["total_leftovers"] != "":
             try:
                 value = Decimal(repr(data["total_leftovers"]))
                 data["total_leftovers"] = value / 1000
