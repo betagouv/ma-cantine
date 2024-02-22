@@ -13,7 +13,7 @@
           J'ai mis en place un menu végétarien dans ma cantine :
           <span class="fr-hint-text mt-2">Optionnel</span>
         </legend>
-        <v-radio-group class="my-0" v-model="payload.vegetarianWeeklyRecurrence" hide-details @change="calulateSteps">
+        <v-radio-group class="my-0" v-model="payload.vegetarianWeeklyRecurrence" hide-details @change="calculateSteps">
           <v-radio v-for="item in frequency" :key="item.value" :label="item.label" :value="item.value"></v-radio>
         </v-radio-group>
       </fieldset>
@@ -157,33 +157,31 @@ export default {
       this.fields.forEach((f) => (payload[f] = this.diagnostic[f]))
       this.$set(this, "payload", payload)
     },
-    calulateSteps() {
-      const steps = [
-        {
-          title: "Mise en place d’un menu végétarien",
-          urlSlug: "menu",
-        },
-      ]
-      const menuDetailsSteps = [
-        {
-          title: "Options proposées aux convives",
-          urlSlug: "options",
-        },
-        {
-          title: "Composition du plat végétarien principal",
-          urlSlug: "composition",
-        },
-      ]
-      // payload is undefined when this is called from data()
-      if (this.payload?.vegetarianWeeklyRecurrence !== "NEVER") {
-        steps.push(...menuDetailsSteps)
-      }
+    calculateSteps() {
+      const steps = []
       const applicableRules = applicableDiagnosticRules(this.canteen)
       if (applicableRules.hasDiversificationPlan) {
         steps.push({
           title: "Mise en place d’actions de diversification des protéines",
           urlSlug: "plan",
         })
+      }
+      steps.push({
+        title: "Mise en place d’un menu végétarien",
+        urlSlug: "menu",
+      })
+      if (this.payload.vegetarianWeeklyRecurrence !== "NEVER") {
+        const menuDetailsSteps = [
+          {
+            title: "Options proposées aux convives",
+            urlSlug: "options",
+          },
+          {
+            title: "Composition du plat végétarien principal",
+            urlSlug: "composition",
+          },
+        ]
+        steps.push(...menuDetailsSteps)
       }
       steps.push({
         title: "Synthèse",
@@ -202,7 +200,7 @@ export default {
   mounted() {
     this.initialisePayload()
     this.updatePayload()
-    this.calulateSteps()
+    this.calculateSteps()
   },
   watch: {
     payload: {
