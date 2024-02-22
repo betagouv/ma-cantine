@@ -49,15 +49,15 @@
       </v-alert>
       <div v-if="duplicateFile">
         <p class="orange--text text--darken-4">
-          Ce fichier a déjà été utilisé pour importer {{ purchaseCount }}
-          <span v-if="purchaseCount > 1">achats.</span>
+          Ce fichier a déjà été utilisé pour importer {{ duplicatePurchaseCount }}
+          <span v-if="duplicatePurchaseCount > 1">achats.</span>
           <span v-else>achat.</span>
         </p>
-        <p class="orange--text text--darken-4" v-if="purchaseCount > 10">
+        <p class="orange--text text--darken-4" v-if="duplicatePurchaseCount > 10">
           Les premiers dix achats sont affichés ci-dessous.
         </p>
         <p class="orange--text text--darken-4" v-else>Les achats sont affichés ci-dessous.</p>
-        <PurchasesTable :purchases="purchases" :hide-default-footer="true" class="mb-6" />
+        <PurchasesTable :purchases="duplicatePurchases" :hide-default-footer="true" class="mb-6" />
       </div>
       <div v-else-if="errors && errors.length">
         <p class="red--text text--darken-4" v-if="purchaseCount === 0">
@@ -163,6 +163,7 @@ export default {
       errors: undefined,
       seconds: undefined,
       importInProgress: false,
+      duplicatePurchases: null,
       documentation: [
         {
           name: "SIRET de la cantine ayant réalisé l'achat",
@@ -219,7 +220,6 @@ export default {
       validators,
       isStaff: user.isStaff,
       duplicateFile: false,
-      purchases: null,
     }
   },
   methods: {
@@ -232,11 +232,10 @@ export default {
           this.importInProgress = false
           this.file = null
           this.purchaseCount = json.count
-          this.purchases = json.purchases
           this.errors = json.errors
-          if (this.errors.length && this.errors[0].message === "Ce fichier a déjà été utilisé pour un import") {
-            this.duplicateFile = true
-          }
+          this.duplicateFile = json.duplicateFile
+          this.duplicatePurchases = json.duplicatePurchases
+          this.duplicatePurchaseCount = json.duplicatePurchaseCount
           this.seconds = json.seconds
           this.$store.dispatch("notify", {
             message: `Fichier traité en ${Math.round(this.seconds)} secondes`,

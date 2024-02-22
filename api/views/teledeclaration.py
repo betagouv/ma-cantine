@@ -148,73 +148,81 @@ class TeledeclarationPdfView(APIView):
     required_scopes = ["canteen"]
 
     def get(self, request, *args, **kwargs):
+        teledeclaration_id = kwargs.get("pk")
+        if not teledeclaration_id:
+            raise ValidationError("teledeclarationId manquant")
+
         try:
-            teledeclaration_id = kwargs.get("pk")
-
-            if not teledeclaration_id:
-                raise ValidationError("teledeclarationId manquant")
-
             teledeclaration = Teledeclaration.objects.get(pk=teledeclaration_id)
-            if request.user not in teledeclaration.canteen.managers.all():
-                raise PermissionDenied()
-
-            if teledeclaration.status != Teledeclaration.TeledeclarationStatus.SUBMITTED:
-                raise ValidationError("La télédéclaration n'est pas validée par l'utilisateur")
-
-            response = HttpResponse(content_type="application/pdf")
-            filename = TeledeclarationPdfView.get_filename(teledeclaration)
-            response["Content-Disposition"] = f'attachment; filename="{filename}"'
-            declared_data = teledeclaration.declared_data
-            is_complete = (
-                declared_data["teledeclaration"].get("diagnostic_type", None) == Diagnostic.DiagnosticType.COMPLETE
-            )
-            central_kitchen_siret = declared_data.get("central_kitchen_siret", None)
-            central_kitchen_name = None
-            if teledeclaration.teledeclaration_mode == Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO:
-                try:
-                    central_kitchen_name = Canteen.objects.get(siret=central_kitchen_siret).name
-                except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
-                    pass
-
-            canteen_data = declared_data["canteen"]
-            teledeclaration_data = declared_data["teledeclaration"]
-            processed_canteen_data = TeledeclarationPdfView._get_canteen_override_data(canteen_data)
-            processed_diagnostic_data = TeledeclarationPdfView._get_teledeclaration_override_data(teledeclaration_data)
-            additional_questions = TeledeclarationPdfView._get_applicable_diagnostic_rules(canteen_data)
-
-            context = {
-                **{**teledeclaration_data, **processed_diagnostic_data},
-                **{
-                    "diagnostic_type": "complète" if is_complete else "simplifiée",
-                    "year": teledeclaration.year,
-                    "date": teledeclaration.creation_date,
-                    "applicant": declared_data["applicant"]["name"],
-                    "teledeclaration_mode": teledeclaration.teledeclaration_mode,
-                    "central_kitchen_siret": central_kitchen_siret,
-                    "central_kitchen_name": central_kitchen_name,
-                    "satellites": declared_data.get("satellites", []),
-                    "canteen": {**canteen_data, **processed_canteen_data},
-                    "additional_questions": additional_questions,
-                },
-            }
-            template = (
-                get_template("teledeclaration_campaign_2024/index.html")
-                if teledeclaration.year >= 2023
-                else get_template("teledeclaration_pdf.html")
-            )
-            html = template.render(context)
-            pisa_status = pisa.CreatePDF(html, dest=response, link_callback=TeledeclarationPdfView.link_callback)
-
-            if pisa_status.err:
-                logger.error(
-                    f"Error while generating PDF for teledeclaration {teledeclaration.id}:\n{pisa_status.err}"
-                )
-                return HttpResponse("An error ocurred", status=500)
-
-            return response
-
         except Teledeclaration.DoesNotExist:
             raise ValidationError("La télédéclaration specifiée n'existe pas")
+
+        if request.user not in teledeclaration.canteen.managers.all():
+            raise PermissionDenied()
+
+        if teledeclaration.status != Teledeclaration.TeledeclarationStatus.SUBMITTED:
+            raise ValidationError("La télédéclaration n'est pas validée par l'utilisateur")
+
+        template = (
+            get_template("teledeclaration_campaign_2024/index.html")
+            if teledeclaration.year >= 2023
+            else get_template("teledeclaration_pdf.html")
+        )
+        context = TeledeclarationPdfView.get_context(teledeclaration)
+        html = template.render(context)
+
+        response = HttpResponse(content_type="application/pdf")
+        filename = TeledeclarationPdfView.get_filename(teledeclaration)
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+        pisa_status = pisa.CreatePDF(html, dest=response, link_callback=TeledeclarationPdfView.link_callback)
+
+        if pisa_status.err:
+            logger.error(f"Error while generating PDF for teledeclaration {teledeclaration.id}:\n{pisa_status.err}")
+            return HttpResponse("An error ocurred", status=500)
+
+        return response
+
+    @staticmethod
+    def get_context(teledeclaration):
+        declared_data = teledeclaration.declared_data
+
+        central_kitchen_siret = declared_data.get("central_kitchen_siret", None)
+        central_kitchen_name = None
+        if teledeclaration.teledeclaration_mode == Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO:
+            try:
+                central_kitchen_name = Canteen.objects.get(siret=central_kitchen_siret).name
+            except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
+                pass
+
+        canteen_data = declared_data["canteen"]
+        teledeclaration_data = declared_data["teledeclaration"]
+        processed_canteen_data = TeledeclarationPdfView._get_canteen_override_data(canteen_data)
+        processed_diagnostic_data = TeledeclarationPdfView._get_teledeclaration_override_data(teledeclaration_data)
+        additional_questions = TeledeclarationPdfView._get_applicable_diagnostic_rules(canteen_data)
+
+        is_complete = (
+            declared_data["teledeclaration"].get("diagnostic_type", None) == Diagnostic.DiagnosticType.COMPLETE
+        )
+        structure_complete_appro_data = {}
+        if is_complete:
+            structure_complete_appro_data = TeledeclarationPdfView._structure_complete_appro_data(teledeclaration_data)
+
+        return {
+            **{**teledeclaration_data, **processed_diagnostic_data},
+            **{
+                "diagnostic_type": "complète" if is_complete else "simplifiée",
+                "year": teledeclaration.year,
+                "date": teledeclaration.creation_date,
+                "applicant": declared_data["applicant"]["name"],
+                "teledeclaration_mode": teledeclaration.teledeclaration_mode,
+                "central_kitchen_siret": central_kitchen_siret,
+                "central_kitchen_name": central_kitchen_name,
+                "satellites": declared_data.get("satellites", []),
+                "canteen": {**canteen_data, **processed_canteen_data},
+                "additional_questions": additional_questions,
+                "complete_appro": structure_complete_appro_data,
+            },
+        }
 
     @staticmethod
     def get_filename(teledeclaration):
@@ -341,3 +349,41 @@ class TeledeclarationPdfView(APIView):
             "donation_agreement": donation_agreement,
             "diversification_plan": diversification_plan,
         }
+
+    @staticmethod
+    def _structure_complete_appro_data(teledeclaration_data):
+        """
+        This function restructures appro data to reduce template code
+        """
+        labels_variable_to_display = {
+            "bio": "Bio",
+            "label_rouge": "Label Rouge",
+            "aocaop_igp_stg": "AOC/AOP, IGP ou STG",
+            "hve": "Certification Environnementale de Niveau 2 ou HVE",
+            "peche_durable": "Écolabel pêche durable",
+            "rup": "RUP",
+            "commerce_equitable": "Commerce Équitable",
+            "fermier": "Fermier",
+            "externalites": "Externalités environnementales",
+            "performance": "Performance environnementale",
+            "non_egalim": "non-EGAlim",
+            "france": "provenance France",
+            "short_distribution": "circuit-court",
+            "local": "« local »",
+        }
+        family_variable_to_display = {
+            "viandes_volailles": "Viandes et volailles",
+            "produits_de_la_mer": "Poissons, produits de la mer et de l'aquaculture",
+            "fruits_et_legumes": "Fruits et légumes",
+            "charcuterie": "Charcuterie",
+            "produits_laitiers": "Produits laitiers",
+            "boulangerie": "Boulangerie",
+            "boissons": "Boissons",
+            "autres": "Autres produits",
+        }
+        structured_data = {}
+        for label, display_label in labels_variable_to_display.items():
+            structured_data[display_label] = {}
+            for family, display_family in family_variable_to_display.items():
+                structured_data[display_label][display_family] = teledeclaration_data[f"value_{family}_{label}"]
+        return structured_data

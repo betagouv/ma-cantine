@@ -8,6 +8,6 @@
     <a href="https://ma-cantine.agriculture.gouv.fr/webinaires/2--Cr%C3%A9er%20une%20cantine%20sur%20la%20plateforme">
       créer sa cantine
     </a>
-    avec son numéro SIRET et créer un diagnostic pour par année civile.
+    avec son numéro SIRET et créer des bilans par année civile.
   </p>
 </template>

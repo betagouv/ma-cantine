@@ -107,7 +107,9 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         errors = response.json()["errors"]
         self.assertEqual(errors.pop(0)["message"], "Champ 'siret' : Le siret de la cantine ne peut pas être vide")
-        self.assertEqual(errors.pop(0)["message"], "Cantine non trouvée.")
+        self.assertEqual(
+            errors.pop(0)["message"], "Une cantine avec le siret « 86180597100897 » n'existe pas sur la plateforme."
+        )
         self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
         self.assertEqual(
             errors.pop(0)["message"], "Champ 'description du produit' : La description ne peut pas être vide"
@@ -160,9 +162,11 @@ class TestPurchaseImport(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(errors.pop(0)["message"], "Ce fichier a déjà été utilisé pour un import")
-        self.assertEqual(body["count"], 2)
-        purchases = body["purchases"]
-        self.assertIn("Pommes, rouges", str(purchases))
+        self.assertEqual(body["count"], 0)
+        self.assertTrue(body["duplicateFile"])
+        self.assertEqual(len(body["duplicatePurchases"]), 2)
+        self.assertEqual(body["duplicatePurchaseCount"], 2)
+
         # no additional purchases created
         self.assertEqual(Purchase.objects.count(), 2)
 

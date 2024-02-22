@@ -54,8 +54,6 @@ export default {
     saveInLocalStorage() {
       this.$store.dispatch("saveLocalStorageDiagnostic", this.diagnosticsCopy.latest)
       this.$store.dispatch("saveLocalStorageDiagnostic", this.diagnosticsCopy.previous)
-      this.$store.dispatch("saveLocalStorageDiagnostic", this.diagnosticsCopy.provisionalYear1)
-      this.$store.dispatch("saveLocalStorageDiagnostic", this.diagnosticsCopy.provisionalYear2)
     },
   },
   computed: {
