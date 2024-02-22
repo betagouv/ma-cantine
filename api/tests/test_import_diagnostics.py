@@ -1165,6 +1165,63 @@ class TestImportDiagnosticsAPI(APITestCase):
         for satellite in (satellite_2_1, satellite_2_2):
             self.assertEqual(satellite.central_producer_siret, cuisine_centrale_2.siret)
 
+    @authenticate
+    def test_encoding_autodetect_utf_8(self, _):
+        """
+        Attempt to auto-detect file encodings: UTF-8
+        """
+        canteen = CanteenFactory.create(siret="96463820453707", name="Initial name")
+        canteen.managers.add(authenticate.user)
+
+        with open("./api/tests/files/diagnostic_encoding_utf-8.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        print(body["errors"])
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0)
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
+
+    @authenticate
+    def test_encoding_autodetect_utf_16(self, _):
+        """
+        Attempt to auto-detect file encodings: UTF-16
+        """
+        canteen = CanteenFactory.create(siret="96463820453707", name="Initial name")
+        canteen.managers.add(authenticate.user)
+
+        with open("./api/tests/files/diagnostic_encoding_utf-16.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        print(body["errors"])
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0)
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
+
+    @authenticate
+    def test_encoding_autodetect_windows_latin_1(self, _):
+        """
+        Attempt to auto-detect file encodings: Windows Latin 1
+        """
+        canteen = CanteenFactory.create(siret="96463820453707", name="Initial name")
+        canteen.managers.add(authenticate.user)
+
+        with open("./api/tests/files/diagnostic_encoding_windows-latin-1.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        print(body["errors"])
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0)
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
+
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):
     @unittest.skipUnless(os.environ.get("ENVIRONMENT") == "dev", "Not in dev environment")
