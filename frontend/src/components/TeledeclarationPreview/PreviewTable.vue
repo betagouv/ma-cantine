@@ -402,31 +402,20 @@ export default {
           value: this.getNullableBooleanLabel(this.diagnostic.hasWasteDiagnostic),
           class: this.diagnostic.hasWasteDiagnostic === null ? "warn" : "",
         },
+        // TODO: this question only asked if hasWasteDiagnostic
         {
           label: "Plan d'action contre le gaspillage en place",
           value: this.getNullableBooleanLabel(this.diagnostic.hasWastePlan),
           class: this.diagnostic.hasWastePlan === null ? "warn" : "",
         },
         {
-          label: "Actions contre le gaspillage en place",
-          value: this.getWasteActions(this.diagnostic.wasteActions),
-        },
-        {
-          label: "Autres actions contre le gaspillage alimentaire",
-          value: this.diagnostic.otherWasteActions || "Aucune",
-        },
-        {
-          label: "Propose des dons alimentaires",
-          value: this.getNullableBooleanLabel(this.diagnostic.hasDonationAgreement),
-          class: this.diagnostic.hasDonationAgreement === null ? "warn" : "",
-        },
-        {
-          label: "Réalise des mesures de gaspillage alimentaire",
+          label: "Réalisé des mesures de gaspillage alimentaire",
           value: this.getNullableBooleanLabel(this.diagnostic.hasWasteMeasures),
           class: this.diagnostic.hasWasteMeasures === null ? "warn" : "",
         },
+        // TODO: the next few fields are only shown if hasWasteMeasures
         {
-          label: "Total des déchets alimentaires pour l'année (tonnes)",
+          label: "Total des déchets alimentaires pour l'année (kg)",
           isNumber: true,
           value: this.diagnostic.totalLeftovers,
           class: this.isTruthyOrZero(this.diagnostic.totalLeftovers) ? "" : "warn",
@@ -461,6 +450,21 @@ export default {
           value: this.diagnostic.sideLeftovers,
           class: this.isTruthyOrZero(this.diagnostic.sideLeftovers) ? "" : "warn",
         },
+        {
+          label: "Actions contre le gaspillage en place",
+          value: this.getWasteActions(this.diagnostic.wasteActions),
+        },
+        {
+          label: "Autres actions contre le gaspillage alimentaire",
+          value: this.diagnostic.otherWasteActions || "Aucune",
+        },
+        // TODO: this question is only shown if applicable to canteen
+        {
+          label: "Propose des dons alimentaires",
+          value: this.getNullableBooleanLabel(this.diagnostic.hasDonationAgreement),
+          class: this.diagnostic.hasDonationAgreement === null ? "warn" : "",
+        },
+        // TODO: the next few questions only shown if hasDonationAgreement && applicable
         {
           label: "Fréquence de dons en dons/an",
           isNumber: true,

@@ -1,0 +1,9 @@
+{{ text }} :
+
+{% if value or value == 0 %}
+  {{ value }}
+{% else %}
+  —
+{% endif %}
+
+{% if unit %}{{ unit }}{% endif %}
