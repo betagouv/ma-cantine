@@ -183,28 +183,6 @@ export const hasDiagnosticApproData = (diagnostic) => {
   )
 }
 
-// For the teledeclaration, all values - including fish/meat
-// which are not used for graphs and calculations - must be
-// present
-export const isDiagnosticComplete = (diagnostic) => {
-  const approFields = [
-    "valueBioHt",
-    "valueSustainableHt",
-    "valueTotalHt",
-    "valueExternalityPerformanceHt",
-    "valueEgalimOthersHt",
-    "valueMeatPoultryHt",
-    "valueMeatPoultryEgalimHt",
-    "valueMeatPoultryFranceHt",
-    "valueFishHt",
-    "valueFishEgalimHt",
-  ]
-  return approFields.every(
-    // sadly null >= 0 is true
-    (key) => diagnostic[key] > 0 || diagnostic[key] === 0
-  )
-}
-
 export const lastYear = () => new Date().getFullYear() - 1
 
 export const diagnosticYears = () => {

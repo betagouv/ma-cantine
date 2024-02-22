@@ -574,9 +574,8 @@ export default {
           if (this.isNewCanteen) {
             const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteenJson)
 
-            let name = "DiagnosticList"
+            let name = "DashboardManager"
             if (this.showSatelliteCanteensCount) name = "SatelliteManagement"
-            else if (window.ENABLE_DASHBOARD) name = "DashboardManager"
 
             this.$router.push({
               // form validation ensures that the count will be > 0
@@ -585,7 +584,7 @@ export default {
             })
           } else {
             this.$router.push({
-              name: window.ENABLE_DASHBOARD ? "DashboardManager" : "ManagementPage",
+              name: "DashboardManager",
               params: {
                 canteenUrlComponent: this.canteenUrlComponent,
               },

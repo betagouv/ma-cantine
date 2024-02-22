@@ -41,7 +41,7 @@
         color="primary"
         class="mb-8"
         :to="{
-          name: 'NewDiagnosticForCanteen',
+          name: 'MyProgress',
           params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(originalCanteen) },
         }"
       >
@@ -81,7 +81,7 @@
 
 <script>
 import PublicationField from "../PublicationField"
-import { getObjectDiff, isDiagnosticComplete, lastYear } from "@/utils"
+import { getObjectDiff, lastYear } from "@/utils"
 import PublicationStateNotice from "../PublicationStateNotice"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
@@ -185,10 +185,6 @@ export default {
     hasChanged() {
       const diff = getObjectDiff(this.originalCanteen, this.canteen)
       return Object.keys(diff).length > 0
-    },
-    currentDiagnosticComplete() {
-      const diagnostic = this.originalCanteen.diagnostics.find((x) => x.year === this.publicationYear)
-      return !!diagnostic && isDiagnosticComplete(diagnostic)
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)

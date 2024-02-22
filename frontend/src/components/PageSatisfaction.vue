@@ -86,7 +86,7 @@ export default {
       const user = this.$store.state.loggedUser
       const hasCanteen = user.reviews.some((review) => review.hasCanteen)
       const hasDiagnostic = user.reviews.some((review) => review.hasDiagnostic)
-      return this.page === "DiagnosticList" ? !hasDiagnostic : !hasCanteen || !hasDiagnostic
+      return !hasCanteen || !hasDiagnostic
     },
   },
   methods: {

@@ -1,10 +1,7 @@
 <template>
   <div class="mt-n2">
     <v-row class="mt-2" v-if="isNewCanteen || canteen">
-      <v-col cols="12" sm="4" md="3" v-if="showNavigation">
-        <CanteenNavigation :canteen="canteen" />
-      </v-col>
-      <v-col v-else cols="12" class="py-0">
+      <v-col cols="12" class="py-0">
         <BreadcrumbsNav :links="breadcrumbLinks" />
       </v-col>
       <v-col
@@ -23,12 +20,11 @@
 </template>
 
 <script>
-import CanteenNavigation from "@/components/CanteenNavigation"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   name: "CanteenEditor",
-  components: { CanteenNavigation, BreadcrumbsNav },
+  components: { BreadcrumbsNav },
   data() {
     return {
       canteen: null,
@@ -46,9 +42,6 @@ export default {
   computed: {
     isNewCanteen() {
       return !this.canteenUrlComponent
-    },
-    showNavigation() {
-      return !this.isNewCanteen && !window.ENABLE_DASHBOARD
     },
     breadcrumbLinks() {
       if (this.isNewCanteen) return [{ to: { name: "ManagementPage" } }]

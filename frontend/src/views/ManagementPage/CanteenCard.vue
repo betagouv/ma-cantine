@@ -90,14 +90,8 @@ export default {
       return window.ENABLE_TELEDECLARATION
     },
     canteenLink() {
-      if (window.ENABLE_DASHBOARD) {
-        return {
-          name: "DashboardManager",
-          params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
-        }
-      }
       return {
-        name: "DiagnosticList",
+        name: "DashboardManager",
         params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
       }
     },

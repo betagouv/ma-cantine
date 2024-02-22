@@ -32,13 +32,11 @@ import PendingActions from "@/views/PendingActions"
 import CanteenEditor from "@/views/CanteenEditor"
 import CanteenForm from "@/views/CanteenEditor/CanteenForm"
 import SatelliteManagement from "@/views/CanteenEditor/SatelliteManagement"
-import DiagnosticList from "@/views/CanteenEditor/DiagnosticList"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import PublishSatellites from "@/views/CanteenEditor/PublishSatellites"
-import DashboardPage from "@/views/CanteenEditor/DashboardPage"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 import DiagnosticImportPage from "@/views/DiagnosticsImporter/DiagnosticImportPage"
@@ -348,15 +346,6 @@ const routes = [
         },
       },
       {
-        path: "diagnostics",
-        name: "DiagnosticList",
-        component: DiagnosticList,
-        meta: {
-          authenticationRequired: true,
-          title: "Mes diagnostics",
-        },
-      },
-      {
         path: "gestionnaires",
         name: "CanteenManagers",
         component: CanteenManagers,
@@ -401,15 +390,6 @@ const routes = [
           title: "Publier mes satellites",
         },
       },
-      {
-        path: "ameliorer",
-        name: "DashboardPage",
-        component: DashboardPage,
-        meta: {
-          authenticationRequired: true,
-          title: "Améliorer ma cantine",
-        },
-      },
     ],
   },
   {
@@ -422,16 +402,6 @@ const routes = [
       authenticationRequired: true,
       fullscreen: true,
     },
-  },
-  {
-    path: "/modifier-mon-diagnostic/:canteenUrlComponent/:year",
-    props: true,
-    redirect: { name: "DiagnosticModification" },
-  },
-  {
-    path: "/nouveau-diagnostic/:canteenUrlComponent",
-    props: true,
-    redirect: { name: "NewDiagnosticForCanteen" },
   },
   {
     path: "/importer-diagnostics",

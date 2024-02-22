@@ -54,8 +54,10 @@
             Vous êtes maintenant gestionnaire.
             <router-link
               :to="{
-                name: 'DiagnosticList',
-                params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                name: 'DashboardManager',
+                params: {
+                  canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen),
+                },
               }"
             >
               Évaluez cet établissement

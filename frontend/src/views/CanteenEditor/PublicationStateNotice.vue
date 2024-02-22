@@ -13,8 +13,8 @@
     <DsfrCallout color="#C08C65" class="mb-1" v-else-if="isDraft && !includeLink">
       <span class="grey--text text--darken-2">
         Nous vous conseillons de remplir des
-        <router-link :to="{ name: 'DiagnosticList', params: { canteenUrlComponent } }">
-          données d'approvisionnement pour l'année {{ this.publicationYear }}
+        <router-link :to="{ name: 'MyProgress', params: { canteenUrlComponent, year: publicationYear } }">
+          données d'approvisionnement pour l'année {{ publicationYear }}
         </router-link>
         avant que vous publiiez vos données.
       </span>
