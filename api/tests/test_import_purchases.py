@@ -107,7 +107,9 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         errors = response.json()["errors"]
         self.assertEqual(errors.pop(0)["message"], "Champ 'siret' : Le siret de la cantine ne peut pas être vide")
-        self.assertEqual(errors.pop(0)["message"], "Cantine non trouvée.")
+        self.assertEqual(
+            errors.pop(0)["message"], "Une cantine avec le siret « 86180597100897 » n'existe pas sur la plateforme."
+        )
         self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
         self.assertEqual(
             errors.pop(0)["message"], "Champ 'description du produit' : La description ne peut pas être vide"

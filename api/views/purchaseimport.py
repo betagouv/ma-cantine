@@ -141,7 +141,7 @@ class ImportPurchasesView(APIView):
                 self._create_purchase_for_canteen(siret, row)
 
             except Exception as e:
-                for error in self._parse_errors(e, row):
+                for error in self._parse_errors(e, row, siret):
                     errors.append(ImportPurchasesView._get_error(e, error["message"], error["code"], row_number))
         self.errors += errors
 
@@ -216,7 +216,7 @@ class ImportPurchasesView(APIView):
         logger.warning(f"Error on row {row_number}:\n{e}\n{message}")
         return {"row": row_number, "status": error_status, "message": message}
 
-    def _parse_errors(self, e, row):
+    def _parse_errors(self, e, row, siret):
         errors = []
         if isinstance(e, PermissionDenied):
             errors.append(
@@ -235,7 +235,7 @@ class ImportPurchasesView(APIView):
         elif isinstance(e, ObjectDoesNotExist):
             errors.append(
                 {
-                    "message": "Cantine non trouvée.",
+                    "message": f"Une cantine avec le siret « {siret} » n'existe pas sur la plateforme.",
                     "code": 404,
                 }
             )
