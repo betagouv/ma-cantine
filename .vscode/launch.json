@@ -31,6 +31,22 @@
             "django": true
         },
         {
+            "name": "Python: Debug tests",
+            "type": "python",
+            "request": "launch",
+            "stopOnEntry": false,
+            "python": "${workspaceFolder}/venv/bin/python",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "test",
+                // to take advantage of this: import tag and @tag("debug")
+                "--tag=debug",
+                "--noinput"
+            ],
+            "justMyCode": false,
+            "django": true
+        },
+        {
             "name":"Python: Current File",
             "type":"python",
             "request":"launch",

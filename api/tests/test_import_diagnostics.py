@@ -1173,12 +1173,11 @@ class TestImportDiagnosticsAPI(APITestCase):
         canteen = CanteenFactory.create(siret="96463820453707", name="Initial name")
         canteen.managers.add(authenticate.user)
 
-        with open("./api/tests/files/diagnostic_encoding_utf-8.csv") as diag_file:
+        with open("./api/tests/files/diagnostic_encoding_utf-8.csv", "rb") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        print(body["errors"])
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["errors"]), 0)
         canteen.refresh_from_db()
@@ -1192,31 +1191,29 @@ class TestImportDiagnosticsAPI(APITestCase):
         canteen = CanteenFactory.create(siret="96463820453707", name="Initial name")
         canteen.managers.add(authenticate.user)
 
-        with open("./api/tests/files/diagnostic_encoding_utf-16.csv") as diag_file:
+        with open("./api/tests/files/diagnostic_encoding_utf-16.csv", "rb") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        print(body["errors"])
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["errors"]), 0)
         canteen.refresh_from_db()
         self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
 
     @authenticate
-    def test_encoding_autodetect_windows_latin_1(self, _):
+    def test_encoding_autodetect_cp1252(self, _):
         """
-        Attempt to auto-detect file encodings: Windows Latin 1
+        Attempt to auto-detect file encodings: Windows 1252
         """
         canteen = CanteenFactory.create(siret="96463820453707", name="Initial name")
         canteen.managers.add(authenticate.user)
 
-        with open("./api/tests/files/diagnostic_encoding_windows-latin-1.csv") as diag_file:
+        with open("./api/tests/files/diagnostic_encoding_cp1252.csv", "rb") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        print(body["errors"])
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["errors"]), 0)
         canteen.refresh_from_db()

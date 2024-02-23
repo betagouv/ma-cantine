@@ -3,7 +3,7 @@ import csv
 import time
 import re
 import logging
-from charset_normalizer import from_fp
+import chardet
 from decimal import Decimal, InvalidOperation
 from data.models.diagnostic import Diagnostic
 from data.models.teledeclaration import Teledeclaration
@@ -114,9 +114,10 @@ class ImportDiagnosticsView(ABC, APIView):
 
     @staticmethod
     def _decode_file(file):
-        result = from_fp(fp=file).best()
-        print(result.encoding)
-        return result.output().decode(encoding="utf_8")
+        bytes_string = file.read()
+        detection_result = chardet.detect(bytes_string)
+        encoding = detection_result["encoding"]
+        return bytes_string.decode(encoding)
 
     @transaction.atomic
     def _save_data_from_row(self, row):
