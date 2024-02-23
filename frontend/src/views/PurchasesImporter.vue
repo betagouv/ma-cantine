@@ -60,7 +60,11 @@
         <PurchasesTable :purchases="duplicatePurchases" :hide-default-footer="true" class="mb-6" />
       </div>
       <div v-else-if="errors && errors.length">
-        <p class="red--text text--darken-4" v-if="purchaseCount === 0">
+        <p class="red--text text--darken-4" v-if="errors.length < errorCount">
+          Votre fichier contient {{ errorCount }} lignes avec des erreurs. Vous trouverez ci-dessous les 30 premières
+          erreurs rencontrées :
+        </p>
+        <p class="red--text text--darken-4" v-else>
           Nous n'avons pas pu traiter votre fichier. Vous trouverez ci-dessous des informations sur les erreurs
           rencontrées.
         </p>
@@ -161,6 +165,7 @@ export default {
       purchaseCount: undefined,
       diagnosticCount: undefined,
       errors: undefined,
+      errorCount: undefined,
       seconds: undefined,
       importInProgress: false,
       duplicatePurchases: null,
@@ -233,6 +238,7 @@ export default {
           this.file = null
           this.purchaseCount = json.count
           this.errors = json.errors
+          this.errorCount = json.errorCount
           this.duplicateFile = json.duplicateFile
           this.duplicatePurchases = json.duplicatePurchases
           this.duplicatePurchaseCount = json.duplicatePurchaseCount
