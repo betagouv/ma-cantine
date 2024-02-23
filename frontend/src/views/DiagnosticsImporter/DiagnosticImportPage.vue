@@ -23,8 +23,7 @@
       :links="downloadLinks"
     />
 
-    <!-- TODO: for now hide if COMPLETE -->
-    <DsfrCallout v-if="isStaff" class="body-2 my-4">
+    <DsfrCallout v-if="isStaff && staffImportAvailable" class="body-2 my-4">
       En tant que membre de l'équipe ma cantine, vous pouvez ajoter trois colonnes additionnelles à la fin du fichier
       CSV :
       <br />
@@ -592,6 +591,9 @@ export default {
         CC_SIMPLE: "la mise à jour des satellites et l'import simple",
         CC_COMPLETE: "la mise à jour des satellites et l'import complet",
       }[this.importLevel]
+    },
+    staffImportAvailable() {
+      return this.importLevel === "SIMPLE" || this.importLevel === "NONE"
     },
   },
   created() {
