@@ -44,7 +44,7 @@
             </router-link>
             , et
             <a
-              href="https://stats.data.gouv.fr/index.php?idSite=162"
+              :href="`https://stats.beta.gouv.fr/index.php?idSite=${matomoId}`"
               class="grey--text text--darken-3"
               target="_blank"
               rel="noopener"
@@ -121,6 +121,7 @@ export default {
         },
       ],
       govLinks: ["legifrance.gouv.fr", "gouvernement.fr", "service-public.fr", "data.gouv.fr"],
+      matomoId: window.MATOMO_ID,
     }
   },
   computed: {
