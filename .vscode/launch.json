@@ -31,6 +31,7 @@
             "django": true
         },
         {
+            "_docs": "to take advantage of this: import tag and @tag('debug')",
             "name": "Python: Debug tests",
             "type": "python",
             "request": "launch",
@@ -39,7 +40,6 @@
             "program": "${workspaceFolder}/manage.py",
             "args": [
                 "test",
-                // to take advantage of this: import tag and @tag("debug")
                 "--tag=debug",
                 "--noinput"
             ],
