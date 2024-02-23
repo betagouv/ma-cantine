@@ -785,7 +785,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.save()
         self.assertEqual(Teledeclaration.objects.count(), 0)
 
-        with patch.object(timezone, "now", return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+        with patch.object(
+            timezone, "now", return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=pytz.timezone("Europe/Paris"))
+        ):
             with open("./api/tests/files/teledeclaration_simple.csv") as diag_file:
                 response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
@@ -807,7 +809,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.email = "authenticate@example.com"
         user.save()
 
-        with patch.object(timezone, "now", return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+        with patch.object(
+            timezone, "now", return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=pytz.timezone("Europe/Paris"))
+        ):
             with open("./api/tests/files/teledeclaration_error.csv") as diag_file:
                 response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 

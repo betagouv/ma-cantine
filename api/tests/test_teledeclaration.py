@@ -76,7 +76,9 @@ class TestTeledeclarationApi(APITestCase):
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
         payload = {"diagnosticId": diagnostic.id}
 
-        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+        with patch.object(
+            timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.timezone("Europe/Paris"))
+        ):
             response = self.client.post(reverse("teledeclaration_create"), payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -136,7 +138,9 @@ class TestTeledeclarationApi(APITestCase):
         )
         payload = {"diagnosticId": diagnostic.id}
 
-        with patch.object(timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.UTC)):
+        with patch.object(
+            timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.timezone("Europe/Paris"))
+        ):
             response = self.client.post(reverse("teledeclaration_create"), payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
