@@ -195,3 +195,18 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
         self.assertEqual(Purchase.objects.first().price_ht, Decimal("90.11"))
+
+    @authenticate
+    def test_import_file_many_errors(self):
+        """
+        Test that only the first errors are returned, but that the error count is correct
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="36462492895701")
+        with open("./api/tests/files/purchase_many_errors.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 30)
+        self.assertEqual(body["errorCount"], 56)
