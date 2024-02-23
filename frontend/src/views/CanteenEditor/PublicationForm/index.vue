@@ -9,7 +9,7 @@
         <router-link
           :to="{
             name: 'CanteenPage',
-            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+            params: { canteenUrlComponent },
           }"
           target="_blank"
         >
@@ -62,7 +62,16 @@
       </v-form>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
         <v-spacer></v-spacer>
-        <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
+        <v-btn
+          x-large
+          outlined
+          color="primary"
+          class="mr-4 align-self-center"
+          :to="{
+            name: 'DashboardManager',
+            params: { canteenUrlComponent },
+          }"
+        >
           Annuler
         </v-btn>
         <v-btn v-if="!isPublished" x-large color="primary" @click="publishCanteen">
@@ -144,7 +153,12 @@ export default {
               params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
             })
           } else {
-            this.$router.push({ name: "ManagementPage" })
+            this.$router.push({
+              name: "DashboardManager",
+              params: {
+                canteenUrlComponent: this.canteenUrlComponent,
+              },
+            })
           }
         })
         .catch((e) => {
