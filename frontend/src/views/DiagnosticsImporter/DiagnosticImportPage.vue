@@ -63,10 +63,10 @@
       Bon courage ! 👾 🚀
     </DsfrCallout>
 
-    <h2 class="mt-8">2. Transfèrer le fichier</h2>
+    <h2 class="mt-8">2. Transférer le fichier</h2>
     <FileDrop
       v-model="file"
-      subtitle="Format CSV encodé en UTF-8 attendu"
+      subtitle="Format CSV attendu"
       :acceptTypes="['.csv', 'text/csv', '.tsv', 'text/tsv']"
       maxSize="10485760"
       @upload="upload"
@@ -78,15 +78,14 @@
       <span class="mt-1">Traitement en cours...</span>
     </v-card>
     <div v-if="!isNaN(canteenCount) && !importInProgress">
-      <!-- TODO: maybe just redirect to mes cantines on success ? -->
       <div v-if="canteenCount > 0">
         <v-alert type="success" outlined>
-          <span class="grey--text text--darken-4 body-2">
+          <p class="grey--text text--darken-4 body-2 mb-0">
             {{ canteenCount }} cantines
             <span v-if="diagnosticCount">et {{ diagnosticCount }} diagnostics&nbsp;</span>
             <span v-if="teledeclarationCount">et {{ teledeclarationCount }} télédéclarations&nbsp;</span>
             <span>ont été {{ diagnosticCount ? "traités" : "traitées" }}.</span>
-          </span>
+          </p>
         </v-alert>
         <router-link :to="{ name: 'ManagementPage' }" class="ma-4">← Retourner à mes cantines</router-link>
       </div>
@@ -103,6 +102,7 @@
           <a href="#contact">contactez-nous</a>
           pour plus d'aide.
         </p>
+        <p class="caption grey--text text--darken-3 mb-0">Encodage utilisé : {{ encodingUsed }}.</p>
         <v-alert type="error" outlined>
           <v-simple-table color="red darken-2" dense>
             <template v-slot:default>
@@ -158,8 +158,8 @@
     </v-card>
     <h3 class="my-6">Format du fichier</h3>
     <p>
-      Le fichier CSV doit être encodé avec UTF-8 et contenir un bilan par ligne. Chaque ligne doit aussi inclure les
-      informations de la cantine associée.
+      Le fichier CSV doit contenir un bilan par ligne. Chaque ligne doit aussi inclure les informations de la cantine
+      associée.
     </p>
     <p>Les données doivent être présentées dans l'ordre indiqué ci-dessous.</p>
     <p>Si un bilan pour la même année et la même cantine existe déjà il ne sera pas modifié.</p>
@@ -279,6 +279,7 @@ export default {
       errors: undefined,
       seconds: undefined,
       importInProgress: false,
+      encodingUsed: undefined,
       sharedDocumentation: [
         {
           name: "SIRET de l'établissement",
@@ -613,6 +614,7 @@ export default {
           this.teledeclarationCount = json.teledeclarations
           this.errors = json.errors
           this.seconds = json.seconds
+          this.encodingUsed = json.encoding
           let resultMessage = {
             message: `${this.canteenCount} cantines traitées`,
             status: "success",
