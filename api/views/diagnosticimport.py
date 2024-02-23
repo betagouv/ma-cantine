@@ -41,7 +41,7 @@ class ImportDiagnosticsView(ABC, APIView):
         self.canteens = {}
         self.errors = []
         self.start_time = None
-        # self.encoding_detected = None eventually add this to tests for frontend to display and logger.info
+        self.encoding_detected = None
         super().__init__(**kwargs)
 
     @property
@@ -86,7 +86,7 @@ class ImportDiagnosticsView(ABC, APIView):
         locations_csv_str = "siret,citycode,postcode\n"
         has_locations_to_find = False
 
-        filestring = ImportDiagnosticsView._decode_file(file)
+        filestring = self._decode_file(file)
         filelines = filestring.splitlines()
         dialect = csv.Sniffer().sniff(filelines[0])
 
@@ -112,12 +112,12 @@ class ImportDiagnosticsView(ABC, APIView):
         if has_locations_to_find:
             self._update_location_data(locations_csv_str)
 
-    @staticmethod
-    def _decode_file(file):
+    def _decode_file(self, file):
         bytes_string = file.read()
         detection_result = chardet.detect(bytes_string)
-        encoding = detection_result["encoding"]
-        return bytes_string.decode(encoding)
+        self.encoding_detected = detection_result["encoding"]
+        logger.info(f"Encoding autodetected : {self.encoding_detected}")
+        return bytes_string.decode(self.encoding_detected)
 
     @transaction.atomic
     def _save_data_from_row(self, row):
@@ -236,6 +236,7 @@ class ImportDiagnosticsView(ABC, APIView):
             "count": 0 if len(self.errors) else self.diagnostics_created,
             "errors": self.errors,
             "seconds": time.time() - self.start_time,
+            "encoding": self.encoding_detected,
         }
         if self.request.user.is_staff:
             body["teledeclarations"] = self.teledeclarations

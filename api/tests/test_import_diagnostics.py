@@ -1180,6 +1180,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         body = response.json()
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(body["encoding"], "utf-8")
         canteen.refresh_from_db()
         self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
 
@@ -1198,6 +1199,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         body = response.json()
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(body["encoding"], "UTF-16")
         canteen.refresh_from_db()
         self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
 
@@ -1216,6 +1218,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         body = response.json()
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(body["encoding"], "Windows-1252")
         canteen.refresh_from_db()
         self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
 
