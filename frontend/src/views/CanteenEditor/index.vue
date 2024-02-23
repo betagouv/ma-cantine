@@ -4,12 +4,7 @@
       <v-col cols="12" class="py-0">
         <BreadcrumbsNav :links="breadcrumbLinks" />
       </v-col>
-      <v-col
-        cols="12"
-        :sm="showNavigation ? 8 : 12"
-        :md="showNavigation ? 9 : 12"
-        :class="showNavigation ? '' : 'pt-0'"
-      >
+      <v-col cols="12" class="pt-0">
         <router-view @updateCanteen="updateCanteen" :originalCanteen="canteen" :year="year"></router-view>
       </v-col>
     </v-row>
