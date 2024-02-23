@@ -161,7 +161,7 @@
       associée.
     </p>
     <p>Les données doivent être présentées dans l'ordre indiqué ci-dessous.</p>
-    <p>Si un bilan pour la même année et la même cantine existe déjà il ne sera pas modifié.</p>
+    <p>Ce n'est pas possible de modifier les bilans télédéclarés.</p>
     <h4 class="my-6">Colonnes</h4>
     <v-simple-table class="my-6">
       <template v-slot:default>

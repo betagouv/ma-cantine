@@ -140,7 +140,7 @@ class ImportDiagnosticsView(ABC, APIView):
             row, import_source, publication_status, manager_emails, silently_added_manager_emails
         )
         if diagnostic_year:
-            diagnostic = self._create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
+            diagnostic = self._update_or_create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
             if should_teledeclare and self.request.user.is_staff:
                 self._teledeclare_diagnostic(diagnostic)
 
@@ -160,13 +160,24 @@ class ImportDiagnosticsView(ABC, APIView):
 
     # NB: this function should only be called once the data has been validated since by this point a canteen
     # will have been saved to the DB and we don't want partial imports caused by exceptions from this method
-    def _create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
-        diagnostic = Diagnostic(
-            canteen_id=canteen.id,
-            year=diagnostic_year,
-            diagnostic_type=diagnostic_type,
-            **values_dict,
+    def _update_or_create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
+        diagnostic_exists = Diagnostic.objects.filter(canteen=canteen, year=diagnostic_year).exists()
+        diagnostic = (
+            Diagnostic.objects.get(canteen=canteen, year=diagnostic_year)
+            if diagnostic_exists
+            else Diagnostic(canteen_id=canteen.id, year=diagnostic_year)
         )
+        if diagnostic_exists:
+            has_active_td = Teledeclaration.objects.filter(
+                diagnostic=diagnostic, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+            ).exists()
+            if has_active_td:
+                raise ValidationError(
+                    "Ce n'est pas possible de modifier un diagnostic télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration."
+                )
+        diagnostic.diagnostic_type = diagnostic_type
+        for key, value in values_dict.items():
+            setattr(diagnostic, key, value)
         diagnostic.full_clean()
         diagnostic.save()
         update_change_reason(diagnostic, f"Mass CSV import. {self.__class__.__name__[:100]}")
@@ -425,8 +436,6 @@ class ImportDiagnosticsView(ABC, APIView):
                     verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(field)
                     for message in messages:
                         user_message = message
-                        if user_message == "Un objet Diagnostic avec ces champs Canteen et Année existe déjà.":
-                            user_message = "Un diagnostic pour cette année et cette cantine existe déjà."
                         if field != "__all__":
                             user_message = f"Champ '{verbose_field_name}' : {user_message}"
                         ImportDiagnosticsView._add_error(errors, user_message)
@@ -489,10 +498,6 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
             raise PermissionDenied(
                 detail=f"Format fichier : {self.final_value_idx + 1} ou 12 colonnes attendues, {len(row)} trouvées."
             )
-
-    def _validate_diagnostic(self, row):
-        # NB: if year is given, appro data is required, else only canteen data required
-        diagnostic_year = values_dict = None
         try:
             diagnostic_year = row[self.year_idx]
             # Flake formatting bug: https://github.com/PyCQA/pycodestyle/issues/373#issuecomment-760190686
@@ -501,7 +506,16 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
         except IndexError:
             pass
 
+    def _validate_diagnostic(self, row):
+        # NB: if year is given, appro data is required, else only canteen data required
+        values_dict = None
+        diagnostic_year = row[self.year_idx] if len(row) > self.year_idx else None
+
         if diagnostic_year:
+            try:
+                diagnostic_year = int(diagnostic_year.strip())
+            except ValueError:
+                raise ValidationError({"year": f"La valeur « {row[self.year_idx]} » doit être un nombre entier."})
             mandatory_fields = [
                 "value_total_ht",
             ]
