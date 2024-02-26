@@ -138,4 +138,4 @@ virtualenv==20.25.0
 wcwidth==0.2.12
 webencodings==0.5.1
 wrapt==1.16.0
-xhtml2pdf==0.2.11
+xhtml2pdf==0.2.15
