@@ -124,7 +124,7 @@
               for="select-commune"
               :class="{
                 'text-body-2': true,
-                'active-filter-label': !!filters.department.value,
+                'active-filter-label': !!filters.city_insee_code.value,
               }"
             >
               Commune
