@@ -400,6 +400,21 @@ class TestTeledeclarationApi(APITestCase):
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
+    def test_generate_pdf_central(self):
+        """
+        A central kitchen should be able to generate a PDF
+        """
+        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, daily_meal_count=345)
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
+        self.assertIsNone(teledeclaration.declared_data["canteen"]["daily_meal_count"])
+
+        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
     def test_create_duplicate(self):
         """
         We can only have one submitted teledeclaration per canteen/year

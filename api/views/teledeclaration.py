@@ -343,8 +343,10 @@ class TeledeclarationPdfView(APIView):
     # this method should correspond to the rules in frontend utils : applicableDiagnosticRules
     @staticmethod
     def _get_applicable_diagnostic_rules(canteen_data):
-        donation_agreement = canteen_data["daily_meal_count"] >= 3000 if "daily_meal_count" in canteen_data else False
-        diversification_plan = canteen_data["daily_meal_count"] >= 200 if "daily_meal_count" in canteen_data else False
+        donation_agreement = diversification_plan = False
+        if "daily_meal_count" in canteen_data and canteen_data["daily_meal_count"]:
+            donation_agreement = canteen_data["daily_meal_count"] >= 3000
+            diversification_plan = canteen_data["daily_meal_count"] >= 200
         return {
             "donation_agreement": donation_agreement,
             "diversification_plan": diversification_plan,
