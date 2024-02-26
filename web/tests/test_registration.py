@@ -56,11 +56,15 @@ class TestRegistration(APITestCase):
         self.assertEqual(len(matches), 1)
         uidb64, token = matches[0]
         activation_response = self.client.get(reverse("activate", kwargs={"uidb64": uidb64, "token": token}))
+
+        # debugging /token-invalide error from this test that appears from time to time in GH
+        redirect_error_message = f"\nEmail body:\n{mail.outbox[0].body}" + f"\n\nUIDB64: {uidb64}\n\nTOKEN: {token}"
         self.assertRedirects(
             activation_response,
             reverse("app"),
             status.HTTP_302_FOUND,
             fetch_redirect_response=False,
+            msg_prefix=redirect_error_message,
         )
 
     def test_phone_number_validation(self):
