@@ -111,7 +111,7 @@ qrcode==7.4.2
 redis==5.0.1
 referencing==0.32.0
 regex==2023.12.25
-reportlab==3.6.13
+reportlab==4.0.8
 requests==2.31.0
 requests-mock==1.11.0
 rpds-py==0.15.2
@@ -138,4 +138,4 @@ virtualenv==20.25.0
 wcwidth==0.2.12
 webencodings==0.5.1
 wrapt==1.16.0
-xhtml2pdf==0.2.11
+xhtml2pdf==0.2.15
