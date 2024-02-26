@@ -152,6 +152,7 @@ export default {
             message: "Nous n'avons pas trouvé cette cantine",
             status: "error",
           })
+          this.$router.replace({ name: "ManagementPage" })
         })
     },
   },

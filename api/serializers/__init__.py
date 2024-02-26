@@ -10,6 +10,7 @@ from .canteen import (  # noqa: F401
     CanteenTeledeclarationSerializer,
     SatelliteTeledeclarationSerializer,
     ElectedCanteenSerializer,
+    MinimalCanteenSerializer,
 )
 from .diagnostic import (  # noqa: F401
     ManagerDiagnosticSerializer,

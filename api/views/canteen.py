@@ -34,6 +34,7 @@ from api.serializers import (
     CanteenActionsSerializer,
     CanteenStatusSerializer,
     ElectedCanteenSerializer,
+    MinimalCanteenSerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration, Purchase
 from data.region_choices import Region
@@ -1046,7 +1047,7 @@ class ClaimCanteenView(APIView):
         canteen.claimed_by = self.request.user
         canteen.has_been_claimed = True
         canteen.save()
-        return JsonResponse({}, status=status.HTTP_200_OK)
+        return JsonResponse(camelize(MinimalCanteenSerializer(canteen).data), status=status.HTTP_200_OK)
 
 
 class UndoClaimCanteenView(APIView):
