@@ -149,7 +149,7 @@
       pour voir la synthèse de vos données.
     </p>
     <v-btn
-      v-if="showEditButton && !hasActiveTeledeclaration"
+      v-if="showEditButton"
       class="mt-6"
       color="primary"
       :to="{
