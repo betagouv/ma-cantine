@@ -345,9 +345,10 @@ export const applicableDiagnosticRules = (canteen) => {
     }
   }
   // extra questions should correspond to the rules in teledeclaration view : _get_applicable_diagnostic_rules
+  const shouldHaveDailyMealCount = canteen && canteen.productionType !== "central"
   return {
-    hasDonationAgreement: canteen ? canteen.dailyMealCount >= 3000 : true,
-    hasDiversificationPlan: canteen ? canteen.dailyMealCount >= 200 : true,
+    hasDonationAgreement: shouldHaveDailyMealCount ? canteen.dailyMealCount >= 3000 : true,
+    hasDiversificationPlan: shouldHaveDailyMealCount ? canteen.dailyMealCount >= 200 : true,
     bioThreshold,
     qualityThreshold,
     hasQualityException,
