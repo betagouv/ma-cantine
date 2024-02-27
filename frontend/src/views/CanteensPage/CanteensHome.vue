@@ -324,10 +324,6 @@
       <v-row class="my-2" align="end">
         <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp"></v-col>
         <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
-        <v-col cols="12" sm="6">
-          <DsfrPagination v-model="page" :length="Math.ceil(publishedCanteenCount / limit)" :total-visible="7" />
-        </v-col>
-        <v-spacer></v-spacer>
         <v-col id="ordering" cols="12" sm="3" class="d-flex align-end">
           <DsfrSelect
             v-model="orderBy"
