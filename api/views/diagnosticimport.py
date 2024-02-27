@@ -3,6 +3,7 @@ import csv
 import time
 import re
 import logging
+import chardet
 from decimal import Decimal, InvalidOperation
 from data.models.diagnostic import Diagnostic
 from data.models.teledeclaration import Teledeclaration
@@ -40,6 +41,7 @@ class ImportDiagnosticsView(ABC, APIView):
         self.canteens = {}
         self.errors = []
         self.start_time = None
+        self.encoding_detected = None
         super().__init__(**kwargs)
 
     @property
@@ -69,6 +71,7 @@ class ImportDiagnosticsView(ABC, APIView):
             logger.warning(f"UnicodeDecodeError: {message}")
             self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
         except Exception as e:
+            print(e)
             logger.exception(f"Échec lors de la lecture du fichier:\n{e}")
             self.errors = [{"row": 0, "status": 400, "message": "Échec lors de la lecture du fichier"}]
 
@@ -83,7 +86,7 @@ class ImportDiagnosticsView(ABC, APIView):
         locations_csv_str = "siret,citycode,postcode\n"
         has_locations_to_find = False
 
-        filestring = file.read().decode("utf-8-sig")
+        filestring = self._decode_file(file)
         filelines = filestring.splitlines()
         dialect = csv.Sniffer().sniff(filelines[0])
 
@@ -108,6 +111,13 @@ class ImportDiagnosticsView(ABC, APIView):
                     )
         if has_locations_to_find:
             self._update_location_data(locations_csv_str)
+
+    def _decode_file(self, file):
+        bytes_string = file.read()
+        detection_result = chardet.detect(bytes_string)
+        self.encoding_detected = detection_result["encoding"]
+        logger.info(f"Encoding autodetected : {self.encoding_detected}")
+        return bytes_string.decode(self.encoding_detected)
 
     @transaction.atomic
     def _save_data_from_row(self, row):
@@ -237,6 +247,7 @@ class ImportDiagnosticsView(ABC, APIView):
             "count": 0 if len(self.errors) else self.diagnostics_created,
             "errors": self.errors,
             "seconds": time.time() - self.start_time,
+            "encoding": self.encoding_detected,
         }
         if self.request.user.is_staff:
             body["teledeclarations"] = self.teledeclarations
