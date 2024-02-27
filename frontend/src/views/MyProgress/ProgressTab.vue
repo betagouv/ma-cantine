@@ -77,7 +77,7 @@
           :usesCentralDiagnostic="hasCentralDiagnosticForMeasure"
           :canteen="canteen"
           :diagnostic="displayDiagnostic"
-          :showEditButton="true"
+          :showEditButton="!hasActiveTeledeclaration"
         />
       </div>
     </div>
