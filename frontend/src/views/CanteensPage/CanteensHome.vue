@@ -318,6 +318,7 @@
       </v-btn>
     </div>
     <div v-else>
+      <!-- TODO: align this better now that we don't have top pagination -->
       <p class="mt-3 mb-n4 text-body-2 grey--text" v-if="resultsCountText">
         {{ resultsCountText }}
       </p>
