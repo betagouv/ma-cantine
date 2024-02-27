@@ -307,7 +307,7 @@
         </v-row>
       </v-sheet>
     </v-expand-transition>
-    <div v-if="loading" class="pa-6">
+    <div v-if="loading" class="pa-12">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
     <div v-else-if="publishedCanteenCount === 0" class="d-flex flex-column align-center py-10">
@@ -589,6 +589,7 @@ export default {
   },
   methods: {
     fetchCurrentPage() {
+      this.visibleCanteens = null // trigger this.pageLoading
       let queryParam = `limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
       Object.entries(this.filters).forEach(([key, f]) => {
@@ -629,7 +630,7 @@ export default {
       this.$router.push({ query }).catch(() => {})
     },
     updateOrder() {
-      const override = this.order ? { page: this.page, trier: this.order.display } : { page: this.page }
+      const override = this.order ? { page: 1, trier: this.order.display } : { page: 1 }
       const query = Object.assign(this.query, override)
       this.$router.push({ query }).catch(() => {})
     },
@@ -797,7 +798,6 @@ export default {
       deep: true,
     },
     page() {
-      this.visibleCanteens = null // trigger this.pageLoading
       this.changePage()
     },
     orderBy() {
