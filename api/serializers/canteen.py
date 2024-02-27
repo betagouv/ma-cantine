@@ -72,7 +72,6 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
-    central_kitchen = MinimalCanteenSerializer(read_only=True)
 
     class Meta:
         model = Canteen
@@ -90,7 +89,6 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "region",
             "department",
             "central_kitchen_diagnostics",
-            "central_kitchen",
         )
 
 
