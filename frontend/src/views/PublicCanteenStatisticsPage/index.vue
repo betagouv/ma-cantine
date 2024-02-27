@@ -107,12 +107,8 @@
             <p>
               <span class="text-h5 font-weight-bold">{{ statistics.publishedCanteenCount }}</span>
               cantine{{
-                statistics.publishedCanteenCount == 1
-                  ? " a publié ses données (répertoriée dans"
-                  : "s ont publié leurs données (répertoriées dans"
+                statistics.publishedCanteenCount == 1 ? " a publié ses données." : "s ont publié leurs données."
               }}
-              <!-- eslint-disable-next-line prettier/prettier-->
-              <router-link :to="{ name: 'CanteensHome' }">nos cantines</router-link>).
             </p>
           </div>
           <VueApexCharts
