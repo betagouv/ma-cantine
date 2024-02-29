@@ -1,8 +1,7 @@
 <template>
-  <div class="text-left">
-    <ProductionTypeTag v-if="canteen" :canteen="canteen" class="mt-2" />
-    <h1 class="my-4 fr-display-xs" v-if="canteen">{{ canteen.name }}</h1>
-    <h1 class="my-4 fr-display-xs" v-else>Bienvenue {{ loggedUser.firstName }}</h1>
+  <div class="text-left" v-if="canteen">
+    <ProductionTypeTag :canteen="canteen" class="mt-2" />
+    <h1 class="my-4 fr-display-xs">{{ canteen.name }}</h1>
     <v-row v-if="canteenPreviews.length > 1">
       <v-col>
         <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
@@ -11,12 +10,12 @@
       </v-col>
     </v-row>
 
-    <div v-if="canteen">
+    <div>
       <div class="mt-4">
         <EgalimProgression :canteen="canteen" />
       </div>
 
-      <div v-if="canteen">
+      <div>
         <h2 class="mt-10 mb-2 fr-h2">
           Mon établissement
         </h2>
@@ -59,33 +58,6 @@
         </v-row>
       </div>
     </div>
-    <v-row v-else>
-      <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
-        <v-card
-          class="d-flex flex-column align-center justify-center dsfr"
-          outlined
-          min-height="220"
-          height="80%"
-          :to="{ name: 'NewCanteen' }"
-        >
-          <v-icon size="100" class="primary--text">mdi-plus</v-icon>
-          <v-card-text class="font-weight-bold pt-0 text-center primary--text text-body-1">
-            Ajouter une cantine
-          </v-card-text>
-        </v-card>
-        <v-spacer></v-spacer>
-        <div class="d-flex mt-4 mb-2 align-center px-2">
-          <v-divider></v-divider>
-          <p class="mx-2 my-0 caption">ou</p>
-          <v-divider></v-divider>
-        </div>
-        <v-spacer></v-spacer>
-        <v-btn text color="primary" :to="{ name: 'DiagnosticsImporter' }">
-          <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
-          Créer plusieurs cantines depuis un fichier
-        </v-btn>
-      </v-col>
-    </v-row>
   </div>
 </template>
 
@@ -152,6 +124,7 @@ export default {
             message: "Nous n'avons pas trouvé cette cantine",
             status: "error",
           })
+          this.$router.replace({ name: "ManagementPage" })
         })
     },
   },
