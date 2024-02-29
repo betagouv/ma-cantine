@@ -194,7 +194,7 @@ export default {
         .then((response) => {
           this.$store.dispatch("notify", {
             status: "success",
-            message: "Vous gérez maintenant cette cantine.",
+            message: "Vous gérez maintenant cet établissement.",
           })
           this.$router.push({
             name: "CanteenForm",
