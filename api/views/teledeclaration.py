@@ -133,54 +133,41 @@ class TeledeclarationCancelView(APIView):
             raise ValidationError("La télédéclaration specifiée n'existe pas")
 
 
-@extend_schema_view(
-    get=extend_schema(
-        summary="Obtenir une représentation PDF de la télédéclaration.",
-        description="",
-    ),
-)
-class TeledeclarationPdfView(APIView):
+class TeledeclarationView(APIView):
     """
-    This view returns a PDF for proof of teledeclaration
+    This view provides helper classes for the HTML and PDF views
     """
 
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
 
-    def get(self, request, *args, **kwargs):
-        teledeclaration_id = kwargs.get("pk")
-        if not teledeclaration_id:
+    @staticmethod
+    def _get_teledeclaration(user, id):
+        if not id:
             raise ValidationError("teledeclarationId manquant")
 
         try:
-            teledeclaration = Teledeclaration.objects.get(pk=teledeclaration_id)
+            teledeclaration = Teledeclaration.objects.get(pk=id)
         except Teledeclaration.DoesNotExist:
             raise ValidationError("La télédéclaration specifiée n'existe pas")
 
-        if request.user not in teledeclaration.canteen.managers.all():
+        if user not in teledeclaration.canteen.managers.all():
             raise PermissionDenied()
 
         if teledeclaration.status != Teledeclaration.TeledeclarationStatus.SUBMITTED:
             raise ValidationError("La télédéclaration n'est pas validée par l'utilisateur")
 
+        return teledeclaration
+
+    @staticmethod
+    def _get_html(teledeclaration):
         template = (
             get_template("teledeclaration_campaign_2024/index.html")
             if teledeclaration.year >= 2023
             else get_template("teledeclaration_pdf.html")
         )
         context = TeledeclarationPdfView.get_context(teledeclaration)
-        html = template.render(context)
-
-        response = HttpResponse(content_type="application/pdf")
-        filename = TeledeclarationPdfView.get_filename(teledeclaration)
-        response["Content-Disposition"] = f'attachment; filename="{filename}"'
-        pisa_status = pisa.CreatePDF(html, dest=response, link_callback=TeledeclarationPdfView.link_callback)
-
-        if pisa_status.err:
-            logger.error(f"Error while generating PDF for teledeclaration {teledeclaration.id}:\n{pisa_status.err}")
-            return HttpResponse("An error ocurred", status=500)
-
-        return response
+        return template.render(context)
 
     @staticmethod
     def get_context(teledeclaration):
@@ -389,3 +376,43 @@ class TeledeclarationPdfView(APIView):
             for family, display_family in family_variable_to_display.items():
                 structured_data[display_label][display_family] = teledeclaration_data[f"value_{family}_{label}"]
         return structured_data
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Obtenir une représentation PDF de la télédéclaration.",
+        description="",
+    ),
+)
+class TeledeclarationPdfView(TeledeclarationView):
+    """
+    This view returns a PDF for proof of teledeclaration
+    """
+
+    def get(self, request, *args, **kwargs):
+        teledeclaration_id = kwargs.get("pk")
+        teledeclaration = TeledeclarationView._get_teledeclaration(request.user, teledeclaration_id)
+        html = TeledeclarationView._get_html(teledeclaration)
+        response = HttpResponse(content_type="application/pdf")
+        filename = TeledeclarationView.get_filename(teledeclaration)
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+        pisa_status = pisa.CreatePDF(html, dest=response, link_callback=TeledeclarationView.link_callback)
+
+        if pisa_status.err:
+            logger.error(f"Error while generating PDF for teledeclaration {teledeclaration.id}:\n{pisa_status.err}")
+            return HttpResponse("An error ocurred", status=500)
+
+        return response
+
+
+class TeledeclarationHTMLView(TeledeclarationView):
+    """
+    This view returns HTML for proof of teledeclaration
+    """
+
+    def get(self, request, *args, **kwargs):
+        teledeclaration_id = kwargs.get("pk")
+        teledeclaration = TeledeclarationView._get_teledeclaration(request.user, teledeclaration_id)
+        html = TeledeclarationView._get_html(teledeclaration)
+
+        return HttpResponse(html)

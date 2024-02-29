@@ -49,6 +49,7 @@ from .teledeclaration import (  # noqa: F401
     TeledeclarationCreateView,
     TeledeclarationCancelView,
     TeledeclarationPdfView,
+    TeledeclarationHTMLView,
 )
 from .inquiry import InquiryView  # noqa: F401
 from .purchase import (  # noqa: F401
