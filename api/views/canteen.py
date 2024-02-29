@@ -27,6 +27,7 @@ from rest_framework.response import Response
 from api.views.utils import update_change_reason_with_auth
 from api.serializers import (
     PublicCanteenSerializer,
+    PublicCanteenPreviewSerializer,
     FullCanteenSerializer,
     CanteenPreviewSerializer,
     ManagingTeamSerializer,
@@ -242,7 +243,7 @@ def filter_by_diagnostic_params(queryset, query_params):
 
 class PublishedCanteensView(ListAPIView):
     model = Canteen
-    serializer_class = PublicCanteenSerializer
+    serializer_class = PublicCanteenPreviewSerializer
     queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
     pagination_class = PublishedCanteensPagination
     filter_backends = [

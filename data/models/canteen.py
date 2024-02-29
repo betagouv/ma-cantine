@@ -35,7 +35,10 @@ class Canteen(SoftDeletionModel):
         verbose_name = "cantine"
         verbose_name_plural = "cantines"
         ordering = ["-creation_date"]
-        indexes = [models.Index(fields=["central_producer_siret"])]
+        indexes = [
+            models.Index(fields=["siret"]),
+            models.Index(fields=["central_producer_siret"]),
+        ]
 
     class ManagementType(models.TextChoices):
         DIRECT = "direct", "Directe"
@@ -131,7 +134,7 @@ class Canteen(SoftDeletionModel):
         verbose_name="nombre de cantines satellites dépendantes (si cuisine centrale)",
     )
 
-    # TODO: once have a standardised format (see _normalise_siret), index by siret if given
+    # TODO: consider using normalise_siret on save
     siret = models.TextField(null=True, blank=True, validators=[validate_siret])
     central_producer_siret = models.TextField(
         null=True,
