@@ -36,7 +36,7 @@
         </v-col>
       </v-row>
     </v-card>
-    <v-sheet class="px-6" elevation="0">
+    <v-sheet class="py-2" elevation="0">
       <v-row>
         <v-col cols="12" md="7" class="pt-0">
           <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
@@ -54,7 +54,7 @@
       </v-row>
     </v-sheet>
 
-    <div class="d-flex align-center mt-4 pl-0 pl-md-6">
+    <div class="d-flex align-center mt-4 pl-0">
       <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">
         <h2 class="text-body-1 font-weight-black" style="background-color: #fff; width: max-content">
           Filtres
@@ -73,7 +73,7 @@
       <v-divider v-if="!showFilters"></v-divider>
     </div>
     <v-expand-transition>
-      <v-sheet class="pa-6 text-left mt-2 ml-6" v-show="showFilters" rounded :outlined="showFilters">
+      <v-sheet class="pa-6 text-left mt-2" v-show="showFilters" rounded :outlined="showFilters">
         <v-row>
           <v-col cols="12" sm="6" md="4">
             <label
@@ -318,16 +318,12 @@
       </v-btn>
     </div>
     <div v-else>
-      <p class="mt-3 mb-n4 text-body-2 grey--text" v-if="resultsCountText">
-        {{ resultsCountText }}
-      </p>
       <v-row class="my-2" align="end">
-        <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp"></v-col>
-        <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
-        <v-col cols="12" sm="6">
-          <DsfrPagination v-model="page" :length="Math.ceil(publishedCanteenCount / limit)" :total-visible="7" />
+        <v-col>
+          <p class="mb-0 text-body-2 grey--text text-left" v-if="resultsCountText">
+            {{ resultsCountText }}
+          </p>
         </v-col>
-        <v-spacer></v-spacer>
         <v-col id="ordering" cols="12" sm="3" class="d-flex align-end">
           <DsfrSelect
             v-model="orderBy"
