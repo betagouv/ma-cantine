@@ -14,6 +14,7 @@ celery==5.3.6
 certifi==2023.7.22
 cffi==1.16.0
 cfgv==3.4.0
+chardet==5.0.0
 charset-normalizer==3.3.2
 click==8.1.7
 click-didyoumean==0.3.0
@@ -53,7 +54,6 @@ factory-boy==3.3.0
 Faker==22.2.0
 filelock==3.13.1
 freezegun==1.4.0
-future==0.18.3
 html-tag-names==0.1.2
 html-void-elements==0.1.0
 html2text==2020.1.16
@@ -68,7 +68,7 @@ jsbeautifier==1.14.11
 json5==0.9.14
 jsonschema==4.20.0
 jsonschema-specifications==2023.12.1
-jwcrypto==1.5.1
+jwcrypto==1.5.4
 kombu==5.3.5
 lazy-object-proxy==1.10.0
 lxml==5.1.0
@@ -86,7 +86,7 @@ pillow==10.2.0
 pipdeptree==2.13.2
 platformdirs==4.2.0
 pluggy==1.4.0
-pre-commit==3.6.0
+pre-commit==3.6.2
 prompt-toolkit==3.0.43
 psycopg2==2.9.9
 py==1.11.0
@@ -111,7 +111,7 @@ qrcode==7.4.2
 redis==5.0.1
 referencing==0.32.0
 regex==2023.12.25
-reportlab==3.6.13
+reportlab==4.0.8
 requests==2.31.0
 requests-mock==1.11.0
 rpds-py==0.15.2
@@ -138,4 +138,4 @@ virtualenv==20.25.0
 wcwidth==0.2.12
 webencodings==0.5.1
 wrapt==1.16.0
-xhtml2pdf==0.2.11
+xhtml2pdf==0.2.15

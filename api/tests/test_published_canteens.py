@@ -557,14 +557,11 @@ class TestPublishedCanteenApi(APITestCase):
                 canteen_image.canteen = canteen
                 canteen_image.save()
 
-        response = self.client.get(reverse("published_canteens"))
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        results = body.get("results", [])
-
-        self.assertEqual(body.get("count"), 1)
-        self.assertEqual(len(results[0].get("images")), 3)
+        self.assertEqual(len(body.get("images")), 3)
 
     def test_canteen_claim_value(self):
         canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)

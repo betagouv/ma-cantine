@@ -1,18 +1,9 @@
 <template>
-  <div class="mt-n2">
-    <v-row class="mt-2" v-if="isNewCanteen || canteen">
-      <v-col cols="12" class="py-0">
-        <BreadcrumbsNav :links="breadcrumbLinks" />
-      </v-col>
-      <v-col
-        cols="12"
-        :sm="showNavigation ? 8 : 12"
-        :md="showNavigation ? 9 : 12"
-        :class="showNavigation ? '' : 'pt-0'"
-      >
-        <router-view @updateCanteen="updateCanteen" :originalCanteen="canteen" :year="year"></router-view>
-      </v-col>
-    </v-row>
+  <div>
+    <div v-if="isNewCanteen || canteen">
+      <BreadcrumbsNav :links="breadcrumbLinks" />
+      <router-view @updateCanteen="updateCanteen" :originalCanteen="canteen" :year="year"></router-view>
+    </div>
     <v-container v-else>
       <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
     </v-container>

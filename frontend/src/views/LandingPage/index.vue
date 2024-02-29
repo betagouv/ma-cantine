@@ -28,10 +28,6 @@
 
     <Resources class="my-16" />
 
-    <v-divider class="mt-16" v-if="showPartners"></v-divider>
-
-    <StartupPartners class="mt-16 mb-8" v-if="showPartners" />
-
     <v-divider class="mt-8"></v-divider>
 
     <TheNewsletter class="mt-12 mb-8" />
@@ -47,7 +43,6 @@ import GoalBlock from "@/views/LandingPage/GoalBlock"
 import DiscoverMeasuresBlock from "@/views/LandingPage/DiscoverMeasuresBlock"
 import Resources from "@/views/LandingPage/Resources"
 import TheNewsletter from "@/components/TheNewsletter"
-import StartupPartners from "@/views/LandingPage/StartupPartners"
 import BlogBlock from "@/views/LandingPage/BlogBlock"
 import MissionBlock from "@/views/LandingPage/MissionBlock"
 
@@ -60,15 +55,9 @@ export default {
     DiscoverMeasuresBlock,
     TheNewsletter,
     Resources,
-    StartupPartners,
     BlogBlock,
     MissionBlock,
     ToolsBlock,
-  },
-  computed: {
-    showPartners() {
-      return window.ENABLE_PARTNERS
-    },
   },
 }
 </script>
