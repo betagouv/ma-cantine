@@ -59,7 +59,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.totalLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Total des déchets alimentaires"
                   suffix="kg"
@@ -70,7 +70,11 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.durationLeftoversMeasurement"
-                  :rules="[validators.nonNegativeOrEmpty, validators.isInteger, validators.lteOrEmpty(365)]"
+                  :rules="
+                    payload.hasWasteMeasures
+                      ? [validators.nonNegativeOrEmpty, validators.isInteger, validators.lteOrEmpty(365)]
+                      : []
+                  "
                   validate-on-blur
                   label="Période de mesure"
                   suffix="jours"
@@ -81,7 +85,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.breadLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste de pain"
                   suffix="kg/an"
@@ -92,7 +96,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.servedLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste plateau"
                   suffix="kg/an"
@@ -103,7 +107,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.unservedLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste en production (non servi)"
                   suffix="kg/an"
@@ -114,7 +118,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.sideLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste de composantes (entrée, plat dessert...)"
                   suffix="kg/an"
