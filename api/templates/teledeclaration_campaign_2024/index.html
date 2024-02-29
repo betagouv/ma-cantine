@@ -11,32 +11,29 @@
                  height="60" />
         </div>
         <h1>Justificatif pour télédéclaration {{ year }}</h1>
-        <h2>Télédéclaration faite le {{ date|date:"l j F Y" }} par {{ applicant }}</h2>
+        <p>Télédéclaration faite le {{ date|date:"l j F Y" }} par {{ applicant }}</p>
         {% include "./canteen.html" %}
-
-        {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
-            <h3>Vous avez choisi la télédéclaration {{ diagnostic_type }}.</h3>
-        {% endif %}
-        <p>
-            L'arrêté du 14 septembre 2022 rend obligatoire la saisie et la transmission des données d'achat de l'année n-1 à l'administration.
-        </p>
         {% include "./diagnostic_mode_description.html" %}
+        <h2>Informations de mon service</h2>
         <p>
-            Pour l'année {{ year }}, les données suivantes ont été télédéclarées le
-            {{ date|date:"l j F Y" }} via la plateforme numérique « ma cantine » :
+            Pour l'année {{ year }}, les données suivantes ont été télédéclarées
+            via la plateforme numérique « ma cantine » :
         </p>
-        <!-- SIMPLIFIED DECLARATION -->
 
         {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
+            {% comment %} Has teledeclared appro data {% endcomment %}
+            <h3>Qualité des produits</h3>
+            <p>Vous avez choisi la télédéclaration {{ diagnostic_type }}.</p>
+
             {% if not diagnostic_type == "complète" %}
                 {% include "./measure_quality_simple.html" %}
             {% else %}
-                <!-- COMPLETE DECLARATION -->
                 {% include "./measure_quality_complete.html" %}
             {% endif %}
         {% endif %}
 
         {% if teledeclaration_mode != "CENTRAL_APPRO" %}
+            {% comment %} Has teledeclared data for the other measures {% endcomment %}
             <div class="other-measures">
                 {% include "./measure_waste.html" %}
                 {% include "./measure_diversification.html" %}
@@ -45,6 +42,9 @@
             </div>
         {% endif %}
         <hr />
+        <p>
+            L'arrêté du 14 septembre 2022 rend obligatoire la saisie et la transmission des données d'achat de l'année n-1 à l'administration.
+        </p>
         <p>
             En savoir plus de la loi EGAlim : <a href="https://ma-cantine.agriculture.gouv.fr/">https://ma-cantine.agriculture.gouv.fr/</a>
         </p>
