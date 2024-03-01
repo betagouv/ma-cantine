@@ -3,7 +3,7 @@
     :options="chartOptions"
     :series="series"
     role="img"
-    aria-description="Approvisionnement bio et durable"
+    aria-label="Approvisionnement bio et durable"
     height="100px"
     width="100%"
     class="my-4"
