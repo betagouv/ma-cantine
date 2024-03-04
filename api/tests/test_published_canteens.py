@@ -579,11 +579,14 @@ class TestPublishedCanteenApi(APITestCase):
 
     @authenticate
     def test_canteen_claim_request(self):
-        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
+        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.DRAFT)
         canteen.managers.clear()
 
         response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], canteen.id)
+        self.assertEqual(body["name"], canteen.name)
         user = authenticate.user
         self.assertEqual(canteen.managers.first().id, user.id)
         self.assertEqual(canteen.managers.count(), 1)

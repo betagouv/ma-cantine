@@ -180,7 +180,7 @@ export default {
           this.requestSent = true
           this.$store.dispatch("notify", {
             status: "success",
-            message: `Votre message a bien été envoyé.`,
+            message: "Votre message a bien été envoyé.",
           })
           window.scrollTo(0, 0)
         })
@@ -190,8 +190,18 @@ export default {
       const canteenId = this.duplicateSiretCanteen.id
       return this.$store
         .dispatch("claimCanteen", { canteenId })
-        .then(() => (this.requestSent = true))
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+        .then((response) => {
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: "Vous gérez maintenant cet établissement.",
+          })
+          this.$router.push({
+            name: "CanteenForm",
+            params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(response) },
+          })
+        })
+        .catch(() => this.$router.push({ name: "ManagementPage" }))
     },
     saveSiretIfNeeded() {
       if (!this.canteen?.id) return Promise.resolve()
