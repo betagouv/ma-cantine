@@ -68,20 +68,20 @@ class ImportDiagnosticsView(ABC, APIView):
                 if self.errors:
                     raise IntegrityError()
         except IntegrityError as e:
-            self.log_error(f"L'import du fichier CSV a échoué:\n{e}")
+            self._log_error(f"L'import du fichier CSV a échoué:\n{e}")
         except ValidationError as e:
-            self.log_error(e.message)
+            self._log_error(e.message)
             self.errors = [{"row": 0, "status": 400, "message": e.message}]
         except UnicodeDecodeError as e:
-            self.log_error(e.reason)
+            self._log_error(e.reason)
             self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
         except Exception as e:
-            self.log_error(f"Échec lors de la lecture du fichier:\n{e}", "exception")
+            self._log_error(f"Échec lors de la lecture du fichier:\n{e}", "exception")
             self.errors = [{"row": 0, "status": 400, "message": "Échec lors de la lecture du fichier"}]
 
         return self._get_success_response()
 
-    def log_error(self, message, level="warning"):
+    def _log_error(self, message, level="warning"):
         logger_function = getattr(logger, level)
         logger_function(message)
         ImportErrorFactory.create(
