@@ -58,7 +58,8 @@
             <v-row>
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
-                  v-model.number="payload.totalLeftovers"
+                  :value="payload.totalLeftovers"
+                  @input="(x) => (payload.totalLeftovers = floatInputValue(x))"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Total des déchets alimentaires"
@@ -69,7 +70,8 @@
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
-                  v-model.number="payload.durationLeftoversMeasurement"
+                  :value="payload.durationLeftoversMeasurement"
+                  @input="(x) => (payload.durationLeftoversMeasurement = integerInputValue(x))"
                   :rules="
                     payload.hasWasteMeasures
                       ? [validators.nonNegativeOrEmpty, validators.isInteger, validators.lteOrEmpty(365)]
@@ -84,7 +86,8 @@
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
-                  v-model.number="payload.breadLeftovers"
+                  :value="payload.breadLeftovers"
+                  @input="(x) => (payload.breadLeftovers = floatInputValue(x))"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste de pain"
@@ -95,7 +98,8 @@
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
-                  v-model.number="payload.servedLeftovers"
+                  :value="payload.servedLeftovers"
+                  @input="(x) => (payload.servedLeftovers = floatInputValue(x))"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste plateau"
@@ -106,7 +110,8 @@
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
-                  v-model.number="payload.unservedLeftovers"
+                  :value="payload.unservedLeftovers"
+                  @input="(x) => (payload.unservedLeftovers = floatInputValue(x))"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste en production (non servi)"
@@ -117,7 +122,8 @@
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
-                  v-model.number="payload.sideLeftovers"
+                  :value="payload.sideLeftovers"
+                  @input="(x) => (payload.sideLeftovers = floatInputValue(x))"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste de composantes (entrée, plat dessert...)"
@@ -183,7 +189,8 @@
                 </label>
                 <DsfrTextField
                   id="donationFrequency"
-                  v-model.number="payload.donationFrequency"
+                  :value="payload.donationFrequency"
+                  @input="(x) => (payload.donationFrequency = integerInputValue(x))"
                   :rules="payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.isInteger] : []"
                   validate-on-blur
                   suffix="dons/an"
@@ -200,7 +207,8 @@
                 </label>
                 <DsfrTextField
                   id="donationQuantity"
-                  v-model.number="payload.donationQuantity"
+                  :value="payload.donationQuantity"
+                  @input="(x) => (payload.donationQuantity = floatInputValue(x))"
                   :rules="
                     payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []
                   "
@@ -436,6 +444,18 @@ export default {
     onTunnelAutofill(e) {
       this.$set(this, "payload", e.payload)
       this.$emit("tunnel-autofill", { payload: this.payload })
+    },
+    integerInputValue(val) {
+      return this.numberInputValue(val, parseInt)
+    },
+    floatInputValue(val) {
+      return this.numberInputValue(val, parseFloat)
+    },
+    numberInputValue(val, parseFunction) {
+      if (val === "") return null
+      const parsedValue = parseFunction(val)
+      if (parsedValue === 0) return 0
+      return parsedValue || val
     },
   },
   mounted() {
