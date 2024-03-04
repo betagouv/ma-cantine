@@ -10,3 +10,6 @@ class ImportErrorAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "user",
         "import_type",
     )
+
+    def has_delete_permission(self, request, obj=None):
+        return True

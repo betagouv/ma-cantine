@@ -684,6 +684,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(unfinished_diag.value_fish_ht, 10)
         self.assertEqual(unfinished_diag.value_autres_label_rouge, None)  # picked a field at random to smoke test
 
+        self.assertFalse(ImportError.objects.exists())
+
     @authenticate
     def test_complete_diagnostic_error_collection(self, _):
         """

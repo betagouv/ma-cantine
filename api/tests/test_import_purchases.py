@@ -48,6 +48,8 @@ class TestPurchaseImport(APITestCase):
         filehash_md5 = hashlib.md5(filebytes).hexdigest()
         self.assertEqual(Purchase.objects.first().import_source, filehash_md5)
 
+        self.assertFalse(ImportError.objects.exists())
+
     @authenticate
     def test_import_purchases_different_separators(self):
         """
