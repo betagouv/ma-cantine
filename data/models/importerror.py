@@ -4,6 +4,10 @@ from .importtype import ImportType
 
 
 class ImportError(models.Model):
+    class Meta:
+        verbose_name = "erreur d'import de masse"
+        verbose_name_plural = "erreurs d'import de masse"
+
     creation_date = models.DateTimeField(auto_now_add=True, verbose_name="date de création")
     modification_date = models.DateTimeField(auto_now=True, verbose_name="date de modification")
 
