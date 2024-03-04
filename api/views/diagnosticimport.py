@@ -19,7 +19,8 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.views import APIView
 from simple_history.utils import update_change_reason
 from api.serializers import FullCanteenSerializer
-from data.models import Canteen, Sector
+from data.models import Canteen, Sector, ImportType
+from data.factories import ImportErrorFactory
 from api.permissions import IsAuthenticated
 from .utils import camelize, normalise_siret
 from .canteen import AddManagerView
@@ -42,6 +43,7 @@ class ImportDiagnosticsView(ABC, APIView):
         self.errors = []
         self.start_time = None
         self.encoding_detected = None
+        self.file = None
         super().__init__(**kwargs)
 
     @property
@@ -49,33 +51,45 @@ class ImportDiagnosticsView(ABC, APIView):
     def final_value_idx():
         ...
 
+    @property
+    @abstractmethod
+    def import_type():
+        ...
+
     def post(self, request):
         self.start_time = time.time()
         logger.info("Diagnostic bulk import started")
         try:
             with transaction.atomic():
-                file = request.data["file"]
-                ImportDiagnosticsView._verify_file_size(file)
-                self._treat_csv_file(file)
+                self.file = request.data["file"]
+                ImportDiagnosticsView._verify_file_size(self.file)
+                self._treat_csv_file(self.file)
 
                 if self.errors:
                     raise IntegrityError()
         except IntegrityError as e:
-            logger.warning(f"L'import du fichier CSV a échoué:\n{e}")
+            self.log_error(f"L'import du fichier CSV a échoué:\n{e}")
         except ValidationError as e:
-            message = e.message
-            logger.warning(f"{message}")
-            self.errors = [{"row": 0, "status": 400, "message": message}]
+            self.log_error(e.message)
+            self.errors = [{"row": 0, "status": 400, "message": e.message}]
         except UnicodeDecodeError as e:
-            message = e.reason
-            logger.warning(f"UnicodeDecodeError: {message}")
+            self.log_error(e.reason)
             self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
         except Exception as e:
-            print(e)
-            logger.exception(f"Échec lors de la lecture du fichier:\n{e}")
+            self.log_error(f"Échec lors de la lecture du fichier:\n{e}", "exception")
             self.errors = [{"row": 0, "status": 400, "message": "Échec lors de la lecture du fichier"}]
 
         return self._get_success_response()
+
+    def log_error(self, message, level="warning"):
+        logger_function = getattr(logger, level)
+        logger_function(message)
+        ImportErrorFactory.create(
+            user=self.request.user,
+            file=self.file,
+            details=message,
+            import_type=self.import_type,
+        )
 
     @staticmethod
     def _verify_file_size(file):
@@ -482,6 +496,7 @@ class ImportDiagnosticsView(ABC, APIView):
 class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
     final_value_idx = 22
     total_value_idx = 13
+    import_type = ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE
 
     def _skip_row(self, row_number, row):
         return row_number == 1 and row[0].lower() == "siret"
@@ -489,7 +504,6 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
     def _validate_row(self, row):
         # manager column isn't required, neither is the economic_model. so intentionally checking less than that idx - 1
         last_mandatory_column = self.manager_column_idx - 1
-
         if len(row) < last_mandatory_column:
             raise IndexError()
         elif len(row) > self.year_idx and len(row) < self.total_value_idx + 1:
@@ -559,6 +573,7 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
 
 class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
     final_value_idx = 127
+    import_type = ImportType.DIAGNOSTIC_COMPLETE
 
     def _skip_row(self, row_number, row):
         if row_number == 1:
@@ -702,6 +717,7 @@ class CCImportMixin:
 
 class ImportSimpleCentralKitchenView(CCImportMixin, ImportSimpleDiagnosticsView):
     final_value_idx = 23
+    import_type = ImportType.CC_SIMPLE
 
     def _column_count_error_message(self, row):
         return f"Données manquantes : 24 colonnes attendues, {len(row)} trouvées."
@@ -709,6 +725,7 @@ class ImportSimpleCentralKitchenView(CCImportMixin, ImportSimpleDiagnosticsView)
 
 class ImportCompleteCentralKitchenView(CCImportMixin, ImportCompleteDiagnosticsView):
     final_value_idx = 128
+    import_type = ImportType.CC_COMPLETE
 
     def _column_count_error_message(self, row):
         return f"Données manquantes : au moins 129 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
