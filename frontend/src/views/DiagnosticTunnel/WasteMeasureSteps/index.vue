@@ -184,7 +184,7 @@
                 <DsfrTextField
                   id="donationFrequency"
                   v-model.number="payload.donationFrequency"
-                  :rules="[validators.nonNegativeOrEmpty, validators.isInteger]"
+                  :rules="payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.isInteger] : []"
                   validate-on-blur
                   suffix="dons/an"
                   :readonly="!payload.hasDonationAgreement"
@@ -201,7 +201,9 @@
                 <DsfrTextField
                   id="donationQuantity"
                   v-model.number="payload.donationQuantity"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="
+                    payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []
+                  "
                   validate-on-blur
                   suffix="kg/an"
                   :readonly="!payload.hasDonationAgreement"
@@ -217,7 +219,7 @@
                 </label>
                 <DsfrTextField
                   id="donationFoodType"
-                  v-model.number="payload.donationFoodType"
+                  v-model="payload.donationFoodType"
                   :readonly="!payload.hasDonationAgreement"
                   :disabled="!payload.hasDonationAgreement"
                 />
@@ -454,6 +456,22 @@ export default {
     otherActionEnabled(newValue) {
       if (newValue) this.$nextTick().then(this.$refs["other-action-field"]?.validate)
       else this.payload.otherWasteAction = null
+    },
+    "payload.hasWasteMeasures": function() {
+      if (this.payload.hasWasteMeasures) return
+      const fieldsToClear = [
+        "totalLeftovers",
+        "durationLeftoversMeasurement",
+        "breadLeftovers",
+        "servedLeftovers",
+        "unservedLeftovers",
+        "sideLeftovers",
+      ]
+      fieldsToClear.forEach((x) => (this.payload[x] = null))
+    },
+    "payload.hasDonationAgreement": function() {
+      const fieldsToClear = ["donationFrequency", "donationQuantity", "donationFoodType"]
+      fieldsToClear.forEach((x) => (this.payload[x] = null))
     },
     $route() {
       // it is possible to navigate without saving.
