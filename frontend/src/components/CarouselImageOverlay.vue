@@ -19,6 +19,7 @@
           style="background: #333; border-radius: 5px; overflow: hidden;"
           :width="carouselWidth"
           :src="item.image"
+          :alt="item.altText"
           contain
         ></v-carousel-item>
       </v-carousel>

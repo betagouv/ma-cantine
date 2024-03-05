@@ -15,7 +15,7 @@
             v-on:click="openImage(index)"
             @keydown.enter="openImage(index)"
           >
-            <v-img :src="image.image" aspect-ratio="1.2" class="grey lighten-2">
+            <v-img :src="image.image" aspect-ratio="1.2" class="grey lighten-2" :alt="image.altText">
               <div v-if="hover" class="d-flex display-3 white--text" style="height: 100%; background: #42424260;">
                 <v-icon color="white" size="30" style="margin-left: auto; margin-right: auto;">
                   mdi-magnify-plus-outline

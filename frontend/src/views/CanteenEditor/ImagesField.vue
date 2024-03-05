@@ -8,6 +8,14 @@
             <v-icon aria-label="Supprimer" aria-hidden="false" color="red">$delete-line</v-icon>
           </v-btn>
         </div>
+        <DsfrTextarea
+          v-model="image.altText"
+          label="Description de l'image"
+          hint="Si l'image contient d'information pertinante, pensez à ajouter une description pour les personnes malvoyantes"
+          class="mt-2"
+          rows="3"
+          labelClasses="body-2 mt-4 mb-2"
+        />
       </v-card>
     </v-col>
 
@@ -34,6 +42,8 @@
 </template>
 
 <script>
+import DsfrTextarea from "@/components/DsfrTextarea"
+
 export default {
   name: "ImagesField",
   props: {
@@ -42,6 +52,7 @@ export default {
       required: true,
     },
   },
+  components: { DsfrTextarea },
   computed: {
     uniqueId() {
       return this.uid

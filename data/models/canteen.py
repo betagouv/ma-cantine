@@ -307,6 +307,11 @@ class Canteen(SoftDeletionModel):
 class CanteenImage(models.Model):
     canteen = models.ForeignKey(Canteen, related_name="images", on_delete=models.CASCADE, null=True)
     image = models.ImageField()
+    alt_text = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="texte alternatif pour les utilisateurs qui voient pas l'image",
+    )
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.image = optimize_image(self.image, self.image.name)

@@ -19,6 +19,7 @@ class CanteenImageSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "image",
+            "alt_text",
         )
 
 
