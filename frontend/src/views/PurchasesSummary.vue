@@ -27,9 +27,12 @@
       <v-row v-if="displayMultiYearSummary">
         <!-- TODO: a11y -->
         <v-col cols="12" sm="8" md="6">
-          <div class="text-center font-weight-bold mb-2">Distribution de mes achats par an</div>
+          <div class="text-center font-weight-bold mb-2" id="summary-graph-heading">
+            Distribution de mes achats par an
+          </div>
           <MultiYearSummaryStatistics
             :diagnostics="yearlySummary"
+            headingId="summary-graph-heading"
             height="260"
             :applicableRules="applicableRules"
             legendPosition="top"
