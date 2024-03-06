@@ -11,7 +11,7 @@
         <DsfrTextarea
           v-model="image.altText"
           label="Description de l'image"
-          hint="Si l'image contient d'information pertinante, pensez à ajouter une description pour les personnes malvoyantes"
+          hint="Si l'image contient de l'information pertinente, pensez à ajouter une description pour les personnes malvoyantes"
           class="mt-2"
           rows="3"
           labelClasses="body-2 mt-4 mb-2"
