@@ -15,7 +15,7 @@ from .communityevent import CommunityEventAdmin  # noqa
 from .partner import Partner  # noqa: F401
 from .partnertype import PartnerType  # noqa: F401
 from .videotutorial import VideoTutorial  # noqa: F401
-from .importerror import ImportErrorAdmin  # noqa: F401
+from .importfailure import ImportFailureAdmin  # noqa: F401
 
 from django.contrib import admin
 from django.contrib.auth.models import Group

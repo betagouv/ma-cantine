@@ -14,7 +14,7 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
 from api.permissions import IsAuthenticated
 from data.models import Purchase, Canteen, ImportType
-from data.factories import ImportErrorFactory
+from data.factories import ImportFailureFactory
 from api.serializers import PurchaseSerializer
 from .utils import normalise_siret, camelize
 
@@ -84,7 +84,7 @@ class ImportPurchasesView(APIView):
     def _log_error(self, message, level="warning"):
         logger_function = getattr(logger, level)
         logger_function(message)
-        ImportErrorFactory.create(
+        ImportFailureFactory.create(
             user=self.request.user,
             file=self.file,
             details=message,

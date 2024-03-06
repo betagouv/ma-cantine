@@ -1,10 +1,10 @@
 from django.contrib import admin
-from data.models import ImportError
+from data.models import ImportFailure
 from .utils import ReadOnlyAdminMixin
 
 
-@admin.register(ImportError)
-class ImportErrorAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
+@admin.register(ImportFailure)
+class ImportFailureAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     list_display = (
         "creation_date",
         "user",

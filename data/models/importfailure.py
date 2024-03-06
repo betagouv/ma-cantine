@@ -3,10 +3,10 @@ from django.contrib.auth import get_user_model
 from .importtype import ImportType
 
 
-class ImportError(models.Model):
+class ImportFailure(models.Model):
     class Meta:
-        verbose_name = "erreur d'import de masse"
-        verbose_name_plural = "erreurs d'import de masse"
+        verbose_name = "échec d'import de masse"
+        verbose_name_plural = "échec d'import de masse"
 
     creation_date = models.DateTimeField(auto_now_add=True, verbose_name="date de création")
     modification_date = models.DateTimeField(auto_now=True, verbose_name="date de modification")

@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 from simple_history.utils import update_change_reason
 from api.serializers import FullCanteenSerializer
 from data.models import Canteen, Sector, ImportType
-from data.factories import ImportErrorFactory
+from data.factories import ImportFailureFactory
 from api.permissions import IsAuthenticated
 from .utils import camelize, normalise_siret
 from .canteen import AddManagerView
@@ -84,7 +84,7 @@ class ImportDiagnosticsView(ABC, APIView):
     def _log_error(self, message, level="warning"):
         logger_function = getattr(logger, level)
         logger_function(message)
-        ImportErrorFactory.create(
+        ImportFailureFactory.create(
             user=self.request.user,
             file=self.file,
             details=message,

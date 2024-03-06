@@ -6,7 +6,7 @@ from django.test.utils import override_settings
 from django.core import mail
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.models import Diagnostic, Canteen, ManagerInvitation, ImportError, ImportType
+from data.models import Diagnostic, Canteen, ManagerInvitation, ImportFailure, ImportType
 from data.factories import SectorFactory, CanteenFactory, UserFactory, DiagnosticFactory
 from data.department_choices import Department
 from data.models.teledeclaration import Teledeclaration
@@ -220,10 +220,10 @@ class TestImportDiagnosticsAPI(APITestCase):
             "Vous n'êtes pas un gestionnaire de cette cantine.",
         )
 
-        self.assertEqual(ImportError.objects.count(), 1)
-        self.assertEqual(ImportError.objects.first().user, authenticate.user)
-        self.assertEqual(ImportError.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
-        self.assertTrue(filecmp.cmp(file_path, ImportError.objects.first().file.path, shallow=False))
+        self.assertEqual(ImportFailure.objects.count(), 1)
+        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
+        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
+        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     def test_valid_sectors_parsed(self, _):
@@ -258,10 +258,10 @@ class TestImportDiagnosticsAPI(APITestCase):
             "Le secteur spécifié ne fait pas partie des options acceptées",
         )
 
-        self.assertEqual(ImportError.objects.count(), 1)
-        self.assertEqual(ImportError.objects.first().user, authenticate.user)
-        self.assertEqual(ImportError.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
-        self.assertTrue(filecmp.cmp(file_path, ImportError.objects.first().file.path, shallow=False))
+        self.assertEqual(ImportFailure.objects.count(), 1)
+        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
+        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
+        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     def test_import_some_without_diagnostic(self, _):
@@ -360,10 +360,10 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["errors"][0]["message"], "Format fichier : 23 ou 12 colonnes attendues, 26 trouvées.")
         self.assertEqual(body["errors"][0]["status"], 401)
 
-        self.assertEqual(ImportError.objects.count(), 1)
-        self.assertEqual(ImportError.objects.first().user, authenticate.user)
-        self.assertEqual(ImportError.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
-        self.assertTrue(filecmp.cmp(file_path, ImportError.objects.first().file.path, shallow=False))
+        self.assertEqual(ImportFailure.objects.count(), 1)
+        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
+        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
+        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     def test_error_collection(self, _):
@@ -464,10 +464,10 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors.pop(0)["message"],
             "Champ 'siret' : Le SIRET doit être composé des chiffres",
         )
-        self.assertEqual(ImportError.objects.count(), 1)
-        self.assertEqual(ImportError.objects.first().user, authenticate.user)
-        self.assertEqual(ImportError.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
-        self.assertTrue(filecmp.cmp(file_path, ImportError.objects.first().file.path, shallow=False))
+        self.assertEqual(ImportFailure.objects.count(), 1)
+        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
+        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
+        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     def test_staff_error_collection(self, _):
@@ -546,14 +546,14 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(
             errors[0]["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
         )
-        self.assertEqual(ImportError.objects.count(), 1)
-        self.assertEqual(ImportError.objects.first().user, authenticate.user)
-        self.assertEqual(ImportError.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
+        self.assertEqual(ImportFailure.objects.count(), 1)
+        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
+        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
         self.assertEqual(
-            ImportError.objects.first().details,
+            ImportFailure.objects.first().details,
             "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo",
         )
-        self.assertTrue(filecmp.cmp(file_path, ImportError.objects.first().file.path, shallow=False))
+        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     @override_settings(DEFAULT_FROM_EMAIL="test-from@example.com")
@@ -604,10 +604,10 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         self.assertEqual(len(mail.outbox), 0)
 
-        self.assertEqual(ImportError.objects.count(), 1)
-        self.assertEqual(ImportError.objects.first().user, authenticate.user)
-        self.assertEqual(ImportError.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
-        self.assertTrue(filecmp.cmp(file_path, ImportError.objects.first().file.path, shallow=False))
+        self.assertEqual(ImportFailure.objects.count(), 1)
+        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
+        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
+        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     def test_add_managers_empty_column(self, _):
@@ -684,7 +684,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(unfinished_diag.value_fish_ht, 10)
         self.assertEqual(unfinished_diag.value_autres_label_rouge, None)  # picked a field at random to smoke test
 
-        self.assertFalse(ImportError.objects.exists())
+        self.assertFalse(ImportFailure.objects.exists())
 
     @authenticate
     def test_complete_diagnostic_error_collection(self, _):
@@ -735,12 +735,14 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors.pop(0)["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGAlim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 10",
         )
-        self.assertEqual(ImportError.objects.count(), 1)
-        self.assertEqual(ImportError.objects.first().user, authenticate.user)
-        self.assertEqual(ImportError.objects.first().import_type, ImportType.DIAGNOSTIC_COMPLETE)
+        self.assertEqual(ImportFailure.objects.count(), 1)
+        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
+        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.DIAGNOSTIC_COMPLETE)
         self.assertTrue(
             filecmp.cmp(
-                "./api/tests/files/bad_complete_diagnostics.csv", ImportError.objects.first().file.path, shallow=False
+                "./api/tests/files/bad_complete_diagnostics.csv",
+                ImportFailure.objects.first().file.path,
+                shallow=False,
             )
         )
 
@@ -932,9 +934,9 @@ class TestImportDiagnosticsAPI(APITestCase):
             body["errors"][0]["message"], "Champ 'Valeur totale annuelle HT' : Ce champ ne peut pas être vide."
         )
 
-        self.assertEqual(ImportError.objects.count(), 1)
-        self.assertEqual(ImportError.objects.first().user, authenticate.user)
-        self.assertTrue(filecmp.cmp(file_path, ImportError.objects.first().file.path, shallow=False))
+        self.assertEqual(ImportFailure.objects.count(), 1)
+        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
+        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     def test_siret_cc(self, _):

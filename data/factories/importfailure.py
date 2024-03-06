@@ -1,11 +1,11 @@
 import factory
-from data.models import ImportError
+from data.models import ImportFailure
 from .user import UserFactory
 
 
-class ImportErrorFactory(factory.django.DjangoModelFactory):
+class ImportFailureFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = ImportError
+        model = ImportFailure
 
     details = factory.Faker("paragraph")
     user = factory.SubFactory(UserFactory)
