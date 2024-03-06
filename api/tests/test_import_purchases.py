@@ -1,5 +1,4 @@
 import hashlib
-import filecmp
 from datetime import date
 from decimal import Decimal
 from django.urls import reverse
@@ -7,7 +6,6 @@ from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from unittest.mock import patch
 from rest_framework import status
-from data.models import ImportFailure, ImportType
 from data.factories import CanteenFactory
 from data.models.purchase import Purchase
 from pathlib import Path
@@ -48,8 +46,6 @@ class TestPurchaseImport(APITestCase):
         filehash_md5 = hashlib.md5(filebytes).hexdigest()
         self.assertEqual(Purchase.objects.first().import_source, filehash_md5)
 
-        self.assertFalse(ImportFailure.objects.exists())
-
     @authenticate
     def test_import_purchases_different_separators(self):
         """
@@ -85,10 +81,9 @@ class TestPurchaseImport(APITestCase):
         """
         Test that the file is not treated if there are too many lines
         """
-        file_path = "./api/tests/files/bad_purchase_import.csv"
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
         CanteenFactory.create(siret="36462492895701")
-        with open(file_path) as purchase_file:
+        with open("./api/tests/files/bad_purchase_import.csv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -99,11 +94,6 @@ class TestPurchaseImport(APITestCase):
         )
         self.assertEqual(errors[0]["status"], 400)
 
-        self.assertEqual(ImportFailure.objects.count(), 1)
-        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
-        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.PURCHASE)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
-
     @authenticate
     def test_import_bad_purchases(self):
         """
@@ -111,8 +101,7 @@ class TestPurchaseImport(APITestCase):
         """
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
         CanteenFactory.create(siret="36462492895701")
-        file_path = "./api/tests/files/bad_purchase_import.csv"
-        with open(file_path) as purchase_file:
+        with open("./api/tests/files/bad_purchase_import.csv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -156,11 +145,6 @@ class TestPurchaseImport(APITestCase):
             "Format fichier : 7-8 colonnes attendues, 6 trouvées.",
         )
 
-        self.assertEqual(ImportFailure.objects.count(), 1)
-        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
-        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.PURCHASE)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
-
     @authenticate
     def test_warn_duplicate_file(self):
         """
@@ -188,30 +172,19 @@ class TestPurchaseImport(APITestCase):
         # no additional purchases created
         self.assertEqual(Purchase.objects.count(), 2)
 
-        self.assertEqual(ImportFailure.objects.count(), 1)
-        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
-        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.PURCHASE)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
-
     @authenticate
     def test_errors_prevent_all_purchase_creation(self):
         """
         Tests that no purchases are created if there are any errors in the file
         even if certain lines are valid
         """
-        file_path = "./api/tests/files/nearly_good_purchase_import.csv"
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
-        with open(file_path) as purchase_file:
+        with open("./api/tests/files/nearly_good_purchase_import.csv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         body = response.json()
         self.assertEqual(len(body["errors"]), 1)
-
-        self.assertEqual(ImportFailure.objects.count(), 1)
-        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
-        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.PURCHASE)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     def test_round_cents(self):
@@ -230,18 +203,12 @@ class TestPurchaseImport(APITestCase):
         """
         Test that only the first errors are returned, but that the error count is correct
         """
-        file_path = "./api/tests/files/purchase_many_errors.csv"
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
         CanteenFactory.create(siret="36462492895701")
-        with open(file_path) as purchase_file:
+        with open("./api/tests/files/purchase_many_errors.csv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         body = response.json()
         self.assertEqual(len(body["errors"]), 30)
         self.assertEqual(body["errorCount"], 56)
-
-        self.assertEqual(ImportFailure.objects.count(), 1)
-        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
-        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.PURCHASE)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))

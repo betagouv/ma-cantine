@@ -6,7 +6,7 @@ from django.test.utils import override_settings
 from django.core import mail
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.models import Diagnostic, Canteen, ManagerInvitation, ImportFailure, ImportType
+from data.models import Diagnostic, Canteen, ManagerInvitation
 from data.factories import SectorFactory, CanteenFactory, UserFactory, DiagnosticFactory
 from data.department_choices import Department
 from data.models.teledeclaration import Teledeclaration
@@ -18,7 +18,6 @@ import datetime
 from unittest.mock import patch
 from django.utils import timezone
 import pytz
-import filecmp
 
 NEXT_YEAR = datetime.date.today().year + 1
 
@@ -203,9 +202,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         CanteenFactory.create(siret="21340172201787")
         my_canteen = CanteenFactory.create(siret="73282932000074")
         my_canteen.managers.add(authenticate.user)
-        file_path = "./api/tests/files/diagnostics_different_canteens.csv"
 
-        with open(file_path) as diag_file:
+        with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -219,11 +217,6 @@ class TestImportDiagnosticsAPI(APITestCase):
             error["message"],
             "Vous n'êtes pas un gestionnaire de cette cantine.",
         )
-
-        self.assertEqual(ImportFailure.objects.count(), 1)
-        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
-        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     def test_valid_sectors_parsed(self, _):
@@ -244,10 +237,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         If file specifies invalid sector, error is raised for that line
         """
-        file_path = "./api/tests/files/diagnostics_sectors.csv"
-
         SectorFactory.create(name="Social et Médico-social (ESMS)")
-        with open(file_path) as diag_file:
+        with open("./api/tests/files/diagnostics_sectors.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
@@ -257,11 +248,6 @@ class TestImportDiagnosticsAPI(APITestCase):
             body["errors"][0]["message"],
             "Le secteur spécifié ne fait pas partie des options acceptées",
         )
-
-        self.assertEqual(ImportFailure.objects.count(), 1)
-        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
-        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     def test_import_some_without_diagnostic(self, _):
@@ -348,8 +334,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         Non-staff users shouldn't have staff import capabilities
         """
-        file_path = "./api/tests/files/mix_diag_canteen_staff_import.csv"
-        with open(file_path) as diag_file:
+        with open("./api/tests/files/mix_diag_canteen_staff_import.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -360,11 +345,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["errors"][0]["message"], "Format fichier : 23 ou 12 colonnes attendues, 26 trouvées.")
         self.assertEqual(body["errors"][0]["status"], 401)
 
-        self.assertEqual(ImportFailure.objects.count(), 1)
-        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
-        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
-
     @authenticate
     def test_error_collection(self, _):
         """
@@ -373,9 +353,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         # creating 2 canteens with same siret here to error when this situation exists IRL
         CanteenFactory.create(siret="42111303053388")
         CanteenFactory.create(siret="42111303053388")
-        file_path = "./api/tests/files/diagnostics_bad_file.csv"
 
-        with open(file_path) as diag_file:
+        with open("./api/tests/files/diagnostics_bad_file.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -464,10 +443,6 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors.pop(0)["message"],
             "Champ 'siret' : Le SIRET doit être composé des chiffres",
         )
-        self.assertEqual(ImportFailure.objects.count(), 1)
-        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
-        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     def test_staff_error_collection(self, _):
@@ -536,8 +511,7 @@ class TestImportDiagnosticsAPI(APITestCase):
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     @authenticate
     def test_max_size(self, _):
-        file_path = "./api/tests/files/diagnostics_decimal_number.csv"
-        with open(file_path) as diag_file:
+        with open("./api/tests/files/diagnostics_decimal_number.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -546,14 +520,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(
             errors[0]["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
         )
-        self.assertEqual(ImportFailure.objects.count(), 1)
-        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
-        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
-        self.assertEqual(
-            ImportFailure.objects.first().details,
-            "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo",
-        )
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     @override_settings(DEFAULT_FROM_EMAIL="test-from@example.com")
@@ -585,8 +551,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @authenticate
     def test_add_managers_invalid_email(self, _):
-        file_path = "./api/tests/files/diagnostics_managers_invalid_email.csv"
-        with open(file_path) as diag_file:
+        with open("./api/tests/files/diagnostics_managers_invalid_email.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -603,11 +568,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
         self.assertEqual(len(mail.outbox), 0)
-
-        self.assertEqual(ImportFailure.objects.count(), 1)
-        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
-        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     def test_add_managers_empty_column(self, _):
@@ -684,8 +644,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(unfinished_diag.value_fish_ht, 10)
         self.assertEqual(unfinished_diag.value_autres_label_rouge, None)  # picked a field at random to smoke test
 
-        self.assertFalse(ImportFailure.objects.exists())
-
     @authenticate
     def test_complete_diagnostic_error_collection(self, _):
         """
@@ -735,17 +693,6 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors.pop(0)["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGAlim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 10",
         )
-        self.assertEqual(ImportFailure.objects.count(), 1)
-        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
-        self.assertEqual(ImportFailure.objects.first().import_type, ImportType.DIAGNOSTIC_COMPLETE)
-        self.assertTrue(
-            filecmp.cmp(
-                "./api/tests/files/bad_complete_diagnostics.csv",
-                ImportFailure.objects.first().file.path,
-                shallow=False,
-            )
-        )
-
         with open("./api/tests/files/bad_header_complete_diagnostics_0.csv") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
         body = response.json()
@@ -922,8 +869,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         For simplified diagnostics, only the total HT is mandatory in the appro fields
         """
-        file_path = "./api/tests/files/diagnostic_simplified_missing_total_ht.csv"
-        with open(file_path) as diag_file:
+        with open("./api/tests/files/diagnostic_simplified_missing_total_ht.csv") as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
         body = response.json()
@@ -933,10 +879,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(
             body["errors"][0]["message"], "Champ 'Valeur totale annuelle HT' : Ce champ ne peut pas être vide."
         )
-
-        self.assertEqual(ImportFailure.objects.count(), 1)
-        self.assertEqual(ImportFailure.objects.first().user, authenticate.user)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.first().file.path, shallow=False))
 
     @authenticate
     def test_siret_cc(self, _):
