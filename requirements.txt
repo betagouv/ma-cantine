@@ -2,14 +2,14 @@ amqp==5.2.0
 arabic-reshaper==3.0.0
 asgiref==3.7.2
 asn1crypto==1.5.1
-astroid==2.15.8
+astroid==3.1.0
 async-timeout==4.0.3
 attrs==23.2.0
 Authlib==1.2.1
 billiard==4.2.0
 black==23.12.1
 boto3==1.34.23
-botocore==1.34.23
+botocore==1.34.54
 celery==5.3.6
 certifi==2023.7.22
 cffi==1.16.0
@@ -93,7 +93,7 @@ py==1.11.0
 pycparser==2.21
 pyHanko==0.21.0
 pyhanko-certvalidator==0.26.3
-pylint==2.17.7
+pylint==3.1.0
 pylint-django==2.5.5
 pylint-plugin-utils==0.8.2
 pypdf==3.17.2
@@ -132,7 +132,7 @@ tzdata==2023.3
 tzlocal==5.2
 uritemplate==4.1.1
 uritools==4.0.2
-urllib3==1.26.18
+urllib3==2.0.7
 vine==5.1.0
 virtualenv==20.25.0
 wcwidth==0.2.12
