@@ -140,6 +140,18 @@ export default {
   background-color: #f6f6f6;
 }
 
+a:focus,
+button:focus,
+.v-input--checkbox:focus-within,
+.v-radio:focus-within,
+.v-card:focus,
+.drag-and-drop:focus-within,
+div[role="tab"]:focus {
+  outline: rgb(0, 0, 145) !important;
+  outline-width: 1px !important;
+  outline-style: auto !important;
+}
+
 .v-expansion-panel-header__icon > .v-icon {
   font-size: 1rem;
 }

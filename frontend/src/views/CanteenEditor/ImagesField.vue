@@ -20,7 +20,7 @@
     </v-col>
 
     <v-col cols="12" sm="6" md="4">
-      <v-card class="fill-height" color="grey lighten-5" min-height="170">
+      <v-card class="fill-height drag-and-drop" color="grey lighten-5" min-height="170">
         <label
           class="d-flex flex-column align-center justify-center"
           :for="uniqueId + '_image-input'"
