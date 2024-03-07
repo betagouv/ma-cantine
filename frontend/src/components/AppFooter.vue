@@ -9,7 +9,7 @@
             contain
             class="mb-4"
             max-width="230"
-            alt="Ministère de l'Agriculture et la Souveraineté Alimentaire"
+            alt="Ministère de l'Agriculture et la Souveraineté Alimentaire - Liberté Égalité Fraternité"
           ></v-img>
           <v-spacer />
         </v-col>
