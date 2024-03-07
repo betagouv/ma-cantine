@@ -7,6 +7,7 @@ from .sector import SectorSerializer
 from .user import CanteenManagerSerializer
 from .managerinvitation import ManagerInvitationSerializer
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -210,6 +211,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
+
         read_only_fields = (
             "id",
             "region",
@@ -269,6 +271,8 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "is_central_cuisine",
             "modification_date",
         )
+
+        extra_kwargs = {"id": {"required": True}, "name": {"required": True}, "siret": {"required": True}}
 
     def __init__(self, *args, **kwargs):
         action = kwargs.pop("action", None)
