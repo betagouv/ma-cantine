@@ -150,13 +150,15 @@ class TestPurchaseImport(APITestCase):
         """
         Tests that the system will warn of duplicate file upload
         """
+        file_path = "./api/tests/files/good_purchase_import.csv"
+
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
-        with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 2)
 
-        with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()

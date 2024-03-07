@@ -353,6 +353,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         # creating 2 canteens with same siret here to error when this situation exists IRL
         CanteenFactory.create(siret="42111303053388")
         CanteenFactory.create(siret="42111303053388")
+
         with open("./api/tests/files/diagnostics_bad_file.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -692,7 +693,6 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors.pop(0)["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGAlim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 10",
         )
-
         with open("./api/tests/files/bad_header_complete_diagnostics_0.csv") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
         body = response.json()

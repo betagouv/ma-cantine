@@ -13,7 +13,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
 from api.permissions import IsAuthenticated
-from data.models import Purchase, Canteen
+from data.models import Purchase, Canteen, ImportType
+from data.factories import ImportFailureFactory
 from api.serializers import PurchaseSerializer
 from .utils import normalise_siret, camelize
 
@@ -61,27 +62,34 @@ class ImportPurchasesView(APIView):
             return self._get_success_response()
 
         except IntegrityError as e:
-            logger.warning(f"L'import du fichier CSV a échoué:\n{e}")
+            self._log_error(f"L'import du fichier CSV a échoué:\n{e}")
             return self._get_success_response()
 
         except UnicodeDecodeError as e:
-            message = e.reason
-            logger.warning(f"UnicodeDecodeError: {message}")
+            self._log_error(f"UnicodeDecodeError: {e.reason}")
             self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
             return self._get_success_response()
 
         except ValidationError as e:
-            message = e.message
-            logger.warning(message)
-            message = message
-            self.errors = [{"row": 0, "status": 400, "message": message}]
+            self._log_error(e.message)
+            self.errors = [{"row": 0, "status": 400, "message": e.message}]
             return self._get_success_response()
 
         except Exception as e:
             message = "Échec lors de la lecture du fichier"
-            logger.exception(f"{message}:\n{e}")
+            self._log_error(f"{message}:\n{e}", "exception")
             self.errors = [{"row": 0, "status": 400, "message": message}]
             return self._get_success_response()
+
+    def _log_error(self, message, level="warning"):
+        logger_function = getattr(logger, level)
+        logger_function(message)
+        ImportFailureFactory.create(
+            user=self.request.user,
+            file=self.file,
+            details=message,
+            import_type=ImportType.PURCHASE,
+        )
 
     def _process_file(self):
         file_hash = hashlib.md5()
