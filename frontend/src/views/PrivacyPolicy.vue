@@ -301,13 +301,23 @@
 
     <ul>
       <li>
-        <a href="https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi" target="_blank" rel="noopener">
+        <a
+          href="https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi"
+          target="_blank"
+          rel="noopener external"
+          title="Cookies & traceurs : que dit la loi ? - ouvre une nouvelle fenêtre"
+        >
           Cookies & traceurs : que dit la loi ?
           <v-icon small color="primary">mdi-open-in-new</v-icon>
         </a>
       </li>
       <li>
-        <a href="https://www.cnil.fr/fr/cookies-les-outils-pour-les-maitriser" target="_blank" rel="noopener">
+        <a
+          href="https://www.cnil.fr/fr/cookies-les-outils-pour-les-maitriser"
+          target="_blank"
+          rel="noopener external"
+          title="Cookies : les outils pour les maîtriser - ouvre une nouvelle fenêtre"
+        >
           Cookies : les outils pour les maîtriser
           <v-icon small color="primary">mdi-open-in-new</v-icon>
         </a>

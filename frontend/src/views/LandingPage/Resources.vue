@@ -18,6 +18,7 @@
               :href="resource.url"
               :target="resource.url ? '_blank' : null"
               :rel="resource.url ? 'noopener noreferrer' : null"
+              :title="resource.url ? `${resource.ctaText} - ouvre une nouvelle fenêtre` : null"
             >
               {{ resource.ctaText }}
               <v-icon v-if="resource.url" small class="ml-2">mdi-open-in-new</v-icon>

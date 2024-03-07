@@ -24,7 +24,8 @@
           <a
             href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/diversification-des-sources-de-proteines-et-menus-vegetariens/guide-pour-la-mise-en-place-du-menu-vegetarien-en-milieu-scolaire"
             target="_blank"
-            rel="noopener"
+            rel="noopener external"
+            title="livret de recettes végétariennes du CNRC - ouvre une nouvelle fenêtre"
           >
             livret de recettes végétariennes du CNRC
             <v-icon small color="primary">mdi-open-in-new</v-icon>
@@ -33,7 +34,8 @@
           <a
             href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/diversification-des-sources-de-proteines-et-menus-vegetariens/untitled"
             target="_blank"
-            rel="noopener"
+            rel="noopener external"
+            title="le cadre pour la mise en oeuvre du plan pluriannuel de diversification des sources de protéines - ouvre une nouvelle fenêtre"
           >
             le cadre pour la mise en oeuvre du plan pluriannuel de diversification des sources de protéines
             <v-icon small color="primary">mdi-open-in-new</v-icon>

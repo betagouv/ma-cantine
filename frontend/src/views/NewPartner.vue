@@ -138,7 +138,13 @@
         <template v-slot:label>
           <span class="body-2 grey--text text--darken-3">
             Je déclare avoir lu et respecter la
-            <a href="/static/documents/charte-referencement-acteurs-de-l-ecosysteme.pdf" target="_blank" @click.stop>
+            <a
+              href="/static/documents/charte-referencement-acteurs-de-l-ecosysteme.pdf"
+              target="_blank"
+              rel="noopener external"
+              title="charte de référencement - ouvre une nouvelle fenêtre"
+              @click.stop
+            >
               charte de référencement
               <v-icon small color="primary">mdi-open-in-new</v-icon>
             </a>
