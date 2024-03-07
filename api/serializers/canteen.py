@@ -272,7 +272,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "modification_date",
         )
 
-        extra_kwargs = {"id": {"required": True}, "name": {"required": True}, "siret": {"required": True}}
+        extra_kwargs = {"name": {"required": True}, "siret": {"required": True}}
 
     def __init__(self, *args, **kwargs):
         action = kwargs.pop("action", None)
