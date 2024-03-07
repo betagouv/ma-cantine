@@ -88,26 +88,14 @@ h2 {
   margin-bottom: 0.5em;
 }
 
-address,
-div#cookies-definition {
+address {
   display: flex;
   align-items: center;
   font-style: normal;
-
-  img {
-    height: 5em;
-    margin-right: 1em;
-  }
 }
 
 ul {
   list-style-type: disc;
   margin-left: 3em;
-}
-
-@media (max-width: 400px) {
-  img {
-    display: none;
-  }
 }
 </style>
