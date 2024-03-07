@@ -22,7 +22,8 @@
               href="https://beta.gouv.fr/startups/ma-cantine-egalim.html"
               class="grey--text text--darken-3"
               target="_blank"
-              rel="noopener"
+              rel="noopener external"
+              title="Découvrez notre page produit - ouvre une nouvelle fenêtre"
             >
               Découvrez notre page produit
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
@@ -34,13 +35,20 @@
               href="https://github.com/betagouv/ma-cantine/"
               class="grey--text text--darken-3"
               target="_blank"
-              rel="noopener"
+              rel="noopener external"
+              title="Voir le code source - ouvre une nouvelle fenêtre"
             >
               Voir le code source
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
             </a>
             . Vous pouvez également obtenir des informations concernant la
-            <a href="https://updown.io/2l7f" class="grey--text text--darken-3" target="_blank" rel="noopener">
+            <a
+              href="https://updown.io/2l7f"
+              class="grey--text text--darken-3"
+              target="_blank"
+              rel="noopener external"
+              title="disponibilité de la plateforme - ouvre une nouvelle fenêtre"
+            >
               disponibilité de la plateforme
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
             </a>
@@ -53,7 +61,8 @@
               :href="`https://stats.beta.gouv.fr/index.php?idSite=${matomoId}`"
               class="grey--text text--darken-3"
               target="_blank"
-              rel="noopener"
+              rel="noopener external"
+              title="l'usage du site - ouvre une nouvelle fenêtre"
             >
               l'usage du site
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
@@ -66,7 +75,8 @@
                 class="grey--text text--darken-4 font-weight-bold"
                 :href="`https://${link}`"
                 target="_blank"
-                rel="noopener"
+                rel="noopener external"
+                :title="`${link} - ouvre une nouvelle fenêtre`"
               >
                 {{ link }}
               </a>
@@ -89,7 +99,8 @@
           href="https://github.com/betagouv/ma-cantine/blob/staging/LICENSE"
           class="grey--text text--darken-2"
           target="_blank"
-          rel="noopener"
+          rel="noopener external"
+          title="licence MIT - ouvre une nouvelle fenêtre"
         >
           licence MIT
           <v-icon small color="grey-darken-2" class="ml-1">mdi-open-in-new</v-icon>

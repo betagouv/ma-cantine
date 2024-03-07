@@ -147,6 +147,7 @@
                     :href="subItem.href"
                     :target="subItem.target"
                     :rel="subItem.rel"
+                    :title="subItem.target ? `${subItem.text} - ouvre une nouvelle fenêtre` : ''"
                   >
                     <v-list-item-title class="text-body-2">
                       {{ subItem.text }}
