@@ -281,6 +281,9 @@
         <span class="font-weight-bold">Matomo</span>
         , cookie de mesure d’audience, dans sa version exemptée de consentement préalable, telle que validée par la
         CNIL.
+        <div>
+          <MatomoOptOut />
+        </div>
       </li>
       <li>
         <span class="font-weight-bold">Crisp</span>
@@ -318,10 +321,10 @@
 
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
-
+import MatomoOptOut from "@/components/MatomoOptOut"
 export default {
   name: "PrivacyPolicy",
-  components: { BreadcrumbsNav },
+  components: { BreadcrumbsNav, MatomoOptOut },
 }
 </script>
 
