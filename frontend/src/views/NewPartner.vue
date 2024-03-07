@@ -49,8 +49,8 @@
               </p>
             </div>
             <div v-if="partner.image" style="position: absolute; top: 10px; left: 10px;">
-              <v-btn fab small @click.stop.prevent="changeImage(null)">
-                <v-icon aria-label="Supprimer l'image" aria-hidden="false" color="red">$delete-line</v-icon>
+              <v-btn fab small @click.stop.prevent="changeImage(null)" title="Supprimer l'image">
+                <v-icon color="red">$delete-line</v-icon>
               </v-btn>
             </div>
           </v-card>
