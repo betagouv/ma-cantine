@@ -60,9 +60,9 @@
           OptOutErrorNoCookies: "La fonction de désinscription du suivi nécessite que les cookies soient activés.",
           OptOutErrorNotHttps:
             "La fonction de désinscription du suivi peut ne pas fonctionner correctement car ce site n'a pas été chargé via HTTPS. Veuillez recharger la page pour vérifier si votre statut de désinscription a changé.",
-          YouAreNotOptedOut: "Vous n'êtes pas désinscrit ou désinscrite",
+          YouAreNotOptedOut: "Vous n'êtes pas désinscrit ou désinscrite de notre suivi Matomo.",
           UncheckToOptOut: "Décochez cette case pour vous désinscrire.",
-          YouAreOptedOut: "Vous êtes actuellement désinscrit ou désinscrite.",
+          YouAreOptedOut: "Vous êtes actuellement désinscrit ou désinscrite de notre suivi Matomo.",
           CheckToOptIn: "Cochez cette case pour vous inscrire.",
         }
 
@@ -105,11 +105,11 @@
                 '<input onclick="window.MatomoConsent.consentRevoked();showContent(false);" id="trackVisits" type="checkbox" checked="checked" />'
             }
             content +=
-              '<label for="trackVisits"><strong><span>' +
+              '<label for="trackVisits"><span>' +
               settings.YouAreNotOptedOut +
               " " +
               settings.UncheckToOptOut +
-              "</span></strong></label>"
+              "</span></label>"
           } else {
             if (settings.showIntro) {
               content += "<p>" + settings.OptOutComplete + " " + settings.OptOutCompleteBis + "</p>"
@@ -122,11 +122,11 @@
                 '<input onclick="window.MatomoConsent.consentGiven();showContent(true);" id="trackVisits" type="checkbox" />'
             }
             content +=
-              '<label for="trackVisits"><strong><span>' +
+              '<label for="trackVisits"><span>' +
               settings.YouAreOptedOut +
               " " +
               settings.CheckToOptIn +
-              "</span></strong></label>"
+              "</span></label>"
           }
           div.innerHTML = content
         }
