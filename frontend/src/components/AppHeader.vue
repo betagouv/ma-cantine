@@ -21,7 +21,7 @@
       hide-on-scroll
     >
       <v-toolbar-title class="align-self-center">
-        <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex align-center pl-4">
+        <v-card :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex align-center pl-4">
           <img
             src="/static/images/Marianne.png"
             height="90"
@@ -36,7 +36,7 @@
           <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
             {{ chipInfo.text }}
           </v-chip>
-        </router-link>
+        </v-card>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
