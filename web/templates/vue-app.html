@@ -50,24 +50,24 @@
           cookiePath: null,
           cookieDomain: null,
           cookieSameSite: "Lax",
-          OptOutComplete: "Opt-out complete; your visits to this website will not be recorded by the Web Analytics tool.",
+          OptOutComplete: "Désinscription prise en compte ; vos visites ne seront pas enregistrées par l'outil Web Analytics",
           OptOutCompleteBis:
-            "Note that if you clear your cookies, delete the opt-out cookie, or if you change computers or Web browsers, you will need to perform the opt-out procedure again.",
+            "Si vous effacez vos cookies, supprimez le cookie de désinscription ou changez d'ordinateur ou de navigateur Web, vous devrez refaire la procédure de désinscription.",
           YouMayOptOut2:
-            "You may choose to prevent this website from aggregating and analyzing the actions you take here.",
+            "Vous pouvez choisir d'empêcher ce site d'analyser vos actions.",
           YouMayOptOut3:
-            "Doing so will protect your privacy, but will also prevent the owner from learning from your actions and creating a better experience for you and other users.",
-          OptOutErrorNoCookies: "The tracking opt-out feature requires cookies to be enabled.",
+            "Cela protégera votre vie privée, mais empêchera également le ou la propriétaire d'apprendre de vos actions et de créer une meilleure expérience.",
+          OptOutErrorNoCookies: "La fonction de désinscription du suivi nécessite que les cookies soient activés.",
           OptOutErrorNotHttps:
-            "The tracking opt-out feature may not work because this site was not loaded over HTTPS. Please reload the page to check if your opt out status changed.",
-          YouAreNotOptedOut: "You are not opted out.",
-          UncheckToOptOut: "Uncheck this box to opt-out.",
-          YouAreOptedOut: "You are currently opted out.",
-          CheckToOptIn: "Check this box to opt-in.",
+            "La fonction de désinscription du suivi peut ne pas fonctionner correctement car ce site n'a pas été chargé via HTTPS. Veuillez recharger la page pour vérifier si votre statut de désinscription a changé.",
+          YouAreNotOptedOut: "Vous n'êtes pas désinscrit ou désinscrite",
+          UncheckToOptOut: "Décochez cette case pour vous désinscrire.",
+          YouAreOptedOut: "Vous êtes actuellement désinscrit ou désinscrite.",
+          CheckToOptIn: "Cochez cette case pour vous inscrire.",
         }
 
         function showContent(consent, errorMessage = null, useTracker = false) {
-          var errorBlock = '<p style="color: red; font-weight: bold;">'
+          var errorBlock = '<p style="font-style: italic;">'
 
           var div = document.getElementById(settings.divId)
           if (!div) {
