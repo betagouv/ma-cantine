@@ -19,6 +19,7 @@
       extension-height="56px"
       id="en-tete"
       hide-on-scroll
+      role="banner"
     >
       <v-toolbar-title class="align-self-center">
         <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex align-center pl-4">
