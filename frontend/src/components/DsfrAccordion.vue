@@ -1,5 +1,5 @@
 <template>
-  <v-expansion-panels hover accordion tile flat>
+  <v-expansion-panels hover accordion tile flat class="dsfr-accordion">
     <v-expansion-panel v-for="item in items" :key="item.title">
       <v-expansion-panel-header class="px-3" expand-icon="mdi-plus" disable-icon-rotate v-slot="{ open }">
         <h3 class="fr-text" :class="open && 'font-weight-bold'">
@@ -27,7 +27,7 @@ export default {
 </script>
 
 <style>
-.v-expansion-panel {
+.dsfr-accordion .v-expansion-panel {
   box-shadow: inset 0 1px 0 0 #ddd, 0 1px 0 0 #ddd;
 }
 </style>
