@@ -1,10 +1,10 @@
 <template>
   <v-expansion-panels hover accordion tile flat>
     <v-expansion-panel v-for="item in items" :key="item.title">
-      <v-expansion-panel-header class="px-3" expand-icon="mdi-plus" disable-icon-rotate v-slot="{ open }">
-        <h3 class="fr-text" :class="open && 'font-weight-bold'">
+      <v-expansion-panel-header class="px-3 fr-accordion__btn" v-slot="{ open }">
+        <component :is="item.titleLevel || 'h3'" class="fr-text" :class="open && 'active-panel'">
           {{ item.title }}
-        </h3>
+        </component>
       </v-expansion-panel-header>
       <v-expansion-panel-content class="my-2">
         <component :is="item.contentComponent" v-if="item.contentComponent" />
@@ -29,5 +29,23 @@ export default {
 <style>
 .v-expansion-panel {
   box-shadow: inset 0 1px 0 0 #ddd, 0 1px 0 0 #ddd;
+}
+.v-expansion-panel-header {
+  color: rgb(0, 0, 145);
+}
+.v-expansion-panel-header__icon > i {
+  color: rgb(0, 0, 145) !important;
+}
+.v-expansion-panel--active > .v-expansion-panel-header {
+  min-height: unset;
+}
+.fr-accordion__btn[aria-expanded="true"] {
+  --background-open-blue-france: rgb(227, 227, 253);
+  background-color: #e3e3fd;
+  background-color: var(--background-open-blue-france);
+}
+.fr-accordion__btn[aria-expanded="true"]:hover {
+  --background-open-blue-france-hover: rgb(193, 193, 251);
+  background-color: var(--background-open-blue-france-hover);
 }
 </style>

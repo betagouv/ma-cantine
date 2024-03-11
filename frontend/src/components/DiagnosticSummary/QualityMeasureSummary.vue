@@ -63,80 +63,77 @@
         </p>
       </v-col>
     </v-row>
-    <v-expansion-panels v-if="!usesCentralDiagnostic" hover accordion tile flat class="mt-10">
-      <v-expansion-panel class="dsfr">
-        <v-expansion-panel-header class="px-3 primary--text">
-          <h5 class="fr-text font-weight-normal">
-            Données détaillées
-          </h5>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content class="ml-n3 py-4">
+    <DsfrAccordion
+      v-if="!usesCentralDiagnostic"
+      class="mt-10"
+      :items="[{ title: 'Données détaillées', titleLevel: 'h5' }]"
+    >
+      <div class="ml-n3">
+        <QualityDiagnosticValue
+          v-for="(field, idx) in totalFields"
+          :key="`total-${idx}`"
+          :text="field.text"
+          :value="diagnostic[field.key]"
+        />
+        <div class="my-8">
           <QualityDiagnosticValue
-            v-for="(field, idx) in totalFields"
-            :key="`total-${idx}`"
+            text="Mode de saisie des données"
+            :value="isDetailedDiagnostic ? 'Détaillée' : 'Simplifiée'"
+          />
+        </div>
+        <div class="my-8">
+          <QualityDiagnosticValue
+            v-for="(field, idx) in egalimFields"
+            :key="`egalim-${idx}`"
             :text="field.text"
             :value="diagnostic[field.key]"
           />
-          <div class="my-8">
-            <QualityDiagnosticValue
-              text="Mode de saisie des données"
-              :value="isDetailedDiagnostic ? 'Détaillée' : 'Simplifiée'"
-            />
-          </div>
-          <div class="my-8">
-            <QualityDiagnosticValue
-              v-for="(field, idx) in egalimFields"
-              :key="`egalim-${idx}`"
-              :text="field.text"
-              :value="diagnostic[field.key]"
-            />
-          </div>
-          <div class="my-8 mb-0">
-            <QualityDiagnosticValue
-              v-for="(field, idx) in familyFields"
-              :key="`family-${idx}`"
-              :text="field.text"
-              :value="diagnostic[field.key]"
-            />
-          </div>
-          <div v-if="isDetailedDiagnostic">
-            <h6 class="font-weight-bold fr-text grey--text text--darken-3 mt-4">
-              Catégories EGAlim par famille de produit
-            </h6>
-            <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
-          </div>
-          <v-btn
-            v-if="hasActiveTeledeclaration"
-            outlined
-            small
-            color="primary"
-            class="fr-btn--tertiary px-2"
-            :disabled="true"
-          >
-            <v-icon small class="mr-2">$check-line</v-icon>
-            Données télédéclarées
-          </v-btn>
-          <v-btn
-            v-else-if="showEditButton"
-            outlined
-            small
-            color="primary"
-            class="fr-btn--tertiary px-2 mb-6"
-            :to="{
-              name: 'DiagnosticTunnel',
-              params: {
-                canteenUrlComponent: this.canteenUrlComponent,
-                year: diagnostic.year,
-                measureId: 'qualite-des-produits',
-              },
-            }"
-          >
-            <v-icon small class="mr-2">$pencil-line</v-icon>
-            Modifier mes données
-          </v-btn>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
+        </div>
+        <div class="my-8 mb-0">
+          <QualityDiagnosticValue
+            v-for="(field, idx) in familyFields"
+            :key="`family-${idx}`"
+            :text="field.text"
+            :value="diagnostic[field.key]"
+          />
+        </div>
+        <div v-if="isDetailedDiagnostic">
+          <h6 class="font-weight-bold fr-text grey--text text--darken-3 mt-4">
+            Catégories EGAlim par famille de produit
+          </h6>
+          <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
+        </div>
+        <v-btn
+          v-if="hasActiveTeledeclaration"
+          outlined
+          small
+          color="primary"
+          class="fr-btn--tertiary px-2"
+          :disabled="true"
+        >
+          <v-icon small class="mr-2">$check-line</v-icon>
+          Données télédéclarées
+        </v-btn>
+        <v-btn
+          v-else-if="showEditButton"
+          outlined
+          small
+          color="primary"
+          class="fr-btn--tertiary px-2 mb-6"
+          :to="{
+            name: 'DiagnosticTunnel',
+            params: {
+              canteenUrlComponent: this.canteenUrlComponent,
+              year: diagnostic.year,
+              measureId: 'qualite-des-produits',
+            },
+          }"
+        >
+          <v-icon small class="mr-2">$pencil-line</v-icon>
+          Modifier mes données
+        </v-btn>
+      </div>
+    </DsfrAccordion>
   </div>
   <div class="fr-text" v-else-if="usesCentralDiagnostic">
     <p>
@@ -169,12 +166,13 @@
 <script>
 import ApproGraph from "@/components/ApproGraph"
 import FamiliesGraph from "@/components/FamiliesGraph"
+import DsfrAccordion from "@/components/DsfrAccordion"
 import QualityDiagnosticValue from "./QualityDiagnosticValue"
 import { hasDiagnosticApproData, applicableDiagnosticRules, getApproPercentages } from "@/utils"
 
 export default {
   name: "QualityMeasureSummary",
-  components: { ApproGraph, FamiliesGraph, QualityDiagnosticValue },
+  components: { ApproGraph, FamiliesGraph, DsfrAccordion, QualityDiagnosticValue },
   props: {
     diagnostic: {},
     usesCentralDiagnostic: {},
@@ -277,9 +275,6 @@ span.percentage {
   display: inline-block;
   width: 3em;
   text-align: right;
-}
-.dsfr.v-expansion-panel {
-  box-shadow: inset 0 1px 0 0 #ddd, 0 1px 0 0 #ddd;
 }
 .color-bio {
   color: #297254;
