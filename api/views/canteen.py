@@ -1,5 +1,4 @@
 import logging
-import base64
 from collections import OrderedDict
 from datetime import date
 import redis as r
@@ -7,7 +6,7 @@ from django.apps import apps
 from django.conf import settings
 from django.http import JsonResponse
 import requests
-from common.utils import send_mail
+from common.utils import send_mail, get_siret_token
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError, BadRequest
 from django.contrib.auth import get_user_model
@@ -435,7 +434,7 @@ class CanteenStatusView(APIView):
     def complete_canteen_data(siret, response):
         response["siret"] = siret
         try:
-            token = CanteenStatusView.get_siret_token()
+            token = get_siret_token()
             if not token:
                 return
 
@@ -466,29 +465,6 @@ class CanteenStatusView(APIView):
         except Exception as e:
             logger.exception(f"Error completing canteen data with SIRET {siret}")
             logger.exception(e)
-
-    def get_siret_token():
-        if not settings.SIRET_API_KEY or not settings.SIRET_API_SECRET:
-            logger.warning("skipping siret token fetching because key and secret env vars aren't set")
-            return
-        token_redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_TOKEN"
-        if redis.exists(token_redis_key):
-            return redis.get(token_redis_key)
-
-        base64Cred = base64.b64encode(bytes(f"{settings.SIRET_API_KEY}:{settings.SIRET_API_SECRET}", "utf-8")).decode(
-            "utf-8"
-        )
-        token_data = {"grant_type": "client_credentials", "validity_period": 604800}
-        token_headers = {"Authorization": f"Basic {base64Cred}"}
-        token_response = requests.post("https://api.insee.fr/token", data=token_data, headers=token_headers)
-        if token_response.ok:
-            token_response = token_response.json()
-            token = token_response["access_token"]
-            expiration_seconds = 60 * 60 * 24
-            redis.set(token_redis_key, token, ex=expiration_seconds)
-            return token
-        else:
-            logger.warning(f"token fetching failed, code {token_response.status_code} : {token_response}")
 
     def complete_location_data(city, postcode, response):
         try:
