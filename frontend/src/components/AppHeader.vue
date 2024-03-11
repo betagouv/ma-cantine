@@ -22,18 +22,14 @@
       role="banner"
     >
       <v-toolbar-title class="align-self-center">
-        <router-link :to="{ name: 'LandingPage' }" class="text-decoration-none d-flex align-center pl-4">
-          <img
-            src="/static/images/Marianne.png"
-            height="90"
-            alt="Ministère de l'Agriculture et de la Souveraineté Alimentaire"
-          />
-          <img
-            v-if="$vuetify.breakpoint.smAndUp"
-            src="/static/images/ma-cantine-logo-light.jpg"
-            height="65"
-            alt="Page d'accueil ma cantine"
-          />
+        <router-link
+          :to="{ name: 'LandingPage' }"
+          class="text-decoration-none d-flex align-center pl-4"
+          aria-label="ma cantine (aller à l'accueil) - Ministère de l'Agriculture et de la Souveraineté Alimentaire"
+          :aria-description="chipInfo && `environnement ${chipInfo.text}`"
+        >
+          <img src="/static/images/Marianne.png" height="90" alt="" />
+          <img v-if="$vuetify.breakpoint.smAndUp" src="/static/images/ma-cantine-logo-light.jpg" height="65" alt="" />
           <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
             {{ chipInfo.text }}
           </v-chip>
