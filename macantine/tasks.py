@@ -11,6 +11,7 @@ from django.db.models import F
 from django.db.models.functions import Length
 from django.core.management import call_command
 from data.models import User, Canteen
+import redis as r
 
 from .celery import app
 from .extract_open_data import ETL_TD, ETL_CANTEEN
@@ -19,6 +20,7 @@ import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 
 logger = logging.getLogger(__name__)
+redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 configuration = sib_api_v3_sdk.Configuration()
 configuration.api_key["api-key"] = settings.ANYMAIL.get("SENDINBLUE_API_KEY")
 api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
@@ -207,6 +209,13 @@ def _get_candidate_canteens():
     return candidate_canteens
 
 
+def _get_candidate_canteens_for_siret():
+    candidate_canteens = Canteen.objects.filter(Q(city_insee_code__isnull=True) & Q(siret__isnull=False)).order_by(
+        "creation_date"
+    )
+    return candidate_canteens
+
+
 def _fill_from_api_response(response, canteens):
     for row in csv.reader(response.text.splitlines()):
         if row[0] == "id":
@@ -223,6 +232,35 @@ def _fill_from_api_response(response, canteens):
             canteen.city = row[5]
             canteen.department = row[6].split(",")[0]
             canteen.save()
+
+
+def complete_canteen_data(siret, response):
+    pass
+
+
+@app.task()
+def fill_missing_geolocation_data_using_siret():
+    candidate_canteens = _get_candidate_canteens_for_siret()
+
+    # Carry out the CSV
+    if len(candidate_canteens) == 0:
+        return 0
+    for canteen in candidate_canteens:
+        try:
+            response = complete_canteen_data(canteen.siret)
+            response.raise_for_status()
+
+            _fill_from_api_response(response, candidate_canteens)
+        except requests.exceptions.HTTPError as e:
+            logger.info(f"Geolocation Bot error: HTTPError\n{e}")
+        except requests.exceptions.ConnectionError as e:
+            logger.info(f"Geolocation Bot error: ConnectionError\n{e}")
+        except requests.exceptions.Timeout as e:
+            logger.info(f"Geolocation Bot error: Timeout\n{e}")
+        except Exception as e:
+            logger.info(f"Geolocation Bot error: Unexpected exception\n{e}")
+
+    logger.info(f"Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
 
 
 @app.task()
@@ -267,24 +305,20 @@ def delete_old_historical_records():
 @app.task()
 def export_datasets():
     logger.info("Starting datasets extractions")
-    datasets = {
-        'campagne teledeclaration 2021': ETL_TD(2021),
-        'cantines': ETL_CANTEEN()
-    }
+    datasets = {"campagne teledeclaration 2021": ETL_TD(2021), "cantines": ETL_CANTEEN()}
     for key, etl in datasets.items():
         logger.info(f"Starting {key} dataset extraction")
         etl.extract_dataset()
-        etl.export_dataset(stage='to_validate')
+        etl.export_dataset(stage="to_validate")
         logger.info(f"Validating {key} dataset. Dataset size : {etl.len_dataset()} lines")
-        if os.environ['DEFAULT_FILE_STORAGE'] == 'storages.backends.s3boto3.S3Boto3Storage':
+        if os.environ["DEFAULT_FILE_STORAGE"] == "storages.backends.s3boto3.S3Boto3Storage":
             if etl.is_valid():
                 logger.info(f"Exporting {key} dataset to s3")
-                etl.export_dataset(stage='validated')
+                etl.export_dataset(stage="validated")
             else:
                 logger.error(f"The dataset {key} is invalid and therefore will not be exported to s3")
-        elif os.environ['DEFAULT_FILE_STORAGE'] == 'django.core.files.storage.FileSystemStorage':
+        elif os.environ["DEFAULT_FILE_STORAGE"] == "django.core.files.storage.FileSystemStorage":
             logger.info(f"Saving {key} dataset locally")
-            etl.export_dataset(stage='validated')
+            etl.export_dataset(stage="validated")
         else:
             logger.info("Exporting the dataset is not possible with the file system configured")
-

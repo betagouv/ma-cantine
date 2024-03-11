@@ -82,3 +82,27 @@ class TestGeolocationBot(TestCase):
 
         canteen.refresh_from_db()
         self.assertEqual(canteen.geolocation_bot_attempts, 1)
+
+
+@requests_mock.Mocker()
+class TestGeolocationWithSiretBot(TestCase):
+    api_url = "https://api-adresse.data.gouv.fr/search/csv/"
+
+    def test_candidate_canteens(self, _):
+        """
+        Only canteens with either postal code or INSEE code
+        that have not been queried more than ten times
+        are considered candidates
+        """
+        candidate_canteens = [
+            CanteenFactory.create(city_insee_code=None, siret="89394682276911"),
+        ]
+        _ = [
+            CanteenFactory.create(city_insee_code=29890),
+            CanteenFactory.create(city_insee_code=None, siret=None),
+        ]
+        result = list(tasks._get_candidate_canteens_for_siret())
+        self.assertEqual(len(result), 1)
+        for canteen in candidate_canteens:
+            match = list(filter(lambda x: x.id == canteen.id, result))
+            self.assertEqual(len(match), 1)
