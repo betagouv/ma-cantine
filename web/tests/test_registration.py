@@ -51,14 +51,14 @@ class TestRegistration(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Confirmation de votre adresse email - ma cantine")
 
-        # Upon click of the activation link we go directly to the Vue app
-        matches = re.findall(r"compte\/(?P<uidb64>.*)\/(?P<token>.*)", mail.outbox[0].body)
+        # Check that the email contains the token
+        content = mail.outbox[0].body.replace("\n", " ")
+        matches = re.findall(r"compte\/(?P<uidb64>.*)\/(?P<token>.*?) ", content)
         self.assertEqual(len(matches), 1)
         uidb64, token = matches[0]
         activation_response = self.client.get(reverse("activate", kwargs={"uidb64": uidb64, "token": token}))
 
-        # debugging /token-invalide error from this test that appears from time to time in GH
-        redirect_error_message = f"\nEmail body:\n{mail.outbox[0].body}" + f"\n\nUIDB64: {uidb64}\n\nTOKEN: {token}"
+        redirect_error_message = f"\nEmail body:\n{content}" + f"\n\nUIDB64: {uidb64}\n\nTOKEN: {token}"
         self.assertRedirects(
             activation_response,
             reverse("app"),
