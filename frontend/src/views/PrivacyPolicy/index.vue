@@ -281,9 +281,8 @@
         <span class="font-weight-bold">Matomo</span>
         , cookie de mesure d’audience, dans sa version exemptée de consentement préalable, telle que validée par la
         CNIL. Vous pouvez gérer votre cookie Matomo ci-dessous :
-        <div>
-          <MatomoOptOut />
-        </div>
+
+        <MatomoOptOut />
       </li>
       <li>
         <span class="font-weight-bold">Crisp</span>
