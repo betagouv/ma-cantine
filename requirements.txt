@@ -58,7 +58,7 @@ html-tag-names==0.1.2
 html-void-elements==0.1.0
 html2text==2020.1.16
 html5lib==1.1
-identify==2.5.33
+identify==2.5.35
 idna==3.6
 inflection==0.5.1
 iniconfig==2.0.0
