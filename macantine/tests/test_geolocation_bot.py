@@ -124,7 +124,7 @@ class TestGeolocationWithSiretBot(TestCase):
                     "etablissement": {
                         "uniteLegale": {"denominationUniteLegale": "cantine test"},
                         "adresseEtablissement": {
-                            "code": 29352,
+                            "codeCommuneEtablissement": 29352,
                             "codePostalEtablissement": 29890,
                             "libelleCommuneEtablissement": "Ville test",
                         },
