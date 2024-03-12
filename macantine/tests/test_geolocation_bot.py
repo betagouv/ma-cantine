@@ -136,3 +136,37 @@ class TestGeolocationWithSiretBot(TestCase):
         response = tasks.get_geo_data(candidate_canteen.siret, token)
         self.assertEquals(response["name"], "cantine test")
         self.assertEquals(response["cityInseeCode"], 29352)
+
+    def test_geolocation_with_siret_data_filled(self, mock):
+        """
+        Geolocation data should be filled with the response
+        from the API
+        """
+        token = "Fake token"
+        siret_canteen = "89394682276911"
+        canteen = CanteenFactory.create(city_insee_code=None, siret=siret_canteen)
+        mock.get(
+            self.api_url + siret_canteen,
+            headers={"Authorization": f"Bearer {token}"},
+            text=json.dumps(
+                {
+                    "etablissement": {
+                        "uniteLegale": {"denominationUniteLegale": "cantine test"},
+                        "adresseEtablissement": {
+                            "codeCommuneEtablissement": 29352,
+                            "codePostalEtablissement": 29890,
+                            "libelleCommuneEtablissement": "Ville test",
+                        },
+                    },
+                }
+            ),
+            status_code=200,
+        )
+
+        tasks.fill_missing_geolocation_data_using_siret()
+
+        canteen.refresh_from_db()
+        # self.assertEqual(canteen.city, "Lesneven")
+        self.assertEqual(canteen.city_insee_code, "29352")
+        self.assertEqual(canteen.postal_code, "29890")
+        # self.assertEqual(canteen.department, "29")

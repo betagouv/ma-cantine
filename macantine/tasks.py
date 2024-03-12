@@ -211,7 +211,9 @@ def _get_candidate_canteens():
 
 
 def _get_candidate_canteens_for_siret():
-    return Canteen.objects.filter(Q(city_insee_code__isnull=True) & Q(siret__isnull=False)).order_by("creation_date")
+    return Canteen.objects.filter(Q(city_insee_code__isnull=True) & Q(siret__isnull=False)).order_by("creation_date")[
+        0:1
+    ]
 
 
 def _fill_from_api_response(response, canteens):
@@ -232,6 +234,22 @@ def _fill_from_api_response(response, canteens):
             canteen.save()
 
 
+def _fill_from_api_response_using_siret(canteen, response):
+    try:
+        if "cityInseeCode" in response.keys():
+            canteen = Canteen.objects.filter(id=canteen.id).first()
+            canteen.city_insee_code = response["cityInseeCode"]
+            canteen.postal_code = response["postalCode"]
+            canteen.city = response["city"]
+            canteen.departement = response["cityInseeCode"]
+            canteen.save()
+            logger.info(f"Canteen info has been updated. Canteen name : f{canteen.name}")
+    except Exception as e:
+        logger.error(f"Unable to update canteen info for canteen : f{canteen.name}")
+        print(e)
+        print("End of Exception  ==========================")
+
+
 def get_geo_data(canteen_siret, token):
     canteen = {}
     canteen["siret"] = canteen_siret
@@ -239,7 +257,7 @@ def get_geo_data(canteen_siret, token):
         redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
         redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
         if int(redis.get(redis_key)) > 30:
-            logger.warning("Siret lookup failed - API rate has been exceeded. Waiting 1 minute")
+            logger.warning("Siret lookup exceding API rate. Waiting 1 minute")
             time.sleep(60)
             return
 
@@ -247,11 +265,14 @@ def get_geo_data(canteen_siret, token):
             f"https://api.insee.fr/entreprises/sirene/V3/siret/{canteen_siret}",
             headers={"Authorization": f"Bearer {token}"},
         )
+        siret_response.raise_for_status()
         if siret_response.ok:
             siret_response = siret_response.json()
             try:
                 canteen["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
-                canteen["cityInseeCode"] = siret_response["etablissement"]["adresseEtablissement"]["code"]
+                canteen["cityInseeCode"] = siret_response["etablissement"]["adresseEtablissement"][
+                    "codeCommuneEtablissement"
+                ]
                 canteen["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
                     "codePostalEtablissement"
                 ]
@@ -273,14 +294,12 @@ def fill_missing_geolocation_data_using_siret():
     candidate_canteens = _get_candidate_canteens_for_siret()
     token = get_siret_token()
     # Carry out the CSV
-    # if len(candidate_canteens) == 0:
-    #     return 0
-    for canteen in ["83014132100034"]:
-        # for canteen in candidate_canteens:
+    if len(candidate_canteens) == 0:
+        return 0
+    for canteen in candidate_canteens:
         try:
-            response = get_geo_data(canteen, token)
-            # response = get_geo_data(canteen.siret, token)
-            response.raise_for_status()
+            response = get_geo_data(canteen.siret, token)
+            _fill_from_api_response_using_siret(canteen, response)
 
         except requests.exceptions.HTTPError as e:
             logger.info(f"Geolocation Bot error: HTTPError\n{e}")
