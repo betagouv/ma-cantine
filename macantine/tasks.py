@@ -211,9 +211,7 @@ def _get_candidate_canteens():
 
 
 def _get_candidate_canteens_for_siret():
-    return Canteen.objects.filter(Q(city_insee_code__isnull=True) & Q(siret__isnull=False)).order_by("creation_date")[
-        0:1
-    ]
+    return Canteen.objects.filter(Q(city_insee_code__isnull=True) & Q(siret__isnull=False)).order_by("creation_date")
 
 
 def _fill_from_api_response(response, canteens):
@@ -236,12 +234,12 @@ def _fill_from_api_response(response, canteens):
 
 def _fill_from_api_response_using_siret(canteen, response):
     try:
-        if "cityInseeCode" in response.keys():
+        if "city_insee_code" in response.keys():
             canteen = Canteen.objects.filter(id=canteen.id).first()
-            canteen.city_insee_code = response["cityInseeCode"]
-            canteen.postal_code = response["postalCode"]
+            canteen.city_insee_code = response["city_insee_code"]
+            canteen.postal_code = response["postal_code"]
             canteen.city = response["city"]
-            canteen.departement = response["cityInseeCode"]
+            canteen.department = response["department"]
             canteen.save()
             logger.info(f"Canteen info has been updated. Canteen name : f{canteen.name}")
     except Exception as e:
@@ -270,22 +268,23 @@ def get_geo_data(canteen_siret, token):
             siret_response = siret_response.json()
             try:
                 canteen["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
-                canteen["cityInseeCode"] = siret_response["etablissement"]["adresseEtablissement"][
+                canteen["city_insee_code"] = siret_response["etablissement"]["adresseEtablissement"][
                     "codeCommuneEtablissement"
                 ]
-                canteen["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
+                canteen["postal_code"] = siret_response["etablissement"]["adresseEtablissement"][
                     "codePostalEtablissement"
                 ]
                 canteen["city"] = siret_response["etablissement"]["adresseEtablissement"][
                     "libelleCommuneEtablissement"
                 ]
+                canteen["department"] = str(canteen["postal_code"])[0:2]
                 return canteen
             except KeyError as e:
                 logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
         else:
             logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response}")
+            return
     except Exception as e:
-        logger.exception(f"Error completing canteen data with SIRET {canteen_siret}")
         logger.exception(e)
 
 
@@ -299,7 +298,8 @@ def fill_missing_geolocation_data_using_siret():
     for canteen in candidate_canteens:
         try:
             response = get_geo_data(canteen.siret, token)
-            _fill_from_api_response_using_siret(canteen, response)
+            if response:
+                _fill_from_api_response_using_siret(canteen, response)
 
         except requests.exceptions.HTTPError as e:
             logger.info(f"Geolocation Bot error: HTTPError\n{e}")
