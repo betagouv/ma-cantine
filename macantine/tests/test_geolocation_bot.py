@@ -2,6 +2,7 @@ import requests_mock
 from django.test import TestCase
 from data.factories import CanteenFactory, UserFactory, SectorFactory
 from macantine import tasks
+import json
 
 
 @requests_mock.Mocker()
@@ -86,13 +87,11 @@ class TestGeolocationBot(TestCase):
 
 @requests_mock.Mocker()
 class TestGeolocationWithSiretBot(TestCase):
-    api_url = "https://api-adresse.data.gouv.fr/search/csv/"
+    api_url = "https://api.insee.fr/entreprises/sirene/V3/siret/"
 
-    def test_candidate_canteens(self, _):
+    def test_candidate_canteens(self):
         """
-        Only canteens with either postal code or INSEE code
-        that have not been queried more than ten times
-        are considered candidates
+        Only canteens with no city_insee_code and with a SIRET
         """
         candidate_canteens = [
             CanteenFactory.create(city_insee_code=None, siret="89394682276911"),
@@ -106,3 +105,34 @@ class TestGeolocationWithSiretBot(TestCase):
         for canteen in candidate_canteens:
             match = list(filter(lambda x: x.id == canteen.id, result))
             self.assertEqual(len(match), 1)
+
+    def test_get_geo_data(self, mock):
+        """
+        Only canteens with either postal code or INSEE code
+        that have not been queried more than ten times
+        are considered candidates
+        """
+        siret_canteen = "89394682276911"
+        token = "Fake token"
+        candidate_canteen = CanteenFactory.create(city_insee_code=None, siret=siret_canteen)
+        # Call the service to hit the mocked API.
+        mock.get(
+            self.api_url + siret_canteen,
+            headers={"Authorization": f"Bearer {token}"},
+            text=json.dumps(
+                {
+                    "etablissement": {
+                        "uniteLegale": {"denominationUniteLegale": "cantine test"},
+                        "adresseEtablissement": {
+                            "code": 29352,
+                            "codePostalEtablissement": 29890,
+                            "libelleCommuneEtablissement": "Ville test",
+                        },
+                    },
+                }
+            ),
+            status_code=200,
+        )
+        response = tasks.get_geo_data(candidate_canteen.siret, token)
+        self.assertEquals(response["name"], "cantine test")
+        self.assertEquals(response["cityInseeCode"], 29352)
