@@ -1,0 +1,82 @@
+{
+  "fields": [
+    {
+      "description": "Le SIRET de la cantine ayant réalisé l'achat",
+      "name": "siret",
+      "pattern": "^[0-9]{14}$",
+      "type": "string"
+    },
+    {
+      "description": "Une description de l'achat",
+      "name": "description",
+      "type": "string"
+    },
+    {
+      "description": "Le nom du fournisseur",
+      "name": "fournisseur",
+      "type": "string"
+    },
+    {
+      "description": "La date de l'achat",
+      "format": "%Y-%m-%d",
+      "name": "date_achat",
+      "type": "date"
+    },
+    {
+      "description": "Le prix HT de l'achat",
+      "name": "prix_ht",
+      "type": "number"
+    },
+    {
+      "description": "La famille de produits de l'achat",
+      "enum": [
+        "VIANDES_VOLAILLES",
+        "CHARCUTERIE",
+        "PRODUITS_DE_LA_MER",
+        "FRUITS_ET_LEGUMES",
+        "PRODUITS_LAITIERS",
+        "BOULANGERIE",
+        "BOISSONS",
+        "AUTRES"
+      ],
+      "name": "famille_produits",
+      "type": "string"
+    },
+    {
+      "description": "Les caractéristiques de l'achat",
+      "items": {
+        "enum": [
+          "BIO",
+          "LABEL_ROUGE",
+          "AOCAOP",
+          "IGP",
+          "STG",
+          "HVE",
+          "PECHE_DURABLE",
+          "RUP",
+          "COMMERCE_EQUITABLE",
+          "FERMIER",
+          "EXTERNALITES",
+          "PERFORMANCE",
+          "FRANCE",
+          "SHORT_DISTRIBUTION",
+          "LOCAL"
+        ],
+        "type": "string"
+      },
+      "name": "caracteristiques",
+      "type": "array"
+    },
+    {
+      "description": "La définition de local si l'achat a la caractéristique de LOCAL",
+      "enum": [
+        "AUTOUR_SERVICE",
+        "DEPARTMENT",
+        "REGION",
+        "AUTRE"
+      ],
+      "name": "definition_local",
+      "type": "string"
+    }
+  ]
+}
