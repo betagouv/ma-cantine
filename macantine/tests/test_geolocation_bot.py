@@ -89,7 +89,7 @@ class TestGeolocationBot(TestCase):
 class TestGeolocationWithSiretBot(TestCase):
     api_url = "https://api.insee.fr/entreprises/sirene/V3/siret/"
 
-    def test_candidate_canteens(self):
+    def test_candidate_canteens(self, _):
         """
         Only canteens with no city_insee_code and with a SIRET
         """
