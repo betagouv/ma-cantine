@@ -128,21 +128,13 @@
         </v-col>
 
         <v-col cols="12">
-          <p class="body-1 ml-1 mb-0">Mon établissement...</p>
-          <v-radio-group
-            class="mt-2"
+          <DsfrRadio
+            label="Mon établissement..."
+            :items="productionTypes"
             v-model="canteen.productionType"
-            hide-details="auto"
             :rules="[validators.required]"
-          >
-            <v-radio class="ml-0" v-for="item in productionTypes" :key="item.value" :value="item.value">
-              <template v-slot:label>
-                <div class="d-block">
-                  <div class="body-1 grey--text text--darken-4" v-html="item.title"></div>
-                </div>
-              </template>
-            </v-radio>
-          </v-radio-group>
+            class="mt-2"
+          />
         </v-col>
 
         <v-col cols="12" md="4" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
@@ -299,30 +291,22 @@
       </v-row>
       <v-row>
         <v-col cols="12" sm="6" md="3">
-          <div>
-            <p class="body-2 ml-4">Type d'établissement</p>
-            <v-radio-group v-model="canteen.economicModel" :rules="[validators.required]">
-              <v-radio
-                class="ml-8"
-                v-for="item in economicModels"
-                :key="item.value"
-                :label="item.text"
-                :value="item.value"
-              ></v-radio>
-            </v-radio-group>
-          </div>
+          <DsfrRadio
+            label="Type d'établissement"
+            :items="economicModels"
+            v-model="canteen.economicModel"
+            :rules="[validators.required]"
+            class="mt-2"
+          />
         </v-col>
         <v-col cols="12" sm="6" md="3">
-          <p class="body-2 ml-4">Mode de gestion</p>
-          <v-radio-group v-model="canteen.managementType" :rules="[validators.required]">
-            <v-radio
-              class="ml-8"
-              v-for="item in managementTypes"
-              :key="item.value"
-              :label="item.text"
-              :value="item.value"
-            ></v-radio>
-          </v-radio-group>
+          <DsfrRadio
+            label="Mode de gestion"
+            :items="managementTypes"
+            v-model="canteen.managementType"
+            :rules="[validators.required]"
+            class="mt-2"
+          />
         </v-col>
       </v-row>
       <div>
@@ -354,6 +338,7 @@ import ImagesField from "./ImagesField"
 import SiretCheck from "./SiretCheck"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrRadio from "@/components/DsfrRadio"
 import CityField from "./CityField"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrCallout from "@/components/DsfrCallout"
@@ -367,6 +352,7 @@ export default {
     ImagesField,
     TechnicalControlDialog,
     DsfrTextField,
+    DsfrRadio,
     CityField,
     DsfrSelect,
     DsfrCallout,
@@ -397,7 +383,7 @@ export default {
       steps: ["siret", "informations-cantine"],
       satelliteSiretMessage:
         "Le numéro SIRET de la cuisine centrale ne peut pas être le même que celui de la cantine satellite.",
-      productionTypes: Constants.ProductionTypesDetailed,
+      productionTypes: Constants.ProductionTypesDetailed.map((pt) => ({ text: pt.title, value: pt.value })),
       economicModels: Constants.EconomicModels,
       sectorCategory: null,
       chosenSector: null,
