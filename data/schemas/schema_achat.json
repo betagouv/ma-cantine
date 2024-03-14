@@ -19,7 +19,7 @@
     {
       "description": "La date de l'achat",
       "format": "%Y-%m-%d",
-      "name": "date_achat",
+      "name": "date",
       "type": "date"
     },
     {
@@ -43,27 +43,28 @@
       "type": "string"
     },
     {
-      "description": "Les caractéristiques de l'achat",
-      "items": {
-        "enum": [
-          "BIO",
-          "LABEL_ROUGE",
-          "AOCAOP",
-          "IGP",
-          "STG",
-          "HVE",
-          "PECHE_DURABLE",
-          "RUP",
-          "COMMERCE_EQUITABLE",
-          "FERMIER",
-          "EXTERNALITES",
-          "PERFORMANCE",
-          "FRANCE",
-          "SHORT_DISTRIBUTION",
-          "LOCAL"
-        ],
-        "type": "string"
+      "arrayItem": {
+        "constraints": {
+          "enum": [
+            "BIO",
+            "LABEL_ROUGE",
+            "AOCAOP",
+            "IGP",
+            "STG",
+            "HVE",
+            "PECHE_DURABLE",
+            "RUP",
+            "COMMERCE_EQUITABLE",
+            "FERMIER",
+            "EXTERNALITES",
+            "PERFORMANCE",
+            "FRANCE",
+            "SHORT_DISTRIBUTION",
+            "LOCAL"
+          ]
+        }
       },
+      "description": "Les caractéristiques de l'achat",
       "name": "caracteristiques",
       "type": "array"
     },
