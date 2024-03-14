@@ -1,4 +1,5 @@
 {
+  "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
   "fields": [
     {
       "description": "Identifiant Unique de la Cantine",
