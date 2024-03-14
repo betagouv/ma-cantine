@@ -16,7 +16,9 @@
     </v-card-subtitle>
     <v-card-text>
       <div class="mb-2" v-if="post.tags && post.tags.length > 0">
-        <v-chip v-for="tag in post.tags" small :color="tagColor(tag)" :key="tag" class="mr-1">{{ tag }}</v-chip>
+        <v-chip v-for="tag in post.tags" small :color="tagColor(tag)" :key="tag" class="mr-1">
+          <p class="mb-0">{{ tag }}</p>
+        </v-chip>
       </div>
       {{ post.tagline }}
     </v-card-text>

@@ -15,7 +15,7 @@
         {{ "Télédéclaration : " + canteenForTD.name }}
       </v-card-title>
       <v-card-text class="text-left pb-0">
-        Veuillez vérifier les données pour {{ diagnosticForTD.year }} ci-dessous.
+        <p class="mb-0">Veuillez vérifier les données pour {{ diagnosticForTD.year }} ci-dessous.</p>
       </v-card-text>
       <PreviewTable ref="table" :canteen="canteenForTD" :diagnostic="diagnosticForTD" />
       <div v-if="unusualData.length" class="text-left px-6">

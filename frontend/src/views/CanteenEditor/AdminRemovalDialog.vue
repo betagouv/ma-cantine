@@ -12,10 +12,12 @@
       </v-card-title>
 
       <v-card-text>
-        <span v-if="manager.firstName || manager.lastName">{{ manager.firstName }} {{ manager.lastName }}</span>
-        <span v-else>Cette personne</span>
-        n'aura plus accès à cette cantine et ne sera plus en mesure d'en apporter des modifications ni de créer des
-        diagnostics.
+        <p class="mb-0">
+          <span v-if="manager.firstName || manager.lastName">{{ manager.firstName }} {{ manager.lastName }}</span>
+          <span v-else>Cette personne</span>
+          n'aura plus accès à cette cantine et ne sera plus en mesure d'en apporter des modifications ni de créer des
+          diagnostics.
+        </p>
       </v-card-text>
 
       <v-divider aria-hidden="true" role="presentation"></v-divider>

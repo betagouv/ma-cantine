@@ -60,7 +60,9 @@
         <v-col cols="12" sm="6" v-for="(resource, idx) in resources" :key="idx">
           <v-card outlined class="d-flex flex-column fill-height pa-4" :style="resource.style">
             <v-card-title class="font-weight-bold" v-html="resource.title"></v-card-title>
-            <v-card-text>{{ resource.text }}</v-card-text>
+            <v-card-text>
+              <p class="mb-0">{{ resource.text }}</p>
+            </v-card-text>
             <v-spacer></v-spacer>
             <v-card-actions class="px-4 justify-end">
               <v-btn text color="primary" :to="resource.links[1].to" v-if="resource.links[1]">

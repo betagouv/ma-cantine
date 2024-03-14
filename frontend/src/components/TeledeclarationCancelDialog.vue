@@ -11,8 +11,10 @@
       </v-card-title>
 
       <v-card-text>
-        En l'annulant vous devez soumettre à nouveau une télédéclaration pour vos achats
-        {{ diagnostic.year }} conformément à l'arrêté du 14 septembre 2022.
+        <p class="mb-0">
+          En l'annulant vous devez soumettre à nouveau une télédéclaration pour vos achats
+          {{ diagnostic.year }} conformément à l'arrêté du 14 septembre 2022.
+        </p>
       </v-card-text>
 
       <v-divider aria-hidden="true" role="presentation"></v-divider>

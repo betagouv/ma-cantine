@@ -18,15 +18,15 @@
     <v-divider aria-hidden="true" role="presentation" class="py-1"></v-divider>
     <div class="grey--text text--darken-2" :style="$vuetify.breakpoint.smAndDown ? '' : 'height: 95px;'">
       <v-card-text class="py-1 fill-height d-flex flex-column" v-if="diagnostic">
-        <span>En {{ year }} :</span>
+        <p class="mb-0">En {{ year }} :</p>
         <v-row class="ma-0" v-if="hasPercentages">
           <p class="ma-0 mr-3" v-if="bioPercent">
             <span class="font-weight-black mr-1">{{ bioPercent }} %</span>
-            <span>bio</span>
+            bio
           </p>
           <p class="ma-0" v-if="sustainablePercent">
             <span class="font-weight-black mr-1">{{ sustainablePercent }} %</span>
-            <span>de qualité et durables</span>
+            de qualité et durables
           </p>
         </v-row>
         <v-spacer v-else></v-spacer>
@@ -45,7 +45,7 @@
       </v-card-text>
       <div v-else class="d-flex flex-column fill-height">
         <v-spacer></v-spacer>
-        <v-card-text class="py-1">Pas de données renseignées</v-card-text>
+        <v-card-text class="py-1"><p class="mb-0">Pas de données renseignées</p></v-card-text>
         <v-spacer></v-spacer>
       </div>
     </div>

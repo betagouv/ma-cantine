@@ -12,8 +12,10 @@
           <v-card class="text-left">
             <v-card-title>Rejoindre l'équipe de « {{ restrictedSatellite.name }} »</v-card-title>
             <v-card-text>
-              Vous n'êtes pas encore un membre de l'équipe de « {{ restrictedSatellite.name }} » alors vous devez
-              demander l'accès pour pouvoir voir et modifier les données de cette cantine.
+              <p class="mb-0">
+                Vous n'êtes pas encore un membre de l'équipe de « {{ restrictedSatellite.name }} » alors vous devez
+                demander l'accès pour pouvoir voir et modifier les données de cette cantine.
+              </p>
               <DsfrTextarea
                 v-model="messageJoinCanteen"
                 label="Message (optionnel)"
@@ -94,7 +96,9 @@
             </v-card-title>
 
             <v-card-text>
-              La cantine ne fera plus parti de celles fournies par votre établissement.
+              <p class="mb-0">
+                La cantine ne fera plus parti de celles fournies par votre établissement.
+              </p>
             </v-card-text>
 
             <v-divider aria-hidden="true" role="presentation"></v-divider>

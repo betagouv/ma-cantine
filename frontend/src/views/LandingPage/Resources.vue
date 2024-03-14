@@ -8,7 +8,9 @@
             <span class="ml-2">{{ resource.title }}</span>
           </v-card-title>
           <v-card-text class="text-left">
-            {{ resource.description }}
+            <p class="mb-0">
+              {{ resource.description }}
+            </p>
           </v-card-text>
           <v-card-actions class="px-4">
             <v-btn

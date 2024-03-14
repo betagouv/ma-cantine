@@ -22,7 +22,9 @@
             </h2>
           </v-card-title>
           <v-card-text>
-            Être outillé pour atteindre les objectifs des lois EGAlim et Climat
+            <p class="mb-0">
+              Être outillé pour atteindre les objectifs des lois EGAlim et Climat
+            </p>
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="px-4 pt-0">
@@ -52,7 +54,9 @@
             </h2>
           </v-card-title>
           <v-card-text>
-            Savoir où en sont les établissements de ma région ou mon département
+            <p class="mb-0">
+              Savoir où en sont les établissements de ma région ou mon département
+            </p>
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="px-4 pt-0">
@@ -80,7 +84,9 @@
             <h2 class="text-h6 font-weight-bold">En savoir plus sur la cantine que je fréquente</h2>
           </v-card-title>
           <v-card-text>
-            Connaître les initiatives de mon restaurant ou celui de mes enfants
+            <p class="mb-0">
+              Connaître les initiatives de mon restaurant ou celui de mes enfants
+            </p>
           </v-card-text>
           <v-spacer></v-spacer>
           <v-card-actions class="px-4 pt-0">

@@ -14,7 +14,9 @@
     <v-card-subtitle>
       <PartnerIndicators :partner="partner" />
     </v-card-subtitle>
-    <v-card-text>{{ partner.shortDescription }}</v-card-text>
+    <v-card-text>
+      <p class="mb-0">{{ partner.shortDescription }}</p>
+    </v-card-text>
     <v-spacer></v-spacer>
     <v-card-actions class="px-4 py-4">
       <v-spacer></v-spacer>

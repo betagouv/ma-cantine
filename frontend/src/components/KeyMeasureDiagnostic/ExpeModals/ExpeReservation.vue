@@ -8,10 +8,12 @@
         Vous êtes inscrit à l'expérimentation
       </v-card-title>
       <v-card-text>
-        Afin de pouvoir évaluer les effets de la solution de réservation sur la satisfaction des usagers et le taux de
-        fréquentation et de confirmer son potentiel en tant que levier de lutte contre le gaspillage alimentaire, nous
-        vous demandons de suivre et renseigner différents indicateurs nécessaires à l’évaluation du gaspillage
-        alimentaire, du taux de fréquentation et de la satisfaction des usagers à 3 étapes de l’expérimentation.
+        <p class="mb-0">
+          Afin de pouvoir évaluer les effets de la solution de réservation sur la satisfaction des usagers et le taux de
+          fréquentation et de confirmer son potentiel en tant que levier de lutte contre le gaspillage alimentaire, nous
+          vous demandons de suivre et renseigner différents indicateurs nécessaires à l’évaluation du gaspillage
+          alimentaire, du taux de fréquentation et de la satisfaction des usagers à 3 étapes de l’expérimentation.
+        </p>
       </v-card-text>
       <v-card-text class="pt-0">
         <DownloadLink

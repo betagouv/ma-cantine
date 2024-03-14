@@ -10,7 +10,9 @@
       Vous êtes un acteur d'accompagnement dans la restauration collective ?
     </v-card-title>
     <v-card-text>
-      Contribuez à notre initiative de référencement !
+      <p class="mb-0">
+        Contribuez à notre initiative de référencement !
+      </p>
     </v-card-text>
     <v-btn class="ma-4 mt-2" color="primary" :to="{ name: 'NewPartner' }">
       Me recenser

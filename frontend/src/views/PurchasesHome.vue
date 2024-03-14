@@ -48,10 +48,14 @@
           </v-icon>
         </v-card-text>
         <v-card-text class="text-center text-body-1 font-weight-bold py-0">
-          La synthèse de vos achats
+          <p class="mb-0">
+            La synthèse de vos achats
+          </p>
         </v-card-text>
         <v-card-text class="text-center pt-2">
-          Cliquez ici pour visualiser les données relatives à vos achats
+          <p class="mb-0">
+            Cliquez ici pour visualiser les données relatives à vos achats
+          </p>
         </v-card-text>
       </v-card>
       <v-img
@@ -301,7 +305,9 @@
         >
           <v-icon size="100" class="primary--text">mdi-plus</v-icon>
           <v-card-text class="font-weight-bold pt-0 text-center primary--text">
-            Ajouter une cantine
+            <p class="mb-0">
+              Ajouter une cantine
+            </p>
           </v-card-text>
         </v-card>
         <v-spacer></v-spacer>

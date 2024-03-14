@@ -11,7 +11,9 @@
       <v-card-title class="font-weight-bold">Voulez-vous vraiment supprimer « {{ canteen.name }} » ?</v-card-title>
 
       <v-card-text>
-        Vous perdrez les données de cette cantine ainsi que celles des diagnostics associés.
+        <p class="mb-0">
+          Vous perdrez les données de cette cantine ainsi que celles des diagnostics associés.
+        </p>
       </v-card-text>
 
       <v-divider aria-hidden="true" role="presentation"></v-divider>

@@ -106,21 +106,25 @@
                   </v-btn>
                 </div>
                 <v-card-text class="text-sm-body-1 grey-text text-darken-3 pt-6">
-                  Produit acquis suivant des modalités prenant en compte les coûts imputés aux externalités
-                  environnementales liées au produit pendant son cycle de vie (production, transformation,
-                  conditionnement, transport, stockage, utilisation) - L'article 2152-10 du code de la commande publique
-                  dispose que, pour l'évaluation du coût du cycle de vie des produits, les acheteurs s'appuient sur une
-                  méthode accessible à tous, fondée sur des critères non-discriminatoires et vérifiables de manière
-                  objective et qui n'implique, pour les soumissionnaires, qu'un effort raisonnable dans la fourniture
-                  des données demandées.
+                  <p class="mb-0">
+                    Produit acquis suivant des modalités prenant en compte les coûts imputés aux externalités
+                    environnementales liées au produit pendant son cycle de vie (production, transformation,
+                    conditionnement, transport, stockage, utilisation) - L'article 2152-10 du code de la commande
+                    publique dispose que, pour l'évaluation du coût du cycle de vie des produits, les acheteurs
+                    s'appuient sur une méthode accessible à tous, fondée sur des critères non-discriminatoires et
+                    vérifiables de manière objective et qui n'implique, pour les soumissionnaires, qu'un effort
+                    raisonnable dans la fourniture des données demandées.
+                  </p>
                 </v-card-text>
                 <v-card-text class="text-sm-body-1 grey-text text-darken-3">
-                  Ni la loi EGALIM, ni le code de la commande publique n'imposent de soumettre la méthodologie de calcul
-                  du coût des externalités environnementales liées aux produits à une validation de l'administration.
-                  Dès lors qu'ils respectent les exigences du code de la commande publique, les acheteurs ayant recours
-                  à ce mode de sélection sont libres de définir les modalités qui leur semblent les plus pertinentes
-                  sous leur responsabilité. Certaines démarches collectives et/ou certains fournisseurs accompagnent
-                  déjà les acheteurs dans la mise en place d'une méthode.
+                  <p class="mb-0">
+                    Ni la loi EGALIM, ni le code de la commande publique n'imposent de soumettre la méthodologie de
+                    calcul du coût des externalités environnementales liées aux produits à une validation de
+                    l'administration. Dès lors qu'ils respectent les exigences du code de la commande publique, les
+                    acheteurs ayant recours à ce mode de sélection sont libres de définir les modalités qui leur
+                    semblent les plus pertinentes sous leur responsabilité. Certaines démarches collectives et/ou
+                    certains fournisseurs accompagnent déjà les acheteurs dans la mise en place d'une méthode.
+                  </p>
                 </v-card-text>
               </v-card>
             </v-dialog>

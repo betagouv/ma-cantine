@@ -36,7 +36,9 @@
 
         <v-card>
           <v-card-text class="pa-8 text-left">
-            Voulez-vous vous déconnecter de votre compte ma cantine ?
+            <p class="mb-0">
+              Voulez-vous vous déconnecter de votre compte ma cantine ?
+            </p>
           </v-card-text>
 
           <v-divider aria-hidden="true" role="presentation"></v-divider>

@@ -3,7 +3,9 @@
     <v-card-title>
       <h1 class="font-weight-black text-h4 mb-4 mt-1">Mon compte</h1>
     </v-card-title>
-    <v-card-subtitle class="mt-n1">Votre nom d'utilisateur : {{ userCopy.username }}</v-card-subtitle>
+    <v-card-subtitle class="mt-n1">
+      <p class="mb-0">Votre nom d'utilisateur : {{ userCopy.username }}</p>
+    </v-card-subtitle>
     <v-card-text>
       <v-form ref="form" v-model="formIsValid">
         <v-row>
