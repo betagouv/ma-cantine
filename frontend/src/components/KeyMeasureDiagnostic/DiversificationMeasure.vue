@@ -76,7 +76,7 @@
       />
     </fieldset>
 
-    <v-divider v-if="showExpeSegment" class="my-4"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" v-if="showExpeSegment" class="my-4"></v-divider>
     <div v-if="showExpeSegment">
       <h3 class="text-h6 font-weight-bold mb-4">
         Expérimentation de l'option végétarienne quotidienne pour les collectivités volontaires

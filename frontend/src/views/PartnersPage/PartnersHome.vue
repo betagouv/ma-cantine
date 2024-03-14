@@ -48,7 +48,7 @@
         <v-icon small>mdi-filter-off-outline</v-icon>
         Enlever tous les filtres
       </v-btn>
-      <v-divider v-if="!showFilters"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" v-if="!showFilters"></v-divider>
     </div>
     <v-expand-transition>
       <v-sheet class="pa-6 text-left mt-2 ma-0" v-show="showFilters" rounded :outlined="showFilters">
@@ -201,7 +201,7 @@
         </v-col>
       </v-row>
     </div>
-    <v-divider class="mb-8 mt-12"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="mb-8 mt-12"></v-divider>
     <v-row>
       <v-col cols="12">
         <h2 class="text-h6 font-weight-black mb-4">

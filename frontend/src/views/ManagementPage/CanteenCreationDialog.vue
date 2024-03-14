@@ -18,7 +18,7 @@
           <v-card-title>{{ organization.label }}</v-card-title>
           <v-card-text>SIRET : {{ organization.siret }}</v-card-text>
         </v-card>
-        <v-divider class="mb-4"></v-divider>
+        <v-divider aria-hidden="true" role="presentation" class="mb-4"></v-divider>
         <v-card outlined class="text-left mb-4" :to="{ name: 'NewCanteen' }">
           <v-card-title>Créer un autre établissement</v-card-title>
         </v-card>

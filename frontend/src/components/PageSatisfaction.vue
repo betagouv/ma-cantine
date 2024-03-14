@@ -47,7 +47,7 @@
           </v-form>
         </v-card-text>
 
-        <v-divider></v-divider>
+        <v-divider aria-hidden="true" role="presentation"></v-divider>
 
         <v-card-actions class="mt-2 mb-n2">
           <v-spacer></v-spacer>

@@ -124,7 +124,7 @@
 
       <v-row>
         <v-col cols="12" class="mt-2">
-          <v-divider></v-divider>
+          <v-divider aria-hidden="true" role="presentation"></v-divider>
         </v-col>
 
         <v-col cols="12">
@@ -248,7 +248,7 @@
 
       <v-row>
         <v-col cols="12" class="mt-4">
-          <v-divider></v-divider>
+          <v-divider aria-hidden="true" role="presentation"></v-divider>
         </v-col>
 
         <v-col cols="12" sm="6" md="4">

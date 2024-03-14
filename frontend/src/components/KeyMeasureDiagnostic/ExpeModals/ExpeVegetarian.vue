@@ -40,7 +40,7 @@
           </a>
         </p>
       </v-card-text>
-      <v-divider></v-divider>
+      <v-divider aria-hidden="true" role="presentation"></v-divider>
 
       <v-card-text>
         <v-form ref="form" v-model="formIsValid">
@@ -581,7 +581,7 @@
                       </template>
                     </v-checkbox>
 
-                    <v-divider class="mt-6"></v-divider>
+                    <v-divider aria-hidden="true" role="presentation" class="mt-6"></v-divider>
                     <!-- Recipes -->
                     <v-checkbox hide-details="auto" class="my-4" v-model="expe[`hasUsedRecipeDocuments${item.value}`]">
                       <template v-slot:label>
@@ -606,7 +606,7 @@
                       hide-details="auto"
                     />
 
-                    <v-divider class="mt-6"></v-divider>
+                    <v-divider aria-hidden="true" role="presentation" class="mt-6"></v-divider>
                     <!-- Formation -->
                     <v-checkbox hide-details="auto" class="my-4" v-model="expe[`training${item.value}`]">
                       <template v-slot:label>
@@ -632,7 +632,7 @@
                       hide-details="auto"
                     />
 
-                    <v-divider class="my-6"></v-divider>
+                    <v-divider aria-hidden="true" role="presentation" class="my-6"></v-divider>
                     <!-- Difficulties -->
                     <label
                       class="body-2 grey--text text--darken-3 font-weight-medium"

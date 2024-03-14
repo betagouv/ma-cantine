@@ -10,7 +10,7 @@
       Remplissez le formulaire ci-dessous ou
       <router-link :to="{ name: 'NewCanteen' }">créez votre cantine</router-link>
       pour que vos données soient automatiquement renseignées.
-      <v-divider class="mt-4"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" class="mt-4"></v-divider>
     </p>
     <p class="text-body-2">
       En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives pour les

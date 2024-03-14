@@ -18,7 +18,7 @@
         diagnostics.
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider aria-hidden="true" role="presentation"></v-divider>
 
       <v-card-actions class="pa-4">
         <v-spacer></v-spacer>

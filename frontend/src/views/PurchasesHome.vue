@@ -94,13 +94,13 @@
             <span v-else>Afficher les filtres</span>
           </v-btn>
         </v-badge>
-        <v-divider v-if="hasActiveFilter" style="max-width: 20px;"></v-divider>
+        <v-divider aria-hidden="true" role="presentation" v-if="hasActiveFilter" style="max-width: 20px;"></v-divider>
         <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter">
           <v-icon small>mdi-filter-off-outline</v-icon>
           Enlever tous les filtres
         </v-btn>
 
-        <v-divider></v-divider>
+        <v-divider aria-hidden="true" role="presentation"></v-divider>
       </div>
       <v-expand-transition>
         <div v-show="showFilters" class="px-4 pb-6 pt-0">
@@ -234,7 +234,7 @@
           </v-row>
         </div>
       </v-expand-transition>
-      <v-divider></v-divider>
+      <v-divider aria-hidden="true" role="presentation"></v-divider>
       <v-data-table
         :options.sync="options"
         :loading="loading"
@@ -306,9 +306,9 @@
         </v-card>
         <v-spacer></v-spacer>
         <div class="d-flex mt-4 mb-2 align-center px-2">
-          <v-divider></v-divider>
+          <v-divider aria-hidden="true" role="presentation"></v-divider>
           <p class="mx-2 my-0 caption">ou</p>
-          <v-divider></v-divider>
+          <v-divider aria-hidden="true" role="presentation"></v-divider>
         </div>
         <v-spacer></v-spacer>
         <v-btn text color="primary" :to="{ name: 'DiagnosticsImporter' }">

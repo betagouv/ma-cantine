@@ -15,7 +15,7 @@
         {{ diagnostic.year }} conformément à l'arrêté du 14 septembre 2022.
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider aria-hidden="true" role="presentation"></v-divider>
 
       <v-card-actions class="pa-4">
         <v-spacer></v-spacer>

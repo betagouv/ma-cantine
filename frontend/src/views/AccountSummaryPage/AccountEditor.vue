@@ -54,7 +54,7 @@
                 </span>
               </template>
             </v-checkbox>
-            <v-divider class="mt-6"></v-divider>
+            <v-divider aria-hidden="true" role="presentation" class="mt-6"></v-divider>
           </v-col>
           <v-col cols="12" md="6">
             <DsfrTextField

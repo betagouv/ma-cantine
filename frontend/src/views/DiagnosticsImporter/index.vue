@@ -76,7 +76,7 @@
         </v-hover>
       </v-col>
     </v-row>
-    <v-divider class="mt-12 mb-4" />
+    <v-divider aria-hidden="true" role="presentation" class="mt-12 mb-4" />
     <HelpForm />
   </div>
 </template>

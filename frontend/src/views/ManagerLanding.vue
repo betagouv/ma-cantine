@@ -62,7 +62,7 @@
     </v-card>
 
     <div v-if="recentlyModifiedCanteens">
-      <v-divider class="my-16"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" class="my-16"></v-divider>
       <h2 class="text-h4 font-weight-black text-center mb-8">Les dernières cantines publiées</h2>
       <v-row>
         <v-col v-for="canteen in recentlyModifiedCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
@@ -76,7 +76,7 @@
       </v-row>
     </div>
 
-    <v-divider class="mt-16"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="mt-16"></v-divider>
     <BlogBlock class="my-16" />
   </div>
 </template>

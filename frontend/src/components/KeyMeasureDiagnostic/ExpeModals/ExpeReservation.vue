@@ -21,7 +21,7 @@
           target="_blank"
         />
       </v-card-text>
-      <v-divider></v-divider>
+      <v-divider aria-hidden="true" role="presentation"></v-divider>
       <v-card-text>
         <v-form ref="form" v-model="formIsValid">
           <!-- reservation system in place? -->
@@ -193,7 +193,7 @@
           </v-checkbox>
 
           <!-- t0, t1, t2 -->
-          <v-divider class="mt-4"></v-divider>
+          <v-divider aria-hidden="true" role="presentation" class="mt-4"></v-divider>
           <p class="body-1 font-weight-bold mt-4 mb-0">
             Évaluons l’impact sur la fréquentation et satisfaction convive
           </p>

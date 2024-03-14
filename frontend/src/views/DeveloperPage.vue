@@ -77,7 +77,7 @@
         <a @click="toggleDevMode(false)" text>Désactiver le mode développeur de votre compte</a>
         .
       </p>
-      <v-divider class="my-10"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" class="my-10"></v-divider>
 
       <h2 class="text-h6 font-weight-black mt-10 mb-6">Une question ? Contactez-nous</h2>
       <GeneralContactForm></GeneralContactForm>

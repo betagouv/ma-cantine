@@ -123,7 +123,7 @@
       </div>
     </div>
 
-    <v-divider class="my-8" />
+    <v-divider aria-hidden="true" role="presentation" class="my-8" />
 
     <h2 class="my-4" id="documentation">Le détail</h2>
     <v-card

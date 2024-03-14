@@ -22,7 +22,7 @@
                 class="mt-2 body-2"
               />
             </v-card-text>
-            <v-divider></v-divider>
+            <v-divider aria-hidden="true" role="presentation"></v-divider>
             <v-card-actions class="py-4 pl-6">
               <v-btn color="primary" @click="sendMgmtRequest">
                 <v-icon class="mr-2">mdi-key</v-icon>
@@ -97,7 +97,7 @@
               La cantine ne fera plus parti de celles fournies par votre établissement.
             </v-card-text>
 
-            <v-divider></v-divider>
+            <v-divider aria-hidden="true" role="presentation"></v-divider>
 
             <v-card-actions class="pa-4">
               <v-spacer></v-spacer>

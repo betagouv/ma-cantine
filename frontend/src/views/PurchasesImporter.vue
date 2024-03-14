@@ -88,7 +88,7 @@
         </v-alert>
       </div>
       <router-link :to="{ name: 'PurchasesHome' }" class="ma-4">← Retourner à mes achats</router-link>
-      <v-divider class="my-8"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" class="my-8"></v-divider>
     </div>
     <h2 class="my-6">Format du fichier</h2>
     <p>

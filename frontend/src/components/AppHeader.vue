@@ -100,7 +100,7 @@
             Voulez-vous vous déconnecter de votre compte ma cantine ?
           </v-card-text>
 
-          <v-divider></v-divider>
+          <v-divider aria-hidden="true" role="presentation"></v-divider>
 
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -115,7 +115,7 @@
       </v-dialog>
 
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
-        <v-divider style="position:absolute; top:0; width:100%;"></v-divider>
+        <v-divider aria-hidden="true" role="presentation" style="position:absolute; top:0; width:100%;"></v-divider>
         <v-tabs align-with-title id="header-tabs" active-class="stealth-active-tab" hide-slider>
           <div
             v-for="(navLink, index) in displayNavLinks"
@@ -150,7 +150,12 @@
                       <v-icon v-if="subItem.href" small color="rgb(22,22,22)">mdi-open-in-new</v-icon>
                     </v-list-item-title>
                   </v-list-item>
-                  <v-divider v-if="subIndex !== navLink.children.length - 1" class="mx-4"></v-divider>
+                  <v-divider
+                    aria-hidden="true"
+                    role="presentation"
+                    v-if="subIndex !== navLink.children.length - 1"
+                    class="mx-4"
+                  ></v-divider>
                 </div>
               </v-list>
             </v-menu>

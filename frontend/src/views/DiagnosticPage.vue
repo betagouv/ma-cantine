@@ -38,7 +38,7 @@
         </v-card-text>
       </v-card>
 
-      <v-divider class="mb-2"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" class="mb-2"></v-divider>
     </div>
 
     <v-row class="mb-4 mt-7">
