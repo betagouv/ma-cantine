@@ -118,7 +118,7 @@
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
-                  v-model="payload.sideLeftovers"
+                  v-model.number="payload.sideLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste de composantes (entrée, plat dessert...)"
@@ -202,7 +202,7 @@
                 </label>
                 <DsfrTextField
                   id="donationQuantity"
-                  v-model="payload.donationQuantity"
+                  v-model.number="payload.donationQuantity"
                   :rules="
                     payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []
                   "
@@ -221,7 +221,7 @@
                 </label>
                 <DsfrTextField
                   id="donationFoodType"
-                  v-model="payload.donationFoodType"
+                  v-model.number="payload.donationFoodType"
                   :readonly="!payload.hasDonationAgreement"
                   :disabled="!payload.hasDonationAgreement"
                 />
