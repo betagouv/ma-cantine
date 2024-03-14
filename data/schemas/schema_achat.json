@@ -67,7 +67,7 @@
       },
       "description": "Les caractéristiques de l'achat",
       "name": "caracteristiques",
-      "type": "array"
+      "type": "string"
     },
     {
       "description": "La définition de local si l'achat a la caractéristique de LOCAL",
@@ -80,5 +80,6 @@
       "name": "definition_local",
       "type": "string"
     }
-  ]
+  ],
+  "title": "Schema achat alimentaires pour la restauration collective"
 }
