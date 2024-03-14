@@ -34,9 +34,11 @@
             <span class="text-decoration-underline">{{ subMeasure.readMore ? "Moins" : "En savoir plus" }}</span>
           </v-btn>
 
-          <v-alert outlined color="blue-grey lighten-4" :value="subMeasure.readMore" transition="scroll-y-transition">
-            <KeyMeasureDescription class="measure-description grey--text text--darken-4" :measure="subMeasure" />
-          </v-alert>
+          <v-scroll-y-transition>
+            <v-card outlined flat v-if="subMeasure.readMore" class="pa-4">
+              <KeyMeasureDescription class="measure-description grey--text text--darken-4" :measure="subMeasure" />
+            </v-card>
+          </v-scroll-y-transition>
         </v-card-text>
       </v-card>
 
