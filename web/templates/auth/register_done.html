@@ -4,16 +4,16 @@
 {% load static %}
 
 {% block content %}
-<h2>Nous avons envoyé un email à votre adresse</h2>
-<div style="text-align: left;">
-  <p>Cliquez sur le lien pour activer votre compte.</p>
-  <p>Vérifiez votre dossier spam, vos courriers indésirables, ou tout autre dossier pour voir si le message a été filtré par votre fournisseur de messagerie. </p>
-</div>
-<hr aria-hidden="true" role="presentation" />
-<form method="post" action="{% url 'registration_email' %}">
-  {% csrf_token %}
-  <input type="hidden" name="username" value="{{ username }}">
-  <button type="submit">Renvoyer email de confirmation</button>
-</form>
-<a href="/"><button style="margin-top: 10px;">Accèder à Ma Cantine</button></a>
+    <h2>Nous avons envoyé un email à votre adresse</h2>
+    <div style="text-align: left;">
+        <p>Cliquez sur le lien pour activer votre compte.</p>
+        <p>Vérifiez votre dossier spam, vos courriers indésirables, ou tout autre dossier pour voir si le message a été filtré par votre fournisseur de messagerie. </p>
+    </div>
+    <hr aria-hidden="true" />
+    <form method="post" action="{% url 'registration_email' %}">
+        {% csrf_token %}
+        <input type="hidden" name="username" value="{{ username }}">
+        <button type="submit">Renvoyer email de confirmation</button>
+    </form>
+    <a href="/"><button style="margin-top: 10px;">Accèder à Ma Cantine</button></a>
 {% endblock %}
