@@ -47,6 +47,26 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.first().import_source, filehash_md5)
 
     @authenticate
+    def test_import_with_no_local_definition(self):
+        """
+        Tests that can import a file without local definition
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        with open("./api/tests/files/good_purchase_import_no_local_def.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 2)
+        purchase = Purchase.objects.filter(description="Pommes, rouges").first()
+        self.assertEqual(purchase.canteen.siret, "82399356058716")
+        self.assertEqual(purchase.description, "Pommes, rouges")
+        self.assertEqual(purchase.provider, "Le bon traiteur")
+        self.assertEqual(purchase.price_ht, Decimal("90.11"))
+        self.assertEqual(purchase.date, date(2022, 5, 2))
+        self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
+        self.assertEqual(purchase.characteristics, [Purchase.Characteristic.BIO])
+        self.assertEqual(purchase.local_definition, None)
+
+    @authenticate
     def test_import_purchases_different_separators(self):
         """
         Tests that can import a well formatted purchases file
@@ -150,13 +170,15 @@ class TestPurchaseImport(APITestCase):
         """
         Tests that the system will warn of duplicate file upload
         """
+        file_path = "./api/tests/files/good_purchase_import.csv"
+
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
-        with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 2)
 
-        with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()

@@ -6,8 +6,9 @@
     v-on="$listeners"
     @input="(v) => $emit('input', v)"
     previous-aria-label="Page précédente"
-    current-page-aria-label="Page actuelle"
+    current-page-aria-label="Page actuelle, page {0}"
     next-aria-label="Page suivante"
+    page-aria-label="Aller à la page {0}"
   ></v-pagination>
 </template>
 

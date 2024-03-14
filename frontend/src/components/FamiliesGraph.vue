@@ -4,7 +4,7 @@
       :options="chartOptions"
       :series="series"
       role="img"
-      aria-description="Répartition par famille de produit"
+      aria-label="Répartition par famille de produit"
       :height="this.height || 'auto'"
       :width="this.width || '100%'"
     />

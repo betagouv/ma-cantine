@@ -6,7 +6,7 @@
     </p>
     <ul id="about-labels">
       <li v-for="label in labels" class="label" :key="label.src">
-        <img :src="`/static/images/quality-labels/${label.src}`" :alt="label.title" :title="label.title" />
+        <img :src="`/static/images/quality-labels/${label.src}`" alt="" />
         {{ label.text }}
       </li>
       <li>
