@@ -37,7 +37,7 @@
             :ripple="false"
             class="dsfr d-flex flex-column fill-height"
           >
-            <v-card-title class="font-weight-bold">Gérer mes applications</v-card-title>
+            <v-card-title><h2 class="fr-h5 mb-1">Gérer mes applications</h2></v-card-title>
             <v-card-text>
               <p class="mb-0">Enregistrez vos applications pour obtenir l'accès à l'API avec Oauth2</p>
             </v-card-text>
@@ -56,7 +56,7 @@
             :ripple="false"
             class="dsfr d-flex flex-column fill-height"
           >
-            <v-card-title class="font-weight-bold">API</v-card-title>
+            <v-card-title><h2 class="fr-h5 mb-1">API</h2></v-card-title>
             <v-card-text><p class="mb-0">Consultez la documentation Swagger de notre API</p></v-card-text>
             <v-spacer></v-spacer>
             <v-card-actions class="px-4 py-4">

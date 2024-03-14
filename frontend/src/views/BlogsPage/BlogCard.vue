@@ -4,23 +4,29 @@
     outlined
     :to="{ name: 'BlogPage', params: { id: post.id } }"
   >
-    <v-card-title class="text-h6 font-weight-bold">{{ post.title }}</v-card-title>
+    <v-card-title class="d-flex flex-column-reverse align-start">
+      <component :is="hLevel" class="text-h6 font-weight-bold">{{ post.title }}</component>
+      <ul class="mb-2 d-flex flex-wrap" v-if="post.tags && post.tags.length > 0">
+        <li v-for="tag in post.tags" :key="tag">
+          <v-chip small :color="tagColor(tag)" class="mr-1">
+            <p class="mb-0">{{ tag }}</p>
+          </v-chip>
+        </li>
+      </ul>
+    </v-card-title>
     <v-card-subtitle class="pt-1">
-      {{
-        new Date(post.displayDate).toLocaleDateString("fr-FR", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      }}
+      <p class="mb-0">
+        {{
+          new Date(post.displayDate).toLocaleDateString("fr-FR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+        }}
+      </p>
     </v-card-subtitle>
     <v-card-text>
-      <div class="mb-2" v-if="post.tags && post.tags.length > 0">
-        <v-chip v-for="tag in post.tags" small :color="tagColor(tag)" :key="tag" class="mr-1">
-          <p class="mb-0">{{ tag }}</p>
-        </v-chip>
-      </div>
-      {{ post.tagline }}
+      <p class="mb-0">{{ post.tagline }}</p>
     </v-card-text>
     <v-spacer></v-spacer>
     <v-card-actions class="px-4 py-4">
@@ -38,6 +44,10 @@ export default {
       type: Object,
       required: true,
     },
+    headingLevel: {
+      type: String,
+      required: false,
+    },
   },
   methods: {
     tagColor(tag) {
@@ -53,5 +63,21 @@ export default {
       return colours[colourIndex]
     },
   },
+  computed: {
+    hLevel() {
+      return this.headingLevel || "h2"
+    },
+  },
 }
 </script>
+
+<style scoped>
+ul {
+  padding-left: 0;
+  list-style-type: none;
+}
+/* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
+li::before {
+  content: "\200B";
+}
+</style>

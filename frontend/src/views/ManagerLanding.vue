@@ -41,8 +41,10 @@
     </v-card>
     <v-card class="text-left mt-16 py-4" elevation="0" color="primary lighten-5">
       <v-col cols="12" sm="8" md="12" class="mx-auto">
-        <v-card-title class="text-h5 font-weight-black py-6">
-          Atteindre vos objectifs en 3 étapes
+        <v-card-title>
+          <h2 class="text-h5 font-weight-black">
+            Atteindre vos objectifs en 3 étapes
+          </h2>
         </v-card-title>
         <v-card-text>
           <v-row>

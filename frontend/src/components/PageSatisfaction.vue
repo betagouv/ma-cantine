@@ -17,8 +17,8 @@
 
     <v-dialog v-model="dialog" width="500">
       <v-card class="text-left pa-4">
-        <v-card-title class="font-weight-black">
-          Faire une suggestion
+        <v-card-title>
+          <h1 class="fr-h5 mb-2">Faire une suggestion</h1>
         </v-card-title>
 
         <v-card-text>

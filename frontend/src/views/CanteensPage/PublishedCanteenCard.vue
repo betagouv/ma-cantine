@@ -4,8 +4,10 @@
     outlined
     class="pa-4 text-left fill-height d-flex flex-column dsfr"
   >
-    <v-card-title class="font-weight-black pt-1">
-      {{ canteen.name }}
+    <v-card-title class="pt-1">
+      <h2 class="fr-h6 mb-1 font-weight-black">
+        {{ canteen.name }}
+      </h2>
     </v-card-title>
     <v-card-subtitle class="pb-4">
       <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" />

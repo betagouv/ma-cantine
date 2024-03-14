@@ -11,8 +11,10 @@
         </v-col>
       </v-row>
 
-      <v-card-title class="font-weight-bold">
-        {{ "Télédéclaration : " + canteenForTD.name }}
+      <v-card-title>
+        <h1 class="fr-h5 mb-2">
+          {{ "Télédéclaration : " + canteenForTD.name }}
+        </h1>
       </v-card-title>
       <v-card-text class="text-left pb-0">
         <p class="mb-0">Veuillez vérifier les données pour {{ diagnosticForTD.year }} ci-dessous.</p>

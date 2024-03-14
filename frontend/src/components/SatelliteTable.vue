@@ -10,7 +10,9 @@
       <template v-slot:top>
         <v-dialog v-model="joinDialog" max-width="800px">
           <v-card class="text-left">
-            <v-card-title>Rejoindre l'équipe de « {{ restrictedSatellite.name }} »</v-card-title>
+            <v-card-title>
+              <h1 class="fr-h5 mb-2">Rejoindre l'équipe de « {{ restrictedSatellite.name }} »</h1>
+            </v-card-title>
             <v-card-text>
               <p class="mb-0">
                 Vous n'êtes pas encore un membre de l'équipe de « {{ restrictedSatellite.name }} » alors vous devez

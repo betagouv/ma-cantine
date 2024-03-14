@@ -201,7 +201,9 @@
             </template>
 
             <v-card>
-              <v-card-title class="font-weight-bold">Voulez-vous vraiment supprimer cet achat ?</v-card-title>
+              <v-card-title>
+                <h1 class="fr-h6">Voulez-vous vraiment supprimer cet achat ?</h1>
+              </v-card-title>
 
               <v-divider aria-hidden="true" role="presentation"></v-divider>
 

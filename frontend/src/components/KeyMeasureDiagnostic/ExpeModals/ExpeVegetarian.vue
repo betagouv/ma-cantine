@@ -4,8 +4,10 @@
       <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
     </div>
     <v-card class="text-left" v-else-if="expe">
-      <v-card-title class="font-weight-black">
-        Vous êtes inscrit à l'expérimentation
+      <v-card-title>
+        <h1 class="fr-h5 mb-2">
+          Vous êtes inscrit à l'expérimentation
+        </h1>
       </v-card-title>
       <v-card-text>
         <p>

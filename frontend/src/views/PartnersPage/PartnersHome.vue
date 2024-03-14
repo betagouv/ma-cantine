@@ -13,18 +13,21 @@
         <v-img src="/static/images/peeps-illustration-couple.png" contain max-width="200"></v-img>
       </v-col>
     </v-row>
-    <p v-if="$vuetify.breakpoint.mdAndUp" class="font-weight-bold">Vos besoins</p>
+    <h2 class="d-sr-only">Les acteurs de l'éco-système</h2>
+    <p v-if="$vuetify.breakpoint.mdAndUp" class="text-body-1 font-weight-black">Vos besoins</p>
     <v-item-group v-if="$vuetify.breakpoint.mdAndUp" multiple v-model="filters.category.value">
-      <v-row>
+      <v-row class="mx-n1">
         <v-col v-for="category in categoryItems" cols="4" :key="category.value" class="pa-1" fill-height>
           <v-item v-slot="{ active, toggle }" :value="category.value">
             <button @click="toggle" style="width: inherit;" class="fill-height">
               <v-card :color="active ? 'primary lighten-4' : ''" outlined class="fill-height">
-                <v-card-title class="text-body-2 d-block text-left">
-                  <v-icon small class="mr-2" :color="active ? 'primary' : ''">
-                    {{ category.icon }}
-                  </v-icon>
-                  {{ category.text }}
+                <v-card-title class="d-block text-left">
+                  <p class="text-body-2 mb-0 d-flex align-center">
+                    <v-icon small class="mr-2" :color="active ? 'primary' : ''">
+                      {{ category.icon }}
+                    </v-icon>
+                    {{ category.text }}
+                  </p>
                 </v-card-title>
               </v-card>
             </button>
@@ -34,9 +37,9 @@
     </v-item-group>
     <div class="d-flex align-center mt-8 pl-0">
       <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">
-        <h2 class="text-body-1 font-weight-black" style="background-color: #fff; width: max-content">
-          Filtres
-        </h2>
+        <p class="text-body-1 font-weight-black mb-0" style="background-color: #fff; width: max-content">
+          Autres filtres
+        </p>
       </v-badge>
       <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1 py-4 py-sm-0">
         <v-icon small>mdi-filter-outline</v-icon>

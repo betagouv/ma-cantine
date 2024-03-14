@@ -4,10 +4,10 @@
     <v-row class="mb-12">
       <v-spacer></v-spacer>
       <v-col cols="12" sm="8" md="6">
-        <h2 class="text-body-1 text-center">
+        <p class="text-body-1 text-center mb-0">
           Évaluez-vous sur les mesures déjà mises en place dans votre établissement, programmées ou celles restantes à
           faire.
-        </h2>
+        </p>
       </v-col>
       <v-spacer></v-spacer>
     </v-row>
@@ -15,7 +15,9 @@
     <div v-for="measure in keyMeasures" :key="`measure: ${measure.id}`">
       <v-card elevation="0" class="mb-8">
         <v-card-title class="font-weight-bold d-flex">
-          <KeyMeasureTitle class="flex-shrink-1" :measure="measure" />
+          <h2 class="fr-h6 mb-0">
+            <KeyMeasureTitle class="flex-shrink-1" :measure="measure" />
+          </h2>
           <v-spacer></v-spacer>
           <v-btn outlined :color="measure.isEvaluated ? 'green' : 'primary'" @click="showDiagnosticModal(measure)">
             <span class="mx-2">

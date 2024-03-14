@@ -7,8 +7,8 @@
     </template>
 
     <v-card class="text-left">
-      <v-card-title class="font-weight-bold">
-        Voulez-vous enlever {{ manager.email }} de la liste de gestionnaires ?
+      <v-card-title>
+        <h1 class="fr-h5 mb-2">Voulez-vous enlever {{ manager.email }} de la liste de gestionnaires ?</h1>
       </v-card-title>
 
       <v-card-text>

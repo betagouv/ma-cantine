@@ -5,10 +5,12 @@
       Cuisine centrale
     </div>
     <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160" max-height="160"></v-img>
-    <v-card-title class="font-weight-bold">{{ canteen.name }}</v-card-title>
+    <v-card-title>
+      <h3 class="fr-h6 font-weight-bold mb-1">{{ canteen.name }}</h3>
+    </v-card-title>
     <v-card-subtitle class="py-1">
       <v-chip v-if="teledeclarationIsActive" small :color="teledeclarationStatus.color" label class="mr-1">
-        {{ teledeclarationStatus.text }}
+        <p class="mb-0">{{ teledeclarationStatus.text }}</p>
       </v-chip>
       <v-chip
         small
@@ -16,7 +18,7 @@
         label
         v-if="this.canteen.publicationStatus === 'published' || this.canteen.productionType === 'central_serving'"
       >
-        {{ publicationStatus.text }}
+        <p class="mb-0">{{ publicationStatus.text }}</p>
       </v-chip>
     </v-card-subtitle>
     <v-card-subtitle class="mt-0 pb-0">

@@ -6,8 +6,10 @@
     </template>
 
     <v-card class="text-left">
-      <v-card-title class="font-weight-bold">
-        Voulez-vous vraiment annuler votre télédéclaration pour l'année {{ diagnostic.year }} ?
+      <v-card-title>
+        <h1 class="fr-h5 mb-2">
+          Voulez-vous vraiment annuler votre télédéclaration pour l'année {{ diagnostic.year }} ?
+        </h1>
       </v-card-title>
 
       <v-card-text>

@@ -97,8 +97,10 @@
                       mdi-chart-line
                     </v-icon>
                   </div>
-                  <v-card-title class="text-h6">
-                    Quels achats rentrent dans ce champ ?
+                  <v-card-title>
+                    <h1 class="fr-h6 mb-0">
+                      Quels achats rentrent dans ce champ ?
+                    </h1>
                   </v-card-title>
                   <v-spacer></v-spacer>
                   <v-btn color="primary" outlined @click="valueExternalityPerformanceHtDialog = false">

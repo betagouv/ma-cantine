@@ -160,7 +160,9 @@
       />
       <v-dialog v-model="showPublicationForm" max-width="750" v-if="canteenForPublication">
         <v-card class="text-left">
-          <v-card-title class="font-weight-bold">Publication : {{ canteenForPublication.name }}</v-card-title>
+          <v-card-title>
+            <h1 class="fr-h5 mt-2 mb-0">Publication : {{ canteenForPublication.name }}</h1>
+          </v-card-title>
           <v-card-text class="mt-2">
             <p>
               Les publications sont affichées dans
