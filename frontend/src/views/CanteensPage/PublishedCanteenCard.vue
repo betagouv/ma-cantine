@@ -12,8 +12,10 @@
     <v-card-subtitle class="pb-4">
       <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" />
       <div v-if="isCentralKitchen" class="tag body-2 font-weight-medium mt-2">
-        <v-icon class="mt-n1" small>$community-fill</v-icon>
-        Cuisine centrale
+        <p class="d-flex align-center mb-0">
+          <v-icon class="mr-1" small>$community-fill</v-icon>
+          Cuisine centrale
+        </p>
       </div>
     </v-card-subtitle>
     <v-spacer></v-spacer>
