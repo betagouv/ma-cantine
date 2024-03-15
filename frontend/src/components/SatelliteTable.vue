@@ -80,41 +80,38 @@
         </router-link>
       </template>
       <template v-slot:[`item.unlink`]="{ item }" v-if="allowUnlinking">
-        <v-dialog v-model="unlinkConfirmationOpen" width="500">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn plain class="text-decoration-underline" v-bind="attrs" v-on="on" @click="unlinkItem = item">
-              <v-icon small class="mr-1 mb-n1">$close-line</v-icon>
-              Enlever
-            </v-btn>
-          </template>
-
-          <v-card class="text-left">
-            <v-card-title class="font-weight-bold">
-              Voulez-vous vraiment enlever cette cantine de vos satellites ?
-            </v-card-title>
-
-            <v-card-text>
-              La cantine « {{ unlinkItem.name }} » ne fera plus parti de celles fournies par votre établissement.
-            </v-card-text>
-
-            <v-divider></v-divider>
-
-            <v-card-actions class="pa-4">
-              <v-spacer></v-spacer>
-              <v-btn outlined text @click="unlinkConfirmationOpen = false" class="mr-2">
-                Non, revenir en arrière
-              </v-btn>
-              <v-btn outlined color="red darken-2" text @click="unlinkSatellite(unlinkItem.id)">
-                Oui, enlever la cantine
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+        <v-btn plain class="text-decoration-underline" @click="unlinkConfirmation(item)">
+          <v-icon small class="mr-1 mb-n1">$close-line</v-icon>
+          Enlever
+        </v-btn>
       </template>
       <template v-slot:[`no-data`]>
         Vous n'avez pas renseigné des satellites
       </template>
     </v-data-table>
+    <v-dialog v-model="unlinkConfirmationOpen" width="500">
+      <v-card class="text-left" v-if="unlinkItem">
+        <v-card-title class="font-weight-bold">
+          Voulez-vous vraiment enlever cette cantine de vos satellites ?
+        </v-card-title>
+
+        <v-card-text>
+          La cantine « {{ unlinkItem.name }} » ne fera plus parti de celles fournies par votre établissement.
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions class="pa-4">
+          <v-spacer></v-spacer>
+          <v-btn outlined text @click="unlinkConfirmationOpen = false" class="mr-2">
+            Non, revenir en arrière
+          </v-btn>
+          <v-btn outlined color="red darken-2" text @click="unlinkSatellite(unlinkItem.id)">
+            Oui, enlever la cantine
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -311,6 +308,10 @@ export default {
           this.joinDialog = false
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
+    },
+    unlinkConfirmation(item) {
+      this.unlinkItem = item
+      this.unlinkConfirmationOpen = true
     },
     unlinkSatellite(satelliteId) {
       const headers = {
