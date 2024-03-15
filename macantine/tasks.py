@@ -238,7 +238,7 @@ def _fill_from_api_response(response, canteens):
             update_change_reason(canteen, "Données de localisation MAJ par script")
 
 
-def _fill_from_api_response_using_siret(canteen, response):
+def _update_canteen_geo_data(canteen, response):
     try:
         if "city_insee_code" in response.keys():
             canteen = Canteen.objects.filter(id=canteen.id).first()
@@ -307,7 +307,7 @@ def fill_missing_geolocation_data_using_siret():
         try:
             response = get_geo_data(canteen.siret, token)
             if response:
-                _fill_from_api_response_using_siret(canteen, response)
+                _update_canteen_geo_data(canteen, response)
 
         except requests.exceptions.HTTPError as e:
             logger.info(f"Geolocation Bot error: HTTPError\n{e}")
