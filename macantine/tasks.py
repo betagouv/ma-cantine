@@ -283,7 +283,7 @@ def get_geo_data(canteen_siret, token):
                 canteen["city"] = siret_response["etablissement"]["adresseEtablissement"][
                     "libelleCommuneEtablissement"
                 ]
-                canteen["department"] = str(canteen["postal_code"])[0:2]
+                canteen["department"] = str(canteen["city_insee_code"])[0:2]
                 return canteen
             except KeyError as e:
                 logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
