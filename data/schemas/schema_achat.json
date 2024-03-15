@@ -67,7 +67,7 @@
       },
       "description": "Les caractéristiques de l'achat",
       "name": "caracteristiques",
-      "type": "string"
+      "type": "array"
     },
     {
       "description": "La définition de local si l'achat a la caractéristique de LOCAL",
