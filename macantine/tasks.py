@@ -241,7 +241,6 @@ def _fill_from_api_response(response, canteens):
 def _update_canteen_geo_data(canteen, response):
     try:
         if "city_insee_code" in response.keys():
-            canteen = Canteen.objects.filter(id=canteen.id).first()
             canteen.city_insee_code = response["city_insee_code"]
             canteen.postal_code = response["postal_code"]
             canteen.city = response["city"]
