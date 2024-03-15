@@ -3,6 +3,7 @@ import datetime
 import requests
 import csv
 import os
+from api.views.utils import update_change_reason
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
@@ -16,7 +17,6 @@ import time
 from common.utils import get_siret_token
 from .celery import app
 from .extract_open_data import ETL_TD, ETL_CANTEEN
-
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 
@@ -190,7 +190,12 @@ def _request_location_api(location_csv_string):
         data={
             "postcode": "postcode",
             "citycode": "citycode",
-            "result_columns": ["result_citycode", "result_postcode", "result_city", "result_context"],
+            "result_columns": [
+                "result_citycode",
+                "result_postcode",
+                "result_city",
+                "result_context",
+            ],
         },
         timeout=60,
     )
@@ -230,6 +235,8 @@ def _fill_from_api_response(response, canteens):
             canteen.city = row[5]
             canteen.department = row[6].split(",")[0]
             canteen.save()
+            update_change_reason(canteen, "Données de localisation MAJ par script")
+            print("yo")
 
 
 def _fill_from_api_response_using_siret(canteen, response):
@@ -241,6 +248,7 @@ def _fill_from_api_response_using_siret(canteen, response):
             canteen.city = response["city"]
             canteen.department = response["department"]
             canteen.save()
+            update_change_reason(canteen, "Données de localisation MAJ par script, via SIRET")
             logger.info(f"Canteen info has been updated. Canteen name : f{canteen.name}")
     except Exception as e:
         logger.error(f"Unable to update canteen info for canteen : f{canteen.name}")
@@ -356,7 +364,10 @@ def delete_old_historical_records():
 @app.task()
 def export_datasets():
     logger.info("Starting datasets extractions")
-    datasets = {"campagne teledeclaration 2021": ETL_TD(2021), "cantines": ETL_CANTEEN()}
+    datasets = {
+        "campagne teledeclaration 2021": ETL_TD(2021),
+        "cantines": ETL_CANTEEN(),
+    }
     for key, etl in datasets.items():
         logger.info(f"Starting {key} dataset extraction")
         etl.extract_dataset()
