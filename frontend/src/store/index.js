@@ -51,11 +51,7 @@ export default new Vuex.Store({
     videoTutorials: [],
     partnerTypes: [],
 
-    notification: {
-      message: "",
-      status: null,
-      title: "",
-    },
+    notifications: [],
 
     showWebinaireBanner: false,
   },
@@ -108,12 +104,10 @@ export default new Vuex.Store({
     SET_INITIAL_DATA_LOADED(state) {
       state.initialDataLoaded = true
     },
-    SET_NOTIFICATION(state, { message, title, status, undoAction, undoMessage }) {
-      state.notification.message = message
-      state.notification.title = title
-      state.notification.status = status
-      state.notification.undoAction = undoAction
-      state.notification.undoMessage = undoMessage
+    SET_NOTIFICATION(state, notification) {
+      // a notification consists of: message, title, status, undoAction, undoMessage
+      notification.id = Math.floor(Math.random() * 10000) // generate random 5 digit id
+      state.notifications.push(notification)
     },
     ADD_CANTEEN(state, canteen) {
       state.userCanteenPreviews.push({
@@ -129,16 +123,12 @@ export default new Vuex.Store({
       const index = state.userCanteenPreviews.findIndex((x) => x.id === id)
       state.userCanteenPreviews.splice(index, 1)
     },
-    REMOVE_NOTIFICATION(state, message) {
-      if (message && state.notification.message !== message) {
-        // in case there was another notification in between, do not remove it
-        return
-      }
-      state.notification.message = null
-      state.notification.status = null
-      state.notification.title = null
-      state.notification.undoAction = null
-      state.notification.undoMessage = null
+    REMOVE_NOTIFICATION(state, notification) {
+      const idx = state.notifications.indexOf(notification)
+      if (idx > -1) state.notifications.splice(idx, 1)
+    },
+    REMOVE_NOTIFICATIONS(state) {
+      state.notifications = []
     },
     SET_UPCOMING_COMMUNITY_EVENTS(state, events) {
       state.upcomingCommunityEvents = events
@@ -506,6 +496,7 @@ export default new Vuex.Store({
     notify(context, { title, message, status, undoAction, undoMessage }) {
       context.commit("SET_NOTIFICATION", { title, message, status, undoAction, undoMessage })
       // TODO: figure out how to handle multiple notifications
+      // TODO: maybe a successful notify can clear existing error notifies. Or at least in the case of form errors
     },
     notifyRequiredFieldsError(context) {
       const title = null
@@ -522,8 +513,11 @@ export default new Vuex.Store({
       const status = "error"
       context.dispatch("notify", { title, message, status })
     },
-    removeNotification(context) {
-      context.commit("REMOVE_NOTIFICATION")
+    removeNotification(context, notification) {
+      context.commit("REMOVE_NOTIFICATION", notification)
+    },
+    removeNotifications(context) {
+      context.commit("REMOVE_NOTIFICATIONS")
     },
 
     submitTeledeclaration(context, { id }) {

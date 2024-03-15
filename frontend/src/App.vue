@@ -17,7 +17,14 @@
       </v-main>
 
       <AppFooter v-if="!isWidget && !fullscreen" />
-      <NotificationSnackbar v-if="!isWidget" />
+      <div v-if="!isWidget">
+        <NotificationSnackbar
+          v-for="(notification, idx) in notifications"
+          :key="notification.id"
+          :notification="notification"
+          :idx="idx"
+        />
+      </div>
     </v-app>
   </div>
 </template>
@@ -56,6 +63,9 @@ export default {
       if (this.isWidget) return "ma-4 mt-0 constrained"
       if (this.fullscreen) return ""
       return "mx-auto constrained"
+    },
+    notifications() {
+      return this.$store.state.notifications
     },
   },
   mounted() {
