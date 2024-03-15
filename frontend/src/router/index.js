@@ -618,6 +618,7 @@ function chooseAuthorisedRoute(to, from, next) {
 }
 
 router.beforeEach((to, from, next) => {
+  store.dispatch("removeNotification")
   chooseAuthorisedRoute(to, from, next)
 })
 
