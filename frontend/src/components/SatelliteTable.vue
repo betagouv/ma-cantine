@@ -82,7 +82,7 @@
       <template v-slot:[`item.unlink`]="{ item }" v-if="allowUnlinking">
         <v-dialog v-model="unlinkConfirmationOpen" width="500">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn plain class="text-decoration-underline" v-bind="attrs" v-on="on">
+            <v-btn plain class="text-decoration-underline" v-bind="attrs" v-on="on" @click="unlinkItem = item">
               <v-icon small class="mr-1 mb-n1">$close-line</v-icon>
               Enlever
             </v-btn>
@@ -94,7 +94,7 @@
             </v-card-title>
 
             <v-card-text>
-              La cantine ne fera plus parti de celles fournies par votre établissement.
+              La cantine « {{ unlinkItem.name }} » ne fera plus parti de celles fournies par votre établissement.
             </v-card-text>
 
             <v-divider></v-divider>
@@ -104,7 +104,7 @@
               <v-btn outlined text @click="unlinkConfirmationOpen = false" class="mr-2">
                 Non, revenir en arrière
               </v-btn>
-              <v-btn outlined color="red darken-2" text @click="unlinkSatellite(item.id)">
+              <v-btn outlined color="red darken-2" text @click="unlinkSatellite(unlinkItem.id)">
                 Oui, enlever la cantine
               </v-btn>
             </v-card-actions>
@@ -198,6 +198,7 @@ export default {
       user: this.$store.state.loggedUser,
       messageJoinCanteen: null,
       unlinkConfirmationOpen: false,
+      unlinkItem: undefined,
     }
   },
   computed: {
