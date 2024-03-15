@@ -17,7 +17,11 @@ class TestGeolocationBot(TestCase):
         sector = SectorFactory.create()
         for i in range(130):
             CanteenFactory.create(
-                city=None, geolocation_bot_attempts=0, postal_code="69003", managers=[manager], sectors=[sector]
+                city=None,
+                geolocation_bot_attempts=0,
+                postal_code="69003",
+                managers=[manager],
+                sectors=[sector],
             )
 
         address_api_text = "id,citycode,postcode,result_citycode,result_postcode,result_city,result_context\n"
@@ -60,10 +64,25 @@ class TestGeolocationBot(TestCase):
         ]
         _ = [
             CanteenFactory.create(city=None, geolocation_bot_attempts=10, postal_code="69003"),
-            CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69", city_insee_code=None),
-            CanteenFactory.create(city=None, geolocation_bot_attempts=0, city_insee_code="6009", postal_code=None),
+            CanteenFactory.create(
+                city=None,
+                geolocation_bot_attempts=0,
+                postal_code="69",
+                city_insee_code=None,
+            ),
+            CanteenFactory.create(
+                city=None,
+                geolocation_bot_attempts=0,
+                city_insee_code="6009",
+                postal_code=None,
+            ),
             CanteenFactory.create(department="69", city="Lyon", geolocation_bot_attempts=4),
-            CanteenFactory.create(department=None, geolocation_bot_attempts=1, city_insee_code=None, postal_code=None),
+            CanteenFactory.create(
+                department=None,
+                geolocation_bot_attempts=1,
+                city_insee_code=None,
+                postal_code=None,
+            ),
         ]
         result = list(tasks._get_candidate_canteens())
         self.assertEqual(len(result), 3)
@@ -98,7 +117,7 @@ class TestGeolocationWithSiretBot(TestCase):
             CanteenFactory.create(city_insee_code=29890),
             CanteenFactory.create(city_insee_code=None, siret=None),
         ]
-        result = list(tasks._get_candidate_canteens_for_siret())
+        result = list(tasks._get_candidate_canteens_for_geobot())
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].id, candidate_canteen.id)
 
@@ -110,7 +129,10 @@ class TestGeolocationWithSiretBot(TestCase):
         token = "Fake token"
         candidate_canteen = CanteenFactory.create(city_insee_code=None, siret=siret_canteen)
         # Call the service to hit the mocked API.
-        mock.post("https://api.insee.fr/token", json={"token_type": "bearer", "access_token": "token"})
+        mock.post(
+            "https://api.insee.fr/token",
+            json={"token_type": "bearer", "access_token": "token"},
+        )
         mock.get(
             self.api_url + siret_canteen,
             headers={"Authorization": f"Bearer {token}"},
@@ -139,7 +161,10 @@ class TestGeolocationWithSiretBot(TestCase):
         token = "Fake token"
         siret_canteen = "89394682276911"
         canteen = CanteenFactory.create(city_insee_code=None, siret=siret_canteen)
-        mock.post("https://api.insee.fr/token", json={"token_type": "bearer", "access_token": "token"})
+        mock.post(
+            "https://api.insee.fr/token",
+            json={"token_type": "bearer", "access_token": "token"},
+        )
         mock.get(
             self.api_url + siret_canteen,
             headers={"Authorization": f"Bearer {token}"},

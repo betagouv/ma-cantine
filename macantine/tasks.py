@@ -215,7 +215,7 @@ def _get_candidate_canteens():
     return candidate_canteens
 
 
-def _get_candidate_canteens_for_siret():
+def _get_candidate_canteens_for_geobot():
     return Canteen.objects.filter(city_insee_code__isnull=True, siret__isnull=False).order_by("creation_date")
 
 
@@ -295,7 +295,7 @@ def get_geo_data(canteen_siret, token):
 
 @app.task()
 def fill_missing_geolocation_data_using_siret():
-    candidate_canteens = _get_candidate_canteens_for_siret()
+    candidate_canteens = _get_candidate_canteens_for_geobot()
     token = get_siret_token()
 
     if len(candidate_canteens) == 0:
