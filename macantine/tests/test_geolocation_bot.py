@@ -93,18 +93,14 @@ class TestGeolocationWithSiretBot(TestCase):
         """
         Only canteens with no city_insee_code and with a SIRET
         """
-        candidate_canteens = [
-            CanteenFactory.create(city_insee_code=None, siret="89394682276911"),
-        ]
+        candidate_canteen = CanteenFactory.create(city_insee_code=None, siret="89394682276911")
         _ = [
             CanteenFactory.create(city_insee_code=29890),
             CanteenFactory.create(city_insee_code=None, siret=None),
         ]
         result = list(tasks._get_candidate_canteens_for_siret())
         self.assertEqual(len(result), 1)
-        for canteen in candidate_canteens:
-            match = list(filter(lambda x: x.id == canteen.id, result))
-            self.assertEqual(len(match), 1)
+        self.assertEqual(result[0].id, candidate_canteen.id)
 
     def test_get_geo_data(self, mock):
         """
