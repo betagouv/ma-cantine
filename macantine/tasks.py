@@ -263,7 +263,6 @@ def get_geo_data(canteen_siret, token):
         if int(redis.get(redis_key)) > 30:
             logger.warning("Siret lookup exceding API rate. Waiting 1 minute")
             time.sleep(60)
-            return
 
         siret_response = requests.get(
             f"https://api.insee.fr/entreprises/sirene/V3/siret/{canteen_siret}",
