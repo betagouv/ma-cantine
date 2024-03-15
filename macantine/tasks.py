@@ -216,7 +216,7 @@ def _get_candidate_canteens():
 
 
 def _get_candidate_canteens_for_siret():
-    return Canteen.objects.filter(Q(city_insee_code__isnull=True) & Q(siret__isnull=False)).order_by("creation_date")
+    return Canteen.objects.filter(city_insee_code__isnull=True, siret__isnull=False).order_by("creation_date")
 
 
 def _fill_from_api_response(response, canteens):
@@ -236,7 +236,6 @@ def _fill_from_api_response(response, canteens):
             canteen.department = row[6].split(",")[0]
             canteen.save()
             update_change_reason(canteen, "Données de localisation MAJ par script")
-            print("yo")
 
 
 def _fill_from_api_response_using_siret(canteen, response):
