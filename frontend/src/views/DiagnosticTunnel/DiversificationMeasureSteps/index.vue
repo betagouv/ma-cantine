@@ -194,7 +194,7 @@ export default {
     },
     onTunnelAutofill(e) {
       this.$set(this, "payload", e.payload)
-      this.$emit("tunnel-autofill", { payload: this.payload })
+      this.$emit("tunnel-autofill", e)
     },
   },
   mounted() {

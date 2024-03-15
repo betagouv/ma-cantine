@@ -372,6 +372,11 @@ export default {
       return this.saveDiagnostic()
         .then(this.$nextTick)
         .then(() => this.$router.push({ query: { étape: synthesisStep.urlSlug } }))
+        .then(() => {
+          if (e.message) {
+            this.$store.dispatch("notify", e.message)
+          }
+        })
     },
     stepLink(step) {
       return { query: { étape: step.urlSlug } }
