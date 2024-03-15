@@ -112,6 +112,7 @@ class TestGeolocationWithSiretBot(TestCase):
         token = "Fake token"
         candidate_canteen = CanteenFactory.create(city_insee_code=None, siret=siret_canteen)
         # Call the service to hit the mocked API.
+        mock.post("https://api.insee.fr/token", json={"token_type": "bearer", "access_token": "token"})
         mock.get(
             self.api_url + siret_canteen,
             headers={"Authorization": f"Bearer {token}"},
@@ -141,6 +142,7 @@ class TestGeolocationWithSiretBot(TestCase):
         token = "Fake token"
         siret_canteen = "89394682276911"
         canteen = CanteenFactory.create(city_insee_code=None, siret=siret_canteen)
+        mock.post("https://api.insee.fr/token", json={"token_type": "bearer", "access_token": "token"})
         mock.get(
             self.api_url + siret_canteen,
             headers={"Authorization": f"Bearer {token}"},
