@@ -273,7 +273,6 @@ def get_geo_data(canteen_siret, token):
         if siret_response.ok:
             siret_response = siret_response.json()
             try:
-                canteen["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
                 canteen["city_insee_code"] = siret_response["etablissement"]["adresseEtablissement"][
                     "codeCommuneEtablissement"
                 ]
