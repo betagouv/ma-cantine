@@ -292,9 +292,10 @@ def get_geo_data(canteen_siret, token):
 def fill_missing_geolocation_data_using_siret():
     candidate_canteens = _get_candidate_canteens_for_siret()
     token = get_siret_token()
-    # Carry out the CSV
+
     if len(candidate_canteens) == 0:
-        return 0
+        logger.info("No candidate canteens have been found. Nothing to do here...")
+        return
     for canteen in candidate_canteens:
         try:
             response = get_geo_data(canteen.siret, token)
