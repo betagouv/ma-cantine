@@ -104,9 +104,7 @@ class TestGeolocationWithSiretBot(TestCase):
 
     def test_get_geo_data(self, mock):
         """
-        Only canteens with either postal code or INSEE code
-        that have not been queried more than ten times
-        are considered candidates
+        Should retrieve geo info for a canteen that have a SIRET
         """
         siret_canteen = "89394682276911"
         token = "Fake token"
