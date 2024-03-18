@@ -195,7 +195,7 @@ export default {
       user: this.$store.state.loggedUser,
       messageJoinCanteen: null,
       unlinkConfirmationOpen: false,
-      unlinkItem: undefined,
+      unlinkItem: null,
     }
   },
   computed: {
