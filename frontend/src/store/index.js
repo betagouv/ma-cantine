@@ -873,6 +873,17 @@ export default new Vuex.Store({
           throw e
         })
     },
+
+    logout(context) {
+      return fetch("/se-deconnecter", { method: "POST", headers })
+        .then(verifyResponse)
+        .then(() => {
+          return context.dispatch("fetchInitialData")
+        })
+        .catch((e) => {
+          throw e
+        })
+    },
   },
 
   getters: {
