@@ -8,44 +8,34 @@
         @tunnel-autofill="onTunnelAutofill"
         class="mb-xs-6 mb-xl-16"
       />
-      <fieldset>
-        <legend class="my-3">
-          J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire
-        </legend>
-        <v-radio-group class="my-0" v-model="payload.hasWasteDiagnostic" hide-details>
-          <v-radio
-            v-for="item in boolOptions"
-            :key="`hasWasteDiagnostic-${item.value}`"
-            :label="item.label"
-            :value="item.value"
-          ></v-radio>
-        </v-radio-group>
-      </fieldset>
-      <fieldset class="mt-8" :disabled="!payload.hasWasteDiagnostic">
-        <legend class="mb-3">J’ai mis en place un plan d’action adapté au diagnostic réalisé</legend>
-        <v-radio-group class="my-0" v-model="payload.hasWastePlan" hide-details>
-          <v-radio
-            v-for="item in boolOptions"
-            :key="`hasWastePlan-${item.value}`"
-            :label="item.label"
-            :value="item.value"
-            :disabled="!payload.hasWasteDiagnostic"
-            :readonly="!payload.hasWasteDiagnostic"
-          ></v-radio>
-        </v-radio-group>
-      </fieldset>
+      <DsfrRadio
+        v-model="payload.hasWasteDiagnostic"
+        label="J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire"
+        yesNo
+        optional
+        hide-details
+      />
+      <DsfrRadio
+        v-model="payload.hasWastePlan"
+        label="J’ai mis en place un plan d’action adapté au diagnostic réalisé"
+        yesNo
+        optional
+        hide-details
+        :disabled="!payload.hasWasteDiagnostic"
+        :readonly="!payload.hasWasteDiagnostic"
+        class="mt-8"
+      />
     </div>
     <div v-else-if="stepUrlSlug === 'mesure-gaspillage'">
       <v-row>
         <v-col cols="12" sm="6">
-          <fieldset>
-            <legend class="my-3">
-              J’ai réalisé des mesures de mon gaspillage alimentaire
-            </legend>
-            <v-radio-group class="my-0" v-model="payload.hasWasteMeasures" hide-details>
-              <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-            </v-radio-group>
-          </fieldset>
+          <DsfrRadio
+            v-model="payload.hasWasteMeasures"
+            label="J’ai réalisé des mesures de mon gaspillage alimentaire"
+            yesNo
+            optional
+            hide-details
+          />
         </v-col>
         <v-col cols="12" sm="6">
           <fieldset :disabled="!payload.hasWasteMeasures">
@@ -158,14 +148,13 @@
     <div v-else-if="stepUrlSlug === 'dons-alimentaires'">
       <v-row>
         <v-col cols="12" sm="6">
-          <fieldset>
-            <legend class="my-3">
-              Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire
-            </legend>
-            <v-radio-group class="my-0" v-model="payload.hasDonationAgreement" hide-details>
-              <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-            </v-radio-group>
-          </fieldset>
+          <DsfrRadio
+            v-model="payload.hasDonationAgreement"
+            label="Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire"
+            yesNo
+            optional
+            hide-details
+          />
         </v-col>
         <v-col cols="12" sm="6">
           <fieldset :disabled="!payload.hasDonationAgreement">
@@ -301,6 +290,7 @@ import validators from "@/validators"
 import LastYearAutofillOption from "../LastYearAutofillOption"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
+import DsfrRadio from "@/components/DsfrRadio"
 import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
 import Constants from "@/constants"
 
@@ -323,6 +313,7 @@ export default {
     LastYearAutofillOption,
     DsfrTextField,
     DsfrTextarea,
+    DsfrRadio,
     ExpeReservation,
   },
   data() {
@@ -365,16 +356,6 @@ export default {
       otherActionEnabled: !!this.diagnostic.otherWasteAction,
       wasteActions: Constants.WasteActions,
       steps,
-      boolOptions: [
-        {
-          label: "Oui",
-          value: true,
-        },
-        {
-          label: "Non",
-          value: false,
-        },
-      ],
       payload: {},
       fields: [
         "hasWasteDiagnostic",
