@@ -134,16 +134,6 @@ export default {
           urlSlug: "complet",
         },
       ],
-      boolOptions: [
-        {
-          label: "Oui",
-          value: true,
-        },
-        {
-          label: "Non",
-          value: false,
-        },
-      ],
       payload: {},
       fields: [
         "communicatesOnFoodQuality",
