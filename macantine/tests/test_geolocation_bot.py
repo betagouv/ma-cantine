@@ -188,4 +188,3 @@ class TestGeolocationWithSiretBot(TestCase):
         canteen.refresh_from_db()
         self.assertEqual(canteen.city_insee_code, "29352")
         self.assertEqual(canteen.postal_code, "29890")
-        self.assertEqual(canteen.department, "29")

@@ -244,7 +244,6 @@ def _update_canteen_geo_data(canteen, response):
             canteen.city_insee_code = response["city_insee_code"]
             canteen.postal_code = response["postal_code"]
             canteen.city = response["city"]
-            canteen.department = response["department"]
             canteen.save()
             update_change_reason(canteen, "Données de localisation MAJ par script, via SIRET")
             logger.info(f"Canteen info has been updated. Canteen name : f{canteen.name}")
@@ -281,7 +280,6 @@ def get_geo_data(canteen_siret, token):
                 canteen["city"] = siret_response["etablissement"]["adresseEtablissement"][
                     "libelleCommuneEtablissement"
                 ]
-                canteen["department"] = str(canteen["city_insee_code"])[0:2]
                 return canteen
             except KeyError as e:
                 logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
