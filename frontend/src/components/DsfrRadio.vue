@@ -8,7 +8,7 @@
     </template>
     <v-row v-if="optionsRow">
       <v-col v-for="item in items" :key="item.value">
-        <v-radio :label="item.label || item.text" :value="item.value"></v-radio>
+        <v-radio :label="item.label || item.text" :value="item.value" :class="optionClasses"></v-radio>
       </v-col>
     </v-row>
     <v-radio
@@ -17,6 +17,7 @@
       :key="item.value"
       :label="item.label || item.text"
       :value="item.value"
+      :class="optionClasses"
     ></v-radio>
 
     <!-- For RGAA 8.9 error messages should also be in p tags, by default in vuetify 2 they're in divs -->
@@ -34,6 +35,11 @@ export default {
       type: String,
       required: false,
       default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
+    },
+    optionClasses: {
+      type: String,
+      required: false,
+      default: "",
     },
     optional: {
       type: Boolean,
