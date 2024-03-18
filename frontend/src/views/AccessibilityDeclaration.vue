@@ -227,7 +227,7 @@
         href="https://github.com/betagouv/ma-cantine/issues?q=is%3Aissue+is%3Aopen+label%3Aa11y"
         target="_blank"
         rel="noopener external"
-        title="GitHub issus - ouvre une nouvelle fenêtre"
+        title="GitHub issues - ouvre une nouvelle fenêtre"
       >
         GitHub
         <v-icon small color="grey darken-4">mdi-open-in-new</v-icon>
