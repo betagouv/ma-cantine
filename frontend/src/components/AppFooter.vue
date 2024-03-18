@@ -1,5 +1,5 @@
 <template>
-  <v-footer id="pied-de-page" color="white" app :absolute="!showSmallFooter" height="280">
+  <v-footer id="pied-de-page" color="white" app :absolute="!showSmallFooter" height="280" role="contentinfo">
     <v-divider style="position: absolute; top: 0; left: 0; width: 100%"></v-divider>
     <v-container class="constrained pb-4 pb-sm-0 pt-0 text-left">
       <v-row v-if="!showSmallFooter" class="pt-12 pt-sm-0">
@@ -9,7 +9,7 @@
             contain
             class="mb-4"
             max-width="230"
-            alt="Ministère de l'Agriculture et la Souveraineté Alimentaire"
+            alt="Ministère de l'Agriculture et la Souveraineté Alimentaire - Liberté Égalité Fraternité"
           ></v-img>
           <v-spacer />
         </v-col>

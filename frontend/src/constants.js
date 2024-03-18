@@ -333,7 +333,7 @@ export default Object.freeze({
   CharacteristicFamilyExceptions: {
     BIO: [],
     LABEL_ROUGE: ["BOISSONS"],
-    AOCAOP_IGP_STG: ["VIANDES_VOLAILLES"],
+    AOCAOP_IGP_STG: [],
     HVE: [],
     PECHE_DURABLE: [
       "FRUITS_ET_LEGUMES",
