@@ -80,8 +80,13 @@
             </DsfrCallout>
           </div>
 
-          <p class="body-2 mt-4 mb-2">Ville</p>
-          <CityField :location="canteen" :rules="[validators.required]" @locationUpdate="setLocation" />
+          <CityField
+            label="Ville"
+            labelClasses="body-2 mb-2"
+            :location="canteen"
+            :rules="[validators.required]"
+            @locationUpdate="setLocation"
+          />
         </v-col>
 
         <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
@@ -197,7 +202,7 @@
           <v-col cols="12" md="8" v-if="usesCentralProducer" class="py-0">
             <DsfrTextField
               label="SIRET de la cuisine centrale"
-              class="mt-2"
+              labelClasses="body-2 mb-2"
               hide-details="auto"
               validate-on-blur
               v-model="canteen.centralProducerSiret"
@@ -245,14 +250,21 @@
 
         <v-col cols="12" sm="6" md="4">
           <div>
-            <p class="body-2">Catégorie de secteur</p>
-            <DsfrSelect clearable :items="sectorCategories" v-model="sectorCategory" hide-details="auto" />
+            <DsfrSelect
+              label="Catégorie de secteur"
+              labelClasses="body-2 mb-2"
+              clearable
+              :items="sectorCategories"
+              v-model="sectorCategory"
+              hide-details="auto"
+            />
           </div>
         </v-col>
         <v-col cols="12" md="6">
           <div>
-            <p class="body-2">Secteurs d'activité</p>
             <DsfrSelect
+              label="Secteurs d'activité"
+              labelClasses="body-2 mb-2"
               :items="filteredSectors"
               :rules="canteen.sectors && canteen.sectors.length ? [] : [validators.required]"
               @change="addSector"
@@ -278,8 +290,9 @@
           </div>
         </v-col>
         <v-col v-if="showMinistryField" cols="12" md="10">
-          <p class="body-2">Ministère de tutelle</p>
           <DsfrSelect
+            label="Ministère de tutelle"
+            labelClasses="body-2 mb-2"
             :items="ministries"
             v-model="canteen.lineMinistry"
             :rules="[validators.required]"
