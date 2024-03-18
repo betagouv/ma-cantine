@@ -3,6 +3,7 @@ from django.core import mail
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+from web.forms import RegisterUserForm
 
 
 class TestRegistration(APITestCase):
@@ -20,10 +21,9 @@ class TestRegistration(APITestCase):
             "username": "tester@example.com",
             "is_dev": False,
         }
-        response = self.client.post(reverse("register"), payload)
+        form = RegisterUserForm(data=payload)
         self.assertFormError(
-            response,
-            "form",
+            form,
             "username",
             "Vous ne pouvez pas utiliser une adresse email comme nom d'utilisateur.",
             msg_prefix="tester@example.com",
@@ -84,10 +84,9 @@ class TestRegistration(APITestCase):
             "is_dev": False,
         }
 
-        response = self.client.post(reverse("register"), payload)
+        form = RegisterUserForm(data=payload)
         self.assertFormError(
-            response,
-            "form",
+            form,
             "phone_number",
             "Dix chiffres numériques attendus",
             msg_prefix="test-phone",
