@@ -287,9 +287,14 @@ def get_geo_data(canteen_siret, token):
                 logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
         else:
             logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response}")
-            return
+    except requests.exceptions.HTTPError as e:
+        logger.warning(f"Geolocation Bot: HTTPError\n{e}")
+    except requests.exceptions.ConnectionError as e:
+        logger.warning(f"Geolocation Bot: ConnectionError\n{e}")
+    except requests.exceptions.Timeout as e:
+        logger.warning(f"Geolocation Bot: Timeout\n{e}")
     except Exception as e:
-        logger.exception(e)
+        logger.error(f"Geolocation Bot: Unexpected exception\n{e}")
 
 
 @app.task()
@@ -301,19 +306,9 @@ def fill_missing_geolocation_data_using_siret():
         logger.info("No candidate canteens have been found. Nothing to do here...")
         return
     for canteen in candidate_canteens:
-        try:
-            response = get_geo_data(canteen.siret, token)
-            if response:
-                _update_canteen_geo_data(canteen, response)
-
-        except requests.exceptions.HTTPError as e:
-            logger.info(f"Geolocation Bot error: HTTPError\n{e}")
-        except requests.exceptions.ConnectionError as e:
-            logger.info(f"Geolocation Bot error: ConnectionError\n{e}")
-        except requests.exceptions.Timeout as e:
-            logger.info(f"Geolocation Bot error: Timeout\n{e}")
-        except Exception as e:
-            logger.info(f"Geolocation Bot error: Unexpected exception\n{e}")
+        response = get_geo_data(canteen.siret, token)
+        if response:
+            _update_canteen_geo_data(canteen, response)
 
     logger.info(f"Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
 
