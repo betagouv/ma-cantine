@@ -100,7 +100,7 @@
               outlined
               color="primary"
               rel="noopener external"
-              title="Decouvrir nos ressources - ouvre une nouvelle fenêtre"
+              title="Découvrir nos ressources - ouvre une nouvelle fenêtre"
             >
               Decouvrir nos ressources
               <v-icon small class="ml-2">mdi-open-in-new</v-icon>
