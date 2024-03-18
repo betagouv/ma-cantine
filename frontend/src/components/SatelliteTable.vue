@@ -95,8 +95,8 @@
     </v-data-table>
     <v-dialog v-model="unlinkConfirmationOpen" width="500">
       <v-card class="text-left" v-if="unlinkItem">
-        <v-card-title class="font-weight-bold">
-          Voulez-vous vraiment enlever cette cantine de vos satellites ?
+        <v-card-title>
+          <h1 class="fr-h5 mb-2">Voulez-vous vraiment enlever cette cantine de vos satellites ?</h1>
         </v-card-title>
 
         <v-card-text>
