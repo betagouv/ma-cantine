@@ -18,7 +18,7 @@
               </v-icon>
               {{ manager.isInvite ? manager.email : `${manager.firstName} ${manager.lastName}` }}
               <span v-if="manager.email === loggedUser.email" class="ml-1">(vous)</span>
-              <span class="d-sr-only">{{ manager.isInvite ? "(Compte pas encore créé)" : "(Compte créé)" }}</span>
+              <span class="d-sr-only">{{ manager.isInvite ? "(création de compte en attente)" : "(compte créée)" }}</span>
             </v-row>
           </li>
         </ul>
