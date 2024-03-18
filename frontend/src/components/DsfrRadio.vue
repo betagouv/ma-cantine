@@ -1,7 +1,7 @@
 <template>
   <v-radio-group class="my-0" ref="radio" v-bind="$attrs" v-on="$listeners" @change="(v) => $emit('input', v)">
     <template v-slot:label>
-      <span :class="labelClasses">
+      <span :class="legendClass">
         {{ $attrs.label }}
       </span>
       <span class="fr-hint-text my-2" v-if="optional">Optionnel</span>
@@ -33,7 +33,7 @@ export default {
     labelClasses: {
       type: String,
       required: false,
-      default: "mb-2 text-sm-subtitle-1 text-body-2 text-left grey--text text--darken-4",
+      default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
     },
     optional: {
       type: Boolean,
@@ -63,6 +63,12 @@ export default {
         ]
       }
       return this.$attrs["items"]
+    },
+    legendClass() {
+      const activeColor = " grey--text text--darken-4"
+      const inactiveColor = " grey--text"
+      const color = this.$attrs.disabled ? inactiveColor : activeColor
+      return this.labelClasses + color
     },
   },
   methods: {
