@@ -108,6 +108,7 @@ class TestInquiry(APITestCase):
         self.assertEqual(email.to[0], "contact@example.com")
         self.assertEqual(email.subject, title)
         self.assertEqual(email.body, body)
+        self.assertIn("test@example.com", email.reply_to)
 
 
 class TestEmail(APITestCase):

@@ -29,7 +29,7 @@ class InquiryView(APIView):
             for key, value in meta.items():
                 body += f"\n{key} : {value}"
 
-            utils.send_mail(message=body, subject=title, to=[settings.CONTACT_EMAIL])
+            utils.send_mail(message=body, subject=title, to=[settings.CONTACT_EMAIL], reply_to=[email])
 
             return JsonResponse({}, status=status.HTTP_200_OK)
         except ValidationError as e:

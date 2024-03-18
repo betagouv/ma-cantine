@@ -1,6 +1,8 @@
 <template>
   <DsfrTextField
     :placeholder="$attrs['placeholder'] || 'Rechercher'"
+    :aria-label="$attrs['placeholder'] || 'Rechercher'"
+    :title="$attrs['placeholder'] || 'Rechercher'"
     v-bind="$attrs"
     v-on="$listeners"
     @input="(v) => $emit('input', v)"
