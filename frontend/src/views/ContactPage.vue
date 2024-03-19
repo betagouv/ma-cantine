@@ -9,7 +9,8 @@
           :to="link.to || {}"
           :href="link.href"
           :target="link.href && '_blank'"
-          :rel="link.href && 'noopener'"
+          :rel="link.href && 'noopener external'"
+          :title="link.href && `${link.title} - ouvre une nouvelle fenêtre`"
         >
           <v-icon small color="primary">mdi-chevron-right</v-icon>
           {{ link.title }}

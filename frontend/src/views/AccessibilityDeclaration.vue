@@ -223,7 +223,12 @@
     </h3>
     <p>
       Vous pouvez suivre notre progrès sur l'amélioration de nos non-confirmités sur
-      <a href="https://github.com/betagouv/ma-cantine/issues?q=is%3Aissue+is%3Aopen+label%3Aa11y">
+      <a
+        href="https://github.com/betagouv/ma-cantine/issues?q=is%3Aissue+is%3Aopen+label%3Aa11y"
+        target="_blank"
+        rel="noopener external"
+        title="GitHub issues - ouvre une nouvelle fenêtre"
+      >
         GitHub
         <v-icon small color="grey darken-4">mdi-open-in-new</v-icon>
       </a>

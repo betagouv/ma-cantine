@@ -99,7 +99,8 @@
               target="_blank"
               outlined
               color="primary"
-              rel="noopener"
+              rel="noopener external"
+              title="Découvrir nos ressources - ouvre une nouvelle fenêtre"
             >
               Decouvrir nos ressources
               <v-icon small class="ml-2">mdi-open-in-new</v-icon>

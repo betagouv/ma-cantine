@@ -66,7 +66,12 @@
       </v-row>
       <p class="mt-4">
         Une application exemple est disponible en
-        <a href="https://github.com/betagouv/ma-cantine-demo-integration" target="_blank" rel="noopener">
+        <a
+          href="https://github.com/betagouv/ma-cantine-demo-integration"
+          target="_blank"
+          rel="noopener external"
+          title="open source - ouvre une nouvelle fenêtre"
+        >
           open source
           <v-icon small color="primary">$external-link-line</v-icon>
         </a>
