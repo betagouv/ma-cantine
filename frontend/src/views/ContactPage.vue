@@ -5,17 +5,20 @@
     <h2 class="mb-4">Ressources</h2>
     <ul class="text-body-2 mb-8">
       <li v-for="link in links" :key="link.title" class="my-1">
-        <router-link
-          :to="link.to || {}"
+        <v-icon small color="primary">mdi-chevron-right</v-icon>
+        <router-link v-if="link.to" :to="link.to">
+          {{ link.title }}
+        </router-link>
+        <a
+          v-else
           :href="link.href"
-          :target="link.href && '_blank'"
-          :rel="link.href && 'noopener external'"
-          :title="link.href && `${link.title} - ouvre une nouvelle fenêtre`"
+          target="_blank"
+          rel="noopener external"
+          :title="`${link.title} - ouvre une nouvelle fenêtre`"
         >
-          <v-icon small color="primary">mdi-chevron-right</v-icon>
           {{ link.title }}
           <v-icon v-if="link.href" small color="primary">mdi-open-in-new</v-icon>
-        </router-link>
+        </a>
       </li>
     </ul>
     <h2 class="mb-4">Avez-vous une autre question ?</h2>

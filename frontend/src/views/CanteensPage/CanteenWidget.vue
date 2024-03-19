@@ -28,29 +28,30 @@
         <v-tabs-items v-model="selectedBadgeKey">
           <v-tab-item v-for="badge in orderedBadges" :key="badge.key">
             <v-card flat outlined>
-              <v-card-title
-                class="text-body-2 font-weight-bold px-2"
-                :class="!badge.earned && 'grey--text text--darken-2'"
-              >
-                {{ badgeTitle(badge) }}
+              <v-card-title :class="!badge.earned && 'grey--text text--darken-2'">
+                <h2 class="text-body-2 font-weight-bold mb-1">
+                  {{ badgeTitle(badge) }}
+                </h2>
               </v-card-title>
               <v-card-subtitle
-                class="text-body-2 px-2"
                 :class="!badge.earned && 'grey--text text--darken-2'"
-                v-text="badge.subtitle"
                 v-if="badge.key !== 'appro' || applicableRules.qualityThreshold === 50"
-              ></v-card-subtitle>
-              <v-card-subtitle v-else class="text-body-2 px-2" :class="!badge.earned && 'grey--text text--darken-2'">
-                Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits
-                durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
-                <a
-                  href="https://ma-cantine.agriculture.gouv.fr/blog/16"
-                  target="_blank"
-                  title="les seuils d'Outre-mer - ouvre une nouvelle fenêtre"
-                >
-                  les seuils d'Outre-mer
-                  <v-icon small class="primary--text">mdi-open-in-new</v-icon>
-                </a>
+              >
+                <p class="text-body-2 mb-0">{{ badge.subtitle }}</p>
+              </v-card-subtitle>
+              <v-card-subtitle v-else :class="!badge.earned && 'grey--text text--darken-2'">
+                <p class="text-body-2 mb-0">
+                  Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de
+                  produits durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
+                  <a
+                    href="https://ma-cantine.agriculture.gouv.fr/blog/16"
+                    target="_blank"
+                    title="les seuils d'Outre-mer - ouvre une nouvelle fenêtre"
+                  >
+                    les seuils d'Outre-mer
+                    <v-icon small class="primary--text">mdi-open-in-new</v-icon>
+                  </a>
+                </p>
               </v-card-subtitle>
             </v-card>
           </v-tab-item>

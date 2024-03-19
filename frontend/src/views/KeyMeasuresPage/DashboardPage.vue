@@ -5,8 +5,10 @@
 
     <v-card elevation="0" class="text-left">
       <v-card-text>
-        Vous accédez actuellement à la plateforme en tant qu'utilisateur.trice invité.e. Vous pouvez créer un compte et
-        enregistrer votre cantine pour profiter de toutes nos fonctionnalités.
+        <p class="mb-0">
+          Vous accédez actuellement à la plateforme en tant qu'utilisateur.trice invité.e. Vous pouvez créer un compte
+          et enregistrer votre cantine pour profiter de toutes nos fonctionnalités.
+        </p>
       </v-card-text>
       <v-card-actions class="pa-4">
         <v-spacer></v-spacer>

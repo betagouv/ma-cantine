@@ -1,9 +1,13 @@
 <template>
   <v-dialog v-model="dialogOpen" max-width="500">
     <v-card class="text-left pa-1">
-      <v-card-title class="font-weight-bold">Vérification</v-card-title>
-      <v-card-text class="grey--text text--darken-3">{{ bodyText }}</v-card-text>
-      <v-divider></v-divider>
+      <v-card-title>
+        <h1 class="fr-h5 mb-2">Vérification</h1>
+      </v-card-title>
+      <v-card-text class="grey--text text--darken-3">
+        <p class="mb-0">{{ bodyText }}</p>
+      </v-card-text>
+      <v-divider aria-hidden="true" role="presentation"></v-divider>
 
       <v-card-actions class="pa-3">
         <v-spacer></v-spacer>

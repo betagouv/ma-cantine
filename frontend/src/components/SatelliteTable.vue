@@ -10,10 +10,14 @@
       <template v-slot:top>
         <v-dialog v-model="joinDialog" max-width="800px">
           <v-card class="text-left">
-            <v-card-title>Rejoindre l'équipe de « {{ restrictedSatellite.name }} »</v-card-title>
+            <v-card-title>
+              <h1 class="fr-h5 mb-2">Rejoindre l'équipe de « {{ restrictedSatellite.name }} »</h1>
+            </v-card-title>
             <v-card-text>
-              Vous n'êtes pas encore un membre de l'équipe de « {{ restrictedSatellite.name }} » alors vous devez
-              demander l'accès pour pouvoir voir et modifier les données de cette cantine.
+              <p class="mb-0">
+                Vous n'êtes pas encore un membre de l'équipe de « {{ restrictedSatellite.name }} » alors vous devez
+                demander l'accès pour pouvoir voir et modifier les données de cette cantine.
+              </p>
               <DsfrTextarea
                 v-model="messageJoinCanteen"
                 label="Message (optionnel)"
@@ -22,7 +26,7 @@
                 class="mt-2 body-2"
               />
             </v-card-text>
-            <v-divider></v-divider>
+            <v-divider aria-hidden="true" role="presentation"></v-divider>
             <v-card-actions class="py-4 pl-6">
               <v-btn color="primary" @click="sendMgmtRequest">
                 <v-icon class="mr-2">mdi-key</v-icon>
@@ -92,15 +96,17 @@
     </v-data-table>
     <v-dialog v-model="unlinkConfirmationOpen" width="500">
       <v-card class="text-left" v-if="unlinkItem">
-        <v-card-title class="font-weight-bold">
-          Voulez-vous vraiment enlever cette cantine de vos satellites ?
+        <v-card-title>
+          <h1 class="fr-h5 mb-2">Voulez-vous vraiment enlever cette cantine de vos satellites ?</h1>
         </v-card-title>
 
         <v-card-text>
-          La cantine « {{ unlinkItem.name }} » ne fera plus parti de celles fournies par votre établissement.
+          <p class="mb-0">
+            La cantine « {{ unlinkItem.name }} » ne fera plus parti de celles fournies par votre établissement.
+          </p>
         </v-card-text>
 
-        <v-divider></v-divider>
+        <v-divider aria-hidden="true" role="presentation"></v-divider>
 
         <v-card-actions class="pa-4">
           <v-spacer></v-spacer>

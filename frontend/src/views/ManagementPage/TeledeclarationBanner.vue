@@ -1,8 +1,10 @@
 <template>
   <v-card color="primary lighten-4" elevation="1" shaped class="d-flex align-center">
     <div>
-      <v-card-title class="text-body-1 font-weight-bold">
-        <p class="mb-0">CAMPAGNE DE TELEDECLARATION 2024 : du 9 janvier au 31 mars 2024</p>
+      <v-card-title>
+        <h2 class="text-body-1 font-weight-bold mb-0">
+          CAMPAGNE DE TELEDECLARATION 2024 : du 9 janvier au 31 mars 2024
+        </h2>
       </v-card-title>
       <v-card-text class="pb-0">
         <p class="mb-0">

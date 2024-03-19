@@ -3,12 +3,16 @@
     <v-row>
       <v-col class="pa-4 pa-md-0" cols="12" sm="8" md="7">
         <v-card elevation="0" class="pa-0">
-          <v-card-title class="font-weight-bold">
-            Suivre les actualités du site ma cantine
+          <v-card-title>
+            <h2 class="fr-h5 mb-2">
+              Suivre les actualités du site ma cantine
+            </h2>
           </v-card-title>
 
           <v-card-subtitle class="text-left">
-            Inscrivez-vous à la newsletter et recevez environ 1 email par mois.
+            <p class="mb-0">
+              Inscrivez-vous à la newsletter et recevez environ 1 email par mois.
+            </p>
           </v-card-subtitle>
 
           <v-card-text>

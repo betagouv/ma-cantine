@@ -1,24 +1,26 @@
 <template>
   <div class="text-left">
     <div class="mt-4 mb-0 mb-md-6">
-      <p
-        class="my-2 text-h6 font-weight-black"
-        :style="$vuetify.breakpoint.mdAndUp ? 'font-size: 2rem !important;' : ''"
-      >
-        Bienvenue dans votre espace, {{ loggedUser.firstName }}
+      <div class="d-flex align-center">
+        <h1
+          class="my-2 text-h6 font-weight-black"
+          :style="$vuetify.breakpoint.mdAndUp ? 'font-size: 2rem !important;' : ''"
+        >
+          Bienvenue dans votre espace, {{ loggedUser.firstName }}
+        </h1>
         <v-btn text class="text-decoration-underline text-caption mb-1 mb-md-n1" :to="{ name: 'AccountEditor' }">
           <v-icon class="mr-1" small>mdi-pencil</v-icon>
           Modifier mon profil
         </v-btn>
-      </p>
+      </div>
 
-      <div v-if="loggedUser.isElectedOfficial">
+      <p v-if="loggedUser.isElectedOfficial" class="mb-0">
         Vous avez un compte élu / élue, vous pouvez voir
         <router-link text color="primary" :to="{ name: 'TerritoryCanteens' }">
           les cantines de votre territoire
         </router-link>
         .
-      </div>
+      </p>
 
       <CanteenCreationDialog
         v-if="showCanteenCreationPrompt !== null"
@@ -27,19 +29,21 @@
       />
     </div>
     <div v-if="canteenCount === 0" class="body-2 font-weight-medium">
-      Prenez connaissance du
-      <v-btn
-        text
-        href="https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2FlNPOtFoTKyfj5UnjZKJj%2FEGAlim%20Bilan%20statistique%202023%20d%C3%A9finitif.pdf?alt=media"
-        target="_blank"
-        rel="noopener external"
-        title="bilan EGAlim pour la campagne de 2022 - ouvre une nouvelle fenêtre"
-        class="text-decoration-underline px-0"
-        style="margin-top: -5px"
-      >
-        bilan EGAlim pour la campagne de 2022
-        <v-icon small class="ml-2">mdi-open-in-new</v-icon>
-      </v-btn>
+      <p class="mb-0">
+        Prenez connaissance du
+        <v-btn
+          text
+          href="https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2FlNPOtFoTKyfj5UnjZKJj%2FEGAlim%20Bilan%20statistique%202023%20d%C3%A9finitif.pdf?alt=media"
+          target="_blank"
+          rel="noopener external"
+          title="bilan EGAlim pour la campagne de 2022 - ouvre une nouvelle fenêtre"
+          class="text-decoration-underline px-0"
+          style="margin-top: -5px"
+        >
+          bilan EGAlim pour la campagne de 2022
+          <v-icon small class="ml-2">mdi-open-in-new</v-icon>
+        </v-btn>
+      </p>
     </div>
     <div v-if="canteenCount > 0">
       <SuccessBanner v-if="showSuccessBanner" />
@@ -47,7 +51,7 @@
       <ActionsBanner v-else />
     </div>
     <div class="mt-4">
-      <h1 class="my-4 text-h5 font-weight-black">Mes cantines</h1>
+      <h2 class="my-4 text-h5 font-weight-black">Mes cantines</h2>
       <CanteensPagination v-on:canteen-count="canteenCount = $event" />
     </div>
     <PageSatisfaction v-if="canteenCount" class="my-12" />
@@ -61,7 +65,9 @@
         <v-col cols="12" sm="6" v-for="(resource, idx) in resources" :key="idx">
           <v-card outlined class="d-flex flex-column fill-height pa-4" :style="resource.style">
             <v-card-title class="font-weight-bold" v-html="resource.title"></v-card-title>
-            <v-card-text>{{ resource.text }}</v-card-text>
+            <v-card-text>
+              <p class="mb-0">{{ resource.text }}</p>
+            </v-card-text>
             <v-spacer></v-spacer>
             <v-card-actions class="px-4 justify-end">
               <v-btn text color="primary" :to="resource.links[1].to" v-if="resource.links[1]">

@@ -3,12 +3,16 @@
     <v-row>
       <v-col cols="12" sm="4" v-for="resource in resources" :key="resource.title">
         <v-card elevation="0">
-          <v-card-title class="text-body-1 text-left font-weight-bold">
-            <v-icon color="grey darken-3 mr-2">{{ resource.icon }}</v-icon>
-            <span class="ml-2">{{ resource.title }}</span>
+          <v-card-title>
+            <h2 class="text-body-1 text-left font-weight-bold d-flex align-center">
+              <v-icon color="grey darken-3 mr-2">{{ resource.icon }}</v-icon>
+              <span class="ml-2">{{ resource.title }}</span>
+            </h2>
           </v-card-title>
           <v-card-text class="text-left">
-            {{ resource.description }}
+            <p class="mb-0">
+              {{ resource.description }}
+            </p>
           </v-card-text>
           <v-card-actions class="px-4">
             <v-btn

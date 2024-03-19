@@ -1,6 +1,10 @@
 <template>
   <v-footer id="pied-de-page" color="white" app :absolute="!showSmallFooter" height="280" role="contentinfo">
-    <v-divider style="position: absolute; top: 0; left: 0; width: 100%"></v-divider>
+    <v-divider
+      aria-hidden="true"
+      role="presentation"
+      style="position: absolute; top: 0; left: 0; width: 100%"
+    ></v-divider>
     <v-container class="constrained pb-4 pb-sm-0 pt-0 text-left">
       <v-row v-if="!showSmallFooter" class="pt-12 pt-sm-0">
         <v-col cols="12" sm="3" :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.name != 'xs' }">
@@ -85,7 +89,7 @@
           </ul>
         </v-col>
       </v-row>
-      <v-divider v-if="!showSmallFooter" class="mt-6 mb-2"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" v-if="!showSmallFooter" class="mt-6 mb-2"></v-divider>
       <ul class="d-flex justify-sm-space-between flex-wrap link-group pl-0">
         <li v-for="(link, index) in bottomLinks" :key="link.text" class="d-flex my-1">
           <router-link class="caption px-0 grey--text text--darken-2" :to="link.to">{{ link.text }}</router-link>

@@ -194,4 +194,12 @@ export default {
 fieldset {
   border: none;
 }
+ul.no-bullets {
+  padding-left: 0;
+  list-style-type: none;
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
+  li::before {
+    content: "\200B";
+  }
+}
 </style>
