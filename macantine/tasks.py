@@ -245,7 +245,7 @@ def _update_canteen_geo_data(canteen, response):
             canteen.postal_code = response["postal_code"]
             canteen.city = response["city"]
             canteen.save()
-            update_change_reason(canteen, "Données de localisation MAJ par script, via SIRET")
+            update_change_reason(canteen, "Données de localisation MAJ par bot, via SIRET")
             logger.info(f"Canteen info has been updated. Canteen name : f{canteen.name}")
     except Exception as e:
         logger.error(f"Unable to update canteen info for canteen : f{canteen.name}")
