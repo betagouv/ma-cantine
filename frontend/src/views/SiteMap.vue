@@ -7,9 +7,12 @@
         <h2 class="my-2">{{ group.title }}</h2>
         <ul>
           <li v-for="link in group.links" :key="link.text">
-            <router-link :to="{ name: link.name, params: link.params }">
+            <router-link v-if="link.name" :to="{ name: link.name, params: link.params }">
               {{ (link.meta || {}).title || link.name }}
             </router-link>
+            <a v-else :href="link.href">
+              {{ (link.meta || {}).title }}
+            </a>
           </li>
         </ul>
       </v-col>
@@ -46,6 +49,13 @@ export default {
         sitemapGroup: Constants.SitemapGroups.LAW,
       }))
     )
+    if (!isAuthenticated) {
+      sitemapRoutes.push({
+        href: "/creer-mon-compte",
+        meta: { title: "Créer mon compte" },
+        sitemapGroup: Constants.SitemapGroups.DIAG,
+      })
+    }
     return {
       sitemapGroups: Object.values(Constants.SitemapGroups).map((g) => {
         return {
