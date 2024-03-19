@@ -138,11 +138,12 @@
                     {{ navItem.text }}
                   </v-btn>
                 </template>
-                <v-list role="list">
+                <v-list role="list" class="pa-0">
                   <v-list-item
                     v-for="(child, childIdx) in navItem.children"
                     :key="`${parentIdx}-${childIdx}`"
                     role="listitem"
+                    class="pa-0"
                   >
                     <v-btn class="fr-nav__link-child" :to="child.to" target="_self">{{ child.text }}</v-btn>
                   </v-list-item>
@@ -336,6 +337,12 @@ export default {
 
   .fr-nav__link {
     height: 100%;
+  }
+
+  .fr-nav__link-child {
+    height: 48px;
+    width: 100%;
+    justify-content: left;
   }
 }
 #profile::v-deep .v-btn__content {
