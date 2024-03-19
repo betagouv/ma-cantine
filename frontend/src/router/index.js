@@ -171,7 +171,6 @@ const routes = [
     meta: {
       title: "Les mesures phares",
     },
-    sitemapGroup: Constants.SitemapGroups.LAW,
   },
   {
     // if you change this path, update the visitor view count logic in the publication widget

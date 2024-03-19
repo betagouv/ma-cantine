@@ -7,7 +7,7 @@
         <h2 class="my-2">{{ group.title }}</h2>
         <ul>
           <li v-for="link in group.links" :key="link.text">
-            <router-link :to="{ name: link.name }" :href="link.path">
+            <router-link :to="{ name: link.name, params: link.params }">
               {{ (link.meta || {}).title || link.name }}
             </router-link>
           </li>
@@ -21,6 +21,7 @@
 import { routes } from "@/router"
 import Constants from "@/constants"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import keyMeasures from "@/data/key-measures.json"
 
 export default {
   name: "SiteMap",
@@ -37,6 +38,14 @@ export default {
       const hasViewRights = route.meta?.authenticationRequired ? isAuthenticated : true
       return !!route.sitemapGroup && hasViewRights
     })
+    sitemapRoutes.push(
+      ...keyMeasures.map((x) => ({
+        name: "KeyMeasurePage",
+        params: { id: x.id },
+        meta: { title: x.shortTitle },
+        sitemapGroup: Constants.SitemapGroups.LAW,
+      }))
+    )
     return {
       sitemapGroups: Object.values(Constants.SitemapGroups).map((g) => {
         return {
