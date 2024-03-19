@@ -116,91 +116,53 @@
 
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
         <v-divider aria-hidden="true" role="presentation" style="position:absolute; top:0; width:100%;"></v-divider>
-        <v-tabs align-with-title id="header-tabs" active-class="stealth-active-tab" hide-slider>
-          <div
-            v-for="(navLink, index) in displayNavLinks"
-            :key="index"
-            :class="navLink.isActive ? 'mc-active-tab' : ''"
-          >
-            <v-menu v-if="navLink.children" rounded="0" offset-y attach="#header-tabs" nudge-right="16">
-              <template v-slot:activator="{ on, attrs, value }">
-                <v-tab
-                  v-bind="attrs"
-                  v-on="on"
-                  class="mc-tab body-2 text--darken-2"
-                  :class="navLink.isActive ? 'primary--text' : 'black--text'"
-                >
-                  {{ navLink.text }}
-                  <v-icon small class="ml-2" :color="navLink.isActive ? 'primary' : 'black'">
-                    {{ value ? "$arrow-up-s-line" : "$arrow-down-s-line" }}
-                  </v-icon>
-                </v-tab>
-              </template>
-              <v-list class="py-0">
-                <div v-for="(subItem, subIndex) in navLink.children" :key="subIndex">
-                  <v-list-item
-                    v-if="shouldDisplayChild(subItem)"
-                    :to="subItem.to"
-                    :href="subItem.href"
-                    :target="subItem.target"
-                    :rel="subItem.rel"
-                    :title="subItem.target ? `${subItem.text} - ouvre une nouvelle fenêtre` : ''"
-                  >
-                    <v-list-item-title class="text-body-2">
-                      {{ subItem.text }}
-                      <v-icon v-if="subItem.href" small color="rgb(22,22,22)">mdi-open-in-new</v-icon>
-                    </v-list-item-title>
-                  </v-list-item>
-                  <v-divider
-                    aria-hidden="true"
-                    role="presentation"
-                    v-if="subIndex !== navLink.children.length - 1"
-                    class="mx-4"
-                  ></v-divider>
-                </div>
-              </v-list>
-            </v-menu>
-            <v-tab
-              v-else
-              :to="navLink.to"
-              class="mc-tab body-2"
-              :class="navLink.isActive ? 'primary--text' : 'black--text'"
+        <!-- TODO:
+          styling: general, active, menu icon
+          external links
+          mobile menu: use v-dialog, fullscreen, make it DSFR, a nav element, and make format the same as desktop nav
+          mobile: what to do with the "main" links from above?
+          mobile: do we still want the avatar?
+          double check all aria roles etc, target="_self"
+          another PR: add link to admin for our team in main links?
+        -->
+        <nav class="fr-nav" id="navigation-773" role="navigation" aria-label="Menu principal">
+          <ul class="fr-nav__list no-bullets d-flex">
+            <li
+              class="fr-nav__item"
+              v-for="(navItem, parentIdx) in displayNavLinks"
+              :key="parentIdx"
+              :id="`nav-${parentIdx}`"
             >
-              {{ navLink.text }}
-            </v-tab>
-          </div>
-        </v-tabs>
+              <v-menu v-if="navItem.children" :attach="`#nav-${parentIdx}`" offset-y tile>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn color="primary" dark v-bind="attrs" v-on="on">
+                    {{ navItem.text }}
+                  </v-btn>
+                </template>
+                <v-list role="list">
+                  <v-list-item
+                    v-for="(child, childIdx) in navItem.children"
+                    :key="`${parentIdx}-${childIdx}`"
+                    role="listitem"
+                  >
+                    <v-btn class="fr-nav__link" :to="child.to" target="_self">{{ child.text }}</v-btn>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+              <v-btn v-else class="fr-nav__link" :to="navItem.to" target="_self">{{ navItem.text }}</v-btn>
+            </li>
+          </ul>
+        </nav>
       </template>
-      <v-menu v-if="$vuetify.breakpoint.smAndDown && userDataReady" left bottom offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn v-if="loggedUser" class="mr-2 ml-2 align-self-center" id="profile" plain v-on="on">
-            <v-avatar size="36" class="mr-2 pt-1" v-if="loggedUser && loggedUser.avatar">
-              <v-img :src="loggedUser.avatar"></v-img>
-            </v-avatar>
-            <v-icon v-else>$account-circle-fill</v-icon>
-            <span class="font-subtitle-3 mx-2 d-none d-sm-inline">Profil</span>
-            <v-icon class="ml-1 pt-1" small>$arrow-down-s-line</v-icon>
-          </v-btn>
-
-          <v-btn v-else icon class="mr-2 ml-2 align-self-center" v-on="on">
-            <v-icon>$menu-fill</v-icon>
-            <span class="d-sr-only">Menu</span>
-          </v-btn>
-        </template>
-
-        <HeaderDropdownList />
-      </v-menu>
     </v-app-bar>
   </div>
 </template>
 
 <script>
-import HeaderDropdownList from "@/components/HeaderDropdownList"
 import keyMeasures from "@/data/key-measures.json"
 
 export default {
   name: "AppHeader",
-  components: { HeaderDropdownList },
   data() {
     return {
       logoutWarningDialog: false,
