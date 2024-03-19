@@ -221,7 +221,7 @@
                 </label>
                 <DsfrTextField
                   id="donationFoodType"
-                  v-model.number="payload.donationFoodType"
+                  v-model="payload.donationFoodType"
                   :readonly="!payload.hasDonationAgreement"
                   :disabled="!payload.hasDonationAgreement"
                 />
