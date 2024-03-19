@@ -55,6 +55,11 @@ export default {
         meta: { title: "Créer mon compte" },
         sitemapGroup: Constants.SitemapGroups.DIAG,
       })
+      sitemapRoutes.push({
+        href: "/s-identifier",
+        meta: { title: "S'identifier" },
+        sitemapGroup: Constants.SitemapGroups.DIAG,
+      })
     }
     return {
       sitemapGroups: Object.values(Constants.SitemapGroups).map((g) => {
