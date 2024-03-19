@@ -184,7 +184,7 @@ const routes = [
         meta: {
           title: "Nos cantines",
         },
-        sitemapGroup: Constants.SitemapGroups.LAW,
+        sitemapGroup: Constants.SitemapGroups.ACTION,
       },
       {
         path: ":canteenUrlComponent",
@@ -528,6 +528,7 @@ const routes = [
     meta: {
       title: "Développement et APIs",
     },
+    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/statistiques-plateforme/",
@@ -554,6 +555,7 @@ const routes = [
     beforeEnter: (_to, _from, next) => {
       store.state.loggedUser?.isElectedOfficial ? next() : next({ name: "ManagementPage" })
     },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
 ]
 
