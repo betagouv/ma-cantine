@@ -115,7 +115,6 @@
       </v-dialog>
 
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
-        <v-divider aria-hidden="true" role="presentation" style="position:absolute; top:0; width:100%;"></v-divider>
         <!-- TODO:
           styling: general, active, menu icon
           external links
@@ -125,17 +124,17 @@
           double check all aria roles etc, target="_self"
           another PR: add link to admin for our team in main links?
         -->
-        <nav class="fr-nav" id="navigation-773" role="navigation" aria-label="Menu principal">
-          <ul class="fr-nav__list no-bullets d-flex">
+        <nav class="fr-nav my-n1" id="navigation-773" role="navigation" aria-label="Menu principal">
+          <ul class="fr-nav__list no-bullets d-flex fill-height">
             <li
-              class="fr-nav__item"
+              class="fr-nav__item fill-height"
               v-for="(navItem, parentIdx) in displayNavLinks"
               :key="parentIdx"
               :id="`nav-${parentIdx}`"
             >
               <v-menu v-if="navItem.children" :attach="`#nav-${parentIdx}`" offset-y tile>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="primary" dark v-bind="attrs" v-on="on">
+                  <v-btn class="fr-nav__link" color="primary" dark v-bind="attrs" v-on="on">
                     {{ navItem.text }}
                   </v-btn>
                 </template>
@@ -145,7 +144,7 @@
                     :key="`${parentIdx}-${childIdx}`"
                     role="listitem"
                   >
-                    <v-btn class="fr-nav__link" :to="child.to" target="_self">{{ child.text }}</v-btn>
+                    <v-btn class="fr-nav__link-child" :to="child.to" target="_self">{{ child.text }}</v-btn>
                   </v-list-item>
                 </v-list>
               </v-menu>
@@ -327,6 +326,17 @@ export default {
 <style scoped lang="scss">
 #en-tete {
   box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.1), 0 8px 16px -16px rgba(0, 0, 0, 0.32) !important;
+
+  // DSFR navigation
+  nav {
+    width: 100%;
+    border-top: solid 1px #e0e0e0;
+    height: 56px; // same height as toolbar extension
+  }
+
+  .fr-nav__link {
+    height: 100%;
+  }
 }
 #profile::v-deep .v-btn__content {
   opacity: 1;
