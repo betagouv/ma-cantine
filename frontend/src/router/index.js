@@ -299,6 +299,7 @@ const routes = [
       title: "Actions en attente",
       authenticationRequired: true,
     },
+    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/nouvelle-cantine",
@@ -537,6 +538,7 @@ const routes = [
     meta: {
       title: "Mesures de notre impact",
     },
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/webinaires/:webinaireUrlComponent",
@@ -569,7 +571,6 @@ if (window.ENABLE_DASHBOARD) {
       title: "Tableau de bord",
       authenticationRequired: true,
     },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
   })
   routes.push({
     path: "/ma-progression/:canteenUrlComponent/:year/:measure",
