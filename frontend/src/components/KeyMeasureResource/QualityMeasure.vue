@@ -15,7 +15,8 @@
       <a
         href="https://www.inao.gouv.fr/Espace-professionnel-et-outils/Rechercher-un-produit"
         target="_blank"
-        rel="noopener"
+        rel="noopener external"
+        title="le moteur de recherche de l'INAO - ouvre une nouvelle fenêtre"
       >
         le moteur de recherche de l'INAO
         <v-icon color="primary" small>mdi-open-in-new</v-icon>

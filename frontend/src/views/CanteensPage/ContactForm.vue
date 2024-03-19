@@ -29,7 +29,13 @@
             acteurs de l'éco-système
           </router-link>
           en remplissant le
-          <a href="https://startupdetat.typeform.com/to/JhhsMCYC" target="_blank" rel="noopener" class="mx-1">
+          <a
+            href="https://startupdetat.typeform.com/to/JhhsMCYC"
+            target="_blank"
+            rel="noopener external"
+            title="formulaire de référencement - ouvre une nouvelle fenêtre"
+            class="mx-1"
+          >
             formulaire de référencement
             <v-icon color="primary" small>mdi-open-in-new</v-icon>
           </a>

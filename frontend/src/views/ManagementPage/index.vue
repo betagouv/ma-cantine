@@ -35,7 +35,8 @@
           text
           href="https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2FlNPOtFoTKyfj5UnjZKJj%2FEGAlim%20Bilan%20statistique%202023%20d%C3%A9finitif.pdf?alt=media"
           target="_blank"
-          rel="noopener"
+          rel="noopener external"
+          title="bilan EGAlim pour la campagne de 2022 - ouvre une nouvelle fenêtre"
           class="text-decoration-underline px-0"
           style="margin-top: -5px"
         >

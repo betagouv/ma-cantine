@@ -25,7 +25,16 @@
               <span class="d-sr-only">sur la mesure {{ measure.shortTitle }}</span>
               !
             </span>
-            <v-icon small color="green" v-if="measure.isEvaluated">mdi-check</v-icon>
+            <v-icon
+              small
+              color="green"
+              v-if="measure.isEvaluated"
+              aria-hidden="false"
+              role="img"
+              aria-label="(Statut : évalué)"
+            >
+              mdi-check
+            </v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text class="py-0" v-for="subMeasure in measure.subMeasures" :key="`submeasure: ${subMeasure.id}`">

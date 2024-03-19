@@ -43,7 +43,11 @@
                 <p class="text-body-2 mb-0">
                   Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de
                   produits durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
-                  <a href="https://ma-cantine.agriculture.gouv.fr/blog/16" target="_blank">
+                  <a
+                    href="https://ma-cantine.agriculture.gouv.fr/blog/16"
+                    target="_blank"
+                    title="les seuils d'Outre-mer - ouvre une nouvelle fenêtre"
+                  >
                     les seuils d'Outre-mer
                     <v-icon small class="primary--text">mdi-open-in-new</v-icon>
                   </a>
@@ -54,7 +58,13 @@
         </v-tabs-items>
       </v-card>
     </div>
-    <v-btn color="primary" class="mt-2" target="_blank" :href="link">
+    <v-btn
+      color="primary"
+      class="mt-2"
+      target="_blank"
+      :href="link"
+      title="Voir sur la plateforme - ouvre une nouvelle fenêtre"
+    >
       Voir sur la plateforme
       <v-icon small class="ml-1">mdi-open-in-new</v-icon>
     </v-btn>

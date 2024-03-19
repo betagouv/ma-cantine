@@ -267,7 +267,7 @@
           {{ item.priceHt.toLocaleString("fr-FR", { style: "currency", currency: "EUR" }) }}
         </template>
         <template v-slot:[`item.hasAttachment`]="{ item }">
-          <v-icon small color="grey" v-if="item.hasAttachment" aria-label="Has invoice file" :aria-hidden="false">
+          <v-icon small color="grey" v-if="item.hasAttachment" aria-label="Facture attachée" :aria-hidden="false">
             mdi-paperclip
           </v-icon>
         </template>

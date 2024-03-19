@@ -11,7 +11,9 @@
               </p>
             </div>
             <div v-else>
-              <v-icon small color="primary lighten-4">{{ tunnel.icon }}</v-icon>
+              <v-icon small color="primary lighten-4" :title="tunnel.shortTitle" aria-hidden="false" role="img">
+                {{ tunnel.icon }}
+              </v-icon>
             </div>
           </div>
         </v-col>

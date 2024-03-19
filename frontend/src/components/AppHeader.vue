@@ -144,6 +144,7 @@
                     :href="subItem.href"
                     :target="subItem.target"
                     :rel="subItem.rel"
+                    :title="subItem.target ? `${subItem.text} - ouvre une nouvelle fenêtre` : ''"
                   >
                     <v-list-item-title class="text-body-2">
                       {{ subItem.text }}
@@ -243,7 +244,7 @@ export default {
               text: "Pour aller plus loin",
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
               target: "_blank",
-              rel: "noopener",
+              rel: "noopener external",
             },
           ],
         },
@@ -267,7 +268,7 @@ export default {
               text: "Indicateurs clés",
               href: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/3dab8a21-c4b9-46e1-84fa-7ba485ddfbbb",
               target: "_blank",
-              rel: "noopener",
+              rel: "noopener external",
             },
           ],
         },
@@ -283,7 +284,7 @@ export default {
                 text: "Pour aller plus loin",
                 href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
                 target: "_blank",
-                rel: "noopener",
+                rel: "noopener external",
               },
             ],
           ],
@@ -303,7 +304,7 @@ export default {
               text: "Documentation",
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
               target: "_blank",
-              rel: "noopener",
+              rel: "noopener external",
             },
           ],
         },

@@ -77,6 +77,7 @@
           }"
           v-else-if="item.publicationStatus === 'published'"
           target="_blank"
+          title="Publié - ouvre une nouvelle fenêtre"
         >
           Publié
           <span class="d-sr-only">- page pour {{ item.name }}</span>
