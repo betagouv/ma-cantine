@@ -1,8 +1,6 @@
 <template>
   <v-card outlined class="fill-height d-flex flex-column dsfr pa-6">
-    <v-card-title class="fr-h4">
-      Mon équipe
-    </v-card-title>
+    <v-card-title><h3 class="fr-h4 mb-2">Mon équipe</h3></v-card-title>
     <v-card-text class="fill-height">
       <div v-if="managers.length > 1" class="fill-height d-flex flex-column">
         <p class="fr-text mb-0 grey--text text--darken-3">
@@ -18,6 +16,9 @@
               </v-icon>
               {{ manager.isInvite ? manager.email : `${manager.firstName} ${manager.lastName}` }}
               <span v-if="manager.email === loggedUser.email" class="ml-1">(vous)</span>
+              <span class="d-sr-only">
+                {{ manager.isInvite ? "(création de compte en attente)" : "(compte créée)" }}
+              </span>
             </v-row>
           </li>
         </ul>

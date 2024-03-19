@@ -1,6 +1,7 @@
 import Constants from "@/constants"
 import jsonBadges from "@/badges"
 import jsonDepartments from "@/departments.json"
+import jsonRegions from "@/regions.json"
 
 export const timeAgo = (date, displayPrefix = false) => {
   if (typeof date === "string") {
@@ -352,6 +353,7 @@ export const applicableDiagnosticRules = (canteen) => {
     bioThreshold,
     qualityThreshold,
     hasQualityException,
+    regionForQualityException: hasQualityException && canteen.region,
   }
 }
 
@@ -675,4 +677,8 @@ export const readyToTeledeclare = (canteen, diagnostic, sectors) => {
 // were interpreted as false. Since then, we ask for an explicit false value.
 export const diagnosticUsesNullAsFalse = (diagnostic) => {
   return diagnostic.year < 2023
+}
+
+export const regionDisplayName = (regionCode) => {
+  return jsonRegions.find((r) => r.regionCode === regionCode).regionName
 }

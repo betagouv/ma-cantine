@@ -18,6 +18,11 @@
       @change="searchInput = ''"
     >
       <template v-slot:label><span></span></template>
+
+      <!-- For RGAA 8.9 error messages should also be in p tags, by default in vuetify 2 they're in divs -->
+      <template v-slot:message="{ key, message }">
+        <p :key="key">{{ message }}</p>
+      </template>
     </v-autocomplete>
   </div>
 </template>

@@ -24,7 +24,12 @@
     </p>
     <p>
       Pour toutes les autres entreprises privées, les formalités pour obtenir un numéro siret doivent se faire sur
-      <a href="https://procedures.inpi.fr/" target="_blank" rel="noopener">
+      <a
+        href="https://procedures.inpi.fr/"
+        target="_blank"
+        rel="noopener external"
+        title="le site du guichet unique de l'Inpi - ouvre une nouvelle fenêtre"
+      >
         le site du guichet unique de l'Inpi
         <v-icon small color="primary" class="ml-1">mdi-open-in-new</v-icon>
       </a>

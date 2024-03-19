@@ -20,7 +20,7 @@
       </v-list-item-content>
       <AdminRemovalDialog v-if="showDeleteButton" :manager="manager" v-model="dialog" @delete="deleteManager" />
     </v-list-item>
-    <v-divider class="my-1"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="my-1"></v-divider>
   </div>
 </template>
 

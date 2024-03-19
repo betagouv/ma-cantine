@@ -10,7 +10,8 @@
     <a
       href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/procedure-campagne-de-remontee-des-donnees-2022"
       target="_blank"
-      rel="noopener"
+      rel="noopener external"
+      title="la documentation de « ma cantine » - ouvre une nouvelle fenêtre"
     >
       la documentation de « ma cantine »
       <v-icon small color="primary" class="ml-1">mdi-open-in-new</v-icon>

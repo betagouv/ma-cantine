@@ -273,7 +273,11 @@
       <p>Les inscriptions sont ouvertes jusqu’au 1er juillet 2023.</p>
       <p>
         Les informations relatives aux conditions de mise en œuvre de l’expérimentation sont précisées dans
-        <a href="/static/documents/Guide_pratique_XP_RESERVATION.pdf" target="_blank" rel="noopener">
+        <a
+          href="/static/documents/Guide_pratique_XP_RESERVATION.pdf"
+          target="_blank"
+          title="le guide pratique - ouvre une nouvelle fenêtre"
+        >
           le guide pratique
           <v-icon color="primary" small>mdi-open-in-new</v-icon>
         </a>

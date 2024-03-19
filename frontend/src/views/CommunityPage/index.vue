@@ -65,10 +65,10 @@
       </v-col>
     </v-row>
 
-    <v-divider class="my-10"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="my-10"></v-divider>
     <FacebookSection id="facebook" />
 
-    <v-divider class="my-10"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="my-10"></v-divider>
     <TheNewsletter id="suivre" />
   </div>
 </template>

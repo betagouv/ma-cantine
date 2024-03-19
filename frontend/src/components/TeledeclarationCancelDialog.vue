@@ -6,16 +6,20 @@
     </template>
 
     <v-card class="text-left">
-      <v-card-title class="font-weight-bold">
-        Voulez-vous vraiment annuler votre télédéclaration pour l'année {{ diagnostic.year }} ?
+      <v-card-title>
+        <h1 class="fr-h5 mb-2">
+          Voulez-vous vraiment annuler votre télédéclaration pour l'année {{ diagnostic.year }} ?
+        </h1>
       </v-card-title>
 
       <v-card-text>
-        En l'annulant vous devez soumettre à nouveau une télédéclaration pour vos achats
-        {{ diagnostic.year }} conformément à l'arrêté du 14 septembre 2022.
+        <p class="mb-0">
+          En l'annulant vous devez soumettre à nouveau une télédéclaration pour vos achats
+          {{ diagnostic.year }} conformément à l'arrêté du 14 septembre 2022.
+        </p>
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider aria-hidden="true" role="presentation"></v-divider>
 
       <v-card-actions class="pa-4">
         <v-spacer></v-spacer>

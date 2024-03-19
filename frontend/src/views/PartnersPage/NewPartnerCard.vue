@@ -6,11 +6,15 @@
     :ripple="false"
     color="grey lighten-4"
   >
-    <v-card-title class="font-weight-bold">
-      Vous êtes un acteur d'accompagnement dans la restauration collective ?
+    <v-card-title>
+      <h2 class="fr-h5 mb-0">
+        Vous êtes un acteur d'accompagnement dans la restauration collective ?
+      </h2>
     </v-card-title>
     <v-card-text>
-      Contribuez à notre initiative de référencement !
+      <p class="mb-0">
+        Contribuez à notre initiative de référencement !
+      </p>
     </v-card-text>
     <v-btn class="ma-4 mt-2" color="primary" :to="{ name: 'NewPartner' }">
       Me recenser

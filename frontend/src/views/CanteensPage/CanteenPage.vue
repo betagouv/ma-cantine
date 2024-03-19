@@ -86,7 +86,7 @@
 
       <CanteenPublication :canteen="canteen" />
 
-      <v-divider class="my-8"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" class="my-8"></v-divider>
 
       <ContactForm id="contact" :canteen="canteen" />
     </div>
