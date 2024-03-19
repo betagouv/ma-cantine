@@ -235,7 +235,7 @@ def _fill_from_api_response(response, canteens):
             canteen.city = row[5]
             canteen.department = row[6].split(",")[0]
             canteen.save()
-            update_change_reason(canteen, "Données de localisation MAJ par script")
+            update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE ou code postale")
 
 
 def _update_canteen_geo_data(canteen, response):
