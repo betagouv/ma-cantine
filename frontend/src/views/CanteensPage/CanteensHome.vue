@@ -17,13 +17,15 @@
           <v-spacer></v-spacer>
           <v-card-title class="pr-0">
             <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
-              Nos cantines
+              Nos cantines publiées
             </h1>
           </v-card-title>
           <v-card-subtitle>
             <p class="mb-1">
-              Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus durable
+              Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus
+              durable.
             </p>
+            <p class="mb-1">Sont affiché sur cette page, uniquement les cantines qui ont décidé d’être visible.</p>
             <p>
               Consulter
               <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
