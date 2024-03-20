@@ -13,7 +13,6 @@ class BlogPostForm(forms.ModelForm):
 
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
-
     form = BlogPostForm
     fields = (
         "title",
