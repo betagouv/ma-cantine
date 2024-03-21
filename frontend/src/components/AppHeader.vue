@@ -134,9 +134,8 @@
             >
               <v-menu v-if="navItem.children" :attach="`#nav-${parentIdx}`" offset-y tile>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn class="fr-nav__link" color="white" v-bind="attrs" v-on="on">
+                  <v-btn class="fr-nav__link body-2" color="white" v-bind="attrs" v-on="on">
                     {{ navItem.text }}
-                    <!-- TODO: can we put a 180 .3s transition around this? -->
                     <v-icon v-if="attrs['aria-expanded'] === 'true'" small class="menu-arrow ml-2">
                       $arrow-up-s-line
                     </v-icon>
@@ -150,13 +149,13 @@
                     role="listitem"
                     class="pa-0"
                   >
-                    <v-btn class="fr-nav__link-child" color="white" :to="child.to" target="_self">
+                    <v-btn class="fr-nav__link-child body-2" color="white" :to="child.to" target="_self">
                       {{ child.text }}
                     </v-btn>
                   </v-list-item>
                 </v-list>
               </v-menu>
-              <v-btn v-else class="fr-nav__link" color="white" :to="navItem.to" target="_self">
+              <v-btn v-else class="fr-nav__link body-2" color="white" :to="navItem.to" target="_self">
                 {{ navItem.text }}
               </v-btn>
             </li>
