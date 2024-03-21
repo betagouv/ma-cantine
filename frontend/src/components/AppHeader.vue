@@ -115,15 +115,6 @@
       </v-dialog>
 
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
-        <!-- TODO:
-          styling: general, active, menu icon
-          external links
-          mobile menu: use v-dialog, fullscreen, make it DSFR, a nav element, and make format the same as desktop nav
-          mobile: what to do with the "main" links from above?
-          mobile: do we still want the avatar?
-          double check all aria roles etc, target="_self"
-          another PR: add link to admin for our team in main links?
-        -->
         <nav class="fr-nav my-n1" id="navigation-773" role="navigation" aria-label="Menu principal">
           <ul class="fr-nav__list no-bullets d-flex fill-height">
             <li
