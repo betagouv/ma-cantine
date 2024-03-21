@@ -6,19 +6,24 @@
       </span>
       <span class="fr-hint-text my-2" v-if="optional">Optionnel</span>
     </template>
-    <v-row v-if="optionsRow">
-      <v-col v-for="item in items" :key="item.value">
-        <v-radio :label="item.label || item.text" :value="item.value" :class="optionClasses"></v-radio>
+    <v-row v-if="optionsRow" class="my-0">
+      <v-col cols="12" sm="6" class="py-2" v-for="item in items" :key="item.value">
+        <v-radio :value="item.value" :class="optionClasses">
+          <template v-slot:label>
+            <span :class="optionClasses">
+              {{ item.label || item.text }}
+            </span>
+          </template>
+        </v-radio>
       </v-col>
     </v-row>
-    <v-radio
-      v-else
-      v-for="item in items"
-      :key="item.value"
-      :label="item.label || item.text"
-      :value="item.value"
-      :class="optionClasses"
-    ></v-radio>
+    <v-radio v-else v-for="item in items" :key="item.value" :value="item.value" :class="optionClasses">
+      <template v-slot:label>
+        <span :class="optionClasses">
+          {{ item.label || item.text }}
+        </span>
+      </template>
+    </v-radio>
 
     <!-- For RGAA 8.9 error messages should also be in p tags, by default in vuetify 2 they're in divs -->
     <template v-slot:message="{ key, message }">
