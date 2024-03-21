@@ -127,10 +127,10 @@
         <nav class="fr-nav my-n1" id="navigation-773" role="navigation" aria-label="Menu principal">
           <ul class="fr-nav__list no-bullets d-flex fill-height">
             <li
-              class="fr-nav__item fill-height"
               v-for="(navItem, parentIdx) in displayNavLinks"
               :key="parentIdx"
               :id="`nav-${parentIdx}`"
+              :class="{ 'fr-nav__item fill-height mc-tab': true, 'mc-active-tab': navItem.isActive }"
             >
               <v-menu v-if="navItem.children" :attach="`#nav-${parentIdx}`" offset-y tile>
                 <template v-slot:activator="{ on, attrs }">
@@ -149,13 +149,26 @@
                     role="listitem"
                     class="pa-0"
                   >
-                    <v-btn class="fr-nav__link-child body-2" color="white" :to="child.to" target="_self">
+                    <v-btn
+                      class="fr-nav__link-child body-2"
+                      active-class="mc-active-item"
+                      color="white"
+                      :to="child.to"
+                      target="_self"
+                    >
                       {{ child.text }}
                     </v-btn>
                   </v-list-item>
                 </v-list>
               </v-menu>
-              <v-btn v-else class="fr-nav__link body-2" color="white" :to="navItem.to" target="_self">
+              <v-btn
+                v-else
+                class="fr-nav__link body-2"
+                active-class="stealth-active-tab"
+                color="white"
+                :to="navItem.to"
+                target="_self"
+              >
                 {{ navItem.text }}
               </v-btn>
             </li>
@@ -352,34 +365,38 @@ export default {
     width: 100%;
     justify-content: left;
   }
-}
-#profile::v-deep .v-btn__content {
-  opacity: 1;
-}
-.divider {
-  height: 60%;
-  max-height: 30px;
-  border-left: solid 1px #ccc;
-}
-.mc-tab {
-  height: 100%;
-  line-height: 24px;
-  text-transform: none;
-}
-.mc-active-tab {
-  border-bottom: 2px solid;
-}
-.stealth-active-tab {
-  color: rgb(22, 22, 22) !important;
-  caret-color: rgb(22, 22, 22);
-  outline-color: #fff;
-  text-decoration-color: #fff;
-}
-.header-signup-button.v-btn--active::before {
-  opacity: 0;
-}
-.header-signup-button.v-btn--active:hover::before {
-  opacity: 0.08;
+  .mc-tab {
+    height: 100%;
+    line-height: 24px;
+    text-transform: none;
+  }
+  .mc-active-tab {
+    border-bottom: 2px solid;
+    color: #000091;
+    .v-btn--active::before {
+      opacity: 0; // get rid of the change in background colour
+    }
+  }
+  .mc-active-item {
+    border-left: 2px solid;
+    border-left-color: currentColor !important;
+    color: #000091;
+  }
+  button {
+    color: inherit;
+  }
+  .stealth-active-tab {
+    color: rgb(22, 22, 22) !important;
+    caret-color: rgb(22, 22, 22);
+    outline-color: #fff;
+    text-decoration-color: #fff;
+  }
+  .header-signup-button.v-btn--active::before {
+    opacity: 0;
+  }
+  .header-signup-button.v-btn--active:hover::before {
+    opacity: 0.08;
+  }
 }
 
 .fr-skiplinks {
