@@ -22,7 +22,8 @@
             text
             href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/infos-generales-sur-contexte-r%C3%A9glementaire/master/procedure-campagne-de-remontee-des-donnees-annuelle"
             target="_blank"
-            rel="noopener"
+            rel="noopener external"
+            title="Le guide de télédéclaration - ouvre une nouvelle fenêtre"
             class="text-decoration-underline mb-2 ml-n4 mr-4"
           >
             Le guide de télédéclaration
@@ -32,7 +33,8 @@
             text
             href="https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2FlNPOtFoTKyfj5UnjZKJj%2FEGAlim%20Bilan%20statistique%202023%20d%C3%A9finitif.pdf?alt=media"
             target="_blank"
-            rel="noopener"
+            rel="noopener external"
+            title="Bilan EGAlim pour la campagne de 2022 - ouvre une nouvelle fenêtre"
             class="text-decoration-underline mb-2 ml-n4"
           >
             Bilan EGAlim pour la campagne de 2022

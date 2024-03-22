@@ -18,7 +18,7 @@
           rel="noopener"
         >
           <v-icon class="mr-2">mdi-facebook</v-icon>
-          Rejoindre le groupe
+          Rejoindre le groupe Facebook
         </v-btn>
       </v-col>
       <v-col cols="4" v-if="$vuetify.breakpoint.mdAndUp">

@@ -171,7 +171,6 @@ const routes = [
     meta: {
       title: "Les mesures phares",
     },
-    sitemapGroup: Constants.SitemapGroups.LAW,
   },
   {
     // if you change this path, update the visitor view count logic in the publication widget
@@ -183,9 +182,9 @@ const routes = [
         name: "CanteensHome",
         component: CanteensHome,
         meta: {
-          title: "Nos cantines",
+          title: "Nos cantines publiées",
         },
-        sitemapGroup: Constants.SitemapGroups.LAW,
+        sitemapGroup: Constants.SitemapGroups.ACTION,
       },
       {
         path: ":canteenUrlComponent",
@@ -300,6 +299,7 @@ const routes = [
       title: "Actions en attente",
       authenticationRequired: true,
     },
+    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/nouvelle-cantine",
@@ -529,6 +529,7 @@ const routes = [
     meta: {
       title: "Développement et APIs",
     },
+    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/statistiques-plateforme/",
@@ -537,6 +538,7 @@ const routes = [
     meta: {
       title: "Mesures de notre impact",
     },
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/webinaires/:webinaireUrlComponent",
@@ -555,6 +557,7 @@ const routes = [
     beforeEnter: (_to, _from, next) => {
       store.state.loggedUser?.isElectedOfficial ? next() : next({ name: "ManagementPage" })
     },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
 ]
 
@@ -568,7 +571,6 @@ if (window.ENABLE_DASHBOARD) {
       title: "Tableau de bord",
       authenticationRequired: true,
     },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
   })
   routes.push({
     path: "/ma-progression/:canteenUrlComponent/:year/:measure",

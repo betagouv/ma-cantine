@@ -9,7 +9,13 @@
         <router-link v-if="link.to" :to="link.to">
           {{ link.title }}
         </router-link>
-        <a v-else :href="link.href" target="_blank" rel="noopener">
+        <a
+          v-else
+          :href="link.href"
+          target="_blank"
+          rel="noopener external"
+          :title="`${link.title} - ouvre une nouvelle fenêtre`"
+        >
           {{ link.title }}
           <v-icon v-if="link.href" small color="primary">mdi-open-in-new</v-icon>
         </a>

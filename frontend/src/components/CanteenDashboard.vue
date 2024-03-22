@@ -162,6 +162,8 @@
                 target="_blank"
                 outlined
                 class="my-2"
+                rel="noopener external"
+                title="Lien vers le support de communication - ouvre une nouvelle fenêtre"
               >
                 Lien vers le support de communication
                 <v-icon small class="ml-2">mdi-open-in-new</v-icon>

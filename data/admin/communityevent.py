@@ -51,7 +51,6 @@ class UpcomingEventsFilter(admin.SimpleListFilter):
 
 @admin.register(CommunityEvent)
 class CommunityEventAdmin(admin.ModelAdmin):
-
     form = CommunityEventForm
     fields = (
         "title",

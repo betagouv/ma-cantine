@@ -19,12 +19,22 @@
       <h2 class="body-1 font-weight-bold mb-4">Étape 1/2 : Renseignez le SIRET de votre établissement</h2>
       <p>
         Vous ne le connaissez pas ? Utilisez
-        <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
+        <a
+          href="https://annuaire-entreprises.data.gouv.fr/"
+          target="_blank"
+          rel="noopener external"
+          title="l'Annuaire des Entreprises - ouvre une nouvelle fenêtre"
+        >
           l'Annuaire des Entreprises
           <v-icon color="primary" small>mdi-open-in-new</v-icon>
         </a>
         pour trouver le SIRET de votre cantine, ou
-        <a href="https://annuaire-education.fr/" target="_blank" rel="noopener">
+        <a
+          href="https://annuaire-education.fr/"
+          target="_blank"
+          rel="noopener external"
+          title="l'Annuaire de l'Éducation - ouvre une nouvelle fenêtre"
+        >
           l'Annuaire de l'Éducation
           <v-icon color="primary" small>mdi-open-in-new</v-icon>
         </a>
@@ -216,7 +226,12 @@
             />
             <p class="caption mt-1 ml-2">
               Vous ne le connaissez pas ? Utilisez cet
-              <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
+              <a
+                href="https://annuaire-entreprises.data.gouv.fr/"
+                target="_blank"
+                rel="noopener external"
+                title="outil de recherche pour trouver le SIRET - ouvre une nouvelle fenêtre"
+              >
                 outil de recherche pour trouver le SIRET
                 <v-icon x-small color="primary">mdi-open-in-new</v-icon>
               </a>
@@ -232,6 +247,7 @@
                       params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(centralKitchen) },
                     }"
                     target="_blank"
+                    :title="`${centralKitchen.name} - ouvre une nouvelle fenêtre`"
                   >
                     « {{ centralKitchen.name }} »
                     <v-icon small color="primary">mdi-open-in-new</v-icon>
