@@ -117,7 +117,7 @@
       </template>
       <v-app-bar-nav-icon v-if="$vuetify.breakpoint.smAndDown" @click="drawer = !drawer"></v-app-bar-nav-icon>
     </v-app-bar>
-    <v-navigation-drawer v-model="drawer" app temporary width="100%" id="navigation-menu" class="text-right">
+    <v-navigation-drawer v-model="drawer" app temporary width="100%" id="navigation-menu" class="text-right py-2">
       <v-btn @click="drawer = false" aria-controls="navigation-menu" text color="primary">
         <span class="d-flex align-center">
           Fermer
@@ -140,50 +140,59 @@
         </ul>
       </nav>
       <nav role="navigation" aria-label="Menu principal" class="text-left py-2">
-        <v-expansion-panels accordion tile flat>
-          <ul class="no-bullets">
-            <li v-for="(link, idx) in navLinks" :key="idx">
-              <!-- TODO: show active style when a child item is chosen, even when collapsed -->
-              <v-expansion-panel v-if="link.children" text class="menu-expansion-item">
-                <v-expansion-panel-header>
-                  {{ link.text }}
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <ul class="no-bullets">
-                    <li v-for="(child, childIdx) in link.children" :key="childIdx">
-                      <v-btn
-                        v-if="child.to"
-                        class="fr-nav__link-child body-2"
-                        active-class="mc-act !importantive-item"
-                        color="white"
-                        :to="child.to"
-                        target="_self"
-                      >
-                        {{ child.text }}
-                      </v-btn>
-                      <v-btn
-                        v-else
-                        class="fr-nav__link-child body-2"
-                        color="white"
-                        !important
-                        :href="child.href"
-                        target="_blank"
-                        rel="noopener external"
-                        :title="`${child.text} - ouvre une nouvelle fenêtre`"
-                      >
-                        {{ child.text }}
-                        <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
-                      </v-btn>
-                    </li>
-                  </ul>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-              <v-btn v-else :to="link.to" text active-class="mc-active-item">
-                {{ link.text }}
-              </v-btn>
-            </li>
-          </ul>
-        </v-expansion-panels>
+        <ul class="no-bullets">
+          <li v-for="(link, idx) in displayNavLinks" :key="idx" class="menu-item py-1">
+            <v-btn
+              v-if="link.children"
+              @click="childMenu = childMenu === idx ? null : idx"
+              :aria-controls="`child-menu-${idx}`"
+              :aria-expanded="childMenu === idx"
+              text
+              :class="{
+                'body-2 font-weight-bold': true,
+                'mc-active-item': link.isActive,
+              }"
+              style="width: 100%;"
+            >
+              {{ link.text }}
+              <v-spacer />
+              <v-icon v-if="childMenu === idx" small class="menu-arrow ml-2">$arrow-up-s-line</v-icon>
+              <v-icon v-else small class="menu-arrow ml-2">$arrow-down-s-line</v-icon>
+            </v-btn>
+            <v-btn v-else :to="link.to" text class="body-2 font-weight-bold" active-class="mc-active-item">
+              {{ link.text }}
+            </v-btn>
+            <div v-if="link.children" :id="`child-menu-${idx}`">
+              <v-expand-transition>
+                <ul v-if="childMenu === idx" class="no-bullets ml-2">
+                  <li v-for="(child, childIdx) in link.children" :key="childIdx">
+                    <v-btn
+                      v-if="child.to"
+                      :to="child.to"
+                      class="fr-nav__link-child body-2"
+                      color="white"
+                      target="_self"
+                    >
+                      {{ child.text }}
+                    </v-btn>
+                    <v-btn
+                      v-else
+                      :href="child.href"
+                      class="fr-nav__link-child body-2"
+                      color="white"
+                      target="_blank"
+                      rel="noopener external"
+                      :title="`${child.text} - ouvre une nouvelle fenêtre`"
+                    >
+                      {{ child.text }}
+                      <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
+                    </v-btn>
+                  </li>
+                </ul>
+              </v-expand-transition>
+            </div>
+          </li>
+        </ul>
       </nav>
     </v-navigation-drawer>
   </div>
@@ -303,6 +312,7 @@ export default {
           authenticationState: true,
         },
       ],
+      childMenu: null,
     }
   },
   computed: {
@@ -424,9 +434,8 @@ button {
   border-bottom: solid 1px #e0e0e0;
 }
 
-.menu-expansion-item {
-  box-shadow: none !important;
-  border-radius: 0;
+.menu-item {
+  border-bottom: solid 1px #e0e0e0;
 }
 
 .fr-skiplinks {
