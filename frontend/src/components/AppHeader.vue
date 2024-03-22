@@ -141,6 +141,7 @@
                     class="pa-0"
                   >
                     <v-btn
+                      v-if="child.to"
                       class="fr-nav__link-child body-2"
                       active-class="mc-active-item"
                       color="white"
@@ -148,6 +149,18 @@
                       target="_self"
                     >
                       {{ child.text }}
+                    </v-btn>
+                    <v-btn
+                      v-else
+                      class="fr-nav__link-child body-2"
+                      color="white"
+                      :href="child.href"
+                      target="_blank"
+                      rel="noopener external"
+                      :title="`${child.text} - ouvre une nouvelle fenêtre`"
+                    >
+                      {{ child.text }}
+                      <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
                     </v-btn>
                   </v-list-item>
                 </v-list>
@@ -217,8 +230,6 @@ export default {
             {
               text: "Pour aller plus loin",
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-              target: "_blank",
-              rel: "noopener external",
             },
           ],
         },
@@ -241,8 +252,6 @@ export default {
             {
               text: "Indicateurs clés",
               href: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/3dab8a21-c4b9-46e1-84fa-7ba485ddfbbb",
-              target: "_blank",
-              rel: "noopener external",
             },
           ],
         },
@@ -277,8 +286,6 @@ export default {
             {
               text: "Documentation",
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-              target: "_blank",
-              rel: "noopener external",
             },
           ],
         },
