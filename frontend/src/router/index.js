@@ -183,7 +183,7 @@ const routes = [
         name: "CanteensHome",
         component: CanteensHome,
         meta: {
-          title: "Nos cantines",
+          title: "Nos cantines publiées",
         },
         sitemapGroup: Constants.SitemapGroups.LAW,
       },
