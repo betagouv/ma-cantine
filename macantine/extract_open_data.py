@@ -1,6 +1,6 @@
 import pandas as pd
 import datetime
-import pytz
+import zoneinfo
 import logging
 import requests
 import json
@@ -21,16 +21,16 @@ logger = logging.getLogger(__name__)
 
 CAMPAIGN_DATES = {
     2021: {
-        "start_date": datetime.datetime(2022, 7, 16, 0, 0, tzinfo=pytz.timezone("Europe/Paris")),
-        "end_date": datetime.datetime(2022, 12, 5, 0, 0, tzinfo=pytz.timezone("Europe/Paris")),
+        "start_date": datetime.datetime(2022, 7, 16, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "end_date": datetime.datetime(2022, 12, 5, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
     2022: {
-        "start_date": datetime.datetime(2023, 2, 13, 0, 0, tzinfo=pytz.timezone("Europe/Paris")),
-        "end_date": datetime.datetime(2023, 6, 30, 0, 0, tzinfo=pytz.timezone("Europe/Paris")),
+        "start_date": datetime.datetime(2023, 2, 13, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "end_date": datetime.datetime(2023, 6, 30, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
     2023: {
-        "start_date": datetime.datetime(2024, 1, 9, 0, 0, tzinfo=pytz.timezone("Europe/Paris")),
-        "end_date": datetime.datetime(2024, 3, 30, 0, 0, tzinfo=pytz.timezone("Europe/Paris")),
+        "start_date": datetime.datetime(2024, 1, 9, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "end_date": datetime.datetime(2024, 3, 30, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
 }
 

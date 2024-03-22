@@ -48,7 +48,7 @@
             <v-btn color="grey darken-2" text @click="logoutWarningDialog = false" class="mr-1">
               Non, revenir en arrière
             </v-btn>
-            <v-btn color="red darken-2" text href="/se-deconnecter">
+            <v-btn color="red darken-2" text @click="logout">
               Oui, je confirme
             </v-btn>
           </v-card-actions>
@@ -180,6 +180,11 @@ export default {
       if (item.authenticationState === false && this.loggedUser) return false
       if (item.breakpoint && !this.$vuetify.breakpoint[item.breakpoint]) return false
       return true
+    },
+    logout() {
+      return this.$store.dispatch("logout").then(() => {
+        this.$router.push({ name: "LandingPage" })
+      })
     },
   },
 }
