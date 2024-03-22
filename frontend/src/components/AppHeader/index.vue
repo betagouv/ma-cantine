@@ -82,7 +82,6 @@
                       active-class="mc-active-item"
                       color="white"
                       :to="child.to"
-                      target="_self"
                     >
                       {{ child.text }}
                     </v-btn>
@@ -107,7 +106,6 @@
                 active-class="stealt !importanth-active-tab"
                 color="white"
                 :to="navItem.to"
-                target="_self"
               >
                 {{ navItem.text }}
               </v-btn>
@@ -180,7 +178,6 @@
                           :to="child.to"
                           class="fr-nav__link-child body-2"
                           color="white"
-                          target="_self"
                           @click="overlayMenu = false"
                         >
                           {{ child.text }}
