@@ -115,7 +115,76 @@
           </ul>
         </nav>
       </template>
+      <v-app-bar-nav-icon v-if="$vuetify.breakpoint.smAndDown" @click="drawer = !drawer"></v-app-bar-nav-icon>
     </v-app-bar>
+    <v-navigation-drawer v-model="drawer" app temporary width="100%" id="navigation-menu" class="text-right">
+      <v-btn @click="drawer = false" aria-controls="navigation-menu" text color="primary">
+        <span class="d-flex align-center">
+          Fermer
+          <v-icon small color="primary" class="ml-2">
+            $close-line
+          </v-icon>
+        </span>
+      </v-btn>
+      <nav role="navigation" aria-label="Menu secondaire" class="text-left py-2" id="menu-quick-links">
+        <ul class="no-bullets">
+          <li v-for="(link, idx) in quickLinks" :key="idx">
+            <LogoutButton v-if="link.logout" />
+            <v-btn v-else-if="link.href" :href="link.href" text class="primary--text">
+              {{ link.text }}
+            </v-btn>
+            <v-btn v-else :to="link.to" text class="primary--text">
+              {{ link.text }}
+            </v-btn>
+          </li>
+        </ul>
+      </nav>
+      <nav role="navigation" aria-label="Menu principal" class="text-left py-2">
+        <v-expansion-panels accordion tile flat>
+          <ul class="no-bullets">
+            <li v-for="(link, idx) in navLinks" :key="idx">
+              <!-- TODO: show active style when a child item is chosen, even when collapsed -->
+              <v-expansion-panel v-if="link.children" text class="menu-expansion-item">
+                <v-expansion-panel-header>
+                  {{ link.text }}
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <ul class="no-bullets">
+                    <li v-for="(child, childIdx) in link.children" :key="childIdx">
+                      <v-btn
+                        v-if="child.to"
+                        class="fr-nav__link-child body-2"
+                        active-class="mc-active-item"
+                        color="white"
+                        :to="child.to"
+                        target="_self"
+                      >
+                        {{ child.text }}
+                      </v-btn>
+                      <v-btn
+                        v-else
+                        class="fr-nav__link-child body-2"
+                        color="white"
+                        :href="child.href"
+                        target="_blank"
+                        rel="noopener external"
+                        :title="`${child.text} - ouvre une nouvelle fenêtre`"
+                      >
+                        {{ child.text }}
+                        <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
+                      </v-btn>
+                    </li>
+                  </ul>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-btn v-else :to="link.to" text active-class="mc-active-item">
+                {{ link.text }}
+              </v-btn>
+            </li>
+          </ul>
+        </v-expansion-panels>
+      </nav>
+    </v-navigation-drawer>
   </div>
 </template>
 
@@ -129,6 +198,7 @@ export default {
   data() {
     return {
       dashboardEnabled: window.ENABLE_DASHBOARD,
+      drawer: false,
       navLinks: [
         {
           text: "Mon tableau de bord",
@@ -305,7 +375,9 @@ export default {
     border-top: solid 1px #e0e0e0;
     height: 56px; // same height as toolbar extension
   }
+}
 
+nav {
   .fr-nav__link {
     height: 100%;
   }
@@ -346,6 +418,15 @@ export default {
   }
   .v-btn--active:hover::before {
     opacity: 0.08;
+  }
+
+  #menu-quick-links {
+    border-bottom: solid 1px #e0e0e0;
+  }
+
+  .menu-expansion-item {
+    box-shadow: none !important;
+    border-radius: 0;
   }
 }
 
