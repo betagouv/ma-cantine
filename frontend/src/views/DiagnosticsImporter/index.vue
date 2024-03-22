@@ -30,7 +30,9 @@
                 </h2>
               </v-card-title>
               <v-card-text>
-                {{ type.help }}
+                <p class="mb-0">
+                  {{ type.help }}
+                </p>
               </v-card-text>
               <v-spacer></v-spacer>
               <v-card-actions class="px-4 pt-0">
@@ -64,7 +66,9 @@
                 </h2>
               </v-card-title>
               <v-card-text>
-                {{ type.help }}
+                <p class="mb-0">
+                  {{ type.help }}
+                </p>
               </v-card-text>
               <v-spacer></v-spacer>
               <v-card-actions class="px-4 pt-0">
@@ -76,7 +80,7 @@
         </v-hover>
       </v-col>
     </v-row>
-    <v-divider class="mt-12 mb-4" />
+    <v-divider aria-hidden="true" role="presentation" class="mt-12 mb-4" />
     <HelpForm />
   </div>
 </template>

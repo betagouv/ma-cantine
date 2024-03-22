@@ -9,20 +9,22 @@
         <v-icon class="ml-4" color="primary">$information-fill</v-icon>
 
         <v-card-text>
-          La cantine « {{ canteen.name }} » sert des repas cuisinés dans la cuisine centrale
-          <span v-if="canteen.centralKitchen.publicationStatus === 'published'">
-            <router-link
-              :to="{
-                name: 'CanteenPage',
-                params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen.centralKitchen) },
-              }"
-            >
-              « {{ canteen.centralKitchen.name }} »
-            </router-link>
-            .
-          </span>
-          <span v-else>« {{ canteen.centralKitchen.name }} ».</span>
-          Les valeurs ci-dessous sont celles du lieu de production des repas.
+          <p class="mb-0">
+            La cantine « {{ canteen.name }} » sert des repas cuisinés dans la cuisine centrale
+            <span v-if="canteen.centralKitchen.publicationStatus === 'published'">
+              <router-link
+                :to="{
+                  name: 'CanteenPage',
+                  params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen.centralKitchen) },
+                }"
+              >
+                « {{ canteen.centralKitchen.name }} »
+              </router-link>
+              .
+            </span>
+            <span v-else>« {{ canteen.centralKitchen.name }} ».</span>
+            Les valeurs ci-dessous sont celles du lieu de production des repas.
+          </p>
         </v-card-text>
       </v-card>
 
@@ -173,17 +175,19 @@
           <div class="d-flex align-start">
             <v-img width="40" max-width="40" contain :src="`/static/images/badges/${key}.svg`" alt=""></v-img>
             <div>
-              <v-card-title class="py-0 text-body-2 font-weight-bold">{{ badge.title }}</v-card-title>
-              <v-card-subtitle
-                class="pt-4"
-                v-text="badge.subtitle"
-                v-if="key !== 'appro' || applicableRules.qualityThreshold === 50"
-              ></v-card-subtitle>
+              <v-card-title class="py-0">
+                <h3 class="text-body-2 font-weight-bold">{{ badge.title }}</h3>
+              </v-card-title>
+              <v-card-subtitle class="pt-4" v-if="key !== 'appro' || applicableRules.qualityThreshold === 50">
+                <p class="mb-0">{{ badge.subtitle }}</p>
+              </v-card-subtitle>
               <div v-else>
                 <v-card-subtitle class="pt-0">
-                  Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de
-                  produits durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
-                  <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+                  <p class="mb-0">
+                    Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de
+                    produits durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
+                    <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+                  </p>
                 </v-card-subtitle>
               </div>
             </div>

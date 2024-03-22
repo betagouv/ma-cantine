@@ -12,7 +12,9 @@
     </v-card-title>
 
     <v-card-text>
-      {{ measure.deadline.display }}
+      <p class="mb-0">
+        {{ measure.deadline.display }}
+      </p>
     </v-card-text>
 
     <v-card-title>
@@ -28,11 +30,11 @@
 
     <v-card-text>
       <p v-if="measure.who">{{ measure.who }}</p>
-      <div>
-        <div v-for="tag in measure.tags" :key="tag" class="my-2">
+      <ul>
+        <li v-for="tag in measure.tags" :key="tag" class="my-2">
           {{ tagsInfo[tag] }}
-        </div>
-      </div>
+        </li>
+      </ul>
     </v-card-text>
   </v-card>
 </template>
@@ -56,3 +58,14 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+ul {
+  padding-left: 0;
+  list-style-type: none;
+}
+/* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
+li::before {
+  content: "\200B";
+}
+</style>

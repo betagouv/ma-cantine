@@ -59,7 +59,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.totalLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Total des déchets alimentaires"
                   suffix="kg"
@@ -69,8 +69,13 @@
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
-                  v-model.number="payload.durationLeftoversMeasurement"
-                  :rules="[validators.nonNegativeOrEmpty, validators.isInteger, validators.lteOrEmpty(365)]"
+                  :value="payload.durationLeftoversMeasurement"
+                  @input="(x) => (payload.durationLeftoversMeasurement = integerInputValue(x))"
+                  :rules="
+                    payload.hasWasteMeasures
+                      ? [validators.nonNegativeOrEmpty, validators.isInteger, validators.lteOrEmpty(365)]
+                      : []
+                  "
                   validate-on-blur
                   label="Période de mesure"
                   suffix="jours"
@@ -81,7 +86,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.breadLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste de pain"
                   suffix="kg/an"
@@ -92,7 +97,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.servedLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste plateau"
                   suffix="kg/an"
@@ -103,7 +108,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.unservedLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste en production (non servi)"
                   suffix="kg/an"
@@ -114,7 +119,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.sideLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste de composantes (entrée, plat dessert...)"
                   suffix="kg/an"
@@ -179,8 +184,9 @@
                 </label>
                 <DsfrTextField
                   id="donationFrequency"
-                  v-model.number="payload.donationFrequency"
-                  :rules="[validators.nonNegativeOrEmpty, validators.isInteger]"
+                  :value="payload.donationFrequency"
+                  @input="(x) => (payload.donationFrequency = integerInputValue(x))"
+                  :rules="payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.isInteger] : []"
                   validate-on-blur
                   suffix="dons/an"
                   :readonly="!payload.hasDonationAgreement"
@@ -197,7 +203,9 @@
                 <DsfrTextField
                   id="donationQuantity"
                   v-model.number="payload.donationQuantity"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="
+                    payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []
+                  "
                   validate-on-blur
                   suffix="kg/an"
                   :readonly="!payload.hasDonationAgreement"
@@ -213,7 +221,7 @@
                 </label>
                 <DsfrTextField
                   id="donationFoodType"
-                  v-model.number="payload.donationFoodType"
+                  v-model="payload.donationFoodType"
                   :readonly="!payload.hasDonationAgreement"
                   :disabled="!payload.hasDonationAgreement"
                 />
@@ -265,7 +273,11 @@
       <p>Les inscriptions sont ouvertes jusqu’au 1er juillet 2023.</p>
       <p>
         Les informations relatives aux conditions de mise en œuvre de l’expérimentation sont précisées dans
-        <a href="/static/documents/Guide_pratique_XP_RESERVATION.pdf" target="_blank" rel="noopener">
+        <a
+          href="/static/documents/Guide_pratique_XP_RESERVATION.pdf"
+          target="_blank"
+          title="le guide pratique - ouvre une nouvelle fenêtre"
+        >
           le guide pratique
           <v-icon color="primary" small>mdi-open-in-new</v-icon>
         </a>
@@ -431,6 +443,15 @@ export default {
       this.$set(this, "payload", e.payload)
       this.$emit("tunnel-autofill", { payload: this.payload })
     },
+    integerInputValue(val) {
+      return this.numberInputValue(val, parseInt)
+    },
+    numberInputValue(val, parseFunction) {
+      if (val === "") return null
+      const parsedValue = parseFunction(val)
+      if (parsedValue === 0) return 0
+      return parsedValue || val
+    },
   },
   mounted() {
     this.$emit("update-steps", this.steps)
@@ -450,6 +471,22 @@ export default {
     otherActionEnabled(newValue) {
       if (newValue) this.$nextTick().then(this.$refs["other-action-field"]?.validate)
       else this.payload.otherWasteAction = null
+    },
+    "payload.hasWasteMeasures": function() {
+      if (this.payload.hasWasteMeasures) return
+      const fieldsToClear = [
+        "totalLeftovers",
+        "durationLeftoversMeasurement",
+        "breadLeftovers",
+        "servedLeftovers",
+        "unservedLeftovers",
+        "sideLeftovers",
+      ]
+      fieldsToClear.forEach((x) => (this.payload[x] = null))
+    },
+    "payload.hasDonationAgreement": function() {
+      const fieldsToClear = ["donationFrequency", "donationQuantity", "donationFoodType"]
+      fieldsToClear.forEach((x) => (this.payload[x] = null))
     },
     $route() {
       // it is possible to navigate without saving.

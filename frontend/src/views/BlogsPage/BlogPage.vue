@@ -15,18 +15,20 @@
           </v-col>
           <v-col cols="12" sm="9">
             <v-card-title>
-              <h1 class="font-weight-black text-h5 text-sm-h4">{{ blogPost.title }}</h1>
+              <h1 class="font-weight-black text-h5 text-sm-h4 mb-2">{{ blogPost.title }}</h1>
             </v-card-title>
             <v-card-subtitle>
-              Publié le
-              {{
-                new Date(blogPost.displayDate).toLocaleDateString("fr-FR", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-              }}
-              <span v-if="author">par {{ author }}</span>
+              <p class="mb-0">
+                Publié le
+                {{
+                  new Date(blogPost.displayDate).toLocaleDateString("fr-FR", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                }}
+                <span v-if="author">par {{ author }}</span>
+              </p>
             </v-card-subtitle>
           </v-col>
           <v-spacer></v-spacer>

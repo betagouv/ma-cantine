@@ -10,7 +10,7 @@ import datetime
 from unittest.mock import patch
 from django.utils import timezone
 from freezegun import freeze_time
-import pytz
+import zoneinfo
 
 LAST_YEAR = datetime.date.today().year - 1
 
@@ -77,7 +77,9 @@ class TestTeledeclarationApi(APITestCase):
         payload = {"diagnosticId": diagnostic.id}
 
         with patch.object(
-            timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.timezone("Europe/Paris"))
+            timezone,
+            "now",
+            return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         ):
             response = self.client.post(reverse("teledeclaration_create"), payload)
 
@@ -139,7 +141,9 @@ class TestTeledeclarationApi(APITestCase):
         payload = {"diagnosticId": diagnostic.id}
 
         with patch.object(
-            timezone, "now", return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=pytz.timezone("Europe/Paris"))
+            timezone,
+            "now",
+            return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         ):
             response = self.client.post(reverse("teledeclaration_create"), payload)
 

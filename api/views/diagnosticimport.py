@@ -48,13 +48,11 @@ class ImportDiagnosticsView(ABC, APIView):
 
     @property
     @abstractmethod
-    def final_value_idx():
-        ...
+    def final_value_idx(): ...
 
     @property
     @abstractmethod
-    def import_type():
-        ...
+    def import_type(): ...
 
     def post(self, request):
         self.start_time = time.time()
@@ -161,16 +159,13 @@ class ImportDiagnosticsView(ABC, APIView):
         return (canteen, should_update_geolocation)
 
     @abstractmethod
-    def _skip_row(self, row_number, row):
-        ...
+    def _skip_row(self, row_number, row): ...
 
     @abstractmethod
-    def _validate_row(self, row):
-        ...
+    def _validate_row(self, row): ...
 
     @abstractmethod
-    def _validate_diagnostic(self, row):
-        ...
+    def _validate_diagnostic(self, row): ...
 
     # NB: this function should only be called once the data has been validated since by this point a canteen
     # will have been saved to the DB and we don't want partial imports caused by exceptions from this method
@@ -488,8 +483,7 @@ class ImportDiagnosticsView(ABC, APIView):
         return errors
 
     @abstractmethod
-    def _column_count_error_message(self, row):
-        ...
+    def _column_count_error_message(self, row): ...
 
 
 # Allows canteen-only and simple diagnostics import

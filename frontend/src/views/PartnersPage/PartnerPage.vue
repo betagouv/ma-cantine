@@ -27,7 +27,7 @@
       </div>
       <p class="my-4" v-html="partner.longDescription"></p>
 
-      <v-divider class="mt-12"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" class="mt-12"></v-divider>
 
       <ReferencingInfo class="pt-12" />
     </div>

@@ -4,7 +4,6 @@ from data.models import ManagerInvitation
 
 @admin.register(ManagerInvitation)
 class ManagerInvitationAdmin(admin.ModelAdmin):
-
     list_display = (
         "creation_date",
         "email",
