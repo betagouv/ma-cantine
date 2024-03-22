@@ -38,81 +38,41 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        text
-        elevation="0"
-        class="align-self-center header-login-button ml-2 primary--text"
-        v-if="!loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
-        href="/s-identifier"
-      >
-        <span>S'identifier</span>
-      </v-btn>
+      <div v-if="$vuetify.breakpoint.mdAndUp" class="d-flex">
+        <div v-for="(link, idx) in quickLinks" :key="idx">
+          <v-dialog v-if="link.logout" v-model="logoutWarningDialog" max-width="500">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn v-bind="attrs" v-on="on" text elevation="0" class="primary--text">
+                <span>Me déconnecter</span>
+              </v-btn>
+            </template>
 
-      <v-btn
-        text
-        elevation="0"
-        v-if="!loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
-        href="/creer-mon-compte"
-        class="d-none d-sm-flex align-self-center header-signup-button primary--text"
-      >
-        <span>Créer mon compte</span>
-      </v-btn>
+            <v-card>
+              <v-card-text class="pa-8 text-left">
+                <p class="mb-0">Voulez-vous vous déconnecter de votre compte ma cantine ?</p>
+              </v-card-text>
 
-      <v-btn
-        text
-        elevation="0"
-        v-if="loggedUser && loggedUser.isDev && userDataReady && $vuetify.breakpoint.mdAndUp"
-        :to="{ name: 'DeveloperPage' }"
-        class="d-none d-sm-flex align-self-center header-signup-button primary--text"
-      >
-        <span>Développement et APIs</span>
-      </v-btn>
+              <v-divider aria-hidden="true" role="presentation"></v-divider>
 
-      <v-btn
-        text
-        elevation="0"
-        v-if="loggedUser && !loggedUser.isDev && userDataReady && $vuetify.breakpoint.mdAndUp"
-        :to="{ name: 'ManagementPage' }"
-        class="d-none d-sm-flex align-self-center header-signup-button primary--text"
-      >
-        <span>Mes cantines</span>
-      </v-btn>
-
-      <v-dialog
-        v-if="loggedUser && userDataReady && $vuetify.breakpoint.mdAndUp"
-        v-model="logoutWarningDialog"
-        max-width="500"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            v-bind="attrs"
-            v-on="on"
-            text
-            elevation="0"
-            class="d-none d-sm-flex align-self-center header-signup-button primary--text"
-          >
-            <span>Me déconnecter</span>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="grey darken-2" text @click="logoutWarningDialog = false" class="mr-1">
+                  Non, revenir en arrière
+                </v-btn>
+                <v-btn color="red darken-2" text @click="logout">
+                  Oui, je confirme
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-btn v-else-if="link.href" text elevation="0" class="ml-2 primary--text" :href="link.href">
+            {{ link.text }}
           </v-btn>
-        </template>
-
-        <v-card>
-          <v-card-text class="pa-8 text-left">
-            <p class="mb-0">Voulez-vous vous déconnecter de votre compte ma cantine ?</p>
-          </v-card-text>
-
-          <v-divider aria-hidden="true" role="presentation"></v-divider>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="grey darken-2" text @click="logoutWarningDialog = false" class="mr-1">
-              Non, revenir en arrière
-            </v-btn>
-            <v-btn color="red darken-2" text @click="logout">
-              Oui, je confirme
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+          <v-btn v-else text elevation="0" class="ml-2 primary--text" :to="link.to">
+            {{ link.text }}
+          </v-btn>
+        </div>
+      </div>
 
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
         <nav class="fr-nav my-n1" id="navigation-773" role="navigation" aria-label="Menu principal">
@@ -331,6 +291,21 @@ export default {
       if (env === "demo") return { text: "Démo", color: "green darken-2" }
       return null
     },
+    quickLinks() {
+      if (!this.userDataReady) return []
+      if (!this.loggedUser) {
+        const login = { href: "/s-identifier", text: "S'identifier" }
+        const signup = { href: "/creer-mon-compte", text: "Créer mon compte" }
+        return [login, signup]
+      }
+      const logout = { logout: true }
+      if (this.loggedUser.isDev) {
+        const apis = { to: { name: "DeveloperPage" }, text: "Développement et APIs" }
+        return [apis, logout]
+      }
+      const mesCantines = { to: { name: "ManagementPage" }, text: "Mon tableau de bord" }
+      return [mesCantines, logout]
+    },
   },
   methods: {
     shouldDisplayChild(child) {
@@ -376,9 +351,6 @@ export default {
   .mc-active-tab {
     border-bottom: 2px solid;
     color: #000091;
-    .v-btn--active::before {
-      opacity: 0; // get rid of the change in background colour
-    }
   }
   .mc-active-item {
     border-left: 2px solid;
@@ -394,10 +366,13 @@ export default {
     outline-color: #fff;
     text-decoration-color: #fff;
   }
-  .header-signup-button.v-btn--active::before {
+  .quick-link.v-btn--active::before {
     opacity: 0;
   }
-  .header-signup-button.v-btn--active:hover::before {
+  .v-btn--active::before {
+    opacity: 0; // get rid of the change in background colour
+  }
+  .v-btn--active:hover::before {
     opacity: 0.08;
   }
 }
