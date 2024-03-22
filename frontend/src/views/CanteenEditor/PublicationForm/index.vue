@@ -12,6 +12,7 @@
             params: { canteenUrlComponent },
           }"
           target="_blank"
+          title="nos cantines - ouvre une nouvelle fenêtre"
         >
           nos cantines
           <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>

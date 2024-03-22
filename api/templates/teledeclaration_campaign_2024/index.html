@@ -2,15 +2,18 @@
 <html>
     <head>{% include "./style.html" %}</head>
     <body>
-        <div class="image-container">
-            <img src="{% static '../../../web/static/images/logo_transparent_white.png' %}"
+        <div>
+            <img src="{% static '../../../web/static/images/Marianne.png' %}"
+                 alt="Ministère de l'Agriculture et de la Souverainté Alimentaire"
+                 height="60" />
+            <img src="{% static '../../../web/static/images/ma-cantine-logo-light.jpg' %}"
                  alt="ma cantine"
-                 height="30"
-                 width="142" />
+                 height="60" />
         </div>
         <h1>Justificatif pour télédéclaration {{ year }}</h1>
         <h2>Télédéclaration faite le {{ date|date:"l j F Y" }} par {{ applicant }}</h2>
         {% include "./canteen.html" %}
+
         {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
             <h3>Vous avez choisi la télédéclaration {{ diagnostic_type }}.</h3>
         {% endif %}
@@ -23,6 +26,7 @@
             {{ date|date:"l j F Y" }} via la plateforme numérique « ma cantine » :
         </p>
         <!-- SIMPLIFIED DECLARATION -->
+
         {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
             {% if not diagnostic_type == "complète" %}
                 {% include "./measure_quality_simple.html" %}
@@ -31,6 +35,7 @@
                 {% include "./measure_quality_complete.html" %}
             {% endif %}
         {% endif %}
+
         {% if teledeclaration_mode != "CENTRAL_APPRO" %}
             <div class="other-measures">
                 {% include "./measure_waste.html" %}

@@ -41,8 +41,10 @@
     </v-card>
     <v-card class="text-left mt-16 py-4" elevation="0" color="primary lighten-5">
       <v-col cols="12" sm="8" md="12" class="mx-auto">
-        <v-card-title class="text-h5 font-weight-black py-6">
-          Atteindre vos objectifs en 3 étapes
+        <v-card-title>
+          <h2 class="text-h5 font-weight-black">
+            Atteindre vos objectifs en 3 étapes
+          </h2>
         </v-card-title>
         <v-card-text>
           <v-row>
@@ -62,7 +64,7 @@
     </v-card>
 
     <div v-if="recentlyModifiedCanteens">
-      <v-divider class="my-16"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" class="my-16"></v-divider>
       <h2 class="text-h4 font-weight-black text-center mb-8">Les dernières cantines publiées</h2>
       <v-row>
         <v-col v-for="canteen in recentlyModifiedCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
@@ -76,7 +78,7 @@
       </v-row>
     </div>
 
-    <v-divider class="mt-16"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="mt-16"></v-divider>
     <BlogBlock class="my-16" />
   </div>
 </template>

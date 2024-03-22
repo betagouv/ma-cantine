@@ -22,6 +22,11 @@
       <template v-for="(_, name) in $slots" v-slot:[name]>
         <slot :name="name" />
       </template>
+
+      <!-- For RGAA 8.9 error messages should also be in p tags, by default in vuetify 2 they're in divs -->
+      <template v-slot:message="{ key, message }">
+        <p :key="key" class="mb-0">{{ message }}</p>
+      </template>
     </v-combobox>
   </div>
 </template>

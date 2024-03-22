@@ -17,10 +17,12 @@
             </v-card-text>
             <div v-else-if="showMassDiagnose">
               <v-card-text>
-                Vous pouvez créer
-                <span v-if="toDiagnose.length > 1">{{ toDiagnose.length }} diagnostics</span>
-                <span v-else>1 diagnostic</span>
-                depuis les achats renseignés.
+                <p class="mb-0">
+                  Vous pouvez créer
+                  <span v-if="toDiagnose.length > 1">{{ toDiagnose.length }} diagnostics</span>
+                  <span v-else>1 diagnostic</span>
+                  depuis les achats renseignés.
+                </p>
               </v-card-text>
               <v-card-actions class="pb-4">
                 <v-btn class="primary ml-2" @click="massDiagnose">
@@ -39,9 +41,11 @@
         <v-col v-if="suggestTeledeclare()" cols="12" sm="6" md="4">
           <v-card outlined v-if="toTeledeclare.length > 1">
             <v-card-text>
-              Vous pouvez dès à présent effectuer la télédéclaration pour
-              <span v-if="toTeledeclare.length > 1">{{ toTeledeclareCount }} cantines.</span>
-              <span v-else>une cantine.</span>
+              <p class="mb-0">
+                Vous pouvez dès à présent effectuer la télédéclaration pour
+                <span v-if="toTeledeclare.length > 1">{{ toTeledeclareCount }} cantines.</span>
+                <span v-else>une cantine.</span>
+              </p>
             </v-card-text>
             <v-card-actions class="pb-4">
               <v-btn class="primary ml-2" @click="showMultipleTeledeclarationPreview = true">
@@ -82,9 +86,11 @@
             </v-row>
             <div v-else-if="showMassPublication">
               <v-card-text>
-                Vous pouvez publier
-                <span v-if="toPublish.length > 1">{{ toPublish.length }} cantines.</span>
-                <span v-else>1 cantine.</span>
+                <p class="mb-0">
+                  Vous pouvez publier
+                  <span v-if="toPublish.length > 1">{{ toPublish.length }} cantines.</span>
+                  <span v-else>1 cantine.</span>
+                </p>
               </v-card-text>
               <v-card-actions class="pb-4">
                 <v-btn class="primary ml-2" @click="massPublication">
@@ -154,7 +160,9 @@
       />
       <v-dialog v-model="showPublicationForm" max-width="750" v-if="canteenForPublication">
         <v-card class="text-left">
-          <v-card-title class="font-weight-bold">Publication : {{ canteenForPublication.name }}</v-card-title>
+          <v-card-title>
+            <h1 class="fr-h5 mt-2 mb-0">Publication : {{ canteenForPublication.name }}</h1>
+          </v-card-title>
           <v-card-text class="mt-2">
             <p>
               Les publications sont affichées dans

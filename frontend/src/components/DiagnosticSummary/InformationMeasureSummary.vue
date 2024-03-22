@@ -69,7 +69,8 @@
           <a
             :href="diagnostic.communicationSupportUrl"
             target="_blank"
-            rel="noopener"
+            rel="noopener external"
+            title="Lien vers le support de communication - ouvre une nouvelle fenêtre"
             class="grey--text text--darken-4"
           >
             Lien vers le support de communication

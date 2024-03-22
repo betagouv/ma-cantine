@@ -37,8 +37,10 @@
             :ripple="false"
             class="dsfr d-flex flex-column fill-height"
           >
-            <v-card-title class="font-weight-bold">Gérer mes applications</v-card-title>
-            <v-card-text>Enregistrez vos applications pour obtenir l'accès à l'API avec Oauth2</v-card-text>
+            <v-card-title><h2 class="fr-h5 mb-1">Gérer mes applications</h2></v-card-title>
+            <v-card-text>
+              <p class="mb-0">Enregistrez vos applications pour obtenir l'accès à l'API avec Oauth2</p>
+            </v-card-text>
             <v-spacer></v-spacer>
             <v-card-actions class="px-4 py-4">
               <v-spacer></v-spacer>
@@ -54,8 +56,8 @@
             :ripple="false"
             class="dsfr d-flex flex-column fill-height"
           >
-            <v-card-title class="font-weight-bold">API</v-card-title>
-            <v-card-text>Consultez la documentation Swagger de notre API</v-card-text>
+            <v-card-title><h2 class="fr-h5 mb-1">API</h2></v-card-title>
+            <v-card-text><p class="mb-0">Consultez la documentation Swagger de notre API</p></v-card-text>
             <v-spacer></v-spacer>
             <v-card-actions class="px-4 py-4">
               <v-spacer></v-spacer>
@@ -66,7 +68,12 @@
       </v-row>
       <p class="mt-4">
         Une application exemple est disponible en
-        <a href="https://github.com/betagouv/ma-cantine-demo-integration" target="_blank" rel="noopener">
+        <a
+          href="https://github.com/betagouv/ma-cantine-demo-integration"
+          target="_blank"
+          rel="noopener external"
+          title="open source - ouvre une nouvelle fenêtre"
+        >
           open source
           <v-icon small color="primary">$external-link-line</v-icon>
         </a>
@@ -77,7 +84,7 @@
         <a @click="toggleDevMode(false)" text>Désactiver le mode développeur de votre compte</a>
         .
       </p>
-      <v-divider class="my-10"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" class="my-10"></v-divider>
 
       <h2 class="text-h6 font-weight-black mt-10 mb-6">Une question ? Contactez-nous</h2>
       <GeneralContactForm></GeneralContactForm>

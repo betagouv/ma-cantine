@@ -22,8 +22,10 @@
           <v-card-text class="pb-1 pt-6">
             <v-icon>{{ measure.mdiIcon }}</v-icon>
           </v-card-text>
-          <v-card-title class="text-body-1 text-left font-weight-bold">
-            {{ measure.title }}
+          <v-card-title>
+            <h3 class="text-body-1 text-left font-weight-bold">
+              {{ measure.title }}
+            </h3>
           </v-card-title>
           <v-spacer></v-spacer>
           <v-card-actions class="px-4 py-4">

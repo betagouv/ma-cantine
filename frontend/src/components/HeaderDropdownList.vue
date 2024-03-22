@@ -2,7 +2,12 @@
   <v-list rounded class="text-left">
     <v-list-item-group active-class="menu-item--active">
       <div v-for="(item, index) in items" :key="index">
-        <v-divider v-if="item.type === 'divider' && shouldDisplay(item)" class="my-2"></v-divider>
+        <v-divider
+          aria-hidden="true"
+          role="presentation"
+          v-if="item.type === 'divider' && shouldDisplay(item)"
+          class="my-2"
+        ></v-divider>
         <v-list-item
           v-else-if="shouldDisplay(item)"
           :to="item.to"
@@ -17,7 +22,7 @@
           </v-list-item-title>
         </v-list-item>
       </div>
-      <v-divider v-if="loggedUser" class="my-2"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" v-if="loggedUser" class="my-2"></v-divider>
       <!-- logout button with warning -->
       <v-dialog v-if="loggedUser" v-model="logoutWarningDialog" max-width="500">
         <template v-slot:activator="{ on, attrs }">
@@ -31,17 +36,19 @@
 
         <v-card>
           <v-card-text class="pa-8 text-left">
-            Voulez-vous vous déconnecter de votre compte ma cantine ?
+            <p class="mb-0">
+              Voulez-vous vous déconnecter de votre compte ma cantine ?
+            </p>
           </v-card-text>
 
-          <v-divider></v-divider>
+          <v-divider aria-hidden="true" role="presentation"></v-divider>
 
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="grey darken-2" text @click="logoutWarningDialog = false" class="mr-1">
               Non, revenir en arrière
             </v-btn>
-            <v-btn color="red darken-2" text href="/se-deconnecter">
+            <v-btn color="red darken-2" text @click="logout">
               Oui, je confirme
             </v-btn>
           </v-card-actions>
@@ -173,6 +180,11 @@ export default {
       if (item.authenticationState === false && this.loggedUser) return false
       if (item.breakpoint && !this.$vuetify.breakpoint[item.breakpoint]) return false
       return true
+    },
+    logout() {
+      return this.$store.dispatch("logout").then(() => {
+        this.$router.push({ name: "LandingPage" })
+      })
     },
   },
 }

@@ -4,7 +4,9 @@
       <h1 class="font-weight-black text-h4 mb-4 mt-1">Supprimer mon compte</h1>
     </v-card-title>
     <v-card-subtitle class="text-body-2 mt-n1">
-      Contactez nous pour supprimer votre compte ou demander les données liées à votre profil
+      <p class="mb-0">
+        Contactez nous pour supprimer votre compte ou demander les données liées à votre profil
+      </p>
     </v-card-subtitle>
     <v-card-actions class="pa-4">
       <v-btn large outlined color="primary" :href="hrefMail" target="_blank">Contacter l'équipe</v-btn>

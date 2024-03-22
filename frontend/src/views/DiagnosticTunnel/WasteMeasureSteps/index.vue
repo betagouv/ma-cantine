@@ -8,44 +8,34 @@
         @tunnel-autofill="onTunnelAutofill"
         class="mb-xs-6 mb-xl-16"
       />
-      <fieldset>
-        <legend class="my-3">
-          J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire
-        </legend>
-        <v-radio-group class="my-0" v-model="payload.hasWasteDiagnostic" hide-details>
-          <v-radio
-            v-for="item in boolOptions"
-            :key="`hasWasteDiagnostic-${item.value}`"
-            :label="item.label"
-            :value="item.value"
-          ></v-radio>
-        </v-radio-group>
-      </fieldset>
-      <fieldset class="mt-8" :disabled="!payload.hasWasteDiagnostic">
-        <legend class="mb-3">J’ai mis en place un plan d’action adapté au diagnostic réalisé</legend>
-        <v-radio-group class="my-0" v-model="payload.hasWastePlan" hide-details>
-          <v-radio
-            v-for="item in boolOptions"
-            :key="`hasWastePlan-${item.value}`"
-            :label="item.label"
-            :value="item.value"
-            :disabled="!payload.hasWasteDiagnostic"
-            :readonly="!payload.hasWasteDiagnostic"
-          ></v-radio>
-        </v-radio-group>
-      </fieldset>
+      <DsfrRadio
+        v-model="payload.hasWasteDiagnostic"
+        label="J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire"
+        yesNo
+        optional
+        hide-details
+      />
+      <DsfrRadio
+        v-model="payload.hasWastePlan"
+        label="J’ai mis en place un plan d’action adapté au diagnostic réalisé"
+        yesNo
+        optional
+        hide-details
+        :disabled="!payload.hasWasteDiagnostic"
+        :readonly="!payload.hasWasteDiagnostic"
+        class="mt-8"
+      />
     </div>
     <div v-else-if="stepUrlSlug === 'mesure-gaspillage'">
       <v-row>
         <v-col cols="12" sm="6">
-          <fieldset>
-            <legend class="my-3">
-              J’ai réalisé des mesures de mon gaspillage alimentaire
-            </legend>
-            <v-radio-group class="my-0" v-model="payload.hasWasteMeasures" hide-details>
-              <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-            </v-radio-group>
-          </fieldset>
+          <DsfrRadio
+            v-model="payload.hasWasteMeasures"
+            label="J’ai réalisé des mesures de mon gaspillage alimentaire"
+            yesNo
+            optional
+            hide-details
+          />
         </v-col>
         <v-col cols="12" sm="6">
           <fieldset :disabled="!payload.hasWasteMeasures">
@@ -59,7 +49,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.totalLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Total des déchets alimentaires"
                   suffix="kg"
@@ -69,8 +59,13 @@
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
-                  v-model.number="payload.durationLeftoversMeasurement"
-                  :rules="[validators.nonNegativeOrEmpty, validators.isInteger, validators.lteOrEmpty(365)]"
+                  :value="payload.durationLeftoversMeasurement"
+                  @input="(x) => (payload.durationLeftoversMeasurement = integerInputValue(x))"
+                  :rules="
+                    payload.hasWasteMeasures
+                      ? [validators.nonNegativeOrEmpty, validators.isInteger, validators.lteOrEmpty(365)]
+                      : []
+                  "
                   validate-on-blur
                   label="Période de mesure"
                   suffix="jours"
@@ -81,7 +76,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.breadLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste de pain"
                   suffix="kg/an"
@@ -92,7 +87,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.servedLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste plateau"
                   suffix="kg/an"
@@ -103,7 +98,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.unservedLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste en production (non servi)"
                   suffix="kg/an"
@@ -114,7 +109,7 @@
               <v-col cols="12" md="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.sideLeftovers"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
                   validate-on-blur
                   label="Reste de composantes (entrée, plat dessert...)"
                   suffix="kg/an"
@@ -158,14 +153,13 @@
     <div v-else-if="stepUrlSlug === 'dons-alimentaires'">
       <v-row>
         <v-col cols="12" sm="6">
-          <fieldset>
-            <legend class="my-3">
-              Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire
-            </legend>
-            <v-radio-group class="my-0" v-model="payload.hasDonationAgreement" hide-details>
-              <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-            </v-radio-group>
-          </fieldset>
+          <DsfrRadio
+            v-model="payload.hasDonationAgreement"
+            label="Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire"
+            yesNo
+            optional
+            hide-details
+          />
         </v-col>
         <v-col cols="12" sm="6">
           <fieldset :disabled="!payload.hasDonationAgreement">
@@ -179,8 +173,9 @@
                 </label>
                 <DsfrTextField
                   id="donationFrequency"
-                  v-model.number="payload.donationFrequency"
-                  :rules="[validators.nonNegativeOrEmpty, validators.isInteger]"
+                  :value="payload.donationFrequency"
+                  @input="(x) => (payload.donationFrequency = integerInputValue(x))"
+                  :rules="payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.isInteger] : []"
                   validate-on-blur
                   suffix="dons/an"
                   :readonly="!payload.hasDonationAgreement"
@@ -197,7 +192,9 @@
                 <DsfrTextField
                   id="donationQuantity"
                   v-model.number="payload.donationQuantity"
-                  :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
+                  :rules="
+                    payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []
+                  "
                   validate-on-blur
                   suffix="kg/an"
                   :readonly="!payload.hasDonationAgreement"
@@ -213,7 +210,7 @@
                 </label>
                 <DsfrTextField
                   id="donationFoodType"
-                  v-model.number="payload.donationFoodType"
+                  v-model="payload.donationFoodType"
                   :readonly="!payload.hasDonationAgreement"
                   :disabled="!payload.hasDonationAgreement"
                 />
@@ -265,7 +262,11 @@
       <p>Les inscriptions sont ouvertes jusqu’au 1er juillet 2023.</p>
       <p>
         Les informations relatives aux conditions de mise en œuvre de l’expérimentation sont précisées dans
-        <a href="/static/documents/Guide_pratique_XP_RESERVATION.pdf" target="_blank" rel="noopener">
+        <a
+          href="/static/documents/Guide_pratique_XP_RESERVATION.pdf"
+          target="_blank"
+          title="le guide pratique - ouvre une nouvelle fenêtre"
+        >
           le guide pratique
           <v-icon color="primary" small>mdi-open-in-new</v-icon>
         </a>
@@ -301,6 +302,7 @@ import validators from "@/validators"
 import LastYearAutofillOption from "../LastYearAutofillOption"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
+import DsfrRadio from "@/components/DsfrRadio"
 import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
 import Constants from "@/constants"
 
@@ -323,6 +325,7 @@ export default {
     LastYearAutofillOption,
     DsfrTextField,
     DsfrTextarea,
+    DsfrRadio,
     ExpeReservation,
   },
   data() {
@@ -365,16 +368,6 @@ export default {
       otherActionEnabled: !!this.diagnostic.otherWasteAction,
       wasteActions: Constants.WasteActions,
       steps,
-      boolOptions: [
-        {
-          label: "Oui",
-          value: true,
-        },
-        {
-          label: "Non",
-          value: false,
-        },
-      ],
       payload: {},
       fields: [
         "hasWasteDiagnostic",
@@ -431,6 +424,15 @@ export default {
       this.$set(this, "payload", e.payload)
       this.$emit("tunnel-autofill", e)
     },
+    integerInputValue(val) {
+      return this.numberInputValue(val, parseInt)
+    },
+    numberInputValue(val, parseFunction) {
+      if (val === "") return null
+      const parsedValue = parseFunction(val)
+      if (parsedValue === 0) return 0
+      return parsedValue || val
+    },
   },
   mounted() {
     this.$emit("update-steps", this.steps)
@@ -450,6 +452,22 @@ export default {
     otherActionEnabled(newValue) {
       if (newValue) this.$nextTick().then(this.$refs["other-action-field"]?.validate)
       else this.payload.otherWasteAction = null
+    },
+    "payload.hasWasteMeasures": function() {
+      if (this.payload.hasWasteMeasures) return
+      const fieldsToClear = [
+        "totalLeftovers",
+        "durationLeftoversMeasurement",
+        "breadLeftovers",
+        "servedLeftovers",
+        "unservedLeftovers",
+        "sideLeftovers",
+      ]
+      fieldsToClear.forEach((x) => (this.payload[x] = null))
+    },
+    "payload.hasDonationAgreement": function() {
+      const fieldsToClear = ["donationFrequency", "donationQuantity", "donationFoodType"]
+      fieldsToClear.forEach((x) => (this.payload[x] = null))
     },
     $route() {
       // it is possible to navigate without saving.

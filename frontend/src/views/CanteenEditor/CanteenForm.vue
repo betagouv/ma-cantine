@@ -19,12 +19,22 @@
       <h2 class="body-1 font-weight-bold mb-4">Étape 1/2 : Renseignez le SIRET de votre établissement</h2>
       <p>
         Vous ne le connaissez pas ? Utilisez
-        <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
+        <a
+          href="https://annuaire-entreprises.data.gouv.fr/"
+          target="_blank"
+          rel="noopener external"
+          title="l'Annuaire des Entreprises - ouvre une nouvelle fenêtre"
+        >
           l'Annuaire des Entreprises
           <v-icon color="primary" small>mdi-open-in-new</v-icon>
         </a>
         pour trouver le SIRET de votre cantine, ou
-        <a href="https://annuaire-education.fr/" target="_blank" rel="noopener">
+        <a
+          href="https://annuaire-education.fr/"
+          target="_blank"
+          rel="noopener external"
+          title="l'Annuaire de l'Éducation - ouvre une nouvelle fenêtre"
+        >
           l'Annuaire de l'Éducation
           <v-icon color="primary" small>mdi-open-in-new</v-icon>
         </a>
@@ -52,10 +62,10 @@
       <h2 class="mb-4" v-if="isNewCanteen">Étape 2/2 : Compléter les informations</h2>
       <v-row>
         <v-col cols="12" md="8">
-          <p>SIRET</p>
-          <p class="grey--text text--darken-2">
+          <p class="mb-2">SIRET</p>
+          <p class="grey--text text--darken-2 d-flex align-center">
             {{ siret || canteen.siret }}
-            <v-btn small @click="goToStep(0)">Modifier</v-btn>
+            <v-btn small @click="goToStep(0)" class="ml-2">Modifier</v-btn>
           </p>
 
           <DsfrTextField
@@ -80,8 +90,13 @@
             </DsfrCallout>
           </div>
 
-          <p class="body-2 mt-4 mb-2">Ville</p>
-          <CityField :location="canteen" :rules="[validators.required]" @locationUpdate="setLocation" />
+          <CityField
+            label="Ville"
+            labelClasses="body-2 mb-2"
+            :location="canteen"
+            :rules="[validators.required]"
+            @locationUpdate="setLocation"
+          />
         </v-col>
 
         <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
@@ -99,7 +114,7 @@
               @click="onLogoUploadClick"
               rounded
               color="grey lighten-5"
-              class="fill-height"
+              class="fill-height drag-and-drop"
               style="overflow: hidden;"
               min-height="170"
             >
@@ -124,25 +139,18 @@
 
       <v-row>
         <v-col cols="12" class="mt-2">
-          <v-divider></v-divider>
+          <v-divider aria-hidden="true" role="presentation"></v-divider>
         </v-col>
 
         <v-col cols="12">
-          <p class="body-1 ml-1 mb-0">Mon établissement...</p>
-          <v-radio-group
-            class="mt-2"
+          <DsfrRadio
+            label="Mon établissement..."
+            labelClasses="body-2 mb-2 grey--text text--darken-4"
+            :items="productionTypes"
             v-model="canteen.productionType"
-            hide-details="auto"
             :rules="[validators.required]"
-          >
-            <v-radio class="ml-0" v-for="item in productionTypes" :key="item.value" :value="item.value">
-              <template v-slot:label>
-                <div class="d-block">
-                  <div class="body-1 grey--text text--darken-4" v-html="item.title"></div>
-                </div>
-              </template>
-            </v-radio>
-          </v-radio-group>
+            class="mt-2"
+          />
         </v-col>
 
         <v-col cols="12" md="4" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
@@ -205,7 +213,7 @@
           <v-col cols="12" md="8" v-if="usesCentralProducer" class="py-0">
             <DsfrTextField
               label="SIRET de la cuisine centrale"
-              class="mt-2"
+              labelClasses="body-2 mb-2"
               hide-details="auto"
               validate-on-blur
               v-model="canteen.centralProducerSiret"
@@ -218,7 +226,12 @@
             />
             <p class="caption mt-1 ml-2">
               Vous ne le connaissez pas ? Utilisez cet
-              <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank" rel="noopener">
+              <a
+                href="https://annuaire-entreprises.data.gouv.fr/"
+                target="_blank"
+                rel="noopener external"
+                title="outil de recherche pour trouver le SIRET - ouvre une nouvelle fenêtre"
+              >
                 outil de recherche pour trouver le SIRET
                 <v-icon x-small color="primary">mdi-open-in-new</v-icon>
               </a>
@@ -234,6 +247,7 @@
                       params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(centralKitchen) },
                     }"
                     target="_blank"
+                    :title="`${centralKitchen.name} - ouvre une nouvelle fenêtre`"
                   >
                     « {{ centralKitchen.name }} »
                     <v-icon small color="primary">mdi-open-in-new</v-icon>
@@ -248,19 +262,26 @@
 
       <v-row>
         <v-col cols="12" class="mt-4">
-          <v-divider></v-divider>
+          <v-divider aria-hidden="true" role="presentation"></v-divider>
         </v-col>
 
         <v-col cols="12" sm="6" md="4">
           <div>
-            <p class="body-2">Catégorie de secteur</p>
-            <DsfrSelect clearable :items="sectorCategories" v-model="sectorCategory" hide-details="auto" />
+            <DsfrSelect
+              label="Catégorie de secteur"
+              labelClasses="body-2 mb-2"
+              clearable
+              :items="sectorCategories"
+              v-model="sectorCategory"
+              hide-details="auto"
+            />
           </div>
         </v-col>
         <v-col cols="12" md="6">
           <div>
-            <p class="body-2">Secteurs d'activité</p>
             <DsfrSelect
+              label="Secteurs d'activité"
+              labelClasses="body-2 mb-2"
               :items="filteredSectors"
               :rules="canteen.sectors && canteen.sectors.length ? [] : [validators.required]"
               @change="addSector"
@@ -286,8 +307,9 @@
           </div>
         </v-col>
         <v-col v-if="showMinistryField" cols="12" md="10">
-          <p class="body-2">Ministère de tutelle</p>
           <DsfrSelect
+            label="Ministère de tutelle"
+            labelClasses="body-2 mb-2"
             :items="ministries"
             v-model="canteen.lineMinistry"
             :rules="[validators.required]"
@@ -299,30 +321,24 @@
       </v-row>
       <v-row>
         <v-col cols="12" sm="6" md="3">
-          <div>
-            <p class="body-2 ml-4">Type d'établissement</p>
-            <v-radio-group v-model="canteen.economicModel" :rules="[validators.required]">
-              <v-radio
-                class="ml-8"
-                v-for="item in economicModels"
-                :key="item.value"
-                :label="item.text"
-                :value="item.value"
-              ></v-radio>
-            </v-radio-group>
-          </div>
+          <DsfrRadio
+            label="Type d'établissement"
+            labelClasses="body-2 mb-2 grey--text text--darken-4"
+            :items="economicModels"
+            v-model="canteen.economicModel"
+            :rules="[validators.required]"
+            class="mt-2"
+          />
         </v-col>
         <v-col cols="12" sm="6" md="3">
-          <p class="body-2 ml-4">Mode de gestion</p>
-          <v-radio-group v-model="canteen.managementType" :rules="[validators.required]">
-            <v-radio
-              class="ml-8"
-              v-for="item in managementTypes"
-              :key="item.value"
-              :label="item.text"
-              :value="item.value"
-            ></v-radio>
-          </v-radio-group>
+          <DsfrRadio
+            label="Mode de gestion"
+            labelClasses="body-2 mb-2 grey--text text--darken-4"
+            :items="managementTypes"
+            v-model="canteen.managementType"
+            :rules="[validators.required]"
+            class="mt-2"
+          />
         </v-col>
       </v-row>
       <div>
@@ -354,6 +370,7 @@ import ImagesField from "./ImagesField"
 import SiretCheck from "./SiretCheck"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrRadio from "@/components/DsfrRadio"
 import CityField from "./CityField"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrCallout from "@/components/DsfrCallout"
@@ -367,6 +384,7 @@ export default {
     ImagesField,
     TechnicalControlDialog,
     DsfrTextField,
+    DsfrRadio,
     CityField,
     DsfrSelect,
     DsfrCallout,
@@ -397,7 +415,7 @@ export default {
       steps: ["siret", "informations-cantine"],
       satelliteSiretMessage:
         "Le numéro SIRET de la cuisine centrale ne peut pas être le même que celui de la cantine satellite.",
-      productionTypes: Constants.ProductionTypesDetailed,
+      productionTypes: Constants.ProductionTypesDetailed.map((pt) => ({ text: pt.title, value: pt.value })),
       economicModels: Constants.EconomicModels,
       sectorCategory: null,
       chosenSector: null,

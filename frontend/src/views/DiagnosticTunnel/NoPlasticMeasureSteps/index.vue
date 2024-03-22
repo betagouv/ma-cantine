@@ -8,40 +8,38 @@
         @tunnel-autofill="onTunnelAutofill"
         class="mb-xs-6 mb-xl-16"
       />
-      <fieldset>
-        <legend class="mb-3">
-          Je n’utilise plus de contenants alimentaires de cuisson / de réchauffe en plastique
-        </legend>
-        <v-radio-group class="my-0" v-model="payload.cookingPlasticSubstituted" hide-details>
-          <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-        </v-radio-group>
-      </fieldset>
-      <fieldset class="mt-8">
-        <legend class="mb-3">
-          Je n’utilise plus de contenants alimentaires de service en plastique
-        </legend>
-        <v-radio-group class="my-0" v-model="payload.servingPlasticSubstituted" hide-details>
-          <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-        </v-radio-group>
-      </fieldset>
+      <DsfrRadio
+        label="Je n’utilise plus de contenants alimentaires de cuisson / de réchauffe en plastique"
+        v-model="payload.cookingPlasticSubstituted"
+        hide-details
+        optional
+        :items="boolOptions"
+      />
+      <DsfrRadio
+        label="Je n’utilise plus de contenants alimentaires de service en plastique"
+        v-model="payload.servingPlasticSubstituted"
+        hide-details
+        optional
+        :items="boolOptions"
+        class="mt-8"
+      />
     </div>
     <div v-else-if="stepUrlSlug === 'ustensils-et-contenants'">
-      <fieldset>
-        <legend class="mb-3">
-          Je ne mets plus à disposition des convives des bouteilles d’eau plate en plastique
-        </legend>
-        <v-radio-group class="my-0" v-model="payload.plasticBottlesSubstituted" hide-details>
-          <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-        </v-radio-group>
-      </fieldset>
-      <fieldset class="mt-8">
-        <legend class="mb-3">
-          Je ne mets plus à disposition des convives des ustensiles à usage unique en matière plastique
-        </legend>
-        <v-radio-group class="my-0" v-model="payload.plasticTablewareSubstituted" hide-details>
-          <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-        </v-radio-group>
-      </fieldset>
+      <DsfrRadio
+        label="Je ne mets plus à disposition des convives des bouteilles d’eau plate en plastique"
+        v-model="payload.plasticBottlesSubstituted"
+        hide-details
+        optional
+        :items="boolOptions"
+      />
+      <DsfrRadio
+        label="Je ne mets plus à disposition des convives des ustensiles à usage unique en matière plastique"
+        v-model="payload.plasticTablewareSubstituted"
+        hide-details
+        optional
+        :items="boolOptions"
+        class="mt-8"
+      />
     </div>
     <component v-else :is="step.componentName" :canteen="canteen" :diagnostic="payload" />
   </v-form>
@@ -49,6 +47,7 @@
 
 <script>
 import LastYearAutofillOption from "../LastYearAutofillOption"
+import DsfrRadio from "@/components/DsfrRadio"
 
 export default {
   name: "NoPlasticMeasureSteps",
@@ -65,7 +64,7 @@ export default {
       type: String,
     },
   },
-  components: { LastYearAutofillOption },
+  components: { LastYearAutofillOption, DsfrRadio },
   data() {
     return {
       formIsValid: true,

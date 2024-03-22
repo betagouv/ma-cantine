@@ -17,7 +17,7 @@ from .utils import authenticate
 import datetime
 from unittest.mock import patch
 from django.utils import timezone
-import pytz
+import zoneinfo
 
 NEXT_YEAR = datetime.date.today().year + 1
 
@@ -786,7 +786,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Teledeclaration.objects.count(), 0)
 
         with patch.object(
-            timezone, "now", return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=pytz.timezone("Europe/Paris"))
+            timezone,
+            "now",
+            return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         ):
             with open("./api/tests/files/teledeclaration_simple.csv") as diag_file:
                 response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
@@ -810,7 +812,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.save()
 
         with patch.object(
-            timezone, "now", return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=pytz.timezone("Europe/Paris"))
+            timezone,
+            "now",
+            return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         ):
             with open("./api/tests/files/teledeclaration_error.csv") as diag_file:
                 response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})

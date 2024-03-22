@@ -4,14 +4,18 @@
       <v-progress-circular indeterminate style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
     </div>
     <v-card class="text-left" v-else-if="expe">
-      <v-card-title class="font-weight-black">
-        Vous êtes inscrit à l'expérimentation
+      <v-card-title>
+        <h1 class="fr-h5 mb-2">
+          Vous êtes inscrit à l'expérimentation
+        </h1>
       </v-card-title>
       <v-card-text>
-        Afin de pouvoir évaluer les effets de la solution de réservation sur la satisfaction des usagers et le taux de
-        fréquentation et de confirmer son potentiel en tant que levier de lutte contre le gaspillage alimentaire, nous
-        vous demandons de suivre et renseigner différents indicateurs nécessaires à l’évaluation du gaspillage
-        alimentaire, du taux de fréquentation et de la satisfaction des usagers à 3 étapes de l’expérimentation.
+        <p class="mb-0">
+          Afin de pouvoir évaluer les effets de la solution de réservation sur la satisfaction des usagers et le taux de
+          fréquentation et de confirmer son potentiel en tant que levier de lutte contre le gaspillage alimentaire, nous
+          vous demandons de suivre et renseigner différents indicateurs nécessaires à l’évaluation du gaspillage
+          alimentaire, du taux de fréquentation et de la satisfaction des usagers à 3 étapes de l’expérimentation.
+        </p>
       </v-card-text>
       <v-card-text class="pt-0">
         <DownloadLink
@@ -21,7 +25,7 @@
           target="_blank"
         />
       </v-card-text>
-      <v-divider></v-divider>
+      <v-divider aria-hidden="true" role="presentation"></v-divider>
       <v-card-text>
         <v-form ref="form" v-model="formIsValid">
           <!-- reservation system in place? -->
@@ -193,7 +197,7 @@
           </v-checkbox>
 
           <!-- t0, t1, t2 -->
-          <v-divider class="mt-4"></v-divider>
+          <v-divider aria-hidden="true" role="presentation" class="mt-4"></v-divider>
           <p class="body-1 font-weight-bold mt-4 mb-0">
             Évaluons l’impact sur la fréquentation et satisfaction convive
           </p>

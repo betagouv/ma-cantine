@@ -6,12 +6,34 @@
         :series="series"
         role="img"
         :aria-labelledby="headingId"
-        aria-describedby="text"
+        aria-describedby="multi-year-graph-description"
         v-if="years.length"
-        :height="this.height || 'auto'"
-        :width="this.width || '100%'"
+        :height="height || 'auto'"
+        :width="width || '100%'"
       />
-      <p id="text" class="d-none">{{ description }}</p>
+      <DsfrAccordion :items="[{ title: 'Description du graphique' }]" :style="`width: ${width}`">
+        <div id="multi-year-graph-description">
+          <p>
+            Les pourcentages d'achats par année pour cette cantine sont :
+          </p>
+          <ol class="mb-4">
+            <li v-for="(year, idx) in years" :key="year">
+              {{ year }} : {{ seriesData.bio[idx] }} % bio, {{ seriesData.sustainable[idx] }} % de qualité et durable
+              (hors bio)
+            </li>
+          </ol>
+          <p class="mb-0">
+            Rappel de l'objectif : Les repas servis comportent au moins {{ applicableRules.qualityThreshold }} % de
+            produits de qualité et durables dont au moins {{ applicableRules.bioThreshold }} % issus de l'agriculture
+            biologique ou en conversion, pour les cantines
+            {{
+              applicableRules.hasQualityException
+                ? `dans la région « ${regionDisplayName} »`
+                : "en France métropolitaine"
+            }}.
+          </p>
+        </div>
+      </DsfrAccordion>
     </div>
     <p v-else class="my-4 text-left">Données non renseignées</p>
   </div>
@@ -19,7 +41,8 @@
 
 <script>
 import VueApexCharts from "vue-apexcharts"
-import { getPercentage, hasDiagnosticApproData, getSustainableTotal } from "@/utils"
+import DsfrAccordion from "@/components/DsfrAccordion"
+import { getPercentage, hasDiagnosticApproData, getSustainableTotal, regionDisplayName } from "@/utils"
 
 const VALUE_DESCRIPTION = "Pourcentage d'achats"
 const BIO = "Bio"
@@ -29,6 +52,7 @@ const OTHER = "Hors EGAlim"
 export default {
   components: {
     VueApexCharts,
+    DsfrAccordion,
   },
   props: {
     diagnostics: Object,
@@ -82,16 +106,6 @@ export default {
           color: "#ccc",
         },
       ]
-    },
-    description() {
-      let description = `${VALUE_DESCRIPTION}. `
-      this.years.forEach((year, idx) => {
-        description += `${year} : `
-        description += `${percentageFormatter(this.seriesData.bio[idx])} ${BIO}, ${percentageFormatter(
-          this.seriesData.sustainable[idx]
-        )} ${SUSTAINABLE}. `
-      })
-      return description
     },
     chartOptions() {
       const legendPosition = this.legendPosition || (this.$vuetify.breakpoint.smAndUp ? "right" : "top")
@@ -151,6 +165,9 @@ export default {
           shared: true,
         },
       }
+    },
+    regionDisplayName() {
+      return regionDisplayName(this.applicableRules.regionForQualityException)
     },
   },
   methods: {

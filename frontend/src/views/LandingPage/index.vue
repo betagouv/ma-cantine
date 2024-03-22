@@ -4,15 +4,15 @@
 
     <ActionsBlock class="ma-0 ma-md-n4 pa-6 cta-group" />
 
-    <v-divider class="mt-16"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="mt-16"></v-divider>
 
     <MissionBlock class="mt-14" />
 
-    <v-divider class="mt-16"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="mt-16"></v-divider>
 
     <ToolsBlock class="mt-14" />
 
-    <v-divider class="mt-16"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="mt-16"></v-divider>
 
     <KeyGoalsBlock class="mt-14 py-2" />
 
@@ -20,15 +20,15 @@
 
     <DiscoverMeasuresBlock class="mt-16 py-2" />
 
-    <v-divider class="mt-16"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="mt-16"></v-divider>
 
     <BlogBlock class="my-16" />
 
-    <v-divider class="mt-16"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="mt-16"></v-divider>
 
     <Resources class="my-16" />
 
-    <v-divider class="mt-8"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="mt-8"></v-divider>
 
     <TheNewsletter class="mt-12 mb-8" />
   </div>

@@ -12,7 +12,6 @@ class SectorForm(forms.ModelForm):
 
 @admin.register(Sector)
 class SectorAdmin(admin.ModelAdmin):
-
     form = SectorForm
     fields = (
         "category",

@@ -4,29 +4,33 @@
     outlined
     class="pa-4 text-left fill-height d-flex flex-column dsfr"
   >
-    <v-card-title class="font-weight-black pt-1">
-      {{ canteen.name }}
+    <v-card-title class="pt-1">
+      <h2 class="fr-h6 mb-1 font-weight-black">
+        {{ canteen.name }}
+      </h2>
     </v-card-title>
     <v-card-subtitle class="pb-4">
       <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" />
       <div v-if="isCentralKitchen" class="tag body-2 font-weight-medium mt-2">
-        <v-icon class="mt-n1" small>$community-fill</v-icon>
-        Cuisine centrale
+        <p class="d-flex align-center mb-0">
+          <v-icon class="mr-1" small>$community-fill</v-icon>
+          Cuisine centrale
+        </p>
       </div>
     </v-card-subtitle>
     <v-spacer></v-spacer>
-    <v-divider class="py-1"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="py-1"></v-divider>
     <div class="grey--text text--darken-2" :style="$vuetify.breakpoint.smAndDown ? '' : 'height: 95px;'">
       <v-card-text class="py-1 fill-height d-flex flex-column" v-if="diagnostic">
-        <span>En {{ year }} :</span>
+        <p class="mb-0">En {{ year }} :</p>
         <v-row class="ma-0" v-if="hasPercentages">
           <p class="ma-0 mr-3" v-if="bioPercent">
             <span class="font-weight-black mr-1">{{ bioPercent }} %</span>
-            <span>bio</span>
+            bio
           </p>
           <p class="ma-0" v-if="sustainablePercent">
             <span class="font-weight-black mr-1">{{ sustainablePercent }} %</span>
-            <span>de qualité et durables</span>
+            de qualité et durables
           </p>
         </v-row>
         <v-spacer v-else></v-spacer>
@@ -45,7 +49,7 @@
       </v-card-text>
       <div v-else class="d-flex flex-column fill-height">
         <v-spacer></v-spacer>
-        <v-card-text class="py-1">Pas de données renseignées</v-card-text>
+        <v-card-text class="py-1"><p class="mb-0">Pas de données renseignées</p></v-card-text>
         <v-spacer></v-spacer>
       </div>
     </div>
