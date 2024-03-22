@@ -7,7 +7,7 @@ def ma_cantine_preprocessing_hook(endpoints):
     property "include_in_documentation" set to True
     """
     filtered_endpoints = []
-    for (path, path_regex, method, callback) in endpoints:
+    for path, path_regex, method, callback in endpoints:
         accessible_through_oauth2 = (
             hasattr(callback.cls, "permission_classes")
             and IsAuthenticatedOrTokenHasResourceScope in callback.cls.permission_classes

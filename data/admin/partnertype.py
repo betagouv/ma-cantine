@@ -12,7 +12,6 @@ class PartnerTypeForm(forms.ModelForm):
 
 @admin.register(PartnerType)
 class PartnerTypeAdmin(admin.ModelAdmin):
-
     form = PartnerTypeForm
     fields = ("name",)
     list_display = (

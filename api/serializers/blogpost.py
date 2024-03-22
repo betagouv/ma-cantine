@@ -4,7 +4,6 @@ from .user import BlogPostAuthor
 
 
 class BlogPostSerializer(serializers.ModelSerializer):
-
     author = BlogPostAuthor()
     tags = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")
 

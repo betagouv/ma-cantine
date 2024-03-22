@@ -2,19 +2,19 @@
   <v-form v-model="formIsValid" @submit.prevent>
     <div v-if="payload">
       <div v-if="stepUrlSlug === 'mode-de-saisie'">
-        <fieldset>
-          <legend class="text-left my-3">
-            Selon le niveau d’information disponible, vous pouvez choisir entre les deux types de saisie suivantes.
-          </legend>
-          <v-radio-group class="my-0" v-model="payload.diagnosticType" hide-details>
-            <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
-              <template v-slot:label>
-                <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
-                <span class="fr-text-sm ml-3">{{ type.help }}</span>
-              </template>
-            </v-radio>
-          </v-radio-group>
-        </fieldset>
+        <v-radio-group class="my-0" v-model="payload.diagnosticType" hide-details>
+          <template v-slot:label>
+            <span class="fr-text grey--text text--darken-4">
+              Selon le niveau d’information disponible, vous pouvez choisir entre les deux types de saisie suivantes.
+            </span>
+          </template>
+          <v-radio v-for="type in diagnosticTypes" :key="type.key" :label="type.label" :value="type.key">
+            <template v-slot:label>
+              <span class="grey--text text--darken-3 font-weight-bold">{{ type.label }}</span>
+              <span class="fr-text-sm ml-3">{{ type.help }}</span>
+            </template>
+          </v-radio>
+        </v-radio-group>
       </div>
       <component
         v-else-if="step.characteristicId"

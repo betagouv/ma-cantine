@@ -17,7 +17,7 @@
 
       <!-- For RGAA 8.9 error messages should also be in p tags, by default in vuetify 2 they're in divs -->
       <template v-slot:message="{ key, message }">
-        <p :key="key">{{ message }}</p>
+        <p :key="key" class="mb-0">{{ message }}</p>
       </template>
     </v-textarea>
   </div>
