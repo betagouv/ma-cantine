@@ -115,86 +115,98 @@
           </ul>
         </nav>
       </template>
-      <v-app-bar-nav-icon v-if="$vuetify.breakpoint.smAndDown" @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-dialog v-model="overlayMenu" fullscreen hide-overlay id="navigation-menu">
+        <template v-slot:activator="{ on, attrs }">
+          <v-app-bar-nav-icon v-if="$vuetify.breakpoint.smAndDown" v-bind="attrs" v-on="on"></v-app-bar-nav-icon>
+        </template>
+        <v-card class="text-right">
+          <v-btn @click="overlayMenu = false" aria-controls="navigation-menu" text color="primary" class="mt-4">
+            <span class="d-flex align-center">
+              Fermer
+              <v-icon small color="primary" class="ml-2">
+                $close-line
+              </v-icon>
+            </span>
+          </v-btn>
+          <nav role="navigation" aria-label="Menu secondaire" class="text-left py-2" id="menu-quick-links">
+            <ul class="no-bullets">
+              <li v-for="(link, idx) in quickLinks" :key="idx">
+                <LogoutButton v-if="link.logout" />
+                <v-btn v-else-if="link.href" :href="link.href" text class="primary--text">
+                  {{ link.text }}
+                </v-btn>
+                <v-btn v-else :to="link.to" text class="primary--text" @click="overlayMenu = false">
+                  {{ link.text }}
+                </v-btn>
+              </li>
+            </ul>
+          </nav>
+          <nav role="navigation" aria-label="Menu principal" class="text-left py-2">
+            <ul class="no-bullets">
+              <li v-for="(link, idx) in displayNavLinks" :key="idx" class="menu-item py-1">
+                <v-btn
+                  v-if="link.children"
+                  @click="childMenu = childMenu === idx ? null : idx"
+                  :aria-controls="`child-menu-${idx}`"
+                  :aria-expanded="childMenu === idx"
+                  text
+                  :class="{
+                    'body-2 font-weight-bold': true,
+                    'mc-active-item': link.isActive,
+                  }"
+                  style="width: 100%;"
+                >
+                  {{ link.text }}
+                  <v-spacer />
+                  <v-icon v-if="childMenu === idx" small class="menu-arrow ml-2">$arrow-up-s-line</v-icon>
+                  <v-icon v-else small class="menu-arrow ml-2">$arrow-down-s-line</v-icon>
+                </v-btn>
+                <v-btn
+                  v-else
+                  :to="link.to"
+                  text
+                  class="body-2 font-weight-bold"
+                  active-class="mc-active-item"
+                  @click="overlayMenu = false"
+                >
+                  {{ link.text }}
+                </v-btn>
+                <div v-if="link.children" :id="`child-menu-${idx}`">
+                  <v-expand-transition>
+                    <ul v-if="childMenu === idx" class="no-bullets ml-2">
+                      <li v-for="(child, childIdx) in link.children" :key="childIdx">
+                        <v-btn
+                          v-if="child.to"
+                          :to="child.to"
+                          class="fr-nav__link-child body-2"
+                          color="white"
+                          target="_self"
+                          @click="overlayMenu = false"
+                        >
+                          {{ child.text }}
+                        </v-btn>
+                        <v-btn
+                          v-else
+                          :href="child.href"
+                          class="fr-nav__link-child body-2"
+                          color="white"
+                          target="_blank"
+                          rel="noopener external"
+                          :title="`${child.text} - ouvre une nouvelle fenêtre`"
+                        >
+                          {{ child.text }}
+                          <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
+                        </v-btn>
+                      </li>
+                    </ul>
+                  </v-expand-transition>
+                </div>
+              </li>
+            </ul>
+          </nav>
+        </v-card>
+      </v-dialog>
     </v-app-bar>
-    <v-navigation-drawer v-model="drawer" app temporary width="100%" id="navigation-menu" class="text-right py-2">
-      <v-btn @click="drawer = false" aria-controls="navigation-menu" text color="primary">
-        <span class="d-flex align-center">
-          Fermer
-          <v-icon small color="primary" class="ml-2">
-            $close-line
-          </v-icon>
-        </span>
-      </v-btn>
-      <nav role="navigation" aria-label="Menu secondaire" class="text-left py-2" id="menu-quick-links">
-        <ul class="no-bullets">
-          <li v-for="(link, idx) in quickLinks" :key="idx">
-            <LogoutButton v-if="link.logout" />
-            <v-btn v-else-if="link.href" :href="link.href" text class="primary--text">
-              {{ link.text }}
-            </v-btn>
-            <v-btn v-else :to="link.to" text class="primary--text">
-              {{ link.text }}
-            </v-btn>
-          </li>
-        </ul>
-      </nav>
-      <nav role="navigation" aria-label="Menu principal" class="text-left py-2">
-        <ul class="no-bullets">
-          <li v-for="(link, idx) in displayNavLinks" :key="idx" class="menu-item py-1">
-            <v-btn
-              v-if="link.children"
-              @click="childMenu = childMenu === idx ? null : idx"
-              :aria-controls="`child-menu-${idx}`"
-              :aria-expanded="childMenu === idx"
-              text
-              :class="{
-                'body-2 font-weight-bold': true,
-                'mc-active-item': link.isActive,
-              }"
-              style="width: 100%;"
-            >
-              {{ link.text }}
-              <v-spacer />
-              <v-icon v-if="childMenu === idx" small class="menu-arrow ml-2">$arrow-up-s-line</v-icon>
-              <v-icon v-else small class="menu-arrow ml-2">$arrow-down-s-line</v-icon>
-            </v-btn>
-            <v-btn v-else :to="link.to" text class="body-2 font-weight-bold" active-class="mc-active-item">
-              {{ link.text }}
-            </v-btn>
-            <div v-if="link.children" :id="`child-menu-${idx}`">
-              <v-expand-transition>
-                <ul v-if="childMenu === idx" class="no-bullets ml-2">
-                  <li v-for="(child, childIdx) in link.children" :key="childIdx">
-                    <v-btn
-                      v-if="child.to"
-                      :to="child.to"
-                      class="fr-nav__link-child body-2"
-                      color="white"
-                      target="_self"
-                    >
-                      {{ child.text }}
-                    </v-btn>
-                    <v-btn
-                      v-else
-                      :href="child.href"
-                      class="fr-nav__link-child body-2"
-                      color="white"
-                      target="_blank"
-                      rel="noopener external"
-                      :title="`${child.text} - ouvre une nouvelle fenêtre`"
-                    >
-                      {{ child.text }}
-                      <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
-                    </v-btn>
-                  </li>
-                </ul>
-              </v-expand-transition>
-            </div>
-          </li>
-        </ul>
-      </nav>
-    </v-navigation-drawer>
   </div>
 </template>
 
@@ -208,7 +220,7 @@ export default {
   data() {
     return {
       dashboardEnabled: window.ENABLE_DASHBOARD,
-      drawer: false,
+      overlayMenu: false,
       navLinks: [
         {
           text: "Mon tableau de bord",
@@ -371,6 +383,12 @@ export default {
       if (!this.loggedUser) return child.authenticationState === false
       if (child.forElected) return this.loggedUser.isElectedOfficial
       return child.authenticationState === true
+    },
+  },
+  watch: {
+    loggedUser() {
+      // user may have logged out from overlay menu, so it should be closed
+      this.overlayMenu = false
     },
   },
 }

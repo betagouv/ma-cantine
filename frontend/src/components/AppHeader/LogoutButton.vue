@@ -13,8 +13,7 @@
 
       <v-divider aria-hidden="true" role="presentation"></v-divider>
 
-      <v-card-actions>
-        <v-spacer></v-spacer>
+      <v-card-actions class="flex-wrap align-end">
         <v-btn color="grey darken-2" text @click="logoutWarningDialog = false" class="mr-1">
           Non, revenir en arrière
         </v-btn>
