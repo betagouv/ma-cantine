@@ -2,7 +2,7 @@ import Vuex from "vuex"
 import VueRouter from "vue-router"
 import Vuetify from "vuetify"
 import { shallowMount, createLocalVue, RouterLinkStub } from "@vue/test-utils"
-import AppHeader from "@/components/AppHeader.vue"
+import AppHeader from "@/components/AppHeader"
 
 const localVue = createLocalVue()
 localVue.use(VueRouter)

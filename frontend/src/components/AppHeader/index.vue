@@ -40,31 +40,7 @@
 
       <div v-if="$vuetify.breakpoint.mdAndUp" class="d-flex">
         <div v-for="(link, idx) in quickLinks" :key="idx">
-          <v-dialog v-if="link.logout" v-model="logoutWarningDialog" max-width="500">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" text elevation="0" class="primary--text">
-                <span>Me déconnecter</span>
-              </v-btn>
-            </template>
-
-            <v-card>
-              <v-card-text class="pa-8 text-left">
-                <p class="mb-0">Voulez-vous vous déconnecter de votre compte ma cantine ?</p>
-              </v-card-text>
-
-              <v-divider aria-hidden="true" role="presentation"></v-divider>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="grey darken-2" text @click="logoutWarningDialog = false" class="mr-1">
-                  Non, revenir en arrière
-                </v-btn>
-                <v-btn color="red darken-2" text @click="logout">
-                  Oui, je confirme
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+          <LogoutButton v-if="link.logout" />
           <v-btn v-else-if="link.href" text elevation="0" class="ml-2 primary--text" :href="link.href">
             {{ link.text }}
           </v-btn>
@@ -145,12 +121,13 @@
 
 <script>
 import keyMeasures from "@/data/key-measures.json"
+import LogoutButton from "./LogoutButton"
 
 export default {
   name: "AppHeader",
+  components: { LogoutButton },
   data() {
     return {
-      logoutWarningDialog: false,
       dashboardEnabled: window.ENABLE_DASHBOARD,
       navLinks: [
         {
@@ -313,11 +290,6 @@ export default {
       if (!this.loggedUser) return child.authenticationState === false
       if (child.forElected) return this.loggedUser.isElectedOfficial
       return child.authenticationState === true
-    },
-    logout() {
-      return this.$store.dispatch("logout").then(() => {
-        this.$router.push({ name: "LandingPage" })
-      })
     },
   },
 }
