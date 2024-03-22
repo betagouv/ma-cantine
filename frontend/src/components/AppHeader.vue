@@ -343,7 +343,7 @@ export default {
 
 <style scoped lang="scss">
 #en-tete {
-  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.1), 0 8px 16px -16px rgba(0, 0, 0, 0.32) !important;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 18, 0.16));
 
   // DSFR navigation
   nav {
