@@ -107,22 +107,15 @@
                 </v-menu>
               </v-col>
             </v-row>
-            <fieldset>
-              <legend class="body-2 my-3">Famille de produit</legend>
-              <v-radio-group v-model="purchase.family" class="my-0">
-                <v-row>
-                  <v-col cols="12" sm="6" class="py-1" v-for="item in productFamilies" :key="item">
-                    <v-radio :value="item" class="mt-2" @change="familyChange">
-                      <template v-slot:label>
-                        <span class="body-2 grey--text text--darken-4">
-                          {{ getProductFamilyDisplayText(item) }}
-                        </span>
-                      </template>
-                    </v-radio>
-                  </v-col>
-                </v-row>
-              </v-radio-group>
-            </fieldset>
+            <DsfrRadio
+              label="Famille de produit"
+              v-model="purchase.family"
+              :items="productFamilies"
+              @change="familyChange"
+              optionsRow
+              labelClasses="body-2 my-3"
+              optionClasses="body-2 grey--text text--darken-4"
+            />
           </v-col>
           <v-col cols="12" md="4">
             <label class="body-2">Facture</label>
@@ -260,10 +253,20 @@ import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrCombobox from "@/components/DsfrCombobox"
+import DsfrRadio from "@/components/DsfrRadio"
 
 export default {
   name: "PurchasePage",
-  components: { FileDrop, FilePreview, BreadcrumbsNav, DsfrTextField, DsfrAutocomplete, DsfrSelect, DsfrCombobox },
+  components: {
+    FileDrop,
+    FilePreview,
+    BreadcrumbsNav,
+    DsfrTextField,
+    DsfrAutocomplete,
+    DsfrSelect,
+    DsfrCombobox,
+    DsfrRadio,
+  },
   data() {
     return {
       originalPurchase: null,
@@ -274,7 +277,10 @@ export default {
       menu: false,
       modal: false,
       showDeleteDialog: false,
-      productFamilies: Object.keys(Constants.ProductFamilies),
+      productFamilies: Object.keys(Constants.ProductFamilies).map((f) => ({
+        value: f,
+        label: this.getProductFamilyDisplayText(f),
+      })),
       characteristics: Object.keys(Constants.Characteristics),
       backLink: { name: "PurchasesHome" },
       localDefinitions: Object.values(Constants.LocalDefinitions),

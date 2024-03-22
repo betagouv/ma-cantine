@@ -76,7 +76,7 @@
     </div>
     <v-expand-transition>
       <v-sheet class="pa-6 text-left mt-2" v-show="showFilters" rounded :outlined="showFilters">
-        <v-row>
+        <v-row class="mb-0">
           <v-col cols="12" sm="6" md="4">
             <label
               for="select-region"
@@ -196,102 +196,86 @@
             />
           </v-col>
         </v-row>
-        <v-row class="align-end mt-0">
+        <v-row class="align-end my-0">
           <v-col cols="12" sm="8" md="6">
-            <label class="text-body-2">
-              Dans les assiettes, part de...
-            </label>
-            <div class="d-flex align-stretch mt-1">
-              <v-col class="pa-0 pr-1 d-flex flex-column">
-                <label
-                  :class="{
-                    caption: true,
-                    'pl-1': true,
-                    'active-filter-label': !!filters.min_portion_bio.value,
-                  }"
-                  id="value-percentages-bio"
-                >
-                  bio minimum
-                </label>
-                <v-spacer></v-spacer>
-                <DsfrTextField
-                  :value="filters.min_portion_bio.value"
-                  ref="min_portion_bio"
-                  :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                  @change="onChangeIntegerFilter('min_portion_bio')"
-                  hide-details="auto"
-                  append-icon="mdi-percent"
-                  placeholder="0"
-                  aria-describedby="value-percentages-bio"
-                />
-              </v-col>
-              <v-col class="pa-0 pl-1 d-flex flex-column">
-                <label
-                  :class="{
-                    caption: true,
-                    'pl-1': true,
-                    'active-filter-label': !!filters.min_portion_combined.value,
-                  }"
-                  id="value-percentages-bio-qualite"
-                >
-                  bio, qualité et durables min
-                </label>
-                <v-spacer></v-spacer>
-                <DsfrTextField
-                  :value="filters.min_portion_combined.value"
-                  ref="min_portion_combined"
-                  :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                  @change="onChangeIntegerFilter('min_portion_combined')"
-                  hide-details="auto"
-                  placeholder="0"
-                  append-icon="mdi-percent"
-                  aria-describedby="value-percentages-bio-qualite"
-                />
-              </v-col>
-            </div>
+            <fieldset>
+              <legend
+                :class="{
+                  'text-body-2': true,
+                  'active-filter-label': !!filters.min_portion_bio.value || !!filters.min_portion_combined.value,
+                }"
+              >
+                Dans les assiettes, part de...
+              </legend>
+              <div class="d-flex align-stretch mt-1">
+                <v-col class="pa-0 pr-1 d-flex flex-column">
+                  <DsfrTextField
+                    label="bio minimum"
+                    labelClasses="caption pl-1"
+                    :value="filters.min_portion_bio.value"
+                    ref="min_portion_bio"
+                    :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                    @change="onChangeIntegerFilter('min_portion_bio')"
+                    hide-details="auto"
+                    append-icon="mdi-percent"
+                    placeholder="0"
+                  />
+                </v-col>
+                <v-col class="pa-0 pl-1 d-flex flex-column">
+                  <DsfrTextField
+                    label="bio, qualité et durables min"
+                    labelClasses="caption pl-1"
+                    :value="filters.min_portion_combined.value"
+                    ref="min_portion_combined"
+                    :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                    @change="onChangeIntegerFilter('min_portion_combined')"
+                    hide-details="auto"
+                    placeholder="0"
+                    append-icon="mdi-percent"
+                  />
+                </v-col>
+              </div>
+            </fieldset>
           </v-col>
           <v-col cols="12" sm="4" md="3">
-            <label
-              :class="{
-                'text-body-2': true,
-                'active-filter-label': !!filters.min_daily_meal_count.value || !!filters.max_daily_meal_count.value,
-              }"
-              id="meal-count"
-            >
-              Repas par jour
-            </label>
-            <div class="d-flex">
-              <div>
-                <label class="caption" for="min-meal-count-field">
-                  Min
-                </label>
-                <DsfrTextField
-                  :value="filters.min_daily_meal_count.value"
-                  ref="min_daily_meal_count"
-                  :rules="[validators.nonNegativeOrEmpty]"
-                  @change="onChangeIntegerFilter('min_daily_meal_count')"
-                  hide-details="auto"
-                  id="min-meal-count-field"
-                  aria-describedby="meal-count"
-                />
+            <fieldset>
+              <legend
+                :class="{
+                  'text-body-2': true,
+                  'active-filter-label': !!filters.min_daily_meal_count.value || !!filters.max_daily_meal_count.value,
+                }"
+              >
+                Repas par jour
+              </legend>
+              <div class="d-flex">
+                <div>
+                  <DsfrTextField
+                    label="Min"
+                    labelClasses="caption"
+                    :value="filters.min_daily_meal_count.value"
+                    ref="min_daily_meal_count"
+                    :rules="[validators.nonNegativeOrEmpty]"
+                    @change="onChangeIntegerFilter('min_daily_meal_count')"
+                    hide-details="auto"
+                  />
+                </div>
+                <span class="mx-2 align-self-center">-</span>
+                <div>
+                  <DsfrTextField
+                    label="Max"
+                    labelClasses="caption"
+                    :value="filters.max_daily_meal_count.value"
+                    ref="max_daily_meal_count"
+                    :rules="[validators.nonNegativeOrEmpty]"
+                    @change="onChangeIntegerFilter('max_daily_meal_count')"
+                    hide-details="auto"
+                  />
+                </div>
               </div>
-              <span class="mx-2 align-self-center">-</span>
-              <div>
-                <label class="caption" for="max-meal-count-field">
-                  Max
-                </label>
-                <DsfrTextField
-                  :value="filters.max_daily_meal_count.value"
-                  ref="max_daily_meal_count"
-                  :rules="[validators.nonNegativeOrEmpty]"
-                  @change="onChangeIntegerFilter('max_daily_meal_count')"
-                  hide-details="auto"
-                  aria-describedby="meal-count"
-                  id="max-meal-count-field"
-                />
-              </div>
-            </div>
+            </fieldset>
           </v-col>
+        </v-row>
+        <v-row class="mt-0">
           <v-col cols="12" sm="6" md="5">
             <label for="select-badge" :class="{ 'text-body-2': true, 'active-filter-label': !!filters.badge.value }">
               Mesure EGAlim réalisée

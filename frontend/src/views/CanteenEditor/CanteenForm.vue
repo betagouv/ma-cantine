@@ -62,10 +62,10 @@
       <h2 class="mb-4" v-if="isNewCanteen">Étape 2/2 : Compléter les informations</h2>
       <v-row>
         <v-col cols="12" md="8">
-          <p>SIRET</p>
-          <p class="grey--text text--darken-2">
+          <p class="mb-2">SIRET</p>
+          <p class="grey--text text--darken-2 d-flex align-center">
             {{ siret || canteen.siret }}
-            <v-btn small @click="goToStep(0)">Modifier</v-btn>
+            <v-btn small @click="goToStep(0)" class="ml-2">Modifier</v-btn>
           </p>
 
           <DsfrTextField
@@ -145,6 +145,7 @@
         <v-col cols="12">
           <DsfrRadio
             label="Mon établissement..."
+            labelClasses="body-2 mb-2 grey--text text--darken-4"
             :items="productionTypes"
             v-model="canteen.productionType"
             :rules="[validators.required]"
@@ -322,6 +323,7 @@
         <v-col cols="12" sm="6" md="3">
           <DsfrRadio
             label="Type d'établissement"
+            labelClasses="body-2 mb-2 grey--text text--darken-4"
             :items="economicModels"
             v-model="canteen.economicModel"
             :rules="[validators.required]"
@@ -331,6 +333,7 @@
         <v-col cols="12" sm="6" md="3">
           <DsfrRadio
             label="Mode de gestion"
+            labelClasses="body-2 mb-2 grey--text text--darken-4"
             :items="managementTypes"
             v-model="canteen.managementType"
             :rules="[validators.required]"

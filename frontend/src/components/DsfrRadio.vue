@@ -1,20 +1,35 @@
 <template>
-  <div>
-    <fieldset id="radio-hint" aria-labelledby="radio-hint-legend radio-hint-messages">
-      <legend v-if="$attrs.label" class="mb-2" id="radio-hint-legend">
+  <v-radio-group class="my-0" ref="radio" v-bind="$attrs" v-on="$listeners" @change="(v) => $emit('input', v)">
+    <template v-slot:label>
+      <span :class="legendClass">
         {{ $attrs.label }}
-        <span v-if="$attrs.hint">{{ $attrs.hint }}</span>
-      </legend>
-      <v-radio-group class="my-0" ref="radio" v-bind="$attrs" v-on="$listeners" @change="(v) => $emit('input', v)">
-        <v-radio v-for="item in $attrs.items" :key="item.value" :label="item.text" :value="item.value"></v-radio>
+      </span>
+      <span class="fr-hint-text my-2" v-if="optional">Optionnel</span>
+    </template>
+    <v-row v-if="optionsRow" class="my-0">
+      <v-col cols="12" sm="6" class="py-2" v-for="item in items" :key="item.value">
+        <v-radio :value="item.value" :class="optionClasses">
+          <template v-slot:label>
+            <span :class="optionClasses">
+              {{ item.label || item.text }}
+            </span>
+          </template>
+        </v-radio>
+      </v-col>
+    </v-row>
+    <v-radio v-else v-for="item in items" :key="item.value" :value="item.value" :class="optionClasses">
+      <template v-slot:label>
+        <span :class="optionClasses">
+          {{ item.label || item.text }}
+        </span>
+      </template>
+    </v-radio>
 
-        <!-- For RGAA 8.9 error messages should also be in p tags, by default in vuetify 2 they're in divs -->
-        <template v-slot:message="{ key, message }">
-          <p :key="key">{{ message }}</p>
-        </template>
-      </v-radio-group>
-    </fieldset>
-  </div>
+    <!-- For RGAA 8.9 error messages should also be in p tags, by default in vuetify 2 they're in divs -->
+    <template v-slot:message="{ key, message }">
+      <p :key="key" class="mb-0">{{ message }}</p>
+    </template>
+  </v-radio-group>
 </template>
 
 <script>
@@ -23,8 +38,23 @@ export default {
   props: {
     labelClasses: {
       type: String,
-      required: false,
       default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
+    },
+    optionClasses: {
+      type: String,
+      default: "",
+    },
+    optional: {
+      type: Boolean,
+      default: false,
+    },
+    yesNo: {
+      type: Boolean,
+      default: false,
+    },
+    optionsRow: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -34,18 +64,26 @@ export default {
     value() {
       return this.$refs["radio"].value
     },
+    items() {
+      if (this.yesNo) {
+        return [
+          { label: "Oui", value: true },
+          { label: "Non", value: false },
+        ]
+      }
+      return this.$attrs["items"]
+    },
+    legendClass() {
+      const activeColor = " grey--text text--darken-4"
+      const inactiveColor = " grey--text"
+      const color = this.$attrs.disabled ? inactiveColor : activeColor
+      return this.labelClasses + color
+    },
   },
   methods: {
-    removeInnerLabel() {
-      const labels = this.$refs["radio"].$el.getElementsByTagName("legend")
-      if (labels && labels.length > 0) for (const label of labels) label.parentNode.removeChild(label)
-    },
     validate() {
       return this.$refs["radio"].validate()
     },
-  },
-  mounted() {
-    this.removeInnerLabel()
   },
 }
 </script>

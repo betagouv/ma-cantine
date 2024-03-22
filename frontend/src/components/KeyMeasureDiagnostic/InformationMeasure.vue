@@ -8,20 +8,16 @@
       :disabled="readonly"
     />
 
-    <fieldset class="mt-3 mb-4">
-      <legend class="text-left my-3">Je fais cette information :</legend>
-      <v-radio-group class="my-0" v-model="diagnostic.communicationFrequency" hide-details>
-        <v-radio
-          class="ml-8"
-          v-for="item in communicationFrequencies"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-          :readonly="readonly"
-          :disabled="readonly"
-        ></v-radio>
-      </v-radio-group>
-    </fieldset>
+    <DsfrRadio
+      label="Je fais cette information :"
+      v-model="diagnostic.communicationFrequency"
+      hide-details
+      :items="communicationFrequencies"
+      :readonly="readonly"
+      :disabled="readonly"
+      optionClasses="ml-8"
+      class="mt-3"
+    />
 
     <fieldset class="mt-3 mb-4">
       <legend class="text-left my-3">J'informe sur la qualité des approvisionnements :</legend>
@@ -82,10 +78,11 @@
 <script>
 import validators from "@/validators"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrRadio from "@/components/DsfrRadio"
 import Constants from "@/constants"
 
 export default {
-  components: { DsfrTextField },
+  components: { DsfrTextField, DsfrRadio },
   props: {
     diagnostic: Object,
     readonly: {

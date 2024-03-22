@@ -28,35 +28,27 @@
       />
     </fieldset>
 
-    <fieldset>
-      <legend class="text-left my-3">J'ai mis en place un menu végétarien dans ma cantine :</legend>
-      <v-radio-group class="my-0" v-model="diagnostic.vegetarianWeeklyRecurrence" hide-details>
-        <v-radio
-          class="ml-8"
-          v-for="item in frequency"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-          :readonly="readonly"
-          :disabled="readonly"
-        ></v-radio>
-      </v-radio-group>
-    </fieldset>
+    <DsfrRadio
+      label="J'ai mis en place un menu végétarien dans ma cantine :"
+      v-model="diagnostic.vegetarianWeeklyRecurrence"
+      hide-details
+      :items="frequency"
+      :readonly="readonly"
+      :disabled="readonly"
+      optionClasses="ml-8"
+      class="mt-3"
+    />
 
-    <fieldset class="mt-3">
-      <legend class="text-left my-3">Le menu végétarien proposé est :</legend>
-      <v-radio-group class="my-0" v-model="diagnostic.vegetarianMenuType" hide-details>
-        <v-radio
-          class="ml-8"
-          v-for="item in menuTypes"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-          :readonly="readonly"
-          :disabled="readonly"
-        ></v-radio>
-      </v-radio-group>
-    </fieldset>
+    <DsfrRadio
+      label="Le menu végétarien proposé est :"
+      v-model="diagnostic.vegetarianMenuType"
+      hide-details
+      :items="menuTypes"
+      :readonly="readonly"
+      :disabled="readonly"
+      optionClasses="ml-8"
+      class="mt-3"
+    />
 
     <fieldset class="mt-3">
       <legend class="text-left mb-2 mt-3">
@@ -119,6 +111,7 @@
 <script>
 import { applicableDiagnosticRules } from "@/utils"
 import ExpeVegetarian from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeVegetarian"
+import DsfrRadio from "@/components/DsfrRadio"
 import Constants from "@/constants"
 
 export default {
@@ -130,7 +123,7 @@ export default {
     },
     canteen: Object,
   },
-  components: { ExpeVegetarian },
+  components: { ExpeVegetarian, DsfrRadio },
   data() {
     return {
       showExpeModal: false,
