@@ -38,12 +38,10 @@ export default {
   props: {
     labelClasses: {
       type: String,
-      required: false,
       default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
     },
     optionClasses: {
       type: String,
-      required: false,
       default: "",
     },
     optional: {
