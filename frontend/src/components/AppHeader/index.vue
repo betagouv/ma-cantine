@@ -41,10 +41,10 @@
       <div v-if="$vuetify.breakpoint.mdAndUp" class="d-flex">
         <div v-for="(link, idx) in quickLinks" :key="idx">
           <LogoutButton v-if="link.logout" />
-          <v-btn v-else-if="link.href" text elevation="0" class="ml-2 primary--text" :href="link.href">
+          <v-btn v-else-if="link.href" :href="link.href" text elevation="0" class="ml-2 primary--text">
             {{ link.text }}
           </v-btn>
-          <v-btn v-else text elevation="0" class="ml-2 primary--text" :to="link.to">
+          <v-btn v-else :to="link.to" text elevation="0" class="ml-2 primary--text">
             {{ link.text }}
           </v-btn>
         </div>
@@ -104,7 +104,7 @@
               <v-btn
                 v-else
                 class="fr-nav__link body-2"
-                active-class="stealth-active-tab"
+                active-class="stealt !importanth-active-tab"
                 color="white"
                 :to="navItem.to"
                 target="_self"
@@ -154,7 +154,7 @@
                       <v-btn
                         v-if="child.to"
                         class="fr-nav__link-child body-2"
-                        active-class="mc-active-item"
+                        active-class="mc-act !importantive-item"
                         color="white"
                         :to="child.to"
                         target="_self"
@@ -165,6 +165,7 @@
                         v-else
                         class="fr-nav__link-child body-2"
                         color="white"
+                        !important
                         :href="child.href"
                         target="_blank"
                         rel="noopener external"
@@ -377,57 +378,55 @@ export default {
   }
 }
 
-nav {
-  .fr-nav__link {
-    height: 100%;
-  }
+.fr-nav__link {
+  height: 100% !important;
+}
 
-  .fr-nav__link-child {
-    height: 48px;
-    width: 100%;
-    justify-content: left;
-  }
-  .mc-tab {
-    height: 100%;
-    line-height: 24px;
-    text-transform: none;
-  }
-  .mc-active-tab {
-    border-bottom: 2px solid;
-    color: #000091;
-  }
-  .mc-active-item {
-    border-left: 2px solid;
-    border-left-color: currentColor !important;
-    color: #000091;
-  }
-  button {
-    color: inherit;
-  }
-  .stealth-active-tab {
-    color: rgb(22, 22, 22) !important;
-    caret-color: rgb(22, 22, 22);
-    outline-color: #fff;
-    text-decoration-color: #fff;
-  }
-  .quick-link.v-btn--active::before {
-    opacity: 0;
-  }
-  .v-btn--active::before {
-    opacity: 0; // get rid of the change in background colour
-  }
-  .v-btn--active:hover::before {
-    opacity: 0.08;
-  }
+.fr-nav__link-child {
+  height: 48px;
+  width: 100%;
+  justify-content: left;
+}
+.mc-tab {
+  height: 100%;
+  line-height: 24px;
+  text-transform: none;
+}
+.mc-active-tab {
+  border-bottom: 2px solid;
+  color: #000091;
+}
+.mc-active-item {
+  border-left: 2px solid;
+  border-left-color: currentColor !important;
+  color: #000091;
+}
+button {
+  color: inherit;
+}
+.stealth-active-tab {
+  color: rgb(22, 22, 22) !important;
+  caret-color: rgb(22, 22, 22);
+  outline-color: #fff;
+  text-decoration-color: #fff;
+}
+.quick-link.v-btn--active::before {
+  opacity: 0;
+}
+.v-btn--active::before {
+  opacity: 0; // get rid of the change in background colour
+}
+.v-btn--active:hover::before {
+  opacity: 0.08;
+}
 
-  #menu-quick-links {
-    border-bottom: solid 1px #e0e0e0;
-  }
+#menu-quick-links {
+  border-bottom: solid 1px #e0e0e0;
+}
 
-  .menu-expansion-item {
-    box-shadow: none !important;
-    border-radius: 0;
-  }
+.menu-expansion-item {
+  box-shadow: none !important;
+  border-radius: 0;
 }
 
 .fr-skiplinks {
