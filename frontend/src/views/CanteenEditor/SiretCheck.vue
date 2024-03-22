@@ -191,14 +191,17 @@ export default {
         .dispatch("claimCanteen", { canteenId })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
         .then((response) => {
-          this.$store.dispatch("notify", {
-            status: "success",
-            message: "Vous gérez maintenant cet établissement.",
-          })
-          this.$router.push({
-            name: "CanteenForm",
-            params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(response) },
-          })
+          this.$router
+            .push({
+              name: "CanteenForm",
+              params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(response) },
+            })
+            .then(() => {
+              this.$store.dispatch("notify", {
+                status: "success",
+                message: "Vous gérez maintenant cet établissement.",
+              })
+            })
         })
         .catch(() => this.$router.push({ name: "ManagementPage" }))
     },

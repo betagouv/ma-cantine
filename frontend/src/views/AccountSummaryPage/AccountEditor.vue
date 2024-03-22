@@ -209,13 +209,14 @@ export default {
         .dispatch("updateProfile", { payload })
         .then(() => {
           this.bypassLeaveWarning = true
-          this.$store.dispatch("notify", {
-            title: "Mise à jour prise en compte",
-            message,
-            status: "success",
-          })
           const nextRoute = this.$store.state.loggedUser.isDev ? { name: "DeveloperPage" } : { name: "ManagementPage" }
-          this.$router.push(nextRoute)
+          this.$router.push(nextRoute).then(() => {
+            this.$store.dispatch("notify", {
+              title: "Mise à jour prise en compte",
+              message,
+              status: "success",
+            })
+          })
         })
         .catch((e) => {
           if (e.jsonPromise) {

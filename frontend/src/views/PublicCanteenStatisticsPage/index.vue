@@ -468,7 +468,6 @@ export default {
               message:
                 "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à support-egalim@beta.gouv.fr",
               status: "error",
-              duration: 7000,
             })
             this.chosenEpcis = []
             this.locationText = this.createLocationText()

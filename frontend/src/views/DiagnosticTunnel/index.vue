@@ -336,7 +336,6 @@ export default {
           title: "Veuillez vérifier les erreurs ci-dessous",
           message: messages.join("\n"),
           status: "error",
-          duration: "5000",
         })
       } catch (error) {
         this.$store.dispatch("notifyServerError", error)
