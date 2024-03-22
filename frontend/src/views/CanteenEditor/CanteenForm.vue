@@ -114,7 +114,7 @@
               @click="onLogoUploadClick"
               rounded
               color="grey lighten-5"
-              class="fill-height"
+              class="fill-height drag-and-drop"
               style="overflow: hidden;"
               min-height="170"
             >
