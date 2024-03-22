@@ -3,6 +3,7 @@ import datetime
 import requests
 import csv
 import os
+from api.views.utils import update_change_reason
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
@@ -11,14 +12,16 @@ from django.db.models import F
 from django.db.models.functions import Length
 from django.core.management import call_command
 from data.models import User, Canteen
-
+import redis as r
+import time
+from common.utils import get_siret_token
 from .celery import app
 from .extract_open_data import ETL_TD, ETL_CANTEEN
-
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 
 logger = logging.getLogger(__name__)
+redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 configuration = sib_api_v3_sdk.Configuration()
 configuration.api_key["api-key"] = settings.ANYMAIL.get("SENDINBLUE_API_KEY")
 api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
@@ -187,7 +190,12 @@ def _request_location_api(location_csv_string):
         data={
             "postcode": "postcode",
             "citycode": "citycode",
-            "result_columns": ["result_citycode", "result_postcode", "result_city", "result_context"],
+            "result_columns": [
+                "result_citycode",
+                "result_postcode",
+                "result_city",
+                "result_context",
+            ],
         },
         timeout=60,
     )
@@ -207,6 +215,10 @@ def _get_candidate_canteens():
     return candidate_canteens
 
 
+def _get_candidate_canteens_for_geobot():
+    return Canteen.objects.filter(city_insee_code__isnull=True, siret__isnull=False).order_by("creation_date")
+
+
 def _fill_from_api_response(response, canteens):
     for row in csv.reader(response.text.splitlines()):
         if row[0] == "id":
@@ -223,6 +235,79 @@ def _fill_from_api_response(response, canteens):
             canteen.city = row[5]
             canteen.department = row[6].split(",")[0]
             canteen.save()
+            update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE ou code postale")
+
+
+def _update_canteen_geo_data(canteen, response):
+    try:
+        if "city_insee_code" in response.keys():
+            canteen.city_insee_code = response["city_insee_code"]
+            canteen.postal_code = response["postal_code"]
+            canteen.city = response["city"]
+            canteen.save()
+            update_change_reason(canteen, "Données de localisation MAJ par bot, via SIRET")
+            logger.info(f"Canteen info has been updated. Canteen name : f{canteen.name}")
+    except Exception as e:
+        logger.error(f"Unable to update canteen info for canteen : f{canteen.name}")
+        logger.error(e)
+
+
+def get_geo_data(canteen_siret, token):
+    canteen = {}
+    canteen["siret"] = canteen_siret
+    try:
+        redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
+        redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
+        if int(redis.get(redis_key)) > 30:
+            logger.warning("Siret lookup exceding API rate. Waiting 1 minute")
+            time.sleep(60)
+
+        siret_response = requests.get(
+            f"https://api.insee.fr/entreprises/sirene/V3/siret/{canteen_siret}",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        siret_response.raise_for_status()
+        if siret_response.ok:
+            siret_response = siret_response.json()
+            try:
+                canteen["city_insee_code"] = siret_response["etablissement"]["adresseEtablissement"][
+                    "codeCommuneEtablissement"
+                ]
+                canteen["postal_code"] = siret_response["etablissement"]["adresseEtablissement"][
+                    "codePostalEtablissement"
+                ]
+                canteen["city"] = siret_response["etablissement"]["adresseEtablissement"][
+                    "libelleCommuneEtablissement"
+                ]
+                return canteen
+            except KeyError as e:
+                logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
+        else:
+            logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response}")
+    except requests.exceptions.HTTPError as e:
+        logger.warning(f"Geolocation Bot: HTTPError\n{e}")
+    except requests.exceptions.ConnectionError as e:
+        logger.warning(f"Geolocation Bot: ConnectionError\n{e}")
+    except requests.exceptions.Timeout as e:
+        logger.warning(f"Geolocation Bot: Timeout\n{e}")
+    except Exception as e:
+        logger.error(f"Geolocation Bot: Unexpected exception\n{e}")
+
+
+@app.task()
+def fill_missing_geolocation_data_using_siret():
+    candidate_canteens = _get_candidate_canteens_for_geobot()
+    token = get_siret_token()
+
+    if len(candidate_canteens) == 0:
+        logger.info("No candidate canteens have been found. Nothing to do here...")
+        return
+    for canteen in candidate_canteens:
+        response = get_geo_data(canteen.siret, token)
+        if response:
+            _update_canteen_geo_data(canteen, response)
+
+    logger.info(f"Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
 
 
 @app.task()
@@ -267,7 +352,10 @@ def delete_old_historical_records():
 @app.task()
 def export_datasets():
     logger.info("Starting datasets extractions")
-    datasets = {"campagne teledeclaration 2021": ETL_TD(2021), "cantines": ETL_CANTEEN()}
+    datasets = {
+        "campagne teledeclaration 2021": ETL_TD(2021),
+        "cantines": ETL_CANTEEN(),
+    }
     for key, etl in datasets.items():
         logger.info(f"Starting {key} dataset extraction")
         etl.extract_dataset()
