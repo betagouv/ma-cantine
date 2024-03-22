@@ -142,7 +142,6 @@ export default {
     validateSiret() {
       if (!this.$refs.siretForm.validate()) {
         this.$store.dispatch("notifyRequiredFieldsError")
-        window.scrollTo(0, 0)
         return
       }
 
