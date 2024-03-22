@@ -1,6 +1,10 @@
 <template>
   <v-footer id="pied-de-page" color="white" app :absolute="!showSmallFooter" height="280" role="contentinfo">
-    <v-divider style="position: absolute; top: 0; left: 0; width: 100%"></v-divider>
+    <v-divider
+      aria-hidden="true"
+      role="presentation"
+      style="position: absolute; top: 0; left: 0; width: 100%"
+    ></v-divider>
     <v-container class="constrained pb-4 pb-sm-0 pt-0 text-left">
       <v-row v-if="!showSmallFooter" class="pt-12 pt-sm-0">
         <v-col cols="12" sm="3" :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.name != 'xs' }">
@@ -22,7 +26,8 @@
               href="https://beta.gouv.fr/startups/ma-cantine-egalim.html"
               class="grey--text text--darken-3"
               target="_blank"
-              rel="noopener"
+              rel="noopener external"
+              title="Découvrez notre page produit - ouvre une nouvelle fenêtre"
             >
               Découvrez notre page produit
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
@@ -34,13 +39,20 @@
               href="https://github.com/betagouv/ma-cantine/"
               class="grey--text text--darken-3"
               target="_blank"
-              rel="noopener"
+              rel="noopener external"
+              title="Voir le code source - ouvre une nouvelle fenêtre"
             >
               Voir le code source
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
             </a>
             . Vous pouvez également obtenir des informations concernant la
-            <a href="https://updown.io/2l7f" class="grey--text text--darken-3" target="_blank" rel="noopener">
+            <a
+              href="https://updown.io/2l7f"
+              class="grey--text text--darken-3"
+              target="_blank"
+              rel="noopener external"
+              title="disponibilité de la plateforme - ouvre une nouvelle fenêtre"
+            >
               disponibilité de la plateforme
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
             </a>
@@ -53,7 +65,8 @@
               :href="`https://stats.beta.gouv.fr/index.php?idSite=${matomoId}`"
               class="grey--text text--darken-3"
               target="_blank"
-              rel="noopener"
+              rel="noopener external"
+              title="l'usage du site - ouvre une nouvelle fenêtre"
             >
               l'usage du site
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
@@ -66,7 +79,8 @@
                 class="grey--text text--darken-4 font-weight-bold"
                 :href="`https://${link}`"
                 target="_blank"
-                rel="noopener"
+                rel="noopener external"
+                :title="`${link} - ouvre une nouvelle fenêtre`"
               >
                 {{ link }}
               </a>
@@ -75,7 +89,7 @@
           </ul>
         </v-col>
       </v-row>
-      <v-divider v-if="!showSmallFooter" class="mt-6 mb-2"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" v-if="!showSmallFooter" class="mt-6 mb-2"></v-divider>
       <ul class="d-flex justify-sm-space-between flex-wrap link-group pl-0">
         <li v-for="(link, index) in bottomLinks" :key="link.text" class="d-flex my-1">
           <router-link class="caption px-0 grey--text text--darken-2" :to="link.to">{{ link.text }}</router-link>
@@ -89,7 +103,8 @@
           href="https://github.com/betagouv/ma-cantine/blob/staging/LICENSE"
           class="grey--text text--darken-2"
           target="_blank"
-          rel="noopener"
+          rel="noopener external"
+          title="licence MIT - ouvre une nouvelle fenêtre"
         >
           licence MIT
           <v-icon small color="grey-darken-2" class="ml-1">mdi-open-in-new</v-icon>

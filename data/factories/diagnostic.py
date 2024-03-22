@@ -43,6 +43,7 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     communication_support_url = factory.Faker("uri")
     communicates_on_food_plan = factory.Faker("boolean")
 
+
 class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Diagnostic

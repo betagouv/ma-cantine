@@ -21,7 +21,7 @@
         @satellitesLoaded="updateSatellitesCount"
         allowUnlinking
       />
-      <v-divider class="my-8"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" class="my-8"></v-divider>
       <AddSatellite :canteen="canteen" @satelliteAdded="fetchSatellites" />
     </div>
   </div>

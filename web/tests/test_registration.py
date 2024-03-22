@@ -1,8 +1,10 @@
 import re
 from django.core import mail
 from django.urls import reverse
+from django.test.utils import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
+from web.forms import RegisterUserForm
 
 
 class TestRegistration(APITestCase):
@@ -20,15 +22,15 @@ class TestRegistration(APITestCase):
             "username": "tester@example.com",
             "is_dev": False,
         }
-        response = self.client.post(reverse("register"), payload)
+        form = RegisterUserForm(data=payload)
         self.assertFormError(
-            response,
-            "form",
+            form,
             "username",
             "Vous ne pouvez pas utiliser une adresse email comme nom d'utilisateur.",
             msg_prefix="tester@example.com",
         )
 
+    @override_settings(HOSTNAME="ma-cantine.example.org")
     def test_user_only_registration(self):
         """
         Registering a user sends an email to verify their address
@@ -52,8 +54,8 @@ class TestRegistration(APITestCase):
         self.assertEqual(mail.outbox[0].subject, "Confirmation de votre adresse email - ma cantine")
 
         # Check that the email contains the token
-        content = mail.outbox[0].body.replace("\n", " ")
-        matches = re.findall(r"compte\/(?P<uidb64>.*)\/(?P<token>.*?) ", content)
+        content = mail.outbox[0].body
+        matches = re.findall(r"compte\/(?P<uidb64>.*)\/(?P<token>.*)", content)
         self.assertEqual(len(matches), 1)
         uidb64, token = matches[0]
         activation_response = self.client.get(reverse("activate", kwargs={"uidb64": uidb64, "token": token}))
@@ -84,10 +86,9 @@ class TestRegistration(APITestCase):
             "is_dev": False,
         }
 
-        response = self.client.post(reverse("register"), payload)
+        form = RegisterUserForm(data=payload)
         self.assertFormError(
-            response,
-            "form",
+            form,
             "phone_number",
             "Dix chiffres numériques attendus",
             msg_prefix="test-phone",

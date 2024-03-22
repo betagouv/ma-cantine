@@ -152,7 +152,7 @@
       class="mt-6"
     />
 
-    <v-divider v-if="showExpeSegment" class="mb-8"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" v-if="showExpeSegment" class="mb-8"></v-divider>
     <div v-if="showExpeSegment">
       <h3 class="text-h6 font-weight-bold mb-4">
         Expérimentation réservation de repas

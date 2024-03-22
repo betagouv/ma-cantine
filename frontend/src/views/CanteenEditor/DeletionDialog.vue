@@ -8,13 +8,17 @@
     </template>
 
     <v-card class="text-left">
-      <v-card-title class="font-weight-bold">Voulez-vous vraiment supprimer « {{ canteen.name }} » ?</v-card-title>
+      <v-card-title>
+        <h1 class="fr-h5 mb-2">Voulez-vous vraiment supprimer « {{ canteen.name }} » ?</h1>
+      </v-card-title>
 
       <v-card-text>
-        Vous perdrez les données de cette cantine ainsi que celles des diagnostics associés.
+        <p class="mb-0">
+          Vous perdrez les données de cette cantine ainsi que celles des diagnostics associés.
+        </p>
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider aria-hidden="true" role="presentation"></v-divider>
 
       <v-card-actions class="pa-4">
         <v-spacer></v-spacer>

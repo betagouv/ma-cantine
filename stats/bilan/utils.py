@@ -8,10 +8,6 @@ from dotenv import load_dotenv
 
 
 import geoviews as gv
-import geoviews.feature as gf
-import xarray as xr
-from cartopy import crs
-import numpy as np
 import geopandas as gpd
 from geoviews import dim
 
@@ -192,7 +188,8 @@ def load_td():
     td_json = pd.json_normalize(td_raw["declared_data"])
     td_raw = pd.concat([td_raw.drop("declared_data", axis=1), td_json], axis=1)
 
-    td = transform_td(td_raw)
+    # TODO: don't merge this PR before deciding to delete or change this line with qloridant
+    td = transform_td(td_raw)  # noqa: F841
 
     td_raw = aggregation_col(td_raw, "bio", ["_bio"])
     td_raw = aggregation_col(td_raw, "sustainable", ["_sustainable", "_label_rouge", "_aocaop_igp_stg"])
@@ -320,9 +317,10 @@ def calcul_indicateur_famille(tds: {}, years=[], col_comparaison=True):
         indicateurs[year]["Montant d'achat alimentaires Egalim Viande/Volaille 🥩"] = int(
             tds[year]["teledeclaration.value_meat_poultry_egalim_ht"].sum()
         )
-        indicateurs[year]["Taux d'achat alimentaires origine France 🇫🇷 au sein de la famille Viande/Volaille 🥩"] = int(
-            tds[year]["teledeclaration.value_meat_poultry_france_ht"].sum()
-        ) / int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
+        indicateurs[year]["Taux d'achat alimentaires origine France 🇫🇷 au sein de la famille Viande/Volaille 🥩"] = (
+            int(tds[year]["teledeclaration.value_meat_poultry_france_ht"].sum())
+            / int(tds[year]["teledeclaration.value_meat_poultry_ht"].sum())
+        )
         indicateurs[year]["Montant d'achat alimentaires origine France 🇫🇷 Viande/Volaille 🥩"] = int(
             tds[year]["teledeclaration.value_meat_poultry_france_ht"].sum()
         )
@@ -333,10 +331,9 @@ def calcul_indicateur_famille(tds: {}, years=[], col_comparaison=True):
         indicateurs[year]["Taux d'achat alimentaires de la famille Poissons/produits de la mer 🐟"] = int(
             tds[year]["teledeclaration.value_fish_ht"].sum()
         ) / int(tds[year]["teledeclaration.value_total_ht"].sum())
-        indicateurs[year][
-            "Taux d'achat alimentaires Egalim au sein de la famille  Poissons/Produits de la mer 🐟"
-        ] = int(tds[year]["teledeclaration.value_fish_egalim_ht"].sum()) / int(
-            tds[year]["teledeclaration.value_fish_ht"].sum()
+        indicateurs[year]["Taux d'achat alimentaires Egalim au sein de la famille  Poissons/Produits de la mer 🐟"] = (
+            int(tds[year]["teledeclaration.value_fish_egalim_ht"].sum())
+            / int(tds[year]["teledeclaration.value_fish_ht"].sum())
         )
         indicateurs[year]["Montant d'achat alimentaires Poissons/Produits de la mer 🐟"] = int(
             tds[year]["teledeclaration.value_fish_ht"].sum()
@@ -463,7 +460,7 @@ def display_indicateurs(df, transpose=True, format=True):
             df = df.T
         try:
             df = apply_formatters(df)
-        except Exception as e:
+        except Exception:
             pass
         if transpose:
             df = df.T
@@ -570,7 +567,7 @@ def fill_region(code_insee):
             url,
         )
         return res.json()["nom"]
-    except Exception as e:
+    except Exception:
         return "Erreur geo"
 
 
@@ -581,7 +578,7 @@ def fill_departement(code_insee):
             url,
         )
         return res.json()["nom"]
-    except Exception as e:
+    except Exception:
         return "Erreur geo"
 
 

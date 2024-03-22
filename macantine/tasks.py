@@ -249,8 +249,7 @@ def _update_canteen_geo_data(canteen, response):
             logger.info(f"Canteen info has been updated. Canteen name : f{canteen.name}")
     except Exception as e:
         logger.error(f"Unable to update canteen info for canteen : f{canteen.name}")
-        print(e)
-        print("End of Exception  ==========================")
+        logger.error(e)
 
 
 def get_geo_data(canteen_siret, token):

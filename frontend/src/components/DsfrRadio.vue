@@ -7,6 +7,11 @@
       </legend>
       <v-radio-group class="my-0" ref="radio" v-bind="$attrs" v-on="$listeners" @change="(v) => $emit('input', v)">
         <v-radio v-for="item in $attrs.items" :key="item.value" :label="item.text" :value="item.value"></v-radio>
+
+        <!-- For RGAA 8.9 error messages should also be in p tags, by default in vuetify 2 they're in divs -->
+        <template v-slot:message="{ key, message }">
+          <p :key="key">{{ message }}</p>
+        </template>
       </v-radio-group>
     </fieldset>
   </div>

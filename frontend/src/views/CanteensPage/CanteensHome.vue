@@ -17,13 +17,15 @@
           <v-spacer></v-spacer>
           <v-card-title class="pr-0">
             <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
-              Nos cantines
+              Nos cantines publiées
             </h1>
           </v-card-title>
           <v-card-subtitle>
             <p class="mb-1">
-              Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus durable
+              Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus
+              durable.
             </p>
+            <p class="mb-1">Sont affichées sur cette page uniquement les cantines qui ont décidé d’être visibles.</p>
             <p>
               Consulter
               <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
@@ -70,7 +72,7 @@
         <v-icon small>mdi-filter-off-outline</v-icon>
         Enlever tous les filtres
       </v-btn>
-      <v-divider v-if="!showFilters"></v-divider>
+      <v-divider aria-hidden="true" role="presentation" v-if="!showFilters"></v-divider>
     </div>
     <v-expand-transition>
       <v-sheet class="pa-6 text-left mt-2" v-show="showFilters" rounded :outlined="showFilters">
@@ -362,7 +364,7 @@
       />
     </div>
 
-    <v-divider class="mb-8 mt-12"></v-divider>
+    <v-divider aria-hidden="true" role="presentation" class="mb-8 mt-12"></v-divider>
 
     <v-row class="mb-6" style="position: relative">
       <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp">

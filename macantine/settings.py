@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+
 import os
 import sys
 import logging
@@ -175,8 +176,7 @@ LOCALE_PATHS = [
 
 TIME_ZONE = "Europe/Paris"
 USE_I18N = True
-USE_L10N = True
-USE_TZ = True
+USE_TZ = True  # True is default as of Django 5
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

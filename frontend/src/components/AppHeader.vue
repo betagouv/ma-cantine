@@ -97,17 +97,17 @@
 
         <v-card>
           <v-card-text class="pa-8 text-left">
-            Voulez-vous vous déconnecter de votre compte ma cantine ?
+            <p class="mb-0">Voulez-vous vous déconnecter de votre compte ma cantine ?</p>
           </v-card-text>
 
-          <v-divider></v-divider>
+          <v-divider aria-hidden="true" role="presentation"></v-divider>
 
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="grey darken-2" text @click="logoutWarningDialog = false" class="mr-1">
               Non, revenir en arrière
             </v-btn>
-            <v-btn color="red darken-2" text href="/se-deconnecter">
+            <v-btn color="red darken-2" text @click="logout">
               Oui, je confirme
             </v-btn>
           </v-card-actions>
@@ -115,7 +115,7 @@
       </v-dialog>
 
       <template v-slot:extension v-if="$vuetify.breakpoint.mdAndUp">
-        <v-divider style="position:absolute; top:0; width:100%;"></v-divider>
+        <v-divider aria-hidden="true" role="presentation" style="position:absolute; top:0; width:100%;"></v-divider>
         <v-tabs align-with-title id="header-tabs" active-class="stealth-active-tab" hide-slider>
           <div
             v-for="(navLink, index) in displayNavLinks"
@@ -144,13 +144,19 @@
                     :href="subItem.href"
                     :target="subItem.target"
                     :rel="subItem.rel"
+                    :title="subItem.target ? `${subItem.text} - ouvre une nouvelle fenêtre` : ''"
                   >
                     <v-list-item-title class="text-body-2">
                       {{ subItem.text }}
                       <v-icon v-if="subItem.href" small color="rgb(22,22,22)">mdi-open-in-new</v-icon>
                     </v-list-item-title>
                   </v-list-item>
-                  <v-divider v-if="subIndex !== navLink.children.length - 1" class="mx-4"></v-divider>
+                  <v-divider
+                    aria-hidden="true"
+                    role="presentation"
+                    v-if="subIndex !== navLink.children.length - 1"
+                    class="mx-4"
+                  ></v-divider>
                 </div>
               </v-list>
             </v-menu>
@@ -238,7 +244,7 @@ export default {
               text: "Pour aller plus loin",
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
               target: "_blank",
-              rel: "noopener",
+              rel: "noopener external",
             },
           ],
         },
@@ -262,7 +268,7 @@ export default {
               text: "Indicateurs clés",
               href: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/3dab8a21-c4b9-46e1-84fa-7ba485ddfbbb",
               target: "_blank",
-              rel: "noopener",
+              rel: "noopener external",
             },
           ],
         },
@@ -278,7 +284,7 @@ export default {
                 text: "Pour aller plus loin",
                 href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
                 target: "_blank",
-                rel: "noopener",
+                rel: "noopener external",
               },
             ],
           ],
@@ -298,7 +304,7 @@ export default {
               text: "Documentation",
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
               target: "_blank",
-              rel: "noopener",
+              rel: "noopener external",
             },
           ],
         },
@@ -351,6 +357,11 @@ export default {
       if (!this.loggedUser) return child.authenticationState === false
       if (child.forElected) return this.loggedUser.isElectedOfficial
       return child.authenticationState === true
+    },
+    logout() {
+      return this.$store.dispatch("logout").then(() => {
+        this.$router.push({ name: "LandingPage" })
+      })
     },
   },
 }

@@ -54,9 +54,9 @@
         </v-card>
         <v-spacer></v-spacer>
         <div class="d-flex mt-4 mb-2 align-center px-2">
-          <v-divider></v-divider>
+          <v-divider aria-hidden="true" role="presentation"></v-divider>
           <p class="mx-2 my-0 caption">ou</p>
-          <v-divider></v-divider>
+          <v-divider aria-hidden="true" role="presentation"></v-divider>
         </div>
         <v-spacer></v-spacer>
         <v-btn text color="primary" :to="{ name: 'DiagnosticsImporter' }">

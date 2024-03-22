@@ -171,12 +171,14 @@
             <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
               <v-img max-width="30" contain src="/static/images/badges/appro.svg" class="mx-auto" alt=""></v-img>
               <v-card-text class="grey--text text--darken-2 px-1">
-                <span class="text-h5 font-weight-black" style="line-height: inherit;">
-                  {{ statistics.approPercent }} %
-                </span>
-                <span class="text-body-2">
-                  ont réussi l'objectif d'approvisionnement EGAlim
-                </span>
+                <p class="mb-0">
+                  <span class="text-h5 font-weight-black" style="line-height: inherit;">
+                    {{ statistics.approPercent }} %
+                  </span>
+                  <span class="text-body-2">
+                    ont réussi l'objectif d'approvisionnement EGAlim
+                  </span>
+                </p>
               </v-card-text>
               <v-card-actions class="px-1">
                 <router-link :to="{ name: 'KeyMeasurePage', params: { id: approMeasure.id } }" class="text-body-2">
@@ -188,10 +190,12 @@
           <v-col class="px-1" cols="12" sm="6" md="3">
             <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
               <v-card-text>
-                <span class="text-h5 font-weight-black">{{ statistics.bioPercent }} %</span>
-                <span class="text-body-2">
-                  bio moyen
-                </span>
+                <p class="mb-0">
+                  <span class="text-h5 font-weight-black">{{ statistics.bioPercent }} %</span>
+                  <span class="text-body-2">
+                    bio moyen
+                  </span>
+                </p>
               </v-card-text>
               <div class="mt-2">
                 <v-img
@@ -207,10 +211,12 @@
           <v-col class="pl-1 pr-0" cols="12" sm="6" md="5">
             <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
               <v-card-text>
-                <span class="text-h5 font-weight-black">{{ statistics.sustainablePercent }} %</span>
-                <span class="text-body-2">
-                  durables et de qualité (hors bio) moyen
-                </span>
+                <p class="mb-0">
+                  <span class="text-h5 font-weight-black">{{ statistics.sustainablePercent }} %</span>
+                  <span class="text-body-2">
+                    durables et de qualité (hors bio) moyen
+                  </span>
+                </p>
               </v-card-text>
               <div class="d-flex mt-2 justify-center flex-wrap">
                 <v-img
