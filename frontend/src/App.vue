@@ -17,12 +17,11 @@
       </v-main>
 
       <AppFooter v-if="!isWidget && !fullscreen" />
-      <div v-if="!isWidget">
+      <div v-if="!isWidget" id="notification-center">
         <NotificationSnackbar
-          v-for="(notification, idx) in notifications"
+          v-for="notification in notifications"
           :key="notification.id"
           :notification="notification"
-          :idx="idx"
         />
       </div>
     </v-app>
@@ -222,6 +221,17 @@ ul.no-bullets {
   /* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
   li::before {
     content: "\200B";
+  }
+}
+#notification-center {
+  position: fixed;
+  z-index: 1000;
+  height: fit-content;
+  width: 100%;
+
+  .v-snack__wrapper {
+    margin: 2px;
+    min-width: unset;
   }
 }
 </style>

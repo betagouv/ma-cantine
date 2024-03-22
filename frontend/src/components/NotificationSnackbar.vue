@@ -1,15 +1,5 @@
 <template>
-  <!-- TODO: on mobile, make sure that the content isn't obscured on min screen width RGAA 10.11 -->
-  <v-snackbar
-    class="notification-snackbar"
-    timeout="-1"
-    :color="color"
-    :value="show"
-    :bottom="isMobile"
-    :top="!isMobile"
-    :right="!isMobile"
-    :style="isMobile ? { bottom: `${position}px` } : { top: `${position}px` }"
-  >
+  <v-snackbar class="notification-snackbar" timeout="-1" :color="color" :value="show" right>
     <div class="d-flex">
       <v-icon small class="mr-3" width="20" @click="$store.dispatch('removeNotification', notification)">
         {{ icon }}
@@ -37,7 +27,7 @@
 <script>
 export default {
   name: "Notification",
-  props: ["notification", "idx"],
+  props: ["notification"],
   computed: {
     color() {
       const colors = { success: "green", error: "red", warning: "amber darken-2" }
@@ -59,11 +49,13 @@ export default {
     show() {
       return !!this.notification.message || this.notification.title
     },
-    position() {
-      // TODO: on mobile, how to make sure close button is not covered by crisp?
-      const snackbarSize = 80
-      return snackbarSize * this.idx
-    },
   },
 }
 </script>
+
+<style scoped>
+.notification-snackbar {
+  position: relative;
+  height: unset;
+}
+</style>
