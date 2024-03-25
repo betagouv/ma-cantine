@@ -23,7 +23,7 @@
       },
       {
         "descriptionComponent": "LogoBio",
-        "htmlDescription": "Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio » pour les cantines en France continentale (consulter <a href='https://ma-cantine.agriculture.gouv.fr/blog/16'>notre blog</a> pour le seuil des autres régions). C'est à dire : \n\n-  des produits issus de l'agriculture biologique.\n-  des produits végétaux étiquetés 'en conversion'.",
+        "htmlDescription": "<p>Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio » pour les cantines en France continentale (consulter <a href='https://ma-cantine.agriculture.gouv.fr/blog/16'>notre blog</a> pour le seuil des autres régions). C'est à dire :</p><ul class='mb-4'><li>des produits issus de l'agriculture biologique.</li><li>des produits végétaux étiquetés 'en conversion'.</li></ul>",
         "id": "vingt",
         "readMore": false,
         "shortTitle": "20 % bio",
@@ -78,7 +78,7 @@
         "deadline": {
           "earliestISO": "2020-10-22"
         },
-        "htmlDescription": "Depuis le 22 octobre 2020, les cuisines centrales ou sur place qui <b>préparent plus de 3000 repas par jour</b> ont l'obligation de proposer une convention de dons à une association habilitée.",
+        "htmlDescription": "<p>Depuis le 22 octobre 2020, les cuisines centrales ou sur place qui <b>préparent plus de 3000 repas par jour</b> ont l'obligation de proposer une convention de dons à une association habilitée.</p>",
         "id": "dons",
         "readMore": false,
         "shortTitle": "Dons aux associations",
@@ -145,7 +145,7 @@
           "display": "depuis le 1er novembre 2019",
           "earliestISO": "2019-11-01"
         },
-        "htmlDescription": "Tous les restaurants collectifs scolaires (publics ou privés), de la maternelle au lycée, sont tenus de proposer, au moins une fois par semaine, un menu végétarien. Par ailleurs, le menu végétarien doit s'insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.\n\n\n<b>Qu'est-ce qu'un menu végétarien ?</b>\n\nIl s'agit d'un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers.",
+        "htmlDescription": "<p>Tous les restaurants collectifs scolaires (publics ou privés), de la maternelle au lycée, sont tenus de proposer, au moins une fois par semaine, un menu végétarien. Par ailleurs, le menu végétarien doit s'insérer dans un plan alimentaire respectueux des exigences relatives à la qualité nutritionnelle.</p><h3 class='mb-2'>Qu'est-ce qu'un menu végétarien ?</h3><p>Il s'agit d'un menu (toutes les composantes) sans viande, ni poisson, crustacés et fruits de mer. Il peut cependant comprendre des protéines animales (œufs, produits laitiers). Les alternatives protéiques utilisées peuvent être les légumineuses (lentilles, pois chiches, haricots...), les céréales (blé, riz, boulgour...), les œufs et/ou les produits laitiers.</p>",
         "id": "menu-vege",
         "readMore": false,
         "shortTitle": "Menu végé hebdo",
@@ -159,7 +159,7 @@
           "display": "1er janvier 2023",
           "earliestISO": "2023-01-01"
         },
-        "htmlDescription": "À partir du 1er janvier 2023, les restaurants collectifs de l'État, les établissements publics et les entreprises publiques nationales doivent proposer une option végétarienne quotidienne, dès lors qu'ils proposent habituellement un choix multiple de menus.\n\nCes établissements sont les suivants :\n\n - les universités ou enseignements supérieurs publics, administration (RA ou RIA), établissements pénitenciers, restaurants des armées ;\n - les établissements publics placés sous la tutelle de l’État, comme par exemple des agences, instituts et centres nationaux (OFB, ANSES, IGNF, INRAE, ...), des établissements publics de santé* (CHR/CHU, CHN, CH, HL, CHS...) ou des établissements publics nationaux (ASP, CdC, CNRS, ...) ;​\n - les entreprises publiques : établissements publics industriels et commerciaux, sociétés commerciales (détention majoritaire du capital par l’État).",
+        "htmlDescription": "<p>À partir du 1er janvier 2023, les restaurants collectifs de l'État, les établissements publics et les entreprises publiques nationales doivent proposer une option végétarienne quotidienne, dès lors qu'ils proposent habituellement un choix multiple de menus.</p><p>Ces établissements sont les suivants :</p><ul class='mb-4'><li>les universités ou enseignements supérieurs publics, administration (RA ou RIA), établissements pénitenciers, restaurants des armées ;</li><li>les établissements publics placés sous la tutelle de l’État, comme par exemple des agences, instituts et centres nationaux (OFB, ANSES, IGNF, INRAE, ...), des établissements publics de santé* (CHR/CHU, CHN, CH, HL, CHS...) ou des établissements publics nationaux (ASP, CdC, CNRS, ...) ;​</li><li>les entreprises publiques : établissements publics industriels et commerciaux, sociétés commerciales (détention majoritaire du capital par l’État).</li></ul>",
         "id": "option-vege",
         "readMore": false,
         "shortTitle": "Menu végé quoti",
