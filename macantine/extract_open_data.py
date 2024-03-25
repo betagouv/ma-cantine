@@ -251,9 +251,9 @@ class ETL(ABC):
             return 0
         with default_storage.open(filename + ".csv", "w") as file:
             self.df.to_csv(file, sep=";", index=False, na_rep="", encoding="utf_8_sig")
-        with default_storage.open(filename + ".parquet", "w") as file:
+        with default_storage.open(filename + ".parquet", "wb") as file:
             self.df.to_parquet(file)
-        with default_storage.open(filename + ".xlsx", "w") as file:
+        with default_storage.open(filename + ".xlsx", "wb") as file:
             df_export = self.df.copy()
             df_export = datetimes_to_str(df_export)  # Ah Excel !
             df_export.to_excel(file, index=False)
