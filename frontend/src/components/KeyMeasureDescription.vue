@@ -1,6 +1,6 @@
 <template>
   <div class="description-container">
-    <p class="description" v-if="measure.htmlDescription" v-html="measure.htmlDescription"></p>
+    <div class="description" v-if="measure.htmlDescription" v-html="measure.htmlDescription"></div>
     <p class="description" v-else-if="measure.description">{{ measure.description }}</p>
     <component :is="measure.descriptionComponent" v-if="measure.descriptionComponent" class="description" />
   </div>

@@ -4,7 +4,7 @@
       Un produit de qualité et durable au sens de l'objectif fixé par la loi EGAlim doit bénéficier d’un des labels
       suivants :
     </p>
-    <ul id="about-labels">
+    <ul id="about-labels" class="no-bullets">
       <li v-for="label in labels" class="label" :key="label.src">
         <img :src="`/static/images/quality-labels/${label.src}`" alt="" />
         {{ label.text }}
@@ -57,15 +57,10 @@ export default {
 <style scoped lang="scss">
 #about-labels {
   margin: 1em 0;
-  list-style-type: none;
   padding: 0;
 
   li {
     margin: 1em 0;
-  }
-  /* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
-  li::before {
-    content: "\200B";
   }
 }
 

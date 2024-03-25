@@ -170,33 +170,37 @@
       </v-col>
       <v-col cols="12" md="9" lg="10">
         <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
-          <fieldset class="fr-text">
-            <legend class="font-weight-bold">
-              Pour mes cantines satellites, je saisis :
-            </legend>
-            <v-radio-group
-              v-model="centralKitchenDiagnosticMode"
-              :readonly="hasActiveTeledeclaration"
-              :disabled="hasActiveTeledeclaration"
-              class="py-0"
-              hide-details
-              row
-              @change="handleModeChange"
-            >
-              <v-radio
+          <v-radio-group
+            v-model="centralKitchenDiagnosticMode"
+            :readonly="hasActiveTeledeclaration"
+            :disabled="hasActiveTeledeclaration"
+            class="py-0 mt-0"
+            hide-details
+            @change="handleModeChange"
+          >
+            <template v-slot:label>
+              <span class="fr-text font-weight-bold grey--text text--darken-4">
+                Pour mes cantines satellites, je saisis :
+              </span>
+            </template>
+            <v-row class="my-0">
+              <v-col
+                cols="12"
+                md="6"
                 v-for="type in centralKitchenDiagnosticModes"
                 :key="type.key"
-                :label="type.shortLabel"
-                :value="type.key"
+                class="py-0 pt-md-2"
               >
-                <template v-slot:label>
-                  <span class="fr-text mr-2 mr-lg-8 grey--text text--darken-4">
-                    {{ type.shortLabel }}
-                  </span>
-                </template>
-              </v-radio>
-            </v-radio-group>
-          </fieldset>
+                <v-radio :label="type.shortLabel" :value="type.key">
+                  <template v-slot:label>
+                    <span class="fr-text mr-2 mr-lg-8 grey--text text--darken-4">
+                      {{ type.shortLabel }}
+                    </span>
+                  </template>
+                </v-radio>
+              </v-col>
+            </v-row>
+          </v-radio-group>
         </v-card>
         <DsfrTabsVue
           v-model="tab"

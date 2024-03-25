@@ -8,31 +8,24 @@
         @tunnel-autofill="onTunnelAutofill"
         class="mb-xs-6 mb-xl-16"
       />
-      <fieldset>
-        <legend class="my-3">
-          J’informe mes convives sur la part de produits de qualité et durables entrant dans la composition des repas
-          servis, et sur les démarches d’acquisition de produits issus d’un PAT (projet alimentaire territorial)
-        </legend>
-        <v-radio-group class="my-0" v-model="payload.communicatesOnFoodQuality" hide-details>
-          <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-        </v-radio-group>
-      </fieldset>
-      <fieldset class="mt-8" :disabled="!payload.communicatesOnFoodQuality">
-        <legend>
-          Je fais cette information
-          <span class="fr-hint-text my-2">Optionnel</span>
-        </legend>
-        <v-radio-group class="my-0" v-model="payload.communicationFrequency" hide-details>
-          <v-radio
-            v-for="item in communicationFrequencies"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-            :disabled="!payload.communicatesOnFoodQuality"
-            :readonly="!payload.communicatesOnFoodQuality"
-          ></v-radio>
-        </v-radio-group>
-      </fieldset>
+      <DsfrRadio
+        label="J’informe mes convives sur la part de produits de qualité et durables entrant dans la composition des repas
+          servis, et sur les démarches d’acquisition de produits issus d’un PAT (projet alimentaire territorial)"
+        v-model="payload.communicatesOnFoodQuality"
+        hide-details
+        optional
+        yesNo
+      />
+      <DsfrRadio
+        label="Je fais cette information"
+        v-model="payload.communicationFrequency"
+        hide-details
+        optional
+        :items="communicationFrequencies"
+        :disabled="!payload.communicatesOnFoodQuality"
+        :readonly="!payload.communicatesOnFoodQuality"
+        class="mt-8"
+      />
     </div>
     <div v-else-if="stepUrlSlug === 'mode-information'">
       <fieldset>
@@ -64,14 +57,14 @@
         </v-row>
       </fieldset>
     </div>
-    <div v-else-if="stepUrlSlug === 'qualite-nutritionnelle'">
-      <fieldset>
-        <legend class="my-3">J’informe les convives sur la qualité nutritionnelle des repas</legend>
-        <v-radio-group class="my-0" v-model="payload.communicatesOnFoodPlan" hide-details>
-          <v-radio v-for="item in boolOptions" :key="item.value" :label="item.label" :value="item.value"></v-radio>
-        </v-radio-group>
-      </fieldset>
-    </div>
+    <DsfrRadio
+      v-else-if="stepUrlSlug === 'qualite-nutritionnelle'"
+      label="J’informe les convives sur la qualité nutritionnelle des repas"
+      v-model="payload.communicatesOnFoodPlan"
+      hide-details
+      optional
+      yesNo
+    />
     <div v-else-if="stepUrlSlug === 'lien-communication'">
       <fieldset>
         <legend>
@@ -93,6 +86,7 @@
 <script>
 import LastYearAutofillOption from "../LastYearAutofillOption"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrRadio from "@/components/DsfrRadio"
 import validators from "@/validators"
 import Constants from "@/constants"
 
@@ -111,7 +105,7 @@ export default {
       type: String,
     },
   },
-  components: { LastYearAutofillOption, DsfrTextField },
+  components: { LastYearAutofillOption, DsfrTextField, DsfrRadio },
   data() {
     return {
       formIsValid: true,
@@ -138,16 +132,6 @@ export default {
           title: "Synthèse",
           isSynthesis: true,
           urlSlug: "complet",
-        },
-      ],
-      boolOptions: [
-        {
-          label: "Oui",
-          value: true,
-        },
-        {
-          label: "Non",
-          value: false,
         },
       ],
       payload: {},
