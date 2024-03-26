@@ -220,4 +220,7 @@ ul.no-bullets {
     content: "\200B";
   }
 }
+.dark-orange {
+  color: #d64309 !important; // 4.5:1 contrast for text on white
+}
 </style>
