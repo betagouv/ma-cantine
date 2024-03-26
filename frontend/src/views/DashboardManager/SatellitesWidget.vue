@@ -6,15 +6,11 @@
     </v-card-text>
     <v-spacer v-if="!satellites.length" />
     <v-card-text
-      :class="
-        `fr-text-xs mt-3 pb-0 ${
-          hasSatelliteInconsistency ? 'orange--text text--darken-4' : 'grey--text text--darken-2'
-        }`
-      "
+      :class="`fr-text-xs mt-3 pb-0 ${hasSatelliteInconsistency ? 'dark-orange' : 'grey--text text--darken-2'}`"
       v-if="canteen.satelliteCanteensCount"
     >
       <p class="mb-0 d-flex">
-        <v-icon small v-if="hasSatelliteInconsistency" class="mr-1 orange--text text--darken-4">$alert-line</v-icon>
+        <v-icon small v-if="hasSatelliteInconsistency" class="mr-1 dark-orange">$alert-line</v-icon>
         {{ satelliteCount }} sur {{ canteen.satelliteCanteensCount }} satellites renseignés
       </p>
     </v-card-text>

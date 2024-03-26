@@ -9,10 +9,10 @@
             <p class="mb-0">Produits bio</p>
           </v-col>
           <v-col cols="2">
-            <p class="mb-0 font-weight-bold color-bio">{{ percentages.bio || "—" }} %</p>
+            <p class="mb-0 font-weight-bold">{{ percentages.bio || "—" }} %</p>
           </v-col>
           <v-col cols="4">
-            <p class="mb-0 color-bio">
+            <p class="mb-0">
               <i>objectif : {{ applicableRules.bioThreshold }} %</i>
             </p>
           </v-col>
@@ -35,10 +35,10 @@
             <p class="mb-0">Produits EGAlim</p>
           </v-col>
           <v-col cols="2">
-            <p class="mb-0 font-weight-bold color-egalim">{{ percentages.egalim || "—" }} %</p>
+            <p class="mb-0 font-weight-bold">{{ percentages.egalim || "—" }} %</p>
           </v-col>
           <v-col cols="4">
-            <p class="mb-0 color-egalim">
+            <p class="mb-0">
               <i>objectif : {{ applicableRules.qualityThreshold }} %</i>
             </p>
           </v-col>
@@ -273,11 +273,5 @@ span.percentage {
   display: inline-block;
   width: 3em;
   text-align: right;
-}
-.color-bio {
-  color: #297254;
-}
-.color-egalim {
-  color: #00a95f;
 }
 </style>
