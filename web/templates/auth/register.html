@@ -71,7 +71,12 @@
       {% for field in form.left_column_fields %}
       <div class="control-group">
         <label class="control-label" for="{{field.id_for_label}}">
-          {{ field.label }}</label>
+          {{ field.label }}
+          {% if field.help_text %}
+          <span class="field-help-text">
+            {{ field.help_text }}</span>
+          {% endif %}
+        </label>
         {{ field }}
         {% for error in field.errors %}
         <p class="inline-error-container">
