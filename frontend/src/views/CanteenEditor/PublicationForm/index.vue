@@ -146,15 +146,14 @@ export default {
           payload: this.canteen,
         })
         .then(() => {
-          this.$store.dispatch("notify", { title, status: "success" })
           this.bypassLeaveWarning = true
           if (toPublish) {
-            this.$router.push({
+            return this.$router.push({
               name: "CanteenPage",
               params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
             })
           } else {
-            this.$router.push({
+            return this.$router.push({
               name: "DashboardManager",
               params: {
                 canteenUrlComponent: this.canteenUrlComponent,
@@ -162,6 +161,7 @@ export default {
             })
           }
         })
+        .then(() => this.$store.dispatch("notify", { title, status: "success" }))
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
