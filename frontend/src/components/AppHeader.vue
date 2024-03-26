@@ -359,9 +359,7 @@ export default {
       return child.authenticationState === true
     },
     logout() {
-      return this.$store.dispatch("logout").then(() => {
-        this.$router.push({ name: "LandingPage" })
-      })
+      return this.$store.dispatch("logout")
     },
   },
 }
