@@ -205,5 +205,6 @@
       "title": "Actif sur Ma Cantine",
       "type": "boolean"
     }
-  ]
+  ],
+  "title": "Schéma des établissements de restauration collective"
 }
