@@ -170,7 +170,7 @@ export default {
     },
     onTunnelAutofill(e) {
       this.$set(this, "payload", e.payload)
-      this.$emit("tunnel-autofill", { payload: this.payload })
+      this.$emit("tunnel-autofill", e)
     },
     fetchPurchasesSummary() {
       fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.diagnostic.year}`)

@@ -68,11 +68,12 @@ export default {
         response.json().then((x) => (this.blogPost = x))
       })
       .catch(() => {
-        this.$store.dispatch("notify", {
-          message: "Nous n'avons pas trouvé cet article",
-          status: "error",
+        this.$router.push({ name: "BlogsHome" }).then(() => {
+          this.$store.dispatch("notify", {
+            message: "Nous n'avons pas trouvé cet article",
+            status: "error",
+          })
         })
-        this.$router.push({ name: "BlogsHome" })
       })
   },
   computed: {

@@ -35,12 +35,13 @@ export default {
       this.$store
         .dispatch("deleteCanteen", { id: this.originalCanteen.id })
         .then(() => {
-          this.$store.dispatch("notify", {
-            message:
-              "Votre cantine a bien été supprimée. En cas d'erreur vous pouvez nous contacter à l'adresse support-egalim@beta.gouv.fr",
-            status: "success",
+          this.$router.push({ name: "ManagementPage" }).then(() => {
+            this.$store.dispatch("notify", {
+              message:
+                "Votre cantine a bien été supprimée. En cas d'erreur vous pouvez nous contacter à l'adresse support-egalim@beta.gouv.fr",
+              status: "success",
+            })
           })
-          this.$router.push({ name: "ManagementPage" })
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)

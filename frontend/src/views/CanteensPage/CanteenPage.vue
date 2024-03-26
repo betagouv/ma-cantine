@@ -178,11 +178,12 @@ export default {
           response.json().then(this.setCanteen)
         })
         .catch(() => {
-          this.$store.dispatch("notify", {
-            message: "Nous n'avons pas trouvé cette cantine",
-            status: "error",
+          this.$router.push({ name: "CanteensHome" }).then(() => {
+            this.$store.dispatch("notify", {
+              message: "Nous n'avons pas trouvé cette cantine",
+              status: "error",
+            })
           })
-          this.$router.push({ name: "CanteensHome" })
         })
     },
   },

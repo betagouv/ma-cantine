@@ -122,8 +122,9 @@ export default {
           id: this.canteen.id,
         })
         .then(() => {
-          this.$store.dispatch("notify", { title: "Votre cuisine centrale n'est plus publiée", status: "success" })
-          this.$router.push({ name: "ManagementPage" })
+          this.$router.push({ name: "ManagementPage" }).then(() => {
+            this.$store.dispatch("notify", { title: "Votre cuisine centrale n'est plus publiée", status: "success" })
+          })
         })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)

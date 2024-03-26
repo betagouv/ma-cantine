@@ -120,11 +120,12 @@ export default {
         })
         .catch(() => {
           this.$set(this, "canteen", null)
-          this.$store.dispatch("notify", {
-            message: "Nous n'avons pas trouvé cette cantine",
-            status: "error",
+          this.$router.replace({ name: "ManagementPage" }).then(() => {
+            this.$store.dispatch("notify", {
+              message: "Nous n'avons pas trouvé cette cantine",
+              status: "error",
+            })
           })
-          this.$router.replace({ name: "ManagementPage" })
         })
     },
   },

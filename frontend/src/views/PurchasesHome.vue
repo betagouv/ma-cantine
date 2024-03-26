@@ -472,7 +472,6 @@ export default {
           this.$store.dispatch("notify", {
             title,
             status: "success",
-            duration: 10000,
             undoMessage: "Restaurer achats",
             undoAction: this.recoverDeletedPurchases(ids),
           })

@@ -336,7 +336,6 @@ export default {
           title: "Veuillez vérifier les erreurs ci-dessous",
           message: messages.join("\n"),
           status: "error",
-          duration: "5000",
         })
       } catch (error) {
         this.$store.dispatch("notifyServerError", error)
@@ -374,6 +373,11 @@ export default {
       return this.saveDiagnostic()
         .then(this.$nextTick)
         .then(() => this.$router.push({ query: { étape: synthesisStep.urlSlug } }))
+        .then(() => {
+          if (e.message) {
+            this.$store.dispatch("notify", e.message)
+          }
+        })
     },
     stepLink(step) {
       return { query: { étape: step.urlSlug } }

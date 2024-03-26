@@ -41,10 +41,12 @@ export default {
     fillFromLastYear() {
       const payload = {}
       this.fields.forEach((f) => (payload[f] = this.lastYearDiagnostic[f]))
-      this.$emit("tunnel-autofill", { payload })
-      this.$store.dispatch("notify", {
-        status: "success",
-        message: "Vos réponses on été rapportés dans votre bilan.",
+      this.$emit("tunnel-autofill", {
+        payload,
+        message: {
+          status: "success",
+          message: "Vos réponses on été rapportés dans votre bilan.",
+        },
       })
     },
   },

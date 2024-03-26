@@ -191,10 +191,12 @@ export default {
     },
     autofillWithPurchases() {
       Object.assign(this.payload, { diagnosticType: "COMPLETE" }, this.purchasesSummary)
-      this.$emit("tunnel-autofill", { payload: this.payload })
-      this.$store.dispatch("notify", {
-        status: "success",
-        message: "Vos achats on été rapportés dans votre bilan.",
+      this.$emit("tunnel-autofill", {
+        payload: this.payload,
+        message: {
+          status: "success",
+          message: "Vos achats on été rapportés dans votre bilan.",
+        },
       })
     },
   },

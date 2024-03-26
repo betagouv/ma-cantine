@@ -361,12 +361,14 @@ export default {
         .then(() => {
           this.bypassLeaveWarning = true
           const message = this.isNewPurchase ? "Votre achat a bien été créée." : "Votre achat a bien été modifiée"
-          this.$store.dispatch("notify", {
-            title: "Mise à jour prise en compte",
-            message,
-            status: "success",
-          })
-          if (!stayOnPage) this.$router.push({ name: "PurchasesHome" })
+          const notify = () => {
+            this.$store.dispatch("notify", {
+              title: "Mise à jour prise en compte",
+              message,
+              status: "success",
+            })
+          }
+          if (!stayOnPage) this.$router.push({ name: "PurchasesHome" }).then(notify)
           else {
             this.purchase = {
               characteristics: [],
@@ -377,6 +379,7 @@ export default {
             this.$refs.form.resetValidation()
             this.fetchOptions() // if the user added a new product or provider, we need to refresh the options
             window.scroll(0, 0)
+            notify()
           }
         })
         .catch((e) => {
@@ -474,11 +477,12 @@ export default {
         })
       })
       .catch(() => {
-        this.$store.dispatch("notify", {
-          message: "Nous n'avons pas trouvé cet achat",
-          status: "error",
+        this.$router.push({ name: "PurchasesHome" }).then(() => {
+          this.$store.dispatch("notify", {
+            message: "Nous n'avons pas trouvé cet achat",
+            status: "error",
+          })
         })
-        this.$router.push({ name: "PurchasesHome" })
       })
   },
   created() {

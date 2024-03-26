@@ -191,7 +191,6 @@ export default {
     saveSatellite() {
       if (!this.$refs.form.validate()) {
         this.$store.dispatch("notifyRequiredFieldsError")
-        window.scrollTo(0, 0)
         return
       }
       this.addSatellite()

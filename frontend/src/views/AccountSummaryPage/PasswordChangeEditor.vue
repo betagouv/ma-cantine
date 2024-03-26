@@ -93,12 +93,13 @@ export default {
       this.$store
         .dispatch("changePassword", { payload })
         .then(() => {
-          this.$store.dispatch("notify", {
-            title: "Mise à jour prise en compte",
-            message: "Votre mot de passe a bien été mis à jour",
-            status: "success",
+          this.$router.push({ name: "ManagementPage" }).then(() => {
+            this.$store.dispatch("notify", {
+              title: "Mise à jour prise en compte",
+              message: "Votre mot de passe a bien été mis à jour",
+              status: "success",
+            })
           })
-          this.$router.push({ name: "ManagementPage" })
         })
         .catch((e) => {
           this.$store.dispatch("notify", {
