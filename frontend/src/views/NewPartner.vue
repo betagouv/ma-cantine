@@ -118,9 +118,9 @@
           :rules="[validators.required, validators.urlOrEmpty]"
         />
       </v-col>
-      <v-row>
+      <v-row class="align-end">
         <v-col cols="12" sm="6">
-          <DsfrTextField v-model="partner.contactEmail" label="Votre email" :rules="[validators.email]" />
+          <DsfrEmail v-model="partner.contactEmail" />
         </v-col>
         <v-col cols="12" sm="6">
           <DsfrTextField v-model="partner.contactName" label="Prénom et nom (optionnel)" />
@@ -170,11 +170,12 @@ import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrRadio from "@/components/DsfrRadio"
+import DsfrEmail from "@/components/DsfrEmail"
 import { toBase64, departmentItems } from "@/utils"
 
 export default {
   name: "NewPartner",
-  components: { BreadcrumbsNav, DsfrTextField, DsfrTextarea, DsfrSelect, DsfrRadio, PageSatisfaction },
+  components: { BreadcrumbsNav, DsfrTextField, DsfrTextarea, DsfrSelect, DsfrRadio, DsfrEmail, PageSatisfaction },
   props: ["canteen"],
   data() {
     const user = this.$store.state.loggedUser

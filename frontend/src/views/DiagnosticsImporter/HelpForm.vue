@@ -8,9 +8,9 @@
       .
     </p>
     <v-form v-model="helpFormIsValid" ref="helpForm" @submit.prevent class="my-12">
-      <v-row class="mb-1">
+      <v-row class="mb-1 align-end">
         <v-col cols="12" md="6" class="py-0">
-          <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
+          <DsfrEmail v-model="fromEmail" />
         </v-col>
         <v-col class="py-0">
           <DsfrTextField v-model="name" label="Prénom et nom" />
@@ -37,10 +37,11 @@
 import validators from "@/validators"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
+import DsfrEmail from "@/components/DsfrEmail"
 
 export default {
   name: "HelpForm",
-  components: { DsfrTextField, DsfrTextarea },
+  components: { DsfrTextField, DsfrTextarea, DsfrEmail },
   data() {
     const user = this.$store.state.loggedUser
     return {

@@ -89,13 +89,9 @@
             />
           </v-col>
           <v-col cols="12">
-            <DsfrTextField
-              label="Adresse email"
-              class="mt-1"
+            <DsfrEmail
               hide-details="auto"
               v-model="userCopy.email"
-              :rules="[validators.email]"
-              validate-on-blur
               @change="emailErrorMessages = []"
               :error-messages="emailErrorMessages"
             />
@@ -158,10 +154,11 @@ import Constants from "@/constants"
 import { toBase64, getObjectDiff } from "@/utils"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrSelect from "@/components/DsfrSelect"
+import DsfrEmail from "@/components/DsfrEmail"
 
 export default {
   name: "AccountEditor",
-  components: { DsfrTextField, DsfrSelect },
+  components: { DsfrTextField, DsfrSelect, DsfrEmail },
   data() {
     return {
       userCopy: {},
