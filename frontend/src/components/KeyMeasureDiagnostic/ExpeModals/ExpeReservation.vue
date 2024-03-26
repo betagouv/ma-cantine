@@ -166,15 +166,12 @@
               class="mb-4 body-2"
               id="leader-last-name"
             />
-            <label class="body-2 grey--text text--darken-3" for="leader-email">
-              Adresse email du responsable
-            </label>
-            <DsfrTextField
-              hide-details="auto"
+            <DsfrEmail
               v-model="expe.leaderEmail"
+              label="Adresse électronique du responsable"
+              labelClasses="body-2 grey--text text--darken-3"
               style="max-width: 300px"
               class="mb-4 body-2"
-              id="leader-email"
             />
           </div>
 
@@ -449,9 +446,10 @@ import Constants from "@/constants"
 import DownloadLink from "../../DownloadLink.vue"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
+import DsfrEmail from "@/components/DsfrEmail"
 
 export default {
-  components: { DownloadLink, DsfrTextField, DsfrTextarea },
+  components: { DownloadLink, DsfrTextField, DsfrTextarea, DsfrEmail },
   name: "ExpeReservation",
   props: {
     canteen: Object,

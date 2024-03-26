@@ -43,7 +43,7 @@
       </div>
     </div>
     <v-form v-model="formIsValid" ref="form" @submit.prevent>
-      <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
+      <DsfrEmail v-model="fromEmail" />
       <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
       <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
       <p class="caption text-left grey--text text--darken-1 mt-n1 mb-6">
@@ -63,11 +63,12 @@
 <script>
 import validators from "@/validators"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrEmail from "@/components/DsfrEmail"
 import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   name: "ContactForm",
-  components: { DsfrTextField, DsfrTextarea },
+  components: { DsfrTextField, DsfrTextarea, DsfrEmail },
   props: ["canteen"],
   data() {
     const user = this.$store.state.loggedUser
