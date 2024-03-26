@@ -10,7 +10,7 @@
     :rules="rules || [validators.email]"
   >
     <template v-slot:label>
-      <span :class="labelClasses || 'fr-label mb-1'">{{ label || "Adresse électronique" }}</span>
+      <span :class="labelClasses || 'fr-label mb-1'">{{ label || "Votre adresse électronique" }}</span>
       <span class="fr-hint-text">Format attendu : nom@domaine.fr</span>
     </template>
   </DsfrTextField>

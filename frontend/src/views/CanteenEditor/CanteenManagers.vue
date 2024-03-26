@@ -26,7 +26,12 @@
         <v-form ref="managerForm" class="mt-3 px-2" v-model="managerFormIsValid" v-on:submit.prevent="addManager">
           <p class="body-2 mb-2 text-left grey--text text--darken-1">Ajouter un gestionnaire</p>
           <div class="d-sm-flex align-sm-center">
-            <DsfrEmail v-model="newManagerEmail" :rules="[validators.emailOrEmpty]" class="flex-grow-1 mb-sm-6" />
+            <DsfrEmail
+              v-model="newManagerEmail"
+              label="Adresse électronique du gestionnaire"
+              :rules="[validators.emailOrEmpty]"
+              class="flex-grow-1 mb-sm-6"
+            />
             <v-btn
               @click="addManager"
               outlined
