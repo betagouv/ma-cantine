@@ -6,6 +6,7 @@ import requests
 import json
 import os
 import time
+import csv
 
 from abc import ABC, abstractmethod
 from data.department_choices import Department
@@ -130,7 +131,7 @@ def fetch_sector(sector_id, sectors):
     Provide EPCI code for a city, given the insee code of the city
     """
     if sector_id and sector_id in sectors.keys():
-        return sectors[sector_id]
+        return sectors[sector_id]["category"] + " - " + sectors[sector_id]["name"]
     else:
         return ""
 
@@ -206,7 +207,11 @@ class ETL(ABC):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
         sectors = map_sectors()
         self.df["sectors"] = self.df["sectors"].apply(lambda x: fetch_sector(x, sectors))
-        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [""] else [])
+        canteens_sectors = (
+            self.df.groupby("id")["sectors"]
+            .apply(list)
+            .apply(lambda x: json.dumps(x, ensure_ascii=False) if x != [""] else [])
+        )
         del self.df["sectors"]
 
         return self.df.merge(canteens_sectors, on="id")
@@ -249,13 +254,22 @@ class ETL(ABC):
         else:
             return 0
         with default_storage.open(filename + ".csv", "w") as file:
-            self.df.to_csv(file, sep=";", index=False, na_rep="", encoding="utf_8_sig")
-        with default_storage.open(filename + ".parquet", "wb") as file:
-            self.df.to_parquet(file)
-        with default_storage.open(filename + ".xlsx", "wb") as file:
-            df_export = self.df.copy()
-            df_export = datetimes_to_str(df_export)  # Ah Excel !
-            df_export.to_excel(file, index=False)
+            self.df.to_csv(
+                file,
+                sep=";",
+                index=False,
+                na_rep="",
+                encoding="utf_8_sig",
+                quoting=csv.QUOTE_NONE,
+            )
+        if stage == "validated":
+            with default_storage.open(filename + ".parquet", "wb") as file:
+                self.df.sectors = self.df.sectors.astype(str)
+                self.df.to_parquet(file)
+            with default_storage.open(filename + ".xlsx", "wb") as file:
+                df_export = self.df.copy()
+                df_export = datetimes_to_str(df_export)  # Ah Excel !
+                df_export.to_excel(file, index=False)
 
 
 class ETL_CANTEEN(ETL):
