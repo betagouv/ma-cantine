@@ -148,7 +148,7 @@
       ],
       "name": "canteen_sectors",
       "title": "Secteurs",
-      "type": "array"
+      "type": "string"
     },
     {
       "description": "Ministère de tutelle de la cantine, s'il y en a un",
