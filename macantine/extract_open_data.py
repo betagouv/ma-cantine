@@ -126,12 +126,17 @@ def fetch_epci_name(code_insee_epci, epcis_names):
         return None
 
 
+def format_sector(sector: dict) -> str:
+    return sector["category"] + " : " + sector["name"]
+
+
 def fetch_sector(sector_id, sectors):
     """
     Provide EPCI code for a city, given the insee code of the city
     """
     if sector_id and sector_id in sectors.keys():
-        return sectors[sector_id]["category"] + " - " + sectors[sector_id]["name"]
+        sector = sectors[sector_id]
+        return format_sector(sector)
     else:
         return ""
 
@@ -207,11 +212,7 @@ class ETL(ABC):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
         sectors = map_sectors()
         self.df["sectors"] = self.df["sectors"].apply(lambda x: fetch_sector(x, sectors))
-        canteens_sectors = (
-            self.df.groupby("id")["sectors"]
-            .apply(list)
-            .apply(lambda x: json.dumps(x, ensure_ascii=False) if x != [""] else [])
-        )
+        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(lambda x: "[" + "+".join(x) + "]")
         del self.df["sectors"]
 
         return self.df.merge(canteens_sectors, on="id")
@@ -242,6 +243,7 @@ class ETL(ABC):
         if len(report["errors"]) > 0 or report["stats"]["errors"] > 0:
             logger.error(f"The dataset {self.dataset_name} extraction has errors : ")
             logger.error(report["errors"])
+            logger.error(report["tasks"])
             return 0
         else:
             return 1
@@ -264,7 +266,8 @@ class ETL(ABC):
             )
         if stage == "validated":
             with default_storage.open(filename + ".parquet", "wb") as file:
-                self.df.sectors = self.df.sectors.astype(str)
+                if "sectors" in self.df.columns:
+                    self.df.sectors = self.df.sectors.astype(str)
                 self.df.to_parquet(file)
             with default_storage.open(filename + ".xlsx", "wb") as file:
                 df_export = self.df.copy()
@@ -353,6 +356,7 @@ class ETL_TD(ETL):
         self.schema_url = (
             "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_teledeclaration.json"
         )
+
         self.categories_to_aggregate = {
             "bio": ["_bio"],
             "sustainable": ["_sustainable", "_label_rouge", "_aocaop_igp_stg"],
@@ -370,6 +374,11 @@ class ETL_TD(ETL):
                 "_externalites",
             ],
         }
+
+    def transform_sectors(sectors: pd.Series) -> pd.Series:
+        sectors = sectors.apply(lambda x: list(map(lambda y: format_sector(y), x)))
+        sectors = sectors.apply(lambda x: "[" + " + ".join(x) + "]")
+        return sectors
 
     def extract_dataset(self):
         if self.year in CAMPAIGN_DATES.keys():
@@ -410,6 +419,8 @@ class ETL_TD(ETL):
         self._clean_dataset()
         logger.info("TD campagne : Filter by sector...")
         self._filter_by_sectors()
+        logger.info("TD campagne : Transform sectors...")
+        self.df["canteen_sectors"] = self.transform_sectors(self.df["canteen_sectors"])
         logger.info("TD Campagne : Fill geo name...")
         self.transform_geo_data(geo_col_names=["canteen_department", "canteen_region"])
 
