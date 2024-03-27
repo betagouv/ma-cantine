@@ -239,7 +239,7 @@ class ETL(ABC):
             f"https://api.validata.etalab.studio/validate?schema={self.schema_url}&url={dataset_to_validate_url}&header_case=true"
         )
         report = json.loads(res.text)["report"]
-        if len(report["errors"]) > 0:
+        if len(report["errors"]) > 0 or report["stats"]["errors"] > 0:
             logger.error(f"The dataset {self.dataset_name} extraction has errors : ")
             logger.error(report["errors"])
             return 0
