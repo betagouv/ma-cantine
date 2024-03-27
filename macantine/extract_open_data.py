@@ -342,8 +342,19 @@ class ETL_TD(ETL):
         self.categories_to_aggregate = {
             "bio": ["_bio"],
             "sustainable": ["_sustainable", "_label_rouge", "_aocaop_igp_stg"],
-            "egalim_others": ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
-            "externality_performance": ["_externality_performance", "_performance", "_externalites"],
+            "egalim_others": [
+                "_egalim_others",
+                "_hve",
+                "_peche_durable",
+                "_rup",
+                "_fermier",
+                "_commerce_equitable",
+            ],
+            "externality_performance": [
+                "_externality_performance",
+                "_performance",
+                "_externalites",
+            ],
         }
 
     def extract_dataset(self):
