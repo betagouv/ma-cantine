@@ -375,7 +375,8 @@ class ETL_TD(ETL):
             ],
         }
 
-    def transform_sectors(sectors: pd.Series) -> pd.Series:
+    def transform_sectors(self) -> pd.Series:
+        sectors = self.df["canteen_sectors"]
         sectors = sectors.apply(lambda x: list(map(lambda y: format_sector(y), x)))
         sectors = sectors.apply(lambda x: "[" + " + ".join(x) + "]")
         return sectors
@@ -420,7 +421,7 @@ class ETL_TD(ETL):
         logger.info("TD campagne : Filter by sector...")
         self._filter_by_sectors()
         logger.info("TD campagne : Transform sectors...")
-        self.df["canteen_sectors"] = self.transform_sectors(self.df["canteen_sectors"])
+        self.df["canteen_sectors"] = self.transform_sectors()
         logger.info("TD Campagne : Fill geo name...")
         self.transform_geo_data(geo_col_names=["canteen_department", "canteen_region"])
 
