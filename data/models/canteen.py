@@ -292,6 +292,28 @@ class Canteen(SoftDeletionModel):
     def can_be_claimed(self):
         return not self.managers.exists()
 
+    def has_diagnostic_for_year(self, year):
+        has_diagnostics = self.diagnostic_set.filter(year=year).exists()
+        has_central_kitchen_diagnostic = (
+            self.central_kitchen_diagnostics and self.central_kitchen_diagnostics.filter(year=year).exists()
+        )
+        return has_diagnostics or has_central_kitchen_diagnostic
+
+    def has_teledeclaration_for_year(self, year):
+        from .teledeclaration import Teledeclaration  # Circular import
+
+        has_canteen_td = self.teledeclaration_set.filter(
+            year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+        ).exists()
+        has_central_kitchen_td = (
+            self.central_kitchen.teledeclaration_set.filter(
+                year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+            ).exists()
+            if self.central_kitchen
+            else False
+        )
+        return has_canteen_td or has_central_kitchen_td
+
     def __str__(self):
         return f'Cantine "{self.name}"'
 
