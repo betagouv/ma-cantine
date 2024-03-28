@@ -163,12 +163,10 @@
     },
     {
       "description": "Liste définissant les secteurs d'activités de la cantine. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
-      "example": [
-        "{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}"
-      ],
+      "example": "[education : Secondaire collège + education : Ecole primaire (maternelle et élémentaire)]",
       "name": "sectors",
       "title": "Secteurs",
-      "type": "array"
+      "type": "string"
     },
     {
       "description": "Statut de publication de la cantine. Il existe 3 statuts différents : published (cantine publiée), draft (brouillon), deleted (cantine supprimée)",
@@ -205,5 +203,6 @@
       "title": "Actif sur Ma Cantine",
       "type": "boolean"
     }
-  ]
+  ],
+  "title": "Schéma des établissements de restauration collective"
 }

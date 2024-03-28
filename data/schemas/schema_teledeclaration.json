@@ -71,10 +71,24 @@
       "type": "string"
     },
     {
+      "description": "Code insee de la commune dans laquelle se trouve la cantine",
+      "example": "29456",
+      "name": "city_insee_code",
+      "title": "Conde Insee Commune",
+      "type": "string"
+    },
+    {
       "description": "Code insee de l'EPCI dans laquelle se trouve la cantine",
       "example": "50570242900793",
       "name": "epci",
       "title": "Code Insee EPCI",
+      "type": "string"
+    },
+    {
+      "description": "Libellé de l'EPCI dans laquelle se trouve la cantine",
+      "example": "CC Communauté Lesneven Côte des Légendes",
+      "name": "epci_lib",
+      "title": "Libellé EPCI",
       "type": "string"
     },
     {
@@ -134,12 +148,11 @@
       "type": "string"
     },
     {
-      "description": "Liste définissant les secteurs d'activités concernés par le télédéclaration. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
+      "description": "Liste définissant les secteurs d'activités de la cantine. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
+      "example": "[education : Secondaire collège + education : Ecole primaire (maternelle et élémentaire)]",
       "name": "canteen_sectors",
-      "title": "Secteurs",
-      "type": "array",
-      "delimiter": ",",
-      "example": ["{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}"]
+      "title": "Secteurs cantines",
+      "type": "string"
     },
     {
       "description": "Ministère de tutelle de la cantine, s'il y en a un",
@@ -150,25 +163,29 @@
     },
     {
       "description": "Type de télédéclaration: soit simple, soit détaillée. Une télédéclaration détaillée propose au gérant plus de champs pour chaque qualité de produits",
+      "enum": [
+        "SIMPLE",
+        "COMPLETE"
+      ],
+      "example": "SIMPLE",
       "name": "teledeclaration_type",
       "title": "Type de télédéclaration",
-      "type": "string",
-      "enum": ["SIMPLE", "COMPLETE"],
-      "example": "SIMPLE"
+      "type": "string"
     },
     {
       "description": "Part des achats bio dans les achats alimentaires de l'année (ratio basé sur le montant des achats en € HT)",
+      "example": 0.1,
       "name": "teledeclaration_ratio_bio",
       "title": "Télédéclaration Ratio Bio",
-      "type": "number",
-      "example": 0.1
+      "type": "number"
     },
     {
       "description": "Part des achats EGAlim dans les achats alimentaires de l'année",
+      "example": 0.3,
       "name": "teledeclaration_ratio_egalim_hors_bio",
       "title": "Télédéclaration Ratio Egalim",
-      "type": "number",
-      "example": 0.3
+      "type": "number"
     }
-  ]
+  ],
+  "title": "Schéma des télédéclarations d'achats alimentaires pour la restauration collective"
 }

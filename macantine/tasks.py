@@ -360,8 +360,8 @@ def export_datasets():
         logger.info(f"Starting {key} dataset extraction")
         etl.extract_dataset()
         etl.export_dataset(stage="to_validate")
-        logger.info(f"Validating {key} dataset. Dataset size : {etl.len_dataset()} lines")
         if os.environ["DEFAULT_FILE_STORAGE"] == "storages.backends.s3boto3.S3Boto3Storage":
+            logger.info(f"Validating {key} dataset. Dataset size : {etl.len_dataset()} lines")
             if etl.is_valid():
                 logger.info(f"Exporting {key} dataset to s3")
                 etl.export_dataset(stage="validated")
