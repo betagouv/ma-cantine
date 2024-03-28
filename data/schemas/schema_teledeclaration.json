@@ -85,6 +85,13 @@
       "type": "string"
     },
     {
+      "description": "Libellé de l'EPCI dans laquelle se trouve la cantine",
+      "example": "CC Communauté Lesneven Côte des Légendes",
+      "name": "epci_lib",
+      "title": "Libellé EPCI",
+      "type": "string"
+    },
+    {
       "description": "Code Insee du département dans lequel se trouve la cantine",
       "example": "50",
       "name": "canteen_department",
