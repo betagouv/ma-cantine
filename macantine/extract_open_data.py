@@ -128,7 +128,6 @@ def fetch_epci_name(code_insee_epci, epcis_names):
 
 def format_sector(sector: dict) -> str:
     return '""' + sector["name"] + '""'
-    # return sector["category"] + " : " + sector["name"]
 
 
 def fetch_sector(sector_id, sectors):
@@ -187,7 +186,6 @@ class ETL(ABC):
             self.df["epci"] = self.df["city_insee_code"].apply(lambda x: fetch_epci(x, epcis))
             epcis_names = map_epcis_code_name()
             self.df["epci_lib"] = self.df["epci"].apply(lambda x: fetch_epci_name(x, epcis_names))
-
         else:
             self.df["epci"] = None
 
@@ -213,7 +211,7 @@ class ETL(ABC):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
         sectors = map_sectors()
         self.df["sectors"] = self.df["sectors"].apply(lambda x: fetch_sector(x, sectors))
-        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(lambda x: '"[' + "+".join(x) + ']"')
+        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(lambda x: '"[' + ",".join(x) + ']"')
         del self.df["sectors"]
 
         return self.df.merge(canteens_sectors, on="id")
