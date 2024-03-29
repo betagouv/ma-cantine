@@ -18,9 +18,9 @@
       </video>
     </div>
     <p class="mt-2 mb-4" v-if="mainVideo && mainVideo.description">{{ mainVideo.description }}</p>
-    <DsfrAccordion v-if="mainVideo.transcription" :items="[{ title: 'Transcription' }]">
+    <DsfrTranscription v-if="mainVideo.transcription">
       <div v-html="mainVideo.transcription"></div>
-    </DsfrAccordion>
+    </DsfrTranscription>
     <v-alert v-if="accessibilityProblem" type="info" outlined class="my-4">
       <p>
         {{ accessibilityProblem }} Si vous en avez besoin, contactez-nous avec notre
@@ -46,11 +46,11 @@
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import VideoTutorialCard from "@/components/VideoTutorialCard"
-import DsfrAccordion from "@/components/DsfrAccordion"
+import DsfrTranscription from "@/components/DsfrTranscription"
 
 export default {
   name: "VideoTutorial",
-  components: { BreadcrumbsNav, VideoTutorialCard, DsfrAccordion },
+  components: { BreadcrumbsNav, VideoTutorialCard, DsfrTranscription },
   props: {
     webinaireUrlComponent: {
       type: String,
