@@ -65,6 +65,7 @@
         </v-btn>
       </v-col>
     </v-row>
+    <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(canteenCount / limit)" v-if="showPagination" />
   </div>
 </template>
 
