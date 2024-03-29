@@ -14,6 +14,7 @@ class VideoTutorialSerializer(serializers.ModelSerializer):
             "published",
             "video",
             "subtitles",
+            "transcription",
             "categories",
             "thumbnail",
         )

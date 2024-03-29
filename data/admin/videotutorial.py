@@ -19,6 +19,8 @@ class AccessibilityStatusFilter(admin.SimpleListFilter):
         return (
             ("ACCESSIBLE", "✅ Accessible"),
             ("MISSING_SUBTITLES", "🛑 Sous-titres manquants"),
+            ("MISSING_TRANSCRIPTION", "🛑 Transcription manquante"),
+            ("MISSING_ALL", "🛑 Sous-titres et transcription manquants"),
         )
 
     def choices(self, cl):
@@ -41,6 +43,10 @@ class AccessibilityStatusFilter(admin.SimpleListFilter):
             return queryset.filter(subtitles__isnull=False)
         elif self.value() in ("MISSING_SUBTITLES"):
             return queryset.filter(subtitles__isnull=True)
+        elif self.value() in ("MISSING_TRANSCRIPTION"):
+            return queryset.filter(transcription__isnull=True)
+        elif self.value() in ("MISSING_ALL"):
+            return queryset.filter(subtitles__isnull=True, transcription__isnull=True)
 
 
 @admin.register(VideoTutorial)
@@ -51,9 +57,12 @@ class VideoTutorial(admin.ModelAdmin):
         "title",
         "description",
         "published",
-        "sous_titré",
+        "statut_accessibilite",
         "creation_date",
         "modification_date",
     )
 
-    list_filter = (AccessibilityStatusFilter,)
+    list_filter = (
+        "published",
+        AccessibilityStatusFilter,
+    )
