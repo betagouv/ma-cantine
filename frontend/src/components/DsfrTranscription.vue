@@ -12,7 +12,11 @@
           <slot />
         </div>
         <div class="transcription-footer pa-2">
-          <v-dialog v-model="transcriptionModal">
+          <v-dialog
+            v-model="transcriptionModal"
+            :fullscreen="$vuetify.breakpoint.smAndDown"
+            :width="$vuetify.breakpoint.mdAndUp ? 900 : undefined"
+          >
             <template v-slot:activator="{ on, attrs }">
               <v-btn v-bind="attrs" v-on="on" text class="primary--text">
                 Agrandir
@@ -20,8 +24,8 @@
               </v-btn>
             </template>
 
-            <v-card class="px-4 pt-6 pb-8 text-left">
-              <v-row class="justify-end mx-0">
+            <v-card class="px-sm-4 pt-6 pb-8 text-left">
+              <v-row class="justify-end ma-0">
                 <v-btn @click="transcriptionModal = false" class="primary--text" text>
                   Fermer
                   <v-icon small primary class="ml-2">$close-line</v-icon>
