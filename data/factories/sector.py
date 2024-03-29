@@ -7,4 +7,3 @@ class SectorFactory(factory.django.DjangoModelFactory):
         model = Sector
 
     name = factory.Faker("text", max_nb_chars=20)
-    category = factory.Faker("text", max_nb_chars=20)
