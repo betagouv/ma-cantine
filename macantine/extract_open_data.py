@@ -186,8 +186,6 @@ class ETL(ABC):
             self.df["epci"] = self.df["city_insee_code"].apply(lambda x: fetch_epci(x, epcis))
             epcis_names = map_epcis_code_name()
             self.df["epci_lib"] = self.df["epci"].apply(lambda x: fetch_epci_name(x, epcis_names))
-        else:
-            self.df["epci"] = None
 
     def _clean_dataset(self):
         columns = [i["name"].replace("canteen_", "canteen.") for i in self.schema["fields"]]
