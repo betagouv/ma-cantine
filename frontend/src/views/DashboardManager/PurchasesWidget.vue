@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="fill-height d-flex flex-column dsfr pa-6">
+  <v-card outlined class="fill-height d-flex flex-column dsfr pa-sm-6">
     <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes achats</h3></v-card-title>
     <v-card-text class="fr-text-xs grey--text text--darken-2 py-0 mt-3">
       <p v-if="purchases.length">Source des données : {{ purchaseDataSourceString }}.</p>
@@ -53,7 +53,7 @@
       </v-data-table>
     </v-card-text>
     <v-spacer></v-spacer>
-    <v-card-actions v-if="(purchases.length || purchasesFetchingError) && !purchasesDelegated">
+    <v-card-actions v-if="(purchases.length || purchasesFetchingError) && !purchasesDelegated" class="flex-wrap">
       <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
         <v-icon small class="mr-2">$add-line</v-icon>
         Ajouter un achat
