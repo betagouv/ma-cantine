@@ -558,3 +558,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+/* Hides rows-per-page */
+.v-data-table >>> .v-data-footer__select {
+  visibility: hidden;
+}
+</style>
