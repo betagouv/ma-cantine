@@ -130,6 +130,10 @@ def format_sector(sector: dict) -> str:
     return '""' + sector["name"] + '""'
 
 
+def format_list_sectors(sector) -> str:
+    return '"[' + ", ".join(sector) + ']"'
+
+
 def fetch_sector(sector_id, sectors):
     """
     Provide EPCI code for a city, given the insee code of the city
@@ -209,7 +213,7 @@ class ETL(ABC):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
         sectors = map_sectors()
         self.df["sectors"] = self.df["sectors"].apply(lambda x: fetch_sector(x, sectors))
-        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(lambda x: '"[' + ",".join(x) + ']"')
+        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(format_list_sectors)
         del self.df["sectors"]
 
         return self.df.merge(canteens_sectors, on="id")
@@ -375,7 +379,7 @@ class ETL_TD(ETL):
     def transform_sectors(self) -> pd.Series:
         sectors = self.df["canteen_sectors"]
         sectors = sectors.apply(lambda x: list(map(lambda y: format_sector(y), x)))
-        sectors = sectors.apply(lambda x: '"[' + ", ".join(x) + ']"')
+        sectors = sectors.apply(format_list_sectors)
         return sectors
 
     def extract_dataset(self):
