@@ -213,7 +213,7 @@ class ETL(ABC):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
         sectors = map_sectors()
         self.df["sectors"] = self.df["sectors"].apply(lambda x: fetch_sector(x, sectors))
-        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(lambda x: "[" + "+".join(x) + "]")
+        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(lambda x: '"[' + "+".join(x) + ']"')
         del self.df["sectors"]
 
         return self.df.merge(canteens_sectors, on="id")
@@ -281,7 +281,9 @@ class ETL_CANTEEN(ETL):
         super().__init__()
         self.dataset_name = "registre_cantines"
         self.schema = json.load(open("data/schemas/schema_cantine.json"))
-        self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_cantine.json"
+        self.schema_url = (
+            "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_cantine.json"
+        )
 
     def extract_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
@@ -312,23 +314,17 @@ class ETL_CANTEEN(ETL):
 
         # Adding the active_on_ma_cantine column
         start = time.time()
-        non_active_canteens = Canteen.objects.filter(managers=None).values_list(
-            "id", flat=True
-        )
+        non_active_canteens = Canteen.objects.filter(managers=None).values_list("id", flat=True)
         end = time.time()
         logger.info(f"Time spent on active canteens : {end - start}")
-        self.df["active_on_ma_cantine"] = self.df["id"].apply(
-            lambda x: x not in non_active_canteens
-        )
+        self.df["active_on_ma_cantine"] = self.df["id"].apply(lambda x: x not in non_active_canteens)
 
         logger.info("Canteens : Extract sectors...")
         self.df = self._extract_sectors()
 
         bucket_url = os.environ.get("CELLAR_HOST")
         bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
-        self.df["logo"] = self.df["logo"].apply(
-            lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else ""
-        )
+        self.df["logo"] = self.df["logo"].apply(lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else "")
 
         logger.info("Canteens : Clean dataset...")
         self._clean_dataset()
@@ -347,9 +343,7 @@ class ETL_CANTEEN(ETL):
                 col_name_campaign = f"declaration_donnees_{year}_en_cours"
             else:
                 col_name_campaign = f"declaration_donnees_{year}"
-            self.df[col_name_campaign] = self.df["id"].apply(
-                lambda x: x in campaign_participation
-            )
+            self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
         end = time.time()
         logger.info(f"Time spent on campaign participations : {end - start}")
 
@@ -360,7 +354,9 @@ class ETL_TD(ETL):
         self.year = year
         self.dataset_name = f"campagne_td_{year}"
         self.schema = json.load(open("data/schemas/schema_teledeclaration.json"))
-        self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_teledeclaration.json"
+        self.schema_url = (
+            "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_teledeclaration.json"
+        )
 
         self.categories_to_aggregate = {
             "bio": ["_bio"],
@@ -414,16 +410,12 @@ class ETL_TD(ETL):
         self._aggregate_complete_td()
 
         self.df["teledeclaration_ratio_bio"] = (
-            self.df["teledeclaration.value_bio_ht"]
-            / self.df["teledeclaration.value_total_ht"]
+            self.df["teledeclaration.value_bio_ht"] / self.df["teledeclaration.value_total_ht"]
         )
         self.df["teledeclaration_ratio_egalim_hors_bio"] = (
-            self.df["teledeclaration.value_sustainable_ht"]
-            / self.df["teledeclaration.value_total_ht"]
+            self.df["teledeclaration.value_sustainable_ht"] / self.df["teledeclaration.value_total_ht"]
         )
-        self.df["teledeclaration_type"] = self.df[
-            "teledeclaration.diagnostic_type"
-        ]  # Renaming to match schema
+        self.df["teledeclaration_type"] = self.df["teledeclaration.diagnostic_type"]  # Renaming to match schema
 
         logger.info("TD campagne : Clean dataset...")
         self._clean_dataset()
@@ -441,9 +433,9 @@ class ETL_TD(ETL):
 
     def _aggregation_col(self, categ="bio", sub_categ=["_bio"]):
         pattern = "|".join(sub_categ)
-        self.df[f"teledeclaration.value_{categ}_ht"] = self.df.filter(
-            regex=pattern
-        ).sum(axis=1, numeric_only=True, skipna=True, min_count=1)
+        self.df[f"teledeclaration.value_{categ}_ht"] = self.df.filter(regex=pattern).sum(
+            axis=1, numeric_only=True, skipna=True, min_count=1
+        )
 
     def _aggregate_complete_td(self):
         """
@@ -456,8 +448,6 @@ class ETL_TD(ETL):
         """
         Filtering the sectors of the police and army so they do not appear publicly
         """
-        canteens_to_filter = Canteen.objects.filter(
-            sectors__name="Restaurants des armées / police / gendarmerie"
-        )
+        canteens_to_filter = Canteen.objects.filter(sectors__name="Restaurants des armées / police / gendarmerie")
         canteens_id_to_filter = [canteen.id for canteen in canteens_to_filter]
         self.df = self.df[~self.df["canteen_id"].isin(canteens_id_to_filter)]
