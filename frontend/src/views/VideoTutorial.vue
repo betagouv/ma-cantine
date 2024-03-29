@@ -18,7 +18,10 @@
       </video>
     </div>
     <p class="mt-2 mb-4" v-if="mainVideo && mainVideo.description">{{ mainVideo.description }}</p>
-    <v-alert v-if="accessibilityProblem" type="info" outlined>
+    <DsfrAccordion v-if="mainVideo.transcription" :items="[{ title: 'Transcription' }]">
+      <div v-html="mainVideo.transcription"></div>
+    </DsfrAccordion>
+    <v-alert v-if="accessibilityProblem" type="info" outlined class="my-4">
       <p>
         {{ accessibilityProblem }} Si vous en avez besoin, contactez-nous avec notre
         <router-link :to="{ name: 'ContactPage' }">formulaire de contact</router-link>
@@ -43,10 +46,11 @@
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import VideoTutorialCard from "@/components/VideoTutorialCard"
+import DsfrAccordion from "@/components/DsfrAccordion"
 
 export default {
   name: "VideoTutorial",
-  components: { BreadcrumbsNav, VideoTutorialCard },
+  components: { BreadcrumbsNav, VideoTutorialCard, DsfrAccordion },
   props: {
     webinaireUrlComponent: {
       type: String,
