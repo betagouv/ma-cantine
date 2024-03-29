@@ -306,7 +306,7 @@
     <div v-else>
       <v-row class="my-2" align="end">
         <v-col>
-          <p class="mb-0 text-body-2 grey--text text-left" v-if="resultsCountText">
+          <p class="mb-0 text-body-2 grey--text text--darken-1 text-left" v-if="resultsCountText">
             {{ resultsCountText }}
           </p>
         </v-col>
