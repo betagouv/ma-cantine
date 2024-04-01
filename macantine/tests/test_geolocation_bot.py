@@ -61,6 +61,9 @@ class TestGeolocationBot(TestCase):
             CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003"),
             CanteenFactory.create(department=None, geolocation_bot_attempts=9, city_insee_code="69383"),
             CanteenFactory.create(department=None, geolocation_bot_attempts=1, city_insee_code="69383"),
+            CanteenFactory.create(
+                department="69", city="Lyon", geolocation_bot_attempts=4, postal_code="69003", city_insee_code=None
+            ),
         ]
         _ = [
             CanteenFactory.create(city=None, geolocation_bot_attempts=10, postal_code="69003"),
@@ -76,7 +79,6 @@ class TestGeolocationBot(TestCase):
                 city_insee_code="6009",
                 postal_code=None,
             ),
-            CanteenFactory.create(department="69", city="Lyon", geolocation_bot_attempts=4),
             CanteenFactory.create(
                 department=None,
                 geolocation_bot_attempts=1,
@@ -85,7 +87,7 @@ class TestGeolocationBot(TestCase):
             ),
         ]
         result = list(tasks._get_candidate_canteens())
-        self.assertEqual(len(result), 3)
+        self.assertEqual(len(result), 4)
         for canteen in candidate_canteens:
             match = list(filter(lambda x: x.id == canteen.id, result))
             self.assertEqual(len(match), 1)
