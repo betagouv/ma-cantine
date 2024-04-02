@@ -77,7 +77,6 @@ export default {
 
 <style scoped lang="scss">
 #legal-notices {
-  padding: 2em;
   max-width: 1200px;
   margin: auto;
   text-align: left;

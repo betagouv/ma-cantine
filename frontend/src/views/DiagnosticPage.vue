@@ -12,44 +12,35 @@
       <v-spacer></v-spacer>
     </v-row>
 
-    <div v-for="measure in keyMeasures" :key="`measure: ${measure.id}`">
-      <v-card elevation="0" class="mb-8">
-        <v-card-title class="font-weight-bold d-flex">
-          <h2 class="fr-h6 mb-0">
-            <KeyMeasureTitle class="flex-shrink-1" :measure="measure" />
-          </h2>
-          <v-spacer></v-spacer>
-          <v-btn outlined :color="measure.isEvaluated ? 'green' : 'primary'" @click="showDiagnosticModal(measure)">
-            <span class="mx-2">
-              Je m'évalue
-              <span class="d-sr-only">sur la mesure {{ measure.shortTitle }}</span>
-              !
-            </span>
-            <v-icon
-              small
-              color="green"
-              v-if="measure.isEvaluated"
-              aria-hidden="false"
-              role="img"
-              aria-label="(Statut : évalué)"
-            >
-              mdi-check
-            </v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-card-text class="py-0" v-for="subMeasure in measure.subMeasures" :key="`submeasure: ${subMeasure.id}`">
-          <v-btn class="d-inline mt-n1" text plain @click="toggleDescriptionDisplay(subMeasure)">
-            <span>{{ subMeasure.title }}.&nbsp;</span>
-            <span class="text-decoration-underline">{{ subMeasure.readMore ? "Moins" : "En savoir plus" }}</span>
-          </v-btn>
-
-          <v-scroll-y-transition>
-            <v-card outlined flat v-if="subMeasure.readMore" class="pa-4">
-              <KeyMeasureDescription class="measure-description grey--text text--darken-4" :measure="subMeasure" />
-            </v-card>
-          </v-scroll-y-transition>
-        </v-card-text>
-      </v-card>
+    <div v-for="measure in keyMeasures" :key="`measure: ${measure.id}`" class="mb-10">
+      <div class="d-flex flex-column flex-sm-row mb-4 mb-sm-0">
+        <h2 class="fr-h6">
+          <KeyMeasureTitle class="flex-shrink-1" :measure="measure" />
+        </h2>
+        <v-spacer></v-spacer>
+        <v-btn outlined :color="measure.isEvaluated ? 'green' : 'primary'" @click="showDiagnosticModal(measure)">
+          <span class="mx-2">
+            Je m'évalue
+            <span class="d-sr-only">sur la mesure {{ measure.shortTitle }}</span>
+            !
+          </span>
+          <v-icon
+            small
+            color="green"
+            v-if="measure.isEvaluated"
+            aria-hidden="false"
+            role="img"
+            aria-label="(Statut : évalué)"
+          >
+            mdi-check
+          </v-icon>
+        </v-btn>
+      </div>
+      <DsfrAccordion :items="measure.subMeasures">
+        <template v-slot="{ item }">
+          <KeyMeasureDescription class="measure-description grey--text text--darken-4 mb-n4" :measure="item" />
+        </template>
+      </DsfrAccordion>
 
       <v-divider aria-hidden="true" role="presentation" class="mb-2"></v-divider>
     </div>
@@ -88,12 +79,14 @@ import keyMeasures from "@/data/key-measures.json"
 import KeyMeasureTitle from "@/components/KeyMeasureTitle"
 import KeyMeasureDescription from "@/components/KeyMeasureDescription"
 import KeyMeasureDiagnostic from "@/components/KeyMeasureDiagnostic"
+import DsfrAccordion from "@/components/DsfrAccordion"
 
 export default {
   components: {
     KeyMeasureTitle,
     KeyMeasureDescription,
     KeyMeasureDiagnostic,
+    DsfrAccordion,
   },
   data() {
     return {
@@ -103,9 +96,6 @@ export default {
     }
   },
   methods: {
-    toggleDescriptionDisplay(subMeasure) {
-      subMeasure.readMore = !subMeasure.readMore
-    },
     showDiagnosticModal(measure) {
       this.measureDiagnosticModal = measure
     },
