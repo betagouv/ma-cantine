@@ -4,7 +4,6 @@ import requests
 import csv
 import os
 import time
-from itertools import islice
 from api.views.utils import update_change_reason
 from django.utils import timezone
 from django.conf import settings
@@ -114,7 +113,7 @@ def no_canteen_second_reminder():
 
 
 def user_to_brevo_payload(user, bulk=True):
-    has_canteens = user.canteen_set.exists()
+    has_canteens = user.canteens.exists()
     date_joined = user.date_joined
 
     def missing_diag_for_year(year, user):
@@ -149,6 +148,7 @@ def user_to_brevo_payload(user, bulk=True):
 # Taken from itertools recipes. Will be able to remove once we pass to
 # Python 3.12 since they added it as itertools.batched. Server is currently
 # on Python 3.11
+from itertools import islice  # noqa: E402
 
 
 def batched(iterable, n):
@@ -170,9 +170,9 @@ def update_brevo_contacts():
     Send custom information on Brevo contacts for automatisation
     API rate limit is 10 req per second : https://developers.brevo.com/docs/api-limits
     """
-    # This call concerns the users that have not been updated in the last week
+    # This call concerns the users that have not been updated in the last day
     today = timezone.now()
-    threshold = today - datetime.timedelta(weeks=1)
+    threshold = today - datetime.timedelta(days=1)
 
     # Attempt a bulk update first to save API calls
     users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold) | Q(last_brevo_update__isnull=True))
@@ -189,7 +189,7 @@ def update_brevo_contacts():
                 user.save()
         except Exception as e:
             logger.exception(f"Error bulk updating Brevo users {e}", stack_info=True)
-        time.sleep(0.1)
+        time.sleep(0.1)  # API rate limit is 10 req per second
 
     # Try creating those who didn't make it (allowing the update flag to be set)
     users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold) | Q(last_brevo_update__isnull=True))
@@ -201,7 +201,7 @@ def update_brevo_contacts():
             user.save()
         except Exception as e:
             logger.exception(f"Error creating/updating an individual Brevo user {e}", stack_info=True)
-        time.sleep(0.1)
+        time.sleep(0.1)  # API rate limit is 10 req per second
 
 
 @app.task()
