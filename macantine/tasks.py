@@ -170,6 +170,8 @@ def update_brevo_contacts():
     Send custom information on Brevo contacts for automatisation
     API rate limit is 10 req per second : https://developers.brevo.com/docs/api-limits
     """
+    logger.info("update_brevo_contacts task starting")
+    start = time.time()
     # This call concerns the users that have not been updated in the last day
     today = timezone.now()
     threshold = today - datetime.timedelta(days=1)
@@ -178,6 +180,8 @@ def update_brevo_contacts():
     users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold) | Q(last_brevo_update__isnull=True))
     bulk_update_size = 100
     chunks = batched(users_to_update, bulk_update_size)
+
+    logger.info("update_brevo_contacts batch updating started")
 
     for chunk in chunks:
         contacts = [user_to_brevo_payload(user) for user in chunk]
@@ -193,6 +197,8 @@ def update_brevo_contacts():
 
     # Try creating those who didn't make it (allowing the update flag to be set)
     users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold) | Q(last_brevo_update__isnull=True))
+    logger.info("update_brevo_contacts individual creating/updating started")
+
     for user in users_to_update:
         try:
             contact = user_to_brevo_payload(user, bulk=False)
@@ -202,6 +208,9 @@ def update_brevo_contacts():
         except Exception as e:
             logger.exception(f"Error creating/updating an individual Brevo user {e}", stack_info=True)
         time.sleep(0.1)  # API rate limit is 10 req per second
+
+    end = time.time()
+    logger.info(f"update_brevo_contacts task ended. Duration : { end - start } seconds")
 
 
 @app.task()
