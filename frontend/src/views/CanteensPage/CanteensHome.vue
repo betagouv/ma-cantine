@@ -306,7 +306,12 @@
     <div v-else>
       <v-row class="my-2" align="end">
         <v-col>
-          <p class="mb-0 text-body-2 grey--text text-left" v-if="resultsCountText">
+          <p
+            class="mb-0 text-body-2 grey--text text-left"
+            aria-live="polite"
+            aria-atomic="true"
+            v-if="resultsCountText"
+          >
             {{ resultsCountText }}
           </p>
         </v-col>
@@ -555,7 +560,8 @@ export default {
       return validators
     },
     resultsCountText() {
-      if (!this.hasActiveFilter || !this.publishedCanteenCount) return null
+      if (!this.publishedCanteenCount) return null
+      else if (!this.hasActiveFilter && !this.searchTerm) return null
 
       if (this.publishedCanteenCount === 1) return "Un établissement correspond à votre recherche"
       else return `${this.publishedCanteenCount} établissements correspondent à votre recherche`
