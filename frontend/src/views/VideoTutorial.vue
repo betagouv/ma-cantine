@@ -18,11 +18,14 @@
       </video>
     </div>
     <p class="mt-2 mb-4" v-if="mainVideo && mainVideo.description">{{ mainVideo.description }}</p>
-    <v-alert v-if="!mainVideo.subtitles" type="info" outlined>
+    <DsfrTranscription v-if="mainVideo.transcription">
+      <div v-html="mainVideo.transcription"></div>
+    </DsfrTranscription>
+    <v-alert v-if="accessibilityProblem" type="info" outlined class="my-4">
       <p>
-        Cette vidéo n'a pas de sous-titres. Si vous en avez besoin, contactez-nous avec notre
+        {{ accessibilityProblem }} Si vous en avez besoin, contactez-nous avec notre
         <router-link :to="{ name: 'ContactPage' }">formulaire de contact</router-link>
-        pour prioriser le sous-titrage de ce contenu.
+        pour prioriser l'accessibilité de ce contenu.
       </p>
       <p class="mb-0">
         Pour plus d'informations consultez notre
@@ -43,10 +46,11 @@
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import VideoTutorialCard from "@/components/VideoTutorialCard"
+import DsfrTranscription from "@/components/DsfrTranscription"
 
 export default {
   name: "VideoTutorial",
-  components: { BreadcrumbsNav, VideoTutorialCard },
+  components: { BreadcrumbsNav, VideoTutorialCard, DsfrTranscription },
   props: {
     webinaireUrlComponent: {
       type: String,
@@ -65,6 +69,17 @@ export default {
     },
     suggestedVideos() {
       return this.videoTutorials.filter((x) => x.id !== this.videoId)
+    },
+    accessibilityProblem() {
+      let problem
+      if (!this.mainVideo.subtitles && !this.mainVideo.transcription) {
+        problem = "Cette vidéo n'a pas de sous-titres, ni de transcription."
+      } else if (!this.mainVideo.subtitles) {
+        problem = "Cette vidéo n'a pas de sous-titres."
+      } else if (!this.mainVideo.transcription) {
+        problem = "Cette vidéo n'a pas de transcription."
+      }
+      return problem
     },
   },
   watch: {

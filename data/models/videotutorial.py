@@ -1,5 +1,6 @@
 from django.db import models
 from data.fields import ChoiceArrayField
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 class VideoTutorialCategory(models.TextChoices):
@@ -21,6 +22,7 @@ class VideoTutorial(models.Model):
     published = models.BooleanField(default=False, verbose_name="publié")
     video = models.FileField(verbose_name="vidéo", upload_to="videos/")
     subtitles = models.FileField(null=True, blank=True, verbose_name="sous-titres", upload_to="subtitles/")
+    transcription = RichTextUploadingField(null=True, blank=True, verbose_name="transcription")
     categories = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=VideoTutorialCategory.choices),
         blank=True,
@@ -34,5 +36,12 @@ class VideoTutorial(models.Model):
         return self.title
 
     @property
-    def sous_titré(self):
-        return "✅ oui" if self.subtitles else "❌ non"
+    def statut_accessibilite(self):
+        if self.subtitles and self.transcription:
+            return "✅ accessible"
+        elif not self.subtitles and not self.transcription:
+            return "❌ pas accessible"
+        elif not self.subtitles:
+            return "❌ pas sous-titré"
+        elif not self.transcription:
+            return "❌ pas de transcription"
