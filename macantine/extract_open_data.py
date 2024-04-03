@@ -26,12 +26,12 @@ CAMPAIGN_DATES = {
         "end_date": datetime.datetime(2022, 12, 5, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
     2022: {
-        "start_date": datetime.datetime(2023, 2, 13, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        "end_date": datetime.datetime(2023, 6, 30, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "start_date": datetime.datetime(2023, 2, 12, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "end_date": datetime.datetime(2023, 7, 1, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
     2023: {
-        "start_date": datetime.datetime(2024, 1, 9, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        "end_date": datetime.datetime(2024, 3, 30, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "start_date": datetime.datetime(2024, 1, 8, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "end_date": datetime.datetime(2024, 4, 16, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
 }
 
@@ -378,8 +378,9 @@ class ETL_TD(ETL):
 
     def transform_sectors(self) -> pd.Series:
         sectors = self.df["canteen_sectors"]
-        sectors = sectors.apply(lambda x: list(map(lambda y: format_sector(y), x)))
-        sectors = sectors.apply(format_list_sectors)
+        if not sectors.isnull().all():
+            sectors = sectors.apply(lambda x: list(map(lambda y: format_sector(y), x)))
+            sectors = sectors.apply(format_list_sectors)
         return sectors
 
     def extract_dataset(self):
@@ -419,8 +420,12 @@ class ETL_TD(ETL):
 
         logger.info("TD campagne : Clean dataset...")
         self._clean_dataset()
-        logger.info("TD campagne : Filter by sector...")
-        self._filter_by_sectors()
+        logger.info("TD campagne : Filter value total null or value bio null...")
+        self._filter_null_values()
+        logger.info("TD campagne : Filter by ministry...")
+        self._filter_by_ministry()
+        logger.info("TD campagne : Filter errors...")
+        self._filter_outsiders()
         logger.info("TD campagne : Transform sectors...")
         self.df["canteen_sectors"] = self.transform_sectors()
         logger.info("TD Campagne : Fill geo name...")
@@ -444,10 +449,22 @@ class ETL_TD(ETL):
         for categ, elements_in_categ in self.categories_to_aggregate.items():
             self._aggregation_col(categ, elements_in_categ)
 
-    def _filter_by_sectors(self):
+    def _filter_null_values(self):
+        "We have decided not take into accounts the TD where the value total or the value bio are null"
+        self.df = self.df[~self.df["teledeclaration_ratio_bio"].isnull()]
+
+    def _filter_outsiders(self):
         """
-        Filtering the sectors of the police and army so they do not appear publicly
+        For the campaign 2023, after analyses, we decided to exclude two TD because their value were impossible
         """
-        canteens_to_filter = Canteen.objects.filter(sectors__name="Restaurants des armées / police / gendarmerie")
+        if self.year == 2022:
+            td_with_errors = [9656, 8037]
+            self.df = self.df[~self.df["id"].isin(td_with_errors)]
+
+    def _filter_by_ministry(self):
+        """
+        Filtering the ministry of Armees so they do     not appear publicly
+        """
+        canteens_to_filter = Canteen.objects.filter(line_ministry="armee")
         canteens_id_to_filter = [canteen.id for canteen in canteens_to_filter]
         self.df = self.df[~self.df["canteen_id"].isin(canteens_id_to_filter)]
