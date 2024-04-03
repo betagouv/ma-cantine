@@ -409,9 +409,6 @@ class ETL_TD(ETL):
         logger.info("TD campagne : Aggregate appro data for complete TD...")
         self._aggregate_complete_td()
 
-        self.df = self.df[~self.df["teledeclaration.value_total_ht"].isnull()]
-        self.df = self.df[~self.df["teledeclaration.value_bio_ht"].isnull()]
-
         self.df["teledeclaration_ratio_bio"] = (
             self.df["teledeclaration.value_bio_ht"] / self.df["teledeclaration.value_total_ht"]
         )
@@ -422,6 +419,8 @@ class ETL_TD(ETL):
 
         logger.info("TD campagne : Clean dataset...")
         self._clean_dataset()
+        logger.info("TD campagne : Filter value total null or value bio null...")
+        self._filter_null_values()
         logger.info("TD campagne : Filter by ministry...")
         self._filter_by_ministry()
         logger.info("TD campagne : Filter errors...")
@@ -448,6 +447,11 @@ class ETL_TD(ETL):
         """
         for categ, elements_in_categ in self.categories_to_aggregate.items():
             self._aggregation_col(categ, elements_in_categ)
+
+    def _filter_null_values(self):
+        "We have decided not take into accounts the TD where the value total or the value bio are null"
+        self.df = self.df[~self.df["teledeclaration.value_total_ht"].isnull()]
+        self.df = self.df[~self.df["teledeclaration.value_bio_ht"].isnull()]
 
     def _filter_outsiders(self):
         """
