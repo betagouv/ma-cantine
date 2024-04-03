@@ -132,6 +132,17 @@ def fetch_epci_name(code_insee_epci, epcis_names):
         return None
 
 
+def format_geo_name(geo_code: int, geo_names: {}):
+    """
+    Format the name of a region or department from its code
+    """
+    if isinstance(geo_code, str) and geo_code not in ["978", "987", "975", "988"]:
+        geo_name = geo_names[geo_code].split(" - ")[1].lstrip()
+        return geo_name
+    else:
+        return None
+
+
 def format_sector(sector: dict) -> str:
     return f'""{sector["name"]}""'
 
@@ -181,30 +192,29 @@ class ETL(ABC):
             )
             return 0
 
-        self.df[f"{geo_zoom}_lib"] = self.df[geo_zoom].apply(
-            lambda x: geo[x].split(" - ")[1].lstrip() if isinstance(x, str) else None
-        )
+        self.df[f"{geo_zoom}_lib"] = self.df[geo_zoom].apply(lambda x: format_geo_name(x, geo))
 
     def transform_geo_data(self, geo_col_names=["department", "region"]):
-        for geo in geo_col_names:
-            logger.info("Start fetching communes details")
-            if "campagne_td" in self.dataset_name:
-                prefix = "canteen_"
-            else:
-                prefix = ""
+        logger.info("Start fetching communes details")
+        if "campagne_td" in self.dataset_name:
+            prefix = "canteen_"
+        else:
+            prefix = ""
 
-            epcis = map_communes_infos()
-            self.df[prefix + "epci"] = self.df[prefix + "city_insee_code"].apply(
-                lambda x: fetch_commune_detail(x, epcis, "epci")
-            )
-            self.df[prefix + "department"] = self.df[prefix + "city_insee_code"].apply(
-                lambda x: fetch_commune_detail(x, epcis, "department")
-            )
-            self.df[prefix + "region"] = self.df[prefix + "city_insee_code"].apply(
-                lambda x: fetch_commune_detail(x, epcis, "region")
-            )
-            epcis_names = map_epcis_code_name()
-            self.df[prefix + "epci_lib"] = self.df[prefix + "epci"].apply(lambda x: fetch_epci_name(x, epcis_names))
+        communes_infos = map_communes_infos()
+        self.df[prefix + "epci"] = self.df[prefix + "city_insee_code"].apply(
+            lambda x: fetch_commune_detail(x, communes_infos, "epci")
+        )
+        self.df[prefix + "department"] = self.df[prefix + "city_insee_code"].apply(
+            lambda x: fetch_commune_detail(x, communes_infos, "department")
+        )
+        self.df[prefix + "region"] = self.df[prefix + "city_insee_code"].apply(
+            lambda x: fetch_commune_detail(x, communes_infos, "region")
+        )
+        epcis_names = map_epcis_code_name()
+        self.df[prefix + "epci_lib"] = self.df[prefix + "epci"].apply(lambda x: fetch_epci_name(x, epcis_names))
+
+        for geo in geo_col_names:
             logger.info("Start filling geo_name")
             self._fill_geo_names(geo_zoom=geo)
             col_geo = self.df.pop(f"{geo}_lib")
