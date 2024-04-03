@@ -3,7 +3,7 @@
     <div>
       <v-card-title>
         <h2 class="text-body-1 font-weight-bold mb-0">
-          CAMPAGNE DE TELEDECLARATION 2024 : du 9 janvier au 31 mars 2024
+          CAMPAGNE DE TELEDECLARATION 2024 : prolongation exceptionnelle jusqu'au 15 avril !
         </h2>
       </v-card-title>
       <v-card-text class="pb-0">
@@ -19,7 +19,7 @@
         </v-btn>
         <p class="text-body-2 mb-5 mb-md-2 mr-4">
           <a
-            href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/infos-generales-sur-contexte-r%C3%A9glementaire/master/procedure-campagne-de-remontee-des-donnees-annuelle"
+            href="https://894795896-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2F5ykK6Oj3jbALj2Vfzo48%2FGuide_Campagne_teledeclaration_2024_110124.pdf?alt=media"
             target="_blank"
             rel="noopener external"
             title="Le guide de télédéclaration - ouvre une nouvelle fenêtre"
