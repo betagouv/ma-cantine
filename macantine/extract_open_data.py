@@ -378,8 +378,9 @@ class ETL_TD(ETL):
 
     def transform_sectors(self) -> pd.Series:
         sectors = self.df["canteen_sectors"]
-        sectors = sectors.apply(lambda x: list(map(lambda y: format_sector(y), x)))
-        sectors = sectors.apply(format_list_sectors)
+        if not sectors.isnull().all():
+            sectors = sectors.apply(lambda x: list(map(lambda y: format_sector(y), x)))
+            sectors = sectors.apply(format_list_sectors)
         return sectors
 
     def extract_dataset(self):
@@ -450,8 +451,7 @@ class ETL_TD(ETL):
 
     def _filter_null_values(self):
         "We have decided not take into accounts the TD where the value total or the value bio are null"
-        self.df = self.df[~self.df["teledeclaration.value_total_ht"].isnull()]
-        self.df = self.df[~self.df["teledeclaration.value_bio_ht"].isnull()]
+        self.df = self.df[~self.df["teledeclaration_ratio_bio"].isnull()]
 
     def _filter_outsiders(self):
         """
