@@ -127,11 +127,11 @@ def fetch_epci_name(code_insee_epci, epcis_names):
 
 
 def format_sector(sector: dict) -> str:
-    return '""' + sector["name"] + '""'
+    return f'""{sector["name"]}""'
 
 
 def format_list_sectors(sector) -> str:
-    return '"[' + ", ".join(sector) + ']"'
+    return f'"[{", ".join(sector)}]"'
 
 
 def fetch_sector(sector_id, sectors):
