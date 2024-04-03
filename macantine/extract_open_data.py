@@ -130,8 +130,8 @@ def format_sector(sector: dict) -> str:
     return f'""{sector["name"]}""'
 
 
-def format_list_sectors(sector) -> str:
-    return f'"[{", ".join(sector)}]"'
+def format_list_sectors(sectors) -> str:
+    return f'"[{", ".join(sectors)}]"'
 
 
 def fetch_sector(sector_id, sectors):
