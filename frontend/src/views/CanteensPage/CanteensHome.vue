@@ -371,7 +371,7 @@
           Dites-nous tout, nous ferons en sorte de leur communiquer votre intérêt pour leurs initiatives en place.
         </p>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
-          <DsfrTextField v-model="fromEmail" label="Votre email" :rules="[validators.email]" validate-on-blur />
+          <DsfrEmail v-model="fromEmail" />
           <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
           <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
         </v-form>
@@ -403,6 +403,7 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import CityField from "@/views/CanteenEditor/CityField"
+import DsfrEmail from "@/components/DsfrEmail"
 
 const DEFAULT_ORDER = "creation"
 
@@ -417,6 +418,7 @@ export default {
     DsfrPagination,
     DsfrSearchField,
     CityField,
+    DsfrEmail,
   },
   data() {
     const user = this.$store.state.loggedUser
