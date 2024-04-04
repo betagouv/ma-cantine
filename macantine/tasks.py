@@ -363,6 +363,7 @@ def get_geo_data(canteen_siret, token):
         redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
         redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
         if int(redis.get(redis_key)) > 30:
+            # TODO : Apparment on arrive systématique dans ce if => 1 minute d'attente par cantine
             logger.warning("Siret lookup exceding API rate. Waiting 1 minute")
             time.sleep(60)
 
