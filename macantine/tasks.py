@@ -319,6 +319,7 @@ def _get_candidate_canteens():
 
 
 def _get_candidate_canteens_for_geobot():
+    # TODO traiter cas city_insee_code = '' treturn Canteen.objects.filter(city_insee_code='', siret__isnull=False, name__startswith="Babilou").order_by("creation_date")
     return Canteen.objects.filter(city_insee_code__isnull=True, siret__isnull=False).order_by("creation_date")
 
 
@@ -349,9 +350,9 @@ def _update_canteen_geo_data(canteen, response):
             canteen.city = response["city"]
             canteen.save()
             update_change_reason(canteen, "Données de localisation MAJ par bot, via SIRET")
-            logger.info(f"Canteen info has been updated. Canteen name : f{canteen.name}")
+            logger.info(f"Canteen info has been updated. Canteen name : {canteen.name}")
     except Exception as e:
-        logger.error(f"Unable to update canteen info for canteen : f{canteen.name}")
+        logger.error(f"Unable to update canteen info for canteen : {canteen.name}")
         logger.error(e)
 
 
