@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="fill-height d-flex flex-column dsfr pa-6">
+  <v-card outlined class="fill-height d-flex flex-column dsfr pa-sm-6">
     <v-card-title>
       <h3 class="fr-h4 mb-0">
         Ma vitrine en ligne
@@ -32,8 +32,8 @@
       </p>
     </v-card-text>
     <v-spacer></v-spacer>
-    <v-card-actions class="mx-2 mb-2 flex-md-wrap flex-lg-nowrap">
-      <p class="mb-0 mb-md-2 mb-lg-0 mr-2">
+    <v-card-actions class="flex-wrap flex-lg-nowrap">
+      <p class="mx-2 mb-2">
         <v-btn
           :to="{
             name: 'PublicationForm',
@@ -46,7 +46,7 @@
           {{ isPublished ? "Éditer ma vitrine" : "Publier ma cantine" }}
         </v-btn>
       </p>
-      <p class="mb-0">
+      <p class="mx-2 mb-2">
         <v-btn outlined color="primary" class="fr-btn--tertiary px-3" :to="{ name: 'CanteenGeneratePoster' }">
           Générer mon affiche
         </v-btn>

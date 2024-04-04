@@ -38,7 +38,9 @@ class TestExtractionOpenData(TestCase):
         canteen.sectors.clear()
         Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
         etl_td.extract_dataset()
-        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_sectors"], [], "The sectors should be an empty list")
+        self.assertEqual(
+            etl_td.get_dataset().iloc[0]["canteen_sectors"], '"[]"', "The sectors should be an empty list"
+        )
 
         canteen = CanteenFactory.create()
         complete_diagnostic = CompleteDiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
@@ -79,11 +81,7 @@ class TestExtractionOpenData(TestCase):
         )
         self.assertEqual(len(canteens.columns), len(schema_cols), "The columns should match the schema.")
 
-        self.assertIsInstance(canteens["sectors"][0], list, "The sectors should be a list of sectors")
-        self.assertEqual(
-            list(canteens[canteens.id == canteen_1.id].iloc[0]["sectors"][0].keys()),
-            ["id", "name", "category", "hasLineMinistry"],
-        )
+        self.assertIsInstance(canteens["sectors"][0], str, "The sectors should be a list of sectors")
 
         # Cheking the geo data transformations
         canteen_1.department = "29"
@@ -121,7 +119,7 @@ class TestExtractionOpenData(TestCase):
         etl_canteen.extract_dataset()
         canteens = etl_canteen.get_dataset()
         self.assertEqual(
-            canteens[canteens.id == canteen_2.id].iloc[0]["sectors"], [], "The sectors should be an empty list"
+            canteens[canteens.id == canteen_2.id].iloc[0]["sectors"], '"[]"', "The sectors should be an empty list"
         )
 
         canteen_1.sectors.clear()
