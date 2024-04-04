@@ -4,7 +4,7 @@
       <v-col cols="4" v-if="$vuetify.breakpoint.smAndUp">
         <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" class="fill-height"></v-img>
       </v-col>
-      <v-col class="py-8 pr-8">
+      <v-col class="py-sm-8 pr-sm-8">
         <v-card-title><h3 class="fr-h4 mb-2">Mon établissement</h3></v-card-title>
         <v-card-text class="fr-text">
           <p class="mb-0">

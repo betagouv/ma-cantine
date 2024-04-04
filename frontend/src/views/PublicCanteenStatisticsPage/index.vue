@@ -379,7 +379,7 @@ export default {
         title: {
           text: this.sectorCategoryChartTitle,
           style: {
-            fontSize: "14px",
+            fontSize: this.$vuetify.breakpoint.xs ? "12px" : "14px",
             fontWeight: "normal",
             fontFamily: "Marianne",
             color: "#333",

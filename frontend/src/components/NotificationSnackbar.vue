@@ -4,7 +4,7 @@
       <v-icon small class="mr-3" width="20" @click="$store.dispatch('removeNotification', notification)">
         {{ icon }}
       </v-icon>
-      <div class="flex-grow-1 d-flex flex-column justify-center">
+      <div class="flex-grow-1 d-flex flex-column justify-center white--text">
         <p class="text-body-1 font-weight-bold mb-0" v-if="notification.title">
           {{ notification.title }}
         </p>
@@ -30,15 +30,15 @@ export default {
   props: ["notification"],
   computed: {
     color() {
-      const colors = { success: "green", error: "red", warning: "amber darken-2" }
+      const colors = { success: "#18753c" /*success-425*/, error: "#ce0500" /*error-425*/ }
       if (!this.show) return "white"
       return Object.prototype.hasOwnProperty.call(colors, this.notification.status)
         ? colors[this.notification.status]
-        : "indigo"
+        : "#0063cb" // info-425
     },
     icon() {
       if (!this.notification || !this.notification.status) return null
-      const icons = { success: "mdi-check-bold", error: "mdi-close-circle", warning: "mdi-alert" }
+      const icons = { success: "mdi-check-bold", error: "mdi-close-circle" }
       return Object.prototype.hasOwnProperty.call(icons, this.notification.status)
         ? icons[this.notification.status]
         : null

@@ -868,11 +868,10 @@ export default new Vuex.Store({
         })
     },
 
-    logout(context) {
+    logout() {
       return fetch("/se-deconnecter", { method: "POST", headers })
-        .then(verifyResponse)
-        .then(() => {
-          return context.dispatch("fetchInitialData")
+        .then((response) => {
+          if (response.redirected) window.location.href = response.url
         })
         .catch((e) => {
           throw e

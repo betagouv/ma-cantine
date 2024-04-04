@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="fill-height d-flex flex-column dsfr pa-6">
+  <v-card outlined class="fill-height d-flex flex-column dsfr pa-sm-6">
     <v-card-title><h3 class="fr-h4 mb-2">Mon équipe</h3></v-card-title>
     <v-card-text class="fill-height">
       <div v-if="managers.length > 1" class="fill-height d-flex flex-column">

@@ -668,7 +668,7 @@ export default {
   cursor: pointer;
 }
 
-/* Hides items-per-row */
+/* Hides rows-per-page */
 .v-data-table >>> .v-data-footer__select {
   visibility: hidden;
 }

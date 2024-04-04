@@ -66,15 +66,29 @@
     {
       "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cuisine centrale a la quelle la cantine est rattachée",
       "example": "",
-      "name": "cantine_central_kitchen_siret",
+      "name": "canteen_central_kitchen_siret",
       "title": "Identifiant de la cuisine centrale",
+      "type": "string"
+    },
+    {
+      "description": "Code insee de la commune dans laquelle se trouve la cantine",
+      "example": "29456",
+      "name": "canteen_city_insee_code",
+      "title": "Conde Insee Commune",
       "type": "string"
     },
     {
       "description": "Code insee de l'EPCI dans laquelle se trouve la cantine",
       "example": "50570242900793",
-      "name": "epci",
+      "name": "canteen_epci",
       "title": "Code Insee EPCI",
+      "type": "string"
+    },
+    {
+      "description": "Libellé de l'EPCI dans laquelle se trouve la cantine",
+      "example": "CC Communauté Lesneven Côte des Légendes",
+      "name": "canteen_epci_lib",
+      "title": "Libellé EPCI",
       "type": "string"
     },
     {
@@ -108,38 +122,37 @@
     {
       "description": "Nombre de cantines satellites pour une cantine qui produit les repas sur place",
       "example": "0",
-      "name": "cantine_satellite_canteens_count",
+      "name": "canteen_satellite_canteens_count",
       "title": "Nombre de cantines satellites",
       "type": "integer"
     },
     {
       "description": "Modèle économique de la cantine. Il existe 2 types différents : public (cantine publique), private (cantine privée).",
       "example": "public",
-      "name": "cantine_economic_model",
+      "name": "canteen_economic_model",
       "title": "Modèle Economique de la cantine",
       "type": "string"
     },
     {
       "description": "Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée. Si la valeur est 'concédée', la délégation peut être totale ou partielle",
       "example": "conceded",
-      "name": "cantine_management_type",
+      "name": "canteen_management_type",
       "title": "Type de Management de la cantine",
       "type": "string"
     },
     {
       "description": "Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.",
       "example": "central",
-      "name": "cantine_production_type",
+      "name": "canteen_production_type",
       "title": "Type de Production de la cantine",
       "type": "string"
     },
     {
-      "description": "Liste définissant les secteurs d'activités concernés par le télédéclaration. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
+      "description": "Liste définissant les secteurs d'activités de la cantine. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
+      "example": "[\"Secondaire collège\", \"Ecole primaire (maternelle et élémentaire)\"]",
       "name": "canteen_sectors",
-      "title": "Secteurs",
-      "type": "array",
-      "delimiter": ",",
-      "example": ["{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}"]
+      "title": "Secteurs cantines",
+      "type": "array"
     },
     {
       "description": "Ministère de tutelle de la cantine, s'il y en a un",
@@ -150,25 +163,29 @@
     },
     {
       "description": "Type de télédéclaration: soit simple, soit détaillée. Une télédéclaration détaillée propose au gérant plus de champs pour chaque qualité de produits",
+      "enum": [
+        "SIMPLE",
+        "COMPLETE"
+      ],
+      "example": "SIMPLE",
       "name": "teledeclaration_type",
       "title": "Type de télédéclaration",
-      "type": "string",
-      "enum": ["SIMPLE", "COMPLETE"],
-      "example": "SIMPLE"
+      "type": "string"
     },
     {
       "description": "Part des achats bio dans les achats alimentaires de l'année (ratio basé sur le montant des achats en € HT)",
+      "example": 0.1,
       "name": "teledeclaration_ratio_bio",
       "title": "Télédéclaration Ratio Bio",
-      "type": "number",
-      "example": 0.1
+      "type": "number"
     },
     {
       "description": "Part des achats EGAlim dans les achats alimentaires de l'année",
+      "example": 0.3,
       "name": "teledeclaration_ratio_egalim_hors_bio",
       "title": "Télédéclaration Ratio Egalim",
-      "type": "number",
-      "example": 0.3
+      "type": "number"
     }
-  ]
+  ],
+  "title": "Schéma des télédéclarations d'achats alimentaires pour la restauration collective"
 }

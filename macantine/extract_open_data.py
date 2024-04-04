@@ -6,6 +6,7 @@ import requests
 import json
 import os
 import time
+import csv
 
 from abc import ABC, abstractmethod
 from data.department_choices import Department
@@ -25,12 +26,12 @@ CAMPAIGN_DATES = {
         "end_date": datetime.datetime(2022, 12, 5, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
     2022: {
-        "start_date": datetime.datetime(2023, 2, 13, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        "end_date": datetime.datetime(2023, 6, 30, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "start_date": datetime.datetime(2023, 2, 12, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "end_date": datetime.datetime(2023, 7, 1, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
     2023: {
-        "start_date": datetime.datetime(2024, 1, 9, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        "end_date": datetime.datetime(2024, 3, 30, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "start_date": datetime.datetime(2024, 1, 8, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "end_date": datetime.datetime(2024, 4, 16, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
 }
 
@@ -125,12 +126,21 @@ def fetch_epci_name(code_insee_epci, epcis_names):
         return None
 
 
+def format_sector(sector: dict) -> str:
+    return f'""{sector["name"]}""'
+
+
+def format_list_sectors(sectors) -> str:
+    return f'"[{", ".join(sectors)}]"'
+
+
 def fetch_sector(sector_id, sectors):
     """
     Provide EPCI code for a city, given the insee code of the city
     """
     if sector_id and sector_id in sectors.keys():
-        return sectors[sector_id]
+        sector = sectors[sector_id]
+        return format_sector(sector)
     else:
         return ""
 
@@ -181,9 +191,6 @@ class ETL(ABC):
             epcis_names = map_epcis_code_name()
             self.df["epci_lib"] = self.df["epci"].apply(lambda x: fetch_epci_name(x, epcis_names))
 
-        else:
-            self.df["epci"] = None
-
     def _clean_dataset(self):
         columns = [i["name"].replace("canteen_", "canteen.") for i in self.schema["fields"]]
 
@@ -206,7 +213,7 @@ class ETL(ABC):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
         sectors = map_sectors()
         self.df["sectors"] = self.df["sectors"].apply(lambda x: fetch_sector(x, sectors))
-        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(lambda x: x if x != [""] else [])
+        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(format_list_sectors)
         del self.df["sectors"]
 
         return self.df.merge(canteens_sectors, on="id")
@@ -229,15 +236,15 @@ class ETL(ABC):
 
     def is_valid(self) -> bool:
         dataset_to_validate_url = f"{os.environ['CELLAR_HOST']}/{os.environ['CELLAR_BUCKET_NAME']}/media/open_data/{self.dataset_name}_to_validate.csv"
-        schema_url = "https://github.com/betagouv/ma-cantine/blob/staging/data/schemas/schema_teledeclaration.json"
 
         res = requests.get(
-            f"https://api.validata.etalab.studio/validate?schema={schema_url}&url={dataset_to_validate_url}&header_case=true"
+            f"https://api.validata.etalab.studio/validate?schema={self.schema_url}&url={dataset_to_validate_url}&header_case=true"
         )
         report = json.loads(res.text)["report"]
-        if len(report["errors"]) > 0:
+        if len(report["errors"]) > 0 or report["stats"]["errors"] > 0:
             logger.error(f"The dataset {self.dataset_name} extraction has errors : ")
             logger.error(report["errors"])
+            logger.error(report["tasks"])
             return 0
         else:
             return 1
@@ -250,13 +257,23 @@ class ETL(ABC):
         else:
             return 0
         with default_storage.open(filename + ".csv", "w") as file:
-            self.df.to_csv(file, sep=";", index=False, na_rep="", encoding="utf_8_sig")
-        with default_storage.open(filename + ".parquet", "w") as file:
-            self.df.to_parquet(file)
-        with default_storage.open(filename + ".xlsx", "w") as file:
-            df_export = self.df.copy()
-            df_export = datetimes_to_str(df_export)  # Ah Excel !
-            df_export.to_excel(file, index=False)
+            self.df.to_csv(
+                file,
+                sep=";",
+                index=False,
+                na_rep="",
+                encoding="utf_8_sig",
+                quoting=csv.QUOTE_NONE,
+            )
+        if stage == "validated":
+            with default_storage.open(filename + ".parquet", "wb") as file:
+                if "sectors" in self.df.columns:
+                    self.df.sectors = self.df.sectors.astype(str)
+                self.df.to_parquet(file)
+            with default_storage.open(filename + ".xlsx", "wb") as file:
+                df_export = self.df.copy()
+                df_export = datetimes_to_str(df_export)  # Ah Excel !
+                df_export.to_excel(file, index=False)
 
 
 class ETL_CANTEEN(ETL):
@@ -340,12 +357,31 @@ class ETL_TD(ETL):
         self.schema_url = (
             "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_teledeclaration.json"
         )
+
         self.categories_to_aggregate = {
             "bio": ["_bio"],
             "sustainable": ["_sustainable", "_label_rouge", "_aocaop_igp_stg"],
-            "egalim_others": ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
-            "externality_performance": ["_externality_performance", "_performance", "_externalites"],
+            "egalim_others": [
+                "_egalim_others",
+                "_hve",
+                "_peche_durable",
+                "_rup",
+                "_fermier",
+                "_commerce_equitable",
+            ],
+            "externality_performance": [
+                "_externality_performance",
+                "_performance",
+                "_externalites",
+            ],
         }
+
+    def transform_sectors(self) -> pd.Series:
+        sectors = self.df["canteen_sectors"]
+        if not sectors.isnull().all():
+            sectors = sectors.apply(lambda x: list(map(lambda y: format_sector(y), x)))
+            sectors = sectors.apply(format_list_sectors)
+        return sectors
 
     def extract_dataset(self):
         if self.year in CAMPAIGN_DATES.keys():
@@ -384,8 +420,14 @@ class ETL_TD(ETL):
 
         logger.info("TD campagne : Clean dataset...")
         self._clean_dataset()
-        logger.info("TD campagne : Filter by sector...")
-        self._filter_by_sectors()
+        logger.info("TD campagne : Filter value total null or value bio null...")
+        self._filter_null_values()
+        logger.info("TD campagne : Filter by ministry...")
+        self._filter_by_ministry()
+        logger.info("TD campagne : Filter errors...")
+        self._filter_outsiders()
+        logger.info("TD campagne : Transform sectors...")
+        self.df["canteen_sectors"] = self.transform_sectors()
         logger.info("TD Campagne : Fill geo name...")
         self.transform_geo_data(geo_col_names=["canteen_department", "canteen_region"])
 
@@ -407,10 +449,22 @@ class ETL_TD(ETL):
         for categ, elements_in_categ in self.categories_to_aggregate.items():
             self._aggregation_col(categ, elements_in_categ)
 
-    def _filter_by_sectors(self):
+    def _filter_null_values(self):
+        "We have decided not take into accounts the TD where the value total or the value bio are null"
+        self.df = self.df[~self.df["teledeclaration_ratio_bio"].isnull()]
+
+    def _filter_outsiders(self):
         """
-        Filtering the sectors of the police and army so they do not appear publicly
+        For the campaign 2023, after analyses, we decided to exclude two TD because their value were impossible
         """
-        canteens_to_filter = Canteen.objects.filter(sectors__name="Restaurants des armées / police / gendarmerie")
+        if self.year == 2022:
+            td_with_errors = [9656, 8037]
+            self.df = self.df[~self.df["id"].isin(td_with_errors)]
+
+    def _filter_by_ministry(self):
+        """
+        Filtering the ministry of Armees so they do     not appear publicly
+        """
+        canteens_to_filter = Canteen.objects.filter(line_ministry="armee")
         canteens_id_to_filter = [canteen.id for canteen in canteens_to_filter]
         self.df = self.df[~self.df["canteen_id"].isin(canteens_id_to_filter)]

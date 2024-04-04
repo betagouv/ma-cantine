@@ -1,7 +1,10 @@
 <template>
   <div>
-    <label :for="inputId" :class="labelClasses" v-if="$attrs.label">
-      {{ $attrs.label }}
+    <label :for="inputId" :class="labelClasses">
+      <span v-if="$attrs.label">
+        {{ $attrs.label }}
+      </span>
+      <slot name="label"></slot>
     </label>
     <v-text-field
       dense
