@@ -495,8 +495,6 @@ export default new Vuex.Store({
 
     notify(context, { title, message, status, undoAction, undoMessage }) {
       context.commit("SET_NOTIFICATION", { title, message, status, undoAction, undoMessage })
-      // TODO: figure out how to handle multiple notifications
-      // TODO: maybe a successful notify can clear existing error notifies. Or at least in the case of form errors
     },
     notifyRequiredFieldsError(context) {
       const title = null
