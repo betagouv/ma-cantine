@@ -18,7 +18,11 @@
           <KeyMeasureTitle class="flex-shrink-1" :measure="measure" />
         </h2>
         <v-spacer></v-spacer>
-        <v-btn outlined :color="measure.isEvaluated ? 'green' : 'primary'" @click="showDiagnosticModal(measure)">
+        <v-btn
+          :outlined="measure.isEvaluated"
+          :color="measure.isEvaluated ? 'green darken-3' : 'primary'"
+          @click="showDiagnosticModal(measure)"
+        >
           <span class="mx-2">
             Je m'évalue
             <span class="d-sr-only">sur la mesure {{ measure.shortTitle }}</span>
@@ -26,7 +30,7 @@
           </span>
           <v-icon
             small
-            color="green"
+            color="green darken-3"
             v-if="measure.isEvaluated"
             aria-hidden="false"
             role="img"

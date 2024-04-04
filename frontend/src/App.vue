@@ -159,6 +159,12 @@ div[role="tab"]:focus {
 .theme--light.v-btn.v-btn--disabled {
   color: #757575 !important; // grey--text text--darken-1 for a11y
 }
+.theme--light.v-input input::placeholder,
+.theme--light.v-input textarea::placeholder {
+  color: #666 !important;
+  opacity: 1;
+  font-style: italic;
+}
 
 .dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
   color: #000091;
@@ -213,5 +219,8 @@ ul.no-bullets {
   li::before {
     content: "\200B";
   }
+}
+.dark-orange {
+  color: #d64309 !important; // 4.5:1 contrast for text on white
 }
 </style>
