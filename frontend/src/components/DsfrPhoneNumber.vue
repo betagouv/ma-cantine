@@ -3,9 +3,9 @@
   <DsfrTextField
     v-bind="$attrs"
     v-on="$listeners"
-    type="telephone"
-    name="telephone"
-    autocomplete="telephone"
+    type="tel"
+    name="tel"
+    autocomplete="tel"
     spellcheck="false"
     validate-on-blur
     :rules="rules || [validators.isEmptyOrPhoneNumber]"
