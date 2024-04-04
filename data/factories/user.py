@@ -11,3 +11,4 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = factory.Sequence(lambda n: "user_%d" % n)
     email = factory.Faker("email")
     is_dev = False
+    is_elected_official = False
