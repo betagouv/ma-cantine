@@ -36,24 +36,26 @@ CAMPAIGN_DATES = {
 }
 
 
-def map_epcis_communes():
+def map_communes_infos():
     """
     Create a dict that maps cities with their EPCI code
     """
-    commune_to_epci = {}
+    commune_details = {}
     try:
         logger.info("Starting communes dl")
         response_commune = requests.get("https://geo.api.gouv.fr/communes", timeout=50)
         response_commune.raise_for_status()
         communes = response_commune.json()
         for commune in communes:
+            commune_details[commune["code"]] = {}
+            commune_details[commune["code"]]["department"] = commune["codeDepartement"]
+            commune_details[commune["code"]]["region"] = commune["codeRegion"]
             if "codeEpci" in commune.keys():
-                commune_to_epci[commune["code"]] = {}
-                commune_to_epci[commune["code"]] = commune["codeEpci"]  # Caching the data
+                commune_details[commune["code"]]["epci"] = commune["codeEpci"]
     except requests.exceptions.HTTPError as e:
         logger.info(e)
         return None
-    return commune_to_epci
+    return commune_details
 
 
 def map_epcis_code_name():
@@ -106,12 +108,16 @@ def map_sectors():
     return sectors_mapper
 
 
-def fetch_epci(code_insee_commune, commune_to_epcis):
+def fetch_commune_detail(code_insee_commune, commune_details, geo_detail_type="epci"):
     """
-    Provide EPCI code for a city, given the insee code of the city
+    Provide EPCI code/ Department code/ Region code for a city, given the insee code of the city
     """
-    if code_insee_commune and code_insee_commune in commune_to_epcis.keys():
-        return commune_to_epcis[code_insee_commune]
+    if (
+        code_insee_commune
+        and code_insee_commune in commune_details.keys()
+        and geo_detail_type in commune_details[code_insee_commune].keys()
+    ):
+        return commune_details[code_insee_commune][geo_detail_type]
     else:
         return None
 
@@ -122,6 +128,17 @@ def fetch_epci_name(code_insee_epci, epcis_names):
     """
     if code_insee_epci and code_insee_epci in epcis_names.keys():
         return epcis_names[code_insee_epci]
+    else:
+        return None
+
+
+def format_geo_name(geo_code: int, geo_names: {}):
+    """
+    Format the name of a region or department from its code
+    """
+    if isinstance(geo_code, str) and geo_code not in ["978", "987", "975", "988"]:
+        geo_name = geo_names[geo_code].split(" - ")[1].lstrip()
+        return geo_name
     else:
         return None
 
@@ -159,7 +176,7 @@ class ETL(ABC):
         self.schema_url = ""
         self.dataset_name = ""
 
-    def _fill_geo_name(self, geo_zoom="department"):
+    def _fill_geo_names(self, geo_zoom="department"):
         """
         Given a dataframe with a column 'department' or 'region', this method maps the name of the location, based on the INSEE code
         Returns:
@@ -175,21 +192,33 @@ class ETL(ABC):
             )
             return 0
 
-        self.df[f"{geo_zoom}_lib"] = self.df[geo_zoom].apply(
-            lambda x: geo[x].split(" - ")[1].lstrip() if isinstance(x, str) else None
-        )
+        self.df[f"{geo_zoom}_lib"] = self.df[geo_zoom].apply(lambda x: format_geo_name(x, geo))
 
     def transform_geo_data(self, geo_col_names=["department", "region"]):
+        logger.info("Start fetching communes details")
+        if "campagne_td" in self.dataset_name:
+            prefix = "canteen_"
+        else:
+            prefix = ""
+
+        communes_infos = map_communes_infos()
+        self.df[prefix + "epci"] = self.df[prefix + "city_insee_code"].apply(
+            lambda x: fetch_commune_detail(x, communes_infos, "epci")
+        )
+        self.df[prefix + "department"] = self.df[prefix + "city_insee_code"].apply(
+            lambda x: fetch_commune_detail(x, communes_infos, "department")
+        )
+        self.df[prefix + "region"] = self.df[prefix + "city_insee_code"].apply(
+            lambda x: fetch_commune_detail(x, communes_infos, "region")
+        )
+        epcis_names = map_epcis_code_name()
+        self.df[prefix + "epci_lib"] = self.df[prefix + "epci"].apply(lambda x: fetch_epci_name(x, epcis_names))
+
         for geo in geo_col_names:
             logger.info("Start filling geo_name")
-            self._fill_geo_name(geo_zoom=geo)
+            self._fill_geo_names(geo_zoom=geo)
             col_geo = self.df.pop(f"{geo}_lib")
             self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
-        if "city_insee_code" in self.df.columns:
-            epcis = map_epcis_communes()
-            self.df["epci"] = self.df["city_insee_code"].apply(lambda x: fetch_epci(x, epcis))
-            epcis_names = map_epcis_code_name()
-            self.df["epci_lib"] = self.df["epci"].apply(lambda x: fetch_epci_name(x, epcis_names))
 
     def _clean_dataset(self):
         columns = [i["name"].replace("canteen_", "canteen.") for i in self.schema["fields"]]

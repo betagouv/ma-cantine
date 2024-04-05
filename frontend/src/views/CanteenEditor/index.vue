@@ -51,11 +51,12 @@ export default {
         .dispatch("fetchCanteen", { id })
         .then((canteen) => (this.canteen = canteen))
         .catch(() => {
-          this.$store.dispatch("notify", {
-            message: "Nous n'avons pas trouvé cette cantine",
-            status: "error",
+          this.$router.push({ name: "ManagementPage" }).then(() => {
+            this.$store.dispatch("notify", {
+              message: "Nous n'avons pas trouvé cette cantine",
+              status: "error",
+            })
           })
-          this.$router.push({ name: "ManagementPage" })
         })
     },
   },

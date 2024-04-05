@@ -583,11 +583,13 @@ export default {
           const message = this.isNewCanteen
             ? "Votre cantine a bien été créée. Vous pouvez maintenant ajouter des diagnostics."
             : "Votre cantine a bien été modifiée"
-          this.$store.dispatch("notify", {
-            title: "Mise à jour prise en compte",
-            message,
-            status: "success",
-          })
+          const notify = () => {
+            this.$store.dispatch("notify", {
+              title: "Mise à jour prise en compte",
+              message,
+              status: "success",
+            })
+          }
           this.$emit("updateCanteen", canteenJson)
           if (this.isNewCanteen) {
             const canteenUrlComponent = this.$store.getters.getCanteenUrlComponent(canteenJson)
@@ -595,18 +597,22 @@ export default {
             let name = "DashboardManager"
             if (this.showSatelliteCanteensCount) name = "SatelliteManagement"
 
-            this.$router.push({
-              // form validation ensures that the count will be > 0
-              name,
-              params: { canteenUrlComponent },
-            })
+            this.$router
+              .push({
+                // form validation ensures that the count will be > 0
+                name,
+                params: { canteenUrlComponent },
+              })
+              .then(notify)
           } else {
-            this.$router.push({
-              name: "DashboardManager",
-              params: {
-                canteenUrlComponent: this.canteenUrlComponent,
-              },
-            })
+            this.$router
+              .push({
+                name: "DashboardManager",
+                params: {
+                  canteenUrlComponent: this.canteenUrlComponent,
+                },
+              })
+              .then(notify)
           }
         })
         .catch((e) => {
