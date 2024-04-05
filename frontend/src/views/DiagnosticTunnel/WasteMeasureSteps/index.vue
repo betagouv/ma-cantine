@@ -12,14 +12,12 @@
         v-model="payload.hasWasteDiagnostic"
         label="J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire"
         yesNo
-        optional
         hide-details
       />
       <DsfrRadio
         v-model="payload.hasWastePlan"
         label="J’ai mis en place un plan d’action adapté au diagnostic réalisé"
         yesNo
-        optional
         hide-details
         :disabled="!payload.hasWasteDiagnostic"
         :readonly="!payload.hasWasteDiagnostic"

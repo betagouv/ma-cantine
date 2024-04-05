@@ -4,7 +4,7 @@
       <span :class="legendClass">
         {{ $attrs.label }}
       </span>
-      <span class="fr-hint-text my-2" v-if="optional">Optionnel</span>
+      <span v-if="optional" class="fr-hint-text my-2">Optionnel</span>
     </template>
     <v-row v-if="optionsRow" class="my-0">
       <v-col cols="12" sm="6" class="py-2" v-for="item in items" :key="item.value">
@@ -33,6 +33,8 @@
 </template>
 
 <script>
+import validators from "@/validators"
+
 export default {
   inheritAttrs: false,
   props: {
@@ -44,8 +46,7 @@ export default {
       type: String,
       default: "",
     },
-    optional: {
-      type: Boolean,
+    hideOptional: {
       default: false,
     },
     yesNo: {
@@ -78,6 +79,9 @@ export default {
       const inactiveColor = " grey--text"
       const color = this.$attrs.disabled ? inactiveColor : activeColor
       return this.labelClasses + color
+    },
+    optional() {
+      return !this.hideOptional && !validators._includesRequiredValidator(this.$attrs.rules)
     },
   },
   methods: {
