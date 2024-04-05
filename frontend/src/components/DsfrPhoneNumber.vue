@@ -1,10 +1,8 @@
 <template>
-  <!-- TODO: check that the type/name/autocomplete values are good -->
   <DsfrTextField
     v-bind="$attrs"
     v-on="$listeners"
     type="tel"
-    name="tel"
     autocomplete="tel"
     spellcheck="false"
     validate-on-blur
@@ -12,7 +10,7 @@
   >
     <template v-slot:label>
       <span :class="labelClasses || 'fr-label mb-1'">{{ label || "Numéro téléphone" }}</span>
-      <span class="fr-hint-text">Format attendu : 07 01 02 03 04</span>
+      <span class="fr-hint-text">Format attendu : 01 22 33 44 55</span>
       <span class="fr-hint-text">Optionnel</span>
     </template>
   </DsfrTextField>
