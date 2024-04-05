@@ -284,7 +284,7 @@ def _get_location_csv_string(canteens):
     return locations_csv_string
 
 
-def _request_location_api(location_csv_string):
+def _request_location_api_in_bulk(location_csv_string):
     response = requests.post(
         "https://api-adresse.data.gouv.fr/search/csv/",
         files={
@@ -305,7 +305,7 @@ def _request_location_api(location_csv_string):
     return response
 
 
-def _get_candidate_canteens():
+def _get_candidate_canteens_for_code_geobot():
     candidate_canteens = (
         Canteen.objects.filter(Q(city=None) | Q(department=None) | Q(city_insee_code=None))
         .filter(Q(postal_code__isnull=False) | Q(city_insee_code__isnull=False))
@@ -318,7 +318,7 @@ def _get_candidate_canteens():
     return candidate_canteens
 
 
-def _get_candidate_canteens_for_geobot():
+def _get_candidate_canteens_for_siret_geobot():
     return Canteen.objects.filter(city_insee_code__isnull=True, siret__isnull=False).order_by("creation_date")
 
 
@@ -355,7 +355,7 @@ def _update_canteen_geo_data(canteen, response):
         logger.error(e)
 
 
-def get_geo_data(canteen_siret, token):
+def get_geo_data_from_siret(canteen_siret, token):
     canteen = {}
     canteen["siret"] = canteen_siret
     try:
@@ -388,37 +388,37 @@ def get_geo_data(canteen_siret, token):
         else:
             logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response}")
     except requests.exceptions.HTTPError as e:
-        logger.warning(f"Geolocation Bot: HTTPError\n{e}")
+        logger.warning(f"Siret Geolocation Bot: HTTPError\n{e}")
     except requests.exceptions.ConnectionError as e:
-        logger.warning(f"Geolocation Bot: ConnectionError\n{e}")
+        logger.warning(f"Siret Geolocation Bot: ConnectionError\n{e}")
     except requests.exceptions.Timeout as e:
-        logger.warning(f"Geolocation Bot: Timeout\n{e}")
+        logger.warning(f"Siret Geolocation Bot: Timeout\n{e}")
     except Exception as e:
-        logger.error(f"Geolocation Bot: Unexpected exception\n{e}")
+        logger.error(f"Siret Geolocation Bot: Unexpected exception\n{e}")
 
 
 @app.task()
 def fill_missing_geolocation_data_using_siret():
-    candidate_canteens = _get_candidate_canteens_for_geobot()
+    candidate_canteens = _get_candidate_canteens_for_siret_geobot()
     token = get_siret_token()
 
     if len(candidate_canteens) == 0:
         logger.info("No candidate canteens have been found. Nothing to do here...")
         return
     for canteen in candidate_canteens:
-        response = get_geo_data(canteen.siret, token)
+        response = get_geo_data_from_siret(canteen.siret, token)
         if response:
             _update_canteen_geo_data(canteen, response)
 
-    logger.info(f"Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
+    logger.info(f"Siret Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
 
 
 @app.task()
-def fill_missing_geolocation_data():
-    candidate_canteens = _get_candidate_canteens()
+def fill_missing_geolocation_data_using_insee_code_or_postcode():
+    candidate_canteens = _get_candidate_canteens_for_code_geobot()
     candidate_canteens.update(geolocation_bot_attempts=F("geolocation_bot_attempts") + 1)
     paginator = Paginator(candidate_canteens, 70)
-    logger.info(f"Geolocation Bot: about to query {candidate_canteens.count()} canteens")
+    logger.info(f"INSEE Geolocation Bot: about to query {candidate_canteens.count()} canteens")
 
     # Carry out the CSV
     for page_number in paginator:
@@ -427,20 +427,20 @@ def fill_missing_geolocation_data():
             continue
         try:
             location_csv_string = _get_location_csv_string(canteens)
-            response = _request_location_api(location_csv_string)
+            response = _request_location_api_in_bulk(location_csv_string)
             response.raise_for_status()
 
             _fill_from_api_response(response, canteens)
         except requests.exceptions.HTTPError as e:
-            logger.info(f"Geolocation Bot error: HTTPError\n{e}")
+            logger.info(f"INSEE Geolocation Bot error: HTTPError\n{e}")
         except requests.exceptions.ConnectionError as e:
-            logger.info(f"Geolocation Bot error: ConnectionError\n{e}")
+            logger.info(f"INSEE Geolocation Bot error: ConnectionError\n{e}")
         except requests.exceptions.Timeout as e:
-            logger.info(f"Geolocation Bot error: Timeout\n{e}")
+            logger.info(f"INSEE Geolocation Bot error: Timeout\n{e}")
         except Exception as e:
-            logger.info(f"Geolocation Bot error: Unexpected exception\n{e}")
+            logger.info(f"INSEE Geolocation Bot error: Unexpected exception\n{e}")
 
-    logger.info(f"Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
+    logger.info(f"INSEE Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
 
 
 @app.task()
