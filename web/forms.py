@@ -47,7 +47,7 @@ class RegisterUserForm(UserCreationForm):
         self.fields["email"].help_text = "Format attendu : nom@domaine.fr"
         self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com", "autocomplete": "email"})
         self.fields["phone_number"].widget.attrs.update({"autocomplete": "tel"})
-        self.fields["phone_number"].help_text = "Format attendu : 07 01 02 03 04"
+        self.fields["phone_number"].help_text = "Format attendu : 01 22 33 44 55"
         self.fields["password1"].widget.attrs.update({"placeholder": "Entrez votre mot de passe"})
         self.fields["password2"].widget.attrs.update({"placeholder": "Confirmez votre mot de passe"})
         self.fields["number_of_managed_cantines"].widget.attrs.update({"class": "cantine-number-input", "min": "0"})
