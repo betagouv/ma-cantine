@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import validators from "@/validators"
+
 export default {
   inheritAttrs: false,
   props: {
@@ -43,7 +45,7 @@ export default {
       return this.$refs["textarea"].value
     },
     optional() {
-      return !this.$attrs.rules?.some((f) => f.name === "required")
+      return !validators._includesRequiredValidator(this.$attrs.rules)
     },
   },
   methods: {

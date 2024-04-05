@@ -55,10 +55,14 @@
     <div v-if="receivesGuests">
       <h2 class="mt-8 mb-2" v-if="isPublished">Modifier la publication</h2>
       <v-form ref="form" @submit.prevent>
-        <label for="general">
-          Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
-        </label>
-        <DsfrTextarea id="general" class="my-2" rows="5" counter="500" v-model="canteen.publicationComments" />
+        <DsfrTextarea
+          id="general"
+          label="Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement..."
+          class="my-2"
+          rows="5"
+          counter="500"
+          v-model="canteen.publicationComments"
+        />
         <PublicationField class="mb-4" :canteen="canteen" v-model="acceptPublication" />
       </v-form>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">

@@ -31,7 +31,7 @@
               type="password"
               hide-details="auto"
               v-model="newPasswordConfirmation"
-              :rules="[validators.required, validators.matchPassword]"
+              :rules="[validators.matchPassword, validators.required]"
               validate-on-blur
             />
           </v-col>

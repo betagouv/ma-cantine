@@ -219,6 +219,7 @@
                     hide-details="auto"
                     append-icon="mdi-percent"
                     placeholder="0"
+                    :hideOptional="true"
                   />
                 </v-col>
                 <v-col class="pa-0 pl-1 d-flex flex-column">
@@ -232,6 +233,7 @@
                     hide-details="auto"
                     placeholder="0"
                     append-icon="mdi-percent"
+                    :hideOptional="true"
                   />
                 </v-col>
               </div>
@@ -257,6 +259,7 @@
                     :rules="[validators.nonNegativeOrEmpty]"
                     @change="onChangeIntegerFilter('min_daily_meal_count')"
                     hide-details="auto"
+                    :hideOptional="true"
                   />
                 </div>
                 <span class="mx-2 align-self-center">-</span>
@@ -269,6 +272,7 @@
                     :rules="[validators.nonNegativeOrEmpty]"
                     @change="onChangeIntegerFilter('max_daily_meal_count')"
                     hide-details="auto"
+                    :hideOptional="true"
                   />
                 </div>
               </div>

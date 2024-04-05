@@ -33,6 +33,8 @@
 </template>
 
 <script>
+import validators from "@/validators"
+
 export default {
   inheritAttrs: false,
   props: {
@@ -55,7 +57,7 @@ export default {
       return this.$refs["text-field"].value
     },
     optional() {
-      return !this.hideOptional && !this.$attrs.rules?.some((f) => f.name === "required")
+      return !this.hideOptional && !validators._includesRequiredValidator(this.$attrs.rules)
     },
   },
   methods: {
