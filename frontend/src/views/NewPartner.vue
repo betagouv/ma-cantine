@@ -7,7 +7,7 @@
       notre base de données.
     </p>
     <p class="text-caption">
-      Sauf mention contraire tous les champs sont obligatoires
+      Sauf mention contraire "Optionnel" dans le label, tous les champs sont obligatoires
     </p>
     <v-form v-model="formIsValid" ref="form" @submit.prevent class="mt-8">
       <v-row>
