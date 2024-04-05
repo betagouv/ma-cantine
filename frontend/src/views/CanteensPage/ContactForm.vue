@@ -51,7 +51,7 @@
     </div>
     <v-form v-model="formIsValid" ref="form" @submit.prevent>
       <DsfrEmail v-model="fromEmail" />
-      <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
+      <DsfrTextField v-model="name" label="Prénom et nom" />
       <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
       <p class="caption text-left grey--text text--darken-1 mt-n1 mb-6">
         Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).

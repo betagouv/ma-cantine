@@ -14,7 +14,6 @@
               :rules="[validators.required]"
               hide-details="auto"
               v-model="oldPassword"
-              placeholder="Entrez votre mot de passe actuel"
             />
           </v-col>
           <v-col cols="12">
@@ -24,7 +23,6 @@
               :rules="[validators.required]"
               hide-details="auto"
               v-model="newPassword"
-              placeholder="Entrez votre nouveau mot de passe"
             />
           </v-col>
           <v-col cols="12">
@@ -33,9 +31,8 @@
               type="password"
               hide-details="auto"
               v-model="newPasswordConfirmation"
-              :rules="[validators.matchPassword]"
+              :rules="[validators.required, validators.matchPassword]"
               validate-on-blur
-              placeholder="Confirmez votre nouveau mot de passe"
             />
           </v-col>
         </v-row>

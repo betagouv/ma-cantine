@@ -2,7 +2,9 @@
   <div>
     <label :for="inputId" :class="labelClasses" v-if="$attrs.label">
       {{ $attrs.label }}
+      <span v-if="optional" class="fr-hint-text">Optionnel</span>
     </label>
+    <slot name="label"></slot>
     <v-textarea
       dense
       ref="textarea"
@@ -39,6 +41,9 @@ export default {
   computed: {
     value() {
       return this.$refs["textarea"].value
+    },
+    optional() {
+      return !this.$attrs.rules?.some((f) => f.name === "required")
     },
   },
   methods: {

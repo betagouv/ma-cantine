@@ -55,6 +55,7 @@
                   suffix="kg"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  :hideOptional="true"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -71,6 +72,7 @@
                   suffix="jours"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  :hideOptional="true"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -82,6 +84,7 @@
                   suffix="kg/an"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  :hideOptional="true"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -93,6 +96,7 @@
                   suffix="kg/an"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  :hideOptional="true"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -104,6 +108,7 @@
                   suffix="kg/an"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  :hideOptional="true"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -115,6 +120,7 @@
                   suffix="kg/an"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  :hideOptional="true"
                 />
               </v-col>
             </v-row>
@@ -223,16 +229,17 @@
     <div v-else-if="stepUrlSlug === 'autres'">
       <v-row>
         <v-col cols="12" sm="9" md="7">
-          <fieldset>
-            <legend class="my-3">
-              Autres commentaires
-              <span class="fr-hint-text mt-2">
-                Optionnel : toute précision que vous souhaiteriez apporter sur votre situation et/ou sur vos actions
-                mises en place pour lutter contre le gaspillage alimentaire
-              </span>
-            </legend>
-            <DsfrTextarea v-model="payload.otherWasteComments" rows="3" class="mt-6" />
-          </fieldset>
+          <DsfrTextarea v-model="payload.otherWasteComments" id="otherWasteComments" rows="3" class="mt-6">
+            <template v-slot:label>
+              <label for="otherWasteComments" class="mb-3">
+                Autres commentaires
+                <span class="fr-hint-text mt-2">
+                  Optionnel : toute précision que vous souhaiteriez apporter sur votre situation et/ou sur vos actions
+                  mises en place pour lutter contre le gaspillage alimentaire
+                </span>
+              </label>
+            </template>
+          </DsfrTextarea>
         </v-col>
       </v-row>
     </div>

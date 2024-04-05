@@ -372,7 +372,7 @@
         </p>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
           <DsfrEmail v-model="fromEmail" />
-          <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
+          <DsfrTextField v-model="name" label="Prénom et nom" />
           <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
         </v-form>
         <v-row class="pa-2">

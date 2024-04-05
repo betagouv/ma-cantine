@@ -3,6 +3,7 @@
     <label :for="inputId" :class="labelClasses">
       <span v-if="$attrs.label">
         {{ $attrs.label }}
+        <span v-if="optional" class="fr-hint-text">Optionnel</span>
       </span>
       <slot name="label"></slot>
     </label>
@@ -39,6 +40,9 @@ export default {
       required: false,
       default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
     },
+    hideOptional: {
+      default: false,
+    },
   },
   data() {
     return { inputId: null }
@@ -49,6 +53,9 @@ export default {
     },
     value() {
       return this.$refs["text-field"].value
+    },
+    optional() {
+      return !this.hideOptional && !this.$attrs.rules?.some((f) => f.name === "required")
     },
   },
   methods: {
