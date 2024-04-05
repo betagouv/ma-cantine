@@ -3,14 +3,26 @@ from data.factories import CompleteDiagnosticFactory, DiagnosticFactory, Canteen
 from data.models import Teledeclaration
 from macantine.extract_open_data import ETL_CANTEEN, ETL_TD
 from freezegun import freeze_time
-
-
+import requests_mock
 import json
 
 
+@requests_mock.Mocker()
 class TestExtractionOpenData(TestCase):
+
     @freeze_time("2023-05-14")  # Faking time to mock creation_date
-    def test_extraction_teledeclaration(self):
+    def test_extraction_teledeclaration(self, mock):
+
+        mock.get(
+            "https://geo.api.gouv.fr/communes",
+            text=json.dumps(""),
+            status_code=200,
+        )
+        mock.get(
+            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            text=json.dumps(""),
+            status_code=200,
+        )
         schema = json.load(open("data/schemas/schema_teledeclaration.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
         canteen = CanteenFactory.create()
@@ -53,7 +65,18 @@ class TestExtractionOpenData(TestCase):
         )
 
     @freeze_time("2022-08-14")  # Faking time to mock creation_date, must be in the campaign dates of 2023
-    def test_extraction_canteen(self):
+    def test_extraction_canteen(self, mock):
+        mock.get(
+            "https://geo.api.gouv.fr/communes",
+            text=json.dumps([{"code": "29021", "codeDepartement": "29", "codeRegion": "53", "codeEpci": "242900793"}]),
+            status_code=200,
+        )
+        mock.get(
+            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            text=json.dumps([{"nom": "CC Communauté Lesneven Côte des Légendes", "code": "242900793"}]),
+            status_code=200,
+        )
+
         schema = json.load(open("data/schemas/schema_cantine.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
 
@@ -86,6 +109,7 @@ class TestExtractionOpenData(TestCase):
         # Cheking the geo data transformations
         canteen_1.city_insee_code = "29021"
         canteen_1.save()
+
         etl_canteen.extract_dataset()
         canteens = etl_canteen.get_dataset()
 
