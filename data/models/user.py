@@ -149,6 +149,10 @@ class User(AbstractUser):
         verbose_name="departements où l'élu·e peut regarder les cantines",
     )
 
+    last_brevo_update = models.DateTimeField(
+        null=True, blank=True, verbose_name="Date de la dernière mise à jour Brevo"
+    )
+
     @property
     def has_mtm_data(self):
         return self.creation_mtm_source or self.creation_mtm_campaign or self.creation_mtm_medium

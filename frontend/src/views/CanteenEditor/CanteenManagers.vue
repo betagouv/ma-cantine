@@ -25,19 +25,18 @@
       <v-col cols="12" sm="10" md="8">
         <v-form ref="managerForm" class="mt-3 px-2" v-model="managerFormIsValid" v-on:submit.prevent="addManager">
           <p class="body-2 mb-2 text-left grey--text text--darken-1">Ajouter un gestionnaire</p>
-          <div class="d-flex align-center">
-            <DsfrTextField
+          <div class="d-sm-flex align-sm-center">
+            <DsfrEmail
               v-model="newManagerEmail"
-              label="Adresse email"
+              label="Adresse électronique du gestionnaire"
               :rules="[validators.emailOrEmpty]"
-              class="flex-grow-1"
-              validate-on-blur
+              class="flex-grow-1 mb-sm-6"
             />
             <v-btn
               @click="addManager"
               outlined
               color="primary darken-1"
-              class="ml-4 mt-1"
+              class="ml-sm-4"
               large
               :disabled="!newManagerEmail"
             >
@@ -53,11 +52,11 @@
 <script>
 import ManagerItem from "./ManagerItem"
 import validators from "@/validators"
-import DsfrTextField from "@/components/DsfrTextField"
+import DsfrEmail from "@/components/DsfrEmail"
 
 export default {
   name: "CanteenManagers",
-  components: { ManagerItem, DsfrTextField },
+  components: { ManagerItem, DsfrEmail },
   props: {
     originalCanteen: {
       type: Object,

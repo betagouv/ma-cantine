@@ -105,9 +105,9 @@
           </ul>
         </nav>
       </template>
-      <v-dialog v-model="overlayMenu" fullscreen hide-overlay id="navigation-menu">
+      <v-dialog v-if="$vuetify.breakpoint.smAndDown" v-model="overlayMenu" fullscreen hide-overlay id="navigation-menu">
         <template v-slot:activator="{ on, attrs }">
-          <v-app-bar-nav-icon v-if="$vuetify.breakpoint.smAndDown" v-bind="attrs" v-on="on"></v-app-bar-nav-icon>
+          <v-app-bar-nav-icon v-bind="attrs" v-on="on"></v-app-bar-nav-icon>
         </template>
         <v-card class="text-right">
           <v-btn @click="overlayMenu = false" aria-controls="navigation-menu" text color="primary" class="mt-4">

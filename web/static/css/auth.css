@@ -253,3 +253,9 @@ input.cantine-number-input {
     padding-top: 0;
   }
 }
+
+.field-help-text {
+  display: block;
+  font-size: 0.8em;
+  color: #333;
+}
