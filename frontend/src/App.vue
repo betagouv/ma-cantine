@@ -17,7 +17,13 @@
       </v-main>
 
       <AppFooter v-if="!isWidget && !fullscreen" />
-      <NotificationSnackbar v-if="!isWidget" />
+      <div v-if="!isWidget" id="notification-center">
+        <NotificationSnackbar
+          v-for="notification in notifications"
+          :key="notification.id"
+          :notification="notification"
+        />
+      </div>
     </v-app>
   </div>
 </template>
@@ -56,6 +62,9 @@ export default {
       if (this.isWidget) return "ma-4 mt-0 constrained"
       if (this.fullscreen) return ""
       return "mx-auto constrained"
+    },
+    notifications() {
+      return this.$store.state.notifications
     },
   },
   mounted() {
@@ -222,5 +231,16 @@ ul.no-bullets {
 }
 .dark-orange {
   color: #d64309 !important; // 4.5:1 contrast for text on white
+}
+#notification-center {
+  position: fixed;
+  z-index: 1000;
+  height: fit-content;
+  width: 100%;
+
+  .v-snack__wrapper {
+    margin: 2px;
+    min-width: unset;
+  }
 }
 </style>
