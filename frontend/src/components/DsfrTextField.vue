@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label :for="inputId" :class="labelClasses">
+    <label :for="inputId" :class="labelClasses" v-if="$attrs.label || $slots.label">
       <span v-if="$attrs.label">
         {{ $attrs.label }}
         <span v-if="optional" class="fr-hint-text">Optionnel</span>
