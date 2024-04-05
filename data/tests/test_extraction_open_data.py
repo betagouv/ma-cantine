@@ -84,15 +84,19 @@ class TestExtractionOpenData(TestCase):
         self.assertIsInstance(canteens["sectors"][0], str, "The sectors should be a list of sectors")
 
         # Cheking the geo data transformations
-        canteen_1.department = "29"
         canteen_1.city_insee_code = "29021"
         canteen_1.save()
         etl_canteen.extract_dataset()
         canteens = etl_canteen.get_dataset()
 
+        # Checking that the geo data has been fetched from the city insee code
+        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["epci"], "242900793")
+        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["department"], "29")
+        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["region"], "53")
+
+        # Check that the names of the region and departments are fetched from the code
         self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["department_lib"], "Finistère")
         self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["region_lib"], "Bretagne")
-        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["epci"], "242900793")
         self.assertEqual(
             canteens[canteens.id == canteen_1.id].iloc[0]["epci_lib"], "CC Communauté Lesneven Côte des Légendes"
         )
