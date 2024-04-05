@@ -1,6 +1,7 @@
 import requests_mock
 from django.test import TestCase
 from data.factories import CanteenFactory, UserFactory, SectorFactory
+from data.department_choices import Department
 from macantine import tasks
 import json
 
@@ -55,12 +56,19 @@ class TestGeolocationBot(TestCase):
         """
         Only canteens with either postal code or INSEE code
         that have not been queried more than ten times
-        are considered candidates
+        are considered candidates.
+        Data that we want to recover is: city, department, INSEE
         """
         candidate_canteens = [
-            CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003"),
+            CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003", city_insee_code="69383"),
             CanteenFactory.create(department=None, geolocation_bot_attempts=9, city_insee_code="69383"),
-            CanteenFactory.create(department=None, geolocation_bot_attempts=1, city_insee_code="69383"),
+            CanteenFactory.create(
+                department=Department.ain,
+                city="Une ville",
+                geolocation_bot_attempts=1,
+                postal_code="69003",
+                city_insee_code=None,
+            ),
         ]
         _ = [
             CanteenFactory.create(city=None, geolocation_bot_attempts=10, postal_code="69003"),

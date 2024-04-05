@@ -307,7 +307,7 @@ def _request_location_api(location_csv_string):
 
 def _get_candidate_canteens():
     candidate_canteens = (
-        Canteen.objects.filter(Q(city=None) | Q(department=None))
+        Canteen.objects.filter(Q(city=None) | Q(department=None) | Q(city_insee_code=None))
         .filter(Q(postal_code__isnull=False) | Q(city_insee_code__isnull=False))
         .filter(geolocation_bot_attempts__lt=10)
         .annotate(postal_code_len=Length("postal_code"))
