@@ -1,8 +1,8 @@
 import Vuex from "vuex"
 import VueRouter from "vue-router"
 import Vuetify from "vuetify"
-import { shallowMount, createLocalVue, RouterLinkStub } from "@vue/test-utils"
-import AppHeader from "@/components/AppHeader.vue"
+import { mount, shallowMount, createLocalVue, RouterLinkStub } from "@vue/test-utils"
+import AppHeader from "@/components/AppHeader"
 
 const localVue = createLocalVue()
 localVue.use(VueRouter)
@@ -25,7 +25,7 @@ describe("AppHeader.vue", () => {
 
   describe("unauthenticated", () => {
     it("Includes login button", () => {
-      const wrapper = shallowMount(AppHeader, {
+      const wrapper = mount(AppHeader, {
         localVue,
         vuetify,
         stubs: {
@@ -39,7 +39,7 @@ describe("AppHeader.vue", () => {
           },
         }),
       })
-      expect(wrapper.find("v-btn-stub.header-login-button").exists()).toBe(true)
+      expect(wrapper.find("a[href='/s-identifier']").exists()).toBe(true)
     })
   })
 
@@ -66,7 +66,7 @@ describe("AppHeader.vue", () => {
           },
         }),
       })
-      expect(wrapper.find("v-menu-stub").exists()).toBe(true)
+      expect(wrapper.find("v-dialog-stub").exists()).toBe(true)
     })
   })
 })
