@@ -1,7 +1,6 @@
 import requests_mock
 from django.test import TestCase
 from data.factories import CanteenFactory, UserFactory, SectorFactory
-from data.department_choices import Department
 from macantine import tasks
 import json
 
@@ -29,7 +28,7 @@ class TestGeolocationBot(TestCase):
         address_api_text += '21340172201787,,11111,00000,11111,Ma ville,"01,Something,Other"\n'
         mock.post(self.api_url, text=address_api_text)
 
-        tasks.fill_missing_geolocation_data_using_insee_code_or_postcode()
+        tasks.fill_missing_geolocation_data()
 
         self.assertEqual(mock.call_count, 2)
 
@@ -43,7 +42,7 @@ class TestGeolocationBot(TestCase):
         address_api_text += f'{canteen.id},,69003,69383,69003,Lyon,"69, Rhône, Auvergne-Rhône-Alpes"\n'
         mock.post(self.api_url, text=address_api_text)
 
-        tasks.fill_missing_geolocation_data_using_insee_code_or_postcode()
+        tasks.fill_missing_geolocation_data()
 
         canteen.refresh_from_db()
         self.assertEqual(canteen.city, "Lyon")
@@ -56,19 +55,12 @@ class TestGeolocationBot(TestCase):
         """
         Only canteens with either postal code or INSEE code
         that have not been queried more than ten times
-        are considered candidates.
-        Data that we want to recover is: city, department, INSEE
+        are considered candidates
         """
         candidate_canteens = [
-            CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003", city_insee_code="69383"),
+            CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003"),
             CanteenFactory.create(department=None, geolocation_bot_attempts=9, city_insee_code="69383"),
-            CanteenFactory.create(
-                department=Department.ain,
-                city="Une ville",
-                geolocation_bot_attempts=1,
-                postal_code="69003",
-                city_insee_code=None,
-            ),
+            CanteenFactory.create(department=None, geolocation_bot_attempts=1, city_insee_code="69383"),
         ]
         _ = [
             CanteenFactory.create(city=None, geolocation_bot_attempts=10, postal_code="69003"),
@@ -92,7 +84,7 @@ class TestGeolocationBot(TestCase):
                 postal_code=None,
             ),
         ]
-        result = list(tasks._get_candidate_canteens_for_code_geobot())
+        result = list(tasks._get_candidate_canteens())
         self.assertEqual(len(result), 3)
         for canteen in candidate_canteens:
             match = list(filter(lambda x: x.id == canteen.id, result))
@@ -106,7 +98,7 @@ class TestGeolocationBot(TestCase):
         canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003")
         mock.post(self.api_url, text="", status_code=403)
 
-        tasks.fill_missing_geolocation_data_using_insee_code_or_postcode()
+        tasks.fill_missing_geolocation_data()
 
         canteen.refresh_from_db()
         self.assertEqual(canteen.geolocation_bot_attempts, 1)
@@ -125,7 +117,7 @@ class TestGeolocationWithSiretBot(TestCase):
             CanteenFactory.create(city_insee_code=29890),
             CanteenFactory.create(city_insee_code=None, siret=None),
         ]
-        result = list(tasks._get_candidate_canteens_for_siret_geobot())
+        result = list(tasks._get_candidate_canteens_for_geobot())
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].id, candidate_canteen.id)
 
@@ -158,7 +150,7 @@ class TestGeolocationWithSiretBot(TestCase):
             ),
             status_code=200,
         )
-        response = tasks.get_geo_data_from_siret(candidate_canteen.siret, token)
+        response = tasks.get_geo_data(candidate_canteen.siret, token)
         self.assertEquals(response["city_insee_code"], 29352)
 
     def test_geolocation_with_siret_data_filled(self, mock):
