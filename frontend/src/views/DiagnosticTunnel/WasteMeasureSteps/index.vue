@@ -166,61 +166,41 @@
           />
         </v-col>
         <v-col cols="12" sm="6">
-          <fieldset :disabled="!payload.hasDonationAgreement">
-            <v-row>
-              <v-col cols="12" md="6" class="pb-0">
-                <label for="donationFrequency">
-                  Fréquence de dons
-                  <span :class="`fr-hint-text my-2 ${payload.hasDonationAgreement ? '' : 'grey--text'}`">
-                    Optionnel
-                  </span>
-                </label>
-                <DsfrTextField
-                  id="donationFrequency"
-                  :value="payload.donationFrequency"
-                  @input="(x) => (payload.donationFrequency = integerInputValue(x))"
-                  :rules="payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.isInteger] : []"
-                  validate-on-blur
-                  suffix="dons/an"
-                  :readonly="!payload.hasDonationAgreement"
-                  :disabled="!payload.hasDonationAgreement"
-                />
-              </v-col>
-              <v-col cols="12" md="6" class="pb-0">
-                <label for="donationQuantity">
-                  Quantité de denrées données
-                  <span :class="`fr-hint-text my-2 ${payload.hasDonationAgreement ? '' : 'grey--text'}`">
-                    Optionnel
-                  </span>
-                </label>
-                <DsfrTextField
-                  id="donationQuantity"
-                  v-model.number="payload.donationQuantity"
-                  :rules="
-                    payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []
-                  "
-                  validate-on-blur
-                  suffix="kg/an"
-                  :readonly="!payload.hasDonationAgreement"
-                  :disabled="!payload.hasDonationAgreement"
-                />
-              </v-col>
-              <v-col cols="12" class="pb-0">
-                <label for="donationFoodType">
-                  Type de denrées données
-                  <span :class="`fr-hint-text my-2 ${payload.hasDonationAgreement ? '' : 'grey--text'}`">
-                    Optionnel
-                  </span>
-                </label>
-                <DsfrTextField
-                  id="donationFoodType"
-                  v-model="payload.donationFoodType"
-                  :readonly="!payload.hasDonationAgreement"
-                  :disabled="!payload.hasDonationAgreement"
-                />
-              </v-col>
-            </v-row>
-          </fieldset>
+          <v-row>
+            <v-col cols="12" md="6" class="pb-0">
+              <DsfrTextField
+                label="Fréquence de dons"
+                :value="payload.donationFrequency"
+                @input="(x) => (payload.donationFrequency = integerInputValue(x))"
+                :rules="payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.isInteger] : []"
+                validate-on-blur
+                suffix="dons/an"
+                :readonly="!payload.hasDonationAgreement"
+                :disabled="!payload.hasDonationAgreement"
+              />
+            </v-col>
+            <v-col cols="12" md="6" class="pb-0">
+              <DsfrTextField
+                label="Quantité de denrées données"
+                v-model.number="payload.donationQuantity"
+                :rules="
+                  payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []
+                "
+                validate-on-blur
+                suffix="kg/an"
+                :readonly="!payload.hasDonationAgreement"
+                :disabled="!payload.hasDonationAgreement"
+              />
+            </v-col>
+            <v-col cols="12" class="pb-0">
+              <DsfrTextField
+                label="Type de denrées données"
+                v-model="payload.donationFoodType"
+                :readonly="!payload.hasDonationAgreement"
+                :disabled="!payload.hasDonationAgreement"
+              />
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </div>

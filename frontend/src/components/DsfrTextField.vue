@@ -1,9 +1,11 @@
 <template>
   <div>
     <label :for="inputId" :class="labelClasses" v-if="$attrs.label || $slots.label">
-      <span v-if="$attrs.label">
+      <span v-if="$attrs.label" :class="{ 'grey--text': $attrs.disabled }">
         {{ $attrs.label }}
-        <span v-if="optional" class="fr-hint-text">Optionnel</span>
+        <span v-if="optional" :class="{ 'fr-hint-text': true, 'grey--text': $attrs.disabled }">
+          Optionnel
+        </span>
       </span>
       <slot name="label"></slot>
     </label>
