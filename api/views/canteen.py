@@ -31,6 +31,7 @@ from api.serializers import (
     CanteenPreviewSerializer,
     ManagingTeamSerializer,
     SatelliteCanteenSerializer,
+    CanteenActionsListSerializer,
     CanteenActionsSerializer,
     CanteenStatusSerializer,
     ElectedCanteenSerializer,
@@ -1189,7 +1190,7 @@ class UnlinkSatelliteView(APIView):
 class ActionableCanteensListView(ListAPIView):
     permission_classes = [IsAuthenticated]
     model = Canteen
-    serializer_class = CanteenActionsSerializer
+    serializer_class = CanteenActionsListSerializer
     pagination_class = CanteenActionsPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -1250,9 +1251,7 @@ class ActionableCanteensListView(ListAPIView):
         )
 
         # prep complete diag action
-        complete_diagnostics = Diagnostic.objects.filter(
-            pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0, diagnostic_type__isnull=False
-        )
+        complete_diagnostics = Diagnostic.objects.filter(pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0)
         user_canteens = user_canteens.annotate(has_complete_diag=Exists(Subquery(complete_diagnostics)))
         # prep TD action
         tds = Teledeclaration.objects.filter(
