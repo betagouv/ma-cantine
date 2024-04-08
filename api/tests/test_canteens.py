@@ -889,7 +889,7 @@ class TestCanteenApi(APITestCase):
         for index, (canteen, action) in zip(range(len(expected_actions)), expected_actions):
             self.assertEqual(returned_canteens[index]["id"], canteen.id)
             self.assertEqual(returned_canteens[index]["action"], action)
-            self.assertIn("sectors", returned_canteens[index])
+            self.assertIn("productionType", returned_canteens[index])
         self.assertTrue(body["hasPendingActions"])
 
     @override_settings(ENABLE_TELEDECLARATION=True)
