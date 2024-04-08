@@ -31,7 +31,6 @@ from api.serializers import (
     CanteenPreviewSerializer,
     ManagingTeamSerializer,
     SatelliteCanteenSerializer,
-    CanteenActionsListSerializer,
     CanteenActionsSerializer,
     CanteenStatusSerializer,
     ElectedCanteenSerializer,
@@ -1190,7 +1189,7 @@ class UnlinkSatelliteView(APIView):
 class ActionableCanteensListView(ListAPIView):
     permission_classes = [IsAuthenticated]
     model = Canteen
-    serializer_class = CanteenActionsListSerializer
+    serializer_class = CanteenActionsSerializer
     pagination_class = CanteenActionsPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
