@@ -30,7 +30,7 @@ distlib==0.3.8
 Django==5.0.3
 django-anymail==10.2
 django-ckeditor==6.7.1
-django-csp==3.7
+django-csp==3.8
 django-debug-toolbar==4.3.0
 django-filter==23.5
 django-js-asset==2.2.0
