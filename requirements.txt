@@ -91,7 +91,7 @@ pre-commit==3.6.2
 prompt-toolkit==3.0.43
 psycopg2==2.9.9
 py==1.11.0
-pycparser==2.21
+pycparser==2.22
 pyHanko==0.21.0
 pyhanko-certvalidator==0.26.3
 pylint==3.1.0
