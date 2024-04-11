@@ -103,7 +103,7 @@ pypng==0.20220715.0
 pytest==8.0.0
 pytest-django==4.8.0
 python-bidi==0.4.2
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 PyYAML==6.0.1
 qrcode==7.4.2
