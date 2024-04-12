@@ -2,7 +2,6 @@ from unittest import mock
 
 # import sib_api_v3_sdk
 from django.test import TestCase
-from django.test.utils import tag
 from macantine import tasks
 from freezegun import freeze_time
 from data.factories import UserFactory, CanteenFactory, DiagnosticFactory, TeledeclarationFactory
@@ -10,7 +9,6 @@ from data.models import Teledeclaration, Canteen, Diagnostic
 
 
 class TestBrevoUserData(TestCase):
-    @tag("DEBUG")
     @freeze_time("2021-01-20")
     @mock.patch("macantine.tasks.contacts_api_instance.create_contact")
     @mock.patch("macantine.tasks.contacts_api_instance.update_batch_contacts")
@@ -25,7 +23,7 @@ class TestBrevoUserData(TestCase):
         batch_update_mock.assert_called_once()
         create_contact_mock.assert_not_called()
 
-        payload = batch_update_mock.call_args[0][0].contacts[0]
+        payload = next(filter(lambda x: x.email == new_user.email, batch_update_mock.call_args[0][0].contacts))
         self.assertEqual(payload.email, new_user.email)
 
         attributes = payload.attributes
@@ -72,7 +70,7 @@ class TestBrevoUserData(TestCase):
         batch_update_mock.assert_called_once()
         create_contact_mock.assert_not_called()
 
-        payload = batch_update_mock.call_args[0][0].contacts[0]
+        payload = next(filter(lambda x: x.email == user.email, batch_update_mock.call_args[0][0].contacts))
         attributes = payload.attributes
         self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
@@ -94,7 +92,7 @@ class TestBrevoUserData(TestCase):
         batch_update_mock.assert_called_once()
         create_contact_mock.assert_not_called()
 
-        payload = batch_update_mock.call_args[0][0].contacts[0]
+        payload = next(filter(lambda x: x.email == user.email, batch_update_mock.call_args[0][0].contacts))
         attributes = payload.attributes
         self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
@@ -119,7 +117,7 @@ class TestBrevoUserData(TestCase):
         batch_update_mock.assert_called_once()
         create_contact_mock.assert_not_called()
 
-        payload = batch_update_mock.call_args[0][0].contacts[0]
+        payload = next(filter(lambda x: x.email == user.email, batch_update_mock.call_args[0][0].contacts))
         attributes = payload.attributes
         self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
@@ -159,7 +157,7 @@ class TestBrevoUserData(TestCase):
         batch_update_mock.assert_called_once()
         create_contact_mock.assert_not_called()
 
-        payload = batch_update_mock.call_args[0][0].contacts[0]
+        payload = next(filter(lambda x: x.email == user.email, batch_update_mock.call_args[0][0].contacts))
         attributes = payload.attributes
         self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
@@ -195,7 +193,7 @@ class TestBrevoUserData(TestCase):
         batch_update_mock.assert_called_once()
         create_contact_mock.assert_not_called()
 
-        payload = batch_update_mock.call_args[0][0].contacts[0]
+        payload = next(filter(lambda x: x.email == user.email, batch_update_mock.call_args[0][0].contacts))
         attributes = payload.attributes
         self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
@@ -246,7 +244,7 @@ class TestBrevoUserData(TestCase):
         batch_update_mock.assert_called_once()
         create_contact_mock.assert_not_called()
 
-        payload = batch_update_mock.call_args[0][0].contacts[0]
+        payload = next(filter(lambda x: x.email == user.email, batch_update_mock.call_args[0][0].contacts))
         attributes = payload.attributes
         self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
