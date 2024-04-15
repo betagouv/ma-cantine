@@ -155,7 +155,7 @@ export default {
       return this.canteenForTD ? this.$store.getters.getCanteenUrlComponent(this.canteenForTD) : null
     },
     centralKitchenDiagostic() {
-      return this.canteenForTD.centralKitchenDiagnostics?.find((x) => x.year === this.diagnostic.year)
+      return this.canteenForTD.centralKitchenDiagnostics?.find((x) => x.year === this.diagnosticForTD.year)
     },
     showApproItems() {
       if (this.canteenForTD.productionType === "site_cooked_elsewhere" && this.centralKitchenDiagostic) {
