@@ -34,7 +34,7 @@
     "eslint-plugin-vue": "^9.24.0",
     "prettier": "^1.19.1",
     "sass": "^1.74.1",
-    "sass-loader": "^10.0.0",
+    "sass-loader": "^14.2.0",
     "vue-cli-plugin-vuetify": "~2.5.8",
     "vue-template-compiler": "^2.7.16",
     "vuetify-loader": "^1.9.2",
