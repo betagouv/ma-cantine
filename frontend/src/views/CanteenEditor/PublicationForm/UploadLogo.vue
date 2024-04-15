@@ -74,6 +74,7 @@ export default {
 .logo-container {
   aspect-ratio: 1 / 1;
   min-width: 124px;
+  width: 124px;
   background-color: #f5f5fe;
   border: solid 2px #dddddd;
 }
