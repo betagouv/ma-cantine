@@ -19,7 +19,7 @@
           :large="$vuetify.breakpoint.smAndUp"
           color="primary"
           outlined
-          class="mr-2"
+          class="mr-2 mb-4 mb-sm-0"
           :to="{ name: 'CanteenGeneratePoster' }"
         >
           Télécharger en .pdf
@@ -33,10 +33,11 @@
             params: { canteenUrlComponent },
           }"
           target="_blank"
-          title="nos cantines - ouvre une nouvelle fenêtre"
+          rel="noopener external"
+          title="Voir la version en ligne - ouvre une nouvelle fenêtre"
         >
           Voir la version en ligne
-          <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
+          <v-icon small class="ml-1" color="white">mdi-open-in-new</v-icon>
         </v-btn>
       </div>
     </div>
