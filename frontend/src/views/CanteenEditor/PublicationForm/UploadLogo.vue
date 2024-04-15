@@ -1,21 +1,23 @@
 <template>
-  <button class="d-block rounded-circle logo-container mr-6" style="position: relative" @click="onLogoUploadClick">
-    <div>
-      <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onLogoChanged" id="logo" />
-    </div>
-    <div class="fill-height d-flex align-center justify-center rounded-circle" style="overflow: hidden;">
-      <v-img v-if="logo" contain :src="logo"></v-img>
-      <div v-else>
-        <v-icon color="primary">$add-line</v-icon>
-        <p class="mb-0 fr-text-sm font-weight-bold primary--text">Ajouter un logo</p>
+  <div style="position: relative">
+    <button class="d-block rounded-circle logo-container mr-6" @click="onLogoUploadClick">
+      <div>
+        <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onLogoChanged" id="logo" />
       </div>
-    </div>
-    <div v-if="logo" style="position: absolute; top: -8px; right: -8px;">
+      <div class="fill-height d-flex align-center justify-center rounded-circle" style="overflow: hidden;">
+        <v-img v-if="logo" contain :src="logo"></v-img>
+        <div v-else>
+          <v-icon color="primary">$add-line</v-icon>
+          <p class="mb-0 fr-text-sm font-weight-bold primary--text">Ajouter un logo</p>
+        </div>
+      </div>
+    </button>
+    <div v-if="logo" style="position: absolute; top: -6px; right: 14px;">
       <v-btn fab small @click.stop.prevent="changeLogo(null)" style="border: solid 2px #DDDDDD;">
         <v-icon aria-label="Supprimer logo" aria-hidden="false" color="red">$delete-line</v-icon>
       </v-btn>
     </div>
-  </button>
+  </div>
 </template>
 
 <script>
