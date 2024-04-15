@@ -16,7 +16,7 @@
           <DsfrTextField v-model="name" label="Prénom et nom" />
         </v-col>
       </v-row>
-      <DsfrTextarea v-model="message" label="Message (facultatif)" />
+      <DsfrTextarea v-model="message" label="Message" />
       <v-file-input
         v-model="unusualFile"
         label="Fichier"

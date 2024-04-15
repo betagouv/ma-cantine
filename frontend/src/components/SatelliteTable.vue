@@ -20,7 +20,7 @@
               </p>
               <DsfrTextarea
                 v-model="messageJoinCanteen"
-                label="Message (optionnel)"
+                label="Message"
                 hide-details="auto"
                 rows="2"
                 class="mt-2 body-2"
