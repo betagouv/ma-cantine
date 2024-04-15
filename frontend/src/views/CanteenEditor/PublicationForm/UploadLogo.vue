@@ -1,6 +1,10 @@
 <template>
   <div style="position: relative">
-    <button class="d-block rounded-circle logo-container mr-6" @click="onLogoUploadClick">
+    <button
+      class="d-block rounded-circle logo-container mr-6"
+      @click="onLogoUploadClick"
+      :title="logo ? 'Modifier le logo' : undefined"
+    >
       <div>
         <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onLogoChanged" id="logo" />
       </div>
