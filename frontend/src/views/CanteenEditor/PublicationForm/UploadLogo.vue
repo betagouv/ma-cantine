@@ -51,6 +51,12 @@ export default {
           id: this.canteen.id,
           payload: { logo: this.canteen.logo },
         })
+        .then(() => {
+          this.$store.dispatch("notify", {
+            title: "Le logo a été mis à jour",
+            status: "success",
+          })
+        })
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
