@@ -73,7 +73,7 @@ export default {
 <style scoped>
 .logo-container {
   aspect-ratio: 1 / 1;
-  width: 124px;
+  min-width: 124px;
   background-color: #f5f5fe;
   border: solid 2px #dddddd;
 }
