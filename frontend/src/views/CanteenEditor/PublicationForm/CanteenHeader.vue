@@ -1,23 +1,7 @@
 <template>
   <div class="d-block d-sm-flex align-center">
-    <div class="d-flex align-center">
-      <button class="d-block rounded-circle logo-container mr-6" style="position: relative" @click="onLogoUploadClick">
-        <div>
-          <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onLogoChanged" id="logo" />
-        </div>
-        <div class="fill-height d-flex align-center justify-center rounded-circle" style="overflow: hidden;">
-          <v-img v-if="logo" contain :src="logo"></v-img>
-          <div v-else>
-            <v-icon color="primary">$add-line</v-icon>
-            <p class="mb-0 fr-text-sm font-weight-bold primary--text">Ajouter un logo</p>
-          </div>
-        </div>
-        <div v-if="logo" style="position: absolute; top: -8px; right: -8px;">
-          <v-btn fab small @click.stop.prevent="changeLogo(null)" style="border: solid 2px #DDDDDD;">
-            <v-icon aria-label="Supprimer logo" aria-hidden="false" color="red">$delete-line</v-icon>
-          </v-btn>
-        </div>
-      </button>
+    <div class="d-sm-flex align-center">
+      <UploadLogo v-if="$vuetify.breakpoint.smAndUp" :canteen="canteen" />
       <div>
         <h2 class="mb-2">{{ canteen.name }}</h2>
         <div>
@@ -33,12 +17,13 @@
         Modifier mon établissement
       </router-link>
     </div>
+    <UploadLogo v-if="$vuetify.breakpoint.xs" :canteen="canteen" class="my-4" />
   </div>
 </template>
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
-import { toBase64 } from "@/utils"
+import UploadLogo from "./UploadLogo.vue"
 
 export default {
   name: "CanteenHeader",
@@ -48,54 +33,6 @@ export default {
     },
   },
 
-  components: { CanteenIndicators },
-
-  methods: {
-    onLogoChanged(e) {
-      this.changeLogo(e.target.files[0])
-    },
-    changeLogo(file) {
-      if (!file) {
-        this.canteen.logo = null
-        return
-      }
-      toBase64(file, (base64) => {
-        this.$set(this.canteen, "logo", base64)
-      })
-    },
-    onLogoUploadClick() {
-      this.$refs.uploader.click()
-    },
-    saveLogo() {
-      this.$store
-        .dispatch("updateCanteen", {
-          id: this.canteen.id,
-          payload: { logo: this.canteen.logo },
-        })
-        .catch((e) => {
-          this.$store.dispatch("notifyServerError", e)
-        })
-    },
-  },
-  computed: {
-    logo() {
-      return this.canteen.logo
-    },
-  },
-  watch: {
-    logo() {
-      this.saveLogo()
-      this.$emit("logoChanged", this.logo)
-    },
-  },
+  components: { CanteenIndicators, UploadLogo },
 }
 </script>
-
-<style scoped>
-.logo-container {
-  aspect-ratio: 1 / 1;
-  width: 124px;
-  background-color: #f5f5fe;
-  border: solid 2px #dddddd;
-}
-</style>
