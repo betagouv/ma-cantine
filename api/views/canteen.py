@@ -1222,9 +1222,9 @@ class ActionableCanteensListView(ListAPIView):
         )
         # prep add diag actions
         diagnostics = Diagnostic.objects.filter(
-            Q(canteen=OuterRef("pk")) | Q(canteen=OuterRef("central_kitchen_id")), year=year
+            Q(canteen=OuterRef("central_kitchen_id")) | Q(canteen=OuterRef("pk")), year=year
         )
-        user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")))
+        user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")[:1]))
         purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk"), date__year=year)
         user_canteens = user_canteens.annotate(has_purchases_for_year=Exists(purchases_for_year))
         is_central_cuisine_query = Q(production_type=Canteen.ProductionType.CENTRAL) | Q(

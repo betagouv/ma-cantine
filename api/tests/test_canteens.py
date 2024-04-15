@@ -1013,6 +1013,12 @@ class TestCanteenApi(APITestCase):
         )
         Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
+        DiagnosticFactory.create(
+            year=2021,
+            canteen=satellite,
+            value_total_ht=1200,
+        )
+
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
         returned_canteens = response.json()["results"]
         satellite_action = next(x for x in returned_canteens if x["id"] == satellite.id)["action"]
