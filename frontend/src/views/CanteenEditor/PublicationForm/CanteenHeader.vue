@@ -1,6 +1,6 @@
 <template>
-  <div class="d-block d-sm-flex align-center">
-    <div class="d-sm-flex align-center">
+  <div :class="{ 'd-sm-flex align-center': !hasLongCanteenName }">
+    <div class="d-sm-flex align-center mb-3 mr-2">
       <UploadLogo v-if="$vuetify.breakpoint.smAndUp" :canteen="canteen" />
       <div>
         <h2 class="mb-2">{{ canteen.name }}</h2>
@@ -10,7 +10,7 @@
       </div>
     </div>
     <v-spacer></v-spacer>
-    <div class="fr-text-sm my-3 my-sm-0">
+    <div :class="{ 'fr-text-sm': true, 'text-right': hasLongCanteenName }">
       <p class="mb-0">Vous remarquez une erreur ?</p>
       <router-link :to="{ name: 'CanteenForm' }">
         <v-icon class="mr-1" small>mdi-pencil</v-icon>
@@ -32,7 +32,11 @@ export default {
       type: Object,
     },
   },
-
   components: { CanteenIndicators, UploadLogo },
+  computed: {
+    hasLongCanteenName() {
+      return this.canteen.name.length > 70
+    },
+  },
 }
 </script>
