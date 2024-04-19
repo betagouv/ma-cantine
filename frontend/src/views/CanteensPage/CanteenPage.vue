@@ -2,6 +2,7 @@
   <div class="text-left">
     <div v-if="canteen" id="canteen-dashboard">
       <BreadcrumbsNav :links="[{ to: { name: 'CanteensHome' } }]" :title="canteen.name" />
+      <!-- TODO: add images here after finished with CanteenPublication form view -->
       <v-card elevation="0" class="pa-0 mb-8 text-left">
         <v-row class="align-center">
           <v-col

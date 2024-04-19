@@ -1,5 +1,11 @@
 <template>
   <v-row>
+    <!-- TODO: limit to three photos -->
+    <!-- TODO: decide what to do with canteens that already have more than 3 images, if they exist (check they do first) -->
+    <!-- TODO: show three add image squares -->
+    <!-- TODO: mobile view -->
+    <!-- TODO: when there is an image uploaded, update the delete button and add modify option to be like logo field -->
+    <!-- TODO: how to label upload field(s) to be accessible? -->
     <v-col v-for="image in imageArray" :key="image.image" class="d-flex child-flex" cols="12" sm="6" md="4">
       <v-card flat class="fill-height" style="overflow: hidden;">
         <v-img :src="image.image" contain aspect-ratio="1.4" style="overflow: hidden;" class="grey lighten-2"></v-img>
@@ -60,6 +66,7 @@ export default {
   },
   methods: {
     emitChange() {
+      // TODO: check if old parent (CanteenForm) used this action
       this.$emit("change", this.imageArray)
     },
     deleteImage(image) {

@@ -231,6 +231,7 @@
       </p>
     </div>
 
+    <!-- TODO: remove image galery -->
     <div v-if="canteen && canteen.images && canteen.images.length > 0">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-0">
         Galerie
