@@ -4,8 +4,8 @@
       <div class="d-flex flex-column mb-2">
         <h1 class="fr-text font-weight-bold">Mon affiche</h1>
         <div v-if="receivesGuests">
-          <DsfrBadge :mode="badgeMode">
-            <p class="mb-0">{{ badgeText }}</p>
+          <DsfrBadge :mode="badge.mode" :icon="badge.icon">
+            <p class="mb-0 text-uppercase">{{ badge.text }}</p>
           </DsfrBadge>
         </div>
       </div>
@@ -252,11 +252,19 @@ export default {
     isPublished() {
       return this.canteen.publicationStatus === "published"
     },
-    badgeMode() {
-      return this.isPublished ? "SUCCESS" : "WARNING"
-    },
-    badgeText() {
-      return this.isPublished ? "EN LIGNE" : "NON PUBLIÉ"
+    badge() {
+      return {
+        true: {
+          mode: "SUCCESS",
+          text: "En ligne",
+          icon: "mdi-circle",
+        },
+        false: {
+          mode: "INFO",
+          text: "Non publiée",
+          icon: "mdi-circle-outline",
+        },
+      }[this.isPublished]
     },
   },
 }
