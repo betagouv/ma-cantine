@@ -32,6 +32,7 @@
           class="mt-2"
           rows="3"
           labelClasses="body-2 mt-4 mb-2"
+          @focus="prepareAltEdit(image)"
           @blur="saveAlt(image)"
         />
       </v-card>
@@ -121,9 +122,11 @@ export default {
         this.saveImages("add")
       })
     },
-    saveAlt() {
-      // TODO: only save (or only show save message) if alt text has changed
-      this.saveImages("alt")
+    prepareAltEdit(image) {
+      image._oldAlt = "" + image.altText
+    },
+    saveAlt(image) {
+      if (image._oldAlt !== image.altText) this.saveImages("alt")
     },
     saveImages(action) {
       this.$store
