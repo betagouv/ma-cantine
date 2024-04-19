@@ -136,6 +136,10 @@ import Constants from "@/constants"
 import validators from "@/validators"
 
 import QualityMeasureResults from "./ResultsComponents/QualityMeasureResults"
+import DiversificationMeasureResults from "./ResultsComponents/DiversificationMeasureResults"
+import InformationMeasureResults from "./ResultsComponents/InformationMeasureResults"
+import NoPlasticMeasureResults from "./ResultsComponents/NoPlasticMeasureResults"
+import WasteMeasureResults from "./ResultsComponents/WasteMeasureResults"
 
 export default {
   props: {
@@ -158,6 +162,10 @@ export default {
     DsfrTextarea,
     DsfrAccordion,
     QualityMeasureResults,
+    DiversificationMeasureResults,
+    InformationMeasureResults,
+    NoPlasticMeasureResults,
+    WasteMeasureResults,
   },
   computed: {
     validators() {
