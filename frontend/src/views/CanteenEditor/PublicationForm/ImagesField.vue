@@ -15,7 +15,8 @@
           contain
           aspect-ratio="1.4"
           height="216"
-          style="overflow: hidden; background-color: #f5f5fe;"
+          style="overflow: hidden;"
+          class="image-card"
         ></v-img>
         <div style="position: absolute; top: 10px; left: 10px;">
           <v-btn fab small @click="deleteImage(image)">
@@ -35,7 +36,7 @@
     </v-col>
 
     <v-col v-if="imageArray.length < 3" cols="12" sm="6" md="4">
-      <v-card class="fill-height drag-and-drop" height="216" style="background-color: #f5f5fe;">
+      <v-card class="fill-height drag-and-drop image-card" height="216">
         <label
           class="d-flex flex-column align-center justify-center"
           :for="uniqueId + '_image-input'"
@@ -139,3 +140,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.image-card {
+  background-color: #f5f5fe;
+  border: solid 1px #dddddd;
+}
+</style>
