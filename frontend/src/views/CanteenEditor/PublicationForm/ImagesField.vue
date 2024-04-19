@@ -4,8 +4,8 @@
     <!-- there are 80 canteens with >3 images -->
     <!-- TODO: show three add image squares -->
     <!-- TODO: mobile view -->
-    <!-- TODO: when there is an image uploaded, update the delete button and add modify option to be like logo field -->
-    <!-- TODO: how to label upload field(s) to be accessible? -->
+    <!-- TODO: when there is an image uploaded, add modify option to be like logo field -->
+    <!-- TODO: how to label upload field(s) to be accessible? How to label delete and modify buttons when have multiple images?-->
     <!-- TODO: focus management for keyboard nav -->
     <v-col v-for="image in imageArray" :key="image.image" class="d-flex child-flex" cols="12" sm="6" md="4">
       <!-- TODO: update design of card -->
@@ -18,9 +18,15 @@
           style="overflow: hidden;"
           class="image-card"
         ></v-img>
-        <div style="position: absolute; top: 10px; left: 10px;">
-          <v-btn fab small @click="deleteImage(image)">
-            <v-icon aria-label="Supprimer" aria-hidden="false" color="red">$delete-line</v-icon>
+        <div style="position: absolute; top: 4px; right: 4px;">
+          <v-btn
+            fab
+            small
+            @click.stop.prevent="deleteImage(image)"
+            style="border: solid 2px #DDDDDD;"
+            title="Supprimer"
+          >
+            <v-icon color="red">$delete-line</v-icon>
           </v-btn>
         </div>
         <DsfrTextarea
