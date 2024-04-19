@@ -13,7 +13,10 @@
       </div>
       <v-btn
         v-if="editable"
-        @click="editDescription = true"
+        @click="
+          editDescription = true
+          oldPublicationComments = canteen.publicationComments
+        "
         outlined
         small
         color="primary"
@@ -311,6 +314,7 @@ export default {
       labels,
       editDescription: false,
       publicationFormIsValid: true,
+      oldPublicationComments: undefined,
     }
   },
   components: { MultiYearSummaryStatistics, ImageGallery, DsfrHighlight, DsfrTextarea, FamiliesGraph },
@@ -433,6 +437,10 @@ export default {
       return Math.round(value * 100)
     },
     saveDescription() {
+      if (this.canteen.publicationComments === this.oldPublicationComments) {
+        this.editDescription = false
+        return
+      }
       this.$refs.publicationCommentsForm.validate()
       if (!this.publicationFormIsValid) {
         this.$store.dispatch("notifyRequiredFieldsError")
