@@ -4,8 +4,8 @@
       <div class="d-flex flex-column mb-2">
         <h1 class="fr-text font-weight-bold">Mon affiche</h1>
         <div v-if="receivesGuests">
-          <DsfrBadge :mode="badgeMode">
-            <p class="mb-0">{{ badgeText }}</p>
+          <DsfrBadge :mode="badge.mode" :icon="badge.icon">
+            <p class="mb-0 text-uppercase">{{ badge.text }}</p>
           </DsfrBadge>
         </div>
       </div>
@@ -81,16 +81,16 @@
       <router-link :to="{ name: 'PublishSatellites' }">Gérer la publication de mes satellites</router-link>
     </p>
     <div v-if="receivesGuests">
-      <h2 class="mt-8 mb-2" v-if="isPublished">Modifier la publication</h2>
       <v-form ref="form" @submit.prevent>
-        <DsfrTextarea
-          id="general"
-          label="Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement..."
-          class="my-2"
-          rows="5"
-          counter="500"
-          v-model="canteen.publicationComments"
-        />
+        <DsfrTextarea class="my-2" rows="5" counter="500" v-model="canteen.publicationComments">
+          <template v-slot:label>
+            <span class="fr-label mb-1">Déscription de l'établissement</span>
+            <span class="fr-hint-text mb-2">
+              Si vous le souhaitez, personnalisez votre affiche en écrivant quelques mots sur votre établissement : son
+              fonctionnement, l'organisation, l'historique...
+            </span>
+          </template>
+        </DsfrTextarea>
         <PublicationField class="mb-4" :canteen="canteen" v-model="acceptPublication" />
       </v-form>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
@@ -218,7 +218,7 @@ export default {
   },
   created() {
     window.addEventListener("beforeunload", this.handleUnload)
-    document.title = `Publier - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
+    document.title = `Éditer mon affiche - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.handleUnload)
@@ -252,11 +252,19 @@ export default {
     isPublished() {
       return this.canteen.publicationStatus === "published"
     },
-    badgeMode() {
-      return this.isPublished ? "SUCCESS" : "WARNING"
-    },
-    badgeText() {
-      return this.isPublished ? "EN LIGNE" : "NON PUBLIÉ"
+    badge() {
+      return {
+        true: {
+          mode: "SUCCESS",
+          text: "En ligne",
+          icon: "mdi-circle",
+        },
+        false: {
+          mode: "INFO",
+          text: "Non publiée",
+          icon: "mdi-circle-outline",
+        },
+      }[this.isPublished]
     },
   },
 }
