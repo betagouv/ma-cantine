@@ -2,6 +2,7 @@
   <v-row>
     <!-- TODO: limit to three photos -->
     <!-- TODO: decide what to do with canteens that already have more than 3 images, if they exist (check they do first) -->
+    <!-- there are 80 canteens with >3 images -->
     <!-- TODO: show three add image squares -->
     <!-- TODO: mobile view -->
     <!-- TODO: when there is an image uploaded, update the delete button and add modify option to be like logo field -->
