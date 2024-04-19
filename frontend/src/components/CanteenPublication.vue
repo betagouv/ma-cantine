@@ -26,13 +26,20 @@
     <v-col v-else-if="canteen && editable" cols="12" sm="6">
       <v-form v-model="publicationFormIsValid" ref="publicationCommentsForm">
         <DsfrTextarea
-          label="Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement..."
           class="mt-2"
           rows="5"
           counter="500"
           v-model="canteen.publicationComments"
           :rules="[validators.maxChars(500)]"
-        />
+        >
+          <template v-slot:label>
+            <span class="fr-label mb-1">Déscription de l'établissement</span>
+            <span class="fr-hint-text mb-2">
+              Si vous le souhaitez, personnalisez votre affiche en écrivant quelques mots sur votre établissement : son
+              fonctionnement, l'organisation, l'historique...
+            </span>
+          </template>
+        </DsfrTextarea>
         <v-btn @click="saveDescription" class="primary">Enregistrer</v-btn>
       </v-form>
     </v-col>

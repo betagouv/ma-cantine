@@ -378,7 +378,7 @@ const routes = [
         component: PublicationForm,
         meta: {
           authenticationRequired: true,
-          title: "Ma publication",
+          title: "Éditer mon affiche",
         },
       },
       {

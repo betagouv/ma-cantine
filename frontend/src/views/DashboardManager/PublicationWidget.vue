@@ -2,23 +2,18 @@
   <v-card outlined class="fill-height d-flex flex-column dsfr pa-sm-6">
     <v-card-title>
       <h3 class="fr-h4 mb-0">
-        Ma vitrine en ligne
+        Mon affiche
       </h3>
     </v-card-title>
     <v-spacer></v-spacer>
     <v-card-text class="fr-text grey--text text--darken-2">
       <p class="publication-detail">
         Statut
-        <v-chip
-          :color="isPublished ? 'green lighten-4' : 'grey lighten-2'"
-          :class="isPublished ? 'green--text text--darken-4' : 'grey--text text--darken-2'"
-          class="font-weight-bold px-2 fr-text-xs text-uppercase"
-          style="border-radius: 4px !important;"
-          small
-          label
-        >
-          {{ isPublished ? "Publiée" : "Non publiée" }}
-        </v-chip>
+        <DsfrBadge :mode="isPublished ? 'SUCCESS' : 'INFO'" :icon="isPublished ? 'mdi-circle' : 'mdi-circle-outline'">
+          <p class="mb-0 text-uppercase">
+            {{ isPublished ? "En ligne" : "Non publiée" }}
+          </p>
+        </DsfrBadge>
       </p>
       <p class="publication-detail">
         Dernière mise à jour
@@ -27,7 +22,7 @@
       <p class="publication-detail">
         Visiteurs (année en cours)
         <span class="font-weight-bold fr-text-xs">
-          {{ isPublished && viewCount !== null ? viewCount : "-" }}
+          {{ isPublished && viewCount > 0 ? viewCount : "-" }}
         </span>
       </p>
     </v-card-text>
@@ -43,7 +38,7 @@
           class="px-3"
           :outlined="isPublished || !hasPublicationData"
         >
-          {{ isPublished ? "Éditer ma vitrine" : "Publier ma cantine" }}
+          {{ isPublished ? "Éditer mon affiche" : "Publier ma cantine" }}
         </v-btn>
       </p>
       <p class="mx-2 mb-2">
@@ -56,6 +51,7 @@
 </template>
 
 <script>
+import DsfrBadge from "@/components/DsfrBadge"
 import { formatDate, lastYear } from "@/utils"
 
 export default {
@@ -66,6 +62,7 @@ export default {
       required: true,
     },
   },
+  components: { DsfrBadge },
   data() {
     return {
       viewCount: null,
