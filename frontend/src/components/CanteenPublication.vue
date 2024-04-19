@@ -24,14 +24,17 @@
       </v-btn>
     </v-col>
     <v-col v-else-if="canteen && editable" cols="12" sm="6">
-      <DsfrTextarea
-        label="Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement..."
-        class="mt-2"
-        rows="5"
-        counter="500"
-        v-model="canteen.publicationComments"
-      />
-      <v-btn @click="saveDescription" class="primary">Enregistrer</v-btn>
+      <v-form v-model="publicationFormIsValid" ref="publicationCommentsForm">
+        <DsfrTextarea
+          label="Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement..."
+          class="mt-2"
+          rows="5"
+          counter="500"
+          v-model="canteen.publicationComments"
+          :rules="[validators.maxChars(500)]"
+        />
+        <v-btn @click="saveDescription" class="primary">Enregistrer</v-btn>
+      </v-form>
     </v-col>
     <div v-if="showPercentagesBlock">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
@@ -286,6 +289,7 @@ import ImageGallery from "@/components/ImageGallery"
 import DsfrHighlight from "@/components/DsfrHighlight"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import Constants from "@/constants"
+import validators from "@/validators"
 
 export default {
   props: {
@@ -299,10 +303,14 @@ export default {
     return {
       labels,
       editDescription: false,
+      publicationFormIsValid: true,
     }
   },
   components: { MultiYearSummaryStatistics, ImageGallery, DsfrHighlight, DsfrTextarea, FamiliesGraph },
   computed: {
+    validators() {
+      return validators
+    },
     diagnosticSet() {
       if (!this.canteen) return
       if (!this.usesCentralKitchenDiagnostics) return this.canteen.diagnostics
@@ -418,7 +426,11 @@ export default {
       return Math.round(value * 100)
     },
     saveDescription() {
-      // TODO: validate field
+      this.$refs.publicationCommentsForm.validate()
+      if (!this.publicationFormIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
       this.$store
         .dispatch("updateCanteen", {
           id: this.canteen.id,
