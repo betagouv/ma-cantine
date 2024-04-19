@@ -43,7 +43,7 @@
     </div>
     <div>
       <label class="body-2" for="images">Images</label>
-      <ImagesField class="mt-0 mb-4" :imageArray.sync="canteen.images" id="images" />
+      <ImagesField class="mt-0 mb-4" :canteen="canteen" id="images" />
     </div>
 
     <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
@@ -240,7 +240,10 @@ export default {
   computed: {
     hasChanged() {
       const diff = getObjectDiff(this.originalCanteen, this.canteen)
-      return Object.keys(diff).length > 0
+      let changes = Object.keys(diff)
+      const ignoreKeys = ["images", "logo"]
+      changes = changes.filter((changedKey) => !ignoreKeys.includes(changedKey))
+      return changes.length > 0
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)

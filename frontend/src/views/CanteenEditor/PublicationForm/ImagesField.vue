@@ -1,7 +1,5 @@
 <template>
   <v-row>
-    <!-- TODO: save on every change -->
-    <!-- TODO: limit to three photos -->
     <!-- TODO: decide what to do with canteens that already have more than 3 images, if they exist (check they do first) -->
     <!-- there are 80 canteens with >3 images -->
     <!-- TODO: show three add image squares -->
@@ -9,10 +7,11 @@
     <!-- TODO: when there is an image uploaded, update the delete button and add modify option to be like logo field -->
     <!-- TODO: how to label upload field(s) to be accessible? -->
     <v-col v-for="image in imageArray" :key="image.image" class="d-flex child-flex" cols="12" sm="6" md="4">
+      <!-- TODO: update design of card -->
       <v-card flat class="fill-height" style="overflow: hidden;">
         <v-img :src="image.image" contain aspect-ratio="1.4" style="overflow: hidden;" class="grey lighten-2"></v-img>
         <div style="position: absolute; top: 10px; left: 10px;">
-          <v-btn fab small @click="deleteImage(image.image)">
+          <v-btn fab small @click="deleteImage(image)">
             <v-icon aria-label="Supprimer" aria-hidden="false" color="red">$delete-line</v-icon>
           </v-btn>
         </div>
@@ -23,11 +22,12 @@
           class="mt-2"
           rows="3"
           labelClasses="body-2 mt-4 mb-2"
+          @blur="saveAlt(image)"
         />
       </v-card>
     </v-col>
 
-    <v-col cols="12" sm="6" md="4">
+    <v-col v-if="imageArray.length < 3" cols="12" sm="6" md="4">
       <v-card class="fill-height drag-and-drop" color="grey lighten-5" min-height="170">
         <label
           class="d-flex flex-column align-center justify-center"
@@ -39,10 +39,10 @@
         </label>
         <input
           :id="uniqueId + '_image-input'"
-          multiple="multiple"
           accept="image/*"
           type="file"
           style="position: absolute; opacity: 0; width: 0.1px; height: 0.1px; overflow: hidden; z-index: -1;"
+          @change="addImage"
         />
       </v-card>
     </v-col>
@@ -55,10 +55,15 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 export default {
   name: "ImagesField",
   props: {
-    imageArray: {
-      type: Array,
+    canteen: {
+      type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      imageArray: this.canteen.images,
+    }
   },
   components: { DsfrTextarea },
   computed: {
@@ -67,17 +72,6 @@ export default {
     },
   },
   methods: {
-    emitChange() {
-      // TODO: check if old parent (CanteenForm) used this action
-      this.$emit("change", this.imageArray)
-    },
-    deleteImage(image) {
-      this.$emit(
-        "update:imageArray",
-        this.imageArray.filter((x) => x.image !== image)
-      )
-      this.emitChange()
-    },
     toBase64(file, success, error) {
       const reader = new FileReader()
       reader.readAsDataURL(file)
@@ -86,34 +80,55 @@ export default {
       }
       if (error) reader.onerror = error
     },
-    addImages(e) {
-      if (!e) return
-      const files = e.target.files
-      this.emitChange()
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i]
-        this.toBase64(file, (base64) => {
-          if (this.imageArray.some((x) => x.image === base64)) return
-
-          this.$emit(
-            "update:imageArray",
-            this.imageArray.concat({
-              image: base64,
-            })
-          )
-        })
-      }
+    deleteImage(image) {
+      this.imageArray = this.imageArray.filter((x) => x.image !== image.image)
+      this.saveImages("delete")
     },
-  },
-  mounted() {
-    if (this.$el) {
-      const domElement = this.$el.querySelector("#" + this.uniqueId + "_image-input")
-      domElement.addEventListener("change", this.addImages)
-    }
-  },
-  beforeDestroy() {
-    this.$el.querySelector("#" + this.uniqueId + "_image-input").removeEventListener("change", this.addImages)
+    addImage(e) {
+      if (!e) return
+      const file = e.target.files[0]
+
+      this.toBase64(file, (base64) => {
+        if (this.imageArray.some((x) => x.image === base64)) {
+          // this only stops the same image being added twice in the same session
+          // if you save and come back it is still possible to add the same image because x.image
+          // becomes the link to that image, and not the base64 rendering of it
+          this.$store.dispatch("notify", { message: "L'image est déjà ajoutée" })
+          return
+        }
+
+        this.imageArray = this.imageArray.concat({
+          image: base64,
+        })
+        this.saveImages("add")
+      })
+    },
+    saveAlt() {
+      // TODO: only save (or only show save message) if alt text has changed
+      this.saveImages("alt")
+    },
+    saveImages(action) {
+      this.$store
+        .dispatch("updateCanteen", {
+          id: this.canteen.id,
+          payload: { images: this.imageArray },
+        })
+        .then(() => {
+          const message = {
+            add: "L'image a été ajoutée",
+            delete: "L'image est supprimée",
+            modify: "L'image a été modifiée",
+            alt: "Le texte a été mis à jour",
+          }[action]
+          this.$store.dispatch("notify", {
+            title: message,
+            status: "success",
+          })
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+        })
+    },
   },
 }
 </script>
