@@ -6,10 +6,17 @@
     <!-- TODO: mobile view -->
     <!-- TODO: when there is an image uploaded, update the delete button and add modify option to be like logo field -->
     <!-- TODO: how to label upload field(s) to be accessible? -->
+    <!-- TODO: focus management for keyboard nav -->
     <v-col v-for="image in imageArray" :key="image.image" class="d-flex child-flex" cols="12" sm="6" md="4">
       <!-- TODO: update design of card -->
       <v-card flat class="fill-height" style="overflow: hidden;">
-        <v-img :src="image.image" contain aspect-ratio="1.4" style="overflow: hidden;" class="grey lighten-2"></v-img>
+        <v-img
+          :src="image.image"
+          contain
+          aspect-ratio="1.4"
+          height="216"
+          style="overflow: hidden; background-color: #f5f5fe;"
+        ></v-img>
         <div style="position: absolute; top: 10px; left: 10px;">
           <v-btn fab small @click="deleteImage(image)">
             <v-icon aria-label="Supprimer" aria-hidden="false" color="red">$delete-line</v-icon>
@@ -28,14 +35,14 @@
     </v-col>
 
     <v-col v-if="imageArray.length < 3" cols="12" sm="6" md="4">
-      <v-card class="fill-height drag-and-drop" color="grey lighten-5" min-height="170">
+      <v-card class="fill-height drag-and-drop" height="216" style="background-color: #f5f5fe;">
         <label
           class="d-flex flex-column align-center justify-center"
           :for="uniqueId + '_image-input'"
           style="width: 100%; height: 100%; cursor: pointer;"
         >
-          <v-icon class="align-center mb-2" lg>$camera-fill</v-icon>
-          <div class="body-2 text-center font-weight-bold grey--text text--darken-2">Ajoutez une image</div>
+          <v-icon class="align-center mb-2 primary--text" lg>$image-add-fill</v-icon>
+          <p class="fr-text-sm text-center primary--text mb-0">Ajouter une image</p>
         </label>
         <input
           :id="uniqueId + '_image-input'"
