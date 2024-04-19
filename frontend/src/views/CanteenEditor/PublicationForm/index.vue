@@ -42,8 +42,7 @@
       </div>
     </div>
     <div>
-      <label class="body-2" for="images">Images</label>
-      <ImagesField class="mt-0 mb-4" :canteen="canteen" id="images" />
+      <ImagesField class="mt-0 mb-4" :canteen="canteen" />
     </div>
 
     <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
