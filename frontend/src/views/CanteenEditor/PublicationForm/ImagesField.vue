@@ -1,5 +1,6 @@
 <template>
   <v-row>
+    <!-- TODO: save on every change -->
     <!-- TODO: limit to three photos -->
     <!-- TODO: decide what to do with canteens that already have more than 3 images, if they exist (check they do first) -->
     <!-- there are 80 canteens with >3 images -->
