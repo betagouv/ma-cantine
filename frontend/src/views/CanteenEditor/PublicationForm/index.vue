@@ -41,6 +41,10 @@
         </v-btn>
       </div>
     </div>
+    <div>
+      <label class="body-2" for="images">Images</label>
+      <ImagesField class="mt-0 mb-4" :imageArray.sync="canteen.images" id="images" />
+    </div>
 
     <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
 
@@ -129,6 +133,7 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
 import DsfrBadge from "@/components/DsfrBadge"
 import CanteenHeader from "./CanteenHeader"
+import ImagesField from "./ImagesField"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Vos changements n'ont pas été sauvegardés."
 
@@ -146,6 +151,7 @@ export default {
     DsfrTextarea,
     AddPublishedCanteenWidget,
     CanteenHeader,
+    ImagesField,
   },
   data() {
     return {
@@ -159,6 +165,7 @@ export default {
     const canteen = this.originalCanteen
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
+      if (!this.canteen.images) this.canteen.images = []
       this.acceptPublication = !!canteen.publicationStatus && canteen.publicationStatus !== "draft"
     }
   },
