@@ -8,7 +8,6 @@
     <!-- TODO: how to label upload field(s) to be accessible? How to label delete and modify buttons when have multiple images?-->
     <!-- TODO: focus management for keyboard nav -->
     <v-col v-for="image in imageArray.slice(0, 3)" :key="image.image" class="d-flex child-flex" cols="12" sm="6" md="4">
-      <!-- TODO: update design of card -->
       <v-card flat class="fill-height" style="overflow: hidden;">
         <v-img
           :src="image.image"
