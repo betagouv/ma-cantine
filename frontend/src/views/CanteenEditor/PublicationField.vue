@@ -1,6 +1,5 @@
 <template>
   <div>
-    <PublicationPreviewDialog :canteen="canteen" :value="showPreview" @close="showPreview = false" />
     <v-row>
       <v-col cols="12">
         <v-checkbox
@@ -18,18 +17,6 @@
               <router-link :to="{ name: 'CanteensHome' }">
                 nos cantines
               </router-link>
-              <br />
-              <span v-if="isDraft">
-                <v-btn
-                  @click.stop="showPreview = true"
-                  class="text-body-2 px-0 text-decoration-underline grey--text text--darken-4"
-                  small
-                  text
-                  plain
-                >
-                  Voir un aperçu de la publication
-                </v-btn>
-              </span>
             </p>
           </template>
         </v-checkbox>
@@ -39,12 +26,10 @@
 </template>
 
 <script>
-import PublicationPreviewDialog from "@/views/ManagementPage/PublicationPreviewDialog"
 import validators from "@/validators"
 
 export default {
   name: "PublicationField",
-  components: { PublicationPreviewDialog },
   props: {
     canteen: {
       type: Object,
@@ -57,7 +42,6 @@ export default {
   },
   data() {
     return {
-      showPreview: false,
       validators,
     }
   },

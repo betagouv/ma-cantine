@@ -80,6 +80,7 @@
     <p v-if="isCentralCuisine">
       <router-link :to="{ name: 'PublishSatellites' }">Gérer la publication de mes satellites</router-link>
     </p>
+    <CanteenPublication v-if="receivesGuests" :canteen="canteen" :editable="true" />
     <div v-if="receivesGuests">
       <h2 class="mt-8 mb-2" v-if="isPublished">Modifier la publication</h2>
       <v-form ref="form" @submit.prevent>
@@ -129,6 +130,7 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
 import DsfrBadge from "@/components/DsfrBadge"
 import CanteenHeader from "./CanteenHeader"
+import CanteenPublication from "@/components/CanteenPublication"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Vos changements n'ont pas été sauvegardés."
 
@@ -146,6 +148,7 @@ export default {
     DsfrTextarea,
     AddPublishedCanteenWidget,
     CanteenHeader,
+    CanteenPublication,
   },
   data() {
     return {

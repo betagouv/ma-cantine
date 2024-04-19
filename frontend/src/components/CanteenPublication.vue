@@ -264,6 +264,10 @@ import Constants from "@/constants"
 export default {
   props: {
     canteen: Object,
+    editable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
