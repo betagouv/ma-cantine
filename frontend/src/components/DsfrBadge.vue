@@ -14,6 +14,7 @@
 
 <script>
 export default {
+  name: "DsfrBadge",
   inheritAttrs: false,
   props: {
     mode: {

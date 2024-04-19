@@ -23,7 +23,7 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
-import UploadLogo from "./UploadLogo.vue"
+import UploadLogo from "./UploadLogo"
 
 export default {
   name: "CanteenHeader",
