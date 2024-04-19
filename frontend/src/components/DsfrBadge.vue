@@ -14,6 +14,7 @@
 
 <script>
 export default {
+  name: "DsfrBadge",
   inheritAttrs: false,
   props: {
     mode: {
@@ -32,6 +33,11 @@ export default {
         ERROR: {
           backgroundColor: "rgb(255, 233, 233)",
           color: "rgb(206, 5, 0)",
+          icon: "$error-warning-fill",
+        },
+        WARNING: {
+          backgroundColor: "rgb(254, 235, 208)",
+          color: "rgb(105, 82, 64)",
           icon: "$error-warning-fill",
         },
         SUCCESS: {
