@@ -3,7 +3,7 @@
     <button
       class="d-block rounded-circle logo-container mr-6"
       @click="onLogoUploadClick"
-      :title="logo ? 'Modifier logo' : undefined"
+      :title="logo ? 'Modifier le logo' : undefined"
     >
       <div>
         <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onLogoChanged" id="logo" />
@@ -17,7 +17,13 @@
       </div>
     </button>
     <div v-if="logo" style="position: absolute; top: -6px; right: 14px;">
-      <v-btn fab small @click.stop.prevent="changeLogo(null)" style="border: solid 2px #DDDDDD;" title="Supprimer logo">
+      <v-btn
+        fab
+        small
+        @click.stop.prevent="changeLogo(null)"
+        style="border: solid 2px #DDDDDD;"
+        title="Supprimer le logo"
+      >
         <v-icon color="red">$delete-line</v-icon>
       </v-btn>
     </div>
