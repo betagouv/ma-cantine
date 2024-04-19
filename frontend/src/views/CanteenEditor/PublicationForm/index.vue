@@ -41,9 +41,8 @@
         </v-btn>
       </div>
     </div>
-    <div>
-      <ImagesField class="mt-0 mb-4" :canteen="canteen" />
-    </div>
+
+    <ImagesField class="mt-0 mb-4" :canteen="canteen" />
 
     <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
 
