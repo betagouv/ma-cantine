@@ -82,19 +82,10 @@
     </p>
     <CanteenPublication v-if="receivesGuests" :canteen="canteen" :editable="true" />
     <div v-if="receivesGuests">
-      <h2 class="mt-8 mb-2" v-if="isPublished">Modifier la publication</h2>
-      <v-form ref="form" @submit.prevent>
-        <DsfrTextarea
-          id="general"
-          label="Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement..."
-          class="my-2"
-          rows="5"
-          counter="500"
-          v-model="canteen.publicationComments"
-        />
-        <PublicationField class="mb-4" :canteen="canteen" v-model="acceptPublication" />
-      </v-form>
-      <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
+      <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex flex-wrap align-center">
+        <v-form ref="form" @submit.prevent class="publication-checkbox">
+          <PublicationField :canteen="canteen" v-model="acceptPublication" />
+        </v-form>
         <v-spacer></v-spacer>
         <v-btn
           x-large
@@ -126,7 +117,6 @@
 import PublicationField from "../PublicationField"
 import { getObjectDiff, lastYear } from "@/utils"
 import PublicationStateNotice from "../PublicationStateNotice"
-import DsfrTextarea from "@/components/DsfrTextarea"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
 import DsfrBadge from "@/components/DsfrBadge"
 import CanteenHeader from "./CanteenHeader"
@@ -145,7 +135,6 @@ export default {
     DsfrBadge,
     PublicationField,
     PublicationStateNotice,
-    DsfrTextarea,
     AddPublishedCanteenWidget,
     CanteenHeader,
     CanteenPublication,
@@ -226,6 +215,7 @@ export default {
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.handleUnload)
   },
+  // TODO: move this to CanteenPublication instead, there are no more things edited here
   beforeRouteLeave(to, from, next) {
     if (!this.hasChanged || this.bypassLeaveWarning) {
       next()
@@ -264,3 +254,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.publication-checkbox {
+  min-width: 40%;
+  max-width: 50%;
+}
+</style>

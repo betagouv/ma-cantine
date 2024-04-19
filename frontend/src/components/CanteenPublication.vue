@@ -1,5 +1,38 @@
 <template>
   <div class="text-left">
+    <v-col v-if="canteen && canteen.publicationComments && !editDescription" cols="12" sm="6" class="px-0">
+      <h2 class="fr-text grey--text text--darken-4 mb-6">
+        Description de l'établissement
+      </h2>
+      <div class="ml-n8">
+        <DsfrHighlight>
+          <p>
+            {{ canteen.publicationComments }}
+          </p>
+        </DsfrHighlight>
+      </div>
+      <v-btn
+        v-if="editable"
+        @click="editDescription = true"
+        outlined
+        small
+        color="primary"
+        class="fr-btn--tertiary px-2 mt-4"
+      >
+        <v-icon primary x-small class="mr-1">mdi-pencil-outline</v-icon>
+        Modifier la description
+      </v-btn>
+    </v-col>
+    <v-col v-else-if="canteen && editable" cols="12" sm="6">
+      <DsfrTextarea
+        label="Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement..."
+        class="mt-2"
+        rows="5"
+        counter="500"
+        v-model="canteen.publicationComments"
+      />
+      <v-btn @click="saveDescription" class="primary">Enregistrer</v-btn>
+    </v-col>
     <div v-if="showPercentagesBlock">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
         Que mange-t-on dans les assiettes en {{ publicationYear }} ?
@@ -196,15 +229,6 @@
       </v-col>
     </v-row>
 
-    <div v-if="canteen && canteen.publicationComments">
-      <h2 class="font-weight-black text-h6 grey--text text--darken-4 mb-2">
-        Un petit mot du gestionnaire
-      </h2>
-      <p class="body-2">
-        {{ canteen.publicationComments }}
-      </p>
-    </div>
-
     <div v-if="canteen && shouldDisplayGraph">
       <h2 id="appro-heading" class="font-weight-black text-h6 grey--text text--darken-4 mt-12 mb-2">
         Évolution des produits dans nos assiettes sur les années
@@ -259,6 +283,8 @@ import {
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import FamiliesGraph from "@/components/FamiliesGraph"
 import ImageGallery from "@/components/ImageGallery"
+import DsfrHighlight from "@/components/DsfrHighlight"
+import DsfrTextarea from "@/components/DsfrTextarea"
 import Constants from "@/constants"
 
 export default {
@@ -272,9 +298,10 @@ export default {
   data() {
     return {
       labels,
+      editDescription: false,
     }
   },
-  components: { MultiYearSummaryStatistics, ImageGallery, FamiliesGraph },
+  components: { MultiYearSummaryStatistics, ImageGallery, DsfrHighlight, DsfrTextarea, FamiliesGraph },
   computed: {
     diagnosticSet() {
       if (!this.canteen) return
@@ -389,6 +416,24 @@ export default {
   methods: {
     toPercentage(value) {
       return Math.round(value * 100)
+    },
+    saveDescription() {
+      // TODO: validate field
+      this.$store
+        .dispatch("updateCanteen", {
+          id: this.canteen.id,
+          payload: { publicationComments: this.canteen.publicationComments },
+        })
+        .then(() => {
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: "Description mise à jour",
+          })
+          this.editDescription = false
+        })
+        .catch(() => {
+          this.$store.dispatch("notifyServerError")
+        })
     },
   },
 }
