@@ -1,5 +1,5 @@
 <template>
-  <GenericMeasureResults :badge="badge" />
+  <GenericMeasureResults :badge="badge" :canteen="canteen" :diagnosticSet="diagnosticSet" />
 </template>
 
 <script>

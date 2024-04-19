@@ -5,6 +5,7 @@
       et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
       <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
     </p>
+    <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
     <div v-if="showPercentagesBlock">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
         Que mange-t-on dans les assiettes en {{ publicationYear }} ?
