@@ -4,7 +4,7 @@
       <v-col>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
           <DsfrEmail v-model="fromEmail" />
-          <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
+          <DsfrTextField v-model="name" label="Prénom et nom" />
           <DsfrSelect
             v-model="inquiryType"
             :items="inquiryOptions"

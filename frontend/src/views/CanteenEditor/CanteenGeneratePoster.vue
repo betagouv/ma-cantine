@@ -11,7 +11,7 @@
     <v-form ref="form" v-model="formIsValid" id="poster-form" @submit.prevent class="mb-4">
       <DsfrTextarea
         v-model="customText"
-        label="Plus de détail (facultatif)"
+        label="Plus de détail"
         counter
         :rules="[(v) => !v || v.length <= 700 || '700 caractères maximum']"
       />

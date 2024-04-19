@@ -50,7 +50,7 @@
           <v-col cols="12">
             <DsfrTextarea
               v-model="customText"
-              label="Plus de détail (facultatif)"
+              label="Plus de détail"
               counter
               :rules="[(v) => !v || v.length <= 700 || '700 caractères maximum']"
             />

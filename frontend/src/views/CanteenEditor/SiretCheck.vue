@@ -57,7 +57,7 @@
               </p>
               <DsfrTextarea
                 v-model="messageJoinCanteen"
-                label="Message (optionnel)"
+                label="Message"
                 hide-details="auto"
                 rows="2"
                 class="mt-2 body-2"
@@ -84,7 +84,7 @@
           validate-on-blur
           label="SIRET"
           v-model="siret"
-          :rules="[validators.length(14), validators.luhn, siretSatelliteValidator()]"
+          :rules="[validators.required, validators.length(14), validators.luhn, siretSatelliteValidator()]"
           labelClasses="body-2 mb-2"
           style="max-width: 30rem;"
         />

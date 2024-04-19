@@ -16,6 +16,11 @@ function isBase10Number(input) {
 const GENERIC_BASE_10_ERROR = "Une valeur numérique est attendue"
 
 export default {
+  // this isn't a validation function, but a helper function, hence the underscore
+  _includesRequiredValidator(validatorArray) {
+    const requiredValidators = ["required", "greaterThanZero", "email"]
+    return (validatorArray || []).some((v) => requiredValidators.includes(v.name))
+  },
   required(input) {
     const errorMessage = "Ce champ ne peut pas être vide"
     if (typeof input === "undefined") return errorMessage

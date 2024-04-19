@@ -2,7 +2,9 @@
   <div>
     <label :for="inputId" :class="labelClasses" v-if="$attrs.label">
       {{ $attrs.label }}
+      <span v-if="optional" class="fr-hint-text">Optionnel</span>
     </label>
+    <slot name="label"></slot>
     <v-textarea
       dense
       ref="textarea"
@@ -24,6 +26,8 @@
 </template>
 
 <script>
+import validators from "@/validators"
+
 export default {
   inheritAttrs: false,
   props: {
@@ -39,6 +43,9 @@ export default {
   computed: {
     value() {
       return this.$refs["textarea"].value
+    },
+    optional() {
+      return !validators._includesRequiredValidator(this.$attrs.rules)
     },
   },
   methods: {
