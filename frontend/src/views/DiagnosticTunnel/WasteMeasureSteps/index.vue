@@ -12,14 +12,12 @@
         v-model="payload.hasWasteDiagnostic"
         label="J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire"
         yesNo
-        optional
         hide-details
       />
       <DsfrRadio
         v-model="payload.hasWastePlan"
         label="J’ai mis en place un plan d’action adapté au diagnostic réalisé"
         yesNo
-        optional
         hide-details
         :disabled="!payload.hasWasteDiagnostic"
         :readonly="!payload.hasWasteDiagnostic"
@@ -55,6 +53,7 @@
                   suffix="kg"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  :hideOptional="true"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -71,6 +70,7 @@
                   suffix="jours"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  :hideOptional="true"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -82,6 +82,7 @@
                   suffix="kg/an"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  :hideOptional="true"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -93,6 +94,7 @@
                   suffix="kg/an"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  :hideOptional="true"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -104,6 +106,7 @@
                   suffix="kg/an"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  :hideOptional="true"
                 />
               </v-col>
               <v-col cols="12" md="6" class="pb-0">
@@ -115,6 +118,7 @@
                   suffix="kg/an"
                   :readonly="!payload.hasWasteMeasures"
                   :disabled="!payload.hasWasteMeasures"
+                  :hideOptional="true"
                 />
               </v-col>
             </v-row>
@@ -162,77 +166,58 @@
           />
         </v-col>
         <v-col cols="12" sm="6">
-          <fieldset :disabled="!payload.hasDonationAgreement">
-            <v-row>
-              <v-col cols="12" md="6" class="pb-0">
-                <label for="donationFrequency">
-                  Fréquence de dons
-                  <span :class="`fr-hint-text my-2 ${payload.hasDonationAgreement ? '' : 'grey--text'}`">
-                    Optionnel
-                  </span>
-                </label>
-                <DsfrTextField
-                  id="donationFrequency"
-                  :value="payload.donationFrequency"
-                  @input="(x) => (payload.donationFrequency = integerInputValue(x))"
-                  :rules="payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.isInteger] : []"
-                  validate-on-blur
-                  suffix="dons/an"
-                  :readonly="!payload.hasDonationAgreement"
-                  :disabled="!payload.hasDonationAgreement"
-                />
-              </v-col>
-              <v-col cols="12" md="6" class="pb-0">
-                <label for="donationQuantity">
-                  Quantité de denrées données
-                  <span :class="`fr-hint-text my-2 ${payload.hasDonationAgreement ? '' : 'grey--text'}`">
-                    Optionnel
-                  </span>
-                </label>
-                <DsfrTextField
-                  id="donationQuantity"
-                  v-model.number="payload.donationQuantity"
-                  :rules="
-                    payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []
-                  "
-                  validate-on-blur
-                  suffix="kg/an"
-                  :readonly="!payload.hasDonationAgreement"
-                  :disabled="!payload.hasDonationAgreement"
-                />
-              </v-col>
-              <v-col cols="12" class="pb-0">
-                <label for="donationFoodType">
-                  Type de denrées données
-                  <span :class="`fr-hint-text my-2 ${payload.hasDonationAgreement ? '' : 'grey--text'}`">
-                    Optionnel
-                  </span>
-                </label>
-                <DsfrTextField
-                  id="donationFoodType"
-                  v-model="payload.donationFoodType"
-                  :readonly="!payload.hasDonationAgreement"
-                  :disabled="!payload.hasDonationAgreement"
-                />
-              </v-col>
-            </v-row>
-          </fieldset>
+          <v-row>
+            <v-col cols="12" md="6" class="pb-0">
+              <DsfrTextField
+                label="Fréquence de dons"
+                :value="payload.donationFrequency"
+                @input="(x) => (payload.donationFrequency = integerInputValue(x))"
+                :rules="payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.isInteger] : []"
+                validate-on-blur
+                suffix="dons/an"
+                :readonly="!payload.hasDonationAgreement"
+                :disabled="!payload.hasDonationAgreement"
+              />
+            </v-col>
+            <v-col cols="12" md="6" class="pb-0">
+              <DsfrTextField
+                label="Quantité de denrées données"
+                v-model.number="payload.donationQuantity"
+                :rules="
+                  payload.hasDonationAgreement ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []
+                "
+                validate-on-blur
+                suffix="kg/an"
+                :readonly="!payload.hasDonationAgreement"
+                :disabled="!payload.hasDonationAgreement"
+              />
+            </v-col>
+            <v-col cols="12" class="pb-0">
+              <DsfrTextField
+                label="Type de denrées données"
+                v-model="payload.donationFoodType"
+                :readonly="!payload.hasDonationAgreement"
+                :disabled="!payload.hasDonationAgreement"
+              />
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </div>
     <div v-else-if="stepUrlSlug === 'autres'">
       <v-row>
         <v-col cols="12" sm="9" md="7">
-          <fieldset>
-            <legend class="my-3">
-              Autres commentaires
-              <span class="fr-hint-text mt-2">
-                Optionnel : toute précision que vous souhaiteriez apporter sur votre situation et/ou sur vos actions
-                mises en place pour lutter contre le gaspillage alimentaire
-              </span>
-            </legend>
-            <DsfrTextarea v-model="payload.otherWasteComments" rows="3" class="mt-6" />
-          </fieldset>
+          <DsfrTextarea v-model="payload.otherWasteComments" id="otherWasteComments" rows="3" class="mt-6">
+            <template v-slot:label>
+              <label for="otherWasteComments" class="mb-3">
+                Autres commentaires
+                <span class="fr-hint-text mt-2">
+                  Optionnel : toute précision que vous souhaiteriez apporter sur votre situation et/ou sur vos actions
+                  mises en place pour lutter contre le gaspillage alimentaire
+                </span>
+              </label>
+            </template>
+          </DsfrTextarea>
         </v-col>
       </v-row>
     </div>

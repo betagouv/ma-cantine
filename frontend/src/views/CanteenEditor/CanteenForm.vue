@@ -169,6 +169,7 @@
             v-model.number="canteen.satelliteCanteensCount"
             prepend-icon="$community-fill"
             labelClasses="body-2 mb-2"
+            :hideOptional="true"
           />
         </v-col>
 
