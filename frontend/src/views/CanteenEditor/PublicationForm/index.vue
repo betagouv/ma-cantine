@@ -41,12 +41,20 @@
         </v-btn>
       </div>
     </div>
+    <v-row class="justify-end">
+      <v-col cols="12" sm="8" md="4">
+        <DsfrAccordion :items="[{ title: 'Ajouter un aperçu sur votre site' }]" class="mt-2">
+          <template>
+            <AddPublishedCanteenWidget :canteen="canteen" />
+          </template>
+        </DsfrAccordion>
+      </v-col>
+    </v-row>
 
     <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
 
     <PublicationStateNotice v-if="receivesGuests" :canteen="originalCanteen" class="my-4" />
     <div v-if="isPublished">
-      <AddPublishedCanteenWidget :canteen="originalCanteen" />
       <div v-if="!receivesGuests">
         <p class="mt-8">
           Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
@@ -128,6 +136,7 @@ import PublicationStateNotice from "../PublicationStateNotice"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
 import DsfrBadge from "@/components/DsfrBadge"
+import DsfrAccordion from "@/components/DsfrAccordion"
 import CanteenHeader from "./CanteenHeader"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Vos changements n'ont pas été sauvegardés."
@@ -146,6 +155,7 @@ export default {
     DsfrTextarea,
     AddPublishedCanteenWidget,
     CanteenHeader,
+    DsfrAccordion,
   },
   data() {
     return {
