@@ -44,7 +44,6 @@
 
     <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
 
-    <PublicationStateNotice v-if="receivesGuests" :canteen="originalCanteen" class="my-4" />
     <div v-if="isPublished">
       <AddPublishedCanteenWidget :canteen="originalCanteen" />
       <div v-if="!receivesGuests">
@@ -124,7 +123,6 @@
 <script>
 import PublicationField from "../PublicationField"
 import { getObjectDiff, lastYear } from "@/utils"
-import PublicationStateNotice from "../PublicationStateNotice"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
 import DsfrBadge from "@/components/DsfrBadge"
@@ -142,7 +140,6 @@ export default {
   components: {
     DsfrBadge,
     PublicationField,
-    PublicationStateNotice,
     DsfrTextarea,
     AddPublishedCanteenWidget,
     CanteenHeader,
