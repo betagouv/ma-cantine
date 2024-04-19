@@ -38,7 +38,7 @@
           class="px-3"
           :outlined="isPublished || !hasPublicationData"
         >
-          {{ isPublished ? "Éditer l'affiche" : "Publier ma cantine" }}
+          {{ isPublished ? "Éditer mon affiche" : "Publier ma cantine" }}
         </v-btn>
       </p>
       <p class="mx-2 mb-2">
