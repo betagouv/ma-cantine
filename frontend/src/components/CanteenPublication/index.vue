@@ -46,9 +46,27 @@
         <v-btn @click="saveDescription" class="primary">Enregistrer</v-btn>
       </v-form>
     </v-col>
-    <DsfrAccordion :items="badges" class="mt-4">
-      <template v-slot="{ item }">
-        <component :is="`${item.baseComponent}Results`" :canteen="canteen" :diagnosticSet="diagnosticSet" />
+    <DsfrAccordion :items="badgeItems" class="mt-4">
+      <template v-slot:title="{ item }">
+        <span class="d-flex align-center">
+          <v-img
+            width="40"
+            max-width="40"
+            contain
+            :src="`/static/images/badges/${item.badgeId}${item.earned ? '' : '-disabled'}.svg`"
+            alt=""
+            class="mr-3"
+          ></v-img>
+          {{ item.shortTitle }}
+        </span>
+      </template>
+      <template v-slot:content="{ item }">
+        <component
+          :is="`${item.baseComponent}Results`"
+          :badge="item"
+          :canteen="canteen"
+          :diagnosticSet="diagnosticSet"
+        />
       </template>
     </DsfrAccordion>
 
@@ -145,11 +163,6 @@ export default {
     validators() {
       return validators
     },
-    badges() {
-      return keyMeasures
-        .filter((k) => k.badgeId === "appro")
-        .map((km) => ({ title: km.shortTitle, baseComponent: km.baseComponent }))
-    },
     diagnosticSet() {
       if (!this.canteen) return
       if (!this.usesCentralKitchenDiagnostics) return this.canteen.diagnostics
@@ -194,11 +207,23 @@ export default {
     publicationYear() {
       return this.diagnostic?.year
     },
-    earnedBadges() {
+    canteenBadges() {
       const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
+      Object.entries(canteenBadges).forEach(([key, badge]) => {
+        const km = keyMeasures.find((k) => k.badgeId === key)
+        Object.assign(badge, km)
+      })
+      return canteenBadges
+    },
+    badgeItems() {
+      const items = JSON.parse(JSON.stringify(Object.values(this.canteenBadges)))
+      items.map((item) => delete item.title)
+      return items
+    },
+    earnedBadges() {
       let earnedBadges = {}
-      Object.keys(canteenBadges).forEach((key) => {
-        if (canteenBadges[key].earned) earnedBadges[key] = canteenBadges[key]
+      Object.keys(this.canteenBadges).forEach((key) => {
+        if (this.canteenBadges[key].earned) earnedBadges[key] = this.canteenBadges[key]
       })
       return earnedBadges
     },

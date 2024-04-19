@@ -1,5 +1,10 @@
 <template>
   <div>
+    <p v-if="badge.earned" class="mb-0">
+      Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
+      et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
+      <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+    </p>
     <div v-if="showPercentagesBlock">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
         Que mange-t-on dans les assiettes en {{ publicationYear }} ?
@@ -198,6 +203,7 @@ import FamiliesGraph from "@/components/FamiliesGraph"
 export default {
   name: "QualityMeasureResults",
   props: {
+    badge: Object,
     canteen: Object,
     diagnosticSet: Array,
   },
