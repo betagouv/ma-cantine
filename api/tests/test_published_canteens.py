@@ -19,20 +19,18 @@ class TestPublishedCanteenApi(APITestCase):
     @authenticate
     def test_canteen_publication_fields_read_only(self):
         """
-        Users cannot modify canteen publication fields with this endpoint
+        Users cannot modify canteen publication status with this endpoint
         """
         canteen = CanteenFactory.create(city="Paris")
         canteen.managers.add(authenticate.user)
         payload = {
             "publication_status": "published",
-            "publication_comments": "Some comments",
         }
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         persisted_canteen = Canteen.objects.get(pk=canteen.id)
         self.assertEqual(persisted_canteen.publication_status, Canteen.PublicationStatus.DRAFT.value)
-        self.assertEqual(persisted_canteen.publication_comments, None)
 
     def test_get_published_canteens(self):
         """
