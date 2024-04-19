@@ -7,7 +7,7 @@
       @done="imageCarouselVisible = false"
     />
     <v-row>
-      <v-col v-for="(image, index) in images" :key="index" cols="6" sm="4" md="3">
+      <v-col v-for="(image, index) in images" :key="index" cols="12" sm="4">
         <v-hover v-slot:default="{ hover }">
           <v-card
             flat
@@ -15,7 +15,14 @@
             v-on:click="openImage(index)"
             @keydown.enter="openImage(index)"
           >
-            <v-img :src="image.image" aspect-ratio="1.2" class="grey lighten-2" :alt="image.altText">
+            <v-img
+              :src="image.image"
+              aspect-ratio="1.2"
+              class="grey lighten-2"
+              :alt="image.altText"
+              contain
+              max-height="216"
+            >
               <div
                 v-if="hover"
                 class="d-flex display-3 white--text"

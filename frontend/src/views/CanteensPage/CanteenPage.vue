@@ -2,7 +2,7 @@
   <div class="text-left">
     <div v-if="canteen" id="canteen-dashboard">
       <BreadcrumbsNav :links="[{ to: { name: 'CanteensHome' } }]" :title="canteen.name" />
-      <!-- TODO: add images here after finished with CanteenPublication form view -->
+      <ImageGallery :images="canteen.images.slice(0, imageLimit)" />
       <v-card elevation="0" class="pa-0 mb-8 text-left">
         <v-row class="align-center">
           <v-col
@@ -103,6 +103,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import labels from "@/data/quality-labels.json"
 import DsfrCallout from "@/components/DsfrCallout"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
+import ImageGallery from "@/components/ImageGallery"
 
 export default {
   data() {
@@ -122,6 +123,7 @@ export default {
     BreadcrumbsNav,
     DsfrCallout,
     AddPublishedCanteenWidget,
+    ImageGallery,
   },
   props: {
     canteenUrlComponent: {
@@ -141,6 +143,9 @@ export default {
     },
     isCanteenManager() {
       return this.canteen.isManagedByUser
+    },
+    imageLimit() {
+      return this.$vuetify.breakpoint.xs ? 1 : 3
     },
   },
   methods: {

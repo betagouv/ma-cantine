@@ -44,7 +44,12 @@
 
     <ImagesField v-if="$vuetify.breakpoint.mdAndUp" class="mt-0 mb-4" :canteen="canteen" />
     <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
-    <ImagesField v-if="$vuetify.breakpoint.smAndDown" class="mt-0 mb-4" :canteen="canteen" />
+    <ImagesField
+      v-if="$vuetify.breakpoint.smAndDown"
+      :end="$vuetify.breakpoint.xs ? 1 : 3"
+      class="mt-0 mb-4"
+      :canteen="canteen"
+    />
 
     <PublicationStateNotice v-if="receivesGuests" :canteen="originalCanteen" class="my-4" />
     <div v-if="isPublished">
@@ -93,6 +98,7 @@
           counter="500"
           v-model="canteen.publicationComments"
         />
+        <ImagesField v-if="$vuetify.breakpoint.xs" :start="1" class="mt-0 mb-4" :canteen="canteen" />
         <PublicationField class="mb-4" :canteen="canteen" v-model="acceptPublication" />
       </v-form>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex flex-wrap">
