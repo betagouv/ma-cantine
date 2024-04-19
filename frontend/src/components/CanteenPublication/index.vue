@@ -1,0 +1,238 @@
+<template>
+  <div class="text-left">
+    <v-col v-if="canteen && canteen.publicationComments && !editDescription" cols="12" sm="6" class="px-0">
+      <h2 class="fr-text grey--text text--darken-4 mb-6">
+        Description de l'établissement
+      </h2>
+      <div class="ml-n8">
+        <DsfrHighlight>
+          <p>
+            {{ canteen.publicationComments }}
+          </p>
+        </DsfrHighlight>
+      </div>
+      <v-btn
+        v-if="editable"
+        @click="
+          editDescription = true
+          oldPublicationComments = canteen.publicationComments
+        "
+        outlined
+        small
+        color="primary"
+        class="fr-btn--tertiary px-2 mt-4"
+      >
+        <v-icon primary x-small class="mr-1">mdi-pencil-outline</v-icon>
+        Modifier la description
+      </v-btn>
+    </v-col>
+    <v-col v-else-if="canteen && editable" cols="12" sm="6">
+      <v-form v-model="publicationFormIsValid" ref="publicationCommentsForm">
+        <DsfrTextarea
+          class="mt-2"
+          rows="5"
+          counter="500"
+          v-model="canteen.publicationComments"
+          :rules="[validators.maxChars(500)]"
+        >
+          <template v-slot:label>
+            <span class="fr-label mb-1">Déscription de l'établissement</span>
+            <span class="fr-hint-text mb-2">
+              Si vous le souhaitez, personnalisez votre affiche en écrivant quelques mots sur votre établissement : son
+              fonctionnement, l'organisation, l'historique...
+            </span>
+          </template>
+        </DsfrTextarea>
+        <v-btn @click="saveDescription" class="primary">Enregistrer</v-btn>
+      </v-form>
+    </v-col>
+    <DsfrAccordion :items="badges" class="mt-4">
+      <template v-slot="{ item }">
+        <component :is="`${item.baseComponent}Results`" :canteen="canteen" :diagnosticSet="diagnosticSet" />
+      </template>
+    </DsfrAccordion>
+
+    <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-n4" v-if="Object.keys(earnedBadges).length">
+      Nos démarches
+    </h2>
+    <v-row class="my-6">
+      <v-col cols="12" v-for="(badge, key) in earnedBadges" :key="key">
+        <v-card class="fill-height" elevation="0">
+          <div class="d-flex align-start">
+            <v-img width="40" max-width="40" contain :src="`/static/images/badges/${key}.svg`" alt=""></v-img>
+            <div>
+              <v-card-title class="py-0">
+                <h3 class="text-body-2 font-weight-bold">{{ badge.title }}</h3>
+              </v-card-title>
+              <v-card-subtitle class="pt-4" v-if="key !== 'appro' || applicableRules.qualityThreshold === 50">
+                <p class="mb-0">{{ badge.subtitle }}</p>
+              </v-card-subtitle>
+              <div v-else>
+                <v-card-subtitle class="pt-0">
+                  <p class="mb-0">
+                    Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de
+                    produits durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
+                    <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+                  </p>
+                </v-card-subtitle>
+              </div>
+            </div>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <div v-if="diagnostic && diagnostic.communicationSupportUrl">
+      <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-2">
+        Information des usagers et des convives
+      </h2>
+      <p class="body-2">
+        Cette cantine communique aux usagers sur
+        <a :href="diagnostic.communicationSupportUrl">{{ diagnostic.communicationSupportUrl }}</a>
+        .
+      </p>
+    </div>
+
+    <div v-if="canteen && canteen.images && canteen.images.length > 0">
+      <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-0">
+        Galerie
+      </h2>
+      <p class="body-2">
+        Cliquez sur une image pour l'agrandir
+      </p>
+      <div>
+        <ImageGallery :images="canteen.images" />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import keyMeasures from "@/data/key-measures.json"
+import { badges, latestCreatedDiagnostic, applicableDiagnosticRules } from "@/utils"
+import ImageGallery from "@/components/ImageGallery"
+import DsfrHighlight from "@/components/DsfrHighlight"
+import DsfrTextarea from "@/components/DsfrTextarea"
+import DsfrAccordion from "@/components/DsfrAccordion"
+import Constants from "@/constants"
+import validators from "@/validators"
+
+import QualityMeasureResults from "./ResultsComponents/QualityMeasureResults"
+
+export default {
+  props: {
+    canteen: Object,
+    editable: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      editDescription: false,
+      publicationFormIsValid: true,
+      oldPublicationComments: undefined,
+    }
+  },
+  components: {
+    ImageGallery,
+    DsfrHighlight,
+    DsfrTextarea,
+    DsfrAccordion,
+    QualityMeasureResults,
+  },
+  computed: {
+    validators() {
+      return validators
+    },
+    badges() {
+      return keyMeasures
+        .filter((k) => k.badgeId === "appro")
+        .map((km) => ({ title: km.shortTitle, baseComponent: km.baseComponent }))
+    },
+    diagnosticSet() {
+      if (!this.canteen) return
+      if (!this.usesCentralKitchenDiagnostics) return this.canteen.diagnostics
+
+      // Since the central kitchen might only handle the appro values, we will merge the diagnostics
+      // from the central and satellites when necessary to show the whole picture
+      return this.canteen.centralKitchenDiagnostics.map((centralDiag) => {
+        const satelliteMatchingDiag = this.canteen.diagnostics.find((x) => x.year === centralDiag.year)
+        if (centralDiag.centralKitchenDiagnosticMode === "APPRO" && satelliteMatchingDiag) {
+          const satelliteDiagCopy = Object.assign({}, satelliteMatchingDiag)
+          this.approFields.forEach((x) => delete satelliteDiagCopy[x])
+          return Object.assign(satelliteDiagCopy, centralDiag)
+        }
+        return centralDiag
+      })
+    },
+    approFields() {
+      const approSimplifiedFields = [
+        "valueTotalHt",
+        "valueBioHt",
+        "valueSustainableHt",
+        "valueExternalityPerformanceHt",
+        "valueEgalimOthersHt",
+      ]
+      const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
+      const approFields = characteristicGroups.egalim.fields
+        .concat(characteristicGroups.outsideLaw.fields)
+        .concat(characteristicGroups.nonEgalim.fields)
+        .concat(approSimplifiedFields)
+      const percentageApproFields = approFields.map((x) => `percentage${x.charAt(0).toUpperCase() + x.slice(1)}`)
+      return approFields.concat(percentageApproFields)
+    },
+    diagnostic() {
+      if (!this.diagnosticSet) return
+      return latestCreatedDiagnostic(this.diagnosticSet)
+    },
+    usesCentralKitchenDiagnostics() {
+      return (
+        this.canteen?.productionType === "site_cooked_elsewhere" && this.canteen?.centralKitchenDiagnostics?.length > 0
+      )
+    },
+    publicationYear() {
+      return this.diagnostic?.year
+    },
+    earnedBadges() {
+      const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
+      let earnedBadges = {}
+      Object.keys(canteenBadges).forEach((key) => {
+        if (canteenBadges[key].earned) earnedBadges[key] = canteenBadges[key]
+      })
+      return earnedBadges
+    },
+    applicableRules() {
+      return applicableDiagnosticRules(this.canteen)
+    },
+  },
+  methods: {
+    saveDescription() {
+      if (this.canteen.publicationComments === this.oldPublicationComments) {
+        this.editDescription = false
+        return
+      }
+      this.$refs.publicationCommentsForm.validate()
+      if (!this.publicationFormIsValid) {
+        this.$store.dispatch("notifyRequiredFieldsError")
+        return
+      }
+      this.$store
+        .dispatch("updateCanteen", {
+          id: this.canteen.id,
+          payload: { publicationComments: this.canteen.publicationComments },
+        })
+        .then(() => {
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: "Description mise à jour",
+          })
+          this.editDescription = false
+        })
+        .catch(() => {
+          this.$store.dispatch("notifyServerError")
+        })
+    },
+  },
+}
+</script>
