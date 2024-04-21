@@ -1,23 +1,51 @@
 <template>
   <div class="text-left">
-    <h1 class="font-weight-black text-h4 my-4">{{ pageTitle }}</h1>
-    <PublicationStateNotice v-if="receivesGuests" :canteen="originalCanteen" class="my-4" />
-    <div v-if="isPublished">
-      <p>
-        <v-icon color="green">$checkbox-circle-fill</v-icon>
-        Votre lieu de service est actuellement publié sur
-        <router-link
+    <div class="d-block d-sm-flex align-center justify-space-between">
+      <div class="d-flex flex-column mb-2">
+        <h1 class="fr-text font-weight-bold">Mon affiche</h1>
+        <div v-if="receivesGuests">
+          <DsfrBadge :mode="badge.mode" :icon="badge.icon">
+            <p class="mb-0 text-uppercase">{{ badge.text }}</p>
+          </DsfrBadge>
+        </div>
+      </div>
+      <div class="mx-2 px-3 py-2" style="border: dotted 2px #CCC" v-if="$vuetify.breakpoint.mdAndUp">
+        <p class="mb-0 fr-text-sm font-weight-medium">
+          Personnalisez votre affiche pour communiquer avec vos convives
+        </p>
+      </div>
+      <div>
+        <v-btn
+          :large="$vuetify.breakpoint.smAndUp"
+          color="primary"
+          outlined
+          class="mr-2 mb-4 mb-sm-0"
+          :to="{ name: 'CanteenGeneratePoster' }"
+        >
+          Télécharger en .pdf
+        </v-btn>
+        <v-btn
+          :large="$vuetify.breakpoint.smAndUp"
+          :disabled="!isPublished"
+          color="primary"
           :to="{
             name: 'CanteenPage',
             params: { canteenUrlComponent },
           }"
           target="_blank"
-          title="nos cantines - ouvre une nouvelle fenêtre"
+          rel="noopener external"
+          title="Voir la version en ligne - ouvre une nouvelle fenêtre"
         >
-          nos cantines
-          <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
-        </router-link>
-      </p>
+          Voir la version en ligne
+          <v-icon small class="ml-1" color="white">mdi-open-in-new</v-icon>
+        </v-btn>
+      </div>
+    </div>
+
+    <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
+
+    <PublicationStateNotice v-if="receivesGuests" :canteen="originalCanteen" class="my-4" />
+    <div v-if="isPublished">
       <AddPublishedCanteenWidget :canteen="originalCanteen" />
       <div v-if="!receivesGuests">
         <p class="mt-8">
@@ -53,16 +81,16 @@
       <router-link :to="{ name: 'PublishSatellites' }">Gérer la publication de mes satellites</router-link>
     </p>
     <div v-if="receivesGuests">
-      <h2 class="mt-8 mb-2" v-if="isPublished">Modifier la publication</h2>
       <v-form ref="form" @submit.prevent>
-        <DsfrTextarea
-          id="general"
-          label="Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement..."
-          class="my-2"
-          rows="5"
-          counter="500"
-          v-model="canteen.publicationComments"
-        />
+        <DsfrTextarea class="my-2" rows="5" counter="500" v-model="canteen.publicationComments">
+          <template v-slot:label>
+            <span class="fr-label mb-1">Déscription de l'établissement</span>
+            <span class="fr-hint-text mb-2">
+              Si vous le souhaitez, personnalisez votre affiche en écrivant quelques mots sur votre établissement : son
+              fonctionnement, l'organisation, l'historique...
+            </span>
+          </template>
+        </DsfrTextarea>
         <PublicationField class="mb-4" :canteen="canteen" v-model="acceptPublication" />
       </v-form>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
@@ -99,6 +127,8 @@ import { getObjectDiff, lastYear } from "@/utils"
 import PublicationStateNotice from "../PublicationStateNotice"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
+import DsfrBadge from "@/components/DsfrBadge"
+import CanteenHeader from "./CanteenHeader"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Vos changements n'ont pas été sauvegardés."
 
@@ -109,7 +139,14 @@ export default {
       type: Object,
     },
   },
-  components: { PublicationField, PublicationStateNotice, DsfrTextarea, AddPublishedCanteenWidget },
+  components: {
+    DsfrBadge,
+    PublicationField,
+    PublicationStateNotice,
+    DsfrTextarea,
+    AddPublishedCanteenWidget,
+    CanteenHeader,
+  },
   data() {
     return {
       acceptPublication: false,
@@ -181,7 +218,7 @@ export default {
   },
   created() {
     window.addEventListener("beforeunload", this.handleUnload)
-    document.title = `Publier - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
+    document.title = `Éditer mon affiche - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.handleUnload)
@@ -194,13 +231,6 @@ export default {
     window.confirm(LEAVE_WARNING) ? next() : next(false)
   },
   computed: {
-    pageTitle() {
-      if (this.isPublished) {
-        return "Votre publication"
-      } else {
-        return "Publier votre lieu de service"
-      }
-    },
     hasChanged() {
       const diff = getObjectDiff(this.originalCanteen, this.canteen)
       return Object.keys(diff).length > 0
@@ -221,6 +251,20 @@ export default {
     },
     isPublished() {
       return this.canteen.publicationStatus === "published"
+    },
+    badge() {
+      return {
+        true: {
+          mode: "SUCCESS",
+          text: "En ligne",
+          icon: "mdi-circle",
+        },
+        false: {
+          mode: "INFO",
+          text: "Non publiée",
+          icon: "mdi-circle-outline",
+        },
+      }[this.isPublished]
     },
   },
 }

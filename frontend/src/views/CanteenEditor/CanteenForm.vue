@@ -98,43 +98,6 @@
             @locationUpdate="setLocation"
           />
         </v-col>
-
-        <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
-          <label class="body-2" for="logo">
-            Logo
-          </label>
-          <div v-if="canteen.logo" class="body-2 grey--text text--darken-1">
-            Cliquez sur le logo pour changer
-          </div>
-          <div>
-            <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onLogoChanged" id="logo" />
-          </div>
-          <div class="flex-grow-1 mt-2 fill-height">
-            <v-card
-              @click="onLogoUploadClick"
-              rounded
-              color="grey lighten-5"
-              class="fill-height drag-and-drop"
-              style="overflow: hidden;"
-              min-height="170"
-            >
-              <div v-if="canteen.logo" class="d-flex flex-column fill-height">
-                <v-spacer></v-spacer>
-                <v-img contain :src="canteen.logo" max-height="135"></v-img>
-                <v-spacer></v-spacer>
-              </div>
-              <div v-else class="d-flex flex-column align-center justify-center fill-height">
-                <v-icon class="pb-2">mdi-shape</v-icon>
-                <p class="ma-0 text-center font-weight-bold body-2 grey--text text--darken-2">Ajoutez un logo</p>
-              </div>
-              <div v-if="canteen.logo" style="position: absolute; top: 10px; left: 10px;">
-                <v-btn fab small @click.stop.prevent="changeLogo(null)">
-                  <v-icon aria-label="Supprimer logo" aria-hidden="false" color="red">$delete-line</v-icon>
-                </v-btn>
-              </div>
-            </v-card>
-          </div>
-        </v-col>
       </v-row>
 
       <v-row>
@@ -364,7 +327,7 @@
 
 <script>
 import validators from "@/validators"
-import { toBase64, getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
+import { getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
 import PublicationStateNotice from "./PublicationStateNotice"
 import TechnicalControlDialog from "./TechnicalControlDialog"
 import ImagesField from "./ImagesField"
@@ -619,21 +582,6 @@ export default {
         .catch((e) => {
           this.$store.dispatch("notifyServerError", e)
         })
-    },
-    onLogoUploadClick() {
-      this.$refs.uploader.click()
-    },
-    onLogoChanged(e) {
-      this.changeLogo(e.target.files[0])
-    },
-    changeLogo(file) {
-      if (!file) {
-        this.canteen.logo = null
-        return
-      }
-      toBase64(file, (base64) => {
-        this.$set(this.canteen, "logo", base64)
-      })
     },
     handleUnload(e) {
       if (this.hasChanged && !this.bypassLeaveWarning) {

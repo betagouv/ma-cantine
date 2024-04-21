@@ -27,7 +27,7 @@
                   text
                   plain
                 >
-                  Voir un aperçu de la publication
+                  Voir un aperçu de l'affiche en ligne
                 </v-btn>
               </span>
             </p>
