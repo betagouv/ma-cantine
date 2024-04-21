@@ -1,22 +1,31 @@
+from django.urls import reverse
 from rest_framework.test import APITestCase
-from data.factories import CanteenFactory
+from data.factories import CanteenFactory, DiagnosticFactory
+from data.models import Canteen
 from .utils import authenticate
 
 
 # site diagnostics contain the data that concerns the site in question
 # sometimes this data might come from a central kitchen
 class TestSiteDiagnosticsApi(APITestCase):
-    def _create_canteen_for_user(user, canteen_data={}):
-        canteen = CanteenFactory.create(**canteen_data)
-        canteen.managers.add(authenticate.user)
-        return canteen
-
     @authenticate
     def test_fetch_for_site(self):
         """
         For a canteen that manages itself, site diagnostics are the same as their diagnostics
         """
-        pass
+        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, value_total_ht=1000, has_waste_diagnostic=True)
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+
+        serialized_site_diagnostics = body.get("siteDiagnostics")
+        self.assertEqual(len(serialized_site_diagnostics), 1)
+        site_diagnostic = serialized_site_diagnostics[0]
+        self.assertEqual(site_diagnostic["id"], diagnostic.id)
+        self.assertEqual(site_diagnostic["valueTotalHt"], 1000)
+        self.assertEqual(site_diagnostic["hasWasteDiagnostic"], True)
 
     @authenticate
     def test_fetch_for_central_kitchen_no_site(self):

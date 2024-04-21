@@ -289,6 +289,10 @@ class Canteen(SoftDeletionModel):
             return None
 
     @property
+    def site_diagnostics(self):
+        return self.diagnostic_set
+
+    @property
     def can_be_claimed(self):
         return not self.managers.exists()
 
