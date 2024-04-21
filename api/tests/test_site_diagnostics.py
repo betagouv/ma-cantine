@@ -8,13 +8,7 @@ from .utils import authenticate
 # site diagnostics contain the data that concerns the site in question
 # sometimes this data might come from a central kitchen
 class TestSiteDiagnosticsApi(APITestCase):
-    @authenticate
-    def test_fetch_for_site(self):
-        """
-        For a canteen that manages itself, site diagnostics are the same as their diagnostics
-        """
-        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
-        canteen.managers.add(authenticate.user)
+    def _test_site_diagnostics_same_as_diagnostics(self, canteen):
         diagnostic = DiagnosticFactory.create(canteen=canteen, value_total_ht=1000, has_waste_diagnostic=True)
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
@@ -28,25 +22,44 @@ class TestSiteDiagnosticsApi(APITestCase):
         self.assertEqual(site_diagnostic["hasWasteDiagnostic"], True)
 
     @authenticate
+    def test_fetch_for_site(self):
+        """
+        For a canteen that manages itself, site diagnostics are the same as their diagnostics
+        """
+        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        canteen.managers.add(authenticate.user)
+
+        self._test_site_diagnostics_same_as_diagnostics(canteen)
+
+    @authenticate
     def test_fetch_for_central_kitchen_no_site(self):
         """
         For a central kitchen without a site, site diagnostics are the same as their diagnostics
         """
-        pass
+        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL)
+        canteen.managers.add(authenticate.user)
+
+        self._test_site_diagnostics_same_as_diagnostics(canteen)
 
     @authenticate
     def test_fetch_for_central_kitchen_with_site(self):
         """
         For a central kitchen with a site, site diagnostics are the same as their diagnostics
         """
-        pass
+        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL_SERVING)
+        canteen.managers.add(authenticate.user)
+
+        self._test_site_diagnostics_same_as_diagnostics(canteen)
 
     @authenticate
     def test_fetch_for_satellite_no_central(self):
         """
         For a satellite without a central kitchen, site diagnostics are the same as their diagnostics
         """
-        pass
+        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+        canteen.managers.add(authenticate.user)
+
+        self._test_site_diagnostics_same_as_diagnostics(canteen)
 
     @authenticate
     def test_fetch_for_satellite_central_all(self):
