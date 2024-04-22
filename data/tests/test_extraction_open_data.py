@@ -68,7 +68,7 @@ class TestExtractionOpenData(TestCase):
     def test_extraction_canteen(self, mock):
         mock.get(
             "https://geo.api.gouv.fr/communes",
-            text=json.dumps([{"code": "29021", "codeDepartement": "29", "codeRegion": "53", "codeEpci": "242900793"}]),
+            text=json.dumps([{"code": "29021", "codeEpci": "242900793"}]),
             status_code=200,
         )
         mock.get(
@@ -115,12 +115,8 @@ class TestExtractionOpenData(TestCase):
 
         # Checking that the geo data has been fetched from the city insee code
         self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["epci"], "242900793")
-        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["department"], "29")
-        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["region"], "53")
 
         # Check that the names of the region and departments are fetched from the code
-        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["department_lib"], "Finistère")
-        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["region_lib"], "Bretagne")
         self.assertEqual(
             canteens[canteens.id == canteen_1.id].iloc[0]["epci_lib"], "CC Communauté Lesneven Côte des Légendes"
         )

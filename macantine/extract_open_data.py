@@ -48,8 +48,10 @@ def map_communes_infos():
         communes = response_commune.json()
         for commune in communes:
             commune_details[commune["code"]] = {}
-            commune_details[commune["code"]]["department"] = commune["codeDepartement"]
-            commune_details[commune["code"]]["region"] = commune["codeRegion"]
+            if "department" in commune.keys():
+                commune_details[commune["code"]]["department"] = commune["codeDepartement"]
+            if "region" in commune.keys():
+                commune_details[commune["code"]]["region"] = commune["codeRegion"]
             if "codeEpci" in commune.keys():
                 commune_details[commune["code"]]["epci"] = commune["codeEpci"]
     except requests.exceptions.HTTPError as e:
