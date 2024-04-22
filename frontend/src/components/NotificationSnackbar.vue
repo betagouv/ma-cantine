@@ -1,7 +1,7 @@
 <template>
   <v-snackbar class="notification-snackbar" timeout="-1" :color="color" :value="show">
     <div class="d-flex">
-      <v-icon small class="mr-3" width="20" @click="$store.dispatch('removeNotification', notification)">
+      <v-icon small class="mr-3" width="20">
         {{ icon }}
       </v-icon>
       <div class="flex-grow-1 d-flex flex-column justify-center white--text">
