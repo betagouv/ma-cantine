@@ -127,7 +127,7 @@ tomli==2.0.1
 tomlkit==0.12.4
 tqdm==4.66.2
 typing_extensions==4.9.0
-tzdata==2023.3
+tzdata==2024.1
 tzlocal==5.2
 uritemplate==4.1.1
 uritools==4.0.2
