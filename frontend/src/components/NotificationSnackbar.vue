@@ -1,5 +1,5 @@
 <template>
-  <v-snackbar class="notification-snackbar" timeout="-1" :color="color" :value="show" right>
+  <v-snackbar class="notification-snackbar" timeout="-1" :color="color" :value="show">
     <div class="d-flex">
       <v-icon small class="mr-3" width="20" @click="$store.dispatch('removeNotification', notification)">
         {{ icon }}
@@ -57,5 +57,6 @@ export default {
 .notification-snackbar {
   position: relative;
   height: unset;
+  width: unset;
 }
 </style>

@@ -236,7 +236,7 @@ ul.no-bullets {
   position: fixed;
   z-index: 1000;
   height: fit-content;
-  width: 100%;
+  right: 0;
 
   .v-snack__wrapper {
     margin: 2px;
