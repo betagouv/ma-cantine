@@ -1,8 +1,11 @@
 <template>
   <div>
-    <label :for="inputId" :class="labelClasses">
-      <span v-if="$attrs.label">
+    <label :for="inputId" :class="labelClasses" v-if="$attrs.label || $slots.label">
+      <span v-if="$attrs.label" :class="{ 'grey--text': $attrs.disabled }">
         {{ $attrs.label }}
+        <span v-if="optional" :class="{ 'fr-hint-text': true, 'grey--text': $attrs.disabled }">
+          Optionnel
+        </span>
       </span>
       <slot name="label"></slot>
     </label>
@@ -32,12 +35,17 @@
 </template>
 
 <script>
+import validators from "@/validators"
+
 export default {
   inheritAttrs: false,
   props: {
     labelClasses: {
       required: false,
       default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
+    },
+    hideOptional: {
+      default: false,
     },
   },
   data() {
@@ -49,6 +57,9 @@ export default {
     },
     value() {
       return this.$refs["text-field"].value
+    },
+    optional() {
+      return !this.hideOptional && !validators._includesRequiredValidator(this.$attrs.rules)
     },
   },
   methods: {

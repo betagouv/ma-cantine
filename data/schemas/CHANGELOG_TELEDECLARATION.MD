@@ -2,6 +2,19 @@
 
 Tous les changements notables apportés aux jeux de données exposés sur data.gouv.fr vont être documentés ici.
 
+## 2024-04-03
+
+### Ajouts
+* Jeu de données télédéclaration 2022
+
+### Modification
+* Amélioration du remplissage des données `department` et `region` pour les jeux de données télédéclaration
+* Uniformisation du nom de colonnes :
+    * `cantine_central_kitchen_siret` => `canteen_central_kitchen_siret`
+    * `cantine_satellite_canteens_count` => `canteen_satellite_canteens_count`
+    * `cantine_management_type` => `canteen_management_type`
+    * `cantine_production_type` => `canteen_production_type`
+
 ## 2024-03-29
 
 ### Modification

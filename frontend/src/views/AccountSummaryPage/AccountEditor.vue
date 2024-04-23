@@ -79,14 +79,7 @@
             />
           </v-col>
           <v-col cols="12" md="6">
-            <DsfrTextField
-              label="Numéro téléphone"
-              class="mt-1"
-              hide-details="auto"
-              v-model="userCopy.phoneNumber"
-              :rules="[validators.isEmptyOrPhoneNumber]"
-              validate-on-blur
-            />
+            <DsfrPhoneNumber v-model="userCopy.phoneNumber" hide-details="auto" />
           </v-col>
           <v-col cols="12">
             <DsfrEmail
@@ -155,10 +148,11 @@ import { toBase64, getObjectDiff } from "@/utils"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrEmail from "@/components/DsfrEmail"
+import DsfrPhoneNumber from "@/components/DsfrPhoneNumber"
 
 export default {
   name: "AccountEditor",
-  components: { DsfrTextField, DsfrSelect, DsfrEmail },
+  components: { DsfrTextField, DsfrSelect, DsfrEmail, DsfrPhoneNumber },
   data() {
     return {
       userCopy: {},
@@ -206,13 +200,14 @@ export default {
         .dispatch("updateProfile", { payload })
         .then(() => {
           this.bypassLeaveWarning = true
-          this.$store.dispatch("notify", {
-            title: "Mise à jour prise en compte",
-            message,
-            status: "success",
-          })
           const nextRoute = this.$store.state.loggedUser.isDev ? { name: "DeveloperPage" } : { name: "ManagementPage" }
-          this.$router.push(nextRoute)
+          this.$router.push(nextRoute).then(() => {
+            this.$store.dispatch("notify", {
+              title: "Mise à jour prise en compte",
+              message,
+              status: "success",
+            })
+          })
         })
         .catch((e) => {
           if (e.jsonPromise) {

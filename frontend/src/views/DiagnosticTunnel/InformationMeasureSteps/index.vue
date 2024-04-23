@@ -66,19 +66,13 @@
       yesNo
     />
     <div v-else-if="stepUrlSlug === 'lien-communication'">
-      <fieldset>
-        <legend>
-          Lien vers le support de communication
-          <span class="fr-hint-text mt-2">Optionnel</span>
-        </legend>
-        <DsfrTextField
-          :rules="[validators.urlOrEmpty]"
-          v-model="payload.communicationSupportUrl"
-          placeholder="https://"
-          validate-on-blur
-          class="mt-2"
-        />
-      </fieldset>
+      <DsfrTextField
+        label="Lien vers le support de communication"
+        :rules="[validators.urlOrEmpty]"
+        v-model="payload.communicationSupportUrl"
+        placeholder="https://"
+        validate-on-blur
+      />
     </div>
   </v-form>
 </template>
@@ -167,7 +161,7 @@ export default {
     },
     onTunnelAutofill(e) {
       this.$set(this, "payload", e.payload)
-      this.$emit("tunnel-autofill", { payload: this.payload })
+      this.$emit("tunnel-autofill", e)
     },
   },
   mounted() {

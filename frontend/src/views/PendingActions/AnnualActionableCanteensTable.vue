@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div v-if="loading" class="pa-10 text-center">
+    <div v-if="loading" class="pa-10 align-center d-flex flex-column">
+      <p>
+        Merci de patienter, nous compilons les actions concernant vos cantines. Ceci peut prendre quelques secondes.
+      </p>
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
     <div v-else>
@@ -527,6 +530,7 @@ export default {
         })
     },
     fetchDiagnosticsToTeledeclare() {
+      this.loading = true
       return fetch(`/api/v1/diagnosticsToTeledeclare/${this.year}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
@@ -541,6 +545,7 @@ export default {
           this.toTeledeclare = []
           this.$store.dispatch("notifyServerError", e)
         })
+        .finally(() => (this.loading = false))
     },
     suggestTeledeclare() {
       if (
@@ -558,3 +563,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+/* Hides rows-per-page */
+.v-data-table >>> .v-data-footer__select {
+  visibility: hidden;
+}
+</style>

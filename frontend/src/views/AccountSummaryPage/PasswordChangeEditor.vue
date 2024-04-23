@@ -14,7 +14,6 @@
               :rules="[validators.required]"
               hide-details="auto"
               v-model="oldPassword"
-              placeholder="Entrez votre mot de passe actuel"
             />
           </v-col>
           <v-col cols="12">
@@ -24,7 +23,6 @@
               :rules="[validators.required]"
               hide-details="auto"
               v-model="newPassword"
-              placeholder="Entrez votre nouveau mot de passe"
             />
           </v-col>
           <v-col cols="12">
@@ -33,9 +31,8 @@
               type="password"
               hide-details="auto"
               v-model="newPasswordConfirmation"
-              :rules="[validators.matchPassword]"
+              :rules="[validators.matchPassword, validators.required]"
               validate-on-blur
-              placeholder="Confirmez votre nouveau mot de passe"
             />
           </v-col>
         </v-row>
@@ -93,12 +90,13 @@ export default {
       this.$store
         .dispatch("changePassword", { payload })
         .then(() => {
-          this.$store.dispatch("notify", {
-            title: "Mise à jour prise en compte",
-            message: "Votre mot de passe a bien été mis à jour",
-            status: "success",
+          this.$router.push({ name: "ManagementPage" }).then(() => {
+            this.$store.dispatch("notify", {
+              title: "Mise à jour prise en compte",
+              message: "Votre mot de passe a bien été mis à jour",
+              status: "success",
+            })
           })
-          this.$router.push({ name: "ManagementPage" })
         })
         .catch((e) => {
           this.$store.dispatch("notify", {

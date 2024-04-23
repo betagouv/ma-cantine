@@ -7,7 +7,7 @@
       notre base de données.
     </p>
     <p class="text-caption">
-      Sauf mention contraire “(optionnel)” dans le label, tous les champs sont obligatoires
+      Sauf mention contraire "Optionnel" dans le label, tous les champs sont obligatoires
     </p>
     <v-form v-model="formIsValid" ref="form" @submit.prevent class="mt-8">
       <v-row>
@@ -123,17 +123,13 @@
           <DsfrEmail v-model="partner.contactEmail" />
         </v-col>
         <v-col cols="12" sm="6">
-          <DsfrTextField v-model="partner.contactName" label="Prénom et nom (optionnel)" />
+          <DsfrTextField v-model="partner.contactName" label="Prénom et nom" />
         </v-col>
         <v-col cols="12" sm="6">
-          <DsfrTextField
-            label="Numéro téléphone (optionnel)"
-            v-model="partner.contactPhoneNumber"
-            :rules="[validators.isEmptyOrPhoneNumber]"
-          />
+          <DsfrPhoneNumber v-model="partner.contactPhoneNumber" />
         </v-col>
       </v-row>
-      <DsfrTextarea v-model="partner.contactMessage" label="Commentaires sur votre demande (optionnel)" :rows="2" />
+      <DsfrTextarea v-model="partner.contactMessage" label="Commentaires sur votre demande" :rows="2" />
       <v-checkbox :rules="[validators.checked]" class="mb-6">
         <template v-slot:label>
           <span class="body-2 grey--text text--darken-3">
@@ -171,11 +167,21 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrRadio from "@/components/DsfrRadio"
 import DsfrEmail from "@/components/DsfrEmail"
+import DsfrPhoneNumber from "@/components/DsfrPhoneNumber"
 import { toBase64, departmentItems } from "@/utils"
 
 export default {
   name: "NewPartner",
-  components: { BreadcrumbsNav, DsfrTextField, DsfrTextarea, DsfrSelect, DsfrRadio, DsfrEmail, PageSatisfaction },
+  components: {
+    BreadcrumbsNav,
+    DsfrTextField,
+    DsfrTextarea,
+    DsfrSelect,
+    DsfrRadio,
+    DsfrEmail,
+    DsfrPhoneNumber,
+    PageSatisfaction,
+  },
   props: ["canteen"],
   data() {
     const user = this.$store.state.loggedUser

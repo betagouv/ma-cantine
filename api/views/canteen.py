@@ -1150,12 +1150,17 @@ class ActionableCanteensListView(ListAPIView):
             .order_by()
             .values("central_producer_siret")  # sets the groupBy for the aggregation
         )
+        central_kitchen = Canteen.objects.filter(siret=OuterRef("central_producer_siret")).values("id")
         # count by id per central prod siret, then fetch that count
         satellites_count = satellites.annotate(count=Count("id")).values("count")
-        user_canteens = queryset.annotate(nb_satellites_in_db=Subquery(satellites_count))
+        user_canteens = queryset.annotate(
+            nb_satellites_in_db=Subquery(satellites_count), central_kitchen_id=Subquery(central_kitchen[:1])
+        )
         # prep add diag actions
-        diagnostics = Diagnostic.objects.filter(canteen=OuterRef("pk"), year=year)
-        user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")))
+        diagnostics = Diagnostic.objects.filter(
+            Q(canteen=OuterRef("central_kitchen_id")) | Q(canteen=OuterRef("pk")), year=year
+        )
+        user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")[:1]))
         purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk"), date__year=year)
         user_canteens = user_canteens.annotate(has_purchases_for_year=Exists(purchases_for_year))
         is_central_cuisine_query = Q(production_type=Canteen.ProductionType.CENTRAL) | Q(
@@ -1186,13 +1191,13 @@ class ActionableCanteensListView(ListAPIView):
         )
 
         # prep complete diag action
-        complete_diagnostics = Diagnostic.objects.filter(
-            pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0, diagnostic_type__isnull=False
-        )
+        complete_diagnostics = Diagnostic.objects.filter(pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0)
         user_canteens = user_canteens.annotate(has_complete_diag=Exists(Subquery(complete_diagnostics)))
         # prep TD action
         tds = Teledeclaration.objects.filter(
-            canteen=OuterRef("pk"), year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+            Q(canteen=OuterRef("pk")) | Q(canteen=OuterRef("central_kitchen_id")),
+            year=year,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
         )
         user_canteens = user_canteens.annotate(has_td=Exists(Subquery(tds)))
         # annotate with action

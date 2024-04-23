@@ -125,7 +125,7 @@
     <div v-else class="fr-text fill-height d-flex flex-column justify-center">
       <p><b>Allez plus loin</b></p>
       <p>
-        Réalisez un bilan pour communiquer votre progrès auprès vos convives avec votre vitrine en ligne.
+        Réalisez un bilan pour communiquer votre progrès auprès vos convives avec votre affiche en ligne.
       </p>
     </div>
   </div>

@@ -973,6 +973,55 @@ class TestCanteenApi(APITestCase):
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
 
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_get_actions_satellite(self):
+        """
+        If a satellite's CC has teledeclared there is no pending action for the satellite
+        """
+        central_kitchen = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="96766910375238",
+            city_insee_code="69123",
+            satellite_canteens_count=1,
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        central_kitchen.managers.add(authenticate.user)
+        satellite = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=10,
+            daily_meal_count=2,
+            siret="99569440745111",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            central_producer_siret="96766910375238",
+        )
+        satellite.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(
+            year=2021,
+            canteen=central_kitchen,
+            value_total_ht=1000,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+        )
+        Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
+
+        DiagnosticFactory.create(
+            year=2021,
+            canteen=satellite,
+            value_total_ht=1200,
+        )
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        returned_canteens = response.json()["results"]
+        satellite_action = next(x for x in returned_canteens if x["id"] == satellite.id)["action"]
+        self.assertEqual(satellite_action, "95_nothing")
+
     @authenticate
     def test_get_canteens_with_purchases_no_diagnostics_for_year(self):
         """

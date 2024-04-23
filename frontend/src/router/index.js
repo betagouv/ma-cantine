@@ -378,7 +378,7 @@ const routes = [
         component: PublicationForm,
         meta: {
           authenticationRequired: true,
-          title: "Ma publication",
+          title: "Éditer mon affiche",
         },
       },
       {
@@ -620,6 +620,9 @@ function chooseAuthorisedRoute(to, from, next) {
 }
 
 router.beforeEach((to, from, next) => {
+  store.dispatch("removeNotifications")
+  // TODO: audit code to check that notifies are placed after redirects
+  // TODO: check the tunnel to see if the change of step also clears notifications
   chooseAuthorisedRoute(to, from, next)
 })
 

@@ -57,7 +57,7 @@
               </p>
               <DsfrTextarea
                 v-model="messageJoinCanteen"
-                label="Message (optionnel)"
+                label="Message"
                 hide-details="auto"
                 rows="2"
                 class="mt-2 body-2"
@@ -84,7 +84,7 @@
           validate-on-blur
           label="SIRET"
           v-model="siret"
-          :rules="[validators.length(14), validators.luhn, siretSatelliteValidator()]"
+          :rules="[validators.required, validators.length(14), validators.luhn, siretSatelliteValidator()]"
           labelClasses="body-2 mb-2"
           style="max-width: 30rem;"
         />
@@ -142,7 +142,6 @@ export default {
     validateSiret() {
       if (!this.$refs.siretForm.validate()) {
         this.$store.dispatch("notifyRequiredFieldsError")
-        window.scrollTo(0, 0)
         return
       }
 
@@ -192,14 +191,17 @@ export default {
         .dispatch("claimCanteen", { canteenId })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
         .then((response) => {
-          this.$store.dispatch("notify", {
-            status: "success",
-            message: "Vous gérez maintenant cet établissement.",
-          })
-          this.$router.push({
-            name: "CanteenForm",
-            params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(response) },
-          })
+          this.$router
+            .push({
+              name: "CanteenForm",
+              params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(response) },
+            })
+            .then(() => {
+              this.$store.dispatch("notify", {
+                status: "success",
+                message: "Vous gérez maintenant cet établissement.",
+              })
+            })
         })
         .catch(() => this.$router.push({ name: "ManagementPage" }))
     },

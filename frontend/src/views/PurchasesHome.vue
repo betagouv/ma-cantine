@@ -472,7 +472,6 @@ export default {
           this.$store.dispatch("notify", {
             title,
             status: "success",
-            duration: 10000,
             undoMessage: "Restaurer achats",
             undoAction: this.recoverDeletedPurchases(ids),
           })
@@ -669,7 +668,7 @@ export default {
   cursor: pointer;
 }
 
-/* Hides items-per-row */
+/* Hides rows-per-page */
 .v-data-table >>> .v-data-footer__select {
   visibility: hidden;
 }

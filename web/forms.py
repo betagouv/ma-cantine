@@ -29,7 +29,6 @@ class RegisterUserForm(UserCreationForm):
             "password1",
             "password2",
             "cgu_approved",
-            "number_of_managed_cantines",
             "creation_mtm_source",
             "creation_mtm_campaign",
             "creation_mtm_medium",
@@ -46,10 +45,10 @@ class RegisterUserForm(UserCreationForm):
         self.fields["email"].label = "Adresse électronique"
         self.fields["email"].help_text = "Format attendu : nom@domaine.fr"
         self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com", "autocomplete": "email"})
-        self.fields["phone_number"].widget.attrs.update({"placeholder": "0* ** ** ** **", "autocomplete": "tel"})
+        self.fields["phone_number"].widget.attrs.update({"autocomplete": "tel"})
+        self.fields["phone_number"].help_text = "Format attendu : 01 22 33 44 55"
         self.fields["password1"].widget.attrs.update({"placeholder": "Entrez votre mot de passe"})
         self.fields["password2"].widget.attrs.update({"placeholder": "Confirmez votre mot de passe"})
-        self.fields["number_of_managed_cantines"].widget.attrs.update({"class": "cantine-number-input", "min": "0"})
 
     def left_column_fields(self):
         field_names = [

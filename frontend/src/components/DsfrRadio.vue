@@ -1,10 +1,12 @@
 <template>
   <v-radio-group class="my-0" ref="radio" v-bind="$attrs" v-on="$listeners" @change="(v) => $emit('input', v)">
     <template v-slot:label>
-      <span :class="legendClass">
-        {{ $attrs.label }}
+      <span class="d-block mb-2">
+        <span :class="legendClass">
+          {{ $attrs.label }}
+        </span>
+        <span v-if="optional" class="fr-hint-text">Optionnel</span>
       </span>
-      <span class="fr-hint-text my-2" v-if="optional">Optionnel</span>
     </template>
     <v-row v-if="optionsRow" class="my-0">
       <v-col cols="12" sm="6" class="py-2" v-for="item in items" :key="item.value">
@@ -33,19 +35,20 @@
 </template>
 
 <script>
+import validators from "@/validators"
+
 export default {
   inheritAttrs: false,
   props: {
     labelClasses: {
       type: String,
-      default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
+      default: "mb-2 text-sm-subtitle-1 text-body-2 text-left d-block",
     },
     optionClasses: {
       type: String,
       default: "",
     },
-    optional: {
-      type: Boolean,
+    hideOptional: {
       default: false,
     },
     yesNo: {
@@ -78,6 +81,9 @@ export default {
       const inactiveColor = " grey--text"
       const color = this.$attrs.disabled ? inactiveColor : activeColor
       return this.labelClasses + color
+    },
+    optional() {
+      return !this.hideOptional && !validators._includesRequiredValidator(this.$attrs.rules)
     },
   },
   methods: {

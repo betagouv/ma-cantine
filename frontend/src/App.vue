@@ -17,7 +17,13 @@
       </v-main>
 
       <AppFooter v-if="!isWidget && !fullscreen" />
-      <NotificationSnackbar v-if="!isWidget" />
+      <div v-if="!isWidget" id="notification-center">
+        <NotificationSnackbar
+          v-for="notification in notifications"
+          :key="notification.id"
+          :notification="notification"
+        />
+      </div>
     </v-app>
   </div>
 </template>
@@ -56,6 +62,9 @@ export default {
       if (this.isWidget) return "ma-4 mt-0 constrained"
       if (this.fullscreen) return ""
       return "mx-auto constrained"
+    },
+    notifications() {
+      return this.$store.state.notifications
     },
   },
   mounted() {
@@ -159,6 +168,12 @@ div[role="tab"]:focus {
 .theme--light.v-btn.v-btn--disabled {
   color: #757575 !important; // grey--text text--darken-1 for a11y
 }
+.theme--light.v-input input::placeholder,
+.theme--light.v-input textarea::placeholder {
+  color: #666 !important;
+  opacity: 1;
+  font-style: italic;
+}
 
 .dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
   color: #000091;
@@ -212,6 +227,20 @@ ul.no-bullets {
   /* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */
   li::before {
     content: "\200B";
+  }
+}
+.dark-orange {
+  color: #d64309 !important; // 4.5:1 contrast for text on white
+}
+#notification-center {
+  position: fixed;
+  z-index: 1000;
+  height: fit-content;
+  width: 100%;
+
+  .v-snack__wrapper {
+    margin: 2px;
+    min-width: unset;
   }
 }
 </style>

@@ -219,6 +219,7 @@
                     hide-details="auto"
                     append-icon="mdi-percent"
                     placeholder="0"
+                    :hideOptional="true"
                   />
                 </v-col>
                 <v-col class="pa-0 pl-1 d-flex flex-column">
@@ -232,6 +233,7 @@
                     hide-details="auto"
                     placeholder="0"
                     append-icon="mdi-percent"
+                    :hideOptional="true"
                   />
                 </v-col>
               </div>
@@ -257,6 +259,7 @@
                     :rules="[validators.nonNegativeOrEmpty]"
                     @change="onChangeIntegerFilter('min_daily_meal_count')"
                     hide-details="auto"
+                    :hideOptional="true"
                   />
                 </div>
                 <span class="mx-2 align-self-center">-</span>
@@ -269,6 +272,7 @@
                     :rules="[validators.nonNegativeOrEmpty]"
                     @change="onChangeIntegerFilter('max_daily_meal_count')"
                     hide-details="auto"
+                    :hideOptional="true"
                   />
                 </div>
               </div>
@@ -307,7 +311,7 @@
       <v-row class="my-2" align="end">
         <v-col>
           <p
-            class="mb-0 text-body-2 grey--text text-left"
+            class="mb-0 text-body-2 grey--text text--darken-1 text-left"
             aria-live="polite"
             aria-atomic="true"
             v-if="resultsCountText"
@@ -372,7 +376,7 @@
         </p>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
           <DsfrEmail v-model="fromEmail" />
-          <DsfrTextField v-model="name" label="Prénom et nom (facultatif)" />
+          <DsfrTextField v-model="name" label="Prénom et nom" />
           <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
         </v-form>
         <v-row class="pa-2">
