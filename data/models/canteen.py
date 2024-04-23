@@ -290,7 +290,21 @@ class Canteen(SoftDeletionModel):
 
     @property
     def site_diagnostics(self):
-        return self.diagnostic_set
+        canteen_diagnostics = self.diagnostic_set
+        site_diagnostic_ids = [diag.id for diag in canteen_diagnostics.all()]
+
+        from .diagnostic import Diagnostic  # Circular import
+
+        central_kitchen_diagnostics = self.central_kitchen_diagnostics or []
+        for central_diagnostic in central_kitchen_diagnostics:
+            if central_diagnostic.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.ALL:
+                # canteen_diagnostic_same_year = canteen_diagnostics.filter(year=central_diagnostic.year)
+                # if canteen_diagnostic_same_year.exists():
+                #     canteen_diagnostic_same_year = canteen_diagnostic_same_year.first()
+                #     site_diagnostic_ids.remove(canteen_diagnostic_same_year.id)
+                site_diagnostic_ids.append(central_diagnostic.id)
+
+        return Diagnostic.objects.filter(id__in=site_diagnostic_ids)
 
     @property
     def can_be_claimed(self):

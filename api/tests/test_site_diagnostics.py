@@ -138,14 +138,16 @@ class TestSiteDiagnosticsApi(APITestCase):
         self.assertEqual(len(serialized_site_diagnostics), 1)
         site_diagnostic = serialized_site_diagnostics[0]
         self.assertEqual(site_diagnostic["id"], diagnostic.id)
-        # self.assertEqual(site_diagnostic["canteen_id"], central.id) TODO: how to indicate that diagnostic is not satellite's?
-        self.assertEqual(site_diagnostic["valueTotalHt"], None)
-        self.assertEqual(site_diagnostic["valueSustainableHt"], None)
-        self.assertEqual(site_diagnostic["valueExternalityPerformanceHt"], None)
+        self.assertEqual(site_diagnostic["canteenId"], central.id)  # TODO: how will this work for merged diags?
         self.assertEqual(site_diagnostic["percentageValueTotalHt"], 1)
         self.assertEqual(site_diagnostic["percentageValueSustainableHt"], 0.5)
         self.assertEqual(site_diagnostic["percentageValueExternalityPerformanceHt"], 0.2)
         self.assertEqual(site_diagnostic["hasWasteDiagnostic"], True)
+        self.assertEqual(site_diagnostic["valueTotalHt"], None, "central kitchen financial data is masked")
+        self.assertEqual(site_diagnostic["valueSustainableHt"], None, "central kitchen financial data is masked")
+        self.assertEqual(
+            site_diagnostic["valueExternalityPerformanceHt"], None, "central kitchen financial data is masked"
+        )
 
     @authenticate
     def test_fetch_for_satellite_central_appro_simple(self):
