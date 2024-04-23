@@ -228,15 +228,30 @@ def appro_to_percentages(representation, instance):
 
     for field in appro_field:
         new_field_name = f"percentage_{field}"
-        if representation.get(field):
+        if field in representation and representation[field] is not None:
             representation[new_field_name] = representation[field] / total if total else None
-        representation.pop(field, None)
 
     representation["percentage_value_total_ht"] = 1
+
+    return representation
+
+
+def remove_raw_financial_data(representation):
     representation.pop("value_total_ht", None)
     representation.pop("value_meat_poultry_egalim_ht", None)
     representation.pop("value_meat_poultry_france_ht", None)
     representation.pop("value_fish_egalim_ht", None)
+
+    appro_fields = (
+        "value_total_ht",
+        "value_bio_ht",
+        "value_sustainable_ht",
+        "value_externality_performance_ht",
+        "value_egalim_others_ht",
+    ) + COMPLETE_APPRO_FIELDS  # meat and fish totals included in COMPLETE
+
+    for field in appro_fields:
+        representation.pop(field, None)
 
     return representation
 
@@ -296,6 +311,7 @@ class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
         """
         representation = super().to_representation(instance)
         representation = appro_to_percentages(representation, instance)
+        representation = remove_raw_financial_data(representation)
         if instance.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
             [representation.pop(field, "") for field in NON_APPRO_FIELDS]
         if instance.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
@@ -311,7 +327,8 @@ class PublicDiagnosticSerializer(DiagnosticSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        return appro_to_percentages(representation, instance)
+        appro_to_percentages(representation, instance)
+        return remove_raw_financial_data(representation)
 
 
 class ManagerDiagnosticSerializer(DiagnosticSerializer):
@@ -415,3 +432,9 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
         from .canteen import FullCanteenSerializer
 
         return FullCanteenSerializer(obj.canteen).data
+
+
+class FullSiteDiagnosticSerializer(FullDiagnosticSerializer):
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return appro_to_percentages(representation, instance)

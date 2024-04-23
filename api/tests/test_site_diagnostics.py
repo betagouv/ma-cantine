@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from data.factories import CanteenFactory, DiagnosticFactory
-from data.models import Canteen
+from data.models import Canteen, Diagnostic
 from .utils import authenticate
 
 
@@ -62,12 +62,89 @@ class TestSiteDiagnosticsApi(APITestCase):
         self._test_site_diagnostics_same_as_diagnostics(canteen)
 
     @authenticate
+    def test_provide_appro_percentages_for_simple_diagnostic_type(self):
+        """
+        Instead of asking the front to calculate percentages for simple diagnostic types,
+        send them from the backend regardless of production type.
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        DiagnosticFactory.create(
+            canteen=canteen, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, value_total_ht=100, value_bio_ht=50
+        )
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+
+        serialized_site_diagnostics = body.get("siteDiagnostics")
+        site_diagnostic = serialized_site_diagnostics[0]
+        self.assertEqual(site_diagnostic["percentageValueBioHt"], 0.5)
+
+    @authenticate
+    def test_provide_appro_percentages_for_complete_diagnostic_type(self):
+        """
+        For complete diagnostic types, send percentages of simple and complete values,
+        regardless of production type
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        DiagnosticFactory.create(
+            canteen=canteen,
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            value_total_ht=100,
+            value_viandes_volailles_bio=20,
+            value_produits_de_la_mer_bio=30,
+            value_fruits_et_legumes_bio=0,
+            value_charcuterie_bio=0,
+            value_produits_laitiers_bio=0,
+            value_boulangerie_bio=0,
+            value_boissons_bio=0,
+            value_autres_bio=0,
+        )
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+
+        serialized_site_diagnostics = body.get("siteDiagnostics")
+        site_diagnostic = serialized_site_diagnostics[0]
+        self.assertEqual(site_diagnostic["percentageValueViandesVolaillesBio"], 0.2)
+        self.assertEqual(site_diagnostic["percentageValueBioHt"], 0.5)
+
+    @authenticate
     def test_fetch_for_satellite_central_all(self):
         """
         For a satellite with a central kitchen declaring all, satellite diagnostics are the same as
-        central kitchen diagnostics
+        central kitchen diagnostics, but with financial data masked
         """
-        pass
+        central = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="17756964123440")
+        diagnostic = DiagnosticFactory.create(
+            canteen=central,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            value_total_ht=1000,
+            value_sustainable_ht=500,
+            value_externality_performance_ht=200,
+            has_waste_diagnostic=True,
+        )
+        canteen = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="17756964123440"
+        )
+        canteen.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+
+        serialized_site_diagnostics = body.get("siteDiagnostics")
+        self.assertEqual(len(serialized_site_diagnostics), 1)
+        site_diagnostic = serialized_site_diagnostics[0]
+        self.assertEqual(site_diagnostic["id"], diagnostic.id)
+        # self.assertEqual(site_diagnostic["canteen_id"], central.id) TODO: how to indicate that diagnostic is not satellite's?
+        self.assertEqual(site_diagnostic["valueTotalHt"], None)
+        self.assertEqual(site_diagnostic["valueSustainableHt"], None)
+        self.assertEqual(site_diagnostic["valueExternalityPerformanceHt"], None)
+        self.assertEqual(site_diagnostic["percentageValueTotalHt"], 1)
+        self.assertEqual(site_diagnostic["percentageValueSustainableHt"], 0.5)
+        self.assertEqual(site_diagnostic["percentageValueExternalityPerformanceHt"], 0.2)
+        self.assertEqual(site_diagnostic["hasWasteDiagnostic"], True)
 
     @authenticate
     def test_fetch_for_satellite_central_appro_simple(self):
@@ -89,6 +166,7 @@ class TestSiteDiagnosticsApi(APITestCase):
         # add one quali field to CC to see that it is overridden
         # add one complete appro field to satellite to see that it is overridden
         # also check masking appro data
+        # also test that there is some data that helps to identify the diagnostic as not belonging to the satellite
         pass
 
     @authenticate

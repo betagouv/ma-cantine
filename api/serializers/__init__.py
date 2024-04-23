@@ -24,6 +24,7 @@ from .diagnostic import (  # noqa: F401
     SimpleApproOnlyTeledeclarationDiagnosticSerializer,
     CompleteApproOnlyTeledeclarationDiagnosticSerializer,
     DiagnosticAndCanteenSerializer,
+    FullSiteDiagnosticSerializer,
 )
 from .sector import SectorSerializer  # noqa: F401
 from .partnertype import PartnerTypeSerializer  # noqa: F401
