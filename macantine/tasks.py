@@ -16,6 +16,7 @@ from data.models import User, Canteen
 import redis as r
 from common.utils import get_siret_token
 from .celery import app
+from .utils import get_infos_from_siret
 from .extract_open_data import ETL_TD, ETL_CANTEEN
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
@@ -356,49 +357,6 @@ def _update_canteen_geo_data(canteen, response):
         logger.error(e)
 
 
-def get_geo_data(canteen_siret, token):
-    canteen = {}
-    canteen["siret"] = canteen_siret
-    try:
-        redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
-        redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
-        if int(redis.get(redis_key)) > 30:
-            # TODO : Apparment on arrive systématique dans ce if => 1 minute d'attente par cantine
-            logger.warning("Siret lookup exceding API rate. Waiting 1 minute")
-            time.sleep(60)
-
-        siret_response = requests.get(
-            f"https://api.insee.fr/entreprises/sirene/V3/siret/{canteen_siret}",
-            headers={"Authorization": f"Bearer {token}"},
-        )
-        siret_response.raise_for_status()
-        if siret_response.ok:
-            siret_response = siret_response.json()
-            try:
-                canteen["city_insee_code"] = siret_response["etablissement"]["adresseEtablissement"][
-                    "codeCommuneEtablissement"
-                ]
-                canteen["postal_code"] = siret_response["etablissement"]["adresseEtablissement"][
-                    "codePostalEtablissement"
-                ]
-                canteen["city"] = siret_response["etablissement"]["adresseEtablissement"][
-                    "libelleCommuneEtablissement"
-                ]
-                return canteen
-            except KeyError as e:
-                logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
-        else:
-            logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response}")
-    except requests.exceptions.HTTPError as e:
-        logger.warning(f"Geolocation Bot: HTTPError\n{e}")
-    except requests.exceptions.ConnectionError as e:
-        logger.warning(f"Geolocation Bot: ConnectionError\n{e}")
-    except requests.exceptions.Timeout as e:
-        logger.warning(f"Geolocation Bot: Timeout\n{e}")
-    except Exception as e:
-        logger.error(f"Geolocation Bot: Unexpected exception\n{e}")
-
-
 @app.task()
 def fill_missing_geolocation_data_using_siret():
     candidate_canteens = _get_candidate_canteens_for_geobot()
@@ -408,7 +366,7 @@ def fill_missing_geolocation_data_using_siret():
         logger.info("No candidate canteens have been found. Nothing to do here...")
         return
     for canteen in candidate_canteens:
-        response = get_geo_data(canteen.siret, token)
+        response = get_infos_from_siret(canteen.siret, token)
         if response:
             _update_canteen_geo_data(canteen, response)
 

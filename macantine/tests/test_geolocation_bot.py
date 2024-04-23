@@ -1,7 +1,7 @@
 import requests_mock
 from django.test import TestCase
 from data.factories import CanteenFactory, UserFactory, SectorFactory
-from macantine import tasks
+from macantine import tasks, utils
 import json
 
 
@@ -133,6 +133,8 @@ class TestGeolocationWithSiretBot(TestCase):
             "https://api.insee.fr/token",
             json={"token_type": "bearer", "access_token": "token"},
         )
+        city_insee_code = "29352"
+
         mock.get(
             self.api_url + siret_canteen,
             headers={"Authorization": f"Bearer {token}"},
@@ -141,8 +143,8 @@ class TestGeolocationWithSiretBot(TestCase):
                     "etablissement": {
                         "uniteLegale": {"denominationUniteLegale": "cantine test"},
                         "adresseEtablissement": {
-                            "codeCommuneEtablissement": 29352,
-                            "codePostalEtablissement": 29890,
+                            "codeCommuneEtablissement": "29352",
+                            "codePostalEtablissement": "29890",
                             "libelleCommuneEtablissement": "Ville test",
                         },
                     },
@@ -150,8 +152,28 @@ class TestGeolocationWithSiretBot(TestCase):
             ),
             status_code=200,
         )
-        response = tasks.get_geo_data(candidate_canteen.siret, token)
-        self.assertEquals(response["city_insee_code"], 29352)
+        mock.get(
+            f"https://api-adresse.data.gouv.fr/search/?q={city_insee_code}&citycode={city_insee_code}&type=municipality&autocomplete=1",
+            headers={"Authorization": f"Bearer {token}"},
+            text=json.dumps(
+                {
+                    "features": [
+                        {
+                            "properties": {
+                                "label": "Ville test",
+                                "citycode": city_insee_code,
+                                "postcode": "29890",
+                                "context": "38, Isère, Auvergne-Rhône-Alpes",
+                            }
+                        }
+                    ]
+                }
+            ),
+            status_code=200,
+        )
+        response = utils.get_infos_from_siret(candidate_canteen.siret, token)
+        self.assertEquals(response["city_insee_code"], "29352")
+        self.assertEquals(response["postal_code"], "29890")
 
     def test_geolocation_with_siret_data_filled(self, mock):
         """
@@ -165,6 +187,9 @@ class TestGeolocationWithSiretBot(TestCase):
             "https://api.insee.fr/token",
             json={"token_type": "bearer", "access_token": "token"},
         )
+
+        city_insee_code = "29352"
+
         mock.get(
             self.api_url + siret_canteen,
             headers={"Authorization": f"Bearer {token}"},
@@ -173,11 +198,30 @@ class TestGeolocationWithSiretBot(TestCase):
                     "etablissement": {
                         "uniteLegale": {"denominationUniteLegale": "cantine test"},
                         "adresseEtablissement": {
-                            "codeCommuneEtablissement": 29352,
-                            "codePostalEtablissement": 29890,
+                            "codeCommuneEtablissement": city_insee_code,
+                            "codePostalEtablissement": "29890",
                             "libelleCommuneEtablissement": "Ville test",
                         },
                     },
+                }
+            ),
+            status_code=200,
+        )
+        mock.get(
+            f"https://api-adresse.data.gouv.fr/search/?q={city_insee_code}&citycode={city_insee_code}&type=municipality&autocomplete=1",
+            headers={"Authorization": f"Bearer {token}"},
+            text=json.dumps(
+                {
+                    "features": [
+                        {
+                            "properties": {
+                                "label": "Ville test",
+                                "citycode": city_insee_code,
+                                "postcode": "29890",
+                                "context": "38, Isère, Auvergne-Rhône-Alpes",
+                            }
+                        }
+                    ]
                 }
             ),
             status_code=200,
