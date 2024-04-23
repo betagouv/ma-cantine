@@ -1,6 +1,6 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
-from data.factories import CanteenFactory, DiagnosticFactory
+from data.factories import CanteenFactory, DiagnosticFactory, CompleteDiagnosticFactory
 from data.models import Canteen, Diagnostic
 from .utils import authenticate
 
@@ -88,26 +88,27 @@ class TestSiteDiagnosticsApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        DiagnosticFactory.create(
+        diagnostic = CompleteDiagnosticFactory.create(
             canteen=canteen,
-            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
-            value_total_ht=100,
-            value_viandes_volailles_bio=20,
-            value_produits_de_la_mer_bio=30,
-            value_fruits_et_legumes_bio=0,
-            value_charcuterie_bio=0,
+            value_total_ht=10000,
+            value_viandes_volailles_bio=0,
+            value_produits_de_la_mer_bio=0,
+            value_fruits_et_legumes_bio=2000,
+            value_charcuterie_bio=3000,
             value_produits_laitiers_bio=0,
             value_boulangerie_bio=0,
             value_boissons_bio=0,
             value_autres_bio=0,
         )
+        diagnostic.full_clean()
+        diagnostic.save()
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
         body = response.json()
 
         serialized_site_diagnostics = body.get("siteDiagnostics")
         site_diagnostic = serialized_site_diagnostics[0]
-        self.assertEqual(site_diagnostic["percentageValueViandesVolaillesBio"], 0.2)
+        self.assertEqual(site_diagnostic["percentageValueFruitsEtLegumesBio"], 0.2)
         self.assertEqual(site_diagnostic["percentageValueBioHt"], 0.5)
 
     @authenticate
