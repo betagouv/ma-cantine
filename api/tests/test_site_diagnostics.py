@@ -18,13 +18,14 @@ class TestSiteDiagnosticsApi(APITestCase):
         self.assertEqual(len(serialized_site_diagnostics), 1)
         site_diagnostic = serialized_site_diagnostics[0]
         self.assertEqual(site_diagnostic["id"], diagnostic.id)
-        self.assertEqual(site_diagnostic["valueTotalHt"], 1000)
+        self.assertNotIn("valueTotalHt", site_diagnostic)
         self.assertEqual(site_diagnostic["hasWasteDiagnostic"], True)
 
     @authenticate
     def test_fetch_for_site(self):
         """
         For a canteen that manages itself, site diagnostics are the same as their diagnostics
+        with raw financial data removed
         """
         canteen = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
         canteen.managers.add(authenticate.user)
@@ -35,6 +36,7 @@ class TestSiteDiagnosticsApi(APITestCase):
     def test_fetch_for_central_kitchen_no_site(self):
         """
         For a central kitchen without a site, site diagnostics are the same as their diagnostics
+        with raw financial data removed
         """
         canteen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL)
         canteen.managers.add(authenticate.user)
@@ -45,6 +47,7 @@ class TestSiteDiagnosticsApi(APITestCase):
     def test_fetch_for_central_kitchen_with_site(self):
         """
         For a central kitchen with a site, site diagnostics are the same as their diagnostics
+        with raw financial data removed
         """
         canteen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL_SERVING)
         canteen.managers.add(authenticate.user)
@@ -55,6 +58,7 @@ class TestSiteDiagnosticsApi(APITestCase):
     def test_fetch_for_satellite_no_central(self):
         """
         For a satellite without a central kitchen, site diagnostics are the same as their diagnostics
+        with raw financial data removed
         """
         canteen = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
         canteen.managers.add(authenticate.user)
@@ -110,6 +114,8 @@ class TestSiteDiagnosticsApi(APITestCase):
         site_diagnostic = serialized_site_diagnostics[0]
         self.assertEqual(site_diagnostic["percentageValueFruitsEtLegumesBio"], 0.2)
         self.assertEqual(site_diagnostic["percentageValueBioHt"], 0.5)
+        self.assertNotIn("valueFruitsEtLegumesBio", site_diagnostic)
+        self.assertNotIn("valueBioHt", site_diagnostic)
 
     @authenticate
     def test_fetch_for_satellite_central_all(self):
@@ -143,11 +149,9 @@ class TestSiteDiagnosticsApi(APITestCase):
         self.assertEqual(site_diagnostic["percentageValueSustainableHt"], 0.5)
         self.assertEqual(site_diagnostic["percentageValueExternalityPerformanceHt"], 0.2)
         self.assertEqual(site_diagnostic["hasWasteDiagnostic"], True)
-        self.assertEqual(site_diagnostic["valueTotalHt"], None, "central kitchen financial data is masked")
-        self.assertEqual(site_diagnostic["valueSustainableHt"], None, "central kitchen financial data is masked")
-        self.assertEqual(
-            site_diagnostic["valueExternalityPerformanceHt"], None, "central kitchen financial data is masked"
-        )
+        self.assertNotIn("valueTotalHt", site_diagnostic, "central kitchen financial data is masked")
+        self.assertNotIn("valueSustainableHt", site_diagnostic, "central kitchen financial data is masked")
+        self.assertNotIn("valueExternalityPerformanceHt", site_diagnostic, "central kitchen financial data is masked")
 
     @authenticate
     def test_fetch_for_satellite_central_appro_simple(self):

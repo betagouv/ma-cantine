@@ -5,7 +5,7 @@ from data.models import Canteen, Sector, CanteenImage, Diagnostic
 from .diagnostic import (
     PublicDiagnosticSerializer,
     FullDiagnosticSerializer,
-    FullSiteDiagnosticSerializer,
+    MaskedSiteDiagnosticSerializer,
     CentralKitchenDiagnosticSerializer,
 )
 from .sector import SectorSerializer
@@ -207,7 +207,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
-    site_diagnostics = FullSiteDiagnosticSerializer(many=True, read_only=True)
+    site_diagnostics = MaskedSiteDiagnosticSerializer(many=True, read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     managers = CanteenManagerSerializer(many=True, read_only=True)
     manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")

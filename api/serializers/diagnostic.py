@@ -434,7 +434,8 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
         return FullCanteenSerializer(obj.canteen).data
 
 
-class FullSiteDiagnosticSerializer(FullDiagnosticSerializer):
+class MaskedSiteDiagnosticSerializer(FullDiagnosticSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        return appro_to_percentages(representation, instance)
+        representation = appro_to_percentages(representation, instance)
+        return remove_raw_financial_data(representation)
