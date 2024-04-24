@@ -38,7 +38,7 @@
           <template v-slot:label>
             <span class="fr-label mb-1">Déscription de l'établissement</span>
             <span class="fr-hint-text mb-2">
-              Si vous le souhaitez, personnalisez votre affiche en écrivant quelques mots sur votre établissement : son
+              Si vous le souhaitez, personnalisez votre affiche en écrivant quelques mots sur votre établissement&nbsp;: son
               fonctionnement, l'organisation, l'historique...
             </span>
           </template>
