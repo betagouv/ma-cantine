@@ -41,15 +41,6 @@
         </v-btn>
       </div>
     </div>
-    <v-row class="justify-end">
-      <v-col cols="12" sm="8" md="4">
-        <DsfrAccordion :items="[{ title: 'Ajouter un aperçu sur votre site' }]" class="mt-2">
-          <template>
-            <AddPublishedCanteenWidget :canteen="canteen" />
-          </template>
-        </DsfrAccordion>
-      </v-col>
-    </v-row>
 
     <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
 
@@ -101,6 +92,11 @@
         />
         <PublicationField class="mb-4" :canteen="canteen" v-model="acceptPublication" />
       </v-form>
+      <DsfrAccordion v-if="isPublished" :items="[{ title: 'Ajouter un aperçu sur votre site' }]" class="my-6">
+        <template>
+          <AddPublishedCanteenWidget :canteen="canteen" />
+        </template>
+      </DsfrAccordion>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
         <v-spacer></v-spacer>
         <v-btn
