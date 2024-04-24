@@ -92,13 +92,10 @@
             </span>
           </template>
         </DsfrTextarea>
-        <ImagesField
-          v-if="canteen.images.length > imageHeaderLimit"
-          :canteen="canteen"
-          :start="imageHeaderLimit"
-          :end="additionalImagesMax"
-          class="mt-0 mb-4"
-        />
+        <div v-if="canteen.images.length > imageHeaderLimit">
+          <h3>Images</h3>
+          <ImagesField :canteen="canteen" :start="imageHeaderLimit" :end="additionalImagesMax" class="mt-0 mb-4" />
+        </div>
         <PublicationField class="mb-4" :canteen="canteen" v-model="acceptPublication" />
       </v-form>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex flex-wrap">
