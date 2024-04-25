@@ -20,7 +20,7 @@
                 style="max-height: 30px;"
               />
             </div>
-            <v-icon size="30" color="brown" aria-label="Fermier" title="Fermier" aria-hidden="false" role="img">
+            <v-icon size="30" color="brown" alt="" title="Fermier">
               mdi-cow
             </v-icon>
           </div>
@@ -57,7 +57,7 @@
               style="max-height: 40px;"
             />
           </div>
-          <v-icon size="40" color="brown" aria-label="Fermier" title="Fermier" aria-hidden="false" role="img">
+          <v-icon size="40" color="brown" alt="" title="Fermier">
             mdi-cow
           </v-icon>
         </div>
