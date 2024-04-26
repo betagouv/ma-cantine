@@ -35,7 +35,7 @@
         />
       </v-col>
       <v-col md="4" class="d-flex align-center left-border" v-if="$vuetify.breakpoint.mdAndUp">
-        <LogoBio style="max-height: 60px;" class="pl-8 d-none d-md-block" />
+        <LogoBio style="max-height: 60px;" class="pl-8 d-none d-md-block" aria-hidden="true" />
       </v-col>
     </v-row>
 
@@ -78,7 +78,7 @@
         <div v-for="label in siqoLabels" :key="label.title">
           <img
             :src="`/static/images/quality-labels/${label.src}`"
-            alt=""
+            aria-hidden="true"
             :title="label.title"
             class="mr-1"
             style="max-height: 40px;"

@@ -6,18 +6,18 @@
     </p>
     <p :class="{ 'my-0': true, inline: singleLine }" v-if="hasDailyMealCount">
       <span class="mx-1" v-if="singleLine && hasSatelliteCanteens">/</span>
-      <v-icon small>$restaurant-fill</v-icon>
+      <v-icon small aria-hidden="false" role="img" aria-label="Repas">$restaurant-fill</v-icon>
       <!-- eslint-disable-next-line prettier/prettier-->
       {{ canteen.dailyMealCount }} par jour<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
     </p>
     <p :class="{ 'my-0': true, inline: singleLine }" v-if="canteen.city">
       <span class="mx-1" v-if="singleLine && (hasSatelliteCanteens || hasDailyMealCount)">/</span>
-      <v-icon small aria-hidden="false" role="img" aria-label="Localisation">$compass-3-fill</v-icon>
+      <v-icon small>$compass-3-fill</v-icon>
       {{ canteen.city }}
     </p>
     <p :class="{ 'my-0': true, inline: singleLine }" v-if="businessSegments">
       <span class="mx-1" v-if="singleLine && (canteen.dailyMealCount || canteen.city)">/</span>
-      <v-icon small aria-hidden="false" role="img" aria-label="Secteurs">$building-fill</v-icon>
+      <v-icon small>$building-fill</v-icon>
       {{ businessSegments }}
     </p>
   </div>
