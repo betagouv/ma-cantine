@@ -1,11 +1,12 @@
 import requests_mock
 from django.test import TestCase
-from macantine.extract_open_data import map_communes_infos
+from macantine.extract_open_data import map_communes_infos, update_datagouv_resources
 from data.factories import CompleteDiagnosticFactory, DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
 from macantine.extract_open_data import ETL_CANTEEN, ETL_TD
 from freezegun import freeze_time
 import json
+import os
 
 
 @requests_mock.Mocker()
@@ -211,3 +212,52 @@ class TestExtractionOpenData(TestCase):
         self.assertEqual(communes_details["01001"]["epci"], "200069193")
 
         self.assertNotIn("epci", communes_details["01002"].keys(), "Not all cities are part of an EPCI")
+
+    @freeze_time("2023-05-14")  # Faking date to check new url
+    def test_update_ressource(self, mock):
+        dataset_id = "expected_dataset_id"
+        os.environ["DATAGOUV_DATASET_ID"] = dataset_id
+
+        api_key = "expected_api_key"
+        os.environ["DATAGOUV_API_KEY"] = api_key
+        expected_header = {"X-API-KEY": api_key}
+
+        ressource_id = "expected_resource_id"
+
+        mock.get(
+            f"https://www.data.gouv.fr/api/1/datasets/{dataset_id}",
+            headers=expected_header,
+            json={
+                "message": "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again. You have requested this URI [/api/1/datasets/6482def590d4cf8cea/] but did you mean /api/1/datasets/schemas/ or /api/1/datasets/<dataset:dataset>/featured/ or /api/1/datasets/<dataset:dataset>/resources/<uuid:rid>/ ?"
+            },
+            status_code=404,
+        )
+
+        number_of_updated_resources = update_datagouv_resources()
+        self.assertIsNone(number_of_updated_resources)
+
+        mock.get(
+            f"https://www.data.gouv.fr/api/1/datasets/{dataset_id}",
+            headers=expected_header,
+            text=json.dumps(
+                {
+                    "resources": [
+                        {
+                            "id": "expected_resource_id",
+                            "url": "https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim-prod/media/open_data/registre_cantines.xlsx?v=old_date",
+                        }
+                    ]
+                }
+            ),
+            status_code=200,
+        )
+        mock.put(
+            f"https://www.data.gouv.fr/api/1/datasets/{dataset_id}/resources/{ressource_id}",
+            headers=expected_header,
+            json={
+                "url": "https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim-prod/media/open_data/registre_cantines.xlsx?v=230514"
+            },
+            status_code=200,
+        )
+        number_of_updated_resources = update_datagouv_resources()
+        self.assertEqual(number_of_updated_resources, 1)
