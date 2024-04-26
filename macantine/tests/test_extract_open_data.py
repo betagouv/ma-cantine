@@ -243,9 +243,15 @@ class TestExtractionOpenData(TestCase):
                 {
                     "resources": [
                         {
+                            "id": "a_resource_id",
+                            "format": "wrong_format",
+                            "url": "https://my-url.org/fichier.txt?v=old_date",
+                        },
+                        {
                             "id": "expected_resource_id",
-                            "url": "https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim-prod/media/open_data/registre_cantines.xlsx?v=old_date",
-                        }
+                            "format": "csv",
+                            "url": "https://my-url.org/fichier.csv?v=old_date",
+                        },
                     ]
                 }
             ),
@@ -260,4 +266,4 @@ class TestExtractionOpenData(TestCase):
             status_code=200,
         )
         number_of_updated_resources = update_datagouv_resources()
-        self.assertEqual(number_of_updated_resources, 1)
+        self.assertEqual(number_of_updated_resources, 1, "Only the csv resource should be updated")
