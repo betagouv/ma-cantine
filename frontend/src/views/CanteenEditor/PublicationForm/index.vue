@@ -45,7 +45,6 @@
     <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
 
     <div v-if="isPublished">
-      <AddPublishedCanteenWidget :canteen="originalCanteen" />
       <div v-if="!receivesGuests">
         <p class="mt-8">
           Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
@@ -92,6 +91,11 @@
         </DsfrTextarea>
         <PublicationField class="mb-4" :canteen="canteen" v-model="acceptPublication" />
       </v-form>
+      <DsfrAccordion v-if="isPublished" :items="[{ title: 'Ajouter un aperçu sur votre site' }]" class="my-6">
+        <template>
+          <AddPublishedCanteenWidget :canteen="canteen" />
+        </template>
+      </DsfrAccordion>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
         <v-spacer></v-spacer>
         <v-btn
@@ -126,6 +130,7 @@ import { getObjectDiff, lastYear } from "@/utils"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
 import DsfrBadge from "@/components/DsfrBadge"
+import DsfrAccordion from "@/components/DsfrAccordion"
 import CanteenHeader from "./CanteenHeader"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Vos changements n'ont pas été sauvegardés."
@@ -143,6 +148,7 @@ export default {
     DsfrTextarea,
     AddPublishedCanteenWidget,
     CanteenHeader,
+    DsfrAccordion,
   },
   data() {
     return {
