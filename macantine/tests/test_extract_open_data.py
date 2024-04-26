@@ -233,6 +233,7 @@ class TestExtractionOpenData(TestCase):
             status_code=404,
         )
 
+        os.environ["ENVIRONMENT"] = "prod"
         number_of_updated_resources = update_datagouv_resources()
         self.assertIsNone(number_of_updated_resources)
 
@@ -265,5 +266,13 @@ class TestExtractionOpenData(TestCase):
             },
             status_code=200,
         )
+
+        os.environ["ENVIRONMENT"] = "not-prod"
+        number_of_updated_resources = update_datagouv_resources()
+        self.assertIsNone(
+            number_of_updated_resources, "No resource should be updated as the environment is not production"
+        )
+
+        os.environ["ENVIRONMENT"] = "prod"
         number_of_updated_resources = update_datagouv_resources()
         self.assertEqual(number_of_updated_resources, 1, "Only the csv resource should be updated")

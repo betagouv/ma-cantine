@@ -177,6 +177,8 @@ def update_datagouv_resources():
     Updating the URL of the different resources dsiplayed on data.gouv.fr in order to force their cache reload and display the correct update dates
     Returns : Number of updated resources
     """
+    if os.environ.get("ENVIRONMENT") != "prod":
+        return
     dataset_id = os.getenv("DATAGOUV_DATASET_ID", "")
     api_key = os.getenv("DATAGOUV_API_KEY", "")
     if not (dataset_id and api_key):
