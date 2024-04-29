@@ -10,11 +10,6 @@
       @save="(e) => saveCanteen(e, true)"
     />
 
-    <PublicationStateNotice
-      :canteen="originalCanteen"
-      :includeLink="true"
-      v-if="!isNewCanteen && originalCanteen.productionType !== 'central'"
-    />
     <div v-if="$route.query.etape === steps[0]">
       <h2 class="body-1 font-weight-bold mb-4">Étape 1/2 : Renseignez le SIRET de votre établissement</h2>
       <p>
@@ -324,7 +319,6 @@
 <script>
 import validators from "@/validators"
 import { getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
-import PublicationStateNotice from "./PublicationStateNotice"
 import TechnicalControlDialog from "./TechnicalControlDialog"
 import SiretCheck from "./SiretCheck"
 import Constants from "@/constants"
@@ -339,7 +333,6 @@ const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n
 export default {
   name: "CanteenForm",
   components: {
-    PublicationStateNotice,
     TechnicalControlDialog,
     DsfrTextField,
     DsfrRadio,

@@ -45,9 +45,7 @@
     <ImagesField :canteen="canteen" :end="imageHeaderLimit" class="mt-0 mb-4" />
     <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
 
-    <PublicationStateNotice v-if="receivesGuests" :canteen="originalCanteen" class="my-4" />
     <div v-if="isPublished">
-      <AddPublishedCanteenWidget :canteen="originalCanteen" />
       <div v-if="!receivesGuests">
         <p class="mt-8">
           Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
@@ -98,6 +96,11 @@
         </div>
         <PublicationField class="mb-4" :canteen="canteen" v-model="acceptPublication" />
       </v-form>
+      <DsfrAccordion v-if="isPublished" :items="[{ title: 'Ajouter un aperçu sur votre site' }]" class="my-6">
+        <template>
+          <AddPublishedCanteenWidget :canteen="canteen" />
+        </template>
+      </DsfrAccordion>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex flex-wrap">
         <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
         <v-btn
@@ -129,10 +132,10 @@
 <script>
 import PublicationField from "../PublicationField"
 import { getObjectDiff, lastYear } from "@/utils"
-import PublicationStateNotice from "../PublicationStateNotice"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
 import DsfrBadge from "@/components/DsfrBadge"
+import DsfrAccordion from "@/components/DsfrAccordion"
 import CanteenHeader from "./CanteenHeader"
 import ImagesField from "./ImagesField"
 
@@ -148,11 +151,11 @@ export default {
   components: {
     DsfrBadge,
     PublicationField,
-    PublicationStateNotice,
     DsfrTextarea,
     AddPublishedCanteenWidget,
     CanteenHeader,
     ImagesField,
+    DsfrAccordion,
   },
   data() {
     return {

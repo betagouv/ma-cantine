@@ -48,8 +48,10 @@ def map_communes_infos():
         communes = response_commune.json()
         for commune in communes:
             commune_details[commune["code"]] = {}
-            commune_details[commune["code"]]["department"] = commune["codeDepartement"]
-            commune_details[commune["code"]]["region"] = commune["codeRegion"]
+            if "codeDepartement" in commune.keys():
+                commune_details[commune["code"]]["department"] = commune["codeDepartement"]
+            if "codeRegion" in commune.keys():
+                commune_details[commune["code"]]["region"] = commune["codeRegion"]
             if "codeEpci" in commune.keys():
                 commune_details[commune["code"]]["epci"] = commune["codeEpci"]
     except requests.exceptions.HTTPError as e:
@@ -196,21 +198,24 @@ class ETL(ABC):
 
     def transform_geo_data(self, geo_col_names=["department", "region"]):
         logger.info("Start fetching communes details")
+        communes_infos = map_communes_infos()
+
         if "campagne_td" in self.dataset_name:
+            # Get department and region as most of TD doesnt have this info
+            self.df["canteen_department"] = self.df["canteen_city_insee_code"].apply(
+                lambda x: fetch_commune_detail(x, communes_infos, "department")
+            )
+            self.df["canteen_region"] = self.df["canteen_city_insee_code"].apply(
+                lambda x: fetch_commune_detail(x, communes_infos, "region")
+            )
             prefix = "canteen_"
         else:
             prefix = ""
 
-        communes_infos = map_communes_infos()
         self.df[prefix + "epci"] = self.df[prefix + "city_insee_code"].apply(
             lambda x: fetch_commune_detail(x, communes_infos, "epci")
         )
-        self.df[prefix + "department"] = self.df[prefix + "city_insee_code"].apply(
-            lambda x: fetch_commune_detail(x, communes_infos, "department")
-        )
-        self.df[prefix + "region"] = self.df[prefix + "city_insee_code"].apply(
-            lambda x: fetch_commune_detail(x, communes_infos, "region")
-        )
+
         epcis_names = map_epcis_code_name()
         self.df[prefix + "epci_lib"] = self.df[prefix + "epci"].apply(lambda x: fetch_epci_name(x, epcis_names))
 
