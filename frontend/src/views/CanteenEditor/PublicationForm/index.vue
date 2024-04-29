@@ -91,7 +91,7 @@
           </template>
         </DsfrTextarea>
         <div v-if="showImagesOverflow">
-          <h3>Images</h3>
+          <h3>Galerie</h3>
           <ImagesField :canteen="canteen" :start="imageHeaderLimit" :end="additionalImagesMax" class="mt-0 mb-4" />
         </div>
         <PublicationField class="mb-4" :canteen="canteen" v-model="acceptPublication" />
