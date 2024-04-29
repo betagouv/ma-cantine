@@ -145,7 +145,7 @@ export default {
       return this.canteen.isManagedByUser
     },
     imageLimit() {
-      return this.$vuetify.breakpoint.xs ? 1 : 3
+      return this.$vuetify.breakpoint.xs ? 0 : 3
     },
   },
   methods: {

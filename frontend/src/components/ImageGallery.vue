@@ -18,7 +18,7 @@
             <v-img
               :src="image.image"
               aspect-ratio="1.2"
-              class="grey lighten-2"
+              class="image-card"
               :alt="image.altText"
               contain
               max-height="216"
@@ -29,7 +29,7 @@
                 style="height: 100%; background: #42424260;"
                 title="agrandir l'image"
               >
-                <v-icon color="white" size="30" style="margin-left: auto; margin-right: auto;">
+                <v-icon large color="white" size="30" style="margin-left: auto; margin-right: auto;">
                   mdi-magnify-plus-outline
                 </v-icon>
               </div>
@@ -70,5 +70,9 @@ export default {
 <style scoped>
 .v-card:focus {
   border: dotted 2px #0c7f46;
+}
+.image-card {
+  background-color: #f5f5fe;
+  border: solid 1px #dddddd;
 }
 </style>

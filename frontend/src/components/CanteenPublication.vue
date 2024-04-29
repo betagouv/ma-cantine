@@ -382,7 +382,7 @@ export default {
       return applicableDiagnosticRules(this.canteen)
     },
     imageLimit() {
-      return this.$vuetify.breakpoint.xs ? 1 : 3
+      return this.$vuetify.breakpoint.xs ? 0 : 3
     },
   },
   methods: {
