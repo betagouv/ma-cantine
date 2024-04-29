@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <ImagesField :canteen="canteen" :end="imageHeaderLimit" class="mt-0 mb-4" />
+    <ImagesField v-if="$vuetify.breakpoint.smAndUp" :canteen="canteen" :end="imageHeaderLimit" class="mt-0 mb-4" />
     <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
 
     <div v-if="isPublished">
@@ -90,7 +90,7 @@
             </span>
           </template>
         </DsfrTextarea>
-        <div v-if="canteen.images.length > imageHeaderLimit">
+        <div v-if="showImagesOverflow">
           <h3>Images</h3>
           <ImagesField :canteen="canteen" :start="imageHeaderLimit" :end="additionalImagesMax" class="mt-0 mb-4" />
         </div>
@@ -163,7 +163,6 @@ export default {
       canteen: {},
       bypassLeaveWarning: false,
       publicationYear: lastYear(),
-      idealImageMax: 3,
     }
   },
   beforeMount() {
@@ -282,11 +281,15 @@ export default {
       }[this.isPublished]
     },
     imageHeaderLimit() {
-      return this.$vuetify.breakpoint.xs ? 1 : this.idealImageMax
+      return this.$vuetify.breakpoint.xs ? 0 : 3
     },
     additionalImagesMax() {
-      if (this.canteen.images.length > this.idealImageMax) return this.canteen.images.length
-      return this.idealImageMax
+      return Math.max(this.canteen.images.length, this.imageHeaderLimit)
+    },
+    showImagesOverflow() {
+      const allowMobileAdd = this.$vuetify.breakpoint.xs && this.canteen.images.length === 0
+      const showRemainingImages = this.canteen.images.length > this.imageHeaderLimit
+      return allowMobileAdd || showRemainingImages
     },
   },
 }
