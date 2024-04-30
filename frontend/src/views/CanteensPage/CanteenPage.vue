@@ -39,9 +39,6 @@
               </div>
             </v-card-subtitle>
           </v-col>
-          <v-col v-if="isCanteenManager">
-            <AddPublishedCanteenWidget :canteen="canteen" />
-          </v-col>
         </v-row>
       </v-card>
 
@@ -101,7 +98,6 @@ import CanteenIndicators from "@/components/CanteenIndicators"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import labels from "@/data/quality-labels.json"
 import DsfrCallout from "@/components/DsfrCallout"
-import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
 
 export default {
   data() {
@@ -120,7 +116,6 @@ export default {
     CanteenIndicators,
     BreadcrumbsNav,
     DsfrCallout,
-    AddPublishedCanteenWidget,
   },
   props: {
     canteenUrlComponent: {
