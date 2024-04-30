@@ -40,7 +40,24 @@
         </v-col>
         <v-col cols="12" sm="8" md="6">
           <div class="text-center font-weight-bold mb-2">Total de mes achats par an</div>
-          <VueApexCharts :options="totalSpendChartOptions" :series="totalSpendSeries" height="260" />
+          <VueApexCharts
+            :options="totalSpendChartOptions"
+            :series="totalSpendSeries"
+            height="260"
+            aria-describedby="purchase-totals-graph-description"
+          />
+          <DsfrAccordion :items="[{ title: 'Description du graphique' }]" class="mb-2">
+            <div id="purchase-totals-graph-description">
+              <p>
+                Les totals de mes achats par année pour cette cantine sont :
+              </p>
+              <ol>
+                <li v-for="(year, idx) in years" :key="year">
+                  {{ year }} : {{ totalSpendSeries[0].data[idx] }} euro HT
+                </li>
+              </ol>
+            </div>
+          </DsfrAccordion>
         </v-col>
       </v-row>
       <div class="text-left font-weight-bold mb-4" v-if="displayMultiYearSummary">
@@ -182,6 +199,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrTextField from "@/components/DsfrTextField"
+import DsfrAccordion from "@/components/DsfrAccordion"
 import FamiliesGraph from "@/components/FamiliesGraph"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import labels from "@/data/quality-labels.json"
@@ -195,6 +213,7 @@ export default {
     DsfrSelect,
     DsfrAutocomplete,
     DsfrTextField,
+    DsfrAccordion,
     FamiliesGraph,
     MultiYearSummaryStatistics,
   },
@@ -290,6 +309,9 @@ export default {
           data: Object.values(this.yearlySummary).map((s) => s.valueTotalHt),
         },
       ]
+    },
+    years() {
+      return Object.values(this.yearlySummary).map((s) => s.year)
     },
   },
   methods: {
