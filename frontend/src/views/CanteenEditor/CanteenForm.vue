@@ -300,10 +300,6 @@
           />
         </v-col>
       </v-row>
-      <div>
-        <label class="body-2" for="images">Images</label>
-        <ImagesField class="mt-0 mb-4" :imageArray.sync="canteen.images" id="images" />
-      </div>
       <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
         <v-btn v-if="showDelete" x-large outlined color="red" :to="{ name: 'CanteenDeletion' }">
           Supprimer
@@ -324,7 +320,6 @@
 import validators from "@/validators"
 import { getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
 import TechnicalControlDialog from "./TechnicalControlDialog"
-import ImagesField from "./ImagesField"
 import SiretCheck from "./SiretCheck"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
@@ -338,7 +333,6 @@ const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n
 export default {
   name: "CanteenForm",
   components: {
-    ImagesField,
     TechnicalControlDialog,
     DsfrTextField,
     DsfrRadio,
@@ -358,7 +352,7 @@ export default {
     },
   },
   data() {
-    const blankCanteen = { images: [], sectors: [] }
+    const blankCanteen = { sectors: [] }
     return {
       siret: null,
       blankCanteen,
@@ -446,7 +440,6 @@ export default {
     const canteen = this.originalCanteen
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
-      if (!this.canteen.images) this.canteen.images = []
       this.getCentralKitchen()
     } else this.$router.push({ name: "NewCanteen", query: this.$route.query })
   },
