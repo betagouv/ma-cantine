@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-8">
     <p v-if="badge.earned" class="mb-0">
       Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
       et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
