@@ -56,7 +56,7 @@
 
         <v-card-text>
           <p class="mb-0">
-            La cantine « {{ canteen.name }} » sert des repas cuisinés dans la cuisine centrale
+            La cantine « {{ canteen.name }} » sert des repas livrés par
             <span v-if="canteen.centralKitchen.publicationStatus === 'published'">
               <router-link
                 :to="{

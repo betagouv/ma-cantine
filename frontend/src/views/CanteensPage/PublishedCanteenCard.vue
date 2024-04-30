@@ -14,7 +14,7 @@
       <div v-if="isCentralKitchen" class="tag body-2 font-weight-medium mt-2">
         <p class="d-flex align-center mb-0">
           <v-icon class="mr-1" small>$community-fill</v-icon>
-          Cuisine centrale
+          Livreur des repas
         </p>
       </div>
     </v-card-subtitle>

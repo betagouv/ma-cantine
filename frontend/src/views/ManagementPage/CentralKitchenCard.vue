@@ -2,7 +2,7 @@
   <v-card :to="canteenLink" class="dsfr d-flex flex-column" outlined :ripple="false">
     <div class="tag body-2 font-weight-medium">
       <v-icon class="mt-n1" small>$community-fill</v-icon>
-      Cuisine centrale
+      Livreur des repas
     </div>
     <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160" max-height="160"></v-img>
     <v-card-title>

@@ -5,7 +5,7 @@
         Vos cantines satellites
       </h1>
       <p v-if="satelliteCount !== null">
-        Cette cuisine centrale fournit des repas
+        Cet établissement livre des repas
         {{ satelliteCanteensCount > 1 ? `à ${satelliteCanteensCount} cantines` : "à une cantine" }}.
         <span v-if="satelliteCount === 0">
           Vous n'avez ajouté aucune cantine satellite.

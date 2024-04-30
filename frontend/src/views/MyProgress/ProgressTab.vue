@@ -36,7 +36,7 @@
             <span class="font-weight-bold">{{ centralKitchenName }}</span>
           </p>
           <p class="mb-0 grey--text text--darken-2">
-            Votre cuisine centrale a déjà renseigné les données de cette mesure pour votre cantine. Retrouvez la
+            Votre livreur des repas a déjà renseigné les données de cette mesure pour votre cantine. Retrouvez la
             synthèse ci-dessous.
             <span v-if="centralDiagnostic.centralKitchenDiagnosticMode !== 'ALL' && measureId === approId">
               Les autres volets de la loi EGAlim vous restent accessibles.

@@ -188,7 +188,7 @@
       </template>
     </v-simple-table>
     <p v-if="ccDocumentation && ccDocumentation.length > 0">
-      Les champs suivants concernent les cuisines centrales
+      Les champs suivants concernent les livreurs des repas
     </p>
     <v-simple-table class="mt-0 mb-6" v-if="ccDocumentation.length && ccDocumentation.length > 0">
       <template v-slot:default>
@@ -303,9 +303,9 @@ export default {
           optional: true,
         },
         {
-          name: "SIRET de la cantine distributrice ou SRC",
+          name: "SIRET du livreur des repas",
           description:
-            "Ce SIRET peut être vide ou utilisé pour plusieurs lignes, dans le cas où c'est le gestionnaire de la SRC ou de la cuisine centrale qui remplit les lignes pour chaque cuisine-site/satellite.",
+            "Ce SIRET peut être vide ou utilisé pour plusieurs lignes, dans le cas où c'est le gestionnaire du livreur des repas qui remplit les lignes pour chaque cantine satellite.",
           type: "14 chiffres, avec ou sans espaces",
           example: "999 999 999 99999",
           optional: true,
@@ -332,7 +332,7 @@ export default {
         {
           name: "Mode de production",
           description:
-            "Le mode de production de votre cantine. Les options :<br />- <code>central</code> si vous êtes une cuisine centrale sans lieu de consommation<br/>- <code>central_serving</code> si vous êtes une cuisine centrale qui accueille aussi des convives sur place,<br/>- <code>site</code> si vous êtes une cantine qui produit les repas sur place, et<br/>- <code>site_cooked_elsewhere</code> si vous êtes une cantine qui sert des repas preparés par une cuisine centrale.<br/>",
+            "Le mode de production de votre cantine. Les options :<br />- <code>central</code> si vous êtes un livreur des repas sans lieu de consommation<br/>- <code>central_serving</code> si vous êtes un livreur des repas qui accueille aussi des convives sur place,<br/>- <code>site</code> si vous êtes une cantine qui produit les repas sur place, et<br/>- <code>site_cooked_elsewhere</code> si vous êtes une cantine qui sert des repas preparés par un autre établissement.<br/>",
           type: "Texte (choix unique)",
           example: "central",
         },
@@ -373,7 +373,7 @@ export default {
         {
           name: "Nombre de cantines satellites",
           description:
-            "Nombre de cantines/lieux de service à qui je fournis des repas. Obligatoire pour les cuisines centrales.",
+            "Nombre de cantines/lieux de service à qui je fournis des repas. Obligatoire pour les livreurs des repas.",
           type: "Chiffre entier",
           example: "14",
           optional: true,
