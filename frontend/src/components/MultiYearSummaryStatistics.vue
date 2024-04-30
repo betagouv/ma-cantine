@@ -11,7 +11,7 @@
         :height="height || 'auto'"
         :width="width || '100%'"
       />
-      <DsfrAccordion :items="[{ title: 'Description du graphique' }]" :style="`width: ${width}`">
+      <DsfrAccordion :items="[{ title: 'Description du graphique' }]" :style="`width: ${width}`" class="mb-2">
         <div id="multi-year-graph-description">
           <p>
             Les pourcentages d'achats par année pour cette cantine sont :
@@ -70,7 +70,7 @@ export default {
     diagArray.forEach((d) => {
       if (hasDiagnosticApproData(d)) {
         completedDiagnostics.push(d)
-        years.push(`${d.year}${d.year >= thisYear ? " (objectif)" : ""}`)
+        years.push(`${d.year}${d.year >= thisYear ? " (provisionnel)" : ""}`)
       }
     })
     return {
