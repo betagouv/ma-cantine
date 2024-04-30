@@ -270,7 +270,7 @@
       </p>
     </div>
 
-    <div v-if="canteen.images && canteen.images.length > imageLimit">
+    <div v-if="!editable && canteen.images && canteen.images.length > imageLimit">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-0">
         Galerie
       </h2>
