@@ -1,6 +1,6 @@
 <template>
-  <div class="text-left">
-    <v-col v-if="canteen && canteen.publicationComments && !editDescription" cols="12" sm="6" class="px-0">
+  <div class="text-left" v-if="canteen">
+    <v-col v-if="!editDescription" cols="12" sm="6" class="px-0">
       <h2 class="fr-text grey--text text--darken-4 mb-6">
         Description de l'établissement
       </h2>
@@ -26,7 +26,7 @@
         Modifier la description
       </v-btn>
     </v-col>
-    <v-col v-else-if="canteen && editable" cols="12" sm="6">
+    <v-col v-else-if="editable" cols="12" sm="6">
       <v-form v-model="publicationFormIsValid" ref="publicationCommentsForm">
         <DsfrTextarea
           class="mt-2"
@@ -38,8 +38,8 @@
           <template v-slot:label>
             <span class="fr-label mb-1">Déscription de l'établissement</span>
             <span class="fr-hint-text mb-2">
-              Si vous le souhaitez, personnalisez votre affiche en écrivant quelques mots sur votre établissement&nbsp;: son
-              fonctionnement, l'organisation, l'historique...
+              Si vous le souhaitez, personnalisez votre affiche en écrivant quelques mots sur votre établissement&nbsp;:
+              son fonctionnement, l'organisation, l'historique...
             </span>
           </template>
         </DsfrTextarea>
@@ -212,37 +212,39 @@
       </div>
     </div>
 
-    <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-n4" v-if="Object.keys(earnedBadges).length">
-      Nos démarches
-    </h2>
-    <v-row class="my-6">
-      <v-col cols="12" v-for="(badge, key) in earnedBadges" :key="key">
-        <v-card class="fill-height" elevation="0">
-          <div class="d-flex align-start">
-            <v-img width="40" max-width="40" contain :src="`/static/images/badges/${key}.svg`" alt=""></v-img>
-            <div>
-              <v-card-title class="py-0">
-                <h3 class="text-body-2 font-weight-bold">{{ badge.title }}</h3>
-              </v-card-title>
-              <v-card-subtitle class="pt-4" v-if="key !== 'appro' || applicableRules.qualityThreshold === 50">
-                <p class="mb-0">{{ badge.subtitle }}</p>
-              </v-card-subtitle>
-              <div v-else>
-                <v-card-subtitle class="pt-0">
-                  <p class="mb-0">
-                    Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de
-                    produits durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
-                    <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
-                  </p>
+    <div v-if="Object.keys(earnedBadges).length">
+      <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-n4">
+        Nos démarches
+      </h2>
+      <v-row class="my-6">
+        <v-col cols="12" v-for="(badge, key) in earnedBadges" :key="key">
+          <v-card class="fill-height" elevation="0">
+            <div class="d-flex align-start">
+              <v-img width="40" max-width="40" contain :src="`/static/images/badges/${key}.svg`" alt=""></v-img>
+              <div>
+                <v-card-title class="py-0">
+                  <h3 class="text-body-2 font-weight-bold">{{ badge.title }}</h3>
+                </v-card-title>
+                <v-card-subtitle class="pt-4" v-if="key !== 'appro' || applicableRules.qualityThreshold === 50">
+                  <p class="mb-0">{{ badge.subtitle }}</p>
                 </v-card-subtitle>
+                <div v-else>
+                  <v-card-subtitle class="pt-0">
+                    <p class="mb-0">
+                      Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de
+                      produits durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
+                      <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+                    </p>
+                  </v-card-subtitle>
+                </div>
               </div>
             </div>
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
 
-    <div v-if="canteen && shouldDisplayGraph">
+    <div v-if="shouldDisplayGraph">
       <h2 id="appro-heading" class="font-weight-black text-h6 grey--text text--darken-4 mt-12 mb-2">
         Évolution des produits dans nos assiettes sur les années
       </h2>
@@ -268,7 +270,7 @@
       </p>
     </div>
 
-    <div v-if="canteen && canteen.images && canteen.images.length > 0">
+    <div v-if="canteen.images && canteen.images.length > 0">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-0">
         Galerie
       </h2>
@@ -312,7 +314,7 @@ export default {
   data() {
     return {
       labels,
-      editDescription: false,
+      editDescription: !this.canteen?.publicationComments,
       publicationFormIsValid: true,
       oldPublicationComments: undefined,
     }
