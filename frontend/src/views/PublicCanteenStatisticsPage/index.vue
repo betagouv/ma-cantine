@@ -97,7 +97,7 @@
         {{ sectorsText }}
       </p>
       <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown, 'mt-8': true }">
-        <v-col cols="12" md="6" class="pr-0">
+        <v-col cols="12" md="6">
           <div class="mb-5">
             <p class="mb-0">
               Au total, nous avons
@@ -128,17 +128,24 @@
           </GraphComponent>
         </v-col>
         <v-col cols="12" sm="8" md="6" class="pl-0">
-          <VueApexCharts
+          <GraphComponent
+            graphId="sector-chart"
+            :label="sectorCategoryChartTitle.join(' ')"
             :options="sectorCategoryChartOptions"
             :series="sectorCategorySeries"
             type="bar"
             height="auto"
             width="100%"
-            role="img"
-            :aria-label="sectorCategoryChartTitle"
-            aria-describedby="sector-chart-description"
-          />
-          <p id="sector-chart-description" class="d-none">{{ sectorChartDescription }}</p>
+          >
+            <template v-slot:description>
+              <p>Nombre de cantines par catégorie de secteur</p>
+              <ol>
+                <li v-for="(label, idx) in sectorCategoryLabels" :key="`sector-${idx}`">
+                  {{ label }} : {{ sectorCategorySeries[0].data[idx] }} cantines
+                </li>
+              </ol>
+            </template>
+          </GraphComponent>
         </v-col>
       </v-row>
     </div>
@@ -262,7 +269,6 @@
 <script>
 import BadgeCard from "./BadgeCard"
 import BadgesExplanation from "./BadgesExplanation"
-import VueApexCharts from "vue-apexcharts"
 import labels from "@/data/quality-labels.json"
 import keyMeasures from "@/data/key-measures.json"
 import jsonDepartments from "@/departments.json"
@@ -279,7 +285,6 @@ export default {
   components: {
     BadgeCard,
     BadgesExplanation,
-    VueApexCharts,
     BreadcrumbsNav,
     DsfrAutocomplete,
     DsfrSelect,
