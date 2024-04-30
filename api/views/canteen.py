@@ -6,7 +6,8 @@ from django.apps import apps
 from django.conf import settings
 from django.http import JsonResponse
 import requests
-from common.utils import send_mail, get_siret_token
+from common.utils import send_mail
+from macantine.utils import complete_location_data, complete_canteen_data
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError, BadRequest
 from django.contrib.auth import get_user_model
@@ -424,77 +425,12 @@ class CanteenStatusView(APIView):
         siret = request.parser_context.get("kwargs").get("siret")
         response = check_siret_response(siret, request) or {}
         if not response:
-            CanteenStatusView.complete_canteen_data(siret, response)
+            response = complete_canteen_data(siret, response)
             city = response.get("city", None)
             postcode = response.get("postalCode", None)
             if city and postcode:
-                CanteenStatusView.complete_location_data(city, postcode, response)
+                response = complete_location_data(response)
         return JsonResponse(response, status=status.HTTP_200_OK)
-
-    def complete_canteen_data(siret, response):
-        response["siret"] = siret
-        try:
-            token = get_siret_token()
-            if not token:
-                return
-
-            redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
-            redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
-            if int(redis.get(redis_key)) > 30:
-                logger.warning("Siret lookup failed - API rate has been exceeded.")
-                return
-
-            siret_response = requests.get(
-                f"https://api.insee.fr/entreprises/sirene/V3/siret/{siret}",
-                headers={"Authorization": f"Bearer {token}"},
-            )
-            if siret_response.ok:
-                siret_response = siret_response.json()
-                try:
-                    response["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
-                    response["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
-                        "codePostalEtablissement"
-                    ]
-                    response["city"] = siret_response["etablissement"]["adresseEtablissement"][
-                        "libelleCommuneEtablissement"
-                    ]
-                except KeyError as e:
-                    logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
-            else:
-                logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response}")
-        except Exception as e:
-            logger.exception(f"Error completing canteen data with SIRET {siret}")
-            logger.exception(e)
-
-    def complete_location_data(city, postcode, response):
-        try:
-            location_response = requests.get(
-                f"https://api-adresse.data.gouv.fr/search/?q={city}&postcode={postcode}&type=municipality&autocomplete=1"
-            )
-            if location_response.ok:
-                location_response = location_response.json()
-                results = location_response["features"]
-                if results and results[0]:
-                    try:
-                        result = results[0]["properties"]
-                        if result:
-                            response["city"] = result["label"]
-                            response["cityInseeCode"] = result["citycode"]
-                            response["postalCode"] = postcode
-                            response["department"] = result["context"].split(",")[0]
-                    except KeyError as e:
-                        logger.warning(f"unexpected location response format : {location_response}. Unknown key : {e}")
-                else:
-                    logger.warning(
-                        f"features array for city '{city}' and postcode '{postcode}' in location response format is non-existant or empty : {location_response}"
-                    )
-            else:
-                logger.warning(
-                    f"location fetching failed, code {location_response.status_code} : {location_response.json()}"
-                )
-        except Exception as e:
-            logger.exception(f"Error completing location data with SIRET for city: {city}, postcode: {postcode}")
-            logger.exception(e)
 
 
 def check_siret_response(canteen_siret, request):

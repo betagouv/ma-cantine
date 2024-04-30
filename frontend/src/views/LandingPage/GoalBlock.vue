@@ -16,11 +16,7 @@
       de qualité de produits, de substitution du plastique, de diversification des protéines, de réduction du
       gaspillage, et d'information des convives.
     </p>
-    <router-link
-      color="primary"
-      class="text-body-2 font-weight-medium mx-auto mt-4 text-decoration-underline mt-8 d-block"
-      :to="{ name: 'KeyMeasuresHome' }"
-    >
+    <router-link class="mx-auto mt-4 mt-8 d-block" :to="{ name: 'KeyMeasuresHome' }">
       En savoir plus sur les mesures-phare des lois
     </router-link>
   </div>

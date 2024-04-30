@@ -1,7 +1,7 @@
 <template>
   <div>
     <p :class="{ 'my-0': true, inline: singleLine }" v-if="types">
-      <v-icon small aria-hidden="false" role="img" aria-label="Type d'acteur">$store-fill</v-icon>
+      <v-icon small>$store-fill</v-icon>
       <span class="ml-1">{{ types }}</span>
     </p>
     <p :class="{ 'my-0': true, inline: singleLine }" v-if="partner.gratuityOption">
@@ -15,7 +15,7 @@
       <span class="ml-1">Présent dans tout le territoire</span>
     </p>
     <p :class="{ 'my-0': true, inline: singleLine }" v-else-if="departments">
-      <v-icon small aria-hidden="false" role="img" aria-label="Départements">$road-map-fill</v-icon>
+      <v-icon small>$road-map-fill</v-icon>
       <span class="ml-1">{{ departments }}</span>
     </p>
   </div>

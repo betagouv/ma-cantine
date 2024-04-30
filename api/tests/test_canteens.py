@@ -501,29 +501,27 @@ class TestCanteenApi(APITestCase):
             "etablissement": {
                 "uniteLegale": {"denominationUniteLegale": "Canteen Name"},
                 "adresseEtablissement": {
+                    "codeCommuneEtablissement": insee_code,
                     "codePostalEtablissement": postcode,
                     "libelleCommuneEtablissement": city,
                 },
             },
         }
         mock.get(sirene_api_url, json=sirene_mocked_response)
-
-        geo_api_url = (
-            f"https://api-adresse.data.gouv.fr/search/?q={city}&postcode={postcode}&type=municipality&autocomplete=1"
-        )
+        geo_api_url = f"https://api-adresse.data.gouv.fr/search/?q={insee_code}&citycode={insee_code}&type=municipality&autocomplete=1"
         geo_mocked_response = {
             "features": [
                 {
                     "properties": {
                         "label": city,
                         "citycode": insee_code,
-                        "context": "75,0",
+                        "postcode": postcode,
+                        "context": "38, Isère, Auvergne-Rhône-Alpes",
                     }
                 }
             ],
         }
         mock.get(geo_api_url, json=geo_mocked_response)
-
         token_api_url = "https://api.insee.fr/token"
         token_mocked_response = {"access_token": "test"}
         mock.post(token_api_url, json=token_mocked_response)
@@ -536,7 +534,7 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(body["postalCode"], postcode)
         self.assertEqual(body["city"], city)
         self.assertEqual(body["cityInseeCode"], insee_code)
-        self.assertEqual(body["department"], "75")
+        self.assertEqual(body["department"], "38")
 
     @mock.patch("requests.get", side_effect=requests.exceptions.ConnectTimeout)
     @mock.patch("requests.post", side_effect=requests.exceptions.ConnectTimeout)
