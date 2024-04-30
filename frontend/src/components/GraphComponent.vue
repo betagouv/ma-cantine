@@ -1,6 +1,6 @@
 <template>
   <div>
-    <component :is="headingLevel" :id="headingId" :class="headingClasses">{{ heading }}</component>
+    <component v-if="heading" :is="headingLevel" :id="headingId" :class="headingClasses">{{ heading }}</component>
     <VueApexCharts v-bind="$attrs" :aria-labelledBy="headingId" :aria-describedby="descriptionId" />
     <DsfrAccordion :items="[{ title: 'Description du graphique' }]" class="mb-2">
       <div :id="descriptionId">
@@ -17,7 +17,10 @@ import DsfrAccordion from "@/components/DsfrAccordion"
 export default {
   name: "GraphComponent",
   props: {
-    graphId: String,
+    graphId: {
+      type: String,
+      required: true,
+    },
     heading: String,
     headingLevel: {
       type: String,

@@ -6,7 +6,7 @@
           {{ item.title }}
         </component>
       </v-expansion-panel-header>
-      <v-expansion-panel-content class="px-3 pt-4 pb-8">
+      <v-expansion-panel-content eager class="px-3 pt-4 pb-8">
         <p v-if="item.content" class="mb-0">{{ item.content }}</p>
         <slot v-else v-bind:item="item" />
       </v-expansion-panel-content>

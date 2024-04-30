@@ -98,7 +98,7 @@
       </p>
       <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown, 'mt-8': true }">
         <v-col cols="12" md="6" class="pr-0">
-          <div id="published-canteen-text" class="mb-5">
+          <div class="mb-5">
             <p class="mb-0">
               Au total, nous avons
               <span class="text-h5 font-weight-bold">{{ statistics.canteenCount }}</span>
@@ -111,16 +111,20 @@
               }}
             </p>
           </div>
-          <VueApexCharts
+          <GraphComponent
+            v-if="$vuetify.breakpoint.mdAndUp"
+            graphId="published-graph"
             :options="publishedChartOptions"
             :series="publishedSeries"
             type="pie"
-            height="auto"
-            v-if="$vuetify.breakpoint.mdAndUp"
             width="62%"
-            role="img"
-            aria-describedby="published-canteen-text"
-          />
+            height="auto"
+          >
+            <template v-slot:description>
+              <p>{{ publishedPercentage }} % des cantines sont publiées.</p>
+              <p>{{ unpublishedPercentage }} % des cantines ne sont pas publiées.</p>
+            </template>
+          </GraphComponent>
         </v-col>
         <v-col cols="12" sm="8" md="6" class="pl-0">
           <VueApexCharts
@@ -263,10 +267,11 @@ import keyMeasures from "@/data/key-measures.json"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
 import jsonEpcis from "@/epcis.json"
-import { lastYear, normaliseText, sectorsSelectList, capitalise, getObjectDiff } from "@/utils"
+import { lastYear, normaliseText, sectorsSelectList, capitalise, getObjectDiff, getPercentage } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrSelect from "@/components/DsfrSelect"
+import GraphComponent from "@/components/GraphComponent"
 
 export default {
   name: "PublicCanteenStatisticsPage",
@@ -277,6 +282,7 @@ export default {
     BreadcrumbsNav,
     DsfrAutocomplete,
     DsfrSelect,
+    GraphComponent,
   },
   data() {
     const yearGenerator = function*() {
@@ -338,11 +344,17 @@ export default {
     regions() {
       return this.formatLocations(this.loadedRegionIds, jsonRegions, "region", "régions")
     },
+    unpublishedCount() {
+      return this.statistics.canteenCount - this.statistics.publishedCanteenCount
+    },
     publishedSeries() {
-      return [
-        this.statistics.publishedCanteenCount,
-        this.statistics.canteenCount - this.statistics.publishedCanteenCount,
-      ]
+      return [this.statistics.publishedCanteenCount, this.unpublishedCount]
+    },
+    publishedPercentage() {
+      return getPercentage(this.statistics.publishedCanteenCount, this.statistics.canteenCount)
+    },
+    unpublishedPercentage() {
+      return getPercentage(this.unpublishedCount, this.statistics.canteenCount)
     },
     sectors() {
       return this.$store.state.sectors
