@@ -1,6 +1,6 @@
 <template>
   <div class="fr-text" v-if="hasApproData">
-    <ApproGraph :diagnostic="diagnostic" :canteen="canteen" />
+    <ApproGraph :diagnostic="diagnostic" :canteen="canteen" aria-hidden="true" />
     <v-row>
       <v-col cols="12" md="6">
         <h5 class="mb-4 font-weight-bold fr-text">Détail du calcul de mes taux EGAlim</h5>
