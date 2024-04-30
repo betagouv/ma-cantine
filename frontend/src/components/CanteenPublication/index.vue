@@ -47,7 +47,7 @@
       </v-form>
     </v-col>
     <h2 class="mt-12 mb-8">Où en-sommes nous de notre transition alimentaire ?</h2>
-    <DsfrAccordion :items="badgeItems" class="mt-4">
+    <DsfrAccordion :items="badgeItems" :openPanelIndex="editable ? undefined : 0" class="mt-4">
       <template v-slot:title="{ item }">
         <span class="d-flex align-center">
           <v-img
