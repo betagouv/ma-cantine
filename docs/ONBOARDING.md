@@ -1,5 +1,17 @@
 # Onboarding tech
 
+## Cloner le dépôt
+
+### OSX
+
+Si `git` dit que vous avez des nouveaux fichiers juste après cloner le dépôt, vérifier vos paramètres de `git`. Sur mon ordinateur, j'ai du faire :
+
+- `git config core.precomposeunicode false`
+- `git reset --hard origin/staging` (attention, vos changements en locale seront perdus)
+- `git pull`
+
+D'autres conseils que j'ai lu c'est de faire `git config core.precomposeunicode true` et/ou `git config core.quotepath false`. Vous pourriez vérifier vos config avec `git config -l`. Si ça ne marche pas, essayer de tirer des cartes de tarot ou faire une offrande à la lune (ou bien soumettre un issu). Bon courage.
+
 ## Mise en place de l'environnement dev
 
 Please note that the `staging` and `main` branches are protected and all commits must come through a pull request.

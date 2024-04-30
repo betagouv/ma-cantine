@@ -93,7 +93,7 @@
     <div v-if="locationText" class="pt-8">
       <h2 class="text-h5 font-weight-bold">Les chiffres pour {{ locationText }}</h2>
       <p v-if="sectorsText" class="text-body-2 mt-4 grey--text text--darken-2">
-        <v-icon aria-hidden="false" role="img" aria-label="Secteurs">mdi-office-building</v-icon>
+        <v-icon>mdi-office-building</v-icon>
         {{ sectorsText }}
       </p>
       <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown, 'mt-8': true }">

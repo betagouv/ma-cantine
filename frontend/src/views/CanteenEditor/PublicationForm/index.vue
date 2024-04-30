@@ -44,9 +44,7 @@
 
     <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
 
-    <PublicationStateNotice v-if="receivesGuests" :canteen="originalCanteen" class="my-4" />
     <div v-if="isPublished">
-      <AddPublishedCanteenWidget :canteen="originalCanteen" />
       <div v-if="!receivesGuests">
         <p class="mt-8">
           Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
@@ -82,12 +80,18 @@
     </p>
     <CanteenPublication v-if="receivesGuests" :canteen="canteen" :editable="true" />
     <div v-if="receivesGuests">
+      <DsfrAccordion v-if="isPublished" :items="[{ title: 'Ajouter un aperçu sur votre site' }]" class="my-6">
+        <template>
+          <AddPublishedCanteenWidget :canteen="canteen" />
+        </template>
+      </DsfrAccordion>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex flex-wrap align-center">
         <v-form ref="form" @submit.prevent class="publication-checkbox">
           <PublicationField :canteen="canteen" v-model="acceptPublication" />
         </v-form>
         <v-spacer></v-spacer>
         <v-btn
+          v-if="!isPublished"
           x-large
           outlined
           color="primary"
@@ -105,9 +109,6 @@
         <v-btn v-else x-large color="red darken-3" class="mr-4" outlined @click="removeCanteenPublication">
           Retirer la publication
         </v-btn>
-        <v-btn v-if="isPublished" x-large color="primary" @click="saveCanteen">
-          Mettre à jour
-        </v-btn>
       </v-sheet>
     </div>
   </div>
@@ -115,14 +116,12 @@
 
 <script>
 import PublicationField from "../PublicationField"
-import { getObjectDiff, lastYear } from "@/utils"
-import PublicationStateNotice from "../PublicationStateNotice"
+import { lastYear } from "@/utils"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
 import DsfrBadge from "@/components/DsfrBadge"
+import DsfrAccordion from "@/components/DsfrAccordion"
 import CanteenHeader from "./CanteenHeader"
 import CanteenPublication from "@/components/CanteenPublication"
-
-const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Vos changements n'ont pas été sauvegardés."
 
 export default {
   name: "PublicationForm",
@@ -134,16 +133,15 @@ export default {
   components: {
     DsfrBadge,
     PublicationField,
-    PublicationStateNotice,
     AddPublishedCanteenWidget,
     CanteenHeader,
     CanteenPublication,
+    DsfrAccordion,
   },
   data() {
     return {
       acceptPublication: false,
       canteen: {},
-      bypassLeaveWarning: false,
       publicationYear: lastYear(),
     }
   },
@@ -163,9 +161,6 @@ export default {
       }
       this.changePublicationStatus(true)
     },
-    saveCanteen() {
-      this.publishCanteen(true, "Votre publication est mise à jour")
-    },
     removeCanteenPublication() {
       this.changePublicationStatus(false)
     },
@@ -179,7 +174,6 @@ export default {
           payload: this.canteen,
         })
         .then(() => {
-          this.bypassLeaveWarning = true
           if (toPublish) {
             return this.$router.push({
               name: "CanteenPage",
@@ -199,35 +193,11 @@ export default {
           this.$store.dispatch("notifyServerError", e)
         })
     },
-    handleUnload(e) {
-      if (this.hasChanged && !this.bypassLeaveWarning) {
-        e.preventDefault()
-        e.returnValue = LEAVE_WARNING
-      } else {
-        delete e["returnValue"]
-      }
-    },
   },
   created() {
-    window.addEventListener("beforeunload", this.handleUnload)
     document.title = `Éditer mon affiche - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
   },
-  beforeDestroy() {
-    window.removeEventListener("beforeunload", this.handleUnload)
-  },
-  // TODO: move this to CanteenPublication instead, there are no more things edited here
-  beforeRouteLeave(to, from, next) {
-    if (!this.hasChanged || this.bypassLeaveWarning) {
-      next()
-      return
-    }
-    window.confirm(LEAVE_WARNING) ? next() : next(false)
-  },
   computed: {
-    hasChanged() {
-      const diff = getObjectDiff(this.originalCanteen, this.canteen)
-      return Object.keys(diff).length > 0
-    },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },

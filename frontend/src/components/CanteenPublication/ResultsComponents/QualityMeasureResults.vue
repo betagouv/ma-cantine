@@ -171,7 +171,8 @@
         </v-row>
       </div>
     </div>
-    <div v-if="canteen && shouldDisplayGraph">
+
+    <div v-if="shouldDisplayGraph">
       <h2 id="appro-heading" class="font-weight-black text-h6 grey--text text--darken-4 mt-12 mb-2">
         Évolution des produits dans nos assiettes sur les années
       </h2>

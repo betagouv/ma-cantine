@@ -1,9 +1,10 @@
+import requests_mock
 from django.test import TestCase
+from macantine.extract_open_data import map_communes_infos
 from data.factories import CompleteDiagnosticFactory, DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
 from macantine.extract_open_data import ETL_CANTEEN, ETL_TD
 from freezegun import freeze_time
-import requests_mock
 import json
 
 
@@ -68,7 +69,7 @@ class TestExtractionOpenData(TestCase):
     def test_extraction_canteen(self, mock):
         mock.get(
             "https://geo.api.gouv.fr/communes",
-            text=json.dumps([{"code": "29021", "codeDepartement": "29", "codeRegion": "53", "codeEpci": "242900793"}]),
+            text=json.dumps([{"code": "29021", "codeEpci": "242900793"}]),
             status_code=200,
         )
         mock.get(
@@ -115,12 +116,8 @@ class TestExtractionOpenData(TestCase):
 
         # Checking that the geo data has been fetched from the city insee code
         self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["epci"], "242900793")
-        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["department"], "29")
-        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["region"], "53")
 
         # Check that the names of the region and departments are fetched from the code
-        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["department_lib"], "Finistère")
-        self.assertEqual(canteens[canteens.id == canteen_1.id].iloc[0]["region_lib"], "Bretagne")
         self.assertEqual(
             canteens[canteens.id == canteen_1.id].iloc[0]["epci_lib"], "CC Communauté Lesneven Côte des Légendes"
         )
@@ -177,3 +174,40 @@ class TestExtractionOpenData(TestCase):
             0,
             "There should be one canteen less as this specific sector has to remain private",
         )
+
+    def test_map_communes_infos(self, mock):
+        mock.get(
+            "https://geo.api.gouv.fr/communes",
+            text=json.dumps(
+                [
+                    {
+                        "nom": "L'Abergement-Clémenciat",
+                        "code": "01001",
+                        "codeDepartement": "01",
+                        "siren": "210100012",
+                        "codeEpci": "200069193",
+                        "codeRegion": "84",
+                        "codesPostaux": ["01400"],
+                        "population": "832",
+                    },
+                    {
+                        "nom": "L'Abergement-de-Varey",
+                        "code": "01002",
+                        "codeDepartement": "01",
+                        "siren": "210100020",
+                        "codeRegion": "84",
+                        "codesPostaux": ["01640"],
+                        "population": "267",
+                    },
+                ]
+            ),
+        )
+
+        communes_details = map_communes_infos()
+        self.assertEqual(len(communes_details), 2)
+        self.assertCountEqual(list(communes_details.keys()), ["01001", "01002"])
+        self.assertEqual(communes_details["01001"]["department"], "01")
+        self.assertEqual(communes_details["01001"]["region"], "84")
+        self.assertEqual(communes_details["01001"]["epci"], "200069193")
+
+        self.assertNotIn("epci", communes_details["01002"].keys(), "Not all cities are part of an EPCI")

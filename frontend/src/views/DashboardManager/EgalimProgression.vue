@@ -90,7 +90,7 @@
     </v-card>
     <v-card
       v-else-if="diagnosticCanBeTeledeclared"
-      class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
+      class="pa-6 pb-2 pb-sm-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
     >
       <div v-if="tunnelComplete">
         <p class="mb-0">
@@ -106,13 +106,15 @@
           Completez votre bilan, ou télédéclarez seulement ces données.
         </p>
       </div>
-      <v-card-actions class="px-0 pt-0 pb-0 justify-center">
-        <v-btn v-if="!tunnelComplete" color="primary" :to="completeDiagnosticLink">Complèter mon bilan</v-btn>
+      <v-card-actions class="px-0 pt-0 pb-0 justify-center flex-wrap">
+        <v-btn v-if="!tunnelComplete" color="primary" :to="completeDiagnosticLink" class="mb-4 mb-sm-0">
+          Complèter mon bilan
+        </v-btn>
         <v-btn
           color="primary"
           :outlined="!tunnelComplete"
           @click="showTeledeclarationPreview = true"
-          class="fr-text font-weight-medium"
+          class="fr-text font-weight-medium mb-4 mb-sm-0"
         >
           Vérifier et télédéclarer mes données {{ canteenDiagnostic.year }}
         </v-btn>
