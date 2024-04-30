@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div role="figure" :aria-labelledBy="headingId" :aria-label="label" :aria-describedby="descriptionId">
     <component v-if="heading" :is="headingLevel" :id="headingId" :class="headingClasses">{{ heading }}</component>
-    <VueApexCharts v-bind="$attrs" :aria-labelledBy="headingId" :aria-describedby="descriptionId" />
+    <VueApexCharts v-bind="$attrs" />
     <DsfrAccordion :items="[{ title: 'Description du graphique' }]" class="mb-2">
       <div :id="descriptionId">
         <slot name="description"></slot>
@@ -30,10 +30,18 @@ export default {
       type: String,
       default: "",
     },
+    label: String,
   },
   components: {
     VueApexCharts,
     DsfrAccordion,
+  },
+  mounted() {
+    if (!this.heading && !this.label) {
+      console.warn(
+        `Graph ${this.graphId} should have an accessible title. Please set either the heading prop or the label prop.`
+      )
+    }
   },
   computed: {
     headingId() {

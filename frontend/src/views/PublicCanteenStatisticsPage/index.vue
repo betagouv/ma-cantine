@@ -114,6 +114,7 @@
           <GraphComponent
             v-if="$vuetify.breakpoint.mdAndUp"
             graphId="published-graph"
+            label="Pourcentage de cantines publiées sur la plateforme"
             :options="publishedChartOptions"
             :series="publishedSeries"
             type="pie"
