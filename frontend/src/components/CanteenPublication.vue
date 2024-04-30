@@ -270,7 +270,7 @@
       </p>
     </div>
 
-    <div v-if="canteen.images && canteen.images.length > 0">
+    <div v-if="canteen.images && canteen.images.length > imageLimit">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 mt-8 mb-0">
         Galerie
       </h2>
@@ -278,7 +278,7 @@
         Cliquez sur une image pour l'agrandir
       </p>
       <div>
-        <ImageGallery :images="canteen.images" />
+        <ImageGallery :images="canteen.images.slice(imageLimit)" />
       </div>
     </div>
   </div>
@@ -432,6 +432,9 @@ export default {
     },
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
+    },
+    imageLimit() {
+      return this.$vuetify.breakpoint.xs ? 0 : 3
     },
   },
   methods: {
