@@ -11,6 +11,8 @@
         controls
         class="player"
         :id="`video-${mainVideo.id}`"
+        crossorigin="anonymous"
+        preload="metadata"
       >
         <source :src="mainVideo.video" />
         <track v-if="mainVideo.subtitles" label="Français" kind="subtitles" srclang="fr" :src="mainVideo.subtitles" />
