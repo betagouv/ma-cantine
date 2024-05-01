@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from data.factories import UserFactory, PurchaseFactory, CanteenFactory, DiagnosticFactory
 from data.models import Purchase, Diagnostic, Canteen
-from .utils import authenticate
+from .utils import authenticate, get_oauth2_token
 
 
 class TestPurchaseApi(APITestCase):
@@ -12,6 +12,16 @@ class TestPurchaseApi(APITestCase):
         """
         This endpoint is only available when authenticated
         """
+        response = self.client.get(reverse("purchase_list_create"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_purchases_wrong_scope(self):
+        """
+        This endpoint is only available if the API token has the right scope
+        """
+        _, token = get_oauth2_token("user:read")
+
+        self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.get(reverse("purchase_list_create"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -42,6 +52,24 @@ class TestPurchaseApi(APITestCase):
         PurchaseFactory.create(canteen=canteen)
         PurchaseFactory.create(canteen=canteen)
 
+        response = self.client.get(reverse("purchase_list_create"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json().get("results", [])
+        self.assertEqual(len(body), 2)
+
+    def test_get_purchases_with_token(self):
+        """
+        The logged user should get the purchases that concern them
+        when having the appropriate token
+        """
+        user, token = get_oauth2_token("canteen:read")
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+
+        PurchaseFactory.create(canteen=canteen)
+        PurchaseFactory.create(canteen=canteen)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.get(reverse("purchase_list_create"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json().get("results", [])
@@ -107,6 +135,23 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(purchase.local_definition, Purchase.Local.AUTOUR_SERVICE)
         self.assertEqual(len(purchase.characteristics), 2)
 
+    def test_create_purchase_with_token(self):
+        """
+        A user can create a purchase using an API token
+        """
+        user, token = get_oauth2_token("canteen:write")
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        payload = {
+            "date": "2022-01-13",
+            "canteen": canteen.id,
+            "provider": "Test provider",
+            "price_ht": 15.23,
+        }
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.post(reverse("purchase_list_create"), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
     @authenticate
     def test_create_purchase_nonexistent_canteen(self):
         """
@@ -168,6 +213,27 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(purchase.description, "Saumon")
         self.assertEqual(purchase.provider, "Test provider")
         self.assertEqual(float(purchase.price_ht), 15.23)
+
+    def test_update_purchase_with_token(self):
+        """
+        A user can update the data from a purchase object with an API token
+        """
+        user, token = get_oauth2_token("canteen:write")
+        purchase = PurchaseFactory.create()
+        purchase.canteen.managers.add(user)
+
+        payload = {
+            "id": purchase.id,
+            "description": "Saumon",
+            "provider": "Test provider",
+            "price_ht": 15.23,
+        }
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.patch(
+            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @authenticate
     def test_update_someone_elses_purchase(self):
@@ -572,6 +638,20 @@ class TestPurchaseApi(APITestCase):
 
         self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 0)
 
+    def test_delete_purchase_with_token(self):
+        """
+        A user can delete a purchase object from the API with a token
+        """
+        user, token = get_oauth2_token("canteen:write")
+        purchase = PurchaseFactory.create()
+        purchase.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 0)
+
     @authenticate
     def test_delete_unauthorized(self):
         """
@@ -593,7 +673,21 @@ class TestPurchaseApi(APITestCase):
         response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)  #
+        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)
+
+    def test_delete_wrong_scope(self):
+        """
+        A user cannot delete a purchase object of a canteen with an API token having the wrong scope
+        """
+        user, token = get_oauth2_token("canteen:read")
+        purchase = PurchaseFactory.create()
+        purchase.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)
 
     @authenticate
     def test_delete_multiple_purchases(self):
