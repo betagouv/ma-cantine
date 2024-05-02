@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="font-weight-black text-h6 grey--text text--darken-4 mb-6">Contactez « {{ canteen.name }} »</h2>
+    <h2 class="grey--text text--darken-4 mb-6">Contactez « {{ canteen.name }} »</h2>
     <div class="text-left grey--text text--darken-4 mt-n1 mb-6 text-body-2">
       <div>
         <div class="mb-1 d-flex align-center">
