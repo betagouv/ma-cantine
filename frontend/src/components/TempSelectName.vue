@@ -8,6 +8,7 @@
       v-on:input="$emit('input', $event.target.value)"
       class="fr-select"
     >
+      <!-- TODO: maybe not hidden so that the info is repeated on interaction? -->
       <option v-if="!items.length" disabled selected hidden value="">{{ noDataText || "Pas d'options" }}</option>
       <option v-for="item in items" :key="item[itemValue]" :value="item[itemValue]">
         {{ item[itemText] }}

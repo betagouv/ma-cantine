@@ -234,7 +234,16 @@
         </v-col>
         <v-col cols="12" md="6">
           <div>
-            <DsfrSelect
+            <TempSelectName
+              label="Secteurs d'activité"
+              labelClasses="body-2 mb-2"
+              :items="filteredSectors"
+              v-model="chosenSector"
+              item-text="name"
+              item-value="id"
+              no-data-text="Veuillez séléctionner la catégorie de secteur"
+            />
+            <!-- <DsfrSelect
               label="Secteurs d'activité"
               labelClasses="body-2 mb-2"
               :items="filteredSectors"
@@ -245,7 +254,7 @@
               item-value="id"
               hide-details="auto"
               no-data-text="Veuillez séléctionner la catégorie de secteur"
-            />
+            /> -->
             <div class="d-flex flex-wrap mt-2">
               <p v-for="id in canteen.sectors" :key="id" class="mb-0">
                 <v-chip
@@ -600,6 +609,7 @@ export default {
       this.canteen.department = location.department
     },
     sectorName(id) {
+      id = parseInt(id, 10) || id
       return this.sectors.find((s) => s.id === id)?.name || id
     },
     addSector(id) {
@@ -620,6 +630,11 @@ export default {
       return
     }
     window.confirm(LEAVE_WARNING) ? next() : next(false)
+  },
+  watch: {
+    chosenSector(newValue) {
+      this.addSector(newValue)
+    },
   },
 }
 </script>
