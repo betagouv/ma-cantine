@@ -34,7 +34,11 @@
         <router-link :to="{ name: 'AccessibilityDeclaration' }">déclaration d'accessibilité</router-link>
       </p>
     </v-alert>
-    <div v-if="suggestedVideos && suggestedVideos.length > 0">
+    <p v-else class="mt-4 text-right">
+      Question, problème ?
+      <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">Contactez-nous</router-link>
+    </p>
+    <div v-if="suggestedVideos && suggestedVideos.length > 0" class="mt-6">
       <h2 class="text-h6 mb-4">Autres webinaires</h2>
       <v-row>
         <v-col cols="12" sm="6" md="4" v-for="video in suggestedVideos" :key="video.id">
