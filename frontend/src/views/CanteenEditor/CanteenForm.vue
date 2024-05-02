@@ -418,11 +418,6 @@ export default {
       return !this.isNewCanteen && window.ENABLE_DASHBOARD
     },
   },
-  provide() {
-    return {
-      form: this.$refs.form,
-    }
-  },
   mounted() {
     if (this.$route.query && this.$route.query["valider"]) {
       this.$nextTick(() => {
