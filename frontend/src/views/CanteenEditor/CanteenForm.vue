@@ -379,7 +379,7 @@ export default {
     },
     filteredSectors() {
       if (!this.sectorCategory) return []
-      return sectorsSelectList(this.sectors, this.sectorCategory)
+      return sectorsSelectList(this.sectors, this.sectorCategory).filter((s) => !s.header)
     },
     sectorCategories() {
       const displayValueMap = Constants.SectorCategoryTranslations

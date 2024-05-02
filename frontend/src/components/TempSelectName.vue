@@ -10,6 +10,7 @@
       @blur="validate"
     >
       <option v-if="!items.length" disabled selected value="">{{ noDataText || "Pas d'options" }}</option>
+      <option v-else disabled selected hidden value="">Sélectionner une option</option>
       <option v-for="item in items" :key="item[itemValue]" :value="item[itemValue]">
         {{ item[itemText] }}
       </option>
@@ -83,6 +84,7 @@ export default {
   mounted() {
     this.assignInputId()
     this.form.register(this)
+    this.$nextTick(() => this.$watch("rules", this.validate, { deep: true }))
   },
   beforeDestroy() {
     // https://github.com/vuetifyjs/vuetify/issues/3464#issuecomment-370240024
