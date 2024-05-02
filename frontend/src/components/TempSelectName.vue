@@ -32,7 +32,7 @@ export default {
     form: { default: null },
   },
   props: {
-    value: String,
+    value: [String, Number],
     items: {
       // array of objects with value and text
       type: Array,
@@ -83,12 +83,12 @@ export default {
   },
   mounted() {
     this.assignInputId()
-    this.form.register(this)
+    if (this.form) this.form.register(this)
     this.$nextTick(() => this.$watch("rules", this.validate, { deep: true }))
   },
   beforeDestroy() {
     // https://github.com/vuetifyjs/vuetify/issues/3464#issuecomment-370240024
-    this.form.unregister(this)
+    if (this.form) this.form.unregister(this)
   },
 }
 </script>
