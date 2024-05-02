@@ -6,20 +6,30 @@
       :id="inputId"
       v-bind:value="value"
       v-on:input="$emit('input', $event.target.value)"
-      class="fr-select"
+      :class="{ 'fr-select mb-1': true, 'fr-error': hasError }"
+      @blur="validate"
     >
-      <!-- TODO: maybe not hidden so that the info is repeated on interaction? -->
-      <option v-if="!items.length" disabled selected hidden value="">{{ noDataText || "Pas d'options" }}</option>
+      <option v-if="!items.length" disabled selected value="">{{ noDataText || "Pas d'options" }}</option>
       <option v-for="item in items" :key="item[itemValue]" :value="item[itemValue]">
         {{ item[itemText] }}
       </option>
     </select>
+    <div v-if="errorMessage" class="v-messages theme--light error--text pl-3" role="alert">
+      <div class="v-messages__wrapper">
+        <div class="v-messages__message">
+          <p>{{ errorMessage }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: "TempSelectName",
+  inject: {
+    form: { default: null },
+  },
   props: {
     value: String,
     items: {
@@ -43,18 +53,40 @@ export default {
       default: "value",
     },
     noDataText: String,
+    rules: Array,
   },
   data() {
-    return { inputId: null }
+    return { inputId: null, errorMessage: null }
+  },
+  computed: {
+    hasError() {
+      return !!this.errorMessage
+    },
   },
   methods: {
     assignInputId() {
       const randInt = Math.floor(Math.random() * 1000)
       this.inputId = `select-${randInt}`
     },
+    validate() {
+      this.errorMessage = null
+      for (const rule in this.rules) {
+        const result = this.rules[rule](this.value)
+        if (result !== true) {
+          this.errorMessage = result
+          break
+        }
+      }
+      return !this.hasError
+    },
   },
   mounted() {
     this.assignInputId()
+    this.form.register(this)
+  },
+  beforeDestroy() {
+    // https://github.com/vuetifyjs/vuetify/issues/3464#issuecomment-370240024
+    this.form.unregister(this)
   },
 }
 </script>
@@ -98,5 +130,8 @@ select.fr-select {
   padding: 0.5rem 2.5rem 0.5rem 1rem;
   width: 100%;
   // TODO: add 2px white border to match focus border look of existing components; fix height to be same as existing components
+}
+select.fr-error {
+  box-shadow: inset 0 -2px 0 0 #df3232;
 }
 </style>

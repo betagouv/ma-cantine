@@ -242,19 +242,8 @@
               item-text="name"
               item-value="id"
               no-data-text="Veuillez séléctionner la catégorie de secteur"
-            />
-            <!-- <DsfrSelect
-              label="Secteurs d'activité"
-              labelClasses="body-2 mb-2"
-              :items="filteredSectors"
               :rules="canteen.sectors && canteen.sectors.length ? [] : [validators.required]"
-              @change="addSector"
-              v-model="chosenSector"
-              item-text="name"
-              item-value="id"
-              hide-details="auto"
-              no-data-text="Veuillez séléctionner la catégorie de secteur"
-            /> -->
+            />
             <div class="d-flex flex-wrap mt-2">
               <p v-for="id in canteen.sectors" :key="id" class="mb-0">
                 <v-chip
@@ -432,6 +421,11 @@ export default {
     showDelete() {
       return !this.isNewCanteen && window.ENABLE_DASHBOARD
     },
+  },
+  provide() {
+    return {
+      form: this.$refs.form,
+    }
   },
   mounted() {
     if (this.$route.query && this.$route.query["valider"]) {
