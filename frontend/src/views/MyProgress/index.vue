@@ -19,14 +19,7 @@
         </v-row>
       </v-col>
       <v-col cols="12" sm="5" md="2">
-        <p class="body-2 my-2" for="yearSelect">Année</p>
-        <DsfrSelect
-          ref="yearSelect"
-          v-model="selectedYear"
-          :items="years"
-          :hide-details="true"
-          placeholder="Année du diagnostic"
-        />
+        <TempSelectName label="Année" v-model="selectedYear" :items="yearOptions" />
       </v-col>
     </v-row>
     <v-row v-if="canteen" class="mt-5 mt-md-10">
@@ -287,7 +280,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import ProductionTypeTag from "@/components/ProductionTypeTag"
 import ProgressTab from "./ProgressTab"
 import DsfrTabsVue from "@/components/DsfrTabs"
-import DsfrSelect from "@/components/DsfrSelect"
+import TempSelectName from "@/components/TempSelectName"
 import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
@@ -313,7 +306,7 @@ export default {
     ProductionTypeTag,
     ProgressTab,
     DsfrTabsVue,
-    DsfrSelect,
+    TempSelectName,
     DownloadLink,
     TeledeclarationPreview,
     TeledeclarationCancelDialog,
@@ -416,6 +409,9 @@ export default {
     },
     isSatelliteWithApproCentralDiagnostic() {
       return this.isSatellite && this.centralDiagnostic?.centralKitchenDiagnosticMode === "APPRO"
+    },
+    yearOptions() {
+      return this.years.map((year) => ({ text: year, value: year }))
     },
   },
   methods: {
