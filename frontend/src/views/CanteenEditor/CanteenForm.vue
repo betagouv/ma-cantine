@@ -225,14 +225,12 @@
         </v-col>
 
         <v-col cols="12" sm="6" md="4">
-          <div>
-            <TempSelectName
-              label="Catégorie de secteur"
-              labelClasses="body-2 mb-2"
-              :items="sectorCategories"
-              v-model="sectorCategory"
-            />
-          </div>
+          <TempSelectName
+            label="Catégorie de secteur"
+            labelClasses="body-2 mb-2"
+            :items="sectorCategories"
+            v-model="sectorCategory"
+          />
         </v-col>
         <v-col cols="12" md="6">
           <div>

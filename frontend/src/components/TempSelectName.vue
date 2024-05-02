@@ -84,12 +84,13 @@ select.fr-select {
   border-radius: 0.25rem 0.25rem 0 0;
   box-shadow: inset 0 -2px 0 0 #3a3a3a;
   box-shadow: inset 0 -2px 0 0 var(--border-plain-grey);
-  color: #3a3a3a;
+  color: #3a3a3a; // TODO: maybe chanage this to match other components (or change them to match this?)
   color: var(--text-default-grey);
   display: block;
   font-size: 1rem;
   line-height: 1.5rem;
   padding: 0.5rem 2.5rem 0.5rem 1rem;
   width: 100%;
+  // TODO: add 2px white border to match focus border look of existing components; fix height to be same as existing components
 }
 </style>
