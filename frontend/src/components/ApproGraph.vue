@@ -2,8 +2,9 @@
   <VueApexCharts
     :options="chartOptions"
     :series="series"
-    role="img"
+    role="figure"
     aria-label="Approvisionnement bio et durable"
+    :aria-description="description"
     height="100px"
     width="100%"
     class="my-4"
@@ -128,6 +129,9 @@ export default {
       return "percentageValueTotalHt" in this.diagnostic
         ? Math.round(getSustainableTotal(this.diagnostic) * 100)
         : getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
+    },
+    description() {
+      return `Bio : ${this.bioPercentage} %. Durable et de qualité (hors bio) : ${this.sustainablePercentage} %. Rappel objectif EGAlim : ${this.applicableRules.qualityThreshold} % des achats de qualité et durable, dont ${this.applicableRules.bioThreshold} % bio.`
     },
   },
 }
