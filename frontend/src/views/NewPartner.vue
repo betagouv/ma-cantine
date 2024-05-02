@@ -17,7 +17,8 @@
             label="Nom de votre structure / organisation"
             :rules="[validators.required]"
           />
-          <DsfrSelect
+          <TempSelectName
+            class="mb-8"
             label="Type d'acteur"
             multiple
             :items="partnerTypes"
@@ -57,7 +58,8 @@
         </v-col>
       </v-row>
       <v-col class="mt-6 pa-0" cols="12" md="9">
-        <DsfrSelect
+        <TempSelectName
+          class="mb-8"
           multiple
           clearable
           label="Sur quels aspects, pouvez-vous aider des gestionnaires de restaurants collectifs ?"
@@ -67,7 +69,8 @@
         />
       </v-col>
       <v-col class="pa-0" cols="12" md="9">
-        <DsfrSelect
+        <TempSelectName
+          class="mb-8"
           label="Secteurs d'activité"
           multiple
           :items="sectorCategories"
@@ -85,7 +88,7 @@
         </v-checkbox>
       </v-col>
       <v-col v-if="showDepartmentSelector" class="pa-0 mb-n4" cols="12" md="9">
-        <DsfrSelect
+        <TempSelectName
           label="Departements où votre activité est présente"
           multiple
           :items="departmentItems"
@@ -164,7 +167,7 @@ import PageSatisfaction from "@/components/PageSatisfaction.vue"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
-import DsfrSelect from "@/components/DsfrSelect"
+import TempSelectName from "@/components/TempSelectName"
 import DsfrRadio from "@/components/DsfrRadio"
 import DsfrEmail from "@/components/DsfrEmail"
 import DsfrPhoneNumber from "@/components/DsfrPhoneNumber"
@@ -176,7 +179,7 @@ export default {
     BreadcrumbsNav,
     DsfrTextField,
     DsfrTextarea,
-    DsfrSelect,
+    TempSelectName,
     DsfrRadio,
     DsfrEmail,
     DsfrPhoneNumber,

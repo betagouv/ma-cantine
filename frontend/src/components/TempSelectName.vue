@@ -1,6 +1,7 @@
 <template>
   <div>
     <label :for="inputId" :class="labelClasses">{{ label }}</label>
+    <!-- TODO: handle clearable option -->
     <select
       ref="select"
       :id="inputId"
@@ -8,6 +9,8 @@
       v-on:input="$emit('input', $event.target.value)"
       :class="{ 'fr-select mb-1': true, 'fr-error': hasError }"
       @blur="validate"
+      :multiple="multiple"
+      size="3"
     >
       <option v-if="!items.length" disabled selected value="">{{ noDataText || "Pas d'options" }}</option>
       <option v-else disabled selected hidden value="">Sélectionner une option</option>
@@ -55,6 +58,7 @@ export default {
     },
     noDataText: String,
     rules: Array,
+    multiple: Boolean,
   },
   data() {
     return { inputId: null, errorMessage: null }
