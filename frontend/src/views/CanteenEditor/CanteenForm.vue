@@ -260,15 +260,13 @@
           </div>
         </v-col>
         <v-col v-if="showMinistryField" cols="12" md="10">
-          <DsfrSelect
+          <TempSelectName
             label="Ministère de tutelle"
             labelClasses="body-2 mb-2"
             :items="ministries"
             v-model="canteen.lineMinistry"
             :rules="[validators.required]"
             placeholder="Sélectionnez le Ministère de tutelle"
-            hide-details="auto"
-            clearable
           />
         </v-col>
       </v-row>
@@ -319,7 +317,6 @@ import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrRadio from "@/components/DsfrRadio"
 import CityField from "./CityField"
-import DsfrSelect from "@/components/DsfrSelect"
 import TempSelectName from "@/components/TempSelectName"
 import DsfrCallout from "@/components/DsfrCallout"
 
@@ -332,7 +329,6 @@ export default {
     DsfrTextField,
     DsfrRadio,
     CityField,
-    DsfrSelect,
     TempSelectName,
     DsfrCallout,
     SiretCheck,
@@ -413,7 +409,7 @@ export default {
     showMinistryField() {
       const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
       if (concernedSectors.length === 0) return false
-      return this.canteen.sectors?.some((x) => concernedSectors.indexOf(x) > -1)
+      return this.canteen.sectors?.some((x) => concernedSectors.indexOf(parseInt(x, 10)) > -1)
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
