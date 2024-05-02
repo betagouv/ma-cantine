@@ -226,13 +226,11 @@
 
         <v-col cols="12" sm="6" md="4">
           <div>
-            <DsfrSelect
+            <TempSelectName
               label="Catégorie de secteur"
               labelClasses="body-2 mb-2"
-              clearable
               :items="sectorCategories"
               v-model="sectorCategory"
-              hide-details="auto"
             />
           </div>
         </v-col>
@@ -326,6 +324,7 @@ import DsfrTextField from "@/components/DsfrTextField"
 import DsfrRadio from "@/components/DsfrRadio"
 import CityField from "./CityField"
 import DsfrSelect from "@/components/DsfrSelect"
+import TempSelectName from "@/components/TempSelectName"
 import DsfrCallout from "@/components/DsfrCallout"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
@@ -338,6 +337,7 @@ export default {
     DsfrRadio,
     CityField,
     DsfrSelect,
+    TempSelectName,
     DsfrCallout,
     SiretCheck,
   },
@@ -388,7 +388,8 @@ export default {
     sectorCategories() {
       const displayValueMap = Constants.SectorCategoryTranslations
       const categoriesInUse = this.sectors.map((s) => s.category)
-      const categories = categoriesInUse.map((c) => ({ value: c, text: displayValueMap[c] }))
+      const uniqueCategories = categoriesInUse.filter((c, idx) => categoriesInUse.indexOf(c) === idx)
+      const categories = uniqueCategories.map((c) => ({ value: c, text: displayValueMap[c] }))
       categories.sort((a, b) => {
         if (a.value === "autres" && b.value === "inconnu") return 0
         else if (a.value === "autres") return 1
