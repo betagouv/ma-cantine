@@ -5,7 +5,7 @@
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
           <DsfrEmail v-model="fromEmail" />
           <DsfrTextField v-model="name" label="Prénom et nom" />
-          <TempSelectName
+          <DsfrNativeSelect
             v-model="inquiryType"
             :items="inquiryOptions"
             label="Type de demande"
@@ -46,12 +46,12 @@
 import validators from "@/validators"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrEmail from "@/components/DsfrEmail"
-import TempSelectName from "@/components/TempSelectName"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   name: "GeneralContactForm",
-  components: { DsfrTextField, TempSelectName, DsfrTextarea, DsfrEmail },
+  components: { DsfrTextField, DsfrNativeSelect, DsfrTextarea, DsfrEmail },
   props: {
     initialInquiryType: {
       type: String,

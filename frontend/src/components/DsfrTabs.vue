@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TempSelectName
+    <DsfrNativeSelect
       class="mb-4"
       :label="mobileLabel"
       :items="mobileSelectItems"
@@ -18,12 +18,12 @@
 </template>
 
 <script>
-import TempSelectName from "@/components/TempSelectName"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 
 export default {
   inheritAttrs: false,
   props: ["value", "enableMobileView", "mobileLabel", "mobileSelectItems"],
-  components: { TempSelectName },
+  components: { DsfrNativeSelect },
   computed: {
     tab: {
       get() {

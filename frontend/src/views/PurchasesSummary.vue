@@ -21,7 +21,7 @@
           />
         </v-col>
         <v-col cols="12" sm="4">
-          <TempSelectName label="Année" v-model="vizYear" :items="allowedYears" hide-details="auto" />
+          <DsfrNativeSelect label="Année" v-model="vizYear" :items="allowedYears" hide-details="auto" />
         </v-col>
       </v-row>
       <v-row v-if="displayMultiYearSummary">
@@ -196,7 +196,7 @@ import {
   applicableDiagnosticRules,
 } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
-import TempSelectName from "@/components/TempSelectName"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrTextField from "@/components/DsfrTextField"
 import GraphComponent from "@/components/GraphComponent"
@@ -209,7 +209,7 @@ export default {
   name: "PurchasesSummary",
   components: {
     BreadcrumbsNav,
-    TempSelectName,
+    DsfrNativeSelect,
     DsfrAutocomplete,
     DsfrTextField,
     GraphComponent,

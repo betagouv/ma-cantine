@@ -225,7 +225,7 @@
         </v-col>
 
         <v-col cols="12" sm="6" md="4">
-          <TempSelectName
+          <DsfrNativeSelect
             label="Catégorie de secteur"
             labelClasses="body-2 mb-2"
             :items="sectorCategories"
@@ -234,7 +234,7 @@
         </v-col>
         <v-col cols="12" md="6">
           <div>
-            <TempSelectName
+            <DsfrNativeSelect
               label="Secteurs d'activité"
               labelClasses="body-2 mb-2"
               :items="filteredSectors"
@@ -260,7 +260,7 @@
           </div>
         </v-col>
         <v-col v-if="showMinistryField" cols="12" md="10">
-          <TempSelectName
+          <DsfrNativeSelect
             label="Ministère de tutelle"
             labelClasses="body-2 mb-2"
             :items="ministries"
@@ -317,7 +317,7 @@ import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrRadio from "@/components/DsfrRadio"
 import CityField from "./CityField"
-import TempSelectName from "@/components/TempSelectName"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrCallout from "@/components/DsfrCallout"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
@@ -329,7 +329,7 @@ export default {
     DsfrTextField,
     DsfrRadio,
     CityField,
-    TempSelectName,
+    DsfrNativeSelect,
     DsfrCallout,
     SiretCheck,
   },

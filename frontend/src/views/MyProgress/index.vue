@@ -19,7 +19,7 @@
         </v-row>
       </v-col>
       <v-col cols="12" sm="5" md="2">
-        <TempSelectName label="Année" v-model="selectedYear" :items="yearOptions" />
+        <DsfrNativeSelect label="Année" v-model="selectedYear" :items="yearOptions" />
       </v-col>
     </v-row>
     <v-row v-if="canteen" class="mt-5 mt-md-10">
@@ -280,7 +280,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import ProductionTypeTag from "@/components/ProductionTypeTag"
 import ProgressTab from "./ProgressTab"
 import DsfrTabsVue from "@/components/DsfrTabs"
-import TempSelectName from "@/components/TempSelectName"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
@@ -306,7 +306,7 @@ export default {
     ProductionTypeTag,
     ProgressTab,
     DsfrTabsVue,
-    TempSelectName,
+    DsfrNativeSelect,
     DownloadLink,
     TeledeclarationPreview,
     TeledeclarationCancelDialog,

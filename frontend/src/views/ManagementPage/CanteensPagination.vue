@@ -17,7 +17,7 @@
           </form>
         </v-col>
         <v-col cols="12" md="4" class="pa-0">
-          <TempSelectName
+          <DsfrNativeSelect
             v-model="filterProductionType"
             :items="productionTypeOptions"
             label="Filtrer par type de production"
@@ -75,12 +75,12 @@ import CanteenCard from "./CanteenCard"
 import CentralKitchenCard from "./CentralKitchenCard"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
-import TempSelectName from "@/components/TempSelectName"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import Constants from "@/constants"
 
 export default {
   name: "CanteensPagination",
-  components: { CanteenCard, DsfrPagination, DsfrSearchField, CentralKitchenCard, TempSelectName },
+  components: { CanteenCard, DsfrPagination, DsfrSearchField, CentralKitchenCard, DsfrNativeSelect },
   data() {
     return {
       limit: 5,

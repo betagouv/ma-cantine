@@ -90,7 +90,7 @@
             />
           </v-col>
           <v-col cols="12" md="9">
-            <TempSelectName
+            <DsfrNativeSelect
               label="Fonction"
               labelClasses="body-2 mb-2"
               v-model="userCopy.job"
@@ -107,7 +107,7 @@
             />
           </v-col>
           <v-col cols="12" md="9" v-if="!userCopy.hasMtmData">
-            <TempSelectName
+            <DsfrNativeSelect
               label="Comment avez-vous connu ma-cantine ?"
               labelClasses="body-2 mb-2"
               v-model="userCopy.source"
@@ -140,13 +140,13 @@ import validators from "@/validators"
 import Constants from "@/constants"
 import { toBase64, getObjectDiff } from "@/utils"
 import DsfrTextField from "@/components/DsfrTextField"
-import TempSelectName from "@/components/TempSelectName"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrEmail from "@/components/DsfrEmail"
 import DsfrPhoneNumber from "@/components/DsfrPhoneNumber"
 
 export default {
   name: "AccountEditor",
-  components: { DsfrTextField, TempSelectName, DsfrEmail, DsfrPhoneNumber },
+  components: { DsfrTextField, DsfrNativeSelect, DsfrEmail, DsfrPhoneNumber },
   data() {
     return {
       userCopy: {},
