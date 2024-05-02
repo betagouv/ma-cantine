@@ -8,8 +8,9 @@
       v-on:input="$emit('input', $event.target.value)"
       class="fr-select"
     >
-      <option v-for="item in items" :key="item.value" :value="item.value">
-        {{ item.text }}
+      <option v-if="!items.length" disabled selected hidden value="">{{ noDataText || "Pas d'options" }}</option>
+      <option v-for="item in items" :key="item[itemValue]" :value="item[itemValue]">
+        {{ item[itemText] }}
       </option>
     </select>
   </div>
@@ -32,6 +33,15 @@ export default {
     labelClasses: {
       default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
     },
+    itemText: {
+      type: String,
+      default: "text",
+    },
+    itemValue: {
+      type: String,
+      default: "value",
+    },
+    noDataText: String,
   },
   data() {
     return { inputId: null }
@@ -40,11 +50,6 @@ export default {
     assignInputId() {
       const randInt = Math.floor(Math.random() * 1000)
       this.inputId = `select-${randInt}`
-    },
-    updateModel(event) {
-      console.log(event.target)
-      console.log(event.target.value)
-      this.$emit("input", event.target.value)
     },
   },
   mounted() {
