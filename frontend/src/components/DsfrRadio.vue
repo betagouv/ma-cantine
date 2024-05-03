@@ -1,5 +1,5 @@
 <template>
-  <v-radio-group class="my-0" ref="radio" v-bind="$attrs" v-on="$listeners" @change="(v) => $emit('input', v)">
+  <v-radio-group class="my-0" ref="radiogroup" v-bind="$attrs" v-on="$listeners" @change="(v) => $emit('input', v)">
     <template v-slot:label>
       <span class="d-block mb-2">
         <span :class="legendClass">
@@ -29,7 +29,7 @@
 
     <!-- For RGAA 8.9 error messages should also be in p tags, by default in vuetify 2 they're in divs -->
     <template v-slot:message="{ key, message }">
-      <p :key="key" class="mb-0">{{ message }}</p>
+      <p :id="errorMessageId" :key="key" class="mb-0">{{ message }}</p>
     </template>
   </v-radio-group>
 </template>
@@ -85,11 +85,26 @@ export default {
     optional() {
       return !this.hideOptional && !validators._includesRequiredValidator(this.$attrs.rules)
     },
+    errorMessageId() {
+      return `${this.inputId}-error`
+    },
   },
   methods: {
     validate() {
-      return this.$refs["radio"].validate()
+      return this.$refs["radiogroup"].validate()
     },
+    assignInputId() {
+      this.inputId = this.$refs?.["radiogroup"]?.$refs?.["label"].id
+    },
+    assignDescribedby() {
+      this.$refs["radiogroup"].$el
+        .querySelector("[role=radiogroup]")
+        .setAttribute("aria-describedby", this.errorMessageId)
+    },
+  },
+  mounted() {
+    this.assignInputId()
+    this.assignDescribedby()
   },
 }
 </script>
