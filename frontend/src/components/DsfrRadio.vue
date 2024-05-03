@@ -1,5 +1,5 @@
 <template>
-  <v-radio-group class="my-0" ref="radiogroup" v-bind="$attrs" v-on="$listeners" @change="(v) => $emit('input', v)">
+  <v-radio-group class="my-0" ref="radiogroup" v-bind="$attrs" v-on="$listeners" @change="change">
     <template v-slot:label>
       <span class="d-block mb-2">
         <span :class="legendClass">
@@ -38,6 +38,9 @@
 import validators from "@/validators"
 
 export default {
+  inject: {
+    form: { default: null },
+  },
   inheritAttrs: false,
   props: {
     labelClasses: {
@@ -65,7 +68,7 @@ export default {
   },
   computed: {
     value() {
-      return this.$refs["radio"].value
+      return this.$refs["radiogroup"].value
     },
     items() {
       if (this.yesNo) {
@@ -90,8 +93,15 @@ export default {
     },
   },
   methods: {
+    change(v) {
+      this.$emit("input", v)
+      this.validate()
+    },
     validate() {
-      return this.$refs["radiogroup"].validate()
+      const result = this.$refs["radiogroup"].validate()
+      this.hasError = result !== true
+      this.assignValidity()
+      return result
     },
     assignInputId() {
       this.inputId = this.$refs?.["radiogroup"]?.$refs?.["label"].id
@@ -101,10 +111,20 @@ export default {
         .querySelector("[role=radiogroup]")
         .setAttribute("aria-describedby", this.errorMessageId)
     },
+    assignValidity() {
+      this.$refs["radiogroup"].$el.querySelector("[role=radiogroup]").setAttribute("aria-invalid", this.hasError)
+    },
   },
   mounted() {
     this.assignInputId()
     this.assignDescribedby()
+    if (this.form) this.form.register(this)
+    else if (this.$attrs.rules?.length)
+      console.warn(`component ${this.inputId} with validation rules not in a form, a11y markup may not work`)
+  },
+  beforeDestroy() {
+    // https://github.com/vuetifyjs/vuetify/issues/3464#issuecomment-370240024
+    if (this.form) this.form.unregister(this)
   },
 }
 </script>
