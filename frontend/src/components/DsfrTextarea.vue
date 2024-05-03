@@ -14,12 +14,13 @@
       v-on="$listeners"
       persistent-placeholder
       @input="(v) => $emit('input', v)"
+      :aria-describedby="errorMessageId"
     >
       <template v-slot:label><span></span></template>
 
       <!-- For RGAA 8.9 error messages should also be in p tags, by default in vuetify 2 they're in divs -->
       <template v-slot:message="{ key, message }">
-        <p :key="key" class="mb-0">{{ message }}</p>
+        <p :id="errorMessageId" :key="key" class="mb-0">{{ message }}</p>
       </template>
     </v-textarea>
   </div>
@@ -46,6 +47,9 @@ export default {
     },
     optional() {
       return !validators._includesRequiredValidator(this.$attrs.rules)
+    },
+    errorMessageId() {
+      return this.inputId && `${this.inputId}-error`
     },
   },
   methods: {
