@@ -20,6 +20,7 @@
       persistent-placeholder
       @input="(v) => $emit('input', v)"
       :aria-describedby="errorMessageId"
+      :aria-invalid="hasError"
     >
       <template v-slot:label><span></span></template>
 
@@ -39,6 +40,9 @@
 import validators from "@/validators"
 
 export default {
+  inject: {
+    form: { default: null },
+  },
   inheritAttrs: false,
   props: {
     labelClasses: {
@@ -50,7 +54,10 @@ export default {
     },
   },
   data() {
-    return { inputId: null }
+    return {
+      inputId: null,
+      hasError: null,
+    }
   },
   computed: {
     lazyValue() {
@@ -72,7 +79,9 @@ export default {
       if (labels && labels.length > 0) for (const label of labels) label.parentNode.removeChild(label)
     },
     validate() {
-      return this.$refs["text-field"].validate()
+      const result = this.$refs["text-field"].validate()
+      this.hasError = result !== true
+      return result
     },
     assignInputId() {
       this.inputId = this.$refs?.["text-field"]?.$refs?.["input"].id
@@ -81,6 +90,13 @@ export default {
   mounted() {
     this.removeInnerLabel()
     this.assignInputId()
+    if (this.form) this.form.register(this)
+    else if (this.$attrs.rules?.length)
+      console.warn(`component ${this.inputId} with validation rules not in a form, a11y markup may not work`)
+  },
+  beforeDestroy() {
+    // https://github.com/vuetifyjs/vuetify/issues/3464#issuecomment-370240024
+    if (this.form) this.form.unregister(this)
   },
 }
 </script>
