@@ -1,27 +1,8 @@
 <template>
   <div class="mb-8">
-    <v-card outlined elevation="0" color="primary lighten-5" class="d-flex mb-6" v-if="usesCentralKitchenDiagnostics">
-      <v-icon class="ml-4" color="primary">$information-fill</v-icon>
-
-      <v-card-text>
-        <p class="mb-0">
-          La cantine « {{ canteen.name }} » sert des repas cuisinés dans la cuisine centrale
-          <span v-if="canteen.centralKitchen.publicationStatus === 'published'">
-            <router-link
-              :to="{
-                name: 'CanteenPage',
-                params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen.centralKitchen) },
-              }"
-            >
-              « {{ canteen.centralKitchen.name }} »
-            </router-link>
-            .
-          </span>
-          <span v-else>« {{ canteen.centralKitchen.name }} ».</span>
-          Les valeurs ci-dessous sont celles du lieu de production des repas.
-        </p>
-      </v-card-text>
-    </v-card>
+    <!-- TODO: consider where this message should be appearing. If ALL above accordions and if APPRO here? -->
+    <!-- do we need to think about the case where the declaration method may change year on year ? -->
+    <CentralKitchenInfo :canteen="canteen" />
 
     <p v-if="badge.earned" class="mb-0">
       Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
@@ -201,6 +182,7 @@ import {
   latestCreatedDiagnostic,
 } from "@/utils"
 import labels from "@/data/quality-labels.json"
+import CentralKitchenInfo from "./CentralKitchenInfo"
 
 export default {
   name: "QualityMeasureResults",
@@ -209,7 +191,7 @@ export default {
     canteen: Object,
     diagnosticSet: Array,
   },
-  components: {},
+  components: { CentralKitchenInfo },
   data() {
     return {
       labels,
@@ -222,11 +204,6 @@ export default {
     },
     publicationYear() {
       return this.diagnostic?.year
-    },
-    usesCentralKitchenDiagnostics() {
-      return (
-        this.canteen?.productionType === "site_cooked_elsewhere" && this.canteen?.centralKitchenDiagnostics?.length > 0
-      )
     },
     showPercentagesBlock() {
       return (
