@@ -85,8 +85,8 @@ export default Object.freeze({
       color: "pink darken-4",
     },
     PRODUITS_DE_LA_MER: {
-      text: "Produits aquatiques frais et surgelés",
-      shortText: "produits aquatiques",
+      text: "Produits de la mer et aquaculture frais et surgelés",
+      shortText: "produits de la mer et aquaculture",
       color: "blue darken-3",
     },
     FRUITS_ET_LEGUMES: {
