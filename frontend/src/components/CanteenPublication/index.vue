@@ -33,6 +33,7 @@
           :badge="item"
           :canteen="canteen"
           :diagnosticSet="diagnosticSet"
+          :editable="editable"
         />
         <p class="mb-0">
           Se renseigner sur

@@ -24,7 +24,14 @@
     <div v-else>
       <!-- TODO: multi year comparison -->
     </div>
-    <!-- Comments for appro section (make "editablecomment" component to reuse general publication comments functionality?) qualityComments -->
+    <EditableCommentsField
+      :canteen="canteen"
+      valueKey="qualityComments"
+      :editable="editable"
+      label="Un mot sur le volet approvisionnement"
+      helpText="Si vous le souhaitez, ajoutez des précisions sur vos résultats : actions entreprises, priorités à venir..."
+      :charLimit="500"
+    />
 
     <!-- <div v-if="showPercentagesBlock">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
@@ -200,6 +207,7 @@ import labels from "@/data/quality-labels.json"
 import CentralKitchenInfo from "./CentralKitchenInfo"
 import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
 import ApproGraph from "@/components/ApproGraph"
+import EditableCommentsField from "../EditableCommentsField"
 
 const COMPARE_TAB = "Comparer"
 
@@ -209,8 +217,9 @@ export default {
     badge: Object,
     canteen: Object,
     diagnosticSet: Array,
+    editable: Boolean,
   },
-  components: { CentralKitchenInfo, DsfrSegmentedControl, ApproGraph },
+  components: { CentralKitchenInfo, DsfrSegmentedControl, ApproGraph, EditableCommentsField },
   data() {
     const tabs = this.diagnosticSet.map((d) => +d.year)
     tabs.sort((a, b) => b - a)
