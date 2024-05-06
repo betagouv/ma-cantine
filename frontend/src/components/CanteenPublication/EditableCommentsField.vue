@@ -41,6 +41,7 @@
           <span v-if="helpText" class="fr-hint-text mb-2">
             {{ helpText }}
           </span>
+          <slot name="help-text" />
         </template>
       </DsfrTextarea>
       <v-btn @click="saveDescription" class="primary">Enregistrer</v-btn>

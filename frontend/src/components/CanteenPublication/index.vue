@@ -6,11 +6,16 @@
       valueKey="publicationComments"
       :editable="editable"
       label="Description de l'établissement"
-      helpText="Si vous le souhaitez, personnalisez votre affiche en écrivant quelques mots sur votre établissement : son
-            fonctionnement, l'organisation, l'historique..."
       cta="Modifier la description"
       :charLimit="500"
-    />
+    >
+      <template v-slot:help-text>
+        <span class="fr-hint-text mb-2">
+          Si vous le souhaitez, personnalisez votre affiche en écrivant quelques mots sur votre établissement&nbsp;: son
+          fonctionnement, l'organisation, l'historique...
+        </span>
+      </template>
+    </EditableCommentsField>
 
     <h2 class="mt-12 mb-8">Où en-sommes nous de notre transition alimentaire ?</h2>
     <DsfrAccordion :items="badgeItems" :openPanelIndex="editable ? undefined : 0" class="mt-4">
