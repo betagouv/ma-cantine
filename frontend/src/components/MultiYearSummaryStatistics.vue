@@ -12,27 +12,29 @@
         :width="width || '100%'"
       />
       <DsfrAccordion :items="[{ title: 'Description du graphique' }]" :style="`width: ${width}`" class="mb-2">
-        <div id="multi-year-graph-description">
-          <p>
-            Les pourcentages d'achats par année pour cette cantine sont :
-          </p>
-          <ol class="mb-4">
-            <li v-for="(year, idx) in years" :key="year">
-              {{ year }} : {{ seriesData.bio[idx] }} % bio, {{ seriesData.sustainable[idx] }} % de qualité et durable
-              (hors bio), {{ 100 - seriesData.bio[idx] - seriesData.sustainable[idx] }} % hors EGAlim
-            </li>
-          </ol>
-          <p class="mb-0">
-            Rappel de l'objectif : Les repas servis comportent au moins {{ applicableRules.qualityThreshold }} % de
-            produits de qualité et durables dont au moins {{ applicableRules.bioThreshold }} % issus de l'agriculture
-            biologique ou en conversion, pour les cantines
-            {{
-              applicableRules.hasQualityException
-                ? `dans la région « ${regionDisplayName} »`
-                : "en France métropolitaine"
-            }}.
-          </p>
-        </div>
+        <template v-slot:content>
+          <div id="multi-year-graph-description">
+            <p>
+              Les pourcentages d'achats par année pour cette cantine sont :
+            </p>
+            <ol class="mb-4">
+              <li v-for="(year, idx) in years" :key="year">
+                {{ year }} : {{ seriesData.bio[idx] }} % bio, {{ seriesData.sustainable[idx] }} % de qualité et durable
+                (hors bio), {{ 100 - seriesData.bio[idx] - seriesData.sustainable[idx] }} % hors EGAlim
+              </li>
+            </ol>
+            <p class="mb-0">
+              Rappel de l'objectif : Les repas servis comportent au moins {{ applicableRules.qualityThreshold }} % de
+              produits de qualité et durables dont au moins {{ applicableRules.bioThreshold }} % issus de l'agriculture
+              biologique ou en conversion, pour les cantines
+              {{
+                applicableRules.hasQualityException
+                  ? `dans la région « ${regionDisplayName} »`
+                  : "en France métropolitaine"
+              }}.
+            </p>
+          </div>
+        </template>
       </DsfrAccordion>
     </div>
     <p v-else class="my-4 text-left">Données non renseignées</p>
