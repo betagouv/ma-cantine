@@ -47,7 +47,6 @@ import { getPercentage, hasDiagnosticApproData, getSustainableTotal, regionDispl
 const VALUE_DESCRIPTION = "Pourcentage d'achats"
 const BIO = "Bio"
 const SUSTAINABLE = "Qualité et durable (hors bio)"
-const OTHER = "Hors EGAlim"
 
 export default {
   components: {
@@ -92,18 +91,13 @@ export default {
         {
           name: BIO,
           data: this.seriesData.bio,
-          color: "#297254",
+          color: "#21402c",
         },
         {
           name: SUSTAINABLE,
           data: this.seriesData.sustainable,
           color: "#00A95F",
           foreColor: "#000",
-        },
-        {
-          name: OTHER,
-          data: this.seriesData.other,
-          color: "#ccc",
         },
       ]
     },

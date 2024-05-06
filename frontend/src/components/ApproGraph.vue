@@ -87,12 +87,12 @@ export default {
             },
             {
               x: this.applicableRules.bioThreshold,
-              borderColor: "#297254",
+              borderColor: "#21402c",
               label: {
                 offsetY: -14,
                 orientation: "horizontal",
                 style: {
-                  color: "#297254",
+                  color: "#21402c",
                   background: "#fff",
                 },
                 text: `${this.applicableRules.bioThreshold} %`,
@@ -107,7 +107,7 @@ export default {
         {
           name: `Bio : ${this.bioPercentage} %`,
           data: [this.bioPercentage],
-          color: "#297254",
+          color: "#21402c",
         },
         {
           name: `Durable et de qualité : ${this.sustainablePercentage} %`,
