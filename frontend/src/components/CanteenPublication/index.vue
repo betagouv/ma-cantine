@@ -1,15 +1,17 @@
 <template>
   <div class="text-left" v-if="canteen">
-    <v-col v-if="!editDescription" cols="12" sm="6" class="px-0">
-      <h2 class="fr-text grey--text text--darken-4 mb-6">
-        Description de l'établissement
-      </h2>
-      <div class="ml-n8">
-        <DsfrHighlight>
-          <p>
-            {{ canteen.publicationComments }}
-          </p>
-        </DsfrHighlight>
+    <v-col v-if="!editDescription && (canteen.publicationComments || editable)" cols="12" sm="6" class="px-0 pb-2">
+      <div v-if="canteen.publicationComments">
+        <h2 class="fr-text grey--text text--darken-4 mb-6">
+          Description de l'établissement
+        </h2>
+        <div class="ml-n8">
+          <DsfrHighlight>
+            <p>
+              {{ canteen.publicationComments }}
+            </p>
+          </DsfrHighlight>
+        </div>
       </div>
       <v-btn
         v-if="editable"
