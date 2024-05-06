@@ -1,15 +1,17 @@
 <template>
-  <div class="text-left">
-    <v-col v-if="canteen && canteen.publicationComments && !editDescription" cols="12" sm="6" class="px-0">
-      <h2 class="fr-text grey--text text--darken-4 mb-6">
-        Description de l'établissement
-      </h2>
-      <div class="ml-n8">
-        <DsfrHighlight>
-          <p>
-            {{ canteen.publicationComments }}
-          </p>
-        </DsfrHighlight>
+  <div class="text-left" v-if="canteen">
+    <v-col v-if="!editDescription && (canteen.publicationComments || editable)" cols="12" sm="6" class="px-0 pb-2">
+      <div v-if="canteen.publicationComments">
+        <h2 class="fr-text grey--text text--darken-4 mb-6">
+          Description de l'établissement
+        </h2>
+        <div class="ml-n8">
+          <DsfrHighlight>
+            <p>
+              {{ canteen.publicationComments }}
+            </p>
+          </DsfrHighlight>
+        </div>
       </div>
       <v-btn
         v-if="editable"
@@ -26,7 +28,7 @@
         Modifier la description
       </v-btn>
     </v-col>
-    <v-col v-else-if="canteen && editable" cols="12" sm="6">
+    <v-col v-else-if="editable" cols="12" sm="6">
       <v-form v-model="publicationFormIsValid" ref="publicationCommentsForm">
         <DsfrTextarea
           class="mt-2"
@@ -38,8 +40,8 @@
           <template v-slot:label>
             <span class="fr-label mb-1">Déscription de l'établissement</span>
             <span class="fr-hint-text mb-2">
-              Si vous le souhaitez, personnalisez votre affiche en écrivant quelques mots sur votre établissement : son
-              fonctionnement, l'organisation, l'historique...
+              Si vous le souhaitez, personnalisez votre affiche en écrivant quelques mots sur votre établissement&nbsp;:
+              son fonctionnement, l'organisation, l'historique...
             </span>
           </template>
         </DsfrTextarea>
