@@ -4,12 +4,22 @@
     <!-- do we need to think about the case where the declaration method may change year on year ? -->
     <CentralKitchenInfo :canteen="canteen" />
 
+    <!-- TODO: check if this text is desired -->
     <p v-if="badge.earned" class="mb-0">
       Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
       et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
       <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
     </p>
     <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
+
+    <!-- TODO: New DSFR tabs component -->
+    <!-- tabs are years with diagnostics + "comparer" -->
+    <!-- single appro graph per tab -->
+    <!-- provisional purchases graph (what publishing rules do we want on that?) -->
+    <!-- callouts for each tab to explain whats up -->
+    <!-- Later: option to unpublish per-year if not TD and provisional purchases -->
+    <!-- Comments for appro section (make "editablecomment" component to reuse general publication comments functionality?) -->
+    <!-- Per-family accordion detail -->
 
     <!-- <div v-if="showPercentagesBlock">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">

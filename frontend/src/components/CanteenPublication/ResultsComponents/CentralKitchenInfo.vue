@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: use DsfrCallout instead -->
   <v-card outlined elevation="0" color="primary lighten-5" class="d-flex mb-6" v-if="usesCentralKitchenDiagnostics">
     <v-icon class="ml-4" color="primary">$information-fill</v-icon>
 
