@@ -1,18 +1,18 @@
 <template>
-  <fieldset class="fr-segmented fr-segmented--no-legend">
-    <legend class="fr-segmented__legend">Légende</legend>
+  <fieldset :class="{ 'fr-segmented': true, 'fr-segmented--no-legend': noLegend }">
+    <legend class="fr-segmented__legend">{{ legend }}</legend>
     <div class="fr-segmented__elements">
-      <div class="fr-segmented__element">
-        <input value="1" type="radio" id="segmented-2230-1" name="segmented-2230" />
-        <label class="fr-label" for="segmented-2230-1">Libellé</label>
-      </div>
-      <div class="fr-segmented__element">
-        <input value="2" checked type="radio" id="segmented-2230-2" name="segmented-2230" />
-        <label class="fr-label" for="segmented-2230-2">Libellé</label>
-      </div>
-      <div class="fr-segmented__element">
-        <input value="3" type="radio" id="segmented-2230-3" name="segmented-2230" />
-        <label class="fr-label" for="segmented-2230-3">Libellé</label>
+      <div v-for="item in itemsForDisplay" :key="item.value" class="fr-segmented__element">
+        <!-- if this component is used in multiple places on one page, the single name will be a problem -->
+        <input
+          :value="item.value"
+          type="radio"
+          :id="`segmented-${item.value}`"
+          name="segmented-group"
+          v-on:input="$emit('input', $event.target.value)"
+          :checked="value === item.value"
+        />
+        <label class="fr-label" :for="`segmented-${item.value}`">{{ item.text }}</label>
       </div>
     </div>
   </fieldset>
@@ -21,6 +21,20 @@
 <script>
 export default {
   name: "DsfrSegmentedControl",
+  props: {
+    value: [String, Number],
+    legend: String, // necessary even if not displayed
+    noLegend: Boolean,
+    // array of text value objects
+    items: Array,
+  },
+  computed: {
+    itemsForDisplay() {
+      if (!this.items.length) return this.items
+      if (this.items[0].text) return this.items
+      return this.items.map((i) => ({ text: i, value: i }))
+    },
+  },
 }
 </script>
 

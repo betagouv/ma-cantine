@@ -13,7 +13,7 @@
     <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
 
     <!-- TODO: New DSFR tabs component -->
-    <DsfrSegmentedControl />
+    <DsfrSegmentedControl v-model="tab" legend="Année" noLegend :items="[2024, 2023, 2022, 'Comparer']" />
     <!-- tabs are years with diagnostics + "comparer" -->
     <!-- single appro graph per tab -->
     <!-- provisional purchases graph (what publishing rules do we want on that?) -->
@@ -207,6 +207,7 @@ export default {
   data() {
     return {
       labels,
+      tab: 2024,
     }
   },
   computed: {
@@ -278,6 +279,11 @@ export default {
   methods: {
     toPercentage(value) {
       return Math.round(value * 100)
+    },
+  },
+  watch: {
+    tab(newtab) {
+      console.log(newtab)
     },
   },
 }
