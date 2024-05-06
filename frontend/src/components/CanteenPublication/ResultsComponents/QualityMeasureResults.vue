@@ -24,7 +24,7 @@
     <div v-else>
       <!-- TODO: multi year comparison -->
     </div>
-    <!-- Comments for appro section (make "editablecomment" component to reuse general publication comments functionality?) -->
+    <!-- Comments for appro section (make "editablecomment" component to reuse general publication comments functionality?) qualityComments -->
 
     <!-- <div v-if="showPercentagesBlock">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
