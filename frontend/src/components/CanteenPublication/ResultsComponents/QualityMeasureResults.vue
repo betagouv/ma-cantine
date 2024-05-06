@@ -13,12 +13,18 @@
     <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
 
     <DsfrSegmentedControl v-model="tab" legend="Année" noLegend :items="tabs" />
-    <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" />
-    <!-- provisional purchases graph (what publishing rules do we want on that?) -->
-    <!-- callouts for each tab to explain whats up -->
-    <!-- Later: option to unpublish per-year if not TD and provisional purchases -->
+    <div v-if="diagnosticForYear">
+      <!-- callouts for each tab to explain whats up -->
+      <!-- Later: option to unpublish per-year if not TD and provisional purchases -->
+      <!-- colour config option: blue/green/brown -->
+      <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" />
+      <!-- provisional purchases graph (what publishing rules do we want on that?) -->
+      <!-- Per-family accordion detail -->
+    </div>
+    <div v-else>
+      <!-- TODO: multi year comparison -->
+    </div>
     <!-- Comments for appro section (make "editablecomment" component to reuse general publication comments functionality?) -->
-    <!-- Per-family accordion detail -->
 
     <!-- <div v-if="showPercentagesBlock">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
