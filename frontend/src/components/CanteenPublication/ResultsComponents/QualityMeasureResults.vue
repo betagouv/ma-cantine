@@ -12,10 +12,8 @@
     </p>
     <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
 
-    <!-- TODO: New DSFR tabs component -->
-    <DsfrSegmentedControl v-model="tab" legend="Année" noLegend :items="[2024, 2023, 2022, 'Comparer']" />
-    <!-- tabs are years with diagnostics + "comparer" -->
-    <!-- single appro graph per tab -->
+    <DsfrSegmentedControl v-model="tab" legend="Année" noLegend :items="tabs" />
+    <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" />
     <!-- provisional purchases graph (what publishing rules do we want on that?) -->
     <!-- callouts for each tab to explain whats up -->
     <!-- Later: option to unpublish per-year if not TD and provisional purchases -->
@@ -195,6 +193,9 @@ import {
 import labels from "@/data/quality-labels.json"
 import CentralKitchenInfo from "./CentralKitchenInfo"
 import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
+import ApproGraph from "@/components/ApproGraph"
+
+const COMPARE_TAB = "Comparer"
 
 export default {
   name: "QualityMeasureResults",
@@ -203,17 +204,24 @@ export default {
     canteen: Object,
     diagnosticSet: Array,
   },
-  components: { CentralKitchenInfo, DsfrSegmentedControl },
+  components: { CentralKitchenInfo, DsfrSegmentedControl, ApproGraph },
   data() {
+    const tabs = this.diagnosticSet.map((d) => +d.year)
+    tabs.sort((a, b) => b - a)
+    tabs.push(COMPARE_TAB)
     return {
       labels,
-      tab: 2024,
+      tabs,
+      tab: tabs[0],
     }
   },
   computed: {
     diagnostic() {
       if (!this.diagnosticSet) return
       return latestCreatedDiagnostic(this.diagnosticSet)
+    },
+    diagnosticForYear() {
+      return this.diagnosticSet.find((d) => d.year === +this.tab)
     },
     publicationYear() {
       return this.diagnostic?.year
@@ -279,11 +287,6 @@ export default {
   methods: {
     toPercentage(value) {
       return Math.round(value * 100)
-    },
-  },
-  watch: {
-    tab(newtab) {
-      console.log(newtab)
     },
   },
 }
