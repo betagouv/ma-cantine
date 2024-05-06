@@ -1,14 +1,16 @@
 <template>
-  <v-col v-if="value && !editDescription" cols="12" sm="6" class="px-0">
-    <h2 class="fr-text grey--text text--darken-4 mb-6">
-      {{ label }}
-    </h2>
-    <div class="ml-n8">
-      <DsfrHighlight>
-        <p>
-          {{ value }}
-        </p>
-      </DsfrHighlight>
+  <v-col v-if="!editDescription && (value || editable)" cols="12" sm="6" class="px-0 pb-2">
+    <div v-if="value">
+      <h2 class="fr-text grey--text text--darken-4 mb-6">
+        {{ label }}
+      </h2>
+      <div class="ml-n8">
+        <DsfrHighlight>
+          <p>
+            {{ value }}
+          </p>
+        </DsfrHighlight>
+      </div>
     </div>
     <v-btn
       v-if="editable"

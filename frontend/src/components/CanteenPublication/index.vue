@@ -1,5 +1,5 @@
 <template>
-  <div class="text-left">
+  <div class="text-left" v-if="canteen">
     <EditableCommentsField
       v-if="canteen"
       :canteen="canteen"
