@@ -13,6 +13,7 @@
     <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
 
     <!-- TODO: New DSFR tabs component -->
+    <DsfrSegmentedControl />
     <!-- tabs are years with diagnostics + "comparer" -->
     <!-- single appro graph per tab -->
     <!-- provisional purchases graph (what publishing rules do we want on that?) -->
@@ -193,6 +194,7 @@ import {
 } from "@/utils"
 import labels from "@/data/quality-labels.json"
 import CentralKitchenInfo from "./CentralKitchenInfo"
+import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
 
 export default {
   name: "QualityMeasureResults",
@@ -201,7 +203,7 @@ export default {
     canteen: Object,
     diagnosticSet: Array,
   },
-  components: { CentralKitchenInfo },
+  components: { CentralKitchenInfo, DsfrSegmentedControl },
   data() {
     return {
       labels,
