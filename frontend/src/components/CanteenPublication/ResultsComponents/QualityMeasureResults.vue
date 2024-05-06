@@ -22,7 +22,14 @@
       <!-- Per-family accordion detail -->
     </div>
     <div v-else>
-      <!-- TODO: multi year comparison -->
+      <!-- TODO: use new design -->
+      <MultiYearSummaryStatistics
+        :diagnostics="graphDiagnostics"
+        headingId="appro-heading"
+        height="260"
+        :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
+        :applicableRules="applicableRules"
+      />
     </div>
     <EditableCommentsField
       :canteen="canteen"
@@ -209,6 +216,7 @@ import CentralKitchenInfo from "./CentralKitchenInfo"
 import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
 import ApproGraph from "@/components/ApproGraph"
 import EditableCommentsField from "../EditableCommentsField"
+import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 
 const COMPARE_TAB = "Comparer"
 
@@ -220,7 +228,13 @@ export default {
     diagnosticSet: Array,
     editable: Boolean,
   },
-  components: { CentralKitchenInfo, DsfrSegmentedControl, ApproGraph, EditableCommentsField },
+  components: {
+    CentralKitchenInfo,
+    DsfrSegmentedControl,
+    ApproGraph,
+    EditableCommentsField,
+    MultiYearSummaryStatistics,
+  },
   data() {
     const tabs = this.diagnosticSet.map((d) => +d.year)
     tabs.sort((a, b) => b - a)
