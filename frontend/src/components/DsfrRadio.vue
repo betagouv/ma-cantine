@@ -1,5 +1,5 @@
 <template>
-  <v-radio-group class="my-0" ref="radio" v-bind="$attrs" v-on="$listeners" @change="(v) => $emit('input', v)">
+  <v-radio-group class="my-0" ref="radiogroup" v-bind="$attrs" v-on="$listeners" @change="change">
     <template v-slot:label>
       <span class="d-block mb-2">
         <span :class="legendClass">
@@ -29,7 +29,7 @@
 
     <!-- For RGAA 8.9 error messages should also be in p tags, by default in vuetify 2 they're in divs -->
     <template v-slot:message="{ key, message }">
-      <p :key="key" class="mb-0">{{ message }}</p>
+      <p :id="errorMessageId" :key="key" class="mb-0">{{ message }}</p>
     </template>
   </v-radio-group>
 </template>
@@ -38,6 +38,9 @@
 import validators from "@/validators"
 
 export default {
+  inject: {
+    form: { default: null },
+  },
   inheritAttrs: false,
   props: {
     labelClasses: {
@@ -65,7 +68,7 @@ export default {
   },
   computed: {
     value() {
-      return this.$refs["radio"].value
+      return this.$refs["radiogroup"].value
     },
     items() {
       if (this.yesNo) {
@@ -85,11 +88,43 @@ export default {
     optional() {
       return !this.hideOptional && !validators._includesRequiredValidator(this.$attrs.rules)
     },
+    errorMessageId() {
+      return `${this.inputId}-error`
+    },
   },
   methods: {
-    validate() {
-      return this.$refs["radio"].validate()
+    change(v) {
+      this.$emit("input", v)
+      this.validate()
     },
+    validate() {
+      const result = this.$refs["radiogroup"].validate()
+      this.hasError = result !== true
+      this.assignValidity()
+      return result
+    },
+    assignInputId() {
+      this.inputId = this.$refs?.["radiogroup"]?.$refs?.["label"].id
+    },
+    assignDescribedby() {
+      this.$refs["radiogroup"].$el
+        .querySelector("[role=radiogroup]")
+        .setAttribute("aria-describedby", this.errorMessageId)
+    },
+    assignValidity() {
+      this.$refs["radiogroup"].$el.querySelector("[role=radiogroup]").setAttribute("aria-invalid", this.hasError)
+    },
+  },
+  mounted() {
+    this.assignInputId()
+    this.assignDescribedby()
+    if (this.form) this.form.register(this)
+    else if (this.$attrs.rules?.length)
+      console.warn(`component ${this.inputId} with validation rules not in a form, a11y markup may not work`)
+  },
+  beforeDestroy() {
+    // https://github.com/vuetifyjs/vuetify/issues/3464#issuecomment-370240024
+    if (this.form) this.form.unregister(this)
   },
 }
 </script>
