@@ -9,7 +9,7 @@
       :class="{ 'fr-select mb-1': true, 'fr-error': hasError }"
       @blur="validate"
     >
-      <option v-if="!items.length" disabled selected value="">{{ noDataText || "Pas d'options" }}</option>
+      <option v-if="!items.length" disabled selected value="">{{ noDataText || "Liste vide" }}</option>
       <option v-else disabled selected hidden value="">Sélectionner une option</option>
       <option v-for="item in items" :key="item[itemValue]" :value="item[itemValue]">
         {{ item[itemText] }}
