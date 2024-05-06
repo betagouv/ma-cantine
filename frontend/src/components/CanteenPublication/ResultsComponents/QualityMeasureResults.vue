@@ -1,10 +1,7 @@
 <template>
   <div class="mb-8">
-    <!-- TODO: consider where this message should be appearing. If ALL above accordions and if APPRO here? -->
-    <!-- do we need to think about the case where the declaration method may change year on year ? -->
     <CentralKitchenInfo :canteen="canteen" />
 
-    <!-- TODO: check if this text is desired -->
     <p v-if="badge.earned" class="mb-0">
       Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
       et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
@@ -14,25 +11,18 @@
 
     <DsfrSegmentedControl v-model="tab" legend="Année" noLegend :items="tabs" />
     <div v-if="diagnosticForYear">
-      <!-- callouts for each tab to explain whats up -->
-      <!-- Later: option to unpublish per-year if not TD and provisional purchases -->
-      <!-- colour config option: blue/green/brown -->
       <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" />
-      <!-- provisional purchases graph (what publishing rules do we want on that?) -->
 
       <div v-if="hasFamilyDetail">
         <DsfrAccordion :items="[{ title: 'Détail par famille de produit' }]" class="mb-2">
           <template v-slot:content>
             <div v-if="diagnosticForYear.diagnosticType === 'COMPLETE'">
-              <!-- TODO: do we want to keep this graph? It isn't accessible and it isn't in the design -->
               <FamiliesGraph :diagnostic="diagnosticForYear" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
             </div>
             <v-row v-else class="text-center pt-3 pb-2">
-              <!-- TODO: add objectives ? -->
               <v-col cols="12" sm="4" class="pa-4">
                 <v-icon large class="grey--text text--darken-3 mb-2">$award-line</v-icon>
                 <p class="mb-0">
-                  <!-- TODO: differentiate between 0 % and unknown -->
                   <span class="font-weight-bold percentage">{{ meatEgalimPercentage || "—" }} %</span>
                   de viandes et volailles
                   <br />
@@ -63,7 +53,6 @@
       </div>
     </div>
     <div v-else>
-      <!-- TODO: use new design -->
       <MultiYearSummaryStatistics
         :diagnostics="graphDiagnostics"
         headingId="appro-heading"
