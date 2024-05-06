@@ -19,7 +19,80 @@
       <!-- colour config option: blue/green/brown -->
       <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" />
       <!-- provisional purchases graph (what publishing rules do we want on that?) -->
-      <!-- Per-family accordion detail -->
+
+      <div v-if="meatEgalimPercentage || meatFrancePercentage || fishEgalimPercentage">
+        <h3 class="font-weight-black text-body-1 grey--text text--darken-4 mb-4 mt-8">
+          Par famille de produit
+        </h3>
+        <v-row>
+          <v-col cols="12" sm="4" md="4" v-if="meatEgalimPercentage">
+            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+              <p class="ma-0">
+                <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
+                  {{ meatEgalimPercentage }} %
+                </span>
+                <span class="caption grey--text text--darken-2">
+                  viandes et volailles EGAlim
+                </span>
+              </p>
+              <div class="mt-2">
+                <v-icon size="30" color="brown">
+                  mdi-food-steak
+                </v-icon>
+                <v-icon size="30" color="brown">
+                  mdi-food-drumstick
+                </v-icon>
+                <v-icon size="30" color="green">
+                  $checkbox-circle-fill
+                </v-icon>
+              </div>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="4" md="4" v-if="meatFrancePercentage">
+            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+              <p class="ma-0">
+                <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
+                  {{ meatFrancePercentage }} %
+                </span>
+                <span class="caption grey--text text--darken-2">
+                  viandes et volailles provenance France
+                </span>
+              </p>
+              <div class="mt-2">
+                <v-icon size="30" color="brown">
+                  mdi-food-steak
+                </v-icon>
+                <v-icon size="30" color="brown">
+                  mdi-food-drumstick
+                </v-icon>
+                <v-icon size="30" color="indigo">
+                  $france-line
+                </v-icon>
+              </div>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="4" md="4" v-if="fishEgalimPercentage">
+            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+              <p class="ma-0">
+                <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
+                  {{ fishEgalimPercentage }} %
+                </span>
+                <span class="caption grey--text text--darken-2">
+                  produits aquatiques EGAlim
+                </span>
+              </p>
+              <div class="mt-2">
+                <v-icon size="30" color="blue">
+                  mdi-fish
+                </v-icon>
+                <v-icon size="30" color="green">
+                  $checkbox-circle-fill
+                </v-icon>
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+      </div>
     </div>
     <div v-else>
       <!-- TODO: use new design -->
@@ -207,7 +280,6 @@ import {
   lastYear,
   hasDiagnosticApproData,
   applicableDiagnosticRules,
-  getSustainableTotal,
   getPercentage,
   latestCreatedDiagnostic,
 } from "@/utils"
@@ -256,46 +328,26 @@ export default {
     publicationYear() {
       return this.diagnostic?.year
     },
-    showPercentagesBlock() {
-      return (
-        this.diagnostic &&
-        (this.bioPercentage ||
-          this.sustainablePercentage ||
-          this.meatEgalimPercentage ||
-          this.meatFrancePercentage ||
-          this.fishEgalimPercentage)
-      )
-    },
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
     },
     hasPercentages() {
-      return "percentageValueTotalHt" in this.diagnostic
-    },
-    bioPercentage() {
-      return this.hasPercentages
-        ? this.toPercentage(this.diagnostic.percentageValueBioHt)
-        : getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
-    },
-    sustainablePercentage() {
-      return this.hasPercentages
-        ? this.toPercentage(getSustainableTotal(this.diagnostic))
-        : getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
+      return "percentageValueTotalHt" in this.diagnosticForYear
     },
     meatEgalimPercentage() {
       return this.hasPercentages
-        ? this.toPercentage(this.diagnostic.percentageValueMeatPoultryEgalimHt)
-        : getPercentage(this.diagnostic.valueMeatPoultryEgalimHt, this.diagnostic.valueMeatPoultryHt)
+        ? this.toPercentage(this.diagnosticForYear.percentageValueMeatPoultryEgalimHt)
+        : getPercentage(this.diagnosticForYear.valueMeatPoultryEgalimHt, this.diagnosticForYear.valueMeatPoultryHt)
     },
     meatFrancePercentage() {
       return this.hasPercentages
-        ? this.toPercentage(this.diagnostic.percentageValueMeatPoultryFranceHt)
-        : getPercentage(this.diagnostic.valueMeatPoultryFranceHt, this.diagnostic.valueMeatPoultryHt)
+        ? this.toPercentage(this.diagnosticForYear.percentageValueMeatPoultryFranceHt)
+        : getPercentage(this.diagnosticForYear.valueMeatPoultryFranceHt, this.diagnosticForYear.valueMeatPoultryHt)
     },
     fishEgalimPercentage() {
       return this.hasPercentages
-        ? this.toPercentage(this.diagnostic.percentageValueFishEgalimHt)
-        : getPercentage(this.diagnostic.valueFishEgalimHt, this.diagnostic.valueFishHt)
+        ? this.toPercentage(this.diagnosticForYear.percentageValueFishEgalimHt)
+        : getPercentage(this.diagnosticForYear.valueFishEgalimHt, this.diagnosticForYear.valueFishHt)
     },
     shouldDisplayGraph() {
       if (!this.diagnosticSet || this.diagnosticSet.length === 0) return false
