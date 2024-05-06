@@ -1,38 +1,40 @@
 <template>
   <div class="mb-8">
+    <v-card outlined elevation="0" color="primary lighten-5" class="d-flex mb-6" v-if="usesCentralKitchenDiagnostics">
+      <v-icon class="ml-4" color="primary">$information-fill</v-icon>
+
+      <v-card-text>
+        <p class="mb-0">
+          La cantine « {{ canteen.name }} » sert des repas cuisinés dans la cuisine centrale
+          <span v-if="canteen.centralKitchen.publicationStatus === 'published'">
+            <router-link
+              :to="{
+                name: 'CanteenPage',
+                params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen.centralKitchen) },
+              }"
+            >
+              « {{ canteen.centralKitchen.name }} »
+            </router-link>
+            .
+          </span>
+          <span v-else>« {{ canteen.centralKitchen.name }} ».</span>
+          Les valeurs ci-dessous sont celles du lieu de production des repas.
+        </p>
+      </v-card-text>
+    </v-card>
+
     <p v-if="badge.earned" class="mb-0">
       Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
       et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
       <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
     </p>
     <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
-    <div v-if="showPercentagesBlock">
+
+    <!-- <div v-if="showPercentagesBlock">
       <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
         Que mange-t-on dans les assiettes en {{ publicationYear }} ?
       </h2>
 
-      <v-card outlined elevation="0" color="primary lighten-5" class="d-flex mb-6" v-if="usesCentralKitchenDiagnostics">
-        <v-icon class="ml-4" color="primary">$information-fill</v-icon>
-
-        <v-card-text>
-          <p class="mb-0">
-            La cantine « {{ canteen.name }} » sert des repas cuisinés dans la cuisine centrale
-            <span v-if="canteen.centralKitchen.publicationStatus === 'published'">
-              <router-link
-                :to="{
-                  name: 'CanteenPage',
-                  params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen.centralKitchen) },
-                }"
-              >
-                « {{ canteen.centralKitchen.name }} »
-              </router-link>
-              .
-            </span>
-            <span v-else>« {{ canteen.centralKitchen.name }} ».</span>
-            Les valeurs ci-dessous sont celles du lieu de production des repas.
-          </p>
-        </v-card-text>
-      </v-card>
 
       <h3
         class="font-weight-black text-body-1 grey--text text--darken-4 my-4"
@@ -185,7 +187,7 @@
           :applicableRules="applicableRules"
         />
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -199,8 +201,6 @@ import {
   latestCreatedDiagnostic,
 } from "@/utils"
 import labels from "@/data/quality-labels.json"
-import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
-import FamiliesGraph from "@/components/FamiliesGraph"
 
 export default {
   name: "QualityMeasureResults",
@@ -209,7 +209,7 @@ export default {
     canteen: Object,
     diagnosticSet: Array,
   },
-  components: { MultiYearSummaryStatistics, FamiliesGraph },
+  components: {},
   data() {
     return {
       labels,
