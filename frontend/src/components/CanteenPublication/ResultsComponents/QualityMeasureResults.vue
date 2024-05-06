@@ -28,8 +28,9 @@
       :canteen="canteen"
       valueKey="qualityComments"
       :editable="editable"
-      label="Un mot sur le volet approvisionnement"
+      label="Commentaire"
       helpText="Si vous le souhaitez, ajoutez des précisions sur vos résultats : actions entreprises, priorités à venir..."
+      cta="Modifier le commentaire"
       :charLimit="500"
     />
 
