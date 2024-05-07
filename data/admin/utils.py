@@ -42,3 +42,13 @@ def get_arrayfield_list_filter(field_name, verbose_name):
         title = verbose_name
 
     return ArrayFieldListFilterForField
+
+
+class HistoryChangedFieldsAdminMixin:
+    history_list_display = ["changed_fields"]
+
+    def changed_fields(self, obj):
+        if obj.prev_record:
+            delta = obj.diff_against(obj.prev_record)
+            return delta.changed_fields
+        return None

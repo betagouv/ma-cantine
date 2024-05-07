@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from data.models import Teledeclaration
 from simple_history.admin import SimpleHistoryAdmin
-from .utils import ReadOnlyAdminMixin
+from .utils import ReadOnlyAdminMixin, HistoryChangedFieldsAdminMixin
 
 
 class TeledeclarationForm(forms.ModelForm):
@@ -22,7 +22,7 @@ class TeledeclarationInline(admin.TabularInline):
 
 
 @admin.register(Teledeclaration)
-class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
+class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin, HistoryChangedFieldsAdminMixin):
     form = TeledeclarationForm
     list_display = (
         "canteen_name",

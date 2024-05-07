@@ -5,6 +5,7 @@ from django.utils import timezone
 from data.models import Canteen, Teledeclaration
 from .diagnostic import DiagnosticInline
 from .softdeletionadmin import SoftDeletionHistoryAdmin, SoftDeletionStatusFilter
+from .utils import HistoryChangedFieldsAdminMixin
 
 
 class CanteenForm(forms.ModelForm):
@@ -39,7 +40,7 @@ def unpublish(modeladmin, request, queryset):
 
 
 @admin.register(Canteen)
-class CanteenAdmin(SoftDeletionHistoryAdmin):
+class CanteenAdmin(SoftDeletionHistoryAdmin, HistoryChangedFieldsAdminMixin):
     form = CanteenForm
     inlines = (DiagnosticInline,)
     fields = (
