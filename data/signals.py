@@ -45,13 +45,9 @@ def update_satellites_siret(sender, instance, raw, using, update_fields, **kwarg
         pass  # Object is new
 
 
-@receiver(pre_create_historical_record)
-def historical_record_add_auth_method(sender, **kwargs):
-    history_instance = kwargs["history_instance"]
+def historical_record_add_auth_method(history_instance):
     if history_instance.authentication_method:
         return
-
-    # think about wrapping everything in a try/catch with logging
 
     if not hasattr(HistoricalRecords, "context") or not hasattr(HistoricalRecords.context, "request"):
         history_instance.authentication_method = "AUTO"
@@ -74,3 +70,12 @@ def historical_record_add_auth_method(sender, **kwargs):
         # save hostname to track usage of specific integrations?
 
     history_instance.authentication_method = "WEBSITE"
+
+
+@receiver(pre_create_historical_record)
+def pre_historical_record_save(sender, **kwargs):
+    try:
+        history_instance = kwargs["history_instance"]
+        historical_record_add_auth_method(history_instance)
+    except Exception as e:
+        logger.error("Error when attempting to set authentication method on a history object", e)
