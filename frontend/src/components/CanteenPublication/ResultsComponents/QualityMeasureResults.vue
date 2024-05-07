@@ -2,7 +2,7 @@
   <div class="mb-8">
     <CentralKitchenInfo :canteen="canteen" />
 
-    <p v-if="badge.earned" class="mb-0">
+    <p v-if="badge.earned">
       Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
       et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
       <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
@@ -16,10 +16,7 @@
       <div v-if="hasFamilyDetail">
         <DsfrAccordion :items="[{ title: 'Détail par famille de produit' }]" class="mb-2">
           <template v-slot:content>
-            <div v-if="diagnosticForYear.diagnosticType === 'COMPLETE'">
-              <FamiliesGraph :diagnostic="diagnosticForYear" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
-            </div>
-            <v-row v-else class="text-center pt-3 pb-2">
+            <v-row class="text-center pt-3 pb-2">
               <v-col cols="12" sm="4" class="pa-4">
                 <v-icon large class="grey--text text--darken-3 mb-2">$award-line</v-icon>
                 <p class="mb-0">
@@ -81,7 +78,6 @@ import ApproGraph from "@/components/ApproGraph"
 import EditableCommentsField from "../EditableCommentsField"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import DsfrAccordion from "@/components/DsfrAccordion"
-import FamiliesGraph from "@/components/FamiliesGraph"
 
 const COMPARE_TAB = "Comparer"
 
@@ -100,7 +96,6 @@ export default {
     EditableCommentsField,
     MultiYearSummaryStatistics,
     DsfrAccordion,
-    FamiliesGraph,
   },
   data() {
     const tabs = this.diagnosticSet.map((d) => +d.year)
@@ -150,12 +145,7 @@ export default {
       return diagnostics
     },
     hasFamilyDetail() {
-      return (
-        this.meatEgalimPercentage ||
-        this.meatFrancePercentage ||
-        this.fishEgalimPercentage ||
-        this.diagnosticForYear.diagnosticType === "COMPLETE"
-      )
+      return this.meatEgalimPercentage || this.meatFrancePercentage || this.fishEgalimPercentage
     },
   },
   methods: {
