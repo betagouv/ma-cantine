@@ -81,6 +81,7 @@ import ApproGraph from "@/components/ApproGraph"
 import EditableCommentsField from "../EditableCommentsField"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import DsfrAccordion from "@/components/DsfrAccordion"
+import FamiliesGraph from "@/components/FamiliesGraph"
 
 const COMPARE_TAB = "Comparer"
 
@@ -99,6 +100,7 @@ export default {
     EditableCommentsField,
     MultiYearSummaryStatistics,
     DsfrAccordion,
+    FamiliesGraph,
   },
   data() {
     const tabs = this.diagnosticSet.map((d) => +d.year)
