@@ -50,5 +50,6 @@ class HistoryChangedFieldsAdminMixin:
     def changed_fields(self, obj):
         if obj.prev_record:
             delta = obj.diff_against(obj.prev_record)
-            return delta.changed_fields
+            meta_model = type(obj)._meta
+            return [meta_model.get_field(f).verbose_name for f in delta.changed_fields]
         return None
