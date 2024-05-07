@@ -21,6 +21,28 @@ class CustomJSONEncoder(DjangoJSONEncoder):
         return super(CustomJSONEncoder, self).default(o)
 
 
+class AuthenticationMethodHistoricalModel(models.Model):
+    """
+    Abstract model for history models tracking the authentication method.
+    """
+
+    class AuthMethodChoices(models.TextChoices):
+        WEBSITE = "WEBSITE", "Via la plateforme en ligne"
+        API = "API", "Via une intégration API"
+        AUTO = "AUTO", "Via un script ou bot interne"
+        ADMIN = "ADMIN", "Via site admin"
+
+    authentication_method = models.CharField(
+        max_length=255,
+        choices=AuthMethodChoices.choices,
+        verbose_name="méthode d'authentification",
+        null=True,
+    )
+
+    class Meta:
+        abstract = True
+
+
 class Teledeclaration(models.Model):
     class TeledeclarationStatus(models.TextChoices):
         SUBMITTED = "SUBMITTED", "Télédéclaré"
@@ -63,7 +85,11 @@ class Teledeclaration(models.Model):
     year = models.IntegerField(verbose_name="année")
     canteen_siret = models.TextField(null=True, blank=True)
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(
+        bases=[
+            AuthenticationMethodHistoricalModel,
+        ]
+    )
 
     status = models.CharField(
         max_length=255,

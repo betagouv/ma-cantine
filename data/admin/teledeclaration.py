@@ -71,6 +71,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "applicant__username",
         "applicant__email",
     )
+    history_list_display = ["authentication_method"]
 
     def canteen_name(self, obj):
         return obj.declared_data["canteen"]["name"]
