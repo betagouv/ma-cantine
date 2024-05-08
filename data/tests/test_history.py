@@ -1,6 +1,6 @@
 from datetime import timedelta
 from django.test import TestCase
-from data.factories import CanteenFactory
+from data.factories import CanteenFactory, TeledeclarationFactory
 from django.test.utils import override_settings
 from macantine import tasks
 
@@ -38,3 +38,11 @@ class TestModelHistory(TestCase):
         # Verify all history items are still there
         tasks.delete_old_historical_records()
         self.assertEqual(canteen.history.count(), history_count)
+
+    def test_authentication_method_auto(self):
+        """
+        Objects created in code should get an authentication method of 'AUTO'
+        """
+        td = TeledeclarationFactory.create()
+
+        self.assertEqual(td.history.first().authentication_method, "AUTO")
