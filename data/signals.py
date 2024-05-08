@@ -64,12 +64,12 @@ def historical_record_add_auth_method(history_instance):
     http_host = HistoricalRecords.context.request.META["HTTP_HOST"]
     if settings.DEBUG:
         http_host = http_host.replace("localhost", "127.0.0.1")
-    if http_host != settings.HOSTNAME:
-        history_instance.authentication_method = "API"
-        return
-        # save hostname to track usage of specific integrations?
 
-    history_instance.authentication_method = "WEBSITE"
+    if http_host == settings.HOSTNAME:
+        history_instance.authentication_method = "WEBSITE"
+    else:
+        history_instance.authentication_method = "API"
+        # save hostname to track usage of specific integrations?
 
 
 @receiver(pre_create_historical_record)
