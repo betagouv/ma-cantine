@@ -1,4 +1,5 @@
 from .user import UserAdmin  # noqa
+from .historyauthenticationmethod import AuthenticationMethodHistoricalRecordsMixin  # noqa: F401
 from .canteen import CanteenAdmin  # noqa
 from .diagnostic import DiagnosticAdmin  # noqa
 from .sector import Sector  # noqa

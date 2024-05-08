@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
-from data.models import Canteen, Diagnostic
+from data.models import Canteen, Diagnostic, AuthenticationMethodHistoricalRecords
 from simple_history.models import HistoricalRecords
 
 logger = logging.getLogger(__name__)
@@ -19,28 +19,6 @@ class CustomJSONEncoder(DjangoJSONEncoder):
         if isinstance(o, decimal.Decimal):
             return float(o)
         return super(CustomJSONEncoder, self).default(o)
-
-
-class AuthenticationMethodHistoricalModel(models.Model):
-    """
-    Abstract model for history models tracking the authentication method.
-    """
-
-    class AuthMethodChoices(models.TextChoices):
-        WEBSITE = "WEBSITE", "Via la plateforme en ligne"
-        API = "API", "Via une intégration API"
-        AUTO = "AUTO", "Via un script ou bot interne"
-        ADMIN = "ADMIN", "Via site admin"
-
-    authentication_method = models.CharField(
-        max_length=255,
-        choices=AuthMethodChoices.choices,
-        verbose_name="méthode d'authentification",
-        null=True,
-    )
-
-    class Meta:
-        abstract = True
 
 
 class Teledeclaration(models.Model):
@@ -87,7 +65,7 @@ class Teledeclaration(models.Model):
 
     history = HistoricalRecords(
         bases=[
-            AuthenticationMethodHistoricalModel,
+            AuthenticationMethodHistoricalRecords,
         ]
     )
 
