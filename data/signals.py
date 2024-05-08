@@ -46,7 +46,7 @@ def update_satellites_siret(sender, instance, raw, using, update_fields, **kwarg
 
 
 def historical_record_add_auth_method(history_instance):
-    if history_instance.authentication_method:
+    if not hasattr(history_instance, "authentication_method") or history_instance.authentication_method:
         return
 
     if not hasattr(HistoricalRecords, "context") or not hasattr(HistoricalRecords.context, "request"):
