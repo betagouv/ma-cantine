@@ -46,6 +46,7 @@ def update_satellites_siret(sender, instance, raw, using, update_fields, **kwarg
 
 
 def historical_record_add_auth_method(history_instance):
+    # TODO: test example of auth method override or remove code
     if not hasattr(history_instance, "authentication_method") or history_instance.authentication_method:
         return
 
@@ -60,7 +61,6 @@ def historical_record_add_auth_method(history_instance):
         history_instance.authentication_method = "ADMIN"
         return
 
-    # TODO: test this
     http_host = HistoricalRecords.context.request.META["HTTP_HOST"]
     if settings.DEBUG:
         http_host = http_host.replace("localhost", "127.0.0.1")

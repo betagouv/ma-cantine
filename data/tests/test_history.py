@@ -39,7 +39,7 @@ class TestModelHistory(TestCase):
         tasks.delete_old_historical_records()
         self.assertEqual(canteen.history.count(), history_count)
 
-    def test_authentication_method_auto(self):
+    def test_authentication_method_created_in_code(self):
         """
         Objects created in code should get an authentication method of 'AUTO'
         """
