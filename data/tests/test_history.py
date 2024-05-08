@@ -1,6 +1,7 @@
 from datetime import timedelta
 from django.test import TestCase
 from data.factories import CanteenFactory, TeledeclarationFactory
+from data.models import AuthenticationMethodHistoricalRecords
 from django.test.utils import override_settings
 from macantine import tasks
 
@@ -41,8 +42,10 @@ class TestModelHistory(TestCase):
 
     def test_authentication_method_created_in_code(self):
         """
-        Objects created in code should get an authentication method of 'AUTO'
+        Objects created in code should save the corresponding authentication method
         """
         td = TeledeclarationFactory.create()
 
-        self.assertEqual(td.history.first().authentication_method, "AUTO")
+        self.assertEqual(
+            td.history.first().authentication_method, AuthenticationMethodHistoricalRecords.AuthMethodChoices.AUTO
+        )
