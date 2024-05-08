@@ -1,5 +1,4 @@
 import logging
-from django.conf import settings
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from simple_history.signals import pre_create_historical_record
@@ -46,30 +45,27 @@ def update_satellites_siret(sender, instance, raw, using, update_fields, **kwarg
 
 
 def historical_record_add_auth_method(history_instance):
-    # TODO: test example of auth method override or remove code
-    if not hasattr(history_instance, "authentication_method") or history_instance.authentication_method:
+    if not hasattr(history_instance, "authentication_method"):
         return
 
     if not hasattr(HistoricalRecords, "context") or not hasattr(HistoricalRecords.context, "request"):
         history_instance.authentication_method = "AUTO"
         return
 
-    path_info = HistoricalRecords.context.request.META["PATH_INFO"]
+    metadata = HistoricalRecords.context.request.META
+
+    path_info = metadata["PATH_INFO"]
     path_parts = path_info.split("/")
     path_root = path_parts[1] if len(path_parts) > 1 else path_parts[0]
     if path_root == "admin":
         history_instance.authentication_method = "ADMIN"
         return
 
-    http_host = HistoricalRecords.context.request.META["HTTP_HOST"]
-    if settings.DEBUG:
-        http_host = http_host.replace("localhost", "127.0.0.1")
-
-    if http_host == settings.HOSTNAME:
-        history_instance.authentication_method = "WEBSITE"
-    else:
+    if hasattr(metadata, "HTTP_AUTHORIZATION"):
         history_instance.authentication_method = "API"
         # save hostname to track usage of specific integrations?
+    else:
+        history_instance.authentication_method = "WEBSITE"
 
 
 @receiver(pre_create_historical_record)

@@ -59,7 +59,7 @@ class TeledeclarationCreateView(APIView):
         try:
             diagnostic = Diagnostic.objects.get(pk=diagnostic_id)
         except Diagnostic.DoesNotExist:
-            raise PermissionDenied()  # in general we through 403s not 404s
+            raise PermissionDenied()  # in general we throw 403s not 404s
 
         if user not in diagnostic.canteen.managers.all():
             raise PermissionDenied()
