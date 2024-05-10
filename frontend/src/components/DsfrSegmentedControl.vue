@@ -3,12 +3,11 @@
     <legend class="fr-segmented__legend">{{ legend }}</legend>
     <div class="fr-segmented__elements">
       <div v-for="item in itemsForDisplay" :key="item.value" class="fr-segmented__element">
-        <!-- if this component is used in multiple places on one page, the single name will be a problem -->
         <input
           :value="item.value"
           type="radio"
           :id="`segmented-${item.value}`"
-          name="segmented-group"
+          :name="name"
           v-on:input="$emit('input', $event.target.value)"
           :checked="value === item.value"
         />
@@ -27,6 +26,10 @@ export default {
     noLegend: Boolean,
     // array of text value objects
     items: Array,
+    name: {
+      type: String,
+      default: "segmented-group",
+    },
   },
   computed: {
     itemsForDisplay() {
