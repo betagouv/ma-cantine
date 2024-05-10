@@ -29,7 +29,6 @@ class TestSignals(APITestCase):
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @freeze_time("2021-01-20")
-    @authenticate
     def test_authentication_method_created_with_api(self):
         """
         Teledeclarations created via a third party API should save the corresponding authentication method
