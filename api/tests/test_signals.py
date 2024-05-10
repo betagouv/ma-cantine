@@ -38,7 +38,7 @@ class TestSignals(APITestCase):
         diagnostic.canteen.managers.add(user)
         payload = {"diagnosticId": diagnostic.id}
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
         self.client.post(reverse("teledeclaration_create"), payload)
 
         diagnostic.refresh_from_db()

@@ -61,7 +61,7 @@ def historical_record_add_auth_method(history_instance):
         history_instance.authentication_method = "ADMIN"
         return
 
-    if hasattr(metadata, "HTTP_AUTHORIZATION"):
+    if "HTTP_AUTHORIZATION" in metadata:
         history_instance.authentication_method = "API"
         # save hostname to track usage of specific integrations?
     else:
