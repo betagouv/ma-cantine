@@ -136,6 +136,7 @@ class ImportPurchasesView(APIView):
 
         csvreader = csv.reader(io.StringIO("".join(chunk)), self.dialect)
         for row_number, row in enumerate(csvreader, start=1):
+            siret = None
             # If header, pass
             if row_number == 1 and row[0].lower().__contains__("siret"):
                 continue

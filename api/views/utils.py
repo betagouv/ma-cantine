@@ -68,7 +68,7 @@ class MaCantineOrderingFilter(filters.OrderingFilter):
 
 
 class UnaccentSearchFilter(filters.SearchFilter):
-    def construct_search(self, field_name):
+    def construct_search(self, field_name, queryset):
         lookup = self.lookup_prefixes.get(field_name[0])
         if lookup:
             field_name = field_name[1:]

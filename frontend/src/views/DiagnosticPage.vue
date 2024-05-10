@@ -41,7 +41,7 @@
         </v-btn>
       </div>
       <DsfrAccordion :items="measure.subMeasures">
-        <template v-slot="{ item }">
+        <template v-slot:content="{ item }">
           <KeyMeasureDescription class="measure-description grey--text text--darken-4 mb-n4" :measure="item" />
         </template>
       </DsfrAccordion>

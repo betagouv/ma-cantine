@@ -39,8 +39,26 @@
           />
         </v-col>
         <v-col cols="12" sm="8" md="6">
-          <div class="text-center font-weight-bold mb-2">Total de mes achats par an</div>
-          <VueApexCharts :options="totalSpendChartOptions" :series="totalSpendSeries" height="260" />
+          <GraphComponent
+            graphId="purchase-totals-graph"
+            heading="Total de mes achats par an"
+            headingLevel="p"
+            headingClasses="text-center font-weight-bold mb-2"
+            :options="totalSpendChartOptions"
+            :series="totalSpendSeries"
+            height="260"
+          >
+            <template v-slot:description>
+              <p>
+                Les totals de mes achats par année pour cette cantine sont :
+              </p>
+              <ol>
+                <li v-for="(year, idx) in years" :key="year">
+                  {{ year }} : {{ totalSpendSeries[0].data[idx] }} euro HT
+                </li>
+              </ol>
+            </template>
+          </GraphComponent>
         </v-col>
       </v-row>
       <div class="text-left font-weight-bold mb-4" v-if="displayMultiYearSummary">
@@ -168,7 +186,6 @@
 </template>
 
 <script>
-import VueApexCharts from "vue-apexcharts"
 import {
   lastYear,
   diagnosticYears,
@@ -182,6 +199,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrTextField from "@/components/DsfrTextField"
+import GraphComponent from "@/components/GraphComponent"
 import FamiliesGraph from "@/components/FamiliesGraph"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import labels from "@/data/quality-labels.json"
@@ -190,11 +208,11 @@ import validators from "@/validators"
 export default {
   name: "PurchasesSummary",
   components: {
-    VueApexCharts,
     BreadcrumbsNav,
     DsfrSelect,
     DsfrAutocomplete,
     DsfrTextField,
+    GraphComponent,
     FamiliesGraph,
     MultiYearSummaryStatistics,
   },
@@ -290,6 +308,9 @@ export default {
           data: Object.values(this.yearlySummary).map((s) => s.valueTotalHt),
         },
       ]
+    },
+    years() {
+      return Object.values(this.yearlySummary).map((s) => s.year)
     },
   },
   methods: {

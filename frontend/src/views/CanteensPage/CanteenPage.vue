@@ -84,9 +84,7 @@
 
       <CanteenPublication :canteen="canteen" />
 
-      <v-divider aria-hidden="true" role="presentation" class="my-8"></v-divider>
-
-      <ContactForm id="contact" :canteen="canteen" />
+      <ContactForm id="contact" :canteen="canteen" class="mt-16" />
     </div>
     <v-progress-circular indeterminate v-else style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
   </div>
