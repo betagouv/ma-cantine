@@ -86,7 +86,7 @@
         <ImagesField :canteen="canteen" :start="imageHeaderLimit" :end="additionalImagesMax" class="mt-0 mb-4" />
       </div>
       <DsfrAccordion v-if="isPublished" :items="[{ title: 'Ajouter un aperçu sur votre site' }]" class="my-6">
-        <template>
+        <template v-slot:content>
           <AddPublishedCanteenWidget :canteen="canteen" />
         </template>
       </DsfrAccordion>
