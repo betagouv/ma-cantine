@@ -60,6 +60,7 @@
               label="Visible"
               color="#000091"
             ></v-switch>
+            <DsfrToggle :labelLeft="true" />
           </v-col>
         </v-row>
       </DsfrCallout>
@@ -132,6 +133,7 @@ import EditableCommentsField from "../EditableCommentsField"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import DsfrAccordion from "@/components/DsfrAccordion"
 import DsfrCallout from "@/components/DsfrCallout"
+import DsfrToggle from "@/components/DsfrToggle"
 
 const COMPARE_TAB = "Comparer"
 
@@ -151,6 +153,7 @@ export default {
     MultiYearSummaryStatistics,
     DsfrAccordion,
     DsfrCallout,
+    DsfrToggle,
   },
   data() {
     const tabs = this.diagnosticSet.map((d) => +d.year)
