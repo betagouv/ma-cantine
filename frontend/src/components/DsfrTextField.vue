@@ -86,6 +86,9 @@ export default {
     assignInputId() {
       this.inputId = this.$refs?.["text-field"]?.$refs?.["input"].id
     },
+    resetValidation() {
+      return this.$refs["text-field"].resetValidation()
+    },
   },
   mounted() {
     this.removeInnerLabel()

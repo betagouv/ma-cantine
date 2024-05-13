@@ -47,6 +47,9 @@ export default {
     validate() {
       return this.$refs["text-field"].validate()
     },
+    resetValidation() {
+      return this.$refs["text-field"].resetValidation()
+    },
   },
 }
 </script>
