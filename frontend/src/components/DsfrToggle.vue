@@ -19,7 +19,7 @@
       @click.self="clickInput"
     >
       <span v-if="label">{{ label }}</span>
-      <slot name="label" />
+      <span><slot name="label" /></span>
     </label>
     <p v-if="hint" class="fr-hint-text" id="toggle-698-hint-text">{{ hint }}</p>
   </div>
@@ -73,7 +73,6 @@ export default {
   flex-wrap: wrap;
   padding: 1rem 0;
   position: relative;
-  width: fit-content;
 }
 .fr-toggle input[type="checkbox"] {
   box-shadow: inset 0 0 0 1px #000091;
@@ -186,6 +185,10 @@ input[type="checkbox"] + label {
   justify-content: space-between;
   padding-left: 0;
   width: calc(100% - 2rem);
+}
+.fr-toggle--label-left .fr-toggle__label::after {
+  left: auto;
+  right: 1rem;
 }
 .fr-toggle input[type="checkbox"]:checked {
   --idle: transparent;

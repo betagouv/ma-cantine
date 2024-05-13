@@ -27,35 +27,36 @@
       </v-col>
     </v-row>
     <div v-if="diagnosticForYear">
-      <DsfrCallout v-if="editable" icon=" " :color="color" class="my-4 py-6 pr-14">
-        <div v-if="teledeclared">
+      <DsfrCallout v-if="editable" icon=" " :color="color" class="my-4 py-4 pr-14">
+        <div v-if="teledeclared" class="py-4">
           <p class="mb-0">
             <b>Données officielles {{ diagnosticForYear.year }} télédéclarées</b>
             : le bilan ci-dessous a été officiellement transmis à l’administration et il est pris en compte dans le
             rapport annuel public remis au Parlement. Vos données sont publiées par défaut sur votre vitrine en ligne.
           </p>
         </div>
-        <div v-else-if="provisional">
+        <div v-else-if="provisional" class="py-4">
           <p class="mb-0">
             <b>Total des achats au {{ lastPurchaseDate }}</b>
             : le bilan provisoire ci-dessous est réalisé à partir des données d’achat au {{ lastPurchaseDate }}. Vos
             données sont visibles par défaut sur votre affiche et en ligne.
           </p>
         </div>
-        <v-row v-else class="align-center py-1">
-          <v-col class="py-0">
-            <p class="mb-0">
-              <b>Données non télédéclarées</b>
-              : le bilan des achats de l'année {{ diagnosticForYear.year }} n'a pas été officiellement télédéclaré à
-              l'administration. Il est visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
-            </p>
-          </v-col>
-          <v-col cols="3" sm="2" class="py-0" align="right">
-            <!-- TODO: test a11y -->
-            <!-- TODO: ideally make this DSFR. If remake component, make it so that the two states can have string value -->
-            <DsfrToggle v-model="publishedToggleState" @input="updateDiagnosticPublication" :labelLeft="true" />
-          </v-col>
-        </v-row>
+        <DsfrToggle
+          v-else
+          v-model="publishedToggleState"
+          @input="updateDiagnosticPublication"
+          :labelLeft="true"
+          checkedLabel="Visible"
+          uncheckedLabel="Caché"
+        >
+          <template v-slot:label>
+            <!-- TODO: DSFR recommends labels be <= 3 words long -->
+            <b>Données non télédéclarées</b>
+            : le bilan des achats de l'année {{ diagnosticForYear.year }} n'a pas été officiellement télédéclaré à
+            l'administration. Il est visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
+          </template>
+        </DsfrToggle>
       </DsfrCallout>
 
       <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" class="my-8" />
