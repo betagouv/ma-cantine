@@ -164,9 +164,10 @@ export default {
       return !!this.diagnosticForYear?.year >= new Date().getFullYear()
     },
     color() {
+      // these are the same as the colours for "bio" in ApproGraph
       if (this.teledeclared) return "#21402c"
-      if (this.provisional) return "#3558A2"
-      return "#755348"
+      if (this.provisional) return "#263b58"
+      return "#543125"
     },
     lastPurchaseDate() {
       if (!this.provisional) return

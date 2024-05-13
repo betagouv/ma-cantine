@@ -113,11 +113,11 @@ export default {
           quality: "#00A95F",
         },
         blue: {
-          bio: "#3558A2",
+          bio: "#263b58", // blue-cumulus-200
           quality: "#5982E0",
         },
         brown: {
-          bio: "#755348",
+          bio: "#543125", // orange-terre-battue-200
           quality: "#AB7B6B",
         },
       }
