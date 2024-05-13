@@ -260,7 +260,7 @@ export default {
       handler(newValue) {
         // TODO: how to make sure we are getting the latest status, which might have changed since
         // the fetching of diagnostic_set?
-        this.publishedToggleState = newValue.publicationStatus === "published"
+        this.publishedToggleState = newValue?.publicationStatus === "published"
       },
     },
   },
