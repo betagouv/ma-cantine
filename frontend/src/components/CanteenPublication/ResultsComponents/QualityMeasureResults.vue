@@ -9,8 +9,49 @@
     </p>
     <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
 
-    <DsfrSegmentedControl v-model="tab" legend="Année" noLegend :items="tabs" />
+    <v-row class="align-end flex-wrap">
+      <v-col>
+        <!-- TODO: add legend to segmented control -->
+        <DsfrSegmentedControl v-model="tab" legend="Année" noLegend :items="tabs" />
+      </v-col>
+      <v-col v-if="!editable && diagnosticForYear" align="right">
+        <DsfrCallout icon=" " class="py-6 pr-14 my-0" style="width: fit-content;">
+          <div class="text-left">
+            <p class="mb-0">
+              <b v-if="teledeclared">Données officielles</b>
+              <b v-else-if="provisional">Données provisoires</b>
+              <b v-else>Données non télédéclarées</b>
+            </p>
+          </div>
+          <!-- TODO: link to article -->
+        </DsfrCallout>
+      </v-col>
+    </v-row>
     <div v-if="diagnosticForYear">
+      <DsfrCallout v-if="editable" icon=" " class="my-4 py-6 pr-14">
+        <div v-if="teledeclared">
+          <p class="mb-0">
+            <b>Données officielles {{ diagnosticForYear.year }} télédéclarées</b>
+            : le bilan ci-dessous a été officiellement transmis à l’administration et il est pris en compte dans le
+            rapport annuel public remis au Parlement. Vos données sont publiées par défaut sur votre vitrine en ligne.
+          </p>
+        </div>
+        <div v-else-if="provisional">
+          <p class="mb-0">
+            <b>Total des achats au {{ lastPurchaseDate }}</b>
+            : le bilan provisoire ci-dessous est réalisé à partir des données d’achat au {{ lastPurchaseDate }}. Vos
+            données sont visibles par défaut sur votre affiche et en ligne.
+          </p>
+        </div>
+        <div v-else>
+          <p class="mb-0">
+            <b>Données non télédéclarées</b>
+            : le bilan des achats de l'année {{ diagnosticForYear.year }} n'a pas été officiellement télédéclaré à
+            l'administration. Il est visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
+          </p>
+        </div>
+      </DsfrCallout>
+
       <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" />
 
       <div v-if="hasFamilyDetail">
@@ -78,6 +119,7 @@ import ApproGraph from "@/components/ApproGraph"
 import EditableCommentsField from "../EditableCommentsField"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import DsfrAccordion from "@/components/DsfrAccordion"
+import DsfrCallout from "@/components/DsfrCallout"
 
 const COMPARE_TAB = "Comparer"
 
@@ -96,6 +138,7 @@ export default {
     EditableCommentsField,
     MultiYearSummaryStatistics,
     DsfrAccordion,
+    DsfrCallout,
   },
   data() {
     const tabs = this.diagnosticSet.map((d) => +d.year)
@@ -113,6 +156,22 @@ export default {
     },
     diagnosticForYear() {
       return this.diagnosticSet.find((d) => d.year === +this.tab)
+    },
+    teledeclared() {
+      return !!this.diagnosticForYear?.teledeclaration
+    },
+    provisional() {
+      return !!this.diagnosticForYear?.year >= new Date().getFullYear()
+    },
+    lastPurchaseDate() {
+      if (!this.provisional) return
+      // TODO: make this the date of the most recent purchase
+      const date = new Date(this.diagnosticForYear.modificationDate)
+      return date.toLocaleString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
     },
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
