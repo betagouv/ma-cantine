@@ -53,14 +53,7 @@
           <v-col cols="3" sm="2" class="py-0" align="right">
             <!-- TODO: test a11y -->
             <!-- TODO: ideally make this DSFR. If remake component, make it so that the two states can have string value -->
-            <v-switch
-              v-model="publishedToggleState"
-              @change="updateDiagnosticPublication"
-              inset
-              label="Visible"
-              color="#000091"
-            ></v-switch>
-            <DsfrToggle :labelLeft="true" />
+            <DsfrToggle v-model="publishedToggleState" @input="updateDiagnosticPublication" :labelLeft="true" />
           </v-col>
         </v-row>
       </DsfrCallout>
