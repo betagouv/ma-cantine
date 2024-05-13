@@ -19,7 +19,7 @@
       @click.self="clickInput"
     >
       <span v-if="label">{{ label }}</span>
-      <span><slot name="label" /></span>
+      <span class="pr-2"><slot name="label" /></span>
     </label>
     <p v-if="hint" class="fr-hint-text" id="toggle-698-hint-text">{{ hint }}</p>
   </div>
