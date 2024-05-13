@@ -1,6 +1,5 @@
 <template>
   <div :class="{ 'fr-toggle': true, 'fr-toggle--label-left': labelLeft }" @click.self="clickInput">
-    <!-- TODO: check keyboard a11y -->
     <input
       :disabled="disabled"
       :aria-disabled="disabled"
@@ -216,5 +215,10 @@ input[type="checkbox"] + label {
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='24' fill='%23000091' stroke='%23000091'%3E%3Crect width='39' height='23' x='.5' y='.5' rx='11.5'/%3E%3C/svg%3E");
   background-image: var(--data-uri-svg);
 }
-/* TODO: focus border */
+input[type="checkbox"]:focus + label::before {
+  outline-color: #0a76f6;
+  outline-offset: 2px;
+  outline-style: solid;
+  outline-width: 2px;
+}
 </style>
