@@ -102,6 +102,10 @@ class Diagnostic(models.Model):
         )
         ALL = "ALL", "Ce diagnostic concerne toutes les données des cantines satellites"
 
+    class PublicationStatus(models.TextChoices):
+        DRAFT = "draft", "🔒 Non publié"
+        PUBLISHED = "published", "✅ Publié"
+
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()
@@ -136,6 +140,13 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="comment est-ce que ce diagnostic à été créé ?",
+    )
+
+    publication_status = models.CharField(
+        max_length=50,
+        choices=PublicationStatus.choices,
+        default="published",
+        verbose_name="état de publication",
     )
 
     # progress fields

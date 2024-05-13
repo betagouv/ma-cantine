@@ -178,6 +178,7 @@ META_FIELDS = (
     "diagnostic_type",
     "central_kitchen_diagnostic_mode",
     "is_teledeclared",
+    "publication_status",
 )
 
 CREATION_META_FIELDS = (

@@ -328,6 +328,10 @@ class Canteen(SoftDeletionModel):
     def _get_region(self):
         return get_region(self.department)
 
+    @property
+    def published_diagnostics(self):
+        return self.diagnostic_set.filter(publication_status="published")
+
 
 class CanteenImage(models.Model):
     canteen = models.ForeignKey(Canteen, related_name="images", on_delete=models.CASCADE, null=True)

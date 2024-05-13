@@ -96,7 +96,7 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
 
 class PublicCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="published_diagnostics")
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)

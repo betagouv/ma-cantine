@@ -52,9 +52,9 @@
           </v-col>
           <v-col cols="3" sm="2" class="py-0" align="right">
             <!-- TODO: test a11y -->
-            <!-- TODO: ideally make this DSFR -->
+            <!-- TODO: ideally make this DSFR. If remake component, make it so that the two states can have string value -->
             <v-switch
-              v-model="diagnosticForYear.published"
+              v-model="publishedToggleState"
               @change="updateDiagnosticPublication"
               inset
               label="Visible"
@@ -159,6 +159,7 @@ export default {
     return {
       tabs,
       tab: tabs[0],
+      publishedToggleState: this.diagnosticSet.find((d) => d.year === +tabs[0])?.publicationStatus === "published",
     }
   },
   computed: {
@@ -230,7 +231,40 @@ export default {
       return Math.round(value * 100)
     },
     updateDiagnosticPublication(value) {
-      console.log(value)
+      if (!this.diagnosticForYear) {
+        this.$store.dispatch("notifyServerError")
+        return
+      }
+      const payload = {
+        publicationStatus: value ? "published" : "draft",
+      }
+      return this.$store
+        .dispatch("updateDiagnostic", {
+          canteenId: this.canteen.id,
+          id: this.diagnosticForYear.id,
+          payload: payload,
+        })
+        .then(() => {
+          const descriptor = value ? "publiées" : "dépubliées"
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: `Les données de ${this.diagnosticForYear.year} sont bien ${descriptor}`,
+          })
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+          return Promise.reject()
+        })
+    },
+  },
+  watch: {
+    diagnosticForYear: {
+      deep: true,
+      handler(newValue) {
+        // TODO: how to make sure we are getting the latest status, which might have changed since
+        // the fetching of diagnostic_set?
+        this.publishedToggleState = newValue.publicationStatus === "published"
+      },
     },
   },
 }

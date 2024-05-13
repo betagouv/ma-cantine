@@ -863,3 +863,24 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertNotIn("valueMeatPoultryEgalimHt", serialized_diag)
         self.assertNotIn("valueMeatPoultryFranceHt", serialized_diag)
         self.assertNotIn("valueFishEgalimHt", serialized_diag)
+
+    def test_return_published_diagnostics(self):
+        """
+        The published endpoint should only return diagnostics that are published
+        """
+        canteen = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status="published",
+        )
+
+        DiagnosticFactory.create(canteen=canteen, year=2022, publication_status="draft")
+        published_diag = DiagnosticFactory.create(canteen=canteen, year=2023, publication_status="published")
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(len(body.get("diagnostics")), 1)
+        serialized_diag = body.get("diagnostics")[0]
+
+        self.assertEqual(serialized_diag["id"], published_diag.id)
