@@ -42,13 +42,26 @@
             données sont visibles par défaut sur votre affiche et en ligne.
           </p>
         </div>
-        <div v-else>
-          <p class="mb-0">
-            <b>Données non télédéclarées</b>
-            : le bilan des achats de l'année {{ diagnosticForYear.year }} n'a pas été officiellement télédéclaré à
-            l'administration. Il est visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
-          </p>
-        </div>
+        <v-row v-else class="align-center py-1">
+          <v-col class="py-0">
+            <p class="mb-0">
+              <b>Données non télédéclarées</b>
+              : le bilan des achats de l'année {{ diagnosticForYear.year }} n'a pas été officiellement télédéclaré à
+              l'administration. Il est visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
+            </p>
+          </v-col>
+          <v-col cols="3" sm="2" class="py-0" align="right">
+            <!-- TODO: test a11y -->
+            <!-- TODO: ideally make this DSFR -->
+            <v-switch
+              v-model="diagnosticForYear.published"
+              @change="updateDiagnosticPublication"
+              inset
+              label="Visible"
+              color="#000091"
+            ></v-switch>
+          </v-col>
+        </v-row>
       </DsfrCallout>
 
       <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" class="my-8" />
@@ -215,6 +228,9 @@ export default {
   methods: {
     toPercentage(value) {
       return Math.round(value * 100)
+    },
+    updateDiagnosticPublication(value) {
+      console.log(value)
     },
   },
 }
