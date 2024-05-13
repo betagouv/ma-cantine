@@ -62,7 +62,7 @@ export default {
       return this.$refs["combobox"].validate()
     },
     resetValidation() {
-      return this.$refs["text-field"].resetValidation()
+      return this.$refs["combobox"].resetValidation()
     },
     assignInputId() {
       this.inputId = this.$refs?.["combobox"]?.$refs?.["input"].id
