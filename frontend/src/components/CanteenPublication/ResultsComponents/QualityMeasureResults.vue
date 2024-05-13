@@ -32,21 +32,20 @@
           <p class="mb-0">
             <b>Données officielles {{ diagnosticForYear.year }} télédéclarées</b>
             : le bilan ci-dessous a été officiellement transmis à l’administration et il est pris en compte dans le
-            rapport annuel public remis au Parlement. Vos données sont publiées par défaut sur votre vitrine en ligne.
+            rapport annuel public remis au Parlement.
           </p>
         </div>
         <div v-else-if="provisional">
           <p class="mb-0">
             <b>Total des achats au {{ lastPurchaseDate }}</b>
-            : le bilan provisoire ci-dessous est réalisé à partir des données d’achat au {{ lastPurchaseDate }}. Vos
-            données sont visibles par défaut sur votre affiche et en ligne.
+            : le bilan provisoire ci-dessous est réalisé à partir des données d’achat au {{ lastPurchaseDate }}.
           </p>
         </div>
         <div v-else>
           <p class="mb-0">
             <b>Données non télédéclarées</b>
             : le bilan des achats de l'année {{ diagnosticForYear.year }} n'a pas été officiellement télédéclaré à
-            l'administration. Il est visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
+            l'administration.
           </p>
         </div>
       </DsfrCallout>
