@@ -79,8 +79,6 @@ import EditableCommentsField from "../EditableCommentsField"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import DsfrAccordion from "@/components/DsfrAccordion"
 
-const COMPARE_TAB = "Comparer"
-
 export default {
   name: "QualityMeasureResults",
   props: {
@@ -98,12 +96,21 @@ export default {
     DsfrAccordion,
   },
   data() {
-    const tabs = this.diagnosticSet.map((d) => +d.year)
+    const tabs = this.diagnosticSet.map((d) => ({
+      text: +d.year,
+      value: +d.year,
+      disabled: false,
+    }))
     tabs.sort((a, b) => b - a)
-    tabs.push(COMPARE_TAB)
+    const compareTab = {
+      text: "Comparer",
+      value: "Comparer",
+      disabled: tabs.length < 2,
+    }
+    tabs.push(compareTab)
     return {
       tabs,
-      tab: tabs[0],
+      tab: tabs[0].value,
     }
   },
   computed: {

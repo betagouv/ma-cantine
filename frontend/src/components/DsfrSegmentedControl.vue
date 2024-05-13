@@ -10,6 +10,7 @@
           :name="name"
           v-on:input="$emit('input', $event.target.value)"
           :checked="value === item.value"
+          :disabled="item.disabled"
         />
         <label class="fr-label" :for="`segmented-${item.value}`">{{ item.text }}</label>
       </div>
@@ -86,6 +87,11 @@ export default {
   position: absolute;
   width: 100%;
   z-index: -1;
+}
+.fr-segmented input:disabled + label {
+  --text-disabled-grey: rgb(146, 146, 146);
+  color: var(--text-disabled-grey);
+  cursor: not-allowed;
 }
 .fr-segmented input + label {
   align-items: center;
