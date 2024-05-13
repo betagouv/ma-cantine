@@ -11,8 +11,7 @@
 
     <v-row class="align-end flex-wrap mb-4">
       <v-col>
-        <!-- TODO: add legend to segmented control -->
-        <DsfrSegmentedControl v-model="tab" legend="Année" noLegend :items="tabs" />
+        <DsfrSegmentedControl v-model="tab" legend="Bilan par période" :noLegend="editable" :items="tabs" />
       </v-col>
       <v-col v-if="!editable && diagnosticForYear" align="right">
         <DsfrCallout icon=" " :color="color" class="py-6 pr-14 my-0" style="width: fit-content;">
