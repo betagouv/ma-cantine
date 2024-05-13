@@ -69,6 +69,9 @@ export default {
       this.hasError = result !== true
       return result
     },
+    resetValidation() {
+      return this.$refs["textarea"].resetValidation()
+    },
     assignInputId() {
       this.inputId = this.$refs?.["textarea"]?.$refs?.["input"].id
     },

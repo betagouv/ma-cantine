@@ -103,6 +103,9 @@ export default {
       this.assignValidity()
       return result
     },
+    resetValidation() {
+      return this.$refs["radiogroup"].resetValidation()
+    },
     assignInputId() {
       this.inputId = this.$refs?.["radiogroup"]?.$refs?.["label"].id
     },
