@@ -177,6 +177,7 @@ META_FIELDS = (
     "year",
     "diagnostic_type",
     "central_kitchen_diagnostic_mode",
+    "is_teledeclared",
 )
 
 CREATION_META_FIELDS = (

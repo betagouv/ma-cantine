@@ -25,6 +25,10 @@ export default {
     canteen: {
       type: Object,
     },
+    colorTheme: {
+      type: String,
+      optional: true,
+    },
   },
   computed: {
     chartOptions() {
@@ -74,12 +78,12 @@ export default {
           xaxis: [
             {
               x: this.applicableRules.qualityThreshold,
-              borderColor: "#00A95F",
+              borderColor: this.theme.quality,
               label: {
                 offsetY: -14,
                 orientation: "horizontal",
                 style: {
-                  color: "#00A95F",
+                  color: this.theme.quality,
                   background: "#fff",
                 },
                 text: `${this.applicableRules.qualityThreshold} %`,
@@ -87,12 +91,12 @@ export default {
             },
             {
               x: this.applicableRules.bioThreshold,
-              borderColor: "#21402c",
+              borderColor: this.theme.bio,
               label: {
                 offsetY: -14,
                 orientation: "horizontal",
                 style: {
-                  color: "#21402c",
+                  color: this.theme.bio,
                   background: "#fff",
                 },
                 text: `${this.applicableRules.bioThreshold} %`,
@@ -102,17 +106,37 @@ export default {
         },
       }
     },
+    theme() {
+      const themes = {
+        green: {
+          bio: "#21402c",
+          quality: "#00A95F",
+        },
+        blue: {
+          bio: "#3558A2",
+          quality: "#5982E0",
+        },
+        brown: {
+          bio: "#755348",
+          quality: "#AB7B6B",
+        },
+      }
+      if (this.colorTheme) return themes[this.colorTheme]
+      if (this.diagnostic.isTeledeclared) return themes.green
+      else if (this.diagnostic.year >= new Date().getFullYear()) return themes.blue
+      return themes.brown
+    },
     series() {
       return [
         {
           name: `Bio : ${this.bioPercentage} %`,
           data: [this.bioPercentage],
-          color: "#21402c",
+          color: this.theme.bio,
         },
         {
           name: `Durable et de qualité : ${this.sustainablePercentage} %`,
           data: [this.sustainablePercentage],
-          color: "#00A95F",
+          color: this.theme.quality,
         },
       ]
     },

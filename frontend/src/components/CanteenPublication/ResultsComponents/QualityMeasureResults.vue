@@ -9,13 +9,13 @@
     </p>
     <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
 
-    <v-row class="align-end flex-wrap">
+    <v-row class="align-end flex-wrap mb-4">
       <v-col>
         <!-- TODO: add legend to segmented control -->
         <DsfrSegmentedControl v-model="tab" legend="Année" noLegend :items="tabs" />
       </v-col>
       <v-col v-if="!editable && diagnosticForYear" align="right">
-        <DsfrCallout icon=" " class="py-6 pr-14 my-0" style="width: fit-content;">
+        <DsfrCallout icon=" " :color="color" class="py-6 pr-14 my-0" style="width: fit-content;">
           <div class="text-left">
             <p class="mb-0">
               <b v-if="teledeclared">Données officielles</b>
@@ -28,7 +28,7 @@
       </v-col>
     </v-row>
     <div v-if="diagnosticForYear">
-      <DsfrCallout v-if="editable" icon=" " class="my-4 py-6 pr-14">
+      <DsfrCallout v-if="editable" icon=" " :color="color" class="my-4 py-6 pr-14">
         <div v-if="teledeclared">
           <p class="mb-0">
             <b>Données officielles {{ diagnosticForYear.year }} télédéclarées</b>
@@ -52,7 +52,7 @@
         </div>
       </DsfrCallout>
 
-      <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" />
+      <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" class="my-8" />
 
       <div v-if="hasFamilyDetail">
         <DsfrAccordion :items="[{ title: 'Détail par famille de produit' }]" class="mb-2">
@@ -158,10 +158,15 @@ export default {
       return this.diagnosticSet.find((d) => d.year === +this.tab)
     },
     teledeclared() {
-      return !!this.diagnosticForYear?.teledeclaration
+      return !!this.diagnosticForYear?.isTeledeclared
     },
     provisional() {
       return !!this.diagnosticForYear?.year >= new Date().getFullYear()
+    },
+    color() {
+      if (this.teledeclared) return "#21402c"
+      if (this.provisional) return "#3558A2"
+      return "#755348"
     },
     lastPurchaseDate() {
       if (!this.provisional) return
