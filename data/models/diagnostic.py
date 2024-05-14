@@ -1,4 +1,3 @@
-import datetime
 from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
@@ -6,6 +5,7 @@ from django.db import models
 from simple_history.models import HistoricalRecords
 from data.fields import ChoiceArrayField
 from .canteen import Canteen
+from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
 
 
 class Diagnostic(models.Model):
@@ -1444,8 +1444,8 @@ class Diagnostic(models.Model):
     def validate_year(self):
         if self.year is None:
             return
-        lower_limit_year = 2019
-        upper_limit_year = datetime.datetime.now().date().year + 1
+        lower_limit_year = get_diagnostic_lower_limit_year()
+        upper_limit_year = get_diagnostic_upper_limit_year()
         if not isinstance(self.year, int) or self.year < lower_limit_year or self.year > upper_limit_year:
             raise ValidationError(
                 {"year": f"L'année doit être comprise entre {lower_limit_year} et {upper_limit_year}."}

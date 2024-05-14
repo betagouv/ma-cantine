@@ -871,10 +871,12 @@ class TestPublishedCanteenApi(APITestCase):
         canteen = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
             publication_status="published",
+            redacted_years=[2020, 2021, 2023],
         )
 
-        DiagnosticFactory.create(canteen=canteen, year=2022, publication_status="draft")
-        published_diag = DiagnosticFactory.create(canteen=canteen, year=2023, publication_status="published")
+        DiagnosticFactory.create(canteen=canteen, year=2021)
+        published_diag = DiagnosticFactory.create(canteen=canteen, year=2022)
+        DiagnosticFactory.create(canteen=canteen, year=2023)
 
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
         body = response.json()
@@ -884,3 +886,5 @@ class TestPublishedCanteenApi(APITestCase):
         serialized_diag = body.get("diagnostics")[0]
 
         self.assertEqual(serialized_diag["id"], published_diag.id)
+
+    # TODO: add test for satellite with CC diagnostics, both satellite redacted_years and CC redacted_years

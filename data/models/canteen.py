@@ -5,7 +5,9 @@ from django.core.exceptions import ValidationError
 from simple_history.models import HistoricalRecords
 from data.department_choices import Department
 from data.region_choices import Region
+from data.fields import ChoiceArrayField
 from data.utils import get_region, optimize_image
+from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
 from .sector import Sector
 from .softdeletionmodel import SoftDeletionModel
 
@@ -28,6 +30,10 @@ def validate_siret(siret):
 
     if not luhn_checksum_valid:
         raise ValidationError("Le numéro SIRET n'est pas valide.")
+
+
+def get_diagnostic_year_choices():
+    return [(y, str(y)) for y in range(get_diagnostic_lower_limit_year(), get_diagnostic_upper_limit_year())]
 
 
 class Canteen(SoftDeletionModel):
@@ -173,6 +179,12 @@ class Canteen(SoftDeletionModel):
         choices=PublicationStatus.choices,
         default="draft",
         verbose_name="état de publication",
+    )
+    redacted_years = ChoiceArrayField(
+        base_field=models.IntegerField(choices=get_diagnostic_year_choices),
+        default=list,
+        size=None,
+        verbose_name="les années depubliées",
     )
     publication_comments = models.TextField(
         null=True,
@@ -330,7 +342,7 @@ class Canteen(SoftDeletionModel):
 
     @property
     def published_diagnostics(self):
-        return self.diagnostic_set.filter(publication_status="published")
+        return self.diagnostic_set.exclude(year__in=self.redacted_years)
 
 
 class CanteenImage(models.Model):

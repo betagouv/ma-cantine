@@ -148,3 +148,5 @@ class TestPublishCanteen(APITestCase):
         self.assertEqual(canteen_1.publication_status, Canteen.PublicationStatus.PUBLISHED)
         canteen_2.refresh_from_db()
         self.assertEqual(canteen_2.publication_status, Canteen.PublicationStatus.DRAFT)
+
+    # TODO: add test for modifying redacted years. Adding, removing, and bad requests
