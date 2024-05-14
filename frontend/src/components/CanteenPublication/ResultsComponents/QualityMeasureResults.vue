@@ -9,9 +9,48 @@
     </p>
     <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
 
-    <DsfrSegmentedControl v-model="tab" legend="Année" noLegend :items="tabs" />
+    <v-row class="align-end flex-wrap mb-4">
+      <v-col>
+        <DsfrSegmentedControl v-model="tab" legend="Bilan par période" :noLegend="editable" :items="tabs" />
+      </v-col>
+      <v-col v-if="!editable && diagnosticForYear" align="right">
+        <DsfrCallout icon=" " :color="color" class="py-6 pr-14 my-0" style="width: fit-content;">
+          <div class="text-left">
+            <p class="mb-0">
+              <b v-if="teledeclared">Données officielles</b>
+              <b v-else-if="provisional">Données provisoires</b>
+              <b v-else>Données non télédéclarées</b>
+            </p>
+          </div>
+          <!-- TODO: link to article -->
+        </DsfrCallout>
+      </v-col>
+    </v-row>
     <div v-if="diagnosticForYear">
-      <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" />
+      <DsfrCallout v-if="editable" icon=" " :color="color" class="my-4 py-6 pr-14">
+        <div v-if="teledeclared">
+          <p class="mb-0">
+            <b>Données officielles {{ diagnosticForYear.year }} télédéclarées</b>
+            : le bilan ci-dessous a été officiellement transmis à l’administration et il est pris en compte dans le
+            rapport annuel public remis au Parlement.
+          </p>
+        </div>
+        <div v-else-if="provisional">
+          <p class="mb-0">
+            <b>Total des achats au {{ lastPurchaseDate }}</b>
+            : le bilan provisoire ci-dessous est réalisé à partir des données d’achat au {{ lastPurchaseDate }}.
+          </p>
+        </div>
+        <div v-else>
+          <p class="mb-0">
+            <b>Données non télédéclarées</b>
+            : le bilan des achats de l'année {{ diagnosticForYear.year }} n'a pas été officiellement télédéclaré à
+            l'administration.
+          </p>
+        </div>
+      </DsfrCallout>
+
+      <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" class="my-8" />
 
       <div v-if="hasFamilyDetail">
         <DsfrAccordion :items="[{ title: 'Détail par famille de produit' }]" class="mb-2">
@@ -56,6 +95,7 @@
         height="260"
         :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
         :applicableRules="applicableRules"
+        colorTheme="grey"
       />
     </div>
     <EditableCommentsField
@@ -78,6 +118,7 @@ import ApproGraph from "@/components/ApproGraph"
 import EditableCommentsField from "../EditableCommentsField"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import DsfrAccordion from "@/components/DsfrAccordion"
+import DsfrCallout from "@/components/DsfrCallout"
 
 const COMPARE_TAB = "Comparer"
 
@@ -96,6 +137,7 @@ export default {
     EditableCommentsField,
     MultiYearSummaryStatistics,
     DsfrAccordion,
+    DsfrCallout,
   },
   data() {
     const tabs = this.diagnosticSet.map((d) => +d.year)
@@ -113,6 +155,28 @@ export default {
     },
     diagnosticForYear() {
       return this.diagnosticSet.find((d) => d.year === +this.tab)
+    },
+    teledeclared() {
+      return !!this.diagnosticForYear?.isTeledeclared
+    },
+    provisional() {
+      return !!this.diagnosticForYear?.year >= new Date().getFullYear()
+    },
+    color() {
+      // these are the same as the colours for "bio" in ApproGraph
+      if (this.teledeclared) return "#21402c"
+      if (this.provisional) return "#263b58"
+      return "#543125"
+    },
+    lastPurchaseDate() {
+      if (!this.provisional) return
+      // TODO: make this the date of the most recent purchase
+      const date = new Date(this.diagnosticForYear.modificationDate)
+      return date.toLocaleString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
     },
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
