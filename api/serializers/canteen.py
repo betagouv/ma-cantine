@@ -3,6 +3,7 @@ from rest_framework import serializers
 from drf_base64.fields import Base64ImageField
 from data.models import Canteen, Sector, CanteenImage, Diagnostic
 from .diagnostic import PublicDiagnosticSerializer, FullDiagnosticSerializer, CentralKitchenDiagnosticSerializer
+from .diagnostic import PublicApproDiagnosticSerializer, PublicServiceDiagnosticSerializer
 from .sector import SectorSerializer
 from .user import CanteenManagerSerializer
 from .managerinvitation import ManagerInvitationSerializer
@@ -96,7 +97,10 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
 
 class PublicCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="published_diagnostics")
+    diagnostics = PublicServiceDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    appro_diagnostics = PublicApproDiagnosticSerializer(
+        many=True, read_only=True, source="published_appro_diagnostics"
+    )
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
@@ -109,6 +113,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "diagnostics",
+            "appro_diagnostics",
             "city",
             "city_insee_code",
             "postal_code",

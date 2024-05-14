@@ -341,7 +341,7 @@ class Canteen(SoftDeletionModel):
         return get_region(self.department)
 
     @property
-    def published_diagnostics(self):
+    def published_appro_diagnostics(self):
         return self.diagnostic_set.exclude(year__in=self.redacted_appro_years)
 
 

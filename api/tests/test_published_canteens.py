@@ -815,8 +815,8 @@ class TestPublishedCanteenApi(APITestCase):
         body = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(len(body.get("diagnostics")), 1)
-        serialized_diag = body.get("diagnostics")[0]
+        self.assertEqual(len(body.get("approDiagnostics")), 1)
+        serialized_diag = body.get("approDiagnostics")[0]
 
         self.assertEqual(serialized_diag["percentageValueTotalHt"], 1)
         self.assertEqual(serialized_diag["percentageValueBioHt"], 0.5)
@@ -882,9 +882,15 @@ class TestPublishedCanteenApi(APITestCase):
         body = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(len(body.get("diagnostics")), 1)
-        serialized_diag = body.get("diagnostics")[0]
+        self.assertEqual(len(body.get("diagnostics")), 3)
+        self.assertEqual(len(body.get("approDiagnostics")), 1)
+        serialized_diags = body.get("diagnostics")
+        serialized_appro_diags = body.get("approDiagnostics")
 
-        self.assertEqual(serialized_diag["id"], published_diag.id)
+        for diag in serialized_diags:
+            self.assertNotIn("percentageValueTotalHt", diag)
+            self.assertNotIn("valueTotalHt", diag)
 
-    # TODO: add test for satellite with CC diagnostics, both satellite redacted_appro_years and CC redacted_appro_years
+        self.assertEqual(serialized_appro_diags[0]["id"], published_diag.id)
+        self.assertIn("percentageValueTotalHt", serialized_appro_diags[0])
+        self.assertNotIn("valueTotalHt", serialized_appro_diags[0])
