@@ -78,12 +78,12 @@ export default {
           xaxis: [
             {
               x: this.applicableRules.qualityThreshold,
-              borderColor: this.theme.quality,
+              borderColor: this.theme.sustainable,
               label: {
                 offsetY: -14,
                 orientation: "horizontal",
                 style: {
-                  color: this.theme.quality,
+                  color: this.theme.sustainable,
                   background: "#fff",
                 },
                 text: `${this.applicableRules.qualityThreshold} %`,
@@ -110,15 +110,15 @@ export default {
       const themes = {
         green: {
           bio: "#21402c",
-          quality: "#00A95F",
+          sustainable: "#00A95F",
         },
         blue: {
           bio: "#263b58", // blue-cumulus-200
-          quality: "#5982E0",
+          sustainable: "#5982E0",
         },
         brown: {
           bio: "#543125", // orange-terre-battue-200
-          quality: "#AB7B6B",
+          sustainable: "#AB7B6B",
         },
       }
       if (this.colorTheme) return themes[this.colorTheme]
@@ -136,7 +136,7 @@ export default {
         {
           name: `Durable et de qualité : ${this.sustainablePercentage} %`,
           data: [this.sustainablePercentage],
-          color: this.theme.quality,
+          color: this.theme.sustainable,
         },
       ]
     },
