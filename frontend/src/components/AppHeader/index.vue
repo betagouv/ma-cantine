@@ -341,7 +341,9 @@ export default {
           navlinks.forEach((x) => (x.children = x.children?.filter((y) => !y.forElected)))
         return navlinks
       } else {
-        return this.navLinks.filter((link) => !link.authenticationState)
+        const navlinks = this.navLinks.filter((link) => !link.authenticationState)
+        navlinks.forEach((x) => (x.children = x.children?.filter((y) => !y.forElected)))
+        return navlinks
       }
     },
     chipInfo() {
