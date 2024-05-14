@@ -2,7 +2,7 @@
   <div>
     <h2 class="grey--text text--darken-4 mb-6">Contactez « {{ canteen.name }} »</h2>
     <div v-if="canteen.canBeClaimed">
-      <p>Nous n'avons pas de coordonnées pour cette cantine.</p>
+      <p>Nous n'avons pas de coordonnées de contact pour cette cantine.</p>
     </div>
     <div v-else>
       <div class="text-left grey--text text--darken-4 mt-n1 mb-6 text-body-2">
