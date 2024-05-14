@@ -180,11 +180,11 @@ class Canteen(SoftDeletionModel):
         default="draft",
         verbose_name="état de publication",
     )
-    redacted_years = ChoiceArrayField(
+    redacted_appro_years = ChoiceArrayField(
         base_field=models.IntegerField(choices=get_diagnostic_year_choices),
         default=list,
-        size=None,
-        verbose_name="les années depubliées",
+        blank=True,
+        verbose_name="les années pour lesquelles les données d'appro sont masquées",
     )
     publication_comments = models.TextField(
         null=True,
@@ -342,7 +342,7 @@ class Canteen(SoftDeletionModel):
 
     @property
     def published_diagnostics(self):
-        return self.diagnostic_set.exclude(year__in=self.redacted_years)
+        return self.diagnostic_set.exclude(year__in=self.redacted_appro_years)
 
 
 class CanteenImage(models.Model):

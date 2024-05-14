@@ -871,7 +871,7 @@ class TestPublishedCanteenApi(APITestCase):
         canteen = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
             publication_status="published",
-            redacted_years=[2020, 2021, 2023],
+            redacted_appro_years=[2020, 2021, 2023],
         )
 
         DiagnosticFactory.create(canteen=canteen, year=2021)
@@ -887,4 +887,4 @@ class TestPublishedCanteenApi(APITestCase):
 
         self.assertEqual(serialized_diag["id"], published_diag.id)
 
-    # TODO: add test for satellite with CC diagnostics, both satellite redacted_years and CC redacted_years
+    # TODO: add test for satellite with CC diagnostics, both satellite redacted_appro_years and CC redacted_appro_years
