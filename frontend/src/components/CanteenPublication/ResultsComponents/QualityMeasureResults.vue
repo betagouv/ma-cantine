@@ -104,6 +104,7 @@
         height="260"
         :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
         :applicableRules="applicableRules"
+        colorTheme="grey"
       />
     </div>
     <EditableCommentsField
