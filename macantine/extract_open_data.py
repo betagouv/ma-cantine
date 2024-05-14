@@ -204,7 +204,9 @@ def update_datagouv_resources():
         return count_updated_resources
     except requests.HTTPError as e:
         logger.error(f"Datagouv resource update : Error while updating dataset : {dataset_id}")
-        logger.error(e)
+        logger.exception(e)
+    except Exception as e:
+        logger.exception(e)
 
 
 class ETL(ABC):
