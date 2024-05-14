@@ -171,7 +171,7 @@
         <v-expand-transition>
           <v-col cols="12" md="8" v-if="usesCentralProducer" class="py-0">
             <DsfrTextField
-              label="SIRET de la cuisine centrale"
+              label="SIRET du livreur"
               labelClasses="body-2 mb-2"
               hide-details="auto"
               validate-on-blur
@@ -194,7 +194,7 @@
                 outil de recherche pour trouver le SIRET
                 <v-icon x-small color="primary">mdi-open-in-new</v-icon>
               </a>
-              de la cuisine centrale.
+              du livreur.
             </p>
             <v-expand-transition>
               <DsfrCallout v-if="centralKitchen && centralKitchen.id && centralKitchen.name">
@@ -364,8 +364,7 @@ export default {
       deletionDialog: false,
       managementTypes: Constants.ManagementTypes,
       steps: ["siret", "informations-cantine"],
-      satelliteSiretMessage:
-        "Le numéro SIRET de la cuisine centrale ne peut pas être le même que celui de la cantine satellite.",
+      satelliteSiretMessage: "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine satellite.",
       productionTypes: Constants.ProductionTypesDetailed.map((pt) => ({ text: pt.title, value: pt.value })),
       economicModels: Constants.EconomicModels,
       sectorCategory: null,
@@ -508,7 +507,7 @@ export default {
           this.canteen.productionType === "central_serving" || this.canteen.productionType === "central"
         if (isCentralCanteen && parseInt(this.canteen.satelliteCanteensCount) >= 250) {
           this.displayTechnicalControlDialog(
-            `Vous êtes sur le point de déclarer une livraison depuis votre cuisine centrale à ${parseInt(
+            `Vous êtes sur le point de déclarer une livraison depuis votre établissement à ${parseInt(
               this.canteen.satelliteCanteensCount
             )} établissements de service. Voulez-vous vraiment continuer ?`
           )

@@ -40,7 +40,7 @@
     />
     <div v-if="!receivesGuests">
       <p>
-        « {{ originalCanteen.name }} » est une cuisine centrale sans lieu de consommation. La publication concerne
+        « {{ originalCanteen.name }} » est un livreur des repas sans lieu de consommation. La publication concerne
         <b>uniquement les lieux de restauration recevant des convives.</b>
       </p>
       <p>
@@ -53,7 +53,7 @@
             params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(originalCanteen) },
           }"
         >
-          votre cuisine centrale reçoit aussi des convives sur place.
+          votre établissement reçoit aussi des convives sur place.
         </router-link>
       </p>
     </div>
@@ -123,7 +123,7 @@ export default {
         })
         .then(() => {
           this.$router.push({ name: "ManagementPage" }).then(() => {
-            this.$store.dispatch("notify", { title: "Votre cuisine centrale n'est plus publiée", status: "success" })
+            this.$store.dispatch("notify", { title: "Votre établissement n'est plus publiée", status: "success" })
           })
         })
         .catch((e) => {

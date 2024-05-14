@@ -48,7 +48,7 @@
     <div v-if="isPublished">
       <div v-if="!receivesGuests">
         <p class="mt-8">
-          Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
+          Précédemment vous aviez choisi de publier cette cantine. En tant que livreur des repas, vous pouvez désormais
           retirer cette publication.
         </p>
         <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">

@@ -45,8 +45,8 @@
       </v-col>
     </v-row>
 
-    <h2 class="mt-10 mb-2">Vous gérez une cuisine centrale ?</h2>
-    <p class="mt-0 mb-6">Renseignez vos satellites et vos données d'approvisionnement avec le même fichier</p>
+    <h2 class="mt-10 mb-2">Vous gérez un livreur des repas ?</h2>
+    <p class="mt-0 mb-6">Renseignez vos données d'approvisionnement une fois pour tous vos cantines satellites</p>
     <v-row class="cta-group pa-2">
       <v-spacer></v-spacer>
       <v-col cols="12" sm="4" v-for="type in ccDiagnosticTypes" :key="type.key">

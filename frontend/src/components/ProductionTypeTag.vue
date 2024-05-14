@@ -3,7 +3,7 @@
     <div class="tag px-2">
       <p v-if="canteen.isCentralCuisine" class="mb-0 fr-text-xs">
         <v-icon class="mt-n1 grey--text text--darken-4" small>$community-fill</v-icon>
-        Cuisine centrale
+        Livreur des repas
       </p>
       <p v-else-if="isSatellite" class="mb-0 fr-text-xs">
         <v-icon class="mt-n1 grey--text text--darken-4" small>$restaurant-fill</v-icon>
