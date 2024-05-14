@@ -40,14 +40,10 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
     list_display = (
         "canteen_name",
         "year",
-        "publication_status",
         "creation_date",
         "modification_date",
     )
-    list_filter = (
-        "year",
-        "publication_status",
-    )
+    list_filter = ("year",)
     readonly_fields = (
         "creation_mtm_source",
         "creation_mtm_campaign",

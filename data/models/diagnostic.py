@@ -142,13 +142,6 @@ class Diagnostic(models.Model):
         verbose_name="comment est-ce que ce diagnostic à été créé ?",
     )
 
-    publication_status = models.CharField(
-        max_length=50,
-        choices=PublicationStatus.choices,
-        default="published",
-        verbose_name="état de publication",
-    )
-
     # progress fields
     # NB None = tunnel has not been started; "complet" = tunnel has finished
     # all other values are defined by the front end

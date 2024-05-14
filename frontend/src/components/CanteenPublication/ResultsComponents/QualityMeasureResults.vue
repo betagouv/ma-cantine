@@ -156,7 +156,7 @@ export default {
     return {
       tabs,
       tab: tabs[0],
-      publishedToggleState: this.diagnosticSet.find((d) => d.year === +tabs[0])?.publicationStatus === "published",
+      publishedToggleState: false, // this.diagnosticSet.find((d) => d.year === +tabs[0])?.publicationStatus === "published",
     }
   },
   computed: {
@@ -228,30 +228,32 @@ export default {
       return Math.round(value * 100)
     },
     updateDiagnosticPublication(value) {
-      if (!this.diagnosticForYear) {
-        this.$store.dispatch("notifyServerError")
-        return
-      }
-      const payload = {
-        publicationStatus: value ? "published" : "draft",
-      }
-      return this.$store
-        .dispatch("updateDiagnostic", {
-          canteenId: this.canteen.id,
-          id: this.diagnosticForYear.id,
-          payload: payload,
-        })
-        .then(() => {
-          const descriptor = value ? "publiées" : "dépubliées"
-          this.$store.dispatch("notify", {
-            status: "success",
-            message: `Les données de ${this.diagnosticForYear.year} sont bien ${descriptor}`,
-          })
-        })
-        .catch((e) => {
-          this.$store.dispatch("notifyServerError", e)
-          return Promise.reject()
-        })
+      console.log(value)
+      // TODO: change this.
+      // if (!this.diagnosticForYear) {
+      //   this.$store.dispatch("notifyServerError")
+      //   return
+      // }
+      // const payload = {
+      //   publicationStatus: value ? "published" : "draft",
+      // }
+      // return this.$store
+      //   .dispatch("updateDiagnostic", {
+      //     canteenId: this.canteen.id,
+      //     id: this.diagnosticForYear.id,
+      //     payload: payload,
+      //   })
+      //   .then(() => {
+      //     const descriptor = value ? "publiées" : "dépubliées"
+      //     this.$store.dispatch("notify", {
+      //       status: "success",
+      //       message: `Les données de ${this.diagnosticForYear.year} sont bien ${descriptor}`,
+      //     })
+      //   })
+      //   .catch((e) => {
+      //     this.$store.dispatch("notifyServerError", e)
+      //     return Promise.reject()
+      //   })
     },
   },
   watch: {

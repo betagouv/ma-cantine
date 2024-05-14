@@ -688,31 +688,3 @@ class TestDiagnosticsApi(APITestCase):
         serialized_diag = body.get("diagnostics")[0]
 
         self.assertEqual(serialized_diag["totalLeftovers"], 1234.56)
-
-    @authenticate
-    def test_update_diagnostic_publication_status(self):
-        """
-        Should be able to individually publish or unpublish diagnostics
-        """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, publication_status=Diagnostic.PublicationStatus.PUBLISHED
-        )
-
-        payload = {
-            "publication_status": Diagnostic.PublicationStatus.DRAFT,
-        }
-        response = self.client.patch(
-            reverse(
-                "diagnostic_edition",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
-            ),
-            payload,
-            format="json",
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        diagnostic.refresh_from_db()
-
-        self.assertEqual(diagnostic.publication_status, Diagnostic.PublicationStatus.DRAFT)
