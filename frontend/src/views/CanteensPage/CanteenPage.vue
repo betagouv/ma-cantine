@@ -2,6 +2,7 @@
   <div class="text-left">
     <div v-if="canteen" id="canteen-dashboard">
       <BreadcrumbsNav :links="[{ to: { name: 'CanteensHome' } }]" :title="canteen.name" />
+      <ImageGallery :images="canteen.images.slice(0, imageLimit)" />
       <v-card elevation="0" class="pa-0 mb-8 text-left">
         <v-row class="align-center">
           <v-col
@@ -38,9 +39,6 @@
                 </router-link>
               </div>
             </v-card-subtitle>
-          </v-col>
-          <v-col v-if="isCanteenManager">
-            <AddPublishedCanteenWidget :canteen="canteen" />
           </v-col>
         </v-row>
       </v-card>
@@ -86,9 +84,7 @@
 
       <CanteenPublication :canteen="canteen" />
 
-      <v-divider aria-hidden="true" role="presentation" class="my-8"></v-divider>
-
-      <ContactForm id="contact" :canteen="canteen" />
+      <ContactForm id="contact" :canteen="canteen" class="mt-16" />
     </div>
     <v-progress-circular indeterminate v-else style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
   </div>
@@ -101,7 +97,7 @@ import CanteenIndicators from "@/components/CanteenIndicators"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import labels from "@/data/quality-labels.json"
 import DsfrCallout from "@/components/DsfrCallout"
-import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
+import ImageGallery from "@/components/ImageGallery"
 
 export default {
   data() {
@@ -120,7 +116,7 @@ export default {
     CanteenIndicators,
     BreadcrumbsNav,
     DsfrCallout,
-    AddPublishedCanteenWidget,
+    ImageGallery,
   },
   props: {
     canteenUrlComponent: {
@@ -140,6 +136,9 @@ export default {
     },
     isCanteenManager() {
       return this.canteen.isManagedByUser
+    },
+    imageLimit() {
+      return this.$vuetify.breakpoint.xs ? 0 : 3
     },
   },
   methods: {

@@ -1,5 +1,5 @@
 <template>
-  <v-snackbar class="notification-snackbar" timeout="-1" :color="color" :value="show">
+  <v-snackbar class="notification-snackbar" timeout="-1" :color="color" :value="show" right>
     <div class="d-flex">
       <v-icon small class="mr-3" width="20">
         {{ icon }}

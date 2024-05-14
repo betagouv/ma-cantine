@@ -87,6 +87,12 @@ export default {
   emailOrEmpty(input) {
     return input ? email(input) : true
   },
+  maxChars(max) {
+    return (input) => {
+      if (!input) return true
+      return input.length <= max || `Ce champ ne doit pas dépasser les ${max} caractères`
+    }
+  },
   maxCharsXPName(input) {
     if (!input) return true
     return input.length <= 70 || "Ce champ ne doit pas dépasser les 70 caractères"

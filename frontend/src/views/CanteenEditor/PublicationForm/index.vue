@@ -42,10 +42,10 @@
       </div>
     </div>
 
+    <ImagesField v-if="$vuetify.breakpoint.smAndUp" :canteen="canteen" :end="imageHeaderLimit" class="mt-0 mb-4" />
     <CanteenHeader class="my-6" :canteen="canteen" @logoChanged="(x) => (originalCanteen.logo = x)" />
 
     <div v-if="isPublished">
-      <AddPublishedCanteenWidget :canteen="originalCanteen" />
       <div v-if="!receivesGuests">
         <p class="mt-8">
           Précédemment vous aviez choisi de publier cette cantine. En tant que cuisine centrale, vous pouvez désormais
@@ -79,22 +79,24 @@
     <p v-if="isCentralCuisine">
       <router-link :to="{ name: 'PublishSatellites' }">Gérer la publication de mes satellites</router-link>
     </p>
+    <CanteenPublication v-if="receivesGuests" :canteen="canteen" :editable="true" />
     <div v-if="receivesGuests">
-      <v-form ref="form" @submit.prevent>
-        <DsfrTextarea class="my-2" rows="5" counter="500" v-model="canteen.publicationComments">
-          <template v-slot:label>
-            <span class="fr-label mb-1">Déscription de l'établissement</span>
-            <span class="fr-hint-text mb-2">
-              Si vous le souhaitez, personnalisez votre affiche en écrivant quelques mots sur votre établissement : son
-              fonctionnement, l'organisation, l'historique...
-            </span>
-          </template>
-        </DsfrTextarea>
-        <PublicationField class="mb-4" :canteen="canteen" v-model="acceptPublication" />
-      </v-form>
-      <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex">
-        <v-spacer></v-spacer>
+      <div v-if="showImagesOverflow">
+        <h3>Galerie</h3>
+        <ImagesField :canteen="canteen" :start="imageHeaderLimit" :end="additionalImagesMax" class="mt-0 mb-4" />
+      </div>
+      <DsfrAccordion v-if="isPublished" :items="[{ title: 'Ajouter un aperçu sur votre site' }]" class="my-6">
+        <template v-slot:content>
+          <AddPublishedCanteenWidget :canteen="canteen" />
+        </template>
+      </DsfrAccordion>
+      <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex flex-wrap align-center">
+        <v-form ref="form" @submit.prevent class="publication-checkbox">
+          <PublicationField :canteen="canteen" v-model="acceptPublication" />
+        </v-form>
+        <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
         <v-btn
+          v-if="!isPublished"
           x-large
           outlined
           color="primary"
@@ -112,9 +114,6 @@
         <v-btn v-else x-large color="red darken-3" class="mr-4" outlined @click="removeCanteenPublication">
           Retirer la publication
         </v-btn>
-        <v-btn v-if="isPublished" x-large color="primary" @click="saveCanteen">
-          Mettre à jour
-        </v-btn>
       </v-sheet>
     </div>
   </div>
@@ -122,13 +121,13 @@
 
 <script>
 import PublicationField from "../PublicationField"
-import { getObjectDiff, lastYear } from "@/utils"
-import DsfrTextarea from "@/components/DsfrTextarea"
+import { lastYear } from "@/utils"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
 import DsfrBadge from "@/components/DsfrBadge"
+import DsfrAccordion from "@/components/DsfrAccordion"
 import CanteenHeader from "./CanteenHeader"
-
-const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Vos changements n'ont pas été sauvegardés."
+import CanteenPublication from "@/components/CanteenPublication"
+import ImagesField from "./ImagesField"
 
 export default {
   name: "PublicationForm",
@@ -140,15 +139,16 @@ export default {
   components: {
     DsfrBadge,
     PublicationField,
-    DsfrTextarea,
     AddPublishedCanteenWidget,
     CanteenHeader,
+    CanteenPublication,
+    ImagesField,
+    DsfrAccordion,
   },
   data() {
     return {
       acceptPublication: false,
       canteen: {},
-      bypassLeaveWarning: false,
       publicationYear: lastYear(),
     }
   },
@@ -156,6 +156,7 @@ export default {
     const canteen = this.originalCanteen
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
+      if (!this.canteen.images) this.canteen.images = []
       this.acceptPublication = !!canteen.publicationStatus && canteen.publicationStatus !== "draft"
     }
   },
@@ -167,9 +168,6 @@ export default {
         return
       }
       this.changePublicationStatus(true)
-    },
-    saveCanteen() {
-      this.publishCanteen(true, "Votre publication est mise à jour")
     },
     removeCanteenPublication() {
       this.changePublicationStatus(false)
@@ -184,7 +182,6 @@ export default {
           payload: this.canteen,
         })
         .then(() => {
-          this.bypassLeaveWarning = true
           if (toPublish) {
             return this.$router.push({
               name: "CanteenPage",
@@ -204,34 +201,11 @@ export default {
           this.$store.dispatch("notifyServerError", e)
         })
     },
-    handleUnload(e) {
-      if (this.hasChanged && !this.bypassLeaveWarning) {
-        e.preventDefault()
-        e.returnValue = LEAVE_WARNING
-      } else {
-        delete e["returnValue"]
-      }
-    },
   },
   created() {
-    window.addEventListener("beforeunload", this.handleUnload)
     document.title = `Éditer mon affiche - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
   },
-  beforeDestroy() {
-    window.removeEventListener("beforeunload", this.handleUnload)
-  },
-  beforeRouteLeave(to, from, next) {
-    if (!this.hasChanged || this.bypassLeaveWarning) {
-      next()
-      return
-    }
-    window.confirm(LEAVE_WARNING) ? next() : next(false)
-  },
   computed: {
-    hasChanged() {
-      const diff = getObjectDiff(this.originalCanteen, this.canteen)
-      return Object.keys(diff).length > 0
-    },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
@@ -263,6 +237,24 @@ export default {
         },
       }[this.isPublished]
     },
+    imageHeaderLimit() {
+      return this.$vuetify.breakpoint.xs ? 0 : 3
+    },
+    additionalImagesMax() {
+      return Math.max(this.canteen.images.length, this.imageHeaderLimit)
+    },
+    showImagesOverflow() {
+      const allowMobileAdd = this.$vuetify.breakpoint.xs && this.canteen.images.length === 0
+      const showRemainingImages = this.canteen.images.length > this.imageHeaderLimit
+      return allowMobileAdd || showRemainingImages
+    },
   },
 }
 </script>
+
+<style scoped>
+.publication-checkbox {
+  min-width: 40%;
+  max-width: 50%;
+}
+</style>

@@ -3,7 +3,7 @@
     <div v-for="section in sections" :key="section.title">
       <h2 class="mt-8 mb-4">{{ section.title }}</h2>
       <DsfrAccordion :items="section.questions">
-        <template v-slot="{ item }">
+        <template v-slot:content="{ item }">
           <component :is="item.component" />
         </template>
       </DsfrAccordion>

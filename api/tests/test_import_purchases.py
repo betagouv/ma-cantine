@@ -166,6 +166,19 @@ class TestPurchaseImport(APITestCase):
         )
 
     @authenticate
+    def test_import_corrupt_purchases_file(self):
+        """
+        A reasonable error should be thrown
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        with open("./api/tests/files/corrupt_purchase_import.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
+        errors = response.json()["errors"]
+        self.assertEqual(errors.pop(0)["message"], "Format fichier : 7-8 colonnes attendues, 1 trouvées.")
+
+    @authenticate
     def test_warn_duplicate_file(self):
         """
         Tests that the system will warn of duplicate file upload
