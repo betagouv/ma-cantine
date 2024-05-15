@@ -336,14 +336,23 @@ class Canteen(SoftDeletionModel):
         return get_region(self.department)
 
     @property
-    def published_appro_diagnostics(self):
+    def appro_diagnostics(self):
+        diag_ids = [d["id"] for d in self.diagnostic_set.values("id")]
         if self.central_kitchen_diagnostics:
             # for any given year, could have own diag or CC diag
             # own diag always takes precedent
             # if don't have own diag, include CC diag in set
-            # then filter set to exclude redacted years
-            return self.central_kitchen_diagnostics.exclude(year__in=self.redacted_appro_years)
-        return self.diagnostic_set.exclude(year__in=self.redacted_appro_years)
+            own_diag_years = [d["year"] for d in self.diagnostic_set.values("year")]
+            central_appro_diagnostics = self.central_kitchen_diagnostics.exclude(year__in=own_diag_years)
+            diag_ids += [d["id"] for d in central_appro_diagnostics.values("id")]
+
+        from data.models import Diagnostic
+
+        return Diagnostic.objects.filter(id__in=diag_ids)
+
+    @property
+    def published_appro_diagnostics(self):
+        return self.appro_diagnostics.exclude(year__in=self.redacted_appro_years)
 
 
 class CanteenImage(models.Model):

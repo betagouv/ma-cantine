@@ -946,11 +946,79 @@ class TestPublishedCanteenApi(APITestCase):
         """
         CCs should be able to redact the appro data without impacting their satellites
         """
-        pass
+        central = CanteenFactory.create(
+            siret="96766910375238",
+            production_type=Canteen.ProductionType.CENTRAL,
+            redacted_appro_years=[2023],
+            publication_status="published",
+        )
+        satellite = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=central.siret,
+            publication_status="published",
+            redacted_appro_years=[],
+        )
+
+        DiagnosticFactory.create(
+            canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
+        )
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": central.id}))
+        body = response.json()
+        self.assertEqual(len(body.get("approDiagnostics")), 0)
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
+        body = response.json()
+        self.assertEqual(len(body.get("approDiagnostics")), 1)
+
+    def test_satellites_get_correct_appro_diagnostic(self):
+        """
+        Satellites that have their own diagnostic for one year, and CC diagnostics for another,
+        should recieve the appropriate diagnostic for appro data per-year
+        """
+        central = CanteenFactory.create(siret="96766910375238", production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=central.siret,
+            publication_status="published",
+        )
+
+        DiagnosticFactory.create(
+            canteen=central, year=2022, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
+        )
+        DiagnosticFactory.create(
+            canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
+        )
+        DiagnosticFactory.create(canteen=satellite, year=2023)
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
+        body = response.json()
+        serialized_diagnostics = body.get("approDiagnostics")
+        self.assertEqual(len(serialized_diagnostics), 2)
+        for diagnostic in serialized_diagnostics:
+            if diagnostic["year"] == 2022:
+                self.assertEqual(diagnostic["canteenId"], central.id)
+            elif diagnostic["year"] == 2023:
+                self.assertEqual(diagnostic["canteenId"], satellite.id)
 
     def test_satellites_can_redact_own_appro_data(self):
         """
         Satellites that have their own diagnostic should be able to redact their appro data
         without their CC's diagnostic appro data taking it's place
         """
-        pass
+        central = CanteenFactory.create(siret="96766910375238", production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=central.siret,
+            publication_status="published",
+            redacted_appro_years=[2023],
+        )
+
+        DiagnosticFactory.create(
+            canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
+        )
+        DiagnosticFactory.create(canteen=satellite, year=2023)
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
+        body = response.json()
+        self.assertEqual(len(body.get("approDiagnostics")), 0)
