@@ -896,17 +896,23 @@ class TestPublishedCanteenApi(APITestCase):
 
     def test_satellites_can_redact_cc_appro_data(self):
         """
-        Satellites should be able to redact the appro data provided by a CC
+        Satellites should be able to redact the appro data provided by a CC, regardless of diagostic mode,
         without impacting other satellites or the CC
         """
         central = CanteenFactory.create(
             siret="96766910375238", production_type=Canteen.ProductionType.CENTRAL, redacted_appro_years=[]
         )
-        redacted_satellite = CanteenFactory.create(
+        fully_redacted_satellite = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
             publication_status="published",
-            redacted_appro_years=[2023],
+            redacted_appro_years=[2022, 2023],
+        )
+        partially_redacted_satellite = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=central.siret,
+            publication_status="published",
+            redacted_appro_years=[2022],
         )
         other_satellite = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -916,43 +922,25 @@ class TestPublishedCanteenApi(APITestCase):
         )
 
         DiagnosticFactory.create(
+            canteen=central, year=2022, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL
+        )
+        DiagnosticFactory.create(
             canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
         )
-        self.assertEqual(redacted_satellite.central_kitchen, central)
-        self.assertEqual(redacted_satellite.central_kitchen_diagnostics.count(), 1)
+        self.assertEqual(fully_redacted_satellite.central_kitchen_diagnostics.count(), 2)
 
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": redacted_satellite.id}))
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": fully_redacted_satellite.id}))
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 0)
 
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": other_satellite.id}))
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": partially_redacted_satellite.id}))
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 1)
+        self.assertEqual(body.get("approDiagnostics")[0]["year"], 2023)
 
-    def test_satellites_can_redact_cc_appro_data_from_all(self):
-        """
-        Satellites should be able to redact the appro data provided by a CC mode ALL
-        without impacting other satellites or the CC
-        """
-        pass
-        # central = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, redacted_appro_years=[])
-        # satellite = CanteenFactory.create(
-        #     production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-        #     central_kitchen_siret=central.siret,
-        #     publication_status="published",
-        #     redacted_appro_years=[2023],
-        # )
-
-        # published_diag = DiagnosticFactory.create(
-        #     canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL
-        # )
-
-        # response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
-        # body = response.json()
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # self.assertEqual(len(body.get("diagnostics")), 3)
-        # self.assertEqual(len(body.get("approDiagnostics")), 1)
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": other_satellite.id}))
+        body = response.json()
+        self.assertEqual(len(body.get("approDiagnostics")), 2)
 
     def test_cc_can_redact_appro_data(self):
         """
