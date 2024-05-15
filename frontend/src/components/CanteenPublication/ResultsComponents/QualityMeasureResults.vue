@@ -136,7 +136,10 @@ export default {
   name: "QualityMeasureResults",
   props: {
     badge: Object,
-    canteen: Object,
+    canteen: {
+      type: Object,
+      required: true,
+    },
     diagnosticSet: Array,
     editable: Boolean,
   },
@@ -154,10 +157,13 @@ export default {
     const tabs = this.diagnosticSet.map((d) => +d.year)
     tabs.sort((a, b) => b - a)
     tabs.push(COMPARE_TAB)
+    const tab = tabs[0]
     return {
+      redactedYears: this.canteen.redactedApproYears,
       tabs,
-      tab: tabs[0],
-      publishedToggleState: false, // this.diagnosticSet.find((d) => d.year === +tabs[0])?.publicationStatus === "published",
+      tab,
+      // it is published if it is not redacted
+      publishedToggleState: undefined,
     }
   },
   computed: {
@@ -166,7 +172,7 @@ export default {
       return latestCreatedDiagnostic(this.diagnosticSet)
     },
     diagnosticForYear() {
-      return this.diagnosticSet.find((d) => d.year === +this.tab)
+      return this.canteen.approDiagnostics.find((d) => d.year === +this.tab)
     },
     teledeclared() {
       return !!this.diagnosticForYear?.isTeledeclared
@@ -229,42 +235,57 @@ export default {
       return Math.round(value * 100)
     },
     updateDiagnosticPublication(value) {
-      console.log(value)
-      // TODO: change this.
-      // if (!this.diagnosticForYear) {
-      //   this.$store.dispatch("notifyServerError")
-      //   return
-      // }
-      // const payload = {
-      //   publicationStatus: value ? "published" : "draft",
-      // }
-      // return this.$store
-      //   .dispatch("updateDiagnostic", {
-      //     canteenId: this.canteen.id,
-      //     id: this.diagnosticForYear.id,
-      //     payload: payload,
-      //   })
-      //   .then(() => {
-      //     const descriptor = value ? "publiées" : "dépubliées"
-      //     this.$store.dispatch("notify", {
-      //       status: "success",
-      //       message: `Les données de ${this.diagnosticForYear.year} sont bien ${descriptor}`,
-      //     })
-      //   })
-      //   .catch((e) => {
-      //     this.$store.dispatch("notifyServerError", e)
-      //     return Promise.reject()
-      //   })
+      if (!this.diagnosticForYear) {
+        this.$store.dispatch("notifyServerError")
+        return
+      }
+      const year = this.diagnosticForYear?.year
+      if (!year) {
+        console.error("attempt to change redacted appro year without diagnostic year")
+        return
+      }
+      const toRedact = value === false
+      const redactedYears = [...new Set(this.redactedYears)] // get unique values just in case
+      if (toRedact) {
+        redactedYears.push(year)
+      } else {
+        const yearIdx = redactedYears.indexOf(year)
+        if (yearIdx > -1) {
+          redactedYears.splice(yearIdx, 1)
+        }
+      }
+      this.$set(this, "redactedYears", redactedYears)
+      const payload = {
+        redactedApproYears: this.redactedYears,
+      }
+      return this.$store
+        .dispatch("updateCanteen", {
+          id: this.canteen.id,
+          payload: payload,
+        })
+        .then(() => {
+          const descriptor = toRedact ? "dépubliées" : "publiées"
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: `Les données de ${this.diagnosticForYear.year} sont bien ${descriptor}`,
+          })
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+          return Promise.reject()
+        })
+    },
+    getPublicationState(year) {
+      return this.redactedYears.indexOf(year) === -1
     },
   },
+  mounted() {
+    this.publishedToggleState = this.getPublicationState(this.tab)
+  },
   watch: {
-    diagnosticForYear: {
-      deep: true,
-      handler(newValue) {
-        // TODO: how to make sure we are getting the latest status, which might have changed since
-        // the fetching of diagnostic_set?
-        this.publishedToggleState = newValue?.publicationStatus === "published"
-      },
+    tab(newValue) {
+      const year = +newValue
+      if (year !== newValue) this.publishedToggleState = this.getPublicationState(+newValue)
     },
   },
 }

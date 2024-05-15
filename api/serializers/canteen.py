@@ -255,6 +255,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "managers",
             "manager_invitations",
             "publication_status",
+            "redacted_appro_years",
             "publication_comments",
             "quality_comments",
             "waste_comments",
