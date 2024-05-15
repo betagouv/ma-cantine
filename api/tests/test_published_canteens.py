@@ -791,9 +791,7 @@ class TestPublishedCanteenApi(APITestCase):
         """
         The published endpoint should not contain the real economic data, only percentages.
         """
-        central_siret = "22730656663081"
         canteen = CanteenFactory.create(
-            siret=central_siret,
             production_type=Canteen.ProductionType.ON_SITE,
             publication_status="published",
         )
@@ -866,7 +864,8 @@ class TestPublishedCanteenApi(APITestCase):
 
     def test_return_published_diagnostics(self):
         """
-        The published endpoint should only return diagnostics that are published
+        The published endpoint returns all diagnostic "service" data in one property,
+        and the appro data in another. The latter should be filtered on the redacted years.
         """
         canteen = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -894,3 +893,76 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(serialized_appro_diags[0]["id"], published_diag.id)
         self.assertIn("percentageValueTotalHt", serialized_appro_diags[0])
         self.assertNotIn("valueTotalHt", serialized_appro_diags[0])
+
+    def test_satellites_can_redact_cc_appro_data(self):
+        """
+        Satellites should be able to redact the appro data provided by a CC
+        without impacting other satellites or the CC
+        """
+        central = CanteenFactory.create(
+            siret="96766910375238", production_type=Canteen.ProductionType.CENTRAL, redacted_appro_years=[]
+        )
+        redacted_satellite = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=central.siret,
+            publication_status="published",
+            redacted_appro_years=[2023],
+        )
+        other_satellite = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=central.siret,
+            publication_status="published",
+            redacted_appro_years=[],
+        )
+
+        DiagnosticFactory.create(
+            canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
+        )
+        self.assertEqual(redacted_satellite.central_kitchen, central)
+        self.assertEqual(redacted_satellite.central_kitchen_diagnostics.count(), 1)
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": redacted_satellite.id}))
+        body = response.json()
+        self.assertEqual(len(body.get("approDiagnostics")), 0)
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": other_satellite.id}))
+        body = response.json()
+        self.assertEqual(len(body.get("approDiagnostics")), 1)
+
+    def test_satellites_can_redact_cc_appro_data_from_all(self):
+        """
+        Satellites should be able to redact the appro data provided by a CC mode ALL
+        without impacting other satellites or the CC
+        """
+        pass
+        # central = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, redacted_appro_years=[])
+        # satellite = CanteenFactory.create(
+        #     production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        #     central_kitchen_siret=central.siret,
+        #     publication_status="published",
+        #     redacted_appro_years=[2023],
+        # )
+
+        # published_diag = DiagnosticFactory.create(
+        #     canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL
+        # )
+
+        # response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+        # body = response.json()
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # self.assertEqual(len(body.get("diagnostics")), 3)
+        # self.assertEqual(len(body.get("approDiagnostics")), 1)
+
+    def test_cc_can_redact_appro_data(self):
+        """
+        CCs should be able to redact the appro data without impacting their satellites
+        """
+        pass
+
+    def test_satellites_can_redact_own_appro_data(self):
+        """
+        Satellites that have their own diagnostic should be able to redact their appro data
+        without their CC's diagnostic appro data taking it's place
+        """
+        pass

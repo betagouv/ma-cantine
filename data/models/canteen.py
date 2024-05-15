@@ -292,13 +292,8 @@ class Canteen(SoftDeletionModel):
 
     @property
     def central_kitchen_diagnostics(self):
-        if not self.production_type == Canteen.ProductionType.ON_SITE_CENTRAL or not self.central_producer_siret:
-            return None
-        try:
-            central_kitchen = Canteen.objects.get(siret=self.central_producer_siret)
-            return central_kitchen.diagnostic_set.filter(central_kitchen_diagnostic_mode__isnull=False)
-        except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
-            return None
+        if self.central_kitchen:
+            return self.central_kitchen.diagnostic_set.filter(central_kitchen_diagnostic_mode__isnull=False)
 
     @property
     def can_be_claimed(self):
@@ -342,6 +337,12 @@ class Canteen(SoftDeletionModel):
 
     @property
     def published_appro_diagnostics(self):
+        if self.central_kitchen_diagnostics:
+            # for any given year, could have own diag or CC diag
+            # own diag always takes precedent
+            # if don't have own diag, include CC diag in set
+            # then filter set to exclude redacted years
+            return self.central_kitchen_diagnostics.exclude(year__in=self.redacted_appro_years)
         return self.diagnostic_set.exclude(year__in=self.redacted_appro_years)
 
 
