@@ -238,7 +238,8 @@ def filter_by_diagnostic_params(queryset, query_params):
                 )
             ).distinct()
         canteen_ids = qs_diag.values_list("canteen", flat=True)
-        return queryset.filter(id__in=canteen_ids)
+        canteen_sirets = qs_diag.values_list("canteen__siret", flat=True)
+        return queryset.filter(Q(id__in=canteen_ids) | Q(central_producer_siret__in=canteen_sirets))
     return queryset
 
 
