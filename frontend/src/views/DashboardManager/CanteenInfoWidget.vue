@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="fill-height dsfr">
+  <v-card outlined class="fill-height dsfr no-hover">
     <v-row>
       <v-col cols="4" v-if="$vuetify.breakpoint.smAndUp">
         <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" class="fill-height"></v-img>
