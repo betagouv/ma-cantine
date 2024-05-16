@@ -379,13 +379,8 @@ class TestPublishedCanteenApi(APITestCase):
         guadeloupe_canteen = CanteenFactory.create(
             publication_status=Canteen.PublicationStatus.PUBLISHED, region=Region.guadeloupe, name="Guadeloupe"
         )
+
         publication_year = date.today().year - 1
-        # redacted_good_canteen = CanteenFactory.create(
-        #     publication_status=Canteen.PublicationStatus.PUBLISHED,
-        #     name="Redacted",
-        #     region=Region.auvergne_rhone_alpes,
-        #     redacted_appro_years=[publication_year],
-        # )
 
         DiagnosticFactory.create(
             canteen=good_canteen,
@@ -414,15 +409,6 @@ class TestPublishedCanteenApi(APITestCase):
             value_externality_performance_ht=0,
             value_egalim_others_ht=0,
         )
-        # DiagnosticFactory.create(
-        #     canteen=redacted_good_canteen,
-        #     year=publication_year,
-        #     value_total_ht=100,
-        #     value_bio_ht=30,
-        #     value_sustainable_ht=30,
-        #     value_externality_performance_ht=0,
-        #     value_egalim_others_ht=0,
-        # )
         DiagnosticFactory.create(
             canteen=medium_canteen,
             year=publication_year,
