@@ -26,11 +26,26 @@
         </DsfrCallout>
       </v-col>
     </v-row>
-    <div v-if="diagnosticForYear">
+    <div v-if="tab === 'Comparer'">
+      <MultiYearSummaryStatistics
+        :diagnostics="graphDiagnostics"
+        headingId="appro-heading"
+        height="260"
+        :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
+        :applicableRules="applicableRules"
+        colorTheme="grey"
+      />
+    </div>
+    <div v-else-if="!diagnosticForYear">
+      <p>
+        Données pas disponibles
+      </p>
+    </div>
+    <div v-else>
       <DsfrCallout v-if="editable" icon=" " :color="color" class="my-4 py-4 pr-14">
         <div v-if="teledeclared" class="py-4">
           <p class="mb-0">
-            <b>Données officielles {{ diagnosticForYear.year }} télédéclarées</b>
+            <b>Données officielles {{ tab }} télédéclarées</b>
             : le bilan ci-dessous a été officiellement transmis à l’administration et il est pris en compte dans le
             rapport annuel public remis au Parlement. Vos données sont publiées par défaut sur votre vitrine en ligne.
           </p>
@@ -53,8 +68,8 @@
           <template v-slot:label>
             <!-- TODO: DSFR recommends labels be <= 3 words long -->
             <b>Données non télédéclarées</b>
-            : le bilan des achats de l'année {{ diagnosticForYear.year }} n'a pas été officiellement télédéclaré à
-            l'administration. Il est visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
+            : le bilan des achats de l'année {{ tab }} n'a pas été officiellement télédéclaré à l'administration. Il est
+            visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
           </template>
         </DsfrToggle>
       </DsfrCallout>
@@ -96,16 +111,6 @@
           </template>
         </DsfrAccordion>
       </div>
-    </div>
-    <div v-else>
-      <MultiYearSummaryStatistics
-        :diagnostics="graphDiagnostics"
-        headingId="appro-heading"
-        height="260"
-        :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
-        :applicableRules="applicableRules"
-        colorTheme="grey"
-      />
     </div>
     <EditableCommentsField
       :canteen="canteen"
@@ -159,7 +164,7 @@ export default {
     tabs.push(COMPARE_TAB)
     const tab = tabs[0]
     return {
-      redactedYears: this.canteen.redactedApproYears,
+      redactedYears: this.canteen.redactedApproYears || [],
       tabs,
       tab,
       // it is published if it is not redacted
@@ -188,6 +193,7 @@ export default {
     },
     lastPurchaseDate() {
       if (!this.provisional) return
+      if (!this.diagnosticForYear) return
       // TODO: make this the date of the most recent purchase
       const date = new Date(this.diagnosticForYear.modificationDate)
       return date.toLocaleString("fr-FR", {
@@ -200,7 +206,7 @@ export default {
       return applicableDiagnosticRules(this.canteen)
     },
     hasPercentages() {
-      return "percentageValueTotalHt" in this.diagnosticForYear
+      return !!this.diagnosticForYear && "percentageValueTotalHt" in this.diagnosticForYear
     },
     meatEgalimPercentage() {
       return this.hasPercentages
@@ -218,10 +224,10 @@ export default {
         : getPercentage(this.diagnosticForYear.valueFishEgalimHt, this.diagnosticForYear.valueFishHt)
     },
     graphDiagnostics() {
-      if (!this.diagnosticSet || this.diagnosticSet.length === 0) return null
+      if (!this.canteen.approDiagnostics || this.canteen.approDiagnostics.length === 0) return null
       const diagnostics = {}
-      for (let i = 0; i < this.diagnosticSet.length; i++) {
-        const diagnostic = this.diagnosticSet[i]
+      for (let i = 0; i < this.canteen.approDiagnostics.length; i++) {
+        const diagnostic = this.canteen.approDiagnostics[i]
         diagnostics[diagnostic.year] = diagnostic
       }
       return diagnostics
@@ -239,7 +245,7 @@ export default {
         this.$store.dispatch("notifyServerError")
         return
       }
-      const year = this.diagnosticForYear?.year
+      const year = this.diagnosticForYear.year
       if (!year) {
         console.error("attempt to change redacted appro year without diagnostic year")
         return

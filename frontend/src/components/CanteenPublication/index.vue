@@ -140,8 +140,12 @@ export default {
     publicationYear() {
       return this.diagnostic?.year
     },
+    approDiagnostic() {
+      return this.canteen.approDiagnostics.find((d) => d.year === this.diagnostic.year)
+    },
     canteenBadges() {
-      const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
+      const fullDiagnostic = Object.assign({}, this.diagnostic, this.approDiagnostic)
+      const canteenBadges = badges(this.canteen, fullDiagnostic, this.$store.state.sectors)
       Object.entries(canteenBadges).forEach(([key, badge]) => {
         const km = keyMeasures.find((k) => k.badgeId === key)
         Object.assign(badge, km)

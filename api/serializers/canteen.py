@@ -3,6 +3,7 @@ from rest_framework import serializers
 from drf_base64.fields import Base64ImageField
 from data.models import Canteen, Sector, CanteenImage, Diagnostic
 from .diagnostic import PublicDiagnosticSerializer, FullDiagnosticSerializer, CentralKitchenDiagnosticSerializer
+from .diagnostic import ApproDiagnosticSerializer
 from .diagnostic import PublicApproDiagnosticSerializer, PublicServiceDiagnosticSerializer
 from .sector import SectorSerializer
 from .user import CanteenManagerSerializer
@@ -206,6 +207,7 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
 class FullCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    appro_diagnostics = ApproDiagnosticSerializer(many=True, read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     managers = CanteenManagerSerializer(many=True, read_only=True)
     manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
@@ -248,6 +250,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "management_type",
             "production_type",
             "diagnostics",
+            "appro_diagnostics",
             "department",
             "region",
             "logo",

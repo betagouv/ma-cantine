@@ -17,6 +17,7 @@ from .diagnostic import (  # noqa: F401
     ManagerDiagnosticSerializer,
     PublicDiagnosticSerializer,
     FullDiagnosticSerializer,
+    ApproDiagnosticSerializer,
     CentralKitchenDiagnosticSerializer,
     SimpleTeledeclarationDiagnosticSerializer,
     CompleteTeledeclarationDiagnosticSerializer,

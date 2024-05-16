@@ -402,6 +402,13 @@ class CompleteTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
         read_only_fields = fields
 
 
+class ApproDiagnosticSerializer(DiagnosticSerializer):
+    class Meta:
+        model = Diagnostic
+        fields = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
+        read_ony_fields = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
+
+
 class ApproDeferredTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
