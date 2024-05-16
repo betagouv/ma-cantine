@@ -685,10 +685,10 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertEqual(body.get("id"), satellite.id)
-        self.assertEqual(len(body.get("centralKitchenDiagnostics")), 1)
+        self.assertEqual(len(body.get("approDiagnostics")), 1)
         self.assertEqual(body.get("centralKitchen").get("id"), central_kitchen.id)
 
-        serialized_diagnostic = body.get("centralKitchenDiagnostics")[0]
+        serialized_diagnostic = body.get("approDiagnostics")[0]
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
         self.assertEqual(serialized_diagnostic["percentageValueTotalHt"], 1)
         self.assertEqual(serialized_diagnostic["percentageValueBioHt"], 0.5)
@@ -716,9 +716,9 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertEqual(body.get("id"), satellite.id)
-        self.assertEqual(len(body.get("centralKitchenDiagnostics")), 1)
+        self.assertEqual(len(body.get("approDiagnostics")), 1)
 
-        serialized_diagnostic = body.get("centralKitchenDiagnostics")[0]
+        serialized_diagnostic = body.get("approDiagnostics")[0]
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
         self.assertEqual(serialized_diagnostic["percentageValueTotalHt"], 1)
         self.assertNotIn("percentageValueBioHt", serialized_diagnostic)
@@ -750,7 +750,7 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertEqual(body.get("id"), satellite.id)
-        self.assertEqual(len(body.get("centralKitchenDiagnostics")), 0)
+        self.assertEqual(len(body.get("approDiagnostics")), 0)
 
     def test_satellite_published_needed_fields(self):
         """
@@ -789,18 +789,20 @@ class TestPublishedCanteenApi(APITestCase):
         body = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(len(body.get("centralKitchenDiagnostics")), 2)
-        serialized_diagnostics = body.get("centralKitchenDiagnostics")
-        serialized_diag_2020 = next(filter(lambda x: x["year"] == 2020, serialized_diagnostics))
-        serialized_diag_2021 = next(filter(lambda x: x["year"] == 2021, serialized_diagnostics))
+        self.assertEqual(len(body.get("approDiagnostics")), 2)
+        self.assertEqual(len(body.get("serviceDiagnostics")), 1)
+        appro_diagnostics = body.get("approDiagnostics")
+        appro_diag_2020 = next(filter(lambda x: x["year"] == 2020, appro_diagnostics))
+        appro_diag_2021 = next(filter(lambda x: x["year"] == 2021, appro_diagnostics))
+        service_diag_2021 = body.get("serviceDiagnostics")[0]
 
-        self.assertIn("percentageValueTotalHt", serialized_diag_2020)
-        self.assertNotIn("hasWasteDiagnostic", serialized_diag_2020)
+        self.assertIn("percentageValueTotalHt", appro_diag_2020)
+        self.assertNotIn("hasWasteDiagnostic", appro_diag_2020)
 
-        self.assertIn("percentageValueTotalHt", serialized_diag_2021)
-        self.assertIn("hasWasteDiagnostic", serialized_diag_2021)
-        self.assertNotIn("valueFishEgalimHt", serialized_diag_2021)
-        self.assertIn("percentageValueFishEgalimHt", serialized_diag_2021)
+        self.assertIn("percentageValueTotalHt", appro_diag_2021)
+        self.assertIn("hasWasteDiagnostic", service_diag_2021)
+        self.assertNotIn("valueFishEgalimHt", appro_diag_2021)
+        self.assertIn("percentageValueFishEgalimHt", appro_diag_2021)
 
     def test_percentage_values(self):
         """
@@ -871,7 +873,7 @@ class TestPublishedCanteenApi(APITestCase):
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
         body = response.json()
 
-        serialized_diag = body.get("diagnostics")[0]
+        serialized_diag = body.get("approDiagnostics")[0]
 
         self.assertNotIn("valueMeatPoultryEgalimHt", serialized_diag)
         self.assertNotIn("valueMeatPoultryFranceHt", serialized_diag)
@@ -889,23 +891,23 @@ class TestPublishedCanteenApi(APITestCase):
         )
 
         DiagnosticFactory.create(canteen=canteen, year=2021)
-        published_diag = DiagnosticFactory.create(canteen=canteen, year=2022)
+        published_appro_diag = DiagnosticFactory.create(canteen=canteen, year=2022)
         DiagnosticFactory.create(canteen=canteen, year=2023)
 
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
         body = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(len(body.get("diagnostics")), 3)
+        self.assertEqual(len(body.get("serviceDiagnostics")), 3)
         self.assertEqual(len(body.get("approDiagnostics")), 1)
-        serialized_diags = body.get("diagnostics")
+        serialized_diags = body.get("serviceDiagnostics")
         serialized_appro_diags = body.get("approDiagnostics")
 
         for diag in serialized_diags:
             self.assertNotIn("percentageValueTotalHt", diag)
             self.assertNotIn("valueTotalHt", diag)
 
-        self.assertEqual(serialized_appro_diags[0]["id"], published_diag.id)
+        self.assertEqual(serialized_appro_diags[0]["id"], published_appro_diag.id)
         self.assertIn("percentageValueTotalHt", serialized_appro_diags[0])
         self.assertNotIn("valueTotalHt", serialized_appro_diags[0])
 

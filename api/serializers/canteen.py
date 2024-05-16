@@ -99,18 +99,16 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "satellite_canteens_count",
             "region",
             "department",
-            "central_kitchen_diagnostics",
             "last_year_badges",
         )
 
 
 class PublicCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    diagnostics = PublicServiceDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     appro_diagnostics = PublicApproDiagnosticSerializer(
         many=True, read_only=True, source="published_appro_diagnostics"
     )
-    central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
+    service_diagnostics = PublicServiceDiagnosticSerializer(many=True, read_only=True)
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
@@ -124,8 +122,8 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
-            "diagnostics",
             "appro_diagnostics",
+            "service_diagnostics",
             "city",
             "city_insee_code",
             "postal_code",
@@ -145,7 +143,6 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "information_comments",
             "can_be_claimed",
             "is_managed_by_user",
-            "central_kitchen_diagnostics",
             "central_kitchen",
             "last_year_badges",
         )
