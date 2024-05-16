@@ -5,7 +5,7 @@
     </h1>
     <CanteenIndicators :canteen="canteen" :singleLine="true" class="grey--text text--darken-3 caption" />
     <div class="my-6">
-      <p class="text-body-1">
+      <p v-if="hasPercentages" class="text-body-1">
         <span class="font-weight-black">{{ bioPercent }} %</span>
         bio,
         <span class="font-weight-black">{{ sustainablePercent }} %</span>
@@ -125,11 +125,20 @@ export default {
     year() {
       return this.diagnostic?.year
     },
+    approDiagnostic() {
+      if (!this.canteen?.approDiagnostics) return
+      return this.canteen.approDiagnostics.find((d) => d.year == this.year)
+    },
     bioPercent() {
-      return this.diagnostic.percentageValueBioHt ? Math.round(this.diagnostic.percentageValueBioHt * 100) : "0"
+      if (!this.approDiagnostic) return
+      return this.approDiagnostic.percentageValueBioHt && Math.round(this.approDiagnostic.percentageValueBioHt * 100)
     },
     sustainablePercent() {
-      return Math.round(getSustainableTotal(this.diagnostic) * 100)
+      if (!this.approDiagnostic) return
+      return Math.round(getSustainableTotal(this.approDiagnostic) * 100)
+    },
+    hasPercentages() {
+      return this.bioPercent || this.sustainablePercent
     },
     canteenBadges() {
       if (!this.canteen) return {}

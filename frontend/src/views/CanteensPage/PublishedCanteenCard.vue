@@ -62,7 +62,7 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
-import { getSustainableTotal, hasDiagnosticApproData, badges, latestCreatedDiagnostic } from "@/utils"
+import { getSustainableTotal, badges, latestCreatedDiagnostic } from "@/utils"
 
 export default {
   name: "PublishedCanteenCard",
@@ -117,14 +117,17 @@ export default {
           return a.earned && !b.earned ? -1 : 1
         })
     },
+    approDiagnostic() {
+      if (!this.canteen.approDiagnostics) return
+      return this.canteen.approDiagnostics.find((d) => d.year == this.year)
+    },
     bioPercent() {
-      if (!this.diagnostic || !hasDiagnosticApproData(this.diagnostic)) return null
-      return Math.round(this.diagnostic["percentageValueBioHt"] * 100)
+      if (!this.approDiagnostic) return
+      return Math.round(this.approDiagnostic.percentageValueBioHt * 100)
     },
     sustainablePercent() {
-      if (this.diagnostic && hasDiagnosticApproData(this.diagnostic))
-        return Math.round(getSustainableTotal(this.diagnostic) * 100)
-      return null
+      if (!this.approDiagnostic) return
+      return Math.round(getSustainableTotal(this.approDiagnostic) * 100)
     },
     hasPercentages() {
       return this.bioPercent || this.sustainablePercent

@@ -74,7 +74,10 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
 
 class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    diagnostics = PublicServiceDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    appro_diagnostics = PublicApproDiagnosticSerializer(
+        many=True, read_only=True, source="published_appro_diagnostics"
+    )
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     last_year_badges = serializers.ListSerializer(child=serializers.CharField(), source="published_last_year_badges")
 
@@ -84,6 +87,7 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "diagnostics",
+            "appro_diagnostics",
             "city",
             "city_insee_code",
             "postal_code",
