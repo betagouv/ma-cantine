@@ -177,7 +177,7 @@ class ImportPurchasesView(APIView):
         if date == "":
             raise ValidationError({"date": "La date ne peut pas être vide"})
 
-        price = row.pop(0).strip()
+        price = row.pop(0).strip().replace(",", ".")
         if price == "":
             raise ValidationError({"price_ht": "Le prix ne peut pas être vide"})
 
