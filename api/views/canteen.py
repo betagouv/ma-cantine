@@ -238,7 +238,8 @@ def filter_by_diagnostic_params(queryset, query_params):
                 )
             ).distinct()
         canteen_ids = qs_diag.values_list("canteen", flat=True)
-        return queryset.filter(id__in=canteen_ids)
+        queryset = queryset.filter(id__in=canteen_ids)
+        return queryset.exclude(redacted_appro_years__contains=[publication_year])
     return queryset
 
 
