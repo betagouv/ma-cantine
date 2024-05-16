@@ -10,6 +10,7 @@ from data.utils import get_region, optimize_image
 from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
 from .sector import Sector
 from .softdeletionmodel import SoftDeletionModel
+import datetime
 
 
 def validate_siret(siret):
@@ -353,6 +354,50 @@ class Canteen(SoftDeletionModel):
     @property
     def published_appro_diagnostics(self):
         return self.appro_diagnostics.exclude(year__in=self.redacted_appro_years)
+
+    @property
+    def last_year_badges(self):
+        # Ideally reuse badges_for_queryset but for now repeat rules.
+        last_year = datetime.date.today().year - 1
+        diagnostic = self.diagnostic_set.filter(year=last_year).first()
+        if not diagnostic:
+            return []
+
+        badges = []
+        if diagnostic.appro_badge:
+            badges.append("appro")
+
+        # waste
+        if diagnostic.waste_badge:
+            badges.append("waste")
+
+        # diversification
+        if diagnostic.diversification_badge:
+            badges.append("diversification")
+
+        # plastic
+        if diagnostic.plastic_badge:
+            badges.append("plastic")
+
+        # info
+        if diagnostic.info_badge:
+            badges.append("info")
+
+        return badges
+
+    @property
+    def published_last_year_badges(self):
+        last_year = datetime.date.today().year - 1
+        badges = self.last_year_badges
+        if last_year in self.redacted_appro_years and "appro" in self.last_year_badges:
+            badges.remove("appro")
+        return badges
+
+    @property
+    def in_education(self):
+        scolaire_sectors = Sector.objects.filter(category="education")
+        if scolaire_sectors.count() and self.sectors.intersection(scolaire_sectors).exists():
+            return True
 
 
 class CanteenImage(models.Model):

@@ -132,7 +132,8 @@ export default {
       return Math.round(getSustainableTotal(this.diagnostic) * 100)
     },
     canteenBadges() {
-      return badges(this.canteen, this.diagnostic, this.$store.state.sectors)
+      if (!this.canteen) return {}
+      return badges(this.canteen)
     },
     approBadge() {
       return this.canteenBadges.appro

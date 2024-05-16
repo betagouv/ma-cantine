@@ -102,7 +102,7 @@ export default {
       return this.diagnostic?.year
     },
     canteenBadges() {
-      return badges(this.canteen, this.diagnostic, this.$store.state.sectors)
+      return badges(this.canteen)
     },
     approBadge() {
       return this.canteenBadges.appro

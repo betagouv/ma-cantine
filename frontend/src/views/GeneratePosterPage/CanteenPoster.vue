@@ -204,7 +204,7 @@ export default {
     },
     earnedBadges() {
       if (!Object.keys(this.canteen).length || !this.canteen.id) return {}
-      const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
+      const canteenBadges = badges(this.canteen)
       let earnedBadges = {}
       Object.keys(canteenBadges).forEach((key) => {
         if (canteenBadges[key].earned) earnedBadges[key] = canteenBadges[key]

@@ -11,6 +11,7 @@ from data.factories import CanteenFactory, ManagerInvitationFactory, PurchaseFac
 from data.factories import DiagnosticFactory, SectorFactory
 from data.models import Canteen, Teledeclaration, Diagnostic
 from .utils import authenticate, get_oauth2_token
+from freezegun import freeze_time
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -1286,3 +1287,27 @@ class TestCanteenApi(APITestCase):
         """
         response = self.client.get(reverse("territory_canteens"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    @freeze_time("2024-01-20")
+    def test_canteen_badges(self):
+        """
+        The full representation of a canteen contains the badges earned for last year
+        """
+        user_canteen = CanteenFactory.create()
+        user_canteen.managers.add(authenticate.user)
+
+        DiagnosticFactory.create(
+            canteen=user_canteen,
+            year=2023,
+            value_total_ht=100,
+            value_bio_ht=20,
+            value_sustainable_ht=30,
+        )
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        badges = body["lastYearBadges"]
+        self.assertTrue("appro" in badges)

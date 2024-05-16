@@ -264,51 +264,11 @@ export const getApproPercentages = (diagnostic) => {
   }
 }
 
-export const badges = (canteen, diagnostic, sectors) => {
+export const badges = (canteen) => {
   let applicable = JSON.parse(JSON.stringify(jsonBadges))
-  if (!diagnostic) return applicable
-  const bioPercent =
-    "percentageValueBioHt" in diagnostic
-      ? Math.round(diagnostic.percentageValueBioHt * 100)
-      : getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
-  const sustainablePercent =
-    "percentageValueSustainableHt" in diagnostic
-      ? Math.round(getSustainableTotal(diagnostic) * 100)
-      : getPercentage(getSustainableTotal(diagnostic), diagnostic.valueTotalHt)
-  const applicableRules = applicableDiagnosticRules(canteen)
-  if (
-    bioPercent >= applicableRules.bioThreshold &&
-    bioPercent + sustainablePercent >= applicableRules.qualityThreshold
-  ) {
-    applicable.appro.earned = true
-  }
-  if (
-    diagnostic.hasWasteDiagnostic &&
-    diagnostic.wasteActions?.length > 0 &&
-    (!applicableRules.hasDonationAgreement || diagnostic.hasDonationAgreement)
-  ) {
-    applicable.waste.earned = true
-  }
-  if (
-    diagnostic.cookingPlasticSubstituted &&
-    diagnostic.servingPlasticSubstituted &&
-    diagnostic.plasticBottlesSubstituted &&
-    diagnostic.plasticTablewareSubstituted
-  ) {
-    applicable.plastic.earned = true
-  }
-
-  const educationSectors = sectors.filter((s) => s.category === "education").map((s) => s.id)
-  const inEducation = canteen.sectors.some((s) => educationSectors.indexOf(s) > -1)
-  if (diagnostic.vegetarianWeeklyRecurrence === "DAILY") {
-    applicable.diversification.earned = true
-  } else if (inEducation) {
-    if (diagnostic.vegetarianWeeklyRecurrence === "MID" || diagnostic.vegetarianWeeklyRecurrence === "HIGH") {
-      applicable.diversification.earned = true
-    }
-  }
-  if (diagnostic.communicatesOnFoodQuality) {
-    applicable.info.earned = true
+  const earned = canteen.lastYearBadges
+  for (const badgeIdx in earned) {
+    applicable[earned[badgeIdx]].earned = true
   }
   return applicable
 }

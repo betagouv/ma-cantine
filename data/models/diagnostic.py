@@ -6,6 +6,8 @@ from simple_history.models import HistoricalRecords
 from data.fields import ChoiceArrayField
 from .canteen import Canteen
 from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
+from data.department_choices import Department
+from data.region_choices import Region
 
 
 class Diagnostic(models.Model):
@@ -1647,3 +1649,66 @@ class Diagnostic(models.Model):
     @property
     def total_family_autres(self):
         return self.family_sum("autres")
+
+    @property
+    def appro_badge(self):
+        total = self.value_total_ht
+        if total:
+            bio_share = (self.value_bio_ht or 0) / total
+            combined_share = (
+                (self.value_bio_ht or 0)
+                + (self.value_sustainable_ht or 0)
+                + (self.value_externality_performance_ht or 0)
+                + (self.value_egalim_others_ht or 0)
+            ) / total
+
+            bio_threshold = 20
+            combined_threshold = 50
+            group_1_regions = [Region.guadeloupe, Region.martinique, Region.guyane, Region.la_reunion]
+            group_2_regions = [Region.mayotte]
+            if self.canteen.region in group_1_regions or self.canteen.department == Department.saint_martin:
+                # group 1
+                bio_threshold = 5
+                combined_threshold = 20
+            elif self.canteen.region in group_2_regions:
+                # group 2
+                bio_threshold = 2
+                combined_threshold = 5
+            elif self.canteen.department == Department.saint_pierre_et_miquelon:
+                # group 3
+                bio_threshold = 1
+                combined_threshold = 3
+
+            # * 100 to get around floating point errors when we are on the cusp
+            if bio_share * 100 >= bio_threshold and combined_share * 100 >= combined_threshold:
+                return True
+
+    @property
+    def waste_badge(self):
+        if self.has_waste_diagnostic and self.waste_actions and len(self.waste_actions) > 0:
+            if self.canteen.daily_meal_count < 3000 or self.has_donation_agreement:
+                return True
+
+    @property
+    def diversification_badge(self):
+        if self.vegetarian_weekly_recurrence == Diagnostic.MenuFrequency.DAILY:
+            return True
+        elif self.vegetarian_weekly_recurrence in [Diagnostic.MenuFrequency.MID, Diagnostic.MenuFrequency.HIGH]:
+            # if the canteen is in the education sector, it can have a lower recurrence
+            if self.canteen.in_education:
+                return True
+
+    @property
+    def plastic_badge(self):
+        if (
+            self.cooking_plastic_substituted
+            and self.serving_plastic_substituted
+            and self.plastic_bottles_substituted
+            and self.plastic_tableware_substituted
+        ):
+            return True
+
+    @property
+    def info_badge(self):
+        if self.communicates_on_food_quality:
+            return True
