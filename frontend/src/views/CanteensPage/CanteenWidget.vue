@@ -74,7 +74,7 @@
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
 import labels from "@/data/quality-labels.json"
-import { applicableDiagnosticRules, getSustainableTotal } from "@/utils"
+import { applicableDiagnosticRules, getSustainableTotal, toPercentage } from "@/utils"
 import badges from "@/badges"
 
 export default {
@@ -108,11 +108,11 @@ export default {
       return this.canteen?.approDiagnostic
     },
     bioPercent() {
-      return this.approDiagnostic?.percentageValueBioHt && Math.round(this.approDiagnostic.percentageValueBioHt * 100)
+      return toPercentage(this.approDiagnostic?.percentageValueBioHt)
     },
     sustainablePercent() {
       if (!this.approDiagnostic) return
-      return Math.round(getSustainableTotal(this.approDiagnostic) * 100)
+      return toPercentage(getSustainableTotal(this.approDiagnostic))
     },
     hasPercentages() {
       return this.bioPercent || this.sustainablePercent

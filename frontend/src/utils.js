@@ -222,11 +222,16 @@ export const latestCreatedDiagnostic = (diagnostics) => {
   return diagnostic
 }
 
+export const toPercentage = (value, round = true) => {
+  if (!value) return null
+  return round ? Math.round(value * 100) : value * 100
+}
+
 export const getPercentage = (partialValue, totalValue, round = true) => {
   if (strictIsNaN(partialValue) || strictIsNaN(totalValue) || totalValue === 0) {
     return null
   } else {
-    return round ? Math.round((100 * partialValue) / totalValue) : (100 * partialValue) / totalValue
+    return toPercentage(partialValue / totalValue, round)
   }
 }
 
