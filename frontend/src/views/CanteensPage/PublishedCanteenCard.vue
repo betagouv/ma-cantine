@@ -38,7 +38,7 @@
           <v-img
             max-width="30"
             contain
-            :src="`/static/images/badges/${badge.key}${badge.earned ? '' : '-disabled'}.svg`"
+            :src="`/static/images/badges/${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
             v-for="badge in orderedBadges"
             :key="badge.key"
             class="mr-2"
@@ -62,7 +62,8 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
-import { getSustainableTotal, badges } from "@/utils"
+import { getSustainableTotal, toPercentage } from "@/utils"
+import badges from "@/badges"
 
 export default {
   name: "PublishedCanteenCard",
@@ -77,32 +78,32 @@ export default {
   },
   computed: {
     year() {
-      return this.canteen.latestYear
+      return this.canteen.badges.year
     },
     canteenBadges() {
-      return badges(this.canteen)
+      return this.canteen?.badges
     },
     orderedBadges() {
-      return Object.keys(this.canteenBadges)
+      return Object.keys(badges)
         .map((key) => {
-          return { ...{ key }, ...this.canteenBadges[key] }
+          return { ...{ key }, ...badges[key] }
         })
         .sort((a, b) => {
-          if (a.earned === b.earned) return 0
-          return a.earned && !b.earned ? -1 : 1
+          const aIsEarned = this.badgeIsEarned(a)
+          const bIsEarned = this.badgeIsEarned(b)
+          if (aIsEarned === bIsEarned) return 0
+          return aIsEarned && !bIsEarned ? -1 : 1
         })
     },
     approDiagnostic() {
-      if (!this.canteen.approDiagnostics) return
-      return this.canteen.approDiagnostics.find((d) => d.year == this.year)
+      return this.canteen?.approDiagnostic
     },
     bioPercent() {
-      if (!this.approDiagnostic) return
-      return Math.round(this.approDiagnostic.percentageValueBioHt * 100)
+      return toPercentage(this.approDiagnostic?.percentageValueBioHt)
     },
     sustainablePercent() {
       if (!this.approDiagnostic) return
-      return Math.round(getSustainableTotal(this.approDiagnostic) * 100)
+      return toPercentage(getSustainableTotal(this.approDiagnostic))
     },
     hasPercentages() {
       return this.bioPercent || this.sustainablePercent
@@ -113,7 +114,10 @@ export default {
   },
   methods: {
     badgeTitle(badge) {
-      return `${badge.title}${badge.earned ? "" : " (à faire)"}`
+      return `${badge.title}${this.badgeIsEarned(badge) ? "" : " (à faire)"}`
+    },
+    badgeIsEarned(badge) {
+      return this.canteen?.badges[badge.key]
     },
   },
 }
