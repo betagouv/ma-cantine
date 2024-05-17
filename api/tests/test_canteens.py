@@ -1309,8 +1309,8 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
-        badges = body["badgesPerYear"]
-        self.assertTrue("appro" in badges["2023"])
+        badges = body["badges"]
+        self.assertTrue("appro" in badges)
 
     @authenticate
     def test_canteen_returns_latest_diagnostic_year(self):
@@ -1340,4 +1340,4 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
-        self.assertEqual(body["latestYear"], 2022)
+        self.assertEqual(body["badges"]["year"], 2022)

@@ -36,6 +36,10 @@ def get_diagnostic_year_choices():
     return [(y, str(y)) for y in range(get_diagnostic_lower_limit_year(), get_diagnostic_upper_limit_year())]
 
 
+def list_properties(queryset, property):
+    return list(queryset.values_list(property, flat=True))
+
+
 class Canteen(SoftDeletionModel):
     class Meta:
         verbose_name = "cantine"
@@ -337,14 +341,17 @@ class Canteen(SoftDeletionModel):
 
     @property
     def appro_diagnostics(self):
-        diag_ids = [d["id"] for d in self.diagnostic_set.values("id")]
+        diag_ids = list_properties(self.diagnostic_set, "id")
+
         if self.central_kitchen_diagnostics:
             # for any given year, could have own diag or CC diag
-            # own diag always takes precedent TODO: is this true? not in new UI
+            # CC diag always takes precedent TODO: do we consistently assume this?
             # if don't have own diag, include CC diag in set
-            own_diag_years = [d["year"] for d in self.diagnostic_set.values("year")]
-            central_diagnostics = self.central_kitchen_diagnostics.exclude(year__in=own_diag_years)
-            diag_ids += [d["id"] for d in central_diagnostics.values("id")]
+            cc_diag_years = list_properties(self.central_kitchen_diagnostics, "year")
+            own_diagnostics = self.diagnostic_set.exclude(year__in=cc_diag_years)
+
+            diag_ids = list_properties(self.central_kitchen_diagnostics, "id")
+            diag_ids += list_properties(own_diagnostics, "id")
 
         from data.models import Diagnostic
 
@@ -352,15 +359,18 @@ class Canteen(SoftDeletionModel):
 
     @property
     def service_diagnostics(self):
-        diag_ids = [d["id"] for d in self.diagnostic_set.values("id")]
+        diag_ids = list_properties(self.diagnostic_set, "id")
+
         if self.central_kitchen_diagnostics:
             cc_service_diagnostics = self.central_kitchen_diagnostics.filter(central_kitchen_diagnostic_mode="ALL")
             # for any given year, could have own diag or CC diag
-            # own diag always takes precedent TODO: is this true? not in new UI
-            # if don't have own diag, include CC diag in set if mode of ALL
-            own_diag_years = [d["year"] for d in self.diagnostic_set.values("year")]
-            central_diagnostics = cc_service_diagnostics.exclude(year__in=own_diag_years)
-            diag_ids += [d["id"] for d in central_diagnostics.values("id")]
+            # CC diag always takes precedent, if ALL TODO: do we consistently assume this?
+            # if don't have own diag, include CC diag in set
+            cc_diag_years = list_properties(cc_service_diagnostics, "year")
+            own_diagnostics = self.diagnostic_set.exclude(year__in=cc_diag_years)
+
+            diag_ids = list_properties(cc_service_diagnostics, "id")
+            diag_ids += list_properties(own_diagnostics, "id")
 
         from data.models import Diagnostic
 

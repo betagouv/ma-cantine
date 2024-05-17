@@ -414,7 +414,7 @@ class TestPublishedCanteenApi(APITestCase):
     def test_satellites_get_correct_appro_diagnostic(self):
         """
         Satellites that have their own diagnostic for one year, and CC diagnostics for another,
-        should recieve the appropriate diagnostic for appro data per-year
+        should receive the CC diagnostic where it exists
         """
         central = CanteenFactory.create(siret="96766910375238", production_type=Canteen.ProductionType.CENTRAL)
         satellite = CanteenFactory.create(
@@ -423,6 +423,7 @@ class TestPublishedCanteenApi(APITestCase):
             publication_status="published",
         )
 
+        DiagnosticFactory.create(canteen=satellite, year=2021)
         DiagnosticFactory.create(
             canteen=central, year=2022, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
         )
@@ -434,12 +435,18 @@ class TestPublishedCanteenApi(APITestCase):
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
         body = response.json()
         serialized_diagnostics = body.get("approDiagnostics")
-        self.assertEqual(len(serialized_diagnostics), 2)
+        self.assertEqual(len(serialized_diagnostics), 3)
         for diagnostic in serialized_diagnostics:
-            if diagnostic["year"] == 2022:
-                self.assertEqual(diagnostic["canteenId"], central.id)
+            if diagnostic["year"] == 2021:
+                self.assertEqual(
+                    diagnostic["canteenId"], satellite.id, "return satellite diagnostic when only diag for year"
+                )
+            elif diagnostic["year"] == 2022:
+                self.assertEqual(diagnostic["canteenId"], central.id, "return CC diagnostic when only diag for year")
             elif diagnostic["year"] == 2023:
-                self.assertEqual(diagnostic["canteenId"], satellite.id)
+                self.assertEqual(
+                    diagnostic["canteenId"], central.id, "priority to central diagnostic where there are both"
+                )
 
     def test_satellites_can_redact_own_appro_data(self):
         """
