@@ -237,11 +237,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     satellites = MinimalCanteenSerializer(many=True, read_only=True)
-    badges_per_year = serializers.DictField(
-        child=serializers.ListSerializer(child=serializers.CharField()),
-        read_only=True,
-    )
-    latest_year = serializers.IntegerField(read_only=True)
+    badges = BadgesSerializer(read_only=True, source="*")
 
     class Meta:
         model = Canteen
@@ -257,8 +253,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "satellites",
             "is_central_cuisine",
             "modification_date",
-            "badges_per_year",
-            "latest_year",
+            "badges",
         )
         fields = (
             "id",
@@ -302,8 +297,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "creation_mtm_medium",
             "is_central_cuisine",
             "modification_date",
-            "badges_per_year",
-            "latest_year",
+            "badges",
         )
 
         extra_kwargs = {"name": {"required": True}, "siret": {"required": True}}
