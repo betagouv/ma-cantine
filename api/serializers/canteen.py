@@ -123,7 +123,9 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
     appro_diagnostics = PublicApproDiagnosticSerializer(
         many=True, read_only=True, source="published_appro_diagnostics"
     )
-    service_diagnostics = PublicServiceDiagnosticSerializer(many=True, read_only=True)
+    service_diagnostics = PublicServiceDiagnosticSerializer(
+        many=True, read_only=True, source="published_service_diagnostics"
+    )
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)

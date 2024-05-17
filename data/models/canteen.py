@@ -378,7 +378,12 @@ class Canteen(SoftDeletionModel):
 
     @property
     def published_appro_diagnostics(self):
-        return self.appro_diagnostics.exclude(year__in=self.redacted_appro_years)
+        diagnostics_to_redact = []
+        for year in self.redacted_appro_years:
+            diag = self.appro_diagnostics.filter(year=year).first()
+            if diag and not diag.is_teledeclared:
+                diagnostics_to_redact.append(diag.id)
+        return self.appro_diagnostics.exclude(id__in=diagnostics_to_redact)
 
     @property
     def published_service_diagnostics(self):
@@ -386,22 +391,11 @@ class Canteen(SoftDeletionModel):
         return self.service_diagnostics
 
     @property
-    def latest_year(self):
-        max_year = 0
-        if self.appro_diagnostics:
-            max_year = self.appro_diagnostics.only("year").order_by("-year").first().year
-        if self.service_diagnostics:
-            year = self.service_diagnostics.only("year").order_by("-year").first().year
-            if year > max_year:
-                max_year = year
-        return max_year
-
-    @property
     def latest_published_year(self):
         max_year = None
         if self.published_appro_diagnostics:
             # TODO: can we use latest("year")?
-            max_year = self.appro_diagnostics.only("year").order_by("-year").first().year
+            max_year = self.published_appro_diagnostics.only("year").order_by("-year").first().year
         if self.published_service_diagnostics:
             year = self.published_service_diagnostics.only("year").order_by("-year").first().year
             if not max_year or year > max_year:

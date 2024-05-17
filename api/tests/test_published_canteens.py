@@ -4,8 +4,8 @@ from django.core.files import File
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, UserFactory
-from data.factories import DiagnosticFactory
-from data.models import Canteen, CanteenImage, Diagnostic
+from data.factories import DiagnosticFactory, TeledeclarationFactory
+from data.models import Canteen, CanteenImage, Diagnostic, Teledeclaration
 from .utils import authenticate
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -469,6 +469,23 @@ class TestPublishedCanteenApi(APITestCase):
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 0)
+
+    def test_td_diags_not_redacted(self):
+        """
+        A teledeclared diagnostic cannot be redacted
+        """
+        canteen = CanteenFactory.create(publication_status="published", redacted_appro_years=[2022, 2023])
+
+        DiagnosticFactory.create(canteen=canteen, year=2022)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2023)
+        TeledeclarationFactory.create(
+            diagnostic=diagnostic, status=Teledeclaration.TeledeclarationStatus.SUBMITTED, declared_data={"foo": "bar"}
+        )
+
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+        self.assertEqual(len(body.get("approDiagnostics")), 1)
+        self.assertEqual(len(body.get("serviceDiagnostics")), 2)
 
 
 class TestPublishedCanteenClaimApi(APITestCase):
