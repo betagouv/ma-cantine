@@ -1,5 +1,4 @@
 import Constants from "@/constants"
-import jsonBadges from "@/badges"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
 
@@ -267,18 +266,6 @@ export const getApproPercentages = (diagnostic) => {
     meatPoultryFrance: getPercentage(valueMeatPoultryFrance, valueMeatPoultryTotal),
     fishEgalim: getPercentage(valueFishEgalim, valueFishTotal),
   }
-}
-
-export const badges = (canteen) => {
-  let applicable = JSON.parse(JSON.stringify(jsonBadges))
-  let canteenBadges = canteen.badgesPerYear
-  if (!canteenBadges) return applicable
-  const earned = canteen.badgesPerYear[canteen.latestYear?.toString()]
-  if (!earned) return applicable
-  for (const badgeIdx in earned) {
-    applicable[earned[badgeIdx]].earned = true
-  }
-  return applicable
 }
 
 // normalise "À fîrst" to "A FIRST"
