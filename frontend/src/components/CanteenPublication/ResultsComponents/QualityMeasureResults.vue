@@ -145,7 +145,7 @@ export default {
       type: Object,
       required: true,
     },
-    diagnosticSet: Array,
+    approDiagnostics: Array,
     editable: Boolean,
   },
   components: {
@@ -159,7 +159,7 @@ export default {
     DsfrToggle,
   },
   data() {
-    const tabs = this.diagnosticSet.map((d) => +d.year)
+    const tabs = this.approDiagnostics.map((d) => +d.year)
     tabs.sort((a, b) => b - a)
     tabs.push(COMPARE_TAB)
     const tab = tabs[0]
@@ -173,8 +173,8 @@ export default {
   },
   computed: {
     diagnostic() {
-      if (!this.diagnosticSet) return
-      return latestCreatedDiagnostic(this.diagnosticSet)
+      if (!this.approDiagnostics) return
+      return latestCreatedDiagnostic(this.approDiagnostics)
     },
     diagnosticForYear() {
       return this.canteen.approDiagnostics.find((d) => d.year === +this.tab)

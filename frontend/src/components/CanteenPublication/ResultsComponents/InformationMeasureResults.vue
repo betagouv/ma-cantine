@@ -1,6 +1,6 @@
 <template>
   <div>
-    <GenericMeasureResults :badge="badge" :canteen="canteen" :diagnosticSet="diagnosticSet" />
+    <GenericMeasureResults :badge="badge" :canteen="canteen" :serviceDiagnostics="serviceDiagnostics" />
     <p v-if="diagnostic && diagnostic.communicationSupportUrl" class="fr-text">
       Cette cantine communique aux usagers sur
       <a :href="diagnostic.communicationSupportUrl">{{ diagnostic.communicationSupportUrl }}</a>
@@ -17,13 +17,13 @@ export default {
   props: {
     badge: Object,
     canteen: Object,
-    diagnosticSet: Array,
+    serviceDiagnostics: Array,
   },
   components: { GenericMeasureResults },
   computed: {
     diagnostic() {
-      if (!this.diagnosticSet) return
-      return latestCreatedDiagnostic(this.diagnosticSet)
+      if (!this.serviceDiagnostics) return
+      return latestCreatedDiagnostic(this.serviceDiagnostics)
     },
   },
 }

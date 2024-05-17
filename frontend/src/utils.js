@@ -266,7 +266,10 @@ export const getApproPercentages = (diagnostic) => {
 
 export const badges = (canteen) => {
   let applicable = JSON.parse(JSON.stringify(jsonBadges))
-  const earned = canteen.lastYearBadges
+  let canteenBadges = canteen.badgesPerYear
+  if (!canteenBadges) return applicable
+  const earned = canteen.badgesPerYear[canteen.latestYear?.toString()]
+  if (!earned) return applicable
   for (const badgeIdx in earned) {
     applicable[earned[badgeIdx]].earned = true
   }

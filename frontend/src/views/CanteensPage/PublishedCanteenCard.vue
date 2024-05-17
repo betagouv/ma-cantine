@@ -21,7 +21,7 @@
     <v-spacer></v-spacer>
     <v-divider aria-hidden="true" role="presentation" class="py-1"></v-divider>
     <div class="grey--text text--darken-2" :style="$vuetify.breakpoint.smAndDown ? '' : 'height: 95px;'">
-      <v-card-text class="py-1 fill-height d-flex flex-column" v-if="diagnostic">
+      <v-card-text class="py-1 fill-height d-flex flex-column" v-if="year">
         <p class="mb-0">En {{ year }} :</p>
         <v-row class="ma-0" v-if="hasPercentages">
           <p class="ma-0 mr-3" v-if="bioPercent">
@@ -62,7 +62,7 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
-import { getSustainableTotal, badges, latestCreatedDiagnostic } from "@/utils"
+import { getSustainableTotal, badges } from "@/utils"
 
 export default {
   name: "PublishedCanteenCard",
@@ -76,36 +76,11 @@ export default {
     CanteenIndicators,
   },
   computed: {
-    usesCentralKitchenDiagnostics() {
-      return (
-        this.canteen?.productionType === "site_cooked_elsewhere" && this.canteen?.centralKitchenDiagnostics?.length > 0
-      )
-    },
-    diagnosticSet() {
-      if (!this.canteen) return
-      if (!this.usesCentralKitchenDiagnostics) return this.canteen.diagnostics
-
-      // Since the central kitchen might only handle the appro values, we will merge the diagnostics
-      // from the central and satellites when necessary to show the whole picture
-      return this.canteen.centralKitchenDiagnostics.map((centralDiag) => {
-        const satelliteMatchingDiag = this.canteen.diagnostics.find((x) => x.year === centralDiag.year)
-        if (centralDiag.centralKitchenDiagnosticMode === "APPRO" && satelliteMatchingDiag)
-          return Object.assign(satelliteMatchingDiag, centralDiag)
-        return centralDiag
-      })
-    },
-    diagnostic() {
-      if (!this.diagnosticSet) return
-      return latestCreatedDiagnostic(this.diagnosticSet)
-    },
     year() {
-      return this.diagnostic?.year
+      return this.canteen.latestYear
     },
     canteenBadges() {
       return badges(this.canteen)
-    },
-    approBadge() {
-      return this.canteenBadges.appro
     },
     orderedBadges() {
       return Object.keys(this.canteenBadges)

@@ -1309,5 +1309,35 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
-        badges = body["lastYearBadges"]
-        self.assertTrue("appro" in badges)
+        badges = body["badgesPerYear"]
+        self.assertTrue("appro" in badges["2023"])
+
+    @authenticate
+    def test_canteen_returns_latest_diagnostic_year(self):
+        """
+        Test whether the canteen returns the last year it has data for
+        """
+        central = CanteenFactory.create(siret="21340172201787", production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory.create(
+            central_producer_siret="21340172201787", production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+        )
+        satellite.managers.add(authenticate.user)
+
+        DiagnosticFactory.create(
+            canteen=satellite,
+            year=2021,
+            value_total_ht=100,
+            value_bio_ht=0,
+            value_sustainable_ht=30,
+        )
+        DiagnosticFactory.create(
+            canteen=central,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            year=2022,
+        )
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": satellite.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(body["latestYear"], 2022)

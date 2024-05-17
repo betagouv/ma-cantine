@@ -10,7 +10,6 @@ from data.utils import get_region, optimize_image
 from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
 from .sector import Sector
 from .softdeletionmodel import SoftDeletionModel
-import datetime
 
 
 def validate_siret(siret):
@@ -372,42 +371,92 @@ class Canteen(SoftDeletionModel):
         return self.appro_diagnostics.exclude(year__in=self.redacted_appro_years)
 
     @property
-    def last_year_badges(self):
-        # Ideally reuse badges_for_queryset but for now repeat rules.
-        last_year = datetime.date.today().year - 1
-        diagnostic = self.diagnostic_set.filter(year=last_year).first()
-        if not diagnostic:
-            return []
+    def badges_per_year(self):
+        year_dict = {}
 
-        badges = []
-        if diagnostic.appro_badge:
-            badges.append("appro")
+        for diagnostic in self.appro_diagnostics:
+            if diagnostic.appro_badge:
+                year_dict[str(diagnostic.year)] = ["appro"]
 
-        # waste
-        if diagnostic.waste_badge:
-            badges.append("waste")
+        for diagnostic in self.service_diagnostics:
+            badges = []
+            if diagnostic.appro_badge:
+                badges.append("appro")
+            # waste
+            if diagnostic.waste_badge:
+                badges.append("waste")
+            # diversification
+            if diagnostic.diversification_badge:
+                badges.append("diversification")
+            # plastic
+            if diagnostic.plastic_badge:
+                badges.append("plastic")
+            # info
+            if diagnostic.info_badge:
+                badges.append("info")
 
-        # diversification
-        if diagnostic.diversification_badge:
-            badges.append("diversification")
+            year_key = str(diagnostic.year)
+            if not year_dict[year_key]:
+                year_dict[year_key] = badges
+            else:
+                year_dict[year_key] += badges
 
-        # plastic
-        if diagnostic.plastic_badge:
-            badges.append("plastic")
-
-        # info
-        if diagnostic.info_badge:
-            badges.append("info")
-
-        return badges
+        return year_dict
 
     @property
-    def published_last_year_badges(self):
-        last_year = datetime.date.today().year - 1
-        badges = self.last_year_badges
-        if last_year in self.redacted_appro_years and "appro" in self.last_year_badges:
-            badges.remove("appro")
-        return badges
+    def published_badges_per_year(self):
+        year_dict = {}
+
+        for diagnostic in self.published_appro_diagnostics:
+            if diagnostic.appro_badge:
+                year_dict[str(diagnostic.year)] = ["appro"]
+
+        for diagnostic in self.service_diagnostics:
+            badges = []
+            if diagnostic.appro_badge:
+                badges.append("appro")
+            # waste
+            if diagnostic.waste_badge:
+                badges.append("waste")
+            # diversification
+            if diagnostic.diversification_badge:
+                badges.append("diversification")
+            # plastic
+            if diagnostic.plastic_badge:
+                badges.append("plastic")
+            # info
+            if diagnostic.info_badge:
+                badges.append("info")
+
+            year_key = str(diagnostic.year)
+            if not year_dict[year_key]:
+                year_dict[year_key] = badges
+            else:
+                year_dict[year_key] += badges
+
+        return year_dict
+
+    @property
+    def latest_year(self):
+        max_year = 0
+        if self.appro_diagnostics:
+            max_year = self.appro_diagnostics.only("year").order_by("-year").first().year
+        if self.service_diagnostics:
+            year = self.service_diagnostics.only("year").order_by("-year").first().year
+            if year > max_year:
+                max_year = year
+        return max_year
+
+    @property
+    def latest_published_year(self):
+        max_year = 0
+        if self.published_appro_diagnostics:
+            max_year = self.appro_diagnostics.only("year").order_by("-year").first().year
+        if self.service_diagnostics:
+            year = self.service_diagnostics.only("year").order_by("-year").first().year
+            if year > max_year:
+                max_year = year
+        return max_year
 
     @property
     def in_education(self):

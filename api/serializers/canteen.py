@@ -74,21 +74,21 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
 
 class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    diagnostics = PublicServiceDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     appro_diagnostics = PublicApproDiagnosticSerializer(
         many=True, read_only=True, source="published_appro_diagnostics"
     )
-    central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
-    last_year_badges = serializers.ListSerializer(
-        child=serializers.CharField(), read_only=True, source="published_last_year_badges"
+    badges_per_year = serializers.DictField(
+        child=serializers.ListSerializer(child=serializers.CharField()),
+        read_only=True,
+        source="published_badges_per_year",
     )
+    latest_year = serializers.IntegerField(read_only=True, source="latest_published_year")
 
     class Meta:
         model = Canteen
         fields = (
             "id",
             "name",
-            "diagnostics",
             "appro_diagnostics",
             "city",
             "city_insee_code",
@@ -99,7 +99,8 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "satellite_canteens_count",
             "region",
             "department",
-            "last_year_badges",
+            "badges_per_year",
+            "latest_year",
         )
 
 
@@ -113,9 +114,12 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
     is_managed_by_user = serializers.SerializerMethodField(read_only=True)
-    last_year_badges = serializers.ListSerializer(
-        child=serializers.CharField(), read_only=True, source="published_last_year_badges"
+    badges_per_year = serializers.DictField(
+        child=serializers.ListSerializer(child=serializers.CharField()),
+        read_only=True,
+        source="published_badges_per_year",
     )
+    latest_year = serializers.IntegerField(read_only=True, source="latest_published_year")
 
     class Meta:
         model = Canteen
@@ -144,7 +148,8 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "can_be_claimed",
             "is_managed_by_user",
             "central_kitchen",
-            "last_year_badges",
+            "badges_per_year",
+            "latest_year",
         )
 
     def get_is_managed_by_user(self, obj):
@@ -224,7 +229,11 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     satellites = MinimalCanteenSerializer(many=True, read_only=True)
-    last_year_badges = serializers.ListSerializer(child=serializers.CharField(), read_only=True)
+    badges_per_year = serializers.DictField(
+        child=serializers.ListSerializer(child=serializers.CharField()),
+        read_only=True,
+    )
+    latest_year = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Canteen
@@ -240,7 +249,8 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "satellites",
             "is_central_cuisine",
             "modification_date",
-            "last_year_badges",
+            "badges_per_year",
+            "latest_year",
         )
         fields = (
             "id",
@@ -284,7 +294,8 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "creation_mtm_medium",
             "is_central_cuisine",
             "modification_date",
-            "last_year_badges",
+            "badges_per_year",
+            "latest_year",
         )
 
         extra_kwargs = {"name": {"required": True}, "siret": {"required": True}}
