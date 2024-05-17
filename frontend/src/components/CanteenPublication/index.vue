@@ -18,17 +18,10 @@
     </EditableCommentsField>
 
     <h2 class="mt-12 mb-8">Où en-sommes nous de notre transition alimentaire ?</h2>
-    <DsfrAccordion :items="badgeItems" :openPanelIndex="editable ? undefined : 0" class="mt-4">
+    <DsfrAccordion :items="keyMeasures" :openPanelIndex="editable ? undefined : 0" class="mt-4">
       <template v-slot:title="{ item }">
         <span class="d-flex align-center">
-          <v-img
-            width="40"
-            max-width="40"
-            contain
-            :src="`/static/images/badges/${item.badgeId}${item.earned ? '' : '-disabled'}.svg`"
-            alt=""
-            class="mr-3"
-          ></v-img>
+          <v-img width="40" max-width="40" contain :src="badgeSrc(item.badgeId)" alt="" class="mr-3"></v-img>
           {{ item.shortTitle }}
         </span>
       </template>
@@ -66,7 +59,6 @@
 
 <script>
 import keyMeasures from "@/data/key-measures.json"
-import { badges } from "@/utils"
 import ImageGallery from "@/components/ImageGallery"
 import EditableCommentsField from "./EditableCommentsField"
 import DsfrAccordion from "@/components/DsfrAccordion"
@@ -95,6 +87,16 @@ export default {
     NoPlasticMeasureResults,
     WasteMeasureResults,
   },
+  data() {
+    return {
+      keyMeasures: keyMeasures.map((km) => ({
+        id: km.id,
+        shortTitle: km.shortTitle,
+        badgeId: km.badgeId,
+        baseComponent: km.baseComponent,
+      })),
+    }
+  },
   computed: {
     approDiagnostics() {
       return this.canteen?.approDiagnostics
@@ -102,28 +104,16 @@ export default {
     serviceDiagnostics() {
       return this.canteen?.serviceDiagnostics
     },
-    canteenBadges() {
-      const canteenBadges = badges(this.canteen)
-      Object.entries(canteenBadges).forEach(([key, badge]) => {
-        const km = keyMeasures.find((k) => k.badgeId === key)
-        Object.assign(badge, km)
-      })
-      return canteenBadges
-    },
-    badgeItems() {
-      const items = JSON.parse(JSON.stringify(Object.values(this.canteenBadges)))
-      items.map((item) => delete item.title)
-      return items
-    },
-    earnedBadges() {
-      let earnedBadges = {}
-      Object.keys(this.canteenBadges).forEach((key) => {
-        if (this.canteenBadges[key].earned) earnedBadges[key] = this.canteenBadges[key]
-      })
-      return earnedBadges
-    },
     imageLimit() {
       return this.$vuetify.breakpoint.xs ? 0 : 3
+    },
+  },
+  methods: {
+    badgeIsEarned(badge) {
+      return this.canteen?.badges[badge.key]
+    },
+    badgeSrc(badgeId) {
+      return `/static/images/badges/${badgeId}${this.badgeIsEarned({ key: badgeId }) ? "" : "-disabled"}.svg`
     },
   },
 }

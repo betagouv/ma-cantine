@@ -121,16 +121,12 @@ export default {
       return this.canteen?.badges
     },
     orderedBadges() {
-      return Object.keys(badges)
-        .map((key) => {
-          return { ...{ key }, ...badges[key] }
-        })
-        .sort((a, b) => {
-          const aIsEarned = this.badgeIsEarned(a)
-          const bIsEarned = this.badgeIsEarned(b)
-          if (aIsEarned === bIsEarned) return 0
-          return aIsEarned && !bIsEarned ? -1 : 1
-        })
+      return Object.values(badges).sort((a, b) => {
+        const aIsEarned = this.badgeIsEarned(a)
+        const bIsEarned = this.badgeIsEarned(b)
+        if (aIsEarned === bIsEarned) return 0
+        return aIsEarned && !bIsEarned ? -1 : 1
+      })
     },
     selectedBadge() {
       return badges[this.selectedBadgeKey]

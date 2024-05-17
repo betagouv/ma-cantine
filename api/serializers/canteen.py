@@ -128,12 +128,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
     is_managed_by_user = serializers.SerializerMethodField(read_only=True)
-    badges_per_year = serializers.DictField(
-        child=serializers.ListSerializer(child=serializers.CharField()),
-        read_only=True,
-        source="published_badges_per_year",
-    )
-    latest_year = serializers.IntegerField(read_only=True, source="latest_published_year")
+    badges = BadgesSerializer(read_only=True, source="*")
 
     class Meta:
         model = Canteen
@@ -162,8 +157,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "can_be_claimed",
             "is_managed_by_user",
             "central_kitchen",
-            "badges_per_year",
-            "latest_year",
+            "badges",
         )
 
     def get_is_managed_by_user(self, obj):

@@ -48,6 +48,17 @@ class TestPublishedCanteenApi(APITestCase):
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": private_canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_get_badges_in_single_published_canteen(self):
+        """
+        Expect to get badge info in response
+        """
+        published_canteen = CanteenFactory.create(publication_status="published")
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": published_canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertIn("badges", body)
+
     @authenticate
     def test_canteen_image_serialization(self):
         """

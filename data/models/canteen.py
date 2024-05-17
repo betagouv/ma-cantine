@@ -340,7 +340,7 @@ class Canteen(SoftDeletionModel):
         diag_ids = [d["id"] for d in self.diagnostic_set.values("id")]
         if self.central_kitchen_diagnostics:
             # for any given year, could have own diag or CC diag
-            # own diag always takes precedent
+            # own diag always takes precedent TODO: is this true? not in new UI
             # if don't have own diag, include CC diag in set
             own_diag_years = [d["year"] for d in self.diagnostic_set.values("year")]
             central_diagnostics = self.central_kitchen_diagnostics.exclude(year__in=own_diag_years)
@@ -356,7 +356,7 @@ class Canteen(SoftDeletionModel):
         if self.central_kitchen_diagnostics:
             cc_service_diagnostics = self.central_kitchen_diagnostics.filter(central_kitchen_diagnostic_mode="ALL")
             # for any given year, could have own diag or CC diag
-            # own diag always takes precedent
+            # own diag always takes precedent TODO: is this true? not in new UI
             # if don't have own diag, include CC diag in set if mode of ALL
             own_diag_years = [d["year"] for d in self.diagnostic_set.values("year")]
             central_diagnostics = cc_service_diagnostics.exclude(year__in=own_diag_years)
