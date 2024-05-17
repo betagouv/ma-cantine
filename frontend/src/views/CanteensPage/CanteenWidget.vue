@@ -18,7 +18,7 @@
             <v-img
               max-width="30"
               contain
-              :src="`/static/images/badges/${badge.key}${badge.earned ? '' : '-disabled'}.svg`"
+              :src="`/static/images/badges/${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
               class="mx-4"
               :alt="badgeTitle(badge)"
               :title="badgeTitle(badge)"
@@ -28,18 +28,18 @@
         <v-tabs-items v-model="selectedBadgeKey">
           <v-tab-item v-for="badge in orderedBadges" :key="badge.key">
             <v-card flat outlined>
-              <v-card-title :class="!badge.earned && 'grey--text text--darken-2'">
+              <v-card-title :class="!badgeIsEarned(badge) && 'grey--text text--darken-2'">
                 <h2 class="text-body-2 font-weight-bold mb-1">
                   {{ badgeTitle(badge) }}
                 </h2>
               </v-card-title>
               <v-card-subtitle
-                :class="!badge.earned && 'grey--text text--darken-2'"
+                :class="!badgeIsEarned(badge) && 'grey--text text--darken-2'"
                 v-if="badge.key !== 'appro' || applicableRules.qualityThreshold === 50"
               >
                 <p class="text-body-2 mb-0">{{ badge.subtitle }}</p>
               </v-card-subtitle>
-              <v-card-subtitle v-else :class="!badge.earned && 'grey--text text--darken-2'">
+              <v-card-subtitle v-else :class="!badgeIsEarned(badge) && 'grey--text text--darken-2'">
                 <p class="text-body-2 mb-0">
                   Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de
                   produits durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
@@ -74,7 +74,8 @@
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
 import labels from "@/data/quality-labels.json"
-import { badges, latestCreatedDiagnostic, applicableDiagnosticRules, getSustainableTotal } from "@/utils"
+import { applicableDiagnosticRules, getSustainableTotal } from "@/utils"
+import badges from "@/badges"
 
 export default {
   data() {
@@ -100,38 +101,14 @@ export default {
       const prefixLength = "/widgets".length
       return `${l.origin}${l.pathname.slice(prefixLength)}?mtm_campaign=widget-cantine`
     },
-    usesCentralKitchenDiagnostics() {
-      return (
-        this.canteen?.productionType === "site_cooked_elsewhere" && this.canteen?.centralKitchenDiagnostics?.length > 0
-      )
-    },
-    diagnosticSet() {
-      if (!this.canteen) return
-      if (!this.usesCentralKitchenDiagnostics) return this.canteen.diagnostics
-
-      // Since the central kitchen might only handle the appro values, we will merge the diagnostics
-      // from the central and satellites when necessary to show the whole picture
-      return this.canteen.centralKitchenDiagnostics.map((centralDiag) => {
-        const satelliteMatchingDiag = this.canteen.diagnostics.find((x) => x.year === centralDiag.year)
-        if (centralDiag.centralKitchenDiagnosticMode === "APPRO" && satelliteMatchingDiag)
-          return Object.assign(satelliteMatchingDiag, centralDiag)
-        return centralDiag
-      })
-    },
-    diagnostic() {
-      if (!this.diagnosticSet) return
-      return latestCreatedDiagnostic(this.diagnosticSet)
-    },
     year() {
-      return this.diagnostic?.year
+      return this.canteen?.badges.year
     },
     approDiagnostic() {
-      if (!this.canteen?.approDiagnostics) return
-      return this.canteen.approDiagnostics.find((d) => d.year == this.year)
+      return this.canteen?.approDiagnostic
     },
     bioPercent() {
-      if (!this.approDiagnostic) return
-      return this.approDiagnostic.percentageValueBioHt && Math.round(this.approDiagnostic.percentageValueBioHt * 100)
+      return this.approDiagnostic?.percentageValueBioHt && Math.round(this.approDiagnostic.percentageValueBioHt * 100)
     },
     sustainablePercent() {
       if (!this.approDiagnostic) return
@@ -141,24 +118,22 @@ export default {
       return this.bioPercent || this.sustainablePercent
     },
     canteenBadges() {
-      if (!this.canteen) return {}
-      return badges(this.canteen)
-    },
-    approBadge() {
-      return this.canteenBadges.appro
+      return this.canteen?.badges
     },
     orderedBadges() {
-      return Object.keys(this.canteenBadges)
+      return Object.keys(badges)
         .map((key) => {
-          return { ...{ key }, ...this.canteenBadges[key] }
+          return { ...{ key }, ...badges[key] }
         })
         .sort((a, b) => {
-          if (a.earned === b.earned) return 0
-          return a.earned && !b.earned ? -1 : 1
+          const aIsEarned = this.badgeIsEarned(a)
+          const bIsEarned = this.badgeIsEarned(b)
+          if (aIsEarned === bIsEarned) return 0
+          return aIsEarned && !bIsEarned ? -1 : 1
         })
     },
     selectedBadge() {
-      return this.canteenBadges[this.selectedBadgeKey]
+      return badges[this.selectedBadgeKey]
     },
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
@@ -169,13 +144,16 @@ export default {
       this.canteen = canteen
     },
     badgeTitle(badge) {
-      return `${badge.title}${badge.earned ? "" : " (à faire)"}`
+      return `${badge.title}${this.badgeIsEarned(badge) ? "" : " (à faire)"}`
+    },
+    badgeIsEarned(badge) {
+      return this.canteen?.badges[badge.key]
     },
   },
   beforeMount() {
     const previousIdVersion = this.canteenUrlComponent.indexOf("--") === -1
     const id = previousIdVersion ? this.canteenUrlComponent : this.canteenUrlComponent.split("--")[0]
-    return fetch(`/api/v1/publishedCanteens/${id}`)
+    return fetch(`/api/v1/publicCanteenPreviews/${id}`)
       .then((response) => {
         if (response.status != 200) throw new Error()
         response.json().then(this.setCanteen)
