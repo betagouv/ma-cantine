@@ -2,7 +2,7 @@
   <div class="mb-8">
     <CentralKitchenInfo :canteen="canteen" />
 
-    <p v-if="badge.earned">
+    <p v-if="canteen.badges.appro">
       Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
       et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
       <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>

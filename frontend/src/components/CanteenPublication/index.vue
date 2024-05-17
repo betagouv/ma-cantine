@@ -28,7 +28,7 @@
       <template v-slot:content="{ item }">
         <component
           :is="`${item.baseComponent}Results`"
-          :badge="item"
+          :badge="badges[item.badgeId]"
           :canteen="canteen"
           :approDiagnostics="approDiagnostics"
           :serviceDiagnostics="serviceDiagnostics"
@@ -59,6 +59,7 @@
 
 <script>
 import keyMeasures from "@/data/key-measures.json"
+import badges from "@/badges.json"
 import ImageGallery from "@/components/ImageGallery"
 import EditableCommentsField from "./EditableCommentsField"
 import DsfrAccordion from "@/components/DsfrAccordion"
@@ -95,6 +96,7 @@ export default {
         badgeId: km.badgeId,
         baseComponent: km.baseComponent,
       })),
+      badges,
     }
   },
   computed: {
