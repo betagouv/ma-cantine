@@ -72,24 +72,38 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
         )
 
 
+class BadgesSerializer(serializers.ModelSerializer):
+    year = serializers.IntegerField(source="latest_published_year")
+    appro = serializers.BooleanField(source="latest_published_appro_diagnostic.appro_badge", default=False)
+    waste = serializers.BooleanField(source="latest_published_service_diagnostic.waste_badge", default=False)
+    diversification = serializers.BooleanField(
+        source="latest_published_service_diagnostic.diversification_badge", default=False
+    )
+    plastic = serializers.BooleanField(source="latest_published_service_diagnostic.plastic_badge", default=False)
+    info = serializers.BooleanField(source="latest_published_service_diagnostic.info_badge", default=False)
+
+    class Meta:
+        model = Canteen
+        fields = (
+            "year",
+            "appro",
+            "waste",
+            "diversification",
+            "plastic",
+            "info",
+        )
+
+
 class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    appro_diagnostics = PublicApproDiagnosticSerializer(
-        many=True, read_only=True, source="published_appro_diagnostics"
-    )
-    badges_per_year = serializers.DictField(
-        child=serializers.ListSerializer(child=serializers.CharField()),
-        read_only=True,
-        source="published_badges_per_year",
-    )
-    latest_year = serializers.IntegerField(read_only=True, source="latest_published_year")
+    badges = BadgesSerializer(read_only=True, source="*")
+    appro_diagnostic = PublicApproDiagnosticSerializer(read_only=True, source="latest_published_appro_diagnostic")
 
     class Meta:
         model = Canteen
         fields = (
             "id",
             "name",
-            "appro_diagnostics",
             "city",
             "city_insee_code",
             "postal_code",
@@ -99,8 +113,8 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "satellite_canteens_count",
             "region",
             "department",
-            "badges_per_year",
-            "latest_year",
+            "badges",
+            "appro_diagnostic",
         )
 
 

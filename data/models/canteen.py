@@ -371,70 +371,9 @@ class Canteen(SoftDeletionModel):
         return self.appro_diagnostics.exclude(year__in=self.redacted_appro_years)
 
     @property
-    def badges_per_year(self):
-        year_dict = {}
-
-        for diagnostic in self.appro_diagnostics:
-            if diagnostic.appro_badge:
-                year_dict[str(diagnostic.year)] = ["appro"]
-
-        for diagnostic in self.service_diagnostics:
-            badges = []
-            if diagnostic.appro_badge:
-                badges.append("appro")
-            # waste
-            if diagnostic.waste_badge:
-                badges.append("waste")
-            # diversification
-            if diagnostic.diversification_badge:
-                badges.append("diversification")
-            # plastic
-            if diagnostic.plastic_badge:
-                badges.append("plastic")
-            # info
-            if diagnostic.info_badge:
-                badges.append("info")
-
-            year_key = str(diagnostic.year)
-            if not year_dict[year_key]:
-                year_dict[year_key] = badges
-            else:
-                year_dict[year_key] += badges
-
-        return year_dict
-
-    @property
-    def published_badges_per_year(self):
-        year_dict = {}
-
-        for diagnostic in self.published_appro_diagnostics:
-            if diagnostic.appro_badge:
-                year_dict[str(diagnostic.year)] = ["appro"]
-
-        for diagnostic in self.service_diagnostics:
-            badges = []
-            if diagnostic.appro_badge:
-                badges.append("appro")
-            # waste
-            if diagnostic.waste_badge:
-                badges.append("waste")
-            # diversification
-            if diagnostic.diversification_badge:
-                badges.append("diversification")
-            # plastic
-            if diagnostic.plastic_badge:
-                badges.append("plastic")
-            # info
-            if diagnostic.info_badge:
-                badges.append("info")
-
-            year_key = str(diagnostic.year)
-            if not year_dict[year_key]:
-                year_dict[year_key] = badges
-            else:
-                year_dict[year_key] += badges
-
-        return year_dict
+    def published_service_diagnostics(self):
+        # a wrapper to have consistent naming conventions
+        return self.service_diagnostics
 
     @property
     def latest_year(self):
@@ -449,14 +388,23 @@ class Canteen(SoftDeletionModel):
 
     @property
     def latest_published_year(self):
-        max_year = 0
+        max_year = None
         if self.published_appro_diagnostics:
+            # TODO: can we use latest("year")?
             max_year = self.appro_diagnostics.only("year").order_by("-year").first().year
-        if self.service_diagnostics:
-            year = self.service_diagnostics.only("year").order_by("-year").first().year
-            if year > max_year:
+        if self.published_service_diagnostics:
+            year = self.published_service_diagnostics.only("year").order_by("-year").first().year
+            if not max_year or year > max_year:
                 max_year = year
         return max_year
+
+    @property
+    def latest_published_appro_diagnostic(self):
+        return self.published_appro_diagnostics.filter(year=self.latest_published_year).first()
+
+    @property
+    def latest_published_service_diagnostic(self):
+        return self.published_service_diagnostics.filter(year=self.latest_published_year).first()
 
     @property
     def in_education(self):

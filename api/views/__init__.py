@@ -7,6 +7,7 @@ from .user import (  # noqa: F401
 )
 from .canteen import (  # noqa: F401
     PublishedCanteensView,
+    PublicCanteenPreviewView,
     PublishedCanteenSingleView,
     UserCanteensView,
     RetrieveUpdateUserCanteenView,

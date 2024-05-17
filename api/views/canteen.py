@@ -262,6 +262,12 @@ class PublishedCanteensView(ListAPIView):
         return super().filter_queryset(new_queryset)
 
 
+class PublicCanteenPreviewView(RetrieveAPIView):
+    model = Canteen
+    serializer_class = PublicCanteenPreviewSerializer
+    queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
+
+
 class UserCanteensFilterSet(django_filters.FilterSet):
     production_type = ProductionTypeInFilter(field_name="production_type")
 

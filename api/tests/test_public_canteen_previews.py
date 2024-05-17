@@ -45,6 +45,56 @@ class TestPublicCanteenPreviewsApi(APITestCase):
             self.assertFalse("managers" in recieved_canteen)
             self.assertFalse("managerInvitations" in recieved_canteen)
 
+    def test_get_single_public_canteen_preview(self):
+        """
+        Should be able to get the public summary data for a single published canteen
+        """
+        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED)
+
+        response = self.client.get(reverse("single_public_canteen_preview", kwargs={"pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_fail_to_get_single_private_canteen_preview(self):
+        """
+        Should not be able to get the public summary data for a single private canteen
+        """
+        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.DRAFT)
+
+        response = self.client.get(reverse("single_public_canteen_preview", kwargs={"pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_fail_to_get_non_existant_canteen_preview(self):
+        """
+        A request for a canteen that does not exist returns a 404
+        """
+        response = self.client.get(reverse("single_public_canteen_preview", kwargs={"pk": 99}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_recieve_expected_keys_in_preview(self):
+        """
+        Should get summary data in a public preview
+        """
+        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED)
+        DiagnosticFactory.create(canteen=canteen)
+
+        response = self.client.get(reverse("single_public_canteen_preview", kwargs={"pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["id"], canteen.id)
+        self.assertIn("badges", body)
+        self.assertIn("year", body["badges"])
+        self.assertIn("appro", body["badges"])
+        self.assertIn("waste", body["badges"])
+        self.assertIn("diversification", body["badges"])
+        self.assertIn("plastic", body["badges"])
+        self.assertIn("info", body["badges"])
+        self.assertIn("approDiagnostic", body)
+        self.assertIn("percentageValueBioHt", body["approDiagnostic"])
+        # self.assertIn("combinedSustainablePercent", body["approDiagnostic"])
+
+    # TODO: test satellites: CC APPRO, CC ALL, own diag
+
 
 class TestPublicCanteenSearchApi(APITestCase):
     def test_search_single_result(self):
