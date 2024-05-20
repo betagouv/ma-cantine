@@ -1315,7 +1315,7 @@ class TestCanteenApi(APITestCase):
     @authenticate
     def test_canteen_returns_latest_diagnostic_year(self):
         """
-        Test whether the canteen returns the last year it has data for
+        Test whether the canteen returns the latest year it has data for
         """
         central = CanteenFactory.create(siret="21340172201787", production_type=Canteen.ProductionType.CENTRAL)
         satellite = CanteenFactory.create(
