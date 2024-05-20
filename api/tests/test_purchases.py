@@ -649,9 +649,21 @@ class TestPurchaseApi(APITestCase):
 
     def test_cannot_get_redacted_purchases_summary(self):
         """
-        If the canteen has redacted the year return a 400
+        If the canteen has redacted the year return a 404
+        TODO: do we really want to use redacted_appro_years to control this?
         """
-        pass
+        canteen = CanteenFactory.create(redacted_appro_years=[2024])
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2024-01-01",
+            characteristics=[Purchase.Characteristic.BIO],
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            price_ht=100,
+        )
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_no_purchases_for_public_summary(self):
         """

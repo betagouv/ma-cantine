@@ -201,8 +201,14 @@ class CanteenPurchasesPercentageSummaryView(APIView):
         canteen_id = kwargs.get("canteen_pk")
         canteen = self._get_canteen(canteen_id, self.request)
         year = request.query_params.get("year")
-        if not year:
-            raise BadRequest("year is required")
+        try:
+            year = int(year)
+        except ValueError:
+            raise BadRequest("an integer is required for the year query parameter")
+        except TypeError:
+            raise BadRequest("the year query parameter is required")
+        if year in canteen.redacted_appro_years:
+            raise NotFound()
         data = canteen_summary_for_year(canteen, year)
         if data["value_total_ht"] == 0:
             raise NotFound()
