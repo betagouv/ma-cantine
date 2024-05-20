@@ -50,13 +50,6 @@
             rapport annuel public remis au Parlement. Vos données sont publiées par défaut sur votre vitrine en ligne.
           </p>
         </div>
-        <div v-else-if="provisional" class="py-4">
-          <p class="mb-0">
-            <b>Total des achats au {{ lastPurchaseDate }}</b>
-            : le bilan provisoire ci-dessous est réalisé à partir des données d’achat au {{ lastPurchaseDate }}. Vos
-            données sont visibles par défaut sur votre affiche et en ligne.
-          </p>
-        </div>
         <DsfrToggle
           v-else
           v-model="publishedToggleState"
@@ -66,10 +59,17 @@
           uncheckedLabel="Caché"
         >
           <template v-slot:label>
-            <!-- TODO: DSFR recommends labels be <= 3 words long -->
-            <b>Données non télédéclarées</b>
-            : le bilan des achats de l'année {{ tab }} n'a pas été officiellement télédéclaré à l'administration. Il est
-            visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
+            <span v-if="provisional" class="mb-0">
+              <b>Total des achats au {{ lastPurchaseDate }}</b>
+              : le bilan provisoire ci-dessous est réalisé à partir des données d’achat au {{ lastPurchaseDate }}. Vos
+              données sont visibles par défaut sur votre affiche et en ligne.
+            </span>
+            <span v-else>
+              <!-- TODO: DSFR recommends labels be <= 3 words long -->
+              <b>Données non télédéclarées</b>
+              : le bilan des achats de l'année {{ tab }} n'a pas été officiellement télédéclaré à l'administration. Il
+              est visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
+            </span>
           </template>
         </DsfrToggle>
       </DsfrCallout>
