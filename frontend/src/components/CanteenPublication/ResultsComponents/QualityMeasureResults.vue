@@ -159,31 +159,34 @@ export default {
     DsfrToggle,
   },
   data() {
-    const tabs = this.approDiagnostics.map((d) => +d.year)
+    const approData = this.approDiagnostics
+    const tabs = approData.map((d) => +d.year)
     tabs.sort((a, b) => b - a)
     tabs.push(COMPARE_TAB)
     const tab = tabs[0]
     return {
+      approData,
       redactedYears: this.canteen.redactedApproYears || [],
       tabs,
       tab,
       // it is published if it is not redacted
       publishedToggleState: undefined,
+      thisYear: new Date().getFullYear(),
     }
   },
   computed: {
     diagnostic() {
-      if (!this.approDiagnostics) return
-      return latestCreatedDiagnostic(this.approDiagnostics)
+      if (!this.approData) return
+      return latestCreatedDiagnostic(this.approData)
     },
     diagnosticForYear() {
-      return this.canteen.approDiagnostics.find((d) => d.year === +this.tab)
+      return this.approData.find((d) => d.year === +this.tab)
     },
     teledeclared() {
       return !!this.diagnosticForYear?.isTeledeclared
     },
     provisional() {
-      return !!this.diagnosticForYear?.year >= new Date().getFullYear()
+      return this.diagnosticForYear?.year >= this.thisYear
     },
     color() {
       // these are the same as the colours for "bio" in ApproGraph
@@ -194,8 +197,7 @@ export default {
     lastPurchaseDate() {
       if (!this.provisional) return
       if (!this.diagnosticForYear) return
-      // TODO: make this the date of the most recent purchase
-      const date = new Date(this.diagnosticForYear.modificationDate)
+      const date = new Date(this.diagnosticForYear.lastPurchaseDate)
       return date.toLocaleString("fr-FR", {
         day: "numeric",
         month: "long",
@@ -224,10 +226,10 @@ export default {
         : getPercentage(this.diagnosticForYear.valueFishEgalimHt, this.diagnosticForYear.valueFishHt)
     },
     graphDiagnostics() {
-      if (!this.canteen.approDiagnostics || this.canteen.approDiagnostics.length === 0) return null
+      if (!this.approData || this.approData.length === 0) return null
       const diagnostics = {}
-      for (let i = 0; i < this.canteen.approDiagnostics.length; i++) {
-        const diagnostic = this.canteen.approDiagnostics[i]
+      for (let i = 0; i < this.approData.length; i++) {
+        const diagnostic = this.approData[i]
         diagnostics[diagnostic.year] = diagnostic
       }
       return diagnostics
@@ -284,9 +286,22 @@ export default {
     getPublicationState(year) {
       return this.redactedYears.indexOf(year) === -1
     },
+    getPurchasesSummary() {
+      return fetch(`/api/v1/canteenPurchasesPercentageSummary/${this.canteen.id}?year=${this.thisYear}`)
+        .then((response) => (response.ok ? response.json() : undefined))
+        .then((response) => {
+          if (response) {
+            response.year = this.thisYear
+            this.approData.push(response)
+            this.tabs.unshift(this.thisYear)
+            if (this.tab === this.tabs[1]) this.tab = this.tabs[0]
+          }
+        })
+    },
   },
   mounted() {
     this.publishedToggleState = this.getPublicationState(this.tab)
+    return this.getPurchasesSummary()
   },
   watch: {
     tab(newValue) {
