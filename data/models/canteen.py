@@ -392,15 +392,13 @@ class Canteen(SoftDeletionModel):
 
     @property
     def latest_published_year(self):
-        max_year = None
-        if self.published_appro_diagnostics:
-            # TODO: can we use latest("year")?
-            max_year = self.published_appro_diagnostics.only("year").order_by("-year").first().year
-        if self.published_service_diagnostics:
-            year = self.published_service_diagnostics.only("year").order_by("-year").first().year
-            if not max_year or year > max_year:
-                max_year = year
-        return max_year
+        if not self.published_appro_diagnostics and not self.published_service_diagnostics:
+            return
+
+        appro_year = self.published_appro_diagnostics.only("year").order_by("-year").first().year
+        service_year = self.published_service_diagnostics.only("year").order_by("-year").first().year
+
+        return max(appro_year, service_year)
 
     @property
     def latest_published_appro_diagnostic(self):
