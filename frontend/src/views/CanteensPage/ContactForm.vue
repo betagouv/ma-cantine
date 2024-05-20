@@ -1,69 +1,74 @@
 <template>
   <div>
     <h2 class="grey--text text--darken-4 mb-6">Contactez « {{ canteen.name }} »</h2>
-    <div class="text-left grey--text text--darken-4 mt-n1 mb-6 text-body-2">
-      <div>
-        <div class="mb-1 d-flex align-center">
-          <v-icon small color="green" class="mr-1">$check-line</v-icon>
-          <p class="mb-0">Demandez des informations supplémentaires sur la cantine « {{ canteen.name }} »</p>
-        </div>
-        <div class="mb-1 d-flex align-center">
-          <v-icon small color="green" class="mr-1">$check-line</v-icon>
-          <p class="mb-0">
-            Demandez aux gestionnaires leur retour d'expérience sur une action mise en place
-          </p>
-        </div>
-      </div>
-      <div class="mt-4">
-        <div class="mb-1 d-flex align-center">
-          <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
-          <p class="mb-0">
-            Pour postuler à une offre d'emploi privilégiez les contacts directs de l'établissement
-          </p>
-        </div>
-        <div class="mb-1 d-flex align-center">
-          <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
-          <p class="mb-0">
-            Pour informer l'établissement de l'absence de votre enfant à la pension du midi, utilisez votre site de «
-            vie scolaire »
-          </p>
-        </div>
-        <div class="mb-1 d-flex align-center">
-          <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
-          <p class="mb-0">
-            Proposez vos services parmi les
-            <router-link :to="{ name: 'PartnersHome' }">
-              acteurs de l'éco-système
-            </router-link>
-            en remplissant le
-            <a
-              href="https://startupdetat.typeform.com/to/JhhsMCYC"
-              target="_blank"
-              rel="noopener external"
-              title="formulaire de référencement - ouvre une nouvelle fenêtre"
-            >
-              formulaire de référencement
-              <v-icon color="primary" small>mdi-open-in-new</v-icon>
-            </a>
-          </p>
-        </div>
-      </div>
+    <div v-if="canteen.canBeClaimed">
+      <p>Nous n'avons pas de coordonnées de contact pour cette cantine.</p>
     </div>
-    <v-form v-model="formIsValid" ref="form" @submit.prevent>
-      <DsfrEmail v-model="fromEmail" />
-      <DsfrTextField v-model="name" label="Prénom et nom" />
-      <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
-      <p class="caption text-left grey--text text--darken-1 mt-n1 mb-6">
-        Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).
-        <br />
-        L'équipe de « ma cantine » se réserve un droit de modération et décide ou non de valider votre message dans les
-        3 jours ouvrables.
-      </p>
-    </v-form>
-    <v-btn x-large color="primary" class="mt-0 mb-6" @click="sendEmail">
-      <v-icon class="mr-2">mdi-send</v-icon>
-      Envoyer
-    </v-btn>
+    <div v-else>
+      <div class="text-left grey--text text--darken-4 mt-n1 mb-6 text-body-2">
+        <div>
+          <div class="mb-1 d-flex align-center">
+            <v-icon small color="green" class="mr-1">$check-line</v-icon>
+            <p class="mb-0">Demandez des informations supplémentaires sur la cantine « {{ canteen.name }} »</p>
+          </div>
+          <div class="mb-1 d-flex align-center">
+            <v-icon small color="green" class="mr-1">$check-line</v-icon>
+            <p class="mb-0">
+              Demandez aux gestionnaires leur retour d'expérience sur une action mise en place
+            </p>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="mb-1 d-flex align-center">
+            <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
+            <p class="mb-0">
+              Pour postuler à une offre d'emploi privilégiez les contacts directs de l'établissement
+            </p>
+          </div>
+          <div class="mb-1 d-flex align-center">
+            <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
+            <p class="mb-0">
+              Pour informer l'établissement de l'absence de votre enfant à la pension du midi, utilisez votre site de «
+              vie scolaire »
+            </p>
+          </div>
+          <div class="mb-1 d-flex align-center">
+            <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
+            <p class="mb-0">
+              Proposez vos services parmi les
+              <router-link :to="{ name: 'PartnersHome' }">
+                acteurs de l'éco-système
+              </router-link>
+              en remplissant le
+              <a
+                href="https://startupdetat.typeform.com/to/JhhsMCYC"
+                target="_blank"
+                rel="noopener external"
+                title="formulaire de référencement - ouvre une nouvelle fenêtre"
+              >
+                formulaire de référencement
+                <v-icon color="primary" small>mdi-open-in-new</v-icon>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+      <v-form v-model="formIsValid" ref="form" @submit.prevent>
+        <DsfrEmail v-model="fromEmail" />
+        <DsfrTextField v-model="name" label="Prénom et nom" />
+        <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
+        <p class="caption text-left grey--text text--darken-1 mt-n1 mb-6">
+          Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).
+          <br />
+          L'équipe de « ma cantine » se réserve un droit de modération et décide ou non de valider votre message dans
+          les 3 jours ouvrables.
+        </p>
+      </v-form>
+      <v-btn x-large color="primary" class="mt-0 mb-6" @click="sendEmail">
+        <v-icon class="mr-2">mdi-send</v-icon>
+        Envoyer
+      </v-btn>
+    </div>
   </div>
 </template>
 

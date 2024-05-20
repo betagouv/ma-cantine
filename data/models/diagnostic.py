@@ -1376,6 +1376,10 @@ class Diagnostic(models.Model):
             return None
         return submitted_teledeclarations.order_by("-creation_date").first()
 
+    @property
+    def is_teledeclared(self):
+        return self.latest_submitted_teledeclaration is not None
+
     def clean(self):
         self.validate_year()
 
