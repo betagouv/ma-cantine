@@ -9,7 +9,7 @@
     </p>
     <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
 
-    <v-row class="align-end flex-wrap mb-4">
+    <v-row v-if="tabs" class="align-end flex-wrap mb-4">
       <v-col>
         <DsfrSegmentedControl v-model="tab" legend="Bilan par période" :noLegend="editable" :items="tabs" />
       </v-col>
@@ -159,14 +159,12 @@ export default {
     DsfrToggle,
   },
   data() {
-    const tabs = this.approDiagnostics.map((d) => +d.year)
-    tabs.sort((a, b) => b - a)
-    tabs.push(COMPARE_TAB)
-    const tab = tabs[0]
     return {
+      tabs: undefined,
+      tab: undefined,
+      thisYear: new Date().getFullYear(),
+      purchasesSummary: undefined,
       redactedYears: this.canteen.redactedApproYears || [],
-      tabs,
-      tab,
       // it is published if it is not redacted
       publishedToggleState: undefined,
     }
@@ -177,13 +175,14 @@ export default {
       return latestCreatedDiagnostic(this.approDiagnostics)
     },
     diagnosticForYear() {
+      if (+this.tab === this.thisYear) return this.purchasesSummary
       return this.canteen.approDiagnostics.find((d) => d.year === +this.tab)
     },
     teledeclared() {
       return !!this.diagnosticForYear?.isTeledeclared
     },
     provisional() {
-      return !!this.diagnosticForYear?.year >= new Date().getFullYear()
+      return this.diagnosticForYear?.year >= this.thisYear
     },
     color() {
       // these are the same as the colours for "bio" in ApproGraph
@@ -193,8 +192,6 @@ export default {
     },
     lastPurchaseDate() {
       if (!this.provisional) return
-      if (!this.diagnosticForYear) return
-      // TODO: make this the date of the most recent purchase
       const date = new Date(this.diagnosticForYear.modificationDate)
       return date.toLocaleString("fr-FR", {
         day: "numeric",
@@ -284,9 +281,24 @@ export default {
     getPublicationState(year) {
       return this.redactedYears.indexOf(year) === -1
     },
+    fetchPurchasesSummary() {
+      this.purchasesSummary = null
+      // TODO: create an endpoint that just returns the percentages and conditionally the last purchase date for public view
+      return fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.thisYear}`)
+        .then((response) => (response.ok ? response.json() : {}))
+        .then((response) => (this.purchasesSummary = response))
+    },
   },
   mounted() {
     this.publishedToggleState = this.getPublicationState(this.tab)
+    this.fetchPurchasesSummary().finally(() => {
+      const tabs = this.approDiagnostics.map((d) => +d.year)
+      if (this.purchasesSummary.modificationDate) tabs.push(this.thisYear)
+      tabs.sort((a, b) => b - a)
+      tabs.push(COMPARE_TAB)
+      this.tabs = tabs
+      this.tab = this.tabs[0]
+    })
   },
   watch: {
     tab(newValue) {
