@@ -653,13 +653,7 @@ class TestPurchaseApi(APITestCase):
         TODO: do we really want to use redacted_appro_years to control this?
         """
         canteen = CanteenFactory.create(redacted_appro_years=[2024])
-        PurchaseFactory.create(
-            canteen=canteen,
-            date="2024-01-01",
-            characteristics=[Purchase.Characteristic.BIO],
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            price_ht=100,
-        )
+        PurchaseFactory.create(canteen=canteen, date="2024-01-01")
         response = self.client.get(
             reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
         )
@@ -670,13 +664,7 @@ class TestPurchaseApi(APITestCase):
         If the canteen doesn't have purchases for the year requested return a 404
         """
         canteen = CanteenFactory.create()
-        PurchaseFactory.create(
-            canteen=canteen,
-            date="2023-12-31",
-            characteristics=[Purchase.Characteristic.BIO],
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            price_ht=999999,
-        )
+        PurchaseFactory.create(canteen=canteen, date="2023-12-31")
         response = self.client.get(
             reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
         )
