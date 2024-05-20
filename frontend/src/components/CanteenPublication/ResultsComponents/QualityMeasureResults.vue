@@ -143,7 +143,7 @@ export default {
       value: +d.year,
       disabled: false,
     }))
-    tabs.sort((a, b) => b - a)
+    tabs.sort((a, b) => b.value - a.value)
     const compareTab = {
       text: "Comparer",
       value: "Comparer",
