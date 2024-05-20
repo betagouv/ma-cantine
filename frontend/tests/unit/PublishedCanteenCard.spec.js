@@ -14,6 +14,7 @@ describe("PublishedCanteenCard.vue", () => {
     name: "Wasabi",
     city: "Lyon",
     dailyMealCount: 100,
+    badges: {},
   }
 
   let store = new Vuex.Store({
