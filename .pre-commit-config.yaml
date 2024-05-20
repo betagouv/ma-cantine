@@ -55,7 +55,7 @@ repos:
     args: [--line-length=119]
     exclude: ^migrations/
   repo: https://github.com/ambv/black
-  rev: 24.3.0
+  rev: 24.4.2
 - hooks:
   - args:
     - --config=.flake8
