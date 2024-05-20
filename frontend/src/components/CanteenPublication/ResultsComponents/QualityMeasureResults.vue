@@ -38,7 +38,7 @@
     </div>
     <div v-else-if="!diagnosticForYear">
       <p>
-        Données pas disponibles
+        Données non disponibles
       </p>
     </div>
     <div v-else>
