@@ -194,7 +194,7 @@ def canteen_summary_for_year(canteen, year):
     purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
         canteen=canteen, date__year=year
     )
-    data = meta_data(purchases, year)
+    data = {}
     simple_diag_data(purchases, data)
     complete_diag_data(purchases, data)
     misc_totals(purchases, data)
@@ -209,23 +209,13 @@ def canteen_summary(canteen):
     )
     years = [y["year"] for y in years.values()]
     for year in years:
+        year_data = {"year": year}
         purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
             canteen=canteen, date__year=year
         )
-        year_data = meta_data(purchases, year)
         simple_diag_data(purchases, year_data)
         data["results"].append(year_data)
 
-    return data
-
-
-def meta_data(purchases, year):
-    data = {"year": year}
-    try:
-        last_purchase = purchases.latest("date")
-        data["modification_date"] = last_purchase.date
-    except Purchase.DoesNotExist:
-        pass
     return data
 
 
