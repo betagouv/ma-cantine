@@ -6,12 +6,18 @@ from rest_framework.response import Response
 from rest_framework import status
 from drf_excel.renderers import XLSXRenderer
 from drf_excel.mixins import XLSXFileMixin
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
 from django.db.models import Sum, Q
 from django.db.models.functions import ExtractYear
 from django.http import JsonResponse
 from django_filters import rest_framework as django_filters
-from api.permissions import IsLinkedCanteenManager, IsCanteenManager, IsAuthenticated
+from api.permissions import (
+    IsLinkedCanteenManager,
+    IsCanteenManager,
+    IsAuthenticated,
+    IsAuthenticatedOrTokenHasResourceScope,
+)
 from api.serializers import PurchaseSerializer, PurchaseSummarySerializer, PurchaseExportSerializer
 from data.models import Purchase, Canteen, Diagnostic
 from .utils import MaCantineOrderingFilter, UnaccentSearchFilter
@@ -86,11 +92,22 @@ class PurchaseFilterSet(django_filters.FilterSet):
         )
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="Lister les achats concernant toutes les cantines gérées par l'utilisateur identifié.",
+        description="Cet endpoint retourne la totalité des achats pour toutes les établissements gérés par l'utilisateur.",
+    ),
+    post=extend_schema(
+        summary="Ajouter un achat.",
+        description="La cantine de l'achat à ajouter doit être parmi celles que l'utilisateur gére.",
+    ),
+)
 class PurchaseListCreateView(ListCreateAPIView):
-    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
     model = Purchase
     serializer_class = PurchaseSerializer
     pagination_class = PurchasesPagination
+    required_scopes = ["canteen"]
     filter_backends = [
         MaCantineOrderingFilter,
         UnaccentSearchFilter,
@@ -141,10 +158,28 @@ class PurchaseListCreateView(ListCreateAPIView):
         return super().filter_queryset(queryset)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="Obtenir les détails d'un achat.",
+        description="Permet d'obtenir toutes les informations sur un achat particulier.",
+    ),
+    put=extend_schema(
+        exclude=True,
+    ),
+    patch=extend_schema(
+        summary="Modifier un achat existant.",
+        description="Possible si l'utilisateur identifié fait partie des gestionnaires de la cantine associée à l'achat.",
+    ),
+    delete=extend_schema(
+        summary="Supprimer un achat existante.",
+        description="Possible si l'utilisateur identifié fait partie des gestionnaires de la cantine associée à l'achat.",
+    ),
+)
 class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
     model = Purchase
     serializer_class = PurchaseSerializer
+    required_scopes = ["canteen"]
 
     def put(self, request, *args, **kwargs):
         return JsonResponse({"error": "Only PATCH request supported in this resource"}, status=405)
@@ -400,10 +435,19 @@ class DiagnosticsFromPurchasesView(APIView):
         return JsonResponse({"results": created_diags, "errors": errors}, status=status.HTTP_201_CREATED)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        exclude=True,
+    ),
+    post=extend_schema(
+        exclude=True,
+    ),
+)
 class PurchaseListExportView(PurchaseListCreateView, XLSXFileMixin):
     renderer_classes = (XLSXRenderer,)
     pagination_class = None
     serializer_class = PurchaseExportSerializer
+    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
 
     column_header = {
         "titles": [
