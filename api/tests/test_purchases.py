@@ -676,7 +676,18 @@ class TestPurchaseApi(APITestCase):
         The purchases summary should return the last purchase date if the user
         is the manager of the canteen
         """
-        pass
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+
+        PurchaseFactory.create(canteen=canteen, date="2024-12-01")
+        PurchaseFactory.create(canteen=canteen, date="2024-05-31")
+        PurchaseFactory.create(canteen=canteen, date="2025-01-01")
+
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
+        )
+        body = response.json()
+        self.assertEqual(body["lastPurchaseDate"], "2024-12-01")
 
     @authenticate
     def test_dont_get_last_purchase_date_in_public_summary_if_not_manager(self):

@@ -212,6 +212,9 @@ class CanteenPurchasesPercentageSummaryView(APIView):
         data = canteen_summary_for_year(canteen, year)
         if data["value_total_ht"] == 0:
             raise NotFound()
+        data["last_purchase_date"] = (
+            Purchase.objects.only("date").filter(canteen=canteen, date__year=year).latest("date").date
+        )
         return Response(PurchasePercentageSummarySerializer(data).data)
 
     def _get_canteen(self, canteen_id, request):

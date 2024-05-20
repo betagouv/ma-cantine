@@ -175,6 +175,8 @@ class PurchaseSummarySerializer(serializers.Serializer):
 
 
 class PurchasePercentageSummarySerializer(PurchaseSummarySerializer):
+    last_purchase_date = serializers.DateField()
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         return appro_to_percentages(representation, instance)
