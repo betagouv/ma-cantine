@@ -1175,9 +1175,23 @@ class TestPublicPurchasesSummaryApi(APITestCase):
         PurchaseFactory.create(canteen=canteen, date="2024-01-01")
         response = self.client.get(
             reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
-            {"year": 2024, "ignoreRedaction": True},
+            {"year": 2024, "ignoreRedaction": "true"},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @authenticate
+    def test_manager_can_optionally_not_get_redacted_purchases(self):
+        """
+        The manager of the canteen has an option to not get redacted data
+        """
+        canteen = CanteenFactory.create(redacted_appro_years=[2024])
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(canteen=canteen, date="2024-01-01")
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
+            {"year": 2024, "ignoreRedaction": "false"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_non_manager_cannot_optionally_get_redacted_purchases(self):
@@ -1188,7 +1202,7 @@ class TestPublicPurchasesSummaryApi(APITestCase):
         PurchaseFactory.create(canteen=canteen, date="2024-01-01")
         response = self.client.get(
             reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
-            {"year": 2024, "ignoreRedaction": True},
+            {"year": 2024, "ignoreRedaction": "true"},
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -1200,6 +1214,6 @@ class TestPublicPurchasesSummaryApi(APITestCase):
         PurchaseFactory.create(canteen=canteen, date="2024-01-01")
         response = self.client.get(
             reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
-            {"year": 2024, "ignoreRedaction": True},
+            {"year": 2024, "ignoreRedaction": "true"},
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

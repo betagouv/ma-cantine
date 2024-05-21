@@ -280,7 +280,9 @@ export default {
       return this.redactedYears.indexOf(year) === -1
     },
     getPurchasesSummary() {
-      return fetch(`/api/v1/canteenPurchasesPercentageSummary/${this.canteen.id}?year=${this.thisYear}`)
+      return fetch(
+        `/api/v1/canteenPurchasesPercentageSummary/${this.canteen.id}?year=${this.thisYear}&ignoreRedaction=${this.editable}`
+      )
         .then((response) => (response.ok ? response.json() : undefined))
         .then((response) => {
           if (response) {
@@ -307,8 +309,10 @@ export default {
     },
   },
   mounted() {
-    this.publishedToggleState = this.getPublicationState(this.tab)
-    return this.getPurchasesSummary().finally(() => this.makeTabs())
+    return this.getPurchasesSummary().finally(() => {
+      this.makeTabs()
+      this.publishedToggleState = this.getPublicationState(this.tab)
+    })
   },
   watch: {
     tab(newValue) {

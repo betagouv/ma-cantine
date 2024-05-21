@@ -209,7 +209,7 @@ class CanteenPurchasesPercentageSummaryView(APIView):
             raise BadRequest("the year query parameter is required")
 
         is_canteen_manager = IsCanteenManager().has_object_permission(request, self, canteen)
-        ignore_redaction = is_canteen_manager and request.query_params.get("ignoreRedaction")
+        ignore_redaction = is_canteen_manager and request.query_params.get("ignoreRedaction") == "true"
         if not ignore_redaction and year in canteen.redacted_appro_years:
             raise NotFound()
 
