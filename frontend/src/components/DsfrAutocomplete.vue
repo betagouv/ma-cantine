@@ -17,6 +17,7 @@
       auto-select-first
       :search-input.sync="searchInput"
       @change="searchInput = ''"
+      :filter="unaccentedFilter"
     >
       <template v-slot:label><span></span></template>
 
@@ -29,6 +30,7 @@
 </template>
 
 <script>
+import { normaliseText } from "@/utils"
 export default {
   inheritAttrs: false,
   props: {
@@ -56,6 +58,11 @@ export default {
     },
     assignInputId() {
       this.inputId = this.$refs?.["autocomplete"]?.$refs?.["input"].id
+    },
+    unaccentedFilter(item, queryText, itemText) {
+      const normalizedQueryText = normaliseText(queryText).toLocaleLowerCase()
+      const normalizedItemText = normaliseText(itemText).toLocaleLowerCase()
+      return normalizedItemText.indexOf(normalizedQueryText) > -1
     },
   },
   mounted() {
