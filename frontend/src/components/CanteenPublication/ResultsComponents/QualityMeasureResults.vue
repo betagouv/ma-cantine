@@ -3,9 +3,12 @@
     <CentralKitchenInfo :canteen="canteen" />
 
     <p v-if="canteen.badges.appro">
-      Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
-      et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
-      <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+      <span v-if="applicableRules.qualityThreshold !== 50">
+        Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
+        et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
+        <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+      </span>
+      <span v-else>{{ badge.subtitle }}</span>
     </p>
     <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
 
