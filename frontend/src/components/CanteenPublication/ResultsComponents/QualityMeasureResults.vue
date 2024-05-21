@@ -157,24 +157,11 @@ export default {
     DsfrToggle,
   },
   data() {
-    const approData = this.approDiagnostics
-    const tabs = approData.map((d) => ({
-      text: +d.year,
-      value: +d.year,
-      disabled: false,
-    }))
-    tabs.sort((a, b) => b.value - a.value)
-    const compareTab = {
-      text: "Comparer",
-      value: "Comparer",
-      disabled: tabs.length < 2,
-    }
-    tabs.push(compareTab)
     return {
-      approData,
+      approData: this.approDiagnostics,
       redactedYears: this.canteen.redactedApproYears || [],
-      tabs,
-      tab: tabs[0].value,
+      tabs: [],
+      tab: undefined,
       // it is published if it is not redacted
       publishedToggleState: undefined,
       thisYear: new Date().getFullYear(),
@@ -299,15 +286,29 @@ export default {
           if (response) {
             response.year = this.thisYear
             this.approData.push(response)
-            this.tabs.unshift({ value: this.thisYear, text: this.thisYear, disabled: false })
-            if (this.tab === this.tabs[1].value) this.tab = this.tabs[0].value
           }
         })
+    },
+    makeTabs() {
+      const tabs = this.approData.map((d) => ({
+        text: +d.year,
+        value: +d.year,
+        disabled: false,
+      }))
+      tabs.sort((a, b) => b.value - a.value)
+      const compareTab = {
+        text: "Comparer",
+        value: "Comparer",
+        disabled: tabs.length < 2,
+      }
+      tabs.push(compareTab)
+      this.tabs = tabs
+      this.tab = tabs[0].value
     },
   },
   mounted() {
     this.publishedToggleState = this.getPublicationState(this.tab)
-    return this.getPurchasesSummary()
+    return this.getPurchasesSummary().finally(() => this.makeTabs())
   },
   watch: {
     tab(newValue) {
