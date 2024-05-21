@@ -2,7 +2,7 @@
   <div class="mb-8">
     <CentralKitchenInfo :canteen="canteen" />
 
-    <p v-if="badge.earned">
+    <p v-if="canteen.badges.appro">
       Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
       et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
       <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
@@ -26,28 +26,52 @@
         </DsfrCallout>
       </v-col>
     </v-row>
-    <div v-if="diagnosticForYear">
-      <DsfrCallout v-if="editable" icon=" " :color="color" class="my-4 py-6 pr-14">
-        <div v-if="teledeclared">
+    <div v-if="tab === 'Comparer'">
+      <MultiYearSummaryStatistics
+        :diagnostics="graphDiagnostics"
+        headingId="appro-heading"
+        height="260"
+        :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
+        :applicableRules="applicableRules"
+        colorTheme="grey"
+      />
+    </div>
+    <div v-else-if="!diagnosticForYear">
+      <p>
+        Données non disponibles
+      </p>
+    </div>
+    <div v-else>
+      <DsfrCallout v-if="editable" icon=" " :color="color" class="my-4 py-4 pr-14">
+        <div v-if="teledeclared" class="py-4">
           <p class="mb-0">
-            <b>Données officielles {{ diagnosticForYear.year }} télédéclarées</b>
+            <b>Données officielles {{ tab }} télédéclarées</b>
             : le bilan ci-dessous a été officiellement transmis à l’administration et il est pris en compte dans le
-            rapport annuel public remis au Parlement.
+            rapport annuel public remis au Parlement. Vos données sont publiées par défaut sur votre vitrine en ligne.
           </p>
         </div>
-        <div v-else-if="provisional">
+        <div v-else-if="provisional" class="py-4">
           <p class="mb-0">
             <b>Total des achats au {{ lastPurchaseDate }}</b>
-            : le bilan provisoire ci-dessous est réalisé à partir des données d’achat au {{ lastPurchaseDate }}.
+            : le bilan provisoire ci-dessous est réalisé à partir des données d’achat au {{ lastPurchaseDate }}. Vos
+            données sont visibles par défaut sur votre affiche et en ligne.
           </p>
         </div>
-        <div v-else>
-          <p class="mb-0">
+        <DsfrToggle
+          v-else
+          v-model="publishedToggleState"
+          @input="updateDiagnosticPublication"
+          :labelLeft="true"
+          checkedLabel="Visible"
+          uncheckedLabel="Caché"
+        >
+          <template v-slot:label>
+            <!-- TODO: DSFR recommends labels be <= 3 words long -->
             <b>Données non télédéclarées</b>
-            : le bilan des achats de l'année {{ diagnosticForYear.year }} n'a pas été officiellement télédéclaré à
-            l'administration.
-          </p>
-        </div>
+            : le bilan des achats de l'année {{ tab }} n'a pas été officiellement télédéclaré à l'administration. Il est
+            visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
+          </template>
+        </DsfrToggle>
       </DsfrCallout>
 
       <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" class="my-8" />
@@ -88,16 +112,6 @@
         </DsfrAccordion>
       </div>
     </div>
-    <div v-else>
-      <MultiYearSummaryStatistics
-        :diagnostics="graphDiagnostics"
-        headingId="appro-heading"
-        height="260"
-        :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
-        :applicableRules="applicableRules"
-        colorTheme="grey"
-      />
-    </div>
     <EditableCommentsField
       :canteen="canteen"
       valueKey="qualityComments"
@@ -119,13 +133,17 @@ import EditableCommentsField from "../EditableCommentsField"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
 import DsfrAccordion from "@/components/DsfrAccordion"
 import DsfrCallout from "@/components/DsfrCallout"
+import DsfrToggle from "@/components/DsfrToggle"
 
 export default {
   name: "QualityMeasureResults",
   props: {
     badge: Object,
-    canteen: Object,
-    diagnosticSet: Array,
+    canteen: {
+      type: Object,
+      required: true,
+    },
+    approDiagnostics: Array,
     editable: Boolean,
   },
   components: {
@@ -136,9 +154,10 @@ export default {
     MultiYearSummaryStatistics,
     DsfrAccordion,
     DsfrCallout,
+    DsfrToggle,
   },
   data() {
-    const tabs = this.diagnosticSet.map((d) => ({
+    const tabs = this.approDiagnostics.map((d) => ({
       text: +d.year,
       value: +d.year,
       disabled: false,
@@ -151,17 +170,20 @@ export default {
     }
     tabs.push(compareTab)
     return {
+      redactedYears: this.canteen.redactedApproYears || [],
       tabs,
       tab: tabs[0].value,
+      // it is published if it is not redacted
+      publishedToggleState: undefined,
     }
   },
   computed: {
     diagnostic() {
-      if (!this.diagnosticSet) return
-      return latestCreatedDiagnostic(this.diagnosticSet)
+      if (!this.approDiagnostics) return
+      return latestCreatedDiagnostic(this.approDiagnostics)
     },
     diagnosticForYear() {
-      return this.diagnosticSet.find((d) => d.year === +this.tab)
+      return this.canteen.approDiagnostics.find((d) => d.year === +this.tab)
     },
     teledeclared() {
       return !!this.diagnosticForYear?.isTeledeclared
@@ -177,6 +199,7 @@ export default {
     },
     lastPurchaseDate() {
       if (!this.provisional) return
+      if (!this.diagnosticForYear) return
       // TODO: make this the date of the most recent purchase
       const date = new Date(this.diagnosticForYear.modificationDate)
       return date.toLocaleString("fr-FR", {
@@ -189,7 +212,7 @@ export default {
       return applicableDiagnosticRules(this.canteen)
     },
     hasPercentages() {
-      return "percentageValueTotalHt" in this.diagnosticForYear
+      return !!this.diagnosticForYear && "percentageValueTotalHt" in this.diagnosticForYear
     },
     meatEgalimPercentage() {
       return this.hasPercentages
@@ -207,10 +230,10 @@ export default {
         : getPercentage(this.diagnosticForYear.valueFishEgalimHt, this.diagnosticForYear.valueFishHt)
     },
     graphDiagnostics() {
-      if (!this.diagnosticSet || this.diagnosticSet.length === 0) return null
+      if (!this.canteen.approDiagnostics || this.canteen.approDiagnostics.length === 0) return null
       const diagnostics = {}
-      for (let i = 0; i < this.diagnosticSet.length; i++) {
-        const diagnostic = this.diagnosticSet[i]
+      for (let i = 0; i < this.canteen.approDiagnostics.length; i++) {
+        const diagnostic = this.canteen.approDiagnostics[i]
         diagnostics[diagnostic.year] = diagnostic
       }
       return diagnostics
@@ -222,6 +245,59 @@ export default {
   methods: {
     toPercentage(value) {
       return Math.round(value * 100)
+    },
+    updateDiagnosticPublication(value) {
+      if (!this.diagnosticForYear) {
+        this.$store.dispatch("notifyServerError")
+        return
+      }
+      const year = this.diagnosticForYear.year
+      if (!year) {
+        console.error("attempt to change redacted appro year without diagnostic year")
+        return
+      }
+      const toRedact = value === false
+      const redactedYears = [...new Set(this.redactedYears)] // get unique values just in case
+      if (toRedact) {
+        redactedYears.push(year)
+      } else {
+        const yearIdx = redactedYears.indexOf(year)
+        if (yearIdx > -1) {
+          redactedYears.splice(yearIdx, 1)
+        }
+      }
+      this.$set(this, "redactedYears", redactedYears)
+      const payload = {
+        redactedApproYears: this.redactedYears,
+      }
+      return this.$store
+        .dispatch("updateCanteen", {
+          id: this.canteen.id,
+          payload: payload,
+        })
+        .then(() => {
+          const descriptor = toRedact ? "dépubliées" : "publiées"
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: `Les données de ${this.diagnosticForYear.year} sont bien ${descriptor}`,
+          })
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+          return Promise.reject()
+        })
+    },
+    getPublicationState(year) {
+      return this.redactedYears.indexOf(year) === -1
+    },
+  },
+  mounted() {
+    this.publishedToggleState = this.getPublicationState(this.tab)
+  },
+  watch: {
+    tab(newValue) {
+      const year = +newValue
+      if (year !== newValue) this.publishedToggleState = this.getPublicationState(+newValue)
     },
   },
 }

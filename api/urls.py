@@ -17,7 +17,12 @@ from api.views import (
     TerritoryCanteensListView,
 )
 from api.views import UpdateUserView, UserCanteensView, CanteenStatisticsView
-from api.views import PublishedCanteensView, PublishManyCanteensView, PublishedCanteenSingleView
+from api.views import (
+    PublishedCanteensView,
+    PublicCanteenPreviewView,
+    PublishManyCanteensView,
+    PublishedCanteenSingleView,
+)
 from api.views import DiagnosticCreateView, RetrieveUpdateUserCanteenView, DiagnosticUpdateView
 from api.views import EmailDiagnosticImportFileView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
@@ -40,6 +45,11 @@ urlpatterns = {
     path("userInfo/", UserInfoView.as_view(), name="user_info"),
     path("user/<int:pk>", UpdateUserView.as_view(), name="update_user"),
     path("publishedCanteens/", PublishedCanteensView.as_view(), name="published_canteens"),
+    path(
+        "publicCanteenPreviews/<int:pk>",
+        PublicCanteenPreviewView.as_view(),
+        name="single_public_canteen_preview",
+    ),
     path(
         "publishedCanteens/<int:pk>",
         PublishedCanteenSingleView.as_view(),

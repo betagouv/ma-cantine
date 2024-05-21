@@ -315,6 +315,24 @@ class PublicDiagnosticSerializer(DiagnosticSerializer):
         return appro_to_percentages(representation, instance)
 
 
+class PublicApproDiagnosticSerializer(DiagnosticSerializer):
+    class Meta:
+        model = Diagnostic
+        fields = META_FIELDS + SIMPLE_APPRO_FIELDS
+        read_ony_fields = META_FIELDS + SIMPLE_APPRO_FIELDS
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return appro_to_percentages(representation, instance)
+
+
+class PublicServiceDiagnosticSerializer(DiagnosticSerializer):
+    class Meta:
+        model = Diagnostic
+        fields = META_FIELDS + NON_APPRO_FIELDS
+        read_ony_fields = META_FIELDS + NON_APPRO_FIELDS
+
+
 class ManagerDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
@@ -382,6 +400,13 @@ class CompleteTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
         model = Diagnostic
         fields = META_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
         read_only_fields = fields
+
+
+class ApproDiagnosticSerializer(DiagnosticSerializer):
+    class Meta:
+        model = Diagnostic
+        fields = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
+        read_ony_fields = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
 
 
 class ApproDeferredTeledeclarationDiagnosticSerializer(DiagnosticSerializer):

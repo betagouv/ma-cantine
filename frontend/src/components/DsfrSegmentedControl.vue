@@ -140,4 +140,10 @@ input:focus {
   color: #000091;
   // color: var(--text-active-blue-france);
 }
+input:focus + label {
+  outline-color: #0a76f6;
+  outline-offset: 2px;
+  outline-style: solid;
+  outline-width: 2px;
+}
 </style>

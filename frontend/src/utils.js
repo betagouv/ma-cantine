@@ -1,5 +1,4 @@
 import Constants from "@/constants"
-import jsonBadges from "@/badges"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
 
@@ -222,11 +221,16 @@ export const latestCreatedDiagnostic = (diagnostics) => {
   return diagnostic
 }
 
+export const toPercentage = (value, round = true) => {
+  if (!value) return null
+  return round ? Math.round(value * 100) : value * 100
+}
+
 export const getPercentage = (partialValue, totalValue, round = true) => {
   if (strictIsNaN(partialValue) || strictIsNaN(totalValue) || totalValue === 0) {
     return null
   } else {
-    return round ? Math.round((100 * partialValue) / totalValue) : (100 * partialValue) / totalValue
+    return toPercentage(partialValue / totalValue, round)
   }
 }
 
@@ -262,55 +266,6 @@ export const getApproPercentages = (diagnostic) => {
     meatPoultryFrance: getPercentage(valueMeatPoultryFrance, valueMeatPoultryTotal),
     fishEgalim: getPercentage(valueFishEgalim, valueFishTotal),
   }
-}
-
-export const badges = (canteen, diagnostic, sectors) => {
-  let applicable = JSON.parse(JSON.stringify(jsonBadges))
-  if (!diagnostic) return applicable
-  const bioPercent =
-    "percentageValueBioHt" in diagnostic
-      ? Math.round(diagnostic.percentageValueBioHt * 100)
-      : getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
-  const sustainablePercent =
-    "percentageValueSustainableHt" in diagnostic
-      ? Math.round(getSustainableTotal(diagnostic) * 100)
-      : getPercentage(getSustainableTotal(diagnostic), diagnostic.valueTotalHt)
-  const applicableRules = applicableDiagnosticRules(canteen)
-  if (
-    bioPercent >= applicableRules.bioThreshold &&
-    bioPercent + sustainablePercent >= applicableRules.qualityThreshold
-  ) {
-    applicable.appro.earned = true
-  }
-  if (
-    diagnostic.hasWasteDiagnostic &&
-    diagnostic.wasteActions?.length > 0 &&
-    (!applicableRules.hasDonationAgreement || diagnostic.hasDonationAgreement)
-  ) {
-    applicable.waste.earned = true
-  }
-  if (
-    diagnostic.cookingPlasticSubstituted &&
-    diagnostic.servingPlasticSubstituted &&
-    diagnostic.plasticBottlesSubstituted &&
-    diagnostic.plasticTablewareSubstituted
-  ) {
-    applicable.plastic.earned = true
-  }
-
-  const educationSectors = sectors.filter((s) => s.category === "education").map((s) => s.id)
-  const inEducation = canteen.sectors.some((s) => educationSectors.indexOf(s) > -1)
-  if (diagnostic.vegetarianWeeklyRecurrence === "DAILY") {
-    applicable.diversification.earned = true
-  } else if (inEducation) {
-    if (diagnostic.vegetarianWeeklyRecurrence === "MID" || diagnostic.vegetarianWeeklyRecurrence === "HIGH") {
-      applicable.diversification.earned = true
-    }
-  }
-  if (diagnostic.communicatesOnFoodQuality) {
-    applicable.info.earned = true
-  }
-  return applicable
 }
 
 // normalise "À fîrst" to "A FIRST"
