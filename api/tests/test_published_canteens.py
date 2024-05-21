@@ -55,7 +55,6 @@ class TestPublishedCanteenApi(APITestCase):
         published_canteen = CanteenFactory.create(publication_status="published")
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": published_canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         body = response.json()
         self.assertIn("badges", body)
 

@@ -135,8 +135,6 @@ import DsfrAccordion from "@/components/DsfrAccordion"
 import DsfrCallout from "@/components/DsfrCallout"
 import DsfrToggle from "@/components/DsfrToggle"
 
-const COMPARE_TAB = "Comparer"
-
 export default {
   name: "QualityMeasureResults",
   props: {
@@ -159,14 +157,22 @@ export default {
     DsfrToggle,
   },
   data() {
-    const tabs = this.approDiagnostics.map((d) => +d.year)
-    tabs.sort((a, b) => b - a)
-    tabs.push(COMPARE_TAB)
-    const tab = tabs[0]
+    const tabs = this.approDiagnostics.map((d) => ({
+      text: +d.year,
+      value: +d.year,
+      disabled: false,
+    }))
+    tabs.sort((a, b) => b.value - a.value)
+    const compareTab = {
+      text: "Comparer",
+      value: "Comparer",
+      disabled: tabs.length < 2,
+    }
+    tabs.push(compareTab)
     return {
       redactedYears: this.canteen.redactedApproYears || [],
       tabs,
-      tab,
+      tab: tabs[0].value,
       // it is published if it is not redacted
       publishedToggleState: undefined,
     }
