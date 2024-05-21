@@ -44,7 +44,7 @@ export default {
     return isChecked ? true : errorMessage
   },
   greaterThanZero(input) {
-    const errorMessage = "Ce champ doit contenir une chiffre supérieure à zéro"
+    const errorMessage = "Ce champ doit contenir un chiffre supérieur à zéro"
     if (!input) return errorMessage
     if (!isBase10Number(input)) return GENERIC_BASE_10_ERROR
     if (parseFloat(input) > 0) return true
@@ -156,7 +156,7 @@ export default {
   },
   isPercentageOrEmpty(input) {
     if (!input || input.length === 0) return true
-    const errorMessage = "Ce champ doit contenir une chiffre entre 0 et 100"
+    const errorMessage = "Ce champ doit contenir un chiffre entre 0 et 100"
     if (parseFloat(input) >= 0 && parseFloat(input) <= 100) return true
     return errorMessage
   },

@@ -38,7 +38,7 @@
     </div>
     <div v-else-if="!diagnosticForYear">
       <p>
-        Données pas disponibles
+        Données non disponibles
       </p>
     </div>
     <div v-else>
@@ -135,8 +135,6 @@ import DsfrAccordion from "@/components/DsfrAccordion"
 import DsfrCallout from "@/components/DsfrCallout"
 import DsfrToggle from "@/components/DsfrToggle"
 
-const COMPARE_TAB = "Comparer"
-
 export default {
   name: "QualityMeasureResults",
   props: {
@@ -160,15 +158,23 @@ export default {
   },
   data() {
     const approData = this.approDiagnostics
-    const tabs = approData.map((d) => +d.year)
-    tabs.sort((a, b) => b - a)
-    tabs.push(COMPARE_TAB)
-    const tab = tabs[0]
+    const tabs = approData.map((d) => ({
+      text: +d.year,
+      value: +d.year,
+      disabled: false,
+    }))
+    tabs.sort((a, b) => b.value - a.value)
+    const compareTab = {
+      text: "Comparer",
+      value: "Comparer",
+      disabled: tabs.length < 2,
+    }
+    tabs.push(compareTab)
     return {
       approData,
       redactedYears: this.canteen.redactedApproYears || [],
       tabs,
-      tab,
+      tab: tabs[0].value,
       // it is published if it is not redacted
       publishedToggleState: undefined,
       thisYear: new Date().getFullYear(),
@@ -293,8 +299,8 @@ export default {
           if (response) {
             response.year = this.thisYear
             this.approData.push(response)
-            this.tabs.unshift(this.thisYear)
-            if (this.tab === this.tabs[1]) this.tab = this.tabs[0]
+            this.tabs.unshift({ value: this.thisYear, text: this.thisYear, disabled: false })
+            if (this.tab === this.tabs[1].value) this.tab = this.tabs[0].value
           }
         })
     },

@@ -149,6 +149,10 @@ export default {
   background-color: #f6f6f6;
 }
 
+.v-card.dsfr.no-hover:hover {
+  background-color: inherit;
+}
+
 a:focus,
 button:focus,
 .v-input--checkbox:focus-within,
