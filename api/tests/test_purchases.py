@@ -1165,4 +1165,41 @@ class TestPublicPurchasesSummaryApi(APITestCase):
         body = response.json()
         self.assertNotIn("lastPurchaseDate", body)
 
-    # TODO: option to ignore redaction for canteen managers
+    @authenticate
+    def test_manager_can_optionally_get_redacted_purchases(self):
+        """
+        The manager of the canteen has an option to get redacted data
+        """
+        canteen = CanteenFactory.create(redacted_appro_years=[2024])
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(canteen=canteen, date="2024-01-01")
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
+            {"year": 2024, "ignoreRedaction": True},
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @authenticate
+    def test_non_manager_cannot_optionally_get_redacted_purchases(self):
+        """
+        Non-managers cannot get redacted canteen data
+        """
+        canteen = CanteenFactory.create(redacted_appro_years=[2024])
+        PurchaseFactory.create(canteen=canteen, date="2024-01-01")
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
+            {"year": 2024, "ignoreRedaction": True},
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_public_cannot_optionally_get_redacted_purchases_summary(self):
+        """
+        Public cannot get redacted canteen data
+        """
+        canteen = CanteenFactory.create(redacted_appro_years=[2024])
+        PurchaseFactory.create(canteen=canteen, date="2024-01-01")
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
+            {"year": 2024, "ignoreRedaction": True},
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

@@ -207,15 +207,21 @@ class CanteenPurchasesPercentageSummaryView(APIView):
             raise BadRequest("an integer is required for the year query parameter")
         except TypeError:
             raise BadRequest("the year query parameter is required")
-        if year in canteen.redacted_appro_years:
+
+        is_canteen_manager = IsCanteenManager().has_object_permission(request, self, canteen)
+        ignore_redaction = is_canteen_manager and request.query_params.get("ignoreRedaction")
+        if not ignore_redaction and year in canteen.redacted_appro_years:
             raise NotFound()
+
         data = canteen_summary_for_year(canteen, year)
         if data["value_total_ht"] == 0:
             raise NotFound()
-        if IsCanteenManager().has_object_permission(request, self, canteen):
+
+        if is_canteen_manager:
             data["last_purchase_date"] = (
                 Purchase.objects.only("date").filter(canteen=canteen, date__year=year).latest("date").date
             )
+
         return Response(PurchasePercentageSummarySerializer(data).data)
 
     def _get_canteen(self, canteen_id, request):
