@@ -493,6 +493,8 @@ class UnpublishCanteenView(APIView):
     required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
+        if settings.PUBLISH_BY_DEFAULT:
+            raise BadRequest("Cannot unpublish canteen")
         try:
             data = request.data
             canteen_id = kwargs.get("pk")

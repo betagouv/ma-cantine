@@ -1,5 +1,6 @@
 from data.models.canteen import Canteen
 from data.factories.canteen import CanteenFactory
+from django.test.utils import override_settings
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -149,4 +150,14 @@ class TestPublishCanteen(APITestCase):
         canteen_2.refresh_from_db()
         self.assertEqual(canteen_2.publication_status, Canteen.PublicationStatus.DRAFT)
 
-    # TODO: add test for modifying redacted years. Adding, removing, and bad requests
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    @authenticate
+    def test_cannot_unpublish_canteen(self):
+        """
+        Calling the unpublish endpoint when we have moved to publish by default does nothing
+        """
+        canteen = CanteenFactory.create(publication_status="published")
+        canteen.managers.add(authenticate.user)
+        response = self.client.post(reverse("unpublish_canteen", kwargs={"pk": canteen.id}))
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
