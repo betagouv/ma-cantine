@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-8">
+  <div>
     <CentralKitchenInfo :canteen="canteen" />
 
     <p v-if="canteen.badges.appro">
@@ -12,107 +12,109 @@
     </p>
     <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
 
-    <v-row class="align-end flex-wrap mb-4">
-      <v-col>
-        <DsfrSegmentedControl v-model="tab" legend="Bilan par période" :noLegend="editable" :items="tabs" />
-      </v-col>
-      <v-col v-if="!editable && diagnosticForYear" align="right">
-        <DsfrCallout icon=" " :color="color" class="py-6 pr-14 my-0" style="width: fit-content;">
-          <div class="text-left">
+    <div v-if="tabs.length" class="mb-8">
+      <v-row class="align-end flex-wrap mb-4">
+        <v-col>
+          <DsfrSegmentedControl v-model="tab" legend="Bilan par période" :noLegend="editable" :items="tabs" />
+        </v-col>
+        <v-col v-if="!editable && diagnosticForYear" align="right">
+          <DsfrCallout icon=" " :color="color" class="py-6 pr-14 my-0" style="width: fit-content;">
+            <div class="text-left">
+              <p class="mb-0">
+                <b v-if="teledeclared">Données officielles</b>
+                <b v-else-if="provisional">Données provisoires</b>
+                <b v-else>Données non télédéclarées</b>
+              </p>
+            </div>
+            <!-- TODO: link to article -->
+          </DsfrCallout>
+        </v-col>
+      </v-row>
+      <div v-if="tab === 'Comparer'">
+        <MultiYearSummaryStatistics
+          :diagnostics="graphDiagnostics"
+          headingId="appro-heading"
+          height="260"
+          :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
+          :applicableRules="applicableRules"
+          colorTheme="grey"
+        />
+      </div>
+      <div v-else-if="!diagnosticForYear">
+        <p>
+          Données non disponibles
+        </p>
+      </div>
+      <div v-else>
+        <DsfrCallout v-if="editable" icon=" " :color="color" class="my-4 py-4 pr-14">
+          <div v-if="teledeclared" class="py-4">
             <p class="mb-0">
-              <b v-if="teledeclared">Données officielles</b>
-              <b v-else-if="provisional">Données provisoires</b>
-              <b v-else>Données non télédéclarées</b>
+              <b>Données officielles {{ tab }} télédéclarées</b>
+              : le bilan ci-dessous a été officiellement transmis à l’administration et il est pris en compte dans le
+              rapport annuel public remis au Parlement. Vos données sont publiées par défaut sur votre vitrine en ligne.
             </p>
           </div>
-          <!-- TODO: link to article -->
+          <DsfrToggle
+            v-else
+            v-model="publishedToggleState"
+            @input="updateDiagnosticPublication"
+            :labelLeft="true"
+            checkedLabel="Visible"
+            uncheckedLabel="Caché"
+          >
+            <template v-slot:label>
+              <span v-if="provisional" class="mb-0">
+                <b>Total des achats au {{ lastPurchaseDate }}</b>
+                : le bilan provisoire ci-dessous est réalisé à partir des données d’achat au {{ lastPurchaseDate }}. Vos
+                données sont visibles par défaut sur votre affiche et en ligne.
+              </span>
+              <span v-else>
+                <!-- TODO: DSFR recommends labels be <= 3 words long -->
+                <b>Données non télédéclarées</b>
+                : le bilan des achats de l'année {{ tab }} n'a pas été officiellement télédéclaré à l'administration. Il
+                est visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
+              </span>
+            </template>
+          </DsfrToggle>
         </DsfrCallout>
-      </v-col>
-    </v-row>
-    <div v-if="tab === 'Comparer'">
-      <MultiYearSummaryStatistics
-        :diagnostics="graphDiagnostics"
-        headingId="appro-heading"
-        height="260"
-        :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
-        :applicableRules="applicableRules"
-        colorTheme="grey"
-      />
-    </div>
-    <div v-else-if="!diagnosticForYear">
-      <p>
-        Données non disponibles
-      </p>
-    </div>
-    <div v-else>
-      <DsfrCallout v-if="editable" icon=" " :color="color" class="my-4 py-4 pr-14">
-        <div v-if="teledeclared" class="py-4">
-          <p class="mb-0">
-            <b>Données officielles {{ tab }} télédéclarées</b>
-            : le bilan ci-dessous a été officiellement transmis à l’administration et il est pris en compte dans le
-            rapport annuel public remis au Parlement. Vos données sont publiées par défaut sur votre vitrine en ligne.
-          </p>
-        </div>
-        <div v-else-if="provisional" class="py-4">
-          <p class="mb-0">
-            <b>Total des achats au {{ lastPurchaseDate }}</b>
-            : le bilan provisoire ci-dessous est réalisé à partir des données d’achat au {{ lastPurchaseDate }}. Vos
-            données sont visibles par défaut sur votre affiche et en ligne.
-          </p>
-        </div>
-        <DsfrToggle
-          v-else
-          v-model="publishedToggleState"
-          @input="updateDiagnosticPublication"
-          :labelLeft="true"
-          checkedLabel="Visible"
-          uncheckedLabel="Caché"
-        >
-          <template v-slot:label>
-            <!-- TODO: DSFR recommends labels be <= 3 words long -->
-            <b>Données non télédéclarées</b>
-            : le bilan des achats de l'année {{ tab }} n'a pas été officiellement télédéclaré à l'administration. Il est
-            visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
-          </template>
-        </DsfrToggle>
-      </DsfrCallout>
 
-      <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" class="my-8" />
+        <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" class="my-8" />
 
-      <div v-if="hasFamilyDetail">
-        <DsfrAccordion :items="[{ title: 'Détail par famille de produit' }]" class="mb-2">
-          <template v-slot:content>
-            <v-row class="text-center pt-3 pb-2">
-              <v-col cols="12" sm="4" class="pa-4">
-                <v-icon large class="grey--text text--darken-3 mb-2">$award-line</v-icon>
-                <p class="mb-0">
-                  <span class="font-weight-bold percentage">{{ meatEgalimPercentage || "—" }} %</span>
-                  de viandes et volailles
-                  <br />
-                  EGAlim
-                </p>
-              </v-col>
-              <v-col cols="12" sm="4" class="pa-4">
-                <v-icon large class="grey--text text--darken-3 mb-2">$france-line</v-icon>
-                <p class="mb-0">
-                  <span class="font-weight-bold percentage">{{ meatFrancePercentage || "—" }} %</span>
-                  de viandes et volailles
-                  <br />
-                  provenance France
-                </p>
-              </v-col>
-              <v-col cols="12" sm="4" class="pa-4">
-                <v-icon large class="grey--text text--darken-3 mb-2">$anchor-line</v-icon>
-                <p class="mb-0">
-                  <span class="font-weight-bold percentage">{{ fishEgalimPercentage || "—" }} %</span>
-                  de produits de la mer
-                  <br />
-                  et aquaculture EGAlim
-                </p>
-              </v-col>
-            </v-row>
-          </template>
-        </DsfrAccordion>
+        <div v-if="hasFamilyDetail">
+          <DsfrAccordion :items="[{ title: 'Détail par famille de produit' }]" class="mb-2">
+            <template v-slot:content>
+              <v-row class="text-center pt-3 pb-2">
+                <v-col cols="12" sm="4" class="pa-4">
+                  <v-icon large class="grey--text text--darken-3 mb-2">$award-line</v-icon>
+                  <p class="mb-0">
+                    <span class="font-weight-bold percentage">{{ meatEgalimPercentage || "—" }} %</span>
+                    de viandes et volailles
+                    <br />
+                    EGAlim
+                  </p>
+                </v-col>
+                <v-col cols="12" sm="4" class="pa-4">
+                  <v-icon large class="grey--text text--darken-3 mb-2">$france-line</v-icon>
+                  <p class="mb-0">
+                    <span class="font-weight-bold percentage">{{ meatFrancePercentage || "—" }} %</span>
+                    de viandes et volailles
+                    <br />
+                    provenance France
+                  </p>
+                </v-col>
+                <v-col cols="12" sm="4" class="pa-4">
+                  <v-icon large class="grey--text text--darken-3 mb-2">$anchor-line</v-icon>
+                  <p class="mb-0">
+                    <span class="font-weight-bold percentage">{{ fishEgalimPercentage || "—" }} %</span>
+                    de produits de la mer
+                    <br />
+                    et aquaculture EGAlim
+                  </p>
+                </v-col>
+              </v-row>
+            </template>
+          </DsfrAccordion>
+        </div>
       </div>
     </div>
     <EditableCommentsField
@@ -123,6 +125,7 @@
       helpText="Si vous le souhaitez, ajoutez des précisions sur vos résultats : actions entreprises, priorités à venir..."
       cta="Modifier le commentaire"
       :charLimit="500"
+      class="mb-8"
     />
   </div>
 </template>
@@ -160,39 +163,29 @@ export default {
     DsfrToggle,
   },
   data() {
-    const tabs = this.approDiagnostics.map((d) => ({
-      text: +d.year,
-      value: +d.year,
-      disabled: false,
-    }))
-    tabs.sort((a, b) => b.value - a.value)
-    const compareTab = {
-      text: "Comparer",
-      value: "Comparer",
-      disabled: tabs.length < 2,
-    }
-    tabs.push(compareTab)
     return {
+      approData: this.approDiagnostics,
       redactedYears: this.canteen.redactedApproYears || [],
-      tabs,
-      tab: tabs[0].value,
+      tabs: [],
+      tab: undefined,
       // it is published if it is not redacted
       publishedToggleState: undefined,
+      thisYear: new Date().getFullYear(),
     }
   },
   computed: {
     diagnostic() {
-      if (!this.approDiagnostics) return
-      return latestCreatedDiagnostic(this.approDiagnostics)
+      if (!this.approData) return
+      return latestCreatedDiagnostic(this.approData)
     },
     diagnosticForYear() {
-      return this.canteen.approDiagnostics.find((d) => d.year === +this.tab)
+      return this.approData.find((d) => d.year === +this.tab)
     },
     teledeclared() {
       return !!this.diagnosticForYear?.isTeledeclared
     },
     provisional() {
-      return !!this.diagnosticForYear?.year >= new Date().getFullYear()
+      return this.diagnosticForYear?.year >= this.thisYear
     },
     color() {
       // these are the same as the colours for "bio" in ApproGraph
@@ -203,8 +196,7 @@ export default {
     lastPurchaseDate() {
       if (!this.provisional) return
       if (!this.diagnosticForYear) return
-      // TODO: make this the date of the most recent purchase
-      const date = new Date(this.diagnosticForYear.modificationDate)
+      const date = new Date(this.diagnosticForYear.lastPurchaseDate)
       return date.toLocaleString("fr-FR", {
         day: "numeric",
         month: "long",
@@ -233,10 +225,10 @@ export default {
         : getPercentage(this.diagnosticForYear.valueFishEgalimHt, this.diagnosticForYear.valueFishHt)
     },
     graphDiagnostics() {
-      if (!this.canteen.approDiagnostics || this.canteen.approDiagnostics.length === 0) return null
+      if (!this.approData || this.approData.length === 0) return null
       const diagnostics = {}
-      for (let i = 0; i < this.canteen.approDiagnostics.length; i++) {
-        const diagnostic = this.canteen.approDiagnostics[i]
+      for (let i = 0; i < this.approData.length; i++) {
+        const diagnostic = this.approData[i]
         diagnostics[diagnostic.year] = diagnostic
       }
       return diagnostics
@@ -293,9 +285,42 @@ export default {
     getPublicationState(year) {
       return this.redactedYears.indexOf(year) === -1
     },
+    getPurchasesSummary() {
+      return fetch(
+        `/api/v1/canteenPurchasesPercentageSummary/${this.canteen.id}?year=${this.thisYear}&ignoreRedaction=${this.editable}`
+      )
+        .then((response) => (response.ok ? response.json() : undefined))
+        .then((response) => {
+          if (response) {
+            response.year = this.thisYear
+            this.approData.push(response)
+          }
+        })
+    },
+    makeTabs() {
+      const tabs = this.approData.map((d) => ({
+        text: +d.year,
+        value: +d.year,
+        disabled: false,
+      }))
+      tabs.sort((a, b) => b.value - a.value)
+      if (tabs.length) {
+        const compareTab = {
+          text: "Comparer",
+          value: "Comparer",
+          disabled: tabs.length < 2,
+        }
+        tabs.push(compareTab)
+      }
+      this.tabs = tabs
+      this.tab = tabs[0].value
+    },
   },
   mounted() {
-    this.publishedToggleState = this.getPublicationState(this.tab)
+    return this.getPurchasesSummary().finally(() => {
+      this.makeTabs()
+      this.publishedToggleState = this.getPublicationState(this.tab)
+    })
   },
   watch: {
     tab(newValue) {
