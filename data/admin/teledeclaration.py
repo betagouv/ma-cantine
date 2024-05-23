@@ -22,7 +22,7 @@ class TeledeclarationInline(admin.TabularInline):
 
 
 @admin.action(description="Marquer les télédéclarations comme incorrectes")
-def void_a_teledeclaration(modeladmin, request, queryset):
+def void_teledeclarations(modeladmin, request, queryset):
     queryset.update(status="VOIDED")
 
 
