@@ -71,6 +71,8 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
             "publication_status",
         )
 
+    # TODO: get_publication_status
+
 
 class BadgesSerializer(serializers.ModelSerializer):
     year = serializers.IntegerField(source="latest_published_year")
@@ -204,6 +206,8 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         return user in obj.managers.all()
 
+    # TODO: get_publication_status
+
 
 class SatelliteCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
@@ -226,6 +230,8 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
         # thanks to https://stackoverflow.com/questions/59430930/how-can-i-access-request-object-within-a-custom-serializer-field-in-the-django-r
         user = self.context["request"].user
         return obj.managers.filter(pk=user.pk).exists()
+
+    # TODO: get_publication_status
 
 
 class FullCanteenSerializer(serializers.ModelSerializer):
@@ -363,6 +369,8 @@ class FullCanteenSerializer(serializers.ModelSerializer):
         except Canteen.MultipleObjectsReturned as e:
             logger.exception(f"Multiple canteens returned when obtaining the central_producer_siret field {e}")
             return None
+
+    # TODO: get_publication_status
 
 
 class CanteenPreviewSerializer(serializers.ModelSerializer):
