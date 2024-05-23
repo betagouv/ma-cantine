@@ -14,7 +14,7 @@ class TeledeclarationForm(forms.ModelForm):
 
 class TeledeclarationInline(admin.TabularInline):
     model = Teledeclaration
-    show_change_link = False
+    show_change_link = True
     can_delete = False
     fields = ("year", "creation_date", "status", "applicant")
     readonly_fields = fields
