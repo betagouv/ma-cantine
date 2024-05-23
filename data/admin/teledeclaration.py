@@ -21,7 +21,7 @@ class TeledeclarationInline(admin.TabularInline):
     extra = 0
 
 
-@admin.action(description="Make the teledeclaration editable")
+@admin.action(description="Marquer les télédéclarations comme incorrectes")
 def void_a_teledeclaration(modeladmin, request, queryset):
     queryset.update(status="VOIDED")
 
