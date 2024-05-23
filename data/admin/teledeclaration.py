@@ -20,6 +20,9 @@ class TeledeclarationInline(admin.TabularInline):
     readonly_fields = fields
     extra = 0
 
+    def has_change_permission(self, request, obj=None):
+        return False
+
 
 @admin.register(Teledeclaration)
 class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
