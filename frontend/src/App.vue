@@ -165,6 +165,10 @@ div[role="tab"]:focus {
   outline-style: auto !important;
 }
 
+.v-btn.primary:hover {
+  background-color: #1212ff !important;
+}
+
 .v-expansion-panel-header__icon > .v-icon {
   font-size: 1rem;
 }
