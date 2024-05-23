@@ -3,6 +3,7 @@ import datetime
 from datetime import date
 from django.urls import reverse
 from django.utils import timezone
+from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, SectorFactory
@@ -14,7 +15,7 @@ CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestPublicCanteenPreviewsApi(APITestCase):
-    def test_get_published_canteens(self):
+    def test_deprecated_get_published_canteens(self):
         """
         Only published canteens with public data should be
         returned from this call
@@ -32,6 +33,42 @@ class TestPublicCanteenPreviewsApi(APITestCase):
 
         body = response.json()
         self.assertEqual(body.get("count"), 2)
+
+        results = body.get("results", [])
+
+        for published_canteen in published_canteens:
+            self.assertTrue(any(x["id"] == published_canteen.id for x in results))
+
+        for private_canteen in private_canteens:
+            self.assertFalse(any(x["id"] == private_canteen.id for x in results))
+
+        for recieved_canteen in results:
+            self.assertFalse("managers" in recieved_canteen)
+            self.assertFalse("managerInvitations" in recieved_canteen)
+
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    def test_get_published_canteens(self):
+        """
+        All canteens except with line ministry ARMEE should be public, regardless of publication status
+        """
+        published_canteens = [
+            CanteenFactory.create(line_ministry=Canteen.Ministries.AFFAIRES_ETRANGERES),
+            CanteenFactory.create(line_ministry=None),
+            CanteenFactory.create(
+                line_ministry=Canteen.Ministries.AUTRE, publication_status=Canteen.PublicationStatus.DRAFT
+            ),
+        ]
+        private_canteens = [
+            CanteenFactory.create(line_ministry=Canteen.Ministries.ARMEE),
+            CanteenFactory.create(
+                line_ministry=Canteen.Ministries.ARMEE, publication_status=Canteen.PublicationStatus.PUBLISHED
+            ),
+        ]
+        response = self.client.get(reverse("published_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body.get("count"), 3)
 
         results = body.get("results", [])
 

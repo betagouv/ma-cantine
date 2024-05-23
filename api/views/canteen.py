@@ -54,16 +54,22 @@ logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
+# TODO: look into a more elegant approach, ideally like Canteen.objects.filter_published_canteens()
+# that is chainable like other queryset methods
+def filter_published_canteens(canteen_queryset):
+    if settings.PUBLISH_BY_DEFAULT:
+        return canteen_queryset.exclude(line_ministry=Canteen.Ministries.ARMEE)
+    else:
+        return canteen_queryset.filter(publication_status="published")
+
+
 class PublishedCanteenSingleView(RetrieveAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
     queryset = Canteen.objects
 
     def get_queryset(self):
-        if settings.PUBLISH_BY_DEFAULT:
-            return super().get_queryset().exclude(line_ministry=Canteen.Ministries.ARMEE)
-        else:
-            return super().get_queryset().filter(publication_status="published")
+        return filter_published_canteens(super().get_queryset())
 
 
 class ProductionTypeInFilter(BaseInFilter, CharFilter):
@@ -85,6 +91,7 @@ class PublishedCanteensPagination(LimitOffsetPagination):
         self.management_types = set(filter(lambda x: x, queryset.values_list("management_type", flat=True)))
         self.production_types = set(filter(lambda x: x, queryset.values_list("production_type", flat=True)))
 
+        # TODO: why do we create the published_canteens queryset instead of using the queryset argument?
         published_canteens = Canteen.objects.filter(publication_status="published")
         query_params = request.query_params
 
@@ -253,7 +260,7 @@ def filter_by_diagnostic_params(queryset, query_params):
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenPreviewSerializer
-    queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
+    queryset = Canteen.objects
     pagination_class = PublishedCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -263,6 +270,9 @@ class PublishedCanteensView(ListAPIView):
     search_fields = ["name", "siret"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
     filterset_class = PublishedCanteenFilterSet
+
+    def get_queryset(self):
+        return filter_published_canteens(super().get_queryset())
 
     def filter_queryset(self, queryset):
         new_queryset = filter_by_diagnostic_params(queryset, self.request.query_params)
