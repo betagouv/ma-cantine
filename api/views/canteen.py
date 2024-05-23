@@ -854,9 +854,7 @@ class CanteenStatisticsView(APIView):
 
         canteens = CanteenStatisticsView._filter_canteens(regions, departments, city_insee_codes, sector_categories)
         data["canteen_count"] = canteens.count()
-        data["published_canteen_count"] = canteens.filter(
-            publication_status=Canteen.PublicationStatus.PUBLISHED
-        ).count()
+        data["published_canteen_count"] = filter_published_canteens(canteens).count()
 
         diagnostics = CanteenStatisticsView._filter_diagnostics(
             year, regions, departments, city_insee_codes, sector_categories

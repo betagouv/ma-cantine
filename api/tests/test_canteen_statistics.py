@@ -1,3 +1,4 @@
+from django.test.utils import override_settings
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -501,3 +502,25 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 5)
         self.assertEqual(body["epciError"], "Une erreur est survenue")
+
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    def test_published_canteen_count(self):
+        """
+        The summary published canteen count should be the sum of all canteens not with ARMEE
+        """
+        CanteenFactory.create(
+            line_ministry=Canteen.Ministries.AGRICULTURE,
+            publication_status=Canteen.PublicationStatus.DRAFT,
+        )
+        CanteenFactory.create(line_ministry=None)
+        CanteenFactory.create(
+            line_ministry=Canteen.Ministries.ARMEE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+        )
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": 2024})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["publishedCanteenCount"], 2)
