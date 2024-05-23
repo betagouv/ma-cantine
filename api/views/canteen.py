@@ -57,7 +57,13 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 class PublishedCanteenSingleView(RetrieveAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
-    queryset = Canteen.objects.filter(publication_status="published")
+    queryset = Canteen.objects
+
+    def get_queryset(self):
+        if settings.PUBLISH_BY_DEFAULT:
+            return super().get_queryset().exclude(line_ministry=Canteen.Ministries.ARMEE)
+        else:
+            return super().get_queryset().filter(publication_status="published")
 
 
 class ProductionTypeInFilter(BaseInFilter, CharFilter):
