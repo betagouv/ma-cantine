@@ -24,6 +24,7 @@ class CustomJSONEncoder(DjangoJSONEncoder):
 class Teledeclaration(models.Model):
     class TeledeclarationStatus(models.TextChoices):
         SUBMITTED = "SUBMITTED", "Télédéclaré"
+        VOIDED = "VOIDED", "Corrigé"
         CANCELLED = "CANCELLED", "Annulé"
 
     class Meta:
