@@ -2,6 +2,7 @@ import logging
 from rest_framework import serializers
 from drf_base64.fields import Base64ImageField
 from data.models import Canteen, Sector, CanteenImage, Diagnostic
+from django.conf import settings
 from .diagnostic import PublicDiagnosticSerializer, FullDiagnosticSerializer, CentralKitchenDiagnosticSerializer
 from .diagnostic import ApproDiagnosticSerializer
 from .diagnostic import PublicApproDiagnosticSerializer, PublicServiceDiagnosticSerializer
@@ -56,6 +57,8 @@ class MediaListSerializer(serializers.ListSerializer):
 
 
 class MinimalCanteenSerializer(serializers.ModelSerializer):
+    publication_status = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Canteen
         read_only_fields = (
@@ -71,7 +74,12 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
             "publication_status",
         )
 
-    # TODO: get_publication_status
+    def get_publication_status(self, obj):
+        if not settings.PUBLISH_BY_DEFAULT:
+            return obj.publication_status
+        if obj.line_ministry == Canteen.Ministries.ARMEE:
+            return Canteen.PublicationStatus.DRAFT
+        return Canteen.PublicationStatus.PUBLISHED
 
 
 class BadgesSerializer(serializers.ModelSerializer):
