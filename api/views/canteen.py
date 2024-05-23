@@ -91,34 +91,31 @@ class PublishedCanteensPagination(LimitOffsetPagination):
         self.management_types = set(filter(lambda x: x, queryset.values_list("management_type", flat=True)))
         self.production_types = set(filter(lambda x: x, queryset.values_list("production_type", flat=True)))
 
-        # TODO: why do we create the published_canteens queryset instead of using the queryset argument?
-        published_canteens = Canteen.objects.filter(publication_status="published")
+        # Prepare sector filter options:
+        # we want to return all sectors that are available after the other filters,
+        # because the user can select multiple sectors (unlike other filter options)
+        all_sector_canteens = Canteen.objects.filter(publication_status="published")
         query_params = request.query_params
-
         if query_params.get("department"):
-            published_canteens = published_canteens.filter(department=query_params.get("department"))
-
+            all_sector_canteens = all_sector_canteens.filter(department=query_params.get("department"))
         if query_params.get("region"):
-            published_canteens = published_canteens.filter(region=query_params.get("region"))
-
+            all_sector_canteens = all_sector_canteens.filter(region=query_params.get("region"))
         if query_params.get("min_daily_meal_count"):
-            published_canteens = published_canteens.filter(
+            all_sector_canteens = all_sector_canteens.filter(
                 daily_meal_count__gte=query_params.get("min_daily_meal_count")
             )
-
         if query_params.get("max_daily_meal_count"):
-            published_canteens = published_canteens.filter(
+            all_sector_canteens = all_sector_canteens.filter(
                 daily_meal_count__lte=query_params.get("max_daily_meal_count")
             )
-
         if query_params.get("management_type"):
-            published_canteens = published_canteens.filter(management_type=query_params.get("management_type"))
-
-        published_canteens = filter_by_diagnostic_params(published_canteens, query_params)
+            all_sector_canteens = all_sector_canteens.filter(management_type=query_params.get("management_type"))
+        all_sector_canteens = filter_by_diagnostic_params(all_sector_canteens, query_params)
 
         self.sectors = (
-            Sector.objects.filter(canteen__in=list(published_canteens)).values_list("id", flat=True).distinct()
+            Sector.objects.filter(canteen__in=list(all_sector_canteens)).values_list("id", flat=True).distinct()
         )
+
         return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
