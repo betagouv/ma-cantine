@@ -68,7 +68,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "applicant__email",
     )
 
-    actions = [void_a_teledeclaration]
+    actions = [void_teledeclarations]
 
     def canteen_name(self, obj):
         return obj.declared_data["canteen"]["name"]
