@@ -94,7 +94,7 @@ class PublishedCanteensPagination(LimitOffsetPagination):
         # Prepare sector filter options:
         # we want to return all sectors that are available after the other filters,
         # because the user can select multiple sectors (unlike other filter options)
-        all_sector_canteens = Canteen.objects.filter(publication_status="published")
+        all_sector_canteens = filter_published_canteens(Canteen.objects)
         query_params = request.query_params
         if query_params.get("department"):
             all_sector_canteens = all_sector_canteens.filter(department=query_params.get("department"))

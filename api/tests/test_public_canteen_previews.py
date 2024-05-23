@@ -574,7 +574,7 @@ class TestPublicCanteenSearchApi(APITestCase):
         self.assertIn("75", body.get("departments"))
         self.assertIn("69", body.get("departments"))
 
-    def test_pagination_sectors(self):
+    def test_deprecated_pagination_sectors(self):
         """
         The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
         """
@@ -587,6 +587,40 @@ class TestPublicCanteenSearchApi(APITestCase):
         CanteenFactory.create(publication_status="published", sectors=[school], name="Wasabi")
         CanteenFactory.create(publication_status="published", sectors=[school], name="Mochi")
         CanteenFactory.create(publication_status="published", sectors=[administration], name="Umami")
+
+        url = f"{reverse('published_canteens')}"
+        response = self.client.get(url)
+        body = response.json()
+
+        self.assertEqual(len(body.get("sectors")), 3)
+        self.assertIn(school.id, body.get("sectors"))
+        self.assertIn(enterprise.id, body.get("sectors"))
+        self.assertIn(administration.id, body.get("sectors"))
+
+        url = f"{reverse('published_canteens')}?sectors={enterprise.id}"
+        response = self.client.get(url)
+        body = response.json()
+
+        self.assertEqual(len(body.get("sectors")), 3)
+        self.assertIn(school.id, body.get("sectors"))
+        self.assertIn(enterprise.id, body.get("sectors"))
+        self.assertIn(administration.id, body.get("sectors"))
+
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    def test_pagination_sectors(self):
+        """
+        The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
+        It should not return sectors from hidden canteens
+        """
+        school = SectorFactory.create(name="School")
+        enterprise = SectorFactory.create(name="Enterprise")
+        administration = SectorFactory.create(name="Administration")
+        # unused sectors shouldn't show up as an option
+        unused = SectorFactory.create(name="Unused")
+        CanteenFactory.create(line_ministry=None, sectors=[school, enterprise], name="Shiso")
+        CanteenFactory.create(line_ministry=None, sectors=[school, administration], name="Umami")
+
+        CanteenFactory.create(line_ministry=Canteen.Ministries.ARMEE, sectors=[unused], name="Secret")
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
