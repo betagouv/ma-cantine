@@ -21,11 +21,6 @@ class TeledeclarationInline(admin.TabularInline):
     extra = 0
 
 
-@admin.action(description="Marquer les télédéclarations comme incorrectes")
-def void_teledeclarations(modeladmin, request, queryset):
-    queryset.update(status="VOIDED")
-
-
 @admin.register(Teledeclaration)
 class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
     form = TeledeclarationForm
@@ -67,8 +62,6 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "applicant__username",
         "applicant__email",
     )
-
-    actions = [void_teledeclarations]
 
     def canteen_name(self, obj):
         return obj.declared_data["canteen"]["name"]
