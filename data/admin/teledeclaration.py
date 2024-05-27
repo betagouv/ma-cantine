@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib import admin
 from data.models import Teledeclaration
-from .historyauthenticationmethod import AuthenticationMethodHistoricalRecordsMixin
 from simple_history.admin import SimpleHistoryAdmin
 from .utils import ReadOnlyAdminMixin
 
@@ -37,7 +36,7 @@ class TeledeclarationInline(admin.TabularInline):
 
 
 @admin.register(Teledeclaration)
-class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin, AuthenticationMethodHistoricalRecordsMixin):
+class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
     form = TeledeclarationForm
     list_display = (
         "canteen_name",
@@ -46,6 +45,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin, Authenticatio
         "creation_date",
         "status",
     )
+    history_list_display = ["authentication_method"]
     list_filter = ("year", "status")
     fields = (
         "canteen",
