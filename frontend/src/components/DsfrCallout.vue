@@ -9,6 +9,7 @@
     @input="(v) => $emit('input', v)"
     style="background: #eeeeee;"
   >
+    <!-- TODO: consider using a different component if we don't want role="alert" -->
     <slot />
   </v-alert>
 </template>

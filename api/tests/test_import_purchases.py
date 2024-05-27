@@ -47,6 +47,19 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.first().import_source, filehash_md5)
 
     @authenticate
+    def test_import_comma_separated_numbers(self):
+        """
+        Tests that can import a file with comma-separated numbers
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        with open("./api/tests/files/comma_separated_purchase_import.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+        purchase = Purchase.objects.filter(description="Pommes, rouges").first()
+        self.assertEqual(purchase.price_ht, Decimal("90.11"))
+
+    @authenticate
     def test_import_with_no_local_definition(self):
         """
         Tests that can import a file without local definition
@@ -164,6 +177,19 @@ class TestPurchaseImport(APITestCase):
             errors.pop(0)["message"],
             "Format fichier : 7-8 colonnes attendues, 6 trouvées.",
         )
+
+    @authenticate
+    def test_import_corrupt_purchases_file(self):
+        """
+        A reasonable error should be thrown
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        with open("./api/tests/files/corrupt_purchase_import.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
+        errors = response.json()["errors"]
+        self.assertEqual(errors.pop(0)["message"], "Format fichier : 7-8 colonnes attendues, 1 trouvées.")
 
     @authenticate
     def test_warn_duplicate_file(self):

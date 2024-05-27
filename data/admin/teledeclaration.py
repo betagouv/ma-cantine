@@ -23,11 +23,17 @@ class TeledeclarationForm(forms.ModelForm):
 
 class TeledeclarationInline(admin.TabularInline):
     model = Teledeclaration
-    show_change_link = False
+    show_change_link = True
     can_delete = False
     fields = ("year", "creation_date", "status", "applicant")
     readonly_fields = fields
     extra = 0
+
+    def has_add_permission(self, request, obj):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(Teledeclaration)

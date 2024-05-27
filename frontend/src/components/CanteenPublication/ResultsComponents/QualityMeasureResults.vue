@@ -1,294 +1,331 @@
 <template>
-  <div class="mb-8">
-    <p v-if="badge.earned" class="mb-0">
-      Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
-      et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
-      <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+  <div>
+    <CentralKitchenInfo :canteen="canteen" />
+
+    <p v-if="canteen.badges.appro">
+      <span v-if="applicableRules.qualityThreshold !== 50">
+        Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
+        et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
+        <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+      </span>
+      <span v-else>{{ badge.subtitle }}</span>
     </p>
     <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
-    <div v-if="showPercentagesBlock">
-      <h2 class="font-weight-black text-h6 grey--text text--darken-4 my-4">
-        Que mange-t-on dans les assiettes en {{ publicationYear }} ?
-      </h2>
 
-      <v-card outlined elevation="0" color="primary lighten-5" class="d-flex mb-6" v-if="usesCentralKitchenDiagnostics">
-        <v-icon class="ml-4" color="primary">$information-fill</v-icon>
-
-        <v-card-text>
-          <p class="mb-0">
-            La cantine « {{ canteen.name }} » sert des repas cuisinés dans la cuisine centrale
-            <span v-if="canteen.centralKitchen.publicationStatus === 'published'">
-              <router-link
-                :to="{
-                  name: 'CanteenPage',
-                  params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen.centralKitchen) },
-                }"
-              >
-                « {{ canteen.centralKitchen.name }} »
-              </router-link>
-              .
-            </span>
-            <span v-else>« {{ canteen.centralKitchen.name }} ».</span>
-            Les valeurs ci-dessous sont celles du lieu de production des repas.
-          </p>
-        </v-card-text>
-      </v-card>
-
-      <h3
-        class="font-weight-black text-body-1 grey--text text--darken-4 my-4"
-        v-if="
-          diagnostic.diagnosticType === 'COMPLETE' ||
-            meatEgalimPercentage ||
-            meatFrancePercentage ||
-            fishEgalimPercentage
-        "
-      >
-        Total
-      </h3>
-      <v-row>
-        <v-col cols="12" sm="6" md="4" v-if="bioPercentage">
-          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
-            <p class="ma-0">
-              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ bioPercentage }} %</span>
-              <span class="caption grey--text text--darken-2">
-                bio
-              </span>
-            </p>
-            <div class="mt-2">
-              <v-img
-                contain
-                src="/static/images/quality-labels/logo_bio_eurofeuille.png"
-                alt="Logo Agriculture Biologique"
-                title="Logo Agriculture Biologique"
-                max-height="35"
-              />
-            </div>
-          </v-card>
+    <div v-if="tabs.length" class="mb-8">
+      <v-row class="align-end flex-wrap mb-4">
+        <v-col>
+          <DsfrSegmentedControl v-model="tab" legend="Bilan par période" :noLegend="editable" :items="tabs" />
         </v-col>
-        <v-col cols="12" sm="6" md="4" v-if="sustainablePercentage">
-          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
-            <p class="ma-0">
-              <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
-                {{ sustainablePercentage }} %
-              </span>
-              <span class="caption grey--text text--darken-2">
-                durables et de qualité (hors bio)
-              </span>
-            </p>
-            <div class="d-flex mt-2 justify-center flex-wrap">
-              <v-img
-                contain
-                v-for="label in labels"
-                :key="label.title"
-                :src="`/static/images/quality-labels/${label.src}`"
-                :alt="label.title"
-                :title="label.title"
-                class="px-1"
-                max-height="40"
-                max-width="40"
-              />
+        <v-col v-if="!editable && diagnosticForYear" align="right">
+          <DsfrCallout icon=" " :color="color" class="py-6 pr-14 my-0" style="width: fit-content;">
+            <div class="text-left">
+              <p class="mb-0">
+                <b v-if="teledeclared">Données officielles</b>
+                <b v-else-if="provisional">Données provisoires</b>
+                <b v-else>Données non télédéclarées</b>
+              </p>
             </div>
-          </v-card>
+            <!-- TODO: link to article -->
+          </DsfrCallout>
         </v-col>
       </v-row>
-      <div v-if="diagnostic.diagnosticType === 'COMPLETE'">
-        <h3 class="font-weight-black text-body-1 grey--text text--darken-4 mt-4">
-          Catégories EGAlim par famille de produit
-        </h3>
-        <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
-      </div>
-      <div v-else-if="meatEgalimPercentage || meatFrancePercentage || fishEgalimPercentage">
-        <h3 class="font-weight-black text-body-1 grey--text text--darken-4 mb-4 mt-8">
-          Par famille de produit
-        </h3>
-        <v-row>
-          <v-col cols="12" sm="4" md="4" v-if="meatEgalimPercentage">
-            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
-              <p class="ma-0">
-                <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
-                  {{ meatEgalimPercentage }} %
-                </span>
-                <span class="caption grey--text text--darken-2">
-                  viandes et volailles EGAlim
-                </span>
-              </p>
-              <div class="mt-2">
-                <v-icon size="30" color="brown">
-                  mdi-food-steak
-                </v-icon>
-                <v-icon size="30" color="brown">
-                  mdi-food-drumstick
-                </v-icon>
-                <v-icon size="30" color="green">
-                  $checkbox-circle-fill
-                </v-icon>
-              </div>
-            </v-card>
-          </v-col>
-          <v-col cols="12" sm="4" md="4" v-if="meatFrancePercentage">
-            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
-              <p class="ma-0">
-                <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
-                  {{ meatFrancePercentage }} %
-                </span>
-                <span class="caption grey--text text--darken-2">
-                  viandes et volailles provenance France
-                </span>
-              </p>
-              <div class="mt-2">
-                <v-icon size="30" color="brown">
-                  mdi-food-steak
-                </v-icon>
-                <v-icon size="30" color="brown">
-                  mdi-food-drumstick
-                </v-icon>
-                <v-icon size="30" color="indigo">
-                  $france-line
-                </v-icon>
-              </div>
-            </v-card>
-          </v-col>
-          <v-col cols="12" sm="4" md="4" v-if="fishEgalimPercentage">
-            <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
-              <p class="ma-0">
-                <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
-                  {{ fishEgalimPercentage }} %
-                </span>
-                <span class="caption grey--text text--darken-2">
-                  produits aquatiques EGAlim
-                </span>
-              </p>
-              <div class="mt-2">
-                <v-icon size="30" color="blue">
-                  mdi-fish
-                </v-icon>
-                <v-icon size="30" color="green">
-                  $checkbox-circle-fill
-                </v-icon>
-              </div>
-            </v-card>
-          </v-col>
-        </v-row>
-      </div>
-    </div>
-
-    <div v-if="shouldDisplayGraph">
-      <h2 id="appro-heading" class="font-weight-black text-h6 grey--text text--darken-4 mt-12 mb-2">
-        Évolution des produits dans nos assiettes sur les années
-      </h2>
-      <div>
+      <div v-if="tab === 'Comparer'">
         <MultiYearSummaryStatistics
           :diagnostics="graphDiagnostics"
           headingId="appro-heading"
           height="260"
           :width="$vuetify.breakpoint.mdAndUp ? '650px' : '100%'"
           :applicableRules="applicableRules"
+          colorTheme="grey"
         />
       </div>
+      <div v-else-if="!diagnosticForYear">
+        <p>
+          Données non disponibles
+        </p>
+      </div>
+      <div v-else>
+        <DsfrCallout v-if="editable" icon=" " :color="color" class="my-4 py-4 pr-14">
+          <div v-if="teledeclared" class="py-4">
+            <p class="mb-0">
+              <b>Données officielles {{ tab }} télédéclarées</b>
+              : le bilan ci-dessous a été officiellement transmis à l’administration et il est pris en compte dans le
+              rapport annuel public remis au Parlement. Vos données sont publiées par défaut sur votre vitrine en ligne.
+            </p>
+          </div>
+          <DsfrToggle
+            v-else
+            v-model="publishedToggleState"
+            @input="updateDiagnosticPublication"
+            :labelLeft="true"
+            checkedLabel="Visible"
+            uncheckedLabel="Caché"
+          >
+            <template v-slot:label>
+              <span v-if="provisional" class="mb-0">
+                <b>Total des achats au {{ lastPurchaseDate }}</b>
+                : le bilan provisoire ci-dessous est réalisé à partir des données d’achat au {{ lastPurchaseDate }}. Vos
+                données sont visibles par défaut sur votre affiche et en ligne.
+              </span>
+              <span v-else>
+                <!-- TODO: DSFR recommends labels be <= 3 words long -->
+                <b>Données non télédéclarées</b>
+                : le bilan des achats de l'année {{ tab }} n'a pas été officiellement télédéclaré à l'administration. Il
+                est visible par défaut sur votre affiche et en ligne, mais vous pouvez le retirer.
+              </span>
+            </template>
+          </DsfrToggle>
+        </DsfrCallout>
+
+        <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" class="my-8" />
+
+        <div v-if="hasFamilyDetail">
+          <DsfrAccordion :items="[{ title: 'Détail par famille de produit' }]" class="mb-2">
+            <template v-slot:content>
+              <v-row class="text-center pt-3 pb-2">
+                <v-col cols="12" sm="4" class="pa-4">
+                  <v-icon large class="grey--text text--darken-3 mb-2">$award-line</v-icon>
+                  <p class="mb-0">
+                    <span class="font-weight-bold percentage">{{ meatEgalimPercentage || "—" }} %</span>
+                    de viandes et volailles
+                    <br />
+                    EGAlim
+                  </p>
+                </v-col>
+                <v-col cols="12" sm="4" class="pa-4">
+                  <v-icon large class="grey--text text--darken-3 mb-2">$france-line</v-icon>
+                  <p class="mb-0">
+                    <span class="font-weight-bold percentage">{{ meatFrancePercentage || "—" }} %</span>
+                    de viandes et volailles
+                    <br />
+                    provenance France
+                  </p>
+                </v-col>
+                <v-col cols="12" sm="4" class="pa-4">
+                  <v-icon large class="grey--text text--darken-3 mb-2">$anchor-line</v-icon>
+                  <p class="mb-0">
+                    <span class="font-weight-bold percentage">{{ fishEgalimPercentage || "—" }} %</span>
+                    de produits de la mer
+                    <br />
+                    et aquaculture EGAlim
+                  </p>
+                </v-col>
+              </v-row>
+            </template>
+          </DsfrAccordion>
+        </div>
+      </div>
     </div>
+    <EditableCommentsField
+      :canteen="canteen"
+      valueKey="qualityComments"
+      :editable="editable"
+      label="Commentaire"
+      helpText="Si vous le souhaitez, ajoutez des précisions sur vos résultats : actions entreprises, priorités à venir..."
+      cta="Modifier le commentaire"
+      :charLimit="500"
+      class="mb-8"
+    />
   </div>
 </template>
 
 <script>
-import {
-  lastYear,
-  hasDiagnosticApproData,
-  applicableDiagnosticRules,
-  getSustainableTotal,
-  getPercentage,
-  latestCreatedDiagnostic,
-} from "@/utils"
-import labels from "@/data/quality-labels.json"
+import { applicableDiagnosticRules, getPercentage, latestCreatedDiagnostic } from "@/utils"
+import CentralKitchenInfo from "./CentralKitchenInfo"
+import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
+import ApproGraph from "@/components/ApproGraph"
+import EditableCommentsField from "../EditableCommentsField"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
-import FamiliesGraph from "@/components/FamiliesGraph"
+import DsfrAccordion from "@/components/DsfrAccordion"
+import DsfrCallout from "@/components/DsfrCallout"
+import DsfrToggle from "@/components/DsfrToggle"
 
 export default {
   name: "QualityMeasureResults",
   props: {
     badge: Object,
-    canteen: Object,
-    diagnosticSet: Array,
+    canteen: {
+      type: Object,
+      required: true,
+    },
+    approDiagnostics: Array,
+    editable: Boolean,
   },
-  components: { MultiYearSummaryStatistics, FamiliesGraph },
+  components: {
+    CentralKitchenInfo,
+    DsfrSegmentedControl,
+    ApproGraph,
+    EditableCommentsField,
+    MultiYearSummaryStatistics,
+    DsfrAccordion,
+    DsfrCallout,
+    DsfrToggle,
+  },
   data() {
     return {
-      labels,
+      approData: this.approDiagnostics,
+      redactedYears: this.canteen.redactedApproYears || [],
+      tabs: [],
+      tab: undefined,
+      // it is published if it is not redacted
+      publishedToggleState: undefined,
+      thisYear: new Date().getFullYear(),
     }
   },
   computed: {
     diagnostic() {
-      if (!this.diagnosticSet) return
-      return latestCreatedDiagnostic(this.diagnosticSet)
+      if (!this.approData) return
+      return latestCreatedDiagnostic(this.approData)
     },
-    publicationYear() {
-      return this.diagnostic?.year
+    diagnosticForYear() {
+      return this.approData.find((d) => d.year === +this.tab)
     },
-    usesCentralKitchenDiagnostics() {
-      return (
-        this.canteen?.productionType === "site_cooked_elsewhere" && this.canteen?.centralKitchenDiagnostics?.length > 0
-      )
+    teledeclared() {
+      return !!this.diagnosticForYear?.isTeledeclared
     },
-    showPercentagesBlock() {
-      return (
-        this.diagnostic &&
-        (this.bioPercentage ||
-          this.sustainablePercentage ||
-          this.meatEgalimPercentage ||
-          this.meatFrancePercentage ||
-          this.fishEgalimPercentage)
-      )
+    provisional() {
+      return this.diagnosticForYear?.year >= this.thisYear
+    },
+    color() {
+      // these are the same as the colours for "bio" in ApproGraph
+      if (this.teledeclared) return "#21402c"
+      if (this.provisional) return "#263b58"
+      return "#543125"
+    },
+    lastPurchaseDate() {
+      if (!this.provisional) return
+      if (!this.diagnosticForYear) return
+      const date = new Date(this.diagnosticForYear.lastPurchaseDate)
+      return date.toLocaleString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
     },
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
     },
     hasPercentages() {
-      return "percentageValueTotalHt" in this.diagnostic
-    },
-    bioPercentage() {
-      return this.hasPercentages
-        ? this.toPercentage(this.diagnostic.percentageValueBioHt)
-        : getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
-    },
-    sustainablePercentage() {
-      return this.hasPercentages
-        ? this.toPercentage(getSustainableTotal(this.diagnostic))
-        : getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
+      return !!this.diagnosticForYear && "percentageValueTotalHt" in this.diagnosticForYear
     },
     meatEgalimPercentage() {
       return this.hasPercentages
-        ? this.toPercentage(this.diagnostic.percentageValueMeatPoultryEgalimHt)
-        : getPercentage(this.diagnostic.valueMeatPoultryEgalimHt, this.diagnostic.valueMeatPoultryHt)
+        ? this.toPercentage(this.diagnosticForYear.percentageValueMeatPoultryEgalimHt)
+        : getPercentage(this.diagnosticForYear.valueMeatPoultryEgalimHt, this.diagnosticForYear.valueMeatPoultryHt)
     },
     meatFrancePercentage() {
       return this.hasPercentages
-        ? this.toPercentage(this.diagnostic.percentageValueMeatPoultryFranceHt)
-        : getPercentage(this.diagnostic.valueMeatPoultryFranceHt, this.diagnostic.valueMeatPoultryHt)
+        ? this.toPercentage(this.diagnosticForYear.percentageValueMeatPoultryFranceHt)
+        : getPercentage(this.diagnosticForYear.valueMeatPoultryFranceHt, this.diagnosticForYear.valueMeatPoultryHt)
     },
     fishEgalimPercentage() {
       return this.hasPercentages
-        ? this.toPercentage(this.diagnostic.percentageValueFishEgalimHt)
-        : getPercentage(this.diagnostic.valueFishEgalimHt, this.diagnostic.valueFishHt)
-    },
-    shouldDisplayGraph() {
-      if (!this.diagnosticSet || this.diagnosticSet.length === 0) return false
-      const completedDiagnostics = this.diagnosticSet.filter(hasDiagnosticApproData)
-      if (completedDiagnostics.length === 0) return false
-      else if (completedDiagnostics.length === 1) return completedDiagnostics[0].year !== lastYear()
-      else return true
+        ? this.toPercentage(this.diagnosticForYear.percentageValueFishEgalimHt)
+        : getPercentage(this.diagnosticForYear.valueFishEgalimHt, this.diagnosticForYear.valueFishHt)
     },
     graphDiagnostics() {
-      if (!this.diagnosticSet || this.diagnosticSet.length === 0) return null
+      if (!this.approData || this.approData.length === 0) return null
       const diagnostics = {}
-      for (let i = 0; i < this.diagnosticSet.length; i++) {
-        const diagnostic = this.diagnosticSet[i]
+      for (let i = 0; i < this.approData.length; i++) {
+        const diagnostic = this.approData[i]
         diagnostics[diagnostic.year] = diagnostic
       }
       return diagnostics
+    },
+    hasFamilyDetail() {
+      return this.meatEgalimPercentage || this.meatFrancePercentage || this.fishEgalimPercentage
     },
   },
   methods: {
     toPercentage(value) {
       return Math.round(value * 100)
+    },
+    updateDiagnosticPublication(value) {
+      if (!this.diagnosticForYear) {
+        this.$store.dispatch("notifyServerError")
+        return
+      }
+      const year = this.diagnosticForYear.year
+      if (!year) {
+        console.error("attempt to change redacted appro year without diagnostic year")
+        return
+      }
+      const toRedact = value === false
+      const redactedYears = [...new Set(this.redactedYears)] // get unique values just in case
+      if (toRedact) {
+        redactedYears.push(year)
+      } else {
+        const yearIdx = redactedYears.indexOf(year)
+        if (yearIdx > -1) {
+          redactedYears.splice(yearIdx, 1)
+        }
+      }
+      this.$set(this, "redactedYears", redactedYears)
+      const payload = {
+        redactedApproYears: this.redactedYears,
+      }
+      return this.$store
+        .dispatch("updateCanteen", {
+          id: this.canteen.id,
+          payload: payload,
+        })
+        .then(() => {
+          const descriptor = toRedact ? "dépubliées" : "publiées"
+          this.$store.dispatch("notify", {
+            status: "success",
+            message: `Les données de ${this.diagnosticForYear.year} sont bien ${descriptor}`,
+          })
+        })
+        .catch((e) => {
+          this.$store.dispatch("notifyServerError", e)
+          return Promise.reject()
+        })
+    },
+    getPublicationState(year) {
+      return this.redactedYears.indexOf(year) === -1
+    },
+    getPurchasesSummary() {
+      return fetch(
+        `/api/v1/canteenPurchasesPercentageSummary/${this.canteen.id}?year=${this.thisYear}&ignoreRedaction=${this.editable}`
+      )
+        .then((response) => (response.ok ? response.json() : undefined))
+        .then((response) => {
+          if (response) {
+            response.year = this.thisYear
+            this.approData.push(response)
+          }
+        })
+    },
+    makeTabs() {
+      const tabs = this.approData.map((d) => ({
+        text: +d.year,
+        value: +d.year,
+        disabled: false,
+      }))
+      tabs.sort((a, b) => b.value - a.value)
+      if (tabs.length) {
+        const compareTab = {
+          text: "Comparer",
+          value: "Comparer",
+          disabled: tabs.length < 2,
+        }
+        tabs.push(compareTab)
+      }
+      this.tabs = tabs
+      this.tab = tabs[0].value
+    },
+  },
+  mounted() {
+    return this.getPurchasesSummary().finally(() => {
+      this.makeTabs()
+      this.publishedToggleState = this.getPublicationState(this.tab)
+    })
+  },
+  watch: {
+    tab(newValue) {
+      const year = +newValue
+      if (year !== newValue) this.publishedToggleState = this.getPublicationState(+newValue)
     },
   },
 }

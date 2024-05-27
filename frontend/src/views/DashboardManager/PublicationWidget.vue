@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="fill-height d-flex flex-column dsfr pa-sm-6">
+  <v-card outlined class="fill-height d-flex flex-column dsfr no-hover pa-sm-6">
     <v-card-title>
       <h3 class="fr-h4 mb-0">
         Mon affiche

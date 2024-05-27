@@ -123,7 +123,7 @@
           :to="{
             name: 'DiagnosticTunnel',
             params: {
-              canteenUrlComponent: this.canteenUrlComponent,
+              canteenUrlComponent: canteenUrlComponent,
               year: diagnostic.year,
               measureId: 'qualite-des-produits',
             },
@@ -152,7 +152,7 @@
       :to="{
         name: 'DiagnosticTunnel',
         params: {
-          canteenUrlComponent: this.canteenUrlComponent,
+          canteenUrlComponent: canteenUrlComponent,
           year: diagnostic.year,
           measureId: 'qualite-des-produits',
         },

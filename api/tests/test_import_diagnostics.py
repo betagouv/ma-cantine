@@ -1283,6 +1283,20 @@ class TestImportDiagnosticsAPI(APITestCase):
         canteen.refresh_from_db()
         self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
 
+    @authenticate
+    def test_fail_import_bad_format(self, _):
+        with open("./api/tests/files/bad_format_file.ods", "rb") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        errors = body["errors"]
+        first_error = errors.pop(0)
+        self.assertEqual(first_error["status"], 400)
+        self.assertEqual(
+            first_error["message"],
+            "Ce fichier est du format application/vnd.oasis.opendocument.spreadsheet, merci d'exporter votre fichier en format CSV et re-essayer.",
+        )
+
 
 class TestImportDiagnosticsFromAPIIntegration(APITestCase):
     @unittest.skipUnless(os.environ.get("ENVIRONMENT") == "dev", "Not in dev environment")

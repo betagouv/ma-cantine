@@ -2,6 +2,7 @@ from io import BytesIO
 from PIL import Image as Img
 from PIL import ExifTags
 from django.core.files.base import ContentFile
+import datetime
 
 
 def _needs_rotation(pillow_image):
@@ -194,3 +195,11 @@ def get_region(department_code):
     }
     if department_code and department_code in code_department_to_region:
         return code_department_to_region[department_code]
+
+
+def get_diagnostic_lower_limit_year():
+    return 2019
+
+
+def get_diagnostic_upper_limit_year():
+    return datetime.datetime.now().date().year + 1

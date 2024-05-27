@@ -62,6 +62,10 @@ export default {
     width: String,
     applicableRules: Object,
     legendPosition: String,
+    colorTheme: {
+      type: String,
+      default: "green",
+    },
   },
   data() {
     let years = []
@@ -93,12 +97,12 @@ export default {
         {
           name: BIO,
           data: this.seriesData.bio,
-          color: "#21402c",
+          color: this.theme.bio,
         },
         {
           name: SUSTAINABLE,
           data: this.seriesData.sustainable,
-          color: "#00A95F",
+          color: this.theme.sustainable,
           foreColor: "#000",
         },
       ]
@@ -164,6 +168,19 @@ export default {
     },
     regionDisplayName() {
       return regionDisplayName(this.applicableRules.regionForQualityException)
+    },
+    theme() {
+      const themes = {
+        green: {
+          bio: "#21402c",
+          sustainable: "#00A95F",
+        },
+        grey: {
+          bio: "#3a3a3a", // grey-200
+          sustainable: "#919191",
+        },
+      }
+      return themes[this.colorTheme]
     },
   },
   methods: {
