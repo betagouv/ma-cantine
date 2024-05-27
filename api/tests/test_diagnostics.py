@@ -408,33 +408,46 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(diagnostic.year, 2019)
 
     @authenticate
-    def test_edit_cancelled_diagnostic(self):
+    def test_edit_cancelled_voided_diagnostic(self):
         """
-        A diagnostic can be edited if a cancelled teledeclaration
+        A diagnostic can be edited if a cancelled/voided teledeclaration
         object linked to it exists
         """
-        diagnostic = DiagnosticFactory.create(year=2019)
-        diagnostic.canteen.managers.add(authenticate.user)
-        Teledeclaration.create_from_diagnostic(
-            diagnostic,
-            authenticate.user,
-            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
-        )
+        test_cases = [
+            {"status": Teledeclaration.TeledeclarationStatus.CANCELLED},
+            {"status": Teledeclaration.TeledeclarationStatus.VOIDED},
+        ]
+        for tc in test_cases:
+            diagnostic = DiagnosticFactory.create(year=2019)
+            diagnostic.canteen.managers.add(authenticate.user)
+            Teledeclaration.create_from_diagnostic(
+                diagnostic,
+                authenticate.user,
+                status=tc["status"],
+            )
 
-        payload = {"year": 2020}
+            payload = {"year": 2020}
 
-        response = self.client.patch(
-            reverse(
-                "diagnostic_edition",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
-            ),
-            payload,
-        )
+            response = self.client.patch(
+                reverse(
+                    "diagnostic_edition",
+                    kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                ),
+                payload,
+            )
 
-        diagnostic.refresh_from_db()
+            diagnostic.refresh_from_db()
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(diagnostic.year, 2020)
+            self.assertEqual(
+                response.status_code,
+                status.HTTP_200_OK,
+                f"The status code should be 200 for diagnostic import with status {tc['status']}",
+            )
+            self.assertEqual(
+                diagnostic.year,
+                2020,
+                f"The diagnostic year should be 200 for diagnostic import with status {tc['status']}",
+            )
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate

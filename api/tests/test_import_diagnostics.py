@@ -1190,7 +1190,7 @@ class TestImportDiagnosticsAPI(APITestCase):
     def test_update_diagnostic_conditional_on_teledeclaration_status(self, _):
         """
         If a diagnostic with a valid TD already exists for the canteen, throw an error
-        If the TD is cancelled, allow update
+        If the TD is cancelled/voided, allow update
         """
         canteen = CanteenFactory.create(siret="21340172201787", name="Old name")
         canteen.managers.add(authenticate.user)
@@ -1212,19 +1212,38 @@ class TestImportDiagnosticsAPI(APITestCase):
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.value_total_ht, 1)
 
-        # now test cancelled TD
-        teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
-        teledeclaration.save()
-        with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:
-            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        # now test cancelled/voided status TD
+        test_cases = [
+            {"status": Teledeclaration.TeledeclarationStatus.CANCELLED},
+            {"status": Teledeclaration.TeledeclarationStatus.VOIDED},
+        ]
+        for tc in test_cases:
+            teledeclaration.status = tc["status"]
+            teledeclaration.save()
+            with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:
+                response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(len(body["errors"]), 0)
-        canteen.refresh_from_db()
-        self.assertEqual(canteen.name, "A canteen")
-        diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.value_total_ht, 1000)
+            self.assertEqual(
+                response.status_code,
+                status.HTTP_200_OK,
+                f"Status code should be 200 for diagnostic import with status {tc['status']}",
+            )
+            body = response.json()
+            self.assertEqual(
+                len(body["errors"]), 0, f"There should be no error on diagnostic import with status {tc['status']}"
+            )
+            canteen.refresh_from_db()
+            self.assertEqual(
+                canteen.name,
+                "A canteen",
+                f"The canteen name should be 'A canteen' for diagnostic import with status {tc['status']}",
+            )
+            diagnostic.refresh_from_db()
+            self.assertEqual(
+                diagnostic.value_total_ht,
+                1000,
+                f"The total value should be 1000 for diagnostic import with status {tc['status']}",
+            )
 
     @authenticate
     def test_encoding_autodetect_utf_8(self, _):
