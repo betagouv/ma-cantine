@@ -17,6 +17,7 @@ class AuthenticationMethodHistoricalRecords(models.Model):
         choices=AuthMethodChoices.choices,
         verbose_name="méthode d'authentification",
         null=True,
+        blank=True,
     )
 
     class Meta:
