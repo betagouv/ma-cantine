@@ -31,7 +31,7 @@ from api.views import AddManagerView, RemoveManagerView
 from api.views import ImportSimpleDiagnosticsView, ImportCompleteDiagnosticsView
 from api.views import TeledeclarationCreateView, TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
-from api.views import UserCanteenPreviews, CanteenLocationsView
+from api.views import UserCanteenPreviews, UserCanteenSummaries, CanteenLocationsView
 from api.views import PartnerView, PartnersView, PartnerTypeListView
 from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView, ImportPurchasesView
 from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
@@ -58,6 +58,7 @@ urlpatterns = {
     ),
     path("publish/", PublishManyCanteensView.as_view(), name="publish_canteens"),
     path("canteenPreviews/", UserCanteenPreviews.as_view(), name="user_canteen_previews"),
+    path("canteenSummaries/", UserCanteenSummaries.as_view(), name="user_canteens_summaries"),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
     path("canteens/<int:pk>", RetrieveUpdateUserCanteenView.as_view(), name="single_canteen"),
     path(
