@@ -1,26 +1,48 @@
-from data.models import ManagerInvitation
-from data.factories.managerinvitation import ManagerInvitationFactory
-from django.contrib.auth import get_user_model
+from django.urls import reverse
 from rest_framework.test import APITestCase
+from data.factories import DiagnosticFactory
+from data.models import AuthenticationMethodHistoricalRecords
+from django.test.utils import override_settings
+from .utils import authenticate, get_oauth2_token
+from freezegun import freeze_time
 
 
 class TestSignals(APITestCase):
-    def test_new_user_linked_successfully(self):
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2021-01-20")
+    @authenticate
+    def test_authentication_method_created_with_website(self):
         """
-        A new user with an email matching the email in the manager invitations table,
-        should be added to the list of canteen managers
+        Teledeclarations created via the website should save the corresponding authentication method
         """
-        pms = [
-            ManagerInvitationFactory.create(email="smith@example.com"),
-            ManagerInvitationFactory.create(email="smith@example.com"),
-        ]
-        canteens = [pms[0].canteen, pms[1].canteen]
+        diagnostic = DiagnosticFactory.create(year=2020)
+        diagnostic.canteen.managers.add(authenticate.user)
+        payload = {"diagnosticId": diagnostic.id}
 
-        user = get_user_model()(email="smith@example.com", username="smith.example")
-        user.save()
+        self.client.post(reverse("teledeclaration_create"), payload)
 
-        for canteen in canteens:
-            self.assertTrue(len(canteen.managers.all()) > 1)
-            self.assertEqual(canteen.managers.all().filter(email="smith@example.com").count(), 1)
+        diagnostic.refresh_from_db()
+        td = diagnostic.teledeclaration_set.first()
+        self.assertEqual(
+            td.history.first().authentication_method, AuthenticationMethodHistoricalRecords.AuthMethodChoices.WEBSITE
+        )
 
-        self.assertEqual(len(ManagerInvitation.objects.all()), 0)
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2021-01-20")
+    def test_authentication_method_created_with_api(self):
+        """
+        Teledeclarations created via a third party API should save the corresponding authentication method
+        """
+        user, token = get_oauth2_token("canteen:write")
+        diagnostic = DiagnosticFactory.create(year=2020)
+        diagnostic.canteen.managers.add(user)
+        payload = {"diagnosticId": diagnostic.id}
+
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+        self.client.post(reverse("teledeclaration_create"), payload)
+
+        diagnostic.refresh_from_db()
+        td = diagnostic.teledeclaration_set.first()
+        self.assertEqual(
+            td.history.first().authentication_method, AuthenticationMethodHistoricalRecords.AuthMethodChoices.API
+        )

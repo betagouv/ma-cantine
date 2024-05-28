@@ -11,6 +11,14 @@ class TeledeclarationForm(forms.ModelForm):
             "declared_data": forms.Textarea(attrs={"cols": 60, "rows": 5}),
         }
 
+    # thanks to https://github.com/jazzband/django-simple-history/issues/853#issuecomment-1105754544
+    change_reason = forms.CharField(
+        label="Raison de modification",
+        help_text="100 caractères max",
+        max_length=100,
+        widget=forms.TextInput(attrs={"size": "70"}),
+    )
+
 
 class TeledeclarationInline(admin.TabularInline):
     model = Teledeclaration
@@ -37,6 +45,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "creation_date",
         "status",
     )
+    history_list_display = ["authentication_method"]
     list_filter = ("year", "status")
     fields = (
         "canteen",
@@ -49,6 +58,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "modification_date",
         "declared_data",
         "teledeclaration_mode",
+        "change_reason",
     )
     # want to be able to modify status
     readonly_fields = (
@@ -75,3 +85,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
     # overriding mixin
     def has_change_permission(self, request, obj=None):
         return True
+
+    def save_model(self, request, obj, form, change):
+        obj._change_reason = form.cleaned_data["change_reason"]
+        super().save_model(request, obj, form, change)
