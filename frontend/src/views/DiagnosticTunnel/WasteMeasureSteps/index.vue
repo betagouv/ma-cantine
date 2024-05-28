@@ -142,9 +142,14 @@
         :label="action.label"
       />
       <v-row align="center" class="ml-0 mb-3 mt-0 mr-2">
-        <v-checkbox v-model="otherActionEnabled" hide-details class="shrink mt-0" aria-label="Autre"></v-checkbox>
+        <v-checkbox
+          v-model="otherActionEnabled"
+          hide-details
+          class="shrink mt-0"
+          aria-label="Autre : donnez plus d'informations"
+        ></v-checkbox>
         <v-text-field
-          class="my-0 py-0"
+          class="my-0 py-0 other-text-input"
           ref="other-action-field"
           hide-details
           :disabled="!otherActionEnabled"
