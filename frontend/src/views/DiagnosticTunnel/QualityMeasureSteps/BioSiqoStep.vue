@@ -35,7 +35,7 @@
         />
       </v-col>
       <v-col md="4" class="d-flex align-center left-border" v-if="$vuetify.breakpoint.mdAndUp">
-        <LogoBio style="max-height: 60px;" class="pl-8 d-none d-md-block" aria-hidden="true" />
+        <LogoBio style="max-height: 60px;" class="pl-8 d-none d-md-block" />
       </v-col>
     </v-row>
 
@@ -47,7 +47,7 @@
             <div v-for="label in siqoLabels" :key="label.title">
               <img
                 :src="`/static/images/quality-labels/${label.src}`"
-                alt=""
+                aria-hidden="true"
                 :title="label.title"
                 style="max-height: 30px;"
               />
@@ -125,10 +125,10 @@ export default {
   },
   data() {
     const siqoLogos = [
-      "Logo Label Rouge",
-      "Logo Appellation d'origine (AOC / AOP)",
-      "Logo indication géographique",
-      "Logo Spécialité traditionnelle garantie",
+      "Label Rouge",
+      "Appellation d'origine (AOC / AOP)",
+      "Indication géographique (IGP)",
+      "Spécialité traditionnelle garantie (STG)",
     ]
     return {
       totalErrorMessage: "",

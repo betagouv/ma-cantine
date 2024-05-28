@@ -137,13 +137,7 @@
                 </span>
               </p>
               <div class="mt-2">
-                <v-img
-                  contain
-                  src="/static/images/quality-labels/logo_bio_eurofeuille.png"
-                  alt="Logo Agriculture Biologique"
-                  title="Logo Agriculture Biologique"
-                  max-height="35"
-                />
+                <v-img contain src="/static/images/quality-labels/logo_bio_eurofeuille.png" alt="" max-height="35" />
               </div>
             </v-card>
           </v-col>
