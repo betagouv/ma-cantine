@@ -238,7 +238,9 @@ def filter_by_diagnostic_params(queryset, query_params):
                 )
             ).distinct()
         canteen_ids = qs_diag.values_list("canteen", flat=True)
-        return queryset.filter(id__in=canteen_ids)
+        canteen_sirets = qs_diag.values_list("canteen__siret", flat=True)
+        queryset = queryset.exclude(redacted_appro_years__contains=[publication_year])
+        return queryset.filter(Q(id__in=canteen_ids) | Q(central_producer_siret__in=canteen_sirets))
     return queryset
 
 
@@ -259,6 +261,12 @@ class PublishedCanteensView(ListAPIView):
     def filter_queryset(self, queryset):
         new_queryset = filter_by_diagnostic_params(queryset, self.request.query_params)
         return super().filter_queryset(new_queryset)
+
+
+class PublicCanteenPreviewView(RetrieveAPIView):
+    model = Canteen
+    serializer_class = PublicCanteenPreviewSerializer
+    queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
 
 
 class UserCanteensFilterSet(django_filters.FilterSet):

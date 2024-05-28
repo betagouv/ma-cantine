@@ -1,6 +1,5 @@
 import logging
 import os
-from api.views.utils import update_change_reason_with_auth
 from datetime import datetime
 from django.http import JsonResponse, HttpResponse
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -53,7 +52,6 @@ class TeledeclarationCreateView(APIView):
             raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
 
         td = TeledeclarationCreateView._teledeclare_diagnostic(diagnostic_id, request.user)
-        update_change_reason_with_auth(self, td)
         data = FullDiagnosticSerializer(td.diagnostic).data
         return JsonResponse(camelize(data), status=status.HTTP_201_CREATED)
 
@@ -61,7 +59,7 @@ class TeledeclarationCreateView(APIView):
         try:
             diagnostic = Diagnostic.objects.get(pk=diagnostic_id)
         except Diagnostic.DoesNotExist:
-            raise PermissionDenied()  # in general we through 403s not 404s
+            raise PermissionDenied()  # in general we throw 403s not 404s
 
         if user not in diagnostic.canteen.managers.all():
             raise PermissionDenied()
@@ -124,7 +122,6 @@ class TeledeclarationCancelView(APIView):
 
             teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
             teledeclaration.save()
-            update_change_reason_with_auth(self, teledeclaration)
 
             data = FullDiagnosticSerializer(teledeclaration.diagnostic).data
             return JsonResponse(camelize(data), status=status.HTTP_200_OK)

@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
-from data.models import Canteen, Diagnostic
+from data.models import Canteen, Diagnostic, AuthenticationMethodHistoricalRecords
 from simple_history.models import HistoricalRecords
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,11 @@ class Teledeclaration(models.Model):
     year = models.IntegerField(verbose_name="année")
     canteen_siret = models.TextField(null=True, blank=True)
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(
+        bases=[
+            AuthenticationMethodHistoricalRecords,
+        ]
+    )
 
     status = models.CharField(
         max_length=255,

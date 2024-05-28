@@ -12,6 +12,7 @@ from abc import ABC, abstractmethod
 from data.department_choices import Department
 from data.region_choices import Region
 from data.models import Canteen, Teledeclaration, Sector
+from datetime import date
 from api.serializers import SectorSerializer
 from api.views.utils import camelize
 from django.core.files.storage import default_storage
@@ -171,6 +172,43 @@ def datetimes_to_str(df):
     return df
 
 
+def update_datagouv_resources():
+    """
+    Updating the URL of the different resources dsiplayed on data.gouv.fr in order to force their cache reload and display the correct update dates
+    Returns : Number of updated resources
+    """
+    if os.environ.get("ENVIRONMENT") != "prod":
+        return
+    dataset_id = os.getenv("DATAGOUV_DATASET_ID", "")
+    api_key = os.getenv("DATAGOUV_API_KEY", "")
+    if not (dataset_id and api_key):
+        logger.error("Datagouv resource update : API key or dataset id incorrect values")
+        return
+    header = {"X-API-KEY": api_key}
+    try:
+        response = requests.get(f"https://www.data.gouv.fr/api/1/datasets/{dataset_id}", headers=header)
+        response.raise_for_status()
+        resources = response.json()["resources"]
+        count_updated_resources = 0
+        for resource in resources:
+            if resource["format"] in ["xlsx", "csv"]:
+                today = date.today()
+                updated_url = resource["url"].split("?v=")[0] + "?v=" + today.strftime("%Y%m%d")
+                response = requests.put(
+                    f'https://www.data.gouv.fr/api/1/datasets/{dataset_id}/resources/{resource["id"]}',
+                    headers=header,
+                    json={"url": updated_url},
+                )
+                response.raise_for_status()
+                count_updated_resources += 1
+        return count_updated_resources
+    except requests.HTTPError as e:
+        logger.error(f"Datagouv resource update : Error while updating dataset : {dataset_id}")
+        logger.exception(e)
+    except Exception as e:
+        logger.exception(e)
+
+
 class ETL(ABC):
     def __init__(self):
         self.df = None
@@ -308,6 +346,7 @@ class ETL(ABC):
                 df_export = self.df.copy()
                 df_export = datetimes_to_str(df_export)  # Ah Excel !
                 df_export.to_excel(file, index=False)
+            update_datagouv_resources()
 
 
 class ETL_CANTEEN(ETL):

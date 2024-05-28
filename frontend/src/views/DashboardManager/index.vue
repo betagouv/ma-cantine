@@ -22,7 +22,7 @@
         <p class="fr-text-sm">
           Accédez ci-dessous aux différents outils de gestion de votre établissement sur la plateforme « ma cantine ».
         </p>
-        <v-row v-if="isCentralWithSite">
+        <v-row v-if="canteen.isCentralCuisine">
           <v-col cols="12" md="6">
             <SatellitesWidget :canteen="canteen" />
           </v-col>
@@ -43,11 +43,8 @@
           <v-col cols="12" md="8">
             <PurchasesWidget :canteen="canteen" />
           </v-col>
-          <v-col v-if="!canteen.isCentralCuisine" cols="12" md="4">
+          <v-col cols="12" md="4">
             <PublicationWidget :canteen="canteen" />
-          </v-col>
-          <v-col v-else cols="12" md="4">
-            <SatellitesWidget :canteen="canteen" />
           </v-col>
           <v-col cols="12" md="8">
             <CanteenInfoWidget :canteen="canteen" />

@@ -7,7 +7,7 @@ from magicauth.urls import urlpatterns as magicauth_urls
 from web.views import VueAppDisplayView
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path("admin/", admin.site.urls),  # if the path of 'admin/' changes, update historical_record_add_auth_method
     path("ckeditor/", include("ckeditor_uploader.urls")),
     path("o/", include("oauth2_provider.urls", namespace="oauth2_provider")),
 ]

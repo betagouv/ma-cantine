@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory
 from data.models import Diagnostic, Teledeclaration, Canteen
-from .utils import authenticate
+from .utils import authenticate, get_oauth2_token
 import decimal
 
 
@@ -326,6 +326,23 @@ class TestDiagnosticsApi(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(diagnostic.year, 2020)
+
+    def test_modify_diagnostic_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        diagnostic = DiagnosticFactory.create(year=2019)
+        diagnostic.canteen.managers.add(user)
+        payload = {"year": 2020}
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.patch(
+            reverse(
+                "diagnostic_edition",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            ),
+            payload,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @authenticate
     def test_edit_diagnostic_tracking_info(self):

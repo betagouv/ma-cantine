@@ -924,6 +924,7 @@ class TestPurchaseApi(APITestCase):
             family=Purchase.Family.BOISSONS,
             characteristics=[Purchase.Characteristic.AOCAOP],
         )
+        # TODO: would be nice to double check the AOCAOP IGP STG aggregation vs other labels
         PurchaseFactory.create(
             canteen=canteen_site,
             date="2021-12-31",
@@ -954,6 +955,7 @@ class TestPurchaseApi(APITestCase):
         diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
         self.assertIn(diag_site.id, results)
         self.assertEqual(diag_site.value_total_ht, 200)
+        # TODO: would be nice to test the aggregation for a simple value (e.g. value_sustainable_ht)
         self.assertEqual(diag_site.value_boissons_aocaop_igp_stg, 50)
         self.assertEqual(diag_site.value_boulangerie_non_egalim, 150)
         self.assertEqual(diag_site.value_autres_aocaop_igp_stg, 0)
@@ -1015,3 +1017,203 @@ class TestPurchaseApi(APITestCase):
         )
         self.assertEqual(errors[3], f"Aucun achat trouvé pour la cantine : {canteen_without_purchases.id}")
         self.assertEqual(len(errors), 4)
+
+
+class TestPublicPurchasesSummaryApi(APITestCase):
+    def test_get_public_purchases_summary(self):
+        """
+        Return percentages from purchase data for the given year and canteen
+        """
+        canteen = CanteenFactory.create()
+        year = 2024
+
+        # bio percent, ignore lesser labels
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2024-01-01",
+            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            price_ht=10,
+        )
+        # sustainable percent, meat egalim
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2024-01-01",
+            characteristics=[Purchase.Characteristic.LABEL_ROUGE],
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            price_ht=10,
+        )
+        # externalities percent, meat egalim, meat france
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2024-01-01",
+            characteristics=[Purchase.Characteristic.EXTERNALITES, Purchase.Characteristic.FRANCE],
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            price_ht=10,
+        )
+        # egalim others, fish egalim
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2024-01-01",
+            characteristics=[Purchase.Characteristic.PECHE_DURABLE],
+            family=Purchase.Family.PRODUITS_DE_LA_MER,
+            price_ht=10,
+        )
+        # meat france (local and short_distribution not included?)
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2024-12-31",
+            characteristics=[Purchase.Characteristic.FRANCE],
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            price_ht=10,
+        )
+        # fish non egalim
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2024-12-31",
+            characteristics=[Purchase.Characteristic.FRANCE],
+            family=Purchase.Family.PRODUITS_DE_LA_MER,
+            price_ht=10,
+        )
+        # add misc purchase to have nice round total of 100 HT
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2024-12-31",
+            characteristics=[],
+            family=Purchase.Family.AUTRES,
+            price_ht=40,
+        )
+
+        # create purchase outside of requested year to check filtering
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2023-12-31",
+            characteristics=[Purchase.Characteristic.BIO],
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            price_ht=999999,
+        )
+
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": year}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(body["percentageValueBioHt"], 0.1)
+        self.assertEqual(body["percentageValueSustainableHt"], 0.1)
+        self.assertEqual(body["percentageValueExternalityPerformanceHt"], 0.1)
+        self.assertEqual(body["percentageValueEgalimOthersHt"], 0.1)
+        # 30 HT, meat total is 40.
+        self.assertEqual(body["percentageValueMeatPoultryEgalimHt"], 0.75)
+        self.assertEqual(body["percentageValueMeatPoultryFranceHt"], 0.5)
+        self.assertEqual(body["percentageValueFishEgalimHt"], 0.5)
+
+    def test_cannot_get_redacted_purchases_summary(self):
+        """
+        If the canteen has redacted the year return a 404
+        TODO: do we really want to use redacted_appro_years to control this?
+        """
+        canteen = CanteenFactory.create(redacted_appro_years=[2024])
+        PurchaseFactory.create(canteen=canteen, date="2024-01-01")
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_no_purchases_for_public_summary(self):
+        """
+        If the canteen doesn't have purchases for the year requested return a 404
+        """
+        canteen = CanteenFactory.create()
+        PurchaseFactory.create(canteen=canteen, date="2023-12-31")
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_get_last_purchase_date_in_public_summary_if_manager(self):
+        """
+        The purchases summary should return the last purchase date if the user
+        is the manager of the canteen
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+
+        PurchaseFactory.create(canteen=canteen, date="2024-12-01")
+        PurchaseFactory.create(canteen=canteen, date="2024-05-31")
+        PurchaseFactory.create(canteen=canteen, date="2025-01-01")
+
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
+        )
+        body = response.json()
+        self.assertEqual(body["lastPurchaseDate"], "2024-12-01")
+
+    @authenticate
+    def test_dont_get_last_purchase_date_in_public_summary_if_not_manager(self):
+        """
+        The purchases summary should not return the last purchase date if the user
+        is not the manager of the canteen, even if authenticated
+        """
+        canteen = CanteenFactory.create()
+        PurchaseFactory.create(canteen=canteen, date="2024-05-31")
+
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
+        )
+        body = response.json()
+        self.assertNotIn("lastPurchaseDate", body)
+
+    @authenticate
+    def test_manager_can_optionally_get_redacted_purchases(self):
+        """
+        The manager of the canteen has an option to get redacted data
+        """
+        canteen = CanteenFactory.create(redacted_appro_years=[2024])
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(canteen=canteen, date="2024-01-01")
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
+            {"year": 2024, "ignoreRedaction": "true"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @authenticate
+    def test_manager_can_optionally_not_get_redacted_purchases(self):
+        """
+        The manager of the canteen has an option to not get redacted data
+        """
+        canteen = CanteenFactory.create(redacted_appro_years=[2024])
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(canteen=canteen, date="2024-01-01")
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
+            {"year": 2024, "ignoreRedaction": "false"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_non_manager_cannot_optionally_get_redacted_purchases(self):
+        """
+        Non-managers cannot get redacted canteen data
+        """
+        canteen = CanteenFactory.create(redacted_appro_years=[2024])
+        PurchaseFactory.create(canteen=canteen, date="2024-01-01")
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
+            {"year": 2024, "ignoreRedaction": "true"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_public_cannot_optionally_get_redacted_purchases_summary(self):
+        """
+        Public cannot get redacted canteen data
+        """
+        canteen = CanteenFactory.create(redacted_appro_years=[2024])
+        PurchaseFactory.create(canteen=canteen, date="2024-01-01")
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
+            {"year": 2024, "ignoreRedaction": "true"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
