@@ -446,7 +446,7 @@ class TestDiagnosticsApi(APITestCase):
             self.assertEqual(
                 diagnostic.year,
                 2020,
-                f"The diagnostic year should be 200 for diagnostic import with status {tc['status']}",
+                f"The diagnostic year should be 2020 for diagnostic import with status {tc['status']}",
             )
 
     @override_settings(ENABLE_TELEDECLARATION=True)
