@@ -7,15 +7,12 @@
     ></v-divider>
     <v-container class="constrained pb-4 pb-sm-0 pt-0 text-left">
       <v-row v-if="!showSmallFooter" class="pt-12 pt-sm-0">
-        <v-col cols="12" sm="3" :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.name != 'xs' }">
-          <v-img
+        <v-col cols="12" sm="3" md="2" class="d-flex align-center">
+          <img
             src="/static/images/Marianne.png"
             contain
-            class="mb-4"
-            max-width="230"
             alt="Ministère de l'Agriculture et la Souveraineté Alimentaire - Liberté Égalité Fraternité"
-          ></v-img>
-          <v-spacer />
+          />
         </v-col>
         <v-spacer></v-spacer>
         <v-col cols="12" sm="8" md="7" class="text-body-2">
