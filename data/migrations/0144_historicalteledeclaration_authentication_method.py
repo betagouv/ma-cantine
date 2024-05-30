@@ -2,8 +2,15 @@
 
 from django.db import migrations, models
 
+
 def migrate_auth_method(apps, schema_editor):
     HistoricalTeledeclaration = apps.get_model("data", "historicalteledeclaration")
+    for td in HistoricalTeledeclaration.objects.filter(
+        history_change_reason__isnull=True, history_user__is_staff=True
+    ):
+        td.authentication_method = "ADMIN"
+        td.save()
+
     for td in HistoricalTeledeclaration.objects.filter(history_change_reason__isnull=False):
         if td.history_change_reason == "SessionAuthentication":
             td.authentication_method = "WEBSITE"
@@ -16,16 +23,12 @@ def migrate_auth_method(apps, schema_editor):
         elif td.history_change_reason.startswith("Données de localisation MAJ"):
             td.authentication_method = "AUTO"
         td.save()
-    # an imperfect solution that still cleans up the data in prod a bit
-    for td in HistoricalTeledeclaration.objects.filter(history_change_reason__isnull=True, history_user__is_staff=True):
-        td.authentication_method = "ADMIN"
-        td.save()
 
 
 def undo_migrate_auth_method(apps, schema_editor):
     HistoricalTeledeclaration = apps.get_model("data", "historicalteledeclaration")
     for td in HistoricalTeledeclaration.objects.filter(authentication_method__isnull=False):
-        if td.authentication_method == "WEBSITE":
+        if td.authentication_method == "WEBSITE" or td.authentication_method == "ADMIN":
             td.history_change_reason = "SessionAuthentication"
         elif td.authentication_method == "API":
             td.history_change_reason = "OAuth2Authentication"
