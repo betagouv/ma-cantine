@@ -2,6 +2,7 @@ from urllib.parse import quote
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
 from data.department_choices import Department
 from data.region_choices import Region
@@ -339,7 +340,7 @@ class Canteen(SoftDeletionModel):
     def _get_region(self):
         return get_region(self.department)
 
-    @property
+    @cached_property
     def appro_diagnostics(self):
         diag_ids = list_properties(self.diagnostic_set, "id")
 
@@ -357,7 +358,7 @@ class Canteen(SoftDeletionModel):
 
         return Diagnostic.objects.filter(id__in=diag_ids)
 
-    @property
+    @cached_property
     def service_diagnostics(self):
         diag_ids = list_properties(self.diagnostic_set, "id")
 
@@ -376,7 +377,7 @@ class Canteen(SoftDeletionModel):
 
         return Diagnostic.objects.filter(id__in=diag_ids)
 
-    @property
+    @cached_property
     def published_appro_diagnostics(self):
         diagnostics_to_redact = []
         for year in self.redacted_appro_years:
@@ -385,12 +386,12 @@ class Canteen(SoftDeletionModel):
                 diagnostics_to_redact.append(diag.id)
         return self.appro_diagnostics.exclude(id__in=diagnostics_to_redact)
 
-    @property
+    @cached_property
     def published_service_diagnostics(self):
         # a wrapper to have consistent naming conventions
         return self.service_diagnostics
 
-    @property
+    @cached_property
     def latest_published_year(self):
         if not self.published_appro_diagnostics and not self.published_service_diagnostics:
             return
@@ -404,11 +405,11 @@ class Canteen(SoftDeletionModel):
         max_year = max(appro_year, service_year)
         return max_year if max_year > 0 else None
 
-    @property
+    @cached_property
     def latest_published_appro_diagnostic(self):
         return self.published_appro_diagnostics.filter(year=self.latest_published_year).first()
 
-    @property
+    @cached_property
     def latest_published_service_diagnostic(self):
         return self.published_service_diagnostics.filter(year=self.latest_published_year).first()
 
