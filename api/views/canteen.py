@@ -36,6 +36,7 @@ from api.serializers import (
     CanteenStatusSerializer,
     ElectedCanteenSerializer,
     MinimalCanteenSerializer,
+    CanteenSummarySerializer,
 )
 from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration, Purchase
 from data.region_choices import Region
@@ -372,6 +373,25 @@ class UserCanteenPreviews(ListAPIView):
     serializer_class = CanteenPreviewSerializer
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
+
+    def get_queryset(self):
+        return self.request.user.canteens.all()
+
+
+class UserCanteenSummaries(ListAPIView):
+    model = Canteen
+    serializer_class = CanteenSummarySerializer
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
+    pagination_class = UserCanteensPagination
+    filter_backends = [
+        django_filters.DjangoFilterBackend,
+        UnaccentSearchFilter,
+        MaCantineOrderingFilter,
+    ]
+    filterset_class = UserCanteensFilterSet
+    search_fields = ["name", "siret"]
+    ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
 
     def get_queryset(self):
         return self.request.user.canteens.all()
