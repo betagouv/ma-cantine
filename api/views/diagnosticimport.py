@@ -60,6 +60,7 @@ class ImportDiagnosticsView(ABC, APIView):
         try:
             with transaction.atomic():
                 self.file = request.data["file"]
+                ImportDiagnosticsView._verify_file_format(self.file)
                 ImportDiagnosticsView._verify_file_size(self.file)
                 self._treat_csv_file(self.file)
 
@@ -88,6 +89,13 @@ class ImportDiagnosticsView(ABC, APIView):
             details=message,
             import_type=self.import_type,
         )
+
+    @staticmethod
+    def _verify_file_format(file):
+        if file.content_type != "text/csv" and file.content_type != "text/tab-separated-values":
+            raise ValidationError(
+                f"Ce fichier est du format {file.content_type}, merci d'exporter votre fichier en format CSV et re-essayer."
+            )
 
     @staticmethod
     def _verify_file_size(file):

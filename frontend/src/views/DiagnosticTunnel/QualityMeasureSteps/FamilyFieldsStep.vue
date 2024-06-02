@@ -8,13 +8,7 @@
         :key="label.title || label.icon"
         class="d-flex flex-column justify-center"
       >
-        <img
-          v-if="label.src"
-          :src="`/static/images/quality-labels/${label.src}`"
-          :alt="label.title"
-          :title="label.title"
-          style="max-height: 30px;"
-        />
+        <img v-if="label.src" :src="`/static/images/quality-labels/${label.src}`" alt="" style="max-height: 30px;" />
         <v-icon class="mt-n1" :color="label.color" v-else-if="label.icon" size="30">
           {{ label.icon }}
         </v-icon>

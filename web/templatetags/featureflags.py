@@ -20,6 +20,11 @@ def enable_teledeclaration():
 
 
 @register.simple_tag
+def teledeclaration_correction_campaign():
+    return getattr(settings, "TELEDECLARATION_CORRECTION_CAMPAIGN", "")
+
+
+@register.simple_tag
 def teledeclaration_end_date():
     return getattr(settings, "TELEDECLARATION_END_DATE", "")
 

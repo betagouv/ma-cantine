@@ -10,6 +10,7 @@ from api.views import (
     PurchasesDeleteView,
     PurchasesRestoreView,
     CanteenPurchasesSummaryView,
+    CanteenPurchasesPercentageSummaryView,
     DiagnosticsFromPurchasesView,
     UsernameSuggestionView,
     ImportSimpleCentralKitchenView,
@@ -17,7 +18,12 @@ from api.views import (
     TerritoryCanteensListView,
 )
 from api.views import UpdateUserView, UserCanteensView, CanteenStatisticsView
-from api.views import PublishedCanteensView, PublishManyCanteensView, PublishedCanteenSingleView
+from api.views import (
+    PublishedCanteensView,
+    PublicCanteenPreviewView,
+    PublishManyCanteensView,
+    PublishedCanteenSingleView,
+)
 from api.views import DiagnosticCreateView, RetrieveUpdateUserCanteenView, DiagnosticUpdateView
 from api.views import EmailDiagnosticImportFileView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
@@ -25,7 +31,7 @@ from api.views import AddManagerView, RemoveManagerView
 from api.views import ImportSimpleDiagnosticsView, ImportCompleteDiagnosticsView
 from api.views import TeledeclarationCreateView, TeledeclarationCancelView, TeledeclarationPdfView
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
-from api.views import UserCanteenPreviews, CanteenLocationsView
+from api.views import UserCanteenPreviews, UserCanteenSummaries, CanteenLocationsView
 from api.views import PartnerView, PartnersView, PartnerTypeListView
 from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView, ImportPurchasesView
 from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
@@ -41,12 +47,18 @@ urlpatterns = {
     path("user/<int:pk>", UpdateUserView.as_view(), name="update_user"),
     path("publishedCanteens/", PublishedCanteensView.as_view(), name="published_canteens"),
     path(
+        "publicCanteenPreviews/<int:pk>",
+        PublicCanteenPreviewView.as_view(),
+        name="single_public_canteen_preview",
+    ),
+    path(
         "publishedCanteens/<int:pk>",
         PublishedCanteenSingleView.as_view(),
         name="single_published_canteen",
     ),
     path("publish/", PublishManyCanteensView.as_view(), name="publish_canteens"),
     path("canteenPreviews/", UserCanteenPreviews.as_view(), name="user_canteen_previews"),
+    path("canteenSummaries/", UserCanteenSummaries.as_view(), name="user_canteens_summaries"),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
     path("canteens/<int:pk>", RetrieveUpdateUserCanteenView.as_view(), name="single_canteen"),
     path(
@@ -161,6 +173,11 @@ urlpatterns = {
         "canteenPurchasesSummary/<int:canteen_pk>",
         CanteenPurchasesSummaryView.as_view(),
         name="canteen_purchases_summary",
+    ),
+    path(
+        "canteenPurchasesPercentageSummary/<int:canteen_pk>",
+        CanteenPurchasesPercentageSummaryView.as_view(),
+        name="canteen_purchases_percentage_summary",
     ),
     path(
         "createDiagnosticsFromPurchases/<int:year>",

@@ -136,6 +136,7 @@ class ImportPurchasesView(APIView):
 
         csvreader = csv.reader(io.StringIO("".join(chunk)), self.dialect)
         for row_number, row in enumerate(csvreader, start=1):
+            siret = None
             # If header, pass
             if row_number == 1 and row[0].lower().__contains__("siret"):
                 continue
@@ -176,7 +177,7 @@ class ImportPurchasesView(APIView):
         if date == "":
             raise ValidationError({"date": "La date ne peut pas être vide"})
 
-        price = row.pop(0).strip()
+        price = row.pop(0).strip().replace(",", ".")
         if price == "":
             raise ValidationError({"price_ht": "Le prix ne peut pas être vide"})
 

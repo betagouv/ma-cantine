@@ -3,9 +3,11 @@
     <component v-if="heading" :is="headingLevel" :id="headingId" :class="headingClasses">{{ heading }}</component>
     <VueApexCharts v-bind="$attrs" />
     <DsfrAccordion :items="[{ title: 'Description du graphique' }]" class="mb-2">
-      <div :id="descriptionId">
-        <slot name="description"></slot>
-      </div>
+      <template v-slot:content>
+        <div :id="descriptionId">
+          <slot name="description"></slot>
+        </div>
+      </template>
     </DsfrAccordion>
   </div>
 </template>

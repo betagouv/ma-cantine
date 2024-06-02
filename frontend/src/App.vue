@@ -149,6 +149,10 @@ export default {
   background-color: #f6f6f6;
 }
 
+.v-card.dsfr.no-hover:hover {
+  background-color: inherit;
+}
+
 a:focus,
 button:focus,
 .v-input--checkbox:focus-within,
@@ -159,6 +163,10 @@ div[role="tab"]:focus {
   outline: rgb(0, 0, 145) !important;
   outline-width: 1px !important;
   outline-style: auto !important;
+}
+
+.v-btn.primary:hover {
+  background-color: #1212ff !important;
 }
 
 .v-expansion-panel-header__icon > .v-icon {
@@ -173,6 +181,10 @@ div[role="tab"]:focus {
   color: #666 !important;
   opacity: 1;
   font-style: italic;
+}
+.other-text-input label.theme--light.v-label--is-disabled {
+  color: #666 !important;
+  opacity: 1;
 }
 
 .dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {

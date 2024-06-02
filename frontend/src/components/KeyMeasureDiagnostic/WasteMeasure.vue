@@ -38,10 +38,11 @@
           class="shrink mt-0"
           :readonly="readonly"
           :disabled="readonly"
+          aria-label="Autre : donnez plus d'informations"
         ></v-checkbox>
         <!-- Will leave this UI version of the text-field since it is next to a checkbox -->
         <v-text-field
-          class="my-0 py-0"
+          class="my-0 py-0 other-text-input"
           hide-details
           :disabled="!otherActionEnabled || readonly"
           v-model="diagnostic.otherWasteAction"

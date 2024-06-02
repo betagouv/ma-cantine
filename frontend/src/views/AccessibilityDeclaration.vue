@@ -252,7 +252,6 @@
         <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
         .
       </li>
-      <li>Appelez-nous au +33 6 59 63 44 43.</li>
       <li>Écrivez-nous par voie postale à l’adresse suivante : 20 avenue de Ségur, 75007, Paris</li>
     </ul>
     <h3 class="fr-h3">

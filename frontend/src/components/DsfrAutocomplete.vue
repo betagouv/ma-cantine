@@ -13,21 +13,24 @@
       v-on="$listeners"
       persistent-placeholder
       @input="(v) => $emit('input', v)"
+      :aria-describedby="errorMessageId"
       auto-select-first
       :search-input.sync="searchInput"
       @change="searchInput = ''"
+      :filter="unaccentedFilter"
     >
       <template v-slot:label><span></span></template>
 
       <!-- For RGAA 8.9 error messages should also be in p tags, by default in vuetify 2 they're in divs -->
       <template v-slot:message="{ key, message }">
-        <p :key="key" class="mb-0">{{ message }}</p>
+        <p :id="errorMessageId" :key="key" class="mb-0">{{ message }}</p>
       </template>
     </v-autocomplete>
   </div>
 </template>
 
 <script>
+import { normaliseText } from "@/utils"
 export default {
   inheritAttrs: false,
   props: {
@@ -43,6 +46,11 @@ export default {
       inputId: null,
     }
   },
+  computed: {
+    errorMessageId() {
+      return this.inputId && `${this.inputId}-error`
+    },
+  },
   methods: {
     removeInnerLabel() {
       const labels = this.$refs["autocomplete"].$el.getElementsByTagName("label")
@@ -50,6 +58,11 @@ export default {
     },
     assignInputId() {
       this.inputId = this.$refs?.["autocomplete"]?.$refs?.["input"].id
+    },
+    unaccentedFilter(item, queryText, itemText) {
+      const normalizedQueryText = normaliseText(queryText).toLocaleLowerCase()
+      const normalizedItemText = normaliseText(itemText).toLocaleLowerCase()
+      return normalizedItemText.indexOf(normalizedQueryText) > -1
     },
   },
   mounted() {

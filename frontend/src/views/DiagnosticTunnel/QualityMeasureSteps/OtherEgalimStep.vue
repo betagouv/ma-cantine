@@ -196,10 +196,10 @@ export default {
   },
   data() {
     const otherLogos = [
-      "Logo Haute Valeur Environnementale",
+      "Haute Valeur Environnementale (HVE)",
       "Écolabel pêche durable",
-      "Logo Région Ultrapériphérique",
-      "Logo Commerce Équitable",
+      "Région Ultrapériphérique (RUP)",
+      "Commerce Équitable",
     ]
     return {
       totalErrorMessage: null,

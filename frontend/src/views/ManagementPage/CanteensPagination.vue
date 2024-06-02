@@ -134,7 +134,7 @@ export default {
       if (this.filterProductionType !== "all") queryParam += `&production_type=${this.filterProductionType}`
       this.inProgress = true
 
-      return fetch(`/api/v1/canteens/?${queryParam}`)
+      return fetch(`/api/v1/canteenSummaries/?${queryParam}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
           return response.json()

@@ -7,6 +7,7 @@ from .user import (  # noqa: F401
 )
 from .canteen import (  # noqa: F401
     PublishedCanteensView,
+    PublicCanteenPreviewView,
     PublishedCanteenSingleView,
     UserCanteensView,
     RetrieveUpdateUserCanteenView,
@@ -28,6 +29,7 @@ from .canteen import (  # noqa: F401
     ActionableCanteenRetrieveView,
     CanteenStatusView,
     TerritoryCanteensListView,
+    UserCanteenSummaries,
 )
 from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,
@@ -55,6 +57,7 @@ from .purchase import (  # noqa: F401
     PurchaseListCreateView,
     PurchaseRetrieveUpdateDestroyView,
     CanteenPurchasesSummaryView,
+    CanteenPurchasesPercentageSummaryView,
     PurchaseListExportView,
     PurchaseOptionsView,
     PurchasesDeleteView,
