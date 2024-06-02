@@ -599,6 +599,7 @@ export default {
       return this.sectors.find((s) => s.id === id)?.name || id
     },
     addSector(id) {
+      id = +id
       if (!id || id < 0) return
       if (!this.canteen.sectors) this.canteen.sectors = []
       if (this.canteen.sectors.indexOf(id) === -1) this.canteen.sectors.push(id)
