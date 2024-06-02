@@ -252,6 +252,7 @@
                   @click:close="removeSector(id)"
                   class="mr-1 mt-1"
                   color="primary"
+                  close-label="Fermer"
                 >
                   {{ sectorName(id) }}
                 </v-chip>
