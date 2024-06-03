@@ -7,7 +7,7 @@
       {{ applicableRules.bioThreshold }} % de bio
       <span v-if="applicableRules.qualityThreshold !== 50">
         - en respectant
-        <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+        <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les différents seuils fixés pour l'Outre-mer</a>
       </span>
     </p>
 
