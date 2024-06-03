@@ -225,30 +225,24 @@
         </v-col>
 
         <v-col cols="12" sm="6" md="4">
-          <div>
-            <DsfrSelect
-              label="Catégorie de secteur"
-              labelClasses="body-2 mb-2"
-              clearable
-              :items="sectorCategories"
-              v-model="sectorCategory"
-              hide-details="auto"
-            />
-          </div>
+          <DsfrNativeSelect
+            label="Catégorie de secteur"
+            labelClasses="body-2 mb-2"
+            :items="sectorCategories"
+            v-model="sectorCategory"
+          />
         </v-col>
         <v-col cols="12" md="6">
           <div>
-            <DsfrSelect
+            <DsfrNativeSelect
               label="Secteurs d'activité"
               labelClasses="body-2 mb-2"
               :items="filteredSectors"
-              :rules="canteen.sectors && canteen.sectors.length ? [] : [validators.required]"
-              @change="addSector"
               v-model="chosenSector"
               item-text="name"
               item-value="id"
-              hide-details="auto"
               no-data-text="Veuillez séléctionner la catégorie de secteur"
+              :rules="canteen.sectors && canteen.sectors.length ? [] : [validators.required]"
             />
             <div class="d-flex flex-wrap mt-2">
               <p v-for="id in canteen.sectors" :key="id" class="mb-0">
@@ -258,6 +252,7 @@
                   @click:close="removeSector(id)"
                   class="mr-1 mt-1"
                   color="primary"
+                  close-label="Fermer"
                 >
                   {{ sectorName(id) }}
                 </v-chip>
@@ -266,15 +261,13 @@
           </div>
         </v-col>
         <v-col v-if="showMinistryField" cols="12" md="10">
-          <DsfrSelect
+          <DsfrNativeSelect
             label="Ministère de tutelle"
             labelClasses="body-2 mb-2"
             :items="ministries"
             v-model="canteen.lineMinistry"
             :rules="[validators.required]"
             placeholder="Sélectionnez le Ministère de tutelle"
-            hide-details="auto"
-            clearable
           />
         </v-col>
       </v-row>
@@ -325,7 +318,7 @@ import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrRadio from "@/components/DsfrRadio"
 import CityField from "./CityField"
-import DsfrSelect from "@/components/DsfrSelect"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrCallout from "@/components/DsfrCallout"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
@@ -337,7 +330,7 @@ export default {
     DsfrTextField,
     DsfrRadio,
     CityField,
-    DsfrSelect,
+    DsfrNativeSelect,
     DsfrCallout,
     SiretCheck,
   },
@@ -383,12 +376,13 @@ export default {
     },
     filteredSectors() {
       if (!this.sectorCategory) return []
-      return sectorsSelectList(this.sectors, this.sectorCategory)
+      return sectorsSelectList(this.sectors, this.sectorCategory).filter((s) => !s.header)
     },
     sectorCategories() {
       const displayValueMap = Constants.SectorCategoryTranslations
       const categoriesInUse = this.sectors.map((s) => s.category)
-      const categories = categoriesInUse.map((c) => ({ value: c, text: displayValueMap[c] }))
+      const uniqueCategories = categoriesInUse.filter((c, idx) => categoriesInUse.indexOf(c) === idx)
+      const categories = uniqueCategories.map((c) => ({ value: c, text: displayValueMap[c] }))
       categories.sort((a, b) => {
         if (a.value === "autres" && b.value === "inconnu") return 0
         else if (a.value === "autres") return 1
@@ -416,7 +410,7 @@ export default {
     showMinistryField() {
       const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
       if (concernedSectors.length === 0) return false
-      return this.canteen.sectors?.some((x) => concernedSectors.indexOf(x) > -1)
+      return this.canteen.sectors?.some((x) => concernedSectors.indexOf(parseInt(x, 10)) > -1)
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
@@ -601,9 +595,11 @@ export default {
       this.canteen.department = location.department
     },
     sectorName(id) {
+      id = parseInt(id, 10) || id
       return this.sectors.find((s) => s.id === id)?.name || id
     },
     addSector(id) {
+      id = +id
       if (!id || id < 0) return
       if (!this.canteen.sectors) this.canteen.sectors = []
       if (this.canteen.sectors.indexOf(id) === -1) this.canteen.sectors.push(id)
@@ -621,6 +617,11 @@ export default {
       return
     }
     window.confirm(LEAVE_WARNING) ? next() : next(false)
+  },
+  watch: {
+    chosenSector(newValue) {
+      this.addSector(newValue)
+    },
   },
 }
 </script>
