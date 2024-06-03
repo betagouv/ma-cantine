@@ -8,6 +8,8 @@
       v-on:input="$emit('input', $event.target.value)"
       :class="{ 'fr-select mb-1': true, 'fr-error': hasError }"
       @blur="validate"
+      :aria-describedby="errorMessageId"
+      :aria-invalid="hasError"
     >
       <option v-if="!items.length" disabled selected value="">{{ noDataText || "Liste vide" }}</option>
       <option v-else disabled selected hidden value="">Sélectionner une option</option>
@@ -18,7 +20,7 @@
     <div v-if="errorMessage" class="v-messages theme--light error--text pl-3" role="alert">
       <div class="v-messages__wrapper">
         <div class="v-messages__message">
-          <p>{{ errorMessage }}</p>
+          <p :id="errorMessageId" class="mb-0">{{ errorMessage }}</p>
         </div>
       </div>
     </div>
@@ -62,6 +64,9 @@ export default {
   computed: {
     hasError() {
       return !!this.errorMessage
+    },
+    errorMessageId() {
+      return this.inputId && `${this.inputId}-error`
     },
   },
   methods: {
