@@ -3,7 +3,7 @@
     v-bind="$attrs"
     v-on="$listeners"
     :color="modes[mode].backgroundColor"
-    :style="`border-radius: 4px !important; color: ${modes[mode].color}`"
+    :style="`border-radius: 4px !important; color: ${modes[mode].color}; width: fit-content;`"
     small
     label
   >
