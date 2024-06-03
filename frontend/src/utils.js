@@ -234,6 +234,16 @@ export const getPercentage = (partialValue, totalValue, round = true) => {
   }
 }
 
+export const hasApproGraphData = (diagnostic) => {
+  const graphDataKeys = [
+    "percentageValueBioHt",
+    "percentageValueSustainableHt",
+    "percentageValueExternalityPerformanceHt",
+    "percentageValueEgalimOthersHt",
+  ]
+  return graphDataKeys.some((k) => Object.hasOwn(diagnostic, k))
+}
+
 export const getSustainableTotal = (diagnostic) => {
   const sustainableSum =
     (diagnostic.valueSustainableHt || 0) +

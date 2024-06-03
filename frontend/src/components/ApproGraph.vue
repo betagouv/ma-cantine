@@ -1,19 +1,23 @@
 <template>
-  <VueApexCharts
-    :options="chartOptions"
-    :series="series"
-    role="figure"
-    aria-label="Approvisionnement bio et durable"
-    :aria-description="description"
-    height="100px"
-    width="100%"
-    class="my-4"
-  />
+  <div>
+    <p v-if="!hasEnoughData && fallbackText">{{ fallbackText }}</p>
+    <VueApexCharts
+      v-else
+      :options="chartOptions"
+      :series="series"
+      role="figure"
+      aria-label="Approvisionnement bio et durable"
+      :aria-description="description"
+      height="100px"
+      width="100%"
+      class="my-4"
+    />
+  </div>
 </template>
 
 <script>
 import VueApexCharts from "vue-apexcharts"
-import { applicableDiagnosticRules, getSustainableTotal, getPercentage } from "@/utils"
+import { applicableDiagnosticRules, getSustainableTotal, getPercentage, hasApproGraphData } from "@/utils"
 
 export default {
   name: "ApproGraph",
@@ -26,6 +30,10 @@ export default {
       type: Object,
     },
     colorTheme: {
+      type: String,
+      optional: true,
+    },
+    fallbackText: {
       type: String,
       optional: true,
     },
@@ -156,6 +164,9 @@ export default {
     },
     description() {
       return `Bio : ${this.bioPercentage} %. Durable et de qualité (hors bio) : ${this.sustainablePercentage} %. Rappel objectif EGAlim : ${this.applicableRules.qualityThreshold} % des achats de qualité et durable, dont ${this.applicableRules.bioThreshold} % bio.`
+    },
+    hasEnoughData() {
+      return hasApproGraphData(this.diagnostic)
     },
   },
 }

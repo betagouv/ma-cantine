@@ -1,4 +1,4 @@
-def appro_to_percentages(representation, instance):
+def appro_to_percentages(representation, instance, remove_values=True):
     # first do the percentages relative to meat and fish totals
     # not removing these totals so that can then calculate the percent of those compared to global total
     meat_total = representation.get("value_meat_poultry_ht")
@@ -32,13 +32,15 @@ def appro_to_percentages(representation, instance):
         new_field_name = f"percentage_{field}"
         if representation.get(field):
             representation[new_field_name] = representation[field] / total if total else None
-        representation.pop(field, None)
+        if remove_values:
+            representation.pop(field, None)
 
     representation["percentage_value_total_ht"] = 1
-    representation.pop("value_total_ht", None)
-    representation.pop("value_meat_poultry_egalim_ht", None)
-    representation.pop("value_meat_poultry_france_ht", None)
-    representation.pop("value_fish_egalim_ht", None)
+    if remove_values:
+        representation.pop("value_total_ht", None)
+        representation.pop("value_meat_poultry_egalim_ht", None)
+        representation.pop("value_meat_poultry_france_ht", None)
+        representation.pop("value_fish_egalim_ht", None)
 
     return representation
 
