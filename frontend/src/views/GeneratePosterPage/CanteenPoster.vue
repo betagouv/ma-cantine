@@ -83,7 +83,7 @@
         <div class="badge-description" v-else>
           Ce qui est servi dans les assiettes est au moins à
           {{ applicableRules.qualityThreshold }}&nbsp;% de produits durables et de qualité, dont
-          {{ applicableRules.bioThreshold }}&nbsp;% bio, en respectant les seuils d'Outre-mer.
+          {{ applicableRules.bioThreshold }}&nbsp;% bio, en respectant les différents seuils fixés pour l'Outre-mer.
         </div>
       </div>
     </div>

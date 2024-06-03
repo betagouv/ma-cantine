@@ -21,7 +21,7 @@
           />
         </v-col>
         <v-col cols="12" sm="4">
-          <DsfrSelect label="Année" v-model="vizYear" :items="allowedYears" hide-details="auto" />
+          <DsfrNativeSelect label="Année" v-model="vizYear" :items="allowedYears" hide-details="auto" />
         </v-col>
       </v-row>
       <v-row v-if="displayMultiYearSummary">
@@ -190,7 +190,7 @@ import {
   applicableDiagnosticRules,
 } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
-import DsfrSelect from "@/components/DsfrSelect"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrTextField from "@/components/DsfrTextField"
 import GraphComponent from "@/components/GraphComponent"
@@ -203,7 +203,7 @@ export default {
   name: "PurchasesSummary",
   components: {
     BreadcrumbsNav,
-    DsfrSelect,
+    DsfrNativeSelect,
     DsfrAutocomplete,
     DsfrTextField,
     GraphComponent,
@@ -215,7 +215,9 @@ export default {
       vizYear: lastYear(),
       vizCanteenId: null,
       vizCanteen: null,
-      allowedYears: diagnosticYears().filter((year) => year <= lastYear() + 1),
+      allowedYears: diagnosticYears()
+        .filter((year) => year <= lastYear() + 1)
+        .map((year) => ({ text: year, value: year })),
       yearlySummary: null,
       summary: null,
       loading: false,

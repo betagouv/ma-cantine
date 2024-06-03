@@ -9,7 +9,7 @@
             </h2>
           </v-col>
           <v-col>
-            <DsfrSelect v-model="year" :items="allowedYears" hide-details="auto" placeholder="Année" />
+            <DsfrNativeSelect v-model="year" :items="allowedYears" label="Année" labelClasses="d-sr-only" />
           </v-col>
         </v-row>
         <div>
@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import DsfrSelect from "@/components/DsfrSelect"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import {
   lastYear,
@@ -153,7 +153,7 @@ import ApproSegment from "./ApproSegment"
 export default {
   name: "EgalimProgression",
   components: {
-    DsfrSelect,
+    DsfrNativeSelect,
     TeledeclarationPreview,
     FoodWasteCard,
     DiversificationCard,

@@ -90,15 +90,12 @@
             />
           </v-col>
           <v-col cols="12" md="9">
-            <label for="job" class="body-2 mt-2 text-left">Fonction</label>
-            <DsfrSelect
-              id="job"
-              class="mt-1"
+            <DsfrNativeSelect
+              label="Fonction"
+              labelClasses="body-2 mb-2"
               v-model="userCopy.job"
               :items="jobOptions"
               :rules="[validators.required]"
-              hide-details="auto"
-              placeholder="Choisir une fonction"
             />
           </v-col>
           <v-col cols="12" v-if="showOtherJobField" class="my-0">
@@ -110,15 +107,12 @@
             />
           </v-col>
           <v-col cols="12" md="9" v-if="!userCopy.hasMtmData">
-            <label for="source" class="body-2 mt-2 text-left">Comment avez-vous connu ma-cantine ?</label>
-            <DsfrSelect
-              id="source"
-              class="mt-1"
+            <DsfrNativeSelect
+              label="Comment avez-vous connu ma-cantine ?"
+              labelClasses="body-2 mb-2"
               v-model="userCopy.source"
               :items="sourceOptions"
               :rules="[validators.required]"
-              hide-details="auto"
-              placeholder="Choisir une option"
             />
           </v-col>
           <v-col cols="12" v-if="showOtherSourceField" class="my-0">
@@ -146,13 +140,13 @@ import validators from "@/validators"
 import Constants from "@/constants"
 import { toBase64, getObjectDiff } from "@/utils"
 import DsfrTextField from "@/components/DsfrTextField"
-import DsfrSelect from "@/components/DsfrSelect"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrEmail from "@/components/DsfrEmail"
 import DsfrPhoneNumber from "@/components/DsfrPhoneNumber"
 
 export default {
   name: "AccountEditor",
-  components: { DsfrTextField, DsfrSelect, DsfrEmail, DsfrPhoneNumber },
+  components: { DsfrTextField, DsfrNativeSelect, DsfrEmail, DsfrPhoneNumber },
   data() {
     return {
       userCopy: {},

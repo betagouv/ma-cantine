@@ -234,6 +234,20 @@ export const getPercentage = (partialValue, totalValue, round = true) => {
   }
 }
 
+// Currently we check for the existence of the key, where we mean to verify whether
+// the value is null or not. If we wanted to make this change, we would also need to
+// modify line 33 of api/serializers/utils.py to ensure all values are added regardless
+// of their nullability
+export const hasApproGraphData = (diagnostic) => {
+  const graphDataKeys = [
+    "percentageValueBioHt",
+    "percentageValueSustainableHt",
+    "percentageValueExternalityPerformanceHt",
+    "percentageValueEgalimOthersHt",
+  ]
+  return graphDataKeys.some((k) => Object.hasOwn(diagnostic, k))
+}
+
 export const getSustainableTotal = (diagnostic) => {
   const sustainableSum =
     (diagnostic.valueSustainableHt || 0) +

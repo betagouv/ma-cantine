@@ -46,9 +46,9 @@
                   <a
                     href="https://ma-cantine.agriculture.gouv.fr/blog/16"
                     target="_blank"
-                    title="les seuils d'Outre-mer - ouvre une nouvelle fenêtre"
+                    title="les différents seuils fixés pour l'Outre-mer - ouvre une nouvelle fenêtre"
                   >
-                    les seuils d'Outre-mer
+                    les différents seuils fixés pour l'Outre-mer
                     <v-icon small class="primary--text">mdi-open-in-new</v-icon>
                   </a>
                 </p>
