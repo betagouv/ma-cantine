@@ -77,7 +77,13 @@
           </DsfrToggle>
         </DsfrCallout>
 
-        <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" class="my-8" />
+        <ApproGraph
+          v-if="diagnosticForYear"
+          :diagnostic="diagnosticForYear"
+          :canteen="canteen"
+          fallbackText="Pas de données disponibles"
+          class="my-8"
+        />
 
         <div v-if="hasFamilyDetail">
           <DsfrAccordion :items="[{ title: 'Détail par famille de produit' }]" class="mb-2">
