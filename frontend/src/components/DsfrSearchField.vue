@@ -54,6 +54,10 @@ export default {
     value() {
       return this.$refs["text-field"].value
     },
+    clear() {
+      const noAction = () => {}
+      return this.clearAction || noAction
+    },
   },
   methods: {
     validate() {
@@ -61,10 +65,6 @@ export default {
     },
     resetValidation() {
       return this.$refs["text-field"].resetValidation()
-    },
-    clear() {
-      const noAction = () => {}
-      return this.clearAction || noAction
     },
   },
 }
