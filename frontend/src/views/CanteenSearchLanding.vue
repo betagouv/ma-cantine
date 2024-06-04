@@ -27,6 +27,7 @@
           hide-details
           :searchAction="search"
         />
+        <p class="my-4"><router-link :to="{ name: 'CanteensHome' }">Effectuer une recherche avancée</router-link></p>
       </v-col>
     </v-row>
   </v-container>
