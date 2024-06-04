@@ -1,5 +1,5 @@
 <template>
-  <div class="text-left">
+  <div class="text-left fr-text">
     <BreadcrumbsNav />
     <v-card elevation="0" class="text-center text-md-left mb-6 mt-3">
       <v-row v-if="$vuetify.breakpoint.smAndDown">
@@ -38,52 +38,31 @@
         </v-col>
       </v-row>
     </v-card>
-    <v-sheet class="py-2" elevation="0">
-      <v-row>
-        <v-col cols="12" md="7" class="pt-0">
-          <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
+
+    <div id="search-top">
+      <v-row class="my-2" align="end">
+        <v-col cols="12" md="4">
+          <form role="search" onsubmit="return false">
             <DsfrSearchField
               hide-details="auto"
               ref="search"
               v-model="searchTerm"
-              placeholder="Recherche par nom ou SIRET de l'établissement"
+              placeholder="Recherche par nom ou SIRET"
               :searchAction="search"
               :clearAction="clearSearch"
-              class="mb-2 flex-grow-1"
             />
           </form>
         </v-col>
-      </v-row>
-    </v-sheet>
-
-    <div id="search-top">
-      <v-row class="my-2" align="end">
-        <v-col>
-          <p
-            class="mb-0 fr-text grey--text text--darken-1"
-            aria-live="polite"
-            aria-atomic="true"
-            v-if="resultsCountText"
-          >
-            {{ resultsCountText }}
-          </p>
-        </v-col>
-        <v-col id="ordering" cols="12" sm="3" class="d-flex align-end">
-          <DsfrSelect
-            v-model="orderBy"
-            :items="orderOptions"
-            labelClasses="body-2 mb-2"
-            hide-details
-            label="Trier par"
-          />
+        <v-col id="ordering" cols="12" sm="6" md="3" class="d-flex align-end">
+          <DsfrNativeSelect v-model="orderBy" :items="orderOptions" hide-details label="Trier par" class="mb-n1" />
           <v-btn
             icon
             @click="toggleOrderDirection"
             :title="`Resultats affichés en ordre ${orderDescending ? 'décroissant' : 'croissant'}`"
             plain
           >
-            <v-icon v-if="orderDescending">mdi-arrow-down</v-icon>
-            <v-icon v-else>
+            <v-icon color="primary" v-if="orderDescending">mdi-arrow-down</v-icon>
+            <v-icon color="primary" v-else>
               mdi-arrow-up
             </v-icon>
           </v-btn>
@@ -385,6 +364,7 @@ import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrRadio from "@/components/DsfrRadio"
 import DsfrSelect from "@/components/DsfrSelect"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
@@ -402,6 +382,7 @@ export default {
     DsfrAutocomplete,
     DsfrRadio,
     DsfrSelect,
+    DsfrNativeSelect,
     DsfrTextarea,
     DsfrPagination,
     DsfrSearchField,
