@@ -407,7 +407,7 @@ export default {
   data() {
     const user = this.$store.state.loggedUser
     return {
-      limit: 6,
+      limit: 3,
       departments: [],
       regions: [],
       sectors: [],
