@@ -104,10 +104,16 @@
           <v-form class="mt-4">
             <DsfrAccordion
               :items="[
-                { title: 'Par térritoire', id: 'territory' },
-                { title: 'Par caractéristique', id: 'characteristic' },
+                { id: 'territory', icon: '$road-map-fill', text: 'Par térritoire' },
+                { id: 'characteristic', icon: '$community-fill', text: 'Par caractéristique' },
               ]"
             >
+              <template v-slot:title="{ item }">
+                <span class="d-flex">
+                  <v-icon color="primary" class="mr-2">{{ item.icon }}</v-icon>
+                  {{ item.text }}
+                </span>
+              </template>
               <template v-slot:content="{ item }">
                 <div v-if="item.id === 'territory'">
                   <label
