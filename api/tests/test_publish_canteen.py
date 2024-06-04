@@ -161,3 +161,5 @@ class TestPublishCanteen(APITestCase):
         response = self.client.post(reverse("unpublish_canteen", kwargs={"pk": canteen.id}))
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.publication_status, "published")
