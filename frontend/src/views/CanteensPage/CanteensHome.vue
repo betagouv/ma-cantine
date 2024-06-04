@@ -90,7 +90,7 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="3">
+        <v-col cols="4">
           <div class="mt-4 pl-0">
             <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">
               <h2 class="fr-h6 mb-1">
@@ -214,17 +214,17 @@
                     class="mt-1 mb-4"
                     placeholder="Tous les cantines"
                   />
-                  <fieldset>
+                  <fieldset class="mb-4">
                     <legend
                       :class="{
                         'active-filter-label': !!filters.min_portion_bio.value || !!filters.min_portion_combined.value,
                       }"
                     >
-                      Dans les assiettes, part de...
+                      Dans les assiettes, part minimum de...
                     </legend>
-                    <div class="d-flex align-stretch mt-1">
+                    <div class="d-flex mt-1">
                       <DsfrTextField
-                        label="bio minimum"
+                        label="bio"
                         labelClasses="caption pl-1"
                         :value="filters.min_portion_bio.value"
                         ref="min_portion_bio"
@@ -234,9 +234,10 @@
                         append-icon="mdi-percent"
                         placeholder="0"
                         :hideOptional="true"
+                        class="mr-2"
                       />
                       <DsfrTextField
-                        label="bio, qualité et durables min"
+                        label="bio, qualité et durable"
                         labelClasses="caption pl-1"
                         :value="filters.min_portion_combined.value"
                         ref="min_portion_combined"
@@ -246,10 +247,11 @@
                         placeholder="0"
                         append-icon="mdi-percent"
                         :hideOptional="true"
+                        class="ml-2"
                       />
                     </div>
                   </fieldset>
-                  <fieldset>
+                  <fieldset class="mb-4">
                     <legend
                       :class="{
                         'active-filter-label':
@@ -258,10 +260,10 @@
                     >
                       Repas par jour
                     </legend>
-                    <div class="d-flex">
+                    <div class="d-flex mt-1">
                       <div>
                         <DsfrTextField
-                          label="Min"
+                          label="minimum"
                           labelClasses="caption"
                           :value="filters.min_daily_meal_count.value"
                           ref="min_daily_meal_count"
@@ -269,12 +271,12 @@
                           @change="onChangeIntegerFilter('min_daily_meal_count')"
                           hide-details="auto"
                           :hideOptional="true"
+                          class="mr-2"
                         />
                       </div>
-                      <span class="mx-2 align-self-center">-</span>
                       <div>
                         <DsfrTextField
-                          label="Max"
+                          label="maximum"
                           labelClasses="caption"
                           :value="filters.max_daily_meal_count.value"
                           ref="max_daily_meal_count"
@@ -282,6 +284,7 @@
                           @change="onChangeIntegerFilter('max_daily_meal_count')"
                           hide-details="auto"
                           :hideOptional="true"
+                          class="ml-2"
                         />
                       </div>
                     </div>
@@ -303,7 +306,7 @@
             </DsfrAccordion>
           </v-form>
         </v-col>
-        <v-col cols="9">
+        <v-col cols="8">
           <div v-if="loading || pageLoading" class="pa-12">
             <v-progress-circular indeterminate></v-progress-circular>
           </div>
