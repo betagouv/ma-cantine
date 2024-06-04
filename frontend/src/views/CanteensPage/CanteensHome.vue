@@ -60,7 +60,7 @@
       <v-row class="my-2" align="end">
         <v-col>
           <p
-            class="mb-0 text-body-2 grey--text text--darken-1"
+            class="mb-0 fr-text grey--text text--darken-1"
             aria-live="polite"
             aria-atomic="true"
             v-if="resultsCountText"
@@ -115,7 +115,6 @@
                   <label
                     for="select-region"
                     :class="{
-                      'text-body-2': true,
                       'active-filter-label': !!filters.region.value,
                     }"
                   >
@@ -135,7 +134,6 @@
                   <label
                     for="select-department"
                     :class="{
-                      'text-body-2': true,
                       'active-filter-label': !!filters.department.value,
                     }"
                   >
@@ -155,7 +153,6 @@
                   <label
                     for="select-commune"
                     :class="{
-                      'text-body-2': true,
                       'active-filter-label': !!filters.city_insee_code.value,
                     }"
                   >
@@ -174,7 +171,6 @@
                   <label
                     for="select-sector"
                     :class="{
-                      'text-body-2': true,
                       'active-filter-label': filters.sectors.value && !!filters.sectors.value.length,
                     }"
                   >
@@ -192,7 +188,7 @@
                   />
                   <label
                     for="select-management-type"
-                    :class="{ 'text-body-2': true, 'active-filter-label': !!filters.management_type.value }"
+                    :class="{ 'active-filter-label': !!filters.management_type.value }"
                   >
                     Mode de gestion
                   </label>
@@ -205,7 +201,7 @@
                   />
                   <label
                     for="select-production-type"
-                    :class="{ 'text-body-2': true, 'active-filter-label': !!filters.production_type.value }"
+                    :class="{ 'active-filter-label': !!filters.production_type.value }"
                   >
                     Type d'établissement
                   </label>
@@ -221,7 +217,6 @@
                   <fieldset>
                     <legend
                       :class="{
-                        'text-body-2': true,
                         'active-filter-label': !!filters.min_portion_bio.value || !!filters.min_portion_combined.value,
                       }"
                     >
@@ -257,7 +252,6 @@
                   <fieldset>
                     <legend
                       :class="{
-                        'text-body-2': true,
                         'active-filter-label':
                           !!filters.min_daily_meal_count.value || !!filters.max_daily_meal_count.value,
                       }"
@@ -292,10 +286,7 @@
                       </div>
                     </div>
                   </fieldset>
-                  <label
-                    for="select-badge"
-                    :class="{ 'text-body-2': true, 'active-filter-label': !!filters.badge.value }"
-                  >
+                  <label for="select-badge" :class="{ 'active-filter-label': !!filters.badge.value }">
                     Expertise EGAlim
                   </label>
                   <DsfrSelect
