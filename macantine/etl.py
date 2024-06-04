@@ -208,8 +208,42 @@ def update_datagouv_resources():
     except Exception as e:
         logger.exception(e)
 
-
 class ETL(ABC):
+    """
+    Interface for the different ETL
+    """
+    
+    @abstractmethod
+    def transform_dataset(self):
+        pass
+
+    @abstractmethod
+    def transform_dataset(self):
+        pass
+
+    @abstractmethod
+    def load_dataset(self):
+        pass
+
+
+class ETL_ANALYSIS(ETL):
+    """ 
+    Create a dataset for analysis
+    """
+    def __init__(self):
+        self.df = None
+
+    def transform_dataset(self):
+        pass
+    
+    def load_dataset(self):
+        """
+        Load in database
+        """
+        pass
+
+class ETL_OPEN_DATA(ETL):
+    
     def __init__(self):
         self.df = None
         self.schema = None
@@ -289,11 +323,7 @@ class ETL(ABC):
         del self.df["sectors"]
 
         return self.df.merge(canteens_sectors, on="id")
-
-    @abstractmethod
-    def extract_dataset(self):
-        pass
-
+ 
     def get_schema(self):
         return self.schema
 
@@ -321,7 +351,7 @@ class ETL(ABC):
         else:
             return 1
 
-    def export_dataset(self, stage="to_validate"):
+    def load_dataset(self, stage="to_validate"):
         if stage == "to_validate":
             filename = f"open_data/{self.dataset_name}_to_validate"
         elif stage == "validated":
@@ -349,7 +379,7 @@ class ETL(ABC):
             update_datagouv_resources()
 
 
-class ETL_CANTEEN(ETL):
+class ETL_CANTEEN(ETL_OPEN_DATA):
     def __init__(self):
         super().__init__()
         self.dataset_name = "registre_cantines"
@@ -357,10 +387,14 @@ class ETL_CANTEEN(ETL):
         self.schema_url = (
             "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_cantine.json"
         )
+        self.canteens = None
 
     def extract_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
-        canteens_col_from_db = all_canteens_col.copy()
+        self.canteens = all_canteens_col.copy()
+
+    def transform_dataset(self):
+        canteens_col_from_db = self.canteens
         for col_processed in [
             "active_on_ma_cantine",
             "department_lib",
@@ -421,7 +455,7 @@ class ETL_CANTEEN(ETL):
         logger.info(f"Time spent on campaign participations : {end - start}")
 
 
-class ETL_TD(ETL):
+class ETL_TD(ETL_OPEN_DATA):
     def __init__(self, year: int):
         super().__init__()
         self.year = year
@@ -448,14 +482,8 @@ class ETL_TD(ETL):
                 "_externalites",
             ],
         }
-
-    def transform_sectors(self) -> pd.Series:
-        sectors = self.df["canteen_sectors"]
-        if not sectors.isnull().all():
-            sectors = sectors.apply(lambda x: list(map(lambda y: format_sector(y), x)))
-            sectors = sectors.apply(format_list_sectors)
-        return sectors
-
+        self.df = None
+    
     def extract_dataset(self):
         if self.year in CAMPAIGN_DATES.keys():
             self.df = pd.DataFrame(
@@ -471,12 +499,20 @@ class ETL_TD(ETL):
             )
         else:
             logger.warning(f"TD campagne dataset does not exist for year : {self.year}")
-            return pd.DataFrame()
+            self.df = pd.DataFrame()
 
         if len(self.df) == 0:
             logger.warning(f"TD campagne dataset is empty for year : {self.year}")
-            return pd.DataFrame()
+            self.df = pd.DataFrame()
 
+    def transform_sectors(self) -> pd.Series:
+        sectors = self.df["canteen_sectors"]
+        if not sectors.isnull().all():
+            sectors = sectors.apply(lambda x: list(map(lambda y: format_sector(y), x)))
+            sectors = sectors.apply(format_list_sectors)
+        return sectors
+
+    def transform_dataset(self):
         logger.info("TD campagne : Flatten declared data...")
         self.df = self._flatten_declared_data()
 

@@ -17,7 +17,7 @@ import redis as r
 from common.utils import get_siret_token
 from .celery import app
 from .utils import get_infos_from_siret
-from .extract_open_data import ETL_TD, ETL_CANTEEN
+from .etl import ETL_TD, ETL_CANTEEN
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 
@@ -422,6 +422,7 @@ def export_datasets():
     for key, etl in datasets.items():
         logger.info(f"Starting {key} dataset extraction")
         etl.extract_dataset()
+        etl.transform_dataset()
         etl.export_dataset(stage="to_validate")
         if os.environ["DEFAULT_FILE_STORAGE"] == "storages.backends.s3boto3.S3Boto3Storage":
             logger.info(f"Validating {key} dataset. Dataset size : {etl.len_dataset()} lines")
