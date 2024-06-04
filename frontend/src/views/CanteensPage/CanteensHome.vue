@@ -196,14 +196,12 @@
                   >
                     Mode de gestion
                   </label>
-                  <DsfrSelect
+                  <DsfrRadio
                     v-model="filters.management_type.value"
                     :items="managementTypes"
-                    clearable
-                    hide-details
                     id="select-management-type"
-                    class="mt-1 mb-4"
-                    placeholder="Tous les modes"
+                    class="my-n2"
+                    :optionsRow="$vuetify.breakpoint.mdAndUp"
                   />
                   <label
                     for="select-production-type"
@@ -387,6 +385,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrAccordion from "@/components/DsfrAccordion"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrRadio from "@/components/DsfrRadio"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrPagination from "@/components/DsfrPagination"
@@ -403,6 +402,7 @@ export default {
     DsfrAccordion,
     DsfrTextField,
     DsfrAutocomplete,
+    DsfrRadio,
     DsfrSelect,
     DsfrTextarea,
     DsfrPagination,
