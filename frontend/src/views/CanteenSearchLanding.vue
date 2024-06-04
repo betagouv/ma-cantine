@@ -16,7 +16,7 @@
           </router-link>
         </p>
       </v-col>
-      <v-col cols="5">
+      <v-col v-if="$vuetify.breakpoint.mdAndUp" cols="5">
         <v-img max-height="200px" contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
       </v-col>
     </v-row>
@@ -24,7 +24,7 @@
       <v-col cols="12" md="6">
         <DsfrSearchField
           v-model="searchTerm"
-          placeholder="Chercher par nom ou SIRET"
+          placeholder="Recherche par nom ou SIRET de l'établissement"
           hide-details
           :searchAction="search"
         />
