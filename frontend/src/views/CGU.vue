@@ -18,7 +18,7 @@
     <p>
       « ma cantine » (ci-après dénommé « le Service ») est un téléservice mis en œuvre par le ministère de l’Agriculture
       et de la Souveraineté Alimentaire (Direction générale à l’alimentation) en lien avec la Direction
-      interministérielle du numérique .
+      interministérielle du numérique.
     </p>
     <p>
       Le Service est destiné à accompagner au mieux les acteurs de la restauration collective (ci-après abrégé « RC »)
