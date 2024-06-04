@@ -1,60 +1,26 @@
 <template>
-  <div>
-    <BreadcrumbsNav />
-    <v-card elevation="0" class="text-center text-md-left mb-6 mt-3">
-      <v-row v-if="$vuetify.breakpoint.smAndDown">
-        <v-col cols="12">
-          <v-img max-height="90px" contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="2" v-if="$vuetify.breakpoint.mdAndUp">
-          <div class="d-flex fill-height align-center">
-            <v-img contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
-          </div>
-        </v-col>
-        <v-col cols="12" md="10">
-          <v-spacer></v-spacer>
-          <v-card-title class="pr-0">
-            <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
-              Nos cantines publiées
-            </h1>
-          </v-card-title>
-          <v-card-subtitle>
-            <p class="mb-1">
-              Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus
-              durable.
-            </p>
-            <p class="mb-1">Sont affichées sur cette page uniquement les cantines qui ont décidé d’être visibles.</p>
-            <p>
-              Consulter
-              <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
-                les statistiques de votre collectivité (régions et départements)
-              </router-link>
-            </p>
-          </v-card-subtitle>
-
-          <v-spacer></v-spacer>
-        </v-col>
-      </v-row>
-    </v-card>
-    <v-sheet class="py-2" elevation="0">
-      <v-row>
-        <v-col cols="12" md="7" class="pt-0">
-          <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
-            <DsfrSearchField
-              hide-details="auto"
-              ref="search"
-              v-model="searchTerm"
-              placeholder="Recherche par nom ou SIRET de l'établissement"
-              :searchAction="search"
-              :clearAction="clearSearch"
-              class="mb-2 flex-grow-1"
-            />
-          </form>
-        </v-col>
-      </v-row>
-    </v-sheet>
+  <div class="text-left">
+    <BreadcrumbsNav :links="[{ to: { name: 'CanteenSearchLanding' } }]" />
+    <v-row>
+      <v-col>
+        <h1 class="fr-h2 mb-0">
+          Les cantines
+        </h1>
+      </v-col>
+      <v-col cols="12" md="7">
+        <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
+          <DsfrSearchField
+            hide-details="auto"
+            ref="search"
+            v-model="searchTerm"
+            placeholder="Recherche par nom ou SIRET de l'établissement"
+            :searchAction="search"
+            :clearAction="clearSearch"
+            class="mb-2 flex-grow-1"
+          />
+        </form>
+      </v-col>
+    </v-row>
 
     <div class="d-flex align-center mt-4 pl-0">
       <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">

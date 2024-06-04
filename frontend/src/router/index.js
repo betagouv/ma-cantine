@@ -192,7 +192,7 @@ const routes = [
         name: "CanteensHome",
         component: CanteensHome,
         meta: {
-          title: "Trouver une cantine",
+          title: "Les cantines",
         },
       },
       {

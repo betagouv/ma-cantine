@@ -1,5 +1,6 @@
 <template>
   <v-container class="fr-text text-left">
+    <BreadcrumbsNav />
     <v-row>
       <v-col>
         <h1 class="fr-h1">Trouver une cantine</h1>
@@ -34,11 +35,12 @@
 </template>
 
 <script>
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSearchField from "@/components/DsfrSearchField"
 
 export default {
   name: "CanteenSearchLanding",
-  components: { DsfrSearchField },
+  components: { BreadcrumbsNav, DsfrSearchField },
   data() {
     return {
       searchTerm: undefined,
