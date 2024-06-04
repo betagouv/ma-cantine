@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="text-left">
     <BreadcrumbsNav />
     <v-card elevation="0" class="text-center text-md-left mb-6 mt-3">
       <v-row v-if="$vuetify.breakpoint.smAndDown">
@@ -60,7 +60,7 @@
       <v-row class="my-2" align="end">
         <v-col>
           <p
-            class="mb-0 text-body-2 grey--text text--darken-1 text-left"
+            class="mb-0 text-body-2 grey--text text--darken-1"
             aria-live="polite"
             aria-atomic="true"
             v-if="resultsCountText"
@@ -72,7 +72,7 @@
           <DsfrSelect
             v-model="orderBy"
             :items="orderOptions"
-            labelClasses="body-2 text-left mb-2"
+            labelClasses="body-2 mb-2"
             hide-details
             label="Trier par"
           />
@@ -91,254 +91,211 @@
       </v-row>
       <v-row>
         <v-col cols="3">
-          <div class="d-flex align-center mt-4 pl-0">
+          <div class="mt-4 pl-0">
             <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">
-              <h2 class="text-body-1 font-weight-black" style="background-color: #fff; width: max-content">
-                Filtres
+              <h2 class="fr-h6 mb-1">
+                Rechercher et filtrer
               </h2>
             </v-badge>
-            <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1 py-4 py-sm-0">
-              <v-icon small>mdi-filter-outline</v-icon>
-              <span v-if="showFilters">Cacher les filtres</span>
-              <span v-else>Afficher les filtres</span>
-            </v-btn>
 
             <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter">
               <v-icon small>mdi-filter-off-outline</v-icon>
               Enlever tous les filtres
             </v-btn>
-            <v-divider aria-hidden="true" role="presentation" v-if="!showFilters"></v-divider>
           </div>
-          <v-expand-transition>
-            <v-sheet class="pa-6 text-left mt-2" v-show="showFilters" rounded :outlined="showFilters">
-              <v-form>
-                <v-row class="mb-0">
-                  <v-col cols="12" sm="6" md="4">
-                    <label
-                      for="select-region"
-                      :class="{
-                        'text-body-2': true,
-                        'active-filter-label': !!filters.region.value,
-                      }"
-                    >
-                      Région
-                    </label>
-                    <DsfrAutocomplete
-                      v-model="filters.region.value"
-                      :items="regions"
-                      clearable
-                      hide-details
-                      id="select-region"
-                      placeholder="Toutes les régions"
-                      class="mt-1"
-                      auto-select-first
-                      :filter="locationFilter"
-                    />
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <label
-                      for="select-department"
-                      :class="{
-                        'text-body-2': true,
-                        'active-filter-label': !!filters.department.value,
-                      }"
-                    >
-                      Département
-                    </label>
-                    <DsfrAutocomplete
-                      v-model="filters.department.value"
-                      :items="departments"
-                      clearable
-                      hide-details
-                      id="select-department"
-                      placeholder="Tous les départements"
-                      class="mt-1"
-                      auto-select-first
-                      :filter="locationFilter"
-                    />
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <label
-                      for="select-commune"
-                      :class="{
-                        'text-body-2': true,
-                        'active-filter-label': !!filters.city_insee_code.value,
-                      }"
-                    >
-                      Commune
-                    </label>
-                    <CityField
-                      :inseeCode.sync="filters.city_insee_code.value"
-                      clearable
-                      hide-details
-                      id="select-commune"
-                      placeholder="Toutes les communes"
-                      class="mt-1"
-                    />
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <label
-                      for="select-sector"
-                      :class="{
-                        'text-body-2': true,
-                        'active-filter-label': filters.sectors.value && !!filters.sectors.value.length,
-                      }"
-                    >
-                      Secteur d'activité
-                    </label>
-                    <DsfrSelect
-                      v-model="filters.sectors.value"
-                      multiple
-                      :items="sectors"
-                      clearable
-                      hide-details
-                      id="select-sector"
-                      placeholder="Tous les secteurs"
-                      class="mt-1"
-                    />
-                  </v-col>
-                  <v-col cols="12" sm="4" md="3">
-                    <label
-                      for="select-management-type"
-                      :class="{ 'text-body-2': true, 'active-filter-label': !!filters.management_type.value }"
-                    >
-                      Mode de gestion
-                    </label>
-                    <DsfrSelect
-                      v-model="filters.management_type.value"
-                      :items="managementTypes"
-                      clearable
-                      hide-details
-                      id="select-management-type"
-                      class="mt-1"
-                      placeholder="Tous les modes"
-                    />
-                  </v-col>
-                  <v-col cols="12" sm="6" md="5">
-                    <label
-                      for="select-production-type"
-                      :class="{ 'text-body-2': true, 'active-filter-label': !!filters.production_type.value }"
-                    >
-                      Type d'établissement
-                    </label>
-                    <DsfrSelect
-                      v-model="filters.production_type.value"
-                      :items="productionTypes"
-                      clearable
-                      hide-details
-                      id="select-production-type"
-                      class="mt-1"
-                      placeholder="Tous les cantines"
-                    />
-                  </v-col>
-                </v-row>
-                <v-row class="align-end my-0">
-                  <v-col cols="12" sm="8" md="6">
-                    <fieldset>
-                      <legend
-                        :class="{
-                          'text-body-2': true,
-                          'active-filter-label':
-                            !!filters.min_portion_bio.value || !!filters.min_portion_combined.value,
-                        }"
-                      >
-                        Dans les assiettes, part de...
-                      </legend>
-                      <div class="d-flex align-stretch mt-1">
-                        <v-col class="pa-0 pr-1 d-flex flex-column">
-                          <DsfrTextField
-                            label="bio minimum"
-                            labelClasses="caption pl-1"
-                            :value="filters.min_portion_bio.value"
-                            ref="min_portion_bio"
-                            :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                            @change="onChangeIntegerFilter('min_portion_bio')"
-                            hide-details="auto"
-                            append-icon="mdi-percent"
-                            placeholder="0"
-                            :hideOptional="true"
-                          />
-                        </v-col>
-                        <v-col class="pa-0 pl-1 d-flex flex-column">
-                          <DsfrTextField
-                            label="bio, qualité et durables min"
-                            labelClasses="caption pl-1"
-                            :value="filters.min_portion_combined.value"
-                            ref="min_portion_combined"
-                            :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                            @change="onChangeIntegerFilter('min_portion_combined')"
-                            hide-details="auto"
-                            placeholder="0"
-                            append-icon="mdi-percent"
-                            :hideOptional="true"
-                          />
-                        </v-col>
-                      </div>
-                    </fieldset>
-                  </v-col>
-                  <v-col cols="12" sm="4" md="3">
-                    <fieldset>
-                      <legend
-                        :class="{
-                          'text-body-2': true,
-                          'active-filter-label':
-                            !!filters.min_daily_meal_count.value || !!filters.max_daily_meal_count.value,
-                        }"
-                      >
-                        Repas par jour
-                      </legend>
-                      <div class="d-flex">
-                        <div>
-                          <DsfrTextField
-                            label="Min"
-                            labelClasses="caption"
-                            :value="filters.min_daily_meal_count.value"
-                            ref="min_daily_meal_count"
-                            :rules="[validators.nonNegativeOrEmpty]"
-                            @change="onChangeIntegerFilter('min_daily_meal_count')"
-                            hide-details="auto"
-                            :hideOptional="true"
-                          />
-                        </div>
-                        <span class="mx-2 align-self-center">-</span>
-                        <div>
-                          <DsfrTextField
-                            label="Max"
-                            labelClasses="caption"
-                            :value="filters.max_daily_meal_count.value"
-                            ref="max_daily_meal_count"
-                            :rules="[validators.nonNegativeOrEmpty]"
-                            @change="onChangeIntegerFilter('max_daily_meal_count')"
-                            hide-details="auto"
-                            :hideOptional="true"
-                          />
-                        </div>
-                      </div>
-                    </fieldset>
-                  </v-col>
-                </v-row>
-                <v-row class="mt-0">
-                  <v-col cols="12" sm="6" md="5">
-                    <label
-                      for="select-badge"
-                      :class="{ 'text-body-2': true, 'active-filter-label': !!filters.badge.value }"
-                    >
-                      Mesure EGAlim réalisée
-                    </label>
-                    <DsfrSelect
-                      v-model="filters.badge.value"
-                      :items="badges"
-                      clearable
-                      hide-details
-                      id="select-badge"
-                      class="mt-1"
-                      placeholder="Tous les cantines"
-                    />
-                  </v-col>
-                </v-row>
-              </v-form>
-            </v-sheet>
-          </v-expand-transition>
+          <v-form>
+            <label
+              for="select-region"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': !!filters.region.value,
+              }"
+            >
+              Région
+            </label>
+            <DsfrAutocomplete
+              v-model="filters.region.value"
+              :items="regions"
+              clearable
+              hide-details
+              id="select-region"
+              placeholder="Toutes les régions"
+              class="mt-1"
+              auto-select-first
+              :filter="locationFilter"
+            />
+            <label
+              for="select-department"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': !!filters.department.value,
+              }"
+            >
+              Département
+            </label>
+            <DsfrAutocomplete
+              v-model="filters.department.value"
+              :items="departments"
+              clearable
+              hide-details
+              id="select-department"
+              placeholder="Tous les départements"
+              class="mt-1"
+              auto-select-first
+              :filter="locationFilter"
+            />
+            <label
+              for="select-commune"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': !!filters.city_insee_code.value,
+              }"
+            >
+              Commune
+            </label>
+            <CityField
+              :inseeCode.sync="filters.city_insee_code.value"
+              clearable
+              hide-details
+              id="select-commune"
+              placeholder="Toutes les communes"
+              class="mt-1"
+            />
+            <label
+              for="select-sector"
+              :class="{
+                'text-body-2': true,
+                'active-filter-label': filters.sectors.value && !!filters.sectors.value.length,
+              }"
+            >
+              Secteur d'activité
+            </label>
+            <DsfrSelect
+              v-model="filters.sectors.value"
+              multiple
+              :items="sectors"
+              clearable
+              hide-details
+              id="select-sector"
+              placeholder="Tous les secteurs"
+              class="mt-1"
+            />
+            <label
+              for="select-management-type"
+              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.management_type.value }"
+            >
+              Mode de gestion
+            </label>
+            <DsfrSelect
+              v-model="filters.management_type.value"
+              :items="managementTypes"
+              clearable
+              hide-details
+              id="select-management-type"
+              class="mt-1"
+              placeholder="Tous les modes"
+            />
+            <label
+              for="select-production-type"
+              :class="{ 'text-body-2': true, 'active-filter-label': !!filters.production_type.value }"
+            >
+              Type d'établissement
+            </label>
+            <DsfrSelect
+              v-model="filters.production_type.value"
+              :items="productionTypes"
+              clearable
+              hide-details
+              id="select-production-type"
+              class="mt-1"
+              placeholder="Tous les cantines"
+            />
+            <fieldset>
+              <legend
+                :class="{
+                  'text-body-2': true,
+                  'active-filter-label': !!filters.min_portion_bio.value || !!filters.min_portion_combined.value,
+                }"
+              >
+                Dans les assiettes, part de...
+              </legend>
+              <div class="d-flex align-stretch mt-1">
+                <DsfrTextField
+                  label="bio minimum"
+                  labelClasses="caption pl-1"
+                  :value="filters.min_portion_bio.value"
+                  ref="min_portion_bio"
+                  :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                  @change="onChangeIntegerFilter('min_portion_bio')"
+                  hide-details="auto"
+                  append-icon="mdi-percent"
+                  placeholder="0"
+                  :hideOptional="true"
+                />
+                <DsfrTextField
+                  label="bio, qualité et durables min"
+                  labelClasses="caption pl-1"
+                  :value="filters.min_portion_combined.value"
+                  ref="min_portion_combined"
+                  :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                  @change="onChangeIntegerFilter('min_portion_combined')"
+                  hide-details="auto"
+                  placeholder="0"
+                  append-icon="mdi-percent"
+                  :hideOptional="true"
+                />
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend
+                :class="{
+                  'text-body-2': true,
+                  'active-filter-label': !!filters.min_daily_meal_count.value || !!filters.max_daily_meal_count.value,
+                }"
+              >
+                Repas par jour
+              </legend>
+              <div class="d-flex">
+                <div>
+                  <DsfrTextField
+                    label="Min"
+                    labelClasses="caption"
+                    :value="filters.min_daily_meal_count.value"
+                    ref="min_daily_meal_count"
+                    :rules="[validators.nonNegativeOrEmpty]"
+                    @change="onChangeIntegerFilter('min_daily_meal_count')"
+                    hide-details="auto"
+                    :hideOptional="true"
+                  />
+                </div>
+                <span class="mx-2 align-self-center">-</span>
+                <div>
+                  <DsfrTextField
+                    label="Max"
+                    labelClasses="caption"
+                    :value="filters.max_daily_meal_count.value"
+                    ref="max_daily_meal_count"
+                    :rules="[validators.nonNegativeOrEmpty]"
+                    @change="onChangeIntegerFilter('max_daily_meal_count')"
+                    hide-details="auto"
+                    :hideOptional="true"
+                  />
+                </div>
+              </div>
+            </fieldset>
+            <label for="select-badge" :class="{ 'text-body-2': true, 'active-filter-label': !!filters.badge.value }">
+              Mesure EGAlim réalisée
+            </label>
+            <DsfrSelect
+              v-model="filters.badge.value"
+              :items="badges"
+              clearable
+              hide-details
+              id="select-badge"
+              class="mt-1"
+              placeholder="Tous les cantines"
+            />
+          </v-form>
         </v-col>
         <v-col cols="9">
           <div v-if="loading || pageLoading" class="pa-12">
@@ -378,10 +335,10 @@
         </div>
       </v-col>
       <v-col>
-        <h2 class="text-h6 font-weight-black text-left mb-4">
+        <h2 class="text-h6 font-weight-black mb-4">
           Vous n'avez pas trouvé un ou plusieurs établissements qui vous intéressent ?
         </h2>
-        <p class="body-2 text-left mb-6">
+        <p class="body-2 mb-6">
           Dites-nous tout, nous ferons en sorte de leur communiquer votre intérêt pour leurs initiatives en place.
         </p>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
