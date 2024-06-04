@@ -208,13 +208,14 @@ def update_datagouv_resources():
     except Exception as e:
         logger.exception(e)
 
+
 class ETL(ABC):
     """
     Interface for the different ETL
     """
-    
+
     @abstractmethod
-    def transform_dataset(self):
+    def extract_dataset(self):
         pass
 
     @abstractmethod
@@ -225,25 +226,9 @@ class ETL(ABC):
     def load_dataset(self):
         pass
 
-
-class ETL_ANALYSIS(ETL):
-    """ 
-    Create a dataset for analysis
-    """
-    def __init__(self):
-        self.df = None
-
-    def transform_dataset(self):
-        pass
-    
-    def load_dataset(self):
-        """
-        Load in database
-        """
-        pass
 
 class ETL_OPEN_DATA(ETL):
-    
+
     def __init__(self):
         self.df = None
         self.schema = None
@@ -323,7 +308,7 @@ class ETL_OPEN_DATA(ETL):
         del self.df["sectors"]
 
         return self.df.merge(canteens_sectors, on="id")
- 
+
     def get_schema(self):
         return self.schema
 
@@ -483,7 +468,7 @@ class ETL_TD(ETL_OPEN_DATA):
             ],
         }
         self.df = None
-    
+
     def extract_dataset(self):
         if self.year in CAMPAIGN_DATES.keys():
             self.df = pd.DataFrame(
@@ -582,3 +567,21 @@ class ETL_TD(ETL_OPEN_DATA):
         canteens_to_filter = Canteen.objects.filter(line_ministry="armee")
         canteens_id_to_filter = [canteen.id for canteen in canteens_to_filter]
         self.df = self.df[~self.df["canteen_id"].isin(canteens_id_to_filter)]
+
+
+class ETL_ANALYSIS(ETL):
+    """
+    Create a dataset for analysis
+    """
+
+    def __init__(self):
+        self.df = None
+
+    def transform_dataset(self):
+        pass
+
+    def load_dataset(self):
+        """
+        Load in database
+        """
+        pass
