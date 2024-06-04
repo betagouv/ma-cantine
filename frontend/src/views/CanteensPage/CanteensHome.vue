@@ -322,15 +322,15 @@
           <div v-else>
             <PublishedCanteenCard v-for="canteen in visibleCanteens" :key="canteen.id" :canteen="canteen" />
           </div>
+          <DsfrPagination
+            class="my-6"
+            v-model="page"
+            :length="Math.ceil(publishedCanteenCount / limit)"
+            :total-visible="5"
+            v-if="!pageLoading"
+          />
         </v-col>
       </v-row>
-      <DsfrPagination
-        class="my-6"
-        v-model="page"
-        :length="Math.ceil(publishedCanteenCount / limit)"
-        :total-visible="7"
-        v-if="!pageLoading"
-      />
     </div>
 
     <v-divider aria-hidden="true" role="presentation" class="mb-8 mt-12"></v-divider>
