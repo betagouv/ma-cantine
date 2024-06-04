@@ -2,6 +2,7 @@ from urllib.parse import quote
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
 from data.department_choices import Department
@@ -356,7 +357,8 @@ class Canteen(SoftDeletionModel):
 
         from data.models import Diagnostic
 
-        return Diagnostic.objects.filter(id__in=diag_ids)
+        this_year = timezone.now().date().year
+        return Diagnostic.objects.filter(id__in=diag_ids, year__lt=this_year).order_by("-year")
 
     @cached_property
     def service_diagnostics(self):
@@ -375,7 +377,8 @@ class Canteen(SoftDeletionModel):
 
         from data.models import Diagnostic
 
-        return Diagnostic.objects.filter(id__in=diag_ids)
+        this_year = timezone.now().date().year
+        return Diagnostic.objects.filter(id__in=diag_ids, year__lt=this_year).order_by("-year")
 
     @cached_property
     def published_appro_diagnostics(self):
@@ -396,8 +399,8 @@ class Canteen(SoftDeletionModel):
         if not self.published_appro_diagnostics and not self.published_service_diagnostics:
             return
 
-        latest_appro = self.published_appro_diagnostics.only("year").order_by("-year").first()
-        latest_service = self.published_service_diagnostics.only("year").order_by("-year").first()
+        latest_appro = self.published_appro_diagnostics.only("year").first()
+        latest_service = self.published_service_diagnostics.only("year").first()
 
         appro_year = latest_appro.year if latest_appro else 0
         service_year = latest_service.year if latest_service else 0
