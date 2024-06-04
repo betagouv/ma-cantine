@@ -6,8 +6,8 @@
     v-bind="$attrs"
     v-on="$listeners"
     @input="(v) => $emit('input', v)"
-    clearable
-    @click:clear="clearAction"
+    :clearable="clearable"
+    @click:clear="clear"
     @keyup.enter="searchAction"
     ref="text-field"
   >
@@ -34,8 +34,20 @@ import DsfrTextField from "@/components/DsfrTextField"
 export default {
   inheritAttrs: false,
   components: { DsfrTextField },
-  props: ["searchAction", "clearAction"],
+  props: {
+    searchAction: {
+      type: Function,
+      required: true,
+    },
+    clearAction: {
+      type: Function,
+      required: false,
+    },
+  },
   computed: {
+    clearable() {
+      return !!this.clearAction
+    },
     lazyValue() {
       return this.$refs["text-field"].lazyValue
     },
@@ -49,6 +61,10 @@ export default {
     },
     resetValidation() {
       return this.$refs["text-field"].resetValidation()
+    },
+    clear() {
+      const noAction = () => {}
+      return this.clearAction || noAction
     },
   },
 }
