@@ -128,7 +128,7 @@
                     hide-details
                     id="select-region"
                     placeholder="Toutes les régions"
-                    class="mt-1"
+                    class="mt-1 mb-4"
                     auto-select-first
                     :filter="locationFilter"
                   />
@@ -148,7 +148,7 @@
                     hide-details
                     id="select-department"
                     placeholder="Tous les départements"
-                    class="mt-1"
+                    class="mt-1 mb-4"
                     auto-select-first
                     :filter="locationFilter"
                   />
@@ -167,7 +167,7 @@
                     hide-details
                     id="select-commune"
                     placeholder="Toutes les communes"
-                    class="mt-1"
+                    class="mt-1 mb-4"
                   />
                 </div>
                 <div v-if="item.id === 'characteristic'">
@@ -188,7 +188,7 @@
                     hide-details
                     id="select-sector"
                     placeholder="Tous les secteurs"
-                    class="mt-1"
+                    class="mt-1 mb-4"
                   />
                   <label
                     for="select-management-type"
@@ -202,7 +202,7 @@
                     clearable
                     hide-details
                     id="select-management-type"
-                    class="mt-1"
+                    class="mt-1 mb-4"
                     placeholder="Tous les modes"
                   />
                   <label
@@ -217,7 +217,7 @@
                     clearable
                     hide-details
                     id="select-production-type"
-                    class="mt-1"
+                    class="mt-1 mb-4"
                     placeholder="Tous les cantines"
                   />
                   <fieldset>
@@ -306,7 +306,7 @@
                     clearable
                     hide-details
                     id="select-badge"
-                    class="mt-1"
+                    class="mt-1 mb-4"
                     placeholder="Tous les cantines"
                   />
                 </div>
