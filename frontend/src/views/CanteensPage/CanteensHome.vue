@@ -188,14 +188,11 @@
                   >
                     Type d'établissement
                   </label>
-                  <DsfrSelect
+                  <DsfrNativeSelect
                     v-model="filters.production_type.value"
                     :items="productionTypes"
-                    clearable
-                    hide-details
                     id="select-production-type"
                     class="mt-1 mb-4"
-                    placeholder="Tous les cantines"
                   />
                   <fieldset class="mb-4">
                     <legend
@@ -275,15 +272,7 @@
                   <label for="select-badge" :class="{ 'active-filter-label': !!filters.badge.value }">
                     Expertise EGAlim
                   </label>
-                  <DsfrSelect
-                    v-model="filters.badge.value"
-                    :items="badges"
-                    clearable
-                    hide-details
-                    id="select-badge"
-                    class="mt-1 mb-4"
-                    placeholder="Tous les cantines"
-                  />
+                  <DsfrNativeSelect v-model="filters.badge.value" :items="badges" id="select-badge" class="mt-1 mb-4" />
                 </div>
               </template>
             </DsfrAccordion>
