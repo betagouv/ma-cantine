@@ -378,10 +378,11 @@ class FullCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin)
             return None
 
 
-class CanteenSummarySerializer(serializers.ModelSerializer):
+class CanteenSummarySerializer(serializers.ModelSerializer, PublicationStatusMixin):
     images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
+    publication_status = PublicationStatusMixin.publication_status
 
     class Meta:
         model = Canteen
