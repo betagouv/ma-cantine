@@ -29,7 +29,12 @@ from api.views import EmailDiagnosticImportFileView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
 from api.views import AddManagerView, RemoveManagerView
 from api.views import ImportSimpleDiagnosticsView, ImportCompleteDiagnosticsView
-from api.views import TeledeclarationCreateView, TeledeclarationCancelView, TeledeclarationPdfView
+from api.views import (
+    TeledeclarationCreateView,
+    TeledeclarationCancelView,
+    TeledeclarationPdfView,
+    TeledeclarationHTMLView,
+)
 from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
 from api.views import UserCanteenPreviews, UserCanteenSummaries, CanteenLocationsView
 from api.views import PartnerView, PartnersView, PartnerTypeListView
@@ -142,6 +147,11 @@ urlpatterns = {
         "teledeclaration/<int:pk>/document.pdf",
         TeledeclarationPdfView.as_view(),
         name="teledeclaration_pdf",
+    ),
+    path(
+        "teledeclaration/<int:pk>/document.html",
+        TeledeclarationHTMLView.as_view(),
+        name="teledeclaration_html",
     ),
     path("inquiry/", InquiryView.as_view(), name="inquiry"),
     path(
