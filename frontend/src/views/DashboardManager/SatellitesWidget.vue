@@ -53,12 +53,6 @@
           {{ satellites.length ? "Modifier" : "Ajouter mes satellites" }}
         </v-btn>
       </p>
-      <p class="mx-2 mb-2">
-        <!-- TODO: maybe remove this? -->
-        <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'PublishSatellites' }">
-          Publier
-        </v-btn>
-      </p>
     </v-card-actions>
   </v-card>
 </template>

@@ -28,7 +28,7 @@
     </v-card-text>
     <v-spacer></v-spacer>
     <v-card-actions class="flex-wrap flex-lg-nowrap">
-      <p class="mx-2 mb-2">
+      <p v-if="isPublished" class="mx-2 mb-2">
         <v-btn
           :to="{
             name: 'PublicationForm',
@@ -36,9 +36,9 @@
           }"
           color="primary"
           class="px-3"
-          :outlined="isPublished || !hasPublicationData"
+          outlined
         >
-          {{ isPublished ? "Éditer mon affiche" : "Publier ma cantine" }}
+          Éditer mon affiche
         </v-btn>
       </p>
       <p class="mx-2 mb-2">
