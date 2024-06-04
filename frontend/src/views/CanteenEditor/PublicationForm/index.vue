@@ -78,6 +78,7 @@
         </v-btn>
         <v-btn v-else x-large color="red darken-3" class="mr-4" outlined @click="removeCanteenPublication">
           Retirer la publication
+          <!-- TODO: remove options -->
         </v-btn>
       </v-sheet>
     </div>

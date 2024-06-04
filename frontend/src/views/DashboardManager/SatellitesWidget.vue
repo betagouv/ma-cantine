@@ -24,6 +24,7 @@
         :class="`dsfr-table grey--table ${satellites.length && 'table-preview'}`"
         dense
       >
+        <!-- TODO: does it still make sense to include the publication status? Maybe TD status is better -->
         <template v-slot:[`item.publicationStatus`]="{ item }">
           <v-chip
             :color="isSatellitePublished(item) ? 'green lighten-4' : 'grey lighten-2'"
@@ -53,6 +54,7 @@
         </v-btn>
       </p>
       <p class="mx-2 mb-2">
+        <!-- TODO: maybe remove this? -->
         <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'PublishSatellites' }">
           Publier
         </v-btn>

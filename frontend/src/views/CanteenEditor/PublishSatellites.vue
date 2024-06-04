@@ -1,5 +1,6 @@
 <template>
   <div class="text-left">
+    <!-- TODO: what do we do with this now that publication isn't a choice? -->
     <h1 class="font-weight-black text-h4 my-4">Publier mes satellites</h1>
     <div>
       <v-row v-if="pubLoading" class="green--text">
@@ -153,7 +154,7 @@ export default {
       const store = this.$store
       const that = this
       return {
-        text: isDraft ? "Publier" : "Retirer la publication",
+        text: isDraft ? "Publier" : "Retirer la publication", // TODO: remove option to publish/unpublish
         color: isDraft ? "green darken-3" : "red darken-3",
         icon: isDraft ? "mdi-bullhorn" : "mdi-cancel",
         action() {

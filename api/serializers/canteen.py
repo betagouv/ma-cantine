@@ -56,23 +56,8 @@ class MediaListSerializer(serializers.ListSerializer):
         return media
 
 
-class MinimalCanteenSerializer(serializers.ModelSerializer):
+class PublicationStatusMixin:
     publication_status = serializers.SerializerMethodField(read_only=True)
-
-    class Meta:
-        model = Canteen
-        read_only_fields = (
-            "id",
-            "siret",
-            "name",
-            "publication_status",
-        )
-        fields = (
-            "id",
-            "siret",
-            "name",
-            "publication_status",
-        )
 
     def get_publication_status(self, obj):
         if not settings.PUBLISH_BY_DEFAULT:
@@ -80,6 +65,21 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
         if obj.line_ministry == Canteen.Ministries.ARMEE:
             return Canteen.PublicationStatus.DRAFT
         return Canteen.PublicationStatus.PUBLISHED
+
+
+class MinimalCanteenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Canteen
+        read_only_fields = (
+            "id",
+            "siret",
+            "name",
+        )
+        fields = (
+            "id",
+            "siret",
+            "name",
+        )
 
 
 class BadgesSerializer(serializers.ModelSerializer):
@@ -177,11 +177,12 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
         return user in obj.managers.all()
 
 
-class ElectedCanteenSerializer(serializers.ModelSerializer):
+class ElectedCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     is_managed_by_user = serializers.SerializerMethodField(read_only=True)
+    publication_status = PublicationStatusMixin.publication_status
 
     class Meta:
         model = Canteen
@@ -214,12 +215,11 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         return user in obj.managers.all()
 
-    # TODO: get_publication_status
 
-
-class SatelliteCanteenSerializer(serializers.ModelSerializer):
+class SatelliteCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin):
     sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
     user_can_view = serializers.SerializerMethodField(read_only=True)
+    publication_status = PublicationStatusMixin.publication_status
 
     class Meta:
         model = Canteen
@@ -239,10 +239,8 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         return obj.managers.filter(pk=user.pk).exists()
 
-    # TODO: get_publication_status
 
-
-class FullCanteenSerializer(serializers.ModelSerializer):
+class FullCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin):
     sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     appro_diagnostics = ApproDiagnosticSerializer(many=True, read_only=True)
@@ -254,6 +252,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     satellites = MinimalCanteenSerializer(many=True, read_only=True)
     badges = BadgesSerializer(read_only=True, source="*")
+    publication_status = PublicationStatusMixin.publication_status
 
     class Meta:
         model = Canteen
@@ -377,8 +376,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
         except Canteen.MultipleObjectsReturned as e:
             logger.exception(f"Multiple canteens returned when obtaining the central_producer_siret field {e}")
             return None
-
-    # TODO: get_publication_status
 
 
 class CanteenSummarySerializer(serializers.ModelSerializer):
