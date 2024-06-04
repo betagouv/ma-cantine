@@ -28,7 +28,12 @@
           hide-details
           :searchAction="search"
         />
-        <p class="my-4"><router-link :to="{ name: 'CanteensHome' }">Effectuer une recherche avancée</router-link></p>
+        <p class="my-4">
+          <router-link :to="{ name: 'CanteensHome' }" class="d-flex align-center">
+            <v-icon small color="primary" class="mr-1">$arrow-right-line</v-icon>
+            Effectuer une recherche avancée
+          </router-link>
+        </p>
       </v-col>
     </v-row>
   </v-container>
