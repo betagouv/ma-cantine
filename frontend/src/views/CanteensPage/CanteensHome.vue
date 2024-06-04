@@ -296,7 +296,7 @@
                     for="select-badge"
                     :class="{ 'text-body-2': true, 'active-filter-label': !!filters.badge.value }"
                   >
-                    Mesure EGAlim réalisée
+                    Expertise EGAlim
                   </label>
                   <DsfrSelect
                     v-model="filters.badge.value"
