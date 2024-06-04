@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CentralKitchenInfo :canteen="canteen" />
+    <CentralKitchenInfo :canteen="canteen" v-if="usesCentralKitchenDiagnostics" />
 
     <p>
       La loi EGAlim impose {{ applicableRules.qualityThreshold }} % de produits durables et de qualité et durable, dont
@@ -240,6 +240,11 @@ export default {
     },
     hasFamilyDetail() {
       return this.meatEgalimPercentage || this.meatFrancePercentage || this.fishEgalimPercentage
+    },
+    usesCentralKitchenDiagnostics() {
+      if (!this.canteen.centralKitchen) return
+      const hasCentralDiagnostic = this.approData.some((diagnostic) => diagnostic.canteenId !== this.canteen.id)
+      return hasCentralDiagnostic
     },
   },
   methods: {
