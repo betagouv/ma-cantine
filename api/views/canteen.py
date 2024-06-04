@@ -1246,9 +1246,10 @@ class ActionableCanteensListView(ListAPIView):
         ]
         if should_teledeclare:
             conditions.append(When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)))
-        conditions.append(
-            When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH))
-        )
+        if not settings.PUBLISH_BY_DEFAULT:
+            conditions.append(
+                When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH))
+            )
         user_canteens = user_canteens.annotate(action=Case(*conditions, default=Value(Canteen.Actions.NOTHING)))
         return user_canteens
 
