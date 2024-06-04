@@ -91,19 +91,17 @@
       </v-row>
       <v-row>
         <v-col cols="4">
-          <div class="mt-4 pl-0">
-            <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">
-              <h2 class="fr-h6 mb-1">
-                Rechercher et filtrer
-              </h2>
-            </v-badge>
+          <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2" class="mr-2">
+            <h2 class="fr-h6 mb-0">
+              Rechercher et filtrer
+            </h2>
+          </v-badge>
 
-            <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter">
-              <v-icon small>mdi-filter-off-outline</v-icon>
-              Enlever tous les filtres
-            </v-btn>
-          </div>
-          <v-form>
+          <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter" class="mb-1">
+            <v-icon small>mdi-filter-off-outline</v-icon>
+            Enlever tous les filtres
+          </v-btn>
+          <v-form class="mt-4">
             <DsfrAccordion
               :items="[
                 { title: 'Par térritoire', id: 'territory' },
