@@ -90,7 +90,7 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="4">
+        <v-col cols="12" md="4">
           <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2" class="mr-2">
             <h2 class="fr-h6 mb-0">
               Rechercher et filtrer
@@ -310,7 +310,7 @@
             </DsfrAccordion>
           </v-form>
         </v-col>
-        <v-col cols="8">
+        <v-col cols="12" md="8">
           <div v-if="loading || pageLoading" class="pa-12">
             <v-progress-circular indeterminate></v-progress-circular>
           </div>
