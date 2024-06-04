@@ -182,6 +182,10 @@ div[role="tab"]:focus {
   opacity: 1;
   font-style: italic;
 }
+.other-text-input label.theme--light.v-label--is-disabled {
+  color: #666 !important;
+  opacity: 1;
+}
 
 .dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
   color: #000091;

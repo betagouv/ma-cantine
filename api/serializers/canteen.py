@@ -381,6 +381,62 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     # TODO: get_publication_status
 
 
+class CanteenSummarySerializer(serializers.ModelSerializer):
+    images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
+    diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Canteen
+        my_fields = (
+            "id",
+            "name",
+            "city",
+            "city_insee_code",
+            "postal_code",
+            "sectors",
+            "daily_meal_count",
+            "yearly_meal_count",
+            "siret",
+            "management_type",
+            "production_type",
+            "department",
+            "region",
+            "publication_status",
+            "economic_model",
+            "is_central_cuisine",
+            "modification_date",
+            # the following can still be improved
+            "images",  # can return the first image only
+            "diagnostics",
+            "central_kitchen_diagnostics",  # can return a TD status instead of diagnostics
+        )
+        fields = my_fields
+        read_only_fields = my_fields
+
+    def get_central_kitchen_diagnostics(self, obj):
+        # Ideally we would also check the status of the satellite canteen and
+        # the central cuisine, for now we omit this check. For now it is the
+        # responsibility of the frontend to use this information.
+        if not obj.central_producer_siret or not obj.production_type == Canteen.ProductionType.ON_SITE_CENTRAL:
+            return None
+        try:
+            diagnostics = Diagnostic.objects.filter(
+                canteen__siret=obj.central_producer_siret,
+                central_kitchen_diagnostic_mode__in=[
+                    Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                    Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+                ],
+            )
+
+            return CentralKitchenDiagnosticSerializer(diagnostics, many=True).data
+        except Canteen.DoesNotExist:
+            return None
+        except Canteen.MultipleObjectsReturned as e:
+            logger.exception(f"Multiple canteens returned when obtaining the central_producer_siret field {e}")
+            return None
+
+
 class CanteenPreviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Canteen

@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative">
+  <div style="position: relative; display: inline-block;">
     <button
       class="d-block rounded-circle logo-container mr-6"
       @click="onLogoUploadClick"

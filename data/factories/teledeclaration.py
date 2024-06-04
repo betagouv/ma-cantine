@@ -11,3 +11,5 @@ class TeledeclarationFactory(factory.django.DjangoModelFactory):
     canteen = factory.SubFactory(CanteenFactory)
     diagnostic = factory.SubFactory(DiagnosticFactory)
     applicant = factory.SubFactory(UserFactory)
+    status = Teledeclaration.TeledeclarationStatus.SUBMITTED
+    declared_data = {"foo": 1}

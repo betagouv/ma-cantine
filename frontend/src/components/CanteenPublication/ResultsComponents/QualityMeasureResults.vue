@@ -2,15 +2,14 @@
   <div>
     <CentralKitchenInfo :canteen="canteen" />
 
-    <p v-if="canteen.badges.appro">
+    <p>
+      La loi EGAlim impose {{ applicableRules.qualityThreshold }} % de produits durables et de qualité et durable, dont
+      {{ applicableRules.bioThreshold }} % de bio
       <span v-if="applicableRules.qualityThreshold !== 50">
-        Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de produits durables
-        et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
-        <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les seuils d'Outre-mer</a>
+        - en respectant
+        <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les différents seuils fixés pour l'Outre-mer</a>
       </span>
-      <span v-else>{{ badge.subtitle }}</span>
     </p>
-    <p v-else>Cet établissement ne respecte pas encore la loi EGAlim pour cette mesure.</p>
 
     <div v-if="tabs.length" class="mb-8">
       <v-row class="align-end flex-wrap mb-4">
@@ -78,7 +77,13 @@
           </DsfrToggle>
         </DsfrCallout>
 
-        <ApproGraph v-if="diagnosticForYear" :diagnostic="diagnosticForYear" :canteen="canteen" class="my-8" />
+        <ApproGraph
+          v-if="diagnosticForYear"
+          :diagnostic="diagnosticForYear"
+          :canteen="canteen"
+          fallbackText="Pas de données disponibles"
+          class="my-8"
+        />
 
         <div v-if="hasFamilyDetail">
           <DsfrAccordion :items="[{ title: 'Détail par famille de produit' }]" class="mb-2">

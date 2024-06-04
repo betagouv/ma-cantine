@@ -9,7 +9,7 @@
           <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="isHighContent" />
         </div>
       </div>
-      <img contain v-if="canteen.logo" :src="canteen.logo" :alt="`Logo ${canteen.name}`" class="canteen-image" />
+      <img contain v-if="canteen.logo" :src="canteen.logo" alt="" class="canteen-image" />
     </div>
 
     <div class="spacer"></div>
@@ -29,13 +29,7 @@
               </span>
             </p>
             <div>
-              <img
-                contain
-                src="/static/images/quality-labels/logo_bio_eurofeuille.png"
-                alt="Logo Agriculture Biologique"
-                title="Logo Agriculture Biologique"
-                height="35"
-              />
+              <img contain src="/static/images/quality-labels/logo_bio_eurofeuille.png" alt="" height="35" />
             </div>
           </div>
 
@@ -89,7 +83,7 @@
         <div class="badge-description" v-else>
           Ce qui est servi dans les assiettes est au moins à
           {{ applicableRules.qualityThreshold }}&nbsp;% de produits durables et de qualité, dont
-          {{ applicableRules.bioThreshold }}&nbsp;% bio, en respectant les seuils d'Outre-mer.
+          {{ applicableRules.bioThreshold }}&nbsp;% bio, en respectant les différents seuils fixés pour l'Outre-mer.
         </div>
       </div>
     </div>
@@ -204,6 +198,7 @@ export default {
       return !!this.diagnostic.valueTotalHt || !!this.diagnostic.percentageValueTotalHt
     },
     earnedBadges() {
+      if (!this.canteen.badges) return [] // for non-connected view
       return Object.values(badges).filter((b) => this.canteen.badges[b.key])
     },
     applicableRules() {

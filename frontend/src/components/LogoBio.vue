@@ -1,10 +1,5 @@
 <template>
-  <img
-    id="bio-logo"
-    src="/static/images/quality-labels/logo_bio_eurofeuille.png"
-    alt="Logo Agriculture Biologique"
-    title="Logo Agriculture Biologique"
-  />
+  <img id="bio-logo" src="/static/images/quality-labels/logo_bio_eurofeuille.png" alt="" />
 </template>
 
 <style scoped lang="scss">

@@ -9,7 +9,7 @@ Authlib==1.3.0
 billiard==4.2.0
 black==24.4.2
 boto3==1.34.93
-botocore==1.34.98
+botocore==1.34.113
 celery==5.4.0
 certifi==2024.2.2
 cffi==1.16.0
@@ -31,13 +31,13 @@ Django==5.0.3
 django-anymail==10.3
 django-ckeditor==6.7.1
 django-csp==3.8
-django-debug-toolbar==4.3.0
+django-debug-toolbar==4.4.1
 django-filter==23.5
 django-js-asset==2.2.0
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@51f4709d8593016ac67428a87bbd2810070ae288
-django-oauth-toolkit==2.3.0
+django-oauth-toolkit==2.4.0
 django-otp==1.3.0
-django-simple-history==3.5.0
+django-simple-history==3.6.0
 django-storages==1.14.2
 django-webpack-loader==3.1.0
 djangorestframework==3.15.1
@@ -54,7 +54,7 @@ factory-boy==3.3.0
 Faker==25.1.0
 fastparquet==2024.2.0
 filelock==3.13.4
-freezegun==1.4.0
+freezegun==1.5.1
 html-tag-names==0.1.2
 html-void-elements==0.1.0
 html2text==2024.2.26
@@ -87,7 +87,7 @@ pillow==10.3.0
 pipdeptree==2.19.1
 platformdirs==4.2.0
 pluggy==1.4.0
-pre-commit==3.7.0
+pre-commit==3.7.1
 prompt-toolkit==3.0.43
 psycopg2==2.9.9
 py==1.11.0

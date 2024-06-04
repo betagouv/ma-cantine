@@ -246,6 +246,10 @@ class ApproDiagnosticSerializer(DiagnosticSerializer):
         fields = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
         read_ony_fields = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return appro_to_percentages(representation, instance, remove_values=False)
+
 
 class ApproDeferredTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
     class Meta:

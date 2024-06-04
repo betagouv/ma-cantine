@@ -17,11 +17,12 @@
           </form>
         </v-col>
         <v-col cols="12" md="4" class="pa-0">
-          <DsfrSelect
-            @change="applyProductionType"
-            height="40"
+          <DsfrNativeSelect
             v-model="filterProductionType"
             :items="productionTypeOptions"
+            label="Filtrer par type de production"
+            labelClasses="d-sr-only"
+            title="Filtrer par type de production"
           />
         </v-col>
       </v-row>
@@ -74,12 +75,12 @@ import CanteenCard from "./CanteenCard"
 import CentralKitchenCard from "./CentralKitchenCard"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
-import DsfrSelect from "@/components/DsfrSelect"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import Constants from "@/constants"
 
 export default {
   name: "CanteensPagination",
-  components: { CanteenCard, DsfrPagination, DsfrSearchField, CentralKitchenCard, DsfrSelect },
+  components: { CanteenCard, DsfrPagination, DsfrSearchField, CentralKitchenCard, DsfrNativeSelect },
   data() {
     return {
       limit: 5,
@@ -133,7 +134,7 @@ export default {
       if (this.filterProductionType !== "all") queryParam += `&production_type=${this.filterProductionType}`
       this.inProgress = true
 
-      return fetch(`/api/v1/canteens/?${queryParam}`)
+      return fetch(`/api/v1/canteenSummaries/?${queryParam}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
           return response.json()
@@ -178,6 +179,9 @@ export default {
     $route() {
       this.populateInitialParameters()
       this.$nextTick(this.fetchCurrentPage)
+    },
+    filterProductionType() {
+      this.applyProductionType()
     },
   },
   mounted() {

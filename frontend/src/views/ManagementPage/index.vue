@@ -47,7 +47,7 @@
     </div>
     <div v-if="canteenCount > 0">
       <SuccessBanner v-if="showSuccessBanner" />
-      <TeledeclarationBanner v-else-if="this.teledeclarationCampaignActive" />
+      <TeledeclarationBanner v-else-if="teledeclarationCampaignActive && !correctionCampaignActive" />
       <ActionsBanner v-else />
     </div>
     <div class="mt-4">
@@ -113,6 +113,7 @@ export default {
       hasActions: false,
       showCanteenCreationPrompt: null,
       teledeclarationCampaignActive: window.ENABLE_TELEDECLARATION,
+      correctionCampaignActive: window.TELEDECLARATION_CORRECTION_CAMPAIGN,
       actionsLoading: true,
       resources: [
         {
