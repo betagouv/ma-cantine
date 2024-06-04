@@ -1,5 +1,6 @@
 from urllib.parse import quote
 from django.db import models
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.utils.functional import cached_property
@@ -10,7 +11,7 @@ from data.fields import ChoiceArrayField
 from data.utils import get_region, optimize_image
 from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
 from .sector import Sector
-from .softdeletionmodel import SoftDeletionModel
+from .softdeletionmodel import SoftDeletionModel, SoftDeletionManager, SoftDeletionQuerySet
 
 
 def validate_siret(siret):
@@ -41,7 +42,40 @@ def list_properties(queryset, property):
     return list(queryset.values_list(property, flat=True))
 
 
+class CanteenQuerySet(SoftDeletionQuerySet):
+    def publicly_visible(self):
+        return self.exclude(line_ministry=Canteen.Ministries.ARMEE)
+
+    def publicly_hidden(self):
+        return self.filter(line_ministry=Canteen.Ministries.ARMEE)
+
+
+class DeprecatedCanteenQuerySet(SoftDeletionQuerySet):
+    def publicly_visible(self):
+        return self.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
+
+    def publicly_hidden(self):
+        return self.exclude(publication_status=Canteen.PublicationStatus.PUBLISHED)
+
+
+class CanteenManager(SoftDeletionManager):
+    def get_queryset(self):
+        if settings.PUBLISH_BY_DEFAULT:
+            return CanteenQuerySet(self.model)
+        else:
+            return DeprecatedCanteenQuerySet(self.model)
+
+    def publicly_visible(self):
+        return self.get_queryset().publicly_visible()
+
+    def publicly_hidden(self):
+        return self.get_queryset().publicly_hidden()
+
+
 class Canteen(SoftDeletionModel):
+    objects = CanteenManager()
+    all_objects = CanteenManager(alive_only=False)
+
     class Meta:
         verbose_name = "cantine"
         verbose_name_plural = "cantines"

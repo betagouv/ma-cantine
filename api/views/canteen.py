@@ -55,22 +55,10 @@ logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
-# TODO: look into a more elegant approach, ideally like Canteen.objects.filter_published_canteens()
-# that is chainable like other queryset methods
-def filter_published_canteens(canteen_queryset):
-    if settings.PUBLISH_BY_DEFAULT:
-        return canteen_queryset.exclude(line_ministry=Canteen.Ministries.ARMEE)
-    else:
-        return canteen_queryset.filter(publication_status="published")
-
-
 class PublishedCanteenSingleView(RetrieveAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
-    queryset = Canteen.objects
-
-    def get_queryset(self):
-        return filter_published_canteens(super().get_queryset())
+    queryset = Canteen.objects.publicly_visible()
 
 
 class ProductionTypeInFilter(BaseInFilter, CharFilter):
@@ -95,7 +83,7 @@ class PublishedCanteensPagination(LimitOffsetPagination):
         # Prepare sector filter options:
         # we want to return all sectors that are available after the other filters,
         # because the user can select multiple sectors (unlike other filter options)
-        all_sector_canteens = filter_published_canteens(Canteen.objects)
+        all_sector_canteens = Canteen.objects.publicly_visible()
         query_params = request.query_params
         if query_params.get("department"):
             all_sector_canteens = all_sector_canteens.filter(department=query_params.get("department"))
@@ -258,7 +246,7 @@ def filter_by_diagnostic_params(queryset, query_params):
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenPreviewSerializer
-    queryset = Canteen.objects
+    queryset = Canteen.objects.publicly_visible()
     pagination_class = PublishedCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -268,9 +256,6 @@ class PublishedCanteensView(ListAPIView):
     search_fields = ["name", "siret"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
     filterset_class = PublishedCanteenFilterSet
-
-    def get_queryset(self):
-        return filter_published_canteens(super().get_queryset())
 
     def filter_queryset(self, queryset):
         new_queryset = filter_by_diagnostic_params(queryset, self.request.query_params)
@@ -874,7 +859,7 @@ class CanteenStatisticsView(APIView):
 
         canteens = CanteenStatisticsView._filter_canteens(regions, departments, city_insee_codes, sector_categories)
         data["canteen_count"] = canteens.count()
-        data["published_canteen_count"] = filter_published_canteens(canteens).count()
+        data["published_canteen_count"] = canteens.publicly_visible().count()
 
         diagnostics = CanteenStatisticsView._filter_diagnostics(
             year, regions, departments, city_insee_codes, sector_categories

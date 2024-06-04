@@ -49,6 +49,7 @@ class TestPublishCanteen(APITestCase):
         self.assertEqual(persisted_canteen.information_comments, "Information")
         self.assertEqual(response.json()["publicationComments"], "Hello, world!")
 
+    @override_settings(PUBLISH_BY_DEFAULT=False)
     @authenticate
     def test_unpublish_canteen(self):
         """

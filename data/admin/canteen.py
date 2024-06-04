@@ -49,15 +49,9 @@ class PubliclyVisibleFilter(admin.SimpleListFilter):
         if self.value() is None:
             return queryset
         elif self.value() in ("draft"):
-            if settings.PUBLISH_BY_DEFAULT:
-                return queryset.filter(line_ministry=Canteen.Ministries.ARMEE)
-            else:
-                return queryset.exclude(publication_status="published")
+            return queryset.publicly_hidden()
         elif self.value() in ("published"):
-            if settings.PUBLISH_BY_DEFAULT:
-                return queryset.exclude(line_ministry=Canteen.Ministries.ARMEE)
-            else:
-                return queryset.filter(publication_status="published")
+            return queryset.publicly_visible()
 
 
 @admin.register(Canteen)
@@ -122,12 +116,12 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "managers",
     )
     list_filter = (
+        PubliclyVisibleFilter,
         "management_type",
         "production_type",
         "economic_model",
         SoftDeletionStatusFilter,
         "sectors",
-        PubliclyVisibleFilter,
         "region",
         "department",
         "import_source",

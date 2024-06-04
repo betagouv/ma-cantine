@@ -12,6 +12,7 @@ from data.region_choices import Region
 
 
 class TestCanteenStatsApi(APITestCase):
+    @override_settings(PUBLISH_BY_DEFAULT=False)
     def test_canteen_statistics(self):
         """
         This public endpoint returns some summary statistics for a region and a location
@@ -128,6 +129,30 @@ class TestCanteenStatsApi(APITestCase):
         # can also call without location info
         response = self.client.get(reverse("canteen_statistics"), {"year": 2020})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    def test_publication_filter_new_rules(self):
+        """
+        When canteens are published by default, test that the publication count is filtered on ministry
+        """
+        region = "01"
+
+        CanteenFactory.create(
+            region=region,
+            publication_status=Canteen.PublicationStatus.DRAFT,
+        )
+        CanteenFactory.create(
+            region=region,
+            line_ministry=Canteen.Ministries.ARMEE,
+            publication_status=Canteen.PublicationStatus.DRAFT,
+        )
+
+        response = self.client.get(reverse("canteen_statistics"), {"region": region, "year": 2020})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["publishedCanteenCount"], 1)
 
     def test_canteen_stats_by_departments(self):
         department = "01"

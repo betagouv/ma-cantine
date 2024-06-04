@@ -6,12 +6,13 @@ from rest_framework import status
 from data.factories import CanteenFactory, UserFactory
 from data.factories import DiagnosticFactory, TeledeclarationFactory
 from data.models import Canteen, CanteenImage, Diagnostic, Teledeclaration
-from django.test.utils import override_settings
+from django.test import override_settings
 from .utils import authenticate
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
+@override_settings(PUBLISH_BY_DEFAULT=False)
 class TestPublishedCanteenApi(APITestCase):
     @authenticate
     def test_canteen_publication_fields_read_only(self):
@@ -29,7 +30,7 @@ class TestPublishedCanteenApi(APITestCase):
         persisted_canteen = Canteen.objects.get(pk=canteen.id)
         self.assertEqual(persisted_canteen.publication_status, Canteen.PublicationStatus.DRAFT.value)
 
-    def test_deprecated_get_single_published_canteen(self):
+    def test_get_single_published_canteen(self):
         """
         We are able to get a single published canteen.
         """
@@ -40,38 +41,12 @@ class TestPublishedCanteenApi(APITestCase):
         body = response.json()
         self.assertEqual(body.get("id"), published_canteen.id)
 
-    def test_deprecated_get_single_unpublished_canteen(self):
+    def test_get_single_unpublished_canteen(self):
         """
         A 404 is raised if we try to get a sinlge published canteen
         that has not been published by the manager.
         """
-        private_canteen = CanteenFactory.create()
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": private_canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-    @override_settings(PUBLISH_BY_DEFAULT=True)
-    def test_get_single_published_canteen(self):
-        """
-        All canteens are published except those with line_ministry of ARMEE
-        """
-        published_canteen = CanteenFactory.create(
-            publication_status=Canteen.PublicationStatus.DRAFT, line_ministry=None
-        )
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": published_canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        body = response.json()
-        self.assertEqual(body.get("id"), published_canteen.id)
-
-    @override_settings(PUBLISH_BY_DEFAULT=True)
-    def test_get_single_army_canteen(self):
-        """
-        Canteens with a line ministry of ARMEE are not available publicly, regardless of publication status
-        """
-        private_canteen = CanteenFactory.create(
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
-            line_ministry=Canteen.Ministries.ARMEE,
-        )
+        private_canteen = CanteenFactory.create(publication_status="draft")
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": private_canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -512,6 +487,33 @@ class TestPublishedCanteenApi(APITestCase):
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 1)
         self.assertEqual(len(body.get("serviceDiagnostics")), 2)
+
+
+@override_settings(PUBLISH_BY_DEFAULT=True)
+class TestPublicCanteenApi(APITestCase):
+    def test_get_single_published_canteen(self):
+        """
+        All canteens are published except those with line_ministry of ARMEE
+        """
+        published_canteen = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.DRAFT, line_ministry=None
+        )
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": published_canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body.get("id"), published_canteen.id)
+
+    def test_get_single_army_canteen(self):
+        """
+        Canteens with a line ministry of ARMEE are not available publicly, regardless of publication status
+        """
+        private_canteen = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            line_ministry=Canteen.Ministries.ARMEE,
+        )
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": private_canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class TestPublishedCanteenClaimApi(APITestCase):
