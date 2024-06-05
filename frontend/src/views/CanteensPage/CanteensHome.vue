@@ -416,26 +416,42 @@ export default {
           param: "departement",
           value: null,
           default: null,
+          displayName(value) {
+            const department = jsonDepartments.find((d) => d.departmentCode === value)
+            return department?.departmentName
+          },
         },
         region: {
           param: "region",
           value: null,
           default: null,
+          displayName(value) {
+            const region = jsonRegions.find((d) => d.regionCode === value)
+            return region?.regionName
+          },
         },
         city_insee_code: {
           param: "commune",
           value: null,
           default: null,
+          // TODO: displayname
         },
         management_type: {
           param: "modeDeGestion",
           value: null,
           default: null,
+          displayName(value) {
+            const mt = Constants.ManagementTypes.find((pt) => pt.value === value)?.text || value
+            return `Gestion ${mt.toLowerCase()}`
+          },
         },
         production_type: {
           param: "typeEtablissement",
           value: null,
           default: null,
+          displayName(value) {
+            return Constants.ProductionTypes.find((pt) => pt.value === value)?.text
+          },
         },
         sectors: {
           param: "secteurs",
@@ -449,11 +465,17 @@ export default {
           param: "minRepasJour",
           value: null,
           default: null,
+          displayName(value) {
+            return `Repas >= ${value}`
+          },
         },
         max_daily_meal_count: {
           param: "maxRepasJour",
           value: null,
           default: null,
+          displayName(value) {
+            return `Repas <= ${value}`
+          },
         },
         min_portion_bio: {
           param: "minBio",
@@ -462,6 +484,9 @@ export default {
           transformToBackend(value) {
             return value / 100
           },
+          displayName(value) {
+            return `Bio >= ${value} %`
+          },
         },
         min_portion_combined: {
           param: "minQualite",
@@ -469,6 +494,9 @@ export default {
           default: null,
           transformToBackend(value) {
             return value / 100
+          },
+          displayName(value) {
+            return `Qualité >= ${value} %`
           },
         },
         badge: {
@@ -561,10 +589,11 @@ export default {
       const tags = activeFilters
         .filter(([, f]) => !Array.isArray(f.default))
         .map(([key, filter]) => {
+          const text = filter.displayName ? filter.displayName(filter.value) : `${filter.param} : ${filter.value}`
           return {
             id: key,
             key,
-            text: `${filter.param} : ${filter.value}`,
+            text,
           }
         })
       const arrayFilters = activeFilters.filter(([, f]) => Array.isArray(f.default))
@@ -612,6 +641,7 @@ export default {
           this.setProductionTypes(response.productionTypes)
         })
         .catch((e) => {
+          // TODO: handle bad request better (e.g. someone types in url directly)
           this.publishedCanteenCount = 0
           this.$store.dispatch("notifyServerError", e)
         })
