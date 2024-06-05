@@ -589,11 +589,11 @@ export default {
       const tags = activeFilters
         .filter(([, f]) => !Array.isArray(f.default))
         .map(([key, filter]) => {
-          const text = filter.displayName ? filter.displayName(filter.value) : `${filter.param} : ${filter.value}`
+          const text = filter.displayName && filter.displayName(filter.value)
           return {
             id: key,
             key,
-            text,
+            text: text || `${filter.param} : ${filter.value}`,
           }
         })
       const arrayFilters = activeFilters.filter(([, f]) => Array.isArray(f.default))
@@ -628,7 +628,9 @@ export default {
 
       return fetch(`/api/v1/publishedCanteens/?${queryParam}`)
         .then((response) => {
-          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+          if (response.status === 400) {
+            return Promise.reject("Bad request")
+          } else if (response.status < 200 || response.status > 400) throw new Error(`Error encountered : ${response}`)
           return response.json()
         })
         .then((response) => {
@@ -641,9 +643,9 @@ export default {
           this.setProductionTypes(response.productionTypes)
         })
         .catch((e) => {
-          // TODO: handle bad request better (e.g. someone types in url directly)
           this.publishedCanteenCount = 0
-          this.$store.dispatch("notifyServerError", e)
+          this.visibleCanteens = 0
+          if (e !== "Bad request") this.$store.dispatch("notifyServerError", e)
         })
     },
     clearSearch() {
