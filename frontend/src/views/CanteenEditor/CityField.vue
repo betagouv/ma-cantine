@@ -138,8 +138,9 @@ export default {
 
       this.search = this.location.city
     },
-    inseeCode() {
+    inseeCode(newCode) {
       if (!this.location || !this.location.city) this.populateCityAutocomplete()
+      if (!newCode) this.cityAutocompleteChoice = undefined
     },
   },
 }
