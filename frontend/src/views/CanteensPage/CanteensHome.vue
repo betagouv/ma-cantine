@@ -401,6 +401,7 @@ export default {
     DsfrEmail,
   },
   data() {
+    const sectors = this.$store.state.sectors
     const user = this.$store.state.loggedUser
     return {
       limit: 3,
@@ -458,7 +459,11 @@ export default {
           value: [],
           default: [],
           transformToFrontend(values) {
-            return Array.isArray(values) ? values.map((v) => +v) : +values
+            return Array.isArray(values) ? values.map((v) => +v) : [+values]
+          },
+          displayName(value) {
+            value = +value
+            return sectors.find((s) => s.id === value)?.name || value
           },
         },
         min_daily_meal_count: {
@@ -599,12 +604,13 @@ export default {
       const arrayFilters = activeFilters.filter(([, f]) => Array.isArray(f.default))
       arrayFilters.forEach(([key, filter]) => {
         const arrayTags = filter.value.map((fv, idx) => {
+          const text = filter.displayName && filter.displayName(fv)
           return {
             id: `${key}[${idx}]`,
             key,
             idx: idx,
             isArray: true,
-            text: `${filter.param} : ${fv}`,
+            text: text || `${filter.param} : ${fv}`,
           }
         })
         tags.push(...arrayTags)
