@@ -1,5 +1,12 @@
 <template>
-  <v-chip close @click="closeAction" @click:close="closeAction" class="ma-1" color="primary" close-label="Fermer">
+  <v-chip
+    :close="closeable"
+    @click="clickAction"
+    @click:close="closeable && closeAction"
+    class="ma-1"
+    color="primary"
+    close-label="Fermer"
+  >
     {{ text }}
   </v-chip>
 </template>
@@ -12,9 +19,17 @@ export default {
       type: String,
       required: true,
     },
-    closeAction: {
-      type: Function,
-      required: true, // there is definitely a use case without
+    closeable: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  methods: {
+    clickAction() {
+      this.$emit(this.closeable ? "close" : "click")
+    },
+    closeAction() {
+      this.$emit("close")
     },
   },
 }

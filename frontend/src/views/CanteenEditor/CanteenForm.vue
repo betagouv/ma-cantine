@@ -244,7 +244,7 @@
               no-data-text="Veuillez séléctionner la catégorie de secteur"
               :rules="canteen.sectors && canteen.sectors.length ? [] : [validators.required]"
             />
-            <DsfrTagGroup :tags="sectorTags" :closeAction="removeSector" />
+            <DsfrTagGroup :tags="sectorTags" :closeable="true" @closeTag="(tag) => removeSector(tag.id)" />
           </div>
         </v-col>
         <v-col v-if="showMinistryField" cols="12" md="10">
@@ -603,9 +603,7 @@ export default {
       })
     },
     removeSector(id) {
-      return () => {
-        this.canteen.sectors?.splice(this.canteen.sectors?.indexOf(id), 1)
-      }
+      this.canteen.sectors?.splice(this.canteen.sectors?.indexOf(id), 1)
     },
   },
   beforeRouteLeave(to, from, next) {
