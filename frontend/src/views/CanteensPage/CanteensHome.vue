@@ -75,11 +75,6 @@
               Rechercher et filtrer
             </h2>
           </v-badge>
-
-          <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter" class="mb-1">
-            <v-icon small>mdi-filter-off-outline</v-icon>
-            Enlever tous les filtres
-          </v-btn>
           <v-form class="mt-4">
             <DsfrAccordion
               :items="[
@@ -287,16 +282,36 @@
           <div v-if="loading || pageLoading" class="pa-12">
             <v-progress-circular indeterminate></v-progress-circular>
           </div>
-          <div v-else-if="publishedCanteenCount === 0" class="d-flex flex-column align-center py-10">
-            <v-icon large>mdi-inbox-remove</v-icon>
-            <p class="text-body-1 grey--text text--darken-1 my-2">
-              Nous n'avons pas trouvé des cantines avec ces paramètres
-            </p>
-            <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
-              Désactiver tous les filtres
-            </v-btn>
-          </div>
           <div v-else>
+            <div class="d-flex">
+              <h2>{{ publishedCanteenCount }} résultats</h2>
+
+              <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter" class="mb-1">
+                <v-icon small>mdi-filter-off-outline</v-icon>
+                Enlever tous les filtres
+              </v-btn>
+            </div>
+            <DsfrTagGroup
+              :tags="filterTags"
+              :closeable="true"
+              @closeTag="(tag) => removeFilter(tag)"
+              class="mt-2 mb-6"
+            />
+            <div v-if="publishedCanteenCount === 0" class="d-flex flex-column align-center py-10">
+              <v-icon large>mdi-inbox-remove</v-icon>
+              <p class="text-body-1 grey--text text--darken-1 my-2">
+                Nous n'avons pas trouvé des cantines avec ces paramètres
+              </p>
+              <v-btn
+                color="primary"
+                text
+                @click="clearFilters"
+                class="text-decoration-underline"
+                v-if="hasActiveFilter"
+              >
+                Désactiver tous les filtres
+              </v-btn>
+            </div>
             <PublishedCanteenCard v-for="canteen in visibleCanteens" :key="canteen.id" :canteen="canteen" />
           </div>
           <DsfrPagination
@@ -304,7 +319,7 @@
             v-model="page"
             :length="Math.ceil(publishedCanteenCount / limit)"
             :total-visible="5"
-            v-if="!pageLoading"
+            v-if="!pageLoading && publishedCanteenCount"
           />
         </v-col>
       </v-row>
@@ -363,6 +378,7 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import CityField from "@/views/CanteenEditor/CityField"
+import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrEmail from "@/components/DsfrEmail"
 
 const DEFAULT_ORDER = "creation"
@@ -381,6 +397,7 @@ export default {
     DsfrPagination,
     DsfrSearchField,
     CityField,
+    DsfrTagGroup,
     DsfrEmail,
   },
   data() {
@@ -538,6 +555,16 @@ export default {
         query: `${this.orderDescending ? "-" : ""}${chosenOption?.query || DEFAULT_ORDER}`,
         display: `${chosenOption?.value || DEFAULT_ORDER}${this.orderDescending ? "Dec" : "Cro"}`,
       }
+    },
+    filterTags() {
+      return Object.entries(this.filters)
+        .filter(([, f]) => !!f.value)
+        .map(([key, filter]) => {
+          return {
+            id: key,
+            text: `${filter.param} : ${filter.value}`,
+          }
+        })
     },
   },
   methods: {
@@ -742,6 +769,10 @@ export default {
     toggleOrderDirection() {
       this.orderDescending = !this.orderDescending
       this.page = 1 // reset page to 1 when changing order direction
+    },
+    removeFilter(filterTag) {
+      // TODO: need special behaviour for arrays
+      this.filters[filterTag.id].value = this.filters[filterTag.id].default
     },
   },
   watch: {
