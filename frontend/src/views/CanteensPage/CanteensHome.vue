@@ -142,6 +142,7 @@
                     id="select-commune"
                     placeholder="Toutes les communes"
                     class="mt-1 mb-4"
+                    @locationUpdate="setLocation"
                   />
                 </div>
                 <div v-if="item.id === 'characteristic'">
@@ -434,7 +435,7 @@ export default {
           param: "commune",
           value: null,
           default: null,
-          // TODO: displayname
+          displayNameComputed: "locationDisplay",
         },
         management_type: {
           param: "modeDeGestion",
@@ -549,6 +550,7 @@ export default {
           return { value: key, text: value.title }
         })[0], // for now only the appro measure is available as a filter
       ],
+      location: undefined,
     }
   },
   computed: {
@@ -597,7 +599,9 @@ export default {
       const tags = activeFilters
         .filter(([, f]) => !Array.isArray(f.default))
         .map(([key, filter]) => {
-          const text = filter.displayName && filter.displayName(filter.value)
+          const text = filter.displayNameComputed
+            ? this[filter.displayNameComputed]
+            : filter.displayName && filter.displayName(filter.value)
           return {
             id: key,
             key,
@@ -619,6 +623,9 @@ export default {
         tags.push(...arrayTags)
       })
       return tags
+    },
+    locationDisplay() {
+      return this.location?.city
     },
   },
   methods: {
@@ -833,6 +840,9 @@ export default {
       } else {
         this.filters[filterTag.key].value = this.filters[filterTag.id].default
       }
+    },
+    setLocation(location) {
+      this.location = location
     },
   },
   watch: {
