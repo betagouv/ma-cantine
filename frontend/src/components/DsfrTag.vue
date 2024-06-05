@@ -2,7 +2,7 @@
   <v-chip
     :close="closeable"
     @click="clickAction"
-    @click:close="closeable && closeAction"
+    @click:close="closeAction"
     class="ma-1"
     color="primary"
     close-label="Fermer"
@@ -30,7 +30,7 @@ export default {
       this.$emit(this.closeable ? "close" : "click")
     },
     closeAction() {
-      this.$emit("close")
+      if (this.closeable) this.$emit("close")
     },
   },
 }
