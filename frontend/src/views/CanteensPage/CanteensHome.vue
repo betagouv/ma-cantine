@@ -70,11 +70,9 @@
       </v-row>
       <v-row>
         <v-col cols="12" md="4">
-          <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2" class="mr-2">
-            <h2 class="fr-h6 mb-0">
-              Rechercher et filtrer
-            </h2>
-          </v-badge>
+          <h2 class="fr-h6 mb-0">
+            Rechercher et filtrer
+          </h2>
           <v-form class="mt-4">
             <DsfrAccordion
               :items="[
