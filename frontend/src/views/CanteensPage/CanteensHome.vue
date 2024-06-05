@@ -43,6 +43,7 @@
       <v-row class="my-2" align="end">
         <v-col cols="12" md="4">
           <form role="search" onsubmit="return false">
+            <h2 class="fr-h5 mb-2">Rechercher</h2>
             <DsfrSearchField
               hide-details="auto"
               ref="search"
@@ -70,14 +71,14 @@
       </v-row>
       <v-row>
         <v-col cols="12" md="4">
-          <h2 class="fr-h6 mb-0">
-            Rechercher et filtrer
-          </h2>
+          <h3 class="fr-h6 mb-0">
+            Filtrer
+          </h3>
           <v-form class="mt-4">
             <DsfrAccordion
               :items="[
-                { id: 'territory', icon: '$road-map-fill', text: 'Par térritoire' },
-                { id: 'characteristic', icon: '$community-fill', text: 'Par caractéristique' },
+                { id: 'territory', icon: '$road-map-fill', text: 'Par térritoire', titleLevel: 'h4' },
+                { id: 'characteristic', icon: '$community-fill', text: 'Par caractéristique', titleLevel: 'h4' },
               ]"
             >
               <template v-slot:title="{ item }">
@@ -282,7 +283,7 @@
           </div>
           <div v-else>
             <div class="d-flex">
-              <h2>{{ publishedCanteenCount }} résultats</h2>
+              <h3 class="fr-h6 mb-0">{{ publishedCanteenCount }} résultats</h3>
 
               <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter" class="mb-1">
                 <v-icon small>mdi-filter-off-outline</v-icon>
