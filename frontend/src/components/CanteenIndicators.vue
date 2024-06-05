@@ -1,23 +1,20 @@
 <template>
-  <div>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="hasSatelliteCanteens">
-      <v-icon small>$community-fill</v-icon>
-      {{ canteen.satelliteCanteensCount }} satellites
-    </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="hasDailyMealCount">
-      <span class="mx-1" v-if="singleLine && hasSatelliteCanteens">/</span>
-      <v-icon small aria-hidden="false" role="img" aria-label="Repas">$restaurant-fill</v-icon>
-      <!-- eslint-disable-next-line prettier/prettier-->
-      {{ canteen.dailyMealCount }} par jour<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
-    </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="canteen.city">
-      <span class="mx-1" v-if="singleLine && (hasSatelliteCanteens || hasDailyMealCount)">/</span>
-      <v-icon small>$compass-3-fill</v-icon>
+  <div :class="{ 'fr-text grey--text text--darken-2': true, 'd-flex flex-wrap': singleLine }">
+    <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="canteen.city">
+      <v-icon small class="mr-1">$compass-3-line</v-icon>
       {{ canteen.city }}
     </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="businessSegments">
-      <span class="mx-1" v-if="singleLine && (canteen.dailyMealCount || canteen.city)">/</span>
-      <v-icon small>$building-fill</v-icon>
+    <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="hasDailyMealCount">
+      <v-icon small class="mr-1" aria-hidden="false" role="img">$restaurant-line</v-icon>
+      <!-- eslint-disable-next-line prettier/prettier-->
+      {{ canteen.dailyMealCount }} couverts<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
+    </p>
+    <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="hasSatelliteCanteens">
+      <v-icon small class="mr-1">$community-line</v-icon>
+      {{ canteen.satelliteCanteensCount }} satellites
+    </p>
+    <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="businessSegments">
+      <v-icon small class="mr-1">$building-line</v-icon>
       {{ businessSegments }}
     </p>
   </div>

@@ -11,58 +11,48 @@
           height="100%"
           width="100%"
           style="object-fit: cover;"
+          class="lead-image"
         />
       </v-col>
-      <v-col class="pa-4">
-        <v-card-title class="pt-1">
-          <h2 class="fr-h6 mb-1 font-weight-black">
+      <v-col class="pa-8 d-flex flex-column justify-space-between">
+        <div>
+          <h2 class="fr-h5 mb-1 primary--text">
             {{ canteen.name }}
           </h2>
-        </v-card-title>
-        <v-card-subtitle class="pb-4">
-          <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" />
+          <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" class="fr-text-xs" />
           <div v-if="isCentralKitchen" class="tag body-2 font-weight-medium mt-2">
             <p class="d-flex align-center mb-0">
               <v-icon class="mr-1" small>$community-fill</v-icon>
               Cuisine centrale
             </p>
           </div>
-        </v-card-subtitle>
-        <v-spacer></v-spacer>
-        <v-divider aria-hidden="true" role="presentation" class="py-1"></v-divider>
-        <div class="grey--text text--darken-2" :style="$vuetify.breakpoint.smAndDown ? '' : 'height: 95px;'">
-          <v-card-text class="py-1 fill-height d-flex flex-column" v-if="year">
-            <p class="mb-0">En {{ year }} :</p>
-            <v-row class="ma-0" v-if="hasPercentages">
-              <p class="ma-0 mr-3" v-if="bioPercent">
-                <span class="font-weight-black mr-1">{{ bioPercent }} %</span>
-                bio
-              </p>
-              <p class="ma-0" v-if="sustainablePercent">
-                <span class="font-weight-black mr-1">{{ sustainablePercent }} %</span>
-                de qualité et durables
-              </p>
-            </v-row>
-            <v-spacer v-else></v-spacer>
-            <v-row class="ma-0 pt-3">
-              <v-img
-                max-width="30"
-                contain
-                :src="`/static/images/badges/${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
-                v-for="badge in orderedBadges"
-                :key="badge.key"
-                class="mr-2"
-                :alt="badgeTitle(badge)"
-                :title="badgeTitle(badge)"
-              ></v-img>
-            </v-row>
-          </v-card-text>
-          <div v-else class="d-flex flex-column fill-height">
-            <v-spacer></v-spacer>
-            <v-card-text class="py-1"><p class="mb-0">Pas de données renseignées</p></v-card-text>
-            <v-spacer></v-spacer>
-          </div>
         </div>
+        <p v-if="year" class="mb-0 fr-text-sm">
+          En {{ year }} :
+          <span class="ma-0" v-if="hasPercentages">
+            <span class="ma-0 mr-3" v-if="bioPercent">
+              <span class="font-weight-black mr-1">{{ bioPercent }} %</span>
+              bio
+            </span>
+            <span class="ma-0" v-if="sustainablePercent">
+              <span class="font-weight-black mr-1">{{ sustainablePercent }} %</span>
+              de qualité et durables
+            </span>
+          </span>
+        </p>
+        <div v-if="year" class="d-flex">
+          <img
+            v-for="badge in orderedBadges"
+            :key="badge.key"
+            :src="`/static/images/badges/${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
+            width="50px"
+            height="50px"
+            class="mr-4"
+            :alt="badgeTitle(badge)"
+            :title="badgeTitle(badge)"
+          />
+        </div>
+        <p v-else class="mb-0">Pas de données renseignées</p>
         <v-card-actions class="px-4 py-0">
           <v-spacer></v-spacer>
           <v-icon color="primary">$arrow-right-line</v-icon>
@@ -140,11 +130,11 @@ export default {
   color: #333;
   display: inline-block;
 }
-.canteen-card img {
+.canteen-card img.lead-image {
   opacity: 50%;
 }
-.canteen-card:hover img,
-.canteen-card:focus img {
+.canteen-card:hover img.lead-image,
+.canteen-card:focus img.lead-image {
   opacity: 100%;
 }
 </style>
