@@ -557,14 +557,30 @@ export default {
       }
     },
     filterTags() {
-      return Object.entries(this.filters)
-        .filter(([, f]) => !!f.value)
+      const activeFilters = Object.entries(this.filters).filter(([, f]) => !!f.value)
+      const tags = activeFilters
+        .filter(([, f]) => !Array.isArray(f.default))
         .map(([key, filter]) => {
           return {
             id: key,
+            key,
             text: `${filter.param} : ${filter.value}`,
           }
         })
+      const arrayFilters = activeFilters.filter(([, f]) => Array.isArray(f.default))
+      arrayFilters.forEach(([key, filter]) => {
+        const arrayTags = filter.value.map((fv, idx) => {
+          return {
+            id: `${key}[${idx}]`,
+            key,
+            idx: idx,
+            isArray: true,
+            text: `${filter.param} : ${fv}`,
+          }
+        })
+        tags.push(...arrayTags)
+      })
+      return tags
     },
   },
   methods: {
@@ -771,8 +787,11 @@ export default {
       this.page = 1 // reset page to 1 when changing order direction
     },
     removeFilter(filterTag) {
-      // TODO: need special behaviour for arrays
-      this.filters[filterTag.id].value = this.filters[filterTag.id].default
+      if (filterTag.isArray) {
+        this.filters[filterTag.key].value.splice(filterTag.idx, 1)
+      } else {
+        this.filters[filterTag.key].value = this.filters[filterTag.id].default
+      }
     },
   },
   watch: {
