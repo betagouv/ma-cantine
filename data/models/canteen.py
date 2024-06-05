@@ -422,6 +422,10 @@ class Canteen(SoftDeletionModel):
         if scolaire_sectors.count() and self.sectors.intersection(scolaire_sectors).exists():
             return True
 
+    @property
+    def lead_image(self):
+        return self.images.first()
+
 
 class CanteenImage(models.Model):
     canteen = models.ForeignKey(Canteen, related_name="images", on_delete=models.CASCADE, null=True)

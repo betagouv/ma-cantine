@@ -98,6 +98,7 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     badges = BadgesSerializer(read_only=True, source="*")
     appro_diagnostic = PublicApproDiagnosticSerializer(read_only=True, source="latest_published_appro_diagnostic")
+    lead_image = CanteenImageSerializer()
 
     class Meta:
         model = Canteen
@@ -115,6 +116,7 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "department",
             "badges",
             "appro_diagnostic",
+            "lead_image",
         )
 
 
