@@ -244,11 +244,7 @@
               no-data-text="Veuillez séléctionner la catégorie de secteur"
               :rules="canteen.sectors && canteen.sectors.length ? [] : [validators.required]"
             />
-            <ul class="d-flex flex-wrap mt-2 mx-n1 no-bullets">
-              <li v-for="id in canteen.sectors" :key="id">
-                <DsfrTag :text="sectorName(id)" :closeAction="removeSector(id)" />
-              </li>
-            </ul>
+            <DsfrTagGroup :tags="sectorTags" :closeAction="removeSector" />
           </div>
         </v-col>
         <v-col v-if="showMinistryField" cols="12" md="10">
@@ -311,7 +307,7 @@ import DsfrRadio from "@/components/DsfrRadio"
 import CityField from "./CityField"
 import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrCallout from "@/components/DsfrCallout"
-import DsfrTag from "@/components/DsfrTag"
+import DsfrTagGroup from "@/components/DsfrTagGroup"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -325,7 +321,7 @@ export default {
     DsfrNativeSelect,
     DsfrCallout,
     SiretCheck,
-    DsfrTag,
+    DsfrTagGroup,
   },
   props: {
     canteenUrlComponent: {
@@ -410,6 +406,12 @@ export default {
     },
     showDelete() {
       return !this.isNewCanteen && window.ENABLE_DASHBOARD
+    },
+    sectorTags() {
+      return this.canteen.sectors.map((sectorId) => ({
+        text: this.sectorName(sectorId),
+        id: sectorId,
+      }))
     },
   },
   mounted() {

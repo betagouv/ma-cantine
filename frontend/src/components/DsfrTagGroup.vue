@@ -1,0 +1,26 @@
+<template>
+  <ul class="d-flex flex-wrap mx-n1 no-bullets">
+    <li v-for="tag in tags" :key="tag.id">
+      <DsfrTag :text="tag.text" :closeAction="closeAction(tag.id)" />
+    </li>
+  </ul>
+</template>
+
+<script>
+import DsfrTag from "@/components/DsfrTag"
+
+export default {
+  name: "DsfrTagGroup",
+  components: { DsfrTag },
+  props: {
+    tags: {
+      type: Array,
+      required: true,
+    },
+    closeAction: {
+      type: Function,
+      required: true,
+    },
+  },
+}
+</script>
