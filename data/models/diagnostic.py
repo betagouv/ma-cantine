@@ -1686,7 +1686,7 @@ class Diagnostic(models.Model):
     @property
     def waste_badge(self):
         if self.has_waste_diagnostic and self.waste_actions and len(self.waste_actions) > 0:
-            if self.canteen.daily_meal_count and (self.canteen.daily_meal_count < 3000 or self.has_donation_agreement):
+            if self.has_donation_agreement or (self.canteen.daily_meal_count and self.canteen.daily_meal_count < 3000):
                 return True
 
     @property
