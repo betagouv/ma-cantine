@@ -508,6 +508,9 @@ export default {
           param: "badge",
           value: null,
           default: null,
+          displayName(value) {
+            return badges[value]?.title
+          },
         },
       },
       orderBy: null,
