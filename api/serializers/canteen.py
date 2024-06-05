@@ -117,6 +117,8 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "badges",
             "appro_diagnostic",
             "lead_image",
+            "is_central_cuisine",
+            "is_satellite",
         )
 
 

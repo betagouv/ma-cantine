@@ -19,13 +19,13 @@
           <h2 class="fr-h5 mb-1 primary--text">
             {{ canteen.name }}
           </h2>
-          <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" class="fr-text-xs" />
-          <div v-if="isCentralKitchen" class="tag body-2 font-weight-medium mt-2">
+          <div v-if="isCentralKitchen || isSatellite" class="tag body-2 font-weight-medium">
             <p class="d-flex align-center mb-0">
               <v-icon class="mr-1" small>$community-fill</v-icon>
-              Cuisine centrale
+              {{ isCentralKitchen ? "Cuisine centrale" : "Cantine satellite" }}
             </p>
           </div>
+          <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" class="fr-text-xs" />
         </div>
         <p v-if="year" class="mb-0 fr-text-sm">
           En {{ year }} :
@@ -107,7 +107,10 @@ export default {
       return this.bioPercent || this.sustainablePercent
     },
     isCentralKitchen() {
-      return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
+      return this.canteen.isCentralCuisine
+    },
+    isSatellite() {
+      return this.canteen.isSatellite
     },
   },
   methods: {
@@ -124,11 +127,13 @@ export default {
 <style scoped>
 .tag {
   background: #e0e0f2;
-  left: 10px;
   padding: 3px 10px;
   border-radius: 4px;
   color: #333;
   display: inline-block;
+  position: absolute;
+  top: 7px;
+  left: 7px;
 }
 .canteen-card img.lead-image {
   opacity: 50%;
