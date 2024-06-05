@@ -419,7 +419,7 @@ export default {
           default: null,
           displayName(value) {
             const department = jsonDepartments.find((d) => d.departmentCode === value)
-            return department?.departmentName
+            return department && `${department.departmentName} (${value})`
           },
         },
         region: {
@@ -428,7 +428,7 @@ export default {
           default: null,
           displayName(value) {
             const region = jsonRegions.find((d) => d.regionCode === value)
-            return region?.regionName
+            return region.regionName
           },
         },
         city_insee_code: {
@@ -471,7 +471,7 @@ export default {
           value: null,
           default: null,
           displayName(value) {
-            return `Repas >= ${value}`
+            return `Repas min : ${value}`
           },
         },
         max_daily_meal_count: {
@@ -479,7 +479,7 @@ export default {
           value: null,
           default: null,
           displayName(value) {
-            return `Repas <= ${value}`
+            return `Repas max : ${value}`
           },
         },
         min_portion_bio: {
