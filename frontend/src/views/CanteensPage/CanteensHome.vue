@@ -458,6 +458,7 @@ export default {
           value: [],
           default: [],
           transformToFrontend(values) {
+            if (!values) return
             return Array.isArray(values) ? values.map((v) => +v) : [+values]
           },
           displayName(value) {
