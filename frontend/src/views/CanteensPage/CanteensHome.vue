@@ -154,6 +154,7 @@
                   <label
                     for="select-sector"
                     :class="{
+                      'fr-text': true,
                       'active-filter-label': filters.sectors.value && !!filters.sectors.value.length,
                     }"
                   >
@@ -182,17 +183,16 @@
                     class="my-n2"
                     :optionsRow="$vuetify.breakpoint.mdAndUp"
                   />
-                  <label
-                    for="select-production-type"
-                    :class="{ 'active-filter-label': !!filters.production_type.value }"
-                  >
-                    Type d'établissement
-                  </label>
+
                   <DsfrNativeSelect
                     v-model="filters.production_type.value"
                     :items="productionTypes"
-                    id="select-production-type"
-                    class="mt-1 mb-4"
+                    label="Type d'établissement"
+                    :labelClasses="{
+                      'mb-1 fr-text text-left': true,
+                      'active-filter-label': !!filters.production_type.value,
+                    }"
+                    class="mb-4"
                   />
                   <fieldset class="mb-4">
                     <legend
@@ -269,10 +269,16 @@
                       </div>
                     </div>
                   </fieldset>
-                  <label for="select-badge" :class="{ 'active-filter-label': !!filters.badge.value }">
-                    Expertise EGAlim
-                  </label>
-                  <DsfrNativeSelect v-model="filters.badge.value" :items="badges" id="select-badge" class="mt-1 mb-4" />
+                  <DsfrNativeSelect
+                    v-model="filters.badge.value"
+                    :items="badges"
+                    label="Expertise EGAlim"
+                    :labelClasses="{
+                      'mb-1 fr-text text-left': true,
+                      'active-filter-label': !!filters.badge.value,
+                    }"
+                    class="mb-4"
+                  />
                 </div>
               </template>
             </DsfrAccordion>
@@ -770,10 +776,10 @@ export default {
 .v-btn--plain:not(.v-btn--active):not(.v-btn--loading):not(:focus):not(:hover) >>> .v-btn__content {
   opacity: 1;
 }
-.active-filter-label {
+div >>> .active-filter-label {
   font-weight: bold;
 }
-.active-filter-label::before {
+div >>> .active-filter-label::before {
   content: "⚫︎";
   color: #ce614a;
 }
