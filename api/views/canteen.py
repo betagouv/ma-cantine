@@ -58,7 +58,6 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 class PublishedCanteenSingleView(RetrieveAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
-    queryset = Canteen.objects
 
     def get_queryset(self):
         return Canteen.objects.publicly_visible()
@@ -249,7 +248,6 @@ def filter_by_diagnostic_params(queryset, query_params):
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenPreviewSerializer
-    queryset = Canteen.objects
     pagination_class = PublishedCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
