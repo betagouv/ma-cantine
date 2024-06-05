@@ -6,6 +6,7 @@
     class="ma-1"
     color="primary"
     close-label="Fermer"
+    close-icon="$close-line"
   >
     {{ text }}
   </v-chip>
