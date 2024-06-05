@@ -170,18 +170,17 @@
                     placeholder="Tous les secteurs"
                     class="mt-1 mb-4"
                   />
-                  <label
-                    for="select-management-type"
-                    :class="{ 'active-filter-label': !!filters.management_type.value }"
-                  >
-                    Mode de gestion
-                  </label>
                   <DsfrRadio
                     v-model="filters.management_type.value"
                     :items="managementTypes"
-                    id="select-management-type"
-                    class="my-n2"
                     :optionsRow="$vuetify.breakpoint.mdAndUp"
+                    label="Mode de gestion"
+                    :labelClasses="{
+                      'fr-text text-left grey--text text--darken-4': true,
+                      'active-filter-label': !!filters.management_type.value,
+                    }"
+                    :hideOptional="true"
+                    class="mb-n2"
                   />
 
                   <DsfrNativeSelect
