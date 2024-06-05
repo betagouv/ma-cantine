@@ -2,7 +2,7 @@
   <v-card
     :to="{ name: 'CanteenPage', params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) } }"
     outlined
-    class="pa-4 text-left fill-height d-flex flex-column dsfr"
+    class="my-4 pa-4 text-left d-flex flex-column dsfr"
   >
     <v-card-title class="pt-1">
       <h2 class="fr-h6 mb-1 font-weight-black">
