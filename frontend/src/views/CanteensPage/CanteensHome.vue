@@ -490,7 +490,7 @@ export default {
             return value / 100
           },
           displayName(value) {
-            return `Bio >= ${value} %`
+            return `Bio min : ${value} %`
           },
         },
         min_portion_combined: {
@@ -501,7 +501,7 @@ export default {
             return value / 100
           },
           displayName(value) {
-            return `Qualité >= ${value} %`
+            return `EGAlim min : ${value} %`
           },
         },
         badge: {
