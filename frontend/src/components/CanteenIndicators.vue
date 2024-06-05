@@ -1,7 +1,7 @@
 <template>
   <div :class="{ 'fr-text grey--text text--darken-2': true, 'd-flex flex-wrap': singleLine }">
     <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="canteen.city">
-      <v-icon small class="mr-1">$compass-3-line</v-icon>
+      <v-icon small class="mr-1">$map-pin-2-line</v-icon>
       {{ canteen.city }}
     </p>
     <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="hasDailyMealCount">
