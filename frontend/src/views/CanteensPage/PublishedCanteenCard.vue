@@ -23,7 +23,7 @@
             <v-icon x-small>{{ isCentralKitchen ? "$community-fill" : "$restaurant-fill" }}</v-icon>
             {{ isCentralKitchen ? "Cuisine centrale" : "Cantine satellite" }}
           </p>
-          <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" class="fr-text-xs" />
+          <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" :dense="true" />
         </div>
         <p v-if="year" class="mb-0 fr-text-sm">
           En {{ year }} :

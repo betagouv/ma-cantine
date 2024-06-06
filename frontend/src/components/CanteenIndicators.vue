@@ -1,24 +1,31 @@
 <template>
-  <div :class="{ 'fr-text grey--text text--darken-2': true, 'd-flex flex-wrap': singleLine }">
+  <div
+    :class="{
+      'grey--text text--darken-2': true,
+      'd-flex flex-wrap': singleLine,
+      'fr-text': !dense,
+      'fr-text-xs': dense,
+    }"
+  >
     <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="canteen.city">
-      <v-icon small class="mr-1">$map-pin-2-line</v-icon>
+      <v-icon :small="!dense" :x-small="dense" class="mr-1">$map-pin-2-line</v-icon>
       {{ canteen.city }}
     </p>
     <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="hasDailyMealCount">
-      <v-icon small class="mr-1" aria-hidden="false" role="img">$team-line</v-icon>
+      <v-icon :small="!dense" :x-small="dense" class="mr-1" aria-hidden="false" role="img">$team-line</v-icon>
       <!-- eslint-disable-next-line prettier/prettier-->
       {{ canteen.dailyMealCount }} couverts<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
     </p>
     <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="satelliteCount">
-      <v-icon small class="mr-1">$restaurant-line</v-icon>
+      <v-icon :small="!dense" :x-small="dense" class="mr-1">$restaurant-line</v-icon>
       {{ satelliteCount }} {{ satelliteCount === 1 ? "satellite" : "satellites" }}
     </p>
     <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="businessSegments">
-      <v-icon small class="mr-1">$building-line</v-icon>
+      <v-icon :small="!dense" :x-small="dense" class="mr-1">$building-line</v-icon>
       {{ businessSegments }}
     </p>
     <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="managementType">
-      <v-icon small class="mr-1">$group-line</v-icon>
+      <v-icon :small="!dense" :x-small="dense" class="mr-1">$group-line</v-icon>
       Gestion {{ managementType.toLowerCase() }}
     </p>
   </div>
@@ -36,6 +43,10 @@ export default {
       required: true,
     },
     singleLine: {
+      type: Boolean,
+      default: false,
+    },
+    dense: {
       type: Boolean,
       default: false,
     },
