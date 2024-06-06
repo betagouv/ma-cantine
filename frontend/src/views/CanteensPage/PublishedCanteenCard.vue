@@ -5,7 +5,7 @@
     class="my-4 text-left d-flex flex-column dsfr canteen-card"
   >
     <v-row class="pa-0 ma-0">
-      <v-col cols="4" class="pa-0" style="height: 256px;">
+      <v-col cols="4" class="pa-0" style="height: 256px;" v-if="!dense">
         <img
           :src="canteen.leadImage ? canteen.leadImage.image : '/static/images/canteen-default-image.jpg'"
           height="100%"
@@ -19,10 +19,10 @@
           <h2 class="fr-h5 mb-1 primary--text">
             {{ canteen.name }}
           </h2>
-          <ProductionTypeTag :canteen="canteen" position="top-left" />
-          <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" :dense="true" />
+          <ProductionTypeTag :canteen="canteen" :position="!dense ? 'top-left' : ''" />
+          <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" :dense="true" class="my-2" />
         </div>
-        <p v-if="year" class="mb-0 fr-text-sm">
+        <p v-if="year" class="my-2 fr-text-sm">
           En {{ year }} :
           <span class="ma-0" v-if="hasPercentages">
             <span class="ma-0 mr-3" v-if="bioPercent">
@@ -35,19 +35,19 @@
             </span>
           </span>
         </p>
-        <div v-if="year" class="d-flex">
+        <div v-if="year" class="d-flex my-2">
           <img
             v-for="badge in orderedBadges"
             :key="badge.key"
             :src="`/static/images/badges/${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
-            width="50px"
-            height="50px"
-            class="mr-4"
+            :width="dense ? '35px' : '50px'"
+            :height="dense ? '35px' : '50px'"
+            :class="dense ? 'mr-2' : 'mr-4'"
             :alt="badgeTitle(badge)"
             :title="badgeTitle(badge)"
           />
         </div>
-        <p v-else class="mb-0">Pas de données renseignées</p>
+        <p v-else class="my-2 fr-text-sm">Pas de données renseignées</p>
         <v-card-actions class="px-4 py-0">
           <v-spacer></v-spacer>
           <v-icon color="primary">$arrow-right-line</v-icon>
@@ -102,6 +102,9 @@ export default {
     },
     hasPercentages() {
       return this.bioPercent || this.sustainablePercent
+    },
+    dense() {
+      return this.$vuetify.breakpoint.xs
     },
   },
   methods: {
