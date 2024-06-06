@@ -132,6 +132,7 @@
                     auto-select-first
                     :filter="locationFilter"
                   />
+                  <WaiCombobox />
                   <label
                     for="select-commune"
                     :class="{
@@ -362,6 +363,7 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import CityField from "@/views/CanteenEditor/CityField"
+import WaiCombobox from "@/components/WaiCombobox"
 import DsfrEmail from "@/components/DsfrEmail"
 
 const DEFAULT_ORDER = "creation"
@@ -380,6 +382,7 @@ export default {
     DsfrPagination,
     DsfrSearchField,
     CityField,
+    WaiCombobox,
     DsfrEmail,
   },
   data() {
