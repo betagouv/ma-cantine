@@ -5,17 +5,21 @@
       {{ canteen.city }}
     </p>
     <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="hasDailyMealCount">
-      <v-icon small class="mr-1" aria-hidden="false" role="img">$restaurant-line</v-icon>
+      <v-icon small class="mr-1" aria-hidden="false" role="img">$team-line</v-icon>
       <!-- eslint-disable-next-line prettier/prettier-->
       {{ canteen.dailyMealCount }} couverts<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
     </p>
-    <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="hasSatelliteCanteens">
-      <v-icon small class="mr-1">$community-line</v-icon>
-      {{ canteen.satelliteCanteensCount }} satellites
+    <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="satelliteCount">
+      <v-icon small class="mr-1">$restaurant-line</v-icon>
+      {{ satelliteCount }} {{ satelliteCount === 1 ? "satellite" : "satellites" }}
     </p>
     <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="businessSegments">
       <v-icon small class="mr-1">$building-line</v-icon>
       {{ businessSegments }}
+    </p>
+    <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="managementType">
+      <v-icon small class="mr-1">$group-line</v-icon>
+      Gestion {{ managementType.toLowerCase() }}
     </p>
   </div>
 </template>
@@ -57,14 +61,14 @@ export default {
       const sectors = this.$store.state.sectors
       return this.canteen.sectors.map((sectorId) => sectors.find((s) => s.id === sectorId))
     },
-    hasSatelliteCanteens() {
-      return (
-        this.canteen.satelliteCanteensCount &&
-        (this.canteen.productionType === "central" || this.canteen.productionType === "central_serving")
-      )
+    satelliteCount() {
+      return this.canteen.isCentralCuisine ? this.canteen.satelliteCanteensCount : undefined
     },
     hasDailyMealCount() {
       return this.canteen.dailyMealCount && this.canteen.productionType !== "central"
+    },
+    managementType() {
+      return Constants.ManagementTypes.find((type) => type.value === this.canteen.managementType)?.text
     },
   },
 }

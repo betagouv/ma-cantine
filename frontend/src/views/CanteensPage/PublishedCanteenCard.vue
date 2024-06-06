@@ -19,12 +19,10 @@
           <h2 class="fr-h5 mb-1 primary--text">
             {{ canteen.name }}
           </h2>
-          <div v-if="isCentralKitchen || isSatellite" class="tag body-2 font-weight-medium">
-            <p class="d-flex align-center mb-0">
-              <v-icon class="mr-1" small>$community-fill</v-icon>
-              {{ isCentralKitchen ? "Cuisine centrale" : "Cantine satellite" }}
-            </p>
-          </div>
+          <p v-if="isCentralKitchen || isSatellite" class="tag fr-text-xs">
+            <v-icon x-small>{{ isCentralKitchen ? "$community-fill" : "$restaurant-fill" }}</v-icon>
+            {{ isCentralKitchen ? "Cuisine centrale" : "Cantine satellite" }}
+          </p>
           <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" class="fr-text-xs" />
         </div>
         <p v-if="year" class="mb-0 fr-text-sm">
@@ -126,14 +124,20 @@ export default {
 
 <style scoped>
 .tag {
-  background: #e0e0f2;
-  padding: 3px 10px;
-  border-radius: 4px;
-  color: #333;
-  display: inline-block;
+  display: flex;
+  padding: 2px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
   position: absolute;
-  top: 7px;
-  left: 7px;
+  left: 12px;
+  top: 12px;
+  border-radius: 12px;
+  background-color: #eee;
+  color: #161616;
+}
+.tag .v-icon {
+  color: #161616;
 }
 .canteen-card img.lead-image {
   opacity: 50%;
