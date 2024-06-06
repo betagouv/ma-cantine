@@ -137,6 +137,10 @@ class ComboboxAutocomplete {
     return node.textContent.toLowerCase()
   }
 
+  getNormalisedLowercaseContent(node) {
+    return this.getLowercaseContent(node).trim()
+  }
+
   isOptionInView(option) {
     var bounding = option.getBoundingClientRect()
     return (
@@ -228,7 +232,7 @@ class ComboboxAutocomplete {
 
     for (var i = 0; i < this.allOptions.length; i++) {
       option = this.allOptions[i]
-      if (filter.length === 0 || this.getLowercaseContent(option).indexOf(filter) === 0) {
+      if (filter.length === 0 || this.getNormalisedLowercaseContent(option).indexOf(filter) === 0) {
         this.filteredOptions.push(option)
         this.listboxNode.appendChild(option)
       }
@@ -250,7 +254,7 @@ class ComboboxAutocomplete {
       option = null
       this.lastOption = null
     }
-
+    console.log(option)
     return option
   }
 
@@ -668,6 +672,7 @@ ul[role="listbox"] {
   overflow-x: hidden;
   font-size: 87.5%;
   cursor: pointer;
+  z-index: 99;
 }
 
 ul[role="listbox"] li[role="option"] {
