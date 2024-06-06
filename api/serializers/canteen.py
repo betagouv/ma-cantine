@@ -374,7 +374,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 
 
 class CanteenSummarySerializer(serializers.ModelSerializer):
-    images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
+    lead_image = CanteenImageSerializer()
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
 
@@ -399,8 +399,8 @@ class CanteenSummarySerializer(serializers.ModelSerializer):
             "is_central_cuisine",
             "is_satellite",
             "modification_date",
+            "lead_image",
             # the following can still be improved
-            "images",  # can return the first image only
             "diagnostics",
             "central_kitchen_diagnostics",  # can return a TD status instead of diagnostics
         )
