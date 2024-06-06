@@ -794,6 +794,6 @@ div >>> .v-list-item--disabled .theme--light.v-icon {
   font-size: 12px;
 }
 #filter-and-results.min-height {
-  min-height: 960px;
+  min-height: 1050px;
 }
 </style>

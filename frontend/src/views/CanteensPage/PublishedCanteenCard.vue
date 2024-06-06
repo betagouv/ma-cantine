@@ -5,12 +5,9 @@
     class="my-4 text-left d-flex flex-column dsfr canteen-card"
   >
     <v-row class="pa-0 ma-0">
-      <v-col cols="4" class="pa-0" style="height: 256px;" v-if="!dense">
+      <v-col cols="4" class="pa-0 card-image-wrap" v-if="!dense">
         <img
           :src="canteen.leadImage ? canteen.leadImage.image : '/static/images/canteen-default-image.jpg'"
-          height="100%"
-          width="100%"
-          style="object-fit: cover;"
           class="lead-image"
         />
       </v-col>
@@ -119,11 +116,23 @@ export default {
 </script>
 
 <style scoped>
+.canteen-card {
+  min-height: 256px;
+}
 .canteen-card img.lead-image {
   opacity: 50%;
+  max-height: 100%;
+  max-width: 100%;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  position: absolute;
 }
 .canteen-card:hover img.lead-image,
 .canteen-card:focus img.lead-image {
   opacity: 100%;
+}
+.card-image-wrap {
+  position: relative;
 }
 </style>
