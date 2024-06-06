@@ -3,6 +3,7 @@ import datetime
 from datetime import date
 from django.urls import reverse
 from django.utils import timezone
+from django.test.utils import override_settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, SectorFactory
@@ -14,7 +15,8 @@ CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestPublicCanteenPreviewsApi(APITestCase):
-    def test_get_published_canteens(self):
+    @override_settings(PUBLISH_BY_DEFAULT=False)
+    def test_deprecated_get_published_canteens(self):
         """
         Only published canteens with public data should be
         returned from this call
@@ -32,6 +34,42 @@ class TestPublicCanteenPreviewsApi(APITestCase):
 
         body = response.json()
         self.assertEqual(body.get("count"), 2)
+
+        results = body.get("results", [])
+
+        for published_canteen in published_canteens:
+            self.assertTrue(any(x["id"] == published_canteen.id for x in results))
+
+        for private_canteen in private_canteens:
+            self.assertFalse(any(x["id"] == private_canteen.id for x in results))
+
+        for recieved_canteen in results:
+            self.assertFalse("managers" in recieved_canteen)
+            self.assertFalse("managerInvitations" in recieved_canteen)
+
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    def test_get_published_canteens(self):
+        """
+        All canteens except with line ministry ARMEE should be public, regardless of publication status
+        """
+        published_canteens = [
+            CanteenFactory.create(line_ministry=Canteen.Ministries.AFFAIRES_ETRANGERES),
+            CanteenFactory.create(line_ministry=None),
+            CanteenFactory.create(
+                line_ministry=Canteen.Ministries.AUTRE, publication_status=Canteen.PublicationStatus.DRAFT
+            ),
+        ]
+        private_canteens = [
+            CanteenFactory.create(line_ministry=Canteen.Ministries.ARMEE),
+            CanteenFactory.create(
+                line_ministry=Canteen.Ministries.ARMEE, publication_status=Canteen.PublicationStatus.PUBLISHED
+            ),
+        ]
+        response = self.client.get(reverse("published_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body.get("count"), 3)
 
         results = body.get("results", [])
 
@@ -356,6 +394,7 @@ class TestPublicCanteenSearchApi(APITestCase):
         self.assertEqual(results[2]["name"], "Wasabi")
         self.assertEqual(results[3]["name"], "Shiso")
 
+    @override_settings(PUBLISH_BY_DEFAULT=False)
     def test_filter_appro_values(self):
         """
         Should be able to filter by bio %, sustainable %, combined % based on last year's diagnostic
@@ -537,7 +576,7 @@ class TestPublicCanteenSearchApi(APITestCase):
         self.assertIn("75", body.get("departments"))
         self.assertIn("69", body.get("departments"))
 
-    def test_pagination_sectors(self):
+    def test_deprecated_pagination_sectors(self):
         """
         The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
         """
@@ -550,6 +589,40 @@ class TestPublicCanteenSearchApi(APITestCase):
         CanteenFactory.create(publication_status="published", sectors=[school], name="Wasabi")
         CanteenFactory.create(publication_status="published", sectors=[school], name="Mochi")
         CanteenFactory.create(publication_status="published", sectors=[administration], name="Umami")
+
+        url = f"{reverse('published_canteens')}"
+        response = self.client.get(url)
+        body = response.json()
+
+        self.assertEqual(len(body.get("sectors")), 3)
+        self.assertIn(school.id, body.get("sectors"))
+        self.assertIn(enterprise.id, body.get("sectors"))
+        self.assertIn(administration.id, body.get("sectors"))
+
+        url = f"{reverse('published_canteens')}?sectors={enterprise.id}"
+        response = self.client.get(url)
+        body = response.json()
+
+        self.assertEqual(len(body.get("sectors")), 3)
+        self.assertIn(school.id, body.get("sectors"))
+        self.assertIn(enterprise.id, body.get("sectors"))
+        self.assertIn(administration.id, body.get("sectors"))
+
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    def test_pagination_sectors(self):
+        """
+        The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
+        It should not return sectors from hidden canteens
+        """
+        school = SectorFactory.create(name="School")
+        enterprise = SectorFactory.create(name="Enterprise")
+        administration = SectorFactory.create(name="Administration")
+        # unused sectors shouldn't show up as an option
+        unused = SectorFactory.create(name="Unused")
+        CanteenFactory.create(line_ministry=None, sectors=[school, enterprise], name="Shiso")
+        CanteenFactory.create(line_ministry=None, sectors=[school, administration], name="Umami")
+
+        CanteenFactory.create(line_ministry=Canteen.Ministries.ARMEE, sectors=[unused], name="Secret")
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)

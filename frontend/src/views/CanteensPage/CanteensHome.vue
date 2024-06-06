@@ -25,7 +25,6 @@
               Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus
               durable.
             </p>
-            <p class="mb-1">Sont affichées sur cette page uniquement les cantines qui ont décidé d’être visibles.</p>
             <p>
               Consulter
               <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">

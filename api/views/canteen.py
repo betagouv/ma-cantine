@@ -58,7 +58,9 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 class PublishedCanteenSingleView(RetrieveAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
-    queryset = Canteen.objects.filter(publication_status="published")
+
+    def get_queryset(self):
+        return Canteen.objects.publicly_visible()
 
 
 class ProductionTypeInFilter(BaseInFilter, CharFilter):
@@ -80,33 +82,31 @@ class PublishedCanteensPagination(LimitOffsetPagination):
         self.management_types = set(filter(lambda x: x, queryset.values_list("management_type", flat=True)))
         self.production_types = set(filter(lambda x: x, queryset.values_list("production_type", flat=True)))
 
-        published_canteens = Canteen.objects.filter(publication_status="published")
+        # Prepare sector filter options:
+        # we want to return all sectors that are available after the other filters,
+        # because the user can select multiple sectors (unlike other filter options)
+        all_sector_canteens = Canteen.objects.publicly_visible()
         query_params = request.query_params
-
         if query_params.get("department"):
-            published_canteens = published_canteens.filter(department=query_params.get("department"))
-
+            all_sector_canteens = all_sector_canteens.filter(department=query_params.get("department"))
         if query_params.get("region"):
-            published_canteens = published_canteens.filter(region=query_params.get("region"))
-
+            all_sector_canteens = all_sector_canteens.filter(region=query_params.get("region"))
         if query_params.get("min_daily_meal_count"):
-            published_canteens = published_canteens.filter(
+            all_sector_canteens = all_sector_canteens.filter(
                 daily_meal_count__gte=query_params.get("min_daily_meal_count")
             )
-
         if query_params.get("max_daily_meal_count"):
-            published_canteens = published_canteens.filter(
+            all_sector_canteens = all_sector_canteens.filter(
                 daily_meal_count__lte=query_params.get("max_daily_meal_count")
             )
-
         if query_params.get("management_type"):
-            published_canteens = published_canteens.filter(management_type=query_params.get("management_type"))
-
-        published_canteens = filter_by_diagnostic_params(published_canteens, query_params)
+            all_sector_canteens = all_sector_canteens.filter(management_type=query_params.get("management_type"))
+        all_sector_canteens = filter_by_diagnostic_params(all_sector_canteens, query_params)
 
         self.sectors = (
-            Sector.objects.filter(canteen__in=list(published_canteens)).values_list("id", flat=True).distinct()
+            Sector.objects.filter(canteen__in=list(all_sector_canteens)).values_list("id", flat=True).distinct()
         )
+
         return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
@@ -248,7 +248,6 @@ def filter_by_diagnostic_params(queryset, query_params):
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenPreviewSerializer
-    queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
     pagination_class = PublishedCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -258,6 +257,9 @@ class PublishedCanteensView(ListAPIView):
     search_fields = ["name", "siret"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
     filterset_class = PublishedCanteenFilterSet
+
+    def get_queryset(self):
+        return Canteen.objects.publicly_visible()
 
     def filter_queryset(self, queryset):
         new_queryset = filter_by_diagnostic_params(queryset, self.request.query_params)
@@ -513,6 +515,8 @@ class UnpublishCanteenView(APIView):
     required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
+        if settings.PUBLISH_BY_DEFAULT:
+            raise BadRequest("Cannot unpublish canteen")
         try:
             data = request.data
             canteen_id = kwargs.get("pk")
@@ -859,9 +863,7 @@ class CanteenStatisticsView(APIView):
 
         canteens = CanteenStatisticsView._filter_canteens(regions, departments, city_insee_codes, sector_categories)
         data["canteen_count"] = canteens.count()
-        data["published_canteen_count"] = canteens.filter(
-            publication_status=Canteen.PublicationStatus.PUBLISHED
-        ).count()
+        data["published_canteen_count"] = canteens.publicly_visible().count()
 
         diagnostics = CanteenStatisticsView._filter_diagnostics(
             year, regions, departments, city_insee_codes, sector_categories
@@ -1248,9 +1250,10 @@ class ActionableCanteensListView(ListAPIView):
         ]
         if should_teledeclare:
             conditions.append(When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)))
-        conditions.append(
-            When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH))
-        )
+        if not settings.PUBLISH_BY_DEFAULT:
+            conditions.append(
+                When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH))
+            )
         user_canteens = user_canteens.annotate(action=Case(*conditions, default=Value(Canteen.Actions.NOTHING)))
         return user_canteens
 
