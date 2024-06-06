@@ -254,7 +254,6 @@ class ComboboxAutocomplete {
       option = null
       this.lastOption = null
     }
-    console.log(option)
     return option
   }
 
@@ -594,6 +593,14 @@ class ComboboxAutocomplete {
     setTimeout(this.close.bind(this, false), 300)
   }
 }
+
+// TODO:
+// how to auto select first option?
+// Define this component with props : label, items etc
+// Pass option to parent with $emit
+// Replace region/department select (make own components wrapping this?)
+// Replace city field : API list?
+// Dsfr styling
 
 export default {
   name: "WaiCombobox",
