@@ -1,57 +1,62 @@
 <template>
-  <v-card
-    :to="{ name: 'CanteenPage', params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) } }"
-    outlined
-    class="my-4 text-left d-flex flex-column dsfr canteen-card"
-  >
-    <v-row class="pa-0 ma-0">
-      <v-col cols="4" class="pa-0 card-image-wrap" v-if="!dense">
-        <img
-          :src="canteen.leadImage ? canteen.leadImage.image : '/static/images/canteen-default-image.jpg'"
-          class="lead-image"
-        />
-      </v-col>
-      <v-col class="pa-8 d-flex flex-column justify-space-between">
-        <div>
-          <h2 class="fr-h5 mb-1 primary--text">
-            {{ canteen.name }}
-          </h2>
-          <ProductionTypeTag :canteen="canteen" :position="!dense ? 'top-left' : ''" />
-          <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" :dense="true" class="my-2" />
-        </div>
-        <p v-if="year" class="my-2 fr-text-sm">
-          En {{ year }} :
-          <span class="ma-0" v-if="hasPercentages">
-            <span class="ma-0 mr-3" v-if="bioPercent">
-              <span class="font-weight-black mr-1">{{ bioPercent }} %</span>
-              bio
-            </span>
-            <span class="ma-0" v-if="sustainablePercent">
-              <span class="font-weight-black mr-1">{{ sustainablePercent }} %</span>
-              de qualité et durables
-            </span>
-          </span>
-        </p>
-        <div v-if="year" class="d-flex my-2">
+  <li>
+    <v-card outlined class="text-left d-flex flex-column dsfr expanded-link canteen-card">
+      <v-row class="pa-0 ma-0">
+        <v-col cols="4" class="pa-0 card-image-wrap" v-if="showImage">
           <img
-            v-for="badge in orderedBadges"
-            :key="badge.key"
-            :src="`/static/images/badges/${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
-            :width="dense ? '35px' : '50px'"
-            :height="dense ? '35px' : '50px'"
-            :class="dense ? 'mr-2' : 'mr-4'"
-            :alt="badgeTitle(badge)"
-            :title="badgeTitle(badge)"
+            :src="canteen.leadImage ? canteen.leadImage.image : '/static/images/canteen-default-image.jpg'"
+            class="lead-image"
           />
-        </div>
-        <p v-else class="my-2 fr-text-sm">Pas de données renseignées</p>
-        <v-card-actions class="px-4 py-0">
-          <v-spacer></v-spacer>
-          <v-icon color="primary">$arrow-right-line</v-icon>
-        </v-card-actions>
-      </v-col>
-    </v-row>
-  </v-card>
+        </v-col>
+        <v-col class="pa-8 d-flex flex-column justify-space-between">
+          <div>
+            <h2 class="fr-h5 mb-1 primary--text">
+              <router-link
+                :to="{
+                  name: 'CanteenPage',
+                  params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                }"
+              >
+                {{ canteen.name }}
+              </router-link>
+            </h2>
+            <ProductionTypeTag :canteen="canteen" :position="showImage ? 'top-left' : ''" />
+            <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" :dense="true" class="my-2" />
+          </div>
+          <p v-if="year" class="my-2 fr-text-sm">
+            En {{ year }} :
+            <span class="ma-0" v-if="hasPercentages">
+              <span class="ma-0 mr-3" v-if="bioPercent">
+                <span class="font-weight-black mr-1">{{ bioPercent }} %</span>
+                bio
+              </span>
+              <span class="ma-0" v-if="sustainablePercent">
+                <span class="font-weight-black mr-1">{{ sustainablePercent }} %</span>
+                de qualité et durables
+              </span>
+            </span>
+          </p>
+          <div v-if="year" class="d-flex my-2">
+            <img
+              v-for="badge in orderedBadges"
+              :key="badge.key"
+              :src="`/static/images/badges/${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
+              :width="dense ? '35px' : '50px'"
+              :height="dense ? '35px' : '50px'"
+              :class="dense ? 'mr-2' : 'mr-4'"
+              :alt="badgeTitle(badge)"
+              :title="badgeTitle(badge)"
+            />
+          </div>
+          <p v-else class="my-2 fr-text-sm">Pas de données renseignées</p>
+          <v-card-actions class="px-4 py-0">
+            <v-spacer></v-spacer>
+            <v-icon color="primary">$arrow-right-line</v-icon>
+          </v-card-actions>
+        </v-col>
+      </v-row>
+    </v-card>
+  </li>
 </template>
 
 <script>
@@ -66,6 +71,10 @@ export default {
     canteen: {
       type: Object,
       required: true,
+    },
+    noImage: {
+      type: Boolean,
+      default: false,
     },
   },
   components: {
@@ -103,6 +112,9 @@ export default {
     dense() {
       return this.$vuetify.breakpoint.xs
     },
+    showImage() {
+      return !this.dense && !this.noImage
+    },
   },
   methods: {
     badgeTitle(badge) {
@@ -118,6 +130,7 @@ export default {
 <style scoped>
 .canteen-card {
   min-height: 256px;
+  height: 100%;
 }
 .canteen-card img.lead-image {
   opacity: 50%;

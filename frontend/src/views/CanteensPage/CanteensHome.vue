@@ -299,9 +299,9 @@
               Désactiver tous les filtres
             </v-btn>
           </div>
-          <div v-else>
+          <ol v-else class="no-bullets">
             <PublishedCanteenCard v-for="canteen in visibleCanteens" :key="canteen.id" :canteen="canteen" />
-          </div>
+          </ol>
           <v-spacer />
           <DsfrPagination
             class="my-6"
