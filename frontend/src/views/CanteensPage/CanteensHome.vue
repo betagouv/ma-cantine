@@ -68,7 +68,7 @@
           </v-btn>
         </v-col>
       </v-row>
-      <v-row>
+      <v-row id="filter-and-results" :class="{ 'min-height': !visibleCanteens || visibleCanteens.length === limit }">
         <v-col cols="12" md="4">
           <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2" class="mr-2">
             <h2 class="fr-h6 mb-0">
@@ -283,10 +283,13 @@
             </DsfrAccordion>
           </v-form>
         </v-col>
-        <v-col cols="12" md="8">
-          <div v-if="loading || pageLoading" class="pa-12">
-            <v-progress-circular indeterminate></v-progress-circular>
-          </div>
+        <v-col cols="12" md="8" class="d-flex flex-column">
+          <v-spacer />
+          <v-progress-circular
+            v-if="loading || pageLoading"
+            indeterminate
+            class="align-self-center justify-self-center"
+          />
           <div v-else-if="publishedCanteenCount === 0" class="d-flex flex-column align-center py-10">
             <v-icon large>mdi-inbox-remove</v-icon>
             <p class="text-body-1 grey--text text--darken-1 my-2">
@@ -299,12 +302,13 @@
           <div v-else>
             <PublishedCanteenCard v-for="canteen in visibleCanteens" :key="canteen.id" :canteen="canteen" />
           </div>
+          <v-spacer />
           <DsfrPagination
             class="my-6"
             v-model="page"
             :length="Math.ceil(publishedCanteenCount / limit)"
             :total-visible="5"
-            v-if="!pageLoading"
+            v-if="!loading && publishedCanteenCount"
           />
         </v-col>
       </v-row>
@@ -596,6 +600,7 @@ export default {
       const override = this.page ? { page: this.page } : { page: 1 }
       const query = Object.assign(this.query, override)
       this.updateRouter(query)
+      // TODO: make this dependent on window height to avoid jumps for bigger screens
       document.getElementById("search-top").scrollIntoView()
     },
     applyFilter() {
@@ -787,5 +792,8 @@ div >>> .v-list-item--disabled .theme--light.v-icon {
 }
 #ordering >>> .v-select__selection {
   font-size: 12px;
+}
+#filter-and-results.min-height {
+  min-height: 960px;
 }
 </style>
