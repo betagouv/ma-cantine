@@ -260,6 +260,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "central_kitchen",
             "satellites",
             "is_central_cuisine",
+            "is_satellite",
             "modification_date",
             "badges",
         )
@@ -304,6 +305,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "creation_mtm_campaign",
             "creation_mtm_medium",
             "is_central_cuisine",
+            "is_satellite",
             "modification_date",
             "badges",
         )
@@ -395,6 +397,7 @@ class CanteenSummarySerializer(serializers.ModelSerializer):
             "publication_status",
             "economic_model",
             "is_central_cuisine",
+            "is_satellite",
             "modification_date",
             # the following can still be improved
             "images",  # can return the first image only

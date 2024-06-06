@@ -19,10 +19,7 @@
           <h2 class="fr-h5 mb-1 primary--text">
             {{ canteen.name }}
           </h2>
-          <p v-if="isCentralKitchen || isSatellite" class="tag fr-text-xs">
-            <v-icon x-small>{{ isCentralKitchen ? "$community-fill" : "$restaurant-fill" }}</v-icon>
-            {{ isCentralKitchen ? "Cuisine centrale" : "Cantine satellite" }}
-          </p>
+          <ProductionTypeTag :canteen="canteen" position="top-left" />
           <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" :dense="true" />
         </div>
         <p v-if="year" class="mb-0 fr-text-sm">
@@ -62,6 +59,7 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
+import ProductionTypeTag from "@/components/ProductionTypeTag"
 import { getSustainableTotal, toPercentage } from "@/utils"
 import badges from "@/badges"
 
@@ -75,6 +73,7 @@ export default {
   },
   components: {
     CanteenIndicators,
+    ProductionTypeTag,
   },
   computed: {
     year() {
@@ -104,12 +103,6 @@ export default {
     hasPercentages() {
       return this.bioPercent || this.sustainablePercent
     },
-    isCentralKitchen() {
-      return this.canteen.isCentralCuisine
-    },
-    isSatellite() {
-      return this.canteen.isSatellite
-    },
   },
   methods: {
     badgeTitle(badge) {
@@ -123,22 +116,6 @@ export default {
 </script>
 
 <style scoped>
-.tag {
-  display: flex;
-  padding: 2px 8px;
-  justify-content: center;
-  align-items: center;
-  gap: 2px;
-  position: absolute;
-  left: 12px;
-  top: 12px;
-  border-radius: 12px;
-  background-color: #eee;
-  color: #161616;
-}
-.tag .v-icon {
-  color: #161616;
-}
 .canteen-card img.lead-image {
   opacity: 50%;
 }
