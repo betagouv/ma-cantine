@@ -111,6 +111,29 @@ def map_sectors():
     return sectors_mapper
 
 
+def fetch_teledeclarations(years: list) -> pd.DataFrame:
+    df = pd.DataFrame()
+    for year in years:
+        if year in CAMPAIGN_DATES.keys():
+            df_year = pd.DataFrame(
+                Teledeclaration.objects.filter(
+                    year=year,
+                    creation_date__range=(
+                        CAMPAIGN_DATES[year]["start_date"],
+                        CAMPAIGN_DATES[year]["end_date"],
+                    ),
+                    status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+                    canteen_id__isnull=False,
+                ).values()
+            )
+            df = pd.concat([df, df_year])
+        else:
+            logger.warning(f"TD dataset does not exist for year : {year}")
+        if len(df) == 0:
+            logger.warning("TD dataset is empty for all the specified years")
+    return df
+
+
 def fetch_commune_detail(code_insee_commune, commune_details, geo_detail_type="epci"):
     """
     Provide EPCI code/ Department code/ Region code for a city, given the insee code of the city
@@ -336,7 +359,22 @@ class ETL_OPEN_DATA(ETL):
         else:
             return 1
 
-    def load_dataset(self, stage="to_validate"):
+    def load_dataset(self):
+        self._load_dataset(stage="to_validate")
+        if os.environ["DEFAULT_FILE_STORAGE"] == "storages.backends.s3boto3.S3Boto3Storage":
+            logger.info(f"Validating {self.name} dataset. Dataset size : {self.len_dataset()} lines")
+            if self.is_valid():
+                logger.info(f"Exporting {self.name} dataset to s3")
+                self._load_dataset(stage="validated")
+            else:
+                logger.error(f"The dataset {self.name} is invalid and therefore will not be exported to s3")
+        elif os.environ["DEFAULT_FILE_STORAGE"] == "django.core.files.storage.FileSystemStorage":
+            logger.info(f"Saving {self.name} dataset locally")
+            self._load_dataset(stage="validated")
+        else:
+            logger.info("Exporting the dataset is not possible with the file system configured")
+
+    def _load_dataset(self, stage="to_validate"):
         if stage == "to_validate":
             filename = f"open_data/{self.dataset_name}_to_validate"
         elif stage == "validated":
@@ -376,10 +414,7 @@ class ETL_CANTEEN(ETL_OPEN_DATA):
 
     def extract_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
-        self.canteens = all_canteens_col.copy()
-
-    def transform_dataset(self):
-        canteens_col_from_db = self.canteens
+        self.canteens_col_from_db = all_canteens_col
         for col_processed in [
             "active_on_ma_cantine",
             "department_lib",
@@ -390,20 +425,23 @@ class ETL_CANTEEN(ETL_OPEN_DATA):
             "declaration_donnees_2022",
             "declaration_donnees_2023_en_cours",
         ]:
-            canteens_col_from_db.remove(col_processed)
+            self.canteens_col_from_db.remove(col_processed)
 
         exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
         exclude_filter |= Q(deletion_date__isnull=False)  # Filtering out the deleted canteens
         start = time.time()
-        canteens = Canteen.objects.exclude(exclude_filter)
-        end = time.time()
-        logger.info(f"Time spent on canteens extraction : {end - start}")
-        if canteens.count() == 0:
-            return pd.DataFrame(columns=canteens_col_from_db)
+        self.canteens = Canteen.objects.exclude(exclude_filter)
+
+        if self.canteens.count() == 0:
+            return pd.DataFrame(columns=self.canteens_col_from_db)
 
         # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
-        self.df = pd.DataFrame(canteens.values(*canteens_col_from_db))
+        self.df = pd.DataFrame(self.canteens.values(*self.canteens_col_from_db))
 
+        end = time.time()
+        logger.info(f"Time spent on canteens extraction : {end - start}")
+
+    def transform_dataset(self):
         # Adding the active_on_ma_cantine column
         start = time.time()
         non_active_canteens = Canteen.objects.filter(managers=None).values_list("id", flat=True)
@@ -470,25 +508,7 @@ class ETL_TD(ETL_OPEN_DATA):
         self.df = None
 
     def extract_dataset(self):
-        if self.year in CAMPAIGN_DATES.keys():
-            self.df = pd.DataFrame(
-                Teledeclaration.objects.filter(
-                    year=self.year,
-                    creation_date__range=(
-                        CAMPAIGN_DATES[self.year]["start_date"],
-                        CAMPAIGN_DATES[self.year]["end_date"],
-                    ),
-                    status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-                    canteen_id__isnull=False,
-                ).values()
-            )
-        else:
-            logger.warning(f"TD campagne dataset does not exist for year : {self.year}")
-            self.df = pd.DataFrame()
-
-        if len(self.df) == 0:
-            logger.warning(f"TD campagne dataset is empty for year : {self.year}")
-            self.df = pd.DataFrame()
+        self.df = fetch_teledeclarations([self.year])
 
     def transform_sectors(self) -> pd.Series:
         sectors = self.df["canteen_sectors"]
@@ -576,6 +596,11 @@ class ETL_ANALYSIS(ETL):
 
     def __init__(self):
         self.df = None
+        self.years = [2021, 2022, 2023]
+
+    def extract_dataset(self):
+        self.df = fetch_teledeclarations(self.years)
+        print("self")
 
     def transform_dataset(self):
         pass
