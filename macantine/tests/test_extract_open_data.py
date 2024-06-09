@@ -31,7 +31,7 @@ class TestETLAnalysis(TestCase):
 
         etl_stats.extract_dataset()
         self.assertEqual(
-            etl_stats.len_dataset(),
+            len(etl_stats.df),
             2,
             "There should be two teledeclaration. None for 1990 (no campaign). One for 2022 and one for 2023",
         )
