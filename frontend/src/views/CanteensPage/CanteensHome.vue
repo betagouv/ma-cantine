@@ -284,7 +284,9 @@
           </div>
           <div v-else>
             <div class="d-flex">
-              <h3 class="fr-h6 mb-0">{{ publishedCanteenCount }} résultats</h3>
+              <h2 class="fr-h6 mb-0" aria-live="polite" aria-atomic="true">
+                {{ publishedCanteenCount }} {{ publishedCanteenCount === 1 ? "résultat" : "résultats" }}
+              </h2>
 
               <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter" class="mb-1">
                 <v-icon small>mdi-filter-off-outline</v-icon>
