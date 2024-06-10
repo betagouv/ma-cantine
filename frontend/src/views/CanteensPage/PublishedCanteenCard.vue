@@ -10,7 +10,7 @@
         </v-col>
         <v-col class="pa-8 d-flex flex-column justify-space-between">
           <div>
-            <h2 class="fr-h5 mb-1">
+            <h3 class="fr-h5 mb-1">
               <router-link
                 :to="{
                   name: 'CanteenPage',
@@ -19,7 +19,7 @@
               >
                 {{ canteen.name }}
               </router-link>
-            </h2>
+            </h3>
             <ProductionTypeTag :canteen="canteen" :position="showImage ? 'top-left' : ''" />
             <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" :dense="true" class="my-2" />
           </div>
