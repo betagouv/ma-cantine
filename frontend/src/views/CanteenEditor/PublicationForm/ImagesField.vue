@@ -23,8 +23,8 @@
         </div>
         <DsfrTextarea
           v-model="image.altText"
-          label="Description de l'image"
-          hint="Si l'image contient de l'information pertinente, pensez à ajouter une description pour les personnes malvoyantes"
+          label="Description pour les personnes malvoyantes"
+          hintText="Optionnel - Si l'image contient du texte, pensez à le répéter ici. Ce ne sera pas visible en legende."
           class="mt-2"
           rows="3"
           labelClasses="body-2 mt-4 mb-2"
