@@ -126,7 +126,7 @@
                     auto-select-first
                     :filter="locationFilter"
                   />
-                  <WaiCombobox label="State" :items="testItems" />
+                  <WaiCombobox v-model="filters.department.value" label="Département" :items="testDepartments" />
                   <label
                     for="select-commune"
                     :class="{
@@ -555,28 +555,10 @@ export default {
         })[0], // for now only the appro measure is available as a filter
       ],
       location: undefined,
-      testItems: [
-        {
-          id: "alabama",
-          text: "Alabama",
-        },
-        {
-          id: "alaska",
-          text: "Alaska",
-        },
-        {
-          id: "american samoa",
-          text: "American Samoa",
-        },
-        {
-          id: "arizona",
-          text: "Arizona",
-        },
-        {
-          id: "arkansas",
-          text: "Arkansas",
-        },
-      ],
+      testDepartments: jsonDepartments.map((dep) => ({
+        id: dep.departmentCode,
+        text: `${dep.departmentName} (${dep.departmentCode})`,
+      })),
     }
   },
   computed: {
