@@ -126,7 +126,7 @@
                     auto-select-first
                     :filter="locationFilter"
                   />
-                  <WaiCombobox />
+                  <WaiCombobox label="State" :items="testItems" />
                   <label
                     for="select-commune"
                     :class="{
@@ -555,6 +555,28 @@ export default {
         })[0], // for now only the appro measure is available as a filter
       ],
       location: undefined,
+      testItems: [
+        {
+          id: "alabama",
+          text: "Alabama",
+        },
+        {
+          id: "alaska",
+          text: "Alaska",
+        },
+        {
+          id: "american samoa",
+          text: "American Samoa",
+        },
+        {
+          id: "arizona",
+          text: "Arizona",
+        },
+        {
+          id: "arkansas",
+          text: "Arkansas",
+        },
+      ],
     }
   },
   computed: {

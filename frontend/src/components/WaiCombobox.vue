@@ -1,7 +1,7 @@
 <template>
   <div>
     <label for="cb1-input">
-      State
+      {{ label }}
     </label>
     <div class="combobox combobox-list">
       <div class="group">
@@ -34,20 +34,8 @@
         </button>
       </div>
       <ul id="cb1-listbox" role="listbox" aria-label="States">
-        <li id="lb1-al" role="option">
-          Alabama
-        </li>
-        <li id="lb1-ak" role="option">
-          Alaska
-        </li>
-        <li id="lb1-as" role="option">
-          American Samoa
-        </li>
-        <li id="lb1-az" role="option">
-          Arizona
-        </li>
-        <li id="lb1-ar" role="option">
-          Arkansas
+        <li v-for="item in items" :id="item.id" :key="item.id" role="option">
+          {{ item.text }}
         </li>
       </ul>
     </div>
@@ -596,7 +584,6 @@ class ComboboxAutocomplete {
 
 // TODO:
 // how to auto select first option?
-// Define this component with props : label, items etc
 // Pass option to parent with $emit
 // Replace region/department select (make own components wrapping this?)
 // Replace city field : API list?
@@ -604,6 +591,17 @@ class ComboboxAutocomplete {
 
 export default {
   name: "WaiCombobox",
+  props: {
+    label: {
+      type: String,
+      required: true,
+    },
+    items: {
+      // array of objects with id and text
+      type: Array,
+      required: true,
+    },
+  },
   mounted() {
     var comboboxes = document.querySelectorAll(".combobox-list")
 
