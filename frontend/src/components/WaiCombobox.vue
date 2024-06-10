@@ -122,11 +122,7 @@ class ComboboxAutocomplete {
   }
 
   getLowercaseContent(node) {
-    return node.textContent.toLowerCase()
-  }
-
-  getNormalisedLowercaseContent(node) {
-    return this.getLowercaseContent(node).trim()
+    return node.textContent.trim().toLowerCase()
   }
 
   isOptionInView(option) {
@@ -168,11 +164,14 @@ class ComboboxAutocomplete {
       this.setActiveDescendant(this.option)
 
       if (this.isBoth) {
-        this.comboboxNode.value = this.option.textContent
+        this.comboboxNode.value = this.option.textContent.trim()
         if (flag) {
-          this.comboboxNode.setSelectionRange(this.option.textContent.length, this.option.textContent.length)
+          this.comboboxNode.setSelectionRange(
+            this.option.textContent.trim().length,
+            this.option.textContent.trim().length
+          )
         } else {
-          this.comboboxNode.setSelectionRange(this.filter.length, this.option.textContent.length)
+          this.comboboxNode.setSelectionRange(this.filter.length, this.option.textContent.trim().length)
         }
       }
     }
@@ -220,7 +219,7 @@ class ComboboxAutocomplete {
 
     for (var i = 0; i < this.allOptions.length; i++) {
       option = this.allOptions[i]
-      if (filter.length === 0 || this.getNormalisedLowercaseContent(option).indexOf(filter) === 0) {
+      if (filter.length === 0 || this.getLowercaseContent(option).indexOf(filter) === 0) {
         this.filteredOptions.push(option)
         this.listboxNode.appendChild(option)
       }
@@ -329,7 +328,7 @@ class ComboboxAutocomplete {
     switch (event.key) {
       case "Enter":
         if (this.listboxHasVisualFocus) {
-          this.setValue(this.option.textContent)
+          this.setValue(this.option.textContent.trim())
         }
         this.close(true)
         this.setVisualFocusCombobox()
@@ -390,7 +389,7 @@ class ComboboxAutocomplete {
         this.close(true)
         if (this.listboxHasVisualFocus) {
           if (this.option) {
-            this.setValue(this.option.textContent)
+            this.setValue(this.option.textContent.trim())
           }
         }
         break
@@ -567,7 +566,7 @@ class ComboboxAutocomplete {
   // Listbox Option Events
 
   onOptionClick(event) {
-    this.comboboxNode.value = event.target.textContent
+    this.comboboxNode.value = event.target.textContent.trim()
     this.close(true)
   }
 
@@ -588,6 +587,8 @@ class ComboboxAutocomplete {
 // Replace region/department select (make own components wrapping this?)
 // Replace city field : API list?
 // Dsfr styling
+// when click on input for the first time which contains text, select all text for easy replacement. What to do about the menu?
+// what to do with invalid input on blur?
 
 export default {
   name: "WaiCombobox",
