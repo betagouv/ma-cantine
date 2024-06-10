@@ -119,9 +119,10 @@ export default {
       })
     },
     prepareAltEdit(image) {
-      image._oldAlt = image.altText || ""
+      image._oldAlt = image.altText
     },
     saveAlt(image) {
+      if (!image._oldAlt && !image.altText) return
       if (image._oldAlt !== image.altText) this.saveImages("alt")
     },
     saveImages(action) {
