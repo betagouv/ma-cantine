@@ -38,7 +38,7 @@
       </v-row>
     </v-card>
 
-    <div id="search-top">
+    <div>
       <v-row class="my-2" align="end">
         <v-col cols="12" md="4">
           <form role="search" onsubmit="return false">
@@ -279,6 +279,7 @@
         </v-col>
         <v-col cols="12" md="8" class="d-flex flex-column">
           <v-spacer />
+          <!-- TODO: this can just be loading -->
           <v-progress-circular
             v-if="loading || pageLoading"
             indeterminate
@@ -316,6 +317,7 @@
                 Désactiver tous les filtres
               </v-btn>
             </div>
+            <!-- TODO: add page loading indicator here -->
             <div v-else>
               <PublishedCanteenCard
                 v-for="canteen in visibleCanteens"
@@ -332,6 +334,7 @@
             :length="Math.ceil(publishedCanteenCount / limit)"
             :total-visible="5"
             v-if="!loading && publishedCanteenCount"
+            @input="pageChangedManually"
           />
         </v-col>
       </v-row>
@@ -699,8 +702,6 @@ export default {
       const override = this.page ? { page: this.page } : { page: 1 }
       const query = Object.assign(this.query, override)
       this.updateRouter(query)
-      // TODO: make this dependent on window height to avoid jumps for bigger screens
-      document.getElementById("search-top").scrollIntoView()
     },
     applyFilter() {
       // urls are always strings. Some query params are not strings.
@@ -857,6 +858,10 @@ export default {
     setLocation(location) {
       this.location = location
     },
+    pageChangedManually() {
+      // TODO: make this dependent on window height to avoid jumps for bigger screens
+      document.getElementById("filter-and-results").scrollIntoView({ behavior: "smooth" })
+    },
   },
   watch: {
     filters: {
@@ -902,6 +907,7 @@ div >>> .v-list-item--disabled .theme--light.v-icon {
 #ordering >>> .v-select__selection {
   font-size: 12px;
 }
+/* TODO: fix min height now that we have filter tags to take into account */
 #filter-and-results.min-height {
   min-height: 1050px;
 }
