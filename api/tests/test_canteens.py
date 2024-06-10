@@ -765,6 +765,7 @@ class TestCanteenApi(APITestCase):
         self.assertIn(user_central_serving_cuisine.id, ids)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
+    @override_settings(PUBLISH_BY_DEFAULT=False)
     @authenticate
     def test_get_canteen_actions(self):
         """
