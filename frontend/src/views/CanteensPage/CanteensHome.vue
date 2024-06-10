@@ -42,6 +42,7 @@
       <v-row class="my-2" align="end">
         <v-col cols="12" md="4">
           <form role="search" onsubmit="return false">
+            <h2 class="fr-h5 mb-2">Rechercher</h2>
             <DsfrSearchField
               hide-details="auto"
               ref="search"
@@ -69,21 +70,14 @@
       </v-row>
       <v-row id="filter-and-results" :class="{ 'min-height': !visibleCanteens || visibleCanteens.length === limit }">
         <v-col cols="12" md="4">
-          <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2" class="mr-2">
-            <h2 class="fr-h6 mb-0">
-              Rechercher et filtrer
-            </h2>
-          </v-badge>
-
-          <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter" class="mb-1">
-            <v-icon small>mdi-filter-off-outline</v-icon>
-            Enlever tous les filtres
-          </v-btn>
+          <h3 class="fr-h6 mb-0">
+            Filtrer
+          </h3>
           <v-form class="mt-4">
             <DsfrAccordion
               :items="[
-                { id: 'territory', icon: '$road-map-fill', text: 'Par térritoire' },
-                { id: 'characteristic', icon: '$community-fill', text: 'Par caractéristique' },
+                { id: 'territory', icon: '$road-map-fill', text: 'Par térritoire', titleLevel: 'h4' },
+                { id: 'characteristic', icon: '$community-fill', text: 'Par caractéristique', titleLevel: 'h4' },
               ]"
             >
               <template v-slot:title="{ item }">
@@ -147,6 +141,7 @@
                     id="select-commune"
                     placeholder="Toutes les communes"
                     class="mt-1 mb-4"
+                    @locationUpdate="setLocation"
                   />
                 </div>
                 <div v-if="item.id === 'characteristic'">
@@ -289,22 +284,46 @@
             indeterminate
             class="align-self-center justify-self-center"
           />
-          <div v-else-if="publishedCanteenCount === 0" class="d-flex flex-column align-center py-10">
-            <v-icon large>mdi-inbox-remove</v-icon>
-            <p class="text-body-1 grey--text text--darken-1 my-2">
-              Nous n'avons pas trouvé des cantines avec ces paramètres
-            </p>
-            <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
-              Désactiver tous les filtres
-            </v-btn>
-          </div>
           <div v-else>
-            <PublishedCanteenCard
-              v-for="canteen in visibleCanteens"
-              :key="canteen.id"
-              :canteen="canteen"
-              class="my-4"
+            <div class="d-flex">
+              <h2 class="fr-h6 mb-0" aria-live="polite" aria-atomic="true">
+                {{ publishedCanteenCount }} {{ publishedCanteenCount === 1 ? "résultat" : "résultats" }}
+              </h2>
+
+              <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter" class="mb-1">
+                <v-icon small>mdi-filter-off-outline</v-icon>
+                Enlever tous les filtres
+              </v-btn>
+            </div>
+            <DsfrTagGroup
+              :tags="filterTags"
+              :closeable="true"
+              @closeTag="(tag) => removeFilter(tag)"
+              class="mt-2 mb-6"
             />
+            <div v-if="publishedCanteenCount === 0" class="d-flex flex-column align-center py-10">
+              <v-icon large>mdi-inbox-remove</v-icon>
+              <p class="text-body-1 grey--text text--darken-1 my-2">
+                Nous n'avons pas trouvé des cantines avec ces paramètres
+              </p>
+              <v-btn
+                color="primary"
+                text
+                @click="clearFilters"
+                class="text-decoration-underline"
+                v-if="hasActiveFilter"
+              >
+                Désactiver tous les filtres
+              </v-btn>
+            </div>
+            <div v-else>
+              <PublishedCanteenCard
+                v-for="canteen in visibleCanteens"
+                :key="canteen.id"
+                :canteen="canteen"
+                class="my-4"
+              />
+            </div>
           </div>
           <v-spacer />
           <DsfrPagination
@@ -371,6 +390,7 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import CityField from "@/views/CanteenEditor/CityField"
+import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrEmail from "@/components/DsfrEmail"
 
 const DEFAULT_ORDER = "creation"
@@ -389,9 +409,11 @@ export default {
     DsfrPagination,
     DsfrSearchField,
     CityField,
+    DsfrTagGroup,
     DsfrEmail,
   },
   data() {
+    const sectors = this.$store.state.sectors
     const user = this.$store.state.loggedUser
     return {
       limit: 3,
@@ -407,44 +429,71 @@ export default {
           param: "departement",
           value: null,
           default: null,
+          displayName(value) {
+            const department = jsonDepartments.find((d) => d.departmentCode === value)
+            return department && `${department.departmentName} (${value})`
+          },
         },
         region: {
           param: "region",
           value: null,
           default: null,
+          displayName(value) {
+            const region = jsonRegions.find((d) => d.regionCode === value)
+            return region.regionName
+          },
         },
         city_insee_code: {
           param: "commune",
           value: null,
           default: null,
+          displayNameComputed: "locationDisplay",
         },
         management_type: {
           param: "modeDeGestion",
           value: null,
           default: null,
+          displayName(value) {
+            const mt = Constants.ManagementTypes.find((pt) => pt.value === value)?.text || value
+            return `Gestion ${mt.toLowerCase()}`
+          },
         },
         production_type: {
           param: "typeEtablissement",
           value: null,
           default: null,
+          displayName(value) {
+            return Constants.ProductionTypes.find((pt) => pt.value === value)?.text
+          },
         },
         sectors: {
           param: "secteurs",
           value: [],
           default: [],
           transformToFrontend(values) {
-            return Array.isArray(values) ? values.map((v) => +v) : +values
+            if (!values) return
+            return Array.isArray(values) ? values.map((v) => +v) : [+values]
+          },
+          displayName(value) {
+            value = +value
+            return sectors.find((s) => s.id === value)?.name || value
           },
         },
         min_daily_meal_count: {
           param: "minRepasJour",
           value: null,
           default: null,
+          displayName(value) {
+            return `Repas min : ${value}`
+          },
         },
         max_daily_meal_count: {
           param: "maxRepasJour",
           value: null,
           default: null,
+          displayName(value) {
+            return `Repas max : ${value}`
+          },
         },
         min_portion_bio: {
           param: "minBio",
@@ -452,6 +501,9 @@ export default {
           default: null,
           transformToBackend(value) {
             return value / 100
+          },
+          displayName(value) {
+            return `Bio min : ${value} %`
           },
         },
         min_portion_combined: {
@@ -461,11 +513,17 @@ export default {
           transformToBackend(value) {
             return value / 100
           },
+          displayName(value) {
+            return `EGAlim min : ${value} %`
+          },
         },
         badge: {
           param: "badge",
           value: null,
           default: null,
+          displayName(value) {
+            return badges[value]?.title
+          },
         },
       },
       orderBy: null,
@@ -504,6 +562,7 @@ export default {
           return { value: key, text: value.title }
         })[0], // for now only the appro measure is available as a filter
       ],
+      location: undefined,
     }
   },
   computed: {
@@ -547,6 +606,39 @@ export default {
         display: `${chosenOption?.value || DEFAULT_ORDER}${this.orderDescending ? "Dec" : "Cro"}`,
       }
     },
+    filterTags() {
+      const activeFilters = Object.entries(this.filters).filter(([, f]) => !!f.value)
+      const tags = activeFilters
+        .filter(([, f]) => !Array.isArray(f.default))
+        .map(([key, filter]) => {
+          const text = filter.displayNameComputed
+            ? this[filter.displayNameComputed]
+            : filter.displayName && filter.displayName(filter.value)
+          return {
+            id: key,
+            key,
+            text: text || `${filter.param} : ${filter.value}`,
+          }
+        })
+      const arrayFilters = activeFilters.filter(([, f]) => Array.isArray(f.default))
+      arrayFilters.forEach(([key, filter]) => {
+        const arrayTags = filter.value.map((fv, idx) => {
+          const text = filter.displayName && filter.displayName(fv)
+          return {
+            id: `${key}[${idx}]`,
+            key,
+            idx: idx,
+            isArray: true,
+            text: text || `${filter.param} : ${fv}`,
+          }
+        })
+        tags.push(...arrayTags)
+      })
+      return tags
+    },
+    locationDisplay() {
+      return this.location?.city
+    },
   },
   methods: {
     fetchCurrentPage() {
@@ -564,7 +656,9 @@ export default {
 
       return fetch(`/api/v1/publishedCanteens/?${queryParam}`)
         .then((response) => {
-          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+          if (response.status === 400) {
+            return Promise.reject("Bad request")
+          } else if (response.status < 200 || response.status > 400) throw new Error(`Error encountered : ${response}`)
           return response.json()
         })
         .then((response) => {
@@ -578,7 +672,8 @@ export default {
         })
         .catch((e) => {
           this.publishedCanteenCount = 0
-          this.$store.dispatch("notifyServerError", e)
+          this.visibleCanteens = 0
+          if (e !== "Bad request") this.$store.dispatch("notifyServerError", e)
         })
     },
     clearSearch() {
@@ -751,6 +846,16 @@ export default {
     toggleOrderDirection() {
       this.orderDescending = !this.orderDescending
       this.page = 1 // reset page to 1 when changing order direction
+    },
+    removeFilter(filterTag) {
+      if (filterTag.isArray) {
+        this.filters[filterTag.key].value.splice(filterTag.idx, 1)
+      } else {
+        this.filters[filterTag.key].value = this.filters[filterTag.id].default
+      }
+    },
+    setLocation(location) {
+      this.location = location
     },
   },
   watch: {
