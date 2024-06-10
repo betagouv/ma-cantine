@@ -1,5 +1,5 @@
 <template>
-  <li>
+  <div>
     <v-card outlined class="text-left d-flex flex-column dsfr expanded-link canteen-card">
       <v-row class="pa-0 ma-0">
         <v-col cols="4" class="pa-0 card-image-wrap" v-if="showImage">
@@ -56,7 +56,7 @@
         </v-col>
       </v-row>
     </v-card>
-  </li>
+  </div>
 </template>
 
 <script>

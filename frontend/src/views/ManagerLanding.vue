@@ -66,7 +66,7 @@
     <div v-if="recentlyModifiedCanteens">
       <v-divider aria-hidden="true" role="presentation" class="my-16"></v-divider>
       <h2 class="text-h4 font-weight-black text-center mb-8">Les dernières cantines publiées</h2>
-      <ol class="no-bullets d-flex flex-wrap mb-12">
+      <div class="d-flex flex-wrap mb-8">
         <PublishedCanteenCard
           :canteen="canteen"
           v-for="canteen in recentlyModifiedCanteens"
@@ -74,8 +74,8 @@
           class="col-6"
           :noImage="true"
         />
-      </ol>
-      <div class="d-flex justify-center mt-4">
+      </div>
+      <div class="d-flex justify-center">
         <v-btn x-large outlined color="primary" :to="{ name: 'CanteensHome' }">
           Voir plus
         </v-btn>
