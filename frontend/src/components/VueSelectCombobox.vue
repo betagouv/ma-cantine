@@ -1,7 +1,14 @@
 <template>
   <div class="mc-select">
     <label>{{ label }}</label>
-    <VueSelect v-model="selected" :options="options" :label="optionLabelKey" :selectOnTab="true" :filterBy="filterBy" />
+    <VueSelect
+      :id="wrapperId"
+      v-model="selected"
+      :options="options"
+      :label="optionLabelKey"
+      :selectOnTab="true"
+      :filterBy="filterBy"
+    />
   </div>
 </template>
 
@@ -9,8 +16,6 @@
 import { VueSelect } from "vue-select"
 import "vue-select/dist/vue-select.css"
 
-// TODO: decide filter behaviour (only check for start of word or no? No is default)
-// TODO: be able to search without accents
 // TODO: dsfr styling
 
 export default {
@@ -42,9 +47,18 @@ export default {
     },
   },
   data() {
+    const number = Math.floor(Math.random() * 1000)
+    const wrapperId = `mc-combobox-${number}`
     return {
       selected: undefined, // TODO: how to initialise with parent v-model value?
+      wrapperId,
     }
+  },
+  mounted() {
+    const vueSelect = document.getElementById(this.wrapperId)
+    const combobox = vueSelect.querySelector("[role=combobox]")
+    // replace the default aria-label provided by the library
+    combobox.setAttribute("aria-label", this.label)
   },
   watch: {
     selected() {
