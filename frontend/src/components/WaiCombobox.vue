@@ -155,6 +155,22 @@ export default {
         return this.normalise(opt.text).indexOf(filter) === 0
       })
     },
+
+    doesOptionHaveFocus() {
+      return this.comboboxActiveDescendent !== ""
+    },
+
+    isOpen() {
+      return this.listboxNode.style.display === "block"
+    },
+
+    isClosed() {
+      return this.listboxNode.style.display !== "block"
+    },
+
+    hasOptions() {
+      return this.filteredOptions.length
+    },
   },
   methods: {
     normalise(text) {
@@ -304,22 +320,6 @@ export default {
 
     /* MENU DISPLAY METHODS */
 
-    doesOptionHaveFocus() {
-      return this.comboboxActiveDescendent !== ""
-    },
-
-    isOpen() {
-      return this.listboxNode.style.display === "block"
-    },
-
-    isClosed() {
-      return this.listboxNode.style.display !== "block"
-    },
-
-    hasOptions() {
-      return this.filteredOptions.length
-    },
-
     open() {
       this.listboxNode.style.display = "block"
       this.comboboxNode.setAttribute("aria-expanded", "true")
@@ -398,7 +398,7 @@ export default {
 
         case "Esc":
         case "Escape":
-          if (this.isOpen()) {
+          if (this.isOpen) {
             this.close(true)
             // this.filter = this.comboboxNode.value
             this.populateOptions()
@@ -485,7 +485,7 @@ export default {
     },
 
     onComboboxClick() {
-      if (this.isOpen()) {
+      if (this.isOpen) {
         this.close(true)
       } else {
         this.open()
@@ -518,7 +518,7 @@ export default {
     },
 
     onButtonClick() {
-      if (this.isOpen()) {
+      if (this.isOpen) {
         this.close(true)
       } else {
         this.open()
@@ -569,7 +569,7 @@ export default {
       if (this.isList || this.isBoth) {
         const option = this.populateOptions()
         if (option) {
-          if (this.isClosed() && newFilter.length) {
+          if (this.isClosed && newFilter.length) {
             this.open()
           }
 
