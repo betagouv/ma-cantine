@@ -1,13 +1,7 @@
 <template>
   <div class="mc-select">
     <label>{{ label }}</label>
-    <VueSelect
-      v-model="selected"
-      :options="options"
-      :label="optionLabelKey"
-      :selectOnTab="true"
-      :filterBy="unaccentedFilterBy"
-    />
+    <VueSelect v-model="selected" :options="options" :label="optionLabelKey" :selectOnTab="true" :filterBy="filterBy" />
   </div>
 </template>
 

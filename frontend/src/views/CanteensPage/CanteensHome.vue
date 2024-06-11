@@ -126,13 +126,7 @@
                     auto-select-first
                     :filter="locationFilter"
                   />
-                  <VueSelectCombobox
-                    v-model="filters.department.value"
-                    label="Département"
-                    :options="testDepartments"
-                    optionLabelKey="departmentName"
-                    optionValueKey="departmentCode"
-                  />
+                  <DepartmentSelect v-model="filters.department.value" />
                   <label
                     for="select-commune"
                     :class="{
@@ -388,7 +382,7 @@ import DsfrSearchField from "@/components/DsfrSearchField"
 import CityField from "@/views/CanteenEditor/CityField"
 import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrEmail from "@/components/DsfrEmail"
-import VueSelectCombobox from "@/components/VueSelectCombobox"
+import DepartmentSelect from "@/components/DepartmentSelect"
 
 const DEFAULT_ORDER = "creation"
 
@@ -408,7 +402,7 @@ export default {
     CityField,
     DsfrTagGroup,
     DsfrEmail,
-    VueSelectCombobox,
+    DepartmentSelect,
   },
   data() {
     const sectors = this.$store.state.sectors
@@ -561,7 +555,6 @@ export default {
         })[0], // for now only the appro measure is available as a filter
       ],
       location: undefined,
-      testDepartments: jsonDepartments,
     }
   },
   computed: {
