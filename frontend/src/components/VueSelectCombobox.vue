@@ -65,7 +65,7 @@ export default {
     clearButton.setAttribute("aria-label", "Supprimer la selection")
     // modify display of clear button icon, taking advantage of vuetify classes
     clearButton.innerHTML = ""
-    const clearButtonClasses = "v-icon v-icon--link mdi mdi-close primary--text mr-8"
+    const clearButtonClasses = "v-icon v-icon--link mdi mdi-close primary--text mr-5"
     clearButtonClasses.split(" ").forEach((className) => clearButton.classList.add(className))
     // replace open indicator with background image like NativeSelect
     const vueSelectDropdownIndicator = vueSelect.querySelector("svg.vs__open-indicator")
@@ -93,6 +93,9 @@ export default {
   background-position: calc(100% - 1rem) 50%;
   background-repeat: no-repeat;
   background-size: 1rem 1rem;
+  border: none;
+  padding-left: 6px;
+  padding-right: 12px;
 }
 
 /* .mc-select.error--text >>> input.vs__search {
