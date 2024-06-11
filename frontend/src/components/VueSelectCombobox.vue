@@ -1,6 +1,6 @@
 <template>
   <div class="mc-select">
-    <label>{{ label }}</label>
+    <label :class="labelClasses">{{ label }}</label>
     <VueSelect
       :id="wrapperId"
       v-model="selected"
@@ -30,6 +30,10 @@ export default {
     label: {
       type: String,
       required: true,
+    },
+    labelClasses: {
+      type: [String, Object],
+      default: "",
     },
     options: {
       type: Array,
@@ -105,22 +109,4 @@ export default {
   padding-left: 6px;
   padding-right: 12px;
 }
-
-/* .mc-select.error--text >>> input.vs__search {
-  border-radius: 0.25rem 0.25rem 0 0;
-  background-color: #eee !important;
-  box-shadow: inset 0 -2px 0 0 #ff5252;
-} */
-/*
-input.vs__search:focus-within {
-  outline-style: solid;
-  outline-width: 2px;
-  outline-color: #0a76f6;
-  outline-offset: 2px;
-  border-radius: 2px 2px 0 0;
-} */
-
-/* div > label {
-  display: block;
-} */
 </style>

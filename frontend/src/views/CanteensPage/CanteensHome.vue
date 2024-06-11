@@ -126,7 +126,10 @@
                     auto-select-first
                     :filter="locationFilter"
                   />
-                  <DepartmentSelect v-model="filters.department.value" />
+                  <DepartmentSelect
+                    v-model="filters.department.value"
+                    :labelClasses="{ 'active-filter-label': !!filters.department.value }"
+                  />
                   <label
                     for="select-commune"
                     :class="{

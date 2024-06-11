@@ -2,6 +2,7 @@
   <VueSelectCombobox
     v-model="department"
     label="Département"
+    :labelClasses="labelClasses"
     :options="options"
     optionLabelKey="combinedName"
     :optionValueKey="valueKey"
@@ -18,6 +19,12 @@ import { normaliseText } from "@/utils"
 export default {
   name: "DepartmentSelect",
   components: { VueSelectCombobox },
+  props: {
+    labelClasses: {
+      type: [String, Object],
+      default: "",
+    },
+  },
   data() {
     const valueKey = "departmentCode"
     const nameKey = "departmentName"
@@ -32,6 +39,7 @@ export default {
     }
   },
   methods: {
+    // TODO: make it possible to make options unavailable
     filterBy(option, label, search) {
       const normalisedSearch = normaliseText(search)
       const searchMatchesCode =
