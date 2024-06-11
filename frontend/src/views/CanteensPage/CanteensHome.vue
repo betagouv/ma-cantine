@@ -129,6 +129,7 @@
                   <DepartmentSelect
                     v-model="filters.department.value"
                     :labelClasses="{ 'active-filter-label': !!filters.department.value }"
+                    class="mb-4"
                   />
                   <label
                     for="select-commune"
