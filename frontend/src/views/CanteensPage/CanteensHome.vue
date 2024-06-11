@@ -130,6 +130,7 @@
                     v-model="filters.department.value"
                     :labelClasses="{ 'active-filter-label': !!filters.department.value }"
                     class="mb-4"
+                    :selectableOptions="selectableDepartments"
                   />
                   <label
                     for="select-commune"
@@ -559,6 +560,7 @@ export default {
         })[0], // for now only the appro measure is available as a filter
       ],
       location: undefined,
+      selectableDepartments: undefined,
     }
   },
   computed: {
@@ -660,6 +662,7 @@ export default {
         .then((response) => {
           this.publishedCanteenCount = response.count
           this.visibleCanteens = response.results
+          this.selectableDepartments = response.departments
           this.setDepartments(response.departments)
           this.setRegions(response.regions)
           this.setSectors(response.sectors)

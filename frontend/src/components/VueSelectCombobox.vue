@@ -10,6 +10,7 @@
       :filterBy="filterBy"
       placeholder="Selectionner une option"
       class="mt-1"
+      :selectable="selectable"
     >
       <template #no-options>
         {{ noOptionsText }}
@@ -58,6 +59,12 @@ export default {
     noOptionsText: {
       type: String,
       default: "Pas d'options qui correspondent à la recherche",
+    },
+    selectable: {
+      type: Function,
+      default() {
+        return true
+      },
     },
   },
   data() {
