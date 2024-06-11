@@ -12,6 +12,7 @@
 <script>
 import VueSelectCombobox from "./VueSelectCombobox"
 import jsonDepartments from "@/departments.json"
+import { normaliseText } from "@/utils"
 
 export default {
   name: "DepartmentSelect",
@@ -30,7 +31,7 @@ export default {
       if (codeSearch && searchMatchesCode) {
         return true
       }
-      return (label || "").toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) === 0
+      return normaliseText(label || "").indexOf(normaliseText(search)) === 0
     },
   },
   watch: {
