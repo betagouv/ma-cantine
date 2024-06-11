@@ -3,7 +3,7 @@
     v-model="department"
     label="Département"
     :options="options"
-    optionLabelKey="departmentName"
+    optionLabelKey="combinedName"
     :optionValueKey="valueKey"
     :filterBy="filterBy"
   />
@@ -18,10 +18,16 @@ export default {
   name: "DepartmentSelect",
   components: { VueSelectCombobox },
   data() {
+    const valueKey = "departmentCode"
+    const nameKey = "departmentName"
     return {
       department: undefined, // TODO: initisalise with parent value
-      options: jsonDepartments,
-      valueKey: "departmentCode",
+      options: jsonDepartments.map((d) => ({
+        ...d,
+        combinedName: `${d[valueKey]} - ${d[nameKey]}`,
+      })),
+      valueKey,
+      nameKey,
     }
   },
   methods: {
@@ -32,7 +38,7 @@ export default {
       if (searchMatchesCode) {
         return true
       }
-      return normaliseText(label || "").indexOf(normalisedSearch) === 0
+      return normaliseText(option[this.nameKey] || "").indexOf(normalisedSearch) === 0
     },
   },
   watch: {
