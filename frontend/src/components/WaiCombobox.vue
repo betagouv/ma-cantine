@@ -103,20 +103,6 @@ export default {
     },
   },
   data() {
-    // constructor(comboboxNode, buttonNode, listboxNode) {
-    //   this.comboboxNode = comboboxNode
-    //   this.buttonNode = buttonNode
-    //   this.listboxNode = listboxNode
-
-    // var nodes = this.listboxNode.getElementsByTagName("LI")
-
-    // for (var i = 0; i < nodes.length; i++) {
-    //   var node = nodes[i]
-    //   this.allOptionElements.push(node)
-    // }
-
-    // this.populateOptions()
-
     const isList = this.autocomplete === "list"
     const isBoth = this.autocomplete === "both"
     const isNone = !isList && !isBoth
@@ -133,7 +119,6 @@ export default {
       isList,
       isBoth,
 
-      allOptionElements: [],
       allOptions: this.items,
 
       option: null,
@@ -153,13 +138,6 @@ export default {
     this.comboboxNode = combobox.querySelector("input")
     this.buttonNode = combobox.querySelector("button")
     this.listboxNode = combobox.querySelector('[role="listbox"]')
-
-    const nodes = this.listboxNode.getElementsByTagName("LI")
-
-    for (let i = 0; i < nodes.length; i++) {
-      const node = nodes[i]
-      this.allOptionElements.push(node)
-    }
 
     document.body.addEventListener("pointerup", this.onBackgroundPointerUp.bind(this), true)
     this.populateOptions()
@@ -186,8 +164,12 @@ export default {
       return this.normalise(node.textContent)
     },
 
+    getOptionElement(option) {
+      return document.getElementById(option.id)
+    },
+
     isOptionInView(option) {
-      var bounding = option.getBoundingClientRect()
+      var bounding = this.getOptionElement(option).getBoundingClientRect()
       return (
         bounding.top >= 0 &&
         bounding.left >= 0 &&
