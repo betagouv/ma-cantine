@@ -131,6 +131,7 @@
                     :labelClasses="{ 'active-filter-label': !!filters.department.value }"
                     class="mb-4"
                     :selectableOptions="selectableDepartments"
+                    :unselectableOptionsHeader="unselectableDepartmentsHeader"
                   />
                   <label
                     for="select-commune"
@@ -636,6 +637,12 @@ export default {
     },
     locationDisplay() {
       return this.location?.city
+    },
+    unselectableDepartmentsHeader() {
+      const locationsWord = "départements"
+      return this.hasActiveFilter || this.searchTerm
+        ? `Ces ${locationsWord} ne contiennent pas d'établissements correspondant à votre recherche :`
+        : `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
     },
   },
   methods: {

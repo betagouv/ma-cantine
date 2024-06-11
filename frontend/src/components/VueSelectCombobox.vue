@@ -90,7 +90,7 @@ export default {
     // replace open indicator with background image like NativeSelect
     const vueSelectDropdownIndicator = vueSelect.querySelector("svg.vs__open-indicator")
     vueSelectDropdownIndicator.remove()
-
+    // initisalise value
     this.$nextTick(() => {
       const originalValue = this.$attrs.value
       this.selected = this.options.find((o) => o[this.optionValueKey] === originalValue)
@@ -121,5 +121,8 @@ export default {
   border: none;
   padding-left: 6px;
   padding-right: 12px;
+}
+li.vs__dropdown-option {
+  white-space: normal;
 }
 </style>

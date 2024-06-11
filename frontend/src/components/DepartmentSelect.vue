@@ -7,7 +7,7 @@
     label="Département"
     :labelClasses="labelClasses"
     :options="options"
-    optionLabelKey="combinedName"
+    optionLabelKey="text"
     :optionValueKey="valueKey"
     :filterBy="filterBy"
     noOptionsText="Pas de départements qui correspondent à la recherche"
@@ -32,18 +32,18 @@ export default {
       type: Array,
       required: false,
     },
+    unselectableOptionsHeader: {
+      type: String,
+      default: "Les options suivantes ne sont pas disponibles",
+    },
   },
   data() {
     const valueKey = "departmentCode"
     const nameKey = "departmentName"
     return {
-      options: undefined,
       valueKey,
       nameKey,
     }
-  },
-  mounted() {
-    this.options = this.sortedOptions()
   },
   methods: {
     filterBy(option, label, search) {
@@ -57,22 +57,29 @@ export default {
     },
     isOptionSelectable(option) {
       if (this.selectableOptions === undefined) return true
-      return this.selectableOptions?.indexOf(option[this.valueKey]) > -1
-    },
-    sortedOptions() {
-      const unsortedOptions = jsonDepartments.map((d) => ({
-        ...d,
-        combinedName: `${d[this.valueKey]} - ${d[this.nameKey]}`,
-      }))
-      const options = JSON.parse(JSON.stringify(unsortedOptions))
-      // TODO: add header message before unavailable options
-      options.sort((optionA, optionB) => this.isOptionSelectable(optionB) - this.isOptionSelectable(optionA))
-      return options
+      return this.selectableOptions.indexOf(option[this.valueKey]) > -1
     },
   },
-  watch: {
-    selectableOptions() {
-      this.options = this.sortedOptions()
+  computed: {
+    options() {
+      const unsortedOptions = jsonDepartments.map((d) => ({
+        ...d,
+        text: `${d[this.valueKey]} - ${d[this.nameKey]}`,
+      }))
+      if (this.selectableOptions === undefined) return unsortedOptions
+      if (!this.selectableOptions.length) return []
+
+      const availableOptions = unsortedOptions.filter((opt) => this.selectableOptions.indexOf(opt[this.valueKey]) > -1)
+      const unavailableOptions = unsortedOptions.filter(
+        (opt) => this.selectableOptions.indexOf(opt[this.valueKey]) === -1
+      )
+      let options = []
+      if (availableOptions.length) options = options.concat(availableOptions)
+      if (unavailableOptions.length) {
+        options.push({ text: this.unselectableOptionsHeader })
+        options = options.concat(unavailableOptions)
+      }
+      return options
     },
   },
 }
