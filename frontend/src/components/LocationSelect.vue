@@ -4,13 +4,13 @@
     v-bind="$attrs"
     v-on="$listeners"
     @input="(v) => $emit('input', v)"
-    label="Département"
+    :label="label"
     :labelClasses="labelClasses"
     :options="options"
     optionLabelKey="text"
     :optionValueKey="valueKey"
     :filterBy="filterBy"
-    noOptionsText="Pas de départements qui correspondent à la recherche"
+    :noOptionsText="`Pas de ${label.toLowerCase()}s qui correspondent à la recherche`"
     :selectable="isOptionSelectable"
   />
 </template>
@@ -18,12 +18,18 @@
 <script>
 import VueSelectCombobox from "./VueSelectCombobox"
 import jsonDepartments from "@/departments.json"
+import jsonRegions from "@/regions.json"
 import { normaliseText } from "@/utils"
 
 export default {
-  name: "DepartmentSelect",
+  name: "LocationSelect",
   components: { VueSelectCombobox },
   props: {
+    // department or region
+    locationType: {
+      type: String,
+      required: true,
+    },
     labelClasses: {
       type: [String, Object],
       default: "",
@@ -38,12 +44,21 @@ export default {
     },
   },
   data() {
-    const valueKey = "departmentCode"
-    const nameKey = "departmentName"
-    return {
-      valueKey,
-      nameKey,
+    const configuration = {
+      department: {
+        valueKey: "departmentCode",
+        nameKey: "departmentName",
+        data: jsonDepartments,
+        label: "Département",
+      },
+      region: {
+        valueKey: "regionCode",
+        nameKey: "regionName",
+        data: jsonRegions,
+        label: "Région",
+      },
     }
+    return configuration[this.locationType]
   },
   methods: {
     filterBy(option, label, search) {
@@ -62,7 +77,7 @@ export default {
   },
   computed: {
     options() {
-      const unsortedOptions = jsonDepartments.map((d) => ({
+      const unsortedOptions = this.data.map((d) => ({
         ...d,
         text: `${d[this.valueKey]} - ${d[this.nameKey]}`,
       }))
