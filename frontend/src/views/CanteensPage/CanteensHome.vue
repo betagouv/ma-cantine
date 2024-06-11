@@ -126,7 +126,13 @@
                     auto-select-first
                     :filter="locationFilter"
                   />
-                  <WaiCombobox v-model="filters.department.value" label="Département" :items="testDepartments" />
+                  <VueSelectCombobox
+                    v-model="filters.department.value"
+                    label="Département"
+                    :options="testDepartments"
+                    optionLabelKey="departmentName"
+                    optionValueKey="departmentCode"
+                  />
                   <label
                     for="select-commune"
                     :class="{
@@ -380,9 +386,9 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import CityField from "@/views/CanteenEditor/CityField"
-import WaiCombobox from "@/components/WaiCombobox"
 import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrEmail from "@/components/DsfrEmail"
+import VueSelectCombobox from "@/components/VueSelectCombobox"
 
 const DEFAULT_ORDER = "creation"
 
@@ -400,9 +406,9 @@ export default {
     DsfrPagination,
     DsfrSearchField,
     CityField,
-    WaiCombobox,
     DsfrTagGroup,
     DsfrEmail,
+    VueSelectCombobox,
   },
   data() {
     const sectors = this.$store.state.sectors
@@ -555,10 +561,7 @@ export default {
         })[0], // for now only the appro measure is available as a filter
       ],
       location: undefined,
-      testDepartments: jsonDepartments.map((dep) => ({
-        id: dep.departmentCode,
-        text: `${dep.departmentName} (${dep.departmentCode})`,
-      })),
+      testDepartments: jsonDepartments,
     }
   },
   computed: {
