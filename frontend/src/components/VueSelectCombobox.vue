@@ -8,7 +8,12 @@
       :label="optionLabelKey"
       :selectOnTab="true"
       :filterBy="filterBy"
-    />
+      placeholder="Selectionner une option"
+    >
+      <template #no-options>
+        {{ noOptionsText }}
+      </template>
+    </VueSelect>
   </div>
 </template>
 
@@ -16,7 +21,6 @@
 import { VueSelect } from "vue-select"
 import "vue-select/dist/vue-select.css"
 
-// TODO: dsfr styling
 // TODO: validation
 
 export default {
@@ -45,6 +49,10 @@ export default {
       default(option, label, search) {
         return (label || "").toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) > -1
       },
+    },
+    noOptionsText: {
+      type: String,
+      default: "Pas d'options qui correspondent à la recherche",
     },
   },
   data() {

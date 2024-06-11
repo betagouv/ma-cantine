@@ -6,6 +6,7 @@
     optionLabelKey="combinedName"
     :optionValueKey="valueKey"
     :filterBy="filterBy"
+    noOptionsText="Pas de départements qui correspondent à la recherche"
   />
 </template>
 
