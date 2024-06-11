@@ -30,7 +30,7 @@ export default {
       if (codeSearch && searchMatchesCode) {
         return true
       }
-      return (label || "").toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) > -1
+      return (label || "").toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) === 0
     },
   },
   watch: {
