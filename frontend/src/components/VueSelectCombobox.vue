@@ -64,7 +64,7 @@ export default {
     const number = Math.floor(Math.random() * 1000)
     const wrapperId = `mc-combobox-${number}`
     return {
-      selected: undefined, // TODO: how to initialise with parent v-model value?
+      selected: undefined,
       wrapperId,
     }
   },
@@ -83,6 +83,11 @@ export default {
     // replace open indicator with background image like NativeSelect
     const vueSelectDropdownIndicator = vueSelect.querySelector("svg.vs__open-indicator")
     vueSelectDropdownIndicator.remove()
+
+    this.$nextTick(() => {
+      const originalValue = this.$attrs.value
+      this.selected = this.options.find((o) => o[this.optionValueKey] === originalValue)
+    })
   },
   watch: {
     selected() {

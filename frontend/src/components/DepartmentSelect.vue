@@ -1,6 +1,8 @@
 <template>
   <VueSelectCombobox
-    v-model="department"
+    v-bind="$attrs"
+    v-on="$listeners"
+    @input="(v) => $emit('input', v)"
     label="Département"
     :labelClasses="labelClasses"
     :options="options"
@@ -29,7 +31,6 @@ export default {
     const valueKey = "departmentCode"
     const nameKey = "departmentName"
     return {
-      department: undefined, // TODO: initisalise with parent value
       options: jsonDepartments.map((d) => ({
         ...d,
         combinedName: `${d[valueKey]} - ${d[nameKey]}`,
@@ -48,11 +49,6 @@ export default {
         return true
       }
       return normaliseText(option[this.nameKey] || "").indexOf(normalisedSearch) === 0
-    },
-  },
-  watch: {
-    department() {
-      this.$emit("input", this.department)
     },
   },
 }
