@@ -26,12 +26,13 @@ export default {
   },
   methods: {
     filterBy(option, label, search) {
-      const codeSearch = +search
-      const searchMatchesCode = option[this.valueKey] === search || +option[this.valueKey] === codeSearch
-      if (codeSearch && searchMatchesCode) {
+      const normalisedSearch = normaliseText(search)
+      const searchMatchesCode =
+        normaliseText(option[this.valueKey]) === normalisedSearch || +option[this.valueKey] === +search
+      if (searchMatchesCode) {
         return true
       }
-      return normaliseText(label || "").indexOf(normaliseText(search)) === 0
+      return normaliseText(label || "").indexOf(normalisedSearch) === 0
     },
   },
   watch: {
