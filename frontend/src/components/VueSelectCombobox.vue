@@ -17,6 +17,7 @@ import { VueSelect } from "vue-select"
 import "vue-select/dist/vue-select.css"
 
 // TODO: dsfr styling
+// TODO: validation
 
 export default {
   name: "VueSelectCombobox",
@@ -59,6 +60,16 @@ export default {
     const combobox = vueSelect.querySelector("[role=combobox]")
     // replace the default aria-label provided by the library
     combobox.setAttribute("aria-label", this.label)
+    const clearButton = vueSelect.querySelector("button.vs__clear")
+    clearButton.setAttribute("title", "Supprimer la selection")
+    clearButton.setAttribute("aria-label", "Supprimer la selection")
+    // modify display of clear button icon, taking advantage of vuetify classes
+    clearButton.innerHTML = ""
+    const clearButtonClasses = "v-icon v-icon--link mdi mdi-close primary--text mr-8"
+    clearButtonClasses.split(" ").forEach((className) => clearButton.classList.add(className))
+    // replace open indicator with background image like NativeSelect
+    const vueSelectDropdownIndicator = vueSelect.querySelector("svg.vs__open-indicator")
+    vueSelectDropdownIndicator.remove()
   },
   watch: {
     selected() {
@@ -72,4 +83,33 @@ export default {
 .vs__dropdown-menu {
   padding-left: 0px !important;
 }
+.vs__dropdown-toggle {
+  border-radius: 0.25rem 0.25rem 0 0;
+  background-color: #eee !important;
+  box-shadow: inset 0 -2px 0 0 #3a3a3a;
+  transition: none;
+  height: 38px;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23161616' d='m12 13.1 5-4.9 1.4 1.4-6.4 6.3-6.4-6.4L7 8.1l5 5z'/%3E%3C/svg%3E");
+  background-position: calc(100% - 1rem) 50%;
+  background-repeat: no-repeat;
+  background-size: 1rem 1rem;
+}
+
+/* .mc-select.error--text >>> input.vs__search {
+  border-radius: 0.25rem 0.25rem 0 0;
+  background-color: #eee !important;
+  box-shadow: inset 0 -2px 0 0 #ff5252;
+} */
+/*
+input.vs__search:focus-within {
+  outline-style: solid;
+  outline-width: 2px;
+  outline-color: #0a76f6;
+  outline-offset: 2px;
+  border-radius: 2px 2px 0 0;
+} */
+
+/* div > label {
+  display: block;
+} */
 </style>
