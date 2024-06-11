@@ -9,6 +9,7 @@
       :selectOnTab="true"
       :filterBy="filterBy"
       placeholder="Selectionner une option"
+      class="mt-1"
     >
       <template #no-options>
         {{ noOptionsText }}
