@@ -236,7 +236,7 @@ def canteen_summary_for_year(canteen, year):
     purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
         canteen=canteen, date__year=year
     )
-    data = {}
+    data = {"year": year}
     simple_diag_data(purchases, data)
     complete_diag_data(purchases, data)
     misc_totals(purchases, data)
