@@ -20,7 +20,7 @@
           <DsfrCallout icon=" " :color="color" class="py-6 pr-14 my-0" style="width: fit-content;">
             <div class="text-left">
               <p class="mb-0">
-                <b v-if="teledeclared">Données officielles</b>
+                <b v-if="teledeclared">Données télédéclarées</b>
                 <b v-else-if="provisional">Données provisoires</b>
                 <b v-else>Données non télédéclarées</b>
               </p>
@@ -48,7 +48,7 @@
         <DsfrCallout v-if="editable" icon=" " :color="color" class="my-4 py-4 pr-14">
           <div v-if="teledeclared" class="py-4">
             <p class="mb-0">
-              <b>Données officielles {{ tab }} télédéclarées</b>
+              <b>Données {{ tab }} télédéclarées</b>
               : le bilan ci-dessous a été officiellement transmis à l’administration et il est pris en compte dans le
               rapport annuel public remis au Parlement. Vos données sont publiées par défaut sur votre vitrine en ligne.
             </p>
