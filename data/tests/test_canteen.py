@@ -1,4 +1,5 @@
 from django.test import TestCase
+from data.models import Canteen
 from data.factories import CanteenFactory, DiagnosticFactory
 from freezegun import freeze_time
 
@@ -17,3 +18,9 @@ class TestCanteenModel(TestCase):
         self.assertEqual(canteen.service_diagnostics.count(), 2)
         self.assertEqual(canteen.service_diagnostics.first().year, 2023)
         self.assertEqual(canteen.latest_published_year, 2023)
+
+    def test_user_deleted_canteens_not_in_custom_manager(self):
+        canteen = CanteenFactory.create()
+        canteen.delete()
+        qs = Canteen.objects.all()
+        self.assertEqual(qs.count(), 0)

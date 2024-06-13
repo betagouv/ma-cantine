@@ -74,8 +74,8 @@ class CanteenManager(SoftDeletionManager):
 
 
 class Canteen(SoftDeletionModel):
-    objects = CanteenManager()
-    all_objects = CanteenManager(alive_only=False)
+    objects = SoftDeletionManager()
+    all_objects = SoftDeletionManager(alive_only=False)
 
     class Meta:
         verbose_name = "cantine"
