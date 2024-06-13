@@ -526,6 +526,10 @@ export default Object.freeze({
     },
     { value: "agriculture", text: "Ministère en charge de l'Agriculture et de l'Alimentation" },
     { value: "transformation", text: "Ministère de la Transformation et de la Fonction Publiques" },
+    {
+      value: "administration_territoriale",
+      text: "Préfecture - Administration Territoriale de l'État (ATE)",
+    },
     { value: "autre", text: "Autre" },
   ],
   CentralKitchenDiagnosticModes: [
