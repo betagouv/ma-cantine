@@ -24,7 +24,7 @@
         <DsfrTextarea
           v-model="image.altText"
           label="Description pour les personnes malvoyantes"
-          hintText="Optionnel - Si l'image contient du texte, pensez à le répéter ici. Ce ne sera pas visible en legende."
+          hintText="Optionnel - Si l'image contient du texte, pensez à le répéter ici. Ce ne sera pas visible en légende."
           class="mt-2"
           rows="3"
           labelClasses="body-2 mt-4 mb-2"
