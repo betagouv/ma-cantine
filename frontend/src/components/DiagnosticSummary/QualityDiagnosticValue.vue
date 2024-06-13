@@ -1,7 +1,7 @@
 <template>
   <div class="grey--text text--darken-2">
     <p class="mb-1">{{ text }}</p>
-    <p class="font-weight-bold" v-if="!value">Je ne sais pas</p>
+    <p class="font-weight-bold" v-if="!isTruthyOrZero(value)">Je ne sais pas</p>
     <p class="font-weight-bold" v-else-if="Number.isNaN(+value)">{{ value }}</p>
     <p class="font-weight-bold" v-else>{{ toCurrency(+value) }} HT</p>
   </div>
@@ -19,6 +19,9 @@ export default {
   methods: {
     toCurrency(value) {
       return toCurrency(value)
+    },
+    isTruthyOrZero(value) {
+      return !!value || value === 0
     },
   },
 }
