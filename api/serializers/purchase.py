@@ -48,6 +48,7 @@ class PurchaseField(serializers.DecimalField):
 
 # NB: these names reflect the names in the diagnostic model
 class PurchaseSummarySerializer(serializers.Serializer):
+    year = serializers.IntegerField()
     value_total_ht = PurchaseField()
     value_bio_ht = PurchaseField()
     value_sustainable_ht = PurchaseField()
