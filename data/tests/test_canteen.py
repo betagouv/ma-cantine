@@ -27,6 +27,6 @@ class TestCanteenModel(TestCase):
         canteen = CanteenFactory.create()
         canteen.delete()
         qs = Canteen.objects.all()
-        self.assertEqual(qs.count(), 0)
+        self.assertEqual(qs.count(), 0, "Soft deleted canteen is not visible in default queryset")
         qs = Canteen.all_objects.all()
-        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs.count(), 1, "Soft deleted canteens can be accessed in custom queryset")

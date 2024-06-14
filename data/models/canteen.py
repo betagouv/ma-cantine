@@ -60,11 +60,12 @@ class DeprecatedCanteenQuerySet(SoftDeletionQuerySet):
 
 
 class CanteenManager(SoftDeletionManager):
-    def get_queryset(self):
+    def get_queryset(self, *args, **kwargs):
         if settings.PUBLISH_BY_DEFAULT:
-            return CanteenQuerySet(self.model)
+            self.queryset_model = CanteenQuerySet
         else:
-            return DeprecatedCanteenQuerySet(self.model)
+            self.queryset_model = DeprecatedCanteenQuerySet
+        return super(CanteenManager, self).get_queryset(*args, **kwargs)
 
     def publicly_visible(self):
         return self.get_queryset().publicly_visible()
@@ -74,8 +75,8 @@ class CanteenManager(SoftDeletionManager):
 
 
 class Canteen(SoftDeletionModel):
-    objects = SoftDeletionManager()
-    all_objects = SoftDeletionManager(alive_only=False)
+    objects = CanteenManager()
+    all_objects = CanteenManager(alive_only=False)
 
     class Meta:
         verbose_name = "cantine"
