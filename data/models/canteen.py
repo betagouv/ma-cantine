@@ -45,27 +45,22 @@ def list_properties(queryset, property):
 
 class CanteenQuerySet(SoftDeletionQuerySet):
     def publicly_visible(self):
-        return self.exclude(line_ministry=Canteen.Ministries.ARMEE)
+        return (
+            self.exclude(line_ministry=Canteen.Ministries.ARMEE)
+            if settings.PUBLISH_BY_DEFAULT
+            else self.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
+        )
 
     def publicly_hidden(self):
-        return self.filter(line_ministry=Canteen.Ministries.ARMEE)
-
-
-class DeprecatedCanteenQuerySet(SoftDeletionQuerySet):
-    def publicly_visible(self):
-        return self.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
-
-    def publicly_hidden(self):
-        return self.exclude(publication_status=Canteen.PublicationStatus.PUBLISHED)
+        return (
+            self.filter(line_ministry=Canteen.Ministries.ARMEE)
+            if settings.PUBLISH_BY_DEFAULT
+            else self.exclude(publication_status=Canteen.PublicationStatus.PUBLISHED)
+        )
 
 
 class CanteenManager(SoftDeletionManager):
-    def get_queryset(self, *args, **kwargs):
-        if settings.PUBLISH_BY_DEFAULT:
-            self.queryset_model = CanteenQuerySet
-        else:
-            self.queryset_model = DeprecatedCanteenQuerySet
-        return super(CanteenManager, self).get_queryset(*args, **kwargs)
+    queryset_model = CanteenQuerySet
 
     def publicly_visible(self):
         return self.get_queryset().publicly_visible()
