@@ -502,36 +502,6 @@ export default Object.freeze({
       color: "blue",
     },
   },
-  Ministries: [
-    { value: "premier_ministre", text: "Services du Premier Ministre" },
-    { value: "affaires_etrangeres", text: "Ministère en charge des affaires étrangères" },
-    { value: "ecologie", text: "Ministère de la Transition écologique" },
-    { value: "jeunesse", text: "Ministère en charge de l'Éducation, de la Jeunesse et des Sports" },
-    { value: "economie", text: "Ministère en charge de l'Économie et des finances" },
-    { value: "armee", text: "Ministère des Armées" },
-    { value: "interieur", text: "Ministère de l’Intérieur" },
-    { value: "travail", text: "Ministère en charge du Travail" },
-    { value: "outre_mer", text: "Ministère des Outre-mer" },
-    {
-      value: "territoires",
-      text: "Ministère de la Cohésion des Territoires et des Relations avec les Collectivités Territoriales",
-    },
-    { value: "justice", text: "Ministère de la Justice" },
-    { value: "culture", text: "Ministère de la Culture" },
-    { value: "sante", text: "Ministère en charge de la Santé et des Solidarités" },
-    { value: "mer", text: "Ministère de la Mer" },
-    {
-      value: "enseignement_superieur",
-      text: "Ministère en charge de l'Enseignement supérieur et de la Recherche",
-    },
-    { value: "agriculture", text: "Ministère en charge de l'Agriculture et de l'Alimentation" },
-    { value: "transformation", text: "Ministère de la Transformation et de la Fonction Publiques" },
-    {
-      value: "administration_territoriale",
-      text: "Préfecture - Administration Territoriale de l'État (ATE)",
-    },
-    { value: "autre", text: "Autre" },
-  ],
   CentralKitchenDiagnosticModes: [
     {
       key: "ALL",

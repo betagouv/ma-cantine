@@ -138,6 +138,10 @@ class Canteen(SoftDeletionModel):
             "administration_territoriale",
             "Préfecture - Administration Territoriale de l'État (ATE)",
         )
+        AUTORITES_INDEPENDANTES = (
+            "autorites_independantes",
+            "Présidence de la république - Autorités indépendantes (AAI, API)",
+        )
         AUTRE = "autre", "Autre"
 
     import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
