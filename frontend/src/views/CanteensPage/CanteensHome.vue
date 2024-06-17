@@ -1,44 +1,8 @@
 <template>
   <div class="text-left fr-text">
-    <BreadcrumbsNav />
-    <v-card elevation="0" class="text-center text-md-left mb-6 mt-3">
-      <v-row v-if="$vuetify.breakpoint.smAndDown">
-        <v-col cols="12">
-          <v-img max-height="90px" contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="2" v-if="$vuetify.breakpoint.mdAndUp">
-          <div class="d-flex fill-height align-center">
-            <v-img contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
-          </div>
-        </v-col>
-        <v-col cols="12" md="10">
-          <v-spacer></v-spacer>
-          <v-card-title class="pr-0">
-            <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
-              Nos cantines publiées
-            </h1>
-          </v-card-title>
-          <v-card-subtitle>
-            <p class="mb-1">
-              Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus
-              durable.
-            </p>
-            <p>
-              Consulter
-              <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
-                les statistiques de votre collectivité (régions et départements)
-              </router-link>
-            </p>
-          </v-card-subtitle>
-
-          <v-spacer></v-spacer>
-        </v-col>
-      </v-row>
-    </v-card>
-
+    <BreadcrumbsNav :links="[{ to: { name: 'CanteenSearchLanding' } }]" />
     <div>
+      <h1 class="fr-h1 hidden">Les cantines</h1>
       <v-row id="search-and-ordering" align="end">
         <v-col cols="12" md="4">
           <form role="search" onsubmit="return false">
@@ -909,5 +873,15 @@ div >>> .v-list-item--disabled .theme--light.v-icon {
 /* TODO: fix min height now that we have filter tags to take into account */
 #filters-and-results.min-height {
   min-height: 1050px;
+}
+h1.hidden {
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+  z-index: -1;
+  user-select: none;
 }
 </style>

@@ -261,8 +261,8 @@ export default {
               forElected: true,
             },
             {
-              text: "Nos cantines publiées",
-              to: { name: "CanteensHome" },
+              text: "Trouver une cantine",
+              to: { name: "CanteenSearchLanding" },
             },
             {
               text: "Dans ma collectivité",
