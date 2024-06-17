@@ -244,20 +244,7 @@
               no-data-text="Veuillez séléctionner la catégorie de secteur"
               :rules="canteen.sectors && canteen.sectors.length ? [] : [validators.required]"
             />
-            <div class="d-flex flex-wrap mt-2">
-              <p v-for="id in canteen.sectors" :key="id" class="mb-0">
-                <v-chip
-                  close
-                  @click="removeSector(id)"
-                  @click:close="removeSector(id)"
-                  class="mr-1 mt-1"
-                  color="primary"
-                  close-label="Fermer"
-                >
-                  {{ sectorName(id) }}
-                </v-chip>
-              </p>
-            </div>
+            <DsfrTagGroup :tags="sectorTags" :closeable="true" @closeTag="(tag) => removeSector(tag.id)" />
           </div>
         </v-col>
         <v-col v-if="showMinistryField" cols="12" md="10">
@@ -320,6 +307,7 @@ import DsfrRadio from "@/components/DsfrRadio"
 import CityField from "./CityField"
 import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrCallout from "@/components/DsfrCallout"
+import DsfrTagGroup from "@/components/DsfrTagGroup"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -333,6 +321,7 @@ export default {
     DsfrNativeSelect,
     DsfrCallout,
     SiretCheck,
+    DsfrTagGroup,
   },
   props: {
     canteenUrlComponent: {
@@ -363,7 +352,7 @@ export default {
       economicModels: Constants.EconomicModels,
       sectorCategory: null,
       chosenSector: null,
-      ministries: Constants.Ministries,
+      ministries: this.$store.state.lineMinistries,
       centralKitchen: null,
     }
   },
@@ -417,6 +406,12 @@ export default {
     },
     showDelete() {
       return !this.isNewCanteen && window.ENABLE_DASHBOARD
+    },
+    sectorTags() {
+      return this.canteen.sectors.map((sectorId) => ({
+        text: this.sectorName(sectorId),
+        id: sectorId,
+      }))
     },
   },
   mounted() {

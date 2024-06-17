@@ -9,7 +9,7 @@
             <p class="mb-0">Produits bio</p>
           </v-col>
           <v-col cols="2">
-            <p class="mb-0 font-weight-bold">{{ percentages.bio || "—" }} %</p>
+            <p class="mb-0 font-weight-bold">{{ percentageDisplay(percentages.bio) }}</p>
           </v-col>
           <v-col cols="4">
             <p class="mb-0">
@@ -22,7 +22,7 @@
             <p class="mb-0">Produits durables et de qualité (hors bio)</p>
           </v-col>
           <v-col cols="2">
-            <p class="mb-0 font-weight-bold">{{ percentages.allSustainable || "—" }} %</p>
+            <p class="mb-0 font-weight-bold">{{ percentageDisplay(percentages.allSustainable) }}</p>
           </v-col>
         </v-row>
         <v-row class="mt-1">
@@ -35,7 +35,7 @@
             <p class="mb-0">Produits EGAlim</p>
           </v-col>
           <v-col cols="2">
-            <p class="mb-0 font-weight-bold">{{ percentages.egalim || "—" }} %</p>
+            <p class="mb-0 font-weight-bold">{{ percentageDisplay(percentages.egalim) }}</p>
           </v-col>
           <v-col cols="4">
             <p class="mb-0">
@@ -48,17 +48,17 @@
         <h5 class="mb-4 font-weight-bold fr-text">Par famille de produits</h5>
         <p class="mb-md-4">
           <v-icon class="mr-2" color="#00A95F">$award-line</v-icon>
-          <span class="font-weight-bold percentage">{{ percentages.meatPoultryEgalim || "—" }} %</span>
+          <span class="font-weight-bold percentage">{{ percentageDisplay(percentages.meatPoultryEgalim) }}</span>
           de viandes et volailles EGAlim
         </p>
         <p class="mb-md-4">
           <v-icon class="mr-2" color="#00A95F">$france-line</v-icon>
-          <span class="font-weight-bold percentage">{{ percentages.meatPoultryFrance || "—" }} %</span>
+          <span class="font-weight-bold percentage">{{ percentageDisplay(percentages.meatPoultryFrance) }}</span>
           de viandes et volailles provenance France
         </p>
         <p class="mb-md-4">
           <v-icon class="mr-2" color="#00A95F">$anchor-line</v-icon>
-          <span class="font-weight-bold percentage">{{ percentages.fishEgalim || "—" }} %</span>
+          <span class="font-weight-bold percentage">{{ percentageDisplay(percentages.fishEgalim) }}</span>
           de produits de la mer et aquaculture EGAlim
         </p>
       </v-col>
@@ -258,6 +258,14 @@ export default {
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
+    },
+  },
+  methods: {
+    isTruthyOrZero(value) {
+      return !!value || value === 0
+    },
+    percentageDisplay(value) {
+      return `${this.isTruthyOrZero(value) ? value : "—"} %`
     },
   },
 }

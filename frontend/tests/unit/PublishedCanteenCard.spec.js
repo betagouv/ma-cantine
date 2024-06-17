@@ -34,7 +34,7 @@ describe("PublishedCanteenCard.vue", () => {
       vuetify,
       store,
     })
-    expect(wrapper.find("v-card-title-stub").text()).toBe(testCanteen.name)
+    expect(wrapper.find("h3").text()).toBe(testCanteen.name)
   })
 
   it("Includes canteen indicators", () => {
