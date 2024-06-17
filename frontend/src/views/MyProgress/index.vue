@@ -9,7 +9,7 @@
     <v-row>
       <v-col cols="12" md="10">
         <ProductionTypeTag v-if="canteen" :canteen="canteen" class="mt-n2" />
-        <h1 class="fr-h3 my-2" v-if="canteen">{{ canteen.name }}</h1>
+        <h1 class="fr-h3 mt-1 mb-2" v-if="canteen">{{ canteen.name }}</h1>
         <v-row v-if="canteenPreviews.length > 1">
           <v-col>
             <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">

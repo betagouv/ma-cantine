@@ -38,8 +38,8 @@
       </v-row>
     </v-card>
 
-    <div id="search-top">
-      <v-row class="my-2" align="end">
+    <div>
+      <v-row id="search-and-ordering" align="end">
         <v-col cols="12" md="4">
           <form role="search" onsubmit="return false">
             <h2 class="fr-h5 mb-2">Rechercher</h2>
@@ -68,8 +68,11 @@
           </v-btn>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="12" md="4">
+      <v-row
+        id="filters-and-results"
+        :class="{ 'pt-4': true, 'min-height': !visibleCanteens || visibleCanteens.length === limit }"
+      >
+        <v-col id="filters" cols="12" md="4">
           <h3 class="fr-h6 mb-0">
             Filtrer
           </h3>
@@ -277,11 +280,9 @@
             </DsfrAccordion>
           </v-form>
         </v-col>
-        <v-col cols="12" md="8">
-          <div v-if="loading || pageLoading" class="pa-12">
-            <v-progress-circular indeterminate></v-progress-circular>
-          </div>
-          <div v-else>
+        <v-col id="results" cols="12" md="8" class="d-flex flex-column">
+          <v-progress-circular v-if="loading" indeterminate class="mt-8 align-self-center" />
+          <div v-else class="d-flex flex-column" style="height: 100%;">
             <div class="d-flex">
               <h2 class="fr-h6 mb-0" aria-live="polite" aria-atomic="true">
                 {{ publishedCanteenCount }} {{ publishedCanteenCount === 1 ? "résultat" : "résultats" }}
@@ -313,15 +314,27 @@
                 Désactiver tous les filtres
               </v-btn>
             </div>
-            <PublishedCanteenCard v-for="canteen in visibleCanteens" :key="canteen.id" :canteen="canteen" />
+            <v-progress-circular v-else-if="pageLoading" indeterminate class="mt-8 align-self-center" />
+            <div v-else>
+              <v-spacer />
+              <PublishedCanteenCard
+                v-for="canteen in visibleCanteens"
+                :key="canteen.id"
+                :canteen="canteen"
+                class="my-4"
+              />
+              <v-spacer />
+            </div>
+            <v-spacer />
+            <DsfrPagination
+              class="my-6"
+              v-model="page"
+              :length="Math.ceil(publishedCanteenCount / limit)"
+              :total-visible="5"
+              v-if="publishedCanteenCount"
+              @input="pageChangedManually"
+            />
           </div>
-          <DsfrPagination
-            class="my-6"
-            v-model="page"
-            :length="Math.ceil(publishedCanteenCount / limit)"
-            :total-visible="5"
-            v-if="!pageLoading && publishedCanteenCount"
-          />
         </v-col>
       </v-row>
     </div>
@@ -688,7 +701,6 @@ export default {
       const override = this.page ? { page: this.page } : { page: 1 }
       const query = Object.assign(this.query, override)
       this.updateRouter(query)
-      document.getElementById("search-top").scrollIntoView()
     },
     applyFilter() {
       // urls are always strings. Some query params are not strings.
@@ -845,6 +857,10 @@ export default {
     setLocation(location) {
       this.location = location
     },
+    pageChangedManually() {
+      // TODO: make this dependent on window height to avoid jumps for bigger screens
+      document.getElementById("filters-and-results").scrollIntoView({ behavior: "smooth" })
+    },
   },
   watch: {
     filters: {
@@ -889,5 +905,9 @@ div >>> .v-list-item--disabled .theme--light.v-icon {
 }
 #ordering >>> .v-select__selection {
   font-size: 12px;
+}
+/* TODO: fix min height now that we have filter tags to take into account */
+#filters-and-results.min-height {
+  min-height: 1050px;
 }
 </style>
