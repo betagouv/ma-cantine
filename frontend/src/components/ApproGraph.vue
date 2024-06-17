@@ -155,18 +155,25 @@ export default {
       const percentage =
         Math.round(this.diagnostic.percentageValueBioHt * 100) ||
         getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt, true)
-      return percentage || 0
+      return this.isTruthyOrZero(percentage) ? percentage : "—"
     },
     sustainablePercentage() {
-      return "percentageValueTotalHt" in this.diagnostic
-        ? Math.round(getSustainableTotal(this.diagnostic) * 100)
-        : getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
+      const percentage =
+        "percentageValueTotalHt" in this.diagnostic
+          ? Math.round(getSustainableTotal(this.diagnostic) * 100)
+          : getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
+      return this.isTruthyOrZero(percentage) ? percentage : "—"
     },
     description() {
       return `Bio : ${this.bioPercentage} %. Durable et de qualité (hors bio) : ${this.sustainablePercentage} %. Rappel objectif EGAlim : ${this.applicableRules.qualityThreshold} % des achats de qualité et durable, dont ${this.applicableRules.bioThreshold} % bio.`
     },
     hasEnoughData() {
       return hasApproGraphData(this.diagnostic)
+    },
+  },
+  methods: {
+    isTruthyOrZero(value) {
+      return !!value || value === 0
     },
   },
 }

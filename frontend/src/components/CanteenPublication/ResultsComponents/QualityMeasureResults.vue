@@ -20,7 +20,7 @@
           <DsfrCallout icon=" " :color="color" class="py-6 pr-14 my-0" style="width: fit-content;">
             <div class="text-left">
               <p class="mb-0">
-                <b v-if="teledeclared">Données officielles</b>
+                <b v-if="teledeclared">Données télédéclarées</b>
                 <b v-else-if="provisional">Données provisoires</b>
                 <b v-else>Données non télédéclarées</b>
               </p>
@@ -48,7 +48,7 @@
         <DsfrCallout v-if="editable" icon=" " :color="color" class="my-4 py-4 pr-14">
           <div v-if="teledeclared" class="py-4">
             <p class="mb-0">
-              <b>Données officielles {{ tab }} télédéclarées</b>
+              <b>Données {{ tab }} télédéclarées</b>
               : le bilan ci-dessous a été officiellement transmis à l’administration et il est pris en compte dans le
               rapport annuel public remis au Parlement. Vos données sont publiées par défaut sur votre vitrine en ligne.
             </p>
@@ -92,7 +92,7 @@
                 <v-col cols="12" sm="4" class="pa-4">
                   <v-icon large class="grey--text text--darken-3 mb-2">$award-line</v-icon>
                   <p class="mb-0">
-                    <span class="font-weight-bold percentage">{{ meatEgalimPercentage || "—" }} %</span>
+                    <span class="font-weight-bold percentage">{{ percentageDisplay(meatEgalimPercentage) }}</span>
                     de viandes et volailles
                     <br />
                     EGAlim
@@ -101,7 +101,7 @@
                 <v-col cols="12" sm="4" class="pa-4">
                   <v-icon large class="grey--text text--darken-3 mb-2">$france-line</v-icon>
                   <p class="mb-0">
-                    <span class="font-weight-bold percentage">{{ meatFrancePercentage || "—" }} %</span>
+                    <span class="font-weight-bold percentage">{{ percentageDisplay(meatFrancePercentage) }}</span>
                     de viandes et volailles
                     <br />
                     provenance France
@@ -110,7 +110,7 @@
                 <v-col cols="12" sm="4" class="pa-4">
                   <v-icon large class="grey--text text--darken-3 mb-2">$anchor-line</v-icon>
                   <p class="mb-0">
-                    <span class="font-weight-bold percentage">{{ fishEgalimPercentage || "—" }} %</span>
+                    <span class="font-weight-bold percentage">{{ percentageDisplay(fishEgalimPercentage) }}</span>
                     de produits de la mer
                     <br />
                     et aquaculture EGAlim
@@ -136,7 +136,7 @@
 </template>
 
 <script>
-import { applicableDiagnosticRules, getPercentage, latestCreatedDiagnostic } from "@/utils"
+import { applicableDiagnosticRules, getPercentage, toPercentage, latestCreatedDiagnostic } from "@/utils"
 import CentralKitchenInfo from "./CentralKitchenInfo"
 import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
 import ApproGraph from "@/components/ApproGraph"
@@ -216,17 +216,17 @@ export default {
     },
     meatEgalimPercentage() {
       return this.hasPercentages
-        ? this.toPercentage(this.diagnosticForYear.percentageValueMeatPoultryEgalimHt)
+        ? toPercentage(this.diagnosticForYear.percentageValueMeatPoultryEgalimHt)
         : getPercentage(this.diagnosticForYear.valueMeatPoultryEgalimHt, this.diagnosticForYear.valueMeatPoultryHt)
     },
     meatFrancePercentage() {
       return this.hasPercentages
-        ? this.toPercentage(this.diagnosticForYear.percentageValueMeatPoultryFranceHt)
+        ? toPercentage(this.diagnosticForYear.percentageValueMeatPoultryFranceHt)
         : getPercentage(this.diagnosticForYear.valueMeatPoultryFranceHt, this.diagnosticForYear.valueMeatPoultryHt)
     },
     fishEgalimPercentage() {
       return this.hasPercentages
-        ? this.toPercentage(this.diagnosticForYear.percentageValueFishEgalimHt)
+        ? toPercentage(this.diagnosticForYear.percentageValueFishEgalimHt)
         : getPercentage(this.diagnosticForYear.valueFishEgalimHt, this.diagnosticForYear.valueFishHt)
     },
     graphDiagnostics() {
@@ -239,7 +239,11 @@ export default {
       return diagnostics
     },
     hasFamilyDetail() {
-      return this.meatEgalimPercentage || this.meatFrancePercentage || this.fishEgalimPercentage
+      return (
+        this.isTruthyOrZero(this.meatEgalimPercentage) ||
+        this.isTruthyOrZero(this.meatFrancePercentage) ||
+        this.isTruthyOrZero(this.fishEgalimPercentage)
+      )
     },
     usesCentralKitchenDiagnostics() {
       if (!this.canteen.centralKitchen) return
@@ -248,8 +252,11 @@ export default {
     },
   },
   methods: {
-    toPercentage(value) {
-      return Math.round(value * 100)
+    isTruthyOrZero(value) {
+      return !!value || value === 0
+    },
+    percentageDisplay(value) {
+      return `${this.isTruthyOrZero(value) ? value : "—"} %`
     },
     updateDiagnosticPublication(value) {
       if (!this.diagnosticForYear) {

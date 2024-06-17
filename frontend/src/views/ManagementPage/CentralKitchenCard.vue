@@ -1,9 +1,5 @@
 <template>
   <v-card :to="canteenLink" class="dsfr d-flex flex-column" outlined :ripple="false">
-    <div class="tag body-2 font-weight-medium">
-      <v-icon class="mt-n1" small>$community-fill</v-icon>
-      Cuisine centrale
-    </div>
     <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160" max-height="160"></v-img>
     <v-card-title>
       <h3 class="fr-h6 font-weight-bold mb-1">{{ canteen.name }}</h3>
@@ -22,6 +18,7 @@
       </v-chip>
     </v-card-subtitle>
     <v-card-subtitle class="mt-0 pb-0">
+      <ProductionTypeTag :canteen="canteen" position="top-left" />
       <CanteenIndicators :canteen="canteen" />
     </v-card-subtitle>
     <v-spacer></v-spacer>
@@ -34,6 +31,7 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
+import ProductionTypeTag from "@/components/ProductionTypeTag"
 import { lastYear } from "@/utils"
 
 export default {
@@ -46,6 +44,7 @@ export default {
   },
   components: {
     CanteenIndicators,
+    ProductionTypeTag,
   },
   data() {
     return {
@@ -103,17 +102,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.tag {
-  position: absolute;
-  top: 0;
-  z-index: 1;
-  background: #e0e0f2;
-  left: 10px;
-  padding: 3px 10px;
-  border-radius: 0px 0px 4px 4px;
-  box-shadow: 4px 0px 5px -4px black;
-  color: #333;
-}
-</style>

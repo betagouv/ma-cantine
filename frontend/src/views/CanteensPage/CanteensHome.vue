@@ -1,45 +1,9 @@
 <template>
   <div class="text-left fr-text">
-    <BreadcrumbsNav />
-    <v-card elevation="0" class="text-center text-md-left mb-6 mt-3">
-      <v-row v-if="$vuetify.breakpoint.smAndDown">
-        <v-col cols="12">
-          <v-img max-height="90px" contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="2" v-if="$vuetify.breakpoint.mdAndUp">
-          <div class="d-flex fill-height align-center">
-            <v-img contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
-          </div>
-        </v-col>
-        <v-col cols="12" md="10">
-          <v-spacer></v-spacer>
-          <v-card-title class="pr-0">
-            <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
-              Nos cantines publiées
-            </h1>
-          </v-card-title>
-          <v-card-subtitle>
-            <p class="mb-1">
-              Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus
-              durable.
-            </p>
-            <p>
-              Consulter
-              <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
-                les statistiques de votre collectivité (régions et départements)
-              </router-link>
-            </p>
-          </v-card-subtitle>
-
-          <v-spacer></v-spacer>
-        </v-col>
-      </v-row>
-    </v-card>
-
-    <div id="search-top">
-      <v-row class="my-2" align="end">
+    <BreadcrumbsNav :links="[{ to: { name: 'CanteenSearchLanding' } }]" />
+    <div>
+      <h1 class="fr-h1 hidden">Les cantines</h1>
+      <v-row id="search-and-ordering" align="end">
         <v-col cols="12" md="4">
           <form role="search" onsubmit="return false">
             <h2 class="fr-h5 mb-2">Rechercher</h2>
@@ -68,15 +32,18 @@
           </v-btn>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="12" md="4">
+      <v-row
+        id="filters-and-results"
+        :class="{ 'pt-4': true, 'min-height': !visibleCanteens || visibleCanteens.length === limit }"
+      >
+        <v-col id="filters" cols="12" md="4">
           <h3 class="fr-h6 mb-0">
             Filtrer
           </h3>
           <v-form class="mt-4">
             <DsfrAccordion
               :items="[
-                { id: 'territory', icon: '$road-map-fill', text: 'Par térritoire', titleLevel: 'h4' },
+                { id: 'territory', icon: '$road-map-fill', text: 'Par territoire', titleLevel: 'h4' },
                 { id: 'characteristic', icon: '$community-fill', text: 'Par caractéristique', titleLevel: 'h4' },
               ]"
             >
@@ -255,11 +222,9 @@
             </DsfrAccordion>
           </v-form>
         </v-col>
-        <v-col cols="12" md="8">
-          <div v-if="loading || pageLoading" class="pa-12">
-            <v-progress-circular indeterminate></v-progress-circular>
-          </div>
-          <div v-else>
+        <v-col id="results" cols="12" md="8" class="d-flex flex-column">
+          <v-progress-circular v-if="loading" indeterminate class="mt-8 align-self-center" />
+          <div v-else class="d-flex flex-column" style="height: 100%;">
             <div class="d-flex">
               <h2 class="fr-h6 mb-0" aria-live="polite" aria-atomic="true">
                 {{ publishedCanteenCount }} {{ publishedCanteenCount === 1 ? "résultat" : "résultats" }}
@@ -291,15 +256,27 @@
                 Désactiver tous les filtres
               </v-btn>
             </div>
-            <PublishedCanteenCard v-for="canteen in visibleCanteens" :key="canteen.id" :canteen="canteen" />
+            <v-progress-circular v-else-if="pageLoading" indeterminate class="mt-8 align-self-center" />
+            <div v-else>
+              <v-spacer />
+              <PublishedCanteenCard
+                v-for="canteen in visibleCanteens"
+                :key="canteen.id"
+                :canteen="canteen"
+                class="my-4"
+              />
+              <v-spacer />
+            </div>
+            <v-spacer />
+            <DsfrPagination
+              class="my-6"
+              v-model="page"
+              :length="Math.ceil(publishedCanteenCount / limit)"
+              :total-visible="5"
+              v-if="publishedCanteenCount"
+              @input="pageChangedManually"
+            />
           </div>
-          <DsfrPagination
-            class="my-6"
-            v-model="page"
-            :length="Math.ceil(publishedCanteenCount / limit)"
-            :total-visible="5"
-            v-if="!pageLoading && publishedCanteenCount"
-          />
         </v-col>
       </v-row>
     </div>
@@ -680,7 +657,6 @@ export default {
       const override = this.page ? { page: this.page } : { page: 1 }
       const query = Object.assign(this.query, override)
       this.updateRouter(query)
-      document.getElementById("search-top").scrollIntoView()
     },
     applyFilter() {
       // urls are always strings. Some query params are not strings.
@@ -799,6 +775,10 @@ export default {
     setLocation(location) {
       this.location = location
     },
+    pageChangedManually() {
+      // TODO: make this dependent on window height to avoid jumps for bigger screens
+      document.getElementById("filters-and-results").scrollIntoView({ behavior: "smooth" })
+    },
   },
   watch: {
     filters: {
@@ -843,5 +823,19 @@ div >>> .v-list-item--disabled .theme--light.v-icon {
 }
 #ordering >>> .v-select__selection {
   font-size: 12px;
+}
+/* TODO: fix min height now that we have filter tags to take into account */
+#filters-and-results.min-height {
+  min-height: 1050px;
+}
+h1.hidden {
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+  z-index: -1;
+  user-select: none;
 }
 </style>

@@ -30,6 +30,7 @@ from .canteen import (  # noqa: F401
     CanteenStatusView,
     TerritoryCanteensListView,
     UserCanteenSummaries,
+    CanteenMinistriesView,
 )
 from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,

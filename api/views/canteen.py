@@ -254,6 +254,7 @@ class PublishedCanteensView(ListAPIView):
         UnaccentSearchFilter,
         MaCantineOrderingFilter,
     ]
+    # TODO: maybe add city/region/department name?
     search_fields = ["name", "siret"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
     filterset_class = PublishedCanteenFilterSet
@@ -1287,3 +1288,25 @@ class TerritoryCanteensListView(ListAPIView):
     def get_queryset(self):
         departments = self.request.user.departments
         return Canteen.objects.filter(department__in=departments)
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Lister les options pour le ministère de tutelle.",
+        description="Certains secteurs nécessite la spécification d'un ministère du tutelle.",
+    ),
+)
+class CanteenMinistriesView(APIView):
+    include_in_documentation = True
+    required_scopes = ["canteen"]
+
+    def get(self, request, format=None):
+        ministries = []
+        for ministry in Canteen.Ministries:
+            ministries.append(
+                {
+                    "value": ministry.value,
+                    "name": ministry.label,
+                }
+            )
+        return Response(ministries)

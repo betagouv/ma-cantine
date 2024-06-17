@@ -10,6 +10,7 @@ import KeyMeasurePage from "@/views/KeyMeasuresPage/KeyMeasurePage"
 import GeneratePosterPage from "@/views/GeneratePosterPage"
 import CanteensPage from "@/views/CanteensPage"
 import CanteenWidget from "@/views/CanteensPage/CanteenWidget"
+import CanteenSearchLanding from "@/views/CanteenSearchLanding"
 import CanteensHome from "@/views/CanteensPage/CanteensHome"
 import CanteenPage from "@/views/CanteensPage/CanteenPage"
 import LegalNotices from "@/views/LegalNotices"
@@ -173,6 +174,15 @@ const routes = [
     },
   },
   {
+    path: "/trouver-une-cantine",
+    name: "CanteenSearchLanding",
+    component: CanteenSearchLanding,
+    meta: {
+      title: "Trouver une cantine",
+    },
+    sitemapGroup: Constants.SitemapGroups.ACTION,
+  },
+  {
     // if you change this path, update the visitor view count logic in the publication widget
     path: "/nos-cantines",
     component: CanteensPage,
@@ -182,9 +192,8 @@ const routes = [
         name: "CanteensHome",
         component: CanteensHome,
         meta: {
-          title: "Nos cantines publiées",
+          title: "Les cantines",
         },
-        sitemapGroup: Constants.SitemapGroups.ACTION,
       },
       {
         path: ":canteenUrlComponent",
