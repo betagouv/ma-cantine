@@ -142,7 +142,7 @@ export default {
   position: absolute;
 }
 .canteen-card:hover img.lead-image,
-.canteen-card:focus img.lead-image {
+.canteen-card:focus-within img.lead-image {
   opacity: 100%;
 }
 .card-image-wrap {
