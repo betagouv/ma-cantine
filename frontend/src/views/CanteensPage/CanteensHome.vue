@@ -1,28 +1,8 @@
 <template>
   <div class="text-left fr-text">
     <BreadcrumbsNav :links="[{ to: { name: 'CanteenSearchLanding' } }]" />
-    <v-row>
-      <v-col>
-        <h1 class="fr-h2 mb-0">
-          Les cantines
-        </h1>
-      </v-col>
-      <v-col cols="12" md="7">
-        <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
-          <DsfrSearchField
-            hide-details="auto"
-            ref="search"
-            v-model="searchTerm"
-            placeholder="Recherche par nom ou SIRET de l'établissement"
-            :searchAction="search"
-            :clearAction="clearSearch"
-            class="mb-2 flex-grow-1"
-          />
-        </form>
-      </v-col>
-    </v-row>
-
     <div>
+      <h1 class="fr-h1 hidden">Les cantines</h1>
       <v-row id="search-and-ordering" align="end">
         <v-col cols="12" md="4">
           <form role="search" onsubmit="return false">
@@ -893,5 +873,15 @@ div >>> .v-list-item--disabled .theme--light.v-icon {
 /* TODO: fix min height now that we have filter tags to take into account */
 #filters-and-results.min-height {
   min-height: 1050px;
+}
+h1.hidden {
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+  z-index: -1;
+  user-select: none;
 }
 </style>
