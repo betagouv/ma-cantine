@@ -13,8 +13,7 @@
     </p>
     <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="hasDailyMealCount">
       <v-icon :small="!dense" :x-small="dense" class="mr-1" aria-hidden="false" role="img">$team-line</v-icon>
-      <!-- eslint-disable-next-line prettier/prettier-->
-      {{ canteen.dailyMealCount }} couverts<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
+      {{ canteen.dailyMealCount }} couverts
     </p>
     <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="satelliteCount">
       <v-icon :small="!dense" :x-small="dense" class="mr-1">$restaurant-line</v-icon>
