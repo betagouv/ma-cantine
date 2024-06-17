@@ -43,7 +43,7 @@
           <v-form class="mt-4">
             <DsfrAccordion
               :items="[
-                { id: 'territory', icon: '$road-map-fill', text: 'Par térritoire', titleLevel: 'h4' },
+                { id: 'territory', icon: '$road-map-fill', text: 'Par territoire', titleLevel: 'h4' },
                 { id: 'characteristic', icon: '$community-fill', text: 'Par caractéristique', titleLevel: 'h4' },
               ]"
             >
