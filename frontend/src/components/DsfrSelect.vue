@@ -41,6 +41,9 @@ export default {
     value() {
       return this.$refs["select"].value
     },
+    reset() {
+      return this.$refs["select"].reset
+    },
     errorMessageId() {
       return this.inputId && `${this.inputId}-error`
     },

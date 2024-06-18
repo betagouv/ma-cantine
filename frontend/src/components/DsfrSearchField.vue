@@ -54,6 +54,9 @@ export default {
     value() {
       return this.$refs["text-field"].value
     },
+    reset() {
+      return this.$refs["text-field"].reset
+    },
     clear() {
       const noAction = () => {}
       return this.clearAction || noAction

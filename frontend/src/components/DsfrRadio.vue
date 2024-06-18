@@ -69,6 +69,9 @@ export default {
     value() {
       return this.$refs["radiogroup"].value
     },
+    reset() {
+      return this.$refs["radiogroup"].reset
+    },
     items() {
       if (this.yesNo) {
         return [

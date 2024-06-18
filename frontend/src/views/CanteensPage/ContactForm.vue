@@ -55,7 +55,7 @@
       </div>
       <v-form v-model="formIsValid" ref="form" @submit.prevent>
         <DsfrEmail v-model="fromEmail" />
-        <DsfrTextField v-model="name" label="Prénom et nom" />
+        <DsfrFullName v-model="name" />
         <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
         <p class="caption text-left grey--text text--darken-1 mt-n1 mb-6">
           Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).
@@ -74,13 +74,13 @@
 
 <script>
 import validators from "@/validators"
-import DsfrTextField from "@/components/DsfrTextField"
+import DsfrFullName from "@/components/DsfrFullName"
 import DsfrEmail from "@/components/DsfrEmail"
 import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   name: "ContactForm",
-  components: { DsfrTextField, DsfrTextarea, DsfrEmail },
+  components: { DsfrFullName, DsfrTextarea, DsfrEmail },
   props: ["canteen"],
   data() {
     const user = this.$store.state.loggedUser
