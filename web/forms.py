@@ -37,11 +37,9 @@ class RegisterUserForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(RegisterUserForm, self).__init__(*args, **kwargs)
         self.label_suffix = ""
-        self.fields["first_name"].widget.attrs.update(
-            {"placeholder": "Agnès", "autocomplete": "given-name"}, autoFocus=True
-        )
+        self.fields["first_name"].widget.attrs.update({"placeholder": "Agnès", "autocomplete": "given-name"})
         self.fields["last_name"].widget.attrs.update({"placeholder": "Dufresne", "autocomplete": "family-name"})
-        self.fields["username"].widget.attrs.update({"placeholder": "agnes.dufresne"})
+        self.fields["username"].widget.attrs.update({"placeholder": "agnes.dufresne", "autofocus": False})
         self.fields["email"].label = "Adresse électronique"
         self.fields["email"].help_text = "Format attendu : nom@domaine.fr"
         self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com", "autocomplete": "email"})
