@@ -10,6 +10,7 @@ from web.sitemaps import CanteenSitemap, BlogPostSitemap, WebSitemap, PartnerSit
 from web.views import (
     VueAppDisplayView,
     WidgetView,
+    LoginUserView,
     RegisterUserView,
     ActivationTokenView,
     RegisterDoneView,
@@ -33,7 +34,7 @@ urlpatterns = [
     # https://docs.djangoproject.com/en/3.1/topics/auth/default/#django.contrib.auth.views.LoginView
     path(
         "s-identifier",
-        auth_views.LoginView.as_view(
+        LoginUserView.as_view(
             template_name="auth/login.html",
             redirect_authenticated_user=True,
         ),

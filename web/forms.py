@@ -1,5 +1,5 @@
 import re
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
 from django import forms
 from django.utils.safestring import mark_safe
@@ -105,3 +105,11 @@ def _clean_username(form):
         raise forms.ValidationError("Vous ne pouvez pas utiliser une adresse email comme nom d'utilisateur.")
 
     return username
+
+
+class LoginUserForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super(LoginUserForm, self).__init__(*args, **kwargs)
+        self.error_messages["invalid_login"] = (
+            "Saisissez un nom d'utilisateur ou adresse électronique et un mot de passe valides. Remarquez que chacun de ces champs est sensible à la casse (différenciation des majuscules/minuscules)."
+        )
