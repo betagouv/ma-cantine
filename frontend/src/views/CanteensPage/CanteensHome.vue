@@ -300,7 +300,7 @@
         </p>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
           <DsfrEmail v-model="fromEmail" />
-          <DsfrTextField v-model="name" label="Prénom et nom" />
+          <DsfrFullName v-model="name" />
           <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
         </v-form>
         <v-row class="pa-2">
@@ -335,6 +335,7 @@ import DsfrSearchField from "@/components/DsfrSearchField"
 import CityField from "@/views/CanteenEditor/CityField"
 import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrEmail from "@/components/DsfrEmail"
+import DsfrFullName from "@/components/DsfrFullName"
 import LocationSelect from "@/components/LocationSelect"
 
 const DEFAULT_ORDER = "creation"
@@ -354,6 +355,7 @@ export default {
     CityField,
     DsfrTagGroup,
     DsfrEmail,
+    DsfrFullName,
     LocationSelect,
   },
   data() {

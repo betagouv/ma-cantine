@@ -4,7 +4,7 @@
       <v-col>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
           <DsfrEmail v-model="fromEmail" />
-          <DsfrTextField v-model="name" label="Prénom et nom" />
+          <DsfrFullName v-model="name" />
           <DsfrNativeSelect
             v-model="inquiryType"
             :items="inquiryOptions"
@@ -44,14 +44,14 @@
 
 <script>
 import validators from "@/validators"
-import DsfrTextField from "@/components/DsfrTextField"
+import DsfrFullName from "@/components/DsfrFullName"
 import DsfrEmail from "@/components/DsfrEmail"
 import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   name: "GeneralContactForm",
-  components: { DsfrTextField, DsfrNativeSelect, DsfrTextarea, DsfrEmail },
+  components: { DsfrFullName, DsfrNativeSelect, DsfrTextarea, DsfrEmail },
   props: {
     initialInquiryType: {
       type: String,
