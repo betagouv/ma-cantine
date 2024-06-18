@@ -4,7 +4,7 @@
     @click="clickAction"
     @click:close="closeAction"
     class="ma-1"
-    color="primary"
+    :color="color"
     close-label="Fermer"
     close-icon="$close-line"
   >
@@ -23,6 +23,10 @@ export default {
     closeable: {
       type: Boolean,
       default: false,
+    },
+    color: {
+      type: String,
+      default: "primary",
     },
   },
   methods: {

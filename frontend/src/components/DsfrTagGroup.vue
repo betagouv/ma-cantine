@@ -1,7 +1,7 @@
 <template>
   <ul class="d-flex flex-wrap mx-n1 no-bullets">
     <li v-for="tag in tags" :key="tag.id">
-      <DsfrTag :text="tag.text" :closeable="closeable" @close="closeable && closeAction(tag)" />
+      <DsfrTag :text="tag.text" :closeable="closeable" @close="closeable && closeAction(tag)" :color="tag.color" />
     </li>
   </ul>
 </template>
