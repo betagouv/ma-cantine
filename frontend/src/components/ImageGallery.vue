@@ -10,11 +10,11 @@
       <v-col v-for="(image, index) in images" :key="index" cols="12" sm="4">
         <button @click="openImage(index)" class="image-open" title="agrandir l'image" aria-label="agrandir l'image">
           <img :src="image.image" :alt="image.altText || ''" />
-          <div class="overlay align-center justify-center">
+          <span class="overlay align-center justify-center">
             <v-icon large color="white" size="30">
               mdi-magnify-plus-outline
             </v-icon>
-          </div>
+          </span>
         </button>
       </v-col>
     </v-row>
