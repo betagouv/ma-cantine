@@ -129,10 +129,7 @@ export default {
           this.$refs.form.reset()
           window.scrollTo(0, 0)
         })
-        .catch((e) => {
-          console.log(e)
-          this.$store.dispatch("notifyServerError", e)
-        })
+        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
   },
 }
