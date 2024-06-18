@@ -57,6 +57,9 @@ export default {
     value() {
       return this.$refs["textarea"].value
     },
+    reset() {
+      return this.$refs["textarea"].reset
+    },
     optional() {
       return !validators._includesRequiredValidator(this.$attrs.rules)
     },
