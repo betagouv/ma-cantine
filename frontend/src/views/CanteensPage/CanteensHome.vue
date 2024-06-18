@@ -55,43 +55,21 @@
               </template>
               <template v-slot:content="{ item }">
                 <div v-if="item.id === 'territory'">
-                  <label
-                    for="select-region"
-                    :class="{
-                      'active-filter-label': !!filters.region.value,
-                    }"
-                  >
-                    Région
-                  </label>
-                  <DsfrAutocomplete
+                  <LocationSelect
+                    locationType="region"
                     v-model="filters.region.value"
-                    :items="regions"
-                    clearable
-                    hide-details
-                    id="select-region"
-                    placeholder="Toutes les régions"
-                    class="mt-1 mb-4"
-                    auto-select-first
-                    :filter="locationFilter"
+                    :labelClasses="{ 'active-filter-label': !!filters.region.value }"
+                    class="mb-4"
+                    :selectableOptions="selectableRegions"
+                    :unselectableOptionsHeader="unselectableRegionsHeader"
                   />
-                  <label
-                    for="select-department"
-                    :class="{
-                      'active-filter-label': !!filters.department.value,
-                    }"
-                  >
-                    Département
-                  </label>
-                  <DsfrAutocomplete
+                  <LocationSelect
+                    locationType="department"
                     v-model="filters.department.value"
-                    :items="departments"
-                    clearable
-                    hide-details
-                    id="select-department"
-                    placeholder="Tous les départements"
-                    class="mt-1 mb-4"
-                    auto-select-first
-                    :filter="locationFilter"
+                    :labelClasses="{ 'active-filter-label': !!filters.department.value }"
+                    class="mb-4"
+                    :selectableOptions="selectableDepartments"
+                    :unselectableOptionsHeader="unselectableDepartmentsHeader"
                   />
                   <label
                     for="select-commune"
@@ -341,14 +319,13 @@
 import PublishedCanteenCard from "./PublishedCanteenCard"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
-import { getObjectDiff, normaliseText, sectorsSelectList } from "@/utils"
+import { getObjectDiff, sectorsSelectList } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
 import badges from "@/badges"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrAccordion from "@/components/DsfrAccordion"
 import DsfrTextField from "@/components/DsfrTextField"
-import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrRadio from "@/components/DsfrRadio"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrNativeSelect from "@/components/DsfrNativeSelect"
@@ -359,6 +336,7 @@ import CityField from "@/views/CanteenEditor/CityField"
 import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrEmail from "@/components/DsfrEmail"
 import DsfrFullName from "@/components/DsfrFullName"
+import LocationSelect from "@/components/LocationSelect"
 
 const DEFAULT_ORDER = "creation"
 
@@ -368,7 +346,6 @@ export default {
     BreadcrumbsNav,
     DsfrAccordion,
     DsfrTextField,
-    DsfrAutocomplete,
     DsfrRadio,
     DsfrSelect,
     DsfrNativeSelect,
@@ -379,6 +356,7 @@ export default {
     DsfrTagGroup,
     DsfrEmail,
     DsfrFullName,
+    LocationSelect,
   },
   data() {
     const sectors = this.$store.state.sectors
@@ -531,6 +509,8 @@ export default {
         })[0], // for now only the appro measure is available as a filter
       ],
       location: undefined,
+      selectableDepartments: undefined,
+      selectableRegions: undefined,
     }
   },
   computed: {
@@ -607,6 +587,18 @@ export default {
     locationDisplay() {
       return this.location?.city
     },
+    unselectableDepartmentsHeader() {
+      const locationsWord = "départements"
+      return this.hasActiveFilter || this.searchTerm
+        ? `Ces ${locationsWord} ne contiennent pas d'établissements correspondant à votre recherche :`
+        : `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
+    },
+    unselectableRegionsHeader() {
+      const locationsWord = "régions"
+      return this.hasActiveFilter || this.searchTerm
+        ? `Ces ${locationsWord} ne contiennent pas d'établissements correspondant à votre recherche :`
+        : `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
+    },
   },
   methods: {
     fetchCurrentPage() {
@@ -632,8 +624,8 @@ export default {
         .then((response) => {
           this.publishedCanteenCount = response.count
           this.visibleCanteens = response.results
-          this.setDepartments(response.departments)
-          this.setRegions(response.regions)
+          this.selectableDepartments = response.departments
+          this.selectableRegions = response.regions
           this.setSectors(response.sectors)
           this.setManagementTypes(response.managementTypes)
           this.setProductionTypes(response.productionTypes)
@@ -737,44 +729,6 @@ export default {
           window.scrollTo(0, 0)
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
-    },
-    setLocations(enabledLocationIds, jsonLocations, locationKeyWord, locationsWord) {
-      const enabledLocations = jsonLocations
-        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) > -1)
-        .map((x) => ({
-          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
-          value: x[`${locationKeyWord}Code`],
-        }))
-      const headerText =
-        this.hasActiveFilter || this.searchTerm
-          ? `Ces ${locationsWord} ne contiennent pas d'établissements correspondant à votre recherche :`
-          : `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
-      const header = { header: headerText }
-
-      const divider = { divider: true }
-
-      const disabledLocations = jsonLocations
-        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) === -1)
-        .map((x) => ({
-          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
-          value: x[`${locationKeyWord}Code`],
-          disabled: true,
-        }))
-
-      return [...enabledLocations, divider, header, ...disabledLocations]
-    },
-    setDepartments(enabledDepartmentIds) {
-      this.departments = this.setLocations(enabledDepartmentIds, jsonDepartments, "department", "départements")
-    },
-    setRegions(enabledRegionIds) {
-      this.regions = this.setLocations(enabledRegionIds, jsonRegions, "region", "régions")
-    },
-    locationFilter(item, queryText, itemText) {
-      return (
-        Object.prototype.hasOwnProperty.call(item, "divider") ||
-        Object.prototype.hasOwnProperty.call(item, "header") ||
-        normaliseText(itemText).indexOf(normaliseText(queryText)) > -1
-      )
     },
     setSectors(enabledSectorIds) {
       this.sectors = sectorsSelectList(this.$store.state.sectors).map((x) => {
