@@ -7,6 +7,7 @@
     :color="color"
     close-label="Fermer"
     close-icon="$close-line"
+    :small="small"
   >
     {{ text }}
   </v-chip>
@@ -27,6 +28,10 @@ export default {
     color: {
       type: String,
       default: "primary",
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

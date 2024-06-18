@@ -6,7 +6,7 @@
   >
     <v-card-title class="d-flex flex-column-reverse align-start">
       <component :is="hLevel" class="text-h6 font-weight-bold">{{ post.title }}</component>
-      <DsfrTagGroup v-if="tags.length" :tags="tags" :closeable="false" />
+      <DsfrTagGroup v-if="tags.length" :tags="tags" :closeable="false" :small="true" />
     </v-card-title>
     <v-card-subtitle class="pt-1">
       <p class="mb-0">
