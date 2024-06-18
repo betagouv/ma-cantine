@@ -154,7 +154,7 @@ export default {
       type: Object,
       required: true,
     },
-    approDiagnostics: Array,
+    diagnostics: Array,
     editable: Boolean,
   },
   components: {
@@ -169,7 +169,7 @@ export default {
   },
   data() {
     return {
-      approData: this.approDiagnostics,
+      approData: this.diagnostics,
       redactedYears: this.canteen.redactedApproYears || [],
       tabs: [],
       tab: undefined,
