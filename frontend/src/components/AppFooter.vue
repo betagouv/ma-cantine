@@ -10,7 +10,6 @@
         <v-col cols="12" sm="3" md="2" class="d-flex align-center">
           <img
             src="/static/images/Marianne.png"
-            contain
             alt="Ministère de l'Agriculture et la Souveraineté Alimentaire - Liberté Égalité Fraternité"
           />
         </v-col>
