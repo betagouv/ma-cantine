@@ -6,6 +6,7 @@
           <img
             :src="canteen.leadImage ? canteen.leadImage.image : '/static/images/canteen-default-image.jpg'"
             class="lead-image"
+            alt=""
           />
         </v-col>
         <v-col class="pa-8 d-flex flex-column justify-space-between">
