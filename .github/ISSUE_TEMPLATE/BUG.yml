@@ -3,7 +3,7 @@ description: Soumettre un bug
 title: "[Bug]: "
 labels: ["bug", "triage"]
 projects: []
-assignees:
+assignees: []
 body:
   - type: markdown
     attributes:
@@ -21,10 +21,10 @@ body:
     attributes:
       label: C'est de quel prio ?
       options:
-        - Nice to have
-        - Gênant (sprint prochain si on peut)
-        - Bloquant, pas urgent (sprint prochain idéalement)
-        - Bloquant, urgent (pour hier, idéalement)
+        - "Nice to have"
+        - "Gênant (sprint prochain si on peut)"
+        - "Bloquant, pas urgent (sprint prochain idéalement)"
+        - "Bloquant, urgent (pour hier, idéalement)"
   - type: input
     id: url
     attributes:
