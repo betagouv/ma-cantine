@@ -133,7 +133,7 @@ export default {
   height: 100%;
 }
 .canteen-card img.lead-image {
-  opacity: 50%;
+  opacity: 0.5;
   max-height: 100%;
   max-width: 100%;
   height: 100%;
@@ -143,7 +143,7 @@ export default {
 }
 .canteen-card:hover img.lead-image,
 .canteen-card:focus-within img.lead-image {
-  opacity: 100%;
+  opacity: 1;
 }
 .card-image-wrap {
   position: relative;
