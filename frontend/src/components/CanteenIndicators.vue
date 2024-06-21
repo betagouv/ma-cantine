@@ -1,24 +1,31 @@
 <template>
-  <div>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="hasSatelliteCanteens">
-      <v-icon small>$community-fill</v-icon>
-      {{ canteen.satelliteCanteensCount }} satellites
-    </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="hasDailyMealCount">
-      <span class="mx-1" v-if="singleLine && hasSatelliteCanteens">/</span>
-      <v-icon small aria-hidden="false" role="img" aria-label="Repas">$restaurant-fill</v-icon>
-      <!-- eslint-disable-next-line prettier/prettier-->
-      {{ canteen.dailyMealCount }} par jour<span v-if="canteen.productionType === 'site_cooked_elsewhere'">, livrés</span>
-    </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="canteen.city">
-      <span class="mx-1" v-if="singleLine && (hasSatelliteCanteens || hasDailyMealCount)">/</span>
-      <v-icon small>$compass-3-fill</v-icon>
+  <div
+    :class="{
+      'grey--text text--darken-2': true,
+      'd-flex flex-wrap': singleLine,
+      'fr-text': !dense,
+      'fr-text-xs': dense,
+    }"
+  >
+    <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="canteen.city">
+      <v-icon :small="!dense" :x-small="dense" class="mr-1">$map-pin-2-line</v-icon>
       {{ canteen.city }}
     </p>
-    <p :class="{ 'my-0': true, inline: singleLine }" v-if="businessSegments">
-      <span class="mx-1" v-if="singleLine && (canteen.dailyMealCount || canteen.city)">/</span>
-      <v-icon small>$building-fill</v-icon>
+    <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="hasDailyMealCount">
+      <v-icon :small="!dense" :x-small="dense" class="mr-1" aria-hidden="false" role="img">$team-line</v-icon>
+      {{ canteen.dailyMealCount }} couverts
+    </p>
+    <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="satelliteCount">
+      <v-icon :small="!dense" :x-small="dense" class="mr-1">$restaurant-line</v-icon>
+      {{ satelliteCount }} {{ satelliteCount === 1 ? "satellite" : "satellites" }}
+    </p>
+    <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="businessSegments">
+      <v-icon :small="!dense" :x-small="dense" class="mr-1">$building-line</v-icon>
       {{ businessSegments }}
+    </p>
+    <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="managementType">
+      <v-icon :small="!dense" :x-small="dense" class="mr-1">$group-line</v-icon>
+      Gestion {{ managementType.toLowerCase() }}
     </p>
   </div>
 </template>
@@ -35,6 +42,10 @@ export default {
       required: true,
     },
     singleLine: {
+      type: Boolean,
+      default: false,
+    },
+    dense: {
       type: Boolean,
       default: false,
     },
@@ -60,14 +71,14 @@ export default {
       const sectors = this.$store.state.sectors
       return this.canteen.sectors.map((sectorId) => sectors.find((s) => s.id === sectorId))
     },
-    hasSatelliteCanteens() {
-      return (
-        this.canteen.satelliteCanteensCount &&
-        (this.canteen.productionType === "central" || this.canteen.productionType === "central_serving")
-      )
+    satelliteCount() {
+      return this.canteen.isCentralCuisine ? this.canteen.satelliteCanteensCount : undefined
     },
     hasDailyMealCount() {
       return this.canteen.dailyMealCount && this.canteen.productionType !== "central"
+    },
+    managementType() {
+      return Constants.ManagementTypes.find((type) => type.value === this.canteen.managementType)?.text
     },
   },
 }

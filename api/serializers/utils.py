@@ -5,18 +5,18 @@ def appro_to_percentages(representation, instance, remove_values=True):
     if meat_total:
         field = "value_meat_poultry_egalim_ht"
         value = representation.get(field)
-        if value:
+        if value is not None:
             representation[f"percentage_{field}"] = value / meat_total
         field = "value_meat_poultry_france_ht"
         value = representation.get(field)
-        if value:
+        if value is not None:
             representation[f"percentage_{field}"] = value / meat_total
 
     fish_total = representation.get("value_fish_ht")
     if fish_total:
         field = "value_fish_egalim_ht"
         value = representation.get(field)
-        if value:
+        if value is not None:
             representation[f"percentage_{field}"] = value / fish_total
 
     appro_field = (

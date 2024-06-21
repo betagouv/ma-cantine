@@ -53,7 +53,7 @@
         :patName="showPatData ? patName : null"
       />
     </div>
-    <v-btn x-large color="primary" @click="submit">
+    <v-btn x-large color="primary" @click="submit" id="post-preview-button">
       Générer mon affiche
     </v-btn>
   </div>
@@ -154,7 +154,8 @@ export default {
   min-height: 296mm;
 }
 @media (max-width: 210mm) {
-  #poster-preview {
+  #poster-preview,
+  #post-preview-button {
     display: none;
   }
 }

@@ -199,19 +199,12 @@ input[type="checkbox"]#id_cgu_approved {
 }
 
 .register-top-text {
-  margin-bottom: 30px;
-  margin-top: 0;
   text-align: left;
   line-height: 24px;
 }
 
 .register-top-text > p {
   font-size: 15px;
-}
-
-label[for="id_is_dev"] {
-  font-size: 15px;
-  margin-top: 15px;
 }
 
 #id_is_dev {
@@ -226,7 +219,7 @@ input.cantine-number-input {
 }
 
 .cgu-right-column > div {
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
 @media (max-width: 1005px) {

@@ -35,12 +35,12 @@ class Message(models.Model):
         if self.status == Message.Status.SENT:
             logger.exception(f"Attempt to send an already sent message: {self.id}")
             raise Exception(f"Message already sent on {self.sent_date}")
-        recipients = [user.email for user in self.destination_canteen.managers.all()]
+        recipients = self.recipients
         recipients.append(settings.CONTACT_EMAIL)
         reply_to = [self.sender_email]
 
         context = {
-            "canteen": self.destination_canteen.name,
+            "canteen": self.canteen_name,
             "from": self.sender_email,
             "name": self.sender_name or "Une personne",
             "message": self.body,
@@ -48,7 +48,7 @@ class Message(models.Model):
 
         try:
             send_mail(
-                subject=f"Un message pour {self.destination_canteen.name}",
+                subject=f"Un message pour {self.canteen_name}",
                 to=recipients,
                 reply_to=reply_to,
                 template="contact_canteen",
@@ -68,4 +68,12 @@ class Message(models.Model):
         self.save()
 
     def __str__(self):
-        return f"Message envoyé de {self.sender_email} à {self.destination_canteen.name}"
+        return f"Message envoyé de {self.sender_email} à {self.canteen_name}"
+
+    @property
+    def canteen_name(self):
+        return self.destination_canteen.name if self.destination_canteen else "⚠️ Cantine inconnue"
+
+    @property
+    def recipients(self):
+        return [user.email for user in self.destination_canteen.managers.all()] if self.destination_canteen else []

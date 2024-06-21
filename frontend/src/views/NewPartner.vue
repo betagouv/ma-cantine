@@ -123,7 +123,7 @@
           <DsfrEmail v-model="partner.contactEmail" />
         </v-col>
         <v-col cols="12" sm="6">
-          <DsfrTextField v-model="partner.contactName" label="Prénom et nom" />
+          <DsfrFullName v-model="partner.contactName" />
         </v-col>
         <v-col cols="12" sm="6">
           <DsfrPhoneNumber v-model="partner.contactPhoneNumber" />
@@ -167,6 +167,7 @@ import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrRadio from "@/components/DsfrRadio"
 import DsfrEmail from "@/components/DsfrEmail"
+import DsfrFullName from "@/components/DsfrFullName"
 import DsfrPhoneNumber from "@/components/DsfrPhoneNumber"
 import { toBase64, departmentItems } from "@/utils"
 
@@ -179,6 +180,7 @@ export default {
     DsfrSelect,
     DsfrRadio,
     DsfrEmail,
+    DsfrFullName,
     DsfrPhoneNumber,
     PageSatisfaction,
   },

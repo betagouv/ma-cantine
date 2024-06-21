@@ -50,6 +50,7 @@ export default new Vuex.Store({
     upcomingCommunityEvents: [],
     videoTutorials: [],
     partnerTypes: [],
+    lineMinistries: [],
 
     notifications: [],
 
@@ -141,6 +142,9 @@ export default new Vuex.Store({
     },
     SET_PARTNER_TYPES(state, types) {
       state.partnerTypes = types
+    },
+    SET_LINE_MINISTRIES(state, ministries) {
+      state.lineMinistries = ministries.map((m) => ({ value: m.value, text: m.name }))
     },
   },
 
@@ -234,6 +238,7 @@ export default new Vuex.Store({
           context.commit("SET_UPCOMING_COMMUNITY_EVENTS", response.communityEvents)
           context.commit("SET_VIDEO_TUTORIALS", response.videoTutorials)
           context.commit("SET_USER_CANTEEN_PREVIEWS", response.canteenPreviews)
+          context.commit("SET_LINE_MINISTRIES", response.lineMinistries)
 
           context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)

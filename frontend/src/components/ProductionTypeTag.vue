@@ -1,16 +1,8 @@
 <template>
-  <div v-if="canteen.isCentralCuisine || isSatellite">
-    <div class="tag px-2">
-      <p v-if="canteen.isCentralCuisine" class="mb-0 fr-text-xs">
-        <v-icon class="mt-n1 grey--text text--darken-4" small>$community-fill</v-icon>
-        Cuisine centrale
-      </p>
-      <p v-else-if="isSatellite" class="mb-0 fr-text-xs">
-        <v-icon class="mt-n1 grey--text text--darken-4" small>$restaurant-fill</v-icon>
-        Cantine satellite
-      </p>
-    </div>
-  </div>
+  <p v-if="isCentralKitchen || isSatellite" :class="`tag fr-text-xs mb-0 ${position}`">
+    <v-icon x-small>{{ isCentralKitchen ? "$community-fill" : "$restaurant-fill" }}</v-icon>
+    {{ isCentralKitchen ? "Cuisine centrale" : "Cantine satellite" }}
+  </p>
 </template>
 
 <script>
@@ -21,11 +13,17 @@ export default {
       type: Object,
       required: true,
     },
+    position: {
+      type: String,
+      default: "",
+    },
   },
   computed: {
+    isCentralKitchen() {
+      return this.canteen.isCentralCuisine
+    },
     isSatellite() {
-      const productionType = this.canteen?.productionType
-      return productionType === "site_cooked_elsewhere"
+      return this.canteen.isSatellite
     },
   },
 }
@@ -33,31 +31,22 @@ export default {
 
 <style scoped>
 .tag {
-  --text-spacing: 0;
-  --title-spacing: 0;
-  --underline-img: none;
-  /* --hover-tint: var(--hover); */
-  --hover-tint: #f6f6f6;
-  --idle: transparent;
-  /* --hover: var(--background-contrast-grey-hover);
-  --active: var(--background-contrast-grey-active); */
-  --hover: #d2d2d2;
-  --active: #c1c1c1;
-  align-items: center;
-  background-color: #eee;
-  /* background-color: var(--background-contrast-grey); */
-  border-radius: 1rem;
-  color: #161616;
-  /* color: var(--text-label-grey); */
-  display: inline-flex;
-  flex-direction: row;
-  font-size: 0.875rem;
+  display: flex;
+  padding: 2px 8px;
   justify-content: center;
-  line-height: 1.5rem;
-  min-height: 2rem;
-  min-width: 2.25rem;
-  padding: 0.25rem 0.75rem;
-  width: -moz-fit-content;
+  align-items: center;
+  gap: 2px;
+  border-radius: 12px;
+  background-color: #eee;
+  color: #161616;
   width: fit-content;
+}
+.tag .v-icon {
+  color: #161616;
+}
+.tag.top-left {
+  position: absolute;
+  left: 12px;
+  top: 12px;
 }
 </style>

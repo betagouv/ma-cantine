@@ -153,16 +153,41 @@ export default {
   background-color: inherit;
 }
 
+// thanks to https://codesandbox.io/p/sandbox/awesome-clickable-card-8tgtwt?file=%2Fstyle.css%3A16%2C1-19%2C2
+// makes link titles much less verbose for improved accessible experience
+.v-card.dsfr.expanded-link {
+  position: relative;
+  isolation: isolate;
+}
+
+.v-card.dsfr.expanded-link a {
+  text-decoration: none;
+}
+
+.v-card.dsfr.expanded-link a::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+
+  inset: 0;
+}
+.v-card.dsfr.expanded-link button,
+.v-card.dsfr.expanded-link a {
+  z-index: 2;
+}
+
 a:focus,
 button:focus,
 .v-input--checkbox:focus-within,
 .v-radio:focus-within,
 .v-card:focus,
 .drag-and-drop:focus-within,
-div[role="tab"]:focus {
+div[role="tab"]:focus,
+.outline-focus-within:focus-within {
   outline: rgb(0, 0, 145) !important;
   outline-width: 1px !important;
   outline-style: auto !important;
+  outline-offset: 2px;
 }
 
 .v-btn.primary:hover {
@@ -233,7 +258,8 @@ div[role="tab"]:focus {
 fieldset {
   border: none;
 }
-ul.no-bullets {
+ul.no-bullets,
+ol.no-bullets {
   padding-left: 0;
   list-style-type: none;
   /* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */

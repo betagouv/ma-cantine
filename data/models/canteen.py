@@ -134,6 +134,14 @@ class Canteen(SoftDeletionModel):
         )
         AGRICULTURE = "agriculture", "Ministère en charge de l'Agriculture et de l'Alimentation"
         TRANSFORMATION = "transformation", "Ministère de la Transformation et de la Fonction Publiques"
+        ADMINISTRATION_TERRITORIALE = (
+            "administration_territoriale",
+            "Préfecture - Administration Territoriale de l'État (ATE)",
+        )
+        AUTORITES_INDEPENDANTES = (
+            "autorites_independantes",
+            "Présidence de la république - Autorités indépendantes (AAI, API)",
+        )
         AUTRE = "autre", "Autre"
 
     import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
@@ -451,6 +459,10 @@ class Canteen(SoftDeletionModel):
         scolaire_sectors = Sector.objects.filter(category="education")
         if scolaire_sectors.count() and self.sectors.intersection(scolaire_sectors).exists():
             return True
+
+    @property
+    def lead_image(self):
+        return self.images.first()
 
 
 class CanteenImage(models.Model):

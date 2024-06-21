@@ -1,45 +1,9 @@
 <template>
   <div class="text-left fr-text">
-    <BreadcrumbsNav />
-    <v-card elevation="0" class="text-center text-md-left mb-6 mt-3">
-      <v-row v-if="$vuetify.breakpoint.smAndDown">
-        <v-col cols="12">
-          <v-img max-height="90px" contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="2" v-if="$vuetify.breakpoint.mdAndUp">
-          <div class="d-flex fill-height align-center">
-            <v-img contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
-          </div>
-        </v-col>
-        <v-col cols="12" md="10">
-          <v-spacer></v-spacer>
-          <v-card-title class="pr-0">
-            <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
-              Nos cantines publiées
-            </h1>
-          </v-card-title>
-          <v-card-subtitle>
-            <p class="mb-1">
-              Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus
-              durable.
-            </p>
-            <p>
-              Consulter
-              <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
-                les statistiques de votre collectivité (régions et départements)
-              </router-link>
-            </p>
-          </v-card-subtitle>
-
-          <v-spacer></v-spacer>
-        </v-col>
-      </v-row>
-    </v-card>
-
-    <div id="search-top">
-      <v-row class="my-2" align="end">
+    <BreadcrumbsNav :links="[{ to: { name: 'CanteenSearchLanding' } }]" />
+    <div>
+      <h1 class="fr-h1 hidden">Les cantines</h1>
+      <v-row id="search-and-ordering" align="end">
         <v-col cols="12" md="4">
           <form role="search" onsubmit="return false">
             <h2 class="fr-h5 mb-2">Rechercher</h2>
@@ -68,15 +32,18 @@
           </v-btn>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="12" md="4">
+      <v-row
+        id="filters-and-results"
+        :class="{ 'pt-4': true, 'min-height': !visibleCanteens || visibleCanteens.length === limit }"
+      >
+        <v-col id="filters" cols="12" md="4">
           <h3 class="fr-h6 mb-0">
             Filtrer
           </h3>
           <v-form class="mt-4">
             <DsfrAccordion
               :items="[
-                { id: 'territory', icon: '$road-map-fill', text: 'Par térritoire', titleLevel: 'h4' },
+                { id: 'territory', icon: '$road-map-fill', text: 'Par territoire', titleLevel: 'h4' },
                 { id: 'characteristic', icon: '$community-fill', text: 'Par caractéristique', titleLevel: 'h4' },
               ]"
             >
@@ -88,43 +55,21 @@
               </template>
               <template v-slot:content="{ item }">
                 <div v-if="item.id === 'territory'">
-                  <label
-                    for="select-region"
-                    :class="{
-                      'active-filter-label': !!filters.region.value,
-                    }"
-                  >
-                    Région
-                  </label>
-                  <DsfrAutocomplete
+                  <LocationSelect
+                    locationType="region"
                     v-model="filters.region.value"
-                    :items="regions"
-                    clearable
-                    hide-details
-                    id="select-region"
-                    placeholder="Toutes les régions"
-                    class="mt-1 mb-4"
-                    auto-select-first
-                    :filter="locationFilter"
+                    :labelClasses="{ 'active-filter-label': !!filters.region.value }"
+                    class="mb-4"
+                    :selectableOptions="selectableRegions"
+                    :unselectableOptionsHeader="unselectableRegionsHeader"
                   />
-                  <label
-                    for="select-department"
-                    :class="{
-                      'active-filter-label': !!filters.department.value,
-                    }"
-                  >
-                    Département
-                  </label>
-                  <DsfrAutocomplete
+                  <LocationSelect
+                    locationType="department"
                     v-model="filters.department.value"
-                    :items="departments"
-                    clearable
-                    hide-details
-                    id="select-department"
-                    placeholder="Tous les départements"
-                    class="mt-1 mb-4"
-                    auto-select-first
-                    :filter="locationFilter"
+                    :labelClasses="{ 'active-filter-label': !!filters.department.value }"
+                    class="mb-4"
+                    :selectableOptions="selectableDepartments"
+                    :unselectableOptionsHeader="unselectableDepartmentsHeader"
                   />
                   <label
                     for="select-commune"
@@ -277,11 +222,9 @@
             </DsfrAccordion>
           </v-form>
         </v-col>
-        <v-col cols="12" md="8">
-          <div v-if="loading || pageLoading" class="pa-12">
-            <v-progress-circular indeterminate></v-progress-circular>
-          </div>
-          <div v-else>
+        <v-col id="results" cols="12" md="8" class="d-flex flex-column">
+          <v-progress-circular v-if="loading" indeterminate class="mt-8 align-self-center" />
+          <div v-else class="d-flex flex-column" style="height: 100%;">
             <div class="d-flex">
               <h2 class="fr-h6 mb-0" aria-live="polite" aria-atomic="true">
                 {{ publishedCanteenCount }} {{ publishedCanteenCount === 1 ? "résultat" : "résultats" }}
@@ -313,15 +256,27 @@
                 Désactiver tous les filtres
               </v-btn>
             </div>
-            <PublishedCanteenCard v-for="canteen in visibleCanteens" :key="canteen.id" :canteen="canteen" />
+            <v-progress-circular v-else-if="pageLoading" indeterminate class="mt-8 align-self-center" />
+            <div v-else>
+              <v-spacer />
+              <PublishedCanteenCard
+                v-for="canteen in visibleCanteens"
+                :key="canteen.id"
+                :canteen="canteen"
+                class="my-4"
+              />
+              <v-spacer />
+            </div>
+            <v-spacer />
+            <DsfrPagination
+              class="my-6"
+              v-model="page"
+              :length="Math.ceil(publishedCanteenCount / limit)"
+              :total-visible="5"
+              v-if="publishedCanteenCount"
+              @input="pageChangedManually"
+            />
           </div>
-          <DsfrPagination
-            class="my-6"
-            v-model="page"
-            :length="Math.ceil(publishedCanteenCount / limit)"
-            :total-visible="5"
-            v-if="!pageLoading && publishedCanteenCount"
-          />
         </v-col>
       </v-row>
     </div>
@@ -345,7 +300,7 @@
         </p>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
           <DsfrEmail v-model="fromEmail" />
-          <DsfrTextField v-model="name" label="Prénom et nom" />
+          <DsfrFullName v-model="name" />
           <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
         </v-form>
         <v-row class="pa-2">
@@ -364,14 +319,13 @@
 import PublishedCanteenCard from "./PublishedCanteenCard"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
-import { getObjectDiff, normaliseText, sectorsSelectList } from "@/utils"
+import { getObjectDiff, sectorsSelectList } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
 import badges from "@/badges"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrAccordion from "@/components/DsfrAccordion"
 import DsfrTextField from "@/components/DsfrTextField"
-import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrRadio from "@/components/DsfrRadio"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrNativeSelect from "@/components/DsfrNativeSelect"
@@ -381,6 +335,8 @@ import DsfrSearchField from "@/components/DsfrSearchField"
 import CityField from "@/views/CanteenEditor/CityField"
 import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrEmail from "@/components/DsfrEmail"
+import DsfrFullName from "@/components/DsfrFullName"
+import LocationSelect from "@/components/LocationSelect"
 
 const DEFAULT_ORDER = "creation"
 
@@ -390,7 +346,6 @@ export default {
     BreadcrumbsNav,
     DsfrAccordion,
     DsfrTextField,
-    DsfrAutocomplete,
     DsfrRadio,
     DsfrSelect,
     DsfrNativeSelect,
@@ -400,6 +355,8 @@ export default {
     CityField,
     DsfrTagGroup,
     DsfrEmail,
+    DsfrFullName,
+    LocationSelect,
   },
   data() {
     const sectors = this.$store.state.sectors
@@ -552,6 +509,8 @@ export default {
         })[0], // for now only the appro measure is available as a filter
       ],
       location: undefined,
+      selectableDepartments: undefined,
+      selectableRegions: undefined,
     }
   },
   computed: {
@@ -628,6 +587,18 @@ export default {
     locationDisplay() {
       return this.location?.city
     },
+    unselectableDepartmentsHeader() {
+      const locationsWord = "départements"
+      return this.hasActiveFilter || this.searchTerm
+        ? `Ces ${locationsWord} ne contiennent pas d'établissements correspondant à votre recherche :`
+        : `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
+    },
+    unselectableRegionsHeader() {
+      const locationsWord = "régions"
+      return this.hasActiveFilter || this.searchTerm
+        ? `Ces ${locationsWord} ne contiennent pas d'établissements correspondant à votre recherche :`
+        : `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
+    },
   },
   methods: {
     fetchCurrentPage() {
@@ -653,8 +624,8 @@ export default {
         .then((response) => {
           this.publishedCanteenCount = response.count
           this.visibleCanteens = response.results
-          this.setDepartments(response.departments)
-          this.setRegions(response.regions)
+          this.selectableDepartments = response.departments
+          this.selectableRegions = response.regions
           this.setSectors(response.sectors)
           this.setManagementTypes(response.managementTypes)
           this.setProductionTypes(response.productionTypes)
@@ -688,7 +659,6 @@ export default {
       const override = this.page ? { page: this.page } : { page: 1 }
       const query = Object.assign(this.query, override)
       this.updateRouter(query)
-      document.getElementById("search-top").scrollIntoView()
     },
     applyFilter() {
       // urls are always strings. Some query params are not strings.
@@ -760,44 +730,6 @@ export default {
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
-    setLocations(enabledLocationIds, jsonLocations, locationKeyWord, locationsWord) {
-      const enabledLocations = jsonLocations
-        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) > -1)
-        .map((x) => ({
-          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
-          value: x[`${locationKeyWord}Code`],
-        }))
-      const headerText =
-        this.hasActiveFilter || this.searchTerm
-          ? `Ces ${locationsWord} ne contiennent pas d'établissements correspondant à votre recherche :`
-          : `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
-      const header = { header: headerText }
-
-      const divider = { divider: true }
-
-      const disabledLocations = jsonLocations
-        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) === -1)
-        .map((x) => ({
-          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
-          value: x[`${locationKeyWord}Code`],
-          disabled: true,
-        }))
-
-      return [...enabledLocations, divider, header, ...disabledLocations]
-    },
-    setDepartments(enabledDepartmentIds) {
-      this.departments = this.setLocations(enabledDepartmentIds, jsonDepartments, "department", "départements")
-    },
-    setRegions(enabledRegionIds) {
-      this.regions = this.setLocations(enabledRegionIds, jsonRegions, "region", "régions")
-    },
-    locationFilter(item, queryText, itemText) {
-      return (
-        Object.prototype.hasOwnProperty.call(item, "divider") ||
-        Object.prototype.hasOwnProperty.call(item, "header") ||
-        normaliseText(itemText).indexOf(normaliseText(queryText)) > -1
-      )
-    },
     setSectors(enabledSectorIds) {
       this.sectors = sectorsSelectList(this.$store.state.sectors).map((x) => {
         return x.header
@@ -845,6 +777,10 @@ export default {
     setLocation(location) {
       this.location = location
     },
+    pageChangedManually() {
+      // TODO: make this dependent on window height to avoid jumps for bigger screens
+      document.getElementById("filters-and-results").scrollIntoView({ behavior: "smooth" })
+    },
   },
   watch: {
     filters: {
@@ -889,5 +825,19 @@ div >>> .v-list-item--disabled .theme--light.v-icon {
 }
 #ordering >>> .v-select__selection {
   font-size: 12px;
+}
+/* TODO: fix min height now that we have filter tags to take into account */
+#filters-and-results.min-height {
+  min-height: 1050px;
+}
+h1.hidden {
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+  z-index: -1;
+  user-select: none;
 }
 </style>

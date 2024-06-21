@@ -352,7 +352,7 @@ export default {
       economicModels: Constants.EconomicModels,
       sectorCategory: null,
       chosenSector: null,
-      ministries: Constants.Ministries,
+      ministries: this.$store.state.lineMinistries,
       centralKitchen: null,
     }
   },

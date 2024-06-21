@@ -19,6 +19,7 @@
       </v-chip>
     </v-card-subtitle>
     <v-card-subtitle class="mt-0 pb-0">
+      <ProductionTypeTag :canteen="canteen" position="top-left" />
       <CanteenIndicators :canteen="canteen" />
     </v-card-subtitle>
     <v-spacer></v-spacer>
@@ -31,6 +32,7 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
+import ProductionTypeTag from "@/components/ProductionTypeTag"
 import { lastYear } from "@/utils"
 
 export default {
@@ -43,6 +45,7 @@ export default {
   },
   components: {
     CanteenIndicators,
+    ProductionTypeTag,
   },
   data() {
     return {
@@ -85,8 +88,7 @@ export default {
       )
     },
     canteenImage() {
-      if (!this.canteen.images || this.canteen.images.length === 0) return null
-      return this.canteen.images[0].image
+      return this.canteen.leadImage?.image
     },
     teledeclarationIsActive() {
       return window.ENABLE_TELEDECLARATION

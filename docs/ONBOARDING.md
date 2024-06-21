@@ -23,6 +23,7 @@ Please note that the `staging` and `main` branches are protected and all commits
 - [vitrualenv](https://virtualenv.pypa.io/en/stable/installation.html)
 - [Node et npm](https://nodejs.org/en/download/)
 - [Postgres](https://www.postgresql.org/download/)
+- [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 - [pre-commit](https://pypi.org/project/pre-commit/)
 
 ### Création d'un environnement Python3 virtualenv

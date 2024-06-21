@@ -222,7 +222,7 @@ export const latestCreatedDiagnostic = (diagnostics) => {
 }
 
 export const toPercentage = (value, round = true) => {
-  if (!value) return null
+  if (!value && value !== 0) return null
   return round ? Math.round(value * 100) : value * 100
 }
 

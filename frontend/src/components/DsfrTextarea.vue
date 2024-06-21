@@ -2,7 +2,8 @@
   <div>
     <label :for="inputId" :class="labelClasses" v-if="$attrs.label">
       {{ $attrs.label }}
-      <span v-if="optional" class="fr-hint-text">Optionnel</span>
+      <span v-if="hintText" class="fr-hint-text">{{ hintText }}</span>
+      <span v-else-if="optional" class="fr-hint-text">Optionnel</span>
     </label>
     <slot name="label"></slot>
     <v-textarea
@@ -41,6 +42,10 @@ export default {
       required: false,
       default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
     },
+    hintText: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
@@ -51,6 +56,9 @@ export default {
   computed: {
     value() {
       return this.$refs["textarea"].value
+    },
+    reset() {
+      return this.$refs["textarea"].reset
     },
     optional() {
       return !validators._includesRequiredValidator(this.$attrs.rules)

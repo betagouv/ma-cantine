@@ -1,7 +1,10 @@
 <template>
   <div class="text-left">
     <div v-if="canteen" id="canteen-dashboard">
-      <BreadcrumbsNav :links="[{ to: { name: 'CanteensHome' } }]" :title="canteen.name" />
+      <BreadcrumbsNav
+        :links="[{ to: { name: 'CanteenSearchLanding' } }, { to: { name: 'CanteensHome' } }]"
+        :title="canteen.name"
+      />
       <ImageGallery :images="canteen.images.slice(0, imageLimit)" />
       <v-card elevation="0" class="pa-0 mb-8 text-left">
         <v-row class="align-center">

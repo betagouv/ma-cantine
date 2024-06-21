@@ -13,7 +13,7 @@
           <DsfrEmail v-model="fromEmail" />
         </v-col>
         <v-col class="py-0">
-          <DsfrTextField v-model="name" label="Prénom et nom" />
+          <DsfrFullName v-model="name" />
         </v-col>
       </v-row>
       <DsfrTextarea v-model="message" label="Message" />
@@ -35,13 +35,13 @@
 
 <script>
 import validators from "@/validators"
-import DsfrTextField from "@/components/DsfrTextField"
+import DsfrFullName from "@/components/DsfrFullName"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrEmail from "@/components/DsfrEmail"
 
 export default {
   name: "HelpForm",
-  components: { DsfrTextField, DsfrTextarea, DsfrEmail },
+  components: { DsfrFullName, DsfrTextarea, DsfrEmail },
   data() {
     const user = this.$store.state.loggedUser
     return {

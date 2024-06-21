@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework.test import APITestCase
 from rest_framework import status
+from data.models import Canteen
 from data.factories import (
     SectorFactory,
     PartnerTypeFactory,
@@ -50,6 +51,9 @@ class TestInitialDataApi(APITestCase):
 
         self.assertIn("canteenPreviews", body)
         self.assertIsNone(body["canteenPreviews"])
+
+        self.assertIn("lineMinistries", body)
+        self.assertEqual(len(body["lineMinistries"]), len(Canteen.Ministries))
 
     @authenticate
     def test_authenticated_logged_initial_data(self):

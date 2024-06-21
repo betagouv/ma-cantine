@@ -63,6 +63,9 @@ export default {
     lazyValue() {
       return this.$refs["text-field"].lazyValue
     },
+    reset() {
+      return this.$refs["text-field"].reset
+    },
     value() {
       return this.$refs["text-field"].value
     },

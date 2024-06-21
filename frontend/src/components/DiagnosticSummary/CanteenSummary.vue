@@ -158,7 +158,7 @@ export default {
     },
     lineMinistry() {
       if (!this.canteen.lineMinistry) return
-      const allMinistries = Constants.Ministries
+      const allMinistries = this.$store.state.lineMinistries
       const ministry = allMinistries.find((m) => m.value === this.canteen.lineMinistry)
       return ministry?.text
     },

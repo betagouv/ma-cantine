@@ -13,8 +13,8 @@
       hide-on-scroll
       role="banner"
     >
-      <v-toolbar-title class="align-self-center">
-        <v-card
+      <v-toolbar-title class="align-self-center outline-focus-within">
+        <router-link
           :to="{ name: 'LandingPage' }"
           class="text-decoration-none d-flex align-center pl-4"
           aria-label="ma cantine (aller à l'accueil) - Ministère de l'Agriculture et de la Souveraineté Alimentaire"
@@ -25,7 +25,7 @@
           <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
             {{ chipInfo.text }}
           </v-chip>
-        </v-card>
+        </router-link>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -261,8 +261,8 @@ export default {
               forElected: true,
             },
             {
-              text: "Nos cantines publiées",
-              to: { name: "CanteensHome" },
+              text: "Trouver une cantine",
+              to: { name: "CanteenSearchLanding" },
             },
             {
               text: "Dans ma collectivité",

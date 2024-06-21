@@ -152,7 +152,6 @@ import DsfrTextField from "@/components/DsfrTextField"
 import DsfrSelect from "@/components/DsfrSelect"
 import SiretCheck from "../SiretCheck"
 import CityField from "../CityField"
-import Constants from "@/constants"
 
 export default {
   name: "AddSatellite",
@@ -164,7 +163,7 @@ export default {
     return {
       formIsValid: true,
       satellite: {},
-      ministries: Constants.Ministries,
+      ministries: this.$store.state.lineMinistries,
     }
   },
   computed: {

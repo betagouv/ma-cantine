@@ -108,6 +108,7 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     badges = BadgesSerializer(read_only=True, source="*")
     appro_diagnostic = PublicApproDiagnosticSerializer(read_only=True, source="latest_published_appro_diagnostic")
+    lead_image = CanteenImageSerializer()
 
     class Meta:
         model = Canteen
@@ -120,11 +121,15 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "sectors",
             "daily_meal_count",
             "production_type",
+            "management_type",
             "satellite_canteens_count",
             "region",
             "department",
             "badges",
             "appro_diagnostic",
+            "lead_image",
+            "is_central_cuisine",
+            "is_satellite",
         )
 
 
@@ -155,6 +160,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "sectors",
             "daily_meal_count",
             "production_type",
+            "management_type",
             "satellite_canteens_count",
             "region",
             "department",
@@ -267,6 +273,7 @@ class FullCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin)
             "central_kitchen",
             "satellites",
             "is_central_cuisine",
+            "is_satellite",
             "modification_date",
             "badges",
         )
@@ -311,6 +318,7 @@ class FullCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin)
             "creation_mtm_campaign",
             "creation_mtm_medium",
             "is_central_cuisine",
+            "is_satellite",
             "modification_date",
             "badges",
         )
@@ -379,7 +387,7 @@ class FullCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin)
 
 
 class CanteenSummarySerializer(serializers.ModelSerializer, PublicationStatusMixin):
-    images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
+    lead_image = CanteenImageSerializer()
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
     publication_status = PublicationStatusMixin.publication_status
@@ -403,9 +411,10 @@ class CanteenSummarySerializer(serializers.ModelSerializer, PublicationStatusMix
             "publication_status",
             "economic_model",
             "is_central_cuisine",
+            "is_satellite",
             "modification_date",
+            "lead_image",
             # the following can still be improved
-            "images",  # can return the first image only
             "diagnostics",
             "central_kitchen_diagnostics",  # can return a TD status instead of diagnostics
         )
