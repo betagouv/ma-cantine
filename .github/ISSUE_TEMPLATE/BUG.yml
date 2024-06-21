@@ -3,7 +3,7 @@ description: Soumettre un bug
 title: "[Bug]: "
 labels: ["bug", "triage"]
 projects: []
-assignees:
+assignees: []
 body:
   - type: markdown
     attributes:
@@ -21,10 +21,10 @@ body:
     attributes:
       label: C'est de quel prio ?
       options:
-        - Nice to have
-        - Gênant (sprint prochain si on peut)
-        - Bloquant, pas urgent (sprint prochain idéalement)
-        - Bloquant, urgent (pour hier, idéalement)
+        - label: Nice to have
+        - label: Gênant (sprint prochain si on peut)
+        - label: Bloquant, pas urgent (sprint prochain idéalement)
+        - label: Bloquant, urgent (pour hier, idéalement)
   - type: input
     id: url
     attributes:
@@ -36,11 +36,11 @@ body:
     attributes:
       label: Quel type d'utilisateur est concerné ?
       options:
-        - Gestionnaire
-        - Équipe
-        - Citoyen
-        - Administration
-        - Autre (à decrire avec le champ en dessous)
+        - label: Gestionnaire
+        - label: Équipe
+        - label: Citoyen
+        - label: Administration
+        - label: Autre (à decrire avec le champ en dessous)
     validations:
       required: true
   - type: textarea
@@ -63,10 +63,10 @@ body:
     attributes:
       label: Tu utilises quel navigateur ?
       options:
-        - Firefox
-        - Chrome
-        - Safari
-        - Microsoft Edge
+        - label: Firefox
+        - label: Chrome
+        - label: Safari
+        - label: Microsoft Edge
     validations:
       required: true
   - type: checkboxes
