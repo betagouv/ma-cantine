@@ -27,7 +27,7 @@
           :diagnostic="approDiagnostic"
           :lastYearDiagnostic="lastYearDiagnostic"
           :canteen="canteen"
-          :year="year"
+          :year="+year"
         />
       </v-col>
       <v-col cols="12" md="8">
