@@ -58,9 +58,10 @@
         <v-row>
           <v-col cols="12" md="6">
             <DsfrSearchField
-              v-model="search"
-              :searchAction="applySearchTerm"
-              :clearAction="clearSearch"
+              v-model="filters.search.provisionalValue"
+              :searchAction="applyProvisionalValue(filters.search)"
+              clearable
+              @clear="clearFilterField(filters.search)"
               placeholder="Rechercher par nom"
               hide-details="auto"
             />
@@ -263,11 +264,11 @@ export default {
       types: [],
       visiblePartners: null,
       partnerCount: null,
-      search: null,
       filters: {
         search: {
           param: "recherche",
           value: null,
+          provisionalValue: null,
           default: null,
         },
         gratuityOption: {
@@ -418,10 +419,10 @@ export default {
         })
     },
     populateParameters() {
-      // TODO: fix bug where search isn't populated
       Object.values(this.filters).forEach((f) => {
         f.value = this.$route.query[f.param]
         if (f.transformToFrontend) f.value = f.transformToFrontend(f.value)
+        if (Object.hasOwn(f, "provisionalValue")) f.provisionalValue = f.value
       })
       this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
       this.fetchCurrentPage()
@@ -484,12 +485,12 @@ export default {
       })
       this.sectorCategories = [...enabledCategories, divider, header, ...disabledCategories]
     },
-    applySearchTerm() {
-      this.filters.search.value = this.search
+    applyProvisionalValue(filterTerm) {
+      return () => (filterTerm.value = filterTerm.provisionalValue)
     },
-    clearSearch() {
-      this.search = this.filters.search.default
-      this.applySearchTerm()
+    clearFilterField(filterTerm) {
+      filterTerm.provisionalValue = filterTerm.default
+      filterTerm.value = filterTerm.provisionalValue
     },
   },
   watch: {

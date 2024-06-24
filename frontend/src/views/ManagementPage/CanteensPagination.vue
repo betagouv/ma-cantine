@@ -10,7 +10,7 @@
               v-model="searchTerm"
               placeholder="Recherche par nom ou SIRET de l'établissement"
               clearable
-              :clearAction="clearSearch"
+              @clear="clearSearch"
               :searchAction="search"
               class="mb-2 flex-grow-1"
             />

@@ -77,7 +77,7 @@
             placeholder="Chercher par produit ou fournisseur"
             hide-details
             clearable
-            :clearAction="clearSearch"
+            @clear="clearSearch"
             :searchAction="search"
           />
         </v-col>

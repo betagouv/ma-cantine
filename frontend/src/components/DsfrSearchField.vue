@@ -6,7 +6,6 @@
     v-bind="$attrs"
     v-on="$listeners"
     @input="(v) => $emit('input', v)"
-    :clearable="clearable"
     @click:clear="clear"
     @keyup.enter="searchAction"
     ref="text-field"
@@ -39,15 +38,8 @@ export default {
       type: Function,
       required: true,
     },
-    clearAction: {
-      type: Function,
-      required: false,
-    },
   },
   computed: {
-    clearable() {
-      return !!this.clearAction
-    },
     lazyValue() {
       return this.$refs["text-field"].lazyValue
     },
@@ -57,10 +49,6 @@ export default {
     reset() {
       return this.$refs["text-field"].reset
     },
-    clear() {
-      const noAction = () => {}
-      return this.clearAction || noAction
-    },
   },
   methods: {
     validate() {
@@ -68,6 +56,9 @@ export default {
     },
     resetValidation() {
       return this.$refs["text-field"].resetValidation()
+    },
+    clear() {
+      this.$emit("clear")
     },
   },
 }
