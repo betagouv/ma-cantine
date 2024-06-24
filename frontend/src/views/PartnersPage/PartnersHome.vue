@@ -418,6 +418,7 @@ export default {
         })
     },
     populateParameters() {
+      // TODO: fix bug where search isn't populated
       Object.values(this.filters).forEach((f) => {
         f.value = this.$route.query[f.param]
         if (f.transformToFrontend) f.value = f.transformToFrontend(f.value)
@@ -437,9 +438,7 @@ export default {
       }
     },
     applyFilter() {
-      console.log("apply filter")
       const changedKeys = Object.keys(getObjectDiff(this.query, this.$route.query))
-      console.log(changedKeys)
       const shouldNavigate = changedKeys.length > 0
       if (shouldNavigate) {
         this.page = 1
