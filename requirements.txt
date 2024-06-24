@@ -84,7 +84,7 @@ packaging==24.1
 pandas==2.2.2
 pathspec==0.12.1
 pillow==10.3.0
-pipdeptree==2.19.1
+pipdeptree==2.23.0
 platformdirs==4.2.2
 pluggy==1.4.0
 pre-commit==3.7.1
