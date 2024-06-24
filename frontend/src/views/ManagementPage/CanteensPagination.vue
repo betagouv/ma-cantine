@@ -11,7 +11,7 @@
               placeholder="Recherche par nom ou SIRET de l'établissement"
               clearable
               @clear="clearSearch"
-              :searchAction="search"
+              @search="search"
               class="mb-2 flex-grow-1"
             />
           </form>

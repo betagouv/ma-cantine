@@ -29,7 +29,7 @@
           hide-details
           clearable
           @clear="clearSearch"
-          :searchAction="search"
+          @search="search"
         />
       </v-col>
 

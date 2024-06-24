@@ -59,7 +59,7 @@
           <v-col cols="12" md="6">
             <DsfrSearchField
               v-model="filters.search.provisionalValue"
-              :searchAction="applyProvisionalValue(filters.search)"
+              @search="applyProvisionalValue(filters.search)"
               clearable
               @clear="clearFilterField(filters.search)"
               placeholder="Rechercher par nom"
@@ -486,7 +486,7 @@ export default {
       this.sectorCategories = [...enabledCategories, divider, header, ...disabledCategories]
     },
     applyProvisionalValue(filterTerm) {
-      return () => (filterTerm.value = filterTerm.provisionalValue)
+      filterTerm.value = filterTerm.provisionalValue
     },
     clearFilterField(filterTerm) {
       filterTerm.provisionalValue = filterTerm.default

@@ -78,7 +78,7 @@
             hide-details
             clearable
             @clear="clearSearch"
-            :searchAction="search"
+            @search="search"
           />
         </v-col>
         <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
