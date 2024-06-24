@@ -56,6 +56,17 @@
     <v-expand-transition>
       <v-sheet class="pa-6 text-left mt-2 ma-0" v-show="showFilters" rounded :outlined="showFilters">
         <v-row>
+          <v-col cols="12" md="6">
+            <DsfrSearchField
+              v-model="search"
+              :searchAction="applySearchTerm"
+              :clearAction="clearSearch"
+              placeholder="Rechercher par nom"
+              hide-details="auto"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
           <v-col cols="12" sm="6" v-if="$vuetify.breakpoint.smAndDown">
             <label
               for="select-category"
@@ -222,6 +233,7 @@
 <script>
 import Constants from "@/constants"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrCombobox from "@/components/DsfrCombobox"
@@ -235,6 +247,7 @@ export default {
   name: "PartnersHome",
   components: {
     BreadcrumbsNav,
+    DsfrSearchField,
     DsfrPagination,
     DsfrSelect,
     DsfrCombobox,
@@ -250,7 +263,13 @@ export default {
       types: [],
       visiblePartners: null,
       partnerCount: null,
+      search: null,
       filters: {
+        search: {
+          param: "recherche",
+          value: null,
+          default: null,
+        },
         gratuityOption: {
           param: "gratuit",
           value: [],
@@ -418,7 +437,9 @@ export default {
       }
     },
     applyFilter() {
+      console.log("apply filter")
       const changedKeys = Object.keys(getObjectDiff(this.query, this.$route.query))
+      console.log(changedKeys)
       const shouldNavigate = changedKeys.length > 0
       if (shouldNavigate) {
         this.page = 1
@@ -463,6 +484,13 @@ export default {
         }
       })
       this.sectorCategories = [...enabledCategories, divider, header, ...disabledCategories]
+    },
+    applySearchTerm() {
+      this.filters.search.value = this.search
+    },
+    clearSearch() {
+      this.search = this.filters.search.default
+      this.applySearchTerm()
     },
   },
   watch: {
