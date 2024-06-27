@@ -13,6 +13,9 @@ import os
 class TestETLAnalysis(TestCase):
 
     def test_extraction_teledeclaration(self):
+        """
+        Only teledeclarations that occurred during teledeclaration campaigns should be extracted
+        """
         canteen = CanteenFactory.create()
         applicant = UserFactory.create()
         with freeze_time("1991-01-14"):  # Faking time to mock creation_date
@@ -44,6 +47,9 @@ class TestETLOpenData(TestCase):
 
     @freeze_time("2023-05-14")  # Faking time to mock creation_date
     def test_extraction_teledeclaration(self, mock):
+        """
+        Only teledeclarations that occurred during one specific teledeclaration campaign should be extracted
+        """
         canteen = CanteenFactory.create()
         applicant = UserFactory.create()
 
