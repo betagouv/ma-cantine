@@ -21,11 +21,11 @@ class TestETLAnalysis(TestCase):
 
         with freeze_time("2023-05-14"):  # Faking time to mock creation_date
             diagnostic_2022 = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
-            _ = Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
+            td_2022 = Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
 
         with freeze_time("2024-02-14"):  # Faking time to mock creation_date
             diagnostic_2023 = DiagnosticFactory.create(canteen=canteen, year=2023, diagnostic_type=None)
-            _ = Teledeclaration.create_from_diagnostic(diagnostic_2023, applicant)
+            td_2023 = Teledeclaration.create_from_diagnostic(diagnostic_2023, applicant)
 
         etl_stats = ETL_ANALYSIS()
 
@@ -35,6 +35,8 @@ class TestETLAnalysis(TestCase):
             2,
             "There should be two teledeclaration. None for 1990 (no campaign). One for 2022 and one for 2023",
         )
+        self.assertEqual(etl_stats.df[etl_stats.df.id == td_2022.id].year[0], 2022)
+        self.assertEqual(etl_stats.df[etl_stats.df.id == td_2023.id].year[0], 2023)
 
 
 @requests_mock.Mocker()
