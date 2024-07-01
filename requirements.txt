@@ -86,7 +86,7 @@ pathspec==0.12.1
 pillow==10.3.0
 pipdeptree==2.23.0
 platformdirs==4.2.2
-pluggy==1.4.0
+pluggy==1.5.0
 pre-commit==3.7.1
 prompt-toolkit==3.0.43
 psycopg2==2.9.9
