@@ -6,4 +6,4 @@ frictionless==5.17.0
 nbformat==5.10.4
 nbclient==0.10.0
 jupyter-cache==1.0.0
-plotly==5.15.0
+plotly==5.22.0
