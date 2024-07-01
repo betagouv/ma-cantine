@@ -66,6 +66,7 @@
               v-model="userCopy.firstName"
               :rules="[validators.required]"
               validate-on-blur
+              autocomplete="given-name"
             />
           </v-col>
           <v-col cols="12" md="6">
@@ -76,6 +77,7 @@
               v-model="userCopy.lastName"
               :rules="[validators.required]"
               validate-on-blur
+              autocomplete="family-name"
             />
           </v-col>
           <v-col cols="12" md="6">

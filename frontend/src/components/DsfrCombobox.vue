@@ -52,6 +52,9 @@ export default {
     errorMessageId() {
       return this.inputId && `${this.inputId}-error`
     },
+    reset() {
+      return this.$refs["combobox"].reset
+    },
   },
   methods: {
     removeInnerLabel() {

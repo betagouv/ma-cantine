@@ -18,6 +18,7 @@
       :headers="headers"
       :server-items-length="canteenCount || 0"
     >
+      <!-- TODO: update wording of publication status -->
       <template v-slot:[`item.publicationStatus`]="{ item }">
         <router-link
           v-if="item.publicationStatus === 'published'"

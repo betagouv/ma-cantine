@@ -23,6 +23,7 @@ Please note that the `staging` and `main` branches are protected and all commits
 - [vitrualenv](https://virtualenv.pypa.io/en/stable/installation.html)
 - [Node et npm](https://nodejs.org/en/download/)
 - [Postgres](https://www.postgresql.org/download/)
+- [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 - [pre-commit](https://pypi.org/project/pre-commit/)
 
 ### Création d'un environnement Python3 virtualenv
@@ -113,6 +114,7 @@ ENABLE_TELEDECLARATION= Optionnel - `True` pour permettre les utilisateurs de t�
 TELEDECLARATION_CORRECTION_CAMPAIGN= Optionnel - `True` pour pour distinguer la campagne de TD de la campagne de corrections. Ça fait pas grande chose sans ENABLE_TELEDECLARATION.
 TELEDECLARATION_END_DATE= Optionnel - Celle-ci n'est pas exactement une feature flag mais fonctionne avec le flag précedent. Il faut indiquer une date pour la fin de la campagne de la télédéclaration (par exemple, `2024-03-15`)
 ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des gestionnaires.
+PUBLISH_BY_DEFAULT= Optionnel - `True` pour publier les cantines sauf celles qui sont identifiées autrement.
 ```
 
 ### Relances automatiques par email

@@ -85,6 +85,10 @@ export default {
       }
       return !this.hasError
     },
+    reset() {
+      this.$emit("input", null)
+      this.$nextTick(() => (this.errorMessage = null))
+    },
   },
   mounted() {
     this.assignInputId()

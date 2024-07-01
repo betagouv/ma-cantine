@@ -1,362 +1,284 @@
 <template>
-  <div>
-    <BreadcrumbsNav />
-    <v-card elevation="0" class="text-center text-md-left mb-6 mt-3">
-      <v-row v-if="$vuetify.breakpoint.smAndDown">
-        <v-col cols="12">
-          <v-img max-height="90px" contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="2" v-if="$vuetify.breakpoint.mdAndUp">
-          <div class="d-flex fill-height align-center">
-            <v-img contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
-          </div>
-        </v-col>
-        <v-col cols="12" md="10">
-          <v-spacer></v-spacer>
-          <v-card-title class="pr-0">
-            <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
-              Nos cantines publiées
-            </h1>
-          </v-card-title>
-          <v-card-subtitle>
-            <p class="mb-1">
-              Découvrez les initiatives prises par nos cantines pour une alimentation saine, de qualité, et plus
-              durable.
-            </p>
-            <p class="mb-1">Sont affichées sur cette page uniquement les cantines qui ont décidé d’être visibles.</p>
-            <p>
-              Consulter
-              <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
-                les statistiques de votre collectivité (régions et départements)
-              </router-link>
-            </p>
-          </v-card-subtitle>
-
-          <v-spacer></v-spacer>
-        </v-col>
-      </v-row>
-    </v-card>
-    <v-sheet class="py-2" elevation="0">
-      <v-row>
-        <v-col cols="12" md="7" class="pt-0">
-          <form role="search" class="d-block d-sm-flex align-end" onsubmit="return false">
+  <div class="text-left fr-text">
+    <BreadcrumbsNav :links="[{ to: { name: 'CanteenSearchLanding' } }]" />
+    <div>
+      <h1 class="fr-h1 hidden">Les cantines</h1>
+      <v-row id="search-and-ordering" align="end">
+        <v-col cols="12" md="4">
+          <form role="search" onsubmit="return false">
+            <h2 class="fr-h5 mb-2">Rechercher</h2>
             <DsfrSearchField
               hide-details="auto"
               ref="search"
               v-model="searchTerm"
-              placeholder="Recherche par nom ou SIRET de l'établissement"
+              placeholder="Recherche par nom ou SIRET"
               :searchAction="search"
               :clearAction="clearSearch"
-              class="mb-2 flex-grow-1"
             />
           </form>
         </v-col>
-      </v-row>
-    </v-sheet>
-
-    <div class="d-flex align-center mt-4 pl-0">
-      <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">
-        <h2 class="text-body-1 font-weight-black" style="background-color: #fff; width: max-content">
-          Filtres
-        </h2>
-      </v-badge>
-      <v-btn text color="primary" small @click="showFilters = !showFilters" class="ml-1 py-4 py-sm-0">
-        <v-icon small>mdi-filter-outline</v-icon>
-        <span v-if="showFilters">Cacher les filtres</span>
-        <span v-else>Afficher les filtres</span>
-      </v-btn>
-
-      <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter">
-        <v-icon small>mdi-filter-off-outline</v-icon>
-        Enlever tous les filtres
-      </v-btn>
-      <v-divider aria-hidden="true" role="presentation" v-if="!showFilters"></v-divider>
-    </div>
-    <v-expand-transition>
-      <v-sheet class="pa-6 text-left mt-2" v-show="showFilters" rounded :outlined="showFilters">
-        <v-form>
-          <v-row class="mb-0">
-            <v-col cols="12" sm="6" md="4">
-              <label
-                for="select-region"
-                :class="{
-                  'text-body-2': true,
-                  'active-filter-label': !!filters.region.value,
-                }"
-              >
-                Région
-              </label>
-              <DsfrAutocomplete
-                v-model="filters.region.value"
-                :items="regions"
-                clearable
-                hide-details
-                id="select-region"
-                placeholder="Toutes les régions"
-                class="mt-1"
-                auto-select-first
-                :filter="locationFilter"
-              />
-            </v-col>
-            <v-col cols="12" sm="6" md="4">
-              <label
-                for="select-department"
-                :class="{
-                  'text-body-2': true,
-                  'active-filter-label': !!filters.department.value,
-                }"
-              >
-                Département
-              </label>
-              <DsfrAutocomplete
-                v-model="filters.department.value"
-                :items="departments"
-                clearable
-                hide-details
-                id="select-department"
-                placeholder="Tous les départements"
-                class="mt-1"
-                auto-select-first
-                :filter="locationFilter"
-              />
-            </v-col>
-            <v-col cols="12" sm="6" md="4">
-              <label
-                for="select-commune"
-                :class="{
-                  'text-body-2': true,
-                  'active-filter-label': !!filters.city_insee_code.value,
-                }"
-              >
-                Commune
-              </label>
-              <CityField
-                :inseeCode.sync="filters.city_insee_code.value"
-                clearable
-                hide-details
-                id="select-commune"
-                placeholder="Toutes les communes"
-                class="mt-1"
-              />
-            </v-col>
-            <v-col cols="12" sm="6" md="4">
-              <label
-                for="select-sector"
-                :class="{
-                  'text-body-2': true,
-                  'active-filter-label': filters.sectors.value && !!filters.sectors.value.length,
-                }"
-              >
-                Secteur d'activité
-              </label>
-              <DsfrSelect
-                v-model="filters.sectors.value"
-                multiple
-                :items="sectors"
-                clearable
-                hide-details
-                id="select-sector"
-                placeholder="Tous les secteurs"
-                class="mt-1"
-              />
-            </v-col>
-            <v-col cols="12" sm="4" md="3">
-              <label
-                for="select-management-type"
-                :class="{ 'text-body-2': true, 'active-filter-label': !!filters.management_type.value }"
-              >
-                Mode de gestion
-              </label>
-              <DsfrSelect
-                v-model="filters.management_type.value"
-                :items="managementTypes"
-                clearable
-                hide-details
-                id="select-management-type"
-                class="mt-1"
-                placeholder="Tous les modes"
-              />
-            </v-col>
-            <v-col cols="12" sm="6" md="5">
-              <label
-                for="select-production-type"
-                :class="{ 'text-body-2': true, 'active-filter-label': !!filters.production_type.value }"
-              >
-                Type d'établissement
-              </label>
-              <DsfrSelect
-                v-model="filters.production_type.value"
-                :items="productionTypes"
-                clearable
-                hide-details
-                id="select-production-type"
-                class="mt-1"
-                placeholder="Tous les cantines"
-              />
-            </v-col>
-          </v-row>
-          <v-row class="align-end my-0">
-            <v-col cols="12" sm="8" md="6">
-              <fieldset>
-                <legend
-                  :class="{
-                    'text-body-2': true,
-                    'active-filter-label': !!filters.min_portion_bio.value || !!filters.min_portion_combined.value,
-                  }"
-                >
-                  Dans les assiettes, part de...
-                </legend>
-                <div class="d-flex align-stretch mt-1">
-                  <v-col class="pa-0 pr-1 d-flex flex-column">
-                    <DsfrTextField
-                      label="bio minimum"
-                      labelClasses="caption pl-1"
-                      :value="filters.min_portion_bio.value"
-                      ref="min_portion_bio"
-                      :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                      @change="onChangeIntegerFilter('min_portion_bio')"
-                      hide-details="auto"
-                      append-icon="mdi-percent"
-                      placeholder="0"
-                      :hideOptional="true"
-                    />
-                  </v-col>
-                  <v-col class="pa-0 pl-1 d-flex flex-column">
-                    <DsfrTextField
-                      label="bio, qualité et durables min"
-                      labelClasses="caption pl-1"
-                      :value="filters.min_portion_combined.value"
-                      ref="min_portion_combined"
-                      :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
-                      @change="onChangeIntegerFilter('min_portion_combined')"
-                      hide-details="auto"
-                      placeholder="0"
-                      append-icon="mdi-percent"
-                      :hideOptional="true"
-                    />
-                  </v-col>
-                </div>
-              </fieldset>
-            </v-col>
-            <v-col cols="12" sm="4" md="3">
-              <fieldset>
-                <legend
-                  :class="{
-                    'text-body-2': true,
-                    'active-filter-label': !!filters.min_daily_meal_count.value || !!filters.max_daily_meal_count.value,
-                  }"
-                >
-                  Repas par jour
-                </legend>
-                <div class="d-flex">
-                  <div>
-                    <DsfrTextField
-                      label="Min"
-                      labelClasses="caption"
-                      :value="filters.min_daily_meal_count.value"
-                      ref="min_daily_meal_count"
-                      :rules="[validators.nonNegativeOrEmpty]"
-                      @change="onChangeIntegerFilter('min_daily_meal_count')"
-                      hide-details="auto"
-                      :hideOptional="true"
-                    />
-                  </div>
-                  <span class="mx-2 align-self-center">-</span>
-                  <div>
-                    <DsfrTextField
-                      label="Max"
-                      labelClasses="caption"
-                      :value="filters.max_daily_meal_count.value"
-                      ref="max_daily_meal_count"
-                      :rules="[validators.nonNegativeOrEmpty]"
-                      @change="onChangeIntegerFilter('max_daily_meal_count')"
-                      hide-details="auto"
-                      :hideOptional="true"
-                    />
-                  </div>
-                </div>
-              </fieldset>
-            </v-col>
-          </v-row>
-          <v-row class="mt-0">
-            <v-col cols="12" sm="6" md="5">
-              <label for="select-badge" :class="{ 'text-body-2': true, 'active-filter-label': !!filters.badge.value }">
-                Mesure EGAlim réalisée
-              </label>
-              <DsfrSelect
-                v-model="filters.badge.value"
-                :items="badges"
-                clearable
-                hide-details
-                id="select-badge"
-                class="mt-1"
-                placeholder="Tous les cantines"
-              />
-            </v-col>
-          </v-row>
-        </v-form>
-      </v-sheet>
-    </v-expand-transition>
-    <div v-if="loading" class="pa-12">
-      <v-progress-circular indeterminate></v-progress-circular>
-    </div>
-    <div v-else-if="publishedCanteenCount === 0" class="d-flex flex-column align-center py-10">
-      <v-icon large>mdi-inbox-remove</v-icon>
-      <p class="text-body-1 grey--text text--darken-1 my-2">Nous n'avons pas trouvé des cantines avec ces paramètres</p>
-      <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
-        Désactiver tous les filtres
-      </v-btn>
-    </div>
-    <div v-else>
-      <v-row class="my-2" align="end">
-        <v-col>
-          <p
-            class="mb-0 text-body-2 grey--text text--darken-1 text-left"
-            aria-live="polite"
-            aria-atomic="true"
-            v-if="resultsCountText"
-          >
-            {{ resultsCountText }}
-          </p>
-        </v-col>
-        <v-col id="ordering" cols="12" sm="3" class="d-flex align-end">
-          <DsfrSelect
-            v-model="orderBy"
-            :items="orderOptions"
-            labelClasses="body-2 text-left mb-2"
-            hide-details
-            label="Trier par"
-          />
+        <v-col id="ordering" cols="12" sm="6" md="3" class="d-flex align-end">
+          <DsfrNativeSelect v-model="orderBy" :items="orderOptions" hide-details label="Trier par" class="mb-n1" />
           <v-btn
             icon
             @click="toggleOrderDirection"
             :title="`Resultats affichés en ordre ${orderDescending ? 'décroissant' : 'croissant'}`"
             plain
           >
-            <v-icon v-if="orderDescending">mdi-arrow-down</v-icon>
-            <v-icon v-else>
+            <v-icon color="primary" v-if="orderDescending">mdi-arrow-down</v-icon>
+            <v-icon color="primary" v-else>
               mdi-arrow-up
             </v-icon>
           </v-btn>
         </v-col>
       </v-row>
-      <div v-if="pageLoading" class="pa-6">
-        <v-progress-circular indeterminate></v-progress-circular>
-      </div>
-      <v-row v-else>
-        <v-col v-for="canteen in visibleCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
-          <PublishedCanteenCard :canteen="canteen" />
+      <v-row
+        id="filters-and-results"
+        :class="{ 'pt-4': true, 'min-height': !visibleCanteens || visibleCanteens.length === limit }"
+      >
+        <v-col id="filters" cols="12" md="4">
+          <h3 class="fr-h6 mb-0">
+            Filtrer
+          </h3>
+          <v-form class="mt-4">
+            <DsfrAccordion
+              :items="[
+                { id: 'territory', icon: '$road-map-fill', text: 'Par territoire', titleLevel: 'h4' },
+                { id: 'characteristic', icon: '$community-fill', text: 'Par caractéristique', titleLevel: 'h4' },
+              ]"
+            >
+              <template v-slot:title="{ item }">
+                <span class="d-flex">
+                  <v-icon color="primary" class="mr-2">{{ item.icon }}</v-icon>
+                  {{ item.text }}
+                </span>
+              </template>
+              <template v-slot:content="{ item }">
+                <div v-if="item.id === 'territory'">
+                  <LocationSelect
+                    locationType="region"
+                    v-model="filters.region.value"
+                    :labelClasses="{ 'active-filter-label': !!filters.region.value }"
+                    class="mb-4"
+                    :selectableOptions="selectableRegions"
+                    :unselectableOptionsHeader="unselectableRegionsHeader"
+                  />
+                  <LocationSelect
+                    locationType="department"
+                    v-model="filters.department.value"
+                    :labelClasses="{ 'active-filter-label': !!filters.department.value }"
+                    class="mb-4"
+                    :selectableOptions="selectableDepartments"
+                    :unselectableOptionsHeader="unselectableDepartmentsHeader"
+                  />
+                  <label
+                    for="select-commune"
+                    :class="{
+                      'active-filter-label': !!filters.city_insee_code.value,
+                    }"
+                  >
+                    Commune
+                  </label>
+                  <CityField
+                    :inseeCode.sync="filters.city_insee_code.value"
+                    clearable
+                    hide-details
+                    id="select-commune"
+                    placeholder="Toutes les communes"
+                    class="mt-1 mb-4"
+                    @locationUpdate="setLocation"
+                  />
+                </div>
+                <div v-if="item.id === 'characteristic'">
+                  <label
+                    for="select-sector"
+                    :class="{
+                      'fr-text': true,
+                      'active-filter-label': filters.sectors.value && !!filters.sectors.value.length,
+                    }"
+                  >
+                    Secteur d'activité
+                  </label>
+                  <DsfrSelect
+                    v-model="filters.sectors.value"
+                    multiple
+                    :items="sectors"
+                    clearable
+                    hide-details
+                    id="select-sector"
+                    placeholder="Tous les secteurs"
+                    class="mt-1 mb-4"
+                  />
+                  <DsfrRadio
+                    v-model="filters.management_type.value"
+                    :items="managementTypes"
+                    :optionsRow="$vuetify.breakpoint.mdAndUp"
+                    label="Mode de gestion"
+                    :labelClasses="{
+                      'fr-text text-left grey--text text--darken-4': true,
+                      'active-filter-label': !!filters.management_type.value,
+                    }"
+                    :hideOptional="true"
+                    class="mb-n2"
+                  />
+
+                  <DsfrNativeSelect
+                    v-model="filters.production_type.value"
+                    :items="productionTypes"
+                    label="Type d'établissement"
+                    :labelClasses="{
+                      'mb-1 fr-text text-left': true,
+                      'active-filter-label': !!filters.production_type.value,
+                    }"
+                    class="mb-4"
+                  />
+                  <fieldset class="mb-4">
+                    <legend
+                      :class="{
+                        'active-filter-label': !!filters.min_portion_bio.value || !!filters.min_portion_combined.value,
+                      }"
+                    >
+                      Dans les assiettes, part minimum de...
+                    </legend>
+                    <div class="d-flex mt-1">
+                      <DsfrTextField
+                        label="bio"
+                        labelClasses="caption pl-1"
+                        :value="filters.min_portion_bio.value"
+                        ref="min_portion_bio"
+                        :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                        @change="onChangeIntegerFilter('min_portion_bio')"
+                        hide-details="auto"
+                        append-icon="mdi-percent"
+                        placeholder="0"
+                        :hideOptional="true"
+                        class="mr-2"
+                      />
+                      <DsfrTextField
+                        label="bio, qualité et durable"
+                        labelClasses="caption pl-1"
+                        :value="filters.min_portion_combined.value"
+                        ref="min_portion_combined"
+                        :rules="[validators.nonNegativeOrEmpty, validators.lteOrEmpty(100)]"
+                        @change="onChangeIntegerFilter('min_portion_combined')"
+                        hide-details="auto"
+                        placeholder="0"
+                        append-icon="mdi-percent"
+                        :hideOptional="true"
+                        class="ml-2"
+                      />
+                    </div>
+                  </fieldset>
+                  <fieldset class="mb-4">
+                    <legend
+                      :class="{
+                        'active-filter-label':
+                          !!filters.min_daily_meal_count.value || !!filters.max_daily_meal_count.value,
+                      }"
+                    >
+                      Repas par jour
+                    </legend>
+                    <div class="d-flex mt-1">
+                      <div>
+                        <DsfrTextField
+                          label="minimum"
+                          labelClasses="caption"
+                          :value="filters.min_daily_meal_count.value"
+                          ref="min_daily_meal_count"
+                          :rules="[validators.nonNegativeOrEmpty]"
+                          @change="onChangeIntegerFilter('min_daily_meal_count')"
+                          hide-details="auto"
+                          :hideOptional="true"
+                          class="mr-2"
+                        />
+                      </div>
+                      <div>
+                        <DsfrTextField
+                          label="maximum"
+                          labelClasses="caption"
+                          :value="filters.max_daily_meal_count.value"
+                          ref="max_daily_meal_count"
+                          :rules="[validators.nonNegativeOrEmpty]"
+                          @change="onChangeIntegerFilter('max_daily_meal_count')"
+                          hide-details="auto"
+                          :hideOptional="true"
+                          class="ml-2"
+                        />
+                      </div>
+                    </div>
+                  </fieldset>
+                  <DsfrNativeSelect
+                    v-model="filters.badge.value"
+                    :items="badges"
+                    label="Expertise EGAlim"
+                    :labelClasses="{
+                      'mb-1 fr-text text-left': true,
+                      'active-filter-label': !!filters.badge.value,
+                    }"
+                    class="mb-4"
+                  />
+                </div>
+              </template>
+            </DsfrAccordion>
+          </v-form>
+        </v-col>
+        <v-col id="results" cols="12" md="8" class="d-flex flex-column">
+          <v-progress-circular v-if="loading" indeterminate class="mt-8 align-self-center" />
+          <div v-else class="d-flex flex-column" style="height: 100%;">
+            <div class="d-flex">
+              <h2 class="fr-h6 mb-0" aria-live="polite" aria-atomic="true">
+                {{ publishedCanteenCount }} {{ publishedCanteenCount === 1 ? "résultat" : "résultats" }}
+              </h2>
+
+              <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter" class="mb-1">
+                <v-icon small>mdi-filter-off-outline</v-icon>
+                Enlever tous les filtres
+              </v-btn>
+            </div>
+            <DsfrTagGroup
+              :tags="filterTags"
+              :closeable="true"
+              @closeTag="(tag) => removeFilter(tag)"
+              class="mt-2 mb-6"
+            />
+            <div v-if="publishedCanteenCount === 0" class="d-flex flex-column align-center py-10">
+              <v-icon large>mdi-inbox-remove</v-icon>
+              <p class="text-body-1 grey--text text--darken-1 my-2">
+                Nous n'avons pas trouvé des cantines avec ces paramètres
+              </p>
+              <v-btn
+                color="primary"
+                text
+                @click="clearFilters"
+                class="text-decoration-underline"
+                v-if="hasActiveFilter"
+              >
+                Désactiver tous les filtres
+              </v-btn>
+            </div>
+            <v-progress-circular v-else-if="pageLoading" indeterminate class="mt-8 align-self-center" />
+            <div v-else>
+              <v-spacer />
+              <PublishedCanteenCard
+                v-for="canteen in visibleCanteens"
+                :key="canteen.id"
+                :canteen="canteen"
+                class="my-4"
+              />
+              <v-spacer />
+            </div>
+            <v-spacer />
+            <DsfrPagination
+              class="my-6"
+              v-model="page"
+              :length="Math.ceil(publishedCanteenCount / limit)"
+              :total-visible="5"
+              v-if="publishedCanteenCount"
+              @input="pageChangedManually"
+            />
+          </div>
         </v-col>
       </v-row>
-      <DsfrPagination
-        class="my-6"
-        v-model="page"
-        :length="Math.ceil(publishedCanteenCount / limit)"
-        :total-visible="7"
-        v-if="!pageLoading"
-      />
     </div>
 
     <v-divider aria-hidden="true" role="presentation" class="mb-8 mt-12"></v-divider>
@@ -370,15 +292,15 @@
         </div>
       </v-col>
       <v-col>
-        <h2 class="text-h6 font-weight-black text-left mb-4">
+        <h2 class="text-h6 font-weight-black mb-4">
           Vous n'avez pas trouvé un ou plusieurs établissements qui vous intéressent ?
         </h2>
-        <p class="body-2 text-left mb-6">
+        <p class="body-2 mb-6">
           Dites-nous tout, nous ferons en sorte de leur communiquer votre intérêt pour leurs initiatives en place.
         </p>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
           <DsfrEmail v-model="fromEmail" />
-          <DsfrTextField v-model="name" label="Prénom et nom" />
+          <DsfrFullName v-model="name" />
           <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
         </v-form>
         <v-row class="pa-2">
@@ -397,19 +319,24 @@
 import PublishedCanteenCard from "./PublishedCanteenCard"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
-import { getObjectDiff, normaliseText, sectorsSelectList } from "@/utils"
+import { getObjectDiff, sectorsSelectList } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
 import badges from "@/badges"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import DsfrAccordion from "@/components/DsfrAccordion"
 import DsfrTextField from "@/components/DsfrTextField"
-import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrRadio from "@/components/DsfrRadio"
 import DsfrSelect from "@/components/DsfrSelect"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import CityField from "@/views/CanteenEditor/CityField"
+import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrEmail from "@/components/DsfrEmail"
+import DsfrFullName from "@/components/DsfrFullName"
+import LocationSelect from "@/components/LocationSelect"
 
 const DEFAULT_ORDER = "creation"
 
@@ -417,19 +344,25 @@ export default {
   components: {
     PublishedCanteenCard,
     BreadcrumbsNav,
+    DsfrAccordion,
     DsfrTextField,
-    DsfrAutocomplete,
+    DsfrRadio,
     DsfrSelect,
+    DsfrNativeSelect,
     DsfrTextarea,
     DsfrPagination,
     DsfrSearchField,
     CityField,
+    DsfrTagGroup,
     DsfrEmail,
+    DsfrFullName,
+    LocationSelect,
   },
   data() {
+    const sectors = this.$store.state.sectors
     const user = this.$store.state.loggedUser
     return {
-      limit: 6,
+      limit: 3,
       departments: [],
       regions: [],
       sectors: [],
@@ -442,44 +375,71 @@ export default {
           param: "departement",
           value: null,
           default: null,
+          displayName(value) {
+            const department = jsonDepartments.find((d) => d.departmentCode === value)
+            return department && `${department.departmentName} (${value})`
+          },
         },
         region: {
           param: "region",
           value: null,
           default: null,
+          displayName(value) {
+            const region = jsonRegions.find((d) => d.regionCode === value)
+            return region.regionName
+          },
         },
         city_insee_code: {
           param: "commune",
           value: null,
           default: null,
+          displayNameComputed: "locationDisplay",
         },
         management_type: {
           param: "modeDeGestion",
           value: null,
           default: null,
+          displayName(value) {
+            const mt = Constants.ManagementTypes.find((pt) => pt.value === value)?.text || value
+            return `Gestion ${mt.toLowerCase()}`
+          },
         },
         production_type: {
           param: "typeEtablissement",
           value: null,
           default: null,
+          displayName(value) {
+            return Constants.ProductionTypes.find((pt) => pt.value === value)?.text
+          },
         },
         sectors: {
           param: "secteurs",
           value: [],
           default: [],
           transformToFrontend(values) {
-            return Array.isArray(values) ? values.map((v) => +v) : +values
+            if (!values) return
+            return Array.isArray(values) ? values.map((v) => +v) : [+values]
+          },
+          displayName(value) {
+            value = +value
+            return sectors.find((s) => s.id === value)?.name || value
           },
         },
         min_daily_meal_count: {
           param: "minRepasJour",
           value: null,
           default: null,
+          displayName(value) {
+            return `Repas min : ${value}`
+          },
         },
         max_daily_meal_count: {
           param: "maxRepasJour",
           value: null,
           default: null,
+          displayName(value) {
+            return `Repas max : ${value}`
+          },
         },
         min_portion_bio: {
           param: "minBio",
@@ -487,6 +447,9 @@ export default {
           default: null,
           transformToBackend(value) {
             return value / 100
+          },
+          displayName(value) {
+            return `Bio min : ${value} %`
           },
         },
         min_portion_combined: {
@@ -496,11 +459,17 @@ export default {
           transformToBackend(value) {
             return value / 100
           },
+          displayName(value) {
+            return `EGAlim min : ${value} %`
+          },
         },
         badge: {
           param: "badge",
           value: null,
           default: null,
+          displayName(value) {
+            return badges[value]?.title
+          },
         },
       },
       orderBy: null,
@@ -539,6 +508,9 @@ export default {
           return { value: key, text: value.title }
         })[0], // for now only the appro measure is available as a filter
       ],
+      location: undefined,
+      selectableDepartments: undefined,
+      selectableRegions: undefined,
     }
   },
   computed: {
@@ -582,6 +554,51 @@ export default {
         display: `${chosenOption?.value || DEFAULT_ORDER}${this.orderDescending ? "Dec" : "Cro"}`,
       }
     },
+    filterTags() {
+      const activeFilters = Object.entries(this.filters).filter(([, f]) => !!f.value)
+      const tags = activeFilters
+        .filter(([, f]) => !Array.isArray(f.default))
+        .map(([key, filter]) => {
+          const text = filter.displayNameComputed
+            ? this[filter.displayNameComputed]
+            : filter.displayName && filter.displayName(filter.value)
+          return {
+            id: key,
+            key,
+            text: text || `${filter.param} : ${filter.value}`,
+          }
+        })
+      const arrayFilters = activeFilters.filter(([, f]) => Array.isArray(f.default))
+      arrayFilters.forEach(([key, filter]) => {
+        const arrayTags = filter.value.map((fv, idx) => {
+          const text = filter.displayName && filter.displayName(fv)
+          return {
+            id: `${key}[${idx}]`,
+            key,
+            idx: idx,
+            isArray: true,
+            text: text || `${filter.param} : ${fv}`,
+          }
+        })
+        tags.push(...arrayTags)
+      })
+      return tags
+    },
+    locationDisplay() {
+      return this.location?.city
+    },
+    unselectableDepartmentsHeader() {
+      const locationsWord = "départements"
+      return this.hasActiveFilter || this.searchTerm
+        ? `Ces ${locationsWord} ne contiennent pas d'établissements correspondant à votre recherche :`
+        : `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
+    },
+    unselectableRegionsHeader() {
+      const locationsWord = "régions"
+      return this.hasActiveFilter || this.searchTerm
+        ? `Ces ${locationsWord} ne contiennent pas d'établissements correspondant à votre recherche :`
+        : `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
+    },
   },
   methods: {
     fetchCurrentPage() {
@@ -599,21 +616,24 @@ export default {
 
       return fetch(`/api/v1/publishedCanteens/?${queryParam}`)
         .then((response) => {
-          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+          if (response.status === 400) {
+            return Promise.reject("Bad request")
+          } else if (response.status < 200 || response.status > 400) throw new Error(`Error encountered : ${response}`)
           return response.json()
         })
         .then((response) => {
           this.publishedCanteenCount = response.count
           this.visibleCanteens = response.results
-          this.setDepartments(response.departments)
-          this.setRegions(response.regions)
+          this.selectableDepartments = response.departments
+          this.selectableRegions = response.regions
           this.setSectors(response.sectors)
           this.setManagementTypes(response.managementTypes)
           this.setProductionTypes(response.productionTypes)
         })
         .catch((e) => {
           this.publishedCanteenCount = 0
-          this.$store.dispatch("notifyServerError", e)
+          this.visibleCanteens = 0
+          if (e !== "Bad request") this.$store.dispatch("notifyServerError", e)
         })
     },
     clearSearch() {
@@ -710,44 +730,6 @@ export default {
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
-    setLocations(enabledLocationIds, jsonLocations, locationKeyWord, locationsWord) {
-      const enabledLocations = jsonLocations
-        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) > -1)
-        .map((x) => ({
-          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
-          value: x[`${locationKeyWord}Code`],
-        }))
-      const headerText =
-        this.hasActiveFilter || this.searchTerm
-          ? `Ces ${locationsWord} ne contiennent pas d'établissements correspondant à votre recherche :`
-          : `Nous n'avons pas encore d'établissements dans ces ${locationsWord} :`
-      const header = { header: headerText }
-
-      const divider = { divider: true }
-
-      const disabledLocations = jsonLocations
-        .filter((x) => enabledLocationIds.indexOf(x[`${locationKeyWord}Code`]) === -1)
-        .map((x) => ({
-          text: `${x[`${locationKeyWord}Code`]} - ${x[`${locationKeyWord}Name`]}`,
-          value: x[`${locationKeyWord}Code`],
-          disabled: true,
-        }))
-
-      return [...enabledLocations, divider, header, ...disabledLocations]
-    },
-    setDepartments(enabledDepartmentIds) {
-      this.departments = this.setLocations(enabledDepartmentIds, jsonDepartments, "department", "départements")
-    },
-    setRegions(enabledRegionIds) {
-      this.regions = this.setLocations(enabledRegionIds, jsonRegions, "region", "régions")
-    },
-    locationFilter(item, queryText, itemText) {
-      return (
-        Object.prototype.hasOwnProperty.call(item, "divider") ||
-        Object.prototype.hasOwnProperty.call(item, "header") ||
-        normaliseText(itemText).indexOf(normaliseText(queryText)) > -1
-      )
-    },
     setSectors(enabledSectorIds) {
       this.sectors = sectorsSelectList(this.$store.state.sectors).map((x) => {
         return x.header
@@ -785,6 +767,20 @@ export default {
       this.orderDescending = !this.orderDescending
       this.page = 1 // reset page to 1 when changing order direction
     },
+    removeFilter(filterTag) {
+      if (filterTag.isArray) {
+        this.filters[filterTag.key].value.splice(filterTag.idx, 1)
+      } else {
+        this.filters[filterTag.key].value = this.filters[filterTag.id].default
+      }
+    },
+    setLocation(location) {
+      this.location = location
+    },
+    pageChangedManually() {
+      // TODO: make this dependent on window height to avoid jumps for bigger screens
+      document.getElementById("filters-and-results").scrollIntoView({ behavior: "smooth" })
+    },
   },
   watch: {
     filters: {
@@ -817,10 +813,10 @@ export default {
 .v-btn--plain:not(.v-btn--active):not(.v-btn--loading):not(:focus):not(:hover) >>> .v-btn__content {
   opacity: 1;
 }
-.active-filter-label {
+div >>> .active-filter-label {
   font-weight: bold;
 }
-.active-filter-label::before {
+div >>> .active-filter-label::before {
   content: "⚫︎";
   color: #ce614a;
 }
@@ -829,5 +825,19 @@ div >>> .v-list-item--disabled .theme--light.v-icon {
 }
 #ordering >>> .v-select__selection {
   font-size: 12px;
+}
+/* TODO: fix min height now that we have filter tags to take into account */
+#filters-and-results.min-height {
+  min-height: 1050px;
+}
+h1.hidden {
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+  z-index: -1;
+  user-select: none;
 }
 </style>

@@ -17,6 +17,7 @@
     "vue-apexcharts": "^1.6.2",
     "vue-matomo": "^4.2.0",
     "vue-router": "^3.6.5",
+    "vue-select": "^3.20.3",
     "vuetify": "^2.7.2",
     "vuex": "^3.6.2"
   },
@@ -33,7 +34,7 @@
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-vue": "^9.26.0",
     "prettier": "^1.19.1",
-    "sass": "^1.77.4",
+    "sass": "^1.77.6",
     "sass-loader": "^10.0.0",
     "vue-cli-plugin-vuetify": "~2.5.8",
     "vue-template-compiler": "^2.7.16",

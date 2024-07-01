@@ -1,7 +1,9 @@
 from urllib.parse import quote
 from django.db import models
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
 from data.department_choices import Department
@@ -10,7 +12,7 @@ from data.fields import ChoiceArrayField
 from data.utils import get_region, optimize_image
 from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
 from .sector import Sector
-from .softdeletionmodel import SoftDeletionModel
+from .softdeletionmodel import SoftDeletionModel, SoftDeletionManager, SoftDeletionQuerySet
 
 
 def validate_siret(siret):
@@ -41,7 +43,36 @@ def list_properties(queryset, property):
     return list(queryset.values_list(property, flat=True))
 
 
+class CanteenQuerySet(SoftDeletionQuerySet):
+    def publicly_visible(self):
+        return (
+            self.exclude(line_ministry=Canteen.Ministries.ARMEE)
+            if settings.PUBLISH_BY_DEFAULT
+            else self.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
+        )
+
+    def publicly_hidden(self):
+        return (
+            self.filter(line_ministry=Canteen.Ministries.ARMEE)
+            if settings.PUBLISH_BY_DEFAULT
+            else self.exclude(publication_status=Canteen.PublicationStatus.PUBLISHED)
+        )
+
+
+class CanteenManager(SoftDeletionManager):
+    queryset_model = CanteenQuerySet
+
+    def publicly_visible(self):
+        return self.get_queryset().publicly_visible()
+
+    def publicly_hidden(self):
+        return self.get_queryset().publicly_hidden()
+
+
 class Canteen(SoftDeletionModel):
+    objects = CanteenManager()
+    all_objects = CanteenManager(alive_only=False)
+
     class Meta:
         verbose_name = "cantine"
         verbose_name_plural = "cantines"
@@ -103,6 +134,14 @@ class Canteen(SoftDeletionModel):
         )
         AGRICULTURE = "agriculture", "Ministère en charge de l'Agriculture et de l'Alimentation"
         TRANSFORMATION = "transformation", "Ministère de la Transformation et de la Fonction Publiques"
+        ADMINISTRATION_TERRITORIALE = (
+            "administration_territoriale",
+            "Préfecture - Administration Territoriale de l'État (ATE)",
+        )
+        AUTORITES_INDEPENDANTES = (
+            "autorites_independantes",
+            "Présidence de la république - Autorités indépendantes (AAI, API)",
+        )
         AUTRE = "autre", "Autre"
 
     import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
@@ -356,7 +395,8 @@ class Canteen(SoftDeletionModel):
 
         from data.models import Diagnostic
 
-        return Diagnostic.objects.filter(id__in=diag_ids)
+        this_year = timezone.now().date().year
+        return Diagnostic.objects.filter(id__in=diag_ids, year__lt=this_year).order_by("-year")
 
     @cached_property
     def service_diagnostics(self):
@@ -375,7 +415,8 @@ class Canteen(SoftDeletionModel):
 
         from data.models import Diagnostic
 
-        return Diagnostic.objects.filter(id__in=diag_ids)
+        this_year = timezone.now().date().year
+        return Diagnostic.objects.filter(id__in=diag_ids, year__lt=this_year).order_by("-year")
 
     @cached_property
     def published_appro_diagnostics(self):
@@ -396,8 +437,8 @@ class Canteen(SoftDeletionModel):
         if not self.published_appro_diagnostics and not self.published_service_diagnostics:
             return
 
-        latest_appro = self.published_appro_diagnostics.only("year").order_by("-year").first()
-        latest_service = self.published_service_diagnostics.only("year").order_by("-year").first()
+        latest_appro = self.published_appro_diagnostics.only("year").first()
+        latest_service = self.published_service_diagnostics.only("year").first()
 
         appro_year = latest_appro.year if latest_appro else 0
         service_year = latest_service.year if latest_service else 0
@@ -418,6 +459,10 @@ class Canteen(SoftDeletionModel):
         scolaire_sectors = Sector.objects.filter(category="education")
         if scolaire_sectors.count() and self.sectors.intersection(scolaire_sectors).exists():
             return True
+
+    @property
+    def lead_image(self):
+        return self.images.first()
 
 
 class CanteenImage(models.Model):

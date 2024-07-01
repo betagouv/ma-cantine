@@ -33,6 +33,7 @@
           target="_blank"
           rel="noopener external"
           title="Voir la version en ligne - ouvre une nouvelle fenêtre"
+          class="mb-4 mb-sm-0"
         >
           Voir la version en ligne
           <v-icon small class="ml-1" color="white">mdi-open-in-new</v-icon>
@@ -77,6 +78,7 @@
         </v-btn>
         <v-btn v-else x-large color="red darken-3" class="mr-4" outlined @click="removeCanteenPublication">
           Retirer la publication
+          <!-- TODO: remove options -->
         </v-btn>
       </v-sheet>
     </div>

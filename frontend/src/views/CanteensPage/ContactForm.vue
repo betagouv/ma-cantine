@@ -6,35 +6,35 @@
     </div>
     <div v-else>
       <div class="text-left grey--text text--darken-4 mt-n1 mb-6 text-body-2">
-        <div>
-          <div class="mb-1 d-flex align-center">
+        <ul class="no-bullets">
+          <li class="mb-1 d-flex align-center">
             <v-icon small color="green" class="mr-1">$check-line</v-icon>
-            <p class="mb-0">Demandez des informations supplémentaires sur la cantine « {{ canteen.name }} »</p>
-          </div>
-          <div class="mb-1 d-flex align-center">
+            <span>Demandez des informations supplémentaires sur la cantine « {{ canteen.name }} »</span>
+          </li>
+          <li class="mb-1 d-flex align-center">
             <v-icon small color="green" class="mr-1">$check-line</v-icon>
-            <p class="mb-0">
+            <span>
               Demandez aux gestionnaires leur retour d'expérience sur une action mise en place
-            </p>
-          </div>
-        </div>
-        <div class="mt-4">
-          <div class="mb-1 d-flex align-center">
+            </span>
+          </li>
+        </ul>
+        <ul class="mt-4 no-bullets">
+          <li class="mb-1 d-flex align-center">
             <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
-            <p class="mb-0">
+            <span>
               Pour postuler à une offre d'emploi privilégiez les contacts directs de l'établissement
-            </p>
-          </div>
-          <div class="mb-1 d-flex align-center">
+            </span>
+          </li>
+          <li class="mb-1 d-flex align-center">
             <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
-            <p class="mb-0">
+            <span class="mb-0">
               Pour informer l'établissement de l'absence de votre enfant à la pension du midi, utilisez votre site de «
               vie scolaire »
-            </p>
-          </div>
-          <div class="mb-1 d-flex align-center">
+            </span>
+          </li>
+          <li class="mb-1 d-flex align-center">
             <v-icon small color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
-            <p class="mb-0">
+            <span class="mb-0">
               Proposez vos services parmi les
               <router-link :to="{ name: 'PartnersHome' }">
                 acteurs de l'éco-système
@@ -49,13 +49,13 @@
                 formulaire de référencement
                 <v-icon color="primary" small>mdi-open-in-new</v-icon>
               </a>
-            </p>
-          </div>
-        </div>
+            </span>
+          </li>
+        </ul>
       </div>
       <v-form v-model="formIsValid" ref="form" @submit.prevent>
         <DsfrEmail v-model="fromEmail" />
-        <DsfrTextField v-model="name" label="Prénom et nom" />
+        <DsfrFullName v-model="name" />
         <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
         <p class="caption text-left grey--text text--darken-1 mt-n1 mb-6">
           Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).
@@ -74,13 +74,13 @@
 
 <script>
 import validators from "@/validators"
-import DsfrTextField from "@/components/DsfrTextField"
+import DsfrFullName from "@/components/DsfrFullName"
 import DsfrEmail from "@/components/DsfrEmail"
 import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   name: "ContactForm",
-  components: { DsfrTextField, DsfrTextarea, DsfrEmail },
+  components: { DsfrFullName, DsfrTextarea, DsfrEmail },
   props: ["canteen"],
   data() {
     const user = this.$store.state.loggedUser

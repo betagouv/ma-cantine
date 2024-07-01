@@ -66,16 +66,20 @@
     <div v-if="recentlyModifiedCanteens">
       <v-divider aria-hidden="true" role="presentation" class="my-16"></v-divider>
       <h2 class="text-h4 font-weight-black text-center mb-8">Les dernières cantines publiées</h2>
-      <v-row>
-        <v-col v-for="canteen in recentlyModifiedCanteens" :key="canteen.id" style="height: auto;" cols="12" md="6">
-          <PublishedCanteenCard :canteen="canteen" />
-        </v-col>
-        <v-col cols="12">
-          <v-btn large outlined color="primary" class="mt-2" :to="{ name: 'CanteensHome' }">
-            Voir plus
-          </v-btn>
-        </v-col>
-      </v-row>
+      <div class="d-flex flex-wrap mb-8">
+        <PublishedCanteenCard
+          :canteen="canteen"
+          v-for="canteen in recentlyModifiedCanteens"
+          :key="canteen.id"
+          class="col-6"
+          :noImage="true"
+        />
+      </div>
+      <div class="d-flex justify-center">
+        <v-btn x-large outlined color="primary" :to="{ name: 'CanteensHome' }">
+          Voir plus
+        </v-btn>
+      </div>
     </div>
 
     <v-divider aria-hidden="true" role="presentation" class="mt-16"></v-divider>
