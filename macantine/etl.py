@@ -598,11 +598,10 @@ class ETL_ANALYSIS(ETL):
 
     def __init__(self):
         self.df = None
-        self.years = [2021, 2022, 2023]
+        self.years = CAMPAIGN_DATES.keys()
 
     def extract_dataset(self):
         self.df = fetch_teledeclarations(self.years)
-        print("self")
 
     def transform_dataset(self):
         pass
