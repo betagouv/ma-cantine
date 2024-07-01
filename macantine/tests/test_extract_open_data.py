@@ -308,7 +308,7 @@ class TestETLOpenData(TestCase):
         etl_canteen = ETL_CANTEEN()
 
         # Adding data in the db
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory(sectors=[])
         canteen.sectors.clear()
 
         etl_canteen.extract_dataset()
