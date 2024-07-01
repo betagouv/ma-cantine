@@ -433,10 +433,10 @@ class ETL_CANTEEN(ETL_OPEN_DATA):
         self.canteens = Canteen.objects.exclude(exclude_filter)
 
         if self.canteens.count() == 0:
-            return pd.DataFrame(columns=self.canteens_col_from_db)
-
-        # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
-        self.df = pd.DataFrame(self.canteens.values(*self.canteens_col_from_db))
+            self.df = pd.DataFrame(columns=self.canteens_col_from_db)
+        else:
+            # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
+            self.df = pd.DataFrame(self.canteens.values(*self.canteens_col_from_db))
 
         end = time.time()
         logger.info(f"Time spent on canteens extraction : {end - start}")
