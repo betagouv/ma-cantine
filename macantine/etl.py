@@ -454,7 +454,9 @@ class ETL_CANTEEN(ETL_OPEN_DATA):
 
         bucket_url = os.environ.get("CELLAR_HOST")
         bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
-        self.df["logo"] = self.df["logo"].apply(lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else "")
+
+        if "logo" in self.df.columns:
+            self.df["logo"] = self.df["logo"].apply(lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else "")
 
         logger.info("Canteens : Clean dataset...")
         self._clean_dataset()

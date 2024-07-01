@@ -197,7 +197,6 @@ class TestETLOpenData(TestCase):
                 "department": None,
                 "region": None,
                 "sectors": None,
-                "logo": None,
             },
             "1": {
                 "id": 2,
@@ -209,7 +208,6 @@ class TestETLOpenData(TestCase):
                 "department": None,
                 "region": None,
                 "sectors": None,
-                "logo": None,
             },
         }
         etl_canteen = ETL_CANTEEN()
