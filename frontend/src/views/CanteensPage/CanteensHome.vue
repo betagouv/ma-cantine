@@ -12,8 +12,9 @@
               ref="search"
               v-model="searchTerm"
               placeholder="Recherche par nom ou SIRET"
-              :searchAction="search"
-              :clearAction="clearSearch"
+              @search="search"
+              clearable
+              @clear="clearSearch"
             />
           </form>
         </v-col>

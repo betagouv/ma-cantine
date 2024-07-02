@@ -77,8 +77,8 @@
             placeholder="Chercher par produit ou fournisseur"
             hide-details
             clearable
-            :clearAction="clearSearch"
-            :searchAction="search"
+            @clear="clearSearch"
+            @search="search"
           />
         </v-col>
         <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
