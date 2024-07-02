@@ -28,7 +28,7 @@
               <v-row class="justify-end ma-0">
                 <v-btn @click="transcriptionModal = false" class="primary--text" text>
                   Fermer
-                  <v-icon small primary class="ml-2">$close-line</v-icon>
+                  <v-icon small color="primary" class="ml-2">$close-line</v-icon>
                 </v-btn>
               </v-row>
               <v-card-title>

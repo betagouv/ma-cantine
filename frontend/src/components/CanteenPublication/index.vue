@@ -30,8 +30,7 @@
           :is="`${item.baseComponent}Results`"
           :badge="badges[item.badgeId]"
           :canteen="canteen"
-          :approDiagnostics="approDiagnostics"
-          :serviceDiagnostics="serviceDiagnostics"
+          :diagnostics="item.badgeId === 'appro' ? approDiagnostics : serviceDiagnostics"
           :editable="editable"
         />
         <p class="mb-0">

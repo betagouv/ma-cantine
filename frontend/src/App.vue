@@ -1,31 +1,25 @@
 <template>
-  <div id="app">
-    <v-app>
-      <WidgetHeader class="ma-4 mb-0 constrained" v-if="isWidget" />
-      <AppHeader class="mx-auto constrained" v-else-if="!fullscreen" />
+  <v-app>
+    <WidgetHeader class="ma-4 mb-0 constrained" v-if="isWidget" />
+    <AppHeader class="mx-auto constrained" v-else-if="!fullscreen" />
 
-      <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget, 'fill-height': fullscreen }" role="main">
-        <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner && !fullscreen" />
-        <v-container fluid :fill-height="!initialDataLoaded || fullscreen" :class="{ 'pa-0': fullscreen }">
-          <v-progress-circular
-            indeterminate
-            style="position: absolute; left: 50%; top: 50%"
-            v-if="!initialDataLoaded"
-          ></v-progress-circular>
-          <router-view v-else :class="routerViewClass" />
-        </v-container>
-      </v-main>
+    <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget, 'fill-height': fullscreen }" role="main">
+      <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner && !fullscreen" />
+      <v-container fluid :fill-height="!initialDataLoaded || fullscreen" :class="{ 'pa-0': fullscreen }">
+        <v-progress-circular
+          indeterminate
+          style="position: absolute; left: 50%; top: 50%"
+          v-if="!initialDataLoaded"
+        ></v-progress-circular>
+        <router-view v-else :class="routerViewClass" />
+      </v-container>
+    </v-main>
 
-      <AppFooter v-if="!isWidget && !fullscreen" />
-      <div v-if="!isWidget" id="notification-center">
-        <NotificationSnackbar
-          v-for="notification in notifications"
-          :key="notification.id"
-          :notification="notification"
-        />
-      </div>
-    </v-app>
-  </div>
+    <AppFooter v-if="!isWidget && !fullscreen" />
+    <div v-if="!isWidget" id="notification-center">
+      <NotificationSnackbar v-for="notification in notifications" :key="notification.id" :notification="notification" />
+    </div>
+  </v-app>
 </template>
 
 <script>

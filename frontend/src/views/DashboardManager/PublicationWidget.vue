@@ -10,9 +10,9 @@
       <p class="publication-detail">
         Statut
         <DsfrBadge :mode="isPublished ? 'SUCCESS' : 'INFO'" :icon="isPublished ? 'mdi-circle' : 'mdi-circle-outline'">
-          <p class="mb-0 text-uppercase">
+          <span class="text-uppercase">
             {{ isPublished ? "En ligne" : "Non publiée" }}
-          </p>
+          </span>
         </DsfrBadge>
       </p>
       <p class="publication-detail">

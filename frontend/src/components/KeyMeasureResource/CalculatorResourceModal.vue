@@ -42,7 +42,7 @@
 export default {
   data() {
     return {
-      filepath: "/static/documents/Diagnostic approvisionnement v0.8",
+      filepath: "/static/documents/Diagnostic_approvisionnement_v0.8",
     }
   },
   methods: {

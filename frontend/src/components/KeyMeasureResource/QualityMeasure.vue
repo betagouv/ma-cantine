@@ -24,14 +24,14 @@
     </p>
 
     <DownloadLink
-      href="/static/documents/Guide Pratique MP Gestion directe.pdf"
+      href="/static/documents/Guide_Pratique_MP_Gestion_directe.pdf"
       label="Télécharger le guide pratique CNRC de rédaction des marchés publics pour des appros durables à destination des acteurs de la restauration collective en gestion directe"
       sizeStr="2,4 Mo"
       class="mt-4"
     />
 
     <DownloadLink
-      href="/static/documents/Guide Pratique pour des Prestations Intégrant des Produits Durables et de Qualité.pdf"
+      href="/static/documents/Guide_Pratique_pour_des_Prestations_Intégrant_des_Produits_Durables_et_de_Qualité.pdf"
       label="Télécharger le guide pratique CNRC à destination des acteurs de la restauration collective en prestation de service"
       sizeStr="2,2 Mo"
       class="mt-4"

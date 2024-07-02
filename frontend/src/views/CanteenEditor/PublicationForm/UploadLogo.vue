@@ -5,16 +5,9 @@
       @click="onLogoUploadClick"
       :title="logo ? 'Modifier le logo' : undefined"
     >
-      <div>
-        <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onLogoChanged" id="logo" />
-      </div>
-      <div class="fill-height d-flex align-center justify-center rounded-circle" style="overflow: hidden;">
-        <v-img v-if="logo" contain :src="logo"></v-img>
-        <div v-else>
-          <v-icon color="primary">$add-line</v-icon>
-          <p class="mb-0 fr-text-sm font-weight-bold primary--text">Ajouter un logo</p>
-        </div>
-      </div>
+      <img v-if="logo" :src="logo" class="logo" alt="" />
+      <v-icon v-if="!logo" color="primary">$add-line</v-icon>
+      <span v-if="!logo" class="mb-0 fr-text-sm font-weight-bold primary--text d-block">Ajouter un logo</span>
     </button>
     <div v-if="logo" style="position: absolute; top: -6px; right: 14px;">
       <v-btn
@@ -27,6 +20,7 @@
         <v-icon color="red">$delete-line</v-icon>
       </v-btn>
     </div>
+    <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onLogoChanged" id="logo" />
   </div>
 </template>
 
@@ -95,5 +89,13 @@ export default {
   width: 124px;
   background-color: #f5f5fe;
   border: solid 2px #dddddd;
+  overflow: hidden;
+}
+.logo {
+  object-fit: contain;
+  max-height: 100%;
+  max-width: 100%;
+  height: 100%;
+  width: 100%;
 }
 </style>

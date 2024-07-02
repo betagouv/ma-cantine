@@ -132,9 +132,6 @@ export default {
   min-width: 2.5rem;
   padding-top: 1.75rem;
 }
-label {
-  --toggle-status-width: 2.5rem;
-}
 .fr-toggle label[data-fr-unchecked-label][data-fr-checked-label] {
   padding-left: 0;
 }
@@ -145,7 +142,7 @@ input[type="checkbox"] + label {
   cursor: pointer;
 }
 .fr-toggle label {
-  --toggle-status-width: auto;
+  --toggle-status-width: 2.5rem;
   color: #161616;
   /* color: var(--text-label-grey); */
   display: inline-flex;
