@@ -181,7 +181,7 @@
         <v-row class="px-2">
           <v-col class="pl-0 pr-1" cols="12" sm="6" md="4">
             <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
-              <v-img max-width="30" contain src="/web/static/images/badges/appro.svg" class="mx-auto" alt=""></v-img>
+              <v-img max-width="30" contain src="/static/images/badges/appro.svg" class="mx-auto" alt=""></v-img>
               <v-card-text class="grey--text text--darken-2 px-1">
                 <p class="mb-0">
                   <span class="text-h5 font-weight-black" style="line-height: inherit;">
@@ -210,12 +210,7 @@
                 </p>
               </v-card-text>
               <div class="mt-2">
-                <v-img
-                  contain
-                  src="/web/static/images/quality-labels/logo_bio_eurofeuille.png"
-                  alt=""
-                  max-height="35"
-                />
+                <v-img contain src="/static/images/quality-labels/logo_bio_eurofeuille.png" alt="" max-height="35" />
               </div>
             </v-card>
           </v-col>
@@ -234,7 +229,7 @@
                   contain
                   v-for="label in labels"
                   :key="label.title"
-                  :src="`/web/static/images/quality-labels/${label.src}`"
+                  :src="`/static/images/quality-labels/${label.src}`"
                   :alt="label.title"
                   :title="label.title"
                   class="px-1"

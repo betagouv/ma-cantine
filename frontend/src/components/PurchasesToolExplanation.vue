@@ -25,7 +25,7 @@
             <video
               ref="video"
               style="width: 100%; background: #333;"
-              poster="/web/static/images/video-poster-achats.webp"
+              poster="/static/images/video-poster-achats.webp"
               controls
             >
               <source

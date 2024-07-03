@@ -59,7 +59,7 @@
         </v-card-text>
       </v-card>
       <v-img
-        src="/web/static/images/doodles-dsfr/primary/ChartDoodle.png"
+        src="/static/images/doodles-dsfr/primary/ChartDoodle.png"
         v-else-if="$vuetify.breakpoint.smAndUp"
         class="mx-auto rounded-0"
         contain

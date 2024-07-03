@@ -31,7 +31,7 @@
         <div class="fill-height d-flex flex-column align-center">
           <v-spacer></v-spacer>
           <v-img
-            src="/web/static/images/doodles-dsfr/primary/SittingDoodle.png"
+            src="/static/images/doodles-dsfr/primary/SittingDoodle.png"
             contain
             style="transform: scaleX(-1);"
           ></v-img>

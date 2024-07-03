@@ -19,7 +19,7 @@
       </v-card-text>
       <v-card-text class="pt-0">
         <DownloadLink
-          href="/web/static/documents/Guide_pratique_XP_RESERVATION.pdf"
+          href="/static/documents/Guide_pratique_XP_RESERVATION.pdf"
           label="Télécharger le guide d'accompagnement"
           sizeStr="2.1 Mo"
           target="_blank"

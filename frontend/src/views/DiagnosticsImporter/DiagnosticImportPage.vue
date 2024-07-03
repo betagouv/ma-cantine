@@ -44,15 +44,15 @@
         </li>
       </ul>
       Téléchargez l'en-tête en format :
-      <a class="text-decoration-underline" href="/web/static/documents/fichier_exemple_staff.xlsx" download>
+      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.xlsx" download>
         Excel (.xlsx)
       </a>
       ,
-      <a class="text-decoration-underline" href="/web/static/documents/fichier_exemple_staff.csv" download>
+      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.csv" download>
         CSV
       </a>
       ,
-      <a class="text-decoration-underline" href="/web/static/documents/fichier_exemple_staff.ods" download>
+      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.ods" download>
         OpenDocument (.ods)
       </a>
       <br />
@@ -134,7 +134,7 @@
         ref="video"
         class="ma-4"
         :style="`max-width: ${$vuetify.breakpoint.xs ? '70%' : '30%'}; background: #333; border-radius: 10px`"
-        poster="/web/static/images/video-poster-import-masse.webp"
+        poster="/static/images/video-poster-import-masse.webp"
         controls
       >
         <source
@@ -571,7 +571,7 @@ export default {
           xlsx: "6 Ko",
         },
       }
-      let filename = "/web/static/documents/"
+      let filename = "/static/documents/"
       if (this.importLevel === "COMPLETE") filename = filename + "fichier_exemple_complet_ma_cantine"
       else if (this.importLevel === "CC_SIMPLE") filename = filename + "fichier_exemple_ma_cantine_cc_simple"
       else if (this.importLevel === "CC_COMPLETE") filename = filename + "fichier_exemple_ma_cantine_cc_complet"

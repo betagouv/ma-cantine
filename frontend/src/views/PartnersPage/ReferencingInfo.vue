@@ -9,7 +9,7 @@
       responsables légaux de restaurants collectifs
     </p>
     <DownloadLink
-      href="/web/static/documents/charte-referencement-acteurs-de-l-ecosysteme.pdf"
+      href="/static/documents/charte-referencement-acteurs-de-l-ecosysteme.pdf"
       label="Télécharger la charte de référencement"
       sizeStr="187.3 ko"
     />

@@ -135,7 +135,7 @@
           <span class="body-2 grey--text text--darken-3">
             Je déclare avoir lu et respecter la
             <a
-              href="/web/static/documents/charte-referencement-acteurs-de-l-ecosysteme.pdf"
+              href="/static/documents/charte-referencement-acteurs-de-l-ecosysteme.pdf"
               target="_blank"
               rel="noopener external"
               title="charte de référencement - ouvre une nouvelle fenêtre"

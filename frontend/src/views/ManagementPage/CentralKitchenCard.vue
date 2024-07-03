@@ -1,6 +1,6 @@
 <template>
   <v-card :to="canteenLink" class="dsfr d-flex flex-column" outlined :ripple="false">
-    <v-img :src="canteenImage || '/web/static/images/canteen-default-image.jpg'" height="160" max-height="160"></v-img>
+    <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160" max-height="160"></v-img>
     <v-card-title>
       <h3 class="fr-h6 font-weight-bold mb-1">{{ canteen.name }}</h3>
     </v-card-title>

@@ -8,7 +8,7 @@
         class="fill-height pa-4 d-flex flex-column hover-transition dsfr"
       >
         <v-img
-          src="/web/static/images/doodles-dsfr/secondary/SprintingDoodle.png"
+          src="/static/images/doodles-dsfr/secondary/SprintingDoodle.png"
           v-if="$vuetify.breakpoint.smAndUp"
           class="mx-auto rounded-0"
           contain
@@ -43,7 +43,7 @@
         class="fill-height pa-4 d-flex flex-column hover-transition dsfr"
       >
         <v-img
-          src="/web/static/images/doodles-dsfr/secondary/SitReadingDoodle.png"
+          src="/static/images/doodles-dsfr/secondary/SitReadingDoodle.png"
           v-if="$vuetify.breakpoint.smAndUp"
           class="mx-auto rounded-0"
           contain
@@ -69,7 +69,7 @@
     <v-col role="listitem" cols="12" md="4">
       <v-card outlined :to="{ name: 'CanteensHome' }" class="fill-height pa-4 d-flex flex-column hover-transition dsfr">
         <v-img
-          src="/web/static/images/doodles-dsfr/secondary/DogDoodle.png"
+          src="/static/images/doodles-dsfr/secondary/DogDoodle.png"
           v-if="$vuetify.breakpoint.smAndUp"
           class="mx-auto rounded-0"
           contain

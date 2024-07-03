@@ -9,7 +9,7 @@
     :ripple="false"
   >
     <v-img contain :src="partner.image" height="120" max-height="120" v-if="partner.image"></v-img>
-    <v-img src="/web/static/images/partner-default-image.jpg" height="120" max-height="120" v-else></v-img>
+    <v-img src="/static/images/partner-default-image.jpg" height="120" max-height="120" v-else></v-img>
     <v-card-title class="font-weight-bold">
       <h3 class="fr-h5 mb-2">{{ partner.name }}</h3>
     </v-card-title>

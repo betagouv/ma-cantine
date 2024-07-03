@@ -11,7 +11,7 @@
       <video
         ref="video"
         style="width: 100%; background: #333;"
-        poster="/web/static/images/video-poster-tableur.webp"
+        poster="/static/images/video-poster-tableur.webp"
         controls
       >
         <source
@@ -42,7 +42,7 @@
 export default {
   data() {
     return {
-      filepath: "/web/static/documents/Diagnostic approvisionnement v0.8",
+      filepath: "/static/documents/Diagnostic approvisionnement v0.8",
     }
   },
   methods: {

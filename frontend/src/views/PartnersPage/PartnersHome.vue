@@ -10,7 +10,7 @@
       </v-col>
       <v-col cols="0" sm="5" md="4" v-if="$vuetify.breakpoint.smAndUp" class="py-0 pr-8 d-flex">
         <v-spacer></v-spacer>
-        <v-img src="/web/static/images/peeps-illustration-couple.png" contain max-width="200"></v-img>
+        <v-img src="/static/images/peeps-illustration-couple.png" contain max-width="200"></v-img>
       </v-col>
     </v-row>
     <h2 class="d-sr-only">Les acteurs de l'éco-système</h2>

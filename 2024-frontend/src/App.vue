@@ -26,7 +26,7 @@ const handleClick = () => {
     <DsfrHeader :logo-text :service-title :placeholder :home-to :quick-links />
     <div class="fr-container fr-my-2w">
       <div class="fr-grid-row">
-        <img src="@s:web/static/images/badges/appro.svg" width="125" height="125" />
+        <img src="@/assets/images/badges/appro.svg" width="125" height="125" />
       </div>
       <div class="fr-grid-row">
         <!-- example of loading from web/static -->

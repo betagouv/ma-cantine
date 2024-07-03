@@ -46,7 +46,7 @@
           <div class="d-flex" v-if="$vuetify.breakpoint.smAndDown">
             <div v-for="label in siqoLabels" :key="label.title">
               <img
-                :src="`/web/static/images/quality-labels/${label.src}`"
+                :src="`/static/images/quality-labels/${label.src}`"
                 aria-hidden="true"
                 :title="label.title"
                 style="max-height: 30px;"
@@ -77,7 +77,7 @@
       <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
         <div v-for="label in siqoLabels" :key="label.title">
           <img
-            :src="`/web/static/images/quality-labels/${label.src}`"
+            :src="`/static/images/quality-labels/${label.src}`"
             aria-hidden="true"
             :title="label.title"
             class="mr-1"

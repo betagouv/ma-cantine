@@ -29,7 +29,7 @@
               </span>
             </p>
             <div>
-              <img contain src="/web/static/images/quality-labels/logo_bio_eurofeuille.png" alt="" height="35" />
+              <img contain src="/static/images/quality-labels/logo_bio_eurofeuille.png" alt="" height="35" />
             </div>
           </div>
 
@@ -45,7 +45,7 @@
                 contain
                 v-for="label in labels"
                 :key="label.title"
-                :src="`/web/static/images/quality-labels/${label.src}`"
+                :src="`/static/images/quality-labels/${label.src}`"
                 :alt="label.title"
                 :title="label.title"
                 height="33"
@@ -74,7 +74,7 @@
     <div v-if="hasBadges" class="badge-container">
       <h3 class="badge-heading">Nos succès</h3>
       <div v-for="badge in earnedBadges" :key="badge.key" class="d-flex" style="margin-bottom: 14px;">
-        <img :width="isHighContent ? 25 : 38" contain :src="`/web/static/images/badges/${badge.key}.svg`" alt="" />
+        <img :width="isHighContent ? 25 : 38" contain :src="`/static/images/badges/${badge.key}.svg`" alt="" />
         <div
           class="badge-description"
           v-text="badge.subtitle"

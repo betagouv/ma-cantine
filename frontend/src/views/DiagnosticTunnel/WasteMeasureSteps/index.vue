@@ -253,7 +253,7 @@
       <p>
         Les informations relatives aux conditions de mise en œuvre de l’expérimentation sont précisées dans
         <a
-          href="/web/static/documents/Guide_pratique_XP_RESERVATION.pdf"
+          href="/static/documents/Guide_pratique_XP_RESERVATION.pdf"
           target="_blank"
           title="le guide pratique - ouvre une nouvelle fenêtre"
         >

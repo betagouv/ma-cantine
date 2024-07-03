@@ -115,7 +115,7 @@ export default {
       return this.canteen?.badges[badge.key]
     },
     badgeSrc(badgeId) {
-      return `/web/static/images/badges/${badgeId}${this.badgeIsEarned({ key: badgeId }) ? "" : "-disabled"}.svg`
+      return `/static/images/badges/${badgeId}${this.badgeIsEarned({ key: badgeId }) ? "" : "-disabled"}.svg`
     },
   },
 }

@@ -18,7 +18,7 @@
             <v-img
               max-width="30"
               contain
-              :src="`/web/static/images/badges/${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
+              :src="`/static/images/badges/${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
               class="mx-4"
               :alt="badgeTitle(badge)"
               :title="badgeTitle(badge)"

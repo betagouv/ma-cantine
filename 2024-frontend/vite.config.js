@@ -19,7 +19,6 @@ export default defineConfig({
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
       vue: fileURLToPath(new URL("./node_modules/vue/index.js", import.meta.url)),
-      "@s:web": fileURLToPath(new URL("../web", import.meta.url)),
     },
   },
 })

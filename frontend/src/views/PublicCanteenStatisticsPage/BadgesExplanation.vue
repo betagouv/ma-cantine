@@ -7,7 +7,7 @@
             width="30"
             max-width="30"
             contain
-            :src="`/web/static/images/badges/${measure.badgeId}.svg`"
+            :src="`/static/images/badges/${measure.badgeId}.svg`"
             class="mr-2"
             alt=""
           ></v-img>

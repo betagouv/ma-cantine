@@ -20,13 +20,13 @@
         <p>Exemple de ce qui est attendu fin 2022 :</p>
         <div class="good graphs">
           <img
-            src="/web/static/images/appro-graphs/good-1.svg"
+            src="/static/images/appro-graphs/good-1.svg"
             class="graph"
             alt="Graphe du exemple satisfaisant fin 2022"
             title="20 % bio, 30 % durable (hors bio)"
           />
           <img
-            src="/web/static/images/appro-graphs/good-2.svg"
+            src="/static/images/appro-graphs/good-2.svg"
             class="graph"
             alt="Graphe du exemple satisfaisant fin 2022"
             title="50 % bio, 0 % durable (hors bio)"
@@ -37,13 +37,13 @@
         <p>A améliorer d'ici fin 2022 :</p>
         <div class="bad graphs">
           <img
-            src="/web/static/images/appro-graphs/bad-1.svg"
+            src="/static/images/appro-graphs/bad-1.svg"
             class="graph"
             alt="Graphe du exemple insuffisant fin 2022"
             title="20 % bio, 20 % durable (hors bio)"
           />
           <img
-            src="/web/static/images/appro-graphs/bad-2.svg"
+            src="/static/images/appro-graphs/bad-2.svg"
             class="graph"
             alt="Graphe du exemple insuffisant fin 2022"
             title="15 % bio, 50 % durable (hors bio)"
