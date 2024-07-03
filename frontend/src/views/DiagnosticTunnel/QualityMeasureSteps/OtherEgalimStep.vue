@@ -14,7 +14,7 @@
           <div class="d-flex" v-if="$vuetify.breakpoint.smAndDown">
             <div v-for="label in otherLabels" :key="label.title">
               <img
-                :src="`/static/images/quality-labels/${label.src}`"
+                :src="`/web/static/images/quality-labels/${label.src}`"
                 :alt="label.title"
                 :title="label.title"
                 style="max-height: 30px;"
@@ -49,7 +49,7 @@
       <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
         <div v-for="label in otherLabels" :key="label.title">
           <img
-            :src="`/static/images/quality-labels/${label.src}`"
+            :src="`/web/static/images/quality-labels/${label.src}`"
             :alt="label.title"
             :title="label.title"
             class="mr-1"

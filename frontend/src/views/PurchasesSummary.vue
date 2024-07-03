@@ -137,7 +137,12 @@
                 </span>
               </p>
               <div class="mt-2">
-                <v-img contain src="/static/images/quality-labels/logo_bio_eurofeuille.png" alt="" max-height="35" />
+                <v-img
+                  contain
+                  src="/web/static/images/quality-labels/logo_bio_eurofeuille.png"
+                  alt=""
+                  max-height="35"
+                />
               </div>
             </v-card>
           </v-col>
@@ -154,7 +159,7 @@
                   contain
                   v-for="label in labels"
                   :key="label.title"
-                  :src="`/static/images/quality-labels/${label.src}`"
+                  :src="`/web/static/images/quality-labels/${label.src}`"
                   :alt="label.title"
                   :title="label.title"
                   class="px-1"

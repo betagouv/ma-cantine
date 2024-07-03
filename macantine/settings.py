@@ -182,7 +182,7 @@ USE_TZ = True  # True is default as of Django 5
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = "/static/"
+STATIC_URL = "/web/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 # Default primary key field type

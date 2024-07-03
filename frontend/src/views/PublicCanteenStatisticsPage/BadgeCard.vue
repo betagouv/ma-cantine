@@ -4,7 +4,13 @@
     outlined
     style="max-height: 10rem; max-width: 20rem;"
   >
-    <v-img max-width="30" contain :src="`/static/images/badges/${measure.badgeId}.svg`" class="mx-auto" alt=""></v-img>
+    <v-img
+      max-width="30"
+      contain
+      :src="`/web/static/images/badges/${measure.badgeId}.svg`"
+      class="mx-auto"
+      alt=""
+    ></v-img>
     <v-card-text class="mx-auto px-1">
       <p class="mb-0">
         <span class="grey--text text-h5 font-weight-black text--darken-2" style="line-height: inherit;">

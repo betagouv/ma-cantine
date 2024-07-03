@@ -1,5 +1,5 @@
 <template>
-  <img id="bio-logo" src="/static/images/quality-labels/logo_bio_eurofeuille.png" alt="" />
+  <img id="bio-logo" src="/web/static/images/quality-labels/logo_bio_eurofeuille.png" alt="" />
 </template>
 
 <style scoped lang="scss">

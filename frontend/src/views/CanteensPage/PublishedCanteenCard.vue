@@ -4,7 +4,7 @@
       <v-row class="pa-0 ma-0">
         <v-col cols="4" class="pa-0 card-image-wrap" v-if="showImage">
           <img
-            :src="canteen.leadImage ? canteen.leadImage.image : '/static/images/canteen-default-image.jpg'"
+            :src="canteen.leadImage ? canteen.leadImage.image : '/web/static/images/canteen-default-image.jpg'"
             class="lead-image"
             alt=""
           />
@@ -41,7 +41,7 @@
             <img
               v-for="badge in orderedBadges"
               :key="badge.key"
-              :src="`/static/images/badges/${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
+              :src="`/web/static/images/badges/${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
               :width="dense ? '35px' : '50px'"
               :height="dense ? '35px' : '50px'"
               :class="dense ? 'mr-2' : 'mr-4'"

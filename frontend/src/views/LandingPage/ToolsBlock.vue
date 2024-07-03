@@ -6,7 +6,7 @@
       <v-col cols="12" sm="6" md="4">
         <div class="d-flex flex-column">
           <p>Simplifiez les calculs de la loi EGAlim en ajoutant vos achats</p>
-          <v-card elevation="1" max-width="400px"><v-img src="/static/images/features/achats.png"></v-img></v-card>
+          <v-card elevation="1" max-width="400px"><v-img src="/web/static/images/features/achats.png"></v-img></v-card>
           <DownloadLink
             class="mt-4"
             :href="`${filepath}.xlsx`"
@@ -18,13 +18,15 @@
       <v-col cols="12" sm="6" md="4">
         <div class="d-flex flex-column">
           <p>Positionnez-vous sur les objectifs et démarches de la loi</p>
-          <v-card elevation="1" max-width="400px"><v-img src="/static/images/features/diagnostic.png"></v-img></v-card>
+          <v-card elevation="1" max-width="400px">
+            <v-img src="/web/static/images/features/diagnostic.png"></v-img>
+          </v-card>
         </div>
       </v-col>
       <v-col cols="12" sm="6" md="4">
         <div class="d-flex flex-column">
           <p>Informez vos convives en communiquant sur vos initiatives</p>
-          <v-card elevation="1" max-width="400px"><v-img src="/static/images/features/publier.png"></v-img></v-card>
+          <v-card elevation="1" max-width="400px"><v-img src="/web/static/images/features/publier.png"></v-img></v-card>
           <p class="mt-4">
             Ou utilisez notre
             <router-link :to="{ name: 'GeneratePosterPage' }">générateur d'affiche</router-link>
@@ -54,7 +56,7 @@ export default {
   components: { DownloadLink },
   data() {
     return {
-      filepath: "/static/documents/Diagnostic approvisionnement v0.8",
+      filepath: "/web/static/documents/Diagnostic approvisionnement v0.8",
       filesizeStr: "2,9 Mo",
     }
   },

@@ -17,7 +17,7 @@
         </p>
       </v-col>
       <v-col v-if="$vuetify.breakpoint.mdAndUp" cols="5">
-        <v-img max-height="200px" contain src="/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
+        <v-img max-height="200px" contain src="/web/static/images/doodles-dsfr/primary/LovingDoodle.png"></v-img>
       </v-col>
     </v-row>
     <v-row>

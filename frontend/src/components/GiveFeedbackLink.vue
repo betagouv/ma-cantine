@@ -5,7 +5,7 @@
     rel="noopener"
   >
     <img
-      src="https://voxusagers.numerique.gouv.fr/static/bouton-blanc.svg"
+      src="https://voxusagers.numerique.gouv.fr/web/static/bouton-blanc.svg"
       alt="Je donne mon avis"
       title="Je donne mon avis sur cette démarche"
     />

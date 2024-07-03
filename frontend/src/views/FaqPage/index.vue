@@ -12,7 +12,7 @@
       </v-col>
       <v-col cols="2">
         <v-img
-          src="/static/images/doodles-dsfr/primary/ReadingDoodle.png"
+          src="/web/static/images/doodles-dsfr/primary/ReadingDoodle.png"
           v-if="$vuetify.breakpoint.smAndUp"
           class="mx-auto rounded-0"
           contain

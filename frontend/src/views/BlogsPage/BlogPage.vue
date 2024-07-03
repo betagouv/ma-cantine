@@ -5,13 +5,13 @@
       <v-card elevation="0" class="text-center text-md-left my-10">
         <v-row v-if="$vuetify.breakpoint.smAndDown">
           <v-col cols="12">
-            <v-img max-height="100px" contain src="/static/images/lighthouse.png"></v-img>
+            <v-img max-height="100px" contain src="/web/static/images/lighthouse.png"></v-img>
           </v-col>
         </v-row>
         <v-row>
           <v-spacer></v-spacer>
           <v-col cols="12" sm="3" v-if="$vuetify.breakpoint.mdAndUp">
-            <v-img max-height="90px" contain src="/static/images/lighthouse.png"></v-img>
+            <v-img max-height="90px" contain src="/web/static/images/lighthouse.png"></v-img>
           </v-col>
           <v-col cols="12" sm="9">
             <v-card-title>

@@ -8,8 +8,8 @@
           target="_blank"
           rel="noopener"
         >
-          <img src="/static/images/Marianne-logo.png" height="20" max-width="60" class="mr-1" alt="" />
-          <img src="/static/images/ma-cantine-logo-light.jpg" height="48" alt="ma cantine" />
+          <img src="/web/static/images/Marianne-logo.png" height="20" max-width="60" class="mr-1" alt="" />
+          <img src="/web/static/images/ma-cantine-logo-light.jpg" height="48" alt="ma cantine" />
         </router-link>
       </v-toolbar-title>
     </v-app-bar>

@@ -25,7 +25,7 @@
         <v-card href="https://www.facebook.com/groups/719336016153227/" target="_blank" rel="noopener">
           <v-img
             contain
-            src="/static/images/facebook-cover.jpg"
+            src="/web/static/images/facebook-cover.jpg"
             alt="ma-cantine.beta.gouv.fr (accéder au groupe facebook) - communauté d'entraide et d'échange de la restauration collective"
           ></v-img>
         </v-card>

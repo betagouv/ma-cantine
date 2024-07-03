@@ -287,7 +287,7 @@
       <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp">
         <div class="fill-height d-flex flex-column align-center">
           <v-spacer></v-spacer>
-          <v-img src="/static/images/doodles-dsfr/primary/SittingDoodle.png" contain></v-img>
+          <v-img src="/web/static/images/doodles-dsfr/primary/SittingDoodle.png" contain></v-img>
           <v-spacer></v-spacer>
         </div>
       </v-col>

@@ -2,7 +2,7 @@
   <v-card outlined class="fill-height dsfr no-hover">
     <v-row>
       <v-col cols="4" v-if="$vuetify.breakpoint.smAndUp">
-        <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" class="fill-height"></v-img>
+        <v-img :src="canteenImage || '/web/static/images/canteen-default-image.jpg'" class="fill-height"></v-img>
       </v-col>
       <v-col class="py-sm-8 pr-sm-8">
         <v-card-title><h3 class="fr-h4 mb-2">Mon établissement</h3></v-card-title>

@@ -3,7 +3,7 @@
     <v-card elevation="0" class="text-center text-md-left">
       <v-row v-if="$vuetify.breakpoint.smAndDown">
         <v-col cols="12">
-          <v-img max-height="150px" contain src="/static/images/doodles-dsfr/primary/SittingChef.png"></v-img>
+          <v-img max-height="150px" contain src="/web/static/images/doodles-dsfr/primary/SittingChef.png"></v-img>
         </v-col>
       </v-row>
       <v-row>
@@ -27,7 +27,7 @@
         </v-col>
         <v-col cols="3" class="d-flex flex-column align-self-end" v-if="$vuetify.breakpoint.mdAndUp">
           <v-spacer></v-spacer>
-          <v-img max-height="200px" contain src="/static/images/doodles-dsfr/primary/SittingChef.png"></v-img>
+          <v-img max-height="200px" contain src="/web/static/images/doodles-dsfr/primary/SittingChef.png"></v-img>
           <v-spacer></v-spacer>
         </v-col>
         <v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
@@ -102,17 +102,17 @@ export default {
         {
           text:
             "Créez-vous un compte utilisateur puis ajoutez votre ou vos établissements s'ils ne sont pas encore référencés.",
-          image: "/static/images/features/creer-cantine.png",
+          image: "/web/static/images/features/creer-cantine.png",
         },
         {
           text:
             "Faites l'auto-diagnostic de votre ou vos établissements sur les 5 mesures phares de la loi EGAlim (et Climat).",
-          image: "/static/images/features/diagnostic.png",
+          image: "/web/static/images/features/diagnostic.png",
         },
         {
           text:
             "Améliorez les résultats et communiquez sur vos bonnes pratiques en utilisant les outils et ressources disponibles.",
-          image: "/static/images/features/publier.png",
+          image: "/web/static/images/features/publier.png",
         },
       ],
       recentlyModifiedCanteens: null,
