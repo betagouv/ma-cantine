@@ -257,7 +257,10 @@ SPECTACULAR_SETTINGS = {
 # Frontend - VueJS application
 
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "frontend/dist/")]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "frontend/dist/"),
+    ("dsfr/icons", BASE_DIR / "2024-frontend/node_modules/@gouvfr/dsfr/dist/icons"),
+]
 WEBPACK_LOADER = {
     "DEFAULT": {
         "CACHE": DEBUG,

@@ -17,6 +17,8 @@ urlpatterns.append(re_path(r"^api/v1/", include("api.urls")))
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # a hack to get icon URLs to work in Vue 3 CSS
+    urlpatterns += static("/2024-frontend/node_modules/@gouvfr/dsfr/dist/icons", document_root="static/dsfr/icons")
 
 if settings.DEBUG_PERFORMANCE:
     import debug_toolbar
