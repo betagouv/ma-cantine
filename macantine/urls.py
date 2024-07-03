@@ -4,7 +4,7 @@ from django.conf.urls import include
 from django.conf.urls.static import static
 from django.urls import path, re_path
 from magicauth.urls import urlpatterns as magicauth_urls
-from web.views import VueAppDisplayView
+from web.views import VueAppDisplayView, Vue3AppDisplayView
 
 urlpatterns = [
     path("admin/", admin.site.urls),  # if the path of 'admin/' changes, update historical_record_add_auth_method
@@ -28,6 +28,7 @@ urlpatterns.extend(magicauth_urls)
 
 # In order for vue-history to work in HTML5 mode, we need to add a catch-all
 # route returning the app (https://router.vuejs.org/guide/essentials/history-mode.html#html5-history-mode)
+urlpatterns.append(re_path(r"v2/$", Vue3AppDisplayView.as_view()))
 urlpatterns.append(re_path(r"^.*/$", VueAppDisplayView.as_view()))
 
 admin.site.site_header = f"Ma Cantine EGALIM - {getattr(settings, 'ENVIRONMENT', '')}"

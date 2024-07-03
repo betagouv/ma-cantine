@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
     "django.contrib.postgres",
+    "django_vite_plugin",
     "webpack_loader",
     "rest_framework",
     "oauth2_provider",
