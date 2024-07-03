@@ -2,7 +2,97 @@
   "compilerOptions": {
     "paths": {
       "@/*": [
-        "./src/*"
+        "./*"
+      ],
+      "@s:api/*": [
+        "./../api/static/api/*"
+      ],
+      "@s:ckeditor/*": [
+        "./../venv/lib/python3.10/site-packages/ckeditor/static/ckeditor/*"
+      ],
+      "@s:ckeditor_uploader/*": [
+        "./../venv/lib/python3.10/site-packages/ckeditor_uploader/static/ckeditor_uploader/*"
+      ],
+      "@s:common/*": [
+        "./../common/static/common/*"
+      ],
+      "@s:data/*": [
+        "./../data/static/data/*"
+      ],
+      "@s:django_filters/*": [
+        "./../venv/lib/python3.10/site-packages/django_filters/static/django_filters/*"
+      ],
+      "@s:drf_spectacular/*": [
+        "./../venv/lib/python3.10/site-packages/drf_spectacular/static/drf_spectacular/*"
+      ],
+      "@s:drf_spectacular_sidecar/*": [
+        "./../venv/lib/python3.10/site-packages/drf_spectacular_sidecar/static/drf_spectacular_sidecar/*"
+      ],
+      "@s:macantine/*": [
+        "./../macantine/static/macantine/*"
+      ],
+      "@s:magicauth/*": [
+        "./../venv/lib/python3.10/site-packages/magicauth/static/magicauth/*"
+      ],
+      "@s:oauth2_provider/*": [
+        "./../venv/lib/python3.10/site-packages/oauth2_provider/static/oauth2_provider/*"
+      ],
+      "@s:rest_framework/*": [
+        "./../venv/lib/python3.10/site-packages/rest_framework/static/rest_framework/*"
+      ],
+      "@s:simple_history/*": [
+        "./../venv/lib/python3.10/site-packages/simple_history/static/simple_history/*"
+      ],
+      "@s:web/*": [
+        "./../web/static/web/*"
+      ],
+      "@s:webpack_loader/*": [
+        "./../venv/lib/python3.10/site-packages/webpack_loader/static/webpack_loader/*"
+      ],
+      "@t:api/*": [
+        "./../api/templates/api/*"
+      ],
+      "@t:ckeditor/*": [
+        "./../venv/lib/python3.10/site-packages/ckeditor/templates/ckeditor/*"
+      ],
+      "@t:ckeditor_uploader/*": [
+        "./../venv/lib/python3.10/site-packages/ckeditor_uploader/templates/ckeditor_uploader/*"
+      ],
+      "@t:common/*": [
+        "./../common/templates/common/*"
+      ],
+      "@t:data/*": [
+        "./../data/templates/data/*"
+      ],
+      "@t:django_filters/*": [
+        "./../venv/lib/python3.10/site-packages/django_filters/templates/django_filters/*"
+      ],
+      "@t:drf_spectacular/*": [
+        "./../venv/lib/python3.10/site-packages/drf_spectacular/templates/drf_spectacular/*"
+      ],
+      "@t:drf_spectacular_sidecar/*": [
+        "./../venv/lib/python3.10/site-packages/drf_spectacular_sidecar/templates/drf_spectacular_sidecar/*"
+      ],
+      "@t:macantine/*": [
+        "./../macantine/templates/macantine/*"
+      ],
+      "@t:magicauth/*": [
+        "./../venv/lib/python3.10/site-packages/magicauth/templates/magicauth/*"
+      ],
+      "@t:oauth2_provider/*": [
+        "./../venv/lib/python3.10/site-packages/oauth2_provider/templates/oauth2_provider/*"
+      ],
+      "@t:rest_framework/*": [
+        "./../venv/lib/python3.10/site-packages/rest_framework/templates/rest_framework/*"
+      ],
+      "@t:simple_history/*": [
+        "./../venv/lib/python3.10/site-packages/simple_history/templates/simple_history/*"
+      ],
+      "@t:web/*": [
+        "./../web/templates/web/*"
+      ],
+      "@t:webpack_loader/*": [
+        "./../venv/lib/python3.10/site-packages/webpack_loader/templates/webpack_loader/*"
       ]
     }
   },

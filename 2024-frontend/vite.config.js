@@ -11,17 +11,14 @@ export default defineConfig({
     vue(),
     vueDevTools(),
     djangoVitePlugin({
-      input: [
-        "src/main.js",
-        // 'home/css/style.css',
-      ],
+      input: ["src/main.js"],
       root: "../",
     }),
   ],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
-      // vue: "@vitejs/plugin-vue",
+      vue: fileURLToPath(new URL("./node_modules/vue/index.js", import.meta.url)),
     },
   },
 })
