@@ -2,6 +2,19 @@
 import { RouterView } from "vue-router"
 import { ref } from "vue"
 
+const logoText = ["Ministère", "de l’Agriculture", "et de la Souveraineté", "Alimentaire"]
+const serviceTitle = "ma cantine"
+const placeholder = ""
+const homeTo = "/"
+const quickLinks = [
+  { label: "Se connecter", to: "/login", class: "fr-icon-user-fill" },
+  {
+    label: "S’enregistrer",
+    to: "/signup",
+    icon: "ri-account-circle-line",
+  },
+]
+
 const nb = ref(0)
 const handleClick = () => {
   nb.value++
@@ -9,75 +22,30 @@ const handleClick = () => {
 </script>
 
 <template>
-  <div class="fr-container fr-my-2w">
-    <img alt="Vue logo" class="logo" src="@s:web/static/images/badges/appro.svg" width="125" height="125" />
-    <DsfrButton size="lg" icon="fr-icon-home-4-fill" label="Accueil" @click="handleClick()" />
-    Cliqué {{ nb }} fois
-  </div>
+  <div style="position: relative; padding-bottom: 4rem;">
+    <DsfrHeader :logo-text :service-title :placeholder :home-to :quick-links />
+    <div class="fr-container fr-my-2w">
+      <div class="fr-grid-row">
+        <img src="@s:web/static/images/badges/appro.svg" width="125" height="125" />
+      </div>
+      <div class="fr-grid-row">
+        <!-- example of loading from web/static -->
+        <DsfrButton size="lg" icon="fr-icon-home-4-fill" label="Accueil" @click="handleClick()" />
+      </div>
+      <div class="fr-grid-row">
+        <p>Cliqué {{ nb }} fois</p>
+      </div>
+    </div>
 
-  <RouterView />
+    <main class="fr-container fr-pb-2w">
+      <RouterView />
+    </main>
+  </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+#app {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 </style>
