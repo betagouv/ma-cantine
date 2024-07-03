@@ -1,21 +1,19 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router"
-import HelloWorld from "./components/HelloWorld.vue"
+import { RouterView } from "vue-router"
+import { ref } from "vue"
+
+const nb = ref(0)
+const handleClick = () => {
+  nb.value++
+}
 </script>
 
 <template>
-  <header>
+  <div class="fr-container fr-my-2w">
     <img alt="Vue logo" class="logo" src="@s:web/static/images/badges/appro.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+    <DsfrButton size="lg" icon="fr-icon-home-4-fill" label="Accueil" @click="handleClick()" />
+    Cliqué {{ nb }} fois
+  </div>
 
   <RouterView />
 </template>
