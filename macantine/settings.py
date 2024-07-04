@@ -38,6 +38,7 @@ PROTOCOL = "https" if SECURE else "http"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
+DEBUG_FRONT = os.getenv("DEBUG_FRONT") == "True"
 AUTH_USER_MODEL = "data.User"
 AUTHENTICATION_BACKENDS = [
     "macantine.backends.EmailUsernameBackend",
@@ -259,6 +260,7 @@ SPECTACULAR_SETTINGS = {
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/dist/"),
+    os.path.join(BASE_DIR, "build/"),
     ("dsfr/icons", BASE_DIR / "2024-frontend/node_modules/@gouvfr/dsfr/dist/icons"),
 ]
 WEBPACK_LOADER = {
@@ -267,6 +269,11 @@ WEBPACK_LOADER = {
         "BUNDLE_DIR_NAME": "/bundles/",
         "STATS_FILE": os.path.join(FRONTEND_DIR, "webpack-stats.json"),
     }
+}
+
+DJANGO_VITE_PLUGIN = {
+    "DEV_MODE": DEBUG_FRONT,
+    "BUILD_DIR": "build",
 }
 
 # Email
