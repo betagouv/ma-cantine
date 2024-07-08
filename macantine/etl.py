@@ -359,47 +359,52 @@ class ETL_OPEN_DATA(ETL):
         else:
             return 1
 
-    def load_dataset(self):
-        self._load_dataset(stage="to_validate")
-        if os.environ["DEFAULT_FILE_STORAGE"] == "storages.backends.s3boto3.S3Boto3Storage":
-            logger.info(f"Validating {self.name} dataset. Dataset size : {self.len_dataset()} lines")
-            if self.is_valid():
-                logger.info(f"Exporting {self.name} dataset to s3")
-                self._load_dataset(stage="validated")
-            else:
-                logger.error(f"The dataset {self.name} is invalid and therefore will not be exported to s3")
-        elif os.environ["DEFAULT_FILE_STORAGE"] == "django.core.files.storage.FileSystemStorage":
-            logger.info(f"Saving {self.name} dataset locally")
-            self._load_dataset(stage="validated")
-        else:
-            logger.info("Exporting the dataset is not possible with the file system configured")
-
-    def _load_dataset(self, stage="to_validate"):
+    def build_filename(self, stage):
         if stage == "to_validate":
-            filename = f"open_data/{self.dataset_name}_to_validate"
+            return f"open_data/{self.dataset_name}_to_validate.csv"
         elif stage == "validated":
-            filename = f"open_data/{self.dataset_name}"
+            return f"open_data/{self.dataset_name}.csv"
         else:
-            return 0
-        with default_storage.open(filename + ".csv", "w") as file:
-            self.df.to_csv(
-                file,
-                sep=";",
-                index=False,
-                na_rep="",
-                encoding="utf_8_sig",
-                quoting=csv.QUOTE_NONE,
-            )
-        if stage == "validated":
-            with default_storage.open(filename + ".parquet", "wb") as file:
-                if "sectors" in self.df.columns:
-                    self.df.sectors = self.df.sectors.astype(str)
-                self.df.to_parquet(file)
-            with default_storage.open(filename + ".xlsx", "wb") as file:
-                df_export = self.df.copy()
-                df_export = datetimes_to_str(df_export)  # Ah Excel !
-                df_export.to_excel(file, index=False)
-            update_datagouv_resources()
+            raise ValueError(f"Invalid stage: {stage}")
+
+    def _read_dataframe(self, filename):
+        try:
+            with default_storage.open(filename, "r") as file:
+                self.df = pd.read_csv(file, sep=";")
+        except FileNotFoundError:
+            logger.warning(f"File {filename} not found. Dataset assumed empty.")
+            self.df = pd.DataFrame()
+
+    def _load_data_csv(self, filename):
+        with default_storage.open(filename + ".csv", "w") as csv_file:
+            self.df.to_csv(csv_file, sep=";", index=False, na_rep="", encoding="utf_8_sig", quoting=csv.QUOTE_NONE)
+
+    def _load_data_parquet(self, filename):
+        with default_storage.open(filename + ".parquet", "wb") as parquet_file:
+            if "sectors" in self.df.columns:
+                self.df.sectors = self.df.sectors.astype(str)
+            self.df.to_parquet(parquet_file)
+
+    def _load_data_xlsx(self, filename):
+        with default_storage.open(filename + ".xlsx", "wb") as excel_file:
+            df_export = self.df.copy()
+            df_export = datetimes_to_str(df_export)
+            df_export.to_excel(excel_file, index=False)
+
+    def load_dataset(self):
+        self._read_dataframe(self.build_filename(self, stage="to_validate"))
+        if self.is_valid():
+            validated_filename = self.build_filename(self, stage="validated")
+            try:
+                self._load_data_csv(validated_filename)
+                self._load_data_parquet(validated_filename)
+                self._load_data_xlsx(validated_filename)
+
+                update_datagouv_resources()
+            except Exception as e:
+                logger.error(f"Error saving validated data: {e}")
+        else:
+            logger.error(f"The dataset {self.name} is invalid and therefore will not be exported to s3")
 
 
 class ETL_CANTEEN(ETL_OPEN_DATA):
