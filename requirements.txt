@@ -51,7 +51,7 @@ EditorConfig==0.12.3
 et-xmlfile==1.1.0
 exceptiongroup==1.2.1
 factory-boy==3.3.0
-Faker==25.8.0
+Faker==26.0.0
 fastparquet==2024.2.0
 filelock==3.15.4
 freezegun==1.5.1
