@@ -20,8 +20,7 @@ if settings.DEBUG:
     # a hack to get icon URLs to work in Vue 3 CSS
     urlpatterns += static("/2024-frontend/node_modules/@gouvfr/dsfr/dist/icons", document_root="static/dsfr/icons")
 
-if not settings.DEBUG_FRONT:
-    urlpatterns += (path("", include("django_vite_plugin.urls")),)
+urlpatterns += (path("", include("django_vite_plugin.urls")),)
 
 if settings.DEBUG_PERFORMANCE:
     import debug_toolbar
@@ -33,7 +32,7 @@ urlpatterns.extend(magicauth_urls)
 
 # In order for vue-history to work in HTML5 mode, we need to add a catch-all
 # route returning the app (https://router.vuejs.org/guide/essentials/history-mode.html#html5-history-mode)
-urlpatterns.append(re_path(r"v2/$", Vue3AppDisplayView.as_view()))
+urlpatterns.append(re_path(r"^v2/.*$", Vue3AppDisplayView.as_view()))
 urlpatterns.append(re_path(r"^.*/$", VueAppDisplayView.as_view()))
 
 admin.site.site_header = f"Ma Cantine EGALIM - {getattr(settings, 'ENVIRONMENT', '')}"

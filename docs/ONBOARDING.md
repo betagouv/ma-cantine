@@ -247,9 +247,6 @@ Des extensions qu'on trouve utile :
 
 ## Test déploiement en locale
 
-`frontend/ > export DEBUG=False; npm run build`
-`2024-frontend/ > npm run build`
-
 .env :
 
 ```
@@ -257,5 +254,7 @@ DEBUG=True
 DEBUG_FRONT=False
 ```
 
+`frontend/ > export DEBUG=False; npm run build`
+`2024-frontend/ > npm run build`
 `/ > python manage.py collectstatic`
 `/ > python manage.py runserver --insecure`

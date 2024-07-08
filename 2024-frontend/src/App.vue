@@ -35,6 +35,10 @@ const handleClick = () => {
       <div class="fr-grid-row">
         <p>Cliqué {{ nb }} fois</p>
       </div>
+      <p>
+        <RouterLink :to="{ name: 'HomeView' }" class="fr-mr-2w">Accueil</RouterLink>
+        <RouterLink :to="{ name: 'AboutView' }">About</RouterLink>
+      </p>
     </div>
 
     <main class="fr-container fr-pb-2w">
