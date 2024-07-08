@@ -38,7 +38,8 @@ PROTOCOL = "https" if SECURE else "http"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
-DEBUG_FRONT = os.getenv("DEBUG_FRONT") == "True"
+# Default to True so that tests can pass without this env var being defined
+DEBUG_FRONT = os.getenv("DEBUG_FRONT") == "True" if os.getenv("DEBUG_FRONT") else True
 AUTH_USER_MODEL = "data.User"
 AUTHENTICATION_BACKENDS = [
     "macantine.backends.EmailUsernameBackend",
