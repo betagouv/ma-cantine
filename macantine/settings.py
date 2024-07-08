@@ -38,6 +38,8 @@ PROTOCOL = "https" if SECURE else "http"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
+# Default to True so that tests can pass without this env var being defined
+DEBUG_FRONT = os.getenv("DEBUG_FRONT") == "True" if os.getenv("DEBUG_FRONT") else True
 AUTH_USER_MODEL = "data.User"
 AUTHENTICATION_BACKENDS = [
     "macantine.backends.EmailUsernameBackend",
@@ -77,6 +79,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
     "django.contrib.postgres",
+    "django_vite_plugin",
     "webpack_loader",
     "rest_framework",
     "oauth2_provider",
@@ -256,13 +259,22 @@ SPECTACULAR_SETTINGS = {
 # Frontend - VueJS application
 
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "frontend/dist/")]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "frontend/dist/"),
+    os.path.join(BASE_DIR, "build/"),
+    ("dsfr/icons", BASE_DIR / "2024-frontend/node_modules/@gouvfr/dsfr/dist/icons"),
+]
 WEBPACK_LOADER = {
     "DEFAULT": {
         "CACHE": DEBUG,
         "BUNDLE_DIR_NAME": "/bundles/",
         "STATS_FILE": os.path.join(FRONTEND_DIR, "webpack-stats.json"),
     }
+}
+
+DJANGO_VITE_PLUGIN = {
+    "DEV_MODE": DEBUG_FRONT,
+    "BUILD_DIR": "build",
 }
 
 # Email
@@ -482,6 +494,7 @@ TELEDECLARATION_CORRECTION_CAMPAIGN = os.getenv("TELEDECLARATION_CORRECTION_CAMP
 TELEDECLARATION_END_DATE = os.getenv("TELEDECLARATION_END_DATE", "")
 ENABLE_DASHBOARD = os.getenv("ENABLE_DASHBOARD") == "True"
 PUBLISH_BY_DEFAULT = os.getenv("PUBLISH_BY_DEFAULT") == "True"
+ENABLE_VUE3 = os.getenv("ENABLE_VUE3") == "True"
 
 # Custom testing
 
