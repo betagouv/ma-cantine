@@ -172,3 +172,6 @@ stats/bilan/france-geojson
 
 notes/
 
+# 2024 Frontend
+.vite/
+.hotfile
