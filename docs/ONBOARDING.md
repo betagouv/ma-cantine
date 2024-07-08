@@ -116,6 +116,7 @@ TELEDECLARATION_CORRECTION_CAMPAIGN= Optionnel - `True` pour pour distinguer la 
 TELEDECLARATION_END_DATE= Optionnel - Celle-ci n'est pas exactement une feature flag mais fonctionne avec le flag précedent. Il faut indiquer une date pour la fin de la campagne de la télédéclaration (par exemple, `2024-03-15`)
 ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des gestionnaires.
 PUBLISH_BY_DEFAULT= Optionnel - `True` pour publier les cantines sauf celles qui sont identifiées autrement.
+ENABLE_VUE3= Optionnel - `True` pour rendre les nouvelles vues disponibles.
 ```
 
 ### Relances automatiques par email
