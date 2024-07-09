@@ -46,27 +46,34 @@ class TestETLAnalysis(TestCase):
 class TestETLOpenData(TestCase):
 
     @freeze_time("2023-05-14")  # Faking time to mock creation_date
-    def test_extraction_teledeclaration(self, mock):
+    def test_td_range_years(self, mock):
         """
         Only teledeclarations that occurred during one specific teledeclaration campaign should be extracted
         """
         canteen = CanteenFactory.create()
         applicant = UserFactory.create()
+        test_cases = [
+            {"name": "Ignore years out of range", "year": 1990, "expected_outcome": 0},
+            {"name": "Returns TDs for year in range", "year": 2022, "expected_outcome": 1},
+        ]
 
-        etl_td = ETL_TD(1990)
-        diagnostic_1990 = DiagnosticFactory.create(canteen=canteen, year=1990, diagnostic_type=None)
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic_1990, applicant)
-        etl_td.extract_dataset()
-        self.assertEqual(etl_td.len_dataset(), 0, "There should be no teledeclaration")
+        for tc in test_cases:
+            etl_td = ETL_TD(tc["year"])
+            diagnostic = DiagnosticFactory.create(canteen=canteen, year=tc["year"], diagnostic_type=None)
+            Teledeclaration.create_from_diagnostic(diagnostic, applicant)
+            etl_td.extract_dataset()
+            self.assertEqual(etl_td.len_dataset(), tc["expected_outcome"])
 
-        etl_td = ETL_TD(2022)
-        diagnostic_2022 = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
-        etl_td.extract_dataset()
-        self.assertEqual(etl_td.len_dataset(), 1, "There should be one teledeclaration")
-
+    @freeze_time("2023-05-14")  # Faking time to mock creation_date
+    def test_ignore_cancelled_tds(self, mock):
+        canteen = CanteenFactory.create()
+        applicant = UserFactory.create()
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant)
         teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
         teledeclaration.save()
+
+        etl_td = ETL_TD(2022)
         etl_td.extract_dataset()
         self.assertEqual(etl_td.len_dataset(), 0, "The list should be empty as the only td has the CANCELLED status")
 
