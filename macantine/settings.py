@@ -100,6 +100,7 @@ INSTALLED_APPS = [
     "ckeditor_uploader",
     "macantine",
     "data",
+    "cms",
     "api",
     "web",
     "magicauth",
