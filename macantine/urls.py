@@ -5,11 +5,17 @@ from django.conf.urls.static import static
 from django.urls import path, re_path
 from magicauth.urls import urlpatterns as magicauth_urls
 from web.views import VueAppDisplayView, Vue3AppDisplayView
+from wagtail.admin import urls as wagtailadmin_urls
+from wagtail import urls as wagtail_urls
+from wagtail.documents import urls as wagtaildocs_urls
 
 urlpatterns = [
     path("admin/", admin.site.urls),  # if the path of 'admin/' changes, update historical_record_add_auth_method
     path("ckeditor/", include("ckeditor_uploader.urls")),
     path("o/", include("oauth2_provider.urls", namespace="oauth2_provider")),
+    path('cms/', include(wagtailadmin_urls)),
+    path('documents/', include(wagtaildocs_urls)),
+    path('pages/', include(wagtail_urls)),
 ]
 urlpatterns.append(re_path(r"", include("web.urls")))
 urlpatterns.append(re_path(r"^api/v1/", include("api.urls")))
