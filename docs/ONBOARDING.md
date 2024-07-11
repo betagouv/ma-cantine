@@ -248,14 +248,17 @@ Des extensions qu'on trouve utile :
 
 ## Test déploiement en locale
 
+Les commandes lancées sur CleverCloud sont listées dans `clevercloud/python.json`.
+
 .env :
 
 ```
-DEBUG=True
+DEBUG=False
 DEBUG_FRONT=False
 ```
 
-`frontend/ > export DEBUG=False; npm run build`
-`2024-frontend/ > npm run build`
-`/ > python manage.py collectstatic`
-`/ > python manage.py runserver --insecure`
+Dans le dossier principal, lancez :
+`bash ./clevercloud/test-build.sh`
+`python manage.py runserver --insecure`
+
+En prod, faut ajouter `CC_PRE_BUILD_HOOK=./clevercloud/pre-build-hook.sh`

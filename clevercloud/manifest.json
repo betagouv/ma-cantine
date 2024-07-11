@@ -1,0 +1,3 @@
+{
+  "dummy": "manifest file. This is a hack to work around a django-vite-plugin bug."
+}

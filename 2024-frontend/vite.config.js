@@ -21,7 +21,4 @@ export default defineConfig({
       vue: fileURLToPath(new URL("./node_modules/vue/index.js", import.meta.url)),
     },
   },
-  build: {
-    manifest: true,
-  },
 })
