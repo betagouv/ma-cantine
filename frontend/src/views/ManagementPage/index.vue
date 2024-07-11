@@ -21,10 +21,10 @@
           </router-link>
         </p>
       </v-col>
-      <v-col>
+      <v-col cols="12" md="5">
         <DsfrCallout noIcon class="mb-0">
           <p class="mb-1">
-            Vous cherchez à recruter au sein de vos équipes ?
+            Vous cherchez à recruter au sein de vos équipes&nbsp;?
           </p>
           <p>
             <i>ma cantine</i>
