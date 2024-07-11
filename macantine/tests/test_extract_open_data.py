@@ -281,21 +281,23 @@ class TestETLOpenData(TestCase):
         )
         etl_canteen = ETL_CANTEEN()
 
-        canteen_td = CanteenFactory.create()
-        _ = CanteenFactory.create()
+        canteen_has_declared_within_campaign = CanteenFactory.create()
+        canteen_has_not_declared = CanteenFactory.create()
         applicant = UserFactory.create()
-        diagnostic_2022 = DiagnosticFactory.create(canteen=canteen_td, year=2022, diagnostic_type=None)
+        diagnostic_2022 = DiagnosticFactory.create(
+            canteen=canteen_has_declared_within_campaign, year=2022, diagnostic_type=None
+        )
         _ = Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
         etl_canteen.extract_dataset()
         etl_canteen.transform_dataset()
         canteens = etl_canteen.get_dataset()
         self.assertEqual(
-            canteens[canteens.id == canteen_td.id].iloc[0]["declaration_donnees_2022"],
+            canteens[canteens.id == canteen_has_declared_within_campaign.id].iloc[0]["declaration_donnees_2022"],
             True,
             "The canteen has participated in the campain",
         )
         self.assertEqual(
-            canteens[canteens.id != canteen_td.id].iloc[0]["declaration_donnees_2022"],
+            canteens[canteens.id == canteen_has_not_declared.id].iloc[0]["declaration_donnees_2022"],
             False,
             "The canteen hasn't participated in the campain",
         )
