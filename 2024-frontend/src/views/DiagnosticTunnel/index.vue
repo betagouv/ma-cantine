@@ -36,8 +36,8 @@ const tunnels = [
   <!-- TODO: mobile view optimisations -->
   <!-- TODO: synthesis styling -->
   <div class="tunnel">
-    <div class="fr-container fr-pt-2w">
-      <div class="measures fr-grid-row fr-grid-row--middle">
+    <div class="fr-container fr-pt-1w">
+      <div class="measures fr-grid-row fr-grid-row--middle fr-py-2w">
         <div class="fr-col-12 fr-col-sm-8 fr-hidden fr-unhidden-sm">
           <div class="fr-grid-row fr-ml-n2w">
             <div
@@ -47,7 +47,7 @@ const tunnels = [
             >
               <div v-if="tunnel.id === measure.id" class="fr-grid-row fr-grid-row--middle">
                 <!-- TODO: proper colours (originally primary and primary lighten-4) -->
-                <component :is="tunnel.icon" class="fr-mb-1v fr-mr-1v" />
+                <component :is="tunnel.icon" class="fr-mb-1v fr-mr-1w" />
                 <!-- text-uppercase mb-0 grey--text text--darken-2 font-weight-bold -->
                 <p class="measure-title fr-text--xs fr-mb-0">
                   {{ tunnel.shortTitle }}
