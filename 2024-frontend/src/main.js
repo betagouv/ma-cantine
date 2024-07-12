@@ -1,5 +1,3 @@
-import "./assets/main.css"
-
 import { createApp } from "vue"
 import { createPinia } from "pinia"
 import "@gouvfr/dsfr/dist/core/core.main.min.css" // Le CSS minimal du DSFR

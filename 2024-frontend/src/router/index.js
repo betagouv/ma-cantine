@@ -1,17 +1,17 @@
 import { createRouter, createWebHistory } from "vue-router"
-import HomeView from "../views/HomeView.vue"
-import AboutView from "../views/AboutView.vue"
+import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 
 const routes = [
   {
-    path: "/",
-    name: "HomeView",
-    component: HomeView,
-  },
-  {
-    path: "/about",
-    name: "AboutView",
-    component: AboutView,
+    path: "/diagnostic-tunnel/:canteenUrlComponent/:year/:measureId",
+    name: "DiagnosticTunnel",
+    component: DiagnosticTunnel,
+    props: (route) => ({ ...route.query, ...route.params }),
+    meta: {
+      title: "Bilan",
+      authenticationRequired: true,
+      fullscreen: true,
+    },
   },
 ]
 

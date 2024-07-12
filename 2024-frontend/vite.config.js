@@ -16,9 +16,19 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-      vue: fileURLToPath(new URL("./node_modules/vue/index.js", import.meta.url)),
-    },
+    alias: [
+      {
+        find: /@\/views\/([\w/]+)/,
+        replacement: fileURLToPath(new URL("./src/views/$1/index.vue", import.meta.url)),
+      },
+      {
+        find: "@",
+        replacement: fileURLToPath(new URL("./src", import.meta.url)),
+      },
+      {
+        find: "vue",
+        replacement: fileURLToPath(new URL("./node_modules/vue/index.js", import.meta.url)),
+      },
+    ],
   },
 })

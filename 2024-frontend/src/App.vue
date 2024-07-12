@@ -1,49 +1,31 @@
 <script setup>
-import { RouterView } from "vue-router"
-import { ref } from "vue"
+import { RouterView, useRoute } from "vue-router"
+import { reactive, computed, watch } from "vue"
 
 const logoText = ["Ministère", "de l’Agriculture", "et de la Souveraineté", "Alimentaire"]
 const serviceTitle = "ma cantine"
-const placeholder = ""
-const homeTo = "/"
-const quickLinks = [
-  { label: "Se connecter", to: "/login", class: "fr-icon-user-fill" },
-  {
-    label: "S’enregistrer",
-    to: "/signup",
-    icon: "ri-account-circle-line",
-  },
-]
 
-const nb = ref(0)
-const handleClick = () => {
-  nb.value++
-}
+const layout = reactive({ fullscreen: false })
+const routerViewClass = computed(() => (layout.fullscreen ? "" : "fr-container fr-pb-2w"))
+
+const route = useRoute()
+watch(route, (to) => {
+  const suffix = "ma cantine"
+  document.title = to.meta.title ? to.meta.title + " - " + suffix : suffix
+
+  layout.fullscreen = to.meta.fullscreen
+})
 </script>
 
 <template>
-  <div style="position: relative; padding-bottom: 4rem;">
-    <DsfrHeader :logo-text :service-title :placeholder :home-to :quick-links />
-    <div class="fr-container fr-my-2w">
-      <div class="fr-grid-row">
-        <img src="/static/images/badges/appro.svg" width="125" height="125" />
-      </div>
-      <div class="fr-grid-row">
-        <!-- example of loading from web/static -->
-        <DsfrButton size="lg" icon="fr-icon-home-4-fill" label="Accueil" @click="handleClick()" />
-      </div>
-      <div class="fr-grid-row">
-        <p>Cliqué {{ nb }} fois</p>
-      </div>
-      <p>
-        <RouterLink :to="{ name: 'HomeView' }" class="fr-mr-2w">Accueil</RouterLink>
-        <RouterLink :to="{ name: 'AboutView' }">About</RouterLink>
-      </p>
-    </div>
+  <div>
+    <DsfrHeader v-if="!layout.fullscreen" :logo-text :service-title />
 
-    <main class="fr-container fr-pb-2w">
+    <main :class="routerViewClass">
       <RouterView />
     </main>
+
+    <DsfrFooter v-if="!layout.fullscreen" />
   </div>
 </template>
 
