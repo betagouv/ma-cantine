@@ -29,6 +29,14 @@ export default defineConfig({
         find: "vue",
         replacement: fileURLToPath(new URL("./node_modules/vue/index.js", import.meta.url)),
       },
+      {
+        find: "mdi-icons/styles.css",
+        replacement: fileURLToPath(new URL("./node_modules/vue-material-design-icons/styles.css", import.meta.url)),
+      },
+      {
+        find: /^mdi-icons\/([\w]+)/,
+        replacement: fileURLToPath(new URL("./node_modules/vue-material-design-icons/$1.vue", import.meta.url)),
+      },
     ],
   },
 })
