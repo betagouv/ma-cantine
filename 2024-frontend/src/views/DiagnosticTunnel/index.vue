@@ -1,5 +1,6 @@
 <script setup>
 import keyMeasures from "@/data/key-measures.json"
+import WasteMeasureSteps from "./WasteMeasureSteps/index.vue"
 
 const props = defineProps(["canteenUrlComponent", "year", "measureId", "étape"])
 
@@ -30,6 +31,10 @@ const tunnels = [
     backendField: km.progressField,
   })),
 ]
+
+const tunnelComponents = {
+  "gaspillage-alimentaire": WasteMeasureSteps,
+}
 </script>
 
 <template>
@@ -48,7 +53,7 @@ const tunnels = [
               <div v-if="tunnel.id === measure.id" class="fr-grid-row fr-grid-row--middle">
                 <!-- TODO: proper colours (originally primary and primary lighten-4) -->
                 <component :is="tunnel.icon" class="fr-mb-1v fr-mr-1w" />
-                <!-- text-uppercase mb-0 grey--text text--darken-2 font-weight-bold -->
+                <!-- grey--text text--darken-2 -->
                 <p class="measure-title fr-text--xs fr-mb-0">
                   {{ tunnel.shortTitle }}
                 </p>
@@ -82,15 +87,15 @@ const tunnels = [
     </div>
     <div class="body">
       <div class="step fr-container">
-        <!-- TODO: setup steps in child folder -->
-        <DsfrInput
-          v-model="name"
-          label="Nom"
-          placeholder="Jean Dupont"
-          label-visible
-          required
-          hint="Indiquez votre nom"
-        />
+        <component :is="tunnelComponents[props.measureId]" />
+        <!--
+          :canteen="canteen"
+          :diagnostic="diagnostic"
+          :stepUrlSlug="stepUrlSlug"
+          v-on:update-payload="updatePayload"
+          v-on:tunnel-autofill="onTunnelAutofill"
+          v-on:update-steps="updateSteps"
+         -->
       </div>
       <!-- TODO: setup synthesis -->
     </div>
