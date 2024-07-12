@@ -34,9 +34,10 @@ const tunnels = [
 
 <template>
   <!-- TODO: mobile view optimisations -->
+  <!-- TODO: synthesis styling -->
   <div class="tunnel">
     <div class="fr-container fr-pt-2w">
-      <div class="fr-grid-row">
+      <div class="fr-grid-row fr-grid-row--middle">
         <!-- TODO: hide on xs -->
         <div class="fr-col-9">
           <div class="fr-grid-row fr-ml-n2w">
@@ -97,7 +98,16 @@ const tunnels = [
     <div class="footer">
       <div class="content fr-container fr-grid-row fr-grid-row--right fr-p-2w">
         <!-- TODO: next tab text on synthesis view -->
-        <!-- TODO: previous step link -->
+        <!-- TODO: button functionalities -->
+        <DsfrButton v-if="step.isSynthesis" label="Modifier" tertiary no-outline class="fr-mr-1w" />
+        <DsfrButton
+          v-else
+          label="Revenir à l'étape précédente"
+          tertiary
+          no-outline
+          :disabled="currentStep === 1"
+          class="fr-mr-1w"
+        />
         <DsfrButton label="Sauvegarder et continuer" />
       </div>
     </div>
