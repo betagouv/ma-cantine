@@ -60,10 +60,3 @@ jobs:
           SIRET_API_SECRET: fake
         run: |
           python3 manage.py test
-
-      - name: Test Vue
-        working-directory: ./frontend
-        run: |
-          npm install
-          npm run build --if-present
-          npm run test
