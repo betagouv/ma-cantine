@@ -227,9 +227,7 @@
           <v-progress-circular v-if="loading" indeterminate class="mt-8 align-self-center" />
           <div v-else class="d-flex flex-column" style="height: 100%;">
             <div class="d-flex">
-              <h2 class="fr-h6 mb-0" aria-live="polite" aria-atomic="true">
-                {{ publishedCanteenCount }} {{ publishedCanteenCount === 1 ? "résultat" : "résultats" }}
-              </h2>
+              <ResultCount :count="publishedCanteenCount" class="fr-h6 mb-0" />
 
               <v-btn text color="primary" small @click="clearFilters" v-if="hasActiveFilter" class="mb-1">
                 <v-icon small>mdi-filter-off-outline</v-icon>
@@ -338,6 +336,7 @@ import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrEmail from "@/components/DsfrEmail"
 import DsfrFullName from "@/components/DsfrFullName"
 import LocationSelect from "@/components/LocationSelect"
+import ResultCount from "@/components/ResultCount"
 
 const DEFAULT_ORDER = "creation"
 
@@ -358,6 +357,7 @@ export default {
     DsfrEmail,
     DsfrFullName,
     LocationSelect,
+    ResultCount,
   },
   data() {
     const sectors = this.$store.state.sectors
