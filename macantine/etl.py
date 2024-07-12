@@ -111,6 +111,29 @@ def map_sectors():
     return sectors_mapper
 
 
+def fetch_teledeclarations(years: list) -> pd.DataFrame:
+    df = pd.DataFrame()
+    for year in years:
+        if year in CAMPAIGN_DATES.keys():
+            df_year = pd.DataFrame(
+                Teledeclaration.objects.filter(
+                    year=year,
+                    creation_date__range=(
+                        CAMPAIGN_DATES[year]["start_date"],
+                        CAMPAIGN_DATES[year]["end_date"],
+                    ),
+                    status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+                    canteen_id__isnull=False,
+                ).values()
+            )
+            df = pd.concat([df, df_year])
+        else:
+            logger.warning(f"TD dataset does not exist for year : {year}")
+        if len(df) == 0:
+            logger.warning("TD dataset is empty for all the specified years")
+    return df
+
+
 def fetch_commune_detail(code_insee_commune, commune_details, geo_detail_type="epci"):
     """
     Provide EPCI code/ Department code/ Region code for a city, given the insee code of the city
@@ -210,6 +233,25 @@ def update_datagouv_resources():
 
 
 class ETL(ABC):
+    """
+    Interface for the different ETL
+    """
+
+    @abstractmethod
+    def extract_dataset(self):
+        pass
+
+    @abstractmethod
+    def transform_dataset(self):
+        pass
+
+    @abstractmethod
+    def load_dataset(self):
+        pass
+
+
+class ETL_OPEN_DATA(ETL):
+
     def __init__(self):
         self.df = None
         self.schema = None
@@ -290,10 +332,6 @@ class ETL(ABC):
 
         return self.df.merge(canteens_sectors, on="id")
 
-    @abstractmethod
-    def extract_dataset(self):
-        pass
-
     def get_schema(self):
         return self.schema
 
@@ -321,35 +359,55 @@ class ETL(ABC):
         else:
             return 1
 
-    def export_dataset(self, stage="to_validate"):
+    def build_filename(self, stage):
         if stage == "to_validate":
-            filename = f"open_data/{self.dataset_name}_to_validate"
+            return f"open_data/{self.dataset_name}_to_validate.csv"
         elif stage == "validated":
-            filename = f"open_data/{self.dataset_name}"
+            return f"open_data/{self.dataset_name}.csv"
         else:
-            return 0
-        with default_storage.open(filename + ".csv", "w") as file:
-            self.df.to_csv(
-                file,
-                sep=";",
-                index=False,
-                na_rep="",
-                encoding="utf_8_sig",
-                quoting=csv.QUOTE_NONE,
-            )
-        if stage == "validated":
-            with default_storage.open(filename + ".parquet", "wb") as file:
-                if "sectors" in self.df.columns:
-                    self.df.sectors = self.df.sectors.astype(str)
-                self.df.to_parquet(file)
-            with default_storage.open(filename + ".xlsx", "wb") as file:
-                df_export = self.df.copy()
-                df_export = datetimes_to_str(df_export)  # Ah Excel !
-                df_export.to_excel(file, index=False)
-            update_datagouv_resources()
+            raise ValueError(f"Invalid stage: {stage}")
+
+    def _read_dataframe(self, filename):
+        try:
+            with default_storage.open(filename, "r") as file:
+                self.df = pd.read_csv(file, sep=";")
+        except FileNotFoundError:
+            logger.warning(f"File {filename} not found. Dataset assumed empty.")
+            self.df = pd.DataFrame()
+
+    def _load_data_csv(self, filename):
+        with default_storage.open(filename + ".csv", "w") as csv_file:
+            self.df.to_csv(csv_file, sep=";", index=False, na_rep="", encoding="utf_8_sig", quoting=csv.QUOTE_NONE)
+
+    def _load_data_parquet(self, filename):
+        with default_storage.open(filename + ".parquet", "wb") as parquet_file:
+            if "sectors" in self.df.columns:
+                self.df.sectors = self.df.sectors.astype(str)
+            self.df.to_parquet(parquet_file)
+
+    def _load_data_xlsx(self, filename):
+        with default_storage.open(filename + ".xlsx", "wb") as excel_file:
+            df_export = self.df.copy()
+            df_export = datetimes_to_str(df_export)
+            df_export.to_excel(excel_file, index=False)
+
+    def load_dataset(self):
+        self._read_dataframe(self.build_filename(self, stage="to_validate"))
+        if self.is_valid():
+            validated_filename = self.build_filename(self, stage="validated")
+            try:
+                self._load_data_csv(validated_filename)
+                self._load_data_parquet(validated_filename)
+                self._load_data_xlsx(validated_filename)
+
+                update_datagouv_resources()
+            except Exception as e:
+                logger.error(f"Error saving validated data: {e}")
+        else:
+            logger.error(f"The dataset {self.name} is invalid and therefore will not be exported to s3")
 
 
-class ETL_CANTEEN(ETL):
+class ETL_CANTEEN(ETL_OPEN_DATA):
     def __init__(self):
         super().__init__()
         self.dataset_name = "registre_cantines"
@@ -357,10 +415,11 @@ class ETL_CANTEEN(ETL):
         self.schema_url = (
             "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_cantine.json"
         )
+        self.canteens = None
 
     def extract_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
-        canteens_col_from_db = all_canteens_col.copy()
+        self.canteens_col_from_db = all_canteens_col
         for col_processed in [
             "active_on_ma_cantine",
             "department_lib",
@@ -371,20 +430,23 @@ class ETL_CANTEEN(ETL):
             "declaration_donnees_2022",
             "declaration_donnees_2023_en_cours",
         ]:
-            canteens_col_from_db.remove(col_processed)
+            self.canteens_col_from_db.remove(col_processed)
 
         exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
         exclude_filter |= Q(deletion_date__isnull=False)  # Filtering out the deleted canteens
         start = time.time()
-        canteens = Canteen.objects.exclude(exclude_filter)
+        self.canteens = Canteen.objects.exclude(exclude_filter)
+
+        if self.canteens.count() == 0:
+            self.df = pd.DataFrame(columns=self.canteens_col_from_db)
+        else:
+            # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
+            self.df = pd.DataFrame(self.canteens.values(*self.canteens_col_from_db))
+
         end = time.time()
         logger.info(f"Time spent on canteens extraction : {end - start}")
-        if canteens.count() == 0:
-            return pd.DataFrame(columns=canteens_col_from_db)
 
-        # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
-        self.df = pd.DataFrame(canteens.values(*canteens_col_from_db))
-
+    def transform_dataset(self):
         # Adding the active_on_ma_cantine column
         start = time.time()
         non_active_canteens = Canteen.objects.filter(managers=None).values_list("id", flat=True)
@@ -397,7 +459,9 @@ class ETL_CANTEEN(ETL):
 
         bucket_url = os.environ.get("CELLAR_HOST")
         bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
-        self.df["logo"] = self.df["logo"].apply(lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else "")
+
+        if "logo" in self.df.columns:
+            self.df["logo"] = self.df["logo"].apply(lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else "")
 
         logger.info("Canteens : Clean dataset...")
         self._clean_dataset()
@@ -421,7 +485,7 @@ class ETL_CANTEEN(ETL):
         logger.info(f"Time spent on campaign participations : {end - start}")
 
 
-class ETL_TD(ETL):
+class ETL_TD(ETL_OPEN_DATA):
     def __init__(self, year: int):
         super().__init__()
         self.year = year
@@ -448,6 +512,10 @@ class ETL_TD(ETL):
                 "_externalites",
             ],
         }
+        self.df = None
+
+    def extract_dataset(self):
+        self.df = fetch_teledeclarations([self.year])
 
     def transform_sectors(self) -> pd.Series:
         sectors = self.df["canteen_sectors"]
@@ -456,27 +524,7 @@ class ETL_TD(ETL):
             sectors = sectors.apply(format_list_sectors)
         return sectors
 
-    def extract_dataset(self):
-        if self.year in CAMPAIGN_DATES.keys():
-            self.df = pd.DataFrame(
-                Teledeclaration.objects.filter(
-                    year=self.year,
-                    creation_date__range=(
-                        CAMPAIGN_DATES[self.year]["start_date"],
-                        CAMPAIGN_DATES[self.year]["end_date"],
-                    ),
-                    status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-                    canteen_id__isnull=False,
-                ).values()
-            )
-        else:
-            logger.warning(f"TD campagne dataset does not exist for year : {self.year}")
-            return pd.DataFrame()
-
-        if len(self.df) == 0:
-            logger.warning(f"TD campagne dataset is empty for year : {self.year}")
-            return pd.DataFrame()
-
+    def transform_dataset(self):
         logger.info("TD campagne : Flatten declared data...")
         self.df = self._flatten_declared_data()
 
@@ -546,3 +594,25 @@ class ETL_TD(ETL):
         canteens_to_filter = Canteen.objects.filter(line_ministry="armee")
         canteens_id_to_filter = [canteen.id for canteen in canteens_to_filter]
         self.df = self.df[~self.df["canteen_id"].isin(canteens_id_to_filter)]
+
+
+class ETL_ANALYSIS(ETL):
+    """
+    Create a dataset for analysis
+    """
+
+    def __init__(self):
+        self.df = None
+        self.years = CAMPAIGN_DATES.keys()
+
+    def extract_dataset(self):
+        self.df = fetch_teledeclarations(self.years)
+
+    def transform_dataset(self):
+        pass
+
+    def load_dataset(self):
+        """
+        Load in database
+        """
+        pass

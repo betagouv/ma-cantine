@@ -2,7 +2,6 @@ import logging
 import datetime
 import requests
 import csv
-import os
 import time
 from api.views.utils import update_change_reason
 from django.utils import timezone
@@ -17,7 +16,7 @@ import redis as r
 from common.utils import get_siret_token
 from .celery import app
 from .utils import get_infos_from_siret
-from .extract_open_data import ETL_TD, ETL_CANTEEN
+from .etl import ETL_TD, ETL_CANTEEN
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 
@@ -422,16 +421,5 @@ def export_datasets():
     for key, etl in datasets.items():
         logger.info(f"Starting {key} dataset extraction")
         etl.extract_dataset()
-        etl.export_dataset(stage="to_validate")
-        if os.environ["DEFAULT_FILE_STORAGE"] == "storages.backends.s3boto3.S3Boto3Storage":
-            logger.info(f"Validating {key} dataset. Dataset size : {etl.len_dataset()} lines")
-            if etl.is_valid():
-                logger.info(f"Exporting {key} dataset to s3")
-                etl.export_dataset(stage="validated")
-            else:
-                logger.error(f"The dataset {key} is invalid and therefore will not be exported to s3")
-        elif os.environ["DEFAULT_FILE_STORAGE"] == "django.core.files.storage.FileSystemStorage":
-            logger.info(f"Saving {key} dataset locally")
-            etl.export_dataset(stage="validated")
-        else:
-            logger.info("Exporting the dataset is not possible with the file system configured")
+        etl.transform_dataset()
+        etl.load_dataset()

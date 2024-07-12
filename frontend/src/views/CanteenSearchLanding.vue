@@ -26,7 +26,7 @@
           v-model="searchTerm"
           placeholder="Recherche par nom ou SIRET de l'établissement"
           hide-details
-          :searchAction="search"
+          @search="search"
         />
         <p class="my-4">
           <router-link :to="{ name: 'CanteensHome' }" class="d-flex align-center">

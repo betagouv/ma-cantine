@@ -60,6 +60,18 @@
     <v-expand-transition>
       <v-sheet class="pa-6 text-left mt-2 ma-0" v-show="showFilters" rounded :outlined="showFilters">
         <v-row>
+          <v-col cols="12" md="6">
+            <DsfrSearchField
+              v-model="filters.search.provisionalValue"
+              @search="applyProvisionalValue(filters.search)"
+              clearable
+              @clear="clearFilterField(filters.search)"
+              placeholder="Rechercher par nom"
+              hide-details="auto"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
           <v-col cols="12" sm="6" v-if="$vuetify.breakpoint.smAndDown">
             <label
               for="select-category"
@@ -225,6 +237,7 @@
 import Constants from "@/constants"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import ResultCount from "@/components/ResultCount"
+import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrCombobox from "@/components/DsfrCombobox"
@@ -239,6 +252,7 @@ export default {
   components: {
     BreadcrumbsNav,
     ResultCount,
+    DsfrSearchField,
     DsfrPagination,
     DsfrSelect,
     DsfrCombobox,
@@ -255,6 +269,12 @@ export default {
       visiblePartners: null,
       partnerCount: null,
       filters: {
+        search: {
+          param: "recherche",
+          value: null,
+          provisionalValue: null,
+          default: null,
+        },
         gratuityOption: {
           param: "gratuit",
           value: [],
@@ -406,6 +426,7 @@ export default {
       Object.values(this.filters).forEach((f) => {
         f.value = this.$route.query[f.param]
         if (f.transformToFrontend) f.value = f.transformToFrontend(f.value)
+        if (Object.hasOwn(f, "provisionalValue")) f.provisionalValue = f.value
       })
       this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
       this.fetchCurrentPage()
@@ -467,6 +488,13 @@ export default {
         }
       })
       this.sectorCategories = [...enabledCategories, divider, header, ...disabledCategories]
+    },
+    applyProvisionalValue(filterTerm) {
+      filterTerm.value = filterTerm.provisionalValue
+    },
+    clearFilterField(filterTerm) {
+      filterTerm.provisionalValue = filterTerm.default
+      filterTerm.value = filterTerm.provisionalValue
     },
   },
   watch: {
