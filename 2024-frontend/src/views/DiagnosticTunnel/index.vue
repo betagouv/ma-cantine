@@ -118,6 +118,7 @@ const tunnels = [
 .tunnel {
   display: flex;
   flex-direction: column;
+  height: 100vh;
 }
 .tunnel,
 .tunnel .footer {
@@ -129,10 +130,9 @@ const tunnels = [
   overflow-x: hidden;
   background: #fff;
   flex-grow: 1;
-}
-.tunnel .footer {
-  position: absolute;
-  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .scroll {
   overflow-y: scroll;
