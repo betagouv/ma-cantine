@@ -37,9 +37,8 @@ const tunnels = [
   <!-- TODO: synthesis styling -->
   <div class="tunnel">
     <div class="fr-container fr-pt-2w">
-      <div class="fr-grid-row fr-grid-row--middle">
-        <!-- TODO: hide on xs -->
-        <div class="fr-col-9">
+      <div class="measures fr-grid-row fr-grid-row--middle">
+        <div class="fr-col-12 fr-col-sm-8 fr-hidden fr-unhidden-sm">
           <div class="fr-grid-row fr-ml-n2w">
             <div
               v-for="tunnel in tunnels"
@@ -50,7 +49,7 @@ const tunnels = [
                 <!-- TODO: proper colours (originally primary and primary lighten-4) -->
                 <component :is="tunnel.icon" class="fr-mb-1v fr-mr-1v" />
                 <!-- text-uppercase mb-0 grey--text text--darken-2 font-weight-bold -->
-                <p class="tunnel-header-title fr-text--xs fr-mb-0">
+                <p class="measure-title fr-text--xs fr-mb-0">
                   {{ tunnel.shortTitle }}
                 </p>
               </div>
@@ -67,7 +66,7 @@ const tunnels = [
           </div>
         </div>
         <!-- TODO: functionality -->
-        <div v-if="step" class="fr-col-3 quit">
+        <div v-if="step" class="quit">
           <DsfrButton
             :label="step.isSynthesis ? 'Quitter' : 'Sauvegarder et quitter'"
             icon="fr-icon-close-line"
@@ -82,7 +81,7 @@ const tunnels = [
       <DsfrStepper :steps="stepTitles" :currentStep />
     </div>
     <div class="body">
-      <div class="step fr-container fr-py-2w">
+      <div class="step fr-container">
         <!-- TODO: setup steps in child folder -->
         <DsfrInput
           v-model="name"
@@ -96,19 +95,12 @@ const tunnels = [
       <!-- TODO: setup synthesis -->
     </div>
     <div class="footer">
-      <div class="content fr-container fr-grid-row fr-grid-row--right fr-p-2w">
+      <div class="content fr-container fr-grid-row fr-grid-row--right fr-p-2w fr-pr-8w">
         <!-- TODO: next tab text on synthesis view -->
         <!-- TODO: button functionalities -->
-        <DsfrButton v-if="step.isSynthesis" label="Modifier" tertiary no-outline class="fr-mr-1w" />
-        <DsfrButton
-          v-else
-          label="Revenir à l'étape précédente"
-          tertiary
-          no-outline
-          :disabled="currentStep === 1"
-          class="fr-mr-1w"
-        />
-        <DsfrButton label="Sauvegarder et continuer" />
+        <DsfrButton v-if="step.isSynthesis" label="Modifier" tertiary no-outline />
+        <DsfrButton v-else label="Revenir à l'étape précédente" tertiary no-outline :disabled="currentStep === 1" />
+        <DsfrButton label="Sauvegarder et continuer" class="fr-ml-1w" />
       </div>
     </div>
   </div>
@@ -141,11 +133,15 @@ const tunnels = [
 .header-icon {
   border-right: #e5e5e5 solid 1px;
 }
-.tunnel-header-title {
+.measures {
+  flex-wrap: nowrap;
+}
+.measure-title {
   text-transform: uppercase;
   font-weight: bold;
 }
 .quit {
   text-align: right;
+  flex-grow: 1;
 }
 </style>
