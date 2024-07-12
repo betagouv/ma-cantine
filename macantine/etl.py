@@ -17,6 +17,7 @@ from api.serializers import SectorSerializer
 from api.views.utils import camelize
 from django.core.files.storage import default_storage
 from django.db.models import Q
+from typing import Dict
 
 logger = logging.getLogger(__name__)
 
@@ -158,7 +159,7 @@ def fetch_epci_name(code_insee_epci, epcis_names):
         return None
 
 
-def format_geo_name(geo_code: int, geo_names: {}):
+def format_geo_name(geo_code: int, geo_names: Dict[int, str]):
     """
     Format the name of a region or department from its code
     """
