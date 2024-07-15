@@ -98,32 +98,50 @@ jobs:
     strategy:
       matrix:
         python-version: [3.11]
-    on:
-      pull_request:
-        branches:
-          - staging
-          - main
-          - "dependabot/**"
 
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.11
+        on:
+          push:
+            branches:
+              - main
+              - staging
+              - "dependabot/**"
         uses: actions/setup-python@v1
         with:
           python-version: 3.11
 
       - name: Install Python dependencies
+        on:
+          push:
+            branches:
+              - main
+              - staging
+              - "dependabot/**"
         run: |
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - uses: actions/checkout@v4
       - name: Setup Node
+        on:
+          push:
+            branches:
+              - main
+              - staging
+              - "dependabot/**"
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
 
       - name: Vue 2 install
+        on:
+          push:
+            branches:
+              - main
+              - staging
+              - "dependabot/**"
         working-directory: ./frontend
         env:
           NODE_OPTIONS: --openssl-legacy-provider
@@ -131,6 +149,12 @@ jobs:
           npm install
 
       - name: Vue 2 build
+        on:
+          push:
+            branches:
+              - main
+              - staging
+              - "dependabot/**"
         working-directory: ./frontend
         env:
           NODE_OPTIONS: --openssl-legacy-provider
@@ -138,11 +162,23 @@ jobs:
           npm run build --if-present
 
       - name: Vue 2 test
+        on:
+          push:
+            branches:
+              - main
+              - staging
+              - "dependabot/**"
         working-directory: ./frontend
         run: |
           npm run test
 
       - name: Vue 3 build
+        on:
+          push:
+            branches:
+              - main
+              - staging
+              - "dependabot/**"
         working-directory: ./
         env:
           ALLOWED_HOSTS: localhost
