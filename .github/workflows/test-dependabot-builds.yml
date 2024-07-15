@@ -1,9 +1,14 @@
-name: Ma Cantine CI
+name: Dependabot upgrade test
 
-on: [push]
+on:
+  push:
+    branches:
+      - staging
+      - main
+      - "dependabot/**"
 
 jobs:
-  build:
+  dependabot-frontend-build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -16,45 +21,10 @@ jobs:
         with:
           python-version: 3.11
 
-      - name: Setup PostgreSQL
-        uses: Harmon758/postgresql-action@v1.0.0
-        with:
-          postgresql db: postgres
-          postgresql user: postgres
-          postgresql password: postgres
-
-      - name: Setup Redis
-        uses: zhulik/redis-action@1.1.0
-        with:
-          redis version: "5"
-          number of databases: 5
-
       - name: Install Python dependencies
         run: |
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
-
-      - name: Test Django
-        env:
-          DEBUG: True
-          SECRET: test
-          ALLOWED_HOSTS: localhost
-          DB_USER: postgres
-          DB_PASSWORD: postgres
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: postgres
-          HOSTNAME: localhost
-          STATICFILES_STORAGE: django.contrib.staticfiles.storage.StaticFilesStorage
-          DEFAULT_FILE_STORAGE: django.core.files.storage.FileSystemStorage
-          EMAIL_BACKEND: django.core.mail.backends.console.EmailBackend
-          DEFAULT_FROM_EMAIL: contact@example.com
-          CONTACT_EMAIL: contact@example.com
-          REDIS_URL: redis://localhost:6379/0
-          SIRET_API_KEY: fake
-          SIRET_API_SECRET: fake
-        run: |
-          python3 manage.py test
 
       - uses: actions/checkout@v4
       - name: Setup Node
