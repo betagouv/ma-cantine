@@ -18,6 +18,9 @@ from api.views.utils import camelize
 from django.core.files.storage import default_storage
 from django.db.models import Q
 from typing import Dict
+from macantine.etl.data_warehouse import DataWareHouse
+from sqlalchemy import types
+
 
 logger = logging.getLogger(__name__)
 
@@ -599,15 +602,25 @@ class ETL_TD(ETL_OPEN_DATA):
 
 class ETL_ANALYSIS(ETL):
     """
-    Create a dataset for analysis
+    Create a dataset for analysis in a Data Warehouse
+    * Extract data from prod to the data warehouse
+    * Run a SQL query using Metabase API to transform the dataset
+    * Load the transformed data in a new table within the Data WareHouse
     """
 
     def __init__(self):
         self.df = None
         self.years = CAMPAIGN_DATES.keys()
+        self.extracted_table_name = "teledeclarations_extracted"
 
     def extract_dataset(self):
+        # Load teledeclarations from prod database into the Data Warehouse
         self.df = fetch_teledeclarations(self.years)
+        warehouse = DataWareHouse()
+        self.df = self.df.astype(str)  # Handle errors during conversion
+        warehouse.insert_dataframe(
+            self.df, table=self.extracted_table_name, dtype={col_name: types.Text for col_name in self.df}
+        )
 
     def transform_dataset(self):
         pass
