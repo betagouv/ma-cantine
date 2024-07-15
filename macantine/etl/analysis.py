@@ -20,7 +20,7 @@ class ETL_ANALYSIS(ETL):
         # Load teledeclarations from prod database into the Data Warehouse
         self.df = fetch_teledeclarations(self.years)
         warehouse = DataWareHouse()
-        df_as_str = self.df.astype(str)  # Handle errors during conversion
+        df_as_str = self.df.copy().astype(str)  # Handle errors during conversion
         warehouse.insert_dataframe(
             df_as_str, table=self.extracted_table_name, dtype={col_name: types.Text for col_name in self.df}
         )
