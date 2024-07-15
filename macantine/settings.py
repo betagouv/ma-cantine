@@ -69,8 +69,7 @@ if not DEBUG:
 INTERNAL_IPS = []
 
 # Application definition
-
-INSTALLED_APPS = [
+WAGTAIL_INSTALLED_APPS = [
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -84,6 +83,9 @@ INSTALLED_APPS = [
     "wagtail",
     "modelcluster",
     "taggit",
+    "cms",
+]
+INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -100,7 +102,6 @@ INSTALLED_APPS = [
     "ckeditor_uploader",
     "macantine",
     "data",
-    "cms",
     "api",
     "web",
     "magicauth",
