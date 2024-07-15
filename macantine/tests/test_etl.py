@@ -1,10 +1,11 @@
 import pandas as pd
 import requests_mock
 from django.test import TestCase
-from macantine.etl import map_communes_infos, update_datagouv_resources
+from macantine.etl.etl import map_communes_infos, update_datagouv_resources
 from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
-from macantine.etl import ETL_CANTEEN, ETL_TD, ETL_ANALYSIS
+from macantine.etl.analysis import ETL_ANALYSIS
+from macantine.etl.open_data import ETL_CANTEEN, ETL_TD
 from freezegun import freeze_time
 import json
 import os
