@@ -54,6 +54,7 @@ jobs:
       - name: Vue 3 build
         working-directory: ./
         env:
+          SECRET: test
           ALLOWED_HOSTS: localhost
           REDIS_URL: redis://localhost:6379/0
           STATICFILES_STORAGE: django.contrib.staticfiles.storage.StaticFilesStorage
