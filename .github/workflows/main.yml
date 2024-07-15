@@ -3,7 +3,7 @@ name: Ma Cantine CI
 on: [push]
 
 jobs:
-  build:
+  backend:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,11 +28,6 @@ jobs:
         with:
           redis version: "5"
           number of databases: 5
-
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
 
       - name: Install Python dependencies
         run: |
