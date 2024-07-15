@@ -29,11 +29,6 @@ jobs:
           redis version: "5"
           number of databases: 5
 
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-
       - name: Install Python dependencies
         run: |
           python3 -m pip install --upgrade pip
