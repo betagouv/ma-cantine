@@ -69,7 +69,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - name: Test Vue 3
+      - name: Test Vue 2
         working-directory: ./frontend
         run: |
           npm install
