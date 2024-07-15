@@ -3,7 +3,7 @@ name: Ma Cantine CI
 on: [push]
 
 jobs:
-  backend:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -56,7 +56,18 @@ jobs:
         run: |
           python3 manage.py test
 
-  frontend:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+      - name: Test Vue 3
+        working-directory: ./2024-frontend
+        run: |
+          npm install
+          npm run build --if-present
+
+  frontend-v2:
     runs-on: ubuntu-latest
 
     steps:
@@ -72,8 +83,3 @@ jobs:
           npm install
           npm run build --if-present
           npm run test
-      - name: Test Vue 3
-        working-directory: ./2024-frontend
-        run: |
-          npm install
-          npm run build --if-present
