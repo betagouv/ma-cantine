@@ -68,6 +68,7 @@ jobs:
       - name: Test Vue 2
         working-directory: ./frontend
         run: |
+          export NODE_OPTIONS=--openssl-legacy-provider
           npm install
           npm run build --if-present
           npm run test
