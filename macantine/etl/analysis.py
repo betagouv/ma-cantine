@@ -71,6 +71,11 @@ class ETL_ANALYSIS(ETL):
         self.df['modele_economique'] = self.df['canteen.economic_model'].apply(get_economic_model)
         self.df['diagnostic_type'] = self.df['teledeclaration.diagnostic_type'].apply(get_economic_model)
 
+        # Convert types
+        self.df['daily_meal_count'] = pd.to_numeric(self.df['canteen.daily_meal_count'], errors='coerce')
+        self.df['yearly_meal_count'] = pd.to_numeric(self.df['canteen.yearly_meal_count'], errors='coerce')
+        self.df['satellite_canteens_count'] = pd.to_numeric(self.df['canteen.satellite_canteens_count'], errors='coerce')
+
 
     def load_dataset(self):
         """
