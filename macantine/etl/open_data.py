@@ -7,8 +7,6 @@ import requests
 import pandas as pd
 
 from data.models import Canteen
-from data.department_choices import Department
-from data.region_choices import Region
 from macantine.etl import etl
 from django.core.files.storage import default_storage
 from django.db.models import Q
@@ -24,24 +22,6 @@ class ETL_OPEN_DATA(etl.ETL):
         self.schema = None
         self.schema_url = ""
         self.dataset_name = ""
-
-    def _fill_geo_names(self, geo_zoom="department"):
-        """
-        Given a dataframe with a column 'department' or 'region', this method maps the name of the location, based on the INSEE code
-        Returns:
-            pd.Series: The names of the location corresponding to an INSEE code, for each line of the dataset
-        """
-        if "department" in geo_zoom:
-            geo = {i.value: i.label for i in Department}
-        elif "region" in geo_zoom:
-            geo = {i.value: i.label for i in Region}
-        else:
-            logger.warning(
-                "The desired geo zoom for the method _fill_geo_zoom() is not possible. Please choose between 'department' and 'region'"
-            )
-            return 0
-
-        self.df[f"{geo_zoom}_lib"] = self.df[geo_zoom].apply(lambda x: etl.format_geo_name(x, geo))
 
     def transform_geo_data(self, geo_col_names=["department", "region"]):
         logger.info("Start fetching communes details")
@@ -68,7 +48,7 @@ class ETL_OPEN_DATA(etl.ETL):
 
         for geo in geo_col_names:
             logger.info("Start filling geo_name")
-            self._fill_geo_names(geo_zoom=geo)
+            self.fill_geo_names(geo_zoom=geo)
             col_geo = self.df.pop(f"{geo}_lib")
             self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
 

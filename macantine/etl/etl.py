@@ -12,7 +12,8 @@ from datetime import date
 from api.serializers import SectorSerializer
 from api.views.utils import camelize
 from typing import Dict
-
+from data.department_choices import Department
+from data.region_choices import Region
 
 logger = logging.getLogger(__name__)
 
@@ -232,6 +233,24 @@ class ETL(ABC):
     """
     Interface for the different ETL
     """
+
+    def fill_geo_names(self, geo_zoom="department"):
+        """
+        Given a dataframe with a column 'department' or 'region', this method maps the name of the location, based on the INSEE code
+        Returns:
+            pd.Series: The names of the location corresponding to an INSEE code, for each line of the dataset
+        """
+        if "department" in geo_zoom:
+            geo = {i.value: i.label for i in Department}
+        elif "region" in geo_zoom:
+            geo = {i.value: i.label for i in Region}
+        else:
+            logger.warning(
+                "The desired geo zoom for the method _fill_geo_zoom() is not possible. Please choose between 'department' and 'region'"
+            )
+            return 0
+
+        self.df[f"{geo_zoom}_lib"] = self.df[geo_zoom].apply(lambda x: format_geo_name(x, geo))
 
     @abstractmethod
     def extract_dataset(self):
