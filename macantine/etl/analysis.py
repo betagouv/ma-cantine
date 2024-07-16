@@ -1,12 +1,49 @@
-from macantine.etl.data_warehouse import DataWareHouse
-from macantine.etl.etl import CAMPAIGN_DATES, ETL, fetch_teledeclarations
-from sqlalchemy import types
+import pandas as pd
+import logging
 
+from macantine.etl.data_warehouse import DataWareHouse
+from macantine.etl.etl import CAMPAIGN_DATES, ETL, fetch_teledeclarations, map_canteens_td
+
+logger = logging.getLogger(__name__)
+
+
+
+def get_management_type(value):
+    if value == 'direct':
+      return 'A) directe'
+    elif value == 'conceded':
+      return 'B) concédée'
+    else:
+      return 'C) non renseigné'
+    
+def get_cuisine_centrale(value):
+    if value in ['site', 'site_cooked_elsewhere']:
+      return 'B) non'
+    elif value in ['central', 'central_serving']:
+      return 'A) oui'
+    else:
+      return 'C) non renseigné'
+    
+def get_economic_model(value):
+    if value == 'private':
+      return 'A) privé'
+    elif value == 'public':
+      return 'B) oui'
+    else:
+      return 'C) non renseigné'
+    
+def get_diagnostic_type(value):
+    if value == 'COMPLETE':
+      return 'A) détaillée'
+    elif value == 'SIMPLE':
+      return 'B) simple'
+    else:
+      return 'C) non renseigné'
 
 class ETL_ANALYSIS(ETL):
     """
     Create a dataset for analysis in a Data Warehouse
-    * Extract data from prod 
+    * Extract data from prod
     * Run a SQL query using Metabase API to transform the dataset
     * Load the transformed data in a new table within the Data WareHouse
     """
@@ -27,6 +64,13 @@ class ETL_ANALYSIS(ETL):
         del df_json["year"]
         self.df = self.df.loc[~self.df.index.duplicated(keep="first")]
         self.df = pd.concat([self.df.drop("declared_data", axis=1), df_json], axis=1)
+
+        # Calculate columns
+        self.df['management_type'] = self.df['canteen.management_type'].apply(get_management_type)
+        self.df['cuisine_centrale'] = self.df['canteen.production_type'].apply(get_management_type)
+        self.df['modele_economique'] = self.df['canteen.economic_model'].apply(get_economic_model)
+        self.df['diagnostic_type'] = self.df['teledeclaration.diagnostic_type'].apply(get_economic_model)
+
 
     def load_dataset(self):
         """
