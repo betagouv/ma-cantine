@@ -23,14 +23,14 @@
       </v-col>
       <v-col cols="12" md="5">
         <DsfrCallout noIcon class="mb-0">
-          <p class="mb-1">
+          <h2 class="fr-text font-weight-bold mb-2">
             Vous cherchez à recruter au sein de vos équipes&nbsp;?
-          </p>
-          <p>
+          </h2>
+          <p class="mb-1">
             <i>ma cantine</i>
-            vous propose de diffuser vos offres gratuitement sur nos réseaux sociaux
+            vous propose de diffuser vos offres gratuitement sur nos réseaux sociaux. Envoyez-nous votre offre à
+            <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
           </p>
-          <v-btn color="primary" href="mailto:support-egalim@beta.gouv.fr">Je communique mon offre</v-btn>
         </DsfrCallout>
       </v-col>
     </v-row>
