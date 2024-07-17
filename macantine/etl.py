@@ -344,8 +344,20 @@ class ETL_OPEN_DATA(ETL):
         else:
             return 0
 
-    def is_valid(self) -> bool:
-        dataset_to_validate_url = f"{os.environ['CELLAR_HOST']}/{os.environ['CELLAR_BUCKET_NAME']}/media/open_data/{self.dataset_name}_to_validate.csv"
+    def is_valid(self, filepath) -> bool:
+        # Saving file online
+        with default_storage.open(filepath + "_to_validate.csv", "w") as file:
+            self.df.to_csv(
+                file,
+                sep=";",
+                index=False,
+                na_rep="",
+                encoding="utf_8_sig",
+                quoting=csv.QUOTE_NONE,
+            )
+        dataset_to_validate_url = (
+            f"{os.environ['CELLAR_HOST']}/{os.environ['CELLAR_BUCKET_NAME']}/media/{filepath}_to_validate.csv"
+        )
 
         res = requests.get(
             f"https://api.validata.etalab.studio/validate?schema={self.schema_url}&url={dataset_to_validate_url}&header_case=true"
@@ -359,22 +371,6 @@ class ETL_OPEN_DATA(ETL):
         else:
             return 1
 
-    def build_filename(self, stage):
-        if stage == "to_validate":
-            return f"open_data/{self.dataset_name}_to_validate.csv"
-        elif stage == "validated":
-            return f"open_data/{self.dataset_name}.csv"
-        else:
-            raise ValueError(f"Invalid stage: {stage}")
-
-    def _read_dataframe(self, filename):
-        try:
-            with default_storage.open(filename, "r") as file:
-                self.df = pd.read_csv(file, sep=";")
-        except FileNotFoundError:
-            logger.warning(f"File {filename} not found. Dataset assumed empty.")
-            self.df = pd.DataFrame()
-
     def _load_data_csv(self, filename):
         with default_storage.open(filename + ".csv", "w") as csv_file:
             self.df.to_csv(csv_file, sep=";", index=False, na_rep="", encoding="utf_8_sig", quoting=csv.QUOTE_NONE)
@@ -386,25 +382,51 @@ class ETL_OPEN_DATA(ETL):
             self.df.to_parquet(parquet_file)
 
     def _load_data_xlsx(self, filename):
-        with default_storage.open(filename + ".xlsx", "wb") as excel_file:
-            df_export = self.df.copy()
-            df_export = datetimes_to_str(df_export)
-            df_export.to_excel(excel_file, index=False)
+        try:
+            chunk_size = 1000
+            start_row = 0
+
+            # Convert datetime to string
+            df = datetimes_to_str(self.df.copy())  # Assuming it converts datetimes to strings
+            
+            # Create an in-memory bytes buffer
+            output = BytesIO()
+
+            # Create ExcelWriter with the actual file path
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                for chunk in [df[i:i + chunk_size] for i in range(0, len(df.copy()), chunk_size)]:
+                    # Write chunk to the sheet, accumulating data
+                    chunk.to_excel(writer, sheet_name='Sheet1', startrow=start_row, index=False, header=True if start_row == 0 else False)
+                    start_row += len(chunk)  # Update starting row for next chunk
+                
+            # Ensure the buffer is ready for reading
+            output.seek(0)
+
+            # Save the in-memory bytes buffer to the storage backend
+            with default_storage.open(filename + ".xlsx", "wb") as f:
+                f.write(output.getvalue())
+
+        except Exception as e:
+            logger.error(e)
+            return
 
     def load_dataset(self):
-        self._read_dataframe(self.build_filename(self, stage="to_validate"))
-        if self.is_valid():
-            validated_filename = self.build_filename(self, stage="validated")
-            try:
-                self._load_data_csv(validated_filename)
-                self._load_data_parquet(validated_filename)
-                self._load_data_xlsx(validated_filename)
+        filepath = f"open_data/{self.dataset_name}"
+        if (
+            os.environ.get("STATICFILES_STORAGE") == "dstorages.backends.s3boto3.S3StaticStorage"
+            and os.environ.get("DEFAULT_FILE_STORAGE") == "storages.backends.s3boto3.S3Boto3Storage"
+        ):
+            if not self.is_valid():
+                logger.error(f"The dataset {self.name} is invalid and therefore will not be exported to s3")
+                return
+        try:
+            self._load_data_csv(filepath)
+            self._load_data_parquet(filepath)
+            self._load_data_xlsx(filepath)
 
-                update_datagouv_resources()
-            except Exception as e:
-                logger.error(f"Error saving validated data: {e}")
-        else:
-            logger.error(f"The dataset {self.name} is invalid and therefore will not be exported to s3")
+            update_datagouv_resources()
+        except Exception as e:
+            logger.error(f"Error saving validated data: {e}")
 
 
 class ETL_CANTEEN(ETL_OPEN_DATA):
