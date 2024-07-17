@@ -17,6 +17,7 @@ from api.serializers import SectorSerializer
 from api.views.utils import camelize
 from django.core.files.storage import default_storage
 from django.db.models import Q
+from io import BytesIO
 
 logger = logging.getLogger(__name__)
 
@@ -388,17 +389,22 @@ class ETL_OPEN_DATA(ETL):
 
             # Convert datetime to string
             df = datetimes_to_str(self.df.copy())  # Assuming it converts datetimes to strings
-            
+
             # Create an in-memory bytes buffer
             output = BytesIO()
 
             # Create ExcelWriter with the actual file path
-            with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                for chunk in [df[i:i + chunk_size] for i in range(0, len(df.copy()), chunk_size)]:
+            with pd.ExcelWriter(output, engine="openpyxl") as writer:
+                for chunk in [df[i: i + chunk_size] for i in range(0, len(df.copy()), chunk_size)]:
                     # Write chunk to the sheet, accumulating data
-                    chunk.to_excel(writer, sheet_name='Sheet1', startrow=start_row, index=False, header=True if start_row == 0 else False)
+                    chunk.to_excel(
+                        writer,
+                        startrow=start_row,
+                        index=False,
+                        header=True if start_row == 0 else False,
+                    )
                     start_row += len(chunk)  # Update starting row for next chunk
-                
+
             # Ensure the buffer is ready for reading
             output.seek(0)
 
