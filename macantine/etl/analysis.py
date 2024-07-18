@@ -2,43 +2,46 @@ import pandas as pd
 import logging
 
 from macantine.etl.data_warehouse import DataWareHouse
-from macantine.etl.etl import CAMPAIGN_DATES, ETL, fetch_teledeclarations, map_canteens_td
+from macantine.etl.etl import CAMPAIGN_DATES, ETL, fetch_teledeclarations
 
 logger = logging.getLogger(__name__)
 
 
-
 def get_management_type(value):
-    if value == 'direct':
-      return 'A) directe'
-    elif value == 'conceded':
-      return 'B) concédée'
+    if value == "direct":
+        return "A) directe"
+    elif value == "conceded":
+        return "B) concédée"
     else:
-      return 'C) non renseigné'
-    
+        return "C) non renseigné"
+
+
 def get_cuisine_centrale(value):
-    if value in ['site', 'site_cooked_elsewhere']:
-      return 'B) non'
-    elif value in ['central', 'central_serving']:
-      return 'A) oui'
+    if value in ["site", "site_cooked_elsewhere"]:
+        return "B) non"
+    elif value in ["central", "central_serving"]:
+        return "A) oui"
     else:
-      return 'C) non renseigné'
-    
+        return "C) non renseigné"
+
+
 def get_economic_model(value):
-    if value == 'private':
-      return 'A) privé'
-    elif value == 'public':
-      return 'B) oui'
+    if value == "private":
+        return "A) privé"
+    elif value == "public":
+        return "B) oui"
     else:
-      return 'C) non renseigné'
-    
+        return "C) non renseigné"
+
+
 def get_diagnostic_type(value):
-    if value == 'COMPLETE':
-      return 'A) détaillée'
-    elif value == 'SIMPLE':
-      return 'B) simple'
+    if value == "COMPLETE":
+        return "A) détaillée"
+    elif value == "SIMPLE":
+        return "B) simple"
     else:
-      return 'C) non renseigné'
+        return "C) non renseigné"
+
 
 class ETL_ANALYSIS(ETL):
     """
@@ -66,16 +69,25 @@ class ETL_ANALYSIS(ETL):
         self.df = pd.concat([self.df.drop("declared_data", axis=1), df_json], axis=1)
 
         # Calculate columns
-        self.df['management_type'] = self.df['canteen.management_type'].apply(get_management_type)
-        self.df['cuisine_centrale'] = self.df['canteen.production_type'].apply(get_management_type)
-        self.df['modele_economique'] = self.df['canteen.economic_model'].apply(get_economic_model)
-        self.df['diagnostic_type'] = self.df['teledeclaration.diagnostic_type'].apply(get_economic_model)
+        self.df["management_type"] = self.df["canteen.management_type"].apply(get_management_type)
+        self.df["cuisine_centrale"] = self.df["canteen.production_type"].apply(get_management_type)
+        self.df["modele_economique"] = self.df["canteen.economic_model"].apply(get_economic_model)
+        self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_economic_model)
 
         # Convert types
-        self.df['daily_meal_count'] = pd.to_numeric(self.df['canteen.daily_meal_count'], errors='coerce')
-        self.df['yearly_meal_count'] = pd.to_numeric(self.df['canteen.yearly_meal_count'], errors='coerce')
-        self.df['satellite_canteens_count'] = pd.to_numeric(self.df['canteen.satellite_canteens_count'], errors='coerce')
+        self.df["daily_meal_count"] = pd.to_numeric(self.df["canteen.daily_meal_count"], errors="coerce")
+        self.df["yearly_meal_count"] = pd.to_numeric(self.df["canteen.yearly_meal_count"], errors="coerce")
+        self.df["satellite_canteens_count"] = pd.to_numeric(
+            self.df["canteen.satellite_canteens_count"], errors="coerce"
+        )
 
+        # Fill geo data
+        for geo in ["department", "region"]:
+            geo = f"canteen.{geo}"
+            logger.info("Start filling geo_name")
+            self.fill_geo_names(geo_zoom=geo)
+            col_geo = self.df.pop(f"{geo}_lib")
+            self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
 
     def load_dataset(self):
         """
