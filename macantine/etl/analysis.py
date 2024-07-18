@@ -2,7 +2,7 @@ import pandas as pd
 import logging
 
 from macantine.etl.data_warehouse import DataWareHouse
-from macantine.etl.etl import CAMPAIGN_DATES, ETL, fetch_teledeclarations
+from macantine.etl.etl import CAMPAIGN_DATES, ETL, fetch_teledeclarations, map_canteens_td
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +41,10 @@ def get_diagnostic_type(value):
         return "B) simple"
     else:
         return "C) non renseigné"
+
+
+def campaign_participation(row, year):
+    return True
 
 
 class ETL_ANALYSIS(ETL):
@@ -88,6 +92,13 @@ class ETL_ANALYSIS(ETL):
             self.fill_geo_names(geo_zoom=geo)
             col_geo = self.df.pop(f"{geo}_lib")
             self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
+
+        # Fill campaign participation
+        logger.info("Canteens : Fill campaign participations...")
+        for year in CAMPAIGN_DATES.keys():
+            campaign_participation = map_canteens_td(year)
+            col_name_campaign = f"declared_{year}"
+            self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
 
     def load_dataset(self):
         """
