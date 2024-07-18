@@ -12,7 +12,7 @@ class ActionSheetViewSet(SnippetViewSet):
     icon = "doc-full"
     menu_label = "Fiches action"
     menu_name = "actionsheets"
-    menu_order = 000
+    menu_order = 90
     add_to_admin_menu = True
     edit_handler = TabbedInterface([
         ObjectList([FieldPanel("title"), FieldPanel("subtitle"), FieldPanel("description")], heading="Description"),
