@@ -11,12 +11,16 @@ class WasteAction(models.Model):
 
     class Effort(models.TextChoices):
         SMALL = "SMALL", "Petit pas"
+        MEDIUM = "MEDIUM", "Moyen"
         LARGE = "LARGE", "Grand projet"
 
     class WasteOrigin(models.TextChoices):
         PREP = "PREP", "Préparation"
         UNSERVED = "UNSERVED", "Non servi"
         PLATE = "PLATE", "Retour assiette"
+
+    creation_date = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
+    modification_date = models.DateTimeField(auto_now=True, verbose_name="Date de dernière modification")
 
     title = models.TextField(verbose_name="Titre")
     subtitle = models.TextField(verbose_name="Sous-titre")
@@ -26,16 +30,12 @@ class WasteAction(models.Model):
         size=None,
         verbose_name="Origines du gaspillage",
     )
-    creation_date = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
-    modification_date = models.DateTimeField(auto_now=True, verbose_name="Date de dernière modification")
     description = RichTextField(
         verbose_name="Description",
-        null=True,
-        blank=True,
         default="<h2>Description</h2><h2>Conseils pratiques</h2><ul><li></li></ul>",
     )
-    savings_estimation = models.IntegerField(verbose_name="Estimation d'économies (€)")
-    coefficient = models.IntegerField(verbose_name="Coefficient d'évolution")
+    # savings_estimation = models.IntegerField(verbose_name="Estimation d'économies (€)")
+    # coefficient = models.IntegerField(verbose_name="Coefficient d'évolution")
     lead_image = models.ForeignKey(
         "wagtailimages.Image", on_delete=models.SET_NULL, related_name="+", null=True, blank=True, verbose_name="Image"
     )
