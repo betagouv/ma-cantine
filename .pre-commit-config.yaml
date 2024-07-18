@@ -61,7 +61,7 @@ repos:
           - --config=.flake8
         id: flake8
     repo: https://github.com/pycqa/flake8
-    rev: 3.8.3
+    rev: 7.0.0
   - hooks:
       - id: python-safety-dependencies-check
     repo: https://github.com/Lucas-C/pre-commit-hooks-safety
