@@ -17,6 +17,6 @@ class ActionSheetViewSet(SnippetViewSet):
     edit_handler = TabbedInterface([
         ObjectList([FieldPanel("title"), FieldPanel("subtitle"), FieldPanel("description")], heading="Description"),
         ObjectList([FieldPanel("effort"), FieldPanel("waste_origin"), FieldPanel("savings_estimation"), FieldPanel("coefficient")], heading="Caractéristiques"),
-        ObjectList([FieldPanel("image")], heading="Illustration"),
+        ObjectList([FieldPanel("lead_image")], heading="Illustration"),
     ])
     list_display = ["title", "modification_date"]

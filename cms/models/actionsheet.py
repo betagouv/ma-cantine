@@ -31,8 +31,8 @@ class ActionSheet(models.Model):
     description = RichTextField(verbose_name="Description", null=True, blank=True, default="<h2>Description</h2><h2>Conseils pratiques</h2><ul><li></li></ul>")
     savings_estimation = models.IntegerField(verbose_name="Estimation d'économies (€)")
     coefficient = models.IntegerField(verbose_name="Coefficient d'évolution")
-    image = models.ForeignKey(
-        'wagtailimages.Image', on_delete=models.SET_NULL, related_name='+', null=True, blank=True
+    lead_image = models.ForeignKey(
+        'wagtailimages.Image', on_delete=models.SET_NULL, related_name='+', null=True, blank=True, verbose_name="Image"
     )
     def __str__(self):
         return f'Fiche action "{self.title}"'
