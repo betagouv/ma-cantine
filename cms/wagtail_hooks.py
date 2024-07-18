@@ -1,4 +1,4 @@
 from wagtail.snippets.models import register_snippet
-from cms.viewsets import ActionSheetViewSet
+from cms.viewsets import WasteActionViewSet
 
-register_snippet(ActionSheetViewSet)
+register_snippet(WasteActionViewSet)

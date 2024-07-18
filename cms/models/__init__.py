@@ -1,1 +1,1 @@
-from .actionsheet import ActionSheet
+from .wasteaction import WasteAction

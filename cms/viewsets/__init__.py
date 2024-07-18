@@ -1,1 +1,1 @@
-from .actionsheet import ActionSheetViewSet # noqa: F401
+from .wasteaction import WasteActionViewSet  # noqa: F401
