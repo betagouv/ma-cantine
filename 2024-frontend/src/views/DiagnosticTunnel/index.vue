@@ -2,7 +2,7 @@
 import keyMeasures from "@/data/key-measures.json"
 // TODO: sort out **/index.vue imports so don't have to add index.vue
 import WasteMeasureSteps from "./WasteMeasureSteps/index.vue"
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
 
 const props = defineProps(["canteenUrlComponent", "year", "measureId", "étape"])
@@ -23,26 +23,20 @@ const tunnelComponents = {
   "gaspillage-alimentaire": WasteMeasureSteps,
 }
 
-// TODO: get steps from child tunnel component
-const steps = [
-  {
-    urlSlug: "example",
-    title: "Step 1",
-  },
-  {
-    urlSlug: "test",
-    title: "Step 2",
-  },
-]
-const stepTitles = steps.map((s) => s.title)
+let steps = ref([])
+const stepTitles = computed(() => steps.value.map((s) => s.title))
 const stepIdx = computed(() => {
-  let idx = steps.findIndex((s) => s.urlSlug === props.étape)
+  let idx = steps.value.findIndex((s) => s.urlSlug === props.étape)
   return idx === -1 ? 0 : idx
 })
 const currentStep = computed(() => stepIdx.value + 1)
-const step = computed(() => steps[stepIdx.value])
-const nextStep = computed(() => (stepIdx.value < steps.length - 1 ? steps[stepIdx.value + 1] : null))
-const previousStep = computed(() => (stepIdx.value > 0 ? steps[stepIdx.value - 1] : null))
+const step = computed(() => steps.value[stepIdx.value] || {})
+const nextStep = computed(() => (stepIdx.value < steps.value.length - 1 ? steps.value[stepIdx.value + 1] : null))
+const previousStep = computed(() => (stepIdx.value > 0 ? steps.value[stepIdx.value - 1] : null))
+
+const updateSteps = (tunnelSteps) => {
+  steps.value = tunnelSteps
+}
 
 const continueActionText = computed(() => {
   const onSynthesisView = step.value?.isSynthesis
@@ -156,7 +150,7 @@ const goBack = () => {
     </div>
     <div class="body">
       <div class="step fr-container">
-        <component :is="tunnelComponents[props.measureId]" :stepUrlSlug="step.urlSlug" />
+        <component :is="tunnelComponents[props.measureId]" :stepUrlSlug="step.urlSlug" @update-steps="updateSteps" />
         <!--
           :canteen="canteen"
           :diagnostic="diagnostic"

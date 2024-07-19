@@ -1,7 +1,24 @@
 <script setup>
+import { onMounted } from "vue"
+
 defineProps(["stepUrlSlug"])
 
 const name = defineModel()
+
+const steps = [
+  {
+    urlSlug: "example",
+    title: "Step 1",
+  },
+  {
+    urlSlug: "test",
+    title: "Step 2",
+  },
+]
+const emit = defineEmits(["update-steps"])
+onMounted(() => {
+  emit("update-steps", steps)
+})
 </script>
 
 <template>
