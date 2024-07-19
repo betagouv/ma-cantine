@@ -69,8 +69,23 @@ if not DEBUG:
 INTERNAL_IPS = []
 
 # Application definition
-
-INSTALLED_APPS = [
+WAGTAIL_INSTALLED_APPS = [
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    "modelcluster",
+    "taggit",
+    "cms",
+]
+INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -110,6 +125,7 @@ MIDDLEWARE = [
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "csp.middleware.CSPMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 CSRF_COOKIE_NAME = "csrftoken"
 ROOT_URLCONF = "macantine.urls"
@@ -537,3 +553,8 @@ USES_MONCOMPTEPRO = (
 MAX_DAYS_HISTORICAL_RECORDS = (
     int(os.getenv("MAX_DAYS_HISTORICAL_RECORDS")) if os.getenv("MAX_DAYS_HISTORICAL_RECORDS", None) else None
 )
+
+# Wagtail CMS
+WAGTAIL_SITE_NAME = "ma-cantine"
+# WAGTAILADMIN_BASE_URL # Declare if null URL in notification emails
+WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'txt', 'xlsx', 'zip']
