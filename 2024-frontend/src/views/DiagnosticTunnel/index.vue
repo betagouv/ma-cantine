@@ -18,7 +18,8 @@ const steps = [
   },
 ]
 const stepTitles = steps.map((s) => s.title)
-const stepIdx = steps.findIndex((s) => s.id === props.étape)
+let stepIdx = steps.findIndex((s) => s.id === props.étape)
+stepIdx = stepIdx === -1 ? 0 : stepIdx
 const currentStep = stepIdx + 1
 const step = steps[stepIdx]
 
