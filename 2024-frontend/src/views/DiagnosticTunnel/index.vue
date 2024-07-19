@@ -156,7 +156,7 @@ const goBack = () => {
     </div>
     <div class="body">
       <div class="step fr-container">
-        <component :is="tunnelComponents[props.measureId]" />
+        <component :is="tunnelComponents[props.measureId]" :stepUrlSlug="step.urlSlug" />
         <!--
           :canteen="canteen"
           :diagnostic="diagnostic"
