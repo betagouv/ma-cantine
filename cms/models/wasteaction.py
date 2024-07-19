@@ -1,6 +1,6 @@
 from django.db import models
 from data.fields import ChoiceArrayField
-from wagtail.fields import RichTextField
+from ckeditor.fields import RichTextField
 
 
 class WasteAction(models.Model):
