@@ -13,6 +13,9 @@
       "@s:ckeditor_uploader/*": [
         "./../venv/lib/python3.10/site-packages/ckeditor_uploader/static/ckeditor_uploader/*"
       ],
+      "@s:cms/*": [
+        "./../cms/static/cms/*"
+      ],
       "@s:common/*": [
         "./../common/static/common/*"
       ],
@@ -34,6 +37,9 @@
       "@s:magicauth/*": [
         "./../venv/lib/python3.10/site-packages/magicauth/static/magicauth/*"
       ],
+      "@s:modelcluster/*": [
+        "./../venv/lib/python3.10/site-packages/modelcluster/static/modelcluster/*"
+      ],
       "@s:oauth2_provider/*": [
         "./../venv/lib/python3.10/site-packages/oauth2_provider/static/oauth2_provider/*"
       ],
@@ -42,6 +48,12 @@
       ],
       "@s:simple_history/*": [
         "./../venv/lib/python3.10/site-packages/simple_history/static/simple_history/*"
+      ],
+      "@s:taggit/*": [
+        "./../venv/lib/python3.10/site-packages/taggit/static/taggit/*"
+      ],
+      "@s:wagtail/*": [
+        "./../venv/lib/python3.10/site-packages/wagtail/static/wagtail/*"
       ],
       "@s:web/*": [
         "./../web/static/web/*"
@@ -57,6 +69,9 @@
       ],
       "@t:ckeditor_uploader/*": [
         "./../venv/lib/python3.10/site-packages/ckeditor_uploader/templates/ckeditor_uploader/*"
+      ],
+      "@t:cms/*": [
+        "./../cms/templates/cms/*"
       ],
       "@t:common/*": [
         "./../common/templates/common/*"
@@ -79,6 +94,9 @@
       "@t:magicauth/*": [
         "./../venv/lib/python3.10/site-packages/magicauth/templates/magicauth/*"
       ],
+      "@t:modelcluster/*": [
+        "./../venv/lib/python3.10/site-packages/modelcluster/templates/modelcluster/*"
+      ],
       "@t:oauth2_provider/*": [
         "./../venv/lib/python3.10/site-packages/oauth2_provider/templates/oauth2_provider/*"
       ],
@@ -87,6 +105,12 @@
       ],
       "@t:simple_history/*": [
         "./../venv/lib/python3.10/site-packages/simple_history/templates/simple_history/*"
+      ],
+      "@t:taggit/*": [
+        "./../venv/lib/python3.10/site-packages/taggit/templates/taggit/*"
+      ],
+      "@t:wagtail/*": [
+        "./../venv/lib/python3.10/site-packages/wagtail/templates/wagtail/*"
       ],
       "@t:web/*": [
         "./../web/templates/web/*"

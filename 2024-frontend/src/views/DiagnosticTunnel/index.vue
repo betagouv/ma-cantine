@@ -51,9 +51,7 @@ const tunnelComponents = {
               class="fr-px-2w header-icon fr-grid-row fr-grid-row--middle"
             >
               <div v-if="tunnel.id === measure.id" class="fr-grid-row fr-grid-row--middle">
-                <!-- TODO: proper colours (originally primary and primary lighten-4) -->
-                <component :is="tunnel.icon" class="fr-mb-1v fr-mr-1w" />
-                <!-- grey--text text--darken-2 -->
+                <component :is="tunnel.icon" class="fr-mb-1v fr-mr-1w current-tab-icon" />
                 <p class="measure-title fr-text--xs fr-mb-0">
                   {{ tunnel.shortTitle }}
                 </p>
@@ -137,6 +135,10 @@ const tunnelComponents = {
 }
 .header-icon {
   border-right: #e5e5e5 solid 1px;
+  color: var(--blue-france-850-200);
+}
+.current-tab-icon {
+  color: var(--blue-france-sun-113-625);
 }
 .measures {
   flex-wrap: nowrap;
@@ -144,6 +146,7 @@ const tunnelComponents = {
 .measure-title {
   text-transform: uppercase;
   font-weight: bold;
+  color: var(--grey-425-625);
 }
 .quit {
   text-align: right;
