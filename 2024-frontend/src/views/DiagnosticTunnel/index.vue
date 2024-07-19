@@ -1,6 +1,9 @@
 <script setup>
 import keyMeasures from "@/data/key-measures.json"
+// TODO: sort out **/index.vue imports so don't have to add index.vue
 import WasteMeasureSteps from "./WasteMeasureSteps/index.vue"
+import { computed } from "vue"
+import { useRouter } from "vue-router"
 
 const props = defineProps(["canteenUrlComponent", "year", "measureId", "étape"])
 
@@ -9,19 +12,22 @@ const measure = keyMeasures.find((measure) => measure.id === props.measureId)
 // TODO: get steps from child tunnel component
 const steps = [
   {
-    id: "example",
+    urlSlug: "example",
     title: "Step 1",
   },
   {
-    id: "test",
+    urlSlug: "test",
     title: "Step 2",
   },
 ]
 const stepTitles = steps.map((s) => s.title)
-let stepIdx = steps.findIndex((s) => s.id === props.étape)
-stepIdx = stepIdx === -1 ? 0 : stepIdx
-const currentStep = stepIdx + 1
-const step = steps[stepIdx]
+const stepIdx = computed(() => {
+  let idx = steps.findIndex((s) => s.urlSlug === props.étape)
+  return idx === -1 ? 0 : idx
+})
+const currentStep = computed(() => stepIdx.value + 1)
+const step = computed(() => steps[stepIdx.value])
+const previousStep = computed(() => (stepIdx.value > 0 ? steps[stepIdx.value - 1] : null))
 
 const tunnels = [
   ...keyMeasures.map((km) => ({
@@ -35,6 +41,25 @@ const tunnels = [
 
 const tunnelComponents = {
   "gaspillage-alimentaire": WasteMeasureSteps,
+}
+
+const saveDiagnostic = () => {
+  // TODO
+  return Promise.resolve()
+}
+
+const router = useRouter()
+const goBack = () => {
+  if (!previousStep.value) return
+  // TODO: check if form is valid
+  // if (!formIsValid) return
+  saveDiagnostic()
+    .then(() => {
+      router.push({ query: { étape: previousStep.value.urlSlug } })
+      // TODO: scroll to top of tunnel content
+      // $refs["stepWrapper"].scrollTop = 0
+    })
+    .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
 }
 </script>
 
@@ -103,7 +128,14 @@ const tunnelComponents = {
         <!-- TODO: next tab text on synthesis view -->
         <!-- TODO: button functionalities -->
         <DsfrButton v-if="step.isSynthesis" label="Modifier" tertiary no-outline />
-        <DsfrButton v-else label="Revenir à l'étape précédente" tertiary no-outline :disabled="currentStep === 1" />
+        <DsfrButton
+          v-else
+          label="Revenir à l'étape précédente"
+          @click="goBack"
+          tertiary
+          no-outline
+          :disabled="!previousStep"
+        />
         <DsfrButton label="Sauvegarder et continuer" class="fr-ml-1w" />
       </div>
     </div>
