@@ -9,6 +9,20 @@ const props = defineProps(["canteenUrlComponent", "year", "measureId", "étape"]
 
 const measure = keyMeasures.find((measure) => measure.id === props.measureId)
 
+const tunnels = [
+  ...keyMeasures.map((km) => ({
+    id: km.id,
+    title: km.title,
+    shortTitle: km.shortTitle,
+    icon: km.mdiIcon,
+    backendField: km.progressField,
+  })),
+]
+
+const tunnelComponents = {
+  "gaspillage-alimentaire": WasteMeasureSteps,
+}
+
 // TODO: get steps from child tunnel component
 const steps = [
   {
@@ -27,21 +41,16 @@ const stepIdx = computed(() => {
 })
 const currentStep = computed(() => stepIdx.value + 1)
 const step = computed(() => steps[stepIdx.value])
+const nextStep = computed(() => (stepIdx.value < steps.length - 1 ? steps[stepIdx.value + 1] : null))
 const previousStep = computed(() => (stepIdx.value > 0 ? steps[stepIdx.value - 1] : null))
 
-const tunnels = [
-  ...keyMeasures.map((km) => ({
-    id: km.id,
-    title: km.title,
-    shortTitle: km.shortTitle,
-    icon: km.mdiIcon,
-    backendField: km.progressField,
-  })),
-]
-
-const tunnelComponents = {
-  "gaspillage-alimentaire": WasteMeasureSteps,
-}
+const continueActionText = computed(() => {
+  const onSynthesisView = step.value?.isSynthesis
+  if (onSynthesisView) return "Passer à l'onglet suivant"
+  const nextIsSynthesis = nextStep.value?.isSynthesis
+  if (nextIsSynthesis) return "Voir la synthèse"
+  return "Sauvegarder et continuer"
+})
 
 const saveDiagnostic = () => {
   // TODO
@@ -49,6 +58,42 @@ const saveDiagnostic = () => {
 }
 
 const router = useRouter()
+
+const continueAction = () => {
+  // TODO
+  // if (!this.formIsValid) return
+  saveDiagnostic()
+    .then(() => {
+      if (nextStep.value) {
+        router.push({ query: { étape: nextStep.value.urlSlug } })
+        // TODO
+        // $refs["stepWrapper"].scrollTop = 0
+        // $refs["synthesisWrapper"].scrollTop = 0
+        // } else if (isLastTunnel) {
+        //   router.push({
+        //     name: "MyProgress",
+        //     params: { measure: "etablissement" },
+        //   })
+        // } else if (nextTunnel) {
+        //   router.push({
+        //     name: "MyProgress",
+        //     params: { measure: nextTunnel.id },
+        //   })
+        // } else {
+        //   router.push({
+        //     name: "DashboardManager",
+        //     params: {
+        //       canteenUrlComponent: canteenUrlComponent,
+        //     },
+        //     query: {
+        //       year: year,
+        //     },
+        //   })
+      }
+    })
+    .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
+}
+
 const goBack = () => {
   if (!previousStep.value) return
   // TODO: check if form is valid
@@ -136,7 +181,7 @@ const goBack = () => {
           no-outline
           :disabled="!previousStep"
         />
-        <DsfrButton label="Sauvegarder et continuer" class="fr-ml-1w" />
+        <DsfrButton :label="continueActionText" @click="continueAction" class="fr-ml-1w" />
       </div>
     </div>
   </div>
