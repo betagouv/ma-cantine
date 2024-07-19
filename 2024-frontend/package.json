@@ -13,6 +13,7 @@
   "dependencies": {
     "@gouvfr/dsfr": "^1.12.1",
     "@gouvminint/vue-dsfr": "^5.18.1",
+    "@vueuse/core": "^10.11.0",
     "django-vite-plugin": "^4.0.1",
     "pinia": "^2.1.7",
     "vue": "^3.4.29",
