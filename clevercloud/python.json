@@ -4,10 +4,12 @@
   },
   "deploy": {
     "managetasks": [
-      "migrate --noinput",
       "buildnpm",
-      "compilemessages",
-      "collectstatic --noinput"
+      "collectstatic --noinput",
+      "buildnpmvue3",
+      "collectstatic --noinput",
+      "migrate --noinput",
+      "compilemessages"
     ]
   }
 }

@@ -38,7 +38,7 @@
       à saisir pour réaliser ce bilan.
     </p>
     <DownloadLink
-      href="/static/documents/Antisèche données d'achat - ma cantine.pdf"
+      href="/static/documents/Antisèche_données_d'achat_ma_cantine.pdf"
       label="Antisèche : Préparer la saisie de mes données d'achat"
       sizeStr="642 Ko"
       class="mt-4"

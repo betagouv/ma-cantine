@@ -9,7 +9,7 @@
             </h2>
           </v-col>
           <v-col>
-            <DsfrNativeSelect v-model="year" :items="allowedYears" label="Année" labelClasses="d-sr-only" />
+            <DsfrNativeSelect v-model="selectedYear" :items="allowedYears" label="Année" labelClasses="d-sr-only" />
           </v-col>
         </v-row>
         <div>
@@ -172,13 +172,16 @@ export default {
     const years = customDiagnosticYears(this.canteen.diagnostics)
     return {
       lastYear: lastYear(),
-      year: lastYear(),
+      selectedYear: lastYear(),
       diagnosticYears: years,
       allowedYears: years.map((year) => ({ text: year, value: year })),
       showTeledeclarationPreview: false,
     }
   },
   computed: {
+    year() {
+      return +this.selectedYear
+    },
     canteenDiagnostic() {
       return this.canteen.diagnostics.find((x) => x.year === this.year)
     },

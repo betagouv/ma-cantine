@@ -16,7 +16,7 @@ class CanteenFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def sectors(self, create, extracted, **kwargs):
-        if not create:
+        if not create or extracted == []:
             return
         if extracted:
             for sector in extracted:

@@ -42,9 +42,7 @@
       Munissez-vous du <strong>numéro SIRET</strong> de votre ou de vos établissement(s) de restauration pour la prochaine étape :
       la création de votre ou de vos cantine(s).
     </p>
-    <p>
-      {{ form.is_dev }}<label for="{{form.is_dev.id_for_label}}">Je suis une développeuse ou un développeur logiciel et j'ai besoin d'accéder aux APIs</label>
-    </p>
+    <p>Les champs marqués d'un astérisque (*) sont obligatoires.</p>
   </div>
   <div>
 
@@ -72,6 +70,7 @@
       <div class="control-group">
         <label class="control-label" for="{{field.id_for_label}}">
           {{ field.label }}
+          {% if field.field.required %}*{% endif %}
           {% if field.help_text %}
           <span class="field-help-text">
             {{ field.help_text }}</span>
@@ -91,7 +90,9 @@
       {% for field in form.right_column_fields %}
       <div class="control-group">
         <label class="control-label" for="{{field.id_for_label}}">
-          {{ field.label }}</label>
+          {{ field.label }}
+          {% if field.field.required %}*{% endif %}
+        </label>
         {{ field }}
         {% for error in field.errors %}
         <p class="inline-error-container">
@@ -103,9 +104,14 @@
 
       <div class="control-group cgu-right-column">
         <div>
+          {{ form.is_dev }}<label for="{{form.is_dev.id_for_label}}">Je suis une développeuse ou un développeur logiciel et j'ai besoin d'accéder aux APIs</label>
+        </div>
+        <div>
           {{ form.cgu_approved }}
           <label class="control-label" for="{{form.cgu_approved.id_for_label}}">
-            {{ form.cgu_approved.label }}</label>
+            {{ form.cgu_approved.label }}
+            {% if form.cgu_approved.field.required %}*{% endif %}
+          </label>
           {% for error in form.cgu_approved.errors %}
           <p class="inline-error-container">
             {{ error | safe }}

@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
 from django.conf import settings
 from django.contrib.auth import get_user_model, tokens, login
+from django.contrib.auth import views as auth_views
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -10,7 +11,7 @@ from django.utils.encoding import force_bytes
 from common.utils import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import TemplateView, FormView, View
-from web.forms import RegisterUserForm
+from web.forms import RegisterUserForm, LoginUserForm
 from data.factories import UserFactory
 from django.views.decorators.clickjacking import xframe_options_exempt
 from authlib.integrations.django_client import OAuth
@@ -45,6 +46,18 @@ class VueAppDisplayView(TemplateView):
     """
 
     template_name = "vue-app.html"
+
+
+class Vue3AppDisplayView(TemplateView):
+    """
+    This template contains the VueJS app in /frontend
+    """
+
+    template_name = "vue3-app.html"
+
+
+class LoginUserView(auth_views.LoginView):
+    form_class = LoginUserForm
 
 
 class RegisterUserView(FormView):
