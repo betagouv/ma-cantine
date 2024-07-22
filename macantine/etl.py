@@ -346,7 +346,7 @@ class ETL_OPEN_DATA(ETL):
             return 0
 
     def is_valid(self, filepath) -> bool:
-        # Saving file online
+        # In order to validate the dataset with the validata api, must first convert to CSV then save online
         with default_storage.open(filepath + "_to_validate.csv", "w") as file:
             self.df.to_csv(
                 file,
