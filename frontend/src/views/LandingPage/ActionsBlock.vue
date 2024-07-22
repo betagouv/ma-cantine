@@ -1,11 +1,11 @@
 <template>
-  <ul class="d-flex flex-wrap text-left">
-    <v-col role="listitem" cols="12" md="4">
+  <ul class="d-flex flex-wrap text-left no-bullets">
+    <li class="col-12 col-md-4">
       <v-card
         outlined
         :to="loggedUser ? { name: 'ManagementPage' } : undefined"
         :href="loggedUser ? undefined : '/s-identifier'"
-        class="fill-height pa-4 d-flex flex-column hover-transition dsfr"
+        class="fill-height pa-4 d-flex flex-column hover-transition dsfr mt-n6"
       >
         <v-img
           src="/static/images/doodles-dsfr/secondary/SprintingDoodle.png"
@@ -30,17 +30,12 @@
           <v-icon color="primary">$arrow-right-line</v-icon>
         </v-card-actions>
       </v-card>
-    </v-col>
-    <v-col
-      role="listitem"
-      cols="12"
-      md="4"
-      :style="{ 'border-right': $vuetify.breakpoint.mdAndUp ? 'dotted 4px #e5fbf0' : 'none' }"
-    >
+    </li>
+    <li :class="{ 'col-12 col-md-4': true, 'right-border': $vuetify.breakpoint.mdAndUp }">
       <v-card
         outlined
         :to="{ name: 'PublicCanteenStatisticsPage' }"
-        class="fill-height pa-4 d-flex flex-column hover-transition dsfr"
+        class="fill-height pa-4 d-flex flex-column hover-transition dsfr mt-n6"
       >
         <v-img
           src="/static/images/doodles-dsfr/secondary/SitReadingDoodle.png"
@@ -65,9 +60,13 @@
           <v-icon color="primary">$arrow-right-line</v-icon>
         </v-card-actions>
       </v-card>
-    </v-col>
-    <v-col role="listitem" cols="12" md="4">
-      <v-card outlined :to="{ name: 'CanteensHome' }" class="fill-height pa-4 d-flex flex-column hover-transition dsfr">
+    </li>
+    <li class="col-12 col-md-4">
+      <v-card
+        outlined
+        :to="{ name: 'CanteensHome' }"
+        class="fill-height pa-4 d-flex flex-column hover-transition dsfr mt-n6"
+      >
         <v-img
           src="/static/images/doodles-dsfr/secondary/DogDoodle.png"
           v-if="$vuetify.breakpoint.smAndUp"
@@ -89,7 +88,7 @@
           <v-icon color="primary">$arrow-right-line</v-icon>
         </v-card-actions>
       </v-card>
-    </v-col>
+    </li>
   </ul>
 </template>
 
@@ -110,5 +109,8 @@ export default {
   transition-duration: 0.4s;
   transition-property: box-shadow;
   transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.right-border {
+  border-right: dotted 4px #e5fbf0;
 }
 </style>
