@@ -383,37 +383,33 @@ class ETL_OPEN_DATA(ETL):
             self.df.to_parquet(parquet_file)
 
     def _load_data_xlsx(self, filename):
-        try:
-            chunk_size = 1000
-            start_row = 0
+        chunk_size = 1000
+        start_row = 0
 
-            # Convert datetime to string
-            df = datetimes_to_str(self.df.copy())  # Assuming it converts datetimes to strings
+        # Convert datetime to string
+        df = datetimes_to_str(self.df.copy())  # Assuming it converts datetimes to strings
 
-            # Create an in-memory bytes buffer
-            output = BytesIO()
+        # Create an in-memory bytes buffer
+        output = BytesIO()
 
-            # Create ExcelWriter with the actual file path
-            with pd.ExcelWriter(output, engine="openpyxl") as writer:
-                for chunk in [df[i : i + chunk_size] for i in range(0, len(df.copy()), chunk_size)]:
-                    # Write chunk to the sheet, accumulating data
-                    chunk.to_excel(
-                        writer,
-                        startrow=start_row,
-                        index=False,
-                        header=True if start_row == 0 else False,
-                    )
-                    start_row += len(chunk)  # Update starting row for next chunk
+        # Create ExcelWriter with the actual file path
+        with pd.ExcelWriter(output, engine="openpyxl") as writer:
+            for chunk in [df[i : i + chunk_size] for i in range(0, len(df.copy()), chunk_size)]:
+                # Write chunk to the sheet, accumulating data
+                chunk.to_excel(
+                    writer,
+                    startrow=start_row,
+                    index=False,
+                    header=True if start_row == 0 else False,
+                )
+                start_row += len(chunk)  # Update starting row for next chunk
 
-            # Ensure the buffer is ready for reading
-            output.seek(0)
+        # Ensure the buffer is ready for reading
+        output.seek(0)
 
-            # Save the in-memory bytes buffer to the storage backend
-            with default_storage.open(filename + ".xlsx", "wb") as f:
-                f.write(output.getvalue())
-
-        except Exception as e:
-            logger.error(e)
+        # Save the in-memory bytes buffer to the storage backend
+        with default_storage.open(filename + ".xlsx", "wb") as f:
+            f.write(output.getvalue())
 
     def load_dataset(self):
         filepath = f"open_data/{self.dataset_name}"
