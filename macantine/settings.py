@@ -557,4 +557,4 @@ MAX_DAYS_HISTORICAL_RECORDS = (
 # Wagtail CMS
 WAGTAIL_SITE_NAME = "ma-cantine"
 # WAGTAILADMIN_BASE_URL # Declare if null URL in notification emails
-WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'txt', 'xlsx', 'zip']
+WAGTAILDOCS_EXTENSIONS = ["csv", "docx", "key", "odt", "pdf", "pptx", "rtf", "txt", "xlsx", "zip"]
