@@ -386,16 +386,16 @@ class ETL_OPEN_DATA(ETL):
         chunk_size = 1000
         start_row = 0
 
-        # Convert datetime to string
-        df = datetimes_to_str(self.df.copy())  # Assuming it converts datetimes to strings
-
         # Create an in-memory bytes buffer
         output = BytesIO()
 
         # Create ExcelWriter with the actual file path
         with pd.ExcelWriter(output, engine="openpyxl") as writer:
-            dataframe_chunks = [df[i : i + chunk_size] for i in range(0, len(df), chunk_size)]
+            dataframe_chunks = [self.df[i : i + chunk_size] for i in range(0, len(self.df), chunk_size)]
             for chunk in dataframe_chunks:
+                # Convert datetime to string and create copy to avoid modifications on the original dataframe
+                chunk = datetimes_to_str(chunk.copy())
+
                 # Write chunk to the sheet, accumulating data
                 chunk.to_excel(
                     writer,
