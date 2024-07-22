@@ -176,10 +176,12 @@ button:focus,
 .v-radio:focus-within,
 .v-card:focus,
 .drag-and-drop:focus-within,
-div[role="tab"]:focus {
+div[role="tab"]:focus,
+.outline-focus-within:focus-within {
   outline: rgb(0, 0, 145) !important;
   outline-width: 1px !important;
   outline-style: auto !important;
+  outline-offset: 2px;
 }
 
 .v-btn.primary:hover {

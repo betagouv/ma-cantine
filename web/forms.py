@@ -1,5 +1,5 @@
 import re
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
 from django import forms
 from django.utils.safestring import mark_safe
@@ -37,11 +37,9 @@ class RegisterUserForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(RegisterUserForm, self).__init__(*args, **kwargs)
         self.label_suffix = ""
-        self.fields["first_name"].widget.attrs.update(
-            {"placeholder": "Agnès", "autocomplete": "given-name"}, autoFocus=True
-        )
+        self.fields["first_name"].widget.attrs.update({"placeholder": "Agnès", "autocomplete": "given-name"})
         self.fields["last_name"].widget.attrs.update({"placeholder": "Dufresne", "autocomplete": "family-name"})
-        self.fields["username"].widget.attrs.update({"placeholder": "agnes.dufresne"})
+        self.fields["username"].widget.attrs.update({"placeholder": "agnes.dufresne", "autofocus": False})
         self.fields["email"].label = "Adresse électronique"
         self.fields["email"].help_text = "Format attendu : nom@domaine.fr"
         self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com", "autocomplete": "email"})
@@ -107,3 +105,11 @@ def _clean_username(form):
         raise forms.ValidationError("Vous ne pouvez pas utiliser une adresse email comme nom d'utilisateur.")
 
     return username
+
+
+class LoginUserForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super(LoginUserForm, self).__init__(*args, **kwargs)
+        self.error_messages["invalid_login"] = (
+            "Saisissez un nom d'utilisateur ou adresse électronique et un mot de passe valides. Remarquez que chacun de ces champs est sensible à la casse (différenciation des majuscules/minuscules)."
+        )

@@ -1,0 +1,79 @@
+name: Bug
+description: Soumettre un bug
+title: "[Bug]: "
+labels: ["bug", "triage"]
+projects: []
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de prendre le temps pour soumettre ce formulaire <3
+  - type: input
+    id: name
+    attributes:
+      label: Ton prénom
+      description: T'es qui ?
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: C'est de quel prio ?
+      options:
+        - label: Nice to have
+        - label: Gênant (sprint prochain si on peut)
+        - label: Bloquant, pas urgent (sprint prochain idéalement)
+        - label: Bloquant, urgent (pour hier, idéalement)
+  - type: input
+    id: url
+    attributes:
+      label: Le(s) url(s) où tu vois le bug
+    validations:
+      required: true
+  - type: checkboxes
+    id: user-type
+    attributes:
+      label: Quel type d'utilisateur est concerné ?
+      options:
+        - label: Gestionnaire
+        - label: Équipe
+        - label: Citoyen
+        - label: Administration
+        - label: Autre (à decrire avec le champ en dessous)
+    validations:
+      required: true
+  - type: textarea
+    id: aim
+    attributes:
+      label: Qu'est-ce que tu veux faire ?
+      description: Avant decrire le problème, dis-nous ce que tu (ou l'utilisateur) voulais faire.
+      placeholder: Je veux rentrer un achat...
+    validations:
+      required: true
+  - type: textarea
+    id: bug
+    attributes:
+      label: Qu'est-ce que t'as bloqué ?
+      placeholder: J'ai l'erreur XX quand je soumets le formulaire avec les valeurs YY...
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: Tu utilises quel navigateur ?
+      options:
+        - label: Firefox
+        - label: Chrome
+        - label: Safari
+        - label: Microsoft Edge
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Les détails de ce bug sont ouvert au grand public. Cocher ce cas pour confirmer que t'as pas ajouté des infos qui pourraient identifier les utilisateurs.
+      description: N'ajoute pas les mails d'utilisateurs, eviter les SIRETs, etc. Envoyer nous un message via mattermost avec les données supplementaires si besoin.
+      options:
+        - label: Il y a pas des données identifiantes.
+          required: true

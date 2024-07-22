@@ -6,6 +6,7 @@
           <img
             :src="canteen.leadImage ? canteen.leadImage.image : '/static/images/canteen-default-image.jpg'"
             class="lead-image"
+            alt=""
           />
         </v-col>
         <v-col class="pa-8 d-flex flex-column justify-space-between">
@@ -133,7 +134,7 @@ export default {
   height: 100%;
 }
 .canteen-card img.lead-image {
-  opacity: 50%;
+  opacity: 0.5;
   max-height: 100%;
   max-width: 100%;
   height: 100%;
@@ -143,7 +144,7 @@ export default {
 }
 .canteen-card:hover img.lead-image,
 .canteen-card:focus-within img.lead-image {
-  opacity: 100%;
+  opacity: 1;
 }
 .card-image-wrap {
   position: relative;
