@@ -395,7 +395,7 @@ class ETL_OPEN_DATA(ETL):
 
             # Create ExcelWriter with the actual file path
             with pd.ExcelWriter(output, engine="openpyxl") as writer:
-                for chunk in [df[i: i + chunk_size] for i in range(0, len(df.copy()), chunk_size)]:
+                for chunk in [df[i : i + chunk_size] for i in range(0, len(df.copy()), chunk_size)]:
                     # Write chunk to the sheet, accumulating data
                     chunk.to_excel(
                         writer,
@@ -414,7 +414,6 @@ class ETL_OPEN_DATA(ETL):
 
         except Exception as e:
             logger.error(e)
-            return
 
     def load_dataset(self):
         filepath = f"open_data/{self.dataset_name}"
