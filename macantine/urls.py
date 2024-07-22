@@ -14,7 +14,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),  # if the path of 'admin/' changes, update historical_record_add_auth_method
     path("ckeditor/", include("ckeditor_uploader.urls")),
     path("o/", include("oauth2_provider.urls", namespace="oauth2_provider")),
-    path("api/v2/", api_router.urls),
+    path("apicms/v1/", api_router.urls),
     path("cms/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("pages/", include(wagtail_urls)),
