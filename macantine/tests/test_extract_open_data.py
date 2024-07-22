@@ -456,6 +456,11 @@ class TestETLOpenData(TestCase):
                 "data": pd.DataFrame({"index": [0], "name": ["a valid name"]}),
                 "expected_length": 1,
             },
+            {
+                "name": " Load valid dataset with special characters",
+                "data": pd.DataFrame({"index": [0], "name": ["a valid name with our csv sep ;"]}),
+                "expected_length": 1,
+            },
         ]
         etl = ETL_CANTEEN()
         etl.dataset_name += "_test"  # Avoid interferring with other files

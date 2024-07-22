@@ -373,8 +373,17 @@ class ETL_OPEN_DATA(ETL):
             return 1
 
     def _load_data_csv(self, filename):
+        df_csv = self.df.copy()
         with default_storage.open(filename + ".csv", "w") as csv_file:
-            self.df.to_csv(csv_file, sep=";", index=False, na_rep="", encoding="utf_8_sig", quoting=csv.QUOTE_NONE)
+            df_csv.to_csv(
+                csv_file,
+                sep=";",
+                index=False,
+                na_rep="",
+                encoding="utf_8_sig",
+                quoting=csv.QUOTE_NONE,
+                escapechar="\\",
+            )
 
     def _load_data_parquet(self, filename):
         with default_storage.open(filename + ".parquet", "wb") as parquet_file:
