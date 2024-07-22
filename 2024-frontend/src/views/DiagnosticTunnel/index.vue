@@ -104,8 +104,6 @@ const goBack = () => {
 </script>
 
 <template>
-  <!-- TODO: mobile view optimisations -->
-  <!-- TODO: synthesis styling -->
   <div class="tunnel">
     <div class="fr-container fr-pt-1w">
       <div class="measures fr-grid-row fr-grid-row--middle fr-py-2w">
@@ -153,22 +151,13 @@ const goBack = () => {
       <div class="step fr-container">
         <div class="fr-py-1w">
           <component :is="tunnelComponents[props.measureId]" :stepUrlSlug="step.urlSlug" @update-steps="updateSteps" />
-          <!--
-          :canteen="canteen"
-          :diagnostic="diagnostic"
-          :stepUrlSlug="stepUrlSlug"
-          v-on:update-payload="updatePayload"
-          v-on:tunnel-autofill="onTunnelAutofill"
-          v-on:update-steps="updateSteps"
-         -->
         </div>
       </div>
-      <!-- TODO: setup synthesis -->
+      <!-- Synthesis: content to go here. General styling to be applied too. -->
     </div>
     <div class="footer">
       <div class="content fr-container fr-grid-row fr-grid-row--right fr-p-2w fr-pr-8w">
-        <!-- TODO: next tab text on synthesis view -->
-        <!-- TODO: button functionalities -->
+        <!-- Synthesis: next tunnel name to go here. Check that continueActionText is correctly applied. -->
         <DsfrButton v-if="step.isSynthesis" label="Modifier" tertiary no-outline />
         <DsfrButton
           v-else
