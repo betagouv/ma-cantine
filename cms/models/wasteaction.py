@@ -34,8 +34,6 @@ class WasteAction(models.Model):
         verbose_name="Description",
         default="<h2>Description</h2><h2>Conseils pratiques</h2><ul><li></li></ul>",
     )
-    # savings_estimation = models.IntegerField(verbose_name="Estimation d'économies (€)")
-    # coefficient = models.IntegerField(verbose_name="Coefficient d'évolution")
     lead_image = models.ForeignKey(
         "wagtailimages.Image", on_delete=models.SET_NULL, related_name="+", null=True, blank=True, verbose_name="Image"
     )
