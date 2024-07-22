@@ -38,6 +38,8 @@ PROTOCOL = "https" if SECURE else "http"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
+# Default to True so that tests can pass without this env var being defined
+DEBUG_FRONT = os.getenv("DEBUG_FRONT") == "True" if os.getenv("DEBUG_FRONT") else True
 AUTH_USER_MODEL = "data.User"
 AUTHENTICATION_BACKENDS = [
     "macantine.backends.EmailUsernameBackend",
@@ -67,8 +69,23 @@ if not DEBUG:
 INTERNAL_IPS = []
 
 # Application definition
-
-INSTALLED_APPS = [
+WAGTAIL_INSTALLED_APPS = [
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    "modelcluster",
+    "taggit",
+    "cms",
+]
+INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -77,6 +94,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
     "django.contrib.postgres",
+    "django_vite_plugin",
     "webpack_loader",
     "rest_framework",
     "oauth2_provider",
@@ -107,6 +125,7 @@ MIDDLEWARE = [
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "csp.middleware.CSPMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 CSRF_COOKIE_NAME = "csrftoken"
 ROOT_URLCONF = "macantine.urls"
@@ -256,13 +275,22 @@ SPECTACULAR_SETTINGS = {
 # Frontend - VueJS application
 
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "frontend/dist/")]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "frontend/dist/"),
+    os.path.join(BASE_DIR, "build/"),
+    ("dsfr/icons", BASE_DIR / "2024-frontend/node_modules/@gouvfr/dsfr/dist/icons"),
+]
 WEBPACK_LOADER = {
     "DEFAULT": {
         "CACHE": DEBUG,
         "BUNDLE_DIR_NAME": "/bundles/",
         "STATS_FILE": os.path.join(FRONTEND_DIR, "webpack-stats.json"),
     }
+}
+
+DJANGO_VITE_PLUGIN = {
+    "DEV_MODE": DEBUG_FRONT,
+    "BUILD_DIR": "build",
 }
 
 # Email
@@ -482,6 +510,7 @@ TELEDECLARATION_CORRECTION_CAMPAIGN = os.getenv("TELEDECLARATION_CORRECTION_CAMP
 TELEDECLARATION_END_DATE = os.getenv("TELEDECLARATION_END_DATE", "")
 ENABLE_DASHBOARD = os.getenv("ENABLE_DASHBOARD") == "True"
 PUBLISH_BY_DEFAULT = os.getenv("PUBLISH_BY_DEFAULT") == "True"
+ENABLE_VUE3 = os.getenv("ENABLE_VUE3") == "True"
 
 # Custom testing
 
@@ -524,3 +553,8 @@ USES_MONCOMPTEPRO = (
 MAX_DAYS_HISTORICAL_RECORDS = (
     int(os.getenv("MAX_DAYS_HISTORICAL_RECORDS")) if os.getenv("MAX_DAYS_HISTORICAL_RECORDS", None) else None
 )
+
+# Wagtail CMS
+WAGTAIL_SITE_NAME = "ma-cantine"
+# WAGTAILADMIN_BASE_URL # Declare if null URL in notification emails
+WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'txt', 'xlsx', 'zip']

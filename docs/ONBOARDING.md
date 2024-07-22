@@ -69,6 +69,7 @@ L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), 
 ```
 SECRET= Le secret pour Django (vous pouvez le [générer ici](https://djecrety.ir/))
 DEBUG= `True` pour le développement local ou `False` autrement
+DEBUG_FRONT= `True` pour le développement local du 2024-front ou `False` autrement
 DB_USER= L'utilisateur de la base de données. Doit avoir les droits de creation de db pour les tests.
 DB_PASSWORD= Le mot de passe pour accéder à la base de données
 DB_HOST= Le host de la base de données (par ex. '127.0.0.1')
@@ -115,6 +116,7 @@ TELEDECLARATION_CORRECTION_CAMPAIGN= Optionnel - `True` pour pour distinguer la 
 TELEDECLARATION_END_DATE= Optionnel - Celle-ci n'est pas exactement une feature flag mais fonctionne avec le flag précedent. Il faut indiquer une date pour la fin de la campagne de la télédéclaration (par exemple, `2024-03-15`)
 ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des gestionnaires.
 PUBLISH_BY_DEFAULT= Optionnel - `True` pour publier les cantines sauf celles qui sont identifiées autrement.
+ENABLE_VUE3= Optionnel - `True` pour rendre les nouvelles vues disponibles.
 ```
 
 ### Relances automatiques par email
@@ -243,3 +245,20 @@ Des extensions qu'on trouve utile :
 - Vetur
 - vuetify-vscode
 - Spell Right
+
+## Test déploiement en locale
+
+Les commandes lancées sur CleverCloud sont listées dans `clevercloud/python.json`.
+
+.env :
+
+```
+DEBUG=False
+DEBUG_FRONT=False
+```
+
+Dans le dossier principal, lancez :
+`bash ./clevercloud/test-build.sh`
+`python manage.py runserver --insecure`
+
+En prod, faut ajouter `CC_PRE_BUILD_HOOK=./clevercloud/pre-build-hook.sh`
