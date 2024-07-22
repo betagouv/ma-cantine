@@ -23,8 +23,6 @@ class WasteActionViewSet(SnippetViewSet):
                 [
                     FieldPanel("effort"),
                     FieldPanel("waste_origin"),
-                    # FieldPanel("savings_estimation"),
-                    # FieldPanel("coefficient"),
                 ],
                 heading="Caractéristiques",
             ),
