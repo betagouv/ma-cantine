@@ -1,9 +1,10 @@
 <script setup>
-import { onMounted } from "vue"
+import { onMounted, reactive } from "vue"
+import { useVuelidate } from "@vuelidate/core"
+import { required, email } from "@vuelidate/validators"
+import { formatError } from "@/utils.js"
 
 defineProps(["stepUrlSlug"])
-
-const name = defineModel()
 
 const steps = [
   {
@@ -23,19 +24,44 @@ const emit = defineEmits(["update-steps"])
 onMounted(() => {
   emit("update-steps", steps)
 })
+
+const state = reactive({
+  name: "",
+  email: "",
+})
+const rules = {
+  name: { required },
+  email: { email },
+}
+
+const v$ = useVuelidate(rules, state)
+
+const testValidation = () => {
+  v$.value.$validate()
+  if (v$.value.$error) return
+}
 </script>
 
 <template>
   <div v-if="stepUrlSlug === 'example'">
-    <DsfrInput
-      v-model="name"
+    <p>This step allows for validation checking</p>
+    <DsfrInputGroup
+      v-model="state.name"
       label="Nom"
       placeholder="Jean Dupont"
       label-visible
-      required
       hint="Indiquez votre nom"
       class="fr-mb-2w"
+      :error-message="formatError(v$.name)"
     />
+    <DsfrInputGroup
+      v-model="state.email"
+      label="Email"
+      label-visible
+      class="fr-mb-2w"
+      :error-message="formatError(v$.email)"
+    />
+    <DsfrButton @click="testValidation">Test validation</DsfrButton>
   </div>
   <div v-else-if="stepUrlSlug === 'test'">
     <p>This is an example of a step that requires scrolling</p>
