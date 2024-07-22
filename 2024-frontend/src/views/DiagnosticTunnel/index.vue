@@ -53,6 +53,8 @@ const saveDiagnostic = () => {
 
 const router = useRouter()
 
+const stepWrapper = ref(null)
+
 const continueAction = () => {
   // TODO
   // if (!this.formIsValid) return
@@ -60,8 +62,8 @@ const continueAction = () => {
     .then(() => {
       if (nextStep.value) {
         router.push({ query: { étape: nextStep.value.urlSlug } })
+        stepWrapper.value.scrollTop = 0
         // TODO
-        // $refs["stepWrapper"].scrollTop = 0
         // $refs["synthesisWrapper"].scrollTop = 0
         // } else if (isLastTunnel) {
         //   router.push({
@@ -95,8 +97,7 @@ const goBack = () => {
   saveDiagnostic()
     .then(() => {
       router.push({ query: { étape: previousStep.value.urlSlug } })
-      // TODO: scroll to top of tunnel content
-      // $refs["stepWrapper"].scrollTop = 0
+      stepWrapper.value.scrollTop = 0
     })
     .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
 }
@@ -148,10 +149,11 @@ const goBack = () => {
       </div>
       <DsfrStepper :steps="stepTitles" :currentStep />
     </div>
-    <div class="body">
+    <div class="body" ref="stepWrapper">
       <div class="step fr-container">
-        <component :is="tunnelComponents[props.measureId]" :stepUrlSlug="step.urlSlug" @update-steps="updateSteps" />
-        <!--
+        <div class="fr-py-1w">
+          <component :is="tunnelComponents[props.measureId]" :stepUrlSlug="step.urlSlug" @update-steps="updateSteps" />
+          <!--
           :canteen="canteen"
           :diagnostic="diagnostic"
           :stepUrlSlug="stepUrlSlug"
@@ -159,6 +161,7 @@ const goBack = () => {
           v-on:tunnel-autofill="onTunnelAutofill"
           v-on:update-steps="updateSteps"
          -->
+        </div>
       </div>
       <!-- TODO: setup synthesis -->
     </div>
@@ -201,9 +204,8 @@ const goBack = () => {
   flex-direction: column;
   justify-content: center;
 }
-.scroll {
-  overflow-y: scroll;
-  overflow-x: hidden;
+.step {
+  max-height: 100%;
 }
 .header-icon {
   border-right: #e5e5e5 solid 1px;

@@ -12,7 +12,11 @@ const steps = [
   },
   {
     urlSlug: "test",
-    title: "Step 2",
+    title: "A long step",
+  },
+  {
+    urlSlug: "long2",
+    title: "A second long step",
   },
 ]
 const emit = defineEmits(["update-steps"])
@@ -23,10 +27,37 @@ onMounted(() => {
 
 <template>
   <div v-if="stepUrlSlug === 'example'">
-    <DsfrInput v-model="name" label="Nom" placeholder="Jean Dupont" label-visible required hint="Indiquez votre nom" />
+    <DsfrInput
+      v-model="name"
+      label="Nom"
+      placeholder="Jean Dupont"
+      label-visible
+      required
+      hint="Indiquez votre nom"
+      class="fr-mb-2w"
+    />
   </div>
   <div v-else-if="stepUrlSlug === 'test'">
-    <DsfrInput v-model="name" label="Autre champ" label-visible />
+    <p>This is an example of a step that requires scrolling</p>
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+  </div>
+  <div v-else-if="stepUrlSlug === 'long2'">
+    <p>This is an example of a step that requires scrolling</p>
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
   </div>
   <div v-else>
     <p>Unknown step (shouldn't arrive here)</p>
