@@ -1,7 +1,7 @@
 <template>
   <div>
     <DownloadLink
-      href="/static/documents/Convention de dons type - restauration collective.docx"
+      href="/static/documents/Convention_de_dons_type_restauration_collective.docx"
       label="Vous voulez éviter le gaspillage ? Télécharger ce modèle type de convention aux associations auxquelles faire des dons."
       sizeStr="575 Ko"
       class="mt-4"

@@ -10,7 +10,6 @@
         <v-col cols="12" sm="3" md="2" class="d-flex align-center">
           <img
             src="/static/images/Marianne.png"
-            contain
             alt="Ministère de l'Agriculture et la Souveraineté Alimentaire - Liberté Égalité Fraternité"
           />
         </v-col>
@@ -87,12 +86,11 @@
         </v-col>
       </v-row>
       <v-divider aria-hidden="true" role="presentation" v-if="!showSmallFooter" class="mt-6 mb-2"></v-divider>
-      <ul class="d-flex justify-sm-space-between flex-wrap link-group pl-0">
+      <ul class="d-flex flex-wrap link-group pl-0">
         <li v-for="(link, index) in bottomLinks" :key="link.text" class="d-flex my-1">
           <router-link class="caption px-0 grey--text text--darken-2" :to="link.to">{{ link.text }}</router-link>
           <div class="footer-divider mx-4" v-if="index < bottomLinks.length - 1"></div>
         </li>
-        <v-spacer></v-spacer>
       </ul>
       <p class="caption mt-2 mb-0 grey--text text--darken-2">
         Sauf mention contraire, tous les contenus de ce site sont sous

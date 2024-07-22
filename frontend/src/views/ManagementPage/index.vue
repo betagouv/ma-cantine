@@ -1,33 +1,40 @@
 <template>
   <div class="text-left">
-    <div class="mt-4 mb-0 mb-md-6">
-      <div class="d-flex align-center">
+    <v-row class="mb-4">
+      <v-col>
         <h1
-          class="my-2 text-h6 font-weight-black"
+          class="mt-4 mb-2 text-h6 font-weight-black"
           :style="$vuetify.breakpoint.mdAndUp ? 'font-size: 2rem !important;' : ''"
         >
           Bienvenue dans votre espace, {{ loggedUser.firstName }}
         </h1>
-        <v-btn text class="text-decoration-underline text-caption mb-1 mb-md-n1" :to="{ name: 'AccountEditor' }">
-          <v-icon class="mr-1" small>mdi-pencil</v-icon>
+
+        <router-link class="fr-text-xs d-flex align-center" :to="{ name: 'AccountEditor' }">
           Modifier mon profil
-        </v-btn>
-      </div>
-
-      <p v-if="loggedUser.isElectedOfficial" class="mb-0">
-        Vous avez un compte élu / élue, vous pouvez voir
-        <router-link text :to="{ name: 'TerritoryCanteens' }">
-          les cantines de votre territoire
+          <v-icon class="ml-1" color="primary" x-small>mdi-pencil</v-icon>
         </router-link>
-        .
-      </p>
 
-      <CanteenCreationDialog
-        v-if="showCanteenCreationPrompt !== null"
-        :organizations="loggedUser.mcpOrganizations"
-        v-model="showCanteenCreationPrompt"
-      />
-    </div>
+        <p v-if="loggedUser.isElectedOfficial" class="mt-2 mb-0">
+          Vous avez un compte élu / élue, voir
+          <router-link text :to="{ name: 'TerritoryCanteens' }">
+            les cantines de votre territoire
+          </router-link>
+        </p>
+      </v-col>
+      <v-col cols="12" md="5">
+        <DsfrCallout noIcon class="mb-0">
+          <h2 class="fr-text font-weight-bold mb-2">
+            Vous cherchez à recruter au sein de vos équipes&nbsp;?
+          </h2>
+          <p class="mb-1">
+            <i>ma cantine</i>
+            vous propose de diffuser vos offres gratuitement sur nos réseaux sociaux. Envoyez-nous votre offre à
+            <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
+          </p>
+        </DsfrCallout>
+      </v-col>
+    </v-row>
+
     <div v-if="canteenCount === 0" class="body-2 font-weight-medium">
       <p class="mb-0">
         Prenez connaissance du
@@ -81,6 +88,11 @@
         </v-col>
       </v-row>
     </div>
+    <CanteenCreationDialog
+      v-if="showCanteenCreationPrompt !== null"
+      :organizations="loggedUser.mcpOrganizations"
+      v-model="showCanteenCreationPrompt"
+    />
   </div>
 </template>
 
@@ -92,6 +104,7 @@ import TeledeclarationBanner from "./TeledeclarationBanner"
 import CanteenCreationDialog from "./CanteenCreationDialog"
 import ActionsBanner from "./ActionsBanner"
 import SuccessBanner from "./SuccessBanner"
+import DsfrCallout from "@/components/DsfrCallout"
 import validators from "@/validators"
 import { lastYear } from "@/utils"
 
@@ -105,6 +118,7 @@ export default {
     ActionsBanner,
     SuccessBanner,
     CanteenCreationDialog,
+    DsfrCallout,
   },
   data() {
     return {
