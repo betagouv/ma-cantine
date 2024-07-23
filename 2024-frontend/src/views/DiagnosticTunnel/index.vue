@@ -56,13 +56,14 @@ const router = useRouter()
 const stepWrapper = ref(null)
 
 const continueAction = () => {
-  // TODO
-  // if (!this.formIsValid) return
+  v$.value.$validate()
+  if (v$.value.$error) return
   saveDiagnostic()
     .then(() => {
       if (nextStep.value) {
         router.push({ query: { étape: nextStep.value.urlSlug } })
         stepWrapper.value.scrollTop = 0
+        console.log(payload)
         // TODO
         // $refs["synthesisWrapper"].scrollTop = 0
         // } else if (isLastTunnel) {
@@ -100,6 +101,23 @@ const goBack = () => {
       stepWrapper.value.scrollTop = 0
     })
     .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
+}
+
+let v$
+const updateVuelidate = (vuelidateObj) => {
+  v$ = vuelidateObj
+}
+
+const payload = {}
+const updatePayloadFromChild = (childPayload) => {
+  console.log("parent", childPayload)
+  if (!v$) {
+    console.error("No vuelidate object")
+    return
+  }
+  v$.value.$validate()
+  if (v$.value.$error) return
+  Object.assign(payload, childPayload)
 }
 </script>
 
@@ -150,7 +168,13 @@ const goBack = () => {
     <div class="body" ref="stepWrapper">
       <div class="step fr-container">
         <div class="fr-py-1w">
-          <component :is="tunnelComponents[props.measureId]" :stepUrlSlug="step.urlSlug" @update-steps="updateSteps" />
+          <component
+            :is="tunnelComponents[props.measureId]"
+            :stepUrlSlug="step.urlSlug"
+            @update-steps="updateSteps"
+            @provide-vuelidate="updateVuelidate"
+            @update-payload="updatePayloadFromChild"
+          />
         </div>
       </div>
       <!-- Synthesis: content to go here. General styling to be applied too. -->

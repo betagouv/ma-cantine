@@ -20,12 +20,9 @@ const steps = [
     title: "A second long step",
   },
 ]
-const emit = defineEmits(["update-steps"])
-onMounted(() => {
-  emit("update-steps", steps)
-})
+const emit = defineEmits(["update-steps", "provide-vuelidate", "update-payload"])
 
-const state = reactive({
+const payload = reactive({
   name: "",
   email: "",
 })
@@ -33,35 +30,39 @@ const rules = {
   name: { required },
   email: { email },
 }
+const v$ = useVuelidate(rules, payload)
 
-const v$ = useVuelidate(rules, state)
-
-const testValidation = () => {
-  v$.value.$validate()
-  if (v$.value.$error) return
+const updatePayload = () => {
+  emit("update-payload", payload)
 }
+
+onMounted(() => {
+  emit("update-steps", steps)
+  emit("provide-vuelidate", v$)
+})
 </script>
 
 <template>
   <div v-if="stepUrlSlug === 'example'">
     <p>This step allows for validation checking</p>
     <DsfrInputGroup
-      v-model="state.name"
+      v-model="payload.name"
       label="Nom"
       placeholder="Jean Dupont"
       label-visible
       hint="Indiquez votre nom"
       class="fr-mb-2w"
       :error-message="formatError(v$.name)"
+      @blur="updatePayload"
     />
     <DsfrInputGroup
-      v-model="state.email"
+      v-model="payload.email"
       label="Email"
       label-visible
       class="fr-mb-2w"
       :error-message="formatError(v$.email)"
+      @blur="updatePayload"
     />
-    <DsfrButton @click="testValidation">Test validation</DsfrButton>
   </div>
   <div v-else-if="stepUrlSlug === 'test'">
     <p>This is an example of a step that requires scrolling</p>
