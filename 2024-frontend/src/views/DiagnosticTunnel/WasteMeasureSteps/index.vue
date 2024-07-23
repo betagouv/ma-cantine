@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive } from "vue"
+import { onMounted, reactive, watch } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { required, email } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
@@ -36,6 +36,10 @@ const updatePayload = () => {
   emit("update-payload", payload)
 }
 
+watch(payload, () => {
+  updatePayload()
+})
+
 onMounted(() => {
   emit("update-steps", steps)
   emit("provide-vuelidate", v$)
@@ -53,7 +57,6 @@ onMounted(() => {
       hint="Indiquez votre nom"
       class="fr-mb-2w"
       :error-message="formatError(v$.name)"
-      @blur="updatePayload"
     />
     <DsfrInputGroup
       v-model="payload.email"
@@ -61,7 +64,6 @@ onMounted(() => {
       label-visible
       class="fr-mb-2w"
       :error-message="formatError(v$.email)"
-      @blur="updatePayload"
     />
   </div>
   <div v-else-if="stepUrlSlug === 'test'">

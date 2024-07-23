@@ -110,13 +110,10 @@ const updateVuelidate = (vuelidateObj) => {
 
 const payload = {}
 const updatePayloadFromChild = (childPayload) => {
-  console.log("parent", childPayload)
   if (!v$) {
     console.error("No vuelidate object")
     return
   }
-  v$.value.$validate()
-  if (v$.value.$error) return
   Object.assign(payload, childPayload)
 }
 </script>
