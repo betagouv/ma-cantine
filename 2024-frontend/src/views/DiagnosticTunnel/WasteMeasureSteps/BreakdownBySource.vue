@@ -102,10 +102,18 @@ const calculateOtherWeight = () => {
   }
 }
 
+watch(props, () => {
+  payload._freezeWatcher = true
+  genericPayloadKeys.forEach((k) => (payload[k] = undefined))
+  delete payload._freezeWatcher
+})
+
 watch(payload, () => {
-  resetCalculationMaybe()
-  calculateOtherWeight()
-  updatePayload()
+  if (!payload._freezeWatcher) {
+    resetCalculationMaybe()
+    calculateOtherWeight()
+    updatePayload()
+  }
 })
 
 onMounted(() => {
@@ -153,9 +161,10 @@ onMounted(() => {
         label-visible
         class="fr-mb-2w"
         :error-message="formatError(v$.edibleKey)"
-        @change="userChose(userChoices.edible)"
+        @keydown="userChose(userChoices.edible)"
         :disabled="userChoice === userChoices.inedible"
       />
+      <!-- TODO: not sure keydown is best - can scroll -->
       <DsfrInputGroup
         v-model.number="payload.inedibleKey"
         type="number"
@@ -164,7 +173,7 @@ onMounted(() => {
         label-visible
         class="fr-mb-2w"
         :error-message="formatError(v$.inedibleKey)"
-        @change="userChose(userChoices.inedible)"
+        @keydown="userChose(userChoices.inedible)"
         :disabled="userChoice === userChoices.edible"
       />
     </div>
