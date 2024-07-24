@@ -11,8 +11,8 @@ const options = [
   },
   {
     label: "Non",
-    id: `${props.name}-yes`,
-    value: true,
+    id: `${props.name}-no`,
+    value: false,
   },
 ]
 </script>

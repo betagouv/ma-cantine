@@ -4,29 +4,16 @@ import { useVuelidate } from "@vuelidate/core"
 import { required } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
 import HelpText from "./HelpText.vue"
+import DsfrBooleanRadio from "@/components/DsfrBooleanRadio.vue"
 
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
-const questionName = "distinction"
-const yesNoOptions = [
-  {
-    label: "Oui",
-    id: `${questionName}-yes`,
-    value: true,
-  },
-  {
-    label: "Non",
-    id: `${questionName}-no`,
-    value: false,
-  },
-]
-
 const payload = reactive({
-  sorted: undefined,
+  sortedSource: undefined,
 })
 
 const rules = {
-  sorted: { required },
+  sortedSource: { required },
 }
 
 const v$ = useVuelidate(rules, payload)
@@ -47,13 +34,12 @@ onMounted(() => {
 <template>
   <div class="fr-grid-row">
     <div class="fr-col-12 fr-col-sm-6">
-      <DsfrRadioButtonSet
-        v-model.number="payload.sorted"
+      <DsfrBooleanRadio
+        v-model.number="payload.sortedSource"
         legend="Avez-vous trié votre gaspillage en fonction de sa source ?"
-        :name="questionName"
-        :options="yesNoOptions"
+        name="sortedSource"
         class="fr-mb-2w"
-        :error-message="formatError(v$.sorted)"
+        :error-message="formatError(v$.sortedSource)"
       />
     </div>
     <div class="fr-col-sm-6">
