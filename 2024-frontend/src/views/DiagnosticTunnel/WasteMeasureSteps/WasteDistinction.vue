@@ -8,6 +8,7 @@ import DsfrBooleanRadio from "@/components/DsfrBooleanRadio.vue"
 
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
+// TODO: show remaining steps only if this is true ?
 const payload = reactive({
   sortedSource: undefined,
 })
