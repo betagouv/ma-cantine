@@ -3,9 +3,7 @@ import { onMounted, reactive, watch, markRaw, defineProps } from "vue"
 import MeasurementPeriod from "./MeasurementPeriod.vue"
 import TotalWaste from "./TotalWaste.vue"
 import WasteDistinction from "./WasteDistinction.vue"
-import PreparationExcess from "./PreparationExcess.vue"
-import UnservedLeftovers from "./UnservedLeftovers.vue"
-import PlateLeftovers from "./PlateLeftovers.vue"
+import BreakdownBySource from "./BreakdownBySource.vue"
 
 const props = defineProps(["stepUrlSlug"])
 
@@ -26,19 +24,22 @@ const steps = [
     component: markRaw(WasteDistinction),
   },
   {
-    urlSlug: "excedents",
+    urlSlug: "preparation",
     title: "Gaspillage lié aux excédents de préparation",
-    component: markRaw(PreparationExcess),
+    component: markRaw(BreakdownBySource),
+    componentData: { source: "preparation" },
   },
   {
     urlSlug: "non-servies",
     title: "Gaspillage lié aux denrées présentées aux convives mais non servies",
-    component: markRaw(UnservedLeftovers),
+    component: markRaw(BreakdownBySource),
+    componentData: { source: "unserved" },
   },
   {
     urlSlug: "reste-assiette",
     title: "Gaspillage lié au reste assiette",
-    component: markRaw(PlateLeftovers),
+    component: markRaw(BreakdownBySource),
+    componentData: { source: "leftovers" },
   },
 ]
 const emit = defineEmits(["update-steps", "provide-vuelidate", "update-payload"])
@@ -65,5 +66,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <component :is="state.step.component" @provide-vuelidate="provideVuelidate" @update-payload="updatePayload" />
+  <component
+    :is="state.step.component"
+    @provide-vuelidate="provideVuelidate"
+    @update-payload="updatePayload"
+    :data="state.step.componentData"
+  />
 </template>
