@@ -149,7 +149,11 @@ Notez que cette commande est à effectuer à chaque changement de fichier de tra
 
 ## Lancer l'application en mode développement
 
-Pour le développement il faudra avoir deux terminales ouvertes : une pour l'application Django, et une autre pour l'application VueJS.
+Deux options :
+
+1. Le script `./local-build.sh` lance les trois commandes en parallel (Django, Vue2, Vue3). Faut pas avoir besoin de faire des migrations pour utiliser ça.
+
+2. Ouvrir trois terminales : une pour l'application Django, une pour l'application Vue2, et une pour l'application Vue3.
 
 ### Terminal Django
 
@@ -159,7 +163,7 @@ Il suffit de lancer la commande Django "runserver" à la racine du projet pour a
 python manage.py runserver
 ```
 
-### Terminal VueJS
+### Terminal Vue2
 
 Pour faire l'équivalent côté frontend, allez sur `./frontend` et lancez le serveur npm :
 
@@ -168,9 +172,16 @@ cd frontend
 npm run serve
 ```
 
-Une fois la compilation finie des deux côtés, l'application se trouvera sous [127.0.0.1:8000](127.0.0.1:8000) (le port Django, non pas celui de npm).
+### Terminal Vue3
 
-### Pre-commit
+```
+cd 2024-frontend
+npm run dev
+```
+
+Une fois la compilation finie des trois côtés, l'application se trouvera sous [127.0.0.1:8000](127.0.0.1:8000) (le port Django, non pas celui de npm).
+
+## Pre-commit
 
 On utilise l'outil [`pre-commit`](https://pre-commit.com/) pour effectuer des vérifications automatiques
 avant chaque commit. Cela permet par exemple de linter les code Python, Javascript et HTML.
@@ -195,7 +206,7 @@ python manage.py test
 
 Sur VSCode, ces tests peuvent être debuggés avec la configuration "Python: Tests", présente sur le menu "Run".
 
-## Lancer les tests pour l'application VueJS
+## Lancer les tests pour l'application Vue2
 
 Il faut d'abord se placer sur "/frontend", ensuite la commande pour lancer les tests VueJS est :
 
@@ -226,13 +237,13 @@ Il faut néanmoins tenir en compte que la mise en page ne sera pas visible et qu
 
 [Maildev](https://maildev.github.io/maildev/) est un outil ouvert qui exécute un serveur SMTP en local et qui permet de visualiser tous les emails traités. En l'installant de façon globale on peut mettre 'django.core.mail.backends.smtp.EmailBackend' comme variable d'environnement `EMAIL_BACKEND` pour l'utiliser.
 
-### Celery
+## Celery
 
 Celery est un gestionnaire de tâches asynchrone utilisé par exemple pour l'envoi périodique de courriels de rappel et pour le remplissage des donn
 
 Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit être spéficié dans la console CleverCloud sous la variable `CC_PYTHON_CELERY_MODULE=macantine.celery`. La fonctionnalité Celery Beat doit aussi être activée : `CC_PYTHON_CELERY_USE_BEAT=true`, ainsi que le timezone souhaité : `CELERY_TIMEZONE:'Europe/Paris'`
 
-### Visual Studio Code
+## Visual Studio Code
 
 Des extensions qu'on trouve utile :
 
