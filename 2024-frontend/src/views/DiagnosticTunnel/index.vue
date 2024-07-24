@@ -57,7 +57,7 @@ const stepWrapper = ref(null)
 
 const formIsValid = () => {
   v$.value.$validate()
-  return !v$.value.$error
+  return !v$.value.$invalid
 }
 
 const continueAction = () => {
