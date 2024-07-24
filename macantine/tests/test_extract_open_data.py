@@ -1,6 +1,6 @@
 import pandas as pd
 import requests_mock
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from macantine.etl import map_communes_infos, update_datagouv_resources
 from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
@@ -447,9 +447,9 @@ class TestETLOpenData(TestCase):
         number_of_updated_resources = update_datagouv_resources()
         self.assertEqual(number_of_updated_resources, 1, "Only the csv resource should be updated")
 
+    @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
     def test_load_dataset_canteen(self, mock):
         # Making sure the code will not enter online dataset validation by forcing local filesystem management
-        os.environ["STATICFILES_STORAGE"] = "django.contrib.staticfiles.storage.StaticFilesStorage"
         test_cases = [
             {
                 "name": " Load valid dataset",
