@@ -55,9 +55,13 @@ const router = useRouter()
 
 const stepWrapper = ref(null)
 
-const continueAction = () => {
+const formIsValid = () => {
   v$.value.$validate()
-  if (v$.value.$error) return
+  return !v$.value.$error
+}
+
+const continueAction = () => {
+  if (!formIsValid()) return
   saveDiagnostic()
     .then(() => {
       if (nextStep.value) {
@@ -93,8 +97,7 @@ const continueAction = () => {
 
 const goBack = () => {
   if (!previousStep.value) return
-  // TODO: check if form is valid
-  // if (!formIsValid) return
+  if (!formIsValid()) return
   saveDiagnostic()
     .then(() => {
       router.push({ query: { étape: previousStep.value.urlSlug } })
