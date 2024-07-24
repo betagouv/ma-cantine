@@ -2,12 +2,19 @@
 import keyMeasures from "@/data/key-measures.json"
 // TODO: sort out **/index.vue imports so don't have to add index.vue
 import WasteMeasureSteps from "./WasteMeasureSteps/index.vue"
-import { computed, ref, watch, defineProps } from "vue"
+import { computed, ref, watch, defineProps, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
 
 const props = defineProps(["canteenUrlComponent", "year", "measureId", "étape"])
 
 const measure = keyMeasures.find((measure) => measure.id === props.measureId)
+
+const originalPayload = reactive({})
+provide("originalPayload", originalPayload)
+
+onMounted(() => {
+  // TODO: set original payload from server
+})
 
 const tunnels = [
   ...keyMeasures.map((km) => ({
@@ -57,6 +64,7 @@ const stepWrapper = ref(null)
 
 const formIsValid = () => {
   v$.value.$validate()
+  console.log(v$.value.$errors)
   return !v$.value.$invalid
 }
 
@@ -67,7 +75,8 @@ const continueAction = () => {
       if (nextStep.value) {
         router.push({ query: { étape: nextStep.value.urlSlug } })
         stepWrapper.value.scrollTop = 0
-        console.log("payload to save", payload)
+        console.log("payload to save", hotPayload)
+        Object.assign(originalPayload, hotPayload)
         // TODO
         // $refs["synthesisWrapper"].scrollTop = 0
         // } else if (isLastTunnel) {
@@ -122,17 +131,18 @@ const updateVuelidate = (vuelidateObj) => {
   v$ = vuelidateObj
 }
 
-const payload = {}
+let hotPayload = {}
 const updatePayloadFromChild = (childPayload) => {
   if (!v$) {
     console.error("No vuelidate object")
     return
   }
-  Object.assign(payload, childPayload)
+  Object.assign(hotPayload, childPayload)
 }
 
 watch(props, () => {
   v$.value.$reset()
+  hotPayload = {}
 })
 </script>
 

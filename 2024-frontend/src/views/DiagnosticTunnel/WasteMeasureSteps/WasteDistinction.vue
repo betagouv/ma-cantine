@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, watch } from "vue"
+import { onMounted, reactive, watch, inject } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { required } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
@@ -8,9 +8,10 @@ import DsfrBooleanRadio from "@/components/DsfrBooleanRadio.vue"
 
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
+const originalPayload = inject("originalPayload")
 // TODO: show remaining steps only if this is true ?
 const payload = reactive({
-  sortedSource: undefined,
+  sortedSource: originalPayload.sortedSource,
 })
 
 const rules = {

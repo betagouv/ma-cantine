@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, watch } from "vue"
+import { onMounted, reactive, watch, inject } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { required, integer, minValue } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
@@ -7,9 +7,11 @@ import HelpText from "./HelpText.vue"
 
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
+const originalPayload = inject("originalPayload")
+
 const state = reactive({
-  editMealCount: false,
-  editCanteenMealCount: false,
+  editMealCount: originalPayload.editMealCount,
+  editCanteenMealCount: originalPayload.editCanteenMealCount,
 })
 
 const toggleCanteenEdit = () => {
@@ -24,8 +26,8 @@ const togglePeriodEdit = () => {
 }
 
 const payload = reactive({
-  startDate: "",
-  endDate: "",
+  startDate: originalPayload.startDate,
+  endDate: originalPayload.endDate,
   mealCount: 100, // TODO: update according to days in period * canteen daily meal count
   canteen: {
     dailyMealCount: 200, // TODO: initialise with data

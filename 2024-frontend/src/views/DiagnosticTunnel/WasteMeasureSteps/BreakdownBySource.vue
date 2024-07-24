@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, watch, computed, ref } from "vue"
+import { onMounted, reactive, watch, computed, ref, inject, nextTick } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { required, decimal, minValue, maxValue } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
@@ -47,11 +47,13 @@ if (!source.value) console.error("Invalid source :", props.data.source)
 
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
+const originalPayload = inject("originalPayload")
+
 const payload = reactive({
-  totalKey: undefined,
-  sortedKey: undefined,
-  edibleKey: undefined,
-  inedibleKey: undefined,
+  totalKey: originalPayload[source.value.totalKey],
+  sortedKey: originalPayload[source.value.sortedKey],
+  edibleKey: originalPayload[source.value.edibleKey],
+  inedibleKey: originalPayload[source.value.inedibleKey],
 })
 
 const genericPayloadKeys = Object.keys(payload)
@@ -103,9 +105,11 @@ const calculateOtherWeight = () => {
 }
 
 watch(props, () => {
-  payload._freezeWatcher = true
-  genericPayloadKeys.forEach((k) => (payload[k] = undefined))
-  delete payload._freezeWatcher
+  nextTick().then(() => {
+    payload._freezeWatcher = true
+    genericPayloadKeys.forEach((k) => (payload[k] = originalPayload[source.value[k]]))
+    delete payload._freezeWatcher
+  })
 })
 
 watch(payload, () => {

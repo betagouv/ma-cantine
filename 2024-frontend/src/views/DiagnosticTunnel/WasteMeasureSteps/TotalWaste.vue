@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, watch } from "vue"
+import { onMounted, reactive, watch, inject } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { required, decimal, minValue } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
@@ -7,8 +7,10 @@ import HelpText from "./HelpText.vue"
 
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
+const originalPayload = inject("originalPayload")
+
 const payload = reactive({
-  total: undefined,
+  total: originalPayload.total,
 })
 
 const rules = {
