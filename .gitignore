@@ -69,6 +69,7 @@ static/*
 # except the .keep to keep it in git
 media/*
 !media/.keep
+!media/open_data/.keep
 
 # Flask stuff:
 instance/
