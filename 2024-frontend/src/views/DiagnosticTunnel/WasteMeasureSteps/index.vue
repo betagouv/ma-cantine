@@ -1,10 +1,10 @@
 <script setup>
-import { onMounted, reactive, watch } from "vue"
+import { onMounted, reactive, watch, computed } from "vue"
 import { useVuelidate } from "@vuelidate/core"
-import { required, email } from "@vuelidate/validators"
+import { helpers, required, email, sameAs } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
 
-defineProps(["stepUrlSlug"])
+const props = defineProps(["stepUrlSlug"])
 
 const steps = [
   {
@@ -23,17 +23,35 @@ const steps = [
 const emit = defineEmits(["update-steps", "provide-vuelidate", "update-payload"])
 
 const payload = reactive({
-  name: "",
-  email: "",
+  example: {
+    name: "",
+    email: "",
+  },
+  long2: {
+    emailMatch: "",
+  },
 })
+
+const emailForMatching = computed(() => payload.example.email)
+
 const rules = {
-  name: { required },
-  email: { email },
+  example: {
+    name: { required },
+    email: { email },
+  },
+  long2: {
+    emailMatch: {
+      sameAsEmail: helpers.withMessage(
+        ({ $params }) => `Faut que ça soit le même que l'adresse mail ${$params.equalTo}`,
+        sameAs(emailForMatching)
+      ),
+    },
+  },
 }
 const v$ = useVuelidate(rules, payload)
 
 const updatePayload = () => {
-  emit("update-payload", payload)
+  emit("update-payload", payload[props.stepUrlSlug])
 }
 
 watch(payload, () => {
@@ -50,20 +68,20 @@ onMounted(() => {
   <div v-if="stepUrlSlug === 'example'">
     <p>This step allows for validation checking</p>
     <DsfrInputGroup
-      v-model="payload.name"
+      v-model="payload[stepUrlSlug].name"
       label="Nom"
       placeholder="Jean Dupont"
       label-visible
       hint="Indiquez votre nom"
       class="fr-mb-2w"
-      :error-message="formatError(v$.name)"
+      :error-message="formatError(v$[stepUrlSlug].name)"
     />
     <DsfrInputGroup
-      v-model="payload.email"
+      v-model="payload[stepUrlSlug].email"
       label="Email"
       label-visible
       class="fr-mb-2w"
-      :error-message="formatError(v$.email)"
+      :error-message="formatError(v$[stepUrlSlug].email)"
     />
   </div>
   <div v-else-if="stepUrlSlug === 'test'">
@@ -79,7 +97,13 @@ onMounted(() => {
   </div>
   <div v-else-if="stepUrlSlug === 'long2'">
     <p>This is an example of a step that requires scrolling</p>
-    <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
+    <DsfrInputGroup
+      v-model="payload[stepUrlSlug].emailMatch"
+      label="Repeat email from first step"
+      label-visible
+      class="fr-mb-2w"
+      :error-message="formatError(v$[stepUrlSlug].emailMatch)"
+    />
     <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
     <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />
     <DsfrInput label="Autre champ" label-visible class="fr-mb-2w" />

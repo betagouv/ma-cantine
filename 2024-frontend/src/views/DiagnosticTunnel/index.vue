@@ -56,8 +56,10 @@ const router = useRouter()
 const stepWrapper = ref(null)
 
 const formIsValid = () => {
-  v$.value.$validate()
-  return !v$.value.$invalid
+  const validatorForStep = v$.value[step.value.urlSlug]
+  if (!validatorForStep) return true
+  validatorForStep.$validate()
+  return !validatorForStep.$invalid
 }
 
 const continueAction = () => {
@@ -67,7 +69,7 @@ const continueAction = () => {
       if (nextStep.value) {
         router.push({ query: { étape: nextStep.value.urlSlug } })
         stepWrapper.value.scrollTop = 0
-        console.log(payload)
+        console.log("payload to save", payload)
         // TODO
         // $refs["synthesisWrapper"].scrollTop = 0
         // } else if (isLastTunnel) {
