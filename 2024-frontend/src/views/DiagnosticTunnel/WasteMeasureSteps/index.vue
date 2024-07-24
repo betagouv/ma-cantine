@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, watch, markRaw } from "vue"
+import { onMounted, reactive, watch, markRaw, defineProps } from "vue"
 import MeasurementPeriod from "./MeasurementPeriod.vue"
 import TotalWaste from "./TotalWaste.vue"
 import WasteDistinction from "./WasteDistinction.vue"
