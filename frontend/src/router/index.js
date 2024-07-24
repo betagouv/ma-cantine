@@ -21,6 +21,9 @@ import AccountDeletion from "@/views/AccountSummaryPage/AccountDeletion"
 import BlogsPage from "@/views/BlogsPage"
 import BlogsHome from "@/views/BlogsPage/BlogsHome"
 import BlogPage from "@/views/BlogsPage/BlogPage"
+import WasteActionsPage from "@/views/WasteActionsPage"
+import WasteActionsHome from "@/views/WasteActionsPage/WasteActionsHome.vue"
+import WasteActionPage from "@/views/WasteActionsPage/WasteActionPage.vue"
 import PartnersPage from "@/views/PartnersPage"
 import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
@@ -235,6 +238,27 @@ const routes = [
         path: ":id",
         name: "BlogPage",
         component: BlogPage,
+        props: true,
+      },
+    ],
+  },
+  {
+    path: "/actions-anti-gaspi",
+    component: WasteActionsPage,
+    children: [
+      {
+        path: "",
+        name: "WasteActionsHome",
+        component: WasteActionsHome,
+        meta: {
+          title: "Actions anti-gaspi",
+        },
+        sitemapGroup: Constants.SitemapGroups.LAW,
+      },
+      {
+        path: ":id",
+        name: "WasteActionsPage",
+        component: WasteActionPage,
         props: true,
       },
     ],

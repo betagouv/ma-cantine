@@ -247,6 +247,10 @@ export default {
               to: { name: "BlogsHome" },
             },
             {
+              text: "Actions anti-gaspi",
+              to: { name: "WasteActionsHome" },
+            },
+            {
               text: "Pour aller plus loin",
               href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
             },
