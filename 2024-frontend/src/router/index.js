@@ -4,13 +4,6 @@ import { useRootStore } from "../stores/root"
 
 const routes = [
   {
-    path: "/",
-    name: "Vue2Home",
-    meta: {
-      redirectToVue2: true,
-    },
-  },
-  {
     path: "/diagnostic-tunnel/:canteenUrlComponent/:year/:measureId",
     name: "DiagnosticTunnel",
     component: DiagnosticTunnel,
@@ -23,9 +16,22 @@ const routes = [
   },
 ]
 
+const VUE3_PREFIX = "/v2"
 routes.forEach((r) => {
-  r.path = "/v2" + r.path
+  r.path = VUE3_PREFIX + r.path
 })
+
+const vue2Routes = [
+  {
+    path: "/",
+    name: "Vue2Home",
+  },
+  {
+    path: "/ma-progression/:canteenUrlComponent/:year/:measureId",
+    name: "MyProgress",
+  },
+]
+routes.push(...vue2Routes)
 
 const router = createRouter({
   history: createWebHistory(),
@@ -33,8 +39,8 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.redirectToVue2) {
-    location.href = location.origin
+  if (!to.path.startsWith(VUE3_PREFIX)) {
+    location.href = location.origin + to.path
     return
   }
   const store = useRootStore()

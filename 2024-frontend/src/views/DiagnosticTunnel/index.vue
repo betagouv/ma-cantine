@@ -108,6 +108,17 @@ const goBack = () => {
     .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
 }
 
+const saveAndQuit = () => {
+  if (!formIsValid()) return
+  saveDiagnostic()
+    .then(() => {
+      router.push({ name: "MyProgress" })
+    })
+    .catch((e) => {
+      console.error(e)
+    }) // Empty handler bc we handle the backend error on saveDiagnostic
+}
+
 let v$
 const updateVuelidate = (vuelidateObj) => {
   v$ = vuelidateObj
@@ -160,6 +171,7 @@ watch(props, () => {
         <div v-if="step" class="quit">
           <DsfrButton
             :label="step.isSynthesis ? 'Quitter' : 'Sauvegarder et quitter'"
+            @click="saveAndQuit"
             icon="fr-icon-close-line"
             icon-right
             size="sm"
