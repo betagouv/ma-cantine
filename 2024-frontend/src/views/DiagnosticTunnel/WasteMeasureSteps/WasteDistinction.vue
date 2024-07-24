@@ -3,6 +3,7 @@ import { onMounted, reactive, watch } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { required } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
+import HelpText from "./HelpText.vue"
 
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
@@ -53,15 +54,15 @@ onMounted(() => {
         :options="yesNoOptions"
         class="fr-mb-2w"
         :error-message="formatError(v$.sorted)"
-      >
-        <template v-slot:legend>
-          <span class="fr-text">Avez-vous trié votre gaspillage en fonction de sa source ?</span>
-          <span class="fr-hint-text">
-            Cela signifie procéder à des pesées séparées en fonction de la source de gaspillage : restes assiettes,
-            excédents présentés aux convives et non servis, et excédents de préparation.
-          </span>
-        </template>
-      </DsfrRadioButtonSet>
+      />
+    </div>
+    <div class="fr-col-sm-6">
+      <HelpText>
+        <p>
+          Cela signifie procéder à des pesées séparées en fonction de la source de gaspillage : restes assiettes,
+          excédents présentés aux convives et non servis, et excédents de préparation.
+        </p>
+      </HelpText>
     </div>
   </div>
 </template>
