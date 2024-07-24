@@ -1,4 +1,4 @@
-exclude: ^(.*\/migrations|.*package.json|.*package-lock.json|Pipfile*|.vscode|.*.spec.js)
+exclude: ^(.*\/migrations|.*package.json|.*package-lock.json|Pipfile*|.vscode|.*.spec.js|.*jsconfig.json)
 repos:
   # GENERAL
   - hooks:
