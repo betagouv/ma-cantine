@@ -56,10 +56,8 @@ const router = useRouter()
 const stepWrapper = ref(null)
 
 const formIsValid = () => {
-  const validatorForStep = v$.value[step.value.urlSlug]
-  if (!validatorForStep) return true
-  validatorForStep.$validate()
-  return !validatorForStep.$invalid
+  v$.value.$validate()
+  return !v$.value.$invalid
 }
 
 const continueAction = () => {
