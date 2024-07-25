@@ -47,7 +47,7 @@ onMounted(() => {
     </div>
     <div class="fr-col-sm-6">
       <HelpText question="Dois-je compter les os et les épluchures ?">
-        <p>
+        <p class="fr-mb-0">
           Inutile à ce stade de différencier les denrées comestibles et non comestibles. Si vous l’avez fait, vous
           pourrez saisir les données détaillées aux étapes suivantes.
         </p>

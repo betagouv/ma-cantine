@@ -46,7 +46,7 @@ onMounted(() => {
     </div>
     <div class="fr-col-sm-6">
       <HelpText>
-        <p>
+        <p class="fr-mb-0">
           Cela signifie procéder à des pesées séparées en fonction de la source de gaspillage : restes assiettes,
           excédents présentés aux convives et non servis, et excédents de préparation.
         </p>

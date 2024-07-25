@@ -62,7 +62,7 @@ onMounted(() => {
   <div>
     <div class="fr-grid-row">
       <div class="fr-col-12 fr-col-sm-6">
-        <fieldset class="fr-px-0 fr-pt-0 fr-mx-0">
+        <fieldset class="fr-col-10 fr-px-0 fr-pt-0 fr-mx-0">
           <legend class="fr-text--lg fr-mb-1w fr-px-0">Période de mesure de mon gaspillage alimentaire</legend>
           <DsfrInputGroup
             v-model="payload.startDate"
@@ -83,8 +83,8 @@ onMounted(() => {
         </fieldset>
       </div>
       <div class="fr-col-sm-6">
-        <HelpText question="Pendant combien de temps mesurer ?">
-          <p>
+        <HelpText question="Pendant combien de temps mesurer&nbsp;?">
+          <p class="fr-mb-0">
             Pour garantir une bonne estimation, nous vous conseillons de réaliser vos mesures sur une période d’au moins
             5 jours.
           </p>
