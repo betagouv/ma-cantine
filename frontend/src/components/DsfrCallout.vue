@@ -2,7 +2,7 @@
   <v-alert
     border="left"
     colored-border
-    :icon="$attrs['icon'] || 'mdi-information-outline'"
+    :icon="icon"
     :color="$attrs['color'] || '#6a6af4'"
     v-bind="$attrs"
     v-on="$listeners"
@@ -17,10 +17,21 @@
 <script>
 export default {
   inheritAttrs: false,
+  props: {
+    noIcon: {
+      type: Boolean,
+      default: false,
+    },
+  },
   methods: {
     reformatIcon() {
       const icon = this.$el.getElementsByClassName("v-alert__icon")[0]
       icon.style.color = "#161616"
+    },
+  },
+  computed: {
+    icon() {
+      return this.noIcon ? " " : this.$attrs["icon"] || "mdi-information-outline"
     },
   },
   mounted() {

@@ -346,7 +346,7 @@ class ETL_OPEN_DATA(ETL):
             return 0
 
     def is_valid(self, filepath) -> bool:
-        # Saving file online
+        # In order to validate the dataset with the validata api, must first convert to CSV then save online
         with default_storage.open(filepath + "_to_validate.csv", "w") as file:
             self.df.to_csv(
                 file,
@@ -373,8 +373,17 @@ class ETL_OPEN_DATA(ETL):
             return 1
 
     def _load_data_csv(self, filename):
+        df_csv = self.df.copy()
         with default_storage.open(filename + ".csv", "w") as csv_file:
-            self.df.to_csv(csv_file, sep=";", index=False, na_rep="", encoding="utf_8_sig", quoting=csv.QUOTE_NONE)
+            df_csv.to_csv(
+                csv_file,
+                sep=";",
+                index=False,
+                na_rep="",
+                encoding="utf_8_sig",
+                quoting=csv.QUOTE_NONE,
+                escapechar="\\",
+            )
 
     def _load_data_parquet(self, filename):
         with default_storage.open(filename + ".parquet", "wb") as parquet_file:
@@ -383,38 +392,34 @@ class ETL_OPEN_DATA(ETL):
             self.df.to_parquet(parquet_file)
 
     def _load_data_xlsx(self, filename):
-        try:
-            chunk_size = 1000
-            start_row = 0
+        chunk_size = 1000
+        start_row = 0
 
-            # Convert datetime to string
-            df = datetimes_to_str(self.df.copy())  # Assuming it converts datetimes to strings
+        # Create an in-memory bytes buffer
+        output = BytesIO()
 
-            # Create an in-memory bytes buffer
-            output = BytesIO()
+        # Create ExcelWriter with the actual file path
+        with pd.ExcelWriter(output, engine="openpyxl") as writer:
+            dataframe_chunks = [self.df[i : i + chunk_size] for i in range(0, len(self.df), chunk_size)]
+            for chunk in dataframe_chunks:
+                # Convert datetime to string and create copy to avoid modifications on the original dataframe
+                chunk = datetimes_to_str(chunk.copy())
 
-            # Create ExcelWriter with the actual file path
-            with pd.ExcelWriter(output, engine="openpyxl") as writer:
-                for chunk in [df[i: i + chunk_size] for i in range(0, len(df.copy()), chunk_size)]:
-                    # Write chunk to the sheet, accumulating data
-                    chunk.to_excel(
-                        writer,
-                        startrow=start_row,
-                        index=False,
-                        header=True if start_row == 0 else False,
-                    )
-                    start_row += len(chunk)  # Update starting row for next chunk
+                # Write chunk to the sheet, accumulating data
+                chunk.to_excel(
+                    writer,
+                    startrow=start_row,
+                    index=False,
+                    header=True if start_row == 0 else False,
+                )
+                start_row += len(chunk)  # Update starting row for next chunk
 
-            # Ensure the buffer is ready for reading
-            output.seek(0)
+        # Ensure the buffer is ready for reading
+        output.seek(0)
 
-            # Save the in-memory bytes buffer to the storage backend
-            with default_storage.open(filename + ".xlsx", "wb") as f:
-                f.write(output.getvalue())
-
-        except Exception as e:
-            logger.error(e)
-            return
+        # Save the in-memory bytes buffer to the storage backend
+        with default_storage.open(filename + ".xlsx", "wb") as f:
+            f.write(output.getvalue())
 
     def load_dataset(self):
         filepath = f"open_data/{self.dataset_name}"
