@@ -76,6 +76,9 @@ const updatePayload = () => {
 const specifySortedExcess = computed(() => {
   return !!payload.totalKey && payload.sortedKey
 })
+const leftHandQuestionsClass = computed(() => {
+  return !specifySortedExcess.value ? "fr-col-sm-5" : "fr-col-10"
+})
 
 const userChoices = {
   edible: "edible",
@@ -126,37 +129,51 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="fr-grid-row">
-    <div class="fr-col-sm-6">
-      <DsfrInputGroup
-        v-model.number="payload.totalKey"
-        type="number"
-        :label="source.primaryLabel"
-        hint="En kg (optionnel)"
-        label-visible
-        class="fr-mb-2w"
-        :error-message="formatError(v$.totalKey)"
-      />
-      <DsfrBooleanRadio
-        v-model.number="payload.sortedKey"
-        legend="Avez-vous trié entre comestible et non-comestible&nbsp;?"
-        name="sortedKey"
-        class="fr-mb-2w"
-        :error-message="formatError(v$.sortedKey)"
-      />
+  <div class="fr-grid-row fr-grid-row--middle">
+    <div :class="specifySortedExcess ? 'fr-col-sm-6' : ''">
+      <div class="input-with-help fr-grid-row">
+        <div :class="leftHandQuestionsClass">
+          <DsfrInputGroup
+            v-model.number="payload.totalKey"
+            type="number"
+            :label="source.primaryLabel"
+            hint="En kg (optionnel)"
+            label-visible
+            class="fr-mb-2w"
+            :error-message="formatError(v$.totalKey)"
+          />
+        </div>
+        <div v-if="!specifySortedExcess" class="fr-col-sm-6">
+          <HelpText question="À quoi cela correspond-il ?">
+            <p class="fr-mb-0">
+              {{ source.description }}
+            </p>
+          </HelpText>
+        </div>
+      </div>
+      <div class="input-with-help fr-grid-row fr-mt-4w">
+        <div :class="leftHandQuestionsClass">
+          <!-- TODO: maybe reset validation if go from yes to no? -->
+          <DsfrBooleanRadio
+            v-model.number="payload.sortedKey"
+            legend="Avez-vous trié entre comestible et non-comestible&nbsp;?"
+            name="sortedKey"
+            class="fr-mb-2w"
+            :error-message="formatError(v$.sortedKey)"
+          />
+        </div>
+        <div v-if="!specifySortedExcess" class="fr-col-sm-6">
+          <HelpText>
+            <p class="fr-mb-0">
+              {{ source.edibleHelp }}
+            </p>
+          </HelpText>
+        </div>
+      </div>
     </div>
-    <div v-if="!specifySortedExcess" class="fr-col-sm-6">
-      <HelpText question="À quoi cela correspond-il ?">
-        <p>
-          {{ source.description }}
-        </p>
-        <p>
-          {{ source.edibleHelp }}
-        </p>
-      </HelpText>
-    </div>
-    <!-- TODO: styling with border and padding -->
-    <div v-else class="fr-col-sm-6">
+    <!-- TODO: indication which field is calculated -->
+    <div v-if="specifySortedExcess" class="sorted-inputs fr-col-sm-6">
+      <!-- TODO: info tip about calculation -->
       <DsfrInputGroup
         v-model.number="payload.edibleKey"
         type="number"
@@ -172,7 +189,7 @@ onMounted(() => {
       <DsfrInputGroup
         v-model.number="payload.inedibleKey"
         type="number"
-        label="Total du gaspillage de denrées comestibles"
+        label="Total du gaspillage de denrées non comestibles"
         hint="En kg (optionnel)"
         label-visible
         class="fr-mb-2w"
@@ -183,3 +200,14 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.input-with-help {
+  justify-content: space-between;
+}
+.sorted-inputs {
+  border-left: 2px solid var(--grey-900-175);
+  padding: 1rem 2rem;
+  padding-right: 0;
+}
+</style>
