@@ -13,6 +13,7 @@ const sources = {
     sortedKey: "preparationSorted",
     edibleKey: "preparationEdible",
     inedibleKey: "preparationInedible",
+    title: "Excédents de préparation",
     primaryLabel: "Masse de gaspillage pour les excédents de préparation",
     description:
       "Par exemple, si vous avez jeté des épluchures, des parures ou si vous avez des ingrédients excédentaires que vous ne réutiliserez pas, il s’agit d’excédents de préparation",
@@ -24,6 +25,7 @@ const sources = {
     sortedKey: "unservedSorted",
     edibleKey: "unservedEdible",
     inedibleKey: "unservedInedible",
+    title: "Denrées présentées aux convives mais non servies",
     primaryLabel: "Masse de gaspillage pour les denrées présentées aux convives mais non servies",
     description:
       "Par exemple, si vous présentez en vitrine un nombre excédentaire de salades, de parts de tarte aux pommes et que ces denrées supplémentaires ne sont ni consommées ni valorisées, il s’agit d’excédents présentés aux convives et non servis",
@@ -35,6 +37,7 @@ const sources = {
     sortedKey: "leftoversSorted",
     edibleKey: "leftoversEdible",
     inedibleKey: "leftoversInedible",
+    title: "Reste assiette",
     primaryLabel: "Masse de gaspillage pour le reste assiette",
     description:
       "Il s’agit de l’ensemble des restes alimentaires des plateaux repas /assiettes incluant les os, noyaux et épluchures",
@@ -173,7 +176,12 @@ onMounted(() => {
     </div>
     <!-- TODO: indication which field is calculated -->
     <div v-if="specifySortedExcess" class="sorted-inputs fr-col-sm-6">
-      <!-- TODO: info tip about calculation -->
+      <div class="fr-grid-row fr-grid-row--middle fr-mb-4w">
+        <p class="source-title-tooltip fr-mb-0">
+          {{ source.title }}
+        </p>
+        <DsfrTooltip :content="source.edibleHelp" />
+      </div>
       <DsfrInputGroup
         v-model.number="payload.edibleKey"
         type="number"
@@ -209,5 +217,8 @@ onMounted(() => {
   border-left: 2px solid var(--grey-900-175);
   padding: 1rem 2rem;
   padding-right: 0;
+}
+p.source-title-tooltip {
+  font-weight: bold;
 }
 </style>
