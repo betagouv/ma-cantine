@@ -1,5 +1,9 @@
 <template>
-  <v-card outlined class="fill-height text-left d-flex flex-column dsfr expanded-link ">
+  <v-card
+    outlined
+    class="fill-height text-left d-flex flex-column dsfr expanded-link"
+    :to="{ name: 'WasteActionPage', params: { id: wasteaction.id } }"
+  >
     <v-img
       v-if="wasteaction.lead_image"
       :src="wasteaction.lead_image.meta.download_url"

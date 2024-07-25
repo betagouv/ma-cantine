@@ -4,6 +4,7 @@
       <v-progress-circular inderterminate></v-progress-circular>
     </div>
     <div v-if="!loading && wasteactions.length > 0">
+      <h1>Explorez et mettez en avant vos actions de lutte contre le gaspillage</h1>
       <v-row class="cta-group pa-2 mt-2">
         <v-col vols="12" sm="6" md="4" v-for="wasteaction in wasteactions" :key="wasteaction.id">
           <WasteActionCard :wasteaction="wasteaction" />
@@ -33,7 +34,7 @@ export default {
   methods: {
     fetchCurrentPage() {
       this.$store
-        .dispatch("fetchWasteActions", { offset: this.offset, tag: this.tag, search: this.searchTerm, limit: 7 })
+        .dispatch("fetchWasteActions", { offset: this.offset, tag: this.tag, search: this.searchTerm })
         .then((response) => {
           this.wasteactions = response.items
         })
