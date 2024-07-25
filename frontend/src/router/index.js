@@ -257,7 +257,7 @@ const routes = [
       },
       {
         path: ":id",
-        name: "WasteActionsPage",
+        name: "WasteActionPage",
         component: WasteActionPage,
         props: true,
       },
