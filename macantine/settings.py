@@ -53,6 +53,7 @@ DEBUG_PERFORMANCE = os.getenv("DEBUG") == "True" and os.getenv("DEBUG_PERFORMANC
 
 ENVIRONMENT = os.getenv("ENVIRONMENT")
 
+
 # Sentry
 # No need making this one secret: https://forum.sentry.io/t/dsn-private-public/6297/3
 if not DEBUG:
@@ -256,9 +257,14 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
+# Reading doc API and load it in the swagger
+with open("docs/api.html", "r") as f:
+    doc_api = f.read()
+
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "Ma Cantine API",
-    "DESCRIPTION": "API de l'application « ma cantine »",
+    "DESCRIPTION": doc_api,
     "VERSION": "1",
     "SERVE_INCLUDE_SCHEMA": False,
     "SWAGGER_UI_DIST": "SIDECAR",
