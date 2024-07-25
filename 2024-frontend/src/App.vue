@@ -29,9 +29,12 @@ watch(route, (to) => {
   </div>
 </template>
 
-<style scoped>
+<style>
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+fieldset {
+  border: none;
 }
 </style>

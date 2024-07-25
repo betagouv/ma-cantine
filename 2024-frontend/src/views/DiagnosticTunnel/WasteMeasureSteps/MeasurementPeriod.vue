@@ -62,22 +62,25 @@ onMounted(() => {
   <div>
     <div class="fr-grid-row">
       <div class="fr-col-12 fr-col-sm-6">
-        <DsfrInputGroup
-          v-model="payload.startDate"
-          type="date"
-          label="Debut de la période"
-          label-visible
-          class="fr-mb-2w"
-          :error-message="formatError(v$.startDate)"
-        />
-        <DsfrInputGroup
-          v-model="payload.endDate"
-          type="date"
-          label="Fin de la période (inclusif)"
-          label-visible
-          class="fr-mb-2w"
-          :error-message="formatError(v$.endDate)"
-        />
+        <fieldset class="fr-px-0 fr-pt-0 fr-mx-0">
+          <legend class="fr-text--lg fr-mb-1w fr-px-0">Période de mesure de mon gaspillage alimentaire</legend>
+          <DsfrInputGroup
+            v-model="payload.startDate"
+            type="date"
+            label="Début"
+            label-visible
+            class="fr-mb-2w"
+            :error-message="formatError(v$.startDate)"
+          />
+          <DsfrInputGroup
+            v-model="payload.endDate"
+            type="date"
+            label="Fin"
+            label-visible
+            class="fr-mb-2w"
+            :error-message="formatError(v$.endDate)"
+          />
+        </fieldset>
       </div>
       <div class="fr-col-sm-6">
         <HelpText question="Pendant combien de temps mesurer ?">

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, watch, computed, ref, inject, nextTick } from "vue"
+import { onMounted, reactive, watch, computed, ref, inject, nextTick, defineProps } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { required, decimal, minValue, maxValue } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
