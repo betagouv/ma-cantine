@@ -25,6 +25,10 @@ const togglePeriodEdit = () => {
   if (state.editMealCount) state.editCanteenMealCount = false
 }
 
+const saveCanteenMealCount = () => {
+  state.editCanteenMealCount = !state.editCanteenMealCount
+}
+
 const payload = reactive({
   startDate: originalPayload.startDate,
   endDate: originalPayload.endDate,
@@ -60,75 +64,82 @@ onMounted(() => {
 
 <template>
   <div>
-    <div class="fr-grid-row">
-      <div class="fr-col-12 fr-col-sm-6">
-        <fieldset class="fr-col-10 fr-px-0 fr-pt-0 fr-mx-0">
+    <div class="fr-grid-row fr-grid-row--middle">
+      <div class="fr-col-12 fr-col-md-6">
+        <fieldset class="fr-px-0 fr-pt-0 fr-mx-0">
           <legend class="fr-text--lg fr-mb-1w fr-px-0">Période de mesure de mon gaspillage alimentaire</legend>
-          <DsfrInputGroup
-            v-model="payload.startDate"
-            type="date"
-            label="Début"
-            label-visible
-            class="fr-mb-2w"
-            :error-message="formatError(v$.startDate)"
-          />
-          <DsfrInputGroup
-            v-model="payload.endDate"
-            type="date"
-            label="Fin"
-            label-visible
-            class="fr-mb-2w"
-            :error-message="formatError(v$.endDate)"
-          />
+          <div class="fr-col-md-7">
+            <DsfrInputGroup
+              v-model="payload.startDate"
+              type="date"
+              label="Début"
+              label-visible
+              :error-message="formatError(v$.startDate)"
+            />
+            <DsfrInputGroup
+              v-model="payload.endDate"
+              type="date"
+              label="Fin"
+              label-visible
+              class="fr-mb-2w"
+              :error-message="formatError(v$.endDate)"
+            />
+          </div>
         </fieldset>
       </div>
-      <div class="fr-col-sm-6">
+      <div class="fr-col-md-6">
+        <!-- TODO: show this whilst !startDate || !endDate -->
         <HelpText question="Pendant combien de temps mesurer&nbsp;?">
           <p class="fr-mb-0">
-            Pour garantir une bonne estimation, nous vous conseillons de réaliser vos mesures sur une période d’au moins
-            5 jours.
+            Pour garantir une bonne estimation, nous vous conseillons de réaliser vos mesures sur une période
+            <b>d'au moins 5 jours.</b>
           </p>
         </HelpText>
       </div>
     </div>
-    <div class="fr-grid-row fr-mt-0w">
-      <div class="fr-col-sm-6">
-        <div class="fr-grid-row">
-          <DsfrInputGroup
-            v-model.number="payload.mealCount"
-            type="number"
-            label="Nombre de couverts sur la période"
-            label-visible
-            class="fr-mb-2w"
-            :error-message="formatError(v$.mealCount)"
-            :disabled="!state.editMealCount"
-          />
+    <div class="fr-grid-row fr-grid-row--middle fr-mt-0w">
+      <div class="fr-col-md-6">
+        <div class="fr-grid-row fr-grid-row--bottom">
+          <div class="fr-mr-2w">
+            <DsfrInputGroup
+              v-model.number="payload.mealCount"
+              type="number"
+              label="Nombre de couverts sur la période"
+              label-visible
+              :error-message="formatError(v$.mealCount)"
+              :disabled="!state.editMealCount"
+            />
+          </div>
           <div>
-            <DsfrButton @click="togglePeriodEdit">Modifier</DsfrButton>
+            <DsfrButton @click="togglePeriodEdit" tertiary icon="fr-icon-pencil-fill">Modifier</DsfrButton>
           </div>
         </div>
       </div>
-      <div class="fr-col-sm-6">
+      <div class="fr-col-md-6">
+        <!-- TODO: show this when !!startDate && !!endDate -->
         <HelpText>
           <p>
             Calculé à partir du nombre de couverts par jour indiqué pour votre établissement :
           </p>
-          <div v-if="!state.editCanteenMealCount" class="fr-grid-row">
-            <p>{{ payload.canteen.dailyMealCount }}</p>
-            <DsfrButton @click="toggleCanteenEdit">Modifier</DsfrButton>
-          </div>
-          <div v-else class="fr-grid-row">
-            <!-- TODO: how to keep in alignement against year meal count? Show both? -->
-            <DsfrInputGroup
-              v-model.number="payload.canteen.dailyMealCount"
-              type="number"
-              label="Nombre de couverts par jour"
-              label-visible
-              class="fr-mb-2w"
-              :error-message="formatError(v$.canteen.dailyMealCount)"
-            />
+          <div v-if="!state.editCanteenMealCount" class="fr-grid-row fr-grid-row--bottom">
+            <p class="fr-mb-0 fr-mr-2w">{{ payload.canteen.dailyMealCount }}</p>
             <div>
-              <DsfrButton @click="state.editCanteenMealCount = !state.editCanteenMealCount">Sauvegarder</DsfrButton>
+              <DsfrButton @click="toggleCanteenEdit" tertiary icon="fr-icon-pencil-fill" size="sm">Modifier</DsfrButton>
+            </div>
+          </div>
+          <div v-else class="fr-grid-row fr-grid-row--bottom">
+            <!-- TODO: how to keep in alignement against year meal count? Show both? -->
+            <div class="fr-mr-2w">
+              <DsfrInputGroup
+                v-model.number="payload.canteen.dailyMealCount"
+                type="number"
+                label="Nombre de couverts par jour"
+                label-visible
+                :error-message="formatError(v$.canteen.dailyMealCount)"
+              />
+            </div>
+            <div>
+              <DsfrButton @click="saveCanteenMealCount">Sauvegarder</DsfrButton>
             </div>
           </div>
         </HelpText>
