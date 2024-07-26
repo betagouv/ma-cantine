@@ -1,0 +1,31 @@
+<!-- api.html -->
+<!-- Documentation of the API displayed in the swagger -->
+
+
+<h2>Général</h2>
+
+Cette API permet de s'interfacer à l'application ma-cantine afin de réaliser les démarches d'administration des cantines
+
+Vous pouvez tester l'API depuis cette page. Nous fournissons également un <a href="https://github.com/betagouv/ma-cantine-demo-integration">exemple d'application</a> en python.
+
+<b>Important :</b> Les tests se font obligatoirement sur la plateforme de <a href="">démo</a> (la suite de la doc référencera toujours l'instance de démo). La plateforme de <a href="https://ma-cantine.agriculture.gouv.fr">prod</a> est réservée aux données réelles.
+<h2>Autorisation</h2>
+L'API est protégé par le protocole d'autorisation OAuth2 (avec le package <a href="https://django-oauth-toolkit.readthedocs.io/en/latest/">Django OAuth Toolkit Documentation</a>). Afin d'obtenir une autorisation, il faut :
+<ul>
+<li>Avoir enregistré votre application sur la plateforme ma-cantine. A ce stade, il vous faut sauvegarder le CLIENT_SECRET qui ne sera plus visible ensuite (seulement la version hashée le sera).</li>
+<li>Récupérer le code d'autorisation (1er appel API). Ce code à une durée de vie d'une minute.</li>
+<li>Utiliser ce code d'autorisation pour négocier et récuperer un token d'autorisation (2ème appel API)</li>
+</ul>
+
+Vous serez ensuite autorisé à utiliser l'API avec vos mêmes droits utilsiateurs que sur la plateforme.
+
+Vous pouvez utiliser ce swagger pour tester l'API. Obtenez l'autorisation nécessaire en cliquant sur le bouton vert <b>Authorize 🔓</b>. Suivez le procotole d'autorisation en commencant par la partie la plus basse de la pop-up (<b>oauth2 (OAuth2, authorizationCode)"</b>).
+Pour pouvoir tester sur le swagger, il faudra renseigner comme URI de redirection (callback), l'URI du swagger en terminant par `/swagger-ui/oauth2-redirect.html`
+
+Cette étape va vous renvoyer vers une page 404 de l'application ma-cantine. C'est bon signe ! Vous pouvez alors récupérer le code dans l'URL.
+</br>
+Exemple : <i>https://ma-cantine-demo.cleverapps.io/swagger-ui/oauth2-redirect.html/?code=<b>HRnXZzhez5WJVNzW7TgsLAbeFZOmB3</b>&state=RnJpIEp1bCAyNiAyMDI0IDExOjExOjE5IEdNVCswMjAwIChDZW50cmFsIEV1cm9wZWFuIFN1bW1lciBUaW1lKQ%3D%3D</i>
+
+
+<h2>Gestion des erreurs</h2>
+<i>En cours de rédaction</i>
