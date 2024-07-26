@@ -1,32 +1,46 @@
 <!-- api.html -->
 <!-- Documentation of the API displayed in the swagger -->
 
+<h2>Fonctionnement</h2>
 
-<h2>Général</h2>
+<p>
+Cette API permet de s'interfacer à l'application ma-cantine afin de réaliser les démarches administratives de cantines.
 
-Cette API permet de s'interfacer à l'application ma-cantine afin de réaliser les démarches d'administration des cantines
+Pour pouvoir envoyer les données sur notre plateforme, vous devez dans un premier temps synchroniser votre compte avec votre cantine existante sur notre plateforme. La connexion se fait via le numéro SIRET.
+Puis l'API vous permet d'envoyer les données d'approvisionnements (par cantine) sur la plateforme ma-cantine. Vous pouvez créer des nouveaux diagnostic et mettre à jour les diagnostics déjà existants.
+Enfin, ces données seront affichées sur tableau de bord de la cantine en fonction de l'année.
+</p>
 
-Vous pouvez tester l'API depuis cette page. Nous fournissons également un <a href="https://github.com/betagouv/ma-cantine-demo-integration">exemple d'application</a> en python.
-
-<b>Important :</b> Les tests se font obligatoirement sur la plateforme de <a href="https://ma-cantine-demo.cleverapps.io/" target="_blank">démo</a> (la suite de la doc référencera toujours l'instance de démo). La plateforme de <a href="https://ma-cantine.agriculture.gouv.fr" target="_blank">prod</a> est réservée aux données réelles.
 <h2>Autorisation</h2>
+
+<p>
 L'API est protégé par le protocole d'autorisation OAuth2 (avec le package <a href="https://django-oauth-toolkit.readthedocs.io/en/latest/">Django OAuth Toolkit Documentation</a>). Afin d'obtenir une autorisation, il faut :
-<ul>
+<ol>
 <li>Avoir un compte de dév sur la plateforme <i>ma cantine</i>. Quand vous <a href="https://ma-cantine-demo.cleverapps.io/creer-mon-compte" target="_blank">créez votre compte</a>, cocher le cas "Je suis une développeuse ou un développeur logiciel et j'ai besoin d'accéder aux APIs". Si vous avez déjà un compte et vous voyez pas la page de documentation API, il vous faudra cocher ce cas sur la page <a href="https://ma-cantine-demo.cleverapps.io/mon-compte/profil" target="_blank">Mon compte</a></li>
-<li>Avoir <a href="https://ma-cantine-demo.cleverapps.io/o/applications/" target="_blank">enregistré votre application</a> sur la plateforme ma-cantine. A ce stade, il vous faut sauvegarder le CLIENT_SECRET qui ne sera plus visible ensuite (seulement la version hashée le sera).</li>
-<li>Récupérer le code d'autorisation (1er appel API). Ce code à une durée de vie d'une minute.</li>
-<li>Utiliser ce code d'autorisation pour négocier et récuperer un token d'autorisation (2ème appel API)</li>
-</ul>
+<li>Avoir <a href="https://ma-cantine-demo.cleverapps.io/o/applications/" target="_blank">enregistré votre application</a> sur la plateforme ma-cantine. A ce stade, il vous faut sauvegarder le CLIENT_SECRET qui ne sera plus visible ensuite (seulement la version hashée le sera). Récupérer le code d'autorisation dans l'url (voir exemple plus bas). Ce code à une durée de vie d'une minute.</li>
+<li>Utiliser ce code d'autorisation pour négocier et récuperer un token d'autorisation.</li>
+</ol>
 
-Vous serez ensuite autorisé à utiliser l'API avec vos mêmes droits utilisateurs que sur la plateforme.
+Vous serez ensuite autorisé à utiliser l'API avec vos mêmes droits utilisateur que sur la plateforme.
+</p>
 
-Vous pouvez utiliser ce swagger pour tester l'API. Obtenez l'autorisation nécessaire en cliquant sur le bouton vert <b>Authorize 🔓</b>. Suivez le procotole d'autorisation en commencant par la partie la plus basse de la pop-up (<b>oauth2 (OAuth2, authorizationCode)"</b>).
+<h2>Tester</h2>
+<p>
+<b>⚠️ Important :</b> Les tests se font obligatoirement sur la plateforme de <a href="https://ma-cantine-demo.cleverapps.io/" target="_blank">démo</a> (la suite de la doc référencera toujours l'instance de démo). La plateforme de <a href="https://ma-cantine.agriculture.gouv.fr">prod</a> est réservée aux données réelles.
+
+Vous pouvez utiliser ce swagger pour tester l'API ou consulter un <a href="https://github.com/betagouv/ma-cantine-demo-integration">exemple d'application</a> en python.
+
+Obtenez l'autorisation nécessaire en cliquant sur le bouton vert <b>Authorize 🔓</b>. Suivez le procotole d'autorisation en commençant par la partie la plus basse de la pop-up (<b>"oauth2 (OAuth2, authorizationCode)"</b>).
 Pour pouvoir tester sur le swagger, il faudra renseigner comme URI de redirection (callback), l'URI du swagger en terminant par `/swagger-ui/oauth2-redirect.html`
 
 Cette étape va vous renvoyer vers une page 404 de l'application ma-cantine. C'est bon signe ! Vous pouvez alors récupérer le code dans l'URL.
 </br>
-Exemple : <i>https://ma-cantine-demo.cleverapps.io/swagger-ui/oauth2-redirect.html/?code=<b>HRnXZzhez5WJVNzW7TgsLAbeFZOmB3</b>&state=RnJpIEp1bCAyNiAyMDI0IDExOjExOjE5IEdNVCswMjAwIChDZW50cmFsIEV1cm9wZWFuIFN1bW1lciBUaW1lKQ%3D%3D</i>
+Exemple : <i>https://ma-cantine-demo.cleverapps.io/swagger-ui/oauth2-redirect.html/?code=<b>HRnXZzhez5WJVNzW7TgsLAbeFZOmB3</b>&state=RnJpIEp1bCAyN...</i>
 
+</p>
 
 <h2>Gestion des erreurs</h2>
+
+<p>
 <i>En cours de rédaction</i>
+</p>
