@@ -104,14 +104,21 @@ const continueAction = () => {
     .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
 }
 
+const navigateBack = () => {
+  router.push({ query: { étape: previousStep.value.urlSlug } })
+  stepWrapper.value.scrollTop = 0
+}
+
 const goBack = () => {
   if (!previousStep.value) return
+  // allow going back without validation if payload is empty, don't need to save
+  if (Object.keys(hotPayload).length === 0) {
+    navigateBack()
+    return
+  }
   if (!formIsValid()) return
   saveDiagnostic()
-    .then(() => {
-      router.push({ query: { étape: previousStep.value.urlSlug } })
-      stepWrapper.value.scrollTop = 0
-    })
+    .then(navigateBack)
     .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
 }
 
