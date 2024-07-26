@@ -205,6 +205,10 @@ onMounted(() => {
         @keydown="userChose(userChoices.inedible)"
         :disabled="userChoice === userChoices.edible"
       />
+      <p class="calculation-info fr-text--sm fr-mb-0 fr-mt-4w">
+        <span class="fr-icon-info-fill fr-icon--sm fr-mr-1v"></span>
+        Remplissez un des deux champs pour calculer l’autre automatiquement
+      </p>
     </div>
   </div>
 </template>
@@ -220,5 +224,8 @@ onMounted(() => {
 }
 p.source-title-tooltip {
   font-weight: bold;
+}
+.calculation-info {
+  color: var(--info-425-625);
 }
 </style>
