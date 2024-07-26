@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, reactive, watch, inject, computed } from "vue"
 import { useVuelidate } from "@vuelidate/core"
-import { required, integer, minValue } from "@vuelidate/validators"
+import { required, integer, minValue, helpers } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
 import HelpText from "./HelpText.vue"
 
@@ -38,12 +38,18 @@ const datesEntered = computed(() => {
   return !!payload.startDate && !!payload.endDate
 })
 
+const startDateAsDate = computed(() => {
+  return new Date(payload.startDate)
+})
+const endDateAsDate = computed(() => {
+  return new Date(payload.endDate)
+})
+
 const daysInPeriod = computed(() => {
   if (!datesEntered.value) return undefined
-  const start = new Date(payload.startDate)
-  const end = new Date(payload.endDate)
-  const milliseconds = end - start
+  const milliseconds = endDateAsDate.value - startDateAsDate.value
   const daysInclusive = milliseconds / 1000 / 60 / 60 / 24 + 1
+  if (daysInclusive < 0) return undefined
   return daysInclusive
 })
 
@@ -62,9 +68,16 @@ const payload = reactive({
   },
 })
 
+const afterStartDateValidator = (date) => {
+  date = new Date(date)
+  return date - startDateAsDate.value >= 0
+}
+
+const afterStartDate = helpers.withMessage("Faut être après la date de début", afterStartDateValidator)
+
 const rules = {
   startDate: { required }, // TODO: ensure greater than endDate of last measurement taken
-  endDate: { required }, // TODO: ensure greater than startDate
+  endDate: { required, afterStartDate },
   mealCount: { required, integer, minValue: minValue(1) },
   canteen: {
     dailyMealCount: { required, integer, minValue: minValue(1) },
@@ -98,8 +111,9 @@ onMounted(() => {
               type="date"
               label="Début"
               label-visible
+              :max="payload.endDate"
               :error-message="formatError(v$.startDate)"
-              @blur="calculateMealCountMaybe"
+              @change="calculateMealCountMaybe"
             />
             <DsfrInputGroup
               v-model="payload.endDate"
@@ -107,8 +121,9 @@ onMounted(() => {
               label="Fin"
               label-visible
               class="fr-mb-2w"
+              :min="payload.startDate"
               :error-message="formatError(v$.endDate)"
-              @blur="calculateMealCountMaybe"
+              @change="calculateMealCountMaybe"
             />
           </div>
         </fieldset>
