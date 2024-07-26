@@ -12,6 +12,7 @@ Vous pouvez tester l'API depuis cette page. Nous fournissons également un <a hr
 <h2>Autorisation</h2>
 L'API est protégé par le protocole d'autorisation OAuth2 (avec le package <a href="https://django-oauth-toolkit.readthedocs.io/en/latest/">Django OAuth Toolkit Documentation</a>). Afin d'obtenir une autorisation, il faut :
 <ul>
+<li>Avoir un compte de dév sur la plateforme <i>ma cantine</i>. Quand vous <a href="https://ma-cantine-demo.cleverapps.io/creer-mon-compte" target="_blank">créez votre compte</a>, cocher le cas "Je suis une développeuse ou un développeur logiciel et j'ai besoin d'accéder aux APIs". Si vous avez déjà un compte et vous voyez pas la page de documentation API, il vous faudra cocher ce cas sur la page <a href="https://ma-cantine-demo.cleverapps.io/mon-compte/profil" target="_blank">Mon compte</a></li>
 <li>Avoir enregistré votre application sur la plateforme ma-cantine. A ce stade, il vous faut sauvegarder le CLIENT_SECRET qui ne sera plus visible ensuite (seulement la version hashée le sera).</li>
 <li>Récupérer le code d'autorisation (1er appel API). Ce code à une durée de vie d'une minute.</li>
 <li>Utiliser ce code d'autorisation pour négocier et récuperer un token d'autorisation (2ème appel API)</li>
