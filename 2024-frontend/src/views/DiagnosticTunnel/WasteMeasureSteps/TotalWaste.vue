@@ -33,8 +33,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="fr-grid-row">
-    <div class="fr-col-12 fr-col-sm-6">
+  <div class="fr-grid-row justify-space-between">
+    <div class="fr-col-12 fr-col-sm-5">
       <DsfrInputGroup
         v-model.number="payload.total"
         type="number"

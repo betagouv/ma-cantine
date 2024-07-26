@@ -134,7 +134,7 @@ onMounted(() => {
 <template>
   <div class="fr-grid-row fr-grid-row--middle">
     <div :class="specifySortedExcess ? 'fr-col-sm-6' : ''">
-      <div class="input-with-help fr-grid-row">
+      <div class="fr-grid-row justify-space-between">
         <div :class="leftHandQuestionsClass">
           <DsfrInputGroup
             v-model.number="payload.totalKey"
@@ -154,7 +154,7 @@ onMounted(() => {
           </HelpText>
         </div>
       </div>
-      <div class="input-with-help fr-grid-row fr-mt-4w">
+      <div class="fr-grid-row justify-space-between fr-mt-4w">
         <div :class="leftHandQuestionsClass">
           <!-- TODO: maybe reset validation if go from yes to no? -->
           <DsfrBooleanRadio
@@ -214,9 +214,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.input-with-help {
-  justify-content: space-between;
-}
 .sorted-inputs {
   border-left: 2px solid var(--grey-900-175);
   padding: 1rem 2rem;

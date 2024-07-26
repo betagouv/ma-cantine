@@ -37,4 +37,7 @@ watch(route, (to) => {
 fieldset {
   border: none;
 }
+.justify-space-between {
+  justify-content: space-between;
+}
 </style>
