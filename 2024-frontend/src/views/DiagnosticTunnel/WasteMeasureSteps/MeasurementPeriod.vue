@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, watch, inject } from "vue"
+import { onMounted, reactive, watch, inject, computed } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { required, integer, minValue } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
@@ -29,6 +29,10 @@ const togglePeriodEdit = () => {
 const saveCanteenMealCount = () => {
   state.editCanteenMealCount = !state.editCanteenMealCount
 }
+
+const datesEntered = computed(() => {
+  return !!payload.startDate && !!payload.endDate
+})
 
 const payload = reactive({
   startDate: originalPayload.startDate,
@@ -89,8 +93,7 @@ onMounted(() => {
         </fieldset>
       </div>
       <div class="fr-col-md-6">
-        <!-- TODO: show this whilst !startDate || !endDate -->
-        <HelpText question="Pendant combien de temps mesurer&nbsp;?">
+        <HelpText v-if="!datesEntered" question="Pendant combien de temps mesurer&nbsp;?">
           <p class="fr-mb-0">
             Pour garantir une bonne estimation, nous vous conseillons de réaliser vos mesures sur une période
             <b>d'au moins 5 jours.</b>
@@ -98,7 +101,7 @@ onMounted(() => {
         </HelpText>
       </div>
     </div>
-    <div class="fr-grid-row fr-grid-row--middle fr-mt-0w">
+    <div class="fr-grid-row fr-grid-row--middle fr-mt-2w">
       <div class="fr-col-md-6">
         <div class="fr-grid-row fr-grid-row--bottom">
           <div class="fr-mr-2w">
@@ -120,8 +123,7 @@ onMounted(() => {
         </div>
       </div>
       <div class="fr-col-md-6">
-        <!-- TODO: show this when !!startDate && !!endDate -->
-        <HelpText>
+        <HelpText v-if="datesEntered">
           <p>
             Calculé à partir du nombre de couverts par jour indiqué pour votre établissement :
           </p>
