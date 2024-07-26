@@ -277,6 +277,12 @@ SPECTACULAR_SETTINGS = {
     "POSTPROCESSING_HOOKS": [
         "drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields",
     ],
+    # Oauth2 related settings. used for example by django-oauth2-toolkit.
+    # https://spec.openapis.org/oas/v3.0.3#oauth-flows-object
+    "OAUTH2_FLOWS": ["authorizationCode"],
+    "OAUTH2_AUTHORIZATION_URL": "/o/authorize/",
+    "OAUTH2_TOKEN_URL": "/o/token/",
+    "OAUTH2_SCOPES": {"read": "Lecture", "write": "Ecriture"},
 }
 
 # Frontend - VueJS application
