@@ -27,17 +27,36 @@ const togglePeriodEdit = () => {
 }
 
 const saveCanteenMealCount = () => {
-  state.editCanteenMealCount = !state.editCanteenMealCount
+  v$.value.canteen.$validate()
+  if (!v$.value.canteen.$invalid) {
+    state.editCanteenMealCount = !state.editCanteenMealCount
+    calculateMealCountMaybe()
+  }
 }
 
 const datesEntered = computed(() => {
   return !!payload.startDate && !!payload.endDate
 })
 
+const daysInPeriod = computed(() => {
+  if (!datesEntered.value) return undefined
+  const start = new Date(payload.startDate)
+  const end = new Date(payload.endDate)
+  const milliseconds = end - start
+  const daysInclusive = milliseconds / 1000 / 60 / 60 / 24 + 1
+  return daysInclusive
+})
+
+const calculateMealCountMaybe = () => {
+  if (datesEntered.value) {
+    payload.mealCount = payload.canteen.dailyMealCount * daysInPeriod.value
+  }
+}
+
 const payload = reactive({
   startDate: originalPayload.startDate,
   endDate: originalPayload.endDate,
-  mealCount: 100, // TODO: update according to days in period * canteen daily meal count
+  mealCount: undefined,
   canteen: {
     dailyMealCount: 200, // TODO: initialise with data
   },
@@ -80,6 +99,7 @@ onMounted(() => {
               label="Début"
               label-visible
               :error-message="formatError(v$.startDate)"
+              @blur="calculateMealCountMaybe"
             />
             <DsfrInputGroup
               v-model="payload.endDate"
@@ -88,6 +108,7 @@ onMounted(() => {
               label-visible
               class="fr-mb-2w"
               :error-message="formatError(v$.endDate)"
+              @blur="calculateMealCountMaybe"
             />
           </div>
         </fieldset>
@@ -109,13 +130,20 @@ onMounted(() => {
               v-model.number="payload.mealCount"
               type="number"
               label="Nombre de couverts sur la période"
+              :hint="`${daysInPeriod || '?'} jours`"
               label-visible
               :error-message="formatError(v$.mealCount)"
               :disabled="!state.editMealCount"
             />
           </div>
           <div>
-            <DsfrButton v-if="!state.editMealCount" @click="togglePeriodEdit" tertiary icon="fr-icon-pencil-fill">
+            <DsfrButton
+              v-if="!state.editMealCount"
+              @click="togglePeriodEdit"
+              :disabled="!datesEntered"
+              tertiary
+              icon="fr-icon-pencil-fill"
+            >
               Modifier
             </DsfrButton>
             <DsfrButton v-else @click="togglePeriodEdit">Sauvegarder</DsfrButton>

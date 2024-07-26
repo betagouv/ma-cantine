@@ -5,7 +5,7 @@ defineProps(["question"])
 </script>
 
 <template>
-  <div class="help-block fr-pl-4w fr-py-1w">
+  <div class="help-block fr-pl-4w fr-py-1w fr-my-2w">
     <p v-if="question" class="fr-mb-1w question">
       <span class="fr-icon-question-fill fr-icon--sm fr-mr-1v"></span>
       {{ question }}
