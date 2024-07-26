@@ -23,6 +23,7 @@ const toggleCanteenEdit = () => {
 const togglePeriodEdit = () => {
   state.editMealCount = !state.editMealCount
   if (state.editMealCount) state.editCanteenMealCount = false
+  // TODO: do we want to track when the number was changed from the auto calculation?
 }
 
 const saveCanteenMealCount = () => {
@@ -111,7 +112,10 @@ onMounted(() => {
             />
           </div>
           <div>
-            <DsfrButton @click="togglePeriodEdit" tertiary icon="fr-icon-pencil-fill">Modifier</DsfrButton>
+            <DsfrButton v-if="!state.editMealCount" @click="togglePeriodEdit" tertiary icon="fr-icon-pencil-fill">
+              Modifier
+            </DsfrButton>
+            <DsfrButton v-else @click="togglePeriodEdit">Sauvegarder</DsfrButton>
           </div>
         </div>
       </div>
