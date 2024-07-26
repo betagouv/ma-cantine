@@ -6,6 +6,7 @@ import WasteDistinction from "./WasteDistinction.vue"
 import BreakdownBySource from "./BreakdownBySource.vue"
 
 const props = defineProps(["stepUrlSlug"])
+const emit = defineEmits(["update-steps", "provide-vuelidate", "update-payload"])
 
 const firstSteps = [
   {
@@ -45,7 +46,18 @@ const breakdownSteps = [
   },
 ]
 const steps = firstSteps.concat(breakdownSteps)
-const emit = defineEmits(["update-steps", "provide-vuelidate", "update-payload"])
+
+const state = reactive({
+  step: steps[0],
+})
+
+watch(props, () => {
+  state.step = steps.find((s) => s.urlSlug === props.stepUrlSlug)
+})
+
+onMounted(() => {
+  emit("update-steps", steps)
+})
 
 const provideVuelidate = (v$) => {
   emit("provide-vuelidate", v$)
@@ -59,18 +71,6 @@ const updatePayload = (payload) => {
     emit("update-steps", steps)
   }
 }
-
-const state = reactive({
-  step: steps[0],
-})
-
-watch(props, () => {
-  state.step = steps.find((s) => s.urlSlug === props.stepUrlSlug)
-})
-
-onMounted(() => {
-  emit("update-steps", steps)
-})
 </script>
 
 <template>
