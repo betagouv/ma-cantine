@@ -7,7 +7,7 @@ import BreakdownBySource from "./BreakdownBySource.vue"
 
 const props = defineProps(["stepUrlSlug"])
 
-const steps = [
+const firstSteps = [
   {
     urlSlug: "periode",
     title: "Période de mesure",
@@ -23,6 +23,8 @@ const steps = [
     title: "Distinction du gaspillage en fonction de la source",
     component: markRaw(WasteDistinction),
   },
+]
+const breakdownSteps = [
   {
     urlSlug: "preparation",
     title: "Gaspillage lié aux excédents de préparation",
@@ -42,6 +44,7 @@ const steps = [
     componentData: { source: "leftovers" },
   },
 ]
+const steps = firstSteps.concat(breakdownSteps)
 const emit = defineEmits(["update-steps", "provide-vuelidate", "update-payload"])
 
 const provideVuelidate = (v$) => {
@@ -50,6 +53,11 @@ const provideVuelidate = (v$) => {
 
 const updatePayload = (payload) => {
   emit("update-payload", payload)
+  if (payload.sortedSource === false) {
+    emit("update-steps", firstSteps)
+  } else if (payload.sortedSource === true) {
+    emit("update-steps", steps)
+  }
 }
 
 const state = reactive({
