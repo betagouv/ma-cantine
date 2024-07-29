@@ -3,9 +3,11 @@
     <div class="d-block d-sm-flex align-center justify-space-between">
       <div class="d-flex flex-column mb-2">
         <h1 class="fr-text font-weight-bold">Mon affiche</h1>
-        <DsfrBadge :mode="badge.mode" :icon="badge.icon">
-          <p class="mb-0 text-uppercase">{{ badge.text }}</p>
-        </DsfrBadge>
+        <p class="mb-0 text-uppercase">
+          <DsfrBadge :mode="badge.mode" :icon="badge.icon">
+            {{ badge.text }}
+          </DsfrBadge>
+        </p>
       </div>
       <div class="mx-2 px-3 py-2" style="border: dotted 2px #CCC" v-if="$vuetify.breakpoint.mdAndUp">
         <p class="mb-0 fr-text-sm font-weight-medium">

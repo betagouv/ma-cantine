@@ -6,13 +6,7 @@
   >
     <v-card-title class="d-flex flex-column-reverse align-start">
       <component :is="hLevel" class="text-h6 font-weight-bold">{{ post.title }}</component>
-      <ul class="mb-2 d-flex flex-wrap" v-if="post.tags && post.tags.length > 0">
-        <li v-for="tag in post.tags" :key="tag">
-          <v-chip small :color="tagColor(tag)" class="mr-1">
-            <p class="mb-0">{{ tag }}</p>
-          </v-chip>
-        </li>
-      </ul>
+      <DsfrTagGroup v-if="tags.length" :tags="tags" :closeable="false" :small="true" />
     </v-card-title>
     <v-card-subtitle class="pt-1">
       <p class="mb-0">
@@ -37,6 +31,8 @@
 </template>
 
 <script>
+import DsfrTagGroup from "@/components/DsfrTagGroup"
+
 export default {
   name: "BlogCard",
   props: {
@@ -49,6 +45,7 @@ export default {
       required: false,
     },
   },
+  components: { DsfrTagGroup },
   methods: {
     tagColor(tag) {
       const colours = [
@@ -66,6 +63,15 @@ export default {
   computed: {
     hLevel() {
       return this.headingLevel || "h2"
+    },
+    tags() {
+      return this.post.tags.map((tag) => {
+        return {
+          id: tag,
+          text: tag,
+          color: this.tagColor(tag),
+        }
+      })
     },
   },
 }
