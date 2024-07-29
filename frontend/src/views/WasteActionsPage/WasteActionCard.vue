@@ -12,17 +12,11 @@
       max-height="150"
       cover
     >
-      <DsfrBadge :mode="wasteaction.effort == 'SMALL' ? 'SUCCESS' : 'ERROR'" class="mt-2 ml-2">
-        {{ wasteaction.effort }}
-      </DsfrBadge>
+      <DsfrTag :text="wasteaction.effort" :color="tagColor(wasteaction.effort)" class="mt-2 ml-2" />
     </v-img>
-    <DsfrBadge
-      v-if="!wasteaction.lead_image"
-      :mode="wasteaction.effort == 'SMALL' ? 'SUCCESS' : 'ERROR'"
-      class="mt-2 ml-2"
-    >
-      {{ wasteaction.effort }}
-    </DsfrBadge>
+    <div class="mt-2 ml-2">
+      <DsfrTag v-if="!wasteaction.lead_image" :text="wasteaction.effort" :color="tagColor(wasteaction.effort)" />
+    </div>
     <v-card-title class="d-flex flex-column-reverse align-start">
       <DsfrTagGroup v-if="wasteaction.waste_origin.length" :tags="wasteOrigins" :closeable="false" :small="true" />
       {{ wasteaction.title }}
@@ -41,7 +35,7 @@
 
 <script>
 import DsfrTagGroup from "@/components/DsfrTagGroup"
-import DsfrBadge from "@/components/DsfrBadge"
+import DsfrTag from "@/components/DsfrTag"
 
 export default {
   name: "WasteActionCard",
@@ -51,19 +45,19 @@ export default {
       required: true,
     },
   },
-  components: { DsfrTagGroup, DsfrBadge },
+  components: { DsfrTagGroup, DsfrTag },
   methods: {
     tagColor(tag) {
-      const colours = [
-        "pink lighten-4",
-        "blue lighten-4",
-        "green lighten-4",
-        "purple lighten-4",
-        "yellow lighten-4",
-        "teal lighten-4",
-      ]
-      const colourIndex = Array.from(tag, (x) => x.charCodeAt(0)).reduce((a, b) => a + b) % (colours.length - 1)
-      return colours[colourIndex]
+      switch (tag) {
+        case "SMALL":
+          return "success"
+        case "MEDIUM":
+          return "warning"
+        case "LARGE":
+          return "error"
+        default:
+          return "default"
+      }
     },
   },
   computed: {
@@ -80,25 +74,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.wasteaction-card {
-  min-height: 256px;
-  height: 100%;
-}
-.wasteaction-card img.lead-image {
-  opacity: 0.5;
-  max-height: 100%;
-  max-width: 100%;
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
-  position: absolute;
-}
-.wasteaction-card:hover img.lead-image,
-.wasteaction-card:focus-within img.lead-image {
-  opacity: 1;
-}
-.card-image-wrap {
-  position: relative;
-}
-</style>
+<style scoped></style>

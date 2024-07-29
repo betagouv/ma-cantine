@@ -4,7 +4,9 @@
       <v-progress-circular inderterminate></v-progress-circular>
     </div>
     <div v-if="!loading && wasteactions.length > 0">
-      <h1>Explorez et mettez en avant vos actions de lutte contre le gaspillage</h1>
+      <h1 class="text-left font-weight-black black--text mb-6">
+        Explorez et mettez en avant vos actions de lutte contre le gaspillage
+      </h1>
       <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(wasteactionsCount / limit)" />
       <v-row class="cta-group pa-2 mt-2">
         <v-col vols="12" sm="6" md="4" v-for="wasteaction in wasteactions" :key="wasteaction.id">

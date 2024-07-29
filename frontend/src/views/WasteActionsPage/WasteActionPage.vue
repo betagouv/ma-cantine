@@ -13,8 +13,8 @@
       </v-row>
       <v-row>
         <v-col cols="12" class="mt-7" sm="3">
-          <v-row>Origine du gaspillage</v-row>
-          <v-row>
+          <v-row justify="end">Origine du gaspillage</v-row>
+          <v-row justify="end">
             <DsfrTagGroup
               v-if="wasteaction.waste_origin.length"
               :tags="wasteOrigins"
@@ -22,13 +22,11 @@
               :small="true"
             />
           </v-row>
-          <v-row>Type d'action</v-row>
-          <v-row>
-            <DsfrBadge :mode="wasteaction.effort == 'SMALL' ? 'SUCCESS' : 'ERROR'" class="mt-2 ml-2">
-              {{ wasteaction.effort }}
-            </DsfrBadge>
+          <v-row justify="end">Type d'action</v-row>
+          <v-row justify="end">
+            <DsfrTag :text="wasteaction.effort" :color="tagColor(wasteaction.effort)" class="mt-2 ml-2" />
           </v-row>
-          <v-row>
+          <v-row justify="end">
             <i>Description du type d'action à ajouter</i>
           </v-row>
         </v-col>
@@ -63,10 +61,10 @@
 import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import BackLink from "@/components/BackLink"
 import DsfrTagGroup from "@/components/DsfrTagGroup"
-import DsfrBadge from "@/components/DsfrBadge"
+import DsfrTag from "@/components/DsfrTag"
 
 export default {
-  components: { BreadcrumbsNav, BackLink, DsfrTagGroup, DsfrBadge },
+  components: { BreadcrumbsNav, BackLink, DsfrTagGroup, DsfrTag },
   data() {
     return {
       wasteaction: null,
@@ -94,6 +92,18 @@ export default {
           })
         })
     },
+    tagColor(tag) {
+      switch (tag) {
+        case "SMALL":
+          return "success"
+        case "MEDIUM":
+          return "warning"
+        case "LARGE":
+          return "error"
+        default:
+          return "default"
+      }
+    },
   },
   computed: {
     wasteOrigins() {
@@ -120,12 +130,6 @@ export default {
 </script>
 <style>
 .lead-image {
-  opacity: 1;
-  max-height: 100%;
-  max-width: 100%;
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
   filter: brightness(90%);
 }
 .negative-margin {
