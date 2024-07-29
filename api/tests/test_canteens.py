@@ -267,36 +267,6 @@ class TestCanteenApi(APITestCase):
             self.assertIsNone(canteen.central_producer_siret)
 
     @authenticate
-    def test_unable_to_set_siret_blank(self):
-        """
-        Managers cannnot delete the siret of a canteen by sending empty string
-        """
-        canteen = CanteenFactory.create(siret="21340172201787")
-        canteen.managers.add(authenticate.user)
-        payload = {
-            "siret": "",
-        }
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        canteen.refresh_from_db()
-        self.assertEqual(canteen.siret, "21340172201787")
-
-    @authenticate
-    def test_unable_to_set_siret_none(self):
-        """
-        Managers cannnot delete the siret of a canteen by sending null
-        """
-        canteen = CanteenFactory.create(siret="21340172201787")
-        canteen.managers.add(authenticate.user)
-        payload = {
-            "siret": None,
-        }
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        canteen.refresh_from_db()
-        self.assertEqual(canteen.siret, "21340172201787")
-
-    @authenticate
     def test_soft_delete(self):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
@@ -430,9 +400,9 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @authenticate
-    def test_refuse_patch_with_no_siret(self):
+    def test_refuse_patch_with_blank_siret(self):
         """
-        A canteen modification shouldn't allow deleting a SIRET
+        A canteen modification shouldn't allow deleting a SIRET with sending blank value
         """
         siret = "26566234910966"
         canteen = CanteenFactory.create(siret=siret)
@@ -443,6 +413,23 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["Le numéro SIRET ne peut pas être vide."])
+
+    @authenticate
+    def test_refuse_patch_with_no_siret(self):
+        """
+        A canteen modification shouldn't allow deleting a SIRET with sending null value
+        """
+        canteen = CanteenFactory.create(siret="21340172201787")
+        canteen.managers.add(authenticate.user)
+        payload = {
+            "siret": None,
+        }
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        body = response.json()
+        self.assertEqual(body["siret"], ["Le numéro SIRET ne peut pas être vide."])
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.siret, "21340172201787")
 
     @authenticate
     def test_update_canteen_duplicate_siret_unmanaged(self):
