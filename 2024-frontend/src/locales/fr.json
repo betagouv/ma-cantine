@@ -1,6 +1,8 @@
 {
   "validations": {
+    "decimal": "Ce champ doit être un nombre",
     "integer": "Ce champ doit être un nombre entier",
+    "maxValue": "La valeur maximum est {max}",
     "minValue": "La valeur minimum est {min}",
     "required": "Ce champ est obligatoire"
   }

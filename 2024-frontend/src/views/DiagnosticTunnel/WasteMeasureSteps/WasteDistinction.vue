@@ -1,10 +1,11 @@
 <script setup>
 import { onMounted, reactive, watch, inject } from "vue"
 import { useVuelidate } from "@vuelidate/core"
-import { required } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
 import HelpText from "./HelpText.vue"
 import DsfrBooleanRadio from "@/components/DsfrBooleanRadio.vue"
+import { useValidators } from "@/validators.js"
+const { required } = useValidators()
 
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
