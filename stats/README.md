@@ -1,1 +1,0 @@
-# Construction des statistiques pour ma-cantine
