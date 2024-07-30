@@ -139,9 +139,9 @@ class ETL_OPEN_DATA(etl.ETL):
             df_export.to_excel(excel_file, index=False)
 
     def load_dataset(self):
-        self._read_dataframe(self.build_filename(self, stage="to_validate"))
+        self._read_dataframe(self.build_filename(stage="to_validate"))
         if self.is_valid():
-            validated_filename = self.build_filename(self, stage="validated")
+            validated_filename = self.build_filename(stage="validated")
             try:
                 self._load_data_csv(validated_filename)
                 self._load_data_parquet(validated_filename)
