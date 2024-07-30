@@ -11,14 +11,9 @@
       alt="wasteaction.lead_image.title"
       max-height="150"
       cover
-    >
-      <DsfrTag :text="wasteaction.effort" :color="tagColor(wasteaction.effort)" class="mt-2 ml-2" />
-    </v-img>
-    <div class="mt-2 ml-2">
-      <DsfrTag v-if="!wasteaction.lead_image" :text="wasteaction.effort" :color="tagColor(wasteaction.effort)" />
-    </div>
+    ></v-img>
     <v-card-title class="d-flex flex-column-reverse align-start">
-      <DsfrTagGroup v-if="wasteaction.waste_origin.length" :tags="wasteOrigins" :closeable="false" :small="true" />
+      <DsfrTagGroup v-if="wasteaction.waste_origin.length" :tags="tags" :closeable="false" :small="true" />
       {{ wasteaction.title }}
     </v-card-title>
     <v-card-subtitle class="pt-1">
@@ -35,7 +30,6 @@
 
 <script>
 import DsfrTagGroup from "@/components/DsfrTagGroup"
-import DsfrTag from "@/components/DsfrTag"
 
 export default {
   name: "WasteActionCard",
@@ -45,30 +39,19 @@ export default {
       required: true,
     },
   },
-  components: { DsfrTagGroup, DsfrTag },
-  methods: {
-    tagColor(tag) {
-      switch (tag) {
-        case "Petit pas":
-          return "success"
-        case "Moyen":
-          return "warning"
-        case "Grand projet":
-          return "error"
-        default:
-          return "default"
-      }
-    },
-  },
+  components: { DsfrTagGroup },
+  methods: {},
   computed: {
-    wasteOrigins() {
-      return this.wasteaction.waste_origin.map((tag) => {
+    tags() {
+      const effort = [{ id: this.wasteaction.effort, text: this.wasteaction.effort, color: "rgb(238, 238, 238)" }]
+      const waste_origins = this.wasteaction.waste_origin.map((tag) => {
         return {
           id: tag,
           text: tag,
           color: "rgb(238, 238, 238)",
         }
       })
+      return effort.concat(waste_origins)
     },
   },
 }

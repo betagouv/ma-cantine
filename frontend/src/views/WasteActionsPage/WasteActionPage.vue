@@ -11,8 +11,18 @@
           max-height="200"
         ></v-img>
       </v-row>
-      <v-row>
-        <v-col cols="12" class="mt-7" sm="3">
+      <v-row justify="center">
+        <v-col cols="12" class="mt-7" sm="2">
+          <v-row justify="end">Type d'action</v-row>
+          <v-row justify="end">
+            <DsfrTag
+              :text="wasteaction.effort"
+              class="mt-2 ml-2"
+              :closeable="false"
+              color="rgb(238, 238, 238)"
+              :small="true"
+            />
+          </v-row>
           <v-row justify="end">Origine du gaspillage</v-row>
           <v-row justify="end">
             <DsfrTagGroup
@@ -22,25 +32,22 @@
               :small="true"
             />
           </v-row>
-          <v-row justify="end">Type d'action</v-row>
-          <v-row justify="end">
-            <DsfrTag :text="wasteaction.effort" :color="tagColor(wasteaction.effort)" class="mt-2 ml-2" />
-          </v-row>
-          <v-row justify="end">
-            <i>Description du type d'action à ajouter</i>
-          </v-row>
         </v-col>
         <v-col
           cols="12"
-          v-bind:class="{ 'text-left': true, 'negative-margin': $vuetify.breakpoint.smAndUp && wasteaction.lead_image }"
-          sm="6"
+          v-bind:class="{
+            'text-left': true,
+            'mx-5': true,
+            'negative-margin': $vuetify.breakpoint.smAndUp && wasteaction.lead_image,
+          }"
+          sm="7"
         >
           <h1>{{ wasteaction.title }}</h1>
           <p>{{ wasteaction.subtitle }}</p>
           <p v-html="wasteaction.description"></p>
         </v-col>
-        <v-col cols="12" class="text-left mt-7" sm="3">
-          <v-row class="mb-1">
+        <v-col cols="12" v-bind:class="{ 'mt-7': $vuetify.breakpoint.smAndUp }" sm="2">
+          <!-- <v-row class="mb-1">
             <v-btn color="primary" outlined>
               <v-icon small class="mr-2">$bookmark-line</v-icon>
               Ajouter aux favoris
@@ -50,7 +57,7 @@
             <v-btn color="primary">
               J'ai mis en place cette action
             </v-btn>
-          </v-row>
+          </v-row> -->
         </v-col>
       </v-row>
     </div>
@@ -91,18 +98,6 @@ export default {
             })
           })
         })
-    },
-    tagColor(tag) {
-      switch (tag) {
-        case "Petit pas":
-          return "success"
-        case "Moyen":
-          return "warning"
-        case "Grand projet":
-          return "error"
-        default:
-          return "default"
-      }
     },
   },
   computed: {
