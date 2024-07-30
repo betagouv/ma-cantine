@@ -21,16 +21,15 @@
       </v-row>
     </v-card>
 
-    <v-row>
+    <v-row class="align-end">
       <v-col cols="12" sm="6" md="8">
         <DsfrSearchField
           v-model="searchTerm"
           placeholder="Rechercher par titre ou contenu"
           hide-details
           clearable
-          :clearAction="clearSearch"
-          :searchAction="search"
-          label="Rechercher"
+          @clear="clearSearch"
+          @search="search"
         />
       </v-col>
 

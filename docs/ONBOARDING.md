@@ -258,7 +258,9 @@ DEBUG_FRONT=False
 ```
 
 Dans le dossier principal, lancez :
-`bash ./clevercloud/test-build.sh`
+`bash ./clevercloud/test-build-with-vue3.sh`
 `python manage.py runserver --insecure`
 
 En prod, faut ajouter `CC_PRE_BUILD_HOOK=./clevercloud/pre-build-hook.sh`
+
+À noter qu'à ce moment, Vue 3 ne peut pas être deployer en prod car il y a un bug avec le django-vite-plugin.

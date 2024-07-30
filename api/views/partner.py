@@ -8,6 +8,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from api.serializers import PartnerSerializer, PartnerShortSerializer, PartnerContactSerializer
 from data.models import Partner
+from .utils import UnaccentSearchFilter
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +59,8 @@ class PartnersPagination(LimitOffsetPagination):
 class PartnersView(ListCreateAPIView):
     model = Partner
     pagination_class = PartnersPagination
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, UnaccentSearchFilter]
+    search_fields = ["name"]
 
     def get_serializer_class(self):
         if self.request.method == "POST":

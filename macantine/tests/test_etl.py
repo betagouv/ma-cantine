@@ -1,13 +1,15 @@
 import pandas as pd
 import requests_mock
-from django.test import TestCase
 from macantine.etl.etl import map_communes_infos, update_datagouv_resources
+from django.test import TestCase, override_settings
 from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
 from macantine.etl.analysis import ETL_ANALYSIS
 from macantine.etl.open_data import ETL_CANTEEN, ETL_TD
 from freezegun import freeze_time
 import json
+from django.core.files.storage import default_storage
+
 import os
 
 
@@ -445,3 +447,35 @@ class TestETLOpenData(TestCase):
         os.environ["ENVIRONMENT"] = "prod"
         number_of_updated_resources = update_datagouv_resources()
         self.assertEqual(number_of_updated_resources, 1, "Only the csv resource should be updated")
+
+    @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
+    def test_load_dataset_canteen(self, mock):
+        # Making sure the code will not enter online dataset validation by forcing local filesystem management
+        test_cases = [
+            {
+                "name": " Load valid dataset",
+                "data": pd.DataFrame({"index": [0], "name": ["a valid name"]}),
+                "expected_length": 1,
+            },
+            {
+                "name": " Load valid dataset with special characters",
+                "data": pd.DataFrame({"index": [0], "name": ["a valid name with our csv sep ;"]}),
+                "expected_length": 1,
+            },
+        ]
+        etl = ETL_CANTEEN()
+        etl.dataset_name += "_test"  # Avoid interferring with other files
+
+        for tc in test_cases:
+            etl.df = tc["data"]
+            etl.load_dataset()
+            with default_storage.open(f"open_data/{etl.dataset_name}.csv", "r") as csv_file:
+                output_dataframe = pd.read_csv(csv_file, sep=";")
+            self.assertEqual(tc["expected_length"], len(output_dataframe))
+
+            self.assertTrue(default_storage.exists(f"open_data/{etl.dataset_name}.parquet"))
+            self.assertTrue(default_storage.exists(f"open_data/{etl.dataset_name}.xlsx"))
+
+            # Cleaning files
+            for file_extension in ["csv", "parquet", "xslx"]:
+                default_storage.delete(f"open_data/{etl.dataset_name}.{file_extension}")

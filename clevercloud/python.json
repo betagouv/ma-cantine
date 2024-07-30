@@ -5,7 +5,6 @@
   "deploy": {
     "managetasks": [
       "buildnpm",
-      "collectstatic --noinput",
       "buildnpmvue3",
       "collectstatic --noinput",
       "migrate --noinput",
