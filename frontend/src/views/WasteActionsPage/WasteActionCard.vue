@@ -6,7 +6,7 @@
   >
     <v-img
       v-if="wasteaction.lead_image"
-      :src="wasteaction.lead_image.meta.download_url"
+      :src="wasteaction.lead_image.url"
       class="lead-image"
       alt="wasteaction.lead_image.title"
       max-height="150"
@@ -49,11 +49,11 @@ export default {
   methods: {
     tagColor(tag) {
       switch (tag) {
-        case "SMALL":
+        case "Petit pas":
           return "success"
-        case "MEDIUM":
+        case "Moyen":
           return "warning"
-        case "LARGE":
+        case "Grand projet":
           return "error"
         default:
           return "default"

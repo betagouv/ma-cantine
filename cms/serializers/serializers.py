@@ -31,3 +31,16 @@ class ChoiceArrayField(serializers.Field):
         if data is None:
             return []
         return [key for key, val in self.choices.items() if val in data]
+
+
+class ImageSerializedField(serializers.Field):
+    """A custom serializer used in Wagtails v2 API."""
+
+    def to_representation(self, value):
+        """Return the image URL, title and dimensions."""
+        return {
+            "url": value.file.url,
+            "title": value.title,
+            "width": value.width,
+            "height": value.height,
+        }

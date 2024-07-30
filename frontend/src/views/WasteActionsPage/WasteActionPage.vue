@@ -4,7 +4,7 @@
       <BreadcrumbsNav :title="wasteaction.title" :links="[{ to: { name: 'WasteActionsHome' } }]" />
       <v-row v-if="wasteaction.lead_image">
         <v-img
-          :src="wasteaction.lead_image.meta.download_url"
+          :src="wasteaction.lead_image.url"
           class="lead-image"
           alt="wasteaction.lead_image.title"
           cover
@@ -94,11 +94,11 @@ export default {
     },
     tagColor(tag) {
       switch (tag) {
-        case "SMALL":
+        case "Petit pas":
           return "success"
-        case "MEDIUM":
+        case "Moyen":
           return "warning"
-        case "LARGE":
+        case "Grand projet":
           return "error"
         default:
           return "default"
