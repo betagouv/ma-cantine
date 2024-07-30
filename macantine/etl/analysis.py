@@ -1,5 +1,6 @@
 import pandas as pd
 import logging
+import json
 
 from macantine.etl.data_warehouse import DataWareHouse
 from macantine.etl.etl import CAMPAIGN_DATES, ETL, fetch_teledeclarations, map_canteens_td
@@ -60,6 +61,7 @@ class ETL_ANALYSIS(ETL):
         self.years = CAMPAIGN_DATES.keys()
         self.extracted_table_name = "teledeclarations_extracted"
         self.warehouse = DataWareHouse()
+        self.schema = json.load(open("data/schemas/schema_analysis.json"))
 
     def extract_dataset(self):
         # Load teledeclarations from prod database into the Data Warehouse
@@ -99,6 +101,9 @@ class ETL_ANALYSIS(ETL):
             campaign_participation = map_canteens_td(year)
             col_name_campaign = f"declared_{year}"
             self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
+
+        columns = [i["name"] for i in self.schema["fields"]]
+        self.df = self.df[columns]
 
     def load_dataset(self):
         """
