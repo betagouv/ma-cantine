@@ -1,9 +1,12 @@
 <script setup>
 import { onMounted, reactive, watch, inject, computed } from "vue"
 import { useVuelidate } from "@vuelidate/core"
-import { required, integer, minValue, helpers } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
 import HelpText from "./HelpText.vue"
+
+import { helpers } from "@vuelidate/validators"
+import { useValidators } from "@/validators.js"
+const { required, integer, minValue } = useValidators()
 
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
 

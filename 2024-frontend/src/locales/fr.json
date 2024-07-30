@@ -1,0 +1,7 @@
+{
+  "validations": {
+    "integer": "Ce champ doit être un nombre entier",
+    "minValue": "La valeur minimum est {min}",
+    "required": "Ce champ est obligatoire"
+  }
+}
