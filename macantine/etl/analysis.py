@@ -1,6 +1,7 @@
 import pandas as pd
 import logging
 import json
+import numpy as np
 
 from macantine.etl.data_warehouse import DataWareHouse
 from macantine.etl import etl
@@ -45,6 +46,17 @@ def get_diagnostic_type(value):
 
 def campaign_participation(row, year):
     return True
+
+def transform_sector_column(row):
+    """
+    Fetching sectors information and aggreting in list in order to have only one row per canteen
+    """
+    if (type(row) == list):
+        if len(row) > 1:
+            return pd.Series({'secteur': 'Secteurs multiples', 'catégorie': 'Catégories multiples'})
+        elif len(row) == 1:
+            return pd.Series({'secteur': row[0]['name'], 'catégorie': row[0]['category']})
+    return pd.Series({'secteur': np.nan, 'catégorie': np.nan})
 
 
 class ETL_ANALYSIS(etl.ETL):
@@ -100,6 +112,13 @@ class ETL_ANALYSIS(etl.ETL):
             campaign_participation = etl.map_canteens_td(year)
             col_name_campaign = f"declaration_{year}"
             self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
+
+        
+        # Extract the sector names and categories
+        logger.info("Canteens : Extract sectors...")
+        self.df[['secteur', 'catégorie']] = self.df['canteen.sectors'].apply(
+            lambda x: transform_sector_column(x) if x != np.nan else pd.Series({'secteur': np.nan, 'catégorie': np.nan})
+        )
 
         # Rename columns
         self.df = self.df.rename(columns={
