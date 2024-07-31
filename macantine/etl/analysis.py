@@ -3,8 +3,7 @@ import logging
 import json
 
 from macantine.etl.data_warehouse import DataWareHouse
-from macantine.etl.etl import CAMPAIGN_DATES, ETL, fetch_teledeclarations, map_canteens_td
-
+from macantine.etl import etl
 logger = logging.getLogger(__name__)
 
 
@@ -48,7 +47,7 @@ def campaign_participation(row, year):
     return True
 
 
-class ETL_ANALYSIS(ETL):
+class ETL_ANALYSIS(etl.ETL):
     """
     Create a dataset for analysis in a Data Warehouse
     * Extract data from prod
@@ -58,14 +57,14 @@ class ETL_ANALYSIS(ETL):
 
     def __init__(self):
         self.df = None
-        self.years = CAMPAIGN_DATES.keys()
+        self.years = etl.CAMPAIGN_DATES.keys()
         self.extracted_table_name = "teledeclarations_extracted"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis.json"))
 
     def extract_dataset(self):
         # Load teledeclarations from prod database into the Data Warehouse
-        self.df = fetch_teledeclarations(self.years)
+        self.df = etl.fetch_teledeclarations(self.years)
 
     def transform_dataset(self):
         # Flatten json 'declared_data' column
