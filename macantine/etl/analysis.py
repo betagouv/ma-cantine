@@ -5,6 +5,7 @@ import numpy as np
 
 from macantine.etl.data_warehouse import DataWareHouse
 from macantine.etl import etl
+
 logger = logging.getLogger(__name__)
 
 
@@ -47,16 +48,17 @@ def get_diagnostic_type(value):
 def campaign_participation(row, year):
     return True
 
+
 def transform_sector_column(row):
     """
     Fetching sectors information and aggreting in list in order to have only one row per canteen
     """
-    if (type(row) == list):
+    if type(row) == list:
         if len(row) > 1:
-            return pd.Series({'secteur': 'Secteurs multiples', 'catégorie': 'Catégories multiples'})
+            return pd.Series({"secteur": "Secteurs multiples", "catégorie": "Catégories multiples"})
         elif len(row) == 1:
-            return pd.Series({'secteur': row[0]['name'], 'catégorie': row[0]['category']})
-    return pd.Series({'secteur': np.nan, 'catégorie': np.nan})
+            return pd.Series({"secteur": row[0]["name"], "catégorie": row[0]["category"]})
+    return pd.Series({"secteur": np.nan, "catégorie": np.nan})
 
 
 class ETL_ANALYSIS(etl.ETL):
@@ -113,22 +115,25 @@ class ETL_ANALYSIS(etl.ETL):
             col_name_campaign = f"declaration_{year}"
             self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
 
-        
         # Extract the sector names and categories
         logger.info("Canteens : Extract sectors...")
-        self.df[['secteur', 'catégorie']] = self.df['canteen.sectors'].apply(
-            lambda x: transform_sector_column(x) if x != np.nan else pd.Series({'secteur': np.nan, 'catégorie': np.nan})
+        self.df[["secteur", "catégorie"]] = self.df["canteen.sectors"].apply(
+            lambda x: (
+                transform_sector_column(x) if x != np.nan else pd.Series({"secteur": np.nan, "catégorie": np.nan})
+            )
         )
 
         # Rename columns
-        self.df = self.df.rename(columns={
-            'teledeclaration.id': 'id',
-            'canteen.id': 'canteen_id',
-            'applicant.id': 'applicant_id',
-            'diagnostic_id': 'diagnostic_id'
-        })
-        self.df.columns = self.df.columns.str.replace('teledeclaration.', '')
-        self.df.columns = self.df.columns.str.replace('canteen.', '')
+        self.df = self.df.rename(
+            columns={
+                "teledeclaration.id": "id",
+                "canteen.id": "canteen_id",
+                "applicant.id": "applicant_id",
+                "diagnostic_id": "diagnostic_id",
+            }
+        )
+        self.df.columns = self.df.columns.str.replace("teledeclaration.", "")
+        self.df.columns = self.df.columns.str.replace("canteen.", "")
 
         columns = [i["name"] for i in self.schema["fields"]]
         self.df = self.df[columns]
