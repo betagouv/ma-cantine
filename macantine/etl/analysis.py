@@ -101,6 +101,16 @@ class ETL_ANALYSIS(etl.ETL):
             col_name_campaign = f"declaration_{year}"
             self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
 
+        # Rename columns
+        self.df = self.df.rename(columns={
+            'teledeclaration.id': 'id',
+            'canteen.id': 'canteen_id',
+            'applicant.id': 'applicant_id',
+            'diagnostic_id': 'diagnostic_id'
+        })
+        self.df.columns = self.df.columns.str.replace('teledeclaration.', '')
+        self.df.columns = self.df.columns.str.replace('canteen.', '')
+
         columns = [i["name"] for i in self.schema["fields"]]
         self.df = self.df[columns]
 
