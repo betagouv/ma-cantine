@@ -96,9 +96,9 @@ class ETL_ANALYSIS(etl.ETL):
 
         # Fill campaign participation
         logger.info("Canteens : Fill campaign participations...")
-        for year in CAMPAIGN_DATES.keys():
-            campaign_participation = map_canteens_td(year)
-            col_name_campaign = f"declared_{year}"
+        for year in etl.CAMPAIGN_DATES.keys():
+            campaign_participation = etl.map_canteens_td(year)
+            col_name_campaign = f"declaration_{year}"
             self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
 
         columns = [i["name"] for i in self.schema["fields"]]
