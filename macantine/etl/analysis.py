@@ -45,6 +45,12 @@ def get_diagnostic_type(value):
         return "C) non renseigné"
 
 
+def get_egalim_hors_bio(row):
+    return row['teledeclaration.value_externality_performance_ht'] + row['teledeclaration.value_sustainable_ht'] + row['teledeclaration.value_egalim_others_ht'] 
+
+def get_egalim_avec_bio(row):
+    return row['teledeclaration.value_bio_ht'] + row['teledeclaration.value_externality_performance_ht'] + row['teledeclaration.value_sustainable_ht'] + row['teledeclaration.value_egalim_others_ht'] 
+
 def campaign_participation(row, year):
     return True
 
@@ -92,6 +98,8 @@ class ETL_ANALYSIS(etl.ETL):
         self.df["cuisine_centrale"] = self.df["canteen.production_type"].apply(get_management_type)
         self.df["modele_economique"] = self.df["canteen.economic_model"].apply(get_economic_model)
         self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_economic_model)
+        self.df['value_somme_egalim_avec_bio_ht'] = self.df.apply(get_egalim_avec_bio, axis=1)  
+        self.df['value_somme_egalim_hors_bio_ht'] = self.df.apply(get_egalim_hors_bio, axis=1)
 
         # Convert types
         self.df["daily_meal_count"] = pd.to_numeric(self.df["canteen.daily_meal_count"], errors="coerce")
