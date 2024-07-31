@@ -66,6 +66,28 @@ def transform_sector_column(row):
             return pd.Series({"secteur": row[0]["name"], "catégorie": row[0]["category"]})
     return pd.Series({"secteur": np.nan, "catégorie": np.nan})
 
+def aggregate_col(df, categ="bio", sub_categ=["_bio"]):
+    pattern = "|".join(sub_categ)
+    df[f"teledeclaration.value_{categ}_ht"] = df.filter(regex=pattern).sum(
+        axis=1, numeric_only=True, skipna=True, min_count=1
+    )
+    return df
+
+def aggregate(df):
+    df = aggregate_col(df, "bio", ["_bio"])
+    df = aggregate_col(df, "sustainable", ["_sustainable", "_label_rouge", "_aocaop_igp_stg"])
+    df = aggregate_col(
+        df,
+        "egalim_others",
+        ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
+    )
+    df = aggregate_col(
+        df, "externality_performance", ["_externality_performance", "_performance", "_externalites"]
+    )
+    df["teledeclaration.cout_denrees"] = df.apply(
+        lambda row: row["teledeclaration.value_total_ht"] / row["canteen.yearly_meal_count"], axis=1
+    )
+    return df
 
 class ETL_ANALYSIS(etl.ETL):
     """
@@ -99,7 +121,7 @@ class ETL_ANALYSIS(etl.ETL):
         self.df["modele_economique"] = self.df["canteen.economic_model"].apply(get_economic_model)
         self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_economic_model)
         self.df['value_somme_egalim_avec_bio_ht'] = self.df.apply(get_egalim_avec_bio, axis=1)  
-        self.df['value_somme_egalim_hors_bio_ht'] = self.df.apply(get_egalim_hors_bio, axis=1)
+        self.df['value_somme_egalim_hors_bio_ht'] = self.df.apply(get_egalim_hors_bio, axis=1)  
 
         # Convert types
         self.df["daily_meal_count"] = pd.to_numeric(self.df["canteen.daily_meal_count"], errors="coerce")
@@ -130,6 +152,9 @@ class ETL_ANALYSIS(etl.ETL):
                 transform_sector_column(x) if x != np.nan else pd.Series({"secteur": np.nan, "catégorie": np.nan})
             )
         )
+
+        # Aggregate columns for complete TD
+        self.df = aggregate(self.df)
 
         # Rename columns
         self.df = self.df.rename(
