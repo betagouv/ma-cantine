@@ -47,17 +47,7 @@
           <p v-html="wasteaction.description"></p>
         </v-col>
         <v-col cols="12" v-bind:class="{ 'mt-7': $vuetify.breakpoint.smAndUp }" sm="2">
-          <!-- <v-row class="mb-1">
-            <v-btn color="primary" outlined>
-              <v-icon small class="mr-2">$bookmark-line</v-icon>
-              Ajouter aux favoris
-            </v-btn>
-          </v-row>
-          <v-row>
-            <v-btn color="primary">
-              J'ai mis en place cette action
-            </v-btn>
-          </v-row> -->
+          <!-- Implement action buttons -->
         </v-col>
       </v-row>
     </div>

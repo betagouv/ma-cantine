@@ -1,7 +1,7 @@
 <template>
   <div id="wasteactions-home">
     <div v-if="loading" class="mt-8">
-      <v-progress-circular inderterminate></v-progress-circular>
+      <v-progress-circular indeterminate></v-progress-circular>
     </div>
     <div v-if="!loading && wasteactions.length > 0">
       <h1 class="text-left font-weight-black black--text mb-6">
