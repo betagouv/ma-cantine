@@ -2,7 +2,7 @@
   <div id="wasteaction-page">
     <div v-if="wasteaction">
       <BreadcrumbsNav :title="wasteaction.title" :links="[{ to: { name: 'WasteActionsHome' } }]" />
-      <v-row v-if="wasteaction.lead_image">
+      <v-row>
         <img
           :src="wasteaction.lead_image ? wasteaction.lead_image.url : '/static/images/wasteaction-default-image.png'"
           class="lead-image"
@@ -31,15 +31,7 @@
             />
           </v-row>
         </v-col>
-        <v-col
-          cols="12"
-          v-bind:class="{
-            'text-left': true,
-            'mx-5': true,
-            'negative-margin': $vuetify.breakpoint.smAndUp && wasteaction.lead_image,
-          }"
-          sm="7"
-        >
+        <v-col cols="12" class="pa-12 text-left mt-sm-n12 body-wrapper" sm="7">
           <h1>{{ wasteaction.title }}</h1>
           <p>{{ wasteaction.subtitle }}</p>
           <p v-html="wasteaction.description"></p>
@@ -117,8 +109,7 @@ export default {
   height: 425px;
   object-fit: cover;
 }
-.negative-margin {
-  margin-top: -50px;
+.body-wrapper {
   background-color: white;
   z-index: 1;
 }
