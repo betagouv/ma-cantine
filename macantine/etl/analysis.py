@@ -10,25 +10,26 @@ logger = logging.getLogger(__name__)
 
 # Source : query Resytal dec 2023
 ESTIMATED_NUMBER_CANTEENS_REGION = {
-        1: 625,
-        2: 554,
-        3: 161,
-        4: 900,
-        6: 203,
-        11: 13235,
-        24: 4171,
-        27: 3623,
-        28: 4360,
-        32: 7061,
-        44: 7324,
-        52: 4545,
-        53: 4279,
-        75: 8854,
-        76: 7336,
-        84: 10842,
-        93: 5991,
-        94: 395
+    1: 625,
+    2: 554,
+    3: 161,
+    4: 900,
+    6: 203,
+    11: 13235,
+    24: 4171,
+    27: 3623,
+    28: 4360,
+    32: 7061,
+    44: 7324,
+    52: 4545,
+    53: 4279,
+    75: 8854,
+    76: 7336,
+    84: 10842,
+    93: 5991,
+    94: 395,
 }
+
 
 def get_management_type(value):
     if value == "direct":
@@ -67,68 +68,87 @@ def get_diagnostic_type(value):
 
 
 def get_egalim_hors_bio(row):
-    return row['teledeclaration.value_externality_performance_ht'] + row['teledeclaration.value_sustainable_ht'] + row['teledeclaration.value_egalim_others_ht'] 
+    return (
+        row["teledeclaration.value_externality_performance_ht"]
+        + row["teledeclaration.value_sustainable_ht"]
+        + row["teledeclaration.value_egalim_others_ht"]
+    )
+
 
 def get_egalim_avec_bio(row):
-    return row['teledeclaration.value_bio_ht'] + row['teledeclaration.value_externality_performance_ht'] + row['teledeclaration.value_sustainable_ht'] + row['teledeclaration.value_egalim_others_ht'] 
+    return (
+        row["teledeclaration.value_bio_ht"]
+        + row["teledeclaration.value_externality_performance_ht"]
+        + row["teledeclaration.value_sustainable_ht"]
+        + row["teledeclaration.value_egalim_others_ht"]
+    )
+
 
 def get_meat_and_fish(row):
-    return row['teledeclaration.value_meat_poultry_ht'] + row['teledeclaration.value_fish_ht']
+    return row["teledeclaration.value_meat_poultry_ht"] + row["teledeclaration.value_fish_ht"]
+
 
 def get_meat_and_fish_egalim(row):
-    return row['teledeclaration.value_meat_poultry_egalim_ht'] + row['teledeclaration.value_fish_egalim_ht']
+    return row["teledeclaration.value_meat_poultry_egalim_ht"] + row["teledeclaration.value_fish_egalim_ht"]
 
-def get_nbre_cantines_region(region:int):
+
+def get_nbre_cantines_region(region: int):
     if region in ESTIMATED_NUMBER_CANTEENS_REGION.keys():
         return ESTIMATED_NUMBER_CANTEENS_REGION[region]
     else:
         return np.nan
-    
-def get_objectif_zone_geo(department:int):
-    if department and department != 'nan' and not pd.isna(department):
+
+
+def get_objectif_zone_geo(department: int):
+    if department and department != "nan" and not pd.isna(department):
         # Dealing with two string codes
-        if department == '2A' or department == '2B':
-            return 'France métropolitaine'
+        if department == "2A" or department == "2B":
+            return "France métropolitaine"
         department = int(department)
         if department >= 1 and department <= 95:
-            return 'France métropolitaine'
+            return "France métropolitaine"
         elif department == 976:
-            return 'DROM (Mayotte)'
+            return "DROM (Mayotte)"
         elif department >= 971 and department <= 978:
-            return 'DROM (hors Mayotte)'
-        else: 
-            return 'Autre'
-        
+            return "DROM (hors Mayotte)"
+        else:
+            return "Autre"
+
+
 def get_ratio_egalim_fish(row):
     if row["teledeclaration.value_fish_ht"] > 0 and row["teledeclaration.value_fish_egalim_ht"] >= 0:
         return 100 * row["teledeclaration.value_fish_egalim_ht"] / row["teledeclaration.value_fish_ht"]
     else:
         return np.nan
-        
+
+
 def get_ratio_egalim_meat_poultry(row):
     if row["teledeclaration.value_meat_poultry_ht"] > 0 and row["teledeclaration.value_meat_poultry_egalim_ht"] >= 0:
         return 100 * row["teledeclaration.value_meat_poultry_egalim_ht"] / row["teledeclaration.value_meat_poultry_ht"]
     else:
         return np.nan
-        
+
+
 def get_ratio_bio(row):
     if row["teledeclaration.value_total_ht"] > 0 and row["teledeclaration.value_bio_ht"] >= 0:
         return 100 * row["teledeclaration.value_bio_ht"] / row["teledeclaration.value_total_ht"]
     else:
         return np.nan
-        
+
+
 def get_ratio_egalim_avec_bio(row):
     if row["teledeclaration.value_total_ht"] > 0 and row["teledeclaration.value_somme_egalim_avec_bio_ht"] >= 0:
         return 100 * row["teledeclaration.value_somme_egalim_avec_bio_ht"] / row["teledeclaration.value_total_ht"]
     else:
         return np.nan
-        
+
+
 def get_ratio_egalim_sans_bio(row):
     if row["teledeclaration.value_total_ht"] > 0 and row["teledeclaration.value_somme_egalim_hors_bio_ht"] >= 0:
         return 100 * row["teledeclaration.value_somme_egalim_hors_bio_ht"] / row["teledeclaration.value_total_ht"]
     else:
         return np.nan
-    
+
 
 def transform_sector_column(row):
     """
@@ -141,12 +161,14 @@ def transform_sector_column(row):
             return pd.Series({"secteur": row[0]["name"], "catégorie": row[0]["category"]})
     return pd.Series({"secteur": np.nan, "catégorie": np.nan})
 
+
 def aggregate_col(df, categ="bio", sub_categ=["_bio"]):
     pattern = "|".join(sub_categ)
     df[f"teledeclaration.value_{categ}_ht"] = df.filter(regex=pattern).sum(
         axis=1, numeric_only=True, skipna=True, min_count=1
     )
     return df
+
 
 def aggregate(df):
     df = aggregate_col(df, "bio", ["_bio"])
@@ -156,13 +178,12 @@ def aggregate(df):
         "egalim_others",
         ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
     )
-    df = aggregate_col(
-        df, "externality_performance", ["_externality_performance", "_performance", "_externalites"]
-    )
+    df = aggregate_col(df, "externality_performance", ["_externality_performance", "_performance", "_externalites"])
     df["teledeclaration.cout_denrees"] = df.apply(
         lambda row: row["teledeclaration.value_total_ht"] / row["canteen.yearly_meal_count"], axis=1
     )
     return df
+
 
 class ETL_ANALYSIS(etl.ETL):
     """
@@ -195,19 +216,18 @@ class ETL_ANALYSIS(etl.ETL):
         self.df["cuisine_centrale"] = self.df["canteen.production_type"].apply(get_management_type)
         self.df["modele_economique"] = self.df["canteen.economic_model"].apply(get_economic_model)
         self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_economic_model)
-        self.df['nbre_cantines_region'] = self.df["canteen.region"].apply(get_nbre_cantines_region)
-        self.df['objectif_zone_geo'] = self.df["canteen.region"].apply(get_objectif_zone_geo)
-        self.df['teledeclaration.value_somme_egalim_avec_bio_ht'] = self.df.apply(get_egalim_avec_bio, axis=1)  
-        self.df['teledeclaration.value_somme_egalim_hors_bio_ht'] = self.df.apply(get_egalim_hors_bio, axis=1)  
-        self.df['teledeclaration.value_meat_and_fish_ht'] = self.df.apply(get_meat_and_fish, axis=1)  
-        self.df['teledeclaration.value_meat_and_fish_egalim_ht'] = self.df.apply(get_meat_and_fish_egalim, axis=1)
+        self.df["nbre_cantines_region"] = self.df["canteen.region"].apply(get_nbre_cantines_region)
+        self.df["objectif_zone_geo"] = self.df["canteen.region"].apply(get_objectif_zone_geo)
+        self.df["teledeclaration.value_somme_egalim_avec_bio_ht"] = self.df.apply(get_egalim_avec_bio, axis=1)
+        self.df["teledeclaration.value_somme_egalim_hors_bio_ht"] = self.df.apply(get_egalim_hors_bio, axis=1)
+        self.df["teledeclaration.value_meat_and_fish_ht"] = self.df.apply(get_meat_and_fish, axis=1)
+        self.df["teledeclaration.value_meat_and_fish_egalim_ht"] = self.df.apply(get_meat_and_fish_egalim, axis=1)
 
-        self.df['ratio_egalim_fish'] = self.df.apply(get_ratio_egalim_fish, axis=1)
-        self.df['ratio_egalim_meat_poultry'] = self.df.apply(get_ratio_egalim_meat_poultry, axis=1)
-        self.df['ratio_bio'] = self.df.apply(get_ratio_bio, axis=1)
-        self.df['ratio_egalim_avec_bio'] = self.df.apply(get_ratio_egalim_avec_bio, axis=1)
-        self.df['ratio_egalim_sans_bio'] = self.df.apply(get_ratio_egalim_sans_bio, axis=1)
-
+        self.df["ratio_egalim_fish"] = self.df.apply(get_ratio_egalim_fish, axis=1)
+        self.df["ratio_egalim_meat_poultry"] = self.df.apply(get_ratio_egalim_meat_poultry, axis=1)
+        self.df["ratio_bio"] = self.df.apply(get_ratio_bio, axis=1)
+        self.df["ratio_egalim_avec_bio"] = self.df.apply(get_ratio_egalim_avec_bio, axis=1)
+        self.df["ratio_egalim_sans_bio"] = self.df.apply(get_ratio_egalim_sans_bio, axis=1)
 
         # Convert types
         self.df["daily_meal_count"] = pd.to_numeric(self.df["canteen.daily_meal_count"], errors="coerce")
@@ -262,11 +282,9 @@ class ETL_ANALYSIS(etl.ETL):
         columns = [i["name"] for i in self.schema["fields"]]
         self.df = self.df[columns]
 
-
     def load_dataset(self):
         """
         Load in database
         """
-        # for testing
+        # For testing
         self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
-
