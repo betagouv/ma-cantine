@@ -214,7 +214,7 @@ class ETL_ANALYSIS(etl.ETL):
         self.df = pd.concat([self.df.drop("declared_data", axis=1), df_json], axis=1)
 
         self.compute_miscellaneous_columns()
-        
+
         # Convert types
         self.df["daily_meal_count"] = pd.to_numeric(self.df["canteen.daily_meal_count"], errors="coerce")
         self.df["yearly_meal_count"] = pd.to_numeric(self.df["canteen.yearly_meal_count"], errors="coerce")
@@ -223,7 +223,7 @@ class ETL_ANALYSIS(etl.ETL):
         )
 
         logger.info("Start filling geo_name")
-        self.fill_geo_names(prefix='canteen.')
+        self.fill_geo_names(prefix="canteen.")
 
         # Fill campaign participation
         logger.info("Canteens : Fill campaign participations...")
@@ -282,7 +282,6 @@ class ETL_ANALYSIS(etl.ETL):
         self.df["ratio_bio"] = self.df.apply(get_ratio_bio, axis=1)
         self.df["ratio_egalim_avec_bio"] = self.df.apply(get_ratio_egalim_avec_bio, axis=1)
         self.df["ratio_egalim_sans_bio"] = self.df.apply(get_ratio_egalim_sans_bio, axis=1)
-
 
     def load_dataset(self):
         """
