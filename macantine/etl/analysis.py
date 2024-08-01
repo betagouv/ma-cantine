@@ -8,6 +8,27 @@ from macantine.etl import etl
 
 logger = logging.getLogger(__name__)
 
+# Source : query Resytal dec 2023
+ESTIMATED_NUMBER_CANTEENS_REGION = {
+        1: 625,
+        2: 554,
+        3: 161,
+        4: 900,
+        6: 203,
+        11: 13235,
+        24: 4171,
+        27: 3623,
+        28: 4360,
+        32: 7061,
+        44: 7324,
+        52: 4545,
+        53: 4279,
+        75: 8854,
+        76: 7336,
+        84: 10842,
+        93: 5991,
+        94: 395
+}
 
 def get_management_type(value):
     if value == "direct":
@@ -57,9 +78,26 @@ def get_meat_and_fish(row):
 def get_meat_and_fish_egalim(row):
     return row['teledeclaration.value_meat_poultry_egalim_ht'] + row['teledeclaration.value_fish_egalim_ht']
 
-def campaign_participation(row, year):
-    return True
-
+def get_nbre_cantines_region(region:int):
+    if region in ESTIMATED_NUMBER_CANTEENS_REGION.keys():
+        return ESTIMATED_NUMBER_CANTEENS_REGION[region]
+    else:
+        return np.nan
+    
+def get_objectif_zone_geo(department:int):
+    if department and department != 'nan' and not pd.isna(department):
+        # Dealing with two string codes
+        if department == '2A' or department == '2B':
+            return 'France métropolitaine'
+        department = int(department)
+        if department >= 1 and department <= 95:
+            return 'France métropolitaine'
+        elif department == 976:
+            return 'DROM (Mayotte)'
+        elif department >= 971 and department <= 978:
+            return 'DROM (hors Mayotte)'
+        else: 
+            return 'Autre'
 
 def transform_sector_column(row):
     """
@@ -126,6 +164,8 @@ class ETL_ANALYSIS(etl.ETL):
         self.df["cuisine_centrale"] = self.df["canteen.production_type"].apply(get_management_type)
         self.df["modele_economique"] = self.df["canteen.economic_model"].apply(get_economic_model)
         self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_economic_model)
+        self.df['nbre_cantines_region'] = self.df["canteen.region"].apply(get_nbre_cantines_region)
+        self.df['objectif_zone_geo'] = self.df["canteen.region"].apply(get_objectif_zone_geo)
         self.df['value_somme_egalim_avec_bio_ht'] = self.df.apply(get_egalim_avec_bio, axis=1)  
         self.df['value_somme_egalim_hors_bio_ht'] = self.df.apply(get_egalim_hors_bio, axis=1)  
         self.df['value_meat_and_fish_ht'] = self.df.apply(get_meat_and_fish, axis=1)  
