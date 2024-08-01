@@ -280,12 +280,11 @@ class ETL_ANALYSIS(etl.ETL):
 
         # Filter by schema columns names
         columns = [i["name"] for i in self.schema["fields"]]
-        self.df = self.df.loc[:,~self.df.columns.duplicated()].copy()
+        self.df = self.df.loc[:, ~self.df.columns.duplicated()].copy()
         self.df = self.df[columns]
 
     def load_dataset(self):
         """
         Load in database
         """
-        # For testing
         self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
