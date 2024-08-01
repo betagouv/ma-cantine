@@ -238,13 +238,8 @@ class ETL_ANALYSIS(etl.ETL):
             self.df["canteen.satellite_canteens_count"], errors="coerce"
         )
 
-        # Fill geo data
-        for geo in ["department", "region"]:
-            geo = f"canteen.{geo}"
-            logger.info("Start filling geo_name")
-            self.fill_geo_names(geo_zoom=geo)
-            col_geo = self.df.pop(f"{geo}_lib")
-            self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
+        logger.info("Start filling geo_name")
+        self.fill_geo_names(prefix='canteen.')
 
         # Fill campaign participation
         logger.info("Canteens : Fill campaign participations...")

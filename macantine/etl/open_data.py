@@ -47,11 +47,10 @@ class ETL_OPEN_DATA(etl.ETL):
         epcis_names = etl.map_epcis_code_name()
         self.df[prefix + "epci_lib"] = self.df[prefix + "epci"].apply(lambda x: etl.fetch_epci_name(x, epcis_names))
 
-        for geo in geo_col_names:
-            logger.info("Start filling geo_name")
-            self.fill_geo_names(geo_zoom=geo)
-            col_geo = self.df.pop(f"{geo}_lib")
-            self.df.insert(self.df.columns.get_loc(geo) + 1, f"{geo}_lib", col_geo)
+        logger.info("Start filling geo_name")
+        del self.df['department_lib']
+        del self.df['region_lib']
+        self.fill_geo_names()
 
     def _clean_dataset(self):
         columns = [i["name"].replace("canteen_", "canteen.") for i in self.schema["fields"]]

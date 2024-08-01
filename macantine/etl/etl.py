@@ -234,23 +234,20 @@ class ETL(ABC):
     Interface for the different ETL
     """
 
-    def fill_geo_names(self, geo_zoom="department"):
+    def fill_geo_names(self, prefix=''):
         """
-        Given a dataframe with a column 'department' or 'region', this method maps the name of the location, based on the INSEE code
+        Given a dataframe with columns 'department' and 'region', this method maps the name of the location, based on the INSEE code
         Returns:
-            pd.Series: The names of the location corresponding to an INSEE code, for each line of the dataset
+            pd.DataFrame: The dataset with two new columns : department_lib and region_lib
         """
-        if "department" in geo_zoom:
-            geo = {i.value: i.label for i in Department}
-        elif "region" in geo_zoom:
-            geo = {i.value: i.label for i in Region}
-        else:
-            logger.warning(
-                "The desired geo zoom for the method _fill_geo_zoom() is not possible. Please choose between 'department' and 'region'"
-            )
-            return 0
-
-        self.df[f"{geo_zoom}_lib"] = self.df[geo_zoom].apply(lambda x: format_geo_name(x, geo))
+        geo_data = {
+            'department': {i.value: i.label for i in Department},
+            'region': {i.value: i.label for i in Region}
+        }
+        for geo_zoom in ["department", "region"]:
+            col_geo_zoom = f"{prefix}{geo_zoom}"
+            col_to_insert = self.df[col_geo_zoom].apply(lambda x: format_geo_name(x, geo_data[geo_zoom]))
+            self.df.insert(self.df.columns.get_loc(col_geo_zoom) + 1, f"{col_geo_zoom}_lib", col_to_insert)
 
     @abstractmethod
     def extract_dataset(self):
