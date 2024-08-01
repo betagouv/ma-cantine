@@ -9,8 +9,8 @@
       alt=""
     />
     <v-card-title class="d-flex flex-column-reverse align-start">
-      <DsfrTagGroup v-if="wasteaction.waste_origin.length" :tags="tags" :closeable="false" :small="true" />
       {{ wasteaction.title }}
+      <DsfrTagGroup v-if="wasteaction.waste_origin.length" :tags="tags" :closeable="false" :small="true" />
     </v-card-title>
     <v-card-subtitle class="pt-1">
       <p class="mb-0">
