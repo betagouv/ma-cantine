@@ -51,6 +51,12 @@ def get_egalim_hors_bio(row):
 def get_egalim_avec_bio(row):
     return row['teledeclaration.value_bio_ht'] + row['teledeclaration.value_externality_performance_ht'] + row['teledeclaration.value_sustainable_ht'] + row['teledeclaration.value_egalim_others_ht'] 
 
+def get_meat_and_fish(row):
+    return row['teledeclaration.value_meat_poultry_ht'] + row['teledeclaration.value_fish_ht']
+
+def get_meat_and_fish_egalim(row):
+    return row['teledeclaration.value_meat_poultry_egalim_ht'] + row['teledeclaration.value_fish_egalim_ht']
+
 def campaign_participation(row, year):
     return True
 
@@ -122,6 +128,8 @@ class ETL_ANALYSIS(etl.ETL):
         self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_economic_model)
         self.df['value_somme_egalim_avec_bio_ht'] = self.df.apply(get_egalim_avec_bio, axis=1)  
         self.df['value_somme_egalim_hors_bio_ht'] = self.df.apply(get_egalim_hors_bio, axis=1)  
+        self.df['value_meat_and_fish_ht'] = self.df.apply(get_meat_and_fish, axis=1)  
+        self.df['value_meat_and_fish_egalim_ht'] = self.df.apply(get_meat_and_fish_egalim, axis=1)
 
         # Convert types
         self.df["daily_meal_count"] = pd.to_numeric(self.df["canteen.daily_meal_count"], errors="coerce")
