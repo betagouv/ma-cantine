@@ -258,11 +258,15 @@ class ETL_ANALYSIS(etl.ETL):
         self.df.columns = self.df.columns.str.replace("applicant.", "")
         self.df.columns = self.df.columns.str.replace("department", "departement")
 
+        # Filter by schema columns names
         columns = [i["name"] for i in self.schema["fields"]]
         self.df = self.df[columns]
+
 
     def load_dataset(self):
         """
         Load in database
         """
-        pass
+        # for testing
+        self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
+
