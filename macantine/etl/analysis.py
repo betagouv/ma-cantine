@@ -211,10 +211,13 @@ class ETL_ANALYSIS(etl.ETL):
                 "canteen.id": "canteen_id",
                 "applicant.id": "applicant_id",
                 "diagnostic_id": "diagnostic_id",
+                "canteen.region_lib": "canteen.lib_region",
+                "canteen.department_lib": "canteen.lib_department",
             }
         )
         self.df.columns = self.df.columns.str.replace("teledeclaration.", "")
         self.df.columns = self.df.columns.str.replace("canteen.", "")
+        self.df.columns = self.df.columns.str.replace("department", "departement")
 
         columns = [i["name"] for i in self.schema["fields"]]
         self.df = self.df[columns]
