@@ -255,6 +255,7 @@ class ETL_ANALYSIS(etl.ETL):
         )
         self.df.columns = self.df.columns.str.replace("teledeclaration.", "")
         self.df.columns = self.df.columns.str.replace("canteen.", "")
+        self.df.columns = self.df.columns.str.replace("applicant.", "")
         self.df.columns = self.df.columns.str.replace("department", "departement")
 
         columns = [i["name"] for i in self.schema["fields"]]
