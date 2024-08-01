@@ -234,19 +234,20 @@ class ETL(ABC):
     Interface for the different ETL
     """
 
-    def fill_geo_names(self, prefix=''):
+    def fill_geo_names(self, prefix=""):
         """
         Given a dataframe with columns 'department' and 'region', this method maps the name of the location, based on the INSEE code
         Returns:
             pd.DataFrame: The dataset with two new columns : department_lib and region_lib
         """
-        geo_data = {
-            'department': {i.value: i.label for i in Department},
-            'region': {i.value: i.label for i in Region}
-        }
+        geo_data = {"department": {i.value: i.label for i in Department}, "region": {i.value: i.label for i in Region}}
         for geo_zoom in ["department", "region"]:
             col_geo_zoom = f"{prefix}{geo_zoom}"
             col_to_insert = self.df[col_geo_zoom].apply(lambda x: format_geo_name(x, geo_data[geo_zoom]))
+            if "department_lib" in self.df.columns:
+                del self.df["department_lib"]
+            if "region_lib" in self.df.columns:
+                del self.df["region_lib"]
             self.df.insert(self.df.columns.get_loc(col_geo_zoom) + 1, f"{col_geo_zoom}_lib", col_to_insert)
 
     @abstractmethod

@@ -48,8 +48,6 @@ class ETL_OPEN_DATA(etl.ETL):
         self.df[prefix + "epci_lib"] = self.df[prefix + "epci"].apply(lambda x: etl.fetch_epci_name(x, epcis_names))
 
         logger.info("Start filling geo_name")
-        del self.df['department_lib']
-        del self.df['region_lib']
         self.fill_geo_names()
 
     def _clean_dataset(self):
