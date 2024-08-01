@@ -4,14 +4,10 @@
     class="fill-height text-left d-flex flex-column dsfr expanded-link"
     :to="{ name: 'WasteActionPage', params: { id: wasteaction.id } }"
   >
-    <v-img
-      v-if="wasteaction.lead_image"
-      :src="wasteaction.lead_image.url"
-      class="lead-image"
-      alt="wasteaction.lead_image.title"
-      max-height="150"
-      cover
-    ></v-img>
+    <img
+      :src="wasteaction.lead_image ? wasteaction.lead_image.url : '/static/images/wasteaction-default-image.png'"
+      alt=""
+    />
     <v-card-title class="d-flex flex-column-reverse align-start">
       <DsfrTagGroup v-if="wasteaction.waste_origin.length" :tags="tags" :closeable="false" :small="true" />
       {{ wasteaction.title }}
@@ -53,4 +49,10 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+img {
+  height: 200px;
+  max-width: 100%;
+  object-fit: cover;
+}
+</style>

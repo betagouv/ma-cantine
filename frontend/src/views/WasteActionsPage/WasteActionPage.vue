@@ -113,7 +113,7 @@ export default {
   },
 }
 </script>
-<style>
+<style scoped>
 .lead-image {
   filter: brightness(90%);
 }
