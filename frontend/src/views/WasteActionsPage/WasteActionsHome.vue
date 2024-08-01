@@ -1,34 +1,30 @@
 <template>
-  <div id="wasteactions-home">
+  <div id="wasteactions-home" class="text-left">
+    <BreadcrumbsNav />
     <div v-if="loading" class="mt-8">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
     <div v-if="!loading && wasteactions.length > 0">
-      <h1 class="text-left font-weight-black black--text mb-6">
+      <h1 class="fr-h1 mb-4">
         Explorez et mettez en avant les actions de lutte contre le gaspillage
       </h1>
-      <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(wasteactionsCount / limit)" />
-      <v-row class="cta-group pa-2 mt-2">
+      <v-row class="pa-2 mt-2">
         <v-col vols="12" sm="6" md="4" v-for="wasteaction in wasteactions" :key="wasteaction.id">
           <WasteActionCard :wasteaction="wasteaction" />
         </v-col>
       </v-row>
-      <DsfrPagination
-        class="my-6"
-        v-model="page"
-        :length="Math.ceil(wasteactionsCount / limit)"
-        v-if="$vuetify.breakpoint.smAndDown"
-      />
+      <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(wasteactionsCount / limit)" />
     </div>
   </div>
 </template>
 <script>
 import WasteActionCard from "./WasteActionCard.vue"
 import DsfrPagination from "@/components/DsfrPagination.vue"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 
 export default {
   name: "WasteActionsHome",
-  components: { WasteActionCard, DsfrPagination },
+  components: { WasteActionCard, DsfrPagination, BreadcrumbsNav },
   data() {
     return {
       limit: 6,
