@@ -244,10 +244,8 @@ class ETL(ABC):
         for geo_zoom in ["department", "region"]:
             col_geo_zoom = f"{prefix}{geo_zoom}"
             col_to_insert = self.df[col_geo_zoom].apply(lambda x: format_geo_name(x, geo_data[geo_zoom]))
-            if "department_lib" in self.df.columns:
-                del self.df["department_lib"]
-            if "region_lib" in self.df.columns:
-                del self.df["region_lib"]
+            if f"{col_geo_zoom}_lib" in self.df.columns:
+                del self.df[f"{col_geo_zoom}_lib"]
             self.df.insert(self.df.columns.get_loc(col_geo_zoom) + 1, f"{col_geo_zoom}_lib", col_to_insert)
 
     @abstractmethod

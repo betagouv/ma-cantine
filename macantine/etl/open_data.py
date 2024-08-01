@@ -24,7 +24,7 @@ class ETL_OPEN_DATA(etl.ETL):
         self.schema_url = ""
         self.dataset_name = ""
 
-    def transform_geo_data(self, geo_col_names=["department", "region"]):
+    def transform_geo_data(self, prefix=""):
         logger.info("Start fetching communes details")
         communes_infos = etl.map_communes_infos()
 
@@ -36,9 +36,6 @@ class ETL_OPEN_DATA(etl.ETL):
             self.df["canteen_region"] = self.df["canteen_city_insee_code"].apply(
                 lambda x: etl.fetch_commune_detail(x, communes_infos, "region")
             )
-            prefix = "canteen_"
-        else:
-            prefix = ""
 
         self.df[prefix + "epci"] = self.df[prefix + "city_insee_code"].apply(
             lambda x: etl.fetch_commune_detail(x, communes_infos, "epci")
@@ -48,7 +45,7 @@ class ETL_OPEN_DATA(etl.ETL):
         self.df[prefix + "epci_lib"] = self.df[prefix + "epci"].apply(lambda x: etl.fetch_epci_name(x, epcis_names))
 
         logger.info("Start filling geo_name")
-        self.fill_geo_names()
+        self.fill_geo_names(prefix)
 
     def _clean_dataset(self):
         columns = [i["name"].replace("canteen_", "canteen.") for i in self.schema["fields"]]
@@ -245,7 +242,7 @@ class ETL_CANTEEN(ETL_OPEN_DATA):
 
         logger.info("Canteens : Fill geo name...")
         start = time.time()
-        self.transform_geo_data(geo_col_names=["department", "region"])
+        self.transform_geo_data()
         end = time.time()
         logger.info(f"Time spent on geo data : {end - start}")
 
@@ -332,7 +329,7 @@ class ETL_TD(ETL_OPEN_DATA):
         logger.info("TD campagne : Transform sectors...")
         self.df["canteen_sectors"] = self.transform_sectors()
         logger.info("TD Campagne : Fill geo name...")
-        self.transform_geo_data(geo_col_names=["canteen_department", "canteen_region"])
+        self.transform_geo_data(prefix="canteen_")
 
     def _flatten_declared_data(self):
         tmp_df = pd.json_normalize(self.df["declared_data"])
