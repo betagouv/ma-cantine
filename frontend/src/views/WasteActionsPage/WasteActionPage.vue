@@ -3,13 +3,11 @@
     <div v-if="wasteaction">
       <BreadcrumbsNav :title="wasteaction.title" :links="[{ to: { name: 'WasteActionsHome' } }]" />
       <v-row v-if="wasteaction.lead_image">
-        <v-img
-          :src="wasteaction.lead_image.url"
+        <img
+          :src="wasteaction.lead_image ? wasteaction.lead_image.url : '/static/images/wasteaction-default-image.png'"
           class="lead-image"
-          alt="wasteaction.lead_image.title"
-          cover
-          max-height="200"
-        ></v-img>
+          alt=""
+        />
       </v-row>
       <v-row justify="center">
         <v-col cols="12" class="mt-7" sm="2">
@@ -115,7 +113,9 @@ export default {
 </script>
 <style scoped>
 .lead-image {
-  filter: brightness(90%);
+  width: 100%;
+  height: 425px;
+  object-fit: cover;
 }
 .negative-margin {
   margin-top: -50px;
