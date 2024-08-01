@@ -98,6 +98,37 @@ def get_objectif_zone_geo(department:int):
             return 'DROM (hors Mayotte)'
         else: 
             return 'Autre'
+        
+def get_ratio_egalim_fish(row):
+    if row["teledeclaration.value_fish_ht"] > 0 and row["teledeclaration.value_fish_egalim_ht"] >= 0:
+        return 100 * row["teledeclaration.value_fish_egalim_ht"] / row["teledeclaration.value_fish_ht"]
+    else:
+        return np.nan
+        
+def get_ratio_egalim_meat_poultry(row):
+    if row["teledeclaration.value_meat_poultry_ht"] > 0 and row["teledeclaration.value_meat_poultry_egalim_ht"] >= 0:
+        return 100 * row["teledeclaration.value_meat_poultry_egalim_ht"] / row["teledeclaration.value_meat_poultry_ht"]
+    else:
+        return np.nan
+        
+def get_ratio_bio(row):
+    if row["teledeclaration.value_total_ht"] > 0 and row["teledeclaration.value_bio_ht"] >= 0:
+        return 100 * row["teledeclaration.value_bio_ht"] / row["teledeclaration.value_total_ht"]
+    else:
+        return np.nan
+        
+def get_ratio_egalim_avec_bio(row):
+    if row["teledeclaration.value_total_ht"] > 0 and row["teledeclaration.value_somme_egalim_avec_bio_ht"] >= 0:
+        return 100 * row["teledeclaration.value_somme_egalim_avec_bio_ht"] / row["teledeclaration.value_total_ht"]
+    else:
+        return np.nan
+        
+def get_ratio_egalim_sans_bio(row):
+    if row["teledeclaration.value_total_ht"] > 0 and row["teledeclaration.value_somme_egalim_hors_bio_ht"] >= 0:
+        return 100 * row["teledeclaration.value_somme_egalim_hors_bio_ht"] / row["teledeclaration.value_total_ht"]
+    else:
+        return np.nan
+    
 
 def transform_sector_column(row):
     """
@@ -166,10 +197,17 @@ class ETL_ANALYSIS(etl.ETL):
         self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_economic_model)
         self.df['nbre_cantines_region'] = self.df["canteen.region"].apply(get_nbre_cantines_region)
         self.df['objectif_zone_geo'] = self.df["canteen.region"].apply(get_objectif_zone_geo)
-        self.df['value_somme_egalim_avec_bio_ht'] = self.df.apply(get_egalim_avec_bio, axis=1)  
-        self.df['value_somme_egalim_hors_bio_ht'] = self.df.apply(get_egalim_hors_bio, axis=1)  
-        self.df['value_meat_and_fish_ht'] = self.df.apply(get_meat_and_fish, axis=1)  
-        self.df['value_meat_and_fish_egalim_ht'] = self.df.apply(get_meat_and_fish_egalim, axis=1)
+        self.df['teledeclaration.value_somme_egalim_avec_bio_ht'] = self.df.apply(get_egalim_avec_bio, axis=1)  
+        self.df['teledeclaration.value_somme_egalim_hors_bio_ht'] = self.df.apply(get_egalim_hors_bio, axis=1)  
+        self.df['teledeclaration.value_meat_and_fish_ht'] = self.df.apply(get_meat_and_fish, axis=1)  
+        self.df['teledeclaration.value_meat_and_fish_egalim_ht'] = self.df.apply(get_meat_and_fish_egalim, axis=1)
+
+        self.df['ratio_egalim_fish'] = self.df.apply(get_ratio_egalim_fish, axis=1)
+        self.df['ratio_egalim_meat_poultry'] = self.df.apply(get_ratio_egalim_meat_poultry, axis=1)
+        self.df['ratio_bio'] = self.df.apply(get_ratio_bio, axis=1)
+        self.df['ratio_egalim_avec_bio'] = self.df.apply(get_ratio_egalim_avec_bio, axis=1)
+        self.df['ratio_egalim_sans_bio'] = self.df.apply(get_ratio_egalim_sans_bio, axis=1)
+
 
         # Convert types
         self.df["daily_meal_count"] = pd.to_numeric(self.df["canteen.daily_meal_count"], errors="coerce")
