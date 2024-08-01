@@ -208,6 +208,8 @@ class ETL_ANALYSIS(etl.ETL):
         # Flatten json 'declared_data' column
         df_json = pd.json_normalize(self.df["declared_data"])
         del df_json["year"]
+        del df_json["canteen.id"]
+        self.df.index = np.arange(0, len(self.df))  # Create a standard index to be able to join data
         self.df = self.df.loc[~self.df.index.duplicated(keep="first")]
         self.df = pd.concat([self.df.drop("declared_data", axis=1), df_json], axis=1)
 
@@ -266,8 +268,6 @@ class ETL_ANALYSIS(etl.ETL):
         self.df = self.df.rename(
             columns={
                 "teledeclaration.id": "id",
-                "canteen.id": "canteen_id",
-                "applicant.id": "applicant_id",
                 "diagnostic_id": "diagnostic_id",
                 "canteen.region_lib": "canteen.lib_region",
                 "canteen.department_lib": "canteen.lib_department",
@@ -280,6 +280,7 @@ class ETL_ANALYSIS(etl.ETL):
 
         # Filter by schema columns names
         columns = [i["name"] for i in self.schema["fields"]]
+        self.df = self.df.loc[:,~self.df.columns.duplicated()].copy()
         self.df = self.df[columns]
 
     def load_dataset(self):
