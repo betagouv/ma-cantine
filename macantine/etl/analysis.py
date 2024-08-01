@@ -213,24 +213,8 @@ class ETL_ANALYSIS(etl.ETL):
         self.df = self.df.loc[~self.df.index.duplicated(keep="first")]
         self.df = pd.concat([self.df.drop("declared_data", axis=1), df_json], axis=1)
 
-        # Calculate columns
-        self.df["management_type"] = self.df["canteen.management_type"].apply(get_management_type)
-        self.df["cuisine_centrale"] = self.df["canteen.production_type"].apply(get_management_type)
-        self.df["modele_economique"] = self.df["canteen.economic_model"].apply(get_economic_model)
-        self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_economic_model)
-        self.df["nbre_cantines_region"] = self.df["canteen.region"].apply(get_nbre_cantines_region)
-        self.df["objectif_zone_geo"] = self.df["canteen.region"].apply(get_objectif_zone_geo)
-        self.df["teledeclaration.value_somme_egalim_avec_bio_ht"] = self.df.apply(get_egalim_avec_bio, axis=1)
-        self.df["teledeclaration.value_somme_egalim_hors_bio_ht"] = self.df.apply(get_egalim_hors_bio, axis=1)
-        self.df["teledeclaration.value_meat_and_fish_ht"] = self.df.apply(get_meat_and_fish, axis=1)
-        self.df["teledeclaration.value_meat_and_fish_egalim_ht"] = self.df.apply(get_meat_and_fish_egalim, axis=1)
-
-        self.df["ratio_egalim_fish"] = self.df.apply(get_ratio_egalim_fish, axis=1)
-        self.df["ratio_egalim_meat_poultry"] = self.df.apply(get_ratio_egalim_meat_poultry, axis=1)
-        self.df["ratio_bio"] = self.df.apply(get_ratio_bio, axis=1)
-        self.df["ratio_egalim_avec_bio"] = self.df.apply(get_ratio_egalim_avec_bio, axis=1)
-        self.df["ratio_egalim_sans_bio"] = self.df.apply(get_ratio_egalim_sans_bio, axis=1)
-
+        self.compute_miscellaneous_columns()
+        
         # Convert types
         self.df["daily_meal_count"] = pd.to_numeric(self.df["canteen.daily_meal_count"], errors="coerce")
         self.df["yearly_meal_count"] = pd.to_numeric(self.df["canteen.yearly_meal_count"], errors="coerce")
@@ -277,6 +261,28 @@ class ETL_ANALYSIS(etl.ETL):
         columns = [i["name"] for i in self.schema["fields"]]
         self.df = self.df.loc[:, ~self.df.columns.duplicated()].copy()
         self.df = self.df[columns]
+
+    def compute_miscellaneous_columns(self):
+        # Canteen
+        self.df["management_type"] = self.df["canteen.management_type"].apply(get_management_type)
+        self.df["cuisine_centrale"] = self.df["canteen.production_type"].apply(get_management_type)
+        self.df["modele_economique"] = self.df["canteen.economic_model"].apply(get_economic_model)
+        self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_economic_model)
+        # Add geo data
+        self.df["nbre_cantines_region"] = self.df["canteen.region"].apply(get_nbre_cantines_region)
+        self.df["objectif_zone_geo"] = self.df["canteen.region"].apply(get_objectif_zone_geo)
+        # Combine columns
+        self.df["teledeclaration.value_somme_egalim_avec_bio_ht"] = self.df.apply(get_egalim_avec_bio, axis=1)
+        self.df["teledeclaration.value_somme_egalim_hors_bio_ht"] = self.df.apply(get_egalim_hors_bio, axis=1)
+        self.df["teledeclaration.value_meat_and_fish_ht"] = self.df.apply(get_meat_and_fish, axis=1)
+        self.df["teledeclaration.value_meat_and_fish_egalim_ht"] = self.df.apply(get_meat_and_fish_egalim, axis=1)
+        # Calcul ratio
+        self.df["ratio_egalim_fish"] = self.df.apply(get_ratio_egalim_fish, axis=1)
+        self.df["ratio_egalim_meat_poultry"] = self.df.apply(get_ratio_egalim_meat_poultry, axis=1)
+        self.df["ratio_bio"] = self.df.apply(get_ratio_bio, axis=1)
+        self.df["ratio_egalim_avec_bio"] = self.df.apply(get_ratio_egalim_avec_bio, axis=1)
+        self.df["ratio_egalim_sans_bio"] = self.df.apply(get_ratio_egalim_sans_bio, axis=1)
+
 
     def load_dataset(self):
         """
