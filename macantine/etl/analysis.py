@@ -76,12 +76,7 @@ def get_egalim_hors_bio(row):
 
 
 def get_egalim_avec_bio(row):
-    return (
-        row["teledeclaration.value_bio_ht"]
-        + row["teledeclaration.value_externality_performance_ht"]
-        + row["teledeclaration.value_sustainable_ht"]
-        + row["teledeclaration.value_egalim_others_ht"]
-    )
+    return row["teledeclaration.value_bio_ht"] + get_egalim_hors_bio(row)
 
 
 def get_meat_and_fish(row):
