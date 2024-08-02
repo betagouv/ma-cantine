@@ -253,7 +253,7 @@ const routes = [
         meta: {
           title: "Actions anti-gaspi",
         },
-        sitemapGroup: Constants.SitemapGroups.LAW,
+        sitemapGroup: Constants.SitemapGroups.ACTION,
       },
       {
         path: ":id",
