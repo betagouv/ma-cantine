@@ -53,7 +53,7 @@ def get_economic_model(value):
     if value == "private":
         return "A) privé"
     elif value == "public":
-        return "B) oui"
+        return "B) public"
     else:
         return "C) non renseigné"
 
