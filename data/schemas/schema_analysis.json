@@ -6,7 +6,7 @@
       "type": "integer"
     },
     {
-      "name": "canteen_id",
+      "name": "year",
       "type": "string"
     },
     {
@@ -14,7 +14,7 @@
       "type": "string"
     },
     {
-      "name": "year",
+      "name": "canteen_id",
       "type": "string"
     },
     {
@@ -68,6 +68,38 @@
     {
       "name": "satellite_canteens_count",
       "type": "integer"
+    },
+    {
+      "name": "departement",
+      "type": "string"
+    },
+    {
+      "name": "lib_departement",
+      "type": "string"
+    },
+    {
+      "name": "region",
+      "type": "integer"
+    },
+    {
+      "name": "lib_region",
+      "type": "string"
+    },
+    {
+      "name": "nbre_cantines_region",
+      "type": "integer"
+    },
+    {
+      "name": "objectif_zone_geo",
+      "type": "string"
+    },
+    {
+      "name": "line_ministry",
+      "type": "string"
+    },
+    {
+      "name": "email",
+      "type": "string"
     },
     {
       "name": "value_total_ht",
@@ -126,46 +158,6 @@
       "type": "float"
     },
     {
-      "name": "departement",
-      "type": "string"
-    },
-    {
-      "name": "lib_departement",
-      "type": "string"
-    },
-    {
-      "name": "region",
-      "type": "integer"
-    },
-    {
-      "name": "lib_region",
-      "type": "string"
-    },
-    {
-      "name": "nbre_cantines_region",
-      "type": "integer"
-    },
-    {
-      "name": "objectif_zone_geo",
-      "type": "string"
-    },
-    {
-      "name": "line_ministry",
-      "type": "string"
-    },
-    {
-      "name": "email",
-      "type": "string"
-    },
-    {
-      "name": "vegetarian_weekly_recurrence",
-      "type": "string"
-    },
-    {
-      "name": "vegetarian_menu_type",
-      "type": "string"
-    },
-    {
       "name": "ratio_egalim_fish",
       "type": "float"
     },
@@ -184,6 +176,14 @@
     {
       "name": "ratio_egalim_sans_bio",
       "type": "float"
+    },
+    {
+      "name": "vegetarian_weekly_recurrence",
+      "type": "string"
+    },
+    {
+      "name": "vegetarian_menu_type",
+      "type": "string"
     },
     {
       "name": "declaration_2021",
