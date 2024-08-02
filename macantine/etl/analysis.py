@@ -5,6 +5,8 @@ import numpy as np
 
 from macantine.etl.data_warehouse import DataWareHouse
 from macantine.etl import etl
+import macantine.etl.open_data
+import macantine.etl.utils
 
 logger = logging.getLogger(__name__)
 
@@ -190,14 +192,14 @@ class ETL_ANALYSIS(etl.ETL):
 
     def __init__(self):
         self.df = None
-        self.years = etl.CAMPAIGN_DATES.keys()
+        self.years = macantine.etl.utils.CAMPAIGN_DATES.keys()
         self.extracted_table_name = "teledeclarations_extracted"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis.json"))
 
     def extract_dataset(self):
         # Load teledeclarations from prod database into the Data Warehouse
-        self.df = etl.fetch_teledeclarations(self.years)
+        self.df = macantine.etl.open_data.fetch_teledeclarations(self.years)
 
     def transform_dataset(self):
         # Flatten json 'declared_data' column
@@ -222,8 +224,8 @@ class ETL_ANALYSIS(etl.ETL):
 
         # Fill campaign participation
         logger.info("Canteens : Fill campaign participations...")
-        for year in etl.CAMPAIGN_DATES.keys():
-            campaign_participation = etl.map_canteens_td(year)
+        for year in macantine.etl.utils.CAMPAIGN_DATES.keys():
+            campaign_participation = macantine.etl.utils.map_canteens_td(year)
             col_name_campaign = f"declaration_{year}"
             self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
 

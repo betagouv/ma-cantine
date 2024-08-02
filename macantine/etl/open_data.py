@@ -2,7 +2,6 @@ import json
 import os
 import time
 import csv
-import logging
 import requests
 import pandas as pd
 
@@ -12,8 +11,9 @@ from django.core.files.storage import default_storage
 from django.db.models import Q
 from io import BytesIO
 
-
-logger = logging.getLogger(__name__)
+from macantine.etl.etl import logger
+import macantine.etl.utils
+from macantine.etl.utils import fetch_teledeclarations
 
 
 class ETL_OPEN_DATA(etl.ETL):
@@ -26,23 +26,25 @@ class ETL_OPEN_DATA(etl.ETL):
 
     def transform_geo_data(self, prefix=""):
         logger.info("Start fetching communes details")
-        communes_infos = etl.map_communes_infos()
+        communes_infos = macantine.etl.utils.map_communes_infos()
 
         if "campagne_td" in self.dataset_name:
             # Get department and region as most of TD doesnt have this info
             self.df["canteen_department"] = self.df["canteen_city_insee_code"].apply(
-                lambda x: etl.fetch_commune_detail(x, communes_infos, "department")
+                lambda x: macantine.etl.utils.fetch_commune_detail(x, communes_infos, "department")
             )
             self.df["canteen_region"] = self.df["canteen_city_insee_code"].apply(
-                lambda x: etl.fetch_commune_detail(x, communes_infos, "region")
+                lambda x: macantine.etl.utils.fetch_commune_detail(x, communes_infos, "region")
             )
 
         self.df[prefix + "epci"] = self.df[prefix + "city_insee_code"].apply(
-            lambda x: etl.fetch_commune_detail(x, communes_infos, "epci")
+            lambda x: macantine.etl.utils.fetch_commune_detail(x, communes_infos, "epci")
         )
 
-        epcis_names = etl.map_epcis_code_name()
-        self.df[prefix + "epci_lib"] = self.df[prefix + "epci"].apply(lambda x: etl.fetch_epci_name(x, epcis_names))
+        epcis_names = macantine.etl.utils.map_epcis_code_name()
+        self.df[prefix + "epci_lib"] = self.df[prefix + "epci"].apply(
+            lambda x: macantine.etl.utils.fetch_epci_name(x, epcis_names)
+        )
 
         logger.info("Start filling geo_name")
         self.fill_geo_names(prefix)
@@ -67,9 +69,9 @@ class ETL_OPEN_DATA(etl.ETL):
 
     def _extract_sectors(self):
         # Fetching sectors information and aggreting in list in order to have only one row per canteen
-        sectors = etl.map_sectors()
-        self.df["sectors"] = self.df["sectors"].apply(lambda x: etl.fetch_sector(x, sectors))
-        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(etl.format_list_sectors)
+        sectors = macantine.etl.utils.map_sectors()
+        self.df["sectors"] = self.df["sectors"].apply(lambda x: macantine.etl.utils.fetch_sector(x, sectors))
+        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(macantine.etl.utils.format_list_sectors)
         del self.df["sectors"]
 
         return self.df.merge(canteens_sectors, on="id")
@@ -144,7 +146,7 @@ class ETL_OPEN_DATA(etl.ETL):
             dataframe_chunks = [self.df[i : i + chunk_size] for i in range(0, len(self.df), chunk_size)]
             for chunk in dataframe_chunks:
                 # Convert datetime to string and create copy to avoid modifications on the original dataframe
-                chunk = etl.datetimes_to_str(chunk.copy())
+                chunk = macantine.etl.utils.datetimes_to_str(chunk.copy())
 
                 # Write chunk to the sheet, accumulating data
                 chunk.to_excel(
@@ -176,7 +178,7 @@ class ETL_OPEN_DATA(etl.ETL):
             self._load_data_parquet(filepath)
             self._load_data_xlsx(filepath)
 
-            etl.update_datagouv_resources()
+            macantine.etl.utils.update_datagouv_resources()
         except Exception as e:
             logger.error(f"Error saving validated data: {e}")
 
@@ -249,7 +251,7 @@ class ETL_CANTEEN(ETL_OPEN_DATA):
         logger.info("Canteens : Fill campaign participations...")
         start = time.time()
         for year in [2021, 2022, 2023]:
-            campaign_participation = etl.map_canteens_td(year)
+            campaign_participation = macantine.etl.utils.map_canteens_td(year)
             if year == 2023:
                 col_name_campaign = f"declaration_donnees_{year}_en_cours"
             else:
@@ -289,13 +291,13 @@ class ETL_TD(ETL_OPEN_DATA):
         self.df = None
 
     def extract_dataset(self):
-        self.df = etl.fetch_teledeclarations([self.year])
+        self.df = fetch_teledeclarations([self.year])
 
     def transform_sectors(self) -> pd.Series:
         sectors = self.df["canteen_sectors"]
         if not sectors.isnull().all():
-            sectors = sectors.apply(lambda x: list(map(lambda y: etl.format_sector(y), x)))
-            sectors = sectors.apply(etl.format_list_sectors)
+            sectors = sectors.apply(lambda x: list(map(lambda y: macantine.etl.utils.format_sector(y), x)))
+            sectors = sectors.apply(macantine.etl.utils.format_list_sectors)
         return sectors
 
     def transform_dataset(self):

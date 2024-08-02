@@ -1,6 +1,6 @@
 import pandas as pd
 import requests_mock
-from macantine.etl.etl import map_communes_infos, update_datagouv_resources
+from macantine.etl.utils import map_communes_infos
 from django.test import TestCase, override_settings
 from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
@@ -11,6 +11,8 @@ import json
 from django.core.files.storage import default_storage
 
 import os
+
+from macantine.etl.utils import update_datagouv_resources
 
 
 class TestETLAnalysis(TestCase):
