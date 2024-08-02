@@ -4,7 +4,11 @@
       <BreadcrumbsNav :title="wasteaction.title" :links="[{ to: { name: 'WasteActionsHome' } }]" />
       <v-row>
         <img
-          :src="wasteaction.lead_image ? wasteaction.lead_image.url : '/static/images/wasteaction-default-image.png'"
+          :src="
+            wasteaction.lead_image
+              ? wasteaction.lead_image.meta.download_url
+              : '/static/images/wasteaction-default-image.png'
+          "
           class="lead-image"
           alt=""
         />
@@ -13,13 +17,7 @@
         <v-col cols="12" class="mt-7" sm="2">
           <v-row justify="end">Type d'action</v-row>
           <v-row justify="end">
-            <DsfrTag
-              :text="wasteaction.effort"
-              class="mt-2 ml-2"
-              :closeable="false"
-              color="rgb(238, 238, 238)"
-              :small="true"
-            />
+            <DsfrTag :text="effort" class="mt-2 ml-2" :closeable="false" color="rgb(238, 238, 238)" :small="true" />
           </v-row>
           <v-row justify="end">Origine du gaspillage</v-row>
           <v-row justify="end">
@@ -56,6 +54,34 @@ export default {
     return {
       wasteaction: null,
       backLink: { name: "WasteActionsHome" },
+      effortItems: [
+        {
+          value: "SMALL",
+          text: "Petit pas",
+        },
+        {
+          value: "MEDIUM",
+          text: "Moyen",
+        },
+        {
+          value: "LARGE",
+          text: "Grand projet",
+        },
+      ],
+      wasteOriginItems: [
+        {
+          value: "PREP",
+          text: "Préparation",
+        },
+        {
+          value: "UNSERVED",
+          text: "Non servi",
+        },
+        {
+          value: "PLATE",
+          text: "Retour assiette",
+        },
+      ],
     }
   },
   props: {
@@ -81,11 +107,16 @@ export default {
     },
   },
   computed: {
+    effort() {
+      const effortLabel = this.effortItems.find((item) => item.value === this.wasteaction.effort).text
+      return effortLabel ? effortLabel : "default"
+    },
     wasteOrigins() {
-      return this.wasteaction.waste_origin.map((tag) => {
+      return this.wasteaction.waste_origin.map((wasteOriginId) => {
+        const wasteOriginLabel = this.wasteOriginItems.find((item) => item.value === wasteOriginId).text
         return {
-          id: tag,
-          text: tag,
+          id: wasteOriginId,
+          text: wasteOriginLabel ? wasteOriginLabel : "default",
           color: "rgb(238, 238, 238)",
         }
       })

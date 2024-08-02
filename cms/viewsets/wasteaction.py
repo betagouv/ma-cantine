@@ -2,7 +2,6 @@ from wagtail.snippets.views.snippets import SnippetViewSet
 from wagtail.admin.panels import TabbedInterface, ObjectList, FieldPanel
 from cms.models.wasteaction import WasteAction
 from wagtail.images.api.v2.views import BaseAPIViewSet
-from cms.serializers import WasteActionSerializer
 
 
 class WasteActionViewSet(SnippetViewSet):
@@ -40,6 +39,14 @@ class WasteActionAPIViewSet(BaseAPIViewSet):
     """
 
     model = WasteAction
-
-    def get_serializer_class(self):
-        return WasteActionSerializer
+    body_fields = BaseAPIViewSet.body_fields + [
+        "id",
+        "creation_date",
+        "modification_date",
+        "title",
+        "subtitle",
+        "effort",
+        "waste_origin",
+        "description",
+        "lead_image",
+    ]

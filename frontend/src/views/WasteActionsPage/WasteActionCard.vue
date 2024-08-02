@@ -5,7 +5,11 @@
     :to="{ name: 'WasteActionPage', params: { id: wasteaction.id } }"
   >
     <img
-      :src="wasteaction.lead_image ? wasteaction.lead_image.url : '/static/images/wasteaction-default-image.png'"
+      :src="
+        wasteaction.lead_image
+          ? wasteaction.lead_image.meta.download_url
+          : '/static/images/wasteaction-default-image.png'
+      "
       alt=""
     />
     <v-card-title class="d-flex flex-column-reverse align-start">
@@ -32,14 +36,50 @@ export default {
     },
   },
   components: { DsfrTagGroup },
+  data() {
+    return {
+      effortItems: [
+        {
+          value: "SMALL",
+          text: "Petit pas",
+        },
+        {
+          value: "MEDIUM",
+          text: "Moyen",
+        },
+        {
+          value: "LARGE",
+          text: "Grand projet",
+        },
+      ],
+      wasteOriginItems: [
+        {
+          value: "PREP",
+          text: "Préparation",
+        },
+        {
+          value: "UNSERVED",
+          text: "Non servi",
+        },
+        {
+          value: "PLATE",
+          text: "Retour assiette",
+        },
+      ],
+    }
+  },
   methods: {},
   computed: {
     tags() {
-      const effort = [{ id: this.wasteaction.effort, text: this.wasteaction.effort, color: "rgb(238, 238, 238)" }]
-      const waste_origins = this.wasteaction.waste_origin.map((tag) => {
+      let effortLabel = this.effortItems.find((item) => item.value === this.wasteaction.effort).text
+      if (effortLabel === undefined) effortLabel = "default"
+      const effort = [{ id: this.wasteaction.effort, text: effortLabel, color: "rgb(238, 238, 238)" }]
+      const waste_origins = this.wasteaction.waste_origin.map((wasteOriginId) => {
+        let wasteOriginLabel = this.wasteOriginItems.find((item) => item.value === wasteOriginId).text
+        if (wasteOriginLabel === undefined) wasteOriginLabel = "default"
         return {
-          id: tag,
-          text: tag,
+          id: wasteOriginId,
+          text: wasteOriginLabel,
           color: "rgb(238, 238, 238)",
         }
       })
