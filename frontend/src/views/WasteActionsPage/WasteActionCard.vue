@@ -12,15 +12,13 @@
       "
       alt=""
     />
-    <v-card-title class="d-flex flex-column-reverse align-start">
-      {{ wasteaction.title }}
+    <v-card-text class="pa-10">
       <DsfrTagGroup v-if="wasteaction.waste_origin.length" :tags="tags" :closeable="false" :small="true" />
-    </v-card-title>
-    <v-card-subtitle class="pt-1">
+      <h4 class="mt-6 fr-h4">{{ wasteaction.title }}</h4>
       <p class="mb-0">
         {{ wasteaction.subtitle }}
       </p>
-    </v-card-subtitle>
+    </v-card-text>
   </v-card>
 </template>
 
