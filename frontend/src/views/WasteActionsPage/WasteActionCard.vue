@@ -8,7 +8,7 @@
       :src="
         wasteaction.lead_image
           ? wasteaction.lead_image.meta.download_url
-          : '/static/images/wasteaction-default-image.png'
+          : '/static/images/wasteaction-default-image.jpg'
       "
       alt=""
     />
