@@ -13,33 +13,41 @@
           alt=""
         />
       </v-row>
-      <v-row justify="center">
-        <v-col cols="12" class="mt-7" sm="2">
+      <v-row>
+        <v-col cols="12" class="mt-8" sm="2">
           <v-row justify="end">Type d'action</v-row>
           <v-row justify="end">
-            <DsfrTag :text="effort" class="mt-2 ml-2" :closeable="false" color="rgb(238, 238, 238)" :small="true" />
+            <DsfrTag :text="effortLabel" :closeable="false" color="rgb(238, 238, 238)" :small="true" />
           </v-row>
-          <v-row justify="end">Origine du gaspillage</v-row>
+          <v-row justify="end">
+            <p class="text-right">
+              <i>{{ effortDescription }}</i>
+            </p>
+          </v-row>
+          <v-row justify="end" class="mt-12">Origine du gaspillage</v-row>
           <v-row justify="end">
             <DsfrTagGroup
               v-if="wasteaction.waste_origin.length"
               :tags="wasteOrigins"
               :closeable="false"
               :small="true"
+              class="flex-row-reverse"
             />
           </v-row>
         </v-col>
         <v-col cols="12" class="pa-12 text-left mt-sm-n12 body-wrapper" sm="7">
           <h1>{{ wasteaction.title }}</h1>
-          <p>{{ wasteaction.subtitle }}</p>
-          <p v-html="wasteaction.description"></p>
+          <p class="mt-12">{{ wasteaction.subtitle }}</p>
+          <p v-html="wasteaction.description" class="mt-9"></p>
         </v-col>
         <v-col cols="12" v-bind:class="{ 'mt-7': $vuetify.breakpoint.smAndUp }" sm="2">
           <!-- Implement action buttons -->
         </v-col>
       </v-row>
+      <v-row class="mt-9">
+        <BackLink :to="backLink" text="Retour" :primary="true" />
+      </v-row>
     </div>
-    <BackLink :to="backLink" text="Retour à la liste des actions" :primary="true" class="my-10 d-block" />
   </div>
 </template>
 <script>
@@ -58,14 +66,17 @@ export default {
         {
           value: "SMALL",
           text: "Petit pas",
+          description: "Investissement financier et humain modéré, mais impact limité.",
         },
         {
           value: "MEDIUM",
           text: "Moyen",
+          description: "Investissement financier et humain relativement important, impact moyen.",
         },
         {
           value: "LARGE",
           text: "Grand projet",
+          description: "Investissement financier et humain important, impact fort.",
         },
       ],
       wasteOriginItems: [
@@ -107,9 +118,13 @@ export default {
     },
   },
   computed: {
-    effort() {
+    effortLabel() {
       const effortLabel = this.effortItems.find((item) => item.value === this.wasteaction.effort).text
       return effortLabel ? effortLabel : "default"
+    },
+    effortDescription() {
+      const effortDescription = this.effortItems.find((item) => item.value === this.wasteaction.effort).description
+      return effortDescription ? effortDescription : ""
     },
     wasteOrigins() {
       return this.wasteaction.waste_origin.map((wasteOriginId) => {
