@@ -5,7 +5,7 @@ import { formatError } from "@/utils.js"
 import HelpText from "./HelpText.vue"
 import DsfrBooleanRadio from "@/components/DsfrBooleanRadio.vue"
 import { useValidators } from "@/validators.js"
-const { required, decimal, minValue, maxValue } = useValidators()
+const { decimal, minValue, maxValue } = useValidators()
 
 const props = defineProps(["data"])
 const sources = {
@@ -64,7 +64,7 @@ const genericPayloadKeys = Object.keys(payload)
 
 const rules = {
   totalKey: { decimal, minValue: minValue(0) },
-  sortedKey: { required },
+  sortedKey: {},
   edibleKey: { decimal, maxValue: maxValue(computed(() => payload.totalKey)) },
   inedibleKey: { decimal, maxValue: maxValue(computed(() => payload.totalKey)) },
 }
