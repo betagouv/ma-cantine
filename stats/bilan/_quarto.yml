@@ -1,8 +1,0 @@
-project:
-  output-dir: _output
-  render:
-    - "*.qmd"
-
-toc: true
-number-sections: true
-  

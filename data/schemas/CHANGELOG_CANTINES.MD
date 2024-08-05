@@ -2,6 +2,11 @@
 
 Tous les changements notables apportés aux jeux de données exposés sur data.gouv.fr vont être documentés ici.
 
+## 2024-07-25
+
+### Suppression
+* Colonne 'publication_status' : Depuis fin mai, toutes les cantines sont maintenant publiées sur la plateforme ma-cantine. Ce champ est désormais obsolète.
+
 ## 2024-03-29
 
 ### Modification

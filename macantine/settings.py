@@ -53,6 +53,7 @@ DEBUG_PERFORMANCE = os.getenv("DEBUG") == "True" and os.getenv("DEBUG_PERFORMANC
 
 ENVIRONMENT = os.getenv("ENVIRONMENT")
 
+
 # Sentry
 # No need making this one secret: https://forum.sentry.io/t/dsn-private-public/6297/3
 if not DEBUG:
@@ -256,9 +257,14 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
+# Reading doc API and load it in the swagger
+with open(BASE_DIR / "docs/api.html", "r") as f:
+    doc_api = f.read()
+
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "Ma Cantine API",
-    "DESCRIPTION": "API de l'application « ma cantine »",
+    "DESCRIPTION": doc_api,
     "VERSION": "1",
     "SERVE_INCLUDE_SCHEMA": False,
     "SWAGGER_UI_DIST": "SIDECAR",
@@ -271,6 +277,12 @@ SPECTACULAR_SETTINGS = {
     "POSTPROCESSING_HOOKS": [
         "drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields",
     ],
+    # Oauth2 related settings. used for example by django-oauth2-toolkit.
+    # https://spec.openapis.org/oas/v3.0.3#oauth-flows-object
+    "OAUTH2_FLOWS": ["authorizationCode"],
+    "OAUTH2_AUTHORIZATION_URL": "/o/authorize/",
+    "OAUTH2_TOKEN_URL": "/o/token/",
+    "OAUTH2_SCOPES": {"read": "Lecture", "write": "Ecriture"},
 }
 
 # Frontend - VueJS application
