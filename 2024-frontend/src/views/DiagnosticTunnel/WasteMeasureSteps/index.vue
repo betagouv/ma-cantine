@@ -15,7 +15,7 @@ const firstSteps = [
     component: markRaw(MeasurementPeriod),
   },
   {
-    urlSlug: "totale",
+    urlSlug: "total",
     title: "Masse totale de gaspillage",
     component: markRaw(TotalWaste),
   },

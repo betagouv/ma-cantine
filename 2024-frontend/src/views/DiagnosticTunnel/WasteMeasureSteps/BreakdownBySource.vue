@@ -1,9 +1,10 @@
 <script setup>
-import { onMounted, reactive, watch, computed, ref, inject, nextTick, defineProps } from "vue"
+import { onMounted, reactive, watch, computed, inject, nextTick, defineProps } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { formatError } from "@/utils.js"
 import HelpText from "./HelpText.vue"
 import DsfrBooleanRadio from "@/components/DsfrBooleanRadio.vue"
+import { helpers } from "@vuelidate/validators"
 import { useValidators } from "@/validators.js"
 const { decimal, minValue, maxValue } = useValidators()
 
@@ -62,11 +63,22 @@ const payload = reactive({
 
 const genericPayloadKeys = Object.keys(payload)
 
+const sumCheck = () => {
+  if (!payload.totalKey) return true
+  if (!(payload.edibleKey > 0) || !(payload.inedibleKey > 0)) return true
+  return payload.edibleKey + payload.inedibleKey === payload.totalKey
+}
+const combination = helpers.withMessage(
+  "La somme de denrées comestibles et non-comestibles devrait être égale au total",
+  sumCheck
+)
+
 const rules = {
   totalKey: { decimal, minValue: minValue(0) },
   sortedKey: {},
-  edibleKey: { decimal, maxValue: maxValue(computed(() => payload.totalKey)) },
-  inedibleKey: { decimal, maxValue: maxValue(computed(() => payload.totalKey)) },
+  edibleKey: { decimal, maxValue: maxValue(computed(() => payload.totalKey)), minValue: minValue(0) },
+  inedibleKey: { decimal, maxValue: maxValue(computed(() => payload.totalKey)), minValue: minValue(0) },
+  combined: { combination },
 }
 
 const v$ = useVuelidate(rules, payload)
@@ -84,33 +96,6 @@ const leftHandQuestionsClass = computed(() => {
   return !specifySortedExcess.value ? "fr-col-sm-5" : "fr-col-10"
 })
 
-const userChoices = {
-  edible: "edible",
-  inedible: "inedible",
-}
-const userChoice = ref()
-
-const userChose = (type) => {
-  userChoice.value = type
-}
-
-const resetCalculationMaybe = () => {
-  if (payload.edibleKey === "" || payload.inedibleKey === "") {
-    userChoice.value = undefined
-    payload.edibleKey = undefined
-    payload.inedibleKey = undefined
-  }
-}
-
-const calculateOtherWeight = () => {
-  // TODO: handle floating point errors
-  if (userChoice.value === userChoices.edible) {
-    payload.inedibleKey = payload.totalKey - payload.edibleKey
-  } else if (userChoice.value === userChoices.inedible) {
-    payload.edibleKey = payload.totalKey - payload.inedibleKey
-  }
-}
-
 watch(props, () => {
   nextTick().then(() => {
     payload._freezeWatcher = true
@@ -121,8 +106,6 @@ watch(props, () => {
 
 watch(payload, () => {
   if (!payload._freezeWatcher) {
-    resetCalculationMaybe()
-    calculateOtherWeight()
     updatePayload()
   }
 })
@@ -183,33 +166,27 @@ onMounted(() => {
         </p>
         <DsfrTooltip :content="source.edibleHelp" />
       </div>
-      <DsfrInputGroup
-        v-model.number="payload.edibleKey"
-        type="number"
-        label="Total du gaspillage de denrées comestibles"
-        hint="En kg (optionnel)"
-        label-visible
-        class="fr-mb-2w"
-        :error-message="formatError(v$.edibleKey)"
-        @keydown="userChose(userChoices.edible)"
-        :disabled="userChoice === userChoices.inedible"
-      />
-      <!-- TODO: not sure keydown is best - can scroll -->
-      <DsfrInputGroup
-        v-model.number="payload.inedibleKey"
-        type="number"
-        label="Total du gaspillage de denrées non comestibles"
-        hint="En kg (optionnel)"
-        label-visible
-        class="fr-mb-2w"
-        :error-message="formatError(v$.inedibleKey)"
-        @keydown="userChose(userChoices.inedible)"
-        :disabled="userChoice === userChoices.edible"
-      />
-      <p class="calculation-info fr-text--sm fr-mb-0 fr-mt-4w">
-        <span class="fr-icon-info-fill fr-icon--sm fr-mr-1v"></span>
-        Remplissez un des deux champs pour calculer l’autre automatiquement
-      </p>
+      <DsfrInputGroup :error-message="formatError(v$.combined)">
+        <DsfrInputGroup
+          v-model.number="payload.edibleKey"
+          type="number"
+          label="Total du gaspillage de denrées comestibles"
+          hint="En kg (optionnel)"
+          label-visible
+          class="fr-mb-2w"
+          :error-message="formatError(v$.edibleKey)"
+        />
+        <!-- TODO: not sure keydown is best - can scroll -->
+        <DsfrInputGroup
+          v-model.number="payload.inedibleKey"
+          type="number"
+          label="Total du gaspillage de denrées non comestibles"
+          hint="En kg (optionnel)"
+          label-visible
+          class="fr-mb-2w"
+          :error-message="formatError(v$.inedibleKey)"
+        />
+      </DsfrInputGroup>
     </div>
   </div>
 </template>
