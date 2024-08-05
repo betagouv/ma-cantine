@@ -1,4 +1,4 @@
-name: Frontend build test
+name: Ma Cantine frontend CI
 
 on: [push]
 
