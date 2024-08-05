@@ -54,7 +54,7 @@ const canteen = reactive({
 const payload = reactive({
   startDate: originalPayload.startDate,
   endDate: originalPayload.endDate,
-  mealCount: undefined,
+  mealCount: originalPayload.mealCount,
 })
 
 const afterStartDateValidator = (date) => {
