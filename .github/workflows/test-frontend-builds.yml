@@ -3,7 +3,7 @@ name: Frontend build test
 on: [push]
 
 jobs:
-  dependabot-frontend-build:
+  frontend-build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
