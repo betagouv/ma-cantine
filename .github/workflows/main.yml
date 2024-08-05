@@ -3,7 +3,7 @@ name: Ma Cantine CI
 on: [push]
 
 jobs:
-  backend:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -55,3 +55,42 @@ jobs:
           SIRET_API_SECRET: fake
         run: |
           python3 manage.py test
+
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Vue 2 install
+        working-directory: ./frontend
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: |
+          npm install
+
+      - name: Vue 2 build
+        working-directory: ./frontend
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: |
+          npm run build --if-present
+
+      - name: Vue 2 test
+        working-directory: ./frontend
+        run: |
+          npm run test
+
+      - name: Vue 3 build
+        working-directory: ./
+        env:
+          SECRET: test
+          ALLOWED_HOSTS: localhost
+          REDIS_URL: redis://localhost:6379/0
+          STATICFILES_STORAGE: django.contrib.staticfiles.storage.StaticFilesStorage
+          DEFAULT_FILE_STORAGE: django.core.files.storage.FileSystemStorage
+        run: |
+          python3 manage.py collectstatic --noinput
+          cd ./2024-frontend
+          npm install
+          npm run build --if-present
