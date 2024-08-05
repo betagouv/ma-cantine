@@ -13,28 +13,12 @@ const emit = defineEmits(["provide-vuelidate", "update-payload"])
 const originalPayload = inject("originalPayload")
 
 const state = reactive({
-  editMealCount: originalPayload.editMealCount,
   editCanteenMealCount: originalPayload.editCanteenMealCount,
 })
 
-const toggleCanteenEdit = () => {
-  state.editCanteenMealCount = !state.editCanteenMealCount
-  // disable period meal count edit to avoid confusion
-  if (state.editCanteenMealCount) state.editMealCount = false
-}
-
 const togglePeriodEdit = () => {
   state.editMealCount = !state.editMealCount
-  if (state.editMealCount) state.editCanteenMealCount = false
   // TODO: do we want to track when the number was changed from the auto calculation?
-}
-
-const saveCanteenMealCount = () => {
-  v$.value.canteen.$validate()
-  if (!v$.value.canteen.$invalid) {
-    state.editCanteenMealCount = !state.editCanteenMealCount
-    calculateMealCountMaybe()
-  }
 }
 
 const datesEntered = computed(() => {
@@ -58,17 +42,19 @@ const daysInPeriod = computed(() => {
 
 const calculateMealCountMaybe = () => {
   if (datesEntered.value) {
-    payload.mealCount = payload.canteen.dailyMealCount * daysInPeriod.value
+    payload.mealCount = canteen.dailyMealCount * daysInPeriod.value
   }
 }
+
+// TODO: initialise with data
+const canteen = reactive({
+  dailyMealCount: 200,
+})
 
 const payload = reactive({
   startDate: originalPayload.startDate,
   endDate: originalPayload.endDate,
   mealCount: undefined,
-  canteen: {
-    dailyMealCount: 200, // TODO: initialise with data
-  },
 })
 
 const afterStartDateValidator = (date) => {
@@ -82,9 +68,6 @@ const rules = {
   startDate: { required }, // TODO: ensure greater than endDate of last measurement taken
   endDate: { required, afterStartDate },
   mealCount: { required, integer, minValue: minValue(1) },
-  canteen: {
-    dailyMealCount: { required, integer, minValue: minValue(1) },
-  },
 }
 
 const v$ = useVuelidate(rules, payload)
@@ -164,36 +147,17 @@ onMounted(() => {
             >
               Modifier
             </DsfrButton>
-            <DsfrButton v-else @click="togglePeriodEdit">Sauvegarder</DsfrButton>
           </div>
         </div>
       </div>
       <div class="fr-col-md-6">
         <HelpText v-if="datesEntered">
-          <p>
+          <p class="fr-mb-1w">
             Calculé à partir du nombre de couverts par jour indiqué pour votre établissement :
           </p>
-          <div v-if="!state.editCanteenMealCount" class="fr-grid-row fr-grid-row--bottom">
-            <p class="fr-mb-0 fr-mr-2w">{{ payload.canteen.dailyMealCount }}</p>
-            <div>
-              <DsfrButton @click="toggleCanteenEdit" tertiary icon="fr-icon-pencil-fill" size="sm">Modifier</DsfrButton>
-            </div>
-          </div>
-          <div v-else class="fr-grid-row fr-grid-row--bottom">
-            <!-- TODO: how to keep in alignement against year meal count? Show both? -->
-            <div class="fr-mr-2w">
-              <DsfrInputGroup
-                v-model.number="payload.canteen.dailyMealCount"
-                type="number"
-                label="Nombre de couverts par jour"
-                label-visible
-                :error-message="formatError(v$.canteen.dailyMealCount)"
-              />
-            </div>
-            <div>
-              <DsfrButton @click="saveCanteenMealCount">Sauvegarder</DsfrButton>
-            </div>
-          </div>
+          <p class="fr-mb-0">
+            <b>{{ canteen.dailyMealCount }}</b>
+          </p>
         </HelpText>
       </div>
     </div>
