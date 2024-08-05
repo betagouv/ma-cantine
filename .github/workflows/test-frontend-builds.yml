@@ -1,11 +1,6 @@
-name: Dependabot upgrade test
+name: Frontend build test
 
-on:
-  push:
-    branches:
-      - staging
-      - main
-      - "dependabot/**"
+on: [push]
 
 jobs:
   dependabot-frontend-build:
