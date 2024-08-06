@@ -29,8 +29,6 @@ export default {
     return {
       limit: 6,
       page: null,
-      tag: null,
-      searchTerm: null,
       wasteactions: [],
       wasteactionsCount: null,
     }
@@ -49,8 +47,6 @@ export default {
       this.$store
         .dispatch("fetchWasteActions", {
           offset: this.offset,
-          tag: this.tag,
-          search: this.searchTerm,
           limit: this.limit,
         })
         .then((response) => {
