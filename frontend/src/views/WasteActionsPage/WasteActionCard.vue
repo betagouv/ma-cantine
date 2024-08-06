@@ -12,13 +12,18 @@
       "
       alt=""
     />
-    <v-card-text class="pa-10">
+    <v-card-text class="pa-10 pb-5">
       <DsfrTagGroup v-if="wasteaction.waste_origin.length" :tags="tags" :closeable="false" :small="true" />
       <h4 class="mt-6 fr-h4">{{ wasteaction.title }}</h4>
       <p class="mb-0">
         {{ wasteaction.subtitle }}
       </p>
     </v-card-text>
+    <v-spacer></v-spacer>
+    <v-card-actions class="pa-10 pt-0">
+      <v-spacer></v-spacer>
+      <v-icon color="primary">$arrow-right-line</v-icon>
+    </v-card-actions>
   </v-card>
 </template>
 
