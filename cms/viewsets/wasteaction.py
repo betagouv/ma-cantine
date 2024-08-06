@@ -39,7 +39,7 @@ class WasteActionAPIViewSet(BaseAPIViewSet):
     """
 
     model = WasteAction
-    body_fields = BaseAPIViewSet.body_fields + [
+    body_fields = [
         "id",
         "creation_date",
         "modification_date",
@@ -50,3 +50,4 @@ class WasteActionAPIViewSet(BaseAPIViewSet):
         "description",
         "lead_image",
     ]
+    meta_fields = []
