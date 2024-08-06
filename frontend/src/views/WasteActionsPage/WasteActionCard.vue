@@ -1,9 +1,5 @@
 <template>
-  <v-card
-    outlined
-    class="fill-height text-left d-flex flex-column dsfr expanded-link"
-    :to="{ name: 'WasteActionPage', params: { id: wasteaction.id } }"
-  >
+  <v-card outlined class="fill-height text-left d-flex flex-column dsfr expanded-link">
     <img
       :src="
         wasteaction.lead_image
@@ -14,7 +10,11 @@
     />
     <v-card-text class="pa-10 pb-5">
       <DsfrTagGroup v-if="wasteaction.waste_origin.length" :tags="tags" :closeable="false" :small="true" />
-      <h2 class="mt-6 fr-h4">{{ wasteaction.title }}</h2>
+      <h2 class="mt-6 fr-h4">
+        <router-link :to="{ name: 'WasteActionPage', params: { id: wasteaction.id } }">
+          {{ wasteaction.title }}
+        </router-link>
+      </h2>
       <p class="mb-0">
         {{ wasteaction.subtitle }}
       </p>
