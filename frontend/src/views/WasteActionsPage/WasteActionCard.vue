@@ -29,6 +29,7 @@
 
 <script>
 import DsfrTagGroup from "@/components/DsfrTagGroup"
+import Constants from "@/constants"
 
 export default {
   name: "WasteActionCard",
@@ -39,46 +40,13 @@ export default {
     },
   },
   components: { DsfrTagGroup },
-  data() {
-    return {
-      effortItems: [
-        {
-          value: "SMALL",
-          text: "Petit pas",
-        },
-        {
-          value: "MEDIUM",
-          text: "Moyen",
-        },
-        {
-          value: "LARGE",
-          text: "Grand projet",
-        },
-      ],
-      wasteOriginItems: [
-        {
-          value: "PREP",
-          text: "Préparation",
-        },
-        {
-          value: "UNSERVED",
-          text: "Non servi",
-        },
-        {
-          value: "PLATE",
-          text: "Retour assiette",
-        },
-      ],
-    }
-  },
-  methods: {},
   computed: {
     tags() {
-      let effortLabel = this.effortItems.find((item) => item.value === this.wasteaction.effort).text
+      let effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteaction.effort).text
       if (effortLabel === undefined) effortLabel = "default"
       const effort = [{ id: this.wasteaction.effort, text: effortLabel, color: "rgb(238, 238, 238)" }]
       const waste_origins = this.wasteaction.waste_origin.map((wasteOriginId) => {
-        let wasteOriginLabel = this.wasteOriginItems.find((item) => item.value === wasteOriginId).text
+        let wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId).text
         if (wasteOriginLabel === undefined) wasteOriginLabel = "default"
         return {
           id: wasteOriginId,

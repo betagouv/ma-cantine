@@ -686,4 +686,35 @@ export default Object.freeze({
       help: "Vous connaissez les labels et les familles de produits de vos achats",
     },
   ],
+  WasteActionEffortLevels: [
+    {
+      value: "SMALL",
+      text: "Petit pas",
+      description: "Investissement financier et humain modéré, mais impact limité.",
+    },
+    {
+      value: "MEDIUM",
+      text: "Moyen",
+      description: "Investissement financier et humain relativement important, impact moyen.",
+    },
+    {
+      value: "LARGE",
+      text: "Grand projet",
+      description: "Investissement financier et humain important, impact fort.",
+    },
+  ],
+  WasteActionOrigins: [
+    {
+      value: "PREP",
+      text: "Préparation",
+    },
+    {
+      value: "UNSERVED",
+      text: "Non servi",
+    },
+    {
+      value: "PLATE",
+      text: "Retour assiette",
+    },
+  ],
 })

@@ -55,6 +55,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import BackLink from "@/components/BackLink"
 import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrTag from "@/components/DsfrTag"
+import Constants from "@/constants"
 
 export default {
   components: { BreadcrumbsNav, BackLink, DsfrTagGroup, DsfrTag },
@@ -62,37 +63,6 @@ export default {
     return {
       wasteaction: null,
       backLink: { name: "WasteActionsHome" },
-      effortItems: [
-        {
-          value: "SMALL",
-          text: "Petit pas",
-          description: "Investissement financier et humain modéré, mais impact limité.",
-        },
-        {
-          value: "MEDIUM",
-          text: "Moyen",
-          description: "Investissement financier et humain relativement important, impact moyen.",
-        },
-        {
-          value: "LARGE",
-          text: "Grand projet",
-          description: "Investissement financier et humain important, impact fort.",
-        },
-      ],
-      wasteOriginItems: [
-        {
-          value: "PREP",
-          text: "Préparation",
-        },
-        {
-          value: "UNSERVED",
-          text: "Non servi",
-        },
-        {
-          value: "PLATE",
-          text: "Retour assiette",
-        },
-      ],
     }
   },
   props: {
@@ -119,16 +89,17 @@ export default {
   },
   computed: {
     effortLabel() {
-      const effortLabel = this.effortItems.find((item) => item.value === this.wasteaction.effort).text
+      const effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteaction.effort).text
       return effortLabel ? effortLabel : "default"
     },
     effortDescription() {
-      const effortDescription = this.effortItems.find((item) => item.value === this.wasteaction.effort).description
+      const effortDescription = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteaction.effort)
+        .description
       return effortDescription ? effortDescription : ""
     },
     wasteOrigins() {
       return this.wasteaction.waste_origin.map((wasteOriginId) => {
-        const wasteOriginLabel = this.wasteOriginItems.find((item) => item.value === wasteOriginId).text
+        const wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId).text
         return {
           id: wasteOriginId,
           text: wasteOriginLabel ? wasteOriginLabel : "default",
