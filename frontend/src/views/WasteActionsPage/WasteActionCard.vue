@@ -14,7 +14,7 @@
     />
     <v-card-text class="pa-10 pb-5">
       <DsfrTagGroup v-if="wasteaction.waste_origin.length" :tags="tags" :closeable="false" :small="true" />
-      <h4 class="mt-6 fr-h4">{{ wasteaction.title }}</h4>
+      <h2 class="mt-6 fr-h4">{{ wasteaction.title }}</h2>
       <p class="mb-0">
         {{ wasteaction.subtitle }}
       </p>
