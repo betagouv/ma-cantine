@@ -24,7 +24,7 @@
               <i>{{ effortDescription }}</i>
             </p>
           </v-row>
-          <v-row justify="end" class="mt-12">Origine du gaspillage</v-row>
+          <v-row justify="end" class="mt-12"><p>Origine du gaspillage</p></v-row>
           <v-row justify="end">
             <DsfrTagGroup
               v-if="wasteAction.waste_origin.length"
