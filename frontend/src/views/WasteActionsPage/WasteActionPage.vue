@@ -1,7 +1,7 @@
 <template>
   <div id="wasteaction-page">
     <div v-if="wasteAction">
-      <BreadcrumbsNav :title="wasteAction.title" :links="[{ to: { name: 'WasteActionsHome' } }]" />
+      <BreadcrumbsNav :title="wasteAction.title" :links="[{ to: backLink }]" />
       <v-row>
         <img
           :src="
@@ -15,7 +15,7 @@
       </v-row>
       <v-row>
         <v-col cols="12" class="mt-8" sm="2">
-          <v-row justify="end">Type d'action</v-row>
+          <v-row justify="end"><p>Type d'action</p></v-row>
           <v-row justify="end">
             <DsfrTag :text="effortLabel" :closeable="false" :small="true" />
           </v-row>
