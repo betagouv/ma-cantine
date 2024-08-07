@@ -1,12 +1,12 @@
 <template>
   <div id="wasteaction-page">
-    <div v-if="wasteaction">
-      <BreadcrumbsNav :title="wasteaction.title" :links="[{ to: { name: 'WasteActionsHome' } }]" />
+    <div v-if="wasteAction">
+      <BreadcrumbsNav :title="wasteAction.title" :links="[{ to: { name: 'WasteActionsHome' } }]" />
       <v-row>
         <img
           :src="
-            wasteaction.lead_image
-              ? wasteaction.lead_image.meta.download_url
+            wasteAction.lead_image
+              ? wasteAction.lead_image.meta.download_url
               : '/static/images/wasteaction-default-image.jpg'
           "
           class="lead-image"
@@ -27,7 +27,7 @@
           <v-row justify="end" class="mt-12">Origine du gaspillage</v-row>
           <v-row justify="end">
             <DsfrTagGroup
-              v-if="wasteaction.waste_origin.length"
+              v-if="wasteAction.waste_origin.length"
               :tags="wasteOrigins"
               :closeable="false"
               :small="true"
@@ -36,9 +36,9 @@
           </v-row>
         </v-col>
         <v-col cols="12" class="pa-12 text-left mt-sm-n12 body-wrapper" sm="7">
-          <h1>{{ wasteaction.title }}</h1>
-          <p class="mt-12">{{ wasteaction.subtitle }}</p>
-          <p v-html="wasteaction.description" class="mt-9"></p>
+          <h1>{{ wasteAction.title }}</h1>
+          <p class="mt-12">{{ wasteAction.subtitle }}</p>
+          <p v-html="wasteAction.description" class="mt-9"></p>
         </v-col>
         <v-col cols="12" v-bind:class="{ 'mt-7': $vuetify.breakpoint.smAndUp }" sm="2">
           <!-- Implement action buttons -->
@@ -61,7 +61,7 @@ export default {
   components: { BreadcrumbsNav, BackLink, DsfrTagGroup, DsfrTag },
   data() {
     return {
-      wasteaction: null,
+      wasteAction: null,
       backLink: { name: "WasteActionsHome" },
     }
   },
@@ -71,9 +71,9 @@ export default {
     },
   },
   methods: {
-    setWasteAction(wasteaction) {
-      this.wasteaction = wasteaction
-      if (wasteaction) document.title = `${this.wasteaction.title} - ${this.$store.state.pageTitleSuffix}`
+    setWasteAction(wasteAction) {
+      this.wasteAction = wasteAction
+      if (wasteAction) document.title = `${this.wasteAction.title} - ${this.$store.state.pageTitleSuffix}`
     },
     fetchWasteAction() {
       return fetch(`/apicms/v1/wasteactions/${this.id}/?fields=*`)
@@ -93,16 +93,16 @@ export default {
   },
   computed: {
     effortLabel() {
-      const effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteaction.effort)?.text
+      const effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort)?.text
       return effortLabel || "Inconnu"
     },
     effortDescription() {
-      const effortDescription = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteaction.effort)
+      const effortDescription = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort)
         ?.description
       return effortDescription || ""
     },
     wasteOrigins() {
-      return this.wasteaction.waste_origin.map((wasteOriginId) => {
+      return this.wasteAction.waste_origin.map((wasteOriginId) => {
         const wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId)?.text
         return {
           id: wasteOriginId,

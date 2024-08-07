@@ -4,16 +4,16 @@
     <div v-if="loading" class="mt-8">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
-    <div v-if="!loading && wasteactions.length > 0">
+    <div v-if="!loading && wasteActions.length > 0">
       <h1 class="fr-h1 mb-4">
         Lutter contre le gaspillage alimentaire
       </h1>
       <v-row class="pa-2 mt-2">
-        <v-col vols="12" sm="6" md="4" v-for="wasteaction in wasteactions" :key="wasteaction.id">
-          <WasteActionCard :wasteaction="wasteaction" />
+        <v-col vols="12" sm="6" md="4" v-for="wasteAction in wasteActions" :key="wasteAction.id">
+          <WasteActionCard :wasteAction="wasteAction" />
         </v-col>
       </v-row>
-      <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(wasteactionsCount / limit)" />
+      <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(wasteActionsCount / limit)" />
     </div>
   </div>
 </template>
@@ -29,13 +29,13 @@ export default {
     return {
       limit: 6,
       page: null,
-      wasteactions: [],
-      wasteactionsCount: null,
+      wasteActions: [],
+      wasteActionsCount: null,
     }
   },
   computed: {
     loading() {
-      return this.wasteactionsCount === null
+      return this.wasteActionsCount === null
     },
     offset() {
       return (this.page - 1) * this.limit
@@ -50,8 +50,8 @@ export default {
           limit: this.limit,
         })
         .then((response) => {
-          this.wasteactions = response.items
-          this.wasteactionsCount = response.meta.total_count
+          this.wasteActions = response.items
+          this.wasteActionsCount = response.meta.total_count
         })
         .catch(() => {
           this.$store.dispatch("notifyServerError")

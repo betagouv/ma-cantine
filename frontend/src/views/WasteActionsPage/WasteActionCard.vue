@@ -2,21 +2,21 @@
   <v-card outlined class="fill-height text-left d-flex flex-column dsfr expanded-link">
     <img
       :src="
-        wasteaction.lead_image
-          ? wasteaction.lead_image.meta.download_url
+        wasteAction.lead_image
+          ? wasteAction.lead_image.meta.download_url
           : '/static/images/wasteaction-default-image.jpg'
       "
       alt=""
     />
     <v-card-text class="pa-10 pb-5">
-      <DsfrTagGroup v-if="wasteaction.waste_origin.length" :tags="tags" :closeable="false" :small="true" />
+      <DsfrTagGroup v-if="wasteAction.waste_origin.length" :tags="tags" :closeable="false" :small="true" />
       <h2 class="mt-6 fr-h4">
-        <router-link :to="{ name: 'WasteActionPage', params: { id: wasteaction.id } }">
-          {{ wasteaction.title }}
+        <router-link :to="{ name: 'WasteActionPage', params: { id: wasteAction.id } }">
+          {{ wasteAction.title }}
         </router-link>
       </h2>
       <p class="mb-0">
-        {{ wasteaction.subtitle }}
+        {{ wasteAction.subtitle }}
       </p>
     </v-card-text>
     <v-spacer></v-spacer>
@@ -34,7 +34,7 @@ import Constants from "@/constants"
 export default {
   name: "WasteActionCard",
   props: {
-    wasteaction: {
+    wasteAction: {
       type: Object,
       required: true,
     },
@@ -42,9 +42,9 @@ export default {
   components: { DsfrTagGroup },
   computed: {
     tags() {
-      const effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteaction.effort)?.text
-      const effort = [{ id: this.wasteaction.effort, text: effortLabel || "Inconnu" }]
-      const waste_origins = this.wasteaction.waste_origin.map((wasteOriginId) => {
+      const effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort)?.text
+      const effort = [{ id: this.wasteAction.effort, text: effortLabel || "Inconnu" }]
+      const waste_origins = this.wasteAction.waste_origin.map((wasteOriginId) => {
         const wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId)?.text
         return {
           id: wasteOriginId,
