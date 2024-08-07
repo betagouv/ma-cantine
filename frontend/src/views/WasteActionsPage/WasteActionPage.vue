@@ -71,11 +71,15 @@ export default {
     },
   },
   methods: {
+    setWasteAction(wasteaction) {
+      this.wasteaction = wasteaction
+      if (wasteaction) document.title = `${this.wasteaction.title} - ${this.$store.state.pageTitleSuffix}`
+    },
     fetchWasteAction() {
       return fetch(`/apicms/v1/wasteactions/${this.id}/?fields=*`)
         .then((response) => {
           if (response.status !== 200) throw new Error()
-          response.json().then((x) => (this.wasteaction = x))
+          response.json().then((x) => this.setWasteAction(x))
         })
         .catch(() => {
           this.$router.push({ name: "WasteActionsHome" }).then(() => {
