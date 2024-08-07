@@ -42,15 +42,13 @@ export default {
   components: { DsfrTagGroup },
   computed: {
     tags() {
-      let effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteaction.effort).text
-      if (effortLabel === undefined) effortLabel = "default"
-      const effort = [{ id: this.wasteaction.effort, text: effortLabel }]
+      const effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteaction.effort)?.text
+      const effort = [{ id: this.wasteaction.effort, text: effortLabel || "Inconnu" }]
       const waste_origins = this.wasteaction.waste_origin.map((wasteOriginId) => {
-        let wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId).text
-        if (wasteOriginLabel === undefined) wasteOriginLabel = "default"
+        const wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId)?.text
         return {
           id: wasteOriginId,
-          text: wasteOriginLabel,
+          text: wasteOriginLabel || "Inconnu",
         }
       })
       return effort.concat(waste_origins)

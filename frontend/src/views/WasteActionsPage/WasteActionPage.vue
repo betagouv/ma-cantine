@@ -93,20 +93,20 @@ export default {
   },
   computed: {
     effortLabel() {
-      const effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteaction.effort).text
-      return effortLabel ? effortLabel : "default"
+      const effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteaction.effort)?.text
+      return effortLabel || "Inconnu"
     },
     effortDescription() {
       const effortDescription = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteaction.effort)
-        .description
-      return effortDescription ? effortDescription : ""
+        ?.description
+      return effortDescription || ""
     },
     wasteOrigins() {
       return this.wasteaction.waste_origin.map((wasteOriginId) => {
-        const wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId).text
+        const wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId)?.text
         return {
           id: wasteOriginId,
-          text: wasteOriginLabel ? wasteOriginLabel : "default",
+          text: wasteOriginLabel ? wasteOriginLabel : "Inconnu",
         }
       })
     },
