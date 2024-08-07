@@ -6,7 +6,7 @@
     </div>
     <div v-if="!loading && wasteactions.length > 0">
       <h1 class="fr-h1 mb-4">
-        Explorez et mettez en avant les actions de lutte contre le gaspillage
+        Lutter contre le gaspillage alimentaire
       </h1>
       <v-row class="pa-2 mt-2">
         <v-col vols="12" sm="6" md="4" v-for="wasteaction in wasteactions" :key="wasteaction.id">
