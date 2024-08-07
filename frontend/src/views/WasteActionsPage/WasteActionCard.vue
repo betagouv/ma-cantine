@@ -44,14 +44,13 @@ export default {
     tags() {
       let effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteaction.effort).text
       if (effortLabel === undefined) effortLabel = "default"
-      const effort = [{ id: this.wasteaction.effort, text: effortLabel, color: "rgb(238, 238, 238)" }]
+      const effort = [{ id: this.wasteaction.effort, text: effortLabel }]
       const waste_origins = this.wasteaction.waste_origin.map((wasteOriginId) => {
         let wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId).text
         if (wasteOriginLabel === undefined) wasteOriginLabel = "default"
         return {
           id: wasteOriginId,
           text: wasteOriginLabel,
-          color: "rgb(238, 238, 238)",
         }
       })
       return effort.concat(waste_origins)

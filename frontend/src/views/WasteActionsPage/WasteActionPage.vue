@@ -17,7 +17,7 @@
         <v-col cols="12" class="mt-8" sm="2">
           <v-row justify="end">Type d'action</v-row>
           <v-row justify="end">
-            <DsfrTag :text="effortLabel" :closeable="false" color="rgb(238, 238, 238)" :small="true" />
+            <DsfrTag :text="effortLabel" :closeable="false" :small="true" />
           </v-row>
           <v-row justify="end">
             <p class="text-right">
@@ -107,7 +107,6 @@ export default {
         return {
           id: wasteOriginId,
           text: wasteOriginLabel ? wasteOriginLabel : "default",
-          color: "rgb(238, 238, 238)",
         }
       })
     },
