@@ -29,7 +29,7 @@
             <DsfrTagGroup v-if="wasteOrigins.length" :tags="wasteOrigins" :closeable="false" :small="true" />
           </v-row>
         </v-col>
-        <v-col cols="12" class="pa-12 text-left mt-sm-n12 body-wrapper" sm="7">
+        <v-col cols="12" class="pa-12 text-left mt-sm-n12 body-wrapper" sm="8">
           <h1>{{ wasteAction.title }}</h1>
           <p class="mt-12">{{ wasteAction.subtitle }}</p>
           <p v-html="wasteAction.description" class="mt-9"></p>
