@@ -1,19 +1,24 @@
 <template>
   <div id="wasteactions-home" class="text-left">
     <BreadcrumbsNav />
+    <h1 class="fr-h1 mb-4">
+      Lutter contre le gaspillage alimentaire
+    </h1>
     <div v-if="loading" class="mt-8">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
-    <div v-if="!loading && wasteActions.length > 0">
-      <h1 class="fr-h1 mb-4">
-        Lutter contre le gaspillage alimentaire
-      </h1>
+    <div v-else-if="wasteActions.length > 0">
       <v-row class="pa-2 mt-2">
         <v-col vols="12" sm="6" md="4" v-for="wasteAction in wasteActions" :key="wasteAction.id">
           <WasteActionCard :wasteAction="wasteAction" />
         </v-col>
       </v-row>
       <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(wasteActionsCount / limit)" />
+    </div>
+    <div v-else>
+      <p>
+        Contenu en cours de construction
+      </p>
     </div>
   </div>
 </template>
