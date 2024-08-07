@@ -15,7 +15,7 @@
       </v-row>
       <v-row>
         <v-col cols="12" class="mt-8" sm="2">
-          <v-row justify="end"><p>Type d'action</p></v-row>
+          <v-row justify="end"><p class="mb-2">Type d'action</p></v-row>
           <v-row justify="end">
             <DsfrTag :text="effortLabel" :closeable="false" :small="true" />
           </v-row>
@@ -24,14 +24,13 @@
               <i>{{ effortDescription }}</i>
             </p>
           </v-row>
-          <v-row justify="end" class="mt-12"><p>Origine du gaspillage</p></v-row>
+          <v-row justify="end" class="mt-12"><p class="mb-2">Origine du gaspillage</p></v-row>
           <v-row justify="end">
             <DsfrTagGroup
               v-if="wasteAction.waste_origin.length"
               :tags="wasteOrigins"
               :closeable="false"
               :small="true"
-              class="flex-row-reverse"
             />
           </v-row>
         </v-col>
