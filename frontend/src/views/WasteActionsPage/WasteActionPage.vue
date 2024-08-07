@@ -1,7 +1,7 @@
 <template>
   <div id="wasteaction-page">
     <div v-if="wasteaction">
-      <BreadcrumbsNav :title="wasteaction.title" :links="[{ to: { name: 'WasteActionsHome' } }]" />
+      <BreadcrumbsNav :title="wasteaction.title" :links="[{ to: backLink }]" />
       <v-row>
         <img
           :src="
