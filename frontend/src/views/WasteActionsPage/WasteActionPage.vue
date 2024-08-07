@@ -26,12 +26,7 @@
           </v-row>
           <v-row justify="end" class="mt-12"><p class="mb-2">Origine du gaspillage</p></v-row>
           <v-row justify="end">
-            <DsfrTagGroup
-              v-if="wasteAction.waste_origin.length"
-              :tags="wasteOrigins"
-              :closeable="false"
-              :small="true"
-            />
+            <DsfrTagGroup v-if="wasteOrigins.length" :tags="wasteOrigins" :closeable="false" :small="true" />
           </v-row>
         </v-col>
         <v-col cols="12" class="pa-12 text-left mt-sm-n12 body-wrapper" sm="7">
