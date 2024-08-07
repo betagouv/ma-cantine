@@ -44,14 +44,14 @@ export default {
     tags() {
       const effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort)?.text
       const effort = [{ id: this.wasteAction.effort, text: effortLabel || "Inconnu" }]
-      const waste_origins = this.wasteAction.waste_origin.map((wasteOriginId) => {
+      const wasteOrigins = this.wasteAction.waste_origin.map((wasteOriginId) => {
         const wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId)?.text
         return {
           id: wasteOriginId,
           text: wasteOriginLabel || "Inconnu",
         }
       })
-      return effort.concat(waste_origins)
+      return effort.concat(wasteOrigins)
     },
   },
 }
