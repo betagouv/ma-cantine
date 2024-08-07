@@ -14,20 +14,20 @@
         />
       </v-row>
       <v-row>
-        <v-col cols="12" class="mt-8" sm="2">
-          <v-row justify="end"><p class="mb-2">Type d'action</p></v-row>
-          <v-row justify="end">
-            <DsfrTag :text="effortLabel" :closeable="false" :small="true" />
-          </v-row>
-          <v-row justify="end">
-            <p class="text-right">
-              <i>{{ effortDescription }}</i>
-            </p>
-          </v-row>
-          <v-row justify="end" class="mt-12"><p class="mb-2">Origine du gaspillage</p></v-row>
-          <v-row justify="end">
-            <DsfrTagGroup v-if="wasteOrigins.length" :tags="wasteOrigins" :closeable="false" :small="true" />
-          </v-row>
+        <v-col cols="12" class="d-flex flex-column align-end mt-8" sm="2">
+          <p class="mb-2">Type d'action</p>
+          <DsfrTag :text="effortLabel" :closeable="false" :small="true" />
+          <p class="text-right">
+            <i>{{ effortDescription }}</i>
+          </p>
+          <p class="mt-12 mb-2">Origine du gaspillage</p>
+          <DsfrTagGroup
+            v-if="wasteOrigins.length"
+            :tags="wasteOrigins"
+            :closeable="false"
+            :small="true"
+            class="justify-end"
+          />
         </v-col>
         <v-col cols="12" class="pa-12 text-left mt-sm-n12 body-wrapper" sm="8">
           <h1>{{ wasteAction.title }}</h1>
