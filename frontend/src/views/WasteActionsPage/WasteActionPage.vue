@@ -108,13 +108,6 @@ export default {
   mounted() {
     this.fetchWasteAction()
   },
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      if (from.name == "WasteActionsHome") {
-        vm.backLink = from
-      }
-    })
-  },
 }
 </script>
 <style scoped>
