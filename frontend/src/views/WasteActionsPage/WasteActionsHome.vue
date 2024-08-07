@@ -18,9 +18,9 @@
   </div>
 </template>
 <script>
-import WasteActionCard from "./WasteActionCard.vue"
-import DsfrPagination from "@/components/DsfrPagination.vue"
-import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
+import WasteActionCard from "./WasteActionCard"
+import DsfrPagination from "@/components/DsfrPagination"
+import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   name: "WasteActionsHome",
