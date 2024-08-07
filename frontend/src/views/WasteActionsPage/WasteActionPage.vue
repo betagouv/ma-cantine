@@ -86,14 +86,14 @@ export default {
     },
   },
   computed: {
+    effort() {
+      return Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort)
+    },
     effortLabel() {
-      const effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort)?.text
-      return effortLabel || "Inconnu"
+      return this.effort?.text || "Inconnu"
     },
     effortDescription() {
-      const effortDescription = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort)
-        ?.description
-      return effortDescription || ""
+      return this.effort?.description || ""
     },
     wasteOrigins() {
       return this.wasteAction.waste_origin.map((wasteOriginId) => {
