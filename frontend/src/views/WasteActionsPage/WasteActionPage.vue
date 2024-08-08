@@ -5,8 +5,8 @@
       <v-row>
         <img
           :src="
-            wasteAction.lead_image
-              ? wasteAction.lead_image.meta.download_url
+            wasteAction.leadImage
+              ? wasteAction.leadImage.meta.downloadUrl
               : '/static/images/wasteaction-default-image.jpg'
           "
           class="lead-image"
@@ -96,7 +96,7 @@ export default {
       return this.effort?.description || ""
     },
     wasteOrigins() {
-      return this.wasteAction.waste_origin.map((wasteOriginId) => {
+      return this.wasteAction.wasteOrigin.map((wasteOriginId) => {
         const wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId)?.text
         return {
           id: wasteOriginId,
