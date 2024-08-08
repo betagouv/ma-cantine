@@ -2,6 +2,8 @@ from wagtail.snippets.views.snippets import SnippetViewSet
 from wagtail.admin.panels import TabbedInterface, ObjectList, FieldPanel
 from cms.models.wasteaction import WasteAction
 from wagtail.images.api.v2.views import BaseAPIViewSet
+from djangorestframework_camel_case.render import CamelCaseJSONRenderer
+from rest_framework.renderers import BrowsableAPIRenderer
 
 
 class WasteActionViewSet(SnippetViewSet):
@@ -38,6 +40,7 @@ class WasteActionAPIViewSet(BaseAPIViewSet):
     API endpoint that allows WasteActions to be viewed.
     """
 
+    renderer_classes = [BrowsableAPIRenderer, CamelCaseJSONRenderer]
     model = WasteAction
     body_fields = [
         "id",
