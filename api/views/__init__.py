@@ -38,6 +38,9 @@ from .diagnostic import (  # noqa: F401
     EmailDiagnosticImportFileView,
     DiagnosticsToTeledeclareListView,
 )
+from .wastemeasurement import (  # noqa: F401
+    WasteMeasurementCreateView,
+)
 from .diagnosticimport import (  # noqa: F401
     ImportSimpleDiagnosticsView,
     ImportCompleteDiagnosticsView,
