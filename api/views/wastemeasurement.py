@@ -17,11 +17,8 @@ from rest_framework.generics import CreateAPIView  # ,UpdateAPIView,  ListAPIVie
 from data.models import Canteen  # , Teledeclaration
 
 from api.permissions import (
-    IsAuthenticatedOrTokenHasResourceScope,
+    IsAuthenticated,
     IsCanteenManager,
-    #     CanEditWasteMeasurement,
-    #     IsAuthenticated,
-    #     IsAuthenticatedOrTokenHasResourceScope,
 )
 
 # from api.exceptions import DuplicateException
@@ -33,8 +30,7 @@ logger = logging.getLogger(__name__)
 
 
 class WasteMeasurementCreateView(CreateAPIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
-    required_scopes = ["canteen"]
+    permission_classes = [IsAuthenticated]
     model = WasteMeasurement
     serializer_class = WasteMeasurementSerializer
 

@@ -6,10 +6,11 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory
-from data.models import WasteMeasurement
+from data.models import WasteMeasurement, Canteen
 from .utils import authenticate
-
-# import decimal
+import datetime
+import zoneinfo
+import decimal
 
 
 class TestWasteMeasurementsApi(APITestCase):
@@ -26,7 +27,15 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         When calling this API on an unexistent canteen we expect a 404
         """
-        response = self.client.post(reverse("waste_measurement_creation", kwargs={"canteen_pk": 999}), {})
+        self.assertIsNone(Canteen.objects.filter(id=999).first())
+        response = self.client.post(
+            reverse("waste_measurement_creation", kwargs={"canteen_pk": 999}),
+            {
+                "period_start_date": "2024-08-01",
+                "period_end_date": "2024-08-20",
+                "meal_count": 500,
+            },
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
@@ -36,7 +45,14 @@ class TestWasteMeasurementsApi(APITestCase):
         we expect a 403
         """
         canteen = CanteenFactory.create()
-        response = self.client.post(reverse("waste_measurement_creation", kwargs={"canteen_pk": canteen.id}), {})
+        response = self.client.post(
+            reverse("waste_measurement_creation", kwargs={"canteen_pk": canteen.id}),
+            {
+                "period_start_date": "2024-08-01",
+                "period_end_date": "2024-08-20",
+                "meal_count": 500,
+            },
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -48,15 +64,55 @@ class TestWasteMeasurementsApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
 
-        payload = {}
+        payload = {
+            "period_start_date": "2024-08-01",
+            "period_end_date": "2024-08-20",
+            "meal_count": 500,
+            "total_mass": 100,
+            "is_sorted_by_source": True,
+            "preparation_total_mass": 20,
+            "preparation_is_sorted": True,
+            "preparation_edible_mass": 15,
+            "preparation_inedible_mass": 5,
+            "unserved_total_mass": 50,
+            "unserved_is_sorted": False,
+            "unserved_edible_mass": "",
+            "unserved_inedible_mass": "",
+            "leftovers_total_mass": 30.3,
+        }
 
         response = self.client.post(reverse("waste_measurement_creation", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         waste_measurement = WasteMeasurement.objects.get(canteen__id=canteen.id)
 
-        self.assertIsNotNone(waste_measurement)
+        self.assertEqual(
+            waste_measurement.period_start_date,
+            datetime.datetime(2024, 8, 1, 00, 00, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        )
+        self.assertEqual(
+            waste_measurement.period_end_date,
+            datetime.datetime(2024, 8, 20, 00, 00, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        )
+        self.assertEqual(waste_measurement.meal_count, 500)
+        self.assertEqual(waste_measurement.total_mass, 100)
+        self.assertEqual(waste_measurement.is_sorted_by_source, True)
+        self.assertEqual(waste_measurement.preparation_total_mass, 20)
+        self.assertEqual(waste_measurement.preparation_is_sorted, True)
+        self.assertEqual(waste_measurement.preparation_edible_mass, 15)
+        self.assertEqual(waste_measurement.preparation_inedible_mass, 5)
+        self.assertEqual(waste_measurement.unserved_total_mass, 50)
+        self.assertEqual(waste_measurement.unserved_is_sorted, False)
+        self.assertEqual(waste_measurement.unserved_edible_mass, None)
+        self.assertEqual(waste_measurement.unserved_inedible_mass, None)
+        self.assertEqual(waste_measurement.leftovers_total_mass, decimal.Decimal("30.3"))
+        self.assertEqual(waste_measurement.leftovers_is_sorted, None)
+        self.assertEqual(waste_measurement.leftovers_edible_mass, None)
+        self.assertEqual(waste_measurement.leftovers_inedible_mass, None)
 
-    # TODO: edit rules
-    # TODO: date rules
-    # TODO: fetch rules
+
+# TODO: edit rules
+# TODO: date rules (dont accept none, and check relative to each other and other measurements)
+# TODO: meal count rules
+# TODO: fetch rules
+# TODO: floating point checks
