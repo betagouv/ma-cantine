@@ -2,6 +2,7 @@ from .user import User  # noqa: F401
 from .historyauthenticationmethod import AuthenticationMethodHistoricalRecords  # noqa: F401
 from .canteen import Canteen, CanteenImage  # noqa: F401
 from .diagnostic import Diagnostic  # noqa: F401
+from .wastemeasurement import WasteMeasurement  # noqa: F401
 from .sector import Sector  # noqa: F401
 from .blogpost import BlogPost  # noqa: F401
 from .blogtag import BlogTag  # noqa: F401
