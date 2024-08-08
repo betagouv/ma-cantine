@@ -39,7 +39,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticsToTeledeclareListView,
 )
 from .wastemeasurement import (  # noqa: F401
-    WasteMeasurementCreateView,
+    CanteenWasteMeasurementsView,
 )
 from .diagnosticimport import (  # noqa: F401
     ImportSimpleDiagnosticsView,
