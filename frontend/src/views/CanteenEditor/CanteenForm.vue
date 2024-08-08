@@ -51,6 +51,29 @@
         ou
         <router-link :to="{ name: 'ContactPage' }">contactez-nous</router-link>
       </p>
+
+      <v-col v-if="isNewCanteen" sm="6" class="mt-12 pl-0">
+        <v-card outlined class="d-flex flex-column fill-height pa-2">
+          <v-card-title><h2 class="fr-h6 mb-0">Besoin de créer beaucoup de cantines ?</h2></v-card-title>
+          <v-card-text>
+            <p class="mb-0">
+              Notre outil d'import permets de créer plusieurs cantines depuis un fichier tableur Excel, LibreOffice, ou
+              CSV. Suivre les indications suivantes pour preparer votre fichier.
+            </p>
+          </v-card-text>
+          <v-spacer></v-spacer>
+          <v-card-actions class="px-4">
+            <v-spacer></v-spacer>
+            <v-btn
+              :to="{ name: 'DiagnosticImportPage', params: { importUrlSlug: 'cantines-seules' } }"
+              outlined
+              color="primary"
+            >
+              Importer mes cantines
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
     </div>
 
     <v-form v-else ref="form" v-model="formIsValid">
