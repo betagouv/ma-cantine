@@ -5,7 +5,6 @@ import "@gouvfr/dsfr/dist/component/component.main.min.css" // Styles de tous le
 import "@gouvfr/dsfr/dist/utility/utility.main.min.css" // Classes utilitaires : les composants de VueDsfr en ont besoin
 import "@gouvminint/vue-dsfr/styles" // Les styles propres aux composants de VueDsfr
 import VueDsfr from "@gouvminint/vue-dsfr" // Import (par défaut) de la bibliothèque
-import i18n from "./i18n.js"
 
 import FoodAppleIcon from "mdi-icons/FoodApple"
 import OfferIcon from "mdi-icons/Offer"
@@ -24,7 +23,6 @@ const app = createApp(App)
 app.use(VueDsfr)
 app.use(createPinia())
 app.use(router)
-app.use(i18n)
 
 // deciding to keep same naming convention as previously used with Vue2 and vuetify
 app.component("mdi-food-apple", FoodAppleIcon)
