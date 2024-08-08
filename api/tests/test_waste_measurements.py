@@ -5,12 +5,19 @@ from django.urls import reverse
 # from django.core.exceptions import BadRequest
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory
+from data.factories import CanteenFactory, WasteMeasurementFactory
 from data.models import WasteMeasurement, Canteen
 from .utils import authenticate
 import datetime
 import zoneinfo
 import decimal
+
+
+def date(date_string):
+    parts = date_string.split("-")
+    return datetime.datetime(
+        int(parts[0]), int(parts[1]), int(parts[2]), 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
+    )
 
 
 class TestWasteMeasurementsApi(APITestCase):
@@ -19,7 +26,7 @@ class TestWasteMeasurementsApi(APITestCase):
         When calling this API unathenticated we expect a 403
         """
         canteen = CanteenFactory.create()
-        response = self.client.post(reverse("waste_measurement_creation", kwargs={"canteen_pk": canteen.id}), {})
+        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -29,7 +36,7 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         self.assertIsNone(Canteen.objects.filter(id=999).first())
         response = self.client.post(
-            reverse("waste_measurement_creation", kwargs={"canteen_pk": 999}),
+            reverse("canteen_waste_measurements", kwargs={"canteen_pk": 999}),
             {
                 "period_start_date": "2024-08-01",
                 "period_end_date": "2024-08-20",
@@ -46,7 +53,7 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         response = self.client.post(
-            reverse("waste_measurement_creation", kwargs={"canteen_pk": canteen.id}),
+            reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}),
             {
                 "period_start_date": "2024-08-01",
                 "period_end_date": "2024-08-20",
@@ -81,7 +88,7 @@ class TestWasteMeasurementsApi(APITestCase):
             "leftovers_total_mass": 30.3,
         }
 
-        response = self.client.post(reverse("waste_measurement_creation", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         waste_measurement = WasteMeasurement.objects.get(canteen__id=canteen.id)
@@ -109,6 +116,47 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(waste_measurement.leftovers_is_sorted, None)
         self.assertEqual(waste_measurement.leftovers_edible_mass, None)
         self.assertEqual(waste_measurement.leftovers_inedible_mass, None)
+
+    def test_unauthenticated_get_waste_measurements(self):
+        """
+        Get 403 when trying to fetch waste measurements without being authenticated
+        """
+        canteen = CanteenFactory.create()
+        response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_get_waste_measurements_forbidden_canteen(self):
+        """
+        Get 403 when trying to fetch waste measurements without being manager of the canteen
+        """
+        canteen = CanteenFactory.create()
+        response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_get_waste_measurements(self):
+        """
+        Canteen managers can fetch all the waste measurements for a canteen in order of period start date descending
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        measurement_july = WasteMeasurementFactory.create(
+            canteen=canteen, period_start_date=date("2024-07-01"), period_end_date=date("2024-07-05")
+        )
+        measurement_august = WasteMeasurementFactory.create(
+            canteen=canteen, period_start_date=date("2024-08-01"), period_end_date=date("2024-08-05")
+        )
+        WasteMeasurementFactory.create()  # to be filtered out
+
+        response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+
+        self.assertEqual(len(body), 2)
+        self.assertEqual(body[0]["id"], measurement_august.id)
+        self.assertEqual(body[1]["id"], measurement_july.id)
 
 
 # TODO: edit rules
