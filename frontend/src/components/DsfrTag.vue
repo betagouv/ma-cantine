@@ -4,7 +4,7 @@
     @click="clickAction"
     @click:close="closeAction"
     class="ma-1"
-    :color="color"
+    :color="tagColor"
     close-label="Fermer"
     close-icon="$close-line"
     :small="small"
@@ -27,11 +27,17 @@ export default {
     },
     color: {
       type: String,
-      default: "primary",
     },
     small: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    tagColor() {
+      if (this.color) return this.color
+      else if (this.closeable) return "primary"
+      return "grey lighten-4"
     },
   },
   methods: {

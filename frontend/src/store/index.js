@@ -224,6 +224,15 @@ export default new Vuex.Store({
         })
     },
 
+    fetchWasteActions(context, { limit = 6, offset }) {
+      let url = `/apicms/v1/wasteactions/?fields=*&limit=${limit}&offset=${offset}`
+      return fetch(url)
+        .then(verifyResponse)
+        .then((response) => {
+          return response
+        })
+    },
+
     fetchInitialData(context) {
       context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)

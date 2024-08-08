@@ -39,7 +39,7 @@ class WasteActionAPIViewSet(BaseAPIViewSet):
     """
 
     model = WasteAction
-    api_fields = [
+    body_fields = [
         "id",
         "creation_date",
         "modification_date",
@@ -50,6 +50,4 @@ class WasteActionAPIViewSet(BaseAPIViewSet):
         "description",
         "lead_image",
     ]
-    body_fields = BaseAPIViewSet.body_fields + api_fields
-    # If needed we can list all those fields by default. Otherwise we can see them by adding "?fields=*" to URL
-    # listing_default_fields = BaseAPIViewSet.listing_default_fields + api_fields
+    meta_fields = []
