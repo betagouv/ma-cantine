@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, watch, computed, inject, nextTick, defineProps } from "vue"
+import { onMounted, reactive, watch, computed, inject, nextTick } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { formatError } from "@/utils.js"
 import HelpText from "./HelpText.vue"

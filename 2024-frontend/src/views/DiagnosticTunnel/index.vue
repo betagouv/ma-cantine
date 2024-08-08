@@ -2,7 +2,7 @@
 import keyMeasures from "@/data/key-measures.json"
 // TODO: sort out **/index.vue imports so don't have to add index.vue
 import WasteMeasureSteps from "./WasteMeasureSteps/index.vue"
-import { computed, ref, watch, defineProps, onMounted, provide, reactive } from "vue"
+import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
 
 const props = defineProps(["canteenUrlComponent", "year", "measureId", "étape"])
