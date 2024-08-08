@@ -7,6 +7,7 @@
         @close="closeable && closeAction(tag)"
         :color="tag.color"
         :small="small"
+        :clickable="clickable"
       />
     </li>
   </ul>
@@ -30,6 +31,10 @@ export default {
     small: {
       type: Boolean,
       default: false,
+    },
+    clickable: {
+      type: Boolean,
+      default: true,
     },
   },
   methods: {
