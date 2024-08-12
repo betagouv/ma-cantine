@@ -98,7 +98,7 @@ packaging==24.1
 pandas==2.2.2
 pathspec==0.12.1
 pillow==10.4.0
-pillow_heif==0.17.0
+pillow_heif==0.18.0
 pipdeptree==2.23.1
 platformdirs==4.2.2
 pluggy==1.5.0
