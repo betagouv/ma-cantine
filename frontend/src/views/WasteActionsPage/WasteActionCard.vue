@@ -7,7 +7,7 @@
       alt=""
     />
     <v-card-text class="pa-10 pb-5">
-      <DsfrTagGroup v-if="wasteAction.wasteOrigin.length" :tags="tags" :closeable="false" :small="true" />
+      <DsfrTagGroup v-if="wasteAction.wasteOrigins.length" :tags="tags" :closeable="false" :small="true" />
       <h2 class="mt-6 fr-h4">
         <router-link :to="{ name: 'WasteActionPage', params: { id: wasteAction.id } }">
           {{ wasteAction.title }}
@@ -42,7 +42,7 @@ export default {
     tags() {
       const effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort)?.text
       const effort = [{ id: this.wasteAction.effort, text: effortLabel || "Inconnu" }]
-      const wasteOrigins = this.wasteAction.wasteOrigin.map((wasteOriginId) => {
+      const wasteOrigins = this.wasteAction.wasteOrigins.map((wasteOriginId) => {
         const wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId)?.text
         return {
           id: wasteOriginId,

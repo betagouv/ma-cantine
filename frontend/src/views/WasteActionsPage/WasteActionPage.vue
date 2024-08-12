@@ -96,7 +96,7 @@ export default {
       return this.effort?.description || ""
     },
     wasteOrigins() {
-      return this.wasteAction.wasteOrigin.map((wasteOriginId) => {
+      return this.wasteAction.wasteOrigins.map((wasteOriginId) => {
         const wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId)?.text
         return {
           id: wasteOriginId,

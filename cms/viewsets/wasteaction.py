@@ -24,7 +24,7 @@ class WasteActionViewSet(SnippetViewSet):
             ObjectList(
                 [
                     FieldPanel("effort"),
-                    FieldPanel("waste_origin"),
+                    FieldPanel("waste_origins"),
                 ],
                 heading="Caractéristiques",
             ),
@@ -48,7 +48,7 @@ class WasteActionAPIViewSet(BaseAPIViewSet):
         "title",
         "subtitle",
         "effort",
-        "waste_origin",
+        "waste_origins",
         "description",
         "lead_image",
     ]
