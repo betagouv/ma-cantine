@@ -42,8 +42,10 @@ class WasteMeasurementSerializer(serializers.ModelSerializer):
         if self.instance and self.instance.id:
             other_measurements = other_measurements.exclude(id=self.instance.id)
 
-        if has_start_date and data["period_start_date"] >= end_date:
+        if has_start_date and start_date >= end_date:
             raise serializers.ValidationError({"period_start_date": ["La date doit être avant la date de fin"]})
+        elif has_end_date and end_date <= start_date:
+            raise serializers.ValidationError({"period_end_date": ["La date doit être après la date de début"]})
 
         if has_start_date:
             measurement_containing_start_date = other_measurements.filter(

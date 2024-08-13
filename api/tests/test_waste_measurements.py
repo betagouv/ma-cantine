@@ -318,15 +318,23 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        measurement = WasteMeasurementFactory.create(canteen=canteen, period_end_date=datetime.date(2024, 8, 1))
+        measurement = WasteMeasurementFactory.create(
+            canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
+        )
 
         payload = {"period_start_date": "2024-08-10"}
         response = self.client.patch(
             reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
         self.assertEqual(response.json()["periodStartDate"][0], "La date doit être avant la date de fin")
+
+        payload = {"period_end_date": "2024-08-1"}
+        response = self.client.patch(
+            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json()["periodEndDate"][0], "La date doit être après la date de début")
 
     @authenticate
     def test_periods_cannot_overlap_in_update(self):
