@@ -227,3 +227,33 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(len(body), 2)
         self.assertEqual(body[0]["id"], measurement_august.id)
         self.assertEqual(body[1]["id"], measurement_july.id)
+
+    @authenticate
+    def test_cannot_get_waste_measurement_not_manager(self):
+        """
+        If the user is not the manager of the canteen, they get a 403 when attempting to view the waste measurement
+        """
+        canteen = CanteenFactory.create()
+        measurement = WasteMeasurementFactory.create(canteen=canteen)
+
+        response = self.client.get(
+            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_get_waste_measurement(self):
+        """
+        Canteen managers can fetch the waste measurement of a canteen they manage
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        measurement = WasteMeasurementFactory.create(canteen=canteen)
+
+        response = self.client.get(
+            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertIn("periodStartDate", body)
