@@ -123,6 +123,74 @@ class TestWasteMeasurementsApi(APITestCase):
 
         self.assertEqual(response.json()["periodEndDate"][0], "La date doit être dans le passé")
 
+    @authenticate
+    def test_start_date_must_be_before_end_date(self):
+        """
+        The period start date must be before end date
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+
+        payload = {
+            "period_start_date": "2024-08-10",
+            "period_end_date": "2024-08-01",
+        }
+
+        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        self.assertEqual(response.json()["periodStartDate"][0], "La date doit être avant la date de fin")
+
+    @authenticate
+    def test_periods_cannot_overlap(self):
+        """
+        A new measurement cannot have a period that overlaps with an existing measurement
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        WasteMeasurementFactory.create(
+            canteen=canteen, period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
+        )
+
+        # check a start date that falls in existing period
+        payload = {
+            "period_start_date": "2024-07-03",
+            "period_end_date": "2024-08-01",
+        }
+        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json()["periodStartDate"][0],
+            "Il existe déjà une mesure pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la mesure existante ou corriger la date.",
+        )
+
+        # check an end date that falls in existing period
+        payload = {
+            "period_start_date": "2024-06-10",
+            "period_end_date": "2024-07-03",
+        }
+        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json()["periodEndDate"][0],
+            "Il existe déjà une mesure pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la mesure existante ou corriger la date.",
+        )
+
+        # check a start and end date that encapsulate the periods of existing measurements
+        WasteMeasurementFactory.create(
+            canteen=canteen, period_start_date=datetime.date(2024, 7, 10), period_end_date=datetime.date(2024, 7, 15)
+        )
+        payload = {
+            "period_start_date": "2024-06-30",
+            "period_end_date": "2024-07-16",
+        }
+        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json()["nonFieldErrors"][0],
+            "Il existe déjà 2 mesures dans la période 2024-06-30 à 2024-07-16. Veuillez modifier les mesures existantes ou corriger les dates de la période.",
+        )
+
     def test_unauthenticated_get_waste_measurements(self):
         """
         Get 403 when trying to fetch waste measurements without being authenticated
@@ -166,7 +234,6 @@ class TestWasteMeasurementsApi(APITestCase):
 
 
 # TODO: edit rules
-# TODO: date rules (dont accept none, and check relative to each other and other measurements, should be in the past)
 # TODO: meal count rules
 # TODO: fetch rules
 # TODO: floating point checks

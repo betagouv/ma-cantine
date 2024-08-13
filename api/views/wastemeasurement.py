@@ -56,5 +56,5 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
     def perform_create(self, serializer):
         canteen = self._get_canteen()
         serializer.is_valid(raise_exception=True)
-        diagnostic = serializer.save(canteen=canteen)
-        update_change_reason_with_auth(self, diagnostic)
+        measurement = serializer.save(canteen=canteen)
+        update_change_reason_with_auth(self, measurement)
