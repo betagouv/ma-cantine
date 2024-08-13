@@ -26,7 +26,7 @@ class WasteMeasurement(models.Model):
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
 
-    period_start_date = models.DateField(verbose_name="date de debut")
+    period_start_date = models.DateField(verbose_name="date de début")
     period_end_date = models.DateField(verbose_name="date de fin", validators=[validate_before_today])
     meal_count = models.IntegerField(verbose_name="couverts sur la période", null=True, blank=True)
 
