@@ -9,15 +9,7 @@ from data.factories import CanteenFactory, WasteMeasurementFactory
 from data.models import WasteMeasurement, Canteen
 from .utils import authenticate
 import datetime
-import zoneinfo
 import decimal
-
-
-def date(date_string):
-    parts = date_string.split("-")
-    return datetime.datetime(
-        int(parts[0]), int(parts[1]), int(parts[2]), 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
-    )
 
 
 class TestWasteMeasurementsApi(APITestCase):
@@ -93,14 +85,8 @@ class TestWasteMeasurementsApi(APITestCase):
 
         waste_measurement = WasteMeasurement.objects.get(canteen__id=canteen.id)
 
-        self.assertEqual(
-            waste_measurement.period_start_date,
-            datetime.datetime(2024, 8, 1, 00, 00, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        )
-        self.assertEqual(
-            waste_measurement.period_end_date,
-            datetime.datetime(2024, 8, 20, 00, 00, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        )
+        self.assertEqual(waste_measurement.period_start_date, datetime.date(2024, 8, 1))
+        self.assertEqual(waste_measurement.period_end_date, datetime.date(2024, 8, 20))
         self.assertEqual(waste_measurement.meal_count, 500)
         self.assertEqual(waste_measurement.total_mass, 100)
         self.assertEqual(waste_measurement.is_sorted_by_source, True)
@@ -142,10 +128,10 @@ class TestWasteMeasurementsApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
         measurement_july = WasteMeasurementFactory.create(
-            canteen=canteen, period_start_date=date("2024-07-01"), period_end_date=date("2024-07-05")
+            canteen=canteen, period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
         )
         measurement_august = WasteMeasurementFactory.create(
-            canteen=canteen, period_start_date=date("2024-08-01"), period_end_date=date("2024-08-05")
+            canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
         )
         WasteMeasurementFactory.create()  # to be filtered out
 
@@ -160,7 +146,7 @@ class TestWasteMeasurementsApi(APITestCase):
 
 
 # TODO: edit rules
-# TODO: date rules (dont accept none, and check relative to each other and other measurements)
+# TODO: date rules (dont accept none, and check relative to each other and other measurements, should be in the past)
 # TODO: meal count rules
 # TODO: fetch rules
 # TODO: floating point checks
