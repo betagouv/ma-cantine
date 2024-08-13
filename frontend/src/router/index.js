@@ -441,7 +441,7 @@ const routes = [
     name: "DiagnosticsImporter",
     component: DiagnosticsImporter,
     meta: {
-      title: "Importer des diagnostics",
+      title: "Importer vos données",
       authenticationRequired: true,
     },
     sitemapGroup: Constants.SitemapGroups.DIAG,

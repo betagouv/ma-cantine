@@ -1,6 +1,6 @@
 <template>
   <div class="text-left">
-    <h1 class="font-weight-black text-h4 my-4">
+    <h1 class="fr-h1">
       {{ isNewCanteen ? "Ajouter ma cantine" : "Modifier ma cantine" }}
     </h1>
 
@@ -11,7 +11,7 @@
     />
 
     <div v-if="$route.query.etape === steps[0]">
-      <h2 class="body-1 font-weight-bold mb-4">Étape 1/2 : Renseignez le SIRET de votre établissement</h2>
+      <h2 class="fr-h4">Étape 1/2 : Renseignez le SIRET de votre établissement</h2>
       <p>
         Vous ne le connaissez pas ? Utilisez
         <a
@@ -51,10 +51,33 @@
         ou
         <router-link :to="{ name: 'ContactPage' }">contactez-nous</router-link>
       </p>
+
+      <v-col v-if="isNewCanteen" sm="6" class="mt-12 px-0">
+        <v-card outlined class="d-flex flex-column fill-height pa-2">
+          <v-card-title><h2 class="fr-h5 mb-2">Besoin de créer beaucoup de cantines&nbsp;?</h2></v-card-title>
+          <v-card-text>
+            <p class="mb-0">
+              Notre outil d'import permet de créer plusieurs cantines depuis un fichier tableur Excel, LibreOffice, ou
+              CSV. Suivre les indications suivantes pour preparer votre fichier.
+            </p>
+          </v-card-text>
+          <v-spacer></v-spacer>
+          <v-card-actions class="px-4">
+            <v-spacer></v-spacer>
+            <v-btn
+              :to="{ name: 'DiagnosticImportPage', params: { importUrlSlug: 'cantines-seules' } }"
+              outlined
+              color="primary"
+            >
+              Importer mes cantines
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
     </div>
 
     <v-form v-else ref="form" v-model="formIsValid">
-      <h2 class="mb-4" v-if="isNewCanteen">Étape 2/2 : Compléter les informations</h2>
+      <h2 class="fr-h4" v-if="isNewCanteen">Étape 2/2 : Compléter les informations</h2>
       <v-row>
         <v-col cols="12" md="8">
           <p class="mb-2">SIRET</p>
