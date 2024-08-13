@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
+import ImportSelection from "@/views/ImportSelection"
 import { useRootStore } from "../stores/root"
 
 const routes = [
@@ -12,6 +13,15 @@ const routes = [
       title: "Bilan",
       authenticationRequired: true,
       fullscreen: true,
+    },
+  },
+  {
+    path: "/importer-des-donnees",
+    name: "ImportSelection",
+    component: ImportSelection,
+    meta: {
+      title: "Importer des données",
+      authenticationRequired: true,
     },
   },
 ]
