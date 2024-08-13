@@ -257,3 +257,23 @@ class TestWasteMeasurementsApi(APITestCase):
 
         body = response.json()
         self.assertIn("periodStartDate", body)
+
+    @authenticate
+    def test_update_waste_measurement(self):
+        """
+        Canteen managers can edit the waste measurement of a canteen they manage
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        measurement = WasteMeasurementFactory.create(canteen=canteen, meal_count=100)
+
+        payload = {"mealCount": 200}
+        response = self.client.patch(
+            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["mealCount"], 200)
+
+    # TODO: test update with bad dates
