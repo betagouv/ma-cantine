@@ -87,11 +87,6 @@ urlpatterns = {
         CanteenWasteMeasurementsView.as_view(),
         name="canteen_waste_measurements",
     ),
-    # path(
-    #     "canteens/<int:canteen_pk>/wasteMeasurements/<int:pk>",
-    #     WasteMeasurementUpdateView.as_view(),
-    #     name="waste_measurement_edition",
-    # ),
     path(
         "canteens/<int:canteen_pk>/satellites/",
         SatelliteListCreateView.as_view(),

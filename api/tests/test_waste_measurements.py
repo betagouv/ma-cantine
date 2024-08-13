@@ -231,9 +231,3 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(len(body), 2)
         self.assertEqual(body[0]["id"], measurement_august.id)
         self.assertEqual(body[1]["id"], measurement_july.id)
-
-
-# TODO: edit rules
-# TODO: meal count rules
-# TODO: fetch rules
-# TODO: floating point checks
