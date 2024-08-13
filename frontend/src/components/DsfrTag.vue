@@ -1,5 +1,6 @@
 <template>
   <v-chip
+    v-if="clickable"
     :close="closeable"
     @click="clickAction"
     @click:close="closeAction"
@@ -11,6 +12,10 @@
   >
     {{ text }}
   </v-chip>
+  <p v-else class="tag fr-text-xs mb-0">
+    <v-icon v-if="icon" x-small>{{ icon }}</v-icon>
+    {{ text }}
+  </p>
 </template>
 
 <script>
@@ -32,6 +37,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    clickable: {
+      type: Boolean,
+      default: true,
+    },
+    icon: {
+      type: String,
+      required: false,
+    },
   },
   computed: {
     tagColor() {
@@ -50,3 +63,24 @@ export default {
   },
 }
 </script>
+<style scoped>
+.tag {
+  display: flex;
+  padding: 2px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  border-radius: 12px;
+  background-color: #eee;
+  color: #161616;
+  width: fit-content;
+}
+.tag .v-icon {
+  color: #161616;
+}
+.tag.top-left {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+}
+</style>
