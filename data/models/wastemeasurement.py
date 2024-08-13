@@ -4,8 +4,15 @@
 from django.db import models
 from simple_history.models import HistoricalRecords
 from .canteen import Canteen
+from datetime import datetime
+from django.core.exceptions import ValidationError
 
 # from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
+
+
+def validate_before_today(value):
+    if value > datetime.now().date():
+        raise ValidationError("La date doit être dans le passé")
 
 
 class WasteMeasurement(models.Model):
@@ -20,8 +27,8 @@ class WasteMeasurement(models.Model):
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
 
     period_start_date = models.DateField(verbose_name="date de debut")
-    period_end_date = models.DateField(verbose_name="date de fin")
-    meal_count = models.IntegerField(verbose_name="couverts sur la période")
+    period_end_date = models.DateField(verbose_name="date de fin", validators=[validate_before_today])
+    meal_count = models.IntegerField(verbose_name="couverts sur la période", null=True, blank=True)
 
     total_mass = models.DecimalField(
         max_digits=20,

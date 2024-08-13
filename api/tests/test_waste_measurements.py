@@ -10,6 +10,7 @@ from data.models import WasteMeasurement, Canteen
 from .utils import authenticate
 import datetime
 import decimal
+from freezegun import freeze_time
 
 
 class TestWasteMeasurementsApi(APITestCase):
@@ -31,7 +32,7 @@ class TestWasteMeasurementsApi(APITestCase):
             reverse("canteen_waste_measurements", kwargs={"canteen_pk": 999}),
             {
                 "period_start_date": "2024-08-01",
-                "period_end_date": "2024-08-20",
+                "period_end_date": "2024-08-10",
                 "meal_count": 500,
             },
         )
@@ -48,7 +49,7 @@ class TestWasteMeasurementsApi(APITestCase):
             reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}),
             {
                 "period_start_date": "2024-08-01",
-                "period_end_date": "2024-08-20",
+                "period_end_date": "2024-08-10",
                 "meal_count": 500,
             },
         )
@@ -65,7 +66,7 @@ class TestWasteMeasurementsApi(APITestCase):
 
         payload = {
             "period_start_date": "2024-08-01",
-            "period_end_date": "2024-08-20",
+            "period_end_date": "2024-08-10",
             "meal_count": 500,
             "total_mass": 100,
             "is_sorted_by_source": True,
@@ -86,7 +87,7 @@ class TestWasteMeasurementsApi(APITestCase):
         waste_measurement = WasteMeasurement.objects.get(canteen__id=canteen.id)
 
         self.assertEqual(waste_measurement.period_start_date, datetime.date(2024, 8, 1))
-        self.assertEqual(waste_measurement.period_end_date, datetime.date(2024, 8, 20))
+        self.assertEqual(waste_measurement.period_end_date, datetime.date(2024, 8, 10))
         self.assertEqual(waste_measurement.meal_count, 500)
         self.assertEqual(waste_measurement.total_mass, 100)
         self.assertEqual(waste_measurement.is_sorted_by_source, True)
@@ -102,6 +103,25 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(waste_measurement.leftovers_is_sorted, None)
         self.assertEqual(waste_measurement.leftovers_edible_mass, None)
         self.assertEqual(waste_measurement.leftovers_inedible_mass, None)
+
+    @authenticate
+    @freeze_time("2024-08-10")
+    def test_cannot_create_future_measurement(self):
+        """
+        The period end date cannot be in the future
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+
+        payload = {
+            "period_start_date": "2024-08-01",
+            "period_end_date": "2024-08-20",
+        }
+
+        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        self.assertEqual(response.json()["periodEndDate"][0], "La date doit être dans le passé")
 
     def test_unauthenticated_get_waste_measurements(self):
         """
