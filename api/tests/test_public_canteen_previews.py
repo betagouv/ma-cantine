@@ -113,7 +113,9 @@ class TestPublicCanteenPreviewsApi(APITestCase):
         Should get summary data in a public preview
         """
         canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED)
-        DiagnosticFactory.create(canteen=canteen)
+        DiagnosticFactory.create(
+            canteen=canteen, year=2020
+        )  # year must be in the past, otherwise canteen.appro_diagnostics is empty
 
         response = self.client.get(reverse("single_public_canteen_preview", kwargs={"pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -129,7 +131,6 @@ class TestPublicCanteenPreviewsApi(APITestCase):
         self.assertIn("info", body["badges"])
         self.assertIn("approDiagnostic", body)
         self.assertIn("percentageValueBioHt", body["approDiagnostic"])
-        # self.assertIn("combinedSustainablePercent", body["approDiagnostic"])
 
     # TODO: test satellites: CC APPRO, CC ALL, own diag
 
