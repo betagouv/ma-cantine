@@ -1,8 +1,4 @@
 from django.urls import reverse
-
-# from django.db import transaction
-# from django.test.utils import override_settings
-# from django.core.exceptions import BadRequest
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, WasteMeasurementFactory
