@@ -58,17 +58,17 @@
       État de conformité
     </h3>
     <p>
-      Ce présent site est partiellement conforme avec le RGAA (Référentiel Général d'Amélioration de l'Accessibilité) - version
-      4.1.2 en raison des non-conformités énumérées ci-après.
+      Ce présent site est partiellement conforme avec le RGAA (Référentiel Général d'Amélioration de l'Accessibilité) -
+      version 4.1.2 en raison des non-conformités énumérées ci-après.
     </p>
     <h3 class="fr-h3">
       Résultats des tests
     </h3>
     <p>
       L'audit de conformité au RGAA version 4.1.2 réalisé en juillet 2023 par la société Ideance révèle que, sur
-      l'échantillon, le taux de conformité global est de 37,9%. Puis, un contre audit réalisé en juillet 2024
-      par la société Ideance révèle que, sur l'échantillon, le taux de conformité global est de 70,5%.
-      (Obtenu en divisant le nombre de critères conformes par le nombre de critères applicables.)
+      l'échantillon, le taux de conformité global est de 37,9%. Puis, un contre audit réalisé en juillet 2024 par la
+      société Ideance révèle que, sur l'échantillon, le taux de conformité global est de 70,5%. (Obtenu en divisant le
+      nombre de critères conformes par le nombre de critères applicables.)
     </p>
     <h3 class="fr-h3">
       Contenus non accessibles
