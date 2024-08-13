@@ -25,7 +25,7 @@ class WasteAction(models.Model):
     title = models.TextField(verbose_name="Titre")
     subtitle = models.TextField(verbose_name="Sous-titre")
     effort = models.CharField(max_length=255, choices=Effort.choices, verbose_name="Niveau d'effort")
-    waste_origin = ChoiceArrayField(
+    waste_origins = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=WasteOrigin.choices),
         size=None,
         verbose_name="Origines du gaspillage",
