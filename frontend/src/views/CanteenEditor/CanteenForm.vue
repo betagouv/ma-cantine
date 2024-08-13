@@ -57,7 +57,7 @@
           <v-card-title><h2 class="fr-h5 mb-2">Besoin de créer beaucoup de cantines&nbsp;?</h2></v-card-title>
           <v-card-text>
             <p class="mb-0">
-              Notre outil d'import permets de créer plusieurs cantines depuis un fichier tableur Excel, LibreOffice, ou
+              Notre outil d'import permet de créer plusieurs cantines depuis un fichier tableur Excel, LibreOffice, ou
               CSV. Suivre les indications suivantes pour preparer votre fichier.
             </p>
           </v-card-text>
