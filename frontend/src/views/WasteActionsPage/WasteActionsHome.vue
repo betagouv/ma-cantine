@@ -56,7 +56,7 @@ export default {
         })
         .then((response) => {
           this.wasteActions = response.items
-          this.wasteActionsCount = response.meta.total_count
+          this.wasteActionsCount = response.meta.totalCount
         })
         .catch(() => {
           this.$store.dispatch("notifyServerError")
