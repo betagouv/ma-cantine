@@ -116,6 +116,14 @@ const vue2Routes = [
     path: "/politique-de-confidentialite#cookies",
     name: "Cookies",
   },
+  {
+    path: "/nouvelle-cantine",
+    name: "NewCanteen",
+  },
+  {
+    path: "/importer-diagnostics/:importUrlSlug",
+    name: "DiagnosticImportPage",
+  },
 ]
 routes.push(...vue2Routes)
 
