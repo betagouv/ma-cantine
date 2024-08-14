@@ -2,6 +2,7 @@
 import { RouterView, useRoute } from "vue-router"
 import { reactive, computed, watch } from "vue"
 import AppHeader from "@/components/AppHeader.vue"
+import AppFooter from "@/components/AppFooter.vue"
 
 const layout = reactive({ fullscreen: false })
 const routerViewClass = computed(() => (layout.fullscreen ? "" : "fr-container fr-pb-2w"))
@@ -23,7 +24,7 @@ watch(route, (to) => {
       <RouterView />
     </main>
 
-    <DsfrFooter v-if="!layout.fullscreen" />
+    <AppFooter v-if="!layout.fullscreen" />
   </div>
 </template>
 

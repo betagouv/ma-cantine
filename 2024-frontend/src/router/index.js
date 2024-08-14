@@ -100,6 +100,22 @@ const vue2Routes = [
     path: "/mon-compte",
     name: "AccountSummaryPage",
   },
+  {
+    path: "/accessibilite",
+    name: "AccessibilityDeclaration",
+  },
+  {
+    path: "/plan-du-site/",
+    name: "SiteMap",
+  },
+  {
+    path: "/politique-de-confidentialite",
+    name: "PrivacyPolicy",
+  },
+  {
+    path: "/politique-de-confidentialite#cookies",
+    name: "Cookies",
+  },
 ]
 routes.push(...vue2Routes)
 
