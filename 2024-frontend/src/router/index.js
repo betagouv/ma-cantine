@@ -48,6 +48,58 @@ const vue2Routes = [
     path: "/developpement-et-apis",
     name: "DeveloperPage",
   },
+  {
+    path: "/mes-achats",
+    name: "PurchasesHome",
+  },
+  {
+    path: "/diagnostic",
+    name: "DiagnosticPage",
+  },
+  {
+    path: "/mesures-phares/:id",
+    name: "KeyMeasurePage",
+  },
+  {
+    path: "/acteurs-de-l-eco-systeme",
+    name: "PartnersHome",
+  },
+  {
+    path: "/creation-affiche",
+    name: "GeneratePosterPage",
+  },
+  {
+    path: "/communaute",
+    name: "CommunityPage",
+  },
+  {
+    path: "/blog",
+    name: "BlogsHome",
+  },
+  {
+    path: "/les-cantines-de-mon-territoire",
+    name: "TerritoryCanteens",
+  },
+  {
+    path: "/trouver-une-cantine",
+    name: "CanteenSearchLanding",
+  },
+  {
+    path: "/statistiques-regionales",
+    name: "PublicCanteenStatisticsPage",
+  },
+  {
+    path: "/faq/",
+    name: "FaqPage",
+  },
+  {
+    path: "/contact",
+    name: "ContactPage",
+  },
+  {
+    path: "/mon-compte",
+    name: "AccountSummaryPage",
+  },
 ]
 routes.push(...vue2Routes)
 
