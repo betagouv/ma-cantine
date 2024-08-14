@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import ImportSelection from "@/views/ImportSelection"
-import { useRootStore } from "../stores/root"
+import { useRootStore } from "@/stores/root"
 
 const routes = [
   {
@@ -39,6 +39,14 @@ const vue2Routes = [
   {
     path: "/ma-progression/:canteenUrlComponent/:year/:measureId",
     name: "MyProgress",
+  },
+  {
+    path: "/gestion",
+    name: "ManagementPage",
+  },
+  {
+    path: "/developpement-et-apis",
+    name: "DeveloperPage",
   },
 ]
 routes.push(...vue2Routes)
