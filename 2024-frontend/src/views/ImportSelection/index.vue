@@ -37,7 +37,7 @@ const quizSteps = [
   {
     key: "isCentralKitchen",
     title: "Livreur de repas",
-    question: "Est-ce que vous gérez une ou plusieurs établissments qui livrent des repas aux cantines ?",
+    question: "Est-ce que un ou plusieurs de ces établissments livrent des repas aux cantines ?",
   },
   {
     key: "hasSatelliteData",
