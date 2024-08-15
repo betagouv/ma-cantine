@@ -13,6 +13,12 @@ Object.values(Constants.CentralKitchenImportLevels).forEach((level) => {
   level.to = { name: "DiagnosticImportPage", params: { importUrlSlug: level.urlSlug } }
   importTypes.push(level)
 })
+importTypes.push({
+  key: "PURCHASES",
+  title: "Achats",
+  help: "Vous voulez importer des données d'achat pour des cantines existantes",
+  to: { name: "PurchasesImporter" },
+})
 
 const expandedId = ref("")
 
@@ -50,6 +56,12 @@ const step = computed(() => quizSteps[currentStep.value - 1])
 const currentAnswer = ref("")
 const answers = ref({})
 const importSuggestionKey = ref("")
+const importSuggestion = computed(() => {
+  if (!importSuggestionKey.value) return
+  const suggestion = importTypes.find((type) => type.key === importSuggestionKey.value)
+  suggestion.to = suggestion.to || { name: "DiagnosticImportPage", params: { importUrlSlug: suggestion.urlSlug } }
+  return suggestion
+})
 const revealAnswer = computed(() => !!importSuggestionKey.value)
 
 const handleChoice = () => {
@@ -119,19 +131,24 @@ watch(currentStep, () => (currentAnswer.value = ""))
       <router-link :to="{ name: 'NewCanteen' }">formulaire pour ajouter une nouvelle cantine</router-link>
       tout en simplicité depuis votre navigateur.
     </p>
+    <h2>Trouver le bon import pour votre situation</h2>
     <div class="fr-mb-8w">
-      <h2>Trouver le bon import pour votre situation</h2>
       <div v-if="!revealAnswer">
         <DsfrStepper :steps="stepTitles" :currentStep />
         <DsfrBooleanRadio :legend="step.question" @change="handleChoice" :name="step.title" v-model="currentAnswer" />
-        <DsfrButton @click="back" tertiary :disabled="currentStep === 1">Revenir à l'étape précédente</DsfrButton>
+        <DsfrButton @click="back" tertiary :disabled="currentStep === 1">
+          Revenir à l'étape précédente
+        </DsfrButton>
       </div>
       <div v-else>
-        <p>Your import is : {{ importSuggestionKey }}</p>
+        <h3>Le résultat</h3>
+        <div class="fr-col-md-6 fr-col-lg-5 fr-mb-4w">
+          <DsfrCard :title="importSuggestion.title" :description="importSuggestion.help" :link="importSuggestion.to" />
+        </div>
         <DsfrButton @click="backToLastQuestion" tertiary v-if="currentStep !== 1" class="fr-mr-2w">
           Revenir à l'étape précédente
         </DsfrButton>
-        <DsfrButton @click="reset">Ressaye</DsfrButton>
+        <DsfrButton @click="reset" secondary>Ressayer</DsfrButton>
       </div>
     </div>
 
