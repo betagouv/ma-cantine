@@ -275,3 +275,33 @@ Dans le dossier principal, lancez :
 En prod, faut ajouter `CC_PRE_BUILD_HOOK=./clevercloud/pre-build-hook.sh`
 
 À noter qu'à ce moment, Vue 3 ne peut pas être deployer en prod car il y a un bug avec le django-vite-plugin.
+
+## Déploiement
+
+Vérification pre-déploiment
+
+- est-ce que les tests passent sur staging ?
+- est-ce que tout va bien côté CleverCloud ?
+- est-ce qu'il y a des cherry-picks sur main qui n'existe pas sur staging ?
+
+Étapes :
+
+- https://github.com/betagouv/ma-cantine/releases > "Draft a new release"
+- "Choose a tag" > taper la date d'aujourd'hui en format YYYY-MM-dd > "Create a new tag on publish"
+- "Generate release notes"
+- Modifier les notes générés (indications en dessus)
+- "Publish release"
+- Si il y a des variables d'environnement à ajouter, ajoutez-les sur prod et demo en CleverCloud
+- avec staging : `git pull`
+- preparer la branche main en locale : `git checkout main` `git rebase staging`
+- `git push` (peut-être `git push -f`)
+- Le déploiement va commencer automatiquement. Ça prend un moment pour déployer côté CleverCloud, suivez le progrès la-bas.
+- Une fois que le déploiement est fait, envoyer un message sur mattermost canal produit pour tenir l'équipe au courant.
+
+### Release notes
+
+Vous pourrez modifier les notes dans un éditeur pour être plus rapide.
+
+- supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dependences"
+- supprimer la partie "by @username in https://..."
+- faire n'importe quel autre changement pour rendre la liste facilement comprensible par tout le monde
