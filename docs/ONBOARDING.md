@@ -305,3 +305,7 @@ Vous pourrez modifier les notes dans un éditeur pour être plus rapide.
 - supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dependences"
 - supprimer la partie "by @username in https://..."
 - faire n'importe quel autre changement pour rendre la liste facilement comprensible par tout le monde
+
+### Debugging
+
+Si jamais vous doutez/si il y a n'importe problème, parlez avec un.e autre dév.
