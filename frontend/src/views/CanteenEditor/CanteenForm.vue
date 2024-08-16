@@ -203,6 +203,7 @@
                 validators.length(14),
                 validators.luhn,
                 validators.isDifferent(canteen.siret, satelliteSiretMessage),
+                validators.required,
               ]"
               @blur="getCentralKitchen"
             />
@@ -253,6 +254,7 @@
             labelClasses="body-2 mb-2"
             :items="sectorCategories"
             v-model="sectorCategory"
+            :rules="[validators.required]"
           />
         </v-col>
         <v-col cols="12" md="6">
