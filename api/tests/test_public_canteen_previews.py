@@ -8,7 +8,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, SectorFactory
 from data.factories import DiagnosticFactory
-from data.models import Canteen
+from data.models import Canteen, Diagnostic
 from data.region_choices import Region
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -114,8 +114,13 @@ class TestPublicCanteenPreviewsApi(APITestCase):
         """
         canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED)
         DiagnosticFactory.create(
-            canteen=canteen, year=timezone.now().date().year - 1
-        )  # year must be in the past, otherwise canteen.appro_diagnostics is empty
+            canteen=canteen,
+            year=timezone.now().date().year - 1,  # year must be in the past, otherwise canteen.appro_diagnostics is empty
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            value_total_ht=10,
+            value_bio_ht=5,
+            value_sustainable_ht=2,
+        )
 
         response = self.client.get(reverse("single_public_canteen_preview", kwargs={"pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

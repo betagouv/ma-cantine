@@ -1,18 +1,15 @@
+import os
+import json
 import pandas as pd
 import requests_mock
-from macantine.etl.utils import map_communes_infos
+from macantine.etl.utils import map_communes_infos, update_datagouv_resources
 from django.test import TestCase, override_settings
 from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
 from macantine.etl.analysis import ETL_ANALYSIS, aggregate_col, get_egalim_hors_bio, format_sector_column
 from macantine.etl.open_data import ETL_CANTEEN, ETL_TD
 from freezegun import freeze_time
-import json
 from django.core.files.storage import default_storage
-
-import os
-
-from macantine.etl.utils import update_datagouv_resources
 
 
 class TestETLAnalysis(TestCase):
@@ -20,23 +17,21 @@ class TestETLAnalysis(TestCase):
     def test_extraction_teledeclaration(self):
         """
         Only teledeclarations that occurred during teledeclaration campaigns should be extracted
+        We use freeze_time to mock the mock the Teledeclaration's creation_date
         """
         canteen = CanteenFactory.create()
         applicant = UserFactory.create()
-        with freeze_time("1991-01-14"):  # Faking time to mock creation_date
-            diagnostic_1990 = DiagnosticFactory.create(canteen=canteen, year=1990, diagnostic_type=None)
-            _ = Teledeclaration.create_from_diagnostic(diagnostic_1990, applicant)
-
-        with freeze_time("2023-05-14"):  # Faking time to mock creation_date
+        with freeze_time("2020-01-14"):
+            diagnostic_1990 = DiagnosticFactory.create(canteen=canteen, year=2019, diagnostic_type=None)
+            Teledeclaration.create_from_diagnostic(diagnostic_1990, applicant)
+        with freeze_time("2023-05-14"):
             diagnostic_2022 = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
             td_2022 = Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
-
-        with freeze_time("2024-02-14"):  # Faking time to mock creation_date
+        with freeze_time("2024-02-14"):
             diagnostic_2023 = DiagnosticFactory.create(canteen=canteen, year=2023, diagnostic_type=None)
             td_2023 = Teledeclaration.create_from_diagnostic(diagnostic_2023, applicant)
 
         etl_stats = ETL_ANALYSIS()
-
         etl_stats.extract_dataset()
         self.assertEqual(
             len(etl_stats.df),
@@ -173,7 +168,6 @@ class TestETLAnalysis(TestCase):
 
 @requests_mock.Mocker()
 class TestETLOpenData(TestCase):
-
     @freeze_time("2023-05-14")  # Faking time to mock creation_date
     def test_td_range_years(self, mock):
         """
@@ -182,7 +176,7 @@ class TestETLOpenData(TestCase):
         canteen = CanteenFactory.create()
         applicant = UserFactory.create()
         test_cases = [
-            {"name": "Ignore years out of range", "year": 1990, "expected_outcome": 0},
+            {"name": "Ignore years out of range", "year": 2019, "expected_outcome": 0},
             {"name": "Returns TDs for year in range", "year": 2022, "expected_outcome": 1},
         ]
 

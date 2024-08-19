@@ -68,7 +68,7 @@ class TestCanteenStatsApi(APITestCase):
             value_externality_performance_ht=0,
             value_egalim_others_ht=0,
             has_waste_diagnostic=True,
-            waste_actions=["action1", "action2"],
+            waste_actions=[Diagnostic.WasteActions.AWARENESS, Diagnostic.WasteActions.DISTRIBUTION],
             has_donation_agreement=True,
             vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW,
             cooking_plastic_substituted=True,
@@ -315,22 +315,29 @@ class TestCanteenStatsApi(APITestCase):
         """
         # --- Canteens which don't earn waste badge:
         waste_actions_only = CanteenFactory.create(daily_meal_count=2999)
-        DiagnosticFactory.create(canteen=waste_actions_only, has_waste_diagnostic=False, waste_actions=["action1"])
+        DiagnosticFactory.create(
+            canteen=waste_actions_only, has_waste_diagnostic=False, waste_actions=[Diagnostic.WasteActions.AWARENESS]
+        )
         waste_diagnostic_only = CanteenFactory.create(daily_meal_count=2999)
         DiagnosticFactory.create(canteen=waste_diagnostic_only, has_waste_diagnostic=True, waste_actions=[])
         large_canteen_no_badge = CanteenFactory.create(daily_meal_count=3000)
         DiagnosticFactory.create(
             canteen=large_canteen_no_badge,
             has_waste_diagnostic=True,
-            waste_actions=["action1"],
+            waste_actions=[Diagnostic.WasteActions.AWARENESS],
             has_donation_agreement=False,
         )
         # --- Canteens which earn waste badge:
         small_canteen = CanteenFactory.create(daily_meal_count=2999)
-        DiagnosticFactory.create(canteen=small_canteen, has_waste_diagnostic=True, waste_actions=["action1"])
+        DiagnosticFactory.create(
+            canteen=small_canteen, has_waste_diagnostic=True, waste_actions=[Diagnostic.WasteActions.AWARENESS]
+        )
         large_canteen = CanteenFactory.create(daily_meal_count=3000)
         DiagnosticFactory.create(
-            canteen=large_canteen, has_waste_diagnostic=True, waste_actions=["action1"], has_donation_agreement=True
+            canteen=large_canteen,
+            has_waste_diagnostic=True,
+            waste_actions=[Diagnostic.WasteActions.AWARENESS],
+            has_donation_agreement=True,
         )
 
         badges = badges_for_queryset(Diagnostic.objects.all())
@@ -352,12 +359,14 @@ class TestCanteenStatsApi(APITestCase):
         high_canteen.sectors.remove(primaire)
         high_canteen.sectors.remove(secondaire)
         DiagnosticFactory.create(
-            canteen=high_canteen, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.HIGH.value
+            canteen=high_canteen, year=2019, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.HIGH.value
         )
 
         low_canteen = CanteenFactory.create()
         low_canteen.sectors.add(primaire)
-        DiagnosticFactory.create(canteen=low_canteen, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW.value)
+        DiagnosticFactory.create(
+            canteen=low_canteen, year=2019, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW.value
+        )
 
         # --- canteens which earn diversification badge:
         daily_vege = CanteenFactory.create()

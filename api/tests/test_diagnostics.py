@@ -236,6 +236,7 @@ class TestDiagnosticsApi(APITestCase):
 
         diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
 
+        self.assertEqual(diagnostic.diagnostic_type, None)
         self.assertEqual(diagnostic.year, 2020)
         self.assertTrue(diagnostic.cooking_plastic_substituted)
         self.assertFalse(diagnostic.has_donation_agreement)
@@ -416,7 +417,13 @@ class TestDiagnosticsApi(APITestCase):
         """
         Do not save edits to a diagnostic which make the sum of the values > total
         """
-        diagnostic = DiagnosticFactory.create(year=2019, value_total_ht=10, value_bio_ht=5, value_sustainable_ht=2)
+        diagnostic = DiagnosticFactory.create(
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2019,
+            value_total_ht=10,
+            value_bio_ht=5,
+            value_sustainable_ht=2,
+        )
         diagnostic.canteen.managers.add(authenticate.user)
         payload = {"value_sustainable_ht": 999}
 
@@ -630,7 +637,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, total_leftovers=Decimal("1.23456"))
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2019, total_leftovers=Decimal("1.23456"))
 
         payload = {
             "total_leftovers": 6666.66,
@@ -656,7 +663,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, total_leftovers=Decimal("1.23456"))
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2019, total_leftovers=Decimal("1.23456"))
 
         payload = {
             "bread_leftovers": 100,
@@ -730,7 +737,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        DiagnosticFactory.create(canteen=canteen, total_leftovers=Decimal("1.23456"))
+        DiagnosticFactory.create(canteen=canteen, year=2019, total_leftovers=Decimal("1.23456"))
         response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
         body = response.json()
 
