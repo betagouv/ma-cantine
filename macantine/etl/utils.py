@@ -171,8 +171,6 @@ def fetch_commune_detail(code_insee_commune, commune_details, geo_detail_type="e
         and geo_detail_type in commune_details[code_insee_commune].keys()
     ):
         return commune_details[code_insee_commune][geo_detail_type]
-    else:
-        return None
 
 
 def fetch_epci_name(code_insee_epci, epcis_names):
@@ -181,8 +179,6 @@ def fetch_epci_name(code_insee_epci, epcis_names):
     """
     if code_insee_epci and code_insee_epci in epcis_names.keys():
         return epcis_names[code_insee_epci]
-    else:
-        return None
 
 
 def format_geo_name(geo_code: int, geo_names: Dict[int, str]):
@@ -192,8 +188,6 @@ def format_geo_name(geo_code: int, geo_names: Dict[int, str]):
     if isinstance(geo_code, str) and geo_code not in ["978", "987", "975", "988"]:
         geo_name = geo_names[geo_code].split(" - ")[1].lstrip()
         return geo_name
-    else:
-        return None
 
 
 def format_sector(sector: dict) -> str:
