@@ -43,8 +43,8 @@ class TestETLAnalysis(TestCase):
             2,
             "There should be two teledeclaration. None for 1990 (no campaign). One for 2022 and one for 2023",
         )
-        self.assertEqual(etl_stats.df[etl_stats.df.id == td_2022.id].year[0], 2022)
-        self.assertEqual(etl_stats.df[etl_stats.df.id == td_2023.id].year[0], 2023)
+        self.assertEqual(etl_stats.df[etl_stats.df.id == td_2022.id].year.iloc[0], 2022)
+        self.assertEqual(etl_stats.df[etl_stats.df.id == td_2023.id].year.iloc[0], 2023)
 
 
 @requests_mock.Mocker()
