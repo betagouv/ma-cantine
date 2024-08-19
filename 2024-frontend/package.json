@@ -18,7 +18,7 @@
     "@vueuse/core": "^10.11.1",
     "django-vite-plugin": "^4.0.1",
     "pinia": "^2.2.1",
-    "vue": "^3.4.37",
+    "vue": "^3.4.38",
     "vue-material-design-icons": "^5.3.0",
     "vue-router": "^4.4.2"
   },
