@@ -161,7 +161,7 @@ def fetch_teledeclarations(years: list) -> pd.DataFrame:
     return df
 
 
-def fetch_commune_detail(code_insee_commune, commune_details, geo_detail_type="epci"):
+def fetch_commune_detail(code_insee_commune, commune_details, geo_detail_type):
     """
     Provide EPCI code/ Department code/ Region code for a city, given the insee code of the city
     """
