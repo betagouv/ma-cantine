@@ -200,13 +200,14 @@ class ETL_ANALYSIS(etl.ETL):
     def extract_dataset(self):
         # Load teledeclarations from prod database into the Data Warehouse
         self.df = macantine.etl.open_data.fetch_teledeclarations(self.years)
+        self.df.index = self.df.id
 
     def transform_dataset(self):
         # Flatten json 'declared_data' column
         df_json = pd.json_normalize(self.df["declared_data"])
         del df_json["year"]
         del df_json["canteen.id"]
-        self.df.index = np.arange(0, len(self.df))  # Create a standard index to be able to join data
+        df_json.index = self.df.id
         self.df = self.df.loc[~self.df.index.duplicated(keep="first")]
         self.df = pd.concat([self.df.drop("declared_data", axis=1), df_json], axis=1)
 
