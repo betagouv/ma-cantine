@@ -199,21 +199,6 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
             self.fields.pop("creation_mtm_campaign")
             self.fields.pop("creation_mtm_medium")
 
-    def validate(self, data):
-        total = self.return_value(self, data, "value_total_ht")
-        if total is not None and isinstance(total, Decimal):
-            bio = self.return_value(self, data, "value_bio_ht")
-            sustainable = self.return_value(self, data, "value_sustainable_ht")
-            externality_performance = self.return_value(self, data, "value_externality_performance_ht")
-            egalim_others = self.return_value(self, data, "value_egalim_others_ht")
-            value_sum = (bio or 0) + (sustainable or 0) + (externality_performance or 0) + (egalim_others or 0)
-            if value_sum > total:
-                raise serializers.ValidationError(
-                    f"La somme des valeurs d'approvisionnement, {value_sum}, est plus que le total, {total}"
-                )
-            # TODO: test meat and fish too?
-        return data
-
     @staticmethod
     def return_value(serializer, data, field_name):
         if field_name in data:
