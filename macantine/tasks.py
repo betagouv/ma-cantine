@@ -418,7 +418,7 @@ def export_datasets():
         "campagne teledeclaration 2021": ETL_TD(2021),
         "campagne teledeclaration 2022": ETL_TD(2022),
         "cantines": ETL_CANTEEN(),
-        "analysis": ETL_ANALYSIS(),
+        "td_analyses": ETL_ANALYSIS(),
     }
     for key, etl in datasets.items():
         logger.info(f"Starting {key} dataset extraction")
