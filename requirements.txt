@@ -109,7 +109,7 @@ py==1.11.0
 pycparser==2.22
 pyHanko==0.25.1
 pyhanko-certvalidator==0.26.3
-pylint==3.1.0
+pylint==3.2.6
 pylint-django==2.5.5
 pylint-plugin-utils==0.8.2
 pypdf==4.2.0
