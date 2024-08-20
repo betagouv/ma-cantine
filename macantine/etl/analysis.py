@@ -251,9 +251,9 @@ class ETL_ANALYSIS(etl.ETL):
     def compute_miscellaneous_columns(self):
         # Canteen
         self.df["management_type"] = self.df["canteen.management_type"].apply(get_management_type)
-        self.df["cuisine_centrale"] = self.df["canteen.production_type"].apply(get_management_type)
+        self.df["cuisine_centrale"] = self.df["canteen.production_type"].apply(get_cuisine_centrale)
         self.df["modele_economique"] = self.df["canteen.economic_model"].apply(get_economic_model)
-        self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_economic_model)
+        self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_diagnostic_type)
         # Add geo data
         self.df["nbre_cantines_region"] = self.df["canteen.region"].apply(get_nbre_cantines_region)
         self.df["objectif_zone_geo"] = self.df["canteen.region"].apply(get_objectif_zone_geo)
