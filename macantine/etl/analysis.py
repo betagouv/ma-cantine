@@ -2,6 +2,7 @@ import pandas as pd
 import logging
 import json
 import numpy as np
+import re
 
 from macantine.etl.data_warehouse import DataWareHouse
 from macantine.etl import etl
@@ -144,10 +145,20 @@ def transform_sector_column(row):
     return pd.Series({"secteur": np.nan, "catégorie": np.nan})
 
 
+def check_column_matches_substring(df, sub_categ: str):
+    for substring in sub_categ:
+        pattern = rf".*{re.escape(substring)}.*"
+        matching_cols = df.filter(regex=pattern).columns.tolist()
+        if len(matching_cols) == 0:
+            logger.error("The sub categ {substring} doesn't match any columns from the dataframe")
+            raise KeyError
+
+
 def aggregate_col(df, categ, sub_categ):
     """
     Aggregating into a new column all the values of a category for complete TD
     """
+    check_column_matches_substring(df, sub_categ)
     regex_pattern = rf"^(?!value_{categ}_ht$).*(" + "|".join(sub_categ) + ")"
     df[f"teledeclaration.value_{categ}_ht"] = df.filter(regex=regex_pattern).sum(
         axis=1, numeric_only=True, skipna=True, min_count=1
@@ -163,7 +174,7 @@ def aggregate(df):
         "egalim_others",
         ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
     )
-    df = aggregate_col(df, "externality_performance", ["_externality_performance", "_performance", "_externalites"])
+    df = aggregate_col(df, "externality_performance", ["_performance", "_externalites"])
     df["teledeclaration.cout_denrees"] = df.apply(
         lambda row: row["teledeclaration.value_total_ht"] / row["canteen.yearly_meal_count"], axis=1
     )

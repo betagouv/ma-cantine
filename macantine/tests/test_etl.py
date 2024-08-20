@@ -97,6 +97,16 @@ class TestETLAnalysis(TestCase):
             td_aggregated = aggregate_col(td_complete, tc["categ"], tc["sub_categ"])
             self.assertEqual(td_aggregated.iloc[0][f"teledeclaration.value_{tc['categ']}_ht"], tc["expected_outcome"])
 
+    def test_check_column_matches_substring(self):
+        data = {
+            "0": {
+                "id": 1,
+            }
+        }
+        df = pd.DataFrame.from_dict(data, orient="index")
+        with self.assertRaises(KeyError):
+            aggregate_col(df, "categ_A", ["_non_existing_sub_categ"])
+
 
 @requests_mock.Mocker()
 class TestETLOpenData(TestCase):
