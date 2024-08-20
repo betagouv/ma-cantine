@@ -9,11 +9,11 @@ class DataWareHouse:
         load_dotenv()
         url_object = URL.create(
             "postgresql+psycopg2",
-            username=os.environ.get("DATA_WAREHOUSE_USER"),
-            password=os.environ.get("DATA_WAREHOUSE_PASSWORD"),
-            host=os.environ.get("DATA_WAREHOUSE_HOST"),
-            port=os.environ.get("DATA_WAREHOUSE_PORT"),
-            database=os.environ.get("DATA_WAREHOUSE_DB"),
+            username=os.environ.get("DATA_WARE_HOUSE_USER"),
+            password=os.environ.get("DATA_WARE_HOUSE_PASSWORD"),
+            host=os.environ.get("DATA_WARE_HOUSE_HOST"),
+            port=os.environ.get("DATA_WARE_HOUSE_PORT"),
+            database=os.environ.get("DATA_WARE_HOUSE_DB"),
         )
         self.engine = create_engine(
             url_object,
