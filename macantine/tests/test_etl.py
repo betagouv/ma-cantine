@@ -4,7 +4,7 @@ from macantine.etl.utils import map_communes_infos
 from django.test import TestCase, override_settings
 from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
-from macantine.etl.analysis import ETL_ANALYSIS
+from macantine.etl.analysis import ETL_ANALYSIS, aggregate_col
 from macantine.etl.open_data import ETL_CANTEEN, ETL_TD
 from freezegun import freeze_time
 import json
@@ -45,6 +45,57 @@ class TestETLAnalysis(TestCase):
         )
         self.assertEqual(etl_stats.df[etl_stats.df.id == td_2022.id].year.iloc[0], 2022)
         self.assertEqual(etl_stats.df[etl_stats.df.id == td_2023.id].year.iloc[0], 2023)
+
+    def test_aggregate_col(self):
+        test_cases = [
+            {
+                "name": "Regular aggregation",
+                "data": {
+                    "0": {
+                        "id": 1,
+                        "value_bio_ht": pd.NA,
+                        "value_bio_boulange_ht": 5,
+                        "value_bio_viande_ht": 5,
+                    }
+                },
+                "categ": "bio",
+                "sub_categ": ["_bio"],
+                "expected_outcome": 10,
+            },
+            {
+                "name": "No double count by exluding potential aggregated value from sum",
+                "data": {
+                    "0": {
+                        "id": 1,
+                        "value_bio_ht": 5,
+                        "value_bio_boulange_ht": 5,
+                        "value_bio_viande_ht": 5,
+                    }
+                },
+                "categ": "bio",
+                "sub_categ": ["_bio"],
+                "expected_outcome": 10,
+            },
+            {
+                "name": "Multiple sub categ",
+                "data": {
+                    "0": {
+                        "id": 1,
+                        "value_bio_ht": pd.NA,
+                        "value_bio_boulange_ht": 5,
+                        "value_bio_viande_ht": 5,
+                        "value_awesome_viande_ht": 5,
+                    }
+                },
+                "categ": "bio",
+                "sub_categ": ["_bio", "_awesome"],
+                "expected_outcome": 15,
+            },
+        ]
+        for tc in test_cases:
+            td_complete = pd.DataFrame.from_dict(tc["data"], orient="index")
+            td_aggregated = aggregate_col(td_complete, tc["categ"], tc["sub_categ"])
+            self.assertEqual(td_aggregated.iloc[0][f"teledeclaration.value_{tc['categ']}_ht"], tc["expected_outcome"])
 
 
 @requests_mock.Mocker()

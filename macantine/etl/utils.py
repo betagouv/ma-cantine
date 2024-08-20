@@ -1,12 +1,12 @@
 from typing import Dict
 import pandas as pd
 from api.serializers import SectorSerializer
-from api.views.utils import camelize
 from data.models import Sector, Teledeclaration
 import requests
 import os
 from datetime import datetime, date
 import logging
+import numpy as np
 import zoneinfo
 
 logger = logging.getLogger(__name__)
@@ -25,6 +25,15 @@ CAMPAIGN_DATES = {
         "end_date": datetime(2024, 6, 12, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
 }
+
+
+def get_ratio(row, valueKey, totalKey):
+    tdTotalKey = f"teledeclaration.{totalKey}"
+    tdValueKey = f"teledeclaration.{valueKey}"
+    if row[tdTotalKey] > 0 and row[tdValueKey] >= 0:
+        return 100 * row[tdValueKey] / row[tdTotalKey]
+    else:
+        return np.nan
 
 
 def update_datagouv_resources():
@@ -133,7 +142,7 @@ def map_sectors():
     sectors = Sector.objects.all()
     sectors_mapper = {}
     for sector in sectors:
-        sector = camelize(SectorSerializer(sector).data)
+        sector = SectorSerializer(sector).data
         sectors_mapper[sector["id"]] = sector
     return sectors_mapper
 

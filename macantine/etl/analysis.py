@@ -5,8 +5,8 @@ import numpy as np
 
 from macantine.etl.data_warehouse import DataWareHouse
 from macantine.etl import etl
-import macantine.etl.open_data
-import macantine.etl.utils
+from macantine.etl import open_data
+from macantine.etl import utils
 
 logger = logging.getLogger(__name__)
 
@@ -109,47 +109,32 @@ def get_objectif_zone_geo(department: int):
         elif department >= 971 and department <= 978:
             return "DROM (hors Mayotte)"
         else:
-            return "Autre"
+            return "non renseigné"
 
 
 def get_ratio_egalim_fish(row):
-    if row["teledeclaration.value_fish_ht"] > 0 and row["teledeclaration.value_fish_egalim_ht"] >= 0:
-        return 100 * row["teledeclaration.value_fish_egalim_ht"] / row["teledeclaration.value_fish_ht"]
-    else:
-        return np.nan
+    return utils.get_ratio(row, "value_fish_egalim_ht", "value_fish_ht")
 
 
 def get_ratio_egalim_meat_poultry(row):
-    if row["teledeclaration.value_meat_poultry_ht"] > 0 and row["teledeclaration.value_meat_poultry_egalim_ht"] >= 0:
-        return 100 * row["teledeclaration.value_meat_poultry_egalim_ht"] / row["teledeclaration.value_meat_poultry_ht"]
-    else:
-        return np.nan
+    return utils.get_ratio(row, "value_meat_poultry_egalim_ht", "value_meat_poultry_ht")
 
 
 def get_ratio_bio(row):
-    if row["teledeclaration.value_total_ht"] > 0 and row["teledeclaration.value_bio_ht"] >= 0:
-        return 100 * row["teledeclaration.value_bio_ht"] / row["teledeclaration.value_total_ht"]
-    else:
-        return np.nan
+    return utils.get_ratio(row, "value_bio_ht", "value_total_ht")
 
 
 def get_ratio_egalim_avec_bio(row):
-    if row["teledeclaration.value_total_ht"] > 0 and row["teledeclaration.value_somme_egalim_avec_bio_ht"] >= 0:
-        return 100 * row["teledeclaration.value_somme_egalim_avec_bio_ht"] / row["teledeclaration.value_total_ht"]
-    else:
-        return np.nan
+    return utils.get_ratio(row, "value_somme_egalim_avec_bio_ht", "value_total_ht")
 
 
 def get_ratio_egalim_sans_bio(row):
-    if row["teledeclaration.value_total_ht"] > 0 and row["teledeclaration.value_somme_egalim_hors_bio_ht"] >= 0:
-        return 100 * row["teledeclaration.value_somme_egalim_hors_bio_ht"] / row["teledeclaration.value_total_ht"]
-    else:
-        return np.nan
+    return utils.get_ratio(row, "value_somme_egalim_hors_bio_ht", "value_total_ht")
 
 
 def transform_sector_column(row):
     """
-    Fetching sectors information and aggreting in list in order to have only one row per canteen
+    Fetching sectors information and aggregating in list in order to have only one row per canteen
     """
     if type(row) == list:
         if len(row) > 1:
@@ -159,9 +144,12 @@ def transform_sector_column(row):
     return pd.Series({"secteur": np.nan, "catégorie": np.nan})
 
 
-def aggregate_col(df, categ="bio", sub_categ=["_bio"]):
-    pattern = "|".join(sub_categ)
-    df[f"teledeclaration.value_{categ}_ht"] = df.filter(regex=pattern).sum(
+def aggregate_col(df, categ, sub_categ):
+    """
+    Aggregating into a new column all the values of a category for complete TD
+    """
+    regex_pattern = rf"^(?!value_{categ}_ht$).*(" + "|".join(sub_categ) + ")"
+    df[f"teledeclaration.value_{categ}_ht"] = df.filter(regex=regex_pattern).sum(
         axis=1, numeric_only=True, skipna=True, min_count=1
     )
     return df
@@ -192,14 +180,14 @@ class ETL_ANALYSIS(etl.ETL):
 
     def __init__(self):
         self.df = None
-        self.years = macantine.etl.utils.CAMPAIGN_DATES.keys()
+        self.years = utils.CAMPAIGN_DATES.keys()
         self.extracted_table_name = "teledeclarations_extracted"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis.json"))
 
     def extract_dataset(self):
         # Load teledeclarations from prod database into the Data Warehouse
-        self.df = macantine.etl.open_data.fetch_teledeclarations(self.years)
+        self.df = open_data.fetch_teledeclarations(self.years)
         self.df.index = self.df.id
 
     def transform_dataset(self):
@@ -210,6 +198,9 @@ class ETL_ANALYSIS(etl.ETL):
         df_json.index = self.df.id
         self.df = self.df.loc[~self.df.index.duplicated(keep="first")]
         self.df = pd.concat([self.df.drop("declared_data", axis=1), df_json], axis=1)
+
+        # Aggregate columns for complete TD - Must occur before other transformations
+        self.df = aggregate(self.df)
 
         self.compute_miscellaneous_columns()
 
@@ -225,8 +216,8 @@ class ETL_ANALYSIS(etl.ETL):
 
         # Fill campaign participation
         logger.info("Canteens : Fill campaign participations...")
-        for year in macantine.etl.utils.CAMPAIGN_DATES.keys():
-            campaign_participation = macantine.etl.utils.map_canteens_td(year)
+        for year in utils.CAMPAIGN_DATES.keys():
+            campaign_participation = utils.map_canteens_td(year)
             col_name_campaign = f"declaration_{year}"
             self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
 
@@ -237,9 +228,6 @@ class ETL_ANALYSIS(etl.ETL):
                 transform_sector_column(x) if x != np.nan else pd.Series({"secteur": np.nan, "catégorie": np.nan})
             )
         )
-
-        # Aggregate columns for complete TD
-        self.df = aggregate(self.df)
 
         # Rename columns
         self.df = self.df.rename(
