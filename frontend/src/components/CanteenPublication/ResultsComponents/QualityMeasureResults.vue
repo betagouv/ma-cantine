@@ -97,6 +97,12 @@
                     <br />
                     EGAlim
                   </p>
+                  <p
+                    v-if="applicableRules.meatPoultryEgalimThreshold"
+                    class="mt-1 mb-0 fr-text-sm grey--text text--darken-1"
+                  >
+                    <i>objectif : {{ applicableRules.meatPoultryEgalimThreshold }} %</i>
+                  </p>
                 </v-col>
                 <v-col cols="12" sm="4" class="pa-4">
                   <v-icon large class="grey--text text--darken-3 mb-2">$france-line</v-icon>
@@ -106,6 +112,12 @@
                     <br />
                     provenance France
                   </p>
+                  <p
+                    v-if="applicableRules.meatPoultryFranceThreshold"
+                    class="mt-1 mb-0 fr-text-sm grey--text text--darken-1"
+                  >
+                    <i>objectif : {{ applicableRules.meatPoultryFranceThreshold }} %</i>
+                  </p>
                 </v-col>
                 <v-col cols="12" sm="4" class="pa-4">
                   <v-icon large class="grey--text text--darken-3 mb-2">$anchor-line</v-icon>
@@ -114,6 +126,9 @@
                     de produits de la mer
                     <br />
                     et aquaculture EGAlim
+                  </p>
+                  <p v-if="applicableRules.fishEgalimThreshold" class="mt-1 mb-0 fr-text-sm grey--text text--darken-1">
+                    <i>objectif : {{ applicableRules.fishEgalimThreshold }} %</i>
                   </p>
                 </v-col>
               </v-row>
@@ -209,7 +224,8 @@ export default {
       })
     },
     applicableRules() {
-      return applicableDiagnosticRules(this.canteen)
+      const yearMaybe = +this.tab
+      return applicableDiagnosticRules(this.canteen, yearMaybe)
     },
     hasPercentages() {
       return !!this.diagnosticForYear && "percentageValueTotalHt" in this.diagnosticForYear
