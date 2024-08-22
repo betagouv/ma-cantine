@@ -113,7 +113,7 @@
       Contenus non soumis à l'obligation d'accessibilité
     </h4>
     <p>
-      Le gestionnaire de cookies « crisp » a été exempté. Il n'a donc pas fait l'objet d'un audit complet et détaillé.
+      Le module de chat « crisp » a été exempté. Il n'a donc pas fait l'objet d'un audit complet et détaillé.
     </p>
     <p>
       Il a toutefois été vérifié que sa présence n'empêche pas l'utilisation et la consultation du reste du site.
