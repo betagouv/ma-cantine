@@ -7,7 +7,7 @@
     },
     {
       "name": "year",
-      "type": "string"
+      "type": "integer"
     },
     {
       "name": "creation_date",
