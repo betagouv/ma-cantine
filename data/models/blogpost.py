@@ -5,9 +5,11 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from .blogtag import BlogTag
 from wagtail.models import Page
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from django.contrib.contenttypes.fields import GenericRelation
+from wagtail.models import RevisionMixin
 
 
-class BlogPost(models.Model):
+class BlogPost(RevisionMixin, models.Model):
     class Meta:
         verbose_name = "article de blog"
         verbose_name_plural = "articles de blog"
@@ -29,7 +31,11 @@ class BlogPost(models.Model):
         verbose_name="auteur",
         related_name="blog_posts",
     )
+    # TODO: update to support revisions : https://docs.wagtail.org/en/v6.2.1/topics/snippets/features.html#saving-revisions-of-snippets
     tags = models.ManyToManyField(BlogTag, blank=True, verbose_name="étiquettes")
+
+    # don't use revisions directly, in case custom logic is required in the future
+    _revisions = GenericRelation("wagtailcore.Revision", related_query_name="blogpost")
 
     @property
     def url_path(self):
@@ -37,6 +43,11 @@ class BlogPost(models.Model):
 
     def __str__(self):
         return f'Blog post "{self.title}"'
+
+    @property
+    def revisions(self):
+        # Some custom logic here if necessary
+        return self._revisions
 
 
 class BlogPage(Page):
