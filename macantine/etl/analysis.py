@@ -5,9 +5,7 @@ import numpy as np
 import re
 
 from macantine.etl.data_warehouse import DataWareHouse
-from macantine.etl import etl
-from macantine.etl import open_data
-from macantine.etl import utils
+from macantine.etl import etl, open_data, utils
 
 logger = logging.getLogger(__name__)
 
