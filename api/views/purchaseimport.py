@@ -16,7 +16,7 @@ from api.permissions import IsAuthenticated
 from data.models import Purchase, Canteen, ImportType
 from data.factories import ImportFailureFactory
 from api.serializers import PurchaseSerializer
-from .utils import normalise_siret, camelize
+from .utils import normalise_siret, camelize, decode_bytes
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +33,7 @@ class ImportPurchasesView(APIView):
         self.tmp_id = uuid.uuid4()
         self.file = None
         self.dialect = None
+        self.encoding_detected = None
         self.is_duplicate_file = False
         self.duplicate_purchases = []
         self.duplicate_purchase_count = 0
@@ -76,6 +77,7 @@ class ImportPurchasesView(APIView):
             return self._get_success_response()
 
         except Exception as e:
+            print(e)
             message = "Échec lors de la lecture du fichier"
             self._log_error(f"{message}:\n{e}", "exception")
             self.errors = [{"row": 0, "status": 400, "message": message}]
@@ -98,12 +100,14 @@ class ImportPurchasesView(APIView):
         for row in self.file:
             # Sniffing header
             if self.dialect is None:
-                self.dialect = csv.Sniffer().sniff(row.decode())
+                # decode header, discarding encoding result that might not be accurate without more data
+                (decoded_row, _) = decode_bytes(row)
+                self.dialect = csv.Sniffer().sniff(decoded_row)
 
             file_hash.update(row)
 
             # Split into chunks
-            chunk.append(row.decode())
+            chunk.append(row)
 
             # Process full chunk
             if row_count == settings.CSV_PURCHASE_CHUNK_LINES:
@@ -122,6 +126,13 @@ class ImportPurchasesView(APIView):
         if self.file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
+    def _decode_chunk(self, chunk_list):
+        if self.encoding_detected is None:
+            chunk = b"".join(chunk_list)
+            (_, encoding) = decode_bytes(chunk)
+            self.encoding_detected = encoding
+        return [chunk.decode(self.encoding_detected) for chunk in chunk_list]
+
     def _check_duplication(self):
         matching_purchases = Purchase.objects.filter(import_source=self.file_digest)
         if matching_purchases.exists():
@@ -134,7 +145,8 @@ class ImportPurchasesView(APIView):
         errors = []
         self.purchases = []
 
-        csvreader = csv.reader(io.StringIO("".join(chunk)), self.dialect)
+        decoded_chunk = self._decode_chunk(chunk)
+        csvreader = csv.reader(io.StringIO("".join(decoded_chunk)), self.dialect)
         for row_number, row in enumerate(csvreader, start=1):
             siret = None
             # If header, pass
@@ -232,6 +244,7 @@ class ImportPurchasesView(APIView):
                 "duplicatePurchases": camelize(PurchaseSerializer(self.duplicate_purchases, many=True).data),
                 "duplicateFile": self.is_duplicate_file,
                 "duplicatePurchaseCount": self.duplicate_purchase_count,
+                "encoding": self.encoding_detected,
             },
             status=status.HTTP_200_OK,
         )

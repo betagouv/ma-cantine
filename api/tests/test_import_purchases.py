@@ -270,12 +270,13 @@ class TestPurchaseImport(APITestCase):
         canteen.managers.add(authenticate.user)
         self.assertEqual(Purchase.objects.count(), 0)
 
-        with open("./api/tests/files/purchase_encoding_cp1252.csv", "rb") as diag_file:
+        with open("./api/tests/files/purchase_encoding_iso-8859-1.csv", "rb") as diag_file:
             response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["errors"]), 0)
-        self.assertEqual(body["encoding"], "Windows-1252")
         self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(Purchase.objects.first().description, "deuxième pomme")
+        self.assertEqual(body["encoding"], "ISO-8859-1")
