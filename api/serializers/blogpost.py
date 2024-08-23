@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from data.models import BlogPost
+from data.models import BlogPost, BlogPage
 from .user import BlogPostAuthor
 
 
@@ -20,4 +20,16 @@ class BlogPostSerializer(serializers.ModelSerializer):
             "display_date",
             "author",
             "tags",
+        )
+
+
+class BlogPageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogPage
+        fields = (
+            "id",
+            "title",
+            "body",
+            "date",
+            "status_string",
         )

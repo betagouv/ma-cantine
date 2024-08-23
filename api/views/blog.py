@@ -3,8 +3,8 @@ import logging
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
-from api.serializers import BlogPostSerializer
-from data.models import BlogPost
+from api.serializers import BlogPostSerializer, BlogPageSerializer
+from data.models import BlogPost, BlogPage
 from django_filters import rest_framework as django_filters
 from .utils import UnaccentSearchFilter
 
@@ -47,6 +47,23 @@ class BlogPostsView(ListAPIView):
         if tag is not None:
             queryset = queryset.filter(tags__name=tag)
         return queryset
+
+
+class BlogPageListView(ListAPIView):
+    model = BlogPage
+    serializer_class = BlogPageSerializer
+    queryset = BlogPage.objects.all()
+    # pagination_class = BlogPagesPagination
+
+    # filter_backends = [django_filters.DjangoFilterBackend, UnaccentSearchFilter]
+    # search_fields = ["title", "tagline", "body"]
+
+    # def get_queryset(self):
+    #     queryset = self.queryset
+    #     tag = self.request.query_params.get("tag", None)
+    #     if tag is not None:
+    #         queryset = queryset.filter(tags__name=tag)
+    #     return queryset
 
 
 class BlogPostView(RetrieveAPIView):

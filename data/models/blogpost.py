@@ -3,6 +3,8 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from ckeditor_uploader.fields import RichTextUploadingField
 from .blogtag import BlogTag
+from wagtail.models import Page
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 
 
 class BlogPost(models.Model):
@@ -35,3 +37,17 @@ class BlogPost(models.Model):
 
     def __str__(self):
         return f'Blog post "{self.title}"'
+
+
+class BlogPage(Page):
+    body = RichTextUploadingField()
+    date = models.DateField("Post date")
+
+    content_panels = Page.content_panels + [
+        FieldPanel("date"),
+        FieldPanel("body"),
+    ]
+
+    promote_panels = [
+        MultiFieldPanel(Page.promote_panels, "Common page configuration"),
+    ]

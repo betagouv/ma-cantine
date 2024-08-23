@@ -26,7 +26,7 @@ from api.views import (
 )
 from api.views import DiagnosticCreateView, RetrieveUpdateUserCanteenView, DiagnosticUpdateView
 from api.views import EmailDiagnosticImportFileView
-from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
+from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView, BlogPageListView
 from api.views import AddManagerView, RemoveManagerView
 from api.views import ImportSimpleDiagnosticsView, ImportCompleteDiagnosticsView
 from api.views import TeledeclarationCreateView, TeledeclarationCancelView, TeledeclarationPdfView
@@ -211,6 +211,7 @@ urlpatterns = {
     path("videoTutorials/", VideoTutorialListView.as_view(), name="video_tutorials"),
     path("initialData/", InitialDataView.as_view(), name="initial_data"),
     path("territoryCanteens/", TerritoryCanteensListView.as_view(), name="territory_canteens"),
+    path("blogpage/", BlogPageListView.as_view(), name="blog_pages"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)
