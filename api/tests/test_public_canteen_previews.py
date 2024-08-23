@@ -114,7 +114,7 @@ class TestPublicCanteenPreviewsApi(APITestCase):
         """
         canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED)
         DiagnosticFactory.create(
-            canteen=canteen, year=2020
+            canteen=canteen, year=timezone.now().date().year - 1
         )  # year must be in the past, otherwise canteen.appro_diagnostics is empty
 
         response = self.client.get(reverse("single_public_canteen_preview", kwargs={"pk": canteen.id}))
