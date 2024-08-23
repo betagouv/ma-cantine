@@ -254,7 +254,6 @@
             labelClasses="body-2 mb-2"
             :items="sectorCategories"
             v-model="sectorCategory"
-            :rules="[validators.required]"
           />
         </v-col>
         <v-col cols="12" md="6">
