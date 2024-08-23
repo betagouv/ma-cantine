@@ -9,11 +9,7 @@
     <v-card-text class="fr-text grey--text text--darken-2">
       <p class="publication-detail">
         Statut
-        <DsfrBadge :mode="isPublished ? 'SUCCESS' : 'INFO'" :icon="isPublished ? 'mdi-circle' : 'mdi-circle-outline'">
-          <span class="text-uppercase">
-            {{ isPublished ? "En ligne" : "Non publiée" }}
-          </span>
-        </DsfrBadge>
+        <PublicationBadge :isPublished="isPublished" />
       </p>
       <p class="publication-detail">
         Dernière mise à jour
@@ -51,7 +47,7 @@
 </template>
 
 <script>
-import DsfrBadge from "@/components/DsfrBadge"
+import PublicationBadge from "@/components/PublicationBadge"
 import { formatDate, lastYear } from "@/utils"
 
 export default {
@@ -62,7 +58,7 @@ export default {
       required: true,
     },
   },
-  components: { DsfrBadge },
+  components: { PublicationBadge },
   data() {
     return {
       viewCount: null,
