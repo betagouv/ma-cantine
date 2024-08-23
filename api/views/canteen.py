@@ -277,20 +277,12 @@ class UserCanteensFilterSet(django_filters.FilterSet):
     production_type = ProductionTypeInFilter(field_name="production_type")
 
 
-@extend_schema_view(
-    post=extend_schema(
-        summary="Publier plusieurs cantines.",
-        description="Vous recevrez deux tableaux : `ids` avec les identifiants des cantines publiées, "
-        + "et `unknown_ids` avec les identifiants des cantines non-publiées car l'identifiant n'existe "
-        + "pas où la cantine n'est pas gérée par l'utilisateur.",
-    ),
-)
 class PublishManyCanteensView(APIView):
     """
     This view allows mass publishing of canteens
     """
 
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    permission_classes = [IsAuthenticated]
     required_scopes = ["canteen"]
 
     def post(self, request):
@@ -472,17 +464,13 @@ def check_siret_response(canteen_siret, request):
             return camelize(CanteenStatusSerializer(canteen, context={"request": request}).data)
 
 
-@extend_schema_view(
-    post=extend_schema(
-        summary="Activer la publication de la cantine.",
-        description="La publication permet de mettre à disposition certaines données de la cantine au grand public. Il ne s'agit pas d'une télédéclaration.",
-    ),
-)
 class PublishCanteenView(APIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    permission_classes = [IsAuthenticated]
     required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
+        if settings.PUBLISH_BY_DEFAULT:
+            raise BadRequest("Cannot publish canteen")
         try:
             data = request.data
             canteen_id = kwargs.get("pk")
@@ -505,14 +493,8 @@ class PublishCanteenView(APIView):
             raise ValidationError("Le cantine specifié n'existe pas")
 
 
-@extend_schema_view(
-    post=extend_schema(
-        summary="Enlever la publication de la cantine.",
-        description="La publication permet de mettre à disposition les données de la cantine au grand public. Il ne s'agit pas d'une télédéclaration.",
-    ),
-)
 class UnpublishCanteenView(APIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    permission_classes = [IsAuthenticated]
     required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):

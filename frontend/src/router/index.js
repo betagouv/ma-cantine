@@ -40,7 +40,6 @@ import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
-import PublishSatellites from "@/views/CanteenEditor/PublishSatellites"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 import DiagnosticImportPage from "@/views/DiagnosticsImporter/DiagnosticImportPage"
@@ -412,15 +411,6 @@ const routes = [
         meta: {
           authenticationRequired: true,
           title: "Éditer mon affiche",
-        },
-      },
-      {
-        path: "publier-mes-satellites",
-        name: "PublishSatellites",
-        component: PublishSatellites,
-        meta: {
-          authenticationRequired: true,
-          title: "Publier mes satellites",
         },
       },
     ],
