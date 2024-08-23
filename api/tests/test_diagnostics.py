@@ -287,9 +287,10 @@ class TestDiagnosticsApi(APITestCase):
 
         try:
             with transaction.atomic():
+                payload = {"year": 2020, "value_bio_ht": 1000}
                 response = self.client.post(
                     reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}),
-                    {**payload, "value_bio_ht": 1000},
+                    payload,
                 )
         except BadRequest:
             pass
