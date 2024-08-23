@@ -109,8 +109,7 @@ def get_objectif_zone_geo(department: int):
             return "DROM (Mayotte)"
         elif department >= 971 and department <= 978:
             return "DROM (hors Mayotte)"
-        else:
-            return "non renseigné"
+        return "non renseigné"
 
 
 def get_ratio_egalim_fish(row):
