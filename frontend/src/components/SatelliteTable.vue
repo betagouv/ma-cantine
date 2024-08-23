@@ -53,16 +53,6 @@
           Rejoindre l'équipe
           <span class="d-sr-only">de {{ item.name }}</span>
         </v-btn>
-        <v-btn
-          v-else-if="satelliteAction && satelliteAction(item)"
-          outlined
-          :color="satelliteAction(item).color || 'primary'"
-          @click="satelliteAction(item).action()"
-        >
-          <v-icon v-if="satelliteAction(item).icon" small class="mr-2">{{ satelliteAction(item).icon }}</v-icon>
-          {{ satelliteAction(item).text }}
-          <span class="d-sr-only">{{ item.name }}</span>
-        </v-btn>
         <v-btn v-else-if="satelliteLink(item)" outlined color="primary" :to="satelliteLink(item)">
           Mettre à jour
           <span class="d-sr-only">{{ item.name }}</span>
@@ -161,13 +151,6 @@ export default {
     includeSatelliteLink: {
       type: Boolean,
       default: false,
-    },
-    // this function should return an object with two keys:
-    // action: a function that takes the satellite
-    // text: to be displayed with the button
-    satelliteAction: {
-      type: Function,
-      optional: true,
     },
   },
   data() {
