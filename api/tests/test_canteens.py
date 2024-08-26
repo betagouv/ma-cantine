@@ -822,6 +822,10 @@ class TestCanteenApi(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
         )
+        needs_diagnostic_mode = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL,
+            siret="75665621899905",
+        )
         # publish
         needs_to_publish = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -856,6 +860,7 @@ class TestCanteenApi(APITestCase):
             needs_last_year_diag,
             complete,
             needs_to_complete_diag,
+            needs_diagnostic_mode,
             needs_to_publish,
             needs_td,
             needs_additional_satellites,
@@ -871,6 +876,10 @@ class TestCanteenApi(APITestCase):
         DiagnosticFactory.create(year=last_year, canteen=needs_to_complete_diag, value_total_ht=None)
         # make sure the endpoint only looks at diagnostics of the year requested
         DiagnosticFactory.create(year=last_year - 1, canteen=needs_to_complete_diag, value_total_ht=1000)
+
+        DiagnosticFactory.create(
+            year=last_year, canteen=needs_diagnostic_mode, central_kitchen_diagnostic_mode=None, value_total_ht=100
+        )
 
         td_diag = DiagnosticFactory.create(year=last_year, canteen=needs_to_publish, value_total_ht=10)
         Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
@@ -893,12 +902,13 @@ class TestCanteenApi(APITestCase):
 
         body = response.json()
         returned_canteens = body["results"]
-        self.assertEqual(len(returned_canteens), 6)
+        self.assertEqual(len(returned_canteens), 7)
 
         expected_actions = [
             (needs_additional_satellites, "10_add_satellites"),
             (needs_last_year_diag, "20_create_diagnostic"),
             (needs_to_complete_diag, "30_complete_diagnostic"),
+            (needs_diagnostic_mode, "30_complete_diagnostic"),
             (needs_td, "40_teledeclare"),
             (needs_to_publish, "50_publish"),
             (complete, "95_nothing"),
