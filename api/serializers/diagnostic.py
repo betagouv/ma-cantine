@@ -79,6 +79,8 @@ TUNNEL_PROGRESS_FIELDS = (
 
 FIELDS = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
 
+REQUIRED_FIELDS = ("year",)
+
 
 class DiagnosticSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
@@ -189,7 +191,10 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
     def __init__(self, *args, **kwargs):
         action = kwargs.pop("action", None)
         super().__init__(*args, **kwargs)
-        if action != "create":
+        if action == "create":
+            for field in REQUIRED_FIELDS:
+                self.fields[field].required = True
+        else:
             self.fields.pop("creation_mtm_source")
             self.fields.pop("creation_mtm_campaign")
             self.fields.pop("creation_mtm_medium")
