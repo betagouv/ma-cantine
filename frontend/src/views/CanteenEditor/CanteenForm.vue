@@ -203,6 +203,7 @@
                 validators.length(14),
                 validators.luhn,
                 validators.isDifferent(canteen.siret, satelliteSiretMessage),
+                validators.required,
               ]"
               @blur="getCentralKitchen"
             />
