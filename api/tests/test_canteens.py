@@ -896,7 +896,7 @@ class TestCanteenApi(APITestCase):
         )
 
         response = self.client.get(
-            reverse("list_actionable_canteens", kwargs={"year": last_year}) + "?ordering=action"
+            reverse("list_actionable_canteens", kwargs={"year": last_year}) + "?ordering=action,modification_date"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -955,7 +955,7 @@ class TestCanteenApi(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
         )
-        DiagnosticFactory.create(year=2021, canteen=canteen, value_total_ht=1000)
+        diagnostic = DiagnosticFactory.create(year=2021, canteen=canteen, value_total_ht=1000)
         canteen.managers.add(authenticate.user)
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
         returned_canteens = response.json()["results"]
@@ -974,11 +974,18 @@ class TestCanteenApi(APITestCase):
         canteen.production_type = Canteen.ProductionType.CENTRAL
         canteen.satellite_canteens_count = None
         canteen.save()
+        diagnostic.central_kitchen_diagnostic_mode = "APPRO"
+        diagnostic.save()
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
 
+        # reset diag from above change.
+        diagnostic.central_kitchen_diagnostic_mode = None
+        diagnostic.save()
+
+        # Central kitchens with missing satellites should return the add satellite action
         canteen.satellite_canteens_count = 123
         canteen.save()
 

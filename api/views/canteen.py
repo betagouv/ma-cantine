@@ -1163,7 +1163,7 @@ class ActionableCanteensListView(ListAPIView):
         MaCantineOrderingFilter,
     ]
     search_fields = ["name"]
-    ordering_fields = ["name", "production_type", "action"]
+    ordering_fields = ["name", "production_type", "action", "modification_date"]
     ordering = "modification_date"
 
     def get_queryset(self):
@@ -1224,6 +1224,11 @@ class ActionableCanteensListView(ListAPIView):
         # prep complete diag action
         complete_diagnostics = Diagnostic.objects.filter(pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0)
         user_canteens = user_canteens.annotate(has_complete_diag=Exists(Subquery(complete_diagnostics)))
+        has_cc_mode = Diagnostic.objects.filter(
+            pk=OuterRef("diagnostic_for_year"),
+            central_kitchen_diagnostic_mode__isnull=False,
+        ).exclude(central_kitchen_diagnostic_mode="")
+        user_canteens = user_canteens.annotate(has_cc_mode=Exists(Subquery(has_cc_mode)))
         # prep TD action
         tds = Teledeclaration.objects.filter(
             Q(canteen=OuterRef("pk")) | Q(canteen=OuterRef("central_kitchen_id")),
@@ -1247,6 +1252,7 @@ class ActionableCanteensListView(ListAPIView):
             ),
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
             When(has_complete_diag=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+            When((is_central_cuisine_query & Q(has_cc_mode=False)), then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
             When(incomplete_canteen_data_query, then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
         if should_teledeclare:
