@@ -166,7 +166,8 @@ class Teledeclaration(models.Model):
         check_total_value = not Teledeclaration.should_use_central_kitchen_appro(diagnostic)
         if check_total_value and not diagnostic.value_total_ht:
             raise ValidationError("Données d'approvisionnement manquantes")
-        # if diagnostic.canteen.is_central_kitche
+        if diagnostic.canteen.is_central_cuisine and not diagnostic.central_kitchen_diagnostic_mode:
+            raise ValidationError("Question obligatoire : Quelles données sont déclarées par cette cuisine centrale ?")
 
     @staticmethod
     def create_from_diagnostic(diagnostic, applicant, status=None):
@@ -175,7 +176,8 @@ class Teledeclaration(models.Model):
         """
         from data.factories import TeledeclarationFactory  # Avoids circular import
 
-        version = "10"  # Helps identify which data will be present. Use incremental int values
+        version = "11"  # Helps identify which data will be present. Use incremental int values
+        # Version 11 - Requires diagnostic mode to be defined for central production types (in validate_diagnostic)
         # Version 10 - Add department and region fields
         # Version 9 - removes legacy fields: value_pat_ht, value_label_hve, value_label_rouge, value_label_aoc_igp and value_pat_ht
 
