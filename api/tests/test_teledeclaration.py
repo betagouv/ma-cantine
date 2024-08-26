@@ -605,6 +605,39 @@ class TestTeledeclarationApi(APITestCase):
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
+    def test_create_diagnostic_without_cc_mode(self):
+        """
+        A diagnostic made by a central kitchen cannot be teledeclared if the mode is null or blank
+        """
+        user = authenticate.user
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044")
+        central_kitchen.managers.add(user)
+
+        diagnostic = DiagnosticFactory.create(
+            canteen=central_kitchen,
+            year=LAST_YEAR,
+            value_total_ht=100,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=None,
+        )
+
+        payload = {"diagnosticId": diagnostic.id}
+
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        diagnostic.central_kitchen_diagnostic_mode = ""
+        diagnostic.save()
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        diagnostic.central_kitchen_diagnostic_mode = "APPRO"
+        diagnostic.save()
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
     def test_does_not_contain_irrelevant_data(self):
         # We create a site canteen that contains irrelevant data "central_producer_siret" and
         # "satellite_canteens_count" - this can happen after a change of data

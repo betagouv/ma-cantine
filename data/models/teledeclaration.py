@@ -166,6 +166,7 @@ class Teledeclaration(models.Model):
         check_total_value = not Teledeclaration.should_use_central_kitchen_appro(diagnostic)
         if check_total_value and not diagnostic.value_total_ht:
             raise ValidationError("Données d'approvisionnement manquantes")
+        # if diagnostic.canteen.is_central_kitche
 
     @staticmethod
     def create_from_diagnostic(diagnostic, applicant, status=None):
