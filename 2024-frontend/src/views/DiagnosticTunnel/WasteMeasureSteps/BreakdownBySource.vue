@@ -141,7 +141,7 @@ onMounted(() => {
       <div class="fr-grid-row justify-space-between fr-mt-4w">
         <div :class="leftHandQuestionsClass">
           <DsfrBooleanRadio
-            v-model.number="payload.sortedKey"
+            v-model="payload.sortedKey"
             legend="Avez-vous trié entre comestible et non-comestible&nbsp;?"
             hint="Optionnel"
             name="sortedKey"
