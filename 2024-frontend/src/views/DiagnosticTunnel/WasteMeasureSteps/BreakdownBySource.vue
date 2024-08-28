@@ -144,6 +144,7 @@ onMounted(() => {
           <DsfrBooleanRadio
             v-model.number="payload.sortedKey"
             legend="Avez-vous trié entre comestible et non-comestible&nbsp;?"
+            hint="Optionnel"
             name="sortedKey"
             class="fr-mb-2w"
             :error-message="formatError(v$.sortedKey)"
