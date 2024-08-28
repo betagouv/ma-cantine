@@ -140,7 +140,6 @@ onMounted(() => {
       </div>
       <div class="fr-grid-row justify-space-between fr-mt-4w">
         <div :class="leftHandQuestionsClass">
-          <!-- TODO: maybe reset validation if go from yes to no? -->
           <DsfrBooleanRadio
             v-model.number="payload.sortedKey"
             legend="Avez-vous trié entre comestible et non-comestible&nbsp;?"
@@ -159,7 +158,6 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <!-- TODO: indication which field is calculated -->
     <div v-if="specifySortedExcess" class="sorted-inputs fr-col-sm-6">
       <div class="fr-grid-row fr-grid-row--middle fr-mb-4w">
         <p class="source-title-tooltip fr-mb-0">
@@ -177,7 +175,6 @@ onMounted(() => {
           class="fr-mb-2w"
           :error-message="formatError(v$.edibleKey)"
         />
-        <!-- TODO: not sure keydown is best - can scroll -->
         <DsfrInputGroup
           v-model.number="payload.inedibleKey"
           type="number"

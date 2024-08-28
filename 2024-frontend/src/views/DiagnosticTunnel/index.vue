@@ -1,6 +1,5 @@
 <script setup>
 import keyMeasures from "@/data/key-measures.json"
-// TODO: sort out **/index.vue imports so don't have to add index.vue
 import WasteMeasureSteps from "./WasteMeasureSteps/index.vue"
 import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
@@ -12,9 +11,7 @@ const measure = keyMeasures.find((measure) => measure.id === props.measureId)
 const originalPayload = reactive({})
 provide("originalPayload", originalPayload)
 
-onMounted(() => {
-  // TODO: set original payload from server
-})
+onMounted(() => {})
 
 const tunnels = [
   ...keyMeasures.map((km) => ({
@@ -54,7 +51,6 @@ const continueActionText = computed(() => {
 })
 
 const saveDiagnostic = () => {
-  // TODO
   return Promise.resolve()
 }
 
@@ -75,28 +71,6 @@ const continueAction = () => {
         router.push({ query: { étape: nextStep.value.urlSlug } })
         stepWrapper.value.scrollTop = 0
         Object.assign(originalPayload, hotPayload)
-        // TODO
-        // $refs["synthesisWrapper"].scrollTop = 0
-        // } else if (isLastTunnel) {
-        //   router.push({
-        //     name: "MyProgress",
-        //     params: { measure: "etablissement" },
-        //   })
-        // } else if (nextTunnel) {
-        //   router.push({
-        //     name: "MyProgress",
-        //     params: { measure: nextTunnel.id },
-        //   })
-        // } else {
-        //   router.push({
-        //     name: "DashboardManager",
-        //     params: {
-        //       canteenUrlComponent: canteenUrlComponent,
-        //     },
-        //     query: {
-        //       year: year,
-        //     },
-        //   })
       }
     })
     .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
@@ -180,7 +154,6 @@ watch(props, () => {
             </div>
           </div>
         </div>
-        <!-- TODO: functionality -->
         <div v-if="step" class="quit">
           <DsfrButton
             :label="step.isSynthesis ? 'Quitter' : 'Sauvegarder et quitter'"
