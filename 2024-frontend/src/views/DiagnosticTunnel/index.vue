@@ -64,7 +64,6 @@ const stepWrapper = ref(null)
 
 const formIsValid = () => {
   v$.value.$validate()
-  console.log(v$.value.$errors)
   return !v$.value.$invalid
 }
 
@@ -75,7 +74,6 @@ const continueAction = () => {
       if (nextStep.value) {
         router.push({ query: { étape: nextStep.value.urlSlug } })
         stepWrapper.value.scrollTop = 0
-        console.log("payload to save", hotPayload)
         Object.assign(originalPayload, hotPayload)
         // TODO
         // $refs["synthesisWrapper"].scrollTop = 0
