@@ -1,5 +1,4 @@
 <script setup>
-import keyMeasures from "@/data/key-measures.json"
 import WasteMeasurementSteps from "./WasteMeasurementSteps/index.vue"
 import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
@@ -11,29 +10,10 @@ const props = defineProps(["canteenUrlComponent", "id", "étape"])
 
 const canteenId = props.canteenUrlComponent.split("--")[0] // more globalised way of doing this?
 
-// move this logic to a new file to save the skeleton of the tunnel for future Vue3 migration
-// but having the idea of this tunnel as completely separate
-const measureId = "gaspillage-alimentaire"
-const measure = keyMeasures.find((measure) => measure.id === measureId)
-
 const originalPayload = reactive({})
 provide("originalPayload", originalPayload)
 
 onMounted(() => {})
-
-const tunnels = [
-  ...keyMeasures.map((km) => ({
-    id: km.id,
-    title: km.title,
-    shortTitle: km.shortTitle,
-    icon: km.mdiIcon,
-    backendField: km.progressField,
-  })),
-]
-
-const tunnelComponents = {
-  "gaspillage-alimentaire": WasteMeasurementSteps,
-}
 
 let steps = ref([])
 const stepTitles = computed(() => steps.value.map((s) => s.title))
@@ -146,31 +126,6 @@ watch(props, () => {
   <div class="tunnel">
     <div class="fr-container fr-pt-1w">
       <div class="measures fr-grid-row fr-grid-row--middle fr-py-2w">
-        <div class="fr-col-12 fr-col-sm-8 fr-hidden fr-unhidden-sm">
-          <div class="fr-grid-row fr-ml-n2w">
-            <div
-              v-for="tunnel in tunnels"
-              :key="tunnel.id"
-              class="fr-px-2w header-icon fr-grid-row fr-grid-row--middle"
-            >
-              <div v-if="tunnel.id === measure.id" class="fr-grid-row fr-grid-row--middle">
-                <component :is="tunnel.icon" class="fr-mb-1v fr-mr-1w current-tab-icon" />
-                <p class="measure-title fr-text--xs fr-mb-0">
-                  {{ tunnel.shortTitle }}
-                </p>
-              </div>
-              <div v-else>
-                <component
-                  :is="tunnel.icon"
-                  fillColor="#ff0000"
-                  :title="tunnel.shortTitle"
-                  aria-hidden="false"
-                  role="img"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
         <div v-if="step" class="quit">
           <DsfrButton
             :label="step.isSynthesis ? 'Quitter' : 'Sauvegarder et quitter'"
@@ -189,8 +144,7 @@ watch(props, () => {
     <div class="body" ref="stepWrapper">
       <div class="step fr-container">
         <div class="fr-py-1w">
-          <component
-            :is="tunnelComponents[measureId]"
+          <WasteMeasurementSteps
             :stepUrlSlug="step.urlSlug"
             @update-steps="updateSteps"
             @provide-vuelidate="updateVuelidate"
