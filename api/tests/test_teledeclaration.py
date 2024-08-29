@@ -714,48 +714,52 @@ class TestTeledeclarationApi(APITestCase):
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         ),
         cases = [
-            (
-                CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, siret="79300704800044"),
-                DiagnosticFactory.create(year=LAST_YEAR, value_total_ht=100),
-                "SITE",
-            ),
-            (
-                CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, siret="79300704800044"),
-                DiagnosticFactory.create(year=LAST_YEAR, value_total_ht=100),
-                "SITE",
-            ),
-            (
-                CanteenFactory(
+            {
+                "canteen": CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, siret="79300704800044"),
+                "diagnostic": DiagnosticFactory.create(year=LAST_YEAR, value_total_ht=100),
+                "expected_teledeclaration_mode": "SITE",
+            },
+            {
+                "canteen": CanteenFactory(
+                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL, siret="79300704800044"
+                ),
+                "diagnostic": DiagnosticFactory.create(year=LAST_YEAR, value_total_ht=100),
+                "expected_teledeclaration_mode": "SITE",
+            },
+            {
+                "canteen": CanteenFactory(
                     production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                     siret="79300704800044",
                     central_producer_siret="18704793618411",
                 ),
-                DiagnosticFactory.create(year=LAST_YEAR),
-                "SATELLITE_WITHOUT_APPRO",
-            ),
-            (
-                CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044"),
-                DiagnosticFactory.create(
+                "diagnostic": DiagnosticFactory.create(year=LAST_YEAR),
+                "expected_teledeclaration_mode": "SATELLITE_WITHOUT_APPRO",
+            },
+            {
+                "canteen": CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044"),
+                "diagnostic": DiagnosticFactory.create(
                     year=LAST_YEAR,
                     value_total_ht=100,
                     central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
                 ),
-                "CENTRAL_ALL",
-            ),
-            (
-                CanteenFactory(production_type=Canteen.ProductionType.CENTRAL_SERVING, siret="79300704800044"),
-                DiagnosticFactory.create(
+                "expected_teledeclaration_mode": "CENTRAL_ALL",
+            },
+            {
+                "canteen": CanteenFactory(
+                    production_type=Canteen.ProductionType.CENTRAL_SERVING, siret="79300704800044"
+                ),
+                "diagnostic": DiagnosticFactory.create(
                     year=LAST_YEAR,
                     value_total_ht=100,
                     central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
                 ),
-                "CENTRAL_APPRO",
-            ),
+                "expected_teledeclaration_mode": "CENTRAL_APPRO",
+            },
         ]
         for case in cases:
-            canteen = case[0]
-            diagnostic = case[1]
-            mode = case[2]
+            canteen = case["canteen"]
+            diagnostic = case["diagnostic"]
+            expected_td_mode = case["expected_teledeclaration_mode"]
 
             canteen.managers.add(authenticate.user)
             diagnostic.canteen = canteen
@@ -767,7 +771,7 @@ class TestTeledeclarationApi(APITestCase):
             teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic)
             self.assertEqual(
                 teledeclaration.teledeclaration_mode,
-                mode,
+                expected_td_mode,
                 f"Incorrect mode for canteen with prod type {canteen.production_type}",
             )
 
