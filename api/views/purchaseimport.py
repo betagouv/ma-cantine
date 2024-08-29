@@ -77,7 +77,6 @@ class ImportPurchasesView(APIView):
             return self._get_success_response()
 
         except Exception as e:
-            print(e)
             message = "Échec lors de la lecture du fichier"
             self._log_error(f"{message}:\n{e}", "exception")
             self.errors = [{"row": 0, "status": 400, "message": message}]
