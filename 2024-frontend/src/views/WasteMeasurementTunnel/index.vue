@@ -1,6 +1,6 @@
 <script setup>
 import keyMeasures from "@/data/key-measures.json"
-import WasteMeasureSteps from "./WasteMeasureSteps/index.vue"
+import WasteMeasurementSteps from "./WasteMeasurementSteps/index.vue"
 import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
@@ -32,7 +32,7 @@ const tunnels = [
 ]
 
 const tunnelComponents = {
-  "gaspillage-alimentaire": WasteMeasureSteps,
+  "gaspillage-alimentaire": WasteMeasurementSteps,
 }
 
 let steps = ref([])
