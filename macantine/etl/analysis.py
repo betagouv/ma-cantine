@@ -69,11 +69,16 @@ def get_diagnostic_type(value):
 
 
 def get_egalim_hors_bio(row):
-    return (
-        row["teledeclaration.value_externality_performance_ht"]
-        + row["teledeclaration.value_sustainable_ht"]
-        + row["teledeclaration.value_egalim_others_ht"]
-    )
+    """
+    Aggregating egalim values.
+    Processing of empty values : As decided for analysis, if there are empty values, we convert them to zeros
+    in order to avoid losing too many lines (this doesn't apply to value_bio_ht and value_total_ht, for which we filter out the empty values)
+    """
+    egalim_hors_bio = 0
+    for categ in ["externality_performance", "sustainable", "egalim_others"]:
+        value_categ = row[f"teledeclaration.value_{categ}_ht"] if row[f"teledeclaration.value_{categ}_ht"] >= 0 else 0
+        egalim_hors_bio += value_categ
+    return egalim_hors_bio
 
 
 def get_egalim_avec_bio(row):

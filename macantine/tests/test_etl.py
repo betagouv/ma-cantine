@@ -4,7 +4,7 @@ from macantine.etl.utils import map_communes_infos
 from django.test import TestCase, override_settings
 from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
-from macantine.etl.analysis import ETL_ANALYSIS, aggregate_col, format_sector_column
+from macantine.etl.analysis import ETL_ANALYSIS, aggregate_col, get_egalim_hors_bio, format_sector_column
 from macantine.etl.open_data import ETL_CANTEEN, ETL_TD
 from freezegun import freeze_time
 import json
@@ -45,6 +45,25 @@ class TestETLAnalysis(TestCase):
         )
         self.assertEqual(etl_stats.df[etl_stats.df.id == td_2022.id].year.iloc[0], 2022)
         self.assertEqual(etl_stats.df[etl_stats.df.id == td_2023.id].year.iloc[0], 2023)
+
+    def test_get_egalim_hors_bio(self):
+        data = {
+            "0": {
+                "canteen_id": 1,
+                "teledeclaration.value_externality_performance_ht": 10,
+                "teledeclaration.value_sustainable_ht": 10,
+                "teledeclaration.value_egalim_others_ht": 10,
+            },
+            "1": {
+                "canteen_id": 1,
+                "teledeclaration.value_externality_performance_ht": 10,
+                "teledeclaration.value_sustainable_ht": 10,
+            },
+        }
+        df = pd.DataFrame.from_dict(data, orient="index")
+        df["value_somme_egalim_hors_bio_ht"] = df.apply(get_egalim_hors_bio, axis=1)
+        self.assertEqual(df.iloc[0]["value_somme_egalim_hors_bio_ht"], 30)
+        self.assertEqual(df.iloc[1]["value_somme_egalim_hors_bio_ht"], 20)
 
     def test_aggregate_col(self):
         test_cases = [
@@ -218,6 +237,8 @@ class TestETLOpenData(TestCase):
                     "canteen_id": 1,
                     "value_bio_ht": 1537.0,
                     "value_total_ht": 7627.0,
+                    "value_externality_performance_ht": 60,
+                    "value_sustainable_ht": 50,
                 },
                 "central_kitchen_siret": None,
             },
