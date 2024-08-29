@@ -1,13 +1,17 @@
 <script setup>
 import keyMeasures from "@/data/key-measures.json"
-// TODO: sort out **/index.vue imports so don't have to add index.vue
 import WasteMeasureSteps from "./WasteMeasureSteps/index.vue"
-import { computed, ref, watch } from "vue"
+import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
 
 const props = defineProps(["canteenUrlComponent", "year", "measureId", "étape"])
 
 const measure = keyMeasures.find((measure) => measure.id === props.measureId)
+
+const originalPayload = reactive({})
+provide("originalPayload", originalPayload)
+
+onMounted(() => {})
 
 const tunnels = [
   ...keyMeasures.map((km) => ({
@@ -47,7 +51,6 @@ const continueActionText = computed(() => {
 })
 
 const saveDiagnostic = () => {
-  // TODO
   return Promise.resolve()
 }
 
@@ -56,10 +59,8 @@ const router = useRouter()
 const stepWrapper = ref(null)
 
 const formIsValid = () => {
-  const validatorForStep = v$.value[step.value.urlSlug]
-  if (!validatorForStep) return true
-  validatorForStep.$validate()
-  return !validatorForStep.$invalid
+  v$.value.$validate()
+  return !v$.value.$invalid
 }
 
 const continueAction = () => {
@@ -69,42 +70,27 @@ const continueAction = () => {
       if (nextStep.value) {
         router.push({ query: { étape: nextStep.value.urlSlug } })
         stepWrapper.value.scrollTop = 0
-        console.log("payload to save", payload)
-        // TODO
-        // $refs["synthesisWrapper"].scrollTop = 0
-        // } else if (isLastTunnel) {
-        //   router.push({
-        //     name: "MyProgress",
-        //     params: { measure: "etablissement" },
-        //   })
-        // } else if (nextTunnel) {
-        //   router.push({
-        //     name: "MyProgress",
-        //     params: { measure: nextTunnel.id },
-        //   })
-        // } else {
-        //   router.push({
-        //     name: "DashboardManager",
-        //     params: {
-        //       canteenUrlComponent: canteenUrlComponent,
-        //     },
-        //     query: {
-        //       year: year,
-        //     },
-        //   })
+        Object.assign(originalPayload, hotPayload)
       }
     })
     .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
 }
 
+const navigateBack = () => {
+  router.push({ query: { étape: previousStep.value.urlSlug } })
+  stepWrapper.value.scrollTop = 0
+}
+
 const goBack = () => {
   if (!previousStep.value) return
+  // allow going back without validation if payload is empty, don't need to save
+  if (Object.keys(hotPayload).length === 0) {
+    navigateBack()
+    return
+  }
   if (!formIsValid()) return
   saveDiagnostic()
-    .then(() => {
-      router.push({ query: { étape: previousStep.value.urlSlug } })
-      stepWrapper.value.scrollTop = 0
-    })
+    .then(navigateBack)
     .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
 }
 
@@ -124,17 +110,18 @@ const updateVuelidate = (vuelidateObj) => {
   v$ = vuelidateObj
 }
 
-const payload = {}
+let hotPayload = {}
 const updatePayloadFromChild = (childPayload) => {
   if (!v$) {
     console.error("No vuelidate object")
     return
   }
-  Object.assign(payload, childPayload)
+  Object.assign(hotPayload, childPayload)
 }
 
 watch(props, () => {
   v$.value.$reset()
+  hotPayload = {}
 })
 </script>
 
@@ -167,7 +154,6 @@ watch(props, () => {
             </div>
           </div>
         </div>
-        <!-- TODO: functionality -->
         <div v-if="step" class="quit">
           <DsfrButton
             :label="step.isSynthesis ? 'Quitter' : 'Sauvegarder et quitter'"
