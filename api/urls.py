@@ -25,6 +25,7 @@ from api.views import (
     PublishedCanteenSingleView,
 )
 from api.views import DiagnosticCreateView, RetrieveUpdateUserCanteenView, DiagnosticUpdateView
+from api.views import CanteenWasteMeasurementsView
 from api.views import EmailDiagnosticImportFileView
 from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
 from api.views import AddManagerView, RemoveManagerView
@@ -80,6 +81,11 @@ urlpatterns = {
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>",
         DiagnosticUpdateView.as_view(),
         name="diagnostic_edition",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/wasteMeasurements/",
+        CanteenWasteMeasurementsView.as_view(),
+        name="canteen_waste_measurements",
     ),
     path(
         "canteens/<int:canteen_pk>/satellites/",
