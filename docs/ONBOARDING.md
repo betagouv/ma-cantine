@@ -282,7 +282,7 @@ Vérification pre-déploiment
 
 - est-ce que les tests passent sur staging ?
 - est-ce que tout va bien côté CleverCloud ?
-- est-ce qu'il y a des cherry-picks sur main qui n'existe pas sur staging ?
+- est-ce qu'il y a des cherry-picks sur main qui n'existent pas sur staging ?
 
 Étapes :
 
