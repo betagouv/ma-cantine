@@ -4,7 +4,7 @@ import json
 import numpy as np
 import re
 
-from macantine.etl.data_warehouse import DataWareHouse
+from macantine.etl.data_ware_house import DataWareHouse
 from macantine.etl import etl, open_data, utils
 
 logger = logging.getLogger(__name__)
