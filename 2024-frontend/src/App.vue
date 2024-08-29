@@ -1,10 +1,7 @@
 <script setup>
 import { RouterView, useRoute } from "vue-router"
 import { reactive, computed, watch } from "vue"
-import NotificationSnackbar from "@/components/NotificationSnackbar.vue"
-
-import { useRootStore } from "@/stores/root"
-const store = useRootStore()
+import NotificationCenter from "@/components/NotificationCenter.vue"
 
 const logoText = ["Ministère", "de l’Agriculture", "et de la Souveraineté", "Alimentaire"]
 const serviceTitle = "ma cantine"
@@ -19,8 +16,6 @@ watch(route, (to) => {
 
   layout.fullscreen = to.meta.fullscreen
 })
-
-const notifications = computed(() => store.notifications)
 </script>
 
 <template>
@@ -33,9 +28,7 @@ const notifications = computed(() => store.notifications)
 
     <DsfrFooter v-if="!layout.fullscreen" />
 
-    <div id="notification-center" class="fr-col-12 fr-col-sm-8 fr-col-md-6 fr-col-lg-4">
-      <NotificationSnackbar v-for="notification in notifications" :key="notification.id" :notification="notification" />
-    </div>
+    <NotificationCenter />
   </div>
 </template>
 
@@ -49,12 +42,5 @@ fieldset {
 }
 .justify-space-between {
   justify-content: space-between;
-}
-#notification-center {
-  position: fixed;
-  z-index: 1000;
-  height: fit-content;
-  right: 0;
-  top: 0;
 }
 </style>
