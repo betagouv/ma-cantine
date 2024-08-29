@@ -2,8 +2,8 @@
 import WasteMeasurementSteps from "./WasteMeasurementSteps/index.vue"
 import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
-import { useRootStore } from "@/stores/root"
 
+import { useRootStore } from "@/stores/root"
 const store = useRootStore()
 
 const props = defineProps(["canteenUrlComponent", "id", "étape"])
@@ -48,7 +48,10 @@ const formIsValid = () => {
 }
 
 const continueAction = () => {
-  if (!formIsValid()) return
+  if (!formIsValid()) {
+    store.notifyRequiredFieldsError()
+    return
+  }
   saveDiagnostic()
     .then((response) => {
       if (nextStep.value) {
@@ -60,9 +63,9 @@ const continueAction = () => {
         Object.assign(originalPayload, hotPayload)
       }
     })
-    .catch((e) => {
-      console.log(e)
-      // TODO: show message from backend to user
+    .catch(() => {
+      // TODO: show error message?
+      store.notifyServerError()
     })
 }
 
@@ -111,7 +114,7 @@ const updatePayloadFromChild = (childPayload) => {
 
 const saveDiagnostic = () => {
   if (!props.id) {
-    return store.actions.createWasteMeasurement(canteenId, hotPayload)
+    return store.createWasteMeasurement(canteenId, hotPayload)
   }
   return Promise.resolve()
 }
