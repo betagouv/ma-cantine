@@ -23,7 +23,7 @@
 
     <FileDrop
       v-model="file"
-      subtitle="Format CSV encodé en UTF-8 attendu"
+      subtitle="Format CSV attendu"
       :acceptTypes="['.csv', 'text/csv', '.tsv', 'text/tsv']"
       maxSize="10485760"
       @upload="upload"
@@ -92,7 +92,7 @@
     </div>
     <h2 class="my-6">Format du fichier</h2>
     <p>
-      Le fichier CSV doit être encodé avec UTF-8 et contenir un achat par ligne.
+      Le fichier CSV doit contenir un achat par ligne.
     </p>
     <p>Les données doivent être présentées dans l'ordre indiqué ci-dessous.</p>
     <h3 class="my-6">Colonnes</h3>
