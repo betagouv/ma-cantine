@@ -130,16 +130,18 @@ def get_ratio_egalim_sans_bio(row):
     return utils.get_ratio(row, "value_somme_egalim_hors_bio_ht", "value_total_ht")
 
 
-def transform_sector_column(row):
+def format_sector_column(row: pd.Series, sector_col_name: str):
     """
-    Fetching sectors information and aggregating in list in order to have only one row per canteen
+    Splitting sectors information into two new columns, one for the sector, one for the category
+    If there are multiple sectors, we
     """
-    if type(row) == list:
-        if len(row) > 1:
-            return pd.Series({"secteur": "Secteurs multiples", "catégorie": "Catégories multiples"})
-        elif len(row) == 1:
-            return pd.Series({"secteur": row[0]["name"], "catégorie": row[0]["category"]})
-    return pd.Series({"secteur": np.nan, "catégorie": np.nan})
+    x = row[sector_col_name]
+    if type(x) == list:
+        if len(x) > 1:
+            return "Secteurs multiples", "Catégories multiples"
+        elif len(x) == 1:
+            return x[0]["name"], x[0]["category"]
+    return np.nan, np.nan
 
 
 def check_column_matches_substring(df, sub_categ: str):
@@ -232,9 +234,7 @@ class ETL_ANALYSIS(etl.ETL):
         # Extract the sector names and categories
         logger.info("Canteens : Extract sectors...")
         self.df[["secteur", "catégorie"]] = self.df["canteen.sectors"].apply(
-            lambda x: (
-                transform_sector_column(x) if x != np.nan else pd.Series({"secteur": np.nan, "catégorie": np.nan})
-            )
+            lambda x: format_sector_column(x, "canteen.sectors"), axis=1, result_type="expand"
         )
 
         # Rename columns

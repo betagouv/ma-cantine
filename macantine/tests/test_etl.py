@@ -4,7 +4,7 @@ from macantine.etl.utils import map_communes_infos
 from django.test import TestCase, override_settings
 from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
-from macantine.etl.analysis import ETL_ANALYSIS, aggregate_col
+from macantine.etl.analysis import ETL_ANALYSIS, aggregate_col, format_sector_column
 from macantine.etl.open_data import ETL_CANTEEN, ETL_TD
 from freezegun import freeze_time
 import json
@@ -106,6 +106,50 @@ class TestETLAnalysis(TestCase):
         df = pd.DataFrame.from_dict(data, orient="index")
         with self.assertRaises(KeyError):
             aggregate_col(df, "categ_A", ["_non_existing_sub_categ"])
+
+    def test_transform_sector_column(self):
+        data = {
+            "0": {
+                "canteen_id": 1,
+                "canteen.sectors": [
+                    {
+                        "id": 12,
+                        "name": "Ecole primaire (maternelle et élémentaire)",
+                        "category": "education",
+                        "has_line_ministry": False,
+                    }
+                ],
+            },
+            "1": {
+                "canteen_id": 2,
+                "canteen.sectors": [
+                    {
+                        "id": 1,
+                        "name": "Secondaire collège",
+                    },
+                    {
+                        "id": 12,
+                        "name": "Ecole primaire (maternelle et élémentaire)",
+                    },
+                    {
+                        "id": 28,
+                        "name": "Secondaire lycée (hors agricole)",
+                    },
+                ],
+            },
+            "2": {
+                "canteen_id": 2,
+                "canteen.sectors": None,
+            },
+        }
+        df = pd.DataFrame.from_dict(data, orient="index")
+        df[["secteur", "categorie"]] = df.apply(
+            lambda x: format_sector_column(x, "canteen.sectors"), axis=1, result_type="expand"
+        )
+        self.assertEqual(df.iloc[0]["secteur"], "Ecole primaire (maternelle et élémentaire)")
+        self.assertEqual(df.iloc[0]["categorie"], "education")
+        self.assertEqual(df.iloc[1]["secteur"], "Secteurs multiples")
+        self.assertEqual(df.iloc[1]["categorie"], "Catégories multiples")
 
 
 @requests_mock.Mocker()
