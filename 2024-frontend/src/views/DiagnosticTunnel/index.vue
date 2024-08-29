@@ -3,10 +3,18 @@ import keyMeasures from "@/data/key-measures.json"
 import WasteMeasureSteps from "./WasteMeasureSteps/index.vue"
 import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
+import { useRootStore } from "@/stores/root"
 
-const props = defineProps(["canteenUrlComponent", "year", "measureId", "étape"])
+const store = useRootStore()
 
-const measure = keyMeasures.find((measure) => measure.id === props.measureId)
+const props = defineProps(["canteenUrlComponent", "id", "étape"])
+
+const canteenId = props.canteenUrlComponent.split("--")[0] // more globalised way of doing this?
+
+// move this logic to a new file to save the skeleton of the tunnel for future Vue3 migration
+// but having the idea of this tunnel as completely separate
+const measureId = "gaspillage-alimentaire"
+const measure = keyMeasures.find((measure) => measure.id === measureId)
 
 const originalPayload = reactive({})
 provide("originalPayload", originalPayload)
@@ -50,10 +58,6 @@ const continueActionText = computed(() => {
   return "Sauvegarder et continuer"
 })
 
-const saveDiagnostic = () => {
-  return Promise.resolve()
-}
-
 const router = useRouter()
 
 const stepWrapper = ref(null)
@@ -66,14 +70,20 @@ const formIsValid = () => {
 const continueAction = () => {
   if (!formIsValid()) return
   saveDiagnostic()
-    .then(() => {
+    .then((response) => {
       if (nextStep.value) {
-        router.push({ query: { étape: nextStep.value.urlSlug } })
+        const nextRoute = { query: { étape: nextStep.value.urlSlug } }
+        if (!props.id && response.id)
+          nextRoute.params = { id: response.id, canteenUrlComponent: props.canteenUrlComponent }
+        router.push(nextRoute)
         stepWrapper.value.scrollTop = 0
         Object.assign(originalPayload, hotPayload)
       }
     })
-    .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
+    .catch((e) => {
+      console.log(e)
+      // TODO: show message from backend to user
+    })
 }
 
 const navigateBack = () => {
@@ -117,6 +127,13 @@ const updatePayloadFromChild = (childPayload) => {
     return
   }
   Object.assign(hotPayload, childPayload)
+}
+
+const saveDiagnostic = () => {
+  if (!props.id) {
+    return store.actions.createWasteMeasurement(canteenId, hotPayload)
+  }
+  return Promise.resolve()
 }
 
 watch(props, () => {
@@ -173,7 +190,7 @@ watch(props, () => {
       <div class="step fr-container">
         <div class="fr-py-1w">
           <component
-            :is="tunnelComponents[props.measureId]"
+            :is="tunnelComponents[measureId]"
             :stepUrlSlug="step.urlSlug"
             @update-steps="updateSteps"
             @provide-vuelidate="updateVuelidate"
