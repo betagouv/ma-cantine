@@ -274,8 +274,6 @@ Dans le dossier principal, lancez :
 
 En prod, faut ajouter `CC_PRE_BUILD_HOOK=./clevercloud/pre-build-hook.sh`
 
-À noter qu'à ce moment, Vue 3 ne peut pas être deployer en prod car il y a un bug avec le django-vite-plugin.
-
 ## Déploiement
 
 Vérification pre-déploiment
