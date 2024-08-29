@@ -2,6 +2,7 @@
 import WasteMeasurementSteps from "./WasteMeasurementSteps/index.vue"
 import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
+import { BadRequestError } from "@/utils"
 
 import { useRootStore } from "@/stores/root"
 const store = useRootStore()
@@ -52,7 +53,7 @@ const continueAction = () => {
     store.notifyRequiredFieldsError()
     return
   }
-  saveDiagnostic()
+  return saveDiagnostic()
     .then((response) => {
       if (nextStep.value) {
         const nextRoute = { query: { étape: nextStep.value.urlSlug } }
@@ -63,10 +64,7 @@ const continueAction = () => {
         Object.assign(originalPayload, hotPayload)
       }
     })
-    .catch(() => {
-      // TODO: show error message?
-      store.notifyServerError()
-    })
+    .catch(handleServerError)
 }
 
 const navigateBack = () => {
@@ -84,7 +82,7 @@ const goBack = () => {
   if (!formIsValid()) return
   saveDiagnostic()
     .then(navigateBack)
-    .catch(() => {}) // Empty handler bc we handle the backend error on saveDiagnostic
+    .catch(handleServerError)
 }
 
 const saveAndQuit = () => {
@@ -93,9 +91,7 @@ const saveAndQuit = () => {
     .then(() => {
       router.push({ name: "MyProgress" })
     })
-    .catch((e) => {
-      console.error(e)
-    }) // Empty handler bc we handle the backend error on saveDiagnostic
+    .catch(handleServerError)
 }
 
 let v$
@@ -110,6 +106,19 @@ const updatePayloadFromChild = (childPayload) => {
     return
   }
   Object.assign(hotPayload, childPayload)
+}
+
+const handleServerError = (error) => {
+  if (error instanceof BadRequestError) {
+    return error.jsonPromise
+      .then((errorDetail) => {
+        const messages = Object.values(errorDetail)
+        const message = messages && messages.length ? messages[0] : []
+        store.notify({ message: message[0], status: "error" })
+      })
+      .catch(store.notifyServerError)
+  }
+  store.notifyServerError(error)
 }
 
 const saveDiagnostic = () => {
