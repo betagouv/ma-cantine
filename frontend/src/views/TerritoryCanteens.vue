@@ -18,13 +18,12 @@
       :headers="headers"
       :server-items-length="canteenCount || 0"
     >
-      <!-- TODO: update wording of publication status -->
       <template v-slot:[`item.publicationStatus`]="{ item }">
         <router-link
           v-if="item.publicationStatus === 'published'"
           :to="{ name: 'CanteenPage', params: { canteenUrlComponent: `${item.id}--${item.name}` } }"
         >
-          Publiée
+          En ligne
         </router-link>
         <span v-else>
           Non publiée

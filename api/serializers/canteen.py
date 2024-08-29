@@ -74,11 +74,13 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
             "id",
             "siret",
             "name",
+            "publication_status",
         )
         fields = (
             "id",
             "siret",
             "name",
+            "publication_status",
         )
 
 

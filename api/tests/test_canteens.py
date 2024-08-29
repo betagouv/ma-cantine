@@ -909,6 +909,56 @@ class TestCanteenApi(APITestCase):
             self.assertIn("sectors", returned_canteens[index])
         self.assertTrue(body["hasPendingActions"])
 
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    @authenticate
+    def test_no_canteens_to_publish(self):
+        """
+        When publish by default is set, don't send publication actions
+        """
+        # make them all on site to avoid having to create satellites
+        previously_published = CanteenFactory.create(
+            name="published canteen",
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            line_ministry=None,
+        )
+        previously_draft = CanteenFactory.create(
+            name="supposedly draft canteen",
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            line_ministry=None,
+        )
+        public_ministry = CanteenFactory.create(
+            name="canteen with administration ministry",
+            production_type=Canteen.ProductionType.ON_SITE,
+            line_ministry=Canteen.Ministries.ADMINISTRATION_TERRITORIALE,
+        )
+        private_ministry = CanteenFactory.create(
+            name="a private canteen",
+            production_type=Canteen.ProductionType.ON_SITE,
+            line_ministry=Canteen.Ministries.ARMEE,
+        )
+        diag_year = 2023
+        for canteen in [
+            previously_published,
+            previously_draft,
+            public_ministry,
+            private_ministry,
+        ]:
+            canteen.managers.add(authenticate.user)
+            # give them all teledeclarations to skip to final action
+            td_diag = DiagnosticFactory.create(year=diag_year, canteen=canteen, value_total_ht=10)
+            Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": diag_year}) + "?ordering=name")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(len(body["canteensToPublish"]), 0)
+        returned_canteens = body["results"]
+        for canteen in returned_canteens:
+            canteen["action"] = "95_nothing"
+
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_central_without_satellites_has_complete_satellites_action(self):

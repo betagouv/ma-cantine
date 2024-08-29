@@ -58,29 +58,22 @@
         </template>
       </DsfrAccordion>
       <v-sheet rounded color="grey lighten-4 pa-3 my-6" class="d-flex flex-wrap align-center">
-        <v-form ref="form" @submit.prevent class="publication-checkbox">
-          <PublicationField :canteen="canteen" v-model="acceptPublication" />
-        </v-form>
         <v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
         <v-btn
-          v-if="!isPublished"
-          x-large
-          outlined
+          :large="$vuetify.breakpoint.smAndUp"
+          :disabled="!isPublished"
           color="primary"
-          class="mr-4 align-self-center"
           :to="{
-            name: 'DashboardManager',
+            name: 'CanteenPage',
             params: { canteenUrlComponent },
           }"
+          target="_blank"
+          rel="noopener external"
+          title="Voir la version en ligne - ouvre une nouvelle fenêtre"
+          class="mb-4 mb-sm-0"
         >
-          Annuler
-        </v-btn>
-        <v-btn v-if="!isPublished" x-large color="primary" @click="publishCanteen">
-          Publier
-        </v-btn>
-        <v-btn v-else x-large color="red darken-3" class="mr-4" outlined @click="removeCanteenPublication">
-          Retirer la publication
-          <!-- TODO: remove options -->
+          Voir la version en ligne
+          <v-icon small class="ml-1" color="white">mdi-open-in-new</v-icon>
         </v-btn>
       </v-sheet>
     </div>
@@ -88,7 +81,6 @@
 </template>
 
 <script>
-import PublicationField from "../PublicationField"
 import { lastYear } from "@/utils"
 import AddPublishedCanteenWidget from "@/components/AddPublishedCanteenWidget"
 import DsfrBadge from "@/components/DsfrBadge"
@@ -106,7 +98,6 @@ export default {
   },
   components: {
     DsfrBadge,
-    PublicationField,
     AddPublishedCanteenWidget,
     CanteenHeader,
     CanteenPublication,
@@ -115,7 +106,6 @@ export default {
   },
   data() {
     return {
-      acceptPublication: false,
       canteen: {},
       publicationYear: lastYear(),
     }
@@ -125,50 +115,7 @@ export default {
     if (canteen) {
       this.canteen = JSON.parse(JSON.stringify(canteen))
       if (!this.canteen.images) this.canteen.images = []
-      this.acceptPublication = !!canteen.publicationStatus && canteen.publicationStatus !== "draft"
     }
-  },
-  methods: {
-    publishCanteen() {
-      const valid = this.$refs.form.validate()
-      if (!valid) {
-        this.$store.dispatch("notifyRequiredFieldsError")
-        return
-      }
-      this.changePublicationStatus(true)
-    },
-    removeCanteenPublication() {
-      this.changePublicationStatus(false)
-    },
-    changePublicationStatus(toPublish, title) {
-      if (!title) {
-        title = toPublish ? "Votre cantine est publiée" : "Votre cantine n'est plus publiée"
-      }
-      this.$store
-        .dispatch(toPublish ? "publishCanteen" : "unpublishCanteen", {
-          id: this.canteen.id,
-          payload: this.canteen,
-        })
-        .then(() => {
-          if (toPublish) {
-            return this.$router.push({
-              name: "CanteenPage",
-              params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
-            })
-          } else {
-            return this.$router.push({
-              name: "DashboardManager",
-              params: {
-                canteenUrlComponent: this.canteenUrlComponent,
-              },
-            })
-          }
-        })
-        .then(() => this.$store.dispatch("notify", { title, status: "success" }))
-        .catch((e) => {
-          this.$store.dispatch("notifyServerError", e)
-        })
-    },
   },
   created() {
     document.title = `Éditer mon affiche - ${this.originalCanteen.name} - ${this.$store.state.pageTitleSuffix}`
