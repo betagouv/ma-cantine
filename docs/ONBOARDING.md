@@ -289,7 +289,7 @@ Vérification pre-déploiment
 - https://github.com/betagouv/ma-cantine/releases > "Draft a new release"
 - "Choose a tag" > taper la date d'aujourd'hui en format YYYY-MM-dd > "Create a new tag on publish"
 - "Generate release notes"
-- Modifier les notes générés (indications en dessus)
+- Modifier les notes générés (indications ci-dessous)
 - "Publish release"
 - Si il y a des variables d'environnement à ajouter, ajoutez-les sur prod et demo en CleverCloud
 - avec staging : `git pull`
