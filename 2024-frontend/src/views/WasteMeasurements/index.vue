@@ -4,6 +4,7 @@ import { computed, onMounted, ref } from "vue"
 
 const props = defineProps(["canteenUrlComponent"])
 const canteenId = computed(() => props.canteenUrlComponent.split("--")[0])
+// TODO: populate canteen title from id via fetching canteen (should be in initial data summaries)
 
 const newMeasurementRoute = {
   name: "DiagnosticTunnel",
@@ -26,6 +27,7 @@ const measurement = computed(() => measurements.value.length && measurements.val
 const measurementChoices = computed(() => {
   return measurements.value.map((m, idx) => {
     return {
+      // TODO: improve date formatting
       text: `${m.periodStartDate} - ${m.periodEndDate}`,
       value: idx,
     }
@@ -87,6 +89,7 @@ onMounted(() => {
       <div v-if="measurement" class="fr-grid-row">
         <div class="fr-col-6">
           <!-- redudent to include "et par convive?" -->
+          <!-- TODO: styling -->
           <p v-if="wastePerMeal">{{ wastePerMeal }} g par repas et par convive</p>
           <div class="fr-col-12 fr-col-sm-8 fr-mb-2w">
             <DsfrSelect v-model="chosenMeasurementIdx" label="Date du pesage" :options="measurementChoices" />
@@ -97,6 +100,7 @@ onMounted(() => {
         </div>
         <div class="fr-col-6 fr-col-center">
           <div v-if="measurement.isSortedBySource">
+            <!-- TODO: make graph -->
             <h3>Origine du gaspillage</h3>
             <ul v-if="measurementPercentageValues">
               <li>Excédents de préparation : {{ measurementPercentageValues.preparation }} %</li>
@@ -118,6 +122,7 @@ onMounted(() => {
         @expand="detailsExpandedId = $event"
         class="fr-my-4w"
       >
+        <!-- TODO: complete info and styling -->
         <div class="fr-grid-row">
           <div class="fr-col-12 fr-col-sm-8">
             <div v-for="field in detailedFields" :key="field.key">
@@ -125,6 +130,7 @@ onMounted(() => {
               <p>{{ measurement[field.key] }}</p>
             </div>
           </div>
+          <!-- TODO: align to right -->
           <div class="fr-col-12 fr-col-sm-4">
             <router-link class="fr-btn fr-btn--tertiary" :to="measurementTunnel">Modifier les données</router-link>
           </div>
@@ -133,15 +139,17 @@ onMounted(() => {
     </div>
     <div v-else>
       <p>
-        Votre établissement est soumis à l’obligation de faire une analyse des causes du gaspillage alimentaire, et de
+        Votre établissement est soumis à l'obligation de faire une analyse des causes du gaspillage alimentaire, et de
         mettre en place une démarche de lutte contre le gaspillage alimentaire.
       </p>
       <DsfrBadge label="Pas encore des données" type="none" />
+      <!-- TODO: styling -->
       <p>- g par repas et par convive</p>
       <router-link :to="newMeasurementRoute" class="fr-btn">
         Saisir un pesage
       </router-link>
     </div>
+    <!-- TODO: show first few actions ? -->
     <h2 class="fr-mt-4w">Agir contre le gaspillage alimentaire</h2>
     <router-link
       :to="{ name: 'WasteActionsHome' }"
