@@ -33,7 +33,10 @@ const routes = [
     meta: {
       title: "Gaspillage alimentaire",
       authenticationRequired: true,
-      breadcrumbs: [{ to: { name: "ManagementPage" }, title: "Mon tableau de bord" }],
+      breadcrumbs: [
+        { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+        { to: { name: "DashboardManager" }, useCanteenName: true },
+      ],
     },
   },
 ]
@@ -51,6 +54,10 @@ const vue2Routes = [
   {
     path: "/ma-progression/:canteenUrlComponent/:year/:measureId",
     name: "MyProgress",
+  },
+  {
+    path: "/dashboard/:canteenUrlComponent",
+    name: "DashboardManager",
   },
   {
     path: "/gestion",
