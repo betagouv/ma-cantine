@@ -35,24 +35,30 @@ const displayOption = ref("chart")
 
 <template>
   <div v-if="measurementPercentageValues">
-    <div class="fr-grid-row fr-grid-row--right">
-      <DsfrSegmentedSet
-        label="Choix d'affichage"
-        :options="[
-          {
-            label: 'Charte',
-            value: 'chart',
-          },
-          {
-            label: 'Texte',
-            value: 'text',
-          },
-        ]"
-        v-model="displayOption"
-        small
-      />
+    <div class="fr-grid-row">
+      <div class="fr-col-md-7 fr-mb-2w">
+        <h3 class="fr-h6 fr-my-0">Origine du gaspillage</h3>
+      </div>
+      <div class="fr-col fr-mb-2w">
+        <div class="fr-grid-row fr-grid-row--right">
+          <DsfrSegmentedSet
+            label="Choix d'affichage"
+            :options="[
+              {
+                label: 'Charte',
+                value: 'chart',
+              },
+              {
+                label: 'Texte',
+                value: 'text',
+              },
+            ]"
+            v-model="displayOption"
+            small
+          />
+        </div>
+      </div>
     </div>
-    <h3 class="fr-h6 fr-pt-4w">Origine du gaspillage</h3>
     <div v-if="displayOption === 'chart'" class="fr-py-2w fr-pr-8w">
       <pie-chart
         :name="measurementGraphValues.x"
