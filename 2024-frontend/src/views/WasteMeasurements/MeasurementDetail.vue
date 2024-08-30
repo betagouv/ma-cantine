@@ -24,48 +24,48 @@ const detailedFields = [
   //   unit: "kg",
   // },
   {
-    heading: "Mesure du gaspillage au niveau des excédents de préparation",
+    heading: "Excédents de préparation",
   },
   {
-    label: "Masse de gaspillage d'excédents de préparation",
+    label: "Gaspillage total",
     key: "preparationTotalMass",
   },
   {
-    label: "Masse de gaspillage de denrées comestibles parmi les excédents de préparation",
+    label: "Gaspillage de denrées comestibles",
     key: "preparationEdibleMass",
   },
   {
-    label: "Masse de gaspillage de denrées non comestibles parmi les excédents de préparation",
+    label: "Gaspillage de denrées non comestibles",
     key: "preparationInedibleMass",
   },
   {
-    heading: "Mesure du gaspillage au niveau des denrées présentées aux convives mais non servies",
+    heading: "Denrées présentées aux convives mais non servies",
   },
   {
-    label: "Masse de gaspillage de denrées présentées aux convives mais non servies",
+    label: "Gaspillage total",
     key: "unservedTotalMass",
   },
   {
-    label: "Masse de gaspillage de denrées comestibles parmi les denrées présentées aux convives mais non servies",
+    label: "Gaspillage de denrées comestibles",
     key: "unservedEdibleMass",
   },
   {
-    label: "Masse de gaspillage de denrées non comestibles parmi les denrées présentées aux convives mais non servies",
+    label: "Gaspillage de denrées non comestibles",
     key: "unservedInedibleMass",
   },
   {
-    heading: "Mesure du gaspillage au niveau du reste assiette",
+    heading: "Reste assiette",
   },
   {
-    label: "Masse de gaspillage pour le reste assiette",
+    label: "Gaspillage total",
     key: "leftoversTotalMass",
   },
   {
-    label: "Masse de gaspillage de denrées comestibles parmi le reste assiette",
+    label: "Gaspillage de denrées comestibles",
     key: "leftoversEdibleMass",
   },
   {
-    label: "Masse de gaspillage de denrées non comestibles parmi le reste assiette",
+    label: "Gaspillage de denrées non comestibles",
     key: "leftoversInedibleMass",
   },
 ]
