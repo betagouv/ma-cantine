@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from "vue"
 import { formatNoValue } from "@/utils"
 // import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import MeasurementDetail from "./MeasurementDetail.vue"
+import SourceChart from "./SourceChart.vue"
 
 const props = defineProps(["canteenUrlComponent"])
 const canteenId = computed(() => props.canteenUrlComponent.split("--")[0])
@@ -39,18 +40,6 @@ const measurementChoices = computed(() => {
 const wastePerMeal = computed(() => {
   const m = measurement.value
   if (m && m.totalMass && m.mealCount) return (m.totalMass / m.mealCount) * 1000 // convert kg to g
-  return undefined
-})
-const measurementPercentageValues = computed(() => {
-  const m = measurement.value
-  if (m && m.totalMass) {
-    return {
-      preparation: ((m.preparationTotalMass || 0) / m.totalMass) * 100,
-      unserved: ((m.unservedTotalMass || 0) / m.totalMass) * 100,
-      leftovers: ((m.leftoversTotalMass || 0) / m.totalMass) * 100,
-      // TODO: other ?
-    }
-  }
   return undefined
 })
 
@@ -91,13 +80,7 @@ onMounted(() => {
         </div>
         <div class="fr-col-6 fr-col-center">
           <div v-if="measurement.isSortedBySource">
-            <!-- TODO: make graph -->
-            <h3>Origine du gaspillage</h3>
-            <ul v-if="measurementPercentageValues">
-              <li>Excédents de préparation : {{ formatNoValue(measurementPercentageValues.preparation) }} %</li>
-              <li>Denrées présentées mais non servies : {{ formatNoValue(measurementPercentageValues.unserved) }} %</li>
-              <li>Reste-assiette : {{ formatNoValue(measurementPercentageValues.leftovers) }} %</li>
-            </ul>
+            <SourceChart :measurement="measurement" />
           </div>
           <div v-else>
             <DsfrAlert>
