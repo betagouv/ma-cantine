@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import ImportSelection from "@/views/ImportSelection"
+import WasteMeasurements from "@/views/WasteMeasurements"
 import { useRootStore } from "@/stores/root"
 
 const routes = [
@@ -21,6 +22,16 @@ const routes = [
     component: ImportSelection,
     meta: {
       title: "Importer des données",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/gaspillage-alimentaire/:canteenUrlComponent",
+    name: "WasteMeasurements",
+    component: WasteMeasurements,
+    props: (route) => ({ ...route.params }),
+    meta: {
+      title: "Gaspillage alimentaire",
       authenticationRequired: true,
     },
   },
@@ -115,6 +126,10 @@ const vue2Routes = [
   {
     path: "/politique-de-confidentialite#cookies",
     name: "Cookies",
+  },
+  {
+    path: "/actions-anti-gaspi",
+    name: "WasteActionsHome",
   },
 ]
 routes.push(...vue2Routes)
