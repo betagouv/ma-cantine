@@ -12,7 +12,7 @@ export default defineConfig({
       template: {
         compilerOptions: {
           // https://vuejs.org/guide/extras/web-components.html#example-vite-config
-          isCustomElement: (tag) => tag.includes("-"),
+          isCustomElement: (tag) => tag.includes("-chart"),
         },
       },
     }),
