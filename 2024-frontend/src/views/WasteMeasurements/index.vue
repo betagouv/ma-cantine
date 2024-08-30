@@ -55,12 +55,68 @@ const measurementPercentageValues = computed(() => {
 const detailsExpandedId = ref("")
 const detailedFields = [
   {
-    key: "periodStartDate",
-    label: "Date du pesage",
+    key: "totalMass",
+    label: "Masse totale de gaspillage relevée sur la période de mesure",
+  },
+  // TODO: calculated value - from backend?
+  // {
+  //   label: "Période de mesure de mon gaspillage alimentaire",
+  //   unit: "jours",
+  // },
+  {
+    label: "Nombre de couverts sur la période",
+    unit: "couverts",
+    key: "mealCount",
+  },
+  // TODO: calculated value with tooltip - from backend?
+  // {
+  //   label: "Masse totale de gaspillage sur l'année",
+  //   unit: "kg",
+  // },
+  {
+    heading: "Mesure du gaspillage au niveau des excédents de préparation",
   },
   {
-    key: "totalMass",
-    label: "Total",
+    label: "Masse de gaspillage d'excédents de préparation",
+    key: "preparationTotalMass",
+  },
+  {
+    label: "Masse de gaspillage de denrées comestibles parmi les excédents de préparation",
+    key: "preparationEdibleMass",
+  },
+  {
+    label: "Masse de gaspillage de denrées non comestibles parmi les excédents de préparation",
+    key: "preparationInedibleMass",
+  },
+  {
+    heading: "Mesure du gaspillage au niveau des denrées présentées aux convives mais non servies",
+  },
+  {
+    label: "Masse de gaspillage de denrées présentées aux convives mais non servies",
+    key: "unservedTotalMass",
+  },
+  {
+    label: "Masse de gaspillage de denrées comestibles parmi les denrées présentées aux convives mais non servies",
+    key: "unservedEdibleMass",
+  },
+  {
+    label: "Masse de gaspillage de denrées non comestibles parmi les denrées présentées aux convives mais non servies",
+    key: "unservedInedibleMass",
+  },
+  {
+    heading: "Mesure du gaspillage au niveau du reste assiette",
+  },
+  {
+    label: "Masse de gaspillage pour le reste assiette",
+    key: "leftoversTotalMass",
+  },
+  {
+    label: "Masse de gaspillage de denrées comestibles parmi le reste assiette",
+    key: "leftoversEdibleMass",
+  },
+  {
+    label: "Masse de gaspillage de denrées non comestibles parmi le reste assiette",
+    key: "leftoversInedibleMass",
   },
 ]
 
@@ -71,6 +127,11 @@ onMounted(() => {
       measurements.value = response
     })
 })
+
+const formatNoValue = (value) => {
+  if (value || value === 0) return value
+  return "—"
+}
 </script>
 
 <template>
@@ -93,9 +154,6 @@ onMounted(() => {
             <span class="fr-h3">{{ wastePerMeal }} g</span>
             par repas et par convive
           </p>
-          <div class="fr-col-12 fr-col-sm-8 fr-mb-2w">
-            <DsfrSelect v-model="chosenMeasurementIdx" label="Date du pesage" :options="measurementChoices" />
-          </div>
           <router-link :to="newMeasurementRoute" class="fr-btn fr-btn--secondary">
             Saisir un nouveau pesage
           </router-link>
@@ -105,9 +163,9 @@ onMounted(() => {
             <!-- TODO: make graph -->
             <h3>Origine du gaspillage</h3>
             <ul v-if="measurementPercentageValues">
-              <li>Excédents de préparation : {{ measurementPercentageValues.preparation }} %</li>
-              <li>Denrées présentées mais non servies : {{ measurementPercentageValues.unserved }} %</li>
-              <li>Reste-assiette : {{ measurementPercentageValues.leftovers }} %</li>
+              <li>Excédents de préparation : {{ formatNoValue(measurementPercentageValues.preparation) }} %</li>
+              <li>Denrées présentées mais non servies : {{ formatNoValue(measurementPercentageValues.unserved) }} %</li>
+              <li>Reste-assiette : {{ formatNoValue(measurementPercentageValues.leftovers) }} %</li>
             </ul>
           </div>
           <div v-else>
@@ -124,19 +182,31 @@ onMounted(() => {
         @expand="detailsExpandedId = $event"
         class="fr-my-4w"
       >
-        <!-- TODO: complete info and styling -->
-        <div class="fr-grid-row">
-          <div class="fr-col-12 fr-col-sm-8">
-            <div v-for="field in detailedFields" :key="field.key">
-              <p>{{ field.label }}</p>
-              <p>{{ measurement[field.key] }}</p>
-            </div>
+        <div class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
+          <div class="fr-col-12 fr-col-sm-6 fr-col-md-4 fr-pr-4w">
+            <DsfrSelect v-model="chosenMeasurementIdx" label="Date du pesage" :options="measurementChoices" />
           </div>
-          <!-- TODO: align to right -->
           <div class="fr-col-12 fr-col-sm-4">
-            <router-link class="fr-btn fr-btn--tertiary" :to="measurementTunnel">Modifier les données</router-link>
+            <router-link class="fr-btn fr-btn--tertiary" :to="measurementTunnel">
+              <span class="fr-icon-pencil-line fr-icon--sm fr-mr-1w"></span>
+              Modifier les données
+            </router-link>
           </div>
         </div>
+        <div v-for="field in detailedFields" :key="field.key" class="detail">
+          <p v-if="field.label" class="label fr-mb-1w">{{ field.label }}</p>
+          <h4 v-else-if="field.heading" class="fr-h6">{{ field.heading }}</h4>
+          <p v-if="field.key" class="value">
+            <b>
+              {{ formatNoValue(measurement[field.key]) }}
+              {{ field.unit || "kg" }}
+            </b>
+          </p>
+        </div>
+        <router-link class="fr-btn fr-btn--tertiary fr-btn--sm" :to="measurementTunnel">
+          <span class="fr-icon-pencil-line fr-icon--sm fr-mr-1w"></span>
+          Modifier les données
+        </router-link>
       </DsfrAccordion>
     </div>
     <div v-else>
@@ -146,7 +216,7 @@ onMounted(() => {
       </p>
       <DsfrBadge label="Pas encore des données" type="none" />
       <p class="fr-my-4w highlight">
-        <span class="fr-h3">— g</span>
+        <span class="fr-h3">{{ formatNoValue() }} g</span>
         par repas et par convive
       </p>
       <router-link :to="newMeasurementRoute" class="fr-btn">
@@ -184,5 +254,12 @@ p.highlight.brown {
 }
 p.highlight.brown > span {
   background: var(--orange-terre-battue-975-75);
+}
+
+div.detail > .label {
+  color: var(--text-mention-grey);
+}
+div.detail > .value {
+  color: var(--text-default-grey);
 }
 </style>
