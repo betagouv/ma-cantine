@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from "vue"
-import { formatNoValue } from "@/utils"
+import { computed, ref } from "vue"
+import { formatNoValue, getPercentage } from "@/utils"
 
 const props = defineProps(["measurement"])
 
@@ -10,9 +10,9 @@ const measurementPercentageValues = computed(() => {
   const hasAtLeastOneSource = m.preparationTotalMass || m.unservedTotalMass || m.leftoversTotalMass
   if (canCalculatePercentage && hasAtLeastOneSource) {
     return {
-      preparation: ((m.preparationTotalMass || 0) / m.totalMass) * 100,
-      unserved: ((m.unservedTotalMass || 0) / m.totalMass) * 100,
-      leftovers: ((m.leftoversTotalMass || 0) / m.totalMass) * 100,
+      preparation: getPercentage(m.preparationTotalMass, m.totalMass),
+      unserved: getPercentage(m.unservedTotalMass, m.totalMass),
+      leftovers: getPercentage(m.leftoversTotalMass, m.totalMass),
       // TODO: other ?
     }
   }
@@ -29,23 +29,54 @@ const measurementGraphValues = computed(() => {
     x: JSON.stringify(["Excédents de préparation", "Denrées non servies", "Reste-assiette"]),
   }
 })
+
+const displayOption = ref("chart")
 </script>
 
 <template>
   <div v-if="measurementPercentageValues">
-    <!-- TODO: accessible table view -->
-    <pie-chart
-      :name="measurementGraphValues.x"
-      :x="measurementGraphValues.x"
-      :y="measurementGraphValues.y"
-      color='["purple-glycine", "green-archipel", "pink-tuile"]'
-    ></pie-chart>
-    <h3>Origine du gaspillage</h3>
-    <ul>
-      <li>Excédents de préparation : {{ formatNoValue(measurementPercentageValues.preparation) }} %</li>
-      <li>Denrées présentées mais non servies : {{ formatNoValue(measurementPercentageValues.unserved) }} %</li>
-      <li>Reste-assiette : {{ formatNoValue(measurementPercentageValues.leftovers) }} %</li>
-    </ul>
+    <div class="fr-grid-row fr-grid-row--right">
+      <DsfrSegmentedSet
+        label="Choix d'affichage"
+        :options="[
+          {
+            label: 'Charte',
+            value: 'chart',
+          },
+          {
+            label: 'Texte',
+            value: 'text',
+          },
+        ]"
+        v-model="displayOption"
+        small
+      />
+    </div>
+    <h3 class="fr-h6 fr-pt-4w">Origine du gaspillage</h3>
+    <div v-if="displayOption === 'chart'" class="fr-py-2w fr-pr-8w">
+      <pie-chart
+        :name="measurementGraphValues.x"
+        :x="measurementGraphValues.x"
+        :y="measurementGraphValues.y"
+        color='["blue-ecume", "yellow-moutarde", "pink-tuile"]'
+      ></pie-chart>
+    </div>
+    <div v-else-if="displayOption === 'text'">
+      <ul>
+        <li>
+          Excédents de préparation : {{ formatNoValue(measurement.preparationTotalMass) }} kg, soit
+          {{ formatNoValue(measurementPercentageValues.preparation) }} %
+        </li>
+        <li>
+          Denrées présentées mais non servies : {{ formatNoValue(measurement.unservedTotalMass) }} kg, soit
+          {{ formatNoValue(measurementPercentageValues.unserved) }} %
+        </li>
+        <li>
+          Reste-assiette : {{ formatNoValue(measurement.leftoversTotalMass) }} kg, soit
+          {{ formatNoValue(measurementPercentageValues.leftovers) }} %
+        </li>
+      </ul>
+    </div>
   </div>
   <DsfrAlert v-else>
     Completez la saisie du pesage pour visualiser les sources de votre gaspillage.

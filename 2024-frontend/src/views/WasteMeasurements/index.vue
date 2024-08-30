@@ -67,8 +67,8 @@ onMounted(() => {
     </p>
     <h2>Mon gaspillage mesuré</h2>
     <div v-if="measurements.length">
-      <div v-if="measurement" class="fr-grid-row">
-        <div class="fr-col-6">
+      <div v-if="measurement" class="fr-grid-row fr-grid-row--center">
+        <div class="fr-col">
           <!-- redudent to include "et par convive?" -->
           <p class="highlight brown">
             <span class="fr-h3">{{ formatNoValue(wastePerMeal) }} g</span>
@@ -78,7 +78,7 @@ onMounted(() => {
             Saisir un nouveau pesage
           </router-link>
         </div>
-        <div class="fr-col-6 fr-col-center">
+        <div class="fr-col-12 fr-col-sm-5">
           <div v-if="measurement.isSortedBySource">
             <SourceChart :measurement="measurement" />
           </div>
@@ -159,5 +159,9 @@ p.highlight.brown {
 }
 p.highlight.brown > span {
   background: var(--orange-terre-battue-975-75);
+}
+
+.fr-grid-row--center {
+  align-items: center;
 }
 </style>
