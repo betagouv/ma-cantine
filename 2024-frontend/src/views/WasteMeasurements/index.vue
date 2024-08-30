@@ -89,8 +89,10 @@ onMounted(() => {
       <div v-if="measurement" class="fr-grid-row">
         <div class="fr-col-6">
           <!-- redudent to include "et par convive?" -->
-          <!-- TODO: styling -->
-          <p v-if="wastePerMeal">{{ wastePerMeal }} g par repas et par convive</p>
+          <p v-if="wastePerMeal" class="highlight brown">
+            <span class="fr-h3">{{ wastePerMeal }} g</span>
+            par repas et par convive
+          </p>
           <div class="fr-col-12 fr-col-sm-8 fr-mb-2w">
             <DsfrSelect v-model="chosenMeasurementIdx" label="Date du pesage" :options="measurementChoices" />
           </div>
@@ -143,8 +145,10 @@ onMounted(() => {
         mettre en place une démarche de lutte contre le gaspillage alimentaire.
       </p>
       <DsfrBadge label="Pas encore des données" type="none" />
-      <!-- TODO: styling -->
-      <p>- g par repas et par convive</p>
+      <p class="fr-my-4w highlight">
+        <span class="fr-h3">— g</span>
+        par repas et par convive
+      </p>
       <router-link :to="newMeasurementRoute" class="fr-btn">
         Saisir un pesage
       </router-link>
@@ -159,3 +163,26 @@ onMounted(() => {
     </router-link>
   </div>
 </template>
+
+<style scoped>
+p.highlight {
+  color: var(--text-mention-grey);
+  display: flex;
+  align-items: center;
+}
+p.highlight > span {
+  border-radius: 18px;
+  padding: 4px 16px;
+  margin-right: 8px;
+  margin-bottom: 0;
+
+  background: var(--background-default-grey-hover);
+  color: inherit;
+}
+p.highlight.brown {
+  color: var(--text-action-high-orange-terre-battue);
+}
+p.highlight.brown > span {
+  background: var(--orange-terre-battue-975-75);
+}
+</style>
