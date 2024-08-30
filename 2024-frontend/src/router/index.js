@@ -33,6 +33,7 @@ const routes = [
     meta: {
       title: "Gaspillage alimentaire",
       authenticationRequired: true,
+      breadcrumbs: [{ to: { name: "ManagementPage" }, title: "Mon tableau de bord" }],
     },
   },
 ]

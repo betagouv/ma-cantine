@@ -4,8 +4,6 @@ import { routes } from "@/router"
 import { useRoute } from "vue-router"
 const route = useRoute()
 
-const props = defineProps(["links", "title"])
-
 const breadcrumbRoutes = JSON.parse(JSON.stringify(routes))
 // flatten routes for simplicity
 breadcrumbRoutes.forEach((r) => {
@@ -14,12 +12,12 @@ breadcrumbRoutes.forEach((r) => {
   }
 })
 
-const pageTitle = props.title || route.meta?.title
+const pageTitle = computed(() => route.meta?.title)
 
 const breadcrumbLinks = computed(() => {
   const allLinks = [{ text: "Accueil", to: "/" }]
-  if (props.links) {
-    props.links.forEach((link) => {
+  if (route.meta?.breadcrumbs) {
+    route.meta.breadcrumbs.forEach((link) => {
       if (!link.title && link.to?.name) {
         link.title = breadcrumbRoutes.find((r) => r.name === link.to.name)?.meta?.title
       }

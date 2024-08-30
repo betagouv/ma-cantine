@@ -1,7 +1,3 @@
-<script setup>
-import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
-</script>
+<script setup></script>
 
-<template>
-  <BreadcrumbsNav />
-</template>
+<template><div></div></template>

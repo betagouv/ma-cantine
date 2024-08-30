@@ -1,7 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue"
 import { formatNoValue } from "@/utils"
-// import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import MeasurementDetail from "./MeasurementDetail.vue"
 import SourceChart from "./SourceChart.vue"
 
@@ -56,8 +55,6 @@ onMounted(() => {
 
 <template>
   <div>
-    <!-- TODO: fix circular import of breadcrumbs nav for hot reloading -->
-    <!-- <BreadcrumbsNav :links="[{ title: 'Mon tableau de bord', to: { name: 'ManagementPage' } }]" /> -->
     <h1>Gaspillage alimentaire</h1>
     <p>
       Cantine : {{ canteenId }}
