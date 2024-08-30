@@ -1,9 +1,8 @@
 <script setup>
 import { RouterView, useRoute } from "vue-router"
 import { reactive, computed, watch } from "vue"
-
-const logoText = ["Ministère", "de l’Agriculture", "et de la Souveraineté", "Alimentaire"]
-const serviceTitle = "ma cantine"
+import AppHeader from "@/components/AppHeader.vue"
+import AppFooter from "@/components/AppFooter.vue"
 
 const layout = reactive({ fullscreen: false })
 const routerViewClass = computed(() => (layout.fullscreen ? "" : "fr-container fr-pb-2w"))
@@ -19,13 +18,13 @@ watch(route, (to) => {
 
 <template>
   <div>
-    <DsfrHeader v-if="!layout.fullscreen" :logo-text :service-title />
+    <AppHeader v-if="!layout.fullscreen" />
 
     <main :class="routerViewClass">
       <RouterView />
     </main>
 
-    <DsfrFooter v-if="!layout.fullscreen" />
+    <AppFooter v-if="!layout.fullscreen" />
   </div>
 </template>
 
