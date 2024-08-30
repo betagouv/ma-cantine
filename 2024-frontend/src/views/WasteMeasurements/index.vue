@@ -68,17 +68,17 @@ onMounted(() => {
     <h2>Mon gaspillage mesuré</h2>
     <div v-if="measurements.length">
       <div v-if="measurement" class="fr-grid-row fr-grid-row--center">
-        <div class="fr-col">
+        <div class="fr-col fr-mb-4w">
           <!-- redudent to include "et par convive?" -->
           <p class="highlight brown">
             <span class="fr-h3">{{ formatNoValue(wastePerMeal) }} g</span>
             par repas et par convive
           </p>
-          <router-link :to="newMeasurementRoute" class="fr-btn fr-btn--secondary">
+          <router-link :to="newMeasurementRoute" class="fr-btn fr-btn--secondary fr-mt-sm-2w">
             Saisir un nouveau pesage
           </router-link>
         </div>
-        <div class="fr-col-12 fr-col-sm-5">
+        <div class="fr-col-12 fr-col-sm-5 fr-mb-4w">
           <div v-if="measurement.isSortedBySource">
             <SourceChart :measurement="measurement" />
           </div>
@@ -94,7 +94,7 @@ onMounted(() => {
         title="Données détaillées"
         :expanded-id="detailsExpandedId"
         @expand="detailsExpandedId = $event"
-        class="fr-my-4w"
+        class="fr-my-2w"
       >
         <div class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
           <div class="fr-col-12 fr-col-sm-6 fr-col-md-4 fr-pr-4w">
@@ -143,6 +143,7 @@ onMounted(() => {
 p.highlight {
   color: var(--text-mention-grey);
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
 }
 p.highlight > span {
