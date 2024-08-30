@@ -150,8 +150,8 @@ const formatNoValue = (value) => {
       <div v-if="measurement" class="fr-grid-row">
         <div class="fr-col-6">
           <!-- redudent to include "et par convive?" -->
-          <p v-if="wastePerMeal" class="highlight brown">
-            <span class="fr-h3">{{ wastePerMeal }} g</span>
+          <p class="highlight brown">
+            <span class="fr-h3">{{ formatNoValue(wastePerMeal) }} g</span>
             par repas et par convive
           </p>
           <router-link :to="newMeasurementRoute" class="fr-btn fr-btn--secondary">
