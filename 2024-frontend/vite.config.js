@@ -8,7 +8,14 @@ import { djangoVitePlugin } from "django-vite-plugin"
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+    vue({
+      template: {
+        compilerOptions: {
+          // https://vuejs.org/guide/extras/web-components.html#example-vite-config
+          isCustomElement: (tag) => tag.includes("-"),
+        },
+      },
+    }),
     vueDevTools(),
     djangoVitePlugin({
       input: ["src/main.js"],

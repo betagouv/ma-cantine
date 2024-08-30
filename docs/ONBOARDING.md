@@ -149,6 +149,8 @@ Notez que cette commande est à effectuer à chaque changement de fichier de tra
 
 ## Lancer l'application en mode développement
 
+Certaines fonctionnalités ont besoin de fichiers statics. La première fois que vous lancez le projet, d'abord lancez `python manage.py collectstatic`.
+
 Deux options :
 
 1. Le script `./local-build.sh` lance les trois commandes en parallel (Django, Vue2, Vue3). Faut pas avoir besoin de faire des migrations pour utiliser ça.
