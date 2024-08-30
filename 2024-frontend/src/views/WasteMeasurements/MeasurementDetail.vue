@@ -75,7 +75,7 @@ const detailedFields = [
   <div>
     <div v-for="field in detailedFields" :key="field.key" class="detail">
       <p v-if="field.label" class="fr-mb-1w">{{ field.label }}</p>
-      <h4 v-else-if="field.heading" class="fr-h6">{{ field.heading }}</h4>
+      <h4 v-else-if="field.heading" class="fr-h6 fr-mt-6w">{{ field.heading }}</h4>
       <p v-if="field.key">
         <b>
           {{ formatNoValue(props.measurement[field.key]) }}
