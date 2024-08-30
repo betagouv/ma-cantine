@@ -194,9 +194,9 @@ const formatNoValue = (value) => {
           </div>
         </div>
         <div v-for="field in detailedFields" :key="field.key" class="detail">
-          <p v-if="field.label" class="label fr-mb-1w">{{ field.label }}</p>
+          <p v-if="field.label" class="fr-mb-1w">{{ field.label }}</p>
           <h4 v-else-if="field.heading" class="fr-h6">{{ field.heading }}</h4>
-          <p v-if="field.key" class="value">
+          <p v-if="field.key">
             <b>
               {{ formatNoValue(measurement[field.key]) }}
               {{ field.unit || "kg" }}
@@ -256,10 +256,7 @@ p.highlight.brown > span {
   background: var(--orange-terre-battue-975-75);
 }
 
-div.detail > .label {
+div.detail {
   color: var(--text-mention-grey);
-}
-div.detail > .value {
-  color: var(--text-default-grey);
 }
 </style>
