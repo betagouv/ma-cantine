@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from "vue"
 import { useRootStore } from "@/stores/root"
 import { useRouter } from "vue-router"
-import { formatNoValue } from "@/utils"
+import { formatNoValue, formatDate } from "@/utils"
 import MeasurementDetail from "./MeasurementDetail.vue"
 import SourceChart from "./SourceChart.vue"
 
@@ -41,8 +41,10 @@ const measurement = computed(() => measurements.value.length && measurements.val
 const measurementChoices = computed(() => {
   return measurements.value.map((m, idx) => {
     return {
-      // TODO: improve date formatting
-      text: `${m.periodStartDate} - ${m.periodEndDate}`,
+      text: `${formatDate(m.periodStartDate, {
+        month: "short",
+        day: "numeric",
+      })} - ${formatDate(m.periodEndDate)}`,
       value: idx,
     }
   })

@@ -30,7 +30,7 @@ class WasteMeasurement(models.Model):
         decimal_places=2,
         blank=True,
         null=True,
-        verbose_name="Masse totale",
+        verbose_name="Masse totale (kg)",
     )
     is_sorted_by_source = models.BooleanField(blank=True, null=True, verbose_name="trié en fonctionne de source ?")
 
@@ -39,7 +39,7 @@ class WasteMeasurement(models.Model):
         decimal_places=2,
         blank=True,
         null=True,
-        verbose_name="préparation - masse totale",
+        verbose_name="préparation - masse totale (kg)",
     )
     preparation_is_sorted = models.BooleanField(
         blank=True, null=True, verbose_name="préparation - trié en fonction de comestible/non-comestible ?"
@@ -49,14 +49,14 @@ class WasteMeasurement(models.Model):
         decimal_places=2,
         blank=True,
         null=True,
-        verbose_name="préparation - masse comestible",
+        verbose_name="préparation - masse comestible (kg)",
     )
     preparation_inedible_mass = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         blank=True,
         null=True,
-        verbose_name="préparation - masse non-comestible",
+        verbose_name="préparation - masse non-comestible (kg)",
     )
 
     unserved_total_mass = models.DecimalField(
@@ -64,7 +64,7 @@ class WasteMeasurement(models.Model):
         decimal_places=2,
         blank=True,
         null=True,
-        verbose_name="non-servi - masse totale",
+        verbose_name="non-servi - masse totale (kg)",
     )
     unserved_is_sorted = models.BooleanField(
         blank=True, null=True, verbose_name="non-servi - trié en fonction de comestible/non-comestible ?"
@@ -74,14 +74,14 @@ class WasteMeasurement(models.Model):
         decimal_places=2,
         blank=True,
         null=True,
-        verbose_name="non-servi - masse comestible",
+        verbose_name="non-servi - masse comestible (kg)",
     )
     unserved_inedible_mass = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         blank=True,
         null=True,
-        verbose_name="non-servi - masse non-comestible",
+        verbose_name="non-servi - masse non-comestible (kg)",
     )
 
     leftovers_total_mass = models.DecimalField(
@@ -89,7 +89,7 @@ class WasteMeasurement(models.Model):
         decimal_places=2,
         blank=True,
         null=True,
-        verbose_name="restes assiette - masse totale",
+        verbose_name="restes assiette - masse totale (kg)",
     )
     leftovers_is_sorted = models.BooleanField(
         blank=True, null=True, verbose_name="restes assiette - trié en fonction de comestible/non-comestible ?"
@@ -99,12 +99,12 @@ class WasteMeasurement(models.Model):
         decimal_places=2,
         blank=True,
         null=True,
-        verbose_name="restes assiette - masse comestible",
+        verbose_name="restes assiette - masse comestible (kg)",
     )
     leftovers_inedible_mass = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         blank=True,
         null=True,
-        verbose_name="restes assiette - masse non-comestible",
+        verbose_name="restes assiette - masse non-comestible (kg)",
     )

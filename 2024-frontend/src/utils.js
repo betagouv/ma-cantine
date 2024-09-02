@@ -24,3 +24,17 @@ export const getPercentage = (partialValue, totalValue, round = true) => {
     return toPercentage(partialValue / totalValue, round)
   }
 }
+
+// Formats ISO 8601 date strings (not datetime). Expects YYYY-MM-DD format.
+export const formatDate = (
+  dateString,
+  options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }
+) => {
+  const dateSegments = dateString.split("-")
+  const date = new Date(parseInt(dateSegments[0]), parseInt(dateSegments[1]) - 1, parseInt(dateSegments[2]))
+  return date.toLocaleString("fr", options)
+}
