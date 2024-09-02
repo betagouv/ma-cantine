@@ -2,7 +2,14 @@ from django.urls import reverse
 from django.db.utils import IntegrityError
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, TeledeclarationFactory, SectorFactory
+from data.factories import (
+    CanteenFactory,
+    DiagnosticFactory,
+    UserFactory,
+    TeledeclarationFactory,
+    SectorFactory,
+    CompleteDiagnosticFactory,
+)
 from data.models import Teledeclaration, Diagnostic, Canteen
 from django.test.utils import override_settings
 from .utils import authenticate
@@ -499,9 +506,7 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=LAST_YEAR, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, value_total_ht=100
-        )
+        diagnostic = CompleteDiagnosticFactory.create(canteen=canteen, year=LAST_YEAR, value_total_ht=100)
         payload = {"diagnosticId": diagnostic.id}
 
         response = self.client.post(reverse("teledeclaration_create"), payload)
