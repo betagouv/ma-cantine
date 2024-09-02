@@ -1,15 +1,18 @@
 import pandas as pd
 import requests_mock
+from macantine.etl.utils import map_communes_infos
 from django.test import TestCase, override_settings
-from macantine.etl import map_communes_infos, update_datagouv_resources
 from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
 from data.models import Teledeclaration
-from macantine.etl import ETL_CANTEEN, ETL_TD, ETL_ANALYSIS
+from macantine.etl.analysis import ETL_ANALYSIS, aggregate_col, get_egalim_hors_bio, format_sector_column
+from macantine.etl.open_data import ETL_CANTEEN, ETL_TD
 from freezegun import freeze_time
 import json
 from django.core.files.storage import default_storage
 
 import os
+
+from macantine.etl.utils import update_datagouv_resources
 
 
 class TestETLAnalysis(TestCase):
@@ -40,8 +43,132 @@ class TestETLAnalysis(TestCase):
             2,
             "There should be two teledeclaration. None for 1990 (no campaign). One for 2022 and one for 2023",
         )
-        self.assertEqual(etl_stats.df[etl_stats.df.id == td_2022.id].year[0], 2022)
-        self.assertEqual(etl_stats.df[etl_stats.df.id == td_2023.id].year[0], 2023)
+        self.assertEqual(etl_stats.df[etl_stats.df.id == td_2022.id].year.iloc[0], 2022)
+        self.assertEqual(etl_stats.df[etl_stats.df.id == td_2023.id].year.iloc[0], 2023)
+
+    def test_get_egalim_hors_bio(self):
+        data = {
+            "0": {
+                "canteen_id": 1,
+                "teledeclaration.value_externality_performance_ht": 10,
+                "teledeclaration.value_sustainable_ht": 10,
+                "teledeclaration.value_egalim_others_ht": 10,
+            },
+            "1": {
+                "canteen_id": 1,
+                "teledeclaration.value_externality_performance_ht": 10,
+                "teledeclaration.value_sustainable_ht": 10,
+            },
+        }
+        df = pd.DataFrame.from_dict(data, orient="index")
+        df["value_somme_egalim_hors_bio_ht"] = df.apply(get_egalim_hors_bio, axis=1)
+        self.assertEqual(df.iloc[0]["value_somme_egalim_hors_bio_ht"], 30)
+        self.assertEqual(df.iloc[1]["value_somme_egalim_hors_bio_ht"], 20)
+
+    def test_aggregate_col(self):
+        test_cases = [
+            {
+                "name": "Regular aggregation",
+                "data": {
+                    "0": {
+                        "id": 1,
+                        "value_bio_ht": pd.NA,
+                        "value_bio_boulange_ht": 5,
+                        "value_bio_viande_ht": 5,
+                    }
+                },
+                "categ": "bio",
+                "sub_categ": ["_bio"],
+                "expected_outcome": 10,
+            },
+            {
+                "name": "No double count by exluding potential aggregated value from sum",
+                "data": {
+                    "0": {
+                        "id": 1,
+                        "value_bio_ht": 5,
+                        "value_bio_boulange_ht": 5,
+                        "value_bio_viande_ht": 5,
+                    }
+                },
+                "categ": "bio",
+                "sub_categ": ["_bio"],
+                "expected_outcome": 10,
+            },
+            {
+                "name": "Multiple sub categ",
+                "data": {
+                    "0": {
+                        "id": 1,
+                        "value_bio_ht": pd.NA,
+                        "value_bio_boulange_ht": 5,
+                        "value_bio_viande_ht": 5,
+                        "value_awesome_viande_ht": 5,
+                    }
+                },
+                "categ": "bio",
+                "sub_categ": ["_bio", "_awesome"],
+                "expected_outcome": 15,
+            },
+        ]
+        for tc in test_cases:
+            td_complete = pd.DataFrame.from_dict(tc["data"], orient="index")
+            td_aggregated = aggregate_col(td_complete, tc["categ"], tc["sub_categ"])
+            self.assertEqual(td_aggregated.iloc[0][f"teledeclaration.value_{tc['categ']}_ht"], tc["expected_outcome"])
+
+    def test_check_column_matches_substring(self):
+        data = {
+            "0": {
+                "id": 1,
+            }
+        }
+        df = pd.DataFrame.from_dict(data, orient="index")
+        with self.assertRaises(KeyError):
+            aggregate_col(df, "categ_A", ["_non_existing_sub_categ"])
+
+    def test_transform_sector_column(self):
+        data = {
+            "0": {
+                "canteen_id": 1,
+                "canteen.sectors": [
+                    {
+                        "id": 12,
+                        "name": "Ecole primaire (maternelle et élémentaire)",
+                        "category": "education",
+                        "has_line_ministry": False,
+                    }
+                ],
+            },
+            "1": {
+                "canteen_id": 2,
+                "canteen.sectors": [
+                    {
+                        "id": 1,
+                        "name": "Secondaire collège",
+                    },
+                    {
+                        "id": 12,
+                        "name": "Ecole primaire (maternelle et élémentaire)",
+                    },
+                    {
+                        "id": 28,
+                        "name": "Secondaire lycée (hors agricole)",
+                    },
+                ],
+            },
+            "2": {
+                "canteen_id": 2,
+                "canteen.sectors": None,
+            },
+        }
+        df = pd.DataFrame.from_dict(data, orient="index")
+        df[["secteur", "categorie"]] = df.apply(
+            lambda x: format_sector_column(x, "canteen.sectors"), axis=1, result_type="expand"
+        )
+        self.assertEqual(df.iloc[0]["secteur"], "Ecole primaire (maternelle et élémentaire)")
+        self.assertEqual(df.iloc[0]["categorie"], "education")
+        self.assertEqual(df.iloc[1]["secteur"], "Secteurs multiples")
+        self.assertEqual(df.iloc[1]["categorie"], "Catégories multiples")
 
 
 @requests_mock.Mocker()
@@ -100,19 +227,7 @@ class TestETLOpenData(TestCase):
                 "canteen": {
                     "id": 1,
                     "name": "Papa rayon lien.",
-                    "siret": None,
-                    "region": None,
                     "sectors": [],
-                    "department": None,
-                    "line_ministry": None,
-                    "economic_model": None,
-                    "city_insee_code": "68454",
-                    "management_type": None,
-                    "production_type": None,
-                    "daily_meal_count": 8167,
-                    "yearly_meal_count": None,
-                    "central_producer_siret": None,
-                    "satellite_canteens_count": None,
                 },
                 "version": "10",
                 "applicant": {"name": "Lucie Lévêque", "email": "clairemarion@example.net"},
@@ -122,7 +237,8 @@ class TestETLOpenData(TestCase):
                     "canteen_id": 1,
                     "value_bio_ht": 1537.0,
                     "value_total_ht": 7627.0,
-                    "diagnostic_type": None,
+                    "value_externality_performance_ht": 60,
+                    "value_sustainable_ht": 50,
                 },
                 "central_kitchen_siret": None,
             },

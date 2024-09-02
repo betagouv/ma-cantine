@@ -16,7 +16,8 @@ import redis as r
 from common.utils import get_siret_token
 from .celery import app
 from .utils import get_infos_from_siret
-from .etl import ETL_TD, ETL_CANTEEN
+from .etl.analysis import ETL_ANALYSIS
+from .etl.open_data import ETL_TD, ETL_CANTEEN
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 
@@ -417,6 +418,7 @@ def export_datasets():
         "campagne teledeclaration 2021": ETL_TD(2021),
         "campagne teledeclaration 2022": ETL_TD(2022),
         "cantines": ETL_CANTEEN(),
+        "td_analyses": ETL_ANALYSIS(),
     }
     for key, etl in datasets.items():
         logger.info(f"Starting {key} dataset extraction")
