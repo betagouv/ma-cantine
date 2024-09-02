@@ -1,12 +1,24 @@
 <script setup>
 import { computed, onMounted, ref } from "vue"
+import { useRootStore } from "@/stores/root"
+import { useRouter } from "vue-router"
 import { formatNoValue } from "@/utils"
 import MeasurementDetail from "./MeasurementDetail.vue"
 import SourceChart from "./SourceChart.vue"
 
 const props = defineProps(["canteenUrlComponent"])
-const canteenId = computed(() => props.canteenUrlComponent.split("--")[0])
-// TODO: populate canteen title from id via fetching canteen (should be in initial data summaries)
+const store = useRootStore()
+const router = useRouter()
+
+const canteenId = computed(() => +props.canteenUrlComponent.split("--")[0])
+const canteen = computed(() => {
+  const canteen = store.canteenPreviews.find((canteen) => canteen.id === canteenId.value)
+  if (!canteen) router.replace({ name: "ManagementPage" })
+  return {
+    id: canteenId,
+    name: canteen?.name,
+  }
+})
 
 const newMeasurementRoute = {
   name: "DiagnosticTunnel",
@@ -57,7 +69,7 @@ onMounted(() => {
   <div>
     <h1>Gaspillage alimentaire</h1>
     <p>
-      Cantine : {{ canteenId }}
+      {{ canteen.name }}
       <router-link :to="{ name: 'ManagementPage' }" class="fr-btn fr-btn--tertiary fr-btn--sm">
         Changer d'établissement
       </router-link>

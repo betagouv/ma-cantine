@@ -20,8 +20,7 @@ const breadcrumbLinks = computed(() => {
   if (route.meta?.breadcrumbs) {
     route.meta.breadcrumbs.forEach((link) => {
       if (link.useCanteenName && canteenUrlComponent.value) {
-        const title = canteenUrlComponent.value.split("--")[1]
-        console.log(title)
+        const title = canteenUrlComponent.value.split("--")[1] || "Mon établissement"
         link.title = title.replace(/-/g, " ")
       } else if (link.useCanteenName) {
         console.error(

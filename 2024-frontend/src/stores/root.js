@@ -20,6 +20,7 @@ export const useRootStore = defineStore("root", () => {
   return {
     initialDataLoaded,
     loggedUser,
+    canteenPreviews,
     fetchInitialData,
   }
 })
