@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.urls import reverse
 from django.db import transaction
 from django.test.utils import override_settings
@@ -7,7 +8,6 @@ from rest_framework import status
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory
 from data.models import Diagnostic, Teledeclaration, Canteen
 from .utils import authenticate, get_oauth2_token
-import decimal
 
 
 class TestDiagnosticsApi(APITestCase):
@@ -245,7 +245,7 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual("DAILY", diagnostic.vegetarian_weekly_recurrence)
         self.assertIn("GRAIN", diagnostic.vegetarian_menu_bases)
         self.assertIn("CHEESE", diagnostic.vegetarian_menu_bases)
-        self.assertEqual(diagnostic.donation_quantity, decimal.Decimal("60.6"))
+        self.assertEqual(diagnostic.donation_quantity, Decimal("60.6"))
         self.assertEqual(diagnostic.communication_frequency, "YEARLY")
         self.assertTrue(diagnostic.communicates_on_food_quality)
         self.assertEqual(diagnostic.creation_mtm_source, "mtm_source_value")
@@ -621,7 +621,7 @@ class TestDiagnosticsApi(APITestCase):
 
         diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
 
-        self.assertEqual(diagnostic.total_leftovers, decimal.Decimal("1.23456"))
+        self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
 
     @authenticate
     def test_total_leftovers_conversion_update_diagnostic(self):
@@ -630,7 +630,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, total_leftovers=decimal.Decimal("1.23456"))
+        diagnostic = DiagnosticFactory.create(canteen=canteen, total_leftovers=Decimal("1.23456"))
 
         payload = {
             "total_leftovers": 6666.66,
@@ -647,7 +647,7 @@ class TestDiagnosticsApi(APITestCase):
 
         diagnostic.refresh_from_db()
 
-        self.assertEqual(diagnostic.total_leftovers, decimal.Decimal("6.66666"))
+        self.assertEqual(diagnostic.total_leftovers, Decimal("6.66666"))
 
     @authenticate
     def test_total_leftovers_conversion_update_diagnostic_no_conversion(self):
@@ -656,7 +656,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, total_leftovers=decimal.Decimal("1.23456"))
+        diagnostic = DiagnosticFactory.create(canteen=canteen, total_leftovers=Decimal("1.23456"))
 
         payload = {
             "bread_leftovers": 100,
@@ -673,8 +673,8 @@ class TestDiagnosticsApi(APITestCase):
 
         diagnostic.refresh_from_db()
 
-        self.assertEqual(diagnostic.total_leftovers, decimal.Decimal("1.23456"))
-        self.assertEqual(diagnostic.bread_leftovers, decimal.Decimal("100"))
+        self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
+        self.assertEqual(diagnostic.bread_leftovers, Decimal("100"))
 
     @authenticate
     def test_total_leftovers_conversion_update_diagnostic_bad_values(self):
@@ -683,7 +683,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, total_leftovers=decimal.Decimal("1.23456"))
+        diagnostic = DiagnosticFactory.create(canteen=canteen, total_leftovers=Decimal("1.23456"))
 
         payload = {
             "total_leftovers": 6666.666,
@@ -703,7 +703,7 @@ class TestDiagnosticsApi(APITestCase):
         )
 
         diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.total_leftovers, decimal.Decimal("1.23456"))
+        self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
 
         payload = {
             "total_leftovers": "this shouldn't be a string",
@@ -721,7 +721,7 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(errors["totalLeftovers"][0], "Assurez-vous que cette valeur est un chiffre décimal.")
 
         diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.total_leftovers, decimal.Decimal("1.23456"))
+        self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
 
     @authenticate
     def test_total_leftovers_conversion_get_diagnostic(self):
@@ -730,7 +730,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        DiagnosticFactory.create(canteen=canteen, total_leftovers=decimal.Decimal("1.23456"))
+        DiagnosticFactory.create(canteen=canteen, total_leftovers=Decimal("1.23456"))
         response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
         body = response.json()
 
