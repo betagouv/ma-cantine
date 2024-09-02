@@ -7,7 +7,7 @@
       alt=""
     />
     <v-card-text class="pa-10 pb-5">
-      <DsfrTagGroup v-if="wasteAction.wasteOrigins.length" :tags="tags" :closeable="false" :small="true" />
+      <DsfrTagGroup v-if="tags.length" :tags="tags" :closeable="false" :small="true" />
       <h2 class="mt-6 fr-h4">
         <router-link :to="{ name: 'WasteActionPage', params: { id: wasteAction.id } }">
           {{ wasteAction.title }}

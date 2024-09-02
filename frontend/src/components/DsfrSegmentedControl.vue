@@ -12,7 +12,10 @@
           :checked="value === item.value"
           :disabled="item.disabled"
         />
-        <label class="fr-label" :for="`segmented-${item.value}`">{{ item.text }}</label>
+        <label class="fr-label" :for="`segmented-${item.value}`">
+          <v-icon v-if="item.icon" small class="mr-2">{{ item.icon }}</v-icon>
+          {{ item.text }}
+        </label>
       </div>
     </div>
   </fieldset>
@@ -145,5 +148,8 @@ input:focus + label {
   outline-offset: 2px;
   outline-style: solid;
   outline-width: 2px;
+}
+label > span {
+  color: inherit !important;
 }
 </style>

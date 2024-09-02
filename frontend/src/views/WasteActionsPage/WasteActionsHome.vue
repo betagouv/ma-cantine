@@ -8,11 +8,19 @@
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
     <div v-else-if="wasteActions.length > 0">
-      <v-row class="pa-2 mt-2">
-        <v-col vols="12" sm="6" md="4" v-for="wasteAction in wasteActions" :key="wasteAction.id">
-          <WasteActionCard :wasteAction="wasteAction" />
-        </v-col>
-      </v-row>
+      <div class="d-flex justify-end">
+        <DsfrSegmentedControl v-model="viewStyle" legend="Vue" :noLegend="true" :items="viewStyles" />
+      </div>
+      <div v-if="viewStyle === 'card'">
+        <v-row class="pa-2 mt-2">
+          <v-col vols="12" sm="6" md="4" v-for="wasteAction in wasteActions" :key="wasteAction.id">
+            <WasteActionCard :wasteAction="wasteAction" />
+          </v-col>
+        </v-row>
+      </div>
+      <div v-else>
+        <WasteActionsListView :wasteActions="wasteActions" :wasteActionsCount="wasteActionsCount" class="mt-4" />
+      </div>
       <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(wasteActionsCount / limit)" />
     </div>
     <div v-else>
@@ -24,18 +32,33 @@
 </template>
 <script>
 import WasteActionCard from "./WasteActionCard"
+import WasteActionsListView from "./WasteActionsListView"
 import DsfrPagination from "@/components/DsfrPagination"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
 
 export default {
   name: "WasteActionsHome",
-  components: { WasteActionCard, DsfrPagination, BreadcrumbsNav },
+  components: { WasteActionCard, WasteActionsListView, DsfrPagination, BreadcrumbsNav, DsfrSegmentedControl },
   data() {
     return {
       limit: 6,
       page: null,
       wasteActions: [],
       wasteActionsCount: null,
+      viewStyles: [
+        {
+          text: "Vue cartes",
+          icon: "$layout-grid-fill",
+          value: "card",
+        },
+        {
+          text: "Vue liste",
+          icon: "$list-check",
+          value: "list",
+        },
+      ],
+      viewStyle: "card",
     }
   },
   computed: {
