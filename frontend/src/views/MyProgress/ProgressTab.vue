@@ -14,6 +14,24 @@
       <h3 v-else class="fr-h6 font-weight-bold mb-4">
         {{ keyMeasure.title }}
       </h3>
+      <div v-if="showWasteTool">
+        <DsfrCallout>
+          <p class="fr-text font-weight-bold">Pesage gaspillage alimentaire</p>
+          <p class="fr-text-sm grey-text text--darken-3">
+            Mettre à jour vos pesages gaspillage alimentaire avant de continuer.
+          </p>
+          <v-row class="align-center my-2 mx-0">
+            <v-btn
+              class="mr-2"
+              outlined
+              color="primary"
+              :to="{ name: 'WasteMeasurements', params: { canteenUrlComponent } }"
+            >
+              Compléter mes pesages
+            </v-btn>
+          </v-row>
+        </DsfrCallout>
+      </div>
       <div v-if="showIntroduction || expandIntro">
         <component :is="`${keyMeasure.baseComponent}Info`" :canteen="canteen" />
         <p><i>Sauf mention contraire, toutes les questions sont obligatoires.</i></p>
@@ -97,6 +115,7 @@ import NoPlasticMeasureSummary from "@/components/DiagnosticSummary/NoPlasticMea
 import WasteMeasureSummary from "@/components/DiagnosticSummary/WasteMeasureSummary"
 import CanteenSummary from "@/components/DiagnosticSummary/CanteenSummary"
 import PurchasesSummary from "@/components/DiagnosticSummary/PurchasesSummary"
+import DsfrCallout from "@/components/DsfrCallout"
 import keyMeasures from "@/data/key-measures.json"
 import { hasDiagnosticApproData, lastYear, hasStartedMeasureTunnel } from "@/utils"
 
@@ -132,10 +151,12 @@ export default {
     WasteMeasureSummary,
     CanteenSummary,
     PurchasesSummary,
+    DsfrCallout,
   },
   data() {
     return {
       approId: "qualite-des-produits",
+      wasteId: "gaspillage-alimentaire",
       establishmentId: "etablissement",
       expandIntro: false,
       requestOngoing: false,
@@ -215,6 +236,9 @@ export default {
       const managesOwnPurchases = !this.isSatellite
       const dataProvidedByDiagnostic = this.diagnostic && hasDiagnosticApproData(this.diagnostic)
       return this.isApproTab && isCurrentYear && managesOwnPurchases && !dataProvidedByDiagnostic
+    },
+    showWasteTool() {
+      return window.ENABLE_WASTE_MEASUREMENTS && this.measureId === this.wasteId
     },
     hasData() {
       if (this.hasActiveTeledeclaration) return true // if tunnel wasn't started, but diag was TD'd, show synthesis
