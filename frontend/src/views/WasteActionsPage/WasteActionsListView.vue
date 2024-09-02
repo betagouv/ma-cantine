@@ -1,11 +1,5 @@
 <template>
-  <v-data-table
-    :server-items-length="wasteActionsCount || 0"
-    :items="wasteActions"
-    :headers="listHeaders"
-    :hide-default-footer="true"
-    :disable-sort="true"
-  >
+  <v-data-table :items="wasteActions" :headers="listHeaders" :hide-default-footer="true" :disable-sort="true">
     <template v-slot:[`item.title`]="{ item }">
       <router-link :to="{ name: 'WasteActionPage', params: { id: item.id } }">
         {{ item.title }}
@@ -15,7 +9,7 @@
       <DsfrTag :text="effortDisplay(item.effort)" :small="true" :clickable="false" />
     </template>
     <template v-slot:[`item.wasteOrigins`]="{ item }">
-      <div class="d-flex flex-wrap justify-end mt-4 mb-2">
+      <div class="d-flex flex-wrap justify-end justify-sm-start mt-4 mb-2">
         <DsfrTag
           v-for="tag in item.wasteOrigins"
           :key="tag"
@@ -39,9 +33,6 @@ export default {
     wasteActions: {
       type: Array,
     },
-    wasteActionsCount: {
-      type: Number,
-    },
   },
   components: { DsfrTag },
   data() {
@@ -64,5 +55,3 @@ export default {
   },
 }
 </script>
-
-<style></style>

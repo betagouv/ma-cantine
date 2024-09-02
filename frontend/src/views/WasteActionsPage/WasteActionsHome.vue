@@ -19,7 +19,7 @@
         </v-row>
       </div>
       <div v-else>
-        <WasteActionsListView :wasteActions="wasteActions" :wasteActionsCount="wasteActionsCount" class="mt-4" />
+        <WasteActionsListView :wasteActions="wasteActions" class="mt-4" />
       </div>
       <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(wasteActionsCount / limit)" />
     </div>
