@@ -40,6 +40,7 @@ from .diagnostic import (  # noqa: F401
 )
 from .wastemeasurement import (  # noqa: F401
     CanteenWasteMeasurementsView,
+    CanteenWasteMeasurementView,
 )
 from .diagnosticimport import (  # noqa: F401
     ImportSimpleDiagnosticsView,
