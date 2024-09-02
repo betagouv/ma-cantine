@@ -40,7 +40,7 @@ django-js-asset==2.2.0
 django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@51f4709d8593016ac67428a87bbd2810070ae288
 django-modelcluster==6.3
 django-oauth-toolkit==2.4.0
-django-otp==1.5.0
+django-otp==1.5.2
 django-permissionedforms==0.1
 django-simple-history==3.7.0
 django-storages==1.14.4
