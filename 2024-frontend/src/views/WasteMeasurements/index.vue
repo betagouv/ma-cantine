@@ -69,7 +69,7 @@ onMounted(() => {
   <div>
     <h1>Gaspillage alimentaire</h1>
     <p>
-      {{ canteen.name }}
+      {{ canteen.name }}&nbsp;
       <router-link :to="{ name: 'ManagementPage' }" class="fr-btn fr-btn--tertiary fr-btn--sm">
         Changer d'établissement
       </router-link>
