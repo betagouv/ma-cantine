@@ -113,3 +113,11 @@ class WasteMeasurement(models.Model):
     def days_in_period(self):
         # + 1 because python is exclusive but period dates are inclusive
         return (self.period_end_date - self.period_start_date).days + 1
+
+    @property
+    def total_yearly_waste_estimation(self):
+        canteen_yearly_meal_count = self.canteen.yearly_meal_count
+        has_total_mass = self.total_mass and self.total_mass >= 0
+        if not canteen_yearly_meal_count or not self.meal_count or not has_total_mass:
+            return None
+        return self.total_mass / self.meal_count * canteen_yearly_meal_count

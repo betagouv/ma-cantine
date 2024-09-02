@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from "vue"
-import { formatNoValue, getPercentage } from "@/utils"
+import { formatNumber, getPercentage } from "@/utils"
 
 const props = defineProps(["measurement"])
 
@@ -70,16 +70,16 @@ const displayOption = ref("chart")
     <div v-else-if="displayOption === 'text'">
       <ul>
         <li>
-          Excédents de préparation : {{ formatNoValue(measurement.preparationTotalMass) }} kg, soit
-          {{ formatNoValue(measurementPercentageValues.preparation) }} %
+          Excédents de préparation : {{ formatNumber(measurement.preparationTotalMass) }} kg, soit
+          {{ formatNumber(measurementPercentageValues.preparation) }} %
         </li>
         <li>
-          Denrées présentées mais non servies : {{ formatNoValue(measurement.unservedTotalMass) }} kg, soit
-          {{ formatNoValue(measurementPercentageValues.unserved) }} %
+          Denrées présentées mais non servies : {{ formatNumber(measurement.unservedTotalMass) }} kg, soit
+          {{ formatNumber(measurementPercentageValues.unserved) }} %
         </li>
         <li>
-          Reste-assiette : {{ formatNoValue(measurement.leftoversTotalMass) }} kg, soit
-          {{ formatNoValue(measurementPercentageValues.leftovers) }} %
+          Reste-assiette : {{ formatNumber(measurement.leftoversTotalMass) }} kg, soit
+          {{ formatNumber(measurementPercentageValues.leftovers) }} %
         </li>
       </ul>
     </div>

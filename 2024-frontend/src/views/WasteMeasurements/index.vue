@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from "vue"
 import { useRootStore } from "@/stores/root"
 import { useRouter } from "vue-router"
-import { formatNoValue, formatDate } from "@/utils"
+import { formatNumber, formatDate } from "@/utils"
 import MeasurementDetail from "./MeasurementDetail.vue"
 import SourceChart from "./SourceChart.vue"
 
@@ -82,7 +82,7 @@ onMounted(() => {
         <div class="fr-col fr-mb-4w">
           <!-- redudent to include "et par convive?" -->
           <p class="highlight brown">
-            <span class="fr-h3">{{ formatNoValue(wastePerMeal) }} g</span>
+            <span class="fr-h3">{{ formatNumber(wastePerMeal) }} g</span>
             par repas et par convive
           </p>
           <router-link :to="newMeasurementRoute" class="fr-btn fr-btn--secondary fr-mt-sm-2w">
@@ -132,7 +132,7 @@ onMounted(() => {
       </p>
       <DsfrBadge label="Pas encore des données" type="none" />
       <p class="fr-my-4w highlight">
-        <span class="fr-h3">{{ formatNoValue() }} g</span>
+        <span class="fr-h3">{{ formatNumber() }} g</span>
         par repas et par convive
       </p>
       <router-link :to="newMeasurementRoute" class="fr-btn">

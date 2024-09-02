@@ -14,6 +14,7 @@ class WasteMeasurementSerializer(serializers.ModelSerializer):
             "days_in_period",
             "meal_count",
             "total_mass",
+            "total_yearly_waste_estimation",
             "is_sorted_by_source",
             "preparation_total_mass",
             "preparation_is_sorted",

@@ -243,3 +243,19 @@ class TestWasteMeasurementsApi(APITestCase):
         body = response.json()
 
         self.assertEqual(body[0]["daysInPeriod"], 5)
+
+    @authenticate
+    def test_get_estimated_total_waste_for_year(self):
+        """
+        Canteen waste measurements should contain a computed field of total waste for the year in kg
+        This is done by taking dividing the total mass by period meal count and multiplying by canteen's
+        yearly meal count
+        """
+        canteen = CanteenFactory(yearly_meal_count=1000)
+        canteen.managers.add(authenticate.user)
+        WasteMeasurementFactory.create(canteen=canteen, meal_count=10, total_mass=50)
+
+        response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
+        body = response.json()
+
+        self.assertEqual(body[0]["totalYearlyWasteEstimation"], 5000)
