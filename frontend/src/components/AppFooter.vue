@@ -128,7 +128,7 @@ export default {
           to: { name: "PrivacyPolicy" },
         },
         {
-          text: "Accessibilité : non conforme",
+          text: "Accessibilité : partiellement conforme",
           to: { name: "AccessibilityDeclaration" },
         },
         {

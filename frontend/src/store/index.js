@@ -224,6 +224,15 @@ export default new Vuex.Store({
         })
     },
 
+    fetchWasteActions(context, { limit = 6, offset }) {
+      let url = `/apicms/v1/wasteactions/?fields=*&limit=${limit}&offset=${offset}`
+      return fetch(url)
+        .then(verifyResponse)
+        .then((response) => {
+          return response
+        })
+    },
+
     fetchInitialData(context) {
       context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
@@ -313,34 +322,6 @@ export default new Vuex.Store({
         .then((response) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           context.commit("UPDATE_CANTEEN", response)
-          return response
-        })
-        .catch((e) => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
-          throw e
-        })
-    },
-
-    publishCanteen(context, { id, payload }) {
-      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/canteens/${id}/publish`, { method: "POST", headers, body: JSON.stringify(payload) })
-        .then(verifyResponse)
-        .then((response) => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
-          return response
-        })
-        .catch((e) => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
-          throw e
-        })
-    },
-
-    unpublishCanteen(context, { id, payload }) {
-      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/canteens/${id}/unpublish`, { method: "POST", headers, body: JSON.stringify(payload) })
-        .then(verifyResponse)
-        .then((response) => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           return response
         })
         .catch((e) => {

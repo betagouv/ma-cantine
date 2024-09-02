@@ -16,5 +16,10 @@ const options = [
 </script>
 
 <template>
-  <DsfrRadioButtonSet v-bind="$attrs" :options="options" />
+  <DsfrRadioButtonSet v-bind="$attrs" :options="options">
+    <template v-slot:legend>
+      {{ $attrs.legend }}
+      <span v-if="$attrs.hint" class="fr-hint-text">{{ $attrs.hint }}</span>
+    </template>
+  </DsfrRadioButtonSet>
 </template>

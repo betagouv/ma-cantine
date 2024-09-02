@@ -159,6 +159,7 @@ celerybeat-schedule.db
 .clever.json
 
 .vscode/*.code-snippets
+.idea/
 
 # Celery
 celerybeat-schedule

@@ -236,7 +236,7 @@ def canteen_summary_for_year(canteen, year):
     purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
         canteen=canteen, date__year=year
     )
-    data = {}
+    data = {"year": year}
     simple_diag_data(purchases, data)
     complete_diag_data(purchases, data)
     misc_totals(purchases, data)
@@ -441,9 +441,7 @@ class DiagnosticsFromPurchasesView(APIView):
                 continue
             if canteen.is_central_cuisine:
                 values_dict["central_kitchen_diagnostic_mode"] = Diagnostic.CentralKitchenDiagnosticMode.APPRO
-            diagnostic = Diagnostic(
-                canteen=canteen, year=year, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, **values_dict
-            )
+            diagnostic = Diagnostic(canteen=canteen, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, **values_dict)
             try:
                 diagnostic.full_clean()
             except ValidationError:

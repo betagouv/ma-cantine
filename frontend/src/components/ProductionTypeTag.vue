@@ -1,13 +1,18 @@
 <template>
-  <p v-if="isCentralKitchen || isSatellite" :class="`tag fr-text-xs mb-0 ${position}`">
-    <v-icon x-small>{{ isCentralKitchen ? "$community-fill" : "$restaurant-fill" }}</v-icon>
-    {{ isCentralKitchen ? "Cuisine centrale" : "Cantine satellite" }}
-  </p>
+  <DsfrTag
+    :clickable="false"
+    v-if="isCentralKitchen || isSatellite"
+    :class="`${position}`"
+    :icon="isCentralKitchen ? '$community-fill' : '$restaurant-fill'"
+    :text="isCentralKitchen ? 'Cuisine centrale' : 'Cantine satellite'"
+  />
 </template>
 
 <script>
+import DsfrTag from "@/components/DsfrTag"
 export default {
   name: "ProductionTypeTag",
+  components: { DsfrTag },
   props: {
     canteen: {
       type: Object,
@@ -28,25 +33,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.tag {
-  display: flex;
-  padding: 2px 8px;
-  justify-content: center;
-  align-items: center;
-  gap: 2px;
-  border-radius: 12px;
-  background-color: #eee;
-  color: #161616;
-  width: fit-content;
-}
-.tag .v-icon {
-  color: #161616;
-}
-.tag.top-left {
-  position: absolute;
-  left: 12px;
-  top: 12px;
-}
-</style>

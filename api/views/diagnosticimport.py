@@ -3,7 +3,6 @@ import csv
 import time
 import re
 import logging
-import chardet
 from decimal import Decimal, InvalidOperation
 from data.models.diagnostic import Diagnostic
 from data.models.teledeclaration import Teledeclaration
@@ -22,7 +21,7 @@ from api.serializers import FullCanteenSerializer
 from data.models import Canteen, Sector, ImportType
 from data.factories import ImportFailureFactory
 from api.permissions import IsAuthenticated
-from .utils import camelize, normalise_siret
+from .utils import camelize, normalise_siret, decode_bytes
 from .canteen import AddManagerView
 import requests
 
@@ -133,11 +132,9 @@ class ImportDiagnosticsView(ABC, APIView):
             self._update_location_data(locations_csv_str)
 
     def _decode_file(self, file):
-        bytes_string = file.read()
-        detection_result = chardet.detect(bytes_string)
-        self.encoding_detected = detection_result["encoding"]
-        logger.info(f"Encoding autodetected : {self.encoding_detected}")
-        return bytes_string.decode(self.encoding_detected)
+        (result, encoding) = decode_bytes(file.read())
+        self.encoding_detected = encoding
+        return result
 
     @transaction.atomic
     def _save_data_from_row(self, row):

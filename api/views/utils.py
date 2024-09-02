@@ -1,5 +1,6 @@
 import logging
 import json
+import chardet
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models import F
 from rest_framework import filters
@@ -81,3 +82,10 @@ class UnaccentSearchFilter(filters.SearchFilter):
                 lookup,
             ]
         )
+
+
+def decode_bytes(bytes_string):
+    detection_result = chardet.detect(bytes_string)
+    encoding_detected = detection_result["encoding"]
+    logger.info(f"Encoding autodetected : {encoding_detected}")
+    return (bytes_string.decode(encoding_detected), encoding_detected)
