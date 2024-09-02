@@ -22,8 +22,8 @@ class TestETLAnalysis(TestCase):
         canteen = CanteenFactory.create()
         applicant = UserFactory.create()
         with freeze_time("2020-01-14"):
-            diagnostic_1990 = DiagnosticFactory.create(canteen=canteen, year=2019, diagnostic_type=None)
-            Teledeclaration.create_from_diagnostic(diagnostic_1990, applicant)
+            diagnostic_2019 = DiagnosticFactory.create(canteen=canteen, year=2019, diagnostic_type=None)
+            Teledeclaration.create_from_diagnostic(diagnostic_2019, applicant)
         with freeze_time("2023-05-14"):
             diagnostic_2022 = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
             td_2022 = Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)

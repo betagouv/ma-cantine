@@ -11,9 +11,7 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
         model = Diagnostic
 
     canteen = factory.SubFactory(CanteenFactory)
-    year = factory.Faker(
-        "random_int", min=get_diagnostic_lower_limit_year(), max=get_diagnostic_upper_limit_year()
-    )  # "year"
+    year = factory.Faker("random_int", min=get_diagnostic_lower_limit_year(), max=get_diagnostic_upper_limit_year())
     diagnostic_type = Diagnostic.DiagnosticType.SIMPLE
 
 
@@ -22,9 +20,7 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
         model = Diagnostic
 
     canteen = factory.SubFactory(CanteenFactory)
-    year = factory.Faker(
-        "random_int", min=get_diagnostic_lower_limit_year(), max=get_diagnostic_upper_limit_year()
-    )  # "year"
+    year = factory.Faker("random_int", min=get_diagnostic_lower_limit_year(), max=get_diagnostic_upper_limit_year())
     diagnostic_type = Diagnostic.DiagnosticType.COMPLETE
 
     value_total_ht = factory.Faker("random_int", min=6000, max=10000)
