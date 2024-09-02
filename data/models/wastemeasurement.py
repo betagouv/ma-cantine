@@ -108,3 +108,8 @@ class WasteMeasurement(models.Model):
         null=True,
         verbose_name="restes assiette - masse non-comestible (kg)",
     )
+
+    @property
+    def days_in_period(self):
+        # + 1 because python is exclusive but period dates are inclusive
+        return (self.period_end_date - self.period_start_date).days + 1

@@ -8,11 +8,11 @@ const detailedFields = [
     key: "totalMass",
     label: "Masse totale de gaspillage relevée sur la période de mesure",
   },
-  // TODO: calculated value - from backend?
-  // {
-  //   label: "Période de mesure de mon gaspillage alimentaire",
-  //   unit: "jours",
-  // },
+  {
+    key: "daysInPeriod",
+    label: "Période de mesure de mon gaspillage alimentaire",
+    unit: "jours",
+  },
   {
     label: "Nombre de couverts sur la période",
     unit: "couverts",

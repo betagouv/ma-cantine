@@ -11,6 +11,7 @@ class WasteMeasurementSerializer(serializers.ModelSerializer):
             "canteen_id",
             "period_start_date",
             "period_end_date",
+            "days_in_period",
             "meal_count",
             "total_mass",
             "is_sorted_by_source",
