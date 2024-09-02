@@ -139,14 +139,6 @@ onMounted(() => {
         Saisir un pesage
       </router-link>
     </div>
-    <!-- TODO: show first few actions ? -->
-    <h2 class="fr-mt-4w">Agir contre le gaspillage alimentaire</h2>
-    <router-link
-      :to="{ name: 'WasteActionsHome' }"
-      :class="{ 'fr-btn': true, 'fr-btn--secondary': !measurements.length }"
-    >
-      Actions
-    </router-link>
   </div>
 </template>
 
