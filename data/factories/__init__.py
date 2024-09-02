@@ -5,7 +5,7 @@ factory.Faker._DEFAULT_LOCALE = "fr-fr"  # noqa
 from .user import UserFactory  # noqa
 from .canteen import CanteenFactory  # noqa
 from .diagnostic import CompleteDiagnosticFactory, DiagnosticFactory  # noqa
-from .wastemanagement import WasteMeasurementFactory  # noqa
+from .wastemeasurement import WasteMeasurementFactory  # noqa
 from .sector import SectorFactory  # noqa
 from .blogpost import BlogPostFactory  # noqa
 from .blogtag import BlogTagFactory  # noqa

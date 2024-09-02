@@ -227,3 +227,19 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(len(body), 2)
         self.assertEqual(body[0]["id"], measurement_august.id)
         self.assertEqual(body[1]["id"], measurement_july.id)
+
+    @authenticate
+    def test_get_period_day_count(self):
+        """
+        Canteen waste measurements should contain a computed field of number of days in period
+        """
+        measurement = WasteMeasurementFactory.create(
+            period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
+        )
+        canteen = measurement.canteen
+        canteen.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
+        body = response.json()
+
+        self.assertEqual(body[0]["daysInPeriod"], 5)
