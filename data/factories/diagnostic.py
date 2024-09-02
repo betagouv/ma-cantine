@@ -2,6 +2,7 @@ import random
 import factory
 from factory import fuzzy
 from data.models import Diagnostic
+from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
 from .canteen import CanteenFactory
 
 
@@ -10,7 +11,9 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
         model = Diagnostic
 
     canteen = factory.SubFactory(CanteenFactory)
-    year = 2019
+    year = factory.Faker(
+        "random_int", min=get_diagnostic_lower_limit_year(), max=get_diagnostic_upper_limit_year()
+    )  # "year"
     diagnostic_type = Diagnostic.DiagnosticType.SIMPLE
 
 
@@ -19,7 +22,9 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
         model = Diagnostic
 
     canteen = factory.SubFactory(CanteenFactory)
-    year = factory.Faker("year")
+    year = factory.Faker(
+        "random_int", min=get_diagnostic_lower_limit_year(), max=get_diagnostic_upper_limit_year()
+    )  # "year"
     diagnostic_type = Diagnostic.DiagnosticType.COMPLETE
 
     value_total_ht = factory.Faker("random_int", min=6000, max=10000)
