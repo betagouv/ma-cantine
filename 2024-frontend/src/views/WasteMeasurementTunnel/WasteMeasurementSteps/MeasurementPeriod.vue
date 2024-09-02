@@ -13,7 +13,7 @@ const emit = defineEmits(["provide-vuelidate", "update-payload"])
 const originalPayload = inject("originalPayload")
 
 const state = reactive({
-  editCanteenMealCount: originalPayload.editCanteenMealCount,
+  editMealCount: false,
 })
 
 const togglePeriodEdit = () => {
@@ -49,11 +49,7 @@ const canteen = reactive({
   dailyMealCount: 200,
 })
 
-const payload = reactive({
-  periodStartDate: originalPayload.periodStartDate,
-  periodEndDate: originalPayload.periodEndDate,
-  mealCount: originalPayload.mealCount,
-})
+const payload = reactive({})
 
 const afterStartDateValidator = (date) => {
   date = new Date(date)
@@ -80,6 +76,9 @@ watch(payload, () => {
 
 onMounted(() => {
   emit("provide-vuelidate", v$)
+  payload.periodStartDate = originalPayload.value.periodStartDate
+  payload.periodEndDate = originalPayload.value.periodEndDate
+  payload.mealCount = originalPayload.value.mealCount
 })
 </script>
 

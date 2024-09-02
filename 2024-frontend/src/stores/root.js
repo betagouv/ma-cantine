@@ -76,6 +76,14 @@ export const useRootStore = defineStore("root", () => {
     }).then(verifyResponse)
   }
 
+  const updateWasteMeasurement = async (canteenId, measurementId, payload) => {
+    return fetch(`/api/v1/canteens/${canteenId}/wasteMeasurements/${measurementId}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(payload),
+    }).then(verifyResponse)
+  }
+
   return {
     // state
     loggedUser,
@@ -84,6 +92,7 @@ export const useRootStore = defineStore("root", () => {
     // actions
     fetchInitialData,
     createWasteMeasurement,
+    updateWasteMeasurement,
     notify,
     notifyRequiredFieldsError,
     notifyServerError,

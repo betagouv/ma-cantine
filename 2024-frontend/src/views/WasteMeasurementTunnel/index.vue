@@ -12,9 +12,19 @@ const props = defineProps(["canteenUrlComponent", "id", "étape"])
 const canteenId = props.canteenUrlComponent.split("--")[0] // more globalised way of doing this?
 
 const originalPayload = reactive({})
+const dataIsReady = ref(!props.id)
 provide("originalPayload", originalPayload)
 
-onMounted(() => {})
+onMounted(() => {
+  if (props.id) {
+    fetch(`/api/v1/canteens/${canteenId}/wasteMeasurements/${props.id}`)
+      .then((response) => response.json())
+      .then((body) => {
+        originalPayload.value = body
+        dataIsReady.value = true
+      })
+  }
+})
 
 let steps = ref([])
 const stepTitles = computed(() => steps.value.map((s) => s.title))
@@ -61,7 +71,7 @@ const continueAction = () => {
           nextRoute.params = { id: response.id, canteenUrlComponent: props.canteenUrlComponent }
         router.push(nextRoute)
         stepWrapper.value.scrollTop = 0
-        Object.assign(originalPayload, hotPayload)
+        Object.assign(originalPayload.value, hotPayload)
       }
     })
     .catch(handleServerError)
@@ -125,7 +135,7 @@ const saveDiagnostic = () => {
   if (!props.id) {
     return store.createWasteMeasurement(canteenId, hotPayload)
   }
-  return Promise.resolve()
+  return store.updateWasteMeasurement(canteenId, props.id, hotPayload)
 }
 
 watch(props, () => {
@@ -161,6 +171,7 @@ watch(props, () => {
             @update-steps="updateSteps"
             @provide-vuelidate="updateVuelidate"
             @update-payload="updatePayloadFromChild"
+            v-if="dataIsReady"
           />
         </div>
       </div>

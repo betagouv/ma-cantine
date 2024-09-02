@@ -10,12 +10,10 @@ const { required } = useValidators()
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
 const originalPayload = inject("originalPayload")
-const payload = reactive({
-  sortedSource: originalPayload.sortedSource,
-})
+const payload = reactive({})
 
 const rules = {
-  sortedSource: { required },
+  isSortedBySource: { required },
 }
 
 const v$ = useVuelidate(rules, payload)
@@ -30,6 +28,8 @@ watch(payload, () => {
 
 onMounted(() => {
   emit("provide-vuelidate", v$)
+
+  payload.isSortedBySource = originalPayload.value.isSortedBySource
 })
 </script>
 
@@ -37,11 +37,11 @@ onMounted(() => {
   <div class="fr-grid-row">
     <div class="fr-col-12 fr-col-sm-6">
       <DsfrBooleanRadio
-        v-model.number="payload.sortedSource"
+        v-model.number="payload.isSortedBySource"
         legend="Avez-vous trié votre gaspillage en fonction de sa source ?"
-        name="sortedSource"
+        name="isSortedBySource"
         class="fr-mb-2w"
-        :error-message="formatError(v$.sortedSource)"
+        :error-message="formatError(v$.isSortedBySource)"
       />
     </div>
     <div class="fr-col-sm-6">

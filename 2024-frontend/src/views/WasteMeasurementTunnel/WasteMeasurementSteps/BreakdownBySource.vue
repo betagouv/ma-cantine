@@ -11,10 +11,10 @@ const { decimal, minValue, maxValue } = useValidators()
 const props = defineProps(["data"])
 const sources = {
   preparation: {
-    totalKey: "preparationTotal",
-    sortedKey: "preparationSorted",
-    edibleKey: "preparationEdible",
-    inedibleKey: "preparationInedible",
+    totalKey: "preparationTotalMass",
+    sortedKey: "preparationIsSorted",
+    edibleKey: "preparationEdibleMass",
+    inedibleKey: "preparationInedibleMass",
     title: "Excédents de préparation",
     primaryLabel: "Masse de gaspillage pour les excédents de préparation",
     description:
@@ -23,10 +23,10 @@ const sources = {
       "Les parties des denrées alimentaires considérées comme non comestibles incluent les os, les morceaux de gras retirés du reste des pièces de viande, les épluchures, les yaourts jetés ayant une DLC dépassée, les fonds de pots de crèmes ou de sauces non valorisés et jetés, les fruits et légumes non présentés et non valorisés du fait de leur mauvaise apparence, ...",
   },
   unserved: {
-    totalKey: "unservedTotal",
-    sortedKey: "unservedSorted",
-    edibleKey: "unservedEdible",
-    inedibleKey: "unservedInedible",
+    totalKey: "unservedTotalMass",
+    sortedKey: "unservedIsSorted",
+    edibleKey: "unservedEdibleMass",
+    inedibleKey: "unservedInedibleMass",
     title: "Denrées présentées aux convives mais non servies",
     primaryLabel: "Masse de gaspillage pour les denrées présentées aux convives mais non servies",
     description:
@@ -35,10 +35,10 @@ const sources = {
       "Les parties des denrées alimentaires considérées comme non comestibles incluent les os, les arrêtes, les noyaux, les trognons de pommes, les épluchures... Les parties considérées comme comestibles incluent les morceaux de viande restants, les pâtes restant dans les assiettes, le pain restant au niveau des plateaux...",
   },
   leftovers: {
-    totalKey: "leftoversTotal",
-    sortedKey: "leftoversSorted",
-    edibleKey: "leftoversEdible",
-    inedibleKey: "leftoversInedible",
+    totalKey: "leftoversTotalMass",
+    sortedKey: "leftoversIsSorted",
+    edibleKey: "leftoversEdibleMass",
+    inedibleKey: "leftoversInedibleMass",
     title: "Reste assiette",
     primaryLabel: "Masse de gaspillage pour le reste assiette",
     description:
@@ -54,14 +54,9 @@ const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
 const originalPayload = inject("originalPayload")
 
-const payload = reactive({
-  totalKey: originalPayload[source.value.totalKey],
-  sortedKey: originalPayload[source.value.sortedKey],
-  edibleKey: originalPayload[source.value.edibleKey],
-  inedibleKey: originalPayload[source.value.inedibleKey],
-})
+const payload = reactive({})
 
-const genericPayloadKeys = Object.keys(payload)
+const genericPayloadKeys = ["totalKey", "sortedKey", "edibleKey", "inedibleKey"]
 
 const sumCheck = () => {
   if (!payload.totalKey) return true
@@ -99,7 +94,7 @@ const leftHandQuestionsClass = computed(() => {
 watch(props, () => {
   nextTick().then(() => {
     payload._freezeWatcher = true
-    genericPayloadKeys.forEach((k) => (payload[k] = originalPayload[source.value[k]]))
+    genericPayloadKeys.forEach((k) => (payload[k] = originalPayload.value[source.value[k]]))
     delete payload._freezeWatcher
   })
 })
@@ -112,6 +107,7 @@ watch(payload, () => {
 
 onMounted(() => {
   emit("provide-vuelidate", v$)
+  genericPayloadKeys.forEach((k) => (payload[k] = originalPayload.value[source.value[k]]))
 })
 </script>
 

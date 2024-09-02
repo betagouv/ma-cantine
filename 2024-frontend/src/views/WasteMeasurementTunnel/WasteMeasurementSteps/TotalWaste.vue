@@ -10,12 +10,10 @@ const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
 const originalPayload = inject("originalPayload")
 
-const payload = reactive({
-  total: originalPayload.total,
-})
+const payload = reactive({})
 
 const rules = {
-  total: { required, decimal, minValue: minValue(1) },
+  totalMass: { required, decimal, minValue: minValue(1) },
 }
 
 const v$ = useVuelidate(rules, payload)
@@ -30,6 +28,8 @@ watch(payload, () => {
 
 onMounted(() => {
   emit("provide-vuelidate", v$)
+
+  payload.totalMass = originalPayload.value.totalMass
 })
 </script>
 
@@ -37,13 +37,13 @@ onMounted(() => {
   <div class="fr-grid-row justify-space-between">
     <div class="fr-col-12 fr-col-sm-5">
       <DsfrInputGroup
-        v-model.number="payload.total"
+        v-model.number="payload.totalMass"
         type="number"
         label="Masse totale de gaspillage relevée sur la période de mesure"
         hint="en kg"
         label-visible
         class="fr-mb-2w"
-        :error-message="formatError(v$.total)"
+        :error-message="formatError(v$.totalMass)"
       />
     </div>
     <div class="fr-col-sm-6">

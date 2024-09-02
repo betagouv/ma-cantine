@@ -65,9 +65,9 @@ const provideVuelidate = (v$) => {
 
 const updatePayload = (payload) => {
   emit("update-payload", payload)
-  if (payload.sortedSource === false) {
+  if (payload.isSortedBySource === false) {
     emit("update-steps", firstSteps)
-  } else if (payload.sortedSource === true) {
+  } else if (payload.isSortedBySource === true) {
     emit("update-steps", steps)
   }
 }
