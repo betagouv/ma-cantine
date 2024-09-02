@@ -249,7 +249,7 @@
       </template>
     </v-simple-table>
 
-    <h2>X - Cookies</h2>
+    <h2 id="cookies">X - Cookies</h2>
     <p>
       Un cookie est un fichier déposé sur votre terminal lors de la visite d’un site. Il a pour but de collecter des
       informations relatives à votre navigation et de vous adresser des services adaptés à votre terminal (ordinateur,

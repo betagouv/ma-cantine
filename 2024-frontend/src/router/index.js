@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router"
 import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel"
-import { useRootStore } from "../stores/root"
+import ImportSelection from "@/views/ImportSelection"
+import { useRootStore } from "@/stores/root"
 
 const routes = [
   {
@@ -12,6 +13,15 @@ const routes = [
       title: "Pesage gaspillage alimentaire",
       authenticationRequired: true,
       fullscreen: true,
+    },
+  },
+  {
+    path: "/importer-des-donnees",
+    name: "ImportSelection",
+    component: ImportSelection,
+    meta: {
+      title: "Importer des données",
+      authenticationRequired: true,
     },
   },
 ]
@@ -29,6 +39,82 @@ const vue2Routes = [
   {
     path: "/ma-progression/:canteenUrlComponent/:year/:measureId",
     name: "MyProgress",
+  },
+  {
+    path: "/gestion",
+    name: "ManagementPage",
+  },
+  {
+    path: "/developpement-et-apis",
+    name: "DeveloperPage",
+  },
+  {
+    path: "/mes-achats",
+    name: "PurchasesHome",
+  },
+  {
+    path: "/diagnostic",
+    name: "DiagnosticPage",
+  },
+  {
+    path: "/mesures-phares/:id",
+    name: "KeyMeasurePage",
+  },
+  {
+    path: "/acteurs-de-l-eco-systeme",
+    name: "PartnersHome",
+  },
+  {
+    path: "/creation-affiche",
+    name: "GeneratePosterPage",
+  },
+  {
+    path: "/communaute",
+    name: "CommunityPage",
+  },
+  {
+    path: "/blog",
+    name: "BlogsHome",
+  },
+  {
+    path: "/les-cantines-de-mon-territoire",
+    name: "TerritoryCanteens",
+  },
+  {
+    path: "/trouver-une-cantine",
+    name: "CanteenSearchLanding",
+  },
+  {
+    path: "/statistiques-regionales",
+    name: "PublicCanteenStatisticsPage",
+  },
+  {
+    path: "/faq/",
+    name: "FaqPage",
+  },
+  {
+    path: "/contact",
+    name: "ContactPage",
+  },
+  {
+    path: "/mon-compte",
+    name: "AccountSummaryPage",
+  },
+  {
+    path: "/accessibilite",
+    name: "AccessibilityDeclaration",
+  },
+  {
+    path: "/plan-du-site/",
+    name: "SiteMap",
+  },
+  {
+    path: "/politique-de-confidentialite",
+    name: "PrivacyPolicy",
+  },
+  {
+    path: "/politique-de-confidentialite#cookies",
+    name: "Cookies",
   },
 ]
 routes.push(...vue2Routes)
@@ -55,4 +141,4 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-export default router
+export { router, routes }
