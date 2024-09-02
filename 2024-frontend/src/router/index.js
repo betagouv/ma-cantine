@@ -147,20 +147,18 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to) => {
   if (!to.path.startsWith(VUE3_PREFIX)) {
     location.href = location.origin + to.path
-    return
+    return false
   }
+  if (!to.meta.authenticationRequired) return
   const store = useRootStore()
   if (!store.initialDataLoaded) {
-    store.fetchInitialData().then(() => {
-      if (!store.loggedUser && to.meta.authenticationRequired) {
-        next({ name: "Vue2Home", replace: true })
-      } else {
-        next()
-      }
-    })
+    await store.fetchInitialData()
+  }
+  if (!store.loggedUser) {
+    return { name: "Vue2Home", replace: true }
   }
 })
 
