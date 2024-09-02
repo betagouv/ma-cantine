@@ -32,10 +32,10 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     value_boissons_bio = factory.Faker("random_int", min=0, max=20)
 
     value_egalim_others_ht = factory.Faker("random_int", min=0, max=20)
-    value_meat_poultry_ht = factory.Faker("random_int", min=0, max=20)
+    value_meat_poultry_ht = factory.Faker("random_int", min=100, max=150)
     value_meat_poultry_egalim_ht = factory.Faker("random_int", min=0, max=20)
     value_meat_poultry_france_ht = factory.Faker("random_int", min=0, max=20)
-    value_fish_ht = factory.Faker("random_int", min=0, max=20)
+    value_fish_ht = factory.Faker("random_int", min=50, max=100)
     value_fish_egalim_ht = factory.Faker("random_int", min=0, max=20)
 
     has_waste_diagnostic = factory.Faker("boolean")
