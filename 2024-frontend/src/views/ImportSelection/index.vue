@@ -15,7 +15,7 @@ Object.values(Constants.CentralKitchenImportLevels).forEach((level) => {
 })
 importTypes.push({
   key: "PURCHASES",
-  title: "Achats",
+  title: "Importer des achats",
   help: "Vous voulez importer des données d'achat pour des cantines existantes",
   to: { name: "PurchasesImporter" },
 })
@@ -26,7 +26,7 @@ const quizSteps = [
   {
     key: "hasCanteens",
     title: "Cantines",
-    question: "Est-ce que vos cantines sont déjà créées ?",
+    question: "Est-ce que vos cantines sont déjà existantes sur la plateforme ma cantine ? ",
   },
   { key: "importPurchases", title: "Achats", question: "Souhaitez-vous importer des achats ?" },
   {
@@ -37,7 +37,7 @@ const quizSteps = [
   {
     key: "isCentralKitchen",
     title: "Livreur de repas",
-    question: "Est-ce que un ou plusieurs de ces établissments livrent des repas aux cantines ?",
+    question: "Est-ce que un ou plusieurs de ces établissements livrent des repas aux cantines ?",
   },
   {
     key: "hasSatelliteData",
@@ -46,7 +46,7 @@ const quizSteps = [
   },
   {
     key: "hasDetailedDiagnosticData",
-    title: "Bilans détaillés",
+    title: "Déclaration détaillée",
     question: "Est-ce que vous connaissez les totaux des achats par famille de produit et par label de qualité ?",
   },
 ]
@@ -122,16 +122,7 @@ watch(currentStep, () => (currentAnswer.value = ""))
   <div>
     <BreadcrumbsNav :links="[{ title: 'Mon tableau de bord', to: { name: 'ManagementPage' } }]" />
     <h1>Importer vos données</h1>
-    <p>
-      Vous êtes en mesure d'exporter vos données en format CSV ? Utilisez notre outil d'import pour ajouter vos cantines
-      rapidement&nbsp;!
-    </p>
-    <p>
-      Sinon, utilisez notre
-      <router-link :to="{ name: 'NewCanteen' }">formulaire pour ajouter une nouvelle cantine</router-link>
-      tout en simplicité depuis votre navigateur.
-    </p>
-    <h2>Trouver le bon import pour votre situation</h2>
+    <p>Complétez le formulaire ci-dessous pour trouver le fichier adapté à votre situation.</p>
     <div class="fr-mb-8w">
       <div v-if="!revealAnswer">
         <DsfrStepper :steps="stepTitles" :currentStep />
@@ -141,20 +132,19 @@ watch(currentStep, () => (currentAnswer.value = ""))
         </DsfrButton>
       </div>
       <div v-else>
-        <h3>Le résultat</h3>
         <div class="fr-col-md-6 fr-col-lg-5 fr-mb-4w">
           <DsfrCard :title="importSuggestion.title" :description="importSuggestion.help" :link="importSuggestion.to" />
         </div>
         <DsfrButton @click="backToLastQuestion" tertiary v-if="currentStep !== 1" class="fr-mr-2w">
           Revenir à l'étape précédente
         </DsfrButton>
-        <DsfrButton @click="reset" secondary>Ressayer</DsfrButton>
+        <DsfrButton @click="reset" secondary>Réessayer</DsfrButton>
       </div>
     </div>
 
     <DsfrAccordion
       id="import-list"
-      title="Tous les imports"
+      title="Voir tous les imports disponibles"
       :expanded-id="expandedId"
       @expand="expandedId = $event"
       class="fr-my-4w"
