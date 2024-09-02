@@ -1,11 +1,11 @@
+import datetime
+from decimal import Decimal
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from data.factories import CanteenFactory, WasteMeasurementFactory
 from data.models import WasteMeasurement, Canteen
 from .utils import authenticate
-import datetime
-import decimal
 from freezegun import freeze_time
 
 
@@ -95,7 +95,7 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(waste_measurement.unserved_is_sorted, False)
         self.assertEqual(waste_measurement.unserved_edible_mass, None)
         self.assertEqual(waste_measurement.unserved_inedible_mass, None)
-        self.assertEqual(waste_measurement.leftovers_total_mass, decimal.Decimal("30.3"))
+        self.assertEqual(waste_measurement.leftovers_total_mass, Decimal("30.3"))
         self.assertEqual(waste_measurement.leftovers_is_sorted, None)
         self.assertEqual(waste_measurement.leftovers_edible_mass, None)
         self.assertEqual(waste_measurement.leftovers_inedible_mass, None)

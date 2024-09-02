@@ -1,5 +1,5 @@
 import logging
-import decimal
+from decimal import Decimal
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class CustomJSONEncoder(DjangoJSONEncoder):
     def default(self, o):
-        if isinstance(o, decimal.Decimal):
+        if isinstance(o, Decimal):
             return float(o)
         return super(CustomJSONEncoder, self).default(o)
 
