@@ -143,6 +143,9 @@
                   Mettre à jour vos satellites
                 </router-link>
               </li>
+              <li v-if="missingDeclarationMode" class="mb-2">
+                Choisir comment les données sont saisis pour vos satellites
+              </li>
             </ul>
           </div>
         </div>
@@ -397,6 +400,9 @@ export default {
     },
     hasSatelliteInconsistency() {
       return !this.canteen || hasSatelliteInconsistency(this.canteen)
+    },
+    missingDeclarationMode() {
+      return this.isCentralKitchen && !this.diagnostic.centralKitchenDiagnosticMode
     },
     hasFinishedMeasureTunnel() {
       return this.diagnostic && hasFinishedMeasureTunnel(this.diagnostic)

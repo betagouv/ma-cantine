@@ -632,6 +632,8 @@ export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
       return canSubmitOtherData && hasOtherData
     }
     // satellites can still TD if CCs haven't
+  } else if (canteen.productionType === "central" || canteen.productionType === "central_serving") {
+    return !!diagnostic.centralKitchenDiagnosticMode
   }
 
   return hasDiagnosticApproData(diagnostic)

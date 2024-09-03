@@ -822,6 +822,10 @@ class TestCanteenApi(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
         )
+        needs_diagnostic_mode = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL,
+            siret="75665621899905",
+        )
         # publish
         needs_to_publish = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -856,6 +860,7 @@ class TestCanteenApi(APITestCase):
             needs_last_year_diag,
             complete,
             needs_to_complete_diag,
+            needs_diagnostic_mode,
             needs_to_publish,
             needs_td,
             needs_additional_satellites,
@@ -872,6 +877,10 @@ class TestCanteenApi(APITestCase):
         # make sure the endpoint only looks at diagnostics of the year requested
         DiagnosticFactory.create(year=last_year - 1, canteen=needs_to_complete_diag, value_total_ht=1000)
 
+        DiagnosticFactory.create(
+            year=last_year, canteen=needs_diagnostic_mode, central_kitchen_diagnostic_mode=None, value_total_ht=100
+        )
+
         td_diag = DiagnosticFactory.create(year=last_year, canteen=needs_to_publish, value_total_ht=10)
         Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
 
@@ -887,18 +896,19 @@ class TestCanteenApi(APITestCase):
         )
 
         response = self.client.get(
-            reverse("list_actionable_canteens", kwargs={"year": last_year}) + "?ordering=action"
+            reverse("list_actionable_canteens", kwargs={"year": last_year}) + "?ordering=action,modification_date"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
         returned_canteens = body["results"]
-        self.assertEqual(len(returned_canteens), 6)
+        self.assertEqual(len(returned_canteens), 7)
 
         expected_actions = [
             (needs_additional_satellites, "10_add_satellites"),
             (needs_last_year_diag, "20_create_diagnostic"),
             (needs_to_complete_diag, "30_complete_diagnostic"),
+            (needs_diagnostic_mode, "30_complete_diagnostic"),
             (needs_td, "40_teledeclare"),
             (needs_to_publish, "50_publish"),
             (complete, "95_nothing"),
@@ -995,7 +1005,7 @@ class TestCanteenApi(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
         )
-        DiagnosticFactory.create(year=2021, canteen=canteen, value_total_ht=1000)
+        diagnostic = DiagnosticFactory.create(year=2021, canteen=canteen, value_total_ht=1000)
         canteen.managers.add(authenticate.user)
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
         returned_canteens = response.json()["results"]
@@ -1014,11 +1024,18 @@ class TestCanteenApi(APITestCase):
         canteen.production_type = Canteen.ProductionType.CENTRAL
         canteen.satellite_canteens_count = None
         canteen.save()
+        diagnostic.central_kitchen_diagnostic_mode = "APPRO"
+        diagnostic.save()
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
 
+        # reset diag from above change.
+        diagnostic.central_kitchen_diagnostic_mode = None
+        diagnostic.save()
+
+        # Central kitchens with missing satellites should return the add satellite action
         canteen.satellite_canteens_count = 123
         canteen.save()
 

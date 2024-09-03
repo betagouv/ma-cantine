@@ -605,6 +605,39 @@ class TestTeledeclarationApi(APITestCase):
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
+    def test_create_diagnostic_without_cc_mode(self):
+        """
+        A diagnostic made by a central kitchen cannot be teledeclared if the mode is null or blank
+        """
+        user = authenticate.user
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044")
+        central_kitchen.managers.add(user)
+
+        diagnostic = DiagnosticFactory.create(
+            canteen=central_kitchen,
+            year=LAST_YEAR,
+            value_total_ht=100,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=None,
+        )
+
+        payload = {"diagnosticId": diagnostic.id}
+
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        diagnostic.central_kitchen_diagnostic_mode = ""
+        diagnostic.save()
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        diagnostic.central_kitchen_diagnostic_mode = "APPRO"
+        diagnostic.save()
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
     def test_does_not_contain_irrelevant_data(self):
         # We create a site canteen that contains irrelevant data "central_producer_siret" and
         # "satellite_canteens_count" - this can happen after a change of data
@@ -617,9 +650,7 @@ class TestTeledeclarationApi(APITestCase):
         )
         canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(
-            canteen=canteen,
-            year=LAST_YEAR,
-            value_total_ht=100,
+            canteen=canteen, year=LAST_YEAR, value_total_ht=100, central_kitchen_diagnostic_mode="ALL"
         )
         payload = {"diagnosticId": diagnostic.id}
 
@@ -632,8 +663,9 @@ class TestTeledeclarationApi(APITestCase):
         self.assertIsNone(canteen_json["central_producer_siret"])
         self.assertIsNone(teledeclaration.declared_data["central_kitchen_siret"])
         self.assertEqual(canteen_json["daily_meal_count"], 10)
+        self.assertEqual(teledeclaration.teledeclaration_mode, "SITE")
 
-        # If we change its type to cuisine centrale we should get the satellite count
+        # If we change its type to cuisine centrale we should get the satellite count and mode
         teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic).delete()
 
         canteen.production_type = Canteen.ProductionType.CENTRAL
@@ -648,6 +680,7 @@ class TestTeledeclarationApi(APITestCase):
         self.assertIsNone(canteen_json["central_producer_siret"])
         self.assertIsNone(teledeclaration.declared_data["central_kitchen_siret"])
         self.assertIsNone(canteen_json["daily_meal_count"])
+        self.assertEqual(teledeclaration.teledeclaration_mode, "CENTRAL_ALL")
 
         # If we change its type to satellite we should get the central_producer_siret
         teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic).delete()
@@ -664,6 +697,83 @@ class TestTeledeclarationApi(APITestCase):
         self.assertEqual(canteen_json["central_producer_siret"], "18704793618411")
         self.assertEqual(teledeclaration.declared_data["central_kitchen_siret"], "18704793618411")
         self.assertEqual(canteen_json["daily_meal_count"], 10)
+        self.assertEqual(teledeclaration.teledeclaration_mode, "SITE")
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_calculate_teledeclaration_mode(self):
+        """
+        The teledeclaration mode is automatically calculated based on production type and
+        diagnostic mode
+        """
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL_SERVING, siret="18704793618411")
+        DiagnosticFactory.create(
+            canteen=central,
+            year=LAST_YEAR,
+            value_total_ht=100,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+        ),
+        cases = [
+            {
+                "canteen": CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, siret="79300704800044"),
+                "diagnostic": DiagnosticFactory.create(year=LAST_YEAR, value_total_ht=100),
+                "expected_teledeclaration_mode": "SITE",
+            },
+            {
+                "canteen": CanteenFactory(
+                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL, siret="79300704800044"
+                ),
+                "diagnostic": DiagnosticFactory.create(year=LAST_YEAR, value_total_ht=100),
+                "expected_teledeclaration_mode": "SITE",
+            },
+            {
+                "canteen": CanteenFactory(
+                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+                    siret="79300704800044",
+                    central_producer_siret="18704793618411",
+                ),
+                "diagnostic": DiagnosticFactory.create(year=LAST_YEAR),
+                "expected_teledeclaration_mode": "SATELLITE_WITHOUT_APPRO",
+            },
+            {
+                "canteen": CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044"),
+                "diagnostic": DiagnosticFactory.create(
+                    year=LAST_YEAR,
+                    value_total_ht=100,
+                    central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                ),
+                "expected_teledeclaration_mode": "CENTRAL_ALL",
+            },
+            {
+                "canteen": CanteenFactory(
+                    production_type=Canteen.ProductionType.CENTRAL_SERVING, siret="79300704800044"
+                ),
+                "diagnostic": DiagnosticFactory.create(
+                    year=LAST_YEAR,
+                    value_total_ht=100,
+                    central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+                ),
+                "expected_teledeclaration_mode": "CENTRAL_APPRO",
+            },
+        ]
+        for case in cases:
+            canteen = case["canteen"]
+            diagnostic = case["diagnostic"]
+            expected_td_mode = case["expected_teledeclaration_mode"]
+
+            canteen.managers.add(authenticate.user)
+            diagnostic.canteen = canteen
+            diagnostic.save()
+
+            payload = {"diagnosticId": diagnostic.id}
+            self.client.post(reverse("teledeclaration_create"), payload)
+
+            teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic)
+            self.assertEqual(
+                teledeclaration.teledeclaration_mode,
+                expected_td_mode,
+                f"Incorrect mode for canteen with prod type {canteen.production_type}",
+            )
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
