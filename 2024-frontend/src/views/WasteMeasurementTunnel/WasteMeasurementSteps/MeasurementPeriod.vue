@@ -76,9 +76,9 @@ watch(payload, () => {
 
 onMounted(() => {
   emit("provide-vuelidate", v$)
-  payload.periodStartDate = originalPayload.value.periodStartDate
-  payload.periodEndDate = originalPayload.value.periodEndDate
-  payload.mealCount = originalPayload.value.mealCount
+  payload.periodStartDate = originalPayload?.periodStartDate
+  payload.periodEndDate = originalPayload?.periodEndDate
+  payload.mealCount = originalPayload?.mealCount
 })
 </script>
 

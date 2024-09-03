@@ -29,7 +29,7 @@ watch(payload, () => {
 onMounted(() => {
   emit("provide-vuelidate", v$)
 
-  payload.isSortedBySource = originalPayload.value.isSortedBySource
+  payload.isSortedBySource = originalPayload.isSortedBySource
 })
 </script>
 

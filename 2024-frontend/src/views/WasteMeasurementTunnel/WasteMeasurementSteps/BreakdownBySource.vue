@@ -94,7 +94,7 @@ const leftHandQuestionsClass = computed(() => {
 watch(props, () => {
   nextTick().then(() => {
     payload._freezeWatcher = true
-    genericPayloadKeys.forEach((k) => (payload[k] = originalPayload.value[source.value[k]]))
+    genericPayloadKeys.forEach((k) => (payload[k] = originalPayload[source.value[k]]))
     delete payload._freezeWatcher
   })
 })
@@ -107,7 +107,7 @@ watch(payload, () => {
 
 onMounted(() => {
   emit("provide-vuelidate", v$)
-  genericPayloadKeys.forEach((k) => (payload[k] = originalPayload.value[source.value[k]]))
+  genericPayloadKeys.forEach((k) => (payload[k] = originalPayload[source.value[k]]))
 })
 </script>
 

@@ -29,7 +29,7 @@ watch(payload, () => {
 onMounted(() => {
   emit("provide-vuelidate", v$)
 
-  payload.totalMass = originalPayload.value.totalMass
+  payload.totalMass = originalPayload.totalMass
 })
 </script>
 

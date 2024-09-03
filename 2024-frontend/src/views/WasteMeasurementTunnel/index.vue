@@ -20,7 +20,7 @@ onMounted(() => {
     fetch(`/api/v1/canteens/${canteenId}/wasteMeasurements/${props.id}`)
       .then((response) => response.json())
       .then((body) => {
-        originalPayload.value = body
+        Object.assign(originalPayload, body)
         dataIsReady.value = true
       })
   }
@@ -71,7 +71,7 @@ const continueAction = () => {
           nextRoute.params = { id: response.id, canteenUrlComponent: props.canteenUrlComponent }
         router.push(nextRoute)
         stepWrapper.value.scrollTop = 0
-        Object.assign(originalPayload.value, hotPayload)
+        Object.assign(originalPayload, hotPayload)
       }
     })
     .catch(handleServerError)
