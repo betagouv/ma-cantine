@@ -123,6 +123,7 @@ class WasteMeasurement(models.Model):
         start_date_changed = start_date is not None
         end_date_changed = end_date is not None
 
+        # if this is an update, check which date(s) have been changed so that we can raise relevant errors
         if self.id:
             original_object = WasteMeasurement.objects.get(id=self.id)
             start_date_changed = original_object.period_start_date != start_date
@@ -130,7 +131,7 @@ class WasteMeasurement(models.Model):
 
         WasteMeasurement._validate_start_before_end(start_date, end_date, start_date_changed, end_date_changed)
 
-        other_measurements = WasteMeasurement.objects
+        other_measurements = WasteMeasurement.objects.filter(canteen=self.canteen)
         if self.id:
             other_measurements = other_measurements.exclude(id=self.id)
 
