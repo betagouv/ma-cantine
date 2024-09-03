@@ -108,3 +108,82 @@ class WasteMeasurement(models.Model):
         null=True,
         verbose_name="restes assiette - masse non-comestible",
     )
+
+    def clean(self):
+        self.validate_dates()
+        return super().clean()
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    def validate_dates(self):
+        start_date = self.period_start_date
+        end_date = self.period_end_date
+        start_date_changed = start_date is not None
+        end_date_changed = end_date is not None
+
+        if self.id:
+            original_object = WasteMeasurement.objects.get(id=self.id)
+            start_date_changed = original_object.period_start_date != start_date
+            end_date_changed = original_object.period_end_date != end_date
+
+        WasteMeasurement._validate_start_before_end(start_date, end_date, start_date_changed, end_date_changed)
+
+        other_measurements = WasteMeasurement.objects
+        if self.id:
+            other_measurements = other_measurements.exclude(id=self.id)
+
+        if start_date_changed:
+            WasteMeasurement._validate_start_not_in_other_period(other_measurements, start_date)
+
+        if end_date_changed:
+            WasteMeasurement._validate_end_not_in_other_period(other_measurements, end_date)
+
+        if start_date_changed or end_date_changed:
+            WasteMeasurement._validate_period_not_in_other_period(other_measurements, start_date, end_date)
+
+    def _validate_start_before_end(start_date, end_date, start_date_changed, end_date_changed):
+        if start_date_changed and start_date >= end_date:
+            raise ValidationError({"period_start_date": ["La date de début doit être avant la date de fin"]})
+        elif end_date_changed and end_date <= start_date:
+            raise ValidationError({"period_end_date": ["La date de fin doit être après la date de début"]})
+
+    def _validate_start_not_in_other_period(other_measurements, start_date):
+        measurement_containing_start_date = other_measurements.filter(
+            period_start_date__lte=start_date, period_end_date__gte=start_date
+        )
+        if measurement_containing_start_date.exists():
+            wm = measurement_containing_start_date.first()
+            raise ValidationError(
+                {
+                    "period_start_date": [
+                        f"Il existe déjà une autre mesure pour la période {wm.period_start_date} à {wm.period_end_date}. Veuillez modifier la mesure existante ou corriger la date de début."
+                    ]
+                }
+            )
+
+    def _validate_end_not_in_other_period(other_measurements, end_date):
+        measurement_containing_end_date = other_measurements.filter(
+            period_start_date__lte=end_date, period_end_date__gte=end_date
+        )
+        if measurement_containing_end_date.exists():
+            wm = measurement_containing_end_date.first()
+            raise ValidationError(
+                {
+                    "period_end_date": [
+                        f"Il existe déjà une autre mesure pour la période {wm.period_start_date} à {wm.period_end_date}. Veuillez modifier la mesure existante ou corriger la date de fin."
+                    ]
+                }
+            )
+
+    def _validate_period_not_in_other_period(other_measurements, start_date, end_date):
+        measurements_within_period = other_measurements.filter(
+            period_start_date__gte=start_date, period_end_date__lte=end_date
+        )
+        if measurements_within_period.exists():
+            wm_count = measurements_within_period.count()
+            measure_count_str = "une autre mesure" if wm_count == 1 else f"{wm_count} autres mesures"
+            raise ValidationError(
+                f"Il existe déjà {measure_count_str} dans la période {start_date} à {end_date}. Veuillez modifier les mesures existantes ou corriger les dates de la période."
+            )
