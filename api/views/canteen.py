@@ -277,20 +277,12 @@ class UserCanteensFilterSet(django_filters.FilterSet):
     production_type = ProductionTypeInFilter(field_name="production_type")
 
 
-@extend_schema_view(
-    post=extend_schema(
-        summary="Publier plusieurs cantines.",
-        description="Vous recevrez deux tableaux : `ids` avec les identifiants des cantines publiées, "
-        + "et `unknown_ids` avec les identifiants des cantines non-publiées car l'identifiant n'existe "
-        + "pas où la cantine n'est pas gérée par l'utilisateur.",
-    ),
-)
 class PublishManyCanteensView(APIView):
     """
     This view allows mass publishing of canteens
     """
 
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    permission_classes = [IsAuthenticated]
     required_scopes = ["canteen"]
 
     def post(self, request):
@@ -434,7 +426,7 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
 
     def partial_update(self, request, *args, **kwargs):
         canteen_siret = request.data.get("siret")
-        if canteen_siret == "":
+        if "siret" in request.data and not canteen_siret:
             return JsonResponse(
                 {"siret": ["Le numéro SIRET ne peut pas être vide."]}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -472,17 +464,13 @@ def check_siret_response(canteen_siret, request):
             return camelize(CanteenStatusSerializer(canteen, context={"request": request}).data)
 
 
-@extend_schema_view(
-    post=extend_schema(
-        summary="Activer la publication de la cantine.",
-        description="La publication permet de mettre à disposition certaines données de la cantine au grand public. Il ne s'agit pas d'une télédéclaration.",
-    ),
-)
 class PublishCanteenView(APIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    permission_classes = [IsAuthenticated]
     required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
+        if settings.PUBLISH_BY_DEFAULT:
+            raise BadRequest("Cannot publish canteen")
         try:
             data = request.data
             canteen_id = kwargs.get("pk")
@@ -505,14 +493,8 @@ class PublishCanteenView(APIView):
             raise ValidationError("Le cantine specifié n'existe pas")
 
 
-@extend_schema_view(
-    post=extend_schema(
-        summary="Enlever la publication de la cantine.",
-        description="La publication permet de mettre à disposition les données de la cantine au grand public. Il ne s'agit pas d'une télédéclaration.",
-    ),
-)
 class UnpublishCanteenView(APIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    permission_classes = [IsAuthenticated]
     required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
@@ -1163,7 +1145,7 @@ class ActionableCanteensListView(ListAPIView):
         MaCantineOrderingFilter,
     ]
     search_fields = ["name"]
-    ordering_fields = ["name", "production_type", "action"]
+    ordering_fields = ["name", "production_type", "action", "modification_date"]
     ordering = "modification_date"
 
     def get_queryset(self):
@@ -1224,6 +1206,11 @@ class ActionableCanteensListView(ListAPIView):
         # prep complete diag action
         complete_diagnostics = Diagnostic.objects.filter(pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0)
         user_canteens = user_canteens.annotate(has_complete_diag=Exists(Subquery(complete_diagnostics)))
+        has_cc_mode = Diagnostic.objects.filter(
+            pk=OuterRef("diagnostic_for_year"),
+            central_kitchen_diagnostic_mode__isnull=False,
+        ).exclude(central_kitchen_diagnostic_mode="")
+        user_canteens = user_canteens.annotate(has_cc_mode=Exists(Subquery(has_cc_mode)))
         # prep TD action
         tds = Teledeclaration.objects.filter(
             Q(canteen=OuterRef("pk")) | Q(canteen=OuterRef("central_kitchen_id")),
@@ -1247,6 +1234,7 @@ class ActionableCanteensListView(ListAPIView):
             ),
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
             When(has_complete_diag=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+            When((is_central_cuisine_query & Q(has_cc_mode=False)), then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
             When(incomplete_canteen_data_query, then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
         if should_teledeclare:

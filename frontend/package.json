@@ -9,8 +9,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "apexcharts": "^3.51.0",
-    "core-js": "^3.38.0",
+    "apexcharts": "^3.53.0",
+    "core-js": "^3.38.1",
     "html2pdf.js": "^0.10.2",
     "qrcode.vue": "^1.7.0",
     "vue": "^2.7.16",
@@ -39,7 +39,7 @@
     "vue-cli-plugin-vuetify": "~2.5.8",
     "vue-template-compiler": "^2.7.16",
     "vuetify-loader": "^1.9.2",
-    "webpack-bundle-tracker": "3.1.0"
+    "webpack-bundle-tracker": "3.1.1"
   },
   "browserslist": [
     "> 1%",

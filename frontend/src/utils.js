@@ -290,7 +290,7 @@ export const normaliseText = (name) => {
     .toUpperCase()
 }
 
-export const applicableDiagnosticRules = (canteen) => {
+export const applicableDiagnosticRules = (canteen, year) => {
   let bioThreshold = 20
   let qualityThreshold = 50
   let hasQualityException = false
@@ -323,6 +323,9 @@ export const applicableDiagnosticRules = (canteen) => {
     qualityThreshold,
     hasQualityException,
     regionForQualityException: hasQualityException && canteen.region,
+    meatPoultryEgalimThreshold: year >= 2024 ? 60 : null,
+    meatPoultryFranceThreshold: year >= 2024 ? 60 : null,
+    fishEgalimThreshold: year >= 2024 ? 60 : null,
   }
 }
 
@@ -629,6 +632,8 @@ export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
       return canSubmitOtherData && hasOtherData
     }
     // satellites can still TD if CCs haven't
+  } else if (canteen.productionType === "central" || canteen.productionType === "central_serving") {
+    return !!diagnostic.centralKitchenDiagnosticMode
   }
 
   return hasDiagnosticApproData(diagnostic)

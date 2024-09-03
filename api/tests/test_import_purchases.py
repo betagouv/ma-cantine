@@ -258,3 +258,25 @@ class TestPurchaseImport(APITestCase):
         body = response.json()
         self.assertEqual(len(body["errors"]), 30)
         self.assertEqual(body["errorCount"], 56)
+
+    @authenticate
+    def test_encoding_autodetect_cp1252(self):
+        """
+        Attempt to auto-detect file encodings: Windows 1252
+        This is a smoke test - purchase import reuses diagnostics import
+        More tests are with the diagnostic import tests
+        """
+        canteen = CanteenFactory.create(siret="82399356058716")
+        canteen.managers.add(authenticate.user)
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        with open("./api/tests/files/purchase_encoding_iso-8859-1.csv", "rb") as diag_file:
+            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(Purchase.objects.first().description, "deuxième pomme")
+        self.assertEqual(body["encoding"], "ISO-8859-1")

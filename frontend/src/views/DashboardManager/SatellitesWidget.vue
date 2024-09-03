@@ -26,16 +26,7 @@
       >
         <!-- TODO: does it still make sense to include the publication status? Maybe TD status is better -->
         <template v-slot:[`item.publicationStatus`]="{ item }">
-          <v-chip
-            :color="isSatellitePublished(item) ? 'green lighten-4' : 'grey lighten-2'"
-            :class="isSatellitePublished(item) ? 'green--text text--darken-4' : 'grey--text text--darken-2'"
-            class="font-weight-bold px-2 fr-text-xs text-uppercase"
-            style="border-radius: 4px !important;"
-            small
-            label
-          >
-            {{ isSatellitePublished(item) ? "Publiée" : "Non publiée" }}
-          </v-chip>
+          <PublicationBadge :isPublished="isSatellitePublished(item)" />
         </template>
       </v-data-table>
     </v-card-text>
@@ -58,10 +49,12 @@
 </template>
 
 <script>
+import PublicationBadge from "@/components/PublicationBadge"
 import { hasSatelliteInconsistency } from "@/utils"
 
 export default {
   name: "SatellitesWidget",
+  components: { PublicationBadge },
   props: {
     canteen: {
       type: Object,

@@ -23,16 +23,16 @@ class WasteAction(models.Model):
     modification_date = models.DateTimeField(auto_now=True, verbose_name="Date de dernière modification")
 
     title = models.TextField(verbose_name="Titre")
-    subtitle = models.TextField(verbose_name="Sous-titre")
-    effort = models.CharField(max_length=255, choices=Effort.choices, verbose_name="Niveau d'effort")
-    waste_origin = ChoiceArrayField(
-        base_field=models.CharField(max_length=255, choices=WasteOrigin.choices),
-        size=None,
-        verbose_name="Origines du gaspillage",
-    )
+    subtitle = models.TextField(null=True, blank=True, verbose_name="Sous-titre")
     description = RichTextField(
         verbose_name="Description",
         default="<h2>Description</h2><h2>Conseils pratiques</h2><ul><li></li></ul>",
+    )
+    effort = models.CharField(max_length=255, choices=Effort.choices, verbose_name="Niveau d'effort")
+    waste_origins = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=WasteOrigin.choices),
+        size=None,
+        verbose_name="Origines du gaspillage",
     )
     lead_image = models.ForeignKey(
         "wagtailimages.Image", on_delete=models.SET_NULL, related_name="+", null=True, blank=True, verbose_name="Image"

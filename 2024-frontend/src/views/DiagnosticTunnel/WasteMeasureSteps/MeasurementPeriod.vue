@@ -18,7 +18,6 @@ const state = reactive({
 
 const togglePeriodEdit = () => {
   state.editMealCount = !state.editMealCount
-  // TODO: do we want to track when the number was changed from the auto calculation?
 }
 
 const datesEntered = computed(() => {
@@ -46,7 +45,6 @@ const calculateMealCountMaybe = () => {
   }
 }
 
-// TODO: initialise with data
 const canteen = reactive({
   dailyMealCount: 200,
 })
@@ -65,7 +63,7 @@ const afterStartDateValidator = (date) => {
 const afterStartDate = helpers.withMessage("Faut être après la date de début", afterStartDateValidator)
 
 const rules = {
-  startDate: { required }, // TODO: ensure greater than endDate of last measurement taken
+  startDate: { required },
   endDate: { required, afterStartDate },
   mealCount: { required, integer, minValue: minValue(1) },
 }

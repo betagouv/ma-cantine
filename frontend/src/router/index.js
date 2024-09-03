@@ -21,6 +21,9 @@ import AccountDeletion from "@/views/AccountSummaryPage/AccountDeletion"
 import BlogsPage from "@/views/BlogsPage"
 import BlogsHome from "@/views/BlogsPage/BlogsHome"
 import BlogPage from "@/views/BlogsPage/BlogPage"
+import WasteActionsPage from "@/views/WasteActionsPage"
+import WasteActionsHome from "@/views/WasteActionsPage/WasteActionsHome.vue"
+import WasteActionPage from "@/views/WasteActionsPage/WasteActionPage.vue"
 import PartnersPage from "@/views/PartnersPage"
 import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
@@ -37,7 +40,6 @@ import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
-import PublishSatellites from "@/views/CanteenEditor/PublishSatellites"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 import DiagnosticImportPage from "@/views/DiagnosticsImporter/DiagnosticImportPage"
@@ -240,6 +242,27 @@ const routes = [
     ],
   },
   {
+    path: "/actions-anti-gaspi",
+    component: WasteActionsPage,
+    children: [
+      {
+        path: "",
+        name: "WasteActionsHome",
+        component: WasteActionsHome,
+        meta: {
+          title: "Actions anti-gaspi",
+        },
+        sitemapGroup: Constants.SitemapGroups.ACTION,
+      },
+      {
+        path: ":id",
+        name: "WasteActionPage",
+        component: WasteActionPage,
+        props: true,
+      },
+    ],
+  },
+  {
     path: "/partenaires",
     redirect: "/acteurs-de-l-eco-systeme",
   },
@@ -390,15 +413,6 @@ const routes = [
           title: "Éditer mon affiche",
         },
       },
-      {
-        path: "publier-mes-satellites",
-        name: "PublishSatellites",
-        component: PublishSatellites,
-        meta: {
-          authenticationRequired: true,
-          title: "Publier mes satellites",
-        },
-      },
     ],
   },
   {
@@ -417,7 +431,7 @@ const routes = [
     name: "DiagnosticsImporter",
     component: DiagnosticsImporter,
     meta: {
-      title: "Importer des diagnostics",
+      title: "Importer vos données",
       authenticationRequired: true,
     },
     sitemapGroup: Constants.SitemapGroups.DIAG,

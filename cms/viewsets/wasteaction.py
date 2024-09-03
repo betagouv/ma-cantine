@@ -2,6 +2,7 @@ from wagtail.snippets.views.snippets import SnippetViewSet
 from wagtail.admin.panels import TabbedInterface, ObjectList, FieldPanel
 from cms.models.wasteaction import WasteAction
 from wagtail.images.api.v2.views import BaseAPIViewSet
+from djangorestframework_camel_case.render import CamelCaseJSONRenderer, CamelCaseBrowsableAPIRenderer
 
 
 class WasteActionViewSet(SnippetViewSet):
@@ -23,7 +24,7 @@ class WasteActionViewSet(SnippetViewSet):
             ObjectList(
                 [
                     FieldPanel("effort"),
-                    FieldPanel("waste_origin"),
+                    FieldPanel("waste_origins"),
                 ],
                 heading="Caractéristiques",
             ),
@@ -38,18 +39,17 @@ class WasteActionAPIViewSet(BaseAPIViewSet):
     API endpoint that allows WasteActions to be viewed.
     """
 
+    renderer_classes = [CamelCaseJSONRenderer, CamelCaseBrowsableAPIRenderer]
     model = WasteAction
-    api_fields = [
+    body_fields = [
         "id",
         "creation_date",
         "modification_date",
         "title",
         "subtitle",
         "effort",
-        "waste_origin",
+        "waste_origins",
         "description",
         "lead_image",
     ]
-    body_fields = BaseAPIViewSet.body_fields + api_fields
-    # If needed we can list all those fields by default. Otherwise we can see them by adding "?fields=*" to URL
-    # listing_default_fields = BaseAPIViewSet.listing_default_fields + api_fields
+    meta_fields = []

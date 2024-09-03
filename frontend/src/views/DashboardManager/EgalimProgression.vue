@@ -226,7 +226,10 @@ export default {
       return this.year === lastYear() + 1
     },
     needsData() {
-      return !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic)
+      return (
+        (!this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic)) ||
+        !this.diagnosticCanBeTeledeclared
+      )
     },
     diagnosticCanBeTeledeclared() {
       return diagnosticCanBeTeledeclared(this.canteen, this.canteenDiagnostic)

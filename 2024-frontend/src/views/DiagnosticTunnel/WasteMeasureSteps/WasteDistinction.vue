@@ -10,7 +10,6 @@ const { required } = useValidators()
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
 const originalPayload = inject("originalPayload")
-// TODO: show remaining steps only if this is true ?
 const payload = reactive({
   sortedSource: originalPayload.sortedSource,
 })
