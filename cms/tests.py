@@ -11,6 +11,8 @@ WASTE_ACTION = {
     "waste_origins": [WasteAction.WasteOrigin.PREP],
 }
 
+WASTE_ACTION_REQUIRED_FIELDS = ["title", "description", "effort", "waste_origins"]
+
 
 class WasteActionModelSaveTest(TransactionTestCase):
     @classmethod
@@ -19,11 +21,8 @@ class WasteActionModelSaveTest(TransactionTestCase):
 
     def test_waste_action_validation(self):
         # NOT OK: missing required field
-        for REQUIRED_FIELD in ["title", "description", "effort", "waste_origins"]:
-            WASTE_ACTION_WITHOUT_REQUIRED_FIELD = WASTE_ACTION | {REQUIRED_FIELD: None}
+        for required_field in WASTE_ACTION_REQUIRED_FIELDS:
+            WASTE_ACTION_WITHOUT_REQUIRED_FIELD = WASTE_ACTION | {required_field: None}
             self.assertRaises(ValidationError, WasteActionFactory, **WASTE_ACTION_WITHOUT_REQUIRED_FIELD)
-        # OK: all required fields passed
+        # OK: all required fields passed (subtitle can be empty)
         WasteActionFactory(**WASTE_ACTION)
-        # OK: subtitle can be empty
-        WASTE_ACTION_WITHOUT_SUBTITLE = WASTE_ACTION | {"subtitle": None}
-        WasteActionFactory(**WASTE_ACTION_WITHOUT_SUBTITLE)
