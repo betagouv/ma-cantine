@@ -11,7 +11,7 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 REGIONS_LIB = {i.label.split(" - ")[1]: i.value for i in Region}
 
 
-def complete_canteen_data(canteen_siret, token):
+def get_city_from_siret(canteen_siret, token):
     canteen = {}
     canteen["siret"] = canteen_siret
     try:
@@ -88,9 +88,3 @@ def complete_location_data(response):
     except Exception as e:
         logger.exception(f"Error completing location data with SIRET for city: {response['city']}")
         logger.exception(e)
-
-
-def get_city_from_siret(siret: str, token: str):
-    response = complete_canteen_data(siret, token)
-    response = complete_location_data(response)
-    return response

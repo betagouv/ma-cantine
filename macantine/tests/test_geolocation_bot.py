@@ -122,7 +122,7 @@ class TestGeolocationBot(TestCase):
 
 @requests_mock.Mocker()
 class TestGeolocationWithSiretBot(TestCase):
-    api_url = "https://api.insee.fr/entreprises/sirene/V3/siret/"
+    api_url = "https://api.insee.fr/entreprises/sirene/siret/"
 
     def test_candidate_canteens(self, _):
         """
@@ -159,7 +159,7 @@ class TestGeolocationWithSiretBot(TestCase):
                     "etablissement": {
                         "uniteLegale": {"denominationUniteLegale": "cantine test"},
                         "adresseEtablissement": {
-                            "codeCommuneEtablissement": "29352",
+                            "codeCommuneEtablissement": city_insee_code,
                             "codePostalEtablissement": "29890",
                             "libelleCommuneEtablissement": "Ville test",
                         },
@@ -168,28 +168,8 @@ class TestGeolocationWithSiretBot(TestCase):
             ),
             status_code=200,
         )
-        mock.get(
-            f"https://api-adresse.data.gouv.fr/search/?q={city_insee_code}&citycode={city_insee_code}&type=municipality&autocomplete=1",
-            headers={"Authorization": f"Bearer {token}"},
-            text=json.dumps(
-                {
-                    "features": [
-                        {
-                            "properties": {
-                                "label": "Ville test",
-                                "citycode": city_insee_code,
-                                "postcode": "29890",
-                                "context": "38, Isère, Auvergne-Rhône-Alpes",
-                            }
-                        }
-                    ]
-                }
-            ),
-            status_code=200,
-        )
         response = utils.get_city_from_siret(candidate_canteen.siret, token)
-        self.assertEquals(response["city_insee_code"], "29352")
-        self.assertEquals(response["postal_code"], "29890")
+        self.assertEquals(response["cityInseeCode"], city_insee_code)
 
     def test_geolocation_with_siret_data_filled(self, mock):
         """
@@ -219,25 +199,6 @@ class TestGeolocationWithSiretBot(TestCase):
                             "libelleCommuneEtablissement": "Ville test",
                         },
                     },
-                }
-            ),
-            status_code=200,
-        )
-        mock.get(
-            f"https://api-adresse.data.gouv.fr/search/?q={city_insee_code}&citycode={city_insee_code}&type=municipality&autocomplete=1",
-            headers={"Authorization": f"Bearer {token}"},
-            text=json.dumps(
-                {
-                    "features": [
-                        {
-                            "properties": {
-                                "label": "Ville test",
-                                "citycode": city_insee_code,
-                                "postcode": "29890",
-                                "context": "38, Isère, Auvergne-Rhône-Alpes",
-                            }
-                        }
-                    ]
                 }
             ),
             status_code=200,
