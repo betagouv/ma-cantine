@@ -22,7 +22,7 @@ def complete_canteen_data(canteen_siret, token):
             time.sleep(60)
 
         siret_response = requests.get(
-            f"https://api.insee.fr/entreprises/sirene/V3/siret/{canteen_siret}",
+            f"https://api.insee.fr/entreprises/sirene/siret/{canteen_siret}",
             headers={"Authorization": f"Bearer {token}"},
         )
         siret_response.raise_for_status()
