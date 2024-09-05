@@ -15,7 +15,7 @@ from data.models import User, Canteen
 import redis as r
 from common.utils import get_siret_token
 from .celery import app
-from .utils import get_infos_from_siret
+from .utils import get_city_from_siret
 from .etl.analysis import ETL_ANALYSIS
 from .etl.open_data import ETL_TD, ETL_CANTEEN
 import sib_api_v3_sdk
@@ -366,7 +366,7 @@ def fill_missing_geolocation_data_using_siret():
         return
     for canteen in candidate_canteens:
         if len(canteen.siret) == 14:
-            response = get_infos_from_siret(canteen.siret, token)
+            response = get_city_from_siret(canteen.siret, token)
             if response:
                 _update_canteen_geo_data(canteen, response)
 

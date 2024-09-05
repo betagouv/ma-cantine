@@ -90,7 +90,7 @@ def complete_location_data(response):
         logger.exception(e)
 
 
-def get_infos_from_siret(siret: str, token: str):
+def get_city_from_siret(siret: str, token: str):
     response = complete_canteen_data(siret, token)
     response = complete_location_data(response)
     return response

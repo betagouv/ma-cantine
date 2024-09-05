@@ -187,7 +187,7 @@ class TestGeolocationWithSiretBot(TestCase):
             ),
             status_code=200,
         )
-        response = utils.get_infos_from_siret(candidate_canteen.siret, token)
+        response = utils.get_city_from_siret(candidate_canteen.siret, token)
         self.assertEquals(response["city_insee_code"], "29352")
         self.assertEquals(response["postal_code"], "29890")
 
