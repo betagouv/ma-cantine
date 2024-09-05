@@ -365,9 +365,10 @@ def fill_missing_geolocation_data_using_siret():
         logger.info("No candidate canteens have been found. Nothing to do here...")
         return
     for canteen in candidate_canteens:
-        response = get_infos_from_siret(canteen.siret, token)
-        if response:
-            _update_canteen_geo_data(canteen, response)
+        if len(canteen.siret) == 14:
+            response = get_infos_from_siret(canteen.siret, token)
+            if response:
+                _update_canteen_geo_data(canteen, response)
 
     logger.info(f"Siret Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
 
