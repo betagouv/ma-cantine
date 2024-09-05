@@ -514,7 +514,7 @@ class TestCanteenApi(APITestCase):
         city = "Paris 15e Arrondissement"
         postcode = "75015"
         insee_code = "75115"
-        sirene_api_url = f"https://api.insee.fr/entreprises/sirene/V3/siret/{siret}"
+        sirene_api_url = f"https://api.insee.fr/entreprises/sirene/siret/{siret}"
         sirene_mocked_response = {
             "etablissement": {
                 "uniteLegale": {"denominationUniteLegale": "Canteen Name"},
