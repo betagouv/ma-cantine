@@ -84,7 +84,7 @@ onMounted(() => {
             par repas et par convive
           </p>
           <router-link :to="newMeasurementRoute" class="fr-btn fr-btn--secondary fr-mt-sm-2w">
-            Saisir un nouveau pesage
+            Saisir une nouvelle évaluation
           </router-link>
         </div>
         <div class="fr-col-12 fr-col-sm-5 fr-mb-4w">
@@ -107,7 +107,7 @@ onMounted(() => {
       >
         <div class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
           <div class="fr-col-12 fr-col-sm-6 fr-col-md-4 fr-pr-4w">
-            <DsfrSelect v-model="chosenMeasurementIdx" label="Date du pesage" :options="measurementChoices" />
+            <DsfrSelect v-model="chosenMeasurementIdx" label="Date de l'évaluation" :options="measurementChoices" />
           </div>
           <div class="fr-col-12 fr-col-sm-4">
             <router-link class="fr-btn fr-btn--tertiary" :to="measurementTunnel">
@@ -134,7 +134,7 @@ onMounted(() => {
         par repas et par convive
       </p>
       <router-link :to="newMeasurementRoute" class="fr-btn">
-        Saisir un pesage
+        Saisir une évaluation
       </router-link>
     </div>
   </div>

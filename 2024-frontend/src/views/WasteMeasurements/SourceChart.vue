@@ -85,6 +85,6 @@ const displayOption = ref("chart")
     </div>
   </div>
   <DsfrAlert v-else>
-    Completez la saisie du pesage pour visualiser les sources de votre gaspillage.
+    Completez l'évaluation pour visualiser les sources de votre gaspillage.
   </DsfrAlert>
 </template>

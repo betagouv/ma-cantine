@@ -11,7 +11,7 @@ const routes = [
     component: WasteMeasurementTunnel,
     props: (route) => ({ ...route.query, ...route.params }),
     meta: {
-      title: "Pesage gaspillage alimentaire",
+      title: "Évaluation gaspillage alimentaire",
       authenticationRequired: true,
       fullscreen: true,
     },

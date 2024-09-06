@@ -16,9 +16,9 @@
       </h3>
       <div v-if="showWasteTool">
         <DsfrCallout>
-          <p class="fr-text font-weight-bold">Pesage gaspillage alimentaire</p>
+          <p class="fr-text font-weight-bold">Évaluation gaspillage alimentaire</p>
           <p class="fr-text-sm grey-text text--darken-3">
-            Mettre à jour vos pesages gaspillage alimentaire avant de continuer.
+            Évaluez gaspillage alimentaire avant de continuer.
           </p>
           <v-row class="align-center my-2 mx-0">
             <v-btn
@@ -27,7 +27,7 @@
               color="primary"
               :to="{ name: 'WasteMeasurements', params: { canteenUrlComponent } }"
             >
-              Compléter mes pesages
+              Compléter l'évaluation
             </v-btn>
           </v-row>
         </DsfrCallout>

@@ -122,7 +122,7 @@ TELEDECLARATION_END_DATE= Optionnel - Celle-ci n'est pas exactement une feature 
 ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des gestionnaires.
 PUBLISH_BY_DEFAULT= Optionnel - `True` pour publier les cantines sauf celles qui sont identifiées autrement.
 ENABLE_VUE3= Optionnel - `True` pour rendre les nouvelles vues disponibles.
-ENABLE_WASTE_MEASUREMENTS= Optionnel - `True` pour rendre l'outil pesage gaspillage alimentaire disponible
+ENABLE_WASTE_MEASUREMENTS= Optionnel - `True` pour rendre l'outil évaluation gaspillage alimentaire disponible
 ```
 
 ### Relances automatiques par email
