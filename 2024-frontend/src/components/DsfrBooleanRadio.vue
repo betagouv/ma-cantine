@@ -5,12 +5,12 @@ const options = [
   {
     label: "Oui",
     id: `${props.name}-yes`,
-    value: "true",
+    value: true,
   },
   {
     label: "Non",
     id: `${props.name}-no`,
-    value: "false",
+    value: false,
   },
 ]
 </script>
