@@ -17,6 +17,10 @@ class WasteMeasurementAdmin(SimpleHistoryAdmin):
         "canteen__name",
         "canteen__siret",
     )
+    readonly_fields = (
+        "creation_date",
+        "modification_date",
+    )
 
     fieldsets = (
         (
@@ -62,6 +66,15 @@ class WasteMeasurementAdmin(SimpleHistoryAdmin):
                     "leftovers_is_sorted",
                     "leftovers_edible_mass",
                     "leftovers_inedible_mass",
+                )
+            },
+        ),
+        (
+            "Meta données",
+            {
+                "fields": (
+                    "creation_date",
+                    "modification_date",
                 )
             },
         ),
