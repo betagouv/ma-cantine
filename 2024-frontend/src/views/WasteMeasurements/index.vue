@@ -78,10 +78,9 @@ onMounted(() => {
     <div v-if="measurements.length">
       <div v-if="measurement" class="fr-grid-row fr-grid-row--center">
         <div class="fr-col fr-mb-4w">
-          <!-- redudent to include "et par convive?" -->
           <p class="highlight brown">
             <span class="fr-h3">{{ formatNumber(wastePerMeal) }} g</span>
-            par repas et par convive
+            par repas
           </p>
           <router-link :to="newMeasurementRoute" class="fr-btn fr-btn--secondary fr-mt-sm-2w">
             Saisir une nouvelle évaluation
@@ -131,7 +130,7 @@ onMounted(() => {
       <DsfrBadge label="Pas encore des données" type="none" />
       <p class="fr-my-4w highlight">
         <span class="fr-h3">{{ formatNumber() }} g</span>
-        par repas et par convive
+        par repas
       </p>
       <router-link :to="newMeasurementRoute" class="fr-btn">
         Saisir une évaluation
