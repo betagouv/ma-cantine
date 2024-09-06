@@ -122,6 +122,7 @@ TELEDECLARATION_END_DATE= Optionnel - Celle-ci n'est pas exactement une feature 
 ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des gestionnaires.
 PUBLISH_BY_DEFAULT= Optionnel - `True` pour publier les cantines sauf celles qui sont identifiées autrement.
 ENABLE_VUE3= Optionnel - `True` pour rendre les nouvelles vues disponibles.
+ENABLE_WASTE_MEASUREMENTS= Optionnel - `True` pour rendre l'outil évaluation gaspillage alimentaire disponible
 ```
 
 ### Relances automatiques par email
@@ -153,6 +154,8 @@ python manage.py compilemessages
 Notez que cette commande est à effectuer à chaque changement de fichier de traduction \*po.
 
 ## Lancer l'application en mode développement
+
+Certaines fonctionnalités ont besoin de fichiers statics. La première fois que vous lancez le projet, d'abord lancez `python manage.py collectstatic`.
 
 Deux options :
 

@@ -293,6 +293,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/dist/"),
     os.path.join(BASE_DIR, "build/"),
     ("dsfr/icons", BASE_DIR / "2024-frontend/node_modules/@gouvfr/dsfr/dist/icons"),
+    ("dsfr/charts", BASE_DIR / "2024-frontend/node_modules/@gouvfr/dsfr-chart"),
+    ("dsfr/dist", BASE_DIR / "2024-frontend/node_modules/@gouvfr/dsfr/dist"),
 ]
 WEBPACK_LOADER = {
     "DEFAULT": {
@@ -525,6 +527,7 @@ TELEDECLARATION_END_DATE = os.getenv("TELEDECLARATION_END_DATE", "")
 ENABLE_DASHBOARD = os.getenv("ENABLE_DASHBOARD") == "True"
 PUBLISH_BY_DEFAULT = os.getenv("PUBLISH_BY_DEFAULT") == "True"
 ENABLE_VUE3 = os.getenv("ENABLE_VUE3") == "True"
+ENABLE_WASTE_MEASUREMENTS = os.getenv("ENABLE_WASTE_MEASUREMENTS") == "True"
 
 # Custom testing
 

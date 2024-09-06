@@ -608,6 +608,18 @@ if (window.ENABLE_DASHBOARD) {
   })
 }
 
+const vue3Routes = [
+  {
+    path: "/gaspillage-alimentaire/:canteenUrlComponent",
+    name: "WasteMeasurements",
+  },
+]
+const VUE3_PREFIX = "/v2"
+vue3Routes.forEach((r) => {
+  r.path = VUE3_PREFIX + r.path
+})
+routes.push(...vue3Routes)
+
 routes.push({
   path: "/:catchAll(.*)",
   component: NotFound,
@@ -642,8 +654,15 @@ function chooseAuthorisedRoute(to, from, next) {
   }
 }
 
+function handleVue3(to) {
+  if (to.path.startsWith(VUE3_PREFIX)) {
+    window.location.href = location.origin + to.path
+  }
+}
+
 router.beforeEach((to, from, next) => {
   store.dispatch("removeNotifications")
+  handleVue3(to)
   // TODO: audit code to check that notifies are placed after redirects
   // TODO: check the tunnel to see if the change of step also clears notifications
   chooseAuthorisedRoute(to, from, next)

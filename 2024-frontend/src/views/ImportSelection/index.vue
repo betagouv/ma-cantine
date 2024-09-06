@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed, watch } from "vue"
-import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import DsfrBooleanRadio from "@/components/DsfrBooleanRadio.vue"
 import Constants from "@/constants.js"
 
@@ -53,7 +52,7 @@ const quizSteps = [
 const currentStep = ref(1)
 const stepTitles = quizSteps.map((step) => step.title)
 const step = computed(() => quizSteps[currentStep.value - 1])
-const currentAnswer = ref("")
+const currentAnswer = ref(undefined)
 const answers = ref({})
 const importSuggestionKey = ref("")
 const importSuggestion = computed(() => {
@@ -65,8 +64,8 @@ const importSuggestion = computed(() => {
 const revealAnswer = computed(() => !!importSuggestionKey.value)
 
 const handleChoice = () => {
-  const value = currentAnswer.value === "true"
-  currentAnswer.value = ""
+  const value = !!currentAnswer.value
+  currentAnswer.value = undefined
   switch (step.value.key) {
     case "hasCanteens":
       if (value) break
@@ -115,12 +114,11 @@ const backToLastQuestion = () => {
   importSuggestionKey.value = ""
 }
 
-watch(currentStep, () => (currentAnswer.value = ""))
+watch(currentStep, () => (currentAnswer.value = undefined))
 </script>
 
 <template>
   <div>
-    <BreadcrumbsNav :links="[{ title: 'Mon tableau de bord', to: { name: 'ManagementPage' } }]" />
     <h1>Importer vos données</h1>
     <p>Complétez le formulaire ci-dessous pour trouver le fichier adapté à votre situation.</p>
     <div class="fr-mb-8w">

@@ -32,3 +32,8 @@ def teledeclaration_end_date():
 @register.simple_tag
 def enable_dashboard():
     return getattr(settings, "ENABLE_DASHBOARD", "")
+
+
+@register.simple_tag
+def enable_waste_measurements():
+    return getattr(settings, "ENABLE_WASTE_MEASUREMENTS", "")

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router"
 import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel"
 import ImportSelection from "@/views/ImportSelection"
+import WasteMeasurements from "@/views/WasteMeasurements"
 import { useRootStore } from "@/stores/root"
 
 const routes = [
@@ -10,7 +11,7 @@ const routes = [
     component: WasteMeasurementTunnel,
     props: (route) => ({ ...route.query, ...route.params }),
     meta: {
-      title: "Pesage gaspillage alimentaire",
+      title: "Évaluation gaspillage alimentaire",
       authenticationRequired: true,
       fullscreen: true,
     },
@@ -22,6 +23,20 @@ const routes = [
     meta: {
       title: "Importer des données",
       authenticationRequired: true,
+    },
+  },
+  {
+    path: "/gaspillage-alimentaire/:canteenUrlComponent",
+    name: "WasteMeasurements",
+    component: WasteMeasurements,
+    props: (route) => ({ ...route.params }),
+    meta: {
+      title: "Gaspillage alimentaire",
+      authenticationRequired: true,
+      breadcrumbs: [
+        { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+        { to: { name: "DashboardManager" }, useCanteenName: true },
+      ],
     },
   },
 ]
@@ -39,6 +54,10 @@ const vue2Routes = [
   {
     path: "/ma-progression/:canteenUrlComponent/:year/:measureId",
     name: "MyProgress",
+  },
+  {
+    path: "/dashboard/:canteenUrlComponent",
+    name: "DashboardManager",
   },
   {
     path: "/gestion",
@@ -117,6 +136,10 @@ const vue2Routes = [
     name: "Cookies",
   },
   {
+    path: "/actions-anti-gaspi",
+    name: "WasteActionsHome",
+  },
+  {
     path: "/nouvelle-cantine",
     name: "NewCanteen",
   },
@@ -136,20 +159,18 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to) => {
   if (!to.path.startsWith(VUE3_PREFIX)) {
     location.href = location.origin + to.path
-    return
+    return false
   }
+  if (!to.meta.authenticationRequired) return
   const store = useRootStore()
   if (!store.initialDataLoaded) {
-    store.fetchInitialData().then(() => {
-      if (!store.loggedUser && to.meta.authenticationRequired) {
-        next({ name: "Vue2Home", replace: true })
-      } else {
-        next()
-      }
-    })
+    await store.fetchInitialData()
+  }
+  if (!store.loggedUser) {
+    return { name: "Vue2Home", replace: true }
   }
 })
 

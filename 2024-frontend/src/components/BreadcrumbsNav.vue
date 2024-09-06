@@ -4,8 +4,6 @@ import { routes } from "@/router"
 import { useRoute } from "vue-router"
 const route = useRoute()
 
-const props = defineProps(["links", "title"])
-
 const breadcrumbRoutes = JSON.parse(JSON.stringify(routes))
 // flatten routes for simplicity
 breadcrumbRoutes.forEach((r) => {
@@ -14,13 +12,21 @@ breadcrumbRoutes.forEach((r) => {
   }
 })
 
-const pageTitle = props.title || route.meta?.title
+const pageTitle = computed(() => route.meta?.title)
+const canteenUrlComponent = computed(() => route.params?.canteenUrlComponent)
 
 const breadcrumbLinks = computed(() => {
   const allLinks = [{ text: "Accueil", to: "/" }]
-  if (props.links) {
-    props.links.forEach((link) => {
-      if (!link.title && link.to?.name) {
+  if (route.meta?.breadcrumbs) {
+    route.meta.breadcrumbs.forEach((link) => {
+      if (link.useCanteenName && canteenUrlComponent.value) {
+        const title = canteenUrlComponent.value.split("--")[1] || "Mon établissement"
+        link.title = title.replace(/-/g, " ")
+      } else if (link.useCanteenName) {
+        console.error(
+          "BreadcrumbsNav: cannot identify canteen for breadcrumbs, canteenUrlComponent required in current route"
+        )
+      } else if (!link.title && link.to?.name) {
         link.title = breadcrumbRoutes.find((r) => r.name === link.to.name)?.meta?.title
       }
       link.text = link.title // DSFR component uses different key to our legacy code

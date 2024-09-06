@@ -72,6 +72,8 @@ const continueAction = () => {
         router.push(nextRoute)
         stepWrapper.value.scrollTop = 0
         Object.assign(originalPayload, hotPayload)
+      } else {
+        router.push({ name: "WasteMeasurements" })
       }
     })
     .catch(handleServerError)
@@ -99,7 +101,7 @@ const saveAndQuit = () => {
   if (!formIsValid()) return
   saveDiagnostic()
     .then(() => {
-      router.push({ name: "MyProgress" })
+      router.push({ name: "WasteMeasurements" })
     })
     .catch(handleServerError)
 }

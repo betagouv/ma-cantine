@@ -266,6 +266,38 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(body[1]["id"], measurement_july.id)
 
     @authenticate
+    def test_get_period_day_count(self):
+        """
+        Canteen waste measurements should contain a computed field of number of days in period
+        """
+        measurement = WasteMeasurementFactory.create(
+            period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
+        )
+        canteen = measurement.canteen
+        canteen.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
+        body = response.json()
+
+        self.assertEqual(body[0]["daysInPeriod"], 5)
+
+    @authenticate
+    def test_get_estimated_total_waste_for_year(self):
+        """
+        Canteen waste measurements should contain a computed field of total waste for the year in kg
+        This is done by taking dividing the total mass by period meal count and multiplying by canteen's
+        yearly meal count
+        """
+        canteen = CanteenFactory(yearly_meal_count=1000)
+        canteen.managers.add(authenticate.user)
+        WasteMeasurementFactory.create(canteen=canteen, meal_count=10, total_mass=50)
+
+        response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
+        body = response.json()
+
+        self.assertEqual(body[0]["totalYearlyWasteEstimation"], 5000)
+
+    @authenticate
     def test_cannot_get_waste_measurement_not_manager(self):
         """
         If the user is not the manager of the canteen, they get a 403 when attempting to view the waste measurement

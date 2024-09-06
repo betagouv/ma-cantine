@@ -37,7 +37,7 @@ onMounted(() => {
   <div class="fr-grid-row">
     <div class="fr-col-12 fr-col-sm-6">
       <DsfrBooleanRadio
-        v-model.number="payload.isSortedBySource"
+        v-model="payload.isSortedBySource"
         legend="Avez-vous trié votre gaspillage en fonction de sa source ?"
         name="isSortedBySource"
         class="fr-mb-2w"
