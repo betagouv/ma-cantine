@@ -99,7 +99,7 @@ const saveAndQuit = () => {
   if (!formIsValid()) return
   saveDiagnostic()
     .then(() => {
-      router.push({ name: "MyProgress" })
+      router.push({ name: "WasteMeasurements" })
     })
     .catch(handleServerError)
 }
