@@ -5,7 +5,7 @@ import { useRootStore } from "@/stores/root"
 
 const routes = [
   {
-    path: "/pesage-gaspillage-alimentaire/:canteenUrlComponent/:id?",
+    path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
     name: "WasteMeasurementTunnel",
     component: WasteMeasurementTunnel,
     props: (route) => ({ ...route.query, ...route.params }),
