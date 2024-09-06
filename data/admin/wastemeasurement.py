@@ -37,7 +37,7 @@ class WasteMeasurementAdmin(SimpleHistoryAdmin):
             },
         ),
         (
-            "Excédentes de préparation",
+            "Excédents de préparation",
             {
                 "fields": (
                     "preparation_total_mass",
@@ -59,7 +59,7 @@ class WasteMeasurementAdmin(SimpleHistoryAdmin):
             },
         ),
         (
-            "Excédentes reste assiette",
+            "Excédents reste assiette",
             {
                 "fields": (
                     "leftovers_total_mass",
