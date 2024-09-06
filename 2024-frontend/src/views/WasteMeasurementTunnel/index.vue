@@ -72,6 +72,8 @@ const continueAction = () => {
         router.push(nextRoute)
         stepWrapper.value.scrollTop = 0
         Object.assign(originalPayload, hotPayload)
+      } else {
+        router.push({ name: "WasteMeasurements" })
       }
     })
     .catch(handleServerError)
