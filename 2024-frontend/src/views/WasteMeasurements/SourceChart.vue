@@ -13,7 +13,6 @@ const measurementPercentageValues = computed(() => {
       preparation: getPercentage(m.preparationTotalMass, m.totalMass),
       unserved: getPercentage(m.unservedTotalMass, m.totalMass),
       leftovers: getPercentage(m.leftoversTotalMass, m.totalMass),
-      // TODO: other ?
     }
   }
   return undefined
