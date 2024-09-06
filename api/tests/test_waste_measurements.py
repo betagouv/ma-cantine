@@ -174,7 +174,7 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()["periodStartDate"][0],
-            "Il existe déjà une autre mesure pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la mesure existante ou corriger la date de début.",
+            "Il existe déjà une autre évaluation pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la évaluation existante ou corriger la date de début.",
         )
 
         # check an end date that falls in existing period
@@ -186,7 +186,7 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()["periodEndDate"][0],
-            "Il existe déjà une autre mesure pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la mesure existante ou corriger la date de fin.",
+            "Il existe déjà une autre évaluation pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la évaluation existante ou corriger la date de fin.",
         )
 
         # check a start and end date that encapsulate the periods of existing measurements
@@ -201,7 +201,7 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()["_All__"][0],
-            "Il existe déjà 2 autres mesures dans la période 2024-06-30 à 2024-07-16. Veuillez modifier les mesures existantes ou corriger les dates de la période.",
+            "Il existe déjà 2 autres évaluations dans la période 2024-06-30 à 2024-07-16. Veuillez modifier les évaluations existantes ou corriger les dates de la période.",
         )
 
     @authenticate
@@ -380,7 +380,7 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()["periodStartDate"][0],
-            "Il existe déjà une autre mesure pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la mesure existante ou corriger la date de début.",
+            "Il existe déjà une autre évaluation pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la évaluation existante ou corriger la date de début.",
         )
 
         # check an end date that falls in existing period
@@ -394,7 +394,7 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()["periodEndDate"][0],
-            "Il existe déjà une autre mesure pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la mesure existante ou corriger la date de fin.",
+            "Il existe déjà une autre évaluation pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la évaluation existante ou corriger la date de fin.",
         )
 
         # check a start and end date that encapsulate the periods of existing measurements
@@ -408,7 +408,7 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()["_All__"][0],
-            "Il existe déjà 2 autres mesures dans la période 2024-01-30 à 2024-08-10. Veuillez modifier les mesures existantes ou corriger les dates de la période.",
+            "Il existe déjà 2 autres évaluations dans la période 2024-01-30 à 2024-08-10. Veuillez modifier les évaluations existantes ou corriger les dates de la période.",
         )
 
     @authenticate
