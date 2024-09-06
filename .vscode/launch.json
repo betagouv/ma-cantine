@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Python: Django",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "python": "${workspaceFolder}/venv/bin/python",
             "program": "${workspaceFolder}/manage.py",
@@ -18,7 +18,7 @@
         },
         {
             "name": "Python: Tests",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "stopOnEntry": false,
             "python": "${workspaceFolder}/venv/bin/python",
@@ -31,9 +31,8 @@
             "django": true
         },
         {
-            "_docs": "to take advantage of this: import tag and @tag('debug')",
             "name": "Python: Debug tests",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "stopOnEntry": false,
             "python": "${workspaceFolder}/venv/bin/python",
@@ -48,11 +47,24 @@
         },
         {
             "name":"Python: Current File",
-            "type":"python",
+            "type":"debugpy",
             "request":"launch",
             "program":"${file}",
             "console":"integratedTerminal",
             "justMyCode":true
+        },
+        {
+            "name": "Geo Bot SIRET",
+            "type": "debugpy",
+            "request": "launch",
+            "stopOnEntry": false,
+            "python": "${workspaceFolder}/venv/bin/python",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "fill_missing_geolocation_data_using_siret",
+            ],
+            "justMyCode": false,
+            "django": true
         },
     ]
 }
