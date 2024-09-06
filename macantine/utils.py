@@ -11,9 +11,8 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 REGIONS_LIB = {i.label.split(" - ")[1]: i.value for i in Region}
 
 
-def get_city_from_siret(canteen_siret, token):
-    canteen = {}
-    canteen["siret"] = canteen_siret
+def get_city_from_siret(canteen_siret, response, token):
+    response["siret"] = canteen_siret
     try:
         redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
         redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
@@ -29,17 +28,17 @@ def get_city_from_siret(canteen_siret, token):
         if siret_response.ok:
             siret_response = siret_response.json()
             try:
-                canteen["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
-                canteen["cityInseeCode"] = siret_response["etablissement"]["adresseEtablissement"][
+                response["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
+                response["cityInseeCode"] = siret_response["etablissement"]["adresseEtablissement"][
                     "codeCommuneEtablissement"
                 ]
-                canteen["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
+                response["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
                     "codePostalEtablissement"
                 ]
-                canteen["city"] = siret_response["etablissement"]["adresseEtablissement"][
+                response["city"] = siret_response["etablissement"]["adresseEtablissement"][
                     "libelleCommuneEtablissement"
                 ]
-                return canteen
+                return response
             except KeyError as e:
                 logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
         else:
@@ -52,7 +51,7 @@ def get_city_from_siret(canteen_siret, token):
         logger.warning(f"Geolocation Bot: Timeout\n{e}")
     except Exception as e:
         logger.error(f"Geolocation Bot: Unexpected exception\n{e}")
-    return canteen
+    return response
 
 
 def complete_location_data(response):
