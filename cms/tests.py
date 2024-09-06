@@ -1,6 +1,17 @@
 from django.test import TransactionTestCase
-from django.db.utils import IntegrityError
+from django.core.exceptions import ValidationError
 from .models import WasteAction
+from .factories import WasteActionFactory
+
+
+WASTE_ACTION = {
+    "title": "Action 1",
+    "description": "Description",
+    "effort": WasteAction.Effort.SMALL,
+    "waste_origins": [WasteAction.WasteOrigin.PREP],
+}
+
+WASTE_ACTION_REQUIRED_FIELDS = ["title", "description", "effort", "waste_origins"]
 
 
 class WasteActionModelSaveTest(TransactionTestCase):
@@ -9,7 +20,9 @@ class WasteActionModelSaveTest(TransactionTestCase):
         pass
 
     def test_waste_action_validation(self):
-        # NOT OK : waste_origins is required
-        self.assertRaises(IntegrityError, WasteAction.objects.create, title="Action 1")
-        # OK
-        WasteAction.objects.create(title="Action 1", subtitle=None, waste_origins=[WasteAction.WasteOrigin.PREP])
+        # NOT OK: missing required field
+        for required_field in WASTE_ACTION_REQUIRED_FIELDS:
+            WASTE_ACTION_WITHOUT_REQUIRED_FIELD = WASTE_ACTION | {required_field: None}
+            self.assertRaises(ValidationError, WasteActionFactory, **WASTE_ACTION_WITHOUT_REQUIRED_FIELD)
+        # OK: all required fields passed (subtitle can be empty)
+        WasteActionFactory(**WASTE_ACTION)
