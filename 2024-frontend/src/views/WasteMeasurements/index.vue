@@ -21,16 +21,14 @@ const canteen = computed(() => {
 })
 
 const newMeasurementRoute = {
-  name: "DiagnosticTunnel",
-  params: { canteenUrlComponent: props.canteenUrlComponent, year: 2024, measureId: "gaspillage-alimentaire" },
+  name: "WasteMeasurementTunnel",
+  params: { canteenUrlComponent: props.canteenUrlComponent },
 }
 
 const measurementTunnel = computed(() => ({
-  name: "DiagnosticTunnel",
+  name: "WasteMeasurementTunnel",
   params: {
     canteenUrlComponent: props.canteenUrlComponent,
-    year: 2024,
-    measureId: "gaspillage-alimentaire",
     id: measurement.value.id,
   },
 }))

@@ -92,6 +92,11 @@ CELLAR_HOST= Optionnel - le host du service S3
 CELLAR_KEY= Optionnel - la clé du service S3
 CELLAR_SECRET= Optionnel - le secret du service S3
 CELLAR_BUCKET_NAME= Optionnel - le nom du bucket S3 à utiliser
+DATA_WARE_HOUSE_USER= Optionnel - l'utilisateur de la base postgres utilisée pour les analsyes stats
+DATA_WARE_HOUSE_PASSWORD= Optionnel - le mot de passe de la base de postgres utilisée pour les analsyes stats
+DATA_WARE_HOUSE_HOST=Optionnel - le host de la base postgres utilisée pour les analsyes stats
+DATA_WARE_HOUSE_PORT= Optionnel - le port de la base postgres utilisée pour les analsyes stats
+DATA_WARE_HOUSE_DB= Optionnel - le nom de la db de la base postgres utilisée pour les analsyes stats
 DEBUG_PERFORMANCE= Optionnel - à utiliser avec "DEBUG" pour montrer la [Django Debug Toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/)
 ENVIRONMENT= Optionnel - si cette variable est remplie un badge sera visible dans l'application et l'admin changera. Les options sont : `dev` | `staging` | `demo` | `prod`
 REDIS_URL= L'instance redis à utiliser pour les tâches asynchrones et le cache des clés API. Par exemple : 'redis://localhost:6379/0'
@@ -277,4 +282,36 @@ Dans le dossier principal, lancez :
 
 En prod, faut ajouter `CC_PRE_BUILD_HOOK=./clevercloud/pre-build-hook.sh`
 
-À noter qu'à ce moment, Vue 3 ne peut pas être deployer en prod car il y a un bug avec le django-vite-plugin.
+## Déploiement
+
+Vérification pre-déploiment
+
+- est-ce que les tests passent sur staging ?
+- est-ce que tout va bien côté Clever Cloud ?
+- est-ce qu'il y a des cherry-picks sur main qui n'existent pas sur staging ?
+
+Étapes :
+
+- https://github.com/betagouv/ma-cantine/releases > "Draft a new release"
+- "Choose a tag" > taper la date d'aujourd'hui en format YYYY-MM-DD > "Create a new tag on publish"
+- "Generate release notes"
+- Modifier les notes générés (indications ci-dessous)
+- "Publish release"
+- Si il y a des variables d'environnement à ajouter, ajoutez-les sur prod et demo côté Clever Cloud
+- avec staging : `git pull`
+- preparer la branche main en locale : `git checkout main` `git rebase staging`
+- `git push` (peut-être `git push -f`)
+- Le déploiement va commencer automatiquement. Ça prend un moment pour déployer côté Clever Cloud, suivez la progression là-bas.
+- Une fois que le déploiement est fait, envoyer un message sur mattermost canal produit pour tenir l'équipe au courant.
+
+### Release notes
+
+Vous pourrez modifier les notes dans un éditeur pour être plus rapide.
+
+- supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dépendances"
+- supprimer la partie "by @username in https://..."
+- faire n'importe quel autre changement pour rendre la liste facilement comprensible par tout le monde
+
+### Debugging
+
+Si jamais vous doutez/si il y a un problème, parlez avec un.e autre dév.

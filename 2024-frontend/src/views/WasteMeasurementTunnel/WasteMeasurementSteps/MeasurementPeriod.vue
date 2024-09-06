@@ -13,7 +13,7 @@ const emit = defineEmits(["provide-vuelidate", "update-payload"])
 const originalPayload = inject("originalPayload")
 
 const state = reactive({
-  editCanteenMealCount: originalPayload.editCanteenMealCount,
+  editMealCount: false,
 })
 
 const togglePeriodEdit = () => {
@@ -21,14 +21,14 @@ const togglePeriodEdit = () => {
 }
 
 const datesEntered = computed(() => {
-  return !!payload.startDate && !!payload.endDate
+  return !!payload.periodStartDate && !!payload.periodEndDate
 })
 
 const startDateAsDate = computed(() => {
-  return new Date(payload.startDate)
+  return new Date(payload.periodStartDate)
 })
 const endDateAsDate = computed(() => {
-  return new Date(payload.endDate)
+  return new Date(payload.periodEndDate)
 })
 
 const daysInPeriod = computed(() => {
@@ -49,11 +49,7 @@ const canteen = reactive({
   dailyMealCount: 200,
 })
 
-const payload = reactive({
-  startDate: originalPayload.startDate,
-  endDate: originalPayload.endDate,
-  mealCount: originalPayload.mealCount,
-})
+const payload = reactive({})
 
 const afterStartDateValidator = (date) => {
   date = new Date(date)
@@ -63,8 +59,8 @@ const afterStartDateValidator = (date) => {
 const afterStartDate = helpers.withMessage("Faut être après la date de début", afterStartDateValidator)
 
 const rules = {
-  startDate: { required },
-  endDate: { required, afterStartDate },
+  periodStartDate: { required },
+  periodEndDate: { required, afterStartDate },
   mealCount: { required, integer, minValue: minValue(1) },
 }
 
@@ -80,6 +76,9 @@ watch(payload, () => {
 
 onMounted(() => {
   emit("provide-vuelidate", v$)
+  payload.periodStartDate = originalPayload?.periodStartDate
+  payload.periodEndDate = originalPayload?.periodEndDate
+  payload.mealCount = originalPayload?.mealCount
 })
 </script>
 
@@ -91,22 +90,22 @@ onMounted(() => {
           <legend class="fr-text--lg fr-mb-1w fr-px-0">Période de mesure de mon gaspillage alimentaire</legend>
           <div class="fr-col-md-7">
             <DsfrInputGroup
-              v-model="payload.startDate"
+              v-model="payload.periodStartDate"
               type="date"
               label="Début"
               label-visible
-              :max="payload.endDate"
-              :error-message="formatError(v$.startDate)"
+              :max="payload.periodEndDate"
+              :error-message="formatError(v$.periodStartDate)"
               @change="calculateMealCountMaybe"
             />
             <DsfrInputGroup
-              v-model="payload.endDate"
+              v-model="payload.periodEndDate"
               type="date"
               label="Fin"
               label-visible
               class="fr-mb-2w"
-              :min="payload.startDate"
-              :error-message="formatError(v$.endDate)"
+              :min="payload.periodStartDate"
+              :error-message="formatError(v$.periodEndDate)"
               @change="calculateMealCountMaybe"
             />
           </div>

@@ -1,15 +1,17 @@
 import logging
-from data.models import WasteMeasurement
 from api.serializers import WasteMeasurementSerializer
-from rest_framework.generics import ListCreateAPIView
-from data.models import Canteen
 from api.permissions import (
     IsAuthenticated,
     IsCanteenManager,
+    IsLinkedCanteenManager,
 )
 from api.views.utils import update_change_reason_with_auth
+from data.models import WasteMeasurement, Canteen
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import JsonResponse
+from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 
 logger = logging.getLogger(__name__)
 
@@ -43,3 +45,14 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         measurement = serializer.save(canteen=canteen)
         update_change_reason_with_auth(self, measurement)
+
+
+class CanteenWasteMeasurementView(RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    queryset = WasteMeasurement.objects.all()
+    serializer_class = WasteMeasurementSerializer
+
+    def put(self, request, *args, **kwargs):
+        return JsonResponse(
+            {"error": "Only PATCH request supported in this resource"}, status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )

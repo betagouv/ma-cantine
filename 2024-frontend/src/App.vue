@@ -4,6 +4,7 @@ import { reactive, computed, watch } from "vue"
 import AppHeader from "@/components/AppHeader.vue"
 import AppFooter from "@/components/AppFooter.vue"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
+import NotificationCenter from "@/components/NotificationCenter.vue"
 
 const layout = reactive({ fullscreen: false })
 const routerViewClass = computed(() => (layout.fullscreen ? "" : "fr-container fr-pb-2w"))
@@ -27,6 +28,8 @@ watch(route, (to) => {
     </main>
 
     <AppFooter v-if="!layout.fullscreen" />
+
+    <NotificationCenter />
   </div>
 </template>
 
