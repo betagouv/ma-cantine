@@ -12,8 +12,8 @@ def validate_before_today(value):
 
 class WasteMeasurement(models.Model):
     class Meta:
-        verbose_name = "pesage du gaspillage alimentaire"
-        verbose_name_plural = "pesages du gaspillage alimentaire"
+        verbose_name = "évaluation du gaspillage alimentaire"
+        verbose_name_plural = "évaluations du gaspillage alimentaire"
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
@@ -159,7 +159,7 @@ class WasteMeasurement(models.Model):
             raise ValidationError(
                 {
                     "period_start_date": [
-                        f"Il existe déjà une autre mesure pour la période {wm.period_start_date} à {wm.period_end_date}. Veuillez modifier la mesure existante ou corriger la date de début."
+                        f"Il existe déjà une autre évaluation pour la période {wm.period_start_date} à {wm.period_end_date}. Veuillez modifier la évaluation existante ou corriger la date de début."
                     ]
                 }
             )
@@ -173,7 +173,7 @@ class WasteMeasurement(models.Model):
             raise ValidationError(
                 {
                     "period_end_date": [
-                        f"Il existe déjà une autre mesure pour la période {wm.period_start_date} à {wm.period_end_date}. Veuillez modifier la mesure existante ou corriger la date de fin."
+                        f"Il existe déjà une autre évaluation pour la période {wm.period_start_date} à {wm.period_end_date}. Veuillez modifier la évaluation existante ou corriger la date de fin."
                     ]
                 }
             )
@@ -184,7 +184,7 @@ class WasteMeasurement(models.Model):
         )
         if measurements_within_period.exists():
             wm_count = measurements_within_period.count()
-            measure_count_str = "une autre mesure" if wm_count == 1 else f"{wm_count} autres mesures"
+            measure_count_str = "une autre évaluation" if wm_count == 1 else f"{wm_count} autres évaluations"
             raise ValidationError(
-                f"Il existe déjà {measure_count_str} dans la période {start_date} à {end_date}. Veuillez modifier les mesures existantes ou corriger les dates de la période."
+                f"Il existe déjà {measure_count_str} dans la période {start_date} à {end_date}. Veuillez modifier les évaluations existantes ou corriger les dates de la période."
             )

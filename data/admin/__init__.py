@@ -1,6 +1,7 @@
 from .user import UserAdmin  # noqa
 from .canteen import CanteenAdmin  # noqa
 from .diagnostic import DiagnosticAdmin  # noqa
+from .wastemeasurement import WasteMeasurementAdmin  # noqa
 from .sector import Sector  # noqa
 from .blogpost import BlogPost  # noqa
 from .blogtag import BlogTag  # noqa
