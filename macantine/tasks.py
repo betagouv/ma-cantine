@@ -13,7 +13,7 @@ from django.db.models.functions import Length
 from django.core.management import call_command
 from data.models import User, Canteen
 import redis as r
-from common.utils import get_or_create_token_sirene
+from common.utils import get_token_sirene
 from .celery import app
 from .utils import get_city_from_siret
 from .etl.analysis import ETL_ANALYSIS
@@ -359,7 +359,7 @@ def _update_canteen_geo_data(canteen, response):
 @app.task()
 def fill_missing_geolocation_data_using_siret():
     candidate_canteens = _get_candidate_canteens_for_siret_geobot()
-    token = get_or_create_token_sirene()
+    token = get_token_sirene()
 
     if len(candidate_canteens) == 0:
         logger.info("No candidate canteens have been found. Nothing to do here...")

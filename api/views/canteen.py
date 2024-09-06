@@ -6,7 +6,7 @@ from django.apps import apps
 from django.conf import settings
 from django.http import JsonResponse
 import requests
-from common.utils import send_mail
+from common.utils import send_mail, get_token_sirene
 from macantine.utils import complete_location_data, get_city_from_siret
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError, BadRequest
@@ -448,7 +448,8 @@ class CanteenStatusView(APIView):
         siret = request.parser_context.get("kwargs").get("siret")
         response = check_siret_response(siret, request) or {}
         if not response:
-            response = get_city_from_siret(siret, response)
+            token = get_token_sirene()
+            response = get_city_from_siret(siret, response, token)
             city = response.get("city", None)
             postcode = response.get("postalCode", None)
             if city and postcode:

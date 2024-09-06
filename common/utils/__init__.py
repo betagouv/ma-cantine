@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
-def get_or_create_token_sirene():
+def get_token_sirene():
     if not settings.SIRET_API_KEY or not settings.SIRET_API_SECRET:
         logger.warning("skipping siret token fetching because key and secret env vars aren't set")
         return
