@@ -1,16 +1,16 @@
 import { createRouter, createWebHistory } from "vue-router"
-import DiagnosticTunnel from "@/views/DiagnosticTunnel"
+import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel"
 import ImportSelection from "@/views/ImportSelection"
 import { useRootStore } from "@/stores/root"
 
 const routes = [
   {
-    path: "/diagnostic-tunnel/:canteenUrlComponent/:year/:measureId",
-    name: "DiagnosticTunnel",
-    component: DiagnosticTunnel,
+    path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
+    name: "WasteMeasurementTunnel",
+    component: WasteMeasurementTunnel,
     props: (route) => ({ ...route.query, ...route.params }),
     meta: {
-      title: "Bilan",
+      title: "Pesage gaspillage alimentaire",
       authenticationRequired: true,
       fullscreen: true,
     },

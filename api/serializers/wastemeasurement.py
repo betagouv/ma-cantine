@@ -51,7 +51,7 @@ class WasteMeasurementSerializer(serializers.ModelSerializer):
 
         if has_start_date:
             measurement_containing_start_date = other_measurements.filter(
-                period_start_date__lt=start_date, period_end_date__gt=start_date
+                period_start_date__lte=start_date, period_end_date__gte=start_date
             )
             if measurement_containing_start_date.exists():
                 wm = measurement_containing_start_date.first()
@@ -65,7 +65,7 @@ class WasteMeasurementSerializer(serializers.ModelSerializer):
 
         if has_end_date:
             measurement_containing_end_date = other_measurements.filter(
-                period_start_date__lt=end_date, period_end_date__gt=end_date
+                period_start_date__lte=end_date, period_end_date__gte=end_date
             )
             if measurement_containing_end_date.exists():
                 wm = measurement_containing_end_date.first()
@@ -79,7 +79,7 @@ class WasteMeasurementSerializer(serializers.ModelSerializer):
 
         if has_start_date or has_end_date:
             measurements_within_period = other_measurements.filter(
-                period_start_date__gt=start_date, period_end_date__lt=end_date
+                period_start_date__gte=start_date, period_end_date__lte=end_date
             )
             if measurements_within_period.exists():
                 wm_count = measurements_within_period.count()
