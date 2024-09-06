@@ -344,9 +344,9 @@ def _fill_from_api_response(response, canteens):
 
 def _update_canteen_geo_data(canteen, response):
     try:
-        if "city_insee_code" in response.keys():
-            canteen.city_insee_code = response["city_insee_code"]
-            canteen.postal_code = response["postal_code"]
+        if "cityInseeCode" in response.keys():
+            canteen.city_insee_code = response["cityInseeCode"]
+            canteen.postal_code = response["postalCode"]
             canteen.city = response["city"]
             canteen.save()
             update_change_reason(canteen, "Données de localisation MAJ par bot, via SIRET")

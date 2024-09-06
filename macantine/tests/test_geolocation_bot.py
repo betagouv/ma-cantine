@@ -168,7 +168,7 @@ class TestGeolocationWithSiretBot(TestCase):
             ),
             status_code=200,
         )
-        response = utils.get_city_from_siret(candidate_canteen.siret, token)
+        response = utils.get_city_from_siret(candidate_canteen.siret, {}, token)
         self.assertEquals(response["cityInseeCode"], city_insee_code)
 
     def test_geolocation_with_siret_data_filled(self, mock):
@@ -181,7 +181,7 @@ class TestGeolocationWithSiretBot(TestCase):
         canteen = CanteenFactory.create(city_insee_code=None, siret=siret_canteen)
         mock.post(
             "https://api.insee.fr/token",
-            json={"token_type": "bearer", "access_token": "token"},
+            json={"token_type": "bearer", "access_token": token},
         )
 
         city_insee_code = "29352"
