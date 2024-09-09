@@ -147,7 +147,7 @@ class TestGeolocationWithSiretBot(TestCase):
         # Call the service to hit the mocked API.
         mock.post(
             "https://api.insee.fr/token",
-            json={"token_type": "bearer", "access_token": "token"},
+            json={"token_type": "bearer", "access_token": token},
         )
         city_insee_code = "29352"
 
