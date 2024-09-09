@@ -5,7 +5,7 @@ from cms.models import WasteAction
 
 
 class WasteActionFilterSet(WagtailFilterSet):
-    title = CharFilter(lookup_expr="icontains")
+    title = CharFilter(label="Titre contient", lookup_expr="unaccent__icontains")
     effort = MultipleChoiceFilter(choices=WasteAction.Effort.choices, widget=forms.CheckboxSelectMultiple)
     waste_origins = MultipleChoiceFilter(
         label=WasteAction._meta.get_field("waste_origins").verbose_name,
