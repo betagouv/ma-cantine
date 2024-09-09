@@ -697,6 +697,7 @@ export default Object.freeze({
       value: "MEDIUM",
       text: "Moyen",
       description: "Investissement financier et humain relativement important, impact moyen.",
+      icon: "$progress-4-line",
     },
     {
       value: "LARGE",
