@@ -16,9 +16,9 @@
       <v-row>
         <v-col cols="12" class="d-flex flex-column align-end mt-8" sm="2">
           <p class="mb-2">Type d'action</p>
-          <DsfrTag :text="effortLabel" :closeable="false" :small="true" :clickable="false" />
+          <DsfrTag :text="effort.text" :icon="effort.icon" :closeable="false" :small="true" :clickable="false" />
           <p class="text-right">
-            <i>{{ effortDescription }}</i>
+            <i>{{ effort.description }}</i>
           </p>
           <p class="mt-12 mb-2">Origine du gaspillage</p>
           <DsfrTagGroup
@@ -88,20 +88,21 @@ export default {
   },
   computed: {
     effort() {
-      return Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort)
-    },
-    effortLabel() {
-      return this.effort?.text || "Inconnu"
-    },
-    effortDescription() {
-      return this.effort?.description || ""
+      return (
+        Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort) || {
+          text: "Inconnu",
+          icon: "",
+          description: "",
+        }
+      )
     },
     wasteOrigins() {
       return this.wasteAction.wasteOrigins.map((wasteOriginId) => {
-        const wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId)?.text
+        const wasteOrigin = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId)
         return {
           id: wasteOriginId,
-          text: wasteOriginLabel ? wasteOriginLabel : "Inconnu",
+          text: wasteOrigin?.text || "Inconnu",
+          icon: wasteOrigin?.icon,
         }
       })
     },

@@ -3,6 +3,7 @@
     <li v-for="tag in tags" :key="tag.id">
       <DsfrTag
         :text="tag.text"
+        :icon="tag.icon"
         :closeable="closeable"
         @close="closeable && closeAction(tag)"
         :color="tag.color"

@@ -7,7 +7,7 @@
       alt=""
     />
     <v-card-text class="pa-10 pb-5">
-      <DsfrTagGroup v-if="tags.length" :tags="tags" :closeable="false" :small="true" />
+      <DsfrTagGroup v-if="tags.length" :tags="tags" :closeable="false" :clickable="false" :small="true" />
       <h2 class="mt-6 fr-h4">
         <router-link :to="{ name: 'WasteActionPage', params: { id: wasteAction.id } }">
           {{ wasteAction.title }}
@@ -40,16 +40,17 @@ export default {
   components: { DsfrTagGroup },
   computed: {
     tags() {
-      const effortLabel = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort)?.text
-      const effort = [{ id: this.wasteAction.effort, text: effortLabel || "Inconnu" }]
+      const effort = Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort)
+      const tags = [{ id: this.wasteAction.effort, text: effort?.text || "Inconnu", icon: effort?.icon }]
       const wasteOrigins = this.wasteAction.wasteOrigins.map((wasteOriginId) => {
-        const wasteOriginLabel = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId)?.text
+        const wasteOrigin = Constants.WasteActionOrigins.find((item) => item.value === wasteOriginId)
         return {
           id: wasteOriginId,
-          text: wasteOriginLabel || "Inconnu",
+          text: wasteOrigin?.text || "Inconnu",
+          icon: wasteOrigin?.icon,
         }
       })
-      return effort.concat(wasteOrigins)
+      return tags.concat(wasteOrigins)
     },
   },
 }

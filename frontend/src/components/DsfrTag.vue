@@ -12,10 +12,10 @@
   >
     {{ text }}
   </v-chip>
-  <p v-else class="tag fr-text-xs mb-0">
+  <span v-else class="tag fr-text-xs ma-1">
     <v-icon v-if="icon" x-small>{{ icon }}</v-icon>
     {{ text }}
-  </p>
+  </span>
 </template>
 
 <script>
@@ -65,7 +65,7 @@ export default {
 </script>
 <style scoped>
 .tag {
-  display: flex;
+  display: inline-flex;
   padding: 2px 8px;
   justify-content: center;
   align-items: center;
