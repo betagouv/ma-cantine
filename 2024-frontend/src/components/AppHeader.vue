@@ -115,6 +115,10 @@ const navItems = [
         to: { name: "FaqPage" },
       },
       {
+        text: "Importer un fichier",
+        to: { name: "ImportSelection" },
+      },
+      {
         text: "Contactez-nous",
         to: { name: "ContactPage" },
       },

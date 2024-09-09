@@ -299,6 +299,10 @@ export default {
               to: { name: "FaqPage" },
             },
             {
+              text: "Importer un fichier",
+              to: { name: "DiagnosticsImporter" },
+            },
+            {
               text: "Contactez-nous",
               to: { name: "ContactPage" },
             },
