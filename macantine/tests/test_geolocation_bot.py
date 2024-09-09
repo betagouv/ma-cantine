@@ -168,7 +168,7 @@ class TestGeolocationWithSiretBot(TestCase):
             ),
             status_code=200,
         )
-        response = utils.get_city_from_siret(candidate_canteen.siret, {}, token)
+        response = utils.fetch_geo_data_from_api_insee_sirene_by_siret(candidate_canteen.siret, {}, token)
         self.assertEquals(response["cityInseeCode"], city_insee_code)
 
     def test_geolocation_with_siret_data_filled(self, mock):

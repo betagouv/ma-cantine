@@ -11,7 +11,7 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 REGIONS_LIB = {i.label.split(" - ")[1]: i.value for i in Region}
 
 
-def get_city_from_siret(canteen_siret, response, token):
+def fetch_geo_data_from_api_insee_sirene_by_siret(canteen_siret, response, token):
     response["siret"] = canteen_siret
     try:
         redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
@@ -54,7 +54,7 @@ def get_city_from_siret(canteen_siret, response, token):
     return response
 
 
-def complete_location_data(response):
+def fetch_geo_data_from_api_entreprise_by_siret(response):
     try:
         location_response = requests.get(
             f"https://api-adresse.data.gouv.fr/search/?q={response['cityInseeCode']}&citycode={response['cityInseeCode']}&type=municipality&autocomplete=1"

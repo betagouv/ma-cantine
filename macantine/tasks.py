@@ -15,11 +15,12 @@ from data.models import User, Canteen
 import redis as r
 from common.utils import get_token_sirene
 from .celery import app
-from .utils import get_city_from_siret
+from .utils import fetch_geo_data_from_api_insee_sirene_by_siret
 from .etl.analysis import ETL_ANALYSIS
 from .etl.open_data import ETL_TD, ETL_CANTEEN
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
+
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -367,7 +368,7 @@ def fill_missing_geolocation_data_using_siret():
     for canteen in candidate_canteens:
         if len(canteen.siret) == 14:
             response = {}
-            response = get_city_from_siret(canteen.siret, response, token)
+            response = fetch_geo_data_from_api_insee_sirene_by_siret(canteen.siret, response, token)
             if response:
                 _update_canteen_geo_data(canteen, response)
 
