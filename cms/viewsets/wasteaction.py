@@ -1,8 +1,9 @@
 from wagtail.snippets.views.snippets import SnippetViewSet
 from wagtail.admin.panels import TabbedInterface, ObjectList, FieldPanel
-from cms.models.wasteaction import WasteAction
 from wagtail.images.api.v2.views import BaseAPIViewSet
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer, CamelCaseBrowsableAPIRenderer
+from cms.models.wasteaction import WasteAction
+from cms.filtersets.wasteaction import WasteActionFilterSet
 
 
 class WasteActionViewSet(SnippetViewSet):
@@ -16,6 +17,8 @@ class WasteActionViewSet(SnippetViewSet):
     menu_name = "wasteactions"
     menu_order = 90
     add_to_admin_menu = True
+    filterset_class = WasteActionFilterSet
+    list_display = ["title", "modification_date"]
     edit_handler = TabbedInterface(
         [
             ObjectList(
@@ -31,7 +34,6 @@ class WasteActionViewSet(SnippetViewSet):
             ObjectList([FieldPanel("lead_image")], heading="Illustration"),
         ]
     )
-    list_display = ["title", "modification_date"]
 
 
 class WasteActionAPIViewSet(BaseAPIViewSet):
