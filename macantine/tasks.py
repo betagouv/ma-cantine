@@ -13,13 +13,14 @@ from django.db.models.functions import Length
 from django.core.management import call_command
 from data.models import User, Canteen
 import redis as r
-from common.utils import get_siret_token
+from common.utils import get_token_sirene
 from .celery import app
-from .utils import get_infos_from_siret
+from .utils import fetch_geo_data_from_api_insee_sirene_by_siret
 from .etl.analysis import ETL_ANALYSIS
 from .etl.open_data import ETL_TD, ETL_CANTEEN
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
+
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -344,9 +345,9 @@ def _fill_from_api_response(response, canteens):
 
 def _update_canteen_geo_data(canteen, response):
     try:
-        if "city_insee_code" in response.keys():
-            canteen.city_insee_code = response["city_insee_code"]
-            canteen.postal_code = response["postal_code"]
+        if "cityInseeCode" in response.keys():
+            canteen.city_insee_code = response["cityInseeCode"]
+            canteen.postal_code = response["postalCode"]
             canteen.city = response["city"]
             canteen.save()
             update_change_reason(canteen, "Données de localisation MAJ par bot, via SIRET")
@@ -359,15 +360,17 @@ def _update_canteen_geo_data(canteen, response):
 @app.task()
 def fill_missing_geolocation_data_using_siret():
     candidate_canteens = _get_candidate_canteens_for_siret_geobot()
-    token = get_siret_token()
+    token = get_token_sirene()
 
     if len(candidate_canteens) == 0:
         logger.info("No candidate canteens have been found. Nothing to do here...")
         return
     for canteen in candidate_canteens:
-        response = get_infos_from_siret(canteen.siret, token)
-        if response:
-            _update_canteen_geo_data(canteen, response)
+        if len(canteen.siret) == 14:
+            response = {}
+            response = fetch_geo_data_from_api_insee_sirene_by_siret(canteen.siret, response, token)
+            if response:
+                _update_canteen_geo_data(canteen, response)
 
     logger.info(f"Siret Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
 
