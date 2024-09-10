@@ -9,6 +9,8 @@
     close-label="Fermer"
     close-icon="$close-line"
     :small="small"
+    :aria-pressed="clickable ? selected.toString() : ''"
+    :tag="clickable ? 'button' : 'span'"
   >
     {{ text }}
   </v-chip>
@@ -45,11 +47,16 @@ export default {
       type: String,
       required: false,
     },
+    selected: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     tagColor() {
       if (this.color) return this.color
-      else if (this.closeable) return "primary"
+      else if (this.closeable || this.selected) return "primary"
+      else if (this.clickable) return "primary lighten-5 primary--text"
       return "grey lighten-4"
     },
   },

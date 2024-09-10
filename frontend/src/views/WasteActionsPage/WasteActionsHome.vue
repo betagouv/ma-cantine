@@ -11,8 +11,14 @@
       <div class="d-flex justify-end">
         <DsfrSegmentedControl v-model="viewStyle" legend="Vue" :noLegend="true" :items="viewStyles" />
       </div>
+      <v-row class="mb-4">
+        <v-col>
+          <p class="mb-2">Origine du gaspillage</p>
+          <DsfrTagGroup :tags="wasteOrigins" @clickTag="addWasteOriginFilter" />
+        </v-col>
+      </v-row>
       <div v-if="viewStyle === 'card'">
-        <v-row class="pa-2 mt-2">
+        <v-row class="mt-2">
           <v-col vols="12" sm="6" md="4" v-for="wasteAction in wasteActions" :key="wasteAction.id">
             <WasteActionCard :wasteAction="wasteAction" />
           </v-col>
@@ -36,10 +42,19 @@ import WasteActionsListView from "./WasteActionsListView"
 import DsfrPagination from "@/components/DsfrPagination"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
+import DsfrTagGroup from "@/components/DsfrTagGroup"
+import Constants from "@/constants"
 
 export default {
   name: "WasteActionsHome",
-  components: { WasteActionCard, WasteActionsListView, DsfrPagination, BreadcrumbsNav, DsfrSegmentedControl },
+  components: {
+    WasteActionCard,
+    WasteActionsListView,
+    DsfrPagination,
+    BreadcrumbsNav,
+    DsfrSegmentedControl,
+    DsfrTagGroup,
+  },
   data() {
     return {
       limit: 6,
@@ -59,6 +74,13 @@ export default {
         },
       ],
       viewStyle: "card",
+      filters: {
+        wasteOrigins: {
+          param: "waste_origins",
+          value: ["PREP"],
+          default: [],
+        },
+      },
     }
   },
   computed: {
@@ -67,6 +89,13 @@ export default {
     },
     offset() {
       return (this.page - 1) * this.limit
+    },
+    wasteOrigins() {
+      return Constants.WasteActionOrigins.map((origin) => ({
+        ...origin,
+        id: origin.value,
+        selected: this.filters.wasteOrigins.value.includes(origin.value),
+      }))
     },
   },
 
@@ -93,6 +122,11 @@ export default {
       } else {
         this.$router.replace({ query }).catch(() => {})
       }
+    },
+    addWasteOriginFilter(tag) {
+      const idx = this.filters.wasteOrigins.value.findIndex((i) => i === tag.value)
+      if (idx === -1) this.filters.wasteOrigins.value.push(tag.value)
+      else this.filters.wasteOrigins.value.splice(idx, 1)
     },
   },
   watch: {

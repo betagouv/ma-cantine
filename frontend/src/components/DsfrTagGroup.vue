@@ -3,11 +3,13 @@
     <li v-for="tag in tags" :key="tag.id">
       <DsfrTag
         :text="tag.text"
+        :selected="tag.selected"
         :closeable="closeable"
         @close="closeable && closeAction(tag)"
         :color="tag.color"
         :small="small"
         :clickable="clickable"
+        @click="clickable && clickAction(tag)"
       />
     </li>
   </ul>
@@ -38,6 +40,9 @@ export default {
     },
   },
   methods: {
+    clickAction(tag) {
+      this.$emit("clickTag", tag)
+    },
     closeAction(tag) {
       this.$emit("closeTag", tag)
     },
