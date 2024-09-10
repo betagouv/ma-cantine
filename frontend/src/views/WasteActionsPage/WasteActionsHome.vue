@@ -13,8 +13,12 @@
       </div>
       <v-row class="mb-4">
         <v-col>
+          <p class="mb-2">Taille d'action</p>
+          <DsfrTagGroup :tags="wasteActionEfforts" @clickTag="(tag) => addFilterTag('effort', tag)" />
+        </v-col>
+        <v-col>
           <p class="mb-2">Origine du gaspillage</p>
-          <DsfrTagGroup :tags="wasteOrigins" @clickTag="addWasteOriginFilter" />
+          <DsfrTagGroup :tags="wasteOrigins" @clickTag="(tag) => addFilterTag('wasteOrigins', tag)" />
         </v-col>
       </v-row>
       <div v-if="viewStyle === 'card'">
@@ -75,9 +79,14 @@ export default {
       ],
       viewStyle: "card",
       filters: {
+        effort: {
+          param: "taille",
+          value: [],
+          default: [],
+        },
         wasteOrigins: {
-          param: "waste_origins",
-          value: ["PREP"],
+          param: "origine",
+          value: [],
           default: [],
         },
       },
@@ -91,10 +100,17 @@ export default {
       return (this.page - 1) * this.limit
     },
     wasteOrigins() {
-      return Constants.WasteActionOrigins.map((origin) => ({
-        ...origin,
-        id: origin.value,
-        selected: this.filters.wasteOrigins.value.includes(origin.value),
+      return Constants.WasteActionOrigins.map((item) => ({
+        ...item,
+        id: item.value,
+        selected: this.filters.wasteOrigins.value.includes(item.value),
+      }))
+    },
+    wasteActionEfforts() {
+      return Constants.WasteActionEffortLevels.map((item) => ({
+        ...item,
+        id: item.value,
+        selected: this.filters.effort.value.includes(item.value),
       }))
     },
   },
@@ -123,10 +139,10 @@ export default {
         this.$router.replace({ query }).catch(() => {})
       }
     },
-    addWasteOriginFilter(tag) {
-      const idx = this.filters.wasteOrigins.value.findIndex((i) => i === tag.value)
-      if (idx === -1) this.filters.wasteOrigins.value.push(tag.value)
-      else this.filters.wasteOrigins.value.splice(idx, 1)
+    addFilterTag(filterKey, tag) {
+      const idx = this.filters[filterKey].value.findIndex((i) => i === tag.value)
+      if (idx === -1) this.filters[filterKey].value.push(tag.value)
+      else this.filters[filterKey].value.splice(idx, 1)
     },
   },
   watch: {
