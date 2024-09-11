@@ -15,4 +15,4 @@ Afin de regénérer la documentation, utilisez [table-schema-to-markdown](https:
 # Paramètres non retenus
 
 Pour chaque schema, il existe un fichier `param_non_retenus_<NOM_DU_JEU>.json`
-L'objectif est de s'assurer qu'au aucun oublie n'a été fait dans la liste des paramètres présents dans les bases de données. 
+L'objectif est de s'assurer qu'au aucun oublie n'a été fait dans la liste des paramètres présents dans les bases de données.
