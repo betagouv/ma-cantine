@@ -100,12 +100,12 @@ print("]")
 
 # importer
 print("\n# CSV")
-for l in labels:
-    print(f"{l[1]}", end="")
+for label in labels:
+    print(f"{label[1]}", end="")
     for f in families:
         print(",", end="")
 print("")
-for l in labels:
+for _ in labels:
     for f in families:
         print(f"{f[1].replace(',', ' et')}", end=",")
 # for f in fields:

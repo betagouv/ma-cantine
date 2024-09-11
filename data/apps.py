@@ -6,4 +6,4 @@ class DataConfig(AppConfig):
     name = "data"
 
     def ready(self):
-        import data.signals
+        import data.signals  # noqa: F401
