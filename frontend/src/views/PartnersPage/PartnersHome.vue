@@ -4,10 +4,10 @@
     <v-row>
       <v-col cols="12" sm="7" md="8">
         <h1 class="fr-h1 mb-4">
-          Faites vous accompagner dans votre démarche EGAlim !
+          Faites-vous accompagner dans votre démarche EGAlim !
         </h1>
         <ul class="mb-4">
-          <li>Vous avez des difficultés à atteindre vos objectifs EGAlim ?</li>
+          <li>Vous avez des difficultés à atteindre vos objectifs EGAlim&nbsp;?</li>
           <li>Vous avez besoin d'aller plus loin dans votre démarche vers une alimentation durable ?</li>
           <li>Vous avez besoin de ressources personnalisées sur votre territoire ?</li>
           <li>Vous êtes en recherche de formation pour vos cuisiniers ?</li>
