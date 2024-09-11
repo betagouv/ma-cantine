@@ -4,7 +4,7 @@
       <BreadcrumbsNav :title="wasteAction.title" :links="[{ to: backLink }]" />
       <v-row>
         <img
-          :src="wasteAction.leadImage ? wasteAction.leadImage.url : '/static/images/wasteaction-default-image.jpg'"
+          :src="wasteAction.leadImage ? wasteAction.leadImage.image : '/static/images/wasteaction-default-image.jpg'"
           class="lead-image"
           alt=""
         />
@@ -67,7 +67,7 @@ export default {
       if (wasteAction) document.title = `${this.wasteAction.title} - ${this.$store.state.pageTitleSuffix}`
     },
     fetchWasteAction() {
-      return fetch(`/api/v1/wasteActions/${this.id}/`)
+      return fetch(`/api/v1/wasteActions/${this.id}`)
         .then((response) => {
           if (response.status !== 200) throw new Error()
           response.json().then((x) => this.setWasteAction(x))
