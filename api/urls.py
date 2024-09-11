@@ -40,6 +40,7 @@ from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, UndoCla
 from api.views import ActionableCanteensListView, ActionableCanteenRetrieveView
 from api.views import CanteenStatusView, VideoTutorialListView, DiagnosticsToTeledeclareListView
 from api.views import InitialDataView, UnlinkSatelliteView
+from api.views import WasteActionsView
 
 
 urlpatterns = {
@@ -222,6 +223,7 @@ urlpatterns = {
     path("videoTutorials/", VideoTutorialListView.as_view(), name="video_tutorials"),
     path("initialData/", InitialDataView.as_view(), name="initial_data"),
     path("territoryCanteens/", TerritoryCanteensListView.as_view(), name="territory_canteens"),
+    path("wasteActions/", WasteActionsView.as_view(), name="waste_actions"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)
