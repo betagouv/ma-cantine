@@ -5,7 +5,7 @@ from api.serializers import WasteActionSerializer
 
 
 class WasteActionPagination(LimitOffsetPagination):
-    default_limit = 100
+    default_limit = 6
     max_limit = 100
 
 
