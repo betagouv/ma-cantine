@@ -1,7 +1,7 @@
 import random
 import factory
 from factory import fuzzy
-from data.models.wasteaction import WasteAction
+from data.models import WasteAction
 
 
 class WasteActionFactory(factory.django.DjangoModelFactory):
