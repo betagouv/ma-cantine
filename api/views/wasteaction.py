@@ -1,4 +1,4 @@
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from data.models import WasteAction
 from api.serializers import WasteActionSerializer
@@ -11,6 +11,12 @@ class WasteActionPagination(LimitOffsetPagination):
 
 class WasteActionsView(ListAPIView):
     model = WasteAction
+    queryset = WasteAction.objects.all()
     serializer_class = WasteActionSerializer
     pagination_class = WasteActionPagination
+
+
+class WasteActionView(RetrieveAPIView):
+    model = WasteAction
     queryset = WasteAction.objects.all()
+    serializer_class = WasteActionSerializer
