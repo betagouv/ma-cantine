@@ -38,7 +38,7 @@ class Command(BaseCommand):
             logger.info(f"Successfully imported {len(canteens_by_siret)} canteens from CSV file {filepath}")
 
     @staticmethod
-    def _create_models(row):
+    def _create_models(row):  # noqa: C901
         if Command._is_header_row(row):
             print("Ingoring header row")
             return
