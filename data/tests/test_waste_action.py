@@ -1,7 +1,7 @@
 from django.test import TransactionTestCase
 from django.core.exceptions import ValidationError
-from .models import WasteAction
-from .factories import WasteActionFactory
+from data.models import WasteAction
+from data.factories import WasteActionFactory
 
 
 WASTE_ACTION = {

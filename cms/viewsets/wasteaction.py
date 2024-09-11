@@ -2,7 +2,7 @@ from wagtail.snippets.views.snippets import SnippetViewSet
 from wagtail.admin.panels import TabbedInterface, ObjectList, FieldPanel
 from wagtail.images.api.v2.views import BaseAPIViewSet
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer, CamelCaseBrowsableAPIRenderer
-from cms.models.wasteaction import WasteAction
+from data.models import WasteAction
 from cms.filtersets.wasteaction import WasteActionFilterSet
 
 
