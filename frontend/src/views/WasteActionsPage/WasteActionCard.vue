@@ -1,9 +1,7 @@
 <template>
   <v-card outlined class="fill-height text-left d-flex flex-column dsfr expanded-link">
     <img
-      :src="
-        wasteAction.leadImage ? wasteAction.leadImage.meta.downloadUrl : '/static/images/wasteaction-default-image.jpg'
-      "
+      :src="wasteAction.leadImage ? wasteAction.leadImage.url : '/static/images/wasteaction-default-image.jpg'"
       alt=""
     />
     <v-card-text class="pa-10 pb-5">
