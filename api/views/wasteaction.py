@@ -10,6 +10,15 @@ class WasteActionPagination(LimitOffsetPagination):
     max_limit = 100
 
 
+class WasteActionFilterSet(django_filters.FilterSet):
+    effort = django_filters.MultipleChoiceFilter(choices=WasteAction.Effort)
+    waste_origins = django_filters.MultipleChoiceFilter(choices=WasteAction.WasteOrigin, lookup_expr="icontains")
+
+    class Meta:
+        model = WasteAction
+        fields = ["effort", "waste_origins"]
+
+
 class WasteActionsView(ListAPIView):
     model = WasteAction
     queryset = WasteAction.objects.all()
@@ -18,7 +27,7 @@ class WasteActionsView(ListAPIView):
     filter_backends = [
         django_filters.DjangoFilterBackend,
     ]
-    filterset_fields = {"effort": ["in"]}
+    filterset_class = WasteActionFilterSet
 
 
 class WasteActionView(RetrieveAPIView):

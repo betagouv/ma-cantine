@@ -27,7 +27,18 @@ class TestWasteActionsFiltersApi(APITestCase):
         WasteActionFactory.create(effort=WasteAction.Effort.SMALL)
 
         response = self.client.get(
-            f"{reverse('waste_actions_list')}?effort__in={WasteAction.Effort.SMALL},{WasteAction.Effort.MEDIUM}"
+            f"{reverse('waste_actions_list')}?effort={WasteAction.Effort.SMALL}&effort={WasteAction.Effort.MEDIUM}"
+        )
+        results = response.data["results"]
+        self.assertEqual(len(results), 2)
+
+    def test_origin_filter(self):
+        WasteActionFactory.create(waste_origins=[WasteAction.WasteOrigin.PLATE])
+        WasteActionFactory.create(waste_origins=[WasteAction.WasteOrigin.PLATE, WasteAction.WasteOrigin.PREP])
+        WasteActionFactory.create(waste_origins=[WasteAction.WasteOrigin.UNSERVED])
+
+        response = self.client.get(
+            f"{reverse('waste_actions_list')}?waste_origins={WasteAction.WasteOrigin.PREP}&waste_origins={WasteAction.WasteOrigin.UNSERVED}"
         )
         results = response.data["results"]
         self.assertEqual(len(results), 2)
