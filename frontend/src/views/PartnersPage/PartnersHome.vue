@@ -4,8 +4,15 @@
     <v-row>
       <v-col cols="12" sm="7" md="8">
         <h1 class="fr-h1 mb-4">
-          Améliorer votre offre avec le soutien des acteurs de l'éco-système
+          Faites-vous accompagner dans votre démarche EGAlim !
         </h1>
+        <ul class="mb-4">
+          <li>Vous avez des difficultés à atteindre vos objectifs EGAlim&nbsp;?</li>
+          <li>Vous avez besoin d'aller plus loin dans votre démarche vers une alimentation durable ?</li>
+          <li>Vous avez besoin de ressources personnalisées sur votre territoire ?</li>
+          <li>Vous êtes en recherche de formation pour vos cuisiniers ?</li>
+          <li>Vous avez besoin d'être accompagné grâce à des aides financières ?</li>
+        </ul>
         <ReferencingInfo />
       </v-col>
       <v-col cols="0" sm="5" md="4" v-if="$vuetify.breakpoint.smAndUp" class="py-0 pr-8 d-flex">

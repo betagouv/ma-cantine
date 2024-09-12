@@ -199,6 +199,8 @@ l'environnement virtuel) : `pip install pre-commit`.
 
 Puis l'activer : `pre-commit install`.
 
+Note : commande pour lancer les règles du pre-commit sur tous les fichiers : `pre-commit run --all-files`
+
 Les vérifications seront ensuite effectuées avant chaque commit. Attention, lorsqu'une vérification `fail`,
 le commit est annulé. Il faut donc que toutes les vérifications passent pour que le commit soit pris en
 compte. Si exceptionnellement vous voulez commiter malgré qu'une vérification ne passe pas, c'est possible

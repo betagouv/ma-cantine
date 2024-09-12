@@ -1,11 +1,11 @@
 <template>
   <div>
     <p>
-      Les acteurs se sont référencés eux mêmes en respectant notre charte.
+      Ce catalogue référence, en continu, des acteurs privés ou publics en capacité de vous apporter une aide (gratuite)
+      ou un service (payant) dans votre démarche d'alimentation durable.
     </p>
     <p>
-      Cette page n’engage pas l’administration ou l'équipe ma cantine ; elle constitue une proposition à l'attention des
-      responsables légaux de restaurants collectifs
+      Ces acteurs s'auto-référencent en acceptant notamment la charte des acteurs de l'éco-système.
     </p>
     <DownloadLink
       href="/static/documents/charte-referencement-acteurs-de-l-ecosysteme.pdf"

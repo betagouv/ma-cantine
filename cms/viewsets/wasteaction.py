@@ -1,8 +1,6 @@
 from wagtail.snippets.views.snippets import SnippetViewSet
 from wagtail.admin.panels import TabbedInterface, ObjectList, FieldPanel
-from wagtail.images.api.v2.views import BaseAPIViewSet
-from djangorestframework_camel_case.render import CamelCaseJSONRenderer, CamelCaseBrowsableAPIRenderer
-from cms.models.wasteaction import WasteAction
+from data.models import WasteAction
 from cms.filtersets.wasteaction import WasteActionFilterSet
 
 
@@ -34,24 +32,3 @@ class WasteActionViewSet(SnippetViewSet):
             ObjectList([FieldPanel("lead_image")], heading="Illustration"),
         ]
     )
-
-
-class WasteActionAPIViewSet(BaseAPIViewSet):
-    """
-    API endpoint that allows WasteActions to be viewed.
-    """
-
-    renderer_classes = [CamelCaseJSONRenderer, CamelCaseBrowsableAPIRenderer]
-    model = WasteAction
-    body_fields = [
-        "id",
-        "creation_date",
-        "modification_date",
-        "title",
-        "subtitle",
-        "effort",
-        "waste_origins",
-        "description",
-        "lead_image",
-    ]
-    meta_fields = []

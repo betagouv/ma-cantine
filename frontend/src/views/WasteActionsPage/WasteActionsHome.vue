@@ -123,8 +123,8 @@ export default {
           limit: this.limit,
         })
         .then((response) => {
-          this.wasteActions = response.items
-          this.wasteActionsCount = response.meta.totalCount
+          this.wasteActions = response.results
+          this.wasteActionsCount = response.count
         })
         .catch(() => {
           this.$store.dispatch("notifyServerError")

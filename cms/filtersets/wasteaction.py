@@ -1,7 +1,7 @@
 from django import forms
 from wagtail.admin.filters import WagtailFilterSet
 from django_filters import CharFilter, MultipleChoiceFilter
-from cms.models import WasteAction
+from data.models import WasteAction
 
 
 class WasteActionFilterSet(WagtailFilterSet):
