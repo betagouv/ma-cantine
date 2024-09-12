@@ -27,7 +27,7 @@ class TestWasteActionsFiltersApi(APITestCase):
         WasteActionFactory.create(effort=WasteAction.Effort.SMALL)
 
         response = self.client.get(
-            f"{reverse('waste_actions_list')}?effort={WasteAction.Effort.SMALL}&effort={WasteAction.Effort.MEDIUM}"
+            f"{reverse('waste_actions_list')}?effort__in={WasteAction.Effort.SMALL},{WasteAction.Effort.MEDIUM}"
         )
         results = response.data["results"]
         self.assertEqual(len(results), 2)
