@@ -228,9 +228,15 @@ export default new Vuex.Store({
       let url = `/api/v1/wasteActions/?limit=${limit}&offset=${offset}`
       Object.keys(filters).forEach((filterKey) => {
         if (filters[filterKey].value && filters[filterKey].value.length) {
-          filters[filterKey].value.forEach((filterValue) => {
-            url += `&${filters[filterKey].apiKey}=${filterValue}`
-          })
+          if (filters[filterKey].value) {
+            if (Array.isArray(filters[filterKey].value)) {
+              filters[filterKey].value.forEach((filterValue) => {
+                url += `&${filters[filterKey].apiKey}=${filterValue}`
+              })
+            } else {
+              url += `&${filters[filterKey].apiKey}=${filters[filterKey].value}`
+            }
+          }
         }
       })
       return fetch(url)

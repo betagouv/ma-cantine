@@ -76,7 +76,7 @@ export default {
   data() {
     return {
       limit: 6,
-      page: 1,
+      page: null,
       wasteActions: [],
       wasteActionsCount: null,
       viewStyles: [
@@ -94,11 +94,13 @@ export default {
       viewStyle: "card",
       filters: {
         effort: {
+          urlParam: "effort",
           apiKey: "effort",
           value: [],
           default: [],
         },
         wasteOrigins: {
+          urlParam: "origine",
           apiKey: "waste_origins",
           value: [],
           default: [],
@@ -134,6 +136,7 @@ export default {
 
   methods: {
     fetchCurrentPage() {
+      this.updateRouter()
       this.$store
         .dispatch("fetchWasteActions", {
           offset: this.offset,
@@ -166,8 +169,28 @@ export default {
       this.wasteActionsCount = null
       this.fetchCurrentPage()
     },
+    updateRouter() {
+      const query = { page: this.page }
+      Object.values(this.filters).forEach((filter) => {
+        if (filter.value.length) {
+          query[filter.urlParam] = filter.value
+        }
+      })
+      this.$router.push({ query }).catch(() => {})
+    },
+    parseQueryParams() {
+      this.page = +this.$route.query.page || 1
+      Object.values(this.filters).forEach((filter) => {
+        if (Array.isArray(this.$route.query[filter.urlParam])) {
+          filter.value = this.$route.query[filter.urlParam]
+        } else {
+          filter.value = [this.$route.query[filter.urlParam]] || filter.default
+        }
+      })
+    },
   },
   mounted() {
+    this.parseQueryParams()
     this.fetchCurrentPage()
   },
 }
