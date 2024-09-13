@@ -1,22 +1,22 @@
 <template>
-  <v-data-table :items="wasteActions" :headers="listHeaders" :hide-default-footer="true" :disable-sort="true">
+  <v-data-table :items="actionsDisplay" :headers="listHeaders" :hide-default-footer="true" :disable-sort="true">
     <template v-slot:[`item.title`]="{ item }">
       <router-link :to="{ name: 'WasteActionPage', params: { id: item.id } }">
         {{ item.title }}
       </router-link>
     </template>
     <template v-slot:[`item.effort`]="{ item }">
-      <DsfrTag :text="effortDisplay(item.effort)" :small="true" :clickable="false" />
+      <DsfrTag :text="item.effort.text" :icon="item.effort.icon" :small="true" :clickable="false" />
     </template>
     <template v-slot:[`item.wasteOrigins`]="{ item }">
-      <div class="d-flex flex-wrap justify-end justify-sm-start mt-4 mb-2">
+      <div class="d-flex flex-wrap justify-end justify-sm-start my-2">
         <DsfrTag
           v-for="tag in item.wasteOrigins"
-          :key="tag"
-          :text="originsDisplay(tag)"
+          :key="tag.text"
+          :text="tag.text"
+          :icon="tag.icon"
           :small="true"
           :clickable="false"
-          class="ml-2 ml-sm-0 mr-sm-2 mb-2"
         />
       </div>
     </template>
@@ -37,6 +37,17 @@ export default {
   components: { DsfrTag },
   data() {
     return {
+      actionsDisplay: this.wasteActions.map((a) => {
+        return {
+          id: a.id,
+          title: a.title,
+          subtitle: a.subtitle,
+          effort: Constants.WasteActionEffortLevels.find((item) => item.value === a.effort),
+          wasteOrigins: a.wasteOrigins.map((origin) =>
+            Constants.WasteActionOrigins.find((item) => item.value === origin)
+          ),
+        }
+      }),
       listHeaders: [
         { text: "Action", value: "title" },
         { text: "Description courte", value: "subtitle" },
@@ -44,14 +55,6 @@ export default {
         { text: "Source", value: "wasteOrigins", width: "20%" },
       ],
     }
-  },
-  methods: {
-    effortDisplay(level) {
-      return Constants.WasteActionEffortLevels.find((item) => item.value === level)?.text
-    },
-    originsDisplay(origin) {
-      return Constants.WasteActionOrigins.find((item) => item.value === origin)?.text
-    },
   },
 }
 </script>

@@ -1,9 +1,11 @@
 from django.db import models
 from data.fields import ChoiceArrayField
 from ckeditor.fields import RichTextField
+from wagtail.models import RevisionMixin
+from django.contrib.contenttypes.fields import GenericRelation
 
 
-class WasteAction(models.Model):
+class WasteAction(RevisionMixin, models.Model):
     class Meta:
         verbose_name = "Action anti-gaspi"
         verbose_name_plural = "Actions anti-gaspi"
@@ -37,6 +39,13 @@ class WasteAction(models.Model):
     lead_image = models.ForeignKey(
         "wagtailimages.Image", on_delete=models.SET_NULL, related_name="+", null=True, blank=True, verbose_name="Image"
     )
+
+    # not using revisions directly in case we want to add custom logic in the property in the future
+    _revisions = GenericRelation("wagtailcore.Revision", related_query_name="wasteaction")
+
+    @property
+    def revisions(self):
+        return self._revisions
 
     def __str__(self):
         return f'Action anti-gaspi "{self.title}"'

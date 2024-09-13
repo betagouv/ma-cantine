@@ -691,30 +691,36 @@ export default Object.freeze({
       value: "SMALL",
       text: "Petit pas",
       description: "Investissement financier et humain modéré, mais impact limité.",
+      icon: "$progress-2-line",
     },
     {
       value: "MEDIUM",
       text: "Moyen",
       description: "Investissement financier et humain relativement important, impact moyen.",
+      icon: "$progress-4-line",
     },
     {
       value: "LARGE",
       text: "Grand projet",
       description: "Investissement financier et humain important, impact fort.",
+      icon: "$progress-6-line",
     },
   ],
   WasteActionOrigins: [
     {
       value: "PREP",
       text: "Préparation",
+      icon: "$slice-line",
     },
     {
       value: "UNSERVED",
       text: "Non servi",
+      icon: "$bowl-line",
     },
     {
       value: "PLATE",
       text: "Retour assiette",
+      icon: "$restaurant-line",
     },
   ],
 })
