@@ -4,45 +4,48 @@
     <h1 class="fr-h1 mb-4">
       Lutter contre le gaspillage alimentaire
     </h1>
-    <div v-if="loading" class="mt-8">
-      <v-progress-circular indeterminate></v-progress-circular>
+    <div class="d-flex justify-end">
+      <DsfrSegmentedControl v-model="viewStyle" legend="Vue" :noLegend="true" :items="viewStyles" />
     </div>
-    <div v-else-if="wasteActions.length > 0 || hasFilter">
-      <div class="d-flex justify-end">
-        <DsfrSegmentedControl v-model="viewStyle" legend="Vue" :noLegend="true" :items="viewStyles" />
+    <v-row class="mb-4">
+      <v-col>
+        <p class="mb-2">Taille d'action</p>
+        <DsfrTagGroup :tags="wasteActionEfforts" @clickTag="(tag) => addFilterTag('effort', tag)" />
+      </v-col>
+      <v-col>
+        <p class="mb-2">Origine du gaspillage</p>
+        <DsfrTagGroup :tags="wasteOrigins" @clickTag="(tag) => addFilterTag('wasteOrigins', tag)" />
+      </v-col>
+    </v-row>
+    <div v-if="loading" class="d-flex flex-column align-center placeholder-height">
+      <v-progress-circular indeterminate class="mt-10"></v-progress-circular>
+    </div>
+    <div v-else-if="wasteActions.length > 0">
+      <div v-if="viewStyle === 'card'">
+        <v-row class="mt-2">
+          <v-col vols="12" sm="6" md="4" v-for="wasteAction in wasteActions" :key="wasteAction.id">
+            <WasteActionCard :wasteAction="wasteAction" />
+          </v-col>
+        </v-row>
       </div>
-      <v-row class="mb-4">
-        <v-col>
-          <p class="mb-2">Taille d'action</p>
-          <DsfrTagGroup :tags="wasteActionEfforts" @clickTag="(tag) => addFilterTag('effort', tag)" />
-        </v-col>
-        <v-col>
-          <p class="mb-2">Origine du gaspillage</p>
-          <DsfrTagGroup :tags="wasteOrigins" @clickTag="(tag) => addFilterTag('wasteOrigins', tag)" />
-        </v-col>
-      </v-row>
-      <div v-if="wasteActions.length > 0">
-        <div v-if="viewStyle === 'card'">
-          <v-row class="mt-2">
-            <v-col vols="12" sm="6" md="4" v-for="wasteAction in wasteActions" :key="wasteAction.id">
-              <WasteActionCard :wasteAction="wasteAction" />
-            </v-col>
-          </v-row>
-        </div>
-        <div v-else>
-          <WasteActionsListView :wasteActions="wasteActions" class="mt-4" />
-        </div>
-        <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(wasteActionsCount / limit)" />
+      <div v-else>
+        <WasteActionsListView :wasteActions="wasteActions" class="mt-4" />
       </div>
-      <div v-else class="d-flex flex-column align-center py-10">
-        <v-icon large>mdi-inbox-remove</v-icon>
-        <p class="text-body-1 grey--text text--darken-1 my-2">
-          Nous n'avons pas trouvé des actions avec ces paramètres
-        </p>
-        <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline">
-          Désactiver tous les filtres
-        </v-btn>
-      </div>
+      <DsfrPagination
+        class="my-6"
+        v-model="page"
+        :length="Math.ceil(wasteActionsCount / limit)"
+        @input="fetchCurrentPage"
+      />
+    </div>
+    <div v-else-if="hasFilter" class="d-flex flex-column align-center placeholder-height">
+      <v-icon large class="mt-10">mdi-inbox-remove</v-icon>
+      <p class="text-body-1 grey--text text--darken-1 my-2">
+        Nous n'avons pas trouvé des actions avec ces paramètres
+      </p>
+      <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline">
+        Désactiver tous les filtres
+      </v-btn>
     </div>
     <div v-else>
       <p>
@@ -73,7 +76,7 @@ export default {
   data() {
     return {
       limit: 6,
-      page: null,
+      page: 1,
       wasteActions: [],
       wasteActionsCount: null,
       viewStyles: [
@@ -131,7 +134,6 @@ export default {
 
   methods: {
     fetchCurrentPage() {
-      this.wasteActionsCount = null
       this.$store
         .dispatch("fetchWasteActions", {
           offset: this.offset,
@@ -146,37 +148,33 @@ export default {
           this.$store.dispatch("notifyServerError")
         })
     },
-    updateRoute() {
-      let query = { page: this.page }
-      // The empty catch is the suggested error management here : https://github.com/vuejs/vue-router/issues/2872#issuecomment-519073998
-      if (this.$route.query.page) {
-        this.$router.push({ query }).catch(() => {})
-      } else {
-        this.$router.replace({ query }).catch(() => {})
-      }
-    },
     addFilterTag(filterKey, tag) {
       const idx = this.filters[filterKey].value.findIndex((i) => i === tag.value)
       if (idx === -1) this.filters[filterKey].value.push(tag.value)
       else this.filters[filterKey].value.splice(idx, 1)
-      this.fetchCurrentPage()
+      this.page = 1
+      this.fetchAfterFiltering()
     },
     clearFilters() {
       Object.values(this.filters).forEach((filter) => (filter.value = Array.from(filter.default)))
-      this.fetchCurrentPage()
+      this.page = 1
+      this.fetchAfterFiltering()
     },
-  },
-  watch: {
-    page() {
-      this.updateRoute()
-    },
-    $route() {
+    fetchAfterFiltering() {
+      // go to first page and trigger loading indication to show the user something happened
+      this.page = 1
+      this.wasteActionsCount = null
       this.fetchCurrentPage()
     },
   },
   mounted() {
-    this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
     this.fetchCurrentPage()
   },
 }
 </script>
+
+<style scoped>
+div.placeholder-height {
+  height: 1200px;
+}
+</style>
