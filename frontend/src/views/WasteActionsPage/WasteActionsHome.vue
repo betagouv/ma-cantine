@@ -7,7 +7,7 @@
     <div v-if="loading" class="mt-8">
       <v-progress-circular indeterminate></v-progress-circular>
     </div>
-    <div v-else-if="wasteActions.length > 0">
+    <div v-else-if="wasteActions.length > 0 || hasFilter">
       <div class="d-flex justify-end">
         <DsfrSegmentedControl v-model="viewStyle" legend="Vue" :noLegend="true" :items="viewStyles" />
       </div>
@@ -21,17 +21,28 @@
           <DsfrTagGroup :tags="wasteOrigins" @clickTag="(tag) => addFilterTag('wasteOrigins', tag)" />
         </v-col>
       </v-row>
-      <div v-if="viewStyle === 'card'">
-        <v-row class="mt-2">
-          <v-col vols="12" sm="6" md="4" v-for="wasteAction in wasteActions" :key="wasteAction.id">
-            <WasteActionCard :wasteAction="wasteAction" />
-          </v-col>
-        </v-row>
+      <div v-if="wasteActions.length > 0">
+        <div v-if="viewStyle === 'card'">
+          <v-row class="mt-2">
+            <v-col vols="12" sm="6" md="4" v-for="wasteAction in wasteActions" :key="wasteAction.id">
+              <WasteActionCard :wasteAction="wasteAction" />
+            </v-col>
+          </v-row>
+        </div>
+        <div v-else>
+          <WasteActionsListView :wasteActions="wasteActions" class="mt-4" />
+        </div>
+        <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(wasteActionsCount / limit)" />
       </div>
-      <div v-else>
-        <WasteActionsListView :wasteActions="wasteActions" class="mt-4" />
+      <div v-else class="d-flex flex-column align-center py-10">
+        <v-icon large>mdi-inbox-remove</v-icon>
+        <p class="text-body-1 grey--text text--darken-1 my-2">
+          Nous n'avons pas trouvé des actions avec ces paramètres
+        </p>
+        <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline">
+          Désactiver tous les filtres
+        </v-btn>
       </div>
-      <DsfrPagination class="my-6" v-model="page" :length="Math.ceil(wasteActionsCount / limit)" />
     </div>
     <div v-else>
       <p>
@@ -80,12 +91,12 @@ export default {
       viewStyle: "card",
       filters: {
         effort: {
-          param: "taille",
+          apiKey: "effort",
           value: [],
           default: [],
         },
         wasteOrigins: {
-          param: "origine",
+          apiKey: "waste_origins",
           value: [],
           default: [],
         },
@@ -113,14 +124,19 @@ export default {
         selected: this.filters.effort.value.includes(item.value),
       }))
     },
+    hasFilter() {
+      return Object.values(this.filters).some((filter) => filter.value.length)
+    },
   },
 
   methods: {
     fetchCurrentPage() {
+      this.wasteActionsCount = null
       this.$store
         .dispatch("fetchWasteActions", {
           offset: this.offset,
           limit: this.limit,
+          filters: this.filters,
         })
         .then((response) => {
           this.wasteActions = response.results
@@ -143,6 +159,11 @@ export default {
       const idx = this.filters[filterKey].value.findIndex((i) => i === tag.value)
       if (idx === -1) this.filters[filterKey].value.push(tag.value)
       else this.filters[filterKey].value.splice(idx, 1)
+      this.fetchCurrentPage()
+    },
+    clearFilters() {
+      Object.values(this.filters).forEach((filter) => (filter.value = Array.from(filter.default)))
+      this.fetchCurrentPage()
     },
   },
   watch: {

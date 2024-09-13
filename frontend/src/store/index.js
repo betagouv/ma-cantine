@@ -224,8 +224,15 @@ export default new Vuex.Store({
         })
     },
 
-    fetchWasteActions(context, { limit = 6, offset }) {
+    fetchWasteActions(context, { limit = 6, offset, filters }) {
       let url = `/api/v1/wasteActions/?limit=${limit}&offset=${offset}`
+      Object.keys(filters).forEach((filterKey) => {
+        if (filters[filterKey].value && filters[filterKey].value.length) {
+          filters[filterKey].value.forEach((filterValue) => {
+            url += `&${filters[filterKey].apiKey}=${filterValue}`
+          })
+        }
+      })
       return fetch(url)
         .then(verifyResponse)
         .then((response) => {
