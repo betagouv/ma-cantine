@@ -183,8 +183,8 @@ export default {
       Object.values(this.filters).forEach((filter) => {
         if (Array.isArray(this.$route.query[filter.urlParam])) {
           filter.value = this.$route.query[filter.urlParam]
-        } else {
-          filter.value = [this.$route.query[filter.urlParam]] || filter.default
+        } else if (this.$route.query[filter.urlParam]) {
+          filter.value = [this.$route.query[filter.urlParam]]
         }
       })
     },
