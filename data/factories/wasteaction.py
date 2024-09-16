@@ -11,4 +11,4 @@ class WasteActionFactory(factory.django.DjangoModelFactory):
     title = factory.Faker("text", max_nb_chars=20)
     description = factory.Faker("text")
     effort = fuzzy.FuzzyChoice(list(WasteAction.Effort))
-    waste_origins = factory.List(random.sample(list(WasteAction.WasteOrigin), random.randint(0, 2)))
+    waste_origins = factory.List(random.sample(list(WasteAction.WasteOrigin), random.randint(1, 3)))

@@ -4,11 +4,13 @@
       <DsfrTag
         :text="tag.text"
         :icon="tag.icon"
+        :selected="tag.selected"
         :closeable="closeable"
         @close="closeable && closeAction(tag)"
         :color="tag.color"
         :small="small"
         :clickable="clickable"
+        @click="clickable && clickAction(tag)"
       />
     </li>
   </ul>
@@ -39,6 +41,9 @@ export default {
     },
   },
   methods: {
+    clickAction(tag) {
+      this.$emit("clickTag", tag)
+    },
     closeAction(tag) {
       this.$emit("closeTag", tag)
     },
