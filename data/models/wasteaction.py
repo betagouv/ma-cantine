@@ -53,3 +53,21 @@ class WasteAction(RevisionMixin, models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+    def effort_display(self):
+        return dict(WasteAction.Effort.choices)[self.effort]
+
+    effort_display.short_description = "Niveau d'effort"
+    effort_display.admin_order_field = "effort"
+
+    def waste_origins_display(self):
+        return ", ".join([dict(WasteAction.WasteOrigin.choices)[origin] for origin in self.waste_origins])
+
+    waste_origins_display.short_description = "Origines du gaspillage"
+    waste_origins_display.admin_order_field = "waste_origins"
+
+    def has_lead_image(self):
+        return "Oui" if self.lead_image else "Non"
+
+    has_lead_image.short_description = "Image"
+    has_lead_image.admin_order_field = "lead_image"
