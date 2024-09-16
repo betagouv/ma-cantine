@@ -9,12 +9,15 @@ from django.core.serializers import deserialize
 
 
 def restore_waste_action_data(apps, schema_editor):
-    with open("waste_action_backup.json", "r") as f:
-        data = f.read()
-    data = data.replace("cms.wasteaction", "data.wasteaction")
-    for obj in deserialize("json", data):
-        obj.save()
-    os.remove("waste_action_backup.json")
+    try:
+        with open("waste_action_backup.json", "r") as f:
+            data = f.read()
+        data = data.replace("cms.wasteaction", "data.wasteaction")
+        for obj in deserialize("json", data):
+            obj.save()
+        os.remove("waste_action_backup.json")
+    except:  # noqa
+        pass
 
 
 class Migration(migrations.Migration):

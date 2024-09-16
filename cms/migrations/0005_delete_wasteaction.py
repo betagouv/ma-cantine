@@ -5,10 +5,13 @@ from django.core.serializers import serialize
 
 
 def backup_waste_action_data(apps, schema_editor):
-    WasteAction = apps.get_model("cms", "WasteAction")
-    data = serialize("json", WasteAction.objects.all())
-    with open("waste_action_backup.json", "w") as f:
-        f.write(data)
+    try:
+        WasteAction = apps.get_model("cms", "WasteAction")
+        data = serialize("json", WasteAction.objects.all())
+        with open("waste_action_backup.json", "w") as f:
+            f.write(data)
+    except:
+        pass
 
 
 class Migration(migrations.Migration):
