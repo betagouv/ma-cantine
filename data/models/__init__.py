@@ -1,3 +1,4 @@
+from .user import User  # noqa: F401  # isort: skip
 from .blogpost import BlogPost  # noqa: F401
 from .blogtag import BlogTag  # noqa: F401
 from .canteen import Canteen, CanteenImage  # noqa: F401
@@ -17,7 +18,6 @@ from .reservationexpe import ReservationExpe  # noqa: F401
 from .review import Review  # noqa: F401
 from .sector import Sector  # noqa: F401
 from .teledeclaration import Teledeclaration  # noqa: F401
-from .user import User  # noqa: F401
 from .vegetarianexpe import VegetarianExpe  # noqa: F401
 from .videotutorial import VideoTutorial  # noqa: F401
 from .wasteaction import WasteAction  # noqa: F401

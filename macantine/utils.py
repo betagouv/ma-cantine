@@ -1,7 +1,7 @@
 import logging
-import requests
 
 import redis as r
+import requests
 from django.conf import settings
 
 from data.region_choices import Region

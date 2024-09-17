@@ -15,7 +15,6 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.generic import FormView, TemplateView, View
 
 from common.utils import send_mail
-from data.factories import UserFactory
 from web.forms import LoginUserForm, RegisterUserForm
 
 logger = logging.getLogger(__name__)
@@ -250,7 +249,7 @@ class OIDCAuthorizeView(View):
 
         # Create user
         logger.info(f"Creating new user from MonComptePro user {mcp_id} with email {mcp_email}.")
-        user = UserFactory.create(
+        user = get_user_model().objects.create(
             first_name=mcp_data.get("given_name"),
             last_name=mcp_data.get("family_name"),
             email=mcp_email,
