@@ -1,23 +1,25 @@
 import logging
-import string
-import re
 import random
+import re
+import string
 import unicodedata
-from django.contrib.auth import get_user_model, tokens, update_session_auth_hash
+
 from django.conf import settings
+from django.contrib.auth import get_user_model, tokens, update_session_auth_hash
 from django.http import JsonResponse
-from common.utils import send_mail
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from drf_spectacular.utils import extend_schema_view, extend_schema
-from rest_framework.generics import RetrieveAPIView, UpdateAPIView
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from oauth2_provider.contrib.rest_framework import TokenHasResourceScope
+from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.generics import RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
-from oauth2_provider.contrib.rest_framework import TokenHasResourceScope
+
+from api.permissions import IsAuthenticated, IsProfileOwner
 from api.serializers import LoggedUserSerializer, PasswordSerializer, UserInfoSerializer
-from api.permissions import IsProfileOwner, IsAuthenticated
+from common.utils import send_mail
 
 logger = logging.getLogger(__name__)
 

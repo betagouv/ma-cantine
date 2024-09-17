@@ -1,7 +1,9 @@
 from django import forms
 from django.contrib import admin
-from data.models import Teledeclaration
 from simple_history.admin import SimpleHistoryAdmin
+
+from data.models import Teledeclaration
+
 from .utils import ReadOnlyAdminMixin
 
 

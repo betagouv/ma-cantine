@@ -1,9 +1,10 @@
 from django.contrib.auth.models import AbstractUser
-from django.utils.translation import gettext_lazy as _
 from django.db import models
-from data.utils import optimize_image
-from data.fields import ChoiceArrayField
+from django.utils.translation import gettext_lazy as _
+
 from data.department_choices import Department
+from data.fields import ChoiceArrayField
+from data.utils import optimize_image
 
 
 class User(AbstractUser):

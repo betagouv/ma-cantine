@@ -1,17 +1,25 @@
-import os
 import base64
+import os
+from unittest import mock
+
 import requests
 import requests_mock
-from unittest import mock
-from django.urls import reverse
 from django.test.utils import override_settings
-from rest_framework.test import APITestCase
-from rest_framework import status
-from data.factories import CanteenFactory, ManagerInvitationFactory, PurchaseFactory
-from data.factories import DiagnosticFactory, SectorFactory
-from data.models import Canteen, Teledeclaration, Diagnostic
-from .utils import authenticate, get_oauth2_token
+from django.urls import reverse
 from freezegun import freeze_time
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+from data.factories import (
+    CanteenFactory,
+    DiagnosticFactory,
+    ManagerInvitationFactory,
+    PurchaseFactory,
+    SectorFactory,
+)
+from data.models import Canteen, Diagnostic, Teledeclaration
+
+from .utils import authenticate, get_oauth2_token
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 

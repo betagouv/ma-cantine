@@ -1,7 +1,9 @@
 import logging
-from data.models import Message
-from api.serializers import MessageSerializer
+
 from rest_framework.generics import CreateAPIView
+
+from api.serializers import MessageSerializer
+from data.models import Message
 
 logger = logging.getLogger(__name__)
 

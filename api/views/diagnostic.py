@@ -1,25 +1,32 @@
 import logging
-from common.utils import send_mail
-from data.models.diagnostic import Diagnostic
+
 from django.conf import settings
-from django.db import IntegrityError
-from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from drf_spectacular.utils import extend_schema_view, extend_schema
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.generics import UpdateAPIView, CreateAPIView, ListAPIView
+from django.db import IntegrityError
+from django.http import (
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseServerError,
+    JsonResponse,
+)
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
-from api.serializers import ManagerDiagnosticSerializer, DiagnosticAndCanteenSerializer
-from api.views.utils import update_change_reason_with_auth
-from data.models import Canteen, Teledeclaration
+
+from api.exceptions import DuplicateException
 from api.permissions import (
-    IsCanteenManager,
     CanEditDiagnostic,
     IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
+    IsCanteenManager,
 )
-from api.exceptions import DuplicateException
+from api.serializers import DiagnosticAndCanteenSerializer, ManagerDiagnosticSerializer
+from api.views.utils import update_change_reason_with_auth
+from common.utils import send_mail
+from data.models import Canteen, Teledeclaration
+from data.models.diagnostic import Diagnostic
 
 logger = logging.getLogger(__name__)
 

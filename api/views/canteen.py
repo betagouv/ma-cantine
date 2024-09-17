@@ -1,55 +1,86 @@
 import logging
 from collections import OrderedDict
 from datetime import date
+
 import redis as r
+import requests
 from django.apps import apps
 from django.conf import settings
-from django.http import JsonResponse
-import requests
-from common.utils import send_mail, get_token_sirene
-from macantine.utils import fetch_geo_data_from_api_entreprise_by_siret, fetch_geo_data_from_api_insee_sirene_by_siret
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError, BadRequest
 from django.contrib.auth import get_user_model
-from django.db import transaction, IntegrityError
+from django.core.exceptions import BadRequest, ValidationError
+from django.core.validators import validate_email
+from django.db import IntegrityError, transaction
+from django.db.models import (
+    Avg,
+    Case,
+    Count,
+    Exists,
+    F,
+    FloatField,
+    Func,
+    OuterRef,
+    Q,
+    Subquery,
+    Sum,
+    Value,
+    When,
+)
 from django.db.models.functions import Cast
-from django.db.models import Sum, FloatField, Avg, Func, F, Q, Case, When, Value, Subquery, OuterRef, Exists, Count
-from django_filters import rest_framework as django_filters
+from django.http import JsonResponse
 from django_filters import BaseInFilter, CharFilter
-from drf_spectacular.utils import extend_schema_view, extend_schema
-from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from django_filters import rest_framework as django_filters
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from api.views.utils import update_change_reason_with_auth
-from api.serializers import (
-    PublicCanteenSerializer,
-    PublicCanteenPreviewSerializer,
-    FullCanteenSerializer,
-    CanteenPreviewSerializer,
-    ManagingTeamSerializer,
-    SatelliteCanteenSerializer,
-    CanteenActionsSerializer,
-    CanteenStatusSerializer,
-    ElectedCanteenSerializer,
-    MinimalCanteenSerializer,
-    CanteenSummarySerializer,
+from rest_framework.generics import (
+    ListAPIView,
+    ListCreateAPIView,
+    RetrieveAPIView,
+    RetrieveUpdateDestroyAPIView,
 )
-from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration, Purchase
-from data.region_choices import Region
-from data.department_choices import Department
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from api.exceptions import DuplicateException
 from api.permissions import (
-    IsCanteenManager,
     IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
+    IsCanteenManager,
     IsCanteenManagerUrlParam,
     IsElectedOfficial,
 )
-from api.exceptions import DuplicateException
-from .utils import camelize, UnaccentSearchFilter, MaCantineOrderingFilter
+from api.serializers import (
+    CanteenActionsSerializer,
+    CanteenPreviewSerializer,
+    CanteenStatusSerializer,
+    CanteenSummarySerializer,
+    ElectedCanteenSerializer,
+    FullCanteenSerializer,
+    ManagingTeamSerializer,
+    MinimalCanteenSerializer,
+    PublicCanteenPreviewSerializer,
+    PublicCanteenSerializer,
+    SatelliteCanteenSerializer,
+)
+from api.views.utils import update_change_reason_with_auth
+from common.utils import get_token_sirene, send_mail
+from data.department_choices import Department
+from data.models import (
+    Canteen,
+    Diagnostic,
+    ManagerInvitation,
+    Purchase,
+    Sector,
+    Teledeclaration,
+)
+from data.region_choices import Region
+from macantine.utils import (
+    fetch_geo_data_from_api_entreprise_by_siret,
+    fetch_geo_data_from_api_insee_sirene_by_siret,
+)
+
+from .utils import MaCantineOrderingFilter, UnaccentSearchFilter, camelize
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)

@@ -1,7 +1,10 @@
 import random
+
 import factory
 from factory import fuzzy
+
 from data.models import Diagnostic
+
 from .canteen import CanteenFactory
 
 

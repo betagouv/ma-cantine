@@ -1,18 +1,29 @@
 from urllib.parse import quote
-from django.db import models
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.db import models
 from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
+
 from data.department_choices import Department
-from data.region_choices import Region
 from data.fields import ChoiceArrayField
-from data.utils import get_region, optimize_image
-from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
+from data.region_choices import Region
+from data.utils import (
+    get_diagnostic_lower_limit_year,
+    get_diagnostic_upper_limit_year,
+    get_region,
+    optimize_image,
+)
+
 from .sector import Sector
-from .softdeletionmodel import SoftDeletionModel, SoftDeletionManager, SoftDeletionQuerySet
+from .softdeletionmodel import (
+    SoftDeletionManager,
+    SoftDeletionModel,
+    SoftDeletionQuerySet,
+)
 
 
 def validate_siret(siret):

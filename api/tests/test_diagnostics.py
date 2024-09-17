@@ -1,12 +1,15 @@
 from decimal import Decimal
-from django.urls import reverse
+
+from django.core.exceptions import BadRequest
 from django.db import transaction
 from django.test.utils import override_settings
-from django.core.exceptions import BadRequest
-from rest_framework.test import APITestCase
+from django.urls import reverse
 from rest_framework import status
+from rest_framework.test import APITestCase
+
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory
-from data.models import Diagnostic, Teledeclaration, Canteen
+from data.models import Canteen, Diagnostic, Teledeclaration
+
 from .utils import authenticate, get_oauth2_token
 
 

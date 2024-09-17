@@ -1,5 +1,7 @@
 from rest_framework import serializers
+
 from data.models import BlogPost
+
 from .user import BlogPostAuthor
 
 

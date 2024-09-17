@@ -1,14 +1,15 @@
 from django.conf import settings
-from django.contrib import admin
 from django.conf.urls import include
 from django.conf.urls.static import static
+from django.contrib import admin
 from django.urls import path, re_path
 from magicauth.urls import urlpatterns as magicauth_urls
-from web.views import VueAppDisplayView, Vue3AppDisplayView
-from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
+from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
+
 from cms.api import api_router
+from web.views import Vue3AppDisplayView, VueAppDisplayView
 
 urlpatterns = [
     path("admin/", admin.site.urls),  # if the path of 'admin/' changes, update historical_record_add_auth_method

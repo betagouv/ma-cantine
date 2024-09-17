@@ -1,24 +1,25 @@
-from django.contrib.auth import views as auth_views
-from django.views.generic import TemplateView
 from django.conf import settings
+from django.contrib.auth import views as auth_views
 from django.contrib.sitemaps.views import sitemap
-from django.views.decorators.cache import cache_page
-from django.views.generic.base import RedirectView
 from django.urls import path, re_path
-from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
-from web.sitemaps import CanteenSitemap, BlogPostSitemap, WebSitemap, PartnerSitemap
+from django.views.decorators.cache import cache_page
+from django.views.generic import TemplateView
+from django.views.generic.base import RedirectView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+
+from web.sitemaps import BlogPostSitemap, CanteenSitemap, PartnerSitemap, WebSitemap
 from web.views import (
+    AccountActivationView,
+    ActivationTokenView,
+    LoginUserView,
+    OIDCAuthorizeView,
+    OIDCLoginView,
+    RegisterDoneView,
+    RegisterInvalidTokenView,
+    RegisterSendMailFailedView,
+    RegisterUserView,
     VueAppDisplayView,
     WidgetView,
-    LoginUserView,
-    RegisterUserView,
-    ActivationTokenView,
-    RegisterDoneView,
-    RegisterSendMailFailedView,
-    RegisterInvalidTokenView,
-    AccountActivationView,
-    OIDCLoginView,
-    OIDCAuthorizeView,
 )
 
 sitemaps = {

@@ -1,13 +1,16 @@
 from decimal import Decimal
+
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
 from simple_history.models import HistoricalRecords
-from data.fields import ChoiceArrayField
-from .canteen import Canteen
-from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
+
 from data.department_choices import Department
+from data.fields import ChoiceArrayField
 from data.region_choices import Region
+from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
+
+from .canteen import Canteen
 
 
 class Diagnostic(models.Model):

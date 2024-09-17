@@ -1,5 +1,7 @@
 from django.contrib import admin
+
 from data.models import Message
+
 from .utils import ReadOnlyAdminMixin
 
 

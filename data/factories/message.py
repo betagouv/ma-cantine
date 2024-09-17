@@ -1,5 +1,7 @@
 import factory
+
 from data.models import Message
+
 from .canteen import CanteenFactory
 
 

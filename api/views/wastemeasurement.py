@@ -1,17 +1,15 @@
 import logging
-from api.serializers import WasteMeasurementSerializer
-from api.permissions import (
-    IsAuthenticated,
-    IsCanteenManager,
-    IsLinkedCanteenManager,
-)
-from api.views.utils import update_change_reason_with_auth
-from data.models import WasteMeasurement, Canteen
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
+
+from api.permissions import IsAuthenticated, IsCanteenManager, IsLinkedCanteenManager
+from api.serializers import WasteMeasurementSerializer
+from api.views.utils import update_change_reason_with_auth
+from data.models import Canteen, WasteMeasurement
 
 logger = logging.getLogger(__name__)
 

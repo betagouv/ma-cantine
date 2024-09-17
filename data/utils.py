@@ -1,8 +1,9 @@
-from io import BytesIO
-from PIL import Image as Img
-from PIL import ExifTags
-from django.core.files.base import ContentFile
 import datetime
+from io import BytesIO
+
+from django.core.files.base import ContentFile
+from PIL import ExifTags
+from PIL import Image as Img
 
 
 def _needs_rotation(pillow_image):

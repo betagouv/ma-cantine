@@ -1,10 +1,13 @@
 from urllib.parse import quote
+
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from ckeditor_uploader.fields import RichTextUploadingField
+
 from data.department_choices import Department
-from data.utils import optimize_image
 from data.fields import ChoiceArrayField
+from data.utils import optimize_image
+
 from .partnertype import PartnerType
 from .sector import Sector
 

@@ -1,18 +1,22 @@
-import pandas as pd
-import requests_mock
-from macantine.etl.utils import map_communes_infos
-from django.test import TestCase, override_settings
-from data.factories import DiagnosticFactory, CanteenFactory, UserFactory, SectorFactory
-from data.models import Teledeclaration
-from macantine.etl.analysis import ETL_ANALYSIS, aggregate_col, get_egalim_hors_bio, format_sector_column
-from macantine.etl.open_data import ETL_CANTEEN, ETL_TD
-from freezegun import freeze_time
 import json
-from django.core.files.storage import default_storage
-
 import os
 
-from macantine.etl.utils import update_datagouv_resources
+import pandas as pd
+import requests_mock
+from django.core.files.storage import default_storage
+from django.test import TestCase, override_settings
+from freezegun import freeze_time
+
+from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
+from data.models import Teledeclaration
+from macantine.etl.analysis import (
+    ETL_ANALYSIS,
+    aggregate_col,
+    format_sector_column,
+    get_egalim_hors_bio,
+)
+from macantine.etl.open_data import ETL_CANTEEN, ETL_TD
+from macantine.etl.utils import map_communes_infos, update_datagouv_resources
 
 
 class TestETLAnalysis(TestCase):

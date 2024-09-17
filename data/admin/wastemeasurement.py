@@ -1,6 +1,7 @@
 from django.contrib import admin
-from data.models import WasteMeasurement
 from simple_history.admin import SimpleHistoryAdmin
+
+from data.models import WasteMeasurement
 
 
 @admin.register(WasteMeasurement)

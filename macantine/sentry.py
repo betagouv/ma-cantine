@@ -1,5 +1,5 @@
-from rest_framework.exceptions import PermissionDenied
 from django.core.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied
 
 
 def before_send(event, hint):
@@ -25,8 +25,8 @@ def before_send(event, hint):
         # the app registry is not ready yet.
         # django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet.
 
-        from data.models import Sector
         from api.views.diagnosticimport import FileFormatError
+        from data.models import Sector
 
         exceptions.append(Sector.DoesNotExist)
         exceptions.append(FileFormatError)

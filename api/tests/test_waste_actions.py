@@ -1,5 +1,6 @@
-from rest_framework.test import APITestCase
 from django.urls import reverse
+from rest_framework.test import APITestCase
+
 from data.factories import WasteActionFactory
 from data.models import WasteAction
 

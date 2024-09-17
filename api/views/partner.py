@@ -1,13 +1,20 @@
-from collections import OrderedDict
 import logging
 import random
+from collections import OrderedDict
+
 from django.db import connection
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import RetrieveAPIView, ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
-from api.serializers import PartnerSerializer, PartnerShortSerializer, PartnerContactSerializer
+
+from api.serializers import (
+    PartnerContactSerializer,
+    PartnerSerializer,
+    PartnerShortSerializer,
+)
 from data.models import Partner
+
 from .utils import UnaccentSearchFilter
 
 logger = logging.getLogger(__name__)

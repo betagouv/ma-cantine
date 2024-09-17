@@ -1,7 +1,8 @@
 from django.test import TestCase
-from data.models import Canteen
-from data.factories import CanteenFactory, DiagnosticFactory
 from freezegun import freeze_time
+
+from data.factories import CanteenFactory, DiagnosticFactory
+from data.models import Canteen
 
 
 class TestCanteenModel(TestCase):

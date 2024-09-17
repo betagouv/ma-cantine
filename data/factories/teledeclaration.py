@@ -1,6 +1,7 @@
 import factory
-from data.models import Teledeclaration
+
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.models import Teledeclaration
 
 
 class TeledeclarationFactory(factory.django.DjangoModelFactory):

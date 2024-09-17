@@ -1,20 +1,22 @@
 import logging
-from django.urls import reverse_lazy
-from django.shortcuts import redirect, render
-from django.conf import settings
-from django.contrib.auth import get_user_model, tokens, login
-from django.contrib.auth import views as auth_views
-from django.contrib import messages
-from django.http import HttpResponseRedirect
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
-from common.utils import send_mail
-from django.core.exceptions import ObjectDoesNotExist
-from django.views.generic import TemplateView, FormView, View
-from web.forms import RegisterUserForm, LoginUserForm
-from data.factories import UserFactory
-from django.views.decorators.clickjacking import xframe_options_exempt
+
 from authlib.integrations.django_client import OAuth
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import get_user_model, login, tokens
+from django.contrib.auth import views as auth_views
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.views.decorators.clickjacking import xframe_options_exempt
+from django.views.generic import FormView, TemplateView, View
+
+from common.utils import send_mail
+from data.factories import UserFactory
+from web.forms import LoginUserForm, RegisterUserForm
 
 logger = logging.getLogger(__name__)
 

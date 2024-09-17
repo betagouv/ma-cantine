@@ -1,16 +1,17 @@
-from django.http import HttpResponse
-from api.permissions import IsLinkedCanteenManager, IsAuthenticated
-from api.serializers import VegetarianExpeSerializer
-from api.exceptions import DuplicateException
-from data.models import VegetarianExpe, Canteen
-from django.core.exceptions import ObjectDoesNotExist
-from django.http.response import Http404
 import logging
-from rest_framework.response import Response
-from rest_framework.generics import get_object_or_404
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
+from django.http.response import Http404
 from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.generics import RetrieveUpdateAPIView, get_object_or_404
 from rest_framework.mixins import CreateModelMixin
+from rest_framework.response import Response
+
+from api.exceptions import DuplicateException
+from api.permissions import IsAuthenticated, IsLinkedCanteenManager
+from api.serializers import VegetarianExpeSerializer
+from data.models import Canteen, VegetarianExpe
 
 logger = logging.getLogger(__name__)
 

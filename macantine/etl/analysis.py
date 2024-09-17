@@ -1,11 +1,12 @@
-import pandas as pd
-import logging
 import json
-import numpy as np
+import logging
 import re
 
-from macantine.etl.data_ware_house import DataWareHouse
+import numpy as np
+import pandas as pd
+
 from macantine.etl import etl, open_data, utils
+from macantine.etl.data_ware_house import DataWareHouse
 
 logger = logging.getLogger(__name__)
 

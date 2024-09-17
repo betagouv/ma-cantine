@@ -1,8 +1,10 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
 from rest_framework import status
+from rest_framework.test import APITestCase
+
 from data.factories import CanteenFactory, SectorFactory, UserFactory
 from data.models import Canteen
+
 from .utils import authenticate
 
 

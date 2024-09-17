@@ -1,10 +1,13 @@
-from django.urls import reverse
-from django.test.utils import override_settings
-from rest_framework.test import APITestCase
-from data.models import ImportFailure, ImportType
-from data.factories import CanteenFactory
-from .utils import authenticate
 import filecmp
+
+from django.test.utils import override_settings
+from django.urls import reverse
+from rest_framework.test import APITestCase
+
+from data.factories import CanteenFactory
+from data.models import ImportFailure, ImportType
+
+from .utils import authenticate
 
 
 class TestImportDiagnosticsAPI(APITestCase):

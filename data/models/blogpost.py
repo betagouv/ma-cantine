@@ -1,7 +1,8 @@
-from django.utils import timezone
-from django.db import models
-from django.contrib.auth import get_user_model
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.contrib.auth import get_user_model
+from django.db import models
+from django.utils import timezone
+
 from .blogtag import BlogTag
 
 

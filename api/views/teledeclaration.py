@@ -1,20 +1,23 @@
 import logging
 import os
 from datetime import datetime
-from django.http import JsonResponse, HttpResponse
-from django.core.exceptions import ValidationError as DjangoValidationError
-from django.template.loader import get_template
-from django.contrib.staticfiles import finders
+
 from django.conf import settings
+from django.contrib.staticfiles import finders
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.http import HttpResponse, JsonResponse
+from django.template.loader import get_template
 from django.utils.text import slugify
-from drf_spectacular.utils import extend_schema_view, extend_schema, inline_serializer
-from rest_framework import status, serializers
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
+from rest_framework import serializers, status
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.views import APIView
-from rest_framework.exceptions import ValidationError, PermissionDenied
 from xhtml2pdf import pisa
-from data.models import Diagnostic, Teledeclaration, Canteen
-from api.serializers import FullDiagnosticSerializer
+
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope
+from api.serializers import FullDiagnosticSerializer
+from data.models import Canteen, Diagnostic, Teledeclaration
+
 from .utils import camelize
 
 logger = logging.getLogger(__name__)

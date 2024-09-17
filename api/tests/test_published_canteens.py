@@ -1,12 +1,19 @@
 import os
-from django.urls import reverse
+
 from django.core.files import File
-from rest_framework.test import APITestCase
-from rest_framework import status
-from data.factories import CanteenFactory, UserFactory
-from data.factories import DiagnosticFactory, TeledeclarationFactory
-from data.models import Canteen, CanteenImage, Diagnostic, Teledeclaration
 from django.test import override_settings
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+from data.factories import (
+    CanteenFactory,
+    DiagnosticFactory,
+    TeledeclarationFactory,
+    UserFactory,
+)
+from data.models import Canteen, CanteenImage, Diagnostic, Teledeclaration
+
 from .utils import authenticate
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))

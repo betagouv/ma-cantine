@@ -1,5 +1,7 @@
 import factory
+
 from data.models import ImportFailure
+
 from .user import UserFactory
 
 

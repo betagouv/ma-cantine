@@ -1,5 +1,7 @@
 import factory
+
 from data.models import VegetarianExpe
+
 from .canteen import CanteenFactory
 
 

@@ -1,13 +1,14 @@
-import os
 import datetime
+import os
 from datetime import date
+
+from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
-from django.test.utils import override_settings
-from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, SectorFactory
-from data.factories import DiagnosticFactory
+from rest_framework.test import APITestCase
+
+from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory
 from data.models import Canteen
 from data.region_choices import Region
 

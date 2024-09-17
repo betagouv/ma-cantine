@@ -1,5 +1,7 @@
 import factory
+
 from data.models import ManagerInvitation
+
 from .canteen import CanteenFactory
 
 

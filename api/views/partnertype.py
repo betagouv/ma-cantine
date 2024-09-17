@@ -1,6 +1,8 @@
 import logging
+
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.generics import ListAPIView
-from drf_spectacular.utils import extend_schema_view, extend_schema
+
 from api.serializers import PartnerTypeSerializer
 from data.models import PartnerType
 

@@ -1,8 +1,10 @@
 import csv
-import requests
 import logging
+
+import requests
 from django.core.management.base import BaseCommand
-from django.db import transaction, IntegrityError
+from django.db import IntegrityError, transaction
+
 from data.models import Canteen, Diagnostic, ManagerInvitation
 
 logger = logging.getLogger(__name__)

@@ -1,9 +1,11 @@
-from django.http import JsonResponse
-from django.conf import settings
-from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.exceptions import ValidationError
 import logging
+
+from django.conf import settings
+from django.http import JsonResponse
+from rest_framework import status
+from rest_framework.exceptions import ValidationError
+from rest_framework.views import APIView
+
 import common.utils as utils
 
 logger = logging.getLogger(__name__)

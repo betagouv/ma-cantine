@@ -1,5 +1,7 @@
 from django.contrib import admin
+
 from data.models import WasteAction
+
 from .utils import ReadOnlyAdminMixin
 
 

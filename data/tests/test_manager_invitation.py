@@ -1,7 +1,8 @@
-from data.models import ManagerInvitation
-from data.factories.managerinvitation import ManagerInvitationFactory
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase
+
+from data.factories.managerinvitation import ManagerInvitationFactory
+from data.models import ManagerInvitation
 
 
 class TestManagerInvitation(APITestCase):

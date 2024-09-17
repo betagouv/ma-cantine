@@ -1,13 +1,13 @@
+import requests_mock
 from django.test.utils import override_settings
 from django.urls import reverse
-from rest_framework.test import APITestCase
 from rest_framework import status
-import requests_mock
-from data.department_choices import Department
-from data.factories import CanteenFactory, SectorFactory
-from data.factories import DiagnosticFactory
-from data.models import Canteen, Diagnostic, Sector
+from rest_framework.test import APITestCase
+
 from api.views.canteen import badges_for_queryset
+from data.department_choices import Department
+from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory
+from data.models import Canteen, Diagnostic, Sector
 from data.region_choices import Region
 
 

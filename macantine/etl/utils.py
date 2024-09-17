@@ -1,13 +1,15 @@
+import logging
+import os
+import zoneinfo
+from datetime import date, datetime
 from typing import Dict
+
+import numpy as np
 import pandas as pd
+import requests
+
 from api.serializers import SectorSerializer
 from data.models import Sector, Teledeclaration
-import requests
-import os
-from datetime import datetime, date
-import logging
-import numpy as np
-import zoneinfo
 
 logger = logging.getLogger(__name__)
 

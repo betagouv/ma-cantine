@@ -1,12 +1,15 @@
 import datetime
 from decimal import Decimal
+
 from django.urls import reverse
-from rest_framework.test import APITestCase
-from rest_framework import status
-from data.factories import CanteenFactory, WasteMeasurementFactory
-from data.models import WasteMeasurement, Canteen
-from .utils import authenticate
 from freezegun import freeze_time
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+from data.factories import CanteenFactory, WasteMeasurementFactory
+from data.models import Canteen, WasteMeasurement
+
+from .utils import authenticate
 
 
 class TestWasteMeasurementsApi(APITestCase):
