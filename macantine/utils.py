@@ -1,6 +1,5 @@
 import logging
 import requests
-import time
 from data.region_choices import Region
 from django.conf import settings
 import redis as r
@@ -17,8 +16,8 @@ def fetch_geo_data_from_api_insee_sirene_by_siret(canteen_siret, response, token
         redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
         redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
         if int(redis.get(redis_key)) > 30:
-            logger.warning("Siret lookup exceding API rate. Waiting 1 minute")
-            time.sleep(60)
+            logger.warning("Siret lookup exceding API rate. Skipping this attempt.")
+            return response
 
         siret_response = requests.get(
             f"https://api.insee.fr/entreprises/sirene/siret/{canteen_siret}",
@@ -87,3 +86,4 @@ def fetch_geo_data_from_api_entreprise_by_siret(response):
     except Exception as e:
         logger.exception(f"Error completing location data with SIRET for city: {response['city']}")
         logger.exception(e)
+    return response
