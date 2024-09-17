@@ -16,7 +16,14 @@ class WasteActionViewSet(SnippetViewSet):
     menu_order = 90
     add_to_admin_menu = True
     filterset_class = WasteActionFilterSet
-    list_display = ["title", "modification_date"]
+    list_display = [
+        "title",
+        "effort_display",
+        "waste_origins_display",
+        "has_lead_image",
+        "creation_date",
+        "modification_date",
+    ]
     edit_handler = TabbedInterface(
         [
             ObjectList(

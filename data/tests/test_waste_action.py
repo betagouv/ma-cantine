@@ -1,4 +1,4 @@
-from django.test import TransactionTestCase
+from django.test import TransactionTestCase, TestCase
 from django.core.exceptions import ValidationError
 from data.models import WasteAction
 from data.factories import WasteActionFactory
@@ -26,3 +26,23 @@ class WasteActionModelSaveTest(TransactionTestCase):
             self.assertRaises(ValidationError, WasteActionFactory, **WASTE_ACTION_WITHOUT_REQUIRED_FIELD)
         # OK: all required fields passed (subtitle can be empty)
         WasteActionFactory(**WASTE_ACTION)
+
+
+class WasteActionModelPropertiesTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pass
+
+    def test_effort_display(self):
+        waste_action = WasteActionFactory(effort=WasteAction.Effort.SMALL)
+        self.assertEqual(waste_action.effort_display(), "Petit pas")
+
+    def test_waste_origins_display(self):
+        waste_action = WasteActionFactory(
+            waste_origins=[WasteAction.WasteOrigin.PREP, WasteAction.WasteOrigin.UNSERVED]
+        )
+        self.assertEqual(waste_action.waste_origins_display(), "Préparation, Non servi")
+
+    def test_has_lead_image(self):
+        waste_action = WasteActionFactory(lead_image=None)
+        self.assertEqual(waste_action.has_lead_image(), "Non")
