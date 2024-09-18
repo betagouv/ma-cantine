@@ -2,7 +2,14 @@ from django.urls import reverse
 from django.db.utils import IntegrityError
 from rest_framework.test import APITestCase
 from rest_framework import status
-from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, TeledeclarationFactory, SectorFactory
+from data.factories import (
+    CanteenFactory,
+    DiagnosticFactory,
+    UserFactory,
+    TeledeclarationFactory,
+    SectorFactory,
+    CompleteDiagnosticFactory,
+)
 from data.models import Teledeclaration, Diagnostic, Canteen
 from django.test.utils import override_settings
 from .utils import authenticate
@@ -73,7 +80,9 @@ class TestTeledeclarationApi(APITestCase):
         manager = UserFactory.create()
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2020, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         payload = {"diagnosticId": diagnostic.id}
 
         with patch.object(
@@ -94,7 +103,9 @@ class TestTeledeclarationApi(APITestCase):
         manager = UserFactory.create()
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2020, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -109,7 +120,9 @@ class TestTeledeclarationApi(APITestCase):
         manager = UserFactory.create()
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2020, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
@@ -136,7 +149,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create(central_producer_siret=None)
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2020, value_total_ht=None, diagnostic_type="SIMPLE"
+            canteen=canteen, year=2020, value_total_ht=None, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
         payload = {"diagnosticId": diagnostic.id}
 
@@ -159,7 +172,9 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create(central_producer_siret=None)
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2019, value_total_ht=100, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2019, value_total_ht=100, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
 
@@ -176,7 +191,11 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(
-            value_externality_performance_ht=0, canteen=canteen, year=2020, diagnostic_type="SIMPLE"
+            value_externality_performance_ht=0,
+            canteen=canteen,
+            year=2020,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            value_total_ht=100,
         )
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -274,7 +293,10 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(
-            value_externality_performance_ht=0, canteen=canteen, year=2020, diagnostic_type="SIMPLE"
+            value_externality_performance_ht=0,
+            canteen=canteen,
+            year=2020,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
         )
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -291,7 +313,9 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2020, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -313,7 +337,9 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -332,7 +358,9 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -350,7 +378,9 @@ class TestTeledeclarationApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2020, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         diagnostic.delete()
@@ -366,7 +396,9 @@ class TestTeledeclarationApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2020, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
@@ -410,7 +442,9 @@ class TestTeledeclarationApi(APITestCase):
         """
         canteen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, daily_meal_count=345)
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2020, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
         self.assertIsNone(teledeclaration.declared_data["canteen"]["daily_meal_count"])
 
@@ -426,7 +460,9 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create(siret="12345678912345")
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=LAST_YEAR, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=LAST_YEAR, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         payload = {"diagnosticId": diagnostic.id}
@@ -443,7 +479,9 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create(siret="")
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=LAST_YEAR, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=LAST_YEAR, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, value_total_ht=100
+        )
         Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         payload = {"diagnosticId": diagnostic.id}
@@ -452,7 +490,7 @@ class TestTeledeclarationApi(APITestCase):
 
         canteen2 = CanteenFactory.create(siret="")
         canteen2.managers.add(user)
-        diagnostic2 = DiagnosticFactory.create(canteen=canteen2, year=LAST_YEAR)
+        diagnostic2 = DiagnosticFactory.create(canteen=canteen2, year=LAST_YEAR, value_total_ht=100)
 
         payload = {"diagnosticId": diagnostic2.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -468,7 +506,7 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=LAST_YEAR, diagnostic_type="COMPLETE")
+        diagnostic = CompleteDiagnosticFactory.create(canteen=canteen, year=LAST_YEAR, value_total_ht=100)
         payload = {"diagnosticId": diagnostic.id}
 
         response = self.client.post(reverse("teledeclaration_create"), payload)

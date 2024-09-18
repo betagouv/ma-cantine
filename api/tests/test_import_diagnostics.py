@@ -1173,7 +1173,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         canteen = CanteenFactory.create(siret="21340172201787", name="Old name")
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, value_total_ht=1, value_bio_ht=0.2)
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2020, value_total_ht=1, value_bio_ht=Decimal("0.2")
+        )
 
         with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
@@ -1194,7 +1196,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         canteen = CanteenFactory.create(siret="21340172201787", name="Old name")
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, value_total_ht=1, value_bio_ht=0.2)
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2020, value_total_ht=1, value_bio_ht=Decimal("0.2")
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         with open("./api/tests/files/diagnostics_different_canteens.csv") as diag_file:

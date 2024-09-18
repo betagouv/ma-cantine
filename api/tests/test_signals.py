@@ -1,4 +1,5 @@
 from django.urls import reverse
+from rest_framework import status
 from rest_framework.test import APITestCase
 from data.factories import DiagnosticFactory
 from data.models import AuthenticationMethodHistoricalRecords
@@ -15,11 +16,12 @@ class TestSignals(APITestCase):
         """
         Teledeclarations created via the website should save the corresponding authentication method
         """
-        diagnostic = DiagnosticFactory.create(year=2020)
+        diagnostic = DiagnosticFactory.create(year=2020, value_total_ht=100)
         diagnostic.canteen.managers.add(authenticate.user)
         payload = {"diagnosticId": diagnostic.id}
 
-        self.client.post(reverse("teledeclaration_create"), payload)
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         diagnostic.refresh_from_db()
         td = diagnostic.teledeclaration_set.first()
@@ -34,12 +36,13 @@ class TestSignals(APITestCase):
         Teledeclarations created via a third party API should save the corresponding authentication method
         """
         user, token = get_oauth2_token("canteen:write")
-        diagnostic = DiagnosticFactory.create(year=2020)
+        diagnostic = DiagnosticFactory.create(year=2020, value_total_ht=100)
         diagnostic.canteen.managers.add(user)
         payload = {"diagnosticId": diagnostic.id}
 
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
-        self.client.post(reverse("teledeclaration_create"), payload)
+        response = self.client.post(reverse("teledeclaration_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         diagnostic.refresh_from_db()
         td = diagnostic.teledeclaration_set.first()
