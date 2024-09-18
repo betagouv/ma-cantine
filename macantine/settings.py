@@ -575,3 +575,7 @@ MAX_DAYS_HISTORICAL_RECORDS = (
 WAGTAIL_SITE_NAME = "ma-cantine"
 # WAGTAILADMIN_BASE_URL # Declare if null URL in notification emails
 WAGTAILDOCS_EXTENSIONS = ["csv", "docx", "key", "odt", "pdf", "pptx", "rtf", "txt", "xlsx", "zip"]
+
+
+# Define a counter to verify we are not exceeding API rate limit
+SIRET_API_CALLS_CMPT = 0

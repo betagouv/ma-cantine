@@ -2,22 +2,41 @@ import logging
 import requests
 from data.region_choices import Region
 from django.conf import settings
+from macantine.settings import SIRET_API_CALLS_CMPT
 import redis as r
+import time
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 REGIONS_LIB = {i.label.split(" - ")[1]: i.value for i in Region}
 
+# Function used to manage a API calls counter
+
+
+def increment_counter(counter: int) -> int:
+    return counter + 1
+
+
+def exceding_api_rate(counter: int, api_rate_limit: int) -> bool:
+    if counter <= api_rate_limit:
+        return False
+    else:
+        logger.warning("Siret lookup exceding API rate. Waiting 1 minute")
+        return True
+
+
+def reset_counter(counter: int) -> int:
+    return 0
+
 
 def fetch_geo_data_from_api_insee_sirene_by_siret(canteen_siret, response, token):
     response["siret"] = canteen_siret
     try:
-        redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
-        redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
-        if int(redis.get(redis_key)) > 30:
-            logger.warning("Siret lookup exceding API rate. Skipping this attempt.")
-            return response
+        increment_counter(SIRET_API_CALLS_CMPT)
+        if exceding_api_rate(SIRET_API_CALLS_CMPT, 30):
+            reset_counter(SIRET_API_CALLS_CMPT)
+            time.sleep(60)
 
         siret_response = requests.get(
             f"https://api.insee.fr/entreprises/sirene/siret/{canteen_siret}",
