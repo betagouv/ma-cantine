@@ -11,6 +11,7 @@ const { required, integer, minValue } = useValidators()
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
 const originalPayload = inject("originalPayload")
+const canteen = inject("canteen")
 
 const state = reactive({
   editMealCount: false,
@@ -41,13 +42,9 @@ const daysInPeriod = computed(() => {
 
 const calculateMealCountMaybe = () => {
   if (datesEntered.value) {
-    payload.mealCount = canteen.dailyMealCount * daysInPeriod.value
+    payload.mealCount = canteen.value.dailyMealCount * daysInPeriod.value
   }
 }
-
-const canteen = reactive({
-  dailyMealCount: 200,
-})
 
 const payload = reactive({})
 

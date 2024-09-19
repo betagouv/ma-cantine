@@ -44,6 +44,11 @@ export const useRootStore = defineStore("root", () => {
       })
   }
 
+  const fetchCanteen = (id) => {
+    return fetch(`/api/v1/canteens/${id}`)
+      .then(verifyResponse)
+  }
+
   const notify = (notification) => {
     // a notification consists of: message, title, status, undoAction, undoMessage
     notification.id = Math.floor(Math.random() * 10000) // generate random 5 digit id
@@ -94,6 +99,7 @@ export const useRootStore = defineStore("root", () => {
 
     // actions
     fetchInitialData,
+    fetchCanteen,
     createWasteMeasurement,
     updateWasteMeasurement,
     notify,
