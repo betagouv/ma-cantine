@@ -14,6 +14,13 @@ module.exports = {
 
   css: {
     sourceMap: true,
+    loaderOptions: {
+      sass: {
+        sassOptions: {
+          silenceDeprecations: ["slash-div", "legacy-js-api"],
+        },
+      },
+    },
   },
 
   chainWebpack: (config) => {
