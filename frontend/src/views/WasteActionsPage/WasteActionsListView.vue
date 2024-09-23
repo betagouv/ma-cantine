@@ -37,7 +37,17 @@ export default {
   components: { DsfrTag },
   data() {
     return {
-      actionsDisplay: this.wasteActions.map((a) => {
+      listHeaders: [
+        { text: "Action", value: "title" },
+        { text: "Description courte", value: "subtitle" },
+        { text: "Taille", value: "effort", width: "15%" },
+        { text: "Source", value: "wasteOrigins", width: "20%" },
+      ],
+    }
+  },
+  computed: {
+    actionsDisplay() {
+      return this.wasteActions.map((a) => {
         return {
           id: a.id,
           title: a.title,
@@ -47,14 +57,8 @@ export default {
             Constants.WasteActionOrigins.find((item) => item.value === origin)
           ),
         }
-      }),
-      listHeaders: [
-        { text: "Action", value: "title" },
-        { text: "Description courte", value: "subtitle" },
-        { text: "Taille", value: "effort", width: "15%" },
-        { text: "Source", value: "wasteOrigins", width: "20%" },
-      ],
-    }
+      })
+    },
   },
 }
 </script>
