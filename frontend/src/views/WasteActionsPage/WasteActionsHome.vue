@@ -7,7 +7,7 @@
     <div class="d-flex justify-end">
       <DsfrSegmentedControl v-model="viewStyle" legend="Vue" :noLegend="true" :items="viewStyles" />
     </div>
-    <v-row class="mb-4">
+    <v-row class="mb-4 align-end">
       <v-col>
         <p class="mb-2">Taille d'action</p>
         <DsfrTagGroup :tags="wasteActionEfforts" @clickTag="(tag) => addFilterTag('effort', tag)" />
@@ -15,6 +15,16 @@
       <v-col>
         <p class="mb-2">Origine du gaspillage</p>
         <DsfrTagGroup :tags="wasteOrigins" @clickTag="(tag) => addFilterTag('wasteOrigins', tag)" />
+      </v-col>
+      <v-col cols="12" md="4">
+        <DsfrSearchField
+          v-model="filters.search.provisionalValue"
+          @search="applyProvisionalValue(filters.search)"
+          clearable
+          @clear="clearFilterField(filters.search)"
+          placeholder="Rechercher par titre"
+          hide-details="auto"
+        />
       </v-col>
     </v-row>
     <div v-if="loading" class="d-flex flex-column align-center placeholder-height">
@@ -61,6 +71,7 @@ import DsfrPagination from "@/components/DsfrPagination"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
 import DsfrTagGroup from "@/components/DsfrTagGroup"
+import DsfrSearchField from "@/components/DsfrSearchField"
 import Constants from "@/constants"
 
 export default {
@@ -72,6 +83,7 @@ export default {
     BreadcrumbsNav,
     DsfrSegmentedControl,
     DsfrTagGroup,
+    DsfrSearchField,
   },
   data() {
     return {
@@ -93,6 +105,13 @@ export default {
       ],
       viewStyle: "card",
       filters: {
+        search: {
+          urlParam: "recherche",
+          apiKey: "search",
+          value: null,
+          provisionalValue: null,
+          default: null,
+        },
         effort: {
           urlParam: "effort",
           apiKey: "effort",
@@ -160,7 +179,6 @@ export default {
     },
     clearFilters() {
       Object.values(this.filters).forEach((filter) => (filter.value = Array.from(filter.default)))
-      this.page = 1
       this.fetchAfterFiltering()
     },
     fetchAfterFiltering() {
@@ -172,7 +190,7 @@ export default {
     updateRouter() {
       const query = { page: this.page }
       Object.values(this.filters).forEach((filter) => {
-        if (filter.value.length) {
+        if (filter.value?.length) {
           query[filter.urlParam] = filter.value
         }
       })
@@ -181,12 +199,25 @@ export default {
     parseQueryParams() {
       this.page = +this.$route.query.page || 1
       Object.values(this.filters).forEach((filter) => {
-        if (Array.isArray(this.$route.query[filter.urlParam])) {
-          filter.value = this.$route.query[filter.urlParam]
-        } else if (this.$route.query[filter.urlParam]) {
-          filter.value = [this.$route.query[filter.urlParam]]
+        const queryValue = this.$route.query[filter.urlParam]
+        if (queryValue && queryValue.length) {
+          if (Array.isArray(filter.default) && !Array.isArray(queryValue)) {
+            filter.value = [queryValue]
+          } else {
+            filter.value = queryValue
+            filter.provisionalValue = queryValue
+          }
         }
       })
+    },
+    applyProvisionalValue(filterTerm) {
+      filterTerm.value = filterTerm.provisionalValue
+      this.fetchAfterFiltering()
+    },
+    clearFilterField(filterTerm) {
+      filterTerm.provisionalValue = filterTerm.default
+      filterTerm.value = filterTerm.provisionalValue
+      this.fetchAfterFiltering()
     },
   },
   mounted() {
