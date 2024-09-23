@@ -1,9 +1,11 @@
 import re
+
 from django.core import mail
-from django.urls import reverse
 from django.test.utils import override_settings
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+
 from web.forms import RegisterUserForm
 
 

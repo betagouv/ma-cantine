@@ -1,16 +1,25 @@
-from django.urls import reverse
-from django.db.utils import IntegrityError
-from rest_framework.test import APITestCase
-from rest_framework import status
-from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, TeledeclarationFactory, SectorFactory
-from data.models import Teledeclaration, Diagnostic, Canteen
-from django.test.utils import override_settings
-from .utils import authenticate
 import datetime
+import zoneinfo
 from unittest.mock import patch
+
+from django.db.utils import IntegrityError
+from django.test.utils import override_settings
+from django.urls import reverse
 from django.utils import timezone
 from freezegun import freeze_time
-import zoneinfo
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+from data.factories import (
+    CanteenFactory,
+    DiagnosticFactory,
+    SectorFactory,
+    TeledeclarationFactory,
+    UserFactory,
+)
+from data.models import Canteen, Diagnostic, Teledeclaration
+
+from .utils import authenticate
 
 LAST_YEAR = datetime.date.today().year - 1
 

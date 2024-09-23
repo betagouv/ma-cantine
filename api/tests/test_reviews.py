@@ -1,8 +1,10 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
-from data.factories import CanteenFactory, ReviewFactory, DiagnosticFactory
-from data.models import Review
 from rest_framework import status
+from rest_framework.test import APITestCase
+
+from data.factories import CanteenFactory, DiagnosticFactory, ReviewFactory
+from data.models import Review
+
 from .utils import authenticate
 
 

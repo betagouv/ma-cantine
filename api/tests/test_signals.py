@@ -1,10 +1,12 @@
+from django.test.utils import override_settings
 from django.urls import reverse
+from freezegun import freeze_time
 from rest_framework.test import APITestCase
+
 from data.factories import DiagnosticFactory
 from data.models import AuthenticationMethodHistoricalRecords
-from django.test.utils import override_settings
+
 from .utils import authenticate, get_oauth2_token
-from freezegun import freeze_time
 
 
 class TestSignals(APITestCase):

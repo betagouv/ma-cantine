@@ -1,3 +1,5 @@
+# isort: skip_file
+
 import factory  # noqa
 
 factory.Faker._DEFAULT_LOCALE = "fr-fr"  # noqa

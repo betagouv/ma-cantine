@@ -1,3 +1,5 @@
+# isort: skip_file
+
 from .user import LoggedUserSerializer, UserInfoSerializer  # noqa: F401
 from .canteen import (  # noqa: F401
     PublicCanteenSerializer,

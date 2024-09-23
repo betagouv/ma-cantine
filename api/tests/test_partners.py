@@ -1,6 +1,7 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
 from rest_framework import status
+from rest_framework.test import APITestCase
+
 from data.factories import PartnerFactory, PartnerTypeFactory, UserFactory
 from data.models import Partner, Sector
 

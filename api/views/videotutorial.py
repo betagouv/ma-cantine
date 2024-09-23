@@ -1,6 +1,7 @@
 from rest_framework.generics import ListAPIView
-from data.models import VideoTutorial
+
 from api.serializers import VideoTutorialSerializer
+from data.models import VideoTutorial
 
 
 class VideoTutorialListView(ListAPIView):

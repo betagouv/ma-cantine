@@ -1,8 +1,10 @@
+from datetime import datetime
+
+from django.core.exceptions import ValidationError
 from django.db import models
 from simple_history.models import HistoricalRecords
+
 from .canteen import Canteen
-from datetime import datetime
-from django.core.exceptions import ValidationError
 
 
 def validate_before_today(value):

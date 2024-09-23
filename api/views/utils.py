@@ -1,12 +1,13 @@
-import logging
 import json
+import logging
+
 import chardet
-from django.db.models.constants import LOOKUP_SEP
 from django.db.models import F
-from rest_framework import filters
+from django.db.models.constants import LOOKUP_SEP
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
-from djangorestframework_camel_case.util import camel_to_underscore
 from djangorestframework_camel_case.settings import api_settings
+from djangorestframework_camel_case.util import camel_to_underscore
+from rest_framework import filters
 from simple_history.utils import update_change_reason
 
 logger = logging.getLogger(__name__)

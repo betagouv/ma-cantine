@@ -1,9 +1,12 @@
 import logging
-from rest_framework import serializers
-from data.models import Diagnostic
 from decimal import Decimal, InvalidOperation
+
+from rest_framework import serializers
+
+from data.models import Diagnostic
+
 from .teledeclaration import ShortTeledeclarationSerializer
-from .utils import appro_to_percentages, COMPLETE_APPRO_FIELDS
+from .utils import COMPLETE_APPRO_FIELDS, appro_to_percentages
 
 logger = logging.getLogger(__name__)
 

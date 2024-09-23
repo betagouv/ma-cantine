@@ -1,7 +1,8 @@
-from rest_framework import permissions
+from django.contrib.auth import get_user_model
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from oauth2_provider.contrib.rest_framework.permissions import TokenHasResourceScope
-from django.contrib.auth import get_user_model
+from rest_framework import permissions
+
 from data.models import Canteen, Diagnostic, Teledeclaration
 
 

@@ -1,10 +1,12 @@
-from django.urls import reverse
-from django.test.utils import override_settings
-from rest_framework.test import APITestCase
-from rest_framework import status
 from django.core import mail
+from django.test.utils import override_settings
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+
 from data.factories.canteen import CanteenFactory
 from data.factories.user import UserFactory
+
 from .utils import authenticate
 
 

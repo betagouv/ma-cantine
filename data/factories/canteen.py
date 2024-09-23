@@ -1,6 +1,9 @@
 import random
+
 import factory
+
 from data.models import Canteen
+
 from .sector import SectorFactory
 from .user import UserFactory
 

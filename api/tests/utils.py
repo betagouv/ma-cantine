@@ -1,5 +1,6 @@
 import functools
 from datetime import timedelta
+
 from django.utils import timezone
 
 from data.factories import UserFactory

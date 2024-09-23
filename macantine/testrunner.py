@@ -1,5 +1,6 @@
-import factory.random
 from random import randint
+
+import factory.random
 from django.conf import settings
 from django.test.runner import DiscoverRunner
 

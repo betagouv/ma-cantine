@@ -1,7 +1,8 @@
+from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.snippets.views.snippets import SnippetViewSet
-from wagtail.admin.panels import TabbedInterface, ObjectList, FieldPanel
-from data.models import WasteAction
+
 from cms.filtersets.wasteaction import WasteActionFilterSet
+from data.models import WasteAction
 
 
 class WasteActionViewSet(SnippetViewSet):

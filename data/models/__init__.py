@@ -1,3 +1,5 @@
+# isort: skip_file
+
 from .user import User  # noqa: F401
 from .historyauthenticationmethod import AuthenticationMethodHistoricalRecords  # noqa: F401
 from .canteen import Canteen, CanteenImage  # noqa: F401

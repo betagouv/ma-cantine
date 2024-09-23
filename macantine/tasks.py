@@ -1,26 +1,27 @@
-import logging
-import datetime
-import requests
 import csv
+import datetime
+import logging
 import time
-from api.views.utils import update_change_reason
-from django.utils import timezone
-from django.conf import settings
-from django.db.models import Q
-from django.core.paginator import Paginator
-from django.db.models import F
-from django.db.models.functions import Length
-from django.core.management import call_command
-from data.models import User, Canteen
+
 import redis as r
-from common.utils import get_token_sirene
-from .celery import app
-from .utils import fetch_geo_data_from_api_insee_sirene_by_siret
-from .etl.analysis import ETL_ANALYSIS
-from .etl.open_data import ETL_TD, ETL_CANTEEN
+import requests
 import sib_api_v3_sdk
+from django.conf import settings
+from django.core.management import call_command
+from django.core.paginator import Paginator
+from django.db.models import F, Q
+from django.db.models.functions import Length
+from django.utils import timezone
 from sib_api_v3_sdk.rest import ApiException
 
+from api.views.utils import update_change_reason
+from common.utils import get_token_sirene
+from data.models import Canteen, User
+
+from .celery import app
+from .etl.analysis import ETL_ANALYSIS
+from .etl.open_data import ETL_CANTEEN, ETL_TD
+from .utils import fetch_geo_data_from_api_insee_sirene_by_siret
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)

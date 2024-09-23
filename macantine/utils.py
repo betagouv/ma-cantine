@@ -1,8 +1,10 @@
 import logging
-import requests
-from data.region_choices import Region
-from django.conf import settings
+
 import redis as r
+import requests
+from django.conf import settings
+
+from data.region_choices import Region
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)

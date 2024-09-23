@@ -1,18 +1,18 @@
+import csv
 import json
 import os
 import time
-import csv
-import requests
-import pandas as pd
-
-from data.models import Canteen
-from macantine.etl import etl
-from django.core.files.storage import default_storage
-from django.db.models import Q
 from io import BytesIO
 
-from macantine.etl.etl import logger
+import pandas as pd
+import requests
+from django.core.files.storage import default_storage
+from django.db.models import Q
+
 import macantine.etl.utils
+from data.models import Canteen
+from macantine.etl import etl
+from macantine.etl.etl import logger
 from macantine.etl.utils import fetch_teledeclarations
 
 

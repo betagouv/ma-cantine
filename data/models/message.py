@@ -1,9 +1,11 @@
 import logging
-from django.db import models
-from data.models import Canteen
+
 from django.conf import settings
-from common.utils import send_mail
+from django.db import models
 from django.utils.timezone import now
+
+from common.utils import send_mail
+from data.models import Canteen
 
 logger = logging.getLogger(__name__)
 

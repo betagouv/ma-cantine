@@ -1,14 +1,17 @@
 import hashlib
 from datetime import date
 from decimal import Decimal
-from django.urls import reverse
-from django.test.utils import override_settings
-from rest_framework.test import APITestCase
+from pathlib import Path
 from unittest.mock import patch
+
+from django.test.utils import override_settings
+from django.urls import reverse
 from rest_framework import status
+from rest_framework.test import APITestCase
+
 from data.factories import CanteenFactory
 from data.models.purchase import Purchase
-from pathlib import Path
+
 from .utils import authenticate
 
 

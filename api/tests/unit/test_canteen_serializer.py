@@ -1,8 +1,9 @@
+from django.test.utils import override_settings
 from rest_framework.test import APITestCase
+
 from api.serializers import MinimalCanteenSerializer
 from data.factories import CanteenFactory
 from data.models import Canteen
-from django.test.utils import override_settings
 
 
 class TestCanteenSerializer(APITestCase):

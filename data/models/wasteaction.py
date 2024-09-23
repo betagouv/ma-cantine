@@ -1,8 +1,9 @@
-from django.db import models
-from data.fields import ChoiceArrayField
 from ckeditor.fields import RichTextField
-from wagtail.models import RevisionMixin
 from django.contrib.contenttypes.fields import GenericRelation
+from django.db import models
+from wagtail.models import RevisionMixin
+
+from data.fields import ChoiceArrayField
 
 
 class WasteAction(RevisionMixin, models.Model):

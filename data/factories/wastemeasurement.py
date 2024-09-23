@@ -1,6 +1,9 @@
-import factory
 from datetime import datetime, timedelta
+
+import factory
+
 from data.models import WasteMeasurement
+
 from .canteen import CanteenFactory
 
 

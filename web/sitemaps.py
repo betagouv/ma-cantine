@@ -1,5 +1,6 @@
 from django.contrib.sitemaps import Sitemap
-from data.models import Canteen, BlogPost, Partner
+
+from data.models import BlogPost, Canteen, Partner
 
 
 class CanteenSitemap(Sitemap):

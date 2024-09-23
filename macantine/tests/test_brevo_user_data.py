@@ -2,10 +2,16 @@ from unittest import mock
 
 # import sib_api_v3_sdk
 from django.test import TestCase
-from macantine import tasks
 from freezegun import freeze_time
-from data.factories import UserFactory, CanteenFactory, DiagnosticFactory, TeledeclarationFactory
-from data.models import Teledeclaration, Canteen, Diagnostic
+
+from data.factories import (
+    CanteenFactory,
+    DiagnosticFactory,
+    TeledeclarationFactory,
+    UserFactory,
+)
+from data.models import Canteen, Diagnostic, Teledeclaration
+from macantine import tasks
 
 
 class TestBrevoUserData(TestCase):

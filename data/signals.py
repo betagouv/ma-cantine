@@ -1,9 +1,11 @@
 import logging
+
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from simple_history.signals import pre_create_historical_record
 from simple_history.models import HistoricalRecords
-from .models import User, ManagerInvitation, Canteen
+from simple_history.signals import pre_create_historical_record
+
+from .models import Canteen, ManagerInvitation, User
 
 logger = logging.getLogger(__name__)
 

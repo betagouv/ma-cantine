@@ -1,8 +1,8 @@
-from django.test import TransactionTestCase, TestCase
 from django.core.exceptions import ValidationError
-from data.models import WasteAction
-from data.factories import WasteActionFactory
+from django.test import TestCase, TransactionTestCase
 
+from data.factories import WasteActionFactory
+from data.models import WasteAction
 
 WASTE_ACTION = {
     "title": "Action 1",

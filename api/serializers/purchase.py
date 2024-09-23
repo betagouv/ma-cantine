@@ -1,6 +1,8 @@
-from rest_framework import serializers
-from data.models import Purchase
 from drf_base64.fields import Base64FileField
+from rest_framework import serializers
+
+from data.models import Purchase
+
 from .utils import appro_to_percentages
 
 

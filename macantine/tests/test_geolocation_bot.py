@@ -1,9 +1,11 @@
+import json
+
 import requests_mock
 from django.test import TestCase
-from data.factories import CanteenFactory, UserFactory, SectorFactory
+
 from data.department_choices import Department
+from data.factories import CanteenFactory, SectorFactory, UserFactory
 from macantine import tasks, utils
-import json
 
 
 @requests_mock.Mocker()

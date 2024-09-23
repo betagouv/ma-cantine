@@ -1,21 +1,23 @@
 import json
-from api.views import (
-    LoggedUserView,
-    SectorListView,
-    PartnerTypeListView,
-    CommunityEventsView,
-    VideoTutorialListView,
-    UserCanteenPreviews,
-    CanteenMinistriesView,
-)
-from rest_framework.views import APIView
-from djangorestframework_camel_case.render import CamelCaseJSONRenderer
+
 from django.http import JsonResponse
+from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 from rest_framework import status
+from rest_framework.views import APIView
 
 
 class InitialDataView(APIView):
     def get(self, request, *args, **kwargs):
+        from api.views import (
+            CanteenMinistriesView,
+            CommunityEventsView,
+            LoggedUserView,
+            PartnerTypeListView,
+            SectorListView,
+            UserCanteenPreviews,
+            VideoTutorialListView,
+        )
+
         is_authenticated = request.user.is_authenticated
         json_content = {
             "logged_user": LoggedUserView.as_view()(request._request).data,

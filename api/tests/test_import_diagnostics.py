@@ -1,23 +1,26 @@
+import datetime
 import os
-from decimal import Decimal
 import unittest
-from django.urls import reverse
-from django.test.utils import override_settings
-from django.core import mail
-from rest_framework.test import APITestCase
-from rest_framework import status
-from data.models import Diagnostic, Canteen, ManagerInvitation
-from data.factories import SectorFactory, CanteenFactory, UserFactory, DiagnosticFactory
-from data.department_choices import Department
-from data.models.teledeclaration import Teledeclaration
-from data.region_choices import Region
+import zoneinfo
+from decimal import Decimal
+from unittest.mock import patch
+
 import requests
 import requests_mock
-from .utils import authenticate
-import datetime
-from unittest.mock import patch
+from django.core import mail
+from django.test.utils import override_settings
+from django.urls import reverse
 from django.utils import timezone
-import zoneinfo
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+from data.department_choices import Department
+from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
+from data.models import Canteen, Diagnostic, ManagerInvitation
+from data.models.teledeclaration import Teledeclaration
+from data.region_choices import Region
+
+from .utils import authenticate
 
 NEXT_YEAR = datetime.date.today().year + 1
 

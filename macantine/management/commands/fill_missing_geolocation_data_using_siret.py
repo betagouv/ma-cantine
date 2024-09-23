@@ -1,5 +1,7 @@
 import logging
+
 from django.core.management.base import BaseCommand
+
 from macantine.tasks import fill_missing_geolocation_data_using_siret
 
 logger = logging.getLogger(__name__)

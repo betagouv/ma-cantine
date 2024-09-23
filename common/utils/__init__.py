@@ -1,11 +1,12 @@
+import base64
+import logging
+
+import html2text
+import redis as r
+import requests
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-import base64
-import html2text
-import redis as r
-import logging
-import requests
 
 logger = logging.getLogger(__name__)
 

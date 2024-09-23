@@ -1,5 +1,6 @@
 import os
 import subprocess
+
 from django.core.management.base import BaseCommand
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))

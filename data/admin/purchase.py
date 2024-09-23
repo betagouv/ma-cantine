@@ -1,7 +1,9 @@
 from django.contrib import admin
+
 from data.models import Purchase
-from .utils import get_arrayfield_list_filter
+
 from .softdeletionadmin import SoftDeletionAdmin, SoftDeletionStatusFilter
+from .utils import get_arrayfield_list_filter
 
 
 @admin.register(Purchase)

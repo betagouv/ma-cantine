@@ -1,12 +1,13 @@
-import logging
 import json
+import logging
+
+import sib_api_v3_sdk
 from django.conf import settings
-from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from rest_framework.views import APIView
+from django.http import JsonResponse
 from rest_framework import status
-import sib_api_v3_sdk
+from rest_framework.views import APIView
 
 logger = logging.getLogger(__name__)
 

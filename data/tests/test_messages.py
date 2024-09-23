@@ -1,9 +1,10 @@
-from django.test import TestCase
 from django.core import mail
+from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
+from data.factories import CanteenFactory, MessageFactory, UserFactory
 from data.models import Message
-from data.factories import MessageFactory, CanteenFactory, UserFactory
 
 
 @override_settings(DEFAULT_FROM_EMAIL="no-reply@example.com")

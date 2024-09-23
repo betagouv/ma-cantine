@@ -1,22 +1,24 @@
 import csv
-import time
-import logging
 import hashlib
 import io
+import logging
+import time
 import uuid
-from decimal import Decimal, ROUND_HALF_DOWN, InvalidOperation
-from django.db import IntegrityError, transaction
+from decimal import ROUND_HALF_DOWN, Decimal, InvalidOperation
+
 from django.conf import settings
 from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
+from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from rest_framework import status
-from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.views import APIView
+
 from api.permissions import IsAuthenticated
-from data.models import Purchase, Canteen, ImportType
-from data.factories import ImportFailureFactory
 from api.serializers import PurchaseSerializer
-from .utils import normalise_siret, camelize, decode_bytes
+from data.models import Canteen, ImportFailure, ImportType, Purchase
+
+from .utils import camelize, decode_bytes, normalise_siret
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +87,7 @@ class ImportPurchasesView(APIView):
     def _log_error(self, message, level="warning"):
         logger_function = getattr(logger, level)
         logger_function(message)
-        ImportFailureFactory.create(
+        ImportFailure.objects.create(
             user=self.request.user,
             file=self.file,
             details=message,

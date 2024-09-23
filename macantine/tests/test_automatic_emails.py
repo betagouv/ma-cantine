@@ -1,9 +1,11 @@
-from unittest import mock
 from datetime import timedelta
-from django.utils import timezone
+from unittest import mock
+
 from django.test import TestCase
 from django.test.utils import override_settings
-from data.factories import CanteenFactory, UserFactory, DiagnosticFactory
+from django.utils import timezone
+
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen
 from macantine import tasks
 

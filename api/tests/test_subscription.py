@@ -1,10 +1,11 @@
 from unittest.mock import MagicMock
-from django.test.utils import override_settings
-from django.urls import reverse
-from rest_framework.test import APITestCase
-from rest_framework import status
+
 import requests_mock
 import sib_api_v3_sdk
+from django.test.utils import override_settings
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
 
 
 @requests_mock.Mocker()

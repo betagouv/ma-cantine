@@ -1,3 +1,5 @@
+# isort: skip_file
+
 from .user import UserAdmin  # noqa
 from .canteen import CanteenAdmin  # noqa
 from .diagnostic import DiagnosticAdmin  # noqa

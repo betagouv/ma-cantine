@@ -1,6 +1,8 @@
-import factory
-from data.models import CommunityEvent
 import zoneinfo
+
+import factory
+
+from data.models import CommunityEvent
 
 
 class CommunityEventFactory(factory.django.DjangoModelFactory):

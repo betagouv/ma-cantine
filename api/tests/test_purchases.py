@@ -2,8 +2,15 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
-from data.factories import UserFactory, PurchaseFactory, CanteenFactory, DiagnosticFactory
-from data.models import Purchase, Diagnostic, Canteen
+
+from data.factories import (
+    CanteenFactory,
+    DiagnosticFactory,
+    PurchaseFactory,
+    UserFactory,
+)
+from data.models import Canteen, Diagnostic, Purchase
+
 from .utils import authenticate
 
 

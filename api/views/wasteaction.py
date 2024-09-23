@@ -1,8 +1,9 @@
+from django_filters import rest_framework as django_filters
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.pagination import LimitOffsetPagination
-from data.models import WasteAction
+
 from api.serializers import WasteActionSerializer
-from django_filters import rest_framework as django_filters
+from data.models import WasteAction
 
 
 class WasteActionPagination(LimitOffsetPagination):
