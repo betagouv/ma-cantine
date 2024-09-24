@@ -19,7 +19,7 @@ importTypes.push({
   to: { name: "PurchasesImporter" },
 })
 
-const expandedId = ref("")
+const activeAccordion = ref("")
 
 const quizSteps = [
   {
@@ -140,20 +140,16 @@ watch(currentStep, () => (currentAnswer.value = undefined))
       </div>
     </div>
 
-    <DsfrAccordion
-      id="import-list"
-      title="Voir tous les imports disponibles"
-      :expanded-id="expandedId"
-      @expand="expandedId = $event"
-      class="fr-my-4w"
-    >
-      <div>
-        <ul>
-          <li v-for="importType in importTypes" :key="importType.key">
-            <router-link :to="importType.to">{{ importType.title }}</router-link>
-          </li>
-        </ul>
-      </div>
-    </DsfrAccordion>
+    <DsfrAccordionsGroup v-model="activeAccordion">
+      <DsfrAccordion id="import-list" title="Voir tous les imports disponibles" class="fr-my-4w">
+        <div>
+          <ul>
+            <li v-for="importType in importTypes" :key="importType.key">
+              <router-link :to="importType.to">{{ importType.title }}</router-link>
+            </li>
+          </ul>
+        </div>
+      </DsfrAccordion>
+    </DsfrAccordionsGroup>
   </div>
 </template>

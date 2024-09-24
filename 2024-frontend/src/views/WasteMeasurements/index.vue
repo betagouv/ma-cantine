@@ -54,7 +54,7 @@ const wastePerMeal = computed(() => {
   return undefined
 })
 
-const detailsExpandedId = ref("")
+const activeAccordion = ref("")
 
 onMounted(() => {
   fetch(`/api/v1/canteens/${canteenId.value}/wasteMeasurements`)
@@ -97,30 +97,26 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <DsfrAccordion
-        id="waste-measurement-detail"
-        title="Données détaillées"
-        :expanded-id="detailsExpandedId"
-        @expand="detailsExpandedId = $event"
-        class="fr-my-2w"
-      >
-        <div class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
-          <div class="fr-col-12 fr-col-sm-6 fr-col-md-4 fr-pr-4w">
-            <DsfrSelect v-model="chosenMeasurementIdx" label="Date de l'évaluation" :options="measurementChoices" />
+      <DsfrAccordionsGroup v-model="activeAccordion">
+        <DsfrAccordion id="waste-measurement-detail" title="Données détaillées" class="fr-my-2w">
+          <div class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
+            <div class="fr-col-12 fr-col-sm-6 fr-col-md-4 fr-pr-4w">
+              <DsfrSelect v-model="chosenMeasurementIdx" label="Date de l'évaluation" :options="measurementChoices" />
+            </div>
+            <div class="fr-col-12 fr-col-sm-4">
+              <router-link class="fr-btn fr-btn--tertiary" :to="measurementTunnel">
+                <span class="fr-icon-pencil-line fr-icon--sm fr-mr-1w"></span>
+                Modifier les données
+              </router-link>
+            </div>
           </div>
-          <div class="fr-col-12 fr-col-sm-4">
-            <router-link class="fr-btn fr-btn--tertiary" :to="measurementTunnel">
-              <span class="fr-icon-pencil-line fr-icon--sm fr-mr-1w"></span>
-              Modifier les données
-            </router-link>
-          </div>
-        </div>
-        <MeasurementDetail :measurement="measurement" />
-        <router-link class="fr-btn fr-btn--tertiary fr-btn--sm" :to="measurementTunnel">
-          <span class="fr-icon-pencil-line fr-icon--sm fr-mr-1w"></span>
-          Modifier les données
-        </router-link>
-      </DsfrAccordion>
+          <MeasurementDetail :measurement="measurement" />
+          <router-link class="fr-btn fr-btn--tertiary fr-btn--sm" :to="measurementTunnel">
+            <span class="fr-icon-pencil-line fr-icon--sm fr-mr-1w"></span>
+            Modifier les données
+          </router-link>
+        </DsfrAccordion>
+      </DsfrAccordionsGroup>
     </div>
     <div v-else>
       <p>
