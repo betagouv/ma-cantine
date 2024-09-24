@@ -48,7 +48,7 @@ const activeAccordion = ref("")
 
 <template>
   <div>
-    <div v-if="displayMeasurement" class="fr-grid-row fr-grid-row--center">
+    <div v-if="displayMeasurement" class="fr-grid-row fr-grid-row--middle">
       <div class="fr-col fr-mb-4w">
         <EmphasiseText :emphasisText="`${formatNumber(wastePerMeal)} g`" contextText="par repas" class="brown" />
         <router-link v-if="editable" :to="newMeasurementRoute" class="fr-btn fr-btn--secondary fr-mt-sm-2w">
