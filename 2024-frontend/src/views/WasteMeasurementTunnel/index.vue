@@ -68,22 +68,22 @@ const formIsValid = () => {
 }
 
 const continueAction = () => {
+  if (step.value.isSynthesis) {
+    router.push({ name: "WasteMeasurements" })
+    return
+  }
   if (!formIsValid()) {
     store.notifyRequiredFieldsError()
     return
   }
   return saveDiagnostic()
     .then((response) => {
-      if (nextStep.value) {
-        const nextRoute = { query: { étape: nextStep.value.urlSlug } }
-        if (!props.id && response.id)
-          nextRoute.params = { id: response.id, canteenUrlComponent: props.canteenUrlComponent }
-        router.push(nextRoute)
-        scrollTop()
-        Object.assign(originalPayload, hotPayload)
-      } else {
-        router.push({ name: "WasteMeasurements" })
-      }
+      const nextRoute = { query: { étape: nextStep.value.urlSlug } }
+      if (!props.id && response.id)
+        nextRoute.params = { id: response.id, canteenUrlComponent: props.canteenUrlComponent }
+      router.push(nextRoute)
+      scrollTop()
+      Object.assign(originalPayload, hotPayload)
     })
     .catch(handleServerError)
 }
