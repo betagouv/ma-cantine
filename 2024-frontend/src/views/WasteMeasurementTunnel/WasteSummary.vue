@@ -18,6 +18,7 @@ h1 {
 }
 .summary {
   height: 100%;
+  overflow: scroll;
   background: #fff;
   border: 1px solid #ddd;
 }
