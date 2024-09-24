@@ -68,14 +68,9 @@ const activeAccordion = ref("")
     </div>
     <DsfrAccordionsGroup v-model="activeAccordion">
       <DsfrAccordion id="waste-measurement-detail" title="Données détaillées" class="fr-my-2w">
-        <div class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
+        <div v-if="editable" class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
           <div class="fr-col-12 fr-col-sm-6 fr-col-md-4 fr-pr-4w">
-            <DsfrSelect
-              v-if="editable"
-              v-model="chosenMeasurementIdx"
-              label="Date de l'évaluation"
-              :options="measurementChoices"
-            />
+            <DsfrSelect v-model="chosenMeasurementIdx" label="Date de l'évaluation" :options="measurementChoices" />
           </div>
           <div v-if="editable" class="fr-col-12 fr-col-sm-4">
             <router-link class="fr-btn fr-btn--tertiary" :to="measurementTunnel">
@@ -83,6 +78,20 @@ const activeAccordion = ref("")
               Modifier les données
             </router-link>
           </div>
+        </div>
+        <div v-else class="grey-text">
+          <p class="fr-mb-1w">Date de l'évaluation</p>
+          <p>
+            <b>
+              {{
+                formatDate(displayMeasurement.periodStartDate, {
+                  month: "short",
+                  day: "numeric",
+                })
+              }}
+              - {{ formatDate(displayMeasurement.periodEndDate) }}
+            </b>
+          </p>
         </div>
         <MeasurementDetail :measurement="displayMeasurement" />
         <router-link v-if="editable" class="fr-btn fr-btn--tertiary fr-btn--sm" :to="measurementTunnel">
@@ -93,3 +102,9 @@ const activeAccordion = ref("")
     </DsfrAccordionsGroup>
   </div>
 </template>
+
+<style scoped>
+.grey-text {
+  color: var(--text-mention-grey);
+}
+</style>
