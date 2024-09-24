@@ -79,7 +79,7 @@ const continueAction = () => {
         if (!props.id && response.id)
           nextRoute.params = { id: response.id, canteenUrlComponent: props.canteenUrlComponent }
         router.push(nextRoute)
-        stepWrapper.value.scrollTop = 0
+        scrollTop()
         Object.assign(originalPayload, hotPayload)
       } else {
         router.push({ name: "WasteMeasurements" })
@@ -90,7 +90,7 @@ const continueAction = () => {
 
 const navigateBack = () => {
   router.push({ query: { étape: previousStep.value.urlSlug } })
-  stepWrapper.value.scrollTop = 0
+  scrollTop()
 }
 
 const goBack = () => {
@@ -108,7 +108,11 @@ const goBack = () => {
 
 const goToFirstStep = () => {
   router.push({ query: { étape: steps.value[0].urlSlug } })
-  stepWrapper.value.scrollTop = 0
+  scrollTop()
+}
+
+const scrollTop = () => {
+  if (stepWrapper.value) stepWrapper.value.scrollTop = 0
 }
 
 const saveAndQuit = () => {
@@ -179,12 +183,13 @@ watch(props, () => {
       </div>
       <DsfrStepper v-if="!step.isSynthesis" :steps="stepTitles" :currentStep />
     </div>
-    <div class="body" ref="stepWrapper">
-      <div v-if="step.isSynthesis">
-        <p>Hi</p>
+    <div v-if="step.isSynthesis" class="body synthesis">
+      <div class="wrapper fr-container">
         <WasteSummary v-if="dataIsReady" />
       </div>
-      <div v-else class="step fr-container">
+    </div>
+    <div v-else class="body" ref="stepWrapper">
+      <div class="step fr-container">
         <div class="fr-py-1w">
           <WasteMeasurementSteps
             :stepUrlSlug="step.urlSlug"
@@ -198,7 +203,6 @@ watch(props, () => {
     </div>
     <div class="footer">
       <div class="content fr-container fr-grid-row fr-grid-row--right fr-p-2w fr-pr-8w">
-        <!-- Synthesis: next tunnel name to go here. Check that continueActionText is correctly applied. -->
         <DsfrButton v-if="step.isSynthesis" label="Modifier" tertiary no-outline @click="goToFirstStep" />
         <DsfrButton
           v-else
@@ -233,6 +237,15 @@ watch(props, () => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+.tunnel .synthesis {
+  background: unset;
+}
+.tunnel .synthesis .wrapper {
+  margin-left: auto;
+  margin-right: auto;
+  height: 100%;
+  width: 100%;
 }
 .step {
   max-height: 100%;
