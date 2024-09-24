@@ -10,19 +10,6 @@
       <CalculatorResourceModal ref="modalContent" @closeModal="closeCalculatorModal" />
     </v-dialog>
 
-    <p class="mt-4 body-1">
-      Trouver des catégories de produits en recherchant par labels, SIQO et/ou régions avec
-      <a
-        href="https://www.inao.gouv.fr/Espace-professionnel-et-outils/Rechercher-un-produit"
-        target="_blank"
-        rel="noopener external"
-        title="le moteur de recherche de l'INAO - ouvre une nouvelle fenêtre"
-      >
-        le moteur de recherche de l'INAO
-        <v-icon color="primary" small>mdi-open-in-new</v-icon>
-      </a>
-    </p>
-
     <DownloadLink
       href="/static/documents/Guide_Pratique_MP_Gestion_directe.pdf"
       label="Télécharger le guide pratique CNRC de rédaction des marchés publics pour des appros durables à destination des acteurs de la restauration collective en gestion directe"
@@ -36,6 +23,20 @@
       sizeStr="2,2 Mo"
       class="mt-4"
     />
+
+    <p class="mt-4 body-1">
+      Trouver des catégories de produits en recherchant par labels, signes officiels de la qualité et de l’origine et/ou
+      régions avec
+      <a
+        href="https://www.inao.gouv.fr/Espace-professionnel-et-outils/Rechercher-un-produit"
+        target="_blank"
+        rel="noopener external"
+        title="le moteur de recherche de l'INAO - ouvre une nouvelle fenêtre"
+      >
+        le moteur de recherche de l'INAO
+        <v-icon color="primary" small>mdi-open-in-new</v-icon>
+      </a>
+    </p>
   </div>
 </template>
 
