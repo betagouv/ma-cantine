@@ -1,9 +1,13 @@
-<script setup></script>
+<script setup>
+import WasteMeasurementSummary from "@/components/WasteMeasurementSummary.vue"
+
+defineProps(["measurement"])
+</script>
 
 <template>
   <div class="summary fr-p-5w">
     <h1 class="fr-text--md fr-mb-4w">Synthèse</h1>
-    <p>hi</p>
+    <WasteMeasurementSummary :measurement="measurement" />
   </div>
 </template>
 

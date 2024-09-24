@@ -1,8 +1,8 @@
 <script setup>
-import WasteMeasurementSteps from "./WasteMeasurementSteps/index.vue"
-import WasteSummary from "./WasteSummary.vue"
 import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
+import WasteMeasurementSteps from "./WasteMeasurementSteps/index.vue"
+import WasteSummary from "./WasteSummary.vue"
 import { BadRequestError } from "@/utils"
 
 import { useRootStore } from "@/stores/root"
@@ -185,7 +185,7 @@ watch(props, () => {
     </div>
     <div v-if="step.isSynthesis" class="body synthesis">
       <div class="wrapper fr-container">
-        <WasteSummary v-if="dataIsReady" />
+        <WasteSummary v-if="dataIsReady" :measurement="originalPayload" />
       </div>
     </div>
     <div v-else class="body" ref="stepWrapper">
