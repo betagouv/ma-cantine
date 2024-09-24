@@ -41,7 +41,6 @@ import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
-import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 import DiagnosticImportPage from "@/views/DiagnosticsImporter/DiagnosticImportPage"
 import PublicCanteenStatisticsPage from "@/views/PublicCanteenStatisticsPage"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
@@ -427,16 +426,6 @@ const routes = [
     },
   },
   {
-    path: "/importer-diagnostics",
-    name: "DiagnosticsImporter",
-    component: DiagnosticsImporter,
-    meta: {
-      title: "Importer vos données",
-      authenticationRequired: true,
-    },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
-  },
-  {
     path: "/importer-diagnostics/:importUrlSlug",
     name: "DiagnosticImportPage",
     component: DiagnosticImportPage,
@@ -612,6 +601,15 @@ const vue3Routes = [
   {
     path: "/gaspillage-alimentaire/:canteenUrlComponent",
     name: "WasteMeasurements",
+  },
+  {
+    path: "/importer-des-donnees",
+    name: "DiagnosticsImporter",
+    meta: {
+      title: "Importer vos données",
+      authenticationRequired: true,
+    },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
 ]
 const VUE3_PREFIX = "/v2"
