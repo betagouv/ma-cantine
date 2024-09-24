@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from "vue"
 import SourceChart from "./SourceChart.vue"
-import MeasurementDetail from "./MeasurementDetail.vue"
+import MeasurementDetail from "./WasteMeasurementDetail.vue"
 import EmphasiseText from "./EmphasiseText.vue"
 import { formatNumber, formatDate } from "@/utils"
 
