@@ -15,17 +15,17 @@
     "shortTitle": "Qualité des produits",
     "subMeasures": [
       {
+        "descriptionComponent": "LogoBio",
+        "htmlDescription": "<p>Les produits « bio » doivent représenter au moins 20 % des denrées composant les repas servis par les cantines en France métropolitaine (consulter <a href='https://ma-cantine.agriculture.gouv.fr/blog/16'>notre blog</a> pour les seuils adaptés pour les départements-régions d’outre-mer –DROM-).</p><p>Ces produits « bio » sont :</p><ul class='mb-4'><li>des produits issus de l'agriculture biologique.</li><li>des produits végétaux étiquetés 'en conversion'.</li></ul>",
+        "id": "vingt",
+        "shortTitle": "20 % bio",
+        "title": "Les Produits issus de l'agriculture biologique"
+      },
+      {
         "descriptionComponent": "KeyMeasureDescriptionLabels",
         "id": "cinquante",
         "shortTitle": "50 % de qualité et durables",
         "title": "Produits de qualité et durables"
-      },
-      {
-        "descriptionComponent": "LogoBio",
-        "htmlDescription": "<p>Parmi ces produits de qualité, au moins 20 % des produits doivent être « bio » pour les cantines en France continentale (consulter <a href='https://ma-cantine.agriculture.gouv.fr/blog/16'>notre blog</a> pour le seuil des autres régions). C'est à dire :</p><ul class='mb-4'><li>des produits issus de l'agriculture biologique.</li><li>des produits végétaux étiquetés 'en conversion'.</li></ul>",
-        "id": "vingt",
-        "shortTitle": "20 % bio",
-        "title": "Produits biologiques"
       }
     ],
     "tabText": "Appro.",

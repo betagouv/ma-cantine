@@ -7,7 +7,7 @@
       20 % issus de l'agriculture biologique ou en conversion, et ce pour toutes les cantines de France métropolitaine
       (consulter
       <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">notre blog</a>
-      pour les seuils adaptés pour les départements-régions d'outre-mer).
+      pour les seuils adaptés pour les départements-régions d'outre-mer –DROM-).
     </p>
     <p>
       Ces taux (en %) sont calculés à partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur
