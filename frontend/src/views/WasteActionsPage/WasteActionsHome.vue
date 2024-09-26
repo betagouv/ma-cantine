@@ -149,7 +149,7 @@ export default {
       }))
     },
     hasFilter() {
-      return Object.values(this.filters).some((filter) => filter.value.length)
+      return Object.values(this.filters).some((filter) => filter.value?.length)
     },
   },
 
@@ -178,7 +178,13 @@ export default {
       this.fetchAfterFiltering()
     },
     clearFilters() {
-      Object.values(this.filters).forEach((filter) => (filter.value = Array.from(filter.default)))
+      Object.values(this.filters).forEach((filter) => {
+        if (Array.isArray(filter.default)) filter.value = Array.from(filter.default)
+        else {
+          filter.value = filter.default
+          filter.provisionalValue = filter.default
+        }
+      })
       this.fetchAfterFiltering()
     },
     fetchAfterFiltering() {
