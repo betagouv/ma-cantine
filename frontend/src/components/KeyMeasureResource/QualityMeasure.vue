@@ -10,6 +10,12 @@
       <CalculatorResourceModal ref="modalContent" @closeModal="closeCalculatorModal" />
     </v-dialog>
 
+    <p>
+      Pour plus d'informations sur les catégories de produits durables et de qualité et pour des explications concernant
+      la catégorie « les produits acquis principalement sur la base de leurs performances en matière environnementale et
+      d'approvisionnements directs » :
+    </p>
+
     <DownloadLink
       href="/static/documents/Guide_Pratique_MP_Gestion_directe.pdf"
       label="Télécharger le guide pratique CNRC de rédaction des marchés publics pour des appros durables à destination des acteurs de la restauration collective en gestion directe"
