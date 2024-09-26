@@ -51,7 +51,7 @@
     <div v-else-if="hasFilter" class="d-flex flex-column align-center placeholder-height">
       <v-icon large class="mt-10">mdi-inbox-remove</v-icon>
       <p class="text-body-1 grey--text text--darken-1 my-2">
-        Nous n'avons pas trouvé des actions avec ces paramètres
+        Nous n'avons pas trouvé de ressources avec ces paramètres
       </p>
       <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline">
         Désactiver tous les filtres
