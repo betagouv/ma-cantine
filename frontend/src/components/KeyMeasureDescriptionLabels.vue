@@ -48,7 +48,7 @@
       </li>
       <li>
         <v-icon color="green" small>mdi-checkbox-marked</v-icon>
-        Produits équivalents aux produits bénéficiant des labels, certifications oumentions, en accord avec le code de
+        Produits équivalents aux produits bénéficiants des labels, certifications ou mentions, en accord avec le code de
         la commande publique.
       </li>
     </ul>
