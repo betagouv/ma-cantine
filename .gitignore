@@ -158,8 +158,12 @@ celerybeat-schedule.db
 # Hosting
 .clever.json
 
+# IDE
 .vscode/*.code-snippets
 .idea/
+
+# Shell nix config
+shell.nix
 
 # Celery
 celerybeat-schedule
