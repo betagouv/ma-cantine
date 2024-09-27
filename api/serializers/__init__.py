@@ -52,3 +52,4 @@ from .communityevent import CommunityEventSerializer  # noqa: F401
 from .partner import PartnerSerializer, PartnerShortSerializer, PartnerContactSerializer  # noqa: F401
 from .videotutorial import VideoTutorialSerializer  # noqa: F401
 from .wasteaction import WasteActionSerializer  # noqa: F401
+from .resourceaction import ResourceActionSerializer  # noqa: F401

@@ -57,6 +57,7 @@ from .purchase import (  # noqa: F401
 )
 from .purchaseimport import ImportPurchasesView  # noqa: F401
 from .reservationexpe import ReservationExpeView  # noqa: F401
+from .resourceaction import ResourceActionView  # noqa: F401
 from .review import ReviewView  # noqa: F401
 from .sector import SectorListView  # noqa: F401
 from .subscription import SubscribeNewsletter  # noqa: F401
