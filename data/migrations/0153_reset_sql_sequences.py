@@ -22,5 +22,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL(SQL_COMMAND),
+        migrations.RunSQL(sql=SQL_COMMAND, reverse_sql=migrations.RunSQL.noop),
     ]
