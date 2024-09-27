@@ -2,15 +2,17 @@
 # Fixes the SQL sequence of the data_wasteaction table
 # https://stackoverflow.com/a/44113124
 
-from io import StringIO
-from django.db import migrations
+
 from django.core.management import call_command
+from django.db import migrations
 
-
-def get_sql_sequence_reset(app_label):
-    out = StringIO()
-    call_command("sqlsequencereset", app_label, stdout=out, no_color=True)
-    return out.getvalue()
+# Reset the SQL sequence of the data_wasteaction table
+# Extracted from sqlsequencereset command
+SQL_COMMAND = """
+BEGIN;
+SELECT setval(pg_get_serial_sequence('"data_wasteaction"','id'), coalesce(max("id"), 1), max("id") IS NOT null) FROM "data_wasteaction";
+COMMIT;
+"""
 
 
 class Migration(migrations.Migration):
@@ -20,5 +22,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL(get_sql_sequence_reset("data")),
+        migrations.RunSQL(SQL_COMMAND),
     ]
