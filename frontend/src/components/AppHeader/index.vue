@@ -235,6 +235,10 @@ export default {
               to: { name: "PartnersHome" },
             },
             {
+              text: "Actions anti-gaspi",
+              to: { name: "WasteActionsHome" },
+            },
+            {
               text: "Générer mon affiche",
               to: { name: "GeneratePosterPage" },
             },
