@@ -13,13 +13,13 @@ REGIONS_LIB = {i.label.split(" - ")[1]: i.value for i in Region}
 
 
 def get_etablissement_or_unite_legale_name(siret_response):
-    if siret_response["etablissement"]["etablissementSiege"]:
-        return siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
-    else:
-        periodes_etablissement = siret_response["etablissement"]["periodesEtablissement"]
-        for periode in periodes_etablissement:
-            if not periode["dateFin"]:
-                return periode["enseigne1Etablissement"]
+    if "etablissementSiege" in siret_response["etablissement"].keys():
+        if not siret_response["etablissement"]["etablissementSiege"]:
+            periodes_etablissement = siret_response["etablissement"]["periodesEtablissement"]
+            for periode in periodes_etablissement:
+                if not periode["dateFin"]:
+                    return periode["enseigne1Etablissement"]
+    return siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
 
 
 def fetch_geo_data_from_api_insee_sirene_by_siret(canteen_siret, response, token):
