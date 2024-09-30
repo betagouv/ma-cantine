@@ -525,7 +525,8 @@ class TestCanteenApi(APITestCase):
         sirene_api_url = f"https://api.insee.fr/entreprises/sirene/siret/{siret}"
         sirene_mocked_response = {
             "etablissement": {
-                "uniteLegale": {"denominationUniteLegale": "Canteen Name"},
+                "etablissemmentSiege": True,
+                "uniteLegale": {"denominationUniteLegale": "Unite Legale Name"},
                 "adresseEtablissement": {
                     "codeCommuneEtablissement": insee_code,
                     "codePostalEtablissement": postcode,
@@ -555,12 +556,38 @@ class TestCanteenApi(APITestCase):
         response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["name"], "Canteen Name")
+        self.assertEqual(body["name"], "Unite Legale Name")
         self.assertEqual(body["siret"], siret)
         self.assertEqual(body["postalCode"], postcode)
         self.assertEqual(body["city"], city)
         self.assertEqual(body["cityInseeCode"], insee_code)
         self.assertEqual(body["department"], "38")
+
+        # Check the given name if the canteen is an etablissement (sub of an unite legale)
+        sirene_mocked_response = {
+            "etablissement": {
+                "etablissementSiege": False,
+                "uniteLegale": {"denominationUniteLegale": "Unite Legale Name"},
+                "adresseEtablissement": {
+                    "codeCommuneEtablissement": insee_code,
+                    "codePostalEtablissement": postcode,
+                    "libelleCommuneEtablissement": city,
+                },
+                "periodesEtablissement": [
+                    {
+                        "dateFin": None,
+                        "enseigne1Etablissement": "ECOLE PRIMAIRE PUBLIQUE",
+                    },
+                    {
+                        "dateFin": "2007-12-31",
+                    },
+                ],
+            },
+        }
+        mock.get(sirene_api_url, json=sirene_mocked_response)
+        response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
+        body = response.json()
+        self.assertEqual(body["name"], "ECOLE PRIMAIRE PUBLIQUE")
 
     @mock.patch("requests.get", side_effect=requests.exceptions.ConnectTimeout)
     @mock.patch("requests.post", side_effect=requests.exceptions.ConnectTimeout)
