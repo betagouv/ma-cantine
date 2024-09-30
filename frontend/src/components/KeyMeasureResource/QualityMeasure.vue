@@ -10,17 +10,10 @@
       <CalculatorResourceModal ref="modalContent" @closeModal="closeCalculatorModal" />
     </v-dialog>
 
-    <p class="mt-4 body-1">
-      Trouver des catégories de produits en recherchant par labels, SIQO et/ou régions avec
-      <a
-        href="https://www.inao.gouv.fr/Espace-professionnel-et-outils/Rechercher-un-produit"
-        target="_blank"
-        rel="noopener external"
-        title="le moteur de recherche de l'INAO - ouvre une nouvelle fenêtre"
-      >
-        le moteur de recherche de l'INAO
-        <v-icon color="primary" small>mdi-open-in-new</v-icon>
-      </a>
+    <p>
+      Pour plus d'informations sur les catégories de produits durables et de qualité et pour des explications concernant
+      la catégorie « les produits acquis principalement sur la base de leurs performances en matière environnementale et
+      d'approvisionnements directs » :
     </p>
 
     <DownloadLink
@@ -36,6 +29,20 @@
       sizeStr="2,2 Mo"
       class="mt-4"
     />
+
+    <p class="mt-4 body-1">
+      Trouver des catégories de produits en recherchant par labels, signes officiels de la qualité et de l’origine et/ou
+      régions avec
+      <a
+        href="https://www.inao.gouv.fr/Espace-professionnel-et-outils/Rechercher-un-produit"
+        target="_blank"
+        rel="noopener external"
+        title="le moteur de recherche de l'INAO - ouvre une nouvelle fenêtre"
+      >
+        le moteur de recherche de l'INAO
+        <v-icon color="primary" small>mdi-open-in-new</v-icon>
+      </a>
+    </p>
   </div>
 </template>
 
