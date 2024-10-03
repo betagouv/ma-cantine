@@ -323,7 +323,7 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
         self.schema = json.load(open("data/schemas/schema_cantine.json"))
 
     def extract_dataset(self):
-        pass
+        self.df = utils.fetch_canteens()
 
     def transform_dataset(self):
         # TMP match_schema() with less columns for smaller PR

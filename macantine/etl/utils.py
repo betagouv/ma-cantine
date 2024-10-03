@@ -9,7 +9,7 @@ import pandas as pd
 import requests
 
 from api.serializers import SectorSerializer
-from data.models import Sector, Teledeclaration
+from data.models import Canteen, Sector, Teledeclaration
 
 logger = logging.getLogger(__name__)
 
@@ -169,6 +169,16 @@ def fetch_teledeclarations(years: list) -> pd.DataFrame:
             logger.warning(f"TD dataset does not exist for year : {year}")
         if len(df) == 0:
             logger.warning("TD dataset is empty for all the specified years")
+    return df
+
+
+def fetch_canteens(columns, exclude_filter=None):
+    canteens = Canteen.objects.exclude(exclude_filter)
+    if canteens.count() == 0:
+        df = pd.DataFrame(columns=columns)
+    else:
+        # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
+        df = pd.DataFrame(canteens.values(*columns))
     return df
 
 

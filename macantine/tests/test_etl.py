@@ -10,7 +10,7 @@ from freezegun import freeze_time
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import Teledeclaration
 from macantine.etl.analysis import (
-    ETL_ANALYSIS,
+    ETL_ANALYSIS_TD,
     aggregate_col,
     format_sector_column,
     get_egalim_hors_bio,
@@ -39,7 +39,7 @@ class TestETLAnalysis(TestCase):
             diagnostic_2023 = DiagnosticFactory.create(canteen=canteen, year=2023, diagnostic_type=None)
             td_2023 = Teledeclaration.create_from_diagnostic(diagnostic_2023, applicant)
 
-        etl_stats = ETL_ANALYSIS()
+        etl_stats = ETL_ANALYSIS_TD()
 
         etl_stats.extract_dataset()
         self.assertEqual(
