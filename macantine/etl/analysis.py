@@ -196,6 +196,27 @@ class ETL_ANALYSIS(etl.ETL):
 
     def __init__(self):
         self.df = None
+        self.extracted_table_name = ""
+        self.schema = ""
+        self.warehouse = DataWareHouse()
+
+    def load_dataset(self):
+        """
+        Load in database
+        """
+        self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
+
+
+class ETL_ANALYSIS_TD(ETL_ANALYSIS):
+    """
+    Create a dataset for analysis in a Data Warehouse
+    * Extract data from prod
+    * Run a SQL query using Metabase API to transform the dataset
+    * Load the transformed data in a new table within the Data WareHouse
+    """
+
+    def __init__(self):
+        self.df = None
         self.years = utils.CAMPAIGN_DATES.keys()
         self.extracted_table_name = "teledeclarations_extracted"
         self.warehouse = DataWareHouse()
@@ -258,6 +279,9 @@ class ETL_ANALYSIS(etl.ETL):
         self.df.columns = self.df.columns.str.replace("department", "departement")
 
         # Filter by schema columns names
+        self.match_schema()
+
+    def match_schema(self):
         columns = [i["name"] for i in self.schema["fields"]]
         self.df = self.df.loc[:, ~self.df.columns.duplicated()].copy()
         self.df = self.df[columns]
@@ -283,8 +307,23 @@ class ETL_ANALYSIS(etl.ETL):
         self.df["ratio_egalim_avec_bio"] = self.df.apply(get_ratio_egalim_avec_bio, axis=1)
         self.df["ratio_egalim_sans_bio"] = self.df.apply(get_ratio_egalim_sans_bio, axis=1)
 
-    def load_dataset(self):
-        """
-        Load in database
-        """
-        self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
+
+class ETL_ANALYSIS_CANTEENS(ETL_ANALYSIS):
+    """
+    Create a dataset for analysis in a Data Warehouse
+    * Extract data from prod
+    * Run a SQL query using Metabase API to transform the dataset
+    * Load the transformed data in a new table within the Data WareHouse
+    """
+
+    def __init__(self):
+        self.df = None
+        self.extracted_table_name = "canteens_extracted"
+        self.warehouse = DataWareHouse()
+        self.schema = json.load(open("data/schemas/schema_cantine.json"))
+
+    def extract_dataset(self):
+        pass
+
+    def transform_dataset(self):
+        pass
