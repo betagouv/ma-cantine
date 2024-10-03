@@ -1,0 +1,115 @@
+{
+  "encoding": "utf-8",
+  "fields": [
+    {
+      "name": "id",
+      "type": "integer"
+    },
+    {
+      "name": "creation_date",
+      "type": "dater"
+    },
+    {
+      "name": "modification_date",
+      "type": "date"
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "city",
+      "type": "string"
+    },
+    {
+      "name": "postal_code",
+      "type": "string"
+    },
+    {
+      "name": "daily_meal_count",
+      "type": "integer"
+    },
+    {
+      "name": "yearly_meal_count",
+      "type": "integer"
+    },
+    {
+      "name": "management_type",
+      "type": "string"
+    },
+    {
+      "name": "siret",
+      "type": "integer"
+    },
+    {
+      "name": "department",
+      "type": "string"
+    },
+    {
+      "name": "city_insee_code",
+      "type": "string"
+    },
+    {
+      "name": "production_type",
+      "type": "string"
+    },
+    {
+      "name": "central_producer_siret",
+      "type": "integer"
+    },
+    {
+      "name": "region",
+      "type": "string"
+    },
+    {
+      "name": "region_lib",
+      "type": "string"
+    },
+    {
+      "name": "economic_model",
+      "type": "string"
+    },
+    {
+      "name": "satellite_canteens_count",
+      "type": "integer"
+    },
+    {
+      "name": "vegetarian_expe_participant",
+      "type": "boolean"
+    },
+    {
+      "name": "has_been_claimed",
+      "type": "boolean"
+    },
+    {
+      "name": "secteur",
+      "type": "string"
+    },
+    {
+      "name": "catégorie",
+      "type": "string"
+    },
+    {
+      "name": "secteur_spe",
+      "type": "string"
+    },
+    {
+      "name": "line_ministry",
+      "type": "string"
+    },
+    {
+      "name": "gestionnaires",
+      "type": "string"
+    },
+    {
+      "name": "secteur_brute",
+      "type": "array"
+    }
+  ],
+  "format": "csv",
+  "mediatype": "text/csv",
+  "name": "dark_query_cantines",
+  "path": "dark_query_cantines.csv",
+  "scheme": "file",
+  "type": "table"
+}

@@ -173,7 +173,10 @@ def fetch_teledeclarations(years: list) -> pd.DataFrame:
 
 
 def fetch_canteens(columns, exclude_filter=None):
-    canteens = Canteen.objects.exclude(exclude_filter)
+    if exclude_filter:
+        canteens = Canteen.objects.exclude(exclude_filter)
+    else:
+        canteens = Canteen.objects.exclude()
     if canteens.count() == 0:
         df = pd.DataFrame(columns=columns)
     else:
