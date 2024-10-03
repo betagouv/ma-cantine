@@ -33,9 +33,9 @@
     </ul>
     <h2 class="fr-h2">Engagements d'accessibilité numérique</h2>
     <p>
-      Le ministère de l'agriculture et de l'alimentation s'engage à rendre accessibles ses sites web (internet, intranet
-      et extranet), ses applications mobiles, ses progiciels et son mobilier urbain numérique conformément à l'article
-      47 de la loi n°2005-102 du 11 février 2005.
+      Le Ministère de l'Agriculture, de la Souveraineté alimentaire et de la Forêt s'engage à rendre accessibles ses
+      sites web (internet, intranet et extranet), ses applications mobiles, ses progiciels et son mobilier urbain
+      numérique conformément à l'article 47 de la loi n°2005-102 du 11 février 2005.
     </p>
     <!-- TODO: complete after a11y meeting in september 2023
     <p>

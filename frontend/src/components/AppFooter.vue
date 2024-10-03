@@ -7,10 +7,11 @@
     ></v-divider>
     <v-container class="constrained pb-4 pb-sm-0 pt-0 text-left">
       <v-row v-if="!showSmallFooter" class="pt-12 pt-sm-0">
-        <v-col cols="12" sm="3" md="2" class="d-flex align-center">
+        <v-col cols="12" sm="3" md="2" class="d-flex align-center ml-n4">
           <img
-            src="/static/images/Marianne.png"
-            alt="Ministère de l'Agriculture et la Souveraineté Alimentaire - Liberté Égalité Fraternité"
+            src="/static/images/Marianne.jpg"
+            alt="Ministère de l'Agriculture, de la Souveraineté alimentaire et de la Forêt - Liberté Égalité Fraternité"
+            height="160"
           />
         </v-col>
         <v-spacer></v-spacer>
