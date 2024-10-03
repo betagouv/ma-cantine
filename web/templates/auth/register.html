@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Créer mon compte{% endblock %}
-{% load moncomptepro %}
+{% load proconnect %}
 {% load static %}
 
 {% block content %}
@@ -191,8 +191,8 @@
 <div>
   <a href="{% url 'login' %}">J'ai déjà un compte</a>
 </div>
-{% uses_moncomptepro as show_mcp_button %}
-{% if show_mcp_button %}
+{% uses_proconnect as show_proconnect_button %}
+{% if show_proconnect_button %}
 <div style="margin-top: 16px;">
   <a href="{% url 'oidc-login' %}">
     <img src="{% static 'images/button-moncomptepro.svg' %}" alt="S'identifier avec MonComptePro" />

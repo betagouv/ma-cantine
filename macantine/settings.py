@@ -559,14 +559,14 @@ REDIS_URL = os.getenv("REDIS_URL")
 REDIS_PREPEND_KEY = os.getenv("REDIS_PREPEND_KEY", "")
 
 AUTHLIB_OAUTH_CLIENTS = {
-    "moncomptepro": {
-        "client_id": os.getenv("MONCOMPTEPRO_CLIENT_ID"),
-        "client_secret": os.getenv("MONCOMPTEPRO_SECRET"),
+    "proconnect": {
+        "client_id": os.getenv("PROCONNECT_CLIENT_ID"),
+        "client_secret": os.getenv("PROCONNECT_SECRET"),
     }
 }
-MONCOMPTEPRO_CONFIG = os.getenv("MONCOMPTEPRO_CONFIG")
-USES_MONCOMPTEPRO = (
-    os.getenv("MONCOMPTEPRO_CLIENT_ID") and os.getenv("MONCOMPTEPRO_SECRET") and os.getenv("MONCOMPTEPRO_CONFIG")
+PROCONNECT_CONFIG = os.getenv("PROCONNECT_CONFIG")
+USES_PROCONNECT = (
+    os.getenv("PROCONNECT_CLIENT_ID") and os.getenv("PROCONNECT_SECRET") and os.getenv("PROCONNECT_CONFIG")
 )
 MAX_DAYS_HISTORICAL_RECORDS = (
     int(os.getenv("MAX_DAYS_HISTORICAL_RECORDS")) if os.getenv("MAX_DAYS_HISTORICAL_RECORDS", None) else None

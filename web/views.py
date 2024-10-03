@@ -19,11 +19,11 @@ from web.forms import LoginUserForm, RegisterUserForm
 
 logger = logging.getLogger(__name__)
 
-if settings.USES_MONCOMPTEPRO:
+if settings.USES_PROCONNECT:
     oauth = OAuth()
     oauth.register(
-        name="moncomptepro",
-        server_metadata_url=settings.MONCOMPTEPRO_CONFIG,
+        name="proconnect",
+        server_metadata_url=settings.PROCONNECT_CONFIG,
         client_kwargs={"scope": "openid email profile organizations"},
     )
 
@@ -205,14 +205,14 @@ def _login_and_send_activation_email(username, request):
 class OIDCLoginView(View):
     def get(self, request, *args, **kwargs):
         redirect_uri = request.build_absolute_uri(reverse_lazy("oidc-authorize"))
-        return oauth.moncomptepro.authorize_redirect(request, redirect_uri)
+        return oauth.proconnect.authorize_redirect(request, redirect_uri)
 
 
 class OIDCAuthorizeView(View):
     def get(self, request, *args, **kwargs):
         try:
-            token = oauth.moncomptepro.authorize_access_token(request)
-            mcp_data = oauth.moncomptepro.userinfo(token=token)
+            token = oauth.proconnect.authorize_access_token(request)
+            mcp_data = oauth.proconnect.userinfo(token=token)
             user = OIDCAuthorizeView.get_or_create_user(mcp_data)
             login(request, user)
             return redirect(reverse_lazy("app"))

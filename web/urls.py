@@ -144,7 +144,7 @@ urlpatterns = [
     ),
 ]
 
-if settings.USES_MONCOMPTEPRO:
+if settings.USES_PROCONNECT:
     urlpatterns.append(
         path(
             "oidc-login",
