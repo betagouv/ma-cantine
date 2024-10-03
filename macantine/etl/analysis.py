@@ -308,7 +308,7 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
         self.df["ratio_egalim_sans_bio"] = self.df.apply(get_ratio_egalim_sans_bio, axis=1)
 
 
-class ETL_ANALYSIS_CANTEENS(ETL_ANALYSIS):
+class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
     """
     Create a dataset for analysis in a Data Warehouse
     * Extract data from prod
@@ -326,4 +326,7 @@ class ETL_ANALYSIS_CANTEENS(ETL_ANALYSIS):
         pass
 
     def transform_dataset(self):
-        pass
+        # TMP match_schema() with less columns for smaller PR
+        columns = ["id", "name", "siret"]
+        self.df = self.df.loc[:, ~self.df.columns.duplicated()].copy()
+        self.df = self.df[columns]

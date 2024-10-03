@@ -19,8 +19,8 @@ from common.utils import get_token_sirene
 from data.models import Canteen, User
 
 from .celery import app
-from .etl.analysis import ETL_ANALYSIS
-from .etl.open_data import ETL_CANTEEN, ETL_TD
+from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TD
+from .etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TD
 from .utils import fetch_geo_data_from_api_insee_sirene_by_siret
 
 logger = logging.getLogger(__name__)
@@ -419,10 +419,11 @@ def delete_old_historical_records():
 def export_datasets():
     logger.info("Starting datasets extractions")
     datasets = {
-        "campagne teledeclaration 2021": ETL_TD(2021),
-        "campagne teledeclaration 2022": ETL_TD(2022),
-        "cantines": ETL_CANTEEN(),
-        "td_analyses": ETL_ANALYSIS(),
+        "campagne teledeclaration 2021": ETL_OPEN_DATA_TD(2021),
+        "campagne teledeclaration 2022": ETL_OPEN_DATA_TD(2022),
+        "cantines": ETL_OPEN_DATA_CANTEEN(),
+        "td_analyses": ETL_ANALYSIS_TD(),
+        "cantines_analyses": ETL_ANALYSIS_CANTEEN(),
     }
     for key, etl in datasets.items():
         logger.info(f"Starting {key} dataset extraction")

@@ -183,7 +183,7 @@ class ETL_OPEN_DATA(etl.ETL):
             logger.error(f"Error saving validated data: {e}")
 
 
-class ETL_CANTEEN(ETL_OPEN_DATA):
+class ETL_OPEN_DATA_CANTEEN(ETL_OPEN_DATA):
     def __init__(self):
         super().__init__()
         self.dataset_name = "registre_cantines"
@@ -261,7 +261,7 @@ class ETL_CANTEEN(ETL_OPEN_DATA):
         logger.info(f"Time spent on campaign participations : {end - start}")
 
 
-class ETL_TD(ETL_OPEN_DATA):
+class ETL_OPEN_DATA_TD(ETL_OPEN_DATA):
     def __init__(self, year: int):
         super().__init__()
         self.year = year
