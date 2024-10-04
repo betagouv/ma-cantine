@@ -278,13 +278,7 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
         self.df.columns = self.df.columns.str.replace("applicant.", "")
         self.df.columns = self.df.columns.str.replace("department", "departement")
 
-        # Filter by schema columns names
-        self.match_schema()
-
-    def match_schema(self):
-        columns = [i["name"] for i in self.schema["fields"]]
-        self.df = self.df.loc[:, ~self.df.columns.duplicated()].copy()
-        self.df = self.df[columns]
+        self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
     def compute_miscellaneous_columns(self):
         # Canteen
@@ -327,7 +321,5 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
         self.df = utils.fetch_canteens(all_canteens_col)
 
     def transform_dataset(self):
-        # TMP match_schema() with less columns for smaller PR
-        columns = ["id", "name", "siret"]
-        self.df = self.df.loc[:, ~self.df.columns.duplicated()].copy()
-        self.df = self.df[columns]
+        self.df = self.df.rename(columns=self.columns_mapper)
+        self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
