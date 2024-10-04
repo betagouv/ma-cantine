@@ -324,17 +324,7 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
 
     def extract_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
-        self.canteens_col_from_db = all_canteens_col
-        for col_processed in [
-            "catégorie",
-            "gestionnaires",
-            "region_lib",
-            "secteur",
-            "secteur_brute",
-            "secteur_spe",
-        ]:
-            self.canteens_col_from_db.remove(col_processed)
-        self.df = utils.fetch_canteens(self.canteens_col_from_db)
+        self.df = utils.fetch_canteens(all_canteens_col)
 
     def transform_dataset(self):
         # TMP match_schema() with less columns for smaller PR
