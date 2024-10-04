@@ -1,11 +1,13 @@
-from data.factories.managerinvitation import ManagerInvitationFactory
 from django.core import mail
-from django.urls import reverse
 from django.test.utils import override_settings
-from rest_framework.test import APITestCase
+from django.urls import reverse
 from rest_framework import status
+from rest_framework.test import APITestCase
+
 from data.factories import CanteenFactory, UserFactory
+from data.factories.managerinvitation import ManagerInvitationFactory
 from data.models import ManagerInvitation
+
 from .utils import authenticate
 
 

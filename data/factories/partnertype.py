@@ -1,4 +1,5 @@
 import factory
+
 from data.models import PartnerType
 
 

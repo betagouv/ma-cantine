@@ -1,11 +1,14 @@
-from collections import OrderedDict
 import logging
-from rest_framework.generics import RetrieveAPIView, ListAPIView
+from collections import OrderedDict
+
+from django_filters import rest_framework as django_filters
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
+
 from api.serializers import BlogPostSerializer
 from data.models import BlogPost
-from django_filters import rest_framework as django_filters
+
 from .utils import UnaccentSearchFilter
 
 logger = logging.getLogger(__name__)

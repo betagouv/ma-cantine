@@ -1,5 +1,5 @@
 <template>
-  <GenericMeasureResults :badge="badge" :canteen="canteen" :diagnosticSet="diagnosticSet" />
+  <GenericMeasureResults :badge="badge" :canteen="canteen" :diagnostics="diagnostics" />
 </template>
 
 <script>
@@ -10,7 +10,8 @@ export default {
   props: {
     badge: Object,
     canteen: Object,
-    diagnosticSet: Array,
+    diagnostics: Array,
+    editable: Boolean,
   },
   components: { GenericMeasureResults },
 }

@@ -115,7 +115,7 @@ export default {
         (x) => x.value === this.canteen.productionType
       )
       const managementTypeDetail = Constants.ManagementTypes.find((x) => x.value === this.canteen.managementType)
-      const ministryDetail = Constants.Ministries.find((x) => x.value === this.canteen.lineMinistry)
+      const ministryDetail = this.$store.state.lineMinistries.find((x) => x.value === this.canteen.lineMinistry)
       let items = [
         { value: this.canteen.name, label: "Nom de la cantine" },
         { value: this.canteen.siret, label: "Numéro SIRET" },

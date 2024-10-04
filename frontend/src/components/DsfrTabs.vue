@@ -1,7 +1,6 @@
 <template>
   <div>
-    <DsfrSelect
-      hide-details
+    <DsfrNativeSelect
       class="mb-4"
       :label="mobileLabel"
       :items="mobileSelectItems"
@@ -19,12 +18,12 @@
 </template>
 
 <script>
-import DsfrSelect from "@/components/DsfrSelect"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 
 export default {
   inheritAttrs: false,
   props: ["value", "enableMobileView", "mobileLabel", "mobileSelectItems"],
-  components: { DsfrSelect },
+  components: { DsfrNativeSelect },
   computed: {
     tab: {
       get() {

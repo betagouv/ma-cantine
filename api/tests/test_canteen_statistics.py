@@ -1,16 +1,18 @@
-from django.urls import reverse
-from rest_framework.test import APITestCase
-from rest_framework import status
 import requests_mock
-from data.department_choices import Department
-from data.factories import CanteenFactory, SectorFactory
-from data.factories import DiagnosticFactory
-from data.models import Canteen, Diagnostic, Sector
+from django.test.utils import override_settings
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+
 from api.views.canteen import badges_for_queryset
+from data.department_choices import Department
+from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory
+from data.models import Canteen, Diagnostic, Sector
 from data.region_choices import Region
 
 
 class TestCanteenStatsApi(APITestCase):
+    @override_settings(PUBLISH_BY_DEFAULT=False)
     def test_canteen_statistics(self):
         """
         This public endpoint returns some summary statistics for a region and a location
@@ -127,6 +129,30 @@ class TestCanteenStatsApi(APITestCase):
         # can also call without location info
         response = self.client.get(reverse("canteen_statistics"), {"year": 2020})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    def test_publication_filter_new_rules(self):
+        """
+        When canteens are published by default, test that the publication count is filtered on ministry
+        """
+        region = "01"
+
+        CanteenFactory.create(
+            region=region,
+            publication_status=Canteen.PublicationStatus.DRAFT,
+        )
+        CanteenFactory.create(
+            region=region,
+            line_ministry=Canteen.Ministries.ARMEE,
+            publication_status=Canteen.PublicationStatus.DRAFT,
+        )
+
+        response = self.client.get(reverse("canteen_statistics"), {"region": region, "year": 2020})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["publishedCanteenCount"], 1)
 
     def test_canteen_stats_by_departments(self):
         department = "01"
@@ -501,3 +527,25 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 5)
         self.assertEqual(body["epciError"], "Une erreur est survenue")
+
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    def test_published_canteen_count(self):
+        """
+        The summary published canteen count should be the sum of all canteens not with ARMEE
+        """
+        CanteenFactory.create(
+            line_ministry=Canteen.Ministries.AGRICULTURE,
+            publication_status=Canteen.PublicationStatus.DRAFT,
+        )
+        CanteenFactory.create(line_ministry=None)
+        CanteenFactory.create(
+            line_ministry=Canteen.Ministries.ARMEE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+        )
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": 2024})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["publishedCanteenCount"], 2)

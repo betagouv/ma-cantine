@@ -1,39 +1,77 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
+
 from api.views import (
+    ActionableCanteenRetrieveView,
+    ActionableCanteensListView,
+    AddManagerView,
+    BlogPostsView,
+    BlogPostView,
+    CanteenLocationsView,
+    CanteenPurchasesPercentageSummaryView,
+    CanteenPurchasesSummaryView,
+    CanteenStatisticsView,
+    CanteenStatusView,
+    CanteenWasteMeasurementsView,
+    CanteenWasteMeasurementView,
+    ChangePasswordView,
+    ClaimCanteenView,
+    CommunityEventsView,
+    DiagnosticCreateView,
+    DiagnosticsFromPurchasesView,
+    DiagnosticsToTeledeclareListView,
+    DiagnosticUpdateView,
+    EmailDiagnosticImportFileView,
+    ImportCompleteCentralKitchenView,
+    ImportCompleteDiagnosticsView,
+    ImportPurchasesView,
+    ImportSimpleCentralKitchenView,
+    ImportSimpleDiagnosticsView,
+    InitialDataView,
     InquiryView,
     LoggedUserView,
-    UserInfoView,
-    SubscribeNewsletter,
+    MessageCreateView,
+    PartnersView,
+    PartnerTypeListView,
+    PartnerView,
+    PublicCanteenPreviewView,
+    PublishCanteenView,
+    PublishedCanteenSingleView,
+    PublishedCanteensView,
+    PublishManyCanteensView,
     PurchaseListCreateView,
+    PurchaseListExportView,
+    PurchaseOptionsView,
     PurchaseRetrieveUpdateDestroyView,
     PurchasesDeleteView,
     PurchasesRestoreView,
-    CanteenPurchasesSummaryView,
-    DiagnosticsFromPurchasesView,
-    UsernameSuggestionView,
-    ImportSimpleCentralKitchenView,
-    ImportCompleteCentralKitchenView,
+    RemoveManagerView,
+    ReservationExpeView,
+    RetrieveUpdateUserCanteenView,
+    ReviewView,
+    SatelliteListCreateView,
+    SectorListView,
+    SendCanteenNotFoundEmail,
+    SubscribeNewsletter,
+    TeamJoinRequestView,
+    TeledeclarationCancelView,
+    TeledeclarationCreateView,
+    TeledeclarationPdfView,
     TerritoryCanteensListView,
+    UndoClaimCanteenView,
+    UnlinkSatelliteView,
+    UnpublishCanteenView,
+    UpdateUserView,
+    UserCanteenPreviews,
+    UserCanteenSummaries,
+    UserCanteensView,
+    UserInfoView,
+    UsernameSuggestionView,
+    VegetarianExpeView,
+    VideoTutorialListView,
+    WasteActionsView,
+    WasteActionView,
 )
-from api.views import UpdateUserView, UserCanteensView, CanteenStatisticsView
-from api.views import PublishedCanteensView, PublishManyCanteensView, PublishedCanteenSingleView
-from api.views import DiagnosticCreateView, RetrieveUpdateUserCanteenView, DiagnosticUpdateView
-from api.views import EmailDiagnosticImportFileView
-from api.views import BlogPostsView, SectorListView, ChangePasswordView, BlogPostView
-from api.views import AddManagerView, RemoveManagerView
-from api.views import ImportSimpleDiagnosticsView, ImportCompleteDiagnosticsView
-from api.views import TeledeclarationCreateView, TeledeclarationCancelView, TeledeclarationPdfView
-from api.views import PublishCanteenView, UnpublishCanteenView, SendCanteenNotFoundEmail
-from api.views import UserCanteenPreviews, CanteenLocationsView
-from api.views import PartnerView, PartnersView, PartnerTypeListView
-from api.views import ReservationExpeView, PurchaseListExportView, PurchaseOptionsView, ImportPurchasesView
-from api.views import MessageCreateView, VegetarianExpeView, TeamJoinRequestView
-from api.views import ReviewView, CommunityEventsView, ClaimCanteenView, UndoClaimCanteenView, SatelliteListCreateView
-from api.views import ActionableCanteensListView, ActionableCanteenRetrieveView
-from api.views import CanteenStatusView, VideoTutorialListView, DiagnosticsToTeledeclareListView
-from api.views import InitialDataView, UnlinkSatelliteView
-
 
 urlpatterns = {
     path("loggedUser/", LoggedUserView.as_view(), name="logged_user"),
@@ -41,12 +79,18 @@ urlpatterns = {
     path("user/<int:pk>", UpdateUserView.as_view(), name="update_user"),
     path("publishedCanteens/", PublishedCanteensView.as_view(), name="published_canteens"),
     path(
+        "publicCanteenPreviews/<int:pk>",
+        PublicCanteenPreviewView.as_view(),
+        name="single_public_canteen_preview",
+    ),
+    path(
         "publishedCanteens/<int:pk>",
         PublishedCanteenSingleView.as_view(),
         name="single_published_canteen",
     ),
     path("publish/", PublishManyCanteensView.as_view(), name="publish_canteens"),
     path("canteenPreviews/", UserCanteenPreviews.as_view(), name="user_canteen_previews"),
+    path("canteenSummaries/", UserCanteenSummaries.as_view(), name="user_canteens_summaries"),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
     path("canteens/<int:pk>", RetrieveUpdateUserCanteenView.as_view(), name="single_canteen"),
     path(
@@ -68,6 +112,16 @@ urlpatterns = {
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>",
         DiagnosticUpdateView.as_view(),
         name="diagnostic_edition",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/wasteMeasurements/",
+        CanteenWasteMeasurementsView.as_view(),
+        name="canteen_waste_measurements",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/wasteMeasurements/<int:pk>",
+        CanteenWasteMeasurementView.as_view(),
+        name="canteen_waste_measurement",
     ),
     path(
         "canteens/<int:canteen_pk>/satellites/",
@@ -163,6 +217,11 @@ urlpatterns = {
         name="canteen_purchases_summary",
     ),
     path(
+        "canteenPurchasesPercentageSummary/<int:canteen_pk>",
+        CanteenPurchasesPercentageSummaryView.as_view(),
+        name="canteen_purchases_percentage_summary",
+    ),
+    path(
         "createDiagnosticsFromPurchases/<int:year>",
         DiagnosticsFromPurchasesView.as_view(),
         name="diagnostics_from_purchases",
@@ -194,6 +253,8 @@ urlpatterns = {
     path("videoTutorials/", VideoTutorialListView.as_view(), name="video_tutorials"),
     path("initialData/", InitialDataView.as_view(), name="initial_data"),
     path("territoryCanteens/", TerritoryCanteensListView.as_view(), name="territory_canteens"),
+    path("wasteActions/", WasteActionsView.as_view(), name="waste_actions_list"),
+    path("wasteActions/<int:pk>", WasteActionView.as_view(), name="waste_action_detail"),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

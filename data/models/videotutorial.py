@@ -1,6 +1,7 @@
-from django.db import models
-from data.fields import ChoiceArrayField
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.db import models
+
+from data.fields import ChoiceArrayField
 
 
 class VideoTutorialCategory(models.TextChoices):

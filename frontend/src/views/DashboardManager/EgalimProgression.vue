@@ -9,7 +9,7 @@
             </h2>
           </v-col>
           <v-col>
-            <DsfrSelect v-model="year" :items="allowedYears" hide-details="auto" placeholder="Année" />
+            <DsfrNativeSelect v-model="selectedYear" :items="allowedYears" label="Année" labelClasses="d-sr-only" />
           </v-col>
         </v-row>
         <div>
@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import DsfrSelect from "@/components/DsfrSelect"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import {
   lastYear,
@@ -153,7 +153,7 @@ import ApproSegment from "./ApproSegment"
 export default {
   name: "EgalimProgression",
   components: {
-    DsfrSelect,
+    DsfrNativeSelect,
     TeledeclarationPreview,
     FoodWasteCard,
     DiversificationCard,
@@ -172,13 +172,16 @@ export default {
     const years = customDiagnosticYears(this.canteen.diagnostics)
     return {
       lastYear: lastYear(),
-      year: lastYear(),
+      selectedYear: lastYear(),
       diagnosticYears: years,
       allowedYears: years.map((year) => ({ text: year, value: year })),
       showTeledeclarationPreview: false,
     }
   },
   computed: {
+    year() {
+      return +this.selectedYear
+    },
     canteenDiagnostic() {
       return this.canteen.diagnostics.find((x) => x.year === this.year)
     },
@@ -223,7 +226,10 @@ export default {
       return this.year === lastYear() + 1
     },
     needsData() {
-      return !this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic)
+      return (
+        (!this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic)) ||
+        !this.diagnosticCanBeTeledeclared
+      )
     },
     diagnosticCanBeTeledeclared() {
       return diagnosticCanBeTeledeclared(this.canteen, this.canteenDiagnostic)

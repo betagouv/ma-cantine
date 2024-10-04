@@ -1,18 +1,19 @@
+import base64
+import logging
+
+import html2text
+import redis as r
+import requests
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-import base64
-import html2text
-import redis as r
-import logging
-import requests
 
 logger = logging.getLogger(__name__)
 
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
-def get_siret_token():
+def get_token_sirene():
     if not settings.SIRET_API_KEY or not settings.SIRET_API_SECRET:
         logger.warning("skipping siret token fetching because key and secret env vars aren't set")
         return

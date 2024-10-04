@@ -69,6 +69,7 @@ static/*
 # except the .keep to keep it in git
 media/*
 !media/.keep
+!media/open_data/.keep
 
 # Flask stuff:
 instance/
@@ -157,7 +158,12 @@ celerybeat-schedule.db
 # Hosting
 .clever.json
 
+# IDE
 .vscode/*.code-snippets
+.idea/
+
+# Shell nix config
+shell.nix
 
 # Celery
 celerybeat-schedule
@@ -172,3 +178,6 @@ stats/bilan/france-geojson
 
 notes/
 
+# 2024 Frontend
+.vite/
+.hotfile

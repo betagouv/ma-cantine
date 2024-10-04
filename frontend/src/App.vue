@@ -1,31 +1,25 @@
 <template>
-  <div id="app">
-    <v-app>
-      <WidgetHeader class="ma-4 mb-0 constrained" v-if="isWidget" />
-      <AppHeader class="mx-auto constrained" v-else-if="!fullscreen" />
+  <v-app>
+    <WidgetHeader class="ma-4 mb-0 constrained" v-if="isWidget" />
+    <AppHeader class="mx-auto constrained" v-else-if="!fullscreen" />
 
-      <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget, 'fill-height': fullscreen }" role="main">
-        <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner && !fullscreen" />
-        <v-container fluid :fill-height="!initialDataLoaded || fullscreen" :class="{ 'pa-0': fullscreen }">
-          <v-progress-circular
-            indeterminate
-            style="position: absolute; left: 50%; top: 50%"
-            v-if="!initialDataLoaded"
-          ></v-progress-circular>
-          <router-view v-else :class="routerViewClass" />
-        </v-container>
-      </v-main>
+    <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget, 'fill-height': fullscreen }" role="main">
+      <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner && !fullscreen" />
+      <v-container fluid :fill-height="!initialDataLoaded || fullscreen" :class="{ 'pa-0': fullscreen }">
+        <v-progress-circular
+          indeterminate
+          style="position: absolute; left: 50%; top: 50%"
+          v-if="!initialDataLoaded"
+        ></v-progress-circular>
+        <router-view v-else :class="routerViewClass" />
+      </v-container>
+    </v-main>
 
-      <AppFooter v-if="!isWidget && !fullscreen" />
-      <div v-if="!isWidget" id="notification-center">
-        <NotificationSnackbar
-          v-for="notification in notifications"
-          :key="notification.id"
-          :notification="notification"
-        />
-      </div>
-    </v-app>
-  </div>
+    <AppFooter v-if="!isWidget && !fullscreen" />
+    <div v-if="!isWidget" id="notification-center">
+      <NotificationSnackbar v-for="notification in notifications" :key="notification.id" :notification="notification" />
+    </div>
+  </v-app>
 </template>
 
 <script>
@@ -149,16 +143,49 @@ export default {
   background-color: #f6f6f6;
 }
 
+.v-card.dsfr.no-hover:hover {
+  background-color: inherit;
+}
+
+// thanks to https://codesandbox.io/p/sandbox/awesome-clickable-card-8tgtwt?file=%2Fstyle.css%3A16%2C1-19%2C2
+// makes link titles much less verbose for improved accessible experience
+.v-card.dsfr.expanded-link {
+  position: relative;
+  isolation: isolate;
+}
+
+.v-card.dsfr.expanded-link a {
+  text-decoration: none;
+}
+
+.v-card.dsfr.expanded-link a::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+
+  inset: 0;
+}
+.v-card.dsfr.expanded-link button,
+.v-card.dsfr.expanded-link a {
+  z-index: 2;
+}
+
 a:focus,
 button:focus,
 .v-input--checkbox:focus-within,
 .v-radio:focus-within,
 .v-card:focus,
 .drag-and-drop:focus-within,
-div[role="tab"]:focus {
+div[role="tab"]:focus,
+.outline-focus-within:focus-within {
   outline: rgb(0, 0, 145) !important;
   outline-width: 1px !important;
   outline-style: auto !important;
+  outline-offset: 2px;
+}
+
+.v-btn.primary:hover {
+  background-color: #1212ff !important;
 }
 
 .v-expansion-panel-header__icon > .v-icon {
@@ -173,6 +200,10 @@ div[role="tab"]:focus {
   color: #666 !important;
   opacity: 1;
   font-style: italic;
+}
+.other-text-input label.theme--light.v-label--is-disabled {
+  color: #666 !important;
+  opacity: 1;
 }
 
 .dsfr-table.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
@@ -221,7 +252,8 @@ div[role="tab"]:focus {
 fieldset {
   border: none;
 }
-ul.no-bullets {
+ul.no-bullets,
+ol.no-bullets {
   padding-left: 0;
   list-style-type: none;
   /* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#accessibility_concerns */

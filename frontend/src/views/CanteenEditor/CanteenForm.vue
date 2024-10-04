@@ -1,6 +1,6 @@
 <template>
   <div class="text-left">
-    <h1 class="font-weight-black text-h4 my-4">
+    <h1 class="fr-h1">
       {{ isNewCanteen ? "Ajouter ma cantine" : "Modifier ma cantine" }}
     </h1>
 
@@ -11,7 +11,7 @@
     />
 
     <div v-if="$route.query.etape === steps[0]">
-      <h2 class="body-1 font-weight-bold mb-4">Étape 1/2 : Renseignez le SIRET de votre établissement</h2>
+      <h2 class="fr-h4">Étape 1/2 : Renseignez le SIRET de votre établissement</h2>
       <p>
         Vous ne le connaissez pas ? Utilisez
         <a
@@ -51,10 +51,33 @@
         ou
         <router-link :to="{ name: 'ContactPage' }">contactez-nous</router-link>
       </p>
+
+      <v-col v-if="isNewCanteen" sm="6" class="mt-12 px-0">
+        <v-card outlined class="d-flex flex-column fill-height pa-2">
+          <v-card-title><h2 class="fr-h5 mb-2">Besoin de créer plus de 5 cantines&nbsp;?</h2></v-card-title>
+          <v-card-text>
+            <p class="mb-0">
+              Notre outil d'import permet de créer plusieurs cantines depuis un fichier tableur Excel, LibreOffice, ou
+              CSV. Suivre les indications suivantes pour préparer votre fichier.
+            </p>
+          </v-card-text>
+          <v-spacer></v-spacer>
+          <v-card-actions class="px-4">
+            <v-spacer></v-spacer>
+            <v-btn
+              :to="{ name: 'DiagnosticImportPage', params: { importUrlSlug: 'cantines-seules' } }"
+              outlined
+              color="primary"
+            >
+              Importer mes cantines
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
     </div>
 
     <v-form v-else ref="form" v-model="formIsValid">
-      <h2 class="mb-4" v-if="isNewCanteen">Étape 2/2 : Compléter les informations</h2>
+      <h2 class="fr-h4" v-if="isNewCanteen">Étape 2/2 : Compléter les informations</h2>
       <v-row>
         <v-col cols="12" md="8">
           <p class="mb-2">SIRET</p>
@@ -180,6 +203,7 @@
                 validators.length(14),
                 validators.luhn,
                 validators.isDifferent(canteen.siret, satelliteSiretMessage),
+                validators.required,
               ]"
               @blur="getCentralKitchen"
             />
@@ -225,56 +249,36 @@
         </v-col>
 
         <v-col cols="12" sm="6" md="4">
-          <div>
-            <DsfrSelect
-              label="Catégorie de secteur"
-              labelClasses="body-2 mb-2"
-              clearable
-              :items="sectorCategories"
-              v-model="sectorCategory"
-              hide-details="auto"
-            />
-          </div>
+          <DsfrNativeSelect
+            label="Catégorie de secteur"
+            labelClasses="body-2 mb-2"
+            :items="sectorCategories"
+            v-model="sectorCategory"
+          />
         </v-col>
         <v-col cols="12" md="6">
           <div>
-            <DsfrSelect
+            <DsfrNativeSelect
               label="Secteurs d'activité"
               labelClasses="body-2 mb-2"
               :items="filteredSectors"
-              :rules="canteen.sectors && canteen.sectors.length ? [] : [validators.required]"
-              @change="addSector"
               v-model="chosenSector"
               item-text="name"
               item-value="id"
-              hide-details="auto"
               no-data-text="Veuillez séléctionner la catégorie de secteur"
+              :rules="canteen.sectors && canteen.sectors.length ? [] : [validators.required]"
             />
-            <div class="d-flex flex-wrap mt-2">
-              <p v-for="id in canteen.sectors" :key="id" class="mb-0">
-                <v-chip
-                  close
-                  @click="removeSector(id)"
-                  @click:close="removeSector(id)"
-                  class="mr-1 mt-1"
-                  color="primary"
-                >
-                  {{ sectorName(id) }}
-                </v-chip>
-              </p>
-            </div>
+            <DsfrTagGroup :tags="sectorTags" :closeable="true" @closeTag="(tag) => removeSector(tag.id)" />
           </div>
         </v-col>
         <v-col v-if="showMinistryField" cols="12" md="10">
-          <DsfrSelect
+          <DsfrNativeSelect
             label="Ministère de tutelle"
             labelClasses="body-2 mb-2"
             :items="ministries"
             v-model="canteen.lineMinistry"
             :rules="[validators.required]"
             placeholder="Sélectionnez le Ministère de tutelle"
-            hide-details="auto"
-            clearable
           />
         </v-col>
       </v-row>
@@ -325,8 +329,9 @@ import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrRadio from "@/components/DsfrRadio"
 import CityField from "./CityField"
-import DsfrSelect from "@/components/DsfrSelect"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrCallout from "@/components/DsfrCallout"
+import DsfrTagGroup from "@/components/DsfrTagGroup"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -337,9 +342,10 @@ export default {
     DsfrTextField,
     DsfrRadio,
     CityField,
-    DsfrSelect,
+    DsfrNativeSelect,
     DsfrCallout,
     SiretCheck,
+    DsfrTagGroup,
   },
   props: {
     canteenUrlComponent: {
@@ -369,7 +375,7 @@ export default {
       economicModels: Constants.EconomicModels,
       sectorCategory: null,
       chosenSector: null,
-      ministries: Constants.Ministries,
+      ministries: this.$store.state.lineMinistries,
       centralKitchen: null,
     }
   },
@@ -382,12 +388,13 @@ export default {
     },
     filteredSectors() {
       if (!this.sectorCategory) return []
-      return sectorsSelectList(this.sectors, this.sectorCategory)
+      return sectorsSelectList(this.sectors, this.sectorCategory).filter((s) => !s.header)
     },
     sectorCategories() {
       const displayValueMap = Constants.SectorCategoryTranslations
       const categoriesInUse = this.sectors.map((s) => s.category)
-      const categories = categoriesInUse.map((c) => ({ value: c, text: displayValueMap[c] }))
+      const uniqueCategories = categoriesInUse.filter((c, idx) => categoriesInUse.indexOf(c) === idx)
+      const categories = uniqueCategories.map((c) => ({ value: c, text: displayValueMap[c] }))
       categories.sort((a, b) => {
         if (a.value === "autres" && b.value === "inconnu") return 0
         else if (a.value === "autres") return 1
@@ -415,13 +422,19 @@ export default {
     showMinistryField() {
       const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
       if (concernedSectors.length === 0) return false
-      return this.canteen.sectors?.some((x) => concernedSectors.indexOf(x) > -1)
+      return this.canteen.sectors?.some((x) => concernedSectors.indexOf(parseInt(x, 10)) > -1)
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
     },
     showDelete() {
       return !this.isNewCanteen && window.ENABLE_DASHBOARD
+    },
+    sectorTags() {
+      return this.canteen.sectors.map((sectorId) => ({
+        text: this.sectorName(sectorId),
+        id: sectorId,
+      }))
     },
   },
   mounted() {
@@ -600,9 +613,11 @@ export default {
       this.canteen.department = location.department
     },
     sectorName(id) {
+      id = parseInt(id, 10) || id
       return this.sectors.find((s) => s.id === id)?.name || id
     },
     addSector(id) {
+      id = +id
       if (!id || id < 0) return
       if (!this.canteen.sectors) this.canteen.sectors = []
       if (this.canteen.sectors.indexOf(id) === -1) this.canteen.sectors.push(id)
@@ -620,6 +635,11 @@ export default {
       return
     }
     window.confirm(LEAVE_WARNING) ? next() : next(false)
+  },
+  watch: {
+    chosenSector(newValue) {
+      this.addSector(newValue)
+    },
   },
 }
 </script>

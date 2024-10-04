@@ -4,21 +4,17 @@
     <v-card-title>
       <h3 class="fr-h6 font-weight-bold mb-1">{{ canteen.name }}</h3>
     </v-card-title>
-    <v-card-subtitle class="py-1">
-      <v-chip
+    <v-card-subtitle class="pb-0 mx-n1">
+      <DsfrTag
         v-if="teledeclarationIsActive && !usesCentralKitchenDiagnostics"
-        small
+        :text="teledeclarationStatus.text"
         :color="teledeclarationStatus.color"
-        label
-        class="mr-1"
-      >
-        <p class="mb-0">{{ teledeclarationStatus.text }}</p>
-      </v-chip>
-      <v-chip small :color="publicationStatus.color" label>
-        <p class="mb-0">{{ publicationStatus.text }}</p>
-      </v-chip>
+        :small="true"
+      />
+      <DsfrTag :text="publicationStatus.text" :color="publicationStatus.color" :small="true" />
     </v-card-subtitle>
-    <v-card-subtitle class="mt-0 pb-0">
+    <v-card-subtitle class="mt-0 pb-0 pt-2">
+      <ProductionTypeTag :canteen="canteen" position="top-left" />
       <CanteenIndicators :canteen="canteen" />
     </v-card-subtitle>
     <v-spacer></v-spacer>
@@ -31,6 +27,8 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
+import ProductionTypeTag from "@/components/ProductionTypeTag"
+import DsfrTag from "@/components/DsfrTag"
 import { lastYear } from "@/utils"
 
 export default {
@@ -43,6 +41,8 @@ export default {
   },
   components: {
     CanteenIndicators,
+    ProductionTypeTag,
+    DsfrTag,
   },
   data() {
     return {
@@ -85,8 +85,7 @@ export default {
       )
     },
     canteenImage() {
-      if (!this.canteen.images || this.canteen.images.length === 0) return null
-      return this.canteen.images[0].image
+      return this.canteen.leadImage?.image
     },
     teledeclarationIsActive() {
       return window.ENABLE_TELEDECLARATION

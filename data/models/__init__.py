@@ -1,6 +1,10 @@
+# isort: skip_file
+
 from .user import User  # noqa: F401
+from .historyauthenticationmethod import AuthenticationMethodHistoricalRecords  # noqa: F401
 from .canteen import Canteen, CanteenImage  # noqa: F401
 from .diagnostic import Diagnostic  # noqa: F401
+from .wastemeasurement import WasteMeasurement  # noqa: F401
 from .sector import Sector  # noqa: F401
 from .blogpost import BlogPost  # noqa: F401
 from .blogtag import BlogTag  # noqa: F401
@@ -17,3 +21,4 @@ from .partnertype import PartnerType  # noqa: F401
 from .videotutorial import VideoTutorial  # noqa: F401
 from .importtype import ImportType  # noqa: F401
 from .importfailure import ImportFailure  # noqa: F401
+from .wasteaction import WasteAction  # noqa: F401

@@ -1,22 +1,24 @@
 import logging
-import decimal
-from django.db import models
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
+from decimal import Decimal
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils import timezone
-from data.models import Canteen, Diagnostic
 from simple_history.models import HistoricalRecords
+
+from data.models import AuthenticationMethodHistoricalRecords, Canteen, Diagnostic
 
 logger = logging.getLogger(__name__)
 
 
 class CustomJSONEncoder(DjangoJSONEncoder):
     def default(self, o):
-        if isinstance(o, decimal.Decimal):
+        if isinstance(o, Decimal):
             return float(o)
         return super(CustomJSONEncoder, self).default(o)
 
@@ -63,7 +65,11 @@ class Teledeclaration(models.Model):
     year = models.IntegerField(verbose_name="année")
     canteen_siret = models.TextField(null=True, blank=True)
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(
+        bases=[
+            AuthenticationMethodHistoricalRecords,
+        ]
+    )
 
     status = models.CharField(
         max_length=255,
@@ -162,6 +168,8 @@ class Teledeclaration(models.Model):
         check_total_value = not Teledeclaration.should_use_central_kitchen_appro(diagnostic)
         if check_total_value and not diagnostic.value_total_ht:
             raise ValidationError("Données d'approvisionnement manquantes")
+        if diagnostic.canteen.is_central_cuisine and not diagnostic.central_kitchen_diagnostic_mode:
+            raise ValidationError("Question obligatoire : Quelles données sont déclarées par cette cuisine centrale ?")
 
     @staticmethod
     def create_from_diagnostic(diagnostic, applicant, status=None):
@@ -170,7 +178,8 @@ class Teledeclaration(models.Model):
         """
         from data.factories import TeledeclarationFactory  # Avoids circular import
 
-        version = "10"  # Helps identify which data will be present. Use incremental int values
+        version = "11"  # Helps identify which data will be present. Use incremental int values
+        # Version 11 - Requires diagnostic mode to be defined for central production types (in validate_diagnostic)
         # Version 10 - Add department and region fields
         # Version 9 - removes legacy fields: value_pat_ht, value_label_hve, value_label_rouge, value_label_aoc_igp and value_pat_ht
 
@@ -223,11 +232,11 @@ class Teledeclaration(models.Model):
     @staticmethod
     def _get_diagnostic_serializer(diagnostic):
         from api.serializers import (
-            SimpleTeledeclarationDiagnosticSerializer,
-            CompleteTeledeclarationDiagnosticSerializer,
             ApproDeferredTeledeclarationDiagnosticSerializer,
-            SimpleApproOnlyTeledeclarationDiagnosticSerializer,
             CompleteApproOnlyTeledeclarationDiagnosticSerializer,
+            CompleteTeledeclarationDiagnosticSerializer,
+            SimpleApproOnlyTeledeclarationDiagnosticSerializer,
+            SimpleTeledeclarationDiagnosticSerializer,
         )
 
         uses_central_kitchen_appro = Teledeclaration.should_use_central_kitchen_appro(diagnostic)

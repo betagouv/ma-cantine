@@ -10,8 +10,12 @@
           :name="name"
           v-on:input="$emit('input', $event.target.value)"
           :checked="value === item.value"
+          :disabled="item.disabled"
         />
-        <label class="fr-label" :for="`segmented-${item.value}`">{{ item.text }}</label>
+        <label class="fr-label" :for="`segmented-${item.value}`">
+          <v-icon v-if="item.icon" small class="mr-2">{{ item.icon }}</v-icon>
+          {{ item.text }}
+        </label>
       </div>
     </div>
   </fieldset>
@@ -87,6 +91,11 @@ export default {
   width: 100%;
   z-index: -1;
 }
+.fr-segmented input:disabled + label {
+  --text-disabled-grey: rgb(146, 146, 146);
+  color: var(--text-disabled-grey);
+  cursor: not-allowed;
+}
 .fr-segmented input + label {
   align-items: center;
   border-radius: 0.25rem;
@@ -133,5 +142,14 @@ input:focus {
   // box-shadow: inset 0 0 0 1px var(--border-active-blue-france);
   color: #000091;
   // color: var(--text-active-blue-france);
+}
+input:focus + label {
+  outline-color: #0a76f6;
+  outline-offset: 2px;
+  outline-style: solid;
+  outline-width: 2px;
+}
+label > span {
+  color: inherit !important;
 }
 </style>

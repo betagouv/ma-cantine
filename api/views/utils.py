@@ -1,11 +1,13 @@
-import logging
 import json
-from django.db.models.constants import LOOKUP_SEP
+import logging
+
+import chardet
 from django.db.models import F
-from rest_framework import filters
+from django.db.models.constants import LOOKUP_SEP
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
-from djangorestframework_camel_case.util import camel_to_underscore
 from djangorestframework_camel_case.settings import api_settings
+from djangorestframework_camel_case.util import camel_to_underscore
+from rest_framework import filters
 from simple_history.utils import update_change_reason
 
 logger = logging.getLogger(__name__)
@@ -81,3 +83,10 @@ class UnaccentSearchFilter(filters.SearchFilter):
                 lookup,
             ]
         )
+
+
+def decode_bytes(bytes_string):
+    detection_result = chardet.detect(bytes_string)
+    encoding_detected = detection_result["encoding"]
+    logger.info(f"Encoding autodetected : {encoding_detected}")
+    return (bytes_string.decode(encoding_detected), encoding_detected)

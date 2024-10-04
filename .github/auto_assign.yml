@@ -1,0 +1,19 @@
+# Configuration file for https://github.com/kentaro-m/auto-assign-action
+
+# Set to true to add reviewers to pull requests
+addReviewers: true
+
+# A list of reviewers to be added to pull requests (GitHub user name)
+reviewers:  # gip-inclusion/admins-le-marche
+  - hfroot
+  - alemangui
+  - qloridant
+  - raphodn
+
+# A number of reviewers added to the pull request
+# Set 0 to add all the reviewers (default: 0)
+numberOfReviewers: 0
+
+# Set to true to add assignees to pull requests
+# Set to 'author' to set the PR creator as the assignee
+addAssignees: author

@@ -23,6 +23,7 @@ Please note that the `staging` and `main` branches are protected and all commits
 - [vitrualenv](https://virtualenv.pypa.io/en/stable/installation.html)
 - [Node et npm](https://nodejs.org/en/download/)
 - [Postgres](https://www.postgresql.org/download/)
+- [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 - [pre-commit](https://pypi.org/project/pre-commit/)
 
 ### Création d'un environnement Python3 virtualenv
@@ -68,6 +69,7 @@ L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), 
 ```
 SECRET= Le secret pour Django (vous pouvez le [générer ici](https://djecrety.ir/))
 DEBUG= `True` pour le développement local ou `False` autrement
+DEBUG_FRONT= `True` pour le développement local du 2024-front ou `False` autrement
 DB_USER= L'utilisateur de la base de données. Doit avoir les droits de creation de db pour les tests.
 DB_PASSWORD= Le mot de passe pour accéder à la base de données
 DB_HOST= Le host de la base de données (par ex. '127.0.0.1')
@@ -90,6 +92,11 @@ CELLAR_HOST= Optionnel - le host du service S3
 CELLAR_KEY= Optionnel - la clé du service S3
 CELLAR_SECRET= Optionnel - le secret du service S3
 CELLAR_BUCKET_NAME= Optionnel - le nom du bucket S3 à utiliser
+DATA_WARE_HOUSE_USER= Optionnel - l'utilisateur de la base postgres utilisée pour les analsyes stats
+DATA_WARE_HOUSE_PASSWORD= Optionnel - le mot de passe de la base de postgres utilisée pour les analsyes stats
+DATA_WARE_HOUSE_HOST=Optionnel - le host de la base postgres utilisée pour les analsyes stats
+DATA_WARE_HOUSE_PORT= Optionnel - le port de la base postgres utilisée pour les analsyes stats
+DATA_WARE_HOUSE_DB= Optionnel - le nom de la db de la base postgres utilisée pour les analsyes stats
 DEBUG_PERFORMANCE= Optionnel - à utiliser avec "DEBUG" pour montrer la [Django Debug Toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/)
 ENVIRONMENT= Optionnel - si cette variable est remplie un badge sera visible dans l'application et l'admin changera. Les options sont : `dev` | `staging` | `demo` | `prod`
 REDIS_URL= L'instance redis à utiliser pour les tâches asynchrones et le cache des clés API. Par exemple : 'redis://localhost:6379/0'
@@ -110,8 +117,12 @@ CSV_PURCHASE_CHUNK_LINES= Optionnel - Définit le nombre de lignes dans chaque c
 ENABLE_XP_RESERVATION= Optionnel - `True` pour activer la feature de l'expérimentation des systèmes de réservation.
 ENABLE_XP_VEGE= Optionnel - `True` pour activer la feature de l'expérimentation de l'offre quotidien de repas végétariens.
 ENABLE_TELEDECLARATION= Optionnel - `True` pour permettre les utilisateurs de télédéclarer leur diagnostic.
+TELEDECLARATION_CORRECTION_CAMPAIGN= Optionnel - `True` pour pour distinguer la campagne de TD de la campagne de corrections. Ça fait pas grande chose sans ENABLE_TELEDECLARATION.
 TELEDECLARATION_END_DATE= Optionnel - Celle-ci n'est pas exactement une feature flag mais fonctionne avec le flag précedent. Il faut indiquer une date pour la fin de la campagne de la télédéclaration (par exemple, `2024-03-15`)
 ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des gestionnaires.
+PUBLISH_BY_DEFAULT= Optionnel - `True` pour publier les cantines sauf celles qui sont identifiées autrement.
+ENABLE_VUE3= Optionnel - `True` pour rendre les nouvelles vues disponibles.
+ENABLE_WASTE_MEASUREMENTS= Optionnel - `True` pour rendre l'outil évaluation gaspillage alimentaire disponible
 ```
 
 ### Relances automatiques par email
@@ -144,7 +155,13 @@ Notez que cette commande est à effectuer à chaque changement de fichier de tra
 
 ## Lancer l'application en mode développement
 
-Pour le développement il faudra avoir deux terminales ouvertes : une pour l'application Django, et une autre pour l'application VueJS.
+Certaines fonctionnalités ont besoin de fichiers statics. La première fois que vous lancez le projet, d'abord lancez `python manage.py collectstatic`.
+
+Deux options :
+
+1. Le script `./local-build.sh` lance les trois commandes en parallel (Django, Vue2, Vue3). Faut pas avoir besoin de faire des migrations pour utiliser ça.
+
+2. Ouvrir trois terminales : une pour l'application Django, une pour l'application Vue2, et une pour l'application Vue3.
 
 ### Terminal Django
 
@@ -154,7 +171,7 @@ Il suffit de lancer la commande Django "runserver" à la racine du projet pour a
 python manage.py runserver
 ```
 
-### Terminal VueJS
+### Terminal Vue2
 
 Pour faire l'équivalent côté frontend, allez sur `./frontend` et lancez le serveur npm :
 
@@ -163,9 +180,16 @@ cd frontend
 npm run serve
 ```
 
-Une fois la compilation finie des deux côtés, l'application se trouvera sous [127.0.0.1:8000](127.0.0.1:8000) (le port Django, non pas celui de npm).
+### Terminal Vue3
 
-### Pre-commit
+```
+cd 2024-frontend
+npm run dev
+```
+
+Une fois la compilation finie des trois côtés, l'application se trouvera sous [127.0.0.1:8000](127.0.0.1:8000) (le port Django, non pas celui de npm).
+
+## Pre-commit
 
 On utilise l'outil [`pre-commit`](https://pre-commit.com/) pour effectuer des vérifications automatiques
 avant chaque commit. Cela permet par exemple de linter les code Python, Javascript et HTML.
@@ -174,6 +198,8 @@ Pour pouvoir l'utiliser, il faut installer `pre-commit` (en général plutôt de
 l'environnement virtuel) : `pip install pre-commit`.
 
 Puis l'activer : `pre-commit install`.
+
+Note : commande pour lancer les règles du pre-commit sur tous les fichiers : `pre-commit run --all-files`
 
 Les vérifications seront ensuite effectuées avant chaque commit. Attention, lorsqu'une vérification `fail`,
 le commit est annulé. Il faut donc que toutes les vérifications passent pour que le commit soit pris en
@@ -190,7 +216,7 @@ python manage.py test
 
 Sur VSCode, ces tests peuvent être debuggés avec la configuration "Python: Tests", présente sur le menu "Run".
 
-## Lancer les tests pour l'application VueJS
+## Lancer les tests pour l'application Vue2
 
 Il faut d'abord se placer sur "/frontend", ensuite la commande pour lancer les tests VueJS est :
 
@@ -221,13 +247,13 @@ Il faut néanmoins tenir en compte que la mise en page ne sera pas visible et qu
 
 [Maildev](https://maildev.github.io/maildev/) est un outil ouvert qui exécute un serveur SMTP en local et qui permet de visualiser tous les emails traités. En l'installant de façon globale on peut mettre 'django.core.mail.backends.smtp.EmailBackend' comme variable d'environnement `EMAIL_BACKEND` pour l'utiliser.
 
-### Celery
+## Celery
 
 Celery est un gestionnaire de tâches asynchrone utilisé par exemple pour l'envoi périodique de courriels de rappel et pour le remplissage des donn
 
 Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit être spéficié dans la console CleverCloud sous la variable `CC_PYTHON_CELERY_MODULE=macantine.celery`. La fonctionnalité Celery Beat doit aussi être activée : `CC_PYTHON_CELERY_USE_BEAT=true`, ainsi que le timezone souhaité : `CELERY_TIMEZONE:'Europe/Paris'`
 
-### Visual Studio Code
+## Visual Studio Code
 
 Des extensions qu'on trouve utile :
 
@@ -240,3 +266,54 @@ Des extensions qu'on trouve utile :
 - Vetur
 - vuetify-vscode
 - Spell Right
+
+## Test déploiement en locale
+
+Les commandes lancées sur CleverCloud sont listées dans `clevercloud/python.json`.
+
+.env :
+
+```
+DEBUG=False
+DEBUG_FRONT=False
+```
+
+Dans le dossier principal, lancez :
+`bash ./clevercloud/test-build-with-vue3.sh`
+`python manage.py runserver --insecure`
+
+En prod, faut ajouter `CC_PRE_BUILD_HOOK=./clevercloud/pre-build-hook.sh`
+
+## Déploiement
+
+Vérification pre-déploiment
+
+- est-ce que les tests passent sur staging ?
+- est-ce que tout va bien côté Clever Cloud ?
+- est-ce qu'il y a des cherry-picks sur main qui n'existent pas sur staging ?
+
+Étapes :
+
+- https://github.com/betagouv/ma-cantine/releases > "Draft a new release"
+- "Choose a tag" > taper la date d'aujourd'hui en format YYYY-MM-DD > "Create a new tag on publish"
+- "Generate release notes"
+- Modifier les notes générés (indications ci-dessous)
+- "Publish release"
+- Si il y a des variables d'environnement à ajouter, ajoutez-les sur prod et demo côté Clever Cloud
+- avec staging : `git pull`
+- preparer la branche main en locale : `git checkout main` `git rebase staging`
+- `git push` (peut-être `git push -f`)
+- Le déploiement va commencer automatiquement. Ça prend un moment pour déployer côté Clever Cloud, suivez la progression là-bas.
+- Une fois que le déploiement est fait, envoyer un message sur mattermost canal produit pour tenir l'équipe au courant.
+
+### Release notes
+
+Vous pourrez modifier les notes dans un éditeur pour être plus rapide.
+
+- supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dépendances"
+- supprimer la partie "by @username in https://..."
+- faire n'importe quel autre changement pour rendre la liste facilement comprensible par tout le monde
+
+### Debugging
+
+Si jamais vous doutez/si il y a un problème, parlez avec un.e autre dév.

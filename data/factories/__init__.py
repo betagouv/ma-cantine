@@ -1,3 +1,5 @@
+# isort: skip_file
+
 import factory  # noqa
 
 factory.Faker._DEFAULT_LOCALE = "fr-fr"  # noqa
@@ -5,6 +7,7 @@ factory.Faker._DEFAULT_LOCALE = "fr-fr"  # noqa
 from .user import UserFactory  # noqa
 from .canteen import CanteenFactory  # noqa
 from .diagnostic import CompleteDiagnosticFactory, DiagnosticFactory  # noqa
+from .wastemeasurement import WasteMeasurementFactory  # noqa
 from .sector import SectorFactory  # noqa
 from .blogpost import BlogPostFactory  # noqa
 from .blogtag import BlogTagFactory  # noqa
@@ -20,3 +23,4 @@ from .partner import PartnerFactory  # noqa
 from .partnertype import PartnerTypeFactory  # noqa
 from .videotutorial import VideoTutorialFactory  # noqa
 from .importfailure import ImportFailureFactory  # noqa
+from .wasteaction import WasteActionFactory  # noqa

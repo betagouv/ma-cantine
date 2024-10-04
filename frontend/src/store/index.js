@@ -50,6 +50,7 @@ export default new Vuex.Store({
     upcomingCommunityEvents: [],
     videoTutorials: [],
     partnerTypes: [],
+    lineMinistries: [],
 
     notifications: [],
 
@@ -142,6 +143,9 @@ export default new Vuex.Store({
     SET_PARTNER_TYPES(state, types) {
       state.partnerTypes = types
     },
+    SET_LINE_MINISTRIES(state, ministries) {
+      state.lineMinistries = ministries.map((m) => ({ value: m.value, text: m.name }))
+    },
   },
 
   actions: {
@@ -220,6 +224,28 @@ export default new Vuex.Store({
         })
     },
 
+    fetchWasteActions(context, { limit = 6, offset, filters }) {
+      let url = `/api/v1/wasteActions/?limit=${limit}&offset=${offset}`
+      Object.keys(filters).forEach((filterKey) => {
+        if (filters[filterKey].value && filters[filterKey].value.length) {
+          if (filters[filterKey].value) {
+            if (Array.isArray(filters[filterKey].value)) {
+              filters[filterKey].value.forEach((filterValue) => {
+                url += `&${filters[filterKey].apiKey}=${filterValue}`
+              })
+            } else {
+              url += `&${filters[filterKey].apiKey}=${filters[filterKey].value}`
+            }
+          }
+        }
+      })
+      return fetch(url)
+        .then(verifyResponse)
+        .then((response) => {
+          return response
+        })
+    },
+
     fetchInitialData(context) {
       context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
@@ -234,6 +260,7 @@ export default new Vuex.Store({
           context.commit("SET_UPCOMING_COMMUNITY_EVENTS", response.communityEvents)
           context.commit("SET_VIDEO_TUTORIALS", response.videoTutorials)
           context.commit("SET_USER_CANTEEN_PREVIEWS", response.canteenPreviews)
+          context.commit("SET_LINE_MINISTRIES", response.lineMinistries)
 
           context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
@@ -308,34 +335,6 @@ export default new Vuex.Store({
         .then((response) => {
           context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           context.commit("UPDATE_CANTEEN", response)
-          return response
-        })
-        .catch((e) => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
-          throw e
-        })
-    },
-
-    publishCanteen(context, { id, payload }) {
-      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/canteens/${id}/publish`, { method: "POST", headers, body: JSON.stringify(payload) })
-        .then(verifyResponse)
-        .then((response) => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
-          return response
-        })
-        .catch((e) => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.ERROR)
-          throw e
-        })
-    },
-
-    unpublishCanteen(context, { id, payload }) {
-      context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/canteens/${id}/unpublish`, { method: "POST", headers, body: JSON.stringify(payload) })
-        .then(verifyResponse)
-        .then((response) => {
-          context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.SUCCESS)
           return response
         })
         .catch((e) => {

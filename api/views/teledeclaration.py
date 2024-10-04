@@ -1,21 +1,23 @@
 import logging
 import os
-from api.views.utils import update_change_reason_with_auth
 from datetime import datetime
-from django.http import JsonResponse, HttpResponse
-from django.core.exceptions import ValidationError as DjangoValidationError
-from django.template.loader import get_template
-from django.contrib.staticfiles import finders
+
 from django.conf import settings
+from django.contrib.staticfiles import finders
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.http import HttpResponse, JsonResponse
+from django.template.loader import get_template
 from django.utils.text import slugify
-from drf_spectacular.utils import extend_schema_view, extend_schema, inline_serializer
-from rest_framework import status, serializers
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
+from rest_framework import serializers, status
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.views import APIView
-from rest_framework.exceptions import ValidationError, PermissionDenied
 from xhtml2pdf import pisa
-from data.models import Diagnostic, Teledeclaration, Canteen
-from api.serializers import FullDiagnosticSerializer
+
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope
+from api.serializers import FullDiagnosticSerializer
+from data.models import Canteen, Diagnostic, Teledeclaration
+
 from .utils import camelize
 
 logger = logging.getLogger(__name__)
@@ -53,7 +55,6 @@ class TeledeclarationCreateView(APIView):
             raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
 
         td = TeledeclarationCreateView._teledeclare_diagnostic(diagnostic_id, request.user)
-        update_change_reason_with_auth(self, td)
         data = FullDiagnosticSerializer(td.diagnostic).data
         return JsonResponse(camelize(data), status=status.HTTP_201_CREATED)
 
@@ -61,7 +62,7 @@ class TeledeclarationCreateView(APIView):
         try:
             diagnostic = Diagnostic.objects.get(pk=diagnostic_id)
         except Diagnostic.DoesNotExist:
-            raise PermissionDenied()  # in general we through 403s not 404s
+            raise PermissionDenied()  # in general we throw 403s not 404s
 
         if user not in diagnostic.canteen.managers.all():
             raise PermissionDenied()
@@ -124,7 +125,6 @@ class TeledeclarationCancelView(APIView):
 
             teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
             teledeclaration.save()
-            update_change_reason_with_auth(self, teledeclaration)
 
             data = FullDiagnosticSerializer(teledeclaration.diagnostic).data
             return JsonResponse(camelize(data), status=status.HTTP_200_OK)

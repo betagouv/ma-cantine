@@ -9,7 +9,7 @@
     <v-row>
       <v-col cols="12" md="10">
         <ProductionTypeTag v-if="canteen" :canteen="canteen" class="mt-n2" />
-        <h1 class="fr-h3 my-2" v-if="canteen">{{ canteen.name }}</h1>
+        <h1 class="fr-h3 mt-1 mb-2" v-if="canteen">{{ canteen.name }}</h1>
         <v-row v-if="canteenPreviews.length > 1">
           <v-col>
             <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
@@ -19,14 +19,7 @@
         </v-row>
       </v-col>
       <v-col cols="12" sm="5" md="2">
-        <p class="body-2 my-2" for="yearSelect">Année</p>
-        <DsfrSelect
-          ref="yearSelect"
-          v-model="selectedYear"
-          :items="years"
-          :hide-details="true"
-          placeholder="Année du diagnostic"
-        />
+        <DsfrNativeSelect label="Année" v-model="selectedYear" :items="yearOptions" />
       </v-col>
     </v-row>
     <v-row v-if="canteen" class="mt-5 mt-md-10">
@@ -149,6 +142,9 @@
                 >
                   Mettre à jour vos satellites
                 </router-link>
+              </li>
+              <li v-if="missingDeclarationMode" class="mb-2">
+                Choisir comment les données sont saisis pour vos satellites
               </li>
             </ul>
           </div>
@@ -287,7 +283,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import ProductionTypeTag from "@/components/ProductionTypeTag"
 import ProgressTab from "./ProgressTab"
 import DsfrTabsVue from "@/components/DsfrTabs"
-import DsfrSelect from "@/components/DsfrSelect"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
@@ -313,7 +309,7 @@ export default {
     ProductionTypeTag,
     ProgressTab,
     DsfrTabsVue,
-    DsfrSelect,
+    DsfrNativeSelect,
     DownloadLink,
     TeledeclarationPreview,
     TeledeclarationCancelDialog,
@@ -405,6 +401,9 @@ export default {
     hasSatelliteInconsistency() {
       return !this.canteen || hasSatelliteInconsistency(this.canteen)
     },
+    missingDeclarationMode() {
+      return this.isCentralKitchen && !this.diagnostic.centralKitchenDiagnosticMode
+    },
     hasFinishedMeasureTunnel() {
       return this.diagnostic && hasFinishedMeasureTunnel(this.diagnostic)
     },
@@ -416,6 +415,9 @@ export default {
     },
     isSatelliteWithApproCentralDiagnostic() {
       return this.isSatellite && this.centralDiagnostic?.centralKitchenDiagnosticMode === "APPRO"
+    },
+    yearOptions() {
+      return this.years.map((year) => ({ text: year, value: year }))
     },
   },
   methods: {

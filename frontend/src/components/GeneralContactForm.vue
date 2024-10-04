@@ -4,12 +4,13 @@
       <v-col>
         <v-form v-model="formIsValid" ref="form" @submit.prevent>
           <DsfrEmail v-model="fromEmail" />
-          <DsfrTextField v-model="name" label="Prénom et nom" />
-          <DsfrSelect
+          <DsfrFullName v-model="name" />
+          <DsfrNativeSelect
             v-model="inquiryType"
             :items="inquiryOptions"
             label="Type de demande"
             :rules="[validators.required]"
+            class="mb-8"
           />
           <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" class="mt-2" />
           <p class="caption grey--text text--darken-1 mt-n1 mb-6">
@@ -43,14 +44,14 @@
 
 <script>
 import validators from "@/validators"
-import DsfrTextField from "@/components/DsfrTextField"
+import DsfrFullName from "@/components/DsfrFullName"
 import DsfrEmail from "@/components/DsfrEmail"
-import DsfrSelect from "@/components/DsfrSelect"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrTextarea from "@/components/DsfrTextarea"
 
 export default {
   name: "GeneralContactForm",
-  components: { DsfrTextField, DsfrSelect, DsfrTextarea, DsfrEmail },
+  components: { DsfrFullName, DsfrNativeSelect, DsfrTextarea, DsfrEmail },
   props: {
     initialInquiryType: {
       type: String,

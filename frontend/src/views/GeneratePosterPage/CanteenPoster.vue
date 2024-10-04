@@ -9,7 +9,7 @@
           <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="isHighContent" />
         </div>
       </div>
-      <img contain v-if="canteen.logo" :src="canteen.logo" :alt="`Logo ${canteen.name}`" class="canteen-image" />
+      <img contain v-if="canteen.logo" :src="canteen.logo" alt="" class="canteen-image" />
     </div>
 
     <div class="spacer"></div>
@@ -29,13 +29,7 @@
               </span>
             </p>
             <div>
-              <img
-                contain
-                src="/static/images/quality-labels/logo_bio_eurofeuille.png"
-                alt="Logo Agriculture Biologique"
-                title="Logo Agriculture Biologique"
-                height="35"
-              />
+              <img contain src="/static/images/quality-labels/logo_bio_eurofeuille.png" alt="" height="35" />
             </div>
           </div>
 
@@ -79,17 +73,17 @@
 
     <div v-if="hasBadges" class="badge-container">
       <h3 class="badge-heading">Nos succès</h3>
-      <div v-for="(badge, key) in earnedBadges" :key="key" class="d-flex" style="margin-bottom: 14px;">
-        <img :width="isHighContent ? 25 : 38" contain :src="`/static/images/badges/${key}.svg`" alt="" />
+      <div v-for="badge in earnedBadges" :key="badge.key" class="d-flex" style="margin-bottom: 14px;">
+        <img :width="isHighContent ? 25 : 38" contain :src="`/static/images/badges/${badge.key}.svg`" alt="" />
         <div
           class="badge-description"
           v-text="badge.subtitle"
-          v-if="key !== 'appro' || applicableRules.qualityThreshold === 50"
+          v-if="badge.key !== 'appro' || applicableRules.qualityThreshold === 50"
         ></div>
         <div class="badge-description" v-else>
           Ce qui est servi dans les assiettes est au moins à
           {{ applicableRules.qualityThreshold }}&nbsp;% de produits durables et de qualité, dont
-          {{ applicableRules.bioThreshold }}&nbsp;% bio, en respectant les seuils d'Outre-mer.
+          {{ applicableRules.bioThreshold }}&nbsp;% bio, en respectant les différents seuils fixés pour l'Outre-mer.
         </div>
       </div>
     </div>
@@ -137,8 +131,9 @@
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
 import QrcodeVue from "qrcode.vue"
-import { lastYear, getPercentage, getSustainableTotal, badges, applicableDiagnosticRules } from "@/utils"
+import { lastYear, getPercentage, getSustainableTotal, applicableDiagnosticRules } from "@/utils"
 import labels from "@/data/quality-labels.json"
+import badges from "@/badges.json"
 
 export default {
   components: {
@@ -203,19 +198,14 @@ export default {
       return !!this.diagnostic.valueTotalHt || !!this.diagnostic.percentageValueTotalHt
     },
     earnedBadges() {
-      if (!Object.keys(this.canteen).length || !this.canteen.id) return {}
-      const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
-      let earnedBadges = {}
-      Object.keys(canteenBadges).forEach((key) => {
-        if (canteenBadges[key].earned) earnedBadges[key] = canteenBadges[key]
-      })
-      return earnedBadges
+      if (!this.canteen.badges) return [] // for non-connected view
+      return Object.values(badges).filter((b) => this.canteen.badges[b.key])
     },
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
     },
     hasBadges() {
-      return !!Object.keys(this.earnedBadges).length
+      return !!this.earnedBadges.length
     },
     contentLength() {
       // this is an estimation of lines, not literal
@@ -238,7 +228,7 @@ export default {
       contentLength += this.hasCurrentYearData && 4
       contentLength += this.showPreviousDiagnostic && 1
 
-      contentLength += this.hasBadges && Object.keys(this.earnedBadges).length * 2
+      contentLength += this.hasBadges && this.earnedBadges.length * 2
       const charactersPerLine = 90 // estimate, changes based on font size
       contentLength += this.customText?.length / charactersPerLine || 0
       // range from 0 - approx 25

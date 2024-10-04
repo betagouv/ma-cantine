@@ -1,14 +1,17 @@
 import hashlib
 from datetime import date
 from decimal import Decimal
-from django.urls import reverse
-from django.test.utils import override_settings
-from rest_framework.test import APITestCase
+from pathlib import Path
 from unittest.mock import patch
+
+from django.test.utils import override_settings
+from django.urls import reverse
 from rest_framework import status
+from rest_framework.test import APITestCase
+
 from data.factories import CanteenFactory
 from data.models.purchase import Purchase
-from pathlib import Path
+
 from .utils import authenticate
 
 
@@ -47,6 +50,19 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.first().import_source, filehash_md5)
 
     @authenticate
+    def test_import_comma_separated_numbers(self):
+        """
+        Tests that can import a file with comma-separated numbers
+        """
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        with open("./api/tests/files/comma_separated_purchase_import.csv") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+        purchase = Purchase.objects.filter(description="Pommes, rouges").first()
+        self.assertEqual(purchase.price_ht, Decimal("90.11"))
+
+    @authenticate
     def test_import_with_no_local_definition(self):
         """
         Tests that can import a file without local definition
@@ -72,7 +88,7 @@ class TestPurchaseImport(APITestCase):
         Tests that can import a well formatted purchases file
         """
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
-        with open("./api/tests/files/purchase_import_delimiter_tab.csv") as purchase_file:
+        with open("./api/tests/files/purchase_import_delimiter_tab.tsv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
@@ -245,3 +261,25 @@ class TestPurchaseImport(APITestCase):
         body = response.json()
         self.assertEqual(len(body["errors"]), 30)
         self.assertEqual(body["errorCount"], 56)
+
+    @authenticate
+    def test_encoding_autodetect_cp1252(self):
+        """
+        Attempt to auto-detect file encodings: Windows 1252
+        This is a smoke test - purchase import reuses diagnostics import
+        More tests are with the diagnostic import tests
+        """
+        canteen = CanteenFactory.create(siret="82399356058716")
+        canteen.managers.add(authenticate.user)
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        with open("./api/tests/files/purchase_encoding_iso-8859-1.csv", "rb") as diag_file:
+            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(Purchase.objects.first().description, "deuxième pomme")
+        self.assertEqual(body["encoding"], "ISO-8859-1")

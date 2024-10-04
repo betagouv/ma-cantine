@@ -41,6 +41,9 @@ export default {
     value() {
       return this.$refs["select"].value
     },
+    reset() {
+      return this.$refs["select"].reset
+    },
     errorMessageId() {
       return this.inputId && `${this.inputId}-error`
     },
@@ -52,6 +55,9 @@ export default {
     },
     validate() {
       return this.$refs["select"].validate()
+    },
+    resetValidation() {
+      return this.$refs["select"].resetValidation()
     },
     assignInputId() {
       this.inputId = this.$refs?.["select"]?.$refs?.["input"].id

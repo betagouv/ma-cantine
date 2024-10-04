@@ -1,30 +1,31 @@
-from abc import ABC, abstractmethod
 import csv
-import time
-import re
 import logging
-import chardet
+import re
+import time
+from abc import ABC, abstractmethod
 from decimal import Decimal, InvalidOperation
-from data.models.diagnostic import Diagnostic
-from data.models.teledeclaration import Teledeclaration
+
+import requests
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from django.db.models.functions import Lower
 from django.http import JsonResponse
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
-from django.conf import settings
-from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.views import APIView
 from simple_history.utils import update_change_reason
-from api.serializers import FullCanteenSerializer
-from data.models import Canteen, Sector, ImportType
-from data.factories import ImportFailureFactory
+
 from api.permissions import IsAuthenticated
-from .utils import camelize, normalise_siret
+from api.serializers import FullCanteenSerializer
+from data.models import Canteen, ImportFailure, ImportType, Sector
+from data.models.diagnostic import Diagnostic
+from data.models.teledeclaration import Teledeclaration
+
 from .canteen import AddManagerView
-import requests
+from .utils import camelize, decode_bytes, normalise_siret
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +84,7 @@ class ImportDiagnosticsView(ABC, APIView):
     def _log_error(self, message, level="warning"):
         logger_function = getattr(logger, level)
         logger_function(message)
-        ImportFailureFactory.create(
+        ImportFailure.objects.create(
             user=self.request.user,
             file=self.file,
             details=message,
@@ -133,11 +134,9 @@ class ImportDiagnosticsView(ABC, APIView):
             self._update_location_data(locations_csv_str)
 
     def _decode_file(self, file):
-        bytes_string = file.read()
-        detection_result = chardet.detect(bytes_string)
-        self.encoding_detected = detection_result["encoding"]
-        logger.info(f"Encoding autodetected : {self.encoding_detected}")
-        return bytes_string.decode(self.encoding_detected)
+        (result, encoding) = decode_bytes(file.read())
+        self.encoding_detected = encoding
+        return result
 
     @transaction.atomic
     def _save_data_from_row(self, row):

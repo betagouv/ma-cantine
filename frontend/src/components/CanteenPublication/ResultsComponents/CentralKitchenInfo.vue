@@ -1,6 +1,6 @@
 <template>
   <!-- TODO: use DsfrCallout instead -->
-  <v-card outlined elevation="0" color="primary lighten-5" class="d-flex mb-6" v-if="usesCentralKitchenDiagnostics">
+  <v-card outlined elevation="0" color="primary lighten-5" class="d-flex mb-6">
     <v-icon class="ml-4" color="primary">$information-fill</v-icon>
 
     <v-card-text>
@@ -33,11 +33,6 @@ export default {
   computed: {
     centralKitchen() {
       return this.canteen.centralKitchen
-    },
-    usesCentralKitchenDiagnostics() {
-      return (
-        this.canteen.productionType === "site_cooked_elsewhere" && this.canteen.centralKitchenDiagnostics?.length > 0
-      )
     },
   },
 }

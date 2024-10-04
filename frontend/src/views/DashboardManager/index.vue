@@ -1,7 +1,7 @@
 <template>
   <div class="text-left" v-if="canteen">
     <ProductionTypeTag :canteen="canteen" class="mt-2" />
-    <h1 class="my-4 fr-display-xs">{{ canteen.name }}</h1>
+    <h1 class="mt-2 mb-4 fr-display-xs">{{ canteen.name }}</h1>
     <v-row v-if="canteenPreviews.length > 1">
       <v-col>
         <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
@@ -22,7 +22,7 @@
         <p class="fr-text-sm">
           Accédez ci-dessous aux différents outils de gestion de votre établissement sur la plateforme « ma cantine ».
         </p>
-        <v-row v-if="isCentralWithSite">
+        <v-row v-if="canteen.isCentralCuisine">
           <v-col cols="12" md="6">
             <SatellitesWidget :canteen="canteen" />
           </v-col>
@@ -43,11 +43,8 @@
           <v-col cols="12" md="8">
             <PurchasesWidget :canteen="canteen" />
           </v-col>
-          <v-col v-if="!canteen.isCentralCuisine" cols="12" md="4">
+          <v-col cols="12" md="4">
             <PublicationWidget :canteen="canteen" />
-          </v-col>
-          <v-col v-else cols="12" md="4">
-            <SatellitesWidget :canteen="canteen" />
           </v-col>
           <v-col cols="12" md="8">
             <CanteenInfoWidget :canteen="canteen" />

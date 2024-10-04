@@ -1,7 +1,7 @@
 <template>
-  <div class="text-left">
+  <div class="text-left fr-text">
     <BreadcrumbsNav />
-    <h1 class="font-weight-black my-6">
+    <h1 class="fr-h1">
       Conditions générales d'utilisation de « ma cantine »
     </h1>
     <p>
@@ -12,13 +12,13 @@
       L'utilisation du Service est gratuite et facultative sauf pour les déclarations obligatoires prévues par les
       dispositions du code rural et de la pêche maritime (articles L. 230-5 à L. 230-5-2 et R. 230-30-4).
     </p>
-    <h2>
+    <h2 class="fr-h2">
       1 - Présentation
     </h2>
     <p>
       « ma cantine » (ci-après dénommé « le Service ») est un téléservice mis en œuvre par le ministère de l’Agriculture
-      et de la Souveraineté Alimentaire (Direction générale à l’alimentation) qui s’appuie sur l’expertise de la
-      Direction interministérielle du numérique dans le cadre d’une délégation de gestion.
+      et de la Souveraineté Alimentaire (Direction générale à l’alimentation) en lien avec la Direction
+      interministérielle du numérique.
     </p>
     <p>
       Le Service est destiné à accompagner au mieux les acteurs de la restauration collective (ci-après abrégé « RC »)
@@ -39,9 +39,14 @@
         de créez un PDF à afficher ou à envoyer par mail à aux convives pour les informer sur les initiatives et la
         composition des repas servis.
       </li>
+      <li>
+        de télédéclarer au ministère de l’Agriculture et de la Souveraineté Alimentaire les données annuelles d’achat
+        dans les conditions prévues par le code rural et de la pêche maritime (articles L. 230-5 à L. 230-5-2 et R.
+        230-30-4).
+      </li>
     </ul>
 
-    <h2>2 – Définitions</h2>
+    <h2 class="fr-h2">2 – Définitions</h2>
     <p>« Visiteur » est toute personne qui consulte ou utilise le Service.</p>
     <p>« Gestionnaire » est toute personne qui ouvre un compte sur le Service.</p>
     <p>
@@ -53,9 +58,9 @@
       finalités.
     </p>
 
-    <h2>3 - Fonctionnalités</h2>
+    <h2 class="fr-h2">3 - Fonctionnalités</h2>
 
-    <h3>3.1 Visiteurs</h3>
+    <h3 class="fr-h3">3.1 Visiteurs</h3>
     <p>Tout Visiteur peut accéder au Service sans inscription.</p>
 
     <p>Le Visiteur peut :</p>
@@ -68,40 +73,49 @@
       </li>
       <li>Simuler une évaluation d’un établissement de RC selon les objectifs fixés par les lois EGAlim.</li>
       <li>
+        Signaler l’absence d’un établissement de restauration collective (saisie d’une adresse mail, d’un nom et prénom
+        à titre facultatif et un champ libre).
+      </li>
+      <li>
         S’inscrire à l’infolettre en saisissant son adresse électronique (un lien de désinscription est accessible dans
         chaque infolettre).
       </li>
     </ul>
 
-    <h3>3.2 Gestionnaire de SR</h3>
+    <h3 class="fr-h3">3.2 Gestionnaire de RC</h3>
 
     <p>En plus des fonctionnalités Visiteur, chaque Gestionnaire de cantine dispose des fonctionnalités suivantes :</p>
 
-    <h4>1) Création d’un compte gestionnaire</h4>
+    <h4 class="fr-h4">1) Création d’un compte gestionnaire</h4>
     <p>
-      Tout gestionnaire SR crée un compte en saisissant ses nom, prénom, courrier électronique, numéro de téléphone, nom
+      Tout gestionnaire RC crée un compte en saisissant ses nom, prénom, courrier électronique, numéro de téléphone, nom
       d’utilisateur et numéro de SIRET.
     </p>
     <p>
       En accédant aux paramètres de son compte, le gestionnaire peut ajouter une photo de profil ainsi que via des
       onglets déroulants préciser ses fonctions et la façon dont il a eu connaissance du Service.
     </p>
-    <p>Le gestionnaire peut supprimer son compte via les paramètres de son compte.</p>
+    <p>Tout gestionnaire peut supprimer son compte via les paramètres de son compte.</p>
 
-    <h4>2) Gestion des établissements de RC</h4>
+    <h4 class="fr-h4">2) Gestion des établissements de RC</h4>
     <p>
       Depuis son espace de gestion, le Gestionnaire peut ajouter d’autres établissements satellites de RC en renseignant
       un numéro de SIRET.
     </p>
     <p>
-      Le Gestionnaire peut également inviter un autre Gestionnaire sur le ou les mêmes établissements en saisissant une
-      adresse électronique.
+      Le Gestionnaire peut également inviter d’autres Gestionnaires associés sur le ou les mêmes établissements en
+      saisissant une adresse électronique. Chaque gestionnaire associé reçoit un courrier électronique pour valider son
+      compte ou refuser l’invitation en contactant le support technique de ma cantine.
+    </p>
+    <p>
+      Le Gestionnaire est seul responsable de l’envoi des invitations, des accès qu’il attribue et de l’utilisation qui
+      en est faite notamment en matière de confidentialité des données.
     </p>
 
-    <h4>3) Auto-évaluation / diagnostic</h4>
-    <p>Chaque Gestionnaire peut auto-évaluer son établissement de RC selon les objectifs fixés par les lois EGAlim.</p>
+    <h4 class="fr-h4">3) Positionner son établissement par rapport aux objectifs des lois EGALIM</h4>
+    <p>Chaque Gestionnaire peut comparer son établissement de RC par rapport aux objectifs des lois EGAlim.</p>
 
-    <h4>4) Télédéclaration</h4>
+    <h4 class="fr-h4">4) Télédéclaration</h4>
     <p>
       Chaque Gestionnaire procède à ses télédéclarations selon les dispositions prévues par le code rural et de la pêche
       maritime et les lois EGAlim.
@@ -110,13 +124,30 @@
       Le Service peut solliciter des informations complémentaires sur la gestion des établissements de RC afin de
       consolider les données télédéclarées ou d’obtenir d’autres jeux de données.
     </p>
+    <p>
+      Une fois les données saisies et validées par l’un des Gestionnaires, la télédéclaration engage l’établissement
+      concerné.
+    </p>
 
-    <h4>5) Générer une affiche</h4>
-    <p>Les Gestionnaires peuvent générer une affiche qui synthétise les informations télédéclarées.</p>
+    <h4 class="fr-h4">5) Référencement de mon établissement en ligne</h4>
+    <p>
+      Dès lors qu’un établissement est créée sur la plateforme, ses informations administratives et ses taux Egalim sont
+      visibles publiquement sur l’onglet « nos cantines publiées » et sur le site data.gouv.fr.
+    </p>
+    <p>
+      Les informations transmises dans le cadre des campagnes de télédéclaration annuelles affichées sont notamment :
+      les pourcentages des taux EGAlim et les données qualitatives sur les autres volets des lois EGAlim (gaspillage
+      alimentaire, diversification des protéines, substitution plastique, information convives).
+    </p>
 
-    <h4>6) Outil de suivi de ses achats</h4>
+    <h4 class="fr-h4">6) Outil de suivi de ses achats</h4>
+    <p>
+      Les Gestionnaires peuvent ajouter leurs achats dans un tableau mis à disposition sur la plateforme. La complétion
+      du tableau permet aux Gestionnaires de voir la répartition des achats en fonction des différentes familles de
+      produit, ainsi que le pourcentage en lien avec les lois Egalim.
+    </p>
 
-    <h2>4 - Traitement des données personnelles</h2>
+    <h2 class="fr-h2">4 - Traitement des données personnelles</h2>
     <p>
       Le Service ne collecte que les données strictement nécessaires à sa mise en œuvre. Les données collectées incluent
       également des données à caractère personnel. Pour plus d’informations sur le traitement des données à caractère
@@ -125,15 +156,15 @@
       .
     </p>
 
-    <h2>5 – Inscription à l’infolettre</h2>
-    <p>La validation des CGU implique l’inscription automatique à l’infolettre « ma cantine ».</p>
+    <h2 class="fr-h2">5 – Inscription à l’infolettre</h2>
+    <p>La création d’un compte implique l’inscription automatique à l’infolettre « ma cantine ».</p>
     <p>
       Cette inscription est révocable à tout moment, soit en vous désabonnant à réception du courriel, ou en nous
       notifiant votre refus à l’adresse suivante :
       <a rel="noopener" href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
     </p>
 
-    <h2>6 - Statistiques et Open Data</h2>
+    <h2 class="fr-h2">6 - Statistiques et diffusion sur data.gouv.fr</h2>
     <p>Les données récoltées dans le cadre du téléservice servent au pilotage de la politique publique.</p>
     <p>
       Conformément aux dispositions des articles L. 230-5-1 et R. 230-30-4 du Code rural, les données recueillies par
@@ -141,17 +172,23 @@
       notamment au Parlement.
     </p>
     <p>
-      En outre, conformément aux dispositions du Livre III du Code des relations entre le public et l’administration, la
-      plateforme diffuse des informations publiques relatives aux données collectées et au suivi de l’usage de la
-      plateforme.
+      En outre, conformément aux dispositions du Livre III du Code des relations entre le public et l'administration, la
+      plateforme diffuse des informations publiques relatives aux données collectées et au suivi de l'usage de la
+      plateforme sur le site de data.gouv.fr
     </p>
 
-    <h2>7 - Engagements et responsabilité</h2>
+    <h2 class="fr-h2">7 - Engagements et responsabilité</h2>
 
-    <h3>Visiteur</h3>
+    <h3 class="fr-h3">Visiteur</h3>
     <p>
       Le Visiteur s’engage à respecter les présentes CGU et leurs éventuelles modifications ainsi que la législation en
       vigueur.
+    </p>
+    <p>
+      Le Visiteur s’engage dans les champs libres à ne communiquer aucune donnée à caractère personnel le concernant ou
+      concernant des tiers en particulier des données sensibles (ex : santé, opinions politiques, syndicales,
+      philosophiques). Il s’engage à ne pas tenir de propos injurieux, diffamatoires, pornographiques et plus
+      globalement contraire à la loi.
     </p>
     <p>
       En cas de violation d'une ou de plusieurs dispositions des CGU ou de tout autre document incorporé aux présentes
@@ -159,7 +196,7 @@
       poursuites devant les juridictions compétentes.
     </p>
 
-    <h3>Gestionnaire</h3>
+    <h3 class="fr-h3">Gestionnaire</h3>
 
     <p>
       Le titulaire d’un compte s’engage à respecter les présentes CGU ainsi que leurs éventuelles modifications ou de
@@ -183,7 +220,7 @@
       déposer que les seuls documents et informations demandées par le Service.
     </p>
 
-    <h3>L’Editeur</h3>
+    <h3 class="fr-h3">L’Editeur</h3>
 
     <p>
       Le Service est développé conformément à l’état de l’art. Toutefois, il n’est pas garanti qu’il soit exempt
@@ -201,13 +238,13 @@
       qui pourraient être engagées à son encontre.
     </p>
 
-    <h2>8 – Code source</h2>
+    <h2 class="fr-h2">8 – Code source</h2>
     <p>
       Le Service a été développé sous licence MIT, le code est disponible à l’adresse suivante :
       <a rel="noopener" href="https://github.com/betagouv/ma-cantine">https://github.com/betagouv/ma-cantine</a>
     </p>
 
-    <h2>9 – Modification et évolution du Service</h2>
+    <h2 class="fr-h2">9 – Modification et évolution du Service</h2>
     <p>
       Les termes des présentes conditions d’utilisation peuvent être modifiés ou complétés à tout moment, sans préavis,
       en fonction des modifications apportées au Service, de l’évolution de la législation ou pour tout autre motif jugé
@@ -218,7 +255,7 @@
       régulièrement à cette rubrique pour vérifier les conditions générales en vigueur.
     </p>
 
-    <h2>10 - Nous contacter</h2>
+    <h2 class="fr-h2">10 - Nous contacter</h2>
     <ul>
       <li>
         Difficultés techniques :
@@ -244,22 +281,9 @@ export default {
 </script>
 
 <style scoped>
-h2 {
-  margin-top: 1.25em;
-  margin-bottom: 0.5em;
-}
-h3 {
-  margin-top: 1 em;
-}
-h4 {
-  margin-top: 0.8em;
-}
-ul,
+h2,
 h3,
 h4 {
-  margin-bottom: 0.5em;
-}
-li {
-  margin-bottom: 0.35em;
+  margin-top: 1.2em;
 }
 </style>

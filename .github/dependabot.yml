@@ -15,3 +15,8 @@ updates:
     directory: "/frontend"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "npm"
+    target-branch: "staging"
+    directory: "/2024-frontend"
+    schedule:
+      interval: "weekly"

@@ -1,6 +1,9 @@
-import factory
 import random
+
+import factory
+
 from data.models import Review
+
 from .user import UserFactory
 
 

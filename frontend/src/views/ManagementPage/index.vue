@@ -1,33 +1,24 @@
 <template>
   <div class="text-left">
-    <div class="mt-4 mb-0 mb-md-6">
-      <div class="d-flex align-center">
-        <h1
-          class="my-2 text-h6 font-weight-black"
-          :style="$vuetify.breakpoint.mdAndUp ? 'font-size: 2rem !important;' : ''"
-        >
-          Bienvenue dans votre espace, {{ loggedUser.firstName }}
-        </h1>
-        <v-btn text class="text-decoration-underline text-caption mb-1 mb-md-n1" :to="{ name: 'AccountEditor' }">
-          <v-icon class="mr-1" small>mdi-pencil</v-icon>
-          Modifier mon profil
-        </v-btn>
-      </div>
+    <h1
+      class="mt-4 mb-2 text-h6 font-weight-black"
+      :style="$vuetify.breakpoint.mdAndUp ? 'font-size: 2rem !important;' : ''"
+    >
+      Bienvenue dans votre espace, {{ loggedUser.firstName }}
+    </h1>
 
-      <p v-if="loggedUser.isElectedOfficial" class="mb-0">
-        Vous avez un compte élu / élue, vous pouvez voir
-        <router-link text :to="{ name: 'TerritoryCanteens' }">
-          les cantines de votre territoire
-        </router-link>
-        .
-      </p>
+    <router-link class="fr-text-xs d-flex align-center" :to="{ name: 'AccountEditor' }">
+      Modifier mon profil
+      <v-icon class="ml-1" color="primary" x-small>mdi-pencil</v-icon>
+    </router-link>
 
-      <CanteenCreationDialog
-        v-if="showCanteenCreationPrompt !== null"
-        :organizations="loggedUser.mcpOrganizations"
-        v-model="showCanteenCreationPrompt"
-      />
-    </div>
+    <p v-if="loggedUser.isElectedOfficial" class="mt-2 mb-0">
+      Vous avez un compte élu / élue, voir
+      <router-link text :to="{ name: 'TerritoryCanteens' }">
+        les cantines de votre territoire
+      </router-link>
+    </p>
+
     <div v-if="canteenCount === 0" class="body-2 font-weight-medium">
       <p class="mb-0">
         Prenez connaissance du
@@ -45,9 +36,9 @@
         </v-btn>
       </p>
     </div>
-    <div v-if="canteenCount > 0">
+    <div v-if="canteenCount > 0" class="mt-4">
       <SuccessBanner v-if="showSuccessBanner" />
-      <TeledeclarationBanner v-else-if="this.teledeclarationCampaignActive" />
+      <TeledeclarationBanner v-else-if="teledeclarationCampaignActive && !correctionCampaignActive" />
       <ActionsBanner v-else />
     </div>
     <div class="mt-4">
@@ -81,6 +72,11 @@
         </v-col>
       </v-row>
     </div>
+    <CanteenCreationDialog
+      v-if="showCanteenCreationPrompt !== null"
+      :organizations="loggedUser.mcpOrganizations"
+      v-model="showCanteenCreationPrompt"
+    />
   </div>
 </template>
 
@@ -113,6 +109,7 @@ export default {
       hasActions: false,
       showCanteenCreationPrompt: null,
       teledeclarationCampaignActive: window.ENABLE_TELEDECLARATION,
+      correctionCampaignActive: window.TELEDECLARATION_CORRECTION_CAMPAIGN,
       actionsLoading: true,
       resources: [
         {

@@ -44,9 +44,14 @@
           :label="support.label"
         />
         <v-row class="ml-0 mb-3 mt-0 mr-2">
-          <v-checkbox v-model="otherSupportEnabled" hide-details class="mt-0"></v-checkbox>
+          <v-checkbox
+            v-model="otherSupportEnabled"
+            hide-details
+            class="mt-0"
+            aria-label="Autre : donnez plus d'informations"
+          ></v-checkbox>
           <v-text-field
-            class="my-0 py-0"
+            class="my-0 py-0 other-text-input"
             hide-details
             ref="other-support-field"
             :disabled="!otherSupportEnabled"

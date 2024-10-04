@@ -1,6 +1,7 @@
-from rest_framework import serializers
-from data.models import Message
 from django.core.validators import validate_email
+from rest_framework import serializers
+
+from data.models import Message
 
 
 class MessageSerializer(serializers.ModelSerializer):

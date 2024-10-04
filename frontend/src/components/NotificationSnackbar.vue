@@ -1,5 +1,5 @@
 <template>
-  <v-snackbar class="notification-snackbar" timeout="-1" :color="color" :value="show">
+  <v-snackbar class="notification-snackbar" timeout="-1" :color="color" :value="show" right>
     <div class="d-flex">
       <v-icon small class="mr-3" width="20">
         {{ icon }}
@@ -12,8 +12,8 @@
           {{ notification.message }}
         </p>
       </div>
-      <v-btn class="ml-3" @click="$store.dispatch('removeNotification', notification)" icon>
-        <v-icon color="white" width="20" aria-hidden="false" aria-label="Fermer">$close-line</v-icon>
+      <v-btn class="ml-3" @click="$store.dispatch('removeNotification', notification)" icon aria-label="Fermer">
+        <v-icon color="white" width="20">$close-line</v-icon>
       </v-btn>
     </div>
     <div v-if="notification.undoMessage && notification.undoAction">

@@ -146,7 +146,7 @@ export default {
       }
 
       if (this.canteen?.siret && this.siret === this.canteen?.siret) {
-        this.$emit("siretIsValid", this.siret)
+        this.$emit("siretIsValid", { siret: this.siret })
         return
       }
 

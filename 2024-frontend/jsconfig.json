@@ -1,0 +1,127 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@s:wagtail/*": [
+        "./../venv/lib/python3.10/site-packages/wagtail/static/wagtail/*"
+      ],
+      "@t:wagtail/*": [
+        "./../venv/lib/python3.10/site-packages/wagtail/templates/wagtail/*"
+      ],
+      "@s:modelcluster/*": [
+        "./../venv/lib/python3.10/site-packages/modelcluster/static/modelcluster/*"
+      ],
+      "@t:modelcluster/*": [
+        "./../venv/lib/python3.10/site-packages/modelcluster/templates/modelcluster/*"
+      ],
+      "@s:taggit/*": [
+        "./../venv/lib/python3.10/site-packages/taggit/static/taggit/*"
+      ],
+      "@t:taggit/*": [
+        "./../venv/lib/python3.10/site-packages/taggit/templates/taggit/*"
+      ],
+      "@s:cms/*": [
+        "./../cms/static/cms/*"
+      ],
+      "@t:cms/*": [
+        "./../cms/templates/cms/*"
+      ],
+      "@s:webpack_loader/*": [
+        "./../venv/lib/python3.10/site-packages/webpack_loader/static/webpack_loader/*"
+      ],
+      "@t:webpack_loader/*": [
+        "./../venv/lib/python3.10/site-packages/webpack_loader/templates/webpack_loader/*"
+      ],
+      "@s:rest_framework/*": [
+        "./../venv/lib/python3.10/site-packages/rest_framework/static/rest_framework/*"
+      ],
+      "@t:rest_framework/*": [
+        "./../venv/lib/python3.10/site-packages/rest_framework/templates/rest_framework/*"
+      ],
+      "@s:oauth2_provider/*": [
+        "./../venv/lib/python3.10/site-packages/oauth2_provider/static/oauth2_provider/*"
+      ],
+      "@t:oauth2_provider/*": [
+        "./../venv/lib/python3.10/site-packages/oauth2_provider/templates/oauth2_provider/*"
+      ],
+      "@s:ckeditor/*": [
+        "./../venv/lib/python3.10/site-packages/ckeditor/static/ckeditor/*"
+      ],
+      "@t:ckeditor/*": [
+        "./../venv/lib/python3.10/site-packages/ckeditor/templates/ckeditor/*"
+      ],
+      "@s:ckeditor_uploader/*": [
+        "./../venv/lib/python3.10/site-packages/ckeditor_uploader/static/ckeditor_uploader/*"
+      ],
+      "@t:ckeditor_uploader/*": [
+        "./../venv/lib/python3.10/site-packages/ckeditor_uploader/templates/ckeditor_uploader/*"
+      ],
+      "@s:macantine/*": [
+        "./../macantine/static/macantine/*"
+      ],
+      "@t:macantine/*": [
+        "./../macantine/templates/macantine/*"
+      ],
+      "@s:data/*": [
+        "./../data/static/data/*"
+      ],
+      "@t:data/*": [
+        "./../data/templates/data/*"
+      ],
+      "@s:api/*": [
+        "./../api/static/api/*"
+      ],
+      "@t:api/*": [
+        "./../api/templates/api/*"
+      ],
+      "@s:web/*": [
+        "./../web/static/web/*"
+      ],
+      "@t:web/*": [
+        "./../web/templates/web/*"
+      ],
+      "@s:magicauth/*": [
+        "./../venv/lib/python3.10/site-packages/magicauth/static/magicauth/*"
+      ],
+      "@t:magicauth/*": [
+        "./../venv/lib/python3.10/site-packages/magicauth/templates/magicauth/*"
+      ],
+      "@s:django_filters/*": [
+        "./../venv/lib/python3.10/site-packages/django_filters/static/django_filters/*"
+      ],
+      "@t:django_filters/*": [
+        "./../venv/lib/python3.10/site-packages/django_filters/templates/django_filters/*"
+      ],
+      "@s:common/*": [
+        "./../common/static/common/*"
+      ],
+      "@t:common/*": [
+        "./../common/templates/common/*"
+      ],
+      "@s:drf_spectacular/*": [
+        "./../venv/lib/python3.10/site-packages/drf_spectacular/static/drf_spectacular/*"
+      ],
+      "@t:drf_spectacular/*": [
+        "./../venv/lib/python3.10/site-packages/drf_spectacular/templates/drf_spectacular/*"
+      ],
+      "@s:drf_spectacular_sidecar/*": [
+        "./../venv/lib/python3.10/site-packages/drf_spectacular_sidecar/static/drf_spectacular_sidecar/*"
+      ],
+      "@t:drf_spectacular_sidecar/*": [
+        "./../venv/lib/python3.10/site-packages/drf_spectacular_sidecar/templates/drf_spectacular_sidecar/*"
+      ],
+      "@s:simple_history/*": [
+        "./../venv/lib/python3.10/site-packages/simple_history/static/simple_history/*"
+      ],
+      "@t:simple_history/*": [
+        "./../venv/lib/python3.10/site-packages/simple_history/templates/simple_history/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

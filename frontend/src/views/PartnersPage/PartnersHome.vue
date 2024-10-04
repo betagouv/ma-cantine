@@ -3,9 +3,16 @@
     <BreadcrumbsNav />
     <v-row>
       <v-col cols="12" sm="7" md="8">
-        <h1 class="font-weight-black text-h5 text-sm-h4 mb-4">
-          Améliorer votre offre avec le soutien des acteurs de l'éco-système
+        <h1 class="fr-h1 mb-4">
+          Faites-vous accompagner dans votre démarche EGAlim !
         </h1>
+        <ul class="mb-4">
+          <li>Vous avez des difficultés à atteindre vos objectifs EGAlim&nbsp;?</li>
+          <li>Vous avez besoin d'aller plus loin dans votre démarche vers une alimentation durable ?</li>
+          <li>Vous avez besoin de ressources personnalisées sur votre territoire ?</li>
+          <li>Vous êtes en recherche de formation pour vos cuisiniers ?</li>
+          <li>Vous avez besoin d'être accompagné grâce à des aides financières ?</li>
+        </ul>
         <ReferencingInfo />
       </v-col>
       <v-col cols="0" sm="5" md="4" v-if="$vuetify.breakpoint.smAndUp" class="py-0 pr-8 d-flex">
@@ -14,15 +21,19 @@
       </v-col>
     </v-row>
     <h2 class="d-sr-only">Les acteurs de l'éco-système</h2>
-    <p v-if="$vuetify.breakpoint.mdAndUp" class="text-body-1 font-weight-black">Vos besoins</p>
+    <p v-if="$vuetify.breakpoint.mdAndUp" class="font-weight-bold">Vos besoins</p>
     <v-item-group v-if="$vuetify.breakpoint.mdAndUp" multiple v-model="filters.category.value">
       <v-row class="mx-n1">
         <v-col v-for="category in categoryItems" cols="4" :key="category.value" class="pa-1" fill-height>
           <v-item v-slot="{ active, toggle }" :value="category.value">
             <button @click="toggle" style="width: inherit;" class="fill-height">
-              <v-card :color="active ? 'primary lighten-4' : ''" outlined class="fill-height">
+              <v-card
+                :color="active ? 'primary lighten-4' : ''"
+                outlined
+                class="fill-height d-flex flex-column justify-center"
+              >
                 <v-card-title class="d-block text-left">
-                  <p class="text-body-2 mb-0 d-flex align-center">
+                  <p class="fr-text-sm mb-0 d-flex align-center">
                     <v-icon small class="mr-2" :color="active ? 'primary' : ''">
                       {{ category.icon }}
                     </v-icon>
@@ -37,7 +48,7 @@
     </v-item-group>
     <div class="d-flex align-center mt-8 pl-0">
       <v-badge :value="hasActiveFilter" color="#CE614A" dot overlap offset-x="-2">
-        <p class="text-body-1 font-weight-black mb-0" style="background-color: #fff; width: max-content">
+        <p class="font-weight-bold mb-0" style="background-color: #fff; width: max-content">
           Autres filtres
         </p>
       </v-badge>
@@ -56,11 +67,22 @@
     <v-expand-transition>
       <v-sheet class="pa-6 text-left mt-2 ma-0" v-show="showFilters" rounded :outlined="showFilters">
         <v-row>
+          <v-col cols="12" md="6">
+            <DsfrSearchField
+              v-model="filters.search.provisionalValue"
+              @search="applyProvisionalValue(filters.search)"
+              clearable
+              @clear="clearFilterField(filters.search)"
+              placeholder="Rechercher par nom"
+              hide-details="auto"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
           <v-col cols="12" sm="6" v-if="$vuetify.breakpoint.smAndDown">
             <label
               for="select-category"
               :class="{
-                'text-body-2': true,
                 'active-filter-label': filters.category.value && !!filters.category.value.length,
               }"
             >
@@ -81,7 +103,6 @@
             <label
               for="select-department"
               :class="{
-                'text-body-2': true,
                 'active-filter-label': filters.department.value && !!filters.department.value.length,
               }"
             >
@@ -102,7 +123,6 @@
             <label
               for="select-sector"
               :class="{
-                'text-body-2': true,
                 'active-filter-label': filters.sectorCategories.value && !!filters.sectorCategories.value.length,
               }"
             >
@@ -125,7 +145,6 @@
             <label
               for="select-type"
               :class="{
-                'text-body-2': true,
                 'active-filter-label': filters.type.value && !!filters.type.value.length,
               }"
             >
@@ -146,7 +165,6 @@
             <label
               for="select-gratuity-option"
               :class="{
-                'text-body-2': true,
                 'active-filter-label': filters.gratuityOption.value && !!filters.gratuityOption.value.length,
               }"
             >
@@ -166,9 +184,21 @@
         </v-row>
       </v-sheet>
     </v-expand-transition>
-    <div class="mt-3">
-      <v-row v-if="!!partnerCount">
-        <v-spacer></v-spacer>
+    <div v-if="!!partnerCount" class="mt-3">
+      <v-row class="mt-2">
+        <v-col>
+          <ResultCount :count="partnerCount" class="fr-h6 mb-0" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col v-for="partner in visiblePartners" :key="partner.id" style="height: auto;" cols="12" sm="6" md="4">
+          <PartnerCard :partner="partner" />
+        </v-col>
+        <v-col style="height: auto;" cols="12" sm="6" md="4">
+          <NewPartnerCard />
+        </v-col>
+      </v-row>
+      <v-row class="justify-center">
         <v-col cols="12" sm="6">
           <DsfrPagination
             v-model="page"
@@ -177,40 +207,31 @@
             v-if="!!partnerCount"
           />
         </v-col>
-        <v-spacer></v-spacer>
-      </v-row>
-      <v-row v-if="!!partnerCount">
-        <v-col v-for="partner in visiblePartners" :key="partner.id" style="height: auto;" cols="12" sm="6" md="4">
-          <PartnerCard :partner="partner" />
-        </v-col>
-        <v-col style="height: auto;" cols="12" sm="6" md="4">
-          <NewPartnerCard />
-        </v-col>
-      </v-row>
-      <v-row v-else>
-        <v-col cols="12">
-          <div class="d-flex flex-column align-center py-0">
-            <p class="text-body-1 grey--text text--darken-1 my-2">
-              <v-icon class="mr-1 mt-n1">mdi-inbox-remove</v-icon>
-              Nous n'avons pas trouvé des acteurs avec ces paramètres
-            </p>
-            <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
-              Désactiver tous les filtres
-            </v-btn>
-          </div>
-        </v-col>
-        <v-col style="height: auto;" cols="12" sm="6" md="4">
-          <NewPartnerCard />
-        </v-col>
       </v-row>
     </div>
+    <v-row v-else class="mt-3">
+      <v-col cols="12">
+        <div class="d-flex flex-column align-center py-0">
+          <p class="text-body-1 grey--text text--darken-1 my-2">
+            <v-icon class="mr-1 mt-n1">mdi-inbox-remove</v-icon>
+            Nous n'avons pas trouvé des acteurs avec ces paramètres
+          </p>
+          <v-btn color="primary" text @click="clearFilters" class="text-decoration-underline" v-if="hasActiveFilter">
+            Désactiver tous les filtres
+          </v-btn>
+        </div>
+      </v-col>
+      <v-col style="height: auto;" cols="12" sm="6" md="4">
+        <NewPartnerCard />
+      </v-col>
+    </v-row>
     <v-divider aria-hidden="true" role="presentation" class="mb-8 mt-12"></v-divider>
     <v-row>
       <v-col cols="12">
-        <h2 class="text-h6 font-weight-black mb-4">
+        <h2 class="fr-h4 mb-4">
           Vous n'avez pas trouvé un ou plusieurs acteurs qui vous intéressent ?
         </h2>
-        <p class="body-2">
+        <p class="fr-text-sm">
           Dites-nous tout, nous ferons en sorte de vous aider.
         </p>
         <GeneralContactForm initialInquiryType="other"></GeneralContactForm>
@@ -222,6 +243,8 @@
 <script>
 import Constants from "@/constants"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
+import ResultCount from "@/components/ResultCount"
+import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrCombobox from "@/components/DsfrCombobox"
@@ -235,6 +258,8 @@ export default {
   name: "PartnersHome",
   components: {
     BreadcrumbsNav,
+    ResultCount,
+    DsfrSearchField,
     DsfrPagination,
     DsfrSelect,
     DsfrCombobox,
@@ -251,6 +276,12 @@ export default {
       visiblePartners: null,
       partnerCount: null,
       filters: {
+        search: {
+          param: "recherche",
+          value: null,
+          provisionalValue: null,
+          default: null,
+        },
         gratuityOption: {
           param: "gratuit",
           value: [],
@@ -281,7 +312,7 @@ export default {
       categoryItems: [
         {
           value: "appro",
-          text: "Améliorer ma part de bio et de produits durables",
+          text: "Améliorer ma part de produits bio et durables",
           icon: "$leaf-fill",
         },
         {
@@ -402,6 +433,7 @@ export default {
       Object.values(this.filters).forEach((f) => {
         f.value = this.$route.query[f.param]
         if (f.transformToFrontend) f.value = f.transformToFrontend(f.value)
+        if (Object.hasOwn(f, "provisionalValue")) f.provisionalValue = f.value
       })
       this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
       this.fetchCurrentPage()
@@ -463,6 +495,13 @@ export default {
         }
       })
       this.sectorCategories = [...enabledCategories, divider, header, ...disabledCategories]
+    },
+    applyProvisionalValue(filterTerm) {
+      filterTerm.value = filterTerm.provisionalValue
+    },
+    clearFilterField(filterTerm) {
+      filterTerm.provisionalValue = filterTerm.default
+      filterTerm.value = filterTerm.provisionalValue
     },
   },
   watch: {

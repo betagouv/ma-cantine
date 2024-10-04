@@ -1,7 +1,10 @@
 from datetime import timedelta
+
 from django.test import TestCase
-from data.factories import CanteenFactory
 from django.test.utils import override_settings
+
+from data.factories import CanteenFactory, TeledeclarationFactory
+from data.models import AuthenticationMethodHistoricalRecords
 from macantine import tasks
 
 
@@ -38,3 +41,13 @@ class TestModelHistory(TestCase):
         # Verify all history items are still there
         tasks.delete_old_historical_records()
         self.assertEqual(canteen.history.count(), history_count)
+
+    def test_authentication_method_created_in_code(self):
+        """
+        Objects created in code should save the corresponding authentication method
+        """
+        td = TeledeclarationFactory.create()
+
+        self.assertEqual(
+            td.history.first().authentication_method, AuthenticationMethodHistoricalRecords.AuthMethodChoices.AUTO
+        )

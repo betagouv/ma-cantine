@@ -1,27 +1,20 @@
 <template>
   <v-card :to="canteenLink" class="dsfr d-flex flex-column" outlined :ripple="false">
-    <div class="tag body-2 font-weight-medium">
-      <v-icon class="mt-n1" small>$community-fill</v-icon>
-      Livreur des repas
-    </div>
     <v-img :src="canteenImage || '/static/images/canteen-default-image.jpg'" height="160" max-height="160"></v-img>
     <v-card-title>
       <h3 class="fr-h6 font-weight-bold mb-1">{{ canteen.name }}</h3>
     </v-card-title>
-    <v-card-subtitle class="py-1">
-      <v-chip v-if="teledeclarationIsActive" small :color="teledeclarationStatus.color" label class="mr-1">
-        <p class="mb-0">{{ teledeclarationStatus.text }}</p>
-      </v-chip>
-      <v-chip
-        small
-        :color="publicationStatus.color"
-        label
-        v-if="this.canteen.publicationStatus === 'published' || this.canteen.productionType === 'central_serving'"
-      >
-        <p class="mb-0">{{ publicationStatus.text }}</p>
-      </v-chip>
+    <v-card-subtitle class="pb-0 mx-n1">
+      <DsfrTag
+        v-if="teledeclarationIsActive"
+        :text="teledeclarationStatus.text"
+        :color="teledeclarationStatus.color"
+        :small="true"
+      />
+      <DsfrTag :text="publicationStatus.text" :color="publicationStatus.color" :small="true" />
     </v-card-subtitle>
-    <v-card-subtitle class="mt-0 pb-0">
+    <v-card-subtitle class="mt-0 pb-0 pt-2">
+      <ProductionTypeTag :canteen="canteen" position="top-left" />
       <CanteenIndicators :canteen="canteen" />
     </v-card-subtitle>
     <v-spacer></v-spacer>
@@ -34,6 +27,8 @@
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
+import ProductionTypeTag from "@/components/ProductionTypeTag"
+import DsfrTag from "@/components/DsfrTag"
 import { lastYear } from "@/utils"
 
 export default {
@@ -46,6 +41,8 @@ export default {
   },
   components: {
     CanteenIndicators,
+    ProductionTypeTag,
+    DsfrTag,
   },
   data() {
     return {
@@ -103,17 +100,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.tag {
-  position: absolute;
-  top: 0;
-  z-index: 1;
-  background: #e0e0f2;
-  left: 10px;
-  padding: 3px 10px;
-  border-radius: 0px 0px 4px 4px;
-  box-shadow: 4px 0px 5px -4px black;
-  color: #333;
-}
-</style>

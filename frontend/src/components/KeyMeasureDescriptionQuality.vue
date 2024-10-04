@@ -1,13 +1,13 @@
 <template>
   <div>
     <p>
-      La loi EGAlim et la loi Climat et Résilience encadrent la qualité des produits achetés entrant dans la composition
-      des repas servis en restauration collective du secteur public et des établissements du secteur privé (article L.
-      230-5-1 du Code Rural et de la Pêche Maritime). Les repas doivent comporter, à partir de l'année 2022, au moins 50
-      % de produits de qualité et durables dont au moins 20 % issus de l'agriculture biologique ou en conversion pour
-      les cantines en France continentale (consulter
+      La loi EGAlim, complétée par la loi Climat et Résilience, a défini des obligations en ce qui concerne la qualité
+      et la durabilité des produits entrant dans la composition des repas servis en restauration collective. Aussi, en
+      moyenne sur une année, les repas doivent comporter au moins 50 % de produits durables et de qualité, dont au moins
+      20 % issus de l'agriculture biologique ou en conversion, et ce pour toutes les cantines de France métropolitaine
+      (consulter
       <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">notre blog</a>
-      pour le seuil des autres régions).
+      pour les seuils adaptés pour les départements-régions d'outre-mer –DROM-).
     </p>
     <p>
       Ces taux (en %) sont calculés à partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur
@@ -17,35 +17,35 @@
     </p>
     <div id="appro-graphs" class="mb-4">
       <div>
-        <p>Exemple de ce qui est attendu fin 2022 :</p>
+        <p>Exemple de ce qui est attendu au minimum :</p>
         <div class="good graphs">
           <img
             src="/static/images/appro-graphs/good-1.svg"
             class="graph"
-            alt="Graphe du exemple satisfaisant fin 2022"
+            alt="Graphe du exemple satisfaisant"
             title="20 % bio, 30 % durable (hors bio)"
           />
           <img
             src="/static/images/appro-graphs/good-2.svg"
             class="graph"
-            alt="Graphe du exemple satisfaisant fin 2022"
+            alt="Graphe du exemple satisfaisant"
             title="50 % bio, 0 % durable (hors bio)"
           />
         </div>
       </div>
       <div>
-        <p>A améliorer d'ici fin 2022 :</p>
+        <p>A améliorer au plus vite :</p>
         <div class="bad graphs">
           <img
             src="/static/images/appro-graphs/bad-1.svg"
             class="graph"
-            alt="Graphe du exemple insuffisant fin 2022"
+            alt="Graphe du exemple insuffisant"
             title="20 % bio, 20 % durable (hors bio)"
           />
           <img
             src="/static/images/appro-graphs/bad-2.svg"
             class="graph"
-            alt="Graphe du exemple insuffisant fin 2022"
+            alt="Graphe du exemple insuffisant"
             title="15 % bio, 50 % durable (hors bio)"
           />
         </div>
@@ -66,14 +66,12 @@
       </div>
     </div>
     <p>
-      Depuis la promulgation de la loi Climat et Résilience, l'ensemble de la restauration collective, publique comme
-      privée, a l'obligation de proposer 50 % de produits de qualité dont 20 % de produits bio à compter de 2022 pour le
-      public, et d'ici le 1er janvier 2024 pour la restauration collective du secteur privé. Depuis la promulgation de
-      la loi Climat et Résilience, à partir du 1er janvier 2024, au moins 60% du total achat de la famille de denrées «
-      viandes et poissons » est composé des produits de qualité et durables, ce taux étant fixé à 100% pour la
-      restauration de l’Etat, ses établissements publics et les entreprises publiques nationales. La viande de synthèse
-      est interdite en restauration collective. Le 1er janvier 2024, ces dispositions s’appliquent à tous les
-      restaurants collectifs, y compris tous les restaurants d'entreprise (RE et RIE).
+      Par ailleurs, la loi Climat et Résilience, a complété cette disposition avec une autre obligation : il est attendu
+      au moins 60 % de produits durables et de qualité dans la famille de denrées « viandes et poissons », ce taux étant
+      fixé à 100 % pour la restauration de l'Etat, ses établissements publics et les entreprises publiques nationales.
+      La viande de synthèse est interdite en restauration collective. Depuis le 1er janvier 2024, ces dispositions
+      concernant la qualité des approvisionnements en restauration collective s'appliquent à tous les restaurants
+      collectifs, y compris tous les restaurants d'entreprise (RE et RIE).
     </p>
   </div>
 </template>

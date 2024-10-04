@@ -1,5 +1,7 @@
 from django.contrib import admin
+
 from data.models import Message
+
 from .utils import ReadOnlyAdminMixin
 
 
@@ -65,13 +67,14 @@ class MessageAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "body",
         "sender_email",
         "destinataire",
+        "recipients",
         "statut",
     )
     list_filter = (MessageStatusFilter,)
     actions = [send, block]
 
     def destinataire(self, obj):
-        return obj.destination_canteen.name if obj.destination_canteen else "⚠️ Cantine inconnue"
+        return obj.canteen_name
 
     def statut(self, obj):
         if obj.status == Message.Status.PENDING:

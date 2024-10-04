@@ -10,16 +10,17 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import logging
 import os
 import sys
-import logging
 from pathlib import Path
-from macantine.sentry import before_send
-import dotenv  # noqa
 
+import dotenv  # noqa
 import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.celery import CeleryIntegration
+from sentry_sdk.integrations.django import DjangoIntegration
+
+from macantine.sentry import before_send
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +39,8 @@ PROTOCOL = "https" if SECURE else "http"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
+# Default to True so that tests can pass without this env var being defined
+DEBUG_FRONT = os.getenv("DEBUG_FRONT") == "True" if os.getenv("DEBUG_FRONT") else True
 AUTH_USER_MODEL = "data.User"
 AUTHENTICATION_BACKENDS = [
     "macantine.backends.EmailUsernameBackend",
@@ -50,6 +53,7 @@ DEBUG_PERFORMANCE = os.getenv("DEBUG") == "True" and os.getenv("DEBUG_PERFORMANC
 # Environment
 
 ENVIRONMENT = os.getenv("ENVIRONMENT")
+
 
 # Sentry
 # No need making this one secret: https://forum.sentry.io/t/dsn-private-public/6297/3
@@ -67,8 +71,24 @@ if not DEBUG:
 INTERNAL_IPS = []
 
 # Application definition
-
-INSTALLED_APPS = [
+WAGTAIL_INSTALLED_APPS = [
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail.api.v2",
+    "wagtail",
+    "modelcluster",
+    "taggit",
+    "cms",
+]
+INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -77,6 +97,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
     "django.contrib.postgres",
+    "django_vite_plugin",
     "webpack_loader",
     "rest_framework",
     "oauth2_provider",
@@ -107,6 +128,7 @@ MIDDLEWARE = [
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "csp.middleware.CSPMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 CSRF_COOKIE_NAME = "csrftoken"
 ROOT_URLCONF = "macantine.urls"
@@ -226,6 +248,7 @@ REST_FRAMEWORK = {
         "djangorestframework_camel_case.parser.CamelCaseMultiPartParser",
         "djangorestframework_camel_case.parser.CamelCaseJSONParser",
     ),
+    "EXCEPTION_HANDLER": "api.middleware.custom_exception_handler",
     "JSON_UNDERSCOREIZE": {
         "no_underscore_before_number": True,
     },
@@ -236,9 +259,14 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
+# Reading doc API and load it in the swagger
+with open(BASE_DIR / "docs/api.html", "r") as f:
+    doc_api = f.read()
+
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "Ma Cantine API",
-    "DESCRIPTION": "API de l'application « ma cantine »",
+    "DESCRIPTION": doc_api,
     "VERSION": "1",
     "SERVE_INCLUDE_SCHEMA": False,
     "SWAGGER_UI_DIST": "SIDECAR",
@@ -251,18 +279,35 @@ SPECTACULAR_SETTINGS = {
     "POSTPROCESSING_HOOKS": [
         "drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields",
     ],
+    # Oauth2 related settings. used for example by django-oauth2-toolkit.
+    # https://spec.openapis.org/oas/v3.0.3#oauth-flows-object
+    "OAUTH2_FLOWS": ["authorizationCode"],
+    "OAUTH2_AUTHORIZATION_URL": "/o/authorize/",
+    "OAUTH2_TOKEN_URL": "/o/token/",
+    "OAUTH2_SCOPES": {"read": "Lecture", "write": "Ecriture"},
 }
 
 # Frontend - VueJS application
 
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "frontend/dist/")]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "frontend/dist/"),
+    os.path.join(BASE_DIR, "build/"),
+    ("dsfr/icons", BASE_DIR / "2024-frontend/node_modules/@gouvfr/dsfr/dist/icons"),
+    ("dsfr/charts", BASE_DIR / "2024-frontend/node_modules/@gouvfr/dsfr-chart"),
+    ("dsfr/dist", BASE_DIR / "2024-frontend/node_modules/@gouvfr/dsfr/dist"),
+]
 WEBPACK_LOADER = {
     "DEFAULT": {
         "CACHE": DEBUG,
         "BUNDLE_DIR_NAME": "/bundles/",
         "STATS_FILE": os.path.join(FRONTEND_DIR, "webpack-stats.json"),
     }
+}
+
+DJANGO_VITE_PLUGIN = {
+    "DEV_MODE": DEBUG_FRONT,
+    "BUILD_DIR": "build",
 }
 
 # Email
@@ -478,8 +523,12 @@ if DEBUG:
 ENABLE_XP_RESERVATION = os.getenv("ENABLE_XP_RESERVATION") == "True"
 ENABLE_XP_VEGE = os.getenv("ENABLE_XP_VEGE") == "True"
 ENABLE_TELEDECLARATION = os.getenv("ENABLE_TELEDECLARATION") == "True"
+TELEDECLARATION_CORRECTION_CAMPAIGN = os.getenv("TELEDECLARATION_CORRECTION_CAMPAIGN") == "True"
 TELEDECLARATION_END_DATE = os.getenv("TELEDECLARATION_END_DATE", "")
 ENABLE_DASHBOARD = os.getenv("ENABLE_DASHBOARD") == "True"
+PUBLISH_BY_DEFAULT = os.getenv("PUBLISH_BY_DEFAULT") == "True"
+ENABLE_VUE3 = os.getenv("ENABLE_VUE3") == "True"
+ENABLE_WASTE_MEASUREMENTS = os.getenv("ENABLE_WASTE_MEASUREMENTS") == "True"
 
 # Custom testing
 
@@ -522,3 +571,8 @@ USES_MONCOMPTEPRO = (
 MAX_DAYS_HISTORICAL_RECORDS = (
     int(os.getenv("MAX_DAYS_HISTORICAL_RECORDS")) if os.getenv("MAX_DAYS_HISTORICAL_RECORDS", None) else None
 )
+
+# Wagtail CMS
+WAGTAIL_SITE_NAME = "ma-cantine"
+# WAGTAILADMIN_BASE_URL # Declare if null URL in notification emails
+WAGTAILDOCS_EXTENSIONS = ["csv", "docx", "key", "odt", "pdf", "pptx", "rtf", "txt", "xlsx", "zip"]

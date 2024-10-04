@@ -1,25 +1,27 @@
-import logging
-import datetime
-import requests
 import csv
-import os
+import datetime
+import logging
 import time
-from api.views.utils import update_change_reason
-from django.utils import timezone
-from django.conf import settings
-from django.db.models import Q
-from django.core.paginator import Paginator
-from django.db.models import F
-from django.db.models.functions import Length
-from django.core.management import call_command
-from data.models import User, Canteen
+
 import redis as r
-from common.utils import get_siret_token
-from .celery import app
-from .utils import get_infos_from_siret
-from .extract_open_data import ETL_TD, ETL_CANTEEN
+import requests
 import sib_api_v3_sdk
+from django.conf import settings
+from django.core.management import call_command
+from django.core.paginator import Paginator
+from django.db.models import F, Q
+from django.db.models.functions import Length
+from django.utils import timezone
 from sib_api_v3_sdk.rest import ApiException
+
+from api.views.utils import update_change_reason
+from common.utils import get_token_sirene
+from data.models import Canteen, User
+
+from .celery import app
+from .etl.analysis import ETL_ANALYSIS
+from .etl.open_data import ETL_CANTEEN, ETL_TD
+from .utils import fetch_geo_data_from_api_insee_sirene_by_siret
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -344,9 +346,9 @@ def _fill_from_api_response(response, canteens):
 
 def _update_canteen_geo_data(canteen, response):
     try:
-        if "city_insee_code" in response.keys():
-            canteen.city_insee_code = response["city_insee_code"]
-            canteen.postal_code = response["postal_code"]
+        if "cityInseeCode" in response.keys():
+            canteen.city_insee_code = response["cityInseeCode"]
+            canteen.postal_code = response["postalCode"]
             canteen.city = response["city"]
             canteen.save()
             update_change_reason(canteen, "Données de localisation MAJ par bot, via SIRET")
@@ -359,15 +361,17 @@ def _update_canteen_geo_data(canteen, response):
 @app.task()
 def fill_missing_geolocation_data_using_siret():
     candidate_canteens = _get_candidate_canteens_for_siret_geobot()
-    token = get_siret_token()
+    token = get_token_sirene()
 
     if len(candidate_canteens) == 0:
         logger.info("No candidate canteens have been found. Nothing to do here...")
         return
     for canteen in candidate_canteens:
-        response = get_infos_from_siret(canteen.siret, token)
-        if response:
-            _update_canteen_geo_data(canteen, response)
+        if len(canteen.siret) == 14:
+            response = {}
+            response = fetch_geo_data_from_api_insee_sirene_by_siret(canteen.siret, response, token)
+            if response:
+                _update_canteen_geo_data(canteen, response)
 
     logger.info(f"Siret Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
 
@@ -418,20 +422,10 @@ def export_datasets():
         "campagne teledeclaration 2021": ETL_TD(2021),
         "campagne teledeclaration 2022": ETL_TD(2022),
         "cantines": ETL_CANTEEN(),
+        "td_analyses": ETL_ANALYSIS(),
     }
     for key, etl in datasets.items():
         logger.info(f"Starting {key} dataset extraction")
         etl.extract_dataset()
-        etl.export_dataset(stage="to_validate")
-        if os.environ["DEFAULT_FILE_STORAGE"] == "storages.backends.s3boto3.S3Boto3Storage":
-            logger.info(f"Validating {key} dataset. Dataset size : {etl.len_dataset()} lines")
-            if etl.is_valid():
-                logger.info(f"Exporting {key} dataset to s3")
-                etl.export_dataset(stage="validated")
-            else:
-                logger.error(f"The dataset {key} is invalid and therefore will not be exported to s3")
-        elif os.environ["DEFAULT_FILE_STORAGE"] == "django.core.files.storage.FileSystemStorage":
-            logger.info(f"Saving {key} dataset locally")
-            etl.export_dataset(stage="validated")
-        else:
-            logger.info("Exporting the dataset is not possible with the file system configured")
+        etl.transform_dataset()
+        etl.load_dataset()

@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="fill-height d-flex flex-column dsfr pa-sm-6">
+  <v-card outlined class="fill-height d-flex flex-column dsfr no-hover pa-sm-6">
     <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes satellites</h3></v-card-title>
     <v-card-text v-if="!satellites.length" class="fr-text-xs grey--text text--darken-2 mt-3 pb-0">
       <p class="mb-0">Ajoutez et publiez les cantines que vous livrez</p>
@@ -24,17 +24,9 @@
         :class="`dsfr-table grey--table ${satellites.length && 'table-preview'}`"
         dense
       >
+        <!-- TODO: does it still make sense to include the publication status? Maybe TD status is better -->
         <template v-slot:[`item.publicationStatus`]="{ item }">
-          <v-chip
-            :color="isSatellitePublished(item) ? 'green lighten-4' : 'grey lighten-2'"
-            :class="isSatellitePublished(item) ? 'green--text text--darken-4' : 'grey--text text--darken-2'"
-            class="font-weight-bold px-2 fr-text-xs text-uppercase"
-            style="border-radius: 4px !important;"
-            small
-            label
-          >
-            {{ isSatellitePublished(item) ? "Publiée" : "Non publiée" }}
-          </v-chip>
+          <PublicationBadge :isPublished="isSatellitePublished(item)" />
         </template>
       </v-data-table>
     </v-card-text>
@@ -52,20 +44,17 @@
           {{ satellites.length ? "Modifier" : "Ajouter mes satellites" }}
         </v-btn>
       </p>
-      <p class="mx-2 mb-2">
-        <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'PublishSatellites' }">
-          Publier
-        </v-btn>
-      </p>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import PublicationBadge from "@/components/PublicationBadge"
 import { hasSatelliteInconsistency } from "@/utils"
 
 export default {
   name: "SatellitesWidget",
+  components: { PublicationBadge },
   props: {
     canteen: {
       type: Object,

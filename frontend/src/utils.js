@@ -1,5 +1,4 @@
 import Constants from "@/constants"
-import jsonBadges from "@/badges"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
 
@@ -222,12 +221,31 @@ export const latestCreatedDiagnostic = (diagnostics) => {
   return diagnostic
 }
 
+export const toPercentage = (value, round = true) => {
+  if (!value && value !== 0) return null
+  return round ? Math.round(value * 100) : value * 100
+}
+
 export const getPercentage = (partialValue, totalValue, round = true) => {
   if (strictIsNaN(partialValue) || strictIsNaN(totalValue) || totalValue === 0) {
     return null
   } else {
-    return round ? Math.round((100 * partialValue) / totalValue) : (100 * partialValue) / totalValue
+    return toPercentage(partialValue / totalValue, round)
   }
+}
+
+// Currently we check for the existence of the key, where we mean to verify whether
+// the value is null or not. If we wanted to make this change, we would also need to
+// modify line 33 of api/serializers/utils.py to ensure all values are added regardless
+// of their nullability
+export const hasApproGraphData = (diagnostic) => {
+  const graphDataKeys = [
+    "percentageValueBioHt",
+    "percentageValueSustainableHt",
+    "percentageValueExternalityPerformanceHt",
+    "percentageValueEgalimOthersHt",
+  ]
+  return graphDataKeys.some((k) => Object.hasOwn(diagnostic, k))
 }
 
 export const getSustainableTotal = (diagnostic) => {
@@ -264,55 +282,6 @@ export const getApproPercentages = (diagnostic) => {
   }
 }
 
-export const badges = (canteen, diagnostic, sectors) => {
-  let applicable = JSON.parse(JSON.stringify(jsonBadges))
-  if (!diagnostic) return applicable
-  const bioPercent =
-    "percentageValueBioHt" in diagnostic
-      ? Math.round(diagnostic.percentageValueBioHt * 100)
-      : getPercentage(diagnostic.valueBioHt, diagnostic.valueTotalHt)
-  const sustainablePercent =
-    "percentageValueSustainableHt" in diagnostic
-      ? Math.round(getSustainableTotal(diagnostic) * 100)
-      : getPercentage(getSustainableTotal(diagnostic), diagnostic.valueTotalHt)
-  const applicableRules = applicableDiagnosticRules(canteen)
-  if (
-    bioPercent >= applicableRules.bioThreshold &&
-    bioPercent + sustainablePercent >= applicableRules.qualityThreshold
-  ) {
-    applicable.appro.earned = true
-  }
-  if (
-    diagnostic.hasWasteDiagnostic &&
-    diagnostic.wasteActions?.length > 0 &&
-    (!applicableRules.hasDonationAgreement || diagnostic.hasDonationAgreement)
-  ) {
-    applicable.waste.earned = true
-  }
-  if (
-    diagnostic.cookingPlasticSubstituted &&
-    diagnostic.servingPlasticSubstituted &&
-    diagnostic.plasticBottlesSubstituted &&
-    diagnostic.plasticTablewareSubstituted
-  ) {
-    applicable.plastic.earned = true
-  }
-
-  const educationSectors = sectors.filter((s) => s.category === "education").map((s) => s.id)
-  const inEducation = canteen.sectors.some((s) => educationSectors.indexOf(s) > -1)
-  if (diagnostic.vegetarianWeeklyRecurrence === "DAILY") {
-    applicable.diversification.earned = true
-  } else if (inEducation) {
-    if (diagnostic.vegetarianWeeklyRecurrence === "MID" || diagnostic.vegetarianWeeklyRecurrence === "HIGH") {
-      applicable.diversification.earned = true
-    }
-  }
-  if (diagnostic.communicatesOnFoodQuality) {
-    applicable.info.earned = true
-  }
-  return applicable
-}
-
 // normalise "À fîrst" to "A FIRST"
 export const normaliseText = (name) => {
   return name
@@ -321,7 +290,7 @@ export const normaliseText = (name) => {
     .toUpperCase()
 }
 
-export const applicableDiagnosticRules = (canteen) => {
+export const applicableDiagnosticRules = (canteen, year) => {
   let bioThreshold = 20
   let qualityThreshold = 50
   let hasQualityException = false
@@ -354,6 +323,9 @@ export const applicableDiagnosticRules = (canteen) => {
     qualityThreshold,
     hasQualityException,
     regionForQualityException: hasQualityException && canteen.region,
+    meatPoultryEgalimThreshold: year >= 2024 ? 60 : null,
+    meatPoultryFranceThreshold: year >= 2024 ? 60 : null,
+    fishEgalimThreshold: year >= 2024 ? 60 : null,
   }
 }
 
@@ -660,6 +632,8 @@ export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
       return canSubmitOtherData && hasOtherData
     }
     // satellites can still TD if CCs haven't
+  } else if (canteen.productionType === "central" || canteen.productionType === "central_serving") {
+    return !!diagnostic.centralKitchenDiagnosticMode
   }
 
   return hasDiagnosticApproData(diagnostic)

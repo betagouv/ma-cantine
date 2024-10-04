@@ -1,72 +1,81 @@
-from .user import (  # noqa: F401
-    LoggedUserView,
-    UpdateUserView,
-    ChangePasswordView,
-    UsernameSuggestionView,
-    UserInfoView,
-)
+from .blog import BlogPostsView, BlogPostView  # noqa: F401
 from .canteen import (  # noqa: F401
-    PublishedCanteensView,
-    PublishedCanteenSingleView,
-    UserCanteensView,
-    RetrieveUpdateUserCanteenView,
-    AddManagerView,
-    RemoveManagerView,
-    PublishCanteenView,
-    UnpublishCanteenView,
-    PublishManyCanteensView,
-    SendCanteenNotFoundEmail,
-    UserCanteenPreviews,
-    CanteenStatisticsView,
-    CanteenLocationsView,
-    TeamJoinRequestView,
-    ClaimCanteenView,
-    UndoClaimCanteenView,
-    SatelliteListCreateView,
-    UnlinkSatelliteView,
-    ActionableCanteensListView,
     ActionableCanteenRetrieveView,
+    ActionableCanteensListView,
+    AddManagerView,
+    CanteenLocationsView,
+    CanteenMinistriesView,
+    CanteenStatisticsView,
     CanteenStatusView,
+    ClaimCanteenView,
+    PublicCanteenPreviewView,
+    PublishCanteenView,
+    PublishedCanteenSingleView,
+    PublishedCanteensView,
+    PublishManyCanteensView,
+    RemoveManagerView,
+    RetrieveUpdateUserCanteenView,
+    SatelliteListCreateView,
+    SendCanteenNotFoundEmail,
+    TeamJoinRequestView,
     TerritoryCanteensListView,
+    UndoClaimCanteenView,
+    UnlinkSatelliteView,
+    UnpublishCanteenView,
+    UserCanteenPreviews,
+    UserCanteenSummaries,
+    UserCanteensView,
 )
+from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,
+    DiagnosticsToTeledeclareListView,
     DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
-    DiagnosticsToTeledeclareListView,
 )
 from .diagnosticimport import (  # noqa: F401
-    ImportSimpleDiagnosticsView,
+    ImportCompleteCentralKitchenView,
     ImportCompleteDiagnosticsView,
     ImportSimpleCentralKitchenView,
-    ImportCompleteCentralKitchenView,
+    ImportSimpleDiagnosticsView,
 )
-from .sector import SectorListView  # noqa: F401
-from .partnertype import PartnerTypeListView  # noqa: F401
-from .blog import BlogPostsView, BlogPostView  # noqa: F401
-from .subscription import SubscribeNewsletter  # noqa: F401
-from .teledeclaration import (  # noqa: F401
-    TeledeclarationCreateView,
-    TeledeclarationCancelView,
-    TeledeclarationPdfView,
-)
+from .initial import InitialDataView  # noqa: F401
 from .inquiry import InquiryView  # noqa: F401
+from .message import MessageCreateView  # noqa: F401
+from .partner import PartnersView, PartnerView  # noqa: F401
+from .partnertype import PartnerTypeListView  # noqa: F401
 from .purchase import (  # noqa: F401
-    PurchaseListCreateView,
-    PurchaseRetrieveUpdateDestroyView,
+    CanteenPurchasesPercentageSummaryView,
     CanteenPurchasesSummaryView,
+    DiagnosticsFromPurchasesView,
+    PurchaseListCreateView,
     PurchaseListExportView,
     PurchaseOptionsView,
+    PurchaseRetrieveUpdateDestroyView,
     PurchasesDeleteView,
     PurchasesRestoreView,
-    DiagnosticsFromPurchasesView,
 )
 from .purchaseimport import ImportPurchasesView  # noqa: F401
 from .reservationexpe import ReservationExpeView  # noqa: F401
-from .vegetarianexpe import VegetarianExpeView  # noqa: F401
-from .message import MessageCreateView  # noqa: F401
 from .review import ReviewView  # noqa: F401
-from .communityevent import CommunityEventsView  # noqa: F401
-from .partner import PartnersView, PartnerView  # noqa: F401
+from .sector import SectorListView  # noqa: F401
+from .subscription import SubscribeNewsletter  # noqa: F401
+from .teledeclaration import (  # noqa: F401
+    TeledeclarationCancelView,
+    TeledeclarationCreateView,
+    TeledeclarationPdfView,
+)
+from .user import (  # noqa: F401
+    ChangePasswordView,
+    LoggedUserView,
+    UpdateUserView,
+    UserInfoView,
+    UsernameSuggestionView,
+)
+from .vegetarianexpe import VegetarianExpeView  # noqa: F401
 from .videotutorial import VideoTutorialListView  # noqa: F401
-from .initial import InitialDataView  # noqa: F401
+from .wasteaction import WasteActionsView, WasteActionView  # noqa: F401
+from .wastemeasurement import (  # noqa: F401
+    CanteenWasteMeasurementsView,
+    CanteenWasteMeasurementView,
+)

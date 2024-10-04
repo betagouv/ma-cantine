@@ -1,11 +1,11 @@
 <template>
   <v-radio-group class="my-0" ref="radiogroup" v-bind="$attrs" v-on="$listeners" @change="change">
     <template v-slot:label>
-      <span class="d-block mb-2">
+      <span class="d-block">
         <span :class="legendClass">
           {{ $attrs.label }}
         </span>
-        <span v-if="optional" class="fr-hint-text">Optionnel</span>
+        <span v-if="optional" class="fr-hint-text mb-2">Optionnel</span>
       </span>
     </template>
     <v-row v-if="optionsRow" class="my-0">
@@ -44,8 +44,7 @@ export default {
   inheritAttrs: false,
   props: {
     labelClasses: {
-      type: String,
-      default: "mb-2 text-sm-subtitle-1 text-body-2 text-left d-block",
+      type: [String, Object],
     },
     optionClasses: {
       type: String,
@@ -70,6 +69,9 @@ export default {
     value() {
       return this.$refs["radiogroup"].value
     },
+    reset() {
+      return this.$refs["radiogroup"].reset
+    },
     items() {
       if (this.yesNo) {
         return [
@@ -80,10 +82,12 @@ export default {
       return this.$attrs["items"]
     },
     legendClass() {
+      if (this.labelClasses) return this.labelClasses
       const activeColor = " grey--text text--darken-4"
       const inactiveColor = " grey--text"
       const color = this.$attrs.disabled ? inactiveColor : activeColor
-      return this.labelClasses + color
+      const defaultClasses = "mb-2 text-sm-subtitle-1 text-body-2 text-left d-block"
+      return defaultClasses + color
     },
     optional() {
       return !this.hideOptional && !validators._includesRequiredValidator(this.$attrs.rules)
@@ -102,6 +106,9 @@ export default {
       this.hasError = result !== true
       this.assignValidity()
       return result
+    },
+    resetValidation() {
+      return this.$refs["radiogroup"].resetValidation()
     },
     assignInputId() {
       this.inputId = this.$refs?.["radiogroup"]?.$refs?.["label"].id

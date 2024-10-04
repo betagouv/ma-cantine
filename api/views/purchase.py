@@ -1,23 +1,30 @@
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
-from rest_framework.exceptions import NotFound, PermissionDenied, MethodNotAllowed
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from drf_excel.renderers import XLSXRenderer
-from drf_excel.mixins import XLSXFileMixin
+import logging
+from collections import OrderedDict
+
 from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
-from django.db.models import Sum, Q
+from django.db.models import Q, Sum
 from django.db.models.functions import ExtractYear
 from django.http import JsonResponse
 from django_filters import rest_framework as django_filters
-from api.permissions import IsLinkedCanteenManager, IsCanteenManager, IsAuthenticated
-from api.serializers import PurchaseSerializer, PurchaseSummarySerializer, PurchaseExportSerializer
-from data.models import Purchase, Canteen, Diagnostic
-from .utils import MaCantineOrderingFilter, UnaccentSearchFilter
-from collections import OrderedDict
-import logging
+from drf_excel.mixins import XLSXFileMixin
+from drf_excel.renderers import XLSXRenderer
+from rest_framework import status
+from rest_framework.exceptions import MethodNotAllowed, NotFound, PermissionDenied
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
+from api.permissions import IsAuthenticated, IsCanteenManager, IsLinkedCanteenManager
+from api.serializers import (
+    PurchaseExportSerializer,
+    PurchasePercentageSummarySerializer,
+    PurchaseSerializer,
+    PurchaseSummarySerializer,
+)
+from data.models import Canteen, Diagnostic, Purchase
+
+from .utils import MaCantineOrderingFilter, UnaccentSearchFilter
 
 logger = logging.getLogger(__name__)
 
@@ -178,7 +185,8 @@ class CanteenPurchasesSummaryView(APIView):
         canteen_id = kwargs.get("canteen_pk")
         canteen = self._get_canteen(canteen_id, self.request)
         year = request.query_params.get("year")
-        return Response(canteen_summary_for_year(canteen, year) if year else canteen_summary(canteen))
+        data = canteen_summary_for_year(canteen, year) if year else canteen_summary(canteen)
+        return Response(PurchaseSummarySerializer(data).data if year else data)
 
     def _get_canteen(self, canteen_id, request):
         try:
@@ -190,16 +198,52 @@ class CanteenPurchasesSummaryView(APIView):
             raise NotFound() from e
 
 
+class CanteenPurchasesPercentageSummaryView(APIView):
+    def get(self, request, *args, **kwargs):
+        canteen_id = kwargs.get("canteen_pk")
+        canteen = self._get_canteen(canteen_id, self.request)
+        year = request.query_params.get("year")
+        try:
+            year = int(year)
+        except ValueError:
+            raise BadRequest("an integer is required for the year query parameter")
+        except TypeError:
+            raise BadRequest("the year query parameter is required")
+
+        is_canteen_manager = IsCanteenManager().has_object_permission(request, self, canteen)
+        ignore_redaction = is_canteen_manager and request.query_params.get("ignoreRedaction") == "true"
+        if not ignore_redaction and year in canteen.redacted_appro_years:
+            raise NotFound()
+
+        data = canteen_summary_for_year(canteen, year)
+        if data["value_total_ht"] == 0:
+            raise NotFound()
+
+        if is_canteen_manager:
+            data["last_purchase_date"] = (
+                Purchase.objects.only("date").filter(canteen=canteen, date__year=year).latest("date").date
+            )
+
+        return Response(PurchasePercentageSummarySerializer(data).data)
+
+    def _get_canteen(self, canteen_id, request):
+        try:
+            canteen = Canteen.objects.get(pk=canteen_id)
+            return canteen
+        except Canteen.DoesNotExist as e:
+            raise NotFound() from e
+
+
 def canteen_summary_for_year(canteen, year):
     purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
         canteen=canteen, date__year=year
     )
-    data = {}
+    data = {"year": year}
     simple_diag_data(purchases, data)
     complete_diag_data(purchases, data)
     misc_totals(purchases, data)
 
-    return PurchaseSummarySerializer(data).data
+    return data
 
 
 def canteen_summary(canteen):
@@ -220,10 +264,21 @@ def canteen_summary(canteen):
 
 
 # the order of EGALIM_LABELS is significant - determines which labels trump others when aggregating purchases
-EGALIM_LABELS = [
+DIAGNOSTIC_EGALIM_LABELS = [
     "BIO",
     "LABEL_ROUGE",
     "AOCAOP_IGP_STG",
+    "HVE",
+    "PECHE_DURABLE",
+    "RUP",
+    "COMMERCE_EQUITABLE",
+    "FERMIER",
+    "EXTERNALITES",
+    "PERFORMANCE",
+]
+PURCHASE_EGALIM_LABELS = [
+    "BIO",
+    "LABEL_ROUGE",
     "AOCAOP",
     "IGP",
     "STG",
@@ -239,6 +294,7 @@ EGALIM_LABELS = [
 
 
 def simple_diag_data(purchases, data):
+    # TODO: is CONVERSION_BIO used?
     bio_filter = Q(characteristics__contains=[Purchase.Characteristic.BIO]) | Q(
         characteristics__contains=[Purchase.Characteristic.CONVERSION_BIO]
     )
@@ -297,7 +353,7 @@ def complete_diag_data(purchases, data):
 
     for family in families:
         purchase_family = purchases.filter(family=family)
-        for label in EGALIM_LABELS:
+        for label in DIAGNOSTIC_EGALIM_LABELS:
             if label == "AOCAOP_IGP_STG":
                 fam_label = purchase_family.filter(
                     Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
@@ -341,7 +397,7 @@ def misc_totals(purchases, data):
     )
     data["value_meat_poultry_ht"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
-    meat_poultry_egalim = meat_poultry_purchases.filter(characteristics__overlap=EGALIM_LABELS)
+    meat_poultry_egalim = meat_poultry_purchases.filter(characteristics__overlap=PURCHASE_EGALIM_LABELS)
     data["value_meat_poultry_egalim_ht"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
 
     meat_poultry_france = meat_poultry_purchases.filter(
@@ -356,7 +412,7 @@ def misc_totals(purchases, data):
     )
     data["value_fish_ht"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
-    fish_egalim = fish_purchases.filter(characteristics__overlap=EGALIM_LABELS)
+    fish_egalim = fish_purchases.filter(characteristics__overlap=PURCHASE_EGALIM_LABELS)
     data["value_fish_egalim_ht"] = fish_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
 
 
@@ -387,9 +443,7 @@ class DiagnosticsFromPurchasesView(APIView):
                 continue
             if canteen.is_central_cuisine:
                 values_dict["central_kitchen_diagnostic_mode"] = Diagnostic.CentralKitchenDiagnosticMode.APPRO
-            diagnostic = Diagnostic(
-                canteen=canteen, year=year, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, **values_dict
-            )
+            diagnostic = Diagnostic(canteen=canteen, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, **values_dict)
             try:
                 diagnostic.full_clean()
             except ValidationError:

@@ -77,33 +77,6 @@
             <p class="mb-0">Si le problème persiste, contactez-nous.</p>
           </v-alert>
         </v-col>
-        <v-col v-if="pubLoading || showMassPublication" cols="12" sm="6" md="4">
-          <v-card outlined>
-            <v-row v-if="pubLoading" class="green--text">
-              <v-col cols="1" justify-self="center">
-                <v-progress-circular indeterminate></v-progress-circular>
-              </v-col>
-              <v-col>
-                <p>Publications en cours...</p>
-              </v-col>
-            </v-row>
-            <div v-else-if="showMassPublication">
-              <v-card-text>
-                <p class="mb-0">
-                  Vous pouvez publier
-                  <span v-if="toPublish.length > 1">{{ toPublish.length }} cantines.</span>
-                  <span v-else>1 cantine.</span>
-                </p>
-              </v-card-text>
-              <v-card-actions class="pb-4">
-                <v-btn class="primary ml-2" @click="massPublication">
-                  <span v-if="toPublish.length > 1">Publier {{ toPublish.length }} cantines</span>
-                  <span v-else>Publier la cantine</span>
-                </v-btn>
-              </v-card-actions>
-            </div>
-          </v-card>
-        </v-col>
       </v-row>
       <TeledeclarationPreview
         v-if="toTeledeclare.length"
@@ -161,50 +134,17 @@
         :canteen="canteenForTD"
         :tdLoading="tdLoading"
       />
-      <v-dialog v-model="showPublicationForm" max-width="750" v-if="canteenForPublication">
-        <v-card class="text-left">
-          <v-card-title>
-            <h1 class="fr-h5 mt-2 mb-0">Publication : {{ canteenForPublication.name }}</h1>
-          </v-card-title>
-          <v-card-text class="mt-2">
-            <p>
-              Les publications sont affichées dans
-              <router-link :to="{ name: 'CanteensHome' }" target="_blank">nos cantines</router-link>
-              pour informer les convives.
-            </p>
-            <v-form>
-              <label class="body-2" for="general">
-                Décrivez si vous le souhaitez le fonctionnement, l'organisation, l'historique de votre établissement...
-              </label>
-              <DsfrTextarea
-                id="general"
-                class="my-2"
-                rows="3"
-                counter="500"
-                v-model="canteenForPublication.publicationComments"
-                hint="Vous pouvez par exemple raconter l'histoire du lieu, du bâtiment, de l'association ou de l'entreprise ou des personnes qui gérent cet établissement, ses spécificités, ses caractéristiques techniques, logistiques... Cela peut aussi être une anecdote dont vous êtes fiers, une certification, un label..."
-              />
-            </v-form>
-          </v-card-text>
-          <v-card-actions class="d-flex pr-6 pb-4">
-            <v-spacer></v-spacer>
-            <v-btn color="primary" outlined class="px-4 mr-2" @click="closePublication">Annuler</v-btn>
-            <v-btn color="primary" class="px-4" @click="publish">Publier</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
     </div>
   </div>
 </template>
 
 <script>
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
-import DsfrTextarea from "@/components/DsfrTextarea"
 import { lastYear } from "@/utils"
 
 export default {
   name: "AnnualActionableCanteensTable",
-  components: { TeledeclarationPreview, DsfrTextarea },
+  components: { TeledeclarationPreview },
   data() {
     const year = lastYear()
     return {
@@ -255,10 +195,6 @@ export default {
           display: "Télédéclarer",
           icon: "$send-plane-fill",
         },
-        "50_publish": {
-          display: "Publier",
-          icon: "mdi-bullhorn",
-        },
         "95_nothing": {
           display: "Rien à faire !",
           icon: "$checkbox-circle-fill",
@@ -267,8 +203,6 @@ export default {
       canteenForTD: null,
       showTeledeclarationPreview: false,
       showMultipleTeledeclarationPreview: false,
-      showPublicationForm: false,
-      canteenForPublication: null,
       toDiagnose: [],
       diagLoading: false,
       diagSuccesses: [],
@@ -277,8 +211,6 @@ export default {
       toTeledeclareCount: null,
       tdSuccesses: [],
       tdFailures: [],
-      toPublish: [],
-      pubLoading: false,
       tdLoading: false,
     }
   },
@@ -310,9 +242,6 @@ export default {
     showMassTD() {
       return this.toTeledeclare?.length && (this.showPagination || this.toTeledeclare > 1)
     },
-    showMassPublication() {
-      return this.toPublish?.length && (this.showPagination || this.toPublish > 1)
-    },
     showMassDiagnose() {
       return this.toDiagnose?.length && (this.showPagination || this.toDiagnose > 1)
     },
@@ -336,11 +265,9 @@ export default {
           this.canteenCount = response.count
           this.visibleCanteens = response.results
           this.toDiagnose = response.undiagnosedCanteensWithPurchases
-          this.toPublish = response.canteensToPublish
           this.$emit("canteen-count", this.canteenCount)
         })
         .catch((e) => {
-          this.publishedCanteenCount = 0
           this.$store.dispatch("notifyServerError", e)
         })
         .finally(() => {
@@ -397,31 +324,7 @@ export default {
       if (canteen.action === "40_teledeclare") {
         this.canteenForTD = canteen
         this.showTeledeclarationPreview = true
-      } else if (canteen.action === "50_publish") {
-        this.canteenForPublication = canteen
-        this.showPublicationForm = true
       }
-    },
-    publish() {
-      this.$store
-        .dispatch("publishCanteen", {
-          id: this.canteenForPublication.id,
-          payload: this.canteenForPublication,
-        })
-        .then((canteen) => {
-          this.$store.dispatch("notify", { title: "Votre cantine est publiée", status: "success" })
-          this.updateCanteen(canteen.id)
-        })
-        .catch((e) => {
-          this.$store.dispatch("notifyServerError", e)
-        })
-        .finally(() => {
-          this.closePublication()
-        })
-    },
-    closePublication() {
-      this.canteenForPublication = null
-      this.showPublicationForm = false
     },
     addWatchers() {
       this.$watch("options", this.onOptionsChange, { deep: true })
@@ -505,28 +408,6 @@ export default {
         .then(() => this.fetchCurrentPage())
         .finally(() => {
           this.diagLoading = false
-        })
-    },
-    massPublication() {
-      this.pubLoading = true
-      this.$store
-        .dispatch("submitMultiplePublications", { ids: this.toPublish })
-        .then((response) => {
-          let pubSuccesses = response.ids
-          const title =
-            pubSuccesses.length > 1
-              ? `${pubSuccesses.length} cantines publiées`
-              : `${pubSuccesses.length} cantine publiée`
-          this.$store.dispatch("notify", {
-            title,
-            status: "success",
-          })
-        })
-        .catch((e) => this.$store.dispatch("notifyServerError", e))
-        // refresh actions
-        .then(() => this.fetchCurrentPage())
-        .finally(() => {
-          this.pubLoading = false
         })
     },
     fetchDiagnosticsToTeledeclare() {

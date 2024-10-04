@@ -1,10 +1,12 @@
 import logging
-from api.exceptions import DuplicateException
-from api.serializers import ReviewSerializer
-from data.models import Review, Canteen, Diagnostic
+
 from django.db import IntegrityError
 from rest_framework import permissions
 from rest_framework.generics import CreateAPIView
+
+from api.exceptions import DuplicateException
+from api.serializers import ReviewSerializer
+from data.models import Canteen, Diagnostic, Review
 
 logger = logging.getLogger(__name__)
 

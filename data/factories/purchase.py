@@ -1,7 +1,10 @@
-import factory
 import random
+
+import factory
 from factory.fuzzy import FuzzyChoice
+
 from data.models import Purchase
+
 from .canteen import CanteenFactory
 
 

@@ -1,13 +1,29 @@
 from urllib.parse import quote
-from django.db import models
+
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils import timezone
+from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
+
 from data.department_choices import Department
+from data.fields import ChoiceArrayField
 from data.region_choices import Region
-from data.utils import get_region, optimize_image
+from data.utils import (
+    get_diagnostic_lower_limit_year,
+    get_diagnostic_upper_limit_year,
+    get_region,
+    optimize_image,
+)
+
 from .sector import Sector
-from .softdeletionmodel import SoftDeletionModel
+from .softdeletionmodel import (
+    SoftDeletionManager,
+    SoftDeletionModel,
+    SoftDeletionQuerySet,
+)
 
 
 def validate_siret(siret):
@@ -30,7 +46,44 @@ def validate_siret(siret):
         raise ValidationError("Le numéro SIRET n'est pas valide.")
 
 
+def get_diagnostic_year_choices():
+    return [(y, str(y)) for y in range(get_diagnostic_lower_limit_year(), get_diagnostic_upper_limit_year())]
+
+
+def list_properties(queryset, property):
+    return list(queryset.values_list(property, flat=True))
+
+
+class CanteenQuerySet(SoftDeletionQuerySet):
+    def publicly_visible(self):
+        return (
+            self.exclude(line_ministry=Canteen.Ministries.ARMEE)
+            if settings.PUBLISH_BY_DEFAULT
+            else self.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
+        )
+
+    def publicly_hidden(self):
+        return (
+            self.filter(line_ministry=Canteen.Ministries.ARMEE)
+            if settings.PUBLISH_BY_DEFAULT
+            else self.exclude(publication_status=Canteen.PublicationStatus.PUBLISHED)
+        )
+
+
+class CanteenManager(SoftDeletionManager):
+    queryset_model = CanteenQuerySet
+
+    def publicly_visible(self):
+        return self.get_queryset().publicly_visible()
+
+    def publicly_hidden(self):
+        return self.get_queryset().publicly_hidden()
+
+
 class Canteen(SoftDeletionModel):
+    objects = CanteenManager()
+    all_objects = CanteenManager(alive_only=False)
+
     class Meta:
         verbose_name = "cantine"
         verbose_name_plural = "cantines"
@@ -92,6 +145,14 @@ class Canteen(SoftDeletionModel):
         )
         AGRICULTURE = "agriculture", "Ministère en charge de l'Agriculture et de l'Alimentation"
         TRANSFORMATION = "transformation", "Ministère de la Transformation et de la Fonction Publiques"
+        ADMINISTRATION_TERRITORIALE = (
+            "administration_territoriale",
+            "Préfecture - Administration Territoriale de l'État (ATE)",
+        )
+        AUTORITES_INDEPENDANTES = (
+            "autorites_independantes",
+            "Présidence de la république - Autorités indépendantes (AAI, API)",
+        )
         AUTRE = "autre", "Autre"
 
     import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
@@ -173,6 +234,12 @@ class Canteen(SoftDeletionModel):
         choices=PublicationStatus.choices,
         default="draft",
         verbose_name="état de publication",
+    )
+    redacted_appro_years = ChoiceArrayField(
+        base_field=models.IntegerField(choices=get_diagnostic_year_choices),
+        default=list,
+        blank=True,
+        verbose_name="les années pour lesquelles les données d'appro sont masquées",
     )
     publication_comments = models.TextField(
         null=True,
@@ -280,13 +347,8 @@ class Canteen(SoftDeletionModel):
 
     @property
     def central_kitchen_diagnostics(self):
-        if not self.production_type == Canteen.ProductionType.ON_SITE_CENTRAL or not self.central_producer_siret:
-            return None
-        try:
-            central_kitchen = Canteen.objects.get(siret=self.central_producer_siret)
-            return central_kitchen.diagnostic_set.filter(central_kitchen_diagnostic_mode__isnull=False)
-        except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
-            return None
+        if self.central_kitchen:
+            return self.central_kitchen.diagnostic_set.filter(central_kitchen_diagnostic_mode__isnull=False)
 
     @property
     def can_be_claimed(self):
@@ -327,6 +389,91 @@ class Canteen(SoftDeletionModel):
 
     def _get_region(self):
         return get_region(self.department)
+
+    @cached_property
+    def appro_diagnostics(self):
+        diag_ids = list_properties(self.diagnostic_set, "id")
+
+        if self.central_kitchen_diagnostics:
+            # for any given year, could have own diag or CC diag
+            # CC diag always takes precedent TODO: do we consistently assume this?
+            # if don't have own diag, include CC diag in set
+            cc_diag_years = list_properties(self.central_kitchen_diagnostics, "year")
+            own_diagnostics = self.diagnostic_set.exclude(year__in=cc_diag_years)
+
+            diag_ids = list_properties(self.central_kitchen_diagnostics, "id")
+            diag_ids += list_properties(own_diagnostics, "id")
+
+        from data.models import Diagnostic
+
+        this_year = timezone.now().date().year
+        return Diagnostic.objects.filter(id__in=diag_ids, year__lt=this_year).order_by("-year")
+
+    @cached_property
+    def service_diagnostics(self):
+        diag_ids = list_properties(self.diagnostic_set, "id")
+
+        if self.central_kitchen_diagnostics:
+            cc_service_diagnostics = self.central_kitchen_diagnostics.filter(central_kitchen_diagnostic_mode="ALL")
+            # for any given year, could have own diag or CC diag
+            # CC diag always takes precedent, if ALL TODO: do we consistently assume this?
+            # if don't have own diag, include CC diag in set
+            cc_diag_years = list_properties(cc_service_diagnostics, "year")
+            own_diagnostics = self.diagnostic_set.exclude(year__in=cc_diag_years)
+
+            diag_ids = list_properties(cc_service_diagnostics, "id")
+            diag_ids += list_properties(own_diagnostics, "id")
+
+        from data.models import Diagnostic
+
+        this_year = timezone.now().date().year
+        return Diagnostic.objects.filter(id__in=diag_ids, year__lt=this_year).order_by("-year")
+
+    @cached_property
+    def published_appro_diagnostics(self):
+        diagnostics_to_redact = []
+        for year in self.redacted_appro_years:
+            diag = self.appro_diagnostics.filter(year=year).first()
+            if diag and not diag.is_teledeclared:
+                diagnostics_to_redact.append(diag.id)
+        return self.appro_diagnostics.exclude(id__in=diagnostics_to_redact)
+
+    @cached_property
+    def published_service_diagnostics(self):
+        # a wrapper to have consistent naming conventions
+        return self.service_diagnostics
+
+    @cached_property
+    def latest_published_year(self):
+        if not self.published_appro_diagnostics and not self.published_service_diagnostics:
+            return
+
+        latest_appro = self.published_appro_diagnostics.only("year").first()
+        latest_service = self.published_service_diagnostics.only("year").first()
+
+        appro_year = latest_appro.year if latest_appro else 0
+        service_year = latest_service.year if latest_service else 0
+
+        max_year = max(appro_year, service_year)
+        return max_year if max_year > 0 else None
+
+    @cached_property
+    def latest_published_appro_diagnostic(self):
+        return self.published_appro_diagnostics.filter(year=self.latest_published_year).first()
+
+    @cached_property
+    def latest_published_service_diagnostic(self):
+        return self.published_service_diagnostics.filter(year=self.latest_published_year).first()
+
+    @property
+    def in_education(self):
+        scolaire_sectors = Sector.objects.filter(category="education")
+        if scolaire_sectors.count() and self.sectors.intersection(scolaire_sectors).exists():
+            return True
+
+    @property
+    def lead_image(self):
+        return self.images.first()
 
 
 class CanteenImage(models.Model):

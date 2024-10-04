@@ -1,8 +1,10 @@
 import csv
-import requests
 import logging
+
+import requests
 from django.core.management.base import BaseCommand
-from django.db import transaction, IntegrityError
+from django.db import IntegrityError, transaction
+
 from data.models import Canteen, Diagnostic, ManagerInvitation
 
 logger = logging.getLogger(__name__)
@@ -38,7 +40,7 @@ class Command(BaseCommand):
             logger.info(f"Successfully imported {len(canteens_by_siret)} canteens from CSV file {filepath}")
 
     @staticmethod
-    def _create_models(row):
+    def _create_models(row):  # noqa: C901
         if Command._is_header_row(row):
             print("Ingoring header row")
             return

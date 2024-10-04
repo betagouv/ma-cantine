@@ -1,0 +1,270 @@
+{% load static %}
+{% load analytics %}
+{% load environment %}
+{% load featureflags %}
+{% load vite %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+  <!-- Open graph (Facebook, Whatsapp...) meta tags -->
+  <meta property="og:title" content="ma cantine" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{% hostname %}{{ request.get_full_path }}" />
+  <meta property="og:description" content="Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim" />
+  <meta property="og:image" content="{% hostname %}{% static 'images/card-social-media.png' %}" />
+
+  <!-- Twitter meta tags -->
+  <meta name="twitter:title" content="ma cantine">
+  <meta name="twitter:description" content="Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim">
+  <meta name="twitter:image" content="{% hostname %}{% static 'images/card-social-media.png' %}">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" type="image/png" href="{% static 'images/favicon-marianne.png' %}">
+
+  <title>ma cantine</title>
+  <meta name="description" content="Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim">
+  <link rel="stylesheet" href="{% static 'css/materialdesignicons.min.css' %}">
+  <script type="text/javascript">
+    window.CSRF_TOKEN = "{{ csrf_token }}";
+    window.MATOMO_ID = "{% matomo_id %}";
+    window.ENVIRONMENT = "{% environment %}"
+    window.ENABLE_XP_RESERVATION = "{% enable_xp_reservation %}" === "True"
+    window.ENABLE_XP_VEGE = "{% enable_xp_vege %}" === "True"
+    window.ENABLE_DASHBOARD = "{% enable_dashboard %}" === "True"
+    window.ENABLE_TELEDECLARATION = "{% enable_teledeclaration %}" === "True"
+    window.TELEDECLARATION_CORRECTION_CAMPAIGN = "{% teledeclaration_correction_campaign %}" === "True"
+    window.TELEDECLARATION_END_DATE = "{% teledeclaration_end_date %}" || null
+    window.IS_WIDGET = "{{ is_widget }}"
+  </script>
+
+  <!-- Matomo opt-out settings -->
+  <script>
+    var settings = {
+      showIntro: false,
+      divId: "matomo-opt-out",
+      useSecureCookies: true,
+      cookiePath: null,
+      cookieDomain: null,
+      cookieSameSite: "Lax",
+      OptOutComplete: "Désinscription prise en compte ; vos visites ne seront pas enregistrées par l'outil Web Analytics",
+      OptOutCompleteBis: "Si vous effacez vos cookies, supprimez le cookie de désinscription ou changez d'ordinateur ou de navigateur Web, vous devrez refaire la procédure de désinscription.",
+      YouMayOptOut2: "Vous pouvez choisir d'empêcher ce site d'analyser vos actions.",
+      YouMayOptOut3: "Cela protégera votre vie privée, mais empêchera également le ou la propriétaire d'apprendre de vos actions et de créer une meilleure expérience.",
+      OptOutErrorNoCookies: "La fonction de désinscription du suivi nécessite que les cookies soient activés.",
+      OptOutErrorNotHttps: "La fonction de désinscription du suivi peut ne pas fonctionner correctement car ce site n'a pas été chargé via HTTPS. Veuillez recharger la page pour vérifier si votre statut de désinscription a changé.",
+      YouAreNotOptedOut: "Vous n'êtes pas désinscrit ou désinscrite de notre suivi Matomo.",
+      UncheckToOptOut: "Décochez cette case pour vous désinscrire.",
+      YouAreOptedOut: "Vous êtes actuellement désinscrit ou désinscrite de notre suivi Matomo.",
+      CheckToOptIn: "Cochez cette case pour vous inscrire.",
+    }
+
+    function showContent(consent, errorMessage = null, useTracker = false) {
+      var errorBlock = '<p style="font-style: italic;">'
+
+      var div = document.getElementById(settings.divId)
+      if (!div) {
+        const warningDiv = document.createElement("div")
+        var msg = 'Le div conteneur de la désinscription est introuvable : "' + settings.divId + '"'
+        warningDiv.id = settings.divId + "-warning"
+        warningDiv.innerHTML = errorBlock + msg + "</p>"
+        document.body.insertBefore(warningDiv, document.body.firstChild)
+        console.log(msg)
+        return
+      }
+
+      if (!navigator || !navigator.cookieEnabled) {
+        div.innerHTML = errorBlock + settings.OptOutErrorNoCookies + "</p>"
+        return
+      }
+      if (location.protocol !== "https:") {
+        div.innerHTML = errorBlock + settings.OptOutErrorNotHttps + "</p>"
+        return
+      }
+      if (errorMessage !== null) {
+        div.innerHTML = errorBlock + errorMessage + "</p>"
+        return
+      }
+      var content = ""
+      if (consent) {
+        if (settings.showIntro) {
+          content += "<p>" + settings.YouMayOptOut2 + " " + settings.YouMayOptOut3 + "</p>"
+        }
+        if (useTracker) {
+          content +=
+            '<input onclick="_paq.push([\'optUserOut\']);showContent(false, null, true);" id="trackVisits" type="checkbox" checked="checked" />'
+        } else {
+          content +=
+            '<input onclick="window.MatomoConsent.consentRevoked();showContent(false);" id="trackVisits" type="checkbox" checked="checked" />'
+        }
+        content +=
+          '<label for="trackVisits"><span>' +
+          settings.YouAreNotOptedOut +
+          " " +
+          settings.UncheckToOptOut +
+          "</span></label>"
+      } else {
+        if (settings.showIntro) {
+          content += "<p>" + settings.OptOutComplete + " " + settings.OptOutCompleteBis + "</p>"
+        }
+        if (useTracker) {
+          content +=
+            '<input onclick="_paq.push([\'forgetUserOptOut\']);showContent(true, null, true);" id="trackVisits" type="checkbox" />'
+        } else {
+          content +=
+            '<input onclick="window.MatomoConsent.consentGiven();showContent(true);" id="trackVisits" type="checkbox" />'
+        }
+        content +=
+          '<label for="trackVisits"><span>' +
+          settings.YouAreOptedOut +
+          " " +
+          settings.CheckToOptIn +
+          "</span></label>"
+      }
+      div.innerHTML = content
+    }
+
+    window.MatomoConsent = {
+      cookiesDisabled: !navigator || !navigator.cookieEnabled,
+      CONSENT_COOKIE_NAME: "mtm_consent",
+      CONSENT_REMOVED_COOKIE_NAME: "mtm_consent_removed",
+      cookieIsSecure: false,
+      useSecureCookies: true,
+      cookiePath: "",
+      cookieDomain: "",
+      cookieSameSite: "Lax",
+      init: function(useSecureCookies, cookiePath, cookieDomain, cookieSameSite) {
+        this.useSecureCookies = useSecureCookies
+        this.cookiePath = cookiePath
+        this.cookieDomain = cookieDomain
+        this.cookieSameSite = cookieSameSite
+        if (useSecureCookies && location.protocol !== "https:") {
+          console.log("Error with setting useSecureCookies: You cannot use this option on http.")
+        } else {
+          this.cookieIsSecure = useSecureCookies
+        }
+      },
+      hasConsent: function() {
+        var consentCookie = this.getCookie(this.CONSENT_COOKIE_NAME)
+        var removedCookie = this.getCookie(this.CONSENT_REMOVED_COOKIE_NAME)
+        if (!consentCookie && !removedCookie) {
+          return true // No cookies set, so opted in
+        }
+        if (removedCookie && consentCookie) {
+          this.setCookie(this.CONSENT_COOKIE_NAME, "", -129600000)
+          return false
+        }
+        return consentCookie || consentCookie !== 0
+      },
+      consentGiven: function() {
+        this.setCookie(this.CONSENT_REMOVED_COOKIE_NAME, "", -129600000)
+        this.setCookie(this.CONSENT_COOKIE_NAME, new Date().getTime(), 946080000000)
+      },
+      consentRevoked: function() {
+        this.setCookie(this.CONSENT_COOKIE_NAME, "", -129600000)
+        this.setCookie(this.CONSENT_REMOVED_COOKIE_NAME, new Date().getTime(), 946080000000)
+      },
+      getCookie: function(cookieName) {
+        var cookiePattern = new RegExp("(^|;)[ ]*" + cookieName + "=([^;]*)"),
+          cookieMatch = cookiePattern.exec(document.cookie)
+        return cookieMatch ? window.decodeURIComponent(cookieMatch[2]) : 0
+      },
+      setCookie: function(cookieName, value, msToExpire) {
+        var expiryDate = new Date()
+        expiryDate.setTime(new Date().getTime() + msToExpire)
+        document.cookie =
+          cookieName +
+          "=" +
+          window.encodeURIComponent(value) +
+          (msToExpire ? ";expires=" + expiryDate.toGMTString() : "") +
+          ";path=" +
+          (this.cookiePath || "/") +
+          (this.cookieDomain ? ";domain=" + this.cookieDomain : "") +
+          (this.cookieIsSecure ? ";secure" : "") +
+          ";SameSite=" +
+          this.cookieSameSite
+        if ((!msToExpire || msToExpire >= 0) && this.getCookie(cookieName) !== String(value)) {
+          console.log("There was an error setting cookie `" + cookieName + "`. Please check domain and path.")
+        }
+      },
+    }
+  </script>
+
+  {% if is_widget != True %}
+  <script type="text/javascript">
+    window.$crisp = [];
+    window.CRISP_WEBSITE_ID = "071cca61-bd5f-4950-a5ed-c02238666a5c";
+    (function() {
+      d = document;
+      s = d.createElement("script");
+      s.src = "https://client.crisp.chat/l.js";
+      s.async = 1;
+      d.getElementsByTagName("head")[0].appendChild(s);
+    })();
+  </script>
+  {% endif %}
+  <style>
+    @font-face {
+      font-family: 'Marianne';
+      src: url({% static 'fonts/Marianne-Regular.woff2' %}) format('woff2'),
+      url({% static 'fonts/Marianne-Regular.woff' %}) format('woff'),
+      url({% static 'fonts/Marianne-Regular.ttf' %}) format('truetype');
+      font-weight: 400;
+    }
+
+    @font-face {
+      font-family: 'Marianne';
+      src: url({% static 'fonts/Marianne-Medium.woff2' %}) format('woff2'),
+      url({% static 'fonts/Marianne-Medium.woff' %}) format('woff');
+      font-weight: 500;
+    }
+
+    @font-face {
+      font-family: 'Marianne';
+      src: url({% static 'fonts/Marianne-Light.woff2' %}) format('woff2'),
+      url({% static 'fonts/Marianne-Light.woff' %}) format('woff'),
+      url({% static 'fonts/Marianne-Light.ttf' %}) format('truetype');
+      font-weight: 100 300;
+    }
+
+    @font-face {
+      font-family: 'Marianne';
+      src: url({% static 'fonts/Marianne-Bold.woff2' %}) format('woff2'),
+      url({% static 'fonts/Marianne-Bold.woff' %}) format('woff'),
+      url({% static 'fonts/Marianne-Bold.ttf' %}) format('truetype');
+      font-weight: 600 700;
+    }
+
+    @font-face {
+      font-family: 'Marianne';
+      src: url({% static 'fonts/Marianne-ExtraBold.woff2' %}) format('woff2'),
+      url({% static 'fonts/Marianne-ExtraBold.woff' %}) format('woff'),
+      url({% static 'fonts/Marianne-ExtraBold.ttf' %}) format('truetype');
+      font-weight: 800 900;
+    }
+  </style>
+
+  <!-- DSFR Charts -->
+  <script type="module" src="{% static 'dsfr/dist/dsfr.module.min.js' %}"></script>
+  <script src="{% static 'dsfr/charts/PieChart/pie-chart.umd.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'dsfr/charts/PieChart/pie-chart.css' %}">
+
+  {% vite %}
+  {% vite '2024-frontend/src/main.js' %}
+</head>
+
+<body>
+  <noscript>
+    <strong>We're sorry but frontend doesn't work properly without JavaScript enabled. Please enable it to
+      continue.</strong>
+  </noscript>
+  <div id="app">
+  </div>
+  <!-- built files will be auto injected -->
+</body>
+
+</html>

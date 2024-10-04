@@ -1,6 +1,9 @@
-from rest_framework import serializers
-from data.models import Purchase
 from drf_base64.fields import Base64FileField
+from rest_framework import serializers
+
+from data.models import Purchase
+
+from .utils import appro_to_percentages
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
@@ -47,6 +50,7 @@ class PurchaseField(serializers.DecimalField):
 
 # NB: these names reflect the names in the diagnostic model
 class PurchaseSummarySerializer(serializers.Serializer):
+    year = serializers.IntegerField()
     value_total_ht = PurchaseField()
     value_bio_ht = PurchaseField()
     value_sustainable_ht = PurchaseField()
@@ -171,6 +175,14 @@ class PurchaseSummarySerializer(serializers.Serializer):
     value_boulangerie_non_egalim = PurchaseField()
     value_boissons_non_egalim = PurchaseField()
     value_autres_non_egalim = PurchaseField()
+
+
+class PurchasePercentageSummarySerializer(PurchaseSummarySerializer):
+    last_purchase_date = serializers.DateField(required=False)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return appro_to_percentages(representation, instance)
 
 
 class PurchaseExportSerializer(serializers.ModelSerializer):

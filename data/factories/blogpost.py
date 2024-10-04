@@ -1,5 +1,7 @@
 import factory
+
 from data.models import BlogPost
+
 from .user import UserFactory
 
 

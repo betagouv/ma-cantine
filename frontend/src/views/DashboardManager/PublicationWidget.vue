@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="fill-height d-flex flex-column dsfr pa-sm-6">
+  <v-card outlined class="fill-height d-flex flex-column dsfr no-hover pa-sm-6">
     <v-card-title>
       <h3 class="fr-h4 mb-0">
         Mon affiche
@@ -9,11 +9,7 @@
     <v-card-text class="fr-text grey--text text--darken-2">
       <p class="publication-detail">
         Statut
-        <DsfrBadge :mode="isPublished ? 'SUCCESS' : 'INFO'" :icon="isPublished ? 'mdi-circle' : 'mdi-circle-outline'">
-          <p class="mb-0 text-uppercase">
-            {{ isPublished ? "En ligne" : "Non publiée" }}
-          </p>
-        </DsfrBadge>
+        <PublicationBadge :isPublished="isPublished" />
       </p>
       <p class="publication-detail">
         Dernière mise à jour
@@ -28,7 +24,7 @@
     </v-card-text>
     <v-spacer></v-spacer>
     <v-card-actions class="flex-wrap flex-lg-nowrap">
-      <p class="mx-2 mb-2">
+      <p v-if="isPublished" class="mx-2 mb-2">
         <v-btn
           :to="{
             name: 'PublicationForm',
@@ -36,9 +32,9 @@
           }"
           color="primary"
           class="px-3"
-          :outlined="isPublished || !hasPublicationData"
+          outlined
         >
-          {{ isPublished ? "Éditer mon affiche" : "Publier ma cantine" }}
+          Éditer mon affiche
         </v-btn>
       </p>
       <p class="mx-2 mb-2">
@@ -51,7 +47,7 @@
 </template>
 
 <script>
-import DsfrBadge from "@/components/DsfrBadge"
+import PublicationBadge from "@/components/PublicationBadge"
 import { formatDate, lastYear } from "@/utils"
 
 export default {
@@ -62,7 +58,7 @@ export default {
       required: true,
     },
   },
-  components: { DsfrBadge },
+  components: { PublicationBadge },
   data() {
     return {
       viewCount: null,

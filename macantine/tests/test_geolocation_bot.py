@@ -1,9 +1,11 @@
+import json
+
 import requests_mock
 from django.test import TestCase
-from data.factories import CanteenFactory, UserFactory, SectorFactory
+
 from data.department_choices import Department
+from data.factories import CanteenFactory, SectorFactory, UserFactory
 from macantine import tasks, utils
-import json
 
 
 @requests_mock.Mocker()
@@ -122,7 +124,7 @@ class TestGeolocationBot(TestCase):
 
 @requests_mock.Mocker()
 class TestGeolocationWithSiretBot(TestCase):
-    api_url = "https://api.insee.fr/entreprises/sirene/V3/siret/"
+    api_url = "https://api.insee.fr/entreprises/sirene/siret/"
 
     def test_candidate_canteens(self, _):
         """
@@ -147,63 +149,8 @@ class TestGeolocationWithSiretBot(TestCase):
         # Call the service to hit the mocked API.
         mock.post(
             "https://api.insee.fr/token",
-            json={"token_type": "bearer", "access_token": "token"},
+            json={"token_type": "bearer", "access_token": token},
         )
-        city_insee_code = "29352"
-
-        mock.get(
-            self.api_url + siret_canteen,
-            headers={"Authorization": f"Bearer {token}"},
-            text=json.dumps(
-                {
-                    "etablissement": {
-                        "uniteLegale": {"denominationUniteLegale": "cantine test"},
-                        "adresseEtablissement": {
-                            "codeCommuneEtablissement": "29352",
-                            "codePostalEtablissement": "29890",
-                            "libelleCommuneEtablissement": "Ville test",
-                        },
-                    },
-                }
-            ),
-            status_code=200,
-        )
-        mock.get(
-            f"https://api-adresse.data.gouv.fr/search/?q={city_insee_code}&citycode={city_insee_code}&type=municipality&autocomplete=1",
-            headers={"Authorization": f"Bearer {token}"},
-            text=json.dumps(
-                {
-                    "features": [
-                        {
-                            "properties": {
-                                "label": "Ville test",
-                                "citycode": city_insee_code,
-                                "postcode": "29890",
-                                "context": "38, Isère, Auvergne-Rhône-Alpes",
-                            }
-                        }
-                    ]
-                }
-            ),
-            status_code=200,
-        )
-        response = utils.get_infos_from_siret(candidate_canteen.siret, token)
-        self.assertEquals(response["city_insee_code"], "29352")
-        self.assertEquals(response["postal_code"], "29890")
-
-    def test_geolocation_with_siret_data_filled(self, mock):
-        """
-        Geolocation data should be filled with the response
-        from the API
-        """
-        token = "Fake token"
-        siret_canteen = "89394682276911"
-        canteen = CanteenFactory.create(city_insee_code=None, siret=siret_canteen)
-        mock.post(
-            "https://api.insee.fr/token",
-            json={"token_type": "bearer", "access_token": "token"},
-        )
-
         city_insee_code = "29352"
 
         mock.get(
@@ -223,21 +170,37 @@ class TestGeolocationWithSiretBot(TestCase):
             ),
             status_code=200,
         )
+        response = utils.fetch_geo_data_from_api_insee_sirene_by_siret(candidate_canteen.siret, {}, token)
+        self.assertEquals(response["cityInseeCode"], city_insee_code)
+
+    def test_geolocation_with_siret_data_filled(self, mock):
+        """
+        Geolocation data should be filled with the response
+        from the API
+        """
+        token = "Fake token"
+        siret_canteen = "89394682276911"
+        canteen = CanteenFactory.create(city_insee_code=None, siret=siret_canteen)
+        mock.post(
+            "https://api.insee.fr/token",
+            json={"token_type": "bearer", "access_token": token},
+        )
+
+        city_insee_code = "29352"
+
         mock.get(
-            f"https://api-adresse.data.gouv.fr/search/?q={city_insee_code}&citycode={city_insee_code}&type=municipality&autocomplete=1",
+            self.api_url + siret_canteen,
             headers={"Authorization": f"Bearer {token}"},
             text=json.dumps(
                 {
-                    "features": [
-                        {
-                            "properties": {
-                                "label": "Ville test",
-                                "citycode": city_insee_code,
-                                "postcode": "29890",
-                                "context": "38, Isère, Auvergne-Rhône-Alpes",
-                            }
-                        }
-                    ]
+                    "etablissement": {
+                        "uniteLegale": {"denominationUniteLegale": "cantine test"},
+                        "adresseEtablissement": {
+                            "codeCommuneEtablissement": city_insee_code,
+                            "codePostalEtablissement": "29890",
+                            "libelleCommuneEtablissement": "Ville test",
+                        },
+                    },
                 }
             ),
             status_code=200,

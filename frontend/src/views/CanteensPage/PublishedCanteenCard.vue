@@ -1,68 +1,70 @@
 <template>
-  <v-card
-    :to="{ name: 'CanteenPage', params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) } }"
-    outlined
-    class="pa-4 text-left fill-height d-flex flex-column dsfr"
-  >
-    <v-card-title class="pt-1">
-      <h2 class="fr-h6 mb-1 font-weight-black">
-        {{ canteen.name }}
-      </h2>
-    </v-card-title>
-    <v-card-subtitle class="pb-4">
-      <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" />
-      <div v-if="isCentralKitchen" class="tag body-2 font-weight-medium mt-2">
-        <p class="d-flex align-center mb-0">
-          <v-icon class="mr-1" small>$community-fill</v-icon>
-          Livreur des repas
-        </p>
-      </div>
-    </v-card-subtitle>
-    <v-spacer></v-spacer>
-    <v-divider aria-hidden="true" role="presentation" class="py-1"></v-divider>
-    <div class="grey--text text--darken-2" :style="$vuetify.breakpoint.smAndDown ? '' : 'height: 95px;'">
-      <v-card-text class="py-1 fill-height d-flex flex-column" v-if="diagnostic">
-        <p class="mb-0">En {{ year }} :</p>
-        <v-row class="ma-0" v-if="hasPercentages">
-          <p class="ma-0 mr-3" v-if="bioPercent">
-            <span class="font-weight-black mr-1">{{ bioPercent }} %</span>
-            bio
+  <div>
+    <v-card outlined class="text-left d-flex flex-column dsfr expanded-link canteen-card">
+      <v-row class="pa-0 ma-0">
+        <v-col cols="4" class="pa-0 card-image-wrap" v-if="showImage">
+          <img
+            :src="canteen.leadImage ? canteen.leadImage.image : '/static/images/canteen-default-image.jpg'"
+            class="lead-image"
+            alt=""
+          />
+        </v-col>
+        <v-col class="pa-8 d-flex flex-column justify-space-between">
+          <div>
+            <h3 class="fr-h5 mb-1">
+              <router-link
+                :to="{
+                  name: 'CanteenPage',
+                  params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                }"
+              >
+                {{ canteen.name }}
+              </router-link>
+            </h3>
+            <ProductionTypeTag :canteen="canteen" :position="showImage ? 'top-left' : ''" />
+            <CanteenIndicators :useCategories="true" :canteen="canteen" :singleLine="true" :dense="true" class="my-2" />
+          </div>
+          <p v-if="year" class="my-2 fr-text-sm">
+            En {{ year }} :
+            <span class="ma-0" v-if="hasPercentages">
+              <span class="ma-0 mr-3" v-if="bioPercent">
+                <span class="font-weight-black mr-1">{{ bioPercent }} %</span>
+                bio
+              </span>
+              <span class="ma-0" v-if="sustainablePercent">
+                <span class="font-weight-black mr-1">{{ sustainablePercent }} %</span>
+                de qualité et durables
+              </span>
+            </span>
           </p>
-          <p class="ma-0" v-if="sustainablePercent">
-            <span class="font-weight-black mr-1">{{ sustainablePercent }} %</span>
-            de qualité et durables
-          </p>
-        </v-row>
-        <v-spacer v-else></v-spacer>
-        <v-row class="ma-0 pt-3">
-          <v-img
-            max-width="30"
-            contain
-            :src="`/static/images/badges/${badge.key}${badge.earned ? '' : '-disabled'}.svg`"
-            v-for="badge in orderedBadges"
-            :key="badge.key"
-            class="mr-2"
-            :alt="badgeTitle(badge)"
-            :title="badgeTitle(badge)"
-          ></v-img>
-        </v-row>
-      </v-card-text>
-      <div v-else class="d-flex flex-column fill-height">
-        <v-spacer></v-spacer>
-        <v-card-text class="py-1"><p class="mb-0">Pas de données renseignées</p></v-card-text>
-        <v-spacer></v-spacer>
-      </div>
-    </div>
-    <v-card-actions class="px-4 py-0">
-      <v-spacer></v-spacer>
-      <v-icon color="primary">$arrow-right-line</v-icon>
-    </v-card-actions>
-  </v-card>
+          <div v-if="year" class="d-flex my-2">
+            <img
+              v-for="badge in orderedBadges"
+              :key="badge.key"
+              :src="`/static/images/badges/${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
+              :width="dense ? '35px' : '50px'"
+              :height="dense ? '35px' : '50px'"
+              :class="dense ? 'mr-2' : 'mr-4'"
+              :alt="badgeTitle(badge)"
+              :title="badgeTitle(badge)"
+            />
+          </div>
+          <p v-else class="my-2 fr-text-sm">Pas de données renseignées</p>
+          <v-card-actions class="px-4 py-0">
+            <v-spacer></v-spacer>
+            <v-icon color="primary">$arrow-right-line</v-icon>
+          </v-card-actions>
+        </v-col>
+      </v-row>
+    </v-card>
+  </div>
 </template>
 
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
-import { getSustainableTotal, hasDiagnosticApproData, badges, latestCreatedDiagnostic } from "@/utils"
+import ProductionTypeTag from "@/components/ProductionTypeTag"
+import { getSustainableTotal, toPercentage } from "@/utils"
+import badges from "@/badges"
 
 export default {
   name: "PublishedCanteenCard",
@@ -71,83 +73,80 @@ export default {
       type: Object,
       required: true,
     },
+    noImage: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     CanteenIndicators,
+    ProductionTypeTag,
   },
   computed: {
-    usesCentralKitchenDiagnostics() {
-      return (
-        this.canteen?.productionType === "site_cooked_elsewhere" && this.canteen?.centralKitchenDiagnostics?.length > 0
-      )
-    },
-    diagnosticSet() {
-      if (!this.canteen) return
-      if (!this.usesCentralKitchenDiagnostics) return this.canteen.diagnostics
-
-      // Since the central kitchen might only handle the appro values, we will merge the diagnostics
-      // from the central and satellites when necessary to show the whole picture
-      return this.canteen.centralKitchenDiagnostics.map((centralDiag) => {
-        const satelliteMatchingDiag = this.canteen.diagnostics.find((x) => x.year === centralDiag.year)
-        if (centralDiag.centralKitchenDiagnosticMode === "APPRO" && satelliteMatchingDiag)
-          return Object.assign(satelliteMatchingDiag, centralDiag)
-        return centralDiag
-      })
-    },
-    diagnostic() {
-      if (!this.diagnosticSet) return
-      return latestCreatedDiagnostic(this.diagnosticSet)
-    },
     year() {
-      return this.diagnostic?.year
+      return this.canteen.badges.year
     },
     canteenBadges() {
-      return badges(this.canteen, this.diagnostic, this.$store.state.sectors)
-    },
-    approBadge() {
-      return this.canteenBadges.appro
+      return this.canteen?.badges
     },
     orderedBadges() {
-      return Object.keys(this.canteenBadges)
-        .map((key) => {
-          return { ...{ key }, ...this.canteenBadges[key] }
-        })
-        .sort((a, b) => {
-          if (a.earned === b.earned) return 0
-          return a.earned && !b.earned ? -1 : 1
-        })
+      return Object.values(badges).sort((a, b) => {
+        const aIsEarned = this.badgeIsEarned(a)
+        const bIsEarned = this.badgeIsEarned(b)
+        if (aIsEarned === bIsEarned) return 0
+        return aIsEarned && !bIsEarned ? -1 : 1
+      })
+    },
+    approDiagnostic() {
+      return this.canteen?.approDiagnostic
     },
     bioPercent() {
-      if (!this.diagnostic || !hasDiagnosticApproData(this.diagnostic)) return null
-      return Math.round(this.diagnostic["percentageValueBioHt"] * 100)
+      return toPercentage(this.approDiagnostic?.percentageValueBioHt)
     },
     sustainablePercent() {
-      if (this.diagnostic && hasDiagnosticApproData(this.diagnostic))
-        return Math.round(getSustainableTotal(this.diagnostic) * 100)
-      return null
+      if (!this.approDiagnostic) return
+      return toPercentage(getSustainableTotal(this.approDiagnostic))
     },
     hasPercentages() {
       return this.bioPercent || this.sustainablePercent
     },
-    isCentralKitchen() {
-      return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
+    dense() {
+      return this.$vuetify.breakpoint.xs
+    },
+    showImage() {
+      return !this.dense && !this.noImage
     },
   },
   methods: {
     badgeTitle(badge) {
-      return `${badge.title}${badge.earned ? "" : " (à faire)"}`
+      return `${badge.title}${this.badgeIsEarned(badge) ? "" : " (à faire)"}`
+    },
+    badgeIsEarned(badge) {
+      return this.canteen?.badges[badge.key]
     },
   },
 }
 </script>
 
 <style scoped>
-.tag {
-  background: #e0e0f2;
-  left: 10px;
-  padding: 3px 10px;
-  border-radius: 4px;
-  color: #333;
-  display: inline-block;
+.canteen-card {
+  min-height: 256px;
+  height: 100%;
+}
+.canteen-card img.lead-image {
+  opacity: 0.5;
+  max-height: 100%;
+  max-width: 100%;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  position: absolute;
+}
+.canteen-card:hover img.lead-image,
+.canteen-card:focus-within img.lead-image {
+  opacity: 1;
+}
+.card-image-wrap {
+  position: relative;
 }
 </style>

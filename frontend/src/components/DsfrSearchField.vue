@@ -6,9 +6,8 @@
     v-bind="$attrs"
     v-on="$listeners"
     @input="(v) => $emit('input', v)"
-    clearable
-    @click:clear="clearAction"
-    @keyup.enter="searchAction"
+    @click:clear="clear"
+    @keyup.enter="search"
     ref="text-field"
   >
     <template v-slot:append>
@@ -19,7 +18,7 @@
         min-width="40px"
         max-width="40px"
         height="40px"
-        @click="searchAction"
+        @click="search"
         aria-label="Rechercher"
       >
         <v-icon>$search-line</v-icon>
@@ -34,7 +33,6 @@ import DsfrTextField from "@/components/DsfrTextField"
 export default {
   inheritAttrs: false,
   components: { DsfrTextField },
-  props: ["searchAction", "clearAction"],
   computed: {
     lazyValue() {
       return this.$refs["text-field"].lazyValue
@@ -42,10 +40,22 @@ export default {
     value() {
       return this.$refs["text-field"].value
     },
+    reset() {
+      return this.$refs["text-field"].reset
+    },
   },
   methods: {
     validate() {
       return this.$refs["text-field"].validate()
+    },
+    resetValidation() {
+      return this.$refs["text-field"].resetValidation()
+    },
+    clear() {
+      this.$emit("clear")
+    },
+    search() {
+      this.$emit("search")
     },
   },
 }

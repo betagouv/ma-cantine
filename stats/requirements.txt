@@ -1,9 +1,0 @@
-pandas==2.2.1
-ipykernel==6.29.3
-ydata-profiling==4.6.3
-ipywidgets==8.1.2
-frictionless==5.16.1
-nbformat==5.10.4
-nbclient==0.10.0
-jupyter-cache==1.0.0
-plotly==5.15.0

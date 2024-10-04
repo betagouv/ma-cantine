@@ -23,7 +23,7 @@
           v-if="item.publicationStatus === 'published'"
           :to="{ name: 'CanteenPage', params: { canteenUrlComponent: `${item.id}--${item.name}` } }"
         >
-          Publiée
+          En ligne
         </router-link>
         <span v-else>
           Non publiée

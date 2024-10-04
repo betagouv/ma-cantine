@@ -7,15 +7,12 @@
     ></v-divider>
     <v-container class="constrained pb-4 pb-sm-0 pt-0 text-left">
       <v-row v-if="!showSmallFooter" class="pt-12 pt-sm-0">
-        <v-col cols="12" sm="3" :class="{ 'd-flex': true, 'flex-column': $vuetify.breakpoint.name != 'xs' }">
-          <v-img
-            src="/static/images/Marianne.png"
-            contain
-            class="mb-4"
-            max-width="230"
-            alt="Ministère de l'Agriculture et la Souveraineté Alimentaire - Liberté Égalité Fraternité"
-          ></v-img>
-          <v-spacer />
+        <v-col cols="12" sm="3" md="2" class="d-flex align-center ml-n4">
+          <img
+            src="/static/images/Marianne.jpg"
+            alt="Ministère de l'Agriculture, de la Souveraineté alimentaire et de la Forêt - Liberté Égalité Fraternité"
+            height="160"
+          />
         </v-col>
         <v-spacer></v-spacer>
         <v-col cols="12" sm="8" md="7" class="text-body-2">
@@ -90,12 +87,11 @@
         </v-col>
       </v-row>
       <v-divider aria-hidden="true" role="presentation" v-if="!showSmallFooter" class="mt-6 mb-2"></v-divider>
-      <ul class="d-flex justify-sm-space-between flex-wrap link-group pl-0">
+      <ul class="d-flex flex-wrap link-group pl-0">
         <li v-for="(link, index) in bottomLinks" :key="link.text" class="d-flex my-1">
           <router-link class="caption px-0 grey--text text--darken-2" :to="link.to">{{ link.text }}</router-link>
           <div class="footer-divider mx-4" v-if="index < bottomLinks.length - 1"></div>
         </li>
-        <v-spacer></v-spacer>
       </ul>
       <p class="caption mt-2 mb-0 grey--text text--darken-2">
         Sauf mention contraire, tous les contenus de ce site sont sous
@@ -133,7 +129,7 @@ export default {
           to: { name: "PrivacyPolicy" },
         },
         {
-          text: "Accessibilité : non conforme",
+          text: "Accessibilité : partiellement conforme",
           to: { name: "AccessibilityDeclaration" },
         },
         {

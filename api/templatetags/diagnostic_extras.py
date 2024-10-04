@@ -1,4 +1,5 @@
 from django.template.defaulttags import register
+
 from data.models import Diagnostic
 
 

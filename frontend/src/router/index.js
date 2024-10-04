@@ -10,6 +10,7 @@ import KeyMeasurePage from "@/views/KeyMeasuresPage/KeyMeasurePage"
 import GeneratePosterPage from "@/views/GeneratePosterPage"
 import CanteensPage from "@/views/CanteensPage"
 import CanteenWidget from "@/views/CanteensPage/CanteenWidget"
+import CanteenSearchLanding from "@/views/CanteenSearchLanding"
 import CanteensHome from "@/views/CanteensPage/CanteensHome"
 import CanteenPage from "@/views/CanteensPage/CanteenPage"
 import LegalNotices from "@/views/LegalNotices"
@@ -20,6 +21,9 @@ import AccountDeletion from "@/views/AccountSummaryPage/AccountDeletion"
 import BlogsPage from "@/views/BlogsPage"
 import BlogsHome from "@/views/BlogsPage/BlogsHome"
 import BlogPage from "@/views/BlogsPage/BlogPage"
+import WasteActionsPage from "@/views/WasteActionsPage"
+import WasteActionsHome from "@/views/WasteActionsPage/WasteActionsHome.vue"
+import WasteActionPage from "@/views/WasteActionsPage/WasteActionPage.vue"
 import PartnersPage from "@/views/PartnersPage"
 import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
@@ -36,9 +40,7 @@ import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
-import PublishSatellites from "@/views/CanteenEditor/PublishSatellites"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
-import DiagnosticsImporter from "@/views/DiagnosticsImporter"
 import DiagnosticImportPage from "@/views/DiagnosticsImporter/DiagnosticImportPage"
 import PublicCanteenStatisticsPage from "@/views/PublicCanteenStatisticsPage"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
@@ -173,6 +175,15 @@ const routes = [
     },
   },
   {
+    path: "/trouver-une-cantine",
+    name: "CanteenSearchLanding",
+    component: CanteenSearchLanding,
+    meta: {
+      title: "Trouver une cantine",
+    },
+    sitemapGroup: Constants.SitemapGroups.ACTION,
+  },
+  {
     // if you change this path, update the visitor view count logic in the publication widget
     path: "/nos-cantines",
     component: CanteensPage,
@@ -182,9 +193,8 @@ const routes = [
         name: "CanteensHome",
         component: CanteensHome,
         meta: {
-          title: "Nos cantines publiées",
+          title: "Les cantines",
         },
-        sitemapGroup: Constants.SitemapGroups.ACTION,
       },
       {
         path: ":canteenUrlComponent",
@@ -226,6 +236,27 @@ const routes = [
         path: ":id",
         name: "BlogPage",
         component: BlogPage,
+        props: true,
+      },
+    ],
+  },
+  {
+    path: "/actions-anti-gaspi",
+    component: WasteActionsPage,
+    children: [
+      {
+        path: "",
+        name: "WasteActionsHome",
+        component: WasteActionsHome,
+        meta: {
+          title: "Actions anti-gaspi",
+        },
+        sitemapGroup: Constants.SitemapGroups.ACTION,
+      },
+      {
+        path: ":id",
+        name: "WasteActionPage",
+        component: WasteActionPage,
         props: true,
       },
     ],
@@ -381,15 +412,6 @@ const routes = [
           title: "Éditer mon affiche",
         },
       },
-      {
-        path: "publier-mes-satellites",
-        name: "PublishSatellites",
-        component: PublishSatellites,
-        meta: {
-          authenticationRequired: true,
-          title: "Publier mes satellites",
-        },
-      },
     ],
   },
   {
@@ -402,16 +424,6 @@ const routes = [
       authenticationRequired: true,
       fullscreen: true,
     },
-  },
-  {
-    path: "/importer-diagnostics",
-    name: "DiagnosticsImporter",
-    component: DiagnosticsImporter,
-    meta: {
-      title: "Importer des diagnostics",
-      authenticationRequired: true,
-    },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/importer-diagnostics/:importUrlSlug",
@@ -585,6 +597,27 @@ if (window.ENABLE_DASHBOARD) {
   })
 }
 
+const vue3Routes = [
+  {
+    path: "/gaspillage-alimentaire/:canteenUrlComponent",
+    name: "WasteMeasurements",
+  },
+  {
+    path: "/importer-des-donnees",
+    name: "DiagnosticsImporter",
+    meta: {
+      title: "Importer vos données",
+      authenticationRequired: true,
+    },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
+  },
+]
+const VUE3_PREFIX = "/v2"
+vue3Routes.forEach((r) => {
+  r.path = VUE3_PREFIX + r.path
+})
+routes.push(...vue3Routes)
+
 routes.push({
   path: "/:catchAll(.*)",
   component: NotFound,
@@ -619,8 +652,15 @@ function chooseAuthorisedRoute(to, from, next) {
   }
 }
 
+function handleVue3(to) {
+  if (to.path.startsWith(VUE3_PREFIX)) {
+    window.location.href = location.origin + to.path
+  }
+}
+
 router.beforeEach((to, from, next) => {
   store.dispatch("removeNotifications")
+  handleVue3(to)
   // TODO: audit code to check that notifies are placed after redirects
   // TODO: check the tunnel to see if the change of step also clears notifications
   chooseAuthorisedRoute(to, from, next)

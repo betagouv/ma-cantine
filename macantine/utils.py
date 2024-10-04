@@ -1,9 +1,10 @@
 import logging
-import requests
-import time
-from data.region_choices import Region
-from django.conf import settings
+
 import redis as r
+import requests
+from django.conf import settings
+
+from data.region_choices import Region
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -11,35 +12,34 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 REGIONS_LIB = {i.label.split(" - ")[1]: i.value for i in Region}
 
 
-def complete_canteen_data(canteen_siret, token):
-    canteen = {}
-    canteen["siret"] = canteen_siret
+def fetch_geo_data_from_api_insee_sirene_by_siret(canteen_siret, response, token):
+    response["siret"] = canteen_siret
     try:
         redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
         redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
         if int(redis.get(redis_key)) > 30:
-            logger.warning("Siret lookup exceding API rate. Waiting 1 minute")
-            time.sleep(60)
+            logger.warning("Siret lookup exceding API rate. Skipping this attempt.")
+            return response
 
         siret_response = requests.get(
-            f"https://api.insee.fr/entreprises/sirene/V3/siret/{canteen_siret}",
+            f"https://api.insee.fr/entreprises/sirene/siret/{canteen_siret}",
             headers={"Authorization": f"Bearer {token}"},
         )
         siret_response.raise_for_status()
         if siret_response.ok:
             siret_response = siret_response.json()
             try:
-                canteen["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
-                canteen["cityInseeCode"] = siret_response["etablissement"]["adresseEtablissement"][
+                response["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
+                response["cityInseeCode"] = siret_response["etablissement"]["adresseEtablissement"][
                     "codeCommuneEtablissement"
                 ]
-                canteen["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
+                response["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
                     "codePostalEtablissement"
                 ]
-                canteen["city"] = siret_response["etablissement"]["adresseEtablissement"][
+                response["city"] = siret_response["etablissement"]["adresseEtablissement"][
                     "libelleCommuneEtablissement"
                 ]
-                return canteen
+                return response
             except KeyError as e:
                 logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
         else:
@@ -52,10 +52,10 @@ def complete_canteen_data(canteen_siret, token):
         logger.warning(f"Geolocation Bot: Timeout\n{e}")
     except Exception as e:
         logger.error(f"Geolocation Bot: Unexpected exception\n{e}")
-    return canteen
+    return response
 
 
-def complete_location_data(response):
+def fetch_geo_data_from_api_entreprise_by_siret(response):
     try:
         location_response = requests.get(
             f"https://api-adresse.data.gouv.fr/search/?q={response['cityInseeCode']}&citycode={response['cityInseeCode']}&type=municipality&autocomplete=1"
@@ -88,9 +88,4 @@ def complete_location_data(response):
     except Exception as e:
         logger.exception(f"Error completing location data with SIRET for city: {response['city']}")
         logger.exception(e)
-
-
-def get_infos_from_siret(siret: str, token: str) -> {}:
-    response = complete_canteen_data(siret, token)
-    response = complete_location_data(response)
     return response

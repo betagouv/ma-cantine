@@ -9,7 +9,7 @@
       :singleColumn="true"
     />
 
-    <div class="text-left mt-10" v-if="this.statistics">
+    <div class="text-left mt-10" v-if="statistics">
       <h2 class="my-6">Où en sont les cantines similaires à la mienne ?</h2>
       <p>Pour les cantines {{ groupingDescription }} :</p>
 
@@ -56,13 +56,7 @@
                   </p>
                 </v-card-text>
                 <div class="mt-2">
-                  <v-img
-                    contain
-                    src="/static/images/quality-labels/logo_bio_eurofeuille.png"
-                    alt="Logo Agriculture Biologique"
-                    title="Logo Agriculture Biologique"
-                    max-height="35"
-                  />
+                  <v-img contain src="/static/images/quality-labels/logo_bio_eurofeuille.png" alt="" max-height="35" />
                 </div>
               </v-card>
             </v-col>

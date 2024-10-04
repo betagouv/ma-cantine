@@ -1,6 +1,9 @@
 from datetime import date
+
 from django.db import models
+
 from data.fields import ChoiceArrayField
+
 from .canteen import Canteen
 from .softdeletionmodel import SoftDeletionModel
 

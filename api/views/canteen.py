@@ -1,54 +1,86 @@
 import logging
 from collections import OrderedDict
 from datetime import date
+
 import redis as r
+import requests
 from django.apps import apps
 from django.conf import settings
-from django.http import JsonResponse
-import requests
-from common.utils import send_mail
-from macantine.utils import complete_location_data, complete_canteen_data
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError, BadRequest
 from django.contrib.auth import get_user_model
-from django.db import transaction, IntegrityError
+from django.core.exceptions import BadRequest, ValidationError
+from django.core.validators import validate_email
+from django.db import IntegrityError, transaction
+from django.db.models import (
+    Avg,
+    Case,
+    Count,
+    Exists,
+    F,
+    FloatField,
+    Func,
+    OuterRef,
+    Q,
+    Subquery,
+    Sum,
+    Value,
+    When,
+)
 from django.db.models.functions import Cast
-from django.db.models import Sum, FloatField, Avg, Func, F, Q, Case, When, Value, Subquery, OuterRef, Exists, Count
-from django_filters import rest_framework as django_filters
+from django.http import JsonResponse
 from django_filters import BaseInFilter, CharFilter
-from drf_spectacular.utils import extend_schema_view, extend_schema
-from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from django_filters import rest_framework as django_filters
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from api.views.utils import update_change_reason_with_auth
-from api.serializers import (
-    PublicCanteenSerializer,
-    PublicCanteenPreviewSerializer,
-    FullCanteenSerializer,
-    CanteenPreviewSerializer,
-    ManagingTeamSerializer,
-    SatelliteCanteenSerializer,
-    CanteenActionsSerializer,
-    CanteenStatusSerializer,
-    ElectedCanteenSerializer,
-    MinimalCanteenSerializer,
+from rest_framework.generics import (
+    ListAPIView,
+    ListCreateAPIView,
+    RetrieveAPIView,
+    RetrieveUpdateDestroyAPIView,
 )
-from data.models import Canteen, ManagerInvitation, Sector, Diagnostic, Teledeclaration, Purchase
-from data.region_choices import Region
-from data.department_choices import Department
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from api.exceptions import DuplicateException
 from api.permissions import (
-    IsCanteenManager,
     IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
+    IsCanteenManager,
     IsCanteenManagerUrlParam,
     IsElectedOfficial,
 )
-from api.exceptions import DuplicateException
-from .utils import camelize, UnaccentSearchFilter, MaCantineOrderingFilter
+from api.serializers import (
+    CanteenActionsSerializer,
+    CanteenPreviewSerializer,
+    CanteenStatusSerializer,
+    CanteenSummarySerializer,
+    ElectedCanteenSerializer,
+    FullCanteenSerializer,
+    ManagingTeamSerializer,
+    MinimalCanteenSerializer,
+    PublicCanteenPreviewSerializer,
+    PublicCanteenSerializer,
+    SatelliteCanteenSerializer,
+)
+from api.views.utils import update_change_reason_with_auth
+from common.utils import get_token_sirene, send_mail
+from data.department_choices import Department
+from data.models import (
+    Canteen,
+    Diagnostic,
+    ManagerInvitation,
+    Purchase,
+    Sector,
+    Teledeclaration,
+)
+from data.region_choices import Region
+from macantine.utils import (
+    fetch_geo_data_from_api_entreprise_by_siret,
+    fetch_geo_data_from_api_insee_sirene_by_siret,
+)
+
+from .utils import MaCantineOrderingFilter, UnaccentSearchFilter, camelize
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -57,7 +89,9 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 class PublishedCanteenSingleView(RetrieveAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
-    queryset = Canteen.objects.filter(publication_status="published")
+
+    def get_queryset(self):
+        return Canteen.objects.publicly_visible()
 
 
 class ProductionTypeInFilter(BaseInFilter, CharFilter):
@@ -79,33 +113,31 @@ class PublishedCanteensPagination(LimitOffsetPagination):
         self.management_types = set(filter(lambda x: x, queryset.values_list("management_type", flat=True)))
         self.production_types = set(filter(lambda x: x, queryset.values_list("production_type", flat=True)))
 
-        published_canteens = Canteen.objects.filter(publication_status="published")
+        # Prepare sector filter options:
+        # we want to return all sectors that are available after the other filters,
+        # because the user can select multiple sectors (unlike other filter options)
+        all_sector_canteens = Canteen.objects.publicly_visible()
         query_params = request.query_params
-
         if query_params.get("department"):
-            published_canteens = published_canteens.filter(department=query_params.get("department"))
-
+            all_sector_canteens = all_sector_canteens.filter(department=query_params.get("department"))
         if query_params.get("region"):
-            published_canteens = published_canteens.filter(region=query_params.get("region"))
-
+            all_sector_canteens = all_sector_canteens.filter(region=query_params.get("region"))
         if query_params.get("min_daily_meal_count"):
-            published_canteens = published_canteens.filter(
+            all_sector_canteens = all_sector_canteens.filter(
                 daily_meal_count__gte=query_params.get("min_daily_meal_count")
             )
-
         if query_params.get("max_daily_meal_count"):
-            published_canteens = published_canteens.filter(
+            all_sector_canteens = all_sector_canteens.filter(
                 daily_meal_count__lte=query_params.get("max_daily_meal_count")
             )
-
         if query_params.get("management_type"):
-            published_canteens = published_canteens.filter(management_type=query_params.get("management_type"))
-
-        published_canteens = filter_by_diagnostic_params(published_canteens, query_params)
+            all_sector_canteens = all_sector_canteens.filter(management_type=query_params.get("management_type"))
+        all_sector_canteens = filter_by_diagnostic_params(all_sector_canteens, query_params)
 
         self.sectors = (
-            Sector.objects.filter(canteen__in=list(published_canteens)).values_list("id", flat=True).distinct()
+            Sector.objects.filter(canteen__in=list(all_sector_canteens)).values_list("id", flat=True).distinct()
         )
+
         return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
@@ -238,47 +270,50 @@ def filter_by_diagnostic_params(queryset, query_params):
                 )
             ).distinct()
         canteen_ids = qs_diag.values_list("canteen", flat=True)
-        return queryset.filter(id__in=canteen_ids)
+        canteen_sirets = qs_diag.values_list("canteen__siret", flat=True)
+        queryset = queryset.exclude(redacted_appro_years__contains=[publication_year])
+        return queryset.filter(Q(id__in=canteen_ids) | Q(central_producer_siret__in=canteen_sirets))
     return queryset
 
 
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenPreviewSerializer
-    queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
     pagination_class = PublishedCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
         UnaccentSearchFilter,
         MaCantineOrderingFilter,
     ]
+    # TODO: maybe add city/region/department name?
     search_fields = ["name", "siret"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
     filterset_class = PublishedCanteenFilterSet
+
+    def get_queryset(self):
+        return Canteen.objects.publicly_visible()
 
     def filter_queryset(self, queryset):
         new_queryset = filter_by_diagnostic_params(queryset, self.request.query_params)
         return super().filter_queryset(new_queryset)
 
 
+class PublicCanteenPreviewView(RetrieveAPIView):
+    model = Canteen
+    serializer_class = PublicCanteenPreviewSerializer
+    queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
+
+
 class UserCanteensFilterSet(django_filters.FilterSet):
     production_type = ProductionTypeInFilter(field_name="production_type")
 
 
-@extend_schema_view(
-    post=extend_schema(
-        summary="Publier plusieurs cantines.",
-        description="Vous recevrez deux tableaux : `ids` avec les identifiants des cantines publiées, "
-        + "et `unknown_ids` avec les identifiants des cantines non-publiées car l'identifiant n'existe "
-        + "pas où la cantine n'est pas gérée par l'utilisateur.",
-    ),
-)
 class PublishManyCanteensView(APIView):
     """
     This view allows mass publishing of canteens
     """
 
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    permission_classes = [IsAuthenticated]
     required_scopes = ["canteen"]
 
     def post(self, request):
@@ -369,6 +404,25 @@ class UserCanteenPreviews(ListAPIView):
         return self.request.user.canteens.all()
 
 
+class UserCanteenSummaries(ListAPIView):
+    model = Canteen
+    serializer_class = CanteenSummarySerializer
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
+    pagination_class = UserCanteensPagination
+    filter_backends = [
+        django_filters.DjangoFilterBackend,
+        UnaccentSearchFilter,
+        MaCantineOrderingFilter,
+    ]
+    filterset_class = UserCanteensFilterSet
+    search_fields = ["name", "siret"]
+    ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
+
+    def get_queryset(self):
+        return self.request.user.canteens.all()
+
+
 @extend_schema_view(
     get=extend_schema(
         summary="Obtenir les détails d'une cantine.",
@@ -403,7 +457,7 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
 
     def partial_update(self, request, *args, **kwargs):
         canteen_siret = request.data.get("siret")
-        if canteen_siret == "":
+        if "siret" in request.data and not canteen_siret:
             return JsonResponse(
                 {"siret": ["Le numéro SIRET ne peut pas être vide."]}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -425,11 +479,12 @@ class CanteenStatusView(APIView):
         siret = request.parser_context.get("kwargs").get("siret")
         response = check_siret_response(siret, request) or {}
         if not response:
-            response = complete_canteen_data(siret, response)
+            token = get_token_sirene()
+            response = fetch_geo_data_from_api_insee_sirene_by_siret(siret, response, token)
             city = response.get("city", None)
             postcode = response.get("postalCode", None)
             if city and postcode:
-                response = complete_location_data(response)
+                response = fetch_geo_data_from_api_entreprise_by_siret(response)
         return JsonResponse(response, status=status.HTTP_200_OK)
 
 
@@ -441,17 +496,13 @@ def check_siret_response(canteen_siret, request):
             return camelize(CanteenStatusSerializer(canteen, context={"request": request}).data)
 
 
-@extend_schema_view(
-    post=extend_schema(
-        summary="Activer la publication de la cantine.",
-        description="La publication permet de mettre à disposition certaines données de la cantine au grand public. Il ne s'agit pas d'une télédéclaration.",
-    ),
-)
 class PublishCanteenView(APIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    permission_classes = [IsAuthenticated]
     required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
+        if settings.PUBLISH_BY_DEFAULT:
+            raise BadRequest("Cannot publish canteen")
         try:
             data = request.data
             canteen_id = kwargs.get("pk")
@@ -474,17 +525,13 @@ class PublishCanteenView(APIView):
             raise ValidationError("Le cantine specifié n'existe pas")
 
 
-@extend_schema_view(
-    post=extend_schema(
-        summary="Enlever la publication de la cantine.",
-        description="La publication permet de mettre à disposition les données de la cantine au grand public. Il ne s'agit pas d'une télédéclaration.",
-    ),
-)
 class UnpublishCanteenView(APIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    permission_classes = [IsAuthenticated]
     required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
+        if settings.PUBLISH_BY_DEFAULT:
+            raise BadRequest("Cannot unpublish canteen")
         try:
             data = request.data
             canteen_id = kwargs.get("pk")
@@ -831,9 +878,7 @@ class CanteenStatisticsView(APIView):
 
         canteens = CanteenStatisticsView._filter_canteens(regions, departments, city_insee_codes, sector_categories)
         data["canteen_count"] = canteens.count()
-        data["published_canteen_count"] = canteens.filter(
-            publication_status=Canteen.PublicationStatus.PUBLISHED
-        ).count()
+        data["published_canteen_count"] = canteens.publicly_visible().count()
 
         diagnostics = CanteenStatisticsView._filter_diagnostics(
             year, regions, departments, city_insee_codes, sector_categories
@@ -1132,7 +1177,7 @@ class ActionableCanteensListView(ListAPIView):
         MaCantineOrderingFilter,
     ]
     search_fields = ["name"]
-    ordering_fields = ["name", "production_type", "action"]
+    ordering_fields = ["name", "production_type", "action", "modification_date"]
     ordering = "modification_date"
 
     def get_queryset(self):
@@ -1193,6 +1238,11 @@ class ActionableCanteensListView(ListAPIView):
         # prep complete diag action
         complete_diagnostics = Diagnostic.objects.filter(pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0)
         user_canteens = user_canteens.annotate(has_complete_diag=Exists(Subquery(complete_diagnostics)))
+        has_cc_mode = Diagnostic.objects.filter(
+            pk=OuterRef("diagnostic_for_year"),
+            central_kitchen_diagnostic_mode__isnull=False,
+        ).exclude(central_kitchen_diagnostic_mode="")
+        user_canteens = user_canteens.annotate(has_cc_mode=Exists(Subquery(has_cc_mode)))
         # prep TD action
         tds = Teledeclaration.objects.filter(
             Q(canteen=OuterRef("pk")) | Q(canteen=OuterRef("central_kitchen_id")),
@@ -1216,13 +1266,15 @@ class ActionableCanteensListView(ListAPIView):
             ),
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
             When(has_complete_diag=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+            When((is_central_cuisine_query & Q(has_cc_mode=False)), then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
             When(incomplete_canteen_data_query, then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
         if should_teledeclare:
             conditions.append(When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)))
-        conditions.append(
-            When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH))
-        )
+        if not settings.PUBLISH_BY_DEFAULT:
+            conditions.append(
+                When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH))
+            )
         user_canteens = user_canteens.annotate(action=Case(*conditions, default=Value(Canteen.Actions.NOTHING)))
         return user_canteens
 
@@ -1256,3 +1308,25 @@ class TerritoryCanteensListView(ListAPIView):
     def get_queryset(self):
         departments = self.request.user.departments
         return Canteen.objects.filter(department__in=departments)
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Lister les options pour le ministère de tutelle.",
+        description="Certains secteurs nécessite la spécification d'un ministère du tutelle.",
+    ),
+)
+class CanteenMinistriesView(APIView):
+    include_in_documentation = True
+    required_scopes = ["canteen"]
+
+    def get(self, request, format=None):
+        ministries = []
+        for ministry in Canteen.Ministries:
+            ministries.append(
+                {
+                    "value": ministry.value,
+                    "name": ministry.label,
+                }
+            )
+        return Response(ministries)

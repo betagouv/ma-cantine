@@ -1,12 +1,22 @@
 import logging
-from rest_framework import serializers
+
+from django.conf import settings
 from drf_base64.fields import Base64ImageField
-from data.models import Canteen, Sector, CanteenImage, Diagnostic
-from .diagnostic import PublicDiagnosticSerializer, FullDiagnosticSerializer, CentralKitchenDiagnosticSerializer
+from rest_framework import serializers
+
+from data.models import Canteen, CanteenImage, Diagnostic, Sector
+
+from .diagnostic import (
+    ApproDiagnosticSerializer,
+    CentralKitchenDiagnosticSerializer,
+    FullDiagnosticSerializer,
+    PublicApproDiagnosticSerializer,
+    PublicDiagnosticSerializer,
+    PublicServiceDiagnosticSerializer,
+)
+from .managerinvitation import ManagerInvitationSerializer
 from .sector import SectorSerializer
 from .user import CanteenManagerSerializer
-from .managerinvitation import ManagerInvitationSerializer
-
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +63,17 @@ class MediaListSerializer(serializers.ListSerializer):
         return media
 
 
+class PublicationStatusMixin:
+    publication_status = serializers.SerializerMethodField(read_only=True)
+
+    def get_publication_status(self, obj):
+        if not settings.PUBLISH_BY_DEFAULT:
+            return obj.publication_status
+        if obj.line_ministry == Canteen.Ministries.ARMEE:
+            return Canteen.PublicationStatus.DRAFT
+        return Canteen.PublicationStatus.PUBLISHED
+
+
 class MinimalCanteenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Canteen
@@ -70,51 +91,85 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
         )
 
 
+class BadgesSerializer(serializers.ModelSerializer):
+    year = serializers.IntegerField(source="latest_published_year")
+    appro = serializers.BooleanField(source="latest_published_appro_diagnostic.appro_badge", default=False)
+    waste = serializers.BooleanField(source="latest_published_service_diagnostic.waste_badge", default=False)
+    diversification = serializers.BooleanField(
+        source="latest_published_service_diagnostic.diversification_badge", default=False
+    )
+    plastic = serializers.BooleanField(source="latest_published_service_diagnostic.plastic_badge", default=False)
+    info = serializers.BooleanField(source="latest_published_service_diagnostic.info_badge", default=False)
+
+    class Meta:
+        model = Canteen
+        fields = (
+            "year",
+            "appro",
+            "waste",
+            "diversification",
+            "plastic",
+            "info",
+        )
+
+
 class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
-    central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
+    badges = BadgesSerializer(read_only=True, source="*")
+    appro_diagnostic = PublicApproDiagnosticSerializer(read_only=True, source="latest_published_appro_diagnostic")
+    lead_image = CanteenImageSerializer()
 
     class Meta:
         model = Canteen
         fields = (
             "id",
             "name",
-            "diagnostics",
             "city",
             "city_insee_code",
             "postal_code",
             "sectors",
             "daily_meal_count",
             "production_type",
+            "management_type",
             "satellite_canteens_count",
             "region",
             "department",
-            "central_kitchen_diagnostics",
+            "badges",
+            "appro_diagnostic",
+            "lead_image",
+            "is_central_cuisine",
+            "is_satellite",
         )
 
 
 class PublicCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
-    central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
+    appro_diagnostics = PublicApproDiagnosticSerializer(
+        many=True, read_only=True, source="published_appro_diagnostics"
+    )
+    service_diagnostics = PublicServiceDiagnosticSerializer(
+        many=True, read_only=True, source="published_service_diagnostics"
+    )
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
     is_managed_by_user = serializers.SerializerMethodField(read_only=True)
+    badges = BadgesSerializer(read_only=True, source="*")
 
     class Meta:
         model = Canteen
         fields = (
             "id",
             "name",
-            "diagnostics",
+            "appro_diagnostics",
+            "service_diagnostics",
             "city",
             "city_insee_code",
             "postal_code",
             "sectors",
             "daily_meal_count",
             "production_type",
+            "management_type",
             "satellite_canteens_count",
             "region",
             "department",
@@ -128,8 +183,8 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "information_comments",
             "can_be_claimed",
             "is_managed_by_user",
-            "central_kitchen_diagnostics",
             "central_kitchen",
+            "badges",
         )
 
     def get_is_managed_by_user(self, obj):
@@ -137,11 +192,12 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
         return user in obj.managers.all()
 
 
-class ElectedCanteenSerializer(serializers.ModelSerializer):
+class ElectedCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     is_managed_by_user = serializers.SerializerMethodField(read_only=True)
+    publication_status = PublicationStatusMixin.publication_status
 
     class Meta:
         model = Canteen
@@ -175,9 +231,10 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
         return user in obj.managers.all()
 
 
-class SatelliteCanteenSerializer(serializers.ModelSerializer):
+class SatelliteCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin):
     sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
     user_can_view = serializers.SerializerMethodField(read_only=True)
+    publication_status = PublicationStatusMixin.publication_status
 
     class Meta:
         model = Canteen
@@ -198,9 +255,10 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
         return obj.managers.filter(pk=user.pk).exists()
 
 
-class FullCanteenSerializer(serializers.ModelSerializer):
+class FullCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin):
     sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    appro_diagnostics = ApproDiagnosticSerializer(many=True, read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     managers = CanteenManagerSerializer(many=True, read_only=True)
     manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
@@ -208,6 +266,8 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     satellites = MinimalCanteenSerializer(many=True, read_only=True)
+    badges = BadgesSerializer(read_only=True, source="*")
+    publication_status = PublicationStatusMixin.publication_status
 
     class Meta:
         model = Canteen
@@ -222,7 +282,9 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "central_kitchen",
             "satellites",
             "is_central_cuisine",
+            "is_satellite",
             "modification_date",
+            "badges",
         )
         fields = (
             "id",
@@ -243,6 +305,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "management_type",
             "production_type",
             "diagnostics",
+            "appro_diagnostics",
             "department",
             "region",
             "logo",
@@ -250,6 +313,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "managers",
             "manager_invitations",
             "publication_status",
+            "redacted_appro_years",
             "publication_comments",
             "quality_comments",
             "waste_comments",
@@ -263,7 +327,9 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "creation_mtm_campaign",
             "creation_mtm_medium",
             "is_central_cuisine",
+            "is_satellite",
             "modification_date",
+            "badges",
         )
 
         extra_kwargs = {"name": {"required": True}, "siret": {"required": True}}
@@ -305,6 +371,64 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             canteen_image_serializer.update(canteen.images.all(), image_validated_data)
 
         return canteen
+
+    def get_central_kitchen_diagnostics(self, obj):
+        # Ideally we would also check the status of the satellite canteen and
+        # the central cuisine, for now we omit this check. For now it is the
+        # responsibility of the frontend to use this information.
+        if not obj.central_producer_siret or not obj.production_type == Canteen.ProductionType.ON_SITE_CENTRAL:
+            return None
+        try:
+            diagnostics = Diagnostic.objects.filter(
+                canteen__siret=obj.central_producer_siret,
+                central_kitchen_diagnostic_mode__in=[
+                    Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                    Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+                ],
+            )
+
+            return CentralKitchenDiagnosticSerializer(diagnostics, many=True).data
+        except Canteen.DoesNotExist:
+            return None
+        except Canteen.MultipleObjectsReturned as e:
+            logger.exception(f"Multiple canteens returned when obtaining the central_producer_siret field {e}")
+            return None
+
+
+class CanteenSummarySerializer(serializers.ModelSerializer, PublicationStatusMixin):
+    lead_image = CanteenImageSerializer()
+    diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
+    publication_status = PublicationStatusMixin.publication_status
+
+    class Meta:
+        model = Canteen
+        my_fields = (
+            "id",
+            "name",
+            "city",
+            "city_insee_code",
+            "postal_code",
+            "sectors",
+            "daily_meal_count",
+            "yearly_meal_count",
+            "siret",
+            "management_type",
+            "production_type",
+            "department",
+            "region",
+            "publication_status",
+            "economic_model",
+            "is_central_cuisine",
+            "is_satellite",
+            "modification_date",
+            "lead_image",
+            # the following can still be improved
+            "diagnostics",
+            "central_kitchen_diagnostics",  # can return a TD status instead of diagnostics
+        )
+        fields = my_fields
+        read_only_fields = my_fields
 
     def get_central_kitchen_diagnostics(self, obj):
         # Ideally we would also check the status of the satellite canteen and

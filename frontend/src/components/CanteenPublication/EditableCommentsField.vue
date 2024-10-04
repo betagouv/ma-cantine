@@ -21,9 +21,9 @@
       outlined
       small
       color="primary"
-      class="fr-btn--tertiary px-2 mt-4"
+      :class="{ 'fr-btn--tertiary px-2': true, 'mt-4': !!value }"
     >
-      <v-icon primary x-small class="mr-1">mdi-pencil-outline</v-icon>
+      <v-icon color="primary" x-small class="mr-1">mdi-pencil-outline</v-icon>
       {{ cta || "Modifier" }}
     </v-btn>
   </v-col>

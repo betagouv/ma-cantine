@@ -1,8 +1,10 @@
 from datetime import timedelta
+
 from django.urls import reverse
 from django.utils import timezone
-from rest_framework.test import APITestCase
 from rest_framework import status
+from rest_framework.test import APITestCase
+
 from data.factories import CommunityEventFactory
 
 

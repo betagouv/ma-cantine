@@ -18,26 +18,19 @@
     </EditableCommentsField>
 
     <h2 class="mt-12 mb-8">Où en-sommes nous de notre transition alimentaire ?</h2>
-    <DsfrAccordion :items="badgeItems" :openPanelIndex="editable ? undefined : 0" class="mt-4">
+    <DsfrAccordion :items="keyMeasures" :openPanelIndex="editable ? undefined : 0" class="mt-4">
       <template v-slot:title="{ item }">
         <span class="d-flex align-center">
-          <v-img
-            width="40"
-            max-width="40"
-            contain
-            :src="`/static/images/badges/${item.badgeId}${item.earned ? '' : '-disabled'}.svg`"
-            alt=""
-            class="mr-3"
-          ></v-img>
+          <v-img width="40" max-width="40" contain :src="badgeSrc(item.badgeId)" alt="" class="mr-3"></v-img>
           {{ item.shortTitle }}
         </span>
       </template>
       <template v-slot:content="{ item }">
         <component
           :is="`${item.baseComponent}Results`"
-          :badge="item"
+          :badge="badges[item.badgeId]"
           :canteen="canteen"
-          :diagnosticSet="diagnosticSet"
+          :diagnostics="item.badgeId === 'appro' ? approDiagnostics : serviceDiagnostics"
           :editable="editable"
         />
         <p class="mb-0">
@@ -65,11 +58,10 @@
 
 <script>
 import keyMeasures from "@/data/key-measures.json"
-import { badges, latestCreatedDiagnostic, applicableDiagnosticRules } from "@/utils"
+import badges from "@/badges.json"
 import ImageGallery from "@/components/ImageGallery"
 import EditableCommentsField from "./EditableCommentsField"
 import DsfrAccordion from "@/components/DsfrAccordion"
-import Constants from "@/constants"
 
 import QualityMeasureResults from "./ResultsComponents/QualityMeasureResults"
 import DiversificationMeasureResults from "./ResultsComponents/DiversificationMeasureResults"
@@ -95,76 +87,34 @@ export default {
     NoPlasticMeasureResults,
     WasteMeasureResults,
   },
+  data() {
+    return {
+      keyMeasures: keyMeasures.map((km) => ({
+        id: km.id,
+        shortTitle: km.shortTitle,
+        badgeId: km.badgeId,
+        baseComponent: km.baseComponent,
+      })),
+      badges,
+    }
+  },
   computed: {
-    diagnosticSet() {
-      if (!this.canteen) return
-      if (!this.usesCentralKitchenDiagnostics) return this.canteen.diagnostics
-
-      // Since the central kitchen might only handle the appro values, we will merge the diagnostics
-      // from the central and satellites when necessary to show the whole picture
-      return this.canteen.centralKitchenDiagnostics.map((centralDiag) => {
-        const satelliteMatchingDiag = this.canteen.diagnostics.find((x) => x.year === centralDiag.year)
-        if (centralDiag.centralKitchenDiagnosticMode === "APPRO" && satelliteMatchingDiag) {
-          const satelliteDiagCopy = Object.assign({}, satelliteMatchingDiag)
-          this.approFields.forEach((x) => delete satelliteDiagCopy[x])
-          return Object.assign(satelliteDiagCopy, centralDiag)
-        }
-        return centralDiag
-      })
+    approDiagnostics() {
+      return this.canteen?.approDiagnostics
     },
-    approFields() {
-      const approSimplifiedFields = [
-        "valueTotalHt",
-        "valueBioHt",
-        "valueSustainableHt",
-        "valueExternalityPerformanceHt",
-        "valueEgalimOthersHt",
-      ]
-      const characteristicGroups = Constants.TeledeclarationCharacteristicGroups
-      const approFields = characteristicGroups.egalim.fields
-        .concat(characteristicGroups.outsideLaw.fields)
-        .concat(characteristicGroups.nonEgalim.fields)
-        .concat(approSimplifiedFields)
-      const percentageApproFields = approFields.map((x) => `percentage${x.charAt(0).toUpperCase() + x.slice(1)}`)
-      return approFields.concat(percentageApproFields)
-    },
-    diagnostic() {
-      if (!this.diagnosticSet) return
-      return latestCreatedDiagnostic(this.diagnosticSet)
-    },
-    usesCentralKitchenDiagnostics() {
-      return (
-        this.canteen?.productionType === "site_cooked_elsewhere" && this.canteen?.centralKitchenDiagnostics?.length > 0
-      )
-    },
-    publicationYear() {
-      return this.diagnostic?.year
-    },
-    canteenBadges() {
-      const canteenBadges = badges(this.canteen, this.diagnostic, this.$store.state.sectors)
-      Object.entries(canteenBadges).forEach(([key, badge]) => {
-        const km = keyMeasures.find((k) => k.badgeId === key)
-        Object.assign(badge, km)
-      })
-      return canteenBadges
-    },
-    badgeItems() {
-      const items = JSON.parse(JSON.stringify(Object.values(this.canteenBadges)))
-      items.map((item) => delete item.title)
-      return items
-    },
-    earnedBadges() {
-      let earnedBadges = {}
-      Object.keys(this.canteenBadges).forEach((key) => {
-        if (this.canteenBadges[key].earned) earnedBadges[key] = this.canteenBadges[key]
-      })
-      return earnedBadges
-    },
-    applicableRules() {
-      return applicableDiagnosticRules(this.canteen)
+    serviceDiagnostics() {
+      return this.canteen?.serviceDiagnostics
     },
     imageLimit() {
       return this.$vuetify.breakpoint.xs ? 0 : 3
+    },
+  },
+  methods: {
+    badgeIsEarned(badge) {
+      return this.canteen?.badges[badge.key]
+    },
+    badgeSrc(badgeId) {
+      return `/static/images/badges/${badgeId}${this.badgeIsEarned({ key: badgeId }) ? "" : "-disabled"}.svg`
     },
   },
 }

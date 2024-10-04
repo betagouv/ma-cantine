@@ -63,6 +63,9 @@ export default {
     lazyValue() {
       return this.$refs["text-field"].lazyValue
     },
+    reset() {
+      return this.$refs["text-field"].reset
+    },
     value() {
       return this.$refs["text-field"].value
     },
@@ -85,6 +88,9 @@ export default {
     },
     assignInputId() {
       this.inputId = this.$refs?.["text-field"]?.$refs?.["input"].id
+    },
+    resetValidation() {
+      return this.$refs["text-field"].resetValidation()
     },
   },
   mounted() {

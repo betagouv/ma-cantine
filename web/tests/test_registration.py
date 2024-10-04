@@ -1,9 +1,11 @@
 import re
+
 from django.core import mail
-from django.urls import reverse
 from django.test.utils import override_settings
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+
 from web.forms import RegisterUserForm
 
 
@@ -55,12 +57,14 @@ class TestRegistration(APITestCase):
 
         # Check that the email contains the token
         content = mail.outbox[0].body
-        matches = re.findall(r"compte\/(?P<uidb64>.*)\/(?P<token>.*)", content)
+        # the link sometimes gets broken in the middle of the token that has a hyphen, avoid this by replacing the line break
+        no_line_break = content.replace("-\n", "-")
+        matches = re.findall(r"compte\/(?P<uidb64>.*)\/(?P<token>.*)", no_line_break)
         self.assertEqual(len(matches), 1)
         uidb64, token = matches[0]
         activation_response = self.client.get(reverse("activate", kwargs={"uidb64": uidb64, "token": token}))
 
-        redirect_error_message = f"\nEmail body:\n{content}" + f"\n\nUIDB64: {uidb64}\n\nTOKEN: {token}"
+        redirect_error_message = f"\nEmail body:\n{no_line_break}" + f"\n\nUIDB64: {uidb64}\n\nTOKEN: {token}"
         self.assertRedirects(
             activation_response,
             reverse("app"),
