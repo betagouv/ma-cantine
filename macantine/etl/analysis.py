@@ -5,7 +5,7 @@ import re
 import numpy as np
 import pandas as pd
 
-from macantine.etl import etl, open_data, utils
+from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
 
 logger = logging.getLogger(__name__)
@@ -224,7 +224,7 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
 
     def extract_dataset(self):
         # Load teledeclarations from prod database into the Data Warehouse
-        self.df = open_data.fetch_teledeclarations(self.years)
+        self.df = utils.fetch_teledeclarations(self.years)
         self.df.index = self.df.id
 
     def transform_dataset(self):
