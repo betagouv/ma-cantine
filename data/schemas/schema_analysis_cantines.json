@@ -6,104 +6,12 @@
       "type": "integer"
     },
     {
-      "name": "creation_date",
-      "type": "date"
-    },
-    {
-      "name": "modification_date",
-      "type": "date"
-    },
-    {
       "name": "name",
-      "type": "string"
-    },
-    {
-      "name": "city_insee_code",
-      "type": "string"
-    },
-    {
-      "name": "city",
-      "type": "string"
-    },
-    {
-      "name": "postal_code",
-      "type": "string"
-    },
-    {
-      "name": "daily_meal_count",
-      "type": "integer"
-    },
-    {
-      "name": "yearly_meal_count",
-      "type": "integer"
-    },
-    {
-      "name": "management_type",
       "type": "string"
     },
     {
       "name": "siret",
       "type": "integer"
-    },
-    {
-      "name": "department",
-      "type": "string"
-    },
-    {
-      "name": "production_type",
-      "type": "string"
-    },
-    {
-      "name": "central_producer_siret",
-      "type": "integer"
-    },
-    {
-      "name": "region",
-      "type": "integer"
-    },
-    {
-      "name": "region_lib",
-      "type": "string"
-    },
-    {
-      "name": "economic_model",
-      "type": "string"
-    },
-    {
-      "name": "satellite_canteens_count",
-      "type": "integer"
-    },
-    {
-      "name": "vegetarian_expe_participant",
-      "type": "boolean"
-    },
-    {
-      "name": "has_been_claimed",
-      "type": "boolean"
-    },
-    {
-      "name": "secteur",
-      "type": "string"
-    },
-    {
-      "name": "catégorie",
-      "type": "string"
-    },
-    {
-      "name": "secteur_spe",
-      "type": "string"
-    },
-    {
-      "name": "line_ministry",
-      "type": "string"
-    },
-    {
-      "name": "gestionnaires",
-      "type": "string"
-    },
-    {
-      "name": "secteur_brute",
-      "type": "array"
     }
   ],
   "format": "csv",
