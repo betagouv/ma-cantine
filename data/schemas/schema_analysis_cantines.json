@@ -12,7 +12,7 @@
     {
       "name": "siret",
       "type": "string",
-      "example": "22940028800010",
+      "example": "11007001800012",
       "constraints": {
         "pattern": "^[0-9]{14}$",
         "required": true
