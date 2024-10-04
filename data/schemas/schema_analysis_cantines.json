@@ -7,7 +7,7 @@
     },
     {
       "name": "creation_date",
-      "type": "dater"
+      "type": "date"
     },
     {
       "name": "modification_date",
@@ -15,6 +15,10 @@
     },
     {
       "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "city_insee_code",
       "type": "string"
     },
     {
@@ -46,10 +50,6 @@
       "type": "string"
     },
     {
-      "name": "city_insee_code",
-      "type": "string"
-    },
-    {
       "name": "production_type",
       "type": "string"
     },
@@ -59,7 +59,7 @@
     },
     {
       "name": "region",
-      "type": "string"
+      "type": "integer"
     },
     {
       "name": "region_lib",
