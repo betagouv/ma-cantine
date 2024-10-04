@@ -10,13 +10,13 @@
       "type": "string"
     },
     {
+      "name": "siret",
+      "type": "string",
+      "example": "22940028800010",
       "constraints": {
         "pattern": "^[0-9]{14}$",
         "required": true
-      },
-      "example": "22940028800010",
-      "name": "siret",
-      "type": "string"
+      }
     }
   ],
   "format": "csv",
