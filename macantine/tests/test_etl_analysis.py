@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 from django.test import TestCase
 from freezegun import freeze_time
@@ -5,6 +7,7 @@ from freezegun import freeze_time
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Teledeclaration
 from macantine.etl.analysis import (
+    ETL_ANALYSIS_CANTEEN,
     ETL_ANALYSIS_TD,
     aggregate_col,
     format_sector_column,
@@ -12,8 +15,19 @@ from macantine.etl.analysis import (
 )
 
 
-class TestETLAnalysisCanteens(TestCase):
-    pass
+class TestETLAnalysisCanteen(TestCase):
+
+    def test_transfomed_dataset_match_schema(self):
+        etl = ETL_ANALYSIS_CANTEEN()
+        schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
+        schema_cols = [i["name"] for i in schema["fields"]]
+
+        etl.df = pd.read_csv("macantine/tests/files/valid_canteens.csv", sep=";")
+        etl.transform_dataset()
+        canteens = etl.df
+
+        # Check the schema matching
+        self.assertEqual(len(canteens.columns), len(schema_cols), "The columns should match the schema.")
 
 
 class TestETLAnalysisTD(TestCase):

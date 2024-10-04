@@ -153,33 +153,10 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
 
-        canteens_data = {
-            "0": {
-                "id": 1,
-                "name": "Dimanche regretter.",
-                "siret": None,
-                "city": None,
-                "city_insee_code": "29021",
-                "postal_code": None,
-                "department": None,
-                "region": None,
-                "sectors": None,
-            },
-            "1": {
-                "id": 2,
-                "name": "Jazz",
-                "siret": None,
-                "city": "Dias",
-                "city_insee_code": "29859",
-                "postal_code": None,
-                "department": None,
-                "region": None,
-                "sectors": None,
-            },
-        }
         etl_canteen = ETL_OPEN_DATA_CANTEEN()
-        etl_canteen.df = pd.DataFrame.from_dict(canteens_data, orient="index")
-
+        etl_canteen.df = pd.read_csv(
+            "macantine/tests/files/valid_canteens.csv", sep=";", dtype={"city_insee_code": str}
+        )
         etl_canteen.transform_dataset()
         canteens = etl_canteen.get_dataset()
 
@@ -187,11 +164,11 @@ class TestETLOpenData(TestCase):
         self.assertEqual(len(canteens.columns), len(schema_cols), "The columns should match the schema.")
 
         # Checking that the geo data has been fetched from the city insee code
-        self.assertEqual(canteens[canteens.id == canteens_data["0"]["id"]].iloc[0]["epci"], "242900793")
+        self.assertEqual(canteens[canteens.city_insee_code == "29021"].iloc[0]["epci"], "242900793")
 
         # Check that the names of the region and departments are fetched from the code
         self.assertEqual(
-            canteens[canteens.id == canteens_data["0"]["id"]].iloc[0]["epci_lib"],
+            canteens[canteens.city_insee_code == "29021"].iloc[0]["epci_lib"],
             "CC Communauté Lesneven Côte des Légendes",
         )
 
