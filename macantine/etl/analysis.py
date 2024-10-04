@@ -315,10 +315,16 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
         self.extracted_table_name = "canteens_extracted"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
+        self.columns_mapper = {
+            "id": "id",
+            "name": "nom",
+            "siret": "siret",
+            "creation_date": "date_creation",
+            "modification_date": "date_modification",
+        }
 
     def extract_dataset(self):
-        all_canteens_col = [i["name"] for i in self.schema["fields"]]
-        self.df = utils.fetch_canteens(all_canteens_col)
+        self.df = utils.fetch_canteens(self.columns_mapper.keys())
 
     def transform_dataset(self):
         self.df = self.df.rename(columns=self.columns_mapper)
