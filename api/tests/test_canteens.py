@@ -526,7 +526,7 @@ class TestCanteenApi(APITestCase):
         sirene_mocked_response = {
             "etablissement": {
                 "etablissemmentSiege": True,
-                "uniteLegale": {"denominationUniteLegale": "Unite Legale Name"},
+                "uniteLegale": {"denominationUniteLegale": "Legal unit name"},
                 "adresseEtablissement": {
                     "codeCommuneEtablissement": insee_code,
                     "codePostalEtablissement": postcode,
@@ -556,7 +556,7 @@ class TestCanteenApi(APITestCase):
         response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["name"], "Unite Legale Name")
+        self.assertEqual(body["name"], "Legal unit name")
         self.assertEqual(body["siret"], siret)
         self.assertEqual(body["postalCode"], postcode)
         self.assertEqual(body["city"], city)
@@ -568,7 +568,7 @@ class TestCanteenApi(APITestCase):
             "etablissement": {
                 "etablissementSiege": False,
                 "uniteLegale": {
-                    "denominationUniteLegale": "Unite Legale name. Only use if enseigne1Etabissement non available"
+                    "denominationUniteLegale": "Legal unit name. Only use if enseigne1Etabissement non available"
                 },
                 "adresseEtablissement": {
                     "codeCommuneEtablissement": insee_code,
