@@ -52,15 +52,15 @@ def fetch_geo_data_from_api_insee_sirene_by_siret(canteen_siret, response, token
                 ]
                 return response
             except KeyError as e:
-                logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
+                logger.error(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
         else:
             logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response}")
     except requests.exceptions.HTTPError as e:
-        logger.warning(f"Api sirene: HTTPError\n{e}")
+        logger.error(f"Api sirene: HTTPError\n{e}")
     except requests.exceptions.ConnectionError as e:
-        logger.warning(f"Api sirene: ConnectionError\n{e}")
+        logger.error(f"Api sirene: ConnectionError\n{e}")
     except requests.exceptions.Timeout as e:
-        logger.warning(f"Api sirene: Timeout\n{e}")
+        logger.error(f"Api sirene: Timeout\n{e}")
     except Exception as e:
         logger.error(f"Api sirene: Unexpected exception\n{e}")
     return response
