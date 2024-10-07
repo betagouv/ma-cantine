@@ -12,14 +12,14 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 REGIONS_LIB = {i.label.split(" - ")[1]: i.value for i in Region}
 
 
-def get_etablissement_or_unite_legale_name(siret_response):
+def get_etablishment_or_legal_unit_name(siret_response):
     has_sub_establishment = siret_response["etablissement"].get("etablissementSiege", True)
     if has_sub_establishment:
         if not siret_response["etablissement"]["etablissementSiege"]:
-            periodes_etablissement = siret_response["etablissement"]["periodesEtablissement"]
-            for periode in periodes_etablissement:
-                if not periode["dateFin"]:
-                    return periode["enseigne1Etablissement"]
+            establishment_periods = siret_response["etablissement"]["periodesEtablissement"]
+            for period in establishment_periods:
+                if not period["dateFin"]:
+                    return period["enseigne1Etablissement"]
     return siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
 
 
@@ -40,7 +40,7 @@ def fetch_geo_data_from_api_insee_sirene_by_siret(canteen_siret, response, token
         if siret_response.ok:
             siret_response = siret_response.json()
             try:
-                response["name"] = get_etablissement_or_unite_legale_name(siret_response)
+                response["name"] = get_etablishment_or_legal_unit_name(siret_response)
                 response["cityInseeCode"] = siret_response["etablissement"]["adresseEtablissement"][
                     "codeCommuneEtablissement"
                 ]
