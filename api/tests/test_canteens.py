@@ -567,7 +567,9 @@ class TestCanteenApi(APITestCase):
         sirene_mocked_response = {
             "etablissement": {
                 "etablissementSiege": False,
-                "uniteLegale": {"denominationUniteLegale": "Unite Legale Name"},
+                "uniteLegale": {
+                    "denominationUniteLegale": "Unite Legale name. Only use if enseigne1Etabissement non available"
+                },
                 "adresseEtablissement": {
                     "codeCommuneEtablissement": insee_code,
                     "codePostalEtablissement": postcode,
