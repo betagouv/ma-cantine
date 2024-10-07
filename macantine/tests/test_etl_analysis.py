@@ -27,7 +27,14 @@ class TestETLAnalysisCanteen(TestCase):
         canteens = etl.df
 
         # Check the schema matching
-        self.assertEqual(len(canteens.columns), len(schema_cols), "The columns should match the schema.")
+        self.assertEqual(
+            len(canteens.columns),
+            len(schema_cols),
+            "The columns should match have the same length as the number of elements in the schema.",
+        )
+        self.assertEqual(
+            set(canteens.columns), set(schema_cols), "The columns names should match the schema field names."
+        )
 
 
 class TestETLAnalysisTD(TestCase):
