@@ -13,7 +13,8 @@ REGIONS_LIB = {i.label.split(" - ")[1]: i.value for i in Region}
 
 
 def get_etablissement_or_unite_legale_name(siret_response):
-    if "etablissementSiege" in siret_response["etablissement"].keys():
+    has_sub_establishment = siret_response["etablissement"].get("etablissementSiege", True)
+    if has_sub_establishment:
         if not siret_response["etablissement"]["etablissementSiege"]:
             periodes_etablissement = siret_response["etablissement"]["periodesEtablissement"]
             for periode in periodes_etablissement:
