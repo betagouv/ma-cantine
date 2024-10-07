@@ -13,7 +13,7 @@ import macantine.etl.utils
 from data.models import Canteen
 from macantine.etl import etl
 from macantine.etl.etl import logger
-from macantine.etl.utils import fetch_teledeclarations
+from macantine.etl.utils import fetch_canteens, fetch_teledeclarations
 
 
 class ETL_OPEN_DATA(etl.ETL):
@@ -48,6 +48,22 @@ class ETL_OPEN_DATA(etl.ETL):
 
         logger.info("Start filling geo_name")
         self.fill_geo_names(prefix)
+
+    def extract_dataset(self):
+        all_canteens_col = [i["name"] for i in self.schema["fields"]]
+        self.canteens_col_from_db = all_canteens_col
+        for col_processed in [
+            "active_on_ma_cantine",
+            "department_lib",
+            "region_lib",
+            "epci",
+            "epci_lib",
+            "declaration_donnees_2021",
+            "declaration_donnees_2022",
+            "declaration_donnees_2023_en_cours",
+        ]:
+            self.canteens_col_from_db.remove(col_processed)
+        self.df = fetch_canteens()
 
     def _clean_dataset(self):
         columns = [i["name"].replace("canteen_", "canteen.") for i in self.schema["fields"]]
@@ -183,7 +199,7 @@ class ETL_OPEN_DATA(etl.ETL):
             logger.error(f"Error saving validated data: {e}")
 
 
-class ETL_CANTEEN(ETL_OPEN_DATA):
+class ETL_OPEN_DATA_CANTEEN(ETL_OPEN_DATA):
     def __init__(self):
         super().__init__()
         self.dataset_name = "registre_cantines"
@@ -208,17 +224,10 @@ class ETL_CANTEEN(ETL_OPEN_DATA):
         ]:
             self.canteens_col_from_db.remove(col_processed)
 
+        start = time.time()
         exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
         exclude_filter |= Q(deletion_date__isnull=False)  # Filtering out the deleted canteens
-        start = time.time()
-        self.canteens = Canteen.objects.exclude(exclude_filter)
-
-        if self.canteens.count() == 0:
-            self.df = pd.DataFrame(columns=self.canteens_col_from_db)
-        else:
-            # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
-            self.df = pd.DataFrame(self.canteens.values(*self.canteens_col_from_db))
-
+        self.df = fetch_canteens(self.canteens_col_from_db, exclude_filter)
         end = time.time()
         logger.info(f"Time spent on canteens extraction : {end - start}")
 
@@ -261,7 +270,7 @@ class ETL_CANTEEN(ETL_OPEN_DATA):
         logger.info(f"Time spent on campaign participations : {end - start}")
 
 
-class ETL_TD(ETL_OPEN_DATA):
+class ETL_OPEN_DATA_TD(ETL_OPEN_DATA):
     def __init__(self, year: int):
         super().__init__()
         self.year = year

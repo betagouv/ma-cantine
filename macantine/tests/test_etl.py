@@ -10,12 +10,12 @@ from freezegun import freeze_time
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import Teledeclaration
 from macantine.etl.analysis import (
-    ETL_ANALYSIS,
+    ETL_ANALYSIS_TD,
     aggregate_col,
     format_sector_column,
     get_egalim_hors_bio,
 )
-from macantine.etl.open_data import ETL_CANTEEN, ETL_TD
+from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TD
 from macantine.etl.utils import map_communes_infos, update_datagouv_resources
 
 
@@ -39,7 +39,7 @@ class TestETLAnalysis(TestCase):
             diagnostic_2023 = DiagnosticFactory.create(canteen=canteen, year=2023, diagnostic_type=None)
             td_2023 = Teledeclaration.create_from_diagnostic(diagnostic_2023, applicant)
 
-        etl_stats = ETL_ANALYSIS()
+        etl_stats = ETL_ANALYSIS_TD()
 
         etl_stats.extract_dataset()
         self.assertEqual(
@@ -191,7 +191,7 @@ class TestETLOpenData(TestCase):
         ]
 
         for tc in test_cases:
-            etl_td = ETL_TD(tc["year"])
+            etl_td = ETL_OPEN_DATA_TD(tc["year"])
             diagnostic = DiagnosticFactory.create(canteen=canteen, year=tc["year"], diagnostic_type=None)
             Teledeclaration.create_from_diagnostic(diagnostic, applicant)
             etl_td.extract_dataset()
@@ -206,7 +206,7 @@ class TestETLOpenData(TestCase):
         teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
         teledeclaration.save()
 
-        etl_td = ETL_TD(2022)
+        etl_td = ETL_OPEN_DATA_TD(2022)
         etl_td.extract_dataset()
         self.assertEqual(etl_td.len_dataset(), 0, "The list should be empty as the only td has the CANCELLED status")
 
@@ -260,7 +260,7 @@ class TestETLOpenData(TestCase):
         schema = json.load(open("data/schemas/schema_teledeclaration.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
 
-        etl_td = ETL_TD(2022)
+        etl_td = ETL_OPEN_DATA_TD(2022)
         etl_td.df = pd.DataFrame.from_dict(td, orient="index").T
 
         etl_td.transform_dataset()
@@ -277,7 +277,7 @@ class TestETLOpenData(TestCase):
         )
 
     def test_extraction_canteen(self, mock):
-        etl_canteen = ETL_CANTEEN()
+        etl_canteen = ETL_OPEN_DATA_CANTEEN()
         self.assertEqual(etl_canteen.len_dataset(), 0, "There shoud be an empty dataframe")
 
         # Adding data in the db
@@ -296,7 +296,7 @@ class TestETLOpenData(TestCase):
         self.assertEqual(len(etl_canteen.df.id.unique()), 1, "There should be one canteen less after soft deletion")
 
         canteen_2.hard_delete()
-        etl_canteen = ETL_CANTEEN()
+        etl_canteen = ETL_OPEN_DATA_CANTEEN()
         etl_canteen.extract_dataset()
         self.assertEqual(etl_canteen.len_dataset(), 0, "There should be one canteen less after hard deletion")
 
@@ -339,7 +339,7 @@ class TestETLOpenData(TestCase):
                 "sectors": None,
             },
         }
-        etl_canteen = ETL_CANTEEN()
+        etl_canteen = ETL_OPEN_DATA_CANTEEN()
         etl_canteen.df = pd.DataFrame.from_dict(canteens_data, orient="index")
 
         etl_canteen.transform_dataset()
@@ -375,7 +375,7 @@ class TestETLOpenData(TestCase):
         canteen_2 = CanteenFactory.create()
         canteen_2.managers.clear()
 
-        etl_canteen = ETL_CANTEEN()
+        etl_canteen = ETL_OPEN_DATA_CANTEEN()
         etl_canteen.extract_dataset()
         etl_canteen.transform_dataset()
         canteens = etl_canteen.get_dataset()
@@ -401,7 +401,7 @@ class TestETLOpenData(TestCase):
             text=json.dumps(""),
             status_code=200,
         )
-        etl_canteen = ETL_CANTEEN()
+        etl_canteen = ETL_OPEN_DATA_CANTEEN()
 
         canteen_has_declared_within_campaign = CanteenFactory.create()
         canteen_has_not_declared = CanteenFactory.create()
@@ -436,7 +436,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
 
-        etl_canteen = ETL_CANTEEN()
+        etl_canteen = ETL_OPEN_DATA_CANTEEN()
 
         # Adding data in the db
         canteen = CanteenFactory(sectors=[])
@@ -582,7 +582,7 @@ class TestETLOpenData(TestCase):
                 "expected_length": 1,
             },
         ]
-        etl = ETL_CANTEEN()
+        etl = ETL_OPEN_DATA_CANTEEN()
         etl.dataset_name += "_test"  # Avoid interferring with other files
 
         for tc in test_cases:
