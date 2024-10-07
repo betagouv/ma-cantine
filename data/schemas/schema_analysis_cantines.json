@@ -3,20 +3,66 @@
   "fields": [
     {
       "name": "id",
+      "example": "1143",
       "type": "integer"
     },
     {
-      "name": "name",
+      "name": "nom",
+      "example": "Ecole Jean Jaurès",
       "type": "string"
     },
     {
       "name": "siret",
-      "type": "string",
-      "example": "11007001800012",
       "constraints": {
         "pattern": "^[0-9]{14}$",
         "required": true
-      }
+      },
+      "example": "11007001800012",
+      "type": "string"
+    },
+    {
+      "name": "code_insee_commune",
+      "constraints": {
+        "pattern": "^([013-9]\\d|2[AB1-9])\\d{3}$",
+        "required": false
+      },
+      "description": "Le code INSEE de la commune dans laquelle la cantine se trouve.",
+      "example": "59599",
+      "title": "Code Insee Commune",
+      "type": "string"
+    },
+    {
+      "name": "libelle_commune",
+      "description": "Libellé de la cantine dans laquelle se trouve la cantine",
+      "example": "Tourcoing",
+      "title": "Libellé commune",
+      "type": "string"
+    },
+    {
+      "name": "date_creation",
+      "example": "2024-01-27",
+      "title": "Date création",
+      "type": "date"
+    },
+    {
+      "name": "date_modification",
+      "example": "2024-02-17",
+      "title": "Date modification",
+      "type": "date"
+    },
+    {
+      "name": "nbre_repas_jour",
+      "description": "Nombre de repas servis, en moyenne, par jour dans la cantine",
+      "example": "100",
+      "title": "Nombre de repas par jour",
+      "type": "integer"
+    },
+    {
+      "name": "nbre_repas_an",
+      "description": "Nombre de repas servis, en moyenne, par an dans la cantine",
+      "example": "20000",
+      "title": "Nombre de repas par an",
+      "type": "integer"
     }
   ],
   "format": "csv",
