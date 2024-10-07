@@ -97,36 +97,6 @@
         {{ sectorsText }}
       </p>
       <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown, 'mt-8': true }">
-        <v-col cols="12" md="6">
-          <div class="mb-5">
-            <p class="mb-0">
-              Au total, nous avons
-              <span class="text-h5 font-weight-bold">{{ statistics.canteenCount }}</span>
-              cantine{{ statistics.canteenCount == 1 ? "" : "s" }} sur {{ statsLevelDisplay }}.
-            </p>
-            <p>
-              <span class="text-h5 font-weight-bold">{{ statistics.publishedCanteenCount }}</span>
-              cantine{{
-                statistics.publishedCanteenCount == 1 ? " a publié ses données." : "s ont publié leurs données."
-              }}
-            </p>
-          </div>
-          <GraphComponent
-            v-if="$vuetify.breakpoint.mdAndUp"
-            graphId="published-graph"
-            label="Pourcentage de cantines publiées sur la plateforme"
-            :options="publishedChartOptions"
-            :series="publishedSeries"
-            type="pie"
-            width="62%"
-            height="auto"
-          >
-            <template v-slot:description>
-              <p>{{ publishedPercentage }} % des cantines sont publiées.</p>
-              <p>{{ unpublishedPercentage }} % des cantines ne sont pas publiées.</p>
-            </template>
-          </GraphComponent>
-        </v-col>
         <v-col cols="12" sm="8" md="6" class="pl-0">
           <GraphComponent
             graphId="sector-chart"
@@ -268,7 +238,7 @@ import keyMeasures from "@/data/key-measures.json"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
 import jsonEpcis from "@/epcis.json"
-import { lastYear, normaliseText, sectorsSelectList, capitalise, getObjectDiff, getPercentage } from "@/utils"
+import { lastYear, normaliseText, sectorsSelectList, capitalise, getObjectDiff } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrSelect from "@/components/DsfrSelect"
@@ -300,18 +270,6 @@ export default {
       chosenEpcis: [],
       locationText: null,
       statistics: {},
-      publishedChartOptions: {
-        labels: ["Publiée", "Non publiée"],
-        colors: ["#6a6af4", "#aaa"],
-        dataLabels: {
-          dropShadow: false,
-          style: {
-            colors: ["#000"],
-            fontSize: "14px",
-          },
-          offsetX: 30,
-        },
-      },
       loadedDepartmentIds: [],
       loadedRegionIds: [],
       sectorCategoryChartTitle: [
@@ -343,18 +301,6 @@ export default {
     },
     regions() {
       return this.formatLocations(this.loadedRegionIds, jsonRegions, "region", "régions")
-    },
-    unpublishedCount() {
-      return this.statistics.canteenCount - this.statistics.publishedCanteenCount
-    },
-    publishedSeries() {
-      return [this.statistics.publishedCanteenCount, this.unpublishedCount]
-    },
-    publishedPercentage() {
-      return getPercentage(this.statistics.publishedCanteenCount, this.statistics.canteenCount)
-    },
-    unpublishedPercentage() {
-      return getPercentage(this.unpublishedCount, this.statistics.canteenCount)
     },
     sectors() {
       return this.$store.state.sectors
