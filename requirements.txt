@@ -33,6 +33,7 @@ dill==0.3.8
 distlib==0.3.8
 Django==5.0.8
 django-anymail==10.3
+django-celery-results==2.5.1
 django-ckeditor==6.7.1
 django-debug-toolbar==4.4.6
 django-filter==24.3
