@@ -323,6 +323,8 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
             "city": "libelle_commune",
             "creation_date": "date_creation",
             "modification_date": "date_modification",
+            "daily_meal_count": "nbre_repas_jour",
+            "yearly_meal_count": "nbre_repas_an",
         }
 
     def extract_dataset(self):

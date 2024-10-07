@@ -47,6 +47,20 @@
       "example": "2024-02-17",
       "name": "date_modification",
       "type": "date"
+    },
+    {
+      "description": "Nombre de repas servis, en moyenne, par jour dans la cantine",
+      "example": "100",
+      "name": "nbre_repas_jour",
+      "title": "Nombre de repas par jour",
+      "type": "integer"
+    },
+    {
+      "description": "Nombre de repas servis, en moyenne, par an dans la cantine",
+      "example": "20000",
+      "name": "nbre_repas_an",
+      "title": "Nombre de repas par an",
+      "type": "integer"
     }
   ],
   "format": "csv",
