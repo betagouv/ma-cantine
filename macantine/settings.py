@@ -109,11 +109,16 @@ INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + [
     "web",
     "magicauth",
     "django_filters",
+    "django_celery_results",
     "common",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "simple_history",
 ]
+
+# Storing celery results
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_RESULT_EXTENDED = True
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

@@ -5,7 +5,7 @@ import keyMeasures from "@/data/key-measures.json"
 
 const store = useRootStore()
 
-const logoText = ["Ministère", "de l’Agriculture", "et de la Souveraineté", "Alimentaire"]
+const logoText = ["Ministère", "de l'Agriculture", "de la Souveraineté", "alimentaire et de la Forêt"]
 
 const quickLinks = computed(() => {
   if (!store.loggedUser) {
@@ -44,6 +44,10 @@ const navItems = [
       {
         text: "Acteurs de l'éco-système",
         to: { name: "PartnersHome" },
+      },
+      {
+        text: "Actions anti-gaspi",
+        to: { name: "WasteActionsHome" },
       },
       {
         text: "Générer mon affiche",

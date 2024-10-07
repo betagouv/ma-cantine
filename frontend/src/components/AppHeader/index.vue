@@ -16,11 +16,11 @@
       <v-toolbar-title class="align-self-center outline-focus-within">
         <router-link
           :to="{ name: 'LandingPage' }"
-          class="text-decoration-none d-flex align-center pl-4"
-          aria-label="ma cantine (aller à l'accueil) - Ministère de l'Agriculture et de la Souveraineté Alimentaire"
+          class="text-decoration-none d-flex align-center"
+          aria-label="ma cantine (aller à l'accueil) - Ministère de l'Agriculture, de la Souveraineté alimentaire et de la Forêt"
           :aria-description="chipInfo && `environnement ${chipInfo.text}`"
         >
-          <img src="/static/images/Marianne.png" height="90" alt="" />
+          <img src="/static/images/Marianne.jpg" height="100" alt="" />
           <img v-if="$vuetify.breakpoint.smAndUp" src="/static/images/ma-cantine-logo-light.jpg" height="65" alt="" />
           <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
             {{ chipInfo.text }}
@@ -233,6 +233,10 @@ export default {
             {
               text: "Acteurs de l'éco-système",
               to: { name: "PartnersHome" },
+            },
+            {
+              text: "Actions anti-gaspi",
+              to: { name: "WasteActionsHome" },
             },
             {
               text: "Générer mon affiche",

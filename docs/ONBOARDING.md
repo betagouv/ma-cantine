@@ -253,6 +253,12 @@ Celery est un gestionnaire de tâches asynchrone utilisé par exemple pour l'env
 
 Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit être spéficié dans la console CleverCloud sous la variable `CC_PYTHON_CELERY_MODULE=macantine.celery`. La fonctionnalité Celery Beat doit aussi être activée : `CC_PYTHON_CELERY_USE_BEAT=true`, ainsi que le timezone souhaité : `CELERY_TIMEZONE:'Europe/Paris'`
 
+### En local
+
+1. Démarrer le beat (gère les tâches régulières) celery `celery -A macantine beat --loglevel=INFO`
+1. Démarrer le worker celery `celery -A macantine worker --loglevel=INFO`.
+
+
 ## Visual Studio Code
 
 Des extensions qu'on trouve utile :
