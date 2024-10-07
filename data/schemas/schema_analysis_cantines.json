@@ -2,33 +2,51 @@
   "encoding": "utf-8",
   "fields": [
     {
+      "example": "1143",
       "name": "id",
-      "type": "integer",
-      "example": "1143"
+      "type": "integer"
     },
     {
+      "example": "Ecole Jean Jaurès",
       "name": "nom",
-      "type": "string",
-      "example": "Ecole Jean Jaurès"
+      "type": "string"
     },
     {
-      "name": "siret",
-      "type": "string",
-      "example": "11007001800012",
       "constraints": {
         "pattern": "^[0-9]{14}$",
         "required": true
-      }
+      },
+      "example": "11007001800012",
+      "name": "siret",
+      "type": "string"
     },
     {
+      "constraints": {
+        "pattern": "^([013-9]\\d|2[AB1-9])\\d{3}$",
+        "required": false
+      },
+      "description": "Le code INSEE de la commune dans laquelle la cantine se trouve.",
+      "example": "59599",
+      "name": "code_insee_commune",
+      "title": "Code Insee Commune",
+      "type": "string"
+    },
+    {
+      "description": "Libellé de la cantine dans laquelle se trouve la cantine",
+      "example": "Tourcoing",
+      "name": "libelle_commune",
+      "title": "Libellé commune",
+      "type": "string"
+    },
+    {
+      "example": "2024-01-27",
       "name": "date_creation",
-      "type": "date",
-      "example": "2024-01-27"
+      "type": "date"
     },
     {
+      "example": "2024-02-17",
       "name": "date_modification",
-      "type": "date",
-      "example": "2024-02-17"
+      "type": "date"
     }
   ],
   "format": "csv",

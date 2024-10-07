@@ -319,6 +319,8 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
             "id": "id",
             "name": "nom",
             "siret": "siret",
+            "city_insee_code": "code_insee_commune",
+            "city": "libelle_commune",
             "creation_date": "date_creation",
             "modification_date": "date_modification",
         }
