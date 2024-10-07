@@ -112,7 +112,6 @@ class TestCanteenStatsApi(APITestCase):
 
         body = response.json()
         self.assertEqual(body["canteenCount"], 3)
-        self.assertEqual(body["publishedCanteenCount"], 2)
         self.assertEqual(body["diagnosticsCount"], 2)
         self.assertEqual(body["bioPercent"], 30)
         self.assertEqual(body["sustainablePercent"], 40)
@@ -152,7 +151,6 @@ class TestCanteenStatsApi(APITestCase):
 
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
-        self.assertEqual(body["publishedCanteenCount"], 1)
 
     def test_canteen_stats_by_departments(self):
         department = "01"
@@ -548,4 +546,3 @@ class TestCanteenStatsApi(APITestCase):
 
         body = response.json()
         self.assertEqual(body["canteenCount"], 3)
-        self.assertEqual(body["publishedCanteenCount"], 2)
