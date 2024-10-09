@@ -98,6 +98,13 @@
       </p>
       <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown, 'mt-8': true }">
         <v-col cols="12" sm="8" md="6" class="pl-0">
+          <div class="mb-5">
+            <p class="mb-0">
+              Au total, nous avons
+              <span class="text-h5 font-weight-bold">{{ statistics.canteenCount }}</span>
+              cantine{{ statistics.canteenCount == 1 ? "" : "s" }} sur {{ statsLevelDisplay }}.
+            </p>
+          </div>
           <GraphComponent
             graphId="sector-chart"
             :label="sectorCategoryChartTitle.join(' ')"
