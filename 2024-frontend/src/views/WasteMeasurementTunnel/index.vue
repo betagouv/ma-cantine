@@ -13,8 +13,10 @@ const props = defineProps(["canteenUrlComponent", "id", "étape"])
 const canteenId = props.canteenUrlComponent.split("--")[0] // more globalised way of doing this?
 
 const originalPayload = reactive({})
+let canteen = ref({})
 const dataIsReady = ref(!props.id)
 provide("originalPayload", originalPayload)
+provide("canteen", canteen)
 
 onMounted(() => {
   if (props.id) {
@@ -25,6 +27,7 @@ onMounted(() => {
         dataIsReady.value = true
       })
   }
+  store.fetchCanteen(canteenId).then((response) => (canteen.value = response))
 })
 
 let steps = ref([])

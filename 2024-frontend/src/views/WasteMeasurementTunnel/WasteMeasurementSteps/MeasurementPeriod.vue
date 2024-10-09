@@ -11,6 +11,7 @@ const { required, integer, minValue } = useValidators()
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
 
 const originalPayload = inject("originalPayload")
+const canteen = inject("canteen")
 
 const state = reactive({
   editMealCount: false,
@@ -40,14 +41,10 @@ const daysInPeriod = computed(() => {
 })
 
 const calculateMealCountMaybe = () => {
-  if (datesEntered.value) {
-    payload.mealCount = canteen.dailyMealCount * daysInPeriod.value
+  if (datesEntered.value && canteen.value.dailyMealCount) {
+    payload.mealCount = canteen.value.dailyMealCount * daysInPeriod.value
   }
 }
-
-const canteen = reactive({
-  dailyMealCount: 200,
-})
 
 const payload = reactive({})
 
@@ -120,7 +117,7 @@ onMounted(() => {
         </HelpText>
       </div>
     </div>
-    <div class="fr-grid-row fr-grid-row--middle fr-mt-2w">
+    <div class="fr-grid-row fr-grid-row--middle fr-mt-2w" v-if="canteen.dailyMealCount">
       <div class="fr-col-md-6">
         <div class="fr-grid-row fr-grid-row--bottom">
           <div class="fr-mr-2w">
@@ -154,6 +151,31 @@ onMounted(() => {
           </p>
           <p class="fr-mb-0">
             <b>{{ canteen.dailyMealCount }}</b>
+          </p>
+        </HelpText>
+      </div>
+    </div>
+    <div class="fr-grid-row fr-grid-row--middle fr-mt-2w" v-else>
+      <div class="fr-col-md-6">
+        <div class="fr-grid-row fr-grid-row--bottom">
+          <div class="fr-mr-2w">
+            <DsfrInputGroup
+              v-model.number="payload.mealCount"
+              type="number"
+              label="Nombre de couverts sur la période"
+              :hint="`${daysInPeriod || '?'} jours`"
+              label-visible
+              :error-message="formatError(v$.mealCount)"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="fr-col-md-6">
+        <HelpText v-if="datesEntered && canteen.yearlyMealCount">
+          <p class="fr-mb-1w">
+            Pour rappel, votre établissement sert
+            <b>{{ canteen.yearlyMealCount }}</b>
+            repas par an.
           </p>
         </HelpText>
       </div>
