@@ -18,8 +18,6 @@ class ResourceAction(models.Model):
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE, verbose_name="cantine")
 
     is_done = models.BooleanField(null=True, blank=True, verbose_name="mis en place")
-    is_not_relevant = models.BooleanField(null=True, blank=True, verbose_name="pas pertinent")
-    is_favorite = models.BooleanField(default=False, verbose_name="favori")
 
     def save(self, *args, **kwargs):
         self.full_clean()

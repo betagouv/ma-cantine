@@ -11,8 +11,6 @@ class ResourceActionAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "resource",
         "canteen",
         "is_done",
-        "is_not_relevant",
-        "is_favorite",
         "creation_date",
         "modification_date",
     )
