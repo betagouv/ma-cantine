@@ -1,7 +1,8 @@
 <script setup>
-import WasteMeasurementSteps from "./WasteMeasurementSteps/index.vue"
 import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
+import WasteMeasurementSteps from "./WasteMeasurementSteps/index.vue"
+import WasteSummary from "./WasteSummary.vue"
 import { BadRequestError } from "@/utils"
 
 import { useRootStore } from "@/stores/root"
@@ -27,23 +28,31 @@ onMounted(() => {
 })
 
 let steps = ref([])
+let allSteps = ref([]) // steps + synthesis, which we don't want in the stepper count UI
 const stepTitles = computed(() => steps.value.map((s) => s.title))
 const stepIdx = computed(() => {
-  let idx = steps.value.findIndex((s) => s.urlSlug === props.étape)
+  let idx = allSteps.value.findIndex((s) => s.urlSlug === props.étape)
   return idx === -1 ? 0 : idx
 })
 const currentStep = computed(() => stepIdx.value + 1)
-const step = computed(() => steps.value[stepIdx.value] || {})
-const nextStep = computed(() => (stepIdx.value < steps.value.length - 1 ? steps.value[stepIdx.value + 1] : null))
-const previousStep = computed(() => (stepIdx.value > 0 ? steps.value[stepIdx.value - 1] : null))
+const step = computed(() => allSteps.value[stepIdx.value] || {})
+const nextStep = computed(() => (stepIdx.value < allSteps.value.length - 1 ? allSteps.value[stepIdx.value + 1] : null))
+const previousStep = computed(() => (stepIdx.value > 0 ? allSteps.value[stepIdx.value - 1] : null))
 
 const updateSteps = (tunnelSteps) => {
   steps.value = tunnelSteps
+  allSteps.value = tunnelSteps.concat([
+    {
+      isSynthesis: true,
+      urlSlug: "complet",
+      title: "Synthèse",
+    },
+  ])
 }
 
 const continueActionText = computed(() => {
   const onSynthesisView = step.value?.isSynthesis
-  if (onSynthesisView) return "Passer à l'onglet suivant"
+  if (onSynthesisView) return "Terminer"
   const nextIsSynthesis = nextStep.value?.isSynthesis
   if (nextIsSynthesis) return "Voir la synthèse"
   return "Sauvegarder et continuer"
@@ -59,29 +68,29 @@ const formIsValid = () => {
 }
 
 const continueAction = () => {
+  if (step.value.isSynthesis) {
+    router.push({ name: "WasteMeasurements" })
+    return
+  }
   if (!formIsValid()) {
     store.notifyRequiredFieldsError()
     return
   }
   return saveDiagnostic()
     .then((response) => {
-      if (nextStep.value) {
-        const nextRoute = { query: { étape: nextStep.value.urlSlug } }
-        if (!props.id && response.id)
-          nextRoute.params = { id: response.id, canteenUrlComponent: props.canteenUrlComponent }
-        router.push(nextRoute)
-        stepWrapper.value.scrollTop = 0
-        Object.assign(originalPayload, hotPayload)
-      } else {
-        router.push({ name: "WasteMeasurements" })
-      }
+      const nextRoute = { query: { étape: nextStep.value.urlSlug } }
+      if (!props.id && response.id)
+        nextRoute.params = { id: response.id, canteenUrlComponent: props.canteenUrlComponent }
+      router.push(nextRoute)
+      scrollTop()
+      Object.assign(originalPayload, hotPayload)
     })
     .catch(handleServerError)
 }
 
 const navigateBack = () => {
   router.push({ query: { étape: previousStep.value.urlSlug } })
-  stepWrapper.value.scrollTop = 0
+  scrollTop()
 }
 
 const goBack = () => {
@@ -95,6 +104,15 @@ const goBack = () => {
   saveDiagnostic()
     .then(navigateBack)
     .catch(handleServerError)
+}
+
+const goToFirstStep = () => {
+  router.push({ query: { étape: steps.value[0].urlSlug } })
+  scrollTop()
+}
+
+const scrollTop = () => {
+  if (stepWrapper.value) stepWrapper.value.scrollTop = 0
 }
 
 const saveAndQuit = () => {
@@ -163,9 +181,14 @@ watch(props, () => {
           />
         </div>
       </div>
-      <DsfrStepper :steps="stepTitles" :currentStep />
+      <DsfrStepper v-if="!step.isSynthesis" :steps="stepTitles" :currentStep />
     </div>
-    <div class="body" ref="stepWrapper">
+    <div v-if="step.isSynthesis" class="body synthesis">
+      <div class="wrapper fr-container">
+        <WasteSummary v-if="dataIsReady" :measurement="originalPayload" />
+      </div>
+    </div>
+    <div v-else class="body" ref="stepWrapper">
       <div class="step fr-container">
         <div class="fr-py-1w">
           <WasteMeasurementSteps
@@ -177,12 +200,10 @@ watch(props, () => {
           />
         </div>
       </div>
-      <!-- Synthesis: content to go here. General styling to be applied too. -->
     </div>
     <div class="footer">
       <div class="content fr-container fr-grid-row fr-grid-row--right fr-p-2w fr-pr-8w">
-        <!-- Synthesis: next tunnel name to go here. Check that continueActionText is correctly applied. -->
-        <DsfrButton v-if="step.isSynthesis" label="Modifier" tertiary no-outline />
+        <DsfrButton v-if="step.isSynthesis" label="Modifier" tertiary no-outline @click="goToFirstStep" />
         <DsfrButton
           v-else
           label="Revenir à l'étape précédente"
@@ -216,6 +237,15 @@ watch(props, () => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+.tunnel .synthesis {
+  background: unset;
+}
+.tunnel .synthesis .wrapper {
+  margin-left: auto;
+  margin-right: auto;
+  height: 100%;
+  width: 100%;
 }
 .step {
   max-height: 100%;
