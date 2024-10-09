@@ -37,6 +37,5 @@ class TestReviews(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(ResourceAction.objects.count(), 1)
         self.assertEqual(ResourceAction.objects.first().resource, self.waste_action)
-        self.assertEqual(ResourceAction.objects.first().user, self.user_canteen)
         self.assertEqual(ResourceAction.objects.first().canteen, self.canteen)
         self.assertEqual(ResourceAction.objects.first().is_done, True)

@@ -11,6 +11,4 @@ class ResourceActionSerializer(serializers.ModelSerializer):
         fields = (
             "canteen_id",
             "is_done",
-            "is_not_interested",
-            "is_favorite",
         )
