@@ -22,6 +22,5 @@ class ResourceActionModelSaveTest(TestCase):
         self.assertRaises(ValidationError, ResourceActionFactory)
         self.assertRaises(ValidationError, ResourceActionFactory, resource=self.waste_action)
         # OK: all required fields passed
-        ResourceActionFactory(resource=self.waste_action, user=self.user)
         ResourceActionFactory(resource=self.waste_action, canteen=self.canteen)
-        ResourceActionFactory(resource=self.waste_action, canteen=self.canteen, user=self.user, is_done=True)
+        ResourceActionFactory(resource=self.waste_action, canteen=self.canteen, is_done=True)

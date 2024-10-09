@@ -10,9 +10,8 @@ class ResourceActionAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     list_display = (
         "resource",
         "canteen",
-        "user",
         "is_done",
-        "is_not_interested",
+        "is_not_relevant",
         "is_favorite",
         "creation_date",
         "modification_date",
