@@ -433,6 +433,7 @@ CSP_DEBUG_DOMAINS = (
     "localhost:*",
     "0.0.0.0:*",
     "127.0.0.1:*",
+    "localhost:8080",
     "www.ssa.gov",  # for a11y testing with ANDI
     "ajax.googleapis.com",  # for a11y testing with ANDI
 )
@@ -458,6 +459,7 @@ CSP_SCRIPT_SRC = (
     "stats.beta.gouv.fr",
     "'unsafe-inline'",
     "client.crisp.chat",
+    "localhost:8080"
 )
 if DEBUG:
     CSP_SCRIPT_SRC += CSP_DEBUG_DOMAINS
