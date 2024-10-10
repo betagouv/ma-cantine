@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 from .canteen import Canteen
 from .wasteaction import WasteAction
@@ -12,6 +13,7 @@ class ResourceAction(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     # resource = only waste_actions for now
     # but we use the term resource to have a consistent API once we regroup resources
