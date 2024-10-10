@@ -1,0 +1,16 @@
+from django.contrib import admin
+
+from data.models import ResourceAction
+
+from .utils import ReadOnlyAdminMixin
+
+
+@admin.register(ResourceAction)
+class ResourceActionAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
+    list_display = (
+        "resource",
+        "canteen",
+        "is_done",
+        "creation_date",
+        "modification_date",
+    )
