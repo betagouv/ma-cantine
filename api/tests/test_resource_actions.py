@@ -16,9 +16,9 @@ class TestResourceActionsApi(APITestCase):
     def setUpTestData(cls):
         cls.waste_action = WasteActionFactory()
         cls.user = UserFactory()
-        cls.user_canteen = UserFactory()
+        cls.user_with_canteen = UserFactory()
         cls.canteen = CanteenFactory()
-        cls.canteen.managers.add(cls.user_canteen)
+        cls.canteen.managers.add(cls.user_with_canteen)
         cls.url = reverse("resource_action_create_or_update", kwargs={"resource_pk": cls.waste_action.id})
 
     def test_create_resource_action(self):
@@ -30,14 +30,14 @@ class TestResourceActionsApi(APITestCase):
         response = self.client.post(self.url, data={"canteen_id": self.canteen.id, "is_done": True})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         # user is authenticated and belongs to the canteen, but canteen_id missing
-        self.client.force_login(user=self.user_canteen)
+        self.client.force_login(user=self.user_with_canteen)
         response = self.client.post(self.url, data={"is_done": True})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # user is authenticated and belongs to the canteen, but canteen_id is wrong
         response = self.client.post(self.url, data={"canteen_id": 999, "is_done": True})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # user is authenticated and belongs to the canteen
-        self.client.force_login(user=self.user_canteen)
+        self.client.force_login(user=self.user_with_canteen)
         response = self.client.post(self.url, data={"canteen_id": self.canteen.id, "is_done": True})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(ResourceAction.objects.count(), 1)
@@ -49,7 +49,7 @@ class TestResourceActionsApi(APITestCase):
         # create an existing ResourceAction
         ResourceActionFactory(resource=self.waste_action, canteen=self.canteen, is_done=True)
         # user is authenticated and belongs to the canteen
-        self.client.force_login(user=self.user_canteen)
+        self.client.force_login(user=self.user_with_canteen)
         response = self.client.post(self.url, data={"canteen_id": self.canteen.id, "is_done": False})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(ResourceAction.objects.count(), 1)
