@@ -3,11 +3,13 @@
   "fields": [
     {
       "name": "id",
-      "type": "integer"
+      "type": "integer",
+      "example": "1143"
     },
     {
-      "name": "name",
-      "type": "string"
+      "name": "nom",
+      "type": "string",
+      "example": "Ecole Jean Jaurès"
     },
     {
       "name": "siret",
@@ -17,6 +19,16 @@
         "pattern": "^[0-9]{14}$",
         "required": true
       }
+    },
+    {
+      "name": "date_creation",
+      "type": "date",
+      "example": "2024-01-27"
+    },
+    {
+      "name": "date_modification",
+      "type": "date",
+      "example": "2024-02-17"
     }
   ],
   "format": "csv",

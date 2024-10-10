@@ -5,7 +5,7 @@ import re
 import numpy as np
 import pandas as pd
 
-from macantine.etl import etl, open_data, utils
+from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
 
 logger = logging.getLogger(__name__)
@@ -224,7 +224,7 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
 
     def extract_dataset(self):
         # Load teledeclarations from prod database into the Data Warehouse
-        self.df = open_data.fetch_teledeclarations(self.years)
+        self.df = utils.fetch_teledeclarations(self.years)
         self.df.index = self.df.id
 
     def transform_dataset(self):
@@ -278,13 +278,7 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
         self.df.columns = self.df.columns.str.replace("applicant.", "")
         self.df.columns = self.df.columns.str.replace("department", "departement")
 
-        # Filter by schema columns names
-        self.match_schema()
-
-    def match_schema(self):
-        columns = [i["name"] for i in self.schema["fields"]]
-        self.df = self.df.loc[:, ~self.df.columns.duplicated()].copy()
-        self.df = self.df[columns]
+        self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
     def compute_miscellaneous_columns(self):
         # Canteen
@@ -321,13 +315,17 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
         self.extracted_table_name = "canteens_extracted"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
+        self.columns_mapper = {
+            "id": "id",
+            "name": "nom",
+            "siret": "siret",
+            "creation_date": "date_creation",
+            "modification_date": "date_modification",
+        }
 
     def extract_dataset(self):
-        all_canteens_col = [i["name"] for i in self.schema["fields"]]
-        self.df = utils.fetch_canteens(all_canteens_col)
+        self.df = utils.fetch_canteens(self.columns_mapper.keys())
 
     def transform_dataset(self):
-        # TMP match_schema() with less columns for smaller PR
-        columns = ["id", "name", "siret"]
-        self.df = self.df.loc[:, ~self.df.columns.duplicated()].copy()
-        self.df = self.df[columns]
+        self.df = self.df.rename(columns=self.columns_mapper)
+        self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
