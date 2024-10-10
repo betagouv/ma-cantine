@@ -11,6 +11,9 @@ services:
   server:
     build:
       context: .
+    volumes:
+      - "./:/app"
+      - "/app/node_modules"
     ports:
       - 8000:8000
     env_file:
