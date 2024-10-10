@@ -19,7 +19,7 @@ def void(*args, **kwargs):
 dotenv.load_dotenv()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "macantine.settings")
 
-app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend=os.getenv("REDIS_URL"), include=["macantine.tasks"])
+app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend="django-db", include=["macantine.tasks"])
 app.worker_hijack_root_logger = False
 
 # At 10:00 on every day from Monday through Friday.
