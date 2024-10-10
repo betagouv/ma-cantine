@@ -62,10 +62,10 @@ class TestWasteActionsDetailApi(APITestCase):
     def setUpTestData(cls):
         cls.waste_action = WasteActionFactory.create()
         cls.user = UserFactory()
-        cls.user_canteen = UserFactory()
+        cls.user_with_canteen = UserFactory()
+        CanteenFactory()
         cls.canteen = CanteenFactory()
-        cls.canteen = CanteenFactory()
-        cls.canteen.managers.add(cls.user_canteen)
+        cls.canteen.managers.add(cls.user_with_canteen)
         cls.resource_action = ResourceActionFactory.create(
             resource=cls.waste_action, canteen=cls.canteen, is_done=True
         )
@@ -82,8 +82,9 @@ class TestWasteActionsDetailApi(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["id"], self.waste_action.id)
         self.assertTrue("actions" in response.data)
+        self.assertEqual(len(response.data["actions"]), 0)
         # logged in user with canteen & resource action
-        self.client.force_login(user=self.user_canteen)
+        self.client.force_login(user=self.user_with_canteen)
         response = self.client.get(reverse("waste_action_detail", kwargs={"pk": self.waste_action.id}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["id"], self.waste_action.id)

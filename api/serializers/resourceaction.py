@@ -20,9 +20,3 @@ class ResourceActionWithCanteenSerializer(ResourceActionSerializer):
 
     class Meta(ResourceActionSerializer.Meta):
         fields = ResourceActionSerializer.Meta.fields + ("canteen",)
-
-    def get_queryset(self):
-        user = self.context["request"].user
-        if user:
-            return self.filter(canteen__in=user.canteens.all())
-        return self.none()

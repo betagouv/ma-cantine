@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.fields import Field
 
 from api.serializers.resourceaction import ResourceActionWithCanteenSerializer
-from data.models import WasteAction
+from data.models import ResourceAction, WasteAction
 
 
 class WagtailImageSerializedField(Field):
@@ -40,3 +40,11 @@ class WasteActionWithActionsSerializer(WasteActionSerializer):
 
     class Meta(WasteActionSerializer.Meta):
         fields = WasteActionSerializer.Meta.fields + ("actions",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        user = kwargs.pop("user", None)
+        if user:
+            self.fields["actions"].queryset = ResourceAction.objects.for_user(user)
+        else:
+            self.fields["actions"].queryset = ResourceAction.objects.none()
