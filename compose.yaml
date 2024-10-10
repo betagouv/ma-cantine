@@ -13,7 +13,7 @@ services:
       context: .
     ports:
       - 8000:8000
-    env_file: 
+    env_file:
       - ".env"
     depends_on:
       db:
@@ -22,14 +22,12 @@ services:
     image: postgres
     restart: always
     user: postgres
-    secrets:
-      - db-password
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=ma-cantine
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-      - PGPORT=3306
+      POSTGRES_DB: ma-cantine
+      PGPORT: 3306
+      POSTGRES_PASSWORD: password
     ports:
       - 3306:3306
     healthcheck:
@@ -40,7 +38,3 @@ services:
 volumes:
   # it's normal that this is empty, it simply defines the existance of persistent storage
   db-data:
-secrets:
-  db-password:
-    file: secrets/db/password.txt
-
