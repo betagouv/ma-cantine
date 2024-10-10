@@ -15,8 +15,12 @@ class ResourceAction(models.Model):
 
     # resource = only waste_actions for now
     # but we use the term resource to have a consistent API once we regroup resources
-    resource = models.ForeignKey(WasteAction, on_delete=models.CASCADE, verbose_name="ressource")
-    canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE, verbose_name="cantine")
+    resource = models.ForeignKey(
+        WasteAction, related_name="actions", on_delete=models.CASCADE, verbose_name="ressource"
+    )
+    canteen = models.ForeignKey(
+        Canteen, related_name="resource_actions", on_delete=models.CASCADE, verbose_name="cantine"
+    )
 
     is_done = models.BooleanField(null=True, blank=True, verbose_name="mis en place")
 
