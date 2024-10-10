@@ -256,7 +256,9 @@ urlpatterns = {
     path("territoryCanteens/", TerritoryCanteensListView.as_view(), name="territory_canteens"),
     path("wasteActions/", WasteActionsView.as_view(), name="waste_actions_list"),
     path("wasteActions/<int:pk>", WasteActionView.as_view(), name="waste_action_detail"),
-    path("wasteActions/<int:resource_pk>/actions", ResourceActionView.as_view(), name="resource_action_create"),
+    path(
+        "wasteActions/<int:resource_pk>/actions", ResourceActionView.as_view(), name="resource_action_create_or_update"
+    ),
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)

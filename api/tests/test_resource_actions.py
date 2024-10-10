@@ -2,11 +2,16 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from data.factories import CanteenFactory, UserFactory, WasteActionFactory
+from data.factories import (
+    CanteenFactory,
+    ResourceActionFactory,
+    UserFactory,
+    WasteActionFactory,
+)
 from data.models import ResourceAction
 
 
-class TestReviews(APITestCase):
+class TestResourceActionsApi(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.waste_action = WasteActionFactory()
@@ -14,7 +19,7 @@ class TestReviews(APITestCase):
         cls.user_canteen = UserFactory()
         cls.canteen = CanteenFactory()
         cls.canteen.managers.add(cls.user_canteen)
-        cls.url = reverse("resource_action_create", kwargs={"resource_pk": cls.waste_action.id})
+        cls.url = reverse("resource_action_create_or_update", kwargs={"resource_pk": cls.waste_action.id})
 
     def test_create_resource_action(self):
         # user is not authenticated
@@ -39,3 +44,15 @@ class TestReviews(APITestCase):
         self.assertEqual(ResourceAction.objects.first().resource, self.waste_action)
         self.assertEqual(ResourceAction.objects.first().canteen, self.canteen)
         self.assertEqual(ResourceAction.objects.first().is_done, True)
+
+    def test_update_resource_action(self):
+        # create an existing ResourceAction
+        ResourceActionFactory(resource=self.waste_action, canteen=self.canteen, is_done=True)
+        # user is authenticated and belongs to the canteen
+        self.client.force_login(user=self.user_canteen)
+        response = self.client.post(self.url, data={"canteen_id": self.canteen.id, "is_done": False})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(ResourceAction.objects.count(), 1)
+        self.assertEqual(ResourceAction.objects.first().resource, self.waste_action)
+        self.assertEqual(ResourceAction.objects.first().canteen, self.canteen)
+        self.assertEqual(ResourceAction.objects.first().is_done, False)
