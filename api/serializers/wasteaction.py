@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import Field
 
+from api.serializers.resourceaction import ResourceActionWithCanteenSerializer
 from data.models import WasteAction
 
 
@@ -32,3 +33,10 @@ class WasteActionSerializer(serializers.ModelSerializer):
             "waste_origins",
             "lead_image",
         )
+
+
+class WasteActionWithActionsSerializer(WasteActionSerializer):
+    actions = ResourceActionWithCanteenSerializer(many=True, read_only=True)
+
+    class Meta(WasteActionSerializer.Meta):
+        fields = WasteActionSerializer.Meta.fields + ("actions",)
