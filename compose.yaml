@@ -9,8 +9,7 @@
 # https://github.com/docker/awesome-compose
 services:
   server:
-    build:
-      context: .
+    build: .
     volumes:
       - "./:/app"
       - "/app/node_modules"
@@ -21,6 +20,13 @@ services:
     depends_on:
       db:
         condition: service_healthy
+  frontend:
+    build:
+      context: 'frontend'
+    image: ma-cantine-front
+    volumes:
+      - "./frontend/:/app"
+      - "/app/node_modules"
   db:
     image: postgres
     restart: always
