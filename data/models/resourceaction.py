@@ -6,6 +6,7 @@ from .wasteaction import WasteAction
 
 class ResourceAction(models.Model):
     class Meta:
+        unique_together = ("resource", "canteen")
         verbose_name = "ressource : action (cantine)"
         verbose_name_plural = "ressources : actions (cantines)"
 
