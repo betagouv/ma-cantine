@@ -427,13 +427,12 @@ CSV_PURCHASE_CHUNK_LINES = 10000
 
 # CSP headers (https://content-security-policy.com/)
 
-# CSP Debug domains -  unsfae-eval needed in DEBUG for hot-reload of the frontend server
+# CSP Debug domains -  unsafe-eval needed in DEBUG for hot-reload of the frontend server
 CSP_DEBUG_DOMAINS = (
     "'unsafe-eval'",
     "localhost:*",
     "0.0.0.0:*",
     "127.0.0.1:*",
-    "localhost:8080",
     "www.ssa.gov",  # for a11y testing with ANDI
     "ajax.googleapis.com",  # for a11y testing with ANDI
 )
