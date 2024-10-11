@@ -36,15 +36,16 @@ class WasteActionSerializer(serializers.ModelSerializer):
 
 
 class WasteActionWithActionsSerializer(WasteActionSerializer):
-    actions = ResourceActionWithCanteenSerializer(many=True, read_only=True)
+    actions = serializers.SerializerMethodField()
 
     class Meta(WasteActionSerializer.Meta):
         fields = WasteActionSerializer.Meta.fields + ("actions",)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        user = kwargs.pop("user", None)
-        if user:
-            self.fields["actions"].queryset = ResourceAction.objects.for_user(user)
-        else:
-            self.fields["actions"].queryset = ResourceAction.objects.none()
+    def get_actions(self, obj):
+        """Only return actions for authenticated users + related to their canteens."""
+        actions = ResourceAction.objects.none()
+        user = self.context["request"].user
+        if user.is_authenticated:
+            actions = ResourceAction.objects.filter(resource=obj).for_user(user)
+        serializer = ResourceActionWithCanteenSerializer(instance=actions, many=True)
+        return serializer.data

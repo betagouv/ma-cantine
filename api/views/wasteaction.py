@@ -41,8 +41,7 @@ class WasteActionView(RetrieveAPIView):
     serializer_class = WasteActionSerializer
 
     def get_serializer(self, *args, **kwargs):
+        kwargs.setdefault("context", self.get_serializer_context())
         if self.request.user.is_authenticated:
-            kwargs["context"] = self.get_serializer_context()
-            kwargs["context"]["user"] = self.request.user
             return WasteActionWithActionsSerializer(*args, **kwargs)
         return super().get_serializer(*args, **kwargs)
