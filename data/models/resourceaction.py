@@ -6,7 +6,7 @@ from .wasteaction import WasteAction
 
 
 class ResourceActionQuerySet(models.QuerySet):
-    def for_user(self, user):
+    def for_user_canteens(self, user):
         return self.filter(canteen__in=user.canteens.all())
 
 

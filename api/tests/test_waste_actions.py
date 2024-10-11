@@ -65,7 +65,6 @@ class TestWasteActionsDetailApi(APITestCase):
         cls.user_with_canteen = UserFactory()
         CanteenFactory()
         cls.canteen = CanteenFactory(managers=[cls.user_with_canteen])
-        # cls.canteen.managers.add(cls.user_with_canteen)
         cls.resource_action = ResourceActionFactory.create(
             resource=cls.waste_action, canteen=cls.canteen, is_done=True
         )

@@ -46,6 +46,6 @@ class WasteActionWithActionsSerializer(WasteActionSerializer):
         actions = ResourceAction.objects.none()
         user = self.context["request"].user
         if user.is_authenticated:
-            actions = ResourceAction.objects.filter(resource=obj).for_user(user)
+            actions = ResourceAction.objects.filter(resource=obj).for_user_canteens(user)
         serializer = ResourceActionWithCanteenSerializer(instance=actions, many=True)
         return serializer.data
