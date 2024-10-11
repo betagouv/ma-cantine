@@ -306,7 +306,7 @@ WEBPACK_LOADER = {
     "DEFAULT": {
         "CACHE": DEBUG,
         "BUNDLE_DIR_NAME": "/bundles/",
-        "STATS_FILE": os.path.join(FRONTEND_DIR, "webpack-stats.json"),
+        "STATS_FILE": os.path.join(FRONTEND_DIR, "dist/webpack-stats.json"),
     }
 }
 
