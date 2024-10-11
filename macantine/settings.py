@@ -306,7 +306,7 @@ WEBPACK_LOADER = {
     "DEFAULT": {
         "CACHE": DEBUG,
         "BUNDLE_DIR_NAME": "/bundles/",
-        "STATS_FILE": os.path.join(FRONTEND_DIR, "webpack-stats.json"),
+        "STATS_FILE": os.path.join(FRONTEND_DIR, "dist/webpack-stats.json"),
     }
 }
 
@@ -433,6 +433,7 @@ CSP_DEBUG_DOMAINS = (
     "localhost:*",
     "0.0.0.0:*",
     "127.0.0.1:*",
+    "localhost:8080",
     "www.ssa.gov",  # for a11y testing with ANDI
     "ajax.googleapis.com",  # for a11y testing with ANDI
 )
