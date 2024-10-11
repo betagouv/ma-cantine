@@ -1,13 +1,9 @@
+
 FROM node:lts-slim
 
-# the below env variable is sadly required because of some hashing
-# functions that have disappeared in OpenSSL and Node wants them: see
+# the following NODE_OPTIONS are required because:
 #
-# https://stackoverflow.com/questions/69692842/error-message-error0308010cdigital-envelope-routinesunsupported
-#
-# for a list of vague reasons and fixes. Ideally the dependencies
-# would be upgraded (Webpack is the one causing the error) but this is
-# legacy stuff so it will hopefully disappear of its own.
+# https://github.com/django-webpack/webpack-bundle-tracker/tree/master?tab=readme-ov-file#compatibility
 
 ENV NODE_OPTIONS=--openssl-legacy-provider
 
