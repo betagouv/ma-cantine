@@ -29,6 +29,15 @@ services:
       - "/app/node_modules"
     ports:
       - 8080:8080
+  2024-frontend:
+    build:
+      context: ./
+      dockerfile: 2024-frontend/Dockerfile
+    image: ma-cantine-2024-front
+    ports:
+      - 5173:5173
+    env_file:
+      - ".env.local"
   db:
     image: postgres
     restart: always

@@ -35,7 +35,7 @@ RUN adduser \
 # we need to install git
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y git libpq-dev gcc
+    apt-get install -y git libpq-dev gcc npm
 
 # i had a problem accessing github.com. When I followed https://docs.docker.com/desktop/get-started/#credentials-management-for-linux-users
 # and restarted the problem was resolved

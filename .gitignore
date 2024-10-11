@@ -180,7 +180,6 @@ notes/
 
 # 2024 Frontend
 .vite/
-.hotfile
 
 # experimental docker setup
 secrets/
