@@ -97,7 +97,7 @@
         {{ sectorsText }}
       </p>
       <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown, 'mt-8': true }">
-        <v-col cols="12" sm="8" md="6" class="pl-0">
+        <v-col cols="12" sm="8" md="6">
           <div class="mb-5">
             <p class="mb-0">
               Au total, nous avons
