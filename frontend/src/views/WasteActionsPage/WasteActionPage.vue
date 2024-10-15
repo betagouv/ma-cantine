@@ -31,8 +31,20 @@
           <p class="mt-12">{{ wasteAction.subtitle }}</p>
           <p v-html="wasteAction.description" class="mt-9"></p>
         </v-col>
-        <v-col cols="12" v-bind:class="{ 'mt-7': $vuetify.breakpoint.smAndUp }" sm="2">
+        <v-col v-if="loggedUser" cols="12" class="d-flex flex-column align-start mt-8" sm="2">
           <!-- Implement action buttons -->
+          <p class="mb-2">Mis en place</p>
+          <DsfrTagGroup
+            v-if="hasActionsDone"
+            :tags="actionsDone"
+            :closeable="false"
+            :small="true"
+            :clickable="false"
+            class="justify-end"
+          />
+          <p v-else class="text-left">
+            <i>Aucune cantine</i>
+          </p>
         </v-col>
       </v-row>
       <v-row class="mt-9">
@@ -67,7 +79,11 @@ export default {
       if (wasteAction) document.title = `${this.wasteAction.title} - ${this.$store.state.pageTitleSuffix}`
     },
     fetchWasteAction() {
-      return fetch(`/api/v1/wasteActions/${this.id}`)
+      const headers = {
+        "X-CSRFToken": window.CSRF_TOKEN || "",
+        "Content-Type": "application/json",
+      }
+      return fetch(`/api/v1/wasteActions/${this.id}`, { headers })
         .then((response) => {
           if (response.status !== 200) throw new Error()
           response.json().then((x) => this.setWasteAction(x))
@@ -83,6 +99,9 @@ export default {
     },
   },
   computed: {
+    loggedUser() {
+      return this.$store.state.loggedUser
+    },
     effort() {
       return (
         Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort) || {
@@ -101,6 +120,18 @@ export default {
           icon: wasteOrigin?.icon,
         }
       })
+    },
+    hasActionsDone() {
+      return this.wasteAction?.actions?.filter((action) => action.isDone).length > 0
+    },
+    actionsDone() {
+      return this.wasteAction.actions
+        .filter((action) => action.isDone)
+        .map((action) => {
+          return {
+            text: action.canteen.name,
+          }
+        })
     },
   },
   mounted() {
