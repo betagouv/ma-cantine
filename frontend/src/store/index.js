@@ -246,6 +246,17 @@ export default new Vuex.Store({
         })
     },
 
+    /**
+     * payload: { canteen_id: int, is_done: boolean }
+     */
+    createOrUpdateResourceAction(context, { resourceId, payload }) {
+      return fetch(`/api/v1/wasteActions/${resourceId}/actions`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      }).then(verifyResponse)
+    },
+
     fetchInitialData(context) {
       context.commit("SET_USER_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
