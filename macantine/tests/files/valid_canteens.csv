@@ -1,3 +1,3 @@
-id;name;siret;city;city_insee_code;postal_code;department;region;sectors;creation_date;modification_date;daily_meal_count;yearly_meal_count
-1;Cantine avec toutes les données;11007001800012;Paris;75105;75005;75;11;;2024-01-27;2024-01-31;10;3600
-2;Jazz;;Lesneven;29021;;;;;;;;
+id;name;siret;city;city_insee_code;postal_code;department;region;sectors;creation_date;modification_date;daily_meal_count;yearly_meal_count;economic_model;management_type;production_type
+1;Cantine avec toutes les données;11007001800012;Paris;75105;75005;75;11;;2024-01-27;2024-01-31;10;3600;public;direct;site
+2;Jazz;;Lesneven;29021;;;;;;;;;;;

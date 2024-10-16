@@ -2,67 +2,116 @@
   "encoding": "utf-8",
   "fields": [
     {
-      "name": "id",
       "example": "1143",
+      "name": "id",
       "type": "integer"
     },
     {
-      "name": "nom",
       "example": "Ecole Jean Jaurès",
+      "name": "nom",
       "type": "string"
     },
     {
-      "name": "siret",
       "constraints": {
         "pattern": "^[0-9]{14}$",
         "required": true
       },
       "example": "11007001800012",
+      "name": "siret",
       "type": "string"
     },
     {
-      "name": "code_insee_commune",
       "constraints": {
         "pattern": "^([013-9]\\d|2[AB1-9])\\d{3}$",
         "required": false
       },
       "description": "Le code INSEE de la commune dans laquelle la cantine se trouve.",
-      "example": "59599",
+      "example": "751005",
+      "name": "code_insee_commune",
       "title": "Code Insee Commune",
       "type": "string"
     },
     {
-      "name": "libelle_commune",
       "description": "Libellé de la cantine dans laquelle se trouve la cantine",
-      "example": "Tourcoing",
+      "example": "Paris",
+      "name": "libelle_commune",
       "title": "Libellé commune",
       "type": "string"
     },
     {
-      "name": "date_creation",
+      "description": "Code Insee du département dans lequel se trouve la cantine",
+      "example": "75",
+      "name": "departement",
+      "title": "Code Département",
+      "type": "string"
+    },
+    {
+      "description": "Libellé du département dans lequel se trouve la cantine",
+      "example": "Paris",
+      "name": "departement_lib",
+      "title": "Département Libellé",
+      "type": "string"
+    },
+    {
+      "description": "Code Insee de la région dans lequel se trouve la cantine",
+      "example": "11",
+      "name": "region",
+      "title": "Code Région",
+      "type": "string"
+    },
+    {
+      "description": "Libellé de la région dans lequel se trouve la cantine",
+      "example": "Île-de-France",
+      "name": "region_lib",
+      "title": "Région libellé",
+      "type": "string"
+    },
+    {
       "example": "2024-01-27",
+      "name": "date_creation",
       "title": "Date création",
       "type": "date"
     },
     {
-      "name": "date_modification",
       "example": "2024-02-17",
+      "name": "date_modification",
       "title": "Date modification",
       "type": "date"
     },
     {
-      "name": "nbre_repas_jour",
       "description": "Nombre de repas servis, en moyenne, par jour dans la cantine",
       "example": "100",
+      "name": "nbre_repas_jour",
       "title": "Nombre de repas par jour",
       "type": "integer"
     },
     {
-      "name": "nbre_repas_an",
       "description": "Nombre de repas servis, en moyenne, par an dans la cantine",
       "example": "20000",
+      "name": "nbre_repas_an",
       "title": "Nombre de repas par an",
       "type": "integer"
+    },
+    {
+      "description": "Modèle économique de la cantine. Il existe 2 types différents : public (cantine publique), private (cantine privée).",
+      "example": "public",
+      "name": "modele_economique",
+      "title": "Modèle Economique",
+      "type": "string"
+    },
+    {
+      "description": "Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée. Si la valeur est 'concédée', la délégation peut être totale ou partielle",
+      "example": "conceded",
+      "name": "type_gestion",
+      "title": "Type de Gestion/Management",
+      "type": "string"
+    },
+    {
+      "description": "Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.",
+      "example": "central",
+      "name": "type_production",
+      "title": "Type de Production",
+      "type": "string"
     }
   ],
   "format": "csv",

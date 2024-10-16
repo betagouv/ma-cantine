@@ -308,6 +308,10 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
     * Extract data from prod
     * Run a SQL query using Metabase API to transform the dataset
     * Load the transformed data in a new table within the Data WareHouse
+
+    How to add a new field ? Add it to the corresponding schema : schema_analysis_cantines.json
+    - If it's a extracted field : Add it to the columns_mapper with its translation
+    - If it's a generated field : Add it in the transform_dataset()
     """
 
     def __init__(self):
@@ -315,21 +319,32 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
         self.extracted_table_name = "canteens_extracted"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
+        # The following mapper is used for renaming columns and for selecting the columns to extract from db
         self.columns_mapper = {
             "id": "id",
             "name": "nom",
             "siret": "siret",
             "city_insee_code": "code_insee_commune",
             "city": "libelle_commune",
+            "department": "departement",
+            "region": "region",
             "creation_date": "date_creation",
             "modification_date": "date_modification",
             "daily_meal_count": "nbre_repas_jour",
             "yearly_meal_count": "nbre_repas_an",
+            "economic_model": "modele_economique",
+            "management_type": "type_gestion",
+            "production_type": "type_production",
         }
 
     def extract_dataset(self):
         self.df = utils.fetch_canteens(self.columns_mapper.keys())
 
     def transform_dataset(self):
+
+        logger.info("Filling geo names")
+        self.fill_geo_names()
+        self.columns_mapper["department_lib"] = "departement_lib"
+
         self.df = self.df.rename(columns=self.columns_mapper)
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
