@@ -22,7 +22,9 @@ class TestETLAnalysisCanteen(TestCase):
         schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
 
-        etl.df = pd.read_csv("macantine/tests/files/valid_canteens.csv", sep=";")
+        etl.df = pd.read_csv(
+            "macantine/tests/files/valid_canteens.csv", sep=";", dtype={"department": str, "region": str}
+        )
         etl.transform_dataset()
         canteens = etl.df
 
@@ -35,6 +37,11 @@ class TestETLAnalysisCanteen(TestCase):
         self.assertEqual(
             set(canteens.columns), set(schema_cols), "The columns names should match the schema field names."
         )
+
+        # Check the generated columns
+        first_canteen = canteens.iloc[0]
+        self.assertEqual(first_canteen["departement_lib"], "Paris")
+        self.assertEqual(first_canteen["region_lib"], "Île-de-France")
 
 
 class TestETLAnalysisTD(TestCase):
