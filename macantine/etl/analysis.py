@@ -335,6 +335,8 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
             "economic_model": "modele_economique",
             "management_type": "type_gestion",
             "production_type": "type_production",
+            "satellite_canteens_count": "nombre_satellites",
+            "central_producer_siret": "siret_cuisine_centrale",
         }
 
     def extract_dataset(self):
