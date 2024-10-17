@@ -4,24 +4,25 @@ import pandas as pd
 from django.test import TestCase
 from freezegun import freeze_time
 
-from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import Teledeclaration
 from macantine.etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
     ETL_ANALYSIS_TD,
     aggregate_col,
-    format_sector_column,
     get_egalim_hors_bio,
 )
+from macantine.etl.utils import format_td_sector_column
 
 
 class TestETLAnalysisCanteen(TestCase):
 
-    def test_transfomed_dataset_match_schema(self):
+    def test_transformed_dataset_match_schema(self):
         etl = ETL_ANALYSIS_CANTEEN()
+        SectorFactory.create(id=1, name="Sector factory", category="Category factory")
+
         schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
-
         etl.df = pd.read_csv(
             "macantine/tests/files/valid_canteens.csv", sep=";", dtype={"department": str, "region": str}
         )
@@ -42,6 +43,8 @@ class TestETLAnalysisCanteen(TestCase):
         first_canteen = canteens.iloc[0]
         self.assertEqual(first_canteen["departement_lib"], "Paris")
         self.assertEqual(first_canteen["region_lib"], "Île-de-France")
+        self.assertEqual(first_canteen["secteur"], "Sector factory")
+        self.assertEqual(first_canteen["spe"], False)
 
 
 class TestETLAnalysisTD(TestCase):
@@ -192,7 +195,7 @@ class TestETLAnalysisTD(TestCase):
         }
         df = pd.DataFrame.from_dict(data, orient="index")
         df[["secteur", "categorie"]] = df.apply(
-            lambda x: format_sector_column(x, "canteen.sectors"), axis=1, result_type="expand"
+            lambda x: format_td_sector_column(x, "canteen.sectors"), axis=1, result_type="expand"
         )
         self.assertEqual(df.iloc[0]["secteur"], "Ecole primaire (maternelle et élémentaire)")
         self.assertEqual(df.iloc[0]["categorie"], "education")

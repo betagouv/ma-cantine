@@ -26,3 +26,5 @@ Parmis les transformations apportées, nous :
 
 * traduisons les champs en français (car à destination des équipes métiers)
 * apportons plus d'informations géographiques (libellés des départemets/régions, epci...)
+
+Nous connectons l'outil de dataviz à ce postgres afin de construire nos indicateurs.

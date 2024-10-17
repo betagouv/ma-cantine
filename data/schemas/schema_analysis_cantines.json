@@ -129,6 +129,34 @@
       "name": "siret_cuisine_centrale",
       "title": "SIRET de la cantine centrale",
       "type": "string"
+    },
+    {
+      "description": "Ministère de tutelle de la cantine, s'il y en a un",
+      "example": "Ministère de l'Education Nationale",
+      "name": "ministere_tutelle",
+      "title": "Ministère de tutelle",
+      "type": "string"
+    },
+    {
+      "description": "Secteur d'activité de l'établissement",
+      "example": "Restaurants administratifs des collectivités territoriales",
+      "name": "secteur",
+      "title": "Secteur",
+      "type": "string"
+    },
+    {
+      "description": "Catégorie du secteur d'activité de l'établissement",
+      "example": "Administration",
+      "name": "categorie",
+      "title": "Catégorie",
+      "type": "string"
+    },
+    {
+      "description": "Etablissement concerné par la politique prioritaire du gouvernement sur les services public écoresponsables",
+      "example": "true",
+      "name": "spe",
+      "title": "Service Public Ecoresponsable",
+      "type": "boolean"
     }
   ],
   "format": "csv",

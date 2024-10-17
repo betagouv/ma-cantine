@@ -136,20 +136,6 @@ def get_ratio_egalim_sans_bio(row):
     return utils.get_ratio(row, "value_somme_egalim_hors_bio_ht", "value_total_ht")
 
 
-def format_sector_column(row: pd.Series, sector_col_name: str):
-    """
-    Splitting sectors information into two new columns, one for the sector, one for the category
-    If there are multiple sectors, we
-    """
-    x = row[sector_col_name]
-    if type(x) == list:
-        if len(x) > 1:
-            return "Secteurs multiples", "Catégories multiples"
-        elif len(x) == 1:
-            return x[0]["name"], x[0]["category"]
-    return np.nan, np.nan
-
-
 def check_column_matches_substring(df, sub_categ: str):
     for substring in sub_categ:
         pattern = rf".*{re.escape(substring)}.*"
@@ -260,8 +246,8 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
 
         # Extract the sector names and categories
         logger.info("Canteens : Extract sectors...")
-        self.df[["secteur", "catégorie"]] = self.df["canteen.sectors"].apply(
-            lambda x: format_sector_column(x, "canteen.sectors"), axis=1, result_type="expand"
+        self.df[["secteur", "catégorie"]] = self.df.apply(
+            lambda x: utils.format_td_sector_column(x, "canteen.sectors"), axis=1, result_type="expand"
         )
 
         # Rename columns
@@ -337,16 +323,22 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
             "production_type": "type_production",
             "satellite_canteens_count": "nombre_satellites",
             "central_producer_siret": "siret_cuisine_centrale",
+            "line_ministry": "ministere_tutelle",
+            "sectors": "secteur",
         }
 
     def extract_dataset(self):
         self.df = utils.fetch_canteens(self.columns_mapper.keys())
 
     def transform_dataset(self):
-
         logger.info("Filling geo names")
         self.fill_geo_names()
         self.columns_mapper["department_lib"] = "departement_lib"
+
+        # Extract the sector names and categories
+        logger.info("Canteens : Extract sectors and SPE...")
+        self.df = utils.extract_sectors(self.df, extract_spe=True, split_category_and_sector=True, only_one_value=True)
+        self.df = self.df.rename(columns={"categories": "categorie"})
 
         self.df = self.df.rename(columns=self.columns_mapper)
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
