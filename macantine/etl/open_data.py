@@ -13,7 +13,7 @@ import macantine.etl.utils
 from data.models import Canteen
 from macantine.etl import etl
 from macantine.etl.etl import logger
-from macantine.etl.utils import fetch_canteens, fetch_teledeclarations
+from macantine.etl.utils import extract_sectors, fetch_canteens, fetch_teledeclarations
 
 
 class ETL_OPEN_DATA(etl.ETL):
@@ -82,15 +82,6 @@ class ETL_OPEN_DATA(etl.ETL):
             if col_int["type"] == "float":
                 self.df[col_int["name"]] = self.df[col_int["name"]].round(decimals=4)
         self.df = self.df.replace("<NA>", "")
-
-    def _extract_sectors(self):
-        # Fetching sectors information and aggreting in list in order to have only one row per canteen
-        sectors = macantine.etl.utils.map_sectors()
-        self.df["sectors"] = self.df["sectors"].apply(lambda x: macantine.etl.utils.fetch_sector(x, sectors))
-        canteens_sectors = self.df.groupby("id")["sectors"].apply(list).apply(macantine.etl.utils.format_list_sectors)
-        del self.df["sectors"]
-
-        return self.df.merge(canteens_sectors, on="id")
 
     def get_schema(self):
         return self.schema
@@ -240,7 +231,7 @@ class ETL_OPEN_DATA_CANTEEN(ETL_OPEN_DATA):
         self.df["active_on_ma_cantine"] = self.df["id"].apply(lambda x: x not in non_active_canteens)
 
         logger.info("Canteens : Extract sectors...")
-        self.df = self._extract_sectors()
+        self.df = extract_sectors(self.df, extract_spe=False, split_category_and_sector=False, only_one_value=False)
 
         bucket_url = os.environ.get("CELLAR_HOST")
         bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
@@ -306,7 +297,7 @@ class ETL_OPEN_DATA_TD(ETL_OPEN_DATA):
         sectors = self.df["canteen_sectors"]
         if not sectors.isnull().all():
             sectors = sectors.apply(lambda x: list(map(lambda y: macantine.etl.utils.format_sector(y), x)))
-            sectors = sectors.apply(macantine.etl.utils.format_list_sectors)
+            sectors = sectors.apply(macantine.etl.utils.format_list)
         return sectors
 
     def transform_dataset(self):

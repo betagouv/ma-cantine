@@ -4,30 +4,48 @@ import pandas as pd
 from django.test import TestCase
 from freezegun import freeze_time
 
-from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import Teledeclaration
 from macantine.etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
     ETL_ANALYSIS_TD,
     aggregate_col,
-    format_sector_column,
     get_egalim_hors_bio,
 )
+from macantine.etl.utils import format_td_sector_column
 
 
 class TestETLAnalysisCanteen(TestCase):
 
-    def test_transfomed_dataset_match_schema(self):
+    def test_transformed_dataset_match_schema(self):
         etl = ETL_ANALYSIS_CANTEEN()
+        SectorFactory.create(id=1, name="Sector factory", category="Category factory")
+
         schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
-
-        etl.df = pd.read_csv("macantine/tests/files/valid_canteens.csv", sep=";")
+        canteen_1 = CanteenFactory(
+            name="Cantine", siret="11007001800012", city_insee_code="29021", department="29", region="53", sectors=[1]
+        )
+        etl.extract_dataset()
         etl.transform_dataset()
         canteens = etl.df
 
         # Check the schema matching
-        self.assertEqual(len(canteens.columns), len(schema_cols), "The columns should match the schema.")
+        self.assertEqual(
+            len(canteens.columns),
+            len(schema_cols),
+            "The columns should match have the same length as the number of elements in the schema.",
+        )
+        self.assertEqual(
+            set(canteens.columns), set(schema_cols), "The columns names should match the schema field names."
+        )
+
+        # Check the generated columns
+        first_canteen = canteens[canteens.id == canteen_1.id].iloc[0]
+        self.assertEqual(first_canteen["departement_lib"], "Finistère")
+        self.assertEqual(first_canteen["region_lib"], "Bretagne")
+        self.assertEqual(first_canteen["secteur"], "Sector factory")
+        self.assertEqual(first_canteen["spe"], False)
 
 
 class TestETLAnalysisTD(TestCase):
@@ -178,7 +196,7 @@ class TestETLAnalysisTD(TestCase):
         }
         df = pd.DataFrame.from_dict(data, orient="index")
         df[["secteur", "categorie"]] = df.apply(
-            lambda x: format_sector_column(x, "canteen.sectors"), axis=1, result_type="expand"
+            lambda x: format_td_sector_column(x, "canteen.sectors"), axis=1, result_type="expand"
         )
         self.assertEqual(df.iloc[0]["secteur"], "Ecole primaire (maternelle et élémentaire)")
         self.assertEqual(df.iloc[0]["categorie"], "education")
