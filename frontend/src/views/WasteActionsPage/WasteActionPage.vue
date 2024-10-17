@@ -45,7 +45,7 @@
             <i>Aucune cantine</i>
           </p>
           <br />
-          <v-btn small color="primary" @click="showActionModal">
+          <v-btn small color="primary" @click="showActionDialog">
             <span class="mx-2">
               Modifier
             </span>
@@ -56,11 +56,11 @@
         <BackLink :to="backLink" text="Retour" :primary="true" />
       </v-row>
 
-      <v-dialog v-model="showModal">
+      <v-dialog v-model="actionDialog">
         <v-card class="pa-6">
           <div class="mt-n6 mx-n6 mb-4 pa-4 d-flex" style="background-color: #F5F5F5">
             <v-spacer></v-spacer>
-            <v-btn outlined color="primary" @click="showModal = false">
+            <v-btn outlined color="primary" @click="actionDialog = false">
               Fermer
             </v-btn>
           </div>
@@ -104,7 +104,7 @@ export default {
   data() {
     return {
       wasteAction: null,
-      actionModal: false,
+      actionDialog: false,
       actionFormIsValid: true,
       chosenCanteenIds: [],
       backLink: { name: "WasteActionsHome" },
@@ -147,12 +147,12 @@ export default {
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
-    showActionModal() {
+    showActionDialog() {
       // Get the canteens that have already done the action
       this.chosenCanteenIds = this.userCanteens
         .filter((canteen) => this.actionsDone.find((actionCanteen) => actionCanteen.id === canteen.id))
         .map((canteen) => canteen.id)
-      this.actionModal = true
+      this.actionDialog = true
     },
     saveActionChanges() {
       const actionChanges = []
@@ -167,14 +167,14 @@ export default {
           actionChanges.push(this.createOrUpdateResourceAction(actionCanteen.id, false))
         }
       })
-      // close modal and refresh the wasteAction if needed
+      // close dialog and refresh the wasteAction if needed
       if (actionChanges.length) {
         Promise.all(actionChanges).then(() => {
           this.fetchWasteAction()
-          this.actionModal = false
+          this.actionDialog = false
         })
       } else {
-        this.actionModal = false
+        this.actionDialog = false
       }
     },
   },
@@ -209,14 +209,6 @@ export default {
       return this.wasteAction?.canteenActions
         ?.filter((canteenAction) => canteenAction.isDone)
         .map((canteenAction) => ({ id: canteenAction.canteen.id, text: canteenAction.canteen.name }))
-    },
-    showModal: {
-      get() {
-        return !!this.actionModal
-      },
-      set(newValue) {
-        if (!newValue) this.actionModal = null
-      },
     },
   },
   mounted() {
