@@ -18,7 +18,7 @@
     "@vuelidate/validators": "^2.0.4",
     "@vueuse/core": "^11.1.0",
     "django-vite-plugin": "^4.0.2",
-    "pinia": "^2.2.2",
+    "pinia": "^2.2.4",
     "vue": "^3.5.11",
     "vue-i18n": "^10.0.0",
     "vue-material-design-icons": "^5.3.0",
