@@ -13,6 +13,15 @@ from data.models import Canteen, Sector, Teledeclaration
 
 logger = logging.getLogger(__name__)
 
+# 26 : Administration : Etablissements publics d’Etat (EPA ou EPIC)
+# 24 : Administration : Restaurants des prisons
+# 23 : Administration : Restaurants administratifs d’Etat (RA)
+# 22 : Administration : Restaurants des armées / police / gendarmerie
+# 4 : Administration : Restaurants inter-administratifs d’Etat (RIA)
+# 2 : Education : Supérieur et Universitaire
+SECTEURS_SPE = [26, 24, 23, 22, 4, 2]
+
+
 CAMPAIGN_DATES = {
     2021: {
         "start_date": datetime(2022, 7, 16, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
@@ -137,6 +146,73 @@ def map_canteens_td(year):
     return participation
 
 
+def format_td_sector_column(row: pd.Series, sector_col_name: str):
+    """
+    Splitting sectors information into two new columns, one for the sector, one for the category
+    If there are multiple sectors, we
+    """
+    x = row[sector_col_name]
+    if type(x) == list:
+        if len(x) > 1:
+            return "Secteurs multiples", "Catégories multiples"
+        elif len(x) == 1:
+            return x[0]["name"], x[0]["category"]
+    return np.nan, np.nan
+
+
+def extract_sectors(
+    df: pd.DataFrame, extract_spe: bool, split_category_and_sector: bool, only_one_value: bool
+) -> pd.DataFrame:
+    """
+    This function processes the 'sectors' data in the input DataFrame by:
+    1. Mapping each sector to its corresponding value.
+    2. Aggregating sectors per canteen (one row per canteen).
+    3. Merging the aggregated sector information back into the original DataFrame.
+
+    Args:
+    - df (pd.DataFrame): The input DataFrame that contains canteen data, including a 'sectors' column.
+    - extract_spe (boolean): Add the 'spe' column that indicates if the canteen is part of Secteur Public Ecoresponsable
+    - split_category_and_sector (boolean):
+    - only_one_value (boolean):
+
+    Returns:
+    - pd.DataFrame: The updated DataFrame with the sectors aggregated per canteen.
+    """
+
+    sector_mapping = map_sectors()
+    if extract_spe:
+        df["spe"] = df["sectors"].apply(lambda x: True if x in SECTEURS_SPE else False)
+        aggregated_sectors_spe = df.groupby("id")["spe"].max()
+        df = df.drop(columns=["spe"])
+        df = df.merge(aggregated_sectors_spe, on="id")
+
+    if split_category_and_sector:
+        df["categories"] = df["sectors"].apply(lambda sector: fetch_category(sector, sector_mapping))
+        if only_one_value:
+            aggregated_categories = (
+                df.groupby("id")["categories"]
+                .apply(list)
+                .apply(lambda x: format_list_to_single_value(x, "Catégories"))
+            )
+        else:
+            aggregated_categories = df.groupby("id")["categories"].apply(list).apply(format_list)
+        df = df.drop(columns=["categories"])
+        df = df.merge(aggregated_categories, on="id")
+
+    df["sectors"] = df["sectors"].apply(lambda sector: fetch_sector(sector, sector_mapping))
+    if only_one_value:
+        aggregated_sectors = (
+            df.groupby("id")["sectors"].apply(list).apply(lambda x: format_list_to_single_value(x, "Secteurs"))
+        )
+    else:
+        aggregated_sectors = df.groupby("id")["sectors"].apply(list).apply(format_list)
+
+    df = df.drop(columns=["sectors"])
+    df = df.merge(aggregated_sectors, on="id")
+
+    return df
+
+
 def map_sectors():
     """
     Populate the details of a sector, given its id
@@ -217,17 +293,39 @@ def format_sector(sector: dict) -> str:
     return f'""{sector["name"]}""'
 
 
-def format_list_sectors(sectors) -> str:
+def format_category(sector: dict) -> str:
+    return f'""{sector["category"]}""'
+
+
+def format_list(sectors) -> str:
     return f'"[{", ".join(sectors)}]"'
 
 
+def format_list_to_single_value(values, col_name) -> str:
+    """
+    Splitting sectors information into two new columns, one for the sector, one for the category
+    If there are multiple sectors, we
+    """
+    if type(values) == list:
+        if len(values) > 1:
+            return f"{col_name} multiples"
+        elif len(values) == 1:
+            return values[0].replace('"', "")
+    return np.nan
+
+
 def fetch_sector(sector_id, sectors):
-    """
-    Provide EPCI code for a city, given the insee code of the city
-    """
     if sector_id and sector_id in sectors.keys():
         sector = sectors[sector_id]
         return format_sector(sector)
+    else:
+        return ""
+
+
+def fetch_category(sector_id, sectors):
+    if sector_id and sector_id in sectors.keys():
+        sector = sectors[sector_id]
+        return format_category(sector)
     else:
         return ""
 

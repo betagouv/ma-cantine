@@ -154,9 +154,11 @@ class TestETLOpenData(TestCase):
         )
 
         etl_canteen = ETL_OPEN_DATA_CANTEEN()
-        etl_canteen.df = pd.read_csv(
-            "macantine/tests/files/valid_canteens.csv", sep=";", dtype={"city_insee_code": str}
+        canteen_1 = CanteenFactory(
+            name="Cantine", siret="11007001800012", city_insee_code="29021", department="75", region="11"
         )
+
+        etl_canteen.extract_dataset()
         etl_canteen.transform_dataset()
         canteens = etl_canteen.get_dataset()
 
@@ -164,11 +166,11 @@ class TestETLOpenData(TestCase):
         self.assertEqual(len(canteens.columns), len(schema_cols), "The columns should match the schema.")
 
         # Checking that the geo data has been fetched from the city insee code
-        self.assertEqual(canteens[canteens.city_insee_code == "29021"].iloc[0]["epci"], "242900793")
+        self.assertEqual(canteens[canteens.id == canteen_1.id]["epci"][0], "242900793")
 
         # Check that the names of the region and departments are fetched from the code
         self.assertEqual(
-            canteens[canteens.city_insee_code == "29021"].iloc[0]["epci_lib"],
+            canteens[canteens.id == canteen_1.id]["epci_lib"][0],
             "CC Communauté Lesneven Côte des Légendes",
         )
 
