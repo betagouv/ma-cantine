@@ -23,9 +23,10 @@ class TestETLAnalysisCanteen(TestCase):
 
         schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
-        etl.df = pd.read_csv(
-            "macantine/tests/files/valid_canteens.csv", sep=";", dtype={"department": str, "region": str}
+        canteen_1 = CanteenFactory(
+            name="Cantine", siret="11007001800012", city_insee_code="29021", department="29", region="53", sectors=[1]
         )
+        etl.extract_dataset()
         etl.transform_dataset()
         canteens = etl.df
 
@@ -40,9 +41,9 @@ class TestETLAnalysisCanteen(TestCase):
         )
 
         # Check the generated columns
-        first_canteen = canteens.iloc[0]
-        self.assertEqual(first_canteen["departement_lib"], "Paris")
-        self.assertEqual(first_canteen["region_lib"], "Île-de-France")
+        first_canteen = canteens[canteens.id == canteen_1.id].iloc[0]
+        self.assertEqual(first_canteen["departement_lib"], "Finistère")
+        self.assertEqual(first_canteen["region_lib"], "Bretagne")
         self.assertEqual(first_canteen["secteur"], "Sector factory")
         self.assertEqual(first_canteen["spe"], False)
 
