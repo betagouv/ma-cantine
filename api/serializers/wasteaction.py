@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import Field
 
-from api.serializers.resourceaction import ResourceActionWithCanteenSerializer
+from api.serializers.resourceaction import ResourceActionFullSerializer
 from data.models import ResourceAction, WasteAction
 
 
@@ -47,5 +47,5 @@ class WasteActionWithActionsSerializer(WasteActionSerializer):
         user = self.context["request"].user
         if user.is_authenticated:
             actions = ResourceAction.objects.filter(resource=obj).for_user_canteens(user)
-        serializer = ResourceActionWithCanteenSerializer(instance=actions, many=True)
+        serializer = ResourceActionFullSerializer(instance=actions, many=True)
         return serializer.data
