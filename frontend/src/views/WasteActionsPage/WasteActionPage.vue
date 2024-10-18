@@ -58,7 +58,7 @@
         v-model="actionDialog"
         :resourceId="id"
         :userCanteens="userCanteens"
-        :actionsDone="actionsDone"
+        :actionCanteensDone="actionCanteensDone"
         @close="closeActionDialog($event)"
       />
     </div>
@@ -71,6 +71,7 @@ import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrTag from "@/components/DsfrTag"
 import ResourceActionDialog from "@/components/ResourceActionDialog"
 import Constants from "@/constants"
+import { normaliseText } from "@/utils"
 
 export default {
   components: { BreadcrumbsNav, BackLink, DsfrTagGroup, DsfrTag, ResourceActionDialog },
@@ -124,7 +125,10 @@ export default {
     },
     userCanteens() {
       if (!this.loggedUser) return []
-      return this.$store.state.userCanteenPreviews
+      const canteens = this.$store.state.userCanteenPreviews
+      return canteens.sort((a, b) => {
+        return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
+      })
     },
     effort() {
       return (
