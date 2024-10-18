@@ -32,24 +32,36 @@
           <p v-html="wasteAction.description" class="mt-9"></p>
         </v-col>
         <v-col v-if="loggedUser" cols="12" class="d-flex flex-column align-start mt-8" sm="2">
-          <!-- Implement action buttons -->
           <p class="mb-2">Mis en place</p>
           <DsfrTagGroup
-            v-if="hasActionsDone"
-            :tags="actionsDone"
+            v-if="actionCanteensDone.length"
+            :tags="actionCanteensDoneTags"
             :closeable="false"
             :small="true"
             :clickable="false"
-            class="justify-end"
+            class="justify-start"
           />
           <p v-else class="text-left">
             <i>Aucune cantine</i>
           </p>
+          <br />
+          <v-btn small color="primary" @click="showActionDialog">
+            <span class="mx-2">
+              Modifier
+            </span>
+          </v-btn>
         </v-col>
       </v-row>
       <v-row class="mt-9">
         <BackLink :to="backLink" text="Retour" :primary="true" />
       </v-row>
+      <ResourceActionDialog
+        v-model="actionDialog"
+        :resourceId="id"
+        :userCanteens="userCanteens"
+        :actionCanteensDone="actionCanteensDone"
+        @close="closeActionDialog($event)"
+      />
     </div>
   </div>
 </template>
@@ -58,13 +70,16 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import BackLink from "@/components/BackLink"
 import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrTag from "@/components/DsfrTag"
+import ResourceActionDialog from "@/components/ResourceActionDialog"
 import Constants from "@/constants"
+import { normaliseText } from "@/utils"
 
 export default {
-  components: { BreadcrumbsNav, BackLink, DsfrTagGroup, DsfrTag },
+  components: { BreadcrumbsNav, BackLink, DsfrTagGroup, DsfrTag, ResourceActionDialog },
   data() {
     return {
       wasteAction: null,
+      actionDialog: false,
       backLink: { name: "WasteActionsHome" },
     }
   },
@@ -97,10 +112,24 @@ export default {
           })
         })
     },
+    showActionDialog() {
+      this.actionDialog = true
+    },
+    closeActionDialog(refresh) {
+      if (refresh) this.fetchWasteAction()
+      this.actionDialog = false
+    },
   },
   computed: {
     loggedUser() {
       return this.$store.state.loggedUser
+    },
+    userCanteens() {
+      if (!this.loggedUser) return []
+      const canteens = this.$store.state.userCanteenPreviews
+      return canteens.sort((a, b) => {
+        return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
+      })
     },
     effort() {
       return (
@@ -121,17 +150,21 @@ export default {
         }
       })
     },
-    hasActionsDone() {
-      return this.wasteAction?.actions?.filter((action) => action.isDone).length > 0
+    actionCanteensDone() {
+      if (!this.wasteAction.actions) return []
+      return this.userCanteens.filter((canteen) =>
+        this.wasteAction.actions.find(
+          (actionCanteen) => actionCanteen.canteen.id === canteen.id && actionCanteen.isDone
+        )
+      )
     },
-    actionsDone() {
-      return this.wasteAction.actions
-        .filter((action) => action.isDone)
-        .map((action) => {
-          return {
-            text: action.canteen.name,
-          }
-        })
+    actionCanteensDoneTags() {
+      return this.actionCanteensDone.map((canteen) => {
+        return {
+          id: canteen.id,
+          text: canteen.name,
+        }
+      })
     },
   },
   mounted() {
