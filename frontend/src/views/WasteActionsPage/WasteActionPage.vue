@@ -34,8 +34,8 @@
         <v-col v-if="loggedUser" cols="12" class="d-flex flex-column align-start mt-8" sm="2">
           <p class="mb-2">Mis en place</p>
           <DsfrTagGroup
-            v-if="hasActionsDone"
-            :tags="actionsDone"
+            v-if="actionCanteensDone.length"
+            :tags="actionCanteensDoneTags"
             :closeable="false"
             :small="true"
             :clickable="false"
@@ -59,7 +59,7 @@
         v-model="actionDialog"
         :resourceId="id"
         :userCanteens="userCanteens"
-        :actionsDone="actionsDone"
+        :actionCanteensDone="actionCanteensDone"
         @close="closeActionDialog($event)"
       />
     </div>
@@ -72,6 +72,7 @@ import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrTag from "@/components/DsfrTag"
 import ResourceActionDialog from "@/components/ResourceActionDialog"
 import Constants from "@/constants"
+import { normaliseText } from "@/utils"
 
 export default {
   components: { BreadcrumbsNav, BackLink, DsfrTagGroup, DsfrTag, ResourceActionDialog },
@@ -125,7 +126,10 @@ export default {
     },
     userCanteens() {
       if (!this.loggedUser) return []
-      return this.$store.state.userCanteenPreviews
+      const canteens = this.$store.state.userCanteenPreviews
+      return canteens.sort((a, b) => {
+        return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
+      })
     },
     effort() {
       return (
@@ -146,18 +150,21 @@ export default {
         }
       })
     },
-    hasActionsDone() {
-      return this.wasteAction?.actions?.filter((action) => action.isDone).length > 0
+    actionCanteensDone() {
+      if (!this.wasteAction.actions) return []
+      return this.userCanteens.filter((canteen) =>
+        this.wasteAction.actions.find(
+          (actionCanteen) => actionCanteen.canteen.id === canteen.id && actionCanteen.isDone
+        )
+      )
     },
-    actionsDone() {
-      return this.wasteAction.actions
-        .filter((action) => action.isDone)
-        .map((action) => {
-          return {
-            id: action.canteen.id,
-            text: action.canteen.name,
-          }
-        })
+    actionCanteensDoneTags() {
+      return this.actionCanteensDone.map((canteen) => {
+        return {
+          id: canteen.id,
+          text: canteen.name,
+        }
+      })
     },
   },
   mounted() {
