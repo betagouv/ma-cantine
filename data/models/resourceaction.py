@@ -5,11 +5,18 @@ from .canteen import Canteen
 from .wasteaction import WasteAction
 
 
+class ResourceActionQuerySet(models.QuerySet):
+    def for_user_canteens(self, user):
+        return self.filter(canteen__in=user.canteens.all())
+
+
 class ResourceAction(models.Model):
     class Meta:
         unique_together = ("resource", "canteen")
         verbose_name = "ressource : action (cantine)"
         verbose_name_plural = "ressources : actions (cantines)"
+
+    objects = models.Manager.from_queryset(ResourceActionQuerySet)()
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)

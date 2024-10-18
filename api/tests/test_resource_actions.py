@@ -40,10 +40,13 @@ class TestResourceActionsApi(APITestCase):
         self.client.force_login(user=self.user_with_canteen)
         response = self.client.post(self.url, data={"canteen_id": self.canteen.id, "is_done": True})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["resource_id"], self.waste_action.id)
+        self.assertEqual(response.data["canteen_id"], self.canteen.id)
+        self.assertTrue(response.data["is_done"])
         self.assertEqual(ResourceAction.objects.count(), 1)
         self.assertEqual(ResourceAction.objects.first().resource, self.waste_action)
         self.assertEqual(ResourceAction.objects.first().canteen, self.canteen)
-        self.assertEqual(ResourceAction.objects.first().is_done, True)
+        self.assertTrue(ResourceAction.objects.first().is_done)
 
     def test_update_resource_action(self):
         # create an existing ResourceAction
@@ -55,4 +58,4 @@ class TestResourceActionsApi(APITestCase):
         self.assertEqual(ResourceAction.objects.count(), 1)
         self.assertEqual(ResourceAction.objects.first().resource, self.waste_action)
         self.assertEqual(ResourceAction.objects.first().canteen, self.canteen)
-        self.assertEqual(ResourceAction.objects.first().is_done, False)
+        self.assertFalse(ResourceAction.objects.first().is_done)
