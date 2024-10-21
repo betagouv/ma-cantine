@@ -39,6 +39,17 @@
             la réglementation de la mesure « {{ item.shortTitle }} »
           </router-link>
         </p>
+        <v-row v-if="canteenResourceActionsDone.length" class="mt-2">
+          <v-col
+            vols="12"
+            sm="6"
+            md="4"
+            v-for="resourceAction in canteenResourceActionsDone"
+            :key="resourceAction.resource.id"
+          >
+            <WasteActionCard :wasteAction="resourceAction.resource" />
+          </v-col>
+        </v-row>
       </template>
     </DsfrAccordion>
 
@@ -68,6 +79,7 @@ import DiversificationMeasureResults from "./ResultsComponents/DiversificationMe
 import InformationMeasureResults from "./ResultsComponents/InformationMeasureResults"
 import NoPlasticMeasureResults from "./ResultsComponents/NoPlasticMeasureResults"
 import WasteMeasureResults from "./ResultsComponents/WasteMeasureResults"
+import WasteActionCard from "@/components/WasteActionCard"
 
 export default {
   props: {
@@ -86,6 +98,7 @@ export default {
     InformationMeasureResults,
     NoPlasticMeasureResults,
     WasteMeasureResults,
+    WasteActionCard,
   },
   data() {
     return {
@@ -107,6 +120,9 @@ export default {
     },
     imageLimit() {
       return this.$vuetify.breakpoint.xs ? 0 : 3
+    },
+    canteenResourceActionsDone() {
+      return this.canteen?.resourceActions ? this.canteen.resourceActions.filter((ra) => ra.isDone) : []
     },
   },
   methods: {
