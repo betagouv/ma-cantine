@@ -22,7 +22,7 @@ services:
         condition: service_healthy
   frontend:
     build:
-      context: 'frontend'
+      context: frontend
     image: ma-cantine-front
     volumes:
       - "./frontend/:/app"
@@ -31,9 +31,11 @@ services:
       - 8080:8080
   2024-frontend:
     build:
-      context: ./
-      dockerfile: 2024-frontend/Dockerfile
+      context: 2024-frontend
     image: ma-cantine-2024-front
+    volumes:
+      - "./2024-frontend:/app/2024-frontend"
+      - "/app/2024-frontend/node_modules"
     ports:
       - 5173:5173
     env_file:
