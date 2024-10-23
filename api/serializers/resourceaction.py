@@ -10,7 +10,6 @@ class ResourceActionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResourceAction
         fields = (
-            # "id",
             "resource_id",
             "canteen_id",
             "is_done",
