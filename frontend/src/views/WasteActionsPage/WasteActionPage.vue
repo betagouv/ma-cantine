@@ -35,14 +35,13 @@
           <!-- Implement action buttons -->
           <p class="mb-2">Mis en place</p>
           <DsfrTagGroup
-            v-if="hasActionsDone"
-            :tags="actionsDone"
+            v-if="canteensDoneAction && canteensDoneAction.length"
+            :tags="canteensDoneAction"
             :closeable="false"
             :small="true"
             :clickable="false"
-            class="justify-end"
           />
-          <p v-else class="text-left">
+          <p v-else>
             <i>Aucune cantine</i>
           </p>
         </v-col>
@@ -121,17 +120,10 @@ export default {
         }
       })
     },
-    hasActionsDone() {
-      return this.wasteAction?.actions?.filter((action) => action.isDone).length > 0
-    },
-    actionsDone() {
-      return this.wasteAction.actions
-        .filter((action) => action.isDone)
-        .map((action) => {
-          return {
-            text: action.canteen.name,
-          }
-        })
+    canteensDoneAction() {
+      return this.wasteAction?.actions
+        ?.filter((action) => action.isDone)
+        .map((action) => ({ text: action.canteen.name }))
     },
   },
   mounted() {
