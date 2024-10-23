@@ -145,6 +145,7 @@ frontend/*.ntvs*
 frontend/*.njsproj
 frontend/*.sln
 frontend/*.sw?
+2024-frontend/jsconfig.json
 
 # Frontend cache
 frontend/.eslintcache
@@ -180,6 +181,3 @@ notes/
 
 # 2024 Frontend
 .vite/
-
-# experimental docker setup
-secrets/
