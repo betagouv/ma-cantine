@@ -4,11 +4,11 @@
       <div class="mt-n6 mx-n6 mb-4 pa-4 d-flex" style="background-color: #F5F5F5">
         <v-spacer></v-spacer>
         <v-btn outlined color="primary" @click="$emit('close')">
-          Fermer
+          Annuler
         </v-btn>
       </div>
 
-      <h2 id="modal-title" class="mb-3" tabindex="-1">Mis en place ?</h2>
+      <h2 class="mb-3">Mis en place ?</h2>
 
       <v-form ref="form" @submit.prevent>
         <DsfrAutocomplete
@@ -18,7 +18,7 @@
           multiple
           hide-details
           id="select-canteen"
-          placeholder="Toutes mes cantines"
+          placeholder="Choissisez les établissements"
           class="mt-1"
           no-data-text="Pas de résultats"
           item-text="name"
@@ -54,7 +54,7 @@ export default {
     actionCanteensDone: {
       type: Array,
       required: true,
-      example: [{ id: 1, name: "Cantine 1" }],
+      // example: [{ id: 1, name: "Cantine 1" }],
     },
   },
   data() {
@@ -79,11 +79,11 @@ export default {
     },
   },
   methods: {
-    createOrUpdateResourceAction(canteenId, is_done = true) {
+    createOrUpdateResourceAction(canteenId, isDone) {
       return this.$store
         .dispatch("createOrUpdateResourceAction", {
           resourceId: this.resourceId,
-          payload: { canteenId, is_done },
+          payload: { canteenId, isDone },
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
