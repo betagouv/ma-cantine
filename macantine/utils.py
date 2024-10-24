@@ -1,4 +1,5 @@
 import logging
+import time
 
 import redis as r
 import requests
@@ -28,8 +29,8 @@ def fetch_geo_data_from_api_insee_sirene_by_siret(canteen_siret, response, token
         redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
         redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
         if int(redis.get(redis_key)) > 30:
-            logger.warning("Siret lookup exceding API rate. Skipping this attempt.")
-            return response
+            logger.warning("Siret lookup exceding API rate. Waiting 60 seconds.")
+            time.sleep(60)
 
         siret_response = requests.get(
             f"https://api.insee.fr/entreprises/sirene/siret/{canteen_siret}",
