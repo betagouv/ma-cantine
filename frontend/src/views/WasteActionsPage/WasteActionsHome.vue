@@ -65,7 +65,7 @@
   </div>
 </template>
 <script>
-import WasteActionCard from "./WasteActionCard"
+import WasteActionCard from "@/components/WasteActionCard"
 import WasteActionsListView from "./WasteActionsListView"
 import DsfrPagination from "@/components/DsfrPagination"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
