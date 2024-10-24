@@ -15,6 +15,7 @@ from .diagnostic import (
     PublicServiceDiagnosticSerializer,
 )
 from .managerinvitation import ManagerInvitationSerializer
+from .resourceaction import ResourceActionFullSerializer
 from .sector import SectorSerializer
 from .user import CanteenManagerSerializer
 
@@ -115,9 +116,10 @@ class BadgesSerializer(serializers.ModelSerializer):
 
 class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    badges = BadgesSerializer(read_only=True, source="*")
     appro_diagnostic = PublicApproDiagnosticSerializer(read_only=True, source="latest_published_appro_diagnostic")
     lead_image = CanteenImageSerializer()
+    badges = BadgesSerializer(read_only=True, source="*")
+    resource_actions = ResourceActionFullSerializer(many=True, read_only=True)
 
     class Meta:
         model = Canteen
@@ -134,11 +136,12 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "satellite_canteens_count",
             "region",
             "department",
-            "badges",
             "appro_diagnostic",
             "lead_image",
             "is_central_cuisine",
             "is_satellite",
+            "badges",
+            "resource_actions",
         )
 
 
@@ -155,6 +158,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
     is_managed_by_user = serializers.SerializerMethodField(read_only=True)
     badges = BadgesSerializer(read_only=True, source="*")
+    resource_actions = ResourceActionFullSerializer(many=True, read_only=True)
 
     class Meta:
         model = Canteen
@@ -185,6 +189,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "is_managed_by_user",
             "central_kitchen",
             "badges",
+            "resource_actions",
         )
 
     def get_is_managed_by_user(self, obj):
@@ -267,6 +272,7 @@ class FullCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin)
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     satellites = MinimalCanteenSerializer(many=True, read_only=True)
     badges = BadgesSerializer(read_only=True, source="*")
+    resource_actions = ResourceActionFullSerializer(many=True, read_only=True)
     publication_status = PublicationStatusMixin.publication_status
 
     class Meta:
@@ -285,6 +291,7 @@ class FullCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin)
             "is_satellite",
             "modification_date",
             "badges",
+            "resource_actions",
         )
         fields = (
             "id",
@@ -330,6 +337,7 @@ class FullCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin)
             "is_satellite",
             "modification_date",
             "badges",
+            "resource_actions",
         )
 
         extra_kwargs = {"name": {"required": True}, "siret": {"required": True}}
