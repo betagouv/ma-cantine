@@ -323,3 +323,17 @@ Vous pourrez modifier les notes dans un éditeur pour être plus rapide.
 ### Debugging
 
 Si jamais vous doutez/si il y a un problème, parlez avec un.e autre dév.
+
+
+## Docker
+
+C'est aussi possible de lancer le site avec Docker.
+
+`docker compose build`
+`docker compose up`
+
+Dans un nouveau terminal, accèder au container du back pour migrer la BDD et créer la première utilisatrice.
+
+`docker compose run server bash`
+`python manage.py migrate`
+`python manage.py createsuperuser`
