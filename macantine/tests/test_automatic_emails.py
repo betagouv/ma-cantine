@@ -59,7 +59,7 @@ class TestAutomaticEmails(TestCase):
         tasks.no_canteen_first_reminder()
 
         # Email is only sent once to Jean
-        tasks._send_sib_template.assert_called_once_with(
+        tasks.send_sib_template.assert_called_once_with(
             1, {"PRENOM": "Jean"}, "jean.serien@example.com", "Jean Sérien"
         )
 
@@ -94,7 +94,7 @@ class TestAutomaticEmails(TestCase):
         )
 
         tasks.no_canteen_first_reminder()
-        tasks._send_sib_template.assert_not_called()
+        tasks.send_sib_template.assert_not_called()
 
         jean.refresh_from_db()
         self.assertIsNone(jean.email_no_canteen_first_reminder)
@@ -161,7 +161,7 @@ class TestAutomaticEmails(TestCase):
         tasks.no_canteen_second_reminder()
 
         # Email is only sent once to Marie
-        tasks._send_sib_template.assert_called_once_with(2, {"PRENOM": ""}, "marie.olait@example.com", "marie.olait")
+        tasks.send_sib_template.assert_called_once_with(2, {"PRENOM": ""}, "marie.olait@example.com", "marie.olait")
 
         jean.refresh_from_db()
         anna.refresh_from_db()
@@ -193,7 +193,7 @@ class TestAutomaticEmails(TestCase):
             is_dev=True,
         )
         tasks.no_canteen_second_reminder()
-        tasks._send_sib_template.assert_not_called()
+        tasks.send_sib_template.assert_not_called()
 
         marie.refresh_from_db()
         self.assertIsNone(marie.email_no_canteen_second_reminder)
@@ -225,7 +225,7 @@ class TestAutomaticEmails(TestCase):
         tasks.no_canteen_first_reminder()
         tasks.no_canteen_second_reminder()
 
-        tasks._send_sib_template.assert_not_called()
+        tasks.send_sib_template.assert_not_called()
 
     @mock.patch("macantine.tasks._send_sib_template")
     @override_settings(TEMPLATE_ID_NO_CANTEEN_FIRST=1)
@@ -257,16 +257,16 @@ class TestAutomaticEmails(TestCase):
         tasks.no_canteen_first_reminder()
         tasks.no_canteen_first_reminder()
         tasks.no_canteen_first_reminder()
-        tasks._send_sib_template.assert_called_once_with(
+        tasks.send_sib_template.assert_called_once_with(
             1, {"PRENOM": "Jean"}, "jean.serien@example.com", "Jean Sérien"
         )
 
-        tasks._send_sib_template.reset_mock()
+        tasks.send_sib_template.reset_mock()
 
         tasks.no_canteen_second_reminder()
         tasks.no_canteen_second_reminder()
         tasks.no_canteen_second_reminder()
-        tasks._send_sib_template.assert_called_once_with(
+        tasks.send_sib_template.assert_called_once_with(
             2, {"PRENOM": "Marie"}, "marie.olait@example.com", "Marie Olait"
         )
 
@@ -356,9 +356,9 @@ class TestAutomaticEmails(TestCase):
         tasks.no_diagnostic_first_reminder()
 
         # Email is only sent once to Jean
-        tasks._send_sib_template.assert_called()
-        self.assertEqual(tasks._send_sib_template.call_count, 2)
-        call_args_list = tasks._send_sib_template.call_args_list
+        tasks.send_sib_template.assert_called()
+        self.assertEqual(tasks.send_sib_template.call_count, 2)
+        call_args_list = tasks.send_sib_template.call_args_list
         recipients = [x[0][2] for x in call_args_list]
         self.assertIn("jean.serien@example.com", recipients)
         self.assertIn("anna.logue@example.com", recipients)
@@ -388,7 +388,7 @@ class TestAutomaticEmails(TestCase):
         Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
 
         tasks.no_diagnostic_first_reminder()
-        tasks._send_sib_template.assert_not_called()
+        tasks.send_sib_template.assert_not_called()
 
         canteen_no_diagnostics.refresh_from_db()
         self.assertIsNone(canteen_no_diagnostics.email_no_diagnostic_first_reminder)
@@ -413,7 +413,7 @@ class TestAutomaticEmails(TestCase):
         )
         tasks.no_canteen_first_reminder()
 
-        tasks._send_sib_template.assert_not_called()
+        tasks.send_sib_template.assert_not_called()
 
         self.assertIsNone(jean.email_no_canteen_first_reminder)
 
@@ -438,7 +438,7 @@ class TestAutomaticEmails(TestCase):
         )
         tasks.no_canteen_second_reminder()
 
-        tasks._send_sib_template.assert_not_called()
+        tasks.send_sib_template.assert_not_called()
 
         marie.refresh_from_db()
 
@@ -478,9 +478,9 @@ class TestAutomaticEmails(TestCase):
         tasks.no_diagnostic_first_reminder()
 
         # Email is only sent once to Anna
-        tasks._send_sib_template.assert_called
-        self.assertEqual(tasks._send_sib_template.call_count, 1)
-        call_args_list = tasks._send_sib_template.call_args_list
+        tasks.send_sib_template.assert_called
+        self.assertEqual(tasks.send_sib_template.call_count, 1)
+        call_args_list = tasks.send_sib_template.call_args_list
         self.assertEqual(call_args_list[0][0][2], "anna.logue@example.com")
 
         # DB objects are updated
@@ -526,7 +526,7 @@ class TestAutomaticEmails(TestCase):
         tasks.no_diagnostic_first_reminder()
 
         # Email is only sent once to Jean
-        tasks._send_sib_template.assert_not_called()
+        tasks.send_sib_template.assert_not_called()
 
         # DB objects remain unchanged
         canteen_no_diagnostics.refresh_from_db()
