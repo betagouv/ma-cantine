@@ -194,8 +194,10 @@ def update_brevo_contacts():
             for user in chunk:
                 user.last_brevo_update = today
                 user.save()
+        except requests.exceptions.HTTPError as e:
+            logger.warning(f"Bulk updating Brevo users: One or more of the users don't exist. {e}")
         except Exception as e:
-            logger.exception(f"Error bulk updating Brevo users {e}", stack_info=True)
+            logger.exception(f"Bulk updating Brevo users: Error updating Brevo users {e}", stack_info=True)
         time.sleep(0.1)  # API rate limit is 10 req per second
 
     # Try creating those who didn't make it (allowing the update flag to be set)
