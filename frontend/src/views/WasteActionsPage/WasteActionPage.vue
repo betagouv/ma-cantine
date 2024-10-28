@@ -40,7 +40,7 @@
             :small="true"
             :clickable="false"
           />
-          <p v-else>
+          <p v-else class="mb-2">
             <i>Aucune cantine</i>
           </p>
           <br />

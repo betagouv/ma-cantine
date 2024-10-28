@@ -246,9 +246,7 @@ export default new Vuex.Store({
         })
     },
 
-    /**
-     * payload: { canteen_id: int, is_done: boolean }
-     */
+    // payload: { canteenId: int, isDone: boolean }
     createOrUpdateResourceAction(context, { resourceId, payload }) {
       return fetch(`/api/v1/wasteActions/${resourceId}/actions`, {
         method: "POST",

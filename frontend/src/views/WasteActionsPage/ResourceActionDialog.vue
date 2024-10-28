@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="isOpen" id="resource-action-dialog" width="500">
+  <v-dialog v-model="isOpen" max-width="500px">
     <v-card class="pa-6">
       <div class="mt-n6 mx-n6 mb-4 pa-4 d-flex" style="background-color: #F5F5F5">
         <v-spacer></v-spacer>
