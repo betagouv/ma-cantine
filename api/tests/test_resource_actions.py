@@ -8,7 +8,7 @@ from data.factories import (
     UserFactory,
     WasteActionFactory,
 )
-from data.models import ResourceAction
+from data.models import Canteen, ResourceAction
 
 
 class TestResourceActionsApi(APITestCase):
@@ -59,3 +59,55 @@ class TestResourceActionsApi(APITestCase):
         self.assertEqual(ResourceAction.objects.first().resource, self.waste_action)
         self.assertEqual(ResourceAction.objects.first().canteen, self.canteen)
         self.assertFalse(ResourceAction.objects.first().is_done)
+
+
+class TestCanteenResourceActionApi(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.waste_action = WasteActionFactory()
+        cls.user = UserFactory()
+        cls.user_with_canteen = UserFactory()
+        cls.canteen = CanteenFactory(publication_status=Canteen.PublicationStatus.PUBLISHED)
+        cls.canteen_with_resource_action = CanteenFactory(publication_status=Canteen.PublicationStatus.PUBLISHED)
+        cls.canteen_with_resource_action.managers.add(cls.user_with_canteen)
+        ResourceActionFactory(resource=cls.waste_action, canteen=cls.canteen_with_resource_action, is_done=True)
+
+    def test_get_published_canteen_with_resource_actions(self):
+        response = self.client.get(reverse("published_canteens"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        returned_cateens = response.json()["results"]
+        self.assertEqual(len(returned_cateens), 2)
+        # canteen without resource_actions
+        self.assertEqual(returned_cateens[1]["id"], self.canteen.id)
+        self.assertTrue("resourceActions" in returned_cateens[1])
+        self.assertEqual(len(returned_cateens[1]["resourceActions"]), 0)
+        # canteen with resource_actions
+        self.assertEqual(returned_cateens[0]["id"], self.canteen_with_resource_action.id)
+        self.assertTrue("resourceActions" in returned_cateens[0])
+        self.assertEqual(len(returned_cateens[0]["resourceActions"]), 1)
+        self.assertTrue(returned_cateens[0]["resourceActions"][0]["isDone"])
+        self.assertEqual(returned_cateens[0]["resourceActions"][0]["resource"]["id"], self.waste_action.id)
+        self.assertEqual(
+            returned_cateens[0]["resourceActions"][0]["canteen"]["id"], self.canteen_with_resource_action.id
+        )
+
+    def test_get_single_published_canteen_with_resource_actions(self):
+        # canteen without resource_actions
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": self.canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], self.canteen.id)
+        self.assertTrue("resourceActions" in body)
+        self.assertEqual(len(body["resourceActions"]), 0)
+        # canteen with resource_actions
+        response = self.client.get(
+            reverse("single_published_canteen", kwargs={"pk": self.canteen_with_resource_action.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], self.canteen_with_resource_action.id)
+        self.assertTrue("resourceActions" in body)
+        self.assertEqual(len(body["resourceActions"]), 1)
+        self.assertTrue(body["resourceActions"][0]["isDone"])
+        self.assertEqual(body["resourceActions"][0]["resource"]["id"], self.waste_action.id)
+        self.assertEqual(body["resourceActions"][0]["canteen"]["id"], self.canteen_with_resource_action.id)
