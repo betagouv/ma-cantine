@@ -18,7 +18,7 @@
           multiple
           hide-details
           id="select-canteen"
-          placeholder="Choissisez les établissements"
+          placeholder="Choisissez les établissements"
           class="mt-1"
           no-data-text="Pas de résultats"
           item-text="name"
@@ -51,7 +51,7 @@ export default {
       type: Array,
       required: true,
     },
-    actionCanteensDone: {
+    canteensDoneAction: {
       type: Array,
       required: true,
       // example: [{ id: 1, name: "Cantine 1" }],
@@ -65,7 +65,7 @@ export default {
   mounted() {
     // Pre-select the canteens that have already done the action
     this.chosenCanteenIds = this.userCanteens
-      .filter((canteen) => this.actionCanteensDone.find((actionCanteen) => actionCanteen.id === canteen.id))
+      .filter((canteen) => this.canteensDoneAction.find((actionCanteen) => actionCanteen.id === canteen.id))
       .map((canteen) => canteen.id)
   },
   computed: {
@@ -91,11 +91,11 @@ export default {
       const actionChanges = []
       // Compare the chosen canteens with the actions done (new & removed)
       this.chosenCanteenIds.forEach((canteenId) => {
-        if (!this.actionCanteensDone.find((actionCanteen) => actionCanteen.id === canteenId)) {
+        if (!this.canteensDoneAction.find((actionCanteen) => actionCanteen.id === canteenId)) {
           actionChanges.push(this.createOrUpdateResourceAction(canteenId, true))
         }
       })
-      this.actionCanteensDone.forEach((actionCanteen) => {
+      this.canteensDoneAction.forEach((actionCanteen) => {
         if (!this.chosenCanteenIds.includes(actionCanteen.id)) {
           actionChanges.push(this.createOrUpdateResourceAction(actionCanteen.id, false))
         }

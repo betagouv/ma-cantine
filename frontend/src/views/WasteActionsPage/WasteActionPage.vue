@@ -58,18 +58,19 @@
         v-model="actionDialog"
         :resourceId="id"
         :userCanteens="userCanteens"
-        :actionCanteensDone="actionCanteensDone"
+        :canteensDoneAction="canteensDoneAction"
         @close="closeActionDialog($event)"
       />
     </div>
   </div>
 </template>
+
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import BackLink from "@/components/BackLink"
 import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrTag from "@/components/DsfrTag"
-import ResourceActionDialog from "@/components/ResourceActionDialog"
+import ResourceActionDialog from "./ResourceActionDialog"
 import Constants from "@/constants"
 import { normaliseText } from "@/utils"
 
@@ -150,6 +151,7 @@ export default {
       })
     },
     canteensDoneAction() {
+      if (!this.wasteAction?.canteenActions) return []
       return this.wasteAction?.canteenActions
         ?.filter((canteenAction) => canteenAction.isDone)
         .map((canteenAction) => ({ id: canteenAction.canteen.id, text: canteenAction.canteen.name }))
