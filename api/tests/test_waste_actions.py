@@ -1,4 +1,5 @@
 from django.urls import reverse
+from rest_framework import status
 from rest_framework.test import APITestCase
 
 from data.factories import (
@@ -17,7 +18,7 @@ class TestWasteActionsListApi(APITestCase):
 
     def test_get_waste_actions_list(self):
         response = self.client.get(reverse("waste_actions_list"))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 1)
 
 
@@ -72,24 +73,29 @@ class TestWasteActionsDetailApi(APITestCase):
     def test_get_waste_action_detail(self):
         # anonymous
         response = self.client.get(reverse("waste_action_detail", kwargs={"pk": self.waste_action.id}))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["id"], self.waste_action.id)
-        self.assertTrue("actions" not in response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], self.waste_action.id)
+        self.assertTrue("canteenActions" not in body)
         # logged in user (without canteen)
         self.client.force_login(user=self.user)
         response = self.client.get(reverse("waste_action_detail", kwargs={"pk": self.waste_action.id}))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["id"], self.waste_action.id)
-        self.assertTrue("actions" in response.data)
-        self.assertEqual(len(response.data["actions"]), 0)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], self.waste_action.id)
+        self.assertTrue("canteenActions" in body)
+        self.assertEqual(len(body["canteenActions"]), 0)
         # logged in user with canteen & resource action
         self.client.force_login(user=self.user_with_canteen)
         response = self.client.get(reverse("waste_action_detail", kwargs={"pk": self.waste_action.id}))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["id"], self.waste_action.id)
-        self.assertTrue("actions" in response.data)
-        self.assertEqual(len(response.data["actions"]), 1)
-        self.assertEqual(response.data["actions"][0]["canteen_id"], self.canteen.id)
-        self.assertEqual(response.data["actions"][0]["canteen"]["id"], self.canteen.id)
-        self.assertEqual(response.data["actions"][0]["canteen"]["name"], self.canteen.name)
-        self.assertTrue(response.data["actions"][0]["is_done"])
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], self.waste_action.id)
+        self.assertTrue("canteenActions" in body)
+        self.assertEqual(len(body["canteenActions"]), 1)
+        self.assertTrue(body["canteenActions"][0]["isDone"])
+        self.assertEqual(body["canteenActions"][0]["canteenId"], self.canteen.id)
+        self.assertEqual(body["canteenActions"][0]["canteen"]["id"], self.canteen.id)
+        self.assertEqual(body["canteenActions"][0]["canteen"]["name"], self.canteen.name)
+        self.assertEqual(body["canteenActions"][0]["resourceId"], self.waste_action.id)
+        self.assertEqual(body["canteenActions"][0]["resource"]["id"], self.waste_action.id)
