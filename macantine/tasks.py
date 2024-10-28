@@ -135,18 +135,15 @@ def update_brevo_contacts():
     today = timezone.now()
     threshold = today - datetime.timedelta(days=1)
 
-    # Attempt a bulk update first to save API calls
-    users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold) | Q(last_brevo_update__isnull=True))
+    logger.info("Create individually new Brevo users (allowing the update flag to be set)")
+    users_to_update = User.objects.filter(Q(last_brevo_update__isnull=True))
+    create_new_brevo_users(users_to_update, today)
+
+    logger.info("Update existing Brevo contacts by batch")
+    users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold))
     bulk_update_size = 100
     chunks = batched(users_to_update, bulk_update_size)
-
-    logger.info("update_brevo_contacts batch updating started")
     update_existing_brevo_contacts(chunks, today)
-
-    # Try creating those who didn't make it (allowing the update flag to be set)
-    users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold) | Q(last_brevo_update__isnull=True))
-    logger.info("update_brevo_contacts individual creating/updating started")
-    create_new_brevo_users(chunks, today)
 
     end = time.time()
     logger.info(f"update_brevo_contacts task ended. Duration : { end - start } seconds")
