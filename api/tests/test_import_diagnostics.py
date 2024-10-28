@@ -531,7 +531,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         This file contains one diagnostic with three emails for managers. The first two
         already have an account with ma cantine, so they should be added. The third one
         has no account, so an invitation should be sent.
-        All the managers would recieve an email, either a notification or an invitation.
+        All the managers would receive an email, either a notification or an invitation.
         """
         gestionnaire_1 = UserFactory(email="gestionnaire1@example.com")
         gestionnaire_2 = UserFactory(email="gestionnaire2@example.com")

@@ -124,9 +124,9 @@ class TestCanteenApi(APITestCase):
         for user_canteen in user_canteens:
             self.assertTrue(any(x["id"] == user_canteen.id for x in body))
 
-        for recieved_canteen in body:
-            self.assertEqual(recieved_canteen["managers"][0]["email"], user.email)
-            self.assertTrue("email" in recieved_canteen["managerInvitations"][0])
+        for received_canteen in body:
+            self.assertEqual(received_canteen["managers"][0]["email"], user.email)
+            self.assertTrue("email" in received_canteen["managerInvitations"][0])
 
         for other_canteen in other_canteens:
             self.assertFalse(any(x["id"] == other_canteen.id for x in body))
