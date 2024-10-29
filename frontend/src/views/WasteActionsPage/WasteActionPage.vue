@@ -34,8 +34,8 @@
         <v-col v-if="loggedUser" cols="12" class="d-flex flex-column align-start mt-8" sm="2">
           <p class="mb-2">Mis en place</p>
           <DsfrTagGroup
-            v-if="canteensDoneAction && canteensDoneAction.length"
-            :tags="canteensDoneAction"
+            v-if="canteensActionDone && canteensActionDone.length"
+            :tags="canteensActionDone"
             :closeable="false"
             :small="true"
             :clickable="false"
@@ -58,7 +58,7 @@
         v-model="actionDialog"
         :resourceId="id"
         :userCanteens="userCanteens"
-        :canteensDoneAction="canteensDoneAction"
+        :canteensActionDone="canteensActionDone"
         @close="closeActionDialog($event)"
       />
     </div>
@@ -150,7 +150,7 @@ export default {
         }
       })
     },
-    canteensDoneAction() {
+    canteensActionDone() {
       if (!this.wasteAction?.canteenActions) return []
       return this.wasteAction?.canteenActions
         ?.filter((canteenAction) => canteenAction.isDone)

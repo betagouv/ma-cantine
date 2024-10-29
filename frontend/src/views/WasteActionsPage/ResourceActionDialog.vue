@@ -51,7 +51,7 @@ export default {
       type: Array,
       required: true,
     },
-    canteensDoneAction: {
+    canteensActionDone: {
       type: Array,
       required: true,
       // example: [{ id: 1, name: "Cantine 1" }],
@@ -65,7 +65,7 @@ export default {
   mounted() {
     // Pre-select the canteens that have already done the action
     this.chosenCanteenIds = this.userCanteens
-      .filter((canteen) => this.canteensDoneAction.find((actionCanteen) => actionCanteen.id === canteen.id))
+      .filter((canteen) => this.canteensActionDone.find((canteenActionDone) => canteenActionDone.id === canteen.id))
       .map((canteen) => canteen.id)
   },
   computed: {
@@ -91,13 +91,13 @@ export default {
       const actionChanges = []
       // Compare the chosen canteens with the actions done (new & removed)
       this.chosenCanteenIds.forEach((canteenId) => {
-        if (!this.canteensDoneAction.find((actionCanteen) => actionCanteen.id === canteenId)) {
+        if (!this.canteensActionDone.find((canteenActionDone) => canteenActionDone.id === canteenId)) {
           actionChanges.push(this.createOrUpdateResourceAction(canteenId, true))
         }
       })
-      this.canteensDoneAction.forEach((actionCanteen) => {
-        if (!this.chosenCanteenIds.includes(actionCanteen.id)) {
-          actionChanges.push(this.createOrUpdateResourceAction(actionCanteen.id, false))
+      this.canteensActionDone.forEach((canteenActionDone) => {
+        if (!this.chosenCanteenIds.includes(canteenActionDone.id)) {
+          actionChanges.push(this.createOrUpdateResourceAction(canteenActionDone.id, false))
         }
       })
       // close dialog and refresh the wasteAction if needed
