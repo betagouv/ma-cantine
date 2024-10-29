@@ -344,9 +344,9 @@ export default {
           disabled: tabs.length < 2,
         }
         tabs.push(compareTab)
+        this.tabs = tabs
+        this.tab = tabs[0].value
       }
-      this.tabs = tabs
-      this.tab = tabs[0].value
     },
   },
   mounted() {
