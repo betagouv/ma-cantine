@@ -13,15 +13,11 @@ from django.db.models.functions import Length
 from django.utils import timezone
 from sib_api_v3_sdk.rest import ApiException
 
+import macantine.brevo as brevo
 from api.views.utils import update_change_reason
 from common.utils import get_token_sirene
 from data.models import Canteen, User
 
-from .brevo import (
-    create_new_brevo_users,
-    send_sib_template,
-    update_existing_brevo_contacts,
-)
 from .celery import app
 from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TD
 from .etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TD
@@ -58,7 +54,7 @@ def no_canteen_first_reminder():
         try:
             parameters = {"PRENOM": user.first_name}
             to_name = _user_name(user)
-            send_sib_template(settings.TEMPLATE_ID_NO_CANTEEN_FIRST, parameters, user.email, to_name)
+            brevo.send_sib_template(settings.TEMPLATE_ID_NO_CANTEEN_FIRST, parameters, user.email, to_name)
             logger.info(f"First email sent to {user.get_full_name()} ({user.email})")
             user.email_no_canteen_first_reminder = today
             user.save()
@@ -93,7 +89,7 @@ def no_canteen_second_reminder():
         try:
             parameters = {"PRENOM": user.first_name}
             to_name = _user_name(user)
-            send_sib_template(settings.TEMPLATE_ID_NO_CANTEEN_SECOND, parameters, user.email, to_name)
+            brevo.send_sib_template(settings.TEMPLATE_ID_NO_CANTEEN_SECOND, parameters, user.email, to_name)
             logger.info(f"Second email sent to {user.get_full_name()} ({user.email})")
             user.email_no_canteen_second_reminder = today
             user.save()
@@ -137,13 +133,13 @@ def update_brevo_contacts():
 
     logger.info("Create individually new Brevo users (allowing the update flag to be set)")
     users_to_update = User.objects.filter(Q(last_brevo_update__isnull=True))
-    create_new_brevo_users(users_to_update, today)
+    brevo.create_new_brevo_users(users_to_update, today)
 
     logger.info("Update existing Brevo contacts by batch")
     users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold))
     bulk_update_size = 100
     chunks = batched(users_to_update, bulk_update_size)
-    update_existing_brevo_contacts(chunks, today)
+    brevo.update_existing_brevo_contacts(chunks, today)
 
     end = time.time()
     logger.info(f"update_brevo_contacts task ended. Duration : { end - start } seconds")
@@ -175,7 +171,7 @@ def no_diagnostic_first_reminder():
             try:
                 parameters = {"PRENOM": manager.first_name, "NOM_CANTINE": canteen.name}
                 to_name = _user_name(manager)
-                send_sib_template(
+                brevo.send_sib_template(
                     settings.TEMPLATE_ID_NO_DIAGNOSTIC_FIRST,
                     parameters,
                     manager.email,

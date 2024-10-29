@@ -7,11 +7,11 @@ from django.utils import timezone
 
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen
-from macantine import tasks
+from macantine import brevo, tasks
 
 
 class TestAutomaticEmails(TestCase):
-    @mock.patch("macantine.tasks._send_sib_template")
+    @mock.patch("macantine.brevo.send_sib_template")
     @override_settings(TEMPLATE_ID_NO_CANTEEN_FIRST=1)
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
     def test_no_canteen_first_reminder(self, _):
@@ -59,7 +59,7 @@ class TestAutomaticEmails(TestCase):
         tasks.no_canteen_first_reminder()
 
         # Email is only sent once to Jean
-        tasks.send_sib_template.assert_called_once_with(
+        brevo.send_sib_template.assert_called_once_with(
             1, {"PRENOM": "Jean"}, "jean.serien@example.com", "Jean Sérien"
         )
 
@@ -73,7 +73,7 @@ class TestAutomaticEmails(TestCase):
         self.assertIsNone(anna.email_no_canteen_first_reminder)
         self.assertIsNone(sophie.email_no_canteen_first_reminder)
 
-    @mock.patch("macantine.tasks._send_sib_template")
+    @mock.patch("macantine.brevo.send_sib_template")
     @override_settings(TEMPLATE_ID_NO_CANTEEN_FIRST=1)
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
     def test_no_canteen_dev_profile(self, _):
@@ -94,12 +94,12 @@ class TestAutomaticEmails(TestCase):
         )
 
         tasks.no_canteen_first_reminder()
-        tasks.send_sib_template.assert_not_called()
+        brevo.send_sib_template.assert_not_called()
 
         jean.refresh_from_db()
         self.assertIsNone(jean.email_no_canteen_first_reminder)
 
-    @mock.patch("macantine.tasks._send_sib_template")
+    @mock.patch("macantine.brevo.send_sib_template")
     @override_settings(TEMPLATE_ID_NO_CANTEEN_SECOND=2)
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
     def test_no_canteen_second_reminder(self, _):
@@ -161,7 +161,7 @@ class TestAutomaticEmails(TestCase):
         tasks.no_canteen_second_reminder()
 
         # Email is only sent once to Marie
-        tasks.send_sib_template.assert_called_once_with(2, {"PRENOM": ""}, "marie.olait@example.com", "marie.olait")
+        brevo.send_sib_template.assert_called_once_with(2, {"PRENOM": ""}, "marie.olait@example.com", "marie.olait")
 
         jean.refresh_from_db()
         anna.refresh_from_db()
@@ -174,7 +174,7 @@ class TestAutomaticEmails(TestCase):
         self.assertIsNone(anna.email_no_canteen_second_reminder)
         self.assertIsNone(sophie.email_no_canteen_second_reminder)
 
-    @mock.patch("macantine.tasks._send_sib_template")
+    @mock.patch("macantine.brevo.send_sib_template")
     @override_settings(TEMPLATE_ID_NO_CANTEEN_SECOND=2)
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
     def test_no_canteen_second_reminder_dev(self, _):
@@ -193,12 +193,12 @@ class TestAutomaticEmails(TestCase):
             is_dev=True,
         )
         tasks.no_canteen_second_reminder()
-        tasks.send_sib_template.assert_not_called()
+        brevo.send_sib_template.assert_not_called()
 
         marie.refresh_from_db()
         self.assertIsNone(marie.email_no_canteen_second_reminder)
 
-    @mock.patch("macantine.tasks._send_sib_template")
+    @mock.patch("macantine.brevo.send_sib_template")
     @override_settings(TEMPLATE_ID_NO_CANTEEN_FIRST=None)
     @override_settings(TEMPLATE_ID_NO_CANTEEN_SECOND=None)
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
@@ -225,9 +225,9 @@ class TestAutomaticEmails(TestCase):
         tasks.no_canteen_first_reminder()
         tasks.no_canteen_second_reminder()
 
-        tasks.send_sib_template.assert_not_called()
+        brevo.send_sib_template.assert_not_called()
 
-    @mock.patch("macantine.tasks._send_sib_template")
+    @mock.patch("macantine.brevo.send_sib_template")
     @override_settings(TEMPLATE_ID_NO_CANTEEN_FIRST=1)
     @override_settings(TEMPLATE_ID_NO_CANTEEN_SECOND=2)
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
@@ -257,20 +257,20 @@ class TestAutomaticEmails(TestCase):
         tasks.no_canteen_first_reminder()
         tasks.no_canteen_first_reminder()
         tasks.no_canteen_first_reminder()
-        tasks.send_sib_template.assert_called_once_with(
+        brevo.send_sib_template.assert_called_once_with(
             1, {"PRENOM": "Jean"}, "jean.serien@example.com", "Jean Sérien"
         )
 
-        tasks.send_sib_template.reset_mock()
+        brevo.send_sib_template.reset_mock()
 
         tasks.no_canteen_second_reminder()
         tasks.no_canteen_second_reminder()
         tasks.no_canteen_second_reminder()
-        tasks.send_sib_template.assert_called_once_with(
+        brevo.send_sib_template.assert_called_once_with(
             2, {"PRENOM": "Marie"}, "marie.olait@example.com", "Marie Olait"
         )
 
-    @mock.patch("macantine.tasks._send_sib_template")
+    @mock.patch("macantine.brevo.send_sib_template")
     @override_settings(TEMPLATE_ID_NO_DIAGNOSTIC_FIRST=1)
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
     def test_no_diagnostic_first_reminder(self, _):
@@ -356,9 +356,9 @@ class TestAutomaticEmails(TestCase):
         tasks.no_diagnostic_first_reminder()
 
         # Email is only sent once to Jean
-        tasks.send_sib_template.assert_called()
-        self.assertEqual(tasks.send_sib_template.call_count, 2)
-        call_args_list = tasks.send_sib_template.call_args_list
+        brevo.send_sib_template.assert_called()
+        self.assertEqual(brevo.send_sib_template.call_count, 2)
+        call_args_list = brevo.send_sib_template.call_args_list
         recipients = [x[0][2] for x in call_args_list]
         self.assertIn("jean.serien@example.com", recipients)
         self.assertIn("anna.logue@example.com", recipients)
@@ -367,7 +367,7 @@ class TestAutomaticEmails(TestCase):
         canteen_no_diagnostics.refresh_from_db()
         self.assertIsNotNone(canteen_no_diagnostics.email_no_diagnostic_first_reminder)
 
-    @mock.patch("macantine.tasks._send_sib_template")
+    @mock.patch("macantine.brevo.send_sib_template")
     @override_settings(TEMPLATE_ID_NO_DIAGNOSTIC_FIRST=1)
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
     def test_no_diagnostic_dev_profile(self, _):
@@ -388,12 +388,12 @@ class TestAutomaticEmails(TestCase):
         Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
 
         tasks.no_diagnostic_first_reminder()
-        tasks.send_sib_template.assert_not_called()
+        brevo.send_sib_template.assert_not_called()
 
         canteen_no_diagnostics.refresh_from_db()
         self.assertIsNone(canteen_no_diagnostics.email_no_diagnostic_first_reminder)
 
-    @mock.patch("macantine.tasks._send_sib_template")
+    @mock.patch("macantine.brevo.send_sib_template")
     @override_settings(TEMPLATE_ID_NO_CANTEEN_FIRST=1)
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
     def test_email_opt_out_first_reminder(self, _):
@@ -413,11 +413,11 @@ class TestAutomaticEmails(TestCase):
         )
         tasks.no_canteen_first_reminder()
 
-        tasks.send_sib_template.assert_not_called()
+        brevo.send_sib_template.assert_not_called()
 
         self.assertIsNone(jean.email_no_canteen_first_reminder)
 
-    @mock.patch("macantine.tasks._send_sib_template")
+    @mock.patch("macantine.brevo.send_sib_template")
     @override_settings(TEMPLATE_ID_NO_CANTEEN_SECOND=2)
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
     def test_opt_out_second_reminder(self, _):
@@ -438,13 +438,13 @@ class TestAutomaticEmails(TestCase):
         )
         tasks.no_canteen_second_reminder()
 
-        tasks.send_sib_template.assert_not_called()
+        brevo.send_sib_template.assert_not_called()
 
         marie.refresh_from_db()
 
         self.assertIsNone(marie.email_no_canteen_second_reminder)
 
-    @mock.patch("macantine.tasks._send_sib_template")
+    @mock.patch("macantine.brevo.send_sib_template")
     @override_settings(TEMPLATE_ID_NO_DIAGNOSTIC_FIRST=1)
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
     def test_opt_out_no_diagnostic_first_reminder(self, _):
@@ -478,16 +478,16 @@ class TestAutomaticEmails(TestCase):
         tasks.no_diagnostic_first_reminder()
 
         # Email is only sent once to Anna
-        tasks.send_sib_template.assert_called
-        self.assertEqual(tasks.send_sib_template.call_count, 1)
-        call_args_list = tasks.send_sib_template.call_args_list
+        brevo.send_sib_template.assert_called
+        self.assertEqual(brevo.send_sib_template.call_count, 1)
+        call_args_list = brevo.send_sib_template.call_args_list
         self.assertEqual(call_args_list[0][0][2], "anna.logue@example.com")
 
         # DB objects are updated
         canteen_no_diagnostics.refresh_from_db()
         self.assertIsNotNone(canteen_no_diagnostics.email_no_diagnostic_first_reminder)
 
-    @mock.patch("macantine.tasks._send_sib_template")
+    @mock.patch("macantine.brevo.send_sib_template")
     @override_settings(TEMPLATE_ID_NO_DIAGNOSTIC_FIRST=1)
     @override_settings(ANYMAIL={"SENDINBLUE_API_KEY": "fake-api-key"})
     def test_no_diagnostic_satellite(self, _):
@@ -526,7 +526,7 @@ class TestAutomaticEmails(TestCase):
         tasks.no_diagnostic_first_reminder()
 
         # Email is only sent once to Jean
-        tasks.send_sib_template.assert_not_called()
+        brevo.send_sib_template.assert_not_called()
 
         # DB objects remain unchanged
         canteen_no_diagnostics.refresh_from_db()

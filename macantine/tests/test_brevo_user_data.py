@@ -48,8 +48,8 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), False)
 
-    @mock.patch("macantine.tasks.contacts_api_instance.create_contact")
-    @mock.patch("macantine.tasks.contacts_api_instance.update_batch_contacts")
+    @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
+    @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_create_user(self, batch_update_mock, create_contact_mock):
         """
         If the batch update fails then the user will be created/updated individually
@@ -64,8 +64,8 @@ class TestBrevoUserData(TestCase):
         payload = create_contact_mock.call_args[0][0]
         self.assertEqual(payload.email, new_user.email)
 
-    @mock.patch("macantine.tasks.contacts_api_instance.create_contact")
-    @mock.patch("macantine.tasks.contacts_api_instance.update_batch_contacts")
+    @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
+    @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_empty_canteen(self, batch_update_mock, create_contact_mock):
         """
         As soon as a user has a canteen, pending actions will follow and all paramteres
@@ -90,8 +90,8 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), True)
 
-    @mock.patch("macantine.tasks.contacts_api_instance.create_contact")
-    @mock.patch("macantine.tasks.contacts_api_instance.update_batch_contacts")
+    @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
+    @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_published_canteen(self, batch_update_mock, create_contact_mock):
         user = UserFactory.create()
         canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED)
@@ -112,8 +112,8 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), False)
 
-    @mock.patch("macantine.tasks.contacts_api_instance.create_contact")
-    @mock.patch("macantine.tasks.contacts_api_instance.update_batch_contacts")
+    @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
+    @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_canteen_with_diag(self, batch_update_mock, create_contact_mock):
         user = UserFactory.create()
         canteen = CanteenFactory.create()
@@ -137,8 +137,8 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), True)
 
-    @mock.patch("macantine.tasks.contacts_api_instance.create_contact")
-    @mock.patch("macantine.tasks.contacts_api_instance.update_batch_contacts")
+    @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
+    @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_canteen_with_td(self, batch_update_mock, create_contact_mock):
         user = UserFactory.create()
         canteen = CanteenFactory.create()
@@ -177,8 +177,8 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), True)
 
-    @mock.patch("macantine.tasks.contacts_api_instance.create_contact")
-    @mock.patch("macantine.tasks.contacts_api_instance.update_batch_contacts")
+    @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
+    @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_sat_canteen_with_cc_diag(self, batch_update_mock, create_contact_mock):
         user = UserFactory.create()
         central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="65815950319874")
@@ -213,8 +213,8 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), True)
 
-    @mock.patch("macantine.tasks.contacts_api_instance.create_contact")
-    @mock.patch("macantine.tasks.contacts_api_instance.update_batch_contacts")
+    @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
+    @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_sat_canteen_with_cc_td(self, batch_update_mock, create_contact_mock):
         user = UserFactory.create()
         central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="65815950319874")
