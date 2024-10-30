@@ -16,7 +16,9 @@ services:
     ports:
       - 8000:8000
     env_file:
-      - ".env.local"
+      - ".env.docker"
+      - path: ".env"
+        required: false
     depends_on:
       db:
         condition: service_healthy
@@ -29,6 +31,10 @@ services:
       - "/app/node_modules"
     ports:
       - 8080:8080
+    env_file:
+      - ".env.docker"
+      - path: ".env"
+        required: false
   2024-frontend:
     build:
       context: 2024-frontend
@@ -39,7 +45,9 @@ services:
     ports:
       - 5173:5173
     env_file:
-      - ".env.local"
+      - ".env.docker"
+      - path: ".env"
+        required: false
   db:
     image: postgres
     restart: always
