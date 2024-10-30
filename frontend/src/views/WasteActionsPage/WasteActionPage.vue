@@ -121,9 +121,9 @@ export default {
       })
     },
     canteensDoneAction() {
-      return this.wasteAction?.actions
-        ?.filter((action) => action.isDone)
-        .map((action) => ({ text: action.canteen.name }))
+      return this.wasteAction?.canteenActions
+        ?.filter((canteenAction) => canteenAction.isDone)
+        .map((canteenAction) => ({ text: canteenAction.canteen.name }))
     },
   },
   mounted() {
