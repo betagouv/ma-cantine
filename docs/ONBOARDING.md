@@ -2,6 +2,10 @@
 
 ## Cloner le dépôt
 
+```
+git clone git@github.com:betagouv/ma-cantine.git
+```
+
 ### OSX
 
 Si `git` dit que vous avez des nouveaux fichiers juste après cloner le dépôt, vérifier vos paramètres de `git`. Sur mon ordinateur, j'ai du faire :
@@ -20,7 +24,7 @@ Please note that the `staging` and `main` branches are protected and all commits
 
 - [Python3](https://www.python.org/downloads/) (de préference 3.11)
 - [pip](https://pip.pypa.io/en/stable/installing/) (souvent installé avec Python)
-- [vitrualenv](https://virtualenv.pypa.io/en/stable/installation.html)
+- [vitrualenv](https://virtualenv.pypa.io/en/stable/installation.html) (optionnel)
 - [Node et npm](https://nodejs.org/en/download/)
 - [Postgres](https://www.postgresql.org/download/)
 - [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
@@ -29,6 +33,15 @@ Please note that the `staging` and `main` branches are protected and all commits
 ### Création d'un environnement Python3 virtualenv
 
 Pour commencer, c'est recommandé de créer un environnement virtuel avec Python3.
+
+### avec Python venv
+
+```
+python -m venv venv
+source ./venv/bin/activate
+```
+
+### Avec virtualenv
 
 ```
 virtualenv -p python3 venv
@@ -43,9 +56,11 @@ Les dépendances du backend se trouvent dans `requirements.txt`. Pour les instal
 pip install -r requirements.txt
 ```
 
+Si vous rencontrez un problème avec `psycopg2`, installez `psycopg2-binary` à la place.
+
 ### Installer les dépendances du frontend
 
-On utilise les dernires versions LTS de `node` et `npm`.
+On utilise les dernières versions LTS de `node` et `npm`.
 
 L'application frontend se trouve sous `/frontend`. Pour installer les dépendances :
 
@@ -56,10 +71,23 @@ npm install
 
 ### Créer la base de données
 
-Par exemple, pour utiliser une base de données nommée _macantine_egalim_ :
+#### Rapide
+
+Pour créer une base de données nommée `macantine_egalim` :
 
 ```
 createdb macantine-egalim
+```
+
+#### Détaillée
+
+Pour créer une base de données nommée `macantine_egalim` avec un utilisateur dédié `macantine_egalim_team`, et définir le mot de passe :
+
+```
+psql -c "CREATE USER macantine_egalim_team WITH PASSWORD 'password'"
+psql -c "CREATE DATABASE macantine_egalim OWNER macantine_egalim_team"
+psql -c "GRANT ALL PRIVILEGES ON DATABASE macantine_egalim to macantine_egalim_team"
+psql -c "ALTER USER macantine_egalim_team CREATEROLE CREATEDB"
 ```
 
 ### Compléter les variables d'environnement
@@ -70,11 +98,11 @@ L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), 
 SECRET= Le secret pour Django (vous pouvez le [générer ici](https://djecrety.ir/))
 DEBUG= `True` pour le développement local ou `False` autrement
 DEBUG_FRONT= `True` pour le développement local du 2024-front ou `False` autrement
-DB_USER= L'utilisateur de la base de données. Doit avoir les droits de creation de db pour les tests.
+DB_USER= L'utilisateur de la base de données. Doit avoir les droits de creation de db pour les tests (par ex. 'macantine_egalim_team')
 DB_PASSWORD= Le mot de passe pour accéder à la base de données
 DB_HOST= Le host de la base de données (par ex. '127.0.0.1')
 DB_PORT= Le port de la base de données (par ex. '3306')
-DB_NAME= Le nom de la base de données (par ex. 'macantine-egalim'
+DB_NAME= Le nom de la base de données (par ex. 'macantine_egalim')
 HOSTNAME= Le hostname dans lequel l'application se trouve (par ex. 127.0.0.1:8000)
 ALLOWED_HOSTS= Des noms de domaine/d’hôte que ce site peut servir (par ex. 'localhost, \*')
 ENFORCE_HOST= Optionnel - Si présent, les requêtes seront redirigées à ce host
@@ -227,7 +255,7 @@ npm run test
 
 ## Creation d'un superuser
 
-Afin de pouvoir s'identifier dans le backoffice (sous /admin), il est nécessaire de créer un utilisateur admin avec tous les droits. Pour ce faire, vous pouvez en console lancer :
+Afin de pouvoir s'identifier dans le backoffice (sous `/admin`), il est nécessaire de créer un utilisateur admin avec tous les droits. Pour ce faire, vous pouvez lancer :
 
 ```
 python manage.py createsuperuser
@@ -235,23 +263,23 @@ python manage.py createsuperuser
 
 ## Reception d'emails en local
 
-Il y a deux options pour recevoir les emails envoyés depuis l'application en local:
+Il y a deux options pour recevoir les emails envoyés depuis l'application en local :
 
 ### 1- Les imprimer dans la console
 
-Django permet d'imprimer en console les emails envoyés avec le 'django.core.mail.backends.console.EmailBackend'. Pour l'utiliser il suffit de mettre la variable d'environnement `EMAIL_BACKEND` à cette valeur. Cette option est rapide à mettre en place et ne nécessite pas d'autres outils.
+Django permet d'imprimer en console les emails envoyés avec le `django.core.mail.backends.console.EmailBackend`. Pour l'utiliser il suffit de mettre la variable d'environnement `EMAIL_BACKEND` à cette valeur. Cette option est rapide à mettre en place et ne nécessite pas d'autres outils.
 
 Il faut néanmoins tenir en compte que la mise en page ne sera pas visible et que certaines configurations qui marchent avec la console ne marchent pas avec d'autres services email. Nous conseillons plutôt d'utiliser la solution suivante :
 
 ### 2- Utiliser Maildev
 
-[Maildev](https://maildev.github.io/maildev/) est un outil ouvert qui exécute un serveur SMTP en local et qui permet de visualiser tous les emails traités. En l'installant de façon globale on peut mettre 'django.core.mail.backends.smtp.EmailBackend' comme variable d'environnement `EMAIL_BACKEND` pour l'utiliser.
+[Maildev](https://maildev.github.io/maildev/) est un outil ouvert qui exécute un serveur SMTP en local et qui permet de visualiser tous les emails traités. En l'installant de façon globale on peut mettre `django.core.mail.backends.smtp.EmailBackend` comme variable d'environnement `EMAIL_BACKEND` pour l'utiliser.
 
 ## Celery
 
 Celery est un gestionnaire de tâches asynchrone utilisé par exemple pour l'envoi périodique de courriels de rappel et pour le remplissage des donn
 
-Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit être spéficié dans la console CleverCloud sous la variable `CC_PYTHON_CELERY_MODULE=macantine.celery`. La fonctionnalité Celery Beat doit aussi être activée : `CC_PYTHON_CELERY_USE_BEAT=true`, ainsi que le timezone souhaité : `CELERY_TIMEZONE:'Europe/Paris'`
+Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit être spéficié dans la console CleverCloud sous la variable `CC_PYTHON_CELERY_MODULE=macantine.celery`. La fonctionnalité Celery Beat doit aussi être activée : `CC_PYTHON_CELERY_USE_BEAT=true`, ainsi que le timezone souhaité : `CELERY_TIMEZONE='Europe/Paris'`
 
 ### En local
 
@@ -261,7 +289,7 @@ Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit êtr
 
 ## Visual Studio Code
 
-Des extensions qu'on trouve utile :
+Des extensions utiles :
 
 - Django
 - EJS Beautify
