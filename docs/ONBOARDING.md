@@ -71,7 +71,17 @@ npm install
 
 ### Créer la base de données
 
-Par exemple, pour utiliser une base de données nommée `macantine_egalim` avec un nouvel utilisateur `macantine_egalim_team` :
+#### Rapide
+
+Pour créer une base de données nommée `macantine_egalim` :
+
+```
+createdb macantine-egalim
+```
+
+#### Détaillée
+
+Pour créer une base de données nommée `macantine_egalim` avec un utilisateur dédié `macantine_egalim_team`, et définir le mot de passe :
 
 ```
 psql -c "CREATE USER macantine_egalim_team WITH PASSWORD 'password'"
