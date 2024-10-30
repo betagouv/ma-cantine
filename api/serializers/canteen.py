@@ -119,7 +119,6 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
     appro_diagnostic = PublicApproDiagnosticSerializer(read_only=True, source="latest_published_appro_diagnostic")
     lead_image = CanteenImageSerializer()
     badges = BadgesSerializer(read_only=True, source="*")
-    resource_actions = ResourceActionFullSerializer(many=True, read_only=True)
 
     class Meta:
         model = Canteen
