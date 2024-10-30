@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.test.utils import override_settings
 from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory
@@ -31,3 +32,41 @@ class TestCanteenModel(TestCase):
         self.assertEqual(qs.count(), 0, "Soft deleted canteen is not visible in default queryset")
         qs = Canteen.all_objects.all()
         self.assertEqual(qs.count(), 1, "Soft deleted canteens can be accessed in custom queryset")
+
+
+class TestCanteenQueryset(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        CanteenFactory(line_ministry=None, publication_status=Canteen.PublicationStatus.PUBLISHED)
+        cls.canteen_published_armee = CanteenFactory(
+            line_ministry=Canteen.Ministries.ARMEE, publication_status=Canteen.PublicationStatus.PUBLISHED
+        )
+        cls.canteen_draft = CanteenFactory(line_ministry=None, publication_status=Canteen.PublicationStatus.DRAFT)
+
+    @override_settings(PUBLISH_BY_DEFAULT=False)
+    def test_publicly_visible(self):
+        self.assertEqual(Canteen.objects.count(), 3)
+        qs = Canteen.objects.publicly_visible()
+        self.assertEqual(qs.count(), 2)
+        self.assertTrue(self.canteen_draft not in qs)
+
+    @override_settings(PUBLISH_BY_DEFAULT=False)
+    def test_publicly_hidden(self):
+        self.assertEqual(Canteen.objects.count(), 3)
+        qs = Canteen.objects.publicly_hidden()
+        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs.first(), self.canteen_draft)
+
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    def test_publicly_visible_publish_by_default(self):
+        self.assertEqual(Canteen.objects.count(), 3)
+        qs = Canteen.objects.publicly_visible()
+        self.assertEqual(qs.count(), 2)
+        self.assertTrue(self.canteen_published_armee not in qs)
+
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    def test_publicly_hidden_publish_by_default(self):
+        self.assertEqual(Canteen.objects.count(), 3)
+        qs = Canteen.objects.publicly_hidden()
+        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs.first(), self.canteen_published_armee)

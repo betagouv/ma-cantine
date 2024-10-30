@@ -7,7 +7,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import NotificationCenter from "@/components/NotificationCenter.vue"
 
 const layout = reactive({ fullscreen: false })
-const routerViewClass = computed(() => (layout.fullscreen ? "" : "fr-container fr-pb-2w"))
+const routerViewClass = computed(() => (layout.fullscreen ? "" : "fr-container fr-mb-6w"))
 
 const route = useRoute()
 watch(route, (to) => {

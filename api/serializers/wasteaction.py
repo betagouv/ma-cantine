@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from rest_framework.fields import Field
 
-from data.models import WasteAction
+from api.serializers.resourceaction import ResourceActionFullSerializer
+from data.models import ResourceAction, WasteAction
 
 
 class WagtailImageSerializedField(Field):
@@ -32,3 +33,19 @@ class WasteActionSerializer(serializers.ModelSerializer):
             "waste_origins",
             "lead_image",
         )
+
+
+class WasteActionWithActionsSerializer(WasteActionSerializer):
+    canteen_actions = serializers.SerializerMethodField()
+
+    class Meta(WasteActionSerializer.Meta):
+        fields = WasteActionSerializer.Meta.fields + ("canteen_actions",)
+
+    def get_canteen_actions(self, obj):
+        """Only return canteen_actions for authenticated users + related to their canteens."""
+        canteen_actions = ResourceAction.objects.none()
+        user = self.context["request"].user
+        if user.is_authenticated:
+            canteen_actions = ResourceAction.objects.filter(resource=obj).for_user_canteens(user)
+        serializer = ResourceActionFullSerializer(instance=canteen_actions, many=True)
+        return serializer.data

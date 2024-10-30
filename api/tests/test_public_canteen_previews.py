@@ -44,9 +44,9 @@ class TestPublicCanteenPreviewsApi(APITestCase):
         for private_canteen in private_canteens:
             self.assertFalse(any(x["id"] == private_canteen.id for x in results))
 
-        for recieved_canteen in results:
-            self.assertFalse("managers" in recieved_canteen)
-            self.assertFalse("managerInvitations" in recieved_canteen)
+        for received_canteen in results:
+            self.assertFalse("managers" in received_canteen)
+            self.assertFalse("managerInvitations" in received_canteen)
 
     @override_settings(PUBLISH_BY_DEFAULT=True)
     def test_get_published_canteens(self):
@@ -80,9 +80,9 @@ class TestPublicCanteenPreviewsApi(APITestCase):
         for private_canteen in private_canteens:
             self.assertFalse(any(x["id"] == private_canteen.id for x in results))
 
-        for recieved_canteen in results:
-            self.assertFalse("managers" in recieved_canteen)
-            self.assertFalse("managerInvitations" in recieved_canteen)
+        for received_canteen in results:
+            self.assertFalse("managers" in received_canteen)
+            self.assertFalse("managerInvitations" in received_canteen)
 
     def test_get_single_public_canteen_preview(self):
         """
@@ -109,7 +109,7 @@ class TestPublicCanteenPreviewsApi(APITestCase):
         response = self.client.get(reverse("single_public_canteen_preview", kwargs={"pk": 99}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_recieve_expected_keys_in_preview(self):
+    def test_receive_expected_keys_in_preview(self):
         """
         Should get summary data in a public preview
         """

@@ -9,7 +9,7 @@ export default Object.freeze({
     {
       key: "SIMPLE",
       urlSlug: "cantines-et-diagnostics-simples",
-      title: "Importer des bilan simples",
+      title: "Importer des bilans simples",
       help:
         "Vous voulez créer ou mettre à jour des bilans. Vous connaissez que les valeurs totales de vos achats bio et de qualité",
     },
@@ -25,9 +25,9 @@ export default Object.freeze({
     {
       key: "CC_SIMPLE",
       urlSlug: "cuisine-centrale-diagnostics-simples",
-      title: "Importer des bilans détaillés pour des livreurs de repas",
+      title: "Importer des bilans simples pour des livreurs de repas",
       help:
-        "Vous ne connaissez pas les données par cantine satellite, que par livreur de repas. Vous connaissez les valeurs totaux, bio, et de qualité et durable",
+        "Vous ne connaissez pas les données par cantine satellite, que par livreur de repas. Vous connaissez que les valeurs totales de vos achats bio et de qualité",
     },
     {
       key: "CC_COMPLETE",

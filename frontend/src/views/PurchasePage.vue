@@ -360,7 +360,7 @@ export default {
         })
         .then(() => {
           this.bypassLeaveWarning = true
-          const message = this.isNewPurchase ? "Votre achat a bien été créée." : "Votre achat a bien été modifiée"
+          const message = this.isNewPurchase ? "Votre achat a bien été créé." : "Votre achat a bien été modifié"
           const notify = () => {
             this.$store.dispatch("notify", {
               title: "Mise à jour prise en compte",

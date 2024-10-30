@@ -31,28 +31,55 @@
           <p class="mt-12">{{ wasteAction.subtitle }}</p>
           <p v-html="wasteAction.description" class="mt-9"></p>
         </v-col>
-        <v-col cols="12" v-bind:class="{ 'mt-7': $vuetify.breakpoint.smAndUp }" sm="2">
-          <!-- Implement action buttons -->
+        <v-col v-if="loggedUser" cols="12" class="d-flex flex-column align-start mt-8" sm="2">
+          <p class="mb-2">Mis en place</p>
+          <DsfrTagGroup
+            v-if="canteensActionDone && canteensActionDone.length"
+            :tags="canteensActionDone"
+            :closeable="false"
+            :small="true"
+            :clickable="false"
+          />
+          <p v-else class="mb-2">
+            <i>Aucune cantine</i>
+          </p>
+          <br />
+          <v-btn small color="primary" @click="showActionDialog">
+            <span class="mx-2">
+              Modifier
+            </span>
+          </v-btn>
         </v-col>
       </v-row>
       <v-row class="mt-9">
         <BackLink :to="backLink" text="Retour" :primary="true" />
       </v-row>
+      <ResourceActionDialog
+        v-model="actionDialog"
+        :resourceId="id"
+        :userCanteens="userCanteens"
+        :canteensActionDone="canteensActionDone"
+        @close="closeActionDialog($event)"
+      />
     </div>
   </div>
 </template>
+
 <script>
 import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import BackLink from "@/components/BackLink"
 import DsfrTagGroup from "@/components/DsfrTagGroup"
 import DsfrTag from "@/components/DsfrTag"
+import ResourceActionDialog from "./ResourceActionDialog"
 import Constants from "@/constants"
+import { normaliseText } from "@/utils"
 
 export default {
-  components: { BreadcrumbsNav, BackLink, DsfrTagGroup, DsfrTag },
+  components: { BreadcrumbsNav, BackLink, DsfrTagGroup, DsfrTag, ResourceActionDialog },
   data() {
     return {
       wasteAction: null,
+      actionDialog: false,
       backLink: { name: "WasteActionsHome" },
     }
   },
@@ -67,7 +94,11 @@ export default {
       if (wasteAction) document.title = `${this.wasteAction.title} - ${this.$store.state.pageTitleSuffix}`
     },
     fetchWasteAction() {
-      return fetch(`/api/v1/wasteActions/${this.id}`)
+      const headers = {
+        "X-CSRFToken": window.CSRF_TOKEN || "",
+        "Content-Type": "application/json",
+      }
+      return fetch(`/api/v1/wasteActions/${this.id}`, { headers })
         .then((response) => {
           if (response.status !== 200) throw new Error()
           response.json().then((x) => this.setWasteAction(x))
@@ -81,8 +112,25 @@ export default {
           })
         })
     },
+    showActionDialog() {
+      this.actionDialog = true
+    },
+    closeActionDialog(refresh) {
+      if (refresh) this.fetchWasteAction()
+      this.actionDialog = false
+    },
   },
   computed: {
+    loggedUser() {
+      return this.$store.state.loggedUser
+    },
+    userCanteens() {
+      if (!this.loggedUser) return []
+      const canteens = this.$store.state.userCanteenPreviews
+      return canteens.sort((a, b) => {
+        return normaliseText(a.name) > normaliseText(b.name) ? 1 : 0
+      })
+    },
     effort() {
       return (
         Constants.WasteActionEffortLevels.find((item) => item.value === this.wasteAction.effort) || {
@@ -101,6 +149,12 @@ export default {
           icon: wasteOrigin?.icon,
         }
       })
+    },
+    canteensActionDone() {
+      if (!this.wasteAction?.canteenActions) return []
+      return this.wasteAction?.canteenActions
+        ?.filter((canteenAction) => canteenAction.isDone)
+        .map((canteenAction) => ({ id: canteenAction.canteen.id, text: canteenAction.canteen.name }))
     },
   },
   mounted() {
