@@ -305,7 +305,7 @@ WEBPACK_LOADER = {
     "DEFAULT": {
         "CACHE": DEBUG,
         "BUNDLE_DIR_NAME": "/bundles/",
-        "STATS_FILE": os.path.join(FRONTEND_DIR, "webpack-stats.json"),
+        "STATS_FILE": os.path.join(FRONTEND_DIR, "dist/webpack-stats.json"),
     }
 }
 
@@ -426,7 +426,7 @@ CSV_PURCHASE_CHUNK_LINES = 10000
 
 # CSP headers (https://content-security-policy.com/)
 
-# CSP Debug domains -  unsfae-eval needed in DEBUG for hot-reload of the frontend server
+# CSP Debug domains -  unsafe-eval needed in DEBUG for hot-reload of the frontend server
 CSP_DEBUG_DOMAINS = (
     "'unsafe-eval'",
     "localhost:*",

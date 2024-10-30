@@ -286,7 +286,6 @@ Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit êtr
 1. Démarrer le beat (gère les tâches régulières) celery `celery -A macantine beat --loglevel=INFO`
 1. Démarrer le worker celery `celery -A macantine worker --loglevel=INFO`.
 
-
 ## Visual Studio Code
 
 Des extensions utiles :
@@ -351,3 +350,26 @@ Vous pourrez modifier les notes dans un éditeur pour être plus rapide.
 ### Debugging
 
 Si jamais vous doutez/si il y a un problème, parlez avec un.e autre dév.
+
+## Docker
+
+C'est aussi possible de lancer le site avec Docker.
+
+`docker compose build`
+`docker compose up`
+
+Dans un nouveau terminal, accèder au container du back pour migrer la BDD et créer la première utilisatrice.
+
+`docker compose run server bash`
+`python manage.py migrate`
+`python manage.py createsuperuser`
+
+### Développement
+
+Pour le formattage automatique de fichiers (prettier), faut avoir quelques dependences npm installé en locale.
+
+Allez dans le dossier `/frontend` et `/2024-frontend`
+
+`sudo npm install --include=dev`
+
+J'ai du utiliser `sudo` car le dossier `node_modules` a été créé par l'image docker.
