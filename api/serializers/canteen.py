@@ -140,7 +140,6 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "is_central_cuisine",
             "is_satellite",
             "badges",
-            "resource_actions",
         )
 
 
