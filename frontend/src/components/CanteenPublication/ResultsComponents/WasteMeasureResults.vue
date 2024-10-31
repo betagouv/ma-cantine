@@ -1,6 +1,9 @@
 <template>
   <div>
     <GenericMeasureResults :badge="badge" :canteen="canteen" :diagnostics="diagnostics" />
+    <p v-if="canteenResourceActionsDone.length">
+      Cet établissement a mis en place les actions suivantes pour lutter contre le gaspillage alimentaire :
+    </p>
     <v-row v-if="canteenResourceActionsDone.length" class="mb-2">
       <v-col
         vols="12"
