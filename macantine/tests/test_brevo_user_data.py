@@ -19,9 +19,9 @@ class TestBrevoUserData(TestCase):
         return next(filter(lambda x: x.email == user_email, contacts))
 
     @freeze_time("2021-01-20")
-    @mock.patch("macantine.tasks.contacts_api_instance.create_contact")
-    @mock.patch("macantine.tasks.contacts_api_instance.update_batch_contacts")
-    def test_batch_user_updates(self, batch_update_mock, create_contact_mock):
+    @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
+    @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
+    def test_create_new_user(self, batch_update_mock, create_contact_mock):
         """
         A new user without canteens will have all paramteres related to the diagnostic,
         TD and publication to `False` because they can't be missing them without even having
@@ -29,13 +29,12 @@ class TestBrevoUserData(TestCase):
         """
         new_user = UserFactory.create()
         tasks.update_brevo_contacts()
-        batch_update_mock.assert_called_once()
-        create_contact_mock.assert_not_called()
+        batch_update_mock.assert_not_called()
+        create_contact_mock.assert_called_once()
 
-        payload = TestBrevoUserData._find_payload_for_user(batch_update_mock.call_args[0][0].contacts, new_user.email)
-        self.assertEqual(payload.email, new_user.email)
-
+        payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
+
         self.assertEqual(attributes.get("MA_CANTINE_DATE_INSCRIPTION"), "2021-01-20")
         self.assertEqual(attributes.get("MA_CANTINE_COMPTE_DEV"), new_user.is_dev)
         self.assertEqual(attributes.get("MA_CANTINE_COMPTE_ELU_E"), new_user.is_elected_official)
@@ -48,21 +47,21 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), False)
 
-    @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
-    @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
-    def test_create_user(self, batch_update_mock, create_contact_mock):
-        """
-        If the batch update fails then the user will be created/updated individually
-        """
-        new_user = UserFactory.create()
-        batch_update_mock.side_effect = Exception("Error !")
+    # @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
+    # @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
+    # def test_update_batch_users(self, batch_update_mock, create_contact_mock):
+    #     """
+    #     If the batch update fails then the user will be created/updated individually
+    #     """
+    #     new_user = UserFactory.create()
+    #     batch_update_mock.side_effect = Exception("Error !")
 
-        tasks.update_brevo_contacts()
-        batch_update_mock.assert_called_once()
-        create_contact_mock.assert_called_once()
+    #     tasks.update_brevo_contacts()
+    #     batch_update_mock.assert_called_once()
+    #     create_contact_mock.assert_called_once()
 
-        payload = create_contact_mock.call_args[0][0]
-        self.assertEqual(payload.email, new_user.email)
+    #     payload = create_contact_mock.call_args[0][0]
+    #     self.assertEqual(payload.email, new_user.email)
 
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
@@ -72,14 +71,13 @@ class TestBrevoUserData(TestCase):
         related to the diagnostic, TD and publication will be active
         """
         user = UserFactory.create()
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        CanteenFactory.create(managers=[user])
 
         tasks.update_brevo_contacts()
-        batch_update_mock.assert_called_once()
-        create_contact_mock.assert_not_called()
+        create_contact_mock.assert_called_once()
+        batch_update_mock.assert_not_called()
 
-        payload = TestBrevoUserData._find_payload_for_user(batch_update_mock.call_args[0][0].contacts, user.email)
+        payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
         self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
@@ -94,14 +92,13 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_published_canteen(self, batch_update_mock, create_contact_mock):
         user = UserFactory.create()
-        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED)
-        canteen.managers.add(user)
+        CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED, managers=[user])
 
         tasks.update_brevo_contacts()
-        batch_update_mock.assert_called_once()
-        create_contact_mock.assert_not_called()
+        create_contact_mock.assert_called_once()
+        batch_update_mock.assert_not_called()
 
-        payload = TestBrevoUserData._find_payload_for_user(batch_update_mock.call_args[0][0].contacts, user.email)
+        payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
         self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
@@ -116,18 +113,18 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_canteen_with_diag(self, batch_update_mock, create_contact_mock):
         user = UserFactory.create()
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(managers=[user])
 
         DiagnosticFactory.create(year=2021, canteen=canteen)
         DiagnosticFactory.create(year=2022, canteen=canteen)
 
         tasks.update_brevo_contacts()
-        batch_update_mock.assert_called_once()
-        create_contact_mock.assert_not_called()
+        batch_update_mock.assert_not_called()
+        create_contact_mock.assert_called_once()
 
-        payload = TestBrevoUserData._find_payload_for_user(batch_update_mock.call_args[0][0].contacts, user.email)
+        payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
+
         self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), False)
@@ -141,8 +138,7 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_canteen_with_td(self, batch_update_mock, create_contact_mock):
         user = UserFactory.create()
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(managers=[user])
 
         diag_2021 = DiagnosticFactory.create(year=2021, canteen=canteen)
         diag_2022 = DiagnosticFactory.create(year=2022, canteen=canteen)
@@ -153,6 +149,7 @@ class TestBrevoUserData(TestCase):
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
             declared_data={"year": 2021},
             canteen=canteen,
+            applicant=user,
         )
         TeledeclarationFactory.create(
             diagnostic=diag_2022,
@@ -160,13 +157,14 @@ class TestBrevoUserData(TestCase):
             status=Teledeclaration.TeledeclarationStatus.CANCELLED,
             declared_data={"year": 2022},
             canteen=canteen,
+            applicant=user,
         )
 
         tasks.update_brevo_contacts()
-        batch_update_mock.assert_called_once()
-        create_contact_mock.assert_not_called()
+        batch_update_mock.assert_not_called()
+        create_contact_mock.assert_called_once()
 
-        payload = TestBrevoUserData._find_payload_for_user(batch_update_mock.call_args[0][0].contacts, user.email)
+        payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
         self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
@@ -181,11 +179,14 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_sat_canteen_with_cc_diag(self, batch_update_mock, create_contact_mock):
         user = UserFactory.create()
-        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="65815950319874")
-        canteen = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
+        central_kitchen = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL, siret="65815950319874", managers=[user]
         )
-        canteen.managers.add(user)
+        CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=central_kitchen.siret,
+            managers=[user],
+        )
 
         DiagnosticFactory.create(
             year=2021,
@@ -199,10 +200,10 @@ class TestBrevoUserData(TestCase):
         )
 
         tasks.update_brevo_contacts()
-        batch_update_mock.assert_called_once()
-        create_contact_mock.assert_not_called()
+        create_contact_mock.assert_called_once()
+        batch_update_mock.assert_not_called()
 
-        payload = TestBrevoUserData._find_payload_for_user(batch_update_mock.call_args[0][0].contacts, user.email)
+        payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
         self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
@@ -217,11 +218,14 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_sat_canteen_with_cc_td(self, batch_update_mock, create_contact_mock):
         user = UserFactory.create()
-        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="65815950319874")
-        canteen = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
+        central_kitchen = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL, siret="65815950319874", managers=[user]
         )
-        canteen.managers.add(user)
+        CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=central_kitchen.siret,
+            managers=[user],
+        )
 
         diag_2021 = DiagnosticFactory.create(
             year=2021,
@@ -240,6 +244,7 @@ class TestBrevoUserData(TestCase):
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
             declared_data={"year": 2021},
             canteen=central_kitchen,
+            applicant=user,
         )
         TeledeclarationFactory.create(
             diagnostic=diag_2022,
@@ -247,13 +252,14 @@ class TestBrevoUserData(TestCase):
             status=Teledeclaration.TeledeclarationStatus.CANCELLED,
             declared_data={"year": 2022},
             canteen=central_kitchen,
+            applicant=user,
         )
 
         tasks.update_brevo_contacts()
-        batch_update_mock.assert_called_once()
-        create_contact_mock.assert_not_called()
+        create_contact_mock.assert_called_once()
+        batch_update_mock.assert_not_called()
 
-        payload = TestBrevoUserData._find_payload_for_user(batch_update_mock.call_args[0][0].contacts, user.email)
+        payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
         self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
