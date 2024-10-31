@@ -138,7 +138,7 @@ def update_brevo_contacts():
     logger.info("Update existing Brevo contacts by batch")
     users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold))
     bulk_update_size = 100
-    chunks = batched(users_to_create, bulk_update_size)
+    chunks = batched(users_to_update, bulk_update_size)
     brevo.update_existing_brevo_contacts(chunks, today)
 
     end = time.time()

@@ -60,7 +60,7 @@ def user_to_brevo_payload(user, bulk=True):
 
 
 def update_existing_brevo_contacts(users_to_update, today):
-    for chunk in users_tu_update:
+    for chunk in users_to_update:
         contacts = [user_to_brevo_payload(user) for user in chunk]
         update_object = sib_api_v3_sdk.UpdateBatchContacts(contacts)
         try:
