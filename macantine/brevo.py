@@ -75,7 +75,7 @@ def update_existing_brevo_contacts(users_tu_update, today):
         time.sleep(0.1)  # API rate limit is 10 req per second
 
 
-def create_new_brevo_users(users_to_create, today):
+def create_new_brevo_contacts(users_to_create, today):
     for user in users_to_create:
         try:
             contact = user_to_brevo_payload(user, bulk=False)
