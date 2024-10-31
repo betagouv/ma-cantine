@@ -132,13 +132,13 @@ def update_brevo_contacts():
     threshold = today - datetime.timedelta(days=1)
 
     logger.info("Create individually new Brevo users (allowing the update flag to be set)")
-    users_to_update = User.objects.filter(Q(last_brevo_update__isnull=True))
-    brevo.create_new_brevo_users(users_to_update, today)
+    users_to_create = User.objects.filter(Q(last_brevo_update__isnull=True))
+    brevo.create_new_brevo_contacts(users_to_create, today)
 
     logger.info("Update existing Brevo contacts by batch")
-    users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold))
+    users_to_create = User.objects.filter(Q(last_brevo_update__lte=threshold))
     bulk_update_size = 100
-    chunks = batched(users_to_update, bulk_update_size)
+    chunks = batched(users_to_create, bulk_update_size)
     brevo.update_existing_brevo_contacts(chunks, today)
 
     end = time.time()
