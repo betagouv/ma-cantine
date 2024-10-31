@@ -47,22 +47,6 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), False)
 
-    # @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
-    # @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
-    # def test_update_batch_users(self, batch_update_mock, create_contact_mock):
-    #     """
-    #     If the batch update fails then the user will be created/updated individually
-    #     """
-    #     new_user = UserFactory.create()
-    #     batch_update_mock.side_effect = Exception("Error !")
-
-    #     tasks.update_brevo_contacts()
-    #     batch_update_mock.assert_called_once()
-    #     create_contact_mock.assert_called_once()
-
-    #     payload = create_contact_mock.call_args[0][0]
-    #     self.assertEqual(payload.email, new_user.email)
-
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_empty_canteen(self, batch_update_mock, create_contact_mock):
