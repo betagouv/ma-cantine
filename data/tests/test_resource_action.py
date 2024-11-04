@@ -19,7 +19,17 @@ class ResourceActionQuerySetTest(TestCase):
         cls.canteen_with_manager = CanteenFactory(managers=[cls.user_with_canteen])
         cls.waste_action = WasteActionFactory()
         ResourceActionFactory(resource=cls.waste_action, canteen=cls.canteen, is_done=True)
-        ResourceActionFactory(resource=cls.waste_action, canteen=cls.canteen_with_manager, is_done=True)
+        ResourceActionFactory(
+            resource=cls.waste_action, canteen=cls.canteen_with_manager, is_done=True, is_favorite=True
+        )
+
+    def test_done(self):
+        self.assertEqual(ResourceAction.objects.count(), 2)
+        self.assertEqual(ResourceAction.objects.done().count(), 2)
+
+    def test_favorite(self):
+        self.assertEqual(ResourceAction.objects.count(), 2)
+        self.assertEqual(ResourceAction.objects.favorite().count(), 1)
 
     def test_for_user_canteens(self):
         self.assertEqual(ResourceAction.objects.count(), 2)

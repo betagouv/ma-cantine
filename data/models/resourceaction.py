@@ -6,6 +6,12 @@ from .wasteaction import WasteAction
 
 
 class ResourceActionQuerySet(models.QuerySet):
+    def done(self):
+        return self.filter(is_done=True)
+
+    def favorite(self):
+        return self.filter(is_favorite=True)
+
     def for_user_canteens(self, user):
         return self.filter(canteen__in=user.canteens.all())
 
@@ -32,6 +38,7 @@ class ResourceAction(models.Model):
     )
 
     is_done = models.BooleanField(null=True, blank=True, verbose_name="mis en place")
+    is_favorite = models.BooleanField(null=True, blank=True, verbose_name="favori")
 
     def save(self, *args, **kwargs):
         self.full_clean()

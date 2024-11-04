@@ -12,6 +12,7 @@ class ResourceActionAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "resource",
         "canteen",
         "is_done",
+        "is_favorite",
         "creation_date",
         "modification_date",
     )
