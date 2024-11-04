@@ -209,7 +209,7 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
     def __init__(self):
         self.df = None
         self.years = utils.CAMPAIGN_DATES.keys()
-        self.extracted_table_name = "teledeclarations_extracted"
+        self.extracted_table_name = "teledeclarations"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis.json"))
 
@@ -307,7 +307,7 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
 
     def __init__(self):
         self.df = None
-        self.extracted_table_name = "canteens_extracted"
+        self.extracted_table_name = "canteens"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
         # The following mapper is used for renaming columns and for selecting the columns to extract from db
