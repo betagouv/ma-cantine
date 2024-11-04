@@ -6,6 +6,12 @@ from .wasteaction import WasteAction
 
 
 class ResourceActionQuerySet(models.QuerySet):
+    def done(self):
+        return self.filter(is_done=True)
+
+    def favorite(self):
+        return self.filter(is_favorite=True)
+
     def for_user_canteens(self, user):
         return self.filter(canteen__in=user.canteens.all())
 
