@@ -2,9 +2,9 @@
 import { computed, onMounted, ref } from "vue"
 import { useRootStore } from "@/stores/root"
 import { useRouter } from "vue-router"
-import { formatNumber, formatDate } from "@/utils"
-import MeasurementDetail from "./MeasurementDetail.vue"
-import SourceChart from "./SourceChart.vue"
+import { formatNumber } from "@/utils"
+import WasteMeasurementSummary from "@/components/WasteMeasurementSummary.vue"
+import EmphasiseText from "@/components/EmphasiseText.vue"
 
 const props = defineProps(["canteenUrlComponent"])
 const store = useRootStore()
@@ -25,36 +25,7 @@ const newMeasurementRoute = {
   params: { canteenUrlComponent: props.canteenUrlComponent },
 }
 
-const measurementTunnel = computed(() => ({
-  name: "WasteMeasurementTunnel",
-  params: {
-    canteenUrlComponent: props.canteenUrlComponent,
-    id: measurement.value.id,
-  },
-}))
-
 const measurements = ref([])
-const chosenMeasurementIdx = ref(0)
-const measurement = computed(() => measurements.value.length && measurements.value[chosenMeasurementIdx.value])
-const measurementChoices = computed(() => {
-  return measurements.value.map((m, idx) => {
-    return {
-      text: `${formatDate(m.periodStartDate, {
-        month: "short",
-        day: "numeric",
-      })} - ${formatDate(m.periodEndDate)}`,
-      value: idx,
-    }
-  })
-})
-
-const wastePerMeal = computed(() => {
-  const m = measurement.value
-  if (m && m.totalMass && m.mealCount) return (m.totalMass / m.mealCount) * 1000 // convert kg to g
-  return undefined
-})
-
-const activeAccordion = ref("")
 
 onMounted(() => {
   fetch(`/api/v1/canteens/${canteenId.value}/wasteMeasurements`)
@@ -76,47 +47,11 @@ onMounted(() => {
     </p>
     <h2>Mon gaspillage mesuré</h2>
     <div v-if="measurements.length">
-      <div v-if="measurement" class="fr-grid-row fr-grid-row--center">
-        <div class="fr-col fr-mb-4w">
-          <p class="highlight brown">
-            <span class="fr-h3">{{ formatNumber(wastePerMeal) }} g</span>
-            par repas
-          </p>
-          <router-link :to="newMeasurementRoute" class="fr-btn fr-btn--secondary fr-mt-sm-2w">
-            Saisir une nouvelle évaluation
-          </router-link>
-        </div>
-        <div class="fr-col-12 fr-col-sm-5 fr-mb-4w">
-          <div v-if="measurement.isSortedBySource">
-            <SourceChart :measurement="measurement" />
-          </div>
-          <div v-else>
-            <DsfrAlert>
-              Triez votre gaspillage alimentaire par source pour mieux comprendre comment agir.
-            </DsfrAlert>
-          </div>
-        </div>
-      </div>
-      <DsfrAccordionsGroup v-model="activeAccordion">
-        <DsfrAccordion id="waste-measurement-detail" title="Données détaillées" class="fr-my-2w">
-          <div class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
-            <div class="fr-col-12 fr-col-sm-6 fr-col-md-4 fr-pr-4w">
-              <DsfrSelect v-model="chosenMeasurementIdx" label="Date de l'évaluation" :options="measurementChoices" />
-            </div>
-            <div class="fr-col-12 fr-col-sm-4">
-              <router-link class="fr-btn fr-btn--tertiary" :to="measurementTunnel">
-                <span class="fr-icon-pencil-line fr-icon--sm fr-mr-1w"></span>
-                Modifier les données
-              </router-link>
-            </div>
-          </div>
-          <MeasurementDetail :measurement="measurement" />
-          <router-link class="fr-btn fr-btn--tertiary fr-btn--sm" :to="measurementTunnel">
-            <span class="fr-icon-pencil-line fr-icon--sm fr-mr-1w"></span>
-            Modifier les données
-          </router-link>
-        </DsfrAccordion>
-      </DsfrAccordionsGroup>
+      <WasteMeasurementSummary
+        :measurements="measurements"
+        :editable="true"
+        :canteenUrlComponent="canteenUrlComponent"
+      />
     </div>
     <div v-else>
       <p>
@@ -124,10 +59,7 @@ onMounted(() => {
         mettre en place une démarche de lutte contre le gaspillage alimentaire.
       </p>
       <DsfrBadge label="Pas encore des données" type="none" />
-      <p class="fr-my-4w highlight">
-        <span class="fr-h3">{{ formatNumber() }} g</span>
-        par repas
-      </p>
+      <EmphasiseText :emphasisText="`${formatNumber()} g`" contextText="par repas" />
       <router-link :to="newMeasurementRoute" class="fr-btn">
         Saisir une évaluation
       </router-link>
@@ -136,28 +68,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-p.highlight {
-  color: var(--text-mention-grey);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-}
-p.highlight > span {
-  border-radius: 18px;
-  padding: 4px 16px;
-  margin-right: 8px;
-  margin-bottom: 0;
-
-  background: var(--background-default-grey-hover);
-  color: inherit;
-}
-p.highlight.brown {
-  color: var(--text-action-high-orange-terre-battue);
-}
-p.highlight.brown > span {
-  background: var(--orange-terre-battue-975-75);
-}
-
 .fr-grid-row--center {
   align-items: center;
 }

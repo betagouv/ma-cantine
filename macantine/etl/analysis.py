@@ -5,7 +5,7 @@ import re
 import numpy as np
 import pandas as pd
 
-from macantine.etl import etl, open_data, utils
+from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
 
 logger = logging.getLogger(__name__)
@@ -136,20 +136,6 @@ def get_ratio_egalim_sans_bio(row):
     return utils.get_ratio(row, "value_somme_egalim_hors_bio_ht", "value_total_ht")
 
 
-def format_sector_column(row: pd.Series, sector_col_name: str):
-    """
-    Splitting sectors information into two new columns, one for the sector, one for the category
-    If there are multiple sectors, we
-    """
-    x = row[sector_col_name]
-    if type(x) == list:
-        if len(x) > 1:
-            return "Secteurs multiples", "Catégories multiples"
-        elif len(x) == 1:
-            return x[0]["name"], x[0]["category"]
-    return np.nan, np.nan
-
-
 def check_column_matches_substring(df, sub_categ: str):
     for substring in sub_categ:
         pattern = rf".*{re.escape(substring)}.*"
@@ -196,6 +182,27 @@ class ETL_ANALYSIS(etl.ETL):
 
     def __init__(self):
         self.df = None
+        self.extracted_table_name = ""
+        self.schema = ""
+        self.warehouse = DataWareHouse()
+
+    def load_dataset(self):
+        """
+        Load in database
+        """
+        self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
+
+
+class ETL_ANALYSIS_TD(ETL_ANALYSIS):
+    """
+    Create a dataset for analysis in a Data Warehouse
+    * Extract data from prod
+    * Run a SQL query using Metabase API to transform the dataset
+    * Load the transformed data in a new table within the Data WareHouse
+    """
+
+    def __init__(self):
+        self.df = None
         self.years = utils.CAMPAIGN_DATES.keys()
         self.extracted_table_name = "teledeclarations_extracted"
         self.warehouse = DataWareHouse()
@@ -203,7 +210,7 @@ class ETL_ANALYSIS(etl.ETL):
 
     def extract_dataset(self):
         # Load teledeclarations from prod database into the Data Warehouse
-        self.df = open_data.fetch_teledeclarations(self.years)
+        self.df = utils.fetch_teledeclarations(self.years)
         self.df.index = self.df.id
 
     def transform_dataset(self):
@@ -239,8 +246,8 @@ class ETL_ANALYSIS(etl.ETL):
 
         # Extract the sector names and categories
         logger.info("Canteens : Extract sectors...")
-        self.df[["secteur", "catégorie"]] = self.df["canteen.sectors"].apply(
-            lambda x: format_sector_column(x, "canteen.sectors"), axis=1, result_type="expand"
+        self.df[["secteur", "catégorie"]] = self.df.apply(
+            lambda x: utils.format_td_sector_column(x, "canteen.sectors"), axis=1, result_type="expand"
         )
 
         # Rename columns
@@ -257,10 +264,7 @@ class ETL_ANALYSIS(etl.ETL):
         self.df.columns = self.df.columns.str.replace("applicant.", "")
         self.df.columns = self.df.columns.str.replace("department", "departement")
 
-        # Filter by schema columns names
-        columns = [i["name"] for i in self.schema["fields"]]
-        self.df = self.df.loc[:, ~self.df.columns.duplicated()].copy()
-        self.df = self.df[columns]
+        self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
     def compute_miscellaneous_columns(self):
         # Canteen
@@ -283,8 +287,58 @@ class ETL_ANALYSIS(etl.ETL):
         self.df["ratio_egalim_avec_bio"] = self.df.apply(get_ratio_egalim_avec_bio, axis=1)
         self.df["ratio_egalim_sans_bio"] = self.df.apply(get_ratio_egalim_sans_bio, axis=1)
 
-    def load_dataset(self):
-        """
-        Load in database
-        """
-        self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
+
+class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
+    """
+    Create a dataset for analysis in a Data Warehouse
+    * Extract data from prod
+    * Run a SQL query using Metabase API to transform the dataset
+    * Load the transformed data in a new table within the Data WareHouse
+
+    How to add a new field ? Add it to the corresponding schema : schema_analysis_cantines.json
+    - If it's a extracted field : Add it to the columns_mapper with its translation
+    - If it's a generated field : Add it in the transform_dataset()
+    """
+
+    def __init__(self):
+        self.df = None
+        self.extracted_table_name = "canteens_extracted"
+        self.warehouse = DataWareHouse()
+        self.schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
+        # The following mapper is used for renaming columns and for selecting the columns to extract from db
+        self.columns_mapper = {
+            "id": "id",
+            "name": "nom",
+            "siret": "siret",
+            "city_insee_code": "code_insee_commune",
+            "city": "libelle_commune",
+            "department": "departement",
+            "region": "region",
+            "creation_date": "date_creation",
+            "modification_date": "date_modification",
+            "daily_meal_count": "nbre_repas_jour",
+            "yearly_meal_count": "nbre_repas_an",
+            "economic_model": "modele_economique",
+            "management_type": "type_gestion",
+            "production_type": "type_production",
+            "satellite_canteens_count": "nombre_satellites",
+            "central_producer_siret": "siret_cuisine_centrale",
+            "line_ministry": "ministere_tutelle",
+            "sectors": "secteur",
+        }
+
+    def extract_dataset(self):
+        self.df = utils.fetch_canteens(self.columns_mapper.keys())
+
+    def transform_dataset(self):
+        logger.info("Filling geo names")
+        self.fill_geo_names()
+        self.columns_mapper["department_lib"] = "departement_lib"
+
+        # Extract the sector names and categories
+        logger.info("Canteens : Extract sectors and SPE...")
+        self.df = utils.extract_sectors(self.df, extract_spe=True, split_category_and_sector=True, only_one_value=True)
+        self.df = self.df.rename(columns={"categories": "categorie"})
+
+        self.df = self.df.rename(columns=self.columns_mapper)
+        self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)

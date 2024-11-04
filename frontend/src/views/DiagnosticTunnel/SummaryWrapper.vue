@@ -38,7 +38,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .summary {
   height: 100%;
   background: #fff;

@@ -105,6 +105,10 @@ ENV/
 env.bak/
 venv.bak/
 
+# local env files
+.env.local
+.env.*.local
+
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -128,10 +132,6 @@ venv.bak/
 frontend/node_modules
 frontend/dist
 
-# local env files
-frontend/.env.local
-frontend/.env.*.local
-
 # Log files
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
@@ -145,6 +145,7 @@ frontend/*.ntvs*
 frontend/*.njsproj
 frontend/*.sln
 frontend/*.sw?
+2024-frontend/jsconfig.json
 
 # Frontend cache
 frontend/.eslintcache
@@ -180,4 +181,3 @@ notes/
 
 # 2024 Frontend
 .vite/
-.hotfile

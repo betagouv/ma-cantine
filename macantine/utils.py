@@ -1,4 +1,5 @@
 import logging
+import time
 
 import redis as r
 import requests
@@ -12,14 +13,24 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 REGIONS_LIB = {i.label.split(" - ")[1]: i.value for i in Region}
 
 
+def get_etablishment_or_legal_unit_name(siret_response):
+    has_sub_establishment = not siret_response["etablissement"].get("etablissementSiege", True)
+    if has_sub_establishment:
+        establishment_periods = siret_response["etablissement"]["periodesEtablissement"]
+        for period in establishment_periods:
+            if not period["dateFin"]:
+                return period["enseigne1Etablissement"]
+    return siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
+
+
 def fetch_geo_data_from_api_insee_sirene_by_siret(canteen_siret, response, token):
     response["siret"] = canteen_siret
     try:
         redis_key = f"{settings.REDIS_PREPEND_KEY}SIRET_API_CALLS_PER_MINUTE"
         redis.incr(redis_key) if redis.exists(redis_key) else redis.set(redis_key, 1, 60)
         if int(redis.get(redis_key)) > 30:
-            logger.warning("Siret lookup exceding API rate. Skipping this attempt.")
-            return response
+            logger.warning("Siret lookup exceding API rate. Waiting 60 seconds.")
+            time.sleep(60)
 
         siret_response = requests.get(
             f"https://api.insee.fr/entreprises/sirene/siret/{canteen_siret}",
@@ -29,7 +40,7 @@ def fetch_geo_data_from_api_insee_sirene_by_siret(canteen_siret, response, token
         if siret_response.ok:
             siret_response = siret_response.json()
             try:
-                response["name"] = siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
+                response["name"] = get_etablishment_or_legal_unit_name(siret_response)
                 response["cityInseeCode"] = siret_response["etablissement"]["adresseEtablissement"][
                     "codeCommuneEtablissement"
                 ]
@@ -41,17 +52,17 @@ def fetch_geo_data_from_api_insee_sirene_by_siret(canteen_siret, response, token
                 ]
                 return response
             except KeyError as e:
-                logger.warning(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
+                logger.error(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
         else:
             logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response}")
     except requests.exceptions.HTTPError as e:
-        logger.warning(f"Geolocation Bot: HTTPError\n{e}")
+        logger.error(f"Api sirene: HTTPError\n{e}")
     except requests.exceptions.ConnectionError as e:
-        logger.warning(f"Geolocation Bot: ConnectionError\n{e}")
+        logger.error(f"Api sirene: ConnectionError\n{e}")
     except requests.exceptions.Timeout as e:
-        logger.warning(f"Geolocation Bot: Timeout\n{e}")
+        logger.error(f"Api sirene: Timeout\n{e}")
     except Exception as e:
-        logger.error(f"Geolocation Bot: Unexpected exception\n{e}")
+        logger.error(f"Api sirene: Unexpected exception\n{e}")
     return response
 
 

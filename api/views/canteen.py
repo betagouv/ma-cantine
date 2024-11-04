@@ -522,7 +522,7 @@ class PublishCanteenView(APIView):
             return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
 
         except Canteen.DoesNotExist:
-            raise ValidationError("Le cantine specifié n'existe pas")
+            raise ValidationError("La cantine spécifiée n'existe pas")
 
 
 class UnpublishCanteenView(APIView):
@@ -551,7 +551,7 @@ class UnpublishCanteenView(APIView):
             return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
 
         except Canteen.DoesNotExist:
-            raise ValidationError("Le cantine specifié n'existe pas")
+            raise ValidationError("La cantine spécifiée n'existe pas")
 
 
 def _respond_with_team(canteen):
@@ -878,7 +878,6 @@ class CanteenStatisticsView(APIView):
 
         canteens = CanteenStatisticsView._filter_canteens(regions, departments, city_insee_codes, sector_categories)
         data["canteen_count"] = canteens.count()
-        data["published_canteen_count"] = canteens.publicly_visible().count()
 
         diagnostics = CanteenStatisticsView._filter_diagnostics(
             year, regions, departments, city_insee_codes, sector_categories

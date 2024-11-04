@@ -24,3 +24,4 @@ from .partnertype import PartnerTypeFactory  # noqa
 from .videotutorial import VideoTutorialFactory  # noqa
 from .importfailure import ImportFailureFactory  # noqa
 from .wasteaction import WasteActionFactory  # noqa
+from .resourceaction import ResourceActionFactory  # noqa
