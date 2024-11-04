@@ -130,7 +130,7 @@ regex==2023.12.25
 reportlab==4.2.2
 requests==2.32.3
 requests-mock==1.12.1
-rpds-py==0.20.0
+rpds-py==0.20.1
 s3transfer==0.10.2
 sentry-sdk==2.10.0
 sib-api-v3-sdk==7.6.0
