@@ -5,7 +5,6 @@ import time
 
 import redis as r
 import requests
-import sib_api_v3_sdk
 from django.conf import settings
 from django.core.management import call_command
 from django.core.paginator import Paginator
@@ -14,6 +13,7 @@ from django.db.models.functions import Length
 from django.utils import timezone
 from sib_api_v3_sdk.rest import ApiException
 
+import macantine.brevo as brevo
 from api.views.utils import update_change_reason
 from common.utils import get_token_sirene
 from data.models import Canteen, User
@@ -25,22 +25,6 @@ from .utils import fetch_geo_data_from_api_insee_sirene_by_siret
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
-configuration = sib_api_v3_sdk.Configuration()
-configuration.api_key["api-key"] = settings.ANYMAIL.get("SENDINBLUE_API_KEY")
-api_client = sib_api_v3_sdk.ApiClient(configuration)
-email_api_instance = sib_api_v3_sdk.TransactionalEmailsApi(api_client)
-contacts_api_instance = sib_api_v3_sdk.ContactsApi(api_client)
-
-
-def _send_sib_template(template_id, parameters, to_email, to_name):
-    send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
-        to=[{"email": to_email, "name": to_name}],
-        params=parameters,
-        sender={"email": settings.CONTACT_EMAIL, "name": "ma cantine"},
-        reply_to={"email": settings.CONTACT_EMAIL, "name": "ma cantine"},
-        template_id=template_id,
-    )
-    email_api_instance.send_transac_email(send_smtp_email)
 
 
 def _user_name(user):
@@ -70,7 +54,7 @@ def no_canteen_first_reminder():
         try:
             parameters = {"PRENOM": user.first_name}
             to_name = _user_name(user)
-            _send_sib_template(settings.TEMPLATE_ID_NO_CANTEEN_FIRST, parameters, user.email, to_name)
+            brevo.send_sib_template(settings.TEMPLATE_ID_NO_CANTEEN_FIRST, parameters, user.email, to_name)
             logger.info(f"First email sent to {user.get_full_name()} ({user.email})")
             user.email_no_canteen_first_reminder = today
             user.save()
@@ -105,7 +89,7 @@ def no_canteen_second_reminder():
         try:
             parameters = {"PRENOM": user.first_name}
             to_name = _user_name(user)
-            _send_sib_template(settings.TEMPLATE_ID_NO_CANTEEN_SECOND, parameters, user.email, to_name)
+            brevo.send_sib_template(settings.TEMPLATE_ID_NO_CANTEEN_SECOND, parameters, user.email, to_name)
             logger.info(f"Second email sent to {user.get_full_name()} ({user.email})")
             user.email_no_canteen_second_reminder = today
             user.save()
@@ -113,38 +97,6 @@ def no_canteen_second_reminder():
             logger.exception(f"SIB error when sending second no-cantine reminder email to {user.username}:\n{e}")
         except Exception as e:
             logger.exception(f"Unable to send second no-cantine reminder email to {user.username}:\n{e}")
-
-
-def user_to_brevo_payload(user, bulk=True):
-    has_canteens = user.canteens.exists()
-    date_joined = user.date_joined
-
-    def missing_diag_for_year(year, user):
-        return user.canteens.exists() and any(not x.has_diagnostic_for_year(year) for x in user.canteens.all())
-
-    def missing_td_for_year(year, user):
-        return user.canteens.exists() and any(not x.has_teledeclaration_for_year(year) for x in user.canteens.all())
-
-    missing_publications = (
-        has_canteens and user.canteens.filter(publication_status=Canteen.PublicationStatus.DRAFT).exists()
-    )
-
-    dict_attributes = {
-        "MA_CANTINE_DATE_INSCRIPTION": date_joined.strftime("%Y-%m-%d"),
-        "MA_CANTINE_COMPTE_DEV": user.is_dev,
-        "MA_CANTINE_COMPTE_ELU_E": user.is_elected_official,
-        "MA_CANTINE_GERE_UN_ETABLISSEMENT": has_canteens,
-        "MA_CANTINE_MANQUE_BILAN_DONNEES_2023": missing_diag_for_year(2023, user),
-        "MA_CANTINE_MANQUE_BILAN_DONNEES_2022": missing_diag_for_year(2022, user),
-        "MA_CANTINE_MANQUE_BILAN_DONNEES_2021": missing_diag_for_year(2021, user),
-        "MA_CANTINE_MANQUE_TD_DONNEES_2023": missing_td_for_year(2023, user),
-        "MA_CANTINE_MANQUE_TD_DONNEES_2022": missing_td_for_year(2022, user),
-        "MA_CANTINE_MANQUE_TD_DONNEES_2021": missing_td_for_year(2021, user),
-        "MA_CANTINE_MANQUE_PUBLICATION": missing_publications,
-    }
-    if bulk:
-        return sib_api_v3_sdk.UpdateBatchContactsContacts(email=user.email, attributes=dict_attributes)
-    return sib_api_v3_sdk.CreateContact(email=user.email, attributes=dict_attributes, update_enabled=True)
 
 
 ##########################################################################
@@ -179,38 +131,15 @@ def update_brevo_contacts():
     today = timezone.now()
     threshold = today - datetime.timedelta(days=1)
 
-    # Attempt a bulk update first to save API calls
-    users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold) | Q(last_brevo_update__isnull=True))
+    logger.info("Create individually new Brevo users (allowing the update flag to be set)")
+    users_to_create = User.objects.filter(Q(last_brevo_update__isnull=True))
+    brevo.create_new_brevo_contacts(users_to_create, today)
+
+    logger.info("Update existing Brevo contacts by batch")
+    users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold))
     bulk_update_size = 100
     chunks = batched(users_to_update, bulk_update_size)
-
-    logger.info("update_brevo_contacts batch updating started")
-
-    for chunk in chunks:
-        contacts = [user_to_brevo_payload(user) for user in chunk]
-        update_object = sib_api_v3_sdk.UpdateBatchContacts(contacts)
-        try:
-            contacts_api_instance.update_batch_contacts(update_object)
-            for user in chunk:
-                user.last_brevo_update = today
-                user.save()
-        except Exception as e:
-            logger.exception(f"Error bulk updating Brevo users {e}", stack_info=True)
-        time.sleep(0.1)  # API rate limit is 10 req per second
-
-    # Try creating those who didn't make it (allowing the update flag to be set)
-    users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold) | Q(last_brevo_update__isnull=True))
-    logger.info("update_brevo_contacts individual creating/updating started")
-
-    for user in users_to_update:
-        try:
-            contact = user_to_brevo_payload(user, bulk=False)
-            contacts_api_instance.create_contact(contact)
-            user.last_brevo_update = today
-            user.save()
-        except Exception as e:
-            logger.exception(f"Error creating/updating an individual Brevo user {e}", stack_info=True)
-        time.sleep(0.1)  # API rate limit is 10 req per second
+    brevo.update_existing_brevo_contacts(chunks, today)
 
     end = time.time()
     logger.info(f"update_brevo_contacts task ended. Duration : { end - start } seconds")
@@ -242,7 +171,7 @@ def no_diagnostic_first_reminder():
             try:
                 parameters = {"PRENOM": manager.first_name, "NOM_CANTINE": canteen.name}
                 to_name = _user_name(manager)
-                _send_sib_template(
+                brevo.send_sib_template(
                     settings.TEMPLATE_ID_NO_DIAGNOSTIC_FIRST,
                     parameters,
                     manager.email,
