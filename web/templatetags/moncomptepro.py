@@ -5,5 +5,5 @@ register = template.Library()
 
 
 @register.simple_tag
-def uses_proconnect():
-    return getattr(settings, "USES_PROCONNECT", "")
+def uses_moncomptepro():
+    return getattr(settings, "USES_MONCOMPTEPRO", "")
