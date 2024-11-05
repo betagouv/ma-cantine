@@ -217,7 +217,7 @@ class OIDCAuthorizeView(View):
             # mcp_data = token["userinfo"]
             mcp_data = oauth.proconnect.userinfo(token=token)
             print(mcp_data)
-            # user = OIDCAuthorizeView.get_or_create_user(mcp_data)
+            user = OIDCAuthorizeView.get_or_create_user(mcp_data)
             # login(request, user)
             return redirect(reverse_lazy("app"))
         except Exception as e:
