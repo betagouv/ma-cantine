@@ -193,17 +193,10 @@
 </div>
 {% uses_proconnect as show_proconnect_button %}
 {% if show_proconnect_button %}
-<div>
-  <form method="get" action="{% url 'oidc-login' %}">
-    <button class="proconnect-button">
-      <span class="proconnect-sr-only">S'identifier avec ProConnect</span>
-    </button>
-  </form>
-  <p>
-    <a href="https://www.proconnect.gouv.fr/" target="_blank" rel="noopener noreferrer" title="Qu’est-ce que ProConnect ? - nouvelle fenêtre">
-      Qu’est-ce que ProConnect ?
-    </a>
-  </p>
+<div style="margin-top: 16px;">
+  <a href="{% url 'oidc-login' %}">
+    <img src="{% static 'images/button-moncomptepro.svg' %}" alt="S'identifier avec MonComptePro" />
+  </a>
 </div>
 {% endif %}
 
