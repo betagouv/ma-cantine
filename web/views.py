@@ -214,7 +214,7 @@ class OIDCAuthorizeView(View):
             token = oauth.moncomptepro.authorize_access_token(request)
             mcp_data = oauth.moncomptepro.userinfo(token=token)
             user = OIDCAuthorizeView.get_or_create_user(mcp_data)
-            # login(request, user)
+            login(request, user)
             return redirect(reverse_lazy("app"))
         except Exception as e:
             logger.exception("Error authenticating with MonComptePro")
