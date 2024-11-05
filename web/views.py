@@ -24,7 +24,7 @@ if settings.USES_PROCONNECT:
     oauth.register(
         name="proconnect",
         server_metadata_url=settings.PROCONNECT_CONFIG,
-        client_kwargs={"scope": "openid email profile organizations"},
+        client_kwargs={"scope": "openid email given_name usual_name uid siret idp_id"},
     )
 
 
@@ -212,9 +212,13 @@ class OIDCAuthorizeView(View):
     def get(self, request, *args, **kwargs):
         try:
             token = oauth.proconnect.authorize_access_token(request)
+            print(token)
+            # print(token["userinfo"])
+            # mcp_data = token["userinfo"]
             mcp_data = oauth.proconnect.userinfo(token=token)
-            user = OIDCAuthorizeView.get_or_create_user(mcp_data)
-            login(request, user)
+            print(mcp_data)
+            # user = OIDCAuthorizeView.get_or_create_user(mcp_data)
+            # login(request, user)
             return redirect(reverse_lazy("app"))
         except Exception as e:
             logger.exception("Error authenticating with MonComptePro")
