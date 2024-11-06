@@ -215,8 +215,8 @@ class OIDCAuthorizeView(View):
     def get(self, request, *args, **kwargs):
         try:
             token = oauth.proconnect.authorize_access_token(request)
-            mcp_data = OIDCAuthorizeView.userinfo(token)
-            user = OIDCAuthorizeView.get_or_create_user(mcp_data)
+            user_data = OIDCAuthorizeView.userinfo(token)
+            user = OIDCAuthorizeView.get_or_create_user(user_data)
             login(request, user)
             return redirect(reverse_lazy("app"))
         except Exception as e:
@@ -225,43 +225,43 @@ class OIDCAuthorizeView(View):
             return redirect("app")
 
     @staticmethod
-    def get_or_create_user(mcp_data):
-        mcp_id = mcp_data.get("sub")
-        mcp_email = mcp_data.get("email")
-        siret = mcp_data.get("siret")
+    def get_or_create_user(user_data):
+        user_id = user_data.get("sub")
+        email = user_data.get("email")
+        siret = user_data.get("siret")
         organizations = [{"siret": siret, "id": siret}]  # recreate old MonComptePro structure
 
-        # Attempt with mcp_id
+        # Attempt with id provided by Identity Provider
         try:
-            user = get_user_model().objects.get(mcp_id=mcp_id)
+            user = get_user_model().objects.get(mcp_id=user_id)
             user.mcp_organizations = organizations
             user.save()
-            logger.info(f"ProConnect user {mcp_id} (ID Ma Cantine: {user.id}) was found.")
+            logger.info(f"ProConnect user {user_id} (ID Ma Cantine: {user.id}) was found.")
             return user
         except get_user_model().DoesNotExist:
             pass
 
         # Attempt with email
         try:
-            user = get_user_model().objects.get(email=mcp_email)
-            user.mcp_id = mcp_id
+            user = get_user_model().objects.get(email=email)
+            user.mcp_id = user_id
             user.mcp_organizations = organizations
             user.save()
-            logger.info(f"ProConnect user {mcp_id} was already registered in MaCantine with email {mcp_email}.")
+            logger.info(f"ProConnect user {user_id} was already registered in MaCantine with email {email}.")
             return user
         except get_user_model().DoesNotExist:
             pass
 
         # Create user
-        last_name = mcp_data.get("usual_name")
-        logger.info(f"Creating new user from ProConnect user {mcp_id} with email {mcp_email}.")
+        last_name = user_data.get("usual_name")
+        logger.info(f"Creating new user from ProConnect user {user_id} with email {email}.")
         user = get_user_model().objects.create(
-            first_name=mcp_data.get("given_name"),
+            first_name=user_data.get("given_name"),
             last_name=last_name,
-            email=mcp_email,
-            mcp_id=mcp_id,
+            email=email,
+            mcp_id=user_id,
             # phone_number=mcp_data.get("phone"),
-            username=f"{last_name}-proconnect-{mcp_id}",
+            username=f"{last_name}-proconnect-{user_id}",
             mcp_organizations=organizations,
             created_with_mcp=True,
         )
