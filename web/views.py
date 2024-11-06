@@ -24,7 +24,7 @@ if settings.USES_MONCOMPTEPRO:
     oauth.register(
         name="moncomptepro",
         server_metadata_url=settings.MONCOMPTEPRO_CONFIG,
-        client_kwargs={"scope": "openid email profile organizations"},
+        client_kwargs={"scope": "openid email given_name usual_name siret"},
     )
 
 
@@ -208,13 +208,17 @@ class OIDCLoginView(View):
         return oauth.moncomptepro.authorize_redirect(request, redirect_uri)
 
 
+ID_TOKEN_KEY = "id_token"
+
+
 class OIDCAuthorizeView(View):
     def get(self, request, *args, **kwargs):
         try:
             token = oauth.moncomptepro.authorize_access_token(request)
-            mcp_data = oauth.moncomptepro.userinfo(token=token)
-            user = OIDCAuthorizeView.get_or_create_user(mcp_data)
-            login(request, user)
+            mcp_data = OIDCAuthorizeView.userinfo(token)
+            print(mcp_data)
+            # user = OIDCAuthorizeView.get_or_create_user(mcp_data)
+            # login(request, user)
             return redirect(reverse_lazy("app"))
         except Exception as e:
             logger.exception("Error authenticating with MonComptePro")
@@ -260,3 +264,24 @@ class OIDCAuthorizeView(View):
             created_with_mcp=True,
         )
         return user
+
+    @staticmethod
+    def userinfo(token):
+        """
+        Authlib's method (callable as oauth.proconnect.userinfo(token=token))
+        does not currently function with ProConnect tokens.
+        There are issues with a non-configurable leeway and the structure of the token
+        received by ProConnect.
+        This method takes their function as of v1.3.2 and rewrites it to fix the
+        issues manually. Inspired by:
+        https://github.com/datagouv/udata-front/blob/f227ce5a8bba9822717ebd5986f5319f45e1622f/udata_front/views/proconnect.py#L29
+        """
+        metadata = oauth.moncomptepro.load_server_metadata()
+        resp = oauth.moncomptepro.get(metadata["userinfo_endpoint"], token=token)
+        resp.raise_for_status()
+        # Create a new token that `client.parse_id_token` expects. Replace the initial
+        # `id_token` with the jwt we received from the `userinfo_endpoint`.
+        userinfo_token = token.copy()
+        userinfo_token[ID_TOKEN_KEY] = resp.content
+        user_data = oauth.moncomptepro.parse_id_token(userinfo_token, nonce=None)
+        return user_data
