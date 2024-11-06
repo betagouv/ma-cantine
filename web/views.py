@@ -19,11 +19,11 @@ from web.forms import LoginUserForm, RegisterUserForm
 
 logger = logging.getLogger(__name__)
 
-if settings.USES_MONCOMPTEPRO:
+if settings.USES_PROCONNECT:
     oauth = OAuth()
     oauth.register(
-        name="moncomptepro",
-        server_metadata_url=settings.MONCOMPTEPRO_CONFIG,
+        name="proconnect",
+        server_metadata_url=settings.PROCONNECT_CONFIG,
         client_kwargs={"scope": "openid email given_name usual_name siret"},
     )
 
@@ -205,7 +205,7 @@ def _login_and_send_activation_email(username, request):
 class OIDCLoginView(View):
     def get(self, request, *args, **kwargs):
         redirect_uri = request.build_absolute_uri(reverse_lazy("oidc-authorize"))
-        return oauth.moncomptepro.authorize_redirect(request, redirect_uri)
+        return oauth.proconnect.authorize_redirect(request, redirect_uri)
 
 
 ID_TOKEN_KEY = "id_token"
@@ -214,14 +214,13 @@ ID_TOKEN_KEY = "id_token"
 class OIDCAuthorizeView(View):
     def get(self, request, *args, **kwargs):
         try:
-            token = oauth.moncomptepro.authorize_access_token(request)
+            token = oauth.proconnect.authorize_access_token(request)
             mcp_data = OIDCAuthorizeView.userinfo(token)
-            print(mcp_data)
             user = OIDCAuthorizeView.get_or_create_user(mcp_data)
             login(request, user)
             return redirect(reverse_lazy("app"))
         except Exception as e:
-            logger.exception("Error authenticating with MonComptePro")
+            logger.exception("Error authenticating with ProConnect")
             logger.exception(e)
             return redirect("app")
 
@@ -237,7 +236,7 @@ class OIDCAuthorizeView(View):
             user = get_user_model().objects.get(mcp_id=mcp_id)
             user.mcp_organizations = organizations
             user.save()
-            logger.info(f"MonComptePro user {mcp_id} (ID Ma Cantine: {user.id}) was found.")
+            logger.info(f"ProConnect user {mcp_id} (ID Ma Cantine: {user.id}) was found.")
             return user
         except get_user_model().DoesNotExist:
             pass
@@ -248,14 +247,14 @@ class OIDCAuthorizeView(View):
             user.mcp_id = mcp_id
             user.mcp_organizations = organizations
             user.save()
-            logger.info(f"MonComptePro user {mcp_id} was already registered in MaCantine with email {mcp_email}.")
+            logger.info(f"ProConnect user {mcp_id} was already registered in MaCantine with email {mcp_email}.")
             return user
         except get_user_model().DoesNotExist:
             pass
 
         # Create user
         last_name = mcp_data.get("usual_name")
-        logger.info(f"Creating new user from MonComptePro user {mcp_id} with email {mcp_email}.")
+        logger.info(f"Creating new user from ProConnect user {mcp_id} with email {mcp_email}.")
         user = get_user_model().objects.create(
             first_name=mcp_data.get("given_name"),
             last_name=last_name,
@@ -279,12 +278,12 @@ class OIDCAuthorizeView(View):
         issues manually. Inspired by:
         https://github.com/datagouv/udata-front/blob/f227ce5a8bba9822717ebd5986f5319f45e1622f/udata_front/views/proconnect.py#L29
         """
-        metadata = oauth.moncomptepro.load_server_metadata()
-        resp = oauth.moncomptepro.get(metadata["userinfo_endpoint"], token=token)
+        metadata = oauth.proconnect.load_server_metadata()
+        resp = oauth.proconnect.get(metadata["userinfo_endpoint"], token=token)
         resp.raise_for_status()
         # Create a new token that `client.parse_id_token` expects. Replace the initial
         # `id_token` with the jwt we received from the `userinfo_endpoint`.
         userinfo_token = token.copy()
         userinfo_token[ID_TOKEN_KEY] = resp.content
-        user_data = oauth.moncomptepro.parse_id_token(userinfo_token, nonce=None)
+        user_data = oauth.proconnect.parse_id_token(userinfo_token, nonce=None)
         return user_data
