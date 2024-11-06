@@ -217,8 +217,8 @@ class OIDCAuthorizeView(View):
             token = oauth.moncomptepro.authorize_access_token(request)
             mcp_data = OIDCAuthorizeView.userinfo(token)
             print(mcp_data)
-            # user = OIDCAuthorizeView.get_or_create_user(mcp_data)
-            # login(request, user)
+            user = OIDCAuthorizeView.get_or_create_user(mcp_data)
+            login(request, user)
             return redirect(reverse_lazy("app"))
         except Exception as e:
             logger.exception("Error authenticating with MonComptePro")
@@ -229,11 +229,13 @@ class OIDCAuthorizeView(View):
     def get_or_create_user(mcp_data):
         mcp_id = mcp_data.get("sub")
         mcp_email = mcp_data.get("email")
+        siret = mcp_data.get("siret")
+        organizations = [{"siret": siret, "id": siret}]  # recreate old MonComptePro structure
 
         # Attempt with mcp_id
         try:
             user = get_user_model().objects.get(mcp_id=mcp_id)
-            user.mcp_organizations = mcp_data.get("organizations")
+            user.mcp_organizations = organizations
             user.save()
             logger.info(f"MonComptePro user {mcp_id} (ID Ma Cantine: {user.id}) was found.")
             return user
@@ -243,8 +245,8 @@ class OIDCAuthorizeView(View):
         # Attempt with email
         try:
             user = get_user_model().objects.get(email=mcp_email)
-            user.mcp_id = mcp_data.get("sub")
-            user.mcp_organizations = mcp_data.get("organizations")
+            user.mcp_id = mcp_id
+            user.mcp_organizations = organizations
             user.save()
             logger.info(f"MonComptePro user {mcp_id} was already registered in MaCantine with email {mcp_email}.")
             return user
@@ -252,15 +254,16 @@ class OIDCAuthorizeView(View):
             pass
 
         # Create user
+        last_name = mcp_data.get("usual_name")
         logger.info(f"Creating new user from MonComptePro user {mcp_id} with email {mcp_email}.")
         user = get_user_model().objects.create(
             first_name=mcp_data.get("given_name"),
-            last_name=mcp_data.get("family_name"),
+            last_name=last_name,
             email=mcp_email,
             mcp_id=mcp_id,
-            phone_number=mcp_data.get("phone_number"),
-            username=f"{mcp_data.get('family_name')}-mcp-{mcp_id}",
-            mcp_organizations=mcp_data.get("organizations"),
+            # phone_number=mcp_data.get("phone"),
+            username=f"{last_name}-proconnect-{mcp_id}",
+            mcp_organizations=organizations,
             created_with_mcp=True,
         )
         return user
