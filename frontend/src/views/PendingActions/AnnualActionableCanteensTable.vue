@@ -167,8 +167,8 @@ export default {
       typeDisplay: {
         site: "Cuisine sur site",
         site_cooked_elsewhere: "Cantine satellite",
-        central: "Cuisine centrale",
-        central_serving: "Centrale avec service sur place",
+        central: "Livreur des repas",
+        central_serving: "Livreur, avec service sur place",
       },
       actions: {
         "10_add_satellites": {
