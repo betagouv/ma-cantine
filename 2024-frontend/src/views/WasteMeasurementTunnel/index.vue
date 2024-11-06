@@ -127,6 +127,10 @@ const saveAndQuit = () => {
     .catch(handleServerError)
 }
 
+const quit = () => {
+  router.push({ name: "WasteMeasurements" })
+}
+
 let v$
 const updateVuelidate = (vuelidateObj) => {
   v$ = vuelidateObj
@@ -173,7 +177,19 @@ watch(props, () => {
       <div class="measures fr-grid-row fr-grid-row--middle fr-py-2w">
         <div v-if="step" class="quit">
           <DsfrButton
-            :label="step.isSynthesis ? 'Quitter' : 'Sauvegarder et quitter'"
+            v-if="step.isSynthesis || stepIdx === 0"
+            label="Quitter"
+            @click="quit"
+            icon="fr-icon-close-line"
+            icon-right
+            size="sm"
+            tertiary
+            no-outline
+            class="fr-mr-n1w"
+          />
+          <DsfrButton
+            v-else
+            label="Sauvegarder et quitter"
             @click="saveAndQuit"
             icon="fr-icon-close-line"
             icon-right
