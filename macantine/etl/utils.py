@@ -225,6 +225,33 @@ def map_sectors():
     return sectors_mapper
 
 
+def filter_empty_values(df: pd.DataFrame, col_name) -> pd.DataFrame:
+    """
+    Filtering out the teledeclarations for wich a certain field is empty
+    """
+    return df.dropna(subset=col_name)
+
+
+def filter_aberrant_td(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Filtering out the teledeclarations that :
+    *  products > 1 million €
+    AND
+    * an avg meal cost > 20 €
+    """
+    mask = (df["teledeclaration.value_total_ht"] > 1000000) & (
+        df["teledeclaration.value_total_ht"] / df["canteen.yearly_meal_count"] > 20
+    )
+    return df[~mask]
+
+
+def filter_teledeclarations(df: pd.DataFrame):
+    df = filter_empty_values(df, col_name="teledeclaration.value_total_ht")
+    df = filter_empty_values(df, col_name="teledeclaration.value_bio_ht")
+    df = filter_aberrant_td(df)
+    return df
+
+
 def fetch_teledeclarations(years: list) -> pd.DataFrame:
     df = pd.DataFrame()
     for year in years:
@@ -238,7 +265,18 @@ def fetch_teledeclarations(years: list) -> pd.DataFrame:
                     ),
                     status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
                     canteen_id__isnull=False,
-                ).values()
+                    canteen__siret__isnull=False,
+                    canteen__siret__length_gt=14,
+                    diagnostic__value_total_ht__isnull=False,
+                    diagnostic__value_bio_ht__isnull=False,
+                )
+                .exclude(
+                    canteen__deletion_date__range=(
+                        CAMPAIGN_DATES[year]["start_date"],
+                        CAMPAIGN_DATES[year]["end_date"],
+                    ),
+                )
+                .values()
             )
             df = pd.concat([df, df_year])
         else:

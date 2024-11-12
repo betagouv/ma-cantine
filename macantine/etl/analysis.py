@@ -190,6 +190,7 @@ class ETL_ANALYSIS(etl.ETL):
         """
         Load in database
         """
+        logger.info(f"Loading {len(self.df)} objects in db")
         self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
 
     def _clean_dataset(self):
@@ -230,6 +231,9 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
         # Aggregate columns for complete TD - Must occur before other transformations
         self.df = aggregate(self.df)
 
+        # Add additionnal filters (that couldn't be processed at queryset)
+        self.df = utils.filter_teledeclarations(self.df)
+
         self.compute_miscellaneous_columns()
 
         # Convert types
@@ -243,14 +247,14 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
         self.fill_geo_names(prefix="canteen.")
 
         # Fill campaign participation
-        logger.info("Canteens : Fill campaign participations...")
+        logger.info("TD : Fill campaign participations...")
         for year in utils.CAMPAIGN_DATES.keys():
             campaign_participation = utils.map_canteens_td(year)
             col_name_campaign = f"declaration_{year}"
             self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
 
         # Extract the sector names and categories
-        logger.info("Canteens : Extract sectors...")
+        logger.info("TD : Extract sectors...")
         self.df[["secteur", "catégorie"]] = self.df.apply(
             lambda x: utils.format_td_sector_column(x, "canteen.sectors"), axis=1, result_type="expand"
         )
