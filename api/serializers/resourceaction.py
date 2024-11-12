@@ -13,6 +13,7 @@ class ResourceActionSerializer(serializers.ModelSerializer):
             "resource_id",
             "canteen_id",
             "is_done",
+            "is_favorite",
         )
 
 

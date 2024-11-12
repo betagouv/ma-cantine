@@ -30,7 +30,7 @@
         <v-spacer />
         <div v-if="!hasApproData">
           <p>
-            Les données d’approvisionnement apparaîtront directement ici lorsque votre cuisine centrale les aura
+            Les données d’approvisionnement apparaîtront directement ici lorsque votre livreur des repas les aura
             renseignées.
           </p>
           <p v-if="!diagnostic || diagnostic.centralKitchenDiagnosticMode !== 'ALL'">
