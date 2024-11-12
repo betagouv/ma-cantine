@@ -192,6 +192,11 @@ class ETL_ANALYSIS(etl.ETL):
         """
         self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
 
+    def _clean_dataset(self):
+        self.df = self.df.loc[:, ~self.df.columns.duplicated()]
+        self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
+        self.df = self.df.drop_duplicates(subset=["id"])
+
 
 class ETL_ANALYSIS_TD(ETL_ANALYSIS):
     """
@@ -204,7 +209,7 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
     def __init__(self):
         self.df = None
         self.years = utils.CAMPAIGN_DATES.keys()
-        self.extracted_table_name = "teledeclarations_extracted"
+        self.extracted_table_name = "teledeclarations"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis.json"))
 
@@ -302,7 +307,7 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
 
     def __init__(self):
         self.df = None
-        self.extracted_table_name = "canteens_extracted"
+        self.extracted_table_name = "canteens"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
         # The following mapper is used for renaming columns and for selecting the columns to extract from db
@@ -338,7 +343,9 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
         # Extract the sector names and categories
         logger.info("Canteens : Extract sectors and SPE...")
         self.df = utils.extract_sectors(self.df, extract_spe=True, split_category_and_sector=True, only_one_value=True)
-        self.df = self.df.rename(columns={"categories": "categorie"})
 
+        self.df = self.df.rename(columns={"categories": "categorie"})
         self.df = self.df.rename(columns=self.columns_mapper)
-        self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
+
+        logger.info("Canteens : Clean dataset")
+        self._clean_dataset()
