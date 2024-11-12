@@ -1415,6 +1415,8 @@ class TestCanteenApi(APITestCase):
     def test_canteen_badges(self):
         """
         The full representation of a canteen contains the badges earned for last year
+        A badge can be True, False, or None. None = !True and the tunnel wasn't started,
+        False = !True and the tunnel was started.
         """
         user_canteen = CanteenFactory.create()
         user_canteen.managers.add(authenticate.user)
@@ -1422,9 +1424,16 @@ class TestCanteenApi(APITestCase):
         DiagnosticFactory.create(
             canteen=user_canteen,
             year=2023,
+            # test appro badge as true
             value_total_ht=100,
             value_bio_ht=20,
             value_sustainable_ht=30,
+            # test plastic badge as false
+            tunnel_plastic="something",
+            cooking_plastic_substituted=False,
+            # test vege badge as null
+            tunnel_diversification=None,
+            vegetarian_weekly_recurrence=None,
         )
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
@@ -1432,7 +1441,9 @@ class TestCanteenApi(APITestCase):
         body = response.json()
 
         badges = body["badges"]
-        self.assertTrue("appro" in badges)
+        self.assertTrue(badges["appro"])
+        self.assertIs(badges["plastic"], False)
+        self.assertIsNone(badges["diversification"])
 
     @authenticate
     def test_canteen_returns_latest_diagnostic_year(self):
