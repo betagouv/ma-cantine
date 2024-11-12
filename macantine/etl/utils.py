@@ -266,7 +266,6 @@ def fetch_teledeclarations(years: list) -> pd.DataFrame:
                     status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
                     canteen_id__isnull=False,
                     canteen__siret__isnull=False,
-                    canteen__siret__length_gt=14,
                     diagnostic__value_total_ht__isnull=False,
                     diagnostic__value_bio_ht__isnull=False,
                 )
@@ -275,6 +274,7 @@ def fetch_teledeclarations(years: list) -> pd.DataFrame:
                         CAMPAIGN_DATES[year]["start_date"],
                         CAMPAIGN_DATES[year]["end_date"],
                     ),
+                    canteen__siret="",
                 )
                 .values()
             )
