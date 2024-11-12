@@ -54,7 +54,7 @@ class TestETLAnalysisTD(TestCase):
         """
         Only teledeclarations that occurred during teledeclaration campaigns should be extracted
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory.create(siret="98648424243607")
         applicant = UserFactory.create()
         with freeze_time("1991-01-14"):  # Faking time to mock creation_date
             diagnostic_1990 = DiagnosticFactory.create(canteen=canteen, year=1990, diagnostic_type=None)
