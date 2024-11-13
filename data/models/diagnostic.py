@@ -1654,7 +1654,7 @@ class Diagnostic(models.Model):
         return self.family_sum("autres")
 
     @property
-    def appro_badge(self):
+    def appro_badge(self) -> bool | None:
         total = self.value_total_ht
         if total:
             bio_share = (self.value_bio_ht or 0) / total
@@ -1685,24 +1685,30 @@ class Diagnostic(models.Model):
             # * 100 to get around floating point errors when we are on the cusp
             if bio_share * 100 >= bio_threshold and combined_share * 100 >= combined_threshold:
                 return True
+        if self.tunnel_appro:
+            return False
 
     @property
-    def waste_badge(self):
+    def waste_badge(self) -> bool | None:
         if self.has_waste_diagnostic and self.waste_actions and len(self.waste_actions) > 0:
             if self.has_donation_agreement or (self.canteen.daily_meal_count and self.canteen.daily_meal_count < 3000):
                 return True
+        if self.tunnel_waste:
+            return False
 
     @property
-    def diversification_badge(self):
+    def diversification_badge(self) -> bool | None:
         if self.vegetarian_weekly_recurrence == Diagnostic.MenuFrequency.DAILY:
             return True
         elif self.vegetarian_weekly_recurrence in [Diagnostic.MenuFrequency.MID, Diagnostic.MenuFrequency.HIGH]:
             # if the canteen is in the education sector, it can have a lower recurrence
             if self.canteen.in_education:
                 return True
+        if self.tunnel_diversification:
+            return False
 
     @property
-    def plastic_badge(self):
+    def plastic_badge(self) -> bool | None:
         if (
             self.cooking_plastic_substituted
             and self.serving_plastic_substituted
@@ -1710,8 +1716,12 @@ class Diagnostic(models.Model):
             and self.plastic_tableware_substituted
         ):
             return True
+        if self.tunnel_plastic:
+            return False
 
     @property
-    def info_badge(self):
+    def info_badge(self) -> bool | None:
         if self.communicates_on_food_quality:
             return True
+        if self.tunnel_info:
+            return False
