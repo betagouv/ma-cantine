@@ -68,6 +68,15 @@ class TestETLAnalysisTD(TestCase):
             diagnostic_2023 = DiagnosticFactory.create(canteen=canteen, year=2023, diagnostic_type=None)
             td_2023 = Teledeclaration.create_from_diagnostic(diagnostic_2023, applicant)
 
+        # This TD should not be extracted as its canteen has been deleted during the campaign
+        with freeze_time("2024-02-14"):  # Faking time to mock creation_date
+            canteen_deleted_during_campaign = CanteenFactory.create(siret="28838740672960")
+            diagnostic_out_of_range = DiagnosticFactory.create(
+                canteen=canteen_deleted_during_campaign, year=2023, diagnostic_type=None
+            )
+            Teledeclaration.create_from_diagnostic(diagnostic_out_of_range, applicant)
+            canteen_deleted_during_campaign.delete()
+
         etl_stats = ETL_ANALYSIS_TD()
 
         etl_stats.extract_dataset()
