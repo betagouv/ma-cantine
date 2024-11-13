@@ -82,11 +82,11 @@ const continueAction = () => {
   return saveDiagnostic()
     .then((response) => {
       const nextRoute = { query: { étape: nextStep.value.urlSlug } }
-      if (!props.id && response.id)
+      if (isNew.value && response.id)
         nextRoute.params = { id: response.id, canteenUrlComponent: props.canteenUrlComponent }
       router.push(nextRoute)
       scrollTop()
-      Object.assign(originalPayload, hotPayload)
+      Object.assign(originalPayload, hotPayload.value)
     })
     .catch(handleServerError)
 }
@@ -98,8 +98,7 @@ const navigateBack = () => {
 
 const goBack = () => {
   if (!previousStep.value) return
-  // allow going back without validation if payload is empty, don't need to save
-  if (Object.keys(hotPayload).length === 0) {
+  if (!hasChanges.value) {
     navigateBack()
     return
   }
@@ -118,13 +117,20 @@ const scrollTop = () => {
   if (stepWrapper.value) stepWrapper.value.scrollTop = 0
 }
 
+const hasChanges = computed(() => {
+  const relevantKeys = Object.keys(hotPayload.value)
+  return relevantKeys.some((key) => hotPayload.value[key] !== originalPayload[key])
+})
 const saveAndQuit = () => {
+  if (!hasChanges.value) quit()
   if (!formIsValid()) return
   saveDiagnostic()
-    .then(() => {
-      router.push({ name: "WasteMeasurements" })
-    })
+    .then(quit)
     .catch(handleServerError)
+}
+
+const quit = () => {
+  router.push({ name: "WasteMeasurements" })
 }
 
 let v$
@@ -132,13 +138,13 @@ const updateVuelidate = (vuelidateObj) => {
   v$ = vuelidateObj
 }
 
-let hotPayload = {}
+let hotPayload = ref({})
 const updatePayloadFromChild = (childPayload) => {
   if (!v$) {
     console.error("No vuelidate object")
     return
   }
-  Object.assign(hotPayload, childPayload)
+  Object.assign(hotPayload.value, childPayload)
 }
 
 const handleServerError = (error) => {
@@ -154,16 +160,18 @@ const handleServerError = (error) => {
   store.notifyServerError(error)
 }
 
+const isNew = computed(() => !props.id)
+
 const saveDiagnostic = () => {
-  if (!props.id) {
-    return store.createWasteMeasurement(canteenId, hotPayload)
+  if (isNew.value) {
+    return store.createWasteMeasurement(canteenId, hotPayload.value)
   }
-  return store.updateWasteMeasurement(canteenId, props.id, hotPayload)
+  return store.updateWasteMeasurement(canteenId, props.id, hotPayload.value)
 }
 
 watch(props, () => {
   v$.value.$reset()
-  hotPayload = {}
+  hotPayload.value = {}
 })
 </script>
 
@@ -173,7 +181,19 @@ watch(props, () => {
       <div class="measures fr-grid-row fr-grid-row--middle fr-py-2w">
         <div v-if="step" class="quit">
           <DsfrButton
-            :label="step.isSynthesis ? 'Quitter' : 'Sauvegarder et quitter'"
+            v-if="step.isSynthesis || (stepIdx === 0 && isNew)"
+            label="Quitter"
+            @click="quit"
+            icon="fr-icon-close-line"
+            icon-right
+            size="sm"
+            tertiary
+            no-outline
+            class="fr-mr-n1w"
+          />
+          <DsfrButton
+            v-else
+            label="Sauvegarder et quitter"
             @click="saveAndQuit"
             icon="fr-icon-close-line"
             icon-right
