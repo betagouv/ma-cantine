@@ -47,8 +47,8 @@
           <v-btn small color="primary" @click="showActionDialog">
             <span class="mx-2">
               <span v-if="!canteensActionDone.length">J'ai mis en place cette action</span>
-              <span v-else-if="userCanteens.length > 1">Modifier cette action</span>
-              <span v-else>Retirer cette action</span>
+              <span v-else-if="userCanteens.length > 1">Modifier</span>
+              <span v-else>Retirer</span>
             </span>
           </v-btn>
         </v-col>
