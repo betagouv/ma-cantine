@@ -65,31 +65,26 @@
           <p>Votre livreur des repas va faire le bilan pour votre établissement.</p>
         </div>
         <div v-else-if="inTeledeclarationCampaign">
+          <DataInfoBadge class="my-2" :readyToTeledeclare="readyToTeledeclare" :missingData="!readyToTeledeclare" />
           <div v-if="isSatelliteWithApproCentralDiagnostic">
             <p>Votre livreur des repas va déclarer les données d'approvisionnement pour votre établissement.</p>
             <p>Pour aller plus loin, vous pouvez télédéclarer les autres volets du bilan.</p>
-            <v-btn v-if="readyToTeledeclare" outlined color="primary" @click="showTeledeclarationPreview = true">
-              Télédéclarer
-            </v-btn>
           </div>
-          <div v-else-if="readyToTeledeclare">
-            <DataInfoBadge class="my-2" :readyToTeledeclare="true" />
+          <div v-if="readyToTeledeclare">
             <div v-if="hasFinishedMeasureTunnel">
               <p>Votre bilan est complet !</p>
-              <v-btn color="primary" @click="showTeledeclarationPreview = true">Télédéclarer</v-btn>
             </div>
-            <div v-else>
+            <div v-else-if="!isSatelliteWithApproCentralDiagnostic">
               <p>Vous pouvez télédéclarer dès maintenant.</p>
               <p v-if="!isCentralKitchen || diagnostic.centralKitchenDiagnosticMode !== 'APPRO'">
                 Pour aller plus loin, vous pouvez également compléter les autres volets du bilan.
               </p>
-              <v-btn outlined color="primary" @click="showTeledeclarationPreview = true">
-                Télédéclarer
-              </v-btn>
             </div>
+            <v-btn color="primary" :outlined="!hasFinishedMeasureTunnel" @click="showTeledeclarationPreview = true">
+              Télédéclarer
+            </v-btn>
           </div>
           <div v-else>
-            <DataInfoBadge class="my-2" :missingData="true" />
             <p>Pour télédéclarer, veuillez :</p>
             <ul>
               <li v-if="missingApproDiagnostic" class="mb-2">
