@@ -94,13 +94,13 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
 
 class BadgesSerializer(serializers.ModelSerializer):
     year = serializers.IntegerField(source="latest_published_year")
-    appro = serializers.BooleanField(source="latest_published_appro_diagnostic.appro_badge", default=False)
-    waste = serializers.BooleanField(source="latest_published_service_diagnostic.waste_badge", default=False)
+    appro = serializers.BooleanField(source="latest_published_appro_diagnostic.appro_badge", default=None)
+    waste = serializers.BooleanField(source="latest_published_service_diagnostic.waste_badge", default=None)
     diversification = serializers.BooleanField(
-        source="latest_published_service_diagnostic.diversification_badge", default=False
+        source="latest_published_service_diagnostic.diversification_badge", default=None
     )
-    plastic = serializers.BooleanField(source="latest_published_service_diagnostic.plastic_badge", default=False)
-    info = serializers.BooleanField(source="latest_published_service_diagnostic.info_badge", default=False)
+    plastic = serializers.BooleanField(source="latest_published_service_diagnostic.plastic_badge", default=None)
+    info = serializers.BooleanField(source="latest_published_service_diagnostic.info_badge", default=None)
 
     class Meta:
         model = Canteen
