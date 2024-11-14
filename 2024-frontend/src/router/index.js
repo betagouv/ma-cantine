@@ -11,7 +11,7 @@ const routes = [
     component: WasteMeasurementTunnel,
     props: (route) => ({ ...route.query, ...route.params }),
     meta: {
-      title: "Évaluation gaspillage alimentaire",
+      title: "Évaluation déchets alimentaires",
       authenticationRequired: true,
       fullscreen: true,
     },
@@ -31,7 +31,7 @@ const routes = [
     component: WasteMeasurements,
     props: (route) => ({ ...route.params }),
     meta: {
-      title: "Gaspillage alimentaire",
+      title: "Déchets alimentaires",
       authenticationRequired: true,
       breadcrumbs: [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
