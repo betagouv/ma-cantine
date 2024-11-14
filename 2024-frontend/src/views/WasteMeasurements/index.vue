@@ -58,7 +58,7 @@ onMounted(() => {
         Votre établissement est soumis à l'obligation de faire une analyse des causes du gaspillage alimentaire, et de
         mettre en place une démarche de lutte contre le gaspillage alimentaire.
       </p>
-      <DsfrBadge label="Pas encore des données" type="none" />
+      <DsfrBadge label="Pas encore de données" type="none" />
       <EmphasiseText :emphasisText="`${formatNumber()} g`" contextText="par repas" />
       <router-link :to="newMeasurementRoute" class="fr-btn">
         Saisir une évaluation

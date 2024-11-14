@@ -84,7 +84,7 @@ onMounted(() => {
     <div class="fr-grid-row fr-grid-row--middle">
       <div class="fr-col-12 fr-col-md-6">
         <fieldset class="fr-px-0 fr-pt-0 fr-mx-0">
-          <legend class="fr-text--lg fr-mb-1w fr-px-0">Période de mesure de mon gaspillage alimentaire</legend>
+          <legend class="fr-text--lg fr-mb-1w fr-px-0">Période de mesure de mes déchets alimentaires</legend>
           <div class="fr-col-md-7">
             <DsfrInputGroup
               v-model="payload.periodStartDate"

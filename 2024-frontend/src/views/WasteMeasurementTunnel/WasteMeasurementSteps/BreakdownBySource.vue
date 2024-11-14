@@ -16,7 +16,7 @@ const sources = {
     edibleKey: "preparationEdibleMass",
     inedibleKey: "preparationInedibleMass",
     title: "Excédents de préparation",
-    primaryLabel: "Masse de gaspillage pour les excédents de préparation",
+    primaryLabel: "Masse de déchets alimentaire pour les excédents de préparation (en kg)",
     description:
       "Par exemple, si vous avez jeté des épluchures, des parures ou si vous avez des ingrédients excédentaires que vous ne réutiliserez pas, il s’agit d’excédents de préparation",
     edibleHelp:
@@ -120,7 +120,7 @@ onMounted(() => {
             v-model.number="payload.totalKey"
             type="number"
             :label="source.primaryLabel"
-            hint="En kg (optionnel)"
+            hint="Optionnel"
             label-visible
             class="fr-mb-2w"
             :error-message="formatError(v$.totalKey)"

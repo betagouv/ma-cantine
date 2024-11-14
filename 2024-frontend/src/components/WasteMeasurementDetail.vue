@@ -6,11 +6,11 @@ const props = defineProps(["measurement"])
 const detailedFields = [
   {
     key: "totalMass",
-    label: "Masse totale de gaspillage relevée sur la période de mesure",
+    label: "Masse totale des déchets alimentaires relevée sur la période de mesure",
   },
   {
     key: "daysInPeriod",
-    label: "Période de mesure de mon gaspillage alimentaire",
+    label: "Période de mesure de mes déchets alimentaires",
     unit: "jours",
   },
   {

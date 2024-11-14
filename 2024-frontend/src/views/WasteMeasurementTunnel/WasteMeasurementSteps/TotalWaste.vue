@@ -39,7 +39,7 @@ onMounted(() => {
       <DsfrInputGroup
         v-model.number="payload.totalMass"
         type="number"
-        label="Masse totale de gaspillage relevée sur la période de mesure"
+        label="Masse totale des déchets alimentaires relevée sur la période de mesure"
         hint="en kg"
         label-visible
         class="fr-mb-2w"

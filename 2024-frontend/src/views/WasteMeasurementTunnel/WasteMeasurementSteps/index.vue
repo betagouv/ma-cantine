@@ -16,31 +16,31 @@ const firstSteps = [
   },
   {
     urlSlug: "total",
-    title: "Masse totale de gaspillage",
+    title: "Masse totale des déchets alimentaires",
     component: markRaw(TotalWaste),
   },
   {
     urlSlug: "distinction",
-    title: "Distinction du gaspillage en fonction de la source",
+    title: "Distinction des déchets alimentaires en fonction de la source",
     component: markRaw(WasteDistinction),
   },
 ]
 const breakdownSteps = [
   {
     urlSlug: "preparation",
-    title: "Gaspillage lié aux excédents de préparation",
+    title: "Déchets alimentaires liés aux excédents de préparation",
     component: markRaw(BreakdownBySource),
     componentData: { source: "preparation" },
   },
   {
     urlSlug: "non-servies",
-    title: "Gaspillage lié aux denrées présentées aux convives mais non servies",
+    title: "Déchets alimentaires liés aux denrées présentées aux convives mais non servies",
     component: markRaw(BreakdownBySource),
     componentData: { source: "unserved" },
   },
   {
     urlSlug: "reste-assiette",
-    title: "Gaspillage lié au reste assiette",
+    title: "Déchets alimentaires liés au reste assiette",
     component: markRaw(BreakdownBySource),
     componentData: { source: "leftovers" },
   },
