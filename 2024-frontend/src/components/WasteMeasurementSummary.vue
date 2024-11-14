@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from "vue"
+import EdibleBarChart from "./EdibleBarChart.vue"
 import SourceChart from "./SourceChart.vue"
 import MeasurementDetail from "./WasteMeasurementDetail.vue"
 import EmphasiseText from "./EmphasiseText.vue"
@@ -55,7 +56,17 @@ const activeAccordion = ref("")
           Saisir une nouvelle évaluation
         </router-link>
       </div>
-      <div class="fr-col-12 fr-col-sm-5 fr-mb-4w">
+      <div class="fr-col-12 fr-col-sm-4 fr-mb-4w">
+        <div v-if="displayMeasurement.isSortedBySource">
+          <EdibleBarChart :measurement="displayMeasurement" />
+        </div>
+        <div v-else>
+          <DsfrAlert>
+            Triez vos déchets alimentaires par source pour mieux comprendre comment agir.
+          </DsfrAlert>
+        </div>
+      </div>
+      <div class="fr-col-12 fr-col-sm-4 fr-mb-4w">
         <div v-if="displayMeasurement.isSortedBySource">
           <SourceChart :measurement="displayMeasurement" />
         </div>
