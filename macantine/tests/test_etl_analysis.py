@@ -55,6 +55,7 @@ class TestETLAnalysisTD(TestCase):
         Only teledeclarations that occurred during teledeclaration campaigns should be extracted
         """
         canteen = CanteenFactory.create(siret="98648424243607")
+        canteen_no_siret = CanteenFactory.create()
         applicant = UserFactory.create()
         etl_stats = ETL_ANALYSIS_TD()
 
@@ -65,6 +66,7 @@ class TestETLAnalysisTD(TestCase):
                 "canteen": canteen,
                 "delete_canteen": False,
                 "expected_outcome": "no_extraction",
+                "msg": "Outside any campaign date",
             },
             {
                 "date_mocked": "2023-05-14",
@@ -72,6 +74,7 @@ class TestETLAnalysisTD(TestCase):
                 "canteen": canteen,
                 "delete_canteen": False,
                 "expected_outcome": "extraction",
+                "msg": "Valid",
             },
             {
                 "date_mocked": "2024-02-14",
@@ -79,6 +82,15 @@ class TestETLAnalysisTD(TestCase):
                 "canteen": canteen,
                 "delete_canteen": True,
                 "expected_outcome": "no_extraction",
+                "msg": "Canteen deleted during campaign",
+            },
+            {
+                "date_mocked": "2024-02-14",
+                "year": 2023,
+                "canteen": canteen_no_siret,
+                "delete_canteen": False,
+                "expected_outcome": "no_extraction",
+                "msg": "Canteen without a siret",
             },
         ]
         for tc in test_cases:
