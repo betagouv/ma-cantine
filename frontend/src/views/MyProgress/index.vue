@@ -397,7 +397,7 @@ export default {
       return !this.canteen || hasSatelliteInconsistency(this.canteen)
     },
     missingDeclarationMode() {
-      return this.isCentralKitchen && !this.diagnostic.centralKitchenDiagnosticMode
+      return this.isCentralKitchen && !this.diagnostic?.centralKitchenDiagnosticMode
     },
     hasFinishedMeasureTunnel() {
       return this.diagnostic && hasFinishedMeasureTunnel(this.diagnostic)
