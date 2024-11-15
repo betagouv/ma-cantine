@@ -213,13 +213,24 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
         self.extracted_table_name = "teledeclarations"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis.json"))
+        self.columns = [field["name"] for field in self.schema["fields"]]
 
     def extract_dataset(self):
         # Load teledeclarations from prod database into the Data Warehouse
         self.df = utils.fetch_teledeclarations(self.years)
-        self.df.index = self.df.id
+
+        if self.df.empty:
+            logger.warning("Dataset is empty. Creating an empty dataframe with columns from the schema")
+            self.df = pd.DataFrame(columns=self.columns)
 
     def transform_dataset(self):
+        if self.df.empty:
+            logger.warning("Dataset is empty. Skipping transformation")
+            return
+
+        # Use id as index
+        self.df.index = self.df.id
+
         # Flatten json 'declared_data' column
         df_json = pd.json_normalize(self.df["declared_data"])
         del df_json["year"]
