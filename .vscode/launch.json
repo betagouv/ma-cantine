@@ -25,7 +25,10 @@
             "program": "${workspaceFolder}/manage.py",
             "args": [
                 "test",
-                "--noinput"
+                "--noinput",
+                "--failfast",
+                "--keepdb",
+                "macantine.tests.test_etl_analysis"
             ],
             "justMyCode": false,
             "django": true
@@ -62,6 +65,19 @@
             "program": "${workspaceFolder}/manage.py",
             "args": [
                 "fill_missing_geolocation_data_using_siret",
+            ],
+            "justMyCode": false,
+            "django": true
+        },
+        {
+            "name": "Export Dataset",
+            "type": "debugpy",
+            "request": "launch",
+            "stopOnEntry": false,
+            "python": "${workspaceFolder}/venv/bin/python",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "export_dataset",
             ],
             "justMyCode": false,
             "django": true
