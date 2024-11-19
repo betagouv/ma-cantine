@@ -273,8 +273,9 @@ def fetch_teledeclarations(years: list) -> pd.DataFrame:
                     canteen__deletion_date__range=(
                         CAMPAIGN_DATES[year]["start_date"],
                         CAMPAIGN_DATES[year]["end_date"],
-                    ),
+                    )
                 )
+                .exclude(canteen_siret="")
                 .values()
             )
             df = pd.concat([df, df_year])
