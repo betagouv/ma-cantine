@@ -66,5 +66,18 @@
             "justMyCode": false,
             "django": true
         },
+        {
+            "name": "Export Dataset",
+            "type": "debugpy",
+            "request": "launch",
+            "stopOnEntry": false,
+            "python": "${workspaceFolder}/venv/bin/python",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "export_dataset",
+            ],
+            "justMyCode": false,
+            "django": true
+        },
     ]
 }
