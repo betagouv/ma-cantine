@@ -26,9 +26,6 @@
             "args": [
                 "test",
                 "--noinput",
-                "--failfast",
-                "--keepdb",
-                "macantine.tests.test_etl_analysis"
             ],
             "justMyCode": false,
             "django": true
