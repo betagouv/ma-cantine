@@ -18,8 +18,8 @@ const measurementSumValues = computed(() => {
 
 const measurementGraphValues = computed(() => {
   return {
-    y: JSON.stringify([[measurementSumValues.edible], [measurementSumValues.inedible]]),
-    x: JSON.stringify([["Comestible"], ["Non-comestible"]]),
+    y: JSON.stringify([measurementSumValues.value.edible, measurementSumValues.value.inedible]),
+    x: JSON.stringify(["Comestible", "Non-comestible"]),
   }
 })
 
@@ -27,14 +27,15 @@ const displayOption = ref("chart")
 </script>
 
 <template>
-  <div v-if="true">
+  <div v-if="measurementSumValues">
     <div class="fr-grid-row">
       <div class="fr-col-md-7 fr-mb-2w">
         <h3 class="fr-h6 fr-my-0">Part de comestible</h3>
       </div>
       <div class="fr-col fr-mb-2w">
-        <div class="fr-grid-row fr-grid-row--right">
+        <div class="fr-grid-row">
           <DsfrSegmentedSet
+            name="Part de comestible"
             label="Choix d'affichage"
             :options="[
               {
@@ -53,12 +54,12 @@ const displayOption = ref("chart")
       </div>
     </div>
     <div v-if="displayOption === 'chart'" class="fr-py-2w fr-pr-8w">
-      <bar-chart
+      <pie-chart
         :name="measurementGraphValues.x"
         :x="measurementGraphValues.x"
         :y="measurementGraphValues.y"
-        color='["blue-ecume", "yellow-moutarde"]'
-      ></bar-chart>
+        color='["green-bourgeon", "orange-terre-battue"]'
+      ></pie-chart>
     </div>
     <div v-else-if="displayOption === 'text'">
       <ul>

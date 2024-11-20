@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from "vue"
-import EdibleBarChart from "./EdibleBarChart.vue"
+import EdibleChart from "./EdibleChart.vue"
 import SourceChart from "./SourceChart.vue"
 import MeasurementDetail from "./WasteMeasurementDetail.vue"
 import EmphasiseText from "./EmphasiseText.vue"
@@ -49,7 +49,7 @@ const activeAccordion = ref("")
 
 <template>
   <div>
-    <div v-if="displayMeasurement" class="fr-grid-row fr-grid-row--middle">
+    <div v-if="displayMeasurement" class="fr-grid-row">
       <div class="fr-col fr-mb-4w">
         <EmphasiseText :emphasisText="`${formatNumber(wastePerMeal)} g`" contextText="par repas" class="brown" />
         <router-link v-if="editable" :to="newMeasurementRoute" class="fr-btn fr-btn--secondary fr-mt-sm-2w">
@@ -58,7 +58,7 @@ const activeAccordion = ref("")
       </div>
       <div class="fr-col-12 fr-col-sm-4 fr-mb-4w">
         <div v-if="displayMeasurement.isSortedBySource">
-          <EdibleBarChart :measurement="displayMeasurement" />
+          <EdibleChart :measurement="displayMeasurement" />
         </div>
         <div v-else>
           <DsfrAlert>
