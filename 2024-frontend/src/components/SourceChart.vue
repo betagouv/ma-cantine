@@ -25,7 +25,7 @@ const measurementGraphValues = computed(() => {
       props.measurement.unservedTotalMass,
       props.measurement.leftoversTotalMass,
     ]),
-    x: JSON.stringify(["Excédents de préparation", "Denrées non servies", "Reste-assiette"]),
+    x: JSON.stringify(["Excédents de préparation", "Denrées non servies", "Reste assiette"]),
   }
 })
 
@@ -77,7 +77,7 @@ const displayOption = ref("chart")
           {{ formatNumber(measurementPercentageValues.unserved) }} %
         </li>
         <li>
-          Reste-assiette : {{ formatNumber(measurement.leftoversTotalMass) }} kg, soit
+          Reste assiette : {{ formatNumber(measurement.leftoversTotalMass) }} kg, soit
           {{ formatNumber(measurementPercentageValues.leftovers) }} %
         </li>
       </ul>
