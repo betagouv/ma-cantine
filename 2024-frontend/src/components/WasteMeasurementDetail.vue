@@ -1,5 +1,6 @@
 <script setup>
 import { formatNumber } from "@/utils"
+import Constants from "@/constants.js"
 
 const props = defineProps(["measurement"])
 
@@ -26,7 +27,7 @@ const detailedFields = [
       "Calculé en prenant le gaspillage par repas pour la période, multiplié par le nombre de couverts par année pour l'établissement",
   },
   {
-    heading: "Excédents de préparation",
+    heading: Constants.WasteMeasurement.preparation.title,
   },
   {
     label: "Gaspillage total",
@@ -41,7 +42,7 @@ const detailedFields = [
     key: "preparationInedibleMass",
   },
   {
-    heading: "Denrées présentées aux convives mais non servies",
+    heading: Constants.WasteMeasurement.unserved.title,
   },
   {
     label: "Gaspillage total",
@@ -56,7 +57,7 @@ const detailedFields = [
     key: "unservedInedibleMass",
   },
   {
-    heading: "Reste assiette",
+    heading: Constants.WasteMeasurement.leftovers.title,
   },
   {
     label: "Gaspillage total",

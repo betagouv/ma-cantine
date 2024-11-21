@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, reactive, watch, computed, inject, nextTick } from "vue"
+import Constants from "@/constants.js"
 import { useVuelidate } from "@vuelidate/core"
 import { formatError } from "@/utils.js"
 import HelpText from "./HelpText.vue"
@@ -15,7 +16,7 @@ const sources = {
     sortedKey: "preparationIsSorted",
     edibleKey: "preparationEdibleMass",
     inedibleKey: "preparationInedibleMass",
-    title: "Excédents de préparation",
+    title: Constants.WasteMeasurement.preparation.title,
     primaryLabel: "Masse de déchets alimentaire pour les excédents de préparation (en kg)",
     description:
       "Par exemple, si vous avez jeté des épluchures, des parures ou si vous avez des ingrédients excédentaires que vous ne réutiliserez pas, il s’agit d’excédents de préparation",
@@ -27,7 +28,7 @@ const sources = {
     sortedKey: "unservedIsSorted",
     edibleKey: "unservedEdibleMass",
     inedibleKey: "unservedInedibleMass",
-    title: "Denrées présentées aux convives mais non servies",
+    title: Constants.WasteMeasurement.unserved.title,
     primaryLabel: "Masse de déchets alimentaires pour les denrées présentées aux convives mais non servies (en kg)",
     description:
       "Par exemple, si vous présentez en vitrine un nombre excédentaire de salades, de parts de tarte aux pommes et que ces denrées supplémentaires ne sont ni consommées ni valorisées, il s’agit d’excédents présentés aux convives et non servis",
@@ -39,7 +40,7 @@ const sources = {
     sortedKey: "leftoversIsSorted",
     edibleKey: "leftoversEdibleMass",
     inedibleKey: "leftoversInedibleMass",
-    title: "Reste assiette",
+    title: Constants.WasteMeasurement.leftovers.title,
     primaryLabel: "Masse de déchets alimentaires pour le reste assiette (en kg)",
     description:
       "Il s’agit de l’ensemble des restes alimentaires des plateaux repas /assiettes incluant les os, noyaux et épluchures",
