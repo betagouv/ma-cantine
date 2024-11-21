@@ -10,7 +10,7 @@
       />
       <DsfrRadio
         v-model="payload.hasWasteDiagnostic"
-        label="J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire"
+        label="J’ai réalisé un diagnostic sur les causes probables de mes déchets alimentaires"
         yesNo
         hide-details
       />
@@ -29,7 +29,7 @@
         <v-col cols="12" sm="6">
           <DsfrRadio
             v-model="payload.hasWasteMeasures"
-            label="J’ai réalisé des mesures de mon gaspillage alimentaire"
+            label="J’ai réalisé des mesures de mes déchets alimentaires"
             yesNo
             optional
             hide-details
@@ -128,7 +128,7 @@
     </div>
     <fieldset v-else-if="stepUrlSlug === 'actions'">
       <legend class="my-3">
-        J’ai réalisé les actions de lutte contre le gaspillage alimentaire suivantes :
+        J’ai réalisé les actions suivantes de lutte contre les déchets alimentaires :
         <span class="fr-hint-text mt-2">Optionnel</span>
       </legend>
       <v-checkbox
@@ -218,7 +218,7 @@
                 Autres commentaires
                 <span class="fr-hint-text mt-2">
                   Optionnel : toute précision que vous souhaiteriez apporter sur votre situation et/ou sur vos actions
-                  mises en place pour lutter contre le gaspillage alimentaire
+                  mises en place pour lutter contre les déchets alimentaires
                 </span>
               </label>
             </template>
@@ -302,7 +302,7 @@ const steps = [
     urlSlug: "plan-action",
   },
   {
-    title: "Mesure de mon gaspillage alimentaire",
+    title: "Mesure de mes déchets alimentaires",
     urlSlug: "mesure-gaspillage",
   },
   {
