@@ -214,7 +214,7 @@ export default {
       communicationSupports,
       qualityMeasure: keyMeasures.find((measure) => measure.id === "qualite-des-produits"),
       wasteMeasure: keyMeasures.find((measure) => measure.id === "gaspillage-alimentaire"),
-      diversificationMeasure: keyMeasures.find((measure) => measure.id === "diversification-des-menus"),
+      diversificationMeasure: keyMeasures.find((measure) => measure.id === "menus-vegetariens"),
       noPlasticMeasure: keyMeasures.find((measure) => measure.id === "interdiction-du-plastique"),
       informationMeasure: keyMeasures.find((measure) => measure.id === "information-des-usagers"),
     }
