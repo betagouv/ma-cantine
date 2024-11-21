@@ -64,7 +64,7 @@ const sumCheck = () => {
   return payload.edibleKey + payload.inedibleKey === payload.totalKey
 }
 const combination = helpers.withMessage(
-  "La somme de denrées comestibles et non-comestibles devrait être égale au total",
+  "La somme de denrées comestibles et non comestibles devrait être égale au total",
   sumCheck
 )
 
@@ -138,7 +138,7 @@ onMounted(() => {
         <div :class="leftHandQuestionsClass">
           <DsfrBooleanRadio
             v-model="payload.sortedKey"
-            legend="Avez-vous trié entre comestible et non-comestible&nbsp;?"
+            legend="Avez-vous trié entre comestible et non comestible&nbsp;?"
             hint="Optionnel"
             name="sortedKey"
             class="fr-mb-2w"
