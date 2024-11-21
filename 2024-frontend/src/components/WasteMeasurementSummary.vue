@@ -51,10 +51,36 @@ const activeAccordion = ref("")
   <div>
     <div v-if="displayMeasurement" class="fr-grid-row">
       <div class="fr-col fr-mb-4w">
+        <div v-if="editable" class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
+          <div class="fr-col-12 fr-col-md-6 fr-pr-4w">
+            <DsfrSelect v-model="chosenMeasurementIdx" label="Date de l'évaluation" :options="measurementChoices" />
+          </div>
+        </div>
+        <div v-else class="grey-text">
+          <p class="fr-mb-1w">Date de l'évaluation</p>
+          <p>
+            <b>
+              {{
+                formatDate(displayMeasurement.periodStartDate, {
+                  month: "short",
+                  day: "numeric",
+                })
+              }}
+              - {{ formatDate(displayMeasurement.periodEndDate) }}
+            </b>
+          </p>
+        </div>
         <EmphasiseText :emphasisText="`${formatNumber(wastePerMeal)} g`" contextText="par repas" class="brown" />
-        <router-link v-if="editable" :to="newMeasurementRoute" class="fr-btn fr-btn--secondary fr-mt-sm-2w">
-          Saisir une nouvelle évaluation
-        </router-link>
+        <p v-if="editable">
+          <router-link :to="measurementTunnel" class="fr-btn fr-btn--secondary">
+            Modifier les données
+          </router-link>
+        </p>
+        <p v-if="editable">
+          <router-link :to="newMeasurementRoute" class="fr-btn fr-btn--secondary">
+            Saisir une nouvelle évaluation
+          </router-link>
+        </p>
       </div>
       <div class="fr-col-12 fr-col-sm-4 fr-mb-4w">
         <div v-if="displayMeasurement.isSortedBySource">
@@ -75,31 +101,6 @@ const activeAccordion = ref("")
     </div>
     <DsfrAccordionsGroup v-model="activeAccordion">
       <DsfrAccordion id="waste-measurement-detail" title="Données détaillées" class="fr-my-2w">
-        <div v-if="editable" class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
-          <div class="fr-col-12 fr-col-sm-6 fr-col-md-4 fr-pr-4w">
-            <DsfrSelect v-model="chosenMeasurementIdx" label="Date de l'évaluation" :options="measurementChoices" />
-          </div>
-          <div v-if="editable" class="fr-col-12 fr-col-sm-4">
-            <router-link class="fr-btn fr-btn--tertiary" :to="measurementTunnel">
-              <span class="fr-icon-pencil-line fr-icon--sm fr-mr-1w"></span>
-              Modifier les données
-            </router-link>
-          </div>
-        </div>
-        <div v-else class="grey-text">
-          <p class="fr-mb-1w">Date de l'évaluation</p>
-          <p>
-            <b>
-              {{
-                formatDate(displayMeasurement.periodStartDate, {
-                  month: "short",
-                  day: "numeric",
-                })
-              }}
-              - {{ formatDate(displayMeasurement.periodEndDate) }}
-            </b>
-          </p>
-        </div>
         <MeasurementDetail :measurement="displayMeasurement" />
         <router-link v-if="editable" class="fr-btn fr-btn--tertiary fr-btn--sm" :to="measurementTunnel">
           <span class="fr-icon-pencil-line fr-icon--sm fr-mr-1w"></span>
