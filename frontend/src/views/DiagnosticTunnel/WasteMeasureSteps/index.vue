@@ -35,16 +35,26 @@
             hide-details
           />
         </v-col>
-        <v-col cols="12" sm="6">
+        <v-col>
+          <DsfrCallout>
+            <p class="fr-text-sm grey-text text--darken-3">
+              Les déchets alimentaires incluent une fraction comestible (assimilable à du gaspillage alimentaire) et une
+              fraction non comestible (os, épluchures, arêtes).
+            </p>
+          </DsfrCallout>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
           <fieldset :disabled="!payload.hasWasteMeasures">
             <legend class="my-3 font-weight-bold">
-              Mesures du gaspillage
+              Mesures des déchets
               <span :class="`fr-hint-text mt-2 ${payload.hasWasteMeasures ? '' : 'grey--text'}`">
                 Optionnel
               </span>
             </legend>
             <v-row>
-              <v-col cols="12" md="6" class="pb-0">
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.totalLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -56,7 +66,7 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   :value="payload.durationLeftoversMeasurement"
                   @input="(x) => (payload.durationLeftoversMeasurement = integerInputValue(x))"
@@ -73,7 +83,9 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.breadLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -85,7 +97,7 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.servedLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -97,7 +109,9 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.unservedLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -109,7 +123,7 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.sideLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -290,6 +304,7 @@
 import { applicableDiagnosticRules } from "@/utils"
 import validators from "@/validators"
 import LastYearAutofillOption from "../LastYearAutofillOption"
+import DsfrCallout from "@/components/DsfrCallout"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrRadio from "@/components/DsfrRadio"
@@ -345,6 +360,7 @@ export default {
   },
   components: {
     LastYearAutofillOption,
+    DsfrCallout,
     DsfrTextField,
     DsfrTextarea,
     DsfrRadio,
