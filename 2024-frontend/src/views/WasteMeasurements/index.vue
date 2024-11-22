@@ -38,14 +38,14 @@ onMounted(() => {
 
 <template>
   <div>
-    <h1>Gaspillage alimentaire</h1>
+    <h1>Déchets alimentaires</h1>
     <p>
       {{ canteen.name }}&nbsp;
       <router-link :to="{ name: 'ManagementPage' }" class="fr-btn fr-btn--tertiary fr-btn--sm">
         Changer d'établissement
       </router-link>
     </p>
-    <h2>Mon gaspillage mesuré</h2>
+    <h2>Mes déchets alimentaires mesurés</h2>
     <div v-if="measurements.length">
       <WasteMeasurementSummary
         :measurements="measurements"
@@ -55,10 +55,10 @@ onMounted(() => {
     </div>
     <div v-else>
       <p>
-        Votre établissement est soumis à l'obligation de faire une analyse des causes du gaspillage alimentaire, et de
-        mettre en place une démarche de lutte contre le gaspillage alimentaire.
+        Votre établissement est soumis à l'obligation de faire une analyse des causes des déchets alimentaires, et de
+        mettre en place une démarche de lutte contre les déchets alimentaires.
       </p>
-      <DsfrBadge label="Pas encore des données" type="none" />
+      <DsfrBadge label="Pas encore de données" type="none" />
       <EmphasiseText :emphasisText="`${formatNumber()} g`" contextText="par repas" />
       <router-link :to="newMeasurementRoute" class="fr-btn">
         Saisir une évaluation

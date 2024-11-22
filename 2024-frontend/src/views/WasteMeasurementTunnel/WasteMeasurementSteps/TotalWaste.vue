@@ -2,6 +2,7 @@
 import { onMounted, reactive, watch, inject } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { formatError } from "@/utils.js"
+import Constants from "@/constants.js"
 import HelpText from "./HelpText.vue"
 import { useValidators } from "@/validators.js"
 const { required, decimal, minValue } = useValidators()
@@ -39,7 +40,7 @@ onMounted(() => {
       <DsfrInputGroup
         v-model.number="payload.totalMass"
         type="number"
-        label="Masse totale de gaspillage relevée sur la période de mesure"
+        :label="Constants.WasteMeasurement.totalMass.title"
         hint="en kg"
         label-visible
         class="fr-mb-2w"
@@ -47,10 +48,10 @@ onMounted(() => {
       />
     </div>
     <div class="fr-col-sm-6">
-      <HelpText question="Dois-je compter les os et les épluchures ?">
+      <HelpText>
         <p class="fr-mb-0">
-          Inutile à ce stade de différencier les denrées comestibles et non comestibles. Si vous l’avez fait, vous
-          pourrez saisir les données détaillées aux étapes suivantes.
+          Les déchets alimentaires incluent une fraction comestible (assimilable à du gaspillage alimentaire) et une
+          fraction non comestible (os, épluchures, arêtes).
         </p>
       </HelpText>
     </div>

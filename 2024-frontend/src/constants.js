@@ -37,4 +37,24 @@ export default Object.freeze({
         "Vous ne connaissez pas les données par cantine satellite, que par livreur de repas. Vous connaissez les labels et les familles de produits de vos achats",
     },
   ],
+  WasteMeasurement: {
+    daysInPeriod: {
+      title: "Période de mesure de mes déchets alimentaires",
+    },
+    mealCount: {
+      title: "Nombre de couverts sur la période",
+    },
+    totalMass: {
+      title: "Masse totale des déchets alimentaires relevée sur la période de mesure",
+    },
+    preparation: {
+      title: "Excédents de préparation dont stock",
+    },
+    unserved: {
+      title: "Denrées présentées aux convives mais non servies",
+    },
+    leftovers: {
+      title: "Restes assiettes",
+    },
+  },
 })

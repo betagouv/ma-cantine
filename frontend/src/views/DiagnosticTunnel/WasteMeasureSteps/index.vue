@@ -10,7 +10,7 @@
       />
       <DsfrRadio
         v-model="payload.hasWasteDiagnostic"
-        label="J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire"
+        label="J’ai réalisé un diagnostic sur les causes probables de mes déchets alimentaires"
         yesNo
         hide-details
       />
@@ -29,22 +29,32 @@
         <v-col cols="12" sm="6">
           <DsfrRadio
             v-model="payload.hasWasteMeasures"
-            label="J’ai réalisé des mesures de mon gaspillage alimentaire"
+            label="J’ai réalisé des mesures de mes déchets alimentaires"
             yesNo
             optional
             hide-details
           />
         </v-col>
-        <v-col cols="12" sm="6">
+        <v-col>
+          <DsfrCallout>
+            <p class="fr-text-sm grey-text text--darken-3">
+              Les déchets alimentaires incluent une fraction comestible (assimilable à du gaspillage alimentaire) et une
+              fraction non comestible (os, épluchures, arêtes).
+            </p>
+          </DsfrCallout>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
           <fieldset :disabled="!payload.hasWasteMeasures">
             <legend class="my-3 font-weight-bold">
-              Mesures du gaspillage
+              Mesures des déchets
               <span :class="`fr-hint-text mt-2 ${payload.hasWasteMeasures ? '' : 'grey--text'}`">
                 Optionnel
               </span>
             </legend>
             <v-row>
-              <v-col cols="12" md="6" class="pb-0">
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.totalLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -56,7 +66,7 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   :value="payload.durationLeftoversMeasurement"
                   @input="(x) => (payload.durationLeftoversMeasurement = integerInputValue(x))"
@@ -73,7 +83,9 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.breadLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -85,7 +97,7 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.servedLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -97,7 +109,9 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.unservedLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -109,7 +123,7 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.sideLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -128,7 +142,7 @@
     </div>
     <fieldset v-else-if="stepUrlSlug === 'actions'">
       <legend class="my-3">
-        J’ai réalisé les actions de lutte contre le gaspillage alimentaire suivantes :
+        J’ai réalisé les actions suivantes de lutte contre les déchets alimentaires :
         <span class="fr-hint-text mt-2">Optionnel</span>
       </legend>
       <v-checkbox
@@ -218,7 +232,7 @@
                 Autres commentaires
                 <span class="fr-hint-text mt-2">
                   Optionnel : toute précision que vous souhaiteriez apporter sur votre situation et/ou sur vos actions
-                  mises en place pour lutter contre le gaspillage alimentaire
+                  mises en place pour lutter contre les déchets alimentaires
                 </span>
               </label>
             </template>
@@ -290,11 +304,44 @@
 import { applicableDiagnosticRules } from "@/utils"
 import validators from "@/validators"
 import LastYearAutofillOption from "../LastYearAutofillOption"
+import DsfrCallout from "@/components/DsfrCallout"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrRadio from "@/components/DsfrRadio"
 import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
 import Constants from "@/constants"
+
+const steps = [
+  {
+    title: "Diagnostic et plan d’action",
+    urlSlug: "plan-action",
+  },
+  {
+    title: "Mesure de mes déchets alimentaires",
+    urlSlug: "mesure-gaspillage",
+  },
+  {
+    title: "Détail des actions mises en place",
+    urlSlug: "actions",
+  },
+  {
+    title: "Dons alimentaires",
+    urlSlug: "dons-alimentaires",
+  },
+  {
+    title: "Autres commentaires",
+    urlSlug: "autres",
+  },
+  {
+    title: "Expérimentation réservation de repas",
+    urlSlug: "expérimentation",
+  },
+  {
+    title: "Synthèse",
+    isSynthesis: true,
+    urlSlug: "complet",
+  },
+]
 
 export default {
   name: "WasteSteps",
@@ -313,51 +360,18 @@ export default {
   },
   components: {
     LastYearAutofillOption,
+    DsfrCallout,
     DsfrTextField,
     DsfrTextarea,
     DsfrRadio,
     ExpeReservation,
   },
   data() {
-    const steps = [
-      {
-        title: "Diagnostic et plan d’action",
-        urlSlug: "plan-action",
-      },
-      {
-        title: "Mesure de mon gaspillage alimentaire",
-        urlSlug: "mesure-gaspillage",
-      },
-      {
-        title: "Détail des actions mises en place",
-        urlSlug: "actions",
-      },
-      {
-        title: "Dons alimentaires",
-        urlSlug: "dons-alimentaires",
-      },
-      {
-        title: "Autres commentaires",
-        urlSlug: "autres",
-      },
-      {
-        title: "Expérimentation réservation de repas",
-        urlSlug: "expérimentation",
-      },
-      {
-        title: "Synthèse",
-        isSynthesis: true,
-        urlSlug: "complet",
-      },
-    ]
-    if (!window.ENABLE_XP_RESERVATION) steps.splice(5, 1)
-    if (!applicableDiagnosticRules(this.canteen).hasDonationAgreement) steps.splice(3, 1)
     return {
       formIsValid: true,
       showExpeModal: false,
       otherActionEnabled: !!this.diagnostic.otherWasteAction,
       wasteActions: Constants.WasteActions,
-      steps,
       payload: {},
       fields: [
         "hasWasteDiagnostic",
@@ -380,6 +394,23 @@ export default {
     }
   },
   computed: {
+    steps() {
+      // filter steps
+      // - 2024-11: hide comment step
+      // - hide XP step if not enabled
+      // - hide donation step if no donation agreement
+      let idx = steps.findIndex((step) => step.urlSlug === "autres")
+      if (idx > -1) steps.splice(idx, 1)
+      if (!window.ENABLE_XP_RESERVATION) {
+        let idx = steps.findIndex((step) => step.urlSlug === "expérimentation")
+        if (idx > -1) steps.splice(idx, 1)
+      }
+      if (!applicableDiagnosticRules(this.canteen).hasDonationAgreement) {
+        let idx = steps.findIndex((step) => step.urlSlug === "dons-alimentaires")
+        if (idx > -1) steps.splice(idx, 1)
+      }
+      return steps
+    },
     step() {
       const step = this.stepUrlSlug && this.steps.find((step) => step.urlSlug === this.stepUrlSlug)
       return step || this.steps[0]

@@ -106,11 +106,11 @@
     "badgeId": "diversification",
     "baseComponent": "DiversificationMeasure",
     "baseMeasureComponent": "DiversificationMeasure",
-    "id": "diversification-des-menus",
+    "id": "menus-vegetariens",
     "mdiIcon": "$leaf-fill",
     "mdiIconColor": "green darken-1",
     "progressField": "tunnelDiversification",
-    "shortTitle": "Diversification des menus",
+    "shortTitle": "Menus végétariens",
     "subMeasures": [
       {
         "deadline": {
@@ -162,7 +162,7 @@
       }
     ],
     "successExplanation": "La cantine offre au moins un repas végétarien par semaine si elle est dans le secteur scolaire, ou et depuis janvier 2023, un repas végétarien par jour pour les restaurants collectifs de l'État, les établissements publics et les entreprises publiques nationales (s'ils proposent habituellement un choix multiple de menus).",
-    "tabText": "Protéines végétales",
+    "tabText": "Menus végétariens",
     "title": "Diversification des sources de protéines et menus végétariens"
   },
   {

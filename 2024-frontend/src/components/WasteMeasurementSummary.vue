@@ -61,7 +61,7 @@ const activeAccordion = ref("")
         </div>
         <div v-else>
           <DsfrAlert>
-            Triez votre gaspillage alimentaire par source pour mieux comprendre comment agir.
+            Triez vos déchets alimentaires par source pour mieux comprendre comment agir.
           </DsfrAlert>
         </div>
       </div>
