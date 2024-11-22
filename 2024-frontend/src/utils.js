@@ -20,6 +20,12 @@ const toPercentage = (value, round = true) => {
   return round ? Math.round(value * 100) : value * 100
 }
 
+export const getSum = (values) => {
+  return values.reduce((acc, value) => {
+    return acc + (value || 0)
+  }, 0)
+}
+
 export const getPercentage = (partialValue, totalValue, round = true) => {
   if (strictIsNaN(partialValue) || strictIsNaN(totalValue) || totalValue === 0) {
     return null

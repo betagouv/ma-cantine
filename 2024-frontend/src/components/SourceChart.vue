@@ -44,8 +44,9 @@ const displayOption = ref("chart")
         <h3 class="fr-h6 fr-my-0">Origine du gaspillage</h3>
       </div>
       <div class="fr-col fr-mb-2w">
-        <div class="fr-grid-row fr-grid-row--right">
+        <div class="fr-grid-row">
           <DsfrSegmentedSet
+            name="Origine du gaspillage"
             label="Choix d'affichage"
             :options="[
               {
