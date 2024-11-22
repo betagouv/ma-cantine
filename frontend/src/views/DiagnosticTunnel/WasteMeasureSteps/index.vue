@@ -296,6 +296,38 @@ import DsfrRadio from "@/components/DsfrRadio"
 import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
 import Constants from "@/constants"
 
+const steps = [
+  {
+    title: "Diagnostic et plan d’action",
+    urlSlug: "plan-action",
+  },
+  {
+    title: "Mesure de mon gaspillage alimentaire",
+    urlSlug: "mesure-gaspillage",
+  },
+  {
+    title: "Détail des actions mises en place",
+    urlSlug: "actions",
+  },
+  {
+    title: "Dons alimentaires",
+    urlSlug: "dons-alimentaires",
+  },
+  {
+    title: "Autres commentaires",
+    urlSlug: "autres",
+  },
+  {
+    title: "Expérimentation réservation de repas",
+    urlSlug: "expérimentation",
+  },
+  {
+    title: "Synthèse",
+    isSynthesis: true,
+    urlSlug: "complet",
+  },
+]
+
 export default {
   name: "WasteSteps",
   props: {
@@ -319,45 +351,11 @@ export default {
     ExpeReservation,
   },
   data() {
-    const steps = [
-      {
-        title: "Diagnostic et plan d’action",
-        urlSlug: "plan-action",
-      },
-      {
-        title: "Mesure de mon gaspillage alimentaire",
-        urlSlug: "mesure-gaspillage",
-      },
-      {
-        title: "Détail des actions mises en place",
-        urlSlug: "actions",
-      },
-      {
-        title: "Dons alimentaires",
-        urlSlug: "dons-alimentaires",
-      },
-      {
-        title: "Autres commentaires",
-        urlSlug: "autres",
-      },
-      {
-        title: "Expérimentation réservation de repas",
-        urlSlug: "expérimentation",
-      },
-      {
-        title: "Synthèse",
-        isSynthesis: true,
-        urlSlug: "complet",
-      },
-    ]
-    if (!window.ENABLE_XP_RESERVATION) steps.splice(5, 1)
-    if (!applicableDiagnosticRules(this.canteen).hasDonationAgreement) steps.splice(3, 1)
     return {
       formIsValid: true,
       showExpeModal: false,
       otherActionEnabled: !!this.diagnostic.otherWasteAction,
       wasteActions: Constants.WasteActions,
-      steps,
       payload: {},
       fields: [
         "hasWasteDiagnostic",
@@ -380,6 +378,23 @@ export default {
     }
   },
   computed: {
+    steps() {
+      // filter steps
+      // - 2024-11: hide comment step
+      // - hide XP step if not enabled
+      // - hide donation step if no donation agreement
+      let idx = steps.findIndex((step) => step.urlSlug === "autres")
+      if (idx > -1) steps.splice(idx, 1)
+      if (!window.ENABLE_XP_RESERVATION) {
+        let idx = steps.findIndex((step) => step.urlSlug === "expérimentation")
+        if (idx > -1) steps.splice(idx, 1)
+      }
+      if (!applicableDiagnosticRules(this.canteen).hasDonationAgreement) {
+        let idx = steps.findIndex((step) => step.urlSlug === "dons-alimentaires")
+        if (idx > -1) steps.splice(idx, 1)
+      }
+      return steps
+    },
     step() {
       const step = this.stepUrlSlug && this.steps.find((step) => step.urlSlug === this.stepUrlSlug)
       return step || this.steps[0]
