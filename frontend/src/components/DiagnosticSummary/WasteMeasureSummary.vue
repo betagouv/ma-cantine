@@ -4,19 +4,19 @@
       <li v-if="diagnostic.hasWasteDiagnostic">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
-          J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire
+          J’ai réalisé un diagnostic sur les causes probables de mes déchets alimentaires
         </div>
       </li>
       <li v-else-if="diagnosticUsesNullAsFalse || diagnostic.hasWasteDiagnostic === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
-          Je n’ai pas encore réalisé un diagnostic sur les causes probables de gaspillage alimentaire
+          Je n’ai pas encore réalisé un diagnostic sur les causes probables de mes déchets alimentaires
         </div>
       </li>
       <li v-else>
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Avez-vous réalisé un diagnostic sur les causes probables de gaspillage alimentaire ?
+          Avez-vous réalisé un diagnostic sur les causes probables de vos déchets alimentaires ?
         </div>
       </li>
 
@@ -45,7 +45,7 @@
       <li v-if="diagnostic.hasWasteMeasures">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
-          J’ai réalisé des mesures de mon gaspillage alimentaire :
+          J’ai réalisé des mesures de mes déchets alimentaires :
           <ul role="list" class="mt-2">
             <li class="fr-text-xs mb-1" v-for="measure in wasteMeasures" :key="measure.label">
               {{ measure.label }} :
@@ -57,13 +57,13 @@
       <li v-else-if="diagnosticUsesNullAsFalse || diagnostic.hasWasteMeasures === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
-          Je n’ai pas encore réalisé des mesures de mon gaspillage alimentaire
+          Je n’ai pas encore réalisé des mesures de mes déchets alimentaires
         </div>
       </li>
       <li v-else>
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Avez-vous réalisé des mesures de votre gaspillage alimentaire ?
+          Avez-vous réalisé des mesures de vos déchets alimentaires ?
         </div>
       </li>
 

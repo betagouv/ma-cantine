@@ -10,7 +10,7 @@
       />
       <DsfrRadio
         v-model="payload.hasWasteDiagnostic"
-        label="J’ai réalisé un diagnostic sur les causes probables de gaspillage alimentaire"
+        label="J’ai réalisé un diagnostic sur les causes probables de mes déchets alimentaires"
         yesNo
         hide-details
       />
@@ -29,22 +29,32 @@
         <v-col cols="12" sm="6">
           <DsfrRadio
             v-model="payload.hasWasteMeasures"
-            label="J’ai réalisé des mesures de mon gaspillage alimentaire"
+            label="J’ai réalisé des mesures de mes déchets alimentaires"
             yesNo
             optional
             hide-details
           />
         </v-col>
-        <v-col cols="12" sm="6">
+        <v-col>
+          <DsfrCallout>
+            <p class="fr-text-sm grey-text text--darken-3">
+              Les déchets alimentaires incluent une fraction comestible (assimilable à du gaspillage alimentaire) et une
+              fraction non comestible (os, épluchures, arêtes).
+            </p>
+          </DsfrCallout>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
           <fieldset :disabled="!payload.hasWasteMeasures">
             <legend class="my-3 font-weight-bold">
-              Mesures du gaspillage
+              Mesures des déchets
               <span :class="`fr-hint-text mt-2 ${payload.hasWasteMeasures ? '' : 'grey--text'}`">
                 Optionnel
               </span>
             </legend>
             <v-row>
-              <v-col cols="12" md="6" class="pb-0">
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.totalLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -56,7 +66,7 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   :value="payload.durationLeftoversMeasurement"
                   @input="(x) => (payload.durationLeftoversMeasurement = integerInputValue(x))"
@@ -73,7 +83,9 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.breadLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -85,7 +97,7 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.servedLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -97,7 +109,9 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.unservedLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -109,7 +123,7 @@
                   :hideOptional="true"
                 />
               </v-col>
-              <v-col cols="12" md="6" class="pb-0">
+              <v-col cols="12" sm="6" class="pb-0">
                 <DsfrTextField
                   v-model.number="payload.sideLeftovers"
                   :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
@@ -128,7 +142,7 @@
     </div>
     <fieldset v-else-if="stepUrlSlug === 'actions'">
       <legend class="my-3">
-        J’ai réalisé les actions de lutte contre le gaspillage alimentaire suivantes :
+        J’ai réalisé les actions suivantes de lutte contre les déchets alimentaires :
         <span class="fr-hint-text mt-2">Optionnel</span>
       </legend>
       <v-checkbox
@@ -218,7 +232,7 @@
                 Autres commentaires
                 <span class="fr-hint-text mt-2">
                   Optionnel : toute précision que vous souhaiteriez apporter sur votre situation et/ou sur vos actions
-                  mises en place pour lutter contre le gaspillage alimentaire
+                  mises en place pour lutter contre les déchets alimentaires
                 </span>
               </label>
             </template>
@@ -290,6 +304,7 @@
 import { applicableDiagnosticRules } from "@/utils"
 import validators from "@/validators"
 import LastYearAutofillOption from "../LastYearAutofillOption"
+import DsfrCallout from "@/components/DsfrCallout"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrRadio from "@/components/DsfrRadio"
@@ -302,7 +317,7 @@ const steps = [
     urlSlug: "plan-action",
   },
   {
-    title: "Mesure de mon gaspillage alimentaire",
+    title: "Mesure de mes déchets alimentaires",
     urlSlug: "mesure-gaspillage",
   },
   {
@@ -345,6 +360,7 @@ export default {
   },
   components: {
     LastYearAutofillOption,
+    DsfrCallout,
     DsfrTextField,
     DsfrTextarea,
     DsfrRadio,
