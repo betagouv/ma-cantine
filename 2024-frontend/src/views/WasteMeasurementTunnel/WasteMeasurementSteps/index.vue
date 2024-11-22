@@ -40,7 +40,7 @@ const breakdownSteps = [
   },
   {
     urlSlug: "reste-assiette",
-    title: "Déchets alimentaires liés au reste assiette",
+    title: "Déchets alimentaires liés aux restes assiettes",
     component: markRaw(BreakdownBySource),
     componentData: { source: "leftovers" },
   },

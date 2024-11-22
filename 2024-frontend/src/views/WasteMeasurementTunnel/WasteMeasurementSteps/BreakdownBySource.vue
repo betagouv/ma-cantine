@@ -17,7 +17,7 @@ const sources = {
     edibleKey: "preparationEdibleMass",
     inedibleKey: "preparationInedibleMass",
     title: Constants.WasteMeasurement.preparation.title,
-    primaryLabel: "Masse de déchets alimentaire pour les excédents de préparation (en kg)",
+    primaryLabel: "Masse de déchets alimentaires pour les excédents de préparation (en kg)",
     description:
       "Par exemple, si vous avez jeté des épluchures, des parures ou si vous avez des ingrédients excédentaires que vous ne réutiliserez pas, il s’agit d’excédents de préparation",
     edibleHelp:
@@ -166,7 +166,7 @@ onMounted(() => {
         <DsfrInputGroup
           v-model.number="payload.edibleKey"
           type="number"
-          label="Total des déchets alimentaires comestibles (assimilable à du gaspillage alimentaire) (en kg)"
+          label="Masse des déchets alimentaires comestibles (assimilable à du gaspillage alimentaire) (en kg)"
           hint="Optionnel"
           label-visible
           class="fr-mb-2w"
@@ -175,7 +175,7 @@ onMounted(() => {
         <DsfrInputGroup
           v-model.number="payload.inedibleKey"
           type="number"
-          label="Total des déchets alimentaires non comestibles (en kg)"
+          label="Masse des déchets alimentaires non comestibles (en kg)"
           hint="Optionnel"
           label-visible
           class="fr-mb-2w"

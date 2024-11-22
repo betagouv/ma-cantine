@@ -2,6 +2,7 @@
 import { onMounted, reactive, watch, inject } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { formatError } from "@/utils.js"
+import Constants from "@/constants.js"
 import HelpText from "./HelpText.vue"
 import { useValidators } from "@/validators.js"
 const { required, decimal, minValue } = useValidators()
@@ -39,7 +40,7 @@ onMounted(() => {
       <DsfrInputGroup
         v-model.number="payload.totalMass"
         type="number"
-        label="Masse totale des déchets alimentaires relevée sur la période de mesure"
+        :label="Constants.WasteMeasurement.totalMass.title"
         hint="en kg"
         label-visible
         class="fr-mb-2w"

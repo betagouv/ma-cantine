@@ -7,68 +7,68 @@ const props = defineProps(["measurement"])
 const detailedFields = [
   {
     key: "totalMass",
-    label: "Masse totale des déchets alimentaires relevée sur la période de mesure",
+    label: Constants.WasteMeasurement.totalMass.title,
   },
   {
     key: "daysInPeriod",
-    label: "Période de mesure de mes déchets alimentaires",
+    label: Constants.WasteMeasurement.daysInPeriod.title,
     unit: "jours",
   },
   {
-    label: "Nombre de couverts sur la période",
-    unit: "couverts",
     key: "mealCount",
+    label: Constants.WasteMeasurement.mealCount.title,
+    unit: "couverts",
   },
   {
     key: "totalYearlyWasteEstimation",
-    label: "Masse totale de gaspillage sur l'année",
+    label: "Masse totale de déchets alimentaires sur l'année",
     unit: "kg",
     tooltip:
-      "Calculé en prenant le gaspillage par repas pour la période, multiplié par le nombre de couverts par année pour l'établissement",
+      "Calculé en prenant les déchets alimentaires par repas pour la période, multiplié par le nombre de couverts par année pour l'établissement",
   },
   {
     heading: Constants.WasteMeasurement.preparation.title,
   },
   {
-    label: "Gaspillage total",
+    label: "Total",
     key: "preparationTotalMass",
   },
   {
-    label: "Gaspillage de denrées comestibles",
+    label: "Denrées comestibles",
     key: "preparationEdibleMass",
   },
   {
-    label: "Gaspillage de denrées non comestibles",
+    label: "Denrées non comestibles",
     key: "preparationInedibleMass",
   },
   {
     heading: Constants.WasteMeasurement.unserved.title,
   },
   {
-    label: "Gaspillage total",
+    label: "Total",
     key: "unservedTotalMass",
   },
   {
-    label: "Gaspillage de denrées comestibles",
+    label: "Denrées comestibles",
     key: "unservedEdibleMass",
   },
   {
-    label: "Gaspillage de denrées non comestibles",
+    label: "Denrées non comestibles",
     key: "unservedInedibleMass",
   },
   {
     heading: Constants.WasteMeasurement.leftovers.title,
   },
   {
-    label: "Gaspillage total",
+    label: "Total",
     key: "leftoversTotalMass",
   },
   {
-    label: "Gaspillage de denrées comestibles",
+    label: "Denrées comestibles",
     key: "leftoversEdibleMass",
   },
   {
-    label: "Gaspillage de denrées non comestibles",
+    label: "Denrées non comestibles",
     key: "leftoversInedibleMass",
   },
 ]
