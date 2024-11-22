@@ -15,7 +15,7 @@ from macantine.etl.etl import logger
 from macantine.etl.utils import extract_sectors
 
 
-class OPEN_DATA(etl.TRASNFORMER_LOADER):
+class OPEN_DATA(etl.TRANSFORMER_LOADER):
     """
     Abstract class implementing the specifity for open data export
     """
@@ -141,8 +141,7 @@ class ETL_OPEN_DATA_CANTEEN(etl.CANTEENS, OPEN_DATA):
         )
         self.columns = [field["name"] for field in self.schema["fields"]]
         self.canteens = None
-        self.exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
-        self.exclude_filter |= Q(deletion_date__isnull=False)  # Filtering out the deleted canteens
+        self.exclude_filter = Q(sectors__id=22) | Q(line_ministry="armee")  # Filtering out the police / army sectors
 
     def transform_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
@@ -299,7 +298,7 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.TELEDECLARATIONS, OPEN_DATA):
 
     def _filter_by_ministry(self):
         """
-        Filtering the ministry of Armees so they do     not appear publicly
+        Filtering the ministry of Armees so they do not appear publicly
         """
         canteens_to_filter = Canteen.objects.filter(line_ministry="armee")
         canteens_id_to_filter = [canteen.id for canteen in canteens_to_filter]

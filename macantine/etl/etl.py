@@ -93,7 +93,7 @@ class EXTRACTOR(ETL):
         pass
 
 
-class TRASNFORMER_LOADER(ETL):
+class TRANSFORMER_LOADER(ETL):
     @abstractmethod
     def transform_dataset(self):
         pass
@@ -121,6 +121,9 @@ class TELEDECLARATIONS(EXTRACTOR):
         self.df = self.df[~mask]
 
     def filter_teledeclarations(self):
+        """
+        Filter teledeclarations for empty values."""
+
         self.df = filter_empty_values(self.df, col_name="teledeclaration.value_total_ht")
         self.df = filter_empty_values(self.df, col_name="teledeclaration.value_bio_ht")
         self.filter_aberrant_td()

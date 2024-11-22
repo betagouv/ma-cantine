@@ -172,7 +172,7 @@ def aggregate(df):
     return df
 
 
-class ANALYSIS(etl.TRASNFORMER_LOADER):
+class ANALYSIS(etl.TRANSFORMER_LOADER):
     """
     Create a dataset for analysis in a Data Warehouse
     * Extract data from prod

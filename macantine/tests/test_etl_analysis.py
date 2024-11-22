@@ -8,7 +8,7 @@ from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, Use
 from data.models import Teledeclaration
 from macantine.etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
-    ETL_ANALYSIS_TD,
+    ETL_ANALYSIS_TELEDECLARATIONS,
     aggregate_col,
     get_egalim_hors_bio,
 )
@@ -57,7 +57,7 @@ class TestETLAnalysisTD(TestCase):
         canteen = CanteenFactory.create(siret="98648424243607")
         canteen_no_siret = CanteenFactory.create()
         applicant = UserFactory.create()
-        etl_stats = ETL_ANALYSIS_TD()
+        etl_stats = ETL_ANALYSIS_TELEDECLARATIONS()
 
         test_cases = [
             {
