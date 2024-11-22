@@ -12,10 +12,10 @@ import macantine.etl.utils
 from data.models import Canteen
 from macantine.etl import etl
 from macantine.etl.etl import logger
-from macantine.etl.utils import extract_sectors, fetch_canteens
+from macantine.etl.utils import extract_sectors
 
 
-class ETL_OPEN_DATA(etl.ETL):
+class OPEN_DATA(etl.TRASNFORMER_LOADER):
     """
     Abstract class implementing the specifity for open data export
     """
@@ -131,7 +131,7 @@ class ETL_OPEN_DATA(etl.ETL):
             logger.error(f"Error saving validated data: {e}")
 
 
-class ETL_OPEN_DATA_CANTEEN(ETL_OPEN_DATA):
+class ETL_OPEN_DATA_CANTEEN(etl.CANTEENS, OPEN_DATA):
     def __init__(self):
         super().__init__()
         self.dataset_name = "registre_cantines"
@@ -139,9 +139,12 @@ class ETL_OPEN_DATA_CANTEEN(ETL_OPEN_DATA):
         self.schema_url = (
             "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_cantine.json"
         )
+        self.columns = [field["name"] for field in self.schema["fields"]]
         self.canteens = None
+        self.exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
+        self.exclude_filter |= Q(deletion_date__isnull=False)  # Filtering out the deleted canteens
 
-    def extract_dataset(self):
+    def transform_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
         self.canteens_col_from_db = all_canteens_col
         for col_processed in [
@@ -156,14 +159,6 @@ class ETL_OPEN_DATA_CANTEEN(ETL_OPEN_DATA):
         ]:
             self.canteens_col_from_db.remove(col_processed)
 
-        start = time.time()
-        exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
-        exclude_filter |= Q(deletion_date__isnull=False)  # Filtering out the deleted canteens
-        self.df = fetch_canteens(self.canteens_col_from_db, exclude_filter)
-        end = time.time()
-        logger.info(f"Time spent on canteens extraction : {end - start}")
-
-    def transform_dataset(self):
         # Adding the active_on_ma_cantine column
         start = time.time()
         non_active_canteens = Canteen.objects.filter(managers=None).values_list("id", flat=True)
@@ -202,10 +197,11 @@ class ETL_OPEN_DATA_CANTEEN(ETL_OPEN_DATA):
         logger.info(f"Time spent on campaign participations : {end - start}")
 
 
-class ETL_OPEN_DATA_TELEDECLARATIONS(etl.TELEDECLARATIONS, ETL_OPEN_DATA):
+class ETL_OPEN_DATA_TELEDECLARATIONS(etl.TELEDECLARATIONS, OPEN_DATA):
     def __init__(self, year: int):
         super().__init__()
         self.years = [year]
+        self.year = year
         self.dataset_name = f"campagne_td_{year}"
         self.schema = json.load(open("data/schemas/schema_teledeclaration.json"))
         self.schema_url = (

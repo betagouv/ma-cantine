@@ -9,7 +9,7 @@ import pandas as pd
 import requests
 
 from api.serializers import SectorSerializer
-from data.models import Canteen, Sector, Teledeclaration
+from data.models import Sector, Teledeclaration
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +35,10 @@ CAMPAIGN_DATES = {
 # 4 : Administration : Restaurants inter-administratifs d’Etat (RIA)
 # 2 : Education : Supérieur et Universitaire
 SECTEURS_SPE = [26, 24, 23, 22, 4, 2]
+
+
+def common_members(a, b):
+    return set(a) & set(b)
 
 
 def get_ratio(row, valueKey, totalKey):
@@ -229,18 +233,6 @@ def filter_empty_values(df: pd.DataFrame, col_name) -> pd.DataFrame:
     Filtering out the teledeclarations for wich a certain field is empty
     """
     return df.dropna(subset=col_name)
-
-
-def fetch_canteens(columns, exclude_filter=None):
-    canteens = Canteen.objects.all()
-    if exclude_filter:
-        canteens = Canteen.objects.exclude(exclude_filter)
-    if canteens.count() == 0:
-        df = pd.DataFrame(columns=columns)
-    else:
-        # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
-        df = pd.DataFrame(canteens.values(*columns))
-    return df
 
 
 def fetch_commune_detail(code_insee_commune, commune_details, geo_detail_type):

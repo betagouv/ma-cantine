@@ -172,7 +172,7 @@ def aggregate(df):
     return df
 
 
-class ANALYSIS(etl.ETL):
+class ANALYSIS(etl.TRASNFORMER_LOADER):
     """
     Create a dataset for analysis in a Data Warehouse
     * Extract data from prod
@@ -300,7 +300,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
         self.df["ratio_egalim_sans_bio"] = self.df.apply(get_ratio_egalim_sans_bio, axis=1)
 
 
-class ETL_ANALYSIS_CANTEEN(ANALYSIS):
+class ETL_ANALYSIS_CANTEEN(etl.CANTEENS, ANALYSIS):
     """
     Create a dataset for analysis in a Data Warehouse
     * Extract data from prod
@@ -313,10 +313,12 @@ class ETL_ANALYSIS_CANTEEN(ANALYSIS):
     """
 
     def __init__(self):
-        self.df = None
+        super().__init__()
+
         self.extracted_table_name = "canteens"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
+
         # The following mapper is used for renaming columns and for selecting the columns to extract from db
         self.columns_mapper = {
             "id": "id",
@@ -338,9 +340,7 @@ class ETL_ANALYSIS_CANTEEN(ANALYSIS):
             "line_ministry": "ministere_tutelle",
             "sectors": "secteur",
         }
-
-    def extract_dataset(self):
-        self.df = utils.fetch_canteens(self.columns_mapper.keys())
+        self.columns = self.columns_mapper.keys()
 
     def transform_dataset(self):
         logger.info("Filling geo names")

@@ -2,6 +2,7 @@ import csv
 import json
 import logging
 import os
+import time
 from abc import ABC, abstractmethod
 
 import pandas as pd
@@ -9,9 +10,14 @@ import requests
 from django.core.files.storage import default_storage
 
 from data.department_choices import Department
-from data.models import Teledeclaration
+from data.models import Canteen, Teledeclaration
 from data.region_choices import Region
-from macantine.etl.utils import CAMPAIGN_DATES, filter_empty_values, format_geo_name
+from macantine.etl.utils import (
+    CAMPAIGN_DATES,
+    common_members,
+    filter_empty_values,
+    format_geo_name,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -40,18 +46,6 @@ class ETL(ABC):
             if f"{col_geo_zoom}_lib" in self.df.columns:
                 del self.df[f"{col_geo_zoom}_lib"]
             self.df.insert(self.df.columns.get_loc(col_geo_zoom) + 1, f"{col_geo_zoom}_lib", col_to_insert)
-
-    @abstractmethod
-    def extract_dataset(self):
-        pass
-
-    @abstractmethod
-    def transform_dataset(self):
-        pass
-
-    @abstractmethod
-    def load_dataset(self):
-        pass
 
     def get_schema(self):
         return self.schema
@@ -93,9 +87,26 @@ class ETL(ABC):
             return 1
 
 
-class TELEDECLARATIONS(ETL):
+class EXTRACTOR(ETL):
+    @abstractmethod
+    def extract_dataset(self):
+        pass
+
+
+class TRASNFORMER_LOADER(ETL):
+    @abstractmethod
+    def transform_dataset(self):
+        pass
+
+    @abstractmethod
+    def load_dataset(self):
+        pass
+
+
+class TELEDECLARATIONS(EXTRACTOR):
     def __init__(self):
         self.years = []
+        self.columns = []
 
     def filter_aberrant_td(self):
         """
@@ -148,5 +159,23 @@ class TELEDECLARATIONS(ETL):
             self.df = pd.DataFrame(columns=self.columns)
 
 
-class CANTEENS(ETL):
-    pass
+class CANTEENS(EXTRACTOR):
+    def __init__(self):
+        super().__init__()
+        self.exclude_filter = None
+        self.columns = []
+
+    def extract_dataset(self):
+        start = time.time()
+        canteens = Canteen.objects.all()
+        if self.exclude_filter:
+            canteens = Canteen.objects.exclude(self.exclude_filter)
+        if canteens.count() == 0:
+            self.df = pd.DataFrame(columns=self.columns)
+        else:
+            # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
+            columns_model = [field.name for field in Canteen._meta.get_fields()]
+            columns_to_extract = common_members(self.columns, columns_model)
+            self.df = pd.DataFrame(canteens.values(*columns_to_extract))
+        end = time.time()
+        logger.info(f"Time spent on canteens extraction : {end - start}")
