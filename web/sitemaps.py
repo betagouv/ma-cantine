@@ -72,7 +72,7 @@ class WebSitemap(Sitemap):
                 "priority": 0.4,
             },
             {
-                "location": "/mesures-phares/diversification-des-menus",
+                "location": "/mesures-phares/menus-vegetariens",
                 "changefreq": "yearly",
                 "priority": 0.4,
             },

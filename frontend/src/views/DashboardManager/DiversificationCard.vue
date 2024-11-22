@@ -48,7 +48,7 @@ export default {
   },
   data() {
     return {
-      measureId: "diversification-des-menus",
+      measureId: "menus-vegetariens",
     }
   },
   computed: {
