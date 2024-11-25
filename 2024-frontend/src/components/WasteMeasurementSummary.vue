@@ -56,19 +56,16 @@ const activeAccordion = ref("")
           Saisir une nouvelle évaluation
         </router-link>
       </div>
-      <div class="fr-col-12 fr-col-sm-4 fr-mb-4w">
-        <div v-if="displayMeasurement.isSortedBySource">
+      <div v-if="displayMeasurement.isSortedBySource" class="fr-col-12 fr-col-sm-8 fr-mb-4w fr-grid-row">
+        <div class="fr-col-12 fr-col-sm-6 fr-pr-2w">
           <EdibleChart :measurement="displayMeasurement" />
         </div>
-        <DsfrAlert v-else>
-          Triez vos déchets alimentaires par source pour mieux comprendre comment agir.
-        </DsfrAlert>
-      </div>
-      <div class="fr-col-12 fr-col-sm-4 fr-mb-4w">
-        <div v-if="displayMeasurement.isSortedBySource">
+        <div class="fr-col-12 fr-col-sm-6">
           <SourceChart :measurement="displayMeasurement" />
         </div>
-        <DsfrAlert v-else>
+      </div>
+      <div v-else class="fr-col-12 fr-col-sm-4 fr-mb-4w">
+        <DsfrAlert>
           Triez vos déchets alimentaires par source pour mieux comprendre comment agir.
         </DsfrAlert>
       </div>
