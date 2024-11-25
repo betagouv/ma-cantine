@@ -74,7 +74,7 @@ const formIsValid = () => {
 
 const continueAction = () => {
   if (step.value.isSynthesis) {
-    router.push({ name: "WasteMeasurements" })
+    quit()
     return
   }
   if (!formIsValid()) {
