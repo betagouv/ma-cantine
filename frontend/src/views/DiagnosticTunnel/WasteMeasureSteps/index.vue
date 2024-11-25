@@ -464,6 +464,9 @@ export default {
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
+    year() {
+      return this.diagnostic.year
+    },
   },
   methods: {
     initialisePayload() {
@@ -502,8 +505,8 @@ export default {
       return parsedValue || val
     },
     fetchWasteMeasurements() {
-      // TODO: only fetch for TD year
-      fetch(`/api/v1/canteens/${this.canteen.id}/wasteMeasurements`)
+      const query = `period_start_date_after=${this.year}-01-01&period_end_date_before=${this.year + 1}-01-01`
+      fetch(`/api/v1/canteens/${this.canteen.id}/wasteMeasurements?${query}`)
         .then((response) => response.json())
         .then((response) => {
           this.measurements = response
