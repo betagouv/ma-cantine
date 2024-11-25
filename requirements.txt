@@ -73,7 +73,7 @@ html-void-elements==0.1.0
 html2text==2024.2.26
 html5lib==1.1
 identify==2.6.2
-idna==3.7
+idna==3.10
 inflection==0.5.1
 iniconfig==2.0.0
 isort==5.13.2
