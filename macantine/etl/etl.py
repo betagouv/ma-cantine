@@ -1,9 +1,23 @@
+import csv
+import json
 import logging
+import os
+import time
 from abc import ABC, abstractmethod
 
+import pandas as pd
+import requests
+from django.core.files.storage import default_storage
+
 from data.department_choices import Department
+from data.models import Canteen, Teledeclaration
 from data.region_choices import Region
-from macantine.etl.utils import format_geo_name
+from macantine.etl.utils import (
+    CAMPAIGN_DATES,
+    common_members,
+    filter_empty_values,
+    format_geo_name,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +26,12 @@ class ETL(ABC):
     """
     Interface for the different ETL
     """
+
+    def __init__(self):
+        self.df = None
+        self.schema = None
+        self.schema_url = ""
+        self.dataset_name = ""
 
     def fill_geo_names(self, prefix=""):
         """
@@ -27,10 +47,53 @@ class ETL(ABC):
                 del self.df[f"{col_geo_zoom}_lib"]
             self.df.insert(self.df.columns.get_loc(col_geo_zoom) + 1, f"{col_geo_zoom}_lib", col_to_insert)
 
+    def get_schema(self):
+        return self.schema
+
+    def get_dataset(self):
+        return self.df
+
+    def len_dataset(self):
+        if isinstance(self.df, pd.DataFrame):
+            return len(self.df)
+        else:
+            return 0
+
+    def is_valid(self, filepath) -> bool:
+        # In order to validate the dataset with the validata api, must first convert to CSV then save online
+        with default_storage.open(filepath + "_to_validate.csv", "w") as file:
+            self.df.to_csv(
+                file,
+                sep=";",
+                index=False,
+                na_rep="",
+                encoding="utf_8_sig",
+                quoting=csv.QUOTE_NONE,
+            )
+        dataset_to_validate_url = (
+            f"{os.environ['CELLAR_HOST']}/{os.environ['CELLAR_BUCKET_NAME']}/media/{filepath}_to_validate.csv"
+        )
+
+        res = requests.get(
+            f"https://api.validata.etalab.studio/validate?schema={self.schema_url}&url={dataset_to_validate_url}&header_case=true"
+        )
+        report = json.loads(res.text)["report"]
+        if len(report["errors"]) > 0 or report["stats"]["errors"] > 0:
+            logger.error(f"The dataset {self.dataset_name} extraction has errors : ")
+            logger.error(report["errors"])
+            logger.error(report["tasks"])
+            return False
+        else:
+            return True
+
+
+class EXTRACTOR(ETL):
     @abstractmethod
     def extract_dataset(self):
         pass
 
+
+class TRANSFORMER_LOADER(ETL):
     @abstractmethod
     def transform_dataset(self):
         pass
@@ -38,3 +101,84 @@ class ETL(ABC):
     @abstractmethod
     def load_dataset(self):
         pass
+
+
+class TELEDECLARATIONS(EXTRACTOR):
+    def __init__(self):
+        self.years = []
+        self.columns = []
+
+    def filter_aberrant_td(self):
+        """
+        Filtering out the teledeclarations that :
+        *  products > 1 million €
+        AND
+        * an avg meal cost > 20 €
+        """
+        mask = (self.df["teledeclaration.value_total_ht"] > 1000000) & (
+            self.df["teledeclaration.value_total_ht"] / self.df["canteen.yearly_meal_count"] > 20
+        )
+        self.df = self.df[~mask]
+
+    def filter_teledeclarations(self):
+        """
+        Filter teledeclarations for empty values."""
+
+        self.df = filter_empty_values(self.df, col_name="teledeclaration.value_total_ht")
+        self.df = filter_empty_values(self.df, col_name="teledeclaration.value_bio_ht")
+        self.filter_aberrant_td()
+
+    def extract_dataset(self) -> pd.DataFrame:
+        self.df = pd.DataFrame()
+        for year in self.years:
+            if year in CAMPAIGN_DATES.keys():
+                df_year = pd.DataFrame(
+                    Teledeclaration.objects.filter(
+                        year=year,
+                        creation_date__range=(
+                            CAMPAIGN_DATES[year]["start_date"],
+                            CAMPAIGN_DATES[year]["end_date"],
+                        ),
+                        status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+                        canteen_id__isnull=False,
+                        canteen_siret__isnull=False,
+                        diagnostic__value_total_ht__isnull=False,
+                        diagnostic__value_bio_ht__isnull=False,
+                    )
+                    .exclude(
+                        canteen__deletion_date__range=(
+                            CAMPAIGN_DATES[year]["start_date"],
+                            CAMPAIGN_DATES[year]["end_date"],
+                        )
+                    )
+                    .exclude(canteen_siret="")
+                    .values()
+                )
+                self.df = pd.concat([self.df, df_year])
+            else:
+                logger.warning(f"TD dataset does not exist for year : {year}")
+        if self.df.empty:
+            logger.warning("Dataset is empty. Creating an empty dataframe with columns from the schema")
+            self.df = pd.DataFrame(columns=self.columns)
+
+
+class CANTEENS(EXTRACTOR):
+    def __init__(self):
+        super().__init__()
+        self.exclude_filter = None
+        self.columns = []
+
+    def extract_dataset(self):
+        start = time.time()
+        canteens = Canteen.objects.all()
+        if self.exclude_filter:
+            canteens = Canteen.objects.exclude(self.exclude_filter)
+        if canteens.count() == 0:
+            self.df = pd.DataFrame(columns=self.columns)
+        else:
+            # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
+            columns_model = [field.name for field in Canteen._meta.get_fields()]
+            columns_to_extract = common_members(self.columns, columns_model)
+            self.df = pd.DataFrame(canteens.values(*columns_to_extract))
+        end = time.time()
+        logger.info(f"Time spent on canteens extraction : {end - start}")
