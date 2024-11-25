@@ -611,6 +611,10 @@ const vue3Routes = [
     },
     sitemapGroup: Constants.SitemapGroups.DIAG,
   },
+  {
+    path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
+    name: "WasteMeasurementTunnel",
+  },
 ]
 const VUE3_PREFIX = "/v2"
 vue3Routes.forEach((r) => {

@@ -297,6 +297,35 @@
         <ExpeReservation v-if="showExpeModal" @close="() => (showExpeModal = false)" :canteen="canteen" />
       </v-dialog>
     </div>
+    <div v-else-if="stepUrlSlug === 'évaluations'" class="fr-text">
+      <p>Complèter vos évaluations de vos déchets alimentaires</p>
+      <ul class="mb-2">
+        <li v-for="m in exampleMeasurements" :key="m.id">
+          <router-link
+            :to="{
+              name: 'WasteMeasurementTunnel',
+              params: { canteenUrlComponent, id: m.id },
+            }"
+          >
+            {{ m.periodStartDate }} - {{ m.periodEndDate }}
+          </router-link>
+          : {{ m.totalMass }} kg
+        </li>
+      </ul>
+      <div>
+        <v-btn
+          color="primary"
+          outlined
+          small
+          :to="{
+            name: 'WasteMeasurementTunnel',
+            params: { canteenUrlComponent },
+          }"
+        >
+          Ajouter une nouvelle
+        </v-btn>
+      </div>
+    </div>
   </v-form>
 </template>
 
@@ -311,7 +340,7 @@ import DsfrRadio from "@/components/DsfrRadio"
 import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
 import Constants from "@/constants"
 
-const steps = [
+const STEPS = [
   {
     title: "Diagnostic et plan d’action",
     urlSlug: "plan-action",
@@ -335,6 +364,10 @@ const steps = [
   {
     title: "Expérimentation réservation de repas",
     urlSlug: "expérimentation",
+  },
+  {
+    title: "Mesure de mes déchets alimentaires (pt 2)",
+    urlSlug: "évaluations",
   },
   {
     title: "Synthèse",
@@ -391,6 +424,20 @@ export default {
         "donationQuantity",
         "donationFoodType",
       ],
+      exampleMeasurements: [
+        {
+          id: 1,
+          periodStartDate: "2023-03-04",
+          periodEndDate: "2023-03-14",
+          totalMass: 2000,
+        },
+        {
+          id: 2,
+          periodStartDate: "2023-11-18",
+          periodEndDate: "2023-11-23",
+          totalMass: 2000,
+        },
+      ],
     }
   },
   computed: {
@@ -399,17 +446,22 @@ export default {
       // - 2024-11: hide comment step
       // - hide XP step if not enabled
       // - hide donation step if no donation agreement
-      let idx = steps.findIndex((step) => step.urlSlug === "autres")
-      if (idx > -1) steps.splice(idx, 1)
+      const removeStep = (urlSlug) => {
+        let idx = STEPS.findIndex((step) => step.urlSlug === urlSlug)
+        if (idx > -1) STEPS.splice(idx, 1)
+      }
+      removeStep("autres")
       if (!window.ENABLE_XP_RESERVATION) {
-        let idx = steps.findIndex((step) => step.urlSlug === "expérimentation")
-        if (idx > -1) steps.splice(idx, 1)
+        removeStep("expérimentation")
       }
       if (!applicableDiagnosticRules(this.canteen).hasDonationAgreement) {
-        let idx = steps.findIndex((step) => step.urlSlug === "dons-alimentaires")
-        if (idx > -1) steps.splice(idx, 1)
+        removeStep("dons-alimentaires")
       }
-      return steps
+      // TODO: make evaluations step conditional on hasWasteMeasures
+      // if (!this.payload.hasWasteMeasures) {
+      //   removeStep("évaluations")
+      // }
+      return STEPS
     },
     step() {
       const step = this.stepUrlSlug && this.steps.find((step) => step.urlSlug === this.stepUrlSlug)
@@ -417,6 +469,9 @@ export default {
     },
     validators() {
       return validators
+    },
+    canteenUrlComponent() {
+      return this.$store.getters.getCanteenUrlComponent(this.canteen)
     },
   },
   methods: {
