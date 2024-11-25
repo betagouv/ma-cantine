@@ -49,10 +49,10 @@ const activeAccordion = ref("")
 
 <template>
   <div>
-    <div v-if="displayMeasurement" class="fr-grid-row">
+    <div v-if="displayMeasurement" class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col fr-mb-4w">
         <div v-if="editable" class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
-          <div class="fr-col-12 fr-col-md-6 fr-pr-4w">
+          <div class="fr-col-12 fr-pr-4w">
             <DsfrSelect v-model="chosenMeasurementIdx" label="Date de l'évaluation" :options="measurementChoices" />
           </div>
         </div>
@@ -72,12 +72,10 @@ const activeAccordion = ref("")
         </div>
         <EmphasiseText :emphasisText="`${formatNumber(wastePerMeal)} g`" contextText="par repas" class="brown" />
         <p v-if="editable">
-          <router-link :to="measurementTunnel" class="fr-btn fr-btn--secondary">
+          <router-link :to="measurementTunnel" class="fr-btn fr-btn--secondary fr-btn--sm fr-mr-1w fr-mb-1w">
             Modifier les données
           </router-link>
-        </p>
-        <p v-if="editable">
-          <router-link :to="newMeasurementRoute" class="fr-btn fr-btn--secondary">
+          <router-link :to="newMeasurementRoute" class="fr-btn fr-btn--primary fr-btn--sm">
             Saisir une nouvelle évaluation
           </router-link>
         </p>

@@ -43,25 +43,23 @@ const displayOption = ref("chart")
       <div class="fr-col-md-7 fr-mb-2w">
         <h3 class="fr-h6 fr-my-0">Origine du gaspillage</h3>
       </div>
-      <div class="fr-col fr-mb-2w">
-        <div class="fr-grid-row">
-          <DsfrSegmentedSet
-            name="Origine du gaspillage"
-            label="Choix d'affichage"
-            :options="[
-              {
-                label: 'Charte',
-                value: 'chart',
-              },
-              {
-                label: 'Texte',
-                value: 'text',
-              },
-            ]"
-            v-model="displayOption"
-            small
-          />
-        </div>
+      <div class="fr-col fr-mb-2w" style="text-align: right;">
+        <DsfrSegmentedSet
+          name="Origine du gaspillage"
+          label="Choix d'affichage"
+          :options="[
+            {
+              label: 'Charte',
+              value: 'chart',
+            },
+            {
+              label: 'Texte',
+              value: 'text',
+            },
+          ]"
+          v-model="displayOption"
+          small
+        />
       </div>
     </div>
     <div v-if="displayOption === 'chart'" class="fr-py-2w fr-pr-8w">
