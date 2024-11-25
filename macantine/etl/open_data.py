@@ -49,22 +49,6 @@ class ETL_OPEN_DATA(etl.ETL):
         logger.info("Start filling geo_name")
         self.fill_geo_names(prefix)
 
-    def extract_dataset(self):
-        all_canteens_col = [i["name"] for i in self.schema["fields"]]
-        self.canteens_col_from_db = all_canteens_col
-        for col_processed in [
-            "active_on_ma_cantine",
-            "department_lib",
-            "region_lib",
-            "epci",
-            "epci_lib",
-            "declaration_donnees_2021",
-            "declaration_donnees_2022",
-            "declaration_donnees_2023_en_cours",
-        ]:
-            self.canteens_col_from_db.remove(col_processed)
-        self.df = fetch_canteens()
-
     def _clean_dataset(self):
         columns = [i["name"].replace("canteen_", "canteen.") for i in self.schema["fields"]]
 
