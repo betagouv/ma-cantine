@@ -44,101 +44,6 @@
           </DsfrCallout>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="12">
-          <fieldset :disabled="!payload.hasWasteMeasures">
-            <legend class="my-3 font-weight-bold">
-              Mesures des déchets
-              <span :class="`fr-hint-text mt-2 ${payload.hasWasteMeasures ? '' : 'grey--text'}`">
-                Optionnel
-              </span>
-            </legend>
-            <v-row>
-              <v-col cols="12" sm="6" class="pb-0">
-                <DsfrTextField
-                  v-model.number="payload.totalLeftovers"
-                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
-                  validate-on-blur
-                  label="Total des déchets alimentaires"
-                  suffix="kg"
-                  :readonly="!payload.hasWasteMeasures"
-                  :disabled="!payload.hasWasteMeasures"
-                  :hideOptional="true"
-                />
-              </v-col>
-              <v-col cols="12" sm="6" class="pb-0">
-                <DsfrTextField
-                  :value="payload.durationLeftoversMeasurement"
-                  @input="(x) => (payload.durationLeftoversMeasurement = integerInputValue(x))"
-                  :rules="
-                    payload.hasWasteMeasures
-                      ? [validators.nonNegativeOrEmpty, validators.isInteger, validators.lteOrEmpty(365)]
-                      : []
-                  "
-                  validate-on-blur
-                  label="Période de mesure"
-                  suffix="jours"
-                  :readonly="!payload.hasWasteMeasures"
-                  :disabled="!payload.hasWasteMeasures"
-                  :hideOptional="true"
-                />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="6" class="pb-0">
-                <DsfrTextField
-                  v-model.number="payload.breadLeftovers"
-                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
-                  validate-on-blur
-                  label="Reste de pain"
-                  suffix="kg/an"
-                  :readonly="!payload.hasWasteMeasures"
-                  :disabled="!payload.hasWasteMeasures"
-                  :hideOptional="true"
-                />
-              </v-col>
-              <v-col cols="12" sm="6" class="pb-0">
-                <DsfrTextField
-                  v-model.number="payload.servedLeftovers"
-                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
-                  validate-on-blur
-                  label="Reste plateau"
-                  suffix="kg/an"
-                  :readonly="!payload.hasWasteMeasures"
-                  :disabled="!payload.hasWasteMeasures"
-                  :hideOptional="true"
-                />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="6" class="pb-0">
-                <DsfrTextField
-                  v-model.number="payload.unservedLeftovers"
-                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
-                  validate-on-blur
-                  label="Reste en production (non servi)"
-                  suffix="kg/an"
-                  :readonly="!payload.hasWasteMeasures"
-                  :disabled="!payload.hasWasteMeasures"
-                  :hideOptional="true"
-                />
-              </v-col>
-              <v-col cols="12" sm="6" class="pb-0">
-                <DsfrTextField
-                  v-model.number="payload.sideLeftovers"
-                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
-                  validate-on-blur
-                  label="Reste de composantes (entrée, plat dessert...)"
-                  suffix="kg/an"
-                  :readonly="!payload.hasWasteMeasures"
-                  :disabled="!payload.hasWasteMeasures"
-                  :hideOptional="true"
-                />
-              </v-col>
-            </v-row>
-          </fieldset>
-        </v-col>
-      </v-row>
     </div>
     <fieldset v-else-if="stepUrlSlug === 'actions'">
       <legend class="my-3">
@@ -298,7 +203,11 @@
       </v-dialog>
     </div>
     <div v-else-if="stepUrlSlug === 'évaluations'" class="fr-text">
-      <p>Complèter vos évaluations de vos déchets alimentaires</p>
+      <p>
+        Suivre les mesures de vos déchets alimentaires dans notre outil pour visualiser les sources principales de vos
+        déchets, et pour recevoir des conseils personnalisés à votre situation.
+      </p>
+      <p>Il est conseillé de faire au moins deux évaluations par an.</p>
       <ul class="mb-6">
         <li v-for="m in measurements" :key="m.id">
           <router-link
@@ -308,9 +217,9 @@
               query: { return: href },
             }"
           >
-            {{ m.periodStartDate }} - {{ m.periodEndDate }}
+            {{ formatDate(m.periodStartDate) }} - {{ formatDate(m.periodEndDate) }}
           </router-link>
-          : {{ m.totalMass }} kg
+          : {{ formatNumber(m.totalMass) }} kg en total
         </li>
       </ul>
       <div>
@@ -331,7 +240,7 @@
 </template>
 
 <script>
-import { applicableDiagnosticRules } from "@/utils"
+import { applicableDiagnosticRules, formatDate, formatNumber } from "@/utils"
 import validators from "@/validators"
 import LastYearAutofillOption from "../LastYearAutofillOption"
 import DsfrCallout from "@/components/DsfrCallout"
@@ -367,7 +276,7 @@ const STEPS = [
     urlSlug: "expérimentation",
   },
   {
-    title: "Mesure de mes déchets alimentaires (pt 2)",
+    title: "Détail des mesures de mes déchets alimentaires",
     urlSlug: "évaluations",
   },
   {
@@ -511,6 +420,12 @@ export default {
         .then((response) => {
           this.measurements = response
         })
+    },
+    formatDate(str) {
+      return formatDate(str)
+    },
+    formatNumber(str) {
+      return formatNumber(str)
     },
   },
   mounted() {
