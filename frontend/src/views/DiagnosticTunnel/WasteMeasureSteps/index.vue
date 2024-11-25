@@ -300,7 +300,7 @@
     <div v-else-if="stepUrlSlug === 'évaluations'" class="fr-text">
       <p>Complèter vos évaluations de vos déchets alimentaires</p>
       <ul class="mb-2">
-        <li v-for="m in exampleMeasurements" :key="m.id">
+        <li v-for="m in measurements" :key="m.id">
           <router-link
             :to="{
               name: 'WasteMeasurementTunnel',
@@ -425,20 +425,7 @@ export default {
         "donationQuantity",
         "donationFoodType",
       ],
-      exampleMeasurements: [
-        {
-          id: 1,
-          periodStartDate: "2023-03-04",
-          periodEndDate: "2023-03-14",
-          totalMass: 2000,
-        },
-        {
-          id: 2,
-          periodStartDate: "2023-11-18",
-          periodEndDate: "2023-11-23",
-          totalMass: 2000,
-        },
-      ],
+      measurements: undefined,
       query: {
         return: document.location.href,
       },
@@ -483,6 +470,7 @@ export default {
       const payload = {}
       this.fields.forEach((f) => (payload[f] = this.diagnostic[f]))
       this.$set(this, "payload", payload)
+      this.fetchWasteMeasurements()
     },
     updatePayload() {
       this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
@@ -512,6 +500,14 @@ export default {
       const parsedValue = parseFunction(val)
       if (parsedValue === 0) return 0
       return parsedValue || val
+    },
+    fetchWasteMeasurements() {
+      // TODO: only fetch for TD year
+      fetch(`/api/v1/canteens/${this.canteen.id}/wasteMeasurements`)
+        .then((response) => response.json())
+        .then((response) => {
+          this.measurements = response
+        })
     },
   },
   mounted() {
