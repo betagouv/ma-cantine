@@ -299,12 +299,13 @@
     </div>
     <div v-else-if="stepUrlSlug === 'évaluations'" class="fr-text">
       <p>Complèter vos évaluations de vos déchets alimentaires</p>
-      <ul class="mb-2">
+      <ul class="mb-6">
         <li v-for="m in measurements" :key="m.id">
           <router-link
             :to="{
               name: 'WasteMeasurementTunnel',
               params: { canteenUrlComponent, id: m.id },
+              query: { return: href },
             }"
           >
             {{ m.periodStartDate }} - {{ m.periodEndDate }}
@@ -315,15 +316,14 @@
       <div>
         <v-btn
           color="primary"
-          outlined
-          small
+          :outlined="!measurements || !!measurements.length"
           :to="{
             name: 'WasteMeasurementTunnel',
             params: { canteenUrlComponent },
-            query,
+            query: { return: href },
           }"
         >
-          Ajouter une nouvelle
+          Saisir une nouvelle évaluation
         </v-btn>
       </div>
     </div>
@@ -426,9 +426,6 @@ export default {
         "donationFoodType",
       ],
       measurements: undefined,
-      query: {
-        return: document.location.href,
-      },
     }
   },
   computed: {
@@ -466,6 +463,9 @@ export default {
     },
     year() {
       return this.diagnostic.year
+    },
+    href() {
+      return document.location.href
     },
   },
   methods: {
