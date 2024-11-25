@@ -82,9 +82,9 @@ class ETL(ABC):
             logger.error(f"The dataset {self.dataset_name} extraction has errors : ")
             logger.error(report["errors"])
             logger.error(report["tasks"])
-            return 0
+            return False
         else:
-            return 1
+            return True
 
 
 class EXTRACTOR(ETL):
