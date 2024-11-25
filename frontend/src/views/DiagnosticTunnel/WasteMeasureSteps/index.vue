@@ -335,31 +335,10 @@ export default {
         "donationFoodType",
       ],
       measurements: undefined,
+      steps: [],
     }
   },
   computed: {
-    steps() {
-      // filter steps
-      // - 2024-11: hide comment step
-      // - hide XP step if not enabled
-      // - hide donation step if no donation agreement
-      const removeStep = (urlSlug) => {
-        let idx = STEPS.findIndex((step) => step.urlSlug === urlSlug)
-        if (idx > -1) STEPS.splice(idx, 1)
-      }
-      removeStep("autres")
-      if (!window.ENABLE_XP_RESERVATION) {
-        removeStep("expérimentation")
-      }
-      if (!applicableDiagnosticRules(this.canteen).hasDonationAgreement) {
-        removeStep("dons-alimentaires")
-      }
-      // TODO: make evaluations step conditional on hasWasteMeasures
-      // if (!this.payload.hasWasteMeasures) {
-      //   removeStep("évaluations")
-      // }
-      return STEPS
-    },
     step() {
       const step = this.stepUrlSlug && this.steps.find((step) => step.urlSlug === this.stepUrlSlug)
       return step || this.steps[0]
@@ -427,11 +406,35 @@ export default {
     formatNumber(str) {
       return formatNumber(str)
     },
+    calculateSteps() {
+      // filter steps
+      // - 2024-11: hide comment step
+      // - hide XP step if not enabled
+      // - hide donation step if no donation agreement
+      const steps = JSON.parse(JSON.stringify(STEPS))
+      const removeStep = (urlSlug) => {
+        let idx = steps.findIndex((step) => step.urlSlug === urlSlug)
+        if (idx > -1) steps.splice(idx, 1)
+      }
+      removeStep("autres")
+      if (!window.ENABLE_XP_RESERVATION) {
+        removeStep("expérimentation")
+      }
+      if (!applicableDiagnosticRules(this.canteen).hasDonationAgreement) {
+        removeStep("dons-alimentaires")
+      }
+      if (!this.payload.hasWasteMeasures) {
+        removeStep("évaluations")
+      }
+
+      this.steps = steps
+      this.$emit("update-steps", this.steps)
+    },
   },
   mounted() {
-    this.$emit("update-steps", this.steps)
     this.initialisePayload()
     this.updatePayload()
+    this.calculateSteps()
   },
   watch: {
     formIsValid() {
@@ -448,6 +451,7 @@ export default {
       else this.payload.otherWasteAction = null
     },
     "payload.hasWasteMeasures": function() {
+      this.calculateSteps()
       if (this.payload.hasWasteMeasures) return
       const fieldsToClear = [
         "totalLeftovers",
