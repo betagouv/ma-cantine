@@ -4,9 +4,11 @@ import { useRouter } from "vue-router"
 import WasteMeasurementSteps from "./WasteMeasurementSteps/index.vue"
 import WasteSummary from "./WasteSummary.vue"
 import { BadRequestError } from "@/utils"
+import { useRoute } from "vue-router"
 
 import { useRootStore } from "@/stores/root"
 const store = useRootStore()
+const route = useRoute()
 
 const props = defineProps(["canteenUrlComponent", "id", "étape"])
 
@@ -129,8 +131,11 @@ const saveAndQuit = () => {
     .catch(handleServerError)
 }
 
+const returnHref = ref(route.query?.return)
+
 const quit = () => {
-  router.push({ name: "WasteMeasurements" })
+  if (returnHref.value) document.location.href = returnHref.value
+  else router.push({ name: "WasteMeasurements" })
 }
 
 let v$

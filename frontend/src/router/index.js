@@ -658,7 +658,7 @@ function chooseAuthorisedRoute(to, from, next) {
 
 function handleVue3(to) {
   if (to.path.startsWith(VUE3_PREFIX)) {
-    window.location.href = location.origin + to.path
+    window.location.href = location.origin + to.fullPath
   }
 }
 

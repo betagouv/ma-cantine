@@ -320,6 +320,7 @@
           :to="{
             name: 'WasteMeasurementTunnel',
             params: { canteenUrlComponent },
+            query,
           }"
         >
           Ajouter une nouvelle
@@ -438,6 +439,9 @@ export default {
           totalMass: 2000,
         },
       ],
+      query: {
+        return: document.location.href,
+      },
     }
   },
   computed: {
