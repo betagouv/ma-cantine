@@ -24,7 +24,7 @@ if settings.USES_PROCONNECT:
     oauth.register(
         name="proconnect",
         server_metadata_url=settings.PROCONNECT_CONFIG,
-        client_kwargs={"scope": "openid email given_name usual_name siret"},
+        client_kwargs={"scope": "openid email given_name usual_name siret", "leeway": 30},
     )
 
 
