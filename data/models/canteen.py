@@ -123,7 +123,7 @@ class Canteen(SoftDeletionModel):
 
     class Ministries(models.TextChoices):
         PREMIER_MINISTRE = "premier_ministre", "Services du Premier Ministre"
-        AFFAIRES_ETRANGERES = "affaires_etrangeres", "Ministère en charge des affaires étrangères"
+        AFFAIRES_ETRANGERES = "affaires_etrangeres", "Affaires étrangères"
         ECOLOGIE = "ecologie", "Ministère de la Transition écologique"
         JEUNESSE = "jeunesse", "Ministère en charge de l'Éducation, de la Jeunesse et des Sports"
         ECONOMIE = "economie", "Ministère en charge de l'Économie et des finances"
