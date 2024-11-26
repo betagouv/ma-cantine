@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from "vue"
 import { formatNumber, getPercentage } from "@/utils"
+import Constants from "@/constants.js"
 
 const props = defineProps(["measurement"])
 
@@ -25,7 +26,11 @@ const measurementGraphValues = computed(() => {
       props.measurement.unservedTotalMass,
       props.measurement.leftoversTotalMass,
     ]),
-    x: JSON.stringify(["Excédents de préparation", "Denrées non servies", "Reste-assiette"]),
+    x: JSON.stringify([
+      Constants.WasteMeasurement.preparation.title,
+      Constants.WasteMeasurement.unserved.title,
+      Constants.WasteMeasurement.leftovers.title,
+    ]),
   }
 })
 
@@ -39,8 +44,9 @@ const displayOption = ref("chart")
         <h3 class="fr-h6 fr-my-0">Origine du gaspillage</h3>
       </div>
       <div class="fr-col fr-mb-2w">
-        <div class="fr-grid-row fr-grid-row--right">
+        <div class="fr-grid-row">
           <DsfrSegmentedSet
+            name="Origine du gaspillage"
             label="Choix d'affichage"
             :options="[
               {
@@ -69,15 +75,15 @@ const displayOption = ref("chart")
     <div v-else-if="displayOption === 'text'">
       <ul>
         <li>
-          Excédents de préparation : {{ formatNumber(measurement.preparationTotalMass) }} kg, soit
-          {{ formatNumber(measurementPercentageValues.preparation) }} %
+          {{ Constants.WasteMeasurement.preparation.title }} : {{ formatNumber(measurement.preparationTotalMass) }} kg,
+          soit {{ formatNumber(measurementPercentageValues.preparation) }} %
         </li>
         <li>
-          Denrées présentées mais non servies : {{ formatNumber(measurement.unservedTotalMass) }} kg, soit
+          {{ Constants.WasteMeasurement.unserved.title }} : {{ formatNumber(measurement.unservedTotalMass) }} kg, soit
           {{ formatNumber(measurementPercentageValues.unserved) }} %
         </li>
         <li>
-          Reste-assiette : {{ formatNumber(measurement.leftoversTotalMass) }} kg, soit
+          {{ Constants.WasteMeasurement.leftovers.title }} : {{ formatNumber(measurement.leftoversTotalMass) }} kg, soit
           {{ formatNumber(measurementPercentageValues.leftovers) }} %
         </li>
       </ul>

@@ -8,7 +8,7 @@ from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, Use
 from data.models import Teledeclaration
 from macantine.etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
-    ETL_ANALYSIS_TD,
+    ETL_ANALYSIS_TELEDECLARATIONS,
     aggregate_col,
     get_egalim_hors_bio,
 )
@@ -54,30 +54,57 @@ class TestETLAnalysisTD(TestCase):
         """
         Only teledeclarations that occurred during teledeclaration campaigns should be extracted
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory.create(siret="98648424243607")
+        canteen_no_siret = CanteenFactory.create()
         applicant = UserFactory.create()
-        with freeze_time("1991-01-14"):  # Faking time to mock creation_date
-            diagnostic_1990 = DiagnosticFactory.create(canteen=canteen, year=1990, diagnostic_type=None)
-            _ = Teledeclaration.create_from_diagnostic(diagnostic_1990, applicant)
+        etl_stats = ETL_ANALYSIS_TELEDECLARATIONS()
 
-        with freeze_time("2023-05-14"):  # Faking time to mock creation_date
-            diagnostic_2022 = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
-            td_2022 = Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
+        test_cases = [
+            {
+                "date_mocked": "1991-01-14",
+                "year": 1990,
+                "canteen": canteen,
+                "delete_canteen": False,
+                "expected_outcome": "no_extraction",
+                "msg": "Outside any campaign date",
+            },
+            {
+                "date_mocked": "2023-05-14",
+                "year": 2022,
+                "canteen": canteen,
+                "delete_canteen": False,
+                "expected_outcome": "extraction",
+                "msg": "Valid",
+            },
+            {
+                "date_mocked": "2024-02-14",
+                "year": 2023,
+                "canteen": canteen,
+                "delete_canteen": True,
+                "expected_outcome": "no_extraction",
+                "msg": "Canteen deleted during campaign",
+            },
+            {
+                "date_mocked": "2024-02-14",
+                "year": 2023,
+                "canteen": canteen_no_siret,
+                "delete_canteen": False,
+                "expected_outcome": "no_extraction",
+                "msg": "Canteen without a siret",
+            },
+        ]
+        for tc in test_cases:
+            with freeze_time(tc["date_mocked"]):  # Faking time to mock creation_date
+                diag = DiagnosticFactory.create(canteen=tc["canteen"], year=tc["year"], diagnostic_type=None)
+                td = Teledeclaration.create_from_diagnostic(diag, applicant)
+                if tc["delete_canteen"]:
+                    tc["canteen"].delete()
 
-        with freeze_time("2024-02-14"):  # Faking time to mock creation_date
-            diagnostic_2023 = DiagnosticFactory.create(canteen=canteen, year=2023, diagnostic_type=None)
-            td_2023 = Teledeclaration.create_from_diagnostic(diagnostic_2023, applicant)
-
-        etl_stats = ETL_ANALYSIS_TD()
-
-        etl_stats.extract_dataset()
-        self.assertEqual(
-            len(etl_stats.df),
-            2,
-            "There should be two teledeclaration. None for 1990 (no campaign). One for 2022 and one for 2023",
-        )
-        self.assertEqual(etl_stats.df[etl_stats.df.id == td_2022.id].year.iloc[0], 2022)
-        self.assertEqual(etl_stats.df[etl_stats.df.id == td_2023.id].year.iloc[0], 2023)
+            etl_stats.extract_dataset()
+            if tc["expected_outcome"] == "extraction":
+                self.assertEqual(len(etl_stats.df[etl_stats.df.id == td.id]), 1)
+            else:
+                self.assertEqual(len(etl_stats.df[etl_stats.df.id == td.id]), 0)
 
     def test_get_egalim_hors_bio(self):
         data = {

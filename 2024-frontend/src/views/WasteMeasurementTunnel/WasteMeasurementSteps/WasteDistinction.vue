@@ -38,7 +38,7 @@ onMounted(() => {
     <div class="fr-col-12 fr-col-sm-6">
       <DsfrBooleanRadio
         v-model="payload.isSortedBySource"
-        legend="Avez-vous trié votre gaspillage en fonction de sa source ?"
+        legend="Avez-vous trié vos déchets en fonction de leur source ?"
         name="isSortedBySource"
         class="fr-mb-2w"
         :error-message="formatError(v$.isSortedBySource)"
@@ -47,7 +47,7 @@ onMounted(() => {
     <div class="fr-col-sm-6">
       <HelpText>
         <p class="fr-mb-0">
-          Cela signifie procéder à des pesées séparées en fonction de la source de gaspillage : restes assiettes,
+          Cela signifie procéder à des pesées séparées en fonction de la source des déchets : restes assiettes,
           excédents présentés aux convives et non servis, et excédents de préparation.
         </p>
       </HelpText>

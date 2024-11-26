@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, reactive, watch, computed, inject, nextTick } from "vue"
+import Constants from "@/constants.js"
 import { useVuelidate } from "@vuelidate/core"
 import { formatError } from "@/utils.js"
 import HelpText from "./HelpText.vue"
@@ -15,8 +16,8 @@ const sources = {
     sortedKey: "preparationIsSorted",
     edibleKey: "preparationEdibleMass",
     inedibleKey: "preparationInedibleMass",
-    title: "Excédents de préparation",
-    primaryLabel: "Masse de gaspillage pour les excédents de préparation",
+    title: Constants.WasteMeasurement.preparation.title,
+    primaryLabel: "Masse de déchets alimentaires pour les excédents de préparation (en kg)",
     description:
       "Par exemple, si vous avez jeté des épluchures, des parures ou si vous avez des ingrédients excédentaires que vous ne réutiliserez pas, il s’agit d’excédents de préparation",
     edibleHelp:
@@ -27,8 +28,8 @@ const sources = {
     sortedKey: "unservedIsSorted",
     edibleKey: "unservedEdibleMass",
     inedibleKey: "unservedInedibleMass",
-    title: "Denrées présentées aux convives mais non servies",
-    primaryLabel: "Masse de gaspillage pour les denrées présentées aux convives mais non servies",
+    title: Constants.WasteMeasurement.unserved.title,
+    primaryLabel: "Masse de déchets alimentaires pour les denrées présentées aux convives mais non servies (en kg)",
     description:
       "Par exemple, si vous présentez en vitrine un nombre excédentaire de salades, de parts de tarte aux pommes et que ces denrées supplémentaires ne sont ni consommées ni valorisées, il s’agit d’excédents présentés aux convives et non servis",
     edibleHelp:
@@ -39,8 +40,8 @@ const sources = {
     sortedKey: "leftoversIsSorted",
     edibleKey: "leftoversEdibleMass",
     inedibleKey: "leftoversInedibleMass",
-    title: "Reste assiette",
-    primaryLabel: "Masse de gaspillage pour le reste assiette",
+    title: Constants.WasteMeasurement.leftovers.title,
+    primaryLabel: "Masse de déchets alimentaires pour le reste assiette (en kg)",
     description:
       "Il s’agit de l’ensemble des restes alimentaires des plateaux repas /assiettes incluant les os, noyaux et épluchures",
     edibleHelp:
@@ -64,7 +65,7 @@ const sumCheck = () => {
   return payload.edibleKey + payload.inedibleKey === payload.totalKey
 }
 const combination = helpers.withMessage(
-  "La somme de denrées comestibles et non-comestibles devrait être égale au total",
+  "La somme de denrées comestibles et non comestibles devrait être égale au total",
   sumCheck
 )
 
@@ -120,7 +121,7 @@ onMounted(() => {
             v-model.number="payload.totalKey"
             type="number"
             :label="source.primaryLabel"
-            hint="En kg (optionnel)"
+            hint="Optionnel"
             label-visible
             class="fr-mb-2w"
             :error-message="formatError(v$.totalKey)"
@@ -138,7 +139,7 @@ onMounted(() => {
         <div :class="leftHandQuestionsClass">
           <DsfrBooleanRadio
             v-model="payload.sortedKey"
-            legend="Avez-vous trié entre comestible et non-comestible&nbsp;?"
+            legend="Avez-vous trié entre comestible et non comestible&nbsp;?"
             hint="Optionnel"
             name="sortedKey"
             class="fr-mb-2w"
@@ -165,8 +166,8 @@ onMounted(() => {
         <DsfrInputGroup
           v-model.number="payload.edibleKey"
           type="number"
-          label="Total du gaspillage de denrées comestibles"
-          hint="En kg (optionnel)"
+          label="Masse des déchets alimentaires comestibles (assimilable à du gaspillage alimentaire) (en kg)"
+          hint="Optionnel"
           label-visible
           class="fr-mb-2w"
           :error-message="formatError(v$.edibleKey)"
@@ -174,8 +175,8 @@ onMounted(() => {
         <DsfrInputGroup
           v-model.number="payload.inedibleKey"
           type="number"
-          label="Total du gaspillage de denrées non comestibles"
-          hint="En kg (optionnel)"
+          label="Masse des déchets alimentaires non comestibles (en kg)"
+          hint="Optionnel"
           label-visible
           class="fr-mb-2w"
           :error-message="formatError(v$.inedibleKey)"

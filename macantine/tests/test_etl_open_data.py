@@ -9,7 +9,10 @@ from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import Teledeclaration
-from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TD
+from macantine.etl.open_data import (
+    ETL_OPEN_DATA_CANTEEN,
+    ETL_OPEN_DATA_TELEDECLARATIONS,
+)
 from macantine.etl.utils import map_communes_infos, update_datagouv_resources
 
 
@@ -21,7 +24,7 @@ class TestETLOpenData(TestCase):
         """
         Only teledeclarations that occurred during one specific teledeclaration campaign should be extracted
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory.create(siret="98648424243607")
         applicant = UserFactory.create()
         test_cases = [
             {"name": "Ignore years out of range", "year": 1990, "expected_outcome": 0},
@@ -29,7 +32,7 @@ class TestETLOpenData(TestCase):
         ]
 
         for tc in test_cases:
-            etl_td = ETL_OPEN_DATA_TD(tc["year"])
+            etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(tc["year"])
             diagnostic = DiagnosticFactory.create(canteen=canteen, year=tc["year"], diagnostic_type=None)
             Teledeclaration.create_from_diagnostic(diagnostic, applicant)
             etl_td.extract_dataset()
@@ -37,14 +40,14 @@ class TestETLOpenData(TestCase):
 
     @freeze_time("2023-05-14")  # Faking time to mock creation_date
     def test_ignore_cancelled_tds(self, mock):
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory.create(siret="98648424243607")
         applicant = UserFactory.create()
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant)
         teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
         teledeclaration.save()
 
-        etl_td = ETL_OPEN_DATA_TD(2022)
+        etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
         etl_td.extract_dataset()
         self.assertEqual(etl_td.len_dataset(), 0, "The list should be empty as the only td has the CANCELLED status")
 
@@ -98,7 +101,7 @@ class TestETLOpenData(TestCase):
         schema = json.load(open("data/schemas/schema_teledeclaration.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
 
-        etl_td = ETL_OPEN_DATA_TD(2022)
+        etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
         etl_td.df = pd.DataFrame.from_dict(td, orient="index").T
 
         etl_td.transform_dataset()
@@ -119,10 +122,10 @@ class TestETLOpenData(TestCase):
         self.assertEqual(etl_canteen.len_dataset(), 0, "There shoud be an empty dataframe")
 
         # Adding data in the db
-        canteen_1 = CanteenFactory.create()
+        canteen_1 = CanteenFactory.create(siret="98648424243607")
         canteen_1.managers.add(UserFactory.create())
 
-        canteen_2 = CanteenFactory.create()  # Another canteen, but without a manager
+        canteen_2 = CanteenFactory.create(siret="98648424243607")  # Another canteen, but without a manager
         canteen_2.managers.clear()
 
         etl_canteen.extract_dataset()

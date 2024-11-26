@@ -3,6 +3,7 @@ import { onMounted, reactive, watch, inject, computed } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { formatError } from "@/utils.js"
 import HelpText from "./HelpText.vue"
+import Constants from "@/constants.js"
 
 import { helpers } from "@vuelidate/validators"
 import { useValidators } from "@/validators.js"
@@ -84,7 +85,7 @@ onMounted(() => {
     <div class="fr-grid-row fr-grid-row--middle">
       <div class="fr-col-12 fr-col-md-6">
         <fieldset class="fr-px-0 fr-pt-0 fr-mx-0">
-          <legend class="fr-text--lg fr-mb-1w fr-px-0">Période de mesure de mon gaspillage alimentaire</legend>
+          <legend class="fr-text--lg fr-mb-1w fr-px-0">{{ Constants.WasteMeasurement.daysInPeriod.title }}</legend>
           <div class="fr-col-md-7">
             <DsfrInputGroup
               v-model="payload.periodStartDate"
@@ -124,7 +125,7 @@ onMounted(() => {
             <DsfrInputGroup
               v-model.number="payload.mealCount"
               type="number"
-              label="Nombre de couverts sur la période"
+              :label="Constants.WasteMeasurement.mealCount.title"
               :hint="`${daysInPeriod || '?'} jours`"
               label-visible
               :error-message="formatError(v$.mealCount)"
@@ -162,7 +163,7 @@ onMounted(() => {
             <DsfrInputGroup
               v-model.number="payload.mealCount"
               type="number"
-              label="Nombre de couverts sur la période"
+              :label="Constants.WasteMeasurement.mealCount.title"
               :hint="`${daysInPeriod || '?'} jours`"
               label-visible
               :error-message="formatError(v$.mealCount)"
