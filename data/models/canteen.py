@@ -135,8 +135,14 @@ class Canteen(SoftDeletionModel):
         INTERIEUR = "interieur", "Intérieur et Outre-mer"
         JUSTICE = "justice", "Justice"
         MER = "mer", "Mer"
-        ADMINISTRATION_TERRITORIALE = "administration_territoriale", "Préfecture - Administration Territoriale de l'État (ATE)"
-        AUTORITES_INDEPENDANTES = "autorites_independantes", "Présidence de la république - Autorités indépendantes (AAI, API)"
+        ADMINISTRATION_TERRITORIALE = (
+            "administration_territoriale",
+            "Préfecture - Administration Territoriale de l'État (ATE)",
+        )
+        AUTORITES_INDEPENDANTES = (
+            "autorites_independantes",
+            "Présidence de la république - Autorités indépendantes (AAI, API)",
+        )
         PREMIER_MINISTRE = "premier_ministre", "Services du Premier Ministre"
         SANTE = "sante", "Santé et Solidarités"
         SPORT = "sport", "Sport"
