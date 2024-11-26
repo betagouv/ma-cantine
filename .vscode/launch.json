@@ -5,20 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: remote-debug Django",
-            "type": "python",
-            "request": "attach",
-            "pathMappings": [
-                {
-                    "localRoot": "${workspaceFolder}",
-                    "remoteRoot": "/app"
-                }
-            ],
-            "port": 3000,
-            "host": "127.0.0.1",
-            "justMyCode": false
-        },
-        {
             "name": "Python: Django",
             "type": "debugpy",
             "request": "launch",
