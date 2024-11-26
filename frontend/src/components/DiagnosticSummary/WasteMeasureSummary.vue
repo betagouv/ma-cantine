@@ -133,6 +133,66 @@
       <p class="font-weight-bold mb-2">Autres commentaires</p>
       <p>{{ diagnostic.otherWasteComments }}</p>
     </div>
+    <div>
+      <v-dialog v-model="xpReservationInfoDialog" max-width="600">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn color="primary" outlined small v-bind="attrs" v-on="on">
+            <v-icon small class="mr-2">$information-line</v-icon>
+            En savoir plus sur l'expérimentation de réservation de repas de 2023
+          </v-btn>
+        </template>
+        <v-card class="text-left">
+          <div class="pa-4 d-flex align-center" style="background-color: #F5F5F5">
+            <v-card-title>
+              <h1 class="fr-h6 mb-0">
+                Expérimentation réservation de repas
+              </h1>
+            </v-card-title>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" outlined @click="xpReservationInfoDialog = false">
+              Fermer
+            </v-btn>
+          </div>
+          <v-card-text class="text-sm-body-1 grey-text text-darken-3 pt-6">
+            <p>
+              Vous souhaitez réduire le gaspillage alimentaire dans votre établissement et générer des économies :
+              <span class="font-weight-bold">la réservation de repas peut être une solution !</span>
+            </p>
+            <p>
+              Pour évaluer ses effets sur le gaspillage alimentaire, la satisfaction de vos convives et le taux de
+              fréquentation de votre établissement, nous vous proposons de participer à une expérimentation prévue par
+              la loi climat et résilience.
+            </p>
+            <p>
+              Votre candidature à cette expérimentation vous permettra de mettre en place une démarche d’évaluation dont
+              les résultats permettront de saisir le potentiel de la solution de réservation de repas.
+            </p>
+            <p class="font-weight-bold">
+              Vous avez déjà mis en place une solution de réservation de repas ou souhaitez en adopter une ? Vous pouvez
+              vous inscrire dès maintenant !
+            </p>
+            <p>
+              Vous serez amenés à répondre à des questions sur votre structure et la solution de réservation que vous
+              aurez mise en place, ainsi qu’à transmettre des données relatives aux évaluations du gaspillage
+              alimentaire, du taux de fréquentation et de la satisfaction des usagers sur une période de six mois.
+            </p>
+            <p>Les inscriptions sont ouvertes jusqu’au 1er juillet 2023.</p>
+            <p>
+              Les informations relatives aux conditions de mise en œuvre de l’expérimentation sont précisées dans
+              <a
+                href="/static/documents/Guide_pratique_XP_RESERVATION.pdf"
+                target="_blank"
+                title="le guide pratique - ouvre une nouvelle fenêtre"
+              >
+                le guide pratique
+                <v-icon color="primary" small>mdi-open-in-new</v-icon>
+              </a>
+              .
+            </p>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+    </div>
   </div>
 </template>
 
