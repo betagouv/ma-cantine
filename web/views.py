@@ -272,8 +272,6 @@ class OIDCAuthorizeView(View):
         """
         Authlib's method (callable as oauth.proconnect.userinfo(token=token))
         does not currently function with ProConnect tokens.
-        There are issues with a non-configurable leeway and the structure of the token
-        received by ProConnect.
         This method takes their function as of v1.3.2 and rewrites it to fix the
         issues manually. Inspired by:
         https://github.com/datagouv/udata-front/blob/f227ce5a8bba9822717ebd5986f5319f45e1622f/udata_front/views/proconnect.py#L29
