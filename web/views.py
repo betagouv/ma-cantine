@@ -233,8 +233,8 @@ class OIDCAuthorizeView(View):
 
         # Attempt with id provided by Identity Provider
         try:
-            user = get_user_model().objects.get(mcp_id=user_id)
-            user.mcp_organizations = organizations
+            user = get_user_model().objects.get(proconnect_id=user_id)
+            user.proconnect_organizations = organizations
             user.save()
             logger.info(f"ProConnect user {user_id} (ID Ma Cantine: {user.id}) was found.")
             return user
@@ -244,8 +244,8 @@ class OIDCAuthorizeView(View):
         # Attempt with email
         try:
             user = get_user_model().objects.get(email=email)
-            user.mcp_id = user_id
-            user.mcp_organizations = organizations
+            user.proconnect_id = user_id
+            user.proconnect_organizations = organizations
             user.save()
             logger.info(f"ProConnect user {user_id} was already registered in MaCantine with email {email}.")
             return user
@@ -259,11 +259,11 @@ class OIDCAuthorizeView(View):
             first_name=user_data.get("given_name"),
             last_name=last_name,
             email=email,
-            mcp_id=user_id,
-            # phone_number=mcp_data.get("phone"),
+            proconnect_id=user_id,
+            # phone_number=proconnect_data.get("phone"),
             username=f"{last_name}-proconnect-{user_id}",
-            mcp_organizations=organizations,
-            created_with_mcp=True,
+            proconnect_organizations=organizations,
+            created_with_proconnect=True,
         )
         return user
 

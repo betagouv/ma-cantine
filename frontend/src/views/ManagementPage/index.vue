@@ -74,7 +74,7 @@
     </div>
     <CanteenCreationDialog
       v-if="showCanteenCreationPrompt !== null"
-      :organizations="loggedUser.mcpOrganizations"
+      :organizations="loggedUser.proconnectOrganizations"
       v-model="showCanteenCreationPrompt"
     />
   </div>
@@ -182,7 +182,7 @@ export default {
   },
   watch: {
     canteenCount(count) {
-      if (this.loggedUser.mcpOrganizations && count === 0 && this.showCanteenCreationPrompt === null) {
+      if (this.loggedUser.proconnectOrganizations && count === 0 && this.showCanteenCreationPrompt === null) {
         this.showCanteenCreationPrompt = true
       }
     },
