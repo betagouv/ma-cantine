@@ -147,7 +147,6 @@ class Canteen(SoftDeletionModel):
         SANTE = "sante", "Santé et Solidarités"
         SPORT = "sport", "Sport"
         TRAVAIL = "travail", "Travail"
-
         OUTRE_MER = "outre_mer", "Ministère des Outre-mer"
         AUTRE = "autre", "Autre"
 
