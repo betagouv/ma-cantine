@@ -70,11 +70,13 @@ const activeAccordion = ref("")
             </b>
           </p>
         </div>
-        <EmphasiseText
-          :emphasisText="`${formatNumber(wastePerMeal)} g`"
-          contextText="par repas et par convive"
-          class="brown"
-        />
+        <div>
+          <EmphasiseText
+            :emphasisText="`${formatNumber(wastePerMeal)} g`"
+            contextText="par repas et par convive"
+            class="brown"
+          />
+        </div>
         <p v-if="editable">
           <router-link :to="measurementTunnel" class="fr-btn fr-btn--secondary fr-btn--sm fr-mr-1w fr-mb-1w">
             Modifier les données
