@@ -50,7 +50,7 @@ const activeAccordion = ref("")
 <template>
   <div>
     <div v-if="displayMeasurement" class="fr-grid-row fr-grid-row--gutters">
-      <div class="fr-col fr-mb-4w">
+      <div class="fr-col-12 fr-col-md-4 fr-mb-4w">
         <div v-if="editable" class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
           <div class="fr-col-12 fr-pr-4w">
             <DsfrSelect v-model="chosenMeasurementIdx" label="Date de l'évaluation" :options="measurementChoices" />
@@ -80,15 +80,18 @@ const activeAccordion = ref("")
           </router-link>
         </p>
       </div>
-      <div v-if="displayMeasurement.isSortedBySource" class="fr-col-12 fr-col-sm-8 fr-mb-4w fr-grid-row">
-        <div class="fr-col-12 fr-col-sm-6 fr-pr-2w">
+      <div
+        v-if="displayMeasurement.isSortedBySource"
+        class="fr-col-12 fr-col-md-8 fr-mb-4w fr-grid-row fr-grid-row--gutters"
+      >
+        <div class="fr-col-12 fr-col-sm-6">
           <EdibleChart :measurement="displayMeasurement" />
         </div>
         <div class="fr-col-12 fr-col-sm-6">
           <SourceChart :measurement="displayMeasurement" />
         </div>
       </div>
-      <div v-else class="fr-col-12 fr-col-sm-4 fr-mb-4w">
+      <div v-else class="fr-col-12 fr-col-md-4 fr-mb-4w">
         <DsfrAlert>
           Triez vos déchets alimentaires par source pour mieux comprendre comment agir.
         </DsfrAlert>
