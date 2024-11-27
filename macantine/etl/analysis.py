@@ -7,6 +7,7 @@ import pandas as pd
 
 from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
+from macantine.utils import CAMPAIGN_DATES
 
 logger = logging.getLogger(__name__)
 
@@ -209,7 +210,7 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
 
     def __init__(self):
         self.df = None
-        self.years = utils.CAMPAIGN_DATES.keys()
+        self.years = CAMPAIGN_DATES.keys()
         self.extracted_table_name = "teledeclarations"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis.json"))
@@ -259,7 +260,7 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
 
         # Fill campaign participation
         logger.info("TD : Fill campaign participations...")
-        for year in utils.CAMPAIGN_DATES.keys():
+        for year in CAMPAIGN_DATES.keys():
             campaign_participation = utils.map_canteens_td(year)
             col_name_campaign = f"declaration_{year}"
             self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
