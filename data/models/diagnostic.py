@@ -10,7 +10,7 @@ from data.department_choices import Department
 from data.fields import ChoiceArrayField
 from data.region_choices import Region
 from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
-from macantine.utils import CAMPAIGN_DATES
+from macantine import utils
 
 from .canteen import Canteen
 
@@ -25,8 +25,8 @@ class DiagForStatsQuerySet(models.QuerySet):
             self.filter(
                 year=year,
                 teledeclaration__creation_date__range=(
-                    CAMPAIGN_DATES[year]["start_date"],
-                    CAMPAIGN_DATES[year]["end_date"],
+                    utils.CAMPAIGN_DATES[year]["start_date"],
+                    utils.CAMPAIGN_DATES[year]["end_date"],
                 ),
                 teledeclaration__status="SUBMITTED",
                 canteen__id__isnull=False,
@@ -36,8 +36,8 @@ class DiagForStatsQuerySet(models.QuerySet):
             )
             .exclude(
                 canteen__deletion_date__range=(
-                    CAMPAIGN_DATES[year]["start_date"],
-                    CAMPAIGN_DATES[year]["end_date"],
+                    utils.CAMPAIGN_DATES[year]["start_date"],
+                    utils.CAMPAIGN_DATES[year]["end_date"],
                 )
             )
             .exclude(canteen__siret="")
