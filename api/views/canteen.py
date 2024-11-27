@@ -11,7 +11,6 @@ from django.core.exceptions import BadRequest, ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from django.db.models import (
-    Avg,
     Case,
     Count,
     Exists,
@@ -884,24 +883,23 @@ class CanteenStatisticsView(APIView):
         )
 
         appro_share_query = diagnostics.filter(value_total_ht__gt=0)
-        appro_share_query = appro_share_query.annotate(
-            bio_share=Cast(Sum("value_bio_ht", default=0) / Sum("value_total_ht"), FloatField())
+        agg = appro_share_query.aggregate(
+            Sum("value_bio_ht", default=0),
+            Sum("value_total_ht", default=0),
+            Sum("value_sustainable_ht", default=0),
+            Sum("value_externality_performance_ht", default=0),
+            Sum("value_egalim_others_ht", default=0),
         )
-        appro_share_query = appro_share_query.annotate(
-            sustainable_share=Cast(
-                (
-                    Sum("value_sustainable_ht", default=0)
-                    + Sum("value_externality_performance_ht", default=0)
-                    + Sum("value_egalim_others_ht", default=0)
-                )
-                / Sum("value_total_ht"),
-                FloatField(),
-            )
-        )
-        agg = appro_share_query.aggregate(Avg("bio_share"), Avg("sustainable_share"))
         # no need for particularly fancy rounding
-        data["bio_percent"] = int((agg["bio_share__avg"] or 0) * 100)
-        data["sustainable_percent"] = int((agg["sustainable_share__avg"] or 0) * 100)
+        data["bio_percent"] = 100 * int(agg["value_bio_ht__sum"] / agg["value_total_ht__sum"] or 0)
+        data["sustainable_percent"] = 100 * int(
+            (
+                (agg["value_sustainable_ht__sum"] or 0)
+                + (agg["value_externality_performance_ht__sum"] or 0)
+                + (agg["value_egalim_others_ht__sum"] or 0)
+            )
+            / agg["value_total_ht__sum"]
+        )
 
         # --- badges ---
         total_diag = diagnostics.count()
