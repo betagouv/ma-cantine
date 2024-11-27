@@ -5,12 +5,51 @@ from django.core.validators import MaxValueValidator
 from django.db import models
 from simple_history.models import HistoricalRecords
 
+# from data.models import Teledeclaration
 from data.department_choices import Department
 from data.fields import ChoiceArrayField
 from data.region_choices import Region
 from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
+from macantine.utils import CAMPAIGN_DATES
 
 from .canteen import Canteen
+
+
+class DiagForStatsQuerySet(models.QuerySet):
+    """
+    Fetching the diagnostics for wich the data has been validated for stats"""
+
+    def diags_for_stat(self, year):
+        year = int(year)
+        return (
+            self.filter(
+                year=year,
+                teledeclaration__creation_date__range=(
+                    CAMPAIGN_DATES[year]["start_date"],
+                    CAMPAIGN_DATES[year]["end_date"],
+                ),
+                teledeclaration__status="SUBMITTED",
+                canteen__id__isnull=False,
+                canteen__siret__isnull=False,
+                value_total_ht__isnull=False,
+                value_bio_ht__isnull=False,
+            )
+            .exclude(
+                canteen__deletion_date__range=(
+                    CAMPAIGN_DATES[year]["start_date"],
+                    CAMPAIGN_DATES[year]["end_date"],
+                )
+            )
+            .exclude(canteen__siret="")
+        )
+
+
+class DiagsForStatManager(models.Manager):
+    def get_queryset(self):
+        return DiagForStatsQuerySet(self.model, using=self._db)
+
+    def diags_for_stat(self, year):
+        return self.get_queryset().diags_for_stat(year)
 
 
 class Diagnostic(models.Model):
@@ -111,6 +150,7 @@ class Diagnostic(models.Model):
         DRAFT = "draft", "🔒 Non publié"
         PUBLISHED = "published", "✅ Publié"
 
+    objects = DiagsForStatManager()
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()
