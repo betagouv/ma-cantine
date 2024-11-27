@@ -19,8 +19,8 @@ from common.utils import get_token_sirene
 from data.models import Canteen, User
 
 from .celery import app
-from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TD
-from .etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TD
+from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS
+from .etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 from .utils import fetch_geo_data_from_api_insee_sirene_by_siret
 
 logger = logging.getLogger(__name__)
@@ -344,18 +344,36 @@ def delete_old_historical_records():
     call_command("clean_old_history", days=settings.MAX_DAYS_HISTORICAL_RECORDS, auto=True)
 
 
-@app.task()
-def export_datasets():
-    logger.info("Starting datasets extractions")
-    datasets = {
-        "campagne teledeclaration 2021": ETL_OPEN_DATA_TD(2021),
-        "campagne teledeclaration 2022": ETL_OPEN_DATA_TD(2022),
-        "cantines": ETL_OPEN_DATA_CANTEEN(),
-        "td_analyses": ETL_ANALYSIS_TD(),
-        "cantines_analyses": ETL_ANALYSIS_CANTEEN(),
-    }
+def export_datasets(datasets: dict):
     for key, etl in datasets.items():
         logger.info(f"Starting {key} dataset extraction")
         etl.extract_dataset()
         etl.transform_dataset()
         etl.load_dataset()
+
+
+def manual_datasets_export():
+    """
+    Export the Teledeclarations datasets for data.gouv.fr
+    This datasets are updated every year by adding a new campaign
+    """
+    logger.info("Starting manual datasets export")
+    datasets = {
+        "campagne teledeclaration 2021": ETL_OPEN_DATA_TELEDECLARATIONS(2021),
+        "campagne teledeclaration 2022": ETL_OPEN_DATA_TELEDECLARATIONS(2022),
+    }
+    export_datasets(datasets)
+
+
+@app.task()
+def continous_datasets_export():
+    """
+    Export regulary and automatically datasets that are updated contiously
+    """
+    logger.info("Starting datasets extractions")
+    datasets = {
+        "cantines": ETL_OPEN_DATA_CANTEEN(),
+        "cantines_analyses": ETL_ANALYSIS_CANTEEN(),
+        "td_analyses": ETL_ANALYSIS_TELEDECLARATIONS(),
+    }
+    export_datasets(datasets)

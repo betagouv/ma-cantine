@@ -172,7 +172,7 @@ def aggregate(df):
     return df
 
 
-class ETL_ANALYSIS(etl.ETL):
+class ANALYSIS(etl.TRANSFORMER_LOADER):
     """
     Create a dataset for analysis in a Data Warehouse
     * Extract data from prod
@@ -181,7 +181,7 @@ class ETL_ANALYSIS(etl.ETL):
     """
 
     def __init__(self):
-        self.df = None
+        super().__init__()
         self.extracted_table_name = ""
         self.schema = ""
         self.warehouse = DataWareHouse()
@@ -199,7 +199,7 @@ class ETL_ANALYSIS(etl.ETL):
         self.df = self.df.drop_duplicates(subset=["id"])
 
 
-class ETL_ANALYSIS_TD(ETL_ANALYSIS):
+class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
     """
     Create a dataset for analysis in a Data Warehouse
     * Extract data from prod
@@ -208,20 +208,12 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
     """
 
     def __init__(self):
-        self.df = None
+        super().__init__()
         self.years = utils.CAMPAIGN_DATES.keys()
         self.extracted_table_name = "teledeclarations"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis.json"))
         self.columns = [field["name"] for field in self.schema["fields"]]
-
-    def extract_dataset(self):
-        # Load teledeclarations from prod database into the Data Warehouse
-        self.df = utils.fetch_teledeclarations(self.years)
-
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe with columns from the schema")
-            self.df = pd.DataFrame(columns=self.columns)
 
     def transform_dataset(self):
         if self.df.empty:
@@ -243,7 +235,7 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
         self.df = aggregate(self.df)
 
         # Add additionnal filters (that couldn't be processed at queryset)
-        self.df = utils.filter_teledeclarations(self.df)
+        self.filter_teledeclarations()
 
         self.compute_miscellaneous_columns()
 
@@ -308,7 +300,7 @@ class ETL_ANALYSIS_TD(ETL_ANALYSIS):
         self.df["ratio_egalim_sans_bio"] = self.df.apply(get_ratio_egalim_sans_bio, axis=1)
 
 
-class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
+class ETL_ANALYSIS_CANTEEN(etl.CANTEENS, ANALYSIS):
     """
     Create a dataset for analysis in a Data Warehouse
     * Extract data from prod
@@ -321,10 +313,12 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
     """
 
     def __init__(self):
-        self.df = None
+        super().__init__()
+
         self.extracted_table_name = "canteens"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
+
         # The following mapper is used for renaming columns and for selecting the columns to extract from db
         self.columns_mapper = {
             "id": "id",
@@ -346,9 +340,7 @@ class ETL_ANALYSIS_CANTEEN(ETL_ANALYSIS):
             "line_ministry": "ministere_tutelle",
             "sectors": "secteur",
         }
-
-    def extract_dataset(self):
-        self.df = utils.fetch_canteens(self.columns_mapper.keys())
+        self.columns = self.columns_mapper.keys()
 
     def transform_dataset(self):
         logger.info("Filling geo names")

@@ -122,29 +122,19 @@ class Canteen(SoftDeletionModel):
         NOTHING = "95_nothing", "Rien à faire !"
 
     class Ministries(models.TextChoices):
-        PREMIER_MINISTRE = "premier_ministre", "Services du Premier Ministre"
-        AFFAIRES_ETRANGERES = "affaires_etrangeres", "Ministère en charge des affaires étrangères"
-        ECOLOGIE = "ecologie", "Ministère de la Transition écologique"
-        JEUNESSE = "jeunesse", "Ministère en charge de l'Éducation, de la Jeunesse et des Sports"
-        ECONOMIE = "economie", "Ministère en charge de l'Économie et des finances"
-        ARMEE = "armee", "Ministère des Armées"
-        INTERIEUR = "interieur", "Ministère de l’Intérieur"
-        TRAVAIL = "travail", "Ministère en charge du Travail"
-        OUTRE_MER = "outre_mer", "Ministère des Outre-mer"
-        TERRITOIRES = (
-            "territoires",
-            "Ministère de la Cohésion des Territoires et des Relations avec les Collectivités Territoriales",
-        )
-        JUSTICE = "justice", "Ministère de la Justice"
-        CULTURE = "culture", "Ministère de la Culture"
-        SANTE = "sante", "Ministère en charge de la Santé et des Solidarités"
-        MER = "mer", "Ministère de la Mer"
-        ENSEIGNEMENT_SUPERIEUR = (
-            "enseignement_superieur",
-            "Ministère en charge de l'Enseignement supérieur et de la Recherche",
-        )
-        AGRICULTURE = "agriculture", "Ministère en charge de l'Agriculture et de l'Alimentation"
-        TRANSFORMATION = "transformation", "Ministère de la Transformation et de la Fonction Publiques"
+        AFFAIRES_ETRANGERES = "affaires_etrangeres", "Affaires étrangères"
+        AGRICULTURE = "agriculture", "Agriculture, Alimentation et Forêts"
+        ARMEE = "armee", "Armées"
+        TERRITOIRES = "territoires", "Cohésion des territoires - Relations avec les collectivités territoriales"
+        CULTURE = "culture", "Culture"
+        ECONOMIE = "economie", "Économie et finances"
+        JEUNESSE = "jeunesse", "Éducation et Jeunesse"
+        ENSEIGNEMENT_SUPERIEUR = "enseignement_superieur", "Enseignement supérieur et Recherche"
+        ECOLOGIE = "ecologie", "Environnement"
+        TRANSFORMATION = "transformation", "Fonction Publiques"
+        INTERIEUR = "interieur", "Intérieur et Outre-mer"
+        JUSTICE = "justice", "Justice"
+        MER = "mer", "Mer"
         ADMINISTRATION_TERRITORIALE = (
             "administration_territoriale",
             "Préfecture - Administration Territoriale de l'État (ATE)",
@@ -153,6 +143,11 @@ class Canteen(SoftDeletionModel):
             "autorites_independantes",
             "Présidence de la république - Autorités indépendantes (AAI, API)",
         )
+        PREMIER_MINISTRE = "premier_ministre", "Services du Premier Ministre"
+        SANTE = "sante", "Santé et Solidarités"
+        SPORT = "sport", "Sport"
+        TRAVAIL = "travail", "Travail"
+        OUTRE_MER = "outre_mer", "Ministère des Outre-mer"
         AUTRE = "autre", "Autre"
 
     import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
