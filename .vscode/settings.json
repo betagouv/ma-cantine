@@ -19,10 +19,10 @@
     "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.codeActionsOnSave": {
       "source.organizeImports": "explicit"
-    },
+    }
   },
   "black-formatter.args": ["--line-length=119"],
   "black-formatter.path": ["./venv/bin/black"],
-  "emmet.includeLanguages": {"django-html": "html"},
-  "isort.args": ["--profile", "black", "--filter-files"],
+  "emmet.includeLanguages": { "django-html": "html" },
+  "isort.args": ["--profile", "black", "--filter-files"]
 }

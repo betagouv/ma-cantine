@@ -1,83 +1,70 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Python: Django",
-            "type": "debugpy",
-            "request": "launch",
-            "python": "${workspaceFolder}/venv/bin/python",
-            "program": "${workspaceFolder}/manage.py",
-            "args": [
-                "runserver"
-            ],
-            "django": true,
-            "justMyCode": false
-        },
-        {
-            "name": "Python: Tests",
-            "type": "debugpy",
-            "request": "launch",
-            "stopOnEntry": false,
-            "python": "${workspaceFolder}/venv/bin/python",
-            "program": "${workspaceFolder}/manage.py",
-            "args": [
-                "test",
-                "--noinput"
-            ],
-            "justMyCode": false,
-            "django": true
-        },
-        {
-            "name": "Python: Debug tests",
-            "type": "debugpy",
-            "request": "launch",
-            "stopOnEntry": false,
-            "python": "${workspaceFolder}/venv/bin/python",
-            "program": "${workspaceFolder}/manage.py",
-            "args": [
-                "test",
-                "--tag=debug",
-                "--noinput"
-            ],
-            "justMyCode": false,
-            "django": true
-        },
-        {
-            "name":"Python: Current File",
-            "type":"debugpy",
-            "request":"launch",
-            "program":"${file}",
-            "console":"integratedTerminal",
-            "justMyCode":true
-        },
-        {
-            "name": "Geo Bot SIRET",
-            "type": "debugpy",
-            "request": "launch",
-            "stopOnEntry": false,
-            "python": "${workspaceFolder}/venv/bin/python",
-            "program": "${workspaceFolder}/manage.py",
-            "args": [
-                "fill_missing_geolocation_data_using_siret",
-            ],
-            "justMyCode": false,
-            "django": true
-        },
-        {
-            "name": "Export Dataset",
-            "type": "debugpy",
-            "request": "launch",
-            "stopOnEntry": false,
-            "python": "${workspaceFolder}/venv/bin/python",
-            "program": "${workspaceFolder}/manage.py",
-            "args": [
-                "export_dataset",
-            ],
-            "justMyCode": false,
-            "django": true
-        },
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Django",
+      "type": "debugpy",
+      "request": "launch",
+      "python": "${workspaceFolder}/venv/bin/python",
+      "program": "${workspaceFolder}/manage.py",
+      "args": ["runserver"],
+      "django": true,
+      "justMyCode": false
+    },
+    {
+      "name": "Python: Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "stopOnEntry": false,
+      "python": "${workspaceFolder}/venv/bin/python",
+      "program": "${workspaceFolder}/manage.py",
+      "args": ["test", "--noinput"],
+      "justMyCode": false,
+      "django": true
+    },
+    {
+      "name": "Python: Debug tests",
+      "type": "debugpy",
+      "request": "launch",
+      "stopOnEntry": false,
+      "python": "${workspaceFolder}/venv/bin/python",
+      "program": "${workspaceFolder}/manage.py",
+      "args": ["test", "--tag=debug", "--noinput"],
+      "justMyCode": false,
+      "django": true
+    },
+    {
+      "name": "Python: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Geo Bot SIRET",
+      "type": "debugpy",
+      "request": "launch",
+      "stopOnEntry": false,
+      "python": "${workspaceFolder}/venv/bin/python",
+      "program": "${workspaceFolder}/manage.py",
+      "args": ["fill_missing_geolocation_data_using_siret"],
+      "justMyCode": false,
+      "django": true
+    },
+    {
+      "name": "Export Dataset",
+      "type": "debugpy",
+      "request": "launch",
+      "stopOnEntry": false,
+      "python": "${workspaceFolder}/venv/bin/python",
+      "program": "${workspaceFolder}/manage.py",
+      "args": ["export_dataset"],
+      "justMyCode": false,
+      "django": true
+    }
+  ]
 }
