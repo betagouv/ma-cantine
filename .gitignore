@@ -119,7 +119,6 @@ venv.bak/
 .ropeproject
 
 # Workspace VSCode settings
-.vscode/
 *.code-workspace
 
 # mkdocs documentation
