@@ -4,11 +4,11 @@
 addReviewers: true
 
 # A list of reviewers to be added to pull requests (GitHub user name)
-reviewers:  # gip-inclusion/admins-le-marche
+reviewers: # gip-inclusion/admins-le-marche
   - hfroot
-  - alemangui
   - qloridant
   - raphodn
+  - Charline-L
 
 # A number of reviewers added to the pull request
 # Set 0 to add all the reviewers (default: 0)

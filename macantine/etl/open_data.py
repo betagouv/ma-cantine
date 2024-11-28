@@ -5,7 +5,6 @@ import time
 from io import BytesIO
 
 import pandas as pd
-import requests
 from django.core.files.storage import default_storage
 from django.db.models import Q
 
@@ -13,16 +12,13 @@ import macantine.etl.utils
 from data.models import Canteen
 from macantine.etl import etl
 from macantine.etl.etl import logger
-from macantine.etl.utils import extract_sectors, fetch_canteens, fetch_teledeclarations
+from macantine.etl.utils import extract_sectors
 
 
-class ETL_OPEN_DATA(etl.ETL):
-
-    def __init__(self):
-        self.df = None
-        self.schema = None
-        self.schema_url = ""
-        self.dataset_name = ""
+class OPEN_DATA(etl.TRANSFORMER_LOADER):
+    """
+    Abstract class implementing the specifity for open data export
+    """
 
     def transform_geo_data(self, prefix=""):
         logger.info("Start fetching communes details")
@@ -66,45 +62,6 @@ class ETL_OPEN_DATA(etl.ETL):
             if col_int["type"] == "float":
                 self.df[col_int["name"]] = self.df[col_int["name"]].round(decimals=4)
         self.df = self.df.replace("<NA>", "")
-
-    def get_schema(self):
-        return self.schema
-
-    def get_dataset(self):
-        return self.df
-
-    def len_dataset(self):
-        if isinstance(self.df, pd.DataFrame):
-            return len(self.df)
-        else:
-            return 0
-
-    def is_valid(self, filepath) -> bool:
-        # In order to validate the dataset with the validata api, must first convert to CSV then save online
-        with default_storage.open(filepath + "_to_validate.csv", "w") as file:
-            self.df.to_csv(
-                file,
-                sep=";",
-                index=False,
-                na_rep="",
-                encoding="utf_8_sig",
-                quoting=csv.QUOTE_NONE,
-            )
-        dataset_to_validate_url = (
-            f"{os.environ['CELLAR_HOST']}/{os.environ['CELLAR_BUCKET_NAME']}/media/{filepath}_to_validate.csv"
-        )
-
-        res = requests.get(
-            f"https://api.validata.etalab.studio/validate?schema={self.schema_url}&url={dataset_to_validate_url}&header_case=true"
-        )
-        report = json.loads(res.text)["report"]
-        if len(report["errors"]) > 0 or report["stats"]["errors"] > 0:
-            logger.error(f"The dataset {self.dataset_name} extraction has errors : ")
-            logger.error(report["errors"])
-            logger.error(report["tasks"])
-            return 0
-        else:
-            return 1
 
     def _load_data_csv(self, filename):
         df_csv = self.df.copy()
@@ -174,7 +131,7 @@ class ETL_OPEN_DATA(etl.ETL):
             logger.error(f"Error saving validated data: {e}")
 
 
-class ETL_OPEN_DATA_CANTEEN(ETL_OPEN_DATA):
+class ETL_OPEN_DATA_CANTEEN(etl.CANTEENS, OPEN_DATA):
     def __init__(self):
         super().__init__()
         self.dataset_name = "registre_cantines"
@@ -182,9 +139,11 @@ class ETL_OPEN_DATA_CANTEEN(ETL_OPEN_DATA):
         self.schema_url = (
             "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_cantine.json"
         )
+        self.columns = [field["name"] for field in self.schema["fields"]]
         self.canteens = None
+        self.exclude_filter = Q(sectors__id=22) | Q(line_ministry="armee")  # Filtering out the police / army sectors
 
-    def extract_dataset(self):
+    def transform_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
         self.canteens_col_from_db = all_canteens_col
         for col_processed in [
@@ -199,14 +158,6 @@ class ETL_OPEN_DATA_CANTEEN(ETL_OPEN_DATA):
         ]:
             self.canteens_col_from_db.remove(col_processed)
 
-        start = time.time()
-        exclude_filter = Q(sectors__id=22)  # Filtering out the police / army sectors
-        exclude_filter |= Q(deletion_date__isnull=False)  # Filtering out the deleted canteens
-        self.df = fetch_canteens(self.canteens_col_from_db, exclude_filter)
-        end = time.time()
-        logger.info(f"Time spent on canteens extraction : {end - start}")
-
-    def transform_dataset(self):
         # Adding the active_on_ma_cantine column
         start = time.time()
         non_active_canteens = Canteen.objects.filter(managers=None).values_list("id", flat=True)
@@ -245,9 +196,10 @@ class ETL_OPEN_DATA_CANTEEN(ETL_OPEN_DATA):
         logger.info(f"Time spent on campaign participations : {end - start}")
 
 
-class ETL_OPEN_DATA_TD(ETL_OPEN_DATA):
+class ETL_OPEN_DATA_TELEDECLARATIONS(etl.TELEDECLARATIONS, OPEN_DATA):
     def __init__(self, year: int):
         super().__init__()
+        self.years = [year]
         self.year = year
         self.dataset_name = f"campagne_td_{year}"
         self.schema = json.load(open("data/schemas/schema_teledeclaration.json"))
@@ -273,9 +225,6 @@ class ETL_OPEN_DATA_TD(ETL_OPEN_DATA):
             ],
         }
         self.df = None
-
-    def extract_dataset(self):
-        self.df = fetch_teledeclarations([self.year])
 
     def transform_sectors(self) -> pd.Series:
         sectors = self.df["canteen_sectors"]
@@ -349,7 +298,7 @@ class ETL_OPEN_DATA_TD(ETL_OPEN_DATA):
 
     def _filter_by_ministry(self):
         """
-        Filtering the ministry of Armees so they do     not appear publicly
+        Filtering the ministry of Armees so they do not appear publicly
         """
         canteens_to_filter = Canteen.objects.filter(line_ministry="armee")
         canteens_id_to_filter = [canteen.id for canteen in canteens_to_filter]

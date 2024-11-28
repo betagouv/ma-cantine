@@ -8,7 +8,7 @@ import pandas as pd
 import requests
 
 from api.serializers import SectorSerializer
-from data.models import Canteen, Sector, Teledeclaration
+from data.models import Sector, Teledeclaration
 from macantine.utils import CAMPAIGN_DATES
 
 logger = logging.getLogger(__name__)
@@ -20,6 +20,10 @@ logger = logging.getLogger(__name__)
 # 4 : Administration : Restaurants inter-administratifs d’Etat (RIA)
 # 2 : Education : Supérieur et Universitaire
 SECTEURS_SPE = [26, 24, 23, 22, 4, 2]
+
+
+def common_members(a, b):
+    return set(a) & set(b)
 
 
 def get_ratio(row, valueKey, totalKey):
@@ -214,72 +218,6 @@ def filter_empty_values(df: pd.DataFrame, col_name) -> pd.DataFrame:
     Filtering out the teledeclarations for wich a certain field is empty
     """
     return df.dropna(subset=col_name)
-
-
-def filter_aberrant_td(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Filtering out the teledeclarations that :
-    *  products > 1 million €
-    AND
-    * an avg meal cost > 20 €
-    """
-    mask = (df["teledeclaration.value_total_ht"] > 1000000) & (
-        df["teledeclaration.value_total_ht"] / df["canteen.yearly_meal_count"] > 20
-    )
-    return df[~mask]
-
-
-def filter_teledeclarations(df: pd.DataFrame):
-    df = filter_empty_values(df, col_name="teledeclaration.value_total_ht")
-    df = filter_empty_values(df, col_name="teledeclaration.value_bio_ht")
-    df = filter_aberrant_td(df)
-    return df
-
-
-def fetch_teledeclarations(years: list) -> pd.DataFrame:
-    df = pd.DataFrame()
-    for year in years:
-        if year in CAMPAIGN_DATES.keys():
-            df_year = pd.DataFrame(
-                Teledeclaration.objects.filter(
-                    year=year,
-                    creation_date__range=(
-                        CAMPAIGN_DATES[year]["start_date"],
-                        CAMPAIGN_DATES[year]["end_date"],
-                    ),
-                    status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-                    canteen_id__isnull=False,
-                    canteen_siret__isnull=False,
-                    diagnostic__value_total_ht__isnull=False,
-                    diagnostic__value_bio_ht__isnull=False,
-                )
-                .exclude(
-                    canteen__deletion_date__range=(
-                        CAMPAIGN_DATES[year]["start_date"],
-                        CAMPAIGN_DATES[year]["end_date"],
-                    )
-                )
-                .exclude(canteen_siret="")
-                .values()
-            )
-            df = pd.concat([df, df_year])
-        else:
-            logger.warning(f"TD dataset does not exist for year : {year}")
-        if len(df) == 0:
-            logger.warning("TD dataset is empty for all the specified years")
-    return df
-
-
-def fetch_canteens(columns, exclude_filter=None):
-    canteens = Canteen.objects.all()
-    if exclude_filter:
-        canteens = Canteen.objects.exclude(exclude_filter)
-    if canteens.count() == 0:
-        df = pd.DataFrame(columns=columns)
-    else:
-        # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
-        df = pd.DataFrame(canteens.values(*columns))
-    return df
 
 
 def fetch_commune_detail(code_insee_commune, commune_details, geo_detail_type):

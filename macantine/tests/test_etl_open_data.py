@@ -9,7 +9,10 @@ from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import Teledeclaration
-from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TD
+from macantine.etl.open_data import (
+    ETL_OPEN_DATA_CANTEEN,
+    ETL_OPEN_DATA_TELEDECLARATIONS,
+)
 from macantine.etl.utils import map_communes_infos, update_datagouv_resources
 
 
@@ -29,7 +32,7 @@ class TestETLOpenData(TestCase):
         ]
 
         for tc in test_cases:
-            etl_td = ETL_OPEN_DATA_TD(tc["year"])
+            etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(tc["year"])
             diagnostic = DiagnosticFactory.create(canteen=canteen, year=tc["year"], diagnostic_type=None)
             Teledeclaration.create_from_diagnostic(diagnostic, applicant)
             etl_td.extract_dataset()
@@ -44,7 +47,7 @@ class TestETLOpenData(TestCase):
         teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
         teledeclaration.save()
 
-        etl_td = ETL_OPEN_DATA_TD(2022)
+        etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
         etl_td.extract_dataset()
         self.assertEqual(etl_td.len_dataset(), 0, "The list should be empty as the only td has the CANCELLED status")
 
@@ -98,7 +101,7 @@ class TestETLOpenData(TestCase):
         schema = json.load(open("data/schemas/schema_teledeclaration.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
 
-        etl_td = ETL_OPEN_DATA_TD(2022)
+        etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
         etl_td.df = pd.DataFrame.from_dict(td, orient="index").T
 
         etl_td.transform_dataset()

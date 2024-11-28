@@ -891,15 +891,20 @@ class CanteenStatisticsView(APIView):
             Sum("value_egalim_others_ht", default=0),
         )
         # no need for particularly fancy rounding
-        data["bio_percent"] = 100 * int(agg["value_bio_ht__sum"] / agg["value_total_ht__sum"] or 0)
-        data["sustainable_percent"] = 100 * int(
-            (
-                (agg["value_sustainable_ht__sum"] or 0)
-                + (agg["value_externality_performance_ht__sum"] or 0)
-                + (agg["value_egalim_others_ht__sum"] or 0)
+        if agg["value_total_ht__sum"] > 0:
+            data["bio_percent"] = int(100 * agg["value_bio_ht__sum"] / agg["value_total_ht__sum"])
+            data["sustainable_percent"] = int(
+                100
+                * (
+                    agg["value_sustainable_ht__sum"]
+                    + agg["value_externality_performance_ht__sum"]
+                    + agg["value_egalim_others_ht__sum"]
+                )
+                / agg["value_total_ht__sum"]
             )
-            / agg["value_total_ht__sum"]
-        )
+        else:
+            data["bio_percent"] = 0
+            data["sustainable_percent"] = 0
 
         # --- badges ---
         total_diag = diagnostics.count()

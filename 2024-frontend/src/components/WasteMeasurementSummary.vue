@@ -49,41 +49,11 @@ const activeAccordion = ref("")
 
 <template>
   <div>
-    <div v-if="displayMeasurement" class="fr-grid-row">
-      <div class="fr-col fr-mb-4w">
-        <EmphasiseText :emphasisText="`${formatNumber(wastePerMeal)} g`" contextText="par repas" class="brown" />
-        <router-link v-if="editable" :to="newMeasurementRoute" class="fr-btn fr-btn--secondary fr-mt-sm-2w">
-          Saisir une nouvelle évaluation
-        </router-link>
-      </div>
-      <div class="fr-col-12 fr-col-sm-4 fr-mb-4w">
-        <div v-if="displayMeasurement.isSortedBySource">
-          <EdibleChart :measurement="displayMeasurement" />
-        </div>
-        <DsfrAlert v-else>
-          Triez vos déchets alimentaires par source pour mieux comprendre comment agir.
-        </DsfrAlert>
-      </div>
-      <div class="fr-col-12 fr-col-sm-4 fr-mb-4w">
-        <div v-if="displayMeasurement.isSortedBySource">
-          <SourceChart :measurement="displayMeasurement" />
-        </div>
-        <DsfrAlert v-else>
-          Triez vos déchets alimentaires par source pour mieux comprendre comment agir.
-        </DsfrAlert>
-      </div>
-    </div>
-    <DsfrAccordionsGroup v-model="activeAccordion">
-      <DsfrAccordion id="waste-measurement-detail" title="Données détaillées" class="fr-my-2w">
+    <div v-if="displayMeasurement" class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-12 fr-col-md-4 fr-mb-4w">
         <div v-if="editable" class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
-          <div class="fr-col-12 fr-col-sm-6 fr-col-md-4 fr-pr-4w">
+          <div class="fr-col-12 fr-pr-4w">
             <DsfrSelect v-model="chosenMeasurementIdx" label="Date de l'évaluation" :options="measurementChoices" />
-          </div>
-          <div v-if="editable" class="fr-col-12 fr-col-sm-4">
-            <router-link class="fr-btn fr-btn--tertiary" :to="measurementTunnel">
-              <span class="fr-icon-pencil-line fr-icon--sm fr-mr-1w"></span>
-              Modifier les données
-            </router-link>
           </div>
         </div>
         <div v-else class="grey-text">
@@ -100,6 +70,35 @@ const activeAccordion = ref("")
             </b>
           </p>
         </div>
+        <EmphasiseText :emphasisText="`${formatNumber(wastePerMeal)} g`" contextText="par repas" class="brown" />
+        <p v-if="editable">
+          <router-link :to="measurementTunnel" class="fr-btn fr-btn--secondary fr-btn--sm fr-mr-1w fr-mb-1w">
+            Modifier les données
+          </router-link>
+          <router-link :to="newMeasurementRoute" class="fr-btn fr-btn--primary fr-btn--sm">
+            Saisir une nouvelle évaluation
+          </router-link>
+        </p>
+      </div>
+      <div
+        v-if="displayMeasurement.isSortedBySource"
+        class="fr-col-12 fr-col-md-8 fr-mb-4w fr-grid-row fr-grid-row--gutters"
+      >
+        <div class="fr-col-12 fr-col-sm-6">
+          <EdibleChart :measurement="displayMeasurement" />
+        </div>
+        <div class="fr-col-12 fr-col-sm-6">
+          <SourceChart :measurement="displayMeasurement" />
+        </div>
+      </div>
+      <div v-else class="fr-col-12 fr-col-md-4 fr-mb-4w">
+        <DsfrAlert>
+          Triez vos déchets alimentaires par source pour mieux comprendre comment agir.
+        </DsfrAlert>
+      </div>
+    </div>
+    <DsfrAccordionsGroup v-model="activeAccordion">
+      <DsfrAccordion id="waste-measurement-detail" title="Données détaillées" class="fr-my-2w">
         <MeasurementDetail :measurement="displayMeasurement" />
         <router-link v-if="editable" class="fr-btn fr-btn--tertiary fr-btn--sm" :to="measurementTunnel">
           <span class="fr-icon-pencil-line fr-icon--sm fr-mr-1w"></span>

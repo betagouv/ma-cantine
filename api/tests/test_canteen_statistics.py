@@ -1,14 +1,25 @@
+from unittest.mock import patch
+
 import requests_mock
 from django.test.utils import override_settings
 from django.urls import reverse
+from django.utils.timezone import now
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.views.canteen import badges_for_queryset
 from data.department_choices import Department
-from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory
-from data.models import Canteen, Diagnostic, Sector
+from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
+from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 from data.region_choices import Region
+
+year_data = now().year - 1
+mocked_campaign_dates = {
+    year_data: {
+        "start_date": now().replace(month=1, day=1, hour=0, minute=0, second=0),
+        "end_date": now().replace(month=12, day=31, hour=23, minute=59, second=59),
+    }
+}
 
 
 class TestCanteenStatsApi(APITestCase):
@@ -18,103 +29,125 @@ class TestCanteenStatsApi(APITestCase):
         This public endpoint returns some summary statistics for a region and a location
         """
         # create 5 canteens (3 in region of interest), 1 unpublished
-        region = "01"
-        year = 2020
-        primary_school = SectorFactory.create(name="Primary", category=Sector.Categories.EDUCATION)
-        secondary_school = SectorFactory.create(name="Secondary", category=Sector.Categories.EDUCATION)
-        enterprise = SectorFactory.create(name="Enterprise", category=Sector.Categories.ENTERPRISE)
-        social = SectorFactory.create(name="Social", category=Sector.Categories.SOCIAL)
+        # Test case definitions
+        sectors = {
+            "primary_school": {"name": "Primary", "category": Sector.Categories.EDUCATION},
+            "secondary_school": {"name": "Secondary", "category": Sector.Categories.EDUCATION},
+            "enterprise": {"name": "Enterprise", "category": Sector.Categories.ENTERPRISE},
+            "social": {"name": "Social", "category": Sector.Categories.SOCIAL},
+        }
 
-        published = CanteenFactory.create(
-            region=region,
-            publication_status=Canteen.PublicationStatus.PUBLISHED.value,
-            sectors=[primary_school, enterprise],
-        )
-        unpublished = CanteenFactory.create(
-            region=region,
-            publication_status=Canteen.PublicationStatus.DRAFT.value,
-            sectors=[primary_school, secondary_school],
-        )
-        # this canteen will be included in the canteen count, but not the diagnostic count
-        # which is used to calculate the measure success percentages
-        out_of_date = CanteenFactory.create(
-            region=region,
-            publication_status=Canteen.PublicationStatus.PUBLISHED.value,
-            sectors=[secondary_school],
-        )
-        other_region = CanteenFactory.create(region="03", sectors=[social])
+        canteen_cases = [
+            {
+                "canteen": {
+                    "region": "01",
+                    "sectors": ["primary_school", "enterprise"],
+                },
+                "diagnostics": [
+                    {
+                        "year": year_data,
+                        "value_total_ht": 100,
+                        "value_bio_ht": 20,
+                        "value_sustainable_ht": 30,
+                        "value_externality_performance_ht": None,
+                        "value_egalim_others_ht": None,
+                        "has_waste_diagnostic": False,
+                        "waste_actions": [],
+                        "vegetarian_weekly_recurrence": Diagnostic.MenuFrequency.DAILY,
+                        "plastic_tableware_substituted": False,
+                        "communicates_on_food_quality": False,
+                    },
+                    {
+                        "year": now().replace(year=1990).year,
+                        "value_total_ht": 100,
+                        "value_bio_ht": 100,
+                        "value_sustainable_ht": 0,
+                        "value_externality_performance_ht": 0,
+                        "value_egalim_others_ht": 0,
+                        "vegetarian_weekly_recurrence": Diagnostic.MenuFrequency.DAILY,
+                    },
+                ],
+            },
+            {
+                "canteen": {
+                    "region": "01",
+                    "sectors": ["primary_school", "secondary_school"],
+                },
+                "diagnostics": [
+                    {
+                        "year": year_data,
+                        "value_total_ht": 1000,
+                        "value_bio_ht": 400,
+                        "value_sustainable_ht": 500,
+                        "value_externality_performance_ht": 0,
+                        "value_egalim_others_ht": 0,
+                        "has_waste_diagnostic": True,
+                        "waste_actions": ["action1", "action2"],
+                        "has_donation_agreement": True,
+                        "vegetarian_weekly_recurrence": Diagnostic.MenuFrequency.LOW,
+                        "cooking_plastic_substituted": True,
+                        "serving_plastic_substituted": True,
+                        "plastic_bottles_substituted": True,
+                        "plastic_tableware_substituted": True,
+                        "communicates_on_food_quality": True,
+                    },
+                ],
+            },
+            {
+                "canteen": {
+                    "region": "01",
+                    "sectors": ["secondary_school"],
+                },
+                "diagnostics": [
+                    {
+                        "year": now().replace(year=1990).year,
+                    },
+                ],
+            },
+            {
+                "canteen": {
+                    "region": "03",
+                    "sectors": ["social"],
+                },
+                "diagnostics": [
+                    {
+                        "year": year_data,
+                        "value_total_ht": 100,
+                        "value_bio_ht": 100,
+                        "value_sustainable_ht": 0,
+                        "value_externality_performance_ht": 0,
+                        "value_egalim_others_ht": 0,
+                        "cooking_plastic_substituted": True,
+                        "serving_plastic_substituted": True,
+                        "plastic_bottles_substituted": True,
+                        "plastic_tableware_substituted": True,
+                        "communicates_on_food_quality": True,
+                    },
+                ],
+            },
+        ]
 
-        # relevant diagnostics
-        DiagnosticFactory.create(
-            canteen=published,
-            year=year,
-            value_total_ht=100,
-            value_bio_ht=20,
-            value_sustainable_ht=30,
-            value_externality_performance_ht=None,
-            value_egalim_others_ht=None,
-            has_waste_diagnostic=False,
-            waste_actions=[],
-            vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY,
-            plastic_tableware_substituted=False,
-            communicates_on_food_quality=False,
-        )
-        DiagnosticFactory.create(
-            canteen=unpublished,
-            year=year,
-            value_total_ht=1000,
-            value_bio_ht=400,
-            value_sustainable_ht=500,
-            value_externality_performance_ht=0,
-            value_egalim_others_ht=0,
-            has_waste_diagnostic=True,
-            waste_actions=["action1", "action2"],
-            has_donation_agreement=True,
-            vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW,
-            cooking_plastic_substituted=True,
-            serving_plastic_substituted=True,
-            plastic_bottles_substituted=True,
-            plastic_tableware_substituted=True,
-            communicates_on_food_quality=True,
-        )
-        # irrelevant diagnostics
-        DiagnosticFactory.create(
-            canteen=published,
-            year=2019,
-            value_total_ht=100,
-            value_bio_ht=100,
-            value_sustainable_ht=0,
-            value_externality_performance_ht=0,
-            value_egalim_others_ht=0,
-            vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY,
-        )
-        DiagnosticFactory.create(
-            canteen=out_of_date,
-            year=2019,
-        )
-        DiagnosticFactory.create(
-            canteen=other_region,
-            year=year,
-            value_total_ht=100,
-            value_bio_ht=100,
-            value_sustainable_ht=0,
-            value_externality_performance_ht=0,
-            value_egalim_others_ht=0,
-            cooking_plastic_substituted=True,
-            serving_plastic_substituted=True,
-            plastic_bottles_substituted=True,
-            plastic_tableware_substituted=True,
-            communicates_on_food_quality=True,
-        )
+        # Create the sectors
+        sector_objects = {key: SectorFactory.create(**attributes) for key, attributes in sectors.items()}
 
-        response = self.client.get(reverse("canteen_statistics"), {"region": region, "year": year})
+        # Create the canteens and diagnostics
+        for i, case in enumerate(canteen_cases):
+            canteen_sectors = [sector_objects[sector] for sector in case["canteen"].pop("sectors")]
+            canteen = CanteenFactory.create(**case["canteen"], sectors=canteen_sectors, siret=i)
+            for diagnostic_data in case.get("diagnostics", []):
+                diag = DiagnosticFactory.create(canteen=canteen, **diagnostic_data)
+                Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
+
+        with patch("macantine.utils.CAMPAIGN_DATES", mocked_campaign_dates):
+            response = self.client.get(reverse("canteen_statistics"), {"region": "01", "year": year_data})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
         self.assertEqual(body["canteenCount"], 3)
         self.assertEqual(body["diagnosticsCount"], 2)
-        self.assertEqual(body["bioPercent"], 30)
-        self.assertEqual(body["sustainablePercent"], 40)
+        self.assertEqual(body["bioPercent"], 38)
+        self.assertEqual(body["sustainablePercent"], 48)
         self.assertEqual(body["approPercent"], 100)
         self.assertEqual(body["wastePercent"], 50)
         self.assertEqual(body["diversificationPercent"], 50)
@@ -126,7 +159,9 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(sector_categories[Sector.Categories.SOCIAL], 0)
 
         # can also call without location info
-        response = self.client.get(reverse("canteen_statistics"), {"year": 2020})
+        with patch("macantine.utils.CAMPAIGN_DATES", mocked_campaign_dates):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @override_settings(PUBLISH_BY_DEFAULT=True)
@@ -146,7 +181,7 @@ class TestCanteenStatsApi(APITestCase):
             publication_status=Canteen.PublicationStatus.DRAFT,
         )
 
-        response = self.client.get(reverse("canteen_statistics"), {"region": region, "year": 2020})
+        response = self.client.get(reverse("canteen_statistics"), {"region": region, "year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
@@ -155,12 +190,11 @@ class TestCanteenStatsApi(APITestCase):
     def test_canteen_stats_by_departments(self):
         department = "01"
         department_2 = "02"
-        year = 2020
         CanteenFactory.create(department=department, publication_status=Canteen.PublicationStatus.PUBLISHED.value)
         CanteenFactory.create(department=department_2, publication_status=Canteen.PublicationStatus.PUBLISHED.value)
 
         response = self.client.get(
-            reverse("canteen_statistics"), {"department": [department, department_2], "year": year}
+            reverse("canteen_statistics"), {"department": [department, department_2], "year": year_data}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -168,7 +202,6 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["canteenCount"], 2)
 
     def test_canteen_stats_by_sectors(self):
-        year = 2020
         school = SectorFactory.create(name="School", category=Sector.Categories.EDUCATION)
         enterprise = SectorFactory.create(name="Enterprise", category=Sector.Categories.ENTERPRISE)
         social = SectorFactory.create(name="Social", category=None)
@@ -178,7 +211,7 @@ class TestCanteenStatsApi(APITestCase):
         CanteenFactory.create(sectors=[social])
 
         response = self.client.get(
-            reverse("canteen_statistics"), {"sectors": [school.id, enterprise.id], "year": year}
+            reverse("canteen_statistics"), {"sectors": [school.id, enterprise.id], "year": year_data}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -199,113 +232,139 @@ class TestCanteenStatsApi(APITestCase):
         """
         Test that the right canteens are identified in appro badge queryset
         """
-        # --- Canteens which don't earn appro badge:
-        zero_total = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
-        DiagnosticFactory.create(year=2020, canteen=zero_total, value_total_ht=0)
-        null_total = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
-        DiagnosticFactory.create(year=2020, canteen=null_total, value_total_ht=None)
-        bio_lacking = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
-        DiagnosticFactory.create(
-            year=2020,
-            canteen=bio_lacking,
-            value_total_ht=100,
-            value_bio_ht=19,
-            value_sustainable_ht=31,
-            value_externality_performance_ht=None,
-            value_egalim_others_ht=None,
-        )
+        test_cases = [
+            # --- Canteens which don't earn appro badge ---
+            {
+                "canteen": {"publication_status": Canteen.PublicationStatus.PUBLISHED.value},
+                "diagnostic": {"year": year_data, "value_total_ht": 0},
+                "specific_territory": False,
+            },
+            {
+                "canteen": {"publication_status": Canteen.PublicationStatus.PUBLISHED.value},
+                "diagnostic": {"year": year_data, "value_total_ht": None},
+                "specific_territory": False,
+            },
+            {
+                "canteen": {"publication_status": Canteen.PublicationStatus.PUBLISHED.value},
+                "diagnostic": {
+                    "year": year_data,
+                    "value_total_ht": 100,
+                    "value_bio_ht": 19,
+                    "value_sustainable_ht": 31,
+                    "value_externality_performance_ht": None,
+                    "value_egalim_others_ht": None,
+                },
+                "specific_territory": False,
+            },
+            # --- Canteens which earn appro badge ---
+            {
+                "canteen": {
+                    "publication_status": Canteen.PublicationStatus.PUBLISHED.value,
+                    "region": Region.ile_de_france.value,
+                },
+                "diagnostic": {
+                    "year": year_data,
+                    "value_total_ht": 100,
+                    "value_bio_ht": 50,
+                    "value_sustainable_ht": None,
+                    "value_externality_performance_ht": None,
+                    "value_egalim_others_ht": None,
+                },
+                "specific_territory": False,
+            },
+            {
+                "canteen": {"publication_status": Canteen.PublicationStatus.PUBLISHED.value},
+                "diagnostic": {
+                    "year": year_data,
+                    "value_total_ht": 100,
+                    "value_bio_ht": 20,
+                    "value_sustainable_ht": 30,
+                    "value_externality_performance_ht": None,
+                    "value_egalim_others_ht": None,
+                },
+                "specific_territory": False,
+            },
+            # --- Rules for specific regions and territories ---
+            {
+                "canteen": {
+                    "publication_status": Canteen.PublicationStatus.PUBLISHED.value,
+                    "region": Region.guadeloupe.value,
+                },
+                "diagnostic": {
+                    "year": year_data,
+                    "value_total_ht": 100,
+                    "value_bio_ht": 5,
+                    "value_sustainable_ht": 15,
+                    "value_externality_performance_ht": None,
+                    "value_egalim_others_ht": 0,
+                },
+                "specific_territory": True,
+            },
+            {
+                "canteen": {
+                    "publication_status": Canteen.PublicationStatus.PUBLISHED.value,
+                    "department": Department.saint_martin.value,
+                },
+                "diagnostic": {
+                    "year": year_data,
+                    "value_total_ht": 100,
+                    "value_bio_ht": 5,
+                    "value_sustainable_ht": 15,
+                    "value_externality_performance_ht": None,
+                    "value_egalim_others_ht": 0,
+                },
+                "specific_territory": True,
+            },
+            {
+                "canteen": {
+                    "publication_status": Canteen.PublicationStatus.PUBLISHED.value,
+                    "region": Region.mayotte.value,
+                },
+                "diagnostic": {
+                    "year": year_data,
+                    "value_total_ht": 100,
+                    "value_bio_ht": 2,
+                    "value_sustainable_ht": 3,
+                    "value_externality_performance_ht": 0,
+                    "value_egalim_others_ht": None,
+                },
+                "specific_territory": True,
+            },
+            {
+                "canteen": {
+                    "publication_status": Canteen.PublicationStatus.PUBLISHED.value,
+                    "department": Department.saint_pierre_et_miquelon.value,
+                },
+                "diagnostic": {
+                    "year": year_data,
+                    "value_total_ht": 100,
+                    "value_bio_ht": 10,
+                    "value_sustainable_ht": 20,
+                    "value_externality_performance_ht": 0,
+                    "value_egalim_others_ht": 0,
+                },
+                "specific_territory": True,
+            },
+        ]
 
-        # --- Canteens which earn appro badge:
-        null_sustainable = CanteenFactory.create(
-            publication_status=Canteen.PublicationStatus.PUBLISHED.value, region=Region.ile_de_france.value
-        )
-        DiagnosticFactory.create(
-            year=2020,
-            canteen=null_sustainable,
-            value_total_ht=100,
-            value_bio_ht=50,
-            value_sustainable_ht=None,
-            value_externality_performance_ht=None,
-            value_egalim_others_ht=None,
-        )
+        # Create the test objects based on the test cases
+        for i, case in enumerate(test_cases):
+            canteen = CanteenFactory.create(**case["canteen"], siret=i)
+            diag = DiagnosticFactory.create(canteen=canteen, **case["diagnostic"])
+            Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
+            if case["specific_territory"]:
+                badges = badges_for_queryset(Diagnostic.objects.all())
+                appro_badge_qs = badges["appro"]
+                self.assertTrue(appro_badge_qs.filter(canteen=canteen).exists())
 
-        earned = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
-        DiagnosticFactory.create(
-            year=2020,
-            canteen=earned,
-            value_total_ht=100,
-            value_bio_ht=20,
-            value_sustainable_ht=30,
-            value_externality_performance_ht=None,
-            value_egalim_others_ht=None,
-        )
-        # rules per outre mer territories
-        guadeloupe = CanteenFactory.create(
-            publication_status=Canteen.PublicationStatus.PUBLISHED.value, region=Region.guadeloupe.value
-        )
-        DiagnosticFactory.create(
-            year=2020,
-            canteen=guadeloupe,
-            value_total_ht=100,
-            value_bio_ht=5,
-            value_sustainable_ht=15,
-            value_externality_performance_ht=None,
-            value_egalim_others_ht=0,
-        )
-        # same rules as for Guadeloupe, but Saint-Martin is considered a department, not a region (in reality it's neither)
-        saint_martin = CanteenFactory.create(
-            publication_status=Canteen.PublicationStatus.PUBLISHED.value, department=Department.saint_martin.value
-        )
-        DiagnosticFactory.create(
-            year=2020,
-            canteen=saint_martin,
-            value_total_ht=100,
-            value_bio_ht=5,
-            value_sustainable_ht=15,
-            value_externality_performance_ht=None,
-            value_egalim_others_ht=0,
-        )
-        mayotte = CanteenFactory.create(
-            publication_status=Canteen.PublicationStatus.PUBLISHED.value, region=Region.mayotte.value
-        )
-        DiagnosticFactory.create(
-            year=2020,
-            canteen=mayotte,
-            value_total_ht=100,
-            value_bio_ht=2,
-            value_sustainable_ht=3,
-            value_externality_performance_ht=0,
-            value_egalim_others_ht=None,
-        )
-        saint_pierre_et_miquelon = CanteenFactory.create(
-            publication_status=Canteen.PublicationStatus.PUBLISHED.value,
-            department=Department.saint_pierre_et_miquelon.value,
-        )
-        DiagnosticFactory.create(
-            canteen=saint_pierre_et_miquelon,
-            year=2020,
-            value_total_ht=100,
-            value_bio_ht=10,
-            value_sustainable_ht=20,
-            value_externality_performance_ht=0,
-            value_egalim_others_ht=0,
-        )
-
-        badges = badges_for_queryset(Diagnostic.objects.all())
-
-        appro_badge_qs = badges["appro"]
-        self.assertTrue(appro_badge_qs.filter(canteen=null_sustainable).exists())
-        self.assertTrue(appro_badge_qs.filter(canteen=earned).exists())
-        self.assertTrue(appro_badge_qs.filter(canteen=guadeloupe).exists())
-        self.assertTrue(appro_badge_qs.filter(canteen=saint_martin).exists())
-        self.assertTrue(appro_badge_qs.filter(canteen=mayotte).exists())
-        self.assertTrue(appro_badge_qs.filter(canteen=saint_pierre_et_miquelon).exists())
         self.assertEqual(appro_badge_qs.count(), 6)
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": 2020})
+        with patch("macantine.utils.CAMPAIGN_DATES", mocked_campaign_dates):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         body = response.json()
-        # there are 3 canteens that do not meet criteria, and 6 which do = 66.6% meet appro, rounded down
-        self.assertEqual(body["approPercent"], 66)
+        # There are 3 canteens that do not meet criteria (including one for which the diag is not even created),
+        # and 6 which do = 75% meet appro, rounded down (computing only on validated diag = 8)
+        self.assertEqual(body["approPercent"], 75)
 
     def test_waste_badge_earned(self):
         """
@@ -451,24 +510,22 @@ class TestCanteenStatsApi(APITestCase):
         The endpoint must take into consideration the simplified diagnostic
         fields for EGAlim stats
         """
-        year = 2021
-
-        published = CanteenFactory.create(
-            publication_status=Canteen.PublicationStatus.PUBLISHED.value,
-        )
+        published = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value, siret=1)
 
         # Diagnostic that should display 20% Bio and 45% other EGAlim
-        DiagnosticFactory.create(
+        diag = DiagnosticFactory.create(
             canteen=published,
-            year=year,
+            year=year_data,
             value_total_ht=100,
             value_bio_ht=20,
             value_sustainable_ht=15,
             value_externality_performance_ht=15,
             value_egalim_others_ht=15,
         )
+        Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": year})
+        with patch("macantine.utils.CAMPAIGN_DATES", mocked_campaign_dates):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
@@ -494,7 +551,7 @@ class TestCanteenStatsApi(APITestCase):
         mock.get(api_url + "/1/communes", json=[{"code": "12345"}, {"code": "67890"}])
         mock.get(api_url + "/2/communes", json=[{"code": "11223"}, {"code": "11224"}])
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": 2021, "epci": epcis})
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "epci": epcis})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
@@ -541,7 +598,7 @@ class TestCanteenStatsApi(APITestCase):
             publication_status=Canteen.PublicationStatus.PUBLISHED,
         )
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": 2024})
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()

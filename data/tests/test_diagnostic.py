@@ -62,7 +62,7 @@ class DiagForStatsQuerySetTest(TestCase):
         # status ?
 
     @patch("macantine.utils.CAMPAIGN_DATES")
-    def test_diags_for_stat(self, mock_campaign_dates):
+    def test_diags_for_stat(self):
         """
         Test the diags_for_stat method.
         """
