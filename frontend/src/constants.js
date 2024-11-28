@@ -630,24 +630,24 @@ export default Object.freeze({
   ],
   VegetarianRecurrence: [
     {
-      label: "De façon quotidienne",
-      value: "DAILY",
-    },
-    {
-      label: "Plus d'une fois par semaine",
-      value: "HIGH",
-    },
-    {
-      label: "Une fois par semaine",
-      value: "MID",
+      label: "Non, je n'ai pas mis en place un menu végétarien",
+      value: "NEVER",
     },
     {
       label: "Moins d'une fois par semaine",
       value: "LOW",
     },
     {
-      label: "Je ne propose pas de menu végétarien",
-      value: "NEVER",
+      label: "Une fois par semaine",
+      value: "MID",
+    },
+    {
+      label: "Plus d'une fois par semaine",
+      value: "HIGH",
+    },
+    {
+      label: "De façon quotidienne",
+      value: "DAILY",
     },
   ],
   CommunicationFrequencies: [
