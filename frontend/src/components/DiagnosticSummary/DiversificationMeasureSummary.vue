@@ -5,7 +5,8 @@
         <span v-if="diagnostic.hasDiversificationPlan">
           <v-icon color="primary" class="mr-1">$check-line</v-icon>
           <span>
-            {{ Constants.DiversificationMeasureStep.hasDiversificationPlan.title }}
+            J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de
+            protéines végétales
             <ul role="list" class="mt-2" v-if="appliedDiversificationActions && appliedDiversificationActions.length">
               <li class="fr-text-xs mb-1" v-for="action in appliedDiversificationActions" :key="action">
                 {{ action }}
@@ -107,22 +108,24 @@ export default {
   },
   computed: {
     weeklyRecurrence() {
-      const items = selectListToObject(Constants.vegetarianWeeklyRecurrence.items)
+      const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianWeeklyRecurrence.items)
       return items[this.diagnostic.vegetarianWeeklyRecurrence]
     },
     menuType() {
-      const types = selectListToObject(Constants.vegetarianMenuType.items)
-      return types[this.diagnostic.vegetarianMenuType]
+      const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianMenuType.items)
+      return items[this.diagnostic.vegetarianMenuType]
     },
     menuBases() {
-      const bases = selectListToObject(Constants.vegetarianMenuBases.items)
-      return this.diagnostic.vegetarianMenuBases.map((x) => bases[x])
+      const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianMenuBases.items)
+      return this.diagnostic.vegetarianMenuBases.map((x) => items[x])
     },
     displayDiversificationPlanSegment() {
       return applicableDiagnosticRules(this.canteen).hasDiversificationPlan
     },
     appliedDiversificationActions() {
-      const diversificationPlanActions = selectListToObject(Constants.diversificationPlanActions.items)
+      const diversificationPlanActions = selectListToObject(
+        Constants.DiversificationMeasureStep.diversificationPlanActions.items
+      )
       if (!this.diagnostic.diversificationPlanActions?.length) return null
       return this.diagnostic.diversificationPlanActions.map((x) => diversificationPlanActions[x]).filter((x) => !!x)
     },

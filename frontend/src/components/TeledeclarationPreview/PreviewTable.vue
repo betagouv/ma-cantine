@@ -607,25 +607,25 @@ export default {
     },
     getDiversificationPlanActions(diversificationPlanActions) {
       if (!diversificationPlanActions || !diversificationPlanActions.length) return "Non renseigné"
-      const actionItems = selectListToObject(Constants.diversificationPlanActions.items)
+      const actionItems = selectListToObject(Constants.DiversificationMeasureStep.diversificationPlanActions.items)
       const labels = diversificationPlanActions.map((x) => actionItems[x]).filter((x) => !!x)
       return labels.join(", ")
     },
     getVegetarianWeeklyRecurrence(vegetarianWeeklyRecurrence) {
       if (!vegetarianWeeklyRecurrence) return "Non renseigné"
-      const items = selectListToObject(Constants.vegetarianWeeklyRecurrence.items)
+      const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianWeeklyRecurrence.items)
       return items[vegetarianWeeklyRecurrence] || "Non renseigné"
     },
     getVegetarianMenuType(vegetarianMenuType) {
       if (this.diagnostic.vegetarianWeeklyRecurrence === "NEVER") return "Non applicable"
       if (!vegetarianMenuType) return "Non renseigné"
-      const items = selectListToObject(Constants.vegetarianMenuType.items)
+      const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianMenuType.items)
       return items[vegetarianMenuType] || "Non renseigné"
     },
     getVegetarianMenuBases(vegetarianMenuBases) {
       if (this.diagnostic.vegetarianWeeklyRecurrence === "NEVER") return "Non applicable"
       if (!vegetarianMenuBases || !vegetarianMenuBases.length) return "Non renseigné"
-      const actionItems = selectListToObject(Constants.vegetarianMenuBases.items)
+      const actionItems = selectListToObject(Constants.DiversificationMeasureStep.vegetarianMenuBases.items)
       const labels = vegetarianMenuBases.map((x) => actionItems[x]).filter((x) => !!x)
       return labels.join(", ")
     },

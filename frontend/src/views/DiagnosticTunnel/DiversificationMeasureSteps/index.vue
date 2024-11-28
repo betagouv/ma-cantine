@@ -9,8 +9,8 @@
         class="mb-xs-6 mb-xl-16"
       />
       <DsfrRadio
-        :label="Constants.DiversificationMeasureStep.vegetarianWeeklyRecurrence.title"
-        :items="frequency"
+        :label="constantsDiversificationMeasureStep.vegetarianWeeklyRecurrence.title"
+        :items="constantsDiversificationMeasureStep.vegetarianWeeklyRecurrence.items"
         v-model="payload.vegetarianWeeklyRecurrence"
         @change="calculateSteps"
         hide-details
@@ -19,15 +19,15 @@
     </div>
     <DsfrRadio
       v-else-if="stepUrlSlug === 'options'"
-      :label="Constants.DiversificationMeasureStep.vegetarianMenuType.title"
-      :items="menuTypes"
+      :label="constantsDiversificationMeasureStep.vegetarianMenuType.title"
+      :items="constantsDiversificationMeasureStep.vegetarianMenuType.items"
       v-model="payload.vegetarianMenuType"
       hide-details
       optional
     />
     <fieldset v-else-if="stepUrlSlug === 'composition'">
       <legend class="text-left mb-2 mt-3">
-        {{ Constants.DiversificationMeasureStep.vegetarianMenuBases.title }}
+        {{ constantsDiversificationMeasureStep.vegetarianMenuBases.title }}
         <span class="fr-hint-text mt-2">Optionnel</span>
       </legend>
       <v-checkbox
@@ -35,7 +35,7 @@
         class="mt-2"
         v-model="payload.vegetarianMenuBases"
         :multiple="true"
-        v-for="item in menuBases"
+        v-for="item in constantsDiversificationMeasureStep.vegetarianMenuBases.items"
         :key="item.value"
         :value="item.value"
         :label="item.label"
@@ -43,7 +43,7 @@
     </fieldset>
     <div v-else-if="stepUrlSlug === 'plan'">
       <DsfrRadio
-        :label="Constants.DiversificationMeasureStep.hasDiversificationPlan.title"
+        :label="constantsDiversificationMeasureStep.hasDiversificationPlan.title"
         v-model="payload.hasDiversificationPlan"
         hide-details
         yesNo
@@ -51,7 +51,7 @@
       />
       <fieldset class="mt-8 mb-3">
         <legend class="text-left mb-1 mt-3" :class="{ 'grey--text': !payload.hasDiversificationPlan }">
-          {{ Constants.DiversificationMeasureStep.diversificationPlanActions.title }}
+          {{ constantsDiversificationMeasureStep.diversificationPlanActions.title }}
           <span :class="`fr-hint-text mt-2 ${!payload.hasDiversificationPlan && 'grey--text'}`">Optionnel</span>
         </legend>
         <v-checkbox
@@ -59,7 +59,7 @@
           class="mt-1"
           v-model="payload.diversificationPlanActions"
           :multiple="true"
-          v-for="item in planActions"
+          v-for="item in constantsDiversificationMeasureStep.diversificationPlanActions.items"
           :key="item.value"
           :value="item.value"
           :label="item.label"
@@ -96,10 +96,7 @@ export default {
   data() {
     return {
       steps: [],
-      frequency: Constants.vegetarianWeeklyRecurrence.items,
-      menuTypes: Constants.vegetarianMenuType.items,
-      menuBases: Constants.vegetarianMenuBases.items,
-      planActions: Constants.diversificationPlanActions.items,
+      constantsDiversificationMeasureStep: Constants.DiversificationMeasureStep,
       payload: {},
       fields: [
         "vegetarianWeeklyRecurrence",
