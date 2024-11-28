@@ -29,7 +29,7 @@
     </fieldset>
 
     <DsfrRadio
-      label="J'ai mis en place un menu végétarien dans ma cantine :"
+      label="J'ai mis en place un menu végétarien :"
       v-model="diagnostic.vegetarianWeeklyRecurrence"
       hide-details
       :items="frequency"

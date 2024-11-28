@@ -9,7 +9,7 @@
         class="mb-xs-6 mb-xl-16"
       />
       <DsfrRadio
-        label="J'ai mis en place un menu végétarien dans ma cantine :"
+        label="J'ai mis en place un menu végétarien :"
         :items="frequency"
         v-model="payload.vegetarianWeeklyRecurrence"
         @change="calculateSteps"
