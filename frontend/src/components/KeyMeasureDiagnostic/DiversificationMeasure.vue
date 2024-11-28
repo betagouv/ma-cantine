@@ -127,10 +127,10 @@ export default {
   data() {
     return {
       showExpeModal: false,
-      diversificationPlanActions: Constants.DiversificationPlanActions,
-      frequency: Constants.VegetarianRecurrence,
-      menuTypes: Constants.VegetarianMenuTypes,
-      menuBases: Constants.VegetarianMenuBases,
+      diversificationPlanActions: Constants.diversificationPlanActions.items,
+      frequency: Constants.vegetarianWeeklyRecurrence.items,
+      menuTypes: Constants.vegetarianMenuType.items,
+      menuBases: Constants.vegetarianMenuBases.items,
     }
   },
   computed: {

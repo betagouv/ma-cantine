@@ -96,10 +96,10 @@ export default {
   data() {
     return {
       steps: [],
-      frequency: Constants.VegetarianRecurrence,
-      menuTypes: Constants.VegetarianMenuTypes,
-      menuBases: Constants.VegetarianMenuBases,
-      planActions: Constants.DiversificationPlanActions,
+      frequency: Constants.vegetarianWeeklyRecurrence.items,
+      menuTypes: Constants.vegetarianMenuType.items,
+      menuBases: Constants.vegetarianMenuBases.items,
+      planActions: Constants.diversificationPlanActions.items,
       payload: {},
       fields: [
         "vegetarianWeeklyRecurrence",
