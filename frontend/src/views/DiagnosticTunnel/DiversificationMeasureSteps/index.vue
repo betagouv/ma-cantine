@@ -47,11 +47,10 @@
           protéines végétales"
         v-model="payload.hasDiversificationPlan"
         hide-details
-        optionsRow
         yesNo
         optional
       />
-      <fieldset class="my-3">
+      <fieldset class="mt-8 mb-3">
         <legend class="text-left mb-1 mt-3" :class="{ 'grey--text': !payload.hasDiversificationPlan }">
           Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :
           <span :class="`fr-hint-text mt-2 ${!payload.hasDiversificationPlan && 'grey--text'}`">Optionnel</span>
