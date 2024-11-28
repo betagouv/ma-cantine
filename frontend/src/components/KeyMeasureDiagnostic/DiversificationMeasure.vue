@@ -4,7 +4,7 @@
       hide-details="auto"
       class="mb-4"
       v-model="diagnostic.hasDiversificationPlan"
-      label="J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales"
+      :label="Constants.DiversificationMeasureStep.hasDiversificationPlan.title"
       :readonly="readonly"
       :disabled="readonly"
       v-if="applicableRules.hasDiversificationPlan"
@@ -12,7 +12,7 @@
 
     <fieldset class="my-3" v-if="applicableRules.hasDiversificationPlan">
       <legend class="text-left mb-2 mt-3" :class="{ 'grey--text': !diagnostic.hasDiversificationPlan }">
-        Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :
+        {{ Constants.DiversificationMeasureStep.diversificationPlanActions.title }}
       </legend>
       <v-checkbox
         hide-details="auto"
@@ -29,7 +29,7 @@
     </fieldset>
 
     <DsfrRadio
-      label="J'ai mis en place un menu végétarien :"
+      :label="Constants.DiversificationMeasureStep.vegetarianWeeklyRecurrence.title"
       v-model="diagnostic.vegetarianWeeklyRecurrence"
       hide-details
       :items="frequency"
@@ -40,7 +40,7 @@
     />
 
     <DsfrRadio
-      label="Le menu végétarien proposé est :"
+      :label="Constants.DiversificationMeasureStep.vegetarianMenuType.title"
       v-model="diagnostic.vegetarianMenuType"
       hide-details
       :items="menuTypes"
@@ -52,7 +52,7 @@
 
     <fieldset class="mt-3">
       <legend class="text-left mb-2 mt-3">
-        Le plat principal de mon menu végétarien est majoritairement à base de :
+        {{ Constants.DiversificationMeasureStep.vegetarianMenuBases.title }}
       </legend>
       <v-checkbox
         hide-details="auto"

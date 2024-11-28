@@ -5,8 +5,7 @@
         <span v-if="diagnostic.hasDiversificationPlan">
           <v-icon color="primary" class="mr-1">$check-line</v-icon>
           <span>
-            J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de
-            protéines végétales
+            {{ Constants.DiversificationMeasureStep.hasDiversificationPlan.title }}
             <ul role="list" class="mt-2" v-if="appliedDiversificationActions && appliedDiversificationActions.length">
               <li class="fr-text-xs mb-1" v-for="action in appliedDiversificationActions" :key="action">
                 {{ action }}

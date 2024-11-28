@@ -568,6 +568,24 @@ export default Object.freeze({
       value: "REUSE",
     },
   ],
+  DiversificationMeasureStep: {
+    hasDiversificationPlan: {
+      title:
+        "J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales",
+    },
+    diversificationPlanActions: {
+      title: "Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :",
+    },
+    vegetarianWeeklyRecurrence: {
+      title: "J'ai mis en place un menu végétarien :",
+    },
+    vegetarianMenuType: {
+      title: "Le menu végétarien proposé est :",
+    },
+    vegetarianMenuBases: {
+      title: "Le plat principal de mon menu végétarien est majoritairement à base de :",
+    },
+  },
   DiversificationPlanActions: [
     {
       label:

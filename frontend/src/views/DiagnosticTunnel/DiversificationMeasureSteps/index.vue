@@ -9,7 +9,7 @@
         class="mb-xs-6 mb-xl-16"
       />
       <DsfrRadio
-        label="J'ai mis en place un menu végétarien :"
+        :label="Constants.DiversificationMeasureStep.vegetarianWeeklyRecurrence.title"
         :items="frequency"
         v-model="payload.vegetarianWeeklyRecurrence"
         @change="calculateSteps"
@@ -19,7 +19,7 @@
     </div>
     <DsfrRadio
       v-else-if="stepUrlSlug === 'options'"
-      label="Le menu végétarien proposé est :"
+      :label="Constants.DiversificationMeasureStep.vegetarianMenuType.title"
       :items="menuTypes"
       v-model="payload.vegetarianMenuType"
       hide-details
@@ -27,7 +27,7 @@
     />
     <fieldset v-else-if="stepUrlSlug === 'composition'">
       <legend class="text-left mb-2 mt-3">
-        Le plat principal de mon menu végétarien est majoritairement à base de :
+        {{ Constants.DiversificationMeasureStep.vegetarianMenuBases.title }}
         <span class="fr-hint-text mt-2">Optionnel</span>
       </legend>
       <v-checkbox
@@ -43,8 +43,7 @@
     </fieldset>
     <div v-else-if="stepUrlSlug === 'plan'">
       <DsfrRadio
-        label="J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de
-          protéines végétales"
+        :label="Constants.DiversificationMeasureStep.hasDiversificationPlan.title"
         v-model="payload.hasDiversificationPlan"
         hide-details
         yesNo
@@ -52,7 +51,7 @@
       />
       <fieldset class="mt-8 mb-3">
         <legend class="text-left mb-1 mt-3" :class="{ 'grey--text': !payload.hasDiversificationPlan }">
-          Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :
+          {{ Constants.DiversificationMeasureStep.diversificationPlanActions.title }}
           <span :class="`fr-hint-text mt-2 ${!payload.hasDiversificationPlan && 'grey--text'}`">Optionnel</span>
         </legend>
         <v-checkbox
