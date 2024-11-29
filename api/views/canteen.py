@@ -892,8 +892,8 @@ class CanteenStatisticsView(APIView):
         )
         # no need for particularly fancy rounding
         if agg["value_total_ht__sum"] > 0:
-            data["bio_percent"] = int(100 * agg["value_bio_ht__sum"] / agg["value_total_ht__sum"])
-            data["sustainable_percent"] = int(
+            data["bio_percent"] = round(100 * agg["value_bio_ht__sum"] / agg["value_total_ht__sum"])
+            data["sustainable_percent"] = round(
                 100
                 * (
                     agg["value_sustainable_ht__sum"]
