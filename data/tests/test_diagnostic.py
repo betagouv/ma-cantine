@@ -61,7 +61,6 @@ class DiagForStatsQuerySetTest(TestCase):
         Teledeclaration.create_from_diagnostic(self.deleted_canteen_diagnostic, applicant=UserFactory.create())
         # status ?
 
-    @patch("macantine.utils.CAMPAIGN_DATES")
     def test_diags_for_stat(self):
         """
         Test the diags_for_stat method.
