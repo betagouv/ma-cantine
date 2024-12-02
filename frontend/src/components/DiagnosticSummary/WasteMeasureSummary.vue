@@ -42,7 +42,7 @@
         </span>
       </li>
 
-      <li v-if="diagnostic.hasWasteMeasures">
+      <li v-if="diagnostic.hasWasteMeasures && hasOldWasteMeasures">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           J’ai réalisé des mesures de mes déchets alimentaires :
@@ -53,6 +53,12 @@
             </li>
           </ul>
         </div>
+      </li>
+      <li v-else-if="diagnostic.hasWasteMeasures">
+        <v-icon color="primary" class="mr-2">$check-line</v-icon>
+        <span>
+          J’ai réalisé des mesures de mes déchets alimentaires
+        </span>
       </li>
       <li v-else-if="diagnosticUsesNullAsFalse || diagnostic.hasWasteMeasures === false">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
@@ -176,6 +182,18 @@ export default {
         },
         { label: "Reste de composantes", value: isDefined(diag.sideLeftovers) ? `${diag.sideLeftovers} kg/an` : "—" },
       ]
+    },
+    hasOldWasteMeasures() {
+      // for the campaign of 2025, we no longer ask for waste measures in the diagnostic, but in the anti-waste tool
+      const diag = this.diagnostic
+      return (
+        !!diag.totalLeftovers ||
+        !!diag.durationLeftoversMeasurement ||
+        !!diag.breadLeftovers ||
+        !!diag.servedLeftovers ||
+        !!diag.unservedLeftovers ||
+        !!diag.sideLeftovers
+      )
     },
     displayDonationAgreementSegment() {
       return applicableDiagnosticRules(this.canteen).hasDonationAgreement
