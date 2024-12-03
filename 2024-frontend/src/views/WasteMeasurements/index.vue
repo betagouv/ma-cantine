@@ -59,7 +59,7 @@ onMounted(() => {
         mettre en place une démarche de lutte contre les déchets alimentaires.
       </p>
       <DsfrBadge label="Pas encore de données" type="none" />
-      <EmphasiseText :emphasisText="`${formatNumber()} g`" contextText="par repas" />
+      <EmphasiseText :emphasisText="`${formatNumber()} g`" contextText="par repas et par convive" />
       <router-link :to="newMeasurementRoute" class="fr-btn">
         Saisir une évaluation
       </router-link>
