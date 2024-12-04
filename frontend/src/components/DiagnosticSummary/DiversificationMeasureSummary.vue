@@ -37,20 +37,20 @@
       <li v-if="diagnostic.vegetarianWeeklyRecurrence === 'NEVER'">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
-          Je ne propose pas de menu végétarien dans ma cantine
+          Je ne propose pas de menu végétarien
         </div>
       </li>
       <li v-else-if="diagnostic.vegetarianWeeklyRecurrence">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
-          J’ai mis en place un menu végétarien dans ma cantine :
+          J'ai mis en place un menu végétarien :
           <span class="font-weight-bold">{{ weeklyRecurrence }}</span>
         </div>
       </li>
       <li v-else>
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Je n'ai pas renseigné la périodicité du menu végétarien dans ma cantine
+          Je n'ai pas renseigné la périodicité du menu végétarien
         </div>
       </li>
 
@@ -65,7 +65,7 @@
         <li v-else>
           <v-icon color="primary" class="mr-2">$question-line</v-icon>
           <div>
-            Je n'ai pas renseigné le type de menu végétarien servi dans ma cantine
+            Je n'ai pas renseigné le type de menu végétarien servi
           </div>
         </li>
       </div>
