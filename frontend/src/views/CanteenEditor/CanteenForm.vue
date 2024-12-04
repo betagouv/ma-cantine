@@ -273,12 +273,13 @@
         </v-col>
         <v-col v-if="showMinistryField" cols="12" md="10">
           <DsfrNativeSelect
-            label="Ministère de tutelle"
+            label="Administration générale de tutelle (ministère ou ATE)"
+            hint="Hors fonction publique territoriale et hospitalière"
             labelClasses="body-2 mb-2"
             :items="ministries"
             v-model="canteen.lineMinistry"
             :rules="[validators.required]"
-            placeholder="Sélectionnez le Ministère de tutelle"
+            placeholder="Sélectionnez l'administration générale de tutelle (ministère ou ATE) hors fonction publique territoriale et hospitalière."
           />
         </v-col>
       </v-row>
