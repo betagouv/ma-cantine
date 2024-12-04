@@ -53,7 +53,9 @@
           <p class="my-0 fr-text-sm grey--text text--darken-1">Secteur d'activité</p>
           <p class="my-0">{{ sectors || "—" }}</p>
           <div v-if="lineMinistryRequired">
-            <p class="my-0 mt-2 fr-text-sm grey--text text--darken-1">Ministère de tutelle</p>
+            <p class="my-0 mt-2 fr-text-sm grey--text text--darken-1">
+              Administration générale de tutelle
+            </p>
             <p class="my-0">{{ lineMinistry || "—" }}</p>
           </div>
           <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Type d'établissement</p>
