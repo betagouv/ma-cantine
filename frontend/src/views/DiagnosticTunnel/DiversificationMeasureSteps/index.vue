@@ -12,7 +12,6 @@
         :label="stepConstants.vegetarianWeeklyRecurrence.title"
         :items="stepConstants.vegetarianWeeklyRecurrence.items"
         v-model="payload.vegetarianWeeklyRecurrence"
-        @change="calculateSteps"
         hide-details
         optional
       />
@@ -77,6 +76,31 @@ import LastYearAutofillOption from "../LastYearAutofillOption"
 import Constants from "@/constants"
 import { applicableDiagnosticRules } from "@/utils"
 
+const stepList = [
+  {
+    title: "Mise en place d’actions de diversification des protéines",
+    urlSlug: "plan",
+  },
+  {
+    title: "Mise en place d’un menu végétarien",
+    urlSlug: "menu",
+  },
+  {
+    title: "Options proposées aux convives",
+    urlSlug: "options",
+  },
+  {
+    title: "Composition du plat végétarien principal",
+    urlSlug: "composition",
+  },
+  {
+    title: "Synthèse",
+    isSynthesis: true,
+    componentName: "DiversificationMeasureSummary",
+    urlSlug: "complet",
+  },
+]
+
 export default {
   name: "DiversificationMeasureSteps",
   props: {
@@ -95,7 +119,6 @@ export default {
   components: { DsfrRadio, LastYearAutofillOption },
   data() {
     return {
-      steps: [],
       stepConstants: Constants.DiversificationMeasureStep,
       payload: {},
       fields: [
@@ -108,6 +131,25 @@ export default {
     }
   },
   computed: {
+    steps() {
+      // filter steps: init
+      let idx
+      let steps = JSON.parse(JSON.stringify(stepList))
+      // - hide plan step if no diversification plan
+      const applicableRules = applicableDiagnosticRules(this.canteen)
+      if (!applicableRules.hasDiversificationPlan) {
+        idx = steps.findIndex((step) => step.urlSlug === "plan")
+        if (idx > -1) steps.splice(idx, 1)
+      }
+      // - hide options & composition steps if no vegetarian menu
+      if (this.payload.vegetarianWeeklyRecurrence === "NEVER") {
+        idx = steps.findIndex((step) => step.urlSlug === "options")
+        if (idx > -1) steps.splice(idx, 1)
+        idx = steps.findIndex((step) => step.urlSlug === "composition")
+        if (idx > -1) steps.splice(idx, 1)
+      }
+      return steps
+    },
     step() {
       const step = this.stepUrlSlug && this.steps.find((step) => step.urlSlug === this.stepUrlSlug)
       return step || this.steps[0]
@@ -122,41 +164,6 @@ export default {
       this.fields.forEach((f) => (payload[f] = this.diagnostic[f]))
       this.$set(this, "payload", payload)
     },
-    calculateSteps() {
-      const steps = []
-      const applicableRules = applicableDiagnosticRules(this.canteen)
-      if (applicableRules.hasDiversificationPlan) {
-        steps.push({
-          title: "Mise en place d’actions de diversification des protéines",
-          urlSlug: "plan",
-        })
-      }
-      steps.push({
-        title: "Mise en place d’un menu végétarien",
-        urlSlug: "menu",
-      })
-      if (this.payload.vegetarianWeeklyRecurrence !== "NEVER") {
-        const menuDetailsSteps = [
-          {
-            title: "Options proposées aux convives",
-            urlSlug: "options",
-          },
-          {
-            title: "Composition du plat végétarien principal",
-            urlSlug: "composition",
-          },
-        ]
-        steps.push(...menuDetailsSteps)
-      }
-      steps.push({
-        title: "Synthèse",
-        isSynthesis: true,
-        componentName: "DiversificationMeasureSummary",
-        urlSlug: "complet",
-      })
-      this.steps = steps
-      this.$emit("update-steps", this.steps)
-    },
     onTunnelAutofill(e) {
       this.$set(this, "payload", e.payload)
       this.$emit("tunnel-autofill", e)
@@ -165,12 +172,17 @@ export default {
   mounted() {
     this.initialisePayload()
     this.updatePayload()
-    this.calculateSteps()
   },
   watch: {
     payload: {
       handler() {
         this.updatePayload()
+      },
+      deep: true,
+    },
+    steps: {
+      handler() {
+        this.$emit("update-steps", this.steps)
       },
       deep: true,
     },
