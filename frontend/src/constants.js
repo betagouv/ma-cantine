@@ -568,88 +568,106 @@ export default Object.freeze({
       value: "REUSE",
     },
   ],
-  DiversificationPlanActions: [
-    {
-      label:
-        "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
-      value: "PRODUCTS",
+  DiversificationMeasureStep: {
+    hasDiversificationPlan: {
+      title:
+        "J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales",
     },
-    {
-      label: "Agir sur la manière dont les aliments sont présentés aux convives (visuellement attrayants)",
-      value: "PRESENTATION",
+    diversificationPlanActions: {
+      title: "Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :",
+      items: [
+        {
+          label:
+            "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
+          value: "PRODUCTS",
+        },
+        {
+          label: "Agir sur la manière dont les aliments sont présentés aux convives (visuellement attrayants)",
+          value: "PRESENTATION",
+        },
+        {
+          label: "Agir sur la manière dont les menus sont conçus en soulignant attributs positifs des plats",
+          value: "MENU",
+        },
+        {
+          label: "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
+          value: "PROMOTION",
+        },
+        {
+          label:
+            "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
+          value: "TRAINING",
+        },
+      ],
     },
-    {
-      label: "Agir sur la manière dont les menus sont conçus en soulignant attributs positifs des plats",
-      value: "MENU",
+    vegetarianWeeklyRecurrence: {
+      title: "J'ai mis en place un menu végétarien :",
+      items: [
+        {
+          label: "De façon quotidienne",
+          value: "DAILY",
+        },
+        {
+          label: "Plus d'une fois par semaine",
+          value: "HIGH",
+        },
+        {
+          label: "Une fois par semaine",
+          value: "MID",
+        },
+        {
+          label: "Moins d'une fois par semaine",
+          value: "LOW",
+        },
+        {
+          label: "Je ne propose pas de menu végétarien",
+          value: "NEVER",
+        },
+      ],
     },
-    {
-      label: "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
-      value: "PROMOTION",
+    vegetarianMenuType: {
+      title: "Le menu végétarien proposé est :",
+      items: [
+        {
+          label: "Un menu végétarien en plat unique, sans choix",
+          value: "UNIQUE",
+        },
+        {
+          label: "Un menu végétarien composé de plusieurs choix de plats végétariens",
+          value: "SEVERAL",
+        },
+        {
+          label: "Un menu végétarien au choix, en plus d'autres plats non végétariens",
+          value: "ALTERNATIVES",
+        },
+      ],
     },
-    {
-      label:
-        "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
-      value: "TRAINING",
+    vegetarianMenuBases: {
+      title: "Le plat principal de mon menu végétarien est majoritairement à base de :",
+      items: [
+        {
+          label: "De céréales et/ou les légumes secs (hors soja)",
+          value: "GRAIN",
+        },
+        {
+          label: "De soja",
+          value: "SOY",
+        },
+        {
+          label: "De fromage",
+          value: "CHEESE",
+        },
+        {
+          label: "D’œufs",
+          value: "EGG",
+        },
+        {
+          label: "De plats transformés prêts à l'emploi",
+          value: "READYMADE",
+        },
+      ],
     },
-  ],
-  VegetarianMenuTypes: [
-    {
-      label: "Un menu végétarien en plat unique, sans choix",
-      value: "UNIQUE",
-    },
-    {
-      label: "Un menu végétarien composé de plusieurs choix de plats végétariens",
-      value: "SEVERAL",
-    },
-    {
-      label: "Un menu végétarien au choix, en plus d'autres plats non végétariens",
-      value: "ALTERNATIVES",
-    },
-  ],
-  VegetarianMenuBases: [
-    {
-      label: "De céréales et/ou les légumes secs (hors soja)",
-      value: "GRAIN",
-    },
-    {
-      label: "De soja",
-      value: "SOY",
-    },
-    {
-      label: "De fromage",
-      value: "CHEESE",
-    },
-    {
-      label: "D’œufs",
-      value: "EGG",
-    },
-    {
-      label: "De plats transformés prêts à l'emploi",
-      value: "READYMADE",
-    },
-  ],
-  VegetarianRecurrence: [
-    {
-      label: "Non, je n'ai pas mis en place un menu végétarien",
-      value: "NEVER",
-    },
-    {
-      label: "Moins d'une fois par semaine",
-      value: "LOW",
-    },
-    {
-      label: "Une fois par semaine",
-      value: "MID",
-    },
-    {
-      label: "Plus d'une fois par semaine",
-      value: "HIGH",
-    },
-    {
-      label: "De façon quotidienne",
-      value: "DAILY",
-    },
-  ],
+  },
   CommunicationFrequencies: [
     {
       label: "Régulièrement au cours de l’année",

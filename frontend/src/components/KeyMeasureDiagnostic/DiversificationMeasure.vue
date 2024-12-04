@@ -4,7 +4,7 @@
       hide-details="auto"
       class="mb-4"
       v-model="diagnostic.hasDiversificationPlan"
-      label="J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales"
+      :label="constantsDiversificationMeasureStep.hasDiversificationPlan.title"
       :readonly="readonly"
       :disabled="readonly"
       v-if="applicableRules.hasDiversificationPlan"
@@ -12,14 +12,14 @@
 
     <fieldset class="my-3" v-if="applicableRules.hasDiversificationPlan">
       <legend class="text-left mb-2 mt-3" :class="{ 'grey--text': !diagnostic.hasDiversificationPlan }">
-        Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :
+        {{ constantsDiversificationMeasureStep.diversificationPlanActions.title }}
       </legend>
       <v-checkbox
         hide-details="auto"
         class="ml-8 mt-2"
         v-model="diagnostic.diversificationPlanActions"
         :multiple="true"
-        v-for="item in diversificationPlanActions"
+        v-for="item in constantsDiversificationMeasureStep.diversificationPlanActions.items"
         :key="item.value"
         :value="item.value"
         :label="item.label"
@@ -29,10 +29,10 @@
     </fieldset>
 
     <DsfrRadio
-      label="J'ai mis en place un menu végétarien :"
+      :label="constantsDiversificationMeasureStep.vegetarianWeeklyRecurrence.title"
       v-model="diagnostic.vegetarianWeeklyRecurrence"
       hide-details
-      :items="frequency"
+      :items="constantsDiversificationMeasureStep.vegetarianWeeklyRecurrence.items"
       :readonly="readonly"
       :disabled="readonly"
       optionClasses="ml-8"
@@ -40,10 +40,10 @@
     />
 
     <DsfrRadio
-      label="Le menu végétarien proposé est :"
+      :label="constantsDiversificationMeasureStep.vegetarianMenuType.title"
       v-model="diagnostic.vegetarianMenuType"
       hide-details
-      :items="menuTypes"
+      :items="constantsDiversificationMeasureStep.vegetarianMenuType.items"
       :readonly="readonly"
       :disabled="readonly"
       optionClasses="ml-8"
@@ -52,14 +52,14 @@
 
     <fieldset class="mt-3">
       <legend class="text-left mb-2 mt-3">
-        Le plat principal de mon menu végétarien est majoritairement à base de :
+        {{ constantsDiversificationMeasureStep.vegetarianMenuBases.title }}
       </legend>
       <v-checkbox
         hide-details="auto"
         class="ml-8 mt-2"
         v-model="diagnostic.vegetarianMenuBases"
         :multiple="true"
-        v-for="item in menuBases"
+        v-for="item in constantsDiversificationMeasureStep.vegetarianMenuBases.items"
         :key="item.value"
         :value="item.value"
         :label="item.label"
@@ -127,10 +127,7 @@ export default {
   data() {
     return {
       showExpeModal: false,
-      diversificationPlanActions: Constants.DiversificationPlanActions,
-      frequency: Constants.VegetarianRecurrence,
-      menuTypes: Constants.VegetarianMenuTypes,
-      menuBases: Constants.VegetarianMenuBases,
+      constantsDiversificationMeasureStep: Constants.DiversificationMeasureStep,
     }
   },
   computed: {

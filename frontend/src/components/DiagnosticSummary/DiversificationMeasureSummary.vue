@@ -108,22 +108,24 @@ export default {
   },
   computed: {
     weeklyRecurrence() {
-      const items = selectListToObject(Constants.VegetarianRecurrence)
+      const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianWeeklyRecurrence.items)
       return items[this.diagnostic.vegetarianWeeklyRecurrence]
     },
     menuType() {
-      const types = selectListToObject(Constants.VegetarianMenuTypes)
-      return types[this.diagnostic.vegetarianMenuType]
+      const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianMenuType.items)
+      return items[this.diagnostic.vegetarianMenuType]
     },
     menuBases() {
-      const bases = selectListToObject(Constants.VegetarianMenuBases)
-      return this.diagnostic.vegetarianMenuBases.map((x) => bases[x])
+      const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianMenuBases.items)
+      return this.diagnostic.vegetarianMenuBases.map((x) => items[x])
     },
     displayDiversificationPlanSegment() {
       return applicableDiagnosticRules(this.canteen).hasDiversificationPlan
     },
     appliedDiversificationActions() {
-      const diversificationPlanActions = selectListToObject(Constants.DiversificationPlanActions)
+      const diversificationPlanActions = selectListToObject(
+        Constants.DiversificationMeasureStep.diversificationPlanActions.items
+      )
       if (!this.diagnostic.diversificationPlanActions?.length) return null
       return this.diagnostic.diversificationPlanActions.map((x) => diversificationPlanActions[x]).filter((x) => !!x)
     },
