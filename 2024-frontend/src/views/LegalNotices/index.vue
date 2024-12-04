@@ -36,7 +36,7 @@
       </p>
       <p>
         Pour en savoir plus sur la politique d’accessibilité numérique de l’État :
-        <a rel="noopener" href="https://accessibilite.numerique.gouv.fr/">
+        <a target="_blank" href="https://accessibilite.numerique.gouv.fr/">
           https://accessibilite.numerique.gouv.fr/
         </a>
         .
@@ -52,7 +52,7 @@
         </li>
         <li>
           créer une “issue” sur
-          <a rel="noopener" href="https://github.com/betagouv/ma-cantine">le dépôt de code sur GitHub</a>
+          <a target="_blank" href="https://github.com/betagouv/ma-cantine">le dépôt de code sur GitHub</a>
         </li>
       </ul>
       <p>
@@ -64,7 +64,7 @@
       <h2>Code source</h2>
       <p>
         Le code source est ouvert et les contributions sont bienvenues :
-        <a target="noopener" href="https://github.com/betagouv/ma-cantine">voir le code source</a>.
+        <a target="_blank" href="https://github.com/betagouv/ma-cantine">voir le code source</a>.
       </p>
     </section>
     <section>
