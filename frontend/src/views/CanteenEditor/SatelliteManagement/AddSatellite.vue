@@ -77,7 +77,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" md="5">
+            <v-col cols="11">
               <label class="body-2" for="sectors">Secteurs d'activité</label>
               <DsfrSelect
                 id="sectors"
@@ -90,7 +90,7 @@
                 :rules="[validators.required]"
               />
             </v-col>
-            <v-col v-if="showMinistryField" cols="12" md="6">
+            <v-col v-if="showMinistryField" cols="11">
               <DsfrNativeSelect
                 label="Administration générale de tutelle (ministère ou ATE)"
                 hint="Hors fonction publique territoriale et hospitalière"
