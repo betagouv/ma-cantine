@@ -13,7 +13,6 @@ import CanteenWidget from "@/views/CanteensPage/CanteenWidget"
 import CanteenSearchLanding from "@/views/CanteenSearchLanding"
 import CanteensHome from "@/views/CanteensPage/CanteensHome"
 import CanteenPage from "@/views/CanteensPage/CanteenPage"
-import LegalNotices from "@/views/LegalNotices"
 import AccountSummaryPage from "@/views/AccountSummaryPage"
 import AccountEditor from "@/views/AccountSummaryPage/AccountEditor"
 import PasswordChangeEditor from "@/views/AccountSummaryPage/PasswordChangeEditor"
@@ -209,15 +208,6 @@ const routes = [
     name: "CanteenWidget",
     component: CanteenWidget,
     props: true,
-  },
-  {
-    path: "/mentions-legales",
-    name: "LegalNotices",
-    component: LegalNotices,
-    meta: {
-      title: "Mentions légales",
-    },
-    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/blog",
@@ -614,6 +604,14 @@ const vue3Routes = [
   {
     path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
     name: "WasteMeasurementTunnel",
+  },
+  {
+    path: "/mentions-legales",
+    name: "LegalNotices",
+    meta: {
+      title: "Mentions légales",
+    },
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
 ]
 const VUE3_PREFIX = "/v2"
