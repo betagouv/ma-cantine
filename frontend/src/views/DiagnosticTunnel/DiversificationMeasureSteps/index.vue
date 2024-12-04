@@ -1,6 +1,41 @@
 <template>
   <v-form @submit.prevent>
-    <div v-if="stepUrlSlug === 'menu'">
+    <div v-if="stepUrlSlug === 'plan'">
+      <DsfrRadio
+        :label="stepConstants.hasDiversificationPlan.title"
+        v-model="payload.hasDiversificationPlan"
+        hide-details
+        yesNo
+        optional
+      />
+      <fieldset class="mt-8 mb-3">
+        <legend class="text-left mb-1 mt-3" :class="{ 'grey--text': !payload.hasDiversificationPlan }">
+          {{ stepConstants.diversificationPlanActions.title }}
+          <span :class="`fr-hint-text mt-2 ${!payload.hasDiversificationPlan && 'grey--text'}`">Optionnel</span>
+        </legend>
+        <v-checkbox
+          hide-details="auto"
+          class="mt-1"
+          v-model="payload.diversificationPlanActions"
+          :multiple="true"
+          v-for="item in stepConstants.diversificationPlanActions.items"
+          :key="item.value"
+          :value="item.value"
+          :label="item.label"
+          :readonly="!payload.hasDiversificationPlan"
+          :disabled="!payload.hasDiversificationPlan"
+        />
+      </fieldset>
+    </div>
+    <DsfrRadio
+      v-else-if="stepUrlSlug === 'service'"
+      :label="stepConstants.serviceType.title"
+      :items="stepConstants.serviceType.items"
+      v-model="payload.serviceType"
+      hide-details
+      optional
+    />
+    <div v-else-if="stepUrlSlug === 'menu'">
       <LastYearAutofillOption
         :canteen="canteen"
         :diagnostic="diagnostic"
@@ -40,33 +75,6 @@
         :label="item.label"
       />
     </fieldset>
-    <div v-else-if="stepUrlSlug === 'plan'">
-      <DsfrRadio
-        :label="stepConstants.hasDiversificationPlan.title"
-        v-model="payload.hasDiversificationPlan"
-        hide-details
-        yesNo
-        optional
-      />
-      <fieldset class="mt-8 mb-3">
-        <legend class="text-left mb-1 mt-3" :class="{ 'grey--text': !payload.hasDiversificationPlan }">
-          {{ stepConstants.diversificationPlanActions.title }}
-          <span :class="`fr-hint-text mt-2 ${!payload.hasDiversificationPlan && 'grey--text'}`">Optionnel</span>
-        </legend>
-        <v-checkbox
-          hide-details="auto"
-          class="mt-1"
-          v-model="payload.diversificationPlanActions"
-          :multiple="true"
-          v-for="item in stepConstants.diversificationPlanActions.items"
-          :key="item.value"
-          :value="item.value"
-          :label="item.label"
-          :readonly="!payload.hasDiversificationPlan"
-          :disabled="!payload.hasDiversificationPlan"
-        />
-      </fieldset>
-    </div>
   </v-form>
 </template>
 
@@ -80,6 +88,10 @@ const stepList = [
   {
     title: "Mise en place d’actions de diversification des protéines",
     urlSlug: "plan",
+  },
+  {
+    title: "Service proposé aux convives",
+    urlSlug: "service",
   },
   {
     title: "Mise en place d’un menu végétarien",
@@ -122,11 +134,12 @@ export default {
       stepConstants: Constants.DiversificationMeasureStep,
       payload: {},
       fields: [
+        "hasDiversificationPlan",
+        "diversificationPlanActions",
+        "serviceType",
         "vegetarianWeeklyRecurrence",
         "vegetarianMenuType",
         "vegetarianMenuBases",
-        "hasDiversificationPlan",
-        "diversificationPlanActions",
       ],
     }
   },
@@ -141,6 +154,7 @@ export default {
         idx = steps.findIndex((step) => step.urlSlug === "plan")
         if (idx > -1) steps.splice(idx, 1)
       }
+      // - 2024-12: hide options step (replaced with service step)
       // - hide options & composition steps if no vegetarian menu
       if (this.payload.vegetarianWeeklyRecurrence === "NEVER") {
         idx = steps.findIndex((step) => step.urlSlug === "options")
