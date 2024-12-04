@@ -10,6 +10,7 @@ const descText =
     :logo-text
     a11yCompliance="partiellement conforme"
     :a11yComplianceLink="{ name: 'AccessibilityDeclaration' }"
+    :legalLink="{ name: 'LegalNotices' }"
     :personalDataLink="{ name: 'PrivacyPolicy' }"
     :cookiesLink="{ name: 'Cookies' }"
     :afterMandatoryLinks="[{ text: 'Plan du site', to: { name: 'SiteMap' } }]"
