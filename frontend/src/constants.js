@@ -600,6 +600,23 @@ export default Object.freeze({
         },
       ],
     },
+    serviceType: {
+      title: "Le service est en :",
+      items: [
+        {
+          label: "Menu unique",
+          value: "UNIQUE",
+        },
+        {
+          label: "Choix multiple en libre-service",
+          value: "MULTIPLE_SELF",
+        },
+        {
+          label: "Choix multiple avec réservation à l’avance au jour le jour",
+          value: "MULTIPLE_RESERVATION",
+        },
+      ],
+    },
     vegetarianWeeklyRecurrence: {
       title: "J'ai mis en place un menu végétarien :",
       items: [
