@@ -103,6 +103,7 @@ class TestDiagnosticsApi(APITestCase):
             "other_waste_comments": "We do our best",
             "has_diversification_plan": True,
             "diversification_plan_actions": ["PRODUCTS", "TRAINING"],
+            "service_type": "MULTIPLE_SELF",
             "vegetarian_weekly_recurrence": "DAILY",
             "vegetarian_menu_type": "UNIQUE",
             "vegetarian_menu_bases": ["GRAIN", "READYMADE", "CHEESE"],
@@ -245,6 +246,7 @@ class TestDiagnosticsApi(APITestCase):
         self.assertIn("AWARENESS", diagnostic.waste_actions)
         self.assertEqual(diagnostic.duration_leftovers_measurement, 30)
         self.assertIn("TRAINING", diagnostic.diversification_plan_actions)
+        self.assertEqual("MULTIPLE_SELF", diagnostic.service_type)
         self.assertEqual("DAILY", diagnostic.vegetarian_weekly_recurrence)
         self.assertIn("GRAIN", diagnostic.vegetarian_menu_bases)
         self.assertIn("CHEESE", diagnostic.vegetarian_menu_bases)

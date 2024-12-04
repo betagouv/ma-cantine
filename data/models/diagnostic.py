@@ -194,14 +194,6 @@ class Diagnostic(models.Model):
         verbose_name="comment est-ce que ce diagnostic à été créé ?",
     )
 
-    service_type = models.CharField(
-        max_length=255,
-        choices=ServiceType.choices,
-        null=True,
-        blank=True,
-        verbose_name="type de service",
-    )
-
     # progress fields
     # NB None = tunnel has not been started; "complet" = tunnel has finished
     # all other values are defined by the front end
@@ -445,6 +437,13 @@ class Diagnostic(models.Model):
         null=True,
         size=None,
         verbose_name="actions inclus dans le plan de diversification des protéines",
+    )
+    service_type = models.CharField(
+        max_length=255,
+        choices=ServiceType.choices,
+        null=True,
+        blank=True,
+        verbose_name="type de service",
     )
     vegetarian_weekly_recurrence = models.CharField(
         max_length=255,
