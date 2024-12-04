@@ -17,7 +17,7 @@
       <div v-if="showWasteTool">
         <DsfrCallout>
           <p class="fr-text font-weight-bold">Évaluation gaspillage alimentaire</p>
-          <p class="fr-text-sm grey-text text--darken-3">
+          <p v-if="!displayDiagnostic.hasWasteMeasures" class="fr-text-sm grey-text text--darken-3">
             Évaluez gaspillage alimentaire avant de continuer.
           </p>
           <v-row class="align-center my-2 mx-0">
@@ -27,7 +27,7 @@
               color="primary"
               :to="{ name: 'WasteMeasurements', params: { canteenUrlComponent } }"
             >
-              Compléter l'évaluation
+              {{ displayDiagnostic.hasWasteMeasures ? "Accéder à mon évaluation" : "Compléter l'évaluation" }}
             </v-btn>
           </v-row>
         </DsfrCallout>
