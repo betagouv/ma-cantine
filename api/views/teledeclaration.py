@@ -324,7 +324,7 @@ class TeledeclarationPdfView(APIView):
                 else None
             ),
             "vegetarian_menu_type": (
-                Diagnostic.MenuType(teledeclaration_data["vegetarian_menu_type"]).label
+                Diagnostic.VegetarianMenuType(teledeclaration_data["vegetarian_menu_type"]).label
                 if teledeclaration_data.get("vegetarian_menu_type")
                 else None
             ),

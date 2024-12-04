@@ -18,6 +18,6 @@ def menu_type(key):
     if not key:
         return None
     try:
-        return Diagnostic.MenuType[key].label
+        return Diagnostic.VegetarianMenuType[key].label
     except Exception:
         return None

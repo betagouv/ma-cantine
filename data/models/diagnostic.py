@@ -78,7 +78,7 @@ class Diagnostic(models.Model):
         HIGH = "HIGH", "Plus d'une fois par semaine"
         DAILY = "DAILY", "De façon quotidienne"
 
-    class MenuType(models.TextChoices):
+    class VegetarianMenuType(models.TextChoices):
         UNIQUE = "UNIQUE", "Un menu végétarien en plat unique, sans choix"
         SEVERAL = (
             "SEVERAL",
@@ -442,7 +442,7 @@ class Diagnostic(models.Model):
     )
     vegetarian_menu_type = models.CharField(
         max_length=255,
-        choices=MenuType.choices,
+        choices=VegetarianMenuType.choices,
         blank=True,
         null=True,
         verbose_name="Menu végétarien proposé",
