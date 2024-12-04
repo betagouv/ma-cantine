@@ -8,7 +8,7 @@ def menu_frequency(key):
     if not key:
         return None
     try:
-        return Diagnostic.MenuFrequency[key].label
+        return Diagnostic.VegetarianMenuFrequency[key].label
     except Exception:
         return None
 
