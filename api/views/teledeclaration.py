@@ -319,7 +319,7 @@ class TeledeclarationPdfView(APIView):
                 for x in (teledeclaration_data.get("diversification_plan_actions") or [])
             ],
             "vegetarian_weekly_recurrence": (
-                Diagnostic.MenuFrequency(teledeclaration_data["vegetarian_weekly_recurrence"]).label
+                Diagnostic.VegetarianMenuFrequency(teledeclaration_data["vegetarian_weekly_recurrence"]).label
                 if teledeclaration_data.get("vegetarian_weekly_recurrence")
                 else None
             ),

@@ -71,7 +71,7 @@ class Diagnostic(models.Model):
     class CreationSource(models.TextChoices):
         TUNNEL = "TUNNEL", "Tunnel"
 
-    class MenuFrequency(models.TextChoices):
+    class VegetarianMenuFrequency(models.TextChoices):
         NEVER = "NEVER", "Jamais"
         LOW = "LOW", "Moins d'une fois par semaine"
         MID = "MID", "Une fois par semaine"
@@ -435,7 +435,7 @@ class Diagnostic(models.Model):
     )
     vegetarian_weekly_recurrence = models.CharField(
         max_length=255,
-        choices=MenuFrequency.choices,
+        choices=VegetarianMenuFrequency.choices,
         null=True,
         blank=True,
         verbose_name="Menus végétariens par semaine",
@@ -1740,9 +1740,12 @@ class Diagnostic(models.Model):
 
     @property
     def diversification_badge(self) -> bool | None:
-        if self.vegetarian_weekly_recurrence == Diagnostic.MenuFrequency.DAILY:
+        if self.vegetarian_weekly_recurrence == Diagnostic.VegetarianMenuFrequency.DAILY:
             return True
-        elif self.vegetarian_weekly_recurrence in [Diagnostic.MenuFrequency.MID, Diagnostic.MenuFrequency.HIGH]:
+        elif self.vegetarian_weekly_recurrence in [
+            Diagnostic.VegetarianMenuFrequency.MID,
+            Diagnostic.VegetarianMenuFrequency.HIGH,
+        ]:
             # if the canteen is in the education sector, it can have a lower recurrence
             if self.canteen.in_education:
                 return True
