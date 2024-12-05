@@ -1,20 +1,31 @@
 <script setup>
+/*
+TODO : 
+- Valeur par défaut si connecté : email et le prénom nom
+- Validateur
+- Envoyer le demande 
+*/
+
 import BaseMailto from './BaseMailto.vue'
+import { ref } from 'vue'
 
 // import validators from "@/validators"
-// import DsfrFullName from "@/components/DsfrFullName"
-// import DsfrEmail from "@/components/DsfrEmail"
-// import DsfrNativeSelect from "@/components/DsfrNativeSelect"
-// import DsfrTextarea from "@/components/DsfrTextarea"
+
+const fromEmail = ref()
+const name = ref()
+const inquiryType = ref()
+const message = ref()
+
+const inquiryOptions = [
+    { text: "Poser une question sur une fonctionnalité de ma cantine ?", value: "functionalityQuestion" },
+    { text: "Demander une démo", value: "demo" },
+    { text: "Signaler un bug", value: "bug" },
+    { text: "Question sur la loi EGAlim", value: "egalim" },
+    { text: "Autre", value: "other" },
+  ]
 
 // export default {
-//   name: "GeneralContactForm",
-//   components: { DsfrFullName, DsfrNativeSelect, DsfrTextarea, DsfrEmail },
 //   props: {
-//     initialInquiryType: {
-//       type: String,
-//       required: false,
-//     },
 //     // meta is a JSON serialisable object containing data that could help the team help the user
 //     // such as the page the user was on when they sent the message
 //     meta: {
@@ -23,20 +34,8 @@ import BaseMailto from './BaseMailto.vue'
 //     },
 //   },
 //   data() {
-//     const user = this.$store.state.loggedUser
 //     return {
 //       formIsValid: true,
-//       fromEmail: user ? user.email : "",
-//       name: user ? `${user.firstName} ${user.lastName}` : "",
-//       message: "",
-//       inquiryType: this.initialInquiryType || "",
-//       inquiryOptions: [
-//         { text: "Poser une question sur une fonctionnalité de ma cantine ?", value: "functionalityQuestion" },
-//         { text: "Demander une démo", value: "demo" },
-//         { text: "Signaler un bug", value: "bug" },
-//         { text: "Question sur la loi EGAlim", value: "egalim" },
-//         { text: "Autre", value: "other" },
-//       ],
 //     }
 //   },
 //   computed: {
@@ -97,26 +96,42 @@ import BaseMailto from './BaseMailto.vue'
   <div>
     <div class="fr-grid-row">
       <div class="fr-col-8">
-        FORMULAIRE
-        <!-- <v-form v-model="formIsValid" ref="form" @submit.prevent>
-          <DsfrEmail v-model="fromEmail" />
-          <DsfrFullName v-model="name" />
-          <DsfrNativeSelect
-            v-model="inquiryType"
-            :items="inquiryOptions"
-            label="Type de demande"
-            :rules="[validators.required]"
-            class="mb-8"
+        <form class="fr-mb-4w">
+          <DsfrInputGroup 
+            :modelValue="fromEmail"
+            label="Votre adresse électronique" 
+            :label-visible="true"
+            hint="Format attendu : nom@domaine.fr" 
+            required
           />
-          <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" class="mt-2" />
-          <p class="caption grey--text text--darken-1 mt-n1 mb-6">
-            Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc).
-          </p>
-        </v-form>
-        <v-btn x-large color="primary" class="mt-0 mb-6" @click="sendEmail">
-          <v-icon class="mr-2">mdi-send</v-icon>
-          Envoyer
-        </v-btn> -->
+          <DsfrInputGroup 
+            :modelValue="name"
+            label="Prénom et nom" 
+            :label-visible="true"
+          />
+          <DsfrSelect 
+            :modelValue="inquiryType"
+            label="Type de demande" 
+            :label-visible="true"
+            required
+            :options="inquiryOptions"
+          />
+          <DsfrInputGroup 
+            :modelValue="message"
+            class="base-contact-form__textarea"
+            label="Message"
+            hint="Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc)." 
+            :label-visible="true"
+            is-textarea
+            required
+            rows="8"
+          />
+          <DsfrButton
+            type="submit"
+            icon="fr-icon-send-plane-fill"
+            label="Envoyer"
+          />
+        </form>
         <DsfrCallout>
           <p>
             Si vous n'arrivez pas à utiliser le formulaire ci-dessus, vous pouvez nous contacter directement par email à
@@ -138,6 +153,11 @@ import BaseMailto from './BaseMailto.vue'
     object-fit: contain;
     object-position: left top;
     transform: scaleX(-1);
+    width: 100%;
+  }
+
+  &__textarea {
+    resize: vertical;
     width: 100%;
   }
 }
