@@ -1,9 +1,9 @@
 <script setup>
 /*
-TODO : 
+TODO :
 - Valeur par défaut si connecté : email et le prénom nom
 - Validateur
-- Envoyer le demande 
+- Envoyer le demande
 */
 
 import BaseMailto from './BaseMailto.vue'
@@ -97,30 +97,30 @@ const inquiryOptions = [
     <div class="fr-grid-row">
       <div class="fr-col-8">
         <form class="fr-mb-4w">
-          <DsfrInputGroup 
+          <DsfrInputGroup
             :modelValue="fromEmail"
-            label="Votre adresse électronique" 
+            label="Votre adresse électronique"
             :label-visible="true"
-            hint="Format attendu : nom@domaine.fr" 
+            hint="Format attendu : nom@domaine.fr"
             required
           />
-          <DsfrInputGroup 
+          <DsfrInputGroup
             :modelValue="name"
-            label="Prénom et nom" 
+            label="Prénom et nom"
             :label-visible="true"
           />
-          <DsfrSelect 
+          <DsfrSelect
             :modelValue="inquiryType"
-            label="Type de demande" 
+            label="Type de demande"
             :label-visible="true"
             required
             :options="inquiryOptions"
           />
-          <DsfrInputGroup 
+          <DsfrInputGroup
             :modelValue="message"
             class="base-contact-form__textarea"
             label="Message"
-            hint="Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc)." 
+            hint="Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc)."
             :label-visible="true"
             is-textarea
             required
@@ -151,7 +151,7 @@ const inquiryOptions = [
 .base-contact-form {
   &__illustration  {
     object-fit: contain;
-    object-position: left top;
+    object-position: left center;
     transform: scaleX(-1);
     width: 100%;
   }
