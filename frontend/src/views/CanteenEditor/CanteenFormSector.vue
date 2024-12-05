@@ -9,6 +9,7 @@
         labelClasses="body-2 mb-2"
         :items="sectorCategories"
         v-model="sectorCategory"
+        @input="changeDectected"
       />
     </v-col>
     <v-col cols="12" md="6">
@@ -22,7 +23,9 @@
           item-value="id"
           no-data-text="Veuillez séléctionner la catégorie de secteur"
           :rules="canteenSectors && canteenSectors.length ? [] : [validators.required]"
+          @input="changeDectected"
         />
+        <!-- Est-ce que && canteenSectors.length plus haut ça fonctionne? -->
         <DsfrTagGroup :tags="sectorTags" :closeable="true" @closeTag="(tag) => removeSector(tag.id)" />
       </div>
     </v-col>
@@ -49,7 +52,6 @@ import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 
 // TODO renvoyer l'info au changement au parent
 // Afficher le champ tutelle en fonction du sectur sélectionné
-// Remplacte le this.canteenSectors par canteenSectors
 
 /* Comportemnt du composant :
 - à la création d'une cantine il est vide
@@ -80,7 +82,6 @@ export default {
       lineMinistry: false,
     }
   },
-
   computed: {
     validators() {
       return validators
@@ -135,6 +136,11 @@ export default {
     sectorName(id) {
       id = parseInt(id, 10) || id
       return this.sectors.find((s) => s.id === id)?.name || id
+    },
+    changeDectected() {
+      console.log("change detected")
+      console.log("sectors", this.sectors)
+      console.log("chosenSector", this.chosenSector)
     },
   },
   watch: {
