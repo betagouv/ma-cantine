@@ -242,6 +242,7 @@
           </v-col>
         </v-expand-transition>
       </v-row>
+      <CanteenFormSector :canteen-sector="canteen.sectors" />
 
       <!-- <v-row>
         <v-col cols="12" class="mt-4">
@@ -335,6 +336,7 @@ import CityField from "./CityField"
 import DsfrCallout from "@/components/DsfrCallout"
 // import DsfrTagGroup from "@/components/DsfrTagGroup"
 
+import CanteenFormSector from "./CanteenFormSector"
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -349,6 +351,7 @@ export default {
     DsfrCallout,
     SiretCheck,
     // DsfrTagGroup,
+    CanteenFormSector,
   },
   props: {
     canteenUrlComponent: {
