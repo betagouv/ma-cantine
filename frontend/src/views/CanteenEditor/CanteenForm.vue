@@ -243,7 +243,7 @@
         </v-expand-transition>
       </v-row>
 
-      <v-row>
+      <!-- <v-row>
         <v-col cols="12" class="mt-4">
           <v-divider aria-hidden="true" role="presentation"></v-divider>
         </v-col>
@@ -282,7 +282,7 @@
             placeholder="Sélectionnez l'administration générale de tutelle (ministère ou ATE) hors fonction publique territoriale et hospitalière."
           />
         </v-col>
-      </v-row>
+      </v-row> -->
       <v-row>
         <v-col cols="12" sm="6" md="3">
           <DsfrRadio
@@ -323,16 +323,18 @@
 
 <script>
 import validators from "@/validators"
-import { getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
+import { getObjectDiff, readCookie } from "@/utils"
+// import { getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
 import TechnicalControlDialog from "./TechnicalControlDialog"
 import SiretCheck from "./SiretCheck"
 import Constants from "@/constants"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrRadio from "@/components/DsfrRadio"
 import CityField from "./CityField"
-import DsfrNativeSelect from "@/components/DsfrNativeSelect"
+// import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DsfrCallout from "@/components/DsfrCallout"
-import DsfrTagGroup from "@/components/DsfrTagGroup"
+// import DsfrTagGroup from "@/components/DsfrTagGroup"
+
 
 const LEAVE_WARNING = "Voulez-vous vraiment quitter cette page ? Votre cantine n'a pas été sauvegardée."
 
@@ -343,10 +345,10 @@ export default {
     DsfrTextField,
     DsfrRadio,
     CityField,
-    DsfrNativeSelect,
+    // DsfrNativeSelect,
     DsfrCallout,
     SiretCheck,
-    DsfrTagGroup,
+    // DsfrTagGroup,
   },
   props: {
     canteenUrlComponent: {
@@ -374,9 +376,9 @@ export default {
       satelliteSiretMessage: "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine satellite.",
       productionTypes: Constants.ProductionTypesDetailed.map((pt) => ({ text: pt.title, value: pt.value })),
       economicModels: Constants.EconomicModels,
-      sectorCategory: null,
-      chosenSector: null,
-      ministries: this.$store.state.lineMinistries,
+      // sectorCategory: null,
+      // chosenSector: null,
+      // ministries: this.$store.state.lineMinistries,
       centralKitchen: null,
     }
   },
@@ -384,28 +386,28 @@ export default {
     validators() {
       return validators
     },
-    sectors() {
-      return this.$store.state.sectors
-    },
-    filteredSectors() {
-      if (!this.sectorCategory) return []
-      return sectorsSelectList(this.sectors, this.sectorCategory).filter((s) => !s.header)
-    },
-    sectorCategories() {
-      const displayValueMap = Constants.SectorCategoryTranslations
-      const categoriesInUse = this.sectors.map((s) => s.category)
-      const uniqueCategories = categoriesInUse.filter((c, idx) => categoriesInUse.indexOf(c) === idx)
-      const categories = uniqueCategories.map((c) => ({ value: c, text: displayValueMap[c] }))
-      categories.sort((a, b) => {
-        if (a.value === "autres" && b.value === "inconnu") return 0
-        else if (a.value === "autres") return 1
-        else if (a.value === "inconnu") return 1
-        else if (b.value === "autres") return -1
-        else if (b.value === "inconnu") return -1
-        return a.text.localeCompare(b.text)
-      })
-      return categories
-    },
+    // sectors() {
+    //   return this.$store.state.sectors
+    // },
+    // filteredSectors() {
+    //   if (!this.sectorCategory) return []
+    //   return sectorsSelectList(this.sectors, this.sectorCategory).filter((s) => !s.header)
+    // },
+    // sectorCategories() {
+    //   const displayValueMap = Constants.SectorCategoryTranslations
+    //   const categoriesInUse = this.sectors.map((s) => s.category)
+    //   const uniqueCategories = categoriesInUse.filter((c, idx) => categoriesInUse.indexOf(c) === idx)
+    //   const categories = uniqueCategories.map((c) => ({ value: c, text: displayValueMap[c] }))
+    //   categories.sort((a, b) => {
+    //     if (a.value === "autres" && b.value === "inconnu") return 0
+    //     else if (a.value === "autres") return 1
+    //     else if (a.value === "inconnu") return 1
+    //     else if (b.value === "autres") return -1
+    //     else if (b.value === "inconnu") return -1
+    //     return a.text.localeCompare(b.text)
+    //   })
+    //   return categories
+    // },
     isNewCanteen() {
       return !this.canteenUrlComponent
     },
@@ -420,23 +422,23 @@ export default {
     showDailyMealCount() {
       return this.canteen.productionType && this.canteen.productionType !== "central"
     },
-    showMinistryField() {
-      const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
-      if (concernedSectors.length === 0) return false
-      return this.canteen.sectors?.some((x) => concernedSectors.indexOf(parseInt(x, 10)) > -1)
-    },
+    // showMinistryField() {
+    //   const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
+    //   if (concernedSectors.length === 0) return false
+    //   return this.canteen.sectors?.some((x) => concernedSectors.indexOf(parseInt(x, 10)) > -1)
+    // },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
     },
     showDelete() {
       return !this.isNewCanteen && window.ENABLE_DASHBOARD
     },
-    sectorTags() {
-      return this.canteen.sectors.map((sectorId) => ({
-        text: this.sectorName(sectorId),
-        id: sectorId,
-      }))
-    },
+    // sectorTags() {
+    //   return this.canteen.sectors.map((sectorId) => ({
+    //     text: this.sectorName(sectorId),
+    //     id: sectorId,
+    //   }))
+    // },
   },
   mounted() {
     if (this.$route.query && this.$route.query["valider"]) {
@@ -613,22 +615,22 @@ export default {
       this.canteen.postalCode = location.postalCode
       this.canteen.department = location.department
     },
-    sectorName(id) {
-      id = parseInt(id, 10) || id
-      return this.sectors.find((s) => s.id === id)?.name || id
-    },
-    addSector(id) {
-      id = +id
-      if (!id || id < 0) return
-      if (!this.canteen.sectors) this.canteen.sectors = []
-      if (this.canteen.sectors.indexOf(id) === -1) this.canteen.sectors.push(id)
-      this.$nextTick(() => {
-        this.chosenSector = null
-      })
-    },
-    removeSector(id) {
-      this.canteen.sectors?.splice(this.canteen.sectors?.indexOf(id), 1)
-    },
+    // sectorName(id) {
+    //   id = parseInt(id, 10) || id
+    //   return this.sectors.find((s) => s.id === id)?.name || id
+    // },
+    // addSector(id) {
+    //   id = +id
+    //   if (!id || id < 0) return
+    //   if (!this.canteen.sectors) this.canteen.sectors = []
+    //   if (this.canteen.sectors.indexOf(id) === -1) this.canteen.sectors.push(id)
+    //   this.$nextTick(() => {
+    //     this.chosenSector = null
+    //   })
+    // },
+    // removeSector(id) {
+    //   this.canteen.sectors?.splice(this.canteen.sectors?.indexOf(id), 1)
+    // },
   },
   beforeRouteLeave(to, from, next) {
     if (!this.hasChanged || this.bypassLeaveWarning) {
@@ -637,10 +639,10 @@ export default {
     }
     window.confirm(LEAVE_WARNING) ? next() : next(false)
   },
-  watch: {
-    chosenSector(newValue) {
-      this.addSector(newValue)
-    },
-  },
+  // watch: {
+  //   chosenSector(newValue) {
+  //     this.addSector(newValue)
+  //   },
+  // },
 }
 </script>
