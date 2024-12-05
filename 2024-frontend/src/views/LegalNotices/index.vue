@@ -19,14 +19,13 @@
     </section>
     <section>
       <h2>Hébergement de la Plateforme</h2>
-      <p>Cette plateforme est hébergé par:
-        <address>
-          Clevercloud <br />
-          3 rue de l'Allier <br />
-          44000 Nantes <br />
-          France
-        </address>
-      </p>
+      <p>Cette plateforme est hébergé par:</p>
+      <address class="fr-mb-3w">
+        Clevercloud <br />
+        3 rue de l'Allier <br />
+        44000 Nantes <br />
+        France
+      </address>
     </section>
     <section>
       <h2>Accessibilité</h2>
