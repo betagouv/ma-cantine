@@ -1,4 +1,6 @@
 <script setup>
+import BaseMailto from './BaseMailto.vue'
+
 // import validators from "@/validators"
 // import DsfrFullName from "@/components/DsfrFullName"
 // import DsfrEmail from "@/components/DsfrEmail"
@@ -115,11 +117,13 @@
           <v-icon class="mr-2">mdi-send</v-icon>
           Envoyer
         </v-btn> -->
-        <p class="grey--text text--darken-1">
-          Si vous n'arrivez pas à utiliser le formulaire ci-dessus, vous pouvez nous contacter directement par email à
-          l'adresse suivante:
-          <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
-        </p>
+        <DsfrCallout>
+          <p>
+            Si vous n'arrivez pas à utiliser le formulaire ci-dessus, vous pouvez nous contacter directement par email à
+            l'adresse suivante:
+            <BaseMailto />
+          </p>
+        </DsfrCallout>
       </div>
       <div class="fr-col-4 fr-hidden fr-unhidden-lg">
         <img src="/static/images/doodles-dsfr/primary/SittingDoodle.png" class="base-contact-form__illustration">
