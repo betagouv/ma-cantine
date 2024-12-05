@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router"
 import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel"
 import ImportSelection from "@/views/ImportSelection"
 import WasteMeasurements from "@/views/WasteMeasurements"
+import ContactPage from "@/views/ContactPage"
 import { useRootStore } from "@/stores/root"
 
 const routes = [
@@ -38,6 +39,14 @@ const routes = [
         { to: { name: "DashboardManager" }, useCanteenName: true },
       ],
     },
+  },
+  {
+    path: "/contact",
+    name: "ContactPage",
+    component: ContactPage,
+    meta: {
+      title: "Contactez-nous",
+    }
   },
 ]
 
@@ -110,10 +119,6 @@ const vue2Routes = [
   {
     path: "/faq/",
     name: "FaqPage",
-  },
-  {
-    path: "/contact",
-    name: "ContactPage",
   },
   {
     path: "/mon-compte",
