@@ -93,6 +93,7 @@
             <v-col v-if="showMinistryField" cols="11">
               <DsfrNativeSelect
                 label="Administration générale de tutelle (ministère ou ATE)"
+                labelClasses="body-2"
                 hint="Hors fonction publique territoriale et hospitalière"
                 :items="ministries"
                 v-model="satellite.lineMinistry"
