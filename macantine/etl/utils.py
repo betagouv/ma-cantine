@@ -1,7 +1,6 @@
 import logging
 import os
-import zoneinfo
-from datetime import date, datetime
+from datetime import date
 from typing import Dict
 
 import numpy as np
@@ -10,23 +9,9 @@ import requests
 
 from api.serializers import SectorSerializer
 from data.models import Sector, Teledeclaration
+from macantine.utils import CAMPAIGN_DATES
 
 logger = logging.getLogger(__name__)
-
-CAMPAIGN_DATES = {
-    2021: {
-        "start_date": datetime(2022, 7, 16, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        "end_date": datetime(2022, 12, 5, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-    },
-    2022: {
-        "start_date": datetime(2023, 2, 12, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        "end_date": datetime(2023, 7, 1, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-    },
-    2023: {
-        "start_date": datetime(2024, 1, 8, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        "end_date": datetime(2024, 6, 12, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-    },
-}
 
 # 26 : Administration : Etablissements publics d’Etat (EPA ou EPIC)
 # 24 : Administration : Restaurants des prisons
