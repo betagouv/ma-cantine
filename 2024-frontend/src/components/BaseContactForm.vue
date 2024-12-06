@@ -1,7 +1,6 @@
 <script setup>
 /*
 TODO :
-- Validateur
 - Envoyer le demande
 - Meta : à voir si on l'ajoute dans la V1 du formulaire ou pas
 */
@@ -33,9 +32,9 @@ const form = reactive({
 })
 
 /* Fields verification */
-const { required } = useValidators()
+const { required, email } = useValidators()
 const rules = {
-  fromEmail: { required },
+  fromEmail: { required, email },
   inquiryType: { required },
   message: { required }
 }
