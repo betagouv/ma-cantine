@@ -139,12 +139,12 @@ repos:
         files: ^frontend/
   # JS (Vue 3 app)
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v7.32.0
+    rev: v8.55.0
     hooks:
       - id: eslint
         name: vue3-eslint
         additional_dependencies:
-          - eslint@latest
+          - eslint@8.55.0
           - vue-eslint-parser@latest
           - eslint-plugin-vue@latest
           - eslint-plugin-jquery@latest
