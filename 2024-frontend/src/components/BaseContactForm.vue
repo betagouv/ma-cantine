@@ -7,8 +7,9 @@ TODO :
 */
 
 import { useRootStore } from '@/stores/root'
-import { ref } from 'vue'
-import { useValidators } from "@/validators.js"
+import { ref, reactive } from 'vue'
+import { required } from "@vuelidate/validators"
+import { useVuelidate } from "@vuelidate/core"
 import BaseMailto from './BaseMailto.vue'
 import ContactForm from "@/settings/contact-form.js"
 
@@ -23,18 +24,28 @@ if (store.loggedUser) {
 }
 
 /* Form fields */
-const fromEmail = ref(defaultEmail)
-const name = ref(defaultName)
-const inquiryType = ref("")
-const message = ref("")
+const form = reactive({
+  fromEmail: defaultEmail,
+  name: defaultName,
+  inquiryType: "",
+  message: "",
+})
 
 /* Fields verification */
-const { required } = useValidators()
+const rules = {
+  fromEmail: { required },
+  inquiryType: { required },
+  message: { required }
+}
+const v$ = useVuelidate(rules, form)
+
 
 /* Send Form */
+const hasSubmitted = ref(false)
 const submitForm = () => {
-  console.log(fromEmail, name, inquiryType, message)
-  console.log('send form')
+  hasSubmitted.value = true
+  if (v$.value.$invalid) console.log('NO SUBMIT')
+  else console.log('SUBMIT')
 }
 
 // export default {
@@ -111,33 +122,33 @@ const submitForm = () => {
       <div class="fr-col-8">
         <form class="fr-mb-4w" @submit.prevent="submitForm">
           <DsfrInputGroup
-            v-model="fromEmail"
-            label="Votre adresse électronique"
+            v-model="form.fromEmail"
+            label="Votre adresse électronique *"
             :label-visible="true"
             hint="Format attendu : nom@domaine.fr"
-            required
+            :error-message="hasSubmitted && v$.fromEmail.$invalid ? 'Ce champs est requis' : false"
           />
           <DsfrInputGroup
-            v-model="name"
+            v-model="form.name"
             label="Prénom et nom"
             :label-visible="true"
           />
           <DsfrSelect
-            v-model="inquiryType"
-            label="Type de demande"
+            v-model="form.inquiryType"
+            label="Type de demande *"
             :label-visible="true"
-            required
             :options="ContactForm.inquiryOptions"
+            :error-message="hasSubmitted && v$.inquiryType.$invalid ? 'Ce champs est requis' : false"
           />
           <DsfrInputGroup
-            v-model="message"
+            v-model="form.message"
             class="base-contact-form__textarea"
-            label="Message"
+            label="Message *"
             hint="Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc)."
             :label-visible="true"
             is-textarea
-            required
             rows="8"
+            :error-message="hasSubmitted && v$.message.$invalid ? 'Ce champs est requis' : false"
           />
           <DsfrButton
             type="submit"
