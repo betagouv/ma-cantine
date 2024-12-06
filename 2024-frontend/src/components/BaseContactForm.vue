@@ -1,20 +1,28 @@
 <script setup>
 /*
 TODO :
-- Valeur par défaut si connecté : email et le prénom nom
 - Validateur
 - Envoyer le demande
 */
 
 import BaseMailto from './BaseMailto.vue'
 import { ref } from 'vue'
+import { useRootStore } from '@/stores/root'
 
 // import validators from "@/validators"
 
-const fromEmail = ref()
-const name = ref()
-const inquiryType = ref()
-const message = ref()
+const store = useRootStore()
+let defaultEmail = ""
+let defaultName = ""
+if (store.loggedUser) {
+  const { email, firstName, lastName } = store.loggedUser
+  defaultEmail = email
+  defaultName = `${firstName} ${lastName}`
+}
+const fromEmail = ref(defaultEmail)
+const name = ref(defaultName)
+const inquiryType = ref("")
+const message = ref("")
 
 const inquiryOptions = [
     { text: "Poser une question sur une fonctionnalité de ma cantine ?", value: "functionalityQuestion" },
