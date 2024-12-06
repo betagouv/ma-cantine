@@ -62,31 +62,13 @@
       "type": "string"
     },
     {
-      "arrayItem": {
-        "constraints": {
-          "enum": [
-            "BIO",
-            "LABEL_ROUGE",
-            "AOCAOP",
-            "IGP",
-            "STG",
-            "HVE",
-            "PECHE_DURABLE",
-            "RUP",
-            "COMMERCE_EQUITABLE",
-            "FERMIER",
-            "EXTERNALITES",
-            "PERFORMANCE",
-            "FRANCE",
-            "SHORT_DISTRIBUTION",
-            "LOCAL"
-          ],
-          "required": true
-        }
+      "constraints": {
+        "pattern": "(?:(?:^|;)(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|FRANCE|SHORT_DISTRIBUTION|LOCAL))+$",
+        "required": false
       },
       "description": "Les caractéristiques de l'achat",
       "name": "caracteristiques",
-      "type": "array"
+      "type": "string"
     },
     {
       "constraints": {
