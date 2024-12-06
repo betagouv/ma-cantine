@@ -126,7 +126,7 @@ const submitForm = () => {
             label="Votre adresse électronique *"
             :label-visible="true"
             hint="Format attendu : nom@domaine.fr"
-            :error-message="hasSubmitted && v$.fromEmail.$invalid ? 'Ce champs est requis' : false"
+            :error-message="hasSubmitted && v$.fromEmail.$invalid ? 'Ce champ est obligatoire' : false"
           />
           <DsfrInputGroup
             v-model="form.name"
@@ -138,7 +138,7 @@ const submitForm = () => {
             label="Type de demande *"
             :label-visible="true"
             :options="ContactFormSetting.inquiryOptions"
-            :error-message="hasSubmitted && v$.inquiryType.$invalid ? 'Ce champs est requis' : false"
+            :error-message="hasSubmitted && v$.inquiryType.$invalid ? 'Ce champ est obligatoire' : false"
           />
           <DsfrInputGroup
             v-model="form.message"
@@ -148,7 +148,7 @@ const submitForm = () => {
             :label-visible="true"
             is-textarea
             rows="8"
-            :error-message="hasSubmitted && v$.message.$invalid ? 'Ce champs est requis' : false"
+            :error-message="hasSubmitted && v$.message.$invalid ? 'Ce champ est obligatoire' : false"
           />
           <DsfrButton
             type="submit"
