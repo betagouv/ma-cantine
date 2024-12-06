@@ -15,7 +15,7 @@ mocked_campaign_dates = {
 }
 
 
-class DiagForStatsQuerySetTest(TestCase):
+class DiagnosticQuerySetTest(TestCase):
     def setUp(self):
         """
         Set up mock data for testing.
@@ -61,12 +61,12 @@ class DiagForStatsQuerySetTest(TestCase):
         Teledeclaration.create_from_diagnostic(self.deleted_canteen_diagnostic, applicant=UserFactory.create())
         # status ?
 
-    def test_diags_for_stat(self):
+    def test_for_stat(self):
         """
         Test the diags_for_stat method.
         """
         with patch("macantine.utils.CAMPAIGN_DATES", mocked_campaign_dates):
-            diagnostics = Diagnostic.objects.diags_for_stat(now().year - 1)
+            diagnostics = Diagnostic.objects.for_stat(now().year - 1)
         self.assertIn(self.valid_diagnostic, diagnostics)
         self.assertNotIn(self.invalid_diagnostic, diagnostics)
         self.assertNotIn(self.deleted_canteen_diagnostic, diagnostics)

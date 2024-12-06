@@ -15,12 +15,14 @@ from macantine import utils
 from .canteen import Canteen
 
 
-class DiagForStatsQuerySet(models.QuerySet):
+class DiagnosticQuerySet(models.QuerySet):
     """
     Fetching the diagnostics for wich the data has been validated for stats"""
 
-    def diags_for_stat(self, year):
+    def for_stat(self, year):
         year = int(year)
+        from .teledeclaration import Teledeclaration
+
         return (
             self.filter(
                 year=year,
@@ -28,7 +30,7 @@ class DiagForStatsQuerySet(models.QuerySet):
                     utils.CAMPAIGN_DATES[year]["start_date"],
                     utils.CAMPAIGN_DATES[year]["end_date"],
                 ),
-                teledeclaration__status="SUBMITTED",
+                teledeclaration__status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
                 canteen__id__isnull=False,
                 canteen__siret__isnull=False,
                 value_total_ht__isnull=False,
@@ -46,10 +48,10 @@ class DiagForStatsQuerySet(models.QuerySet):
 
 class DiagsForStatManager(models.Manager):
     def get_queryset(self):
-        return DiagForStatsQuerySet(self.model, using=self._db)
+        return DiagnosticQuerySet(self.model, using=self._db)
 
-    def diags_for_stat(self, year):
-        return self.get_queryset().diags_for_stat(year)
+    def for_stat(self, year):
+        return self.get_queryset().for_stat(year)
 
 
 class Diagnostic(models.Model):
@@ -150,7 +152,7 @@ class Diagnostic(models.Model):
         DRAFT = "draft", "🔒 Non publié"
         PUBLISHED = "published", "✅ Publié"
 
-    objects = DiagsForStatManager()
+    objects = models.Manager.from_queryset(DiagnosticQuerySet)()
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()

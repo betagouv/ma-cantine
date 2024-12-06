@@ -957,7 +957,7 @@ class CanteenStatisticsView(APIView):
         return canteens.distinct()
 
     def _filter_diagnostics(year, regions, departments, city_insee_codes, sectors):
-        diagnostics = Diagnostic.objects.diags_for_stat(year)
+        diagnostics = Diagnostic.objects.for_stat(year)
         if city_insee_codes:
             diagnostics = diagnostics.filter(canteen__city_insee_code__in=city_insee_codes)
         elif departments:
