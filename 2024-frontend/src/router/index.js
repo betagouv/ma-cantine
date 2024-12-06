@@ -178,12 +178,11 @@ router.beforeEach(async (to) => {
     location.href = location.origin + to.fullPath
     return false
   }
-  if (!to.meta.authenticationRequired) return
   const store = useRootStore()
   if (!store.initialDataLoaded) {
     await store.fetchInitialData()
   }
-  if (!store.loggedUser) {
+  if (!store.loggedUser && to.meta.authenticationRequired) {
     return { name: "Vue2Home", replace: true }
   }
 })
