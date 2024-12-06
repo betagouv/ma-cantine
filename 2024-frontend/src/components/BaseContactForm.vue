@@ -63,6 +63,23 @@ const sendInquiry = () => {
     inquiryType: ContactFormSetting.inquiryTypeDisplay[inquiryType],
     meta,
   }
+
+  store.sendInquiryEmail(payload)
+    .then(() => {
+      store.notify({
+        status: "success",
+        message: "Votre message a bien été envoyé. Nous reviendrons vers vous dans les plus brefs délais.",
+      })
+
+      // if (this.$matomo) {
+      //   this.$matomo.trackEvent("inquiry", "send", this.inquiryType)
+      // }
+      // this.$refs.form.reset()
+      // window.scrollTo(0, 0)
+    })
+    .catch((e) => {
+      store.notifyServerError(e)
+    })
 }
 
 // export default {
