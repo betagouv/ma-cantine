@@ -90,7 +90,7 @@ const stepList = [
     urlSlug: "plan",
   },
   {
-    title: "Service proposé aux convives",
+    title: "Options proposées aux convives",
     urlSlug: "service",
   },
   {
@@ -98,7 +98,7 @@ const stepList = [
     urlSlug: "menu",
   },
   {
-    title: "Options proposées aux convives",
+    title: "Options végétariennes proposées aux convives",
     urlSlug: "options",
   },
   {

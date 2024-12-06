@@ -34,6 +34,21 @@
           </span>
         </span>
       </li>
+
+      <li v-if="diagnostic.serviceType">
+        <v-icon color="primary" class="mr-2">$check-line</v-icon>
+        <div>
+          Le service proposé est en :
+          <span class="font-weight-bold">{{ serviceType }}</span>
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          Je n'ai pas renseigné le type de service
+        </div>
+      </li>
+
       <li v-if="diagnostic.vegetarianWeeklyRecurrence === 'NEVER'">
         <v-icon color="primary" class="mr-2">$close-line</v-icon>
         <div>
@@ -44,7 +59,7 @@
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
           J'ai mis en place un menu végétarien :
-          <span class="font-weight-bold">{{ weeklyRecurrence }}</span>
+          <span class="font-weight-bold">{{ vegetarianWeeklyRecurrence }}</span>
         </div>
       </li>
       <li v-else>
@@ -59,7 +74,7 @@
           <v-icon color="primary" class="mr-2">$check-line</v-icon>
           <div>
             Le menu végétarien proposé est :
-            <span class="font-weight-bold">{{ menuType }}</span>
+            <span class="font-weight-bold">{{ vegetarianMenuType }}</span>
           </div>
         </li>
         <li v-else>
@@ -75,8 +90,8 @@
           <v-icon color="primary" class="mr-2">$check-line</v-icon>
           <div>
             Le plat principal de mon menu végétarien est majoritairement à base de :
-            <ul role="list" class="mt-2" v-if="menuBases && menuBases.length">
-              <li class="fr-text-xs mb-1" v-for="base in menuBases" :key="base">
+            <ul role="list" class="mt-2" v-if="vegetarianMenuBases && vegetarianMenuBases.length">
+              <li class="fr-text-xs mb-1" v-for="base in vegetarianMenuBases" :key="base">
                 {{ base }}
               </li>
             </ul>
@@ -107,15 +122,19 @@ export default {
     },
   },
   computed: {
-    weeklyRecurrence() {
+    serviceType() {
+      const items = selectListToObject(Constants.DiversificationMeasureStep.serviceType.items)
+      return items[this.diagnostic.serviceType]
+    },
+    vegetarianWeeklyRecurrence() {
       const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianWeeklyRecurrence.items)
       return items[this.diagnostic.vegetarianWeeklyRecurrence]
     },
-    menuType() {
+    vegetarianMenuType() {
       const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianMenuType.items)
       return items[this.diagnostic.vegetarianMenuType]
     },
-    menuBases() {
+    vegetarianMenuBases() {
       const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianMenuBases.items)
       return this.diagnostic.vegetarianMenuBases.map((x) => items[x])
     },
