@@ -103,7 +103,7 @@ class TeledeclarationCancelView(APIView):
     This view cancels a submitted teledeclaration
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
