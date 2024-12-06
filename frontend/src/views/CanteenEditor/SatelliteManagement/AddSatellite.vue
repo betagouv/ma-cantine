@@ -97,7 +97,6 @@
                 :items="ministries"
                 v-model="satellite.lineMinistry"
                 :rules="[validators.required]"
-                placeholder="Sélectionnez l'administration générale de tutelle (ministère ou ATE) hors fonction publique territoriale et hospitalière."
               />
             </v-col>
           </v-row>
