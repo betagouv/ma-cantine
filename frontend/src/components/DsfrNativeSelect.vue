@@ -1,6 +1,9 @@
 <template>
   <div>
-    <label :for="inputId" :class="labelClasses">{{ label }}</label>
+    <label :for="inputId" :class="labelClasses">
+      {{ label }}
+      <span v-if="hint" class="fr-hint-text">{{ hint }}</span>
+    </label>
     <select
       ref="select"
       :id="inputId"
@@ -57,6 +60,10 @@ export default {
     },
     noDataText: String,
     rules: Array,
+    hint: {
+      type: String,
+      default: null,
+    },
   },
   data() {
     return { inputId: null, errorMessage: null }

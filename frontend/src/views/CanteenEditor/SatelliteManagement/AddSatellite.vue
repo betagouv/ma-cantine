@@ -77,7 +77,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" md="5">
+            <v-col cols="11">
               <label class="body-2" for="sectors">Secteurs d'activité</label>
               <DsfrSelect
                 id="sectors"
@@ -90,16 +90,14 @@
                 :rules="[validators.required]"
               />
             </v-col>
-            <v-col v-if="showMinistryField" cols="12" md="6">
-              <label class="body-2" for="line-ministry">Ministère de tutelle</label>
-              <DsfrSelect
-                id="line-ministry"
+            <v-col v-if="showMinistryField" cols="11">
+              <DsfrNativeSelect
+                label="Administration générale de tutelle (ministère ou ATE)"
+                labelClasses="body-2"
+                hint="Hors fonction publique territoriale et hospitalière"
                 :items="ministries"
                 v-model="satellite.lineMinistry"
                 :rules="[validators.required]"
-                placeholder="Sélectionnez le Ministère de tutelle"
-                hide-details="auto"
-                clearable
               />
             </v-col>
           </v-row>
@@ -150,12 +148,13 @@ import validators from "@/validators"
 import { sectorsSelectList } from "@/utils"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrSelect from "@/components/DsfrSelect"
+import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import SiretCheck from "../SiretCheck"
 import CityField from "../CityField"
 
 export default {
   name: "AddSatellite",
-  components: { DsfrTextField, DsfrSelect, SiretCheck, CityField },
+  components: { DsfrTextField, DsfrSelect, DsfrNativeSelect, SiretCheck, CityField },
   props: {
     canteen: Object,
   },

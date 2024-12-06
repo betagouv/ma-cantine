@@ -137,8 +137,10 @@ export default {
         { value: this.sectors, label: "Secteurs d'activité" },
       ])
       if (this.showMinistryField)
-        items.push({ value: ministryDetail ? ministryDetail.text : "", label: "Ministère de tutelle" })
-
+        items.push({
+          value: ministryDetail ? ministryDetail.text : "",
+          label: "Administration générale de tutelle (ministère ou ATE)",
+        })
       return items
     },
     approItems() {
