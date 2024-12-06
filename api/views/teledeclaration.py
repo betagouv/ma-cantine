@@ -14,7 +14,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.views import APIView
 from xhtml2pdf import pisa
 
-from api.permissions import IsAuthenticatedOrTokenHasResourceScope
+from api.permissions import IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
 from api.serializers import FullDiagnosticSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
 
@@ -37,7 +37,7 @@ class TeledeclarationCreateView(APIView):
     existing diagnostic.
     """
 
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    permission_classes = [IsAuthenticated]
     required_scopes = ["canteen"]
 
     @extend_schema(
