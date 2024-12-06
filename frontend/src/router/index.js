@@ -608,9 +608,6 @@ const vue3Routes = [
   {
     path: "/mentions-legales",
     name: "LegalNotices",
-    meta: {
-      title: "Mentions légales",
-    },
     sitemapGroup: Constants.SitemapGroups.SITE,
   },
 ]
