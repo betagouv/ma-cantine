@@ -6,12 +6,13 @@ TODO :
 - Meta : à voir si on l'ajoute dans la V1 du formulaire ou pas
 */
 
+import { reactive } from 'vue'
 import { useRootStore } from '@/stores/root'
-import { ref, reactive } from 'vue'
-import { required } from "@vuelidate/validators"
 import { useVuelidate } from "@vuelidate/core"
-import BaseMailto from './BaseMailto.vue'
+import { useValidators } from "@/validators.js"
+import { formatError } from "@/utils.js"
 import ContactFormSetting from "@/settings/contact-form.js"
+import BaseMailto from './BaseMailto.vue'
 
 /* Pre-fill fields with user infos */
 const store = useRootStore()
@@ -32,6 +33,7 @@ const form = reactive({
 })
 
 /* Fields verification */
+const { required } = useValidators()
 const rules = {
   fromEmail: { required },
   inquiryType: { required },
@@ -41,11 +43,10 @@ const v$ = useVuelidate(rules, form)
 
 
 /* Send Form */
-const hasSubmitted = ref(false)
 const submitForm = () => {
-  hasSubmitted.value = true
-  if (v$.value.$invalid) console.log('NO SUBMIT')
-  else console.log('SUBMIT')
+  v$.value.$validate()
+  if (v$.value.$invalid) return
+  console.log('SUBMIT')
 }
 
 // export default {
@@ -126,7 +127,7 @@ const submitForm = () => {
             label="Votre adresse électronique *"
             :label-visible="true"
             hint="Format attendu : nom@domaine.fr"
-            :error-message="hasSubmitted && v$.fromEmail.$invalid ? 'Ce champ est obligatoire' : false"
+            :error-message="formatError(v$.fromEmail)"
           />
           <DsfrInputGroup
             v-model="form.name"
@@ -138,7 +139,7 @@ const submitForm = () => {
             label="Type de demande *"
             :label-visible="true"
             :options="ContactFormSetting.inquiryOptions"
-            :error-message="hasSubmitted && v$.inquiryType.$invalid ? 'Ce champ est obligatoire' : false"
+            :error-message="formatError(v$.inquiryType)"
           />
           <DsfrInputGroup
             v-model="form.message"
@@ -148,7 +149,7 @@ const submitForm = () => {
             :label-visible="true"
             is-textarea
             rows="8"
-            :error-message="hasSubmitted && v$.message.$invalid ? 'Ce champ est obligatoire' : false"
+            :error-message="formatError(v$.message)"
           />
           <DsfrButton
             type="submit"
