@@ -3,14 +3,16 @@
 TODO :
 - Validateur
 - Envoyer le demande
+- Meta : à voir si on l'ajoute dans la V1 du formulaire ou pas
 */
 
-import BaseMailto from './BaseMailto.vue'
-import { ref } from 'vue'
 import { useRootStore } from '@/stores/root'
+import { ref } from 'vue'
+import { useValidators } from "@/validators.js"
+import BaseMailto from './BaseMailto.vue'
+import ContactForm from "@/settings/contact-form.js"
 
-// import validators from "@/validators"
-
+/* Pre-fill fields with user infos */
 const store = useRootStore()
 let defaultEmail = ""
 let defaultName = ""
@@ -19,18 +21,21 @@ if (store.loggedUser) {
   defaultEmail = email
   defaultName = `${firstName} ${lastName}`
 }
+
+/* Form fields */
 const fromEmail = ref(defaultEmail)
 const name = ref(defaultName)
 const inquiryType = ref("")
 const message = ref("")
 
-const inquiryOptions = [
-    { text: "Poser une question sur une fonctionnalité de ma cantine ?", value: "functionalityQuestion" },
-    { text: "Demander une démo", value: "demo" },
-    { text: "Signaler un bug", value: "bug" },
-    { text: "Question sur la loi EGAlim", value: "egalim" },
-    { text: "Autre", value: "other" },
-  ]
+/* Fields verification */
+const { required } = useValidators()
+
+/* Send Form */
+const submitForm = () => {
+  console.log(fromEmail, name, inquiryType, message)
+  console.log('send form')
+}
 
 // export default {
 //   props: {
@@ -104,7 +109,7 @@ const inquiryOptions = [
   <div>
     <div class="fr-grid-row">
       <div class="fr-col-8">
-        <form class="fr-mb-4w">
+        <form class="fr-mb-4w" @submit.prevent="submitForm">
           <DsfrInputGroup
             v-model="fromEmail"
             label="Votre adresse électronique"
@@ -122,7 +127,7 @@ const inquiryOptions = [
             label="Type de demande"
             :label-visible="true"
             required
-            :options="inquiryOptions"
+            :options="ContactForm.inquiryOptions"
           />
           <DsfrInputGroup
             v-model="message"
