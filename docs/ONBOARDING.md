@@ -208,6 +208,9 @@ cd frontend
 npm run serve
 ```
 
+> Un bug connu de code legacy avec Webpack sur les versions récentes entraine l'erreur suivante `code: 'ERR_OSSL_EVP_UNSUPPORTED'`. Pour éviter d'avoir à configurer une variable d'environnement en local on peut utiliser le script `npm run serve:ssl-legacy` qui intègre la configuration.
+
+
 ### Terminal Vue3
 
 ```
