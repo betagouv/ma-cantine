@@ -2,6 +2,7 @@ import logging
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
+from django_filters import rest_framework as django_filters
 from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
@@ -14,10 +15,26 @@ from data.models import Canteen, WasteMeasurement
 logger = logging.getLogger(__name__)
 
 
+class WasteMeasurementFilterSet(django_filters.FilterSet):
+    period_start_date = django_filters.DateFromToRangeFilter()
+    period_end_date = django_filters.DateFromToRangeFilter()
+
+    class Meta:
+        model = WasteMeasurement
+        fields = (
+            "period_start_date",
+            "period_end_date",
+        )
+
+
 class CanteenWasteMeasurementsView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     model = WasteMeasurement
     serializer_class = WasteMeasurementSerializer
+    filter_backends = [
+        django_filters.DjangoFilterBackend,
+    ]
+    filterset_class = WasteMeasurementFilterSet
 
     def _get_canteen(self):
         canteen_id = self.request.parser_context.get("kwargs").get("canteen_pk")

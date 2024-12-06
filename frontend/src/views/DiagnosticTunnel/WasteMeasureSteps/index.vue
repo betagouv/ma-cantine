@@ -44,101 +44,6 @@
           </DsfrCallout>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="12">
-          <fieldset :disabled="!payload.hasWasteMeasures">
-            <legend class="my-3 font-weight-bold">
-              Mesures des déchets
-              <span :class="`fr-hint-text mt-2 ${payload.hasWasteMeasures ? '' : 'grey--text'}`">
-                Optionnel
-              </span>
-            </legend>
-            <v-row>
-              <v-col cols="12" sm="6" class="pb-0">
-                <DsfrTextField
-                  v-model.number="payload.totalLeftovers"
-                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
-                  validate-on-blur
-                  label="Total des déchets alimentaires"
-                  suffix="kg"
-                  :readonly="!payload.hasWasteMeasures"
-                  :disabled="!payload.hasWasteMeasures"
-                  :hideOptional="true"
-                />
-              </v-col>
-              <v-col cols="12" sm="6" class="pb-0">
-                <DsfrTextField
-                  :value="payload.durationLeftoversMeasurement"
-                  @input="(x) => (payload.durationLeftoversMeasurement = integerInputValue(x))"
-                  :rules="
-                    payload.hasWasteMeasures
-                      ? [validators.nonNegativeOrEmpty, validators.isInteger, validators.lteOrEmpty(365)]
-                      : []
-                  "
-                  validate-on-blur
-                  label="Période de mesure"
-                  suffix="jours"
-                  :readonly="!payload.hasWasteMeasures"
-                  :disabled="!payload.hasWasteMeasures"
-                  :hideOptional="true"
-                />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="6" class="pb-0">
-                <DsfrTextField
-                  v-model.number="payload.breadLeftovers"
-                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
-                  validate-on-blur
-                  label="Reste de pain"
-                  suffix="kg/an"
-                  :readonly="!payload.hasWasteMeasures"
-                  :disabled="!payload.hasWasteMeasures"
-                  :hideOptional="true"
-                />
-              </v-col>
-              <v-col cols="12" sm="6" class="pb-0">
-                <DsfrTextField
-                  v-model.number="payload.servedLeftovers"
-                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
-                  validate-on-blur
-                  label="Reste plateau"
-                  suffix="kg/an"
-                  :readonly="!payload.hasWasteMeasures"
-                  :disabled="!payload.hasWasteMeasures"
-                  :hideOptional="true"
-                />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="6" class="pb-0">
-                <DsfrTextField
-                  v-model.number="payload.unservedLeftovers"
-                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
-                  validate-on-blur
-                  label="Reste en production (non servi)"
-                  suffix="kg/an"
-                  :readonly="!payload.hasWasteMeasures"
-                  :disabled="!payload.hasWasteMeasures"
-                  :hideOptional="true"
-                />
-              </v-col>
-              <v-col cols="12" sm="6" class="pb-0">
-                <DsfrTextField
-                  v-model.number="payload.sideLeftovers"
-                  :rules="payload.hasWasteMeasures ? [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)] : []"
-                  validate-on-blur
-                  label="Reste de composantes (entrée, plat dessert...)"
-                  suffix="kg/an"
-                  :readonly="!payload.hasWasteMeasures"
-                  :disabled="!payload.hasWasteMeasures"
-                  :hideOptional="true"
-                />
-              </v-col>
-            </v-row>
-          </fieldset>
-        </v-col>
-      </v-row>
     </div>
     <fieldset v-else-if="stepUrlSlug === 'actions'">
       <legend class="my-3">
@@ -297,11 +202,45 @@
         <ExpeReservation v-if="showExpeModal" @close="() => (showExpeModal = false)" :canteen="canteen" />
       </v-dialog>
     </div>
+    <div v-else-if="stepUrlSlug === 'évaluations'" class="fr-text">
+      <p>
+        Suivre les mesures de vos déchets alimentaires dans notre outil pour visualiser les sources principales de vos
+        déchets, et pour recevoir des conseils personnalisés à votre situation.
+      </p>
+      <p>Il est conseillé de faire au moins deux évaluations par an.</p>
+      <ul class="mb-6">
+        <li v-for="m in measurements" :key="m.id">
+          <router-link
+            :to="{
+              name: 'WasteMeasurementTunnel',
+              params: { canteenUrlComponent, id: m.id },
+              query: { return: href },
+            }"
+          >
+            {{ formatDate(m.periodStartDate) }} - {{ formatDate(m.periodEndDate) }}
+          </router-link>
+          : {{ formatNumber(m.totalMass) }} kg en total
+        </li>
+      </ul>
+      <div>
+        <v-btn
+          color="primary"
+          :outlined="!measurements || !!measurements.length"
+          :to="{
+            name: 'WasteMeasurementTunnel',
+            params: { canteenUrlComponent },
+            query: { return: href },
+          }"
+        >
+          Saisir une nouvelle évaluation
+        </v-btn>
+      </div>
+    </div>
   </v-form>
 </template>
 
 <script>
-import { applicableDiagnosticRules } from "@/utils"
+import { applicableDiagnosticRules, formatDate, formatNumber } from "@/utils"
 import validators from "@/validators"
 import LastYearAutofillOption from "../LastYearAutofillOption"
 import DsfrCallout from "@/components/DsfrCallout"
@@ -311,7 +250,7 @@ import DsfrRadio from "@/components/DsfrRadio"
 import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
 import Constants from "@/constants"
 
-const steps = [
+const STEPS = [
   {
     title: "Diagnostic et plan d’action",
     urlSlug: "plan-action",
@@ -335,6 +274,10 @@ const steps = [
   {
     title: "Expérimentation réservation de repas",
     urlSlug: "expérimentation",
+  },
+  {
+    title: "Détail des mesures de mes déchets alimentaires",
+    urlSlug: "évaluations",
   },
   {
     title: "Synthèse",
@@ -391,26 +334,11 @@ export default {
         "donationQuantity",
         "donationFoodType",
       ],
+      measurements: undefined,
+      steps: [],
     }
   },
   computed: {
-    steps() {
-      // filter steps
-      // - 2024-11: hide comment step
-      // - hide XP step if not enabled
-      // - hide donation step if no donation agreement
-      let idx = steps.findIndex((step) => step.urlSlug === "autres")
-      if (idx > -1) steps.splice(idx, 1)
-      if (!window.ENABLE_XP_RESERVATION) {
-        let idx = steps.findIndex((step) => step.urlSlug === "expérimentation")
-        if (idx > -1) steps.splice(idx, 1)
-      }
-      if (!applicableDiagnosticRules(this.canteen).hasDonationAgreement) {
-        let idx = steps.findIndex((step) => step.urlSlug === "dons-alimentaires")
-        if (idx > -1) steps.splice(idx, 1)
-      }
-      return steps
-    },
     step() {
       const step = this.stepUrlSlug && this.steps.find((step) => step.urlSlug === this.stepUrlSlug)
       return step || this.steps[0]
@@ -418,12 +346,22 @@ export default {
     validators() {
       return validators
     },
+    canteenUrlComponent() {
+      return this.$store.getters.getCanteenUrlComponent(this.canteen)
+    },
+    year() {
+      return this.diagnostic.year
+    },
+    href() {
+      return document.location.href
+    },
   },
   methods: {
     initialisePayload() {
       const payload = {}
       this.fields.forEach((f) => (payload[f] = this.diagnostic[f]))
       this.$set(this, "payload", payload)
+      this.fetchWasteMeasurements()
     },
     updatePayload() {
       this.$emit("update-payload", { payload: this.payload, formIsValid: this.formIsValid })
@@ -454,11 +392,49 @@ export default {
       if (parsedValue === 0) return 0
       return parsedValue || val
     },
+    fetchWasteMeasurements() {
+      const query = `period_start_date_after=${this.year}-01-01&period_end_date_before=${this.year + 1}-01-01`
+      fetch(`/api/v1/canteens/${this.canteen.id}/wasteMeasurements?${query}`)
+        .then((response) => response.json())
+        .then((response) => {
+          this.measurements = response
+        })
+    },
+    formatDate(str) {
+      return formatDate(str)
+    },
+    formatNumber(str) {
+      return formatNumber(str)
+    },
+    calculateSteps() {
+      // filter steps
+      // - 2024-11: hide comment step
+      // - hide XP step if not enabled
+      // - hide donation step if no donation agreement
+      const steps = JSON.parse(JSON.stringify(STEPS))
+      const removeStep = (urlSlug) => {
+        let idx = steps.findIndex((step) => step.urlSlug === urlSlug)
+        if (idx > -1) steps.splice(idx, 1)
+      }
+      removeStep("autres")
+      if (!window.ENABLE_XP_RESERVATION) {
+        removeStep("expérimentation")
+      }
+      if (!applicableDiagnosticRules(this.canteen).hasDonationAgreement) {
+        removeStep("dons-alimentaires")
+      }
+      if (!this.payload.hasWasteMeasures) {
+        removeStep("évaluations")
+      }
+
+      this.steps = steps
+      this.$emit("update-steps", this.steps)
+    },
   },
   mounted() {
-    this.$emit("update-steps", this.steps)
     this.initialisePayload()
     this.updatePayload()
+    this.calculateSteps()
   },
   watch: {
     formIsValid() {
@@ -475,6 +451,7 @@ export default {
       else this.payload.otherWasteAction = null
     },
     "payload.hasWasteMeasures": function() {
+      this.calculateSteps()
       if (this.payload.hasWasteMeasures) return
       const fieldsToClear = [
         "totalLeftovers",

@@ -161,7 +161,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   if (!to.path.startsWith(VUE3_PREFIX)) {
-    location.href = location.origin + to.path
+    location.href = location.origin + to.fullPath
     return false
   }
   if (!to.meta.authenticationRequired) return

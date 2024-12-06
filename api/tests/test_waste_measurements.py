@@ -492,3 +492,32 @@ class TestWasteMeasurementsApi(APITestCase):
         measurement.refresh_from_db()
         self.assertEqual(measurement.period_start_date, datetime.date(2024, 4, 1))
         self.assertEqual(measurement.period_end_date, datetime.date(2024, 7, 1))
+
+    @authenticate
+    def test_get_waste_measurements_for_period(self):
+        """
+        Canteen managers can fetch all the waste measurements for a canteen in a particular time period
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        measurement_july = WasteMeasurementFactory.create(
+            canteen=canteen, period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
+        )
+        measurement_august = WasteMeasurementFactory.create(
+            canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
+        )
+        # the following should be filtered out
+        WasteMeasurementFactory.create(
+            canteen=canteen, period_start_date=datetime.date(2024, 9, 1), period_end_date=datetime.date(2024, 9, 5)
+        )
+
+        query = "?period_start_date_after=2024-07-01&period_end_date_before=2024-09-01"
+        path = reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id})
+        response = self.client.get(path + query)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+
+        self.assertEqual(len(body), 2)
+        self.assertEqual(body[0]["id"], measurement_august.id)
+        self.assertEqual(body[1]["id"], measurement_july.id)

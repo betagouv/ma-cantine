@@ -365,6 +365,14 @@ export const formatDate = (dateString) => {
   return date.toLocaleString("fr", options)
 }
 
+export const formatNumber = (value) => {
+  if (value || value === 0) {
+    const formatter = new Intl.NumberFormat("fr-FR")
+    return formatter.format(value)
+  }
+  return "—"
+}
+
 export const sectorsSelectList = (sectors, category = null) => {
   sectors = JSON.parse(JSON.stringify(sectors))
   if (category) {

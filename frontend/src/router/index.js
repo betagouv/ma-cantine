@@ -611,6 +611,10 @@ const vue3Routes = [
     },
     sitemapGroup: Constants.SitemapGroups.DIAG,
   },
+  {
+    path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
+    name: "WasteMeasurementTunnel",
+  },
 ]
 const VUE3_PREFIX = "/v2"
 vue3Routes.forEach((r) => {
@@ -654,7 +658,7 @@ function chooseAuthorisedRoute(to, from, next) {
 
 function handleVue3(to) {
   if (to.path.startsWith(VUE3_PREFIX)) {
-    window.location.href = location.origin + to.path
+    window.location.href = location.origin + to.fullPath
   }
 }
 
