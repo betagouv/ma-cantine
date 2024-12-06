@@ -13,8 +13,16 @@ import { formatError } from "@/utils.js"
 import ContactFormSetting from "@/settings/contact-form.js"
 import BaseMailto from './BaseMailto.vue'
 
-/* Pre-fill fields with user infos */
+/* Store */
 const store = useRootStore()
+
+/* Save user meta info */
+const meta = {
+  userId: store.loggedUser?.id,
+  userAgent: navigator.userAgent
+}
+
+/* Pre-fill fields with user infos */
 let defaultEmail = ""
 let defaultName = ""
 if (store.loggedUser) {
@@ -39,13 +47,22 @@ const rules = {
   message: { required }
 }
 const v$ = useVuelidate(rules, form)
-
-
-/* Send Form */
-const submitForm = () => {
+const validateForm = () => {
   v$.value.$validate()
   if (v$.value.$invalid) return
-  console.log('SUBMIT')
+  else sendInquiry()
+}
+
+/* Send Form */
+const sendInquiry = () => {
+  const { fromEmail, name, message, inquiryType } = form  
+  const payload = {
+    from: fromEmail,
+    name: name,
+    message: message,
+    inquiryType: ContactFormSetting.inquiryTypeDisplay[inquiryType],
+    meta,
+  }
 }
 
 // export default {
@@ -120,7 +137,7 @@ const submitForm = () => {
   <div>
     <div class="fr-grid-row">
       <div class="fr-col-8">
-        <form class="fr-mb-4w" @submit.prevent="submitForm">
+        <form class="fr-mb-4w" @submit.prevent="validateForm">
           <DsfrInputGroup
             v-model="form.fromEmail"
             label="Votre adresse électronique *"
