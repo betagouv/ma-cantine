@@ -215,6 +215,11 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      xpReservationInfoDialog: false,
+    }
+  },
   computed: {
     appliedWasteActions() {
       if (!this.diagnostic.wasteActions?.length) return null
