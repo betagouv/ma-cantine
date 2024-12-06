@@ -279,7 +279,6 @@
             :items="ministries"
             v-model="canteen.lineMinistry"
             :rules="[validators.required]"
-            placeholder="Sélectionnez l'administration générale de tutelle (ministère ou ATE) hors fonction publique territoriale et hospitalière."
           />
         </v-col>
       </v-row>
