@@ -32,12 +32,14 @@ if (store.loggedUser) {
 }
 
 /* Form fields */
-const form = reactive({
-  fromEmail: defaultEmail,
-  name: defaultName,
-  inquiryType: "",
-  message: "",
-})
+const form = reactive({})
+const initFields = () => {
+  form.fromEmail = defaultEmail
+  form.name =  defaultName
+  form.inquiryType = ""
+  form.message = ""
+}
+initFields()
 
 /* Fields verification */
 const { required, email } = useValidators()
@@ -70,17 +72,18 @@ const sendInquiry = () => {
         status: "success",
         message: "Votre message a bien été envoyé. Nous reviendrons vers vous dans les plus brefs délais.",
       })
-
-      // if (this.$matomo) {
-      //   this.$matomo.trackEvent("inquiry", "send", this.inquiryType)
+      
+      // console.log($matomo)
+      // if ($matomo) {
+      //   console.log($matomo)
+      //   $matomo.trackEvent("inquiry", "send", inquiryType.value)
       // }
-      // this.$refs.form.reset()
-      // window.scrollTo(0, 0)
+      initFields()
+      v$.value.$reset()
     })
-    .catch((e) => {
-      store.notifyServerError(e)
-    })
+    .catch((e) => store.notifyServerError(e))
 }
+
 
 // export default {
 //   props: {
