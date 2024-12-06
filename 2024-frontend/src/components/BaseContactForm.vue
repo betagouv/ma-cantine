@@ -11,7 +11,7 @@ import { ref, reactive } from 'vue'
 import { required } from "@vuelidate/validators"
 import { useVuelidate } from "@vuelidate/core"
 import BaseMailto from './BaseMailto.vue'
-import ContactForm from "@/settings/contact-form.js"
+import ContactFormSetting from "@/settings/contact-form.js"
 
 /* Pre-fill fields with user infos */
 const store = useRootStore()
@@ -137,7 +137,7 @@ const submitForm = () => {
             v-model="form.inquiryType"
             label="Type de demande *"
             :label-visible="true"
-            :options="ContactForm.inquiryOptions"
+            :options="ContactFormSetting.inquiryOptions"
             :error-message="hasSubmitted && v$.inquiryType.$invalid ? 'Ce champs est requis' : false"
           />
           <DsfrInputGroup
