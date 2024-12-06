@@ -106,26 +106,26 @@ const inquiryOptions = [
       <div class="fr-col-8">
         <form class="fr-mb-4w">
           <DsfrInputGroup
-            :modelValue="fromEmail"
+            v-model="fromEmail"
             label="Votre adresse électronique"
             :label-visible="true"
             hint="Format attendu : nom@domaine.fr"
             required
           />
           <DsfrInputGroup
-            :modelValue="name"
+            v-model="name"
             label="Prénom et nom"
             :label-visible="true"
           />
           <DsfrSelect
-            :modelValue="inquiryType"
+            v-model="inquiryType"
             label="Type de demande"
             :label-visible="true"
             required
             :options="inquiryOptions"
           />
           <DsfrInputGroup
-            :modelValue="message"
+            v-model="message"
             class="base-contact-form__textarea"
             label="Message"
             hint="Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc)."
