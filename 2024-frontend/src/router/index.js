@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router"
 import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel"
 import ImportSelection from "@/views/ImportSelection"
 import WasteMeasurements from "@/views/WasteMeasurements"
+import LegalNotices from "@/views/LegalNotices"
 import { useRootStore } from "@/stores/root"
 
 const routes = [
@@ -37,6 +38,14 @@ const routes = [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
         { to: { name: "DashboardManager" }, useCanteenName: true },
       ],
+    },
+  },
+  {
+    path: "/mentions-legales",
+    name: "LegalNotices",
+    component: LegalNotices,
+    meta: {
+      title: "Mentions légales",
     },
   },
 ]
