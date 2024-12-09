@@ -42,11 +42,31 @@
       <ActionsBanner v-else />
     </div>
     <div class="mt-4">
-      <v-row>
-        <h2 class="my-4 text-h5 font-weight-black">Mes cantines</h2>
-        <DsfrToggle v-model="showListView" label="Changer l'affichage" checkedLabel="Liste" uncheckedLabel="Cartes" />
+      <v-row class="justify-space-between">
+        <v-col>
+          <h2 class="my-4 text-h5 font-weight-black">Mes cantines</h2>
+        </v-col>
+        <v-col class="flex-shrink-1 flex-grow-0">
+          <DsfrToggle
+            v-model="showListView"
+            label="Changer l'affichage"
+            checkedLabel="Liste"
+            uncheckedLabel="Cartes"
+            :labelLeft="true"
+          />
+        </v-col>
       </v-row>
-      <AnnualActionableCanteensTable v-if="showListView" />
+      <div v-if="showListView">
+        <AnnualActionableCanteensTable />
+        <v-btn large color="primary" outlined :to="{ name: 'NewCanteen' }">
+          <v-icon class="mr-2">mdi-plus</v-icon>
+          Ajouter une cantine
+        </v-btn>
+        <v-btn large text color="primary" :to="{ name: 'DiagnosticsImporter' }">
+          <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
+          Créer plusieurs cantines depuis un fichier
+        </v-btn>
+      </div>
       <CanteensPagination v-else v-on:canteen-count="canteenCount = $event" />
     </div>
     <PageSatisfaction v-if="canteenCount" class="my-12" />
