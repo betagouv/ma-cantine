@@ -3,6 +3,20 @@
 from django.db import migrations, models
 
 
+def init_service_type(apps, schema_editor):
+    Diagnostic = apps.get_model("data", "Diagnostic")
+    for diagnostic in Diagnostic.objects.all():
+        if diagnostic.vegetarian_menu_type:
+            if diagnostic.vegetarian_menu_type == "UNIQUE":
+                diagnostic.service_type = "UNIQUE"
+            elif diagnostic.vegetarian_menu_type in ["SEVERAL", "ALTERNATIVES"]:
+                diagnostic.service_type = "MULTIPLE_SELF"
+            diagnostic.save(update_fields=["service_type"])
+
+def reverse_init_service_type(apps, schema_editor):
+    pass
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -46,4 +60,5 @@ class Migration(migrations.Migration):
                 verbose_name="type de service",
             ),
         ),
+        migrations.RunPython(init_service_type, reverse_init_service_type),
     ]
