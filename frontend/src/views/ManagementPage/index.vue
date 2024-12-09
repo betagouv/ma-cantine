@@ -49,7 +49,7 @@
         <v-col class="flex-shrink-1 flex-grow-0">
           <DsfrToggle
             v-model="showListView"
-            label="Changer l'affichage"
+            label="Affichage"
             checkedLabel="Liste"
             uncheckedLabel="Cartes"
             :labelLeft="true"
@@ -116,6 +116,8 @@ import SuccessBanner from "./SuccessBanner"
 import validators from "@/validators"
 import { lastYear } from "@/utils"
 import AnnualActionableCanteensTable from "../PendingActions/AnnualActionableCanteensTable.vue"
+
+const CARD_VIEW_DEFAULT_THRESHOLD = 5 // la pagination de cartes est à partir de 5 cantines
 
 export default {
   name: "ManagementPage",
@@ -188,7 +190,7 @@ export default {
           style: "background-color: #E8EDFF; border: none;", // light / background / contrast-info
         },
       ],
-      showListView: false, // default to true for more than X cantines ?
+      showListView: false,
     }
   },
   computed: {
@@ -213,6 +215,9 @@ export default {
     canteenCount(count) {
       if (this.loggedUser.mcpOrganizations && count === 0 && this.showCanteenCreationPrompt === null) {
         this.showCanteenCreationPrompt = true
+      }
+      if (count > CARD_VIEW_DEFAULT_THRESHOLD) {
+        this.showListView = true
       }
     },
   },
