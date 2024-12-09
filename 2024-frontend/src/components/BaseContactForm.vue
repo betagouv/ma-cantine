@@ -5,7 +5,7 @@ import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import ContactFormSetting from "@/settings/contact-form.js"
-import BaseMailto from './BaseMailto.vue'
+import BaseMailto from '@/components/BaseMailto.vue'
 
 /* Store */
 const store = useRootStore()
