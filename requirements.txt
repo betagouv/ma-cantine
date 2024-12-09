@@ -158,5 +158,5 @@ wagtail==6.3
 wcwidth==0.2.13
 webencodings==0.5.1
 Willow==1.9.0
-wrapt==1.16.0
+wrapt==1.17.0
 xhtml2pdf==0.2.16
