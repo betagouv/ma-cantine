@@ -42,8 +42,12 @@
       <ActionsBanner v-else />
     </div>
     <div class="mt-4">
-      <h2 class="my-4 text-h5 font-weight-black">Mes cantines</h2>
-      <CanteensPagination v-on:canteen-count="canteenCount = $event" />
+      <v-row>
+        <h2 class="my-4 text-h5 font-weight-black">Mes cantines</h2>
+        <DsfrToggle v-model="showListView" label="Changer l'affichage" checkedLabel="Liste" uncheckedLabel="Cartes" />
+      </v-row>
+      <AnnualActionableCanteensTable v-if="showListView" />
+      <CanteensPagination v-else v-on:canteen-count="canteenCount = $event" />
     </div>
     <PageSatisfaction v-if="canteenCount" class="my-12" />
     <div class="mt-12 mb-8" v-if="canteenCount > 0">
@@ -83,6 +87,7 @@
 <script>
 import CanteensPagination from "./CanteensPagination.vue"
 import PageSatisfaction from "@/components/PageSatisfaction.vue"
+import DsfrToggle from "@/components/DsfrToggle"
 import UserTools from "./UserTools"
 import TeledeclarationBanner from "./TeledeclarationBanner"
 import CanteenCreationDialog from "./CanteenCreationDialog"
@@ -90,6 +95,7 @@ import ActionsBanner from "./ActionsBanner"
 import SuccessBanner from "./SuccessBanner"
 import validators from "@/validators"
 import { lastYear } from "@/utils"
+import AnnualActionableCanteensTable from "../PendingActions/AnnualActionableCanteensTable.vue"
 
 export default {
   name: "ManagementPage",
@@ -101,6 +107,8 @@ export default {
     ActionsBanner,
     SuccessBanner,
     CanteenCreationDialog,
+    DsfrToggle,
+    AnnualActionableCanteensTable,
   },
   data() {
     return {
@@ -160,6 +168,7 @@ export default {
           style: "background-color: #E8EDFF; border: none;", // light / background / contrast-info
         },
       ],
+      showListView: false, // default to true for more than X cantines ?
     }
   },
   computed: {
