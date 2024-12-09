@@ -178,7 +178,8 @@ class Teledeclaration(models.Model):
         """
         from data.factories import TeledeclarationFactory  # Avoids circular import
 
-        version = "11"  # Helps identify which data will be present. Use incremental int values
+        version = "12"  # Helps identify which data will be present. Use incremental int values
+        # Version 12 - New Diagnostic service_type field (and stop filling vegetarian_menu_type)
         # Version 11 - Requires diagnostic mode to be defined for central production types (in validate_diagnostic)
         # Version 10 - Add department and region fields
         # Version 9 - removes legacy fields: value_pat_ht, value_label_hve, value_label_rouge, value_label_aoc_igp and value_pat_ht
