@@ -42,8 +42,34 @@
       <ActionsBanner v-else />
     </div>
     <div class="mt-4">
-      <h2 class="my-4 text-h5 font-weight-black">Mes cantines</h2>
-      <CanteensPagination v-on:canteen-count="canteenCount = $event" />
+      <v-row class="justify-space-between">
+        <v-col>
+          <h2 class="my-4 text-h5 font-weight-black">Mes cantines</h2>
+        </v-col>
+        <v-col class="flex-shrink-1 flex-grow-0">
+          <DsfrToggle
+            v-model="showListView"
+            label="Affichage"
+            checkedLabel="Liste"
+            uncheckedLabel="Cartes"
+            :labelLeft="true"
+            @input="updatePreference"
+          />
+        </v-col>
+      </v-row>
+      <div v-if="showListView">
+        <p>Actions en attente en {{ year }}</p>
+        <AnnualActionableCanteensTable v-on:canteen-count="canteenCount = $event" />
+        <v-btn large color="primary" outlined :to="{ name: 'NewCanteen' }">
+          <v-icon class="mr-2">mdi-plus</v-icon>
+          Ajouter une cantine
+        </v-btn>
+        <v-btn large text color="primary" :to="{ name: 'DiagnosticsImporter' }">
+          <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
+          Créer plusieurs cantines depuis un fichier
+        </v-btn>
+      </div>
+      <CanteensPagination v-else v-on:canteen-count="canteenCount = $event" />
     </div>
     <PageSatisfaction v-if="canteenCount" class="my-12" />
     <div class="mt-12 mb-8" v-if="canteenCount > 0">
@@ -83,6 +109,7 @@
 <script>
 import CanteensPagination from "./CanteensPagination.vue"
 import PageSatisfaction from "@/components/PageSatisfaction.vue"
+import DsfrToggle from "@/components/DsfrToggle"
 import UserTools from "./UserTools"
 import TeledeclarationBanner from "./TeledeclarationBanner"
 import CanteenCreationDialog from "./CanteenCreationDialog"
@@ -90,6 +117,10 @@ import ActionsBanner from "./ActionsBanner"
 import SuccessBanner from "./SuccessBanner"
 import validators from "@/validators"
 import { lastYear } from "@/utils"
+import AnnualActionableCanteensTable from "@/components/AnnualActionableCanteensTable"
+import { readManagerCanteenViewPreference, updateManagerCanteenViewPreference } from "@/utils"
+
+const CARD_VIEW_DEFAULT_THRESHOLD = 5 // la pagination de cartes est à partir de 5 cantines
 
 export default {
   name: "ManagementPage",
@@ -101,6 +132,8 @@ export default {
     ActionsBanner,
     SuccessBanner,
     CanteenCreationDialog,
+    DsfrToggle,
+    AnnualActionableCanteensTable,
   },
   data() {
     return {
@@ -160,6 +193,8 @@ export default {
           style: "background-color: #E8EDFF; border: none;", // light / background / contrast-info
         },
       ],
+      showListView: readManagerCanteenViewPreference() === "list",
+      year: lastYear(),
     }
   },
   computed: {
@@ -170,8 +205,13 @@ export default {
       return !this.actionsLoading && !this.hasActions
     },
   },
+  methods: {
+    updatePreference() {
+      updateManagerCanteenViewPreference(this.showListView ? "list" : "card")
+    },
+  },
   mounted() {
-    return fetch(`/api/v1/actionableCanteens/${lastYear()}?limit=1&offset=0`)
+    return fetch(`/api/v1/actionableCanteens/${this.year}?limit=1&offset=0`)
       .then((response) => {
         if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
         return response.json()
@@ -184,6 +224,9 @@ export default {
     canteenCount(count) {
       if (this.loggedUser.mcpOrganizations && count === 0 && this.showCanteenCreationPrompt === null) {
         this.showCanteenCreationPrompt = true
+      }
+      if (count > CARD_VIEW_DEFAULT_THRESHOLD && !readManagerCanteenViewPreference()) {
+        this.showListView = true
       }
     },
   },
