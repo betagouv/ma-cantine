@@ -286,6 +286,22 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Canteen.objects.first().economic_model, None)
 
     @authenticate
+    def test_import_canteens_with_managers(self, _):
+        """
+        Should be able to import canteens from a file that doesn't contain any diagnostic fields
+        """
+        manager = UserFactory(email="manager@example.com")
+        with open("./api/tests/files/canteen_manager_import.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 0, body["errors"])
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        self.assertEqual(Canteen.objects.count(), 1)
+        self.assertIn(manager, Canteen.objects.first().managers.all())
+
+    @authenticate
     def test_staff_import(self, _):
         """
         Staff get to specify extra columns and have fewer requirements on what data is required.
