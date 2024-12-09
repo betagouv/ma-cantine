@@ -16,8 +16,8 @@ jobs:
           changelog-types: |
             [
               {"type":"feat","section":"Nouveautés","hidden":false},
-              {"type":"refactor","section":"Améliorations","hidden":false},
               {"type":"fix","section":"Corrections (bugs, typos...)","hidden":false},
+              {"type":"refactor","section":"Technique","hidden":false},
               {"type":"style","section":"Technique","hidden":false},
               {"type":"docs","section":"Technique","hidden":false},
               {"type":"test","section":"Technique","hidden":false},
