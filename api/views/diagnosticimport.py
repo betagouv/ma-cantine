@@ -332,7 +332,7 @@ class ImportDiagnosticsView(ABC, APIView):
     def _get_manager_emails_to_notify(self, row):
         try:
             manager_emails = []
-            if len(row) > self.manager_column_idx + 1 and row[self.manager_column_idx]:
+            if len(row) > self.manager_column_idx and row[self.manager_column_idx]:
                 manager_emails = ImportDiagnosticsView._get_manager_emails(row[self.manager_column_idx])
         except Exception:
             raise ValidationError(
