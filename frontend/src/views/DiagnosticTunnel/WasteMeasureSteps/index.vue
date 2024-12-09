@@ -311,7 +311,7 @@ import DsfrRadio from "@/components/DsfrRadio"
 import ExpeReservation from "@/components/KeyMeasureDiagnostic/ExpeModals/ExpeReservation"
 import Constants from "@/constants"
 
-const steps = [
+const stepList = [
   {
     title: "Diagnostic et plan d’action",
     urlSlug: "plan-action",
@@ -395,18 +395,20 @@ export default {
   },
   computed: {
     steps() {
-      // filter steps
+      // filter steps: init
+      let idx
+      let steps = JSON.parse(JSON.stringify(stepList))
       // - 2024-11: hide comment step
-      // - hide XP step if not enabled
-      // - hide donation step if no donation agreement
-      let idx = steps.findIndex((step) => step.urlSlug === "autres")
+      idx = steps.findIndex((step) => step.urlSlug === "autres")
       if (idx > -1) steps.splice(idx, 1)
+      // - hide XP step if not enabled
       if (!window.ENABLE_XP_RESERVATION) {
-        let idx = steps.findIndex((step) => step.urlSlug === "expérimentation")
+        idx = steps.findIndex((step) => step.urlSlug === "expérimentation")
         if (idx > -1) steps.splice(idx, 1)
       }
+      // - hide donation step if no donation agreement
       if (!applicableDiagnosticRules(this.canteen).hasDonationAgreement) {
-        let idx = steps.findIndex((step) => step.urlSlug === "dons-alimentaires")
+        idx = steps.findIndex((step) => step.urlSlug === "dons-alimentaires")
         if (idx > -1) steps.splice(idx, 1)
       }
       return steps
