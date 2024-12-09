@@ -58,6 +58,7 @@
         </v-col>
       </v-row>
       <div v-if="showListView">
+        <p>Actions en attente en {{ year }}</p>
         <AnnualActionableCanteensTable v-on:canteen-count="canteenCount = $event" />
         <v-btn large color="primary" outlined :to="{ name: 'NewCanteen' }">
           <v-icon class="mr-2">mdi-plus</v-icon>
@@ -116,7 +117,7 @@ import ActionsBanner from "./ActionsBanner"
 import SuccessBanner from "./SuccessBanner"
 import validators from "@/validators"
 import { lastYear } from "@/utils"
-import AnnualActionableCanteensTable from "../PendingActions/AnnualActionableCanteensTable.vue"
+import AnnualActionableCanteensTable from "@/components/AnnualActionableCanteensTable"
 import { readManagerCanteenViewPreference, updateManagerCanteenViewPreference } from "@/utils"
 
 const CARD_VIEW_DEFAULT_THRESHOLD = 5 // la pagination de cartes est à partir de 5 cantines
@@ -193,6 +194,7 @@ export default {
         },
       ],
       showListView: readManagerCanteenViewPreference() === "list",
+      year: lastYear(),
     }
   },
   computed: {
@@ -209,7 +211,7 @@ export default {
     },
   },
   mounted() {
-    return fetch(`/api/v1/actionableCanteens/${lastYear()}?limit=1&offset=0`)
+    return fetch(`/api/v1/actionableCanteens/${this.year}?limit=1&offset=0`)
       .then((response) => {
         if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
         return response.json()

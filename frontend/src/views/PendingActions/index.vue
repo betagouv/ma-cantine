@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import AnnualActionableCanteensTable from "./AnnualActionableCanteensTable"
+import AnnualActionableCanteensTable from "@/components/AnnualActionableCanteensTable"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import { lastYear } from "@/utils"
 
