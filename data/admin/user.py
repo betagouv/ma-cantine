@@ -43,6 +43,9 @@ class MaCanteenUserAdmin(UserAdmin):
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
+        "created_with_proconnect",
+        "proconnect_id",
+        "proconnect_organizations",
     )
 
     fieldsets = (
@@ -110,6 +113,16 @@ class MaCanteenUserAdmin(UserAdmin):
                     "creation_mtm_medium",
                     "source",
                     "other_source_description",
+                )
+            },
+        ),
+        (
+            "Données ProConnect",
+            {
+                "fields": (
+                    "created_with_proconnect",
+                    "proconnect_id",
+                    "proconnect_organizations",
                 )
             },
         ),
