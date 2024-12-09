@@ -53,11 +53,12 @@
             checkedLabel="Liste"
             uncheckedLabel="Cartes"
             :labelLeft="true"
+            @input="updatePreference"
           />
         </v-col>
       </v-row>
       <div v-if="showListView">
-        <AnnualActionableCanteensTable />
+        <AnnualActionableCanteensTable v-on:canteen-count="canteenCount = $event" />
         <v-btn large color="primary" outlined :to="{ name: 'NewCanteen' }">
           <v-icon class="mr-2">mdi-plus</v-icon>
           Ajouter une cantine
@@ -116,6 +117,7 @@ import SuccessBanner from "./SuccessBanner"
 import validators from "@/validators"
 import { lastYear } from "@/utils"
 import AnnualActionableCanteensTable from "../PendingActions/AnnualActionableCanteensTable.vue"
+import { readManagerCanteenViewPreference, updateManagerCanteenViewPreference } from "@/utils"
 
 const CARD_VIEW_DEFAULT_THRESHOLD = 5 // la pagination de cartes est à partir de 5 cantines
 
@@ -190,7 +192,7 @@ export default {
           style: "background-color: #E8EDFF; border: none;", // light / background / contrast-info
         },
       ],
-      showListView: false,
+      showListView: readManagerCanteenViewPreference() === "list",
     }
   },
   computed: {
@@ -199,6 +201,11 @@ export default {
     },
     showSuccessBanner() {
       return !this.actionsLoading && !this.hasActions
+    },
+  },
+  methods: {
+    updatePreference() {
+      updateManagerCanteenViewPreference(this.showListView ? "list" : "card")
     },
   },
   mounted() {
@@ -216,7 +223,7 @@ export default {
       if (this.loggedUser.mcpOrganizations && count === 0 && this.showCanteenCreationPrompt === null) {
         this.showCanteenCreationPrompt = true
       }
-      if (count > CARD_VIEW_DEFAULT_THRESHOLD) {
+      if (count > CARD_VIEW_DEFAULT_THRESHOLD && !readManagerCanteenViewPreference()) {
         this.showListView = true
       }
     },

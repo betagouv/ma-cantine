@@ -441,15 +441,29 @@ export const largestId = (objects) => {
   return Math.max(...objects.map((x) => x.id))
 }
 
+const cookieExpirationDate = () => {
+  const expirationDate = new Date()
+  expirationDate.setFullYear(expirationDate.getFullYear() + 1)
+  return expirationDate.toUTCString()
+}
+
 export const bannerCookieName = "lastHiddenCommunityEventId"
 
 export const hideCommunityEventsBanner = (events, store) => {
   if (events.length === 0) return
-  const expirationDate = new Date()
-  expirationDate.setFullYear(expirationDate.getFullYear() + 1)
   const lastEventId = largestId(events)
-  document.cookie = `${bannerCookieName}=${lastEventId};max-age=31536000;path=/;expires=${expirationDate.toUTCString()};SameSite=Strict;`
+  document.cookie = `${bannerCookieName}=${lastEventId};max-age=31536000;path=/;expires=${cookieExpirationDate()};SameSite=Strict;`
   store.dispatch("setShowWebinaireBanner", false)
+}
+
+export const canteenMgmtViewStyleCookieName = "canteenMgmtViewStyle"
+
+export const updateManagerCanteenViewPreference = (listStyle) => {
+  document.cookie = `${canteenMgmtViewStyleCookieName}=${listStyle};max-age=31536000;path=/;expires=${cookieExpirationDate()};SameSite=Strict;`
+}
+
+export const readManagerCanteenViewPreference = () => {
+  return readCookie(canteenMgmtViewStyleCookieName)
 }
 
 export const capitalise = (str) => {
