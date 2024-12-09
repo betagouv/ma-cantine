@@ -53,7 +53,7 @@ class TestCanteenStatsApi(APITestCase):
                         "value_egalim_others_ht": None,
                         "has_waste_diagnostic": False,
                         "waste_actions": [],
-                        "vegetarian_weekly_recurrence": Diagnostic.MenuFrequency.DAILY,
+                        "vegetarian_weekly_recurrence": Diagnostic.VegetarianMenuFrequency.DAILY,
                         "plastic_tableware_substituted": False,
                         "communicates_on_food_quality": False,
                     },
@@ -64,7 +64,7 @@ class TestCanteenStatsApi(APITestCase):
                         "value_sustainable_ht": 0,
                         "value_externality_performance_ht": 0,
                         "value_egalim_others_ht": 0,
-                        "vegetarian_weekly_recurrence": Diagnostic.MenuFrequency.DAILY,
+                        "vegetarian_weekly_recurrence": Diagnostic.VegetarianMenuFrequency.DAILY,
                     },
                 ],
             },
@@ -84,7 +84,7 @@ class TestCanteenStatsApi(APITestCase):
                         "has_waste_diagnostic": True,
                         "waste_actions": ["action1", "action2"],
                         "has_donation_agreement": True,
-                        "vegetarian_weekly_recurrence": Diagnostic.MenuFrequency.LOW,
+                        "vegetarian_weekly_recurrence": Diagnostic.VegetarianMenuFrequency.LOW,
                         "cooking_plastic_substituted": True,
                         "serving_plastic_substituted": True,
                         "plastic_bottles_substituted": True,
@@ -409,23 +409,27 @@ class TestCanteenStatsApi(APITestCase):
         high_canteen.sectors.remove(primaire)
         high_canteen.sectors.remove(secondaire)
         DiagnosticFactory.create(
-            canteen=high_canteen, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.HIGH.value
+            canteen=high_canteen, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.HIGH.value
         )
 
         low_canteen = CanteenFactory.create()
         low_canteen.sectors.add(primaire)
-        DiagnosticFactory.create(canteen=low_canteen, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.LOW.value)
+        DiagnosticFactory.create(
+            canteen=low_canteen, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.LOW.value
+        )
 
         # --- canteens which earn diversification badge:
         daily_vege = CanteenFactory.create()
         daily_vege.sectors.remove(primaire)
         daily_vege.sectors.remove(secondaire)
-        DiagnosticFactory.create(canteen=daily_vege, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.DAILY.value)
+        DiagnosticFactory.create(
+            canteen=daily_vege, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.DAILY.value
+        )
 
         scolaire_mid_vege = CanteenFactory.create()
         scolaire_mid_vege.sectors.add(secondaire)
         DiagnosticFactory.create(
-            canteen=scolaire_mid_vege, vegetarian_weekly_recurrence=Diagnostic.MenuFrequency.MID.value
+            canteen=scolaire_mid_vege, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.MID.value
         )
 
         badges = badges_for_queryset(Diagnostic.objects.all())
