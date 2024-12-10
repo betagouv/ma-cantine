@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive, inject } from 'vue'
 import { useRootStore } from '@/stores/root'
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
@@ -7,8 +7,9 @@ import { formatError } from "@/utils.js"
 import ContactFormSetting from "@/settings/contact-form.js"
 import BaseMailto from '@/components/BaseMailto.vue'
 
-/* Store */
+/* Get from app */
 const store = useRootStore()
+const $matomo = inject('$matomo')
 
 /* Save user meta info */
 const meta = {
@@ -67,10 +68,7 @@ const sendInquiry = () => {
         message: "Votre message a bien été envoyé. Nous reviendrons vers vous dans les plus brefs délais.",
       })
 
-      // TODO : Matomo, comment ça fonctionne ?
-      // if ($matomo) {
-      //   $matomo.trackEvent("inquiry", "send", inquiryType.value)
-      // }
+      if ($matomo) $matomo.push(['trackEvent', 'inquiry', 'send', inquiryType])
       initFields()
       v$.value.$reset()
     })
