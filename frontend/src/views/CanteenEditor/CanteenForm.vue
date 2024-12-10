@@ -78,14 +78,17 @@
 
     <v-form v-else ref="form" v-model="formIsValid">
       <h2 class="fr-h4" v-if="isNewCanteen">Étape 2/2 : Compléter les informations</h2>
-      <v-row class="mb-4">
-        <v-col cols="12" md="8">
+      <v-row>
+        <v-col cols="12" sm="6">
           <p class="mb-2">SIRET</p>
           <p class="grey--text text--darken-2 d-flex align-center">
             {{ siret || canteen.siret }}
             <v-btn small @click="goToStep(0)" class="ml-2">Modifier</v-btn>
           </p>
-
+        </v-col>
+      </v-row>
+      <v-row class="mt-0">
+        <v-col cols="12" sm="6">
           <DsfrTextField
             hide-details="auto"
             label="Nom de la cantine"
@@ -95,19 +98,21 @@
             labelClasses="body-2 mb-2"
             aria-describedby="name-description"
           />
-
-          <div class="mt-3 mb-6">
-            <DsfrCallout>
-              <p class="ma-0 body-2" id="name-description">
-                Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par
-                exemple :
-                <span class="font-italic">
-                  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne...
-                </span>
-              </p>
-            </DsfrCallout>
-          </div>
-
+        </v-col>
+        <v-col>
+          <DsfrCallout>
+            <p class="ma-0 body-2" id="name-description">
+              Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par
+              exemple :
+              <span class="font-italic">
+                École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne...
+              </span>
+            </p>
+          </DsfrCallout>
+        </v-col>
+      </v-row>
+      <v-row class="mt-0">
+        <v-col cols="12" sm="6">
           <CityField
             label="Ville"
             labelClasses="body-2 mb-2"
@@ -118,8 +123,8 @@
         </v-col>
       </v-row>
 
-      <h3 class="fr-h5 mb-2">Mon établissement est :</h3>
-      <v-row class="mb-4">
+      <h3 class="fr-h5 mt-8 mb-2">Mon établissement est :</h3>
+      <v-row>
         <v-col cols="12">
           <DsfrRadio
             label="Mon établissement..."
@@ -240,7 +245,7 @@
         </v-expand-transition>
       </v-row>
 
-      <h3 class="fr-h5 mb-2">Mon établissement concerne :</h3>
+      <h3 class="fr-h5 mt-8 mb-2">Mon établissement concerne :</h3>
       <v-row>
         <v-col cols="12" sm="6" md="4">
           <DsfrNativeSelect
