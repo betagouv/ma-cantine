@@ -125,6 +125,28 @@
 
       <h3 class="fr-h5 mt-8 mb-2">Mon établissement est :</h3>
       <v-row>
+        <v-col cols="12" sm="6" md="3">
+          <DsfrRadio
+            label="Type d'établissement"
+            labelClasses="body-2 mb-2 grey--text text--darken-4"
+            :items="economicModels"
+            v-model="canteen.economicModel"
+            :rules="[validators.required]"
+            class="mt-2"
+          />
+        </v-col>
+        <v-col cols="12" sm="6" md="3">
+          <DsfrRadio
+            label="Mode de gestion"
+            labelClasses="body-2 mb-2 grey--text text--darken-4"
+            :items="managementTypes"
+            v-model="canteen.managementType"
+            :rules="[validators.required]"
+            class="mt-2"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
         <v-col cols="12">
           <DsfrRadio
             label="Mon établissement..."
@@ -281,28 +303,7 @@
           />
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="12" sm="6" md="3">
-          <DsfrRadio
-            label="Type d'établissement"
-            labelClasses="body-2 mb-2 grey--text text--darken-4"
-            :items="economicModels"
-            v-model="canteen.economicModel"
-            :rules="[validators.required]"
-            class="mt-2"
-          />
-        </v-col>
-        <v-col cols="12" sm="6" md="3">
-          <DsfrRadio
-            label="Mode de gestion"
-            labelClasses="body-2 mb-2 grey--text text--darken-4"
-            :items="managementTypes"
-            v-model="canteen.managementType"
-            :rules="[validators.required]"
-            class="mt-2"
-          />
-        </v-col>
-      </v-row>
+
       <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
         <v-btn v-if="showDelete" x-large outlined color="red" :to="{ name: 'CanteenDeletion' }">
           Supprimer
@@ -367,11 +368,11 @@ export default {
       formIsValid: true,
       bypassLeaveWarning: false,
       deletionDialog: false,
-      managementTypes: Constants.ManagementTypes,
       steps: ["siret", "informations-cantine"],
       satelliteSiretMessage: "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine satellite.",
-      productionTypes: Constants.ProductionTypesDetailed.map((pt) => ({ text: pt.title, value: pt.value })),
       economicModels: Constants.EconomicModels,
+      managementTypes: Constants.ManagementTypes,
+      productionTypes: Constants.ProductionTypesDetailed.map((pt) => ({ text: pt.title, value: pt.value })),
       sectorCategory: null,
       chosenSector: null,
       ministries: this.$store.state.lineMinistries,
