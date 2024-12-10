@@ -462,6 +462,10 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors.pop(0)["message"],
             "Champ 'siret' : Le SIRET doit être composé des chiffres",
         )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Bio - Valeur annuelle HT' : Assurez-vous que cette valeur est supérieure ou égale à 0.",
+        )
 
     @authenticate
     def test_staff_error_collection(self, _):
