@@ -18,6 +18,7 @@ from api.permissions import IsAuthenticated
 from api.serializers import PurchaseSerializer
 from data.models import Canteen, ImportFailure, ImportType, Purchase
 
+from .diagnosticimport import ImportDiagnosticsView
 from .utils import camelize, decode_bytes, normalise_siret
 
 logger = logging.getLogger(__name__)
@@ -47,6 +48,7 @@ class ImportPurchasesView(APIView):
         try:
             self.file = request.data["file"]
             self._verify_file_size()
+            ImportDiagnosticsView._verify_file_format(self.file)
             with transaction.atomic():
                 self._process_file()
 
