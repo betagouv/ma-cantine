@@ -1,3 +1,5 @@
+# https://github.com/googleapis/release-please-action
+
 name: release-please
 
 on:
@@ -16,12 +18,15 @@ jobs:
           changelog-types: |
             [
               {"type":"feat","section":"Nouveautés","hidden":false},
+              {"type":"improve","section":"Améliorations","hidden":false},
               {"type":"fix","section":"Corrections (bugs, typos...)","hidden":false},
               {"type":"refactor","section":"Technique","hidden":false},
+              {"type":"revert","section":"Technique","hidden":false},
               {"type":"style","section":"Technique","hidden":false},
               {"type":"docs","section":"Technique","hidden":false},
               {"type":"test","section":"Technique","hidden":false},
               {"type":"chore","section":"Technique","hidden":false},
               {"type":"perf","section":"Technique","hidden":false},
+              {"type":"build","section":"Technique","hidden":false},
               {"type":"ci","section":"Technique","hidden":false}
             ]
