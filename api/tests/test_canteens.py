@@ -1462,7 +1462,7 @@ class TestCanteenApi(APITestCase):
             canteen=canteen,
             year=2023,
             # test plastic badge as false
-            tunnel_plastic="something",
+            tunnel_plastic="something",  # when this is undefined and the badge is not earned, the output would be None
             cooking_plastic_substituted=True,
             serving_plastic_substituted=True,
             plastic_bottles_substituted=False,
@@ -1472,7 +1472,6 @@ class TestCanteenApi(APITestCase):
             canteen=education_canteen,
             year=2023,
             # test plastic badge as true
-            # tunnel_plastic="something",
             cooking_plastic_substituted=True,
             serving_plastic_substituted=True,
             plastic_bottles_substituted=False,
