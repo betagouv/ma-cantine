@@ -1445,7 +1445,6 @@ class TestCanteenApi(APITestCase):
         self.assertIs(badges["plastic"], False)
         self.assertIsNone(badges["diversification"])
 
-
     @authenticate
     @freeze_time("2024-01-20")
     def test_plastic_badge_calculation(self):

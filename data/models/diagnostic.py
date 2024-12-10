@@ -1757,7 +1757,7 @@ class Diagnostic(models.Model):
         if (
             self.cooking_plastic_substituted
             and self.serving_plastic_substituted
-            and self.plastic_bottles_substituted
+            and (self.plastic_bottles_substituted or self.canteen.in_education)
             and self.plastic_tableware_substituted
         ):
             return True
