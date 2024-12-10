@@ -4,8 +4,9 @@
       CAMPAGNE DE TELEDECLARATION 2025 : Du 7 janvier au 31 mars
     </h2>
     <p class="mb-0">
-      Dans votre espace cantine, remplissez votre bilan sur les données d'achat 2024 et télédéclarez vos données. Pour
-      rappel, selon l’arrêté ministériel du 14 septembre 2022, il est obligatoire de télédéclarer ses achats.
+      Dans votre espace cantine, remplissez votre bilan sur les données d'achat 2024 et télédéclarez vos données.
+      <br />
+      Pour rappel, selon l’arrêté ministériel du 14 septembre 2022, il est obligatoire de télédéclarer ses achats.
     </p>
     <v-row class="mt-4 mb-0 mx-0 align-center">
       <v-btn :to="{ name: 'PendingActions' }" color="primary" class="mb-5 mb-md-2 mr-4">
@@ -21,6 +22,17 @@
         >
           Le guide de télédéclaration
           <v-icon small class="ml-2 grey--text text--darken-4">mdi-open-in-new</v-icon>
+        </a>
+      </p>
+      <p class="fr-text-sm mb-5 mb-md-2 mr-4">
+        <a
+          href="/static/documents/Antisèche_données_d'achat_ma_cantine.pdf"
+          download
+          title="Antisèche : Préparer la saisie de mes données d'achat"
+          class="grey--text text--darken-4"
+        >
+          Antisèche : Préparer la saisie de mes données d'achat
+          <v-icon small class="ml-2 grey--text text--darken-4">mdi-download</v-icon>
         </a>
       </p>
     </v-row>
