@@ -28,10 +28,10 @@
         <a
           href="/static/documents/Antisèche_données_d'achat_ma_cantine.pdf"
           download
-          title="Antisèche : Préparer la saisie de mes données d'achat"
+          title="Comment saisir mes données d'achat"
           class="grey--text text--darken-4"
         >
-          Antisèche : Préparer la saisie de mes données d'achat
+          Comment saisir mes données d'achat
           <v-icon class="ml-2 grey--text text--darken-4 icon-small" width="1rem">$download-line</v-icon>
         </a>
       </p>
