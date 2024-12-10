@@ -461,12 +461,22 @@ class TestCanteenStatsApi(APITestCase):
             plastic_bottles_substituted=True,
             plastic_tableware_substituted=True,
         )
+        sector_in_education = SectorFactory(category="education")
+        earned_education = CanteenFactory.create(sectors=[sector_in_education])
+        DiagnosticFactory.create(
+            canteen=earned_education,
+            cooking_plastic_substituted=True,
+            serving_plastic_substituted=True,
+            plastic_bottles_substituted=False,  # education canteens don't need to remove bottles
+            plastic_tableware_substituted=True,
+        )
 
         badges = badges_for_queryset(Diagnostic.objects.all())
 
         plastic_badge_qs = badges["plastic"]
         self.assertEqual(plastic_badge_qs.count(), 1)
         self.assertTrue(plastic_badge_qs.filter(canteen=earned).exists())
+        self.assertTrue(plastic_badge_qs.filter(canteen=earned_education).exists())
 
     def test_info_badge_earned(self):
         """
