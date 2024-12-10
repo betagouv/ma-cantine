@@ -24,7 +24,7 @@
           <v-icon small class="ml-2 grey--text text--darken-4">mdi-open-in-new</v-icon>
         </a>
       </p>
-      <p class="fr-text-sm mb-5 mb-md-2 mr-4">
+      <p class="fr-text-sm mb-5 mb-md-2">
         <a
           href="/static/documents/Antisèche_données_d'achat_ma_cantine.pdf"
           download
