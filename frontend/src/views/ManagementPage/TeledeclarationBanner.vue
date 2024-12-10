@@ -1,12 +1,11 @@
 <template>
   <DsfrCallout noIcon>
     <h2 class="fr-text font-weight-bold mb-2 mt-2">
-      CAMPAGNE DE TELEDECLARATION 2024 : prolongation exceptionnelle jusqu'au 15 avril !
+      CAMPAGNE DE TELEDECLARATION 2025 : Du 7 janvier au 31 mars
     </h2>
     <p class="mb-0">
-      Dans votre espace cantine, remplissez votre bilan sur les données d'achat 2023 et télédéclarez vos données (arrêté
-      ministériel du 14 septembre 2022 - en cours de modification). L'objectif : établir un bilan de suivi des mesures
-      EGAlim permettant de mieux piloter cette politique publique par l'administration.
+      Dans votre espace cantine, remplissez votre bilan sur les données d'achat 2024 et télédéclarez vos données. Pour
+      rappel, selon l’arrêté ministériel du 14 septembre 2022, il est obligatoire de télédéclarer ses achats.
     </p>
     <v-row class="mt-4 mb-0 mx-0 align-center">
       <v-btn :to="{ name: 'PendingActions' }" color="primary" class="mb-5 mb-md-2 mr-4">
