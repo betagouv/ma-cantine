@@ -1412,7 +1412,7 @@ class TestCanteenApi(APITestCase):
 
     @authenticate
     @freeze_time("2024-01-20")
-    def test_canteen_badges(self):
+    def test_badges_included_in_canteen_lookup(self):
         """
         The full representation of a canteen contains the badges earned for last year
         A badge can be True, False, or None. None = !True and the tunnel wasn't started,
@@ -1444,6 +1444,55 @@ class TestCanteenApi(APITestCase):
         self.assertTrue(badges["appro"])
         self.assertIs(badges["plastic"], False)
         self.assertIsNone(badges["diversification"])
+
+
+    @authenticate
+    @freeze_time("2024-01-20")
+    def test_plastic_badge_calculation(self):
+        """
+        Test that canteens outside of education need all 4 plastics substituted
+        and that canteens in education don't need to substitute bottles
+        """
+        canteen = CanteenFactory.create(sectors=[])
+        canteen.managers.add(authenticate.user)
+        education_sector = SectorFactory(category="education")
+        education_canteen = CanteenFactory.create(sectors=[education_sector])
+        education_canteen.managers.add(authenticate.user)
+
+        DiagnosticFactory.create(
+            canteen=canteen,
+            year=2023,
+            # test plastic badge as false
+            tunnel_plastic="something",
+            cooking_plastic_substituted=True,
+            serving_plastic_substituted=True,
+            plastic_bottles_substituted=False,
+            plastic_tableware_substituted=True,
+        )
+        DiagnosticFactory.create(
+            canteen=education_canteen,
+            year=2023,
+            # test plastic badge as true
+            # tunnel_plastic="something",
+            cooking_plastic_substituted=True,
+            serving_plastic_substituted=True,
+            plastic_bottles_substituted=False,
+            plastic_tableware_substituted=True,
+        )
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        badges = body["badges"]
+        self.assertIs(badges["plastic"], False)
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": education_canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        badges = body["badges"]
+        self.assertIs(badges["plastic"], True)
 
     @authenticate
     def test_canteen_returns_latest_diagnostic_year(self):
