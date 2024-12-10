@@ -16,6 +16,8 @@ import LeafIcon from "mdi-icons/Leaf"
 // https://www.npmjs.com/package/vue-material-design-icons
 import "mdi-icons/styles.css"
 
+import "./css/global.css"
+
 import App from "./App.vue"
 import { router } from "./router"
 
