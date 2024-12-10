@@ -1,5 +1,7 @@
 from datetime import date
+from decimal import Decimal
 
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from data.fields import ChoiceArrayField
@@ -94,6 +96,7 @@ class Purchase(SoftDeletionModel):
         max_digits=20,
         decimal_places=2,
         verbose_name="prix HT",
+        validators=[MinValueValidator(Decimal("0"))],
     )
     invoice_file = models.FileField(null=True, blank=True, upload_to="invoices/%Y/")
     local_definition = models.CharField(

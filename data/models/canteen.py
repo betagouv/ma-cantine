@@ -1,8 +1,10 @@
+from decimal import Decimal
 from urllib.parse import quote
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -182,11 +184,16 @@ class Canteen(SoftDeletionModel):
     )
     has_been_claimed = models.BooleanField(default=False, verbose_name="cette cantine a été revendiquée")
 
-    daily_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par jour")
-    yearly_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par an (y compris livrés)")
+    daily_meal_count = models.IntegerField(
+        null=True, blank=True, validators=[MinValueValidator(0)], verbose_name="repas par jour"
+    )
+    yearly_meal_count = models.IntegerField(
+        null=True, blank=True, validators=[MinValueValidator(0)], verbose_name="repas par an (y compris livrés)"
+    )
     satellite_canteens_count = models.IntegerField(
         null=True,
         blank=True,
+        validators=[MinValueValidator(0)],
         verbose_name="nombre de cantines satellites dépendantes (si cuisine centrale)",
     )
 

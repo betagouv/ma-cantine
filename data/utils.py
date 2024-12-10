@@ -1,7 +1,10 @@
 import datetime
+from decimal import Decimal
 from io import BytesIO
 
 from django.core.files.base import ContentFile
+from django.core.validators import MinValueValidator
+from django.db import models
 from PIL import ExifTags
 from PIL import Image as Img
 
@@ -204,3 +207,9 @@ def get_diagnostic_lower_limit_year():
 
 def get_diagnostic_upper_limit_year():
     return datetime.datetime.now().date().year + 1
+
+
+def make_optional_positive_decimal_field(**kwargs):
+    return models.DecimalField(
+        max_digits=20, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(Decimal("0"))], **kwargs
+    )
