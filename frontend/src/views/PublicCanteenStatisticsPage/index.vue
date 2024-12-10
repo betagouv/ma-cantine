@@ -154,7 +154,7 @@
         </p>
       </div>
       <div v-else>
-        <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} diagnostics validés.&nbsp;:</p>
+        <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} diagnostics validés&nbsp;:</p>
         <v-row class="px-2">
           <v-col class="pl-0 pr-1" cols="12" sm="6" md="4">
             <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
