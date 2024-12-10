@@ -132,7 +132,6 @@
             :items="economicModels"
             v-model="canteen.economicModel"
             :rules="[validators.required]"
-            class="mt-2"
           />
         </v-col>
         <v-col cols="12" sm="6" md="3">
@@ -142,11 +141,10 @@
             :items="managementTypes"
             v-model="canteen.managementType"
             :rules="[validators.required]"
-            class="mt-2"
           />
         </v-col>
       </v-row>
-      <v-row>
+      <v-row class="mt-0">
         <v-col cols="12">
           <DsfrRadio
             label="Mon établissement..."
@@ -154,10 +152,10 @@
             :items="productionTypes"
             v-model="canteen.productionType"
             :rules="[validators.required]"
-            class="mt-2"
           />
         </v-col>
-
+      </v-row>
+      <v-row class="mt-0">
         <v-col cols="12" md="4" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
           <label for="daily-meals" class="body-2 mb-2 d-block">
             Nombre moyen de couverts par
@@ -175,7 +173,6 @@
             prepend-icon="$restaurant-fill"
           />
         </v-col>
-
         <v-col cols="12" md="4">
           <label
             for="yearly-meals"
@@ -197,7 +194,6 @@
             prepend-icon="$restaurant-fill"
           />
         </v-col>
-
         <v-col cols="12" md="4" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
           <DsfrTextField
             label="Nombre de cantines/lieux de service à qui je fournis des repas"
@@ -304,18 +300,22 @@
         </v-col>
       </v-row>
 
-      <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
-        <v-btn v-if="showDelete" x-large outlined color="red" :to="{ name: 'CanteenDeletion' }">
-          Supprimer
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
-          Annuler
-        </v-btn>
-        <v-btn x-large color="primary" @click="saveCanteen">
-          Valider
-        </v-btn>
-      </v-sheet>
+      <v-row>
+        <v-col>
+          <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
+            <v-btn v-if="showDelete" x-large outlined color="red" :to="{ name: 'CanteenDeletion' }">
+              Supprimer
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
+              Annuler
+            </v-btn>
+            <v-btn x-large color="primary" @click="saveCanteen">
+              Valider
+            </v-btn>
+          </v-sheet>
+        </v-col>
+      </v-row>
     </v-form>
   </div>
 </template>
