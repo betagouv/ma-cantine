@@ -32,7 +32,7 @@
           class="grey--text text--darken-4"
         >
           Antisèche : Préparer la saisie de mes données d'achat
-          <v-icon small class="ml-2 grey--text text--darken-4">mdi-download</v-icon>
+          <v-icon class="ml-2 grey--text text--darken-4 icon-small" width="1rem">$download-line</v-icon>
         </a>
       </p>
     </v-row>
@@ -53,5 +53,9 @@ export default {
 <style scoped>
 .v-sheet--shaped {
   border-radius: 26px 4px !important;
+}
+
+.icon-small {
+  width: 1rem;
 }
 </style>
