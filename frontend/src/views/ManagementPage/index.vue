@@ -47,12 +47,11 @@
           <h2 class="my-4 text-h5 font-weight-black">Mes cantines</h2>
         </v-col>
         <v-col class="flex-shrink-1 flex-grow-0">
-          <DsfrToggle
-            v-model="showListView"
-            label="Affichage"
-            checkedLabel="Liste"
-            uncheckedLabel="Cartes"
-            :labelLeft="true"
+          <DsfrSegmentedControl
+            v-model="viewStyle"
+            legend="Vue"
+            :noLegend="true"
+            :items="viewStyles"
             @input="updatePreference"
           />
         </v-col>
@@ -109,7 +108,7 @@
 <script>
 import CanteensPagination from "./CanteensPagination.vue"
 import PageSatisfaction from "@/components/PageSatisfaction.vue"
-import DsfrToggle from "@/components/DsfrToggle"
+import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
 import UserTools from "./UserTools"
 import TeledeclarationBanner from "./TeledeclarationBanner"
 import CanteenCreationDialog from "./CanteenCreationDialog"
@@ -120,6 +119,7 @@ import { lastYear } from "@/utils"
 import AnnualActionableCanteensTable from "@/components/AnnualActionableCanteensTable"
 import { readManagerCanteenViewPreference, updateManagerCanteenViewPreference } from "@/utils"
 
+const LIST_VIEW = "list"
 const CARD_VIEW_DEFAULT_THRESHOLD = 5 // la pagination de cartes est à partir de 5 cantines
 
 export default {
@@ -132,7 +132,7 @@ export default {
     ActionsBanner,
     SuccessBanner,
     CanteenCreationDialog,
-    DsfrToggle,
+    DsfrSegmentedControl,
     AnnualActionableCanteensTable,
   },
   data() {
@@ -193,7 +193,19 @@ export default {
           style: "background-color: #E8EDFF; border: none;", // light / background / contrast-info
         },
       ],
-      showListView: readManagerCanteenViewPreference() === "list",
+      viewStyles: [
+        {
+          text: "Vue cartes",
+          icon: "$layout-grid-fill",
+          value: "card",
+        },
+        {
+          text: "Vue liste",
+          icon: "$list-check",
+          value: LIST_VIEW,
+        },
+      ],
+      viewStyle: readManagerCanteenViewPreference(),
       year: lastYear(),
     }
   },
@@ -204,10 +216,13 @@ export default {
     showSuccessBanner() {
       return !this.actionsLoading && !this.hasActions
     },
+    showListView() {
+      return this.viewStyle === LIST_VIEW
+    },
   },
   methods: {
     updatePreference() {
-      updateManagerCanteenViewPreference(this.showListView ? "list" : "card")
+      updateManagerCanteenViewPreference(this.viewStyle)
     },
   },
   mounted() {
@@ -226,7 +241,7 @@ export default {
         this.showCanteenCreationPrompt = true
       }
       if (count > CARD_VIEW_DEFAULT_THRESHOLD && !readManagerCanteenViewPreference()) {
-        this.showListView = true
+        this.viewStyle = LIST_VIEW
       }
     },
   },
