@@ -81,7 +81,7 @@ const sendInquiry = () => {
 <template>
   <div>
     <div class="fr-grid-row">
-      <div class="fr-col-8">
+      <div class="fr-col-12 fr-col-lg-8">
         <form class="fr-mb-4w" @submit.prevent="validateForm">
           <DsfrInputGroup
             v-model="form.fromEmail"
