@@ -474,7 +474,7 @@ class TestCanteenStatsApi(APITestCase):
         badges = badges_for_queryset(Diagnostic.objects.all())
 
         plastic_badge_qs = badges["plastic"]
-        self.assertEqual(plastic_badge_qs.count(), 1)
+        self.assertEqual(plastic_badge_qs.count(), 2)
         self.assertTrue(plastic_badge_qs.filter(canteen=earned).exists())
         self.assertTrue(plastic_badge_qs.filter(canteen=earned_education).exists())
 
