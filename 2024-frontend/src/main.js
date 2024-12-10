@@ -44,7 +44,6 @@ if (window.MATOMO_ID) {
   app.provide("$matomo", window._paq)
 }
 
-
 // deciding to keep same naming convention as previously used with Vue2 and vuetify
 app.component("mdi-food-apple", FoodAppleIcon)
 app.component("mdi-offer", OfferIcon)

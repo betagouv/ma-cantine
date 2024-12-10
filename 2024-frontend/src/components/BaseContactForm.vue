@@ -1,3 +1,11 @@
+<script>
+export default {
+  mounted() {
+    this.$matomo.trackEvent('test-dev', 'test-dev-contact-form-mounted')
+  }
+}
+</script>
+
 <script setup>
 import { reactive, inject } from 'vue'
 import { useRootStore } from '@/stores/root'
@@ -68,7 +76,12 @@ const sendInquiry = () => {
         message: "Votre message a bien été envoyé. Nous reviendrons vers vous dans les plus brefs délais.",
       })
 
-      if ($matomo) $matomo.push(['trackEvent', 'inquiry', 'send', inquiryType])
+      console.log('$matomo', $matomo)
+
+      if ($matomo) {
+        console.log('TRACKEVENT')
+        $matomo.push(['trackEvent', 'test-dev', 'test-dev-contact-form', `test-dev-${inquiryType}`])
+      }
       initFields()
       v$.value.$reset()
     })
