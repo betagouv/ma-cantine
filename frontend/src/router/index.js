@@ -604,9 +604,6 @@ const vue3Routes = [
   {
     path: "/contact",
     name: "ContactPage",
-    meta: {
-      title: "Contactez-nous",
-    },
     sitemapGroup: Constants.SitemapGroups.SITE,
   },
 ]
