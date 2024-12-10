@@ -297,3 +297,19 @@ class TestPurchaseImport(APITestCase):
             first_error["message"],
             "Ce fichier est au format application/vnd.oasis.opendocument.spreadsheet, merci d'exporter votre fichier au format CSV et réessayer.",
         )
+
+    @authenticate
+    def test_no_header(self):
+        """
+        A file should not be valid if doesn't contain a valid header
+        """
+        canteen = CanteenFactory.create(siret="82399356058716")
+        canteen.managers.add(authenticate.user)
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        with open("./api/tests/files/no_header_purchase_import.csv", "rb") as diag_file:
+            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
