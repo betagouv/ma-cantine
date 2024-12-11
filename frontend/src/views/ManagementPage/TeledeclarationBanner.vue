@@ -32,7 +32,7 @@
           class="grey--text text--darken-4"
         >
           Comment saisir mes données d'achat
-          <v-icon class="ml-2 grey--text text--darken-4 icon-small" width="1rem">$download-line</v-icon>
+          <v-icon class="ml-2 grey--text text--darken-4 icon-small">$download-line</v-icon>
         </a>
       </p>
     </v-row>
