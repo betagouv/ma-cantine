@@ -1,12 +1,12 @@
 <template>
   <DsfrCallout noIcon>
     <h2 class="fr-text font-weight-bold mb-2 mt-2">
-      CAMPAGNE DE TELEDECLARATION 2024 : prolongation exceptionnelle jusqu'au 15 avril !
+      CAMPAGNE DE TELEDECLARATION 2025 : Du 7 janvier au 31 mars
     </h2>
     <p class="mb-0">
-      Dans votre espace cantine, remplissez votre bilan sur les données d'achat 2023 et télédéclarez vos données (arrêté
-      ministériel du 14 septembre 2022 - en cours de modification). L'objectif : établir un bilan de suivi des mesures
-      EGAlim permettant de mieux piloter cette politique publique par l'administration.
+      Dans votre espace cantine, remplissez votre bilan sur les données d'achat 2024 et télédéclarez vos données.
+      <br />
+      Pour rappel, selon l’arrêté ministériel du 14 septembre 2022, il est obligatoire de télédéclarer ses achats.
     </p>
     <v-row class="mt-4 mb-0 mx-0 align-center">
       <v-btn :to="{ name: 'PendingActions' }" color="primary" class="mb-5 mb-md-2 mr-4">
@@ -26,14 +26,13 @@
       </p>
       <p class="fr-text-sm mb-5 mb-md-2">
         <a
-          href="https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2FlNPOtFoTKyfj5UnjZKJj%2FEGAlim%20Bilan%20statistique%202023%20d%C3%A9finitif.pdf?alt=media"
-          target="_blank"
-          rel="noopener external"
-          title="Bilan EGAlim pour la campagne de 2022 - ouvre une nouvelle fenêtre"
+          href="/static/documents/Antisèche_données_d'achat_ma_cantine.pdf"
+          download
+          title="Comment saisir mes données d'achat"
           class="grey--text text--darken-4"
         >
-          Bilan EGAlim pour la campagne de 2022
-          <v-icon small class="ml-2 grey--text text--darken-4">mdi-open-in-new</v-icon>
+          Comment saisir mes données d'achat
+          <v-icon class="ml-2 grey--text text--darken-4 icon-small">$download-line</v-icon>
         </a>
       </p>
     </v-row>
@@ -54,5 +53,9 @@ export default {
 <style scoped>
 .v-sheet--shaped {
   border-radius: 26px 4px !important;
+}
+
+.icon-small {
+  width: 1rem;
 }
 </style>
