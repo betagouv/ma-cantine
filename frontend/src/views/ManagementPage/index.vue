@@ -18,24 +18,6 @@
         les cantines de votre territoire
       </router-link>
     </p>
-
-    <div v-if="canteenCount === 0" class="body-2 font-weight-medium">
-      <p class="mb-0">
-        Prenez connaissance du
-        <v-btn
-          text
-          href="https://1648047458-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2FlNPOtFoTKyfj5UnjZKJj%2FEGAlim%20Bilan%20statistique%202023%20d%C3%A9finitif.pdf?alt=media"
-          target="_blank"
-          rel="noopener external"
-          title="bilan EGAlim pour la campagne de 2022 - ouvre une nouvelle fenêtre"
-          class="text-decoration-underline px-0"
-          style="margin-top: -5px"
-        >
-          bilan EGAlim pour la campagne de 2022
-          <v-icon small class="ml-2">mdi-open-in-new</v-icon>
-        </v-btn>
-      </p>
-    </div>
     <div v-if="canteenCount > 0" class="mt-4">
       <SuccessBanner v-if="showSuccessBanner" />
       <TeledeclarationBanner v-else-if="teledeclarationCampaignActive && !correctionCampaignActive" />
