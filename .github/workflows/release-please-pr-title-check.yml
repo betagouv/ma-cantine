@@ -36,3 +36,5 @@ jobs:
             perf
             build
             ci
+          ignoreLabels: |
+            dependencies
