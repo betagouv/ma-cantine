@@ -14,7 +14,7 @@ const store = useRootStore()
 /* Save user meta info */
 const meta = {
   userId: store.loggedUser?.id,
-  userAgent: navigator.userAgent
+  userAgent: navigator.userAgent,
 }
 
 /* Pre-fill fields with user infos */
@@ -30,7 +30,7 @@ if (store.loggedUser) {
 const form = reactive({})
 const initFields = () => {
   form.fromEmail = defaultEmail
-  form.name =  defaultName
+  form.name = defaultName
   form.inquiryType = ""
   form.message = ""
 }
@@ -41,7 +41,7 @@ const { required, email } = useValidators()
 const rules = {
   fromEmail: { required, email },
   inquiryType: { required },
-  message: { required }
+  message: { required },
 }
 const v$ = useVuelidate(rules, form)
 const validateForm = () => {
@@ -61,7 +61,8 @@ const sendInquiry = () => {
     meta,
   }
 
-  store.sendInquiryEmail(payload)
+  store
+    .sendInquiryEmail(payload)
     .then(() => {
       store.notify({
         status: "success",
@@ -69,7 +70,7 @@ const sendInquiry = () => {
       })
 
       initFields()
-      trackEvent({category: "inquiry", action: "send", value: inquiryType})
+      trackEvent({ category: "inquiry", action: "send", value: inquiryType })
       v$.value.$reset()
     })
     .catch((e) => store.notifyServerError(e))
@@ -88,11 +89,7 @@ const sendInquiry = () => {
             hint="Format attendu : nom@domaine.fr"
             :error-message="formatError(v$.fromEmail)"
           />
-          <DsfrInputGroup
-            v-model="form.name"
-            label="Prénom et nom"
-            :label-visible="true"
-          />
+          <DsfrInputGroup v-model="form.name" label="Prénom et nom" :label-visible="true" />
           <DsfrSelect
             v-model="form.inquiryType"
             label="Type de demande *"
@@ -110,11 +107,7 @@ const sendInquiry = () => {
             rows="8"
             :error-message="formatError(v$.message)"
           />
-          <DsfrButton
-            type="submit"
-            icon="fr-icon-send-plane-fill"
-            label="Envoyer"
-          />
+          <DsfrButton type="submit" icon="fr-icon-send-plane-fill" label="Envoyer" />
         </form>
         <DsfrCallout>
           <p>
@@ -125,7 +118,7 @@ const sendInquiry = () => {
         </DsfrCallout>
       </div>
       <div class="fr-col-4 fr-hidden fr-unhidden-lg">
-        <img src="/static/images/doodles-dsfr/primary/SittingDoodle.png" class="base-contact-form__illustration">
+        <img src="/static/images/doodles-dsfr/primary/SittingDoodle.png" class="base-contact-form__illustration" />
       </div>
     </div>
   </div>
@@ -133,7 +126,7 @@ const sendInquiry = () => {
 
 <style lang="scss">
 .base-contact-form {
-  &__illustration  {
+  &__illustration {
     object-fit: contain;
     object-position: left center;
     transform: scaleX(-1);
