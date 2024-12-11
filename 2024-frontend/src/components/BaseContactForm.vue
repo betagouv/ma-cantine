@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, inject } from 'vue'
+import { reactive } from 'vue'
 import { useRootStore } from '@/stores/root'
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
@@ -7,9 +7,8 @@ import { formatError } from "@/utils.js"
 import ContactFormSetting from "@/settings/contact-form.js"
 import BaseMailto from '@/components/BaseMailto.vue'
 
-/* Get from app */
+/* Store */
 const store = useRootStore()
-const $matomo = inject('$matomo')
 
 /* Save user meta info */
 const meta = {

@@ -41,7 +41,6 @@ if (window.MATOMO_ID) {
     debug: false,
     userId: undefined,
   })
-  app.provide("$matomo", window._paq)
 }
 
 // deciding to keep same naming convention as previously used with Vue2 and vuetify
