@@ -4,6 +4,7 @@ import { useRootStore } from '@/stores/root'
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
+import { trackEvent } from "@/services/matomo.js"
 import ContactFormSetting from "@/settings/contact-form.js"
 import BaseMailto from '@/components/BaseMailto.vue'
 
@@ -68,6 +69,7 @@ const sendInquiry = () => {
       })
 
       initFields()
+      trackEvent({category: "inquiry", action: "send", value: inquiryType})
       v$.value.$reset()
     })
     .catch((e) => store.notifyServerError(e))
