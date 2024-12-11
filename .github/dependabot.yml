@@ -10,13 +10,22 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "build"
+      include: "scope"
   - package-ecosystem: "npm"
     target-branch: "staging"
     directory: "/frontend"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "build"
+      include: "scope"
   - package-ecosystem: "npm"
     target-branch: "staging"
     directory: "/2024-frontend"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "build"
+      include: "scope"
