@@ -1,12 +1,12 @@
 <script setup>
-import { reactive } from 'vue'
-import { useRootStore } from '@/stores/root'
+import { reactive } from "vue"
+import { useRootStore } from "@/stores/root"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import { trackEvent } from "@/services/matomo.js"
 import ContactFormSetting from "@/settings/contact-form.js"
-import BaseMailto from '@/components/BaseMailto.vue'
+import BaseMailto from "@/components/BaseMailto.vue"
 
 /* Store */
 const store = useRootStore()
