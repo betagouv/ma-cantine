@@ -184,3 +184,6 @@ notes/
 # 2024 Frontend
 .vite/
 .hotfile
+
+# postgres
+*.dump
