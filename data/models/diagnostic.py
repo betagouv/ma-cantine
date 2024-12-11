@@ -71,6 +71,11 @@ class Diagnostic(models.Model):
     class CreationSource(models.TextChoices):
         TUNNEL = "TUNNEL", "Tunnel"
 
+    class ServiceType(models.TextChoices):
+        UNIQUE = "UNIQUE", "Menu unique"
+        MULTIPLE_SELF = "MULTIPLE_SELF", "Choix multiple en libre-service"
+        MULTIPLE_RESERVATION = "MULTIPLE_RESERVATION", "Choix multiple avec réservation à l’avance au jour le jour"
+
     class VegetarianMenuFrequency(models.TextChoices):
         NEVER = "NEVER", "Jamais"
         LOW = "LOW", "Moins d'une fois par semaine"
@@ -432,6 +437,13 @@ class Diagnostic(models.Model):
         null=True,
         size=None,
         verbose_name="actions inclus dans le plan de diversification des protéines",
+    )
+    service_type = models.CharField(
+        max_length=255,
+        choices=ServiceType.choices,
+        null=True,
+        blank=True,
+        verbose_name="type de service",
     )
     vegetarian_weekly_recurrence = models.CharField(
         max_length=255,

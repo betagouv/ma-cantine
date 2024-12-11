@@ -121,6 +121,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                     "tunnel_diversification",
                     "has_diversification_plan",
                     "diversification_plan_actions",
+                    "service_type",
                     "vegetarian_weekly_recurrence",
                     "vegetarian_menu_type",
                     "vegetarian_menu_bases",
