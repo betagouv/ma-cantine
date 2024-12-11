@@ -845,12 +845,15 @@ def badges_for_queryset(diagnostic_year_queryset):
     badge_querysets["diversification"] = diversification_badge_query
 
     # plastic
-    badge_querysets["plastic"] = diagnostic_year_queryset.filter(
+    plastic_badge_query = diagnostic_year_queryset.filter(
         cooking_plastic_substituted=True,
         serving_plastic_substituted=True,
-        plastic_bottles_substituted=True,
         plastic_tableware_substituted=True,
     )
+    plastic_badge_query = plastic_badge_query.filter(
+        Q(canteen__sectors__in=scolaire_sectors) | Q(plastic_bottles_substituted=True)
+    ).distinct()
+    badge_querysets["plastic"] = plastic_badge_query
 
     # info
     badge_querysets["info"] = diagnostic_year_queryset.filter(communicates_on_food_quality=True)
