@@ -264,6 +264,11 @@ Afin de pouvoir s'identifier dans le backoffice (sous `/admin`), il est nécessa
 python manage.py createsuperuser
 ```
 
+## Utilisation des magic token
+Les `magic token` permettent de se connecter à la place d'un utilisateur à des fins de support. C'est
+Les tokens se génèrent dans l'interface admin de Django et s'utilisent ensuite en saissant l'adresse : `<URL>/code/<MAGIC TOKEN>`
+
+
 ## Reception d'emails en local
 
 Il y a deux options pour recevoir les emails envoyés depuis l'application en local :
