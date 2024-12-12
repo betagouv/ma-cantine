@@ -18,7 +18,32 @@ D'autres conseils que j'ai lu c'est de faire `git config core.precomposeunicode 
 
 ## Mise en place de l'environnement dev
 
-Please note that the `staging` and `main` branches are protected and all commits must come through a pull request.
+Please note that the `staging` and `main` branches are protected and
+all commits must come through a pull request.
+
+Vous pouvez installer en local ou utiliser l'environnement Docker pour
+démarrer.
+
+### Avec Docker
+
+Un environnement Docker/Docker-Compose est fourni. Pour construire les
+images et lancer les services :
+
+```sh
+make build
+make up
+```
+
+Voir le [Makefile](../Makefile) pour des commandes utiles.
+
+Dans un nouveau terminal, accèder au container du back pour migrer la
+BDD et créer la première utilisatrice.
+
+```sh
+make sh
+python manage.py migrate
+python manage.py createsuperuser
+```
 
 ### À installer localement
 
@@ -346,23 +371,6 @@ Vous pourrez modifier les notes dans un éditeur pour être plus rapide.
 - supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dépendances"
 - supprimer la partie "by @username in https://..."
 - faire n'importe quel autre changement pour rendre la liste facilement comprensible par tout le monde
-
-### Debugging
-
-Si jamais vous doutez/si il y a un problème, parlez avec un.e autre dév.
-
-## Docker
-
-C'est aussi possible de lancer le site avec Docker.
-
-`docker compose build`
-`docker compose up`
-
-Dans un nouveau terminal, accèder au container du back pour migrer la BDD et créer la première utilisatrice.
-
-`docker compose run server bash`
-`python manage.py migrate`
-`python manage.py createsuperuser`
 
 ### Développement
 
