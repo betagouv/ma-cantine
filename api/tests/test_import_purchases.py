@@ -295,5 +295,5 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(first_error["status"], 400)
         self.assertEqual(
             first_error["message"],
-            "Ce fichier est du format application/vnd.oasis.opendocument.spreadsheet, merci d'exporter votre fichier en format CSV et re-essayer.",
+            "Ce fichier est au format application/vnd.oasis.opendocument.spreadsheet, merci d'exporter votre fichier au format CSV et réessayer.",
         )
