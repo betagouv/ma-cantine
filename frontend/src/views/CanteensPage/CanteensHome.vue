@@ -112,9 +112,9 @@
                   />
                   <DsfrRadio
                     v-model="filters.management_type.value"
-                    :items="managementTypes"
+                    :items="managementTypes.items"
                     :optionsRow="$vuetify.breakpoint.mdAndUp"
-                    label="Mode de gestion"
+                    :label="managementTypes.label"
                     :labelClasses="{
                       'fr-text text-left grey--text text--darken-4': true,
                       'active-filter-label': !!filters.management_type.value,
@@ -401,8 +401,8 @@ export default {
           value: null,
           default: null,
           displayName(value) {
-            const mt = Constants.ManagementTypes.find((pt) => pt.value === value)?.text || value
-            return `Gestion ${mt.toLowerCase()}`
+            const managementType = Constants.ManagementTypes.items.find((pt) => pt.value === value)?.text || value
+            return `Gestion ${managementType.toLowerCase()}`
           },
         },
         production_type: {
@@ -743,7 +743,7 @@ export default {
       })
     },
     setManagementTypes(enabledManagementTypes) {
-      this.managementTypes = Constants.ManagementTypes.map((x) =>
+      this.managementTypes.items = Constants.ManagementTypes.items.map((x) =>
         Object.assign(x, {
           disabled: enabledManagementTypes.indexOf(x.value) === -1,
         })

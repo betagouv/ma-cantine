@@ -39,7 +39,7 @@
               {{ canteen.centralProducerSiret || "—" }}
             </p>
           </div>
-          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Mode de gestion</p>
+          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">{{ managementTypes.label }}</p>
           <p class="my-0">{{ managementType || "—" }}</p>
         </div>
       </v-col>
@@ -58,7 +58,7 @@
             </p>
             <p class="my-0">{{ lineMinistry || "—" }}</p>
           </div>
-          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Type d'établissement</p>
+          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">{{ economicModels.label }}</p>
           <p class="my-0">{{ economicModel || "—" }}</p>
         </div>
       </v-col>
@@ -141,6 +141,8 @@ export default {
         { text: "SIRET", value: "siret" },
       ],
       lastYear: lastYear(),
+      economicModels: Constants.EconomicModels,
+      managementTypes: Constants.ManagementTypes,
     }
   },
   computed: {
@@ -149,7 +151,7 @@ export default {
       return productionType?.body
     },
     managementType() {
-      const managementType = Constants.ManagementTypes.find((x) => x.value === this.canteen.managementType)
+      const managementType = this.managementTypes.items.find((x) => x.value === this.canteen.managementType)
       return managementType?.text
     },
     sectors() {
@@ -165,8 +167,8 @@ export default {
       return ministry?.text
     },
     economicModel() {
-      const managementType = Constants.EconomicModels.find((x) => x.value === this.canteen.economicModel)
-      return managementType?.text
+      const economicModel = this.economicModels.items.find((x) => x.value === this.canteen.economicModel)
+      return economicModel?.text
     },
     hasSite() {
       return this.canteen.productionType !== "central"

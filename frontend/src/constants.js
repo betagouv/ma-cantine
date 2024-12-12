@@ -27,16 +27,19 @@ export default Object.freeze({
     communicationSupportUrl: null,
     communicatesOnFoodPlan: null,
   },
-  ManagementTypes: [
-    {
-      text: "Directe",
-      value: "direct",
-    },
-    {
-      text: "Concédée",
-      value: "conceded",
-    },
-  ],
+  ManagementTypes: {
+    label: "Mode de gestion",
+    items: [
+      {
+        text: "Directe",
+        value: "direct",
+      },
+      {
+        text: "Concédée",
+        value: "conceded",
+      },
+    ],
+  },
   ProductionTypes: [
     {
       text: "Livreurs des repas",
@@ -69,10 +72,17 @@ export default Object.freeze({
       value: "central_serving",
     },
   ],
-  EconomicModels: [
-    { text: "Public", value: "public" },
-    { text: "Privé", value: "private" },
-  ],
+  EconomicModels: {
+    label: "Type d'établissement",
+    items: [
+      { text: "Public", value: "public" },
+      { text: "Privé", value: "private" },
+    ],
+    description: [
+      "<strong>Cantine publique</strong> : tout restaurant sous la responsabilité d’une personne morale de droit publique, qu’il soit opéré en gestion directe ou en gestion concédée (notamment avec une société de restauration collective privée). Les restaurants gérés par une association de gestion sont considérés comme publics dès lors que l’association de gestion est rattachée à une administration ou un établissement du secteur public (État, collectivité, fonction publique hospitalière)",
+      "<strong>Cantine privée</strong> : restaurant sous la responsabilité d’une structure privée : entreprise, association (hors associations de gestion d’un restaurant de structure publique), établissement scolaire privé, etc.",
+    ],
+  },
   ProductFamilies: {
     VIANDES_VOLAILLES: {
       text: "Viandes et volailles fraîches et surgelées",

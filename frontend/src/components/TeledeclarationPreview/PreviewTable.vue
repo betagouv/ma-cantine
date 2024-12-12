@@ -114,14 +114,14 @@ export default {
       const productionTypeDetail = Constants.ProductionTypesDetailed.find(
         (x) => x.value === this.canteen.productionType
       )
-      const managementTypeDetail = Constants.ManagementTypes.find((x) => x.value === this.canteen.managementType)
+      const managementType = Constants.ManagementTypes.items.find((x) => x.value === this.canteen.managementType)
       const ministryDetail = this.$store.state.lineMinistries.find((x) => x.value === this.canteen.lineMinistry)
       let items = [
         { value: this.canteen.name, label: "Nom de la cantine" },
         { value: this.canteen.siret, label: "Numéro SIRET" },
         { value: this.canteen.city, label: "Ville" },
-        { value: managementTypeDetail ? managementTypeDetail.text : "", label: "Mode de gestion" },
-        { value: productionTypeDetail ? productionTypeDetail.body : "", label: "Type d'établissement" },
+        { value: managementType ? managementType.text : "", label: Constants.ManagementTypes.label },
+        { value: productionTypeDetail ? productionTypeDetail.body : "", label: Constants.EconomicModels.label },
       ]
       if (this.usesCentralProducer) items.push({ value: this.canteen.centralProducerSiret, label: "SIRET du livreur" })
       if (this.showSatelliteCanteensCount)
