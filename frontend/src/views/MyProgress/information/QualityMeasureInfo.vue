@@ -35,8 +35,8 @@
     </p>
     <DsfrCallout>
       <p class="mb-5">
-        Pour vous aider à vous préparer à la saisie de vos valeurs d'achat, télécharger notre guide qui liste les
-        données à saisir pour réaliser ce bilan.
+        Pour vous aider à vous préparer à la saisie de vos valeurs d'achat utilisez notre guide qui liste les données à
+        saisir pour réaliser ce bilan.
       </p>
       <p class="mb-0">
         <a
@@ -47,7 +47,7 @@
           Télécharger l'antisèche "Préparer la saisie de mes données d'achat"
           <v-icon class="ml-1 quality-mesure-icon">$download-line</v-icon>
         </a>
-        <span class="ml-4 text-body-2 text--darken-3">(PDF - 642 Ko)</span>
+        <span class="ml-4 text-body-2 text--darken-3">(PDF - 634 Ko)</span>
       </p>
     </DsfrCallout>
   </div>
