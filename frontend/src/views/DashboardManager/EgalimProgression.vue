@@ -200,7 +200,9 @@ export default {
       return null
     },
     approDiagnostic() {
-      return (this.isCurrentYear && this.purchasesSummary) || this.centralDiagnostic || this.canteenDiagnostic
+      if (this.isCurrentYear && this.purchasesSummary && this.purchasesSummary.valueTotalHt !== 0) {
+        return this.purchasesSummary
+      } else return this.centralDiagnostic || this.canteenDiagnostic
     },
     otherMeasuresDiagnostic() {
       if (this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL") {
