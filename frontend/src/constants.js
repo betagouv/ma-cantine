@@ -572,6 +572,10 @@ export default Object.freeze({
     hasDiversificationPlan: {
       title:
         "J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales",
+      false:
+        "Je n'ai pas mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales",
+      empty:
+        "Avez-vous mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales ?",
     },
     diversificationPlanActions: {
       title: "Ce plan comporte, par exemple, les actions suivantes (voir guide du CNRC) :",
@@ -599,6 +603,25 @@ export default Object.freeze({
           value: "TRAINING",
         },
       ],
+      empty: "Aucune action du plan renseignée",
+    },
+    serviceType: {
+      title: "Le service est en :",
+      items: [
+        {
+          label: "Menu unique",
+          value: "UNIQUE",
+        },
+        {
+          label: "Choix multiple en libre-service",
+          value: "MULTIPLE_SELF",
+        },
+        {
+          label: "Choix multiple avec réservation à l’avance au jour le jour",
+          value: "MULTIPLE_RESERVATION",
+        },
+      ],
+      empty: "Je n'ai pas renseigné le type de service",
     },
     vegetarianWeeklyRecurrence: {
       title: "J'ai mis en place un menu végétarien :",
@@ -624,6 +647,7 @@ export default Object.freeze({
           value: "NEVER",
         },
       ],
+      empty: "Je n'ai pas renseigné la périodicité du menu végétarien",
     },
     vegetarianMenuType: {
       title: "Le menu végétarien proposé est :",
@@ -641,6 +665,7 @@ export default Object.freeze({
           value: "ALTERNATIVES",
         },
       ],
+      empty: "Je n'ai pas renseigné le type de menu végétarien servi",
     },
     vegetarianMenuBases: {
       title: "Le plat principal de mon menu végétarien est majoritairement à base de :",
@@ -666,6 +691,7 @@ export default Object.freeze({
           value: "READYMADE",
         },
       ],
+      empty: "Je n'ai pas renseigné les bases utilisées pour mon menu végétarien",
     },
   },
   CommunicationFrequencies: [

@@ -5,8 +5,7 @@
         <span v-if="diagnostic.hasDiversificationPlan">
           <v-icon color="primary" class="mr-1">$check-line</v-icon>
           <span>
-            J'ai mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base de
-            protéines végétales
+            {{ constantsDiversificationMeasureStep.hasDiversificationPlan.title }}
             <ul role="list" class="mt-2" v-if="appliedDiversificationActions && appliedDiversificationActions.length">
               <li class="fr-text-xs mb-1" v-for="action in appliedDiversificationActions" :key="action">
                 {{ action }}
@@ -14,7 +13,7 @@
             </ul>
             <ul role="list" class="mt-2" v-else>
               <li class="fr-text-xs mb-1">
-                Aucune action du plan renseignée
+                {{ constantsDiversificationMeasureStep.diversificationPlanActions.empty }}
               </li>
             </ul>
           </span>
@@ -22,35 +21,45 @@
         <span v-else-if="diagnosticUsesNullAsFalse || diagnostic.hasDiversificationPlan === false">
           <v-icon color="primary" class="mr-1">$close-line</v-icon>
           <span>
-            Je n'ai pas mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à
-            base de protéines végétales
+            {{ constantsDiversificationMeasureStep.hasDiversificationPlan.false }}
           </span>
         </span>
         <span v-else>
           <v-icon color="primary" class="mr-1">$question-line</v-icon>
           <span>
-            Avez-vous mis en place un plan pluriannuel de diversification des protéines incluant des alternatives à base
-            de protéines végétales ?
+            {{ constantsDiversificationMeasureStep.hasDiversificationPlan.empty }}
           </span>
         </span>
       </li>
-      <li v-if="diagnostic.vegetarianWeeklyRecurrence === 'NEVER'">
-        <v-icon color="primary" class="mr-2">$close-line</v-icon>
-        <div>
-          Je ne propose pas de menu végétarien
-        </div>
-      </li>
-      <li v-else-if="diagnostic.vegetarianWeeklyRecurrence">
+
+      <li v-if="diagnostic.serviceType">
         <v-icon color="primary" class="mr-2">$check-line</v-icon>
         <div>
-          J'ai mis en place un menu végétarien :
-          <span class="font-weight-bold">{{ weeklyRecurrence }}</span>
+          {{ constantsDiversificationMeasureStep.serviceType.title }}
+          <span class="font-weight-bold">{{ serviceType }}</span>
         </div>
       </li>
       <li v-else>
         <v-icon color="primary" class="mr-2">$question-line</v-icon>
         <div>
-          Je n'ai pas renseigné la périodicité du menu végétarien
+          {{ constantsDiversificationMeasureStep.serviceType.empty }}
+        </div>
+      </li>
+
+      <li v-if="diagnostic.vegetarianWeeklyRecurrence">
+        <v-icon v-if="diagnostic.vegetarianWeeklyRecurrence === 'NEVER'" color="primary" class="mr-2">
+          $close-line
+        </v-icon>
+        <v-icon v-else color="primary" class="mr-2">$check-line</v-icon>
+        <div>
+          {{ constantsDiversificationMeasureStep.vegetarianWeeklyRecurrence.title }}
+          <span class="font-weight-bold">{{ vegetarianWeeklyRecurrence }}</span>
+        </div>
+      </li>
+      <li v-else>
+        <v-icon color="primary" class="mr-2">$question-line</v-icon>
+        <div>
+          {{ constantsDiversificationMeasureStep.vegetarianWeeklyRecurrence.empty }}
         </div>
       </li>
 
@@ -58,14 +67,14 @@
         <li v-if="diagnostic.vegetarianMenuType">
           <v-icon color="primary" class="mr-2">$check-line</v-icon>
           <div>
-            Le menu végétarien proposé est :
-            <span class="font-weight-bold">{{ menuType }}</span>
+            {{ constantsDiversificationMeasureStep.vegetarianMenuType.title }}
+            <span class="font-weight-bold">{{ vegetarianMenuType }}</span>
           </div>
         </li>
         <li v-else>
           <v-icon color="primary" class="mr-2">$question-line</v-icon>
           <div>
-            Je n'ai pas renseigné le type de menu végétarien servi
+            {{ constantsDiversificationMeasureStep.vegetarianMenuType.empty }}
           </div>
         </li>
       </div>
@@ -74,9 +83,9 @@
         <li v-if="diagnostic.vegetarianMenuBases && diagnostic.vegetarianMenuBases.length">
           <v-icon color="primary" class="mr-2">$check-line</v-icon>
           <div>
-            Le plat principal de mon menu végétarien est majoritairement à base de :
-            <ul role="list" class="mt-2" v-if="menuBases && menuBases.length">
-              <li class="fr-text-xs mb-1" v-for="base in menuBases" :key="base">
+            {{ constantsDiversificationMeasureStep.vegetarianMenuBases.title }}
+            <ul role="list" class="mt-2" v-if="vegetarianMenuBases && vegetarianMenuBases.length">
+              <li class="fr-text-xs mb-1" v-for="base in vegetarianMenuBases" :key="base">
                 {{ base }}
               </li>
             </ul>
@@ -85,7 +94,7 @@
         <li v-else>
           <v-icon color="primary" class="mr-2">$question-line</v-icon>
           <div>
-            Je n'ai pas renseigné les bases utilisées pour mon menu végétarien
+            {{ constantsDiversificationMeasureStep.vegetarianMenuBases.empty }}
           </div>
         </li>
       </div>
@@ -106,17 +115,26 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      constantsDiversificationMeasureStep: Constants.DiversificationMeasureStep,
+    }
+  },
   computed: {
-    weeklyRecurrence() {
-      const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianWeeklyRecurrence.items)
+    serviceType() {
+      const items = selectListToObject(this.constantsDiversificationMeasureStep.serviceType.items)
+      return items[this.diagnostic.serviceType]
+    },
+    vegetarianWeeklyRecurrence() {
+      const items = selectListToObject(this.constantsDiversificationMeasureStep.vegetarianWeeklyRecurrence.items)
       return items[this.diagnostic.vegetarianWeeklyRecurrence]
     },
-    menuType() {
-      const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianMenuType.items)
+    vegetarianMenuType() {
+      const items = selectListToObject(this.constantsDiversificationMeasureStep.vegetarianMenuType.items)
       return items[this.diagnostic.vegetarianMenuType]
     },
-    menuBases() {
-      const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianMenuBases.items)
+    vegetarianMenuBases() {
+      const items = selectListToObject(this.constantsDiversificationMeasureStep.vegetarianMenuBases.items)
       return this.diagnostic.vegetarianMenuBases.map((x) => items[x])
     },
     displayDiversificationPlanSegment() {
@@ -124,7 +142,7 @@ export default {
     },
     appliedDiversificationActions() {
       const diversificationPlanActions = selectListToObject(
-        Constants.DiversificationMeasureStep.diversificationPlanActions.items
+        this.constantsDiversificationMeasureStep.diversificationPlanActions.items
       )
       if (!this.diagnostic.diversificationPlanActions?.length) return null
       return this.diagnostic.diversificationPlanActions.map((x) => diversificationPlanActions[x]).filter((x) => !!x)
