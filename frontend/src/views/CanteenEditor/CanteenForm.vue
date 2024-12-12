@@ -79,13 +79,16 @@
     <v-form v-else ref="form" v-model="formIsValid">
       <h2 class="fr-h4" v-if="isNewCanteen">Étape 2/2 : Compléter les informations</h2>
       <v-row>
-        <v-col cols="12" md="8">
+        <v-col cols="12" sm="6">
           <p class="mb-2">SIRET</p>
           <p class="grey--text text--darken-2 d-flex align-center">
             {{ siret || canteen.siret }}
             <v-btn small @click="goToStep(0)" class="ml-2">Modifier</v-btn>
           </p>
-
+        </v-col>
+      </v-row>
+      <v-row class="mt-0">
+        <v-col cols="12" sm="6">
           <DsfrTextField
             hide-details="auto"
             label="Nom de la cantine"
@@ -95,19 +98,21 @@
             labelClasses="body-2 mb-2"
             aria-describedby="name-description"
           />
-
-          <div class="mt-3 mb-6">
-            <DsfrCallout>
-              <p class="ma-0 body-2" id="name-description">
-                Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par
-                exemple :
-                <span class="font-italic">
-                  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne...
-                </span>
-              </p>
-            </DsfrCallout>
-          </div>
-
+        </v-col>
+        <v-col>
+          <DsfrCallout id="name-description">
+            <p class="ma-0 body-2">
+              Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par
+              exemple :
+              <span class="font-italic">
+                École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne...
+              </span>
+            </p>
+          </DsfrCallout>
+        </v-col>
+      </v-row>
+      <v-row class="mt-0">
+        <v-col cols="12" sm="6">
           <CityField
             label="Ville"
             labelClasses="body-2 mb-2"
@@ -118,11 +123,44 @@
         </v-col>
       </v-row>
 
+      <h3 class="fr-h5 mt-8 mb-2">Mon établissement est :</h3>
       <v-row>
-        <v-col cols="12" class="mt-2">
-          <v-divider aria-hidden="true" role="presentation"></v-divider>
+        <v-col cols="12" sm="6">
+          <DsfrRadio
+            label="Type d'établissement"
+            labelClasses="body-2 mb-2 grey--text text--darken-4"
+            :items="economicModels"
+            v-model="canteen.economicModel"
+            :rules="[validators.required]"
+            aria-describedby="economicModel-description"
+          />
+          <DsfrRadio
+            label="Mode de gestion"
+            labelClasses="body-2 mb-2 grey--text text--darken-4"
+            :items="managementTypes"
+            v-model="canteen.managementType"
+            :rules="[validators.required]"
+          />
         </v-col>
-
+        <v-col>
+          <DsfrCallout id="economicModel-description">
+            <p class="ma-0 body-2">
+              <strong>Cantine publique</strong>
+              : tout restaurant sous la responsabilité d’une personne morale de droit publique, qu’il soit opéré en
+              gestion directe ou en gestion concédée (notamment avec une société de restauration collective privée). Les
+              restaurants gérés par une association de gestion sont considérés comme publics dès lors que l’association
+              de gestion est rattachée à une administration ou un établissement du secteur public (État, collectivité,
+              fonction publique hospitalière)
+            </p>
+            <p class="ma-0 body-2">
+              <strong>Cantine privée</strong>
+              : restaurant sous la responsabilité d’une structure privée : entreprise, association (hors associations de
+              gestion d’un restaurant de structure publique), établissement scolaire privé, etc.
+            </p>
+          </DsfrCallout>
+        </v-col>
+      </v-row>
+      <v-row class="mt-0">
         <v-col cols="12">
           <DsfrRadio
             label="Mon établissement..."
@@ -130,10 +168,10 @@
             :items="productionTypes"
             v-model="canteen.productionType"
             :rules="[validators.required]"
-            class="mt-2"
           />
         </v-col>
-
+      </v-row>
+      <v-row class="mt-0">
         <v-col cols="12" md="4" :class="showDailyMealCount ? '' : 'grey--text text--darken-1'">
           <label for="daily-meals" class="body-2 mb-2 d-block">
             Nombre moyen de couverts par
@@ -151,7 +189,6 @@
             prepend-icon="$restaurant-fill"
           />
         </v-col>
-
         <v-col cols="12" md="4">
           <label
             for="yearly-meals"
@@ -173,7 +210,6 @@
             prepend-icon="$restaurant-fill"
           />
         </v-col>
-
         <v-col cols="12" md="4" :class="showSatelliteCanteensCount ? '' : 'grey--text text--darken-1'">
           <DsfrTextField
             label="Nombre de cantines/lieux de service à qui je fournis des repas"
@@ -243,11 +279,8 @@
         </v-expand-transition>
       </v-row>
 
+      <h3 class="fr-h5 mt-8 mb-2">Mon établissement concerne :</h3>
       <v-row>
-        <v-col cols="12" class="mt-4">
-          <v-divider aria-hidden="true" role="presentation"></v-divider>
-        </v-col>
-
         <v-col cols="12" sm="6" md="4">
           <DsfrNativeSelect
             label="Catégorie de secteur"
@@ -282,40 +315,23 @@
           />
         </v-col>
       </v-row>
+
       <v-row>
-        <v-col cols="12" sm="6" md="3">
-          <DsfrRadio
-            label="Type d'établissement"
-            labelClasses="body-2 mb-2 grey--text text--darken-4"
-            :items="economicModels"
-            v-model="canteen.economicModel"
-            :rules="[validators.required]"
-            class="mt-2"
-          />
-        </v-col>
-        <v-col cols="12" sm="6" md="3">
-          <DsfrRadio
-            label="Mode de gestion"
-            labelClasses="body-2 mb-2 grey--text text--darken-4"
-            :items="managementTypes"
-            v-model="canteen.managementType"
-            :rules="[validators.required]"
-            class="mt-2"
-          />
+        <v-col>
+          <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
+            <v-btn v-if="showDelete" x-large outlined color="red" :to="{ name: 'CanteenDeletion' }">
+              Supprimer
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
+              Annuler
+            </v-btn>
+            <v-btn x-large color="primary" @click="saveCanteen">
+              Valider
+            </v-btn>
+          </v-sheet>
         </v-col>
       </v-row>
-      <v-sheet rounded color="grey lighten-4 pa-3" class="d-flex">
-        <v-btn v-if="showDelete" x-large outlined color="red" :to="{ name: 'CanteenDeletion' }">
-          Supprimer
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn x-large outlined color="primary" class="mr-4 align-self-center" :to="{ name: 'ManagementPage' }">
-          Annuler
-        </v-btn>
-        <v-btn x-large color="primary" @click="saveCanteen">
-          Valider
-        </v-btn>
-      </v-sheet>
     </v-form>
   </div>
 </template>
@@ -368,11 +384,11 @@ export default {
       formIsValid: true,
       bypassLeaveWarning: false,
       deletionDialog: false,
-      managementTypes: Constants.ManagementTypes,
       steps: ["siret", "informations-cantine"],
       satelliteSiretMessage: "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine satellite.",
-      productionTypes: Constants.ProductionTypesDetailed.map((pt) => ({ text: pt.title, value: pt.value })),
       economicModels: Constants.EconomicModels,
+      managementTypes: Constants.ManagementTypes,
+      productionTypes: Constants.ProductionTypesDetailed.map((pt) => ({ text: pt.title, value: pt.value })),
       sectorCategory: null,
       chosenSector: null,
       ministries: this.$store.state.lineMinistries,
