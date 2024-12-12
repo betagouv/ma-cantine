@@ -100,8 +100,8 @@
           />
         </v-col>
         <v-col>
-          <DsfrCallout>
-            <p class="ma-0 body-2" id="name-description">
+          <DsfrCallout id="name-description">
+            <p class="ma-0 body-2">
               Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par
               exemple :
               <span class="font-italic">
@@ -125,16 +125,15 @@
 
       <h3 class="fr-h5 mt-8 mb-2">Mon établissement est :</h3>
       <v-row>
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" sm="6">
           <DsfrRadio
             label="Type d'établissement"
             labelClasses="body-2 mb-2 grey--text text--darken-4"
             :items="economicModels"
             v-model="canteen.economicModel"
             :rules="[validators.required]"
+            aria-describedby="economicModel-description"
           />
-        </v-col>
-        <v-col cols="12" sm="6" md="3">
           <DsfrRadio
             label="Mode de gestion"
             labelClasses="body-2 mb-2 grey--text text--darken-4"
@@ -142,6 +141,23 @@
             v-model="canteen.managementType"
             :rules="[validators.required]"
           />
+        </v-col>
+        <v-col>
+          <DsfrCallout id="economicModel-description">
+            <p class="ma-0 body-2">
+              <strong>Cantine publique</strong>
+              : tout restaurant sous la responsabilité d’une personne morale de droit publique, qu’il soit opéré en
+              gestion directe ou en gestion concédée (notamment avec une société de restauration collective privée). Les
+              restaurants gérés par une association de gestion sont considérés comme publics dès lors que l’association
+              de gestion est rattachée à une administration ou un établissement du secteur public (État, collectivité,
+              fonction publique hospitalière)
+            </p>
+            <p class="ma-0 body-2">
+              <strong>Cantine privée</strong>
+              : restaurant sous la responsabilité d’une structure privée : entreprise, association (hors associations de
+              gestion d’un restaurant de structure publique), établissement scolaire privé, etc.
+            </p>
+          </DsfrCallout>
         </v-col>
       </v-row>
       <v-row class="mt-0">
