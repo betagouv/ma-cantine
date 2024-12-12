@@ -78,7 +78,7 @@ export default {
       return this.canteen.dailyMealCount && this.canteen.productionType !== "central"
     },
     managementType() {
-      return Constants.ManagementTypes.find((type) => type.value === this.canteen.managementType)?.text
+      return Constants.ManagementTypes.items.find((type) => type.value === this.canteen.managementType)?.text
     },
   },
 }

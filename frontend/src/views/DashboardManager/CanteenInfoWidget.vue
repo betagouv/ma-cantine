@@ -95,7 +95,7 @@ export default {
       return `${this.canteen.city}${departmentString}`
     },
     canteenProductionType() {
-      const type = Constants.ProductionTypesDetailed.find((mt) => mt.value === this.canteen.productionType)
+      const type = Constants.ProductionTypesDetailed.items.find((mt) => mt.value === this.canteen.productionType)
       return type?.title ? capitalise(type?.title) : "Mode de production non renseigné"
     },
     sectors() {
@@ -107,8 +107,8 @@ export default {
       return sectorString ? capitalise(sectorString) : "Non renseigné"
     },
     canteenMgmt() {
-      const type = Constants.ManagementTypes.find((mt) => mt.value === this.canteen.managementType)
-      return type?.text || "Non renseigné"
+      const managementType = Constants.ManagementTypes.items.find((mt) => mt.value === this.canteen.managementType)
+      return managementType?.text || "Non renseigné"
     },
     canteenImage() {
       if (!this.canteen.images || this.canteen.images.length === 0) return null
