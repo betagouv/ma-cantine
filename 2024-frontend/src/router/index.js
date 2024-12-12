@@ -3,6 +3,7 @@ import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel"
 import ImportSelection from "@/views/ImportSelection"
 import WasteMeasurements from "@/views/WasteMeasurements"
 import LegalNotices from "@/views/LegalNotices"
+import ContactPage from "@/views/ContactPage"
 import { useRootStore } from "@/stores/root"
 
 const routes = [
@@ -46,6 +47,14 @@ const routes = [
     component: LegalNotices,
     meta: {
       title: "Mentions légales",
+    },
+  },
+  {
+    path: "/contact",
+    name: "ContactPage",
+    component: ContactPage,
+    meta: {
+      title: "Contactez-nous",
     },
   },
 ]
@@ -121,10 +130,6 @@ const vue2Routes = [
     name: "FaqPage",
   },
   {
-    path: "/contact",
-    name: "ContactPage",
-  },
-  {
     path: "/mon-compte",
     name: "AccountSummaryPage",
   },
@@ -173,12 +178,11 @@ router.beforeEach(async (to) => {
     location.href = location.origin + to.fullPath
     return false
   }
-  if (!to.meta.authenticationRequired) return
   const store = useRootStore()
   if (!store.initialDataLoaded) {
     await store.fetchInitialData()
   }
-  if (!store.loggedUser) {
+  if (!store.loggedUser && to.meta.authenticationRequired) {
     return { name: "Vue2Home", replace: true }
   }
 })

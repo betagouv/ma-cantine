@@ -1,6 +1,7 @@
 {
   "validations": {
     "decimal": "Ce champ doit être un nombre",
+    "email": "La valeur doit être un email valide",
     "integer": "Ce champ doit être un nombre entier",
     "maxValue": "La valeur maximum est {max}",
     "minValue": "La valeur minimum est {min}",

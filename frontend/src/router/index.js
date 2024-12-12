@@ -43,7 +43,6 @@ import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import DiagnosticImportPage from "@/views/DiagnosticsImporter/DiagnosticImportPage"
 import PublicCanteenStatisticsPage from "@/views/PublicCanteenStatisticsPage"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
-import ContactPage from "@/views/ContactPage"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
 import PurchasesImporter from "@/views/PurchasesImporter"
@@ -440,15 +439,6 @@ const routes = [
     sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
-    path: "/contact",
-    name: "ContactPage",
-    component: ContactPage,
-    meta: {
-      title: "Contactez-nous",
-    },
-    sitemapGroup: Constants.SitemapGroups.SITE,
-  },
-  {
     path: "/mes-achats",
     name: "PurchasesHome",
     component: PurchasesHome,
@@ -610,6 +600,14 @@ const vue3Routes = [
     name: "LegalNotices",
     meta: {
       title: "Mentions Légales",
+    },
+    sitemapGroup: Constants.SitemapGroups.SITE,
+  },
+  {
+    path: "/contact",
+    name: "ContactPage",
+    meta: {
+      title: "Contactez-nous",
     },
     sitemapGroup: Constants.SitemapGroups.SITE,
   },
