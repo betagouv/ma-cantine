@@ -33,23 +33,30 @@
       Pour cela, vous avez besoin a minima de connaître la valeur totale de vos achats de l’année, et les valeurs
       totales d’achats bios, de qualité, et durables.
     </p>
-    <p>
-      Pour vous aider à vous préparer à la saisie de vos valeurs d'achat, télécharger notre guide qui liste les données
-      à saisir pour réaliser ce bilan.
-    </p>
-    <DownloadLink
-      href="/static/documents/Antisèche_données_d'achat_ma_cantine.pdf"
-      label="Antisèche : Préparer la saisie de mes données d'achat"
-      sizeStr="642 Ko"
-      class="mt-4"
-    />
+    <DsfrCallout>
+      <p class="mb-5">
+        Pour vous aider à vous préparer à la saisie de vos valeurs d'achat, télécharger notre guide qui liste les
+        données à saisir pour réaliser ce bilan.
+      </p>
+      <p class="mb-0">
+        <a
+          href="/static/documents/Antisèche_données_d'achat_ma_cantine.pdf"
+          download
+          title="Antisèche : Préparer la saisie de mes données d'achat"
+        >
+          Télécharger l'antisèche "Préparer la saisie de mes données d'achat"
+          <v-icon class="ml-1 quality-mesure-icon">$download-line</v-icon>
+        </a>
+        <span class="ml-4 text-body-2 text--darken-3">(PDF - 642 Ko)</span>
+      </p>
+    </DsfrCallout>
   </div>
 </template>
 
 <script>
 import { applicableDiagnosticRules } from "@/utils"
 import regions from "@/regions.json"
-import DownloadLink from "@/components/DownloadLink"
+import DsfrCallout from "@/components/DsfrCallout"
 
 export default {
   name: "QualityMeasureInfo",
@@ -59,7 +66,7 @@ export default {
       required: true,
     },
   },
-  components: { DownloadLink },
+  components: { DsfrCallout },
   computed: {
     applicableRules() {
       return applicableDiagnosticRules(this.canteen)
@@ -70,3 +77,10 @@ export default {
   },
 }
 </script>
+
+<style>
+.quality-mesure-icon {
+  width: 1rem;
+  color: var(--v-anchor-base) !important;
+}
+</style>
