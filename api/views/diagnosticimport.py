@@ -95,7 +95,7 @@ class ImportDiagnosticsView(ABC, APIView):
     def _verify_file_format(file):
         if file.content_type != "text/csv" and file.content_type != "text/tab-separated-values":
             raise ValidationError(
-                f"Ce fichier est du format {file.content_type}, merci d'exporter votre fichier en format CSV et re-essayer."
+                f"Ce fichier est au format {file.content_type}, merci d'exporter votre fichier au format CSV et réessayer."
             )
 
     @staticmethod
