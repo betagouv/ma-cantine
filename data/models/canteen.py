@@ -182,9 +182,11 @@ class Canteen(SoftDeletionModel):
     )
     has_been_claimed = models.BooleanField(default=False, verbose_name="cette cantine a été revendiquée")
 
-    daily_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par jour")
-    yearly_meal_count = models.IntegerField(null=True, blank=True, verbose_name="repas par an (y compris livrés)")
-    satellite_canteens_count = models.IntegerField(
+    daily_meal_count = models.PositiveIntegerField(null=True, blank=True, verbose_name="repas par jour")
+    yearly_meal_count = models.PositiveIntegerField(
+        null=True, blank=True, verbose_name="repas par an (y compris livrés)"
+    )
+    satellite_canteens_count = models.PositiveIntegerField(
         null=True,
         blank=True,
         verbose_name="nombre de cantines satellites dépendantes (si cuisine centrale)",

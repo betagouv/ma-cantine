@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from simple_history.models import HistoricalRecords
 
+from data.utils import make_optional_positive_decimal_field
+
 from .canteen import Canteen
 
 
@@ -27,87 +29,47 @@ class WasteMeasurement(models.Model):
     period_end_date = models.DateField(verbose_name="date de fin", validators=[validate_before_today])
     meal_count = models.IntegerField(verbose_name="couverts sur la période", null=True, blank=True)
 
-    total_mass = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    total_mass = make_optional_positive_decimal_field(
         verbose_name="Masse totale (kg)",
     )
     is_sorted_by_source = models.BooleanField(blank=True, null=True, verbose_name="trié en fonctionne de source ?")
 
-    preparation_total_mass = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    preparation_total_mass = make_optional_positive_decimal_field(
         verbose_name="préparation - masse totale (kg)",
     )
     preparation_is_sorted = models.BooleanField(
         blank=True, null=True, verbose_name="préparation - trié en fonction de comestible/non-comestible ?"
     )
-    preparation_edible_mass = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    preparation_edible_mass = make_optional_positive_decimal_field(
         verbose_name="préparation - masse comestible (kg)",
     )
-    preparation_inedible_mass = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    preparation_inedible_mass = make_optional_positive_decimal_field(
         verbose_name="préparation - masse non-comestible (kg)",
     )
 
-    unserved_total_mass = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    unserved_total_mass = make_optional_positive_decimal_field(
         verbose_name="non-servi - masse totale (kg)",
     )
     unserved_is_sorted = models.BooleanField(
         blank=True, null=True, verbose_name="non-servi - trié en fonction de comestible/non-comestible ?"
     )
-    unserved_edible_mass = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    unserved_edible_mass = make_optional_positive_decimal_field(
         verbose_name="non-servi - masse comestible (kg)",
     )
-    unserved_inedible_mass = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    unserved_inedible_mass = make_optional_positive_decimal_field(
         verbose_name="non-servi - masse non-comestible (kg)",
     )
 
-    leftovers_total_mass = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    leftovers_total_mass = make_optional_positive_decimal_field(
         verbose_name="restes assiette - masse totale (kg)",
     )
     leftovers_is_sorted = models.BooleanField(
         blank=True, null=True, verbose_name="restes assiette - trié en fonction de comestible/non-comestible ?"
     )
-    leftovers_edible_mass = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    leftovers_edible_mass = make_optional_positive_decimal_field(
         verbose_name="restes assiette - masse comestible (kg)",
     )
-    leftovers_inedible_mass = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    leftovers_inedible_mass = make_optional_positive_decimal_field(
         verbose_name="restes assiette - masse non-comestible (kg)",
     )
 
