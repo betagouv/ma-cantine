@@ -147,7 +147,9 @@ export default {
   },
   computed: {
     productionType() {
-      const productionType = Constants.ProductionTypesDetailed.find((x) => x.value === this.canteen.productionType)
+      const productionType = Constants.ProductionTypesDetailed.items.find(
+        (x) => x.value === this.canteen.productionType
+      )
       return productionType?.body
     },
     managementType() {

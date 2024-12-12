@@ -40,38 +40,44 @@ export default Object.freeze({
       },
     ],
   },
-  ProductionTypes: [
-    {
-      text: "Livreurs des repas",
-      value: "central,central_serving",
-    },
-    {
-      text: "Cantines satellites et autogérées",
-      value: "site,site_cooked_elsewhere",
-    },
-  ],
-  ProductionTypesDetailed: [
-    {
-      title: "produit sur place les repas qu'il sert à ses convives",
-      body: "Mon établissement prépare ce qu'il sert à ses convives",
-      value: "site",
-    },
-    {
-      title: "sert des repas preparés par un autre établissement",
-      body: "Les repas que mon établissement sert à ses convives sont cuisinés ailleurs",
-      value: "site_cooked_elsewhere",
-    },
-    {
-      title: "livre des repas mais n'a pas de lieu de service en propre",
-      body: "Mon établissement livre des repas mais n'a pas de lieu de service en propre",
-      value: "central",
-    },
-    {
-      title: "livre des repas et accueille aussi des convives sur place",
-      body: "Mon établissement livre des repas et accueille aussi des convives sur place",
-      value: "central_serving",
-    },
-  ],
+  ProductionTypes: {
+    label: "Type de production",
+    items: [
+      {
+        text: "Livreurs des repas",
+        value: "central,central_serving",
+      },
+      {
+        text: "Cantines satellites et autogérées",
+        value: "site,site_cooked_elsewhere",
+      },
+    ],
+  },
+  ProductionTypesDetailed: {
+    label: "Type de production",
+    items: [
+      {
+        title: "produit sur place les repas qu'il sert à ses convives",
+        body: "Mon établissement prépare ce qu'il sert à ses convives",
+        value: "site",
+      },
+      {
+        title: "sert des repas preparés par un autre établissement",
+        body: "Les repas que mon établissement sert à ses convives sont cuisinés ailleurs",
+        value: "site_cooked_elsewhere",
+      },
+      {
+        title: "livre des repas mais n'a pas de lieu de service en propre",
+        body: "Mon établissement livre des repas mais n'a pas de lieu de service en propre",
+        value: "central",
+      },
+      {
+        title: "livre des repas et accueille aussi des convives sur place",
+        body: "Mon établissement livre des repas et accueille aussi des convives sur place",
+        value: "central_serving",
+      },
+    ],
+  },
   EconomicModels: {
     label: "Type d'établissement",
     items: [

@@ -158,7 +158,7 @@
           <DsfrRadio
             label="Mon établissement..."
             labelClasses="body-2 mb-2 grey--text text--darken-4"
-            :items="productionTypes"
+            :items="productionTypesDetailedItems"
             v-model="canteen.productionType"
             :rules="[validators.required]"
           />
@@ -381,7 +381,7 @@ export default {
       satelliteSiretMessage: "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine satellite.",
       economicModels: Constants.EconomicModels,
       managementTypes: Constants.ManagementTypes,
-      productionTypes: Constants.ProductionTypesDetailed.map((pt) => ({ text: pt.title, value: pt.value })),
+      productionTypesDetailed: Constants.ProductionTypesDetailed,
       sectorCategory: null,
       chosenSector: null,
       ministries: this.$store.state.lineMinistries,
@@ -443,6 +443,12 @@ export default {
       return this.canteen.sectors.map((sectorId) => ({
         text: this.sectorName(sectorId),
         id: sectorId,
+      }))
+    },
+    productionTypesDetailedItems() {
+      return this.productionTypesDetailed.items.map((pt) => ({
+        text: pt.title,
+        value: pt.value,
       }))
     },
   },

@@ -125,8 +125,8 @@
 
                   <DsfrNativeSelect
                     v-model="filters.production_type.value"
-                    :items="productionTypes"
-                    label="Type d'établissement"
+                    :items="productionTypes.items"
+                    :label="productionTypes.label"
                     :labelClasses="{
                       'mb-1 fr-text text-left': true,
                       'active-filter-label': !!filters.production_type.value,
@@ -410,7 +410,7 @@ export default {
           value: null,
           default: null,
           displayName(value) {
-            return Constants.ProductionTypes.find((pt) => pt.value === value)?.text
+            return Constants.ProductionTypes.items.find((pt) => pt.value === value)?.text
           },
         },
         sectors: {
@@ -751,14 +751,14 @@ export default {
     },
     setProductionTypes(enabledProductionTypes) {
       const whitelistedProductionTypes = []
-      const [centralQuery, siteQuery] = Constants.ProductionTypes.map((x) => x.value)
+      const [centralQuery, siteQuery] = Constants.ProductionTypes.items.map((x) => x.value)
       if (enabledProductionTypes.indexOf("site") > -1 || enabledProductionTypes.indexOf("site_cooked_elsewhere") > -1) {
         whitelistedProductionTypes.push(siteQuery)
       }
       if (enabledProductionTypes.indexOf("central") > -1 || enabledProductionTypes.indexOf("central_serving") > -1) {
         whitelistedProductionTypes.push(centralQuery)
       }
-      this.productionTypes = Constants.ProductionTypes.map((x) =>
+      this.productionTypes.items = Constants.ProductionTypes.items.map((x) =>
         Object.assign(x, {
           disabled: whitelistedProductionTypes.indexOf(x.value) === -1,
         })

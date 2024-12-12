@@ -95,7 +95,7 @@ export default {
       return `${this.canteen.city}${departmentString}`
     },
     canteenProductionType() {
-      const type = Constants.ProductionTypesDetailed.find((mt) => mt.value === this.canteen.productionType)
+      const type = Constants.ProductionTypesDetailed.items.find((mt) => mt.value === this.canteen.productionType)
       return type?.title ? capitalise(type?.title) : "Mode de production non renseigné"
     },
     sectors() {

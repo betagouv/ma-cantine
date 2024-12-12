@@ -90,7 +90,7 @@ export default {
       searchTerm: null,
       filterProductionType: "all",
       inProgress: false,
-      productionTypeOptions: [{ text: "Toutes les cantines", value: "all" }].concat(Constants.ProductionTypes),
+      productionTypeOptions: [{ text: "Toutes les cantines", value: "all" }].concat(Constants.ProductionTypes.items),
     }
   },
   computed: {

@@ -111,7 +111,7 @@ export default {
       return true
     },
     canteenItems() {
-      const productionTypeDetail = Constants.ProductionTypesDetailed.find(
+      const productionTypeDetail = Constants.ProductionTypesDetailed.items.find(
         (x) => x.value === this.canteen.productionType
       )
       const managementType = Constants.ManagementTypes.items.find((x) => x.value === this.canteen.managementType)
