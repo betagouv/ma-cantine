@@ -48,7 +48,7 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "other_source_description",
             "has_mtm_data",
             "reviews",
-            "mcp_organizations",
+            "proconnect_organizations",
             "departments",
         )
 
