@@ -109,7 +109,7 @@ class TestPurchaseImport(APITestCase):
 
         with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
             _ = self.client.post(reverse("import_purchases"), {"file": purchase_file})
-        self.assertEqual(_process_chunk_mock.call_count, 3)
+        self.assertEqual(_process_chunk_mock.call_count, 2)
 
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=10)

@@ -102,10 +102,11 @@ class ImportPurchasesView(APIView):
     def _process_file(self):
         file_hash = hashlib.md5()
         chunk = []
+        read_header = True
         row_count = 1
         for row in self.file:
             # Sniffing 1st line
-            if row_count == 1:
+            if read_header:
                 # decode header, discarding encoding result that might not be accurate without more data
                 (decoded_row, _) = decode_bytes(row)
                 self.dialect = csv.Sniffer().sniff(decoded_row)
@@ -113,6 +114,8 @@ class ImportPurchasesView(APIView):
                 for header in csvreader:
                     if header != self.expected_header:
                         raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
+                read_header = False
+                row_count = 0
             else:
                 file_hash.update(row)
 
