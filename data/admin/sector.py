@@ -24,6 +24,7 @@ class SectorAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "category",
+        "has_line_ministry",
         "creation_date",
     )
-    list_filter = ("category",)
+    list_filter = ("category", "has_line_ministry")
