@@ -15,10 +15,12 @@ class SectorForm(forms.ModelForm):
 class SectorAdmin(admin.ModelAdmin):
     form = SectorForm
     fields = (
-        "category",
         "name",
+        "category",
         "has_line_ministry",
+        "creation_date",
     )
+    readonly_fields = ("creation_date",)
     list_display = (
         "name",
         "category",
