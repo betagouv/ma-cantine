@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import format_html
 
 from data.models import Purchase
 
@@ -39,7 +41,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
     )
     list_display = (
         "date",
-        "canteen",
+        "canteen_with_link",
         "description",
         "family",
         "characteristics",
@@ -62,3 +64,9 @@ class PurchaseAdmin(SoftDeletionAdmin):
 
     def canteen_name(self, obj):
         return obj.canteen.name
+
+    def canteen_with_link(self, obj):
+        url = reverse("admin:data_canteen_change", args=[obj.canteen_id])
+        return format_html(f'<a href="{url}">{obj.canteen}</a>')
+
+    canteen_with_link.short_description = Purchase._meta.get_field("canteen").verbose_name
