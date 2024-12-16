@@ -105,6 +105,8 @@ class ImportPurchasesView(APIView):
         read_header = True
         row_count = 1
         for row in self.file:
+            file_hash.update(row)
+
             # Sniffing 1st line
             if read_header:
                 # decode header, discarding encoding result that might not be accurate without more data
@@ -117,8 +119,6 @@ class ImportPurchasesView(APIView):
                 read_header = False
                 row_count = 0
             else:
-                file_hash.update(row)
-
                 # Split into chunks
                 chunk.append(row)
 

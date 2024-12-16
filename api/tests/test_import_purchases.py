@@ -192,7 +192,9 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         errors = response.json()["errors"]
-        self.assertEqual(errors.pop(0)["message"], "Format fichier : 7-8 colonnes attendues, 1 trouvées.")
+        self.assertEqual(
+            errors.pop(0)["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
+        )
 
     @authenticate
     def test_warn_duplicate_file(self):
