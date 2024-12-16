@@ -1,6 +1,7 @@
 import csv
 import hashlib
 import io
+import json
 import logging
 import time
 import uuid
@@ -40,6 +41,8 @@ class ImportPurchasesView(APIView):
         self.is_duplicate_file = False
         self.duplicate_purchases = []
         self.duplicate_purchase_count = 0
+        self.data_schema = json.load(open("data/schemas/imports/achats.json"))
+        self.expected_header = [field["name"] for field in self.data_schema["fields"]]
         super().__init__(**kwargs)
 
     def post(self, request):
@@ -101,22 +104,26 @@ class ImportPurchasesView(APIView):
         chunk = []
         row_count = 1
         for row in self.file:
-            # Sniffing header
-            if self.dialect is None:
+            # Sniffing 1st line
+            if row_count == 1:
                 # decode header, discarding encoding result that might not be accurate without more data
                 (decoded_row, _) = decode_bytes(row)
                 self.dialect = csv.Sniffer().sniff(decoded_row)
+                csvreader = csv.reader(io.StringIO("".join(decoded_row)), self.dialect)
+                for header in csvreader:
+                    if header != self.expected_header:
+                        raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
+            else:
+                file_hash.update(row)
 
-            file_hash.update(row)
+                # Split into chunks
+                chunk.append(row)
 
-            # Split into chunks
-            chunk.append(row)
-
-            # Process full chunk
-            if row_count == settings.CSV_PURCHASE_CHUNK_LINES:
-                self._process_chunk(chunk)
-                chunk = []
-                row_count = 0
+                # Process full chunk
+                if row_count == settings.CSV_PURCHASE_CHUNK_LINES:
+                    self._process_chunk(chunk)
+                    chunk = []
+                    row_count = 0
             row_count += 1
 
         # Process the last chunk
@@ -152,9 +159,7 @@ class ImportPurchasesView(APIView):
         csvreader = csv.reader(io.StringIO("".join(decoded_chunk)), self.dialect)
         for row_number, row in enumerate(csvreader, start=1):
             siret = None
-            # If header, pass
-            if row_number == 1 and row[0].lower().__contains__("siret"):
-                continue
+
             try:
                 # first check that the number of columns is good
                 #   to throw error if badly formatted early on.

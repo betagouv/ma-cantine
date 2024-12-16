@@ -313,3 +313,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
+        )
