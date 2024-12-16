@@ -9,8 +9,8 @@ from .utils import get_arrayfield_list_filter
 @admin.register(Purchase)
 class PurchaseAdmin(SoftDeletionAdmin):
     fields = (
-        "canteen",
         "date",
+        "canteen",
         "description",
         "provider",
         "family",
@@ -21,6 +21,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "local_definition",
         "import_source",
         "deletion_date",
+        "creation_date",
     )
     readonly_fields = (
         "canteen",
@@ -34,14 +35,17 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "invoice_file",
         "local_definition",
         "import_source",
+        "creation_date",
     )
     list_display = (
         "date",
+        "canteen",
         "description",
         "family",
         "characteristics",
-        "canteen",
         "price_ht",
+        "deletion_status",
+        "creation_date",
     )
     list_filter = (
         "family",
