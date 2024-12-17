@@ -176,6 +176,7 @@ export default {
       diagnosticYears: years,
       allowedYears: years.map((year) => ({ text: year, value: year })),
       showTeledeclarationPreview: false,
+      purchasesSummary: undefined,
     }
   },
   computed: {
@@ -199,6 +200,9 @@ export default {
       return null
     },
     approDiagnostic() {
+      if (this.isCurrentYear && this.purchasesSummary && this.purchasesSummary.valueTotalHt !== 0) {
+        return this.purchasesSummary
+      }
       return this.centralDiagnostic || this.canteenDiagnostic
     },
     otherMeasuresDiagnostic() {
@@ -298,12 +302,30 @@ export default {
           this.showTeledeclarationPreview = false
         })
     },
+    fetchPurchasesSummary() {
+      this.purchasesSummary = null
+      if (this.canteen?.id) {
+        return fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.year}`)
+          .then((response) => (response.ok ? response.json() : {}))
+          .then((response) => (this.purchasesSummary = response))
+          .catch((e) => {
+            this.$store.dispatch("notifyServerError", e)
+          })
+      }
+    },
   },
   mounted() {
     if (this.$route.query?.year && this.diagnosticYears.indexOf(+this.$route.query.year) > -1) {
       this.year = +this.$route.query.year
       this.$router.replace({ query: {} })
     }
+  },
+  watch: {
+    year() {
+      if (this.isCurrentYear && !this.purchasesSummary) {
+        this.fetchPurchasesSummary()
+      }
+    },
   },
 }
 </script>
