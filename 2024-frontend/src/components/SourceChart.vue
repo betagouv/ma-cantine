@@ -68,6 +68,7 @@ const displayOption = ref("chart")
         :x="measurementGraphValues.x"
         :y="measurementGraphValues.y"
         color='["blue-ecume", "yellow-moutarde", "pink-tuile"]'
+        unitTooltip="kg"
       ></pie-chart>
     </div>
     <div v-else-if="displayOption === 'text'">
