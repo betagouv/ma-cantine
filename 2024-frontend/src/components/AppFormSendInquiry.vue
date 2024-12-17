@@ -4,7 +4,7 @@ import { useRootStore } from "@/stores/root"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
-import constants from "@/constants/form-send-inquiry.js"
+import { inquiries } from "@/constants/form-send-inquiry.js"
 import AppLinkMailto from "@/components/AppLinkMailto.vue"
 
 /* Store */
@@ -49,14 +49,21 @@ const validateForm = () => {
   else sendInquiry()
 }
 
+/* Handle inquiry name */
+const getInquiryTypeDisplay = (type) => {
+  const index = inquiries.findIndex((element) => element.value === type)
+  return inquiries[index].display
+}
+
 /* Send Form */
 const sendInquiry = () => {
   const { fromEmail, name, message, inquiryType } = form
+  const inquiryTypeDisplay = getInquiryTypeDisplay(inquiryType)
   const payload = {
     from: fromEmail,
     name: name,
     message: message,
-    inquiryType: constants.inquiryTypeDisplay[inquiryType],
+    inquiryType: inquiryTypeDisplay,
     meta,
   }
 
@@ -92,7 +99,7 @@ const sendInquiry = () => {
             v-model="form.inquiryType"
             label="Type de demande *"
             :label-visible="true"
-            :options="constants.inquiryOptions"
+            :options="inquiries"
             :error-message="formatError(v$.inquiryType)"
           />
           <DsfrInputGroup
