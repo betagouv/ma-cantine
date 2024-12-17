@@ -8,7 +8,7 @@
         <div class="mt-n1">
           <p class="my-0 fr-text-sm grey--text text--darken-1">Nom de la cantine</p>
           <p class="my-0">{{ canteen.name }}</p>
-          <p class="my-0 fr-text-sm grey--text text--darken-1 mt-2">SIRET</p>
+          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">SIRET</p>
           <p class="my-0">{{ canteen.siret || "—" }}</p>
         </div>
       </v-col>
@@ -23,12 +23,16 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
+      <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
         <div class="mx-8">
           <v-icon color="primary" x-large>$team-line</v-icon>
         </div>
         <div class="mt-n1">
-          <p class="my-0 fr-text-sm grey--text text--darken-1">Type de production</p>
+          <p class="my-0 fr-text-sm grey--text text--darken-1">Type d'établissement</p>
+          <p class="my-0">{{ economicModel || "—" }}</p>
+          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Mode de gestion</p>
+          <p class="my-0">{{ managementType || "—" }}</p>
+          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Type de production</p>
           <p class="my-0">{{ productionType || "—" }}</p>
           <div v-if="isSatellite">
             <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">SIRET du livreur</p>
@@ -39,27 +43,6 @@
               {{ canteen.centralProducerSiret || "—" }}
             </p>
           </div>
-          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Mode de gestion</p>
-          <p class="my-0">{{ managementType || "—" }}</p>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
-        <div class="mx-8">
-          <v-icon color="primary" x-large>$building-line</v-icon>
-        </div>
-        <div class="mt-n1">
-          <p class="my-0 fr-text-sm grey--text text--darken-1">Secteur d'activité</p>
-          <p class="my-0">{{ sectors || "—" }}</p>
-          <div v-if="lineMinistryRequired">
-            <p class="my-0 mt-2 fr-text-sm grey--text text--darken-1">
-              Administration générale de tutelle
-            </p>
-            <p class="my-0">{{ lineMinistry || "—" }}</p>
-          </div>
-          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Type d'établissement</p>
-          <p class="my-0">{{ economicModel || "—" }}</p>
         </div>
       </v-col>
       <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
@@ -86,6 +69,23 @@
                 canteen.satelliteCanteensCount ? parseInt(canteen.satelliteCanteensCount).toLocaleString("fr-FR") : "—"
               }}
             </p>
+          </div>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
+        <div class="mx-8">
+          <v-icon color="primary" x-large>$building-line</v-icon>
+        </div>
+        <div class="mt-n1">
+          <p class="my-0 fr-text-sm grey--text text--darken-1">Secteur d'activité</p>
+          <p class="my-0">{{ sectors || "—" }}</p>
+          <div v-if="lineMinistryRequired">
+            <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">
+              Administration générale de tutelle
+            </p>
+            <p class="my-0">{{ lineMinistry || "—" }}</p>
           </div>
         </div>
       </v-col>
