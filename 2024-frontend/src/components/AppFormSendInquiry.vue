@@ -76,6 +76,7 @@ const sendInquiry = () => {
       })
 
       initFields()
+      window.scrollTo(0,0)
       v$.value.$reset()
     })
     .catch((e) => store.notifyServerError(e))
