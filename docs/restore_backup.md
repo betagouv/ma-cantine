@@ -1,35 +1,21 @@
 # Restaurer un backup de données
 
-Clever cloud -> bdd add-on -> backups -> télécharger le backup (c'est format \*.dump)
+**Attention : La restauration de la base de donnée va supprimer vos donénes actuelles**
 
-Pour ne pas impacter mon setup local, je crée un nouveau DB, service, port. Faut MAJ les variables correspondants dans compose.yaml et .env.Docker (ou .env)
-
-`docker compose up server`
-
-Je choisit de travailler avec que `server` pour éviter le temps du build de front.
-
-(optionnel) si t'as l'erreur que la BDD n'est pas créé, fait `docker compose down --volumes` et reessayer `up`
-
-`docker compose run --user root --rm server bash`
-
-si c'est une nouvelle BDD, faire les migrations python `python manage.py migrate`
-
+1. Exporter un backup : Clever cloud -> bdd add-on -> backups -> télécharger le backup (c'est format \*.dump, extrat via une commande `pg_dump`)
+2. Lancer la restauration :
 ```
-apt-get install -y postgresql-client
 pg_restore -v -x -d postgresql://<db user>:<db password>@<nom du db service dans compose>:<db port>/<db name> <path to .dump file>
 ```
-
 (-v pour verbose; -x pour ignorer les droits; -d pour specifier la BDD)
-
-pour voir les données dans l'admin, faut créer le superuser `python manage.py createsuperuser`
 
 ## Comment recuperer les identifiants des objets supprimés ?
 
-On peut utiliser le modèle `LogEntry` : https://docs.djangoproject.com/en/5.1/ref/contrib/admin/#logentry-objects
+Il est possible d'utiliser le modèle [LogEntry](https://docs.djangoproject.com/en/5.1/ref/contrib/admin/#logentry-objects)
 
-Hacky solution : connecte à l'application (grâce à [CleverCloud CLI](https://developers.clever-cloud.com/doc/cli/ssh-access/)) et avec django shell fait les queries sur LogEntry.
+Hacky solution : Se connecter à l'application (grâce à [CleverCloud CLI](https://developers.clever-cloud.com/doc/cli/ssh-access/)) et avec django shell fait les queries sur LogEntry.
 
-Tip : test en local et après en staging avant prod !
+*Tip : test en local et après en staging avant prod !*
 
 ```
 clever ssh --app <id de l'app>
@@ -37,7 +23,7 @@ cd app_<id, utiliser autocompletion>
 python manage.py shell
 ```
 
-maintenant si tu voulais trouver les objets supprimés par un utilisateur dans la dernière heure tu pourrais faire qqch comme :
+Pour trouver les objets supprimés par un utilisateur dans la dernière heure il est possible de :
 
 ```
 from data.models import User
@@ -54,9 +40,9 @@ recent_deletions = LogEntry.objects.filter(action_time__gte=threshold, user=user
 print(recent_deletions.count())
 ```
 
-les autres `action_flag`s et champs sont decrit dans la documentation django.
+Les autres `action_flags` et champs sont decrit dans la documentation django.
 
-tu pourrais utiliser `content_type` pour trouver que les suppressions d'achats (par exemple):
+Il est possible d'utiliser `content_type` pour trouver que les suppressions d'achats (par exemple):
 
 ```
 recent_deletions.first().content_type

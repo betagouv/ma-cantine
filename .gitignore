@@ -186,4 +186,5 @@ notes/
 .hotfile
 
 # postgres
+.postgres
 *.dump
