@@ -90,6 +90,14 @@ export const useRootStore = defineStore("root", () => {
     }).then(verifyResponse)
   }
 
+  const sendInquiryEmail = async (payload) => {
+    return fetch("/api/v1/inquiry/", { 
+      method: "POST", 
+      headers, 
+      body: JSON.stringify(payload),
+    }).then(verifyResponse)
+  }
+
   return {
     // state
     initialDataLoaded,
@@ -106,5 +114,6 @@ export const useRootStore = defineStore("root", () => {
     notifyRequiredFieldsError,
     notifyServerError,
     removeNotification,
+    sendInquiryEmail,
   }
 })
