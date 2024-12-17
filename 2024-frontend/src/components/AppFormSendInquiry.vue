@@ -5,7 +5,7 @@ import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import ContactFormSetting from "@/settings/contact-form.js"
-import BaseMailto from "@/components/BaseMailto.vue"
+import AppLinkMailto from "@/components/AppLinkMailto.vue"
 
 /* Store */
 const store = useRootStore()
@@ -111,7 +111,7 @@ const sendInquiry = () => {
           <p>
             Si vous n'arrivez pas à utiliser le formulaire ci-dessus, vous pouvez nous contacter directement par email à
             l'adresse suivante:
-            <BaseMailto />
+            <AppLinkMailto />
           </p>
         </DsfrCallout>
       </div>
