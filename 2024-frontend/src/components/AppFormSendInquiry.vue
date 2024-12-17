@@ -4,7 +4,7 @@ import { useRootStore } from "@/stores/root"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
-import ContactFormSetting from "@/settings/contact-form.js"
+import constants from "@/constants/form-send-inquiry.js"
 import AppLinkMailto from "@/components/AppLinkMailto.vue"
 
 /* Store */
@@ -56,7 +56,7 @@ const sendInquiry = () => {
     from: fromEmail,
     name: name,
     message: message,
-    inquiryType: ContactFormSetting.inquiryTypeDisplay[inquiryType],
+    inquiryType: constants.inquiryTypeDisplay[inquiryType],
     meta,
   }
 
@@ -92,7 +92,7 @@ const sendInquiry = () => {
             v-model="form.inquiryType"
             label="Type de demande *"
             :label-visible="true"
-            :options="ContactFormSetting.inquiryOptions"
+            :options="constants.inquiryOptions"
             :error-message="formatError(v$.inquiryType)"
           />
           <DsfrInputGroup
