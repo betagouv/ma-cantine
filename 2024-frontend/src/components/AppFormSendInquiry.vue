@@ -4,6 +4,7 @@ import { useRootStore } from "@/stores/root"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
+import { trackEvent } from "@/services/matomo.js"
 import { inquiries } from "@/constants/form-send-inquiry.js"
 import AppLinkMailto from "@/components/AppLinkMailto.vue"
 
@@ -75,6 +76,7 @@ const sendInquiry = () => {
         message: "Votre message a bien été envoyé. Nous reviendrons vers vous dans les plus brefs délais.",
       })
 
+      trackEvent({category: "inquiry", action: "send", value: inquiryType})
       initFields()
       window.scrollTo(0,0)
       v$.value.$reset()
