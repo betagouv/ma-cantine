@@ -27,52 +27,68 @@ export default Object.freeze({
     communicationSupportUrl: null,
     communicatesOnFoodPlan: null,
   },
-  ManagementTypes: [
-    {
-      text: "Directe",
-      value: "direct",
-    },
-    {
-      text: "Concédée",
-      value: "conceded",
-    },
-  ],
-  ProductionTypes: [
-    {
-      text: "Livreurs des repas",
-      value: "central,central_serving",
-    },
-    {
-      text: "Cantines satellites et autogérées",
-      value: "site,site_cooked_elsewhere",
-    },
-  ],
-  ProductionTypesDetailed: [
-    {
-      title: "produit sur place les repas qu'il sert à ses convives",
-      body: "Mon établissement prépare ce qu'il sert à ses convives",
-      value: "site",
-    },
-    {
-      title: "sert des repas preparés par un autre établissement",
-      body: "Les repas que mon établissement sert à ses convives sont cuisinés ailleurs",
-      value: "site_cooked_elsewhere",
-    },
-    {
-      title: "livre des repas mais n'a pas de lieu de service en propre",
-      body: "Mon établissement livre des repas mais n'a pas de lieu de service en propre",
-      value: "central",
-    },
-    {
-      title: "livre des repas et accueille aussi des convives sur place",
-      body: "Mon établissement livre des repas et accueille aussi des convives sur place",
-      value: "central_serving",
-    },
-  ],
-  EconomicModels: [
-    { text: "Public", value: "public" },
-    { text: "Privé", value: "private" },
-  ],
+  ManagementTypes: {
+    label: "Mode de gestion",
+    items: [
+      {
+        text: "Directe",
+        value: "direct",
+      },
+      {
+        text: "Concédée",
+        value: "conceded",
+      },
+    ],
+  },
+  ProductionTypes: {
+    label: "Type de production",
+    items: [
+      {
+        text: "Livreurs des repas",
+        value: "central,central_serving",
+      },
+      {
+        text: "Cantines satellites et autogérées",
+        value: "site,site_cooked_elsewhere",
+      },
+    ],
+  },
+  ProductionTypesDetailed: {
+    label: "Type de production",
+    items: [
+      {
+        title: "produit sur place les repas qu'il sert à ses convives",
+        body: "Mon établissement prépare ce qu'il sert à ses convives",
+        value: "site",
+      },
+      {
+        title: "sert des repas preparés par un autre établissement",
+        body: "Les repas que mon établissement sert à ses convives sont cuisinés ailleurs",
+        value: "site_cooked_elsewhere",
+      },
+      {
+        title: "livre des repas mais n'a pas de lieu de service en propre",
+        body: "Mon établissement livre des repas mais n'a pas de lieu de service en propre",
+        value: "central",
+      },
+      {
+        title: "livre des repas et accueille aussi des convives sur place",
+        body: "Mon établissement livre des repas et accueille aussi des convives sur place",
+        value: "central_serving",
+      },
+    ],
+  },
+  EconomicModels: {
+    label: "Type d'établissement",
+    items: [
+      { text: "Public", value: "public" },
+      { text: "Privé", value: "private" },
+    ],
+    description: [
+      "<strong>Cantine publique</strong> : tout restaurant sous la responsabilité d’une personne morale de droit publique, qu’il soit opéré en gestion directe ou en gestion concédée (notamment avec une société de restauration collective privée). Les restaurants gérés par une association de gestion sont considérés comme publics dès lors que l’association de gestion est rattachée à une administration ou un établissement du secteur public (État, collectivité, fonction publique hospitalière)",
+      "<strong>Cantine privée</strong> : restaurant sous la responsabilité d’une structure privée : entreprise, association (hors associations de gestion d’un restaurant de structure publique), établissement scolaire privé, etc.",
+    ],
+  },
   ProductFamilies: {
     VIANDES_VOLAILLES: {
       text: "Viandes et volailles fraîches et surgelées",
