@@ -97,7 +97,7 @@ const sendInquiry = () => {
           />
           <DsfrInputGroup
             v-model="form.message"
-            class="base-contact-form__textarea"
+            class="app-form-send-inquiry__textarea"
             label="Message *"
             hint="Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc)."
             :label-visible="true"
@@ -116,14 +116,14 @@ const sendInquiry = () => {
         </DsfrCallout>
       </div>
       <div class="fr-col-4 fr-hidden fr-unhidden-lg">
-        <img src="/static/images/doodles-dsfr/primary/SittingDoodle.png" class="base-contact-form__illustration" />
+        <img src="/static/images/doodles-dsfr/primary/SittingDoodle.png" class="app-form-send-inquiry__illustration" />
       </div>
     </div>
   </div>
 </template>
 
 <style lang="scss">
-.base-contact-form {
+.app-form-send-inquiry {
   &__illustration {
     object-fit: contain;
     object-position: left center;

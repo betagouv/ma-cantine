@@ -1,5 +1,5 @@
 <script setup>
-import BaseContactForm from '@/components/BaseContactForm.vue'
+import AppFormSendInquiry from '@/components/AppFormSendInquiry.vue'
 
 const links = [
   {
@@ -51,7 +51,7 @@ const links = [
   </section>
   <section>
     <h2 class="mb-4">Avez-vous une autre question ?</h2>
-    <BaseContactForm />
+    <AppFormSendInquiry />
   </section>
 </template>
 
