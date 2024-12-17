@@ -46,7 +46,7 @@ const v$ = useVuelidate(rules, form)
 const validateForm = () => {
   v$.value.$validate()
   if (v$.value.$invalid) return
-  else sendInquiry()
+  sendInquiry()
 }
 
 /* Handle inquiry name */
