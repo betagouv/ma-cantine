@@ -63,7 +63,7 @@ class ImportDiagnosticsView(ABC, APIView):
                 self.file = request.data["file"]
                 ImportDiagnosticsView._verify_file_format(self.file)
                 ImportDiagnosticsView._verify_file_size(self.file)
-                self._treat_csv_file(self.file)
+                self._process_file(self.file)
 
                 if self.errors:
                     raise IntegrityError()
@@ -103,7 +103,7 @@ class ImportDiagnosticsView(ABC, APIView):
         if file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
-    def _treat_csv_file(self, file):
+    def _process_file(self, file):
         locations_csv_str = "siret,citycode,postcode\n"
         has_locations_to_find = False
 
