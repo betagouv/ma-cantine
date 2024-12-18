@@ -10,6 +10,9 @@ import AppLinkMailto from "@/components/AppLinkMailto.vue"
 /* Store */
 const store = useRootStore()
 
+/* Images */
+const sittingDoodle = "/static/images/doodles-dsfr/primary/SittingDoodle.png"
+
 /* Save user meta info */
 const meta = {
   userId: store.loggedUser?.id,
@@ -124,7 +127,7 @@ const sendInquiry = () => {
         </DsfrCallout>
       </div>
       <div class="fr-col-4 fr-hidden fr-unhidden-lg">
-        <img src="/static/images/doodles-dsfr/primary/SittingDoodle.png" class="app-form-send-inquiry__illustration" />
+        <img :src="sittingDoodle" class="app-form-send-inquiry__illustration" />
       </div>
     </div>
   </div>
