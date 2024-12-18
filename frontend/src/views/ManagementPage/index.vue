@@ -18,7 +18,7 @@
         les cantines de votre territoire
       </router-link>
     </p>
-    <InformationBanner v-if="true" />
+    <InformationBanner v-if="showInformationBanner" />
     <div v-if="canteenCount > 0" class="mt-4">
       <SuccessBanner v-if="showSuccessBanner" />
       <ActionsBanner v-else />
@@ -173,6 +173,7 @@ export default {
           style: "background-color: #E8EDFF; border: none;", // light / background / contrast-info
         },
       ],
+      showInformationBanner: window.SHOW_MANAGEMENT_INFORMATION_BANNER,
       viewStyles: [
         {
           text: "Vue cartes",
