@@ -56,11 +56,11 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "deletion_date",
     )
     search_fields = (
-        "description",
-        "canteen__name",
         "canteen__siret",
+        "description",
         "import_source",
     )
+    search_help_text = f"Cherche sur les champs : Cantine (SIRET), {Purchase._meta.get_field('description').verbose_name.capitalize()}, {Purchase._meta.get_field('import_source').verbose_name.capitalize()}"
 
     def canteen_name(self, obj):
         return obj.canteen.name
