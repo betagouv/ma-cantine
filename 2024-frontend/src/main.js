@@ -6,6 +6,7 @@ import "@gouvfr/dsfr/dist/utility/utility.main.min.css" // Classes utilitaires :
 import "@gouvminint/vue-dsfr/styles" // Les styles propres aux composants de VueDsfr
 import VueDsfr from "@gouvminint/vue-dsfr" // Import (par défaut) de la bibliothèque
 import i18n from "./i18n.js"
+import VueMatomo from 'vue-matomo'
 
 import FoodAppleIcon from "mdi-icons/FoodApple"
 import OfferIcon from "mdi-icons/Offer"
@@ -27,6 +28,20 @@ app.use(VueDsfr)
 app.use(createPinia())
 app.use(router)
 app.use(i18n)
+
+if (window.MATOMO_ID) {
+  app.use(VueMatomo, {
+    host: "https://stats.beta.gouv.fr",
+    siteId: window.MATOMO_ID,
+    trackerFileName: "matomo",
+    router: router,
+    requireConsent: false,
+    enableLinkTracking: true,
+    trackInitialView: false,
+    debug: false,
+    userId: undefined,
+  })
+}
 
 // deciding to keep same naming convention as previously used with Vue2 and vuetify
 app.component("mdi-food-apple", FoodAppleIcon)
