@@ -46,7 +46,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "family",
         "characteristics",
         "price_ht",
-        "deletion_status",
+        "deleted",
         "creation_date",
     )
     list_filter = (
