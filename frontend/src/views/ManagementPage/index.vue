@@ -18,9 +18,9 @@
         les cantines de votre territoire
       </router-link>
     </p>
+    <InformationBanner v-if="true" />
     <div v-if="canteenCount > 0" class="mt-4">
       <SuccessBanner v-if="showSuccessBanner" />
-      <InformationBanner v-else-if="teledeclarationCampaignActive && !correctionCampaignActive" />
       <ActionsBanner v-else />
     </div>
     <div class="mt-4">
@@ -123,8 +123,6 @@ export default {
       canteenCount: undefined,
       hasActions: false,
       showCanteenCreationPrompt: null,
-      teledeclarationCampaignActive: window.ENABLE_TELEDECLARATION,
-      correctionCampaignActive: window.TELEDECLARATION_CORRECTION_CAMPAIGN,
       actionsLoading: true,
       resources: [
         {
