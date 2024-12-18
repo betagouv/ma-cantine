@@ -43,7 +43,7 @@
 import DsfrCallout from "@/components/DsfrCallout"
 
 export default {
-  name: "TeledeclarationBanner",
+  name: "InformationBanner",
   components: {
     DsfrCallout,
   },
