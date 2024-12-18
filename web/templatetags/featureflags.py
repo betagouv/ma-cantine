@@ -37,3 +37,8 @@ def enable_dashboard():
 @register.simple_tag
 def enable_waste_measurements():
     return getattr(settings, "ENABLE_WASTE_MEASUREMENTS", "")
+
+
+@register.simple_tag
+def show_management_information_banner():
+    return getattr(settings, "SHOW_MANAGEMENT_INFORMATION_BANNER", "")

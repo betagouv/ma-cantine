@@ -151,6 +151,7 @@ ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des
 PUBLISH_BY_DEFAULT= Optionnel - `True` pour publier les cantines sauf celles qui sont identifiées autrement.
 ENABLE_VUE3= Optionnel - `True` pour rendre les nouvelles vues disponibles.
 ENABLE_WASTE_MEASUREMENTS= Optionnel - `True` pour rendre l'outil évaluation gaspillage alimentaire disponible
+SHOW_MANAGEMENT_INFORMATION_BANNER= Optionnel - `True` pour afficher une bannière dans la page d'accueil du tableau de bord
 ```
 
 ### Relances automatiques par email
