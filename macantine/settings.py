@@ -314,6 +314,8 @@ DJANGO_VITE_PLUGIN = {
     "BUILD_DIR": "build",
 }
 
+BUILD_FRONTEND = os.getenv("BUILD_FRONTEND", "True") == "True"
+
 # Email
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL")
