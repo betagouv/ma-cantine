@@ -1,4 +1,5 @@
 import csv
+import json
 import logging
 import re
 import time
@@ -45,6 +46,10 @@ class ImportDiagnosticsView(ABC, APIView):
         self.start_time = None
         self.encoding_detected = None
         self.file = None
+        self.data_schema_canteen = json.load(open("data/schemas/imports/cantines.json"))
+        self.data_schema_diagnostics = json.load(open("data/schemas/imports/diagnostics.json"))
+        self.expected_header_canteen = [field["name"] for field in self.data_schema_canteen["fields"]]
+        self.expected_header_diagnostics = [field["name"] for field in self.data_schema_diagnostics["fields"]]
         super().__init__(**kwargs)
 
     @property
@@ -112,7 +117,13 @@ class ImportDiagnosticsView(ABC, APIView):
         dialect = csv.Sniffer().sniff(filelines[0])
 
         csvreader = csv.reader(filelines, dialect=dialect)
-        for row_number, row in enumerate(csvreader, start=1):
+        header = next(csvreader)
+        if not (
+            set(header).issubset(set(self.expected_header_canteen))
+            or set(header).issubset(set(self.expected_header_diagnostics))
+        ):
+            raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
+        for row_number, row in enumerate(csvreader):
             try:
                 if self._skip_row(row_number, row):
                     continue
