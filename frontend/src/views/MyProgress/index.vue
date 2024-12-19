@@ -91,7 +91,7 @@
             </div>
           </div>
           <div v-else>
-            <p>Pour télédéclarer, veuillez :</p>
+            <p>Pour télédéclarer veuillez :</p>
             <ul>
               <li v-if="missingApproDiagnostic" class="mb-2">
                 <router-link
