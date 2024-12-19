@@ -33,7 +33,7 @@
     </v-row>
     <v-row v-if="canteen" class="flex-row-reverse mt-5 mt-md-10">
       <v-col cols="12" sm="9" md="3" lg="2" style="border-right: 1px solid #DDD;" class="fr-text-sm order-md-last pt-1">
-        <DsfrNativeSelect v-model="selectedYear" :items="yearOptions" class="mb-3" />
+        <DsfrNativeSelect v-model="selectedYear" :items="yearOptions" class="mb-3 mt-2" />
         <div v-if="hasActiveTeledeclaration">
           <DataInfoBadge class="my-2" :hasActiveTeledeclaration="true" />
           <p>
