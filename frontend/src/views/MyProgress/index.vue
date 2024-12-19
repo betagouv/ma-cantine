@@ -79,80 +79,37 @@
             <p>Votre livreur des repas va déclarer les données d'approvisionnement pour votre établissement.</p>
             <p>Pour aller plus loin, vous pouvez télédéclarer les autres volets du bilan.</p>
           </div>
-          <div v-if="readyToTeledeclare">
-            <div v-if="hasFinishedMeasureTunnel">
-              <p>Votre bilan est complet !</p>
-            </div>
-            <div v-else-if="!isSatelliteWithApproCentralDiagnostic">
-              <p>Vous pouvez télédéclarer dès maintenant.</p>
-              <p v-if="!isCentralKitchen || diagnostic.centralKitchenDiagnosticMode !== 'APPRO'">
-                Pour aller plus loin, vous pouvez également compléter les autres volets du bilan.
-              </p>
-            </div>
-          </div>
-          <div v-else>
-            <p>Pour télédéclarer veuillez :</p>
-            <ul>
-              <li v-if="missingApproDiagnostic" class="mb-2">
-                <router-link
-                  custom
-                  :to="{
-                    name: 'DiagnosticTunnel',
-                    params: {
-                      canteenUrlComponent: this.canteenUrlComponent,
-                      year: year,
-                      measureId: 'qualite-des-produits',
-                    },
-                  }"
-                  v-slot="{ href }"
-                >
-                  <a @click.stop.prevent="startApproTunnel" :href="href">Rentrer mes données d'approvisionnement</a>
-                </router-link>
-              </li>
-              <li v-else-if="missingApproData" class="mb-2">
-                <router-link
-                  :to="{
-                    name: 'DiagnosticTunnel',
-                    params: {
-                      canteenUrlComponent: this.canteenUrlComponent,
-                      year: year,
-                      measureId: 'qualite-des-produits',
-                    },
-                  }"
-                >
-                  Compléter le volet d’approvisionnement
-                </router-link>
-              </li>
-              <li v-if="missingCanteenData" class="mb-2">
-                <router-link
-                  :to="{
-                    name: 'CanteenForm',
-                    params: { canteenUrlComponent: this.canteenUrlComponent },
-                    query: { valider: true },
-                  }"
-                >
-                  Compléter les données de votre établissement
-                </router-link>
-              </li>
-              <li v-if="hasSatelliteInconsistency" class="mb-2">
-                <router-link
-                  :to="{
-                    name: 'SatelliteManagement',
-                    params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-                  }"
-                >
-                  Mettre à jour vos satellites
-                </router-link>
-              </li>
-              <li v-if="missingDeclarationMode" class="mb-2">
-                Choisir comment les données sont saisis pour vos satellites
-              </li>
-            </ul>
-          </div>
+          <v-checkbox
+            v-for="tab in tabHeaders"
+            class="mb-1"
+            readonly
+            :key="tab.id"
+            :input-value="tab.isCompleted"
+            :label="tab.text"
+            :prepend-icon="tab.icon"
+            :dense="true"
+            :hide-details="true"
+          />
+          <ul>
+            <li v-if="hasSatelliteInconsistency" class="mb-2">
+              <router-link
+                :to="{
+                  name: 'SatelliteManagement',
+                  params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                }"
+              >
+                Mettre à jour vos satellites
+              </router-link>
+            </li>
+            <li v-if="missingDeclarationMode" class="mb-2">
+              Choisir comment les données sont saisis pour vos satellites
+            </li>
+          </ul>
           <v-btn
             color="primary"
             :disabled="!readyToTeledeclare && !hasFinishedMeasureTunnel"
             @click="showTeledeclarationPreview = true"
+            class="mt-3"
           >
             Télédéclarer
           </v-btn>
@@ -306,6 +263,7 @@ import {
   missingCanteenData,
   hasSatelliteInconsistency,
   hasFinishedMeasureTunnel,
+  hasStartedMeasureTunnel,
 } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
@@ -336,24 +294,6 @@ export default {
       tab: null,
       diagnostic: null,
       centralDiagnostic: null,
-      tabHeaders: [
-        ...keyMeasures.map((x) => ({
-          urlSlug: x.id,
-          text: x.tabText,
-          title: x.title,
-          icon: x.mdiIcon,
-          to: { params: { measure: x.id } },
-        })),
-        ...[
-          {
-            urlSlug: establishmentId,
-            text: "Établissement",
-            title: "Établissement",
-            icon: "$building-fill",
-            to: { params: { measure: establishmentId } },
-          },
-        ],
-      ],
       canteen: null,
       years: diagnosticYears(),
       currentYear: lastYear() + 1,
@@ -368,6 +308,31 @@ export default {
     }
   },
   computed: {
+    tabHeaders() {
+      const tabHeaders = []
+      for (let i = 0; i < keyMeasures.length; i++) {
+        const measure = keyMeasures[i]
+        const item = {
+          urlSlug: measure.id,
+          text: measure.tabText,
+          title: measure.title,
+          icon: measure.mdiIcon,
+          to: { params: { measure: measure.id } },
+          isCompleted: hasStartedMeasureTunnel(this.diagnostic, measure),
+        }
+        tabHeaders.push(item)
+      }
+      const centralKitchenCompleted = !this.missingDeclarationMode && !this.hasSatelliteInconsistency
+      tabHeaders.push({
+        urlSlug: this.establishmentId,
+        text: "Établissement",
+        title: "Établissement",
+        icon: "$building-fill",
+        to: { params: { measure: this.establishmentId } },
+        isCompleted: this.isCentralKitchen ? centralKitchenCompleted : !this.missingCanteenData,
+      })
+      return tabHeaders
+    },
     mobileSelectItems() {
       return this.tabHeaders.map((x, index) => ({ text: x.text, value: index }))
     },
