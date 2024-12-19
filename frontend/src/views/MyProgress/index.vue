@@ -80,8 +80,8 @@
             <p>Pour aller plus loin, vous pouvez télédéclarer les autres volets du bilan.</p>
           </div>
           <v-checkbox
-            v-for="tab in tabHeaders"
-            class="mb-1"
+            v-for="(tab, key) in tabHeaders"
+            class="mb-1 progress-checkbox"
             readonly
             :key="tab.id"
             :input-value="tab.isCompleted"
@@ -89,6 +89,7 @@
             :prepend-icon="tab.icon"
             :dense="true"
             :hide-details="true"
+            @click="changeTab(key)"
           />
           <ul>
             <li v-if="hasSatelliteInconsistency" class="mb-2">
@@ -544,6 +545,9 @@ export default {
           this.$store.dispatch("notifyServerError", e)
         })
     },
+    changeTab(tab) {
+      this.tab = tab
+    },
   },
   watch: {
     canteenUrlComponent() {
@@ -600,5 +604,14 @@ export default {
 }
 .close-icon {
   border-bottom: solid 1px;
+}
+.progress-checkbox {
+  align-items: center;
+}
+</style>
+
+<style>
+.progress-checkbox:hover * {
+  color: var(--v-primary-base) !important;
 }
 </style>
