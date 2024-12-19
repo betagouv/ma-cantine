@@ -37,6 +37,7 @@ export default {
     },
     mode() {
       if (this.hasActiveTeledeclaration) return "SUCCESS"
+      else if (this.missingData || this.readyToTeledeclare) return "ERROR"
       return "INFO"
     },
   },
