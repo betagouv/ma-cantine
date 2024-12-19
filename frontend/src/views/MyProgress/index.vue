@@ -6,21 +6,25 @@
         { to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' },
       ]"
     />
-    <v-row>
+    <v-row align="center">
       <v-col cols="12" md="10">
         <ProductionTypeTag v-if="canteen" :canteen="canteen" class="mt-n2" />
         <h1 class="fr-h3 mt-1 mb-2" v-if="canteen">{{ canteen.name }}</h1>
-        <v-row v-if="canteenPreviews.length > 1">
-          <v-col>
-            <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
-              Changer d'établissement
-            </v-btn>
-          </v-col>
-        </v-row>
       </v-col>
       <v-col cols="12" sm="5" md="2">
-        <DsfrNativeSelect label="Année" v-model="selectedYear" :items="yearOptions" />
+        <v-btn
+          v-if="canteenPreviews.length > 1"
+          outlined
+          color="primary"
+          class="fr-btn--tertiary"
+          :to="{ name: 'ManagementPage' }"
+        >
+          Changer d'établissement
+        </v-btn>
       </v-col>
+    </v-row>
+    <v-row>
+      <DsfrNativeSelect label="Année" v-model="selectedYear" :items="yearOptions" />
     </v-row>
     <v-row v-if="canteen" class="mt-5 mt-md-10">
       <v-col cols="12" sm="9" md="3" lg="2" style="border-left: 1px solid #DDD;" class="fr-text-sm order-md-last pr-0">
