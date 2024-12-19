@@ -92,15 +92,15 @@
     </div>
     <h2 class="my-6">Format du fichier</h2>
     <p>
-      Le fichier CSV doit contenir un achat par ligne.
+      Le fichier CSV doit commencer par une ligne en-tête avec le nom des colonnes exactement comme listé ci-dessous
+      dans "Titre". Il doit ensuite contenir un achat par ligne.
     </p>
-    <p>Les données doivent être présentées dans l'ordre indiqué ci-dessous.</p>
     <h3 class="my-6">Colonnes</h3>
     <v-simple-table class="my-6">
       <template v-slot:default>
         <thead>
           <tr>
-            <th>Colonne</th>
+            <th>Titre</th>
             <th>Champ</th>
             <th>Description</th>
             <th>Type</th>
@@ -110,7 +110,7 @@
         </thead>
         <tbody>
           <tr v-for="(field, idx) in documentation" :key="idx">
-            <td class="text-center">{{ idx + 1 }}</td>
+            <td>{{ field.title }}</td>
             <td>{{ field.name }}</td>
             <td v-html="field.description"></td>
             <td style="min-width: 150px;">{{ field.type }}</td>
@@ -171,33 +171,39 @@ export default {
       duplicatePurchases: null,
       documentation: [
         {
+          title: "siret",
           name: "SIRET de la cantine ayant réalisé l'achat",
           description: "La cantine avec ce SIRET doit être déjà enregistrée sur notre plateforme.",
           type: "14 chiffres, avec ou sans espaces",
           example: "000 000 000 00000",
         },
         {
+          title: "description",
           name: "Description de l'achat",
           example: "Pommes de terre",
           type: "Texte libre",
         },
         {
+          title: "fournisseur",
           name: "Fournisseur",
           example: "Le traiteur du village",
           type: "Texte libre",
         },
         {
+          title: "date",
           name: "Date d'achat",
           type: "Date en format AAAA-MM-JJ",
           example: "2022-01-30",
         },
         {
+          title: "prix_ht",
           name: "Prix HT",
           description: numberFormatExample,
           type: "Chiffre",
           example: "3290.23",
         },
         {
+          title: "famille_produits",
           name: "Famille de produits",
           description: `Options acceptées : ${Object.keys(Constants.ProductFamilies).map(
             (x) => " <code>" + x + "</code>"
@@ -206,6 +212,7 @@ export default {
           example: `${Object.keys(Constants.ProductFamilies)[0]}`,
         },
         {
+          title: "caracteristiques",
           name: "Caractéristiques",
           description: `Options acceptées : ${Object.keys(Constants.Characteristics).map(
             (x) => " <code>" + x + "</code>"
@@ -214,6 +221,7 @@ export default {
           example: `${Object.keys(Constants.Characteristics)[0]},${Object.keys(Constants.Characteristics)[3]}`,
         },
         {
+          title: "definition_local",
           name: "Définition de local",
           description: `Obligatoire si l'achat a la caractéristique de LOCAL. Options acceptées : ${Object.keys(
             Constants.LocalDefinitions

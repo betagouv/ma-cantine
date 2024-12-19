@@ -1,4 +1,5 @@
 import csv
+import json
 import logging
 import re
 import time
@@ -45,6 +46,10 @@ class ImportDiagnosticsView(ABC, APIView):
         self.start_time = None
         self.encoding_detected = None
         self.file = None
+        self.data_schema_canteen = json.load(open("data/schemas/imports/cantines.json"))
+        self.data_schema_diagnostics = json.load(open("data/schemas/imports/diagnostics.json"))
+        self.expected_header_canteen = [field["name"] for field in self.data_schema_canteen["fields"]]
+        self.expected_header_diagnostics = [field["name"] for field in self.data_schema_diagnostics["fields"]]
         super().__init__(**kwargs)
 
     @property
@@ -63,7 +68,7 @@ class ImportDiagnosticsView(ABC, APIView):
                 self.file = request.data["file"]
                 ImportDiagnosticsView._verify_file_format(self.file)
                 ImportDiagnosticsView._verify_file_size(self.file)
-                self._treat_csv_file(self.file)
+                self._process_file(self.file)
 
                 if self.errors:
                     raise IntegrityError()
@@ -103,7 +108,7 @@ class ImportDiagnosticsView(ABC, APIView):
         if file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
-    def _treat_csv_file(self, file):
+    def _process_file(self, file):
         locations_csv_str = "siret,citycode,postcode\n"
         has_locations_to_find = False
 
@@ -112,7 +117,13 @@ class ImportDiagnosticsView(ABC, APIView):
         dialect = csv.Sniffer().sniff(filelines[0])
 
         csvreader = csv.reader(filelines, dialect=dialect)
-        for row_number, row in enumerate(csvreader, start=1):
+        header = next(csvreader)
+        if not (
+            set(header).issubset(set(self.expected_header_canteen))
+            or set(header).issubset(set(self.expected_header_diagnostics))
+        ):
+            raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
+        for row_number, row in enumerate(csvreader):
             try:
                 if self._skip_row(row_number, row):
                     continue
