@@ -48,8 +48,12 @@ class ImportDiagnosticsView(ABC, APIView):
         self.file = None
         self.data_schema_canteen = json.load(open("data/schemas/imports/cantines.json"))
         self.data_schema_diagnostics = json.load(open("data/schemas/imports/diagnostics.json"))
+        self.data_schema_diagnostics_admin = json.load(open("data/schemas/imports/diagnostics_admin.json"))
         self.expected_header_canteen = [field["name"] for field in self.data_schema_canteen["fields"]]
         self.expected_header_diagnostics = [field["name"] for field in self.data_schema_diagnostics["fields"]]
+        self.expected_header_diagnostics_admin = [
+            field["name"] for field in self.data_schema_diagnostics_admin["fields"]
+        ]
         super().__init__(**kwargs)
 
     @property
@@ -119,7 +123,8 @@ class ImportDiagnosticsView(ABC, APIView):
         csvreader = csv.reader(filelines, dialect=dialect)
         header = next(csvreader)
         if not (
-            set(header).issubset(set(self.expected_header_canteen))
+            set(header).issubset(set(self.expected_header_diagnostics_admin))
+            or set(header).issubset(set(self.expected_header_canteen))
             or set(header).issubset(set(self.expected_header_diagnostics))
         ):
             raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
@@ -129,7 +134,7 @@ class ImportDiagnosticsView(ABC, APIView):
                     continue
                 canteen, should_update_geolocation = self._save_data_from_row(row)
                 self.canteens[canteen.siret] = canteen
-                if should_update_geolocation:
+                if should_update_geolocation and not self.errors:
                     has_locations_to_find = True
                     if canteen.city_insee_code:
                         locations_csv_str += f"{canteen.siret},{canteen.city_insee_code},\n"
@@ -139,7 +144,7 @@ class ImportDiagnosticsView(ABC, APIView):
             except Exception as e:
                 for error in self._parse_errors(e, row):
                     self.errors.append(
-                        ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number)
+                        ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number + 1)
                     )
         if has_locations_to_find:
             self._update_location_data(locations_csv_str)
@@ -161,13 +166,12 @@ class ImportDiagnosticsView(ABC, APIView):
         # return staff-customisable fields
         (
             import_source,
-            publication_status,
             should_teledeclare,
             silently_added_manager_emails,
         ) = self._generate_canteen_meta_fields(row)
         # create the canteen and potentially the diagnostic
         canteen, should_update_geolocation = self._update_or_create_canteen(
-            row, import_source, publication_status, manager_emails, silently_added_manager_emails
+            row, import_source, manager_emails, silently_added_manager_emails
         )
         if diagnostic_year:
             diagnostic = self._update_or_create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
@@ -358,7 +362,6 @@ class ImportDiagnosticsView(ABC, APIView):
         self,
         row,
         import_source,
-        publication_status,
         manager_emails,
         silently_added_manager_emails,
         satellite_canteens_count=None,
@@ -387,7 +390,6 @@ class ImportDiagnosticsView(ABC, APIView):
         canteen.management_type = row[9].strip().lower()
         canteen.economic_model = row[10].strip().lower() if len(row) > 10 else None
         canteen.import_source = import_source
-        canteen.publication_status = publication_status
         if satellite_canteens_count:
             canteen.satellite_canteens_count = satellite_canteens_count
 
@@ -419,7 +421,6 @@ class ImportDiagnosticsView(ABC, APIView):
         silent_manager_idx = self.final_value_idx + 1
         silently_added_manager_emails = []
         import_source = "Import massif"
-        publication_status = Canteen.PublicationStatus.DRAFT
         should_teledeclare = False
         if len(row) > silent_manager_idx:  # already checked earlier that it's a staff user
             try:
@@ -437,19 +438,16 @@ class ImportDiagnosticsView(ABC, APIView):
             except Exception:
                 raise ValidationError({"import_source": "Ce champ ne peut pas être vide."})
 
-            status_idx = silent_manager_idx + 2
-            if len(row) > status_idx and row[status_idx]:
-                publication_status = row[status_idx].strip()
-            teledeclaration_idx = silent_manager_idx + 3
+            teledeclaration_idx = silent_manager_idx + 2
             if len(row) > teledeclaration_idx and row[teledeclaration_idx]:
-                if row[teledeclaration_idx] != "teledeclared":
+                if row[teledeclaration_idx] not in ["teledeclare", "brouillon"]:
                     raise ValidationError(
                         {
                             "teledeclaration": f"'{row[teledeclaration_idx]}' n'est pas un statut de télédéclaration valid"
                         }
                     )
                 should_teledeclare = True
-        return (import_source, publication_status, should_teledeclare, silently_added_manager_emails)
+        return (import_source, should_teledeclare, silently_added_manager_emails)
 
     def _parse_errors(self, e, row):  # noqa: C901
         errors = []
