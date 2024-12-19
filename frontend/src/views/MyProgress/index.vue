@@ -6,25 +6,34 @@
         { to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' },
       ]"
     />
-    <v-row>
+    <v-row align="end">
       <v-col cols="12" md="10">
-        <ProductionTypeTag v-if="canteen" :canteen="canteen" class="mt-n2" />
-        <h1 class="fr-h3 mt-1 mb-2" v-if="canteen">{{ canteen.name }}</h1>
-        <v-row v-if="canteenPreviews.length > 1">
-          <v-col>
-            <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
-              Changer d'établissement
-            </v-btn>
-          </v-col>
-        </v-row>
+        <DataInfoBadge v-if="hasActiveTeledeclaration" class="my-2" :hasActiveTeledeclaration="true" />
+        <DataInfoBadge
+          v-else-if="inTeledeclarationCampaign"
+          class="my-2"
+          :readyToTeledeclare="readyToTeledeclare"
+          :missingData="!readyToTeledeclare"
+        />
+        <DataInfoBadge v-else-if="+year >= currentYear" class="my-2" :currentYear="+year === currentYear" />
+        <ProductionTypeTag v-if="canteen" :canteen="canteen" class="ml-3" />
+        <h1 class="fr-h3 mt-1 mb-0" v-if="canteen">Télédéclaration : {{ canteen.name }}</h1>
       </v-col>
       <v-col cols="12" sm="5" md="2">
-        <DsfrNativeSelect label="Année" v-model="selectedYear" :items="yearOptions" />
+        <v-btn
+          v-if="canteenPreviews.length > 1"
+          outlined
+          color="primary"
+          class="fr-btn--tertiary"
+          :to="{ name: 'ManagementPage' }"
+        >
+          Changer d'établissement
+        </v-btn>
       </v-col>
     </v-row>
-    <v-row v-if="canteen" class="mt-5 mt-md-10">
-      <v-col cols="12" sm="9" md="3" lg="2" style="border-left: 1px solid #DDD;" class="fr-text-sm order-md-last pr-0">
-        <h2 class="fr-h5 mb-2">Télédéclaration</h2>
+    <v-row v-if="canteen" class="flex-row-reverse mt-5 mt-md-10">
+      <v-col cols="12" sm="9" md="3" lg="2" style="border-right: 1px solid #DDD;" class="fr-text-sm order-md-last pt-1">
+        <DsfrNativeSelect v-model="selectedYear" :items="yearOptions" class="mb-3 mt-2" />
         <div v-if="hasActiveTeledeclaration">
           <DataInfoBadge class="my-2" :hasActiveTeledeclaration="true" />
           <p>
@@ -70,79 +79,42 @@
             <p>Votre livreur des repas va déclarer les données d'approvisionnement pour votre établissement.</p>
             <p>Pour aller plus loin, vous pouvez télédéclarer les autres volets du bilan.</p>
           </div>
-          <div v-if="readyToTeledeclare">
-            <div v-if="hasFinishedMeasureTunnel">
-              <p>Votre bilan est complet !</p>
-            </div>
-            <div v-else-if="!isSatelliteWithApproCentralDiagnostic">
-              <p>Vous pouvez télédéclarer dès maintenant.</p>
-              <p v-if="!isCentralKitchen || diagnostic.centralKitchenDiagnosticMode !== 'APPRO'">
-                Pour aller plus loin, vous pouvez également compléter les autres volets du bilan.
-              </p>
-            </div>
-            <v-btn color="primary" :outlined="!hasFinishedMeasureTunnel" @click="showTeledeclarationPreview = true">
-              Télédéclarer
-            </v-btn>
-          </div>
-          <div v-else>
-            <p>Pour télédéclarer, veuillez :</p>
-            <ul>
-              <li v-if="missingApproDiagnostic" class="mb-2">
-                <router-link
-                  custom
-                  :to="{
-                    name: 'DiagnosticTunnel',
-                    params: {
-                      canteenUrlComponent: this.canteenUrlComponent,
-                      year: year,
-                      measureId: 'qualite-des-produits',
-                    },
-                  }"
-                  v-slot="{ href }"
-                >
-                  <a @click.stop.prevent="startApproTunnel" :href="href">Rentrer mes données d'approvisionnement</a>
-                </router-link>
-              </li>
-              <li v-else-if="missingApproData" class="mb-2">
-                <router-link
-                  :to="{
-                    name: 'DiagnosticTunnel',
-                    params: {
-                      canteenUrlComponent: this.canteenUrlComponent,
-                      year: year,
-                      measureId: 'qualite-des-produits',
-                    },
-                  }"
-                >
-                  Compléter le volet d’approvisionnement
-                </router-link>
-              </li>
-              <li v-if="missingCanteenData" class="mb-2">
-                <router-link
-                  :to="{
-                    name: 'CanteenForm',
-                    params: { canteenUrlComponent: this.canteenUrlComponent },
-                    query: { valider: true },
-                  }"
-                >
-                  Compléter les données de votre établissement
-                </router-link>
-              </li>
-              <li v-if="hasSatelliteInconsistency" class="mb-2">
-                <router-link
-                  :to="{
-                    name: 'SatelliteManagement',
-                    params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-                  }"
-                >
-                  Mettre à jour vos satellites
-                </router-link>
-              </li>
-              <li v-if="missingDeclarationMode" class="mb-2">
-                Choisir comment les données sont saisis pour vos satellites
-              </li>
-            </ul>
-          </div>
+          <v-checkbox
+            v-for="(tab, key) in tabHeaders"
+            class="mb-1 progress-checkbox"
+            readonly
+            :disabled="usesSatelliteDiagnosticForMeasure(tab)"
+            :key="tab.id"
+            :input-value="tab.isCompleted"
+            :label="tab.text"
+            :prepend-icon="tab.icon"
+            :dense="true"
+            :hide-details="true"
+            @click="changeTab(key)"
+          />
+          <ul>
+            <li v-if="hasSatelliteInconsistency" class="mb-2">
+              <router-link
+                :to="{
+                  name: 'SatelliteManagement',
+                  params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                }"
+              >
+                Mettre à jour vos satellites
+              </router-link>
+            </li>
+            <li v-if="missingDeclarationMode" class="mb-2">
+              Choisir comment les données sont saisis pour vos satellites
+            </li>
+          </ul>
+          <v-btn
+            color="primary"
+            :disabled="!readyToTeledeclare && !hasFinishedMeasureTunnel"
+            @click="showTeledeclarationPreview = true"
+            class="mt-3"
+          >
+            Télédéclarer
+          </v-btn>
         </div>
         <div v-else-if="+year >= currentYear">
           <DataInfoBadge class="my-2" :currentYear="+year === currentYear" />
@@ -293,6 +265,7 @@ import {
   missingCanteenData,
   hasSatelliteInconsistency,
   hasFinishedMeasureTunnel,
+  hasStartedMeasureTunnel,
 } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
@@ -323,24 +296,6 @@ export default {
       tab: null,
       diagnostic: null,
       centralDiagnostic: null,
-      tabHeaders: [
-        ...keyMeasures.map((x) => ({
-          urlSlug: x.id,
-          text: x.tabText,
-          title: x.title,
-          icon: x.mdiIcon,
-          to: { params: { measure: x.id } },
-        })),
-        ...[
-          {
-            urlSlug: establishmentId,
-            text: "Établissement",
-            title: "Établissement",
-            icon: "$building-fill",
-            to: { params: { measure: establishmentId } },
-          },
-        ],
-      ],
       canteen: null,
       years: diagnosticYears(),
       currentYear: lastYear() + 1,
@@ -355,6 +310,31 @@ export default {
     }
   },
   computed: {
+    tabHeaders() {
+      const tabHeaders = []
+      for (let i = 0; i < keyMeasures.length; i++) {
+        const measure = keyMeasures[i]
+        const item = {
+          urlSlug: measure.id,
+          text: measure.tabText,
+          title: measure.title,
+          icon: measure.mdiIcon,
+          to: { params: { measure: measure.id } },
+          isCompleted: hasStartedMeasureTunnel(this.diagnostic, measure),
+        }
+        tabHeaders.push(item)
+      }
+      const centralKitchenCompleted = !this.missingDeclarationMode && !this.hasSatelliteInconsistency
+      tabHeaders.push({
+        urlSlug: this.establishmentId,
+        text: "Établissement",
+        title: "Établissement",
+        icon: "$building-fill",
+        to: { params: { measure: this.establishmentId } },
+        isCompleted: this.isCentralKitchen ? centralKitchenCompleted : !this.missingCanteenData,
+      })
+      return tabHeaders
+    },
     mobileSelectItems() {
       return this.tabHeaders.map((x, index) => ({ text: x.text, value: index }))
     },
@@ -566,6 +546,9 @@ export default {
           this.$store.dispatch("notifyServerError", e)
         })
     },
+    changeTab(tab) {
+      this.tab = tab
+    },
   },
   watch: {
     canteenUrlComponent() {
@@ -622,5 +605,14 @@ export default {
 }
 .close-icon {
   border-bottom: solid 1px;
+}
+.progress-checkbox {
+  align-items: center;
+}
+</style>
+
+<style>
+.progress-checkbox:hover * {
+  color: var(--v-primary-base) !important;
 }
 </style>
