@@ -89,9 +89,6 @@
                 Pour aller plus loin, vous pouvez également compléter les autres volets du bilan.
               </p>
             </div>
-            <v-btn color="primary" :outlined="!hasFinishedMeasureTunnel" @click="showTeledeclarationPreview = true">
-              Télédéclarer
-            </v-btn>
           </div>
           <div v-else>
             <p>Pour télédéclarer, veuillez :</p>
@@ -152,6 +149,13 @@
               </li>
             </ul>
           </div>
+          <v-btn
+            color="primary"
+            :disabled="!readyToTeledeclare && !hasFinishedMeasureTunnel"
+            @click="showTeledeclarationPreview = true"
+          >
+            Télédéclarer
+          </v-btn>
         </div>
         <div v-else-if="+year >= currentYear">
           <DataInfoBadge class="my-2" :currentYear="+year === currentYear" />
