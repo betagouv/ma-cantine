@@ -83,6 +83,7 @@
             v-for="(tab, key) in tabHeaders"
             class="mb-1 progress-checkbox"
             readonly
+            :disabled="usesSatelliteDiagnosticForMeasure(tab)"
             :key="tab.id"
             :input-value="tab.isCompleted"
             :label="tab.text"
