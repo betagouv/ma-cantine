@@ -48,15 +48,21 @@ class ImportDiagnosticsView(ABC, APIView):
         self.file = None
         self.data_schema_canteen = json.load(open("data/schemas/imports/cantines.json"))
         self.data_schema_diagnostics = json.load(open("data/schemas/imports/diagnostics.json"))
+        self.data_schema_diagnostics_cc = json.load(open("data/schemas/imports/diagnostics_cc.json"))
         self.data_schema_diagnostics_admin = json.load(open("data/schemas/imports/diagnostics_admin.json"))
         self.data_schema_diagnostics_complete = json.load(open("data/schemas/imports/diagnostics_complets.json"))
+        self.data_schema_diagnostics_complete_cc = json.load(open("data/schemas/imports/diagnostics_complets_cc.json"))
         self.expected_header_canteen = [field["name"] for field in self.data_schema_canteen["fields"]]
         self.expected_header_diagnostics = [field["name"] for field in self.data_schema_diagnostics["fields"]]
+        self.expected_header_diagnostics_cc = [field["name"] for field in self.data_schema_diagnostics_cc["fields"]]
         self.expected_header_diagnostics_admin = [
             field["name"] for field in self.data_schema_diagnostics_admin["fields"]
         ]
-        self.expected_header_diagnostics_complets = [
+        self.expected_header_diagnostics_complete = [
             field["name"] for field in self.data_schema_diagnostics_complete["fields"]
+        ]
+        self.expected_header_diagnostics_complete_cc = [
+            field["name"] for field in self.data_schema_diagnostics_complete_cc["fields"]
         ]
         super().__init__(**kwargs)
 
@@ -138,7 +144,9 @@ class ImportDiagnosticsView(ABC, APIView):
         if not (
             set(header).issubset(set(self.expected_header_diagnostics_admin))
             or set(header).issubset(set(self.expected_header_canteen))
-            or set(header).issubset(set(self.expected_header_diagnostics_complets))
+            or set(header).issubset(set(self.expected_header_diagnostics_cc))
+            or set(header).issubset(set(self.expected_header_diagnostics_complete_cc))
+            or set(header).issubset(set(self.expected_header_diagnostics_complete))
             or set(header).issubset(set(self.expected_header_diagnostics))
         ):
             raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
@@ -642,8 +650,8 @@ class CCImportMixin:
         elif len(row) < last_mandatory_column:
             raise IndexError()
 
-    def _treat_csv_file(self, file):
-        return_value = super()._treat_csv_file(file)
+    def _process_file(self, file):
+        return_value = super()._process_file(file)
         self._clean_removed_satellites()
         return return_value
 
@@ -669,7 +677,6 @@ class CCImportMixin:
         import_source,
         publication_status,
         manager_emails,
-        silently_added_manager_emails,
         satellite_canteens_count=None,
     ):
         is_central_kitchen = CCImportMixin._is_central_kitchen(row)
@@ -680,7 +687,6 @@ class CCImportMixin:
             import_source,
             publication_status,
             manager_emails,
-            silently_added_manager_emails,
             satellite_canteens_count,
         )
 
