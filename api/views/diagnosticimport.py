@@ -449,13 +449,17 @@ class ImportDiagnosticsView(ABC, APIView):
 
             teledeclaration_idx = silent_manager_idx + 2
             if len(row) > teledeclaration_idx and row[teledeclaration_idx]:
-                if row[teledeclaration_idx] not in ["teledeclare", "brouillon"]:
+                if row[teledeclaration_idx] == "teledeclare":
+                    should_teledeclare = True
+                elif row[teledeclaration_idx] == "brouillon":
+                    should_teledeclare = False
+                else:
                     raise ValidationError(
                         {
                             "teledeclaration": f"'{row[teledeclaration_idx]}' n'est pas un statut de télédéclaration valid"
                         }
                     )
-                should_teledeclare = True
+                
         return (import_source, should_teledeclare, silently_added_manager_emails)
 
     def _parse_errors(self, e, row):  # noqa: C901
