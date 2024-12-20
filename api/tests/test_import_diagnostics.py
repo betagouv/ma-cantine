@@ -1253,24 +1253,24 @@ class TestImportDiagnosticsAPI(APITestCase):
         canteen.refresh_from_db()
         self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
 
-    # @authenticate
-    # def test_encoding_autodetect_utf_16(self, _):
-    #     """
-    #     Attempt to auto-detect file encodings: UTF-16
-    #     """
-    #     canteen = CanteenFactory.create(siret="96463820453707", name="Initial name")
-    #     canteen.managers.add(authenticate.user)
+    @authenticate
+    def test_encoding_autodetect_utf_16(self, _):
+        """
+        Attempt to auto-detect file encodings: UTF-16
+        """
+        canteen = CanteenFactory.create(siret="96463820453707", name="Initial name")
+        canteen.managers.add(authenticate.user)
 
-    #     with open("./api/tests/files/diagnostics/diagnostic_encoding_utf-16.csv", "rb") as diag_file:
-    #         response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
+        with open("./api/tests/files/diagnostics/diagnostic_encoding_utf-16.csv", "rb") as diag_file:
+            response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     body = response.json()
-    #     self.assertEqual(body["count"], 1)
-    #     self.assertEqual(len(body["errors"]), 0)
-    #     self.assertEqual(body["encoding"], "UTF-16")
-    #     canteen.refresh_from_db()
-    #     self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(body["encoding"], "UTF-16")
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
 
     @authenticate
     def test_encoding_autodetect_windows1252(self, _):
