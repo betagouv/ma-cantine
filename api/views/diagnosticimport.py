@@ -495,8 +495,6 @@ class ImportDiagnosticsView(ABC, APIView):
                 ImportDiagnosticsView._add_error(
                     errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
                 )
-        elif isinstance(e, IndexError):
-            ImportDiagnosticsView._add_error(errors, self._column_count_error_message(row))
         elif isinstance(e, Canteen.MultipleObjectsReturned):
             ImportDiagnosticsView._add_error(
                 errors,
@@ -511,9 +509,6 @@ class ImportDiagnosticsView(ABC, APIView):
             )
         return errors
 
-    @abstractmethod
-    def _column_count_error_message(self, row): ...
-
 
 # Allows canteen-only and simple diagnostics import
 class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
@@ -522,16 +517,6 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
     import_type = ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE
 
     def _validate_row(self, row):
-        # manager column isn't required, neither is the economic_model. so intentionally checking less than that idx - 1
-        last_mandatory_column = self.manager_column_idx - 1
-        if len(row) < last_mandatory_column:
-            raise IndexError()
-        elif len(row) > self.year_idx and len(row) < self.total_value_idx + 1:
-            raise IndexError()
-        elif len(row) > self.final_value_idx + 1 and not self.request.user.is_staff:
-            raise PermissionDenied(
-                detail=f"Format fichier : {self.final_value_idx + 1} ou 12 colonnes attendues, {len(row)} trouvées."
-            )
         try:
             diagnostic_year = row[self.year_idx]
             # Flake formatting bug: https://github.com/PyCQA/pycodestyle/issues/373#issuecomment-760190686
@@ -724,16 +709,10 @@ class ImportSimpleCentralKitchenView(CCImportMixin, ImportSimpleDiagnosticsView)
     final_value_idx = 23
     import_type = ImportType.CC_SIMPLE
 
-    def _column_count_error_message(self, row):
-        return f"Données manquantes : 24 colonnes attendues, {len(row)} trouvées."
-
 
 class ImportCompleteCentralKitchenView(CCImportMixin, ImportCompleteDiagnosticsView):
     final_value_idx = 128
     import_type = ImportType.CC_COMPLETE
-
-    def _column_count_error_message(self, row):
-        return f"Données manquantes : au moins 129 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
 
 
 class FileFormatError(Exception):
