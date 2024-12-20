@@ -109,7 +109,7 @@ class TestPurchaseImport(APITestCase):
 
         with open("./api/tests/files/good_purchase_import.csv") as purchase_file:
             _ = self.client.post(reverse("import_purchases"), {"file": purchase_file})
-        self.assertEqual(_process_chunk_mock.call_count, 3)
+        self.assertEqual(_process_chunk_mock.call_count, 2)
 
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=10)
@@ -192,7 +192,9 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         errors = response.json()["errors"]
-        self.assertEqual(errors.pop(0)["message"], "Format fichier : 7-8 colonnes attendues, 1 trouvées.")
+        self.assertEqual(
+            errors.pop(0)["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
+        )
 
     @authenticate
     def test_warn_duplicate_file(self):
@@ -296,4 +298,24 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(
             first_error["message"],
             "Ce fichier est au format application/vnd.oasis.opendocument.spreadsheet, merci d'exporter votre fichier au format CSV et réessayer.",
+        )
+
+    @authenticate
+    def test_no_header(self):
+        """
+        A file should not be valid if doesn't contain a valid header
+        """
+        canteen = CanteenFactory.create(siret="82399356058716")
+        canteen.managers.add(authenticate.user)
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        with open("./api/tests/files/no_header_purchase_import.csv", "rb") as diag_file:
+            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
         )
