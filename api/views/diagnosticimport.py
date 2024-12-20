@@ -49,10 +49,14 @@ class ImportDiagnosticsView(ABC, APIView):
         self.data_schema_canteen = json.load(open("data/schemas/imports/cantines.json"))
         self.data_schema_diagnostics = json.load(open("data/schemas/imports/diagnostics.json"))
         self.data_schema_diagnostics_admin = json.load(open("data/schemas/imports/diagnostics_admin.json"))
+        self.data_schema_diagnostics_complete = json.load(open("data/schemas/imports/diagnostics_complets.json"))
         self.expected_header_canteen = [field["name"] for field in self.data_schema_canteen["fields"]]
         self.expected_header_diagnostics = [field["name"] for field in self.data_schema_diagnostics["fields"]]
         self.expected_header_diagnostics_admin = [
             field["name"] for field in self.data_schema_diagnostics_admin["fields"]
+        ]
+        self.expected_header_diagnostics_complets = [
+            field["name"] for field in self.data_schema_diagnostics_complete["fields"]
         ]
         super().__init__(**kwargs)
 
@@ -132,6 +136,7 @@ class ImportDiagnosticsView(ABC, APIView):
         if not (
             set(header).issubset(set(self.expected_header_diagnostics_admin))
             or set(header).issubset(set(self.expected_header_canteen))
+            or set(header).issubset(set(self.expected_header_diagnostics_complets))
             or set(header).issubset(set(self.expected_header_diagnostics))
         ):
             raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
