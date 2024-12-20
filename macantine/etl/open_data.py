@@ -253,10 +253,12 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.TELEDECLARATIONS, OPEN_DATA):
         if "central_kitchen_siret" in self.df.columns:
             self.df["canteen.central_kitchen_siret"] = self.df["central_kitchen_siret"]
 
+        logger.info("TD campagne : Add additionnal filters (that couldn't be processed at queryset)")
+        self.filter_teledeclarations()
         logger.info("TD campagne : Clean dataset...")
         self._clean_dataset()
         logger.info("TD campagne : Format the decimals...")
-        self._format_decimals(['teledeclaration_ratio_bio', 'teledeclaration_ratio_egalim_hors_bio'])
+        self._format_decimals(["teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"])
         logger.info("TD campagne : Filter by ministry...")
         self._filter_by_ministry()
         logger.info("TD campagne : Filter errors...")
