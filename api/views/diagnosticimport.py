@@ -76,6 +76,8 @@ class ImportDiagnosticsView(ABC, APIView):
 
                 if self.errors:
                     raise IntegrityError()
+        except PermissionDenied as e:
+            self.errors = [{"row": 0, "status": 401, "message": e.detail}]
         except IntegrityError as e:
             self._log_error(f"L'import du fichier CSV a échoué:\n{e}")
         except ValidationError as e:
@@ -111,6 +113,11 @@ class ImportDiagnosticsView(ABC, APIView):
     def _verify_file_size(file):
         if file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
+        
+    def check_admin_values(self, header):
+        is_admin_import = any("admin_" in column for column in header)
+        if is_admin_import and not self.request.user.is_staff:
+            raise PermissionDenied(detail="Vous n'êtes pas autorisé à importer des diagnostics administratifs. Veillez supprimer les colonnes commençant par 'admin_'")
 
     def _process_file(self, file):
         locations_csv_str = "siret,citycode,postcode\n"
@@ -128,6 +135,8 @@ class ImportDiagnosticsView(ABC, APIView):
             or set(header).issubset(set(self.expected_header_diagnostics))
         ):
             raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
+        self.check_admin_values(header)
+        
         for row_number, row in enumerate(csvreader):
             try:
                 if self._skip_row(row_number, row):
