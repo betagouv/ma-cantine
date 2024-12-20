@@ -117,11 +117,13 @@ class ImportDiagnosticsView(ABC, APIView):
     def _verify_file_size(file):
         if file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
-        
+
     def check_admin_values(self, header):
         is_admin_import = any("admin_" in column for column in header)
         if is_admin_import and not self.request.user.is_staff:
-            raise PermissionDenied(detail="Vous n'êtes pas autorisé à importer des diagnostics administratifs. Veillez supprimer les colonnes commençant par 'admin_'")
+            raise PermissionDenied(
+                detail="Vous n'êtes pas autorisé à importer des diagnostics administratifs. Veillez supprimer les colonnes commençant par 'admin_'"
+            )
 
     def _process_file(self, file):
         locations_csv_str = "siret,citycode,postcode\n"
@@ -141,7 +143,7 @@ class ImportDiagnosticsView(ABC, APIView):
         ):
             raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
         self.check_admin_values(header)
-        
+
         for row_number, row in enumerate(csvreader):
             try:
                 canteen, should_update_geolocation = self._save_data_from_row(row)
@@ -459,7 +461,7 @@ class ImportDiagnosticsView(ABC, APIView):
                             "teledeclaration": f"'{row[teledeclaration_idx]}' n'est pas un statut de télédéclaration valid"
                         }
                     )
-                
+
         return (import_source, should_teledeclare, silently_added_manager_emails)
 
     def _parse_errors(self, e, row):  # noqa: C901
@@ -617,10 +619,7 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.COMPLETE
 
     def _generate_canteen_meta_fields(self, row):
-        return ("Import massif", Canteen.PublicationStatus.DRAFT, False, [])
-
-    def _column_count_error_message(self, row):
-        return f"Données manquantes : au moins 13 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
+        return ("Import massif", False, [])
 
 
 class CCImportMixin:
