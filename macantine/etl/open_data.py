@@ -255,8 +255,8 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.TELEDECLARATIONS, OPEN_DATA):
 
         logger.info("TD campagne : Clean dataset...")
         self._clean_dataset()
-        logger.info("TD campagne : Filter value total null or value bio null...")
-        self._filter_null_values()
+        logger.info("TD campagne : Format the decimals...")
+        self._format_decimals(['teledeclaration_ratio_bio', 'teledeclaration_ratio_egalim_hors_bio'])
         logger.info("TD campagne : Filter by ministry...")
         self._filter_by_ministry()
         logger.info("TD campagne : Filter errors...")
