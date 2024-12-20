@@ -86,7 +86,7 @@
             :disabled="usesSatelliteDiagnosticForMeasure(tab)"
             :key="tab.id"
             :input-value="tab.isCompleted"
-            :label="tab.text"
+            :label="tab.isRequired ? `${tab.text}*` : tab.text"
             :prepend-icon="tab.icon"
             :dense="true"
             :hide-details="true"
@@ -320,6 +320,7 @@ export default {
           title: measure.title,
           icon: measure.mdiIcon,
           to: { params: { measure: measure.id } },
+          isRequired: measure.id === "qualite-des-produits",
           isCompleted: hasStartedMeasureTunnel(this.diagnostic, measure),
         }
         tabHeaders.push(item)
@@ -332,6 +333,7 @@ export default {
         icon: "$building-fill",
         to: { params: { measure: this.establishmentId } },
         isCompleted: this.isCentralKitchen ? centralKitchenCompleted : !this.missingCanteenData,
+        isRequired: true,
       })
       return tabHeaders
     },
