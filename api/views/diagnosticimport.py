@@ -144,8 +144,6 @@ class ImportDiagnosticsView(ABC, APIView):
         
         for row_number, row in enumerate(csvreader):
             try:
-                if self._skip_row(row_number, row):
-                    continue
                 canteen, should_update_geolocation = self._save_data_from_row(row)
                 self.canteens[canteen.siret] = canteen
                 if should_update_geolocation and not self.errors:
@@ -193,9 +191,6 @@ class ImportDiagnosticsView(ABC, APIView):
                 self._teledeclare_diagnostic(diagnostic)
 
         return (canteen, should_update_geolocation)
-
-    @abstractmethod
-    def _skip_row(self, row_number, row): ...
 
     @abstractmethod
     def _validate_row(self, row): ...
@@ -522,9 +517,6 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
     total_value_idx = 13
     import_type = ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE
 
-    def _skip_row(self, row_number, row):
-        return row_number == 1 and row[0].lower() == "siret"
-
     def _validate_row(self, row):
         # manager column isn't required, neither is the economic_model. so intentionally checking less than that idx - 1
         last_mandatory_column = self.manager_column_idx - 1
@@ -591,25 +583,10 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
                     raise ValidationError(error)
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
 
-    def _column_count_error_message(self, row):
-        return f"Données manquantes : 23 colonnes attendues, {len(row)} trouvées."
-
 
 class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
     final_value_idx = 127
     import_type = ImportType.DIAGNOSTIC_COMPLETE
-
-    def _skip_row(self, row_number, row):
-        if row_number == 1:
-            message = "Deux lignes en-tête attendues, {} trouvée. Veuillez vérifier que vous voulez importer les diagnostics complets, et assurez-vous que le format de l'en-tête suit les exemples donnés."
-            if row[0] and row[0].lower() == "siret":
-                raise FileFormatError(detail=message.format(1))
-            elif row[0]:
-                # making the grand assumption that anything other than "SIRET" resembles a siret number
-                raise FileFormatError(detail=message.format(0))
-            return True
-        elif row_number == 2:
-            return True
 
     def _validate_row(self, row):
         # complete diagnostic should at least have the year and total
