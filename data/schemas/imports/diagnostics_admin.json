@@ -81,7 +81,7 @@
     {
       "description": "Modèle économique de la cantine. Il existe 2 types différents : public (cantine publique), private (cantine privée).",
       "example": "public",
-      "name": "modele_economique",
+      "name": "modèle_économique",
       "title": "Modèle Economique",
       "type": "string"
     },
@@ -93,10 +93,10 @@
       "type": "string"
     },
     {
-      "description": "Année du diagnostic. Réfère à l'année des données et non l'année de déclaration",
+      "description": "Année du bilan. Réfère à l'année des données et non l'année de déclaration",
       "example": "2021",
-      "name": "annee_diagnostic",
-      "title": "Année diagnostic",
+      "name": "année_bilan",
+      "title": "Année bilan",
       "type": "integer"
     },
     {
