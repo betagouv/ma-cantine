@@ -87,6 +87,7 @@ class ImportDiagnosticsView(ABC, APIView):
                 if self.errors:
                     raise IntegrityError()
         except PermissionDenied as e:
+            self._log_error(e.detail)
             self.errors = [{"row": 0, "status": 401, "message": e.detail}]
         except IntegrityError as e:
             self._log_error(f"L'import du fichier CSV a échoué:\n{e}")
