@@ -79,19 +79,17 @@
             <p>Votre livreur des repas va déclarer les données d'approvisionnement pour votre établissement.</p>
             <p>Pour aller plus loin, vous pouvez télédéclarer les autres volets du bilan.</p>
           </div>
-          <p class="mb-1 mt-2">Données à renseigner :</p>
+          <p class="mb-1 mt-2">Onglets à compléter :</p>
           <v-checkbox
-            v-for="(tab, key) in tabHeaders"
+            v-for="tab in tabHeaders"
             class="mb-1 progress-checkbox"
             readonly
             :disabled="usesSatelliteDiagnosticForMeasure(tab)"
             :key="tab.id"
             :input-value="tab.isCompleted"
             :label="tab.isRequired ? `${tab.text}*` : tab.text"
-            :prepend-icon="tab.icon"
             :dense="true"
             :hide-details="true"
-            @click="changeTab(key)"
           />
           <ul>
             <li v-if="hasSatelliteInconsistency" class="mb-2">
@@ -549,9 +547,6 @@ export default {
           this.$store.dispatch("notifyServerError", e)
         })
     },
-    changeTab(tab) {
-      this.tab = tab
-    },
   },
   watch: {
     canteenUrlComponent() {
@@ -615,7 +610,7 @@ export default {
 </style>
 
 <style>
-.progress-checkbox:hover * {
-  color: var(--v-primary-base) !important;
+.progress-checkbox * {
+  cursor: initial !important;
 }
 </style>
