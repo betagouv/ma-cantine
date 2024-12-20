@@ -1,4 +1,5 @@
 import csv
+import json
 import logging
 import re
 import time
@@ -45,6 +46,24 @@ class ImportDiagnosticsView(ABC, APIView):
         self.start_time = None
         self.encoding_detected = None
         self.file = None
+        self.data_schema_canteen = json.load(open("data/schemas/imports/cantines.json"))
+        self.data_schema_diagnostics = json.load(open("data/schemas/imports/diagnostics.json"))
+        self.data_schema_diagnostics_cc = json.load(open("data/schemas/imports/diagnostics_cc.json"))
+        self.data_schema_diagnostics_admin = json.load(open("data/schemas/imports/diagnostics_admin.json"))
+        self.data_schema_diagnostics_complete = json.load(open("data/schemas/imports/diagnostics_complets.json"))
+        self.data_schema_diagnostics_complete_cc = json.load(open("data/schemas/imports/diagnostics_complets_cc.json"))
+        self.expected_header_canteen = [field["name"] for field in self.data_schema_canteen["fields"]]
+        self.expected_header_diagnostics = [field["name"] for field in self.data_schema_diagnostics["fields"]]
+        self.expected_header_diagnostics_cc = [field["name"] for field in self.data_schema_diagnostics_cc["fields"]]
+        self.expected_header_diagnostics_admin = [
+            field["name"] for field in self.data_schema_diagnostics_admin["fields"]
+        ]
+        self.expected_header_diagnostics_complete = [
+            field["name"] for field in self.data_schema_diagnostics_complete["fields"]
+        ]
+        self.expected_header_diagnostics_complete_cc = [
+            field["name"] for field in self.data_schema_diagnostics_complete_cc["fields"]
+        ]
         super().__init__(**kwargs)
 
     @property
@@ -63,10 +82,13 @@ class ImportDiagnosticsView(ABC, APIView):
                 self.file = request.data["file"]
                 ImportDiagnosticsView._verify_file_format(self.file)
                 ImportDiagnosticsView._verify_file_size(self.file)
-                self._treat_csv_file(self.file)
+                self._process_file(self.file)
 
                 if self.errors:
                     raise IntegrityError()
+        except PermissionDenied as e:
+            self._log_error(e.detail)
+            self.errors = [{"row": 0, "status": 401, "message": e.detail}]
         except IntegrityError as e:
             self._log_error(f"L'import du fichier CSV a échoué:\n{e}")
         except ValidationError as e:
@@ -103,7 +125,14 @@ class ImportDiagnosticsView(ABC, APIView):
         if file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
-    def _treat_csv_file(self, file):
+    def check_admin_values(self, header):
+        is_admin_import = any("admin_" in column for column in header)
+        if is_admin_import and not self.request.user.is_staff:
+            raise PermissionDenied(
+                detail="Vous n'êtes pas autorisé à importer des diagnostics administratifs. Veillez supprimer les colonnes commençant par 'admin_'"
+            )
+
+    def _process_file(self, file):
         locations_csv_str = "siret,citycode,postcode\n"
         has_locations_to_find = False
 
@@ -112,13 +141,23 @@ class ImportDiagnosticsView(ABC, APIView):
         dialect = csv.Sniffer().sniff(filelines[0])
 
         csvreader = csv.reader(filelines, dialect=dialect)
-        for row_number, row in enumerate(csvreader, start=1):
+        header = next(csvreader)
+        if not (
+            set(header).issubset(set(self.expected_header_diagnostics_admin))
+            or set(header).issubset(set(self.expected_header_canteen))
+            or set(header).issubset(set(self.expected_header_diagnostics_cc))
+            or set(header).issubset(set(self.expected_header_diagnostics_complete_cc))
+            or set(header).issubset(set(self.expected_header_diagnostics_complete))
+            or set(header).issubset(set(self.expected_header_diagnostics))
+        ):
+            raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
+        self.check_admin_values(header)
+
+        for row_number, row in enumerate(csvreader):
             try:
-                if self._skip_row(row_number, row):
-                    continue
                 canteen, should_update_geolocation = self._save_data_from_row(row)
                 self.canteens[canteen.siret] = canteen
-                if should_update_geolocation:
+                if should_update_geolocation and not self.errors:
                     has_locations_to_find = True
                     if canteen.city_insee_code:
                         locations_csv_str += f"{canteen.siret},{canteen.city_insee_code},\n"
@@ -128,7 +167,7 @@ class ImportDiagnosticsView(ABC, APIView):
             except Exception as e:
                 for error in self._parse_errors(e, row):
                     self.errors.append(
-                        ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number)
+                        ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number + 1)
                     )
         if has_locations_to_find:
             self._update_location_data(locations_csv_str)
@@ -150,13 +189,12 @@ class ImportDiagnosticsView(ABC, APIView):
         # return staff-customisable fields
         (
             import_source,
-            publication_status,
             should_teledeclare,
             silently_added_manager_emails,
         ) = self._generate_canteen_meta_fields(row)
         # create the canteen and potentially the diagnostic
         canteen, should_update_geolocation = self._update_or_create_canteen(
-            row, import_source, publication_status, manager_emails, silently_added_manager_emails
+            row, import_source, manager_emails, silently_added_manager_emails
         )
         if diagnostic_year:
             diagnostic = self._update_or_create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
@@ -164,9 +202,6 @@ class ImportDiagnosticsView(ABC, APIView):
                 self._teledeclare_diagnostic(diagnostic)
 
         return (canteen, should_update_geolocation)
-
-    @abstractmethod
-    def _skip_row(self, row_number, row): ...
 
     @abstractmethod
     def _validate_row(self, row): ...
@@ -347,7 +382,6 @@ class ImportDiagnosticsView(ABC, APIView):
         self,
         row,
         import_source,
-        publication_status,
         manager_emails,
         silently_added_manager_emails,
         satellite_canteens_count=None,
@@ -376,7 +410,6 @@ class ImportDiagnosticsView(ABC, APIView):
         canteen.management_type = row[9].strip().lower()
         canteen.economic_model = row[10].strip().lower() if len(row) > 10 else None
         canteen.import_source = import_source
-        canteen.publication_status = publication_status
         if satellite_canteens_count:
             canteen.satellite_canteens_count = satellite_canteens_count
 
@@ -408,7 +441,6 @@ class ImportDiagnosticsView(ABC, APIView):
         silent_manager_idx = self.final_value_idx + 1
         silently_added_manager_emails = []
         import_source = "Import massif"
-        publication_status = Canteen.PublicationStatus.DRAFT
         should_teledeclare = False
         if len(row) > silent_manager_idx:  # already checked earlier that it's a staff user
             try:
@@ -426,19 +458,20 @@ class ImportDiagnosticsView(ABC, APIView):
             except Exception:
                 raise ValidationError({"import_source": "Ce champ ne peut pas être vide."})
 
-            status_idx = silent_manager_idx + 2
-            if len(row) > status_idx and row[status_idx]:
-                publication_status = row[status_idx].strip()
-            teledeclaration_idx = silent_manager_idx + 3
+            teledeclaration_idx = silent_manager_idx + 2
             if len(row) > teledeclaration_idx and row[teledeclaration_idx]:
-                if row[teledeclaration_idx] != "teledeclared":
+                if row[teledeclaration_idx] == "teledeclare":
+                    should_teledeclare = True
+                elif row[teledeclaration_idx] == "brouillon":
+                    should_teledeclare = False
+                else:
                     raise ValidationError(
                         {
                             "teledeclaration": f"'{row[teledeclaration_idx]}' n'est pas un statut de télédéclaration valid"
                         }
                     )
-                should_teledeclare = True
-        return (import_source, publication_status, should_teledeclare, silently_added_manager_emails)
+
+        return (import_source, should_teledeclare, silently_added_manager_emails)
 
     def _parse_errors(self, e, row):  # noqa: C901
         errors = []
@@ -473,8 +506,6 @@ class ImportDiagnosticsView(ABC, APIView):
                 ImportDiagnosticsView._add_error(
                     errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
                 )
-        elif isinstance(e, IndexError):
-            ImportDiagnosticsView._add_error(errors, self._column_count_error_message(row))
         elif isinstance(e, Canteen.MultipleObjectsReturned):
             ImportDiagnosticsView._add_error(
                 errors,
@@ -489,9 +520,6 @@ class ImportDiagnosticsView(ABC, APIView):
             )
         return errors
 
-    @abstractmethod
-    def _column_count_error_message(self, row): ...
-
 
 # Allows canteen-only and simple diagnostics import
 class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
@@ -499,20 +527,7 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
     total_value_idx = 13
     import_type = ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE
 
-    def _skip_row(self, row_number, row):
-        return row_number == 1 and row[0].lower() == "siret"
-
     def _validate_row(self, row):
-        # manager column isn't required, neither is the economic_model. so intentionally checking less than that idx - 1
-        last_mandatory_column = self.manager_column_idx - 1
-        if len(row) < last_mandatory_column:
-            raise IndexError()
-        elif len(row) > self.year_idx and len(row) < self.total_value_idx + 1:
-            raise IndexError()
-        elif len(row) > self.final_value_idx + 1 and not self.request.user.is_staff:
-            raise PermissionDenied(
-                detail=f"Format fichier : {self.final_value_idx + 1} ou 12 colonnes attendues, {len(row)} trouvées."
-            )
         try:
             diagnostic_year = row[self.year_idx]
             # Flake formatting bug: https://github.com/PyCQA/pycodestyle/issues/373#issuecomment-760190686
@@ -568,25 +583,10 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
                     raise ValidationError(error)
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
 
-    def _column_count_error_message(self, row):
-        return f"Données manquantes : 23 colonnes attendues, {len(row)} trouvées."
-
 
 class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
     final_value_idx = 127
     import_type = ImportType.DIAGNOSTIC_COMPLETE
-
-    def _skip_row(self, row_number, row):
-        if row_number == 1:
-            message = "Deux lignes en-tête attendues, {} trouvée. Veuillez vérifier que vous voulez importer les diagnostics complets, et assurez-vous que le format de l'en-tête suit les exemples donnés."
-            if row[0] and row[0].lower() == "siret":
-                raise FileFormatError(detail=message.format(1))
-            elif row[0]:
-                # making the grand assumption that anything other than "SIRET" resembles a siret number
-                raise FileFormatError(detail=message.format(0))
-            return True
-        elif row_number == 2:
-            return True
 
     def _validate_row(self, row):
         # complete diagnostic should at least have the year and total
@@ -628,10 +628,7 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.COMPLETE
 
     def _generate_canteen_meta_fields(self, row):
-        return ("Import massif", Canteen.PublicationStatus.DRAFT, False, [])
-
-    def _column_count_error_message(self, row):
-        return f"Données manquantes : au moins 13 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
+        return ("Import massif", False, [])
 
 
 class CCImportMixin:
@@ -654,8 +651,8 @@ class CCImportMixin:
         elif len(row) < last_mandatory_column:
             raise IndexError()
 
-    def _treat_csv_file(self, file):
-        return_value = super()._treat_csv_file(file)
+    def _process_file(self, file):
+        return_value = super()._process_file(file)
         self._clean_removed_satellites()
         return return_value
 
@@ -681,7 +678,6 @@ class CCImportMixin:
         import_source,
         publication_status,
         manager_emails,
-        silently_added_manager_emails,
         satellite_canteens_count=None,
     ):
         is_central_kitchen = CCImportMixin._is_central_kitchen(row)
@@ -692,7 +688,6 @@ class CCImportMixin:
             import_source,
             publication_status,
             manager_emails,
-            silently_added_manager_emails,
             satellite_canteens_count,
         )
 
@@ -720,16 +715,10 @@ class ImportSimpleCentralKitchenView(CCImportMixin, ImportSimpleDiagnosticsView)
     final_value_idx = 23
     import_type = ImportType.CC_SIMPLE
 
-    def _column_count_error_message(self, row):
-        return f"Données manquantes : 24 colonnes attendues, {len(row)} trouvées."
-
 
 class ImportCompleteCentralKitchenView(CCImportMixin, ImportCompleteDiagnosticsView):
     final_value_idx = 128
     import_type = ImportType.CC_COMPLETE
-
-    def _column_count_error_message(self, row):
-        return f"Données manquantes : au moins 129 colonnes attendues, {len(row)} trouvées. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer."
 
 
 class FileFormatError(Exception):
