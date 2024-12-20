@@ -1,0 +1,806 @@
+{
+  "description": "dark_query_cantines",
+  "encoding": "utf-8",
+  "fields": [
+    {
+      "example": "Ecole Jean Jaurès",
+      "name": "nom",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^[0-9]{14}$",
+        "required": true
+      },
+      "example": "11007001800012",
+      "name": "siret",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^([013-9]\\d|2[AB1-9])\\d{3}$",
+        "required": false
+      },
+      "description": "Le code INSEE de la commune dans laquelle la cantine se trouve.",
+      "example": "75105",
+      "name": "code_insee_commune",
+      "title": "Code Insee Commune",
+      "type": "string"
+    },
+    {
+      "description": "Le code postal de la commune dans laquelle la cantine se trouve.",
+      "example": "75100",
+      "name": "code_postal_commune",
+      "title": "Code Postal Commune",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^[0-9]{14}$"
+      },
+      "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine ayant produit les repas",
+      "example": "34784885147362",
+      "name": "siret_livreur_repas",
+      "title": "SIRET du livreur de repas",
+      "type": "string"
+    },
+    {
+      "description": "Nombre de repas servis, en moyenne, par jour dans la cantine",
+      "example": "100",
+      "name": "nbre_repas_jour",
+      "title": "Nombre de repas par jour",
+      "type": "integer"
+    },
+    {
+      "description": "Nombre de repas servis, en moyenne, par an dans la cantine",
+      "example": "20000",
+      "name": "nbre_repas_an",
+      "title": "Nombre de repas par an",
+      "type": "integer"
+    },
+    {
+      "description": "Secteurs d'activité de l'établissement",
+      "example": "Restaurants administratifs des collectivités territoriales",
+      "name": "secteurs",
+      "title": "Secteurs",
+      "type": "string"
+    },
+    {
+      "description": "Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.",
+      "example": "central",
+      "name": "type_production",
+      "title": "Type de Production",
+      "type": "string"
+    },
+    {
+      "description": "Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée. Si la valeur est 'concédée', la délégation peut être totale ou partielle",
+      "example": "conceded",
+      "name": "type_gestion",
+      "title": "Type de Gestion/Management",
+      "type": "string"
+    },
+    {
+      "description": "Modèle économique de la cantine. Il existe 2 types différents : public (cantine publique), private (cantine privée).",
+      "example": "public",
+      "name": "modèle_économique",
+      "title": "Modèle Economique",
+      "type": "string"
+    },
+    {
+      "description": "Adresses mél de gestionnaires additionnels. Ces gestionnaires auront la main sur la gestion de l'établissement",
+      "example": "gestionnaire1@example.com, gestionnaire2@example.com",
+      "name": "gestionnaires_additionnels",
+      "title": "Gestionnaires Additionnels",
+      "type": "string"
+    },
+    {
+      "description": "Nombre de cantines satellites pour une cantine qui produit les repas sur place",
+      "example": "12",
+      "name": "nombre_satellites",
+      "title": "Nombre de cantines satellites",
+      "type": "integer"
+    },
+    {
+      "description": "Année du bilan. Réfère à l'année des données et non l'année de déclaration",
+      "example": "2021",
+      "name": "année_bilan",
+      "title": "Année bilan",
+      "type": "integer"
+    },
+    {
+      "description": "Valeur totale des achats alimentaires",
+      "exemple": "1234.99",
+      "name": "achats_totaux",
+      "type": "integer"
+    },
+    {
+      "description": "La valeur totale (en € HT) de mes achats en viandes et volailles fraiches ou surgelées",
+      "exemple": "1234.99",
+      "name": "achats_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "La valeur totale (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture",
+      "exemple": "1234.99",
+      "name": "achats_poissons_produits_mer",
+      "type": "integer"
+    },
+    {
+      "description": "Bio : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "bio_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "Bio : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "bio_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "Bio : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "bio_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "Bio : Charcuterie",
+      "exemple": "1234.99",
+      "name": "bio_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "Bio : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "bio_bof",
+      "type": "integer"
+    },
+    {
+      "description": "Bio : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "bio_boulangerie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "Bio : Boissons",
+      "exemple": "1234.99",
+      "name": "bio_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "Bio : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "bio_autres_produits",
+      "type": "integer"
+    },
+    {
+      "description": "Label rouge : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "label_rouge_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "Label rouge : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "label_rouge_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "Label rouge : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "label_rouge_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "Label rouge : Charcuterie",
+      "exemple": "1234.99",
+      "name": "label_rouge_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "Label rouge : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "label_rouge_bof",
+      "type": "integer"
+    },
+    {
+      "description": "Label rouge : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "label_rouge_boulangerie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "Label rouge : Boissons",
+      "exemple": "1234.99",
+      "name": "label_rouge_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "Label rouge : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "label_rouge_autres_produits",
+      "type": "integer"
+    },
+    {
+      "description": "AOC / AOP / IGP / STG : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "aoc_aop_igp_stg_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "AOC / AOP / IGP / STG : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "aoc_aop_igp_stg_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "AOC / AOP / IGP / STG : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "aoc_aop_igp_stg_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "AOC / AOP / IGP / STG : Charcuterie",
+      "exemple": "1234.99",
+      "name": "aoc_aop_igp_stg_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "AOC / AOP / IGP / STG : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "aoc_aop_igp_stg_bof",
+      "type": "integer"
+    },
+    {
+      "description": "AOC / AOP / IGP / STG : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "aoc_aop_igp_stg_boulangerie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "AOC / AOP / IGP / STG : Boissons",
+      "exemple": "1234.99",
+      "name": "aoc_aop_igp_stg_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "AOC / AOP / IGP / STG : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "aoc_aop_igp_stg_autres_produits",
+      "type": "integer"
+    },
+    {
+      "description": "Certification environnementale de niveau 2 ou HVE : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "certification_environnementale_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "Certification environnementale de niveau 2 ou HVE : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "certification_environnementale_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "Certification environnementale de niveau 2 ou HVE : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "certification_environnementale_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "Certification environnementale de niveau 2 ou HVE : Charcuterie",
+      "exemple": "1234.99",
+      "name": "certification_environnementale_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "Certification environnementale de niveau 2 ou HVE : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "certification_environnementale_bof",
+      "type": "integer"
+    },
+    {
+      "description": "Certification environnementale de niveau 2 ou HVE : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "certification_environnementale_boulangzrie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "Certification environnementale de niveau 2 ou HVE : Boissons",
+      "exemple": "1234.99",
+      "name": "certification_environnementale_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "Certification environnementale de niveau 2 ou HVE : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "certification_environnementale_autres_produits",
+      "type": "integer"
+    },
+    {
+      "description": "Pêche durable : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "peche_durable_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "Pêche durable : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "peche_durable_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "Pêche durable : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "peche_durable_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "Pêche durable : Charcuterie",
+      "exemple": "1234.99",
+      "name": "peche_durable_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "Pêche durable : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "peche_durable_bof",
+      "type": "integer"
+    },
+    {
+      "description": "Pêche durable : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "peche_durable_boulangerie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "Pêche durable : Boissons",
+      "example": "1234.99",
+      "name": "peche_durable_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "Pêche durable : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "peche_durable_autres_produits",
+      "type": "integer"
+    },
+    {
+      "description": "Région ultrapériphérique : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "region_ultraperipherique_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "Région ultrapériphérique : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "region_ultraperipherique_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "Région ultrapériphérique : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "region_ultraperipherique_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "Région ultrapériphérique : Charcuterie",
+      "exemple": "1234.99",
+      "name": "region_ultraperipherique_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "Région ultrapériphérique : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "region_ultraperipherique_bof",
+      "type": "integer"
+    },
+    {
+      "description": "Région ultrapériphérique : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "region_ultraperipherique_boulangerie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "Région ultrapériphérique : Boissons",
+      "exemple": "1234.99",
+      "name": "region_ultraperipherique_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "Région ultrapériphérique : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "region_ultraperipherique_autres_produits",
+      "type": "integer"
+    },
+    {
+      "description": "Commerce équitable : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "commerce_equitable_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "Commerce équitable : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "commerce_equitable_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "Commerce équitable : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "commerce_equitable_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "Commerce équitable : Charcuterie",
+      "exemple": "1234.99",
+      "name": "commerce_equitable_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "Commerce équitable : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "commerce_equitable_bof",
+      "type": "integer"
+    },
+    {
+      "description": "Commerce équitable : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "commerce_equitable_boulangerie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "Commerce équitable : Boissons",
+      "exemple": "1234.99",
+      "name": "commerce_equitable_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "Commerce équitable : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "commerce_equitable_autres_produits",
+      "type": "integer"
+    },
+    {
+      "description": "Fermier : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "fermier_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "Fermier : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "fermier_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "Fermier : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "fermier_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "Fermier : Charcuterie",
+      "exemple": "1234.99",
+      "name": "fermier_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "Fermier : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "fermier_bof",
+      "type": "integer"
+    },
+    {
+      "description": "Fermier : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "fermier_boulangerie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "Fermier : Boissons",
+      "exemple": "1234.99",
+      "name": "fermier_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "Fermier : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "fermier_autres_produits",
+      "type": "integer"
+    },
+    {
+      "description": "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "couts_externalites_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "couts_externalites_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "couts_externalites_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Charcuterie",
+      "exemple": "1234.99",
+      "name": "couts_externalites_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "couts_externalites_bof",
+      "type": "integer"
+    },
+    {
+      "description": "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "couts_externalites_boulangerie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Boissons",
+      "exemple": "1234.99",
+      "name": "couts_externalites_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "couts_externalites_autres_produits",
+      "type": "integer"
+    },
+    {
+      "description": "Produits acquis sur la base de leurs performances en matière environnementale : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "performances_environnementales_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "Produits acquis sur la base de leurs performances en matière environnementale : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "performances_environnementales_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "Produits acquis sur la base de leurs performances en matière environnementale : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "performances_environnementales_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "Produits acquis sur la base de leurs performances en matière environnementale : Charcuterie",
+      "exemple": "1234.99",
+      "name": "performances_environnementales_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "Produits acquis sur la base de leurs performances en matière environnementale : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "performances_environnementales_bof",
+      "type": "integer"
+    },
+    {
+      "description": "Produits acquis sur la base de leurs performances en matière environnementale : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "performances_environnementales_boulangerie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "Produits acquis sur la base de leurs performances en matière environnementale : Boissons",
+      "exemple": "1234.99",
+      "name": "performances_environnementales_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "Produits acquis sur la base de leurs performances en matière environnementale : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "performances_environnementales_autres_produits",
+      "type": "integer"
+    },
+    {
+      "description": "Non-Egalim : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "non_egalim_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "Non-Egalim : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "non_egalim_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "Non-Egalim : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "non_egalim_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "Non-Egalim : Charcuterie",
+      "exemple": "1234.99",
+      "name": "non_egalim_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "Non-Egalim : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "non_egalim_bof",
+      "type": "integer"
+    },
+    {
+      "description": "Non-Egalim : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "non_egalim_boulangerie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "Non-Egalim : Boissons",
+      "exemple": "1234.99",
+      "name": "non_egalim_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "Non-Egalim : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "non_egalim_autres_produits",
+      "type": "integer"
+    },
+    {
+      "description": "Provenance France : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "provenance_france_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "Provenance France : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "provenance_france_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "Provenance France : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "provenance_france_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "Provenance France : Charcuterie",
+      "exemple": "1234.99",
+      "name": "provenance_france_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "Provenance France : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "provenance_france_bof",
+      "type": "integer"
+    },
+    {
+      "description": "Provenance France : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "provenance_france_boulangerie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "Provenance France : Boissons",
+      "exemple": "1234.99",
+      "name": "provenance_france_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "Provenance France : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "provenance_france_autres_produits",
+      "type": "integer"
+    },
+    {
+      "description": "Circuit-court : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "circuit_court_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "Circuit-court : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "circuit_court_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "Circuit-court : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "circuit_court_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "Circuit-court : Charcuterie",
+      "exemple": "1234.99",
+      "name": "circuit_court_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "Circuit-court : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "circuit_court_bof",
+      "type": "integer"
+    },
+    {
+      "description": "Circuit-court : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "circuit_court_boulangerie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "Circuit-court : Boissons",
+      "exemple": "1234.99",
+      "name": "circuit_court_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "Circuit-court : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "circuit_court_autres_produits",
+      "type": "integer"
+    },
+    {
+      "description": "Produit local : Viandes et volailles fraîches et surgelées",
+      "exemple": "1234.99",
+      "name": "produit_local_viandes_volailles",
+      "type": "integer"
+    },
+    {
+      "description": "Produit local : Produits aquatiques frais et surgelés",
+      "exemple": "1234.99",
+      "name": "produit_local_produits_aquatiques",
+      "type": "integer"
+    },
+    {
+      "description": "Produit local : Fruits et légumes frais et surgelés",
+      "exemple": "1234.99",
+      "name": "produit_local_fruits_legumes",
+      "type": "integer"
+    },
+    {
+      "description": "Produit local : Charcuterie",
+      "exemple": "1234.99",
+      "name": "produit_local_charcuterie",
+      "type": "integer"
+    },
+    {
+      "description": "Produit local : BOF (Produits laitiers, beurre et œufs)",
+      "exemple": "1234.99",
+      "name": "produit_local_bof",
+      "type": "integer"
+    },
+    {
+      "description": "Produit local : Boulangerie/Pâtisserie fraîches",
+      "exemple": "1234.99",
+      "name": "produit_local_boulangerie_patisserie",
+      "type": "integer"
+    },
+    {
+      "description": "Produit local : Boissons",
+      "exemple": "1234.99",
+      "name": "produit_local_boissons",
+      "type": "integer"
+    },
+    {
+      "description": "Produit local : Autres produits frais, surgelés et d’épicerie",
+      "exemple": "1234.99",
+      "name": "produit_local_autres_produits",
+      "type": "integer"
+    }
+  ],
+  "format": "csv",
+  "mediatype": "text/csv",
+  "path": "dark_query_cantines.csv",
+  "scheme": "file",
+  "type": "table"
+}
