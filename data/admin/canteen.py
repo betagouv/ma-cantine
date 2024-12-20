@@ -111,7 +111,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "source_des_données",
         "management_type",
         "visible_au_public",
-        "supprimée",
+        "deleted",
     )
     filter_vertical = (
         "sectors",
@@ -151,9 +151,6 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
     def source_des_données(self, obj):
         return obj.import_source
-
-    def supprimée(self, obj):
-        return "🗑️ Supprimée" if obj.deletion_date else ""
 
 
 class CanteenInline(admin.TabularInline):
