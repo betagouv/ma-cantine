@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label :for="inputId" :class="labelClasses">
+    <label v-if="label" :for="inputId" :class="labelClasses">
       {{ label }}
       <span v-if="hint" class="fr-hint-text">{{ hint }}</span>
     </label>
@@ -45,7 +45,6 @@ export default {
     },
     label: {
       type: String,
-      required: true,
     },
     labelClasses: {
       default: "mb-2 text-sm-subtitle-1 text-body-2 text-left",
