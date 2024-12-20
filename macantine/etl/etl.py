@@ -86,6 +86,10 @@ class ETL(ABC):
         else:
             return True
 
+    def _format_decimals(self, columns):
+        for col in columns:
+            self.df[col] = self.df[col].apply(lambda x: round(x, 4) if not pd.isnull(x) else x)
+
 
 class EXTRACTOR(ETL):
     @abstractmethod

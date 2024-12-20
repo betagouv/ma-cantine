@@ -72,6 +72,7 @@ class TestETLOpenData(TestCase):
                 "canteen": {
                     "id": 1,
                     "name": "Papa rayon lien.",
+                    "yearly_meal_count": 1000,
                     "sectors": [],
                 },
                 "version": "10",
