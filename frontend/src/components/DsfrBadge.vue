@@ -7,7 +7,7 @@
     small
     label
   >
-    <v-icon :color="modes[mode].color" small class="mr-2">{{ badgeIcon }}</v-icon>
+    <v-icon v-if="showIcon" :color="modes[mode].color" small class="mr-2">{{ badgeIcon }}</v-icon>
     <slot />
   </v-chip>
 </template>
@@ -24,6 +24,10 @@ export default {
     icon: {
       type: String,
       optional: true,
+    },
+    showIcon: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {
