@@ -79,7 +79,7 @@
             <p>Votre livreur des repas va déclarer les données d'approvisionnement pour votre établissement.</p>
             <p>Pour aller plus loin, vous pouvez télédéclarer les autres volets du bilan.</p>
           </div>
-          <p class="mb-1 mt-2">Onglets à compléter :</p>
+          <p class="mb-1 mt-2">Données à saisir :</p>
           <v-checkbox
             v-for="tab in tabHeaders"
             class="mb-1 progress-checkbox"
