@@ -31,7 +31,7 @@ export default {
     body() {
       if (this.hasActiveTeledeclaration) return "Bilan télédéclaré"
       if (this.currentYear) return "Année en cours"
-      if (this.missingData) return "Bilan à compléter"
+      if (this.missingData) return "Données à compléter"
       if (this.readyToTeledeclare) return "Bilan à télédéclarer"
       return null
     },
