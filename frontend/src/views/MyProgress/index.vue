@@ -7,7 +7,7 @@
       ]"
     />
     <v-row align="end">
-      <v-col cols="12" md="10">
+      <v-col cols="12" md="9" lg="10">
         <DataInfoBadge v-if="hasActiveTeledeclaration" class="my-2" :hasActiveTeledeclaration="true" />
         <DataInfoBadge
           v-else-if="inTeledeclarationCampaign"
@@ -19,7 +19,7 @@
         <ProductionTypeTag v-if="canteen" :canteen="canteen" class="ml-3" />
         <h1 class="fr-h3 mt-1 mb-0" v-if="canteen">{{ canteen.name }} : Télédéclaration</h1>
       </v-col>
-      <v-col cols="12" sm="5" md="2">
+      <v-col cols="12" md="3" lg="2">
         <v-btn
           v-if="canteenPreviews.length > 1"
           outlined
