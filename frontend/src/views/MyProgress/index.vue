@@ -79,20 +79,24 @@
             <p>Votre livreur des repas va déclarer les données d'approvisionnement pour votre établissement.</p>
             <p>Pour aller plus loin, vous pouvez télédéclarer les autres volets du bilan.</p>
           </div>
-          <p class="mb-1 mt-2">Données à saisir :</p>
-          <v-checkbox
-            v-for="tab in tabHeaders"
-            class="mb-1 progress-checkbox"
-            readonly
-            :disabled="usesSatelliteDiagnosticForMeasure(tab)"
-            :key="tab.id"
-            :input-value="tab.isCompleted"
-            :label="tab.isRequired ? `${tab.text}*` : tab.text"
-            :dense="true"
-            :hide-details="true"
-          />
+          <ul class="progress-list">
+            <li
+              v-for="tab in tabHeaders"
+              :key="tab.id"
+              v-show="!usesSatelliteDiagnosticForMeasure(tab)"
+              class="mb-2 progress-list__item"
+            >
+              <p class="mb-0 font-weight-bold">
+                <v-icon small class="black--text">{{ tab.icon }}</v-icon>
+                {{ tab.text }}
+              </p>
+              <DsfrBadge v-if="tab.isCompleted" :showIcon="false" mode="SUCCESS">Complété</DsfrBadge>
+              <DsfrBadge v-else-if="tab.isRequired" :showIcon="false" mode="ERROR">À compléter (obligatoire)</DsfrBadge>
+              <DsfrBadge v-else :showIcon="false" mode="WARNING">À compléter (optionnel)</DsfrBadge>
+            </li>
+          </ul>
           <ul>
-            <li v-if="hasSatelliteInconsistency" class="mb-2">
+            <li v-if="hasSatelliteInconsistency" class="mb-1">
               <router-link
                 :to="{
                   name: 'SatelliteManagement',
@@ -102,7 +106,7 @@
                 Mettre à jour vos satellites
               </router-link>
             </li>
-            <li v-if="missingDeclarationMode" class="mb-2">
+            <li v-if="missingDeclarationMode">
               Choisir comment les données sont saisis pour vos satellites
             </li>
           </ul>
@@ -248,6 +252,7 @@
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import ProductionTypeTag from "@/components/ProductionTypeTag"
 import ProgressTab from "./ProgressTab"
+import DsfrBadge from "@/components/DsfrBadge"
 import DsfrTabsVue from "@/components/DsfrTabs"
 import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DownloadLink from "@/components/DownloadLink"
@@ -275,6 +280,7 @@ export default {
     BreadcrumbsNav,
     ProductionTypeTag,
     ProgressTab,
+    DsfrBadge,
     DsfrTabsVue,
     DsfrNativeSelect,
     DownloadLink,
@@ -604,13 +610,11 @@ export default {
 .close-icon {
   border-bottom: solid 1px;
 }
-.progress-checkbox {
-  align-items: center;
+.progress-list {
+  padding-left: 0;
+  list-style: none;
 }
-</style>
-
-<style>
-.progress-checkbox * {
-  cursor: initial !important;
+.progress-list__item:last-child {
+  margin-bottom: 0.25rem !important;
 }
 </style>
