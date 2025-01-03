@@ -1,0 +1,35 @@
+name: Create review app with Clever Cloud
+
+on:
+  pull_request_target:
+    types: [opened, closed, synchronize, reopened]
+    branches: [ staging ]
+
+jobs:
+  deploy:
+    name: Deploy/redeploy review app
+    runs-on: ubuntu-latest
+    permissions:
+        issues: write
+        pull-requests: write
+        contents: read
+    steps:
+      - uses: actions/checkout@v4
+        if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      - name: Create review app
+        uses: CleverCloud/clever-cloud-review-app@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+          CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+          ORGA_ID: ${{ secrets.ORGA_ID }}
+          GH_CC_RUN_SUCCEEDED_HOOK: echo "it works!"
+        with:
+          type: 'python'
+          set-env: true  # Enables the command to set env vars on Clever Cloud
+          # environment: 'review'
