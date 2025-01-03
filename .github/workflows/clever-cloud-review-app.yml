@@ -9,6 +9,7 @@ jobs:
   deploy:
     name: Deploy/redeploy review app
     runs-on: ubuntu-latest
+    environment: 'review-apps'
     permissions:
         issues: write
         pull-requests: write
@@ -32,4 +33,4 @@ jobs:
         with:
           type: 'python'
           set-env: true  # Enables the command to set env vars on Clever Cloud
-          # environment: 'review'
+          # environment: 'review-apps'
