@@ -3,6 +3,7 @@ import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel"
 import ImportSelection from "@/views/ImportSelection"
 import WasteMeasurements from "@/views/WasteMeasurements"
 import LegalNotices from "@/views/LegalNotices"
+import CGU from "@/views/CGU"
 import ContactPage from "@/views/ContactPage"
 import { useRootStore } from "@/stores/root"
 
@@ -47,6 +48,14 @@ const routes = [
     component: LegalNotices,
     meta: {
       title: "Mentions légales",
+    },
+  },
+  {
+    path: "/cgu",
+    name: "CGU",
+    component: CGU,
+    meta: {
+      title: "Conditions générales d'utilisation",
     },
   },
   {
