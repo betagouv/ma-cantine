@@ -3,7 +3,7 @@ name: Create review app with Clever Cloud
 on:
   pull_request_target:
     types: [opened, closed, synchronize, reopened]
-    branches: [ main ]
+    branches: [ staging ]
 
 jobs:
   deploy:
