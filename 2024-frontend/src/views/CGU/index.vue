@@ -1,5 +1,5 @@
 <template>
-  <div class="text-left fr-text">
+  <div class="fr-col-12">
     <h1 class="fr-h1">
       Conditions générales d'utilisation de « ma cantine »
     </h1>
@@ -269,17 +269,3 @@
     </ul>
   </div>
 </template>
-
-<script>
-export default {
-  name: "CGU",
-}
-</script>
-
-<style scoped>
-h2,
-h3,
-h4 {
-  margin-top: 1.2em;
-}
-</style>
