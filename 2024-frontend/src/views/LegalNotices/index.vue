@@ -21,7 +21,7 @@
       <h2>Hébergement de la Plateforme</h2>
       <p>Cette plateforme est hébergé par:</p>
       <address class="fr-mb-3w">
-        Clevercloud
+        Clever Cloud
         <br />
         3 rue de l'Allier
         <br />
