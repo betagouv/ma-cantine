@@ -1,0 +1,179 @@
+{
+  "encoding": "utf-8",
+  "fields": [
+    {
+      "example": "Ecole Jean Jaurès",
+      "name": "nom",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^[0-9]{14}$",
+        "required": true
+      },
+      "example": "11007001800012",
+      "name": "siret",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^([013-9]\\d|2[AB1-9])\\d{3}$",
+        "required": false
+      },
+      "description": "Le code INSEE de la commune dans laquelle la cantine se trouve.",
+      "example": "75105",
+      "name": "code_insee_commune",
+      "title": "Code Insee Commune",
+      "type": "string"
+    },
+    {
+      "description": "Le code postal de la commune dans laquelle la cantine se trouve.",
+      "example": "75100",
+      "name": "code_postal_commune",
+      "title": "Code Postal Commune",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^[0-9]{14}$"
+      },
+      "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine ayant produit les repas",
+      "example": "34784885147362",
+      "name": "siret_livreur_repas",
+      "title": "SIRET du livreur de repas",
+      "type": "string"
+    },
+    {
+      "description": "Nombre de repas servis, en moyenne, par jour dans la cantine",
+      "example": "100",
+      "name": "nombre_repas_jour",
+      "title": "Nombre de repas par jour",
+      "type": "integer"
+    },
+    {
+      "description": "Nombre de repas servis, en moyenne, par an dans la cantine",
+      "example": "20000",
+      "name": "nombre_repas_an",
+      "title": "Nombre de repas par an",
+      "type": "integer"
+    },
+    {
+      "description": "Secteurs d'activité de l'établissement",
+      "example": "Restaurants administratifs des collectivités territoriales",
+      "name": "secteurs",
+      "title": "Secteurs",
+      "type": "string"
+    },
+    {
+      "description": "Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.",
+      "example": "central",
+      "name": "type_production",
+      "title": "Type de Production",
+      "type": "string"
+    },
+    {
+      "description": "Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée. Si la valeur est 'concédée', la délégation peut être totale ou partielle",
+      "example": "conceded",
+      "name": "type_gestion",
+      "title": "Type de Gestion/Management",
+      "type": "string"
+    },
+    {
+      "description": "Modèle économique de la cantine. Il existe 2 types différents : public (cantine publique), private (cantine privée).",
+      "example": "public",
+      "name": "modèle_économique",
+      "title": "Modèle Economique",
+      "type": "string"
+    },
+    {
+      "description": "Adresses mél de gestionnaires additionnels. Ces gestionnaires auront la main sur la gestion de l'établissement",
+      "example": "gestionnaire1@example.com, gestionnaire2@example.com",
+      "name": "gestionnaires_additionnels",
+      "title": "Gestionnaires Additionnels",
+      "type": "string"
+    },
+    {
+      "description": "Année du bilan. Réfère à l'année des données et non l'année de déclaration",
+      "example": "2021",
+      "name": "année_bilan",
+      "title": "Année bilan",
+      "type": "integer"
+    },
+    {
+      "description": "Valeur totale des Valeur des achats alimentaires",
+      "example": "1231",
+      "name": "valeur_totale",
+      "title": "Valeur des achats totaux",
+      "type": "integer"
+    },
+    {
+      "description": "Valeur totale des Valeur des achats bio",
+      "example": "1200",
+      "name": "valeur_bio",
+      "title": "Valeur des achats bio",
+      "type": "integer"
+    },
+    {
+      "description": "Valeur totale des Valeur des achats SIQO",
+      "example": "30",
+      "name": "valeur_siqo",
+      "title": "Valeur des achats siqo",
+      "type": "integer"
+    },
+    {
+      "description": "Valeur totale des Valeur des achats environnemental/performances exterieures",
+      "example": "10",
+      "name": "valeur_environnemental",
+      "title": "Valeur des achats environnemental",
+      "type": "integer"
+    },
+    {
+      "description": "Valeur totale des Valeur des achats autres EGAlim",
+      "example": "1231",
+      "name": "valeur_autres_egalim",
+      "title": "Valeur des Valeur des achats autres egalim",
+      "type": "integer"
+    },
+    {
+      "description": "Valeur totale des Valeur des achats viandes",
+      "example": "1231",
+      "name": "valeur_viandes",
+      "title": "Valeur des achats viandes",
+      "type": "integer"
+    },
+    {
+      "description": "Valeur totale des Valeur des achats viandes EGAlim",
+      "example": "1231",
+      "name": "valeur_viandes_egalim",
+      "title": "Valeur des achats viandes egalim",
+      "type": "integer"
+    },
+    {
+      "description": "Valeur totale des Valeur des achats viandes d'origine France",
+      "example": "1231",
+      "name": "valeur_viandes_france",
+      "title": "Valeur des achats viandes France",
+      "type": "integer"
+    },
+    {
+      "description": "Valeur totale des Valeur des achats poissons",
+      "example": "1231",
+      "name": "valeur_poissons",
+      "title": "Valeur des achats poissons",
+      "type": "integer"
+    },
+    {
+      "description": "Valeur totale des Valeur des achats poissons EGAlim",
+      "example": "1231",
+      "name": "valeur_poissons_egalim",
+      "title": "Valeur des achats poissons egalim",
+      "type": "integer"
+    }
+  ],
+  "format": "csv",
+  "mediatype": "text/csv",
+  "name": "dark_query_cantines",
+  "path": "dark_query_cantines.csv",
+  "scheme": "file",
+  "type": "table"
+}
