@@ -28,7 +28,6 @@ import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
 import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
-import CGU from "@/views/CGU.vue"
 import PrivacyPolicy from "@/views/PrivacyPolicy"
 import ManagementPage from "@/views/ManagementPage"
 import PendingActions from "@/views/PendingActions"
@@ -282,15 +281,6 @@ const routes = [
       title: "Nouvel acteur de l'éco-système",
     },
     sitemapGroup: Constants.SitemapGroups.ACTION,
-  },
-  {
-    path: "/cgu",
-    name: "CGU",
-    component: CGU,
-    meta: {
-      title: "Conditions générales d'utilisation",
-    },
-    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/politique-de-confidentialite",
@@ -598,6 +588,14 @@ const vue3Routes = [
     name: "AccessibilityDeclaration",
     meta: {
       title: "Déclaration d'accessibilité",
+    },
+    sitemapGroup: Constants.SitemapGroups.SITE,
+  },
+  {
+    path: "/cgu",
+    name: "CGU",
+    meta: {
+      title: "Conditions générales d'utilisation",
     },
     sitemapGroup: Constants.SitemapGroups.SITE,
   },

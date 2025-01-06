@@ -1,5 +1,5 @@
 <template>
-  <div class="legal-notices fr-col-12 fr-col-md-8">
+  <div class="fr-col-12">
     <h1>Mentions légales</h1>
     <section>
       <h2>Éditeur de la Plateforme</h2>
@@ -21,9 +21,12 @@
       <h2>Hébergement de la Plateforme</h2>
       <p>Cette plateforme est hébergé par:</p>
       <address class="fr-mb-3w">
-        Clevercloud <br />
-        3 rue de l'Allier <br />
-        44000 Nantes <br />
+        Clever Cloud
+        <br />
+        3 rue de l'Allier
+        <br />
+        44000 Nantes
+        <br />
         France
       </address>
     </section>
@@ -63,13 +66,16 @@
       <h2>Code source</h2>
       <p>
         Le code source est ouvert et les contributions sont bienvenues :
-        <a target="_blank" href="https://github.com/betagouv/ma-cantine">voir le code source</a>.
+        <a target="_blank" href="https://github.com/betagouv/ma-cantine">voir le code source</a>
+        .
       </p>
     </section>
     <section>
       <h2>Signaler un dysfonctionnement ou une question</h2>
       <p>
-        Envoyez-nous un courriel à <a rel="noopener" href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>.
+        Envoyez-nous un courriel à
+        <a rel="noopener" href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
+        .
       </p>
     </section>
   </div>

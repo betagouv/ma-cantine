@@ -4,6 +4,7 @@ import ImportSelection from "@/views/ImportSelection"
 import WasteMeasurements from "@/views/WasteMeasurements"
 import LegalNotices from "@/views/LegalNotices"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
+import CGU from "@/views/CGU"
 import ContactPage from "@/views/ContactPage"
 import { useRootStore } from "@/stores/root"
 
@@ -56,6 +57,14 @@ const routes = [
     component: AccessibilityDeclaration,
     meta: {
       title: "Déclaration d'accessibilité",
+    },
+  },
+  {
+    path: "/cgu",
+    name: "CGU",
+    component: CGU,
+    meta: {
+      title: "Conditions générales d'utilisation",
     },
   },
   {
