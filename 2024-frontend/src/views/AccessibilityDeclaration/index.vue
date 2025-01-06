@@ -195,7 +195,6 @@
         title="GitHub issues - ouvre une nouvelle fenêtre"
       >
         GitHub
-        <v-icon small color="grey darken-4">mdi-open-in-new</v-icon>
       </a>
       .
     </p>
