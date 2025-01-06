@@ -261,6 +261,7 @@ export default {
       validators,
       isStaff: user.isStaff,
       duplicateFile: false,
+      succesImportDialog: false,
     }
   },
   methods: {
@@ -279,6 +280,7 @@ export default {
           this.duplicatePurchases = json.duplicatePurchases
           this.duplicatePurchaseCount = json.duplicatePurchaseCount
           this.seconds = json.seconds
+          this.succesImportDialog = true
           this.$store.dispatch("notify", {
             message: `Fichier traité en ${Math.round(this.seconds)} secondes`,
           })
