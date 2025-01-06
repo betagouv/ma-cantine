@@ -56,7 +56,7 @@ const links = [
 </template>
 
 
-<style>
+<style scoped>
 ul {
   list-style: none;
 }

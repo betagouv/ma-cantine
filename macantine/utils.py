@@ -27,6 +27,10 @@ CAMPAIGN_DATES = {
         "start_date": datetime(2024, 1, 8, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "end_date": datetime(2024, 6, 12, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
+    2024: {
+        "start_date": datetime(2025, 1, 7, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "end_date": datetime(2024, 3, 31, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+    },
 }
 
 

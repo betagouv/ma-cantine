@@ -1,5 +1,5 @@
 <template>
-  <DsfrCallout noIcon>
+  <DsfrCallout noIcon class="mt-2">
     <h2 class="fr-text font-weight-bold mb-2 mt-2">
       CAMPAGNE DE TELEDECLARATION 2025 : Du 7 janvier au 31 mars
     </h2>
@@ -43,7 +43,7 @@
 import DsfrCallout from "@/components/DsfrCallout"
 
 export default {
-  name: "TeledeclarationBanner",
+  name: "InformationBanner",
   components: {
     DsfrCallout,
   },

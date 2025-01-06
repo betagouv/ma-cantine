@@ -18,9 +18,9 @@
         les cantines de votre territoire
       </router-link>
     </p>
+    <InformationBanner v-if="showInformationBanner" />
     <div v-if="canteenCount > 0" class="mt-4">
       <SuccessBanner v-if="showSuccessBanner" />
-      <TeledeclarationBanner v-else-if="teledeclarationCampaignActive && !correctionCampaignActive" />
       <ActionsBanner v-else />
     </div>
     <div class="mt-4">
@@ -92,7 +92,7 @@ import CanteensPagination from "./CanteensPagination.vue"
 import PageSatisfaction from "@/components/PageSatisfaction.vue"
 import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
 import UserTools from "./UserTools"
-import TeledeclarationBanner from "./TeledeclarationBanner"
+import InformationBanner from "./InformationBanner"
 import CanteenCreationDialog from "./CanteenCreationDialog"
 import ActionsBanner from "./ActionsBanner"
 import SuccessBanner from "./SuccessBanner"
@@ -110,7 +110,7 @@ export default {
     CanteensPagination,
     UserTools,
     PageSatisfaction,
-    TeledeclarationBanner,
+    InformationBanner,
     ActionsBanner,
     SuccessBanner,
     CanteenCreationDialog,
@@ -123,8 +123,6 @@ export default {
       canteenCount: undefined,
       hasActions: false,
       showCanteenCreationPrompt: null,
-      teledeclarationCampaignActive: window.ENABLE_TELEDECLARATION,
-      correctionCampaignActive: window.TELEDECLARATION_CORRECTION_CAMPAIGN,
       actionsLoading: true,
       resources: [
         {
@@ -175,6 +173,7 @@ export default {
           style: "background-color: #E8EDFF; border: none;", // light / background / contrast-info
         },
       ],
+      showInformationBanner: window.SHOW_MANAGEMENT_INFORMATION_BANNER,
       viewStyles: [
         {
           text: "Vue cartes",
