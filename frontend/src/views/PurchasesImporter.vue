@@ -41,12 +41,40 @@
       <span class="mt-1">Traitement en cours...</span>
     </v-card>
     <div v-if="!isNaN(purchaseCount) && !importInProgress">
-      <v-alert type="success" outlined v-if="!duplicateFile && purchaseCount > 0">
-        <span class="grey--text text--darken-4 body-2">
-          {{ purchaseCount }} achats
-          <span>ont été créés.</span>
-        </span>
-      </v-alert>
+      <v-dialog v-model="succesImportDialog" v-if="!duplicateFile && purchaseCount > 0" max-width="600">
+        <v-card class="pt-4">
+          <v-card-title>
+            <h1 class="fr-h5 mb-6">
+              {{ purchaseCount }} {{ purchaseCount <= 1 ? "achat a été importé" : "achats ont été importés" }} dans
+              votre outil.
+            </h1>
+          </v-card-title>
+          <v-card-text class="text-left">
+            <v-row class="mb-4 ml-0 mr-0">
+              <p>Pour finaliser votre télédéclaration il vous suffit de :</p>
+              <ol>
+                <li>
+                  Vous rendre sur la page "Mon tableau de bord"
+                </li>
+                <li>
+                  Séléctionner votre cantine
+                </li>
+                <li>
+                  Cliquer sur le bloc "Qualité des produits"
+                </li>
+                <li>
+                  Valider vos données
+                </li>
+              </ol>
+            </v-row>
+            <v-row justify="center" class="mb-2 ml-0 mr-0">
+              <v-btn color="primary" class="px-4" @click="succesImportDialog = false">
+                Ok j'ai compris
+              </v-btn>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
       <div v-if="duplicateFile">
         <p class="orange--text text--darken-4">
           Ce fichier a déjà été utilisé pour importer {{ duplicatePurchaseCount }}
