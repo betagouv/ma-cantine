@@ -46,14 +46,14 @@
     {
       "description": "Nombre de repas servis, en moyenne, par jour dans la cantine",
       "example": "100",
-      "name": "nbre_repas_jour",
+      "name": "nombre_repas_jour",
       "title": "Nombre de repas par jour",
       "type": "integer"
     },
     {
       "description": "Nombre de repas servis, en moyenne, par an dans la cantine",
       "example": "20000",
-      "name": "nbre_repas_an",
+      "name": "nombre_repas_an",
       "title": "Nombre de repas par an",
       "type": "integer"
     },
@@ -100,73 +100,73 @@
       "type": "integer"
     },
     {
-      "description": "Valeur totale des achats alimentaires",
+      "description": "Valeur totale des Valeur des achats alimentaires",
       "example": "1231",
-      "name": "achats_totaux",
-      "title": "Achats totaux",
+      "name": "valeur_totale",
+      "title": "Valeur des achats totaux",
       "type": "integer"
     },
     {
-      "description": "Valeur totale des achats bio",
+      "description": "Valeur totale des Valeur des achats bio",
       "example": "1200",
-      "name": "achats_bio",
-      "title": "Achats bio",
+      "name": "valeur_bio",
+      "title": "Valeur des achats bio",
       "type": "integer"
     },
     {
-      "description": "Valeur totale des achats SIQO",
+      "description": "Valeur totale des Valeur des achats SIQO",
       "example": "30",
-      "name": "achats_siqo",
-      "title": "Achats siqo",
+      "name": "valeur_siqo",
+      "title": "Valeur des achats siqo",
       "type": "integer"
     },
     {
-      "description": "Valeur totale des achats environnemental/performances exterieures",
+      "description": "Valeur totale des Valeur des achats environnemental/performances exterieures",
       "example": "10",
-      "name": "achats_environnemental",
-      "title": "Achats environnemental",
+      "name": "valeur_environnemental",
+      "title": "Valeur des achats environnemental",
       "type": "integer"
     },
     {
-      "description": "Valeur totale des achats autres EGAlim",
+      "description": "Valeur totale des Valeur des achats autres EGAlim",
       "example": "1231",
-      "name": "achats_autres_egalim",
-      "title": "Achats autres egalim",
+      "name": "valeur_autres_egalim",
+      "title": "Valeur des Valeur des achats autres egalim",
       "type": "integer"
     },
     {
-      "description": "Valeur totale des achats viandes",
+      "description": "Valeur totale des Valeur des achats viandes",
       "example": "1231",
-      "name": "achats_viandes",
-      "title": "Achats viandes",
+      "name": "valeur_viandes",
+      "title": "Valeur des achats viandes",
       "type": "integer"
     },
     {
-      "description": "Valeur totale des achats viandes EGAlim",
+      "description": "Valeur totale des Valeur des achats viandes EGAlim",
       "example": "1231",
-      "name": "achats_viandes_egalim",
-      "title": "Achats viandes egalim",
+      "name": "valeur_viandes_egalim",
+      "title": "Valeur des achats viandes egalim",
       "type": "integer"
     },
     {
-      "description": "Valeur totale des achats viandes d'origine France",
+      "description": "Valeur totale des Valeur des achats viandes d'origine France",
       "example": "1231",
-      "name": "achats_viandes_france",
-      "title": "Achats viandes France",
+      "name": "valeur_viandes_france",
+      "title": "Valeur des achats viandes France",
       "type": "integer"
     },
     {
-      "description": "Valeur totale des achats poissons",
+      "description": "Valeur totale des Valeur des achats poissons",
       "example": "1231",
-      "name": "achats_poissons",
-      "title": "Achats poissons",
+      "name": "valeur_poissons",
+      "title": "Valeur des achats poissons",
       "type": "integer"
     },
     {
-      "description": "Valeur totale des achats poissons EGAlim",
+      "description": "Valeur totale des Valeur des achats poissons EGAlim",
       "example": "1231",
-      "name": "achats_poissons_egalim",
-      "title": "Achats poissons egalim",
+      "name": "valeur_poissons_egalim",
+      "title": "Valeur des achats poissons egalim",
       "type": "integer"
     }
   ],

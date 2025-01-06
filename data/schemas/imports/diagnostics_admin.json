@@ -46,14 +46,14 @@
     {
       "description": "Nombre de repas servis, en moyenne, par jour dans la cantine",
       "example": "100",
-      "name": "nbre_repas_jour",
+      "name": "nombre_repas_jour",
       "title": "Nombre de repas par jour",
       "type": "integer"
     },
     {
       "description": "Nombre de repas servis, en moyenne, par an dans la cantine",
       "example": "20000",
-      "name": "nbre_repas_an",
+      "name": "nombre_repas_an",
       "title": "Nombre de repas par an",
       "type": "integer"
     },
@@ -102,70 +102,70 @@
     {
       "description": "Valeur totale des achats alimentaires",
       "example": "1231",
-      "name": "achats_totaux",
-      "title": "Achats totaux",
+      "name": "valeur_totale",
+      "title": "Valeur des achats totaux",
       "type": "integer"
     },
     {
       "description": "Valeur totale des achats bio",
       "example": "1200",
-      "name": "achats_bio",
+      "name": "valeur_bio",
       "title": "Achats bio",
       "type": "integer"
     },
     {
       "description": "Valeur totale des achats SIQO",
       "example": "30",
-      "name": "achats_siqo",
+      "name": "valeur_siqo",
       "title": "Achats siqo",
       "type": "integer"
     },
     {
       "description": "Valeur totale des achats environnemental/performances exterieures",
       "example": "10",
-      "name": "achats_environnemental",
+      "name": "valeur_environnemental",
       "title": "Achats environnemental",
       "type": "integer"
     },
     {
       "description": "Valeur totale des achats autres EGAlim",
       "example": "1231",
-      "name": "achats_autres_egalim",
+      "name": "valeur_autres_egalim",
       "title": "Achats autres egalim",
       "type": "integer"
     },
     {
       "description": "Valeur totale des achats viandes",
       "example": "1231",
-      "name": "achats_viandes",
+      "name": "valeur_viandes",
       "title": "Achats viandes",
       "type": "integer"
     },
     {
       "description": "Valeur totale des achats viandes EGAlim",
       "example": "1231",
-      "name": "achats_viandes_egalim",
+      "name": "valeur_viandes_egalim",
       "title": "Achats viandes egalim",
       "type": "integer"
     },
     {
       "description": "Valeur totale des achats viandes d'origine France",
       "example": "1231",
-      "name": "achats_viandes_france",
+      "name": "valeur_viandes_france",
       "title": "Achats viandes France",
       "type": "integer"
     },
     {
       "description": "Valeur totale des achats poissons",
       "example": "1231",
-      "name": "achats_poissons",
+      "name": "valeur_poissons",
       "title": "Achats poissons",
       "type": "integer"
     },
     {
       "description": "Valeur totale des achats poissons EGAlim",
       "example": "1231",
-      "name": "achats_poissons_egalim",
+      "name": "valeur_poissons_egalim",
       "title": "Achats poissons egalim",
       "type": "integer"
     },
