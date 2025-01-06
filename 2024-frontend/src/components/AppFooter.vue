@@ -13,7 +13,10 @@ const descText =
     :legalLink="{ name: 'LegalNotices' }"
     :personalDataLink="{ name: 'PrivacyPolicy' }"
     :cookiesLink="{ name: 'Cookies' }"
-    :afterMandatoryLinks="[{ text: 'Plan du site', to: { name: 'SiteMap' } }]"
+    :afterMandatoryLinks="[
+      { text: 'Conditions générales d\'utilisation', to: { name: 'CGU' } },
+      { text: 'Plan du site', to: { name: 'SiteMap' } },
+    ]"
     :desc-text
     licenceTo="https://github.com/betagouv/ma-cantine/blob/staging/LICENSE"
     licenceName="licence MIT"
