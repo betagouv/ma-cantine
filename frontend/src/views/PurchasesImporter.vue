@@ -112,10 +112,20 @@
           <tr v-for="(field, idx) in documentation" :key="idx">
             <td>{{ field.name }}</td>
             <td>{{ field.title }}</td>
-            <td v-html="field.description"></td>
+            <td>
+              <p>{{ field.description }}</p>
+              <p v-if="field.constraints && field.constraints.enum">
+                Options acceptées : {{ field.constraints.enum.join(", ") }}.
+              </p>
+              <p v-if="field.constraints && field.constraints.enum && field.constraints.enum_multiple">
+                Spécifiez plusieurs options en séparant avec un
+                <code>,</code>
+                .
+              </p>
+            </td>
             <td style="min-width: 150px;">{{ field.type }}</td>
             <td>{{ field.example }}</td>
-            <td class="text-center">{{ field.constraints ?? required ? "✔" : "✘" }}</td>
+            <td class="text-center">{{ field.constraints && field.constraints.required ? "✔" : "✘" }}</td>
           </tr>
         </tbody>
       </template>
@@ -152,9 +162,6 @@ import FileDrop from "@/components/FileDrop"
 import PurchasesTable from "@/components/PurchasesTable"
 import validators from "@/validators"
 
-// script to import the json from https://github.com/betagouv/ma-cantine/blob/import-de-masse-rendre-le-header-obligatoire-achats/data/schemas/imports/achats.json
-// and then paste it here
-
 export default {
   name: "ImportPurchases",
   components: { FileDrop, PurchasesTable },
@@ -181,14 +188,11 @@ export default {
   },
   methods: {
     fetchSchema() {
-      console.log("fetchSchema")
       fetch(
         "https://raw.githubusercontent.com/betagouv/ma-cantine/raphodn/import-de-masse-rendre-le-header-obligatoire-achats-json/data/schemas/imports/achats.json"
       )
         .then((response) => response.json())
         .then((json) => {
-          // console.log(json.fields)
-          // console.log(this.documentation)
           this.documentation = json.fields
         })
     },
