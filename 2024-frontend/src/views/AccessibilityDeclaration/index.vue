@@ -1,6 +1,5 @@
 <template>
-  <div class="text-left">
-    <BreadcrumbsNav />
+  <div class="fr-col-12">
     <h1 class="my-6 fr-h1">Déclaration d'accessibilité</h1>
     <p>Cette page n'est pas une page d'aide.</p>
     <p>
@@ -196,7 +195,6 @@
         title="GitHub issues - ouvre une nouvelle fenêtre"
       >
         GitHub
-        <v-icon small color="grey darken-4">mdi-open-in-new</v-icon>
       </a>
       .
     </p>
@@ -240,20 +238,3 @@
     </ul>
   </div>
 </template>
-
-<script>
-import BreadcrumbsNav from "@/components/BreadcrumbsNav"
-
-export default {
-  name: "AccessibilityDeclaration",
-  components: { BreadcrumbsNav },
-}
-</script>
-
-<style scoped>
-h2,
-h3,
-h4 {
-  margin-top: 1.5em;
-}
-</style>

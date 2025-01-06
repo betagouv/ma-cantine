@@ -3,6 +3,7 @@ import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel"
 import ImportSelection from "@/views/ImportSelection"
 import WasteMeasurements from "@/views/WasteMeasurements"
 import LegalNotices from "@/views/LegalNotices"
+import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import CGU from "@/views/CGU"
 import ContactPage from "@/views/ContactPage"
 import { useRootStore } from "@/stores/root"
@@ -51,6 +52,14 @@ const routes = [
     },
   },
   {
+    path: "/accessibilite",
+    name: "AccessibilityDeclaration",
+    component: AccessibilityDeclaration,
+    meta: {
+      title: "Déclaration d'accessibilité",
+    },
+  },
+  {
     path: "/cgu",
     name: "CGU",
     component: CGU,
@@ -79,6 +88,10 @@ const vue2Routes = [
     name: "Vue2Home",
   },
   {
+    path: "/accueil",
+    name: "LandingPage",
+  },
+  {
     path: "/ma-progression/:canteenUrlComponent/:year/:measureId",
     name: "MyProgress",
   },
@@ -101,6 +114,10 @@ const vue2Routes = [
   {
     path: "/diagnostic",
     name: "DiagnosticPage",
+  },
+  {
+    path: "/nos-cantines",
+    name: "CanteensHome",
   },
   {
     path: "/mesures-phares/:id",
@@ -141,10 +158,6 @@ const vue2Routes = [
   {
     path: "/mon-compte",
     name: "AccountSummaryPage",
-  },
-  {
-    path: "/accessibilite",
-    name: "AccessibilityDeclaration",
   },
   {
     path: "/plan-du-site/",
