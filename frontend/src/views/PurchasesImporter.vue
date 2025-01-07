@@ -193,9 +193,7 @@ export default {
   },
   methods: {
     fetchSchema() {
-      fetch(
-        "https://raw.githubusercontent.com/betagouv/ma-cantine/raphodn/import-de-masse-rendre-le-header-obligatoire-achats-json/data/schemas/imports/achats.json"
-      )
+      fetch("https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json")
         .then((response) => response.json())
         .then((json) => {
           this.documentation = json.fields
