@@ -5,7 +5,7 @@ import keyMeasures from "@/data/key-measures.json"
 
 const store = useRootStore()
 
-const logoText = ["Ministère", "de l'Agriculture", "de la Souveraineté", "alimentaire et de la Forêt"]
+const logoText = ["Ministère", "de l'Agriculture", "et de la Souveraineté", "alimentaire"]
 
 const quickLinks = computed(() => {
   if (!store.loggedUser) {
