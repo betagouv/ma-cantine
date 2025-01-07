@@ -12,7 +12,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(field, idx) in fieldList" :key="idx">
+        <tr v-for="(field, idx) in schemaFieldList" :key="idx">
           <td>{{ field.name }}</td>
           <td>{{ field.title }}</td>
           <td>
@@ -49,7 +49,7 @@ export default {
   },
   data() {
     return {
-      fieldList: [],
+      schemaFieldList: [],
     }
   },
   mounted() {
@@ -60,7 +60,7 @@ export default {
       fetch(this.schemaUrl)
         .then((response) => response.json())
         .then((json) => {
-          this.fieldList = json.fields
+          this.schemaFieldList = json.fields
         })
     },
     getSchemaFieldType(field) {
