@@ -115,7 +115,11 @@
             <td>
               <p>{{ field.description }}</p>
               <p v-if="field.constraints && field.constraints.enum">
-                Options acceptées : {{ field.constraints.enum.join(", ") }}.
+                <span>Options acceptées :&#32;</span>
+                <span v-for="(item, idx) in field.constraints.enum" :key="idx">
+                  <code>{{ item }}</code>
+                  <span v-if="idx < field.constraints.enum.length - 1">,&#32;</span>
+                </span>
               </p>
               <p v-if="field.constraints && field.constraints.enum && field.constraints.enum_multiple">
                 Spécifiez plusieurs options en séparant avec un
@@ -123,7 +127,7 @@
                 .
               </p>
             </td>
-            <td style="min-width: 150px;">{{ field.type }}</td>
+            <td style="min-width: 150px;">{{ getSchemaFieldType(field) }}</td>
             <td>{{ field.example }}</td>
             <td class="text-center">{{ field.constraints && field.constraints.required ? "✔" : "✘" }}</td>
           </tr>
@@ -161,6 +165,7 @@
 import FileDrop from "@/components/FileDrop"
 import PurchasesTable from "@/components/PurchasesTable"
 import validators from "@/validators"
+import Constants from "@/constants"
 
 export default {
   name: "ImportPurchases",
@@ -195,6 +200,18 @@ export default {
         .then((json) => {
           this.documentation = json.fields
         })
+    },
+    getSchemaFieldType(field) {
+      if (field.name in Constants.SchemaTypes) {
+        return Constants.SchemaTypes[field.name]
+      }
+      if (field.constraints && field.constraints.enum) {
+        if (field.constraints.enum_multiple) {
+          return Constants.SchemaTypes[`${field.type}_enum_multiple`]
+        }
+        return Constants.SchemaTypes[`${field.type}_enum`]
+      }
+      return Constants.SchemaTypes[field.type]
     },
     upload() {
       this.importInProgress = true
