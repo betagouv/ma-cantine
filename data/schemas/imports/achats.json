@@ -69,7 +69,7 @@
           "BOISSONS",
           "AUTRES"
         ],
-        "required": true
+        "required": false
       },
       "description": "",
       "example": "VIANDES_VOLAILLES",
@@ -99,7 +99,7 @@
         ],
         "enum_multiple": true,
         "pattern": "(?:(?:^|;)(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|FRANCE|SHORT_DISTRIBUTION|LOCAL))+$",
-        "required": true
+        "required": false
       },
       "description": "",
       "example": "BIO,IGP",
@@ -110,8 +110,13 @@
     },
     {
       "constraints": {
-        "enum": ["AUTOUR_SERVICE", "DEPARTMENT", "REGION", "AUTRE"],
-        "required": true
+        "enum": [
+          "AUTOUR_SERVICE",
+          "DEPARTMENT",
+          "REGION",
+          "AUTRE"
+        ],
+        "required": false
       },
       "description": "Obligatoire si l'achat a la caractéristique de LOCAL.",
       "example": "AUTOUR_SERVICE",
