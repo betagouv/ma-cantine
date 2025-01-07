@@ -164,30 +164,7 @@
     <p>Les données doivent être présentées dans l'ordre indiqué ci-dessous.</p>
     <p>Il n'est pas possible de modifier les bilans télédéclarés.</p>
     <h4 class="my-6">Colonnes</h4>
-    <v-simple-table class="my-6">
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th>Titre</th>
-            <th>Champ</th>
-            <th>Description</th>
-            <th>Type</th>
-            <th>Exemple</th>
-            <th>Obligatoire</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(field, idx) in sharedDocumentation" :key="idx">
-            <td>{{ field.title }}</td>
-            <td>{{ field.name }}</td>
-            <td v-html="field.description"></td>
-            <td>{{ field.type }}</td>
-            <td style="min-width: 160px;">{{ field.example }}</td>
-            <td class="text-center">{{ field.optional ? "✘" : "✔" }}</td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table>
+    <SchemaTable :schemaUrl="canteenSchemaUrl" />
     <p v-if="ccDocumentation && ccDocumentation.length > 0">
       Les champs suivants concernent les livreurs des repas
     </p>
@@ -260,10 +237,11 @@ import HelpForm from "./HelpForm"
 import Constants from "@/constants"
 import DownloadLinkList from "@/components/DownloadLinkList.vue"
 import DsfrCallout from "@/components/DsfrCallout"
+import SchemaTable from "@/components/SchemaTable"
 
 export default {
   name: "DiagnosticImportPage",
-  components: { BreadcrumbsNav, FileDrop, HelpForm, DownloadLinkList, DsfrCallout },
+  components: { BreadcrumbsNav, FileDrop, HelpForm, DownloadLinkList, DsfrCallout, SchemaTable },
   props: ["importUrlSlug"],
   data() {
     const user = this.$store.state.loggedUser
@@ -280,99 +258,8 @@ export default {
       seconds: undefined,
       importInProgress: false,
       encodingUsed: undefined,
-      sharedDocumentation: [
-        {
-          title: "siret",
-          name: "SIRET de l'établissement",
-          description: "Ce SIRET doit être unique car il correspond à un lieu physique.",
-          type: "14 chiffres, avec ou sans espaces",
-          example: "000 000 000 00000",
-        },
-        {
-          title: "nom",
-          name: "Nom de l'établissement",
-          example: "Ma Cantine",
-          type: "Texte libre",
-        },
-        {
-          title: "code_insee_commune",
-          name: "Code géographique INSEE de la ville",
-          example: "69123",
-          optional: true,
-        },
-        {
-          title: "code_postal_commune",
-          name: "Code postal",
-          description: "En cas d'absence de code INSEE, ce champ devient obligatoire.",
-          example: "69001",
-          optional: true,
-        },
-        {
-          title: "siret_livreur_repas",
-          name: "SIRET du livreur des repas",
-          description:
-            "Ce SIRET peut être vide ou utilisé pour plusieurs lignes, dans le cas où c'est le gestionnaire du livreur des repas qui remplit les lignes pour chaque cantine satellite.",
-          type: "14 chiffres, avec ou sans espaces",
-          example: "999 999 999 99999",
-          optional: true,
-        },
-        {
-          title: "nombre_repas_jour",
-          name: "Nombre de repas servis par jour",
-          type: "Chiffre",
-          example: "300",
-        },
-        {
-          title: "nombre_repas_an",
-          name: "Nombre total de couverts à l'année",
-          type: "Chiffre",
-          description: "Y compris les couverts livrés",
-          example: "67000",
-        },
-        {
-          title: "secteurs",
-          name: "Secteurs",
-          description: `Options acceptées : ${this.$store.state.sectors.map(
-            (x) => " <code>" + x.name + "</code>"
-          )}. Spécifiez plusieurs en séparant avec un <code>+</code>.`,
-          type: "Texte",
-          example: `${this.$store.state.sectors[0].name}+${this.$store.state.sectors[1].name}`,
-        },
-        {
-          title: "type_production",
-          name: "Mode de production",
-          description:
-            "Le mode de production de votre cantine. Les options :<br />- <code>central</code> si vous êtes un livreur des repas sans lieu de consommation<br/>- <code>central_serving</code> si vous êtes un livreur des repas qui accueille aussi des convives sur place,<br/>- <code>site</code> si vous êtes une cantine qui produit les repas sur place, et<br/>- <code>site_cooked_elsewhere</code> si vous êtes une cantine qui sert des repas preparés par un autre établissement.<br/>",
-          type: "Texte (choix unique)",
-          example: "central",
-        },
-        {
-          title: "type_gestion",
-          name: "Mode de gestion",
-          description:
-            "Comment le service des repas est géré. Options acceptées : <code>direct</code> (directe) et <code>conceded</code> (concédé).",
-          type: "Texte (choix unique)",
-          example: "direct",
-        },
-        {
-          title: "modèle_économique",
-          name: "Secteur économique",
-          description:
-            "Le type d'établissement. Options acceptées : <code>public</code> et <code>private</code> (privé).",
-          type: "Texte (choix unique)",
-          example: "public",
-          optional: true,
-        },
-        {
-          title: "gestionnaires_additionnels",
-          name: "Gestionnaires additionnels (adresses emails)",
-          description:
-            "Les personnes avec ces adresses seront considérées comme gestionnaires de la cantine et pourront modifier toutes ses données.",
-          type: "Texte (adresses email séparées par une virgule)",
-          example: "gestionnaire1@example.com, gestionnaire2@example.com",
-          optional: true,
-        },
-      ],
+      canteenSchemaUrl:
+        "https://raw.githubusercontent.com/betagouv/ma-cantine/raphodn/import-de-masse-rendre-le-header-obligatoire-cantines-json/data/schemas/imports/cantines.json",
       isStaff: user.isStaff,
     }
   },
