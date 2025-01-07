@@ -7,15 +7,14 @@
 
     <v-card class="text-left">
       <v-card-title>
-        <h1 class="fr-h5 mb-2">
-          Voulez-vous vraiment annuler votre télédéclaration pour l'année {{ diagnostic.year }} ?
-        </h1>
+        <h1 class="fr-h5 mb-2">Voulez-vous corriger votre télédéclaration pour l'année {{ diagnostic.year }} ?</h1>
       </v-card-title>
 
       <v-card-text>
         <p class="mb-0">
-          En l'annulant vous devez soumettre à nouveau une télédéclaration pour vos achats
-          {{ diagnostic.year }} conformément à l'arrêté du 14 septembre 2022.
+          L’action de correction annule la télédéclaration déjà en place pour vous permettre de modifier les valeurs de
+          votre choix. Les informations sont pré-remplis avec vos dernières données. Une fois corrigé, vous devez
+          soumettre de nouveau votre télédéclaration conformément à l'arrêté du 14 septembre 2022.
         </p>
       </v-card-text>
 
@@ -24,10 +23,10 @@
       <v-card-actions class="pa-4">
         <v-spacer></v-spacer>
         <v-btn outlined text @click="$emit('input', false)" class="mr-2">
-          Non, revenir en arrière
+          Revenir en arrière
         </v-btn>
         <v-btn outlined color="red darken-2" text @click="$emit('cancel')">
-          Oui, annuler ma télédéclaration
+          Annuler et corriger ma télédéclaration
         </v-btn>
       </v-card-actions>
     </v-card>

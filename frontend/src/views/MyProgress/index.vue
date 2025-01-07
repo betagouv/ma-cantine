@@ -48,7 +48,7 @@
             class="mr-4"
           />
           <p v-if="inTeledeclarationCampaign">
-            En cas d'erreur, vous pouvez annuler votre télédéclaration et modifier vos données
+            En cas d'erreur, vous pouvez modifier vos données
             <span v-if="campaignEndDate">
               jusqu’au
               {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }}.
@@ -65,7 +65,7 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-btn outlined small color="primary" class="fr-btn--tertiary px-2" v-on="on" v-bind="attrs">
-                Annuler ma télédéclaration
+                Corriger ma télédéclaration
               </v-btn>
             </template>
           </TeledeclarationCancelDialog>
