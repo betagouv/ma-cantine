@@ -25,7 +25,7 @@
               </span>
               .
             </p>
-            <p v-if="field.constraints && field.constraints.enum && field.constraints.enum_multiple">
+            <p v-if="field.constraints && field.constraints.enum_multiple">
               Spécifiez plusieurs options en séparant avec un
               <code>{{ field.constraints.enum_multiple_seperator }}</code>
               .
