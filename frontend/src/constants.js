@@ -5,6 +5,14 @@ export default Object.freeze({
     ERROR: 3,
     IDLE: 4,
   },
+  SchemaTypes: {
+    siret: "14 chiffres, avec ou sans espaces",
+    string: "Texte",
+    string_enum: "Texte (choix unique)",
+    string_enum_multiple: "Texte (choix multiples)",
+    number: "Chiffre",
+    date: "Date (au format AAAA-MM-JJ)",
+  },
   DefaultDiagnostics: {
     id: null,
     year: null,

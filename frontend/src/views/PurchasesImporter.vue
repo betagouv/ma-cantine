@@ -110,12 +110,26 @@
         </thead>
         <tbody>
           <tr v-for="(field, idx) in documentation" :key="idx">
-            <td>{{ field.title }}</td>
             <td>{{ field.name }}</td>
-            <td v-html="field.description"></td>
-            <td style="min-width: 150px;">{{ field.type }}</td>
+            <td>{{ field.title }}</td>
+            <td>
+              <p>{{ field.description }}</p>
+              <p v-if="field.constraints && field.constraints.enum">
+                <span>Options acceptées :&#32;</span>
+                <span v-for="(item, idx) in field.constraints.enum" :key="idx">
+                  <code>{{ item }}</code>
+                  <span v-if="idx < field.constraints.enum.length - 1">,&#32;</span>
+                </span>
+              </p>
+              <p v-if="field.constraints && field.constraints.enum && field.constraints.enum_multiple">
+                Spécifiez plusieurs options en séparant avec un
+                <code>,</code>
+                .
+              </p>
+            </td>
+            <td style="min-width: 150px;">{{ getSchemaFieldType(field) }}</td>
             <td>{{ field.example }}</td>
-            <td class="text-center">{{ field.optional ? "✘" : "✔" }}</td>
+            <td class="text-center">{{ field.constraints && field.constraints.required ? "✔" : "✘" }}</td>
           </tr>
         </tbody>
       </template>
@@ -158,7 +172,6 @@ export default {
   components: { FileDrop, PurchasesTable },
   data() {
     const user = this.$store.state.loggedUser
-    const numberFormatExample = "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>."
     return {
       file: undefined,
       canteens: undefined,
@@ -169,73 +182,37 @@ export default {
       seconds: undefined,
       importInProgress: false,
       duplicatePurchases: null,
-      documentation: [
-        {
-          title: "siret",
-          name: "SIRET de la cantine ayant réalisé l'achat",
-          description: "La cantine avec ce SIRET doit être déjà enregistrée sur notre plateforme.",
-          type: "14 chiffres, avec ou sans espaces",
-          example: "000 000 000 00000",
-        },
-        {
-          title: "description",
-          name: "Description de l'achat",
-          example: "Pommes de terre",
-          type: "Texte libre",
-        },
-        {
-          title: "fournisseur",
-          name: "Fournisseur",
-          example: "Le traiteur du village",
-          type: "Texte libre",
-        },
-        {
-          title: "date",
-          name: "Date d'achat",
-          type: "Date en format AAAA-MM-JJ",
-          example: "2022-01-30",
-        },
-        {
-          title: "prix_ht",
-          name: "Prix HT",
-          description: numberFormatExample,
-          type: "Chiffre",
-          example: "3290.23",
-        },
-        {
-          title: "famille_produits",
-          name: "Famille de produits",
-          description: `Options acceptées : ${Object.keys(Constants.ProductFamilies).map(
-            (x) => " <code>" + x + "</code>"
-          )}`,
-          type: "Texte (choix unique)",
-          example: `${Object.keys(Constants.ProductFamilies)[0]}`,
-        },
-        {
-          title: "caracteristiques",
-          name: "Caractéristiques",
-          description: `Options acceptées : ${Object.keys(Constants.Characteristics).map(
-            (x) => " <code>" + x + "</code>"
-          )}. Spécifiez plusieurs en séparant avec un <code>,</code>.`,
-          type: "Texte",
-          example: `${Object.keys(Constants.Characteristics)[0]},${Object.keys(Constants.Characteristics)[3]}`,
-        },
-        {
-          title: "definition_local",
-          name: "Définition de local",
-          description: `Obligatoire si l'achat a la caractéristique de LOCAL. Options acceptées : ${Object.keys(
-            Constants.LocalDefinitions
-          ).map((x) => " <code>" + x + "</code>")}.`,
-          type: "Texte (choix unique)",
-          example: `${Object.keys(Constants.LocalDefinitions)[0]}`,
-        },
-      ],
+      documentation: [], // see mounted
       validators,
       isStaff: user.isStaff,
       duplicateFile: false,
     }
   },
+  mounted() {
+    this.fetchSchema()
+  },
   methods: {
+    fetchSchema() {
+      fetch(
+        "https://raw.githubusercontent.com/betagouv/ma-cantine/raphodn/import-de-masse-rendre-le-header-obligatoire-achats-json/data/schemas/imports/achats.json"
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          this.documentation = json.fields
+        })
+    },
+    getSchemaFieldType(field) {
+      if (field.name in Constants.SchemaTypes) {
+        return Constants.SchemaTypes[field.name]
+      }
+      if (field.constraints && field.constraints.enum) {
+        if (field.constraints.enum_multiple) {
+          return Constants.SchemaTypes[`${field.type}_enum_multiple`]
+        }
+        return Constants.SchemaTypes[`${field.type}_enum`]
+      }
+      return Constants.SchemaTypes[field.type]
+    },
     upload() {
       this.importInProgress = true
       this.duplicateFile = false
