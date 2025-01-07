@@ -98,6 +98,7 @@
           "LOCAL"
         ],
         "enum_multiple": true,
+        "enum_multiple_seperator": ",",
         "pattern": "(?:(?:^|;)(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|FRANCE|SHORT_DISTRIBUTION|LOCAL))+$",
         "required": false
       },
