@@ -23,6 +23,7 @@
                 <code>{{ item }}</code>
                 <span v-if="idx < field.constraints.enum.length - 1">,&#32;</span>
               </span>
+              .
             </p>
             <p v-if="field.constraints && field.constraints.enum && field.constraints.enum_multiple">
               Spécifiez plusieurs options en séparant avec un
