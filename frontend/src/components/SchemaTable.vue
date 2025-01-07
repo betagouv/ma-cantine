@@ -41,7 +41,14 @@
 </template>
 
 <script>
-import Constants from "@/constants"
+const schemaTypes = {
+  siret: "14 chiffres, avec ou sans espaces",
+  string: "Texte",
+  string_enum: "Texte (choix unique)",
+  string_enum_multiple: "Texte (choix multiples)",
+  number: "Chiffre",
+  date: "Date (au format AAAA-MM-JJ)",
+}
 
 export default {
   props: {
@@ -64,16 +71,16 @@ export default {
         })
     },
     getSchemaFieldType(field) {
-      if (field.name in Constants.SchemaTypes) {
-        return Constants.SchemaTypes[field.name]
+      if (field.name in schemaTypes) {
+        return schemaTypes[field.name]
       }
       if (field.constraints && field.constraints.enum) {
         if (field.constraints.enum_multiple) {
-          return Constants.SchemaTypes[`${field.type}_enum_multiple`]
+          return schemaTypes[`${field.type}_enum_multiple`]
         }
-        return Constants.SchemaTypes[`${field.type}_enum`]
+        return schemaTypes[`${field.type}_enum`]
       }
-      return Constants.SchemaTypes[field.type]
+      return schemaTypes[field.type]
     },
   },
 }
