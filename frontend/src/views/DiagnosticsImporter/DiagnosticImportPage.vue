@@ -626,7 +626,8 @@ export default {
           this.seconds = json.seconds
           this.encodingUsed = json.encoding
           let resultMessage = {
-            message: `${this.canteenCount} cantines traitées`,
+            message:
+              this.canteenCount > 1 ? `${this.canteenCount} cantines traitées` : `${this.canteenCount} cantine traitée`,
             status: "success",
           }
           if (this.errors.length) {
