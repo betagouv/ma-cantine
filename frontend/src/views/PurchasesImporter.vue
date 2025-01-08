@@ -43,14 +43,15 @@
     <div v-if="!isNaN(purchaseCount) && !importInProgress">
       <v-dialog v-model="succesImportDialog" v-if="!duplicateFile && purchaseCount > 0" max-width="600">
         <v-card class="pt-4">
-          <v-card-title>
-            <h1 class="fr-h5 mb-6">
-              {{ purchaseCount }} {{ purchaseCount <= 1 ? "achat a été importé" : "achats ont été importés" }} dans
-              votre outil.
+          <v-card-title class="mb-6">
+            <img src="/static/images/picto-dsfr/success.svg" width="50px" />
+            <h1 class="fr-h5 mb-0 ml-2">
+              Le fichier a été importé avec succès
             </h1>
           </v-card-title>
           <v-card-text class="text-left">
             <v-row class="mb-4 ml-0 mr-0">
+              <p>{{ purchaseCount }}</p>
               <p>Pour finaliser votre télédéclaration il vous suffit de :</p>
               <ol>
                 <li>
