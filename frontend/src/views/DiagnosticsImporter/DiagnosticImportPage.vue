@@ -162,13 +162,13 @@
       cantine associée.
     </p>
     <p>Les données doivent être présentées dans l'ordre indiqué ci-dessous.</p>
-    <p>Ce n'est pas possible de modifier les bilans télédéclarés.</p>
+    <p>Il n'est pas possible de modifier les bilans télédéclarés.</p>
     <h4 class="my-6">Colonnes</h4>
     <v-simple-table class="my-6">
       <template v-slot:default>
         <thead>
           <tr>
-            <th>Colonne</th>
+            <th>Titre</th>
             <th>Champ</th>
             <th>Description</th>
             <th>Type</th>
@@ -195,7 +195,7 @@
       <template v-slot:default>
         <thead>
           <tr>
-            <th>Colonne</th>
+            <th>Titre</th>
             <th>Champ</th>
             <th>Description</th>
             <th>Type</th>
@@ -222,7 +222,7 @@
       <template v-slot:default>
         <thead>
           <tr>
-            <th>Colonne</th>
+            <th>Titre</th>
             <th>Champ</th>
             <th>Description</th>
             <th>Type</th>
@@ -242,7 +242,7 @@
         </tbody>
       </template>
     </v-simple-table>
-    <p v-else>Rien d'autre colonnes requises.</p>
+    <p v-else>Aucune autre colonne requise.</p>
 
     <DownloadLinkList
       groupTitle="On met à votre disposition un fichier exemple avec les données en bon format"
