@@ -41,46 +41,14 @@
       <span class="mt-1">Traitement en cours...</span>
     </v-card>
     <div v-if="!isNaN(purchaseCount) && !importInProgress">
-      <v-dialog v-model="succesImportDialog" v-if="!duplicateFile && purchaseCount > 0" max-width="600">
-        <v-card class="pt-4">
-          <v-card-title class="mb-6">
-            <img src="/static/images/picto-dsfr/success.svg" width="50px" />
-            <h1 class="fr-h5 mb-0 ml-2">
-              Le fichier a été importé avec succès
-            </h1>
-          </v-card-title>
-          <v-card-text class="text-left">
-            <v-row class="mb-4 ml-0 mr-0">
-              <p>{{ purchaseCount }}</p>
-              <p>Pour finaliser votre télédéclaration il vous suffit de :</p>
-              <ol>
-                <li>
-                  Vous rendre sur la page "Mon tableau de bord"
-                </li>
-                <li>
-                  Séléctionner votre cantine
-                </li>
-                <li>
-                  Cliquer sur le bloc "Qualité des produits"
-                </li>
-                <li>
-                  Valider vos données
-                </li>
-              </ol>
-            </v-row>
-            <v-row justify="center" class="mb-2 ml-0 mr-0">
-              <v-btn color="primary" outlined class="px-4 mr-2" @click="succesImportDialog = false">
-                Fermer
-              </v-btn>
-              <router-link :to="{ name: 'ManagementPage' }">
-                <v-btn color="primary" class="px-4">
-                  Aller sur mon tableau de bord
-                </v-btn>
-              </router-link>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
+      <ImporterSuccessDialog
+        :isOpen="showSuccessDialog && !duplicateFile && purchaseCount > 0"
+        :description="
+          purchaseCount > 1
+            ? 'Vos achats sont enregistrés et sont maintenant disponibles.'
+            : 'Votre achat est enregistré et est maintenant disponible.'
+        "
+      />
       <div v-if="duplicateFile">
         <p class="orange--text text--darken-4">
           Ce fichier a déjà été utilisé pour importer {{ duplicatePurchaseCount }}
@@ -186,10 +154,11 @@ import FileDrop from "@/components/FileDrop"
 import PurchasesTable from "@/components/PurchasesTable"
 import validators from "@/validators"
 import Constants from "@/constants"
+import ImporterSuccessDialog from "@/components/ImporterSuccessDialog.vue"
 
 export default {
   name: "ImportPurchases",
-  components: { FileDrop, PurchasesTable },
+  components: { FileDrop, PurchasesTable, ImporterSuccessDialog },
   data() {
     const user = this.$store.state.loggedUser
     const numberFormatExample = "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>."
@@ -267,7 +236,7 @@ export default {
       validators,
       isStaff: user.isStaff,
       duplicateFile: false,
-      succesImportDialog: false,
+      showSuccessDialog: false,
     }
   },
   methods: {
@@ -286,7 +255,7 @@ export default {
           this.duplicatePurchases = json.duplicatePurchases
           this.duplicatePurchaseCount = json.duplicatePurchaseCount
           this.seconds = json.seconds
-          this.succesImportDialog = true
+          this.showSuccessDialog = true
           this.$store.dispatch("notify", {
             message: `Fichier traité en ${Math.round(this.seconds)} secondes`,
           })
