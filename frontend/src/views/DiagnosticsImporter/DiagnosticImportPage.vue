@@ -157,8 +157,9 @@
     </v-card>
     <h3 class="my-6">Format du fichier</h3>
     <p>
-      Le fichier CSV doit contenir un bilan par ligne. Chaque ligne doit aussi inclure les informations de la cantine
-      associée.
+      Le fichier CSV doit commencer par une ligne en-tête avec le nom des colonnes exactement comme listé ci-dessous
+      dans "Titre". Il doit ensuite contenir un bilan par ligne. Chaque ligne doit aussi inclure les informations de la
+      cantine associée.
     </p>
     <p>Les données doivent être présentées dans l'ordre indiqué ci-dessous.</p>
     <p>Ce n'est pas possible de modifier les bilans télédéclarés.</p>
