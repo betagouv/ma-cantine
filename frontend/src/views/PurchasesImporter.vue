@@ -69,9 +69,14 @@
               </ol>
             </v-row>
             <v-row justify="center" class="mb-2 ml-0 mr-0">
-              <v-btn color="primary" class="px-4" @click="succesImportDialog = false">
-                Ok j'ai compris
+              <v-btn color="primary" outlined class="px-4 mr-2" @click="succesImportDialog = false">
+                Fermer
               </v-btn>
+              <router-link :to="{ name: 'ManagementPage' }">
+                <v-btn color="primary" class="px-4">
+                  Aller sur mon tableau de bord
+                </v-btn>
+              </router-link>
             </v-row>
           </v-card-text>
         </v-card>
