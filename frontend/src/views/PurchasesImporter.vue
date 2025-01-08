@@ -95,6 +95,7 @@
       Le fichier CSV doit commencer par une ligne en-tête avec le nom des colonnes exactement comme listé ci-dessous
       dans "Titre". Il doit ensuite contenir un achat par ligne.
     </p>
+    <p>Les données doivent être présentées dans l'ordre indiqué ci-dessous.</p>
     <h3 class="my-6">Colonnes</h3>
     <v-simple-table class="my-6">
       <template v-slot:default>
