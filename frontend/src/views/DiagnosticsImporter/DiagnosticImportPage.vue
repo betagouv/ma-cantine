@@ -77,17 +77,24 @@
       <span class="mt-1">Traitement en cours...</span>
     </v-card>
     <div v-if="!isNaN(canteenCount) && !importInProgress">
-      <div v-if="canteenCount > 0">
-        <v-alert type="success" outlined>
-          <p class="grey--text text--darken-4 body-2 mb-0">
-            {{ canteenCount }} cantines
-            <span v-if="diagnosticCount">et {{ diagnosticCount }} diagnostics&nbsp;</span>
-            <span v-if="teledeclarationCount">et {{ teledeclarationCount }} télédéclarations&nbsp;</span>
-            <span>ont été {{ diagnosticCount ? "traités" : "traitées" }}.</span>
-          </p>
-        </v-alert>
-        <router-link :to="{ name: 'ManagementPage' }" class="ma-4">← Retourner à mes cantines</router-link>
-      </div>
+      <ImporterSuccessDialog
+        v-if="canteenCount > 0 && !diagnosticCount && !teledeclarationCount"
+        :isOpen="canteenCount > 0"
+        :description="
+          canteenCount > 1
+            ? 'Vos cantines sont enregistrées et sont maintenant disponibles.'
+            : 'Votre cantine est enregistrée et est maintenant disponible.'
+        "
+      />
+      <ImporterSuccessDialog
+        v-else-if="canteenCount > 0"
+        :isOpen="canteenCount > 0"
+        :description="
+          canteenCount > 1
+            ? 'Vos bilans sont enregistrés et sont maintenant disponibles.'
+            : 'Votre bilan est enregistré et est maintenant disponible.'
+        "
+      />
       <div v-if="errors && errors.length">
         <h2 class="my-4">3. Adresser les erreurs suivants, et re-essayer</h2>
         <p class="text-body-2 red--text text--darken-4" v-if="canteenCount === 0">
@@ -259,10 +266,11 @@ import HelpForm from "./HelpForm"
 import Constants from "@/constants"
 import DownloadLinkList from "@/components/DownloadLinkList.vue"
 import DsfrCallout from "@/components/DsfrCallout"
+import ImporterSuccessDialog from "@/components/ImporterSuccessDialog.vue"
 
 export default {
   name: "DiagnosticImportPage",
-  components: { BreadcrumbsNav, FileDrop, HelpForm, DownloadLinkList, DsfrCallout },
+  components: { BreadcrumbsNav, FileDrop, HelpForm, DownloadLinkList, DsfrCallout, ImporterSuccessDialog },
   props: ["importUrlSlug"],
   data() {
     const user = this.$store.state.loggedUser
