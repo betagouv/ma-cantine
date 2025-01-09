@@ -314,20 +314,21 @@ Des extensions utiles :
 
 ## Test déploiement en locale
 
-Les commandes lancées sur CleverCloud sont listées dans `clevercloud/python.json`.
-
-.env :
+1. Modifier sa configuration d'env locale :
 
 ```
 DEBUG=False
 DEBUG_FRONT=False
 ```
 
-Dans le dossier principal, lancez :
-`bash ./clevercloud/test-build-with-vue3.sh`
-`python manage.py runserver --insecure`
+2. Dans le dossier principal, lancez :
 
-En prod, faut ajouter `CC_PRE_BUILD_HOOK=./clevercloud/pre-build-hook.sh`
+```
+$ bash ./clevercloud/test-build-with-vue3.sh
+$ python manage.py runserver --insecure
+```
+
+Pour le déploiement en prod il faut ajouter : `CC_PRE_BUILD_HOOK=./clevercloud/pre-build-hook.sh`
 
 ## Déploiement
 
