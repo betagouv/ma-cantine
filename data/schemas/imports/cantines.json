@@ -91,13 +91,6 @@
       "name": "gestionnaires_additionnels",
       "title": "Gestionnaires Additionnels",
       "type": "string"
-    },
-    {
-      "description": "Année du diagnostic. Réfère à l'année des données et non l'année de déclaration",
-      "example": "2021",
-      "name": "annee_diagnostic",
-      "title": "Année diagnostic",
-      "type": "integer"
     }
   ],
   "format": "csv",
