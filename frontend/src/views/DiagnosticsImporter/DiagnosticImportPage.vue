@@ -384,7 +384,7 @@ export default {
       if (this.importLevel !== "CC_SIMPLE" && this.importLevel !== "CC_COMPLETE") return []
       return [
         {
-          title: "satellite_canteens_count",
+          title: "nombre_satellites",
           name: "Nombre de cantines satellites",
           description:
             "Nombre de cantines/lieux de service à qui je fournis des repas. Obligatoire pour les livreurs des repas.",
