@@ -16,14 +16,13 @@
           <td>{{ field.name }}</td>
           <td>{{ field.title }}</td>
           <td>
-            <p>{{ field.description }}</p>
+            <p v-if="field.description">{{ field.description }}</p>
             <p v-if="field.constraints && field.constraints.enum">
               <span>Options acceptées :&#32;</span>
               <span v-for="(item, idx) in field.constraints.enum" :key="idx">
                 <code>{{ item }}</code>
                 <span v-if="idx < field.constraints.enum.length - 1">,&#32;</span>
               </span>
-              .
             </p>
             <p v-if="field.constraints && field.constraints.enum_multiple">
               Spécifiez plusieurs options en séparant avec un
@@ -45,8 +44,8 @@ const schemaTypes = {
   date: "Date (au format AAAA-MM-JJ)",
   integer: "Chiffre",
   number: "Chiffre",
-  siret: "14 chiffres, avec ou sans espaces",
-  string: "Texte",
+  siret: "14 chiffres (avec ou sans espaces)",
+  string: "Texte (libre)",
   string_enum: "Texte (choix unique)",
   string_enum_multiple: "Texte (choix multiples)",
 }
