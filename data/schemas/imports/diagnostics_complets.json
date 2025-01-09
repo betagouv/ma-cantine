@@ -295,7 +295,7 @@
     {
       "description": "Certification environnementale de niveau 2 ou HVE : Boulangerie/Pâtisserie fraîches",
       "exemple": "1234.99",
-      "name": "valeur_certification_environnementale_boulangzrie_patisserie",
+      "name": "valeur_certification_environnementale_boulangerie_patisserie",
       "type": "integer"
     },
     {

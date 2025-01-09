@@ -526,7 +526,7 @@ export default {
             name: "Certification environnementale de niveau 2 ou HVE : BOF (Produits laitiers, beurre et œufs)",
           },
           {
-            title: "valeur_certification_environnementale_boulangzrie_patisserie",
+            title: "valeur_certification_environnementale_boulangerie_patisserie",
             name: "Certification environnementale de niveau 2 ou HVE : Boulangerie/Pâtisserie fraîches",
           },
           {
