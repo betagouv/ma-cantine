@@ -321,7 +321,7 @@ DEBUG=False
 DEBUG_FRONT=False
 ```
 
-2. Dans le dossier principal, lancez :
+2. Dans le dossier principal lancer :
 
 ```
 $ bash ./clevercloud/test-build-with-vue3.sh
