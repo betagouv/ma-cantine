@@ -81,7 +81,7 @@
     {
       "description": "Modèle économique de la cantine. Il existe 2 types différents : public (cantine publique), private (cantine privée).",
       "example": "public",
-      "name": "modèle_économique",
+      "name": "modele_economique",
       "title": "Modèle Economique",
       "type": "string"
     },

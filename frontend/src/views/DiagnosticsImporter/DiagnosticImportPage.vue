@@ -355,7 +355,7 @@ export default {
           example: "direct",
         },
         {
-          title: "modèle_économique",
+          title: "modele_economique",
           name: "Secteur économique",
           description:
             "Le type d'établissement. Options acceptées : <code>public</code> et <code>private</code> (privé).",
