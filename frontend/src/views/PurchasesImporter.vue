@@ -136,7 +136,7 @@ import ImporterSuccessDialog from "@/components/ImporterSuccessDialog.vue"
 
 export default {
   name: "ImportPurchases",
-  components: { FileDrop, PurchasesTable, ImporterSuccessDialog },
+  components: { FileDrop, PurchasesTable, SchemaTable, ImporterSuccessDialog },
   data() {
     const user = this.$store.state.loggedUser
     return {
