@@ -97,44 +97,7 @@
     </p>
     <p>Les données doivent être présentées dans l'ordre indiqué ci-dessous.</p>
     <h3 class="my-6">Colonnes</h3>
-    <v-simple-table class="my-6">
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th>Titre</th>
-            <th>Champ</th>
-            <th>Description</th>
-            <th>Type</th>
-            <th>Exemple</th>
-            <th>Obligatoire</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(field, idx) in documentation" :key="idx">
-            <td>{{ field.name }}</td>
-            <td>{{ field.title }}</td>
-            <td>
-              <p>{{ field.description }}</p>
-              <p v-if="field.constraints && field.constraints.enum">
-                <span>Options acceptées :&#32;</span>
-                <span v-for="(item, idx) in field.constraints.enum" :key="idx">
-                  <code>{{ item }}</code>
-                  <span v-if="idx < field.constraints.enum.length - 1">,&#32;</span>
-                </span>
-              </p>
-              <p v-if="field.constraints && field.constraints.enum && field.constraints.enum_multiple">
-                Spécifiez plusieurs options en séparant avec un
-                <code>,</code>
-                .
-              </p>
-            </td>
-            <td style="min-width: 150px;">{{ getSchemaFieldType(field) }}</td>
-            <td>{{ field.example }}</td>
-            <td class="text-center">{{ field.constraints && field.constraints.required ? "✔" : "✘" }}</td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table>
+    <SchemaTable :schemaUrl="purchaseSchemaUrl" />
 
     <h3 class="my-6">Fichier exemple</h3>
     <p>
@@ -165,12 +128,12 @@
 <script>
 import FileDrop from "@/components/FileDrop"
 import PurchasesTable from "@/components/PurchasesTable"
+import SchemaTable from "@/components/SchemaTable"
 import validators from "@/validators"
-import Constants from "@/constants"
 
 export default {
   name: "ImportPurchases",
-  components: { FileDrop, PurchasesTable },
+  components: { FileDrop, PurchasesTable, SchemaTable },
   data() {
     const user = this.$store.state.loggedUser
     return {
@@ -183,35 +146,14 @@ export default {
       seconds: undefined,
       importInProgress: false,
       duplicatePurchases: null,
-      documentation: [], // see mounted
+      purchaseSchemaUrl:
+        "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json",
       validators,
       isStaff: user.isStaff,
       duplicateFile: false,
     }
   },
-  mounted() {
-    this.fetchSchema()
-  },
   methods: {
-    fetchSchema() {
-      fetch("https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json")
-        .then((response) => response.json())
-        .then((json) => {
-          this.documentation = json.fields
-        })
-    },
-    getSchemaFieldType(field) {
-      if (field.name in Constants.SchemaTypes) {
-        return Constants.SchemaTypes[field.name]
-      }
-      if (field.constraints && field.constraints.enum) {
-        if (field.constraints.enum_multiple) {
-          return Constants.SchemaTypes[`${field.type}_enum_multiple`]
-        }
-        return Constants.SchemaTypes[`${field.type}_enum`]
-      }
-      return Constants.SchemaTypes[field.type]
-    },
     upload() {
       this.importInProgress = true
       this.duplicateFile = false
