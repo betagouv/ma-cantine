@@ -3,85 +3,127 @@
   "fields": [
     {
       "constraints": {
+        "pattern": "^[0-9]{14}$",
         "required": true
       },
-      "description": "Le SIRET de la cantine ayant réalisé l'achat",
+      "description": "La cantine avec ce SIRET doit être déjà enregistrée sur notre plateforme.",
+      "example": "000 000 000 00000",
+      "format": "default",
       "name": "siret",
-      "pattern": "^[0-9]{14}$",
+      "title": "Le SIRET de la cantine ayant réalisé l'achat",
       "type": "string"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "Une description de l'achat",
+      "description": "",
+      "example": "Pommes de terre",
+      "format": "default",
       "name": "description",
+      "title": "Une description de l'achat",
       "type": "string"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "Le nom du fournisseur",
+      "description": "",
+      "example": "Le traiteur du village",
+      "format": "default",
       "name": "fournisseur",
+      "title": "Le nom du fournisseur",
       "type": "string"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "La date de l'achat",
+      "description": "",
+      "example": "2022-01-30",
       "format": "%Y-%m-%d",
       "name": "date",
+      "title": "La date de l'achat",
       "type": "date"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "Le prix HT de l'achat",
+      "description": "",
+      "example": "3290.23",
+      "format": "default",
       "name": "prix_ht",
+      "title": "Le prix HT de l'achat",
       "type": "number"
     },
     {
       "constraints": {
-        "required": true
+        "enum": [
+          "VIANDES_VOLAILLES",
+          "CHARCUTERIE",
+          "PRODUITS_DE_LA_MER",
+          "FRUITS_ET_LEGUMES",
+          "PRODUITS_LAITIERS",
+          "BOULANGERIE",
+          "BOISSONS",
+          "AUTRES"
+        ],
+        "required": false
       },
-      "description": "La famille de produits de l'achat",
-      "enum": [
-        "VIANDES_VOLAILLES",
-        "CHARCUTERIE",
-        "PRODUITS_DE_LA_MER",
-        "FRUITS_ET_LEGUMES",
-        "PRODUITS_LAITIERS",
-        "BOULANGERIE",
-        "BOISSONS",
-        "AUTRES"
-      ],
+      "description": "",
+      "example": "VIANDES_VOLAILLES",
+      "format": "default",
       "name": "famille_produits",
+      "title": "La famille de produits de l'achat",
       "type": "string"
     },
     {
       "constraints": {
+        "enum": [
+          "BIO",
+          "LABEL_ROUGE",
+          "AOCAOP",
+          "IGP",
+          "STG",
+          "HVE",
+          "PECHE_DURABLE",
+          "RUP",
+          "COMMERCE_EQUITABLE",
+          "FERMIER",
+          "EXTERNALITES",
+          "PERFORMANCE",
+          "FRANCE",
+          "SHORT_DISTRIBUTION",
+          "LOCAL"
+        ],
+        "enum_multiple": true,
+        "enum_multiple_seperator": ",",
         "pattern": "(?:(?:^|;)(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|FRANCE|SHORT_DISTRIBUTION|LOCAL))+$",
         "required": false
       },
-      "description": "Les caractéristiques de l'achat",
+      "description": "",
+      "example": "BIO,IGP",
+      "format": "default",
       "name": "caracteristiques",
+      "title": "Les caractéristiques de l'achat",
       "type": "string"
     },
     {
       "constraints": {
-        "required": true
+        "enum": [
+          "AUTOUR_SERVICE",
+          "DEPARTMENT",
+          "REGION",
+          "AUTRE"
+        ],
+        "required": false
       },
-      "description": "La définition de local si l'achat a la caractéristique de LOCAL",
-      "enum": [
-        "AUTOUR_SERVICE",
-        "DEPARTMENT",
-        "REGION",
-        "AUTRE"
-      ],
+      "description": "Obligatoire si l'achat a la caractéristique de LOCAL.",
+      "example": "AUTOUR_SERVICE",
+      "format": "default",
       "name": "definition_local",
+      "title": "La définition de local",
       "type": "string"
     }
   ],

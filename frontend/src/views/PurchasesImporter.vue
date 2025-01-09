@@ -97,31 +97,9 @@
       Le fichier CSV doit commencer par une ligne en-tête avec le nom des colonnes exactement comme listé ci-dessous
       dans "Titre". Il doit ensuite contenir un achat par ligne.
     </p>
+    <p>Les données doivent être présentées dans l'ordre indiqué ci-dessous.</p>
     <h3 class="my-6">Colonnes</h3>
-    <v-simple-table class="my-6">
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th>Titre</th>
-            <th>Champ</th>
-            <th>Description</th>
-            <th>Type</th>
-            <th>Exemple</th>
-            <th>Obligatoire</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(field, idx) in documentation" :key="idx">
-            <td>{{ field.title }}</td>
-            <td>{{ field.name }}</td>
-            <td v-html="field.description"></td>
-            <td style="min-width: 150px;">{{ field.type }}</td>
-            <td>{{ field.example }}</td>
-            <td class="text-center">{{ field.optional ? "✘" : "✔" }}</td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table>
+    <SchemaTable :schemaUrl="purchaseSchemaUrl" />
 
     <h3 class="my-6">Fichier exemple</h3>
     <p>
@@ -152,8 +130,8 @@
 <script>
 import FileDrop from "@/components/FileDrop"
 import PurchasesTable from "@/components/PurchasesTable"
+import SchemaTable from "@/components/SchemaTable"
 import validators from "@/validators"
-import Constants from "@/constants"
 import ImporterSuccessDialog from "@/components/ImporterSuccessDialog.vue"
 
 export default {
@@ -161,7 +139,6 @@ export default {
   components: { FileDrop, PurchasesTable, ImporterSuccessDialog },
   data() {
     const user = this.$store.state.loggedUser
-    const numberFormatExample = "En format <code>1234</code>/<code>1234.5</code>/<code>1234.56</code>."
     return {
       file: undefined,
       canteens: undefined,
@@ -172,67 +149,8 @@ export default {
       seconds: undefined,
       importInProgress: false,
       duplicatePurchases: null,
-      documentation: [
-        {
-          title: "siret",
-          name: "SIRET de la cantine ayant réalisé l'achat",
-          description: "La cantine avec ce SIRET doit être déjà enregistrée sur notre plateforme.",
-          type: "14 chiffres, avec ou sans espaces",
-          example: "000 000 000 00000",
-        },
-        {
-          title: "description",
-          name: "Description de l'achat",
-          example: "Pommes de terre",
-          type: "Texte libre",
-        },
-        {
-          title: "fournisseur",
-          name: "Fournisseur",
-          example: "Le traiteur du village",
-          type: "Texte libre",
-        },
-        {
-          title: "date",
-          name: "Date d'achat",
-          type: "Date en format AAAA-MM-JJ",
-          example: "2022-01-30",
-        },
-        {
-          title: "prix_ht",
-          name: "Prix HT",
-          description: numberFormatExample,
-          type: "Chiffre",
-          example: "3290.23",
-        },
-        {
-          title: "famille_produits",
-          name: "Famille de produits",
-          description: `Options acceptées : ${Object.keys(Constants.ProductFamilies).map(
-            (x) => " <code>" + x + "</code>"
-          )}`,
-          type: "Texte (choix unique)",
-          example: `${Object.keys(Constants.ProductFamilies)[0]}`,
-        },
-        {
-          title: "caracteristiques",
-          name: "Caractéristiques",
-          description: `Options acceptées : ${Object.keys(Constants.Characteristics).map(
-            (x) => " <code>" + x + "</code>"
-          )}. Spécifiez plusieurs en séparant avec un <code>,</code>.`,
-          type: "Texte",
-          example: `${Object.keys(Constants.Characteristics)[0]},${Object.keys(Constants.Characteristics)[3]}`,
-        },
-        {
-          title: "definition_local",
-          name: "Définition de local",
-          description: `Obligatoire si l'achat a la caractéristique de LOCAL. Options acceptées : ${Object.keys(
-            Constants.LocalDefinitions
-          ).map((x) => " <code>" + x + "</code>")}.`,
-          type: "Texte (choix unique)",
-          example: `${Object.keys(Constants.LocalDefinitions)[0]}`,
-        },
-      ],
+      purchaseSchemaUrl:
+        "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json",
       validators,
       isStaff: user.isStaff,
       duplicateFile: false,

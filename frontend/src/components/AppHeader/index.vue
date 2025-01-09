@@ -17,7 +17,7 @@
         <router-link
           :to="{ name: 'LandingPage' }"
           class="text-decoration-none d-flex align-center"
-          aria-label="ma cantine (aller à l'accueil) - Ministère de l'Agriculture, de la Souveraineté alimentaire et de la Forêt"
+          aria-label="ma cantine (aller à l'accueil) - Ministère de l'Agriculture et de la Souveraineté alimentaire"
           :aria-description="chipInfo && `environnement ${chipInfo.text}`"
         >
           <img src="/static/images/Marianne.jpg" height="100" alt="" />
