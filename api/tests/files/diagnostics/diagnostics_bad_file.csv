@@ -1,4 +1,4 @@
-siret,nom,code_insee_commune,code_postal_commune,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modele_economique,gestionnaires_additionnels,année_bilan,valeur_totale,valeur_bio,valeur_siqo,valeur_environnemental,valeur_autres_egalim,valeur_viandes,valeur_viandes_egalim,valeur_viandes_france,valeur_poissons,valeur_poissons_egalim
+siret,nom,code_insee_commune,code_postal_commune,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modele_economique,gestionnaires_additionnels,annee_bilan,valeur_totale,valeur_bio,valeur_siqo,valeur_environnemental,valeur_autres_egalim,valeur_viandes,valeur_viandes_egalim,valeur_viandes_france,valeur_poissons,valeur_poissons_egalim
 44170940900011,No year,45096,,42126486200010,700,14000,,site,conceded,public,,,1000,500,100.1,0,0,0,0,0,0,0
 50044221500025,Bad year,45096,,42126486200010,700,14000,,site,conceded,public,,.,1000,500,100.1,0,0,0,0,0,0,0
 50748039000024,Bad repas number,45096,,42126486200010,not a number,14000,,site,conceded,public,,2020,1000,500,100.1,0,0,0,0,0,0,0

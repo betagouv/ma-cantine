@@ -103,7 +103,7 @@
     {
       "description": "Année du bilan. Réfère à l'année des données et non l'année de déclaration",
       "example": "2021",
-      "name": "année_bilan",
+      "name": "annee_bilan",
       "title": "Année bilan",
       "type": "integer"
     },

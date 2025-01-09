@@ -430,7 +430,7 @@ export default {
       let valuesArray = simpleValues
       const array = [
         {
-          title: "année_bilan",
+          title: "annee_bilan",
           name: "Année du bilan",
           description: "En format <code>YYYY</code>.",
           type: "Chiffre",
