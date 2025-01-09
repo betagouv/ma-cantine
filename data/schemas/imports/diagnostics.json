@@ -2,17 +2,17 @@
   "encoding": "utf-8",
   "fields": [
     {
-      "example": "Ecole Jean Jaurès",
-      "name": "nom",
-      "type": "string"
-    },
-    {
       "constraints": {
         "pattern": "^[0-9]{14}$",
         "required": true
       },
       "example": "11007001800012",
       "name": "siret",
+      "type": "string"
+    },
+    {
+      "example": "Ecole Jean Jaurès",
+      "name": "nom",
       "type": "string"
     },
     {
