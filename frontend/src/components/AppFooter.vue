@@ -9,7 +9,7 @@
       <v-row v-if="!showSmallFooter" class="pt-12 pt-sm-0">
         <v-col cols="12" sm="3" md="2" class="d-flex align-center ml-n4">
           <img
-            src="/static/images/Marianne.jpg"
+            src="/static/images/Marianne-2025.jpg"
             alt="Ministère de l'Agriculture et de la Souveraineté alimentaire - Liberté Égalité Fraternité"
             height="160"
           />

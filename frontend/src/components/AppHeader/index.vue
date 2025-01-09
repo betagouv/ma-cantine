@@ -20,7 +20,7 @@
           aria-label="ma cantine (aller à l'accueil) - Ministère de l'Agriculture et de la Souveraineté alimentaire"
           :aria-description="chipInfo && `environnement ${chipInfo.text}`"
         >
-          <img src="/static/images/Marianne.jpg" height="100" alt="" />
+          <img src="/static/images/Marianne-2025.jpg" height="100" alt="" />
           <img v-if="$vuetify.breakpoint.smAndUp" src="/static/images/ma-cantine-logo-light.jpg" height="65" alt="" />
           <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
             {{ chipInfo.text }}
