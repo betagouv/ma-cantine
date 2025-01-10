@@ -7,7 +7,7 @@
         "required": true
       },
       "description": "La cantine avec ce SIRET doit être déjà enregistrée sur notre plateforme.",
-      "example": "000 000 000 00000",
+      "example": "49463556926130",
       "format": "default",
       "name": "siret",
       "title": "Le SIRET de la cantine ayant réalisé l'achat",
@@ -51,7 +51,7 @@
         "required": true
       },
       "description": "",
-      "example": "3290.23",
+      "example": "1234.99",
       "format": "default",
       "name": "prix_ht",
       "title": "Le prix HT de l'achat",

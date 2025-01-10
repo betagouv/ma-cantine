@@ -134,7 +134,7 @@
       "type": "string"
     },
     {
-      "description": "Gestionnaire de la cantine. La cantine peut-être gérée directement ou de manière concédée. Si la valeur est 'concédée', la délégation peut être totale ou partielle",
+      "description": "Gestionnaire de la cantine. La cantine peut être gérée directement ('direct') ou de manière concédée ('conceded'). Si de manière concédée, la délégation peut être totale ou partielle.",
       "example": "conceded",
       "name": "canteen_management_type",
       "title": "Type de Management de la cantine",
