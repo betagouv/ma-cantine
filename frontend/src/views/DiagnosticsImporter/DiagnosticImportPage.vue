@@ -212,15 +212,15 @@ export default {
       importInProgress: false,
       encodingUsed: undefined,
       canteenSchemaUrl:
-        "https://raw.githubusercontent.com/betagouv/ma-cantine/raphodn/import-de-masse-rendre-le-header-obligatoire-diagnostics-json/data/schemas/imports/cantines.json",
+        "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines.json",
       diagnosticSimpleSchemaUrl:
-        "https://raw.githubusercontent.com/betagouv/ma-cantine/raphodn/import-de-masse-rendre-le-header-obligatoire-diagnostics-json/data/schemas/imports/diagnostics.json",
+        "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/diagnostics.json",
       diagnosticCompleteSchemaUrl:
-        "https://raw.githubusercontent.com/betagouv/ma-cantine/raphodn/import-de-masse-rendre-le-header-obligatoire-diagnostics-json/data/schemas/imports/diagnostics_complets.json",
+        "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/diagnostics_complets.json",
       diagnosticSimpleCCSchemaUrl:
-        "https://raw.githubusercontent.com/betagouv/ma-cantine/raphodn/import-de-masse-rendre-le-header-obligatoire-diagnostics-json/data/schemas/imports/diagnostics_cc.json",
+        "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/diagnostics_cc.json",
       diagnosticCompleteCCSchemaUrl:
-        "https://raw.githubusercontent.com/betagouv/ma-cantine/raphodn/import-de-masse-rendre-le-header-obligatoire-diagnostics-json/data/schemas/imports/diagnostics_complets_cc.json",
+        "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/diagnostics_complets_cc.json",
       isStaff: user.isStaff,
     }
   },

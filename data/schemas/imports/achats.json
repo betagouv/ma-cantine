@@ -10,7 +10,7 @@
       "example": "49463556926130",
       "format": "default",
       "name": "siret",
-      "title": "Le SIRET de la cantine ayant réalisé l'achat",
+      "title": "SIRET de la cantine ayant réalisé l'achat",
       "type": "string"
     },
     {
@@ -21,7 +21,7 @@
       "example": "Pommes de terre",
       "format": "default",
       "name": "description",
-      "title": "Une description de l'achat",
+      "title": "Description de l'achat",
       "type": "string"
     },
     {
@@ -32,7 +32,7 @@
       "example": "Le traiteur du village",
       "format": "default",
       "name": "fournisseur",
-      "title": "Le nom du fournisseur",
+      "title": "Nom du fournisseur",
       "type": "string"
     },
     {
@@ -43,7 +43,7 @@
       "example": "2022-01-30",
       "format": "%Y-%m-%d",
       "name": "date",
-      "title": "La date de l'achat",
+      "title": "Date de l'achat",
       "type": "date"
     },
     {
@@ -54,7 +54,7 @@
       "example": "1234.99",
       "format": "default",
       "name": "prix_ht",
-      "title": "Le prix HT de l'achat",
+      "title": "Prix HT de l'achat",
       "type": "number"
     },
     {
@@ -75,7 +75,7 @@
       "example": "VIANDES_VOLAILLES",
       "format": "default",
       "name": "famille_produits",
-      "title": "La famille de produits de l'achat",
+      "title": "Famille de produits de l'achat",
       "type": "string"
     },
     {
@@ -106,7 +106,7 @@
       "example": "BIO,IGP",
       "format": "default",
       "name": "caracteristiques",
-      "title": "Les caractéristiques de l'achat",
+      "title": "Caractéristiques de l'achat",
       "type": "string"
     },
     {
@@ -123,7 +123,7 @@
       "example": "AUTOUR_SERVICE",
       "format": "default",
       "name": "definition_local",
-      "title": "La définition de local",
+      "title": "Définition de local",
       "type": "string"
     }
   ],
