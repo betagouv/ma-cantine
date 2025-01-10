@@ -183,7 +183,7 @@
       "description": "Part des achats EGalim dans les achats alimentaires de l'année",
       "example": 0.3,
       "name": "teledeclaration_ratio_egalim_hors_bio",
-      "title": "Télédéclaration Ratio Egalim",
+      "title": "Télédéclaration Ratio EGalim",
       "type": "number"
     }
   ],

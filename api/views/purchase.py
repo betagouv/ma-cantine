@@ -329,7 +329,7 @@ def simple_diag_data(purchases, data):
     egalim_others_purchases = purchases_no_siqo.filter(egalim_others_filter).distinct()
     data["value_egalim_others_ht"] = egalim_others_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
-    # the remaining stats should ignore any "other Egalim" products
+    # the remaining stats should ignore any "other EGalim" products
     purchases_no_other = purchases_no_siqo.exclude(egalim_others_filter)
     externalities_performance_purchases = purchases_no_other.filter(externalities_performance_filter).distinct()
     data["value_externality_performance_ht"] = (

@@ -130,7 +130,7 @@
 
     <h4 class="fr-h4">5) Référencement de mon établissement en ligne</h4>
     <p>
-      Dès lors qu’un établissement est créée sur la plateforme, ses informations administratives et ses taux Egalim sont
+      Dès lors qu’un établissement est créée sur la plateforme, ses informations administratives et ses taux EGalim sont
       visibles publiquement sur l’onglet « nos cantines publiées » et sur le site data.gouv.fr.
     </p>
     <p>
@@ -143,7 +143,7 @@
     <p>
       Les Gestionnaires peuvent ajouter leurs achats dans un tableau mis à disposition sur la plateforme. La complétion
       du tableau permet aux Gestionnaires de voir la répartition des achats en fonction des différentes familles de
-      produit, ainsi que le pourcentage en lien avec les lois Egalim.
+      produit, ainsi que le pourcentage en lien avec les lois EGalim.
     </p>
 
     <h2 class="fr-h2">4 - Traitement des données personnelles</h2>

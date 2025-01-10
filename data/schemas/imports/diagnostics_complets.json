@@ -685,49 +685,49 @@
       "type": "number"
     },
     {
-      "description": "Non-Egalim : Viandes et volailles fraîches et surgelées",
+      "description": "Non-EGalim : Viandes et volailles fraîches et surgelées",
       "exemple": "1234.99",
       "name": "valeur_non_egalim_viandes_volailles",
       "type": "number"
     },
     {
-      "description": "Non-Egalim : Produits aquatiques frais et surgelés",
+      "description": "Non-EGalim : Produits aquatiques frais et surgelés",
       "exemple": "1234.99",
       "name": "valeur_non_egalim_produits_aquatiques",
       "type": "number"
     },
     {
-      "description": "Non-Egalim : Fruits et légumes frais et surgelés",
+      "description": "Non-EGalim : Fruits et légumes frais et surgelés",
       "exemple": "1234.99",
       "name": "valeur_non_egalim_fruits_legumes",
       "type": "number"
     },
     {
-      "description": "Non-Egalim : Charcuterie",
+      "description": "Non-EGalim : Charcuterie",
       "exemple": "1234.99",
       "name": "valeur_non_egalim_charcuterie",
       "type": "number"
     },
     {
-      "description": "Non-Egalim : BOF (Produits laitiers, beurre et œufs)",
+      "description": "Non-EGalim : BOF (Produits laitiers, beurre et œufs)",
       "exemple": "1234.99",
       "name": "valeur_non_egalim_bof",
       "type": "number"
     },
     {
-      "description": "Non-Egalim : Boulangerie/Pâtisserie fraîches",
+      "description": "Non-EGalim : Boulangerie/Pâtisserie fraîches",
       "exemple": "1234.99",
       "name": "valeur_non_egalim_boulangerie_patisserie",
       "type": "number"
     },
     {
-      "description": "Non-Egalim : Boissons",
+      "description": "Non-EGalim : Boissons",
       "exemple": "1234.99",
       "name": "valeur_non_egalim_boissons",
       "type": "number"
     },
     {
-      "description": "Non-Egalim : Autres produits frais, surgelés et d’épicerie",
+      "description": "Non-EGalim : Autres produits frais, surgelés et d’épicerie",
       "exemple": "1234.99",
       "name": "valeur_non_egalim_autres_produits",
       "type": "number"
