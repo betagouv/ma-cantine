@@ -98,6 +98,7 @@ L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), 
 SECRET= Le secret pour Django (vous pouvez le [générer ici](https://djecrety.ir/))
 DEBUG= `True` pour le développement local ou `False` autrement
 DEBUG_FRONT= `True` pour le développement local du 2024-front ou `False` autrement
+DEBUG_WEBPACK_PROGRESS= `True` pour afficher la progression lors du build de webpack pour le `frontend`
 DB_USER= L'utilisateur de la base de données. Doit avoir les droits de creation de db pour les tests (par ex. 'macantine_egalim_team')
 DB_PASSWORD= Le mot de passe pour accéder à la base de données
 DB_HOST= Le host de la base de données (par ex. '127.0.0.1')
