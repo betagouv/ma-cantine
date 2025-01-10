@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import requests
 
-from api.serializers import SectorSerializer
 from data.models import Sector, Teledeclaration
 from macantine.utils import CAMPAIGN_DATES
 
@@ -205,6 +204,9 @@ def map_sectors():
     """
     Populate the details of a sector, given its id
     """
+
+    from api.serializers import SectorSerializer  # avoir circular import
+
     sectors = Sector.objects.all()
     sectors_mapper = {}
     for sector in sectors:
