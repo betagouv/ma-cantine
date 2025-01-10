@@ -315,45 +315,11 @@ class ETL_ANALYSIS_CANTEEN(etl.CANTEENS, ANALYSIS):
 
     def __init__(self):
         super().__init__()
-
         self.extracted_table_name = "canteens"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
 
-        # The following mapper is used for renaming columns and for selecting the columns to extract from db
-        self.columns_mapper = {
-            "id": "id",
-            "name": "nom",
-            "siret": "siret",
-            "city_insee_code": "code_insee_commune",
-            "city": "libelle_commune",
-            "department": "departement",
-            "region": "region",
-            "creation_date": "date_creation",
-            "modification_date": "date_modification",
-            "daily_meal_count": "nbre_repas_jour",
-            "yearly_meal_count": "nbre_repas_an",
-            "economic_model": "modele_economique",
-            "management_type": "type_gestion",
-            "production_type": "type_production",
-            "satellite_canteens_count": "nombre_satellites",
-            "central_producer_siret": "siret_cuisine_centrale",
-            "line_ministry": "ministere_tutelle",
-            "sectors": "secteur",
-        }
-        self.columns = self.columns_mapper.keys()
-
     def transform_dataset(self):
-        logger.info("Filling geo names")
-        self.fill_geo_names()
-        self.columns_mapper["department_lib"] = "departement_lib"
-
-        # Extract the sector names and categories
-        logger.info("Canteens : Extract sectors and SPE...")
-        self.df = utils.extract_sectors(self.df, extract_spe=True, split_category_and_sector=True, only_one_value=True)
-
-        self.df = self.df.rename(columns={"categories": "categorie"})
-        self.df = self.df.rename(columns=self.columns_mapper)
-
-        logger.info("Canteens : Clean dataset")
-        self._clean_dataset()
+        # Calling this method is still needed to respect the structure of the code
+        # TODO : Make it possible to stop calling transform_dataset()
+        logger.info("No more transformation needed here !")
