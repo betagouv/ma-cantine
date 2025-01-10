@@ -1,5 +1,6 @@
 const BundleTracker = require("webpack-bundle-tracker")
 const debug = !process.env.DEBUG || process.env.DEBUG === "True"
+const debugWebpackProgress = process.env.DEBUG_WEBPACK_PROGRESS === "True"
 
 const FRONTEND_URL = "http://localhost:8080"
 
@@ -20,10 +21,14 @@ module.exports = {
     loaderOptions: {
       sass: {
         sassOptions: {
-          silenceDeprecations: ["slash-div", "legacy-js-api"],
+          silenceDeprecations: ["slash-div", "legacy-js-api", "global-builtin", "import"],
         },
       },
     },
+  },
+
+  devServer: {
+    progress: debugWebpackProgress,
   },
 
   chainWebpack: (config) => {
