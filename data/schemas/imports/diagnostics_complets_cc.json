@@ -8,7 +8,7 @@
         "required": true
       },
       "description": "Ce SIRET doit être unique car il correspond à un lieu physique.",
-      "example": "000 000 000 00000",
+      "example": "49463556926130",
       "format": "default",
       "name": "siret",
       "title": "SIRET de l'établissement",
