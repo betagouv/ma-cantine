@@ -262,7 +262,7 @@
       "description": "Admin : Gestionnaires additionnels (sans notification par mail)",
       "example": "gestionnaire1@example.com",
       "name": "admin_gestionnaires_additionnels",
-      "title": "Admin : Gestionnaires additionnels (sans notifif)",
+      "title": "Admin : Gestionnaires additionnels (sans notif)",
       "type": "string"
     },
     {
