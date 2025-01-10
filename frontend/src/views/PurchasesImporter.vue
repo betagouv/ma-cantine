@@ -41,12 +41,14 @@
       <span class="mt-1">Traitement en cours...</span>
     </v-card>
     <div v-if="!isNaN(purchaseCount) && !importInProgress">
-      <v-alert type="success" outlined v-if="!duplicateFile && purchaseCount > 0">
-        <span class="grey--text text--darken-4 body-2">
-          {{ purchaseCount }} achats
-          <span>ont été créés.</span>
-        </span>
-      </v-alert>
+      <ImporterSuccessDialog
+        :isOpen="showSuccessDialog && !duplicateFile && purchaseCount > 0"
+        :description="
+          purchaseCount > 1
+            ? 'Vos achats sont enregistrés et sont maintenant disponibles.'
+            : 'Votre achat est enregistré et est maintenant disponible.'
+        "
+      />
       <div v-if="duplicateFile">
         <p class="orange--text text--darken-4">
           Ce fichier a déjà été utilisé pour importer {{ duplicatePurchaseCount }}
@@ -130,10 +132,11 @@ import FileDrop from "@/components/FileDrop"
 import PurchasesTable from "@/components/PurchasesTable"
 import SchemaTable from "@/components/SchemaTable"
 import validators from "@/validators"
+import ImporterSuccessDialog from "@/components/ImporterSuccessDialog.vue"
 
 export default {
   name: "ImportPurchases",
-  components: { FileDrop, PurchasesTable, SchemaTable },
+  components: { FileDrop, PurchasesTable, SchemaTable, ImporterSuccessDialog },
   data() {
     const user = this.$store.state.loggedUser
     return {
@@ -151,6 +154,7 @@ export default {
       validators,
       isStaff: user.isStaff,
       duplicateFile: false,
+      showSuccessDialog: false,
     }
   },
   methods: {
@@ -169,6 +173,7 @@ export default {
           this.duplicatePurchases = json.duplicatePurchases
           this.duplicatePurchaseCount = json.duplicatePurchaseCount
           this.seconds = json.seconds
+          this.showSuccessDialog = true
           this.$store.dispatch("notify", {
             message: `Fichier traité en ${Math.round(this.seconds)} secondes`,
           })
