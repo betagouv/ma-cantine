@@ -56,8 +56,8 @@ const SIMPLE_FIELDS = [
   },
   {
     name: "valueEgalimOthersHt",
-    label: "La valeur (en € HT) des autres achats EGAlim",
-    purchaseType: "« autre EGAlim »",
+    label: "La valeur (en € HT) des autres achats EGalim",
+    purchaseType: "« autre EGalim »",
   },
   {
     name: "valueExternalityPerformanceHt",
@@ -72,8 +72,8 @@ const SIMPLE_FIELDS = [
   },
   {
     name: "valueMeatPoultryEgalimHt",
-    label: "La valeur (en € HT) de mes achats EGAlim en viandes et volailles fraiches ou surgelées",
-    purchaseType: "viandes et volailles EGAlim",
+    label: "La valeur (en € HT) de mes achats EGalim en viandes et volailles fraiches ou surgelées",
+    purchaseType: "viandes et volailles EGalim",
   },
   {
     name: "valueMeatPoultryFranceHt",
@@ -87,8 +87,8 @@ const SIMPLE_FIELDS = [
   },
   {
     name: "valueFishEgalimHt",
-    label: "La valeur (en € HT) de mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
-    purchaseType: "poissons, produits de la mer et de l'aquaculture EGAlim",
+    label: "La valeur (en € HT) de mes achats EGalim en poissons, produits de la mer et de l'aquaculture",
+    purchaseType: "poissons, produits de la mer et de l'aquaculture EGalim",
   },
 ]
 

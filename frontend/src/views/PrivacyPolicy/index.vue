@@ -24,7 +24,7 @@
       Cette plateforme permet ainsi :
     </p>
     <ul>
-      <li>une meilleure connaissance des lois EGAlim via une description détaillée et pédagogique des mesures,</li>
+      <li>une meilleure connaissance des lois EGalim via une description détaillée et pédagogique des mesures,</li>
       <li>
         un aperçu de l'état des lieux des cantines ayant partagé leurs données pour connaître leur positionnement et
         éventuellement fomenter des échanges entre elles et avec leurs convives,

@@ -57,7 +57,7 @@
             Votre livreur des repas a déjà renseigné les données de cette mesure pour votre cantine. Retrouvez la
             synthèse ci-dessous.
             <span v-if="centralDiagnostic.centralKitchenDiagnosticMode !== 'ALL' && measureId === approId">
-              Les autres volets de la loi EGAlim vous restent accessibles.
+              Les autres volets de la loi EGalim vous restent accessibles.
             </span>
           </p>
         </div>

@@ -5,36 +5,37 @@
     <li>
         <span>Valeur en HT des achats alimentaires en Bio</span> :
         {% if not value_bio_ht is None %}
-            {{ value_bio_ht|floatformat:2 }}
+        {{ value_bio_ht|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
     <li>
         <span>Valeur en HT de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)</span> :
         {% if not value_sustainable_ht is None %}
-            {{ value_sustainable_ht|floatformat:2 }}
+        {{ value_sustainable_ht|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
     <li>
-        <span>Valeur en HT de mes autres achats EGAlim</span> :
+        <span>Valeur en HT de mes autres achats EGalim</span> :
         {% if not value_egalim_others_ht is None %}
-            {{ value_egalim_others_ht|floatformat:2 }}
+        {{ value_egalim_others_ht|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
     <li>
-        <span>Valeur en HT de mes achats prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale</span> :
+        <span>Valeur en HT de mes achats prenant en compte les coûts imputés aux externalités environnementales ou leurs
+            performances en matière environnementale</span> :
         {% if not value_externality_performance_ht is None %}
-            {{ value_externality_performance_ht|floatformat:2 }}
+        {{ value_externality_performance_ht|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
@@ -44,27 +45,27 @@
     <li>
         <span>Valeur totale en HT des achats en viandes et volailles fraiches ou surgelées</span> :
         {% if not value_meat_poultry_ht is None %}
-            {{ value_meat_poultry_ht|floatformat:2 }}
+        {{ value_meat_poultry_ht|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
     <li>
-        <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées EGAlim</span> :
+        <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées EGalim</span> :
         {% if not value_meat_poultry_egalim_ht is None %}
-            {{ value_meat_poultry_egalim_ht|floatformat:2 }}
+        {{ value_meat_poultry_egalim_ht|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
     <li>
         <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées provenance France</span> :
         {% if not value_meat_poultry_france_ht is None %}
-            {{ value_meat_poultry_france_ht|floatformat:2 }}
+        {{ value_meat_poultry_france_ht|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
@@ -74,18 +75,18 @@
     <li>
         <span>Valeur totale en HT des achats en poissons, produits de la mer et de l'aquaculture</span> :
         {% if not value_fish_ht is None %}
-            {{ value_fish_ht|floatformat:2 }}
+        {{ value_fish_ht|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
     <li>
-        <span>Valeur en HT des achats en poissons, produits de la mer et de l'aquaculture EGAlim</span> :
+        <span>Valeur en HT des achats en poissons, produits de la mer et de l'aquaculture EGalim</span> :
         {% if not value_fish_egalim_ht is None %}
-            {{ value_fish_egalim_ht|floatformat:2 }}
+        {{ value_fish_egalim_ht|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>

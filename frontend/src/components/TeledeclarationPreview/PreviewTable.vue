@@ -53,7 +53,7 @@
           </tr>
           <tr class="header">
             <td class="text-left font-weight-bold" colspan="2">
-              Autres données EGAlim
+              Autres données EGalim
             </td>
           </tr>
           <tr v-for="item in additionalItems" :key="item.label" :class="item.class || ''">
@@ -305,24 +305,24 @@ export default {
           { param: "valueAutresPerformance", label: "Mes autres achats Performance Environnementale" },
           {
             param: "valueViandesVolaillesNonEgalim",
-            label: "Mes achats viandes et volailles non-EGAlim",
+            label: "Mes achats viandes et volailles non-EGalim",
           },
           {
             param: "valueProduitsDeLaMerNonEgalim",
-            label: "Mes achats poissons, produits de la mer et de l'aquaculture non-EGAlim",
+            label: "Mes achats poissons, produits de la mer et de l'aquaculture non-EGalim",
           },
           {
             param: "valueFruitsEtLegumesNonEgalim",
-            label: "Mes achats fruits et legumes non-EGAlim",
+            label: "Mes achats fruits et legumes non-EGalim",
           },
-          { param: "valueCharcuterieNonEgalim", label: "Mes achats charcuterie non-EGAlim" },
+          { param: "valueCharcuterieNonEgalim", label: "Mes achats charcuterie non-EGalim" },
           {
             param: "valueProduitsLaitiersNonEgalim",
-            label: "Mes achats produits laitiers non-EGAlim",
+            label: "Mes achats produits laitiers non-EGalim",
           },
-          { param: "valueBoulangerieNonEgalim", label: "Mes achats boulangerie non-EGAlim" },
-          { param: "valueBoissonsNonEgalim", label: "Mes achats boissons non-EGAlim" },
-          { param: "valueAutresNonEgalim", label: "Mes autres achats non-EGAlim" },
+          { param: "valueBoulangerieNonEgalim", label: "Mes achats boulangerie non-EGalim" },
+          { param: "valueBoissonsNonEgalim", label: "Mes achats boissons non-EGalim" },
+          { param: "valueAutresNonEgalim", label: "Mes autres achats non-EGalim" },
 
           { param: "valueViandesVolaillesFrance", label: "Mes achats viandes et volailles provenance France" },
           {
@@ -368,14 +368,14 @@ export default {
           label:
             "Mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
         },
-        { param: "valueEgalimOthersHt", label: "Autres achats EGAlim" },
+        { param: "valueEgalimOthersHt", label: "Autres achats EGalim" },
         {
           param: "valueMeatPoultryHt",
           label: "Mes achats en viandes et volailles fraiches ou surgelées total",
         },
         {
           param: "valueMeatPoultryEgalimHt",
-          label: "Mes achats EGAlim en viandes et volailles fraiches ou surgelées",
+          label: "Mes achats EGalim en viandes et volailles fraiches ou surgelées",
         },
         {
           param: "valueMeatPoultryFranceHt",
@@ -384,7 +384,7 @@ export default {
         { param: "valueFishHt", label: "Mes achats en poissons, produits de la mer et de l'aquaculture total" },
         {
           param: "valueFishEgalimHt",
-          label: "Mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
+          label: "Mes achats EGalim en poissons, produits de la mer et de l'aquaculture",
         },
       ]
     },

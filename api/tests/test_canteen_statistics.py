@@ -512,11 +512,11 @@ class TestCanteenStatsApi(APITestCase):
     def test_stats_simple_diagnostic(self):
         """
         The endpoint must take into consideration the simplified diagnostic
-        fields for EGAlim stats
+        fields for EGalim stats
         """
         published = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value, siret=1)
 
-        # Diagnostic that should display 20% Bio and 45% other EGAlim
+        # Diagnostic that should display 20% Bio and 45% other EGalim
         diag = DiagnosticFactory.create(
             canteen=published,
             year=year_data,

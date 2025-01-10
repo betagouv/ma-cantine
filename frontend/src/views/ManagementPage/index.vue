@@ -126,9 +126,9 @@ export default {
       actionsLoading: true,
       resources: [
         {
-          title: "Les 5 points essentiels à connaître sur la loi EGAlim en restauration collective",
+          title: "Les 5 points essentiels à connaître sur la loi EGalim en restauration collective",
           text:
-            "Les mesures pour la restauration collective de la loi EGAlim en restauration collective sont un volet important dans l’ensemble de la loi EGAlim. Celles-ci ont vocation à...",
+            "Les mesures pour la restauration collective de la loi EGalim en restauration collective sont un volet important dans l’ensemble de la loi EGalim. Celles-ci ont vocation à...",
           links: [
             {
               text: "Découvrir",

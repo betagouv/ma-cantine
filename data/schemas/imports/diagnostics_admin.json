@@ -217,7 +217,7 @@
       "type": "number"
     },
     {
-      "description": "Valeur totale des achats autres EGAlim",
+      "description": "Valeur totale des achats autres EGalim",
       "example": "1234.99",
       "name": "valeur_autres_egalim",
       "title": "Achats autres egalim",
@@ -231,7 +231,7 @@
       "type": "number"
     },
     {
-      "description": "Valeur totale des achats viandes EGAlim",
+      "description": "Valeur totale des achats viandes EGalim",
       "example": "1234.99",
       "name": "valeur_viandes_egalim",
       "title": "Achats viandes egalim",
@@ -252,7 +252,7 @@
       "type": "number"
     },
     {
-      "description": "Valeur totale des achats poissons EGAlim",
+      "description": "Valeur totale des achats poissons EGalim",
       "example": "1234.99",
       "name": "valeur_poissons_egalim",
       "title": "Achats poissons egalim",

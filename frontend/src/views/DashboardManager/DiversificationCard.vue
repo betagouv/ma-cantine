@@ -66,7 +66,7 @@ export default {
     },
     cardBody() {
       if (this.delegatedToSatellite) {
-        return "Les données associées à cette mesure EGAlim sont renseignées au niveau de chaque lieu de service que vous livrez."
+        return "Les données associées à cette mesure EGalim sont renseignées au niveau de chaque lieu de service que vous livrez."
       } else if (this.delegatedToCentralKitchen) {
         return "Votre livreur a renseigné les données de cette mesure à votre place."
       }

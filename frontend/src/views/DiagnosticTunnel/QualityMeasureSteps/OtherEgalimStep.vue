@@ -7,7 +7,7 @@
 
     <FormErrorCallout v-if="totalError" :errorMessages="[totalErrorMessage]" />
 
-    <!-- Other EGAlim -->
+    <!-- Other EGalim -->
     <v-row class="my-0 my-md-6">
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
@@ -26,7 +26,7 @@
           </div>
 
           <label class="ml-4 ml-md-0" for="other">
-            La valeur (en € HT) des autres achats EGAlim
+            La valeur (en € HT) des autres achats EGalim
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
@@ -41,7 +41,7 @@
           v-if="displayPurchaseHints"
           v-model="payload.valueEgalimOthersHt"
           @autofill="updatePayload"
-          purchaseType="« autre EGAlim »"
+          purchaseType="« autre EGalim »"
           :amount="purchasesSummary.valueEgalimOthersHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
@@ -235,7 +235,7 @@ export default {
       if (sumEgalim > total) {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
           d.valueTotalHt
-        )}) doit être plus élévé que la somme des valeurs EGAlim (${toCurrency(sumEgalim || 0)})`
+        )}) doit être plus élévé que la somme des valeurs EGalim (${toCurrency(sumEgalim || 0)})`
       }
     },
     sumAllEgalim() {

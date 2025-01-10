@@ -1,4 +1,4 @@
-const inquiries= [
+const inquiries = [
   {
     value: "functionalityQuestion",
     text: "Poser une question sur une fonctionnalité de ma cantine ?",
@@ -7,7 +7,7 @@ const inquiries= [
   {
     value: "demo",
     text: "Demander une démo",
-    display: "demande de démo"
+    display: "demande de démo",
   },
   {
     value: "bug",
@@ -16,7 +16,7 @@ const inquiries= [
   },
   {
     value: "egalim",
-    text: "Question sur la loi EGAlim",
+    text: "Question sur la loi EGalim",
     display: "loi",
   },
   {

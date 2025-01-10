@@ -5,7 +5,7 @@
     <v-row class="text-left">
       <v-col cols="12" sm="6" md="4">
         <div class="d-flex flex-column">
-          <p>Simplifiez les calculs de la loi EGAlim en ajoutant vos achats</p>
+          <p>Simplifiez les calculs de la loi EGalim en ajoutant vos achats</p>
           <v-card elevation="1" max-width="400px"><v-img src="/static/images/features/achats.png"></v-img></v-card>
           <DownloadLink
             class="mt-4"

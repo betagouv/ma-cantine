@@ -252,13 +252,13 @@ class Diagnostic(models.Model):
         verbose_name="Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale",
     )
     value_egalim_others_ht = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) des autres achats EGAlim",
+        verbose_name="Valeur totale (HT) des autres achats EGalim",
     )
     value_meat_poultry_ht = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées",
     )
     value_meat_poultry_egalim_ht = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées EGAlim",
+        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim",
     )
     value_meat_poultry_france_ht = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France",
@@ -267,7 +267,7 @@ class Diagnostic(models.Model):
         verbose_name="Valeur totale (HT) poissons et produits aquatiques",
     )
     value_fish_egalim_ht = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) poissons et produits aquatiques EGAlim",
+        verbose_name="Valeur totale (HT) poissons et produits aquatiques EGalim",
     )
 
     value_label_rouge = make_optional_positive_decimal_field(
@@ -715,28 +715,28 @@ class Diagnostic(models.Model):
         verbose_name="Autres produits frais, surgelés et d’épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
     )
     value_viandes_volailles_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Viandes et volailles fraîches et surgelées, non-EGAlim.",
+        verbose_name="Viandes et volailles fraîches et surgelées, non-EGalim.",
     )
     value_produits_de_la_mer_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, non-EGAlim.",
+        verbose_name="Produits aquatiques frais et surgelés, non-EGalim.",
     )
     value_fruits_et_legumes_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Fruits et légumes frais et surgelés, non-EGAlim.",
+        verbose_name="Fruits et légumes frais et surgelés, non-EGalim.",
     )
     value_charcuterie_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Charcuterie, non-EGAlim.",
+        verbose_name="Charcuterie, non-EGalim.",
     )
     value_produits_laitiers_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="BOF (Produits laitiers, beurre et œufs), non-EGAlim.",
+        verbose_name="BOF (Produits laitiers, beurre et œufs), non-EGalim.",
     )
     value_boulangerie_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches, non-EGAlim.",
+        verbose_name="Boulangerie/Pâtisserie fraîches, non-EGalim.",
     )
     value_boissons_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Boissons, non-EGAlim.",
+        verbose_name="Boissons, non-EGalim.",
     )
     value_autres_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, non-EGAlim.",
+        verbose_name="Autres produits frais, surgelés et d’épicerie, non-EGalim.",
     )
     value_viandes_volailles_france = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Provenance France",
@@ -1027,7 +1027,7 @@ class Diagnostic(models.Model):
         ):
             raise ValidationError(
                 {
-                    "value_meat_poultry_ht": f"La valeur totale (HT) viandes et volailles fraiches ou surgelées EGAlim, {self.value_meat_poultry_egalim_ht}, est plus que la valeur totale (HT) viandes et volailles, {self.value_meat_poultry_ht}"
+                    "value_meat_poultry_ht": f"La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, {self.value_meat_poultry_egalim_ht}, est plus que la valeur totale (HT) viandes et volailles, {self.value_meat_poultry_ht}"
                 }
             )
         elif (
@@ -1049,7 +1049,7 @@ class Diagnostic(models.Model):
         ):
             raise ValidationError(
                 {
-                    "value_fish_ht": f"La valeur totale (HT) poissons et produits aquatiques EGAlim, {self.value_fish_egalim_ht}, est plus que la valeur totale (HT) poissons et produits aquatiques, {self.value_fish_ht}"
+                    "value_fish_ht": f"La valeur totale (HT) poissons et produits aquatiques EGalim, {self.value_fish_egalim_ht}, est plus que la valeur totale (HT) poissons et produits aquatiques, {self.value_fish_ht}"
                 }
             )
 
@@ -1066,7 +1066,7 @@ class Diagnostic(models.Model):
         if meat_fish_egalim_sum > egalim_sum:
             raise ValidationError(
                 {
-                    "value_sustainable_ht": f"La somme des valeurs viandes et poissons EGAlim, {meat_fish_egalim_sum}, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGAlim, {egalim_sum}"
+                    "value_sustainable_ht": f"La somme des valeurs viandes et poissons EGalim, {meat_fish_egalim_sum}, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, {egalim_sum}"
                 }
             )
 

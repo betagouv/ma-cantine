@@ -171,7 +171,7 @@
         <DsfrTabsVue
           v-model="tab"
           :enableMobileView="$vuetify.breakpoint.smAndDown"
-          mobileLabel="Mesure de la loi EGAlim"
+          mobileLabel="Mesure de la loi EGalim"
           :mobileSelectItems="mobileSelectItems"
           active-class="selected"
         >

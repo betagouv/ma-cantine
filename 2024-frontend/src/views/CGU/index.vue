@@ -25,7 +25,7 @@
     </p>
     <p>Le Service est une plateforme numérique permettant :</p>
     <ul>
-      <li>une meilleure connaissance des lois EGAlim via une description détaillée et pédagogique des mesures,</li>
+      <li>une meilleure connaissance des lois EGalim via une description détaillée et pédagogique des mesures,</li>
       <li>
         un aperçu de l'état des lieux des cantines ayant partagé leurs données pour connaître leur positionnement et
         éventuellement fomenter des échanges entre elles et avec leurs convives,
@@ -64,13 +64,13 @@
 
     <p>Le Visiteur peut :</p>
     <ul>
-      <li>Prendre connaissance d’informations pédagogiques sur les objectifs et mesures des lois EGAlims.</li>
+      <li>Prendre connaissance d’informations pédagogiques sur les objectifs et mesures des lois EGalims.</li>
       <li>
         Accéder aux informations télédéclarées dans le Services par les Gestionnaires de RC au regard des objectifs
-        fixés par les lois EGAlim. Il dispose soit d’un filtre par numéro de SIRET, soit d’un filtre géographique et par
+        fixés par les lois EGalim. Il dispose soit d’un filtre par numéro de SIRET, soit d’un filtre géographique et par
         type d’EPCI et secteur d’activité.
       </li>
-      <li>Simuler une évaluation d’un établissement de RC selon les objectifs fixés par les lois EGAlim.</li>
+      <li>Simuler une évaluation d’un établissement de RC selon les objectifs fixés par les lois EGalim.</li>
       <li>
         Signaler l’absence d’un établissement de restauration collective (saisie d’une adresse mail, d’un nom et prénom
         à titre facultatif et un champ libre).
@@ -112,12 +112,12 @@
     </p>
 
     <h4 class="fr-h4">3) Positionner son établissement par rapport aux objectifs des lois EGALIM</h4>
-    <p>Chaque Gestionnaire peut comparer son établissement de RC par rapport aux objectifs des lois EGAlim.</p>
+    <p>Chaque Gestionnaire peut comparer son établissement de RC par rapport aux objectifs des lois EGalim.</p>
 
     <h4 class="fr-h4">4) Télédéclaration</h4>
     <p>
       Chaque Gestionnaire procède à ses télédéclarations selon les dispositions prévues par le code rural et de la pêche
-      maritime et les lois EGAlim.
+      maritime et les lois EGalim.
     </p>
     <p>
       Le Service peut solliciter des informations complémentaires sur la gestion des établissements de RC afin de
@@ -135,7 +135,7 @@
     </p>
     <p>
       Les informations transmises dans le cadre des campagnes de télédéclaration annuelles affichées sont notamment :
-      les pourcentages des taux EGAlim et les données qualitatives sur les autres volets des lois EGAlim (gaspillage
+      les pourcentages des taux EGalim et les données qualitatives sur les autres volets des lois EGalim (gaspillage
       alimentaire, diversification des protéines, substitution plastique, information convives).
     </p>
 

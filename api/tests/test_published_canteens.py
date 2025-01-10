@@ -281,7 +281,7 @@ class TestPublishedCanteenApi(APITestCase):
     def test_remove_raw_values_when_missing_totals(self):
         """
         The published endpoint should not contain the real economic data, only percentages.
-        Even when the meat and fish totals are absent, but EGAlim and France totals are present.
+        Even when the meat and fish totals are absent, but EGalim and France totals are present.
         """
         central_siret = "22730656663081"
         canteen = CanteenFactory.create(

@@ -1,5 +1,5 @@
 <template>
-  <DsfrAccordion :items="[{ title: 'Comment réussir les objectifs EGAlim ?' }]">
+  <DsfrAccordion :items="[{ title: 'Comment réussir les objectifs EGalim ?' }]">
     <template v-slot:content>
       <div v-for="measure in keyMeasures" :key="measure.id">
         <v-row class="mb-2 mt-4 mx-0" align="center">

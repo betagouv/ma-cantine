@@ -374,7 +374,7 @@ def complete_diag_data(purchases, data):
                 )
             key = "value_" + family.lower() + "_" + label.lower()
             data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"] or 0
-        # outside of EGAlim, products can be counted twice across characteristics
+        # outside of EGalim, products can be counted twice across characteristics
         purchase_family = purchases.filter(family=family)
         other_labels_characteristics = []
         for label in other_labels:
@@ -383,7 +383,7 @@ def complete_diag_data(purchases, data):
             key = "value_" + family.lower() + "_" + label.lower()
             data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"] or 0
             other_labels_characteristics.append(characteristic)
-        # Non-EGAlim totals: contains no labels or only one or more of other_labels
+        # Non-EGalim totals: contains no labels or only one or more of other_labels
         non_egalim_purchases = purchase_family.filter(
             Q(characteristics__contained_by=(other_labels_characteristics + [""])) | Q(characteristics__len=0)
         ).distinct()

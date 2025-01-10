@@ -3,7 +3,7 @@
     <ApproGraph :diagnostic="diagnostic" :canteen="canteen" aria-hidden="true" />
     <v-row>
       <v-col cols="12" md="6">
-        <h5 class="mb-4 font-weight-bold fr-text-sm">Détail du calcul de mes taux EGAlim</h5>
+        <h5 class="mb-4 font-weight-bold fr-text-sm">Détail du calcul de mes taux EGalim</h5>
         <v-row>
           <v-col cols="6">
             <p class="mb-0">Produits bio</p>
@@ -32,7 +32,7 @@
         </v-row>
         <v-row class="mt-0">
           <v-col cols="6">
-            <p class="mb-0">Produits EGAlim</p>
+            <p class="mb-0">Produits EGalim</p>
           </v-col>
           <v-col cols="2">
             <p class="mb-0 font-weight-bold">{{ percentageDisplay(percentages.egalim) }}</p>
@@ -51,7 +51,7 @@
             <p class="mb-0">
               <v-icon :small="$vuetify.breakpoint.xs" class="mr-1 mr-sm-2" color="#00A95F">$award-line</v-icon>
               <span class="font-weight-bold percentage">{{ percentageDisplay(percentages.meatPoultryEgalim) }}</span>
-              de viandes et volailles EGAlim
+              de viandes et volailles EGalim
             </p>
           </v-col>
           <v-col class="py-0" v-if="applicableRules.meatPoultryEgalimThreshold" cols="12" sm="4" md="3">
@@ -79,7 +79,7 @@
             <p class="mb-0">
               <v-icon :small="$vuetify.breakpoint.xs" class="mr-1 mr-sm-2" color="#00A95F">$anchor-line</v-icon>
               <span class="font-weight-bold percentage">{{ percentageDisplay(percentages.fishEgalim) }}</span>
-              de produits de la mer et aquaculture EGAlim
+              de produits de la mer et aquaculture EGalim
             </p>
           </v-col>
           <v-col class="py-0" v-if="applicableRules.fishEgalimThreshold" cols="12" sm="4" md="3">
@@ -126,7 +126,7 @@
         </div>
         <div v-if="isDetailedDiagnostic">
           <h6 class="font-weight-bold fr-text grey--text text--darken-3 mt-4">
-            Catégories EGAlim par famille de produit
+            Catégories EGalim par famille de produit
           </h6>
           <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
         </div>
@@ -242,7 +242,7 @@ export default {
           key: "valueSustainableHt",
         },
         {
-          text: "Total (en € HT) des autres achats EGAlim",
+          text: "Total (en € HT) des autres achats EGalim",
           key: "valueEgalimOthersHt",
         },
         {
@@ -253,7 +253,7 @@ export default {
       ],
       familyFields: [
         {
-          text: "Total (en € HT) de mes achats EGAlim en viandes et volailles fraiches ou surgelées",
+          text: "Total (en € HT) de mes achats EGalim en viandes et volailles fraiches ou surgelées",
           key: "valueMeatPoultryEgalimHt",
         },
         {
@@ -261,7 +261,7 @@ export default {
           key: "valueMeatPoultryFranceHt",
         },
         {
-          text: "Total (en € HT) de mes achats EGAlim en poissons, produits de la mer et de l'aquaculture",
+          text: "Total (en € HT) de mes achats EGalim en poissons, produits de la mer et de l'aquaculture",
           key: "valueFishEgalimHt",
         },
       ],

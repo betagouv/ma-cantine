@@ -17,7 +17,7 @@
           </v-card-title>
           <v-card-text class="pb-0">
             <p class="mt-4">
-              Dans le cadre de la loi EGAlim, toutes les cantines sont invitées à se référencer ici pour être
+              Dans le cadre de la loi EGalim, toutes les cantines sont invitées à se référencer ici pour être
               accompagnées dans la mise en oeuvre de la loi et faire remonter leurs données au niveau national.
             </p>
             <p class="mb-0">
@@ -106,7 +106,7 @@ export default {
         },
         {
           text:
-            "Faites l'auto-diagnostic de votre ou vos établissements sur les 5 mesures phares de la loi EGAlim (et Climat).",
+            "Faites l'auto-diagnostic de votre ou vos établissements sur les 5 mesures phares de la loi EGalim (et Climat).",
           image: "/static/images/features/diagnostic.png",
         },
         {

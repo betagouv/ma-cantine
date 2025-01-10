@@ -368,7 +368,7 @@ class TeledeclarationPdfView(APIView):
             "fermier": "Fermier",
             "externalites": "Externalités environnementales",
             "performance": "Performance environnementale",
-            "non_egalim": "non-EGAlim",
+            "non_egalim": "non-EGalim",
             "france": "provenance France",
             "short_distribution": "circuit-court",
             "local": "« local »",

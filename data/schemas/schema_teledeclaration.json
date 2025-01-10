@@ -15,7 +15,7 @@
       "type": "integer"
     },
     {
-      "description": "Mode de télédéclaration. Il existe 4 types différents : CENTRAL_APPRO (cuisine centrale déclarant les données d'appro pour ses cuisines satellites), CENTRAL_ALL (cuisine centrale déclarant toutes les données EGAlim pour ses cuisines satellites), SITE (cantine déclarant ses propres données), SATELLITE_WITHOUT_APPRO (cantine satellite dont les données d'appro sont déclarées par la cuisine centrale). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.",
+      "description": "Mode de télédéclaration. Il existe 4 types différents : CENTRAL_APPRO (cuisine centrale déclarant les données d'appro pour ses cuisines satellites), CENTRAL_ALL (cuisine centrale déclarant toutes les données EGalim pour ses cuisines satellites), SITE (cantine déclarant ses propres données), SATELLITE_WITHOUT_APPRO (cantine satellite dont les données d'appro sont déclarées par la cuisine centrale). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ satellite_canteens_count renseigne le nombre de cantines satellites.",
       "example": "SITE",
       "name": "teledeclaration_mode",
       "title": "Mode de télédéclaration",
@@ -180,7 +180,7 @@
       "type": "number"
     },
     {
-      "description": "Part des achats EGAlim dans les achats alimentaires de l'année",
+      "description": "Part des achats EGalim dans les achats alimentaires de l'année",
       "example": 0.3,
       "name": "teledeclaration_ratio_egalim_hors_bio",
       "title": "Télédéclaration Ratio Egalim",

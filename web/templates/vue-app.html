@@ -15,19 +15,22 @@
   <meta property="og:title" content="ma cantine" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="{% hostname %}{{ request.get_full_path }}" />
-  <meta property="og:description" content="Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim" />
+  <meta property="og:description"
+    content="Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGalim" />
   <meta property="og:image" content="{% hostname %}{% static 'images/card-social-media.png' %}" />
 
   <!-- Twitter meta tags -->
   <meta name="twitter:title" content="ma cantine">
-  <meta name="twitter:description" content="Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim">
+  <meta name="twitter:description"
+    content="Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGalim">
   <meta name="twitter:image" content="{% hostname %}{% static 'images/card-social-media.png' %}">
   <meta name="twitter:card" content="summary_large_image">
 
   <link rel="icon" type="image/png" href="{% static 'images/favicon-marianne.png' %}">
 
   <title>ma cantine</title>
-  <meta name="description" content="Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGAlim">
+  <meta name="description"
+    content="Pour une alimentation saine, de qualité et plus durable dans nos assiettes grâce à EGalim">
   <link rel="stylesheet" href="{% static 'css/materialdesignicons.min.css' %}">
   <script type="text/javascript">
     window.CSRF_TOKEN = "{{ csrf_token }}";
@@ -139,7 +142,7 @@
       cookiePath: "",
       cookieDomain: "",
       cookieSameSite: "Lax",
-      init: function(useSecureCookies, cookiePath, cookieDomain, cookieSameSite) {
+      init: function (useSecureCookies, cookiePath, cookieDomain, cookieSameSite) {
         this.useSecureCookies = useSecureCookies
         this.cookiePath = cookiePath
         this.cookieDomain = cookieDomain
@@ -150,7 +153,7 @@
           this.cookieIsSecure = useSecureCookies
         }
       },
-      hasConsent: function() {
+      hasConsent: function () {
         var consentCookie = this.getCookie(this.CONSENT_COOKIE_NAME)
         var removedCookie = this.getCookie(this.CONSENT_REMOVED_COOKIE_NAME)
         if (!consentCookie && !removedCookie) {
@@ -162,20 +165,20 @@
         }
         return consentCookie || consentCookie !== 0
       },
-      consentGiven: function() {
+      consentGiven: function () {
         this.setCookie(this.CONSENT_REMOVED_COOKIE_NAME, "", -129600000)
         this.setCookie(this.CONSENT_COOKIE_NAME, new Date().getTime(), 946080000000)
       },
-      consentRevoked: function() {
+      consentRevoked: function () {
         this.setCookie(this.CONSENT_COOKIE_NAME, "", -129600000)
         this.setCookie(this.CONSENT_REMOVED_COOKIE_NAME, new Date().getTime(), 946080000000)
       },
-      getCookie: function(cookieName) {
+      getCookie: function (cookieName) {
         var cookiePattern = new RegExp("(^|;)[ ]*" + cookieName + "=([^;]*)"),
           cookieMatch = cookiePattern.exec(document.cookie)
         return cookieMatch ? window.decodeURIComponent(cookieMatch[2]) : 0
       },
-      setCookie: function(cookieName, value, msToExpire) {
+      setCookie: function (cookieName, value, msToExpire) {
         var expiryDate = new Date()
         expiryDate.setTime(new Date().getTime() + msToExpire)
         document.cookie =
@@ -200,7 +203,7 @@
   <script type="text/javascript">
     window.$crisp = [];
     window.CRISP_WEBSITE_ID = "071cca61-bd5f-4950-a5ed-c02238666a5c";
-    (function() {
+    (function () {
       d = document;
       s = d.createElement("script");
       s.src = "https://client.crisp.chat/l.js";

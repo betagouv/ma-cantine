@@ -165,7 +165,7 @@ export default {
       return this.isTruthyOrZero(percentage) ? percentage : "—"
     },
     description() {
-      return `Bio : ${this.bioPercentage} %. Durable et de qualité (hors bio) : ${this.sustainablePercentage} %. Rappel objectif EGAlim : ${this.applicableRules.qualityThreshold} % des achats de qualité et durable, dont ${this.applicableRules.bioThreshold} % bio.`
+      return `Bio : ${this.bioPercentage} %. Durable et de qualité (hors bio) : ${this.sustainablePercentage} %. Rappel objectif EGalim : ${this.applicableRules.qualityThreshold} % des achats de qualité et durable, dont ${this.applicableRules.bioThreshold} % bio.`
     },
     hasEnoughData() {
       return hasApproGraphData(this.diagnostic)

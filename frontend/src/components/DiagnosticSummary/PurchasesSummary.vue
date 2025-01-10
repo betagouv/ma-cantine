@@ -5,7 +5,7 @@
         <h4 class="fr-text font-weight-bold mb-4">Pilotez votre progression tout au long de l’année en cours</h4>
         <p class="fr-text">
           Avec l’outil de suivi d’achats de « ma cantine », pilotez en temps réel la part de vos approvisionnements qui
-          correspondent aux critères de la loi EGAlim, et facilitez votre prochaine télédéclaration.
+          correspondent aux critères de la loi EGalim, et facilitez votre prochaine télédéclaration.
         </p>
         <p class="fr-text">
           Pour cela, vous pouvez renseigner tous vos achats au fil de l’eau ou par import en masse, ou bien connecter

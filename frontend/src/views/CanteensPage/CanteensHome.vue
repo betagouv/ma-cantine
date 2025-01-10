@@ -211,7 +211,7 @@
                   <DsfrNativeSelect
                     v-model="filters.badge.value"
                     :items="badges"
-                    label="Expertise EGAlim"
+                    label="Expertise EGalim"
                     :labelClasses="{
                       'mb-1 fr-text text-left': true,
                       'active-filter-label': !!filters.badge.value,
@@ -461,7 +461,7 @@ export default {
             return value / 100
           },
           displayName(value) {
-            return `EGAlim min : ${value} %`
+            return `EGalim min : ${value} %`
           },
         },
         badge: {

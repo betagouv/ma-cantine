@@ -36,7 +36,7 @@
             <div class="d-block d-sm-flex align-center">
               <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$award-line</v-icon>
               <label for="meat-poultry-egalim">
-                Total (en € HT) de mes achats EGAlim en viandes et volailles
+                Total (en € HT) de mes achats EGalim en viandes et volailles
                 <span class="fr-hint-text mt-2">Optionnel</span>
               </label>
             </div>
@@ -51,7 +51,7 @@
               v-if="displayPurchaseHints"
               v-model="payload.valueMeatPoultryEgalimHt"
               @autofill="updatePayload"
-              purchaseType="viandes et volailles EGAlim"
+              purchaseType="viandes et volailles EGalim"
               :amount="purchasesSummary.valueMeatPoultryEgalimHt"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
@@ -207,7 +207,7 @@ export default {
         if (d.valueMeatPoultryEgalimHt > totalMeatPoultry) {
           this.totalEgalimMeatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
             totalMeatPoultry
-          )}) doit être supérieur au champ EGAlim (${toCurrency(d.valueMeatPoultryEgalimHt)})`
+          )}) doit être supérieur au champ EGalim (${toCurrency(d.valueMeatPoultryEgalimHt)})`
         }
         if (d.valueMeatPoultryFranceHt > totalMeatPoultry) {
           this.totalFranceMeatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
