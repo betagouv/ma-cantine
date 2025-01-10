@@ -190,73 +190,73 @@
     },
     {
       "description": "Valeur totale des achats alimentaires",
-      "example": "1231",
+      "example": "1234.99",
       "name": "valeur_totale",
       "title": "Valeur des achats totaux",
-      "type": "integer"
+      "type": "number"
     },
     {
       "description": "Valeur totale des achats bio",
-      "example": "1200",
+      "example": "1234.99",
       "name": "valeur_bio",
       "title": "Achats bio",
-      "type": "integer"
+      "type": "number"
     },
     {
       "description": "Valeur totale des achats SIQO",
-      "example": "30",
+      "example": "1234.99",
       "name": "valeur_siqo",
       "title": "Achats siqo",
-      "type": "integer"
+      "type": "number"
     },
     {
       "description": "Valeur totale des achats environnemental/performances exterieures",
-      "example": "10",
+      "example": "1234.99",
       "name": "valeur_environnemental",
       "title": "Achats environnemental",
-      "type": "integer"
+      "type": "number"
     },
     {
       "description": "Valeur totale des achats autres EGAlim",
-      "example": "1231",
+      "example": "1234.99",
       "name": "valeur_autres_egalim",
       "title": "Achats autres egalim",
-      "type": "integer"
+      "type": "number"
     },
     {
       "description": "Valeur totale des achats viandes",
-      "example": "1231",
+      "example": "1234.99",
       "name": "valeur_viandes",
       "title": "Achats viandes",
-      "type": "integer"
+      "type": "number"
     },
     {
       "description": "Valeur totale des achats viandes EGAlim",
-      "example": "1231",
+      "example": "1234.99",
       "name": "valeur_viandes_egalim",
       "title": "Achats viandes egalim",
-      "type": "integer"
+      "type": "number"
     },
     {
       "description": "Valeur totale des achats viandes d'origine France",
-      "example": "1231",
+      "example": "1234.99",
       "name": "valeur_viandes_france",
       "title": "Achats viandes France",
-      "type": "integer"
+      "type": "number"
     },
     {
       "description": "Valeur totale des achats poissons",
-      "example": "1231",
+      "example": "1234.99",
       "name": "valeur_poissons",
       "title": "Achats poissons",
-      "type": "integer"
+      "type": "number"
     },
     {
       "description": "Valeur totale des achats poissons EGAlim",
-      "example": "1231",
+      "example": "1234.99",
       "name": "valeur_poissons_egalim",
       "title": "Achats poissons egalim",
-      "type": "integer"
+      "type": "number"
     },
     {
       "description": "Admin : Gestionnaires additionnels (sans notification par mail)",
