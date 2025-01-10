@@ -20,7 +20,7 @@ module.exports = {
     loaderOptions: {
       sass: {
         sassOptions: {
-          silenceDeprecations: ["slash-div", "legacy-js-api"],
+          silenceDeprecations: ["slash-div", "legacy-js-api", "global-builtin", "import"],
         },
       },
     },
