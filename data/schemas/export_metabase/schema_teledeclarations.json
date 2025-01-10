@@ -85,13 +85,6 @@
       "type": "string"
     },
     {
-      "description": "Libellé de la cantine dans laquelle se trouve la cantine",
-      "example": "Paris",
-      "name": "libelle_commune",
-      "title": "Libellé commune",
-      "type": "string"
-    },
-    {
       "name": "lib_departement",
       "type": "string"
     },
