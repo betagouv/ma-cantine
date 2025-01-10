@@ -41,7 +41,7 @@ services:
       context: 2024-frontend
     image: ma-cantine-2024-front
     volumes:
-      - "./2024-frontend:/app/2024-frontend"
+      - "./:/app"
       - "/app/2024-frontend/node_modules"
     ports:
       - 5173:5173
