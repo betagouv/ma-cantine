@@ -111,7 +111,7 @@
       en est faite notamment en matière de confidentialité des données.
     </p>
 
-    <h4 class="fr-h4">3) Positionner son établissement par rapport aux objectifs des lois EGALIM</h4>
+    <h4 class="fr-h4">3) Positionner son établissement par rapport aux objectifs des lois EGalim</h4>
     <p>Chaque Gestionnaire peut comparer son établissement de RC par rapport aux objectifs des lois EGalim.</p>
 
     <h4 class="fr-h4">4) Télédéclaration</h4>

@@ -118,7 +118,7 @@
                 </v-card-text>
                 <v-card-text class="text-sm-body-1 grey-text text-darken-3">
                   <p class="mb-0">
-                    Ni la loi EGALIM, ni le code de la commande publique n'imposent de soumettre la méthodologie de
+                    Ni la loi EGalim, ni le code de la commande publique n'imposent de soumettre la méthodologie de
                     calcul du coût des externalités environnementales liées aux produits à une validation de
                     l'administration. Dès lors qu'ils respectent les exigences du code de la commande publique, les
                     acheteurs ayant recours à ce mode de sélection sont libres de définir les modalités qui leur

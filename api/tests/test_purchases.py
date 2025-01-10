@@ -386,7 +386,7 @@ class TestPurchaseApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
 
-        # Should be counted both on EGALIM and "Provenance France"
+        # Should be counted both on EGalim and "Provenance France"
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
@@ -399,7 +399,7 @@ class TestPurchaseApi(APITestCase):
             price_ht=50,
         )
 
-        # Should be counted on EGALIM
+        # Should be counted on EGalim
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
@@ -408,7 +408,7 @@ class TestPurchaseApi(APITestCase):
             price_ht=40,
         )
 
-        # Should be counted on EGALIM
+        # Should be counted on EGalim
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
@@ -462,7 +462,7 @@ class TestPurchaseApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
 
-        # Should be counted on EGALIM only once
+        # Should be counted on EGalim only once
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
@@ -471,7 +471,7 @@ class TestPurchaseApi(APITestCase):
             price_ht=55,
         )
 
-        # Should be counted on EGALIM
+        # Should be counted on EGalim
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
@@ -480,7 +480,7 @@ class TestPurchaseApi(APITestCase):
             price_ht=40,
         )
 
-        # Should be counted on EGALIM
+        # Should be counted on EGalim
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",

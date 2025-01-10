@@ -26,7 +26,7 @@
         utilisation) - L'article 2152-10 du code de la commande publique dispose que, pour l'évaluation du coût du cycle
         de vie des produits, les acheteurs s'appuient sur une méthode accessible à tous, fondée sur des critères
         non-discriminatoires et vérifiables de manière objective et qui n'implique, pour les soumissionnaires, qu'un
-        effort raisonnable dans la fourniture des données demandées. Ni la loi EGALIM, ni le code de la commande
+        effort raisonnable dans la fourniture des données demandées. Ni la loi EGalim, ni le code de la commande
         publique n'imposent de soumettre la méthodologie de calcul du coût des externalités environnementales liées aux
         produits à une validation de l'administration. Dès lors qu'ils respectent les exigences du code de la commande
         publique, les acheteurs ayant recours à ce mode de sélection sont libres de définir les modalités qui leur
@@ -40,7 +40,7 @@
         qu'ils définissent, pour évaluer les deux critères cumulatifs (performance en matière environnementale et
         performance en matière d'approvisionnements directs), en fonction de caractéristiques non-discriminatoires,
         vérifiables de manière objective et qui n'impliquent, pour les soumissionnaires, qu'un effort raisonnable dans
-        la fourniture des données demandées. Ni la loi EGALIM, ni le code de la commande publique n'imposent de
+        la fourniture des données demandées. Ni la loi EGalim, ni le code de la commande publique n'imposent de
         soumettre la méthodologie d'évaluation des performances en matière de protection de l'environnement et de
         développement des approvisionnements directs liées aux produits à une validation de l'administration. Dès lors
         qu'ils respectent les exigences du code de la commande publique, les acheteurs ayant recours à ce mode de

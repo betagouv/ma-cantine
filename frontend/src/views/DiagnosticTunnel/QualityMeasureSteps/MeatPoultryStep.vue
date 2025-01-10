@@ -28,11 +28,11 @@
           <v-col v-if="$vuetify.breakpoint.mdAndUp" cols="4" class="pl-14">
             <div class="d-flex align-center justify-center left-border fill-height">
               <v-icon size="25" color="#4d4db2">$award-line</v-icon>
-              <p class="fr-text-xs font-weight-bold mb-0 ml-6">EGALIM</p>
+              <p class="fr-text-xs font-weight-bold mb-0 ml-6">EGalim</p>
             </div>
           </v-col>
           <v-col cols="12" md="6">
-            <!-- Viande et volailles EGALIM -->
+            <!-- Viande et volailles EGalim -->
             <div class="d-block d-sm-flex align-center">
               <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$award-line</v-icon>
               <label for="meat-poultry-egalim">
