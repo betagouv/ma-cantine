@@ -15,6 +15,7 @@ from .canteen import (  # noqa: F401
     ElectedCanteenSerializer,
     MinimalCanteenSerializer,
     CanteenSummarySerializer,
+    CanteenMetabaseSerializer,
 )
 from .diagnostic import (  # noqa: F401
     ManagerDiagnosticSerializer,
