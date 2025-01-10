@@ -163,7 +163,7 @@
       "description": "Il existe 2 types différents : cantine publique ('public'), et cantine privée ('private').",
       "example": "public",
       "format": "default",
-      "name": "modele_economique",
+      "name": "modèle_économique",
       "title": "Secteur économique",
       "type": "string"
     },
