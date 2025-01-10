@@ -4,7 +4,10 @@ from django.conf import settings
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
+from data.department_choices import Department
 from data.models import Canteen, CanteenImage, Diagnostic, Sector
+from data.region_choices import Region
+from macantine.etl.utils import SECTEURS_SPE
 
 from .diagnostic import (
     ApproDiagnosticSerializer,
@@ -529,6 +532,8 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
 
 # remember to update TD version if you update this
 class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
+    geo_data = {"department": {i.value: i.label for i in Department}, "region": {i.value: i.label for i in Region}}
+
     sectors = SectorSerializer(many=True, read_only=True)
     central_producer_siret = serializers.SerializerMethodField(read_only=True)
     satellite_canteens_count = serializers.SerializerMethodField(read_only=True)
@@ -592,3 +597,113 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
             "yearly_meal_count",
             "sectors",
         )
+
+
+class CanteenMetabaseSerializer(serializers.ModelSerializer):
+    departments_lib = {i.value: i.label.split(" - ")[1] for i in Department}
+    regions_lib = {i.value: i.label.split(" - ")[1] for i in Region}
+
+    nom = serializers.SerializerMethodField()
+    code_commune_insee = serializers.SerializerMethodField()
+    libelle_commune = serializers.SerializerMethodField()
+    departement = serializers.SerializerMethodField()
+    departement_lib = serializers.SerializerMethodField()
+    region = serializers.SerializerMethodField()
+    region_lib = serializers.SerializerMethodField()
+    nombre_repas_jour = serializers.SerializerMethodField()
+    nombre_repas_an = serializers.SerializerMethodField()
+    modele_economique = serializers.SerializerMethodField()
+    type_gestion = serializers.SerializerMethodField()
+    type_production = serializers.SerializerMethodField()
+    nombre_satellites = serializers.SerializerMethodField()
+    siret_cuisine_centrale = serializers.SerializerMethodField()
+    ministere_tutelle = serializers.SerializerMethodField()
+    secteur = serializers.SerializerMethodField()
+    categorie = serializers.SerializerMethodField()
+    spe = serializers.SerializerMethodField()
+
+    # Fields automatically processed
+    creation_date = serializers.DateTimeField(format="%Y-%m-%d")
+    modification_date = serializers.DateTimeField(format="%Y-%m-%d")
+
+    class Meta:
+        model = Canteen
+        fields = (
+            "id",
+            "nom",
+            "siret",
+            "code_commune_insee",
+            "libelle_commune",
+            "departement",
+            "departement_lib",
+            "region",
+            "region_lib",
+            "creation_date",
+            "modification_date",
+            "nombre_repas_jour",
+            "nombre_repas_an",
+            "modele_economique",
+            "type_gestion",
+            "type_production",
+            "nombre_satellites",
+            "siret_cuisine_centrale",
+            "ministere_tutelle",
+            "secteur",
+            "categorie",
+            "spe",
+        )
+        read_only_fields = fields
+
+    def get_nom(self, obj):
+        return obj.name
+
+    def get_code_commune_insee(self, obj):
+        return obj.city_insee_code
+
+    def get_libelle_commune(self, obj):
+        return obj.city
+
+    def get_departement(self, obj):
+        return obj.department
+
+    def get_departement_lib(self, obj):
+        return self.departments_lib[obj.department]
+
+    def get_region(self, obj):
+        return obj.region
+
+    def get_region_lib(self, obj):
+        return self.regions_lib[obj.region]
+
+    def get_nombre_repas_jour(self, obj):
+        return obj.daily_meal_count
+
+    def get_nombre_repas_an(self, obj):
+        return obj.yearly_meal_count
+
+    def get_modele_economique(self, obj):
+        return Canteen.EconomicModel(obj.economic_model).label
+
+    def get_type_gestion(self, obj):
+        return Canteen.ManagementType(obj.management_type).label
+
+    def get_type_production(self, obj):
+        return Canteen.ProductionType(obj.production_type).label
+
+    def get_nombre_satellites(self, obj):
+        return obj.satellite_canteens_count
+
+    def get_siret_cuisine_centrale(self, obj):
+        return obj.central_producer_siret
+
+    def get_ministere_tutelle(self, obj):
+        return obj.line_ministry
+
+    def get_secteur(self, obj):
+        return [sector.name for sector in obj.sectors.all()]
+
+    def get_categorie(self, obj):
+        if obj.sectors.filter(pk__in=SECTEURS_SPE):
+            return "Oui"
+        else:
+            return "Non"
