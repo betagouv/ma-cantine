@@ -703,6 +703,9 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
         return [sector.name for sector in obj.sectors.all()]
 
     def get_categorie(self, obj):
+        return [sector.category for sector in obj.sectors.all()]
+
+    def get_spe(self, obj):
         if obj.sectors.filter(pk__in=SECTEURS_SPE):
             return "Oui"
         else:
