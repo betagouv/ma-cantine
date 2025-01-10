@@ -45,7 +45,7 @@ class TestETLAnalysisCanteen(TestCase):
         self.assertEqual(first_canteen["departement_lib"], "Finistère")
         self.assertEqual(first_canteen["region_lib"], "Bretagne")
         self.assertEqual(first_canteen["secteur"], "Sector factory")
-        self.assertEqual(first_canteen["spe"], False)
+        self.assertEqual(first_canteen["spe"], "Non")
 
 
 class TestETLAnalysisTD(TestCase):

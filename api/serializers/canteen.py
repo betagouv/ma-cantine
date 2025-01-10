@@ -604,14 +604,14 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
     regions_lib = {i.value: i.label.split(" - ")[1] for i in Region}
 
     nom = serializers.SerializerMethodField()
-    code_commune_insee = serializers.SerializerMethodField()
+    code_insee_commune = serializers.SerializerMethodField()
     libelle_commune = serializers.SerializerMethodField()
     departement = serializers.SerializerMethodField()
     departement_lib = serializers.SerializerMethodField()
     region = serializers.SerializerMethodField()
     region_lib = serializers.SerializerMethodField()
-    nombre_repas_jour = serializers.SerializerMethodField()
-    nombre_repas_an = serializers.SerializerMethodField()
+    nbre_repas_jour = serializers.SerializerMethodField()
+    nbre_repas_an = serializers.SerializerMethodField()
     modele_economique = serializers.SerializerMethodField()
     type_gestion = serializers.SerializerMethodField()
     type_production = serializers.SerializerMethodField()
@@ -621,10 +621,8 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
     secteur = serializers.SerializerMethodField()
     categorie = serializers.SerializerMethodField()
     spe = serializers.SerializerMethodField()
-
-    # Fields automatically processed
-    creation_date = serializers.DateTimeField(format="%Y-%m-%d")
-    modification_date = serializers.DateTimeField(format="%Y-%m-%d")
+    date_creation = serializers.SerializerMethodField()
+    date_modification = serializers.SerializerMethodField()
 
     class Meta:
         model = Canteen
@@ -632,16 +630,16 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
             "id",
             "nom",
             "siret",
-            "code_commune_insee",
+            "code_insee_commune",
             "libelle_commune",
             "departement",
             "departement_lib",
             "region",
             "region_lib",
-            "creation_date",
-            "modification_date",
-            "nombre_repas_jour",
-            "nombre_repas_an",
+            "date_creation",
+            "date_modification",
+            "nbre_repas_jour",
+            "nbre_repas_an",
             "modele_economique",
             "type_gestion",
             "type_production",
@@ -657,7 +655,7 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
     def get_nom(self, obj):
         return obj.name
 
-    def get_code_commune_insee(self, obj):
+    def get_code_insee_commune(self, obj):
         return obj.city_insee_code
 
     def get_libelle_commune(self, obj):
@@ -675,20 +673,35 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
     def get_region_lib(self, obj):
         return self.regions_lib[obj.region]
 
-    def get_nombre_repas_jour(self, obj):
+    def get_date_creation(self, obj):
+        return obj.creation_date.strftime('"%Y-%m-%d"')
+
+    def get_date_modification(self, obj):
+        return obj.modification_date.strftime('"%Y-%m-%d"')
+
+    def get_nbre_repas_jour(self, obj):
         return obj.daily_meal_count
 
-    def get_nombre_repas_an(self, obj):
+    def get_nbre_repas_an(self, obj):
         return obj.yearly_meal_count
 
     def get_modele_economique(self, obj):
-        return Canteen.EconomicModel(obj.economic_model).label
+        if obj.economic_model:
+            return Canteen.EconomicModel(obj.economic_model).label
+        else:
+            return "inconnu"
 
     def get_type_gestion(self, obj):
-        return Canteen.ManagementType(obj.management_type).label
+        if obj.management_type:
+            return Canteen.ManagementType(obj.management_type).label
+        else:
+            return "inconnu"
 
     def get_type_production(self, obj):
-        return Canteen.ProductionType(obj.production_type).label
+        if obj.production_type:
+            return Canteen.ProductionType(obj.production_type).label
+        else:
+            return "inconnu"
 
     def get_nombre_satellites(self, obj):
         return obj.satellite_canteens_count
@@ -700,10 +713,12 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
         return obj.line_ministry
 
     def get_secteur(self, obj):
-        return [sector.name for sector in obj.sectors.all()]
+        sectors = [sector.name for sector in obj.sectors.all()]
+        return ",".join(sectors)
 
     def get_categorie(self, obj):
-        return [sector.category for sector in obj.sectors.all()]
+        categories = [sector.category for sector in obj.sectors.all()]
+        return ",".join(categories)
 
     def get_spe(self, obj):
         if obj.sectors.filter(pk__in=SECTEURS_SPE):
