@@ -48,6 +48,7 @@ const schemaTypes = {
   string: "Texte (libre)",
   string_enum: "Texte (choix unique)",
   string_enum_multiple: "Texte (choix multiples)",
+  year: "Année (AAAA)",
 }
 
 export default {

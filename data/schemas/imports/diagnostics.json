@@ -179,11 +179,11 @@
       "type": "string"
     },
     {
-      "description": "Année du bilan. Réfère à l'année des données et non l'année de déclaration",
+      "description": "Réfère à l'année des données et non l'année de déclaration.",
       "example": "2021",
       "name": "année_bilan",
       "title": "Année du bilan",
-      "type": "integer"
+      "type": "year"
     },
     {
       "description": "Valeur totale des achats alimentaires",
