@@ -72,7 +72,8 @@
           "PRODUITS_LAITIERS",
           "BOULANGERIE",
           "BOISSONS",
-          "AUTRES"
+          "AUTRES",
+          ""
         ],
         "required": false
       },
