@@ -163,7 +163,7 @@ export default {
       if (sumEgalim > total) {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
           d.valueTotalHt
-        )}) doit être plus élévé que la somme des valeurs EGAlim (${toCurrency(sumEgalim || 0)})`
+        )}) doit être plus élévé que la somme des valeurs EGalim (${toCurrency(sumEgalim || 0)})`
       }
     },
     sumAllEgalim() {

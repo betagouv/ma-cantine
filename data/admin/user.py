@@ -95,7 +95,7 @@ class MaCanteenUserAdmin(UserAdmin):
             },
         ),
         (
-            _("EY - Connaissance de la loi EGALIM"),
+            _("EY - Connaissance de la loi EGalim"),
             {
                 "fields": ("law_awareness",),
             },

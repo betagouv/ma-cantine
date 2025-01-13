@@ -20,7 +20,7 @@
             <ol class="mb-4">
               <li v-for="(year, idx) in years" :key="year">
                 {{ year }} : {{ seriesData.bio[idx] }} % bio, {{ seriesData.sustainable[idx] }} % de qualité et durable
-                (hors bio), {{ 100 - seriesData.bio[idx] - seriesData.sustainable[idx] }} % hors EGAlim
+                (hors bio), {{ 100 - seriesData.bio[idx] - seriesData.sustainable[idx] }} % hors EGalim
               </li>
             </ol>
             <p class="mb-0">

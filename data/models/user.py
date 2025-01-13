@@ -11,7 +11,7 @@ class User(AbstractUser):
     class LawAwareness(models.TextChoices):
         NONE = (
             "NONE",
-            "Je n’ai pas une connaissance détaillée de l’article 24 de la loi EGAlim",
+            "Je n’ai pas une connaissance détaillée de l’article 24 de la loi EGalim",
         )
         AIMS_DEADLINES = "AIMS_DEADLINES", "Je connais les objectifs et les échéances"
         ELIGIBLE_LABELS = "ELIGIBLE_LABELS", "Je connais la liste des labels éligibles et mentions valorisantes"
@@ -21,7 +21,7 @@ class User(AbstractUser):
         )
         SYSTEM = (
             "SYSTEM",
-            "J’ai un système de saisie formalisé (SI, Excel, papier) permettant de calculer et reporter le montant annuel de mes achats répondants aux exigences de l’article 24 de la loi EGAlim (Non applicable en gestion concédée)",
+            "J’ai un système de saisie formalisé (SI, Excel, papier) permettant de calculer et reporter le montant annuel de mes achats répondants aux exigences de l’article 24 de la loi EGalim (Non applicable en gestion concédée)",
         )
         TAKEN_STOCK = (
             "TAKEN_STOCK",
@@ -33,11 +33,11 @@ class User(AbstractUser):
         )
         ACTION_PLAN = (
             "ACTION_PLAN",
-            "J’ai établi un plan d’actions pour tendre vers les objectifs de la loi EGAlim, définissant notamment : le niveau d’ambition global et par catégories d’achats ; les échéances de renouvellement de contrat avec clauses EGAlim ; le phasage de la progression des indicateurs EGAlim",
+            "J’ai établi un plan d’actions pour tendre vers les objectifs de la loi EGalim, définissant notamment : le niveau d’ambition global et par catégories d’achats ; les échéances de renouvellement de contrat avec clauses EGalim ; le phasage de la progression des indicateurs EGalim",
         )
         QUALITY_ACHIEVED = (
             "QUALITY_ACHIEVED",
-            "J'ai atteint les objectifs - 50% et 20%, de l’article 24 de la loi EGAlim",
+            "J'ai atteint les objectifs - 50% et 20%, de l’article 24 de la loi EGalim",
         )
 
     class JobRoles(models.TextChoices):
@@ -68,7 +68,7 @@ class User(AbstractUser):
         blank=True,
         null=True,
         size=None,
-        verbose_name="Les affirmations suivantes concernent l'article 24 de la loi EGAlim, encadrant les objectifs d'approvisionnements (50% de produits durables et de qualité dont 20% de bio). Parmi ces affirmations, plusieurs choix sont possibles. Choisissez celles qui correspondent à votre situation :",
+        verbose_name="Les affirmations suivantes concernent l'article 24 de la loi EGalim, encadrant les objectifs d'approvisionnements (50% de produits durables et de qualité dont 20% de bio). Parmi ces affirmations, plusieurs choix sont possibles. Choisissez celles qui correspondent à votre situation :",
     )
 
     is_dev = models.BooleanField(default="False", verbose_name="Compte développeur / technique")

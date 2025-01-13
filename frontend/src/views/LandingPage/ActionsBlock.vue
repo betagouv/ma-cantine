@@ -21,7 +21,7 @@
         </v-card-title>
         <v-card-text>
           <p class="mb-0">
-            Être outillé pour atteindre les objectifs des lois EGAlim et Climat
+            Être outillé pour atteindre les objectifs des lois EGalim et Climat
           </p>
         </v-card-text>
         <v-spacer></v-spacer>

@@ -34,7 +34,7 @@
             renseignées.
           </p>
           <p v-if="!diagnostic || diagnostic.centralKitchenDiagnosticMode !== 'ALL'">
-            En attendant, déclarez vos actions concernant les autres volets de la loi EGAlim.
+            En attendant, déclarez vos actions concernant les autres volets de la loi EGalim.
           </p>
         </div>
         <div v-else>
@@ -95,7 +95,7 @@
     <div v-else-if="isTdYear" class="fr-text fill-height d-flex flex-column justify-center">
       <p><b>C’est le moment de se lancer !</b></p>
       <p>
-        Réalisez un bilan complet pour mesurer votre avancée par rapport aux objectifs de la loi EGAlim, et parcourez
+        Réalisez un bilan complet pour mesurer votre avancée par rapport aux objectifs de la loi EGalim, et parcourez
         des ressources personnalisées selon votre situation et vos résultats pour vous aider dans votre transition vers
         une alimentation plus durable.
       </p>
@@ -110,7 +110,7 @@
       <v-card-text class="fill-height mt-2">
         <div class="overlay d-flex flex-column align-center justify-center fill-height pa-6">
           <p class="fr-text text-center my-10">
-            Avec l’outil de suivi d’achats, pilotez en temps réel votre progression EGAlim sur l’année en cours, et
+            Avec l’outil de suivi d’achats, pilotez en temps réel votre progression EGalim sur l’année en cours, et
             simplifiez votre prochaine télédéclaration.
           </p>
           <v-btn v-if="!hasPurchases" large class="mb-10" color="primary" :to="{ name: 'PurchasesHome' }">

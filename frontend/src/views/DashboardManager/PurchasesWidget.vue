@@ -4,7 +4,7 @@
     <v-card-text class="fr-text-xs grey--text text--darken-2 py-0 mt-3">
       <p v-if="purchases.length">Source des données : {{ purchaseDataSourceString }}.</p>
       <p v-else-if="!purchasesDelegated">
-        Renseignez vos achats pour calculer automatiquement votre progression sur le volet approvisionnements EGAlim.
+        Renseignez vos achats pour calculer automatiquement votre progression sur le volet approvisionnements EGalim.
       </p>
     </v-card-text>
     <v-card-text class="pt-0">

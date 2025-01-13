@@ -115,7 +115,7 @@ export default {
           urlSlug: "valeurs-totales-bio-siqo",
         },
         {
-          title: "Valeurs totales des autres achats EGAlim",
+          title: "Valeurs totales des autres achats EGalim",
           componentName: "OtherEgalimStep",
           urlSlug: "valeurs-totales-autres",
         },

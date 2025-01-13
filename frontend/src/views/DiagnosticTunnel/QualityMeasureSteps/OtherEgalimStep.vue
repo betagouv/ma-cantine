@@ -7,7 +7,7 @@
 
     <FormErrorCallout v-if="totalError" :errorMessages="[totalErrorMessage]" />
 
-    <!-- Other EGAlim -->
+    <!-- Other EGalim -->
     <v-row class="my-0 my-md-6">
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
@@ -26,7 +26,7 @@
           </div>
 
           <label class="ml-4 ml-md-0" for="other">
-            La valeur (en € HT) des autres achats EGAlim
+            La valeur (en € HT) des autres achats EGalim
             <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
@@ -41,7 +41,7 @@
           v-if="displayPurchaseHints"
           v-model="payload.valueEgalimOthersHt"
           @autofill="updatePayload"
-          purchaseType="« autre EGAlim »"
+          purchaseType="« autre EGalim »"
           :amount="purchasesSummary.valueEgalimOthersHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
@@ -118,7 +118,7 @@
                 </v-card-text>
                 <v-card-text class="text-sm-body-1 grey-text text-darken-3">
                   <p class="mb-0">
-                    Ni la loi EGALIM, ni le code de la commande publique n'imposent de soumettre la méthodologie de
+                    Ni la loi EGalim, ni le code de la commande publique n'imposent de soumettre la méthodologie de
                     calcul du coût des externalités environnementales liées aux produits à une validation de
                     l'administration. Dès lors qu'ils respectent les exigences du code de la commande publique, les
                     acheteurs ayant recours à ce mode de sélection sont libres de définir les modalités qui leur
@@ -235,7 +235,7 @@ export default {
       if (sumEgalim > total) {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
           d.valueTotalHt
-        )}) doit être plus élévé que la somme des valeurs EGAlim (${toCurrency(sumEgalim || 0)})`
+        )}) doit être plus élévé que la somme des valeurs EGalim (${toCurrency(sumEgalim || 0)})`
       }
     },
     sumAllEgalim() {

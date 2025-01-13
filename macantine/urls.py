@@ -45,6 +45,6 @@ if settings.ENABLE_VUE3:
     urlpatterns.append(re_path(r"^v2/.*$", Vue3AppDisplayView.as_view()))
 urlpatterns.append(re_path(r"^.*/$", VueAppDisplayView.as_view()))
 
-admin.site.site_header = f"Ma Cantine EGALIM - {getattr(settings, 'ENVIRONMENT', '')}"
+admin.site.site_header = f"Ma Cantine EGalim - {getattr(settings, 'ENVIRONMENT', '')}"
 admin.site.index_title = ""
-admin.site.site_title = f"Ma Cantine EGALIM - {getattr(settings, 'ENVIRONMENT', '')}"
+admin.site.site_title = f"Ma Cantine EGalim - {getattr(settings, 'ENVIRONMENT', '')}"

@@ -150,7 +150,7 @@
       </v-row>
       <div v-if="statistics.diagnosticsCount === 0">
         <p class="mt-8 caption">
-          Aucune cantine n'a renseigné des données relatives à la loi EGAlim pour l'année {{ year }}.
+          Aucune cantine n'a renseigné des données relatives à la loi EGalim pour l'année {{ year }}.
         </p>
       </div>
       <div v-else>
@@ -165,7 +165,7 @@
                     {{ statistics.approPercent }} %
                   </span>
                   <span class="text-body-2">
-                    ont réussi l'objectif d'approvisionnement EGAlim
+                    ont réussi l'objectif d'approvisionnement EGalim
                   </span>
                 </p>
               </v-card-text>

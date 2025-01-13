@@ -3,7 +3,7 @@
     <CentralKitchenInfo :canteen="canteen" v-if="usesCentralKitchenDiagnostics" />
 
     <p>
-      La loi EGAlim impose {{ applicableRules.qualityThreshold }} % de produits durables et de qualité et durable, dont
+      La loi EGalim impose {{ applicableRules.qualityThreshold }} % de produits durables et de qualité et durable, dont
       {{ applicableRules.bioThreshold }} % de bio
       <span v-if="applicableRules.qualityThreshold !== 50">
         - en respectant
@@ -95,7 +95,7 @@
                     <span class="font-weight-bold percentage">{{ percentageDisplay(meatEgalimPercentage) }}</span>
                     de viandes et volailles
                     <br />
-                    EGAlim
+                    EGalim
                   </p>
                   <p
                     v-if="applicableRules.meatPoultryEgalimThreshold"
@@ -125,7 +125,7 @@
                     <span class="font-weight-bold percentage">{{ percentageDisplay(fishEgalimPercentage) }}</span>
                     de produits de la mer
                     <br />
-                    et aquaculture EGAlim
+                    et aquaculture EGalim
                   </p>
                   <p v-if="applicableRules.fishEgalimThreshold" class="mt-1 mb-0 fr-text-sm grey--text text--darken-1">
                     <i>objectif : {{ applicableRules.fishEgalimThreshold }} %</i>

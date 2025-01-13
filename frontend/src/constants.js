@@ -116,7 +116,7 @@ export default Object.freeze({
     },
   },
   Characteristics: {
-    // NB: the order of these keys reflects the priority of the label in EGAlim sum calculations
+    // NB: the order of these keys reflects the priority of the label in EGalim sum calculations
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
     BIO: { text: "Bio" },
     LABEL_ROUGE: { text: "Label rouge" },
@@ -174,7 +174,7 @@ export default Object.freeze({
       longText: "Produits acquis sur la base de leurs performances en matière environnementale",
       color: "pink",
     },
-    NON_EGALIM: { text: "Non-EGAlim", color: "blue-grey lighten-2" },
+    NON_EGALIM: { text: "Non-EGalim", color: "blue-grey lighten-2" },
     FRANCE: { text: "Provenance France", additional: true },
     SHORT_DISTRIBUTION: { text: "Circuit-court", additional: true },
     LOCAL: { text: "Local", additional: true },
@@ -285,7 +285,7 @@ export default Object.freeze({
       ],
     },
     nonEgalim: {
-      text: "Merci de renseigner les montants des produits hors EGAlim",
+      text: "Merci de renseigner les montants des produits hors EGalim",
       characteristics: ["NON_EGALIM"],
       fields: [
         "valueViandesVolaillesNonEgalim",
@@ -505,8 +505,8 @@ export default Object.freeze({
   CentralKitchenDiagnosticModes: [
     {
       key: "ALL",
-      label: "Je rentre les données concernant toutes les mesures EGAlim pour mes cantines satellites",
-      shortLabel: "Les données sur l’ensemble des mesures EGAlim",
+      label: "Je rentre les données concernant toutes les mesures EGalim pour mes cantines satellites",
+      shortLabel: "Les données sur l’ensemble des mesures EGalim",
     },
     {
       key: "APPRO",

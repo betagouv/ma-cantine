@@ -309,7 +309,7 @@ class TestPurchaseApi(APITestCase):
         Bio category is the sum of all products with bio label
         Every category apart from bio should exclude bio (so bio + label rouge gets counted in bio but not label rouge)
         Categories should respect the heirarchy (if something is label rouge + AOC only count in rouge; if AOC and fermier count in AOC only)
-        The three categories outside of EGAlim should get the totals regardless of what other labels they have
+        The three categories outside of EGalim should get the totals regardless of what other labels they have
         The category of AOC/AOP/IGP/STG should count items with two or more labels once (applicable to extended declaration)
         """
         canteen = CanteenFactory.create()
@@ -328,7 +328,7 @@ class TestPurchaseApi(APITestCase):
         meat = Purchase.Family.VIANDES_VOLAILLES
         other = Purchase.Family.AUTRES
 
-        # test that bio trumps other labels, but doesn't stop non-EGAlim labels
+        # test that bio trumps other labels, but doesn't stop non-EGalim labels
         PurchaseFactory.create(canteen=canteen, date=d, family=fruit, characteristics=[bio, aoc], price_ht=120)
         PurchaseFactory.create(canteen=canteen, date=d, family=fruit, characteristics=[bio, fairtrade], price_ht=80)
 
@@ -341,7 +341,7 @@ class TestPurchaseApi(APITestCase):
         PurchaseFactory.create(canteen=canteen, date=d, family=fruit, characteristics=[aoc], price_ht=20)
         PurchaseFactory.create(canteen=canteen, date=d, family=fruit, characteristics=[stg, fairtrade], price_ht=60)
 
-        # check that can have a family with only non-EGAlim labels
+        # check that can have a family with only non-EGalim labels
         PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[local], price_ht=50)
         PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[local], price_ht=50)
 
@@ -386,7 +386,7 @@ class TestPurchaseApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
 
-        # Should be counted both on EGALIM and "Provenance France"
+        # Should be counted both on EGalim and "Provenance France"
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
@@ -399,7 +399,7 @@ class TestPurchaseApi(APITestCase):
             price_ht=50,
         )
 
-        # Should be counted on EGALIM
+        # Should be counted on EGalim
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
@@ -408,7 +408,7 @@ class TestPurchaseApi(APITestCase):
             price_ht=40,
         )
 
-        # Should be counted on EGALIM
+        # Should be counted on EGalim
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
@@ -417,7 +417,7 @@ class TestPurchaseApi(APITestCase):
             price_ht=30,
         )
 
-        # Should not be counted as EGAlim, only included in the total
+        # Should not be counted as EGalim, only included in the total
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
@@ -462,7 +462,7 @@ class TestPurchaseApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
 
-        # Should be counted on EGALIM only once
+        # Should be counted on EGalim only once
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
@@ -471,7 +471,7 @@ class TestPurchaseApi(APITestCase):
             price_ht=55,
         )
 
-        # Should be counted on EGALIM
+        # Should be counted on EGalim
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
@@ -480,7 +480,7 @@ class TestPurchaseApi(APITestCase):
             price_ht=40,
         )
 
-        # Should be counted on EGALIM
+        # Should be counted on EGalim
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
@@ -489,7 +489,7 @@ class TestPurchaseApi(APITestCase):
             price_ht=30,
         )
 
-        # Should not be counted as EGAlim, only included in the total
+        # Should not be counted as EGalim, only included in the total
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",
@@ -498,7 +498,7 @@ class TestPurchaseApi(APITestCase):
             price_ht=20,
         )
 
-        # Should not be counted as EGAlim, only included in the total
+        # Should not be counted as EGalim, only included in the total
         PurchaseFactory.create(
             canteen=canteen,
             date="2020-01-01",

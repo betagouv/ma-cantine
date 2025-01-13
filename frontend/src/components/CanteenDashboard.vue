@@ -10,7 +10,7 @@
           </v-card-title>
           <v-card-text class="pb-0">
             <p class="grey--text text--darken-3">
-              La loi EGAlim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent
+              La loi EGalim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent
               comporter, au cours de l'année 2022, {{ applicableRules.qualityThreshold }} % de produits de qualité et
               durables dont {{ applicableRules.bioThreshold }} % issus de l’agriculture biologique ou en conversion,
               pour les cantines

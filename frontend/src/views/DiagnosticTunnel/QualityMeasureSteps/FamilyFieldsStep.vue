@@ -22,7 +22,7 @@
       <!-- TODO: list of prioritisation ? -->
     </p>
     <p v-else-if="groupId === 'nonEgalim'" class="fr-text-sm">
-      Merci de renseigner les montants des produits hors EGAlim
+      Merci de renseigner les montants des produits hors EGalim
     </p>
     <p v-else-if="groupId === 'outsideLaw'" class="fr-text-sm">
       Ici, vous pouvez affecter le produit dans plusieurs caractéristiques. Par exemple, un produit à la fois biologique

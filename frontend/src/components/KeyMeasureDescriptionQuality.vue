@@ -1,7 +1,7 @@
 <template>
   <div>
     <p>
-      La loi EGAlim, complétée par la loi Climat et Résilience, a défini des obligations en ce qui concerne la qualité
+      La loi EGalim, complétée par la loi Climat et Résilience, a défini des obligations en ce qui concerne la qualité
       et la durabilité des produits entrant dans la composition des repas servis en restauration collective. Aussi, en
       moyenne sur une année, les repas doivent comporter au moins 50 % de produits durables et de qualité, dont au moins
       20 % issus de l'agriculture biologique ou en conversion, et ce pour toutes les cantines de France métropolitaine

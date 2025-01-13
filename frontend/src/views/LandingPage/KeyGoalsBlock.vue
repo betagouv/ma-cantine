@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="text-h4 font-weight-black mb-12">Les objectifs de la loi EGAlim</h2>
+    <h2 class="text-h4 font-weight-black mb-12">Les objectifs de la loi EGalim</h2>
 
     <v-row class="mb-8">
       <v-col cols="12" sm="4">
@@ -26,7 +26,7 @@
     </v-row>
     <v-row justify="center">
       <DownloadLink
-        label="Télécharger le livret de la loi EGAlim concernant la restauration collective"
+        label="Télécharger le livret de la loi EGalim concernant la restauration collective"
         href="/static/documents/2208_Mesures-LoiEgalim_BRO_V3.pdf"
         sizeStr="482 ko"
       />

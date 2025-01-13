@@ -46,7 +46,7 @@ class Teledeclaration(models.Model):
         CENTRAL_APPRO = "CENTRAL_APPRO", "Cuisine centrale déclarant les données d'appro pour ses cuisines satellites"
         CENTRAL_ALL = (
             "CENTRAL_ALL",
-            "Cuisine centrale déclarant toutes les données EGAlim pour ses cuisines satellites",
+            "Cuisine centrale déclarant toutes les données EGalim pour ses cuisines satellites",
         )
         SITE = "SITE", "Cantine déclarant ses propres données"
 
