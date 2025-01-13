@@ -1,6 +1,10 @@
 {
   "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
+  "homepage": "https://github.com/betagouv/ma-cantine",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/maj-schema-import-achats/data/schemas/imports/achats.json",
   "encoding": "utf-8",
+  "name": "Import des achats",
+  "title": "Schéma import des achats",
   "fields": [
     {
       "constraints": {
@@ -127,12 +131,5 @@
       "title": "Définition de local",
       "type": "string"
     }
-  ],
-  "format": "csv",
-  "homepage": "https://github.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines.json",
-  "mediatype": "text/csv",
-  "name": "Import des achats",
-  "scheme": "file",
-  "title": "Schéma import des achats",
-  "type": "table"
+  ]
 }
