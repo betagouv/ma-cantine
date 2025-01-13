@@ -1,4 +1,5 @@
 {
+  "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
   "encoding": "utf-8",
   "fields": [
     {
@@ -128,6 +129,7 @@
     }
   ],
   "format": "csv",
+  "homepage": "https://github.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines.json",
   "mediatype": "text/csv",
   "scheme": "file",
   "title": "Schéma import des achats",
