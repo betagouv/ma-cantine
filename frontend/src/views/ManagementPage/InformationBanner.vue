@@ -26,7 +26,7 @@
       </p>
       <p class="fr-text-sm mb-5 mb-md-2">
         <a
-          href="/static/documents/Antisèche_données_d'achat_ma_cantine.pdf"
+          href="/static/documents/Antiseche_donnees_dachat_ma_cantine_2025.pdf"
           download
           title="Comment saisir mes données d'achat"
           class="grey--text text--darken-4"
