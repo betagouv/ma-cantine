@@ -131,6 +131,7 @@
   "format": "csv",
   "homepage": "https://github.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines.json",
   "mediatype": "text/csv",
+  "name": "Import des achats",
   "scheme": "file",
   "title": "Schéma import des achats",
   "type": "table"
