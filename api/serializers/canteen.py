@@ -4,9 +4,9 @@ from django.conf import settings
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
-from data.department_choices import Department
+from data.department_choices import get_lib_department_from_code
 from data.models import Canteen, CanteenImage, Diagnostic, Sector
-from data.region_choices import Region
+from data.region_choices import get_lib_region_from_code
 from macantine.etl.utils import SECTEURS_SPE
 
 from .diagnostic import (
@@ -532,8 +532,6 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
 
 # remember to update TD version if you update this
 class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
-    geo_data = {"department": {i.value: i.label for i in Department}, "region": {i.value: i.label for i in Region}}
-
     sectors = SectorSerializer(many=True, read_only=True)
     central_producer_siret = serializers.SerializerMethodField(read_only=True)
     satellite_canteens_count = serializers.SerializerMethodField(read_only=True)
@@ -600,9 +598,6 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
 
 
 class CanteenMetabaseSerializer(serializers.ModelSerializer):
-    departments_lib = {i.value: i.label.split(" - ")[1] for i in Department}
-    regions_lib = {i.value: i.label.split(" - ")[1] for i in Region}
-
     nom = serializers.SerializerMethodField()
     code_insee_commune = serializers.SerializerMethodField()
     libelle_commune = serializers.SerializerMethodField()
@@ -665,13 +660,13 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
         return obj.department
 
     def get_departement_lib(self, obj):
-        return self.departments_lib[obj.department]
+        return get_lib_department_from_code(obj.department)
 
     def get_region(self, obj):
         return obj.region
 
     def get_region_lib(self, obj):
-        return self.regions_lib[obj.region]
+        return get_lib_region_from_code(obj.region)
 
     def get_date_creation(self, obj):
         return obj.creation_date.strftime('"%Y-%m-%d"')
