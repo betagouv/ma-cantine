@@ -205,7 +205,7 @@ def map_sectors():
     Populate the details of a sector, given its id
     """
 
-    from api.serializers import SectorSerializer  # avoir circular import
+    from api.serializers import SectorSerializer  # avoid circular import
 
     sectors = Sector.objects.all()
     sectors_mapper = {}
