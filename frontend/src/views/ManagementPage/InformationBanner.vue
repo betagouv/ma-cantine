@@ -14,7 +14,7 @@
       </v-btn>
       <p class="fr-text-sm mb-5 mb-md-2 mr-4">
         <a
-          href="https://894795896-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2F5ykK6Oj3jbALj2Vfzo48%2FGuide_Campagne_teledeclaration_2024_110124.pdf?alt=media"
+          href="https://894795896-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2F85J5bYm9Nd4aFRJk1pvm%2FGuide_prise_en_main_ma_cantine_janv2025.pdf?alt=media"
           target="_blank"
           rel="noopener external"
           title="Le guide de télédéclaration - ouvre une nouvelle fenêtre"
@@ -26,7 +26,7 @@
       </p>
       <p class="fr-text-sm mb-5 mb-md-2">
         <a
-          href="/static/documents/Antisèche_données_d'achat_ma_cantine.pdf"
+          href="/static/documents/Antiseche_donnees_dachat_ma_cantine_2025.pdf"
           download
           title="Comment saisir mes données d'achat"
           class="grey--text text--darken-4"
