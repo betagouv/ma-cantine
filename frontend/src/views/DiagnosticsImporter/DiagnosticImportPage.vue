@@ -44,16 +44,8 @@
         </li>
       </ul>
       Téléchargez l'en-tête en format :
-      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.xlsx" download>
-        Excel (.xlsx)
-      </a>
-      ,
       <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.csv" download>
         CSV
-      </a>
-      ,
-      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.ods" download>
-        OpenDocument (.ods)
       </a>
       <br />
       À noter que vous ne serez pas ajouté.e.s automatiquement à l'équipe de gestion sauf si votre mail se trouve dans
@@ -244,35 +236,23 @@ export default {
     },
     downloadLinks() {
       const labels = {
-        xlsx: "Excel",
-        ods: "OpenDocument",
         csv: "CSV",
       }
       const importSizes = {
         CC_COMPLETE: {
           csv: "5.5 ko",
-          ods: "21 ko",
-          xlsx: "9.4 ko",
         },
         CC_SIMPLE: {
           csv: "782 o",
-          ods: "17.1 ko",
-          xlsx: "6 ko",
         },
         COMPLETE: {
           csv: "5 Ko",
-          ods: "15 Ko",
-          xlsx: "13 Ko",
         },
         SIMPLE: {
           csv: "771 o",
-          ods: "11 Ko",
-          xlsx: "11 Ko",
         },
         NONE: {
           csv: "321 o",
-          ods: "10 Ko",
-          xlsx: "6 Ko",
         },
       }
       let filename = "/static/documents/"
@@ -281,7 +261,7 @@ export default {
       else if (this.importLevel === "CC_COMPLETE") filename = filename + "fichier_exemple_ma_cantine_cc_complet"
       else if (this.importLevel === "NONE") filename = filename + "fichier_exemple_ma_cantine_no_diag"
       else filename = filename + "fichier_exemple_ma_cantine"
-      return ["xlsx", "ods", "csv"].map((fileType) => ({
+      return ["csv"].map((fileType) => ({
         href: `${filename}.${fileType}`,
         label: `Télécharger le fichier exemple en format ${labels[fileType]}`,
         sizeStr: importSizes[this.importLevel][fileType],
