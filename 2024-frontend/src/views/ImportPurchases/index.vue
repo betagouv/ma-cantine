@@ -1,5 +1,23 @@
 <script setup>
 import ImportExplanation from "@/components/ImportExplanation.vue"
+const ressources = [
+  {
+    download: true,
+    href: "/static/achats_fichier_exemple_ma_cantine.csv",
+    name: "Télécharger notre fichier d’exemple CSV",
+    size: "189 octets",
+  },
+  {
+    name: "Comment importer un fichier CSV dans Excel ?",
+    target: "_blank",
+  },
+  {
+    href:
+      "https://support.microsoft.com/fr-fr/office/enregistrer-un-classeur-au-format-texte-txt-ou-csv-3e9a9d6c-70da-4255-aa28-fcacf1f081e6",
+    name: "Comment enregistrer mon fichier Excel en CSV ?",
+    target: "_blank",
+  },
+]
 </script>
 
 <template>
@@ -9,5 +27,5 @@ import ImportExplanation from "@/components/ImportExplanation.vue"
     consectetur. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit
     amet risus. Nullam quis risus eget urna mollis ornare vel eu leo.
   </p>
-  <ImportExplanation />
+  <ImportExplanation :ressources="ressources" />
 </template>

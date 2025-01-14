@@ -1,3 +1,7 @@
+<script setup>
+defineProps(["ressources"])
+</script>
+
 <template>
   <section class="fr-grid-row fr-grid-row--bottom">
     <div class="fr-col-12 fr-col-md-8">
@@ -45,6 +49,19 @@
         <span class="fr-icon-star-s-fill" aria-hidden="true"></span>
         Ressources utiles
       </p>
+      <ul class="ma-cantine--unstyled-list">
+        <li v-for="(ressource, index) in ressources" :key="index">
+          <DsfrFileDownload
+            v-if="ressource.download"
+            format="CSV"
+            :size="ressource.size"
+            :href="ressource.href"
+            :download="ressource.download"
+            :title="ressource.name"
+          />
+          <a v-else :href="ressource.href" :target="ressource.target">{{ ressource.name }}</a>
+        </li>
+      </ul>
     </div>
   </section>
 </template>
