@@ -8,14 +8,14 @@ const ressources = [
     size: "189 octets",
   },
   {
+    external: true,
     name: "Comment importer un fichier CSV dans Excel ?",
-    target: "_blank",
   },
   {
+    external: true,
     href:
       "https://support.microsoft.com/fr-fr/office/enregistrer-un-classeur-au-format-texte-txt-ou-csv-3e9a9d6c-70da-4255-aa28-fcacf1f081e6",
     name: "Comment enregistrer mon fichier Excel en CSV ?",
-    target: "_blank",
   },
 ]
 </script>
