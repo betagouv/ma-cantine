@@ -10,14 +10,6 @@
         <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
         CSV (.csv)
       </a>
-      <a class="text-decoration-underline" href="/static/documents/achats_fichier_exemple_ma_cantine.xlsx" download>
-        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        Excel (.xlsx)
-      </a>
-      <a class="text-decoration-underline" href="/static/documents/achats_fichier_exemple_ma_cantine.ods" download>
-        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        OpenDocument (.ods)
-      </a>
       .
     </p>
 
@@ -107,14 +99,6 @@
       <a class="text-decoration-underline" href="/static/documents/achats_fichier_exemple_ma_cantine.csv" download>
         <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
         CSV (.csv)
-      </a>
-      <a class="text-decoration-underline" href="/static/documents/achats_fichier_exemple_ma_cantine.xlsx" download>
-        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        Excel (.xlsx)
-      </a>
-      <a class="text-decoration-underline" href="/static/documents/achats_fichier_exemple_ma_cantine.ods" download>
-        <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
-        OpenDocument (.ods)
       </a>
       à remplir avec vos données.
     </p>
