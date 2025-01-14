@@ -6,6 +6,7 @@ import LegalNotices from "@/views/LegalNotices"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import CGU from "@/views/CGU"
 import ContactPage from "@/views/ContactPage"
+import ImportPurchases from "@/views/ImportPurchases"
 import { useRootStore } from "@/stores/root"
 
 const routes = [
@@ -73,6 +74,19 @@ const routes = [
     component: ContactPage,
     meta: {
       title: "Contactez-nous",
+    },
+  },
+  {
+    path: "/importer-des-donnees/achats",
+    name: "ImportPurchases",
+    component: ImportPurchases,
+    meta: {
+      title: "Créer des achats",
+      authenticationRequired: true,
+      breadcrumbs: [
+        { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+        { to: { name: "ImportSelection" }, title: "Importer des données" },
+      ],
     },
   },
 ]
