@@ -1,10 +1,6 @@
 {
   "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
-  "homepage": "https://github.com/betagouv/ma-cantine",
-  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/maj-schema-import-achats/data/schemas/imports/achats.json",
   "encoding": "utf-8",
-  "name": "import-achats",
-  "title": "Schema import des achats",
   "fields": [
     {
       "constraints": {
@@ -72,9 +68,9 @@
           "PRODUITS_LAITIERS",
           "BOULANGERIE",
           "BOISSONS",
-          "AUTRES",
-          ""
+          "AUTRES"
         ],
+        "pattern": "(?:(?:^|;)(VIANDES_VOLAILLES|CHARCUTERIE|PRODUITS_DE_LA_MER|FRUITS_ET_LEGUMES|PRODUITS_LAITIERS|BOULANGERIE|BOISSONS|AUTRES))+$",
         "required": false
       },
       "description": "",
@@ -106,9 +102,9 @@
         "pattern": "(?:(?:^|;)(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|FRANCE|SHORT_DISTRIBUTION|LOCAL))+$",
         "required": false
       },
+      "description": "",
       "doc_enum_multiple": true,
       "doc_enum_multiple_seperator": ",",
-      "description": "",
       "example": "BIO,IGP",
       "format": "default",
       "name": "caracteristiques",
@@ -132,5 +128,9 @@
       "title": "Définition de local",
       "type": "string"
     }
-  ]
+  ],
+  "homepage": "https://github.com/betagouv/ma-cantine",
+  "name": "import-achats",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/maj-schema-import-achats/data/schemas/imports/achats.json",
+  "title": "Schema import des achats"
 }
