@@ -5,3 +5,7 @@ html {
 address {
     font-style: normal;
 }
+
+.ma-cantine--bold {
+    font-weight: 700;
+}
