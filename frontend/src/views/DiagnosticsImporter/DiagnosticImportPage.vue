@@ -44,16 +44,8 @@
         </li>
       </ul>
       Téléchargez l'en-tête en format :
-      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.xlsx" download>
-        Excel (.xlsx)
-      </a>
-      ,
       <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.csv" download>
         CSV
-      </a>
-      ,
-      <a class="text-decoration-underline" href="/static/documents/fichier_exemple_staff.ods" download>
-        OpenDocument (.ods)
       </a>
       <br />
       À noter que vous ne serez pas ajouté.e.s automatiquement à l'équipe de gestion sauf si votre mail se trouve dans
