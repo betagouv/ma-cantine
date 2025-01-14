@@ -4,7 +4,7 @@ defineProps(["ressources"])
 
 <template>
   <section class="fr-grid-row fr-grid-row--bottom">
-    <div class="fr-col-12 fr-col-md-8">
+    <div class="fr-col-12 fr-col-md-7">
       <h2 class="fr-h5">Comment ça marche ?</h2>
       <p>
         Nous scannons la structure du fichier, puis les valeurs des cellules avant d’importer.
@@ -44,7 +44,7 @@ defineProps(["ressources"])
       </ul>
     </div>
     <div class="fr-col-offset-md-1"></div>
-    <div class="fr-col-12 fr-col-md-3 fr-text-title--blue-france">
+    <div class="fr-col-12 fr-col-md-4 fr-text-title--blue-france">
       <p class="ma-cantine--bold">
         <span class="fr-icon-star-s-fill" aria-hidden="true"></span>
         Ressources utiles
