@@ -50,7 +50,7 @@ defineProps(["ressources"])
         Ressources utiles
       </p>
       <ul class="ma-cantine--unstyled-list">
-        <li v-for="(ressource, index) in ressources" :key="index">
+        <li v-for="(ressource, index) in ressources" :key="index" class="fr-mb-1w">
           <DsfrFileDownload
             v-if="ressource.download"
             format="CSV"
