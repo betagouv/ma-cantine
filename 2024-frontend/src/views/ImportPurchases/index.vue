@@ -3,7 +3,7 @@ import ImportExplanation from "@/components/ImportExplanation.vue"
 const ressources = [
   {
     download: true,
-    href: "/static/achats_fichier_exemple_ma_cantine.csv",
+    href: "/static/documents/achats_fichier_exemple_ma_cantine.csv",
     name: "Télécharger notre fichier d’exemple CSV",
     size: "189 octets",
   },
