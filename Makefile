@@ -11,3 +11,6 @@ down:
 
 sh:
 	$(DOCKER-RUN) server bash
+
+static:
+	$(DOCKER-RUN) server python manage.py collectstatic --no-input
