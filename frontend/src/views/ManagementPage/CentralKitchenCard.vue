@@ -11,7 +11,12 @@
         :color="teledeclarationStatus.color"
         :small="true"
       />
-      <DsfrTag :text="publicationStatus.text" :color="publicationStatus.color" :small="true" />
+      <DsfrTag
+        v-if="publicationStatusIsNotPublished"
+        :text="publicationStatus.text"
+        :color="publicationStatus.color"
+        :small="true"
+      />
     </v-card-subtitle>
     <v-card-subtitle class="mt-0 pb-0 pt-2">
       <ProductionTypeTag :canteen="canteen" position="top-left" />
@@ -61,6 +66,9 @@ export default {
           text: "Publiée",
         },
       }[this.canteen.publicationStatus || "draft"]
+    },
+    publicationStatusIsNotPublished() {
+      return this.canteen.publicationStatus !== "published"
     },
     teledeclarationStatus() {
       const diagnostics = this.canteen.diagnostics
