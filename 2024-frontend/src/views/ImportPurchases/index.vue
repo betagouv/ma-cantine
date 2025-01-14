@@ -23,9 +23,11 @@ const ressources = [
 <template>
   <h1>Créer des achats</h1>
   <p class="fr-col-7">
-    Texte d'introduction à venir. Nulla vitae elit libero, a pharetra augue. Aenean lacinia bibendum nulla sed
-    consectetur. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit
-    amet risus. Nullam quis risus eget urna mollis ornare vel eu leo.
+    Notre outil d’import de masse vous permet d’ajouter les achats de toutes vos cantines d’un coup.
+    <strong>Si vous avez moins de 10 achats,</strong>
+    il est plus rapide de les saisir directement
+    <router-link :to="{ name: 'PurchasesHome' }">sur la plateforme</router-link>
+    .
   </p>
   <ImportExplanation :ressources="ressources" />
 </template>
