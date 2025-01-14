@@ -23,7 +23,7 @@ démarrer.
 
 ### Avec Docker
 
-Un environnement Docker/Docker-Compose est fourni. Pour construire les
+Un environnement Docker/Docker Compose est fourni. Pour construire les
 images et lancer les services :
 
 ```sh
@@ -424,13 +424,3 @@ Vous pourrez modifier les notes dans un éditeur pour être plus rapide.
 - supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dépendances"
 - supprimer la partie "by @username in https://..."
 - faire n'importe quel autre changement pour rendre la liste facilement comprensible par tout le monde
-
-### Développement
-
-Pour le formattage automatique de fichiers (prettier), faut avoir quelques dependences npm installé en locale.
-
-Allez dans le dossier `/frontend` et `/2024-frontend`
-
-`sudo npm install --include=dev`
-
-J'ai du utiliser `sudo` car le dossier `node_modules` a été créé par l'image docker.
