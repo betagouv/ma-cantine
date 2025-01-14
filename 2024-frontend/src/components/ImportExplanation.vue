@@ -59,7 +59,7 @@ defineProps(["ressources"])
             :download="ressource.download"
             :title="ressource.name"
           />
-          <a v-else :href="ressource.href" :target="ressource.target">{{ ressource.name }}</a>
+          <a v-else-if="ressource.external" :href="ressource.href" target="_blank">{{ ressource.name }}</a>
         </li>
       </ul>
     </div>
