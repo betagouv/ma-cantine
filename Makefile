@@ -1,5 +1,7 @@
 DOCKER-RUN = docker compose run -e TERM --rm --entrypoint=""
 
+.PHONY: build up down sh static
+
 build:
 	docker compose build
 
