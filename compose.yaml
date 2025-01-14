@@ -9,6 +9,7 @@
 # https://github.com/docker/awesome-compose
 services:
   server:
+    image: ma-cantine-server
     build: .
     volumes:
       - "./:/app"
@@ -40,7 +41,7 @@ services:
       context: 2024-frontend
     image: ma-cantine-2024-front
     volumes:
-      - "./2024-frontend:/app/2024-frontend"
+      - "./:/app"
       - "/app/2024-frontend/node_modules"
     ports:
       - 5173:5173
@@ -65,6 +66,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  worker:
+    image: ma-cantine-server
+    env_file:
+      - ".env.docker"
+    command: ["celery", "-A", "macantine", "worker"]
+    depends_on:
+      - db
+      - redis
+  redis:
+    image: redis:latest
 volumes:
   # it's normal that this is empty, it simply defines the existance of persistent storage
   db-data:
