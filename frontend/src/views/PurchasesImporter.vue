@@ -5,7 +5,7 @@
       Créez plusieurs achats pour vos cantines en transférant un fichier CSV suivant les spécifications ci-dessous.
     </p>
     <p>
-      Vous pouvez également télécharger un fichier exemple en format de choix :
+      Vous pouvez également télécharger un fichier exemple :
       <a class="text-decoration-underline" href="/static/documents/achats_fichier_exemple_ma_cantine.csv" download>
         <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
         CSV (.csv)
@@ -95,7 +95,7 @@
 
     <h3 class="my-6">Fichier exemple</h3>
     <p>
-      Nous mettons à votre disposition un fichier exemple en format de choix :
+      Nous mettons à votre disposition un fichier exemple :
       <a class="text-decoration-underline" href="/static/documents/achats_fichier_exemple_ma_cantine.csv" download>
         <v-icon small class="mt-n1 ml-1" color="primary">mdi-file-document-outline</v-icon>
         CSV (.csv)
