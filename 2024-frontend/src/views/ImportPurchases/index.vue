@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from "vue"
-import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import { importPurchases } from "@/services/imports.js"
 import { trackEvent } from "@/services/matomo.js"
@@ -10,7 +9,6 @@ import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 
 /* Store and Router */
 const store = useRootStore()
-const router = useRouter()
 
 /* Ressources */
 const ressources = [
