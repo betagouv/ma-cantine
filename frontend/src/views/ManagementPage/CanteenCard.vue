@@ -81,7 +81,7 @@ export default {
         }
       } else {
         return {
-          color: "grey lighten-4",
+          color: "red lighten-4",
           text: `Non-télédéclarée (${this.teledeclarationYear})`,
         }
       }
