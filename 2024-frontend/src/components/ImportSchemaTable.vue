@@ -3,17 +3,16 @@ import { shallowRef } from "vue"
 import schemaService from "@/services/schemas.js"
 import ImportSchemaTableDescriptionCell from "@/components/ImportSchemaTableDescriptionCell.vue"
 
-/* Table props */
+/* Data */
+const props = defineProps(["url"])
 const headers = ["Nom de colonne", "Description", "Format", "Exemple", "Obligatoire"]
 const rows = shallowRef([])
 
-/* Schema data */
-const props = defineProps(["url"])
+/* Fields */
 schemaService.getFields(props.url).then((fields) => {
   rows.value = formatFields(fields)
 })
 
-/* Format fields to match rows expected content */
 const formatFields = (fields) => {
   const rows = []
   fields.forEach((field) => {
