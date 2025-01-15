@@ -6,7 +6,7 @@ import { trackEvent } from "@/services/matomo.js"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 
-/* Store and Router */
+/* Store */
 const store = useRootStore()
 
 /* Ressources */
