@@ -70,8 +70,12 @@ const getType = (field) => {
 .import-schema-table {
   white-space: nowrap;
 
-  th: {
+  th {
     white-space: wrap;
+  }
+
+  td:last-child {
+    text-align: center;
   }
 
   td:nth-child(2),
