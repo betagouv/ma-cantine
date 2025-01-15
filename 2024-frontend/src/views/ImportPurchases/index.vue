@@ -7,7 +7,7 @@ import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 
-/* Store and Router */
+/* Store */
 const store = useRootStore()
 
 /* Ressources */
