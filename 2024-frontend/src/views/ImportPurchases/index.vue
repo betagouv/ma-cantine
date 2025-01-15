@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue"
+import { reactive, ref } from "vue"
 import { useRootStore } from "@/stores/root"
 import { importPurchases } from "@/services/imports.js"
 import { trackEvent } from "@/services/matomo.js"
@@ -76,11 +76,19 @@ const duplicatedUpload = (props) => {
   console.log(message)
 }
 
-const importError = ref(false)
-const errorBadge = ref("")
+const hasErrors = reactive({
+  status: false,
+  badge: "",
+  message: "",
+  list: [],
+})
 const showErrors = (count) => {
-  importError.value = true
-  errorBadge.value = count >= 1 ? "1 Erreur détectée" : `${count} Erreurs détectées`
+  hasErrors.status = true
+  hasErrors.badge = count > 1 ? `${count} Erreurs détectées` : "1 Erreur détectée"
+  hasErrors.message =
+    count > 1
+      ? "Veuillez les corriger avant d’importer à nouveau le fichier."
+      : "Veuillez la corriger avant d’importer à nouveau le fichier."
 }
 </script>
 
@@ -110,11 +118,11 @@ const showErrors = (count) => {
         @change="upload"
         :disabled="isProcessingFile"
       />
-      <div v-if="importError" class="fr-mt-2w">
+      <div v-if="hasErrors.status" class="fr-mt-2w">
         <div class="fr-grid-row fr-grid-row--middle">
-          <DsfrBadge type="error" :label="errorBadge" />
+          <DsfrBadge type="error" :label="hasErrors.badge" />
           <p class="fr-text-default--error fr-ml-1w fr-mb-0">
-            Veuillez la corriger avant d’importer à nouveau le fichier.
+            {{ hasErrors.message }}
           </p>
         </div>
         <AppSeparator class="fr-my-3w" />
