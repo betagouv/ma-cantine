@@ -32,7 +32,6 @@ const ressources = [
 ]
 
 /* Upload */
-// TODO => const duplicateFile = ref(false)
 const isProcessingFile = ref(false)
 
 const upload = (file) => {
@@ -47,7 +46,6 @@ const upload = (file) => {
       } else {
         alert("ERREUR")
       }
-      // }
     })
     .catch((e) => {
       store.notifyServerError(e)
