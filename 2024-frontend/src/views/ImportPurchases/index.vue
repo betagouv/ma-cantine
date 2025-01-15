@@ -37,9 +37,12 @@ const ressources = [
   <ImportSchemaTable
     url="https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json"
   />
-  <section class="fr-px-9w fr-py-3w fr-background-alt--blue-france fr-mt-4w fr-grid-row fr-grid-row--middle">
-    <AppPictoAdd class="fr-mr-9w" />
-    <div class="import-file-upload fr-py-3w fr-px-4w fr-card">
+  <section
+    class="fr-px-3w fr-px-xl-9w fr-py-3w fr-background-alt--blue-france fr-mt-4w fr-grid-row fr-grid-row--middle"
+  >
+    <AppPictoAdd class="fr-hidden fr-unhidden-xl fr-col-2" />
+    <div class="fr-col-offset-1"></div>
+    <div class="import-file-upload fr-col-12 fr-col-xl-9 fr-py-3w fr-px-4w fr-card">
       <DsfrFileUpload
         label="Avant d’importer votre fichier en CSV, assurez-vous que vos données respectent le format ci-dessus"
         accept="csv"
