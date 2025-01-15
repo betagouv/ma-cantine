@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from "vue"
-import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import { importPurchases } from "@/services/imports.js"
 import { trackEvent } from "@/services/matomo.js"
@@ -9,7 +8,6 @@ import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 
 /* Store and Router */
 const store = useRootStore()
-const router = useRouter()
 
 /* Ressources */
 const ressources = [
@@ -52,14 +50,14 @@ const upload = (file) => {
     })
 }
 
-const modalOpened = ref(false)
+const importSuccess = ref(false)
 const purchaseCount = ref(0)
 const successUpload = (props) => {
   const { seconds, count } = props
   const message = `Fichier traité en ${Math.round(seconds)} secondes`
   store.notify({ message })
   purchaseCount.value = count
-  modalOpened.value = true
+  importSuccess.value = true
   trackEvent({ category: "inquiry", action: "send", value: "import-purchases-success" })
 }
 </script>
@@ -92,35 +90,15 @@ const successUpload = (props) => {
       />
     </div>
   </section>
-  <DsfrModal
-    :opened="modalOpened"
-    class="fr-modal--opened"
-    title="Le fichier a été importé avec succès"
-    icon="fr-icon-checkbox-circle-fill"
-    @close="modalOpened = false"
-    :actions="[
-      {
-        label: 'Aller sur mon tableau de bord',
-        onClick() {
-          router.push({ name: 'ManagementPage' })
-        },
-      },
-    ]"
-  >
-    <template #default>
-      <p class="ma-cantine--bold">
-        {{
-          purchaseCount > 1
-            ? "Vos achats sont enregistrés et sont maintenant disponibles."
-            : "Votre achat est enregistré et est maintenant disponible."
-        }}
-      </p>
-      <p>
-        Depuis votre tableau de bord, vous devez télédéclarer vos données, lorsque la campagne de télédéclaration est
-        ouverte.
-      </p>
-    </template>
-  </DsfrModal>
+  <ImportSuccessModal
+    :opened="importSuccess"
+    :message="
+      purchaseCount > 1
+        ? 'Vos achats sont enregistrés et sont maintenant disponibles.'
+        : 'Votre achat est enregistré et est maintenant disponible.'
+    "
+    @close="importSuccess = false"
+  />
 </template>
 
 <style lang="scss">
