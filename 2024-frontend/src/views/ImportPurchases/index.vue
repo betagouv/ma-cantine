@@ -1,10 +1,15 @@
 <script setup>
+import { useRootStore } from "@/stores/root"
 import { importPurchases } from "@/services/imports.js"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 
 import AppPictoAdd from "@/components/AppPictoAdd.vue"
 
+/* Store */
+const store = useRootStore()
+
+/* Ressources */
 const ressources = [
   {
     download: true,
@@ -24,8 +29,10 @@ const ressources = [
   },
 ]
 
+/* Upload */
+// TODO => const duplicateFile = ref(false)
+
 const upload = (file) => {
-  // duplicateFile.value = false
   importPurchases({ file: file })
     .then((json) => {
       console.log(json)
@@ -37,8 +44,7 @@ const upload = (file) => {
       // }
     })
     .catch((e) => {
-      console.log("error", e)
-      // this.$store.dispatch("notifyServerError", e)
+      store.notifyServerError(e)
     })
 }
 </script>
