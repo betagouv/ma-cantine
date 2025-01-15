@@ -43,11 +43,7 @@ const upload = (file) => {
       if (uploadedRows >= 1) {
         successUpload({ seconds: json.seconds, count: json.count })
       } else if (json.duplicateFile) {
-        duplicatedUpload({
-          count: json.errors.length,
-          message: json.errors[0].message,
-          duplicated: json.duplicatePurchases,
-        })
+        duplicatedUpload(json.duplicatePurchases)
       } else {
         alert("ERREUR")
       }
@@ -69,11 +65,19 @@ const successUpload = (props) => {
   trackEvent({ category: "inquiry", action: "send", value: "import-purchases-success" })
 }
 
-const duplicatedUpload = (props) => {
-  const { message, count, duplicatePurchases } = props
-  showErrors(count)
-  console.log(duplicatePurchases)
-  console.log(message)
+const duplicatedUpload = (purchases) => {
+  const countPurchases = purchases.length
+  const cells = purchases.map((purchase) => `"${purchase.description} ${purchase.date} ${purchase.priceHt}€"`)
+  hasErrors.list = [
+    {
+      description:
+        countPurchases > 1
+          ? `Ce fichier a déjà été utilisé pour importer ${countPurchases} achats.`
+          : "Ce fichier a déjà été utilisé pour importer 1 achat.",
+      cells: cells.join(" | "),
+    },
+  ]
+  showErrors(1)
 }
 
 const hasErrors = reactive({
@@ -126,7 +130,14 @@ const showErrors = (count) => {
           </p>
         </div>
         <AppSeparator class="fr-my-3w" />
-        <p>aaaa</p>
+        <ul>
+          <li v-for="(error, index) in hasErrors.list" :key="index" class="fr-text-default--error">
+            <p class="fr-mb-1v ma-cantine--bold">
+              {{ error.description }}
+            </p>
+            <p class="fr-text-default--grey fr-mb-0">{{ error.cells }}</p>
+          </li>
+        </ul>
       </div>
     </div>
   </section>
