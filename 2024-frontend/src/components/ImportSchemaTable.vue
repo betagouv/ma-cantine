@@ -36,7 +36,7 @@ const formatFieldsForRows = (fields) => {
         description: field.description,
         constraints: field.constraints.enum,
         multiple: field.constraints.enum_multiple,
-        separator: field.constraints.separator,
+        separator: field.constraints.enum_multiple_seperator,
       },
       getType(field),
       field.example,
