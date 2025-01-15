@@ -70,6 +70,10 @@ const getType = (field) => {
 .import-schema-table {
   white-space: nowrap;
 
+  th: {
+    white-space: wrap;
+  }
+
   td:nth-child(2),
   th:nth-child(2) {
     white-space: wrap;
