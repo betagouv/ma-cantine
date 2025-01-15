@@ -65,3 +65,15 @@ const getType = (field) => {
 <template>
   <DsfrTable class="import-schema-table" :headers="headers" :rows="rows" />
 </template>
+
+<style lang="scss">
+.import-schema-table {
+  white-space: nowrap;
+
+  td:nth-child(2),
+  th:nth-child(2) {
+    white-space: wrap;
+    width: 100%;
+  }
+}
+</style>
