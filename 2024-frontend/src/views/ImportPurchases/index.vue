@@ -1,4 +1,5 @@
 <script setup>
+import { importPurchases } from "@/services/imports.js"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 
@@ -22,6 +23,24 @@ const ressources = [
     name: "Comment enregistrer mon fichier Excel en CSV ?",
   },
 ]
+
+const upload = (file) => {
+  // duplicateFile.value = false
+  importPurchases({ file: file })
+    .then((json) => {
+      console.log(json)
+      if (json.count === 1) {
+        alert("OK")
+      } else {
+        alert("ERREUR")
+      }
+      // }
+    })
+    .catch((e) => {
+      console.log("error", e)
+      // this.$store.dispatch("notifyServerError", e)
+    })
+}
 </script>
 
 <template>
@@ -46,6 +65,7 @@ const ressources = [
         label="Avant d’importer votre fichier en CSV, assurez-vous que vos données respectent le format ci-dessus"
         accept="csv"
         hint="Extension du fichier autorisé : CSV"
+        @change="upload"
       />
     </div>
   </section>
