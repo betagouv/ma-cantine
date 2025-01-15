@@ -2,6 +2,7 @@
 import { ref } from "vue"
 import { useRootStore } from "@/stores/root"
 import { importPurchases } from "@/services/imports.js"
+import { trackEvent } from "@/services/matomo.js"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 
@@ -58,6 +59,7 @@ const successUpload = (props) => {
   const { seconds } = props
   const message = `Fichier traité en ${Math.round(seconds)} secondes`
   store.notify({ message })
+  trackEvent({ category: "inquiry", action: "send", value: "import-purchases-success" })
 }
 </script>
 
