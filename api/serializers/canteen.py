@@ -1,6 +1,5 @@
 import logging
 
-from django.conf import settings
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
@@ -62,17 +61,6 @@ class MediaListSerializer(serializers.ListSerializer):
                 element.delete()
 
         return media
-
-
-class PublicationStatusMixin:
-    publication_status = serializers.SerializerMethodField(read_only=True)
-
-    def get_publication_status(self, obj):
-        if not settings.PUBLISH_BY_DEFAULT:
-            return obj.publication_status
-        if obj.line_ministry == Canteen.Ministries.ARMEE:
-            return Canteen.PublicationStatus.DRAFT
-        return Canteen.PublicationStatus.PUBLISHED
 
 
 class MinimalCanteenSerializer(serializers.ModelSerializer):
@@ -195,12 +183,12 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
         return user in obj.managers.all()
 
 
-class ElectedCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin):
+class ElectedCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     is_managed_by_user = serializers.SerializerMethodField(read_only=True)
-    publication_status = PublicationStatusMixin.publication_status
+    publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
 
     class Meta:
         model = Canteen
@@ -234,10 +222,10 @@ class ElectedCanteenSerializer(serializers.ModelSerializer, PublicationStatusMix
         return user in obj.managers.all()
 
 
-class SatelliteCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin):
+class SatelliteCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
     user_can_view = serializers.SerializerMethodField(read_only=True)
-    publication_status = PublicationStatusMixin.publication_status
+    publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
 
     class Meta:
         model = Canteen
@@ -258,7 +246,7 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer, PublicationStatusM
         return obj.managers.filter(pk=user.pk).exists()
 
 
-class FullCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin):
+class FullCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     appro_diagnostics = ApproDiagnosticSerializer(many=True, read_only=True)
@@ -271,7 +259,7 @@ class FullCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin)
     satellites = MinimalCanteenSerializer(many=True, read_only=True)
     badges = BadgesSerializer(read_only=True, source="*")
     resource_actions = ResourceActionFullSerializer(many=True, read_only=True)
-    publication_status = PublicationStatusMixin.publication_status
+    publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
 
     class Meta:
         model = Canteen
@@ -401,11 +389,11 @@ class FullCanteenSerializer(serializers.ModelSerializer, PublicationStatusMixin)
             return None
 
 
-class CanteenSummarySerializer(serializers.ModelSerializer, PublicationStatusMixin):
+class CanteenSummarySerializer(serializers.ModelSerializer):
     lead_image = CanteenImageSerializer()
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
-    publication_status = PublicationStatusMixin.publication_status
+    publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
 
     class Meta:
         model = Canteen
