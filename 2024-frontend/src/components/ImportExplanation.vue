@@ -44,8 +44,8 @@ defineProps(["ressources"])
       </ul>
     </div>
     <div class="fr-col-offset-md-1"></div>
-    <div class="fr-col-12 fr-col-md-4 fr-text-title--blue-france">
-      <p class="ma-cantine--bold">
+    <div class="fr-col-12 fr-col-md-4 fr-text-title--blue-france fr-card fr-px-3w fr-pt-3w">
+      <p class="ma-cantine--bold fr-text--lg">
         <span class="fr-icon-question-fill" aria-hidden="true"></span>
         Ressources utiles
       </p>
