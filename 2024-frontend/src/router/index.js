@@ -81,7 +81,7 @@ const routes = [
     name: "ImportPurchases",
     component: ImportPurchases,
     meta: {
-      title: "Créer des achats",
+      title: "Importer des achats",
       authenticationRequired: true,
       breadcrumbs: [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
