@@ -45,3 +45,11 @@ address {
 .ma-cantine--table-white td:first-child {
     font-weight: 700;
 }
+
+.ma-cantine--table-white thead:after, .ma-cantine--table-white tbody:after {
+    display: none !important;
+}
+
+.ma-cantine--table-white thead {
+    background-size: 100% 2px !important
+}
