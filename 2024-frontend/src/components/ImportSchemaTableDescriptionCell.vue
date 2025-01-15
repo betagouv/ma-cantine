@@ -1,5 +1,8 @@
 <script setup>
 const cell = defineProps(["title", "description", "constraints", "multiple", "separator"])
+defineOptions({
+  inheritAttrs: false,
+})
 </script>
 
 <template>
