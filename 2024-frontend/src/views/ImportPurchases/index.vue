@@ -40,8 +40,9 @@ const upload = (file) => {
   importPurchases({ file: file })
     .then((json) => {
       isProcessingFile.value = false
-      if (json.count === 1) {
-        alert("OK")
+      const uploadedRows = json.count
+      if (uploadedRows >= 1) {
+        successUpload({ seconds: json.seconds })
       } else {
         alert("ERREUR")
       }
@@ -51,6 +52,12 @@ const upload = (file) => {
       store.notifyServerError(e)
       isProcessingFile.value = false
     })
+}
+
+const successUpload = (props) => {
+  const { seconds } = props
+  const message = `Fichier traité en ${Math.round(seconds)} secondes`
+  store.notify({ message })
 }
 </script>
 
