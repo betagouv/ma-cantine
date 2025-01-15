@@ -373,6 +373,14 @@ class Canteen(SoftDeletionModel):
         )
         return has_canteen_td or has_central_kitchen_td
 
+    @property
+    def publication_status_display_to_public(self):
+        if not settings.PUBLISH_BY_DEFAULT:
+            return self.publication_status
+        if self.line_ministry == Canteen.Ministries.ARMEE:
+            return Canteen.PublicationStatus.DRAFT
+        return Canteen.PublicationStatus.PUBLISHED
+
     def __str__(self):
         return f'Cantine "{self.name}"'
 
