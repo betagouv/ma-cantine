@@ -1,5 +1,7 @@
 <script setup>
 import ImportExplanation from "@/components/ImportExplanation.vue"
+import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
+
 const ressources = [
   {
     download: true,
@@ -30,4 +32,7 @@ const ressources = [
     .
   </p>
   <ImportExplanation :ressources="ressources" />
+  <ImportSchemaTable
+    url="https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json"
+  />
 </template>
