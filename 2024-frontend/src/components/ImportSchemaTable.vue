@@ -74,6 +74,10 @@ const getType = (field) => {
     white-space: wrap;
   }
 
+  td:first-child {
+    font-weight: 700;
+  }
+
   td:last-child {
     text-align: center;
   }
