@@ -6,6 +6,7 @@ import { trackEvent } from "@/services/matomo.js"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
+import AppSeparator from "@/components/AppSeparator.vue"
 
 /* Store */
 const store = useRootStore()
@@ -41,6 +42,12 @@ const upload = (file) => {
       const uploadedRows = json.count
       if (uploadedRows >= 1) {
         successUpload({ seconds: json.seconds, count: json.count })
+      } else if (json.duplicateFile) {
+        duplicatedUpload({
+          count: json.errors.length,
+          message: json.errors[0].message,
+          duplicated: json.duplicatePurchases,
+        })
       } else {
         alert("ERREUR")
       }
@@ -60,6 +67,20 @@ const successUpload = (props) => {
   purchaseCount.value = count
   importSuccess.value = true
   trackEvent({ category: "inquiry", action: "send", value: "import-purchases-success" })
+}
+
+const duplicatedUpload = (props) => {
+  const { message, count, duplicatePurchases } = props
+  showErrors(count)
+  console.log(duplicatePurchases)
+  console.log(message)
+}
+
+const importError = ref(false)
+const errorBadge = ref("")
+const showErrors = (count) => {
+  importError.value = true
+  errorBadge.value = count >= 1 ? "1 Erreur détectée" : `${count} Erreurs détectées`
 }
 </script>
 
@@ -89,6 +110,16 @@ const successUpload = (props) => {
         @change="upload"
         :disabled="isProcessingFile"
       />
+      <div v-if="importError" class="fr-mt-2w">
+        <div class="fr-grid-row fr-grid-row--middle">
+          <DsfrBadge type="error" :label="errorBadge" />
+          <p class="fr-text-default--error fr-ml-1w fr-mb-0">
+            Veuillez la corriger avant d’importer à nouveau le fichier.
+          </p>
+        </div>
+        <AppSeparator class="fr-my-3w" />
+        <p>aaaa</p>
+      </div>
     </div>
   </section>
   <ImportSuccessModal
