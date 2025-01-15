@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from "vue"
 import { useRootStore } from "@/stores/root"
 import { importPurchases } from "@/services/imports.js"
 import ImportExplanation from "@/components/ImportExplanation.vue"
@@ -31,11 +32,14 @@ const ressources = [
 
 /* Upload */
 // TODO => const duplicateFile = ref(false)
+const isProcessingFile = ref(false)
 
 const upload = (file) => {
+  if (isProcessingFile.value) return
+  isProcessingFile.value = true
   importPurchases({ file: file })
     .then((json) => {
-      console.log(json)
+      isProcessingFile.value = false
       if (json.count === 1) {
         alert("OK")
       } else {
@@ -45,6 +49,7 @@ const upload = (file) => {
     })
     .catch((e) => {
       store.notifyServerError(e)
+      isProcessingFile.value = false
     })
 }
 </script>
@@ -69,9 +74,9 @@ const upload = (file) => {
     <div class="import-file-upload fr-col-12 fr-col-xl-9 fr-py-3w fr-px-4w fr-card">
       <DsfrFileUpload
         label="Avant d’importer votre fichier en CSV, assurez-vous que vos données respectent le format ci-dessus"
-        accept="csv"
         hint="Extension du fichier autorisé : CSV"
         @change="upload"
+        :disabled="isProcessingFile"
       />
     </div>
   </section>
