@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue"
+import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import { importPurchases } from "@/services/imports.js"
 import { trackEvent } from "@/services/matomo.js"
@@ -7,8 +8,9 @@ import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 
-/* Store */
+/* Store and Router */
 const store = useRootStore()
+const router = useRouter()
 
 /* Ressources */
 const ressources = [
