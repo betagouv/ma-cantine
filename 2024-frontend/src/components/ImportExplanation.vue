@@ -46,7 +46,7 @@ defineProps(["ressources"])
     <div class="fr-col-offset-md-1"></div>
     <div class="fr-col-12 fr-col-md-4 fr-text-title--blue-france">
       <p class="ma-cantine--bold">
-        <span class="fr-icon-star-s-fill" aria-hidden="true"></span>
+        <span class="fr-icon-question-fill" aria-hidden="true"></span>
         Ressources utiles
       </p>
       <ul class="ma-cantine--unstyled-list">
