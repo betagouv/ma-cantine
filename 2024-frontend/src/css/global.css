@@ -1,3 +1,4 @@
+/* GENERAL */
 html {
     scroll-behavior: smooth;
 }
@@ -6,11 +7,41 @@ address {
     font-style: normal;
 }
 
+/* TEXT */
 .ma-cantine--bold {
     font-weight: 700;
 }
 
+/* LIST */
 .ma-cantine--unstyled-list {
     list-style: none;
     padding-left: 0;
+}
+
+/* TABLE */
+.ma-cantine--table-sticky-head table {
+    position: relative !important;
+    overflow: initial !important;
+}
+
+.ma-cantine--table-sticky-head thead {
+    position: sticky !important;
+    top: 0px;
+    z-index: 1;
+}
+
+.ma-cantine--table-white tr {
+    background-color: initial !important;
+}
+
+.ma-cantine--table-white  td {
+    background-image: linear-gradient(0deg, var(--border-contrast-grey), var(--border-contrast-grey)),
+        linear-gradient(0deg, var(--border-contrast-grey), var(--border-contrast-grey));
+    background-position: 100% 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 1px;
+}
+
+.ma-cantine--table-white td:first-child {
+    font-weight: 700;
 }
