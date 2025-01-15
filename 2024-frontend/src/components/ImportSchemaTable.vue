@@ -10,11 +10,11 @@ const rows = shallowRef([])
 /* Schema data */
 const props = defineProps(["url"])
 schemaService.getFields(props.url).then((fields) => {
-  rows.value = jsonToRows(fields)
+  rows.value = formatFields(fields)
 })
 
 /* Format fields to match rows expected content */
-const jsonToRows = (fields) => {
+const formatFields = (fields) => {
   const rows = []
   fields.forEach((field) => {
     const row = [
