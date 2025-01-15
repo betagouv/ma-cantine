@@ -71,7 +71,7 @@ const getType = (field) => {
   white-space: nowrap;
 
   th {
-    white-space: wrap;
+    white-space: nowrap;
   }
 
   td:first-child {
