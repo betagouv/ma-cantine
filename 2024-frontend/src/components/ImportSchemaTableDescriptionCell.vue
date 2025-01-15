@@ -1,4 +1,5 @@
 <script setup>
+import AppCode from "@/components/AppCode.vue"
 const cell = defineProps(["title", "description", "constraints", "multiple", "separator"])
 defineOptions({
   inheritAttrs: false,
@@ -11,12 +12,12 @@ defineOptions({
   <p v-if="cell.constraints" class="fr-text--sm">
     <span>Options acceptées :&#32;</span>
     <span v-for="(item, idx) in cell.constraints" :key="idx">
-      <code class="fr-background-contrast--blue-france fr-px-1v">{{ item }}</code>
+      <AppCode :content="item" />
       <span v-if="idx < cell.constraints.length - 1">,&#32;</span>
     </span>
   </p>
   <p v-if="cell.multiple" class="fr-text--sm">
     Spécifiez plusieurs options en séparant avec un
-    <code class="fr-background-contrast--blue-france fr-px-1v">{{ cell.separator }}</code>
+    <AppCode :content="cell.separator" />
   </p>
 </template>
