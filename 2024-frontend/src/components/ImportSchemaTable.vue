@@ -15,7 +15,7 @@ schemaService.getFields(props.url).then((fields) => {
 
 /* Format fields to match rows expected content */
 const jsonToRows = (fields) => {
-  const cleanedFields = []
+  const rows = []
   fields.forEach((field) => {
     const row = [
       field.name,
@@ -31,9 +31,9 @@ const jsonToRows = (fields) => {
       field.example,
       field.constraints && field.constraints.required ? "Oui" : "Non",
     ]
-    cleanedFields.push(row)
+    rows.push(row)
   })
-  return cleanedFields
+  return rows
 }
 </script>
 
