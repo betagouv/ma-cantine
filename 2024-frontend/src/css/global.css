@@ -51,5 +51,6 @@ address {
 }
 
 .ma-cantine--table-white thead {
+    background-color: var(--background-contrast-grey) !important;
     background-size: 100% 2px !important
 }
