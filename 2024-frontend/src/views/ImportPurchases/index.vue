@@ -2,6 +2,8 @@
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 
+import AppPictoAdd from "@/components/AppPictoAdd.vue"
+
 const ressources = [
   {
     download: true,
@@ -35,4 +37,27 @@ const ressources = [
   <ImportSchemaTable
     url="https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json"
   />
+  <section class="fr-px-9w fr-py-3w fr-background-alt--blue-france fr-mt-4w fr-grid-row fr-grid-row--middle">
+    <AppPictoAdd class="fr-mr-9w" />
+    <div class="import-file-upload fr-py-3w fr-px-4w fr-card">
+      <DsfrFileUpload
+        label="Avant d’importer votre fichier en CSV, assurez-vous que vos données respectent le format ci-dessus"
+        accept="csv"
+        hint="Extension du fichier autorisé : CSV"
+      />
+    </div>
+  </section>
 </template>
+
+<style lang="scss">
+.import-file-upload {
+  .fr-label {
+    font-weight: 700;
+    max-width: 75%;
+
+    span {
+      font-weight: initial;
+    }
+  }
+}
+</style>
