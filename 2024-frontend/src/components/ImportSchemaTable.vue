@@ -38,7 +38,11 @@ const formatFields = (fields) => {
 </script>
 
 <template>
-  <DsfrTable class="import-schema-table" :headers="headers" :rows="rows" />
+  <DsfrTable
+    class="ma-cantine--table-sticky-head ma-cantine--table-white import-schema-table"
+    :headers="headers"
+    :rows="rows"
+  />
 </template>
 
 <style lang="scss">
@@ -47,10 +51,6 @@ const formatFields = (fields) => {
 
   th {
     white-space: nowrap;
-  }
-
-  td:first-child {
-    font-weight: 700;
   }
 
   td:last-child {
