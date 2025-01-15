@@ -38,7 +38,7 @@ const ressources = [
     url="https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json"
   />
   <section
-    class="fr-px-3w fr-px-xl-9w fr-py-3w fr-background-alt--blue-france fr-mt-4w fr-grid-row fr-grid-row--middle"
+    class="fr-px-6w fr-px-xl-9w fr-py-6w fr-background-alt--blue-france fr-mt-4w fr-grid-row fr-grid-row--middle"
   >
     <AppPictoAdd class="fr-hidden fr-unhidden-xl fr-col-2" />
     <div class="fr-col-offset-1"></div>
