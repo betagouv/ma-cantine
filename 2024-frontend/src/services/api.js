@@ -1,4 +1,4 @@
-// À supprimer ensuite du store
+// À déplacer ensuite dans le service
 import { AuthenticationError, BadRequestError } from "@/utils.js"
 
 const verifyResponse = function(response) {
