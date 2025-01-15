@@ -4,18 +4,19 @@ const getFields = async (url) => {
     .then((json) => json.fields)
 }
 
-const types = {
-  date: "Date (au format AAAA-MM-JJ)",
-  integer: "Chiffre",
-  number: "Chiffre",
-  siret: "14 chiffres (avec ou sans espaces)",
-  siret_livreur_repas: "14 chiffres (avec ou sans espaces)",
-  string: "Texte (libre)",
-  string_enum: "Texte (choix unique)",
-  string_enum_multiple: "Texte (choix multiples)",
-  year: "Année (AAAA)",
-}
 const getFieldType = (field) => {
+  const types = {
+    date: "Date (au format AAAA-MM-JJ)",
+    integer: "Chiffre",
+    number: "Chiffre",
+    siret: "14 chiffres (avec ou sans espaces)",
+    siret_livreur_repas: "14 chiffres (avec ou sans espaces)",
+    string: "Texte (libre)",
+    string_enum: "Texte (choix unique)",
+    string_enum_multiple: "Texte (choix multiples)",
+    year: "Année (AAAA)",
+  }
+
   if (field.name in types) {
     return types[field.name]
   }
