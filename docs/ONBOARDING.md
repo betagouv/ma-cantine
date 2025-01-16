@@ -18,7 +18,29 @@ D'autres conseils que j'ai lu c'est de faire `git config core.precomposeunicode 
 
 ## Mise en place de l'environnement dev
 
-Vous pouvez installer en local ou utiliser l'environnement [Docker](./docker.md) pour démarrer.
+Vous pouvez installer en local ou utiliser l'environnement Docker pour
+démarrer.
+
+### Avec Docker
+
+Un environnement Docker/Docker Compose est fourni. Pour construire les
+images et lancer les services :
+
+```sh
+make build
+make up
+```
+
+Voir le [Makefile](../Makefile) pour des commandes utiles.
+
+Dans un nouveau terminal, accèder au container du back pour migrer la
+BDD et créer la première utilisatrice.
+
+```sh
+make sh
+python manage.py migrate
+python manage.py createsuperuser
+```
 
 ### À installer localement
 
@@ -270,11 +292,11 @@ python manage.py createsuperuser
 ## Utilisation des magic token
 
 Les `magic token` permettent de se connecter à la place d'un utilisateur à des fins de support. Voici comment les utiliser :
+* Générer un token depuis l'interface admin de Django
+* Déconnecter-vous ou utiliser une navigation privée (recommandé)
+* Saisir l'adresse sur le navigateur: `<URL MA CANTINE>/code/<MAGIC TOKEN>`
+* Se déconnecter après usage
 
-- Générer un token depuis l'interface admin de Django
-- Déconnecter-vous ou utiliser une navigation privée (recommandé)
-- Saisir l'adresse sur le navigateur: `<URL MA CANTINE>/code/<MAGIC TOKEN>`
-- Se déconnecter après usage
 
 ## Reception d'emails en local
 
@@ -325,18 +347,17 @@ Des extensions utiles :
 ### Commits
 
 Pas de convention particulière à respecter !
-
 - anglais ou français
 - pas besoin de respecter les Conventional Commits (voir ci-dessous)
 
 ### PR
 
 - le nommage des PR doit respecter les [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
-  - pour pouvoir être bien interprété par `release-please`
+    - pour pouvoir être bien interprété par `release-please`
 - au moins 1 review est nécessaire avant de pouvoir merger
 - les PR sont **squashées** avant d'être mergées (option "Squash & Merge" sur Github)
-  - pour avoir un historique simple et clair
-  - et ainsi plus facilement retrouver la PR qui a effectué un changement donné
+    - pour avoir un historique simple et clair
+    - et ainsi plus facilement retrouver la PR qui a effectué un changement donné
 
 ### CI
 
@@ -365,7 +386,6 @@ DEBUG_FRONT=False
 ```
 
 Dans le dossier principal, lancez
-
 ```bash
 bash ./clevercloud/test-build-with-vue3.sh
 python manage.py runserver --insecure
@@ -385,13 +405,13 @@ En prod, faut ajouter `CC_PRE_BUILD_HOOK=./clevercloud/pre-build-hook.sh`
 
 1. grâce à `release-please`, une PR nommée `chore(staging): release YYYY.X.Z` est ouverte, et liste les PR mergées sur `staging` depuis la dernière release
 2. il faut merger cette PR. Il se passera alors 2 choses :
-   - une nouvelle release va être automatiquement crée : voir [la liste des releases](https://github.com/betagouv/ma-cantine/releases)
-     - optionnel : supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dépendances"
-   - le CHANGELOG.md sera mis à jour sur `staging`
+    - une nouvelle release va être automatiquement crée : voir [la liste des releases](https://github.com/betagouv/ma-cantine/releases)
+        - optionnel : supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dépendances"
+    - le CHANGELOG.md sera mis à jour sur `staging`
 3. il reste maintenant à déployer (manuellement) en mettant à jour la branche `main`
-   - si il y a des variables d'environnement à ajouter, ajoutez-les sur prod et demo côté Clever Cloud
-   - en local, preparer la branche `main` : `git checkout staging && git pull && git checkout main && git rebase staging`
-   - puis publier les changements : `git push` (peut-être `git push -f`)
+    - si il y a des variables d'environnement à ajouter, ajoutez-les sur prod et demo côté Clever Cloud
+    - en local, preparer la branche `main` : `git checkout staging && git pull && git checkout main && git rebase staging`
+    - puis publier les changements : `git push` (peut-être `git push -f`)
 4. le déploiement va commencer automatiquement. Ça prend un moment pour déployer côté Clever Cloud... suivez la progression là-bas.
 5. une fois le déploiement terminé, envoyer un message sur mattermost (canal produit) pour tenir l'équipe au courant ! (en copiant-collant le contenu de la dernière release)
 
