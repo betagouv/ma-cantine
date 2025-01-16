@@ -38,6 +38,7 @@ const isProcessingFile = ref(false)
 const upload = (file) => {
   if (isProcessingFile.value) return
   isProcessingFile.value = true
+  initErrors()
   importPurchases({ file: file })
     .then((json) => {
       if (json.count >= 1) successUpload({ seconds: json.seconds, count: json.count })
@@ -88,12 +89,14 @@ const errorUpload = (props) => {
   })
 }
 
-const hasErrors = reactive({
-  status: false,
-  badge: "",
-  message: "",
-  list: [],
-})
+const hasErrors = reactive({})
+const initErrors = () => {
+  hasErrors.status = false
+  hasErrors.badge = ""
+  hasErrors.message = ""
+  hasErrors.list = []
+}
+initErrors()
 const showErrors = (count) => {
   hasErrors.status = true
   hasErrors.badge = count > 1 ? `${count} Erreurs détectées` : "1 Erreur détectée"
