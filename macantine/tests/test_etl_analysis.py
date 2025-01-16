@@ -21,7 +21,7 @@ class TestETLAnalysisCanteen(TestCase):
         etl = ETL_ANALYSIS_CANTEEN()
         SectorFactory.create(id=1, name="Sector factory", category="Category factory")
 
-        schema = json.load(open("data/schemas/schema_analysis_cantines.json"))
+        schema = json.load(open("data/schemas/export_metabase/schema_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
         canteen_1 = CanteenFactory(
             name="Cantine", siret="11007001800012", city_insee_code="29021", department="29", region="53", sectors=[1]

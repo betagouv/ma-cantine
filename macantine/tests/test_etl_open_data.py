@@ -99,7 +99,7 @@ class TestETLOpenData(TestCase):
             "teledeclaration_mode": "SITE",
         }
 
-        schema = json.load(open("data/schemas/schema_teledeclaration.json"))
+        schema = json.load(open("data/schemas/export_opendata/schema_teledeclarations.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
 
         etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
@@ -143,7 +143,7 @@ class TestETLOpenData(TestCase):
         self.assertEqual(etl_canteen.len_dataset(), 0, "There should be one canteen less after hard deletion")
 
     def test_transformation_canteens(self, mock):
-        schema = json.load(open("data/schemas/schema_cantine.json"))
+        schema = json.load(open("data/schemas/export_opendata/schema_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
 
         mock.get(
