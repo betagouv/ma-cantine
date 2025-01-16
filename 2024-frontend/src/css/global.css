@@ -23,15 +23,18 @@ address {
 }
 
 /* TABLE */
-.ma-cantine--table-sticky-head table {
-    position: relative !important;
-    overflow: initial !important;
-}
+@media (min-width: 768px) {
 
-.ma-cantine--table-sticky-head thead {
-    position: sticky !important;
-    top: 0px;
-    z-index: 1;
+    .ma-cantine--table-sticky-head table {
+        position: relative !important;
+        overflow: initial !important;
+    }
+
+    .ma-cantine--table-sticky-head thead {
+        position: sticky !important;
+        top: 0px;
+        z-index: 1;
+    }
 }
 
 .ma-cantine--table-white tr {
