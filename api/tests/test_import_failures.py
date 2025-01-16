@@ -45,7 +45,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @authenticate
     def test_staff_import_non_staff_error(self):
-        file_path = "./api/tests/files/diagnostics/mix_diag_canteen_staff_import.csv"
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_staff_good_new_canteen.csv"
         with open(file_path) as diag_file:
             self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
