@@ -503,18 +503,18 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
-    def test_diagnostic_delimiter_options(self, _):
+    def test_diagnostic_separator_options(self, _):
         """
-        Optionally allow using a semicolon or tab as the delimiter
+        Optionally allow using a semicolon or tab as the seperator
         """
-        with open("./api/tests/files/diagnostics/diagnostics_simple_good_delimiter_semicolon.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["errors"]), 0)
 
-        with open("./api/tests/files/diagnostics/diagnostics_simple_good_delimiter_tab.tsv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_separator_tab.tsv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -524,7 +524,7 @@ class TestImportDiagnosticsAPI(APITestCase):
     @authenticate
     def test_decimal_comma_format(self, _):
         with open(
-            "./api/tests/files/diagnostics/diagnostics_simple_good_delimiter_semicolon_decimal_number.csv"
+            "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_decimal_number.csv"
         ) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -536,7 +536,7 @@ class TestImportDiagnosticsAPI(APITestCase):
     @authenticate
     def test_max_size(self, _):
         with open(
-            "./api/tests/files/diagnostics/diagnostics_simple_good_delimiter_semicolon_decimal_number.csv"
+            "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_decimal_number.csv"
         ) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -560,7 +560,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         gestionnaire_2 = UserFactory(email="gestionnaire2@example.com")
 
         with open(
-            "./api/tests/files/diagnostics/diagnostics_simple_good_delimiter_semicolon_add_managers.csv"
+            "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_add_managers.csv"
         ) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -580,7 +580,7 @@ class TestImportDiagnosticsAPI(APITestCase):
     @authenticate
     def test_add_managers_invalid_email(self, _):
         with open(
-            "./api/tests/files/diagnostics/diagnostics_simple_bad_delimiter_semicolon_add_managers.csv"
+            "./api/tests/files/diagnostics/diagnostics_simple_bad_separator_semicolon_add_managers.csv"
         ) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
@@ -602,7 +602,7 @@ class TestImportDiagnosticsAPI(APITestCase):
     @authenticate
     def test_add_managers_empty_column(self, _):
         with open(
-            "./api/tests/files/diagnostics/diagnostics_simple_good_delimiter_semicolon_no_add_managers.csv"
+            "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_no_add_managers.csv"
         ) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
@@ -875,7 +875,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         For simplified diagnostics, an empty appro value is considered unknown
         """
         with open(
-            "./api/tests/files/diagnostics/diagnostics_simple_good_delimiter_semicolon_no_appro.csv"
+            "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_no_appro.csv"
         ) as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
@@ -894,7 +894,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         For simplified diagnostics, only the total HT is mandatory in the appro fields
         """
         with open(
-            "./api/tests/files/diagnostics/diagnostics_simple_bad_delimiter_semicolon_no_total_ht.csv"
+            "./api/tests/files/diagnostics/diagnostics_simple_bad_separator_semicolon_no_total_ht.csv"
         ) as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 

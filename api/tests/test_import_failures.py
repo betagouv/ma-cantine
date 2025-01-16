@@ -64,14 +64,14 @@ class TestImportDiagnosticsAPI(APITestCase):
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     @authenticate
     def test_max_size_error(self):
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_delimiter_semicolon_decimal_number.csv"
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_decimal_number.csv"
         with open(file_path) as diag_file:
             self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE, file_path)
 
     @authenticate
     def test_managers_invalid_email_error(self):
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_delimiter_semicolon_add_managers.csv"
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_separator_semicolon_add_managers.csv"
         with open(file_path) as diag_file:
             self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
@@ -86,7 +86,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @authenticate
     def test_mandatory_total_ht_error(self):
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_delimiter_semicolon_no_total_ht.csv"
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_separator_semicolon_no_total_ht.csv"
         with open(file_path) as diag_file:
             self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
