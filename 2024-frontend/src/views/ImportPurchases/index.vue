@@ -5,6 +5,7 @@ import { importPurchases } from "@/services/imports.js"
 import { trackEvent } from "@/services/matomo.js"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
+import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 
 /* Store */
 const store = useRootStore()
