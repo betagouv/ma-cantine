@@ -67,7 +67,9 @@ const successUpload = (props) => {
 
 const duplicatedUpload = (purchases) => {
   const countPurchases = purchases.length
-  const purchasesString = purchases.map((purchase) => `"${purchase.description} ${purchase.date} ${purchase.priceHt}€"`)
+  const purchasesString = purchases.map(
+    (purchase) => `${purchase.description} | ${purchase.date} | ${purchase.priceHt}€`
+  )
   const description =
     countPurchases > 1
       ? `Ce fichier a déjà été utilisé pour importer ${countPurchases} achats :`
