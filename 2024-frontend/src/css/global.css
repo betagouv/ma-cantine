@@ -12,6 +12,10 @@ address {
     font-weight: 700;
 }
 
+.ma-cantine--inherit-text-color {
+    color: inherit !important;
+}
+
 /* LIST */
 .ma-cantine--unstyled-list {
     list-style: none;
