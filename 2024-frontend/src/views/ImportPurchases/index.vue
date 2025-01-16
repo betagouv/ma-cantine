@@ -12,7 +12,8 @@ import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 /* Store */
 const store = useRootStore()
 
-/* Ressources */
+/* Data */
+const url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json"
 const ressources = [
   {
     download: true,
@@ -113,9 +114,7 @@ const showErrors = (count) => {
     .
   </p>
   <ImportExplanation :ressources="ressources" />
-  <ImportSchemaTable
-    url="https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json"
-  />
+  <ImportSchemaTable :url="url" />
   <section
     class="fr-px-6w fr-px-xl-9w fr-py-6w fr-background-alt--blue-france fr-mt-4w fr-grid-row fr-grid-row--middle"
   >
