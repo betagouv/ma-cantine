@@ -151,7 +151,9 @@ const showErrors = (count) => {
                 {{ purchase.description }} | {{ purchase.date }} | {{ purchase.priceHt }}€
               </li>
             </ul>
-            <p v-if="error.cell" class="fr-text-default--grey">Ligne concernée par cette erreur : {{ error.cell }}</p>
+            <p v-if="error.cell" class="fr-text-default--grey">
+              Ligne concernée par cette erreur : {{ error.cell + 1 }}
+            </p>
           </li>
         </ul>
       </div>
