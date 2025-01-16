@@ -66,7 +66,7 @@ const duplicatedUpload = (purchases) => {
   const description =
     countPurchases > 1
       ? `Ce fichier a déjà été utilisé pour importer ${countPurchases} achats :`
-      : `Ce fichier a déjà été utilisé pour importer 1 achat :`
+      : "Ce fichier a déjà été utilisé pour importer 1 achat :"
   hasErrors.list = [
     {
       description,
