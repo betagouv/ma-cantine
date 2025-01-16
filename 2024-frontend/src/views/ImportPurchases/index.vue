@@ -67,14 +67,15 @@ const successUpload = (props) => {
 
 const duplicatedUpload = (purchases) => {
   const countPurchases = purchases.length
-  const cells = purchases.map((purchase) => `"${purchase.description} ${purchase.date} ${purchase.priceHt}€"`)
+  const purchasesString = purchases.map((purchase) => `"${purchase.description} ${purchase.date} ${purchase.priceHt}€"`)
+  const description =
+    countPurchases > 1
+      ? `Ce fichier a déjà été utilisé pour importer ${countPurchases} achats`
+      : `Ce fichier a déjà été utilisé pour importer 1 achat`
   hasErrors.list = [
     {
-      description:
-        countPurchases > 1
-          ? `Ce fichier a déjà été utilisé pour importer ${countPurchases} achats.`
-          : "Ce fichier a déjà été utilisé pour importer 1 achat.",
-      cells: cells.join(" | "),
+      description: description,
+      purchases: purchasesString,
     },
   ]
   showErrors(1)
