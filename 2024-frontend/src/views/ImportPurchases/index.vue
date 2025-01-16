@@ -67,17 +67,14 @@ const successUpload = (props) => {
 
 const duplicatedUpload = (purchases) => {
   const countPurchases = purchases.length
-  const purchasesString = purchases.map(
-    (purchase) => `${purchase.description} | ${purchase.date} | ${purchase.priceHt}€`
-  )
   const description =
     countPurchases > 1
       ? `Ce fichier a déjà été utilisé pour importer ${countPurchases} achats :`
       : `Ce fichier a déjà été utilisé pour importer 1 achat :`
   hasErrors.list = [
     {
-      description: description,
-      purchases: purchasesString,
+      description,
+      purchases,
     },
   ]
   showErrors(1)
@@ -140,7 +137,7 @@ const showErrors = (count) => {
             </p>
             <ul class="ma-cantine--unstyled-list fr-text-default--grey">
               <li v-for="(purchase, index) in error.purchases" :key="index">
-                {{ purchase }}
+                {{ purchase.description }} | {{ purchase.date }} | {{ purchase.priceHt }}€
               </li>
             </ul>
           </li>
