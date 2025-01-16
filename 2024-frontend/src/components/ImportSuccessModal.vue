@@ -19,6 +19,13 @@ defineProps(["message", "opened"])
           router.push({ name: 'ManagementPage' })
         },
       },
+      {
+        label: 'Importer un autre fichier',
+        secondary: true,
+        onClick() {
+          $emit('close')
+        },
+      },
     ]"
   >
     <template #default>
