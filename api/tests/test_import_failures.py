@@ -95,14 +95,14 @@ class TestImportDiagnosticsAPI(APITestCase):
     @authenticate
     def test_success_purchase_import(self):
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
-        with open("./api/tests/files/achats/good_purchase_import.csv") as purchase_file:
+        with open("./api/tests/files/achats/purchases_good.csv") as purchase_file:
             self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertFalse(ImportFailure.objects.exists())
 
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=10)
     def test_purchase_import_file_too_big(self):
-        file_path = "./api/tests/files/achats/bad_purchase_import.csv"
+        file_path = "./api/tests/files/achats/purchases_bad.csv"
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
         CanteenFactory.create(siret="36462492895701")
         with open(file_path) as purchase_file:
@@ -113,14 +113,14 @@ class TestImportDiagnosticsAPI(APITestCase):
     def test_purchase_import_erros(self):
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
         CanteenFactory.create(siret="36462492895701")
-        file_path = "./api/tests/files/achats/bad_purchase_import.csv"
+        file_path = "./api/tests/files/achats/purchases_bad.csv"
         with open(file_path) as purchase_file:
             self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
 
     @authenticate
     def test_duplicate_file_error(self):
-        file_path = "./api/tests/files/achats/good_purchase_import.csv"
+        file_path = "./api/tests/files/achats/purchases_good.csv"
 
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
         with open(file_path) as purchase_file:
@@ -132,7 +132,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @authenticate
     def test_single_purchase_error(self):
-        file_path = "./api/tests/files/achats/nearly_good_purchase_import.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_nearly_good.csv"
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
         with open(file_path) as purchase_file:
             self.client.post(reverse("import_purchases"), {"file": purchase_file})
@@ -140,7 +140,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @authenticate
     def test_various_errors_purchase_import(self):
-        file_path = "./api/tests/files/achats/purchase_many_errors.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_many_errors.csv"
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
         CanteenFactory.create(siret="36462492895701")
         with open(file_path) as purchase_file:
