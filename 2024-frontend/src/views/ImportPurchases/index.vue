@@ -106,7 +106,7 @@ const showErrors = (count) => {
 
 <template>
   <h1>Créer des achats</h1>
-  <p class="fr-col-7">
+  <p class="fr-col-12 fr-col-md-7">
     Notre outil d’import de masse vous permet d’ajouter les achats de toutes vos cantines d’un coup.
     <strong>Si vous avez moins de 10 achats,</strong>
     il est plus rapide de les saisir directement
