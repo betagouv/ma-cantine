@@ -5,13 +5,13 @@ import AppSeparator from "@/components/AppSeparator.vue"
 
 <template>
   <section class="fr-grid-row fr-grid-row--center">
-    <div class="fr-col-8">
+    <div class="fr-col-12 fr-col-md-8">
       <div class="import-help-center-separator fr-mb-5w">
         <AppSeparator />
         <DsfrBadge class="import-help-center-separator__badge" type="none" label="Besoin d'aide ?" />
       </div>
       <h2>Vous n’arrivez pas à importer votre fichier</h2>
-      <p class="fr-pr-8w">
+      <p class="fr-pr-0 fr-pr-md-8w">
         Si vous avez des questions ou des problèmes, si votre fichier comptable agrégé ne ressemble pas du tout à ça,
         vous pouvez nous l'envoyer à l'adresse
         <AppLinkMailto />
