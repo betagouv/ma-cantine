@@ -207,6 +207,10 @@ routes.push(...vue2Routes)
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to) {
+    const scrollTo = to.hash || "#app"
+    return { el: scrollTo }
+  },
 })
 
 router.beforeEach(async (to) => {
