@@ -10,9 +10,10 @@ import AppSeparator from "@/components/AppSeparator.vue"
         <AppSeparator />
         <DsfrBadge class="import-help-center-separator__badge" type="none" label="Besoin d'aide ?" />
       </div>
-      <h2>Vous n’arrivez pas à importer votre fichier ?</h2>
-      <p class="fr-pr-12w">
-        Si votre fichier comptable agrégé ne ressemble pas du tout à ça, vous pouvez nous l'envoyer à l'adresse
+      <h2>Vous n’arrivez pas à importer votre fichier</h2>
+      <p class="fr-pr-8w">
+        Si vous avez des questions ou des problèmes, si votre fichier comptable agrégé ne ressemble pas du tout à ça,
+        vous pouvez nous l'envoyer à l'adresse
         <AppLinkMailto />
       </p>
     </div>
