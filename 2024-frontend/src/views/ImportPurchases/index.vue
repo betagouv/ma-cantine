@@ -86,6 +86,7 @@ const errorUpload = (props) => {
   hasErrors.list = errors.map((error) => {
     return {
       description: error.message,
+      cell: error.row,
     }
   })
 }
@@ -145,11 +146,12 @@ const showErrors = (count) => {
             <p class="fr-mb-1v ma-cantine--bold">
               {{ error.description }}
             </p>
-            <ul class="ma-cantine--unstyled-list fr-text-default--grey">
+            <ul v-if="error.purchases" class="ma-cantine--unstyled-list fr-text-default--grey">
               <li v-for="(purchase, index) in error.purchases" :key="index">
                 {{ purchase.description }} | {{ purchase.date }} | {{ purchase.priceHt }}€
               </li>
             </ul>
+            <p v-if="error.cell" class="fr-text-default--grey">Ligne concernée par cette erreur : {{ error.cell }}</p>
           </li>
         </ul>
       </div>
