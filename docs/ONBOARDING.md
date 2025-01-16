@@ -18,29 +18,7 @@ D'autres conseils que j'ai lu c'est de faire `git config core.precomposeunicode 
 
 ## Mise en place de l'environnement dev
 
-Vous pouvez installer en local ou utiliser l'environnement Docker pour
-démarrer.
-
-### Avec Docker
-
-Un environnement Docker/Docker Compose est fourni. Pour construire les
-images et lancer les services :
-
-```sh
-make build
-make up
-```
-
-Voir le [Makefile](../Makefile) pour des commandes utiles.
-
-Dans un nouveau terminal, accèder au container du back pour migrer la
-BDD et créer la première utilisatrice.
-
-```sh
-make sh
-python manage.py migrate
-python manage.py createsuperuser
-```
+Vous pouvez installer en local ou utiliser l'environnement [Docker](./docker.md) pour démarrer.
 
 ### À installer localement
 
