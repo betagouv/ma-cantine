@@ -70,8 +70,8 @@ const duplicatedUpload = (purchases) => {
   const purchasesString = purchases.map((purchase) => `"${purchase.description} ${purchase.date} ${purchase.priceHt}€"`)
   const description =
     countPurchases > 1
-      ? `Ce fichier a déjà été utilisé pour importer ${countPurchases} achats`
-      : `Ce fichier a déjà été utilisé pour importer 1 achat`
+      ? `Ce fichier a déjà été utilisé pour importer ${countPurchases} achats :`
+      : `Ce fichier a déjà été utilisé pour importer 1 achat :`
   hasErrors.list = [
     {
       description: description,
@@ -136,7 +136,11 @@ const showErrors = (count) => {
             <p class="fr-mb-1v ma-cantine--bold">
               {{ error.description }}
             </p>
-            <p class="fr-text-default--grey fr-mb-0">{{ error.cells }}</p>
+            <ul class="ma-cantine--unstyled-list fr-text-default--grey">
+              <li v-for="(purchase, index) in error.purchases" :key="index">
+                {{ purchase }}
+              </li>
+            </ul>
           </li>
         </ul>
       </div>
