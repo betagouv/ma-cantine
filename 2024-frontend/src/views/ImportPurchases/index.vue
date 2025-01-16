@@ -45,7 +45,7 @@ const upload = (file) => {
       } else if (json.duplicateFile) {
         duplicatedUpload(json.duplicatePurchases)
       } else {
-        alert("ERREUR")
+        errorUpload({ count: json.errorCount, errors: json.errors })
       }
     })
     .catch((e) => {
@@ -78,6 +78,16 @@ const duplicatedUpload = (purchases) => {
     },
   ]
   showErrors(1)
+}
+
+const errorUpload = (props) => {
+  const { count, errors } = props
+  showErrors(count)
+  hasErrors.list = errors.map((error) => {
+    return {
+      description: error.message,
+    }
+  })
 }
 
 const hasErrors = reactive({
