@@ -5,6 +5,7 @@ import { importPurchases } from "@/services/imports.js"
 import { trackEvent } from "@/services/matomo.js"
 import AppSeparator from "@/components/AppSeparator.vue"
 import ImportExplanation from "@/components/ImportExplanation.vue"
+import ImportHelpContact from "@/components/ImportHelpContact.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 
@@ -154,6 +155,7 @@ const showErrors = (count) => {
     "
     @close="importSuccess = false"
   />
+  <ImportHelpContact class="fr-mt-8w" />
 </template>
 
 <style lang="scss">
