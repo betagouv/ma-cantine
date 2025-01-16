@@ -3,10 +3,10 @@ import { reactive, ref } from "vue"
 import { useRootStore } from "@/stores/root"
 import { importPurchases } from "@/services/imports.js"
 import { trackEvent } from "@/services/matomo.js"
+import AppSeparator from "@/components/AppSeparator.vue"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
-import AppSeparator from "@/components/AppSeparator.vue"
 
 /* Store */
 const store = useRootStore()
