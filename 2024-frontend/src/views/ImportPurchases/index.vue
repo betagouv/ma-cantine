@@ -39,15 +39,10 @@ const upload = (file) => {
   isProcessingFile.value = true
   importPurchases({ file: file })
     .then((json) => {
+      if (json.count >= 1) successUpload({ seconds: json.seconds, count: json.count })
+      if (json.duplicateFile) duplicatedUpload(json.duplicatePurchases)
+      if (json.errorCount > 0) errorUpload({ count: json.errorCount, errors: json.errors })
       isProcessingFile.value = false
-      const uploadedRows = json.count
-      if (uploadedRows >= 1) {
-        successUpload({ seconds: json.seconds, count: json.count })
-      } else if (json.duplicateFile) {
-        duplicatedUpload(json.duplicatePurchases)
-      } else {
-        errorUpload({ count: json.errorCount, errors: json.errors })
-      }
     })
     .catch((e) => {
       store.notifyServerError(e)
