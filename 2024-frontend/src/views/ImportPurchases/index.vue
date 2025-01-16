@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, ref } from "vue"
+import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import { importPurchases } from "@/services/imports.js"
 import { trackEvent } from "@/services/matomo.js"
@@ -9,8 +10,9 @@ import ImportHelpContact from "@/components/ImportHelpContact.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 
-/* Store */
+/* Store and Router */
 const store = useRootStore()
+const router = useRouter()
 
 /* Data */
 const url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json"
@@ -104,6 +106,7 @@ const showErrors = (count) => {
     count > 1
       ? "Veuillez les corriger avant d’importer à nouveau le fichier."
       : "Veuillez la corriger avant d’importer à nouveau le fichier."
+  router.push("#file-upload")
 }
 </script>
 
@@ -119,6 +122,7 @@ const showErrors = (count) => {
   <ImportExplanation :ressources="ressources" />
   <ImportSchemaTable :url="url" />
   <section
+    id="file-upload"
     class="fr-px-6w fr-px-xl-9w fr-py-6w fr-background-alt--blue-france fr-mt-4w fr-grid-row fr-grid-row--middle"
   >
     <div class="fr-hidden fr-unhidden-xl fr-col-3 fr-pr-6w fr-grid-row--center">
