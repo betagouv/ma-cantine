@@ -135,10 +135,8 @@ class ETL_OPEN_DATA_CANTEEN(etl.CANTEENS, OPEN_DATA):
     def __init__(self):
         super().__init__()
         self.dataset_name = "registre_cantines"
-        self.schema = json.load(open("data/schemas/schema_cantine.json"))
-        self.schema_url = (
-            "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_cantine.json"
-        )
+        self.schema = json.load(open("data/schemas/export_opendata/schema_cantines.json"))
+        self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/export_opendata/schema_cantines.json"
         self.columns = [field["name"] for field in self.schema["fields"]]
         self.canteens = None
         self.exclude_filter = Q(sectors__id=22) | Q(line_ministry="armee")  # Filtering out the police / army sectors
@@ -202,10 +200,8 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.TELEDECLARATIONS, OPEN_DATA):
         self.years = [year]
         self.year = year
         self.dataset_name = f"campagne_td_{year}"
-        self.schema = json.load(open("data/schemas/schema_teledeclaration.json"))
-        self.schema_url = (
-            "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/schema_teledeclaration.json"
-        )
+        self.schema = json.load(open("data/schemas/export_opendata/schema_teledeclarations.json"))
+        self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/export_opendata/schema_teledeclarations.json"
 
         self.categories_to_aggregate = {
             "bio": ["_bio"],
