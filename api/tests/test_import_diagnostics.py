@@ -258,7 +258,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         Should be able to import canteens without creating diagnostics if only canteen columns
         are present
         """
-        with open("./api/tests/files/diagnostics/mix_diag_canteen_import.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_new_canteen.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 2)
@@ -275,7 +275,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         Should be able to import canteens from a file that doesn't have commas for the optional fields
         """
-        with open("./api/tests/files/diagnostics/canteen_import.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/canteens_good.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -291,7 +291,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         Should be able to import canteens from a file that doesn't contain any diagnostic fields
         """
         manager = UserFactory(email="manager@example.com")
-        with open("./api/tests/files/diagnostics/canteen_manager_import.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/canteens_good_add_manager.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -314,7 +314,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.email = "authenticate@example.com"
         user.save()
 
-        with open("./api/tests/files/diagnostics/mix_diag_canteen_staff_import.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_staff_good_new_canteen.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -351,7 +351,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         Non-staff users shouldn't have staff import capabilities
         """
-        with open("./api/tests/files/diagnostics/mix_diag_canteen_staff_import.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_staff_good_new_canteen.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -782,7 +782,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         and the array of cantine should return zero
         """
         SectorFactory.create(name="Crèche")
-        with open("./api/tests/files/diagnostics/mixed_cantine_creation.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/canteens_bad.csv") as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -1294,7 +1294,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         canteen = CanteenFactory.create(siret="96463820453707", name="Initial name")
         canteen.managers.add(authenticate.user)
 
-        with open("./api/tests/files/diagnostics/diagnostics_simple_good_encoding_windows1252.csv", "rb") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_encoding_iso-8859-1.csv", "rb") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
