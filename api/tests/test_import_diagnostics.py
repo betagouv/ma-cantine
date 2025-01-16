@@ -291,7 +291,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         Should be able to import canteens from a file that doesn't contain any diagnostic fields
         """
         manager = UserFactory(email="manager@example.com")
-        with open("./api/tests/files/diagnostics/canteens_good_manager.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/canteens_good_add_manager.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
