@@ -44,11 +44,11 @@ defineProps(["ressources"])
       </ul>
     </div>
     <div class="fr-col-offset-md-1"></div>
-    <div class="fr-col-12 fr-col-md-4 fr-text-title--blue-france fr-card fr-px-3w fr-pt-3w">
-      <p class="ma-cantine--bold fr-mb-1w fr-text--lg">
+    <div class="fr-col-12 fr-col-md-4 fr-card fr-px-3w fr-pt-3w">
+      <h3 class="ma-cantine--bold fr-mb-1w fr-text--lg fr-text-title--blue-france">
         <span class="fr-icon-question-fill" aria-hidden="true"></span>
         Ressources utiles
-      </p>
+      </h3>
       <ul class="ma-cantine--unstyled-list">
         <li v-for="(ressource, index) in ressources" :key="index" class="fr-mb-1w">
           <DsfrFileDownload
