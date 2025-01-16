@@ -265,7 +265,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(body["errorCount"], 56)
 
     @authenticate
-    def test_encoding_autodetect_cp1252(self):
+    def test_encoding_autodetect_windows1252(self):
         """
         Attempt to auto-detect file encodings: Windows 1252
         This is a smoke test - purchase import reuses diagnostics import
