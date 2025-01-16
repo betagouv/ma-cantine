@@ -131,7 +131,7 @@ const showErrors = (count) => {
       <div v-if="hasErrors.status" class="fr-mt-2w">
         <div class="fr-grid-row fr-grid-row--middle">
           <DsfrBadge type="error" :label="hasErrors.badge" />
-          <p class="fr-text-default--error fr-ml-1w fr-mb-0">
+          <p class="fr-text-default--error fr-ml-1w fr-mb-0 fr-mt-1w fr-mt-md-0">
             {{ hasErrors.message }}
           </p>
         </div>
