@@ -41,7 +41,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         the authenticated user is added as the manager,
         and a summary of the results is returned
         """
-        with open("./api/tests/files/diagnostics/diagnostics_different_canteens.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -90,7 +90,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             text=address_api_text,
         )
 
-        with open("./api/tests/files/diagnostics/diagnostics_locations.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_locations.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -116,7 +116,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             text="83163531573760,00000,,,,,\n",
         )
 
-        with open("./api/tests/files/diagnostics/diagnostics_bad_location.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_bad_location.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -136,7 +136,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             exc=requests.exceptions.ConnectTimeout,
         )
 
-        with open("./api/tests/files/diagnostics/diagnostics_locations.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_locations.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -151,7 +151,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         If a canteen is present on multiple lines, keep data from first line
         """
-        with open("./api/tests/files/diagnostics/diagnostics_same_canteen.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_duplicate_siret.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -186,7 +186,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             "https://api-adresse.data.gouv.fr/search/csv/",
             text=address_api_text,
         )
-        with open("./api/tests/files/diagnostics/diagnostics_locations.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_locations.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -206,7 +206,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         my_canteen = CanteenFactory.create(siret="73282932000074")
         my_canteen.managers.add(authenticate.user)
 
-        with open("./api/tests/files/diagnostics/diagnostics_different_canteens.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -229,7 +229,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         SectorFactory.create(name="Social et Médico-social (ESMS)")
         SectorFactory.create(name="Crèche")
         SectorFactory.create(name="Scolaire")
-        with open("./api/tests/files/diagnostics/diagnostics_sectors.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_sectors.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         canteen = Canteen.objects.get(siret="21340172201787")
@@ -241,7 +241,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         If file specifies invalid sector, error is raised for that line
         """
         SectorFactory.create(name="Social et Médico-social (ESMS)")
-        with open("./api/tests/files/diagnostics/diagnostics_sectors.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_sectors.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
@@ -369,7 +369,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         CanteenFactory.create(siret="42111303053388")
         CanteenFactory.create(siret="42111303053388")
 
-        with open("./api/tests/files/diagnostics/diagnostics_bad_file.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_bad.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -472,7 +472,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.is_staff = True
         user.save()
 
-        with open("./api/tests/files/diagnostics/diagnostics_bad_staff_file.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_staff_bad.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -490,9 +490,9 @@ class TestImportDiagnosticsAPI(APITestCase):
     @authenticate
     def test_diagnostic_no_header(self, _):
         """
-        Optionally allow a header that starts with SIRET in the file
+        A file should not be valid if doesn't contain a valid header
         """
-        with open("./api/tests/files/diagnostics/diagnostics_without_header.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_bad_no_header.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -503,18 +503,18 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
-    def test_diagnostic_delimiter_options(self, _):
+    def test_diagnostic_separator_options(self, _):
         """
-        Optionally allow using a semicolon or tab as the delimiter
+        Optionally allow using a semicolon or tab as the seperator
         """
-        with open("./api/tests/files/diagnostics/diagnostics_delimiter_semicolon.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["errors"]), 0)
 
-        with open("./api/tests/files/diagnostics/diagnostics_delimiter_tab.tsv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_separator_tab.tsv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -523,7 +523,9 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @authenticate
     def test_decimal_comma_format(self, _):
-        with open("./api/tests/files/diagnostics/diagnostics_decimal_number.csv") as diag_file:
+        with open(
+            "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_decimal_number.csv"
+        ) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -533,7 +535,9 @@ class TestImportDiagnosticsAPI(APITestCase):
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     @authenticate
     def test_max_size(self, _):
-        with open("./api/tests/files/diagnostics/diagnostics_decimal_number.csv") as diag_file:
+        with open(
+            "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_decimal_number.csv"
+        ) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -555,7 +559,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         gestionnaire_1 = UserFactory(email="gestionnaire1@example.com")
         gestionnaire_2 = UserFactory(email="gestionnaire2@example.com")
 
-        with open("./api/tests/files/diagnostics/diagnostics_managers.csv") as diag_file:
+        with open(
+            "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_add_managers.csv"
+        ) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -573,7 +579,9 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @authenticate
     def test_add_managers_invalid_email(self, _):
-        with open("./api/tests/files/diagnostics/diagnostics_managers_invalid_email.csv") as diag_file:
+        with open(
+            "./api/tests/files/diagnostics/diagnostics_simple_bad_separator_semicolon_add_managers.csv"
+        ) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -593,7 +601,9 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @authenticate
     def test_add_managers_empty_column(self, _):
-        with open("./api/tests/files/diagnostics/diagnostics_managers_empty_column.csv") as diag_file:
+        with open(
+            "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_no_add_managers.csv"
+        ) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -606,7 +616,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         If user is not authenticated, cannot send file using this API
         """
-        with open("./api/tests/files/diagnostics/diagnostics_bad_file.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_bad.csv") as diag_file:
             response = self.client.post(reverse("email_diagnostic_file"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -617,7 +627,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         Users should be able to import a complete diagnostic
         """
-        with open("./api/tests/files/diagnostics/complete_diagnostics.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_complete_good.csv") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -671,7 +681,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         Test that the expected errors are returned for a badly formatted file for complete diagnostic
         """
-        with open("./api/tests/files/diagnostics/bad_complete_diagnostics.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_complete_bad.csv") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -706,7 +716,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors.pop(0)["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 10",
         )
-        with open("./api/tests/files/diagnostics/bad_header_complete_diagnostics_0.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_complete_bad_no_header.csv") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
         body = response.json()
 
@@ -715,7 +725,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             "La première ligne du fichier doit contenir les bon noms de colonnes",
         )
 
-        with open("./api/tests/files/diagnostics/bad_header_complete_diagnostics_1.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_complete_bad_wrong_header.csv") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
         body = response.json()
 
@@ -732,7 +742,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         user = authenticate.user
         user.is_staff = True
         user.save()
-        with open("./api/tests/files/diagnostics/staff_complete_diagnostics.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_complete_staff_good.csv") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -749,7 +759,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         Check that this endpoint sends an email with the file attached and relevant info
         """
-        with open("./api/tests/files/diagnostics/diagnostics_bad_file.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_bad.csv") as diag_file:
             response = self.client.post(
                 reverse("email_diagnostic_file"),
                 {"file": diag_file, "message": "Help me", "name": "Camille Dupont", "email": "dupont@example.com"},
@@ -760,7 +770,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "team@example.com")
         self.assertEqual("dupont@example.com", email.reply_to[0])
-        self.assertEqual(email.attachments[0][0], "diagnostics_bad_file.csv")
+        self.assertEqual(email.attachments[0][0], "diagnostics_simple_bad.csv")
         self.assertIn("dupont@example.com", email.body)
         self.assertIn("Camille Dupont", email.body)
         self.assertIn("Help me", email.body)
@@ -864,7 +874,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         For simplified diagnostics, an empty appro value is considered unknown
         """
-        with open("./api/tests/files/diagnostics/diagnostic_simplified_optional_appro.csv") as diag_file:
+        with open(
+            "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_no_appro.csv"
+        ) as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
         body = response.json()
@@ -881,7 +893,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         For simplified diagnostics, only the total HT is mandatory in the appro fields
         """
-        with open("./api/tests/files/diagnostics/diagnostic_simplified_missing_total_ht.csv") as diag_file:
+        with open(
+            "./api/tests/files/diagnostics/diagnostics_simple_bad_separator_semicolon_no_total_ht.csv"
+        ) as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
         body = response.json()
@@ -898,7 +912,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         A validation error should appear if the SIRET for the CC is the same as the SIRET
         for the canteen.
         """
-        with open("./api/tests/files/diagnostics/diagnostic_same_siret_cc.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_cc_bad_same_siret.csv") as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
         body = response.json()
@@ -916,7 +930,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         Users should be able to import a file with central cuisines and their satellites, with only
         appro data at the level of the cuisine centrale.
         """
-        with open("./api/tests/files/diagnostics/cc_complete_diagnostics.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_complete_cc_good.csv") as diag_file:
             response = self.client.post(f"{reverse('import_cc_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1031,7 +1045,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         for canteen in (cuisine_centrale_1, satellite_1_1, satellite_1_3, cuisine_centrale_2, satellite_to_remove):
             canteen.managers.add(authenticate.user)
 
-        with open("./api/tests/files/diagnostics/cc_complete_diagnostics.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_complete_cc_good.csv") as diag_file:
             response = self.client.post(f"{reverse('import_cc_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1062,7 +1076,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         Users should be able to import a file with central cuisines and their satellites, with only
         simplified appro data at the level of the cuisine centrale.
         """
-        with open("./api/tests/files/diagnostics/cc_simple_diagnostics.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_cc_good.csv") as diag_file:
             response = self.client.post(f"{reverse('import_cc_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1148,7 +1162,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         for canteen in (cuisine_centrale_1, satellite_1_1, satellite_1_3, cuisine_centrale_2, satellite_to_remove):
             canteen.managers.add(authenticate.user)
 
-        with open("./api/tests/files/diagnostics/cc_simple_diagnostics.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_cc_good.csv") as diag_file:
             response = self.client.post(f"{reverse('import_cc_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1183,7 +1197,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, value_total_ht=1, value_bio_ht=0.2)
 
-        with open("./api/tests/files/diagnostics/diagnostics_different_canteens.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1205,7 +1219,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, value_total_ht=1, value_bio_ht=0.2)
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
-        with open("./api/tests/files/diagnostics/diagnostics_different_canteens.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1223,7 +1237,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         # now test cancelled TD
         teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
         teledeclaration.save()
-        with open("./api/tests/files/diagnostics/diagnostics_different_canteens.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1242,7 +1256,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         canteen = CanteenFactory.create(siret="96463820453707", name="Initial name")
         canteen.managers.add(authenticate.user)
 
-        with open("./api/tests/files/diagnostics/diagnostic_encoding_utf-8.csv", "rb") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_complete_good_encoding_utf-8.csv", "rb") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1261,7 +1275,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         canteen = CanteenFactory.create(siret="96463820453707", name="Initial name")
         canteen.managers.add(authenticate.user)
 
-        with open("./api/tests/files/diagnostics/diagnostic_encoding_utf-16.csv", "rb") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_encoding_utf-16.csv", "rb") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1280,7 +1294,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         canteen = CanteenFactory.create(siret="96463820453707", name="Initial name")
         canteen.managers.add(authenticate.user)
 
-        with open("./api/tests/files/diagnostics/diagnostic_encoding_windows1252.csv", "rb") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_encoding_windows1252.csv", "rb") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1293,7 +1307,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @authenticate
     def test_fail_import_bad_format(self, _):
-        with open("./api/tests/files/diagnostics/bad_format_file.ods", "rb") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_bad_file_format.ods", "rb") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -1313,7 +1327,7 @@ class TestImportDiagnosticsFromAPIIntegration(APITestCase):
         """
         Test that remaining location information is filled in from import when calling the real API
         """
-        with open("./api/tests/files/diagnostics/diagnostics_locations.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_locations.csv") as diag_file:
             with requests_mock.Mocker() as m:
                 m.register_uri("POST", "https://api-adresse.data.gouv.fr/search/csv/", real_http=True)
                 response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
