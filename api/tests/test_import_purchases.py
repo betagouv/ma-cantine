@@ -55,7 +55,7 @@ class TestPurchaseImport(APITestCase):
         Tests that can import a file with comma-separated numbers
         """
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
-        with open("./api/tests/files/achats/purchases_good_comma_separated.csv") as purchase_file:
+        with open("./api/tests/files/achats/purchases_good_separator_comma.csv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
@@ -88,12 +88,12 @@ class TestPurchaseImport(APITestCase):
         Tests that can import a well formatted purchases file
         """
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
-        with open("./api/tests/files/achats/purchases_good_delimiter_tab.tsv") as purchase_file:
+        with open("./api/tests/files/achats/purchases_good_separator_tab.tsv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
 
-        with open("./api/tests/files/achats/purchases_good_delimiter_semicolon.csv") as purchase_file:
+        with open("./api/tests/files/achats/purchases_good_separator_semicolon.csv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 2)
