@@ -15,7 +15,9 @@ const store = useRootStore()
 const router = useRouter()
 
 /* Data */
-const url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json"
+// const url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json"
+const url =
+  "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/maj-schema-import-achats/data/schemas/imports/achats.json"
 const ressources = [
   {
     download: true,

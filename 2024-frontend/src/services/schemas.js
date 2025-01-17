@@ -21,7 +21,7 @@ const getFieldType = (field) => {
     return types[field.name]
   }
   if (field.constraints && field.constraints.enum) {
-    if (field.constraints.enum_multiple) {
+    if (field.doc_enum_multiple) {
       return types[`${field.type}_enum_multiple`]
     }
     return types[`${field.type}_enum`]
