@@ -7,7 +7,6 @@ from abc import ABC, abstractmethod
 from decimal import Decimal, InvalidOperation
 
 import requests
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -16,11 +15,11 @@ from django.db.models.functions import Lower
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.views import APIView
 from simple_history.utils import update_change_reason
 
 from api.permissions import IsAuthenticated
 from api.serializers import FullCanteenSerializer
+from api.views.utils import CSVImportApiView
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.diagnostic import Diagnostic
@@ -32,7 +31,7 @@ from .utils import camelize, decode_bytes
 logger = logging.getLogger(__name__)
 
 
-class ImportDiagnosticsView(ABC, APIView):
+class ImportDiagnosticsView(ABC, CSVImportApiView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
@@ -82,7 +81,7 @@ class ImportDiagnosticsView(ABC, APIView):
             with transaction.atomic():
                 self.file = request.data["file"]
                 ImportDiagnosticsView._verify_file_format(self.file)
-                ImportDiagnosticsView._verify_file_size(self.file)
+                super()._verify_file_size()
                 self._process_file(self.file)
 
                 if self.errors:
@@ -120,11 +119,6 @@ class ImportDiagnosticsView(ABC, APIView):
             raise ValidationError(
                 f"Ce fichier est au format {file.content_type}, merci d'exporter votre fichier au format CSV et réessayer."
             )
-
-    @staticmethod
-    def _verify_file_size(file):
-        if file.size > settings.CSV_IMPORT_MAX_SIZE:
-            raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
     def check_admin_values(self, header):
         is_admin_import = any("admin_" in column for column in header)

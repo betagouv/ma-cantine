@@ -13,10 +13,10 @@ from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.views import APIView
 
 from api.permissions import IsAuthenticated
 from api.serializers import PurchaseSerializer
+from api.views.utils import CSVImportApiView
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Purchase
 
@@ -26,7 +26,7 @@ from .utils import camelize, decode_bytes
 logger = logging.getLogger(__name__)
 
 
-class ImportPurchasesView(APIView):
+class ImportPurchasesView(CSVImportApiView):
     permission_classes = [IsAuthenticated]
     max_error_items = 30
 
@@ -51,7 +51,7 @@ class ImportPurchasesView(APIView):
         logger.info("Purchase bulk import started")
         try:
             self.file = request.data["file"]
-            self._verify_file_size()
+            super()._verify_file_size()
             ImportDiagnosticsView._verify_file_format(self.file)
             with transaction.atomic():
                 self._process_file()
@@ -135,10 +135,6 @@ class ImportPurchasesView(APIView):
             self._process_chunk(chunk)
 
         self.file_digest = file_hash.hexdigest()
-
-    def _verify_file_size(self):
-        if self.file.size > settings.CSV_IMPORT_MAX_SIZE:
-            raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
     def _decode_chunk(self, chunk_list):
         if self.encoding_detected is None:

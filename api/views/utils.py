@@ -2,10 +2,19 @@ import json
 import logging
 
 import chardet
+from django.conf import settings
+from django.core.exceptions import ValidationError
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
+from rest_framework.views import APIView
 from simple_history.utils import update_change_reason
 
 logger = logging.getLogger(__name__)
+
+
+class CSVImportApiView(APIView):
+    def _verify_file_size(self):
+        if self.file.size > settings.CSV_IMPORT_MAX_SIZE:
+            raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
 
 def camelize(data):

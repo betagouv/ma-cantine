@@ -13,7 +13,6 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.views import APIView
 
 from api.exceptions import DuplicateException
 from api.permissions import (
@@ -23,7 +22,7 @@ from api.permissions import (
     IsCanteenManager,
 )
 from api.serializers import DiagnosticAndCanteenSerializer, ManagerDiagnosticSerializer
-from api.views.utils import update_change_reason_with_auth
+from api.views.utils import CSVImportApiView, update_change_reason_with_auth
 from common.utils import send_mail
 from data.models import Canteen, Teledeclaration
 from data.models.diagnostic import Diagnostic
@@ -93,13 +92,13 @@ class DiagnosticUpdateView(UpdateAPIView):
         update_change_reason_with_auth(self, diagnostic)
 
 
-class EmailDiagnosticImportFileView(APIView):
+class EmailDiagnosticImportFileView(CSVImportApiView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
-            file = request.data["file"]
-            self._verify_file_size(file)
+            self.file = request.data["file"]
+            super()._verify_file_size()
             email = request.data.get("email", request.user.email).strip()
             context = {
                 "from": email,
@@ -111,7 +110,7 @@ class EmailDiagnosticImportFileView(APIView):
                 to=[settings.CONTACT_EMAIL],
                 reply_to=[email],
                 template="unusual_diagnostic_import_file",
-                attachments=[(file.name, file.read(), file.content_type)],
+                attachments=[(self.file.name, self.file.read(), self.file.content_type)],
                 context=context,
             )
         except ValidationError as e:
@@ -126,11 +125,6 @@ class EmailDiagnosticImportFileView(APIView):
             return HttpResponseServerError()
 
         return HttpResponse()
-
-    @staticmethod
-    def _verify_file_size(file):
-        if file.size > settings.CSV_IMPORT_MAX_SIZE:
-            raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
 
 class DiagnosticsToTeledeclarePagination(LimitOffsetPagination):
