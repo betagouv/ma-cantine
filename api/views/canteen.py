@@ -1341,4 +1341,4 @@ class MetabaseListView(ListAPIView):
     ordering_fields = ["creation_date"]
 
     def get_queryset(self):
-        return Canteen.objects.all()
+        return Canteen.objects.prefetch_related("sectors", "managers")
