@@ -6,6 +6,36 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.2.0](https://github.com/betagouv/ma-cantine/compare/v2025.1.0...v2025.2.0) (2025-01-17)
+
+
+### Nouveautés
+
+* **Metabase:** Ajout champ email ([#4925](https://github.com/betagouv/ma-cantine/issues/4925)) ([36ba9f7](https://github.com/betagouv/ma-cantine/commit/36ba9f7792fd3feae7752ba1b9597170eae44b55))
+* **Metabase:** Ajout du champ code commune INSEE dans le modèle TD ([#4880](https://github.com/betagouv/ma-cantine/issues/4880)) ([4469e74](https://github.com/betagouv/ma-cantine/commit/4469e7438d853cbbbae0780e6b81bca01657f4fc))
+
+
+### Améliorations
+
+* **Cantines:** Card : afficher le badge 'Non-télédéclarée' en rouge ([#4902](https://github.com/betagouv/ma-cantine/issues/4902)) ([ee09a82](https://github.com/betagouv/ma-cantine/commit/ee09a82063552280051c0d8b29232924a01e6ca6))
+* **Cantines:** Card : cacher le badge 'Publiée' ([#4901](https://github.com/betagouv/ma-cantine/issues/4901)) ([7c75af9](https://github.com/betagouv/ma-cantine/commit/7c75af92c57bf8e721eb81dd03807bd44171bed0))
+
+
+### Documentation
+
+* **Docker:** Création d'une doc dédiée ([#4922](https://github.com/betagouv/ma-cantine/issues/4922)) ([8c02d0d](https://github.com/betagouv/ma-cantine/commit/8c02d0dd9264762ad9e71fb2f8775879647a58e3))
+
+
+### Technique
+
+* **Cantines:** Serializer : remplace PublicationStatusMixin par une property sur le modèle ([#4900](https://github.com/betagouv/ma-cantine/issues/4900)) ([3050dcf](https://github.com/betagouv/ma-cantine/commit/3050dcf24e96f7e711c7bc5487ebfda87c10c1d1))
+* **deps:** bump django from 5.0.8 to 5.0.11 ([#4904](https://github.com/betagouv/ma-cantine/issues/4904)) ([98cc4d8](https://github.com/betagouv/ma-cantine/commit/98cc4d8e39d98ddf6a781fca92c3b20a33cd0eda))
+* **ETL:** Déplacer et renommer les schémas pour les exports ([#4913](https://github.com/betagouv/ma-cantine/issues/4913)) ([7436ee5](https://github.com/betagouv/ma-cantine/commit/7436ee54b02e684df29304d52e43790e200bbed8))
+* **ETL:** Utilser QuerySet et Serializer pour publier les cantines dans Metabase ([#4884](https://github.com/betagouv/ma-cantine/issues/4884)) ([fe674ff](https://github.com/betagouv/ma-cantine/commit/fe674ff8df71992a619a020c7e34e28757a398d8))
+* **Imports de masse:** Achats: renomme les fichiers de tests ([#4914](https://github.com/betagouv/ma-cantine/issues/4914)) ([3e42f1e](https://github.com/betagouv/ma-cantine/commit/3e42f1e986d3db9f06a18d69b316328b08d34397))
+* **Imports de masse:** Cantines: renomme les fichiers de tests ([#4918](https://github.com/betagouv/ma-cantine/issues/4918)) ([bcab6d3](https://github.com/betagouv/ma-cantine/commit/bcab6d37ac59f46e0b54d3ae2e0b8f3c2c66f94e))
+* **Imports de masse:** Diagnostics: renomme les fichiers de tests ([#4916](https://github.com/betagouv/ma-cantine/issues/4916)) ([4ab3cff](https://github.com/betagouv/ma-cantine/commit/4ab3cff30681095218ce0a0ea9c178340bee4929))
+
 ## [2025.1.0](https://github.com/betagouv/ma-cantine/compare/v2025.0.3...v2025.1.0) (2025-01-14)
 
 
