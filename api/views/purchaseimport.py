@@ -1,5 +1,4 @@
 import csv
-import hashlib
 import io
 import json
 import logging
@@ -52,6 +51,10 @@ class ImportPurchasesView(CSVImportApiView):
             self.file = request.data["file"]
             super()._verify_file_size()
             super()._verify_file_format()
+
+            self.file_digest = super()._get_file_digest()
+            self._check_duplication()
+
             with transaction.atomic():
                 self._process_file()
 
@@ -59,10 +62,6 @@ class ImportPurchasesView(CSVImportApiView):
                 # transaction and rollback the insertion of any data
                 if self.errors:
                     raise IntegrityError()
-
-                # The duplication check is called after the processing. The cost of eventually processing
-                # the file for nothing appears to be smaller than read the file twice.
-                self._check_duplication()
 
                 # Update all purchases's import source with file digest
                 Purchase.objects.filter(import_source=self.tmp_id).update(import_source=self.file_digest)
@@ -100,13 +99,10 @@ class ImportPurchasesView(CSVImportApiView):
         )
 
     def _process_file(self):
-        file_hash = hashlib.md5()
         chunk = []
         read_header = True
         row_count = 1
         for row in self.file:
-            file_hash.update(row)
-
             # Sniffing 1st line
             if read_header:
                 # decode header, discarding encoding result that might not be accurate without more data
@@ -132,8 +128,6 @@ class ImportPurchasesView(CSVImportApiView):
         # Process the last chunk
         if len(chunk) > 0:
             self._process_chunk(chunk)
-
-        self.file_digest = file_hash.hexdigest()
 
     def _decode_chunk(self, chunk_list):
         if self.encoding_detected is None:

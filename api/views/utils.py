@@ -1,3 +1,4 @@
+import hashlib
 import json
 import logging
 
@@ -23,6 +24,12 @@ class CSVImportApiView(APIView):
             raise ValidationError(
                 f"Ce fichier est au format {self.file.content_type}, merci d'exporter votre fichier au format CSV et réessayer."
             )
+
+    def _get_file_digest(self):
+        file_hash = hashlib.md5()
+        for row in self.file:
+            file_hash.update(row)
+        return file_hash.hexdigest()
 
 
 def camelize(data):
