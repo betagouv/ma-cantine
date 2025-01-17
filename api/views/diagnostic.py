@@ -99,6 +99,7 @@ class EmailDiagnosticImportFileView(CSVImportApiView):
         try:
             self.file = request.data["file"]
             super()._verify_file_size()
+            super()._verify_file_format()
             email = request.data.get("email", request.user.email).strip()
             context = {
                 "from": email,

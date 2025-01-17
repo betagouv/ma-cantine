@@ -20,7 +20,6 @@ from api.views.utils import CSVImportApiView
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Purchase
 
-from .diagnosticimport import ImportDiagnosticsView
 from .utils import camelize, decode_bytes
 
 logger = logging.getLogger(__name__)
@@ -52,7 +51,7 @@ class ImportPurchasesView(CSVImportApiView):
         try:
             self.file = request.data["file"]
             super()._verify_file_size()
-            ImportDiagnosticsView._verify_file_format(self.file)
+            super()._verify_file_format()
             with transaction.atomic():
                 self._process_file()
 

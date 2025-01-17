@@ -16,6 +16,12 @@ class CSVImportApiView(APIView):
         if self.file.size > settings.CSV_IMPORT_MAX_SIZE:
             raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
+    def _verify_file_format(self):
+        if self.file.content_type not in ["text/csv", "text/tab-separated-values"]:
+            raise ValidationError(
+                f"Ce fichier est au format {self.file.content_type}, merci d'exporter votre fichier au format CSV et réessayer."
+            )
+
 
 def camelize(data):
     camel_case_bytes = CamelCaseJSONRenderer().render(data)
