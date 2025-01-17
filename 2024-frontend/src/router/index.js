@@ -6,6 +6,7 @@ import LegalNotices from "@/views/LegalNotices"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import CGU from "@/views/CGU"
 import ContactPage from "@/views/ContactPage"
+import ImportPurchases from "@/views/ImportPurchases"
 import { useRootStore } from "@/stores/root"
 
 const routes = [
@@ -73,6 +74,19 @@ const routes = [
     component: ContactPage,
     meta: {
       title: "Contactez-nous",
+    },
+  },
+  {
+    path: "/importer-des-donnees/achats",
+    name: "ImportPurchases",
+    component: ImportPurchases,
+    meta: {
+      title: "Importer des achats",
+      authenticationRequired: true,
+      breadcrumbs: [
+        { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+        { to: { name: "ImportSelection" }, title: "Importer des données" },
+      ],
     },
   },
 ]
@@ -193,6 +207,10 @@ routes.push(...vue2Routes)
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to) {
+    const scrollTo = to.hash || "#app"
+    return { el: scrollTo }
+  },
 })
 
 router.beforeEach(async (to) => {
