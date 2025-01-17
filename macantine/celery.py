@@ -52,7 +52,7 @@ app.conf.beat_schedule = {
     },
     "export_datasets": {
         "task": "macantine.tasks.continous_datasets_export",
-        "schedule": weekly,
+        "schedule": daily_week,
     },
     "update_brevo_contacts": {
         "task": "macantine.tasks.update_brevo_contacts",
