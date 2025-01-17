@@ -74,6 +74,17 @@
       "type": "string"
     },
     {
+      "constraints": {
+        "pattern": "^([013-9]\\d|2[AB1-9])\\d{3}$",
+        "required": false
+      },
+      "description": "Le code INSEE de la commune dans laquelle la cantine se trouve.",
+      "example": "75105",
+      "name": "code_insee_commune",
+      "title": "Code Insee Commune",
+      "type": "string"
+    },
+    {
       "name": "lib_departement",
       "type": "string"
     },

@@ -278,6 +278,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
         self.df.columns = self.df.columns.str.replace("canteen.", "")
         self.df.columns = self.df.columns.str.replace("applicant.", "")
         self.df.columns = self.df.columns.str.replace("department", "departement")
+        self.df.columns = self.df.columns.str.replace("city_insee_code", "code_insee_commune")
 
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
