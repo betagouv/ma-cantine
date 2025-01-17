@@ -14,7 +14,9 @@ logger = logging.getLogger(__name__)
 class CSVImportApiView(APIView):
     def _verify_file_size(self):
         if self.file.size > settings.CSV_IMPORT_MAX_SIZE:
-            raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
+            raise ValidationError(
+                f"Ce fichier est trop grand, merci d'utiliser un fichier de moins de {settings.CSV_IMPORT_MAX_SIZE_PRETTY}"
+            )
 
     def _verify_file_format(self):
         if self.file.content_type not in ["text/csv", "text/tab-separated-values"]:
