@@ -2,7 +2,8 @@ from django.db import models
 
 
 def get_lib_department_from_code(department: str) -> str:
-    return Department(department).label.split(" - ")[1]
+    if department:
+        return Department(department).label.split(" - ")[1]
 
 
 class Department(models.TextChoices):
