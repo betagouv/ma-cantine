@@ -15,6 +15,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api.filters.utils import MaCantineOrderingFilter, UnaccentSearchFilter
 from api.permissions import IsAuthenticated, IsCanteenManager, IsLinkedCanteenManager
 from api.serializers import (
     PurchaseExportSerializer,
@@ -23,8 +24,6 @@ from api.serializers import (
     PurchaseSummarySerializer,
 )
 from data.models import Canteen, Diagnostic, Purchase
-
-from .utils import MaCantineOrderingFilter, UnaccentSearchFilter
 
 logger = logging.getLogger(__name__)
 

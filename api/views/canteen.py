@@ -42,6 +42,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.exceptions import DuplicateException
+from api.filters.utils import MaCantineOrderingFilter, UnaccentSearchFilter
 from api.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
@@ -63,7 +64,7 @@ from api.serializers import (
     PublicCanteenSerializer,
     SatelliteCanteenSerializer,
 )
-from api.views.utils import update_change_reason_with_auth
+from api.views.utils import camelize, update_change_reason_with_auth
 from common.utils import get_token_sirene, send_mail
 from data.department_choices import Department
 from data.models import (
@@ -79,8 +80,6 @@ from macantine.utils import (
     fetch_geo_data_from_api_entreprise_by_siret,
     fetch_geo_data_from_api_insee_sirene_by_siret,
 )
-
-from .utils import MaCantineOrderingFilter, UnaccentSearchFilter, camelize
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)

@@ -8,14 +8,13 @@ from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
+from api.filters.utils import UnaccentSearchFilter
 from api.serializers import (
     PartnerContactSerializer,
     PartnerSerializer,
     PartnerShortSerializer,
 )
 from data.models import Partner
-
-from .utils import UnaccentSearchFilter
 
 logger = logging.getLogger(__name__)
 

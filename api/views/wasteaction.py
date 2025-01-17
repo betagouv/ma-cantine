@@ -2,10 +2,9 @@ from django_filters import rest_framework as django_filters
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.pagination import LimitOffsetPagination
 
+from api.filters.utils import UnaccentSearchFilter
 from api.serializers import WasteActionSerializer, WasteActionWithActionsSerializer
 from data.models import WasteAction
-
-from .utils import UnaccentSearchFilter
 
 
 class WasteActionPagination(LimitOffsetPagination):

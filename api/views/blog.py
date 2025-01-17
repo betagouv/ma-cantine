@@ -6,10 +6,9 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
+from api.filters.utils import UnaccentSearchFilter
 from api.serializers import BlogPostSerializer
 from data.models import BlogPost
-
-from .utils import UnaccentSearchFilter
 
 logger = logging.getLogger(__name__)
 
