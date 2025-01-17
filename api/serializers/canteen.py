@@ -606,6 +606,7 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
     spe = serializers.SerializerMethodField()
     date_creation = serializers.SerializerMethodField()
     date_modification = serializers.SerializerMethodField()
+    adresses_gestionnaires = serializers.SerializerMethodField()
 
     class Meta:
         model = Canteen
@@ -632,6 +633,7 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
             "secteur",
             "categorie",
             "spe",
+            "adresses_gestionnaires",
         )
         read_only_fields = fields
 
@@ -708,3 +710,7 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
             return "Oui"
         else:
             return "Non"
+
+    def get_adresses_gestionnaires(self, obj):
+        emails = [manager.email for manager in obj.managers.all()]
+        return ",".join(emails)

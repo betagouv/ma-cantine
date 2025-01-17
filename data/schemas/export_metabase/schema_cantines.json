@@ -157,6 +157,14 @@
       "name": "spe",
       "title": "Service Public Ecoresponsable",
       "type": "boolean"
+    },
+    {
+      "description": "Adresses mél des gestionnaires",
+      "example": "gestionnaire1@example.com, gestionnaire2@example.com",
+      "format": "default",
+      "name": "adresses_gestionnaires",
+      "title": "Adresses mél des gestionnaires (adresses mél)",
+      "type": "string"
     }
   ],
   "format": "csv",
