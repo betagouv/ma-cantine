@@ -19,12 +19,12 @@ from web.forms import LoginUserForm, RegisterUserForm
 
 logger = logging.getLogger(__name__)
 
-if settings.USES_MONCOMPTEPRO:
+if settings.USES_PROCONNECT:
     oauth = OAuth()
     oauth.register(
-        name="moncomptepro",
-        server_metadata_url=settings.MONCOMPTEPRO_CONFIG,
-        client_kwargs={"scope": "openid email profile organizations"},
+        name="proconnect",
+        server_metadata_url=settings.PROCONNECT_CONFIG,
+        client_kwargs={"scope": "openid email given_name usual_name siret", "leeway": 30},
     )
 
 
@@ -205,58 +205,83 @@ def _login_and_send_activation_email(username, request):
 class OIDCLoginView(View):
     def get(self, request, *args, **kwargs):
         redirect_uri = request.build_absolute_uri(reverse_lazy("oidc-authorize"))
-        return oauth.moncomptepro.authorize_redirect(request, redirect_uri)
+        return oauth.proconnect.authorize_redirect(request, redirect_uri)
+
+
+ID_TOKEN_KEY = "id_token"
 
 
 class OIDCAuthorizeView(View):
     def get(self, request, *args, **kwargs):
         try:
-            token = oauth.moncomptepro.authorize_access_token(request)
-            mcp_data = oauth.moncomptepro.userinfo(token=token)
-            user = OIDCAuthorizeView.get_or_create_user(mcp_data)
+            token = oauth.proconnect.authorize_access_token(request)
+            user_data = OIDCAuthorizeView.userinfo(token)
+            user = OIDCAuthorizeView.get_or_create_user(user_data)
             login(request, user)
             return redirect(reverse_lazy("app"))
         except Exception as e:
-            logger.exception("Error authenticating with MonComptePro")
+            logger.exception("Error authenticating with ProConnect")
             logger.exception(e)
             return redirect("app")
 
     @staticmethod
-    def get_or_create_user(mcp_data):
-        mcp_id = mcp_data.get("sub")
-        mcp_email = mcp_data.get("email")
+    def get_or_create_user(user_data):
+        user_id = user_data.get("sub")
+        email = user_data.get("email")
+        siret = user_data.get("siret")
+        organizations = [{"siret": siret, "id": siret}]  # recreate old MonComptePro structure
 
-        # Attempt with mcp_id
+        # Attempt with id provided by Identity Provider
         try:
-            user = get_user_model().objects.get(mcp_id=mcp_id)
-            user.mcp_organizations = mcp_data.get("organizations")
+            user = get_user_model().objects.get(proconnect_id=user_id)
+            user.proconnect_organizations = organizations
             user.save()
-            logger.info(f"MonComptePro user {mcp_id} (ID Ma Cantine: {user.id}) was found.")
+            logger.info(f"ProConnect user {user_id} (ID Ma Cantine: {user.id}) was found.")
             return user
         except get_user_model().DoesNotExist:
             pass
 
         # Attempt with email
         try:
-            user = get_user_model().objects.get(email=mcp_email)
-            user.mcp_id = mcp_data.get("sub")
-            user.mcp_organizations = mcp_data.get("organizations")
+            user = get_user_model().objects.get(email=email)
+            user.proconnect_id = user_id
+            user.proconnect_organizations = organizations
             user.save()
-            logger.info(f"MonComptePro user {mcp_id} was already registered in MaCantine with email {mcp_email}.")
+            logger.info(f"ProConnect user {user_id} was already registered in MaCantine with email {email}.")
             return user
         except get_user_model().DoesNotExist:
             pass
 
         # Create user
-        logger.info(f"Creating new user from MonComptePro user {mcp_id} with email {mcp_email}.")
+        last_name = user_data.get("usual_name")
+        logger.info(f"Creating new user from ProConnect user {user_id} with email {email}.")
         user = get_user_model().objects.create(
-            first_name=mcp_data.get("given_name"),
-            last_name=mcp_data.get("family_name"),
-            email=mcp_email,
-            mcp_id=mcp_id,
-            phone_number=mcp_data.get("phone_number"),
-            username=f"{mcp_data.get('family_name')}-mcp-{mcp_id}",
-            mcp_organizations=mcp_data.get("organizations"),
-            created_with_mcp=True,
+            first_name=user_data.get("given_name"),
+            last_name=last_name,
+            email=email,
+            proconnect_id=user_id,
+            # phone_number=proconnect_data.get("phone"),
+            username=f"{last_name}-proconnect-{user_id}",
+            proconnect_organizations=organizations,
+            created_with_proconnect=True,
         )
         return user
+
+    @staticmethod
+    def userinfo(token):
+        """
+        Authlib's method (callable as oauth.proconnect.userinfo(token=token))
+        does not currently function with ProConnect tokens.
+        This method takes their function as of v1.3.2 and rewrites it to fix the
+        issues manually. Inspired by:
+        https://github.com/datagouv/udata-front/blob/f227ce5a8bba9822717ebd5986f5319f45e1622f/udata_front/views/proconnect.py#L29
+        """
+        metadata = oauth.proconnect.load_server_metadata()
+        resp = oauth.proconnect.get(metadata["userinfo_endpoint"], token=token)
+        resp.raise_for_status()
+        # Create a new token that `client.parse_id_token` expects. Replace the initial
+        # `id_token` with the jwt we received from the `userinfo_endpoint`.
+        userinfo_token = token.copy()
+        userinfo_token[ID_TOKEN_KEY] = resp.content
+        user_data = oauth.proconnect.parse_id_token(userinfo_token, nonce=None)
+        return user_data
