@@ -6,5 +6,3 @@ cp ./clevercloud/manifest.json build/.vite/
 mkdir 2024-frontend/build
 mkdir 2024-frontend/build/.vite
 cp ./clevercloud/manifest.json 2024-frontend/build/.vite/
-clever --version 
-echo "Ma variable: $1"
