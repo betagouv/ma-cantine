@@ -17,14 +17,12 @@ const getFieldType = (field) => {
     year: "Année (AAAA)",
   }
 
-  if (field.name in types) {
-    return types[field.name]
-  }
-  if (field.constraints && field.constraints.enum) {
-    if (field.doc_enum_multiple) {
+  if (field.constraints) {
+    if (field.constraints.enum) {
+      return types[`${field.type}_enum`]
+    } else if (field.constraints.pattern && field.doc_enum_multiple) {
       return types[`${field.type}_enum_multiple`]
     }
-    return types[`${field.type}_enum`]
   }
   return types[field.type]
 }

@@ -22,7 +22,7 @@ const formatFields = (fields) => {
         component: ImportSchemaTableDescriptionCell,
         title: field.title,
         description: field.description,
-        constraints: field.constraints.enum,
+        constraints: field.constraints.enum || field.doc_enum,
         multiple: field.doc_enum_multiple,
         separator: field.doc_enum_multiple_seperator,
       },
