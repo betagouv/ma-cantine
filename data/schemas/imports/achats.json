@@ -1,4 +1,5 @@
 {
+  "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
   "encoding": "utf-8",
   "fields": [
     {
@@ -80,29 +81,29 @@
     },
     {
       "constraints": {
-        "enum": [
-          "BIO",
-          "LABEL_ROUGE",
-          "AOCAOP",
-          "IGP",
-          "STG",
-          "HVE",
-          "PECHE_DURABLE",
-          "RUP",
-          "COMMERCE_EQUITABLE",
-          "FERMIER",
-          "EXTERNALITES",
-          "PERFORMANCE",
-          "FRANCE",
-          "SHORT_DISTRIBUTION",
-          "LOCAL"
-        ],
-        "enum_multiple": true,
-        "enum_multiple_seperator": ",",
-        "pattern": "(?:(?:^|;)(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|FRANCE|SHORT_DISTRIBUTION|LOCAL))+$",
+        "pattern": "(?:(?:^|,)(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|FRANCE|SHORT_DISTRIBUTION|LOCAL))+$",
         "required": false
       },
       "description": "",
+      "doc_enum": [
+        "BIO",
+        "LABEL_ROUGE",
+        "AOCAOP",
+        "IGP",
+        "STG",
+        "HVE",
+        "PECHE_DURABLE",
+        "RUP",
+        "COMMERCE_EQUITABLE",
+        "FERMIER",
+        "EXTERNALITES",
+        "PERFORMANCE",
+        "FRANCE",
+        "SHORT_DISTRIBUTION",
+        "LOCAL"
+      ],
+      "doc_enum_multiple": true,
+      "doc_enum_multiple_seperator": ",",
       "example": "BIO,IGP",
       "format": "default",
       "name": "caracteristiques",
@@ -127,9 +128,8 @@
       "type": "string"
     }
   ],
-  "format": "csv",
-  "mediatype": "text/csv",
-  "scheme": "file",
-  "title": "Schéma import des achats",
-  "type": "table"
+  "homepage": "https://github.com/betagouv/ma-cantine",
+  "name": "import-achats",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/achats.json",
+  "title": "Schema import des achats"
 }
