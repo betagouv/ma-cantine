@@ -197,10 +197,6 @@ const vue2Routes = [
     path: "/importer-diagnostics/:importUrlSlug",
     name: "DiagnosticImportPage",
   },
-  {
-    path: "/importer-achats",
-    name: "PurchasesImporter",
-  },
 ]
 routes.push(...vue2Routes)
 
