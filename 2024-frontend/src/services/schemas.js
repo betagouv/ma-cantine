@@ -24,6 +24,9 @@ const getFieldType = (field) => {
       return types[`${field.type}_enum_multiple`]
     }
   }
+  if (field.name in types) {
+    return types[field.name]
+  }
   return types[field.type]
 }
 
