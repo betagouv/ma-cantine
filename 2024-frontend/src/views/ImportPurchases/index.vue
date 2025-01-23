@@ -25,12 +25,14 @@ const ressources = [
   },
   {
     external: true,
+    href:
+      "https://ma-cantine.crisp.help/fr/article/comment-importer-un-fichier-csv-dans-excel-7zyxo/?bust=1737110731801#3-1-fichier-gt-importer",
     name: "Comment importer un fichier CSV dans Excel ?",
   },
   {
     external: true,
     href:
-      "https://support.microsoft.com/fr-fr/office/enregistrer-un-classeur-au-format-texte-txt-ou-csv-3e9a9d6c-70da-4255-aa28-fcacf1f081e6",
+      "https://ma-cantine.crisp.help/fr/article/comment-enregistrer-un-fichier-excel-en-csv-cgfrbp/?bust=1737110744484",
     name: "Comment enregistrer mon fichier Excel en CSV ?",
   },
 ]
