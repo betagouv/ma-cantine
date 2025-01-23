@@ -15,7 +15,7 @@ defineOptions({ inheritAttrs: false })
     </span>
   </p>
   <p v-if="multiple" class="fr-text--sm">
-    Spécifiez plusieurs options en séparant avec un
+    Spécifiez plusieurs options en séparant avec
     <AppCode :content="separator" />
   </p>
 </template>

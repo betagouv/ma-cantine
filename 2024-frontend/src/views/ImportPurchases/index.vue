@@ -16,7 +16,8 @@ const router = useRouter()
 
 /* Data */
 const pictoDocument = "/static/images/picto-dsfr/document.svg"
-const url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json"
+const schemaUrl =
+  "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/achats.json"
 const ressources = [
   {
     download: "achats_fichier_exemple_ma_cantine.csv",
@@ -121,7 +122,7 @@ const showErrors = (count) => {
     .
   </p>
   <ImportExplanation :ressources="ressources" />
-  <ImportSchemaTable :url="url" />
+  <ImportSchemaTable :url="schemaUrl" />
   <section
     id="file-upload"
     class="fr-px-6w fr-px-xl-9w fr-py-6w fr-background-alt--blue-france fr-mt-4w fr-grid-row fr-grid-row--middle"
