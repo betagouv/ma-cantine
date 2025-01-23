@@ -15,22 +15,23 @@ const store = useRootStore()
 const router = useRouter()
 
 /* Data */
+const pictoDocument = "/static/images/picto-dsfr/document.svg"
 const url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json"
 const ressources = [
   {
-    download: true,
+    download: "achats_fichier_exemple_ma_cantine.csv",
     href: "/static/documents/achats_fichier_exemple_ma_cantine.csv",
     name: "Télécharger notre fichier d’exemple CSV",
     size: "189 octets",
   },
   {
     external: true,
+    href: "https://ma-cantine.crisp.help/fr/article/comment-importer-un-fichier-csv-dans-excel-7zyxo/",
     name: "Comment importer un fichier CSV dans Excel ?",
   },
   {
     external: true,
-    href:
-      "https://support.microsoft.com/fr-fr/office/enregistrer-un-classeur-au-format-texte-txt-ou-csv-3e9a9d6c-70da-4255-aa28-fcacf1f081e6",
+    href: "https://ma-cantine.crisp.help/fr/article/comment-enregistrer-un-fichier-excel-en-csv-cgfrbp/",
     name: "Comment enregistrer mon fichier Excel en CSV ?",
   },
 ]
@@ -111,7 +112,7 @@ const showErrors = (count) => {
 </script>
 
 <template>
-  <h1>Créer des achats</h1>
+  <h1>Importer des achats</h1>
   <p class="fr-col-12 fr-col-md-7">
     Notre outil d’import de masse vous permet d’ajouter les achats de toutes vos cantines d’un coup.
     <strong>Si vous avez moins de 10 achats,</strong>
@@ -125,7 +126,10 @@ const showErrors = (count) => {
     id="file-upload"
     class="fr-px-6w fr-px-xl-9w fr-py-6w fr-background-alt--blue-france fr-mt-4w fr-grid-row fr-grid-row--middle"
   >
-    <div class="import-file-upload fr-col-12 fr-py-3w fr-px-4w fr-card">
+    <div class="fr-hidden fr-unhidden-xl fr-col-3 fr-pr-6w fr-grid-row--center">
+      <img :src="pictoDocument" alt="" />
+    </div>
+    <div class="import-file-upload fr-col-12 fr-col-xl-9 fr-py-3w fr-px-4w fr-card">
       <DsfrFileUpload
         label="Avant d’importer votre fichier en CSV, assurez-vous que vos données respectent le format ci-dessus"
         hint="Extension du fichier autorisé : CSV"
