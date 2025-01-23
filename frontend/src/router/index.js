@@ -613,6 +613,11 @@ vue3Routes.forEach((r) => {
 routes.push(...vue3Routes)
 
 routes.push({
+  path: "/importer-achats",
+  redirect: { name: "ImportPurchases" },
+})
+
+routes.push({
   path: "/:catchAll(.*)",
   component: NotFound,
   name: "NotFound",
