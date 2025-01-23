@@ -51,11 +51,13 @@ const payload = reactive({})
 
 const afterStartDateValidator = (date) => {
   date = new Date(date)
-  console.log(date, startDateAsDate.value)
   return date >= startDateAsDate.value
 }
 
-const afterStartDate = helpers.withMessage("La date de fin doit être après la date de début", afterStartDateValidator)
+const afterStartDate = helpers.withMessage(
+  "La date de fin ne peut pas être avant la date de début",
+  afterStartDateValidator
+)
 
 const rules = {
   periodStartDate: { required },

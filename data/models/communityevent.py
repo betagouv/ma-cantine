@@ -23,5 +23,5 @@ class CommunityEvent(models.Model):
     def validate_dates(self):
         if self.start_date is None or self.end_date is None:
             return
-        if self.end_date <= self.start_date:
-            raise ValidationError({"end_date": "La date de fin doit être superieure à la date de début"})
+        if self.end_date < self.start_date:
+            raise ValidationError({"end_date": "La date de fin ne peut pas être avant la date de début"})

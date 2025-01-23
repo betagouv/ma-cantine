@@ -11,7 +11,7 @@ from .canteen import Canteen
 
 def validate_before_today(value):
     if value > datetime.now().date():
-        raise ValidationError("La date doit être dans le passé")
+        raise ValidationError("La date ne peut pas être dans le futur")
 
 
 class WasteMeasurement(models.Model):
@@ -117,9 +117,9 @@ class WasteMeasurement(models.Model):
 
     def _validate_start_before_end(start_date, end_date, start_date_changed, end_date_changed):
         if start_date_changed and start_date > end_date:
-            raise ValidationError({"period_start_date": ["La date de début doit être avant la date de fin"]})
+            raise ValidationError({"period_start_date": ["La date de début ne peut pas être après la date de fin"]})
         elif end_date_changed and end_date < start_date:
-            raise ValidationError({"period_end_date": ["La date de fin doit être après la date de début"]})
+            raise ValidationError({"period_end_date": ["La date de fin ne peut pas être avant la date de début"]})
 
     def _validate_period_not_in_other_period(other_measurements, start_date, end_date):
         measurements_within_period = other_measurements.filter(

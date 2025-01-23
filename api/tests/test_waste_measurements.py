@@ -153,7 +153,7 @@ class TestWasteMeasurementsApi(APITestCase):
         response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        self.assertEqual(response.json()["periodEndDate"][0], "La date doit être dans le passé")
+        self.assertEqual(response.json()["periodEndDate"][0], "La date ne peut pas être dans le futur")
 
     @authenticate
     def test_start_date_must_be_before_end_date(self):
@@ -171,7 +171,9 @@ class TestWasteMeasurementsApi(APITestCase):
         response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        self.assertEqual(response.json()["periodStartDate"][0], "La date de début doit être avant la date de fin")
+        self.assertEqual(
+            response.json()["periodStartDate"][0], "La date de début ne peut pas être après la date de fin"
+        )
 
     @authenticate
     def test_periods_cannot_overlap(self):
@@ -382,7 +384,7 @@ class TestWasteMeasurementsApi(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        self.assertEqual(response.json()["periodEndDate"][0], "La date doit être dans le passé")
+        self.assertEqual(response.json()["periodEndDate"][0], "La date ne peut pas être dans le futur")
 
     @authenticate
     def test_start_date_must_be_before_end_date_in_update(self):
@@ -401,7 +403,9 @@ class TestWasteMeasurementsApi(APITestCase):
             reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json()["periodStartDate"][0], "La date de début doit être avant la date de fin")
+        self.assertEqual(
+            response.json()["periodStartDate"][0], "La date de début ne peut pas être après la date de fin"
+        )
 
         # change end_date to before start_date
         payload = {"period_end_date": "2024-07-31"}
@@ -409,7 +413,7 @@ class TestWasteMeasurementsApi(APITestCase):
             reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json()["periodEndDate"][0], "La date de fin doit être après la date de début")
+        self.assertEqual(response.json()["periodEndDate"][0], "La date de fin ne peut pas être avant la date de début")
 
     @authenticate
     def test_periods_cannot_overlap_in_update(self):
