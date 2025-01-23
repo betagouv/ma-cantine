@@ -104,6 +104,22 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(waste_measurement.leftovers_inedible_mass, None)
 
     @authenticate
+    def test_create_waste_measurement_single_day(self):
+        """
+        Same start & end dates (Period of 1 day)
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+
+        payload = {
+            "period_start_date": "2024-08-01",
+            "period_end_date": "2024-08-01",
+        }
+
+        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    @authenticate
     def test_cannot_create_measurement_without_dates(self):
         """
         Period start date and period end date must be given
@@ -176,8 +192,8 @@ class TestWasteMeasurementsApi(APITestCase):
         response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.json()["periodStartDate"][0],
-            "Il existe déjà une autre évaluation pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la évaluation existante ou corriger la date de début.",
+            response.json()["_All__"][0],
+            "Il existe déjà une autre évaluation dans la période 2024-07-03 à 2024-08-01. Veuillez modifier l'évaluation existante ou corriger les dates de la période.",
         )
 
         # check an end date that falls in existing period
@@ -188,8 +204,8 @@ class TestWasteMeasurementsApi(APITestCase):
         response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.json()["periodEndDate"][0],
-            "Il existe déjà une autre évaluation pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la évaluation existante ou corriger la date de fin.",
+            response.json()["_All__"][0],
+            "Il existe déjà une autre évaluation dans la période 2024-06-10 à 2024-07-03. Veuillez modifier l'évaluation existante ou corriger les dates de la période.",
         )
 
         # check a start and end date that encapsulate the periods of existing measurements
@@ -379,6 +395,7 @@ class TestWasteMeasurementsApi(APITestCase):
             canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
         )
 
+        # change start_date to after end_date
         payload = {"period_start_date": "2024-08-10"}
         response = self.client.patch(
             reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
@@ -386,7 +403,8 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()["periodStartDate"][0], "La date de début doit être avant la date de fin")
 
-        payload = {"period_end_date": "2024-08-1"}
+        # change end_date to before start_date
+        payload = {"period_end_date": "2024-07-31"}
         response = self.client.patch(
             reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
         )
@@ -403,19 +421,19 @@ class TestWasteMeasurementsApi(APITestCase):
         WasteMeasurementFactory.create(
             canteen=canteen, period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
         )
+
+        # check a start date that falls in existing period
         measurement = WasteMeasurementFactory.create(
             canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
         )
-
-        # check a start date that falls in existing period
         payload = {"period_start_date": "2024-07-03"}
         response = self.client.patch(
             reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.json()["periodStartDate"][0],
-            "Il existe déjà une autre évaluation pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la évaluation existante ou corriger la date de début.",
+            response.json()["_All__"][0],
+            "Il existe déjà une autre évaluation dans la période 2024-07-03 à 2024-08-05. Veuillez modifier l'évaluation existante ou corriger les dates de la période.",
         )
 
         # check an end date that falls in existing period
@@ -428,8 +446,8 @@ class TestWasteMeasurementsApi(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.json()["periodEndDate"][0],
-            "Il existe déjà une autre évaluation pour la période 2024-07-01 à 2024-07-05. Veuillez modifier la évaluation existante ou corriger la date de fin.",
+            response.json()["_All__"][0],
+            "Il existe déjà une autre évaluation dans la période 2024-06-01 à 2024-07-03. Veuillez modifier l'évaluation existante ou corriger les dates de la période.",
         )
 
         # check a start and end date that encapsulate the periods of existing measurements
