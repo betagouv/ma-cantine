@@ -26,14 +26,12 @@ const ressources = [
   },
   {
     external: true,
-    href:
-      "https://ma-cantine.crisp.help/fr/article/comment-importer-un-fichier-csv-dans-excel-7zyxo/?bust=1737110731801#3-1-fichier-gt-importer",
+    href: "https://ma-cantine.crisp.help/fr/article/comment-importer-un-fichier-csv-dans-excel-7zyxo/",
     name: "Comment importer un fichier CSV dans Excel ?",
   },
   {
     external: true,
-    href:
-      "https://ma-cantine.crisp.help/fr/article/comment-enregistrer-un-fichier-excel-en-csv-cgfrbp/?bust=1737110744484",
+    href: "https://ma-cantine.crisp.help/fr/article/comment-enregistrer-un-fichier-excel-en-csv-cgfrbp/",
     name: "Comment enregistrer mon fichier Excel en CSV ?",
   },
 ]
