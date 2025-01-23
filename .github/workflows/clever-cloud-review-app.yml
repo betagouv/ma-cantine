@@ -3,8 +3,7 @@ name: Create review app with Clever Cloud
 on:
   pull_request_target:
     types: [opened, closed, synchronize, reopened]
-    # branches: [ staging ]
-    branches: [charline-l/ci-review-app-link-addon]
+    branches: [staging]
 
 jobs:
   deploy:
