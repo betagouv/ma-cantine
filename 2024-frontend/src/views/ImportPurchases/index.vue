@@ -15,6 +15,7 @@ const store = useRootStore()
 const router = useRouter()
 
 /* Data */
+const pictoDocument = "/static/images/picto-dsfr/document.svg"
 const url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json"
 const ressources = [
   {
@@ -127,7 +128,10 @@ const showErrors = (count) => {
     id="file-upload"
     class="fr-px-6w fr-px-xl-9w fr-py-6w fr-background-alt--blue-france fr-mt-4w fr-grid-row fr-grid-row--middle"
   >
-    <div class="import-file-upload fr-col-12 fr-py-3w fr-px-4w fr-card">
+    <div class="fr-hidden fr-unhidden-xl fr-col-3 fr-pr-6w fr-grid-row--center">
+      <img :src="pictoDocument" alt="" />
+    </div>
+    <div class="import-file-upload fr-col-12 fr-col-xl-9 fr-py-3w fr-px-4w fr-card">
       <DsfrFileUpload
         label="Avant d’importer votre fichier en CSV, assurez-vous que vos données respectent le format ci-dessus"
         hint="Extension du fichier autorisé : CSV"
