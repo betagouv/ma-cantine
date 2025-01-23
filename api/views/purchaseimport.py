@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 
 from api.permissions import IsAuthenticated
 from api.serializers import PurchaseSerializer
+from common.api.validata import validate_file_against_schema
 from common.utils import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Purchase
@@ -41,8 +42,11 @@ class ImportPurchasesView(APIView):
         self.is_duplicate_file = False
         self.duplicate_purchases = []
         self.duplicate_purchase_count = 0
-        self.data_schema = json.load(open("data/schemas/imports/achats.json"))
-        self.expected_header = [field["name"] for field in self.data_schema["fields"]]
+        self.schema_url = (
+            "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/achats.json"
+        )
+        self.schema_json = json.load(open("data/schemas/imports/achats.json"))
+        self.expected_header = [field["name"] for field in self.schema_json["fields"]]
         super().__init__(**kwargs)
 
     def post(self, request):
@@ -60,15 +64,17 @@ class ImportPurchasesView(APIView):
             file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
 
             with transaction.atomic():
-                self._process_file()
+                res = validate_file_against_schema()
+                print(res)
+                # self._process_file()
 
-                # If at least an error has been detected, we raise an error to interrupt the
-                # transaction and rollback the insertion of any data
-                if self.errors:
-                    raise IntegrityError()
+                # # If at least an error has been detected, we raise an error to interrupt the
+                # # transaction and rollback the insertion of any data
+                # if self.errors:
+                #     raise IntegrityError()
 
-                # Update all purchases's import source with file digest
-                Purchase.objects.filter(import_source=self.tmp_id).update(import_source=self.file_digest)
+                # # Update all purchases's import source with file digest
+                # Purchase.objects.filter(import_source=self.tmp_id).update(import_source=self.dialect)
 
             return self._get_success_response()
 
