@@ -31,7 +31,7 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.ORGA_ID }}
           GH_CC_RUN_SUCCEEDED_HOOK: echo "it works!"
-          GH_CC_PREBUILD_HOOK: ./clevercloud/pre-build-hook.sh Charline
+          GH_CC_PREBUILD_HOOK: ./clevercloud/pre-build-review-app-hook.sh ${{ secrets.ADDON_STAGING_ENV_CONFIG_ID}}
         with:
           type: 'python'
           set-env: true  # Enables the command to set env vars on Clever Cloud
