@@ -18,7 +18,7 @@ const router = useRouter()
 const url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json"
 const ressources = [
   {
-    download: true,
+    download: "achats_fichier_exemple_ma_cantine.csv",
     href: "/static/documents/achats_fichier_exemple_ma_cantine.csv",
     name: "Télécharger notre fichier d’exemple CSV",
     size: "189 octets",
