@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <p>Coucou</p>
     <WidgetHeader class="ma-4 mb-0 constrained" v-if="isWidget" />
     <AppHeader class="mx-auto constrained" v-else-if="!fullscreen" />
 
