@@ -43,7 +43,6 @@ import DiagnosticImportPage from "@/views/DiagnosticsImporter/DiagnosticImportPa
 import PublicCanteenStatisticsPage from "@/views/PublicCanteenStatisticsPage"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
-import PurchasesImporter from "@/views/PurchasesImporter"
 import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
 import FaqPage from "@/views/FaqPage"
@@ -449,16 +448,6 @@ const routes = [
     sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
-    path: "/importer-achats",
-    name: "PurchasesImporter",
-    component: PurchasesImporter,
-    meta: {
-      title: "Importer des achats",
-      authenticationRequired: true,
-    },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
-  },
-  {
     path: "/synthese-achats",
     name: "PurchasesSummary",
     component: PurchasesSummary,
@@ -606,6 +595,15 @@ const vue3Routes = [
       title: "Contactez-nous",
     },
     sitemapGroup: Constants.SitemapGroups.SITE,
+  },
+  {
+    path: "/importer-des-donnees/achats",
+    name: "ImportPurchases",
+    meta: {
+      title: "Importer des achats",
+      authenticationRequired: true,
+    },
+    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
 ]
 const VUE3_PREFIX = "/v2"
