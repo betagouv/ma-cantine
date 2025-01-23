@@ -16,7 +16,7 @@ importTypes.push({
   key: "PURCHASES",
   title: "Importer des achats",
   help: "Vous voulez importer des données d'achat pour des cantines existantes",
-  to: { name: "PurchasesImporter" },
+  to: { name: "ImportPurchases" },
 })
 
 const activeAccordion = ref("")
