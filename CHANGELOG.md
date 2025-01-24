@@ -6,6 +6,37 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.3.0](https://github.com/betagouv/ma-cantine/compare/v2025.2.0...v2025.3.0) (2025-01-24)
+
+
+### Nouveautés
+
+* **Import de masse:** Achats: Migration vue3 et redesign de la page ([#4923](https://github.com/betagouv/ma-cantine/issues/4923)) ([cfaaa71](https://github.com/betagouv/ma-cantine/commit/cfaaa71e5fee5eb72779f9504e94a2ce56017f91))
+* **Imports de masse:** Achats: remplace l'ancienne page pour la nouvelle ([#4946](https://github.com/betagouv/ma-cantine/issues/4946)) ([d088735](https://github.com/betagouv/ma-cantine/commit/d08873570f36d4fded815fc8d5a7d8abaa8cdfdb))
+* **Validata:** Achats: Rendre le schéma de données compatible TableSchema ([#4889](https://github.com/betagouv/ma-cantine/issues/4889)) ([5a8a134](https://github.com/betagouv/ma-cantine/commit/5a8a1347634ac057ce9d22beac1a5bc7e2cb4a2f))
+
+
+### Améliorations
+
+* **Imports de masse:** Achats: utiliser le nouveau schema amélioré pour l'affichage de la doc aux utilisateurs ([#4926](https://github.com/betagouv/ma-cantine/issues/4926)) ([4ea7b28](https://github.com/betagouv/ma-cantine/commit/4ea7b2811c9b462671304ae1f26101b487526deb))
+
+
+### Corrections (bugs, typos...)
+
+* **ETL:** Corriger l'appel à la tâche Celery d'export + modifie la fréquence à journalier (sauf weekend) ([#4929](https://github.com/betagouv/ma-cantine/issues/4929)) ([3b01a3f](https://github.com/betagouv/ma-cantine/commit/3b01a3fa932f92f2fa58a62c703cb7d93791b823))
+* **ETL:** Les départements et régions vides sont mal gérés ([#4935](https://github.com/betagouv/ma-cantine/issues/4935)) ([fe3793c](https://github.com/betagouv/ma-cantine/commit/fe3793cc61adb9fe78d2a342570d6a0224e6b31c))
+* **Import de Masse:** Achats: différents correctifs suite au test de la nouvelle page ([#4942](https://github.com/betagouv/ma-cantine/issues/4942)) ([69b3ced](https://github.com/betagouv/ma-cantine/commit/69b3ced007350c1964f8abf410fe73b9a319dfc2))
+* **Imports de masse:** Achats: enlève temporairement le picto svg (souci de build vue 3) ([#4930](https://github.com/betagouv/ma-cantine/issues/4930)) ([4002a33](https://github.com/betagouv/ma-cantine/commit/4002a33d9675ac39cf0163ec963c94242ab14776))
+
+
+### Technique
+
+* **deps:** bump virtualenv from 20.26.5 to 20.26.6 ([#4919](https://github.com/betagouv/ma-cantine/issues/4919)) ([2279c43](https://github.com/betagouv/ma-cantine/commit/2279c436fbef423f969792253d6a67d6f9679090))
+* **ETL:** Précharger les champs Many To Many [#4931](https://github.com/betagouv/ma-cantine/issues/4931) ([#4932](https://github.com/betagouv/ma-cantine/issues/4932)) ([eec3c62](https://github.com/betagouv/ma-cantine/commit/eec3c6283d8aab9ebae98ff1d122e3eb0e8bc064))
+* **Review apps:** création d'un hook dédié pour le prebuild ([#4945](https://github.com/betagouv/ma-cantine/issues/4945)) ([45b2c5d](https://github.com/betagouv/ma-cantine/commit/45b2c5dd49059df5b43f6320a768edaf4d4cc9ce))
+* **Review apps:** spécifie la version de python ([#4950](https://github.com/betagouv/ma-cantine/issues/4950)) ([526be60](https://github.com/betagouv/ma-cantine/commit/526be60f9faefb3829ab0c4df428c98ae4ceb19b))
+* **Tunnel gaspillage:** Simplification et homogénéisation des règles sur le début et la fin ([#4941](https://github.com/betagouv/ma-cantine/issues/4941)) ([9da5256](https://github.com/betagouv/ma-cantine/commit/9da52562c4456ccb4aa92b9e740dc452e80ab3e4))
+
 ## [2025.2.0](https://github.com/betagouv/ma-cantine/compare/v2025.1.0...v2025.2.0) (2025-01-17)
 
 
