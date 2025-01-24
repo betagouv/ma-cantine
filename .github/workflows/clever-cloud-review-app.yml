@@ -29,6 +29,7 @@ jobs:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.ORGA_ID }}
+          GH_CC_PYTHON_VERSION: 3.11
           GH_CC_RUN_SUCCEEDED_HOOK: echo "it works!"
           GH_CC_PREBUILD_HOOK: ./clevercloud/pre-build-review-app-hook.sh ${{ secrets.ADDON_STAGING_ENV_CONFIG_ID}}
         with:
