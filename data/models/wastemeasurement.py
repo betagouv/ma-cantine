@@ -11,7 +11,7 @@ from .canteen import Canteen
 
 def validate_before_today(value):
     if value > datetime.now().date():
-        raise ValidationError("La date doit être dans le passé")
+        raise ValidationError("La date ne peut pas être dans le futur")
 
 
 class WasteMeasurement(models.Model):
@@ -112,56 +112,25 @@ class WasteMeasurement(models.Model):
         if self.id:
             other_measurements = other_measurements.exclude(id=self.id)
 
-        if start_date_changed:
-            WasteMeasurement._validate_start_not_in_other_period(other_measurements, start_date)
-
-        if end_date_changed:
-            WasteMeasurement._validate_end_not_in_other_period(other_measurements, end_date)
-
         if start_date_changed or end_date_changed:
             WasteMeasurement._validate_period_not_in_other_period(other_measurements, start_date, end_date)
 
     def _validate_start_before_end(start_date, end_date, start_date_changed, end_date_changed):
-        if start_date_changed and start_date >= end_date:
-            raise ValidationError({"period_start_date": ["La date de début doit être avant la date de fin"]})
-        elif end_date_changed and end_date <= start_date:
-            raise ValidationError({"period_end_date": ["La date de fin doit être après la date de début"]})
-
-    def _validate_start_not_in_other_period(other_measurements, start_date):
-        measurement_containing_start_date = other_measurements.filter(
-            period_start_date__lte=start_date, period_end_date__gte=start_date
-        )
-        if measurement_containing_start_date.exists():
-            wm = measurement_containing_start_date.first()
-            raise ValidationError(
-                {
-                    "period_start_date": [
-                        f"Il existe déjà une autre évaluation pour la période {wm.period_start_date} à {wm.period_end_date}. Veuillez modifier la évaluation existante ou corriger la date de début."
-                    ]
-                }
-            )
-
-    def _validate_end_not_in_other_period(other_measurements, end_date):
-        measurement_containing_end_date = other_measurements.filter(
-            period_start_date__lte=end_date, period_end_date__gte=end_date
-        )
-        if measurement_containing_end_date.exists():
-            wm = measurement_containing_end_date.first()
-            raise ValidationError(
-                {
-                    "period_end_date": [
-                        f"Il existe déjà une autre évaluation pour la période {wm.period_start_date} à {wm.period_end_date}. Veuillez modifier la évaluation existante ou corriger la date de fin."
-                    ]
-                }
-            )
+        if start_date_changed and start_date > end_date:
+            raise ValidationError({"period_start_date": ["La date de début ne peut pas être après la date de fin"]})
+        elif end_date_changed and end_date < start_date:
+            raise ValidationError({"period_end_date": ["La date de fin ne peut pas être avant la date de début"]})
 
     def _validate_period_not_in_other_period(other_measurements, start_date, end_date):
         measurements_within_period = other_measurements.filter(
-            period_start_date__gte=start_date, period_end_date__lte=end_date
+            period_end_date__gte=start_date, period_start_date__lte=end_date
         )
         if measurements_within_period.exists():
             wm_count = measurements_within_period.count()
-            measure_count_str = "une autre évaluation" if wm_count == 1 else f"{wm_count} autres évaluations"
+            if wm_count > 1:
+                raise ValidationError(
+                    f"Il existe déjà {wm_count} autres évaluations dans la période {start_date} à {end_date}. Veuillez modifier les évaluations existantes ou corriger les dates de la période."
+                )
             raise ValidationError(
-                f"Il existe déjà {measure_count_str} dans la période {start_date} à {end_date}. Veuillez modifier les évaluations existantes ou corriger les dates de la période."
+                f"Il existe déjà une autre évaluation dans la période {start_date} à {end_date}. Veuillez modifier l'évaluation existante ou corriger les dates de la période."
             )

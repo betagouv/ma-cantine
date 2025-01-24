@@ -24,7 +24,7 @@ const detailedFields = [
     label: "Masse totale de déchets alimentaires sur l'année",
     unit: "kg",
     tooltip:
-      "Calculé en prenant les déchets alimentaires par repas pour la période, multiplié par le nombre de couverts par année pour l'établissement",
+      "Calculé en prenant les déchets alimentaires par repas dans la période, multiplié par le nombre de couverts par année pour l'établissement",
   },
   {
     heading: Constants.WasteMeasurement.preparation.title,
