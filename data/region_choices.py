@@ -2,7 +2,8 @@ from django.db import models
 
 
 def get_lib_region_from_code(region: str) -> str:
-    return Region(region).label.split(" - ")[1]
+    if region:
+        return Region(region).label.split(" - ")[1]
 
 
 class Region(models.TextChoices):
