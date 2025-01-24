@@ -51,8 +51,8 @@ app.conf.beat_schedule = {
         "schedule": nightly,
     },
     "export_datasets": {
-        "task": "macantine.tasks.export_datasets",
-        "schedule": weekly,
+        "task": "macantine.tasks.continous_datasets_export",
+        "schedule": daily_week,
     },
     "update_brevo_contacts": {
         "task": "macantine.tasks.update_brevo_contacts",
