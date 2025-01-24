@@ -16,7 +16,7 @@ from rest_framework.views import APIView
 
 from api.permissions import IsAuthenticated
 from api.serializers import PurchaseSerializer
-from common.api.validata import validate_file_against_schema
+from common.api.validata import process_errors, validate_file_against_schema
 from common.utils import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Purchase
@@ -63,18 +63,20 @@ class ImportPurchasesView(APIView):
             self.dialect = file_import.get_csv_file_dialect(self.file)
             file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
 
+            report = validate_file_against_schema(self.file, self.schema_url)
+            self.errors = process_errors(report)
+            print(self.errors)
+
             with transaction.atomic():
-                res = validate_file_against_schema()
-                print(res)
-                # self._process_file()
+                self._process_file()
 
-                # # If at least an error has been detected, we raise an error to interrupt the
-                # # transaction and rollback the insertion of any data
-                # if self.errors:
-                #     raise IntegrityError()
+                # If at least an error has been detected, we raise an error to interrupt the
+                # transaction and rollback the insertion of any data
+                if self.errors:
+                    raise IntegrityError()
 
-                # # Update all purchases's import source with file digest
-                # Purchase.objects.filter(import_source=self.tmp_id).update(import_source=self.dialect)
+                # Update all purchases's import source with file digest
+                Purchase.objects.filter(import_source=self.tmp_id).update(import_source=self.digest)
 
             return self._get_success_response()
 
