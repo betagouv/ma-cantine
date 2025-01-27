@@ -225,6 +225,7 @@
             </v-card>
           </v-col>
         </v-row>
+        <!-- chiffres faux (requêtes à revoir), on cache en attendant
         <h3 class="text-h6 font-weight-bold mt-10 mb-2">
           Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}
         </h3>
@@ -235,14 +236,15 @@
           </v-col>
         </v-row>
         <BadgesExplanation />
+        -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import BadgeCard from "./BadgeCard"
-import BadgesExplanation from "./BadgesExplanation"
+// import BadgeCard from "./BadgeCard"
+// import BadgesExplanation from "./BadgesExplanation"
 import labels from "@/data/quality-labels.json"
 import keyMeasures from "@/data/key-measures.json"
 import jsonDepartments from "@/departments.json"
@@ -257,8 +259,8 @@ import GraphComponent from "@/components/GraphComponent"
 export default {
   name: "PublicCanteenStatisticsPage",
   components: {
-    BadgeCard,
-    BadgesExplanation,
+    // BadgeCard,
+    // BadgesExplanation,
     BreadcrumbsNav,
     DsfrAutocomplete,
     DsfrSelect,
