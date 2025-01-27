@@ -91,21 +91,33 @@
       </v-card-text>
     </v-card>
 
-    <div v-if="locationText" class="pt-8">
-      <h2 class="text-h5 font-weight-bold">Les chiffres pour {{ locationText }}</h2>
+    <v-row v-if="diagnosticsLoading" justify="center" class="py-15">
+      <v-progress-circular indeterminate></v-progress-circular>
+    </v-row>
+    <div v-else class="pt-8">
+      <h2 class="text-h5 font-weight-bold">Concernant les cantines inscrites sur la plateforme</h2>
+      <p v-if="locationText" class="text-body-2 mt-4 grey--text text--darken-2">
+        <v-icon>mdi-map-marker</v-icon>
+        {{ locationText }}
+      </p>
       <p v-if="sectorsText" class="text-body-2 mt-4 grey--text text--darken-2">
         <v-icon>mdi-office-building</v-icon>
         {{ sectorsText }}
       </p>
       <v-row :class="{ 'flex-column': $vuetify.breakpoint.smAndDown, 'mt-8': true }">
-        <v-col cols="12" sm="8" md="6">
-          <div class="mb-5">
-            <p class="mb-0">
-              Au total, nous avons
-              <span class="text-h5 font-weight-bold">{{ statistics.canteenCount }}</span>
-              cantine{{ statistics.canteenCount == 1 ? "" : "s" }} sur {{ statsLevelDisplay }}.
-            </p>
-          </div>
+        <v-col cols="12" sm="6">
+          <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
+            <v-card-text>
+              <p class="mb-0">
+                <span class="text-h5 font-weight-black">{{ statistics.canteenCount }}</span>
+                <span class="text-body-2">
+                  cantines inscrites
+                </span>
+              </p>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6">
           <GraphComponent
             graphId="sector-chart"
             :label="sectorCategoryChartTitle.join(' ')"
@@ -126,14 +138,9 @@
           </GraphComponent>
         </v-col>
       </v-row>
-    </div>
-    <v-row v-else justify="center" class="py-15">
-      <v-progress-circular indeterminate></v-progress-circular>
-    </v-row>
-    <div v-if="!diagnosticsLoading">
       <v-row class="mt-10 mb-2 px-3 align-center">
         <h3 class="text-h6 font-weight-bold">
-          Qualité de produits en
+          À propos des objectifs EGalim
         </h3>
         <div>
           <label for="select-year" class="d-sr-only">
@@ -155,7 +162,7 @@
         </p>
       </div>
       <div v-else>
-        <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} diagnostics validés.&nbsp;:</p>
+        <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} cantines qui ont télédéclaré&nbsp;:</p>
         <v-row class="px-2">
           <v-col class="pl-0 pr-1" cols="12" sm="6" md="4">
             <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
@@ -221,9 +228,7 @@
         <h3 class="text-h6 font-weight-bold mt-10 mb-2">
           Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}
         </h3>
-        <p class="mb-8">
-          Parmi les mêmes {{ statistics.diagnosticsCount }} cantines qui ont commencé un diagnostic&nbsp;:
-        </p>
+        <p class="mb-8">Parmi les mêmes {{ statistics.diagnosticsCount }} cantines &nbsp;:</p>
         <v-row class="my-8">
           <v-col cols="12" sm="6" md="5" v-for="measure in otherMeasures" :key="measure.id" class="mb-4">
             <BadgeCard :measure="measure" :percentageAchieved="statistics[measure.badgeId + 'Percent']" />
@@ -232,9 +237,6 @@
         <BadgesExplanation />
       </div>
     </div>
-    <v-row v-else-if="locationText" justify="center" class="py-15">
-      <v-progress-circular indeterminate></v-progress-circular>
-    </v-row>
   </div>
 </template>
 
@@ -284,8 +286,7 @@ export default {
         "Nombre de cantines par catégorie de secteur.",
         "Une cantine peut avoir plusieurs catégories.",
       ],
-      defaultLocationText: "l'ensemble de la plateforme",
-      statsLevel: "site",
+      defaultLocationText: null,
       epcis: jsonEpcis,
       diagnosticsLoading: true,
     }
@@ -390,16 +391,6 @@ export default {
       })
       return desc
     },
-    statsLevelDisplay() {
-      return {
-        department: "ce département",
-        region: "cette région",
-        departments: "ces départements",
-        regions: "ces régions",
-        site: "ce site",
-        epci: "cet EPCI",
-      }[this.statsLevel]
-    },
     sectorsText() {
       let sectorsText = ""
       if (this.$route.query.sectors) {
@@ -490,7 +481,7 @@ export default {
         this.chosenEpcis.forEach((d) => {
           names.push(jsonEpcis.find((epci) => epci.code === d).nom)
         })
-        locationText = `les ${this.chosenEpcis.length} EPCIs : ${names.join(", ")}`
+        locationText = `${this.chosenEpcis.length} EPCIs : ${names.join(", ")}`
       } else if (this.chosenEpcis.length === 1) {
         locationText = `« ${jsonEpcis.find((epci) => epci.code === this.chosenEpcis[0]).nom} »`
       } else if (this.chosenDepartments.length > 1) {
@@ -498,7 +489,7 @@ export default {
         this.chosenDepartments.forEach((d) => {
           names.push(jsonDepartments.find((department) => department.departmentCode === d).departmentName)
         })
-        locationText = `les ${this.chosenDepartments.length} départements : ${names.join(", ")}`
+        locationText = `${this.chosenDepartments.length} départements : ${names.join(", ")}`
       } else if (this.chosenDepartments.length === 1) {
         locationText = `« ${
           jsonDepartments.find((department) => department.departmentCode === this.chosenDepartments[0]).departmentName
@@ -508,7 +499,7 @@ export default {
         this.chosenRegions.forEach((d) => {
           names.push(jsonRegions.find((region) => region.regionCode === d).regionName)
         })
-        locationText = `les ${this.chosenRegions.length} régions : ${names.join(", ")}`
+        locationText = `${this.chosenRegions.length} régions : ${names.join(", ")}`
       } else if (this.chosenRegions.length === 1) {
         locationText = `« ${jsonRegions.find((region) => region.regionCode === this.chosenRegions[0]).regionName} »`
       } else {
@@ -523,27 +514,14 @@ export default {
         this.chosenEpcis.forEach((e) => {
           query += `&epci=${e}`
         })
-        this.statsLevel = "epci"
       } else if (this.chosenDepartments.length) {
         this.chosenDepartments.forEach((d) => {
           query += `&department=${d}`
         })
-        if (this.chosenDepartments.length === 1) {
-          this.statsLevel = "department"
-        } else {
-          this.statsLevel = "departments"
-        }
       } else if (this.chosenRegions.length) {
         this.chosenRegions.forEach((r) => {
           query += `&region=${r}`
         })
-        if (this.chosenRegions.length === 1) {
-          this.statsLevel = "region"
-        } else {
-          this.statsLevel = "regions"
-        }
-      } else {
-        this.statsLevel = "site"
       }
       if (this.chosenSectors.length) {
         query += `&sectors=${this.chosenSectors.join("&sectors=")}`
