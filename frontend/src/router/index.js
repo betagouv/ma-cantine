@@ -413,7 +413,7 @@ const routes = [
     name: "PublicCanteenStatisticsPage",
     component: PublicCanteenStatisticsPage,
     meta: {
-      title: "Les cantines dans ma collectivité",
+      title: "Sur mon territoire",
     },
     sitemapGroup: Constants.SitemapGroups.LAW,
   },

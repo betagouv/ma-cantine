@@ -82,7 +82,7 @@ const navItems = [
         to: { name: "CanteenSearchLanding" },
       },
       {
-        text: "Dans ma collectivité",
+        text: "Sur mon territoire",
         to: { name: "PublicCanteenStatisticsPage" },
       },
       {
