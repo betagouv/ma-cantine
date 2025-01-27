@@ -184,7 +184,7 @@ export default {
     initialisePayload() {
       const originalValues = {
         valueTotalHt: this.diagnostic.valueTotalHt,
-        diagnosticType: this.diagnostic.diagnosticType || "SIMPLE",
+        diagnosticType: this.diagnostic.diagnosticType || "",
         valueBioHt: this.diagnostic.valueBioHt,
         valueSustainableHt: this.diagnostic.valueSustainableHt,
         valueEgalimOthersHt: this.diagnostic.valueEgalimOthersHt,
