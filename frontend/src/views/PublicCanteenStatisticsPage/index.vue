@@ -1,7 +1,7 @@
 <template>
   <div class="text-left grey--text text--darken-4">
     <BreadcrumbsNav />
-    <h1 class="text-h4 font-weight-black black--text mb-6">Découvrir les démarches chez vous</h1>
+    <h1 class="text-h4 font-weight-black black--text mb-6">Application de la loi EGalim sur mon territoire</h1>
 
     <v-card outlined>
       <v-card-text>
@@ -90,6 +90,7 @@
         </v-form>
       </v-card-text>
     </v-card>
+
     <div v-if="locationText" class="pt-8">
       <h2 class="text-h5 font-weight-bold">Les chiffres pour {{ locationText }}</h2>
       <p v-if="sectorsText" class="text-body-2 mt-4 grey--text text--darken-2">
@@ -584,7 +585,7 @@ export default {
       this.chosenSectors = this.$route.query.sectors?.split(",").map((s) => parseInt(s, 10)) || []
     },
     updateDocumentTitle() {
-      let title = `Les cantines dans ma collectivité - ${this.$store.state.pageTitleSuffix}`
+      let title = `Sur mon territoire - ${this.$store.state.pageTitleSuffix}`
       if (this.chosenRegions.length || this.chosenDepartments.length || this.chosenEpcis.length) {
         let locationText = this.createLocationText()
         if (locationText.startsWith("les")) {
