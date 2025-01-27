@@ -11,7 +11,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@gouvfr/dsfr": "^1.12.1",
+    "@gouvfr/dsfr": "^1.13.0",
     "@gouvfr/dsfr-chart": "^1.0.0",
     "@gouvminint/vue-dsfr": "^7.2.0",
     "@vuelidate/core": "^2.0.3",
