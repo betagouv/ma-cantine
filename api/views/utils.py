@@ -1,35 +1,11 @@
-import hashlib
 import json
 import logging
 
 import chardet
-from django.conf import settings
-from django.core.exceptions import ValidationError
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
-from rest_framework.views import APIView
 from simple_history.utils import update_change_reason
 
 logger = logging.getLogger(__name__)
-
-
-class CSVImportApiView(APIView):
-    def _verify_file_size(self):
-        if self.file.size > settings.CSV_IMPORT_MAX_SIZE:
-            raise ValidationError(
-                f"Ce fichier est trop grand, merci d'utiliser un fichier de moins de {settings.CSV_IMPORT_MAX_SIZE_PRETTY}"
-            )
-
-    def _verify_file_format(self):
-        if self.file.content_type not in ["text/csv", "text/tab-separated-values"]:
-            raise ValidationError(
-                f"Ce fichier est au format {self.file.content_type}, merci d'exporter votre fichier au format CSV et réessayer."
-            )
-
-    def _get_file_digest(self):
-        file_hash = hashlib.md5()
-        for row in self.file:
-            file_hash.update(row)
-        return file_hash.hexdigest()
 
 
 def camelize(data):

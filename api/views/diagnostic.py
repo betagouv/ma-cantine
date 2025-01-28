@@ -13,6 +13,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.views import APIView
 
 from api.exceptions import DuplicateException
 from api.permissions import (
@@ -22,7 +23,8 @@ from api.permissions import (
     IsCanteenManager,
 )
 from api.serializers import DiagnosticAndCanteenSerializer, ManagerDiagnosticSerializer
-from api.views.utils import CSVImportApiView, update_change_reason_with_auth
+from api.views.utils import update_change_reason_with_auth
+from common import file_import as file_import
 from common.utils import send_mail
 from data.models import Canteen, Teledeclaration
 from data.models.diagnostic import Diagnostic
@@ -92,14 +94,14 @@ class DiagnosticUpdateView(UpdateAPIView):
         update_change_reason_with_auth(self, diagnostic)
 
 
-class EmailDiagnosticImportFileView(CSVImportApiView):
+class EmailDiagnosticImportFileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
             self.file = request.data["file"]
-            super()._verify_file_size()
-            super()._verify_file_format()
+            file_import.validate_file_size(self.file)
+            file_import.validate_file_format(self.file)
             email = request.data.get("email", request.user.email).strip()
             context = {
                 "from": email,

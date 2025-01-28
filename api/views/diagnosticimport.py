@@ -19,7 +19,7 @@ from simple_history.utils import update_change_reason
 
 from api.permissions import IsAuthenticated
 from api.serializers import FullCanteenSerializer
-from api.views.utils import CSVImportApiView
+from common import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.diagnostic import Diagnostic
@@ -31,7 +31,7 @@ from .utils import camelize, decode_bytes
 logger = logging.getLogger(__name__)
 
 
-class ImportDiagnosticsView(ABC, CSVImportApiView):
+class ImportDiagnosticsView(ABC):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
@@ -80,8 +80,8 @@ class ImportDiagnosticsView(ABC, CSVImportApiView):
         try:
             with transaction.atomic():
                 self.file = request.data["file"]
-                super()._verify_file_size()
-                super()._verify_file_format()
+                file_import.validate_file_size(self.file)
+                file_import.validate_file_format(self.file)
                 self._process_file(self.file)
 
                 if self.errors:

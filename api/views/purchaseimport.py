@@ -12,10 +12,11 @@ from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.views import APIView
 
 from api.permissions import IsAuthenticated
 from api.serializers import PurchaseSerializer
-from api.views.utils import CSVImportApiView
+from common import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Purchase
 
@@ -24,7 +25,7 @@ from .utils import camelize, decode_bytes
 logger = logging.getLogger(__name__)
 
 
-class ImportPurchasesView(CSVImportApiView):
+class ImportPurchasesView(APIView):
     permission_classes = [IsAuthenticated]
     max_error_items = 30
 
@@ -49,10 +50,10 @@ class ImportPurchasesView(CSVImportApiView):
         logger.info("Purchase bulk import started")
         try:
             self.file = request.data["file"]
-            super()._verify_file_size()
-            super()._verify_file_format()
+            file_import.validate_file_size(self.file)
+            file_import.validate_file_format(self.file)
 
-            self.file_digest = super()._get_file_digest()
+            self.file_digest = file_import.get_file_digest(self.file)
             self._check_duplication()
 
             with transaction.atomic():
