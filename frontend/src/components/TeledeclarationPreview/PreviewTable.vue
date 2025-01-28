@@ -82,6 +82,14 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      wasteMeasurements: [],
+    }
+  },
+  mounted() {
+    this.fetchWasteMeasurements()
+  },
   computed: {
     centralKitchenDiagostic() {
       if (this.diagnostic.year && this.canteen.centralKitchenDiagnostics)
@@ -592,6 +600,9 @@ export default {
       }
       return null
     },
+    year() {
+      return this.diagnostic.year
+    },
   },
   methods: {
     getWasteActions(wasteActions) {
@@ -650,6 +661,15 @@ export default {
     },
     toCurrency(value) {
       return toCurrency(value)
+    },
+    fetchWasteMeasurements() {
+      if (!this.diagnostic.hasWasteMeasures) return
+      const query = `period_start_date_after=${this.year}-01-01&period_end_date_before=${this.year + 1}-01-01`
+      fetch(`/api/v1/canteens/${this.canteen.id}/wasteMeasurements?${query}`)
+        .then((response) => response.json())
+        .then((response) => {
+          this.wasteMeasurements = response
+        })
     },
   },
 }
