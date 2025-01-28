@@ -71,7 +71,15 @@
 <script>
 import Constants from "@/constants"
 import communicationSupports from "@/data/communication-supports.json"
-import { sectorDisplayString, sectorsSelectList, approSummary, toCurrency, selectListToObject } from "@/utils"
+import {
+  sectorDisplayString,
+  sectorsSelectList,
+  approSummary,
+  toCurrency,
+  selectListToObject,
+  formatDate,
+  formatNumber,
+} from "@/utils"
 
 export default {
   props: {
@@ -424,8 +432,19 @@ export default {
         },
       ]
 
-      // TODO : ajouter les mesures
       const wasteMeasurements = []
+      for (let i = 0; i < this.wasteMeasurements.length; i++) {
+        const waste = this.wasteMeasurements[i]
+        const total = formatNumber(waste.totalMass)
+        const leftovers = formatNumber(waste.leftoversTotalMass)
+        const unserved = formatNumber(waste.unservedTotalMass)
+        const preparation = formatNumber(waste.preparationTotalMass)
+        const line = {
+          label: `Mesure du ${formatDate(waste.periodStartDate)} - ${formatDate(waste.periodEndDate)}`,
+          value: `Total ${total}kg : reste assiette ${leftovers}kg, denrées présentées aux convives mais non servies ${unserved}kg, excédents de préparation dont stock ${preparation}kg`,
+        }
+        wasteMeasurements.push(line)
+      }
 
       const afterWasteMeasurements = [
         {
