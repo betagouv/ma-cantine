@@ -15,7 +15,7 @@ from sib_api_v3_sdk.rest import ApiException
 
 import macantine.brevo as brevo
 from api.views.utils import update_change_reason
-from common.utils import get_token_sirene
+from common.api_insee import get_token_sirene
 from data.models import Canteen, User
 
 from .celery import app

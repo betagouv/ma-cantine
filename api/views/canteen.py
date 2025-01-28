@@ -65,7 +65,8 @@ from api.serializers import (
     SatelliteCanteenSerializer,
 )
 from api.views.utils import camelize, update_change_reason_with_auth
-from common.utils import get_token_sirene, send_mail
+from common.api_insee import get_token_sirene
+from common.utils import send_mail
 from data.department_choices import Department
 from data.models import (
     Canteen,
