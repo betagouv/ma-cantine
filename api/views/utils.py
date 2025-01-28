@@ -13,10 +13,6 @@ def camelize(data):
     return json.loads(camel_case_bytes.decode("utf-8"))
 
 
-def normalise_siret(siret):
-    return siret.replace(" ", "").replace("\xa0", "")
-
-
 def update_change_reason_with_auth(view, object):
     try:
         update_change_reason(
