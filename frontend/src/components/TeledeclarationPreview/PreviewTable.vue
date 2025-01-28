@@ -422,43 +422,6 @@ export default {
           value: this.getNullableBooleanLabel(this.diagnostic.hasWasteMeasures),
           class: this.diagnostic.hasWasteMeasures === null ? "warn" : "",
         },
-        // TODO: the next few fields are only shown if hasWasteMeasures
-        {
-          label: "Total des déchets alimentaires pour l'année (kg)",
-          isNumber: true,
-          value: this.diagnostic.totalLeftovers,
-          class: this.isTruthyOrZero(this.diagnostic.totalLeftovers) ? "" : "warn",
-        },
-        {
-          label: "Période de mesure (jours)",
-          isNumber: true,
-          value: this.diagnostic.durationLeftoversMeasurement,
-          class: this.isTruthyOrZero(this.diagnostic.durationLeftoversMeasurement) ? "" : "warn",
-        },
-        {
-          label: "Restes de pain kg/an",
-          isNumber: true,
-          value: this.diagnostic.breadLeftovers,
-          class: this.isTruthyOrZero(this.diagnostic.breadLeftovers) ? "" : "warn",
-        },
-        {
-          label: "Restes servis (plateau) kg/an",
-          isNumber: true,
-          value: this.diagnostic.servedLeftovers,
-          class: this.isTruthyOrZero(this.diagnostic.servedLeftovers) ? "" : "warn",
-        },
-        {
-          label: "Restes non servis kg/an",
-          isNumber: true,
-          value: this.diagnostic.unservedLeftovers,
-          class: this.isTruthyOrZero(this.diagnostic.unservedLeftovers) ? "" : "warn",
-        },
-        {
-          label: "Restes de composantes kg/an",
-          isNumber: true,
-          value: this.diagnostic.sideLeftovers,
-          class: this.isTruthyOrZero(this.diagnostic.sideLeftovers) ? "" : "warn",
-        },
         {
           label: "Actions contre le gaspillage en place",
           value: this.getWasteActions(this.diagnostic.wasteActions),
