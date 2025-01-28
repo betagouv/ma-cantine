@@ -24,8 +24,7 @@ from api.permissions import (
 )
 from api.serializers import DiagnosticAndCanteenSerializer, ManagerDiagnosticSerializer
 from api.views.utils import update_change_reason_with_auth
-from common import file_import as file_import
-from common.utils import send_mail
+from common.utils import file_import, send_mail
 from data.models import Canteen, Teledeclaration
 from data.models.diagnostic import Diagnostic
 

@@ -19,14 +19,14 @@ from simple_history.utils import update_change_reason
 
 from api.permissions import IsAuthenticated
 from api.serializers import FullCanteenSerializer
-from common import file_import
+from common.utils import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.diagnostic import Diagnostic
 from data.models.teledeclaration import Teledeclaration
 
 from .canteen import AddManagerView
-from .utils import camelize, decode_bytes
+from .utils import camelize
 
 logger = logging.getLogger(__name__)
 
@@ -161,7 +161,7 @@ class ImportDiagnosticsView(ABC):
             self._update_location_data(locations_csv_str)
 
     def _decode_file(self, file):
-        (result, encoding) = decode_bytes(file.read())
+        (result, encoding) = file_import.decode_bytes(file.read())
         self.encoding_detected = encoding
         return result
 

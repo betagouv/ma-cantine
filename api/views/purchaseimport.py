@@ -16,11 +16,11 @@ from rest_framework.views import APIView
 
 from api.permissions import IsAuthenticated
 from api.serializers import PurchaseSerializer
-from common import file_import
+from common.utils import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Purchase
 
-from .utils import camelize, decode_bytes
+from .utils import camelize, normalise_siret
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +55,8 @@ class ImportPurchasesView(APIView):
 
             self.file_digest = file_import.get_file_digest(self.file)
             self._check_duplication()
+
+            self.file_dialect = file_import.get_csv_file_dialect(self.file)
 
             with transaction.atomic():
                 self._process_file()
@@ -107,8 +109,7 @@ class ImportPurchasesView(APIView):
             # Sniffing 1st line
             if read_header:
                 # decode header, discarding encoding result that might not be accurate without more data
-                (decoded_row, _) = decode_bytes(row)
-                self.dialect = csv.Sniffer().sniff(decoded_row)
+                (decoded_row, _) = file_import.decode_bytes(row)
                 csvreader = csv.reader(io.StringIO("".join(decoded_row)), self.dialect)
                 for header in csvreader:
                     if header != self.expected_header:
@@ -133,7 +134,7 @@ class ImportPurchasesView(APIView):
     def _decode_chunk(self, chunk_list):
         if self.encoding_detected is None:
             chunk = b"".join(chunk_list)
-            (_, encoding) = decode_bytes(chunk)
+            (_, encoding) = file_import.decode_bytes(chunk)
             self.encoding_detected = encoding
         return [chunk.decode(self.encoding_detected) for chunk in chunk_list]
 
