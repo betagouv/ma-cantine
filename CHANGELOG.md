@@ -6,6 +6,31 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.3.1](https://github.com/betagouv/ma-cantine/compare/v2025.3.0...v2025.3.1) (2025-01-28)
+
+
+### Améliorations
+
+* **Statistiques territoire:** cacher les chiffres en bas en attendant d'améliorer les requêtes backend ([#4957](https://github.com/betagouv/ma-cantine/issues/4957)) ([40f9f5d](https://github.com/betagouv/ma-cantine/commit/40f9f5d5beb4c129e928c0fe17e2d200e496c73e))
+* **Statistiques territoire:** étoffer les stats dans la section EGalim. clean du CSS ([#4958](https://github.com/betagouv/ma-cantine/issues/4958)) ([ff0e298](https://github.com/betagouv/ma-cantine/commit/ff0e298bf0f2b9a0cc32345e74df9ce5658cabec))
+* **Statistiques territoire:** modification du titre de la page et du breadcrumb ([#4954](https://github.com/betagouv/ma-cantine/issues/4954)) ([d56c319](https://github.com/betagouv/ma-cantine/commit/d56c319bd8f8fdde0990d1943dada9e135855735))
+* **Statistiques territoire:** réorganisation du contenu (renommage de sous-titre, nouvelle card, clarifications) ([#4955](https://github.com/betagouv/ma-cantine/issues/4955)) ([1cc0e3f](https://github.com/betagouv/ma-cantine/commit/1cc0e3fb4b612024cb39a98dd92b3863997f6d99))
+
+
+### Corrections (bugs, typos...)
+
+* **Imports de masse:** Renomme un secteur ([#4951](https://github.com/betagouv/ma-cantine/issues/4951)) ([d96408e](https://github.com/betagouv/ma-cantine/commit/d96408e0b31075df09e61fd9caa61fc78c18f4ea))
+* **Télédéclaration:** supprime la pré-sélection du mode de saisie de la télédéclaration qui ne s'enregistrait pas ([#4952](https://github.com/betagouv/ma-cantine/issues/4952)) ([a8d8a08](https://github.com/betagouv/ma-cantine/commit/a8d8a08d50339e3964ca9f7de8f8e2c3de339f1f))
+
+
+### Technique
+
+* **API:** Filters: basculer dans un fichier utils.py dédié ([#4934](https://github.com/betagouv/ma-cantine/issues/4934)) ([3cc558e](https://github.com/betagouv/ma-cantine/commit/3cc558e245e0e64e7b3d97e6f861d90bad09192f))
+* **deps:** bump @gouvfr/dsfr from 1.12.1 to 1.13.0 in /2024-frontend ([#4821](https://github.com/betagouv/ma-cantine/issues/4821)) ([d94c498](https://github.com/betagouv/ma-cantine/commit/d94c49825e2c7342c0a79b569e1ceb0a0282dbdb))
+* **deps:** bump @gouvminint/vue-dsfr from 7.1.0 to 7.2.0 in /2024-frontend ([#4820](https://github.com/betagouv/ma-cantine/issues/4820)) ([92947ae](https://github.com/betagouv/ma-cantine/commit/92947aed3b3956c2dd7279a28c644d54bde0e88a))
+* **deps:** bump nanoid from 3.3.7 to 3.3.8 in /frontend ([#4920](https://github.com/betagouv/ma-cantine/issues/4920)) ([92bb06d](https://github.com/betagouv/ma-cantine/commit/92bb06d06f42fd84db31d4d756d17c7f1a551b78))
+* **deps:** bump vue-i18n from 10.0.5 to 11.0.1 in /2024-frontend ([#4822](https://github.com/betagouv/ma-cantine/issues/4822)) ([30b1879](https://github.com/betagouv/ma-cantine/commit/30b187940d8e540932c9a858f3135060591a4a09))
+
 ## [2025.3.0](https://github.com/betagouv/ma-cantine/compare/v2025.2.0...v2025.3.0) (2025-01-24)
 
 
