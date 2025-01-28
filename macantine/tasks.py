@@ -15,13 +15,15 @@ from sib_api_v3_sdk.rest import ApiException
 
 import macantine.brevo as brevo
 from api.views.utils import update_change_reason
-from common.api_insee import get_token_sirene
+from common.api.insee import (
+    fetch_geo_data_from_api_insee_sirene_by_siret,
+    get_token_sirene,
+)
 from data.models import Canteen, User
 
 from .celery import app
 from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS
 from .etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
-from .utils import fetch_geo_data_from_api_insee_sirene_by_siret
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
