@@ -405,7 +405,7 @@ export default {
       const vegetarianMenuBases = this.getVegetarianMenuBases(this.diagnostic.vegetarianMenuBases)
       const communicationFrequency = this.getCommunicationFrequency(this.diagnostic.communicationFrequency)
 
-      return [
+      const beforeWasteMeasurements = [
         {
           label: "Diagnostic sur le gaspillage alimentaire réalisé",
           value: this.getNullableBooleanLabel(this.diagnostic.hasWasteDiagnostic),
@@ -422,6 +422,12 @@ export default {
           value: this.getNullableBooleanLabel(this.diagnostic.hasWasteMeasures),
           class: this.diagnostic.hasWasteMeasures === null ? "warn" : "",
         },
+      ]
+
+      // TODO : ajouter les mesures
+      const wasteMeasurements = []
+
+      const afterWasteMeasurements = [
         {
           label: "Actions contre le gaspillage en place",
           value: this.getWasteActions(this.diagnostic.wasteActions),
@@ -532,6 +538,8 @@ export default {
           class: communicationFrequency === "Non renseigné" ? "warn" : "",
         },
       ]
+
+      return [...beforeWasteMeasurements, ...wasteMeasurements, ...afterWasteMeasurements]
     },
     sectors() {
       return sectorDisplayString(this.canteen.sectors, this.$store.state.sectors)
