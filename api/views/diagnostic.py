@@ -24,7 +24,7 @@ from api.permissions import (
 )
 from api.serializers import DiagnosticAndCanteenSerializer, ManagerDiagnosticSerializer
 from api.views.utils import update_change_reason_with_auth
-from common.utils import send_mail
+from common.utils import file_import, send_mail
 from data.models import Canteen, Teledeclaration
 from data.models.diagnostic import Diagnostic
 
@@ -98,8 +98,9 @@ class EmailDiagnosticImportFileView(APIView):
 
     def post(self, request):
         try:
-            file = request.data["file"]
-            self._verify_file_size(file)
+            self.file = request.data["file"]
+            file_import.validate_file_size(self.file)
+            file_import.validate_file_format(self.file)
             email = request.data.get("email", request.user.email).strip()
             context = {
                 "from": email,
@@ -111,7 +112,7 @@ class EmailDiagnosticImportFileView(APIView):
                 to=[settings.CONTACT_EMAIL],
                 reply_to=[email],
                 template="unusual_diagnostic_import_file",
-                attachments=[(file.name, file.read(), file.content_type)],
+                attachments=[(self.file.name, self.file.read(), self.file.content_type)],
                 context=context,
             )
         except ValidationError as e:
@@ -126,11 +127,6 @@ class EmailDiagnosticImportFileView(APIView):
             return HttpResponseServerError()
 
         return HttpResponse()
-
-    @staticmethod
-    def _verify_file_size(file):
-        if file.size > settings.CSV_IMPORT_MAX_SIZE:
-            raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
 
 class DiagnosticsToTeledeclarePagination(LimitOffsetPagination):

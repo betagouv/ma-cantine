@@ -7,7 +7,6 @@ from abc import ABC, abstractmethod
 from decimal import Decimal, InvalidOperation
 
 import requests
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -21,13 +20,14 @@ from simple_history.utils import update_change_reason
 
 from api.permissions import IsAuthenticated
 from api.serializers import FullCanteenSerializer
+from common.utils import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.diagnostic import Diagnostic
 from data.models.teledeclaration import Teledeclaration
 
 from .canteen import AddManagerView
-from .utils import camelize, decode_bytes
+from .utils import camelize
 
 logger = logging.getLogger(__name__)
 
@@ -81,8 +81,8 @@ class ImportDiagnosticsView(ABC, APIView):
         try:
             with transaction.atomic():
                 self.file = request.data["file"]
-                ImportDiagnosticsView._verify_file_format(self.file)
-                ImportDiagnosticsView._verify_file_size(self.file)
+                file_import.validate_file_size(self.file)
+                file_import.validate_file_format(self.file)
                 self._process_file(self.file)
 
                 if self.errors:
@@ -113,18 +113,6 @@ class ImportDiagnosticsView(ABC, APIView):
             details=message,
             import_type=self.import_type,
         )
-
-    @staticmethod
-    def _verify_file_format(file):
-        if file.content_type != "text/csv" and file.content_type != "text/tab-separated-values":
-            raise ValidationError(
-                f"Ce fichier est au format {file.content_type}, merci d'exporter votre fichier au format CSV et réessayer."
-            )
-
-    @staticmethod
-    def _verify_file_size(file):
-        if file.size > settings.CSV_IMPORT_MAX_SIZE:
-            raise ValidationError("Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo")
 
     def check_admin_values(self, header):
         is_admin_import = any("admin_" in column for column in header)
@@ -174,7 +162,7 @@ class ImportDiagnosticsView(ABC, APIView):
             self._update_location_data(locations_csv_str)
 
     def _decode_file(self, file):
-        (result, encoding) = decode_bytes(file.read())
+        (result, encoding) = file_import.decode_bytes(file.read())
         self.encoding_detected = encoding
         return result
 

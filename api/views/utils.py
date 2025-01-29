@@ -1,7 +1,6 @@
 import json
 import logging
 
-import chardet
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 from simple_history.utils import update_change_reason
 
@@ -21,10 +20,3 @@ def update_change_reason_with_auth(view, object):
     except Exception as e:
         logger.warning(f"Unable to set reason change on {view.__class__.__name__} for object ID : {object.id}: \n{e}")
         update_change_reason(object, "Unknown")
-
-
-def decode_bytes(bytes_string):
-    detection_result = chardet.detect(bytes_string)
-    encoding_detected = detection_result["encoding"]
-    logger.info(f"Encoding autodetected : {encoding_detected}")
-    return (bytes_string.decode(encoding_detected), encoding_detected)
