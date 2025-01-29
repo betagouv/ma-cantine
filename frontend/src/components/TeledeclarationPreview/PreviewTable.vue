@@ -436,14 +436,16 @@ export default {
       for (let i = 0; i < this.wasteMeasurements.length; i++) {
         const waste = this.wasteMeasurements[i]
         const total = formatNumber(waste.totalMass)
-        const leftovers = formatNumber(waste.leftoversTotalMass)
-        const unserved = formatNumber(waste.unservedTotalMass)
-        const preparation = formatNumber(waste.preparationTotalMass)
-        const line = {
-          label: `Mesure du ${formatDate(waste.periodStartDate)} - ${formatDate(waste.periodEndDate)}`,
-          value: `Total ${total}kg : reste assiette ${leftovers}kg, denrées présentées aux convives mais non servies ${unserved}kg, excédents de préparation dont stock ${preparation}kg`,
+        const label = `Mesure du ${formatDate(waste.periodStartDate)} - ${formatDate(waste.periodEndDate)}`
+
+        let value = `Total ${total}kg`
+        if (waste.isSortedBySource) {
+          const leftovers = formatNumber(waste.leftoversTotalMass)
+          const unserved = formatNumber(waste.unservedTotalMass)
+          const preparation = formatNumber(waste.preparationTotalMass)
+          value += ` : reste assiette ${leftovers}kg, denrées présentées aux convives mais non servies ${unserved}kg, excédents de préparation dont stock ${preparation}kg`
         }
-        wasteMeasurements.push(line)
+        wasteMeasurements.push({ label, value })
       }
 
       const afterWasteMeasurements = [
