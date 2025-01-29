@@ -6,9 +6,10 @@ import { useRootStore } from "@/stores/root"
 import { importPurchases } from "@/services/imports.js"
 import { trackEvent } from "@/services/matomo.js"
 
-/* Store and Router */
+/* Store and Router and Emit */
 const store = useRootStore()
 const router = useRouter()
+const emit = defineEmits(["success"])
 
 /* Data */
 const pictoDocument = "/static/images/picto-dsfr/document.svg"
@@ -36,6 +37,7 @@ const successUpload = (props) => {
   const { seconds, count } = props
   const message = `Fichier traité en ${Math.round(seconds)} secondes`
   store.notify({ message })
+  emit("success", count)
   trackEvent({ category: "inquiry", action: "send", value: "import-purchases-success" })
 }
 
