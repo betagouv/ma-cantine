@@ -51,7 +51,7 @@ const success = (count) => {
   </p>
   <ImportExplanation :ressources="ressources" />
   <ImportSchemaTable :url="schemaUrl" />
-  <ImportFileUpload @success="success()" />
+  <ImportFileUpload @success="success" />
   <ImportSuccessModal
     :opened="importSuccess"
     :message="
