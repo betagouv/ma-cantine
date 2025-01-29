@@ -1,7 +1,10 @@
 <script setup>
 import ImportExplanation from "@/components/ImportExplanation.vue"
+import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 
 /* Data */
+const schemaUrl =
+  "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/cantines.json"
 const ressources = [
   {
     download: "fichier_exemple_ma_cantine_no_diag.csv",
@@ -32,4 +35,5 @@ const ressources = [
     .
   </p>
   <ImportExplanation :ressources />
+  <ImportSchemaTable :url="schemaUrl" />
 </template>
