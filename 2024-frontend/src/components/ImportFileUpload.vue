@@ -3,13 +3,13 @@ import AppSeparator from "@/components/AppSeparator.vue"
 import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
-import { importPurchases } from "@/services/imports.js"
 import { trackEvent } from "@/services/matomo.js"
 
-/* Store and Router and Emit */
+/* Store and Router and Emit and Props */
 const store = useRootStore()
 const router = useRouter()
 const emit = defineEmits(["success"])
+const props = defineProps(["importFile", "eventMatomo"])
 
 /* Data */
 const pictoDocument = "/static/images/picto-dsfr/document.svg"
@@ -20,7 +20,8 @@ const upload = (file) => {
   if (isProcessingFile.value) return
   isProcessingFile.value = true
   initErrors()
-  importPurchases({ file: file })
+  props
+    .importFile({ file: file })
     .then((json) => {
       if (json.count >= 1) successUpload({ seconds: json.seconds, count: json.count })
       else if (json.duplicateFile) duplicatedUpload(json.duplicatePurchases)
@@ -33,12 +34,12 @@ const upload = (file) => {
     })
 }
 
-const successUpload = (props) => {
-  const { seconds, count } = props
+const successUpload = (params) => {
+  const { seconds, count } = params
   const message = `Fichier traité en ${Math.round(seconds)} secondes`
   store.notify({ message })
   emit("success", count)
-  trackEvent({ category: "inquiry", action: "send", value: "import-purchases-success" })
+  trackEvent({ category: "inquiry", action: "send", value: props.eventMatomo })
 }
 
 const duplicatedUpload = (purchases) => {
