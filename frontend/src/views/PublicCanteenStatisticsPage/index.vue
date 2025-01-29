@@ -216,6 +216,14 @@
           Aucune cantine n'a renseigné des données relatives à la loi EGalim pour l'année {{ year }}.
         </p>
       </div>
+      <div v-else-if="year === 2024">
+        <DsfrCallout class="my-6">
+          <p>
+            Les données 2024 récoltées durant la campagne 2025 seront disponibles d'ici la fin d'année (dès lors que le
+            rapport statistique sera validé par le parlement).
+          </p>
+        </DsfrCallout>
+      </div>
       <div v-else>
         <p class="mt-4">Parmi les {{ statistics.diagnosticsCount }} cantines qui ont télédéclaré&nbsp;:</p>
         <v-row class="px-2">
@@ -290,6 +298,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 import DsfrSelect from "@/components/DsfrSelect"
 import GraphComponent from "@/components/GraphComponent"
+import DsfrCallout from "@/components/DsfrCallout"
 
 export default {
   name: "PublicCanteenStatisticsPage",
@@ -300,6 +309,7 @@ export default {
     DsfrAutocomplete,
     DsfrSelect,
     GraphComponent,
+    DsfrCallout,
   },
   data() {
     const yearGenerator = function*() {
