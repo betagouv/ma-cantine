@@ -1,8 +1,10 @@
 <script setup>
+import { ref } from "vue"
 import { importCanteens } from "@/services/imports.js"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
+import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 
 /* Data */
 const schemaUrl =
@@ -27,8 +29,12 @@ const ressources = [
 ]
 
 /* Success */
-const success = () => {
-  alert("success")
+const showModal = ref(false)
+const canteenCount = ref(0)
+
+const success = (count) => {
+  canteenCount.value = count
+  showModal.value = true
 }
 </script>
 
@@ -43,5 +49,14 @@ const success = () => {
   </p>
   <ImportExplanation :ressources />
   <ImportSchemaTable :url="schemaUrl" />
-  <ImportFileUpload @success="success()" :importFile="importCanteens" eventMatomo="import-canteen-success" />
+  <ImportFileUpload @success="success" :importFile="importCanteens" eventMatomo="import-canteen-success" />
+  <ImportSuccessModal
+    :opened="showModal"
+    :message="
+      canteenCount > 1
+        ? 'Vos cantines sont enregistrées et sont maintenant disponibles.'
+        : 'Votre cantine est enregistrée et est maintenant disponible.'
+    "
+    @close="showModal = false"
+  />
 </template>
