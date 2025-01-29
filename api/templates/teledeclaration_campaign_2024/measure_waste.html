@@ -8,7 +8,8 @@
 <div>
     {% include "./response.html" with success=has_waste_measures success_text="Réalisé des mesures contre le gaspillage alimentaire" failure_text="Ne pas réalisé des mesures contre le gaspillage alimentaire" only %}
 
-    {% if has_waste_measures %}
+    {# En 2024 : la ou les mesures du gaspillage alimentaire sont enregistrées dans un tunnel à part, et les champs _leftovers ne sont plus utilisés #}
+    {% if has_waste_measures and year < 2024 %}
         <ul>
             <li>
                 {% include "./labelled_value.html" with text="Total des déchets alimentaires" value=total_leftovers unit="kg" only %}
