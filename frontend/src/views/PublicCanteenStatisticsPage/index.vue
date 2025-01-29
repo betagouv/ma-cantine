@@ -218,7 +218,7 @@
       </div>
       <div v-else-if="year === 2024">
         <DsfrCallout class="my-6">
-          <p>
+          <p class="mb-0">
             Les données 2024 récoltées durant la campagne 2025 seront disponibles d'ici la fin d'année (dès lors que le
             rapport statistique sera validé par le parlement).
           </p>
