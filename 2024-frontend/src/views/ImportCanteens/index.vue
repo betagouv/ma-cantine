@@ -1,5 +1,25 @@
 <script setup>
-console.log("Import cantine")
+import ImportExplanation from "@/components/ImportExplanation.vue"
+
+/* Data */
+const ressources = [
+  {
+    download: "fichier_exemple_ma_cantine_no_diag.csv",
+    href: "/static/documents/fichier_exemple_ma_cantine_no_diag.csv",
+    name: "Télécharger notre fichier d’exemple CSV",
+    size: "496 octets",
+  },
+  {
+    external: true,
+    href: "https://ma-cantine.crisp.help/fr/article/comment-importer-un-fichier-csv-dans-excel-7zyxo/",
+    name: "Comment importer un fichier CSV dans Excel ?",
+  },
+  {
+    external: true,
+    href: "https://ma-cantine.crisp.help/fr/article/comment-enregistrer-un-fichier-excel-en-csv-cgfrbp/",
+    name: "Comment enregistrer mon fichier Excel en CSV ?",
+  },
+]
 </script>
 
 <template>
@@ -11,4 +31,5 @@ console.log("Import cantine")
     <router-link :to="{ name: 'NewCanteen' }">notre formulaire</router-link>
     .
   </p>
+  <ImportExplanation :ressources />
 </template>
