@@ -1,4 +1,6 @@
 <script setup>
+import { ref } from "vue"
+
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportHelpContact from "@/components/ImportHelpContact.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
@@ -26,6 +28,12 @@ const ressources = [
     name: "Comment enregistrer mon fichier Excel en CSV ?",
   },
 ]
+
+/* Sucess */
+// à renommer en faisant un lien avec la modal
+const importSuccess = ref(false)
+const purchaseCount = ref(0)
+
 </script>
 
 <template>
