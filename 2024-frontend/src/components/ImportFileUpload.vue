@@ -26,6 +26,7 @@ const upload = (file) => {
       if (json.count >= 1) successUpload({ seconds: json.seconds, count: json.count })
       else if (json.duplicateFile) duplicatedUpload(json.duplicatePurchases)
       else if (json.errorCount > 0) errorUpload({ count: json.errorCount, errors: json.errors })
+      else if (json.errors.length > 0) errorUpload({ count: json.errors.length, errors: json.errors })
       isProcessingFile.value = false
     })
     .catch((e) => {
