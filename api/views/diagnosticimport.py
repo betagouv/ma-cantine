@@ -15,6 +15,7 @@ from django.db.models.functions import Lower
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.views import APIView
 from simple_history.utils import update_change_reason
 
 from api.permissions import IsAuthenticated
@@ -31,7 +32,7 @@ from .utils import camelize
 logger = logging.getLogger(__name__)
 
 
-class ImportDiagnosticsView(ABC):
+class ImportDiagnosticsView(ABC, APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))

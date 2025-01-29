@@ -47,6 +47,9 @@ def get_file_digest(file):
 
 
 def get_csv_file_dialect(file):
+    """
+    Possible values: 'excel', 'excel-tab', 'unix'
+    """
     file.seek(0)
     row_1 = file.readline()
     (decoded_row, _) = decode_bytes(row_1)

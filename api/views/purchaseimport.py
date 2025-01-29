@@ -20,7 +20,7 @@ from common.utils import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Purchase
 
-from .utils import camelize, normalise_siret
+from .utils import camelize
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +56,7 @@ class ImportPurchasesView(APIView):
             self.file_digest = file_import.get_file_digest(self.file)
             self._check_duplication()
 
-            self.file_dialect = file_import.get_csv_file_dialect(self.file)
+            self.dialect = file_import.get_csv_file_dialect(self.file)
 
             with transaction.atomic():
                 self._process_file()
