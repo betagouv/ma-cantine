@@ -34,6 +34,10 @@ const ressources = [
 const importSuccess = ref(false)
 const purchaseCount = ref(0)
 
+const success = (count) => {
+  purchaseCount.value = count
+  importSuccess.value = true
+}
 </script>
 
 <template>
@@ -47,7 +51,7 @@ const purchaseCount = ref(0)
   </p>
   <ImportExplanation :ressources="ressources" />
   <ImportSchemaTable :url="schemaUrl" />
-  <ImportFileUpload />
+  <ImportFileUpload @success="success()" />
   <ImportSuccessModal
     :opened="importSuccess"
     :message="
