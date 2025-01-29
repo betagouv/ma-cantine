@@ -30,13 +30,12 @@ const ressources = [
 ]
 
 /* Sucess */
-// à renommer en faisant un lien avec la modal
-const importSuccess = ref(false)
+const showModal = ref(false)
 const purchaseCount = ref(0)
 
 const success = (count) => {
   purchaseCount.value = count
-  importSuccess.value = true
+  showModal.value = true
 }
 </script>
 
@@ -53,13 +52,13 @@ const success = (count) => {
   <ImportSchemaTable :url="schemaUrl" />
   <ImportFileUpload @success="success" />
   <ImportSuccessModal
-    :opened="importSuccess"
+    :opened="showModal"
     :message="
       purchaseCount > 1
         ? 'Vos achats sont enregistrés et sont maintenant disponibles.'
         : 'Votre achat est enregistré et est maintenant disponible.'
     "
-    @close="importSuccess = false"
+    @close="showModal = false"
   />
   <ImportHelpContact class="fr-mt-8w" />
 </template>
