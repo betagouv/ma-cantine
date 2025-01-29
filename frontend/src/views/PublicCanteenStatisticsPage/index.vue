@@ -216,11 +216,11 @@
           Aucune cantine n'a renseigné des données relatives à la loi EGalim pour l'année {{ year }}.
         </p>
       </div>
-      <div v-else-if="year === 2024">
+      <div v-else-if="year === yearLast">
         <DsfrCallout class="my-6">
           <p class="mb-0">
-            Les données 2024 récoltées durant la campagne 2025 seront disponibles d'ici la fin d'année (dès lors que le
-            rapport statistique sera validé par le parlement).
+            Les données {{ yearLast }} récoltées durant la campagne {{ yearLast + 1 }} seront disponibles d'ici la fin
+            d'année (dès lors que le rapport statistique sera validé par le parlement).
           </p>
         </DsfrCallout>
       </div>
@@ -300,6 +300,13 @@ import DsfrSelect from "@/components/DsfrSelect"
 import GraphComponent from "@/components/GraphComponent"
 import DsfrCallout from "@/components/DsfrCallout"
 
+const yearLast = lastYear()
+const yearsList = Array.from(new Array(yearLast - 2020 + 1), (x, i) => i + 2020).map((year) => ({
+  key: year,
+  text: `données ${year} (télédéclarées en ${year + 1})`,
+}))
+console.log(yearsList)
+
 export default {
   name: "PublicCanteenStatisticsPage",
   components: {
@@ -312,12 +319,10 @@ export default {
     DsfrCallout,
   },
   data() {
-    const yearGenerator = function*() {
-      for (let n = 2020; n <= lastYear(); n += 1) yield { key: n, text: `données ${n} (télédéclarées en ${n + 1})` }
-    }
     return {
-      year: lastYear(),
-      yearsList: Array.from(yearGenerator()),
+      year: yearLast, // init
+      yearLast: yearLast,
+      yearsList: yearsList,
       labels,
       approMeasure: keyMeasures.find((measure) => measure.badgeId === "appro"),
       otherMeasures: keyMeasures.filter((measure) => measure.badgeId !== "appro"),
