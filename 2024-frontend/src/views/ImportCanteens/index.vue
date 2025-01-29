@@ -1,6 +1,8 @@
 <script setup>
+import { importCanteens } from "@/services/imports.js"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
+import ImportFileUpload from "@/components/ImportFileUpload.vue"
 
 /* Data */
 const schemaUrl =
@@ -23,6 +25,11 @@ const ressources = [
     name: "Comment enregistrer mon fichier Excel en CSV ?",
   },
 ]
+
+/* Success */
+const success = () => {
+  alert("success")
+}
 </script>
 
 <template>
@@ -36,4 +43,5 @@ const ressources = [
   </p>
   <ImportExplanation :ressources />
   <ImportSchemaTable :url="schemaUrl" />
+  <ImportFileUpload @success="success()" :importFile="importCanteens" eventMatomo="import-canteen-success" />
 </template>
