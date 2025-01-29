@@ -7,6 +7,7 @@ import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
 import CGU from "@/views/CGU"
 import ContactPage from "@/views/ContactPage"
 import ImportPurchases from "@/views/ImportPurchases"
+import ImportCanteens from "@/views/ImportCanteens"
 import { useRootStore } from "@/stores/root"
 
 const routes = [
@@ -82,6 +83,19 @@ const routes = [
     component: ImportPurchases,
     meta: {
       title: "Importer des achats",
+      authenticationRequired: true,
+      breadcrumbs: [
+        { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+        { to: { name: "ImportSelection" }, title: "Importer des données" },
+      ],
+    },
+  },
+  {
+    path: "/importer-des-donnees/cantines",
+    name: "ImportCanteens",
+    component: ImportCanteens,
+    meta: {
+      title: "Importer des cantines",
       authenticationRequired: true,
       breadcrumbs: [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
