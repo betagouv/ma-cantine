@@ -6,6 +6,29 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.3.2](https://github.com/betagouv/ma-cantine/compare/v2025.3.1...v2025.3.2) (2025-01-29)
+
+
+### Améliorations
+
+* **Statistiques territoire:** Indiquer l'année de télédéclaration ([#4966](https://github.com/betagouv/ma-cantine/issues/4966)) ([436b7ba](https://github.com/betagouv/ma-cantine/commit/436b7bab36bc6c8b4af91b4a5e24643a4c8677ca))
+* **Statistiques territoire:** Mettre un message pour l'année en cours (2024) et cacher certains chiffres ([#4968](https://github.com/betagouv/ma-cantine/issues/4968)) ([8b172e0](https://github.com/betagouv/ma-cantine/commit/8b172e0bf61f3a897487b99c5737769d13ba5ab6))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration:** Gaspillage alimentaire: affiche les mesures du nouveau tunnel dans la télédéclaration ([#4965](https://github.com/betagouv/ma-cantine/issues/4965)) ([0097bd4](https://github.com/betagouv/ma-cantine/commit/0097bd4e2b5ce2a54908fc103a2d5c9b49914145))
+* **Télédéclaration:** Gaspillage alimentaire: désactive temporairement le remplissage automatique ([#4967](https://github.com/betagouv/ma-cantine/issues/4967)) ([de15b94](https://github.com/betagouv/ma-cantine/commit/de15b942bcac2161ed96b66814ece9e286813f9e))
+
+
+### Technique
+
+* **API:** Imports: nouvelle librairie de gestion des imports (qui check le format, la taille max, et si déjà uploadé) ([#4936](https://github.com/betagouv/ma-cantine/issues/4936)) ([7fa3b00](https://github.com/betagouv/ma-cantine/commit/7fa3b00d75c4877a2b98dbdb58704974fc9caad9))
+* **common:** centraliser la logique API Adresse dans un nouveau fichier api/adresse.py ([#4963](https://github.com/betagouv/ma-cantine/issues/4963)) ([dc04f52](https://github.com/betagouv/ma-cantine/commit/dc04f5272579d8c82b5574a943f61a045788e9af))
+* **common:** centraliser la logique API Insee dans un nouveau fichier api/insee.py ([#4962](https://github.com/betagouv/ma-cantine/issues/4962)) ([aab167f](https://github.com/betagouv/ma-cantine/commit/aab167f3043221fd425115305276aa69ec75e291))
+* **common:** nouveau fichier utils/siret.py ([#4961](https://github.com/betagouv/ma-cantine/issues/4961)) ([387a8cc](https://github.com/betagouv/ma-cantine/commit/387a8cc68a65274f9324cec53c4faf54a6cbe6d8))
+* **deps-dev:** bump vite from 5.4.11 to 5.4.14 in /2024-frontend ([#4938](https://github.com/betagouv/ma-cantine/issues/4938)) ([c4af8cc](https://github.com/betagouv/ma-cantine/commit/c4af8cc4bcf73801dac46ca890a52b232905d3fe))
+
 ## [2025.3.1](https://github.com/betagouv/ma-cantine/compare/v2025.3.0...v2025.3.1) (2025-01-28)
 
 
