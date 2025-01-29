@@ -65,7 +65,11 @@ from api.serializers import (
     SatelliteCanteenSerializer,
 )
 from api.views.utils import camelize, update_change_reason_with_auth
-from common.utils import get_token_sirene, send_mail
+from common.api.insee import (
+    fetch_geo_data_from_api_insee_sirene_by_siret,
+    get_token_sirene,
+)
+from common.utils import send_mail
 from data.department_choices import Department
 from data.models import (
     Canteen,
@@ -76,10 +80,7 @@ from data.models import (
     Teledeclaration,
 )
 from data.region_choices import Region
-from macantine.utils import (
-    fetch_geo_data_from_api_entreprise_by_siret,
-    fetch_geo_data_from_api_insee_sirene_by_siret,
-)
+from macantine.utils import fetch_geo_data_from_api_entreprise_by_siret
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
