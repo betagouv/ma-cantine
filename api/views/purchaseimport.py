@@ -17,10 +17,11 @@ from rest_framework.views import APIView
 
 from api.permissions import IsAuthenticated
 from api.serializers import PurchaseSerializer
+from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Purchase
 
 from .diagnosticimport import ImportDiagnosticsView
-from .utils import camelize, decode_bytes, normalise_siret
+from .utils import camelize, decode_bytes
 
 logger = logging.getLogger(__name__)
 
