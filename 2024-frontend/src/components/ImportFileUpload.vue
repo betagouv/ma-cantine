@@ -32,14 +32,10 @@ const upload = (file) => {
     })
 }
 
-const importSuccess = ref(false)
-const purchaseCount = ref(0)
 const successUpload = (props) => {
   const { seconds, count } = props
   const message = `Fichier traité en ${Math.round(seconds)} secondes`
   store.notify({ message })
-  purchaseCount.value = count
-  importSuccess.value = true
   trackEvent({ category: "inquiry", action: "send", value: "import-purchases-success" })
 }
 
