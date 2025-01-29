@@ -151,7 +151,9 @@
             hide-details
             id="select-year"
             class="ml-2"
-            style="max-width: 8em"
+            item-text="text"
+            item-value="key"
+            style="max-width: 24em"
           />
         </div>
       </v-row>
@@ -301,10 +303,10 @@ export default {
   },
   data() {
     const yearGenerator = function*() {
-      for (let n = 2020; n <= lastYear(); n += 1) yield n
+      for (let n = 2020; n <= lastYear(); n += 1) yield { key: n, text: `données ${n} (télédéclarées en ${n + 1})` }
     }
     return {
-      year: null,
+      year: lastYear(),
       yearsList: Array.from(yearGenerator()),
       labels,
       approMeasure: keyMeasures.find((measure) => measure.badgeId === "appro"),
