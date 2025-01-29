@@ -1,13 +1,13 @@
 <template>
   <v-form @submit.prevent v-model="formIsValid">
     <div v-if="stepUrlSlug === 'plan-action'">
-      <!-- <LastYearAutofillOption
+      <LastYearAutofillOption
         :canteen="canteen"
         :diagnostic="diagnostic"
         :fields="fields"
         @tunnel-autofill="onTunnelAutofill"
         class="mb-xs-6 mb-xl-16"
-      /> -->
+      />
       <DsfrRadio
         v-model="payload.hasWasteDiagnostic"
         label="J’ai réalisé un diagnostic sur les causes probables de mes déchets alimentaires"
@@ -242,7 +242,7 @@
 <script>
 import { applicableDiagnosticRules, formatDate, formatNumber } from "@/utils"
 import validators from "@/validators"
-// import LastYearAutofillOption from "../LastYearAutofillOption"
+import LastYearAutofillOption from "../LastYearAutofillOption"
 import DsfrCallout from "@/components/DsfrCallout"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
@@ -302,7 +302,7 @@ export default {
     },
   },
   components: {
-    // LastYearAutofillOption,
+    LastYearAutofillOption,
     DsfrCallout,
     DsfrTextField,
     DsfrTextarea,
