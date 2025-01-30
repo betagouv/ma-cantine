@@ -21,7 +21,9 @@ def process_errors(report):
             {
                 "row": error["rowNumber"],
                 "status": 400,
-                "message": f"Champ '{error['fieldName']}' : Valeur « {error['cell']} » : {error['message']}",
+                "column": error["fieldName"],
+                "cell": error["cell"],
+                "message": error["message"],
             }
         )
     return errors

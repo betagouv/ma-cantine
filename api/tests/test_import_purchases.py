@@ -232,16 +232,14 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         errors = response.json()["errors"]
-        self.assertEqual(errors.pop(0)["message"], "Champ 'siret' : Le siret de la cantine ne peut pas être vide")
+        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée")
         self.assertEqual(
             errors.pop(0)["message"], "Une cantine avec le siret « 86180597100897 » n'existe pas sur la plateforme."
         )
         self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
-        self.assertEqual(
-            errors.pop(0)["message"], "Champ 'description du produit' : La description ne peut pas être vide"
-        )
-        self.assertEqual(errors.pop(0)["message"], "Champ 'fournisseur' : Le fournisseur ne peut pas être vide")
-        self.assertEqual(errors.pop(0)["message"], "Champ 'date' : La date ne peut pas être vide")
+        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée")
+        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée")
+        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée")
         self.assertEqual(
             errors.pop(0)["message"],
             "Champ 'date' : Le format de date de la valeur «\xa02022-02-31\xa0» est correct (AAAA-MM-JJ), mais la date n’est pas valide.",
@@ -250,7 +248,7 @@ class TestPurchaseImport(APITestCase):
             errors.pop(0)["message"],
             "Champ 'date' : Le format de date de la valeur «\xa02022/03/01\xa0» n’est pas valide. Le format correct est AAAA-MM-JJ.",
         )
-        self.assertEqual(errors.pop(0)["message"], "Champ 'prix HT' : Le prix ne peut pas être vide")
+        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée")
         self.assertEqual(
             errors.pop(0)["message"], "Champ 'prix HT' : La valeur «\xa0A price\xa0» doit être un nombre décimal."
         )
