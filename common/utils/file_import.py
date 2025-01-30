@@ -65,3 +65,13 @@ def verify_first_line_is_header(file, file_dialect, expected_header):
     header = next(csvreader)
     if header != expected_header:
         raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
+
+
+def verify_first_line_is_header_list(file, file_dialect, expected_header_list):
+    file.seek(0)
+    row_1 = file.readline()
+    (decoded_row, _) = decode_bytes(row_1)
+    csvreader = csv.reader(io.StringIO("".join(decoded_row)), file_dialect)
+    header = next(csvreader)
+    if not any([set(header).issubset(set(expected_header)) for expected_header in expected_header_list]):
+        raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")

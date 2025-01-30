@@ -75,7 +75,7 @@ class ImportDiagnosticsView(ABC, APIView):
     @abstractmethod
     def import_type(): ...
 
-    def post(self, request):
+    def post(self, request):  # noqa: C901
         self.start_time = time.time()
         logger.info("Diagnostic bulk import started")
         try:
@@ -83,10 +83,37 @@ class ImportDiagnosticsView(ABC, APIView):
                 self.file = request.data["file"]
                 file_import.validate_file_size(self.file)
                 file_import.validate_file_format(self.file)
+
+                self.dialect = file_import.get_csv_file_dialect(self.file)
+                print(self.import_type)
+                if self.import_type == ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE:
+                    file_import.verify_first_line_is_header_list(
+                        self.file,
+                        self.dialect,
+                        [
+                            self.expected_header_canteen,
+                            self.expected_header_diagnostics,
+                            self.expected_header_diagnostics_admin,
+                        ],
+                    )
+                elif self.import_type == ImportType.DIAGNOSTIC_COMPLETE:
+                    file_import.verify_first_line_is_header(
+                        self.file, self.dialect, self.expected_header_diagnostics_complete
+                    )
+                elif self.import_type == ImportType.CC_SIMPLE:
+                    file_import.verify_first_line_is_header(
+                        self.file, self.dialect, self.expected_header_diagnostics_cc
+                    )
+                elif self.import_type == ImportType.CC_COMPLETE:
+                    file_import.verify_first_line_is_header(
+                        self.file, self.dialect, self.expected_header_diagnostics_complete_cc
+                    )
+
                 self._process_file(self.file)
 
                 if self.errors:
                     raise IntegrityError()
+
         except PermissionDenied as e:
             self._log_error(e.detail)
             self.errors = [{"row": 0, "status": 401, "message": e.detail}]
@@ -118,28 +145,17 @@ class ImportDiagnosticsView(ABC, APIView):
         is_admin_import = any("admin_" in column for column in header)
         if is_admin_import and not self.request.user.is_staff:
             raise PermissionDenied(
-                detail="Vous n'êtes pas autorisé à importer des diagnostics administratifs. Veillez supprimer les colonnes commençant par 'admin_'"
+                detail="Vous n'êtes pas autorisé à importer des diagnostics administratifs. Veuillez supprimer les colonnes commençant par 'admin_'"
             )
 
     def _process_file(self, file):
+        file.seek(0)
         locations_csv_str = "siret,citycode,postcode\n"
         has_locations_to_find = False
 
         filestring = self._decode_file(file)
-        filelines = filestring.splitlines()
-        dialect = csv.Sniffer().sniff(filelines[0])
-
-        csvreader = csv.reader(filelines, dialect=dialect)
+        csvreader = csv.reader(filestring.splitlines(), self.dialect)
         header = next(csvreader)
-        if not (
-            set(header).issubset(set(self.expected_header_diagnostics_admin))
-            or set(header).issubset(set(self.expected_header_canteen))
-            or set(header).issubset(set(self.expected_header_diagnostics_cc))
-            or set(header).issubset(set(self.expected_header_diagnostics_complete_cc))
-            or set(header).issubset(set(self.expected_header_diagnostics_complete))
-            or set(header).issubset(set(self.expected_header_diagnostics))
-        ):
-            raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
         self.check_admin_values(header)
 
         for row_number, row in enumerate(csvreader):
