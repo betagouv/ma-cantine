@@ -141,6 +141,7 @@ class ImportPurchasesView(APIView):
 
         decoded_chunk = self._decode_chunk(chunk)
         csvreader = csv.reader(io.StringIO("".join(decoded_chunk)), self.dialect)
+        next(csvreader)  # skip header
         for row_number, row in enumerate(csvreader, start=1):
             siret = None
 
