@@ -54,6 +54,8 @@ class ImportPurchasesView(APIView):
         logger.info("Purchase bulk import started")
         try:
             self.file = request.data["file"]
+
+            # Step 1: Format validation
             file_import.validate_file_size(self.file)
             file_import.validate_file_format(self.file)
 
@@ -63,10 +65,13 @@ class ImportPurchasesView(APIView):
             self.dialect = file_import.get_csv_file_dialect(self.file)
             file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
 
+            # Step 2: Schema validation (Validata)
             report = validate_file_against_schema(self.file, self.schema_url)
             self.errors = process_errors(report)
-            print(self.errors)
+            if len(self.errors):
+                return self._get_success_response()
 
+            # Step 3: ma-cantine validation (permissions, last checks...) + import
             with transaction.atomic():
                 self._process_file()
 
