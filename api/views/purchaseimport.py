@@ -57,6 +57,7 @@ class ImportPurchasesView(APIView):
             self._check_duplication()
 
             self.dialect = file_import.get_csv_file_dialect(self.file)
+            file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
 
             with transaction.atomic():
                 self._process_file()
@@ -103,28 +104,16 @@ class ImportPurchasesView(APIView):
 
     def _process_file(self):
         chunk = []
-        read_header = True
-        row_count = 1
+        row_count = 0
         for row in self.file:
-            # Sniffing 1st line
-            if read_header:
-                # decode header, discarding encoding result that might not be accurate without more data
-                (decoded_row, _) = file_import.decode_bytes(row)
-                csvreader = csv.reader(io.StringIO("".join(decoded_row)), self.dialect)
-                for header in csvreader:
-                    if header != self.expected_header:
-                        raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
-                read_header = False
-                row_count = 0
-            else:
-                # Split into chunks
-                chunk.append(row)
+            # Split into chunks
+            chunk.append(row)
 
-                # Process full chunk
-                if row_count == settings.CSV_PURCHASE_CHUNK_LINES:
-                    self._process_chunk(chunk)
-                    chunk = []
-                    row_count = 0
+            # Process full chunk
+            if row_count == settings.CSV_PURCHASE_CHUNK_LINES:
+                self._process_chunk(chunk)
+                chunk = []
+                row_count = 0
             row_count += 1
 
         # Process the last chunk
@@ -156,10 +145,6 @@ class ImportPurchasesView(APIView):
             siret = None
 
             try:
-                # first check that the number of columns is good
-                #   to throw error if badly formatted early on.
-                if len(row) < 7:
-                    raise BadRequest()
                 siret = row.pop(0)
                 if siret == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
