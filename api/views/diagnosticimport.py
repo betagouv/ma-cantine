@@ -85,7 +85,6 @@ class ImportDiagnosticsView(ABC, APIView):
                 file_import.validate_file_format(self.file)
 
                 self.dialect = file_import.get_csv_file_dialect(self.file)
-                print(self.import_type)
                 if self.import_type == ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE:
                     file_import.verify_first_line_is_header_list(
                         self.file,
@@ -158,7 +157,7 @@ class ImportDiagnosticsView(ABC, APIView):
         header = next(csvreader)
         self.check_admin_values(header)
 
-        for row_number, row in enumerate(csvreader):
+        for row_number, row in enumerate(csvreader, start=1):
             try:
                 canteen, should_update_geolocation = self._save_data_from_row(row)
                 self.canteens[canteen.siret] = canteen
@@ -172,7 +171,7 @@ class ImportDiagnosticsView(ABC, APIView):
             except Exception as e:
                 for error in self._parse_errors(e, row):
                     self.errors.append(
-                        ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number + 1)
+                        ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number)
                     )
         if has_locations_to_find:
             self._update_location_data(locations_csv_str)
