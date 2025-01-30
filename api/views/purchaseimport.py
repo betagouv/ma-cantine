@@ -188,18 +188,9 @@ class ImportPurchasesView(APIView):
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
 
         description = row.pop(0)
-        if description == "":
-            raise ValidationError({"description": "La description ne peut pas être vide"})
         provider = row.pop(0)
-        if provider == "":
-            raise ValidationError({"provider": "Le fournisseur ne peut pas être vide"})
         date = row.pop(0)
-        if date == "":
-            raise ValidationError({"date": "La date ne peut pas être vide"})
-
         price = row.pop(0).strip().replace(",", ".")
-        if price == "":
-            raise ValidationError({"price_ht": "Le prix ne peut pas être vide"})
 
         # We try to round the price. If we can't, we will let Django's field validation
         # manage the error - hence the `pass` in the exception handler
