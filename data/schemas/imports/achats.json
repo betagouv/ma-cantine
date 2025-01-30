@@ -60,19 +60,20 @@
     },
     {
       "constraints": {
-        "enum": [
-          "VIANDES_VOLAILLES",
-          "CHARCUTERIE",
-          "PRODUITS_DE_LA_MER",
-          "FRUITS_ET_LEGUMES",
-          "PRODUITS_LAITIERS",
-          "BOULANGERIE",
-          "BOISSONS",
-          "AUTRES"
-        ],
+        "pattern": "^ *(VIANDES_VOLAILLES|CHARCUTERIE|PRODUITS_DE_LA_MER|FRUITS_ET_LEGUMES|PRODUITS_LAITIERS|BOULANGERIE|BOISSONS|AUTRES) *$",
         "required": false
       },
       "description": "",
+      "doc_enum": [
+        "VIANDES_VOLAILLES",
+        "CHARCUTERIE",
+        "PRODUITS_DE_LA_MER",
+        "FRUITS_ET_LEGUMES",
+        "PRODUITS_LAITIERS",
+        "BOULANGERIE",
+        "BOISSONS",
+        "AUTRES"
+      ],
       "example": "VIANDES_VOLAILLES",
       "format": "default",
       "name": "famille_produits",
@@ -81,7 +82,7 @@
     },
     {
       "constraints": {
-        "pattern": "(?:(?:^|,)(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|FRANCE|SHORT_DISTRIBUTION|LOCAL))+$",
+        "pattern": "^ *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|FRANCE|SHORT_DISTRIBUTION|LOCAL)( *, *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|FRANCE|SHORT_DISTRIBUTION|LOCAL))* *$",
         "required": false
       },
       "description": "",
@@ -112,15 +113,16 @@
     },
     {
       "constraints": {
-        "enum": [
-          "AUTOUR_SERVICE",
-          "DEPARTMENT",
-          "REGION",
-          "AUTRE"
-        ],
+        "pattern": "^ *(AUTOUR_SERVICE|DEPARTMENT|REGION|AUTRE) *$",
         "required": false
       },
       "description": "Obligatoire si l'achat a la caractéristique de LOCAL.",
+      "doc_enum": [
+        "AUTOUR_SERVICE",
+        "DEPARTMENT",
+        "REGION",
+        "AUTRE"
+      ],
       "example": "AUTOUR_SERVICE",
       "format": "default",
       "name": "definition_local",
