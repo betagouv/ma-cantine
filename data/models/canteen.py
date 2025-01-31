@@ -123,29 +123,29 @@ class Canteen(SoftDeletionModel):
 
     class Ministries(models.TextChoices):
         AFFAIRES_ETRANGERES = "affaires_etrangeres", "Affaires étrangères"
-        AGRICULTURE = "agriculture", "Agriculture, Alimentation et Forêts"
-        ARMEE = "armee", "Armées"
-        TERRITOIRES = "territoires", "Cohésion des territoires - Relations avec les collectivités territoriales"
+        AGRICULTURE = "agriculture_alimentation", "Agriculture, Alimentation et Forêts"
+        ARMEE = "armees", "Armées"
+        TERRITOIRES = "territoires_relations", "Cohésion des territoires - Relations avec les collectivités territoriales"
         CULTURE = "culture", "Culture"
-        ECONOMIE = "economie", "Économie et finances"
-        JEUNESSE = "jeunesse", "Éducation et Jeunesse"
-        ENSEIGNEMENT_SUPERIEUR = "enseignement_superieur", "Enseignement supérieur et Recherche"
-        ECOLOGIE = "ecologie", "Environnement"
-        TRANSFORMATION = "transformation", "Fonction Publiques"
+        ECONOMIE = "economie_finances", "Économie et finances"
+        JEUNESSE = "education_jeunesse", "Éducation et Jeunesse"
+        ENSEIGNEMENT_SUPERIEUR = "superieur_recherche", "Enseignement supérieur et Recherche"
+        ECOLOGIE = "environnement", "Environnement"
+        TRANSFORMATION = "fonction_publique", "Fonction Publiques"
         INTERIEUR = "interieur", "Intérieur et Outre-mer"
         JUSTICE = "justice", "Justice"
         MER = "mer", "Mer"
         ADMINISTRATION_TERRITORIALE = (
-            "administration_territoriale",
+            "prefecture_ATE",
             "Préfecture - Administration Territoriale de l'État (ATE)",
         )
         AUTORITES_INDEPENDANTES = (
-            "autorites_independantes",
+            "presidence_autre",
             "Présidence de la république - Autorités indépendantes (AAI, API)",
         )
         PREMIER_MINISTRE = "premier_ministre", "Services du Premier Ministre"
-        SANTE = "sante", "Santé et Solidarités"
-        SPORT = "sport", "Sport"
+        SANTE = "sante_solidarites", "Santé et Solidarités"
+        SPORT = "sports", "Sports"
         TRAVAIL = "travail", "Travail"
         OUTRE_MER = "outre_mer", "Ministère des Outre-mer"
         AUTRE = "autre", "Autre"
