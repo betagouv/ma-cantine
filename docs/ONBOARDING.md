@@ -18,7 +18,7 @@ D'autres conseils que j'ai lu c'est de faire `git config core.precomposeunicode 
 
 ## Mise en place de l'environnement dev
 
-Please note that the `staging` and `main` branches are protected and all commits must come through a pull request.
+Vous pouvez installer en local ou utiliser l'environnement [Docker](./docker.md) pour démarrer.
 
 ### À installer localement
 
@@ -98,6 +98,7 @@ L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), 
 SECRET= Le secret pour Django (vous pouvez le [générer ici](https://djecrety.ir/))
 DEBUG= `True` pour le développement local ou `False` autrement
 DEBUG_FRONT= `True` pour le développement local du 2024-front ou `False` autrement
+DEBUG_WEBPACK_PROGRESS= `True` pour afficher la progression lors du build de webpack pour le `frontend`
 DB_USER= L'utilisateur de la base de données. Doit avoir les droits de creation de db pour les tests (par ex. 'macantine_egalim_team')
 DB_PASSWORD= Le mot de passe pour accéder à la base de données
 DB_HOST= Le host de la base de données (par ex. '127.0.0.1')
@@ -211,7 +212,6 @@ npm run serve
 
 > Un bug connu de code legacy avec Webpack sur les versions récentes entraine l'erreur suivante `code: 'ERR_OSSL_EVP_UNSUPPORTED'`. Pour éviter d'avoir à configurer une variable d'environnement en local on peut utiliser le script `npm run serve:ssl-legacy` qui intègre la configuration.
 
-
 ### Terminal Vue3
 
 ```
@@ -238,7 +238,9 @@ le commit est annulé. Il faut donc que toutes les vérifications passent pour q
 compte. Si exceptionnellement vous voulez commiter malgré qu'une vérification ne passe pas, c'est possible
 avec `git commit -m 'my message' --no-verify`.
 
-## Lancer les tests pour l'application Django
+## Lancer les tests
+
+### Django
 
 La commande pour lancer les tests Django est :
 
@@ -248,7 +250,7 @@ python manage.py test
 
 Sur VSCode, ces tests peuvent être debuggés avec la configuration "Python: Tests", présente sur le menu "Run".
 
-## Lancer les tests pour l'application Vue2
+### Vue2
 
 Il faut d'abord se placer sur "/frontend", ensuite la commande pour lancer les tests VueJS est :
 
@@ -266,6 +268,7 @@ python manage.py createsuperuser
 ```
 
 ## Utilisation des magic token
+
 Les `magic token` permettent de se connecter à la place d'un utilisateur à des fins de support. Voici comment les utiliser :
 * Générer un token depuis l'interface admin de Django
 * Déconnecter-vous ou utiliser une navigation privée (recommandé)
@@ -312,45 +315,85 @@ Des extensions utiles :
 - vuetify-vscode
 - Spell Right
 
-## Test déploiement en locale
+## Git & Github
 
-1. Modifier sa configuration d'env locale :
+### Branches
+
+- chaque branche doit partir de `staging`
+- `main` sert uniquement pour les déploiements
+
+### Commits
+
+Pas de convention particulière à respecter !
+- anglais ou français
+- pas besoin de respecter les Conventional Commits (voir ci-dessous)
+
+### PR
+
+- le nommage des PR doit respecter les [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+    - pour pouvoir être bien interprété par `release-please`
+- au moins 1 review est nécessaire avant de pouvoir merger
+- les PR sont **squashées** avant d'être mergées (option "Squash & Merge" sur Github)
+    - pour avoir un historique simple et clair
+    - et ainsi plus facilement retrouver la PR qui a effectué un changement donné
+
+### CI
+
+Lorsqu'une PR est ouverte, plusieurs Github Actions vont tourner (tests, sécurité, reviewers...). Elles sont configurées dans le dossier `.github/workflows`.
+
+### Open source
+
+L'ensemble de notre code est ouvert, ne pushez pas de secrets :)
+
+## Déploiement
+
+### Rappels
+
+- sur Clever Cloud, notre app de staging est branchée sur la branche `staging`
+- sur Clever Cloud, nos apps de demo et de prod sont branchées sur la branche `main`
+- nous utilisons `release-please` (voir #4379) pour automatiser une partie nos déploiements (en particulier le versionnage & la documentation des releases)
+
+### Test déploiement en locale
+
+Les commandes lancées sur CleverCloud sont listées dans `clevercloud/python.json`.
 
 ```
+// .env
 DEBUG=False
 DEBUG_FRONT=False
 ```
 
-2. Dans le dossier principal lancer :
-
+Dans le dossier principal, lancez
+```bash
+bash ./clevercloud/test-build-with-vue3.sh
+python manage.py runserver --insecure
 ```
-$ bash ./clevercloud/test-build-with-vue3.sh
-$ python manage.py runserver --insecure
-```
 
-Pour le déploiement en prod il faut ajouter : `CC_PRE_BUILD_HOOK=./clevercloud/pre-build-hook.sh`
+En prod, faut ajouter `CC_PRE_BUILD_HOOK=./clevercloud/pre-build-hook.sh`
 
-## Déploiement
+### Lancer un déploiement
 
-Vérification pre-déploiment
+#### Vérification pre-déploiment
 
 - est-ce que les tests passent sur staging ?
 - est-ce que tout va bien côté Clever Cloud ?
 - est-ce qu'il y a des cherry-picks sur main qui n'existent pas sur staging ?
 
-Étapes :
+#### Etapes à suivre
 
-- https://github.com/betagouv/ma-cantine/releases > "Draft a new release"
-- "Choose a tag" > taper la date d'aujourd'hui en format YYYY-MM-DD > "Create a new tag on publish"
-- "Generate release notes"
-- Modifier les notes générés (indications ci-dessous)
-- "Publish release"
-- Si il y a des variables d'environnement à ajouter, ajoutez-les sur prod et demo côté Clever Cloud
-- avec staging : `git pull`
-- preparer la branche main en locale : `git checkout main` `git rebase staging`
-- `git push` (peut-être `git push -f`)
-- Le déploiement va commencer automatiquement. Ça prend un moment pour déployer côté Clever Cloud, suivez la progression là-bas.
-- Une fois que le déploiement est fait, envoyer un message sur mattermost canal produit pour tenir l'équipe au courant.
+1. grâce à `release-please`, une PR nommée `chore(staging): release YYYY.X.Z` est ouverte, et liste les PR mergées sur `staging` depuis la dernière release
+2. il faut merger cette PR. Il se passera alors 2 choses :
+    - une nouvelle release va être automatiquement crée : voir [la liste des releases](https://github.com/betagouv/ma-cantine/releases)
+        - optionnel : supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dépendances"
+    - le CHANGELOG.md sera mis à jour sur `staging`
+3. il reste maintenant à déployer (manuellement) en mettant à jour la branche `main`
+    - si il y a des variables d'environnement à ajouter, ajoutez-les sur prod et demo côté Clever Cloud
+    - en local, preparer la branche `main` : `git checkout staging && git pull && git checkout main && git rebase staging`
+    - puis publier les changements : `git push` (peut-être `git push -f`)
+4. le déploiement va commencer automatiquement. Ça prend un moment pour déployer côté Clever Cloud... suivez la progression là-bas.
+5. une fois le déploiement terminé, envoyer un message sur mattermost (canal produit) pour tenir l'équipe au courant ! (en copiant-collant le contenu de la dernière release)
+
+> Si jamais vous doutez/si il y a un problème, parlez avec un.e autre dév.
 
 ### Release notes
 
@@ -359,30 +402,3 @@ Vous pourrez modifier les notes dans un éditeur pour être plus rapide.
 - supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dépendances"
 - supprimer la partie "by @username in https://..."
 - faire n'importe quel autre changement pour rendre la liste facilement comprensible par tout le monde
-
-### Debugging
-
-Si jamais vous doutez/si il y a un problème, parlez avec un.e autre dév.
-
-## Docker
-
-C'est aussi possible de lancer le site avec Docker.
-
-`docker compose build`
-`docker compose up`
-
-Dans un nouveau terminal, accèder au container du back pour migrer la BDD et créer la première utilisatrice.
-
-`docker compose run server bash`
-`python manage.py migrate`
-`python manage.py createsuperuser`
-
-### Développement
-
-Pour le formattage automatique de fichiers (prettier), faut avoir quelques dependences npm installé en locale.
-
-Allez dans le dossier `/frontend` et `/2024-frontend`
-
-`sudo npm install --include=dev`
-
-J'ai du utiliser `sudo` car le dossier `node_modules` a été créé par l'image docker.
