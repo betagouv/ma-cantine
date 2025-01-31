@@ -147,6 +147,10 @@ class ImportPurchasesView(APIView):
             siret = None
 
             try:
+                # first check that the number of columns is good
+                # to throw error if badly formatted early on.
+                if len(row) < len(self.expected_header):
+                    raise BadRequest()
                 siret = row.pop(0)
                 if siret == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
@@ -263,7 +267,7 @@ class ImportPurchasesView(APIView):
         elif isinstance(e, BadRequest):
             errors.append(
                 {
-                    "message": f"Format fichier : 7-8 colonnes attendues, {len(row)} trouvées.",
+                    "message": f"Format fichier : {len(self.expected_header)} colonnes attendues, {len(row)} trouvées.",
                     "code": 400,
                 }
             )
