@@ -34,7 +34,16 @@ class TestPurchaseSchema(TestCase):
     def test_caracteristiques_regex(self):
         field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "caracteristiques"), None)
         pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in ["BIO", "BIO ", " BIO ", "BIO,LOCAL", "BIO,LOCAL ", " BIO,LOCAL ", " BIO, LOCAL "]:
+        for VALUE_OK in [
+            "BIO",
+            "BIO ",
+            "BIO,LOCAL",
+            "BIO,LOCAL ",
+            " BIO,LOCAL ",
+            " BIO, LOCAL ",
+            " BIO,      LOCAL ",
+            "BIO,BIO",
+        ]:
             self.assertTrue(re.match(pattern, VALUE_OK))
         for VALUE_NOT_OK in ["", "TEST"]:
             self.assertFalse(re.match(pattern, VALUE_NOT_OK))
