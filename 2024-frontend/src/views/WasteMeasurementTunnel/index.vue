@@ -95,6 +95,7 @@ const continueAction = () => {
 }
 
 const navigateBack = () => {
+  store.removeNotifications()
   router.push({ query: { étape: previousStep.value.urlSlug } })
   scrollTop()
 }
