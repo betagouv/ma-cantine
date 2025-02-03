@@ -34,7 +34,7 @@ const file = "/static/documents/fichier_exemple_staff.csv"
           format="CSV"
           size="463 octets"
           :href="file"
-          title="Télécharger fichier d'exemple"
+          title="Télécharger le fichier d'exemple"
           :download="true"
         />
       </div>
