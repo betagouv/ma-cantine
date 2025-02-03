@@ -23,7 +23,6 @@ const openCrisp = () => {
         >
           consulter nos ressources
         </a>
-        .
       </p>
     </div>
   </section>
