@@ -81,7 +81,7 @@ class ImportPurchasesView(APIView):
                     raise IntegrityError()
 
                 # Update all purchases's import source with file digest
-                Purchase.objects.filter(import_source=self.tmp_id).update(import_source=self.digest)
+                Purchase.objects.filter(import_source=self.tmp_id).update(import_source=self.file_digest)
 
             return self._get_success_response()
 
