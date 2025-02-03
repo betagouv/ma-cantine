@@ -46,6 +46,15 @@ def get_file_digest(file):
     return file_hash.hexdigest()
 
 
+def get_file_encoding(file):
+    """
+    Example values: 'ascii', 'utf-8', 'UTF-16', 'ISO-8859-1' (windows-1252), 'FMacRoman'
+    """
+    file.seek(0)
+    (result, encoding) = decode_bytes(file.read())
+    return encoding
+
+
 def get_csv_file_dialect(file):
     """
     Possible values: 'excel', 'excel-tab', 'unix'
