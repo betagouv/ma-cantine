@@ -1,6 +1,9 @@
 <script setup>
-import AppLinkMailto from "@/components/AppLinkMailto.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
+
+const openCrisp = () => {
+  window.$crisp.push(["do", "helpdesk:search"])
+}
 </script>
 
 <template>
@@ -12,9 +15,15 @@ import AppSeparator from "@/components/AppSeparator.vue"
       </div>
       <h2>Vous n’arrivez pas à importer votre fichier</h2>
       <p class="fr-pr-0 fr-pr-md-8w">
-        Si vous avez des questions ou des problèmes, si votre fichier comptable agrégé ne ressemble pas du tout à ça,
-        vous pouvez nous l'envoyer à l'adresse
-        <AppLinkMailto />
+        Si vous avez des questions ou des problèmes pour importer votre fichier, vous pouvez
+        <a
+          href="https://ma-cantine.crisp.help/fr/"
+          class="fr-icon-arrow-right-line fr-link--icon-right"
+          @click.prevent="openCrisp()"
+        >
+          consulter nos ressources
+        </a>
+        .
       </p>
     </div>
   </section>
