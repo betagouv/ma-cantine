@@ -1278,6 +1278,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_encoding_utf-16.csv", "rb") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
 
+        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 1)

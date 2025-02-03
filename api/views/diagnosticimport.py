@@ -83,6 +83,10 @@ class ImportDiagnosticsView(ABC, APIView):
                 self.file = request.data["file"]
                 file_import.validate_file_size(self.file)
                 file_import.validate_file_format(self.file)
+
+                self.encoding_detected = file_import.get_file_encoding(self.file)
+                self.dialect = file_import.get_csv_file_dialect(self.file)
+
                 self._process_file(self.file)
 
                 if self.errors:
@@ -127,9 +131,9 @@ class ImportDiagnosticsView(ABC, APIView):
 
         filestring = self._decode_file(file)
         filelines = filestring.splitlines()
-        dialect = csv.Sniffer().sniff(filelines[0])
+        # dialect = csv.Sniffer().sniff(filelines[0])
 
-        csvreader = csv.reader(filelines, dialect=dialect)
+        csvreader = csv.reader(filelines, self.dialect)
         header = next(csvreader)
         if not (
             set(header).issubset(set(self.expected_header_diagnostics_admin))
@@ -163,7 +167,6 @@ class ImportDiagnosticsView(ABC, APIView):
 
     def _decode_file(self, file):
         (result, encoding) = file_import.decode_bytes(file.read())
-        self.encoding_detected = encoding
         return result
 
     @transaction.atomic

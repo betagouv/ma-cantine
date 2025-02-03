@@ -56,6 +56,8 @@ class ImportPurchasesView(APIView):
             self.file_digest = file_import.get_file_digest(self.file)
             self._check_duplication()
 
+            self.encoding_detected = file_import.get_file_encoding(self.file)
+            print(self.encoding_detected)
             self.dialect = file_import.get_csv_file_dialect(self.file)
 
             with transaction.atomic():
@@ -132,10 +134,6 @@ class ImportPurchasesView(APIView):
             self._process_chunk(chunk)
 
     def _decode_chunk(self, chunk_list):
-        if self.encoding_detected is None:
-            chunk = b"".join(chunk_list)
-            (_, encoding) = file_import.decode_bytes(chunk)
-            self.encoding_detected = encoding
         return [chunk.decode(self.encoding_detected) for chunk in chunk_list]
 
     def _check_duplication(self):
