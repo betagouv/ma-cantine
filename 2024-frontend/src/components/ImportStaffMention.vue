@@ -1,3 +1,7 @@
+<script setup>
+const file = "/static/documents/fichier_exemple_staff.csv"
+</script>
+
 <template>
   <DsfrCallout title="En tant que membre de l'équipe ma cantine" titleTag="h5">
     <div class="fr-grid-row fr-grid-row--bottom fr-mt-3w">
@@ -29,7 +33,7 @@
         <DsfrFileDownload
           format="CSV"
           size="463 octets"
-          href="/static/documents/fichier_exemple_staff.csv"
+          :href="file"
           title="Télécharger fichier d'exemple"
           :download="true"
         />
