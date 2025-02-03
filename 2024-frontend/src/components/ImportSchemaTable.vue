@@ -4,12 +4,12 @@ import schemaService from "@/services/schemas.js"
 import ImportSchemaTableDescriptionCell from "@/components/ImportSchemaTableDescriptionCell.vue"
 
 /* Data */
-const props = defineProps(["url"])
+const props = defineProps(["schemaFile"])
 const headers = ["Nom de colonne", "Description", "Format", "Exemple", "Obligatoire"]
 const rows = shallowRef([])
 
 /* Fields */
-schemaService.getFields(props.url).then((fields) => {
+schemaService.getFields(props.schemaFile).then((fields) => {
   rows.value = formatFields(fields)
 })
 
