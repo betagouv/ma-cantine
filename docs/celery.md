@@ -2,7 +2,7 @@
 
 Celery est un gestionnaire de tâches asynchrone utilisé par exemple pour l'envoi périodique de courriels de rappel et pour le remplissage des données.
 
-Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit être spéficié dans la console CleverCloud sous la variable . La fonctionnalité Celery Beat doit aussi être activée : `CC_PYTHON_CELERY_USE_BEAT=true`, ainsi que le timezone souhaité :
+Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit être spéficié dans la console CleverCloud sous la variable . La fonctionnalité Celery Beat, qui gère le cron, doit aussi être activée, ainsi que le timezone souhaité.
 
 ## En local
 
@@ -11,7 +11,7 @@ Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit êtr
 
 ## En production
 
-Le scheduler et les workers sont déployés sur un autre serveur que l'aplication web pour des questions de robustesse.
+Le scheduler et les workers Celery sont déployés sur un autre serveur que l'aplication web pour des questions de robustesse.
 Sur le serveur dit "celery", renseigner les mêmes variables d'environnement que le serveur web, plus :
 
 1. Fonctionnement de celery :
