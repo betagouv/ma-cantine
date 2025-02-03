@@ -2,7 +2,7 @@
 import { ref } from "vue"
 import { importPurchases } from "@/services/imports.js"
 import ImportExplanation from "@/components/ImportExplanation.vue"
-import ImportHelpContact from "@/components/ImportHelpContact.vue"
+import ImportHelp from "@/components/ImportHelp.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
@@ -60,5 +60,5 @@ const success = (count) => {
     "
     @close="showModal = false"
   />
-  <ImportHelpContact class="fr-mt-8w" />
+  <ImportHelp class="fr-mt-8w" />
 </template>
