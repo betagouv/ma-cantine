@@ -8,8 +8,7 @@ import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
 
 /* Data */
-const schemaUrl =
-  "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/achats.json"
+const schemaFile = "achats.json"
 const exampleFile = {
   name: "achats_fichier_exemple_ma_cantine.csv",
   size: "189 octets",
@@ -35,7 +34,7 @@ const success = (count) => {
     .
   </p>
   <ImportExplanation :exampleFile />
-  <ImportSchemaTable :url="schemaUrl" />
+  <ImportSchemaTable :schemaFile />
   <ImportFileUpload @success="success" :importFile="importPurchases" eventMatomo="import-purchases-success" />
   <ImportSuccessModal
     :opened="showModal"

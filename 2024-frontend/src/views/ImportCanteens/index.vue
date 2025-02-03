@@ -13,8 +13,7 @@ import ImportHelp from "@/components/ImportHelp.vue"
 const store = useRootStore()
 
 /* Data */
-const schemaUrl =
-  "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/cantines.json"
+const schemaFile = "cantines.json"
 const exampleFile = {
   name: "fichier_exemple_ma_cantine_no_diag.csv",
   size: "496 octets",
@@ -40,7 +39,7 @@ const success = (count) => {
     .
   </p>
   <ImportExplanation :exampleFile />
-  <ImportSchemaTable :url="schemaUrl" />
+  <ImportSchemaTable :schemaFile />
   <ImportStaffCallout v-if="store.loggedUser.isStaff" class="fr-mb-3w" />
   <ImportFileUpload @success="success" :importFile="importCanteens" eventMatomo="import-canteen-success" />
   <ImportSuccessModal
