@@ -7,6 +7,7 @@ import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportStaffCallout from "@/components/ImportStaffCallout.vue"
+import ImportHelp from "@/components/ImportHelp.vue"
 
 /* Store */
 const store = useRootStore()
@@ -65,4 +66,5 @@ const success = (count) => {
     "
     @close="showModal = false"
   />
+  <ImportHelp class="fr-mt-8w" />
 </template>
