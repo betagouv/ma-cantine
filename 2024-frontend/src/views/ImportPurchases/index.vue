@@ -11,8 +11,7 @@ import ImportFileUpload from "@/components/ImportFileUpload.vue"
 const schemaUrl =
   "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/achats.json"
 const exampleFile = {
-  download: "achats_fichier_exemple_ma_cantine.csv",
-  href: "/static/documents/achats_fichier_exemple_ma_cantine.csv",
+  name: "achats_fichier_exemple_ma_cantine.csv",
   size: "189 octets",
 }
 
