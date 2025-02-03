@@ -16,8 +16,7 @@ const store = useRootStore()
 const schemaUrl =
   "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/cantines.json"
 const exampleFile = {
-  download: "fichier_exemple_ma_cantine_no_diag.csv",
-  href: "/static/documents/fichier_exemple_ma_cantine_no_diag.csv",
+  name: "fichier_exemple_ma_cantine_no_diag.csv",
   size: "496 octets",
 }
 

@@ -53,8 +53,8 @@ defineProps(["exampleFile"])
         <li class="fr-mb-3v">
           <DsfrFileDownload
             :size="exampleFile.size"
-            :href="exampleFile.href"
-            :download="exampleFile.download"
+            :href="`/static/documents/${exampleFile.name}`"
+            :download="exampleFile.name"
             format="CSV"
             title="Télécharger notre fichier d’exemple CSV"
           />
