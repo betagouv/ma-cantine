@@ -69,6 +69,7 @@ class ImportPurchasesView(APIView):
             report = validate_file_against_schema(self.file, self.schema_url)
             self.errors = process_errors(report)
             if len(self.errors):
+                self._log_error("Echec lors de la validation du fichier (schema achats.json - Validata)")
                 return self._get_success_response()
 
             # Step 3: ma-cantine validation (permissions, last checks...) + import
