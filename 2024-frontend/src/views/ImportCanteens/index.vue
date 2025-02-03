@@ -6,7 +6,7 @@ import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
-import ImportStaffMention from "@/components/ImportStaffMention.vue"
+import ImportStaffCallout from "@/components/ImportStaffCallout.vue"
 
 /* Store */
 const store = useRootStore()
@@ -54,7 +54,7 @@ const success = (count) => {
   </p>
   <ImportExplanation :ressources />
   <ImportSchemaTable :url="schemaUrl" />
-  <ImportStaffMention v-if="store.loggedUser.isStaff" class="fr-mb-3w" />
+  <ImportStaffCallout v-if="store.loggedUser.isStaff" class="fr-mb-3w" />
   <ImportFileUpload @success="success" :importFile="importCanteens" eventMatomo="import-canteen-success" />
   <ImportSuccessModal
     :opened="showModal"
