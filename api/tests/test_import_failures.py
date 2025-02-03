@@ -110,7 +110,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
 
     @authenticate
-    def test_purchase_import_erros(self):
+    def test_purchase_import_errors(self):
         CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
         CanteenFactory.create(siret="36462492895701")
         file_path = "./api/tests/files/achats/purchases_bad.csv"
