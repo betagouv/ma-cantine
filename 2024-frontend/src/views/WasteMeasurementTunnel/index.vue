@@ -73,6 +73,7 @@ const formIsValid = () => {
 }
 
 const continueAction = () => {
+  store.removeNotifications()
   if (step.value.isSynthesis) {
     quit()
     return
