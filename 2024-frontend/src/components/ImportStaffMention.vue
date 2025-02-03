@@ -5,7 +5,7 @@ const file = "/static/documents/fichier_exemple_staff.csv"
 <template>
   <DsfrCallout title="En tant que membre de l'équipe ma cantine" titleTag="h5">
     <div class="fr-grid-row fr-grid-row--bottom fr-mt-3w">
-      <div class="fr-col-8">
+      <div class="fr-col-12 fr-col-md-8">
         <p>
           Vous pouvez ajouter 3 colonnes additionnelles à la fin du fichier CSV :
         </p>
@@ -28,8 +28,8 @@ const file = "/static/documents/fichier_exemple_staff.csv"
           colonnes de listes de gestionnaires.
         </p>
       </div>
-      <div class="fr-col-offset-1"></div>
-      <div class="fr-col-3 fr-grid-row--right">
+      <div class="fr-col-offset-md-1"></div>
+      <div class="fr-col-12 fr-col-md-3 fr-grid-row--right fr-mt-3w fr-mt-md-0">
         <DsfrFileDownload
           format="CSV"
           size="463 octets"
