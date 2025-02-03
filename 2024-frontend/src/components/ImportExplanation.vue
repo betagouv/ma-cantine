@@ -1,5 +1,5 @@
 <script setup>
-defineProps(["file"])
+defineProps(["exampleFile"])
 </script>
 
 <template>
@@ -52,9 +52,9 @@ defineProps(["file"])
       <ul class="ma-cantine--unstyled-list">
         <li class="fr-mb-3v">
           <DsfrFileDownload
-            :size="file.size"
-            :href="file.href"
-            :download="file.download"
+            :size="exampleFile.size"
+            :href="exampleFile.href"
+            :download="exampleFile.download"
             format="CSV"
             title="Télécharger notre fichier d’exemple CSV"
           />
