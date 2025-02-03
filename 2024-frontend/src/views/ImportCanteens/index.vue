@@ -15,24 +15,11 @@ const store = useRootStore()
 /* Data */
 const schemaUrl =
   "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/cantines.json"
-const ressources = [
-  {
-    download: "fichier_exemple_ma_cantine_no_diag.csv",
-    href: "/static/documents/fichier_exemple_ma_cantine_no_diag.csv",
-    name: "Télécharger notre fichier d’exemple CSV",
-    size: "496 octets",
-  },
-  {
-    external: true,
-    href: "https://ma-cantine.crisp.help/fr/article/comment-importer-un-fichier-csv-dans-excel-7zyxo/",
-    name: "Comment importer un fichier CSV dans Excel ?",
-  },
-  {
-    external: true,
-    href: "https://ma-cantine.crisp.help/fr/article/comment-enregistrer-un-fichier-excel-en-csv-cgfrbp/",
-    name: "Comment enregistrer mon fichier Excel en CSV ?",
-  },
-]
+const exampleFile = {
+  download: "fichier_exemple_ma_cantine_no_diag.csv",
+  href: "/static/documents/fichier_exemple_ma_cantine_no_diag.csv",
+  size: "496 octets",
+}
 
 /* Success */
 const showModal = ref(false)
@@ -53,7 +40,7 @@ const success = (count) => {
     <router-link :to="{ name: 'NewCanteen' }">notre formulaire</router-link>
     .
   </p>
-  <ImportExplanation :ressources />
+  <ImportExplanation :exampleFile />
   <ImportSchemaTable :url="schemaUrl" />
   <ImportStaffCallout v-if="store.loggedUser.isStaff" class="fr-mb-3w" />
   <ImportFileUpload @success="success" :importFile="importCanteens" eventMatomo="import-canteen-success" />
