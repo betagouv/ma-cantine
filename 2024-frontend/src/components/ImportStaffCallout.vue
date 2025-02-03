@@ -3,7 +3,7 @@ const file = "/static/documents/fichier_exemple_staff.csv"
 </script>
 
 <template>
-  <DsfrCallout title="En tant que membre de l'équipe ma cantine" titleTag="h5">
+  <DsfrCallout title="En tant que membre de l'équipe ma cantine" titleTag="h3">
     <div class="fr-grid-row fr-grid-row--bottom fr-mt-3w">
       <div class="fr-col-12 fr-col-md-8">
         <p>
