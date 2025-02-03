@@ -1,11 +1,15 @@
 <script setup>
 import { ref } from "vue"
 import { importCanteens } from "@/services/imports.js"
+import { useRootStore } from "@/stores/root"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportStaffMention from "@/components/ImportStaffMention.vue"
+
+/* Store */
+const store = useRootStore()
 
 /* Data */
 const schemaUrl =
@@ -50,7 +54,7 @@ const success = (count) => {
   </p>
   <ImportExplanation :ressources />
   <ImportSchemaTable :url="schemaUrl" />
-  <ImportStaffMention class="fr-mb-3w" />
+  <ImportStaffMention v-if="store.loggedUser.isStaff" class="fr-mb-3w" />
   <ImportFileUpload @success="success" :importFile="importCanteens" eventMatomo="import-canteen-success" />
   <ImportSuccessModal
     :opened="showModal"
