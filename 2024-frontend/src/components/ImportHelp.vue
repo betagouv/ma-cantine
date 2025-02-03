@@ -7,7 +7,7 @@ const openCrisp = () => {
 </script>
 
 <template>
-  <section class="import-help-contact fr-grid-row fr-grid-row--center">
+  <section class="import-help-contact fr-mt-8w fr-grid-row fr-grid-row--center">
     <div class="fr-col-12 fr-col-md-8">
       <div class="import-help-contact__separator fr-mb-5w">
         <AppSeparator />

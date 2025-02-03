@@ -60,5 +60,5 @@ const success = (count) => {
     "
     @close="showModal = false"
   />
-  <ImportHelp class="fr-mt-8w" />
+  <ImportHelp />
 </template>
