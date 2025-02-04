@@ -71,7 +71,15 @@
 <script>
 import Constants from "@/constants"
 import communicationSupports from "@/data/communication-supports.json"
-import { sectorDisplayString, sectorsSelectList, approSummary, toCurrency, selectListToObject } from "@/utils"
+import {
+  sectorDisplayString,
+  sectorsSelectList,
+  approSummary,
+  toCurrency,
+  selectListToObject,
+  formatDate,
+  formatNumber,
+} from "@/utils"
 
 export default {
   props: {
@@ -81,6 +89,14 @@ export default {
     canteen: {
       required: true,
     },
+  },
+  data() {
+    return {
+      wasteMeasurements: [],
+    }
+  },
+  mounted() {
+    this.fetchWasteMeasurements()
   },
   computed: {
     centralKitchenDiagostic() {
@@ -397,7 +413,7 @@ export default {
       const vegetarianMenuBases = this.getVegetarianMenuBases(this.diagnostic.vegetarianMenuBases)
       const communicationFrequency = this.getCommunicationFrequency(this.diagnostic.communicationFrequency)
 
-      return [
+      const beforeWasteMeasurements = [
         {
           label: "Diagnostic sur le gaspillage alimentaire réalisé",
           value: this.getNullableBooleanLabel(this.diagnostic.hasWasteDiagnostic),
@@ -414,43 +430,25 @@ export default {
           value: this.getNullableBooleanLabel(this.diagnostic.hasWasteMeasures),
           class: this.diagnostic.hasWasteMeasures === null ? "warn" : "",
         },
-        // TODO: the next few fields are only shown if hasWasteMeasures
-        {
-          label: "Total des déchets alimentaires pour l'année (kg)",
-          isNumber: true,
-          value: this.diagnostic.totalLeftovers,
-          class: this.isTruthyOrZero(this.diagnostic.totalLeftovers) ? "" : "warn",
-        },
-        {
-          label: "Période de mesure (jours)",
-          isNumber: true,
-          value: this.diagnostic.durationLeftoversMeasurement,
-          class: this.isTruthyOrZero(this.diagnostic.durationLeftoversMeasurement) ? "" : "warn",
-        },
-        {
-          label: "Restes de pain kg/an",
-          isNumber: true,
-          value: this.diagnostic.breadLeftovers,
-          class: this.isTruthyOrZero(this.diagnostic.breadLeftovers) ? "" : "warn",
-        },
-        {
-          label: "Restes servis (plateau) kg/an",
-          isNumber: true,
-          value: this.diagnostic.servedLeftovers,
-          class: this.isTruthyOrZero(this.diagnostic.servedLeftovers) ? "" : "warn",
-        },
-        {
-          label: "Restes non servis kg/an",
-          isNumber: true,
-          value: this.diagnostic.unservedLeftovers,
-          class: this.isTruthyOrZero(this.diagnostic.unservedLeftovers) ? "" : "warn",
-        },
-        {
-          label: "Restes de composantes kg/an",
-          isNumber: true,
-          value: this.diagnostic.sideLeftovers,
-          class: this.isTruthyOrZero(this.diagnostic.sideLeftovers) ? "" : "warn",
-        },
+      ]
+
+      const wasteMeasurements = []
+      for (let i = 0; i < this.wasteMeasurements.length; i++) {
+        const waste = this.wasteMeasurements[i]
+        const total = formatNumber(waste.totalMass)
+        const label = `Mesure du ${formatDate(waste.periodStartDate)} - ${formatDate(waste.periodEndDate)}`
+
+        let value = `Total ${total}kg`
+        if (waste.isSortedBySource) {
+          const leftovers = formatNumber(waste.leftoversTotalMass)
+          const unserved = formatNumber(waste.unservedTotalMass)
+          const preparation = formatNumber(waste.preparationTotalMass)
+          value += ` : reste assiette ${leftovers}kg, denrées présentées aux convives mais non servies ${unserved}kg, excédents de préparation dont stock ${preparation}kg`
+        }
+        wasteMeasurements.push({ label, value })
+      }
+
+      const afterWasteMeasurements = [
         {
           label: "Actions contre le gaspillage en place",
           value: this.getWasteActions(this.diagnostic.wasteActions),
@@ -561,6 +559,8 @@ export default {
           class: communicationFrequency === "Non renseigné" ? "warn" : "",
         },
       ]
+
+      return [...beforeWasteMeasurements, ...wasteMeasurements, ...afterWasteMeasurements]
     },
     sectors() {
       return sectorDisplayString(this.canteen.sectors, this.$store.state.sectors)
@@ -591,6 +591,9 @@ export default {
         return mode?.label
       }
       return null
+    },
+    year() {
+      return this.diagnostic.year
     },
   },
   methods: {
@@ -650,6 +653,15 @@ export default {
     },
     toCurrency(value) {
       return toCurrency(value)
+    },
+    fetchWasteMeasurements() {
+      if (!this.diagnostic.hasWasteMeasures) return
+      const query = `period_start_date_after=${this.year}-01-01&period_end_date_before=${this.year + 1}-01-01`
+      fetch(`/api/v1/canteens/${this.canteen.id}/wasteMeasurements?${query}`)
+        .then((response) => response.json())
+        .then((response) => {
+          this.wasteMeasurements = response
+        })
     },
   },
 }

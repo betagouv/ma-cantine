@@ -25,10 +25,6 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: /@\/views\/([\w/]+)/,
-        replacement: fileURLToPath(new URL("./src/views/$1/index.vue", import.meta.url)),
-      },
-      {
         find: "@",
         replacement: fileURLToPath(new URL("./src", import.meta.url)),
       },

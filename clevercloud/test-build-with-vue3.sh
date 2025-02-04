@@ -4,7 +4,7 @@ rm -rf static/
 rm -rf build/
 rm -rf 2024-frontend/build/
 bash ./clevercloud/pre-build-hook.sh
-# the following should mirror the hooks in clevercloud/python.json["deploy"]["managetasks"]
+# the following should mirror the tasks in CC_PYTHON_MANAGE_TASKS env config
 python manage.py buildnpm
 python manage.py buildnpmvue3
 python manage.py collectstatic --noinput

@@ -1,5 +1,6 @@
 import csv
 import hashlib
+import io
 import logging
 
 import chardet
@@ -54,3 +55,13 @@ def get_csv_file_dialect(file):
     row_1 = file.readline()
     (decoded_row, _) = decode_bytes(row_1)
     return csv.Sniffer().sniff(decoded_row)
+
+
+def verify_first_line_is_header(file, file_dialect, expected_header):
+    file.seek(0)
+    row_1 = file.readline()
+    (decoded_row, _) = decode_bytes(row_1)
+    csvreader = csv.reader(io.StringIO("".join(decoded_row)), file_dialect)
+    header = next(csvreader)
+    if header != expected_header:
+        raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")

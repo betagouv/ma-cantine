@@ -1,9 +1,12 @@
 import hashlib
+import json
+import re
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
 from unittest.mock import patch
 
+from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from rest_framework import status
@@ -13,6 +16,53 @@ from data.factories import CanteenFactory
 from data.models.purchase import Purchase
 
 from .utils import authenticate
+
+
+class TestPurchaseSchema(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.schema = json.load(open("data/schemas/imports/achats.json"))
+
+    def test_prix_ht_decimal(self):
+        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "prix_ht"), None)
+        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
+        for VALUE_OK in ["1234", "1234.0", "1234.99", "1234.99999", "1234,0", "1234,99", "1234,99999"]:
+            self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["", " ", "TEST", "1234.99.99", "1234,99,99"]:
+            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+
+    def test_famille_produits_regex(self):
+        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "famille_produits"), None)
+        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
+        for VALUE_OK in ["PRODUITS_LAITIERS", "PRODUITS_LAITIERS ", " PRODUITS_LAITIERS "]:
+            self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["", "TEST", "PRODUITS_LAITIERS,", "PRODUITS_LAITIERS,VIANDES_VOLAILLES"]:
+            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+
+    def test_caracteristiques_regex(self):
+        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "caracteristiques"), None)
+        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
+        for VALUE_OK in [
+            "BIO",
+            "BIO ",
+            "BIO,LOCAL",
+            "BIO,LOCAL ",
+            " BIO,LOCAL ",
+            " BIO, LOCAL ",
+            " BIO,      LOCAL ",
+            "BIO,BIO",
+        ]:
+            self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["", "TEST"]:
+            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+
+    def test_definition_local_regex(self):
+        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "definition_local"), None)
+        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
+        for VALUE_OK in ["DEPARTMENT", "DEPARTMENT ", " DEPARTMENT "]:
+            self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["", "TEST", "DEPARTMENT,", "DEPARTMENT,REGION"]:
+            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
 
 class TestPurchaseImport(APITestCase):
@@ -131,6 +181,46 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(errors[0]["status"], 400)
 
     @authenticate
+    def test_import_no_header(self):
+        """
+        A file should not be valid if doesn't contain a header
+        """
+        canteen = CanteenFactory.create(siret="82399356058716")
+        canteen.managers.add(authenticate.user)
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        with open("./api/tests/files/achats/purchases_bad_no_header.csv", "rb") as diag_file:
+            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
+        )
+
+    @authenticate
+    def test_import_partial_header(self):
+        """
+        A file should not be valid if doesn't contain a valid header
+        """
+        canteen = CanteenFactory.create(siret="82399356058716")
+        canteen.managers.add(authenticate.user)
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        with open("./api/tests/files/achats/purchases_bad_partial_header.csv", "rb") as diag_file:
+            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
+        )
+
+    @authenticate
     def test_import_bad_purchases(self):
         """
         Test that the right errors are thrown
@@ -178,7 +268,7 @@ class TestPurchaseImport(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Format fichier : 7-8 colonnes attendues, 6 trouvées.",
+            "Format fichier : 8 colonnes attendues, 6 trouvées.",
         )
 
     @authenticate
@@ -298,24 +388,4 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(
             first_error["message"],
             "Ce fichier est au format application/vnd.oasis.opendocument.spreadsheet, merci d'exporter votre fichier au format CSV et réessayer.",
-        )
-
-    @authenticate
-    def test_no_header(self):
-        """
-        A file should not be valid if doesn't contain a valid header
-        """
-        canteen = CanteenFactory.create(siret="82399356058716")
-        canteen.managers.add(authenticate.user)
-        self.assertEqual(Purchase.objects.count(), 0)
-
-        with open("./api/tests/files/achats/purchases_bad_no_header.csv", "rb") as diag_file:
-            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["count"], 0)
-        self.assertEqual(len(body["errors"]), 1)
-        self.assertEqual(
-            body["errors"][0]["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
         )

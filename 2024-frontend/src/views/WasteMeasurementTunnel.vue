@@ -1,8 +1,8 @@
 <script setup>
 import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
-import WasteMeasurementSteps from "./WasteMeasurementSteps/index.vue"
-import WasteSummary from "./WasteSummary.vue"
+import WasteMeasurementSteps from "@/components/WasteMeasurementSteps/index.vue"
+import WasteSummary from "@/components/WasteSummary.vue"
 import { BadRequestError } from "@/utils"
 import { useRoute } from "vue-router"
 
@@ -73,6 +73,7 @@ const formIsValid = () => {
 }
 
 const continueAction = () => {
+  store.removeNotifications()
   if (step.value.isSynthesis) {
     quit()
     return
@@ -94,6 +95,7 @@ const continueAction = () => {
 }
 
 const navigateBack = () => {
+  store.removeNotifications()
   router.push({ query: { étape: previousStep.value.urlSlug } })
   scrollTop()
 }
