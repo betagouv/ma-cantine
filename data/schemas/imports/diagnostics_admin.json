@@ -85,8 +85,9 @@
       "constraints": {
         "enum": [
           "Crèche",
+          "Etablissements de la PJJ",
           "Secondaire lycée (hors agricole)",
-          "Secondaire lycée agricole",
+          "Etablissements d’enseignement agricole",
           "Restaurants administratifs des collectivités territoriales",
           "Restaurants d’entreprises",
           "Restaurants inter-entreprises",
