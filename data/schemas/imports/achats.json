@@ -49,14 +49,16 @@
     },
     {
       "constraints": {
+        "pattern": "^\\d+([.,]\\d{1,2})?$",
         "required": true
       },
       "description": "",
+      "doc_pattern": "number",
       "example": "1234.99",
       "format": "default",
       "name": "prix_ht",
       "title": "Prix HT de l'achat",
-      "type": "number"
+      "type": "string"
     },
     {
       "constraints": {
