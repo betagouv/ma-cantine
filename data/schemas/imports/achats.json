@@ -53,6 +53,7 @@
         "required": true
       },
       "description": "",
+      "doc_pattern": "number",
       "example": "1234.99",
       "format": "default",
       "name": "prix_ht",
