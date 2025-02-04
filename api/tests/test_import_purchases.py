@@ -23,6 +23,14 @@ class TestPurchaseSchema(TestCase):
     def setUpTestData(cls):
         cls.schema = json.load(open("data/schemas/imports/achats.json"))
 
+    def test_prix_ht_decimal(self):
+        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "prix_ht"), None)
+        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
+        for VALUE_OK in ["1234", "1234.0", "1234.99", "1234,0", "1234,99"]:
+            self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["", " ", "TEST", "1234.999", "1234.99.99", "1234,999", "1234,99,99"]:
+            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+
     def test_famille_produits_regex(self):
         field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "famille_produits"), None)
         pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
