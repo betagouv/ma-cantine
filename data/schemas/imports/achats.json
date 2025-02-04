@@ -49,7 +49,7 @@
     },
     {
       "constraints": {
-        "pattern": "^\\d+([.,]\\d{1,2})?$",
+        "pattern": "^\\d+([.,]\\d+)?$",
         "required": true
       },
       "description": "",
