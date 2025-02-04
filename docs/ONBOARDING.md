@@ -92,7 +92,10 @@ psql -c "ALTER USER macantine_egalim_team CREATEROLE CREATEDB"
 
 ### Compléter les variables d'environnement
 
-L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), vous pouvez donc créer un fichier `.env` à la racine du projet avec ces variables définies :
+L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), vous pouvez donc créer un fichier `.env` à la racine du projet avec les variables définies ci-dessous.
+
+*Attention* : Certaines variables d'environnement sont utilisées uniquement dans les **tasks celery** (ex: mise à jours des contacts Brevo). Elles sont alors renseignées dans `celery.md`.
+Pour tester ces tâches en local, vous pouvez renseigner ces variables d'environnement dans votre `.env`.
 
 ```
 SECRET= Le secret pour Django (vous pouvez le [générer ici](https://djecrety.ir/))
@@ -114,18 +117,12 @@ SECURE= 'False' si on développe en local, 'True' autrement
 EMAIL_BACKEND= par ex. 'django.core.mail.backends.console.EmailBackend'. Pour utiliser SendInBlue : 'anymail.backends.sendinblue.EmailBackend'
 DEFAULT_FROM_EMAIL= par ex. 'ma-cantine@example.com'
 CONTACT_EMAIL= par ex. 'contact@example.com'
-SENDINBLUE_API_KEY= La clé API de SendInBlue
 NEWSLETTER_SENDINBLUE_LIST_ID= L'ID de la newsletter de SendInBlue
 MATOMO_ID= 162 pour la prod (peut-être laissé vide)
 CELLAR_HOST= Optionnel - le host du service S3
 CELLAR_KEY= Optionnel - la clé du service S3
 CELLAR_SECRET= Optionnel - le secret du service S3
 CELLAR_BUCKET_NAME= Optionnel - le nom du bucket S3 à utiliser
-DATA_WARE_HOUSE_USER= Optionnel - l'utilisateur de la base postgres utilisée pour les analsyes stats
-DATA_WARE_HOUSE_PASSWORD= Optionnel - le mot de passe de la base de postgres utilisée pour les analsyes stats
-DATA_WARE_HOUSE_HOST=Optionnel - le host de la base postgres utilisée pour les analsyes stats
-DATA_WARE_HOUSE_PORT= Optionnel - le port de la base postgres utilisée pour les analsyes stats
-DATA_WARE_HOUSE_DB= Optionnel - le nom de la db de la base postgres utilisée pour les analsyes stats
 DEBUG_PERFORMANCE= Optionnel - à utiliser avec "DEBUG" pour montrer la [Django Debug Toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/)
 ENVIRONMENT= Optionnel - si cette variable est remplie un badge sera visible dans l'application et l'admin changera. Les options sont : `dev` | `staging` | `demo` | `prod`
 REDIS_URL= L'instance redis à utiliser pour les tâches asynchrones et le cache des clés API. Par exemple : 'redis://localhost:6379/0'
@@ -155,13 +152,6 @@ ENABLE_WASTE_MEASUREMENTS= Optionnel - `True` pour rendre l'outil évaluation ga
 SHOW_MANAGEMENT_INFORMATION_BANNER= Optionnel - `True` pour afficher une bannière dans la page d'accueil du tableau de bord
 ```
 
-### Relances automatiques par email
-
-```
-TEMPLATE_ID_NO_CANTEEN_FIRST= Optionnel - ID du template SendInBlue pour le premier email envoyé aux utilisateurs n'ayant pas encore créé une cantine. En cas d'absence la relance n'aura pas lieu.
-TEMPLATE_ID_NO_CANTEEN_SECOND= Optionnel - ID du template SendInBlue pour le deuzième email envoyé aux utilisateurs n'ayant pas encore créé une cantine. En cas d'absence la relance n'aura pas lieu.
-TEMPLATE_ID_NO_DIAGNOSTIC_FIRST= Optionnel - ID du template SendInBlue pour le premier email envoyé aux utilisateurs ayant une cantine mais pas un diagnostic. En cas d'absence la relance n'aura pas lieu.
-```
 
 ### Création des tables / Migration de la base de données
 
@@ -289,17 +279,6 @@ Il faut néanmoins tenir en compte que la mise en page ne sera pas visible et qu
 ### 2- Utiliser Maildev
 
 [Maildev](https://maildev.github.io/maildev/) est un outil ouvert qui exécute un serveur SMTP en local et qui permet de visualiser tous les emails traités. En l'installant de façon globale on peut mettre `django.core.mail.backends.smtp.EmailBackend` comme variable d'environnement `EMAIL_BACKEND` pour l'utiliser.
-
-## Celery
-
-Celery est un gestionnaire de tâches asynchrone utilisé par exemple pour l'envoi périodique de courriels de rappel et pour le remplissage des donn
-
-Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit être spéficié dans la console CleverCloud sous la variable `CC_PYTHON_CELERY_MODULE=macantine.celery`. La fonctionnalité Celery Beat doit aussi être activée : `CC_PYTHON_CELERY_USE_BEAT=true`, ainsi que le timezone souhaité : `CELERY_TIMEZONE='Europe/Paris'`
-
-### En local
-
-1. Démarrer le beat (gère les tâches régulières) celery `celery -A macantine beat --loglevel=INFO`
-1. Démarrer le worker celery `celery -A macantine worker --loglevel=INFO`.
 
 ## Visual Studio Code
 
