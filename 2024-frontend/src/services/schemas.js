@@ -17,23 +17,34 @@ const getFieldType = (field) => {
     year: "Année (AAAA)",
   }
 
-  if (field.constraints) {
-    if (field.constraints.enum) {
-      return types[`${field.type}_enum`]
-    } else if (field.constraints.pattern && field.doc_enum && !field.doc_enum_multiple) {
-      return types[`${field.type}_enum`]
-    } else if (field.constraints.pattern && field.doc_enum && field.doc_enum_multiple) {
-      return types[`${field.type}_enum_multiple`]
-    } else if (field.constaints.pattern && field.doc_pattern) {
+  let fieldType = ""
+
+  switch (true) {
+    case field.name in types:
+      // examples: 'siret', 'siret_livreur_repas'
+      fieldType = types[field.name]
+      break
+    case field.constraints?.enum:
+      // examples: 'secteurs', 'type_production'
+      fieldType = types[`${field.type}_enum`]
+      break
+    case field.constraints?.pattern && field.doc_enum && !field.doc_enum_multiple:
+      // examples: 'famille_produits'
+      fieldType = types[`${field.type}_enum`]
+      break
+    case field.constraints?.pattern && field.doc_enum && field.doc_enum_multiple:
+      // examples: 'caracteristiques'
+      fieldType = types[`${field.type}_enum_multiple`]
+      break
+    case field.constaints?.pattern && field.doc_pattern:
       // examples: 'number'
-      return types[field.doc_pattern]
-    }
+      fieldType = types[field.doc_pattern]
+      break
+    default:
+      fieldType = types[field.type]
   }
-  if (field.name in types) {
-    // examples: 'siret', 'siret_livreur_repas'
-    return types[field.name]
-  }
-  return types[field.type]
+
+  return fieldType
 }
 
 export default { getFields, getFieldType }
