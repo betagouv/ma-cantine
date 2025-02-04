@@ -11,7 +11,7 @@ Pour staging/demo/prod, le chemin du fichier d'instantiation de Celery doit êtr
 
 ## En production
 
-Le scheduler et les workers Celery sont déployés sur un autre serveur que l'aplication web pour des questions de robustesse.
+Le scheduler et les workers Celery sont déployés sur un autre serveur que l'application web pour des questions de robustesse.
 Sur le serveur dit "celery", renseigner les mêmes variables d'environnement que le serveur web, plus :
 
 ### Variables d'environnement
