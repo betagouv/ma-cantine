@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from "vue"
-import { importPurchases } from "@/services/imports.js"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportHelp from "@/components/ImportHelp.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
@@ -35,7 +34,7 @@ const success = (count) => {
   </p>
   <ImportExplanation :exampleFile />
   <ImportSchemaTable :schemaFile />
-  <ImportFileUpload @success="success" :importFile="importPurchases" eventMatomo="import-purchases-success" />
+  <ImportFileUpload @success="success" apiUrl="importPurchases" eventMatomo="import-purchases-success" />
   <ImportSuccessModal
     :opened="showModal"
     :message="

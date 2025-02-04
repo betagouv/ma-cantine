@@ -1,10 +1,10 @@
 import { verifyResponse } from "@/services/api.js"
 
-const importPurchases = (payload) => {
+const importFile = (payload) => {
   const file = payload.file[0]
   const form = new FormData()
   form.append("file", file)
-  return fetch("/api/v1/importPurchases/", {
+  return fetch(`/api/v1/${payload.apiUrl}/`, {
     method: "POST",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",
@@ -13,17 +13,4 @@ const importPurchases = (payload) => {
   }).then(verifyResponse)
 }
 
-const importCanteens = (payload) => {
-  const file = payload.file[0]
-  const form = new FormData()
-  form.append("file", file)
-  return fetch("/api/v1/importDiagnostics/simple/", {
-    method: "POST",
-    headers: {
-      "X-CSRFToken": window.CSRF_TOKEN || "",
-    },
-    body: form,
-  }).then(verifyResponse)
-}
-
-export { importPurchases, importCanteens }
+export { importFile }

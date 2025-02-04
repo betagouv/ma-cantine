@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from "vue"
-import { importCanteens } from "@/services/imports.js"
 import { useRootStore } from "@/stores/root"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
@@ -41,7 +40,7 @@ const success = (count) => {
   <ImportExplanation :exampleFile />
   <ImportSchemaTable :schemaFile />
   <ImportStaffCallout v-if="store.loggedUser.isStaff" class="fr-mb-3w" />
-  <ImportFileUpload @success="success" :importFile="importCanteens" eventMatomo="import-canteen-success" />
+  <ImportFileUpload @success="success" apiUrl="importDiagnostics/simple" eventMatomo="import-canteen-success" />
   <ImportSuccessModal
     :opened="showModal"
     :message="

@@ -4,12 +4,13 @@ import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import { trackEvent } from "@/services/matomo.js"
+import { importFile } from "@/services/imports.js"
 
 /* Store and Router and Emit and Props */
 const store = useRootStore()
 const router = useRouter()
 const emit = defineEmits(["success"])
-const props = defineProps(["importFile", "eventMatomo"])
+const props = defineProps(["apiUrl", "eventMatomo"])
 
 /* Data */
 const pictoDocument = "/static/images/picto-dsfr/document.svg"
@@ -20,8 +21,7 @@ const upload = (file) => {
   if (isProcessingFile.value) return
   isProcessingFile.value = true
   initErrors()
-  props
-    .importFile({ file: file })
+  importFile({ file: file, apiUrl: props.apiUrl })
     .then((json) => {
       if (json.count >= 1) successUpload({ seconds: json.seconds, count: json.count })
       else if (json.canteens.length >= 1) successUpload({ seconds: json.seconds, count: json.canteens.length })
