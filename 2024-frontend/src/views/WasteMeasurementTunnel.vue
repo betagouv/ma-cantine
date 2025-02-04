@@ -1,8 +1,8 @@
 <script setup>
 import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
-import WasteMeasurementSteps from "./WasteMeasurementSteps/index.vue"
-import WasteSummary from "./WasteSummary.vue"
+import WasteMeasurementSteps from "@/components/WasteMeasurementSteps/index.vue"
+import WasteSummary from "@/components/WasteSummary.vue"
 import { BadRequestError } from "@/utils"
 import { useRoute } from "vue-router"
 

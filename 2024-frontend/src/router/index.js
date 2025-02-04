@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router"
-// import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel"
+import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel.vue"
 import ImportSelection from "@/views/ImportSelection.vue"
 import WasteMeasurements from "@/views/WasteMeasurements.vue"
 import LegalNotices from "@/views/LegalNotices.vue"
@@ -10,17 +10,17 @@ import ImportPurchases from "@/views/ImportPurchases.vue"
 import { useRootStore } from "@/stores/root"
 
 const routes = [
-  // {
-  //   path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
-  //   name: "WasteMeasurementTunnel",
-  //   component: WasteMeasurementTunnel,
-  //   props: (route) => ({ ...route.query, ...route.params }),
-  //   meta: {
-  //     title: "Évaluation déchets alimentaires",
-  //     authenticationRequired: true,
-  //     fullscreen: true,
-  //   },
-  // },
+  {
+    path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
+    name: "WasteMeasurementTunnel",
+    component: WasteMeasurementTunnel,
+    props: (route) => ({ ...route.query, ...route.params }),
+    meta: {
+      title: "Évaluation déchets alimentaires",
+      authenticationRequired: true,
+      fullscreen: true,
+    },
+  },
   {
     path: "/importer-des-donnees",
     name: "ImportSelection",
