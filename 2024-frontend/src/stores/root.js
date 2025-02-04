@@ -73,6 +73,9 @@ export const useRootStore = defineStore("root", () => {
     const idx = notifications.indexOf(notification)
     if (idx > -1) notifications.splice(idx, 1)
   }
+  const removeNotifications = () => {
+    notifications.splice(0)
+  }
 
   const createWasteMeasurement = async (canteenId, payload) => {
     return fetch(`/api/v1/canteens/${canteenId}/wasteMeasurements/`, {
@@ -114,6 +117,7 @@ export const useRootStore = defineStore("root", () => {
     notifyRequiredFieldsError,
     notifyServerError,
     removeNotification,
+    removeNotifications,
     sendInquiryEmail,
   }
 })

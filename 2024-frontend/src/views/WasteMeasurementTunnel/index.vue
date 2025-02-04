@@ -73,6 +73,7 @@ const formIsValid = () => {
 }
 
 const continueAction = () => {
+  store.removeNotifications()
   if (step.value.isSynthesis) {
     quit()
     return
@@ -94,6 +95,7 @@ const continueAction = () => {
 }
 
 const navigateBack = () => {
+  store.removeNotifications()
   router.push({ query: { étape: previousStep.value.urlSlug } })
   scrollTop()
 }
