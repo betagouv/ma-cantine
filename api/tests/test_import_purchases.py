@@ -173,6 +173,46 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(errors[0]["status"], 400)
 
     @authenticate
+    def test_import_no_header(self):
+        """
+        A file should not be valid if doesn't contain a header
+        """
+        canteen = CanteenFactory.create(siret="82399356058716")
+        canteen.managers.add(authenticate.user)
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        with open("./api/tests/files/achats/purchases_bad_no_header.csv", "rb") as diag_file:
+            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
+        )
+
+    @authenticate
+    def test_import_partial_header(self):
+        """
+        A file should not be valid if doesn't contain a valid header
+        """
+        canteen = CanteenFactory.create(siret="82399356058716")
+        canteen.managers.add(authenticate.user)
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        with open("./api/tests/files/achats/purchases_bad_partial_header.csv", "rb") as diag_file:
+            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
+        )
+
+    @authenticate
     def test_import_bad_purchases(self):
         """
         Test that the right errors are thrown
@@ -220,7 +260,7 @@ class TestPurchaseImport(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Format fichier : 7-8 colonnes attendues, 6 trouvées.",
+            "Format fichier : 8 colonnes attendues, 6 trouvées.",
         )
 
     @authenticate
@@ -340,24 +380,4 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(
             first_error["message"],
             "Ce fichier est au format application/vnd.oasis.opendocument.spreadsheet, merci d'exporter votre fichier au format CSV et réessayer.",
-        )
-
-    @authenticate
-    def test_no_header(self):
-        """
-        A file should not be valid if doesn't contain a valid header
-        """
-        canteen = CanteenFactory.create(siret="82399356058716")
-        canteen.managers.add(authenticate.user)
-        self.assertEqual(Purchase.objects.count(), 0)
-
-        with open("./api/tests/files/achats/purchases_bad_no_header.csv", "rb") as diag_file:
-            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["count"], 0)
-        self.assertEqual(len(body["errors"]), 1)
-        self.assertEqual(
-            body["errors"][0]["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
         )
