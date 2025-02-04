@@ -1,26 +1,26 @@
 import { createRouter, createWebHistory } from "vue-router"
-import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel"
-import ImportSelection from "@/views/ImportSelection"
-import WasteMeasurements from "@/views/WasteMeasurements"
-import LegalNotices from "@/views/LegalNotices"
-import AccessibilityDeclaration from "@/views/AccessibilityDeclaration"
-import CGU from "@/views/CGU"
-import ContactPage from "@/views/ContactPage"
-import ImportPurchases from "@/views/ImportPurchases"
+// import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel"
+import ImportSelection from "@/views/ImportSelection.vue"
+import WasteMeasurements from "@/views/WasteMeasurements.vue"
+import LegalNotices from "@/views/LegalNotices.vue"
+import AccessibilityDeclaration from "@/views/AccessibilityDeclaration.vue"
+import CGU from "@/views/CGU.vue"
+import ContactPage from "@/views/ContactPage.vue"
+import ImportPurchases from "@/views/ImportPurchases.vue"
 import { useRootStore } from "@/stores/root"
 
 const routes = [
-  {
-    path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
-    name: "WasteMeasurementTunnel",
-    component: WasteMeasurementTunnel,
-    props: (route) => ({ ...route.query, ...route.params }),
-    meta: {
-      title: "Évaluation déchets alimentaires",
-      authenticationRequired: true,
-      fullscreen: true,
-    },
-  },
+  // {
+  //   path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
+  //   name: "WasteMeasurementTunnel",
+  //   component: WasteMeasurementTunnel,
+  //   props: (route) => ({ ...route.query, ...route.params }),
+  //   meta: {
+  //     title: "Évaluation déchets alimentaires",
+  //     authenticationRequired: true,
+  //     fullscreen: true,
+  //   },
+  // },
   {
     path: "/importer-des-donnees",
     name: "ImportSelection",
