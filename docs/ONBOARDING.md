@@ -92,7 +92,7 @@ psql -c "ALTER USER macantine_egalim_team CREATEROLE CREATEDB"
 
 ### Compléter les variables d'environnement
 
-L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), vous pouvez donc créer un fichier `.env` à la racine du projet avec les variables ci-dessous définies.
+L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), vous pouvez donc créer un fichier `.env` à la racine du projet avec les variables définies ci-dessous.
 
 *Attention* : Certaines variables d'environnement sont utilisées uniquement dans les **tasks celery** (ex: mise à jours des contacts Brevo). Elles sont alors renseignées dans `celery.md`.
 Pour tester ces tâches en local, vous pouvez renseigner ces variables d'environnements dans votre `.env`
