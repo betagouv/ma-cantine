@@ -6,6 +6,7 @@ import AccessibilityDeclaration from "@/views/AccessibilityDeclaration.vue"
 import CGU from "@/views/CGU.vue"
 import ContactPage from "@/views/ContactPage.vue"
 import ImportPurchases from "@/views/ImportPurchases.vue"
+import ImportCanteens from "@/views/ImportCanteens.vue"
 
 const vue3routes = [
   {
@@ -80,6 +81,19 @@ const vue3routes = [
     component: ImportPurchases,
     meta: {
       title: "Importer des achats",
+      authenticationRequired: true,
+      breadcrumbs: [
+        { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+        { to: { name: "ImportSelection" }, title: "Importer des données" },
+      ],
+    },
+  },
+  {
+    path: "/importer-des-donnees/cantines",
+    name: "ImportCanteens",
+    component: ImportCanteens,
+    meta: {
+      title: "Importer des cantines",
       authenticationRequired: true,
       breadcrumbs: [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },

@@ -1,4 +1,5 @@
-const getFields = async (url) => {
+const getFields = async (schemaFile) => {
+  const url = `https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/${schemaFile}`
   return await fetch(url)
     .then((response) => response.json())
     .then((json) => json.fields)

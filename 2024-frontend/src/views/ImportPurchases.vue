@@ -1,114 +1,25 @@
 <script setup>
-import { reactive, ref } from "vue"
-import { useRouter } from "vue-router"
-import { useRootStore } from "@/stores/root"
-import { importPurchases } from "@/services/imports.js"
-import { trackEvent } from "@/services/matomo.js"
-import AppSeparator from "@/components/AppSeparator.vue"
+import { ref } from "vue"
 import ImportExplanation from "@/components/ImportExplanation.vue"
-import ImportHelpContact from "@/components/ImportHelpContact.vue"
+import ImportHelp from "@/components/ImportHelp.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
-
-/* Store and Router */
-const store = useRootStore()
-const router = useRouter()
+import ImportFileUpload from "@/components/ImportFileUpload.vue"
 
 /* Data */
-const pictoDocument = "/static/images/picto-dsfr/document.svg"
-const schemaUrl =
-  "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/achats.json"
-const ressources = [
-  {
-    download: "achats_fichier_exemple_ma_cantine.csv",
-    href: "/static/documents/achats_fichier_exemple_ma_cantine.csv",
-    name: "Télécharger notre fichier d’exemple CSV",
-    size: "189 octets",
-  },
-  {
-    external: true,
-    href: "https://ma-cantine.crisp.help/fr/article/comment-importer-un-fichier-csv-dans-excel-7zyxo/",
-    name: "Comment importer un fichier CSV dans Excel ?",
-  },
-  {
-    external: true,
-    href: "https://ma-cantine.crisp.help/fr/article/comment-enregistrer-un-fichier-excel-en-csv-cgfrbp/",
-    name: "Comment enregistrer mon fichier Excel en CSV ?",
-  },
-]
-
-/* Upload */
-const isProcessingFile = ref(false)
-const upload = (file) => {
-  if (isProcessingFile.value) return
-  isProcessingFile.value = true
-  initErrors()
-  importPurchases({ file: file })
-    .then((json) => {
-      if (json.count >= 1) successUpload({ seconds: json.seconds, count: json.count })
-      else if (json.duplicateFile) duplicatedUpload(json.duplicatePurchases)
-      else if (json.errorCount > 0) errorUpload({ count: json.errorCount, errors: json.errors })
-      isProcessingFile.value = false
-    })
-    .catch((e) => {
-      store.notifyServerError(e)
-      isProcessingFile.value = false
-    })
+const schemaFile = "achats.json"
+const exampleFile = {
+  name: "achats_fichier_exemple_ma_cantine.csv",
+  size: "189 octets",
 }
 
-const importSuccess = ref(false)
+/* Sucess */
+const showModal = ref(false)
 const purchaseCount = ref(0)
-const successUpload = (props) => {
-  const { seconds, count } = props
-  const message = `Fichier traité en ${Math.round(seconds)} secondes`
-  store.notify({ message })
+
+const success = (count) => {
   purchaseCount.value = count
-  importSuccess.value = true
-  trackEvent({ category: "inquiry", action: "send", value: "import-purchases-success" })
-}
-
-const duplicatedUpload = (purchases) => {
-  const countPurchases = purchases.length
-  const description =
-    countPurchases > 1
-      ? `Ce fichier a déjà été utilisé pour importer ${countPurchases} achats :`
-      : "Ce fichier a déjà été utilisé pour importer 1 achat :"
-  hasErrors.list = [
-    {
-      description,
-      purchases,
-    },
-  ]
-  showErrors(1)
-}
-
-const errorUpload = (props) => {
-  const { count, errors } = props
-  showErrors(count)
-  hasErrors.list = errors.map((error) => {
-    return {
-      description: error.message,
-      row: error.row,
-    }
-  })
-}
-
-const hasErrors = reactive({})
-const initErrors = () => {
-  hasErrors.status = false
-  hasErrors.badge = ""
-  hasErrors.message = ""
-  hasErrors.list = []
-}
-initErrors()
-const showErrors = (count) => {
-  hasErrors.status = true
-  hasErrors.badge = count > 1 ? `${count} Erreurs détectées` : "1 Erreur détectée"
-  hasErrors.message =
-    count > 1
-      ? "Veuillez les corriger avant d’importer à nouveau le fichier."
-      : "Veuillez la corriger avant d’importer à nouveau le fichier."
-  router.push("#file-upload")
+  showModal.value = true
 }
 </script>
 
@@ -121,69 +32,17 @@ const showErrors = (count) => {
     <router-link :to="{ name: 'PurchasesHome' }">sur la plateforme</router-link>
     .
   </p>
-  <ImportExplanation :ressources="ressources" />
-  <ImportSchemaTable :url="schemaUrl" />
-  <section
-    id="file-upload"
-    class="fr-px-6w fr-px-xl-9w fr-py-6w fr-background-alt--blue-france fr-mt-4w fr-grid-row fr-grid-row--middle"
-  >
-    <div class="fr-hidden fr-unhidden-xl fr-col-3 fr-pr-6w fr-grid-row--center">
-      <img :src="pictoDocument" alt="" />
-    </div>
-    <div class="import-file-upload fr-col-12 fr-col-xl-9 fr-py-3w fr-px-4w fr-card">
-      <DsfrFileUpload
-        label="Avant d’importer votre fichier en CSV, assurez-vous que vos données respectent le format ci-dessus"
-        hint="Extension du fichier autorisé : CSV"
-        @change="upload"
-        :disabled="isProcessingFile"
-      />
-      <div v-if="hasErrors.status" class="fr-mt-2w">
-        <div class="fr-grid-row fr-grid-row--middle">
-          <DsfrBadge type="error" :label="hasErrors.badge" />
-          <p class="fr-text-default--error fr-ml-1w fr-mb-0 fr-mt-1w fr-mt-md-0">
-            {{ hasErrors.message }}
-          </p>
-        </div>
-        <AppSeparator class="fr-my-3w" />
-        <ul>
-          <li v-for="(error, index) in hasErrors.list" :key="index" class="fr-text-default--error">
-            <p class="fr-mb-1v ma-cantine--bold">
-              {{ error.description }}
-            </p>
-            <ul v-if="error.purchases" class="ma-cantine--unstyled-list fr-text-default--grey">
-              <li v-for="(purchase, index) in error.purchases" :key="index">
-                {{ purchase.description }} | {{ purchase.date }} | {{ purchase.priceHt }}€
-              </li>
-            </ul>
-            <p v-if="error.row" class="fr-text-default--grey fr-mb-0">
-              Ligne concernée par cette erreur : {{ error.row + 1 }}
-            </p>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </section>
+  <ImportExplanation :exampleFile />
+  <ImportSchemaTable :schemaFile />
+  <ImportFileUpload @success="success" apiUrl="importPurchases" eventMatomo="import-purchases-success" />
   <ImportSuccessModal
-    :opened="importSuccess"
+    :opened="showModal"
     :message="
       purchaseCount > 1
         ? 'Vos achats sont enregistrés et sont maintenant disponibles.'
         : 'Votre achat est enregistré et est maintenant disponible.'
     "
-    @close="importSuccess = false"
+    @close="showModal = false"
   />
-  <ImportHelpContact class="fr-mt-8w" />
+  <ImportHelp />
 </template>
-
-<style lang="scss">
-.import-file-upload {
-  .fr-label {
-    font-weight: 700;
-    max-width: 75%;
-
-    span {
-      font-weight: initial;
-    }
-  }
-}
-</style>

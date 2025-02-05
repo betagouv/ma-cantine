@@ -1,5 +1,5 @@
 <script setup>
-defineProps(["ressources"])
+defineProps(["exampleFile"])
 </script>
 
 <template>
@@ -50,16 +50,30 @@ defineProps(["ressources"])
         Ressources utiles
       </h3>
       <ul class="ma-cantine--unstyled-list">
-        <li v-for="(ressource, index) in ressources" :key="index" class="fr-mb-3v">
+        <li class="fr-mb-3v">
           <DsfrFileDownload
-            v-if="ressource.download"
+            :size="exampleFile.size"
+            :href="`/static/documents/${exampleFile.name}`"
+            :download="exampleFile.name"
             format="CSV"
-            :size="ressource.size"
-            :href="ressource.href"
-            :download="ressource.download"
-            :title="ressource.name"
+            title="Télécharger notre fichier d’exemple CSV"
           />
-          <a v-else-if="ressource.external" :href="ressource.href" target="_blank">{{ ressource.name }}</a>
+        </li>
+        <li class="fr-mb-3v">
+          <a
+            href="https://ma-cantine.crisp.help/fr/article/comment-importer-un-fichier-csv-dans-excel-7zyxo/"
+            target="_blank"
+          >
+            Comment importer un fichier CSV dans Excel&nbsp;?
+          </a>
+        </li>
+        <li class="fr-mb-3v">
+          <a
+            href="https://ma-cantine.crisp.help/fr/article/comment-enregistrer-un-fichier-excel-en-csv-cgfrbp/"
+            target="_blank"
+          >
+            Comment enregistrer mon fichier Excel en CSV&nbsp;?
+          </a>
         </li>
       </ul>
     </div>
