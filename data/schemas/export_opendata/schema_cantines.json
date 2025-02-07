@@ -183,10 +183,17 @@
       "type": "boolean"
     },
     {
-      "description": "A télédéclaré ses données lors de campagne 2024 (portant sur les données 2023). Cette campagne est encore en cours. Les données peuvent donc évoluer",
+      "description": "A télédéclaré ses données lors de campagne 2024 (portant sur les données 2023)",
       "example": "true",
-      "name": "declaration_donnees_2023_en_cours",
+      "name": "declaration_donnees_2023",
       "title": "A téléclaré en 2024 sur les données 2023",
+      "type": "boolean"
+    },
+    {
+      "description": "A télédéclaré ses données lors de campagne 2024 (portant sur les données 2024). Cette campagne est encore en cours. Les données peuvent donc évoluer",
+      "example": "true",
+      "name": "declaration_donnees_2024_en_cours",
+      "title": "A téléclaré en 2025 sur les données 2024",
       "type": "boolean"
     },
     {
