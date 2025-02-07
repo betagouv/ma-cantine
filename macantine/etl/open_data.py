@@ -183,9 +183,9 @@ class ETL_OPEN_DATA_CANTEEN(etl.CANTEENS, OPEN_DATA):
 
         logger.info("Canteens : Fill campaign participations...")
         start = time.time()
-        for year in [2021, 2022, 2023]:
+        for year in [2021, 2022, 2023, 2024]:
             campaign_participation = macantine.etl.utils.map_canteens_td(year)
-            if year == 2023:
+            if year == 2024:
                 col_name_campaign = f"declaration_donnees_{year}_en_cours"
             else:
                 col_name_campaign = f"declaration_donnees_{year}"
