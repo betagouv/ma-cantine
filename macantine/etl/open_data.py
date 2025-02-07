@@ -152,7 +152,8 @@ class ETL_OPEN_DATA_CANTEEN(etl.CANTEENS, OPEN_DATA):
             "epci_lib",
             "declaration_donnees_2021",
             "declaration_donnees_2022",
-            "declaration_donnees_2023_en_cours",
+            "declaration_donnees_2023",
+            "declaration_donnees_2024_en_cours",
         ]:
             self.canteens_col_from_db.remove(col_processed)
 
