@@ -19,11 +19,15 @@ def process_errors(report):
     for error in report["tasks"][0]["errors"]:
         errors.append(
             {
-                "row": error["rowNumber"],
-                "status": 400,
-                "column": error["fieldName"],
+                # cells, description, fieldNumber, name, note, rowNumber, tags, type
+                "row": error["rowPosition"],
+                "column": error["fieldPosition"],
+                "field": error["fieldName"],
                 "cell": error["cell"],
+                "title": error["title"],  # Cellule vide, Format incorrect, Format de date incorrect
                 "message": error["message"],
+                "code": error["code"],
+                "status": 400,
             }
         )
     return errors
