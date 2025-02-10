@@ -1,29 +1,13 @@
 import { defineStore } from "pinia"
 import { ref, reactive } from "vue"
 import { useFetch } from "@vueuse/core"
-import { AuthenticationError, BadRequestError } from "../utils"
+import { AuthenticationError } from "../utils"
+import { verifyResponse } from "@/services/api.js"
 
+// TODO => à déplacer dans le service une fois tout migrer
 const headers = {
   "X-CSRFToken": window.CSRF_TOKEN || "",
   "Content-Type": "application/json",
-}
-
-const verifyResponse = function(response) {
-  const contentType = response.headers.get("content-type")
-  const hasJSON = contentType && contentType.startsWith("application/json")
-
-  if (response.status < 200 || response.status >= 400) {
-    if (response.status === 403) throw new AuthenticationError()
-    else if (response.status === 400) {
-      if (hasJSON) {
-        throw new BadRequestError(response.json())
-      } else {
-        throw new BadRequestError()
-      }
-    } else throw new Error(`API responded with status of ${response.status}`)
-  }
-
-  return hasJSON ? response.json() : response.text()
 }
 
 export const useRootStore = defineStore("root", () => {
@@ -45,8 +29,7 @@ export const useRootStore = defineStore("root", () => {
   }
 
   const fetchCanteen = (id) => {
-    return fetch(`/api/v1/canteens/${id}`)
-      .then(verifyResponse)
+    return fetch(`/api/v1/canteens/${id}`).then(verifyResponse)
   }
 
   const notify = (notification) => {
@@ -94,9 +77,9 @@ export const useRootStore = defineStore("root", () => {
   }
 
   const sendInquiryEmail = async (payload) => {
-    return fetch("/api/v1/inquiry/", { 
-      method: "POST", 
-      headers, 
+    return fetch("/api/v1/inquiry/", {
+      method: "POST",
+      headers,
       body: JSON.stringify(payload),
     }).then(verifyResponse)
   }

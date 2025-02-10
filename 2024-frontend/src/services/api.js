@@ -1,7 +1,12 @@
-// À supprimer ensuite du store
 import { AuthenticationError, BadRequestError } from "@/utils.js"
 
+// const headers = {
+//   "X-CSRFToken": window.CSRF_TOKEN || "",
+//   "Content-Type": "application/json",
+// }
+
 const verifyResponse = function(response) {
+  console.log("in VERIFY RESPONSe")
   const contentType = response.headers.get("content-type")
   const hasJSON = contentType && contentType.startsWith("application/json")
 
