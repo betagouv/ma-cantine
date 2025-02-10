@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="mb-16" v-if="displayPurchaseHints">
+    <div class="mb-16" v-if="displayPurchaseHints && purchasesSummary.valueTotalHt > 0">
       <DsfrCallout icon="$money-euro-box-fill">
         <div>
           <p>
