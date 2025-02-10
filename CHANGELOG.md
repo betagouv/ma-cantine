@@ -6,6 +6,43 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.4.0](https://github.com/betagouv/ma-cantine/compare/v2025.3.2...v2025.4.0) (2025-02-10)
+
+
+### Nouveautés
+
+* **Import de masse:** Cantines: Migration vue3 et redesign de la page ([#4975](https://github.com/betagouv/ma-cantine/issues/4975)) ([91d6110](https://github.com/betagouv/ma-cantine/commit/91d61102b1ecd17956f7d60d8fe01e04b937bc5c))
+* **Open-Data:** Ajout colonne participation campagne TD 2024 en cours sur le registre des cantines ([#5006](https://github.com/betagouv/ma-cantine/issues/5006)) ([da4ac60](https://github.com/betagouv/ma-cantine/commit/da4ac601f184fc5face58abda0b6130ff5a0f4cd))
+
+
+### Améliorations
+
+* **Import de masse:** Cantines: Renomme les fichiers d'exemple ([#5007](https://github.com/betagouv/ma-cantine/issues/5007)) ([52565b6](https://github.com/betagouv/ma-cantine/commit/52565b6f43f5fa9d958026e6cda26b212d8d37b0))
+
+
+### Corrections (bugs, typos...)
+
+* **Import de masse:** les schémas ne s'affichent pas ([#5005](https://github.com/betagouv/ma-cantine/issues/5005)) ([3f3c463](https://github.com/betagouv/ma-cantine/commit/3f3c46370b468f6ccf38d7d8b07fd4b94e652a01))
+* **Imports:** Remplacer ancien secteur "Secondaire lycée agricole" par "Etablissements d’enseignement agricole" ([#4999](https://github.com/betagouv/ma-cantine/issues/4999)) ([37c4a0c](https://github.com/betagouv/ma-cantine/commit/37c4a0c7f6c0932552bbc71a5e108a62e87a6ffc))
+* **Tunnel gaspillage:** Les erreurs ne s'effaçaient pas ([#4998](https://github.com/betagouv/ma-cantine/issues/4998)) ([5c6e8c3](https://github.com/betagouv/ma-cantine/commit/5c6e8c315d7c5985e58b8bb612107fe031d47950))
+
+
+### Documentation
+
+* **Celery:** Documenter séparation celery et app web ([#4993](https://github.com/betagouv/ma-cantine/issues/4993)) ([0225e7e](https://github.com/betagouv/ma-cantine/commit/0225e7e9add7c7c136672b90e6559e851b58a3ff))
+
+
+### Technique
+
+* **API:** Imports: Achats: séparer le check sur la présence du header ([#4997](https://github.com/betagouv/ma-cantine/issues/4997)) ([a782b1a](https://github.com/betagouv/ma-cantine/commit/a782b1a8ac915983ff5caf161e746df0512130cb))
+* **CleverCloud:** ajoute le mode verbose pour debugger ([#5002](https://github.com/betagouv/ma-cantine/issues/5002)) ([957ba8f](https://github.com/betagouv/ma-cantine/commit/957ba8fa17f319812d19218497c8e8fd0aeb6577))
+* **CleverCloud:** Efface fichier le déploiement pour le remplacer par des variables d'env ([#4978](https://github.com/betagouv/ma-cantine/issues/4978)) ([782bebf](https://github.com/betagouv/ma-cantine/commit/782bebf8062284e87fab2f4d8afa711a711d8358))
+* **deps:** bump jsonschema-specifications from 2023.12.1 to 2024.10.1 ([#4984](https://github.com/betagouv/ma-cantine/issues/4984)) ([4cc007f](https://github.com/betagouv/ma-cantine/commit/4cc007fa218c3be51435fcc96a1d97144c46b40f))
+* **Validata:** Achats: Modifie le schéma pour accepter des decimal avec virgule ([#5001](https://github.com/betagouv/ma-cantine/issues/5001)) ([db77dc9](https://github.com/betagouv/ma-cantine/commit/db77dc95ed987aaf1bd51d1f267dd247085ac2b6))
+* **Validata:** Achats: Modifie le schéma pour accepter des espaces dans les champs enum ([#4973](https://github.com/betagouv/ma-cantine/issues/4973)) ([5ac8e3c](https://github.com/betagouv/ma-cantine/commit/5ac8e3c39aad64bab63b408211e263bd626c37c3))
+* **Validata:** Achats: Re-modifie le schéma pour accepter des decimal avec virgule (et sans limites de chiffres après la virgule) ([#5004](https://github.com/betagouv/ma-cantine/issues/5004)) ([b83e207](https://github.com/betagouv/ma-cantine/commit/b83e2070f1bd5c10d37b5a8fbdab8411cda4bd61))
+* **Vue3:** Change l'organisation du code des views et du router ([#5003](https://github.com/betagouv/ma-cantine/issues/5003)) ([ecf1eb5](https://github.com/betagouv/ma-cantine/commit/ecf1eb5b73bdfdf2405823d41c53a5a34916be52))
+
 ## [2025.3.2](https://github.com/betagouv/ma-cantine/compare/v2025.3.1...v2025.3.2) (2025-01-29)
 
 
