@@ -2,6 +2,14 @@
 
 Tous les changements notables apportés aux jeux de données exposés sur data.gouv.fr vont être documentés ici.
 
+## 2025-02-07
+
+### Ajout
+* Colonne 'declaration_donnees_2024_en_cours'
+
+### Modification
+* La colonne 'declaration_donnees_2023_en_cours' est renommée en 'declaration_donnees_2023'
+
 ## 2024-07-25
 
 ### Suppression
