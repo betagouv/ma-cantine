@@ -1,5 +1,5 @@
 <script setup>
-const file = "/static/documents/fichier_exemple_staff.csv"
+const file = "/static/documents/admin_importer_des_cantines_exemple_ma_cantine.csv"
 </script>
 
 <template>

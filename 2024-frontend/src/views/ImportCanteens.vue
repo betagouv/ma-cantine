@@ -14,7 +14,7 @@ const store = useRootStore()
 /* Data */
 const schemaFile = "cantines.json"
 const exampleFile = {
-  name: "fichier_exemple_ma_cantine_no_diag.csv",
+  name: "importer_des_cantines_exemple_ma_cantine.csv",
   size: "496 octets",
 }
 
