@@ -46,13 +46,13 @@ const successUpload = (params) => {
 
 const duplicatedUpload = (purchases) => {
   const countPurchases = purchases.length
-  const description =
+  const message =
     countPurchases > 1
       ? `Ce fichier a déjà été utilisé pour importer ${countPurchases} achats :`
       : "Ce fichier a déjà été utilisé pour importer 1 achat :"
   hasErrors.list = [
     {
-      description,
+      message,
       purchases,
     },
   ]
@@ -62,12 +62,7 @@ const duplicatedUpload = (purchases) => {
 const errorUpload = (props) => {
   const { count, errors } = props
   showErrors(count)
-  hasErrors.list = errors.map((error) => {
-    return {
-      description: error.message,
-      row: error.row,
-    }
-  })
+  hasErrors.list = errors
 }
 
 const hasErrors = reactive({})
@@ -115,7 +110,9 @@ const showErrors = (count) => {
         <ul>
           <li v-for="(error, index) in hasErrors.list" :key="index" class="fr-text-default--error">
             <p class="fr-mb-1v ma-cantine--bold">
-              {{ error.description }}
+              <!-- TODO: merge Validata & other errors -->
+              <span v-if="error.title">{{ error.field }} : {{ error.title }}</span>
+              <span v-else>{{ error.message }}</span>
             </p>
             <ul v-if="error.purchases" class="ma-cantine--unstyled-list fr-text-default--grey">
               <li v-for="(purchase, index) in error.purchases" :key="index">
@@ -123,7 +120,7 @@ const showErrors = (count) => {
               </li>
             </ul>
             <p v-if="error.row" class="fr-text-default--grey fr-mb-0">
-              Ligne concernée par cette erreur : {{ error.row + 1 }}
+              Ligne concernée par cette erreur : {{ error.title ? error.row : error.row + 1 }}
             </p>
           </li>
         </ul>
