@@ -34,7 +34,7 @@ def get_file_content_type(file):
 
 def validate_file_format(file):
     file_format = get_file_content_type(file)
-    if file_format not in ["text/csv", "text/tab-separated-values"]:
+    if file_format not in ["text/csv", "text/tab-separated-values", "application/vnd.ms-excel"]:
         raise ValidationError(
             f"Ce fichier est au format {file_format}, merci d'exporter votre fichier au format CSV et réessayer."
         )
