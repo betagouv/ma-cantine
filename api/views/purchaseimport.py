@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 
 from api.permissions import IsAuthenticated
 from api.serializers import PurchaseSerializer
+from common.api.validata import process_errors, validate_file_against_schema
 from common.utils import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Purchase
@@ -41,8 +42,11 @@ class ImportPurchasesView(APIView):
         self.is_duplicate_file = False
         self.duplicate_purchases = []
         self.duplicate_purchase_count = 0
-        self.data_schema = json.load(open("data/schemas/imports/achats.json"))
-        self.expected_header = [field["name"] for field in self.data_schema["fields"]]
+        self.schema_url = (
+            "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/achats.json"
+        )
+        self.schema_json = json.load(open("data/schemas/imports/achats.json"))
+        self.expected_header = [field["name"] for field in self.schema_json["fields"]]
         super().__init__(**kwargs)
 
     def post(self, request):
@@ -50,6 +54,8 @@ class ImportPurchasesView(APIView):
         logger.info("Purchase bulk import started")
         try:
             self.file = request.data["file"]
+
+            # Step 1: Format validation
             file_import.validate_file_size(self.file)
             file_import.validate_file_format(self.file)
 
@@ -59,6 +65,14 @@ class ImportPurchasesView(APIView):
             self.dialect = file_import.get_csv_file_dialect(self.file)
             file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
 
+            # Step 2: Schema validation (Validata)
+            report = validate_file_against_schema(self.file, self.schema_url)
+            self.errors = process_errors(report)
+            if len(self.errors):
+                self._log_error("Echec lors de la validation du fichier (schema achats.json - Validata)")
+                return self._get_success_response()
+
+            # Step 3: ma-cantine validation (permissions, last checks...) + import
             with transaction.atomic():
                 self._process_file()
 
@@ -175,18 +189,9 @@ class ImportPurchasesView(APIView):
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
 
         description = row.pop(0)
-        if description == "":
-            raise ValidationError({"description": "La description ne peut pas être vide"})
         provider = row.pop(0)
-        if provider == "":
-            raise ValidationError({"provider": "Le fournisseur ne peut pas être vide"})
         date = row.pop(0)
-        if date == "":
-            raise ValidationError({"date": "La date ne peut pas être vide"})
-
         price = row.pop(0).strip().replace(",", ".")
-        if price == "":
-            raise ValidationError({"price_ht": "Le prix ne peut pas être vide"})
 
         # We try to round the price. If we can't, we will let Django's field validation
         # manage the error - hence the `pass` in the exception handler
