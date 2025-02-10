@@ -389,3 +389,16 @@ class TestPurchaseImport(APITestCase):
             first_error["message"],
             "Ce fichier est au format application/vnd.oasis.opendocument.spreadsheet, merci d'exporter votre fichier au format CSV et réessayer.",
         )
+
+    @authenticate
+    def test_fail_import_bad_extension(self):
+        with open("./api/tests/files/achats/purchases_bad_extension.txt", "rb") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        errors = body["errors"]
+        first_error = errors.pop(0)
+        self.assertEqual(
+            first_error["message"],
+            "Ce fichier est au format text/plain, merci d'exporter votre fichier au format CSV et réessayer.",
+        )
