@@ -6,6 +6,20 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.4.1](https://github.com/betagouv/ma-cantine/compare/v2025.4.0...v2025.4.1) (2025-02-11)
+
+
+### Corrections (bugs, typos...)
+
+* **Import de masse:** autorise le format de fichier utilisé par window pour les fichier csv ([#5012](https://github.com/betagouv/ma-cantine/issues/5012)) ([d75e6bc](https://github.com/betagouv/ma-cantine/commit/d75e6bc0b704ce4ceb5e476e7d91dc807734cd2d))
+* **Import de masse:** restreint l'import aux fichiers .csv et .tsv uniquement ([#5011](https://github.com/betagouv/ma-cantine/issues/5011)) ([fd616e2](https://github.com/betagouv/ma-cantine/commit/fd616e20a221fa81aa12c7a363e0fdf04adefa85))
+* **Télédéclaration:** afficher le bouton de remplissage rapide de l'approvisionnement seulement si le total des achats est supérieur à zéro ([#5008](https://github.com/betagouv/ma-cantine/issues/5008)) ([c8be596](https://github.com/betagouv/ma-cantine/commit/c8be59644bbae6f1eb2aaa87525a7b75f2150e64))
+
+
+### Technique
+
+* **Open data:** lancer les exports plus tôt (à 3AM au lieu de 10AM) ([#5014](https://github.com/betagouv/ma-cantine/issues/5014)) ([53b285b](https://github.com/betagouv/ma-cantine/commit/53b285b0a79240cb0bd0c8769c23a779cfcd80e3))
+
 ## [2025.4.0](https://github.com/betagouv/ma-cantine/compare/v2025.3.2...v2025.4.0) (2025-02-10)
 
 
