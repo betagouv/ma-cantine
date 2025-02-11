@@ -101,6 +101,7 @@ const showErrors = (count) => {
       <DsfrFileUpload
         label="Avant d’importer votre fichier en CSV, assurez-vous que vos données respectent le format ci-dessus"
         hint="Extension du fichier autorisé : CSV"
+        accept=".csv,.tsv"
         @change="upload"
         :disabled="isProcessingFile"
       />
