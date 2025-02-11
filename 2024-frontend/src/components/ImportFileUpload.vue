@@ -110,10 +110,13 @@ const showErrors = (count) => {
         <AppSeparator class="fr-my-3w" />
         <ul>
           <li v-for="(error, index) in hasErrors.list" :key="index" class="fr-text-default--error">
-            <p class="fr-mb-1v ma-cantine--bold">
-              <!-- TODO: merge Validata & other errors -->
-              <span v-if="error.title">{{ error.field }} : {{ error.title }}</span>
-              <span v-else>{{ error.message }}</span>
+            <!-- TODO: merge Validata & other errors -->
+            <p v-if="error.title" class="fr-mb-1v">
+              <span class="ma-cantine--bold">{{ error.field }} :</span>
+              {{ error.title }}
+            </p>
+            <p v-else class="fr-mb-1v">
+              {{ error.message }}
             </p>
             <ul v-if="error.purchases" class="ma-cantine--unstyled-list fr-text-default--grey">
               <li v-for="(purchase, index) in error.purchases" :key="index">
