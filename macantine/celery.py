@@ -22,11 +22,11 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "macantine.settings")
 app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend="django-db", include=["macantine.tasks"])
 app.worker_hijack_root_logger = False
 
-# At 10:00 on every day from Monday through Friday.
-daily_week = crontab(hour=10, minute=0, day_of_week="1-5")
-nightly = crontab(hour=4, minute=0, day_of_week="*")
-midnights = crontab(hour=0, minute=0, day_of_week="*")
-weekly = crontab(hour=4, minute=0, day_of_week=6)
+midnights = crontab(hour=0, minute=0, day_of_week="*")  # Every day at midnight
+daily_week = crontab(hour=10, minute=0, day_of_week="1-5")  # Monday to Friday 10AM
+nightly = crontab(hour=4, minute=0, day_of_week="*")  # Every day at 4AM
+nightly_week = crontab(hour=3, minute=0, day_of_week="1-5")  # Monday to Friday 3AM
+weekly = crontab(hour=4, minute=0, day_of_week=6)  # Saturday 4AM
 every_minute = crontab(minute="*/1")  # For testing purposes
 
 app.conf.beat_schedule = {
@@ -52,7 +52,7 @@ app.conf.beat_schedule = {
     },
     "export_datasets": {
         "task": "macantine.tasks.continous_datasets_export",
-        "schedule": daily_week,
+        "schedule": nightly_week,
     },
     "update_brevo_contacts": {
         "task": "macantine.tasks.update_brevo_contacts",
