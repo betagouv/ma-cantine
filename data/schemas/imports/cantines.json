@@ -180,10 +180,6 @@
       "type": "string"
     }
   ],
-  "format": "csv",
-  "mediatype": "text/csv",
   "name": "dark_query_cantines",
-  "path": "dark_query_cantines.csv",
-  "scheme": "file",
-  "type": "table"
+  "path": "dark_query_cantines.csv"
 }
