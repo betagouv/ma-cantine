@@ -120,7 +120,7 @@
       "example": "Crèche+Secondaire lycée (hors agricole)",
       "format": "default",
       "name": "secteurs",
-      "title": "Secteurs d'activité de l'établissement.",
+      "title": "Secteurs d'activité de l'établissement",
       "type": "string"
     },
     {
