@@ -39,6 +39,7 @@
     },
     {
       "constraints": {
+        "pattern": "^[0-9]{5}$",
         "required": false
       },
       "description": "En cas d'absence de code INSEE, ce champ devient obligatoire.",
