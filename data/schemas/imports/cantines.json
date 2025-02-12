@@ -68,7 +68,7 @@
       "example": "300",
       "format": "default",
       "name": "nombre_repas_jour",
-      "title": "Nombre de repas servis, en moyenne, par jour dans la cantine.",
+      "title": "Nombre de repas servis, en moyenne, par jour dans la cantine",
       "type": "integer"
     },
     {
