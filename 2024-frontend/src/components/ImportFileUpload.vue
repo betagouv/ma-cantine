@@ -151,7 +151,7 @@ const showErrors = (count) => {
               <router-link
                 v-if="error.field"
                 class="fr-ml-1w"
-                :to="{ hash: `#${error.field}`, params: { scrollTop: 100 } }"
+                :to="{ hash: `#${error.field}`, params: { scrollTop: 75 } }"
               >
                 Voir le format attendu
               </router-link>
