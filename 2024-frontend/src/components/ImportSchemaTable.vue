@@ -5,7 +5,7 @@ import ImportSchemaTableDescriptionCell from "@/components/ImportSchemaTableDesc
 
 /* Data */
 const props = defineProps(["schemaFile"])
-const headers = ["Nom de colonne", "Description", "Format", "Exemple", "Obligatoire"]
+const headers = ["Ordre", "Colonne", "Description", "Format", "Exemple", "Obligatoire"]
 const rows = shallowRef([])
 
 /* Fields */
@@ -13,10 +13,15 @@ schemaService.getFields(props.schemaFile).then((fields) => {
   rows.value = formatFields(fields)
 })
 
+const indexToLetter = (index) => {
+  return String.fromCharCode(65 + index) // 65 is the ASCII code for 'A'
+}
+
 const formatFields = (fields) => {
   const rows = []
-  fields.forEach((field) => {
+  fields.forEach((field, idx) => {
     const row = [
+      indexToLetter(idx),
       field.name,
       {
         component: ImportSchemaTableDescriptionCell,
@@ -53,6 +58,9 @@ const formatFields = (fields) => {
       td:first-child {
         color: var(--text-title-red-marianne) !important;
       }
+    }
+    td:nth-child(2) {
+      font-weight: bold;
     }
   }
 }
