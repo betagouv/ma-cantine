@@ -1,11 +1,27 @@
 <script setup>
+import { computed } from "vue"
+import { useRoute } from "vue-router"
 import AppCode from "@/components/AppCode.vue"
-defineProps(["id", "title", "description", "constraints", "multiple", "separator"])
+
 defineOptions({ inheritAttrs: false })
+const route = useRoute()
+const props = defineProps(["id", "title", "description", "constraints", "multiple", "separator"])
+const isSelected = computed(() => {
+  const hash = route.hash.replace("#", "")
+  return hash === props.id
+})
 </script>
 
 <template>
-  <p :id class="fr-text--sm fr-mb-1w">{{ title }}</p>
+  <p
+    :id
+    class="fr-text--sm fr-mb-1w"
+    :class="{
+      selected: isSelected,
+    }"
+  >
+    {{ title }}
+  </p>
   <p v-if="description" class="fr-text--sm">{{ description }}</p>
   <p v-if="constraints" class="fr-text--sm">
     <span>Options acceptées :&#32;</span>
