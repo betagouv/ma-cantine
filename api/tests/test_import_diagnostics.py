@@ -71,7 +71,20 @@ class TestCanteenSchema(TestCase):
             self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_type_gestion_regex(self):
-        self.assertTrue(False)
+        pattern = self.get_pattern("type_gestion")
+        for VALUE_OK in [
+            "conceded",
+            " conceded",
+            "conceded ",
+            " conceded ",
+            "direct",
+            " direct",
+            "direct ",
+            " direct ",
+        ]:
+            self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["type de gestion inconnu", "", "CONCEDED", "     "]:
+            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_modele_economique_regex(self):
         self.assertTrue(False)
