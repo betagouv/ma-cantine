@@ -59,6 +59,9 @@ const formatFields = (fields) => {
         color: var(--text-title-red-marianne) !important;
       }
     }
+    td:nth-child(2) {
+      font-weight: bold;
+    }
   }
 }
 </style>
