@@ -407,6 +407,10 @@ const routes = [
     name: "DiagnosticImportPage",
     component: DiagnosticImportPage,
     props: true,
+    beforeEnter: (to, _from, next) => {
+      if (to.params.importUrlSlug === "cantines-seules") next({ name: "ImportCanteens" })
+      else next()
+    },
   },
   {
     path: "/statistiques-regionales",
