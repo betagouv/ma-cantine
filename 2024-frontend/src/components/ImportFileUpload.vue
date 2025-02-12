@@ -148,7 +148,9 @@ const showErrors = (count) => {
                 error.rowList.length > 1 ? "s" : ""
               }}
               par cette erreur : {{ error.rowList.join(", ") }}
-              <a v-if="error.field" :href="`#${error.field}`">Voir le format attendu</a>
+              <router-link v-if="error.field" :to="{ hash: `#${error.field}`, params: { scrollTop: 100 } }">
+                Voir le format attendu
+              </router-link>
             </p>
           </li>
         </ul>

@@ -18,7 +18,8 @@ const router = createRouter({
   routes,
   scrollBehavior(to) {
     const scrollTo = to.hash || "#app"
-    return { el: scrollTo }
+    const scrollTop = to.params.scrollTop || 0
+    return { el: scrollTo, top: scrollTop }
   },
 })
 
