@@ -144,7 +144,7 @@ def update_brevo_contacts():
     brevo.update_existing_brevo_contacts(chunks, today)
 
     end = time.time()
-    logger.info(f"update_brevo_contacts task ended. Duration : { end - start } seconds")
+    logger.info(f"update_brevo_contacts task ended. Duration : {end - start} seconds")
 
 
 @app.task()
