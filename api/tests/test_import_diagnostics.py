@@ -46,7 +46,11 @@ class TestCanteenSchema(TestCase):
             self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_code_insee_commune_regex(self):
-        self.assertTrue(False)
+        pattern = self.get_pattern("code_insee_commune")
+        for VALUE_OK in ["2A215", "54318"]:
+            self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["AAAAA", "A", " 2A215 ", "543181", "2A215 "]:
+            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_code_postal_commune_regex(self):
         self.assertTrue(False)
