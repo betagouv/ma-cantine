@@ -6,6 +6,28 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.5.0](https://github.com/betagouv/ma-cantine/compare/v2025.4.1...v2025.5.0) (2025-02-12)
+
+
+### Nouveautés
+
+* **Validata:** Import achats: ajout d'appels à Validata et renvoyer les erreurs ([#4949](https://github.com/betagouv/ma-cantine/issues/4949)) ([2c58007](https://github.com/betagouv/ma-cantine/commit/2c5800782f7eb47e4c25f2ac4c239755aa4817ed))
+
+
+### Améliorations
+
+* **Imports:** Ajoute une colonne Ordre (A, B...) dans la doc du schéma ([#5025](https://github.com/betagouv/ma-cantine/issues/5025)) ([0b25f03](https://github.com/betagouv/ma-cantine/commit/0b25f037d2b0b4146b46b9ae9db38ded5806a94e))
+
+
+### Technique
+
+* **Imports achats:** ajouter un lien vers la doc au-dessus ([#5021](https://github.com/betagouv/ma-cantine/issues/5021)) ([b52d79a](https://github.com/betagouv/ma-cantine/commit/b52d79ad6502221aedda3027933bbaf46a45d9ba))
+* **Imports achats:** regrouper les erreurs par colonne ([#5020](https://github.com/betagouv/ma-cantine/issues/5020)) ([c10930b](https://github.com/betagouv/ma-cantine/commit/c10930be5d4aa9c3b782b6059a468cd2d7caf1a5))
+* **Imports de masse:** Achats: renvoyer toutes les erreurs (c'était limité au 30 premières) ([#5018](https://github.com/betagouv/ma-cantine/issues/5018)) ([3051548](https://github.com/betagouv/ma-cantine/commit/30515482793f74f01b21bbc99d6fe61ebe1a8f37))
+* **Imports:** clarifie le message d'erreur venant du header ([#5024](https://github.com/betagouv/ma-cantine/issues/5024)) ([c67888f](https://github.com/betagouv/ma-cantine/commit/c67888fae5f879999d402ff6dc5561084d1b9b5c))
+* **Pre commit:** mise à jour de la version utilisée par flake8 et correction de quelques fichiers ([#5022](https://github.com/betagouv/ma-cantine/issues/5022)) ([3623fd9](https://github.com/betagouv/ma-cantine/commit/3623fd9422994179e0ee3b138bfe16e8cfcd20db))
+* **Validata:** Imports achats: petits ajustements pour commencer à afficher les erreurs renvoyées par Validata ([#5009](https://github.com/betagouv/ma-cantine/issues/5009)) ([a15fe17](https://github.com/betagouv/ma-cantine/commit/a15fe17a6a4ebc6e236efd87932a2d90358fb8a1))
+
 ## [2025.4.1](https://github.com/betagouv/ma-cantine/compare/v2025.4.0...v2025.4.1) (2025-02-11)
 
 
