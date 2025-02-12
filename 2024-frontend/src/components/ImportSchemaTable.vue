@@ -48,7 +48,12 @@ const formatFields = (fields) => {
 <style lang="scss">
 .import-schema-table {
   tr {
-    position: relative;
+    &:has(.selected) {
+      background-color: var(--background-alt-red-marianne) !important;
+      td:first-child {
+        color: var(--text-title-red-marianne) !important;
+      }
+    }
   }
 }
 </style>

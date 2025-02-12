@@ -15,7 +15,7 @@ const isSelected = computed(() => {
 <template>
   <p
     :id
-    class="import-schema-table-description-cell fr-text--sm fr-mb-1w"
+    class="fr-text--sm fr-mb-1w"
     :class="{
       selected: isSelected,
     }"
@@ -35,24 +35,3 @@ const isSelected = computed(() => {
     <AppCode :content="separator" />
   </p>
 </template>
-
-<style lang="scss">
-.import-schema-table-description-cell {
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--text-title-red-marianne);
-    opacity: 0;
-  }
-
-  &.selected {
-    &::before {
-      opacity: 0.1;
-    }
-  }
-}
-</style>
