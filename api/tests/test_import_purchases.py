@@ -197,7 +197,8 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(
-            body["errors"][0]["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
+            body["errors"][0]["message"],
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre",
         )
 
     @authenticate
@@ -217,7 +218,8 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(
-            body["errors"][0]["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
+            body["errors"][0]["message"],
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre",
         )
 
     @authenticate
@@ -279,7 +281,8 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         errors = response.json()["errors"]
         self.assertEqual(
-            errors.pop(0)["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
+            errors.pop(0)["message"],
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre",
         )
 
     @authenticate
