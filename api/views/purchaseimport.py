@@ -287,13 +287,11 @@ class ImportPurchasesView(APIView):
         elif isinstance(e, ValidationError):
             if e.message_dict:
                 for field, messages in e.message_dict.items():
-                    verbose_field_name = ImportPurchasesView._get_verbose_field_name(field)
                     for message in messages:
                         user_message = message
-                        if field != "__all__":
-                            user_message = f"Champ '{verbose_field_name}' : {user_message}"
                         errors.append(
                             {
+                                "field": field,
                                 "message": user_message,
                                 "code": 400,
                             }
