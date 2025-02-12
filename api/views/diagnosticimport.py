@@ -139,7 +139,9 @@ class ImportDiagnosticsView(ABC, APIView):
             or set(header).issubset(set(self.expected_header_diagnostics_complete))
             or set(header).issubset(set(self.expected_header_diagnostics))
         ):
-            raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
+            raise ValidationError(
+                "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre"
+            )
         self.check_admin_values(header)
 
         for row_number, row in enumerate(csvreader):

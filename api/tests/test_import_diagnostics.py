@@ -499,7 +499,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(
-            body["errors"][0]["message"], "La première ligne du fichier doit contenir les bon noms de colonnes"
+            body["errors"][0]["message"],
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre",
         )
 
     @authenticate
@@ -722,7 +723,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         self.assertEqual(
             body["errors"][0]["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes",
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre",
         )
 
         with open("./api/tests/files/diagnostics/diagnostics_complete_bad_wrong_header.csv") as diag_file:
@@ -731,7 +732,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         self.assertEqual(
             body["errors"][0]["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes",
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre",
         )
 
     @authenticate

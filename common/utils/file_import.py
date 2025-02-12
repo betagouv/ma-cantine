@@ -66,4 +66,6 @@ def verify_first_line_is_header(file, file_dialect, expected_header):
     csvreader = csv.reader(io.StringIO("".join(decoded_row)), file_dialect)
     header = next(csvreader)
     if header != expected_header:
-        raise ValidationError("La première ligne du fichier doit contenir les bon noms de colonnes")
+        raise ValidationError(
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre"
+        )
