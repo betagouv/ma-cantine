@@ -177,11 +177,11 @@
       "constraints": {
         "required": false
       },
-      "description": "Adresses mél de gestionnaires additionnels. Ces gestionnaires auront la main sur la gestion de l'établissement.",
+      "description": "Ces gestionnaires auront la main sur la gestion de l'établissement.",
       "example": "gestionnaire1@example.com, gestionnaire2@example.com",
       "format": "default",
       "name": "gestionnaires_additionnels",
-      "title": "Gestionnaires Additionnels (adresses mél)",
+      "title": "Adresses mél de gestionnaires additionnels",
       "type": "string"
     }
   ],
