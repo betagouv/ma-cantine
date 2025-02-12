@@ -27,7 +27,6 @@ logger = logging.getLogger(__name__)
 
 class ImportPurchasesView(APIView):
     permission_classes = [IsAuthenticated]
-    max_error_items = 30
 
     def __init__(self, **kwargs):
         self.purchases = []
@@ -234,7 +233,7 @@ class ImportPurchasesView(APIView):
             {
                 "count": 0 if self.errors else len(self.purchases),
                 "errorCount": len(self.errors),
-                "errors": self.errors[: self.max_error_items],
+                "errors": self.errors,
                 "seconds": time.time() - self.start,
                 "duplicatePurchases": camelize(PurchaseSerializer(self.duplicate_purchases, many=True).data),
                 "duplicateFile": self.is_duplicate_file,
