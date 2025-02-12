@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import unittest
 import zoneinfo
@@ -8,6 +9,7 @@ from unittest.mock import patch
 import requests
 import requests_mock
 from django.core import mail
+from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -23,6 +25,30 @@ from data.region_choices import Region
 from .utils import authenticate
 
 NEXT_YEAR = datetime.date.today().year + 1
+
+
+class TestCanteenSchema(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.schema = json.load(open("data/schemas/imports/cantines.json"))
+
+    def test_secteurs_regex(self):
+        self.assertTrue(False)
+
+    def test_code_insee_commune_regex(self):
+        self.assertTrue(False)
+
+    def test_code_postal_commune_regex(self):
+        self.assertTrue(False)
+
+    def test_type_production_regex(self):
+        self.assertTrue(False)
+
+    def test_type_gestion_regex(self):
+        self.assertTrue(False)
+
+    def test_modele_economique_regex(self):
+        self.assertTrue(False)
 
 
 @requests_mock.Mocker()
