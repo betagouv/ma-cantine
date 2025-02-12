@@ -20,6 +20,7 @@ const formatFields = (fields) => {
       field.name,
       {
         component: ImportSchemaTableDescriptionCell,
+        id: field.name,
         title: field.title,
         description: field.description,
         constraints: field.constraints.enum || field.doc_enum,
