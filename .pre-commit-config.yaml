@@ -56,7 +56,7 @@ repos:
         args: [--line-length=119]
         exclude: ^migrations/
   - repo: https://github.com/pycqa/flake8
-    rev: 3.8.3
+    rev: 7.1.1
     hooks:
       - id: flake8
         args: [--config=.flake8]
