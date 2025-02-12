@@ -5,7 +5,7 @@ import ImportSchemaTableDescriptionCell from "@/components/ImportSchemaTableDesc
 
 /* Data */
 const props = defineProps(["schemaFile"])
-const headers = ["Position", "Nom de colonne", "Description", "Format", "Exemple", "Obligatoire"]
+const headers = ["Ordre", "Nom de colonne", "Description", "Format", "Exemple", "Obligatoire"]
 const rows = shallowRef([])
 
 /* Fields */
