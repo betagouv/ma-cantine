@@ -56,7 +56,19 @@ class TestCanteenSchema(TestCase):
         self.assertTrue(False)
 
     def test_type_production_regex(self):
-        self.assertTrue(False)
+        pattern = self.get_pattern("type_production")
+        for VALUE_OK in [
+            "central",
+            "central_serving",
+            "site",
+            "site_cooked_elsewhere",
+            " central_serving",
+            " site ",
+            "site_cooked_elsewhere ",
+        ]:
+            self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["type de production inconnu", "", "CENTRAL", "site-cooked-elsewhere", "     "]:
+            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_type_gestion_regex(self):
         self.assertTrue(False)
