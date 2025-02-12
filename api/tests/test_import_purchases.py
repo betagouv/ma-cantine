@@ -347,7 +347,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         body = response.json()
-        self.assertEqual(len(body["errors"]), 30)
+        self.assertEqual(len(body["errors"]), 48)
         self.assertEqual(body["errorCount"], 48)
 
     @authenticate
