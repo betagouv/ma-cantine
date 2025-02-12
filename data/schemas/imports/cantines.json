@@ -178,6 +178,8 @@
         "required": false
       },
       "description": "Ces gestionnaires auront la main sur la gestion de l'établissement.",
+      "doc_enum_multiple": true,
+      "doc_enum_multiple_seperator": ",",
       "example": "gestionnaire1@example.com, gestionnaire2@example.com",
       "format": "default",
       "name": "gestionnaires_additionnels",
