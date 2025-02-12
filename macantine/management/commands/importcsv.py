@@ -20,7 +20,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print("Starting CSV import task")
         filepath = options["filepath"]
-        print(f"Filepath to import : { filepath }")
+        print(f"Filepath to import : {filepath}")
 
         locations_csv_str = "siret,citycode\n"
         canteens_by_siret = {}

@@ -94,9 +94,9 @@ export const useRootStore = defineStore("root", () => {
   }
 
   const sendInquiryEmail = async (payload) => {
-    return fetch("/api/v1/inquiry/", { 
-      method: "POST", 
-      headers, 
+    return fetch("/api/v1/inquiry/", {
+      method: "POST",
+      headers,
       body: JSON.stringify(payload),
     }).then(verifyResponse)
   }
