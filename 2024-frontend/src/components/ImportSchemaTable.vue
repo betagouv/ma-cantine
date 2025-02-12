@@ -38,5 +38,17 @@ const formatFields = (fields) => {
 </script>
 
 <template>
-  <DsfrTable class="ma-cantine--table-sticky-head ma-cantine--table-white" :headers="headers" :rows="rows" />
+  <DsfrTable
+    class="ma-cantine--table-sticky-head ma-cantine--table-white import-schema-table"
+    :headers="headers"
+    :rows="rows"
+  />
 </template>
+
+<style lang="scss">
+.import-schema-table {
+  tr {
+    position: relative;
+  }
+}
+</style>
