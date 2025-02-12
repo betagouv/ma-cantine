@@ -62,15 +62,17 @@ const duplicatedUpload = (purchases) => {
 const groupErrorsByColumn = (errors) => {
   const groupedErrors = []
   errors.forEach((error) => {
-    const index = groupedErrors.findIndex((groupedError) => groupedError.field === error.field)
+    let index = groupedErrors.findIndex((groupedError) => groupedError.field === error.field)
     if (index === -1) {
       groupedErrors.push({
         field: error.field,
         column: error.column,
         message: error.title ? error.title : error.message, // Validata: we display the 'title' instead of the 'message'
-        rowList: [error.row],
+        rowList: [],
       })
-    } else {
+      index = groupedErrors.length - 1
+    }
+    if (error.row > 0) {
       groupedErrors[index].rowList.push(error.row)
     }
   })
@@ -138,7 +140,7 @@ const showErrors = (count) => {
                 {{ purchase.description }} | {{ purchase.date }} | {{ purchase.priceHt }}€
               </li>
             </ul>
-            <p v-if="error.rowList" class="fr-text-default--grey fr-mb-0">
+            <p v-if="error.rowList?.length" class="fr-text-default--grey fr-mb-0">
               {{ error.rowList.length }} ligne{{ error.rowList.length > 1 ? "s" : "" }} concernée{{
                 error.rowList.length > 1 ? "s" : ""
               }}
