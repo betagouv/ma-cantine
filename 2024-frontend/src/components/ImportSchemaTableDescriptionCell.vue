@@ -1,11 +1,11 @@
 <script setup>
 import AppCode from "@/components/AppCode.vue"
-defineProps(["title", "description", "constraints", "multiple", "separator"])
+defineProps(["id", "title", "description", "constraints", "multiple", "separator"])
 defineOptions({ inheritAttrs: false })
 </script>
 
 <template>
-  <p class="fr-text--sm fr-mb-1w">{{ title }}</p>
+  <p :id class="fr-text--sm fr-mb-1w">{{ title }}</p>
   <p v-if="description" class="fr-text--sm">{{ description }}</p>
   <p v-if="constraints" class="fr-text--sm">
     <span>Options acceptées :&#32;</span>
