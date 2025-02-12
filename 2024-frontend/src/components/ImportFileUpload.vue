@@ -59,10 +59,34 @@ const duplicatedUpload = (purchases) => {
   showErrors(1)
 }
 
+const groupErrorsByColumn = (errors) => {
+  const groupedErrors = []
+  errors.forEach((error) => {
+    const error_message = error.title ? error.title : error.message // Validata: we display the 'title' instead of the 'message'
+    let index = groupedErrors.findIndex(
+      (groupedError) => groupedError.field === error.field && groupedError.message === error_message
+    )
+    if (index === -1) {
+      groupedErrors.push({
+        field: error.field,
+        column: error.column,
+        message: error_message,
+        rowList: [],
+      })
+      index = groupedErrors.length - 1
+    }
+    if (error.row > 0) {
+      groupedErrors[index].rowList.push(error.row)
+    }
+  })
+  // TODO: order by column from left to right
+  return groupedErrors
+}
+
 const errorUpload = (props) => {
   const { count, errors } = props
   showErrors(count)
-  hasErrors.list = errors
+  hasErrors.list = groupErrorsByColumn(errors)
 }
 
 const hasErrors = reactive({})
@@ -110,12 +134,8 @@ const showErrors = (count) => {
         <AppSeparator class="fr-my-3w" />
         <ul>
           <li v-for="(error, index) in hasErrors.list" :key="index" class="fr-text-default--error">
-            <!-- TODO: merge Validata & other errors -->
-            <p v-if="error.title" class="fr-mb-1v">
-              <span class="ma-cantine--bold">{{ error.field }} :</span>
-              {{ error.title }}
-            </p>
-            <p v-else class="fr-mb-1v">
+            <p class="fr-mb-1v">
+              <span v-if="error.field" class="ma-cantine--bold">{{ error.field }} :</span>
               {{ error.message }}
             </p>
             <ul v-if="error.purchases" class="ma-cantine--unstyled-list fr-text-default--grey">
@@ -123,8 +143,11 @@ const showErrors = (count) => {
                 {{ purchase.description }} | {{ purchase.date }} | {{ purchase.priceHt }}€
               </li>
             </ul>
-            <p v-if="error.row" class="fr-text-default--grey fr-mb-0">
-              Ligne concernée par cette erreur : {{ error.title ? error.row : error.row + 1 }}
+            <p v-if="error.rowList?.length" class="fr-text-default--grey fr-mb-0">
+              {{ error.rowList.length }} ligne{{ error.rowList.length > 1 ? "s" : "" }} concernée{{
+                error.rowList.length > 1 ? "s" : ""
+              }}
+              par cette erreur : {{ error.rowList.join(", ") }}
             </p>
           </li>
         </ul>
