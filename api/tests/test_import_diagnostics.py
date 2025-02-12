@@ -53,7 +53,11 @@ class TestCanteenSchema(TestCase):
             self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_code_postal_commune_regex(self):
-        self.assertTrue(False)
+        pattern = self.get_pattern("code_postal_commune")
+        for VALUE_OK in ["75000"]:
+            self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["75O10", " 75010 ", "", "   "]:
+            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_type_production_regex(self):
         pattern = self.get_pattern("type_production")
