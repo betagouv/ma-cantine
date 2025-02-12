@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import re
 import unittest
 import zoneinfo
 from decimal import Decimal
@@ -32,8 +33,17 @@ class TestCanteenSchema(TestCase):
     def setUpTestData(cls):
         cls.schema = json.load(open("data/schemas/imports/cantines.json"))
 
+    def get_pattern(self, field_name):
+        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == field_name), None)
+        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
+        return pattern
+
     def test_secteurs_regex(self):
-        self.assertTrue(False)
+        pattern = self.get_pattern("secteurs")
+        for VALUE_OK in ["Crèche", " Cliniques ", "Cliniques+Crèche", " Cliniques + Crèche "]:
+            self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["Secteur qui n'existe pas", "Crèche,Cliniques", " Crèche + Cliniques , Hôpitaux"]:
+            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_code_insee_commune_regex(self):
         self.assertTrue(False)
