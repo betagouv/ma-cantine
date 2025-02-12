@@ -1,13 +1,15 @@
 <script setup>
-import { ref } from "vue"
-import AppCode from "@/components/AppCode.vue"
+import { computed } from "vue"
 import { useRoute } from "vue-router"
+import AppCode from "@/components/AppCode.vue"
 
 defineOptions({ inheritAttrs: false })
 const route = useRoute()
 const props = defineProps(["id", "title", "description", "constraints", "multiple", "separator"])
-const hash = route.hash.replace("#", "")
-const isSelected = ref(hash === props.id)
+const isSelected = computed(() => {
+  const hash = route.hash.replace("#", "")
+  return hash === props.id
+})
 </script>
 
 <template>
