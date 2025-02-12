@@ -1,14 +1,19 @@
 <script setup>
+import { ref } from "vue"
 import AppCode from "@/components/AppCode.vue"
 
 defineProps(["id", "title", "description", "constraints", "multiple", "separator"])
 defineOptions({ inheritAttrs: false })
+const isSelected = ref(true)
 </script>
 
 <template>
   <p
     :id
-    class="import-schema-table-description-cell import-schema-table-description-cell--selected fr-text--sm fr-mb-1w"
+    class="import-schema-table-description-cell fr-text--sm fr-mb-1w"
+    :class="{
+      selected: isSelected,
+    }"
   >
     {{ title }}
   </p>
@@ -39,7 +44,7 @@ defineOptions({ inheritAttrs: false })
     opacity: 0;
   }
 
-  &--selected {
+  &.selected {
     &::before {
       opacity: 0.1;
     }
