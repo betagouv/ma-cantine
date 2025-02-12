@@ -87,7 +87,20 @@ class TestCanteenSchema(TestCase):
             self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_modele_economique_regex(self):
-        self.assertTrue(False)
+        pattern = self.get_pattern("modèle_économique")
+        for VALUE_OK in [
+            "public",
+            " public",
+            "public ",
+            " public ",
+            "private",
+            " private",
+            "private ",
+            " private ",
+        ]:
+            self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["modèle économique inconnu", "", "PUBLIC", "     "]:
+            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
 
 @requests_mock.Mocker()
