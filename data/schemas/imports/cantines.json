@@ -138,7 +138,7 @@
       "example": "central",
       "format": "default",
       "name": "type_production",
-      "title": "Lieu de production et de service des repas.",
+      "title": "Lieu de production et de service des repas",
       "type": "string"
     },
     {
