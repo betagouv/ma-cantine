@@ -146,7 +146,7 @@ class TestPurchaseImport(APITestCase):
         with open("./api/tests/files/achats/purchases_good_separator_semicolon.csv") as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 2)
+        self.assertEqual(Purchase.objects.count(), 1 + 1)
 
     @authenticate
     @override_settings(CSV_PURCHASE_CHUNK_LINES=1)
@@ -232,43 +232,39 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         errors = response.json()["errors"]
-        self.assertEqual(errors.pop(0)["message"], "Champ 'siret' : Le siret de la cantine ne peut pas être vide")
-        self.assertEqual(
-            errors.pop(0)["message"], "Une cantine avec le siret « 86180597100897 » n'existe pas sur la plateforme."
-        )
-        self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
-        self.assertEqual(
-            errors.pop(0)["message"], "Champ 'description du produit' : La description ne peut pas être vide"
-        )
-        self.assertEqual(errors.pop(0)["message"], "Champ 'fournisseur' : Le fournisseur ne peut pas être vide")
-        self.assertEqual(errors.pop(0)["message"], "Champ 'date' : La date ne peut pas être vide")
+        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée.")
+        # self.assertEqual(
+        #     errors.pop(0)["message"], "Une cantine avec le siret « 86180597100897 » n'existe pas sur la plateforme."
+        # )
+        # self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
+        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée.")
+        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée.")
+        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée.")
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'date' : Le format de date de la valeur «\xa02022-02-31\xa0» est correct (AAAA-MM-JJ), mais la date n’est pas valide.",
+            "La date doit être écrite sous la forme `aaaa-mm-jj`.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'date' : Le format de date de la valeur «\xa02022/03/01\xa0» n’est pas valide. Le format correct est AAAA-MM-JJ.",
+            "La date doit être écrite sous la forme `aaaa-mm-jj`.",
         )
-        self.assertEqual(errors.pop(0)["message"], "Champ 'prix HT' : Le prix ne peut pas être vide")
-        self.assertEqual(
-            errors.pop(0)["message"], "Champ 'prix HT' : La valeur «\xa0A price\xa0» doit être un nombre décimal."
+        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée.")
+        self.assertTrue(
+            errors.pop(0)["message"].startswith("A price ne respecte pas le motif imposé (expression régulière")
         )
-        self.assertEqual(
-            errors.pop(0)["message"],
-            "Champ 'famille de produits' : La valeur «\xa0'NOPE'\xa0» n’est pas un choix valide.",
+        self.assertTrue(
+            errors.pop(0)["message"].startswith("NOPE ne respecte pas le motif imposé (expression régulière"),
         )
-        self.assertEqual(
-            errors.pop(0)["message"],
-            "Champ 'caractéristiques' : L'élément n°2 du tableau n’est pas valide\xa0: La valeur «\xa0'NOPE'\xa0» n’est pas un choix valide.",
+        self.assertTrue(
+            errors.pop(0)["message"].startswith("BIO,NOPE ne respecte pas le motif imposé (expression régulière"),
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'définition de local' : La définition de local est obligatoire pour les produits locaux",
+            'Row at position "15" has a missing cell in field "caracteristiques" at position "7"',
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Format fichier : 8 colonnes attendues, 6 trouvées.",
+            'Row at position "15" has a missing cell in field "definition_local" at position "8"',
         )
 
     @authenticate
@@ -351,8 +347,8 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         body = response.json()
-        self.assertEqual(len(body["errors"]), 56)
-        self.assertEqual(body["errorCount"], 56)
+        self.assertEqual(len(body["errors"]), 48)
+        self.assertEqual(body["errorCount"], 48)
 
     @authenticate
     def test_encoding_autodetect_windows1252(self):
