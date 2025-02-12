@@ -64,11 +64,7 @@
           <v-spacer></v-spacer>
           <v-card-actions class="px-4">
             <v-spacer></v-spacer>
-            <v-btn
-              :to="{ name: 'DiagnosticImportPage', params: { importUrlSlug: 'cantines-seules' } }"
-              outlined
-              color="primary"
-            >
+            <v-btn :to="{ name: 'ImportCanteens' }" outlined color="primary">
               Importer mes cantines
             </v-btn>
           </v-card-actions>

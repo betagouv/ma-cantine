@@ -605,6 +605,10 @@ const vue3Routes = [
     },
     sitemapGroup: Constants.SitemapGroups.DIAG,
   },
+  {
+    path: "/importer-des-donnees/cantines",
+    name: "ImportCanteens",
+  },
 ]
 const VUE3_PREFIX = "/v2"
 vue3Routes.forEach((r) => {
