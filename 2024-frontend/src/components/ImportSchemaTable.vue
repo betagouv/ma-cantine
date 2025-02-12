@@ -20,6 +20,7 @@ const formatFields = (fields) => {
       field.name,
       {
         component: ImportSchemaTableDescriptionCell,
+        id: field.name,
         title: field.title,
         description: field.description,
         constraints: field.constraints.enum || field.doc_enum,
@@ -37,5 +38,22 @@ const formatFields = (fields) => {
 </script>
 
 <template>
-  <DsfrTable class="ma-cantine--table-sticky-head ma-cantine--table-white" :headers="headers" :rows="rows" />
+  <DsfrTable
+    class="ma-cantine--table-sticky-head ma-cantine--table-white import-schema-table"
+    :headers="headers"
+    :rows="rows"
+  />
 </template>
+
+<style lang="scss">
+.import-schema-table {
+  tr {
+    &:has(.selected) {
+      background-color: var(--background-alt-red-marianne) !important;
+      td:first-child {
+        color: var(--text-title-red-marianne) !important;
+      }
+    }
+  }
+}
+</style>
