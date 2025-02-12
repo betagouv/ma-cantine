@@ -1,10 +1,13 @@
 <script setup>
 import { ref } from "vue"
 import AppCode from "@/components/AppCode.vue"
+import { useRoute } from "vue-router"
 
-defineProps(["id", "title", "description", "constraints", "multiple", "separator"])
 defineOptions({ inheritAttrs: false })
-const isSelected = ref(true)
+const route = useRoute()
+const props = defineProps(["id", "title", "description", "constraints", "multiple", "separator"])
+const hash = route.hash.replace("#", "")
+const isSelected = ref(hash === props.id)
 </script>
 
 <template>
