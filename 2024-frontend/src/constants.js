@@ -1,12 +1,6 @@
 export default Object.freeze({
   DiagnosticImportLevels: [
     {
-      key: "NONE",
-      urlSlug: "cantines-seules",
-      title: "Créer des cantines",
-      help: "Vous voulez créer ou mettre à jour des cantines",
-    },
-    {
       key: "SIMPLE",
       urlSlug: "cantines-et-diagnostics-simples",
       title: "Importer des bilans simples",

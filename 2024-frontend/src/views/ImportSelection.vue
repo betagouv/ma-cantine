@@ -18,6 +18,12 @@ importTypes.push({
   help: "Vous voulez importer des données d'achat pour des cantines existantes",
   to: { name: "ImportPurchases" },
 })
+importTypes.push({
+  key: "CANTEENS",
+  title: "Importer des cantines",
+  help: "Vous voulez créer ou mettre à jour des cantines",
+  to: { name: "ImportCanteens" },
+})
 
 const activeAccordion = ref("")
 
@@ -69,7 +75,7 @@ const handleChoice = () => {
   switch (step.value.key) {
     case "hasCanteens":
       if (value) break
-      importSuggestionKey.value = "NONE"
+      importSuggestionKey.value = "CANTEENS"
       return
     case "importPurchases":
       if (!value) break
@@ -77,7 +83,7 @@ const handleChoice = () => {
       return
     case "importDiagnostics":
       if (value) break
-      importSuggestionKey.value = "NONE"
+      importSuggestionKey.value = "CANTEENS"
       return
     case "isCentralKitchen":
       answers.value.isCentralKitchen = value
