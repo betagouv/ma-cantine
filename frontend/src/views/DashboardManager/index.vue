@@ -1,7 +1,8 @@
 <template>
   <div class="text-left" v-if="canteen">
     <ProductionTypeTag :canteen="canteen" class="mt-2" />
-    <h1 class="mt-2 mb-4 fr-display-xs">{{ canteen.name }}</h1>
+    <h1 class="fr-h3 mt-2 mb-2">{{ canteen.name }}</h1>
+    <p>SIRET : {{ canteen.siret }}</p>
     <v-row v-if="canteenPreviews.length > 1">
       <v-col>
         <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
