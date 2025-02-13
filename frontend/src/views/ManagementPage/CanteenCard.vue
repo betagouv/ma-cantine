@@ -5,6 +5,7 @@
       <h3 class="fr-h6 font-weight-bold mb-1">{{ canteen.name }}</h3>
     </v-card-title>
     <v-card-subtitle class="pb-0 mx-n1">
+      <p class="pl-1 mb-2">SIRET : {{ canteen.siret }}</p>
       <DsfrTag
         v-if="teledeclarationIsActive && !usesCentralKitchenDiagnostics"
         :text="teledeclarationStatus.text"
