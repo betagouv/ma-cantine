@@ -12,6 +12,10 @@
             <span class="font-weight-medium">{{ canteen.name }}</span>
           </p>
           <p class="mb-0">
+            SIRET :
+            <span class="font-weight-medium">{{ canteen.siret }}</span>
+          </p>
+          <p class="mb-0">
             Commune :
             <span class="font-weight-medium">{{ canteenCommune }}</span>
           </p>
