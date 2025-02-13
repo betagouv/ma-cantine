@@ -1,4 +1,5 @@
 {
+  "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
   "encoding": "utf-8",
   "fields": [
     {
@@ -38,6 +39,7 @@
     },
     {
       "constraints": {
+        "pattern": "^[0-9]{5}$",
         "required": false
       },
       "description": "En cas d'absence de code INSEE, ce champ devient obligatoire.",
@@ -63,105 +65,109 @@
       "constraints": {
         "required": true
       },
-      "description": "Nombre de repas servis, en moyenne, par jour dans la cantine.",
+      "description": "",
       "example": "300",
       "format": "default",
       "name": "nombre_repas_jour",
-      "title": "Nombre de repas par jour",
+      "title": "Nombre de repas servis, en moyenne, par jour dans la cantine",
       "type": "integer"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "Nombre de repas servis, en moyenne, par an dans la cantine. Y compris les couverts livrés.",
+      "description": "Y compris les couverts livrés.",
       "example": "67000",
       "format": "default",
       "name": "nombre_repas_an",
-      "title": "Nombre de repas par an",
+      "title": "Nombre de repas servis, en moyenne, par an dans la cantine",
       "type": "integer"
     },
     {
       "constraints": {
-        "enum": [
-          "Crèche",
-          "Etablissements de la PJJ",
-          "Secondaire lycée (hors agricole)",
-          "Etablissements d’enseignement agricole",
-          "Restaurants administratifs des collectivités territoriales",
-          "Restaurants d’entreprises",
-          "Restaurants inter-entreprises",
-          "Autres structures d’enseignement",
-          "Ecole primaire (maternelle et élémentaire)",
-          "Secondaire collège",
-          "Hôpitaux",
-          "Cliniques",
-          "Autres établissements de soins",
-          "Autres établissements sociaux et médico-sociaux",
-          "IME / ITEP, ESAT / Etablissements spécialisés",
-          "EHPAD / maisons de retraite / foyers de personnes âgées",
-          "Centre de vacances / sportif",
-          "Autres établissements de loisirs",
-          "Autres établissements non listés",
-          "Restaurants des prisons",
-          "Restaurants administratifs d’Etat (RA)",
-          "Restaurants des armées / police / gendarmerie",
-          "Etablissements publics d’Etat (EPA ou EPIC)",
-          "Supérieur et Universitaire",
-          "Restaurants inter-administratifs d’État (RIA)"
-        ],
-        "enum_multiple": true,
-        "enum_multiple_seperator": "+",
+        "pattern": "^ *(Crèche|Etablissements de la PJJ|Secondaire lycée (hors agricole)|Etablissements d’enseignement agricole|Restaurants administratifs des collectivités territoriales|Restaurants d’entreprises|Restaurants inter-entreprises|Autres structures d’enseignement|Ecole primaire (maternelle et élémentaire)|Secondaire collège|Hôpitaux|Cliniques|Autres établissements de soins|Autres établissements sociaux et médico-sociaux|IME / ITEP, ESAT / Etablissements spécialisés|EHPAD / maisons de retraite / foyers de personnes âgées|Centre de vacances / sportif|Autres établissements de loisirs|Autres établissements non listés|Restaurants des prisons|Restaurants administratifs d’Etat (RA)|Restaurants des armées / police / gendarmerie|Etablissements publics d’Etat (EPA ou EPIC)|Supérieur et Universitaire|Restaurants inter-administratifs d’État (RIA))( *\\+ *(Crèche|Etablissements de la PJJ|Secondaire lycée (hors agricole)|Etablissements d’enseignement agricole|Restaurants administratifs des collectivités territoriales|Restaurants d’entreprises|Restaurants inter-entreprises|Autres structures d’enseignement|Ecole primaire (maternelle et élémentaire)|Secondaire collège|Hôpitaux|Cliniques|Autres établissements de soins|Autres établissements sociaux et médico-sociaux|IME / ITEP, ESAT / Etablissements spécialisés|EHPAD / maisons de retraite / foyers de personnes âgées|Centre de vacances / sportif|Autres établissements de loisirs|Autres établissements non listés|Restaurants des prisons|Restaurants administratifs d’Etat (RA)|Restaurants des armées / police / gendarmerie|Etablissements publics d’Etat (EPA ou EPIC)|Supérieur et Universitaire|Restaurants inter-administratifs d’État (RIA)))* *$",
         "required": true
       },
-      "description": "Secteurs d'activité de l'établissement.",
+      "description": "",
+      "doc_enum": [
+        "Crèche",
+        "Etablissements de la PJJ",
+        "Secondaire lycée (hors agricole)",
+        "Etablissements d’enseignement agricole",
+        "Restaurants administratifs des collectivités territoriales",
+        "Restaurants d’entreprises",
+        "Restaurants inter-entreprises",
+        "Autres structures d’enseignement",
+        "Ecole primaire (maternelle et élémentaire)",
+        "Secondaire collège",
+        "Hôpitaux",
+        "Cliniques",
+        "Autres établissements de soins",
+        "Autres établissements sociaux et médico-sociaux",
+        "IME / ITEP, ESAT / Etablissements spécialisés",
+        "EHPAD / maisons de retraite / foyers de personnes âgées",
+        "Centre de vacances / sportif",
+        "Autres établissements de loisirs",
+        "Autres établissements non listés",
+        "Restaurants des prisons",
+        "Restaurants administratifs d’Etat (RA)",
+        "Restaurants des armées / police / gendarmerie",
+        "Etablissements publics d’Etat (EPA ou EPIC)",
+        "Supérieur et Universitaire",
+        "Restaurants inter-administratifs d’État (RIA)"
+      ],
+      "doc_enum_multiple": true,
+      "doc_enum_multiple_seperator": "+",
       "example": "Crèche+Secondaire lycée (hors agricole)",
       "format": "default",
       "name": "secteurs",
-      "title": "Secteurs",
+      "title": "Secteurs d'activité de l'établissement",
       "type": "string"
     },
     {
       "constraints": {
-        "enum": [
-          "central",
-          "central_serving",
-          "site",
-          "site_cooked_elsewhere"
-        ],
+        "pattern": "^ *(central|central_serving|site|site_cooked_elsewhere) *$",
         "required": true
       },
-      "description": "Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ 'nombre_satellites' renseigne le nombre de cantines satellites.",
+      "description": "Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ 'nombre_satellites' renseigne le nombre de cantines satellites.",
+      "doc_enum": [
+        "central",
+        "central_serving",
+        "site",
+        "site_cooked_elsewhere"
+      ],
       "example": "central",
       "format": "default",
       "name": "type_production",
-      "title": "Mode de production",
+      "title": "Lieu de production et de service des repas",
       "type": "string"
     },
     {
       "constraints": {
-        "enum": [
-          "conceded",
-          "direct"
-        ],
+        "pattern": "^ *(conceded|direct) *$",
         "required": true
       },
-      "description": "La cantine peut être gérée directement ('direct') ou de manière concédée ('conceded'). Si de manière concédée, la délégation peut être totale ou partielle.",
+      "description": "Elle peut être gérée directement ('direct') ou de manière concédée ('conceded'). Si de manière concédée, la délégation peut être totale ou partielle.",
+      "doc_enum": [
+        "conceded",
+        "direct"
+      ],
       "example": "conceded",
       "format": "default",
       "name": "type_gestion",
-      "title": "Mode de gestion/management",
+      "title": "Mode de gestion de la cantine",
       "type": "string"
     },
     {
       "constraints": {
-        "enum": [
-          "public",
-          "private"
-        ],
+        "pattern": "^ *(public|private) *$",
         "required": false
       },
       "description": "Il existe 2 types différents : cantine publique ('public'), et cantine privée ('private').",
+      "doc_enum": [
+        "public",
+        "private"
+      ],
       "example": "public",
       "format": "default",
       "name": "modèle_économique",
@@ -172,18 +178,18 @@
       "constraints": {
         "required": false
       },
-      "description": "Adresses mél de gestionnaires additionnels. Ces gestionnaires auront la main sur la gestion de l'établissement.",
+      "description": "Ces gestionnaires auront la main sur la gestion de l'établissement.",
+      "doc_enum_multiple": true,
+      "doc_enum_multiple_seperator": ",",
       "example": "gestionnaire1@example.com, gestionnaire2@example.com",
       "format": "default",
       "name": "gestionnaires_additionnels",
-      "title": "Gestionnaires Additionnels (adresses mél)",
+      "title": "Adresses mél de gestionnaires additionnels",
       "type": "string"
     }
   ],
-  "format": "csv",
-  "mediatype": "text/csv",
-  "name": "dark_query_cantines",
-  "path": "dark_query_cantines.csv",
-  "scheme": "file",
-  "type": "table"
+  "homepage": "https://github.com/betagouv/ma-cantine",
+  "name": "import-cantines",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/charline-l/cantine-schema-compatible-validata/data/schemas/imports/cantines.json",
+  "title": "Schema import des cantines"
 }
