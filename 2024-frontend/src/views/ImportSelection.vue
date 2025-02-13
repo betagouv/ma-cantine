@@ -4,6 +4,12 @@ import DsfrBooleanRadio from "@/components/DsfrBooleanRadio.vue"
 import Constants from "@/constants.js"
 
 const importTypes = []
+importTypes.push({
+  key: "CANTEENS",
+  title: "Importer des cantines",
+  help: "Vous voulez créer ou mettre à jour des cantines",
+  to: { name: "ImportCanteens" },
+})
 Object.values(Constants.DiagnosticImportLevels).forEach((level) => {
   level.to = { name: "DiagnosticImportPage", params: { importUrlSlug: level.urlSlug } }
   importTypes.push(level)
@@ -69,7 +75,7 @@ const handleChoice = () => {
   switch (step.value.key) {
     case "hasCanteens":
       if (value) break
-      importSuggestionKey.value = "NONE"
+      importSuggestionKey.value = "CANTEENS"
       return
     case "importPurchases":
       if (!value) break
@@ -77,7 +83,7 @@ const handleChoice = () => {
       return
     case "importDiagnostics":
       if (value) break
-      importSuggestionKey.value = "NONE"
+      importSuggestionKey.value = "CANTEENS"
       return
     case "isCentralKitchen":
       answers.value.isCentralKitchen = value

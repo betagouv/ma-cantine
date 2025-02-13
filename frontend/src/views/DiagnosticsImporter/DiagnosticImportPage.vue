@@ -203,8 +203,6 @@ export default {
       seconds: undefined,
       importInProgress: false,
       encodingUsed: undefined,
-      canteenSchemaUrl:
-        "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines.json",
       diagnosticSimpleSchemaUrl:
         "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/diagnostics.json",
       diagnosticCompleteSchemaUrl:
@@ -221,9 +219,7 @@ export default {
       return this.importLevels.find((level) => level.key === this.importLevel)
     },
     getDiagnosticSchemaUrl() {
-      if (this.importLevel === "NONE") {
-        return this.canteenSchemaUrl
-      } else if (this.importLevel === "SIMPLE") {
+      if (this.importLevel === "SIMPLE") {
         return this.diagnosticSimpleSchemaUrl
       } else if (this.importLevel === "CC_SIMPLE") {
         return this.diagnosticSimpleCCSchemaUrl
@@ -251,15 +247,11 @@ export default {
         SIMPLE: {
           csv: "771 o",
         },
-        NONE: {
-          csv: "321 o",
-        },
       }
       let filename = "/static/documents/"
       if (this.importLevel === "COMPLETE") filename = filename + "fichier_exemple_complet_ma_cantine"
       else if (this.importLevel === "CC_SIMPLE") filename = filename + "fichier_exemple_ma_cantine_cc_simple"
       else if (this.importLevel === "CC_COMPLETE") filename = filename + "fichier_exemple_ma_cantine_cc_complet"
-      else if (this.importLevel === "NONE") filename = filename + "fichier_exemple_ma_cantine_no_diag"
       else filename = filename + "fichier_exemple_ma_cantine"
       return ["csv"].map((fileType) => ({
         href: `${filename}.${fileType}`,
@@ -271,13 +263,12 @@ export default {
       return {
         SIMPLE: "l'import simple",
         COMPLETE: "l'import complet",
-        NONE: "l'import de cantines seulement",
         CC_SIMPLE: "la mise à jour des satellites et l'import simple",
         CC_COMPLETE: "la mise à jour des satellites et l'import complet",
       }[this.importLevel]
     },
     staffImportAvailable() {
-      return this.importLevel === "SIMPLE" || this.importLevel === "NONE"
+      return this.importLevel === "SIMPLE"
     },
   },
   created() {

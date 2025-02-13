@@ -11,16 +11,22 @@ const file = "/static/documents/admin_importer_des_cantines_exemple_ma_cantine.c
         </p>
         <ul>
           <li>
-            <strong>admin_gestionnaires_additionnels</strong>
-            : une liste d'adresses email de gestionnaires qui seront ajoutés sans être notifiés par email
+            <p class="fr-mb-0">
+              <strong>admin_gestionnaires_additionnels</strong>
+              : une liste d'adresses email de gestionnaires qui seront ajoutés sans être notifiés par email
+            </p>
           </li>
           <li>
-            <strong>admin_source_donnees</strong>
-            : un identifiant décrivant la source de données
+            <p class="fr-mb-0">
+              <strong>admin_source_donnees</strong>
+              : un identifiant décrivant la source de données
+            </p>
           </li>
           <li>
-            <strong>admin_statut_teledeclaration</strong>
-            : un état de télédéclaration "teledeclared" ou vide
+            <p class="fr-mb-0">
+              <strong>admin_statut_teledeclaration</strong>
+              : un état de télédéclaration "teledeclared" ou vide
+            </p>
           </li>
         </ul>
         <p>

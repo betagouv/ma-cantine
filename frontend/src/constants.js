@@ -424,14 +424,6 @@ export default Object.freeze({
   },
   DiagnosticImportLevels: [
     {
-      key: "NONE",
-      urlSlug: "cantines-seules",
-      title: "Importer des cantines sans bilan",
-      label: "Sans bilan",
-      help: "Vous voulez importer des cantines sans données d'approvisionnement",
-      icon: "$community-fill",
-    },
-    {
       key: "SIMPLE",
       urlSlug: "cantines-et-diagnostics-simples",
       title: "Importer des cantines et bilans simples",
