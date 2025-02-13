@@ -31,6 +31,8 @@ logger = logging.getLogger(__name__)
 class ImportCanteensView(APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
+    manager_column_idx = 11  # gestionnaires_additionnels
+    silent_manager_idx = 11 + 1  # admin_gestionnaires_additionnels
     annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
 
     def __init__(self, **kwargs):
@@ -93,7 +95,7 @@ class ImportCanteensView(APIView):
 
         csvreader = csv.reader(filelines, dialect=dialect)
         header = next(csvreader)
-        if not set(header).issubset(set(self.expected_header_canteen)):
+        if not set(header).issubset(set(self.expected_header)):
             raise ValidationError(
                 "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre"
             )
@@ -331,22 +333,23 @@ class ImportCanteensView(APIView):
         return (canteen, should_update_geolocation)
 
     def _generate_canteen_meta_fields(self, row):
-        silent_manager_idx = self.final_value_idx + 1
         silently_added_manager_emails = []
         import_source = "Import massif"
-        if len(row) > silent_manager_idx:  # already checked earlier that it's a staff user
+        if len(row) > self.silent_manager_idx:  # already checked earlier that it's a staff user
             try:
-                if row[silent_manager_idx]:
-                    silently_added_manager_emails = ImportCanteensView._get_manager_emails(row[silent_manager_idx])
+                if row[self.silent_manager_idx]:
+                    silently_added_manager_emails = ImportCanteensView._get_manager_emails(
+                        row[self.silent_manager_idx]
+                    )
             except Exception:
                 raise ValidationError(
                     {
-                        "email": f"Un adresse email des gestionnaires (pas notifiés) ({row[silent_manager_idx]}) n'est pas valide."
+                        "email": f"Un adresse email des gestionnaires (pas notifiés) ({row[self.silent_manager_idx]}) n'est pas valide."
                     }
                 )
 
             try:
-                import_source = row[silent_manager_idx + 1].strip()
+                import_source = row[self.silent_manager_idx + 1].strip()
             except Exception:
                 raise ValidationError({"import_source": "Ce champ ne peut pas être vide."})
 
