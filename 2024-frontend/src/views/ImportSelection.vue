@@ -4,6 +4,12 @@ import DsfrBooleanRadio from "@/components/DsfrBooleanRadio.vue"
 import Constants from "@/constants.js"
 
 const importTypes = []
+importTypes.push({
+  key: "CANTEENS",
+  title: "Importer des cantines",
+  help: "Vous voulez créer ou mettre à jour des cantines",
+  to: { name: "ImportCanteens" },
+})
 Object.values(Constants.DiagnosticImportLevels).forEach((level) => {
   level.to = { name: "DiagnosticImportPage", params: { importUrlSlug: level.urlSlug } }
   importTypes.push(level)
@@ -17,12 +23,6 @@ importTypes.push({
   title: "Importer des achats",
   help: "Vous voulez importer des données d'achat pour des cantines existantes",
   to: { name: "ImportPurchases" },
-})
-importTypes.push({
-  key: "CANTEENS",
-  title: "Importer des cantines",
-  help: "Vous voulez créer ou mettre à jour des cantines",
-  to: { name: "ImportCanteens" },
 })
 
 const activeAccordion = ref("")
