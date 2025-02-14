@@ -104,6 +104,9 @@
           <template v-slot:[`item.name`]="{ item }">
             <router-link :to="toCanteen(item)">{{ item.name }}</router-link>
           </template>
+          <template v-slot:[`item.siret`]="{ item }">
+            {{ item.siret }}
+          </template>
           <template v-slot:[`item.productionType`]="{ item }">
             {{ typeDisplay[item.productionType] }}
           </template>
@@ -161,6 +164,7 @@ export default {
       },
       headers: [
         { text: "Nom", value: "name" },
+        { text: "Siret", value: "siret" },
         { text: "Type", value: "productionType" },
         { text: "Action", value: "action" },
       ],
