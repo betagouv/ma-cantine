@@ -16,7 +16,7 @@ from rest_framework.views import APIView
 
 from api.permissions import IsAuthenticated
 from api.serializers import PurchaseSerializer
-from common.api.validata import process_errors, validate_file_against_schema
+from common.api import validata
 from common.utils import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Purchase
@@ -65,8 +65,8 @@ class ImportPurchasesView(APIView):
             file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
 
             # Step 2: Schema validation (Validata)
-            report = validate_file_against_schema(self.file, self.schema_url)
-            self.errors = process_errors(report)
+            report = validata.validate_file_against_schema(self.file, self.schema_url)
+            self.errors = validata.process_errors(report)
             if len(self.errors):
                 self._log_error("Echec lors de la validation du fichier (schema achats.json - Validata)")
                 return self._get_success_response()

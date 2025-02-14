@@ -92,6 +92,11 @@ class TestCanteenSchema(TestCase):
 
 
 class TestCanteenImport(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        SectorFactory.create(name="Cliniques")
+        SectorFactory.create(name="Hôpitaux")
+
     def test_unauthenticated_import_call(self):
         """
         Expect 403 if unauthenticated
@@ -105,6 +110,23 @@ class TestCanteenImport(APITestCase):
         A file should not be valid if it doesn't contain a header
         """
         with open("./api/tests/files/canteens/canteens_bad_no_header.csv", "rb") as canteen_file:
+            response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre",
+        )
+
+    @authenticate
+    def test_import_wrong_header(self):
+        """
+        A file should not be valid if it doesn't contain a valid header
+        """
+        with open("./api/tests/files/canteens/canteens_bad_wrong_header.csv", "rb") as canteen_file:
             response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -159,7 +181,13 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
+        errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(body["errors"]), 1, body["errors"])
+        self.assertEqual(len(errors), 1, errors)
+        self.assertTrue(
+            errors.pop(0)["message"].startswith(
+                "Secteur inconnu ne respecte pas le motif imposé (expression régulière"
+            ),
+        )
         self.assertEqual(Canteen.objects.count(), 0)

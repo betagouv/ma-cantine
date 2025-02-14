@@ -18,6 +18,7 @@ from simple_history.utils import update_change_reason
 
 from api.permissions import IsAuthenticated
 from api.serializers import FullCanteenSerializer
+from common.api import validata
 from common.utils import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Sector
@@ -60,7 +61,11 @@ class ImportCanteensView(APIView):
             file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
 
             # Step 2: Schema validation (Validata)
-            # TODO
+            report = validata.validate_file_against_schema(self.file, self.schema_url)
+            self.errors = validata.process_errors(report)
+            if len(self.errors):
+                self._log_error("Echec lors de la validation du fichier (schema cantines.json - Validata)")
+                return self._get_success_response()
 
             # Step 3: ma-cantine validation (permissions, last checks...) + import
             with transaction.atomic():
@@ -107,6 +112,8 @@ class ImportCanteensView(APIView):
         csvreader = csv.reader(filelines, dialect=dialect)
         for row_number, row in enumerate(csvreader, start=1):
             try:
+                if row_number == 1:  # skip header
+                    continue
                 canteen, should_update_geolocation = self._save_data_from_row(row)
                 self.canteens[canteen.siret] = canteen
                 if should_update_geolocation and not self.errors:
@@ -123,6 +130,8 @@ class ImportCanteensView(APIView):
             self._update_location_data(locations_csv_str)
 
     def _decode_file(self, file):
+        # TODO: refactor
+        file.seek(0)
         (result, encoding) = file_import.decode_bytes(file.read())
         self.encoding_detected = encoding
         return result
@@ -298,15 +307,17 @@ class ImportCanteensView(APIView):
             ImportCanteensView._should_update_geolocation(canteen, row) if canteen_exists else True
         )
 
+        # TODO: remove hardcoded indexes
         canteen.name = row[1].strip()
         canteen.city_insee_code = row[2].strip()
         canteen.postal_code = row[3].strip()
         canteen.central_producer_siret = normalise_siret(row[4])
         canteen.daily_meal_count = row[5].strip()
         canteen.yearly_meal_count = row[6].strip()
+        # sectors: see below
         canteen.production_type = row[8].strip().lower()
         canteen.management_type = row[9].strip().lower()
-        canteen.economic_model = row[10].strip().lower() if len(row) > 10 else None
+        canteen.economic_model = row[10].strip().lower() if row[10] else None
         canteen.import_source = import_source
         if satellite_canteens_count:
             canteen.satellite_canteens_count = satellite_canteens_count
