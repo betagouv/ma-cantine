@@ -16,7 +16,7 @@ def validate_file_against_schema(file, schema_url):
 
 def process_errors(report):
     errors = []
-    for error in report["tasks"][0]["errors"]:
+    for error in report["errors"]:
         errors.append(
             {
                 # cells, description, fieldNumber, name, note, rowNumber, tags, type
