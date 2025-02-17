@@ -42,7 +42,7 @@ class ImportCanteensView(APIView):
         self.start_time = None
         self.encoding_detected = None
         self.file = None
-        self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/cantines.json"
+        self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/raphodn/backend-import-canteens-schema-siret-unique/data/schemas/imports/cantines.json"
         self.schema_json = json.load(open("data/schemas/imports/cantines.json"))
         self.expected_header = [field["name"] for field in self.schema_json["fields"]]
         super().__init__(**kwargs)
