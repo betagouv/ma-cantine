@@ -190,6 +190,6 @@
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",
   "name": "import-cantines",
-  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/charline-l/cantine-schema-compatible-validata/data/schemas/imports/cantines.json",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/cantines.json",
   "title": "Schema import des cantines"
 }
