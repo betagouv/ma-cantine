@@ -186,8 +186,6 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(errors), 1, errors)
         self.assertTrue(
-            errors.pop(0)["message"].startswith(
-                "Secteur inconnu ne respecte pas le motif imposé (expression régulière"
-            ),
+            errors.pop(0)["message"].startswith("Secteur inconnu ne respecte pas le motif imposé"),
         )
         self.assertEqual(Canteen.objects.count(), 0)

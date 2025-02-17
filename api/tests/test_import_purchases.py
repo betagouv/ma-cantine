@@ -234,39 +234,37 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         errors = response.json()["errors"]
-        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée.")
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
         # self.assertEqual(
         #     errors.pop(0)["message"], "Une cantine avec le siret « 86180597100897 » n'existe pas sur la plateforme."
         # )
         # self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
-        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée.")
-        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée.")
-        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée.")
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
         self.assertEqual(
             errors.pop(0)["message"],
-            "La date doit être écrite sous la forme `aaaa-mm-jj`.",
+            "La date doit être écrite sous la forme `aaaa-mm-jj`",
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "La date doit être écrite sous la forme `aaaa-mm-jj`.",
+            "La date doit être écrite sous la forme `aaaa-mm-jj`",
         )
-        self.assertEqual(errors.pop(0)["message"], "Une valeur doit être renseignée.")
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertTrue(errors.pop(0)["message"].startswith("A price ne respecte pas le motif imposé"))
         self.assertTrue(
-            errors.pop(0)["message"].startswith("A price ne respecte pas le motif imposé (expression régulière")
-        )
-        self.assertTrue(
-            errors.pop(0)["message"].startswith("NOPE ne respecte pas le motif imposé (expression régulière"),
+            errors.pop(0)["message"].startswith("NOPE ne respecte pas le motif imposé"),
         )
         self.assertTrue(
-            errors.pop(0)["message"].startswith("BIO,NOPE ne respecte pas le motif imposé (expression régulière"),
+            errors.pop(0)["message"].startswith("BIO,NOPE ne respecte pas le motif imposé"),
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            'Row at position "15" has a missing cell in field "caracteristiques" at position "7"',
+            "La ligne n'a pas le même nombre de cellules que l'en-tête",
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            'Row at position "15" has a missing cell in field "definition_local" at position "8"',
+            "La ligne n'a pas le même nombre de cellules que l'en-tête",
         )
 
     @authenticate
