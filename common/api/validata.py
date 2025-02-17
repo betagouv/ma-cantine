@@ -20,13 +20,12 @@ def process_errors(report):
         errors.append(
             {
                 # cells, description, fieldNumber, name, note, rowNumber, tags, type
-                "row": error["rowPosition"],
-                "column": error["fieldPosition"],
+                "row": error["rowNumber"],
                 "field": error["fieldName"],
                 "cell": error["cell"],
                 "title": error["title"],  # Cellule vide, Format incorrect, Format de date incorrect
                 "message": error["message"],
-                "code": error["code"],
+                "code": error["type"],
                 "status": 400,
             }
         )
