@@ -6,6 +6,28 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.6.0](https://github.com/betagouv/ma-cantine/compare/v2025.5.0...v2025.6.0) (2025-02-17)
+
+
+### Nouveautés
+
+* **Import de masse:** Cantines: remplace l'ancienne page pour la nouvelle ([#5028](https://github.com/betagouv/ma-cantine/issues/5028)) ([ef1eef8](https://github.com/betagouv/ma-cantine/commit/ef1eef87ddb488b19cbc03b9dbe1436f24f3b508))
+* **Imports:** Cantines: ajout d'appels à Validata et renvoyer les erreurs ([#5034](https://github.com/betagouv/ma-cantine/issues/5034)) ([e4d70cf](https://github.com/betagouv/ma-cantine/commit/e4d70cf6b6356f25e662f1bb5837fa0b36152f5f))
+* **Tableau de bord:** Rend le numéro SIRET de la cantine plus visible  ([#5032](https://github.com/betagouv/ma-cantine/issues/5032)) ([5fa7574](https://github.com/betagouv/ma-cantine/commit/5fa7574ec862219420713a40727b9902dd5d82c9))
+* **Validata:** Cantines : Rendre le schéma de données compatible TableSchema ([#5016](https://github.com/betagouv/ma-cantine/issues/5016)) ([d54ea41](https://github.com/betagouv/ma-cantine/commit/d54ea4164224888dee73b363ea362e37670d334c))
+
+
+### Améliorations
+
+* **Imports:** Cantines: remonte le check du header plus haut (comme les achats) ([#5033](https://github.com/betagouv/ma-cantine/issues/5033)) ([5555010](https://github.com/betagouv/ma-cantine/commit/555501069d88912bf3a4fd3260e7ded765753958))
+* **Imports:** Cantines: séparer dans le backend les imports cantines des imports diagnostics ([#5031](https://github.com/betagouv/ma-cantine/issues/5031)) ([7b463c6](https://github.com/betagouv/ma-cantine/commit/7b463c65f336f75cd654e2cfc9248e6e1f3e3b89))
+* **Validata:** Montée de version de l'API v0.12. Correction des changements cassant. ([#5035](https://github.com/betagouv/ma-cantine/issues/5035)) ([2b0ba9f](https://github.com/betagouv/ma-cantine/commit/2b0ba9f2b78052dff3c95c72a9ca3b5adc26a0b8))
+
+
+### Corrections (bugs, typos...)
+
+* **Imports:** Changement de l'url du schema import cantine ([#5030](https://github.com/betagouv/ma-cantine/issues/5030)) ([982e3d2](https://github.com/betagouv/ma-cantine/commit/982e3d26611b284f484d50f5a00bf660d2510519))
+
 ## [2025.5.0](https://github.com/betagouv/ma-cantine/compare/v2025.4.1...v2025.5.0) (2025-02-12)
 
 
