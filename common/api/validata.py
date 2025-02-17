@@ -22,12 +22,16 @@ def process_errors(report):
     for error in report["errors"]:
         errors.append(
             {
-                # cells, description, fieldNumber, name, note, rowNumber, tags, type
                 "row": error["rowNumber"],
+                "column": error["fieldNumber"],
                 "field": error["fieldName"],
                 "cell": error["cell"],
-                "title": error["title"],  # Cellule vide, Format incorrect, Format de date incorrect
+                # tags: a list, e.g. ['#table', '#row', '#cell']
+                "tags": error["tags"],
+                # title: Cellule manquante, Valeur manquante, Format incorrect, Format de date incorrect...
+                "title": error["title"],
                 "message": error["message"],
+                # type: missing-cell, constraint-error, type-error...
                 "type": error["type"],
                 "status": 400,
             }
