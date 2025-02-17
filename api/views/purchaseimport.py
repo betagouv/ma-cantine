@@ -118,8 +118,8 @@ class ImportPurchasesView(APIView):
     def _process_file(self):
         chunk = []
         row_count = 0
-        for i, row in enumerate(self.file):
-            if i == 0:  # skip header
+        for row_number, row in enumerate(self.file, start=1):
+            if row_number == 1:  # skip header
                 continue
 
             # Split into chunks

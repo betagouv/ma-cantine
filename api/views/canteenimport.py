@@ -100,7 +100,7 @@ class ImportCanteensView(APIView):
                 "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre"
             )
 
-        for row_number, row in enumerate(csvreader):
+        for row_number, row in enumerate(csvreader, start=1):
             try:
                 canteen, should_update_geolocation = self._save_data_from_row(row)
                 self.canteens[canteen.siret] = canteen
@@ -113,9 +113,7 @@ class ImportCanteensView(APIView):
 
             except Exception as e:
                 for error in self._parse_errors(e, row):
-                    self.errors.append(
-                        ImportCanteensView._get_error(e, error["message"], error["code"], row_number + 1)
-                    )
+                    self.errors.append(ImportCanteensView._get_error(e, error["message"], error["code"], row_number))
         if has_locations_to_find:
             self._update_location_data(locations_csv_str)
 
