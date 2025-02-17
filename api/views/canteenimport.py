@@ -50,14 +50,25 @@ class ImportCanteensView(APIView):
         self.start_time = time.time()
         logger.info("Canteen bulk import started")
         try:
+            self.file = request.data["file"]
+
+            # Step 1: Format validation
+            file_import.validate_file_size(self.file)
+            file_import.validate_file_format(self.file)
+
+            self.dialect = file_import.get_csv_file_dialect(self.file)
+            file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
+
+            # Step 2: Schema validation (Validata)
+            # TODO
+
+            # Step 3: ma-cantine validation (permissions, last checks...) + import
             with transaction.atomic():
-                self.file = request.data["file"]
-                file_import.validate_file_size(self.file)
-                file_import.validate_file_format(self.file)
                 self._process_file(self.file)
 
                 if self.errors:
                     raise IntegrityError()
+
         except PermissionDenied as e:
             self._log_error(e.detail)
             self.errors = [{"row": 0, "status": 401, "message": e.detail}]
@@ -94,12 +105,6 @@ class ImportCanteensView(APIView):
         dialect = csv.Sniffer().sniff(filelines[0])
 
         csvreader = csv.reader(filelines, dialect=dialect)
-        header = next(csvreader)
-        if not set(header).issubset(set(self.expected_header)):
-            raise ValidationError(
-                "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre"
-            )
-
         for row_number, row in enumerate(csvreader, start=1):
             try:
                 canteen, should_update_geolocation = self._save_data_from_row(row)
