@@ -32,7 +32,7 @@ class ImportPurchasesView(APIView):
     def __init__(self, **kwargs):
         self.purchases = []
         self.errors = []
-        self.start = None
+        self.start_time = None
         self.file_digest = None
         self.tmp_id = uuid.uuid4()
         self.file = None
@@ -49,7 +49,7 @@ class ImportPurchasesView(APIView):
         super().__init__(**kwargs)
 
     def post(self, request):
-        self.start = time.time()
+        self.start_time = time.time()
         logger.info("Purchase bulk import started")
         try:
             self.file = request.data["file"]
@@ -118,8 +118,8 @@ class ImportPurchasesView(APIView):
     def _process_file(self):
         chunk = []
         row_count = 0
-        for i, row in enumerate(self.file):
-            if i == 0:  # skip header
+        for row_number, row in enumerate(self.file, start=1):
+            if row_number == 1:  # skip header
                 continue
 
             # Split into chunks
@@ -239,7 +239,7 @@ class ImportPurchasesView(APIView):
                 "count": 0 if self.errors else len(self.purchases),
                 "errorCount": len(self.errors),
                 "errors": self.errors,
-                "seconds": time.time() - self.start,
+                "seconds": time.time() - self.start_time,
                 "duplicatePurchases": camelize(PurchaseSerializer(self.duplicate_purchases, many=True).data),
                 "duplicateFile": self.is_duplicate_file,
                 "duplicatePurchaseCount": self.duplicate_purchase_count,

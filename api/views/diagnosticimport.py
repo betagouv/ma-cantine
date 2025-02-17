@@ -516,7 +516,7 @@ class ImportDiagnosticsView(ABC, APIView):
 class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
     final_value_idx = 22
     total_value_idx = 13
-    import_type = ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE
+    import_type = ImportType.DIAGNOSTIC_SIMPLE
 
     def _validate_row(self, row):
         try:

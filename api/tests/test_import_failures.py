@@ -34,14 +34,14 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         with open(file_path) as diag_file:
             self.client.post(reverse("import_diagnostics"), {"file": diag_file})
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE, file_path)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
 
     @authenticate
     def test_invalid_sectors_error(self):
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_sectors.csv"
         with open(file_path) as diag_file:
             self.client.post(reverse("import_diagnostics"), {"file": diag_file})
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE, file_path)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
 
     @authenticate
     def test_staff_import_non_staff_error(self):
@@ -49,7 +49,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         with open(file_path) as diag_file:
             self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE, file_path)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
 
     @authenticate
     def test_several_error(self):
@@ -59,7 +59,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         with open(file_path) as diag_file:
             self.client.post(reverse("import_diagnostics"), {"file": diag_file})
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE, file_path)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
 
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     @authenticate
@@ -67,7 +67,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_decimal_number.csv"
         with open(file_path) as diag_file:
             self.client.post(reverse("import_diagnostics"), {"file": diag_file})
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE, file_path)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
 
     @authenticate
     def test_managers_invalid_email_error(self):
@@ -75,7 +75,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         with open(file_path) as diag_file:
             self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE, file_path)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
 
     @authenticate
     def test_success_diagnostic_import(self):
@@ -90,7 +90,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         with open(file_path) as diag_file:
             self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE, file_path)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
 
     @authenticate
     def test_success_purchase_import(self):
