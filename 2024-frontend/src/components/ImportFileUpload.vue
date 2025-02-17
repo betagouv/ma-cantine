@@ -68,7 +68,6 @@ const groupErrorsByColumn = (errors) => {
     if (index === -1) {
       groupedErrors.push({
         field: error.field,
-        column: error.column,
         message: error_message,
         rowList: [],
       })
