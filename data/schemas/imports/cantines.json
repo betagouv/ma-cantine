@@ -5,7 +5,8 @@
     {
       "constraints": {
         "pattern": "^[0-9]{14}$",
-        "required": true
+        "required": true,
+        "unique": true
       },
       "description": "Ce SIRET doit être unique car il correspond à un lieu physique.",
       "example": "49463556926130",

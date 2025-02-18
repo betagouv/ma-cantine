@@ -187,7 +187,7 @@ class TestCanteenImport(APITestCase):
         If a cantine succeeds and another one doesn't, no canteen should be saved
         and the array of cantine should return zero
         """
-        # 2 format errors
+        # 3 format errors
         with open("./api/tests/files/canteens/canteens_bad_nearly_good.csv") as canteen_file:
             response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -196,7 +196,10 @@ class TestCanteenImport(APITestCase):
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 2, errors)
+        self.assertEqual(len(errors), 3, errors)
+        self.assertTrue(
+            errors.pop(0)["message"].startswith("Les valeurs de cette colonne doivent être uniques"),
+        )
         self.assertTrue(
             errors.pop(0)["message"].startswith("La valeur est obligatoire et doit être renseignée"),
         )
