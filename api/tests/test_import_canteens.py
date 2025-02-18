@@ -196,10 +196,10 @@ class TestCanteenImport(APITestCase):
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 1, errors)
-        # self.assertTrue(
-        #     errors.pop(0)["message"].startswith("La valeur est obligatoire et doit être renseignée"),
-        # )
+        self.assertEqual(len(errors), 2, errors)
+        self.assertTrue(
+            errors.pop(0)["message"].startswith("La valeur est obligatoire et doit être renseignée"),
+        )
         self.assertTrue(
             errors.pop(0)["message"].startswith("Secteur inconnu ne respecte pas le motif imposé"),
         )
