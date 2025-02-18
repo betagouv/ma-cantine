@@ -6,7 +6,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from data.factories import SectorFactory, UserFactory
+from data.factories import CanteenFactory, SectorFactory, UserFactory
 from data.models import Canteen
 
 from .utils import authenticate
@@ -111,7 +111,6 @@ class TestCanteenImport(APITestCase):
         """
         with open("./api/tests/files/canteens/canteens_bad_no_header.csv", "rb") as canteen_file:
             response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 0)
@@ -126,9 +125,21 @@ class TestCanteenImport(APITestCase):
         """
         A file should not be valid if it doesn't contain a valid header
         """
+        # wrong header
         with open("./api/tests/files/canteens/canteens_bad_wrong_header.csv", "rb") as canteen_file:
             response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre",
+        )
 
+        # partial header
+        with open("./api/tests/files/canteens/canteens_bad_partial_header.csv", "rb") as diag_file:
+            response = self.client.post(f"{reverse('import_canteens')}", {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 0)
@@ -156,9 +167,10 @@ class TestCanteenImport(APITestCase):
     @authenticate
     def test_import_canteens_with_managers(self):
         """
-        Should be able to import canteens
+        Should be able to import canteens with managers
         """
         manager = UserFactory(email="manager@example.com")
+
         with open("./api/tests/files/canteens/canteens_good_add_manager.csv") as canteen_file:
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -175,17 +187,32 @@ class TestCanteenImport(APITestCase):
         If a cantine succeeds and another one doesn't, no canteen should be saved
         and the array of cantine should return zero
         """
-        SectorFactory.create(name="Crèche")
-        with open("./api/tests/files/canteens/canteens_bad.csv") as canteen_file:
+        # 2 format errors
+        with open("./api/tests/files/canteens/canteens_bad_nearly_good.csv") as canteen_file:
             response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
+        self.assertEqual(Canteen.objects.count(), 0)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 1, errors)
+        self.assertEqual(len(errors), 2, errors)
+        self.assertTrue(
+            errors.pop(0)["message"].startswith("La valeur est obligatoire et doit être renseignée"),
+        )
         self.assertTrue(
             errors.pop(0)["message"].startswith("Secteur inconnu ne respecte pas le motif imposé"),
         )
-        self.assertEqual(Canteen.objects.count(), 0)
+
+        # not the canteen manager error
+        CanteenFactory.create(siret="82399356058716")
+        with open("./api/tests/files/canteens/canteens_bad_nearly_good_2.csv") as canteen_file:
+            response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 1 + 0)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
