@@ -20,20 +20,38 @@ def validate_file_against_schema(file, schema_url):
 def process_errors(report):
     errors = []
     for error in report["errors"]:
-        errors.append(
-            {
-                "row": error["rowNumber"],
-                "column": error["fieldNumber"],
-                "field": error["fieldName"],
-                "cell": error["cell"],
-                # tags: a list, e.g. ['#table', '#row', '#cell']
-                "tags": error["tags"],
-                # title: Cellule manquante, Valeur manquante, Format incorrect, Format de date incorrect...
-                "title": error["title"],
-                "message": error["message"],
-                # type: missing-cell, constraint-error, type-error...
-                "type": error["type"],
-                "status": 400,
-            }
-        )
+        common_informations = get_common_error_informations(error)
+        specific_informations = get_specific_error_informations(error)
+        error_informations = common_informations | specific_informations
+        print(error_informations)
+        errors.append(error_informations)
     return errors
+
+
+def get_common_error_informations(error):
+    return {
+        "row": error["rowNumber"],
+        # tags: a list, e.g. ['#table', '#row', '#cell']
+        "tags": error["tags"],
+        "message": error["message"],
+        # type: missing-cell, constraint-error, type-error...
+        "type": error["type"],
+        "status": 400,
+    }
+
+
+def get_specific_error_informations(error):
+    if error["type"] == "blank-row":
+        return {
+            "field": "lignes vides",
+            "cell": "",
+            "title": "Valeurs manquantes",
+        }
+    else:
+        return {
+            # title: Cellule manquante, Valeur manquante, Format incorrect, Format de date incorrect...
+            "title": error["title"],
+            # "column": error["fieldNumber"]
+            "field": error["fieldName"],
+            "cell": error["cell"],
+        }
