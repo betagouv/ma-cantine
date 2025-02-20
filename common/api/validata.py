@@ -23,7 +23,6 @@ def process_errors(report):
         common_informations = get_common_error_informations(error)
         specific_informations = get_specific_error_informations(error)
         error_informations = common_informations | specific_informations
-        print(error_informations)
         errors.append(error_informations)
     return errors
 
