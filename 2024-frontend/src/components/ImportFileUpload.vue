@@ -61,14 +61,14 @@ const duplicatedUpload = (purchases) => {
 const groupErrorsByColumn = (errors) => {
   const groupedErrors = []
   errors.forEach((error) => {
-    const error_message = error.title ? error.title : error.message // Validata: we display the 'title' instead of the 'message'
+    const errorMessage = error.title ? error.title : error.message // Validata: we display the 'title' instead of the 'message'
     let index = groupedErrors.findIndex(
-      (groupedError) => groupedError.field === error.field && groupedError.message === error_message
+      (groupedError) => groupedError.field === error.field && groupedError.message === errorMessage
     )
     if (index === -1) {
       groupedErrors.push({
         field: error.field,
-        message: error_message,
+        message: errorMessage,
         rowList: [],
         showLink: error.has_doc,
       })
