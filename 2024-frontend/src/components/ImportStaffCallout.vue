@@ -22,12 +22,6 @@ const file = "/static/documents/admin_importer_des_cantines_exemple_ma_cantine.c
               : un identifiant décrivant la source de données
             </p>
           </li>
-          <li>
-            <p class="fr-mb-0">
-              <strong>admin_statut_teledeclaration</strong>
-              : un état de télédéclaration "teledeclared" ou vide
-            </p>
-          </li>
         </ul>
         <p>
           Vous ne serez pas ajouté·e·s automatiquement à l'équipe de gestion sauf si votre mail se trouve dans une des
