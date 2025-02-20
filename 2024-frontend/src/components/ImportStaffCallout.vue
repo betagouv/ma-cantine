@@ -41,7 +41,7 @@ const file = "/static/documents/admin_importer_des_cantines_exemple_ma_cantine.c
           size="463 octets"
           :href="file"
           title="Télécharger le fichier d'exemple"
-          :download="true"
+          download="admin_importer_des_cantines_exemple_ma_cantine.csv"
         />
       </div>
     </div>
