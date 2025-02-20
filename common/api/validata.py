@@ -45,6 +45,7 @@ def get_specific_error_informations(error):
             "field": "lignes vides",
             "cell": "",
             "title": "Valeurs manquantes",
+            "has_doc": False,
         }
     else:
         return {
@@ -53,4 +54,5 @@ def get_specific_error_informations(error):
             # "column": error["fieldNumber"]
             "field": error["fieldName"],
             "cell": error["cell"],
+            "has_doc": True,
         }

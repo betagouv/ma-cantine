@@ -70,6 +70,7 @@ const groupErrorsByColumn = (errors) => {
         field: error.field,
         message: error_message,
         rowList: [],
+        showLink: error.has_doc,
       })
       index = groupedErrors.length - 1
     }
@@ -147,7 +148,7 @@ const showErrors = (count) => {
               }}
               par cette erreur : {{ error.rowList.join(", ") }}
               <router-link
-                v-if="error.field"
+                v-if="error.showLink"
                 class="fr-ml-1w"
                 :to="{ hash: `#${error.field}`, params: { scrollTop: 75 } }"
               >
