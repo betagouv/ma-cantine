@@ -42,7 +42,7 @@ def get_common_error_informations(error):
 def get_specific_error_informations(error):
     if error["type"] == "blank-row":
         return {
-            "field": "lignes vides",
+            "field": "ligne vide",
             "cell": "",
             "title": "Valeur incorrect",
             "has_doc": False,
