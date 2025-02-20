@@ -219,3 +219,22 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
+
+    @authenticate
+    def test_import_with_empty_rows(self):
+        """
+        A file is not valid with Validata if has empty row
+        """
+        with open("./api/tests/files/canteens/canteens_bad_empty_rows.csv") as canteen_file:
+            response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(errors), 2, errors)
+        self.assertTrue(
+            errors.pop(0)["field"].startswith("ligne vide"),
+        )
+        self.assertEqual(Canteen.objects.count(), 0)
