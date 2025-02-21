@@ -47,13 +47,11 @@ class ImportDiagnosticsView(ABC, APIView):
         self.start_time = None
         self.encoding_detected = None
         self.file = None
-        self.data_schema_canteen = json.load(open("data/schemas/imports/cantines.json"))
         self.data_schema_diagnostics = json.load(open("data/schemas/imports/diagnostics.json"))
         self.data_schema_diagnostics_cc = json.load(open("data/schemas/imports/diagnostics_cc.json"))
         self.data_schema_diagnostics_admin = json.load(open("data/schemas/imports/diagnostics_admin.json"))
         self.data_schema_diagnostics_complete = json.load(open("data/schemas/imports/diagnostics_complets.json"))
         self.data_schema_diagnostics_complete_cc = json.load(open("data/schemas/imports/diagnostics_complets_cc.json"))
-        self.expected_header_canteen = [field["name"] for field in self.data_schema_canteen["fields"]]
         self.expected_header_diagnostics = [field["name"] for field in self.data_schema_diagnostics["fields"]]
         self.expected_header_diagnostics_cc = [field["name"] for field in self.data_schema_diagnostics_cc["fields"]]
         self.expected_header_diagnostics_admin = [
@@ -64,6 +62,13 @@ class ImportDiagnosticsView(ABC, APIView):
         ]
         self.expected_header_diagnostics_complete_cc = [
             field["name"] for field in self.data_schema_diagnostics_complete_cc["fields"]
+        ]
+        self.expected_header_list = [
+            self.expected_header_diagnostics,
+            self.expected_header_diagnostics_cc,
+            self.expected_header_diagnostics_admin,
+            self.expected_header_diagnostics_complete,
+            self.expected_header_diagnostics_complete_cc,
         ]
         super().__init__(**kwargs)
 
@@ -86,7 +91,8 @@ class ImportDiagnosticsView(ABC, APIView):
             file_import.validate_file_format(self.file)
 
             # Step 2: Schema validation (Validata)
-            # TODO
+            self.dialect = file_import.get_csv_file_dialect(self.file)
+            file_import.verify_first_line_is_header_list(self.file, self.dialect, self.expected_header_list)
 
             # Step 3: ma-cantine validation (permissions, last checks...) + import
             with transaction.atomic():
@@ -138,22 +144,11 @@ class ImportDiagnosticsView(ABC, APIView):
         dialect = csv.Sniffer().sniff(filelines[0])
 
         csvreader = csv.reader(filelines, dialect=dialect)
-        header = next(csvreader)
-        if not (
-            set(header).issubset(set(self.expected_header_diagnostics_admin))
-            or set(header).issubset(set(self.expected_header_canteen))
-            or set(header).issubset(set(self.expected_header_diagnostics_cc))
-            or set(header).issubset(set(self.expected_header_diagnostics_complete_cc))
-            or set(header).issubset(set(self.expected_header_diagnostics_complete))
-            or set(header).issubset(set(self.expected_header_diagnostics))
-        ):
-            raise ValidationError(
-                "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre"
-            )
-        self.check_admin_values(header)
-
-        for row_number, row in enumerate(csvreader):
+        for row_number, row in enumerate(csvreader, start=1):
             try:
+                if row_number == 1:  # skip header
+                    self.check_admin_values(row)
+                    continue
                 canteen, should_update_geolocation = self._save_data_from_row(row)
                 self.canteens[canteen.siret] = canteen
                 if should_update_geolocation and not self.errors:
@@ -166,12 +161,14 @@ class ImportDiagnosticsView(ABC, APIView):
             except Exception as e:
                 for error in self._parse_errors(e, row):
                     self.errors.append(
-                        ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number + 1)
+                        ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number)
                     )
         if has_locations_to_find:
             self._update_location_data(locations_csv_str)
 
     def _decode_file(self, file):
+        # TODO: refactor
+        file.seek(0)
         (result, encoding) = file_import.decode_bytes(file.read())
         self.encoding_detected = encoding
         return result

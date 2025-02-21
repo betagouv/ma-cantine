@@ -56,7 +56,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 2)
@@ -228,11 +227,11 @@ class TestImportDiagnosticsAPI(APITestCase):
         self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
-        error = body["errors"][0]
-        self.assertEqual(error["row"], 1)
-        self.assertEqual(error["status"], 401)
+        errors = body["errors"]
+        self.assertEqual(errors[0]["row"], 2)
+        self.assertEqual(errors[0]["status"], 401)
         self.assertEqual(
-            error["message"],
+            errors[0]["message"],
             "Vous n'êtes pas un gestionnaire de cette cantine.",
         )
 
@@ -373,7 +372,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
         errors = body["errors"]
         first_error = errors.pop(0)
-        self.assertEqual(first_error["row"], 1)
+        self.assertEqual(first_error["row"], 2)
         self.assertEqual(first_error["status"], 400)
         self.assertEqual(
             first_error["message"],
@@ -584,7 +583,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         body = response.json()
         self.assertEqual(body["count"], 0)
         errors = body["errors"]
-        self.assertEqual(errors[0]["row"], 1)
+        self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
             errors[0]["message"],
@@ -1258,7 +1257,6 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_encoding_utf-16.csv", "rb") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 1)
