@@ -79,14 +79,22 @@ class ImportDiagnosticsView(ABC, APIView):
         self.start_time = time.time()
         logger.info("Diagnostic bulk import started")
         try:
+            self.file = request.data["file"]
+
+            # Step 1: Format validation
+            file_import.validate_file_size(self.file)
+            file_import.validate_file_format(self.file)
+
+            # Step 2: Schema validation (Validata)
+            # TODO
+
+            # Step 3: ma-cantine validation (permissions, last checks...) + import
             with transaction.atomic():
-                self.file = request.data["file"]
-                file_import.validate_file_size(self.file)
-                file_import.validate_file_format(self.file)
                 self._process_file(self.file)
 
                 if self.errors:
                     raise IntegrityError()
+
         except PermissionDenied as e:
             self._log_error(e.detail)
             self.errors = [{"row": 0, "status": 401, "message": e.detail}]
