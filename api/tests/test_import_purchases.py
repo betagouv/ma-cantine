@@ -443,3 +443,19 @@ class TestPurchaseImport(APITestCase):
             first_error["message"],
             "Ce fichier est au format text/plain, merci d'exporter votre fichier au format CSV et réessayer.",
         )
+
+    @authenticate
+    def test_import_with_empty_rows(self):
+        """
+        A file should not be valid if it contains empty rows (Validata)
+        """
+        with open("./api/tests/files/achats/purchases_bad_empty_rows.csv") as canteen_file:
+            response = self.client.post(f"{reverse('import_purchases')}", {"file": canteen_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        errors = body["errors"]
+        self.assertTrue(
+            errors.pop(0)["field"].startswith("ligne vide"),
+        )
+        self.assertEqual(Purchase.objects.count(), 0)
