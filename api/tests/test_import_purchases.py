@@ -447,7 +447,7 @@ class TestPurchaseImport(APITestCase):
     @authenticate
     def test_import_with_empty_rows(self):
         """
-        A file is not valid with Validata if has empty row
+        A file should not be valid if it contains empty rows (Validata)
         """
         with open("./api/tests/files/achats/purchases_bad_empty_rows.csv") as canteen_file:
             response = self.client.post(f"{reverse('import_purchases')}", {"file": canteen_file})

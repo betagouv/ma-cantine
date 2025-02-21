@@ -1,3 +1,17 @@
+"""
+https://validata.fr
+
+Possible error keys:
+- cell
+- fieldName
+- fieldNumber
+- message
+- rowNumber
+- tags: a list. e.g. ['#table', '#row', '#cell']
+- title: e.g. 'Cellule manquante', 'Valeur manquante', 'Format incorrect', 'Format de date incorrect'...
+- type: e.g. 'missing-cell', 'constraint-error', 'type-error', 'blank-row'...
+"""
+
 import requests
 
 VALIDATA_PREPROD_API_URL = "https://preprod-api-validata.dataeng.etalab.studio/validate"
@@ -30,10 +44,8 @@ def process_errors(report):
 def get_common_error_informations(error):
     return {
         "row": error["rowNumber"],
-        # tags: a list, e.g. ['#table', '#row', '#cell']
         "tags": error["tags"],
         "message": error["message"],
-        # type: missing-cell, constraint-error, type-error...
         "type": error["type"],
         "status": 400,
     }
@@ -42,17 +54,16 @@ def get_common_error_informations(error):
 def get_specific_error_informations(error):
     if error["type"] == "blank-row":
         return {
-            "field": "ligne vide",
-            "cell": "",
             "title": "Valeur incorrect",
+            # "column": "",
+            "field": "ligne vide",
+            # "cell": "",
             "has_doc": False,
         }
-    else:
-        return {
-            # title: Cellule manquante, Valeur manquante, Format incorrect, Format de date incorrect...
-            "title": error["title"],
-            # "column": error["fieldNumber"]
-            "field": error["fieldName"],
-            "cell": error["cell"],
-            "has_doc": True,
-        }
+    return {
+        "title": error["title"],
+        "column": error["fieldNumber"],
+        "field": error["fieldName"],
+        "cell": error["cell"],
+        "has_doc": True,
+    }
