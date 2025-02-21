@@ -52,13 +52,6 @@ class ImportCanteensView(APIView):
         self.expected_header_list = [self.expected_header_canteen, self.expected_header_canteen_admin]
         super().__init__(**kwargs)
 
-    def check_admin_values(self, header):
-        is_admin_import = any("admin_" in column for column in header)
-        if is_admin_import and not self.request.user.is_staff:
-            raise PermissionDenied(
-                detail="Vous n'êtes pas autorisé à importer des cantines administratifs. Veillez supprimer les colonnes commençant par 'admin_'"
-            )
-
     def post(self, request):
         self.start_time = time.time()
         logger.info("Canteen bulk import started")
@@ -73,6 +66,13 @@ class ImportCanteensView(APIView):
             self.header = file_import.verify_first_line_is_header_list(
                 self.file, self.dialect, self.expected_header_list
             )
+
+            # Step 1b: Admin import?
+            is_admin_import = any("admin_" in column for column in self.header)
+            if is_admin_import and not self.request.user.is_staff:
+                raise PermissionDenied(
+                    detail="Vous n'êtes pas autorisé à importer des cantines administratifs. Veillez supprimer les colonnes commençant par 'admin_'"
+                )
 
             # Step 2: Schema validation (Validata)
             report = validata.validate_file_against_schema(self.file, self.schema_canteen_url)
@@ -127,7 +127,6 @@ class ImportCanteensView(APIView):
         for row_number, row in enumerate(csvreader, start=1):
             try:
                 if row_number == 1:  # skip header
-                    self.check_admin_values(row)
                     continue
                 canteen, should_update_geolocation = self._save_data_from_row(row)
                 self.canteens[canteen.siret] = canteen
