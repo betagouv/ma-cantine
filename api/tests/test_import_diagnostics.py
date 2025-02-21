@@ -1,4 +1,5 @@
 import datetime
+import filecmp
 import os
 import unittest
 import zoneinfo
@@ -16,7 +17,13 @@ from rest_framework.test import APITestCase
 
 from data.department_choices import Department
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
-from data.models import Canteen, Diagnostic, ManagerInvitation
+from data.models import (
+    Canteen,
+    Diagnostic,
+    ImportFailure,
+    ImportType,
+    ManagerInvitation,
+)
 from data.models.teledeclaration import Teledeclaration
 from data.region_choices import Region
 
@@ -27,7 +34,13 @@ NEXT_YEAR = datetime.date.today().year + 1
 
 @requests_mock.Mocker()
 class TestImportDiagnosticsAPI(APITestCase):
-    def test_unauthenticated_import_call(self, _):
+    def _assertImportFailureCreated(self, user, type, file_path):
+        self.assertTrue(ImportFailure.objects.count() >= 1)
+        self.assertEqual(ImportFailure.objects.first().user, user)
+        self.assertEqual(ImportFailure.objects.first().import_type, type)
+        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.last().file.path, shallow=False))
+
+    def test_unauthenticated_import_call(self, mock):
         """
         Expect 403 if unauthenticated
         """
@@ -35,7 +48,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_diagnostics_created(self, _):
+    def test_diagnostics_created(self, mock):
         """
         Given valid data, multiple diagnostics are created for multiple canteens,
         the authenticated user is added as the manager,
@@ -147,7 +160,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertIsNone(canteen.department)
 
     @authenticate
-    def test_canteen_info_not_overridden(self, _):
+    def test_canteen_info_not_overridden(self, mock):
         """
         If a canteen is present on multiple lines, keep data from first line
         """
@@ -197,7 +210,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.department, Department.ain)
 
     @authenticate
-    def test_cannot_modify_existing_canteen_unless_manager(self, _):
+    def test_cannot_modify_existing_canteen_unless_manager(self, mock):
         """
         If a canteen exists, then you should have to already be it's manager to add diagnostics.
         No canteens will be created since any error cancels out the entire file
@@ -206,11 +219,13 @@ class TestImportDiagnosticsAPI(APITestCase):
         my_canteen = CanteenFactory.create(siret="73282932000074")
         my_canteen.managers.add(authenticate.user)
 
-        with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv"
+        with open(file_path) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(Diagnostic.objects.count(), 0)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
         error = body["errors"][0]
@@ -222,7 +237,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
-    def test_valid_sectors_parsed(self, _):
+    def test_valid_sectors_parsed(self, mock):
         """
         File can specify 0+ sectors to add to the canteen
         """
@@ -236,15 +251,18 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.sectors.count(), 3)
 
     @authenticate
-    def test_invalid_sectors_raise_error(self, _):
+    def test_invalid_sectors_raise_error(self, mock):
         """
         If file specifies invalid sector, error is raised for that line
         """
         SectorFactory.create(name="Social et Médico-social (ESMS)")
-        with open("./api/tests/files/diagnostics/diagnostics_simple_good_sectors.csv") as diag_file:
+
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_sectors.csv"
+        with open(file_path) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()
         self.assertEqual(body["errors"][0]["status"], 400)
         self.assertEqual(
@@ -253,7 +271,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
-    def test_import_some_without_diagnostic(self, _):
+    def test_import_some_without_diagnostic(self, mock):
         """
         Should be able to import canteens without creating diagnostics if only canteen columns
         are present
@@ -271,7 +289,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Diagnostic.objects.filter(canteen=Canteen.objects.get(siret="21340172201787")).count(), 0)
 
     @authenticate
-    def test_staff_import(self, _):
+    def test_staff_import(self, mock):
         """
         Staff get to specify extra columns and have fewer requirements on what data is required.
         Test that a mixed import of canteens/diagnostics works.
@@ -283,7 +301,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.email = "authenticate@example.com"
         user.save()
 
-        with open("./api/tests/files/diagnostics/diagnostics_simple_staff_good_new_canteen.csv") as diag_file:
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_staff_good_new_canteen.csv"
+        with open(file_path) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -316,13 +335,16 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertIn("Staff canteen", email.body)
 
     @authenticate
-    def test_staff_import_non_staff(self, _):
+    def test_staff_import_non_staff(self, mock):
         """
         Non-staff users shouldn't have staff import capabilities
         """
-        with open("./api/tests/files/diagnostics/diagnostics_simple_staff_good_new_canteen.csv") as diag_file:
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_staff_good_new_canteen.csv"
+        with open(file_path) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
@@ -330,7 +352,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["errors"][0]["status"], 401)
 
     @authenticate
-    def test_error_collection(self, _):
+    def test_error_collection(self, mock):
         """
         If errors occur, discard the file and return the errors with row and message
         """
@@ -338,9 +360,12 @@ class TestImportDiagnosticsAPI(APITestCase):
         CanteenFactory.create(siret="42111303053388")
         CanteenFactory.create(siret="42111303053388")
 
-        with open("./api/tests/files/diagnostics/diagnostics_simple_bad.csv") as diag_file:
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad.csv"
+        with open(file_path) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         # no new objects should have been saved to the DB since it failed
@@ -433,7 +458,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
-    def test_staff_error_collection(self, _):
+    def test_staff_error_collection(self, mock):
         """
         If errors occur, discard the file and return the errors with row and message
         """
@@ -457,7 +482,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
-    def test_diagnostic_no_header(self, _):
+    def test_diagnostic_no_header(self, mock):
         """
         A file should not be valid if doesn't contain a valid header
         """
@@ -473,7 +498,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
-    def test_diagnostic_separator_options(self, _):
+    def test_diagnostic_separator_options(self, mock):
         """
         Optionally allow using a semicolon or tab as the seperator
         """
@@ -492,24 +517,25 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(len(body["errors"]), 0)
 
     @authenticate
-    def test_decimal_comma_format(self, _):
-        with open(
-            "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_decimal_number.csv"
-        ) as diag_file:
+    def test_decimal_comma_format(self, mock):
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_decimal_number.csv"
+        with open(file_path) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 2)
         body = response.json()
         self.assertEqual(body["count"], 2)
         self.assertEqual(len(body["errors"]), 0)
 
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     @authenticate
-    def test_max_size(self, _):
-        with open(
-            "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_decimal_number.csv"
-        ) as diag_file:
+    def test_max_size(self, mock):
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_decimal_number.csv"
+        with open(file_path) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         errors = body["errors"]
@@ -519,7 +545,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @authenticate
     @override_settings(DEFAULT_FROM_EMAIL="test-from@example.com")
-    def test_add_managers(self, _):
+    def test_add_managers(self, mock):
         """
         This file contains one diagnostic with three emails for managers. The first two
         already have an account with ma cantine, so they should be added. The third one
@@ -548,17 +574,15 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(len(mail.outbox), 3)
 
     @authenticate
-    def test_add_managers_invalid_email(self, _):
-        with open(
-            "./api/tests/files/diagnostics/diagnostics_simple_bad_separator_semicolon_add_managers.csv"
-        ) as diag_file:
+    def test_add_managers_invalid_email(self, mock):
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_separator_semicolon_add_managers.csv"
+        with open(file_path) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
-
         errors = body["errors"]
         self.assertEqual(errors[0]["row"], 1)
         self.assertEqual(errors[0]["status"], 400)
@@ -566,11 +590,10 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors[0]["message"],
             "Champ 'email' : Un adresse email des gestionnaires (gestionnaire1@, gestionnaire2@example.com) n'est pas valide.",
         )
-
         self.assertEqual(len(mail.outbox), 0)
 
     @authenticate
-    def test_add_managers_empty_column(self, _):
+    def test_add_managers_empty_column(self, mock):
         with open(
             "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_no_add_managers.csv"
         ) as diag_file:
@@ -582,7 +605,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_cannot_email_file_not_authenticated(self, _):
+    def test_cannot_email_file_not_authenticated(self, mock):
         """
         If user is not authenticated, cannot send file using this API
         """
@@ -593,14 +616,16 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     @authenticate
-    def test_success_complete_diagnostic_import(self, _):
+    def test_success_complete_diagnostic_import(self, mock):
         """
         Users should be able to import a complete diagnostic
         """
-        with open("./api/tests/files/diagnostics/diagnostics_complete_good.csv") as diag_file:
+        file_path = "./api/tests/files/diagnostics/diagnostics_complete_good.csv"
+        with open(file_path) as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 2)
+        self.assertFalse(ImportFailure.objects.exists())
         body = response.json()
         self.assertEqual(body["count"], 2)
         finished_diag = Diagnostic.objects.get(canteen__siret="29969025300230", year=2021)
@@ -647,16 +672,17 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(unfinished_diag.value_autres_label_rouge, None)  # picked a field at random to smoke test
 
     @authenticate
-    def test_complete_diagnostic_error_collection(self, _):
+    def test_complete_diagnostic_error_collection(self, mock):
         """
         Test that the expected errors are returned for a badly formatted file for complete diagnostic
         """
-        with open("./api/tests/files/diagnostics/diagnostics_complete_bad.csv") as diag_file:
+        file_path = "./api/tests/files/diagnostics/diagnostics_complete_bad.csv"
+        with open(file_path) as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
         self.assertEqual(Diagnostic.objects.count(), 0)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         errors = body["errors"]
@@ -665,7 +691,6 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors.pop(0)["message"],
             "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
         )
-
         self.assertEqual(
             errors.pop(0)["message"],
             "Champ 'Valeur totale annuelle HT' : Ce champ ne peut pas être vide.",
@@ -686,6 +711,9 @@ class TestImportDiagnosticsAPI(APITestCase):
             errors.pop(0)["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 10",
         )
+
+    @authenticate
+    def test_import_wrong_header(self, mock):
         with open("./api/tests/files/diagnostics/diagnostics_complete_bad_no_header.csv") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
         body = response.json()
@@ -705,7 +733,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
-    def test_tmp_no_staff_complete_diag(self, _):
+    def test_tmp_no_staff_complete_diag(self, mock):
         """
         Test error is thrown if staff attempts to add metadata
         """
@@ -725,7 +753,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @override_settings(CONTACT_EMAIL="team@example.com")
     @authenticate
-    def test_email_diagnostics_file(self, _):
+    def test_email_diagnostics_file(self, mock):
         """
         Check that this endpoint sends an email with the file attached and relevant info
         """
@@ -747,7 +775,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
-    def test_teledeclare_diagnostics_on_import(self, _):
+    def test_teledeclare_diagnostics_on_import(self, mock):
         """
         Staff have the option to teledeclare imported diagnostics directly from import
         NB: since total is required for diag import all teledeclarations should work
@@ -775,7 +803,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
-    def test_error_teledeclare_diagnostics_on_import(self, _):
+    def test_error_teledeclare_diagnostics_on_import(self, mock):
         """
         Provide line-by-line errors if the import isn't successful
         """
@@ -807,7 +835,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     @override_settings(ENABLE_TELEDECLARATION=False)
     @authenticate
-    def test_error_teledeclare_diagnostics_on_import_not_campaign(self, _):
+    def test_error_teledeclare_diagnostics_on_import_not_campaign(self, mock):
         """
         Prevent importing TDs if outside of campagne
         """
@@ -825,7 +853,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
-    def test_optional_appro_values(self, _):
+    def test_optional_appro_values(self, mock):
         """
         For simplified diagnostics, an empty appro value is considered unknown
         """
@@ -844,25 +872,23 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(diagnostic.value_sustainable_ht, 0)
 
     @authenticate
-    def test_mandatory_total_ht_simplified(self, _):
+    def test_mandatory_total_ht_simplified(self, mock):
         """
         For simplified diagnostics, only the total HT is mandatory in the appro fields
         """
-        with open(
-            "./api/tests/files/diagnostics/diagnostics_simple_bad_separator_semicolon_no_total_ht.csv"
-        ) as diag_file:
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_separator_semicolon_no_total_ht.csv"
+        with open(file_path) as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
-
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()
         self.assertEqual(len(body["errors"]), 1)
-        self.assertEqual(Diagnostic.objects.count(), 0)
-
         self.assertEqual(
             body["errors"][0]["message"], "Champ 'Valeur totale annuelle HT' : Ce champ ne peut pas être vide."
         )
 
     @authenticate
-    def test_siret_cc(self, _):
+    def test_siret_cc(self, mock):
         """
         A validation error should appear if the SIRET for the CC is the same as the SIRET
         for the canteen.
@@ -880,7 +906,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
 
     @authenticate
-    def test_success_cuisine_centrale_complete_import(self, _):
+    def test_success_cuisine_centrale_complete_import(self, mock):
         """
         Users should be able to import a file with central cuisines and their satellites, with only
         appro data at the level of the cuisine centrale.
@@ -965,7 +991,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(unfinished_diag.value_autres_label_rouge, None)
 
     @authenticate
-    def test_success_cuisine_centrale_complete_update_satellites(self, _):
+    def test_success_cuisine_centrale_complete_update_satellites(self, mock):
         """
         Users should be able to import a file with central cuisines and their satellites. The existing satellites
         should be updated.
@@ -1026,7 +1052,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             self.assertEqual(satellite.central_producer_siret, cuisine_centrale_2.siret)
 
     @authenticate
-    def test_success_cuisine_centrale_simple_import(self, _):
+    def test_success_cuisine_centrale_simple_import(self, mock):
         """
         Users should be able to import a file with central cuisines and their satellites, with only
         simplified appro data at the level of the cuisine centrale.
@@ -1082,7 +1108,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(cc2_diag.value_fish_ht, 3000)
 
     @authenticate
-    def test_success_cuisine_centrale_simple_update_satellites(self, _):
+    def test_success_cuisine_centrale_simple_update_satellites(self, mock):
         """
         Users should be able to import a file with central cuisines and their satellites. The existing satellites
         should be updated. This should be the case even if the user does not manage the satellites.
@@ -1143,7 +1169,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             self.assertEqual(satellite.central_producer_siret, cuisine_centrale_2.siret)
 
     @authenticate
-    def test_update_existing_diagnostic(self, _):
+    def test_update_existing_diagnostic(self, mock):
         """
         If a diagnostic already exists for the canteen, update the diag and canteen
         with data in import file
@@ -1164,7 +1190,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(diagnostic.value_total_ht, 1000)
 
     @authenticate
-    def test_update_diagnostic_conditional_on_teledeclaration_status(self, _):
+    def test_update_diagnostic_conditional_on_teledeclaration_status(self, mock):
         """
         If a diagnostic with a valid TD already exists for the canteen, throw an error
         If the TD is cancelled, allow update
@@ -1204,7 +1230,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(diagnostic.value_total_ht, 1000)
 
     @authenticate
-    def test_encoding_autodetect_utf_8(self, _):
+    def test_encoding_autodetect_utf_8(self, mock):
         """
         Attempt to auto-detect file encodings: UTF-8
         """
@@ -1223,7 +1249,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
 
     @authenticate
-    def test_encoding_autodetect_utf_16(self, _):
+    def test_encoding_autodetect_utf_16(self, mock):
         """
         Attempt to auto-detect file encodings: UTF-16
         """
@@ -1242,7 +1268,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
 
     @authenticate
-    def test_encoding_autodetect_windows1252(self, _):
+    def test_encoding_autodetect_windows1252(self, mock):
         """
         Attempt to auto-detect file encodings: Windows 1252
         """
@@ -1261,7 +1287,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.name, "CC Ma deuxième Cantine")
 
     @authenticate
-    def test_fail_import_bad_format(self, _):
+    def test_fail_import_bad_format(self, mock):
         with open("./api/tests/files/diagnostics/diagnostics_bad_file_format.ods", "rb") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
