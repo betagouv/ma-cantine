@@ -198,10 +198,10 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(errors), 3, errors)
         self.assertTrue(
-            errors.pop(0)["message"].startswith("Les valeurs de cette colonne doivent être uniques"),
+            errors.pop(0)["message"].startswith("La valeur est obligatoire et doit être renseignée"),
         )
         self.assertTrue(
-            errors.pop(0)["message"].startswith("La valeur est obligatoire et doit être renseignée"),
+            errors.pop(0)["message"].startswith("Les valeurs de cette colonne doivent être uniques"),
         )
         self.assertTrue(
             errors.pop(0)["message"].startswith("Secteur inconnu ne respecte pas le motif imposé"),
