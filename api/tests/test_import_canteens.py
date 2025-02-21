@@ -2,13 +2,14 @@ import filecmp
 import json
 import re
 
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from data.factories import CanteenFactory, SectorFactory, UserFactory
-from data.models import Canteen, ImportFailure, ImportType
+from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation
 
 from .utils import authenticate
 
@@ -152,8 +153,8 @@ class TestCanteenImport(APITestCase):
 
         # partial header
         file_path = "./api/tests/files/canteens/canteens_bad_partial_header.csv"
-        with open(file_path, "rb") as diag_file:
-            response = self.client.post(f"{reverse('import_canteens')}", {"file": diag_file})
+        with open(file_path, "rb") as canteen_file:
+            response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
         self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
@@ -262,4 +263,67 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(len(errors), 2, errors)
         self.assertTrue(
             errors.pop(0)["field"].startswith("ligne vide"),
+        )
+
+    @authenticate
+    def test_staff_import(self):
+        """
+        Staff get to specify extra columns and have fewer requirements on what data is required.
+        Test that can add some managers without sending emails to them.
+        Check that the importer isn't added to the canteen unless specified.
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.email = "authenticate@example.com"
+        user.save()
+
+        file_path = "./api/tests/files/canteens/canteens_staff_good_new_canteen.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(body["count"], 2)
+        self.assertEqual(len(body["canteens"]), 2)
+        self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(Canteen.objects.count(), 2)
+        self.assertEqual(ManagerInvitation.objects.count(), 4)
+        self.assertEqual(len(mail.outbox), 1)
+
+        canteen1 = Canteen.objects.get(siret="21340172201787")
+        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen1, email="user1@example.com"))
+        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen1, email="user2@example.com"))
+        self.assertEqual(canteen1.managers.count(), 0)
+        self.assertEqual(canteen1.import_source, "Automated test")
+
+        canteen2 = Canteen.objects.get(siret="73282932000074")
+        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user1@example.com"))
+        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user2@example.com"))
+        self.assertEqual(canteen2.managers.count(), 1)
+        self.assertEqual(canteen2.managers.first(), user)
+        self.assertEqual(canteen2.import_source, "Automated test")
+
+        email = mail.outbox[0]
+        self.assertEqual(email.to[0], "user1@example.com")
+        self.assertNotIn("Canteen for two", email.body)
+        self.assertIn("Staff canteen", email.body)
+
+    @authenticate
+    def test_staff_import_non_staff(self):
+        """
+        Non-staff users shouldn't have staff import capabilities
+        """
+        file_path = "./api/tests/files/canteens/canteens_staff_good_new_canteen.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
+        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(body["errors"][0]["status"], 401)
+        self.assertTrue(
+            body["errors"][0]["message"].startswith("Vous n'êtes pas autorisé à importer des cantines administratifs"),
         )

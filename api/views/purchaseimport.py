@@ -41,6 +41,7 @@ class ImportPurchasesView(APIView):
         self.is_duplicate_file = False
         self.duplicate_purchases = []
         self.duplicate_purchase_count = 0
+        self.header = None
         self.schema_url = (
             "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/achats.json"
         )
@@ -62,7 +63,7 @@ class ImportPurchasesView(APIView):
             self._check_duplication()
 
             self.dialect = file_import.get_csv_file_dialect(self.file)
-            file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
+            self.header = file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
 
             # Step 2: Schema validation (Validata)
             report = validata.validate_file_against_schema(self.file, self.schema_url)

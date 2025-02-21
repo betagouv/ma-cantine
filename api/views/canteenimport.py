@@ -42,10 +42,22 @@ class ImportCanteensView(APIView):
         self.start_time = None
         self.encoding_detected = None
         self.file = None
-        self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/cantines.json"
-        self.schema_json = json.load(open("data/schemas/imports/cantines.json"))
-        self.expected_header = [field["name"] for field in self.schema_json["fields"]]
+        self.header = None
+        self.schema_canteen_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/cantines.json"
+        self.schema_canteen_admin_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/raphodn/backend-import-canteens-admin/data/schemas/imports/cantines_admin.json"
+        self.schema_canteen_json = json.load(open("data/schemas/imports/cantines.json"))
+        self.schema_canteen_admin_json = json.load(open("data/schemas/imports/cantines_admin.json"))
+        self.expected_header_canteen = [field["name"] for field in self.schema_canteen_json["fields"]]
+        self.expected_header_canteen_admin = [field["name"] for field in self.schema_canteen_admin_json["fields"]]
+        self.expected_header_list = [self.expected_header_canteen, self.expected_header_canteen_admin]
         super().__init__(**kwargs)
+
+    def check_admin_values(self, header):
+        is_admin_import = any("admin_" in column for column in header)
+        if is_admin_import and not self.request.user.is_staff:
+            raise PermissionDenied(
+                detail="Vous n'êtes pas autorisé à importer des cantines administratifs. Veillez supprimer les colonnes commençant par 'admin_'"
+            )
 
     def post(self, request):
         self.start_time = time.time()
@@ -58,10 +70,12 @@ class ImportCanteensView(APIView):
             file_import.validate_file_format(self.file)
 
             self.dialect = file_import.get_csv_file_dialect(self.file)
-            file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
+            self.header = file_import.verify_first_line_is_header_list(
+                self.file, self.dialect, self.expected_header_list
+            )
 
             # Step 2: Schema validation (Validata)
-            report = validata.validate_file_against_schema(self.file, self.schema_url)
+            report = validata.validate_file_against_schema(self.file, self.schema_canteen_url)
             self.errors = validata.process_errors(report)
             if len(self.errors):
                 self._log_error("Echec lors de la validation du fichier (schema cantines.json - Validata)")
@@ -113,6 +127,7 @@ class ImportCanteensView(APIView):
         for row_number, row in enumerate(csvreader, start=1):
             try:
                 if row_number == 1:  # skip header
+                    self.check_admin_values(row)
                     continue
                 canteen, should_update_geolocation = self._save_data_from_row(row)
                 self.canteens[canteen.siret] = canteen
