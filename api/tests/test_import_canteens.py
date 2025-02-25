@@ -169,7 +169,7 @@ class TestCanteenImport(APITestCase):
     @authenticate
     def test_import_only_canteens(self):
         """
-        Should be able to import canteens from a file that doesn't have commas for the optional fields
+        Should be able to import canteens
         """
         file_path = "./api/tests/files/canteens/canteens_good.csv"
         with open(file_path) as canteen_file:

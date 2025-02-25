@@ -190,6 +190,41 @@
     },
     {
       "constraints": {
+        "pattern": "^ *(affaires_etrangeres|agriculture|armee|territoires|culture|economie|jeunesse|enseignement_superieur|ecologie|transformation|interieur|justice|mer|administration_territoriale|autorites_independantes|premier_ministre|sante|sport|travail|outre_mer|autre) *$",
+        "required": false
+      },
+      "description": "",
+      "doc_enum": [
+        "affaires_etrangeres",
+        "agriculture",
+        "armee",
+        "territoires",
+        "culture",
+        "economie",
+        "jeunesse",
+        "enseignement_superieur",
+        "ecologie",
+        "transformation",
+        "interieur",
+        "justice",
+        "mer",
+        "administration_territoriale",
+        "autorites_independantes",
+        "premier_ministre",
+        "sante",
+        "sport",
+        "travail",
+        "outre_mer",
+        "autre"
+      ],
+      "example": "agriculture",
+      "format": "default",
+      "name": "admin_ministère_tutelle",
+      "title": "Ministère de tutelle",
+      "type": "string"
+    },
+    {
+      "constraints": {
         "required": false
       },
       "description": "Ces gestionnaires auront la main sur la gestion de l'établissement.",
