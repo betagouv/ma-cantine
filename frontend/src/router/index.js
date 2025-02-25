@@ -546,7 +546,6 @@ if (window.ENABLE_DASHBOARD) {
       title: "Mon bilan annuel",
       authenticationRequired: true,
     },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
   })
 }
 
