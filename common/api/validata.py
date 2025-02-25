@@ -22,7 +22,7 @@ def validate_file_against_schema(file, schema_url):
     # Reset the file pointer to the beginning
     file.seek(0)
     response = requests.post(
-        VALIDATA_PREPROD_API_URL,
+        VALIDATA_PROD_API_URL,
         files={
             "file": ("file.csv", file.read(), file.content_type),
         },
