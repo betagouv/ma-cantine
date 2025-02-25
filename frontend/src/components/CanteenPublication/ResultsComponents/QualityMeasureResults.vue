@@ -85,7 +85,7 @@
           class="my-8"
         />
 
-        <div v-if="hasFamilyDetail">
+        <div v-if="true">
           <DsfrAccordion :items="[{ title: 'Détail par famille de produit' }]" class="mb-2">
             <template v-slot:content>
               <v-row class="text-center pt-3 pb-2">
@@ -111,12 +111,6 @@
                     de viandes et volailles
                     <br />
                     provenance France
-                  </p>
-                  <p
-                    v-if="applicableRules.meatPoultryFranceThreshold"
-                    class="mt-1 mb-0 fr-text-sm grey--text text--darken-1"
-                  >
-                    <i>objectif : {{ applicableRules.meatPoultryFranceThreshold }} %</i>
                   </p>
                 </v-col>
                 <v-col cols="12" sm="4" class="pa-4">
