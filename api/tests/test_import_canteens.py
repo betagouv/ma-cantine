@@ -332,7 +332,6 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(Canteen.objects.count(), 0)
         self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
-        print(body)
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(body["errors"]), 1)

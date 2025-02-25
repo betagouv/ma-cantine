@@ -1,5 +1,4 @@
 import csv
-import json
 import logging
 import re
 import time
@@ -37,28 +36,6 @@ DIAGNOSTICS_CC_SCHEMA_FILE_PATH = "data/schemas/imports/diagnostics_cc.json"
 DIAGNOSTICS_ADMIN_SCHEMA_FILE_PATH = "data/schemas/imports/diagnostics_admin.json"
 DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH = "data/schemas/imports/diagnostics_complets.json"
 DIAGNOSTICS_COMPLETE_CC_SCHEMA_FILE_PATH = "data/schemas/imports/diagnostics_complets_cc.json"
-
-
-def get_expected_header_list():
-    data_schema_diagnostics = json.load(open(DIAGNOSTICS_SCHEMA_FILE_PATH))
-    data_schema_diagnostics_cc = json.load(open(DIAGNOSTICS_CC_SCHEMA_FILE_PATH))
-    data_schema_diagnostics_admin = json.load(open(DIAGNOSTICS_ADMIN_SCHEMA_FILE_PATH))
-    data_schema_diagnostics_complete = json.load(open(DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH))
-    data_schema_diagnostics_complete_cc = json.load(open(DIAGNOSTICS_COMPLETE_CC_SCHEMA_FILE_PATH))
-    expected_header_diagnostics = [field["name"] for field in data_schema_diagnostics["fields"]]
-    expected_header_diagnostics_cc = [field["name"] for field in data_schema_diagnostics_cc["fields"]]
-    expected_header_diagnostics_admin = [field["name"] for field in data_schema_diagnostics_admin["fields"]]
-    expected_header_diagnostics_complete = [field["name"] for field in data_schema_diagnostics_complete["fields"]]
-    expected_header_diagnostics_complete_cc = [
-        field["name"] for field in data_schema_diagnostics_complete_cc["fields"]
-    ]
-    return [
-        expected_header_diagnostics,
-        expected_header_diagnostics_cc,
-        expected_header_diagnostics_admin,
-        expected_header_diagnostics_complete,
-        expected_header_diagnostics_complete_cc,
-    ]
 
 
 class ImportDiagnosticsView(ABC, APIView):
