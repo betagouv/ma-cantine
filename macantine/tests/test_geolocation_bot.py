@@ -3,7 +3,7 @@ import json
 import requests_mock
 from django.test import TestCase
 
-from common.api.insee import fetch_geo_data_from_api_insee_sirene_by_siret
+from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.department_choices import Department
 from data.factories import CanteenFactory, SectorFactory, UserFactory
 from macantine import tasks
@@ -171,7 +171,7 @@ class TestGeolocationWithSiretBot(TestCase):
             ),
             status_code=200,
         )
-        response = fetch_geo_data_from_api_insee_sirene_by_siret(candidate_canteen.siret, {}, token)
+        response = fetch_geo_data_from_siret(candidate_canteen.siret, {}, token)
         self.assertEquals(response["cityInseeCode"], city_insee_code)
 
     def test_geolocation_with_siret_data_filled(self, mock):
