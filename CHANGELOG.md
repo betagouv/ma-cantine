@@ -6,6 +6,29 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.6.1](https://github.com/betagouv/ma-cantine/compare/v2025.6.0...v2025.6.1) (2025-02-25)
+
+
+### Améliorations
+
+* **Imports:** Cantines: rajoute une contrainte d'unicité sur le champ SIRET ([#5039](https://github.com/betagouv/ma-cantine/issues/5039)) ([0cc9efd](https://github.com/betagouv/ma-cantine/commit/0cc9efd564c63aea3dae9685de1320cdbb05ed96))
+* **Validata:** Change l'url pour celle de prod ([#5036](https://github.com/betagouv/ma-cantine/issues/5036)) ([697eda9](https://github.com/betagouv/ma-cantine/commit/697eda93c0188ec97be7b57f69908d19654b6dbb))
+* **Validata:** Message d'erreur spécifique pour indiquer que le fichier contient des lignes vides ([#5042](https://github.com/betagouv/ma-cantine/issues/5042)) ([5083b6c](https://github.com/betagouv/ma-cantine/commit/5083b6cdb723a3e9cb8c1533bef7aa3b61d631ea))
+
+
+### Corrections (bugs, typos...)
+
+* **Imports:** Cantines: corrige le lien vers le schéma ([#5043](https://github.com/betagouv/ma-cantine/issues/5043)) ([98ee42e](https://github.com/betagouv/ma-cantine/commit/98ee42e6621f25822ac38e8c1029e7e41137b894))
+* **Imports:** Cantines: quelques corrections sur l'encart admin ([#5045](https://github.com/betagouv/ma-cantine/issues/5045)) ([f62dc68](https://github.com/betagouv/ma-cantine/commit/f62dc684b936b67cd1825132c88d84c3bc019bbe))
+* **Imports:** Cantines: répare les tests suite à la correction du lien vers le schéma ([#5044](https://github.com/betagouv/ma-cantine/issues/5044)) ([18689c1](https://github.com/betagouv/ma-cantine/commit/18689c15e2c17b1560f430a3e77097795acb0b12))
+
+
+### Technique
+
+* **Imports:** Achats: améliore les tests ([#5037](https://github.com/betagouv/ma-cantine/issues/5037)) ([fbfd3c1](https://github.com/betagouv/ma-cantine/commit/fbfd3c1dc023171e9675e6adc2b9bd484bfe52ad))
+* **Imports:** Cantines: améliorer les tests ([#5038](https://github.com/betagouv/ma-cantine/issues/5038)) ([fe15321](https://github.com/betagouv/ma-cantine/commit/fe15321b35c4d633d386493565ab1fcdc475ed57))
+* **Imports:** Regroupe tous les tests dans les mêmes fichiers ([#5046](https://github.com/betagouv/ma-cantine/issues/5046)) ([604a890](https://github.com/betagouv/ma-cantine/commit/604a8901bbbaf41e7449abbc392ebd77f9b3f28c))
+
 ## [2025.6.0](https://github.com/betagouv/ma-cantine/compare/v2025.5.0...v2025.6.0) (2025-02-17)
 
 
