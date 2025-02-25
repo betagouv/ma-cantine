@@ -77,7 +77,15 @@ class ImportDiagnosticsView(ABC, APIView):
         self.encoding_detected = None
         self.file = None
         self.is_admin_import = False
-        self.expected_header_list = get_expected_header_list()
+        self.expected_header_list = file_import.get_expected_header_list_from_schema_list(
+            [
+                DIAGNOSTICS_SCHEMA_FILE_PATH,
+                DIAGNOSTICS_CC_SCHEMA_FILE_PATH,
+                DIAGNOSTICS_ADMIN_SCHEMA_FILE_PATH,
+                DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH,
+                DIAGNOSTICS_COMPLETE_CC_SCHEMA_FILE_PATH,
+            ]
+        )
         super().__init__(**kwargs)
 
     @property

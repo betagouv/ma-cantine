@@ -1,5 +1,4 @@
 import csv
-import json
 import logging
 import re
 import time
@@ -37,14 +36,6 @@ CANTEEN_SCHEMA_URL = (
 CANTEEN_ADMIN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/raphodn/backend-import-canteens-admin/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
 
 
-def get_expected_header_list():
-    schema_canteen_json = json.load(open(CANTEEN_SCHEMA_FILE_PATH))
-    schema_canteen_admin_json = json.load(open(CANTEEN_ADMIN_SCHEMA_FILE_PATH))
-    expected_header_canteen = [field["name"] for field in schema_canteen_json["fields"]]
-    expected_header_canteen_admin = [field["name"] for field in schema_canteen_admin_json["fields"]]
-    return [expected_header_canteen, expected_header_canteen_admin]
-
-
 class ImportCanteensView(APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
@@ -61,7 +52,9 @@ class ImportCanteensView(APIView):
         self.header = None
         self.is_admin_import = False
         self.schema_url = None  # set in post(), depending if admin import or not
-        self.expected_header_list = get_expected_header_list()
+        self.expected_header_list = file_import.get_expected_header_list_from_schema_list(
+            [CANTEEN_SCHEMA_FILE_PATH, CANTEEN_ADMIN_SCHEMA_FILE_PATH]
+        )
         super().__init__(**kwargs)
 
     def post(self, request):  # noqa: C901

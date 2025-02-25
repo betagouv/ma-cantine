@@ -1,6 +1,7 @@
 import csv
 import hashlib
 import io
+import json
 import logging
 
 import chardet
@@ -57,6 +58,18 @@ def get_csv_file_dialect(file):
     row_1 = file.readline()
     (decoded_row, _) = decode_bytes(row_1)
     return csv.Sniffer().sniff(decoded_row)
+
+
+def get_expected_header_from_schema(schema_file_path):
+    schema_json = json.load(open(schema_file_path))
+    return [field["name"] for field in schema_json["fields"]]
+
+
+def get_expected_header_list_from_schema_list(schema_file_path_list):
+    expected_header_list = []
+    for schema_file_path in schema_file_path_list:
+        expected_header_list.append(get_expected_header_from_schema(schema_file_path))
+    return expected_header_list
 
 
 def verify_first_line_is_header(file, file_dialect, expected_header):

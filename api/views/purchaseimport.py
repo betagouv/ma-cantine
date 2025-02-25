@@ -1,6 +1,5 @@
 import csv
 import io
-import json
 import logging
 import time
 import uuid
@@ -32,11 +31,6 @@ PURCHASE_SCHEMA_URL = (
 )
 
 
-def get_expected_header():
-    schema_json = json.load(open(PURCHASE_SCHEMA_FILE_PATH))
-    return [field["name"] for field in schema_json["fields"]]
-
-
 class ImportPurchasesView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -54,7 +48,7 @@ class ImportPurchasesView(APIView):
         self.duplicate_purchase_count = 0
         self.header = None
         self.schema_url = PURCHASE_SCHEMA_URL
-        self.expected_header = get_expected_header()
+        self.expected_header = file_import.get_expected_header_from_schema(PURCHASE_SCHEMA_FILE_PATH)
         super().__init__(**kwargs)
 
     def post(self, request):
