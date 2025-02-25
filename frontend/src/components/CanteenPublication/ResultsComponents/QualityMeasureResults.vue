@@ -85,7 +85,7 @@
           class="my-8"
         />
 
-        <div v-if="true">
+        <div v-if="hasFamilyDetail">
           <DsfrAccordion :items="[{ title: 'Détail par famille de produit' }]" class="mb-2">
             <template v-slot:content>
               <v-row class="text-center pt-3 pb-2">
