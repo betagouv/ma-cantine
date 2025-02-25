@@ -294,6 +294,7 @@ class TestCanteenImport(APITestCase):
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen1, email="user1@example.com"))
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen1, email="user2@example.com"))
         self.assertEqual(canteen1.managers.count(), 0)
+        self.assertEqual(canteen1.line_ministry, Canteen.Ministries.SANTE)
         self.assertEqual(canteen1.import_source, "Automated test")
 
         canteen2 = Canteen.objects.get(siret="73282932000074")
@@ -301,6 +302,7 @@ class TestCanteenImport(APITestCase):
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user2@example.com"))
         self.assertEqual(canteen2.managers.count(), 1)
         self.assertEqual(canteen2.managers.first(), user)
+        self.assertEqual(canteen2.line_ministry, None)
         self.assertEqual(canteen2.import_source, "Automated test")
 
         email = mail.outbox[0]
