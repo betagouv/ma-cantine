@@ -119,7 +119,7 @@ class ImportDiagnosticsView(ABC, APIView):
         self.is_admin_import = any("admin_" in column for column in header)
         if self.is_admin_import and not self.request.user.is_staff:
             raise PermissionDenied(
-                detail="Vous n'êtes pas autorisé à importer des diagnostics administratifs. Veillez supprimer les colonnes commençant par 'admin_'"
+                detail="Vous n'êtes pas autorisé à importer des diagnostics avec des champs administratifs. Veuillez supprimer les colonnes commençant par 'admin_'"
             )
 
     def _process_file(self, file):

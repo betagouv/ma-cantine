@@ -325,5 +325,7 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(body["errors"][0]["status"], 401)
         self.assertTrue(
-            body["errors"][0]["message"].startswith("Vous n'êtes pas autorisé à importer des cantines administratifs"),
+            body["errors"][0]["message"].startswith(
+                "Vous n'êtes pas autorisé à importer des cantines avec des champs administratifs"
+            ),
         )

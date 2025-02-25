@@ -53,7 +53,7 @@ class ImportCanteensView(APIView):
         self.expected_header_list = [self.expected_header_canteen, self.expected_header_canteen_admin]
         super().__init__(**kwargs)
 
-    def post(self, request):
+    def post(self, request):  # noqa: C901
         self.start_time = time.time()
         logger.info("Canteen bulk import started")
         try:
@@ -72,11 +72,14 @@ class ImportCanteensView(APIView):
             self.is_admin_import = any("admin_" in column for column in self.header)
             if self.is_admin_import and not self.request.user.is_staff:
                 raise PermissionDenied(
-                    detail="Vous n'êtes pas autorisé à importer des cantines administratifs. Veillez supprimer les colonnes commençant par 'admin_'"
+                    detail="Vous n'êtes pas autorisé à importer des cantines avec des champs administratifs. Veuillez supprimer les colonnes commençant par 'admin_'"
                 )
 
             # Step 2: Schema validation (Validata)
-            report = validata.validate_file_against_schema(self.file, self.schema_canteen_url)
+            if self.is_admin_import:
+                report = validata.validate_file_against_schema(self.file, self.schema_canteen_admin_url)
+            else:
+                report = validata.validate_file_against_schema(self.file, self.schema_canteen_url)
             self.errors = validata.process_errors(report)
             if len(self.errors):
                 self._log_error("Echec lors de la validation du fichier (schema cantines.json - Validata)")
