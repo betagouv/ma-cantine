@@ -43,6 +43,7 @@ class ImportCanteensView(APIView):
         self.encoding_detected = None
         self.file = None
         self.header = None
+        self.is_admin_import = False
         self.schema_canteen_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/cantines.json"
         self.schema_canteen_admin_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/raphodn/backend-import-canteens-admin/data/schemas/imports/cantines_admin.json"
         self.schema_canteen_json = json.load(open("data/schemas/imports/cantines.json"))
@@ -68,8 +69,8 @@ class ImportCanteensView(APIView):
             )
 
             # Step 1b: Admin import?
-            is_admin_import = any("admin_" in column for column in self.header)
-            if is_admin_import and not self.request.user.is_staff:
+            self.is_admin_import = any("admin_" in column for column in self.header)
+            if self.is_admin_import and not self.request.user.is_staff:
                 raise PermissionDenied(
                     detail="Vous n'êtes pas autorisé à importer des cantines administratifs. Veillez supprimer les colonnes commençant par 'admin_'"
                 )
@@ -332,7 +333,8 @@ class ImportCanteensView(APIView):
         canteen.production_type = row[8].strip().lower()
         canteen.management_type = row[9].strip().lower()
         canteen.economic_model = row[10].strip().lower() if row[10] else None
-        canteen.import_source = import_source
+        if self.is_admin_import:
+            canteen.import_source = import_source
         if satellite_canteens_count:
             canteen.satellite_canteens_count = satellite_canteens_count
 
