@@ -6,7 +6,7 @@ import requests
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 
 
-@patch("common.uti~ls.siret.is_valid_siret", return_value=True)
+@patch("common.utils.siret.is_valid_siret", return_value=True)
 class TestFetchGeoDataFromSiret(unittest.TestCase):
 
     @patch("requests.get")
@@ -14,15 +14,35 @@ class TestFetchGeoDataFromSiret(unittest.TestCase):
         mock_response = Mock()
         mock_response.ok = True
         mock_response.json.return_value = {
-            "total_results": 1,
-            "etablissement": {
-                "adresseEtablissement": {
-                    "codeCommuneEtablissement": "12345",
-                    "codePostalEtablissement": "75001",
-                    "libelleCommuneEtablissement": "Paris",
+            "results": [
+                {
+                    "siren": "923412845",
+                    "nom_complet": "LA TURBINE",
+                    "nom_raison_sociale": "LA TURBINE",
+                    "nombre_etablissements_ouverts": 1,
+                    "siege": {
+                        "commune": "59512",
+                    },
+                    "etat_administratif": "A",
+                    "matching_etablissements": [
+                        {
+                            "commune": "12345",
+                            "code_postal": "75001",
+                            "libelle_commune": "PARIS",
+                            "date_debut_activite": "2023-01-15",
+                            "est_siege": "true",
+                            "etat_administratif": "A",
+                            "siret": "92341284500011",
+                        }
+                    ],
                 }
-            },
+            ],
+            "total_results": 1,
+            "page": 1,
+            "per_page": 10,
+            "total_pages": 1,
         }
+
         mock_get.return_value = mock_response
 
         response = {}
