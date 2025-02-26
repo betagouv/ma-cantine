@@ -86,48 +86,44 @@
         />
 
         <div v-if="hasFamilyDetail">
-          <DsfrAccordion :items="[{ title: 'Détail par famille de produit' }]" class="mb-2">
-            <template v-slot:content>
-              <v-row class="text-center pt-3 pb-2">
-                <v-col cols="12" sm="4" class="pa-4">
-                  <v-icon large class="grey--text text--darken-3 mb-2">$award-line</v-icon>
-                  <p class="mb-0">
-                    <span class="font-weight-bold percentage">{{ percentageDisplay(meatEgalimPercentage) }}</span>
-                    de viandes et volailles
-                    <br />
-                    EGalim
-                  </p>
-                  <p
-                    v-if="applicableRules.meatPoultryEgalimThreshold"
-                    class="mt-1 mb-0 fr-text-sm grey--text text--darken-1"
-                  >
-                    <i>objectif : {{ applicableRules.meatPoultryEgalimThreshold }} %</i>
-                  </p>
-                </v-col>
-                <v-col cols="12" sm="4" class="pa-4">
-                  <v-icon large class="grey--text text--darken-3 mb-2">$france-line</v-icon>
-                  <p class="mb-0">
-                    <span class="font-weight-bold percentage">{{ percentageDisplay(meatFrancePercentage) }}</span>
-                    de viandes et volailles
-                    <br />
-                    provenance France
-                  </p>
-                </v-col>
-                <v-col cols="12" sm="4" class="pa-4">
-                  <v-icon large class="grey--text text--darken-3 mb-2">$anchor-line</v-icon>
-                  <p class="mb-0">
-                    <span class="font-weight-bold percentage">{{ percentageDisplay(fishEgalimPercentage) }}</span>
-                    de produits de la mer
-                    <br />
-                    et aquaculture EGalim
-                  </p>
-                  <p v-if="applicableRules.fishEgalimThreshold" class="mt-1 mb-0 fr-text-sm grey--text text--darken-1">
-                    <i>objectif : {{ applicableRules.fishEgalimThreshold }} %</i>
-                  </p>
-                </v-col>
-              </v-row>
-            </template>
-          </DsfrAccordion>
+          <v-row class="text-center pt-3 pb-2">
+            <v-col cols="12" sm="4" class="pa-4">
+              <v-icon large class="grey--text text--darken-3 mb-2">$award-line</v-icon>
+              <p class="mb-0">
+                <span class="font-weight-bold percentage">{{ percentageDisplay(meatEgalimPercentage) }}</span>
+                de viandes et volailles
+                <br />
+                EGalim
+              </p>
+              <p
+                v-if="applicableRules.meatPoultryEgalimThreshold"
+                class="mt-1 mb-0 fr-text-sm grey--text text--darken-1"
+              >
+                <i>objectif : {{ applicableRules.meatPoultryEgalimThreshold }} %</i>
+              </p>
+            </v-col>
+            <v-col cols="12" sm="4" class="pa-4">
+              <v-icon large class="grey--text text--darken-3 mb-2">$france-line</v-icon>
+              <p class="mb-0">
+                <span class="font-weight-bold percentage">{{ percentageDisplay(meatFrancePercentage) }}</span>
+                de viandes et volailles
+                <br />
+                provenance France
+              </p>
+            </v-col>
+            <v-col cols="12" sm="4" class="pa-4">
+              <v-icon large class="grey--text text--darken-3 mb-2">$anchor-line</v-icon>
+              <p class="mb-0">
+                <span class="font-weight-bold percentage">{{ percentageDisplay(fishEgalimPercentage) }}</span>
+                de produits de la mer
+                <br />
+                et aquaculture EGalim
+              </p>
+              <p v-if="applicableRules.fishEgalimThreshold" class="mt-1 mb-0 fr-text-sm grey--text text--darken-1">
+                <i>objectif : {{ applicableRules.fishEgalimThreshold }} %</i>
+              </p>
+            </v-col>
+          </v-row>
         </div>
       </div>
     </div>
@@ -151,7 +147,6 @@ import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
 import ApproGraph from "@/components/ApproGraph"
 import EditableCommentsField from "../EditableCommentsField"
 import MultiYearSummaryStatistics from "@/components/MultiYearSummaryStatistics"
-import DsfrAccordion from "@/components/DsfrAccordion"
 import DsfrCallout from "@/components/DsfrCallout"
 import DsfrToggle from "@/components/DsfrToggle"
 
@@ -172,7 +167,6 @@ export default {
     ApproGraph,
     EditableCommentsField,
     MultiYearSummaryStatistics,
-    DsfrAccordion,
     DsfrCallout,
     DsfrToggle,
   },
