@@ -543,10 +543,9 @@ if (window.ENABLE_DASHBOARD) {
     component: MyProgress,
     props: true,
     meta: {
-      title: "Ma progression",
+      title: "Mon bilan annuel",
       authenticationRequired: true,
     },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
   })
 }
 

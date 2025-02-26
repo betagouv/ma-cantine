@@ -5,7 +5,7 @@
         <v-row>
           <v-col cols="12" sm="8">
             <h2 class="fr-h3 mb-0 mt-1 align-center">
-              Ma progression
+              Mon bilan annuel
             </h2>
           </v-col>
           <v-col>
