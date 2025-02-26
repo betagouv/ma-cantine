@@ -33,7 +33,7 @@ class ImportCanteensView(APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     manager_column_idx = 11  # gestionnaires_additionnels
-    silent_manager_idx = 11 + 1  # admin_gestionnaires_additionnels
+    silent_manager_idx = 11 + 2  # admin_gestionnaires_additionnels
     annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
 
     def __init__(self, **kwargs):
@@ -337,6 +337,7 @@ class ImportCanteensView(APIView):
         canteen.management_type = row[9].strip().lower()
         canteen.economic_model = row[10].strip().lower() if row[10] else None
         if self.is_admin_import:
+            canteen.line_ministry = row[12].strip().lower() if row[12] else None
             canteen.import_source = import_source
         if satellite_canteens_count:
             canteen.satellite_canteens_count = satellite_canteens_count
