@@ -343,6 +343,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         with open(file_path) as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
         self.assertEqual(Diagnostic.objects.count(), 0)
         self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()

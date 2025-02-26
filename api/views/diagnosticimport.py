@@ -47,6 +47,7 @@ class ImportDiagnosticsView(ABC, APIView):
         self.start_time = None
         self.encoding_detected = None
         self.file = None
+        self.is_admin_import = False
         self.data_schema_canteen = json.load(open("data/schemas/imports/cantines.json"))
         self.data_schema_diagnostics = json.load(open("data/schemas/imports/diagnostics.json"))
         self.data_schema_diagnostics_cc = json.load(open("data/schemas/imports/diagnostics_cc.json"))
@@ -115,10 +116,10 @@ class ImportDiagnosticsView(ABC, APIView):
         )
 
     def check_admin_values(self, header):
-        is_admin_import = any("admin_" in column for column in header)
-        if is_admin_import and not self.request.user.is_staff:
+        self.is_admin_import = any("admin_" in column for column in header)
+        if self.is_admin_import and not self.request.user.is_staff:
             raise PermissionDenied(
-                detail="Vous n'êtes pas autorisé à importer des diagnostics administratifs. Veillez supprimer les colonnes commençant par 'admin_'"
+                detail="Vous n'êtes pas autorisé à importer des diagnostics avec des champs administratifs. Veuillez supprimer les colonnes commençant par 'admin_'"
             )
 
     def _process_file(self, file):

@@ -1,0 +1,3 @@
+siret,nom,code_insee_commune,code_postal_commune,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,gestionnaires_additionnels,admin_gestionnaires_additionnels,admin_source_donnees
+21340172201787,Canteen for two,,54460,,700,14000,Cliniques,site,conceded,public,,"user1@example.com,user2@example.com",Automated test
+73282932000074,Staff canteen,,54460,,700,14000,Cliniques,site,conceded,public,user1@example.com,"authenticate@example.com,user2@example.com",Automated test
