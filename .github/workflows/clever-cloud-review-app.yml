@@ -8,12 +8,13 @@ on:
 jobs:
   deploy:
     name: Deploy/redeploy review app
+    if: false  # Disable the job until we fix it
     runs-on: ubuntu-latest
     environment: 'review-apps'
     permissions:
-        issues: write
-        pull-requests: write
-        contents: read
+      issues: write
+      pull-requests: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
         if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
