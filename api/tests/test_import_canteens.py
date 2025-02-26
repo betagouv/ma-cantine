@@ -8,7 +8,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from data.factories import CanteenFactory, SectorFactory, UserFactory
+from data.factories import SectorFactory, UserFactory
 from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation
 
 from .utils import authenticate
@@ -231,7 +231,7 @@ class TestCanteenImport(APITestCase):
         )
 
         # not the canteen manager error
-        CanteenFactory.create(siret="82399356058716")
+        Canteen.objects.create(siret="82399356058716")
         file_path = "./api/tests/files/canteens/canteens_bad_nearly_good_2.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
@@ -266,28 +266,30 @@ class TestCanteenImport(APITestCase):
         )
 
     @authenticate
-    def test_staff_import(self):
+    def test_admin_import(self):
         """
-        Staff get to specify extra columns and have fewer requirements on what data is required.
-        Test that can add some managers without sending emails to them.
-        Check that the importer isn't added to the canteen unless specified.
+        Admin get to specify extra columns and have fewer requirements on what data is required.
+        - new canteen: managers are added without sending emails to them.
+        - new canteen: the importer isn't added to the canteen unless specified.
+        - updated canteen: admin doesn't have to be a manager.
         """
+        Canteen.objects.create(siret="82399356058716", name="Canteen initial")
         user = authenticate.user
         user.is_staff = True
         user.email = "authenticate@example.com"
         user.save()
 
-        file_path = "./api/tests/files/canteens/canteens_staff_good_new_canteen.csv"
+        file_path = "./api/tests/files/canteens/canteens_admin_good_new_canteen.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
-        self.assertEqual(body["count"], 2)
-        self.assertEqual(len(body["canteens"]), 2)
+        self.assertEqual(body["count"], 3)
+        self.assertEqual(len(body["canteens"]), 3)
         self.assertEqual(len(body["errors"]), 0)
-        self.assertEqual(Canteen.objects.count(), 2)
-        self.assertEqual(ManagerInvitation.objects.count(), 4)
+        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(ManagerInvitation.objects.count(), 2 + 2 + 2)
         self.assertEqual(len(mail.outbox), 1)
 
         canteen1 = Canteen.objects.get(siret="21340172201787")
@@ -305,6 +307,14 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(canteen2.line_ministry, None)
         self.assertEqual(canteen2.import_source, "Automated test")
 
+        canteen3 = Canteen.objects.get(siret="82399356058716")
+        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen3, email="user1@example.com"))
+        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen3, email="user2@example.com"))
+        self.assertEqual(canteen3.managers.count(), 0)
+        self.assertEqual(canteen3.name, "Canteen update")  # updated
+        self.assertEqual(canteen3.line_ministry, Canteen.Ministries.SANTE)
+        self.assertEqual(canteen3.import_source, "Automated test")
+
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "user1@example.com")
         self.assertNotIn("Canteen for two", email.body)
@@ -315,7 +325,7 @@ class TestCanteenImport(APITestCase):
         """
         Non-staff users shouldn't have staff import capabilities
         """
-        file_path = "./api/tests/files/canteens/canteens_staff_good_new_canteen.csv"
+        file_path = "./api/tests/files/canteens/canteens_admin_good_new_canteen.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
