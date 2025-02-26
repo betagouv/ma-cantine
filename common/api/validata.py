@@ -19,16 +19,19 @@ VALIDATA_PROD_API_URL = "https://api.validata.etalab.studio/validate"
 
 
 def validate_file_against_schema(file, schema_url):
-    # Reset the file pointer to the beginning
-    file.seek(0)
-    response = requests.post(
-        VALIDATA_PROD_API_URL,
-        files={
-            "file": ("file.csv", file.read(), file.content_type),
-        },
-        data={"schema": schema_url, "header_case": True},
-    )
-    return response.json()["report"]
+    try:
+        # Reset the file pointer to the beginning
+        file.seek(0)
+        response = requests.post(
+            VALIDATA_PROD_API_URL,
+            files={
+                "file": ("file.csv", file.read(), file.content_type),
+            },
+            data={"schema": schema_url, "header_case": True},
+        )
+        return response.json()["report"]
+    except Exception:
+        raise Exception("Erreur lors de la validation du fichier (Validata). Merci de réessayer plus tard.")
 
 
 def process_errors(report):
