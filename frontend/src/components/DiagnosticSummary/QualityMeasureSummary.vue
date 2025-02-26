@@ -60,19 +60,12 @@
             </p>
           </v-col>
         </v-row>
-        <v-row class="py-2">
-          <v-col class="py-0">
-            <p class="mb-0">
-              <v-icon :small="$vuetify.breakpoint.xs" class="mr-1 mr-sm-2" color="#00A95F">$france-line</v-icon>
-              <span class="font-weight-bold percentage">{{ percentageDisplay(percentages.meatPoultryFrance) }}</span>
-              de viandes et volailles provenance France
-            </p>
-          </v-col>
-          <v-col class="py-0" v-if="applicableRules.meatPoultryFranceThreshold" cols="12" sm="4" md="3">
-            <p class="mb-0 grey--text text-darken-1">
-              <i>objectif : {{ applicableRules.meatPoultryFranceThreshold }} %</i>
-            </p>
-          </v-col>
+        <v-row class="py-2 px-3">
+          <p class="mb-0">
+            <v-icon :small="$vuetify.breakpoint.xs" class="mr-1 mr-sm-2" color="#00A95F">$france-line</v-icon>
+            <span class="font-weight-bold percentage">{{ percentageDisplay(percentages.meatPoultryFrance) }}</span>
+            de viandes et volailles provenance France
+          </p>
         </v-row>
         <v-row class="py-2">
           <v-col class="py-0">

@@ -324,7 +324,6 @@ export const applicableDiagnosticRules = (canteen, year) => {
     hasQualityException,
     regionForQualityException: hasQualityException && canteen.region,
     meatPoultryEgalimThreshold: year >= 2024 ? 60 : null,
-    meatPoultryFranceThreshold: year >= 2024 ? 60 : null,
     fishEgalimThreshold: year >= 2024 ? 60 : null,
   }
 }
