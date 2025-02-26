@@ -1,6 +1,5 @@
 import csv
 import io
-import json
 import logging
 import time
 import uuid
@@ -26,6 +25,12 @@ from .utils import camelize
 logger = logging.getLogger(__name__)
 
 
+PURCHASE_SCHEMA_FILE_PATH = "data/schemas/imports/achats.json"
+PURCHASE_SCHEMA_URL = (
+    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{PURCHASE_SCHEMA_FILE_PATH}"
+)
+
+
 class ImportPurchasesView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -42,11 +47,8 @@ class ImportPurchasesView(APIView):
         self.duplicate_purchases = []
         self.duplicate_purchase_count = 0
         self.header = None
-        self.schema_url = (
-            "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/achats.json"
-        )
-        self.schema_json = json.load(open("data/schemas/imports/achats.json"))
-        self.expected_header = [field["name"] for field in self.schema_json["fields"]]
+        self.schema_url = PURCHASE_SCHEMA_URL
+        self.expected_header = file_import.get_expected_header_from_schema(PURCHASE_SCHEMA_FILE_PATH)
         super().__init__(**kwargs)
 
     def post(self, request):

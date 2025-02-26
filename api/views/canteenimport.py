@@ -1,5 +1,4 @@
 import csv
-import json
 import logging
 import re
 import time
@@ -29,6 +28,16 @@ from .utils import camelize
 logger = logging.getLogger(__name__)
 
 
+CANTEEN_SCHEMA_FILE_PATH = "data/schemas/imports/cantines.json"
+CANTEEN_ADMIN_SCHEMA_FILE_PATH = "data/schemas/imports/cantines_admin.json"
+CANTEEN_SCHEMA_URL = (
+    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_SCHEMA_FILE_PATH}"
+)
+CANTEEN_ADMIN_SCHEMA_URL = (
+    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
+)
+
+
 class ImportCanteensView(APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
@@ -44,13 +53,10 @@ class ImportCanteensView(APIView):
         self.file = None
         self.header = None
         self.is_admin_import = False
-        self.schema_canteen_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/cantines.json"
-        self.schema_canteen_admin_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/raphodn/backend-import-canteens-admin/data/schemas/imports/cantines_admin.json"
-        self.schema_canteen_json = json.load(open("data/schemas/imports/cantines.json"))
-        self.schema_canteen_admin_json = json.load(open("data/schemas/imports/cantines_admin.json"))
-        self.expected_header_canteen = [field["name"] for field in self.schema_canteen_json["fields"]]
-        self.expected_header_canteen_admin = [field["name"] for field in self.schema_canteen_admin_json["fields"]]
-        self.expected_header_list = [self.expected_header_canteen, self.expected_header_canteen_admin]
+        self.schema_url = None  # set in post(), depending if admin import or not
+        self.expected_header_list = file_import.get_expected_header_list_from_schema_list(
+            [CANTEEN_SCHEMA_FILE_PATH, CANTEEN_ADMIN_SCHEMA_FILE_PATH]
+        )
         super().__init__(**kwargs)
 
     def post(self, request):  # noqa: C901
@@ -70,16 +76,14 @@ class ImportCanteensView(APIView):
 
             # Step 1b: Admin import?
             self.is_admin_import = any("admin_" in column for column in self.header)
+            self.schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL
             if self.is_admin_import and not self.request.user.is_staff:
                 raise PermissionDenied(
                     detail="Vous n'êtes pas autorisé à importer des cantines avec des champs administratifs. Veuillez supprimer les colonnes commençant par 'admin_'"
                 )
 
             # Step 2: Schema validation (Validata)
-            if self.is_admin_import:
-                report = validata.validate_file_against_schema(self.file, self.schema_canteen_admin_url)
-            else:
-                report = validata.validate_file_against_schema(self.file, self.schema_canteen_url)
+            report = validata.validate_file_against_schema(self.file, self.schema_url)
             self.errors = validata.process_errors(report)
             if len(self.errors):
                 self._log_error("Echec lors de la validation du fichier (schema cantines.json - Validata)")
