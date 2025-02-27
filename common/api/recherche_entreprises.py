@@ -51,7 +51,7 @@ def fetch_geo_data_from_siret(canteen_siret, response):
     response["siret"] = canteen_siret
     try:
         api_response = requests.get(
-            f"https://recherche-entreprises.api.gouv.fr/search?q={canteen_siret}&etat_administratif=A&page=1&per_page=1",
+            f"https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&q={canteen_siret}",
         )
         api_response.raise_for_status()
         result = validate_result(canteen_siret, api_response)
