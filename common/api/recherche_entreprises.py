@@ -7,13 +7,11 @@ from common.utils import siret
 logger = logging.getLogger(__name__)
 
 
-def get_etablishment_or_legal_unit_name(response):
-    for establishment in response["matching_etablissements"]:
-        is_active = establishment["etat_administratif"] == "A"
-        has_enseigne = "liste_enseignes" in establishment.keys() and len(establishment["liste_enseignes"]) > 0
-        if has_enseigne and is_active:
-            return establishment["liste_enseignes"][0]
-    return response["nom_complet"]
+def get_enseigne_name(etablissement):
+    is_active = etablissement["etat_administratif"] == "A"
+    has_enseigne = "liste_enseignes" in etablissement.keys() and len(etablissement["liste_enseignes"]) > 0
+    if has_enseigne and is_active:
+        return etablissement["liste_enseignes"][0]
 
 
 def validate_result(siret, response):
@@ -29,7 +27,7 @@ def validate_result(siret, response):
         result = response["results"][0]
         if len(response["results"][0]["matching_etablissements"]) != 1:
             logger.warning(
-                f"API Recherche Entreprises : Expecting 1 establishment found for siret (choosing the first one) : {siret}"
+                f"API Recherche Entreprises : Expecting 1 establishment for siret (choosing the first one) : {siret}"
             )
             return
         return result
@@ -57,10 +55,11 @@ def fetch_geo_data_from_siret(canteen_siret, response):
         result = validate_result(canteen_siret, api_response)
         if result:
             try:
-                response["name"] = get_etablishment_or_legal_unit_name(result)
-                response["cityInseeCode"] = result["matching_etablissements"][0]["commune"]
-                response["postalCode"] = result["matching_etablissements"][0]["code_postal"]
-                response["city"] = result["matching_etablissements"][0]["libelle_commune"]
+                etablissement = result["matching_etablissements"][0]
+                response["name"] = get_enseigne_name(etablissement) or result["nom_complet"]
+                response["cityInseeCode"] = etablissement["commune"]
+                response["postalCode"] = etablissement["code_postal"]
+                response["city"] = etablissement["libelle_commune"]
                 return response
             except KeyError as e:
                 logger.error(
