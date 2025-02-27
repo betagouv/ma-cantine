@@ -128,7 +128,7 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(
             body["errors"][0]["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre",
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
 
     @authenticate
@@ -148,7 +148,7 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(
             body["errors"][0]["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre",
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
 
         # partial header
@@ -163,7 +163,7 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(
             body["errors"][0]["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre",
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
 
     @authenticate
