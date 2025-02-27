@@ -6,6 +6,32 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.6.2](https://github.com/betagouv/ma-cantine/compare/v2025.6.1...v2025.6.2) (2025-02-27)
+
+
+### Améliorations
+
+* **Affiche en ligne:** affiche par défaut les % des viandes et produits de la mer ([#5056](https://github.com/betagouv/ma-cantine/issues/5056)) ([b6066f8](https://github.com/betagouv/ma-cantine/commit/b6066f8522cd7ede45bf465a0e58d103b43863b6))
+* **Badge qualité des produits:** supprime l'objectif sur les viandes et volailles de France qui ne fait pas parti de loi ([#5053](https://github.com/betagouv/ma-cantine/issues/5053)) ([44b0958](https://github.com/betagouv/ma-cantine/commit/44b0958bbe6bb3026cf5e392d395463dafb89af3))
+* **Cantines:** Imports: autoriser les admin à modifier des cantines dont ils ne sont pas gestionnaires ([#5052](https://github.com/betagouv/ma-cantine/issues/5052)) ([75aea3e](https://github.com/betagouv/ma-cantine/commit/75aea3e9a6f440dcc6492d6e1545d2179b5ded78))
+* **Import de masse:** affiche en rouge les cellules ordre et colonne au clic "voir le format attendu" ([#5061](https://github.com/betagouv/ma-cantine/issues/5061)) ([c2805c2](https://github.com/betagouv/ma-cantine/commit/c2805c22dffcca1c288dbcdc915d9b7827e557d6))
+* **Import de masse:** précise le message d'erreur de l'en-tête non conforme ([#5060](https://github.com/betagouv/ma-cantine/issues/5060)) ([63182ff](https://github.com/betagouv/ma-cantine/commit/63182ffe75af8a692ffa90505bfa986d4217ab35))
+* **Imports:** Cantines: ajout du champ ministère_tutelle (seulement pour les admins) ([#5050](https://github.com/betagouv/ma-cantine/issues/5050)) ([f3dac84](https://github.com/betagouv/ma-cantine/commit/f3dac849270b6f7bfbb67b610bc01b1d1a5a2336))
+* **Imports:** Cantines: mieux gérer les imports admin (schéma dédié, erreurs, tests) ([#5049](https://github.com/betagouv/ma-cantine/issues/5049)) ([6a2dd2d](https://github.com/betagouv/ma-cantine/commit/6a2dd2d064145328c2143d529d64afe7c49a87ca))
+* **Imports:** Cantines: suite de l'ajout du champ admin_ministère_tutelle (affichage dans l'interface) ([#5059](https://github.com/betagouv/ma-cantine/issues/5059)) ([1a70140](https://github.com/betagouv/ma-cantine/commit/1a70140651df7fcdd26a9b640fa0398df9b75ee1))
+
+
+### Corrections (bugs, typos...)
+
+* **Imports:** Cantines: répare le fichier d'exemple admin ([#5062](https://github.com/betagouv/ma-cantine/issues/5062)) ([70ecb5a](https://github.com/betagouv/ma-cantine/commit/70ecb5a77f508f547f31881a08347a6e21acdfad))
+* **Tableau de bord:** renomme la section "Ma progression" pour "Mon bilan annuel" ([#5051](https://github.com/betagouv/ma-cantine/issues/5051)) ([bfe4f2f](https://github.com/betagouv/ma-cantine/commit/bfe4f2fab924851514b3d5b6f9a95b8c7ea04376))
+
+
+### Technique
+
+* **Imports:** simplifier un peu le code de récupération des headers à partir des schémas (achats, cantines, bilans) ([#5054](https://github.com/betagouv/ma-cantine/issues/5054)) ([e25a7fb](https://github.com/betagouv/ma-cantine/commit/e25a7fb05a50509cade7a0ea59defec754881e25))
+* **Review apps:** Les désactiver en attendant qu'on prenne le temps de les faire fonctionner ([#5057](https://github.com/betagouv/ma-cantine/issues/5057)) ([b09965d](https://github.com/betagouv/ma-cantine/commit/b09965d3158cfd892b4e76463cdbab0ae2db996d))
+
 ## [2025.6.1](https://github.com/betagouv/ma-cantine/compare/v2025.6.0...v2025.6.1) (2025-02-25)
 
 
