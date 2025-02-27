@@ -522,17 +522,26 @@ class TestCanteenApi(APITestCase):
         city = "Paris 15e Arrondissement"
         postcode = "75015"
         insee_code = "75115"
-        sirene_api_url = f"https://api.insee.fr/entreprises/sirene/siret/{siret}"
+        sirene_api_url = (
+            f"https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&q={siret}"
+        )
         sirene_mocked_response = {
-            "etablissement": {
-                "etablissemmentSiege": True,
-                "uniteLegale": {"denominationUniteLegale": "Legal unit name"},
-                "adresseEtablissement": {
-                    "codeCommuneEtablissement": insee_code,
-                    "codePostalEtablissement": postcode,
-                    "libelleCommuneEtablissement": city,
-                },
-            },
+            "results": [
+                {
+                    "siren": "923412845",
+                    "nom_complet": "Wrong name",
+                    "matching_etablissements": [
+                        {
+                            "commune": insee_code,
+                            "code_postal": postcode,
+                            "libelle_commune": city,
+                            "liste_enseignes": ["Legal unit name"],
+                            "etat_administratif": "A",
+                        }
+                    ],
+                }
+            ],
+            "total_results": 1,
         }
         mock.get(sirene_api_url, json=sirene_mocked_response)
         geo_api_url = f"https://api-adresse.data.gouv.fr/search/?q={insee_code}&citycode={insee_code}&type=municipality&autocomplete=1"
@@ -549,9 +558,6 @@ class TestCanteenApi(APITestCase):
             ],
         }
         mock.get(geo_api_url, json=geo_mocked_response)
-        token_api_url = "https://api.insee.fr/token"
-        token_mocked_response = {"access_token": "test"}
-        mock.post(token_api_url, json=token_mocked_response)
 
         response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -565,26 +571,22 @@ class TestCanteenApi(APITestCase):
 
         # Check the given name if the canteen is an etablissement (sub of an unite legale)
         sirene_mocked_response = {
-            "etablissement": {
-                "etablissementSiege": False,
-                "uniteLegale": {
-                    "denominationUniteLegale": "Legal unit name. Only use if enseigne1Etabissement non available"
-                },
-                "adresseEtablissement": {
-                    "codeCommuneEtablissement": insee_code,
-                    "codePostalEtablissement": postcode,
-                    "libelleCommuneEtablissement": city,
-                },
-                "periodesEtablissement": [
-                    {
-                        "dateFin": None,
-                        "enseigne1Etablissement": "ECOLE PRIMAIRE PUBLIQUE",
-                    },
-                    {
-                        "dateFin": "2007-12-31",
-                    },
-                ],
-            },
+            "results": [
+                {
+                    "siren": "923412845",
+                    "nom_complet": "A name",
+                    "matching_etablissements": [
+                        {
+                            "commune": insee_code,
+                            "code_postal": postcode,
+                            "libelle_commune": city,
+                            "liste_enseignes": ["ECOLE PRIMAIRE PUBLIQUE"],
+                            "etat_administratif": "A",
+                        }
+                    ],
+                }
+            ],
+            "total_results": 1,
         }
         mock.get(sirene_api_url, json=sirene_mocked_response)
         response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
