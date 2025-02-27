@@ -3,7 +3,7 @@ import json
 import requests_mock
 from django.test import TestCase
 
-from common.api.insee import fetch_geo_data_from_api_insee_sirene_by_siret
+from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.department_choices import Department
 from data.factories import CanteenFactory, SectorFactory, UserFactory
 from macantine import tasks
@@ -125,7 +125,7 @@ class TestGeolocationBot(TestCase):
 
 @requests_mock.Mocker()
 class TestGeolocationWithSiretBot(TestCase):
-    api_url = "https://api.insee.fr/entreprises/sirene/siret/"
+    api_url = "https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&q="
 
     def test_candidate_canteens(self, _):
         """
@@ -145,33 +145,34 @@ class TestGeolocationWithSiretBot(TestCase):
         Should retrieve geo info for a canteen that have a SIRET
         """
         siret_canteen = "89394682276911"
-        token = "Fake token"
         candidate_canteen = CanteenFactory.create(city_insee_code=None, siret=siret_canteen)
-        # Call the service to hit the mocked API.
-        mock.post(
-            "https://api.insee.fr/token",
-            json={"token_type": "bearer", "access_token": token},
-        )
         city_insee_code = "29352"
 
         mock.get(
             self.api_url + siret_canteen,
-            headers={"Authorization": f"Bearer {token}"},
             text=json.dumps(
                 {
-                    "etablissement": {
-                        "uniteLegale": {"denominationUniteLegale": "cantine test"},
-                        "adresseEtablissement": {
-                            "codeCommuneEtablissement": city_insee_code,
-                            "codePostalEtablissement": "29890",
-                            "libelleCommuneEtablissement": "Ville test",
-                        },
-                    },
-                }
+                    "results": [
+                        {
+                            "siren": "923412845",
+                            "nom_complet": "Wrong name",
+                            "matching_etablissements": [
+                                {
+                                    "commune": "29352",
+                                    "code_postal": "75001",
+                                    "libelle_commune": "PARIS",
+                                    "liste_enseignes": ["Foo"],
+                                    "etat_administratif": "A",
+                                }
+                            ],
+                        }
+                    ],
+                    "total_results": 1,
+                },
             ),
             status_code=200,
         )
-        response = fetch_geo_data_from_api_insee_sirene_by_siret(candidate_canteen.siret, {}, token)
+        response = fetch_geo_data_from_siret(candidate_canteen.siret, {})
         self.assertEquals(response["cityInseeCode"], city_insee_code)
 
     def test_geolocation_with_siret_data_filled(self, mock):
@@ -179,30 +180,31 @@ class TestGeolocationWithSiretBot(TestCase):
         Geolocation data should be filled with the response
         from the API
         """
-        token = "Fake token"
         siret_canteen = "89394682276911"
         canteen = CanteenFactory.create(city_insee_code=None, siret=siret_canteen)
-        mock.post(
-            "https://api.insee.fr/token",
-            json={"token_type": "bearer", "access_token": token},
-        )
-
         city_insee_code = "29352"
-
+        code_postal = "29890"
         mock.get(
             self.api_url + siret_canteen,
-            headers={"Authorization": f"Bearer {token}"},
             text=json.dumps(
                 {
-                    "etablissement": {
-                        "uniteLegale": {"denominationUniteLegale": "cantine test"},
-                        "adresseEtablissement": {
-                            "codeCommuneEtablissement": city_insee_code,
-                            "codePostalEtablissement": "29890",
-                            "libelleCommuneEtablissement": "Ville test",
-                        },
-                    },
-                }
+                    "results": [
+                        {
+                            "siren": "923412845",
+                            "nom_complet": "A Name",
+                            "matching_etablissements": [
+                                {
+                                    "commune": city_insee_code,
+                                    "code_postal": code_postal,
+                                    "libelle_commune": "PARIS",
+                                    "liste_enseignes": ["Foo"],
+                                    "etat_administratif": "A",
+                                }
+                            ],
+                        }
+                    ],
+                    "total_results": 1,
+                },
             ),
             status_code=200,
         )
@@ -210,5 +212,5 @@ class TestGeolocationWithSiretBot(TestCase):
         tasks.fill_missing_geolocation_data_using_siret()
 
         canteen.refresh_from_db()
-        self.assertEqual(canteen.city_insee_code, "29352")
-        self.assertEqual(canteen.postal_code, "29890")
+        self.assertEqual(canteen.city_insee_code, city_insee_code)
+        self.assertEqual(canteen.postal_code, code_postal)

@@ -15,10 +15,7 @@ from sib_api_v3_sdk.rest import ApiException
 
 import macantine.brevo as brevo
 from api.views.utils import update_change_reason
-from common.api.insee import (
-    fetch_geo_data_from_api_insee_sirene_by_siret,
-    get_token_sirene,
-)
+from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.models import Canteen, User
 
 from .celery import app
@@ -292,7 +289,6 @@ def _update_canteen_geo_data(canteen, response):
 @app.task()
 def fill_missing_geolocation_data_using_siret():
     candidate_canteens = _get_candidate_canteens_for_siret_geobot()
-    token = get_token_sirene()
 
     if len(candidate_canteens) == 0:
         logger.info("No candidate canteens have been found. Nothing to do here...")
@@ -300,7 +296,7 @@ def fill_missing_geolocation_data_using_siret():
     for canteen in candidate_canteens:
         if len(canteen.siret) == 14:
             response = {}
-            response = fetch_geo_data_from_api_insee_sirene_by_siret(canteen.siret, response, token)
+            response = fetch_geo_data_from_siret(canteen.siret, response)
             if response:
                 _update_canteen_geo_data(canteen, response)
 

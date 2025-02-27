@@ -66,10 +66,7 @@ from api.serializers import (
 )
 from api.views.utils import camelize, update_change_reason_with_auth
 from common.api.adresse import fetch_geo_data_from_api_entreprise_by_siret
-from common.api.insee import (
-    fetch_geo_data_from_api_insee_sirene_by_siret,
-    get_token_sirene,
-)
+from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from common.utils import send_mail
 from data.department_choices import Department
 from data.models import (
@@ -479,8 +476,7 @@ class CanteenStatusView(APIView):
         siret = request.parser_context.get("kwargs").get("siret")
         response = check_siret_response(siret, request) or {}
         if not response:
-            token = get_token_sirene()
-            response = fetch_geo_data_from_api_insee_sirene_by_siret(siret, response, token)
+            response = fetch_geo_data_from_siret(siret, response)
             city = response.get("city", None)
             postcode = response.get("postalCode", None)
             if city and postcode:
