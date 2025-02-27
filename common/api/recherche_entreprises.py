@@ -7,20 +7,42 @@ from common.utils import siret
 logger = logging.getLogger(__name__)
 
 
-def get_etablishment_or_legal_unit_name(siret_response):
-    has_sub_establishment = not siret_response["etablissement"].get("etablissementSiege", True)
-    if has_sub_establishment:
-        establishment_periods = siret_response["etablissement"]["periodesEtablissement"]
-        for period in establishment_periods:
-            if not period["dateFin"]:
-                return period["enseigne1Etablissement"]
-    return siret_response["etablissement"]["uniteLegale"]["denominationUniteLegale"]
+def get_etablishment_or_legal_unit_name(response):
+    for establishment in response["matching_etablissements"]:
+        is_active = establishment["etat_administratif"] == "A"
+        has_enseigne = "liste_enseignes" in establishment.keys() and len(establishment["liste_enseignes"]) > 0
+        if has_enseigne and is_active:
+            return establishment["liste_enseignes"][0]
+    return response["nom_complet"]
+
+
+def validate_result(siret, response):
+    """
+    Return a dict with the results of the API if there is valid data to process
+    If not, returns None
+    """
+    if response.ok:
+        response = response.json()
+        if response["total_results"] == 0:
+            logger.info(f"API Recherche Entreprises  : No results found for canteen siret : {siret}")
+            return
+        result = response["results"][0]
+        if len(response["results"][0]["matching_etablissements"]) != 1:
+            logger.warning(
+                f"API Recherche Entreprises : Expecting 1 establishment found for siret (choosing the first one) : {siret}"
+            )
+            return
+        return result
 
 
 def fetch_geo_data_from_siret(canteen_siret, response):
     """
     API rate limit : 400/min
     Pour l'utilsiation de cette méthode dans un script, penser à ne pas dépasser plus que 400 appels/min.
+    Les paramètres de l'appel API à Recherche Entreprises:
+    * q={siret} : Terme de la recherche pour lequel nous utilions uniquemement le siret
+    * etat_administratif=A : Nous renvoyons uniquements les organismes actifs
+    * page=1&per_page=1 : Un seul élément est demandé en réponse car la recherche par SIRET doit renvoyer un seul établissement.
     """
     if not siret.is_valid_siret(canteen_siret):
         logger.error(f"Api Recherche Entreprises: Le SIRET fourni est invalide : {canteen_siret}")
@@ -28,28 +50,27 @@ def fetch_geo_data_from_siret(canteen_siret, response):
 
     response["siret"] = canteen_siret
     try:
-        siret_response = requests.get(
-            f"https://recherche-entreprises.api.gouv.fr/search?q={canteen_siret}",
+        api_response = requests.get(
+            f"https://recherche-entreprises.api.gouv.fr/search?q={canteen_siret}&etat_administratif=A&page=1&per_page=1",
         )
-        siret_response.raise_for_status()
-        if siret_response.ok:
-            siret_response = siret_response.json()
+        api_response.raise_for_status()
+        result = validate_result(canteen_siret, api_response)
+        if result:
             try:
-                response["name"] = get_etablishment_or_legal_unit_name(siret_response)
-                response["cityInseeCode"] = siret_response["etablissement"]["adresseEtablissement"][
-                    "codeCommuneEtablissement"
-                ]
-                response["postalCode"] = siret_response["etablissement"]["adresseEtablissement"][
-                    "codePostalEtablissement"
-                ]
-                response["city"] = siret_response["etablissement"]["adresseEtablissement"][
-                    "libelleCommuneEtablissement"
-                ]
+                response["name"] = get_etablishment_or_legal_unit_name(result)
+                response["cityInseeCode"] = result["matching_etablissements"][0]["commune"]
+                response["postalCode"] = result["matching_etablissements"][0]["code_postal"]
+                response["city"] = result["matching_etablissements"][0]["libelle_commune"]
                 return response
             except KeyError as e:
-                logger.error(f"unexpected siret response format : {siret_response}. Unknown key : {e}")
+                logger.error(
+                    f"API Recherche Entreprises : Unexpected siret response format : {api_response}. Unknown key : {e}"
+                )
         else:
-            logger.warning(f"siret lookup failed, code {siret_response.status_code} : {siret_response}")
+            logger.warning(
+                f"API Recherche Entreprises : Siret lookup failed, code {api_response.status_code} : {api_response}"
+            )
+            return
     except requests.exceptions.HTTPError as e:
         logger.error(f"Api Recherche Entreprises: HTTPError\n{e}")
     except requests.exceptions.ConnectionError as e:

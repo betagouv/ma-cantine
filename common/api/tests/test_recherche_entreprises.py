@@ -1,6 +1,8 @@
 import unittest
 from unittest.mock import Mock, patch
 
+import requests
+
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 
 
@@ -12,23 +14,18 @@ class TestFetchGeoDataFromSiret(unittest.TestCase):
         canteen_siret = "12345678901234"
         test_cases = [
             {
-                "name": "Valid with enseigne",
+                "name": "Valid without enseigne",
                 "data": {
                     "results": [
                         {
                             "siren": "923412845",
                             "nom_complet": "Foo",
-                            "nombre_etablissements_ouverts": 1,
-                            "siege": {
-                                "commune": "59512",
-                            },
                             "etat_administratif": "A",
                             "matching_etablissements": [
                                 {
                                     "commune": "12345",
                                     "code_postal": "75001",
                                     "libelle_commune": "PARIS",
-                                    "date_debut_activite": "2023-01-15",
                                     "etat_administratif": "A",
                                 }
                             ],
@@ -43,7 +40,37 @@ class TestFetchGeoDataFromSiret(unittest.TestCase):
                     "postalCode": "75001",
                     "city": "PARIS",
                 },
-            }
+            },
+            {
+                "name": "Valid with enseigne",
+                "data": {
+                    "results": [
+                        {
+                            "siren": "923412845",
+                            "nom_complet": "Wrong name",
+                            "etat_administratif": "A",
+                            "matching_etablissements": [
+                                {
+                                    "commune": "12345",
+                                    "code_postal": "75001",
+                                    "libelle_commune": "PARIS",
+                                    "date_debut_activite": "2023-01-15",
+                                    "etat_administratif": "A",
+                                    "liste_enseignes": ["Foo"],
+                                }
+                            ],
+                        }
+                    ],
+                    "total_results": 1,
+                },
+                "expected_outcome": {
+                    "siret": canteen_siret,
+                    "name": "Foo",
+                    "cityInseeCode": "12345",
+                    "postalCode": "75001",
+                    "city": "PARIS",
+                },
+            },
         ]
         mock_response = Mock()
         mock_response.ok = True
@@ -56,48 +83,48 @@ class TestFetchGeoDataFromSiret(unittest.TestCase):
             result = fetch_geo_data_from_siret(canteen_siret, response)
             self.assertEqual(result, tc["expected_outcome"])
 
-    # def test_fetch_geo_data_from_siret_invalid_siret(self, mock_is_valid_siret):
-    #     response = {}
-    #     canteen_siret = "invalid_siret"
-    #     result = fetch_geo_data_from_siret(canteen_siret, response)
-    #     self.assertIsNone(result)
+    def test_fetch_geo_data_from_siret_invalid_siret(self, mock_is_valid_siret):
+        response = {}
+        canteen_siret = "invalid_siret"
+        result = fetch_geo_data_from_siret(canteen_siret, response)
+        self.assertIsNone(result)
 
-    # @patch("requests.get")
-    # def test_fetch_geo_data_from_siret_no_results(self, mock_get, mock_is_valid_siret):
-    #     mock_response = Mock()
-    #     mock_response.ok = True
-    #     mock_response.json.return_value = {"total_results": 0}
-    #     mock_get.return_value = mock_response
+    @patch("requests.get")
+    def test_fetch_geo_data_from_siret_no_results(self, mock_get, mock_is_valid_siret):
+        mock_response = Mock()
+        mock_response.ok = True
+        mock_response.json.return_value = {"total_results": 0}
+        mock_get.return_value = mock_response
 
-    #     response = {}
-    #     canteen_siret = "12345678901234"
-    #     result = fetch_geo_data_from_siret(canteen_siret, response)
-    #     self.assertIsNone(result)
+        response = {}
+        canteen_siret = "12345678901234"
+        result = fetch_geo_data_from_siret(canteen_siret, response)
+        self.assertIsNone(result)
 
-    # @patch("requests.get", side_effect=requests.exceptions.HTTPError)
-    # def test_fetch_geo_data_from_siret_http_error(self, mock_get, mock_is_valid_siret):
-    #     response = {}
-    #     canteen_siret = "12345678901234"
-    #     result = fetch_geo_data_from_siret(canteen_siret, response)
-    #     self.assertEqual(result, {"siret": canteen_siret})
+    @patch("requests.get", side_effect=requests.exceptions.HTTPError)
+    def test_fetch_geo_data_from_siret_http_error(self, mock_get, mock_is_valid_siret):
+        response = {}
+        canteen_siret = "12345678901234"
+        result = fetch_geo_data_from_siret(canteen_siret, response)
+        self.assertEqual(result, {"siret": canteen_siret})
 
-    # @patch("requests.get", side_effect=requests.exceptions.ConnectionError)
-    # def test_fetch_geo_data_from_siret_connection_error(self, mock_get, mock_is_valid_siret):
-    #     response = {}
-    #     canteen_siret = "12345678901234"
-    #     result = fetch_geo_data_from_siret(canteen_siret, response)
-    #     self.assertEqual(result, {"siret": canteen_siret})
+    @patch("requests.get", side_effect=requests.exceptions.ConnectionError)
+    def test_fetch_geo_data_from_siret_connection_error(self, mock_get, mock_is_valid_siret):
+        response = {}
+        canteen_siret = "12345678901234"
+        result = fetch_geo_data_from_siret(canteen_siret, response)
+        self.assertEqual(result, {"siret": canteen_siret})
 
-    # @patch("requests.get", side_effect=requests.exceptions.Timeout)
-    # def test_fetch_geo_data_from_siret_timeout(self, mock_get, mock_is_valid_siret):
-    #     response = {}
-    #     canteen_siret = "12345678901234"
-    #     result = fetch_geo_data_from_siret(canteen_siret, response)
-    #     self.assertEqual(result, {"siret": canteen_siret})
+    @patch("requests.get", side_effect=requests.exceptions.Timeout)
+    def test_fetch_geo_data_from_siret_timeout(self, mock_get, mock_is_valid_siret):
+        response = {}
+        canteen_siret = "12345678901234"
+        result = fetch_geo_data_from_siret(canteen_siret, response)
+        self.assertEqual(result, {"siret": canteen_siret})
 
-    # @patch("requests.get", side_effect=Exception)
-    # def test_fetch_geo_data_from_siret_unexpected_exception(self, mock_get, mock_is_valid_siret):
-    #     response = {}
-    #     canteen_siret = "12345678901234"
-    #     result = fetch_geo_data_from_siret(canteen_siret, response)
-    #     self.assertEqual(result, {"siret": canteen_siret})
+    @patch("requests.get", side_effect=Exception)
+    def test_fetch_geo_data_from_siret_unexpected_exception(self, mock_get, mock_is_valid_siret):
+        response = {}
+        canteen_siret = "12345678901234"
+        result = fetch_geo_data_from_siret(canteen_siret, response)
+        self.assertEqual(result, {"siret": canteen_siret})
