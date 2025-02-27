@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.7.0](https://github.com/betagouv/ma-cantine/compare/v2025.6.2...v2025.7.0) (2025-02-27)
+
+
+### Nouveautés
+
+* **Cantine données géo:** Remplacer API Insee vers Recherche Entreprises  ([#5048](https://github.com/betagouv/ma-cantine/issues/5048)) ([b59303e](https://github.com/betagouv/ma-cantine/commit/b59303e5de31c0822a2a1c1d9c3e79f0f9038045))
+
 ## [2025.6.2](https://github.com/betagouv/ma-cantine/compare/v2025.6.1...v2025.6.2) (2025-02-27)
 
 
