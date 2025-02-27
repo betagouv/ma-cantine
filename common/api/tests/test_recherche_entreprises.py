@@ -71,6 +71,14 @@ class TestFetchGeoDataFromSiret(unittest.TestCase):
                     "city": "PARIS",
                 },
             },
+            {
+                "name": "Valid with enseigne",
+                "data": {
+                    "results": [],
+                    "total_results": 0,
+                },
+                "expected_outcome": None,
+            },
         ]
         mock_response = Mock()
         mock_response.ok = True
