@@ -1,6 +1,4 @@
 <script setup>
-import AppCode from "@/components/AppCode.vue"
-
 const file = "/static/documents/admin_importer_des_cantines_exemple_ma_cantine.csv"
 </script>
 
@@ -8,32 +6,11 @@ const file = "/static/documents/admin_importer_des_cantines_exemple_ma_cantine.c
   <DsfrCallout title="En tant que membre de l'équipe ma cantine" titleTag="h3">
     <div class="fr-grid-row fr-grid-row--bottom fr-mt-3w">
       <div class="fr-col-12 fr-col-md-8">
-        <p>
-          Vous pouvez ajouter 3 colonnes additionnelles à la fin du fichier CSV :
+        <p class="fr-mb-1w">
+          Vous pouvez ajouter 3 colonnes additionnelles à la fin du fichier CSV : admin_ministère_tutelle,
+          admin_gestionnaires_additionnels & admin_source_donnees.
         </p>
-        <ul>
-          <li>
-            <p class="fr-mb-0">
-              <strong>admin_ministère_tutelle</strong>
-              : le ministère de tutelle. Par exemple :
-              <AppCode content="sante" />
-              .
-            </p>
-          </li>
-          <li>
-            <p class="fr-mb-0">
-              <strong>admin_gestionnaires_additionnels</strong>
-              : une liste d'adresses email de gestionnaires qui seront ajoutés sans être notifiés par email
-            </p>
-          </li>
-          <li>
-            <p class="fr-mb-0">
-              <strong>admin_source_donnees</strong>
-              : un identifiant décrivant la source de données
-            </p>
-          </li>
-        </ul>
-        <p>
+        <p class="fr-mb-1w">
           Vous pouvez créer des cantines. Vous ne serez pas ajouté·e·s automatiquement à l'équipe de gestion, sauf si
           votre mail se trouve dans une des colonnes de listes de gestionnaires.
         </p>
