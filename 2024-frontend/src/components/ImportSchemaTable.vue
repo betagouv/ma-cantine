@@ -55,7 +55,8 @@ const formatFields = (fields) => {
   tr {
     &:has(.selected) {
       background-color: var(--background-alt-red-marianne) !important;
-      td:first-child {
+      td:first-child,
+      td:nth-child(2) {
         color: var(--text-title-red-marianne) !important;
       }
     }
