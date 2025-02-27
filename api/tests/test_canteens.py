@@ -513,8 +513,6 @@ class TestCanteenApi(APITestCase):
         # the CanteenFactory creates canteens with managers
         self.assertFalse(body["canBeClaimed"])
 
-    @override_settings(SIRET_API_KEY="dummy")
-    @override_settings(SIRET_API_SECRET="dummy")
     @requests_mock.Mocker()
     @authenticate
     def test_check_siret_new_canteen(self, mock):
