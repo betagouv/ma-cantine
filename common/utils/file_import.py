@@ -80,7 +80,7 @@ def verify_first_line_is_header(file, file_dialect, expected_header):
     header = next(csvreader)
     if header != expected_header:
         raise ValidationError(
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre"
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus."
         )
     return header
 
@@ -93,6 +93,6 @@ def verify_first_line_is_header_list(file, file_dialect, expected_header_list):
     header = next(csvreader)
     if header not in expected_header_list:
         raise ValidationError(
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre"
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus."
         )
     return header
