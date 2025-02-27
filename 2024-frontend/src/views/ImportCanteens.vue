@@ -12,7 +12,7 @@ import ImportHelp from "@/components/ImportHelp.vue"
 const store = useRootStore()
 
 /* Data */
-const schemaFile = "cantines.json"
+const schemaFile = store.loggedUser.isStaff ? "cantines_admin.json" : "cantines.json"
 const exampleFile = {
   name: "importer_des_cantines_exemple_ma_cantine.csv",
   size: "496 octets",
