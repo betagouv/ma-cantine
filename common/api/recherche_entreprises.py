@@ -9,7 +9,11 @@ logger = logging.getLogger(__name__)
 
 def get_enseigne_name(etablissement):
     is_active = etablissement["etat_administratif"] == "A"
-    has_enseigne = "liste_enseignes" in etablissement.keys() and len(etablissement["liste_enseignes"]) > 0
+    has_enseigne = (
+        "liste_enseignes" in etablissement.keys()
+        and etablissement["liste_enseignes"]
+        and len(etablissement["liste_enseignes"]) > 0
+    )
     if has_enseigne and is_active:
         return etablissement["liste_enseignes"][0]
 
@@ -36,7 +40,7 @@ def validate_result(siret, response):
 def fetch_geo_data_from_siret(canteen_siret, response):
     """
     API rate limit : 400/min
-    Pour l'utilsiation de cette méthode dans un script, penser à ne pas dépasser plus que 400 appels/min.
+    Pour l'utilisation de cette méthode dans un script, penser à ne pas dépasser plus que 400 appels/min.
     Les paramètres de l'appel API à Recherche Entreprises:
     * q={siret} : Terme de la recherche pour lequel nous utilions uniquemement le siret
     * etat_administratif=A : Nous renvoyons uniquements les organismes actifs
