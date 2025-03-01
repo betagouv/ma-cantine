@@ -58,7 +58,7 @@ drf-base64==2.0
 drf-excel==2.4.1
 drf-spectacular==0.28.0
 drf-spectacular-sidecar==2024.7.1
-EditorConfig==0.12.4
+EditorConfig==0.17.0
 et-xmlfile==1.1.0
 exceptiongroup==1.2.2
 factory-boy==3.3.1
