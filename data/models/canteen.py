@@ -173,6 +173,10 @@ class Canteen(SoftDeletionModel):
     )
 
     siret = models.TextField(null=True, blank=True, validators=[utils_siret.validate_siret])
+    siren_unite_legale = models.TextField(
+        null=True, blank=True, verbose_name="siren de l'unité légale", validators=[utils_siret.validate_siren]
+    )
+
     central_producer_siret = models.TextField(
         null=True,
         blank=True,
@@ -263,9 +267,11 @@ class Canteen(SoftDeletionModel):
     )
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        # before-save cleanup on siret, logo & region (from department)
+        # before-save cleanup some fields
         if self.siret:
             self.siret = utils_siret.normalise_siret(self.siret)
+        if self.siren_unite_legale:
+            self.siren_unite_legale = utils_siret.normalise_siret(self.siren_unite_legale)
         max_image_size = 1024
         if self.logo:
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
