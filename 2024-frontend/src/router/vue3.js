@@ -7,6 +7,7 @@ import CGU from "@/views/CGU.vue"
 import ContactPage from "@/views/ContactPage.vue"
 import ImportPurchases from "@/views/ImportPurchases.vue"
 import ImportCanteens from "@/views/ImportCanteens.vue"
+import CanteenCreation from "@/views/CanteenCreation.vue"
 
 const vue3routes = [
   {
@@ -99,6 +100,15 @@ const vue3routes = [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
         { to: { name: "ImportSelection" }, title: "Importer des données" },
       ],
+    },
+  },
+  {
+    path: "/ajouter-une-cantine",
+    name: "CanteenCreation",
+    component: CanteenCreation,
+    meta: {
+      title: "Ajouter une cantine",
+      breadcrumbs: [{ to: { name: "ManagementPage" }, title: "Mon tableau de bord" }],
     },
   },
 ]
