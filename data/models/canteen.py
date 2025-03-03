@@ -2,6 +2,7 @@ from urllib.parse import quote
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -266,19 +267,6 @@ class Canteen(SoftDeletionModel):
         null=True, blank=True, verbose_name="Date d'envoi du premier email pour manque de diagnostics"
     )
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        # before-save cleanup some fields
-        if self.siret:
-            self.siret = utils_siret.normalise_siret(self.siret)
-        if self.siren_unite_legale:
-            self.siren_unite_legale = utils_siret.normalise_siret(self.siren_unite_legale)
-        max_image_size = 1024
-        if self.logo:
-            self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
-        if self.department:
-            self.region = self._get_region()
-        super(Canteen, self).save(force_insert, force_update, using, update_fields)
-
     # Automatic tasks
     geolocation_bot_attempts = models.IntegerField(default=0)
 
@@ -292,6 +280,36 @@ class Canteen(SoftDeletionModel):
     creation_mtm_medium = models.TextField(
         null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
     )
+
+    def clean(self, *args, **kwargs):
+        # cleanup some fields
+        if self.siret:
+            self.siret = utils_siret.normalise_siret(self.siret)
+        if self.siren_unite_legale:
+            self.siren_unite_legale = utils_siret.normalise_siret(self.siren_unite_legale)
+        max_image_size = 1024
+        if self.logo:
+            self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
+        if self.department:
+            self.region = self._get_region()
+        # siret rules
+        self.check_siret_rules()
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.full_clean()
+        super(Canteen, self).save(force_insert, force_update, using, update_fields)
+
+    def check_siret_rules(self):
+        """
+        Some canteens are allowed to have an empty siret
+        """
+        if self.siren_unite_legale:
+            if self.siret:
+                raise ValidationError(
+                    {
+                        "siren_unite_legale": "Si le SIREN de l'unité légale est renseigné, alors le SIRET doit être vide"
+                    }
+                )
 
     @property
     def url_slug(self):
