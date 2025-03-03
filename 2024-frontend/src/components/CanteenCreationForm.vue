@@ -67,7 +67,6 @@ initFields()
       <fieldset>
         <legend class="fr-h5">4. Secteur</legend>
         <DsfrSelect
-          v-if="sectorsCategoryOptions.length > 0"
           v-model="form.sectorCategory"
           label="Catégorie de secteur"
           labelVisible
