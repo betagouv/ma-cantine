@@ -16,10 +16,10 @@ initFields()
 <template>
   <section class="fr-p-3w fr-background-alt--blue-france fr-mt-4w fr-grid-row fr-grid-row--center">
     <form class="fr-col-7 fr-background-default--grey fr-p-2w fr-p-md-7w">
-      <fieldset>
+      <fieldset class="fr-mb-7w">
         <legend class="fr-h5">1. SIRET</legend>
       </fieldset>
-      <fieldset>
+      <fieldset class="fr-mb-7w">
         <legend class="fr-h5">2. Coordonnées</legend>
         <DsfrInput
           v-model="form.name"
@@ -28,7 +28,7 @@ initFields()
           hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
         />
       </fieldset>
-      <fieldset>
+      <fieldset class="fr-mb-7w">
         <legend class="fr-h5">3. Caractéristiques</legend>
         <DsfrRadioButtonSet
           legend="Type d’établissement"
