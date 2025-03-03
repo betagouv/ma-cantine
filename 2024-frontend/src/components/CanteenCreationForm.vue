@@ -30,6 +30,8 @@ const initFields = () => {
   form.sectorCategory = ""
   form.sectorActivity = []
   form.ministry = ""
+  form.dailyMealCount = ""
+  form.yearlyMealCount = ""
 }
 initFields()
 
@@ -93,7 +95,7 @@ const verifyLineMinistry = () => {
           :options="options.productionType"
         />
       </fieldset>
-      <fieldset>
+      <fieldset class="fr-mb-7w">
         <legend class="fr-h5">4. Secteur</legend>
         <DsfrSelect
           v-model="form.sectorCategory"
@@ -124,6 +126,17 @@ const verifyLineMinistry = () => {
           labelVisible
           :options="ministryOptions"
         />
+      </fieldset>
+      <fieldset>
+        <legend class="fr-h5">5. Nombre de repas</legend>
+        <div class="fr-grid-row fr-grid-row--gutters">
+          <div class="fr-col-6">
+            <DsfrInput v-model="form.dailyMealCount" label="Par jour" :label-visible="true" />
+          </div>
+          <div class="fr-col-6">
+            <DsfrInput v-model="form.yearlyMealCount" label="Par an" :label-visible="true" />
+          </div>
+        </div>
       </fieldset>
     </form>
   </section>
