@@ -7,7 +7,7 @@ const route = useRoute()
 
 <template>
   <section class="fr-grid-row">
-    <div class="fr-col-12 fr-col-md-7">
+    <div class="fr-col-12 fr-col-md-6">
       <h1>{{ route.meta.title }}</h1>
       <p>
         La mission de la plateforme
