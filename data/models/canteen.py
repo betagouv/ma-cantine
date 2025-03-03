@@ -281,7 +281,7 @@ class Canteen(SoftDeletionModel):
         null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
     )
 
-    def clean(self, *args, **kwargs):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         # cleanup some fields
         if self.siret:
             self.siret = utils_siret.normalise_siret(self.siret)
@@ -294,9 +294,6 @@ class Canteen(SoftDeletionModel):
             self.region = self._get_region()
         # siret rules
         self.check_siret_rules()
-
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        self.full_clean()
         super(Canteen, self).save(force_insert, force_update, using, update_fields)
 
     def check_siret_rules(self):
