@@ -7,8 +7,8 @@ const file = "/static/documents/admin_importer_des_cantines_exemple_ma_cantine.c
     <div class="fr-grid-row fr-grid-row--bottom fr-mt-3w">
       <div class="fr-col-12 fr-col-md-8">
         <p class="fr-mb-1w">
-          Vous pouvez ajouter 3 colonnes additionnelles à la fin du fichier CSV : admin_ministère_tutelle,
-          admin_gestionnaires_additionnels & admin_source_donnees.
+          our utiliser l'import admin, vous devez ajouter 3 colonnes additionnelles à la fin du fichier CSV :
+          admin_ministère_tutelle, admin_gestionnaires_additionnels & admin_source_donnees.
         </p>
         <p class="fr-mb-1w">
           Vous pouvez créer des cantines. Vous ne serez pas ajouté·e·s automatiquement à l'équipe de gestion, sauf si
