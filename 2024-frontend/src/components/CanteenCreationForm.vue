@@ -1,6 +1,19 @@
 <script setup>
-import { reactive } from "vue"
+import "@/css/dsfr-multi-select.css"
+import { reactive, computed } from "vue"
+import sectorsService from "@/services/sectors"
 import options from "@/constants/canteen-creation-form-options"
+
+/* Sectors */
+const sectors = reactive({})
+const sectorsInCategory = computed(() => sectors.value.filter((sector) => sector.category === form.sectorCategory))
+const sectorsCategoryOptions = computed(() => (sectors.value ? sectorsService.getCategories(sectors.value) : []))
+const sectorsActivityOptions = computed(() =>
+  sectors.value ? sectorsService.getActivities(sectorsInCategory.value) : []
+)
+sectorsService.getSectors().then((response) => {
+  sectors.value = response
+})
 
 /* Form fields */
 const form = reactive({})
@@ -9,6 +22,8 @@ const initFields = () => {
   form.economicModel = ""
   form.managementType = ""
   form.productionType = ""
+  form.sectorCategory = ""
+  form.sectorActivity = []
 }
 initFields()
 </script>
@@ -28,7 +43,7 @@ initFields()
           hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
         />
       </fieldset>
-      <fieldset class="fr-mb-7w">
+      <fieldset class="fr-mb-3w">
         <legend class="fr-h5">3. Caractéristiques</legend>
         <DsfrRadioButtonSet
           legend="Type d’établissement"
@@ -48,6 +63,31 @@ initFields()
           :small="true"
           :options="options.productionType"
         />
+      </fieldset>
+      <fieldset>
+        <legend class="fr-h5">4. Secteur</legend>
+        <DsfrSelect
+          v-if="sectorsCategoryOptions.length > 0"
+          v-model="form.sectorCategory"
+          label="Catégorie de secteur"
+          labelVisible
+          :options="sectorsCategoryOptions"
+          @change="form.sectorActivity = []"
+        />
+        <DsfrMultiselect
+          v-model="form.sectorActivity"
+          label="Secteur d’activité"
+          labelVisible
+          :options="sectorsActivityOptions"
+          id-key="index"
+          label-key="name"
+          search
+          :filtering-keys="['name']"
+        >
+          <template #no-results>
+            Sélectionner une catégorie de secteur pour pouvoir sélectionner des secteurs d'activité
+          </template>
+        </DsfrMultiselect>
       </fieldset>
     </form>
   </section>
