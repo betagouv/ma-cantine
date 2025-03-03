@@ -42,7 +42,7 @@ def fetch_geo_data_from_siret(canteen_siret, response):
     * etat_administratif=A : Nous renvoyons uniquements les organismes actifs
     * page=1&per_page=1 : Un seul élément est demandé en réponse car la recherche par SIRET doit renvoyer un seul établissement.
     """
-    if not siret.is_valid_siret(canteen_siret):
+    if not siret.is_valid_length_siret(canteen_siret):
         logger.error(f"Api Recherche Entreprises: Le SIRET fourni est invalide : {canteen_siret}")
         return
 

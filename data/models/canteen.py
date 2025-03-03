@@ -2,12 +2,12 @@ from urllib.parse import quote
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
 
+from common.utils import siret
 from data.department_choices import Department
 from data.fields import ChoiceArrayField
 from data.region_choices import Region
@@ -24,26 +24,6 @@ from .softdeletionmodel import (
     SoftDeletionModel,
     SoftDeletionQuerySet,
 )
-
-
-def validate_siret(siret):
-    """
-    Performs length and Luhn validation
-    (https://portal.hardis-group.com/pages/viewpage.action?pageId=120357227)
-    """
-    if siret is None or siret == "":
-        return
-    if len(siret) != 14:
-        raise ValidationError("14 caractères numériques sont attendus")
-    odd_digits = [int(n) for n in siret[-1::-2]]
-    even_digits = [int(n) for n in siret[-2::-2]]
-    checksum = sum(odd_digits)
-    for digit in even_digits:
-        checksum += sum(int(n) for n in str(digit * 2))
-    luhn_checksum_valid = checksum % 10 == 0
-
-    if not luhn_checksum_valid:
-        raise ValidationError("Le numéro SIRET n'est pas valide.")
 
 
 def get_diagnostic_year_choices():
@@ -193,12 +173,12 @@ class Canteen(SoftDeletionModel):
     )
 
     # TODO: consider using normalise_siret on save
-    siret = models.TextField(null=True, blank=True, validators=[validate_siret])
+    siret = models.TextField(null=True, blank=True, validators=[siret.validate_siret])
     central_producer_siret = models.TextField(
         null=True,
         blank=True,
         verbose_name="siret de la cuisine centrale",
-        validators=[validate_siret],
+        validators=[siret.validate_siret],
     )
     management_type = models.CharField(
         max_length=255,
