@@ -10,6 +10,15 @@ def is_valid_length_siret(siret: str) -> bool:
         return True
 
 
+def is_valid_luhn_siret(siret: str) -> bool:
+    odd_digits = [int(n) for n in siret[-1::-2]]
+    even_digits = [int(n) for n in siret[-2::-2]]
+    checksum = sum(odd_digits)
+    for digit in even_digits:
+        checksum += sum(int(n) for n in str(digit * 2))
+    return checksum % 10 == 0
+
+
 def validate_siret(siret):
     """
     Performs length and Luhn validation
@@ -20,12 +29,5 @@ def validate_siret(siret):
     siret = normalise_siret(siret)
     if not is_valid_length_siret(siret):
         raise ValidationError("14 caractères numériques sont attendus")
-    odd_digits = [int(n) for n in siret[-1::-2]]
-    even_digits = [int(n) for n in siret[-2::-2]]
-    checksum = sum(odd_digits)
-    for digit in even_digits:
-        checksum += sum(int(n) for n in str(digit * 2))
-    luhn_checksum_valid = checksum % 10 == 0
-
-    if not luhn_checksum_valid:
+    if not is_valid_luhn_siret(siret):
         raise ValidationError("Le numéro SIRET n'est pas valide.")
