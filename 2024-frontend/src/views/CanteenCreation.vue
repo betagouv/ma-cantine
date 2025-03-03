@@ -6,7 +6,7 @@ const route = useRoute()
 </script>
 
 <template>
-  <section class="fr-grid-row">
+  <section class="fr-grid-row fr-grid-row--bottom">
     <div class="fr-col-12 fr-col-md-6">
       <h1>{{ route.meta.title }}</h1>
       <p>
@@ -15,7 +15,7 @@ const route = useRoute()
         est de référencer toutes les cantines de France afin d’aider le ministère de l’agriculture à déployer sa
         transition alimentaire.
       </p>
-      <p>Remplissez le formulaire ci-dessous pour créer votre établissement.</p>
+      <p class="fr-mb-0">Remplissez le formulaire ci-dessous pour créer votre établissement.</p>
     </div>
     <div class="fr-col-offset-md-1"></div>
     <AppRessources>
