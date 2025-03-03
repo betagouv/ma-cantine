@@ -53,6 +53,13 @@ const formatFields = (fields) => {
 <style lang="scss">
 .import-schema-table {
   tr {
+    &:has(.admin) {
+      background-color: var(--background-alt-blue-france) !important;
+      td:first-child,
+      td:nth-child(2) {
+        color: var(--text-title-blue-france) !important;
+      }
+    }
     &:has(.selected) {
       background-color: var(--background-alt-red-marianne) !important;
       td:first-child,
