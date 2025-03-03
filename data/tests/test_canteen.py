@@ -15,6 +15,13 @@ class TestCanteenModel(TestCase):
         # siret: normalize on save
         canteen = CanteenFactory.create(siret="756 656 218 99905")
         self.assertEqual(canteen.siret, "75665621899905")  # normalized
+        # siren_unite_legale: can be empty
+        for siren_unite_legale in ["", None]:
+            canteen = CanteenFactory.create(siren_unite_legale=siren_unite_legale)
+            self.assertEqual(canteen.siren_unite_legale, siren_unite_legale)
+        # siren_unite_legale: normalize on save
+        canteen = CanteenFactory.create(siren_unite_legale="756 656 218")
+        self.assertEqual(canteen.siren_unite_legale, "756656218")  # normalized
         # region: get from department on save
         canteen = CanteenFactory.create(department="38", region=None)
         self.assertEqual(canteen.region, "84")  # Auvergne-Rhône-Alpes
