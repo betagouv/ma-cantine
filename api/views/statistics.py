@@ -41,7 +41,7 @@ class CanteenStatisticsView(APIView):
 
         data = CanteenStatisticsSerializer.calculate_statistics(canteens, diagnostics)
         if epci_error:
-            data["epci_error"] = epci_error
+            data["epciError"] = epci_error
 
         serializer = CanteenStatisticsSerializer(data)
         return JsonResponse(serializer.data, status=status.HTTP_200_OK)
