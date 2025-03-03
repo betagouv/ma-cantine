@@ -619,6 +619,7 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
             "id",
             "nom",
             "siret",
+            "siren_unite_legale",
             "code_insee_commune",
             "libelle_commune",
             "departement",
