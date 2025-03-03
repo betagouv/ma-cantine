@@ -1,6 +1,6 @@
 <script setup>
 import "@/css/dsfr-multi-select.css"
-import { reactive, computed } from "vue"
+import { ref, reactive, computed } from "vue"
 import sectorsService from "@/services/sectors"
 import options from "@/constants/canteen-creation-form-options"
 
@@ -14,6 +14,11 @@ const sectorsActivityOptions = computed(() =>
 sectorsService.getSectors().then((response) => {
   sectors.value = response
 })
+const changeCategory = () => {
+  form.sectorActivity = []
+  form.ministry = ""
+  showMinistrySelector.value = false
+}
 
 /* Form fields */
 const form = reactive({})
@@ -24,8 +29,32 @@ const initFields = () => {
   form.productionType = ""
   form.sectorCategory = ""
   form.sectorActivity = []
+  form.ministry = ""
 }
 initFields()
+
+/* Line Ministry */
+const ministries = reactive({})
+const showMinistrySelector = ref(false)
+const ministryOptions = computed(() => {
+  if (!ministries.value) return []
+  return ministries.value.map((ministry) => {
+    return { value: ministry.value, text: ministry.name }
+  })
+})
+sectorsService.getMinistries().then((response) => {
+  ministries.value = response
+})
+const verifyLineMinistry = () => {
+  for (let i = 0; i < form.sectorActivity.length; i++) {
+    const key = form.sectorActivity[i]
+    const activity = sectorsActivityOptions.value[key]
+    const hasLineMinistry = activity.hasLineMinistry
+    if (!hasLineMinistry) continue
+    showMinistrySelector.value = true
+    break
+  }
+}
 </script>
 
 <template>
@@ -71,7 +100,7 @@ initFields()
           label="Catégorie de secteur"
           labelVisible
           :options="sectorsCategoryOptions"
-          @change="form.sectorActivity = []"
+          @change="changeCategory()"
         />
         <DsfrMultiselect
           v-model="form.sectorActivity"
@@ -82,11 +111,19 @@ initFields()
           label-key="name"
           search
           :filtering-keys="['name']"
+          @change="verifyLineMinistry()"
         >
           <template #no-results>
             Sélectionner une catégorie de secteur pour pouvoir sélectionner des secteurs d'activité
           </template>
         </DsfrMultiselect>
+        <DsfrSelect
+          v-if="showMinistrySelector"
+          v-model="form.ministry"
+          label="Ministère de tutelle"
+          labelVisible
+          :options="ministryOptions"
+        />
       </fieldset>
     </form>
   </section>

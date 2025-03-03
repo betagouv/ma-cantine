@@ -9,6 +9,15 @@ const getSectors = () => {
   }).then(verifyResponse)
 }
 
+const getMinistries = () => {
+  return fetch("/api/v1/ministries/", {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  }).then(verifyResponse)
+}
+
 const getCategories = (sectors) => {
   const sectorCategories = []
   for (let i = 0; i < sectors.length; i++) {
@@ -33,4 +42,4 @@ const getActivities = (sectors) => {
   return sectorActivities
 }
 
-export default { getSectors, getCategories, getActivities }
+export default { getSectors, getMinistries, getCategories, getActivities }
