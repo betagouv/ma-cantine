@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
 
-from common.utils import siret
+from common.utils import siret as utils_siret
 from data.department_choices import Department
 from data.fields import ChoiceArrayField
 from data.region_choices import Region
@@ -172,13 +172,12 @@ class Canteen(SoftDeletionModel):
         verbose_name="nombre de cantines satellites dépendantes (si cuisine centrale)",
     )
 
-    # TODO: consider using normalise_siret on save
-    siret = models.TextField(null=True, blank=True, validators=[siret.validate_siret])
+    siret = models.TextField(null=True, blank=True, validators=[utils_siret.validate_siret])
     central_producer_siret = models.TextField(
         null=True,
         blank=True,
         verbose_name="siret de la cuisine centrale",
-        validators=[siret.validate_siret],
+        validators=[utils_siret.validate_siret],
     )
     management_type = models.CharField(
         max_length=255,
@@ -264,6 +263,9 @@ class Canteen(SoftDeletionModel):
     )
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        # before-save cleanup on siret, logo & region (from department)
+        if self.siret:
+            self.siret = utils_siret.normalise_siret(self.siret)
         max_image_size = 1024
         if self.logo:
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
