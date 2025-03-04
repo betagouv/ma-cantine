@@ -75,6 +75,10 @@ const initFields = () => {
   form.yearlyMealCount = ""
   form.centralProducerSiret = ""
   form.satelliteCanteensCount = ""
+  form.postalCode = ""
+  form.city = ""
+  form.cityInseeCode = ""
+  form.department = ""
 }
 initFields()
 
@@ -133,11 +137,11 @@ const saveCanteen = (saveAndCreateValue = false) => {
 
 const sendCanteenForm = () => {
   const payload = {
-    siret: "12345678912345", // TODO à mettre en dynmaique ensuite
-    postalCode: "73000", // TODO à mettre en dynmaique ensuite
-    city: "Chambéry", // TODO à mettre en dynmaique ensuite
-    cityInseeCode: "73065", // TODO à mettre en dynmaique ensuite
-    department: "73", // TODO à mettre en dynmaique ensuite
+    siret: form.siret,
+    postalCode: form.postalCode,
+    city: form.city,
+    cityInseeCode: form.cityInseeCode,
+    department: form.department,
     name: form.name,
     economicModel: form.economicModel,
     managementType: form.managementType,
@@ -191,6 +195,16 @@ const getSectorsID = (activitiesSelected) => {
   }
   return names
 }
+
+/* SIRET Informations */
+const saveInfos = (canteenInfos) => {
+  form.siret = canteenInfos.siret
+  form.name = canteenInfos.name
+  form.postalCode = canteenInfos.postalCode
+  form.city = canteenInfos.city
+  form.cityInseeCode = canteenInfos.cityInseeCode
+  form.department = canteenInfos.department
+}
 </script>
 
 <template>
@@ -200,7 +214,7 @@ const getSectorsID = (activitiesSelected) => {
     <form class="fr-col-12 fr-col-md-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">1. SIRET</legend>
-        <CanteenCreationSiret />
+        <CanteenCreationSiret @select="(canteenSelected) => saveInfos(canteenSelected)" />
       </fieldset>
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">2. Coordonnées</legend>

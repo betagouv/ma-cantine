@@ -17,7 +17,12 @@ defineProps(["name", "siret", "city", "department", "status"])
       </ul>
     </div>
     <div v-if="status === 'can-be-created'" class="fr-grid-row fr-grid-row--center">
-      <DsfrButton label="Sélectionner cet établissement" icon="fr-icon-add-circle-fill" secondary />
+      <DsfrButton
+        label="Sélectionner cet établissement"
+        icon="fr-icon-add-circle-fill"
+        secondary
+        @click="$emit('select')"
+      />
     </div>
   </div>
 </template>

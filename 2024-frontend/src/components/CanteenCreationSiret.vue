@@ -55,6 +55,7 @@ const saveCanteenInfos = (response) => {
       :city="canteen.city"
       :department="canteen.department"
       :status="canteen.status"
+      @select="$emit('select', canteen)"
     />
   </div>
 </template>
