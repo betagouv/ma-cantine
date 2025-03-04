@@ -1,13 +1,19 @@
 <script setup>
 import "@/css/dsfr-multi-select.css"
+import { useRouter } from "vue-router"
 import { ref, reactive, computed } from "vue"
 import { helpers } from "@vuelidate/validators"
 import { useVuelidate } from "@vuelidate/core"
+import { useRootStore } from "@/stores/root"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import { createCanteen } from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
+
+/* Router and Store */
+const router = useRouter()
+const store = useRootStore()
 
 /* Sectors */
 const sectors = reactive({})
@@ -116,9 +122,11 @@ const validateForm = () => {
 }
 
 /* Send Form */
+const saveAndCreate = ref(false)
+const isCreatingCanteen = ref(false)
 const sendCanteenForm = () => {
   const payload = {
-    siret: "", // TODO à mettre en dynmaique ensuite
+    siret: "12345678912345", // TODO à mettre en dynmaique ensuite
     postalCode: "73000", // TODO à mettre en dynmaique ensuite
     city: "Chambéry", // TODO à mettre en dynmaique ensuite
     cityInseeCode: "73065", // TODO à mettre en dynmaique ensuite
@@ -135,9 +143,37 @@ const sendCanteenForm = () => {
     satelliteCanteensCount: Number(form.satelliteCanteensCount),
   }
 
-  createCanteen(payload).then((response) => {
-    console.log("response", response)
+  isCreatingCanteen.value = true
+
+  createCanteen(payload)
+    .then((canteenCreated) => {
+      if (canteenCreated.id && saveAndCreate.value) addNewCanteen(canteenCreated.name)
+      else if (canteenCreated.id && !saveAndCreate.value) goToNewCanteenPage(canteenCreated.id)
+      else {
+        store.notifyServerError()
+        isCreatingCanteen.value = false
+      }
+    })
+    .catch((e) => {
+      store.notifyServerError(e)
+      isCreatingCanteen.value = false
+    })
+}
+
+const goToNewCanteenPage = (id) => {
+  router.replace({
+    name: "DashboardManager",
+    params: { canteenUrlComponent: id },
   })
+}
+
+const addNewCanteen = (name) => {
+  store.notify({ message: `Cantine ${name} créée avec succès.` })
+  isCreatingCanteen.value = false
+  saveAndCreate.value = false
+  initFields()
+  window.scrollTo(0, 0)
+  v$.value.$reset()
 }
 
 const getSectorsID = (activitiesSelected) => {
@@ -281,7 +317,15 @@ const getSectorsID = (activitiesSelected) => {
       </fieldset>
       <fieldset class="fr-py-0">
         <div class="fr-grid-row fr-grid-row--right">
-          <DsfrButton label="Enregistrer" type="submmit" icon="fr-icon-save-line" />
+          <DsfrButton
+            :disabled="isCreatingCanteen"
+            label="Enregistrer et créer un nouvel établissement"
+            type="submit"
+            secondary
+            class="fr-mr-1v"
+            @click="saveAndCreate = true"
+          />
+          <DsfrButton :disabled="isCreatingCanteen" label="Enregistrer" type="submit" icon="fr-icon-save-line" />
         </div>
       </fieldset>
     </form>
