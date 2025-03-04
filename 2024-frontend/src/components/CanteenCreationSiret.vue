@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive } from "vue"
 import { verifySiret } from "@/services/canteens.js"
-import CanteenCreationCard from "@/components/CanteenCreationCard.vue"
+import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
 
 const search = ref()
 const canteen = reactive({})
@@ -49,7 +49,7 @@ const saveCanteenInfos = (response) => {
       @search="searchSiret()"
       class="fr-mb-2w"
     />
-    <CanteenCreationCard
+    <CanteenCreationResult
       v-if="canteen.founded"
       :name="canteen.name"
       :siret="canteen.siret"
