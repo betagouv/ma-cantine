@@ -122,6 +122,7 @@ const validateForm = () => {
 }
 
 /* Send Form */
+const saveAndCreate = ref(false)
 const isCreatingCanteen = ref(false)
 const sendCanteenForm = () => {
   const payload = {
@@ -299,7 +300,15 @@ const getSectorsID = (activitiesSelected) => {
       </fieldset>
       <fieldset class="fr-py-0">
         <div class="fr-grid-row fr-grid-row--right">
-          <DsfrButton :disabled="isCreatingCanteen" label="Enregistrer" type="submmit" icon="fr-icon-save-line" />
+          <DsfrButton
+            :disabled="isCreatingCanteen"
+            label="Enregistrer et créer un nouvel établissement"
+            type="submit"
+            secondary
+            class="fr-mr-1v"
+            @click="saveAndCreate = true"
+          />
+          <DsfrButton :disabled="isCreatingCanteen" label="Enregistrer" type="submit" icon="fr-icon-save-line" />
         </div>
       </fieldset>
     </form>
