@@ -116,6 +116,7 @@ const validateForm = () => {
 }
 
 /* Send Form */
+const isCreatingCanteen = ref(false)
 const sendCanteenForm = () => {
   const payload = {
     siret: "", // TODO à mettre en dynmaique ensuite
@@ -135,8 +136,9 @@ const sendCanteenForm = () => {
     satelliteCanteensCount: Number(form.satelliteCanteensCount),
   }
 
-  createCanteen(payload).then((response) => {
-    console.log("response", response)
+  isCreatingCanteen.value = true
+  
+  createCanteen(payload).then((canteenCreated) => {
   })
 }
 
@@ -281,7 +283,7 @@ const getSectorsID = (activitiesSelected) => {
       </fieldset>
       <fieldset class="fr-py-0">
         <div class="fr-grid-row fr-grid-row--right">
-          <DsfrButton label="Enregistrer" type="submmit" icon="fr-icon-save-line" />
+          <DsfrButton :disabled="isCreatingCanteen" label="Enregistrer" type="submmit" icon="fr-icon-save-line" />
         </div>
       </fieldset>
     </form>
