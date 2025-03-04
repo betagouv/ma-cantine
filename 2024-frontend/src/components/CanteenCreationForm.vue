@@ -2,6 +2,7 @@
 import "@/css/dsfr-multi-select.css"
 import { ref, reactive, computed } from "vue"
 import sectorsService from "@/services/sectors"
+import { createCanteen } from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
 
 /* Sectors */
@@ -52,6 +53,7 @@ sectorsService.getMinistries().then((response) => {
 const verifyLineMinistry = () => {
   if (form.economicModel === "private") {
     showMinistrySelector.value = false
+    form.ministry = ""
     return
   }
   for (let i = 0; i < form.sectorActivity.length; i++) {
@@ -70,13 +72,47 @@ const showCentralProducerSiret = computed(() => form.productionType === "site_co
 const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
 )
+
+/* Send Form */
+const submit = () => {
+  const payload = {
+    siret: "00000000000000", // TODO à mettre en dynmaique ensuite
+    postalCode: "73000", // TODO à mettre en dynmaique ensuite
+    city: "Chambéry", // TODO à mettre en dynmaique ensuite
+    cityInseeCode: "73065", // TODO à mettre en dynmaique ensuite
+    department: "73", // TODO à mettre en dynmaique ensuite
+    name: form.name,
+    economicModel: form.economicModel,
+    managementType: form.managementType,
+    productionType: form.productionType,
+    sectors: getSectorsID(form.sectorActivity),
+    lineMinistry: form.ministry,
+    dailyMealCount: Number(form.dailyMealCount),
+    yearlyMealCount: Number(form.yearlyMealCount),
+    centralProducerSiret: form.centralProducerSiret,
+    satelliteCanteensCount: Number(form.satelliteCanteensCount),
+  }
+
+  createCanteen(payload).then((response) => {
+    console.log("response", response)
+  })
+}
+
+const getSectorsID = (activitiesSelected) => {
+  const names = []
+  for (let i = 0; i < activitiesSelected.length; i++) {
+    const index = activitiesSelected[i]
+    names.push(sectorsActivityOptions.value[index].id)
+  }
+  return names
+}
 </script>
 
 <template>
   <section
     class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
-    <form class="fr-col-7 fr-background-default--grey fr-p-2w fr-p-md-7w">
+    <form class="fr-col-12 fr-col-md-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="submit()">
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">1. SIRET</legend>
       </fieldset>
@@ -161,7 +197,7 @@ const showSatelliteCanteensCount = computed(
           :options="ministryOptions"
         />
       </fieldset>
-      <fieldset>
+      <fieldset class="fr-mb-7w">
         <legend class="fr-h5">5. Nombre de repas</legend>
         <div class="fr-grid-row fr-grid-row--gutters">
           <div class="fr-col-6">
@@ -180,6 +216,11 @@ const showSatelliteCanteensCount = computed(
           <div class="fr-col-6">
             <DsfrInput v-model="form.yearlyMealCount" label="Par an" :label-visible="true" type="number" />
           </div>
+        </div>
+      </fieldset>
+      <fieldset class="fr-py-0">
+        <div class="fr-grid-row fr-grid-row--right">
+          <DsfrButton label="Enregistrer" type="submmit" icon="fr-icon-save-line" />
         </div>
       </fieldset>
     </form>

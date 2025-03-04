@@ -35,9 +35,10 @@ const getActivities = (sectors) => {
   for (let i = 0; i < sectors.length; i++) {
     const currentSector = sectors[i]
     const name = currentSector.name
+    const id = currentSector.id
     const hasLineMinistry = currentSector.hasLineMinistry
     const index = sectorActivities.findIndex((sector) => sector.name === name)
-    if (index < 0) sectorActivities.push({ index: i, name, hasLineMinistry })
+    if (index < 0) sectorActivities.push({ index: i, id, name, hasLineMinistry })
   }
   return sectorActivities
 }
