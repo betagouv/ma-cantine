@@ -135,8 +135,6 @@ const sendCanteenForm = () => {
     satelliteCanteensCount: Number(form.satelliteCanteensCount),
   }
 
-  console.log("createCanteen")
-
   createCanteen(payload).then((response) => {
     console.log("response", response)
   })
