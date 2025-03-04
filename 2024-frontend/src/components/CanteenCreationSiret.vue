@@ -5,6 +5,8 @@ import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
 
 const search = ref()
 const canteen = reactive({})
+const hasSelected = ref(false)
+const emit = defineEmits(["select"])
 
 const searchSiret = () => {
   verifySiret(search.value)
@@ -30,10 +32,16 @@ const saveCanteenInfos = (response) => {
   canteen.postalCode = response.postalCode
   canteen.department = response.postalCode.slice(0, 2)
 }
+
+const selectCanteen = () => {
+  hasSelected.value = true
+  canteen.status = "selected"
+  emit("select", canteen)
+}
 </script>
 
 <template>
-  <div>
+  <div class="canteen-creation-siret">
     <p class="fr-mb-0">Mon établissement</p>
     <p class="fr-hint-text">
       Nous utilisons le site
@@ -55,7 +63,8 @@ const saveCanteenInfos = (response) => {
       :city="canteen.city"
       :department="canteen.department"
       :status="canteen.status"
-      @select="$emit('select', canteen)"
+      @select="selectCanteen()"
+    />
     />
   </div>
 </template>
