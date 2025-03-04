@@ -1,0 +1,67 @@
+.fr-multiselect {
+    text-align: left;
+    background-image: none;
+    display: inline-flex;
+    flex-direction: row;
+    padding: 0.75rem 1rem;
+}
+
+.fr-multiselect::after {
+    --icon-size: 1rem;
+    background-color: currentColor;
+    content: "";
+    display: inline-block;
+    flex: 0 0 auto;
+    height: 1rem;
+    height: var(--icon-size);
+    margin-left: auto;
+    margin-right: 0;
+    -webkit-mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0ibTEyIDEzLjE3MiA0Ljk1LTQuOTUgMS40MTQgMS40MTRMMTIgMTYgNS42MzYgOS42MzYgNy4wNSA4LjIyMmw0Ljk1IDQuOTVaIi8+PC9zdmc+);
+    mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0ibTEyIDEzLjE3MiA0Ljk1LTQuOTUgMS40MTQgMS40MTRMMTIgMTYgNS42MzYgOS42MzYgNy4wNSA4LjIyMmw0Ljk1IDQuOTVaIi8+PC9zdmc+);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    transition: transform 0.3s;
+    vertical-align: calc(0.375em - 0.5rem);
+    vertical-align: calc((0.75em - var(--icon-size)) * 0.5);
+    width: 1rem;
+    width: var(--icon-size);
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.fr-multiselect--is-open::after {
+    transform: rotate(-180deg);
+}
+
+.fr-multiselect__search__icon {
+    margin-right: 1rem;
+}
+
+.fr-multiselect__collapse {
+    z-index: 1;
+    position: absolute;
+    transform-origin: left top;
+    width: var(--width-host);
+    padding: 1rem;
+    margin-top: 0.25rem;
+    background-color: var(--background-overlap-grey);
+    filter: drop-shadow(var(--overlap-shadow));
+}
+
+.fr-multiselect__collapse__fieldset {
+    max-height: var(--maxOverflowHeight);
+    overflow: auto;
+}
+
+.fr-multiselect__collapse__fieldset label {
+    color: inherit;
+}
+
+/* Custom : remove extra spacing bottom of the collapsed bloc */
+.fr-multiselect__collapse .fr-fieldset__element:last-child {
+    margin-bottom: 0 !important;
+}
+
+.fr-multiselect__collapse .fr-fieldset {
+    margin-bottom: 0 !important;
+}

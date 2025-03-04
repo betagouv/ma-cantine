@@ -61,3 +61,9 @@ address {
     background-color: var(--background-contrast-grey) !important;
     background-size: 100% 2px !important
 }
+
+
+/* ICON */
+.ma-cantine--icon-xs::before {
+    --icon-size: 1rem !important
+}
