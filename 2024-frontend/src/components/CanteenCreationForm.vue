@@ -45,6 +45,7 @@ initFields()
 /* Fields verification */
 const { required, integer, minValue, requiredIf, sameAs, not } = useValidators()
 const dailyMealRequired = computed(() => form.productionType !== "central")
+const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
 const rules = {
   name: { required },
   economicModel: { required },
@@ -58,7 +59,7 @@ const rules = {
     integer,
     minValue: minValue(0),
   },
-  yearlyMealCount: { required, integer, minValue: minValue(0) },
+  yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
   satelliteCanteensCount: { required, integer, minValue: minValue(0) },
   centralProducerSiret: { required, notSameSiret: not(sameAs(form.siret)) },
 }
