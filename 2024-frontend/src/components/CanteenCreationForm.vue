@@ -39,6 +39,34 @@ const initFields = () => {
   form.satelliteCanteensCount = ""
 }
 initFields()
+
+/* Dynamics rules */
+const getDailyMealCountRules = (productionType) => {
+  const rules = {
+    required,
+    integer,
+    minValue: minValue(0),
+  }
+  if (productionType === "central") delete rules.required
+  return rules
+}
+
+/* Fields verification */
+const { required, integer, minValue } = useValidators()
+const dailyMealCountRules = computed(() => getDailyMealCountRules(form.productionType))
+const rules = {
+  name: { required },
+  economicModel: { required },
+  managementType: { required },
+  productionType: { required },
+  sectorCategory: { required },
+  sectorActivity: { required },
+  ministry: { required },
+  dailyMealCount: dailyMealCountRules,
+  yearlyMealCount: { required, integer, minValue: minValue(0) },
+  satelliteCanteensCount: { required, integer, minValue: minValue(0) },
+  centralProducerSiret: { required },
+}
 const v$ = useVuelidate(rules, form)
 const validateForm = () => {
   v$.value.$validate()
