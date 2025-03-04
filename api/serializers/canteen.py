@@ -71,14 +71,14 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
         model = Canteen
         read_only_fields = (
             "id",
-            "siret",
             "name",
+            "siret",
             "publication_status",
         )
         fields = (
             "id",
-            "siret",
             "name",
+            "siret",
             "publication_status",
         )
 
@@ -505,8 +505,8 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Canteen
         fields = (
-            "name",
             "id",
+            "name",
             "siret",
             "is_managed_by_user",
             "can_be_claimed",
@@ -577,8 +577,8 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
         model = Canteen
         fields = (
             "id",
-            "siret",
             "name",
+            "siret",
             "daily_meal_count",
             "yearly_meal_count",
             "sectors",

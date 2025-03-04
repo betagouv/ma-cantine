@@ -13,6 +13,7 @@ class CanteenFactory(factory.django.DjangoModelFactory):
         model = Canteen
 
     name = factory.Faker("text", max_nb_chars=20)
+    siret = factory.Faker("siret")
     city = factory.Faker("city")
     city_insee_code = factory.Faker("postcode")
     daily_meal_count = factory.Faker("pyint")
