@@ -147,7 +147,8 @@ const sendCanteenForm = () => {
 
   createCanteen(payload)
     .then((canteenCreated) => {
-      if (canteenCreated.id) canteenCreationSuccess(canteenCreated)
+      if (canteenCreated.id && saveAndCreate.value) addNewCanteen(canteenCreated.name)
+      else if (canteenCreated.id && !saveAndCreate.value) goToNewCanteenPage(canteenCreated.id)
       else {
         store.notifyServerError()
         isCreatingCanteen.value = false
@@ -159,11 +160,10 @@ const sendCanteenForm = () => {
     })
 }
 
-const canteenCreationSuccess = (canteenCreated) => {
-  if (saveAndCreate.value) addNewCanteen(canteenCreated.name)
+const goToNewCanteenPage = (id) => {
   router.replace({
     name: "DashboardManager",
-    params: { canteenUrlComponent: canteenCreated.id },
+    params: { canteenUrlComponent: id },
   })
 }
 
