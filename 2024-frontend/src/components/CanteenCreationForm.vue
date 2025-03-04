@@ -74,7 +74,7 @@ const showSatelliteCanteensCount = computed(
 )
 
 /* Send Form */
-const submit = () => {
+const sendCanteenForm = () => {
   const payload = {
     siret: "00000000000000", // TODO à mettre en dynmaique ensuite
     postalCode: "73000", // TODO à mettre en dynmaique ensuite
