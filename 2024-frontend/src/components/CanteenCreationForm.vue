@@ -63,22 +63,22 @@ const verifyLineMinistry = () => {
 /* Form fields */
 const form = reactive({})
 const initFields = () => {
-  form.siret = ""
-  form.name = ""
-  form.economicModel = ""
-  form.managementType = ""
-  form.productionType = ""
-  form.sectorCategory = ""
+  form.siret = null
+  form.name = null
+  form.economicModel = null
+  form.managementType = null
+  form.productionType = null
+  form.sectorCategory = null
   form.sectorActivity = []
-  form.ministry = ""
-  form.dailyMealCount = ""
-  form.yearlyMealCount = ""
-  form.centralProducerSiret = ""
-  form.satelliteCanteensCount = ""
-  form.postalCode = ""
-  form.city = ""
-  form.cityInseeCode = ""
-  form.department = ""
+  form.ministry = null
+  form.dailyMealCount = null
+  form.yearlyMealCount = null
+  form.centralProducerSiret = null
+  form.satelliteCanteensCount = null
+  form.postalCode = null
+  form.city = null
+  form.cityInseeCode = null
+  form.department = null
 }
 initFields()
 
@@ -136,23 +136,8 @@ const saveCanteen = (saveAndCreateValue = false) => {
 }
 
 const sendCanteenForm = () => {
-  const payload = {
-    siret: form.siret,
-    postalCode: form.postalCode,
-    city: form.city,
-    cityInseeCode: form.cityInseeCode,
-    department: form.department,
-    name: form.name,
-    economicModel: form.economicModel,
-    managementType: form.managementType,
-    productionType: form.productionType,
-    sectors: getSectorsID(form.sectorActivity),
-    lineMinistry: form.ministry,
-    dailyMealCount: Number(form.dailyMealCount),
-    yearlyMealCount: Number(form.yearlyMealCount),
-    centralProducerSiret: form.centralProducerSiret,
-    satelliteCanteensCount: Number(form.satelliteCanteensCount),
-  }
+  const payload = form
+  payload.sectors = getSectorsID(form.sectorActivity)
 
   isCreatingCanteen.value = true
 
