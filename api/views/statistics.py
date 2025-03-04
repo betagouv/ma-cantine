@@ -53,11 +53,11 @@ class CanteenStatisticsView(APIView):
         canteens = self._filter_canteens(regions, departments, city_insee_codes, sector_categories)
         diagnostics = self._filter_diagnostics(year, regions, departments, city_insee_codes, sector_categories)
 
-        data = CanteenStatisticsSerializer.calculate_statistics(canteens, diagnostics)
+        data = self.serializer_class.calculate_statistics(canteens, diagnostics)
         if epci_error:
             data["epci_error"] = epci_error
 
-        serializer = CanteenStatisticsSerializer(data)
+        serializer = self.serializer_class(data)
         return JsonResponse(camelize(serializer.data), status=status.HTTP_200_OK)
 
     def _get_city_insee_codes(self, epcis):
