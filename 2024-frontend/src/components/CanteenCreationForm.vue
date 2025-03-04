@@ -1,5 +1,6 @@
 <script setup>
 import "@/css/dsfr-multi-select.css"
+import { useRouter } from "vue-router"
 import { ref, reactive, computed } from "vue"
 import { helpers } from "@vuelidate/validators"
 import { useVuelidate } from "@vuelidate/core"
@@ -8,6 +9,9 @@ import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import { createCanteen } from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
+
+/* Router */
+const router = useRouter()
 
 /* Sectors */
 const sectors = reactive({})
@@ -137,8 +141,12 @@ const sendCanteenForm = () => {
   }
 
   isCreatingCanteen.value = true
-  
+
   createCanteen(payload).then((canteenCreated) => {
+    router.replace({
+      name: "DashboardManager",
+      params: { canteenUrlComponent: canteenCreated.id },
+    })
   })
 }
 
