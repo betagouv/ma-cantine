@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 
 from api.serializers import CanteenStatisticsSerializer
+from api.views.utils import camelize
 from data.models import Canteen, Diagnostic
 
 logger = logging.getLogger(__name__)
@@ -44,7 +45,7 @@ class CanteenStatisticsView(APIView):
             data["epci_error"] = epci_error
 
         serializer = CanteenStatisticsSerializer(data)
-        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+        return JsonResponse(camelize(serializer.data), status=status.HTTP_200_OK)
 
     def _get_city_insee_codes(self, epcis):
         city_insee_codes = []
