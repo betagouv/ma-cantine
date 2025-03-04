@@ -5,7 +5,6 @@
     "integer": "Ce champ doit être un nombre entier",
     "maxValue": "La valeur maximum est {max}",
     "minValue": "La valeur minimum est {min}",
-    "notSameSiret": "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine",
     "required": "Ce champ est obligatoire"
   }
 }

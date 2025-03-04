@@ -1,6 +1,7 @@
 <script setup>
 import "@/css/dsfr-multi-select.css"
 import { ref, reactive, computed } from "vue"
+import { helpers } from "@vuelidate/validators"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
@@ -61,7 +62,13 @@ const rules = {
   },
   yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
   satelliteCanteensCount: { required, integer, minValue: minValue(0) },
-  centralProducerSiret: { required, notSameSiret: not(sameAs(form.siret)) },
+  centralProducerSiret: {
+    required,
+    notSameSiret: helpers.withMessage(
+      "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine",
+      not(sameAs(form.siret))
+    ),
+  },
 }
 const v$ = useVuelidate(rules, form)
 const validateForm = () => {
