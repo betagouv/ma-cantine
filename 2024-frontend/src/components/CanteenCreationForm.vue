@@ -4,14 +4,16 @@ import { useRouter } from "vue-router"
 import { ref, reactive, computed } from "vue"
 import { helpers } from "@vuelidate/validators"
 import { useVuelidate } from "@vuelidate/core"
+import { useRootStore } from "@/stores/root"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import { createCanteen } from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
 
-/* Router */
+/* Router and Store */
 const router = useRouter()
+const store = useRootStore()
 
 /* Sectors */
 const sectors = reactive({})
@@ -123,7 +125,7 @@ const validateForm = () => {
 const isCreatingCanteen = ref(false)
 const sendCanteenForm = () => {
   const payload = {
-    siret: "", // TODO à mettre en dynmaique ensuite
+    siret: "12345678912345", // TODO à mettre en dynmaique ensuite
     postalCode: "73000", // TODO à mettre en dynmaique ensuite
     city: "Chambéry", // TODO à mettre en dynmaique ensuite
     cityInseeCode: "73065", // TODO à mettre en dynmaique ensuite
@@ -142,12 +144,18 @@ const sendCanteenForm = () => {
 
   isCreatingCanteen.value = true
 
-  createCanteen(payload).then((canteenCreated) => {
-    router.replace({
-      name: "DashboardManager",
-      params: { canteenUrlComponent: canteenCreated.id },
+  createCanteen(payload)
+    .then((canteenCreated) => {
+      router.replace({
+        name: "DashboardManager",
+        params: { canteenUrlComponent: canteenCreated.id },
+      })
+      // Si enregistrer et créer à nouveau => pas de redirection
     })
-  })
+    .catch((e) => {
+      store.notifyServerError(e)
+      isCreatingCanteen.value = false
+    })
 }
 
 const getSectorsID = (activitiesSelected) => {
