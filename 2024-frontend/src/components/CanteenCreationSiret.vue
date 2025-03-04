@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive } from "vue"
 import { verifySiret } from "@/services/canteens.js"
+import CanteenCreationCard from "@/components/CanteenCreationCard.vue"
 
 const search = ref()
 const canteen = reactive({})
@@ -35,6 +36,7 @@ const searchSiret = () => {
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">annuaire-des-entreprises</a>
       afin de retrouver les informations votre établissement
     </p>
+    <pre>{{ 91100348100015 }}</pre>
     <DsfrSearchBar
       v-model="search"
       placeholder="Tapez votre n° SIRET"
@@ -43,22 +45,6 @@ const searchSiret = () => {
       @search="searchSiret()"
       class="fr-mb-2w"
     />
-    <div v-if="canteen.founded" class="fr-card fr-p-3v">
-      <div class="fr-grid-row fr-grid-row--top fr-grid-row--left fr-mb-1w">
-        <p class="fr-h6 fr-mb-0 fr-col-5">{{ canteen.name }}</p>
-        <div class="fr-col-offset-1"></div>
-        <ul class="ma-cantine--unstyled-list fr-my-0 fr-col-6">
-          <li>
-            <p class="fr-mb-0 fr-text--xs">SIRET: {{ canteen.siret }}</p>
-          </li>
-          <li>
-            <p class="fr-mb-0 fr-text--xs">Ville: {{ canteen.city }} ({{ canteen.department }})</p>
-          </li>
-        </ul>
-      </div>
-      <div v-if="canteen.status === 'can-be-created'" class="fr-grid-row fr-grid-row--center">
-        <DsfrButton label="Sélectionner cet établissement" icon="fr-icon-add-circle-fill" secondary />
-      </div>
-    </div>
+    <CanteenCreationCard />
   </div>
 </template>
