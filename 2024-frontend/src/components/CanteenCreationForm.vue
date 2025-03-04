@@ -154,7 +154,7 @@ const getSectorsID = (activitiesSelected) => {
       </fieldset>
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">2. Coordonnées</legend>
-        <DsfrInput
+        <DsfrInputGroup
           v-model="form.name"
           label="Nom de la cantine"
           :label-visible="true"
@@ -182,16 +182,19 @@ const getSectorsID = (activitiesSelected) => {
           :small="true"
           :options="options.productionType"
         />
-        <DsfrInput v-if="showCentralProducerSiret" v-model="form.centralProducerSiret" :label-visible="true">
-          <template #label>
-            SIRET du livreur
-            <span class="fr-hint-text">
-              Vous ne le connaissez pas ? Trouvez-le avec
-              <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
-            </span>
-          </template>
-        </DsfrInput>
-        <DsfrInput
+        <div v-if="showCentralProducerSiret" class="canteen-creation-form__central-producer-siret">
+          <DsfrInputGroup
+            v-model="form.centralProducerSiret"
+            label="SIRET du livreur"
+            :label-visible="true"
+          />
+          <p class="fr-hint-text">
+            Vous ne le connaissez pas ? Trouvez-le avec
+            <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
+          </p>
+        </div>
+
+        <DsfrInputGroup
           v-if="showSatelliteCanteensCount"
           v-model="form.satelliteCanteensCount"
           type="number"
@@ -237,7 +240,7 @@ const getSectorsID = (activitiesSelected) => {
         <legend class="fr-h5">5. Nombre de repas</legend>
         <div class="fr-grid-row fr-grid-row--gutters">
           <div class="fr-col-6">
-            <DsfrInput
+            <DsfrInputGroup
               :class="{
                 hide: hideDailyMealCount,
               }"
@@ -250,7 +253,12 @@ const getSectorsID = (activitiesSelected) => {
             />
           </div>
           <div class="fr-col-6">
-            <DsfrInput v-model="form.yearlyMealCount" label="Par an" :label-visible="true" type="number" />
+            <DsfrInputGroup
+              v-model="form.yearlyMealCount"
+              label="Par an"
+              :label-visible="true"
+              type="number"
+            />
           </div>
         </div>
       </fieldset>
@@ -267,6 +275,12 @@ const getSectorsID = (activitiesSelected) => {
 .canteen-creation-form {
   .hide {
     display: none !important;
+  }
+
+  &__central-producer-siret {
+    .fr-input-group {
+      margin-bottom: 0.25rem !important;
+    }
   }
 }
 </style>
