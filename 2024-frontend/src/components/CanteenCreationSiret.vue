@@ -45,6 +45,13 @@ const searchSiret = () => {
       @search="searchSiret()"
       class="fr-mb-2w"
     />
-    <CanteenCreationCard />
+    <CanteenCreationCard
+      v-if="canteen.founded"
+      :name="canteen.name"
+      :siret="canteen.siret"
+      :city="canteen.city"
+      :department="canteen.department"
+      :status="canteen.status"
+    />
   </div>
 </template>
