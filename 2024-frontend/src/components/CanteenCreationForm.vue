@@ -125,6 +125,12 @@ const validateForm = () => {
 /* Send Form */
 const saveAndCreate = ref(false)
 const isCreatingCanteen = ref(false)
+
+const saveCanteen = (saveAndCreateValue = false) => {
+  saveAndCreate.value = saveAndCreateValue
+  validateForm()
+}
+
 const sendCanteenForm = () => {
   const payload = {
     siret: "12345678912345", // TODO à mettre en dynmaique ensuite
@@ -191,7 +197,7 @@ const getSectorsID = (activitiesSelected) => {
   <section
     class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
-    <form class="fr-col-12 fr-col-md-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="validateForm()">
+    <form class="fr-col-12 fr-col-md-7 fr-background-default--grey fr-p-2w fr-p-md-7w">
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">1. SIRET</legend>
         <CanteenCreationFormSiret />
@@ -322,12 +328,16 @@ const getSectorsID = (activitiesSelected) => {
           <DsfrButton
             :disabled="isCreatingCanteen"
             label="Enregistrer et créer un nouvel établissement"
-            type="submit"
             secondary
             class="fr-mr-1v"
-            @click="saveAndCreate = true"
+            @click="saveCanteen(true)"
           />
-          <DsfrButton :disabled="isCreatingCanteen" label="Enregistrer" type="submit" icon="fr-icon-save-line" />
+          <DsfrButton
+            :disabled="isCreatingCanteen"
+            label="Enregistrer"
+            icon="fr-icon-save-line"
+            @click="saveCanteen()"
+          />
         </div>
       </fieldset>
     </form>
