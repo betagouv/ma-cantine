@@ -150,7 +150,8 @@ const showSatelliteCanteensCount = computed(
         <DsfrSelect
           v-if="showMinistrySelector"
           v-model="form.ministry"
-          label="Ministère de tutelle"
+          label="Administration générale de tutelle (ministère ou ATE)"
+          description="Hors fonction publique territoriale et hospitalière"
           labelVisible
           :options="ministryOptions"
         />
