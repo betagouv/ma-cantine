@@ -111,9 +111,7 @@ const rules = {
 const v$ = useVuelidate(rules, form)
 const validateForm = () => {
   v$.value.$validate()
-  console.log("invalid", v$)
   if (v$.value.$invalid) return
-  console.log("validate")
   sendCanteenForm()
 }
 
