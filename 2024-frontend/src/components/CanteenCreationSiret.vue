@@ -3,10 +3,6 @@ import { ref, reactive } from "vue"
 import { verifySiret } from "@/services/canteens.js"
 import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
 
-const search = ref()
-const hasSelected = ref(false)
-const emit = defineEmits(["select"])
-
 /* Canteen fields */
 const canteen = reactive({})
 const initFields = () => {
@@ -21,6 +17,9 @@ const initFields = () => {
 }
 initFields()
 
+/* Search */
+const search = ref()
+const hasSelected = ref(false)
 const searchSiret = () => {
   verifySiret(search.value)
     .then((response) => {
@@ -46,13 +45,14 @@ const saveCanteenInfos = (response) => {
   canteen.department = response.postalCode.slice(0, 2)
 }
 
+/* Select canteen */
+const emit = defineEmits(["select"])
 const selectCanteen = () => {
   hasSelected.value = true
   canteen.status = "selected"
   emit("select", canteen)
 }
-
-const newSearch = () => {
+const unselectCanteen = () => {
   hasSelected.value = false
   search.value = ""
   initFields()
@@ -93,7 +93,7 @@ const newSearch = () => {
       icon="fr-icon-search-line"
       icon-right
       class="canteen-creation-siret__back fr-mt-1w"
-      @click="newSearch()"
+      @click="unselectCanteen()"
     />
   </div>
 </template>
