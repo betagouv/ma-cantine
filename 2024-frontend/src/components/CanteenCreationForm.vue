@@ -27,6 +27,7 @@ const changeCategory = () => {
 /* Form fields */
 const form = reactive({})
 const initFields = () => {
+  form.siret = "000000000000000"
   form.name = ""
   form.economicModel = ""
   form.managementType = ""
@@ -42,7 +43,7 @@ const initFields = () => {
 initFields()
 
 /* Fields verification */
-const { required, integer, minValue, requiredIf } = useValidators()
+const { required, integer, minValue, requiredIf, sameAs, not } = useValidators()
 const dailyMealRequired = computed(() => form.productionType !== "central")
 const rules = {
   name: { required },
@@ -59,7 +60,7 @@ const rules = {
   },
   yearlyMealCount: { required, integer, minValue: minValue(0) },
   satelliteCanteensCount: { required, integer, minValue: minValue(0) },
-  centralProducerSiret: { required },
+  centralProducerSiret: { required, notSameSiret: not(sameAs(form.siret)) },
 }
 const v$ = useVuelidate(rules, form)
 const validateForm = () => {
