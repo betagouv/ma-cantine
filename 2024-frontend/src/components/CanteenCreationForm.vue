@@ -50,13 +50,17 @@ sectorsService.getMinistries().then((response) => {
   ministries.value = response
 })
 const verifyLineMinistry = () => {
+  if (form.economicModel === "private") {
+    showMinistrySelector.value = false
+    return
+  }
   for (let i = 0; i < form.sectorActivity.length; i++) {
     const key = form.sectorActivity[i]
     const activity = sectorsActivityOptions.value[key]
     const hasLineMinistry = activity.hasLineMinistry
     if (!hasLineMinistry) continue
     showMinistrySelector.value = true
-    break
+    return
   }
 }
 
@@ -92,6 +96,7 @@ const showSatelliteCanteensCount = computed(
           v-model="form.economicModel"
           :small="true"
           :options="options.economicModel"
+          @change="verifyLineMinistry()"
         />
         <DsfrRadioButtonSet
           legend="Mode de gestion"
