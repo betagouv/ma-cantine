@@ -1,6 +1,8 @@
 <script setup>
 import "@/css/dsfr-multi-select.css"
 import { ref, reactive, computed } from "vue"
+import { useVuelidate } from "@vuelidate/core"
+import { useValidators } from "@/validators.js"
 import sectorsService from "@/services/sectors"
 import { createCanteen } from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
@@ -37,6 +39,12 @@ const initFields = () => {
   form.satelliteCanteensCount = ""
 }
 initFields()
+const v$ = useVuelidate(rules, form)
+const validateForm = () => {
+  v$.value.$validate()
+  if (v$.value.$invalid) return
+  sendCanteenForm()
+}
 
 /* Line Ministry */
 const ministries = reactive({})
@@ -112,7 +120,7 @@ const getSectorsID = (activitiesSelected) => {
   <section
     class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
-    <form class="fr-col-12 fr-col-md-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="submit()">
+    <form class="fr-col-12 fr-col-md-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="validateForm()">
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">1. SIRET</legend>
       </fieldset>
