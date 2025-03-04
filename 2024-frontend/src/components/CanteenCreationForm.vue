@@ -147,16 +147,32 @@ const sendCanteenForm = () => {
 
   createCanteen(payload)
     .then((canteenCreated) => {
-      router.replace({
-        name: "DashboardManager",
-        params: { canteenUrlComponent: canteenCreated.id },
-      })
-      // Si enregistrer et créer à nouveau => pas de redirection
+      if (canteenCreated.id) canteenCreationSuccess(canteenCreated)
+      else {
+        store.notifyServerError()
+        isCreatingCanteen.value = false
+      }
     })
     .catch((e) => {
       store.notifyServerError(e)
       isCreatingCanteen.value = false
     })
+}
+
+const canteenCreationSuccess = (canteenCreated) => {
+  if (saveAndCreate.value) addNewCanteen(canteenCreated.name)
+  router.replace({
+    name: "DashboardManager",
+    params: { canteenUrlComponent: canteenCreated.id },
+  })
+}
+
+const addNewCanteen = (name) => {
+  store.notify({ message: `Cantine ${name} créée avec succès.` })
+  isCreatingCanteen.value = true
+  saveAndCreate.value = false
+  initFields()
+  v$.value.$reset()
 }
 
 const getSectorsID = (activitiesSelected) => {
