@@ -14,4 +14,16 @@ const createCanteen = (payload) => {
     .catch((e) => e)
 }
 
-export { createCanteen }
+const verifySiret = (siret) => {
+  return fetch(`/api/v1/canteenStatus/siret/${siret}`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+export { createCanteen, verifySiret }
