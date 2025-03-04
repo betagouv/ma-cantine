@@ -7,6 +7,18 @@ from data.models import Canteen
 
 
 class TestCanteenModel(TestCase):
+    def test_create_canteen(self):
+        # siret: can be empty
+        for siret in ["", None]:
+            canteen = CanteenFactory.create(siret=siret)
+            self.assertEqual(canteen.siret, siret)
+        # siret: normalize on save
+        canteen = CanteenFactory.create(siret="756 656 218 99905")
+        self.assertEqual(canteen.siret, "75665621899905")  # normalized
+        # region: get from department on save
+        canteen = CanteenFactory.create(department="38", region=None)
+        self.assertEqual(canteen.region, "84")  # Auvergne-Rhône-Alpes
+
     @freeze_time("2024-01-20")
     def test_appro_and_service_diagnostics_in_past_ordered_year_desc(self):
         canteen = CanteenFactory.create()

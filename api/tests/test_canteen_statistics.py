@@ -133,7 +133,7 @@ class TestCanteenStatsApi(APITestCase):
         # Create the canteens and diagnostics
         for i, case in enumerate(canteen_cases):
             canteen_sectors = [sector_objects[sector] for sector in case["canteen"].pop("sectors")]
-            canteen = CanteenFactory.create(**case["canteen"], sectors=canteen_sectors, siret=i)
+            canteen = CanteenFactory.create(**case["canteen"], sectors=canteen_sectors, siret=str(i))
             for diagnostic_data in case.get("diagnostics", []):
                 diag = DiagnosticFactory.create(canteen=canteen, **diagnostic_data)
                 Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
@@ -349,7 +349,7 @@ class TestCanteenStatsApi(APITestCase):
 
         # Create the test objects based on the test cases
         for i, case in enumerate(test_cases):
-            canteen = CanteenFactory.create(**case["canteen"], siret=i)
+            canteen = CanteenFactory.create(**case["canteen"], siret=str(i))
             diag = DiagnosticFactory.create(canteen=canteen, **case["diagnostic"])
             Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
             if case["specific_territory"]:
@@ -514,7 +514,9 @@ class TestCanteenStatsApi(APITestCase):
         The endpoint must take into consideration the simplified diagnostic
         fields for EGalim stats
         """
-        published = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value, siret=1)
+        published = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.PUBLISHED.value, siret="75665621899905"
+        )
 
         # Diagnostic that should display 20% Bio and 45% other EGalim
         diag = DiagnosticFactory.create(
