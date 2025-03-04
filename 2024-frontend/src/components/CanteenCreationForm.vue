@@ -32,6 +32,8 @@ const initFields = () => {
   form.ministry = ""
   form.dailyMealCount = ""
   form.yearlyMealCount = ""
+  form.centralProducerSiret = ""
+  form.satelliteCanteensCount = ""
 }
 initFields()
 
@@ -57,10 +59,19 @@ const verifyLineMinistry = () => {
     break
   }
 }
+
+/* Dynamic Inputs */
+const hideDailyMealCount = computed(() => form.productionType === "central")
+const showCentralProducerSiret = computed(() => form.productionType === "site_cooked_elsewhere")
+const showSatelliteCanteensCount = computed(
+  () => form.productionType === "central" || form.productionType === "central_serving"
+)
 </script>
 
 <template>
-  <section class="fr-p-3w fr-background-alt--blue-france fr-mt-4w fr-grid-row fr-grid-row--center">
+  <section
+    class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
+  >
     <form class="fr-col-7 fr-background-default--grey fr-p-2w fr-p-md-7w">
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">1. SIRET</legend>
@@ -93,6 +104,23 @@ const verifyLineMinistry = () => {
           v-model="form.productionType"
           :small="true"
           :options="options.productionType"
+        />
+        <DsfrInput v-if="showCentralProducerSiret" v-model="form.centralProducerSiret" :label-visible="true">
+          <template #label>
+            SIRET du livreur
+            <span class="fr-hint-text">
+              Vous ne le connaissez pas ? Trouvez-le avec
+              <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
+            </span>
+          </template>
+        </DsfrInput>
+        <DsfrInput
+          v-if="showSatelliteCanteensCount"
+          v-model="form.satelliteCanteensCount"
+          type="number"
+          label="Nombre de cuisine satellite"
+          hint="Nombre de cantines/lieux de service à qui je fournis des repas"
+          :label-visible="true"
         />
       </fieldset>
       <fieldset class="fr-mb-7w">
@@ -131,13 +159,31 @@ const verifyLineMinistry = () => {
         <legend class="fr-h5">5. Nombre de repas</legend>
         <div class="fr-grid-row fr-grid-row--gutters">
           <div class="fr-col-6">
-            <DsfrInput v-model="form.dailyMealCount" label="Par jour" :label-visible="true" />
+            <DsfrInput
+              :class="{
+                hide: hideDailyMealCount,
+              }"
+              v-model="form.dailyMealCount"
+              label="Par jour"
+              :label-visible="true"
+              :disabled="hideDailyMealCount"
+              :hint="hideDailyMealCount ? 'Concerne uniquement les cantines recevant des convives' : ''"
+              type="number"
+            />
           </div>
           <div class="fr-col-6">
-            <DsfrInput v-model="form.yearlyMealCount" label="Par an" :label-visible="true" />
+            <DsfrInput v-model="form.yearlyMealCount" label="Par an" :label-visible="true" type="number" />
           </div>
         </div>
       </fieldset>
     </form>
   </section>
 </template>
+
+<style lang="scss">
+.canteen-creation-form {
+  .hide {
+    display: none !important;
+  }
+}
+</style>
