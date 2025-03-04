@@ -3,6 +3,7 @@ import "@/css/dsfr-multi-select.css"
 import { ref, reactive, computed } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
+import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import { createCanteen } from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
@@ -159,6 +160,7 @@ const getSectorsID = (activitiesSelected) => {
           label="Nom de la cantine"
           :label-visible="true"
           hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
+          :error-message="formatError(v$.name)"
         />
       </fieldset>
       <fieldset class="fr-mb-3w">
@@ -169,24 +171,28 @@ const getSectorsID = (activitiesSelected) => {
           :small="true"
           :options="options.economicModel"
           @change="verifyLineMinistry()"
+          :error-message="formatError(v$.economicModel)"
         />
         <DsfrRadioButtonSet
           legend="Mode de gestion"
           v-model="form.managementType"
           :small="true"
           :options="options.managementType"
+          :error-message="formatError(v$.managementType)"
         />
         <DsfrRadioButtonSet
           legend="Mode de production"
           v-model="form.productionType"
           :small="true"
           :options="options.productionType"
+          :error-message="formatError(v$.productionType)"
         />
         <div v-if="showCentralProducerSiret" class="canteen-creation-form__central-producer-siret">
           <DsfrInputGroup
             v-model="form.centralProducerSiret"
             label="SIRET du livreur"
             :label-visible="true"
+            :error-message="formatError(v$.centralProducerSiret)"
           />
           <p class="fr-hint-text">
             Vous ne le connaissez pas ? Trouvez-le avec
@@ -201,6 +207,7 @@ const getSectorsID = (activitiesSelected) => {
           label="Nombre de cuisine satellite"
           hint="Nombre de cantines/lieux de service à qui je fournis des repas"
           :label-visible="true"
+          :error-message="formatError(v$.satelliteCanteensCount)"
         />
       </fieldset>
       <fieldset class="fr-mb-7w">
@@ -211,6 +218,7 @@ const getSectorsID = (activitiesSelected) => {
           labelVisible
           :options="sectorsCategoryOptions"
           @change="changeCategory()"
+          :error-message="formatError(v$.sectorCategory)"
         />
         <DsfrMultiselect
           v-model="form.sectorActivity"
@@ -222,6 +230,7 @@ const getSectorsID = (activitiesSelected) => {
           search
           :filtering-keys="['name']"
           @change="verifyLineMinistry()"
+          :error-message="formatError(v$.sectorActivity)"
         >
           <template #no-results>
             Sélectionner une catégorie de secteur pour pouvoir sélectionner des secteurs d'activité
@@ -234,6 +243,7 @@ const getSectorsID = (activitiesSelected) => {
           description="Hors fonction publique territoriale et hospitalière"
           labelVisible
           :options="ministryOptions"
+          :error-message="formatError(v$.ministry)"
         />
       </fieldset>
       <fieldset class="fr-mb-7w">
@@ -250,6 +260,7 @@ const getSectorsID = (activitiesSelected) => {
               :disabled="hideDailyMealCount"
               :hint="hideDailyMealCount ? 'Concerne uniquement les cantines recevant des convives' : ''"
               type="number"
+              :error-message="formatError(v$.dailyMealCount)"
             />
           </div>
           <div class="fr-col-6">
@@ -258,6 +269,7 @@ const getSectorsID = (activitiesSelected) => {
               label="Par an"
               :label-visible="true"
               type="number"
+              :error-message="formatError(v$.yearlyMealCount)"
             />
           </div>
         </div>
