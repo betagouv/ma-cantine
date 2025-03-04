@@ -28,7 +28,7 @@ const changeCategory = () => {
 /* Form fields */
 const form = reactive({})
 const initFields = () => {
-  form.siret = "000000000000000"
+  form.siret = ""
   form.name = ""
   form.economicModel = ""
   form.managementType = ""
