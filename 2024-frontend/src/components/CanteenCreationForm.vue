@@ -10,6 +10,7 @@ import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import { createCanteen } from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
+import CanteenCreationFormSiret from "@/components/CanteenCreationFormSiret.vue"
 
 /* Router and Store */
 const router = useRouter()
@@ -193,6 +194,7 @@ const getSectorsID = (activitiesSelected) => {
     <form class="fr-col-12 fr-col-md-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="validateForm()">
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">1. SIRET</legend>
+        <CanteenCreationFormSiret />
       </fieldset>
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">2. Coordonnées</legend>
