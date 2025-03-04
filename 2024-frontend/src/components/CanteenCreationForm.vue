@@ -25,61 +25,6 @@ const changeCategory = () => {
   showMinistrySelector.value = false
 }
 
-/* Form fields */
-const form = reactive({})
-const initFields = () => {
-  form.siret = ""
-  form.name = ""
-  form.economicModel = ""
-  form.managementType = ""
-  form.productionType = ""
-  form.sectorCategory = ""
-  form.sectorActivity = []
-  form.ministry = ""
-  form.dailyMealCount = ""
-  form.yearlyMealCount = ""
-  form.centralProducerSiret = ""
-  form.satelliteCanteensCount = ""
-}
-initFields()
-
-/* Fields verification */
-const { required, integer, minValue, requiredIf, sameAs, not, minLength, maxLength } = useValidators()
-const dailyMealRequired = computed(() => form.productionType !== "central")
-const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
-const rules = {
-  name: { required },
-  economicModel: { required },
-  managementType: { required },
-  productionType: { required },
-  sectorCategory: { required },
-  sectorActivity: { required },
-  ministry: { required },
-  dailyMealCount: {
-    required: requiredIf(dailyMealRequired),
-    integer,
-    minValue: minValue(0),
-  },
-  yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
-  satelliteCanteensCount: { required, integer, minValue: minValue(0) },
-  centralProducerSiret: {
-    required,
-    notSameSiret: helpers.withMessage(
-      "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine",
-      not(sameAs(form.siret))
-    ),
-    integer,
-    minLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", minLength(14)),
-    maxLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", maxLength(14)),
-  },
-}
-const v$ = useVuelidate(rules, form)
-const validateForm = () => {
-  v$.value.$validate()
-  if (v$.value.$invalid) return
-  sendCanteenForm()
-}
-
 /* Line Ministry */
 const ministries = reactive({})
 const showMinistrySelector = ref(false)
@@ -108,6 +53,24 @@ const verifyLineMinistry = () => {
   }
 }
 
+/* Form fields */
+const form = reactive({})
+const initFields = () => {
+  form.siret = ""
+  form.name = ""
+  form.economicModel = ""
+  form.managementType = ""
+  form.productionType = ""
+  form.sectorCategory = ""
+  form.sectorActivity = []
+  form.ministry = ""
+  form.dailyMealCount = ""
+  form.yearlyMealCount = ""
+  form.centralProducerSiret = ""
+  form.satelliteCanteensCount = ""
+}
+initFields()
+
 /* Dynamic Inputs */
 const hideDailyMealCount = computed(() => form.productionType === "central")
 const showCentralProducerSiret = computed(() => form.productionType === "site_cooked_elsewhere")
@@ -115,10 +78,49 @@ const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
 )
 
+/* Fields verification */
+const { required, integer, minValue, requiredIf, sameAs, not, minLength, maxLength } = useValidators()
+const dailyMealRequired = computed(() => form.productionType !== "central")
+const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
+const rules = {
+  name: { required },
+  economicModel: { required },
+  managementType: { required },
+  productionType: { required },
+  sectorCategory: { required },
+  sectorActivity: { required },
+  ministry: { required: requiredIf(showMinistrySelector) },
+  dailyMealCount: {
+    required: requiredIf(dailyMealRequired),
+    integer,
+    minValue: minValue(0),
+  },
+  yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
+  satelliteCanteensCount: { required: requiredIf(showCentralProducerSiret), integer, minValue: minValue(0) },
+  centralProducerSiret: {
+    required: requiredIf(showCentralProducerSiret),
+    notSameSiret: helpers.withMessage(
+      "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine",
+      not(sameAs(form.siret))
+    ),
+    integer,
+    minLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", minLength(14)),
+    maxLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", maxLength(14)),
+  },
+}
+const v$ = useVuelidate(rules, form)
+const validateForm = () => {
+  v$.value.$validate()
+  console.log("invalid", v$)
+  if (v$.value.$invalid) return
+  console.log("validate")
+  sendCanteenForm()
+}
+
 /* Send Form */
 const sendCanteenForm = () => {
   const payload = {
-    siret: "00000000000000", // TODO à mettre en dynmaique ensuite
+    siret: "", // TODO à mettre en dynmaique ensuite
     postalCode: "73000", // TODO à mettre en dynmaique ensuite
     city: "Chambéry", // TODO à mettre en dynmaique ensuite
     cityInseeCode: "73065", // TODO à mettre en dynmaique ensuite
@@ -134,6 +136,8 @@ const sendCanteenForm = () => {
     centralProducerSiret: form.centralProducerSiret,
     satelliteCanteensCount: Number(form.satelliteCanteensCount),
   }
+
+  console.log("createCanteen")
 
   createCanteen(payload).then((response) => {
     console.log("response", response)
