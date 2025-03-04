@@ -54,3 +54,4 @@ from .partner import PartnerSerializer, PartnerShortSerializer, PartnerContactSe
 from .videotutorial import VideoTutorialSerializer  # noqa: F401
 from .wasteaction import WasteActionSerializer, WasteActionWithActionsSerializer  # noqa: F401
 from .resourceaction import ResourceActionSerializer, ResourceActionFullSerializer  # noqa: F401
+from .statistics import CanteenStatisticsSerializer  # noqa: F401

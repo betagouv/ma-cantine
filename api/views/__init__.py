@@ -5,7 +5,6 @@ from .canteen import (  # noqa: F401
     AddManagerView,
     CanteenLocationsView,
     CanteenMinistriesView,
-    CanteenStatisticsView,
     CanteenStatusView,
     ClaimCanteenView,
     PublicCanteenPreviewView,
@@ -61,6 +60,7 @@ from .reservationexpe import ReservationExpeView  # noqa: F401
 from .resourceaction import ResourceActionView  # noqa: F401
 from .review import ReviewView  # noqa: F401
 from .sector import SectorListView  # noqa: F401
+from .statistics import CanteenStatisticsView  # noqa: F401
 from .subscription import SubscribeNewsletter  # noqa: F401
 from .teledeclaration import (  # noqa: F401
     TeledeclarationCancelView,

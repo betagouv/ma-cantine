@@ -7,7 +7,7 @@ from django.utils.timezone import now
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.views.canteen import badges_for_queryset
+from common.utils.badges import badges_for_queryset
 from data.department_choices import Department
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
