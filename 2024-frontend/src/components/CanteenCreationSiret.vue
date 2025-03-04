@@ -40,7 +40,6 @@ const saveCanteenInfos = (response) => {
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">annuaire-des-entreprises</a>
       afin de retrouver les informations votre établissement
     </p>
-    <pre>{{ 91100348100015 }}</pre>
     <DsfrSearchBar
       v-model="search"
       placeholder="Tapez votre n° SIRET"
