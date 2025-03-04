@@ -172,6 +172,7 @@ const addNewCanteen = (name) => {
   isCreatingCanteen.value = false
   saveAndCreate.value = false
   initFields()
+  window.scrollTo(0, 0)
   v$.value.$reset()
 }
 
