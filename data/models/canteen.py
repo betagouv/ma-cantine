@@ -2,7 +2,6 @@ from urllib.parse import quote
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -292,21 +291,7 @@ class Canteen(SoftDeletionModel):
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
         if self.department:
             self.region = self._get_region()
-        # siret rules
-        self.check_siret_rules()
         super(Canteen, self).save(force_insert, force_update, using, update_fields)
-
-    def check_siret_rules(self):
-        """
-        Some canteens are allowed to have an empty siret
-        """
-        if self.siren_unite_legale:
-            if self.siret:
-                raise ValidationError(
-                    {
-                        "siren_unite_legale": "Si le SIREN de l'unité légale est renseigné, alors le SIRET doit être vide"
-                    }
-                )
 
     @property
     def url_slug(self):

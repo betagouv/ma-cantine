@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
 from freezegun import freeze_time
@@ -20,16 +19,10 @@ class TestCanteenModel(TestCase):
         self.assertEqual(canteen.region, "84")  # Auvergne-Rhône-Alpes
 
     def test_create_canteen_siret_validation(self):
-        # siret: can be empty
-        for siret in ["", None]:
-            canteen = CanteenFactory.create(siret=siret)
-            self.assertEqual(canteen.siret, siret)
-        # siren_unite_legale: can be empty
-        for siren_unite_legale in ["", None]:
-            canteen = CanteenFactory.create(siren_unite_legale=siren_unite_legale)
-            self.assertEqual(canteen.siren_unite_legale, siren_unite_legale)
-        # bother siret and siren_unite_legale filled
-        self.assertRaises(ValidationError, CanteenFactory, siret="756 656 218 99905", siren_unite_legale="756 656 218")
+        # both siret and siren_unite_legale can be empty or set
+        for siret in ["", None, "756 656 218 99905"]:
+            for siren_unite_legale in ["", None, "756 656 218"]:
+                CanteenFactory.create(siret=siret, siren_unite_legale=siren_unite_legale)
 
     @freeze_time("2024-01-20")
     def test_appro_and_service_diagnostics_in_past_ordered_year_desc(self):
