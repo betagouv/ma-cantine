@@ -169,7 +169,7 @@ const goToNewCanteenPage = (id) => {
 
 const addNewCanteen = (name) => {
   store.notify({ message: `Cantine ${name} créée avec succès.` })
-  isCreatingCanteen.value = true
+  isCreatingCanteen.value = false
   saveAndCreate.value = false
   initFields()
   v$.value.$reset()
