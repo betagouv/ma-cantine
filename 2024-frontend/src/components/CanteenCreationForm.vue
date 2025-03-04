@@ -197,7 +197,7 @@ const getSectorsID = (activitiesSelected) => {
   <section
     class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
-    <form class="fr-col-12 fr-col-md-7 fr-background-default--grey fr-p-2w fr-p-md-7w">
+    <form class="fr-col-12 fr-col-md-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">1. SIRET</legend>
         <CanteenCreationFormSiret />
