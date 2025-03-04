@@ -14,17 +14,21 @@ const searchSiret = () => {
       // TODO : existe déjà dont déjà autre gestionnaire
       console.log("resposne", response)
       canteen.founded = true
-      canteen.status = "can-be-created"
-      canteen.name = response.name
-      canteen.siret = response.siret
-      canteen.city = response.city
-      canteen.cityInseeCode = response.cityInseeCode
-      canteen.postalCode = response.postalCode
-      canteen.department = response.postalCode.slice(0, 2)
+      saveCanteenInfos(response)
     })
     .catch((e) => {
       console.log("error", e) // TODO
     })
+}
+
+const saveCanteenInfos = (response) => {
+  canteen.status = "can-be-created"
+  canteen.name = response.name
+  canteen.siret = response.siret
+  canteen.city = response.city
+  canteen.cityInseeCode = response.cityInseeCode
+  canteen.postalCode = response.postalCode
+  canteen.department = response.postalCode.slice(0, 2)
 }
 </script>
 
