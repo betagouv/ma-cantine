@@ -41,20 +41,9 @@ const initFields = () => {
 }
 initFields()
 
-/* Dynamics rules */
-const getDailyMealCountRules = (productionType) => {
-  const rules = {
-    required,
-    integer,
-    minValue: minValue(0),
-  }
-  if (productionType === "central") delete rules.required
-  return rules
-}
-
 /* Fields verification */
-const { required, integer, minValue } = useValidators()
-const dailyMealCountRules = computed(() => getDailyMealCountRules(form.productionType))
+const { required, integer, minValue, requiredIf } = useValidators()
+const dailyMealRequired = computed(() => form.productionType !== "central")
 const rules = {
   name: { required },
   economicModel: { required },
@@ -63,7 +52,11 @@ const rules = {
   sectorCategory: { required },
   sectorActivity: { required },
   ministry: { required },
-  dailyMealCount: dailyMealCountRules,
+  dailyMealCount: {
+    required: requiredIf(dailyMealRequired),
+    integer,
+    minValue: minValue(0),
+  },
   yearlyMealCount: { required, integer, minValue: minValue(0) },
   satelliteCanteensCount: { required, integer, minValue: minValue(0) },
   centralProducerSiret: { required },
