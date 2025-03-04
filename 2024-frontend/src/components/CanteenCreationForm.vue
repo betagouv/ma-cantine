@@ -44,7 +44,7 @@ const initFields = () => {
 initFields()
 
 /* Fields verification */
-const { required, integer, minValue, requiredIf, sameAs, not } = useValidators()
+const { required, integer, minValue, requiredIf, sameAs, not, minLength, maxLength } = useValidators()
 const dailyMealRequired = computed(() => form.productionType !== "central")
 const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
 const rules = {
@@ -68,6 +68,9 @@ const rules = {
       "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine",
       not(sameAs(form.siret))
     ),
+    integer,
+    minLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", minLength(14)),
+    maxLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", maxLength(14)),
   },
 }
 const v$ = useVuelidate(rules, form)

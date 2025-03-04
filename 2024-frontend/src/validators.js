@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n"
 // To use more vuelidate validators, add the name of the validator to the appropriate array
 // and add the translation for the error message in @/locales/...
 const VUELIDATE_VALIDATORS = ["required", "integer", "decimal", "email"]
-const VUELIDATE_VALIDATORS_WITH_ARGS = ["minValue", "maxValue", "requiredIf", "not", "sameAs"]
+const VUELIDATE_VALIDATORS_WITH_ARGS = ["minValue", "maxValue", "requiredIf", "not", "sameAs", "minLength", "maxLength"]
 
 // https://github.com/vuelidate/vuelidate/issues/1164#issuecomment-2104538357
 export const useValidators = () => {
