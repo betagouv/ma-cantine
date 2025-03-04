@@ -4,9 +4,22 @@ import { verifySiret } from "@/services/canteens.js"
 import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
 
 const search = ref()
-const canteen = reactive({})
 const hasSelected = ref(false)
 const emit = defineEmits(["select"])
+
+/* Canteen fields */
+const canteen = reactive({})
+const initFields = () => {
+  canteen.founded = false
+  canteen.status = null
+  canteen.name = null
+  canteen.siret = null
+  canteen.city = null
+  canteen.cityInseeCode = null
+  canteen.postalCode = null
+  canteen.department = null
+}
+initFields()
 
 const searchSiret = () => {
   verifySiret(search.value)
@@ -38,6 +51,13 @@ const selectCanteen = () => {
   canteen.status = "selected"
   emit("select", canteen)
 }
+
+const newSearch = () => {
+  hasSelected.value = false
+  search.value = ""
+  initFields()
+  emit("select", canteen)
+}
 </script>
 
 <template>
@@ -49,6 +69,7 @@ const selectCanteen = () => {
       afin de retrouver les informations votre établissement
     </p>
     <DsfrSearchBar
+      v-if="!hasSelected"
       v-model="search"
       placeholder="Tapez votre n° SIRET"
       button-text="Rechercher"
@@ -65,6 +86,23 @@ const selectCanteen = () => {
       :status="canteen.status"
       @select="selectCanteen()"
     />
+    <DsfrButton
+      v-if="hasSelected"
+      tertiary
+      label="Rechercher un nouvel établissement"
+      icon="fr-icon-search-line"
+      icon-right
+      class="canteen-creation-siret__back fr-mt-1w"
+      @click="newSearch()"
     />
   </div>
 </template>
+
+<style lang="scss">
+.canteen-creation-siret {
+  &__back {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
