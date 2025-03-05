@@ -1,10 +1,34 @@
 <script setup>
-defineProps(["name", "siret", "city", "department", "status", "id"])
+import { useRouter } from "vue-router"
+import { useRootStore } from "@/stores/root"
+import canteensService from "@/services/canteens"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
+
+/* Props */
+const props = defineProps(["name", "siret", "city", "department", "status", "id"])
+
+/* Store and Router */
+const store = useRootStore()
+const router = useRouter()
+
+/* Claim a canteen */
+const claimCanteen = () => {
+  canteensService
+    .claimCanteen(props.id)
+    .then((response) => {
+      if (response.id) {
+        router.push({
+          name: "DashboardManager",
+          params: { canteenUrlComponent: response.id },
+        })
+      }
+    })
+    .catch((e) => store.notifyServerError(e))
+}
 </script>
 
 <template>
-  <div class="fr-card fr-p-3v">
+  <div class="canteen-creation-result fr-card fr-p-3v">
     <div class="fr-grid-row fr-grid-row--top fr-grid-row--left">
       <div class="fr-col-5">
         <p class="fr-h6 fr-mb-1v">{{ name }}</p>
@@ -38,5 +62,30 @@ import AppLinkRouter from "@/components/AppLinkRouter.vue"
         />
       </p>
     </div>
+    <div v-if="status === 'can-be-claimed'" class="fr-mt-1v">
+      <DsfrBadge type="success" label="cantine déjà existante" small />
+      <div class="canteen-creation-result__tertiary-action">
+        <p class="fr-mb-0 fr-text--xs fr-col-7">
+          La cantine avec le numéro SIRET {{ siret }} est déjà référencée sur notre site, mais n'a pas de gestionnaire
+          enregistré.
+        </p>
+        <DsfrButton tertiary label="Rejoindre la cantine" @click="claimCanteen()" />
+      </div>
+    </div>
   </div>
 </template>
+
+<style lang="scss">
+.canteen-creation-result {
+  &__tertiary-action {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 0.5rem;
+    align-items: flex-start;
+
+    p {
+      flex-grow: 1;
+    }
+  }
+}
+</style>

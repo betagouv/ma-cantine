@@ -27,7 +27,7 @@ const searchSiret = () => {
       console.log("resposne", response)
       canteen.founded = true
       if (response.isManagedByUser) canteen.status = "managed-by-user"
-      // TODO : existe déjà dont je peux réclamer
+      if (response.canBeClaimed) canteen.status = "can-be-claimed"
       // TODO : existe déjà dont déjà autre gestionnaire
       // TODO : établissement non trouvé
       canteen.founded = true

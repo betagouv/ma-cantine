@@ -26,4 +26,16 @@ const verifySiret = (siret) => {
     .catch((e) => e)
 }
 
+const claimCanteen = (id) => {
+  return fetch(`/api/v1/canteens/${id}/claim/`, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 export default { createCanteen, verifySiret, claimCanteen }
