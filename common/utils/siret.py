@@ -5,6 +5,11 @@ def normalise_siret(siret):
     return siret.replace(" ", "").replace("\xa0", "")
 
 
+def is_valid_length_siren(siret: str) -> bool:
+    if len(siret) == 9:
+        return True
+
+
 def is_valid_length_siret(siret: str) -> bool:
     if len(siret) == 14:
         return True
@@ -17,6 +22,14 @@ def is_valid_luhn_siret(siret: str) -> bool:
     for digit in even_digits:
         checksum += sum(int(n) for n in str(digit * 2))
     return checksum % 10 == 0
+
+
+def validate_siren(siren):
+    if siren is None or siren == "":
+        return
+    siren = normalise_siret(siren)
+    if not is_valid_length_siren(siren):
+        raise ValidationError("9 caractères numériques sont attendus")
 
 
 def validate_siret(siret):
