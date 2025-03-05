@@ -23,9 +23,11 @@ const showEmptyResult = ref(false)
 const hasSearched = ref(false)
 const hasSelected = ref(false)
 const searchSiret = () => {
+  const cleanSiret = search.value.replaceAll(" ", "")
+  if (cleanSiret.length === 0) return
   hasSearched.value = true
   canteensService
-    .verifySiret(search.value)
+    .verifySiret(cleanSiret)
     .then((response) => {
       switch (true) {
         case response.length === 0:
