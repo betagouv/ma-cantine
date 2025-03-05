@@ -1,7 +1,11 @@
 <script setup>
 import { ref, reactive } from "vue"
+import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens.js"
 import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
+
+/* Store */
+const store = useRootStore()
 
 /* Canteen fields */
 const canteen = reactive({})
@@ -53,9 +57,7 @@ const searchSiret = () => {
       }
       if (canteen.founded) saveCanteenInfos(response)
     })
-    .catch((e) => {
-      console.log("error", e) // TODO
-    })
+    .catch((e) => store.notifyServerError(e))
 }
 
 const verifyIfEmtpy = () => {
