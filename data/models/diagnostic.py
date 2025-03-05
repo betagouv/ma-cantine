@@ -27,7 +27,7 @@ class DiagnosticQuerySet(models.QuerySet):
         year = int(year)
         from .teledeclaration import Teledeclaration
 
-        return self.select_related("teledeclaration").filter(
+        return self.filter(
             year=year,
             teledeclaration__creation_date__range=(
                 CAMPAIGN_DATES[year]["start_date"],
