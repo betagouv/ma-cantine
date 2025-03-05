@@ -38,4 +38,17 @@ const claimCanteen = (id) => {
     .catch((e) => e)
 }
 
-export default { createCanteen, verifySiret, claimCanteen }
+const joinCanteen = (id, userInfos) => {
+  return fetch(`/api/v1/teamJoinRequest/${id}/`, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userInfos),
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+export default { createCanteen, verifySiret, claimCanteen, joinCanteen }

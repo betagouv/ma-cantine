@@ -5,6 +5,8 @@ import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
+const loading = ref(false)
+
 /* Props */
 const props = defineProps(["name", "siret", "city", "department", "status", "id"])
 
@@ -13,7 +15,6 @@ const store = useRootStore()
 const router = useRouter()
 
 /* Claim a canteen */
-const loading = ref(false)
 const claimCanteen = () => {
   loading.value = true
   canteensService
@@ -26,6 +27,29 @@ const claimCanteen = () => {
           params: { canteenUrlComponent: response.id },
         })
       }
+    })
+    .catch((e) => {
+      loading.value = false
+      store.notifyServerError(e)
+    })
+}
+
+/* Ask to join */
+const joinLabel = ref("Rejoindre la cantine")
+const joinCanteen = () => {
+  loading.value = true
+  const userInfos = {
+    email: store.loggedUser.email,
+    name: `${store.loggedUser.firstName} ${store.loggedUser.lastName}`,
+  }
+  canteensService
+    .joinCanteen(props.id, userInfos)
+    .then(() => {
+      store.notify({
+        title: "Demande envoyée",
+        message: `Nous avons contacter l'équipe de la cantine ${props.name}, ces derniers reviendrons vers vous pour accepter ou non votre demande.`,
+      })
+      joinLabel.value = "Demande envoyée"
     })
     .catch((e) => {
       loading.value = false
@@ -76,7 +100,17 @@ const claimCanteen = () => {
           La cantine avec le numéro SIRET {{ siret }} est déjà référencée sur notre site, mais n'a pas de gestionnaire
           enregistré.
         </p>
-        <DsfrButton tertiary label="Rejoindre la cantine" @click="claimCanteen()" :disabled="loading" />
+        <DsfrButton tertiary label="Revendiquer la cantine" @click="claimCanteen()" :disabled="loading" />
+      </div>
+    </div>
+    <div v-if="status === 'ask-to-join'" class="fr-mt-1v">
+      <DsfrBadge type="success" label="cantine déjà existante" small />
+      <div class="canteen-creation-result__tertiary-action">
+        <p class="fr-mb-0 fr-text--xs fr-col-7">
+          La cantine avec le numéro SIRET {{ siret }} est déjà référencée sur notre site. Vous n’êtes pas enregistré en
+          tant que gestionnaire.
+        </p>
+        <DsfrButton tertiary :label="joinLabel" @click="joinCanteen()" :disabled="loading" />
       </div>
     </div>
   </div>

@@ -38,9 +38,12 @@ const searchSiret = () => {
           canteen.founded = true
           canteen.status = "can-be-claimed"
           break
+        case !response.canBeClaimed:
+          canteen.founded = true
+          canteen.status = "ask-to-join"
+          break
       }
       // TODO : établissement non trouvé
-      // TODO : existe déjà dont déjà autre gestionnaire
 
       saveCanteenInfos(response)
     })
