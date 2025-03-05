@@ -508,6 +508,9 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
             "name",
             "id",
             "siret",
+            "city",
+            "postal_code",
+            "department",
             "is_managed_by_user",
             "can_be_claimed",
         )

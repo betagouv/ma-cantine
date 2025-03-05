@@ -23,11 +23,16 @@ const hasSelected = ref(false)
 const searchSiret = () => {
   verifySiret(search.value)
     .then((response) => {
+      console.log("resposne", response)
       // TODO : existe déjà dont je suis gestionnaire
+      if (response.isManagedByUser) canteen.status = "managed-by-user"
       // TODO : existe déjà dont je peux réclamer
       // TODO : existe déjà dont déjà autre gestionnaire
-      console.log("resposne", response)
+      // TODO : établissement fermé
+      // TODO : ajouter le code NAF dans la carte
       canteen.founded = true
+      // TODO : ajouter le status dans la réponse
+      canteen.status = "can-be-created"
       saveCanteenInfos(response)
     })
     .catch((e) => {
@@ -36,7 +41,6 @@ const searchSiret = () => {
 }
 
 const saveCanteenInfos = (response) => {
-  canteen.status = "can-be-created"
   canteen.name = response.name
   canteen.siret = response.siret
   canteen.city = response.city
