@@ -212,7 +212,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
 
     def __init__(self):
         super().__init__()
-        self.years = utils.CAMPAIGN_DATES.keys()
+        self.years = CAMPAIGN_DATES.keys()
         self.extracted_table_name = "teledeclarations"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/export_metabase/schema_teledeclarations.json"))

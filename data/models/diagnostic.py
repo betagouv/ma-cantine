@@ -14,7 +14,7 @@ from data.utils import (
     get_diagnostic_upper_limit_year,
     make_optional_positive_decimal_field,
 )
-from macantine import utils
+from macantine.utils import CAMPAIGN_DATES
 
 from .canteen import Canteen
 
@@ -23,18 +23,25 @@ class DiagnosticQuerySet(models.QuerySet):
     """
     Fetching the diagnostics for wich the data has been validated for stats"""
 
-    def for_stat(self, year):
+    def td_submitted_for_year(self, year):
         year = int(year)
         from .teledeclaration import Teledeclaration
 
+        return self.filter(
+            year=year,
+            teledeclaration__creation_date__range=(
+                CAMPAIGN_DATES[year]["start_date"],
+                CAMPAIGN_DATES[year]["end_date"],
+            ),
+            teledeclaration__status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+        )
+
+    def for_stat(self, year):
+        year = int(year)
+
         return (
-            self.filter(
-                year=year,
-                teledeclaration__creation_date__range=(
-                    utils.CAMPAIGN_DATES[year]["start_date"],
-                    utils.CAMPAIGN_DATES[year]["end_date"],
-                ),
-                teledeclaration__status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            self.td_submitted_for_year(year)
+            .filter(
                 canteen__id__isnull=False,
                 canteen__siret__isnull=False,
                 value_total_ht__isnull=False,
@@ -42,20 +49,12 @@ class DiagnosticQuerySet(models.QuerySet):
             )
             .exclude(
                 canteen__deletion_date__range=(
-                    utils.CAMPAIGN_DATES[year]["start_date"],
-                    utils.CAMPAIGN_DATES[year]["end_date"],
+                    CAMPAIGN_DATES[year]["start_date"],
+                    CAMPAIGN_DATES[year]["end_date"],
                 )
             )
             .exclude(canteen__siret="")
         )
-
-
-class DiagsForStatManager(models.Manager):
-    def get_queryset(self):
-        return DiagnosticQuerySet(self.model, using=self._db)
-
-    def for_stat(self, year):
-        return self.get_queryset().for_stat(year)
 
 
 class Diagnostic(models.Model):
@@ -162,6 +161,7 @@ class Diagnostic(models.Model):
         PUBLISHED = "published", "✅ Publié"
 
     objects = models.Manager.from_queryset(DiagnosticQuerySet)()
+
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()
