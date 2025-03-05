@@ -26,4 +26,4 @@ const verifySiret = (siret) => {
     .catch((e) => e)
 }
 
-export { createCanteen, verifySiret }
+export default { createCanteen, verifySiret, claimCanteen }

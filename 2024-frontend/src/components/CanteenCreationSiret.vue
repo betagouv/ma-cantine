@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive } from "vue"
-import { verifySiret } from "@/services/canteens.js"
+import canteensService from "@/services/canteens.js"
 import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
 
 /* Canteen fields */
@@ -21,7 +21,8 @@ initFields()
 const search = ref()
 const hasSelected = ref(false)
 const searchSiret = () => {
-  verifySiret(search.value)
+  canteensService
+    .verifySiret(search.value)
     .then((response) => {
       console.log("resposne", response)
       canteen.founded = true

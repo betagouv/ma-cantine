@@ -8,7 +8,7 @@ import { useRootStore } from "@/stores/root"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
-import { createCanteen } from "@/services/canteens"
+import canteensService from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
 import CanteenCreationSiret from "@/components/CanteenCreationSiret.vue"
 
@@ -141,7 +141,8 @@ const sendCanteenForm = () => {
 
   isCreatingCanteen.value = true
 
-  createCanteen(payload)
+  canteensService
+    .createCanteen(payload)
     .then((canteenCreated) => {
       if (canteenCreated.id && saveAndCreate.value) addNewCanteen(canteenCreated.name)
       else if (canteenCreated.id && !saveAndCreate.value) goToNewCanteenPage(canteenCreated.id)
