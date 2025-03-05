@@ -1,5 +1,6 @@
 <script setup>
-defineProps(["name", "siret", "city", "department", "status"])
+defineProps(["name", "siret", "city", "department", "status", "id"])
+import AppLinkRouter from "@/components/AppLinkRouter.vue"
 </script>
 
 <template>
@@ -26,6 +27,16 @@ defineProps(["name", "siret", "city", "department", "status"])
         secondary
         @click="$emit('select')"
       />
+    </div>
+    <div v-if="status === 'managed-by-user'" class="fr-mt-1v">
+      <DsfrBadge type="success" label="cantine déjà existante" small />
+      <p class="fr-mb-0 fr-text--xs">
+        La cantine avec le numéro SIRET {{ siret }}, existe déjà et fait déjà partie de vos cantines.
+        <AppLinkRouter
+          :to="{ name: 'DashboardManager', params: { canteenUrlComponent: id } }"
+          title="Accéder à sa fiche"
+        />
+      </p>
     </div>
   </div>
 </template>

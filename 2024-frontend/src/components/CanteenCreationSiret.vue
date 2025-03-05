@@ -24,15 +24,15 @@ const searchSiret = () => {
   verifySiret(search.value)
     .then((response) => {
       console.log("resposne", response)
-      // TODO : existe déjà dont je suis gestionnaire
+      canteen.founded = true
       if (response.isManagedByUser) canteen.status = "managed-by-user"
       // TODO : existe déjà dont je peux réclamer
       // TODO : existe déjà dont déjà autre gestionnaire
-      // TODO : établissement fermé
-      // TODO : ajouter le code NAF dans la carte
+      // TODO : établissement non trouvé
       canteen.founded = true
-      // TODO : ajouter le status dans la réponse
-      canteen.status = "can-be-created"
+      // TODO : ajouter le status dans la réponse plutôt que de passer par l'ID car il y a aura d'autre cas apèrs ?
+      if (!response.id) canteen.status = "can-be-created"
+      else canteen.id = response.id
       saveCanteenInfos(response)
     })
     .catch((e) => {
@@ -88,6 +88,7 @@ const unselectCanteen = () => {
       :city="canteen.city"
       :department="canteen.department"
       :status="canteen.status"
+      :id="canteen.id"
       @select="selectCanteen()"
     />
     <DsfrButton
