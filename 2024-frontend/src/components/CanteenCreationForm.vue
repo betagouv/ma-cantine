@@ -354,12 +354,12 @@ const saveInfos = (canteenInfos) => {
           :error-message="formatError(v$.manyDelivery)"
         />
       </div>
-      <div class="fr-grid-md-row fr-grid-row--right">
+      <div class="fr-grid-row fr-grid-row--right fr-grid-row--top">
         <DsfrButton
           :disabled="isCreatingCanteen"
           label="Enregistrer et créer un nouvel établissement"
           secondary
-          class="fr-mb-1w fr-mb-md-0 fr-mr-1v"
+          class="fr-mb-1v fr-mr-1v"
           @click="saveCanteen(true)"
         />
         <DsfrButton :disabled="isCreatingCanteen" label="Enregistrer" icon="fr-icon-save-line" @click="saveCanteen()" />
