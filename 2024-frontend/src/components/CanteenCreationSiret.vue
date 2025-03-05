@@ -55,7 +55,6 @@ const searchSiret = () => {
 }
 
 const saveCanteenInfos = (response) => {
-  console.log("ave infos")
   canteen.id = response.id
   canteen.name = response.name
   canteen.siret = response.siret
