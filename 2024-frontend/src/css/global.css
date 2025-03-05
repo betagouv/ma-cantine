@@ -16,6 +16,10 @@ address {
     color: inherit !important;
 }
 
+.ma-cantine--text-center {
+    text-align: center;
+}
+
 /* LIST */
 .ma-cantine--unstyled-list {
     list-style: none;

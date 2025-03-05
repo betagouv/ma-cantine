@@ -8,8 +8,9 @@ import { useRootStore } from "@/stores/root"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
-import { createCanteen } from "@/services/canteens"
+import canteensService from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
+import CanteenCreationSiret from "@/components/CanteenCreationSiret.vue"
 
 /* Router and Store */
 const router = useRouter()
@@ -62,18 +63,22 @@ const verifyLineMinistry = () => {
 /* Form fields */
 const form = reactive({})
 const initFields = () => {
-  form.siret = ""
-  form.name = ""
-  form.economicModel = ""
-  form.managementType = ""
-  form.productionType = ""
-  form.sectorCategory = ""
+  form.siret = null
+  form.name = null
+  form.economicModel = null
+  form.managementType = null
+  form.productionType = null
+  form.sectorCategory = null
   form.sectorActivity = []
-  form.ministry = ""
-  form.dailyMealCount = ""
-  form.yearlyMealCount = ""
-  form.centralProducerSiret = ""
-  form.satelliteCanteensCount = ""
+  form.ministry = null
+  form.dailyMealCount = null
+  form.yearlyMealCount = null
+  form.centralProducerSiret = null
+  form.satelliteCanteensCount = null
+  form.postalCode = null
+  form.city = null
+  form.cityInseeCode = null
+  form.department = null
 }
 initFields()
 
@@ -90,6 +95,7 @@ const dailyMealRequired = computed(() => form.productionType !== "central")
 const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
 const rules = {
   name: { required },
+  siret: { required },
   economicModel: { required },
   managementType: { required },
   productionType: { required },
@@ -124,28 +130,20 @@ const validateForm = () => {
 /* Send Form */
 const saveAndCreate = ref(false)
 const isCreatingCanteen = ref(false)
+
+const saveCanteen = (saveAndCreateValue = false) => {
+  saveAndCreate.value = saveAndCreateValue
+  validateForm()
+}
+
 const sendCanteenForm = () => {
-  const payload = {
-    siret: "12345678912345", // TODO à mettre en dynmaique ensuite
-    postalCode: "73000", // TODO à mettre en dynmaique ensuite
-    city: "Chambéry", // TODO à mettre en dynmaique ensuite
-    cityInseeCode: "73065", // TODO à mettre en dynmaique ensuite
-    department: "73", // TODO à mettre en dynmaique ensuite
-    name: form.name,
-    economicModel: form.economicModel,
-    managementType: form.managementType,
-    productionType: form.productionType,
-    sectors: getSectorsID(form.sectorActivity),
-    lineMinistry: form.ministry,
-    dailyMealCount: Number(form.dailyMealCount),
-    yearlyMealCount: Number(form.yearlyMealCount),
-    centralProducerSiret: form.centralProducerSiret,
-    satelliteCanteensCount: Number(form.satelliteCanteensCount),
-  }
+  const payload = form
+  payload.sectors = getSectorsID(form.sectorActivity)
 
   isCreatingCanteen.value = true
 
-  createCanteen(payload)
+  canteensService
+    .createCanteen(payload)
     .then((canteenCreated) => {
       if (canteenCreated.id && saveAndCreate.value) addNewCanteen(canteenCreated.name)
       else if (canteenCreated.id && !saveAndCreate.value) goToNewCanteenPage(canteenCreated.id)
@@ -184,15 +182,29 @@ const getSectorsID = (activitiesSelected) => {
   }
   return names
 }
+
+/* SIRET Informations */
+const saveInfos = (canteenInfos) => {
+  form.siret = canteenInfos.siret
+  form.name = canteenInfos.name
+  form.postalCode = canteenInfos.postalCode
+  form.city = canteenInfos.city
+  form.cityInseeCode = canteenInfos.cityInseeCode
+  form.department = canteenInfos.department
+}
 </script>
 
 <template>
   <section
     class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
-    <form class="fr-col-12 fr-col-md-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="validateForm()">
+    <form class="fr-col-12 fr-col-md-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">1. SIRET</legend>
+        <CanteenCreationSiret
+          @select="(canteenSelected) => saveInfos(canteenSelected)"
+          :error="formatError(v$.siret)"
+        />
       </fieldset>
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">2. Coordonnées</legend>
@@ -320,12 +332,16 @@ const getSectorsID = (activitiesSelected) => {
           <DsfrButton
             :disabled="isCreatingCanteen"
             label="Enregistrer et créer un nouvel établissement"
-            type="submit"
             secondary
             class="fr-mr-1v"
-            @click="saveAndCreate = true"
+            @click="saveCanteen(true)"
           />
-          <DsfrButton :disabled="isCreatingCanteen" label="Enregistrer" type="submit" icon="fr-icon-save-line" />
+          <DsfrButton
+            :disabled="isCreatingCanteen"
+            label="Enregistrer"
+            icon="fr-icon-save-line"
+            @click="saveCanteen()"
+          />
         </div>
       </fieldset>
     </form>
