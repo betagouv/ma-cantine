@@ -93,25 +93,25 @@ const joinCanteen = () => {
         />
       </p>
     </div>
-    <div v-if="status === 'can-be-claimed'" class="fr-mt-1v">
-      <DsfrBadge type="success" label="cantine déjà existante" small />
-      <div class="canteen-creation-result__tertiary-action">
+    <div v-if="status === 'can-be-claimed'" class="canteen-creation-result__tertiary-action fr-mt-1v">
+      <div>
+        <DsfrBadge type="success" label="cantine déjà existante" small />
         <p class="fr-mb-0 fr-text--xs">
           La cantine avec le numéro SIRET {{ siret }} est déjà référencée sur notre site, mais n'a pas de gestionnaire
           enregistré.
         </p>
-        <DsfrButton tertiary label="Revendiquer la cantine" @click="claimCanteen()" :disabled="loading" />
       </div>
+      <DsfrButton tertiary label="Revendiquer la cantine" @click="claimCanteen()" :disabled="loading" />
     </div>
-    <div v-if="status === 'ask-to-join'" class="fr-mt-1v">
-      <DsfrBadge type="success" label="cantine déjà existante" small />
-      <div class="canteen-creation-result__tertiary-action">
+    <div v-if="status === 'ask-to-join'" class="canteen-creation-result__tertiary-action fr-mt-1v">
+      <div>
+        <DsfrBadge type="success" label="cantine déjà existante" small />
         <p class="fr-mb-0 fr-text--xs">
           La cantine avec le numéro SIRET {{ siret }} est déjà référencée sur notre site. Vous n’êtes pas enregistré en
           tant que gestionnaire.
         </p>
-        <DsfrButton tertiary :label="joinLabel" @click="joinCanteen()" :disabled="loading" />
       </div>
+      <DsfrButton tertiary :label="joinLabel" @click="joinCanteen()" :disabled="loading" />
     </div>
   </div>
 </template>
