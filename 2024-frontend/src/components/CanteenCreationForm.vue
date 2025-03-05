@@ -329,22 +329,24 @@ const getSectorsID = (activitiesSelected) => {
           </div>
         </div>
       </fieldset>
-      <DsfrCheckbox
-        v-if="showCheckboxOneDelivery"
-        v-model="oneDelivery"
-        name="oneDelivery"
-        label="En cochant cette case, je confirme déclarer une livraison depuis mon établissement à uniquement 1 seul autre site de service"
-        :error-message="formatError(v$.oneDelivery)"
-      />
-      <DsfrCheckbox
-        v-if="showCheckboxManyDelivery"
-        v-model="manyDelivery"
-        name="manyDelivery"
-        :label="
-          `En cochant cette case, je confirme déclarer une livraison depuis mon établissement à ${form.satelliteCanteensCount} sites de service`
-        "
-        :error-message="formatError(v$.manyDelivery)"
-      />
+      <fieldset class="fr-py-0 fr-mb-5w" v-if="showCheckboxOneDelivery || showCheckboxManyDelivery">
+        <DsfrCheckbox
+          v-if="showCheckboxOneDelivery"
+          v-model="oneDelivery"
+          name="oneDelivery"
+          label="En cochant cette case, je confirme déclarer une livraison depuis mon établissement à uniquement 1 seul autre site de service"
+          :error-message="formatError(v$.oneDelivery)"
+        />
+        <DsfrCheckbox
+          v-if="showCheckboxManyDelivery"
+          v-model="manyDelivery"
+          name="manyDelivery"
+          :label="
+            `En cochant cette case, je confirme déclarer une livraison depuis mon établissement à ${form.satelliteCanteensCount} sites de service`
+          "
+          :error-message="formatError(v$.manyDelivery)"
+        />
+      </fieldset>
       <fieldset class="fr-py-0">
         <div class="fr-grid-row fr-grid-row--right">
           <DsfrButton
