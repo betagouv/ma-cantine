@@ -2,7 +2,7 @@ import logging
 
 import requests
 from django.http import JsonResponse
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.views import APIView
 
@@ -14,16 +14,29 @@ logger = logging.getLogger(__name__)
 
 
 @extend_schema(
-    # extra parameters added to the schema
-    summary="Récapitulatif statistiques des données de ma-cantine",
+    summary="Récapitulatif statistique des données de ma-cantine",
 )
 class CanteenStatisticsView(APIView):
+    include_in_documentation = True
+    serializer_class = CanteenStatisticsSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(name="year", type=str, description="Filter by year of declared data", required=True),
+            OpenApiParameter(name="regions", type=str, description="Filter by regions, using their INSEE code"),
+            OpenApiParameter(
+                name="departments", type=str, description="Filter by departments, using their INSEE code"
+            ),
+            OpenApiParameter(name="epcis", type=str, description="Filter by EPCIS, using their INSEE code"),
+            OpenApiParameter(name="sector_categories", type=int, description="Filter by sectors, using their id"),
+        ]
+    )
     def get(self, request):
+        year = request.query_params.get("year")
         regions = request.query_params.getlist("region")
         departments = request.query_params.getlist("department")
         sector_categories = request.query_params.getlist("sectors")
         epcis = request.query_params.getlist("epci")
-        year = request.query_params.get("year")
 
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
@@ -40,11 +53,11 @@ class CanteenStatisticsView(APIView):
         canteens = self._filter_canteens(regions, departments, city_insee_codes, sector_categories)
         diagnostics = self._filter_diagnostics(year, regions, departments, city_insee_codes, sector_categories)
 
-        data = CanteenStatisticsSerializer.calculate_statistics(canteens, diagnostics)
+        data = self.serializer_class.calculate_statistics(canteens, diagnostics)
         if epci_error:
             data["epci_error"] = epci_error
 
-        serializer = CanteenStatisticsSerializer(data)
+        serializer = self.serializer_class(data)
         return JsonResponse(camelize(serializer.data), status=status.HTTP_200_OK)
 
     def _get_city_insee_codes(self, epcis):
