@@ -106,6 +106,7 @@ class Teledeclaration(models.Model):
     modification_date = models.DateTimeField(auto_now=True)
     year = models.IntegerField(verbose_name="année")
     canteen_siret = models.TextField(null=True, blank=True)
+    canteen_siren_unite_legale = models.TextField(null=True, blank=True)
 
     history = HistoricalRecords(
         bases=[
@@ -220,8 +221,9 @@ class Teledeclaration(models.Model):
         """
         from data.factories import TeledeclarationFactory  # Avoids circular import
 
-        version = "13"  # Helps identify which data will be present. Use incremental int values
-        # Version 13 - Add category_name in canteen sectors
+        version = "14"  # Helps identify which data will be present. Use incremental int values
+        # Version 14 - New Teledeclaration.canteen_siren_unite_legale field, also add the field to the canteen serialization
+        # Version 13 - Add category_name in canteen sectors serializer
         # Version 12 - New Diagnostic service_type field (and stop filling vegetarian_menu_type)
         # Version 11 - Requires diagnostic mode to be defined for central production types (in validate_diagnostic)
         # Version 10 - Add department and region fields
@@ -267,6 +269,7 @@ class Teledeclaration(models.Model):
             year=diagnostic.year,
             canteen=canteen,
             canteen_siret=canteen.siret,
+            canteen_siren_unite_legale=canteen.siren_unite_legale,
             status=status,
             diagnostic=diagnostic,
             declared_data=json_fields,
