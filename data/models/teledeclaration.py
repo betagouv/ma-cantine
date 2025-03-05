@@ -37,7 +37,8 @@ class TeledeclarationQuerySet(models.QuerySet):
 
     def for_stat(self, year):
         return (
-            self.submitted_for_year(year)
+            self.select_related("canteen", "diagnostic")
+            .submitted_for_year(year)
             .filter(
                 canteen_id__isnull=False,
                 canteen_siret__isnull=False,
