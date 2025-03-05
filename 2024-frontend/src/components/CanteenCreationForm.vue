@@ -262,7 +262,6 @@ const saveInfos = (canteenInfos) => {
             <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
           </p>
         </div>
-
         <DsfrInputGroup
           v-if="showSatelliteCanteensCount"
           v-model="form.satelliteCanteensCount"
