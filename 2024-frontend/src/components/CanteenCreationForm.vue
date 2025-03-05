@@ -69,11 +69,17 @@ const initFields = () => {
   form.productionType = ""
   form.sectorCategory = ""
   form.sectorActivity = []
-  form.ministry = ""
-  form.dailyMealCount = ""
-  form.yearlyMealCount = ""
-  form.centralProducerSiret = ""
-  form.satelliteCanteensCount = ""
+  form.ministry = null
+  form.dailyMealCount = null
+  form.yearlyMealCount = null
+  form.centralProducerSiret = null
+  form.satelliteCanteensCount = null
+  form.postalCode = null
+  form.city = null
+  form.cityInseeCode = null
+  form.department = null
+  form.oneDelivery = null
+  form.manyDelivery = null
 }
 initFields()
 
@@ -83,6 +89,8 @@ const showCentralProducerSiret = computed(() => form.productionType === "site_co
 const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
 )
+const showCheckboxOneDelivery = computed(() => Number(form.satelliteCanteensCount) === 1)
+const showCheckboxManyDelivery = computed(() => Number(form.satelliteCanteensCount) >= 250)
 
 /* Fields verification */
 const { required, integer, minValue, requiredIf, sameAs, not, minLength, maxLength } = useValidators()
@@ -112,6 +120,12 @@ const rules = {
     integer,
     minLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", minLength(14)),
     maxLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", maxLength(14)),
+  },
+  oneDelivery: {
+    required: requiredIf(showCheckboxOneDelivery),
+  },
+  manyDelivery: {
+    required: requiredIf(showCheckboxManyDelivery),
   },
 }
 const v$ = useVuelidate(rules, form)
@@ -315,6 +329,22 @@ const getSectorsID = (activitiesSelected) => {
           </div>
         </div>
       </fieldset>
+      <DsfrCheckbox
+        v-if="showCheckboxOneDelivery"
+        v-model="oneDelivery"
+        name="oneDelivery"
+        label="En cochant cette case, je confirme déclarer une livraison depuis mon établissement à uniquement 1 seul autre site de service"
+        :error-message="formatError(v$.oneDelivery)"
+      />
+      <DsfrCheckbox
+        v-if="showCheckboxManyDelivery"
+        v-model="manyDelivery"
+        name="manyDelivery"
+        :label="
+          `En cochant cette case, je confirme déclarer une livraison depuis mon établissement à ${form.satelliteCanteensCount} sites de service`
+        "
+        :error-message="formatError(v$.manyDelivery)"
+      />
       <fieldset class="fr-py-0">
         <div class="fr-grid-row fr-grid-row--right">
           <DsfrButton
