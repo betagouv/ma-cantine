@@ -209,14 +209,14 @@ const saveInfos = (canteenInfos) => {
     class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
-      <fieldset class="fr-mb-3w">
+      <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
         <CanteenCreationSiret
           @select="(canteenSelected) => saveInfos(canteenSelected)"
           :error="formatError(v$.siret)"
         />
       </fieldset>
-      <fieldset class="fr-mb-3w">
+      <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">2. Coordonnées</legend>
         <DsfrInputGroup
           v-model="form.name"
@@ -226,7 +226,7 @@ const saveInfos = (canteenInfos) => {
           :error-message="formatError(v$.name)"
         />
       </fieldset>
-      <fieldset class="fr-mb-3w canteen-creation-form__caracteristics">
+      <fieldset class="fr-mb-4w canteen-creation-form__caracteristics">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
         <DsfrRadioButtonSet
           legend="Type d’établissement"
@@ -272,7 +272,7 @@ const saveInfos = (canteenInfos) => {
           :error-message="formatError(v$.satelliteCanteensCount)"
         />
       </fieldset>
-      <fieldset class="fr-mb-3w">
+      <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
         <DsfrSelect
           v-model="form.sectorCategory"
@@ -308,7 +308,7 @@ const saveInfos = (canteenInfos) => {
           :error-message="formatError(v$.ministry)"
         />
       </fieldset>
-      <fieldset class="fr-mb-3w">
+      <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">5. Nombre de repas</legend>
         <div class="fr-grid-row fr-grid-row--gutters">
           <div class="fr-col-6">
