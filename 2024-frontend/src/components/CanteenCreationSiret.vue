@@ -107,10 +107,11 @@ const unselectCanteen = () => {
       :id="canteen.id"
       @select="selectCanteen()"
     />
-    <p v-if="!canteen.founded && hasSearched" class="fr-text--xs fr-mb-0">
+    <p v-if="!canteen.founded && hasSearched" class="fr-text--xs fr-mb-0 ma-cantine--text-center">
       D’après
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
-      , le numéro SIRET {{ search }} ne correspond à aucun établissement.
+      <br />
+      le numéro SIRET "{{ search }}" ne correspond à aucun établissement
     </p>
     <DsfrButton
       v-if="hasSelected"
