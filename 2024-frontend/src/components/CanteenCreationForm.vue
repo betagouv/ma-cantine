@@ -226,7 +226,7 @@ const saveInfos = (canteenInfos) => {
           :error-message="formatError(v$.name)"
         />
       </fieldset>
-      <fieldset class="fr-mb-3w">
+      <fieldset class="fr-mb-3w canteen-creation-form__caracteristics">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
         <DsfrRadioButtonSet
           legend="Type d’établissement"
@@ -379,6 +379,15 @@ const saveInfos = (canteenInfos) => {
 .canteen-creation-form {
   .hide {
     display: none !important;
+  }
+
+  &__caracteristics {
+    .fr-form-group:last-child {
+      .fr-fieldset,
+      .fr-fieldset__element:last-child {
+        margin-bottom: 0 !important;
+      }
+    }
   }
 
   &__central-producer-siret {
