@@ -111,7 +111,6 @@ const unselectCanteen = () => {
           :large="true"
           @update:modelValue="verifyIfEmtpy()"
           @search="searchSiret()"
-          class="fr-mb-2w"
         />
       </template>
     </DsfrInputGroup>
