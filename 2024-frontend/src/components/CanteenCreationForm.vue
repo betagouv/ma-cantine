@@ -95,6 +95,7 @@ const dailyMealRequired = computed(() => form.productionType !== "central")
 const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
 const rules = {
   name: { required },
+  siret: { required },
   economicModel: { required },
   managementType: { required },
   productionType: { required },
@@ -200,7 +201,10 @@ const saveInfos = (canteenInfos) => {
     <form class="fr-col-12 fr-col-md-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">1. SIRET</legend>
-        <CanteenCreationSiret @select="(canteenSelected) => saveInfos(canteenSelected)" />
+        <CanteenCreationSiret
+          @select="(canteenSelected) => saveInfos(canteenSelected)"
+          :error="formatError(v$.siret)"
+        />
       </fieldset>
       <fieldset class="fr-mb-7w">
         <legend class="fr-h5">2. Coordonnées</legend>

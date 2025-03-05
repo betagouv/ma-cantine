@@ -4,6 +4,9 @@ import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens.js"
 import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
 
+/* Props */
+defineProps(["error"])
+
 /* Store */
 const store = useRootStore()
 
@@ -98,16 +101,20 @@ const unselectCanteen = () => {
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">annuaire-des-entreprises</a>
       afin de retrouver les informations votre établissement
     </p>
-    <DsfrSearchBar
-      v-if="!hasSelected"
-      v-model="search"
-      placeholder="Tapez votre n° SIRET"
-      button-text="Rechercher"
-      :large="true"
-      @update:modelValue="verifyIfEmtpy()"
-      @search="searchSiret()"
-      class="fr-mb-2w"
-    />
+    <DsfrInputGroup :error-message="error">
+      <template #default>
+        <DsfrSearchBar
+          v-if="!hasSelected"
+          v-model="search"
+          placeholder="Tapez votre n° SIRET"
+          button-text="Rechercher"
+          :large="true"
+          @update:modelValue="verifyIfEmtpy()"
+          @search="searchSiret()"
+          class="fr-mb-2w"
+        />
+      </template>
+    </DsfrInputGroup>
     <CanteenCreationResult
       v-if="canteen.founded"
       :name="canteen.name"
