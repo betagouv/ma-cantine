@@ -6,6 +6,35 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.7.1](https://github.com/betagouv/ma-cantine/compare/v2025.7.0...v2025.7.1) (2025-03-05)
+
+
+### Améliorations
+
+* **Ajouter un cantine:** enregistrement de la nouvelle cantine ([#5090](https://github.com/betagouv/ma-cantine/issues/5090)) ([04ed0c2](https://github.com/betagouv/ma-cantine/commit/04ed0c2c927b6c1a14bbb030c1163e3214a12b6e))
+* **Ajouter une cantine:** création de la nouvelle page en vue3 ([#5085](https://github.com/betagouv/ma-cantine/issues/5085)) ([1a5afa7](https://github.com/betagouv/ma-cantine/commit/1a5afa774fc569679590529d1427980045ab33c3))
+* **Ajouter une cantine:** vérification des champs avant l'envoi du formulaire de création [#5086](https://github.com/betagouv/ma-cantine/issues/5086)  ([#5087](https://github.com/betagouv/ma-cantine/issues/5087)) ([523e104](https://github.com/betagouv/ma-cantine/commit/523e1049b06a6bccf79c3f0eb09bd784bf66f935))
+* **Imports:** Cantines: mieux documenter les champs admin (les lister dans le tableau) ([#5064](https://github.com/betagouv/ma-cantine/issues/5064)) ([efec9bb](https://github.com/betagouv/ma-cantine/commit/efec9bba26440d7378c7d81c44b4dfa08313ff0b))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines données géo:** Ajout condition supplémentaire en cas d enseignes vides ([#5066](https://github.com/betagouv/ma-cantine/issues/5066)) ([ff052d9](https://github.com/betagouv/ma-cantine/commit/ff052d9d6626970b023cca5f43613939bbc73561))
+
+
+### Documentation
+
+* **API Stats:** Ajout des filtres dans la documentation ([#5091](https://github.com/betagouv/ma-cantine/issues/5091)) ([bc95447](https://github.com/betagouv/ma-cantine/commit/bc95447cb6d1889d4390bb9837829786636c3478))
+
+
+### Technique
+
+* **API Stats:** Créer une classe serializer pour l'API stats ([#5084](https://github.com/betagouv/ma-cantine/issues/5084)) ([110a2ad](https://github.com/betagouv/ma-cantine/commit/110a2adf132219cedf7c2120d44d5aad0c4dee25))
+* **Cantines:** meilleure gestion des SIRET ([#5080](https://github.com/betagouv/ma-cantine/issues/5080)) ([1fe5fc2](https://github.com/betagouv/ma-cantine/commit/1fe5fc2bb80d2e677bba70f7e720a15b334bbd54))
+* **deps-dev:** bump @rushstack/eslint-patch from 1.10.4 to 1.10.5 in /2024-frontend ([#4990](https://github.com/betagouv/ma-cantine/issues/4990)) ([f8c4e19](https://github.com/betagouv/ma-cantine/commit/f8c4e19ba3d8fccb1080dc7066850446776f3b87))
+* **deps-dev:** bump eslint from 9.17.0 to 9.21.0 in /2024-frontend ([7f01840](https://github.com/betagouv/ma-cantine/commit/7f018402c88876a79cc3e16cc9c41045f5614f7a))
+* **deps:** bump @vueuse/core from 12.0.0 to 12.7.0 in /2024-frontend ([b3928ac](https://github.com/betagouv/ma-cantine/commit/b3928accb472a8078b9cb0757aee720d79c83d78))
+
 ## [2025.7.0](https://github.com/betagouv/ma-cantine/compare/v2025.6.2...v2025.7.0) (2025-02-27)
 
 
