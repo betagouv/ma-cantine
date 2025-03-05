@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from "vue"
 import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens"
@@ -12,10 +13,13 @@ const store = useRootStore()
 const router = useRouter()
 
 /* Claim a canteen */
+const loading = ref(false)
 const claimCanteen = () => {
+  loading.value = true
   canteensService
     .claimCanteen(props.id)
     .then((response) => {
+      loading.value = false
       if (response.id) {
         router.push({
           name: "DashboardManager",
@@ -23,7 +27,10 @@ const claimCanteen = () => {
         })
       }
     })
-    .catch((e) => store.notifyServerError(e))
+    .catch((e) => {
+      loading.value = false
+      store.notifyServerError(e)
+    })
 }
 </script>
 
@@ -69,7 +76,7 @@ const claimCanteen = () => {
           La cantine avec le numéro SIRET {{ siret }} est déjà référencée sur notre site, mais n'a pas de gestionnaire
           enregistré.
         </p>
-        <DsfrButton tertiary label="Rejoindre la cantine" @click="claimCanteen()" />
+        <DsfrButton tertiary label="Rejoindre la cantine" @click="claimCanteen()" :disabled="loading" />
       </div>
     </div>
   </div>
