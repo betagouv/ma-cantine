@@ -208,7 +208,7 @@ const saveInfos = (canteenInfos) => {
   <section
     class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
-    <form class="fr-col-12 fr-col-lg-8 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
+    <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
       <fieldset class="fr-mb-3w">
         <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
         <CanteenCreationSiret
