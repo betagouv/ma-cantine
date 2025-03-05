@@ -208,7 +208,7 @@ const saveInfos = (canteenInfos) => {
   <section
     class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
-    <form class="fr-col-12 fr-col-md-8 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
+    <form class="fr-col-12 fr-col-lg-8 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
       <fieldset class="fr-mb-3w">
         <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
         <CanteenCreationSiret
@@ -355,12 +355,12 @@ const saveInfos = (canteenInfos) => {
         />
       </fieldset>
       <fieldset class="fr-py-0">
-        <div class="fr-grid-row fr-grid-row--right">
+        <div class="fr-grid-md-row fr-grid-row--right">
           <DsfrButton
             :disabled="isCreatingCanteen"
             label="Enregistrer et créer un nouvel établissement"
             secondary
-            class="fr-mr-1v"
+            class="fr-mb-1w fr-mb-md-0 fr-mr-1v"
             @click="saveCanteen(true)"
           />
           <DsfrButton
