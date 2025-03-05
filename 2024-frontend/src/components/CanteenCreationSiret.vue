@@ -118,6 +118,10 @@ const unselectCanteen = () => {
       :id="canteen.id"
       @select="selectCanteen()"
     />
+    <p v-if="canteen.founded" class="fr-text--xs fr-mb-0 fr-mt-1w ma-cantine--text-center">
+      Ce n’est pas le bon établissement ? Refaites une recherche via le bon numéro SIRET, ou trouvez l’information dans
+      <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
+    </p>
     <p v-if="showEmptyResult" class="fr-text--xs fr-mb-0 ma-cantine--text-center">
       D’après
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
