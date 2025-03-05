@@ -475,6 +475,8 @@ class CanteenStatusView(APIView):
         response = check_siret_response(siret, request) or {}
         if not response:
             response = fetch_geo_data_from_siret(siret, response)
+            if not response:
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
             city = response.get("city", None)
             postcode = response.get("postalCode", None)
             if city and postcode:

@@ -19,13 +19,17 @@ initFields()
 
 /* Search */
 const search = ref()
+const hasSearched = ref(false)
 const hasSelected = ref(false)
 const searchSiret = () => {
+  hasSearched.value = true
   canteensService
     .verifySiret(search.value)
     .then((response) => {
-      console.log("resposne", response)
       switch (true) {
+        case response.length === 0:
+          canteen.founded = false
+          break
         case !response.id:
           canteen.status = "can-be-created"
           canteen.founded = true
@@ -43,9 +47,7 @@ const searchSiret = () => {
           canteen.status = "ask-to-join"
           break
       }
-      // TODO : établissement non trouvé
-
-      saveCanteenInfos(response)
+      if (canteen.founded) saveCanteenInfos(response)
     })
     .catch((e) => {
       console.log("error", e) // TODO
@@ -53,6 +55,7 @@ const searchSiret = () => {
 }
 
 const saveCanteenInfos = (response) => {
+  console.log("ave infos")
   canteen.id = response.id
   canteen.name = response.name
   canteen.siret = response.siret
@@ -72,6 +75,7 @@ const selectCanteen = () => {
 const unselectCanteen = () => {
   hasSelected.value = false
   search.value = ""
+  hasSearched.value = false
   initFields()
   emit("select", canteen)
 }
@@ -104,6 +108,11 @@ const unselectCanteen = () => {
       :id="canteen.id"
       @select="selectCanteen()"
     />
+    <p v-if="!canteen.founded && hasSearched" class="fr-text--xs fr-mb-0">
+      D’après
+      <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
+      , le numéro SIRET {{ search }} ne correspond à aucun établissement.
+    </p>
     <DsfrButton
       v-if="hasSelected"
       tertiary
