@@ -19,6 +19,7 @@ initFields()
 
 /* Search */
 const search = ref()
+const showEmptyResult = ref(false)
 const hasSearched = ref(false)
 const hasSelected = ref(false)
 const searchSiret = () => {
@@ -29,6 +30,7 @@ const searchSiret = () => {
       switch (true) {
         case response.length === 0:
           canteen.founded = false
+          showEmptyResult.value = true
           break
         case !response.id:
           canteen.status = "can-be-created"
@@ -52,6 +54,10 @@ const searchSiret = () => {
     .catch((e) => {
       console.log("error", e) // TODO
     })
+}
+
+const verifyIfEmtpy = () => {
+  if (search.value.length === 0 && hasSearched.value) showEmptyResult.value = false
 }
 
 const saveCanteenInfos = (response) => {
@@ -94,6 +100,7 @@ const unselectCanteen = () => {
       placeholder="Tapez votre n° SIRET"
       button-text="Rechercher"
       :large="true"
+      @update:modelValue="verifyIfEmtpy()"
       @search="searchSiret()"
       class="fr-mb-2w"
     />
@@ -107,7 +114,7 @@ const unselectCanteen = () => {
       :id="canteen.id"
       @select="selectCanteen()"
     />
-    <p v-if="!canteen.founded && hasSearched" class="fr-text--xs fr-mb-0 ma-cantine--text-center">
+    <p v-if="showEmptyResult" class="fr-text--xs fr-mb-0 ma-cantine--text-center">
       D’après
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
       <br />
