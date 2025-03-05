@@ -25,15 +25,23 @@ const searchSiret = () => {
     .verifySiret(search.value)
     .then((response) => {
       console.log("resposne", response)
-      canteen.founded = true
-      if (response.isManagedByUser) canteen.status = "managed-by-user"
-      if (response.canBeClaimed) canteen.status = "can-be-claimed"
-      // TODO : existe déjà dont déjà autre gestionnaire
+      switch (true) {
+        case !response.id:
+          canteen.status = "can-be-created"
+          canteen.founded = true
+          break
+        case response.isManagedByUser:
+          canteen.founded = true
+          canteen.status = "managed-by-user"
+          break
+        case response.canBeClaimed:
+          canteen.founded = true
+          canteen.status = "can-be-claimed"
+          break
+      }
       // TODO : établissement non trouvé
-      canteen.founded = true
-      // TODO : ajouter le status dans la réponse plutôt que de passer par l'ID car il y a aura d'autre cas apèrs ?
-      if (!response.id) canteen.status = "can-be-created"
-      else canteen.id = response.id
+      // TODO : existe déjà dont déjà autre gestionnaire
+
       saveCanteenInfos(response)
     })
     .catch((e) => {
@@ -42,6 +50,7 @@ const searchSiret = () => {
 }
 
 const saveCanteenInfos = (response) => {
+  canteen.id = response.id
   canteen.name = response.name
   canteen.siret = response.siret
   canteen.city = response.city
