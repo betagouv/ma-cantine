@@ -99,7 +99,7 @@ const unselectCanteen = () => {
     <p class="fr-hint-text">
       Nous utilisons le site
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">annuaire-des-entreprises</a>
-      afin de retrouver les informations votre établissement
+      afin de retrouver les informations de votre établissement
     </p>
     <DsfrInputGroup :error-message="error">
       <template #default>
