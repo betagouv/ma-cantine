@@ -294,6 +294,7 @@ const saveInfos = (canteenInfos) => {
           id-key="index"
           label-key="name"
           search
+          selectAll
           :filtering-keys="['name']"
           @change="verifyLineMinistry()"
           :error-message="formatError(v$.sectorActivity)"
