@@ -25,7 +25,7 @@ const initFields = () => {
 initFields()
 
 /* Search */
-const search = ref()
+const search = ref("")
 const showEmptyResult = ref(false)
 const hasSearched = ref(false)
 const hasSelected = ref(false)
