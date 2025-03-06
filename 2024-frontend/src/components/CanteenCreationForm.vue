@@ -336,14 +336,14 @@ const saveInfos = (canteenInfos) => {
       <div class="fr-py-0 fr-my-3w fr-mb-md-3w fr-mt-md-5w">
         <DsfrCheckbox
           v-if="showCheckboxOneDelivery"
-          v-model="oneDelivery"
+          v-model="form.oneDelivery"
           name="oneDelivery"
           label="En cochant cette case, je confirme déclarer une livraison depuis mon établissement à uniquement 1 seul autre site de service"
           :error-message="formatError(v$.oneDelivery)"
         />
         <DsfrCheckbox
           v-if="showCheckboxManyDelivery"
-          v-model="manyDelivery"
+          v-model="form.manyDelivery"
           name="manyDelivery"
           :label="
             `En cochant cette case, je confirme déclarer une livraison depuis mon établissement à ${form.satelliteCanteensCount} sites de service`
