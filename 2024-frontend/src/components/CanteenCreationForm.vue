@@ -226,7 +226,7 @@ const saveInfos = (canteenInfos) => {
         <legend class="fr-h5 fr-mb-2w">2. Coordonnées</legend>
         <DsfrInputGroup
           v-model="form.name"
-          label="Nom de la cantine"
+          label="Nom de la cantine *"
           :label-visible="true"
           hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
           :error-message="formatError(v$.name)"
@@ -235,20 +235,20 @@ const saveInfos = (canteenInfos) => {
       <fieldset class="fr-mb-4w canteen-creation-form__caracteristics">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
         <DsfrRadioButtonSet
-          legend="Type d’établissement"
+          legend="Type d’établissement *"
           v-model="form.economicModel"
           :options="options.economicModel"
           @change="verifyLineMinistry()"
           :error-message="formatError(v$.economicModel)"
         />
         <DsfrRadioButtonSet
-          legend="Mode de gestion"
+          legend="Mode de gestion *"
           v-model="form.managementType"
           :options="options.managementType"
           :error-message="formatError(v$.managementType)"
         />
         <DsfrRadioButtonSet
-          legend="Mode de production"
+          legend="Mode de production *"
           v-model="form.productionType"
           :options="options.productionType"
           :error-message="formatError(v$.productionType)"
@@ -257,7 +257,7 @@ const saveInfos = (canteenInfos) => {
         <div v-if="showCentralProducerSiret" class="canteen-creation-form__central-producer-siret">
           <DsfrInputGroup
             v-model="form.centralProducerSiret"
-            label="SIRET du livreur"
+            label="SIRET du livreur *"
             :label-visible="true"
             :error-message="formatError(v$.centralProducerSiret)"
           />
@@ -270,7 +270,7 @@ const saveInfos = (canteenInfos) => {
           v-if="showSatelliteCanteensCount"
           v-model="form.satelliteCanteensCount"
           type="number"
-          label="Nombre de cuisine satellite"
+          label="Nombre de cuisine satellite *"
           hint="Nombre de cantines/lieux de service à qui je fournis des repas"
           :label-visible="true"
           :error-message="formatError(v$.satelliteCanteensCount)"
@@ -280,7 +280,7 @@ const saveInfos = (canteenInfos) => {
         <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
         <DsfrSelect
           v-model="form.sectorCategory"
-          label="Catégorie de secteur"
+          label="Catégorie de secteur *"
           labelVisible
           :options="sectorsCategoryOptions"
           @change="changeCategory()"
@@ -288,7 +288,7 @@ const saveInfos = (canteenInfos) => {
         />
         <DsfrMultiselect
           v-model="form.sectorActivity"
-          label="Secteur d’activité"
+          label="Secteur d’activité *"
           labelVisible
           :options="sectorsActivityOptions"
           id-key="index"
@@ -306,7 +306,7 @@ const saveInfos = (canteenInfos) => {
         <DsfrSelect
           v-if="showMinistrySelector"
           v-model="form.ministry"
-          label="Administration générale de tutelle (ministère ou ATE)"
+          label="Administration générale de tutelle (ministère ou ATE) *"
           description="Hors fonction publique territoriale et hospitalière"
           labelVisible
           :options="ministryOptions"
@@ -322,7 +322,7 @@ const saveInfos = (canteenInfos) => {
                 hide: hideDailyMealCount,
               }"
               v-model="form.dailyMealCount"
-              label="Par jour"
+              :label="hideDailyMealCount ? 'Par jour' : 'Par jour *'"
               :label-visible="true"
               :disabled="hideDailyMealCount"
               :hint="hideDailyMealCount ? 'Concerne uniquement les cantines recevant des convives' : ''"
@@ -333,7 +333,7 @@ const saveInfos = (canteenInfos) => {
           <div class="fr-col-6">
             <DsfrInputGroup
               v-model="form.yearlyMealCount"
-              label="Par an"
+              label="Par an *"
               :label-visible="true"
               type="number"
               :error-message="formatError(v$.yearlyMealCount)"
