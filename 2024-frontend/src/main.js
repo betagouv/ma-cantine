@@ -6,7 +6,7 @@ import "@gouvfr/dsfr/dist/utility/utility.main.min.css" // Classes utilitaires :
 import "@gouvminint/vue-dsfr/styles" // Les styles propres aux composants de VueDsfr
 import VueDsfr from "@gouvminint/vue-dsfr" // Import (par défaut) de la bibliothèque
 import i18n from "./i18n.js"
-import VueMatomo from 'vue-matomo'
+import VueMatomo from "vue-matomo"
 
 import FoodAppleIcon from "mdi-icons/FoodApple"
 import OfferIcon from "mdi-icons/Offer"
@@ -17,6 +17,7 @@ import LeafIcon from "mdi-icons/Leaf"
 // https://www.npmjs.com/package/vue-material-design-icons
 import "mdi-icons/styles.css"
 
+import "./css/reset.css"
 import "./css/global.css"
 
 import App from "./App.vue"

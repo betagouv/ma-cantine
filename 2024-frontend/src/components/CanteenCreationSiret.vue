@@ -108,10 +108,10 @@ const unselectCanteen = () => {
           v-model="search"
           placeholder="Tapez votre n° SIRET"
           button-text="Rechercher"
+          label="Rechercher un établissement par son numéro SIRET"
           :large="true"
           @update:modelValue="verifyIfEmtpy()"
           @search="searchSiret()"
-          class="fr-mb-2w"
         />
       </template>
     </DsfrInputGroup>

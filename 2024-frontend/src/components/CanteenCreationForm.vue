@@ -90,8 +90,17 @@ const showCentralProducerSiret = computed(() => form.productionType === "site_co
 const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
 )
-const showCheckboxOneDelivery = computed(() => Number(form.satelliteCanteensCount) === 1)
-const showCheckboxManyDelivery = computed(() => Number(form.satelliteCanteensCount) >= 250)
+const showCheckboxOneDelivery = computed(() => showSatelliteCanteensCount.value && Number(form.satelliteCanteensCount) === 1)
+const showCheckboxManyDelivery = computed(
+  () => showSatelliteCanteensCount.value && Number(form.satelliteCanteensCount) >= 250
+)
+const showConfirmationFieldset = computed(() => showCheckboxOneDelivery.value || showCheckboxManyDelivery)
+
+const resetDynamicInputValues = () => {
+  form.satelliteCanteensCount = null
+  form.centralProducerSiret = null
+  form.dailyMealCount = null
+}
 
 /* Fields verification */
 const { required, integer, minValue, requiredIf, sameAs, not, minLength, maxLength } = useValidators()
@@ -208,16 +217,16 @@ const saveInfos = (canteenInfos) => {
   <section
     class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
-    <form class="fr-col-12 fr-col-md-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
-      <fieldset class="fr-mb-7w">
-        <legend class="fr-h5">1. SIRET</legend>
+    <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
+      <fieldset class="fr-mb-4w">
+        <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
         <CanteenCreationSiret
           @select="(canteenSelected) => saveInfos(canteenSelected)"
           :error="formatError(v$.siret)"
         />
       </fieldset>
-      <fieldset class="fr-mb-7w">
-        <legend class="fr-h5">2. Coordonnées</legend>
+      <fieldset class="fr-mb-4w">
+        <legend class="fr-h5 fr-mb-2w">2. Coordonnées</legend>
         <DsfrInputGroup
           v-model="form.name"
           label="Nom de la cantine"
@@ -226,12 +235,11 @@ const saveInfos = (canteenInfos) => {
           :error-message="formatError(v$.name)"
         />
       </fieldset>
-      <fieldset class="fr-mb-3w">
-        <legend class="fr-h5">3. Caractéristiques</legend>
+      <fieldset class="fr-mb-4w canteen-creation-form__caracteristics">
+        <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
         <DsfrRadioButtonSet
           legend="Type d’établissement"
           v-model="form.economicModel"
-          :small="true"
           :options="options.economicModel"
           @change="verifyLineMinistry()"
           :error-message="formatError(v$.economicModel)"
@@ -239,16 +247,15 @@ const saveInfos = (canteenInfos) => {
         <DsfrRadioButtonSet
           legend="Mode de gestion"
           v-model="form.managementType"
-          :small="true"
           :options="options.managementType"
           :error-message="formatError(v$.managementType)"
         />
         <DsfrRadioButtonSet
           legend="Mode de production"
           v-model="form.productionType"
-          :small="true"
           :options="options.productionType"
           :error-message="formatError(v$.productionType)"
+          @change="resetDynamicInputValues"
         />
         <div v-if="showCentralProducerSiret" class="canteen-creation-form__central-producer-siret">
           <DsfrInputGroup
@@ -257,12 +264,11 @@ const saveInfos = (canteenInfos) => {
             :label-visible="true"
             :error-message="formatError(v$.centralProducerSiret)"
           />
-          <p class="fr-hint-text">
+          <p class="fr-hint-text fr-mb-0">
             Vous ne le connaissez pas ? Trouvez-le avec
             <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
           </p>
         </div>
-
         <DsfrInputGroup
           v-if="showSatelliteCanteensCount"
           v-model="form.satelliteCanteensCount"
@@ -273,8 +279,8 @@ const saveInfos = (canteenInfos) => {
           :error-message="formatError(v$.satelliteCanteensCount)"
         />
       </fieldset>
-      <fieldset class="fr-mb-7w">
-        <legend class="fr-h5">4. Secteur</legend>
+      <fieldset class="fr-mb-4w">
+        <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
         <DsfrSelect
           v-model="form.sectorCategory"
           label="Catégorie de secteur"
@@ -309,8 +315,8 @@ const saveInfos = (canteenInfos) => {
           :error-message="formatError(v$.ministry)"
         />
       </fieldset>
-      <fieldset class="fr-mb-7w">
-        <legend class="fr-h5">5. Nombre de repas</legend>
+      <fieldset class="fr-mb-4w">
+        <legend class="fr-h5 fr-mb-2w">5. Nombre de repas</legend>
         <div class="fr-grid-row fr-grid-row--gutters">
           <div class="fr-col-6">
             <DsfrInputGroup
@@ -337,17 +343,18 @@ const saveInfos = (canteenInfos) => {
           </div>
         </div>
       </fieldset>
-      <fieldset class="fr-py-0 fr-mb-5w" v-if="showCheckboxOneDelivery || showCheckboxManyDelivery">
+      <fieldset class="fr-py-0 fr-my-3w fr-mb-md-3w" v-if="showConfirmationFieldset">
+        <legend class="fr-h5 fr-mb-2w">6. Confirmation</legend>
         <DsfrCheckbox
           v-if="showCheckboxOneDelivery"
-          v-model="oneDelivery"
+          v-model="form.oneDelivery"
           name="oneDelivery"
           label="En cochant cette case, je confirme déclarer une livraison depuis mon établissement à uniquement 1 seul autre site de service"
           :error-message="formatError(v$.oneDelivery)"
         />
         <DsfrCheckbox
           v-if="showCheckboxManyDelivery"
-          v-model="manyDelivery"
+          v-model="form.manyDelivery"
           name="manyDelivery"
           :label="
             `En cochant cette case, je confirme déclarer une livraison depuis mon établissement à ${form.satelliteCanteensCount} sites de service`
@@ -355,23 +362,16 @@ const saveInfos = (canteenInfos) => {
           :error-message="formatError(v$.manyDelivery)"
         />
       </fieldset>
-      <fieldset class="fr-py-0">
-        <div class="fr-grid-row fr-grid-row--right">
-          <DsfrButton
-            :disabled="isCreatingCanteen"
-            label="Enregistrer et créer un nouvel établissement"
-            secondary
-            class="fr-mr-1v"
-            @click="saveCanteen(true)"
-          />
-          <DsfrButton
-            :disabled="isCreatingCanteen"
-            label="Enregistrer"
-            icon="fr-icon-save-line"
-            @click="saveCanteen()"
-          />
-        </div>
-      </fieldset>
+      <div class="fr-grid-row fr-grid-row--right fr-grid-row--top">
+        <DsfrButton
+          :disabled="isCreatingCanteen"
+          label="Enregistrer et créer un nouvel établissement"
+          secondary
+          class="fr-mb-1v fr-mr-1v"
+          @click="saveCanteen(true)"
+        />
+        <DsfrButton :disabled="isCreatingCanteen" label="Enregistrer" icon="fr-icon-save-line" @click="saveCanteen()" />
+      </div>
     </form>
   </section>
 </template>
@@ -380,6 +380,15 @@ const saveInfos = (canteenInfos) => {
 .canteen-creation-form {
   .hide {
     display: none !important;
+  }
+
+  &__caracteristics {
+    .fr-form-group:last-child {
+      .fr-fieldset,
+      .fr-fieldset__element:last-child {
+        margin-bottom: 0 !important;
+      }
+    }
   }
 
   &__central-producer-siret {
