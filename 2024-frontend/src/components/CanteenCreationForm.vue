@@ -333,7 +333,8 @@ const saveInfos = (canteenInfos) => {
           </div>
         </div>
       </fieldset>
-      <div class="fr-py-0 fr-my-3w fr-mb-md-3w fr-mt-md-5w">
+      <fieldset class="fr-py-0 fr-my-3w fr-mb-md-3w">
+        <legend class="fr-h5 fr-mb-2w">6. Confirmation</legend>
         <DsfrCheckbox
           v-if="showCheckboxOneDelivery"
           v-model="form.oneDelivery"
@@ -350,7 +351,7 @@ const saveInfos = (canteenInfos) => {
           "
           :error-message="formatError(v$.manyDelivery)"
         />
-      </div>
+      </fieldset>
       <div class="fr-grid-row fr-grid-row--right fr-grid-row--top">
         <DsfrButton
           :disabled="isCreatingCanteen"
