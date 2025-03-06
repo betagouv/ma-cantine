@@ -1346,6 +1346,7 @@ class TestCanteenStatusApi(APITestCase):
         self.assertEqual(body["id"], canteen.id)
         self.assertEqual(body["name"], canteen.name)
         self.assertTrue(body["isManagedByUser"])
+        self.assertFalse(body["canBeClaimed"])
 
     @authenticate
     def test_check_siret_unmanaged(self):
@@ -1477,3 +1478,40 @@ class TestCanteenStatusApi(APITestCase):
         self.assertNotIn("city", body)
         self.assertNotIn("cityInseeCode", body)
         self.assertNotIn("department", body)
+
+    @authenticate
+    def test_check_siren_unite_legale_managed(self):
+        """
+        If checking a siren_unite_legale of a canteen that exists and I manage, give me canteen info
+        """
+        siren_unite_legale = "265662349"
+        canteen = CanteenFactory.create(siren_unite_legale=siren_unite_legale)
+        canteen.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("canteen_status_by_siren", kwargs={"siren": siren_unite_legale}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 1)
+        self.assertEqual(body[0]["id"], canteen.id)
+        self.assertEqual(body[0]["name"], canteen.name)
+        self.assertTrue(body[0]["isManagedByUser"])
+        self.assertFalse(body[0]["canBeClaimed"])
+
+    @authenticate
+    def test_check_siren_unite_legale_unmanaged(self):
+        """
+        If checking a siren_unite_legale of a canteen that exists but no one manages,
+        give me minimal canteen info and an indication that the canteen can be claimed
+        """
+        siren_unite_legale = "265662349"
+        canteen = CanteenFactory.create(siren_unite_legale=siren_unite_legale)
+        canteen.managers.clear()
+
+        response = self.client.get(reverse("canteen_status_by_siren", kwargs={"siren": siren_unite_legale}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 1)
+        self.assertEqual(body[0]["id"], canteen.id)
+        self.assertEqual(body[0]["name"], canteen.name)
+        self.assertFalse(body[0]["isManagedByUser"])
+        self.assertTrue(body[0]["canBeClaimed"])
