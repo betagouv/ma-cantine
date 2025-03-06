@@ -90,8 +90,17 @@ const showCentralProducerSiret = computed(() => form.productionType === "site_co
 const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
 )
-const showCheckboxOneDelivery = computed(() => Number(form.satelliteCanteensCount) === 1)
-const showCheckboxManyDelivery = computed(() => Number(form.satelliteCanteensCount) >= 250)
+const showCheckboxOneDelivery = computed(() => showSatelliteCanteensCount.value && Number(form.satelliteCanteensCount) === 1)
+const showCheckboxManyDelivery = computed(
+  () => showSatelliteCanteensCount.value && Number(form.satelliteCanteensCount) >= 250
+)
+const showConfirmationFieldset = computed(() => showCheckboxOneDelivery.value || showCheckboxManyDelivery)
+
+const resetDynamicInputValues = () => {
+  form.satelliteCanteensCount = null
+  form.centralProducerSiret = null
+  form.dailyMealCount = null
+}
 
 /* Fields verification */
 const { required, integer, minValue, requiredIf, sameAs, not, minLength, maxLength } = useValidators()
@@ -246,6 +255,7 @@ const saveInfos = (canteenInfos) => {
           v-model="form.productionType"
           :options="options.productionType"
           :error-message="formatError(v$.productionType)"
+          @change="resetDynamicInputValues"
         />
         <div v-if="showCentralProducerSiret" class="canteen-creation-form__central-producer-siret">
           <DsfrInputGroup
@@ -333,7 +343,7 @@ const saveInfos = (canteenInfos) => {
           </div>
         </div>
       </fieldset>
-      <fieldset class="fr-py-0 fr-my-3w fr-mb-md-3w">
+      <fieldset class="fr-py-0 fr-my-3w fr-mb-md-3w" v-if="showConfirmationFieldset">
         <legend class="fr-h5 fr-mb-2w">6. Confirmation</legend>
         <DsfrCheckbox
           v-if="showCheckboxOneDelivery"
