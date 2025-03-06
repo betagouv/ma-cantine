@@ -231,7 +231,6 @@ const saveInfos = (canteenInfos) => {
         <DsfrRadioButtonSet
           legend="Type d’établissement"
           v-model="form.economicModel"
-          :small="true"
           :options="options.economicModel"
           @change="verifyLineMinistry()"
           :error-message="formatError(v$.economicModel)"
@@ -239,14 +238,12 @@ const saveInfos = (canteenInfos) => {
         <DsfrRadioButtonSet
           legend="Mode de gestion"
           v-model="form.managementType"
-          :small="true"
           :options="options.managementType"
           :error-message="formatError(v$.managementType)"
         />
         <DsfrRadioButtonSet
           legend="Mode de production"
           v-model="form.productionType"
-          :small="true"
           :options="options.productionType"
           :error-message="formatError(v$.productionType)"
         />
