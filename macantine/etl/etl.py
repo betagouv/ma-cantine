@@ -12,12 +12,8 @@ from django.core.files.storage import default_storage
 from data.department_choices import Department
 from data.models import Canteen, Teledeclaration
 from data.region_choices import Region
-from macantine.etl.utils import (
-    CAMPAIGN_DATES,
-    common_members,
-    filter_empty_values,
-    format_geo_name,
-)
+from macantine.etl.utils import common_members, filter_empty_values, format_geo_name
+from macantine.utils import CAMPAIGN_DATES
 
 logger = logging.getLogger(__name__)
 
@@ -136,28 +132,7 @@ class TELEDECLARATIONS(EXTRACTOR):
         self.df = pd.DataFrame()
         for year in self.years:
             if year in CAMPAIGN_DATES.keys():
-                df_year = pd.DataFrame(
-                    Teledeclaration.objects.filter(
-                        year=year,
-                        creation_date__range=(
-                            CAMPAIGN_DATES[year]["start_date"],
-                            CAMPAIGN_DATES[year]["end_date"],
-                        ),
-                        status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-                        canteen_id__isnull=False,
-                        canteen_siret__isnull=False,
-                        diagnostic__value_total_ht__isnull=False,
-                        diagnostic__value_bio_ht__isnull=False,
-                    )
-                    .exclude(
-                        canteen__deletion_date__range=(
-                            CAMPAIGN_DATES[year]["start_date"],
-                            CAMPAIGN_DATES[year]["end_date"],
-                        )
-                    )
-                    .exclude(canteen_siret="")
-                    .values()
-                )
+                df_year = pd.DataFrame(Teledeclaration.objects.for_stat(year).values())
                 self.df = pd.concat([self.df, df_year])
             else:
                 logger.warning(f"TD dataset does not exist for year : {year}")

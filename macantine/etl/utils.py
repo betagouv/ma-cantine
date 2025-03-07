@@ -8,7 +8,6 @@ import pandas as pd
 import requests
 
 from data.models import Sector, Teledeclaration
-from macantine.utils import CAMPAIGN_DATES
 
 logger = logging.getLogger(__name__)
 
@@ -114,14 +113,7 @@ def map_canteens_td(year):
     Populate mapper for a given year. The mapper indicates if one canteen has participated in campaign
     """
     # Check and fetch Teledeclaration data from the database
-    tds = Teledeclaration.objects.filter(
-        year=year,
-        creation_date__range=(
-            CAMPAIGN_DATES[year]["start_date"],
-            CAMPAIGN_DATES[year]["end_date"],
-        ),
-        status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-    ).values("canteen_id", "declared_data")
+    tds = Teledeclaration.objects.submitted_for_year(year).values("canteen_id", "declared_data")
 
     # Populate the mapper for the given year
     participation = []
@@ -139,7 +131,7 @@ def format_td_sector_column(row: pd.Series, sector_col_name: str):
     If there are multiple sectors, we
     """
     x = row[sector_col_name]
-    if type(x) == list:
+    if type(x) is list:
         if len(x) > 1:
             return "Secteurs multiples", "Catégories multiples"
         elif len(x) == 1:
@@ -268,7 +260,7 @@ def format_list_to_single_value(values, col_name) -> str:
     Splitting sectors information into two new columns, one for the sector, one for the category
     If there are multiple sectors, we
     """
-    if type(values) == list:
+    if type(values) is list:
         if len(values) > 1:
             return f"{col_name} multiples"
         elif len(values) == 1:

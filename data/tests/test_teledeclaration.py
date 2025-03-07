@@ -15,7 +15,7 @@ mocked_campaign_dates = {
 }
 
 
-class DiagnosticQuerySetTest(TestCase):
+class TeledeclarationQuerySetTest(TestCase):
     def setUp(self):
         """
         Set up mock data for testing.
@@ -39,7 +39,9 @@ class DiagnosticQuerySetTest(TestCase):
             value_total_ht=1000.00,
             value_bio_ht=200.00,
         )
-        Teledeclaration.create_from_diagnostic(self.valid_canteen_diagnostic, applicant=UserFactory.create())
+        self.valid_canteen_td = Teledeclaration.create_from_diagnostic(
+            self.valid_canteen_diagnostic, applicant=UserFactory.create()
+        )
 
         self.invalid_canteen_diagnostic = Diagnostic.objects.create(
             year=year_data,
@@ -48,7 +50,9 @@ class DiagnosticQuerySetTest(TestCase):
             value_total_ht=1000.00,
             value_bio_ht=200.00,
         )
-        Teledeclaration.create_from_diagnostic(self.invalid_canteen_diagnostic, applicant=UserFactory.create())
+        self.invalid_canteen_td = Teledeclaration.create_from_diagnostic(
+            self.invalid_canteen_diagnostic, applicant=UserFactory.create()
+        )
 
         self.deleted_canteen_diagnostic = Diagnostic.objects.create(
             year=year_data,
@@ -57,20 +61,22 @@ class DiagnosticQuerySetTest(TestCase):
             value_total_ht=1000.00,
             value_bio_ht=200.00,
         )
-        Teledeclaration.create_from_diagnostic(self.deleted_canteen_diagnostic, applicant=UserFactory.create())
+        self.deleted_canteen_td = Teledeclaration.create_from_diagnostic(
+            self.deleted_canteen_diagnostic, applicant=UserFactory.create()
+        )
 
-    def test_td_submitted_for_year(self):
-        with patch("data.models.diagnostic.CAMPAIGN_DATES", mocked_campaign_dates):
-            diagnostics = Diagnostic.objects.td_submitted_for_year(year_data)
-        self.assertEqual(diagnostics.count(), 3)
-        self.assertIn(self.valid_canteen_diagnostic, diagnostics)
-        self.assertIn(self.invalid_canteen_diagnostic, diagnostics)
-        self.assertIn(self.deleted_canteen_diagnostic, diagnostics)
+    def test_submitted_for_year(self):
+        with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
+            teledeclarations = Teledeclaration.objects.submitted_for_year(year_data)
+        self.assertEqual(teledeclarations.count(), 3)
+        self.assertIn(self.valid_canteen_td, teledeclarations)
+        self.assertIn(self.invalid_canteen_td, teledeclarations)
+        self.assertIn(self.deleted_canteen_td, teledeclarations)
 
     def test_for_stat(self):
-        with patch("data.models.diagnostic.CAMPAIGN_DATES", mocked_campaign_dates):
-            diagnostics = Diagnostic.objects.for_stat(year_data)
-        self.assertEqual(diagnostics.count(), 1)
-        self.assertIn(self.valid_canteen_diagnostic, diagnostics)
-        self.assertNotIn(self.invalid_canteen_diagnostic, diagnostics)  # canteen without siret
-        self.assertNotIn(self.deleted_canteen_diagnostic, diagnostics)  # canteen deleted
+        with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
+            teledeclarations = Teledeclaration.objects.for_stat(year_data)
+        self.assertEqual(teledeclarations.count(), 1)
+        self.assertIn(self.valid_canteen_td, teledeclarations)
+        self.assertNotIn(self.invalid_canteen_td, teledeclarations)  # canteen without siret
+        self.assertNotIn(self.deleted_canteen_td, teledeclarations)  # canteen deleted
