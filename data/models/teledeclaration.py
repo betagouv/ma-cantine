@@ -35,23 +35,31 @@ class TeledeclarationQuerySet(models.QuerySet):
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
         )
 
-    def for_stat(self, year):
+    def canteen_for_stat(self, year):
         return (
-            self.select_related("canteen", "diagnostic")
-            .submitted_for_year(year)
+            self.select_related("canteen")
             .filter(
                 canteen_id__isnull=False,
                 canteen_siret__isnull=False,
-                diagnostic__value_total_ht__isnull=False,
-                diagnostic__value_bio_ht__isnull=False,
             )
+            .exclude(canteen_siret="")
             .exclude(
                 canteen__deletion_date__range=(
                     CAMPAIGN_DATES[year]["start_date"],
                     CAMPAIGN_DATES[year]["end_date"],
                 )
             )
-            .exclude(canteen_siret="")
+        )
+
+    def for_stat(self, year):
+        return (
+            self.canteen_for_stat(year)
+            .submitted_for_year(year)
+            .select_related("diagnostic")
+            .filter(
+                diagnostic__value_total_ht__isnull=False,
+                diagnostic__value_bio_ht__isnull=False,
+            )
         )
 
 
