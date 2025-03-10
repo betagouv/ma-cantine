@@ -555,6 +555,10 @@ const vue3Routes = [
     name: "WasteMeasurements",
   },
   {
+    path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
+    name: "WasteMeasurementTunnel",
+  },
+  {
     path: "/importer-des-donnees",
     name: "DiagnosticsImporter",
     meta: {
@@ -564,8 +568,12 @@ const vue3Routes = [
     sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
-    path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
-    name: "WasteMeasurementTunnel",
+    path: "/developpement-et-apis-2",
+    name: "DeveloperAPI",
+    meta: {
+      title: "Développement et APIs",
+    },
+    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/mentions-legales",

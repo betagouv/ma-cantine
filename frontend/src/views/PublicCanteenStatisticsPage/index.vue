@@ -305,7 +305,6 @@ const yearsList = Array.from(new Array(yearLast - 2020 + 1), (x, i) => i + 2020)
   key: year,
   text: `données ${year} (télédéclarées en ${year + 1})`,
 }))
-console.log(yearsList)
 
 export default {
   name: "PublicCanteenStatisticsPage",
