@@ -47,7 +47,7 @@ const joinCanteen = () => {
     .then(() => {
       store.notify({
         title: "Demande envoyée",
-        message: `Nous avons contacté l'équipe de la cantine ${props.name}, ces derniers reviendrons vers vous pour accepter ou non votre demande.`,
+        message: `Nous avons contacté l'équipe de la cantine ${props.name}. Ces derniers reviendront vers vous pour accepter ou non votre demande.`,
       })
       joinLabel.value = "Demande envoyée"
     })
@@ -126,11 +126,15 @@ const joinCanteen = () => {
     @media (min-width: 576px) {
       flex-direction: row;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
     }
 
     p {
       flex-grow: 1;
+    }
+
+    button {
+      flex-shrink: 0;
     }
   }
 }

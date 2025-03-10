@@ -5,7 +5,7 @@ import canteensService from "@/services/canteens.js"
 import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
 
 /* Props */
-defineProps(["error"])
+const props = defineProps(["error"])
 
 /* Store */
 const store = useRootStore()
@@ -25,21 +25,20 @@ const initFields = () => {
 initFields()
 
 /* Search */
-const search = ref()
-const showEmptyResult = ref(false)
-const hasSearched = ref(false)
+const search = ref("")
+const errorMessage = ref(props.error || "")
 const hasSelected = ref(false)
 const searchSiret = () => {
   const cleanSiret = search.value.replaceAll(" ", "")
   if (cleanSiret.length === 0) return
-  hasSearched.value = true
+  errorMessage.value = ""
   canteensService
     .verifySiret(cleanSiret)
     .then((response) => {
       switch (true) {
         case response.length === 0:
           canteen.founded = false
-          showEmptyResult.value = true
+          errorMessage.value = `D’après l'annuaire-des-entreprises le numéro SIRET « ${cleanSiret} » ne correspond à aucun établissement`
           break
         case !response.id:
           canteen.status = "can-be-created"
@@ -64,7 +63,7 @@ const searchSiret = () => {
 }
 
 const verifyIfEmtpy = () => {
-  if (search.value.length === 0 && hasSearched.value) showEmptyResult.value = false
+  if (search.value.length === 0) errorMessage.value = ""
 }
 
 const saveCanteenInfos = (response) => {
@@ -87,7 +86,6 @@ const selectCanteen = () => {
 const unselectCanteen = () => {
   hasSelected.value = false
   search.value = ""
-  hasSearched.value = false
   initFields()
   emit("select", canteen)
 }
@@ -95,13 +93,13 @@ const unselectCanteen = () => {
 
 <template>
   <div class="canteen-creation-siret">
-    <p class="fr-mb-0">Mon établissement</p>
+    <p class="fr-mb-0">Mon établissement *</p>
     <p class="fr-hint-text">
       Nous utilisons le site
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">annuaire-des-entreprises</a>
       afin de retrouver les informations de votre établissement
     </p>
-    <DsfrInputGroup :error-message="error">
+    <DsfrInputGroup :error-message="errorMessage">
       <template #default>
         <DsfrSearchBar
           v-if="!hasSelected"
@@ -128,12 +126,6 @@ const unselectCanteen = () => {
     <p v-if="canteen.founded && !hasSelected" class="fr-text--xs fr-mb-0 fr-mt-1w ma-cantine--text-center">
       Ce n’est pas le bon établissement ? Refaites une recherche via le bon numéro SIRET, ou trouvez l’information dans
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
-    </p>
-    <p v-if="showEmptyResult" class="fr-text--xs fr-mb-0 ma-cantine--text-center">
-      D’après
-      <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
-      <br />
-      le numéro SIRET "{{ search }}" ne correspond à aucun établissement
     </p>
     <DsfrButton
       v-if="hasSelected"

@@ -90,11 +90,8 @@ const showCentralProducerSiret = computed(() => form.productionType === "site_co
 const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
 )
-const showCheckboxOneDelivery = computed(() => showSatelliteCanteensCount.value && Number(form.satelliteCanteensCount) === 1)
-const showCheckboxManyDelivery = computed(
-  () => showSatelliteCanteensCount.value && Number(form.satelliteCanteensCount) >= 250
-)
-const showConfirmationFieldset = computed(() => showCheckboxOneDelivery.value || showCheckboxManyDelivery)
+const showCheckboxOneDelivery = computed(() => Number(form.satelliteCanteensCount) === 1)
+const showCheckboxManyDelivery = computed(() => Number(form.satelliteCanteensCount) >= 250)
 
 const resetDynamicInputValues = () => {
   form.satelliteCanteensCount = null
@@ -103,7 +100,7 @@ const resetDynamicInputValues = () => {
 }
 
 /* Fields verification */
-const { required, integer, minValue, requiredIf, sameAs, not, minLength, maxLength } = useValidators()
+const { required, integer, minValue, requiredIf, minLength, maxLength } = useValidators()
 const dailyMealRequired = computed(() => form.productionType !== "central")
 const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
 const rules = {
@@ -121,12 +118,12 @@ const rules = {
     minValue: minValue(0),
   },
   yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
-  satelliteCanteensCount: { required: requiredIf(showCentralProducerSiret), integer, minValue: minValue(0) },
+  satelliteCanteensCount: { required: requiredIf(showSatelliteCanteensCount), integer, minValue: minValue(0) },
   centralProducerSiret: {
     required: requiredIf(showCentralProducerSiret),
     notSameSiret: helpers.withMessage(
       "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine",
-      not(sameAs(form.siret))
+      (value) => value !== form.siret
     ),
     integer,
     minLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", minLength(14)),
@@ -149,6 +146,7 @@ const validateForm = () => {
 /* Send Form */
 const saveAndCreate = ref(false)
 const isCreatingCanteen = ref(false)
+const forceRerender = ref(0)
 
 const saveCanteen = (saveAndCreateValue = false) => {
   saveAndCreate.value = saveAndCreateValue
@@ -188,6 +186,7 @@ const addNewCanteen = (name) => {
   store.notify({ message: `Cantine ${name} créée avec succès.` })
   isCreatingCanteen.value = false
   saveAndCreate.value = false
+  forceRerender.value++
   initFields()
   window.scrollTo(0, 0)
   v$.value.$reset()
@@ -204,7 +203,7 @@ const getSectorsID = (activitiesSelected) => {
 
 /* SIRET Informations */
 const saveInfos = (canteenInfos) => {
-  form.siret = canteenInfos.siret
+  form.siret = canteenInfos.siret.replace(" ", "")
   form.name = canteenInfos.name
   form.postalCode = canteenInfos.postalCode
   form.city = canteenInfos.city
@@ -221,6 +220,7 @@ const saveInfos = (canteenInfos) => {
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
         <CanteenCreationSiret
+          :key="forceRerender"
           @select="(canteenSelected) => saveInfos(canteenSelected)"
           :error="formatError(v$.siret)"
         />
@@ -229,7 +229,7 @@ const saveInfos = (canteenInfos) => {
         <legend class="fr-h5 fr-mb-2w">2. Coordonnées</legend>
         <DsfrInputGroup
           v-model="form.name"
-          label="Nom de la cantine"
+          label="Nom de la cantine *"
           :label-visible="true"
           hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
           :error-message="formatError(v$.name)"
@@ -238,20 +238,20 @@ const saveInfos = (canteenInfos) => {
       <fieldset class="fr-mb-4w canteen-creation-form__caracteristics">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
         <DsfrRadioButtonSet
-          legend="Type d’établissement"
+          legend="Type d’établissement *"
           v-model="form.economicModel"
           :options="options.economicModel"
           @change="verifyLineMinistry()"
           :error-message="formatError(v$.economicModel)"
         />
         <DsfrRadioButtonSet
-          legend="Mode de gestion"
+          legend="Mode de gestion *"
           v-model="form.managementType"
           :options="options.managementType"
           :error-message="formatError(v$.managementType)"
         />
         <DsfrRadioButtonSet
-          legend="Mode de production"
+          legend="Mode de production *"
           v-model="form.productionType"
           :options="options.productionType"
           :error-message="formatError(v$.productionType)"
@@ -260,7 +260,7 @@ const saveInfos = (canteenInfos) => {
         <div v-if="showCentralProducerSiret" class="canteen-creation-form__central-producer-siret">
           <DsfrInputGroup
             v-model="form.centralProducerSiret"
-            label="SIRET du livreur"
+            label="SIRET du livreur *"
             :label-visible="true"
             :error-message="formatError(v$.centralProducerSiret)"
           />
@@ -273,7 +273,7 @@ const saveInfos = (canteenInfos) => {
           v-if="showSatelliteCanteensCount"
           v-model="form.satelliteCanteensCount"
           type="number"
-          label="Nombre de cuisine satellite"
+          label="Nombre de cuisine satellite *"
           hint="Nombre de cantines/lieux de service à qui je fournis des repas"
           :label-visible="true"
           :error-message="formatError(v$.satelliteCanteensCount)"
@@ -283,7 +283,7 @@ const saveInfos = (canteenInfos) => {
         <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
         <DsfrSelect
           v-model="form.sectorCategory"
-          label="Catégorie de secteur"
+          label="Catégorie de secteur *"
           labelVisible
           :options="sectorsCategoryOptions"
           @change="changeCategory()"
@@ -291,12 +291,13 @@ const saveInfos = (canteenInfos) => {
         />
         <DsfrMultiselect
           v-model="form.sectorActivity"
-          label="Secteur d’activité"
+          label="Secteur d’activité *"
           labelVisible
           :options="sectorsActivityOptions"
           id-key="index"
           label-key="name"
           search
+          selectAll
           :filtering-keys="['name']"
           @change="verifyLineMinistry()"
           :error-message="formatError(v$.sectorActivity)"
@@ -308,7 +309,7 @@ const saveInfos = (canteenInfos) => {
         <DsfrSelect
           v-if="showMinistrySelector"
           v-model="form.ministry"
-          label="Administration générale de tutelle (ministère ou ATE)"
+          label="Administration générale de tutelle (ministère ou ATE) *"
           description="Hors fonction publique territoriale et hospitalière"
           labelVisible
           :options="ministryOptions"
@@ -324,7 +325,7 @@ const saveInfos = (canteenInfos) => {
                 hide: hideDailyMealCount,
               }"
               v-model="form.dailyMealCount"
-              label="Par jour"
+              :label="hideDailyMealCount ? 'Par jour' : 'Par jour *'"
               :label-visible="true"
               :disabled="hideDailyMealCount"
               :hint="hideDailyMealCount ? 'Concerne uniquement les cantines recevant des convives' : ''"
@@ -335,7 +336,7 @@ const saveInfos = (canteenInfos) => {
           <div class="fr-col-6">
             <DsfrInputGroup
               v-model="form.yearlyMealCount"
-              label="Par an"
+              label="Par an *"
               :label-visible="true"
               type="number"
               :error-message="formatError(v$.yearlyMealCount)"
@@ -343,7 +344,7 @@ const saveInfos = (canteenInfos) => {
           </div>
         </div>
       </fieldset>
-      <fieldset class="fr-py-0 fr-my-3w fr-mb-md-3w" v-if="showConfirmationFieldset">
+      <fieldset v-if="showCheckboxOneDelivery || showCheckboxManyDelivery" class="fr-py-0 fr-my-3w fr-mb-md-3w">
         <legend class="fr-h5 fr-mb-2w">6. Confirmation</legend>
         <DsfrCheckbox
           v-if="showCheckboxOneDelivery"
