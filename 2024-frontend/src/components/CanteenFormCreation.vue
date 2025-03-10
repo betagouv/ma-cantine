@@ -12,6 +12,7 @@ import canteensService from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
 import CanteenFormEstablishement from "@/components/CanteenFormEstablishement.vue"
 
+import CanteenFormDetails from "@/components/CanteenFormDetails.vue"
 
 /* Router and Store */
 const router = useRouter()
@@ -202,14 +203,14 @@ const getSectorsID = (activitiesSelected) => {
   return names
 }
 
-/* SIRET Informations */
-const saveInfos = (canteenInfos) => {
-  form.siret = canteenInfos.siret.replace(" ", "")
-  form.name = canteenInfos.name
-  form.postalCode = canteenInfos.postalCode
-  form.city = canteenInfos.city
-  form.cityInseeCode = canteenInfos.cityInseeCode
-  form.department = canteenInfos.department
+/* Save form fields new values */
+const updateFormFields = (canteenInfos) => {
+  form.siret = canteenInfos.siret ? canteenInfos.siret.replace(" ", "") : form.siret
+  form.name = canteenInfos.name || form.name
+  form.postalCode = canteenInfos.postalCode || form.postalCode
+  form.city = canteenInfos.city || form.city
+  form.cityInseeCode = canteenInfos.cityInseeCode || form.cityInseeCode
+  form.department = canteenInfos.department || form.department
 }
 </script>
 
