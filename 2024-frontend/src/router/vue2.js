@@ -20,10 +20,6 @@ const vue2routes = [
     name: "ManagementPage",
   },
   {
-    path: "/developpement-et-apis",
-    name: "DeveloperPage",
-  },
-  {
     path: "/mes-achats",
     name: "PurchasesHome",
   },

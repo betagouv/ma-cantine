@@ -1,6 +1,7 @@
 import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel.vue"
-import ImportSelection from "@/views/ImportSelection.vue"
 import WasteMeasurements from "@/views/WasteMeasurements.vue"
+import ImportSelection from "@/views/ImportSelection.vue"
+import DeveloperAPI from "@/views/DeveloperAPI.vue"
 import LegalNotices from "@/views/LegalNotices.vue"
 import AccessibilityDeclaration from "@/views/AccessibilityDeclaration.vue"
 import CGU from "@/views/CGU.vue"
@@ -22,15 +23,6 @@ const vue3routes = [
     },
   },
   {
-    path: "/importer-des-donnees",
-    name: "ImportSelection",
-    component: ImportSelection,
-    meta: {
-      title: "Importer des données",
-      authenticationRequired: true,
-    },
-  },
-  {
     path: "/gaspillage-alimentaire/:canteenUrlComponent",
     name: "WasteMeasurements",
     component: WasteMeasurements,
@@ -42,6 +34,23 @@ const vue3routes = [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
         { to: { name: "DashboardManager" }, useCanteenName: true },
       ],
+    },
+  },
+  {
+    path: "/importer-des-donnees",
+    name: "ImportSelection",
+    component: ImportSelection,
+    meta: {
+      title: "Importer des données",
+      authenticationRequired: true,
+    },
+  },
+  {
+    path: "/developpement-et-apis",
+    name: "DeveloperAPI",
+    component: DeveloperAPI,
+    meta: {
+      title: "Développement et APIs",
     },
   },
   {
