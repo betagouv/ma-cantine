@@ -10,6 +10,11 @@
             <span>SIRET</span> : {{ canteen.siret }}
         </li>
     {% endif %}
+    {% if canteen.siren_unite_legale %}
+        <li>
+            <span>SIREN de l'unité légale</span> : {{ canteen.siren_unite_legale }}
+        </li>
+    {% endif %}
     {% if canteen.production_type %}
         <li>
             <span>Mode de production</span> : {{ canteen.production_type }}
