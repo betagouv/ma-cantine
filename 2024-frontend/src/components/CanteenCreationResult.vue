@@ -126,11 +126,15 @@ const joinCanteen = () => {
     @media (min-width: 576px) {
       flex-direction: row;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
     }
 
     p {
       flex-grow: 1;
+    }
+
+    button {
+      flex-shrink: 0;
     }
   }
 }
