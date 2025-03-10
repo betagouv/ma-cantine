@@ -7,11 +7,11 @@ import { useVuelidate } from "@vuelidate/core"
 import { useRootStore } from "@/stores/root"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
+import { provide } from "vue"
 import sectorsService from "@/services/sectors"
 import canteensService from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
 import CanteenFormEstablishement from "@/components/CanteenFormEstablishement.vue"
-
 import CanteenFormDetails from "@/components/CanteenFormDetails.vue"
 
 /* Router and Store */
@@ -204,7 +204,7 @@ const getSectorsID = (activitiesSelected) => {
 }
 
 /* Save form fields new values */
-const updateFormFields = (canteenInfos) => {
+const updateForm = (canteenInfos) => {
   form.siret = canteenInfos.siret ? canteenInfos.siret.replace(" ", "") : form.siret
   form.name = canteenInfos.name || form.name
   form.postalCode = canteenInfos.postalCode || form.postalCode
@@ -212,6 +212,9 @@ const updateFormFields = (canteenInfos) => {
   form.cityInseeCode = canteenInfos.cityInseeCode || form.cityInseeCode
   form.department = canteenInfos.department || form.department
 }
+
+/* Provider */
+provide("form", { form, v$, updateForm })
 </script>
 
 <template>
@@ -219,8 +222,8 @@ const updateFormFields = (canteenInfos) => {
     class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
-      <CanteenFormEstablishement :key="forceRerender" :error="formatError(v$.siret)" @select="updateFormFields" />
-      <CanteenFormDetails :key="forceRerender" :error="formatError(v$.name)" @update="updateFormFields" />
+      <CanteenFormEstablishement :key="forceRerender" :error="formatError(v$.siret)" @select="updateForm" />
+      <CanteenFormDetails />
       <fieldset class="fr-mb-4w canteen-creation-form__caracteristics">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
         <DsfrRadioButtonSet

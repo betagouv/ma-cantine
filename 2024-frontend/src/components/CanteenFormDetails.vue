@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from "vue"
-defineProps(["error"])
-const name = ref("")
+import { inject, ref } from "vue"
+import { formatError } from "@/utils.js"
+const { updateForm, v$ } = inject("form")
+const name = ref()
 </script>
 
 <template>
@@ -12,8 +13,8 @@ const name = ref("")
       label="Nom de la cantine *"
       hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
       :label-visible="true"
-      :error-message="error"
-      @change="$emit('update', { name: name })"
+      :error-message="formatError(v$.name)"
+      @update:modelValue="updateForm({ name })"
     />
   </fieldset>
 </template>
