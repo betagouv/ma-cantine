@@ -1,6 +1,7 @@
 <script setup>
 import { useRoute } from "vue-router"
 import { useRootStore } from "@/stores/root"
+import profileService from "@/services/profile"
 const route = useRoute()
 
 /* Store */
@@ -10,8 +11,10 @@ const store = useRootStore()
 const env = window.ENVIRONMENT
 
 const toggleDevMode = (value) => {
-  console.log(value)
-  // TODO
+  const payload = { isDev: value }
+  profileService.updateProfile(store.loggedUser.id, payload).then(() => {
+    store.loggedUser.isDev = value
+  })
 }
 </script>
 
