@@ -46,7 +46,7 @@ const vue3routes = [
     },
   },
   {
-    path: "/developpement-et-apis-2",
+    path: "/developpement-et-apis",
     name: "DeveloperAPI",
     component: DeveloperAPI,
     meta: {

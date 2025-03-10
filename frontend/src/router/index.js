@@ -47,7 +47,6 @@ import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
 import FaqPage from "@/views/FaqPage"
 import SiteMap from "@/views/SiteMap"
-import DeveloperPage from "@/views/DeveloperPage"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
 import TerritoryCanteens from "@/views/TerritoryCanteens"
@@ -488,15 +487,6 @@ const routes = [
     },
   },
   {
-    path: "/developpement-et-apis/",
-    name: "DeveloperPage",
-    component: DeveloperPage,
-    meta: {
-      title: "Développement et APIs",
-    },
-    sitemapGroup: Constants.SitemapGroups.ACTION,
-  },
-  {
     path: "/statistiques-plateforme/",
     name: "ImpactMeasuresPage",
     component: ImpactMeasuresPage,
@@ -568,7 +558,7 @@ const vue3Routes = [
     sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
-    path: "/developpement-et-apis-2",
+    path: "/developpement-et-apis",
     name: "DeveloperAPI",
     meta: {
       title: "Développement et APIs",
@@ -659,7 +649,7 @@ function chooseAuthorisedRoute(to, from, next) {
       })
   } else {
     if (to.meta.home && store.state.loggedUser && !store.state.loggedUser.isDev) next({ name: "ManagementPage" })
-    else if (to.meta.home && store.state.loggedUser && store.state.loggedUser.isDev) next({ name: "DeveloperPage" })
+    else if (to.meta.home && store.state.loggedUser && store.state.loggedUser.isDev) next({ name: "DeveloperAPI" })
     else if (to.meta.home) next({ name: "LandingPage" })
     else if (!to.meta.authenticationRequired || store.state.loggedUser) next()
     else window.location.href = `/s-identifier?next=${to.path}`
