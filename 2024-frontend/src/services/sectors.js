@@ -21,16 +21,21 @@ const getCategories = (sectors) => {
 }
 
 const getActivities = (sectors) => {
-  const sectorActivities = []
+  const activities = []
   for (let i = 0; i < sectors.length; i++) {
     const currentSector = sectors[i]
     const name = currentSector.name
     const id = currentSector.id
     const hasLineMinistry = currentSector.hasLineMinistry
-    const index = sectorActivities.findIndex((sector) => sector.name === name)
-    if (index < 0) sectorActivities.push({ index: i, id, name, hasLineMinistry })
+    const index = activities.findIndex((sector) => sector.name === name)
+    if (index < 0) activities.push({ index: i, id, name, hasLineMinistry })
   }
-  return sectorActivities
+  const activitiesSortedAlphabetical = activities.sort((activityBefore, activityAfter) => {
+    if (activityBefore.name < activityAfter.name) return -1
+    else if (activityBefore.name > activityAfter.name) return 1
+    else return 0
+  })
+  return activitiesSortedAlphabetical
 }
 
 export default { getSectors, getMinistries, getCategories, getActivities }
