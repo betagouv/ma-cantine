@@ -118,7 +118,7 @@ const rules = {
     minValue: minValue(0),
   },
   yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
-  satelliteCanteensCount: { required: requiredIf(showCentralProducerSiret), integer, minValue: minValue(0) },
+  satelliteCanteensCount: { required: requiredIf(showSatelliteCanteensCount), integer, minValue: minValue(0) },
   centralProducerSiret: {
     required: requiredIf(showCentralProducerSiret),
     notSameSiret: helpers.withMessage(
