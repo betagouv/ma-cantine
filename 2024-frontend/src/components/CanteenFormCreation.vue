@@ -10,7 +10,8 @@ import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import canteensService from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
-import CanteenCreationSiret from "@/components/CanteenCreationSiret.vue"
+import CanteenFormEstablishement from "@/components/CanteenFormEstablishement.vue"
+
 
 /* Router and Store */
 const router = useRouter()
@@ -217,24 +218,8 @@ const saveInfos = (canteenInfos) => {
     class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
-      <fieldset class="fr-mb-4w">
-        <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
-        <CanteenCreationSiret
-          :key="forceRerender"
-          @select="(canteenSelected) => saveInfos(canteenSelected)"
-          :error="formatError(v$.siret)"
-        />
-      </fieldset>
-      <fieldset class="fr-mb-4w">
-        <legend class="fr-h5 fr-mb-2w">2. Coordonnées</legend>
-        <DsfrInputGroup
-          v-model="form.name"
-          label="Nom de la cantine *"
-          :label-visible="true"
-          hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
-          :error-message="formatError(v$.name)"
-        />
-      </fieldset>
+      <CanteenFormEstablishement :key="forceRerender" :error="formatError(v$.siret)" @select="updateFormFields" />
+      <CanteenFormDetails :key="forceRerender" :error="formatError(v$.name)" @update="updateFormFields" />
       <fieldset class="fr-mb-4w canteen-creation-form__caracteristics">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
         <DsfrRadioButtonSet

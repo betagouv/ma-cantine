@@ -2,7 +2,7 @@
 import { ref, reactive } from "vue"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens.js"
-import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
+import CanteenFormEstablishementCard from "@/components/CanteenFormEstablishementCard.vue"
 
 /* Props */
 const props = defineProps(["error"])
@@ -27,6 +27,7 @@ initFields()
 /* Search */
 const search = ref("")
 const errorMessage = ref(props.error || "")
+console.log("errorMessage", errorMessage)
 const hasSelected = ref(false)
 const searchSiret = () => {
   const cleanSiret = search.value.replaceAll(" ", "")
@@ -92,7 +93,9 @@ const unselectCanteen = () => {
 </script>
 
 <template>
-  <div class="canteen-creation-siret">
+  <fieldset class="fr-mb-4w">
+    <pre>{{ errorMessage }}</pre>
+    <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
     <p class="fr-mb-0">Mon établissement *</p>
     <p class="fr-hint-text">
       Nous utilisons le site
@@ -113,7 +116,7 @@ const unselectCanteen = () => {
         />
       </template>
     </DsfrInputGroup>
-    <CanteenCreationResult
+    <CanteenFormEstablishementCard
       v-if="canteen.founded"
       :name="canteen.name"
       :siret="canteen.siret"
@@ -133,14 +136,14 @@ const unselectCanteen = () => {
       label="Rechercher un nouvel établissement"
       icon="fr-icon-search-line"
       icon-right
-      class="canteen-creation-siret__back fr-mt-1w"
+      class="canteen-form-search__back fr-mt-1w"
       @click="unselectCanteen()"
     />
-  </div>
+  </fieldset>
 </template>
 
 <style lang="scss">
-.canteen-creation-siret {
+.canteen-form-search {
   &__back {
     width: 100%;
     justify-content: center;
