@@ -12,6 +12,7 @@ from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
 from data.models import AuthenticationMethodHistoricalRecords, Canteen, Diagnostic
+from macantine.utils import CAMPAIGN_DATES
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,45 @@ class CustomJSONEncoder(DjangoJSONEncoder):
         if isinstance(o, Decimal):
             return float(o)
         return super(CustomJSONEncoder, self).default(o)
+
+
+class TeledeclarationQuerySet(models.QuerySet):
+    def submitted_for_year(self, year):
+        return self.filter(
+            year=year,
+            creation_date__range=(
+                CAMPAIGN_DATES[year]["start_date"],
+                CAMPAIGN_DATES[year]["end_date"],
+            ),
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+        )
+
+    def canteen_for_stat(self, year):
+        return (
+            self.select_related("canteen")
+            .filter(
+                canteen_id__isnull=False,
+                canteen_siret__isnull=False,
+            )
+            .exclude(canteen_siret="")
+            .exclude(
+                canteen__deletion_date__range=(
+                    CAMPAIGN_DATES[year]["start_date"],
+                    CAMPAIGN_DATES[year]["end_date"],
+                )
+            )
+        )
+
+    def for_stat(self, year):
+        return (
+            self.canteen_for_stat(year)
+            .submitted_for_year(year)
+            .select_related("diagnostic")
+            .filter(
+                diagnostic__value_total_ht__isnull=False,
+                diagnostic__value_bio_ht__isnull=False,
+            )
+        )
 
 
 class Teledeclaration(models.Model):
@@ -49,6 +89,8 @@ class Teledeclaration(models.Model):
             "Cuisine centrale déclarant toutes les données EGalim pour ses cuisines satellites",
         )
         SITE = "SITE", "Cantine déclarant ses propres données"
+
+    objects = models.Manager.from_queryset(TeledeclarationQuerySet)()
 
     # Fields that pertain to the teledeclaration. These fields
     # will not change and should contain all information to be
