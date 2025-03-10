@@ -1,6 +1,8 @@
 <script setup>
 import { inject, ref } from "vue"
 import { formatError } from "@/utils.js"
+
+/* Setup */
 const { updateForm, v$ } = inject("form")
 const name = ref()
 </script>
