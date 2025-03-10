@@ -100,7 +100,7 @@ const resetDynamicInputValues = () => {
 }
 
 /* Fields verification */
-const { required, integer, minValue, requiredIf, sameAs, not, minLength, maxLength } = useValidators()
+const { required, integer, minValue, requiredIf, minLength, maxLength } = useValidators()
 const dailyMealRequired = computed(() => form.productionType !== "central")
 const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
 const rules = {
@@ -123,7 +123,7 @@ const rules = {
     required: requiredIf(showCentralProducerSiret),
     notSameSiret: helpers.withMessage(
       "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine",
-      not(sameAs(form.siret))
+      (value) => value !== form.siret
     ),
     integer,
     minLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", minLength(14)),
@@ -203,7 +203,7 @@ const getSectorsID = (activitiesSelected) => {
 
 /* SIRET Informations */
 const saveInfos = (canteenInfos) => {
-  form.siret = canteenInfos.siret
+  form.siret = canteenInfos.siret.replace(" ", "")
   form.name = canteenInfos.name
   form.postalCode = canteenInfos.postalCode
   form.city = canteenInfos.city
