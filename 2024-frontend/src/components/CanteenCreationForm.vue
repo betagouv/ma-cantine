@@ -146,6 +146,7 @@ const validateForm = () => {
 /* Send Form */
 const saveAndCreate = ref(false)
 const isCreatingCanteen = ref(false)
+const forceRerender = ref(0)
 
 const saveCanteen = (saveAndCreateValue = false) => {
   saveAndCreate.value = saveAndCreateValue
@@ -185,6 +186,7 @@ const addNewCanteen = (name) => {
   store.notify({ message: `Cantine ${name} créée avec succès.` })
   isCreatingCanteen.value = false
   saveAndCreate.value = false
+  forceRerender.value++
   initFields()
   window.scrollTo(0, 0)
   v$.value.$reset()
@@ -218,6 +220,7 @@ const saveInfos = (canteenInfos) => {
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
         <CanteenCreationSiret
+          :key="forceRerender"
           @select="(canteenSelected) => saveInfos(canteenSelected)"
           :error="formatError(v$.siret)"
         />
