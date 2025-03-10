@@ -47,7 +47,7 @@ const joinCanteen = () => {
     .then(() => {
       store.notify({
         title: "Demande envoyée",
-        message: `Nous avons contacté l'équipe de la cantine ${props.name}, ces derniers reviendrons vers vous pour accepter ou non votre demande.`,
+        message: `Nous avons contacté l'équipe de la cantine ${props.name}. Ces derniers reviendront vers vous pour accepter ou non votre demande.`,
       })
       joinLabel.value = "Demande envoyée"
     })
