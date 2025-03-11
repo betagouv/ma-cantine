@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from "vue"
+import { ref, useTemplateRef } from "vue"
+import { onClickOutside } from "@vueuse/core"
 import openDataService from "@/services/openData.js"
 
 defineProps(["errorRequired"])
@@ -31,6 +32,7 @@ const displayError = (name) => {
 /* List of options */
 const expanded = ref(false)
 const citiesOption = ref([])
+const dropdown = useTemplateRef("dropdown")
 const displayOptions = (options) => {
   noResults.value = false
   expanded.value = true
@@ -46,6 +48,11 @@ const displayOptions = (options) => {
   })
   citiesOption.value = cleanedOptions
 }
+const closeDropdown = () => {
+  expanded.value = false
+  if (!citySelected.value) search.value = ""
+}
+onClickOutside(dropdown, closeDropdown)
 
 /* Selection */
 const citySelected = ref()
@@ -73,6 +80,7 @@ const selectCity = () => {
     </div>
     <DsfrRadioButtonSet
       v-if="citiesOption.length > 0"
+      ref="dropdown"
       hint="Sélectionnez une commune parmis la liste"
       class="canteen-creation-city__options fr-multiselect__collapse fr-collapse"
       :class="{
