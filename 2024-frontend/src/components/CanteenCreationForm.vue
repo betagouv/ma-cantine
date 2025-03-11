@@ -243,7 +243,7 @@ const updateForm = (type, canteenInfos) => {
     class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
-      <fieldset class="fr-mb-4w">
+      <fieldset class="fr-mb-4w canteen-creation-form__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
         <DsfrRadioButtonSet
           v-model="form.hasSiret"
@@ -278,7 +278,7 @@ const updateForm = (type, canteenInfos) => {
           @select="(citySelected) => updateForm('city', citySelected)"
         />
       </fieldset>
-      <fieldset class="fr-mb-4w canteen-creation-form__caracteristics">
+      <fieldset class="fr-mb-4w canteen-creation-form__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
         <DsfrRadioButtonSet
           legend="Type d’établissement *"
@@ -458,7 +458,7 @@ const updateForm = (type, canteenInfos) => {
     display: none !important;
   }
 
-  &__caracteristics {
+  &__reduce-margin-bottom {
     .fr-form-group:last-child {
       .fr-fieldset,
       .fr-fieldset__element:last-child {
