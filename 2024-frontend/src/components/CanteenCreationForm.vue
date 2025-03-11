@@ -110,6 +110,7 @@ const showSatelliteCanteensCount = computed(
 const showCheckboxOneDelivery = computed(() => Number(form.satelliteCanteensCount) === 1)
 const showCheckboxManyDelivery = computed(() => Number(form.satelliteCanteensCount) >= 250)
 const showCheckboxNoSiret = computed(() => form.hasSiret === "no-siret")
+const showCitySelector = computed(() => form.hasSiret === "no-siret")
 
 const resetDynamicInputValues = () => {
   form.satelliteCanteensCount = null
@@ -264,7 +265,7 @@ const saveInfos = (canteenInfos) => {
           hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
           :error-message="formatError(v$.name)"
         />
-        <CanteenCreationFormCity />
+        <CanteenCreationFormCity v-if="showCitySelector" />
       </fieldset>
       <fieldset class="fr-mb-4w canteen-creation-form__caracteristics">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
