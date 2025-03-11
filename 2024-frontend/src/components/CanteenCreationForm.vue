@@ -76,7 +76,9 @@ const verifyLineMinistry = () => {
 }
 
 /* City */
-const citiesOptions = ref([{ value: "a", text: "Sélectionner une option", disabled: true }])
+const citiesOptions = ref([
+  { value: "no-results", text: "Renseignez un code postal pour afficher des villes", disabled: true },
+])
 const changePostal = () => {
   if (form.city) form.city = ""
   if (form.postalCode && form.postalCode.trim().length === 5) getCitiesOptions()
