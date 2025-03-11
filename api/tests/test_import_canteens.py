@@ -382,4 +382,4 @@ class TestCanteenImport(APITestCase):
         )
 
         body = response.json()
-        self.assertEqual(body["errors"], 0)
+        self.assertEqual(body["errors"], [])
