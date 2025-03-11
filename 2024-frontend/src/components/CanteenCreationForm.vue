@@ -239,20 +239,7 @@ const saveInfos = (canteenInfos) => {
           v-model="form.hasSiret"
           legend="Avez-vous un numéro SIRET ?"
           :error-message="formatError(v$.hasSiret)"
-          :options="[
-            {
-              label: 'Oui, j’ai un numéro SIRET propre',
-              img: '/static/images/picto-dsfr/success.svg',
-              value: 'has-siret',
-            },
-            {
-              label: 'Non, je suis rattaché à une unité légale',
-              hint:
-                'Seuls certains établissement peuvent être rattachés au SIRET d’une unité légale, vérifier votre éligibilité dans nos conditions d’utilisation.',
-              img: '/static/images/picto-dsfr/flow-list.svg',
-              value: 'no-siret',
-            },
-          ]"
+          :options="options.hasSiret"
         />
         <CanteenCreationSearch
           v-if="form.hasSiret"
