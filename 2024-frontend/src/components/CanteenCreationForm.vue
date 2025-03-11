@@ -28,26 +28,26 @@ sectorsService.getSectors().then((response) => {
 })
 const changeCategory = () => {
   form.sectorActivity = []
-  form.ministry = ""
-  showMinistrySelector.value = false
+  form.lineMinistry = ""
+  showLineMinistrySelector.value = false
 }
 
 /* Line Ministry */
-const ministries = reactive({})
-const showMinistrySelector = ref(false)
-const ministryOptions = computed(() => {
-  if (!ministries.value) return []
-  return ministries.value.map((ministry) => {
-    return { value: ministry.value, text: ministry.name }
+const lineMinistries = reactive({})
+const showLineMinistrySelector = ref(false)
+const lineMinistryOptions = computed(() => {
+  if (!lineMinistries.value) return []
+  return lineMinistries.value.map((lineMinistry) => {
+    return { value: lineMinistry.value, text: lineMinistry.name }
   })
 })
 sectorsService.getMinistries().then((response) => {
-  ministries.value = response
+  lineMinistries.value = response
 })
 const verifyLineMinistry = () => {
   if (form.economicModel === "private") {
-    showMinistrySelector.value = false
-    form.ministry = ""
+    showLineMinistrySelector.value = false
+    form.lineMinistry = ""
     return
   }
   for (let i = 0; i < form.sectorActivity.length; i++) {
@@ -55,8 +55,7 @@ const verifyLineMinistry = () => {
     const activity = sectorsActivityOptions.value[key]
     const hasLineMinistry = activity.hasLineMinistry
     if (!hasLineMinistry) continue
-    showMinistrySelector.value = true
-    return
+    showLineMinistrySelector.value = true
   }
 }
 
@@ -70,7 +69,7 @@ const initFields = () => {
   form.productionType = null
   form.sectorCategory = null
   form.sectorActivity = []
-  form.ministry = null
+  form.lineMinistry = null
   form.dailyMealCount = null
   form.yearlyMealCount = null
   form.centralProducerSiret = null
@@ -111,7 +110,7 @@ const rules = {
   productionType: { required },
   sectorCategory: { required },
   sectorActivity: { required },
-  ministry: { required: requiredIf(showMinistrySelector) },
+  lineMinistry: { required: requiredIf(showLineMinistrySelector) },
   dailyMealCount: {
     required: requiredIf(dailyMealRequired),
     integer,
@@ -307,13 +306,13 @@ const saveInfos = (canteenInfos) => {
           </template>
         </DsfrMultiselect>
         <DsfrSelect
-          v-if="showMinistrySelector"
-          v-model="form.ministry"
+          v-if="showLineMinistrySelector"
+          v-model="form.lineMinistry"
           label="Administration générale de tutelle (ministère ou ATE) *"
           description="Hors fonction publique territoriale et hospitalière"
           labelVisible
-          :options="ministryOptions"
-          :error-message="formatError(v$.ministry)"
+          :options="lineMinistryOptions"
+          :error-message="formatError(v$.lineMinistry)"
         />
       </fieldset>
       <fieldset class="fr-mb-4w">
