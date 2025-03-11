@@ -203,7 +203,7 @@ const getSectorsID = (activitiesSelected) => {
 
 /* SIRET Informations */
 const saveInfos = (canteenInfos) => {
-  form.siret = canteenInfos.siret.replace(" ", "")
+  form.siret = canteenInfos.siret?.replace(" ", "")
   form.name = canteenInfos.name
   form.postalCode = canteenInfos.postalCode
   form.city = canteenInfos.city
@@ -222,7 +222,7 @@ const saveInfos = (canteenInfos) => {
         <CanteenCreationSiret
           :key="forceRerender"
           @select="(canteenSelected) => saveInfos(canteenSelected)"
-          :error="formatError(v$.siret)"
+          :error-required="formatError(v$.siret)"
         />
       </fieldset>
       <fieldset class="fr-mb-4w">

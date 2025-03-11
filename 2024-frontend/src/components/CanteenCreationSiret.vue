@@ -1,11 +1,11 @@
 <script setup>
-import { ref, reactive } from "vue"
+import { ref, reactive, computed } from "vue"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens.js"
 import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
 
 /* Props */
-const props = defineProps(["error"])
+const props = defineProps(["errorRequired"])
 
 /* Store */
 const store = useRootStore()
@@ -26,19 +26,25 @@ initFields()
 
 /* Search */
 const search = ref("")
-const errorMessage = ref(props.error || "")
+const errorNotFound = ref()
+const errorMessage = computed(() => {
+  if (errorNotFound.value) return errorNotFound.value
+  if (props.errorRequired && !canteen.founded) return props.errorRequired
+  if (props.errorRequired && canteen.founded) return `Vous devez sélectionner un établissement`
+  else return ""
+})
 const hasSelected = ref(false)
 const searchSiret = () => {
   const cleanSiret = search.value.replaceAll(" ", "")
   if (cleanSiret.length === 0) return
-  errorMessage.value = ""
+  errorNotFound.value = ""
   canteensService
     .verifySiret(cleanSiret)
     .then((response) => {
       switch (true) {
         case response.length === 0:
           canteen.founded = false
-          errorMessage.value = `D’après l'annuaire-des-entreprises le numéro SIRET « ${cleanSiret} » ne correspond à aucun établissement`
+          errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro SIRET « ${cleanSiret} » ne correspond à aucun établissement`
           break
         case !response.id:
           canteen.status = "can-be-created"
@@ -60,10 +66,6 @@ const searchSiret = () => {
       if (canteen.founded) saveCanteenInfos(response)
     })
     .catch((e) => store.notifyServerError(e))
-}
-
-const verifyIfEmtpy = () => {
-  if (search.value.length === 0) errorMessage.value = ""
 }
 
 const saveCanteenInfos = (response) => {
@@ -108,7 +110,6 @@ const unselectCanteen = () => {
           button-text="Rechercher"
           label="Rechercher un établissement par son numéro SIRET"
           :large="true"
-          @update:modelValue="verifyIfEmtpy()"
           @search="searchSiret()"
         />
       </template>
