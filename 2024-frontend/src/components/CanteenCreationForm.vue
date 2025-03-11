@@ -298,7 +298,7 @@ const saveInfos = (canteenInfos) => {
           search
           selectAll
           :filtering-keys="['name']"
-          @change="verifyLineMinistry()"
+          @update:modelValue="verifyLineMinistry()"
           :error-message="formatError(v$.sectorActivity)"
         >
           <template #no-results>
