@@ -3,6 +3,7 @@ import { ref } from "vue"
 import openDataService from "@/services/openData.js"
 
 defineProps(["errorMessage"])
+const emit = defineEmits(["select"])
 
 const search = ref()
 const citySelected = ref()
@@ -25,13 +26,26 @@ const findCities = () => {
 
 const displayOptions = (options) => {
   noResults.value = false
-  const cleanedOptions = options.map((option) => {
+  const cleanedOptions = options.map((option, index) => {
     return {
+      value: index,
       label: option.properties.label,
-      value: option.properties.citycode,
+      cityInseeCode: option.properties.citycode,
+      postalCode: option.properties.postcode,
+      department: option.properties.citycode.slice(0, 2),
     }
   })
   citiesOption.value = cleanedOptions
+}
+
+const selectCity = () => {
+  const optionSelected = citiesOption.value[citySelected.value]
+  emit("select", {
+    postalCode: optionSelected.postalCode,
+    city: optionSelected.label,
+    cityInseeCode: optionSelected.cityInseeCode,
+    department: optionSelected.department,
+  })
 }
 </script>
 
@@ -49,6 +63,7 @@ const displayOptions = (options) => {
     legend="Sélectionnez une commune parmis la liste"
     v-model="citySelected"
     :options="citiesOption"
+    @update:modelValue="selectCity()"
     small
   />
 </template>
