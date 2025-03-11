@@ -241,9 +241,11 @@ const saveInfos = (canteenInfos) => {
           ]"
         />
         <CanteenCreationSearch
+          v-if="form.hasSiret"
           :key="forceRerender"
           @select="(canteenSelected) => saveInfos(canteenSelected)"
           :error-required="formatError(v$.siret)"
+          :type="form.hasSiret"
         />
       </fieldset>
       <fieldset class="fr-mb-4w">
