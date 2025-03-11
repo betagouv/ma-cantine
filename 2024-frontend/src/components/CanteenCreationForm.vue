@@ -32,15 +32,15 @@ const changeCategory = () => {
 }
 
 /* Line Ministry */
-const lineMinistries = reactive({})
+const ministries = reactive({})
 const lineMinistryOptions = computed(() => {
-  if (!lineMinistries.value) return []
-  return lineMinistries.value.map((lineMinistry) => {
+  if (!ministries.value) return []
+  return ministries.value.map((lineMinistry) => {
     return { value: lineMinistry.value, text: lineMinistry.name }
   })
 })
 sectorsService.getMinistries().then((response) => {
-  lineMinistries.value = response
+  ministries.value = response
 })
 
 /* Form fields */
