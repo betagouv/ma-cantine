@@ -1,5 +1,7 @@
 <script setup>
 import { reactive, ref } from "vue"
+defineProps(["errorMessage"])
+
 const citySelected = ref([])
 const citiesOptions = reactive([
   {
@@ -24,6 +26,7 @@ const citiesOptions = reactive([
     label-key="city"
     search
     :filtering-keys="['city']"
+    :error-message="errorMessage"
   >
     <template #no-results>
       Tapez les 3 premières lettres de votre ville
