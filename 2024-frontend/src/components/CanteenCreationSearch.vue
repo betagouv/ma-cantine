@@ -25,6 +25,7 @@ const label = computed(() =>
     ? "Rechercher un établissement par son numéro SIRET"
     : "Rechercher un établissement par son numéro SIREN"
 )
+const typeNumber = computed(() => (props.type === "has-siret" ? "SIRET" : "SIREN"))
 
 /* Canteen fields */
 const canteen = reactive({})
@@ -60,7 +61,7 @@ const searchSiret = () => {
       switch (true) {
         case response.length === 0:
           canteen.founded = false
-          errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro SIRET « ${cleanSiret} » ne correspond à aucun établissement`
+          errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro ${typeNumber.value} « ${cleanSiret} » ne correspond à aucun établissement`
           break
         case !response.id:
           canteen.status = "can-be-created"
@@ -141,7 +142,8 @@ const unselectCanteen = () => {
       @select="selectCanteen()"
     />
     <p v-if="canteen.founded && !hasSelected" class="fr-text--xs fr-mb-0 fr-mt-1w ma-cantine--text-center">
-      Ce n’est pas le bon établissement ? Refaites une recherche via le bon numéro SIRET, ou trouvez l’information dans
+      Ce n’est pas le bon établissement ? Refaites une recherche via le bon numéro {{ typeNumber }}, ou trouvez
+      l’information dans
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
     </p>
     <DsfrButton
