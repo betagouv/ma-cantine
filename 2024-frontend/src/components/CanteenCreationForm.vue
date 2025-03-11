@@ -16,6 +16,23 @@ import CanteenCreationSearch from "@/components/CanteenCreationSearch.vue"
 const router = useRouter()
 const store = useRootStore()
 
+/* Production type */
+const productionTypeOptions = computed(() => {
+  if (!form.hasSiret || form.hasSiret === "has-siret") return options.productionType
+  const optionsChecked = []
+  const disabledOptions = ["central", "central_serving"]
+  for (let i = 0; i < options.productionType.length; i++) {
+    const option = options.productionType[i]
+    const isDisabled = disabledOptions.includes(option["value"])
+    option["disabled"] = isDisabled
+    option["hint"] = isDisabled
+      ? "Ce mode de production n'est pas disponible pour les établissements rattachés à une unité légale"
+      : ""
+    optionsChecked.push(option)
+  }
+  return optionsChecked
+})
+
 /* Sectors */
 const sectors = reactive({})
 const sectorsInCategory = computed(() => sectors.value.filter((sector) => sector.category === form.sectorCategory))
@@ -276,7 +293,7 @@ const saveInfos = (canteenInfos) => {
         <DsfrRadioButtonSet
           legend="Mode de production *"
           v-model="form.productionType"
-          :options="options.productionType"
+          :options="productionTypeOptions"
           :error-message="formatError(v$.productionType)"
           @change="resetDynamicInputValues"
         />
