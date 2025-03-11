@@ -106,6 +106,7 @@ const dailyMealRequired = computed(() => form.productionType !== "central")
 const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
 const rules = {
   name: { required },
+  hasSiret: { required },
   siret: { required },
   economicModel: { required },
   managementType: { required },
@@ -222,6 +223,7 @@ const saveInfos = (canteenInfos) => {
         <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
         <DsfrRadioButtonSet
           v-model="form.hasSiret"
+          :error-message="formatError(v$.hasSiret)"
           legend="Avez-vous un numéro SIRET ?"
           :options="[
             {
