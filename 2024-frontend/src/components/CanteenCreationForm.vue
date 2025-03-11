@@ -11,6 +11,7 @@ import sectorsService from "@/services/sectors"
 import canteensService from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
 import CanteenCreationSearch from "@/components/CanteenCreationSearch.vue"
+import CanteenCreationFormCity from "@/components/CanteenCreationFormCity.vue"
 
 /* Router and Store */
 const router = useRouter()
@@ -263,6 +264,7 @@ const saveInfos = (canteenInfos) => {
           hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
           :error-message="formatError(v$.name)"
         />
+        <CanteenCreationFormCity />
       </fieldset>
       <fieldset class="fr-mb-4w canteen-creation-form__caracteristics">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
