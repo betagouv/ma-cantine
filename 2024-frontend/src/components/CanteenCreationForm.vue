@@ -339,8 +339,6 @@ const updateForm = (type, canteenInfos) => {
           :options="sectorsActivityOptions"
           id-key="index"
           label-key="name"
-          search
-          selectAll
           :filtering-keys="['name']"
           @change="verifyLineMinistry()"
           :error-message="formatError(v$.sectorActivity)"
