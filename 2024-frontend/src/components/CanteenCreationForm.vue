@@ -223,8 +223,8 @@ const saveInfos = (canteenInfos) => {
         <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
         <DsfrRadioButtonSet
           v-model="form.hasSiret"
-          :error-message="formatError(v$.hasSiret)"
           legend="Avez-vous un numéro SIRET ?"
+          :error-message="formatError(v$.hasSiret)"
           :options="[
             {
               label: 'Oui, j’ai un numéro SIRET propre',
