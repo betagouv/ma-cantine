@@ -5,7 +5,7 @@ import canteensService from "@/services/canteens.js"
 import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
 
 /* Props */
-const props = defineProps(["error"])
+const props = defineProps(["errorRequired"])
 
 /* Store */
 const store = useRootStore()

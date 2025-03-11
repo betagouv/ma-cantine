@@ -222,7 +222,7 @@ const saveInfos = (canteenInfos) => {
         <CanteenCreationSiret
           :key="forceRerender"
           @select="(canteenSelected) => saveInfos(canteenSelected)"
-          :error="formatError(v$.siret)"
+          :error-required="formatError(v$.siret)"
         />
       </fieldset>
       <fieldset class="fr-mb-4w">
