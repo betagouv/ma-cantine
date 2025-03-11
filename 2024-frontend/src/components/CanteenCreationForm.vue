@@ -9,6 +9,7 @@ import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import canteensService from "@/services/canteens"
+import openDataService from "@/services/openData.js"
 import options from "@/constants/canteen-creation-form-options"
 import CanteenCreationSearch from "@/components/CanteenCreationSearch.vue"
 import CanteenCreationCity from "@/components/CanteenCreationCity.vue"
@@ -73,6 +74,31 @@ const verifyLineMinistry = () => {
     showMinistrySelector.value = true
     return
   }
+}
+
+/* City */
+const citiesOptions = ref([{ value: "a", text: "Sélectionner une option", disabled: true }])
+const changePostal = () => {
+  if (form.city) form.city = ""
+  if (form.postalCode && form.postalCode.trim().length === 5) getCitiesOptions()
+}
+const getCitiesOptions = () => {
+  openDataService
+    .getCities(form.postalCode)
+    .then((response) => {
+      const options = []
+      for (let i = 0; i < response.length; i++) {
+        const city = response[i]
+        options.push({
+          value: city.code,
+          text: city.nom,
+          inseeCode: city.code,
+          department: city.codeDepartement,
+        })
+      }
+      citiesOptions.value = options
+    })
+    .catch((e) => store.notifyServerError(e))
 }
 
 /* Form fields */
@@ -272,7 +298,26 @@ const updateForm = (type, canteenInfos) => {
           hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
           :error-message="formatError(v$.name)"
         />
-        <CanteenCreationCity
+        <div v-if="showCitySelector" class="fr-grid-row fr-grid-row--gutters">
+          <div class="fr-col-6">
+            <DsfrInputGroup
+              v-model="form.postalCode"
+              label="Code postal *"
+              :label-visible="true"
+              :error-message="formatError(v$.postalCode)"
+              @update:modelValue="changePostal()"
+            />
+          </div>
+          <div class="fr-col-6">
+            <DsfrSelect
+              v-model="form.city"
+              label="Ville *"
+              :label-visible="true"
+              :error-message="formatError(v$.city)"
+              :options="citiesOptions"
+            />
+          </div>
+        </div>
           v-if="showCitySelector"
           :error-required="formatError(v$.city)"
           @select="(citySelected) => updateForm('city', citySelected)"
