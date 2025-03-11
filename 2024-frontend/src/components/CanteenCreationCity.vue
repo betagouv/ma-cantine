@@ -5,11 +5,9 @@ import openDataService from "@/services/openData.js"
 defineProps(["errorMessage"])
 const emit = defineEmits(["select"])
 
+/* Search */
 const search = ref()
-const citySelected = ref()
-const citiesOption = ref([])
 const noResults = ref()
-
 const findCities = () => {
   const trimSearch = search.value.trim()
   if (trimSearch.length < 3) return
@@ -24,6 +22,8 @@ const findCities = () => {
     })
 }
 
+/* List of options */
+const citiesOption = ref([])
 const displayOptions = (options) => {
   noResults.value = false
   const cleanedOptions = options.map((option, index) => {
@@ -38,6 +38,8 @@ const displayOptions = (options) => {
   citiesOption.value = cleanedOptions
 }
 
+/* Selection */
+const citySelected = ref()
 const selectCity = () => {
   const optionSelected = citiesOption.value[citySelected.value]
   emit("select", {
