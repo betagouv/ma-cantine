@@ -96,6 +96,7 @@ const initFields = () => {
   form.department = null
   form.oneDelivery = null
   form.manyDelivery = null
+  form.noSiret = null
 }
 initFields()
 
@@ -107,6 +108,7 @@ const showSatelliteCanteensCount = computed(
 )
 const showCheckboxOneDelivery = computed(() => Number(form.satelliteCanteensCount) === 1)
 const showCheckboxManyDelivery = computed(() => Number(form.satelliteCanteensCount) >= 250)
+const showCheckboxNoSiret = computed(() => form.hasSiret === "no-siret")
 
 const resetDynamicInputValues = () => {
   form.satelliteCanteensCount = null
@@ -150,6 +152,9 @@ const rules = {
   },
   manyDelivery: {
     required: requiredIf(showCheckboxManyDelivery),
+  },
+  noSiret: {
+    required: requiredIf(showCheckboxNoSiret),
   },
 }
 const v$ = useVuelidate(rules, form)
@@ -368,7 +373,10 @@ const saveInfos = (canteenInfos) => {
           </div>
         </div>
       </fieldset>
-      <fieldset v-if="showCheckboxOneDelivery || showCheckboxManyDelivery" class="fr-py-0 fr-my-3w fr-mb-md-3w">
+      <fieldset
+        v-if="showCheckboxOneDelivery || showCheckboxManyDelivery || showCheckboxNoSiret"
+        class="fr-py-0 fr-my-3w fr-mb-md-3w"
+      >
         <legend class="fr-h5 fr-mb-2w">6. Confirmation</legend>
         <DsfrCheckbox
           v-if="showCheckboxOneDelivery"
@@ -386,6 +394,20 @@ const saveInfos = (canteenInfos) => {
           "
           :error-message="formatError(v$.manyDelivery)"
         />
+        <DsfrCheckbox
+          v-if="showCheckboxNoSiret"
+          v-model="form.noSiret"
+          name="noSiret"
+          :error-message="formatError(v$.noSiret)"
+        >
+          <template #label>
+            <p>
+              En cochant cette case, Je certifie que mon établissement n’a pas de numéro SIRET, et que je respecte
+              <router-link :to="{ name: 'CGU' }" target="_blank">les conditions générales d’utilisation</router-link>
+              pour la création de ma cantine
+            </p>
+          </template>
+        </DsfrCheckbox>
       </fieldset>
       <div class="fr-grid-row fr-grid-row--right fr-grid-row--top">
         <DsfrButton
