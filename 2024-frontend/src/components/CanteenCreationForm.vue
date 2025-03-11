@@ -152,6 +152,11 @@ const rules = {
   hasSiret: { required },
   siret: { required },
   city: { required: requiredIf(showCitySelector) },
+  postalCode: {
+    required: requiredIf(showCitySelector),
+    integer,
+    minLength: helpers.withMessage("Le code postal doit contenir 5 caractères", minLength(5)),
+  },
   economicModel: { required },
   managementType: { required },
   productionType: { required },
