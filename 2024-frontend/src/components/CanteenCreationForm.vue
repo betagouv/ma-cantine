@@ -401,7 +401,7 @@ const saveInfos = (canteenInfos) => {
           :error-message="formatError(v$.noSiret)"
         >
           <template #label>
-            <p>
+            <p class="fr-mb-0">
               En cochant cette case, Je certifie que mon établissement n’a pas de numéro SIRET, et que je respecte
               <router-link :to="{ name: 'CGU' }" target="_blank">les conditions générales d’utilisation</router-link>
               pour la création de ma cantine
