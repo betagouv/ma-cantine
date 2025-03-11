@@ -1,10 +1,12 @@
 <script setup>
 import { ref, useTemplateRef } from "vue"
 import { onClickOutside } from "@vueuse/core"
+import { useRootStore } from "@/stores/root"
 import openDataService from "@/services/openData.js"
 
 defineProps(["errorRequired"])
 const emit = defineEmits(["select"])
+const store = useRootStore()
 
 /* Search */
 const search = ref()
@@ -19,9 +21,7 @@ const findCities = () => {
       if (response.features.length > 0) displayOptions(response.features)
       else displayError(trimSearch)
     })
-    .catch((e) => {
-      console.log("error", e)
-    })
+    .catch((e) => store.notifyServerError(e))
 }
 
 const displayError = (name) => {
