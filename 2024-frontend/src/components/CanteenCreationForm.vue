@@ -12,7 +12,6 @@ import canteensService from "@/services/canteens"
 import openDataService from "@/services/openData.js"
 import options from "@/constants/canteen-creation-form-options"
 import CanteenCreationSearch from "@/components/CanteenCreationSearch.vue"
-import CanteenCreationCity from "@/components/CanteenCreationCity.vue"
 
 /* Router and Store */
 const router = useRouter()
@@ -318,10 +317,6 @@ const updateForm = (type, canteenInfos) => {
             />
           </div>
         </div>
-          v-if="showCitySelector"
-          :error-required="formatError(v$.city)"
-          @select="(citySelected) => updateForm('city', citySelected)"
-        />
       </fieldset>
       <fieldset class="fr-mb-4w canteen-creation-form__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
