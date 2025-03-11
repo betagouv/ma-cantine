@@ -2,7 +2,7 @@
 import { ref } from "vue"
 import openDataService from "@/services/openData.js"
 
-defineProps(["errorMessage"])
+defineProps(["errorRequired"])
 const emit = defineEmits(["select"])
 
 /* Search */
@@ -67,7 +67,7 @@ const selectCity = () => {
         v-model="search"
         placeholder="Tapez les 3 premières lettre de votre ville"
         @update:modelValue="findCities()"
-        :error-message="noResults"
+        :error-message="noResults || errorRequired"
       />
     </div>
     <DsfrRadioButtonSet

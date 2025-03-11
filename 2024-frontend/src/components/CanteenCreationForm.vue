@@ -274,7 +274,7 @@ const updateForm = (type, canteenInfos) => {
         />
         <CanteenCreationCity
           v-if="showCitySelector"
-          :error-message="formatError(v$.city)"
+          :error-required="formatError(v$.city)"
           @select="(citySelected) => updateForm('city', citySelected)"
         />
       </fieldset>
