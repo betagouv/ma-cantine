@@ -9,6 +9,7 @@ const emit = defineEmits(["select"])
 const search = ref()
 const noResults = ref()
 const findCities = () => {
+  emit("select", {})
   const trimSearch = search.value.trim()
   if (trimSearch.length < 3) return
   openDataService
