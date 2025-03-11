@@ -63,6 +63,7 @@ const verifyLineMinistry = () => {
 /* Form fields */
 const form = reactive({})
 const initFields = () => {
+  form.hasSiret = null
   form.siret = null
   form.name = null
   form.economicModel = null
@@ -219,6 +220,24 @@ const saveInfos = (canteenInfos) => {
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
+        <DsfrRadioButtonSet
+          v-model="form.hasSiret"
+          legend="Avez-vous un numéro SIRET ?"
+          :options="[
+            {
+              label: 'Oui, j’ai un numéro SIRET propre',
+              img: '/static/images/picto-dsfr/success.svg',
+              value: 'has-siret',
+            },
+            {
+              label: 'Non, je suis rattaché à une unité légale',
+              hint:
+                'Seuls certains établissement peuvent être rattachés au SIRET d’une unité légale, vérifier votre éligibilité dans nos conditions d’utilisation.',
+              img: '/static/images/picto-dsfr/flow-list.svg',
+              value: 'no-siret',
+            },
+          ]"
+        />
         <CanteenCreationSiret
           :key="forceRerender"
           @select="(canteenSelected) => saveInfos(canteenSelected)"
