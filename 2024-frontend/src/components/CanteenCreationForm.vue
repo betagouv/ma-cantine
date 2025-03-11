@@ -18,19 +18,16 @@ const store = useRootStore()
 
 /* Production type */
 const productionTypeOptions = computed(() => {
-  if (!form.hasSiret || form.hasSiret === "has-siret") return options.productionType
-  const optionsChecked = []
-  const disabledOptions = ["central", "central_serving"]
-  for (let i = 0; i < options.productionType.length; i++) {
-    const option = options.productionType[i]
-    const isDisabled = disabledOptions.includes(option["value"])
-    option["disabled"] = isDisabled
-    option["hint"] = isDisabled
-      ? "Ce mode de production n'est pas disponible pour les établissements rattachés à une unité légale"
-      : ""
-    optionsChecked.push(option)
-  }
-  return optionsChecked
+  const isDisabled = form.hasSiret === "no-siret"
+  const disabledHint = "Ce mode de production n'est pas disponible pour les établissements rattachés à une unité légale"
+  const optionsWithDisabled = [...options.productionType]
+  const indexCentralType = optionsWithDisabled.findIndex((option) => option.value === "central")
+  const indexCentralServingType = optionsWithDisabled.findIndex((option) => option.value === "central_serving")
+  optionsWithDisabled[indexCentralType].disabled = isDisabled
+  optionsWithDisabled[indexCentralType].hint = isDisabled ? disabledHint : ""
+  optionsWithDisabled[indexCentralServingType].disabled = isDisabled
+  optionsWithDisabled[indexCentralServingType].hint = isDisabled ? disabledHint : ""
+  return optionsWithDisabled
 })
 
 /* Sectors */

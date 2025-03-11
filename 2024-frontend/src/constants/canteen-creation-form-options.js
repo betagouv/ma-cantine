@@ -19,10 +19,10 @@ const managementType = [
 ]
 
 const productionType = [
-  { label: "Produit sur place les repas qu'il sert à ses convives", value: "site", disabled: false },
-  { label: "Sert des repas préparés par un autre établissement", value: "site_cooked_elsewhere", disabled: false },
-  { label: "Livre des repas mais n'a pas de lieu de service en propre", value: "central", disabled: false },
-  { label: "Livre des repas et accueille aussi des convives sur place", value: "central_serving", disabled: false },
+  { label: "Produit sur place les repas qu'il sert à ses convives", value: "site" },
+  { label: "Sert des repas préparés par un autre établissement", value: "site_cooked_elsewhere" },
+  { label: "Livre des repas mais n'a pas de lieu de service en propre", value: "central" },
+  { label: "Livre des repas et accueille aussi des convives sur place", value: "central_serving" },
 ]
 
 export default {
