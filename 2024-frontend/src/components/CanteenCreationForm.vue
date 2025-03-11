@@ -10,7 +10,7 @@ import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import canteensService from "@/services/canteens"
 import options from "@/constants/canteen-creation-form-options"
-import CanteenCreationSiret from "@/components/CanteenCreationSiret.vue"
+import CanteenCreationSearch from "@/components/CanteenCreationSearch.vue"
 
 /* Router and Store */
 const router = useRouter()
@@ -238,7 +238,7 @@ const saveInfos = (canteenInfos) => {
             },
           ]"
         />
-        <CanteenCreationSiret
+        <CanteenCreationSearch
           :key="forceRerender"
           @select="(canteenSelected) => saveInfos(canteenSelected)"
           :error-required="formatError(v$.siret)"

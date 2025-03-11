@@ -94,7 +94,7 @@ const unselectCanteen = () => {
 </script>
 
 <template>
-  <div class="canteen-creation-siret">
+  <div class="canteen-creation-search">
     <p class="fr-mb-0">Mon établissement *</p>
     <p class="fr-hint-text">
       Nous utilisons le site
@@ -134,14 +134,14 @@ const unselectCanteen = () => {
       label="Rechercher un nouvel établissement"
       icon="fr-icon-search-line"
       icon-right
-      class="canteen-creation-siret__back fr-mt-1w"
+      class="canteen-creation-search__back fr-mt-1w"
       @click="unselectCanteen()"
     />
   </div>
 </template>
 
 <style lang="scss">
-.canteen-creation-siret {
+.canteen-creation-search {
   &__back {
     width: 100%;
     justify-content: center;
