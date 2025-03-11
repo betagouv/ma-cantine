@@ -63,10 +63,6 @@ const searchSiret = () => {
     .catch((e) => store.notifyServerError(e))
 }
 
-const verifyIfEmtpy = () => {
-  if (search.value.length === 0) errorMessage.value = ""
-}
-
 const saveCanteenInfos = (response) => {
   canteen.id = response.id
   canteen.name = response.name
@@ -109,7 +105,6 @@ const unselectCanteen = () => {
           button-text="Rechercher"
           label="Rechercher un établissement par son numéro SIRET"
           :large="true"
-          @update:modelValue="verifyIfEmtpy()"
           @search="searchSiret()"
         />
       </template>
