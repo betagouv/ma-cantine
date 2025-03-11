@@ -408,20 +408,35 @@ const updateForm = (type, canteenInfos) => {
           "
           :error-message="formatError(v$.manyDelivery)"
         />
-        <DsfrCheckbox
-          v-if="showCheckboxNoSiret"
-          v-model="form.noSiret"
-          name="noSiret"
-          :error-message="formatError(v$.noSiret)"
-        >
-          <template #label>
-            <p class="fr-mb-0">
-              En cochant cette case, Je certifie que mon établissement n’a pas de numéro SIRET, et que je respecte
-              <router-link :to="{ name: 'CGU' }" target="_blank">les conditions générales d’utilisation</router-link>
-              pour la création de ma cantine
-            </p>
-          </template>
-        </DsfrCheckbox>
+        <div v-if="showCheckboxNoSiret">
+          <p class="fr-mb-1v">
+            Votre cantine n’a pas de numéro de SIRET et vous êtes sur le point de la rattacher à une unité légale
+            existante. Avant de confirmer :
+          </p>
+          <ul>
+            <li>
+              avez-vous vérifié que votre ne cantine ne dispose pas d’un numéro SIRET (ex : une facture, l’annuaire des
+              entreprises, annuaire des cantines scolaires) ?
+            </li>
+            <li>
+              l’unité légale à laquelle vous vous rattachez correspond bien à l’entité qui contrôle votre cantine ?
+            </li>
+            <li>
+              vous êtes-vous assuré que votre cantine ne figure pas dans la liste des établissements de l’unité légale ?
+            </li>
+          </ul>
+          <p>
+            Ces éléments sont essentiels pour éviter les doublons et garantir l’exactitude des télédéclarations
+            effectuées sur ma cantine.
+          </p>
+          <DsfrCheckbox v-model="form.noSiret" name="noSiret" :error-message="formatError(v$.noSiret)">
+            <template #label>
+              <p class="fr-mb-0">
+                En cochant cette case vous confirmez avoir vérifié ces informations.
+              </p>
+            </template>
+          </DsfrCheckbox>
+        </div>
       </fieldset>
       <div class="fr-grid-row fr-grid-row--right fr-grid-row--top">
         <DsfrButton
