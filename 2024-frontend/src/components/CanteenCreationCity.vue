@@ -44,6 +44,9 @@ const citySelected = ref()
 const selectCity = () => {
   const { city, cityInseeCode, postalCode, department } = citiesOption.value[citySelected.value]
   emit("select", { city, cityInseeCode, postalCode, department })
+  citiesOption.value = []
+  search.value = city
+  citySelected.value = null
 }
 </script>
 
