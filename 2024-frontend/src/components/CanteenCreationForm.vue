@@ -203,7 +203,7 @@ const getSectorsID = (activitiesSelected) => {
 
 /* SIRET Informations */
 const saveInfos = (canteenInfos) => {
-  form.siret = canteenInfos.siret.replace(" ", "")
+  form.siret = canteenInfos.siret?.replace(" ", "")
   form.name = canteenInfos.name
   form.postalCode = canteenInfos.postalCode
   form.city = canteenInfos.city
