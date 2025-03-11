@@ -1,11 +1,9 @@
-const apiAdresse = "https://api-adresse.data.gouv.fr/search/"
+const apiGeo = "https://geo.api.gouv.fr/"
 
-const findCities = (name) => {
-  return fetch(`${apiAdresse}?q=${name}&type=municipality&autocomplete=1&limit=10`)
+const getCities = (postcode) => {
+  return fetch(`${apiGeo}communes?codePostal=${postcode}`)
     .then((response) => response.json())
-    .catch((error) => {
-      console.log(error)
-    })
+    .catch((error) => error)
 }
 
-export default { findCities }
+export default { getCities }
