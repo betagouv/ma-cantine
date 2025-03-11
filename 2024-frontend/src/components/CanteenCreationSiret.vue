@@ -26,8 +26,13 @@ initFields()
 
 /* Search */
 const search = ref("")
-const errorNotFound = ref("")
-const errorMessage = computed(() => (search.value === "" ? props.error : errorNotFound.value))
+const errorNotFound = ref()
+const errorMessage = computed(() => {
+  if (errorNotFound.value) return errorNotFound.value
+  if (props.errorRequired && !canteen.founded) return props.errorRequired
+  if (props.errorRequired && canteen.founded) return `Vous devez sélectionner un établissement`
+  else return ""
+})
 const hasSelected = ref(false)
 const searchSiret = () => {
   const cleanSiret = search.value.replaceAll(" ", "")
