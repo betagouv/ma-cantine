@@ -361,3 +361,25 @@ class TestCanteenImport(APITestCase):
                 "Vous n'êtes pas autorisé à importer des cantines avec des champs administratifs"
             ),
         )
+
+    @authenticate
+    def test_sectors_apostrophes(self):
+        """
+        Different apostrophes caracters should be accepted but a unique one should be saved
+        """
+        file_path = "./api/tests/files/canteens/canteens_sectors.csv"
+        sector = SectorFactory(name="Restaurants administratifs d'Etat (RA)")
+        sector.save()
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 2)
+        self.assertEqual(
+            Canteen.objects.filter(sectors__name__in=["Restaurants administratifs d'Etat (RA)"]).distinct().count(), 2
+        )
+        self.assertEqual(
+            Canteen.objects.filter(sectors__name__in=["Restaurants administratifs d’Etat (RA)"]).distinct().count(), 0
+        )
+
+        body = response.json()
+        self.assertEqual(body["errors"], 0)
