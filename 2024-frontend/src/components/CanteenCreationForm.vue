@@ -76,30 +76,35 @@ const verifyLineMinistry = () => {
 }
 
 /* City */
-const citiesOptions = ref([
-  { value: "no-results", text: "Renseignez un code postal pour afficher des villes", disabled: true },
-])
+const emptyCity = ref("")
+const citiesOptions = ref([])
 const changePostal = () => {
   if (form.city) form.city = ""
   if (form.postalCode && form.postalCode.trim().length === 5) getCitiesOptions()
 }
 const getCitiesOptions = () => {
+  emptyCity.value = ""
+  citiesOptions.value = []
   openDataService
     .getCities(form.postalCode)
     .then((response) => {
-      const options = []
-      for (let i = 0; i < response.length; i++) {
-        const city = response[i]
-        options.push({
-          value: city.code,
-          text: city.nom,
-          inseeCode: city.code,
-          department: city.codeDepartement,
-        })
-      }
-      citiesOptions.value = options
+      if (response.length === 0) emptyCity.value = `Aucune ville trouvée pour le code postal « ${form.postalCode} »`
+      else displayCitiesResult(response)
     })
     .catch((e) => store.notifyServerError(e))
+}
+const displayCitiesResult = (cities) => {
+  const options = []
+  for (let i = 0; i < cities.length; i++) {
+    const city = cities[i]
+    options.push({
+      value: city.code,
+      text: city.nom,
+      inseeCode: city.code,
+      department: city.codeDepartement,
+    })
+  }
+  citiesOptions.value = options
 }
 
 /* Form fields */
@@ -319,7 +324,7 @@ const updateForm = (type, canteenInfos) => {
               v-model="form.city"
               label="Ville *"
               :label-visible="true"
-              :error-message="formatError(v$.city)"
+              :error-message="emptyCity || formatError(v$.city)"
               :options="citiesOptions"
             />
           </div>
