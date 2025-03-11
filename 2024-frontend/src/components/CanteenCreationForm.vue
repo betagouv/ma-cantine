@@ -225,10 +225,12 @@ const getSectorsID = (activitiesSelected) => {
   return names
 }
 
-/* SIRET Informations */
-const saveInfos = (canteenInfos) => {
-  form.siret = canteenInfos.siret?.replace(" ", "")
-  form.name = canteenInfos.name
+/* Update canteen informations from child components */
+const updateForm = (type, canteenInfos) => {
+  if (type === "establishment") {
+    form.siret = canteenInfos.siret?.replace(" ", "")
+    form.name = canteenInfos.name
+  }
   form.postalCode = canteenInfos.postalCode
   form.city = canteenInfos.city
   form.cityInseeCode = canteenInfos.cityInseeCode
@@ -252,7 +254,11 @@ const saveInfos = (canteenInfos) => {
         <CanteenCreationSearch
           v-if="form.hasSiret"
           :key="forceRerender"
-          @select="(canteenSelected) => saveInfos(canteenSelected)"
+          @select="
+            (establishmentSelected) => {
+              updateForm('establishment', establishmentSelected)
+            }
+          "
           :error-required="formatError(v$.siret)"
           :type="form.hasSiret"
         />
@@ -266,7 +272,11 @@ const saveInfos = (canteenInfos) => {
           hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
           :error-message="formatError(v$.name)"
         />
-        <CanteenCreationCity v-if="showCitySelector" :error-message="formatError(v$.city)" />
+        <CanteenCreationCity
+          v-if="showCitySelector"
+          :error-message="formatError(v$.city)"
+          @select="(citySelected) => updateForm('city', citySelected)"
+        />
       </fieldset>
       <fieldset class="fr-mb-4w canteen-creation-form__caracteristics">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
