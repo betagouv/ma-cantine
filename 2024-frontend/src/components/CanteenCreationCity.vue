@@ -30,9 +30,10 @@ const displayOptions = (options) => {
     return {
       value: index,
       label: option.properties.label,
-      cityInseeCode: option.properties.citycode,
-      postalCode: option.properties.postcode,
-      department: option.properties.citycode.slice(0, 2),
+      city: option.properties.label, // Needed for CanteenCreationForm emit
+      cityInseeCode: option.properties.citycode, // Needed for CanteenCreationForm emit
+      postalCode: option.properties.postcode, // Needed for CanteenCreationForm emit
+      department: option.properties.citycode.slice(0, 2), // Needed for CanteenCreationForm emit
     }
   })
   citiesOption.value = cleanedOptions
@@ -41,13 +42,8 @@ const displayOptions = (options) => {
 /* Selection */
 const citySelected = ref()
 const selectCity = () => {
-  const optionSelected = citiesOption.value[citySelected.value]
-  emit("select", {
-    postalCode: optionSelected.postalCode,
-    city: optionSelected.label,
-    cityInseeCode: optionSelected.cityInseeCode,
-    department: optionSelected.department,
-  })
+  const { city, cityInseeCode, postalCode, department } = citiesOption.value[citySelected.value]
+  emit("select", { city, cityInseeCode, postalCode, department })
 }
 </script>
 
