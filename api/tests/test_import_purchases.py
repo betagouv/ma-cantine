@@ -29,17 +29,21 @@ class TestPurchaseSchema(TestCase):
         field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "prix_ht"), None)
         pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
         for VALUE_OK in ["1234", "1234.0", "1234.99", "1234.99999", "1234,0", "1234,99", "1234,99999"]:
-            self.assertTrue(re.match(pattern, VALUE_OK))
+            with self.subTest(VALUE=VALUE_OK):
+                self.assertTrue(re.match(pattern, VALUE_OK))
         for VALUE_NOT_OK in ["", " ", "TEST", "1234.99.99", "1234,99,99"]:
-            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+            with self.subTest(VALUE=VALUE_NOT_OK):
+                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_famille_produits_regex(self):
         field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "famille_produits"), None)
         pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
         for VALUE_OK in ["PRODUITS_LAITIERS", "PRODUITS_LAITIERS ", " PRODUITS_LAITIERS "]:
-            self.assertTrue(re.match(pattern, VALUE_OK))
+            with self.subTest(VALUE=VALUE_OK):
+                self.assertTrue(re.match(pattern, VALUE_OK))
         for VALUE_NOT_OK in ["", "TEST", "PRODUITS_LAITIERS,", "PRODUITS_LAITIERS,VIANDES_VOLAILLES"]:
-            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+            with self.subTest(VALUE=VALUE_NOT_OK):
+                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_caracteristiques_regex(self):
         field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "caracteristiques"), None)
@@ -54,17 +58,21 @@ class TestPurchaseSchema(TestCase):
             " BIO,      LOCAL ",
             "BIO,BIO",
         ]:
-            self.assertTrue(re.match(pattern, VALUE_OK))
+            with self.subTest(VALUE=VALUE_OK):
+                self.assertTrue(re.match(pattern, VALUE_OK))
         for VALUE_NOT_OK in ["", "TEST"]:
-            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+            with self.subTest(VALUE=VALUE_NOT_OK):
+                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_definition_local_regex(self):
         field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "definition_local"), None)
         pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
         for VALUE_OK in ["DEPARTMENT", "DEPARTMENT ", " DEPARTMENT "]:
-            self.assertTrue(re.match(pattern, VALUE_OK))
+            with self.subTest(VALUE=VALUE_OK):
+                self.assertTrue(re.match(pattern, VALUE_OK))
         for VALUE_NOT_OK in ["", "TEST", "DEPARTMENT,", "DEPARTMENT,REGION"]:
-            self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+            with self.subTest(VALUE=VALUE_NOT_OK):
+                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
 
 class TestPurchaseImport(APITestCase):
