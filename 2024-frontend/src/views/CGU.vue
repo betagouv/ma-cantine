@@ -98,13 +98,23 @@
 
     <h4 class="fr-h4">2) Gestion des établissements de RC</h4>
     <p>
-      Depuis son espace de gestion, le Gestionnaire peut ajouter d’autres établissements satellites de RC en renseignant
-      un numéro de SIRET.
+      Depuis son espace de gestion, le Gestionnaire peut ajouter d’autres établissements de RC soit en renseignant un
+      numéro de SIRET propre à l’établissement, soit lorsqu’il ne dispose pas d’un tel numéro de SIRET en se rattachant
+      à l’unité légale de tutelle dont il relève qui dispose d’un numéro de SIRET.
     </p>
     <p>
-      Le Gestionnaire peut également inviter d’autres Gestionnaires associés sur le ou les mêmes établissements en
-      saisissant une adresse électronique. Chaque gestionnaire associé reçoit un courrier électronique pour valider son
-      compte ou refuser l’invitation en contactant le support technique de ma cantine.
+      Un Gestionnaire peut se rattacher à une unité légale à condition :
+    </p>
+    <ul>
+      <li>- de ne pas dupliquer un établissement déjà existant dans le Service,</li>
+      <li>- de se rattacher à une unité légale qui exerce la tutelle de son établissement.</li>
+    </ul>
+    <p>
+      En cas de doute, l’Editeur peut prendre contact avec le Gestionnaire concerné et se réserve le droit de supprimer
+      tout établissement qui méconnaitrait ces conditions. Le Gestionnaire peut également inviter d’autres Gestionnaires
+      associés sur le ou les mêmes établissements en saisissant une adresse électronique. Chaque gestionnaire associé
+      reçoit un courrier électronique pour valider son compte ou refuser l’invitation en contactant le support technique
+      de ma cantine.
     </p>
     <p>
       Le Gestionnaire est seul responsable de l’envoi des invitations, des accès qu’il attribue et de l’utilisation qui
