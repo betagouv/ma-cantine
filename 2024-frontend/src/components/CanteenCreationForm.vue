@@ -78,10 +78,20 @@ const verifyLineMinistry = () => {
 /* City */
 const emptyCity = ref("")
 const citiesOptions = ref([])
+
+const selectCity = () => {
+  const index = Number(form.citySelector)
+  const selectedCityOptions = citiesOptions.value[index]
+  form.cityInseeCode = selectedCityOptions.cityInseeCode
+  form.department = selectedCityOptions.department
+  form.city = selectedCityOptions.text
+}
+
 const changePostal = () => {
-  if (form.city) form.city = ""
+  if (form.citySelector) form.citySelector = ""
   if (form.postalCode && form.postalCode.trim().length === 5) getCitiesOptions()
 }
+
 const getCitiesOptions = () => {
   emptyCity.value = ""
   citiesOptions.value = []
@@ -93,14 +103,15 @@ const getCitiesOptions = () => {
     })
     .catch((e) => store.notifyServerError(e))
 }
+
 const displayCitiesResult = (cities) => {
   const options = []
   for (let i = 0; i < cities.length; i++) {
     const city = cities[i]
     options.push({
-      value: city.code,
+      value: i,
       text: city.nom,
-      inseeCode: city.code,
+      cityInseeCode: city.code,
       department: city.codeDepartement,
     })
   }
@@ -124,6 +135,7 @@ const initFields = () => {
   form.centralProducerSiret = null
   form.satelliteCanteensCount = null
   form.postalCode = null
+  form.citySelector = null
   form.city = null
   form.cityInseeCode = null
   form.department = null
@@ -158,7 +170,7 @@ const rules = {
   name: { required },
   hasSiret: { required },
   siret: { required },
-  city: { required: requiredIf(showCitySelector) },
+  citySelector: { required: requiredIf(showCitySelector) },
   postalCode: {
     required: requiredIf(showCitySelector),
     integer,
@@ -321,11 +333,12 @@ const updateForm = (type, canteenInfos) => {
           </div>
           <div class="fr-col-6">
             <DsfrSelect
-              v-model="form.city"
+              v-model="form.citySelector"
               label="Ville *"
               :label-visible="true"
-              :error-message="emptyCity || formatError(v$.city)"
+              :error-message="emptyCity || formatError(v$.citySelector)"
               :options="citiesOptions"
+              @update:modelValue="selectCity()"
             />
           </div>
         </div>
