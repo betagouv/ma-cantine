@@ -595,9 +595,13 @@ export const hasSatelliteInconsistency = (canteen) => {
 }
 
 export const lineMinistryRequired = (canteen, allSectors) => {
+  // 2 rules
+  // - canteen must be Public
+  // - canteen has Sector(s) with line_ministry
+  if (canteen.economicModel !== "public") return false
   const concernedSectors = allSectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
   if (concernedSectors.length === 0) return false
-  return canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
+  return canteen.sectors?.some((x) => concernedSectors.indexOf(x) > -1)
 }
 
 export const missingCanteenData = (canteen, sectors) => {

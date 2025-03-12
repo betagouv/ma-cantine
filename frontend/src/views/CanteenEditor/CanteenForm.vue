@@ -334,7 +334,7 @@
 
 <script>
 import validators from "@/validators"
-import { getObjectDiff, sectorsSelectList, readCookie } from "@/utils"
+import { getObjectDiff, sectorsSelectList, readCookie, lineMinistryRequired } from "@/utils"
 import TechnicalControlDialog from "./TechnicalControlDialog"
 import SiretCheck from "./SiretCheck"
 import Constants from "@/constants"
@@ -432,11 +432,7 @@ export default {
       return this.canteen.productionType && this.canteen.productionType !== "central"
     },
     showMinistryField() {
-      // 2 rules: Public + Sector(s) with line_ministry
-      if (this.canteen.economicModel !== "public") return false
-      const concernedSectors = this.sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
-      if (concernedSectors.length === 0) return false
-      return this.canteen.sectors?.some((x) => concernedSectors.indexOf(parseInt(x, 10)) > -1)
+      return lineMinistryRequired(this.canteen, this.sectors)
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
