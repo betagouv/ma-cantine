@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.8.1](https://github.com/betagouv/ma-cantine/compare/v2025.8.0...v2025.8.1) (2025-03-12)
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** Répare les règles concernant le champ 'Administration de tutelle' au moment de la TD ([#5112](https://github.com/betagouv/ma-cantine/issues/5112)) ([8eab91a](https://github.com/betagouv/ma-cantine/commit/8eab91a3ab453db3a472861e4253471839bb69b8))
+
 ## [2025.8.0](https://github.com/betagouv/ma-cantine/compare/v2025.7.1...v2025.8.0) (2025-03-11)
 
 
