@@ -502,13 +502,12 @@ const updateForm = (type, canteenInfos) => {
             Ces éléments sont essentiels pour éviter les doublons et garantir l’exactitude des télédéclarations
             effectuées sur ma cantine.
           </p>
-          <DsfrCheckbox v-model="form.noSiret" name="noSiret" :error-message="formatError(v$.noSiret)">
-            <template #label>
-              <p class="fr-mb-0">
-                En cochant cette case vous confirmez avoir vérifié ces informations.
-              </p>
-            </template>
-          </DsfrCheckbox>
+          <DsfrCheckbox
+            v-model="form.noSiret"
+            name="noSiret"
+            :error-message="formatError(v$.noSiret)"
+            label="En cochant cette case vous confirmez avoir vérifié ces informations"
+          />
         </div>
       </fieldset>
       <div class="fr-grid-row fr-grid-row--right fr-grid-row--top">
