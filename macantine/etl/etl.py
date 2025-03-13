@@ -9,11 +9,11 @@ import pandas as pd
 import requests
 from django.core.files.storage import default_storage
 
+from api.views import OpenDataTeleDeclarationsListView
 from data.department_choices import Department
-from data.models import Canteen, Teledeclaration
+from data.models import Canteen
 from data.region_choices import Region
-from macantine.etl.utils import common_members, filter_empty_values, format_geo_name
-from macantine.utils import CAMPAIGN_DATES
+from macantine.etl.utils import common_members, format_geo_name
 
 logger = logging.getLogger(__name__)
 
@@ -108,37 +108,12 @@ class TELEDECLARATIONS(EXTRACTOR):
         self.years = []
         self.columns = []
 
-    def filter_aberrant_td(self):
-        """
-        Filtering out the teledeclarations that :
-        *  products > 1 million €
-        AND
-        * an avg meal cost > 20 €
-        """
-        mask = (self.df["teledeclaration.value_total_ht"] > 1000000) & (
-            self.df["teledeclaration.value_total_ht"] / self.df["canteen.yearly_meal_count"] > 20
-        )
-        self.df = self.df[~mask]
-
-    def filter_teledeclarations(self):
-        """
-        Filter teledeclarations for empty values."""
-
-        self.df = filter_empty_values(self.df, col_name="teledeclaration.value_total_ht")
-        self.df = filter_empty_values(self.df, col_name="teledeclaration.value_bio_ht")
-        self.filter_aberrant_td()
-
     def extract_dataset(self) -> pd.DataFrame:
-        self.df = pd.DataFrame()
-        for year in self.years:
-            if year in CAMPAIGN_DATES.keys():
-                df_year = pd.DataFrame(Teledeclaration.objects.for_stat(year).values())
-                self.df = pd.concat([self.df, df_year])
-            else:
-                logger.warning(f"TD dataset does not exist for year : {year}")
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe with columns from the schema")
-            self.df = pd.DataFrame(columns=self.columns)
+        open_data_view = OpenDataTeleDeclarationsListView()
+        queryset = open_data_view.get_queryset()
+        serializer = open_data_view.get_serializer_class()
+        teledeclarations = serializer(queryset, many=True).data
+        self.df = pd.DataFrame(teledeclarations)
 
 
 class CANTEENS(EXTRACTOR):

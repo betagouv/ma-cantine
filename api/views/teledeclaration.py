@@ -5,18 +5,21 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db.models import ExpressionWrapper, F, FloatField, Q
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import get_template
 from django.utils.text import slugify
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import serializers, status
 from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from xhtml2pdf import pisa
 
 from api.permissions import IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
-from api.serializers import FullDiagnosticSerializer
+from api.serializers import FullDiagnosticSerializer, OpenDataTeledeclarationSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
+from macantine.utils import CAMPAIGN_DATES
 
 from .utils import camelize
 
@@ -389,3 +392,28 @@ class TeledeclarationPdfView(APIView):
             for family, display_family in family_variable_to_display.items():
                 structured_data[display_label][display_family] = teledeclaration_data[f"value_{family}_{label}"]
         return structured_data
+
+
+class OpenDataTeleDeclarationsListView(ListAPIView):
+    model = Teledeclaration
+    serializer_class = OpenDataTeledeclarationSerializer
+    # Rajouter le filtre par année
+    date_query = Q()
+    for _, data in CAMPAIGN_DATES.items():
+        date_query |= Q(creation_date__range=(data["start_date"], data["end_date"]))
+    # Rajouter le filtre données vides
+    empty_values_query = Q(diagnostic_id__value_total_ht__isnull=False)
+    empty_values_query |= Q(diagnostic_id__value_bio_ht__isnull=False)
+    # Rajouter le filtre TD aberrantes
+    aberrant_values_query = Q(cout_denrees__lte=20)
+    queryset = (
+        Teledeclaration.objects.filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED)
+        .filter(date_query)
+        .filter(empty_values_query)
+        .annotate(
+            cout_denrees=ExpressionWrapper(
+                F("diagnostic_id__value_total_ht") / F("canteen_id__yearly_meal_count"), output_field=FloatField()
+            )
+        )
+        .filter(aberrant_values_query)
+    )
