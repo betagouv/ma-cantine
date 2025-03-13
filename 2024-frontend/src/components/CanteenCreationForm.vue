@@ -42,8 +42,12 @@ sectorsService.getSectors().then((sectors) => {
     const { name, id, categoryName, hasLineMinistry } = sector
     options.push({ name: `${categoryName} - ${name}`, sectorId: id, hasLineMinistry })
   }
-  sectorsOptions.value = options
-  // TODO : Tri alphabétique
+  const optionsSortedAlphabetically = options.sort((sectorBefore, sectorAfter) => {
+    if (sectorBefore.name < sectorAfter.name) return -1
+    else if (sectorBefore.name > sectorAfter.name) return 1
+    else return 0
+  })
+  sectorsOptions.value = optionsSortedAlphabetically
 })
 
 /* Line Ministry */
