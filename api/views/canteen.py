@@ -64,7 +64,10 @@ from api.serializers import (
 )
 from api.views.utils import camelize, update_change_reason_with_auth
 from common.api.adresse import fetch_geo_data_from_api_entreprise_by_siret
-from common.api.recherche_entreprises import fetch_geo_data_from_siret
+from common.api.recherche_entreprises import (
+    fetch_geo_data_from_siren,
+    fetch_geo_data_from_siret,
+)
 from common.utils import send_mail
 from data.department_choices import Department
 from data.models import (
@@ -490,9 +493,10 @@ class CanteenStatusBySirenView(APIView):
 
     def get(self, request, *args, **kwargs):
         siren = request.parser_context.get("kwargs").get("siren")
-        response = get_cantine_list_from_siren_unite_legale(siren, request) or []
+        response = fetch_geo_data_from_siren(siren, {})
         if not response:
             return Response(None, status=status.HTTP_204_NO_CONTENT)
+        response["canteens"] = get_cantine_list_from_siren_unite_legale(siren, request)
         return JsonResponse(response, status=status.HTTP_200_OK, safe=False)
 
 
@@ -507,8 +511,7 @@ def get_cantine_from_siret(siret, request):
 def get_cantine_list_from_siren_unite_legale(siren, request):
     if siren:
         canteens = Canteen.objects.filter(siren_unite_legale=siren)
-        if canteens.exists():
-            return camelize(CanteenStatusSerializer(canteens, many=True, context={"request": request}).data)
+        return camelize(CanteenStatusSerializer(canteens, many=True, context={"request": request}).data)
 
 
 class PublishCanteenView(APIView):
