@@ -1,3 +1,18 @@
+const hasSiret = [
+  {
+    label: "Oui, j’ai un numéro SIRET propre",
+    img: "/static/images/picto-dsfr/success.svg",
+    value: "has-siret",
+  },
+  {
+    label: "Non, je suis rattaché à une unité légale",
+    hint:
+      "Seuls certains établissement peuvent être rattachés au SIRET d’une unité légale, vérifier votre éligibilité dans nos conditions d’utilisation.",
+    img: "/static/images/picto-dsfr/flow-list.svg",
+    value: "no-siret",
+  },
+]
+
 const economicModel = [
   {
     label: "Public",
@@ -26,6 +41,7 @@ const productionType = [
 ]
 
 export default {
+  hasSiret,
   economicModel,
   managementType,
   productionType,

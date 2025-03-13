@@ -5,10 +5,26 @@ import canteensService from "@/services/canteens.js"
 import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
 
 /* Props */
-const props = defineProps(["errorRequired"])
+const props = defineProps(["errorRequired", "type"])
 
 /* Store */
 const store = useRootStore()
+
+/* Content */
+const title = computed(() => (props.type === "has-siret" ? "Mon établissement" : "Mon unité légale de rattachement"))
+const hint = computed(() =>
+  props.type === "has-siret"
+    ? "afin de retrouver les informations de votre établissement"
+    : "afin de retrouver les informations de l'établissement"
+)
+const placeholder = computed(() =>
+  props.type === "has-siret" ? "Tapez votre n° SIRET" : "Tapez le n° SIREN de l’unité légale"
+)
+const label = computed(() =>
+  props.type === "has-siret"
+    ? "Rechercher un établissement par son numéro SIRET"
+    : "Rechercher un établissement par son numéro SIREN"
+)
 
 /* Canteen fields */
 const canteen = reactive({})
@@ -94,21 +110,21 @@ const unselectCanteen = () => {
 </script>
 
 <template>
-  <div class="canteen-creation-siret">
-    <p class="fr-mb-0">Mon établissement *</p>
+  <div class="canteen-creation-search">
+    <p class="fr-mb-0">{{ title }} *</p>
     <p class="fr-hint-text">
       Nous utilisons le site
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">annuaire-des-entreprises</a>
-      afin de retrouver les informations de votre établissement
+      {{ hint }}
     </p>
     <DsfrInputGroup :error-message="errorMessage">
       <template #default>
         <DsfrSearchBar
           v-if="!hasSelected"
           v-model="search"
-          placeholder="Tapez votre n° SIRET"
           button-text="Rechercher"
-          label="Rechercher un établissement par son numéro SIRET"
+          :placeholder="placeholder"
+          :label="label"
           :large="true"
           @search="searchSiret()"
         />
@@ -134,14 +150,14 @@ const unselectCanteen = () => {
       label="Rechercher un nouvel établissement"
       icon="fr-icon-search-line"
       icon-right
-      class="canteen-creation-siret__back fr-mt-1w"
+      class="canteen-creation-search__back fr-mt-1w"
       @click="unselectCanteen()"
     />
   </div>
 </template>
 
 <style lang="scss">
-.canteen-creation-siret {
+.canteen-creation-search {
   &__back {
     width: 100%;
     justify-content: center;

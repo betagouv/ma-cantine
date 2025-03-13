@@ -9,12 +9,29 @@ import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import canteensService from "@/services/canteens"
+import openDataService from "@/services/openData.js"
 import options from "@/constants/canteen-creation-form-options"
-import CanteenCreationSiret from "@/components/CanteenCreationSiret.vue"
+import CanteenCreationSearch from "@/components/CanteenCreationSearch.vue"
 
 /* Router and Store */
 const router = useRouter()
 const store = useRootStore()
+
+/* Production type */
+const productionTypeOptions = computed(() => {
+  const isDisabled = form.hasSiret === "no-siret"
+  const hint = isDisabled
+    ? "Ce mode de production n'est pas disponible pour les établissements rattachés à une unité légale"
+    : ""
+  const optionsWithDisabled = [...options.productionType]
+  const indexCentralType = optionsWithDisabled.findIndex((option) => option.value === "central")
+  const indexCentralServingType = optionsWithDisabled.findIndex((option) => option.value === "central_serving")
+  optionsWithDisabled[indexCentralType].disabled = isDisabled
+  optionsWithDisabled[indexCentralType].hint = hint
+  optionsWithDisabled[indexCentralServingType].disabled = isDisabled
+  optionsWithDisabled[indexCentralServingType].hint = hint
+  return optionsWithDisabled
+})
 
 /* Sectors */
 const sectors = reactive({})
@@ -43,9 +60,68 @@ sectorsService.getMinistries().then((response) => {
   ministries.value = response
 })
 
+/* City */
+const defaultCitySelector = [
+  {
+    text: "Sélectionner une option",
+    disabled: true,
+    value: null,
+  },
+]
+const emptyCity = ref("")
+const citiesOptions = ref(defaultCitySelector)
+
+const selectCity = () => {
+  const index = Number(form.citySelector)
+  const selectedCityOptions = citiesOptions.value[index]
+  form.cityInseeCode = selectedCityOptions.cityInseeCode
+  form.department = selectedCityOptions.department
+  form.city = selectedCityOptions.text
+}
+
+const changePostal = () => {
+  resetCity()
+  if (form.postalCode && form.postalCode.trim().length === 5) getCitiesOptions()
+}
+
+const resetCity = () => {
+  citiesOptions.value = defaultCitySelector
+  form.citySelector = null
+  form.city = null
+  form.cityInseeCode = null
+  form.department = null
+}
+
+const getCitiesOptions = () => {
+  emptyCity.value = ""
+  citiesOptions.value = []
+  openDataService
+    .findCitiesFromPostalCode(form.postalCode)
+    .then((response) => {
+      if (response.length === 0) emptyCity.value = `Aucune ville trouvée pour le code postal « ${form.postalCode} »`
+      else displayCitiesResult(response)
+    })
+    .catch((e) => store.notifyServerError(e))
+}
+
+const displayCitiesResult = (cities) => {
+  const options = []
+  for (let i = 0; i < cities.length; i++) {
+    const city = cities[i]
+    options.push({
+      value: i,
+      text: city.nom,
+      cityInseeCode: city.code,
+      department: city.codeDepartement,
+    })
+  }
+  citiesOptions.value = options
+}
+
 /* Form fields */
 const form = reactive({})
 const initFields = () => {
+  form.hasSiret = null
   form.siret = null
   form.name = null
   form.economicModel = null
@@ -59,11 +135,13 @@ const initFields = () => {
   form.centralProducerSiret = null
   form.satelliteCanteensCount = null
   form.postalCode = null
+  form.citySelector = null
   form.city = null
   form.cityInseeCode = null
   form.department = null
   form.oneDelivery = null
   form.manyDelivery = null
+  form.noSiret = null
 }
 initFields()
 
@@ -85,6 +163,8 @@ const showLineMinistry = computed(() => {
 })
 const showCheckboxOneDelivery = computed(() => Number(form.satelliteCanteensCount) === 1)
 const showCheckboxManyDelivery = computed(() => Number(form.satelliteCanteensCount) >= 250)
+const showCheckboxNoSiret = computed(() => form.hasSiret === "no-siret")
+const showCitySelector = computed(() => form.hasSiret === "no-siret")
 
 const resetDynamicInputValues = () => {
   form.satelliteCanteensCount = null
@@ -98,7 +178,15 @@ const dailyMealRequired = computed(() => form.productionType !== "central")
 const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
 const rules = {
   name: { required },
+  hasSiret: { required },
   siret: { required },
+  citySelector: { required: requiredIf(showCitySelector) },
+  postalCode: {
+    required: requiredIf(showCitySelector),
+    integer,
+    minLength: helpers.withMessage("Le code postal doit contenir 5 caractères", minLength(5)),
+    maxLength: helpers.withMessage("Le code postal doit contenir 5 caractères", maxLength(5)),
+  },
   economicModel: { required },
   managementType: { required },
   productionType: { required },
@@ -127,6 +215,9 @@ const rules = {
   },
   manyDelivery: {
     required: requiredIf(showCheckboxManyDelivery),
+  },
+  noSiret: {
+    required: requiredIf(showCheckboxNoSiret),
   },
 }
 const v$ = useVuelidate(rules, form)
@@ -194,10 +285,12 @@ const getSectorsID = (activitiesSelected) => {
   return names
 }
 
-/* SIRET Informations */
-const saveInfos = (canteenInfos) => {
-  form.siret = canteenInfos.siret?.replace(" ", "")
-  form.name = canteenInfos.name
+/* Update canteen informations from child components */
+const updateForm = (type, canteenInfos) => {
+  if (type === "establishment") {
+    form.siret = canteenInfos.siret?.replace(" ", "")
+    form.name = canteenInfos.name
+  }
   form.postalCode = canteenInfos.postalCode
   form.city = canteenInfos.city
   form.cityInseeCode = canteenInfos.cityInseeCode
@@ -210,12 +303,24 @@ const saveInfos = (canteenInfos) => {
     class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
-      <fieldset class="fr-mb-4w">
+      <fieldset class="fr-mb-4w canteen-creation-form__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
-        <CanteenCreationSiret
+        <DsfrRadioButtonSet
+          v-model="form.hasSiret"
+          legend="Avez-vous un numéro SIRET ?"
+          :error-message="formatError(v$.hasSiret)"
+          :options="options.hasSiret"
+        />
+        <CanteenCreationSearch
+          v-if="form.hasSiret"
           :key="forceRerender"
-          @select="(canteenSelected) => saveInfos(canteenSelected)"
+          @select="
+            (establishmentSelected) => {
+              updateForm('establishment', establishmentSelected)
+            }
+          "
           :error-required="formatError(v$.siret)"
+          :type="form.hasSiret"
         />
       </fieldset>
       <fieldset class="fr-mb-4w">
@@ -227,8 +332,29 @@ const saveInfos = (canteenInfos) => {
           hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
           :error-message="formatError(v$.name)"
         />
+        <div v-if="showCitySelector" class="fr-grid-row fr-grid-row--gutters">
+          <div class="fr-col-6">
+            <DsfrInputGroup
+              v-model="form.postalCode"
+              label="Code postal *"
+              :label-visible="true"
+              :error-message="formatError(v$.postalCode)"
+              @update:modelValue="changePostal()"
+            />
+          </div>
+          <div class="fr-col-6">
+            <DsfrSelect
+              v-model="form.citySelector"
+              label="Ville *"
+              :label-visible="true"
+              :error-message="emptyCity || formatError(v$.citySelector)"
+              :options="citiesOptions"
+              @update:modelValue="selectCity()"
+            />
+          </div>
+        </div>
       </fieldset>
-      <fieldset class="fr-mb-4w canteen-creation-form__caracteristics">
+      <fieldset class="fr-mb-4w canteen-creation-form__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
         <DsfrRadioButtonSet
           legend="Type d’établissement *"
@@ -245,7 +371,7 @@ const saveInfos = (canteenInfos) => {
         <DsfrRadioButtonSet
           legend="Mode de production *"
           v-model="form.productionType"
-          :options="options.productionType"
+          :options="productionTypeOptions"
           :error-message="formatError(v$.productionType)"
           @change="resetDynamicInputValues"
         />
@@ -288,8 +414,6 @@ const saveInfos = (canteenInfos) => {
           :options="sectorsActivityOptions"
           id-key="index"
           label-key="name"
-          search
-          selectAll
           @update:modelValue="changeSector('sectorActivity')"
           :filtering-keys="['name']"
           :error-message="formatError(v$.sectorActivity)"
@@ -336,7 +460,10 @@ const saveInfos = (canteenInfos) => {
           </div>
         </div>
       </fieldset>
-      <fieldset v-if="showCheckboxOneDelivery || showCheckboxManyDelivery" class="fr-py-0 fr-my-3w fr-mb-md-3w">
+      <fieldset
+        v-if="showCheckboxOneDelivery || showCheckboxManyDelivery || showCheckboxNoSiret"
+        class="fr-py-0 fr-my-3w fr-mb-md-3w"
+      >
         <legend class="fr-h5 fr-mb-2w">6. Confirmation</legend>
         <DsfrCheckbox
           v-if="showCheckboxOneDelivery"
@@ -354,6 +481,34 @@ const saveInfos = (canteenInfos) => {
           "
           :error-message="formatError(v$.manyDelivery)"
         />
+        <div v-if="showCheckboxNoSiret">
+          <p class="fr-mb-1v">
+            Votre cantine n’a pas de numéro de SIRET et vous êtes sur le point de la rattacher à une unité légale
+            existante. Avant de confirmer :
+          </p>
+          <ul>
+            <li>
+              avez-vous vérifié que votre cantine ne dispose pas d’un numéro SIRET (ex : une facture, l’annuaire des
+              entreprises, annuaire des cantines scolaires) ?
+            </li>
+            <li>
+              l’unité légale à laquelle vous vous rattachez correspond bien à l’entité qui contrôle votre cantine ?
+            </li>
+            <li>
+              vous êtes-vous assuré que votre cantine ne figure pas dans la liste des établissements de l’unité légale ?
+            </li>
+          </ul>
+          <p>
+            Ces éléments sont essentiels pour éviter les doublons et garantir l’exactitude des télédéclarations
+            effectuées sur ma cantine.
+          </p>
+          <DsfrCheckbox
+            v-model="form.noSiret"
+            name="noSiret"
+            :error-message="formatError(v$.noSiret)"
+            label="En cochant cette case vous confirmez avoir vérifié ces informations"
+          />
+        </div>
       </fieldset>
       <div class="fr-grid-row fr-grid-row--right fr-grid-row--top">
         <DsfrButton
@@ -375,7 +530,7 @@ const saveInfos = (canteenInfos) => {
     display: none !important;
   }
 
-  &__caracteristics {
+  &__reduce-margin-bottom {
     .fr-form-group:last-child {
       .fr-fieldset,
       .fr-fieldset__element:last-child {
