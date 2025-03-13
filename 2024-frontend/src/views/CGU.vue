@@ -106,8 +106,8 @@
       Un Gestionnaire peut se rattacher à une unité légale à condition :
     </p>
     <ul>
-      <li>- de ne pas dupliquer un établissement déjà existant dans le Service,</li>
-      <li>- de se rattacher à une unité légale qui exerce la tutelle de son établissement.</li>
+      <li>de ne pas dupliquer un établissement déjà existant dans le Service,</li>
+      <li>de se rattacher à une unité légale qui exerce la tutelle de son établissement.</li>
     </ul>
     <p>
       En cas de doute, l’Editeur peut prendre contact avec le Gestionnaire concerné et se réserve le droit de supprimer
