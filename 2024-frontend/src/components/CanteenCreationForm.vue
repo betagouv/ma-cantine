@@ -57,6 +57,9 @@ const lineMinistryOptions = computed(() => {
 sectorsService.getMinistries().then((response) => {
   ministries.value = response
 })
+const resetLineMinistry = () => {
+  form.lineMinistry = ""
+}
 
 /* City */
 const defaultCitySelector = [
@@ -391,7 +394,7 @@ const updateForm = (type, canteenInfos) => {
           search
           id-key="sectorId"
           label-key="name"
-          @update:modelValue="form.lineMinistry = ''"
+          @update:modelValue="resetLineMinistry()"
           :filtering-keys="['name']"
           :error-message="formatError(v$.sectors)"
         />
