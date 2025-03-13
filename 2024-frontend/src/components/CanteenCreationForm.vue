@@ -34,19 +34,17 @@ const productionTypeOptions = computed(() => {
 })
 
 /* Sectors */
-const sectors = reactive({})
-const sectorsInCategory = computed(() => sectors.value.filter((sector) => sector.category === form.sectorCategory))
-const sectorsCategoryOptions = computed(() => (sectors.value ? sectorsService.getCategories(sectors.value) : []))
-const sectorsActivityOptions = computed(() =>
-  sectors.value ? sectorsService.getActivities(sectorsInCategory.value) : []
-)
-sectorsService.getSectors().then((response) => {
-  sectors.value = response
+const sectorsOptions = ref([])
+sectorsService.getSectors().then((sectors) => {
+  const options = []
+  for (let i = 0; i < sectors.length; i++) {
+    const sector = sectors[i]
+    const { name, id, categoryName, hasLineMinistry } = sector
+    options.push({ name: `${categoryName} - ${name}`, sectorId: id, hasLineMinistry })
+  }
+  sectorsOptions.value = options
+  // TODO : Tri alphabétique
 })
-const changeSector = (type) => {
-  if (type === "sectorCategory") form.sectorCategory = ""
-  form.lineMinistry = ""
-}
 
 /* Line Ministry */
 const ministries = reactive({})
@@ -127,8 +125,7 @@ const initFields = () => {
   form.economicModel = null
   form.managementType = null
   form.productionType = null
-  form.sectorCategory = null
-  form.sectorActivity = []
+  form.sectors = []
   form.lineMinistry = null
   form.dailyMealCount = null
   form.yearlyMealCount = null
@@ -399,29 +396,18 @@ const updateForm = (type, canteenInfos) => {
       </fieldset>
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
-        <DsfrSelect
-          v-model="form.sectorCategory"
-          label="Catégorie de secteur *"
-          labelVisible
-          :options="sectorsCategoryOptions"
-          @change="changeSector('sectorCategory')"
-          :error-message="formatError(v$.sectorCategory)"
-        />
         <DsfrMultiselect
-          v-model="form.sectorActivity"
-          label="Secteur d’activité *"
+          v-model="form.sectors"
+          label="Secteurs *"
           labelVisible
-          :options="sectorsActivityOptions"
-          id-key="index"
+          :options="sectorsOptions"
+          search
+          id-key="sectorId"
           label-key="name"
-          @update:modelValue="changeSector('sectorActivity')"
+          @update:modelValue="form.lineMinistry = ''"
           :filtering-keys="['name']"
-          :error-message="formatError(v$.sectorActivity)"
-        >
-          <template #no-results>
-            Sélectionner une catégorie de secteur pour pouvoir sélectionner des secteurs d'activité
-          </template>
-        </DsfrMultiselect>
+          :error-message="formatError(v$.sectors)"
+        />
         <DsfrSelect
           v-if="showLineMinistry"
           v-model="form.lineMinistry"
