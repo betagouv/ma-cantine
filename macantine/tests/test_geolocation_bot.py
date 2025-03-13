@@ -3,7 +3,11 @@ import json
 import requests_mock
 from django.test import TestCase
 
-from common.api.recherche_entreprises import fetch_geo_data_from_siret
+from common.api.recherche_entreprises import (
+    RECHERCHE_ENTREPRISE_API_URL,
+    RECHERCHE_ENTREPRISE_DEFAULT_PARAMS,
+    fetch_geo_data_from_siret,
+)
 from data.department_choices import Department
 from data.factories import CanteenFactory, SectorFactory, UserFactory
 from macantine import tasks
@@ -125,7 +129,7 @@ class TestGeolocationBot(TestCase):
 
 @requests_mock.Mocker()
 class TestGeolocationWithSiretBot(TestCase):
-    api_url = "https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&q="
+    api_url = f"{RECHERCHE_ENTREPRISE_API_URL}?{RECHERCHE_ENTREPRISE_DEFAULT_PARAMS}"
 
     def test_candidate_canteens(self, _):
         """
@@ -149,7 +153,7 @@ class TestGeolocationWithSiretBot(TestCase):
         city_insee_code = "29352"
 
         mock.get(
-            self.api_url + siret_canteen,
+            self.api_url + f"&q={siret_canteen}",
             text=json.dumps(
                 {
                     "results": [

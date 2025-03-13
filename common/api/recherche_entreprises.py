@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 RECHERCHE_ENTREPRISE_API_URL = "https://recherche-entreprises.api.gouv.fr/search"
-DEFAULT_PARAMS = "etat_administratif=A&page=1&per_page=1"
+RECHERCHE_ENTREPRISE_DEFAULT_PARAMS = "etat_administratif=A&page=1&per_page=1"
 
 
 def get_enseigne_name(etablissement):
@@ -57,7 +57,7 @@ def fetch_geo_data_from_siren(siren, response):
 
     response["siren"] = siren
     try:
-        api_response = requests.get(f"{RECHERCHE_ENTREPRISE_API_URL}?{DEFAULT_PARAMS}&q={siren}")
+        api_response = requests.get(f"{RECHERCHE_ENTREPRISE_API_URL}?{RECHERCHE_ENTREPRISE_DEFAULT_PARAMS}&q={siren}")
         api_response.raise_for_status()
         result = validate_result(siren, api_response)
         if result:
@@ -104,7 +104,7 @@ def fetch_geo_data_from_siret(siret, response):
 
     response["siret"] = siret
     try:
-        api_response = requests.get(f"{RECHERCHE_ENTREPRISE_API_URL}?{DEFAULT_PARAMS}&q={siret}")
+        api_response = requests.get(f"{RECHERCHE_ENTREPRISE_API_URL}?{RECHERCHE_ENTREPRISE_DEFAULT_PARAMS}&q={siret}")
         api_response.raise_for_status()
         result = validate_result(siret, api_response)
         if result:

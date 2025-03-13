@@ -10,6 +10,10 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from common.api.recherche_entreprises import (
+    RECHERCHE_ENTREPRISE_API_URL,
+    RECHERCHE_ENTREPRISE_DEFAULT_PARAMS,
+)
 from data.factories import (
     CanteenFactory,
     DiagnosticFactory,
@@ -1390,9 +1394,7 @@ class TestCanteenStatusApi(APITestCase):
         city = "Paris 15e Arrondissement"
         postcode = "75015"
         insee_code = "75115"
-        sirene_api_url = (
-            f"https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&q={siret}"
-        )
+        sirene_api_url = f"{RECHERCHE_ENTREPRISE_API_URL}?{RECHERCHE_ENTREPRISE_DEFAULT_PARAMS}&q={siret}"
         sirene_mocked_response = {
             "results": [
                 {
