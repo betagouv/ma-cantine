@@ -190,6 +190,7 @@ const rules = {
     required: requiredIf(showCitySelector),
     integer,
     minLength: helpers.withMessage("Le code postal doit contenir 5 caractères", minLength(5)),
+    maxLength: helpers.withMessage("Le code postal doit contenir 5 caractères", maxLength(5)),
   },
   economicModel: { required },
   managementType: { required },
