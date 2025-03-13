@@ -111,7 +111,7 @@ const getCitiesOptions = () => {
   emptyCity.value = ""
   citiesOptions.value = []
   openDataService
-    .getCities(form.postalCode)
+    .findCitiesFromPostalCode(form.postalCode)
     .then((response) => {
       if (response.length === 0) emptyCity.value = `Aucune ville trouvée pour le code postal « ${form.postalCode} »`
       else displayCitiesResult(response)
