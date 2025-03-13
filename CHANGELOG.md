@@ -6,6 +6,26 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.9.0](https://github.com/betagouv/ma-cantine/compare/v2025.8.1...v2025.9.0) (2025-03-13)
+
+
+### Nouveautés
+
+* **Cantines:** nouvel endpoint API pour récupérer les status des cantines par siren (utile pour l'ajout sans SIRET) ([#5108](https://github.com/betagouv/ma-cantine/issues/5108)) ([8f0fb19](https://github.com/betagouv/ma-cantine/commit/8f0fb192257a2d91b0bb3aa60f7fd144de1cda78))
+
+
+### Améliorations
+
+* **Cantines:** affiche le nouveau champ siren_unite_legale dans l'admin ([#5119](https://github.com/betagouv/ma-cantine/issues/5119)) ([aa452de](https://github.com/betagouv/ma-cantine/commit/aa452def3965a81e8e1a2994222c25f1a94a3906))
+* **Cantines:** gérer le nouveau champ siren_unite_legale dans les exports Metabase ([#5083](https://github.com/betagouv/ma-cantine/issues/5083)) ([f1bd2ea](https://github.com/betagouv/ma-cantine/commit/f1bd2eac695a19fab4e78de3029c5596c3de78e7))
+
+
+### Corrections (bugs, typos...)
+
+* **Ajouter une cantine:** corrige le ministère de tutelle qui ne s'enregistrait pas et homogénéise les variables en lien avec ce champ ([#5113](https://github.com/betagouv/ma-cantine/issues/5113)) ([ed7c285](https://github.com/betagouv/ma-cantine/commit/ed7c285434f93c121412e15fcb109a47f8cd453c))
+* **Ajouter une cantine:** début de la gestion des cantines sans SIRET (formulaire de création personnalisé) ([#5117](https://github.com/betagouv/ma-cantine/issues/5117)) ([dc6fb50](https://github.com/betagouv/ma-cantine/commit/dc6fb50834b7317a3814f355a0ba7b071119ddf2))
+* **Imports:** Sépare les catégories IME & ESAT (typo) ([#5118](https://github.com/betagouv/ma-cantine/issues/5118)) ([9030138](https://github.com/betagouv/ma-cantine/commit/9030138a56453a6af869ca0dca7b5ca4af1cff3d))
+
 ## [2025.8.1](https://github.com/betagouv/ma-cantine/compare/v2025.8.0...v2025.8.1) (2025-03-12)
 
 
