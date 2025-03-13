@@ -95,17 +95,18 @@ const selectCity = () => {
 }
 
 const changePostal = () => {
-  resetCityValues()
+  resetCity()
   if (form.postalCode && form.postalCode.trim().length === 5) getCitiesOptions()
 }
 
-const resetCityValues = () => {
+const resetCity = () => {
   citiesOptions.value = defaultCitySelector
   form.citySelector = null
   form.city = null
   form.cityInseeCode = null
   form.department = null
 }
+
 const getCitiesOptions = () => {
   emptyCity.value = ""
   citiesOptions.value = []
