@@ -76,8 +76,15 @@ const verifyLineMinistry = () => {
 }
 
 /* City */
+const defaultCitySelector = [
+  {
+    text: "Sélectionner une option",
+    disabled: true,
+    value: null,
+  },
+]
 const emptyCity = ref("")
-const citiesOptions = ref([])
+const citiesOptions = ref(defaultCitySelector)
 
 const selectCity = () => {
   const index = Number(form.citySelector)
@@ -88,10 +95,17 @@ const selectCity = () => {
 }
 
 const changePostal = () => {
-  if (form.citySelector) form.citySelector = ""
+  resetCityValues()
   if (form.postalCode && form.postalCode.trim().length === 5) getCitiesOptions()
 }
 
+const resetCityValues = () => {
+  citiesOptions.value = defaultCitySelector
+  form.citySelector = null
+  form.city = null
+  form.cityInseeCode = null
+  form.department = null
+}
 const getCitiesOptions = () => {
   emptyCity.value = ""
   citiesOptions.value = []
