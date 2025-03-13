@@ -64,7 +64,10 @@ from api.serializers import (
 )
 from api.views.utils import camelize, update_change_reason_with_auth
 from common.api.adresse import fetch_geo_data_from_api_entreprise_by_siret
-from common.api.recherche_entreprises import fetch_geo_data_from_siret
+from common.api.recherche_entreprises import (
+    fetch_geo_data_from_siren,
+    fetch_geo_data_from_siret,
+)
 from common.utils import send_mail
 from data.department_choices import Department
 from data.models import (
@@ -377,7 +380,7 @@ class UserCanteensView(ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         canteen_siret = request.data.get("siret")
-        error_response = check_siret_response(canteen_siret, request)
+        error_response = get_cantine_from_siret(canteen_siret, request)
         if error_response:
             raise DuplicateException(additional_data=error_response)
         return super().create(request, *args, **kwargs)
@@ -456,7 +459,7 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
             return JsonResponse(
                 {"siret": ["Le numéro SIRET ne peut pas être vide."]}, status=status.HTTP_400_BAD_REQUEST
             )
-        error_response = check_siret_response(canteen_siret, request)
+        error_response = get_cantine_from_siret(canteen_siret, request)
         if error_response and error_response.get("id") != kwargs.get("pk"):
             raise DuplicateException(additional_data=error_response)
         return super().partial_update(request, *args, **kwargs)
@@ -466,13 +469,13 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
         update_change_reason_with_auth(self, canteen)
 
 
-class CanteenStatusView(APIView):
+class CanteenStatusBySiretView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
 
     def get(self, request, *args, **kwargs):
         siret = request.parser_context.get("kwargs").get("siret")
-        response = check_siret_response(siret, request) or {}
+        response = get_cantine_from_siret(siret, request) or {}
         if not response:
             response = fetch_geo_data_from_siret(siret, response)
             if not response:
@@ -484,12 +487,31 @@ class CanteenStatusView(APIView):
         return JsonResponse(response, status=status.HTTP_200_OK)
 
 
-def check_siret_response(canteen_siret, request):
-    if canteen_siret:
-        canteens = Canteen.objects.filter(siret=canteen_siret)
+class CanteenStatusBySirenView(APIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    required_scopes = ["canteen"]
+
+    def get(self, request, *args, **kwargs):
+        siren = request.parser_context.get("kwargs").get("siren")
+        response = fetch_geo_data_from_siren(siren, {})
+        if not response:
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        response["canteens"] = get_cantine_list_from_siren_unite_legale(siren, request)
+        return JsonResponse(response, status=status.HTTP_200_OK, safe=False)
+
+
+def get_cantine_from_siret(siret, request):
+    if siret:
+        canteens = Canteen.objects.filter(siret=siret)
         if canteens.exists():
             canteen = canteens.first()
             return camelize(CanteenStatusSerializer(canteen, context={"request": request}).data)
+
+
+def get_cantine_list_from_siren_unite_legale(siren, request):
+    if siren:
+        canteens = Canteen.objects.filter(siren_unite_legale=siren)
+        return camelize(CanteenStatusSerializer(canteens, many=True, context={"request": request}).data)
 
 
 class PublishCanteenView(APIView):

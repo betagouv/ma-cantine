@@ -6,6 +6,44 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.8.1](https://github.com/betagouv/ma-cantine/compare/v2025.8.0...v2025.8.1) (2025-03-12)
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** Répare les règles concernant le champ 'Administration de tutelle' au moment de la TD ([#5112](https://github.com/betagouv/ma-cantine/issues/5112)) ([8eab91a](https://github.com/betagouv/ma-cantine/commit/8eab91a3ab453db3a472861e4253471839bb69b8))
+
+## [2025.8.0](https://github.com/betagouv/ma-cantine/compare/v2025.7.1...v2025.8.0) (2025-03-11)
+
+
+### Nouveautés
+
+* **Cantines:** nouveau champ siren_unite_legale pour commencer à gérer les cantines sans SIRET propre ([#5081](https://github.com/betagouv/ma-cantine/issues/5081)) ([b5c04b4](https://github.com/betagouv/ma-cantine/commit/b5c04b44ee5d6e8d04591a9b3dabb2f755d397df))
+
+
+### Améliorations
+
+* **Ajouter une cantine:** ajoute des cases à cocher pour confirmer certaines valeurs renseignées ([#5096](https://github.com/betagouv/ma-cantine/issues/5096)) ([331f55a](https://github.com/betagouv/ma-cantine/commit/331f55a956209152822f92a2e78b36bf6ea443a0))
+* **Ajouter une cantine:** améliore l'accessibilité, le responsive et quelques correctifs de stylisation ([#5097](https://github.com/betagouv/ma-cantine/issues/5097)) ([d1e98e8](https://github.com/betagouv/ma-cantine/commit/d1e98e8253a9c33b4b11d9fce6bf09d72e4c327f))
+* **Ajouter une cantine:** rechercher un SIRET ([#5094](https://github.com/betagouv/ma-cantine/issues/5094)) ([d7e807e](https://github.com/betagouv/ma-cantine/commit/d7e807ead1622cb71c757ee49bba96fb587ab5a8))
+
+
+### Corrections (bugs, typos...)
+
+* **Ajouter une cantine:** le message d'erreur du SIRET manquant ne s'affichait pas ([#5105](https://github.com/betagouv/ma-cantine/issues/5105)) ([599bbb1](https://github.com/betagouv/ma-cantine/commit/599bbb1704d52eb76176782f91f9cff93e435f21))
+* **Ajouter une cantine:** multiples correctifs suite aux tests manuels de la fonctionnalité ([#5102](https://github.com/betagouv/ma-cantine/issues/5102)) ([3a04877](https://github.com/betagouv/ma-cantine/commit/3a04877acc10c09c224e97d602ec24ab4c8323d2))
+* **Imports:** Deuxième partie de correction des regex pour rendre les apostrophes plus permissives ([#5103](https://github.com/betagouv/ma-cantine/issues/5103)) ([e9b2d20](https://github.com/betagouv/ma-cantine/commit/e9b2d206be578b8fb584641c4087d15f9bb307e1))
+* **Imports:** Rendre la regex plus permissive pour accepter tous les secteurs avec les apostrophes ([#5100](https://github.com/betagouv/ma-cantine/issues/5100)) ([9dcdd97](https://github.com/betagouv/ma-cantine/commit/9dcdd97f007362f2cb2985a0ea2f3514aaa9a31d))
+* **Imports:** Troisième partie de correction des regex pour rendre les apostrophes plus permissives ([#5104](https://github.com/betagouv/ma-cantine/issues/5104)) ([6f790b3](https://github.com/betagouv/ma-cantine/commit/6f790b3a73fa59247caa2034f10032b1e4381be0))
+
+
+### Technique
+
+* **deps:** bump django from 5.0.11 to 5.0.13 ([#5098](https://github.com/betagouv/ma-cantine/issues/5098)) ([352d78c](https://github.com/betagouv/ma-cantine/commit/352d78c4d6e9fcfbab7b61ba295151917629a7b2))
+* **Import:** Vérifier que les imports uniformisent les apostrophes ([#5106](https://github.com/betagouv/ma-cantine/issues/5106)) ([31c04b4](https://github.com/betagouv/ma-cantine/commit/31c04b471b3cbc2bd60f52263ccf53b0a9ea200e))
+* **Page Développeur:** Migration de la page en Vue 3 ([#5101](https://github.com/betagouv/ma-cantine/issues/5101)) ([a6485e2](https://github.com/betagouv/ma-cantine/commit/a6485e2dc5517b242262549f6ffff86ff6f1b314))
+* **TD:** bouger les queryset de stats dans les modèles ([#5095](https://github.com/betagouv/ma-cantine/issues/5095)) ([127867c](https://github.com/betagouv/ma-cantine/commit/127867c9a331ab93023243010692b47c26f7a2b0))
+
 ## [2025.7.1](https://github.com/betagouv/ma-cantine/compare/v2025.7.0...v2025.7.1) (2025-03-05)
 
 
