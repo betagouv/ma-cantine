@@ -187,8 +187,7 @@ const rules = {
   economicModel: { required },
   managementType: { required },
   productionType: { required },
-  sectorCategory: { required },
-  sectorActivity: { required },
+  sectors: { required },
   lineMinistry: { required: requiredIf(showLineMinistry) },
   dailyMealCount: {
     required: requiredIf(dailyMealRequired),
