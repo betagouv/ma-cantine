@@ -288,6 +288,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
     search_fields = (
         "canteen__name",
         "canteen__siret",
+        "canteen__siren_unite_legale",
     )
 
     def has_change_permission(self, request, obj=None):

@@ -57,6 +57,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
     )
     search_fields = (
         "canteen__siret",
+        "canteen__siren_unite_legale",
         "description",
         "import_source",
     )

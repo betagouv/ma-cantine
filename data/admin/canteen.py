@@ -15,6 +15,7 @@ class CanteenForm(forms.ModelForm):
             "name": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "city": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "siret": forms.Textarea(attrs={"cols": 35, "rows": 1}),
+            "siren_unite_legale": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "import_source": forms.Textarea(attrs={"cols": 55, "rows": 1}),
             "central_producer_siret": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "city_insee_code": forms.Textarea(attrs={"cols": 35, "rows": 1}),
@@ -63,6 +64,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     fields = (
         "name",
         "siret",
+        "siren_unite_legale",
         "creation_date",
         "import_source",
         "logo",
@@ -131,6 +133,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     search_fields = (
         "name",
         "siret",
+        "siren_unite_legale",
     )
 
     def télédéclarée(self, obj):
