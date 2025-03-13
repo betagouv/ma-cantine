@@ -1335,12 +1335,14 @@ class TestCanteenApi(APITestCase):
 
 
 class TestCanteenStatusApi(APITestCase):
+    sirene_api_url = f"{RECHERCHE_ENTREPRISE_API_URL}?{RECHERCHE_ENTREPRISE_DEFAULT_PARAMS}"
+
     @authenticate
     def test_check_siret_managed(self):
         """
         If checking a siret of a canteen that exists and I manage, give me canteen info
         """
-        siret = "26566234910966"
+        siret = "21380185500288"
         canteen = CanteenFactory.create(siret=siret)
         canteen.managers.add(authenticate.user)
 
@@ -1358,7 +1360,7 @@ class TestCanteenStatusApi(APITestCase):
         If checking a siret of a canteen that exists but no one manages,
         give me minimal canteen info and an indication that the canteen can be claimed
         """
-        siret = "26566234910966"
+        siret = "21380185500288"
         canteen = CanteenFactory.create(siret=siret)
         canteen.managers.clear()
 
@@ -1376,7 +1378,7 @@ class TestCanteenStatusApi(APITestCase):
         If checking a siret of a canteen that exists but is managed by someone else,
         give me minimal canteen info and an indication that the canteen can't be claimed
         """
-        siret = "26566234910966"
+        siret = "21380185500288"
         canteen = CanteenFactory.create(siret=siret)
 
         response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
@@ -1390,16 +1392,16 @@ class TestCanteenStatusApi(APITestCase):
     @requests_mock.Mocker()
     @authenticate
     def test_check_siret_new_canteen(self, mock):
-        siret = "34974603058674"
-        city = "Paris 15e Arrondissement"
-        postcode = "75015"
-        insee_code = "75115"
-        sirene_api_url = f"{RECHERCHE_ENTREPRISE_API_URL}?{RECHERCHE_ENTREPRISE_DEFAULT_PARAMS}&q={siret}"
+        siret = "21380185500288"
+        city = "Grenoble"
+        postcode = "38000"
+        insee_code = "38185"
+
         sirene_mocked_response = {
             "results": [
                 {
-                    "siren": "923412845",
-                    "nom_complet": "Wrong name",
+                    "siren": "213801855",
+                    "nom_complet": "COMMUNE DE GRENOBLE",
                     "matching_etablissements": [
                         {
                             "commune": insee_code,
@@ -1407,13 +1409,14 @@ class TestCanteenStatusApi(APITestCase):
                             "libelle_commune": city,
                             "liste_enseignes": ["Legal unit name"],
                             "etat_administratif": "A",
+                            "siret": siret,
                         }
                     ],
                 }
             ],
             "total_results": 1,
         }
-        mock.get(sirene_api_url, json=sirene_mocked_response)
+        mock.get(self.sirene_api_url + "&q={siret}", json=sirene_mocked_response)
         geo_api_url = f"https://api-adresse.data.gouv.fr/search/?q={insee_code}&citycode={insee_code}&type=municipality&autocomplete=1"
         geo_mocked_response = {
             "features": [
@@ -1444,7 +1447,7 @@ class TestCanteenStatusApi(APITestCase):
         sirene_mocked_response = {
             "results": [
                 {
-                    "siren": "923412845",
+                    "siren": "213801855",
                     "nom_complet": "A name",
                     "matching_etablissements": [
                         {
@@ -1453,13 +1456,14 @@ class TestCanteenStatusApi(APITestCase):
                             "libelle_commune": city,
                             "liste_enseignes": ["ECOLE PRIMAIRE PUBLIQUE"],
                             "etat_administratif": "A",
+                            "siret": "21380185500288",
                         }
                     ],
                 }
             ],
             "total_results": 1,
         }
-        mock.get(sirene_api_url, json=sirene_mocked_response)
+        mock.get(self.sirene_api_url + "&q={siret}", json=sirene_mocked_response)
         response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
         body = response.json()
         self.assertEqual(body["name"], "ECOLE PRIMAIRE PUBLIQUE")
@@ -1468,15 +1472,93 @@ class TestCanteenStatusApi(APITestCase):
     @mock.patch("requests.post", side_effect=requests.exceptions.ConnectTimeout)
     @authenticate
     def test_external_api_down(self, mock_get, mock_post):
-        siret = "34974603058674"
+        siret = "21380185500288"
 
         response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertNotIn("id", body)
         self.assertNotIn("name", body)
-        self.assertEqual(body["siret"], "34974603058674")
+        self.assertEqual(body["siret"], "21380185500288")
         self.assertNotIn("postalCode", body)
         self.assertNotIn("city", body)
         self.assertNotIn("cityInseeCode", body)
         self.assertNotIn("department", body)
+
+    @requests_mock.Mocker()
+    @authenticate
+    def test_check_siren_unite_legale_managed(self, mock):
+        """
+        If checking a siren_unite_legale of a canteen that exists and I manage, give me canteen info
+        """
+        siren_unite_legale = "213801855"
+        canteen = CanteenFactory.create(siren_unite_legale=siren_unite_legale)
+        canteen.managers.add(authenticate.user)
+
+        sirene_mocked_response = {
+            "results": [
+                {
+                    "siren": "213801855",
+                    "nom_complet": "COMMUNE DE GRENOBLE",
+                    "siege": {
+                        "commune": "38185",
+                        "code_postal": "38000",
+                        "libelle_commune": "GRENOBLE",
+                    },
+                    "matching_etablissements": [],
+                }
+            ],
+            "total_results": 1,
+        }
+        mock.get(self.sirene_api_url + "&q={siren_unite_legale}", json=sirene_mocked_response)
+
+        response = self.client.get(reverse("canteen_status_by_siren", kwargs={"siren": siren_unite_legale}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertNotIn("id", body)
+        self.assertIn("name", body)
+        self.assertEqual(len(body["canteens"]), 1)
+        self.assertEqual(body["canteens"][0]["siret"], "34974603058674")
+        self.assertEqual(body["canteens"][0]["id"], canteen.id)
+        self.assertEqual(body["canteens"][0]["name"], canteen.name)
+        self.assertTrue(body["canteens"][0]["isManagedByUser"])
+        self.assertFalse(body["canteens"][0]["canBeClaimed"])
+
+    @requests_mock.Mocker()
+    @authenticate
+    def test_check_siren_unite_legale_unmanaged(self, mock):
+        """
+        If checking a siren_unite_legale of a canteen that exists but no one manages,
+        give me minimal canteen info and an indication that the canteen can be claimed
+        """
+        siren_unite_legale = "213801855"
+        canteen = CanteenFactory.create(siren_unite_legale=siren_unite_legale)
+        canteen.managers.clear()
+
+        sirene_mocked_response = {
+            "results": [
+                {
+                    "siren": "213801855",
+                    "nom_complet": "COMMUNE DE GRENOBLE",
+                    "siege": {
+                        "commune": "38185",
+                        "code_postal": "38000",
+                        "libelle_commune": "GRENOBLE",
+                    },
+                    "matching_etablissements": [],
+                }
+            ],
+            "total_results": 1,
+        }
+        mock.get(self.sirene_api_url + "&q={siren_unite_legale}", json=sirene_mocked_response)
+
+        response = self.client.get(reverse("canteen_status_by_siren", kwargs={"siren": siren_unite_legale}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertNotIn("id", body)
+        self.assertIn("name", body)
+        self.assertEqual(len(body["canteens"]), 1)
+        self.assertEqual(body["canteens"][0]["id"], canteen.id)
+        self.assertEqual(body["canteens"][0]["name"], canteen.name)
+        self.assertFalse(body["canteens"][0]["isManagedByUser"])
+        self.assertTrue(body["canteens"][0]["canBeClaimed"])
