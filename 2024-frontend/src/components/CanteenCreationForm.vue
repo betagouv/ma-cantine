@@ -149,11 +149,11 @@ const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
 )
 const showLineMinistry = computed(() => {
-  if (form.economicModel === "private") return false
-  for (let i = 0; i < form.sectorActivity.length; i++) {
-    const key = form.sectorActivity[i]
-    const activity = sectorsActivityOptions.value[key]
-    const hasLineMinistry = activity.hasLineMinistry
+  if (form.sectors.length === 0) return false
+  if (form.economicModel !== "public") return false
+  for (let i = 0; i < sectorsOptions.value.length; i++) {
+    const sector = sectorsOptions.value[i]
+    const hasLineMinistry = sector.hasLineMinistry
     if (hasLineMinistry) return true
   }
   return false
