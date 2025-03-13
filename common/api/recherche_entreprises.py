@@ -7,6 +7,10 @@ from common.utils import siret as utils_siret
 logger = logging.getLogger(__name__)
 
 
+RECHERCHE_ENTREPRISE_API_URL = "https://recherche-entreprises.api.gouv.fr/search"
+DEFAULT_PARAMS = "etat_administratif=A&page=1&per_page=1"
+
+
 def get_enseigne_name(etablissement):
     is_active = etablissement["etat_administratif"] == "A"
     has_enseigne = (
@@ -26,38 +30,83 @@ def validate_result(siret, response):
     if response.ok:
         response = response.json()
         if response["total_results"] == 0:
-            logger.info(f"API Recherche Entreprises  : No results found for canteen siret : {siret}")
+            logger.info(f"API Recherche Entreprises : No results found for canteen SIRET : {siret}")
             return
         result = response["results"][0]
-        if len(response["results"][0]["matching_etablissements"]) != 1:
+        if len(response["results"][0]["matching_etablissements"]) > 1:
             logger.warning(
-                f"API Recherche Entreprises : Expecting 1 establishment for siret (choosing the first one) : {siret}"
+                f"API Recherche Entreprises : Expecting 1 establishment for SIRET (choosing the first one) : {siret}"
             )
             return
         return result
 
 
-def fetch_geo_data_from_siret(canteen_siret, response):
+def fetch_geo_data_from_siren(siren, response):
     """
     API rate limit : 400/min
     Pour l'utilisation de cette méthode dans un script, penser à ne pas dépasser plus que 400 appels/min.
     Les paramètres de l'appel API à Recherche Entreprises:
-    * q={siret} : Terme de la recherche pour lequel nous utilions uniquemement le siret
+    * q={siren} : Terme de la recherche pour lequel nous utilions uniquemement le SIREN
+    * etat_administratif=A : Nous renvoyons uniquements les organismes actifs
+    * page=1&per_page=1 : Un seul élément est demandé en réponse car la recherche par SIREN doit renvoyer un seul établissement.
+    """
+    # TODO: replace with utils_siret.validate_siret
+    if not utils_siret.is_valid_length_siren(siren):
+        logger.error(f"Api Recherche Entreprises: Le SIREN fourni est invalide : {siren}")
+        return
+
+    response["siren"] = siren
+    try:
+        api_response = requests.get(f"{RECHERCHE_ENTREPRISE_API_URL}?{DEFAULT_PARAMS}&q={siren}")
+        api_response.raise_for_status()
+        result = validate_result(siren, api_response)
+        if result:
+            try:
+                etablissement = result["siege"]
+                response["name"] = get_enseigne_name(etablissement) or result["nom_complet"]
+                response["cityInseeCode"] = etablissement["commune"]
+                response["postalCode"] = etablissement["code_postal"]
+                response["city"] = etablissement["libelle_commune"]
+                return response
+            except KeyError as e:
+                logger.error(
+                    f"API Recherche Entreprises : Unexpected SIREN response format : {api_response}. Unknown key : {e}"
+                )
+        else:
+            logger.warning(
+                f"API Recherche Entreprises : SIREN lookup failed, code {api_response.status_code} : {api_response}"
+            )
+            return
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"Api Recherche Entreprises: HTTPError\n{e}")
+    except requests.exceptions.ConnectionError as e:
+        logger.error(f"Api Recherche Entreprises: ConnectionError\n{e}")
+    except requests.exceptions.Timeout as e:
+        logger.error(f"Api Recherche Entreprises: Timeout\n{e}")
+    except Exception as e:
+        logger.error(f"Api Recherche Entreprises: Unexpected exception\n{e}")
+    return response
+
+
+def fetch_geo_data_from_siret(siret, response):
+    """
+    API rate limit : 400/min
+    Pour l'utilisation de cette méthode dans un script, penser à ne pas dépasser plus que 400 appels/min.
+    Les paramètres de l'appel API à Recherche Entreprises:
+    * q={siret} : Terme de la recherche pour lequel nous utilions uniquemement le SIRET
     * etat_administratif=A : Nous renvoyons uniquements les organismes actifs
     * page=1&per_page=1 : Un seul élément est demandé en réponse car la recherche par SIRET doit renvoyer un seul établissement.
     """
     # TODO: replace with utils_siret.validate_siret
-    if not utils_siret.is_valid_length_siret(canteen_siret):
-        logger.error(f"Api Recherche Entreprises: Le SIRET fourni est invalide : {canteen_siret}")
+    if not utils_siret.is_valid_length_siret(siret):
+        logger.error(f"Api Recherche Entreprises: Le SIRET fourni est invalide : {siret}")
         return
 
-    response["siret"] = canteen_siret
+    response["siret"] = siret
     try:
-        api_response = requests.get(
-            f"https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&q={canteen_siret}",
-        )
+        api_response = requests.get(f"{RECHERCHE_ENTREPRISE_API_URL}?{DEFAULT_PARAMS}&q={siret}")
         api_response.raise_for_status()
-        result = validate_result(canteen_siret, api_response)
+        result = validate_result(siret, api_response)
         if result:
             try:
                 etablissement = result["matching_etablissements"][0]
@@ -68,11 +117,11 @@ def fetch_geo_data_from_siret(canteen_siret, response):
                 return response
             except KeyError as e:
                 logger.error(
-                    f"API Recherche Entreprises : Unexpected siret response format : {api_response}. Unknown key : {e}"
+                    f"API Recherche Entreprises : Unexpected SIRET response format : {api_response}. Unknown key : {e}"
                 )
         else:
             logger.warning(
-                f"API Recherche Entreprises : Siret lookup failed, code {api_response.status_code} : {api_response}"
+                f"API Recherche Entreprises : SIRET lookup failed, code {api_response.status_code} : {api_response}"
             )
             return
     except requests.exceptions.HTTPError as e:
