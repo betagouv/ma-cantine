@@ -486,7 +486,7 @@ const updateForm = (type, canteenInfos) => {
           </p>
           <ul>
             <li>
-              avez-vous vérifié que votre ne cantine ne dispose pas d’un numéro SIRET (ex : une facture, l’annuaire des
+              avez-vous vérifié que votre cantine ne dispose pas d’un numéro SIRET (ex : une facture, l’annuaire des
               entreprises, annuaire des cantines scolaires) ?
             </li>
             <li>
