@@ -26,8 +26,8 @@ const sectorsActivityOptions = computed(() =>
 sectorsService.getSectors().then((response) => {
   sectors.value = response
 })
-const changeCategory = () => {
-  form.sectorActivity = []
+const changeSector = (type) => {
+  if (type === "sectorCategory") form.sectorCategory = ""
   form.lineMinistry = ""
 }
 
@@ -278,7 +278,7 @@ const saveInfos = (canteenInfos) => {
           label="Catégorie de secteur *"
           labelVisible
           :options="sectorsCategoryOptions"
-          @change="changeCategory()"
+          @change="changeSector('sectorCategory')"
           :error-message="formatError(v$.sectorCategory)"
         />
         <DsfrMultiselect
@@ -290,6 +290,7 @@ const saveInfos = (canteenInfos) => {
           label-key="name"
           search
           selectAll
+          @update:modelValue="changeSector('sectorActivity')"
           :filtering-keys="['name']"
           :error-message="formatError(v$.sectorActivity)"
         >
