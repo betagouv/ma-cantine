@@ -20,14 +20,16 @@ const store = useRootStore()
 /* Production type */
 const productionTypeOptions = computed(() => {
   const isDisabled = form.hasSiret === "no-siret"
-  const disabledHint = "Ce mode de production n'est pas disponible pour les établissements rattachés à une unité légale"
+  const hint = isDisabled
+    ? "Ce mode de production n'est pas disponible pour les établissements rattachés à une unité légale"
+    : ""
   const optionsWithDisabled = [...options.productionType]
   const indexCentralType = optionsWithDisabled.findIndex((option) => option.value === "central")
   const indexCentralServingType = optionsWithDisabled.findIndex((option) => option.value === "central_serving")
   optionsWithDisabled[indexCentralType].disabled = isDisabled
-  optionsWithDisabled[indexCentralType].hint = isDisabled ? disabledHint : ""
+  optionsWithDisabled[indexCentralType].hint = hint
   optionsWithDisabled[indexCentralServingType].disabled = isDisabled
-  optionsWithDisabled[indexCentralServingType].hint = isDisabled ? disabledHint : ""
+  optionsWithDisabled[indexCentralServingType].hint = hint
   return optionsWithDisabled
 })
 
