@@ -235,10 +235,7 @@ const saveCanteen = (saveAndCreateValue = false) => {
 
 const sendCanteenForm = () => {
   const payload = form
-  payload.sectors = getSectorsID(form.sectorActivity)
-
   isCreatingCanteen.value = true
-
   canteensService
     .createCanteen(payload)
     .then((canteenCreated) => {
@@ -270,15 +267,6 @@ const addNewCanteen = (name) => {
   initFields()
   window.scrollTo(0, 0)
   v$.value.$reset()
-}
-
-const getSectorsID = (activitiesSelected) => {
-  const names = []
-  for (let i = 0; i < activitiesSelected.length; i++) {
-    const index = activitiesSelected[i]
-    names.push(sectorsActivityOptions.value[index].id)
-  }
-  return names
 }
 
 /* Update canteen informations from child components */
