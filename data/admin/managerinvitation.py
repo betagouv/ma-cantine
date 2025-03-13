@@ -14,8 +14,9 @@ class ManagerInvitationAdmin(admin.ModelAdmin):
     list_filter = ("creation_date",)
     search_fields = (
         "email",
-        "canteen__siret",
         "canteen__name",
+        "canteen__siret",
+        "canteen__siren_unite_legale",
     )
 
     def siret(self, obj):

@@ -17,6 +17,7 @@ class WasteMeasurementAdmin(SimpleHistoryAdmin):
     search_fields = (
         "canteen__name",
         "canteen__siret",
+        "canteen__siren_unite_legale",
     )
     readonly_fields = (
         "creation_date",
