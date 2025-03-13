@@ -469,7 +469,7 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
         update_change_reason_with_auth(self, canteen)
 
 
-class CanteenStatusView(APIView):
+class CanteenStatusBySiretView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
 

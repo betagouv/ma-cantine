@@ -1340,7 +1340,7 @@ class TestCanteenStatusApi(APITestCase):
         canteen = CanteenFactory.create(siret=siret)
         canteen.managers.add(authenticate.user)
 
-        response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
+        response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], canteen.id)
@@ -1358,7 +1358,7 @@ class TestCanteenStatusApi(APITestCase):
         canteen = CanteenFactory.create(siret=siret)
         canteen.managers.clear()
 
-        response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
+        response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], canteen.id)
@@ -1375,7 +1375,7 @@ class TestCanteenStatusApi(APITestCase):
         siret = "26566234910966"
         canteen = CanteenFactory.create(siret=siret)
 
-        response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
+        response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], canteen.id)
@@ -1427,7 +1427,7 @@ class TestCanteenStatusApi(APITestCase):
         }
         mock.get(geo_api_url, json=geo_mocked_response)
 
-        response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
+        response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertNotIn("id", body)
@@ -1458,7 +1458,7 @@ class TestCanteenStatusApi(APITestCase):
             "total_results": 1,
         }
         mock.get(sirene_api_url, json=sirene_mocked_response)
-        response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
+        response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
         body = response.json()
         self.assertEqual(body["name"], "ECOLE PRIMAIRE PUBLIQUE")
 
@@ -1468,7 +1468,7 @@ class TestCanteenStatusApi(APITestCase):
     def test_external_api_down(self, mock_get, mock_post):
         siret = "34974603058674"
 
-        response = self.client.get(reverse("canteen_status", kwargs={"siret": siret}))
+        response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertNotIn("id", body)

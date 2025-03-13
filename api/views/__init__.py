@@ -6,7 +6,7 @@ from .canteen import (  # noqa: F401
     CanteenLocationsView,
     CanteenMinistriesView,
     CanteenStatusBySirenView,
-    CanteenStatusView,
+    CanteenStatusBySiretView,
     ClaimCanteenView,
     PublicCanteenPreviewView,
     PublishCanteenView,
