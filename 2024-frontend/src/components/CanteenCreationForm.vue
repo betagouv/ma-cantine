@@ -26,39 +26,22 @@ const sectorsActivityOptions = computed(() =>
 sectorsService.getSectors().then((response) => {
   sectors.value = response
 })
-const changeCategory = () => {
-  form.sectorActivity = []
-  form.ministry = ""
-  showMinistrySelector.value = false
+const changeSector = (type) => {
+  if (type === "sectorCategory") form.sectorCategory = ""
+  form.lineMinistry = ""
 }
 
 /* Line Ministry */
 const ministries = reactive({})
-const showMinistrySelector = ref(false)
-const ministryOptions = computed(() => {
+const lineMinistryOptions = computed(() => {
   if (!ministries.value) return []
-  return ministries.value.map((ministry) => {
-    return { value: ministry.value, text: ministry.name }
+  return ministries.value.map((lineMinistry) => {
+    return { value: lineMinistry.value, text: lineMinistry.name }
   })
 })
 sectorsService.getMinistries().then((response) => {
   ministries.value = response
 })
-const verifyLineMinistry = () => {
-  if (form.economicModel === "private") {
-    showMinistrySelector.value = false
-    form.ministry = ""
-    return
-  }
-  for (let i = 0; i < form.sectorActivity.length; i++) {
-    const key = form.sectorActivity[i]
-    const activity = sectorsActivityOptions.value[key]
-    const hasLineMinistry = activity.hasLineMinistry
-    if (!hasLineMinistry) continue
-    showMinistrySelector.value = true
-    return
-  }
-}
 
 /* Form fields */
 const form = reactive({})
@@ -70,7 +53,7 @@ const initFields = () => {
   form.productionType = null
   form.sectorCategory = null
   form.sectorActivity = []
-  form.ministry = null
+  form.lineMinistry = null
   form.dailyMealCount = null
   form.yearlyMealCount = null
   form.centralProducerSiret = null
@@ -90,6 +73,16 @@ const showCentralProducerSiret = computed(() => form.productionType === "site_co
 const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
 )
+const showLineMinistry = computed(() => {
+  if (form.economicModel === "private") return false
+  for (let i = 0; i < form.sectorActivity.length; i++) {
+    const key = form.sectorActivity[i]
+    const activity = sectorsActivityOptions.value[key]
+    const hasLineMinistry = activity.hasLineMinistry
+    if (hasLineMinistry) return true
+  }
+  return false
+})
 const showCheckboxOneDelivery = computed(() => Number(form.satelliteCanteensCount) === 1)
 const showCheckboxManyDelivery = computed(() => Number(form.satelliteCanteensCount) >= 250)
 
@@ -111,7 +104,7 @@ const rules = {
   productionType: { required },
   sectorCategory: { required },
   sectorActivity: { required },
-  ministry: { required: requiredIf(showMinistrySelector) },
+  lineMinistry: { required: requiredIf(showLineMinistry) },
   dailyMealCount: {
     required: requiredIf(dailyMealRequired),
     integer,
@@ -241,7 +234,6 @@ const saveInfos = (canteenInfos) => {
           legend="Type d’établissement *"
           v-model="form.economicModel"
           :options="options.economicModel"
-          @change="verifyLineMinistry()"
           :error-message="formatError(v$.economicModel)"
         />
         <DsfrRadioButtonSet
@@ -286,7 +278,7 @@ const saveInfos = (canteenInfos) => {
           label="Catégorie de secteur *"
           labelVisible
           :options="sectorsCategoryOptions"
-          @change="changeCategory()"
+          @change="changeSector('sectorCategory')"
           :error-message="formatError(v$.sectorCategory)"
         />
         <DsfrMultiselect
@@ -298,8 +290,8 @@ const saveInfos = (canteenInfos) => {
           label-key="name"
           search
           selectAll
+          @update:modelValue="changeSector('sectorActivity')"
           :filtering-keys="['name']"
-          @change="verifyLineMinistry()"
           :error-message="formatError(v$.sectorActivity)"
         >
           <template #no-results>
@@ -307,13 +299,13 @@ const saveInfos = (canteenInfos) => {
           </template>
         </DsfrMultiselect>
         <DsfrSelect
-          v-if="showMinistrySelector"
-          v-model="form.ministry"
+          v-if="showLineMinistry"
+          v-model="form.lineMinistry"
           label="Administration générale de tutelle (ministère ou ATE) *"
           description="Hors fonction publique territoriale et hospitalière"
           labelVisible
-          :options="ministryOptions"
-          :error-message="formatError(v$.ministry)"
+          :options="lineMinistryOptions"
+          :error-message="formatError(v$.lineMinistry)"
         />
       </fieldset>
       <fieldset class="fr-mb-4w">
