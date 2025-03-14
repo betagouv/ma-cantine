@@ -18,7 +18,10 @@
         <DataInfoBadge v-else-if="+year >= currentYear" class="my-2" :currentYear="+year === currentYear" />
         <ProductionTypeTag v-if="canteen" :canteen="canteen" class="ml-3" />
         <h1 class="fr-h3 mt-1 mb-2" v-if="canteen">{{ canteen.name }} : Télédéclaration</h1>
-        <p>SIRET : {{ canteen.siret }}</p>
+        <p>
+          SIRET : {{ canteen.siret || "inconnu" }}
+          <span v-if="canteen.sirenUniteLegale">(SIREN de l'unité légale : {{ canteen.sirenUniteLegale }})</span>
+        </p>
       </v-col>
       <v-col cols="12" md="3" lg="2">
         <v-btn
