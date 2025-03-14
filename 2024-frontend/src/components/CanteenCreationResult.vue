@@ -1,12 +1,9 @@
 <script setup>
-import { computed, ref } from "vue"
-import { useRootStore } from "@/stores/root"
-import canteensService from "@/services/canteens"
+import { computed } from "vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import CanteenCreationClaim from "@/components/CanteenCreationClaim.vue"
-
-const loading = ref(false)
+import CanteenCreationJoin from "@/components/CanteenCreationJoin.vue"
 
 /* Props */
 const props = defineProps(["name", "siret", "city", "department", "status", "id", "siren", "linkedCanteens"])
@@ -18,32 +15,6 @@ const linkedCanteensLabel = computed(() => {
   const exist = count === 1 ? "existe" : "existent"
   return `${count} ${establishment} ${exist} déjà pour cette unité locale`
 })
-
-/* Store and Router */
-const store = useRootStore()
-
-/* Ask to join */
-const joinLabel = ref("Rejoindre la cantine")
-const joinCanteen = () => {
-  loading.value = true
-  const userInfos = {
-    email: store.loggedUser.email,
-    name: `${store.loggedUser.firstName} ${store.loggedUser.lastName}`,
-  }
-  canteensService
-    .joinCanteen(props.id, userInfos)
-    .then(() => {
-      store.notify({
-        title: "Demande envoyée",
-        message: `Nous avons contacté l'équipe de la cantine ${props.name}. Ces derniers reviendront vers vous pour accepter ou non votre demande.`,
-      })
-      joinLabel.value = "Demande envoyée"
-    })
-    .catch((e) => {
-      loading.value = false
-      store.notifyServerError(e)
-    })
-}
 </script>
 
 <template>
@@ -82,8 +53,16 @@ const joinCanteen = () => {
               <p v-if="!canteen.isManagedByUser && canteen.canBeClaimed" class="fr-mb-0 fr-text--xs">
                 Cet établissement n’a pas de gestionnaire.
               </p>
+              <p v-if="canteen.canBeClaimed" class="fr-mb-0 fr-text--xs">
+                Cet établissement a déjà des gestionnaires.
+              </p>
             </div>
             <CanteenCreationClaim v-if="!canteen.isManagedByUser && canteen.canBeClaimed" :id="canteen.id" />
+            <CanteenCreationJoin
+              v-if="!canteen.isManagedByUser && !canteen.canBeClaimed"
+              :id="canteen.id"
+              :name="canteen.name"
+            />
           </li>
         </ul>
       </div>
@@ -132,7 +111,7 @@ const joinCanteen = () => {
           tant que gestionnaire.
         </p>
       </div>
-      <DsfrButton tertiary :label="joinLabel" @click="joinCanteen()" :disabled="loading" />
+      <CanteenCreationJoin :id="props.id" :name="props.name" />
     </div>
   </div>
 </template>
