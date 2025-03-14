@@ -42,7 +42,7 @@ const linkedCanteensLabel = computed(() => {
           <li
             v-for="canteen in linkedCanteens"
             :key="canteen.id"
-            class="canteen-creation-result__tertiary-action fr-mt-1v"
+            class="canteen-creation-result__tertiary-action fr-mt-2w"
           >
             <div>
               <p class="fr-text--bold fr-mb-0">{{ canteen.name }}</p>
