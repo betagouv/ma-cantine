@@ -28,6 +28,8 @@ const initFields = () => {
   canteen.cityInseeCode = null
   canteen.postalCode = null
   canteen.department = null
+  canteen.linkedCanteens = []
+  canteen.siren = null
 }
 initFields()
 
@@ -55,9 +57,13 @@ const searchByNumber = () => {
           canteen.founded = false
           errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro ${numberName.value} « ${cleanNumber} » ne correspond à aucun établissement`
           break
-        case !response.id:
-          canteen.status = "can-be-created"
+        case !response.id && !response.siren:
           canteen.founded = true
+          canteen.status = "can-be-created"
+          break
+        case !response.id && response.siren !== "":
+          canteen.founded = true
+          canteen.status = "can-be-linked"
           break
         case response.isManagedByUser:
           canteen.founded = true
@@ -85,6 +91,8 @@ const saveCanteenInfos = (response) => {
   canteen.cityInseeCode = response.cityInseeCode
   canteen.postalCode = response.postalCode
   canteen.department = response.postalCode.slice(0, 2)
+  canteen.linkedCanteens = response.canteens
+  canteen.siren = response.siren
 }
 
 /* Select canteen */
@@ -127,6 +135,7 @@ const unselectCanteen = () => {
       v-if="canteen.founded"
       :name="canteen.name"
       :siret="canteen.siret"
+      :siren="canteen.siren"
       :city="canteen.city"
       :department="canteen.department"
       :status="canteen.status"

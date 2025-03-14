@@ -8,7 +8,7 @@ import AppLinkRouter from "@/components/AppLinkRouter.vue"
 const loading = ref(false)
 
 /* Props */
-const props = defineProps(["name", "siret", "city", "department", "status", "id"])
+const props = defineProps(["name", "siret", "city", "department", "status", "id", "siren"])
 
 /* Store and Router */
 const store = useRootStore()
@@ -68,14 +68,17 @@ const joinCanteen = () => {
       <div class="fr-col-offset-1"></div>
       <ul class="ma-cantine--unstyled-list fr-my-0 fr-col-6">
         <li>
-          <p class="fr-mb-0 fr-text--xs">SIRET : {{ siret }}</p>
+          <p class="fr-mb-0 fr-text--xs">{{ siret ? "SIRET" : "SIREN" }} : {{ siret || siren }}</p>
         </li>
         <li>
           <p class="fr-mb-0 fr-text--xs">Ville : {{ city }} ({{ department }})</p>
         </li>
       </ul>
     </div>
-    <div v-if="status === 'can-be-created'" class="fr-grid-row fr-grid-row--center fr-mt-1w">
+    <div v-if="status === 'can-be-linked'" class="fr-grid-row fr-grid-row--center fr-mt-1w">
+      <p>Faire des établissements rattachés</p>
+    </div>
+    <div v-else-if="status === 'can-be-created'" class="fr-grid-row fr-grid-row--center fr-mt-1w">
       <DsfrButton
         label="Sélectionner cet établissement"
         icon="fr-icon-add-circle-fill"
@@ -83,7 +86,7 @@ const joinCanteen = () => {
         @click="$emit('select')"
       />
     </div>
-    <div v-if="status === 'managed-by-user'" class="fr-mt-1v">
+    <div v-else-if="status === 'managed-by-user'" class="fr-mt-1v">
       <DsfrBadge type="success" label="cantine déjà existante" small />
       <p class="fr-mb-0 fr-text--xs">
         La cantine avec le numéro SIRET {{ siret }} existe déjà et fait déjà partie de vos cantines.
@@ -93,7 +96,7 @@ const joinCanteen = () => {
         />
       </p>
     </div>
-    <div v-if="status === 'can-be-claimed'" class="canteen-creation-result__tertiary-action fr-mt-1v">
+    <div v-else-if="status === 'can-be-claimed'" class="canteen-creation-result__tertiary-action fr-mt-1v">
       <div>
         <DsfrBadge type="success" label="cantine déjà existante" small />
         <p class="fr-mb-0 fr-text--xs">
@@ -103,7 +106,7 @@ const joinCanteen = () => {
       </div>
       <DsfrButton tertiary label="Revendiquer la cantine" @click="claimCanteen()" :disabled="loading" />
     </div>
-    <div v-if="status === 'ask-to-join'" class="canteen-creation-result__tertiary-action fr-mt-1v">
+    <div v-else-if="status === 'ask-to-join'" class="canteen-creation-result__tertiary-action fr-mt-1v">
       <div>
         <DsfrBadge type="success" label="cantine déjà existante" small />
         <p class="fr-mb-0 fr-text--xs">
