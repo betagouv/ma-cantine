@@ -13,7 +13,7 @@ const linkedCanteensLabel = computed(() => {
   const count = props.linkedCanteens.length
   const establishment = count === 1 ? "établissement" : "établissements"
   const exist = count === 1 ? "existe" : "existent"
-  return `${count} ${establishment} ${exist} déjà pour cette unité locale`
+  return `${count} ${establishment} ${exist} déjà pour cette unité légale`
 })
 </script>
 
