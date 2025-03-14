@@ -13,7 +13,7 @@ const linkedCanteensLabel = computed(() => {
   const count = props.linkedCanteens.length
   const establishment = count === 1 ? "établissement" : "établissements"
   const exist = count === 1 ? "existe" : "existent"
-  return `${count} ${establishment} ${exist} déjà pour cette unité locale`
+  return `${count} ${establishment} ${exist} déjà pour cette unité légale`
 })
 </script>
 
@@ -68,7 +68,7 @@ const linkedCanteensLabel = computed(() => {
       </div>
       <div class="fr-grid-row fr-grid-row--center">
         <DsfrButton
-          label="Sélectionner cet établissement comme unité légale"
+          label="Créer un nouvel établissement rattaché à cette unité légale"
           icon="fr-icon-add-circle-fill"
           secondary
           @click="$emit('select')"

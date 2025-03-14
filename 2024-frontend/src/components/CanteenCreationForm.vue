@@ -243,13 +243,13 @@ const rules = {
     maxLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", maxLength(14)),
   },
   oneDelivery: {
-    required: requiredIf(showCheckboxOneDelivery),
+    beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxOneDelivery.value || value),
   },
   manyDelivery: {
-    required: requiredIf(showCheckboxManyDelivery),
+    beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxManyDelivery.value || value),
   },
   noSiret: {
-    required: requiredIf(showCheckboxNoSiret),
+    beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxNoSiret.value || value),
   },
 }
 const v$ = useVuelidate(rules, form)
@@ -342,19 +342,22 @@ const resetForm = () => {
           :error-message="formatError(v$.name)"
         />
         <div v-if="showCitySelector" class="fr-grid-row fr-grid-row--gutters">
-          <div class="fr-col-6">
+          <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
               v-model="form.postalCode"
               label="Code postal *"
+              hint="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
               :label-visible="true"
               :error-message="formatError(v$.postalCode)"
               @update:modelValue="changePostal()"
             />
           </div>
-          <div class="fr-col-6">
+          <div class="fr-col-12 fr-col-md-6">
             <DsfrSelect
+              class="fr-mb-0"
               v-model="form.citySelector"
               label="Ville *"
+              description="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
               :label-visible="true"
               :error-message="emptyCity || formatError(v$.citySelector)"
               :options="citiesOptions"
@@ -433,7 +436,7 @@ const resetForm = () => {
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">5. Nombre de repas</legend>
         <div class="fr-grid-row fr-grid-row--gutters">
-          <div class="fr-col-6">
+          <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
               :class="{
                 hide: hideDailyMealCount,
@@ -447,7 +450,7 @@ const resetForm = () => {
               :error-message="formatError(v$.dailyMealCount)"
             />
           </div>
-          <div class="fr-col-6">
+          <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
               v-model="form.yearlyMealCount"
               label="Par an *"
