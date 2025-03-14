@@ -1,10 +1,10 @@
 <script setup>
 import { computed, ref } from "vue"
-import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
+import CanteenCreationClaim from "@/components/CanteenCreationClaim.vue"
 
 const loading = ref(false)
 
@@ -21,27 +21,6 @@ const linkedCanteensLabel = computed(() => {
 
 /* Store and Router */
 const store = useRootStore()
-const router = useRouter()
-
-/* Claim a canteen */
-const claimCanteen = (id) => {
-  loading.value = true
-  canteensService
-    .claimCanteen(id)
-    .then((response) => {
-      loading.value = false
-      if (response.id) {
-        router.push({
-          name: "DashboardManager",
-          params: { canteenUrlComponent: response.id },
-        })
-      }
-    })
-    .catch((e) => {
-      loading.value = false
-      store.notifyServerError(e)
-    })
-}
 
 /* Ask to join */
 const joinLabel = ref("Rejoindre la cantine")
@@ -104,13 +83,7 @@ const joinCanteen = () => {
                 Cet établissement n’a pas de gestionnaire.
               </p>
             </div>
-            <DsfrButton
-              v-if="!canteen.isManagedByUser && canteen.canBeClaimed"
-              tertiary
-              label="Revendiquer la cantine"
-              @click="claimCanteen(canteen.id)"
-              :disabled="loading"
-            />
+            <CanteenCreationClaim v-if="!canteen.isManagedByUser && canteen.canBeClaimed" :id="canteen.id" />
           </li>
         </ul>
       </div>
@@ -149,7 +122,7 @@ const joinCanteen = () => {
           enregistré.
         </p>
       </div>
-      <DsfrButton tertiary label="Revendiquer la cantine" @click="claimCanteen(props.id)" :disabled="loading" />
+      <CanteenCreationClaim :id="props.id" />
     </div>
     <div v-else-if="status === 'ask-to-join'" class="canteen-creation-result__tertiary-action fr-mt-1v">
       <div>
