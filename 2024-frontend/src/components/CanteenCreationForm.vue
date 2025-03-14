@@ -243,13 +243,13 @@ const rules = {
     maxLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", maxLength(14)),
   },
   oneDelivery: {
-    required: requiredIf(showCheckboxOneDelivery),
+    beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxOneDelivery.value || value),
   },
   manyDelivery: {
-    required: requiredIf(showCheckboxManyDelivery),
+    beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxManyDelivery.value || value),
   },
   noSiret: {
-    required: requiredIf(showCheckboxNoSiret),
+    beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxNoSiret.value || value),
   },
 }
 const v$ = useVuelidate(rules, form)
