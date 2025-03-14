@@ -11,23 +11,11 @@ const props = defineProps(["errorRequired", "hasSiret"])
 const store = useRootStore()
 
 /* Content */
-const numberName = computed(() => (props.hasSiret === "has-siret" ? "SIRET" : "SIREN"))
-const title = computed(() =>
-  props.hasSiret === "has-siret" ? "Mon établissement" : "Mon unité légale de rattachement"
-)
-const hint = computed(() =>
-  props.hasSiret === "has-siret"
-    ? "afin de retrouver les informations de votre établissement"
-    : "afin de retrouver les informations de l'établissement"
-)
-const placeholder = computed(() =>
-  props.hasSiret === "has-siret" ? "Tapez votre n° SIRET" : "Tapez le n° SIREN de l’unité légale"
-)
-const label = computed(() =>
-  props.hasSiret === "has-siret"
-    ? "Rechercher un établissement par son numéro SIRET"
-    : "Rechercher un établissement par son numéro SIREN"
-)
+const numberName = computed(() => (props.hasSiret ? "SIRET" : "SIREN"))
+const title = computed(() => (props.hasSiret ? "Mon établissement" : "Mon unité légale de rattachement"))
+const establishment = computed(() => (props.hasSiret ? "votre établissement" : "l'établissement"))
+const placeholder = computed(() => (props.hasSiret ? "Tapez votre n° SIRET" : "Tapez le n° SIREN de l’unité légale"))
+const label = computed(() => `Rechercher un établissement par son numéro ${numberName.value}`)
 
 /* Canteen fields */
 const canteen = reactive({})
@@ -118,7 +106,7 @@ const unselectCanteen = () => {
     <p class="fr-hint-text">
       Nous utilisons le site
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">annuaire-des-entreprises</a>
-      {{ hint }}
+      afin de retrouver les informations de {{ establishment }}
     </p>
     <DsfrInputGroup :error-message="errorMessage">
       <template #default>

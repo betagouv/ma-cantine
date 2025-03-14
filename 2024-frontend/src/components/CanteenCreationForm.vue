@@ -312,7 +312,7 @@ const updateForm = (type, canteenInfos) => {
             }
           "
           :error-required="formatError(v$.siret)"
-          :has-siret="form.hasSiret"
+          :has-siret="form.hasSiret === 'has-siret'"
         />
       </fieldset>
       <fieldset class="fr-mb-4w">
