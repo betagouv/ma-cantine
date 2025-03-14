@@ -5,27 +5,29 @@ import canteensService from "@/services/canteens.js"
 import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
 
 /* Props */
-const props = defineProps(["errorRequired", "type"])
+const props = defineProps(["errorRequired", "hasSiret"])
 
 /* Store */
 const store = useRootStore()
 
 /* Content */
-const title = computed(() => (props.type === "has-siret" ? "Mon établissement" : "Mon unité légale de rattachement"))
+const numberName = computed(() => (props.hasSiret === "has-siret" ? "SIRET" : "SIREN"))
+const title = computed(() =>
+  props.hasSiret === "has-siret" ? "Mon établissement" : "Mon unité légale de rattachement"
+)
 const hint = computed(() =>
-  props.type === "has-siret"
+  props.hasSiret === "has-siret"
     ? "afin de retrouver les informations de votre établissement"
     : "afin de retrouver les informations de l'établissement"
 )
 const placeholder = computed(() =>
-  props.type === "has-siret" ? "Tapez votre n° SIRET" : "Tapez le n° SIREN de l’unité légale"
+  props.hasSiret === "has-siret" ? "Tapez votre n° SIRET" : "Tapez le n° SIREN de l’unité légale"
 )
 const label = computed(() =>
-  props.type === "has-siret"
+  props.hasSiret === "has-siret"
     ? "Rechercher un établissement par son numéro SIRET"
     : "Rechercher un établissement par son numéro SIREN"
 )
-const typeNumber = computed(() => (props.type === "has-siret" ? "SIRET" : "SIREN"))
 
 /* Canteen fields */
 const canteen = reactive({})
@@ -61,7 +63,7 @@ const searchSiret = () => {
       switch (true) {
         case response.length === 0:
           canteen.founded = false
-          errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro ${typeNumber.value} « ${cleanSiret} » ne correspond à aucun établissement`
+          errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro ${numberName.value} « ${cleanSiret} » ne correspond à aucun établissement`
           break
         case !response.id:
           canteen.status = "can-be-created"
@@ -142,7 +144,7 @@ const unselectCanteen = () => {
       @select="selectCanteen()"
     />
     <p v-if="canteen.founded && !hasSelected" class="fr-text--xs fr-mb-0 fr-mt-1w ma-cantine--text-center">
-      Ce n’est pas le bon établissement ? Refaites une recherche via le bon numéro {{ typeNumber }}, ou trouvez
+      Ce n’est pas le bon établissement ? Refaites une recherche via le bon numéro {{ numberName }}, ou trouvez
       l’information dans
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
     </p>
