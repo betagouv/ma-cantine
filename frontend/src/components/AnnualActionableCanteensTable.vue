@@ -105,8 +105,8 @@
             <router-link :to="toCanteen(item)">{{ item.name }}</router-link>
           </template>
           <template v-slot:[`item.siret`]="{ item }">
-            {{ item.siret || "inconnu" }}
-            <span v-if="item.sirenUniteLegale" class="caption">({{ item.sirenUniteLegale }})</span>
+            <span v-if="item.sirenUniteLegale">SIREN : {{ item.sirenUniteLegale }}</span>
+            <span v-else>SIRET : {{ item.siret }}</span>
           </template>
           <template v-slot:[`item.productionType`]="{ item }">
             {{ typeDisplay[item.productionType] }}
@@ -165,7 +165,7 @@ export default {
       },
       headers: [
         { text: "Nom", value: "name" },
-        { text: "Siret", value: "siret" },
+        { text: "Siret ou Siren", value: "siret" },
         { text: "Type", value: "productionType" },
         { text: "Action", value: "action" },
       ],
