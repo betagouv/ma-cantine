@@ -39,7 +39,8 @@ const errorNotFound = ref()
 const errorMessage = computed(() => {
   if (errorNotFound.value) return errorNotFound.value
   if (props.errorRequired && !canteen.find) return props.errorRequired
-  if (props.errorRequired && canteen.find) return `Vous devez sélectionner un établissement`
+  if (props.errorRequired && canteen.find && props.hasSiret) return "Vous devez sélectionner un établissement"
+  if (props.errorRequired && canteen.find && !props.hasSiret) return "Vous devez sélectionner ou créer un établissement"
   else return ""
 })
 const hasSelected = ref(false)
