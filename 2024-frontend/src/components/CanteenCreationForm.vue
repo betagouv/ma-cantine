@@ -158,8 +158,9 @@ const showSatelliteCanteensCount = computed(
 const showLineMinistry = computed(() => {
   if (form.sectors.length === 0) return false
   if (form.economicModel !== "public") return false
-  for (let i = 0; i < sectorsOptions.value.length; i++) {
-    const sector = sectorsOptions.value[i]
+  for (let i = 0; i < form.sectors.length; i++) {
+    const index = sectorsOptions.value.findIndex((option) => option.sectorId === form.sectors[i])
+    const sector = sectorsOptions.value[index]
     const hasLineMinistry = sector.hasLineMinistry
     if (hasLineMinistry) return true
   }
