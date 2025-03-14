@@ -342,7 +342,7 @@ const resetForm = () => {
           :error-message="formatError(v$.name)"
         />
         <div v-if="showCitySelector" class="fr-grid-row fr-grid-row--gutters">
-          <div class="fr-col-6">
+          <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
               v-model="form.postalCode"
               label="Code postal *"
@@ -351,8 +351,9 @@ const resetForm = () => {
               @update:modelValue="changePostal()"
             />
           </div>
-          <div class="fr-col-6">
+          <div class="fr-col-12 fr-col-md-6">
             <DsfrSelect
+              class="fr-mb-0"
               v-model="form.citySelector"
               label="Ville *"
               :label-visible="true"
@@ -433,7 +434,7 @@ const resetForm = () => {
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">5. Nombre de repas</legend>
         <div class="fr-grid-row fr-grid-row--gutters">
-          <div class="fr-col-6">
+          <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
               :class="{
                 hide: hideDailyMealCount,
@@ -447,7 +448,7 @@ const resetForm = () => {
               :error-message="formatError(v$.dailyMealCount)"
             />
           </div>
-          <div class="fr-col-6">
+          <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
               v-model="form.yearlyMealCount"
               label="Par an *"
