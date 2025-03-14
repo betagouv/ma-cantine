@@ -207,13 +207,6 @@ def map_sectors():
     return sectors_mapper
 
 
-def filter_empty_values(df: pd.DataFrame, col_name) -> pd.DataFrame:
-    """
-    Filtering out the teledeclarations for wich a certain field is empty
-    """
-    return df.dropna(subset=col_name)
-
-
 def fetch_commune_detail(code_insee_commune, commune_details, geo_detail_type):
     """
     Provide EPCI code/ Department code/ Region code for a city, given the insee code of the city

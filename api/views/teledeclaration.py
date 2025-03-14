@@ -5,7 +5,6 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.db.models import ExpressionWrapper, F, FloatField, Q
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import get_template
 from django.utils.text import slugify
@@ -395,25 +394,7 @@ class TeledeclarationPdfView(APIView):
 
 
 class OpenDataTeleDeclarationsListView(ListAPIView):
+    years = CAMPAIGN_DATES.keys()
     model = Teledeclaration
     serializer_class = OpenDataTeledeclarationSerializer
-    # Rajouter le filtre par année
-    date_query = Q()
-    for _, data in CAMPAIGN_DATES.items():
-        date_query |= Q(creation_date__range=(data["start_date"], data["end_date"]))
-    # Rajouter le filtre données vides
-    empty_values_query = Q(diagnostic_id__value_total_ht__isnull=False)
-    empty_values_query |= Q(diagnostic_id__value_bio_ht__isnull=False)
-    # Rajouter le filtre TD aberrantes
-    aberrant_values_query = Q(cout_denrees__lte=20)
-    queryset = (
-        Teledeclaration.objects.filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED)
-        .filter(date_query)
-        .filter(empty_values_query)
-        .annotate(
-            cout_denrees=ExpressionWrapper(
-                F("diagnostic_id__value_total_ht") / F("canteen_id__yearly_meal_count"), output_field=FloatField()
-            )
-        )
-        .filter(aberrant_values_query)
-    )
+    queryset = Teledeclaration.objects.for_stat(years[0])

@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
+from django.db.models import ExpressionWrapper, F, FloatField, Q
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
@@ -52,14 +53,49 @@ class TeledeclarationQuerySet(models.QuerySet):
         )
 
     def for_stat(self, year):
+        # Rajouter le filtre par année
+        date_query = Q()
+        for _, data in CAMPAIGN_DATES.items():
+            date_query |= Q(creation_date__range=(data["start_date"], data["end_date"]))
+        # Rajouter le filtre données vides
+        is_appro_query = Q(declared_data__teledeclaration__has_key="value_total_ht")
+        empty_values_query = Q(declared_data__teledeclaration__value_total_ht__gte=0)
+        empty_bio_values_query = Q(declared_data__teledeclaration__value_bio_ht__gte=0) & (
+            ~Q(declared_data__teledeclaration__has_key="diagnostic_mode")
+            | Q(declared_data__teledeclaration__diagnostic_mode="SIMPLE")
+        )
+        empty_bio_values_query |= Q(declared_data__teledeclaration__diagnostic_type="COMPLETE") & Q(
+            declared_data__teledeclaration__value_bio_ht__lte=0
+        )
+        empty_bio_values_query |= Q(declared_data__teledeclaration__diagnostic_type="COMPLETE") & (
+            Q(declared_data__teledeclaration__value_autres_bio__gte=0)
+            | Q(declared_data__teledeclaration__value_boissons_bio__gte=0)
+            | Q(declared_data__teledeclaration__value_charcuterie_bio__gte=0)
+            | Q(declared_data__teledeclaration__value_fruits_et_legumes_bio__gte=0)
+            | Q(declared_data__teledeclaration__value_produits_de_la_mer_bio__gte=0)
+            | Q(declared_data__teledeclaration__value_viandes_volailles_bio__gte=0)
+            | Q(declared_data__teledeclaration__value_boulangerie_bio__gte=0)
+            | Q(declared_data__teledeclaration__value_produits_laitiers_bio__gte=0)
+        )
+        # Rajouter le filtre TD aberrantes
+        aberrant_values_query = Q(cout_denrees__lte=20)
+        aberrant_values_query |= Q(declared_data__teledeclaration__value_total_ht__lte=1000000)
+        # Deleted canteens within the campaign range
+        # deleted_canteens_query = Q
         return (
-            self.canteen_for_stat(year)
-            .submitted_for_year(year)
-            .select_related("diagnostic")
-            .filter(
-                diagnostic__value_total_ht__isnull=False,
-                diagnostic__value_bio_ht__isnull=False,
+            self.filter(year__in=[year])
+            .filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED)
+            .filter(date_query)
+            .filter(is_appro_query)
+            .filter(empty_values_query)
+            .filter(empty_bio_values_query)
+            .annotate(
+                cout_denrees=ExpressionWrapper(
+                    F("diagnostic_id__value_total_ht") / F("canteen_id__yearly_meal_count"), output_field=FloatField()
+                )
             )
+            .filter(aberrant_values_query)
+            .canteen_for_stat(year)
         )
 
 
