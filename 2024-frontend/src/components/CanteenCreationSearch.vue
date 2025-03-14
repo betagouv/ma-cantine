@@ -41,17 +41,19 @@ const errorMessage = computed(() => {
   else return ""
 })
 const hasSelected = ref(false)
-const searchSiret = () => {
-  const cleanSiret = search.value.replaceAll(" ", "")
-  if (cleanSiret.length === 0) return
+const searchByNumber = () => {
+  const cleanNumber = search.value.replaceAll(" ", "")
+  if (cleanNumber.length === 0) return
   errorNotFound.value = ""
+  const searchBy = numberName.value.toLowerCase()
   canteensService
-    .verifySiret(cleanSiret)
+    .canteenStatus(searchBy, cleanNumber)
     .then((response) => {
+      console.log("response", response)
       switch (true) {
         case response.length === 0:
           canteen.founded = false
-          errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro ${numberName.value} « ${cleanSiret} » ne correspond à aucun établissement`
+          errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro ${numberName.value} « ${cleanNumber} » ne correspond à aucun établissement`
           break
         case !response.id:
           canteen.status = "can-be-created"
@@ -117,7 +119,7 @@ const unselectCanteen = () => {
           :placeholder="placeholder"
           :label="label"
           :large="true"
-          @search="searchSiret()"
+          @search="searchByNumber()"
         />
       </template>
     </DsfrInputGroup>
