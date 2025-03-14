@@ -8,7 +8,7 @@
     </h1>
     <p v-if="!hasCanteens && isAuthenticated" class="mt-0">
       Remplissez le formulaire ci-dessous ou
-      <router-link :to="{ name: 'NewCanteen' }">créez votre cantine</router-link>
+      <router-link :to="{ name: 'CanteenCreation' }">créez votre cantine</router-link>
       pour que vos données soient automatiquement renseignées.
       <v-divider aria-hidden="true" role="presentation" class="mt-4"></v-divider>
     </p>

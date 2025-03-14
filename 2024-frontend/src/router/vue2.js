@@ -88,10 +88,6 @@ const vue2routes = [
     name: "WasteActionsHome",
   },
   {
-    path: "/nouvelle-cantine",
-    name: "NewCanteen",
-  },
-  {
     path: "/importer-diagnostics/:importUrlSlug",
     name: "DiagnosticImportPage",
   },
