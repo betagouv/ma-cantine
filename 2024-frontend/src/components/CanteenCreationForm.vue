@@ -346,6 +346,7 @@ const resetForm = () => {
             <DsfrInputGroup
               v-model="form.postalCode"
               label="Code postal *"
+              hint="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
               :label-visible="true"
               :error-message="formatError(v$.postalCode)"
               @update:modelValue="changePostal()"
@@ -356,6 +357,7 @@ const resetForm = () => {
               class="fr-mb-0"
               v-model="form.citySelector"
               label="Ville *"
+              description="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
               :label-visible="true"
               :error-message="emptyCity || formatError(v$.citySelector)"
               :options="citiesOptions"
