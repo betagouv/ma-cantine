@@ -24,10 +24,10 @@ const store = useRootStore()
 const router = useRouter()
 
 /* Claim a canteen */
-const claimCanteen = () => {
+const claimCanteen = (id) => {
   loading.value = true
   canteensService
-    .claimCanteen(props.id)
+    .claimCanteen(id)
     .then((response) => {
       loading.value = false
       if (response.id) {
@@ -100,7 +100,17 @@ const joinCanteen = () => {
               <p v-if="canteen.isManagedByUser" class="fr-mb-0 fr-text--xs">
                 Vous êtes gestionnaire de cet établissement.
               </p>
+              <p v-if="!canteen.isManagedByUser && canteen.canBeClaimed" class="fr-mb-0 fr-text--xs">
+                Cet établissement n’a pas de gestionnaire.
+              </p>
             </div>
+            <DsfrButton
+              v-if="!canteen.isManagedByUser && canteen.canBeClaimed"
+              tertiary
+              label="Revendiquer la cantine"
+              @click="claimCanteen(canteen.id)"
+              :disabled="loading"
+            />
           </li>
         </ul>
       </div>
@@ -139,7 +149,7 @@ const joinCanteen = () => {
           enregistré.
         </p>
       </div>
-      <DsfrButton tertiary label="Revendiquer la cantine" @click="claimCanteen()" :disabled="loading" />
+      <DsfrButton tertiary label="Revendiquer la cantine" @click="claimCanteen(props.id)" :disabled="loading" />
     </div>
     <div v-else-if="status === 'ask-to-join'" class="canteen-creation-result__tertiary-action fr-mt-1v">
       <div>
