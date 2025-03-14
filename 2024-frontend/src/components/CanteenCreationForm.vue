@@ -128,6 +128,7 @@ const form = reactive({})
 const initFields = () => {
   form.hasSiret = null
   form.siret = null
+  form.sirenUniteLegale = null
   form.name = null
   form.economicModel = null
   form.managementType = null
@@ -184,7 +185,8 @@ const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
 const rules = {
   name: { required },
   hasSiret: { required },
-  siret: { required },
+  siret: { required: requiredIf(showCheckboxNoSiret.value !== true) },
+  sirenUniteLegale: { required: requiredIf(showCheckboxNoSiret) },
   citySelector: { required: requiredIf(showCitySelector) },
   postalCode: {
     required: requiredIf(showCitySelector),
@@ -311,7 +313,7 @@ const updateForm = (type, canteenInfos) => {
               updateForm('establishment', establishmentSelected)
             }
           "
-          :error-required="formatError(v$.siret)"
+          :error-required="formatError(v$.siret) || formatError(v$.sirenUniteLegale)"
           :has-siret="form.hasSiret === 'has-siret'"
         />
       </fieldset>
