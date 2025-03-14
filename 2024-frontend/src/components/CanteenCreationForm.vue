@@ -279,16 +279,21 @@ const addNewCanteen = (name) => {
   v$.value.$reset()
 }
 
-/* Update canteen informations from child components */
-const updateForm = (type, canteenInfos) => {
-  if (type === "establishment") {
-    form.siret = canteenInfos.siret?.replace(" ", "")
-    form.name = canteenInfos.name
+/* Update canteen informations from SIREN-SIRET search */
+const updateForm = (canteenInfos) => {
+  switch (true) {
+    case form.hasSiret === "has-siret":
+      form.name = canteenInfos.name
+      form.postalCode = canteenInfos.postalCode
+      form.city = canteenInfos.city
+      form.cityInseeCode = canteenInfos.cityInseeCode
+      form.siret = canteenInfos.siret?.replace(" ", "")
+      form.department = canteenInfos.department
+      break
+    case form.hasSiret === "no-siret":
+      form.sirenUniteLegale = canteenInfos.siren?.replace(" ", "")
+      break
   }
-  form.postalCode = canteenInfos.postalCode
-  form.city = canteenInfos.city
-  form.cityInseeCode = canteenInfos.cityInseeCode
-  form.department = canteenInfos.department
 }
 </script>
 
@@ -308,11 +313,7 @@ const updateForm = (type, canteenInfos) => {
         <CanteenCreationSearch
           v-if="form.hasSiret"
           :key="forceRerender"
-          @select="
-            (establishmentSelected) => {
-              updateForm('establishment', establishmentSelected)
-            }
-          "
+          @select="(canteenInfos) => updateForm(canteenInfos)"
           :error-required="formatError(v$.siret) || formatError(v$.sirenUniteLegale)"
           :has-siret="form.hasSiret === 'has-siret'"
         />
