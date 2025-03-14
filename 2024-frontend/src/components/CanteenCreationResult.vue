@@ -68,7 +68,7 @@ const linkedCanteensLabel = computed(() => {
       </div>
       <div class="fr-grid-row fr-grid-row--center">
         <DsfrButton
-          label="Créer un nouvel établissement rattaché à cette unité légale"
+          label="Sélectionner cet établissement comme unité légale"
           icon="fr-icon-add-circle-fill"
           secondary
           @click="$emit('select')"
