@@ -6,6 +6,19 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.9.1](https://github.com/betagouv/ma-cantine/compare/v2025.9.0...v2025.9.1) (2025-03-14)
+
+
+### Améliorations
+
+* **Cantines:** permettre aux cantines sans SIRET (mais avec un siren_unite_legale) de TD ([#5122](https://github.com/betagouv/ma-cantine/issues/5122)) ([fd17a05](https://github.com/betagouv/ma-cantine/commit/fd17a05930a64c992062b1fabf049b67b02fa207))
+
+
+### Corrections (bugs, typos...)
+
+* **Ajouter une cantine:** corrige le comportement des secteurs en ayant un seul sélecteur ([#5121](https://github.com/betagouv/ma-cantine/issues/5121)) ([633613a](https://github.com/betagouv/ma-cantine/commit/633613ae6a422c3d11cae455d3840335aa851aeb))
+* **Ajouter une cantine:** l'affichage du ministère de tutelle était calculé sur tous les secteurs et non juste ceux sélectionnés ([#5126](https://github.com/betagouv/ma-cantine/issues/5126)) ([e6ba6d9](https://github.com/betagouv/ma-cantine/commit/e6ba6d9ba08beb9db408b172f27b09526b370c02))
+
 ## [2025.9.0](https://github.com/betagouv/ma-cantine/compare/v2025.8.1...v2025.9.0) (2025-03-13)
 
 
