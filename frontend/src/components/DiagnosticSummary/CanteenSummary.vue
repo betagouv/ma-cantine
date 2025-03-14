@@ -9,7 +9,11 @@
           <p class="my-0 fr-text-sm grey--text text--darken-1">Nom de la cantine</p>
           <p class="my-0">{{ canteen.name }}</p>
           <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">SIRET</p>
-          <p class="my-0">{{ canteen.siret || "—" }}</p>
+          <p class="my-0">{{ canteen.siret || "inconnu" }}</p>
+          <p v-if="canteen.sirenUniteLegale" class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">
+            SIREN de l'unité légale
+          </p>
+          <p class="my-0">{{ canteen.sirenUniteLegale }}</p>
         </div>
       </v-col>
       <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">

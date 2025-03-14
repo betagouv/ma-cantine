@@ -486,6 +486,7 @@ class CanteenActionsSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "siret",
+            "siren_unite_legale",
             "city",
             "production_type",
             "daily_meal_count",
