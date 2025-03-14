@@ -24,24 +24,36 @@ class TeledeclarationQuerySetTest(TestCase):
         """
 
         # Create canteens and diagnostics
-        self.valid_canteen = Canteen.objects.create(id=1, siret="12345678901234", deletion_date=None)
-        self.invalid_canteen = Canteen.objects.create(id=2, siret="", deletion_date=None)  # siret missing
+        self.valid_canteen_1 = Canteen.objects.create(siret="12345678901234", deletion_date=None)
+        self.valid_canteen_2 = Canteen.objects.create(siren_unite_legale="123456789", deletion_date=None)
+        self.valid_canteen_3 = Canteen.objects.create(
+            siret="12345678901235", siren_unite_legale="123456789", deletion_date=None
+        )
+        self.invalid_canteen = Canteen.objects.create(siret="", deletion_date=None)  # siret missing
         self.deleted_canteen = Canteen.objects.create(
-            id=3,
             siret="56789012345678",
             deletion_date=now().replace(month=6, day=1),
         )
 
-        self.valid_canteen_diagnostic = Diagnostic.objects.create(
-            year=year_data,
-            creation_date=now().replace(month=3, day=1),
-            canteen=self.valid_canteen,
-            value_total_ht=1000.00,
-            value_bio_ht=200.00,
-        )
-        self.valid_canteen_td = Teledeclaration.create_from_diagnostic(
-            self.valid_canteen_diagnostic, applicant=UserFactory.create()
-        )
+        for index, canteen in enumerate([self.valid_canteen_1, self.valid_canteen_2, self.valid_canteen_3]):
+            setattr(
+                self,
+                f"valid_canteen_diagnostic_{index+1}",
+                Diagnostic.objects.create(
+                    year=year_data,
+                    creation_date=now().replace(month=3, day=1),
+                    canteen=canteen,
+                    value_total_ht=1000.00,
+                    value_bio_ht=200.00,
+                ),
+            )
+            setattr(
+                self,
+                f"valid_canteen_td_{index+1}",
+                Teledeclaration.create_from_diagnostic(
+                    getattr(self, f"valid_canteen_diagnostic_{index+1}"), applicant=UserFactory.create()
+                ),
+            )
 
         self.invalid_canteen_diagnostic = Diagnostic.objects.create(
             year=year_data,
@@ -68,15 +80,15 @@ class TeledeclarationQuerySetTest(TestCase):
     def test_submitted_for_year(self):
         with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
             teledeclarations = Teledeclaration.objects.submitted_for_year(year_data)
-        self.assertEqual(teledeclarations.count(), 3)
-        self.assertIn(self.valid_canteen_td, teledeclarations)
+        self.assertEqual(teledeclarations.count(), 5)
+        self.assertIn(self.valid_canteen_td_1, teledeclarations)
         self.assertIn(self.invalid_canteen_td, teledeclarations)
         self.assertIn(self.deleted_canteen_td, teledeclarations)
 
     def test_for_stat(self):
         with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
             teledeclarations = Teledeclaration.objects.for_stat(year_data)
-        self.assertEqual(teledeclarations.count(), 1)
-        self.assertIn(self.valid_canteen_td, teledeclarations)
+        self.assertEqual(teledeclarations.count(), 3)
+        self.assertIn(self.valid_canteen_td_1, teledeclarations)
         self.assertNotIn(self.invalid_canteen_td, teledeclarations)  # canteen without siret
         self.assertNotIn(self.deleted_canteen_td, teledeclarations)  # canteen deleted

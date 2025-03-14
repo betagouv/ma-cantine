@@ -38,11 +38,8 @@ class TeledeclarationQuerySet(models.QuerySet):
     def canteen_for_stat(self, year):
         return (
             self.select_related("canteen")
-            .filter(
-                canteen_id__isnull=False,
-                canteen_siret__isnull=False,
-            )
-            .exclude(canteen_siret="")
+            .filter(canteen_id__isnull=False)
+            .filter(~models.Q(canteen_siret__in=[None, ""]) | ~models.Q(canteen_siren_unite_legale__in=[None, ""]))
             .exclude(
                 canteen__deletion_date__range=(
                     CAMPAIGN_DATES[year]["start_date"],

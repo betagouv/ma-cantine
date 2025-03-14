@@ -39,10 +39,8 @@ class DiagnosticQuerySet(models.QuerySet):
     def canteen_for_stat(self, year):
         return (
             self.select_related("canteen")
-            .filter(
-                canteen__id__isnull=False,
-                canteen__siret__isnull=False,
-            )
+            .filter(canteen__id__isnull=False)
+            .filter(~models.Q(canteen__siret__in=[None, ""]) | ~models.Q(canteen__siren_unite_legale__in=[None, ""]))
             .exclude(canteen__siret="")
             .exclude(
                 canteen__deletion_date__range=(
