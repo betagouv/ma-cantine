@@ -4,17 +4,16 @@ import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens"
 
-defineProps(["id"])
+const props = defineProps(["id"])
 const loading = ref(false)
 const store = useRootStore()
 const router = useRouter()
 
 /* Claim a canteen */
-const claimCanteen = (id) => {
-  console.log("id", id)
+const claimCanteen = () => {
   loading.value = true
   canteensService
-    .claimCanteen(id)
+    .claimCanteen(props.id)
     .then((response) => {
       loading.value = false
       if (response.id) {
@@ -32,5 +31,5 @@ const claimCanteen = (id) => {
 </script>
 
 <template>
-  <DsfrButton tertiary label="Revendiquer la cantine" @click="claimCanteen(id)" :disabled="loading" />
+  <DsfrButton tertiary label="Revendiquer la cantine" @click="claimCanteen()" :disabled="loading" />
 </template>
