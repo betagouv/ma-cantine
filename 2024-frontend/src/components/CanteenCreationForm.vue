@@ -17,6 +17,28 @@ import CanteenCreationSearch from "@/components/CanteenCreationSearch.vue"
 const router = useRouter()
 const store = useRootStore()
 
+/* Siret */
+const changeHasSiret = () => {
+  initFields(["hasSiret"])
+  resetForm()
+}
+
+const selectEstablishment = (canteenInfos) => {
+  switch (true) {
+    case form.hasSiret === "has-siret":
+      form.name = canteenInfos.name
+      form.postalCode = canteenInfos.postalCode
+      form.city = canteenInfos.city
+      form.cityInseeCode = canteenInfos.cityInseeCode
+      form.siret = canteenInfos.siret?.replace(" ", "")
+      form.department = canteenInfos.department
+      break
+    case form.hasSiret === "no-siret":
+      form.sirenUniteLegale = canteenInfos.siren?.replace(" ", "")
+      break
+  }
+}
+
 /* Production type */
 const productionTypeOptions = computed(() => {
   const isDisabled = form.hasSiret === "no-siret"
@@ -125,8 +147,9 @@ const displayCitiesResult = (cities) => {
 
 /* Form fields */
 const form = reactive({})
-const initFields = () => {
-  form.hasSiret = null
+const initFields = (keepFields) => {
+  const list = keepFields || []
+  form.hasSiret = list.includes("hasSiret") ? form.hasSiret : null
   form.siret = null
   form.sirenUniteLegale = null
   form.name = null
@@ -276,27 +299,14 @@ const addNewCanteen = (name) => {
   store.notify({ message: `Cantine ${name} créée avec succès.` })
   isCreatingCanteen.value = false
   saveAndCreate.value = false
-  forceRerender.value++
-  initFields()
   window.scrollTo(0, 0)
-  v$.value.$reset()
+  initFields()
+  resetForm()
 }
 
-/* Update canteen informations from SIREN-SIRET search */
-const updateForm = (canteenInfos) => {
-  switch (true) {
-    case form.hasSiret === "has-siret":
-      form.name = canteenInfos.name
-      form.postalCode = canteenInfos.postalCode
-      form.city = canteenInfos.city
-      form.cityInseeCode = canteenInfos.cityInseeCode
-      form.siret = canteenInfos.siret?.replace(" ", "")
-      form.department = canteenInfos.department
-      break
-    case form.hasSiret === "no-siret":
-      form.sirenUniteLegale = canteenInfos.siren?.replace(" ", "")
-      break
-  }
+const resetForm = () => {
+  v$.value.$reset()
+  forceRerender.value++
 }
 </script>
 
@@ -312,11 +322,12 @@ const updateForm = (canteenInfos) => {
           legend="Avez-vous un numéro SIRET ?"
           :error-message="formatError(v$.hasSiret)"
           :options="options.hasSiret"
+          @update:modelValue="changeHasSiret()"
         />
         <CanteenCreationSearch
           v-if="form.hasSiret"
           :key="forceRerender"
-          @select="(canteenInfos) => updateForm(canteenInfos)"
+          @select="(canteenInfos) => selectEstablishment(canteenInfos)"
           :error-required="formatError(v$.siret) || formatError(v$.sirenUniteLegale)"
           :has-siret="form.hasSiret === 'has-siret'"
         />
