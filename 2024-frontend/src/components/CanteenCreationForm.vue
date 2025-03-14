@@ -17,6 +17,28 @@ import CanteenCreationSearch from "@/components/CanteenCreationSearch.vue"
 const router = useRouter()
 const store = useRootStore()
 
+/* Siret */
+const changeHasSiret = () => {
+  initFields(["hasSiret"])
+  resetForm()
+}
+
+const selectEstablishment = (canteenInfos) => {
+  switch (true) {
+    case form.hasSiret === "has-siret":
+      form.name = canteenInfos.name
+      form.postalCode = canteenInfos.postalCode
+      form.city = canteenInfos.city
+      form.cityInseeCode = canteenInfos.cityInseeCode
+      form.siret = canteenInfos.siret?.replace(" ", "")
+      form.department = canteenInfos.department
+      break
+    case form.hasSiret === "no-siret":
+      form.sirenUniteLegale = canteenInfos.siren?.replace(" ", "")
+      break
+  }
+}
+
 /* Production type */
 const productionTypeOptions = computed(() => {
   const isDisabled = form.hasSiret === "no-siret"
@@ -125,9 +147,11 @@ const displayCitiesResult = (cities) => {
 
 /* Form fields */
 const form = reactive({})
-const initFields = () => {
-  form.hasSiret = null
+const initFields = (keepFields) => {
+  const list = keepFields || []
+  form.hasSiret = list.includes("hasSiret") ? form.hasSiret : null
   form.siret = null
+  form.sirenUniteLegale = null
   form.name = null
   form.economicModel = null
   form.managementType = null
@@ -181,10 +205,14 @@ const resetDynamicInputValues = () => {
 const { required, integer, minValue, requiredIf, minLength, maxLength } = useValidators()
 const dailyMealRequired = computed(() => form.productionType !== "central")
 const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
+const siretIsRequired = computed(() => form.hasSiret === "has-siret")
+const sirenIsRequired = computed(() => form.hasSiret === "no-siret")
+
 const rules = {
   name: { required },
   hasSiret: { required },
-  siret: { required },
+  siret: { required: requiredIf(siretIsRequired) },
+  sirenUniteLegale: { required: requiredIf(sirenIsRequired) },
   citySelector: { required: requiredIf(showCitySelector) },
   postalCode: {
     required: requiredIf(showCitySelector),
@@ -208,7 +236,7 @@ const rules = {
     required: requiredIf(showCentralProducerSiret),
     notSameSiret: helpers.withMessage(
       "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine",
-      (value) => value !== form.siret
+      (value) => sirenIsRequired.value || value !== form.siret
     ),
     integer,
     minLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", minLength(14)),
@@ -271,22 +299,14 @@ const addNewCanteen = (name) => {
   store.notify({ message: `Cantine ${name} créée avec succès.` })
   isCreatingCanteen.value = false
   saveAndCreate.value = false
-  forceRerender.value++
-  initFields()
   window.scrollTo(0, 0)
-  v$.value.$reset()
+  initFields()
+  resetForm()
 }
 
-/* Update canteen informations from child components */
-const updateForm = (type, canteenInfos) => {
-  if (type === "establishment") {
-    form.siret = canteenInfos.siret?.replace(" ", "")
-    form.name = canteenInfos.name
-  }
-  form.postalCode = canteenInfos.postalCode
-  form.city = canteenInfos.city
-  form.cityInseeCode = canteenInfos.cityInseeCode
-  form.department = canteenInfos.department
+const resetForm = () => {
+  v$.value.$reset()
+  forceRerender.value++
 }
 </script>
 
@@ -302,17 +322,14 @@ const updateForm = (type, canteenInfos) => {
           legend="Avez-vous un numéro SIRET ?"
           :error-message="formatError(v$.hasSiret)"
           :options="options.hasSiret"
+          @update:modelValue="changeHasSiret()"
         />
         <CanteenCreationSearch
           v-if="form.hasSiret"
           :key="forceRerender"
-          @select="
-            (establishmentSelected) => {
-              updateForm('establishment', establishmentSelected)
-            }
-          "
-          :error-required="formatError(v$.siret)"
-          :type="form.hasSiret"
+          @select="(canteenInfos) => selectEstablishment(canteenInfos)"
+          :error-required="formatError(v$.siret) || formatError(v$.sirenUniteLegale)"
+          :has-siret="form.hasSiret === 'has-siret'"
         />
       </fieldset>
       <fieldset class="fr-mb-4w">
