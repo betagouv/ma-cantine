@@ -34,19 +34,21 @@ const productionTypeOptions = computed(() => {
 })
 
 /* Sectors */
-const sectors = reactive({})
-const sectorsInCategory = computed(() => sectors.value.filter((sector) => sector.category === form.sectorCategory))
-const sectorsCategoryOptions = computed(() => (sectors.value ? sectorsService.getCategories(sectors.value) : []))
-const sectorsActivityOptions = computed(() =>
-  sectors.value ? sectorsService.getActivities(sectorsInCategory.value) : []
-)
-sectorsService.getSectors().then((response) => {
-  sectors.value = response
+const sectorsOptions = ref([])
+sectorsService.getSectors().then((sectors) => {
+  const options = []
+  for (let i = 0; i < sectors.length; i++) {
+    const sector = sectors[i]
+    const { name, id, categoryName, hasLineMinistry } = sector
+    options.push({ name: `${categoryName} - ${name}`, sectorId: id, hasLineMinistry })
+  }
+  const optionsSortedAlphabetically = options.sort((sectorBefore, sectorAfter) => {
+    if (sectorBefore.name < sectorAfter.name) return -1
+    else if (sectorBefore.name > sectorAfter.name) return 1
+    else return 0
+  })
+  sectorsOptions.value = optionsSortedAlphabetically
 })
-const changeSector = (type) => {
-  if (type === "sectorCategory") form.sectorCategory = ""
-  form.lineMinistry = ""
-}
 
 /* Line Ministry */
 const ministries = reactive({})
@@ -59,6 +61,9 @@ const lineMinistryOptions = computed(() => {
 sectorsService.getMinistries().then((response) => {
   ministries.value = response
 })
+const resetLineMinistry = () => {
+  form.lineMinistry = ""
+}
 
 /* City */
 const defaultCitySelector = [
@@ -127,8 +132,7 @@ const initFields = () => {
   form.economicModel = null
   form.managementType = null
   form.productionType = null
-  form.sectorCategory = null
-  form.sectorActivity = []
+  form.sectors = []
   form.lineMinistry = null
   form.dailyMealCount = null
   form.yearlyMealCount = null
@@ -152,11 +156,11 @@ const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
 )
 const showLineMinistry = computed(() => {
-  if (form.economicModel === "private") return false
-  for (let i = 0; i < form.sectorActivity.length; i++) {
-    const key = form.sectorActivity[i]
-    const activity = sectorsActivityOptions.value[key]
-    const hasLineMinistry = activity.hasLineMinistry
+  if (form.sectors.length === 0) return false
+  if (form.economicModel !== "public") return false
+  for (let i = 0; i < sectorsOptions.value.length; i++) {
+    const sector = sectorsOptions.value[i]
+    const hasLineMinistry = sector.hasLineMinistry
     if (hasLineMinistry) return true
   }
   return false
@@ -190,8 +194,7 @@ const rules = {
   economicModel: { required },
   managementType: { required },
   productionType: { required },
-  sectorCategory: { required },
-  sectorActivity: { required },
+  sectors: { required },
   lineMinistry: { required: requiredIf(showLineMinistry) },
   dailyMealCount: {
     required: requiredIf(dailyMealRequired),
@@ -239,10 +242,7 @@ const saveCanteen = (saveAndCreateValue = false) => {
 
 const sendCanteenForm = () => {
   const payload = form
-  payload.sectors = getSectorsID(form.sectorActivity)
-
   isCreatingCanteen.value = true
-
   canteensService
     .createCanteen(payload)
     .then((canteenCreated) => {
@@ -274,15 +274,6 @@ const addNewCanteen = (name) => {
   initFields()
   window.scrollTo(0, 0)
   v$.value.$reset()
-}
-
-const getSectorsID = (activitiesSelected) => {
-  const names = []
-  for (let i = 0; i < activitiesSelected.length; i++) {
-    const index = activitiesSelected[i]
-    names.push(sectorsActivityOptions.value[index].id)
-  }
-  return names
 }
 
 /* Update canteen informations from child components */
@@ -399,29 +390,18 @@ const updateForm = (type, canteenInfos) => {
       </fieldset>
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
-        <DsfrSelect
-          v-model="form.sectorCategory"
-          label="Catégorie de secteur *"
-          labelVisible
-          :options="sectorsCategoryOptions"
-          @change="changeSector('sectorCategory')"
-          :error-message="formatError(v$.sectorCategory)"
-        />
         <DsfrMultiselect
-          v-model="form.sectorActivity"
-          label="Secteur d’activité *"
+          v-model="form.sectors"
+          label="Secteurs *"
           labelVisible
-          :options="sectorsActivityOptions"
-          id-key="index"
+          :options="sectorsOptions"
+          search
+          id-key="sectorId"
           label-key="name"
-          @update:modelValue="changeSector('sectorActivity')"
+          @update:modelValue="resetLineMinistry()"
           :filtering-keys="['name']"
-          :error-message="formatError(v$.sectorActivity)"
-        >
-          <template #no-results>
-            Sélectionner une catégorie de secteur pour pouvoir sélectionner des secteurs d'activité
-          </template>
-        </DsfrMultiselect>
+          :error-message="formatError(v$.sectors)"
+        />
         <DsfrSelect
           v-if="showLineMinistry"
           v-model="form.lineMinistry"
