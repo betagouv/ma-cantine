@@ -63,7 +63,7 @@ const joinCanteen = () => {
     <div class="fr-grid-row fr-grid-row--top fr-grid-row--left">
       <div class="fr-col-5">
         <p class="fr-h6 fr-mb-1v">{{ name }}</p>
-        <DsfrBadge v-if="status === 'selected'" type="success" label="sélectionné" small />
+        <DsfrBadge v-if="status === 'selected'" type="success" :label="siret ? 'sélectionné' : 'rattaché'" small />
       </div>
       <div class="fr-col-offset-1"></div>
       <ul class="ma-cantine--unstyled-list fr-my-0 fr-col-6">
@@ -76,7 +76,12 @@ const joinCanteen = () => {
       </ul>
     </div>
     <div v-if="status === 'can-be-linked'" class="fr-grid-row fr-grid-row--center fr-mt-1w">
-      <p>Faire des établissements rattachés</p>
+      <DsfrButton
+        label="Créer un nouvel établissement rattaché à cette unité légale"
+        icon="fr-icon-add-circle-fill"
+        secondary
+        @click="$emit('select')"
+      />
     </div>
     <div v-else-if="status === 'can-be-created'" class="fr-grid-row fr-grid-row--center fr-mt-1w">
       <DsfrButton
