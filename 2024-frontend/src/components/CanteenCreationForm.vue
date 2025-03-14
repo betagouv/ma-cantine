@@ -182,11 +182,14 @@ const resetDynamicInputValues = () => {
 const { required, integer, minValue, requiredIf, minLength, maxLength } = useValidators()
 const dailyMealRequired = computed(() => form.productionType !== "central")
 const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
+const siretIsRequired = computed(() => form.hasSiret === "has-siret")
+const sirenIsRequired = computed(() => form.hasSiret === "no-siret")
+
 const rules = {
   name: { required },
   hasSiret: { required },
-  siret: { required: requiredIf(showCheckboxNoSiret.value !== true) },
-  sirenUniteLegale: { required: requiredIf(showCheckboxNoSiret) },
+  siret: { required: requiredIf(siretIsRequired) },
+  sirenUniteLegale: { required: requiredIf(sirenIsRequired) },
   citySelector: { required: requiredIf(showCitySelector) },
   postalCode: {
     required: requiredIf(showCitySelector),
@@ -210,7 +213,7 @@ const rules = {
     required: requiredIf(showCentralProducerSiret),
     notSameSiret: helpers.withMessage(
       "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine",
-      (value) => value !== form.siret
+      (value) => sirenIsRequired.value || value !== form.siret
     ),
     integer,
     minLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", minLength(14)),
@@ -229,6 +232,7 @@ const rules = {
 const v$ = useVuelidate(rules, form)
 const validateForm = () => {
   v$.value.$validate()
+  console.log(v$.value)
   if (v$.value.$invalid) return
   sendCanteenForm()
 }
