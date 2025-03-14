@@ -594,6 +594,10 @@ export const hasSatelliteInconsistency = (canteen) => {
   return canteen.satelliteCanteensCount !== canteen.satellites.length
 }
 
+export const siretOrSirenUniteLegaleRequired = (canteen) => {
+  return !!canteen.siret && !!canteen.siren_unite_legale
+}
+
 export const lineMinistryRequired = (canteen, allSectors) => {
   // 2 rules
   // - canteen must be Public
@@ -605,8 +609,12 @@ export const lineMinistryRequired = (canteen, allSectors) => {
 }
 
 export const missingCanteenData = (canteen, sectors) => {
-  // TODO: what location data to we require at minimum?
-  const requiredFields = ["siret", "name", "cityInseeCode", "productionType", "managementType"]
+  // some canteens might not have a SIRET
+  if (siretOrSirenUniteLegaleRequired(canteen)) return true
+
+  // basic canteen fields
+  // TODO: what location data do we require at minimum?
+  const requiredFields = ["name", "cityInseeCode", "productionType", "managementType"]
   const missingFieldLambda = (f) => !canteen[f]
   const missingSharedRequiredData = requiredFields.some(missingFieldLambda)
   if (missingSharedRequiredData) return true
