@@ -51,7 +51,6 @@ const searchByNumber = () => {
   canteensService
     .canteenStatus(searchBy, cleanNumber)
     .then((response) => {
-      console.log("response", response)
       switch (true) {
         case response.length === 0:
           canteen.find = false
