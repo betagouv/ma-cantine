@@ -38,7 +38,7 @@ const claimCanteen = (id) => {
     .catch((e) => e)
 }
 
-const joinCanteen = (id, userInfos) => {
+const teamJoinRequest = (id, userInfos) => {
   return fetch(`/api/v1/teamJoinRequest/${id}/`, {
     method: "POST",
     headers: {
@@ -51,4 +51,4 @@ const joinCanteen = (id, userInfos) => {
     .then((response) => response)
     .catch((e) => e)
 }
-export default { createCanteen, canteenStatus, claimCanteen, joinCanteen }
+export default { createCanteen, canteenStatus, claimCanteen, teamJoinRequest }
