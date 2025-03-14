@@ -24,32 +24,22 @@ class DiagnosticQuerySetTest(TestCase):
         """
 
         # Create canteens and diagnostics
-        self.valid_canteen_1 = Canteen.objects.create(siret="12345678901234", deletion_date=None)
-        self.valid_canteen_2 = Canteen.objects.create(siren_unite_legale="123456789", deletion_date=None)
-        self.valid_canteen_3 = Canteen.objects.create(
-            siret="12345678901235", siren_unite_legale="123456789", deletion_date=None
-        )
-        self.invalid_canteen = Canteen.objects.create(siret="", deletion_date=None)  # siret missing
+        self.valid_canteen = Canteen.objects.create(id=1, siret="12345678901234", deletion_date=None)
+        self.invalid_canteen = Canteen.objects.create(id=2, siret="", deletion_date=None)  # siret missing
         self.deleted_canteen = Canteen.objects.create(
+            id=3,
             siret="56789012345678",
             deletion_date=now().replace(month=6, day=1),
         )
 
-        for index, canteen in enumerate([self.valid_canteen_1, self.valid_canteen_2, self.valid_canteen_3]):
-            setattr(
-                self,
-                f"valid_canteen_diagnostic_{index+1}",
-                Diagnostic.objects.create(
-                    year=year_data,
-                    creation_date=now().replace(month=3, day=1),
-                    canteen=canteen,
-                    value_total_ht=1000.00,
-                    value_bio_ht=200.00,
-                ),
-            )
-            Teledeclaration.create_from_diagnostic(
-                getattr(self, f"valid_canteen_diagnostic_{index+1}"), applicant=UserFactory.create()
-            )
+        self.valid_canteen_diagnostic = Diagnostic.objects.create(
+            year=year_data,
+            creation_date=now().replace(month=3, day=1),
+            canteen=self.valid_canteen,
+            value_total_ht=1000.00,
+            value_bio_ht=200.00,
+        )
+        Teledeclaration.create_from_diagnostic(self.valid_canteen_diagnostic, applicant=UserFactory.create())
 
         self.invalid_canteen_diagnostic = Diagnostic.objects.create(
             year=year_data,
@@ -72,15 +62,15 @@ class DiagnosticQuerySetTest(TestCase):
     def test_td_submitted_for_year(self):
         with patch("data.models.diagnostic.CAMPAIGN_DATES", mocked_campaign_dates):
             diagnostics = Diagnostic.objects.td_submitted_for_year(year_data)
-        self.assertEqual(diagnostics.count(), 5)
-        self.assertIn(self.valid_canteen_diagnostic_1, diagnostics)
+        self.assertEqual(diagnostics.count(), 3)
+        self.assertIn(self.valid_canteen_diagnostic, diagnostics)
         self.assertIn(self.invalid_canteen_diagnostic, diagnostics)
         self.assertIn(self.deleted_canteen_diagnostic, diagnostics)
 
     def test_for_stat(self):
         with patch("data.models.diagnostic.CAMPAIGN_DATES", mocked_campaign_dates):
             diagnostics = Diagnostic.objects.for_stat(year_data)
-        self.assertEqual(diagnostics.count(), 3)
-        self.assertIn(self.valid_canteen_diagnostic_1, diagnostics)
+        self.assertEqual(diagnostics.count(), 1)
+        self.assertIn(self.valid_canteen_diagnostic, diagnostics)
         self.assertNotIn(self.invalid_canteen_diagnostic, diagnostics)  # canteen without siret
         self.assertNotIn(self.deleted_canteen_diagnostic, diagnostics)  # canteen deleted
