@@ -140,6 +140,7 @@ const unselectCanteen = () => {
       :department="canteen.department"
       :status="canteen.status"
       :id="canteen.id"
+      :linked-canteens="canteen.linkedCanteens"
       @select="selectCanteen()"
     />
     <p v-if="canteen.founded && !hasSelected" class="fr-text--xs fr-mb-0 fr-mt-1w ma-cantine--text-center">

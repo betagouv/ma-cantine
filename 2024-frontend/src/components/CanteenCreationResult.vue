@@ -1,14 +1,23 @@
 <script setup>
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
+import AppSeparator from "@/components/AppSeparator.vue"
 
 const loading = ref(false)
 
 /* Props */
-const props = defineProps(["name", "siret", "city", "department", "status", "id", "siren"])
+const props = defineProps(["name", "siret", "city", "department", "status", "id", "siren", "linkedCanteens"])
+
+/* Content */
+const linkedCanteensLabel = computed(() => {
+  const count = props.linkedCanteens.length
+  const establishment = count === 1 ? "établissement" : "établissements"
+  const exist = count === 1 ? "existe" : "existent"
+  return `${count} ${establishment} ${exist} déjà pour cette unité locale`
+})
 
 /* Store and Router */
 const store = useRootStore()
@@ -75,13 +84,34 @@ const joinCanteen = () => {
         </li>
       </ul>
     </div>
-    <div v-if="status === 'can-be-linked'" class="fr-grid-row fr-grid-row--center fr-mt-1w">
-      <DsfrButton
-        label="Créer un nouvel établissement rattaché à cette unité légale"
-        icon="fr-icon-add-circle-fill"
-        secondary
-        @click="$emit('select')"
-      />
+    <div v-if="status === 'can-be-linked'" class="fr-mt-1w">
+      <div v-if="linkedCanteens.length > 0" class="fr-mb-2w">
+        <DsfrBadge type="warning" :label="linkedCanteensLabel" />
+        <AppSeparator class="fr-my-1w" />
+        <ul class="fr-pl-0">
+          <li
+            v-for="canteen in linkedCanteens"
+            :key="canteen.id"
+            class="canteen-creation-result__tertiary-action fr-mt-1v"
+          >
+            <div>
+              <p class="fr-text--bold fr-mb-0">{{ canteen.name }}</p>
+              <p class="fr-mb-0 fr-text--xs">{{ canteen.city }} ({{ canteen.department }})</p>
+              <p v-if="canteen.isManagedByUser" class="fr-mb-0 fr-text--xs">
+                Vous êtes gestionnaire de cet établissement.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="fr-grid-row fr-grid-row--center">
+        <DsfrButton
+          label="Créer un nouvel établissement rattaché à cette unité légale"
+          icon="fr-icon-add-circle-fill"
+          secondary
+          @click="$emit('select')"
+        />
+      </div>
     </div>
     <div v-else-if="status === 'can-be-created'" class="fr-grid-row fr-grid-row--center fr-mt-1w">
       <DsfrButton
