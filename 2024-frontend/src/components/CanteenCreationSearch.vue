@@ -20,7 +20,7 @@ const label = computed(() => `Rechercher un établissement par son numéro ${num
 /* Canteen fields */
 const canteen = reactive({})
 const initFields = () => {
-  canteen.find = false
+  canteen.found = false
   canteen.status = null
   canteen.name = null
   canteen.siret = null
@@ -38,14 +38,17 @@ const search = ref("")
 const errorNotFound = ref()
 const errorMessage = computed(() => {
   if (errorNotFound.value) return errorNotFound.value
-  if (props.errorRequired && !canteen.find) return props.errorRequired
-  if (props.errorRequired && canteen.find) return `Vous devez sélectionner un établissement`
+  if (props.errorRequired && !canteen.found) return props.errorRequired
+  if (props.errorRequired && canteen.found && props.hasSiret) return "Vous devez sélectionner un établissement"
+  if (props.errorRequired && canteen.found && !props.hasSiret)
+    return "Vous devez sélectionner ou créer un établissement"
   else return ""
 })
 const hasSelected = ref(false)
 const searchByNumber = () => {
   const cleanNumber = search.value.replaceAll(" ", "")
   if (cleanNumber.length === 0) return
+  initFields()
   errorNotFound.value = ""
   const searchBy = numberName.value.toLowerCase()
   canteensService
@@ -53,31 +56,31 @@ const searchByNumber = () => {
     .then((response) => {
       switch (true) {
         case response.length === 0:
-          canteen.find = false
+          canteen.found = false
           errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro ${numberName.value} « ${cleanNumber} » ne correspond à aucun établissement`
           break
         case !response.id && !response.siren:
-          canteen.find = true
+          canteen.found = true
           canteen.status = "can-be-created"
           break
         case !response.id && response.siren !== "":
-          canteen.find = true
+          canteen.found = true
           canteen.status = "can-be-linked"
           break
         case response.isManagedByUser:
-          canteen.find = true
+          canteen.found = true
           canteen.status = "managed-by-user"
           break
         case response.canBeClaimed:
-          canteen.find = true
+          canteen.found = true
           canteen.status = "can-be-claimed"
           break
         case !response.canBeClaimed:
-          canteen.find = true
+          canteen.found = true
           canteen.status = "ask-to-join"
           break
       }
-      if (canteen.find) saveCanteenInfos(response)
+      if (canteen.found) saveCanteenInfos(response)
     })
     .catch((e) => store.notifyServerError(e))
 }
@@ -115,7 +118,7 @@ const unselectCanteen = () => {
     <p class="fr-hint-text">
       Nous utilisons le site
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">annuaire-des-entreprises</a>
-      afin de retrouver les informations de {{ establishment }}
+      afin de retrouver les informations de {{ establishment }}.
     </p>
     <DsfrInputGroup :error-message="errorMessage">
       <template #default>
@@ -131,7 +134,7 @@ const unselectCanteen = () => {
       </template>
     </DsfrInputGroup>
     <CanteenCreationResult
-      v-if="canteen.find"
+      v-if="canteen.found"
       :name="canteen.name"
       :siret="canteen.siret"
       :siren="canteen.siren"
@@ -142,7 +145,7 @@ const unselectCanteen = () => {
       :linked-canteens="canteen.linkedCanteens"
       @select="selectCanteen()"
     />
-    <p v-if="canteen.find && !hasSelected" class="fr-text--xs fr-mb-0 fr-mt-1w ma-cantine--text-center">
+    <p v-if="canteen.found && !hasSelected" class="fr-text--xs fr-mb-0 fr-mt-1w ma-cantine--text-center">
       Ce n’est pas le bon établissement ? Refaites une recherche via le bon numéro {{ numberName }}, ou trouvez
       l’information dans
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
