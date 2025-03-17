@@ -775,8 +775,6 @@ class TeamJoinRequestView(APIView):
                 "siren_unite_legale": canteen.siren_unite_legale,
             }
 
-            print(context)
-
             recipients = list(canteen.managers.values_list("email", flat=True))
 
             if not recipients:
