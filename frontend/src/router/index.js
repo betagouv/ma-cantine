@@ -309,24 +309,6 @@ const routes = [
     sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
-    path: "/nouvelle-cantine",
-    name: "NewCanteen",
-    component: CanteenEditor,
-    redirect: { name: "NewCanteenForm" },
-    children: [
-      {
-        path: "",
-        name: "NewCanteenForm",
-        component: CanteenForm,
-        meta: {
-          title: "Ajouter ma cantine",
-          authenticationRequired: true,
-        },
-        sitemapGroup: Constants.SitemapGroups.ACTION,
-      },
-    ],
-  },
-  {
     path: "/modifier-ma-cantine/:canteenUrlComponent",
     name: "CanteenModification",
     props: true,
@@ -610,6 +592,14 @@ const vue3Routes = [
     path: "/importer-des-donnees/cantines",
     name: "ImportCanteens",
   },
+  {
+    path: "/ajouter-une-cantine",
+    name: "CanteenCreation",
+    meta: {
+      title: "Ajouter une cantine",
+    },
+    sitemapGroup: Constants.SitemapGroups.ACTION,
+  },
 ]
 const VUE3_PREFIX = "/v2"
 vue3Routes.forEach((r) => {
@@ -620,6 +610,11 @@ routes.push(...vue3Routes)
 routes.push({
   path: "/importer-achats",
   redirect: { name: "ImportPurchases" },
+})
+
+routes.push({
+  path: "/nouvelle-cantine",
+  redirect: { name: "CanteenCreation" },
 })
 
 routes.push({
