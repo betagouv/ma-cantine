@@ -48,6 +48,7 @@ const hasSelected = ref(false)
 const searchByNumber = () => {
   const cleanNumber = search.value.replaceAll(" ", "")
   if (cleanNumber.length === 0) return
+  initFields()
   errorNotFound.value = ""
   const searchBy = numberName.value.toLowerCase()
   canteensService
