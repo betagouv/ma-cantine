@@ -7,7 +7,7 @@ const hasSiret = [
   {
     label: "Non, je suis rattaché à une unité légale",
     hint:
-      "Seuls certains établissement peuvent être rattachés au SIREN d’une unité légale, vérifier votre éligibilité dans nos conditions d’utilisation.",
+      "Seuls certains établissements peuvent être rattachés au SIREN d’une unité légale, vérifiez votre éligibilité dans nos conditions d’utilisation.",
     img: "/static/images/picto-dsfr/flow-list.svg",
     value: "no-siret",
   },
