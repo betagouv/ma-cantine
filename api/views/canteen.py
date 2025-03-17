@@ -510,7 +510,7 @@ def get_cantine_from_siret(siret, request):
 
 def get_cantine_list_from_siren_unite_legale(siren, request):
     if siren:
-        canteens = Canteen.objects.filter(siren_unite_legale=siren)
+        canteens = Canteen.objects.filter(siren_unite_legale=siren).order_by("name")
         return camelize(CanteenStatusSerializer(canteens, many=True, context={"request": request}).data)
 
 

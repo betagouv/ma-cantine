@@ -14,8 +14,8 @@ const createCanteen = (payload) => {
     .catch((e) => e)
 }
 
-const verifySiret = (siret) => {
-  return fetch(`/api/v1/canteenStatus/siret/${siret}`, {
+const canteenStatus = (searchBy, number) => {
+  return fetch(`/api/v1/canteenStatus/${searchBy}/${number}`, {
     method: "GET",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",
@@ -38,7 +38,7 @@ const claimCanteen = (id) => {
     .catch((e) => e)
 }
 
-const joinCanteen = (id, userInfos) => {
+const teamJoinRequest = (id, userInfos) => {
   return fetch(`/api/v1/teamJoinRequest/${id}/`, {
     method: "POST",
     headers: {
@@ -51,4 +51,4 @@ const joinCanteen = (id, userInfos) => {
     .then((response) => response)
     .catch((e) => e)
 }
-export default { createCanteen, verifySiret, claimCanteen, joinCanteen }
+export default { createCanteen, canteenStatus, claimCanteen, teamJoinRequest }
