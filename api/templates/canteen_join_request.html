@@ -1,7 +1,14 @@
 {% extends 'email_base.html' %}
 
 {% block content %}
-    <p>{{ name }} ({{ email }}) veut rejoindre l'équipe de gestion de la cantine « {{ canteen }} » (SIRET {{ siret }}).</p>
+    <p>{{ name }} ({{ email }}) veut rejoindre l'équipe de gestion de la cantine « {{ canteen }} »
+        {% if siret %}
+            <span>(SIRET {{ siret }})</span>
+        {% endif %}
+        {% if siren_unite_legale %}
+            <span>(SIREN {{ siren_unite_legale }})</span>.
+        {% endif %}
+    </p>
 
     {% if message %}
         <p>Voici son message :</p>

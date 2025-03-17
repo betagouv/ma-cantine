@@ -13,7 +13,11 @@
           </p>
           <p class="mb-0">
             SIRET :
-            <span class="font-weight-medium">{{ canteen.siret }}</span>
+            <span class="font-weight-medium">{{ canteen.siret || "inconnu" }}</span>
+          </p>
+          <p v-if="canteen.sirenUniteLegale" class="mb-0">
+            SIREN de l'unité légale :
+            <span class="font-weight-medium">{{ canteen.sirenUniteLegale }}</span>
           </p>
           <p class="mb-0">
             Commune :

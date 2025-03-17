@@ -772,6 +772,7 @@ class TeamJoinRequestView(APIView):
                 "url": url,
                 "canteen": canteen.name,
                 "siret": canteen.siret,
+                "siren_unite_legale": canteen.siren_unite_legale,
             }
 
             recipients = list(canteen.managers.values_list("email", flat=True))
