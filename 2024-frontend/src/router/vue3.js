@@ -9,6 +9,7 @@ import ContactPage from "@/views/ContactPage.vue"
 import ImportPurchases from "@/views/ImportPurchases.vue"
 import ImportCanteens from "@/views/ImportCanteens.vue"
 import CanteenCreation from "@/views/CanteenCreation.vue"
+import CanteenModification from "@/views/CanteenModification.vue"
 
 const vue3routes = [
   {
@@ -116,9 +117,28 @@ const vue3routes = [
     name: "CanteenCreation",
     component: CanteenCreation,
     meta: {
+      authenticationRequired: true,
       title: "Ajouter une cantine",
       breadcrumbs: [{ to: { name: "ManagementPage" }, title: "Mon tableau de bord" }],
     },
+  },
+  {
+    path: "/modifier-ma-cantine/:canteenUrlComponent",
+    children: [
+      {
+        path: "etablissement",
+        name: "CanteenModification",
+        component: CanteenModification,
+        meta: {
+          authenticationRequired: true,
+          title: "Modifier mon établissement",
+          breadcrumbs: [
+            { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+            { to: { name: "DashboardManager" }, useCanteenName: true },
+          ],
+        },
+      },
+    ],
   },
 ]
 
