@@ -2,7 +2,7 @@
 import { ref, reactive, computed } from "vue"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens.js"
-import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
+import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Props */
 const props = defineProps(["errorRequired", "hasSiret"])
@@ -133,7 +133,7 @@ const unselectCanteen = () => {
         />
       </template>
     </DsfrInputGroup>
-    <CanteenCreationResult
+    <CanteenEstablishmentCard
       v-if="canteen.found"
       :name="canteen.name"
       :siret="canteen.siret"

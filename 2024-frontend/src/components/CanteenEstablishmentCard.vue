@@ -18,7 +18,7 @@ const linkedCanteensLabel = computed(() => {
 </script>
 
 <template>
-  <div class="canteen-creation-result fr-card fr-p-3v">
+  <div class="canteen-establishment-card fr-card fr-p-3v">
     <div class="fr-grid-row fr-grid-row--top fr-grid-row--left">
       <div class="fr-col-5">
         <p class="fr-h6 fr-mb-1v">{{ name }}</p>
@@ -42,7 +42,7 @@ const linkedCanteensLabel = computed(() => {
           <li
             v-for="canteen in linkedCanteens"
             :key="canteen.id"
-            class="canteen-creation-result__tertiary-action fr-mt-2w"
+            class="canteen-establishment-card__tertiary-action fr-mt-2w"
           >
             <div>
               <p class="fr-text--bold fr-mb-0">{{ canteen.name }}</p>
@@ -93,7 +93,7 @@ const linkedCanteensLabel = computed(() => {
         />
       </p>
     </div>
-    <div v-else-if="status === 'can-be-claimed'" class="canteen-creation-result__tertiary-action fr-mt-1v">
+    <div v-else-if="status === 'can-be-claimed'" class="canteen-establishment-card__tertiary-action fr-mt-1v">
       <div>
         <DsfrBadge type="success" label="cantine déjà existante" small />
         <p class="fr-mb-0 fr-text--xs">
@@ -103,7 +103,7 @@ const linkedCanteensLabel = computed(() => {
       </div>
       <CanteenCreationClaim :id="props.id" />
     </div>
-    <div v-else-if="status === 'ask-to-join'" class="canteen-creation-result__tertiary-action fr-mt-1v">
+    <div v-else-if="status === 'ask-to-join'" class="canteen-establishment-card__tertiary-action fr-mt-1v">
       <div>
         <DsfrBadge type="success" label="cantine déjà existante" small />
         <p class="fr-mb-0 fr-text--xs">
@@ -117,7 +117,7 @@ const linkedCanteensLabel = computed(() => {
 </template>
 
 <style lang="scss">
-.canteen-creation-result {
+.canteen-establishment-card {
   &__tertiary-action {
     display: flex;
     flex-direction: column;
