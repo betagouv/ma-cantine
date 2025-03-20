@@ -1,6 +1,5 @@
 <script setup>
 import "@/css/dsfr-multi-select.css"
-import { useRouter } from "vue-router"
 import { ref, reactive, computed } from "vue"
 import { helpers } from "@vuelidate/validators"
 import { useVuelidate } from "@vuelidate/core"
@@ -8,15 +7,14 @@ import { useRootStore } from "@/stores/root"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
-import canteensService from "@/services/canteens"
 import openDataService from "@/services/openData.js"
 import options from "@/constants/canteen-establishment-form-options"
 import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
 
-/* Router and Store */
-const router = useRouter()
+/* Data */
 const store = useRootStore()
 const props = defineProps(["establishmentData", "showCreateButton"])
+const emit = defineEmits(["sendForm"])
 
 /* Siret */
 const changeHasSiret = () => {
@@ -284,56 +282,16 @@ const rules = {
     beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxNoSiret.value || value),
   },
 }
-const v$ = useVuelidate(rules, form)
-const validateForm = () => {
-  v$.value.$validate()
-  if (v$.value.$invalid) return
-  sendCanteenForm()
-}
 
-/* Send Form */
-const saveAndCreate = ref(false)
+/* Form */
 const isSaving = ref(false)
 const forceRerender = ref(0)
+const v$ = useVuelidate(rules, form)
 
-const saveCanteen = (saveAndCreateValue = false) => {
-  saveAndCreate.value = saveAndCreateValue
-  validateForm()
-}
-
-const sendCanteenForm = () => {
-  const payload = form
-  isSaving.value = true
-  canteensService
-    .createCanteen(payload)
-    .then((canteenCreated) => {
-      if (canteenCreated.id && saveAndCreate.value) addNewCanteen(canteenCreated.name)
-      else if (canteenCreated.id && !saveAndCreate.value) goToNewCanteenPage(canteenCreated.id)
-      else {
-        store.notifyServerError()
-        isSaving.value = false
-      }
-    })
-    .catch((e) => {
-      store.notifyServerError(e)
-      isSaving.value = false
-    })
-}
-
-const goToNewCanteenPage = (id) => {
-  router.replace({
-    name: "DashboardManager",
-    params: { canteenUrlComponent: id },
-  })
-}
-
-const addNewCanteen = (name) => {
-  store.notify({ message: `Cantine ${name} créée avec succès.` })
-  isSaving.value = false
-  saveAndCreate.value = false
-  window.scrollTo(0, 0)
-  resetFields()
-  resetForm()
+const validateForm = (action) => {
+  v$.value.$validate()
+  if (v$.value.$invalid) return
+  emit("sendForm", { form: form, action: action })
 }
 
 const resetForm = () => {
@@ -551,9 +509,14 @@ const resetForm = () => {
           label="Enregistrer et créer un nouvel établissement"
           secondary
           class="fr-mb-1v fr-mr-1v"
-          @click="saveCanteen(true)"
+          @click="validateForm('stay-on-creation-page')"
         />
-        <DsfrButton :disabled="isSaving" label="Enregistrer" icon="fr-icon-save-line" @click="saveCanteen()" />
+        <DsfrButton
+          :disabled="isSaving"
+          label="Enregistrer"
+          icon="fr-icon-save-line"
+          @click="validateForm('go-to-canteen-page')"
+        />
       </div>
     </form>
   </section>
