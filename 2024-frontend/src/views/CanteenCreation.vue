@@ -2,7 +2,7 @@
 import { useRoute } from "vue-router"
 import AppRessources from "@/components/AppRessources.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
-import CanteenForm from "@/components/CanteenForm.vue"
+import CanteenEstablishmentForm from "@/components/CanteenEstablishmentForm.vue"
 const route = useRoute()
 </script>
 
@@ -38,5 +38,5 @@ const route = useRoute()
       </li>
     </AppRessources>
   </section>
-  <CanteenForm />
+  <CanteenEstablishmentForm />
 </template>
