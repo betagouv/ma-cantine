@@ -201,7 +201,8 @@ const prefillFields = () => {
     )
   })
 }
-if (props.establishmentData.id) prefillFields()
+if (props.establishmentData) prefillFields()
+else resetFields()
 
 /* Dynamic Inputs */
 const hideDailyMealCount = computed(() => form.productionType === "central")
