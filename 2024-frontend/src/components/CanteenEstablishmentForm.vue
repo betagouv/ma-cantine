@@ -293,7 +293,7 @@ const validateForm = () => {
 
 /* Send Form */
 const saveAndCreate = ref(false)
-const isCreatingCanteen = ref(false)
+const isSaving = ref(false)
 const forceRerender = ref(0)
 
 const saveCanteen = (saveAndCreateValue = false) => {
@@ -303,7 +303,7 @@ const saveCanteen = (saveAndCreateValue = false) => {
 
 const sendCanteenForm = () => {
   const payload = form
-  isCreatingCanteen.value = true
+  isSaving.value = true
   canteensService
     .createCanteen(payload)
     .then((canteenCreated) => {
@@ -311,12 +311,12 @@ const sendCanteenForm = () => {
       else if (canteenCreated.id && !saveAndCreate.value) goToNewCanteenPage(canteenCreated.id)
       else {
         store.notifyServerError()
-        isCreatingCanteen.value = false
+        isSaving.value = false
       }
     })
     .catch((e) => {
       store.notifyServerError(e)
-      isCreatingCanteen.value = false
+      isSaving.value = false
     })
 }
 
@@ -329,7 +329,7 @@ const goToNewCanteenPage = (id) => {
 
 const addNewCanteen = (name) => {
   store.notify({ message: `Cantine ${name} créée avec succès.` })
-  isCreatingCanteen.value = false
+  isSaving.value = false
   saveAndCreate.value = false
   window.scrollTo(0, 0)
   resetFields()
@@ -547,13 +547,13 @@ const resetForm = () => {
       <div class="fr-grid-row fr-grid-row--right fr-grid-row--top">
         <DsfrButton
           v-if="showCreateButton"
-          :disabled="isCreatingCanteen"
+          :disabled="isSaving"
           label="Enregistrer et créer un nouvel établissement"
           secondary
           class="fr-mb-1v fr-mr-1v"
           @click="saveCanteen(true)"
         />
-        <DsfrButton :disabled="isCreatingCanteen" label="Enregistrer" icon="fr-icon-save-line" @click="saveCanteen()" />
+        <DsfrButton :disabled="isSaving" label="Enregistrer" icon="fr-icon-save-line" @click="saveCanteen()" />
       </div>
     </form>
   </section>
