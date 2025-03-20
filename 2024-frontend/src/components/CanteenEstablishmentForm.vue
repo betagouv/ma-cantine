@@ -311,218 +311,217 @@ const resetForm = () => {
 </script>
 
 <template>
-  <section
-    class="canteen-establishment-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
+  <form
+    class="canteen-establishment-form fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w"
+    @submit.prevent=""
   >
-    <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
-      <fieldset class="fr-mb-4w canteen-establishment-form__reduce-margin-bottom">
-        <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
-        <DsfrRadioButtonSet
-          v-model="form.hasSiret"
-          legend="Avez-vous un numéro SIRET ?"
-          :error-message="formatError(v$.hasSiret)"
-          :options="options.hasSiret"
-          @update:modelValue="changeHasSiret()"
-        />
-        <CanteenEstablishmentSearch
-          v-if="form.hasSiret"
-          :key="forceRerender"
-          @select="(canteenInfos) => selectEstablishment(canteenInfos)"
-          :error-required="formatError(v$.siret) || formatError(v$.sirenUniteLegale)"
-          :has-siret="form.hasSiret === 'has-siret'"
-        />
-      </fieldset>
-      <fieldset class="fr-mb-4w">
-        <legend class="fr-h5 fr-mb-2w">2. Coordonnées</legend>
-        <DsfrInputGroup
-          v-model="form.name"
-          label="Nom de la cantine *"
-          :label-visible="true"
-          hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
-          :error-message="formatError(v$.name)"
-        />
-        <div v-if="showCitySelector" class="fr-grid-row fr-grid-row--gutters">
-          <div class="fr-col-12 fr-col-md-6">
-            <DsfrInputGroup
-              v-model="form.postalCode"
-              label="Code postal *"
-              hint="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
-              :label-visible="true"
-              :error-message="formatError(v$.postalCode)"
-              @update:modelValue="changePostal()"
-            />
-          </div>
-          <div class="fr-col-12 fr-col-md-6">
-            <DsfrSelect
-              class="fr-mb-0"
-              v-model="form.citySelector"
-              label="Ville *"
-              description="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
-              :label-visible="true"
-              :error-message="emptyCity || formatError(v$.citySelector)"
-              :options="citiesOptions"
-              @update:modelValue="selectCity()"
-            />
-          </div>
-        </div>
-      </fieldset>
-      <fieldset class="fr-mb-4w canteen-establishment-form__reduce-margin-bottom">
-        <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
-        <DsfrRadioButtonSet
-          legend="Type d’établissement *"
-          v-model="form.economicModel"
-          :options="options.economicModel"
-          :error-message="formatError(v$.economicModel)"
-        />
-        <DsfrRadioButtonSet
-          legend="Mode de gestion *"
-          v-model="form.managementType"
-          :options="options.managementType"
-          :error-message="formatError(v$.managementType)"
-        />
-        <DsfrRadioButtonSet
-          legend="Mode de production *"
-          v-model="form.productionType"
-          :options="productionTypeOptions"
-          :error-message="formatError(v$.productionType)"
-          @change="resetDynamicInputValues"
-        />
-        <div v-if="showCentralProducerSiret" class="canteen-establishment-form__central-producer-siret">
+    <fieldset class="fr-mb-4w canteen-establishment-form__reduce-margin-bottom">
+      <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
+      <DsfrRadioButtonSet
+        v-model="form.hasSiret"
+        legend="Avez-vous un numéro SIRET ?"
+        :error-message="formatError(v$.hasSiret)"
+        :options="options.hasSiret"
+        @update:modelValue="changeHasSiret()"
+      />
+      <CanteenEstablishmentSearch
+        v-if="form.hasSiret"
+        :key="forceRerender"
+        @select="(canteenInfos) => selectEstablishment(canteenInfos)"
+        :error-required="formatError(v$.siret) || formatError(v$.sirenUniteLegale)"
+        :has-siret="form.hasSiret === 'has-siret'"
+      />
+    </fieldset>
+    <fieldset class="fr-mb-4w">
+      <legend class="fr-h5 fr-mb-2w">2. Coordonnées</legend>
+      <DsfrInputGroup
+        v-model="form.name"
+        label="Nom de la cantine *"
+        :label-visible="true"
+        hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
+        :error-message="formatError(v$.name)"
+      />
+      <div v-if="showCitySelector" class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-6">
           <DsfrInputGroup
-            v-model="form.centralProducerSiret"
-            label="SIRET du livreur *"
+            v-model="form.postalCode"
+            label="Code postal *"
+            hint="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
             :label-visible="true"
-            :error-message="formatError(v$.centralProducerSiret)"
-          />
-          <p class="fr-hint-text fr-mb-0">
-            Vous ne le connaissez pas ? Trouvez-le avec
-            <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
-          </p>
-        </div>
-        <DsfrInputGroup
-          v-if="showSatelliteCanteensCount"
-          v-model="form.satelliteCanteensCount"
-          type="number"
-          label="Nombre de cuisine satellite *"
-          hint="Nombre de cantines/lieux de service à qui je fournis des repas"
-          :label-visible="true"
-          :error-message="formatError(v$.satelliteCanteensCount)"
-        />
-      </fieldset>
-      <fieldset class="fr-mb-4w">
-        <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
-        <DsfrMultiselect
-          v-model="form.sectors"
-          label="Secteurs *"
-          labelVisible
-          :options="sectorsOptions"
-          search
-          id-key="sectorId"
-          label-key="name"
-          @update:modelValue="resetLineMinistry()"
-          :filtering-keys="['name']"
-          :error-message="formatError(v$.sectors)"
-        />
-        <DsfrSelect
-          v-if="showLineMinistry"
-          v-model="form.lineMinistry"
-          label="Administration générale de tutelle (ministère ou ATE) *"
-          description="Hors fonction publique territoriale et hospitalière"
-          labelVisible
-          :options="lineMinistryOptions"
-          :error-message="formatError(v$.lineMinistry)"
-        />
-      </fieldset>
-      <fieldset class="fr-mb-4w">
-        <legend class="fr-h5 fr-mb-2w">5. Nombre de repas</legend>
-        <div class="fr-grid-row fr-grid-row--gutters">
-          <div class="fr-col-12 fr-col-md-6">
-            <DsfrInputGroup
-              :class="{
-                hide: hideDailyMealCount,
-              }"
-              v-model="form.dailyMealCount"
-              :label="hideDailyMealCount ? 'Par jour' : 'Par jour *'"
-              :label-visible="true"
-              :disabled="hideDailyMealCount"
-              :hint="hideDailyMealCount ? 'Concerne uniquement les cantines recevant des convives' : ''"
-              type="number"
-              :error-message="formatError(v$.dailyMealCount)"
-            />
-          </div>
-          <div class="fr-col-12 fr-col-md-6">
-            <DsfrInputGroup
-              v-model="form.yearlyMealCount"
-              label="Par an *"
-              :label-visible="true"
-              type="number"
-              :error-message="formatError(v$.yearlyMealCount)"
-            />
-          </div>
-        </div>
-      </fieldset>
-      <fieldset
-        v-if="showCheckboxOneDelivery || showCheckboxManyDelivery || showCheckboxNoSiret"
-        class="fr-py-0 fr-my-3w fr-mb-md-3w"
-      >
-        <legend class="fr-h5 fr-mb-2w">6. Confirmation</legend>
-        <DsfrCheckbox
-          v-if="showCheckboxOneDelivery"
-          v-model="form.oneDelivery"
-          name="oneDelivery"
-          label="En cochant cette case, je confirme déclarer une livraison depuis mon établissement à uniquement 1 seul autre site de service"
-          :error-message="formatError(v$.oneDelivery)"
-        />
-        <DsfrCheckbox
-          v-if="showCheckboxManyDelivery"
-          v-model="form.manyDelivery"
-          name="manyDelivery"
-          :label="
-            `En cochant cette case, je confirme déclarer une livraison depuis mon établissement à ${form.satelliteCanteensCount} sites de service`
-          "
-          :error-message="formatError(v$.manyDelivery)"
-        />
-        <div v-if="showCheckboxNoSiret">
-          <p class="fr-mb-1v">
-            Votre cantine n’a pas de numéro de SIRET et vous êtes sur le point de la rattacher à une unité légale
-            existante. Avant de confirmer :
-          </p>
-          <ul>
-            <li>
-              avez-vous vérifié que votre cantine ne dispose pas d’un numéro SIRET (ex : une facture, l’annuaire des
-              entreprises, annuaire des cantines scolaires) ?
-            </li>
-            <li>
-              l’unité légale à laquelle vous vous rattachez correspond bien à l’entité qui contrôle votre cantine ?
-            </li>
-            <li>
-              vous êtes-vous assuré que votre cantine ne figure pas dans la liste des établissements de l’unité légale ?
-            </li>
-          </ul>
-          <p>
-            Ces éléments sont essentiels pour éviter les doublons et garantir l’exactitude des télédéclarations
-            effectuées sur ma cantine.
-          </p>
-          <DsfrCheckbox
-            v-model="form.noSiret"
-            name="noSiret"
-            :error-message="formatError(v$.noSiret)"
-            label="En cochant cette case vous confirmez avoir vérifié ces informations"
+            :error-message="formatError(v$.postalCode)"
+            @update:modelValue="changePostal()"
           />
         </div>
-      </fieldset>
-      <div class="fr-grid-row fr-grid-row--right fr-grid-row--top">
-        <DsfrButton
-          :disabled="isCreatingCanteen"
-          label="Enregistrer et créer un nouvel établissement"
-          secondary
-          class="fr-mb-1v fr-mr-1v"
-          @click="saveCanteen(true)"
-        />
-        <DsfrButton :disabled="isCreatingCanteen" label="Enregistrer" icon="fr-icon-save-line" @click="saveCanteen()" />
+        <div class="fr-col-12 fr-col-md-6">
+          <DsfrSelect
+            class="fr-mb-0"
+            v-model="form.citySelector"
+            label="Ville *"
+            description="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
+            :label-visible="true"
+            :error-message="emptyCity || formatError(v$.citySelector)"
+            :options="citiesOptions"
+            @update:modelValue="selectCity()"
+          />
+        </div>
       </div>
-    </form>
-  </section>
+    </fieldset>
+    <fieldset class="fr-mb-4w canteen-establishment-form__reduce-margin-bottom">
+      <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
+      <DsfrRadioButtonSet
+        legend="Type d’établissement *"
+        v-model="form.economicModel"
+        :options="options.economicModel"
+        :error-message="formatError(v$.economicModel)"
+      />
+      <DsfrRadioButtonSet
+        legend="Mode de gestion *"
+        v-model="form.managementType"
+        :options="options.managementType"
+        :error-message="formatError(v$.managementType)"
+      />
+      <DsfrRadioButtonSet
+        legend="Mode de production *"
+        v-model="form.productionType"
+        :options="productionTypeOptions"
+        :error-message="formatError(v$.productionType)"
+        @change="resetDynamicInputValues"
+      />
+      <div v-if="showCentralProducerSiret" class="canteen-establishment-form__central-producer-siret">
+        <DsfrInputGroup
+          v-model="form.centralProducerSiret"
+          label="SIRET du livreur *"
+          :label-visible="true"
+          :error-message="formatError(v$.centralProducerSiret)"
+        />
+        <p class="fr-hint-text fr-mb-0">
+          Vous ne le connaissez pas ? Trouvez-le avec
+          <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
+        </p>
+      </div>
+      <DsfrInputGroup
+        v-if="showSatelliteCanteensCount"
+        v-model="form.satelliteCanteensCount"
+        type="number"
+        label="Nombre de cuisine satellite *"
+        hint="Nombre de cantines/lieux de service à qui je fournis des repas"
+        :label-visible="true"
+        :error-message="formatError(v$.satelliteCanteensCount)"
+      />
+    </fieldset>
+    <fieldset class="fr-mb-4w">
+      <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
+      <DsfrMultiselect
+        v-model="form.sectors"
+        label="Secteurs *"
+        labelVisible
+        :options="sectorsOptions"
+        search
+        id-key="sectorId"
+        label-key="name"
+        @update:modelValue="resetLineMinistry()"
+        :filtering-keys="['name']"
+        :error-message="formatError(v$.sectors)"
+      />
+      <DsfrSelect
+        v-if="showLineMinistry"
+        v-model="form.lineMinistry"
+        label="Administration générale de tutelle (ministère ou ATE) *"
+        description="Hors fonction publique territoriale et hospitalière"
+        labelVisible
+        :options="lineMinistryOptions"
+        :error-message="formatError(v$.lineMinistry)"
+      />
+    </fieldset>
+    <fieldset class="fr-mb-4w">
+      <legend class="fr-h5 fr-mb-2w">5. Nombre de repas</legend>
+      <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-6">
+          <DsfrInputGroup
+            :class="{
+              hide: hideDailyMealCount,
+            }"
+            v-model="form.dailyMealCount"
+            :label="hideDailyMealCount ? 'Par jour' : 'Par jour *'"
+            :label-visible="true"
+            :disabled="hideDailyMealCount"
+            :hint="hideDailyMealCount ? 'Concerne uniquement les cantines recevant des convives' : ''"
+            type="number"
+            :error-message="formatError(v$.dailyMealCount)"
+          />
+        </div>
+        <div class="fr-col-12 fr-col-md-6">
+          <DsfrInputGroup
+            v-model="form.yearlyMealCount"
+            label="Par an *"
+            :label-visible="true"
+            type="number"
+            :error-message="formatError(v$.yearlyMealCount)"
+          />
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      v-if="showCheckboxOneDelivery || showCheckboxManyDelivery || showCheckboxNoSiret"
+      class="fr-py-0 fr-my-3w fr-mb-md-3w"
+    >
+      <legend class="fr-h5 fr-mb-2w">6. Confirmation</legend>
+      <DsfrCheckbox
+        v-if="showCheckboxOneDelivery"
+        v-model="form.oneDelivery"
+        name="oneDelivery"
+        label="En cochant cette case, je confirme déclarer une livraison depuis mon établissement à uniquement 1 seul autre site de service"
+        :error-message="formatError(v$.oneDelivery)"
+      />
+      <DsfrCheckbox
+        v-if="showCheckboxManyDelivery"
+        v-model="form.manyDelivery"
+        name="manyDelivery"
+        :label="
+          `En cochant cette case, je confirme déclarer une livraison depuis mon établissement à ${form.satelliteCanteensCount} sites de service`
+        "
+        :error-message="formatError(v$.manyDelivery)"
+      />
+      <div v-if="showCheckboxNoSiret">
+        <p class="fr-mb-1v">
+          Votre cantine n’a pas de numéro de SIRET et vous êtes sur le point de la rattacher à une unité légale
+          existante. Avant de confirmer :
+        </p>
+        <ul>
+          <li>
+            avez-vous vérifié que votre cantine ne dispose pas d’un numéro SIRET (ex : une facture, l’annuaire des
+            entreprises, annuaire des cantines scolaires) ?
+          </li>
+          <li>
+            l’unité légale à laquelle vous vous rattachez correspond bien à l’entité qui contrôle votre cantine ?
+          </li>
+          <li>
+            vous êtes-vous assuré que votre cantine ne figure pas dans la liste des établissements de l’unité légale ?
+          </li>
+        </ul>
+        <p>
+          Ces éléments sont essentiels pour éviter les doublons et garantir l’exactitude des télédéclarations effectuées
+          sur ma cantine.
+        </p>
+        <DsfrCheckbox
+          v-model="form.noSiret"
+          name="noSiret"
+          :error-message="formatError(v$.noSiret)"
+          label="En cochant cette case vous confirmez avoir vérifié ces informations"
+        />
+      </div>
+    </fieldset>
+    <div class="fr-grid-row fr-grid-row--right fr-grid-row--top">
+      <DsfrButton
+        :disabled="isCreatingCanteen"
+        label="Enregistrer et créer un nouvel établissement"
+        secondary
+        class="fr-mb-1v fr-mr-1v"
+        @click="saveCanteen(true)"
+      />
+      <DsfrButton :disabled="isCreatingCanteen" label="Enregistrer" icon="fr-icon-save-line" @click="saveCanteen()" />
+    </div>
+  </form>
 </template>
 
 <style lang="scss">

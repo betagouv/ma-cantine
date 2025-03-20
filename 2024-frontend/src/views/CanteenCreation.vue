@@ -38,5 +38,7 @@ const route = useRoute()
       </li>
     </AppRessources>
   </section>
-  <CanteenEstablishmentForm />
+  <section class="c fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center">
+    <CanteenEstablishmentForm />
+  </section>
 </template>
