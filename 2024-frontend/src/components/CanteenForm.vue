@@ -10,7 +10,7 @@ import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import canteensService from "@/services/canteens"
 import openDataService from "@/services/openData.js"
-import options from "@/constants/canteen-creation-form-options"
+import options from "@/constants/canteen-form-options"
 import CanteenCreationSearch from "@/components/CanteenCreationSearch.vue"
 
 /* Router and Store */
@@ -311,11 +311,9 @@ const resetForm = () => {
 </script>
 
 <template>
-  <section
-    class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
-  >
+  <section class="canteen-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center">
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
-      <fieldset class="fr-mb-4w canteen-creation-form__reduce-margin-bottom">
+      <fieldset class="fr-mb-4w canteen-form__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
         <DsfrRadioButtonSet
           v-model="form.hasSiret"
@@ -366,7 +364,7 @@ const resetForm = () => {
           </div>
         </div>
       </fieldset>
-      <fieldset class="fr-mb-4w canteen-creation-form__reduce-margin-bottom">
+      <fieldset class="fr-mb-4w canteen-form__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
         <DsfrRadioButtonSet
           legend="Type d’établissement *"
@@ -387,7 +385,7 @@ const resetForm = () => {
           :error-message="formatError(v$.productionType)"
           @change="resetDynamicInputValues"
         />
-        <div v-if="showCentralProducerSiret" class="canteen-creation-form__central-producer-siret">
+        <div v-if="showCentralProducerSiret" class="canteen-form__central-producer-siret">
           <DsfrInputGroup
             v-model="form.centralProducerSiret"
             label="SIRET du livreur *"
@@ -526,7 +524,7 @@ const resetForm = () => {
 </template>
 
 <style lang="scss">
-.canteen-creation-form {
+.canteen-form {
   .hide {
     display: none !important;
   }
