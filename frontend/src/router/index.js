@@ -32,7 +32,6 @@ import PrivacyPolicy from "@/views/PrivacyPolicy"
 import ManagementPage from "@/views/ManagementPage"
 import PendingActions from "@/views/PendingActions"
 import CanteenEditor from "@/views/CanteenEditor"
-import CanteenForm from "@/views/CanteenEditor/CanteenForm"
 import SatelliteManagement from "@/views/CanteenEditor/SatelliteManagement"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
@@ -316,16 +315,6 @@ const routes = [
     redirect: { name: "CanteenForm" },
     children: [
       {
-        path: "modifier",
-        name: "CanteenForm",
-        props: true,
-        component: CanteenForm,
-        meta: {
-          authenticationRequired: true,
-          title: "Modifier ma cantine",
-        },
-      },
-      {
         path: "satellites",
         name: "SatelliteManagement",
         component: SatelliteManagement,
@@ -599,6 +588,10 @@ const vue3Routes = [
       title: "Ajouter une cantine",
     },
     sitemapGroup: Constants.SitemapGroups.ACTION,
+  },
+  {
+    path: "/modifier-ma-cantine/:canteenUrlComponent/etablissement",
+    name: "CanteenForm",
   },
 ]
 const VUE3_PREFIX = "/v2"
