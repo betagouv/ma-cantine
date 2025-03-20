@@ -38,5 +38,5 @@ const route = useRoute()
       </li>
     </AppRessources>
   </section>
-  <CanteenEstablishmentForm />
+  <CanteenEstablishmentForm :showCreateButton="true" />
 </template>

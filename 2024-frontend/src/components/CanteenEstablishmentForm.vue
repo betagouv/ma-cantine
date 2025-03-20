@@ -16,7 +16,7 @@ import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.
 /* Router and Store */
 const router = useRouter()
 const store = useRootStore()
-const props = defineProps(["establishmentData"])
+const props = defineProps(["establishmentData", "showCreateButton"])
 
 /* Siret */
 const changeHasSiret = () => {
@@ -546,6 +546,7 @@ const resetForm = () => {
       </fieldset>
       <div class="fr-grid-row fr-grid-row--right fr-grid-row--top">
         <DsfrButton
+          v-if="showCreateButton"
           :disabled="isCreatingCanteen"
           label="Enregistrer et créer un nouvel établissement"
           secondary
