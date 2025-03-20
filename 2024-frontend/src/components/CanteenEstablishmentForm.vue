@@ -19,7 +19,7 @@ const store = useRootStore()
 
 /* Siret */
 const changeHasSiret = () => {
-  initFields(["hasSiret"])
+  resetFields(["hasSiret"])
   resetForm()
 }
 
@@ -147,7 +147,7 @@ const displayCitiesResult = (cities) => {
 
 /* Form fields */
 const form = reactive({})
-const initFields = (keepFields) => {
+const resetFields = (keepFields) => {
   const list = keepFields || []
   form.hasSiret = list.includes("hasSiret") ? form.hasSiret : null
   form.siret = null
@@ -171,7 +171,7 @@ const initFields = (keepFields) => {
   form.manyDelivery = null
   form.noSiret = null
 }
-initFields()
+resetFields()
 
 /* Dynamic Inputs */
 const hideDailyMealCount = computed(() => form.productionType === "central")
@@ -300,7 +300,7 @@ const addNewCanteen = (name) => {
   isCreatingCanteen.value = false
   saveAndCreate.value = false
   window.scrollTo(0, 0)
-  initFields()
+  resetFields()
   resetForm()
 }
 
