@@ -16,6 +16,7 @@ import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.
 /* Router and Store */
 const router = useRouter()
 const store = useRootStore()
+const props = defineProps(["establishmentData"])
 
 /* Siret */
 const changeHasSiret = () => {
@@ -119,7 +120,7 @@ const resetCity = () => {
   form.department = null
 }
 
-const getCitiesOptions = () => {
+const getCitiesOptions = (callback) => {
   emptyCity.value = ""
   citiesOptions.value = []
   openDataService
@@ -127,6 +128,7 @@ const getCitiesOptions = () => {
     .then((response) => {
       if (response.length === 0) emptyCity.value = `Aucune ville trouvée pour le code postal « ${form.postalCode} »`
       else displayCitiesResult(response)
+      if (callback) callback()
     })
     .catch((e) => store.notifyServerError(e))
 }
@@ -146,7 +148,13 @@ const displayCitiesResult = (cities) => {
 }
 
 /* Form fields */
-const form = reactive({})
+const form = reactive({
+  hasSiret: null,
+  citySelector: null,
+  oneDelivery: null,
+  manyDelivery: null,
+  noSiret: null,
+})
 const resetFields = (keepFields) => {
   const list = keepFields || []
   form.hasSiret = list.includes("hasSiret") ? form.hasSiret : null
@@ -171,7 +179,31 @@ const resetFields = (keepFields) => {
   form.manyDelivery = null
   form.noSiret = null
 }
-resetFields()
+const prefillFields = () => {
+  form.hasSiret = props.establishmentData.siret ? "has-siret" : "no-siret"
+  form.siret = props.establishmentData.siret
+  form.sirenUniteLegale = props.establishmentData.sirenUniteLegale
+  form.name = props.establishmentData.name
+  form.economicModel = props.establishmentData.economicModel
+  form.managementType = props.establishmentData.managementType
+  form.productionType = props.establishmentData.productionType
+  form.sectors = props.establishmentData.sectors
+  form.lineMinistry = props.establishmentData.lineMinistry
+  form.dailyMealCount = props.establishmentData.dailyMealCount
+  form.yearlyMealCount = props.establishmentData.yearlyMealCount
+  form.centralProducerSiret = props.establishmentData.centralProducerSiret
+  form.satelliteCanteensCount = props.establishmentData.satelliteCanteensCount
+  form.postalCode = props.establishmentData.postalCode
+  form.city = props.establishmentData.city
+  form.cityInseeCode = props.establishmentData.cityInseeCode
+  form.department = props.establishmentData.department
+  getCitiesOptions(() => {
+    form.citySelector = citiesOptions.value.findIndex(
+      (option) => option.cityInseeCode === props.establishmentData.cityInseeCode
+    )
+  })
+}
+if (props.establishmentData.id) prefillFields()
 
 /* Dynamic Inputs */
 const hideDailyMealCount = computed(() => form.productionType === "central")
@@ -180,6 +212,7 @@ const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
 )
 const showLineMinistry = computed(() => {
+  if (sectorsOptions.value.length === 0) return false
   if (form.sectors.length === 0) return false
   if (form.economicModel !== "public") return false
   for (let i = 0; i < form.sectors.length; i++) {
