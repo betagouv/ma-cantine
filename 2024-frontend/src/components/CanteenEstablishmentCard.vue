@@ -2,8 +2,8 @@
 import { computed } from "vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
-import CanteenCreationClaim from "@/components/CanteenCreationClaim.vue"
-import CanteenCreationJoin from "@/components/CanteenCreationJoin.vue"
+import CanteenButtonClaim from "@/components/CanteenButtonClaim.vue"
+import CanteenButtonJoin from "@/components/CanteenButtonJoin.vue"
 
 /* Props */
 const props = defineProps(["name", "siret", "city", "department", "status", "id", "siren", "linkedCanteens"])
@@ -57,8 +57,8 @@ const linkedCanteensLabel = computed(() => {
                 Cet établissement a déjà des gestionnaires.
               </p>
             </div>
-            <CanteenCreationClaim v-if="!canteen.isManagedByUser && canteen.canBeClaimed" :id="canteen.id" />
-            <CanteenCreationJoin
+            <CanteenButtonClaim v-if="!canteen.isManagedByUser && canteen.canBeClaimed" :id="canteen.id" />
+            <CanteenButtonJoin
               v-if="!canteen.isManagedByUser && !canteen.canBeClaimed"
               :id="canteen.id"
               :name="canteen.name"
@@ -101,7 +101,7 @@ const linkedCanteensLabel = computed(() => {
           enregistré.
         </p>
       </div>
-      <CanteenCreationClaim :id="props.id" />
+      <CanteenButtonClaim :id="props.id" />
     </div>
     <div v-else-if="status === 'ask-to-join'" class="canteen-establishment-card__tertiary-action fr-mt-1v">
       <div>
@@ -111,7 +111,7 @@ const linkedCanteensLabel = computed(() => {
           tant que gestionnaire.
         </p>
       </div>
-      <CanteenCreationJoin :id="props.id" :name="props.name" />
+      <CanteenButtonJoin :id="props.id" :name="props.name" />
     </div>
   </div>
 </template>
