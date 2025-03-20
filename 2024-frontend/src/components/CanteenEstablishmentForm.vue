@@ -149,8 +149,6 @@ const displayCitiesResult = (cities) => {
 
 /* Form fields */
 const form = reactive({
-  hasSiret: null,
-  citySelector: null,
   oneDelivery: null,
   manyDelivery: null,
   noSiret: null,
