@@ -363,6 +363,7 @@ const resetForm = () => {
           @select="(canteenInfos) => selectEstablishment(canteenInfos)"
           :error-required="formatError(v$.siret) || formatError(v$.sirenUniteLegale)"
           :has-siret="form.hasSiret === 'has-siret'"
+          :establishment-data="establishmentData"
         />
       </fieldset>
       <fieldset class="fr-mb-4w">

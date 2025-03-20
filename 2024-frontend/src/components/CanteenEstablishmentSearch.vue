@@ -5,7 +5,7 @@ import canteensService from "@/services/canteens.js"
 import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Props */
-const props = defineProps(["errorRequired", "hasSiret"])
+const props = defineProps(["errorRequired", "hasSiret", "establishmentData"])
 
 /* Store */
 const store = useRootStore()
@@ -16,6 +16,7 @@ const title = computed(() => (props.hasSiret ? "Mon établissement" : "Mon unit�
 const establishment = computed(() => (props.hasSiret ? "votre établissement" : "l'établissement"))
 const placeholder = computed(() => (props.hasSiret ? "Tapez votre n° SIRET" : "Tapez le n° SIREN de l’unité légale"))
 const label = computed(() => `Rechercher un établissement par son numéro ${numberName.value}`)
+const hasSelected = ref(false)
 
 /* Canteen fields */
 const canteen = reactive({})
@@ -31,7 +32,18 @@ const initFields = () => {
   canteen.linkedCanteens = []
   canteen.siren = null
 }
-initFields()
+const prefillFields = () => {
+  hasSelected.value = true
+  canteen.found = true
+  canteen.status = "selected"
+  canteen.name = props.establishmentData.name
+  canteen.siret = props.establishmentData.siret
+  canteen.city = props.establishmentData.city
+  canteen.department = props.establishmentData.department
+  canteen.siren = props.establishmentData.sirenUniteLegale
+}
+if (props.establishmentData) prefillFields()
+else initFields()
 
 /* Search */
 const search = ref("")
@@ -44,7 +56,6 @@ const errorMessage = computed(() => {
     return "Vous devez sélectionner ou créer un établissement"
   else return ""
 })
-const hasSelected = ref(false)
 const searchByNumber = () => {
   const cleanNumber = search.value.replaceAll(" ", "")
   if (cleanNumber.length === 0) return
