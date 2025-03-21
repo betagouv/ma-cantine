@@ -151,6 +151,7 @@ const form = reactive({
   manyDelivery: null,
   noSiret: null,
 })
+
 const resetFields = (keepFields) => {
   const list = keepFields || []
   form.hasSiret = list.includes("hasSiret") ? form.hasSiret : null
@@ -175,6 +176,7 @@ const resetFields = (keepFields) => {
   form.manyDelivery = null
   form.noSiret = null
 }
+
 const prefillFields = () => {
   form.hasSiret = props.establishmentData.siret ? "has-siret" : "no-siret"
   form.siret = props.establishmentData.siret
@@ -199,6 +201,7 @@ const prefillFields = () => {
     )
   })
 }
+
 if (props.establishmentData) prefillFields()
 else resetFields()
 
