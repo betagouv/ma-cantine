@@ -37,6 +37,7 @@ const saveCanteen = (props) => {
     .catch((e) => store.notifyServerError(e))
 }
 
+/* After canteen is saved */
 const goToCanteenPage = (id) => {
   router.replace({
     name: "DashboardManager",

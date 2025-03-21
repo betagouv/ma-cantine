@@ -7,7 +7,7 @@ import AppRessources from "@/components/AppRessources.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import CanteenEstablishmentForm from "@/components/CanteenEstablishmentForm.vue"
 
-/* Router */
+/* Router and Store */
 const route = useRoute()
 const router = useRouter()
 const store = useRootStore()
