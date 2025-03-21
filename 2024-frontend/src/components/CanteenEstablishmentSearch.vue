@@ -36,11 +36,18 @@ const prefillFields = () => {
   hasSelected.value = true
   canteen.found = true
   canteen.status = "selected"
-  canteen.name = props.establishmentData.name
-  canteen.siret = props.establishmentData.siret
-  canteen.city = props.establishmentData.city
-  canteen.department = props.establishmentData.department
   canteen.siren = props.establishmentData.sirenUniteLegale
+  canteen.siret = props.establishmentData.siret
+  if (props.hasSiret) {
+    canteen.city = props.establishmentData.city
+    canteen.department = props.establishmentData.department
+    canteen.name = props.establishmentData.name
+  } else {
+    canteensService.canteenStatus("siren", props.establishmentData.sirenUniteLegale).then((response) => {
+      canteen.name = response.name
+      canteen.city = props.establishmentData.city
+    })
+  }
 }
 if (props.establishmentData) prefillFields()
 else initFields()
