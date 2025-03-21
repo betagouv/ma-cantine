@@ -2,10 +2,10 @@
 import { ref, reactive, computed } from "vue"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens.js"
-import CanteenCreationResult from "@/components/CanteenCreationResult.vue"
+import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Props */
-const props = defineProps(["errorRequired", "hasSiret"])
+const props = defineProps(["errorRequired", "hasSiret", "establishmentData"])
 
 /* Store */
 const store = useRootStore()
@@ -16,6 +16,7 @@ const title = computed(() => (props.hasSiret ? "Mon établissement" : "Mon unit�
 const establishment = computed(() => (props.hasSiret ? "votre établissement" : "l'établissement"))
 const placeholder = computed(() => (props.hasSiret ? "Tapez votre n° SIRET" : "Tapez le n° SIREN de l’unité légale"))
 const label = computed(() => `Rechercher un établissement par son numéro ${numberName.value}`)
+const hasSelected = ref(false)
 
 /* Canteen fields */
 const canteen = reactive({})
@@ -31,7 +32,25 @@ const initFields = () => {
   canteen.linkedCanteens = []
   canteen.siren = null
 }
-initFields()
+const prefillFields = () => {
+  hasSelected.value = true
+  canteen.found = true
+  canteen.status = "selected"
+  canteen.siren = props.establishmentData.sirenUniteLegale
+  canteen.siret = props.establishmentData.siret
+  if (props.hasSiret) {
+    canteen.city = props.establishmentData.city
+    canteen.department = props.establishmentData.department
+    canteen.name = props.establishmentData.name
+  } else {
+    canteensService.canteenStatus("siren", props.establishmentData.sirenUniteLegale).then((response) => {
+      canteen.name = response.name
+      canteen.city = props.establishmentData.city
+    })
+  }
+}
+if (props.establishmentData) prefillFields()
+else initFields()
 
 /* Search */
 const search = ref("")
@@ -44,7 +63,6 @@ const errorMessage = computed(() => {
     return "Vous devez sélectionner ou créer un établissement"
   else return ""
 })
-const hasSelected = ref(false)
 const searchByNumber = () => {
   const cleanNumber = search.value.replaceAll(" ", "")
   if (cleanNumber.length === 0) return
@@ -113,7 +131,7 @@ const unselectCanteen = () => {
 </script>
 
 <template>
-  <div class="canteen-creation-search">
+  <div class="canteen-establishment-search">
     <p class="fr-mb-0">{{ title }} *</p>
     <p class="fr-hint-text">
       Nous utilisons le site
@@ -133,7 +151,7 @@ const unselectCanteen = () => {
         />
       </template>
     </DsfrInputGroup>
-    <CanteenCreationResult
+    <CanteenEstablishmentCard
       v-if="canteen.found"
       :name="canteen.name"
       :siret="canteen.siret"
@@ -156,14 +174,14 @@ const unselectCanteen = () => {
       label="Rechercher un nouvel établissement"
       icon="fr-icon-search-line"
       icon-right
-      class="canteen-creation-search__back fr-mt-1w"
+      class="canteen-establishment-search__back fr-mt-1w"
       @click="unselectCanteen()"
     />
   </div>
 </template>
 
 <style lang="scss">
-.canteen-creation-search {
+.canteen-establishment-search {
   &__back {
     width: 100%;
     justify-content: center;

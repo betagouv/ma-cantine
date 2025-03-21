@@ -1,6 +1,5 @@
 <script setup>
 import "@/css/dsfr-multi-select.css"
-import { useRouter } from "vue-router"
 import { ref, reactive, computed } from "vue"
 import { helpers } from "@vuelidate/validators"
 import { useVuelidate } from "@vuelidate/core"
@@ -8,19 +7,29 @@ import { useRootStore } from "@/stores/root"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
-import canteensService from "@/services/canteens"
 import openDataService from "@/services/openData.js"
-import options from "@/constants/canteen-creation-form-options"
-import CanteenCreationSearch from "@/components/CanteenCreationSearch.vue"
+import options from "@/constants/canteen-establishment-form-options"
+import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
 
-/* Router and Store */
-const router = useRouter()
+/* Data */
 const store = useRootStore()
+const props = defineProps(["establishmentData", "showCreateButton", "showCancelButton"])
+const emit = defineEmits(["sendForm", "cancel"])
 
 /* Siret */
+const prefillEstablishment = ref(props.establishmentData)
+
 const changeHasSiret = () => {
-  initFields(["hasSiret"])
-  resetForm()
+  form.siret = null
+  form.sirenUniteLegale = null
+  form.postalCode = null
+  form.citySelector = null
+  form.city = null
+  form.cityInseeCode = null
+  form.department = null
+  prefillEstablishment.value = null
+  forceRerender.value++
+  v$.value.$reset()
 }
 
 const selectEstablishment = (canteenInfos) => {
@@ -119,7 +128,7 @@ const resetCity = () => {
   form.department = null
 }
 
-const getCitiesOptions = () => {
+const getCitiesOptions = (callback) => {
   emptyCity.value = ""
   citiesOptions.value = []
   openDataService
@@ -127,6 +136,7 @@ const getCitiesOptions = () => {
     .then((response) => {
       if (response.length === 0) emptyCity.value = `Aucune ville trouvée pour le code postal « ${form.postalCode} »`
       else displayCitiesResult(response)
+      if (callback) callback()
     })
     .catch((e) => store.notifyServerError(e))
 }
@@ -146,10 +156,14 @@ const displayCitiesResult = (cities) => {
 }
 
 /* Form fields */
-const form = reactive({})
-const initFields = (keepFields) => {
-  const list = keepFields || []
-  form.hasSiret = list.includes("hasSiret") ? form.hasSiret : null
+const form = reactive({
+  oneDelivery: null,
+  manyDelivery: null,
+  noSiret: null,
+})
+
+const resetFields = () => {
+  form.hasSiret = null
   form.siret = null
   form.sirenUniteLegale = null
   form.name = null
@@ -171,7 +185,34 @@ const initFields = (keepFields) => {
   form.manyDelivery = null
   form.noSiret = null
 }
-initFields()
+
+const prefillFields = () => {
+  form.hasSiret = props.establishmentData.siret ? "has-siret" : "no-siret"
+  form.siret = props.establishmentData.siret
+  form.sirenUniteLegale = props.establishmentData.sirenUniteLegale
+  form.name = props.establishmentData.name
+  form.economicModel = props.establishmentData.economicModel
+  form.managementType = props.establishmentData.managementType
+  form.productionType = props.establishmentData.productionType
+  form.sectors = props.establishmentData.sectors
+  form.lineMinistry = props.establishmentData.lineMinistry
+  form.dailyMealCount = props.establishmentData.dailyMealCount
+  form.yearlyMealCount = props.establishmentData.yearlyMealCount
+  form.centralProducerSiret = props.establishmentData.centralProducerSiret
+  form.satelliteCanteensCount = props.establishmentData.satelliteCanteensCount
+  form.postalCode = props.establishmentData.postalCode
+  form.city = props.establishmentData.city
+  form.cityInseeCode = props.establishmentData.cityInseeCode
+  form.department = props.establishmentData.department
+  getCitiesOptions(() => {
+    form.citySelector = citiesOptions.value.findIndex(
+      (option) => option.cityInseeCode === props.establishmentData.cityInseeCode
+    )
+  })
+}
+
+if (props.establishmentData) prefillFields()
+else resetFields()
 
 /* Dynamic Inputs */
 const hideDailyMealCount = computed(() => form.productionType === "central")
@@ -180,6 +221,7 @@ const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
 )
 const showLineMinistry = computed(() => {
+  if (sectorsOptions.value.length === 0) return false
   if (form.sectors.length === 0) return false
   if (form.economicModel !== "public") return false
   for (let i = 0; i < form.sectors.length; i++) {
@@ -252,70 +294,25 @@ const rules = {
     beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxNoSiret.value || value),
   },
 }
+
+/* Form */
+const isSaving = ref(false)
+const forceRerender = ref(0)
 const v$ = useVuelidate(rules, form)
-const validateForm = () => {
+
+const validateForm = (action) => {
   v$.value.$validate()
   if (v$.value.$invalid) return
-  sendCanteenForm()
-}
-
-/* Send Form */
-const saveAndCreate = ref(false)
-const isCreatingCanteen = ref(false)
-const forceRerender = ref(0)
-
-const saveCanteen = (saveAndCreateValue = false) => {
-  saveAndCreate.value = saveAndCreateValue
-  validateForm()
-}
-
-const sendCanteenForm = () => {
-  const payload = form
-  isCreatingCanteen.value = true
-  canteensService
-    .createCanteen(payload)
-    .then((canteenCreated) => {
-      if (canteenCreated.id && saveAndCreate.value) addNewCanteen(canteenCreated.name)
-      else if (canteenCreated.id && !saveAndCreate.value) goToNewCanteenPage(canteenCreated.id)
-      else {
-        store.notifyServerError()
-        isCreatingCanteen.value = false
-      }
-    })
-    .catch((e) => {
-      store.notifyServerError(e)
-      isCreatingCanteen.value = false
-    })
-}
-
-const goToNewCanteenPage = (id) => {
-  router.replace({
-    name: "DashboardManager",
-    params: { canteenUrlComponent: id },
-  })
-}
-
-const addNewCanteen = (name) => {
-  store.notify({ message: `Cantine ${name} créée avec succès.` })
-  isCreatingCanteen.value = false
-  saveAndCreate.value = false
-  window.scrollTo(0, 0)
-  initFields()
-  resetForm()
-}
-
-const resetForm = () => {
-  v$.value.$reset()
-  forceRerender.value++
+  emit("sendForm", { form: form, action: action })
 }
 </script>
 
 <template>
   <section
-    class="canteen-creation-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
+    class="canteen-establishment-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
-      <fieldset class="fr-mb-4w canteen-creation-form__reduce-margin-bottom">
+      <fieldset class="fr-mb-4w canteen-establishment-form__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
         <DsfrRadioButtonSet
           v-model="form.hasSiret"
@@ -324,12 +321,13 @@ const resetForm = () => {
           :options="options.hasSiret"
           @update:modelValue="changeHasSiret()"
         />
-        <CanteenCreationSearch
+        <CanteenEstablishmentSearch
           v-if="form.hasSiret"
           :key="forceRerender"
           @select="(canteenInfos) => selectEstablishment(canteenInfos)"
           :error-required="formatError(v$.siret) || formatError(v$.sirenUniteLegale)"
           :has-siret="form.hasSiret === 'has-siret'"
+          :establishment-data="prefillEstablishment"
         />
       </fieldset>
       <fieldset class="fr-mb-4w">
@@ -366,7 +364,7 @@ const resetForm = () => {
           </div>
         </div>
       </fieldset>
-      <fieldset class="fr-mb-4w canteen-creation-form__reduce-margin-bottom">
+      <fieldset class="fr-mb-4w canteen-establishment-form__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
         <DsfrRadioButtonSet
           legend="Type d’établissement *"
@@ -387,7 +385,7 @@ const resetForm = () => {
           :error-message="formatError(v$.productionType)"
           @change="resetDynamicInputValues"
         />
-        <div v-if="showCentralProducerSiret" class="canteen-creation-form__central-producer-siret">
+        <div v-if="showCentralProducerSiret" class="canteen-establishment-form__central-producer-siret">
           <DsfrInputGroup
             v-model="form.centralProducerSiret"
             label="SIRET du livreur *"
@@ -513,20 +511,34 @@ const resetForm = () => {
       </fieldset>
       <div class="fr-grid-row fr-grid-row--right fr-grid-row--top">
         <DsfrButton
-          :disabled="isCreatingCanteen"
+          v-if="showCreateButton"
+          :disabled="isSaving"
           label="Enregistrer et créer un nouvel établissement"
           secondary
           class="fr-mb-1v fr-mr-1v"
-          @click="saveCanteen(true)"
+          @click="validateForm('stay-on-creation-page')"
         />
-        <DsfrButton :disabled="isCreatingCanteen" label="Enregistrer" icon="fr-icon-save-line" @click="saveCanteen()" />
+        <DsfrButton
+          v-if="showCancelButton"
+          :disabled="isSaving"
+          label="Annuler"
+          secondary
+          class="fr-mb-1v fr-mr-1v"
+          @click="emit('cancel')"
+        />
+        <DsfrButton
+          :disabled="isSaving"
+          label="Enregistrer"
+          icon="fr-icon-save-line"
+          @click="validateForm('go-to-canteen-page')"
+        />
       </div>
     </form>
   </section>
 </template>
 
 <style lang="scss">
-.canteen-creation-form {
+.canteen-establishment-form {
   .hide {
     display: none !important;
   }

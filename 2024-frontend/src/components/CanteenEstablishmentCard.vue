@@ -2,8 +2,8 @@
 import { computed } from "vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
-import CanteenCreationClaim from "@/components/CanteenCreationClaim.vue"
-import CanteenCreationJoin from "@/components/CanteenCreationJoin.vue"
+import CanteenButtonClaim from "@/components/CanteenButtonClaim.vue"
+import CanteenButtonJoin from "@/components/CanteenButtonJoin.vue"
 
 /* Props */
 const props = defineProps(["name", "siret", "city", "department", "status", "id", "siren", "linkedCanteens"])
@@ -18,7 +18,7 @@ const linkedCanteensLabel = computed(() => {
 </script>
 
 <template>
-  <div class="canteen-creation-result fr-card fr-p-3v">
+  <div class="canteen-establishment-card fr-card fr-p-3v">
     <div class="fr-grid-row fr-grid-row--top fr-grid-row--left">
       <div class="fr-col-5">
         <p class="fr-h6 fr-mb-1v">{{ name }}</p>
@@ -42,7 +42,7 @@ const linkedCanteensLabel = computed(() => {
           <li
             v-for="canteen in linkedCanteens"
             :key="canteen.id"
-            class="canteen-creation-result__tertiary-action fr-mt-2w"
+            class="canteen-establishment-card__tertiary-action fr-mt-2w"
           >
             <div>
               <p class="fr-text--bold fr-mb-0">{{ canteen.name }}</p>
@@ -57,8 +57,8 @@ const linkedCanteensLabel = computed(() => {
                 Cet établissement a déjà des gestionnaires.
               </p>
             </div>
-            <CanteenCreationClaim v-if="!canteen.isManagedByUser && canteen.canBeClaimed" :id="canteen.id" />
-            <CanteenCreationJoin
+            <CanteenButtonClaim v-if="!canteen.isManagedByUser && canteen.canBeClaimed" :id="canteen.id" />
+            <CanteenButtonJoin
               v-if="!canteen.isManagedByUser && !canteen.canBeClaimed"
               :id="canteen.id"
               :name="canteen.name"
@@ -93,7 +93,7 @@ const linkedCanteensLabel = computed(() => {
         />
       </p>
     </div>
-    <div v-else-if="status === 'can-be-claimed'" class="canteen-creation-result__tertiary-action fr-mt-1v">
+    <div v-else-if="status === 'can-be-claimed'" class="canteen-establishment-card__tertiary-action fr-mt-1v">
       <div>
         <DsfrBadge type="success" label="cantine déjà existante" small />
         <p class="fr-mb-0 fr-text--xs">
@@ -101,9 +101,9 @@ const linkedCanteensLabel = computed(() => {
           enregistré.
         </p>
       </div>
-      <CanteenCreationClaim :id="props.id" />
+      <CanteenButtonClaim :id="props.id" />
     </div>
-    <div v-else-if="status === 'ask-to-join'" class="canteen-creation-result__tertiary-action fr-mt-1v">
+    <div v-else-if="status === 'ask-to-join'" class="canteen-establishment-card__tertiary-action fr-mt-1v">
       <div>
         <DsfrBadge type="success" label="cantine déjà existante" small />
         <p class="fr-mb-0 fr-text--xs">
@@ -111,13 +111,13 @@ const linkedCanteensLabel = computed(() => {
           tant que gestionnaire.
         </p>
       </div>
-      <CanteenCreationJoin :id="props.id" :name="props.name" />
+      <CanteenButtonJoin :id="props.id" :name="props.name" />
     </div>
   </div>
 </template>
 
 <style lang="scss">
-.canteen-creation-result {
+.canteen-establishment-card {
   &__tertiary-action {
     display: flex;
     flex-direction: column;

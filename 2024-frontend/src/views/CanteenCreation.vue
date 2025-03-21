@@ -1,9 +1,51 @@
 <script setup>
-import { useRoute } from "vue-router"
+import { ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import { useRootStore } from "@/stores/root"
+import canteensService from "@/services/canteens"
 import AppRessources from "@/components/AppRessources.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
-import CanteenCreationForm from "@/components/CanteenCreationForm.vue"
+import CanteenEstablishmentForm from "@/components/CanteenEstablishmentForm.vue"
+
+/* Router and Store */
 const route = useRoute()
+const router = useRouter()
+const store = useRootStore()
+
+/* Save canteen */
+const isSaving = ref(false)
+const forceRerender = ref(0)
+
+const saveCanteen = (props) => {
+  const { form, action } = props
+  isSaving.value = true
+  canteensService
+    .createCanteen(form)
+    .then((canteenCreated) => {
+      isSaving.value = false
+      if (canteenCreated.id && action === "stay-on-creation-page") addNewCanteen(canteenCreated.name)
+      else if (canteenCreated.id && action === "go-to-canteen-page") goToNewCanteenPage(canteenCreated.id)
+      else store.notifyServerError()
+    })
+    .catch((e) => {
+      store.notifyServerError(e)
+      isSaving.value = false
+    })
+}
+
+/* After canteen is saved */
+const goToNewCanteenPage = (id) => {
+  router.replace({
+    name: "DashboardManager",
+    params: { canteenUrlComponent: id },
+  })
+}
+
+const addNewCanteen = (name) => {
+  store.notify({ message: `Cantine ${name} créée avec succès.` })
+  window.scrollTo(0, 0)
+  forceRerender.value++
+}
 </script>
 
 <template>
@@ -38,5 +80,9 @@ const route = useRoute()
       </li>
     </AppRessources>
   </section>
-  <CanteenCreationForm />
+  <CanteenEstablishmentForm
+    :showCreateButton="true"
+    :key="forceRerender"
+    @sendForm="(payload) => saveCanteen(payload)"
+  />
 </template>
