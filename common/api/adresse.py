@@ -12,7 +12,7 @@ REGIONS_LIB = {i.label.split(" - ")[1]: i.value for i in Region}
 def fetch_geo_data_from_api_entreprise_by_siret(response):
     try:
         location_response = requests.get(
-            f"https://api-adresse.data.gouv.fr/search/?q={response['city']}&citycode={response['cityInseeCode']}&type=municipality&autocomplete=1"
+            f"https://api-adresse.data.gouv.fr/search/?q={response['cityInseeCode']}&citycode={response['cityInseeCode']}&type=municipality&autocomplete=1"
         )
         if location_response.ok:
             location_response = location_response.json()
