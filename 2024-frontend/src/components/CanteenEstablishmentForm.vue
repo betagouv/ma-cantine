@@ -17,6 +17,8 @@ const props = defineProps(["establishmentData", "showCreateButton"])
 const emit = defineEmits(["sendForm"])
 
 /* Siret */
+const prefillEstablishment = ref(props.establishmentData)
+
 const changeHasSiret = () => {
   form.siret = null
   form.sirenUniteLegale = null
@@ -25,7 +27,9 @@ const changeHasSiret = () => {
   form.city = null
   form.cityInseeCode = null
   form.department = null
-  resetForm()
+  prefillEstablishment.value = null
+  forceRerender.value++
+  v$.value.$reset()
 }
 
 const selectEstablishment = (canteenInfos) => {
@@ -301,11 +305,6 @@ const validateForm = (action) => {
   if (v$.value.$invalid) return
   emit("sendForm", { form: form, action: action })
 }
-
-const resetForm = () => {
-  v$.value.$reset()
-  forceRerender.value++
-}
 </script>
 
 <template>
@@ -328,7 +327,7 @@ const resetForm = () => {
           @select="(canteenInfos) => selectEstablishment(canteenInfos)"
           :error-required="formatError(v$.siret) || formatError(v$.sirenUniteLegale)"
           :has-siret="form.hasSiret === 'has-siret'"
-          :establishment-data="establishmentData"
+          :establishment-data="prefillEstablishment"
         />
       </fieldset>
       <fieldset class="fr-mb-4w">
