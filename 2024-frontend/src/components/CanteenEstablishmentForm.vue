@@ -18,7 +18,13 @@ const emit = defineEmits(["sendForm"])
 
 /* Siret */
 const changeHasSiret = () => {
-  resetFields(["hasSiret"])
+  form.siret = null
+  form.sirenUniteLegale = null
+  form.postalCode = null
+  form.citySelector = null
+  form.city = null
+  form.cityInseeCode = null
+  form.department = null
   resetForm()
 }
 
@@ -152,9 +158,8 @@ const form = reactive({
   noSiret: null,
 })
 
-const resetFields = (keepFields) => {
-  const list = keepFields || []
-  form.hasSiret = list.includes("hasSiret") ? form.hasSiret : null
+const resetFields = () => {
+  form.hasSiret = null
   form.siret = null
   form.sirenUniteLegale = null
   form.name = null
