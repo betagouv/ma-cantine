@@ -54,7 +54,9 @@ const goToCanteenPage = (id) => {
   <CanteenEstablishmentForm
     v-else-if="!loading && canteenData.id"
     :establishment-data="canteenData"
+    :showCancelButton="true"
     @sendForm="(payload) => saveCanteen(payload)"
+    @cancel="(id) => goToCanteenPage(canteenId)"
   />
   <p v-else>
     Une erreur est survenue,
