@@ -67,6 +67,7 @@ def fetch_geo_data_from_siren(siren, response):
                 response["cityInseeCode"] = etablissement["commune"]
                 response["postalCode"] = etablissement["code_postal"]
                 response["city"] = etablissement["libelle_commune"]
+                response["department"] = etablissement["departement"]
                 return response
             except KeyError as e:
                 logger.error(
