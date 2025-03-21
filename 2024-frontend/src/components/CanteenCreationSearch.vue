@@ -86,7 +86,6 @@ const searchByNumber = () => {
 }
 
 const saveCanteenInfos = (response) => {
-  console.log("response", response)
   canteen.id = response.id
   canteen.name = response.name
   canteen.siret = response.siret
