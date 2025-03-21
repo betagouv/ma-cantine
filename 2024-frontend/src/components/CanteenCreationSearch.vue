@@ -86,13 +86,14 @@ const searchByNumber = () => {
 }
 
 const saveCanteenInfos = (response) => {
+  console.log("response", response)
   canteen.id = response.id
   canteen.name = response.name
   canteen.siret = response.siret
   canteen.city = response.city
   canteen.cityInseeCode = response.cityInseeCode
   canteen.postalCode = response.postalCode
-  canteen.department = response.postalCode.slice(0, 2)
+  canteen.department = response.department
   canteen.linkedCanteens = response.canteens
   canteen.siren = response.siren
 }
