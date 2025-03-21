@@ -13,8 +13,8 @@ import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.
 
 /* Data */
 const store = useRootStore()
-const props = defineProps(["establishmentData", "showCreateButton"])
-const emit = defineEmits(["sendForm"])
+const props = defineProps(["establishmentData", "showCreateButton", "showCancelButton"])
+const emit = defineEmits(["sendForm", "cancel"])
 
 /* Siret */
 const prefillEstablishment = ref(props.establishmentData)
@@ -517,6 +517,14 @@ const validateForm = (action) => {
           secondary
           class="fr-mb-1v fr-mr-1v"
           @click="validateForm('stay-on-creation-page')"
+        />
+        <DsfrButton
+          v-if="showCancelButton"
+          :disabled="isSaving"
+          label="Annuler"
+          secondary
+          class="fr-mb-1v fr-mr-1v"
+          @click="emit('cancel')"
         />
         <DsfrButton
           :disabled="isSaving"
