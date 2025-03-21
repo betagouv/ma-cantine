@@ -28,6 +28,7 @@ canteenService
 /* Save canteen */
 const saveCanteen = (props) => {
   const { form } = props
+  if (form.hasSiret === "no-siret") delete form.siret
   canteenService
     .updateCanteen(form, canteenId)
     .then((response) => {
