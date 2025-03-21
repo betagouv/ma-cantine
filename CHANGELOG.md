@@ -6,6 +6,19 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.11.0](https://github.com/betagouv/ma-cantine/compare/v2025.10.0...v2025.11.0) (2025-03-21)
+
+
+### Nouveautés
+
+* **Modifier une cantine:** redesign et migration de la page en vue3 ([#5145](https://github.com/betagouv/ma-cantine/issues/5145)) ([1846e86](https://github.com/betagouv/ma-cantine/commit/1846e8624a57d06e7edc95a1117aa954cc6e3f10))
+
+
+### Corrections (bugs, typos...)
+
+* **Ajouter une cantine:** corrige le département manquant dans la réponse api de la recherche d'un l'établissement via SIRET ou SIREN ([#5146](https://github.com/betagouv/ma-cantine/issues/5146)) ([3d98886](https://github.com/betagouv/ma-cantine/commit/3d988865e97f30a5574c072c1f2dafd1fe2db23b))
+* **Imports Cantines:** Corriger l'apostrophe de la regex pour le secteur RIA ([#5136](https://github.com/betagouv/ma-cantine/issues/5136)) ([a9d49aa](https://github.com/betagouv/ma-cantine/commit/a9d49aac1470bd0ed94279c33cb5f4847af1f105))
+
 ## [2025.10.0](https://github.com/betagouv/ma-cantine/compare/v2025.9.0...v2025.10.0) (2025-03-17)
 
 
