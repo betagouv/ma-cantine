@@ -614,7 +614,7 @@ export const missingCanteenData = (canteen, sectors) => {
 
   // basic canteen fields
   // TODO: what location data do we require at minimum?
-  const requiredFields = ["name", "cityInseeCode", "productionType", "managementType"]
+  const requiredFields = ["name", "cityInseeCode", "productionType", "managementType"] // "economicModel" ??
   const missingFieldLambda = (f) => !canteen[f]
   const missingSharedRequiredData = requiredFields.some(missingFieldLambda)
   if (missingSharedRequiredData) return true

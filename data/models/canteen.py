@@ -339,6 +339,35 @@ class Canteen(SoftDeletionModel):
     def can_be_claimed(self):
         return not self.managers.exists()
 
+    @property
+    def has_complete_data(self):
+        # basic rules
+        has_complete_data = (
+            self.yearly_meal_count
+            and self.daily_meal_count
+            and (self.siret or self.siren_unite_legale)
+            and self.name
+            and self.city_insee_code
+            and self.production_type
+            and self.management_type
+            and self.economic_model
+        )
+        # satellite-specific rules
+        if has_complete_data and self.is_satellite:
+            has_complete_data = self.central_producer_siret and self.central_producer_siret != self.siret
+        # cc-specific rules
+        if has_complete_data and self.is_central_cuisine:
+            has_complete_data = self.satellite_canteens_count
+            # We check again to avoid useless DB hits
+            if has_complete_data:
+                has_complete_data = (
+                    Canteen.objects.filter(central_producer_siret=self.siret).count() == self.satellite_canteens_count
+                )
+        # sectors & line_ministry
+        if has_complete_data and self.sectors.filter(has_line_ministry=True).exists():
+            has_complete_data = self.line_ministry
+        return has_complete_data
+
     def has_diagnostic_for_year(self, year):
         has_diagnostics = self.diagnostic_set.filter(year=year).exists()
         has_central_kitchen_diagnostic = (
