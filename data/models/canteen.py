@@ -374,6 +374,8 @@ class Canteen(SoftDeletionModel):
                     Canteen.objects.filter(central_producer_siret=self.siret).count() == self.satellite_canteens_count
                 )
         # sectors & line_ministry
+        if has_complete_data:
+            has_complete_data = self.sectors.exists()
         if has_complete_data and self.sectors.filter(has_line_ministry=True).exists():
             has_complete_data = bool(self.line_ministry)
         return has_complete_data
