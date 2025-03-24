@@ -351,20 +351,20 @@ class Canteen(SoftDeletionModel):
     def has_complete_data(self) -> bool:
         # basic rules
         has_complete_data = (
-            self.yearly_meal_count
-            and (self.siret or self.siren_unite_legale)
-            and self.name
-            and self.city_insee_code
-            and self.production_type
-            and self.management_type
-            and self.economic_model
+            bool(self.name)
+            and bool(self.city_insee_code)
+            and bool(self.yearly_meal_count)
+            and bool(self.siret or self.siren_unite_legale)
+            and bool(self.production_type)
+            and bool(self.management_type)
+            and bool(self.economic_model)
         )
         # serving-specific rules
         if has_complete_data and self.is_serving:
             has_complete_data = bool(self.daily_meal_count)
         # satellite-specific rules
         if has_complete_data and self.is_satellite:
-            has_complete_data = self.central_producer_siret and self.central_producer_siret != self.siret
+            has_complete_data = bool(self.central_producer_siret and self.central_producer_siret != self.siret)
         # cc-specific rules
         if has_complete_data and self.is_central_cuisine:
             has_complete_data = bool(self.satellite_canteens_count)
