@@ -1040,8 +1040,10 @@ class ActionableCanteensListView(ListAPIView):
         user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")[:1]))
         purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk"), date__year=year)
         user_canteens = user_canteens.annotate(has_purchases_for_year=Exists(purchases_for_year))
-        is_serving_query = Q(production_type=Canteen.ProductionType.CENTRAL_SERVING) | Q(
-            production_type=Canteen.ProductionType.ON_SITE | Q(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+        is_serving_query = (
+            Q(production_type=Canteen.ProductionType.CENTRAL_SERVING)
+            | Q(production_type=Canteen.ProductionType.ON_SITE)
+            | Q(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
         )
         is_satellite_query = Q(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
         is_central_cuisine_query = Q(production_type=Canteen.ProductionType.CENTRAL) | Q(
