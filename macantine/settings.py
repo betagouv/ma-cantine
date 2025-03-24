@@ -61,7 +61,11 @@ if not DEBUG:
     sentry_sdk.init(
         dsn="https://db78f7d440094c498a02135e8abefa27@sentry.incubateur.net/2",
         integrations=[DjangoIntegration(), CeleryIntegration()],
-        traces_sample_rate=0,
+        # Tracing: set traces_sample_rate to 1.0 to capture 100% of transactions
+        traces_sample_rate=0.2,  # 20%
+        # Profiling: set profiles_sample_rate to 1.0 to profile 100% of sampled transactions.
+        # The profiles_sample_rate setting is relative to the traces_sample_rate setting.
+        profiles_sample_rate=0.2,  # 4%
         send_default_pii=False,
         send_client_reports=False,
         before_send=before_send,
