@@ -246,7 +246,7 @@ const resetDynamicInputValues = () => {
 /* Fields verification */
 const { required, integer, minValue, requiredIf, minLength, maxLength } = useValidators()
 const dailyMealRequired = computed(() => form.productionType !== "central")
-const yearlyMealMinValue = computed(() => form.dailyMealCount || 0)
+const yearlyMealMinValue = computed(() => form.dailyMealCount || 1)
 const siretIsRequired = computed(() => form.hasSiret === "has-siret")
 const sirenIsRequired = computed(() => form.hasSiret === "no-siret")
 
@@ -270,10 +270,10 @@ const rules = {
   dailyMealCount: {
     required: requiredIf(dailyMealRequired),
     integer,
-    minValue: minValue(0),
+    minValue: minValue(1),
   },
   yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
-  satelliteCanteensCount: { required: requiredIf(showSatelliteCanteensCount), integer, minValue: minValue(0) },
+  satelliteCanteensCount: { required: requiredIf(showSatelliteCanteensCount), integer, minValue: minValue(1) },
   centralProducerSiret: {
     required: requiredIf(showCentralProducerSiret),
     notSameSiret: helpers.withMessage(
