@@ -401,43 +401,57 @@ class TestCanteenStatsApi(APITestCase):
         """
         Test that the right canteens are identifies in diversification badge qs
         """
-        primaire = SectorFactory(name="Scolaire primaire", category="education")
-        secondaire = SectorFactory(name="Scolaire secondaire", category="education")
+        administration_sector = SectorFactory.create(
+            name="Secteur de l'administration", category=Sector.Categories.ADMINISTRATION
+        )
+        other_sector = SectorFactory.create(name="Secteur hors administration", category=Sector.Categories.EDUCATION)
 
         # --- canteens which don't earn diversification badge:
-        high_canteen = CanteenFactory.create()
-        high_canteen.sectors.remove(primaire)
-        high_canteen.sectors.remove(secondaire)
+        canteen_admin_high = CanteenFactory.create(sectors=[administration_sector])
         DiagnosticFactory.create(
-            canteen=high_canteen, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.HIGH.value
+            canteen=canteen_admin_high, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.HIGH.value
         )
-
-        low_canteen = CanteenFactory.create()
-        low_canteen.sectors.add(primaire)
+        canteen_admin_mid = CanteenFactory.create(sectors=[administration_sector])
         DiagnosticFactory.create(
-            canteen=low_canteen, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.LOW.value
+            canteen=canteen_admin_mid, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.MID.value
+        )
+        canteen_other_low = CanteenFactory.create(sectors=[other_sector])
+        DiagnosticFactory.create(
+            canteen=canteen_other_low, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.LOW.value
+        )
+        canteen_other_never = CanteenFactory.create(sectors=[other_sector])
+        DiagnosticFactory.create(
+            canteen=canteen_other_never, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.NEVER.value
         )
 
         # --- canteens which earn diversification badge:
-        daily_vege = CanteenFactory.create()
-        daily_vege.sectors.remove(primaire)
-        daily_vege.sectors.remove(secondaire)
+        canteen_admin_daily = CanteenFactory.create(sectors=[administration_sector])
         DiagnosticFactory.create(
-            canteen=daily_vege, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.DAILY.value
+            canteen=canteen_admin_daily, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.DAILY.value
         )
-
-        scolaire_mid_vege = CanteenFactory.create()
-        scolaire_mid_vege.sectors.add(secondaire)
+        canteen_other_high = CanteenFactory.create(sectors=[other_sector])
         DiagnosticFactory.create(
-            canteen=scolaire_mid_vege, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.MID.value
+            canteen=canteen_other_high, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.HIGH.value
+        )
+        canteen_other_mid = CanteenFactory.create(sectors=[other_sector])
+        DiagnosticFactory.create(
+            canteen=canteen_other_mid, vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.MID.value
         )
 
         badges = badges_for_queryset(Diagnostic.objects.all())
-
         diversification_badge_qs = badges["diversification"]
-        self.assertEqual(diversification_badge_qs.count(), 2)
-        self.assertTrue(diversification_badge_qs.filter(canteen=daily_vege).exists())
-        self.assertTrue(diversification_badge_qs.filter(canteen=scolaire_mid_vege).exists())
+        self.assertEqual(diversification_badge_qs.count(), 3)
+
+        # --- have badge
+        self.assertTrue(diversification_badge_qs.filter(canteen=canteen_admin_daily).exists())
+        self.assertTrue(diversification_badge_qs.filter(canteen=canteen_other_high).exists())
+        self.assertTrue(diversification_badge_qs.filter(canteen=canteen_other_mid).exists())
+
+        # --- not have badge
+        self.assertFalse(diversification_badge_qs.filter(canteen=canteen_admin_high).exists())
+        self.assertFalse(diversification_badge_qs.filter(canteen=canteen_admin_mid).exists())
+        self.assertFalse(diversification_badge_qs.filter(canteen=canteen_other_low).exists())
+        self.assertFalse(diversification_badge_qs.filter(canteen=canteen_other_never).exists())
 
     def test_plastic_badge_earned(self):
         """
