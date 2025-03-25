@@ -87,3 +87,72 @@ class TestCanteenQueryset(TestCase):
         qs = Canteen.objects.publicly_hidden()
         self.assertEqual(qs.count(), 1)
         self.assertEqual(qs.first(), self.canteen_published_armee)
+
+
+class TestCanteenProperty(TestCase):
+    def test_has_complete_data(self):
+        COMMON = {
+            # CanteenFactory generates: name, city_insee_code, sectors
+            "yearly_meal_count": 1000,
+            "publication_status": Canteen.PublicationStatus.PUBLISHED,
+            "management_type": Canteen.ManagementType.DIRECT,
+            "economic_model": Canteen.EconomicModel.PUBLIC,
+        }
+        canteen_central = CanteenFactory(
+            **COMMON,
+            siret="75665621899905",
+            production_type=Canteen.ProductionType.CENTRAL,
+            satellite_canteens_count=1
+        )
+        canteen_central_incomplete = CanteenFactory(
+            **COMMON,
+            siret="75665621899905",
+            production_type=Canteen.ProductionType.CENTRAL,
+            satellite_canteens_count=0  # incomplete
+        )
+        canteen_central_serving = CanteenFactory(
+            **COMMON,
+            siret="75665621899905",
+            production_type=Canteen.ProductionType.CENTRAL_SERVING,
+            daily_meal_count=12,
+            satellite_canteens_count=1
+        )
+        canteen_central_serving_incomplete = CanteenFactory(
+            **COMMON,
+            siret="75665621899905",
+            production_type=Canteen.ProductionType.CENTRAL_SERVING,
+            daily_meal_count=0,  # incomplete
+            satellite_canteens_count=1
+        )
+        canteen_on_site = CanteenFactory(
+            **COMMON, siret="96766910375238", production_type=Canteen.ProductionType.ON_SITE, daily_meal_count=12
+        )
+        canteen_on_site_incomplete = CanteenFactory(
+            **COMMON,
+            siret="96766910375238",
+            production_type=Canteen.ProductionType.ON_SITE,
+            daily_meal_count=0  # incomplete
+        )
+        canteen_on_site_central = CanteenFactory(
+            **COMMON,
+            siret="96766910375238",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            daily_meal_count=12,
+            central_producer_siret="75665621899905"
+        )
+        canteen_on_site_central_incomplete = CanteenFactory(
+            **COMMON,
+            siret="96766910375238",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            daily_meal_count=12,
+            central_producer_siret=None  # incomplete
+        )
+        for canteen in [canteen_central, canteen_central_serving, canteen_on_site, canteen_on_site_central]:
+            self.assertTrue(canteen.has_complete_data)
+        for canteen in [
+            canteen_central_incomplete,
+            canteen_central_serving_incomplete,
+            canteen_on_site_incomplete,
+            canteen_on_site_central_incomplete,
+        ]:
+            self.assertFalse(canteen.has_complete_data)

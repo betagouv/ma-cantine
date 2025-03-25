@@ -302,6 +302,14 @@ class Canteen(SoftDeletionModel):
         return f"/nos-cantines/{self.url_slug}"
 
     @property
+    def is_serving(self):
+        return self.production_type and self.production_type in [
+            Canteen.ProductionType.CENTRAL_SERVING,
+            Canteen.ProductionType.ON_SITE,
+            Canteen.ProductionType.ON_SITE_CENTRAL,
+        ]
+
+    @property
     def satellites(self):
         if self.siret:
             return Canteen.objects.filter(
@@ -311,14 +319,14 @@ class Canteen(SoftDeletionModel):
         return Canteen.objects.none()
 
     @property
-    def is_central_cuisine(self):
+    def is_central_cuisine(self) -> bool:
         return self.production_type and self.production_type in [
             Canteen.ProductionType.CENTRAL,
             Canteen.ProductionType.CENTRAL_SERVING,
         ]
 
     @property
-    def is_satellite(self):
+    def is_satellite(self) -> bool:
         return self.production_type and self.production_type == Canteen.ProductionType.ON_SITE_CENTRAL
 
     @property
@@ -338,6 +346,39 @@ class Canteen(SoftDeletionModel):
     @property
     def can_be_claimed(self):
         return not self.managers.exists()
+
+    @property
+    def has_complete_data(self) -> bool:
+        # basic rules
+        has_complete_data = (
+            bool(self.name)
+            and bool(self.city_insee_code)
+            and bool(self.yearly_meal_count)
+            and bool(self.siret or self.siren_unite_legale)
+            and bool(self.production_type)
+            and bool(self.management_type)
+            and bool(self.economic_model)
+        )
+        # serving-specific rules
+        if has_complete_data and self.is_serving:
+            has_complete_data = bool(self.daily_meal_count)
+        # satellite-specific rules
+        if has_complete_data and self.is_satellite:
+            has_complete_data = bool(self.central_producer_siret and self.central_producer_siret != self.siret)
+        # cc-specific rules
+        if has_complete_data and self.is_central_cuisine:
+            has_complete_data = bool(self.satellite_canteens_count)
+            # We check again to avoid useless DB hits
+            if has_complete_data:
+                has_complete_data = (
+                    Canteen.objects.filter(central_producer_siret=self.siret).count() == self.satellite_canteens_count
+                )
+        # sectors & line_ministry
+        if has_complete_data:
+            has_complete_data = self.sectors.exists()
+        if has_complete_data and self.sectors.filter(has_line_ministry=True).exists():
+            has_complete_data = bool(self.line_ministry)
+        return has_complete_data
 
     def has_diagnostic_for_year(self, year):
         has_diagnostics = self.diagnostic_set.filter(year=year).exists()

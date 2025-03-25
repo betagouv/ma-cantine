@@ -163,31 +163,5 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
         # all SQL requests when not needed. We are also not interested exactly in the kind of
         # completeness, just wether or not the canteen can teledeclare.
         # Possible to have this method in the model
-        def canteen_is_complete(canteen):
-            has_complete_data = (
-                canteen.yearly_meal_count
-                and canteen.daily_meal_count
-                and canteen.siret
-                and canteen.name
-                and canteen.city_insee_code
-                and canteen.production_type
-                and canteen.management_type
-                and canteen.economic_model
-            )
-            if has_complete_data and canteen.is_satellite:
-                has_complete_data = canteen.central_producer_siret and canteen.central_producer_siret != canteen.siret
-            if has_complete_data and canteen.is_central_cuisine:
-                has_complete_data = canteen.satellite_canteens_count
-                # We check again to avoid useless DB hits
-                if has_complete_data:
-                    has_complete_data = (
-                        Canteen.objects.filter(central_producer_siret=canteen.siret).count()
-                        == canteen.satellite_canteens_count
-                    )
-
-            if has_complete_data and canteen.sectors.filter(has_line_ministry=True).exists():
-                has_complete_data = canteen.line_ministry
-            return has_complete_data
-
-        complete_canteens = list(filter(canteen_is_complete, canteens))
+        complete_canteens = [canteen for canteen in canteens if canteen.has_complete_data]
         return complete_canteens
