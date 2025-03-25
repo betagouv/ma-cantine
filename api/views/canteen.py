@@ -3,7 +3,6 @@ from collections import OrderedDict
 from datetime import date
 
 import redis as r
-from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import BadRequest, ValidationError
@@ -1041,12 +1040,6 @@ class ActionableCanteensListView(ListAPIView):
         user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")[:1]))
         purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk"), date__year=year)
         user_canteens = user_canteens.annotate(has_purchases_for_year=Exists(purchases_for_year))
-        # prep line ministry check
-        canteen_sector_relation = apps.get_model(app_label="data", model_name="Canteen_sectors")
-        has_sector_requiring_line_ministry = canteen_sector_relation.objects.filter(
-            canteen=OuterRef("pk"), sector__has_line_ministry=True
-        )
-        user_canteens = user_canteens.annotate(requires_line_ministry=Exists(has_sector_requiring_line_ministry))
         # prep complete diag action
         complete_diagnostics = Diagnostic.objects.filter(pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0)
         user_canteens = user_canteens.annotate(has_complete_diag=Exists(Subquery(complete_diagnostics)))
@@ -1055,6 +1048,8 @@ class ActionableCanteensListView(ListAPIView):
             central_kitchen_diagnostic_mode__isnull=False,
         ).exclude(central_kitchen_diagnostic_mode="")
         user_canteens = user_canteens.annotate(has_cc_mode=Exists(Subquery(has_cc_mode)))
+        # prep missing data action
+        user_canteens = user_canteens.annotate_with_requires_line_ministry()
         # prep TD action
         tds = Teledeclaration.objects.filter(
             Q(canteen=OuterRef("pk")) | Q(canteen=OuterRef("central_kitchen_id")),
@@ -1062,9 +1057,6 @@ class ActionableCanteensListView(ListAPIView):
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
         )
         user_canteens = user_canteens.annotate(has_td=Exists(Subquery(tds)))
-        incomplete_canteen_data_query = has_missing_data_query() | (
-            Q(line_ministry=None) & Q(requires_line_ministry=True)
-        )
         # annotate with action
         should_teledeclare = settings.ENABLE_TELEDECLARATION
         conditions = [
@@ -1081,7 +1073,7 @@ class ActionableCanteensListView(ListAPIView):
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
             When(has_complete_diag=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
             When((is_central_cuisine_query() & Q(has_cc_mode=False)), then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
-            When(incomplete_canteen_data_query, then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
+            When(has_missing_data_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
         if should_teledeclare:
             conditions.append(When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)))

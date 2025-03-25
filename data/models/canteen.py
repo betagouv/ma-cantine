@@ -1,9 +1,10 @@
 from urllib.parse import quote
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import F, Q
+from django.db.models import Exists, F, OuterRef, Q
 from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
@@ -68,7 +69,7 @@ def has_missing_data_query():
         | (is_satellite_query() & (Q(central_producer_siret=None) | Q(central_producer_siret="")))
         | (is_satellite_query() & Q(central_producer_siret=F("siret")))
         | (is_central_cuisine_query() & Q(satellite_canteens_count=None))
-        # sectors & line_ministry
+        | Q(line_ministry=None) & Q(requires_line_ministry=True)  # with annotate_with_requires_line_ministry()
     )
 
 
@@ -87,11 +88,18 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             else self.exclude(publication_status=Canteen.PublicationStatus.PUBLISHED)
         )
 
+    def annotate_with_requires_line_ministry(self):
+        canteen_sector_relation = apps.get_model(app_label="data", model_name="Canteen_sectors")
+        has_sector_requiring_line_ministry = canteen_sector_relation.objects.filter(
+            canteen=OuterRef("pk"), sector__has_line_ministry=True
+        )
+        return self.annotate(requires_line_ministry=Exists(has_sector_requiring_line_ministry))
+
     def has_missing_data(self):
-        return self.filter(has_missing_data_query())
+        return self.annotate_with_requires_line_ministry().filter(has_missing_data_query())
 
     def has_complete_data(self):
-        return self.exclude(has_missing_data_query())
+        return self.annotate_with_requires_line_ministry().exclude(has_missing_data_query())
 
 
 class CanteenManager(SoftDeletionManager):
