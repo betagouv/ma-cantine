@@ -44,7 +44,7 @@
 <script>
 import VueApexCharts from "vue-apexcharts"
 import DsfrAccordion from "@/components/DsfrAccordion"
-import { getPercentage, hasApproGraphData, getSustainableTotal, regionDisplayName } from "@/utils"
+import { getPercentage, getSustainableTotal, regionDisplayName } from "@/utils"
 
 const VALUE_DESCRIPTION = "Pourcentage d'achats"
 const BIO = "Bio"
@@ -73,10 +73,8 @@ export default {
     const completedDiagnostics = []
     const thisYear = new Date().getFullYear()
     diagArray.forEach((d) => {
-      if (hasApproGraphData(d)) {
-        completedDiagnostics.push(d)
-        years.push(`${d.year}${d.year >= thisYear ? " (provisionnel)" : ""}`)
-      }
+      completedDiagnostics.push(d)
+      years.push(`${d.year}${d.year >= thisYear ? " (provisionnel)" : ""}`)
     })
     return {
       years,
