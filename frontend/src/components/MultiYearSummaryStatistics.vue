@@ -44,7 +44,7 @@
 <script>
 import VueApexCharts from "vue-apexcharts"
 import DsfrAccordion from "@/components/DsfrAccordion"
-import { getPercentage, getSustainableTotal, hasApproGraphData, regionDisplayName } from "@/utils"
+import { getPercentage, hasApproGraphData, getSustainableTotal, regionDisplayName } from "@/utils"
 
 const VALUE_DESCRIPTION = "Pourcentage d'achats"
 const BIO = "Bio"
