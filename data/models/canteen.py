@@ -3,6 +3,7 @@ from urllib.parse import quote
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import F, Q
 from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
@@ -34,6 +35,43 @@ def list_properties(queryset, property):
     return list(queryset.values_list(property, flat=True))
 
 
+def is_serving_query():
+    return Q(
+        production_type__in=[
+            Canteen.ProductionType.CENTRAL_SERVING,
+            Canteen.ProductionType.ON_SITE,
+            Canteen.ProductionType.ON_SITE_CENTRAL,
+        ]
+    )
+
+
+def is_satellite_query():
+    return Q(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+
+
+def is_central_cuisine_query():
+    return Q(production_type__in=[Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING])
+
+
+def has_missing_data_query():
+    return (
+        Q(name=None)
+        | Q(city_insee_code=None)
+        | Q(city_insee_code="")
+        | Q(yearly_meal_count=None)
+        | Q(siret=None)
+        | Q(siret="")
+        | Q(production_type=None)
+        | Q(management_type=None)
+        | Q(economic_model=None)
+        | Q(is_serving_query()) & Q(daily_meal_count=None)
+        | (is_satellite_query() & (Q(central_producer_siret=None) | Q(central_producer_siret="")))
+        | (is_satellite_query() & Q(central_producer_siret=F("siret")))
+        | (is_central_cuisine_query() & Q(satellite_canteens_count=None))
+        # sectors & line_ministry
+    )
+
+
 class CanteenQuerySet(SoftDeletionQuerySet):
     def publicly_visible(self):
         return (
@@ -49,6 +87,12 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             else self.exclude(publication_status=Canteen.PublicationStatus.PUBLISHED)
         )
 
+    def has_missing_data(self):
+        return self.filter(has_missing_data_query())
+
+    def has_complete_data(self):
+        return self.exclude(has_missing_data_query())
+
 
 class CanteenManager(SoftDeletionManager):
     queryset_model = CanteenQuerySet
@@ -58,6 +102,12 @@ class CanteenManager(SoftDeletionManager):
 
     def publicly_hidden(self):
         return self.get_queryset().publicly_hidden()
+
+    def has_missing_data(self):
+        return self.get_queryset().has_missing_data()
+
+    def has_complete_data(self):
+        return self.get_queryset().has_complete_data()
 
 
 class Canteen(SoftDeletionModel):

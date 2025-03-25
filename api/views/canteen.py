@@ -78,6 +78,7 @@ from data.models import (
     Sector,
     Teledeclaration,
 )
+from data.models.canteen import has_missing_data_query, is_central_cuisine_query
 from data.region_choices import Region
 
 logger = logging.getLogger(__name__)
@@ -1040,38 +1041,12 @@ class ActionableCanteensListView(ListAPIView):
         user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")[:1]))
         purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk"), date__year=year)
         user_canteens = user_canteens.annotate(has_purchases_for_year=Exists(purchases_for_year))
-        is_serving_query = (
-            Q(production_type=Canteen.ProductionType.CENTRAL_SERVING)
-            | Q(production_type=Canteen.ProductionType.ON_SITE)
-            | Q(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
-        )
-        is_satellite_query = Q(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
-        is_central_cuisine_query = Q(production_type=Canteen.ProductionType.CENTRAL) | Q(
-            production_type=Canteen.ProductionType.CENTRAL_SERVING
-        )
         # prep line ministry check
         canteen_sector_relation = apps.get_model(app_label="data", model_name="Canteen_sectors")
         has_sector_requiring_line_ministry = canteen_sector_relation.objects.filter(
             canteen=OuterRef("pk"), sector__has_line_ministry=True
         )
         user_canteens = user_canteens.annotate(requires_line_ministry=Exists(has_sector_requiring_line_ministry))
-        incomplete_canteen_data_query = (
-            Q(name=None)
-            | Q(city_insee_code=None)
-            | Q(city_insee_code="")
-            | Q(yearly_meal_count=None)
-            | Q(siret=None)
-            | Q(siret="")
-            | Q(production_type=None)
-            | Q(management_type=None)
-            | Q(economic_model=None)
-            | Q(is_serving_query) & Q(daily_meal_count=None)
-            | (is_satellite_query & (Q(central_producer_siret=None) | Q(central_producer_siret="")))
-            | (is_satellite_query & Q(central_producer_siret=F("siret")))
-            | (is_central_cuisine_query & Q(satellite_canteens_count=None))
-            | (Q(line_ministry=None) & Q(requires_line_ministry=True))
-        )
-
         # prep complete diag action
         complete_diagnostics = Diagnostic.objects.filter(pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0)
         user_canteens = user_canteens.annotate(has_complete_diag=Exists(Subquery(complete_diagnostics)))
@@ -1087,12 +1062,14 @@ class ActionableCanteensListView(ListAPIView):
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
         )
         user_canteens = user_canteens.annotate(has_td=Exists(Subquery(tds)))
+        incomplete_canteen_data_query = has_missing_data_query() | (
+            Q(line_ministry=None) & Q(requires_line_ministry=True)
+        )
         # annotate with action
-
         should_teledeclare = settings.ENABLE_TELEDECLARATION
         conditions = [
             When(
-                (is_central_cuisine_query & Q(satellite_canteens_count__gt=0) & Q(nb_satellites_in_db=None)),
+                (is_central_cuisine_query() & Q(satellite_canteens_count__gt=0) & Q(nb_satellites_in_db=None)),
                 then=Value(Canteen.Actions.ADD_SATELLITES),
             ),
             When(nb_satellites_in_db__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
@@ -1103,7 +1080,7 @@ class ActionableCanteensListView(ListAPIView):
             ),
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
             When(has_complete_diag=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
-            When((is_central_cuisine_query & Q(has_cc_mode=False)), then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+            When((is_central_cuisine_query() & Q(has_cc_mode=False)), then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
             When(incomplete_canteen_data_query, then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
         if should_teledeclare:
