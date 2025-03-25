@@ -51,7 +51,7 @@ class TestCanteenModel(TestCase):
         self.assertEqual(qs.count(), 1, "Soft deleted canteens can be accessed in custom queryset")
 
 
-class TestCanteenQueryset(TestCase):
+class TestCanteenQuerySet(TestCase):
     @classmethod
     def setUpTestData(cls):
         CanteenFactory(line_ministry=None, publication_status=Canteen.PublicationStatus.PUBLISHED)
@@ -89,8 +89,9 @@ class TestCanteenQueryset(TestCase):
         self.assertEqual(qs.first(), self.canteen_published_armee)
 
 
-class TestCanteenProperty(TestCase):
-    def test_has_complete_data(self):
+class TestCanteenCompletePropertyAndQuerySet(TestCase):
+    @classmethod
+    def setUpTestData(cls):
         COMMON = {
             # CanteenFactory generates: name, city_insee_code, sectors
             "yearly_meal_count": 1000,
@@ -98,61 +99,76 @@ class TestCanteenProperty(TestCase):
             "management_type": Canteen.ManagementType.DIRECT,
             "economic_model": Canteen.EconomicModel.PUBLIC,
         }
-        canteen_central = CanteenFactory(
+        cls.canteen_central = CanteenFactory(
             **COMMON,
             siret="75665621899905",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=1
         )
-        canteen_central_incomplete = CanteenFactory(
+        cls.canteen_central_incomplete = CanteenFactory(
             **COMMON,
             siret="75665621899905",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=0  # incomplete
         )
-        canteen_central_serving = CanteenFactory(
+        cls.canteen_central_serving = CanteenFactory(
             **COMMON,
             siret="75665621899905",
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             daily_meal_count=12,
             satellite_canteens_count=1
         )
-        canteen_central_serving_incomplete = CanteenFactory(
+        cls.canteen_central_serving_incomplete = CanteenFactory(
             **COMMON,
             siret="75665621899905",
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             daily_meal_count=0,  # incomplete
             satellite_canteens_count=1
         )
-        canteen_on_site = CanteenFactory(
+        cls.canteen_on_site = CanteenFactory(
             **COMMON, siret="96766910375238", production_type=Canteen.ProductionType.ON_SITE, daily_meal_count=12
         )
-        canteen_on_site_incomplete = CanteenFactory(
+        cls.canteen_on_site_incomplete = CanteenFactory(
             **COMMON,
             siret="96766910375238",
             production_type=Canteen.ProductionType.ON_SITE,
             daily_meal_count=0  # incomplete
         )
-        canteen_on_site_central = CanteenFactory(
+        cls.canteen_on_site_central = CanteenFactory(
             **COMMON,
             siret="96766910375238",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             daily_meal_count=12,
             central_producer_siret="75665621899905"
         )
-        canteen_on_site_central_incomplete = CanteenFactory(
+        cls.canteen_on_site_central_incomplete = CanteenFactory(
             **COMMON,
             siret="96766910375238",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             daily_meal_count=12,
             central_producer_siret=None  # incomplete
         )
-        for canteen in [canteen_central, canteen_central_serving, canteen_on_site, canteen_on_site_central]:
+
+    def test_has_complete_data_queryset(self):
+        self.assertEqual(Canteen.objects.count(), 8)
+        self.assertEqual(Canteen.objects.has_complete_data().count(), 4)
+
+    def test_has_complete_data_property(self):
+        for canteen in [
+            self.canteen_central,
+            self.canteen_central_serving,
+            self.canteen_on_site,
+            self.canteen_on_site_central,
+        ]:
             self.assertTrue(canteen.has_complete_data)
         for canteen in [
-            canteen_central_incomplete,
-            canteen_central_serving_incomplete,
-            canteen_on_site_incomplete,
-            canteen_on_site_central_incomplete,
+            self.canteen_central_incomplete,
+            self.canteen_central_serving_incomplete,
+            self.canteen_on_site_incomplete,
+            self.canteen_on_site_central_incomplete,
         ]:
             self.assertFalse(canteen.has_complete_data)
+
+    def test_has_missing_data_queryset(self):
+        self.assertEqual(Canteen.objects.count(), 8)
+        self.assertEqual(Canteen.objects.has_missing_data().count(), 4)
