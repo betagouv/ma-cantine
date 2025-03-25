@@ -65,10 +65,10 @@ def has_missing_data_query():
         | Q(production_type=None)
         | Q(management_type=None)
         | Q(economic_model=None)
-        | Q(is_serving_query()) & Q(daily_meal_count=None)
+        | Q(is_serving_query()) & (Q(daily_meal_count=None) | Q(daily_meal_count=0))
         | (is_satellite_query() & (Q(central_producer_siret=None) | Q(central_producer_siret="")))
         | (is_satellite_query() & Q(central_producer_siret=F("siret")))
-        | (is_central_cuisine_query() & Q(satellite_canteens_count=None))
+        | (is_central_cuisine_query() & (Q(satellite_canteens_count=None) | Q(satellite_canteens_count=0)))
         | Q(line_ministry=None) & Q(requires_line_ministry=True)  # with annotate_with_requires_line_ministry()
     )
 
