@@ -6,6 +6,23 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.11.2](https://github.com/betagouv/ma-cantine/compare/v2025.11.1...v2025.11.2) (2025-03-25)
+
+
+### Corrections (bugs, typos...)
+
+* **Ajouter et modifier une cantine:** corrige la valeur minimale attendue pour être supérieure à zéro ([#5152](https://github.com/betagouv/ma-cantine/issues/5152)) ([4beedf5](https://github.com/betagouv/ma-cantine/commit/4beedf560d58b180821e02f2084284b48704876e))
+* **Cantine:** affiche toutes années dans le comparateur "qualité des produits" ([#5153](https://github.com/betagouv/ma-cantine/issues/5153)) ([2918ea7](https://github.com/betagouv/ma-cantine/commit/2918ea775bbbab0dc47ed8d6690fb5dfe20db96a))
+* **Cantines:** le champ line_ministry n'est pas obligatoire pour les établissements privés ([#5158](https://github.com/betagouv/ma-cantine/issues/5158)) ([7879f84](https://github.com/betagouv/ma-cantine/commit/7879f847364a310f00e834292c609ff219e1128d))
+* **ETL:** Gérer le cas où la cantine d un diagnostic à renseignée un yearly_meal_count à 0 ([#5157](https://github.com/betagouv/ma-cantine/issues/5157)) ([1795728](https://github.com/betagouv/ma-cantine/commit/1795728f19773342cdf196d7d72eb5c2ec956d14))
+
+
+### Technique
+
+* **Cantines:** le champ daily_meal_count n'est pas obligatoire pour les cantines centrales sans lieu de consommation ([#5150](https://github.com/betagouv/ma-cantine/issues/5150)) ([9ceb864](https://github.com/betagouv/ma-cantine/commit/9ceb8649832af642d09238191832ef63fec74f1d))
+* **Cantines:** nouveau queryset pour savoir si il manque des infos ([#5155](https://github.com/betagouv/ma-cantine/issues/5155)) ([cc3dde7](https://github.com/betagouv/ma-cantine/commit/cc3dde7654131f59a93b107f933884f55ea52966))
+* **Cantines:** nouvelle property pour savoir si il manque des infos ([#5148](https://github.com/betagouv/ma-cantine/issues/5148)) ([240ce8b](https://github.com/betagouv/ma-cantine/commit/240ce8b171d5c68874db94c1e88538fa5b57f3b3))
+
 ## [2025.11.1](https://github.com/betagouv/ma-cantine/compare/v2025.11.0...v2025.11.1) (2025-03-25)
 
 
