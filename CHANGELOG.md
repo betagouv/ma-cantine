@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.11.1](https://github.com/betagouv/ma-cantine/compare/v2025.11.0...v2025.11.1) (2025-03-25)
+
+
+### Technique
+
+* **Sentry:** ajout de config pour monitorer la performance ([#5149](https://github.com/betagouv/ma-cantine/issues/5149)) ([438d342](https://github.com/betagouv/ma-cantine/commit/438d342b1e16a72c2962a165fb1bd9a449cc4acd))
+
 ## [2025.11.0](https://github.com/betagouv/ma-cantine/compare/v2025.10.0...v2025.11.0) (2025-03-21)
 
 
