@@ -10,6 +10,7 @@ from macantine.etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
     ETL_ANALYSIS_TELEDECLARATIONS,
     aggregate_col,
+    compute_cout_denrees,
     get_egalim_hors_bio,
 )
 from macantine.etl.utils import format_td_sector_column
@@ -229,3 +230,34 @@ class TestETLAnalysisTD(TestCase):
         self.assertEqual(df.iloc[0]["categorie"], "education")
         self.assertEqual(df.iloc[1]["secteur"], "Secteurs multiples")
         self.assertEqual(df.iloc[1]["categorie"], "Catégories multiples")
+
+    def test_cout_denrees(self):
+        test_cases = [
+            {
+                "name": "Valid cout denrees",
+                "data": {
+                    "0": {
+                        "id": 1,
+                        "teledeclaration.value_total_ht": 1,
+                        "canteen.yearly_meal_count": 1,
+                    }
+                },
+                "expected_outcome": 1,
+            },
+            {
+                "name": "Invalid cout denrees",
+                "data": {
+                    "0": {
+                        "id": 1,
+                        "teledeclaration.value_total_ht": 1,
+                        "canteen.yearly_meal_count": 0,
+                    }
+                },
+                "expected_outcome": -1,
+            },
+        ]
+
+        for tc in test_cases:
+            td_complete = pd.DataFrame.from_dict(tc["data"], orient="index")
+            cout_denrees = compute_cout_denrees(td_complete)
+            self.assertEqual(cout_denrees.iloc[0], tc["expected_outcome"])
