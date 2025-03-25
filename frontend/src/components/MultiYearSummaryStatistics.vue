@@ -77,8 +77,8 @@ export default {
       years.push(`${d.year}${d.year >= thisYear ? " (provisionnel)" : ""}`)
     })
     return {
-      years,
-      completedDiagnostics,
+      years: years.reverse(),
+      completedDiagnostics: completedDiagnostics.reverse(),
     }
   },
   computed: {
