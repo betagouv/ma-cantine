@@ -51,7 +51,7 @@ class TestCanteenModel(TestCase):
         self.assertEqual(qs.count(), 1, "Soft deleted canteens can be accessed in custom queryset")
 
 
-class TestCanteenQueryset(TestCase):
+class TestCanteenQuerySet(TestCase):
     @classmethod
     def setUpTestData(cls):
         CanteenFactory(line_ministry=None, publication_status=Canteen.PublicationStatus.PUBLISHED)
@@ -89,7 +89,7 @@ class TestCanteenQueryset(TestCase):
         self.assertEqual(qs.first(), self.canteen_published_armee)
 
 
-class TestCanteenCompletePropertyAndQueryset(TestCase):
+class TestCanteenCompletePropertyAndQuerySet(TestCase):
     @classmethod
     def setUpTestData(cls):
         COMMON = {
