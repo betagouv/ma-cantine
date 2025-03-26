@@ -108,30 +108,22 @@ class Teledeclaration(models.Model):
     canteen_siret = models.TextField(null=True, blank=True)
     canteen_siren_unite_legale = models.TextField(null=True, blank=True)
 
-    value_total_ht = (
-        models.IntegerField(
-            null=True, blank=True, verbose_name="Valeur du champs. En cas de TD complète, ce champ est aggrégé"
-        ),
+    value_total_ht = models.IntegerField(
+        null=True, blank=True, verbose_name="Champ value total. En cas de TD complète: ce champ est aggrégé"
     )
-    value_bio_ht_agg = (
-        models.IntegerField(
-            null=True, blank=True, verbose_name="Valeur du champs. En cas de TD complète, ce champ est aggrégé"
-        ),
+    value_bio_ht_agg = models.IntegerField(
+        null=True, blank=True, verbose_name="Champ value bio. En cas de TD complète: ce champ est aggrégé"
     )
-    value_sustainable_ht_agg = (
-        models.IntegerField(
-            null=True, blank=True, verbose_name="Valeur du champs. En cas de TD complète, ce champ est aggrégé"
-        ),
+    value_sustainable_ht_agg = models.IntegerField(
+        null=True, blank=True, verbose_name="Champ value Egalim. En cas de TD complète: ce champ est aggrégé"
     )
-    value_externality_performance_ht_agg = (
-        models.IntegerField(
-            null=True, blank=True, verbose_name="Valeur du champs. En cas de TD complète, ce champ est aggrégé"
-        ),
+    value_externality_performance_ht_agg = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Champ externalité/performance. En cas de TD complète, ce champ est aggrégé",
     )
-    value_egalim_others_ht_agg = (
-        models.IntegerField(
-            null=True, blank=True, verbose_name="Valeur du champs. En cas de TD complète, ce champ est aggrégé"
-        ),
+    value_egalim_others_ht_agg = models.IntegerField(
+        null=True, blank=True, verbose_name="Champ Autres Egalim. En cas de TD complète, ce champ est aggrégé"
     )
 
     history = HistoricalRecords(
