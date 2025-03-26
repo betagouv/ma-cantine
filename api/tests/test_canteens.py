@@ -715,7 +715,13 @@ class TestCanteenApi(APITestCase):
         )
         needs_diagnostic_mode = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
             siret="75665621899905",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            # satellite_canteens_count=3,
         )
         # publish
         needs_to_publish = CanteenFactory.create(
@@ -742,8 +748,13 @@ class TestCanteenApi(APITestCase):
         # create satellites
         central_siret = "78146469373706"
         needs_additional_satellites = CanteenFactory.create(
-            siret=central_siret,
             production_type=Canteen.ProductionType.CENTRAL,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            siret=central_siret,
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
             satellite_canteens_count=3,
         )
         CanteenFactory.create(name="Not my canteen")
@@ -805,9 +816,10 @@ class TestCanteenApi(APITestCase):
             (complete, "95_nothing"),
         ]
         for index, (canteen, action) in zip(range(len(expected_actions)), expected_actions):
-            self.assertEqual(returned_canteens[index]["id"], canteen.id)
-            self.assertEqual(returned_canteens[index]["action"], action)
-            self.assertIn("sectors", returned_canteens[index])
+            with self.subTest(canteen_id=canteen.id, action=action):
+                self.assertEqual(returned_canteens[index]["id"], canteen.id)
+                self.assertEqual(returned_canteens[index]["action"], action)
+                self.assertIn("sectors", returned_canteens[index])
         self.assertTrue(body["hasPendingActions"])
 
     @override_settings(PUBLISH_BY_DEFAULT=True)
@@ -867,8 +879,13 @@ class TestCanteenApi(APITestCase):
         Test for a bug fix. A central that doesn't have any satellites at all should get the complete satellite action.
         """
         has_no_satellites = CanteenFactory.create(
-            siret="45467900121441",
             production_type=Canteen.ProductionType.CENTRAL,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            siret="45467900121441",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
             satellite_canteens_count=3,
         )
         has_no_satellites.managers.add(authenticate.user)
@@ -1092,7 +1109,17 @@ class TestCanteenApi(APITestCase):
         """
         Check that this endpoint can return the summary for a specified canteen
         """
-        canteen = CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE)
+        canteen = CanteenFactory.create(
+            id=3,
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            yearly_meal_count="123",
+            daily_meal_count="12",
+            siret="75665621899905",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            management_type=Canteen.ManagementType.DIRECT,
+        )
         canteen.managers.add(authenticate.user)
 
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
