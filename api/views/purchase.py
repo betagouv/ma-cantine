@@ -37,13 +37,13 @@ class PurchasesPagination(LimitOffsetPagination):
 
     def paginate_queryset(self, queryset, request, view=None):
         # Performance improvements possible
-        user_purchases = Purchase.objects.filter(canteen__in=request.user.canteens.all())
+        user_purchases = Purchase.objects.prefetch_related("canteen").filter(canteen__in=request.user.canteens.all())
         family_param = request.query_params.get("family")
         if family_param:
             family_qs = user_purchases
             characteristic_param = request.query_params.getlist("characteristics")
             if characteristic_param:
-                family_qs = family_qs.filter(characteristics__overlap=characteristic_param)
+                family_qs = family_qs.filter_by_characteristics(characteristic_param)
                 self.families = set(filter(lambda x: x, family_qs.values_list("family", flat=True)))
             else:
                 self.families = list(Purchase.Family)
@@ -95,8 +95,8 @@ class PurchaseFilterSet(django_filters.FilterSet):
 class PurchaseListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
     model = Purchase
-    serializer_class = PurchaseSerializer
     pagination_class = PurchasesPagination
+    serializer_class = PurchaseSerializer
     filter_backends = [
         MaCantineOrderingFilter,
         UnaccentSearchFilter,
@@ -118,7 +118,7 @@ class PurchaseListCreateView(ListCreateAPIView):
     filterset_class = PurchaseFilterSet
 
     def get_queryset(self):
-        return Purchase.objects.filter(canteen__in=self.request.user.canteens.all())
+        return Purchase.objects.prefetch_related("canteen").filter(canteen__in=self.request.user.canteens.all())
 
     def perform_create(self, serializer):
         canteen_id = self.request.data.get("canteen")
@@ -143,7 +143,7 @@ class PurchaseListCreateView(ListCreateAPIView):
         # handle characteristics filtering manually because ChoiceArrayField is not a Django field
         characteristics = self.request.query_params.getlist("characteristics")
         if characteristics:
-            queryset = queryset.filter(characteristics__overlap=characteristics)
+            queryset = queryset.filter_by_characteristics(characteristics)
         return super().filter_queryset(queryset)
 
 
@@ -396,7 +396,7 @@ def misc_totals(purchases, data):
     )
     data["value_meat_poultry_ht"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
-    meat_poultry_egalim = meat_poultry_purchases.filter(characteristics__overlap=PURCHASE_EGALIM_LABELS)
+    meat_poultry_egalim = meat_poultry_purchases.filter_by_characteristics(PURCHASE_EGALIM_LABELS)
     data["value_meat_poultry_egalim_ht"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
 
     meat_poultry_france = meat_poultry_purchases.filter(
@@ -411,7 +411,7 @@ def misc_totals(purchases, data):
     )
     data["value_fish_ht"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
-    fish_egalim = fish_purchases.filter(characteristics__overlap=PURCHASE_EGALIM_LABELS)
+    fish_egalim = fish_purchases.filter_by_characteristics(PURCHASE_EGALIM_LABELS)
     data["value_fish_egalim_ht"] = fish_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
 
 
