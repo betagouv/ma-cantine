@@ -1062,16 +1062,12 @@ class ActionableCanteensListView(ListAPIView):
         # annotate with action
         should_teledeclare = settings.ENABLE_TELEDECLARATION
         conditions = [
-            # FILL_CANTEEN_DATA
-            When(has_missing_data_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
-            # ADD_SATELLITES
             When(
                 (is_central_cuisine_query() & Q(satellite_canteens_count__gt=0) & Q(nb_satellites_in_db=None)),
                 then=Value(Canteen.Actions.ADD_SATELLITES),
             ),
             When(nb_satellites_in_db__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
             When(nb_satellites_in_db__gt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
-            # DIAGNOSTIC
             When(
                 Q(diagnostic_for_year=None) & Q(has_purchases_for_year=True),
                 then=Value(Canteen.Actions.PREFILL_DIAGNOSTIC),
@@ -1079,6 +1075,7 @@ class ActionableCanteensListView(ListAPIView):
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
             When(has_complete_diagnostic_for_year=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
             When((is_central_cuisine_query() & Q(has_cc_mode=False)), then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+            When(has_missing_data_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
         if should_teledeclare:
             conditions.append(When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)))
