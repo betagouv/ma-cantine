@@ -530,7 +530,7 @@ class TestTeledeclarationApi(APITestCase):
 
         # Checking the aggregation
         self.assertEqual(teledeclaration.value_total_ht, 0)
-        self.assertEqual(teledeclaration.value_sustainable_ht_agg, 0)
+        self.assertEqual(teledeclaration.value_sustainable_ht_agg, 10)  # Because of boissons HVE
         self.assertEqual(teledeclaration.value_egalim_others_ht_agg, 0)
         self.assertEqual(teledeclaration.value_bio_ht_agg, 0)
         self.assertEqual(teledeclaration.value_externality_performance_ht_agg, 0)
