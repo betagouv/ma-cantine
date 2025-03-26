@@ -14,7 +14,7 @@ from data.models import Canteen, Diagnostic, Purchase
 from .utils import authenticate
 
 
-class TestPurchaseApi(APITestCase):
+class TestPurchaseListApi(APITestCase):
     def test_get_purchases_unauthenticated(self):
         """
         This endpoint is only available when authenticated
@@ -54,6 +54,176 @@ class TestPurchaseApi(APITestCase):
         body = response.json().get("results", [])
         self.assertEqual(len(body), 2)
 
+
+class TestPurchaseListFilterApi(APITestCase):
+    @authenticate
+    def test_search_purchases(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen)
+        PurchaseFactory.create(description="tomates", canteen=canteen)
+        PurchaseFactory.create(description="pommes", canteen=canteen)
+
+        search_term = "avoine"
+        response = self.client.get(f"{reverse('purchase_list_create')}?search={search_term}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].get("description"), "avoine")
+
+    @authenticate
+    def test_search_only_user_purchases(self):
+        PurchaseFactory.create(description="avoine")
+        PurchaseFactory.create(description="tomates")
+        PurchaseFactory.create(description="pommes")
+
+        search_term = "avoine"
+        response = self.client.get(f"{reverse('purchase_list_create')}?search={search_term}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 0)
+
+    @authenticate
+    def test_filter_by_canteen(self):
+        canteen = CanteenFactory.create()
+        other_canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        other_canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen)
+        PurchaseFactory.create(description="tomates", canteen=other_canteen)
+        PurchaseFactory.create(description="pommes", canteen=canteen)
+
+        canteen_id = canteen.id
+        response = self.client.get(f"{reverse('purchase_list_create')}?canteen__id={canteen_id}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+
+        self.assertEqual(len(results), 2)
+
+    @authenticate
+    def test_filter_by_characteristic(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen, characteristics=[Purchase.Characteristic.BIO])
+        PurchaseFactory.create(
+            description="tomates",
+            canteen=canteen,
+            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.PECHE_DURABLE],
+        )
+        PurchaseFactory.create(
+            description="pommes", canteen=canteen, characteristics=[Purchase.Characteristic.PECHE_DURABLE]
+        )
+
+        response = self.client.get(f"{reverse('purchase_list_create')}?characteristics={Purchase.Characteristic.BIO}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+
+        response = self.client.get(
+            f"{reverse('purchase_list_create')}?characteristics={Purchase.Characteristic.BIO}&characteristics={Purchase.Characteristic.PECHE_DURABLE}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 3)
+
+    @authenticate
+    def test_filter_by_family(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen, family=Purchase.Family.PRODUITS_DE_LA_MER)
+        PurchaseFactory.create(description="tomates", canteen=canteen, family=Purchase.Family.PRODUITS_DE_LA_MER)
+        PurchaseFactory.create(description="pommes", canteen=canteen, family=Purchase.Family.AUTRES)
+
+        response = self.client.get(f"{reverse('purchase_list_create')}?family={Purchase.Family.PRODUITS_DE_LA_MER}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+
+    @authenticate
+    def test_filter_by_date(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(description="avoine", canteen=canteen, date="2020-01-01")
+        PurchaseFactory.create(description="tomates", canteen=canteen, date="2020-01-02")
+        PurchaseFactory.create(description="pommes", canteen=canteen, date="2020-02-01")
+
+        response = self.client.get(f"{reverse('purchase_list_create')}?date_after=2020-01-02")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+
+        response = self.client.get(f"{reverse('purchase_list_create')}?date_before=2020-01-01")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 1)
+
+        response = self.client.get(f"{reverse('purchase_list_create')}?date_after=2020-01-02&date_before=2020-02-01")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results", [])
+        self.assertEqual(len(results), 2)
+
+    @authenticate
+    def test_available_filter_options(self):
+        """
+        Test that filter options with data are included in purchases list response
+        """
+        first_canteen = CanteenFactory.create()
+        first_canteen.managers.add(authenticate.user)
+        second_canteen = CanteenFactory.create()
+        second_canteen.managers.add(authenticate.user)
+        PurchaseFactory.create(
+            description="avoine",
+            canteen=first_canteen,
+            family=Purchase.Family.PRODUITS_DE_LA_MER,
+            characteristics=[Purchase.Characteristic.BIO],
+        )
+        PurchaseFactory.create(
+            description="tomates",
+            canteen=first_canteen,
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            characteristics=[],
+        )
+        PurchaseFactory.create(
+            description="pommes",
+            canteen=second_canteen,
+            family=Purchase.Family.PRODUITS_LAITIERS,
+            characteristics=[Purchase.Characteristic.LABEL_ROUGE],
+        )
+
+        not_my_canteen = CanteenFactory.create()
+        PurchaseFactory.create(
+            description="secret",
+            canteen=not_my_canteen,
+            family=Purchase.Family.AUTRES,
+            characteristics=[Purchase.Characteristic.COMMERCE_EQUITABLE],
+        )
+
+        response = self.client.get(f"{reverse('purchase_list_create')}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        families = body.get("families", [])
+        self.assertEqual(len(families), 3)
+        self.assertIn(Purchase.Family.PRODUITS_DE_LA_MER, families)
+        self.assertNotIn(Purchase.Family.AUTRES, families)
+        self.assertEqual(len(body.get("characteristics", [])), 2)
+        canteens = body.get("canteens", [])
+        self.assertEqual(len(canteens), 2)
+        self.assertNotIn(not_my_canteen.id, canteens)
+
+        response = self.client.get(f"{reverse('purchase_list_create')}?characteristics={Purchase.Characteristic.BIO}")
+        body = response.json()
+        self.assertEqual(len(body["families"]), 1)
+
+        response = self.client.get(f"{reverse('purchase_list_create')}?family={Purchase.Family.PRODUITS_LAITIERS}")
+        body = response.json()
+        self.assertEqual(len(body["characteristics"]), 1)
+
+
+class TestPurchaseCreateApi(APITestCase):
     def test_create_purchase_unauthenticated(self):
         """
         The purchase creation is only available when logged in
@@ -133,6 +303,8 @@ class TestPurchaseApi(APITestCase):
         response = self.client.post(reverse("purchase_list_create"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+
+class TestPurchaseUpdateApi(APITestCase):
     def test_update_purchases_unauthenticated(self):
         """
         The purchase update is only available when logged in
@@ -214,6 +386,8 @@ class TestPurchaseApi(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+
+class TestCanteenPurchaseSummaryApi(APITestCase):
     @authenticate
     def test_purchase_total_summary(self):
         """
@@ -566,6 +740,8 @@ class TestPurchaseApi(APITestCase):
         self.assertEquals(body["results"][1]["year"], 2021)
         self.assertEquals(body["results"][1]["valueTotalHt"], 450)
 
+
+class TestPurchaseDeleteApi(APITestCase):
     @authenticate
     def test_delete_purchase(self):
         """
@@ -646,6 +822,8 @@ class TestPurchaseApi(APITestCase):
         not_mine.refresh_from_db()
         self.assertIsNone(not_mine.deletion_date)
 
+
+class TestPurchaseRestoreApi(APITestCase):
     @authenticate
     def test_restore_purchases(self):
         """
@@ -674,172 +852,8 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(not_me.deletion_date, date)
         self.assertEqual(not_my_purchase.deletion_date, date)
 
-    @authenticate
-    def test_search_purchases(self):
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-        PurchaseFactory.create(description="avoine", canteen=canteen)
-        PurchaseFactory.create(description="tomates", canteen=canteen)
-        PurchaseFactory.create(description="pommes", canteen=canteen)
 
-        search_term = "avoine"
-        response = self.client.get(f"{reverse('purchase_list_create')}?search={search_term}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0].get("description"), "avoine")
-
-    @authenticate
-    def test_search_only_user_purchases(self):
-        PurchaseFactory.create(description="avoine")
-        PurchaseFactory.create(description="tomates")
-        PurchaseFactory.create(description="pommes")
-
-        search_term = "avoine"
-        response = self.client.get(f"{reverse('purchase_list_create')}?search={search_term}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 0)
-
-    @authenticate
-    def test_filter_by_canteen(self):
-        canteen = CanteenFactory.create()
-        other_canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-        other_canteen.managers.add(authenticate.user)
-        PurchaseFactory.create(description="avoine", canteen=canteen)
-        PurchaseFactory.create(description="tomates", canteen=other_canteen)
-        PurchaseFactory.create(description="pommes", canteen=canteen)
-
-        canteen_id = canteen.id
-        response = self.client.get(f"{reverse('purchase_list_create')}?canteen__id={canteen_id}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-
-        self.assertEqual(len(results), 2)
-
-    @authenticate
-    def test_filter_by_characteristic(self):
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-        PurchaseFactory.create(description="avoine", canteen=canteen, characteristics=[Purchase.Characteristic.BIO])
-        PurchaseFactory.create(
-            description="tomates",
-            canteen=canteen,
-            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.PECHE_DURABLE],
-        )
-        PurchaseFactory.create(
-            description="pommes", canteen=canteen, characteristics=[Purchase.Characteristic.PECHE_DURABLE]
-        )
-
-        response = self.client.get(f"{reverse('purchase_list_create')}?characteristics={Purchase.Characteristic.BIO}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 2)
-
-        response = self.client.get(
-            f"{reverse('purchase_list_create')}?characteristics={Purchase.Characteristic.BIO}&characteristics={Purchase.Characteristic.PECHE_DURABLE}"
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 3)
-
-    @authenticate
-    def test_filter_by_family(self):
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-        PurchaseFactory.create(description="avoine", canteen=canteen, family=Purchase.Family.PRODUITS_DE_LA_MER)
-        PurchaseFactory.create(description="tomates", canteen=canteen, family=Purchase.Family.PRODUITS_DE_LA_MER)
-        PurchaseFactory.create(description="pommes", canteen=canteen, family=Purchase.Family.AUTRES)
-
-        response = self.client.get(f"{reverse('purchase_list_create')}?family={Purchase.Family.PRODUITS_DE_LA_MER}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 2)
-
-    @authenticate
-    def test_filter_by_date(self):
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-        PurchaseFactory.create(description="avoine", canteen=canteen, date="2020-01-01")
-        PurchaseFactory.create(description="tomates", canteen=canteen, date="2020-01-02")
-        PurchaseFactory.create(description="pommes", canteen=canteen, date="2020-02-01")
-
-        response = self.client.get(f"{reverse('purchase_list_create')}?date_after=2020-01-02")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 2)
-
-        response = self.client.get(f"{reverse('purchase_list_create')}?date_before=2020-01-01")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 1)
-
-        response = self.client.get(f"{reverse('purchase_list_create')}?date_after=2020-01-02&date_before=2020-02-01")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 2)
-
-    @authenticate
-    def test_available_filter_options(self):
-        """
-        Test that filter options with data are included in purchases list response
-        """
-        first_canteen = CanteenFactory.create()
-        first_canteen.managers.add(authenticate.user)
-        second_canteen = CanteenFactory.create()
-        second_canteen.managers.add(authenticate.user)
-        PurchaseFactory.create(
-            description="avoine",
-            canteen=first_canteen,
-            family=Purchase.Family.PRODUITS_DE_LA_MER,
-            characteristics=[Purchase.Characteristic.BIO],
-        )
-        PurchaseFactory.create(
-            description="tomates",
-            canteen=first_canteen,
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            characteristics=[],
-        )
-        PurchaseFactory.create(
-            description="pommes",
-            canteen=second_canteen,
-            family=Purchase.Family.PRODUITS_LAITIERS,
-            characteristics=[Purchase.Characteristic.LABEL_ROUGE],
-        )
-
-        not_my_canteen = CanteenFactory.create()
-        PurchaseFactory.create(
-            description="secret",
-            canteen=not_my_canteen,
-            family=Purchase.Family.AUTRES,
-            characteristics=[Purchase.Characteristic.COMMERCE_EQUITABLE],
-        )
-
-        response = self.client.get(f"{reverse('purchase_list_create')}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        families = body.get("families", [])
-        self.assertEqual(len(families), 3)
-        self.assertIn(Purchase.Family.PRODUITS_DE_LA_MER, families)
-        self.assertNotIn(Purchase.Family.AUTRES, families)
-        self.assertEqual(len(body.get("characteristics", [])), 2)
-        canteens = body.get("canteens", [])
-        self.assertEqual(len(canteens), 2)
-        self.assertNotIn(not_my_canteen.id, canteens)
-
-        response = self.client.get(f"{reverse('purchase_list_create')}?characteristics={Purchase.Characteristic.BIO}")
-        body = response.json()
-        self.assertEqual(len(body["families"]), 1)
-
-        response = self.client.get(f"{reverse('purchase_list_create')}?family={Purchase.Family.PRODUITS_LAITIERS}")
-        body = response.json()
-        self.assertEqual(len(body["characteristics"]), 1)
-
+class TestPurchaseExportApi(APITestCase):
     def test_excel_export_unauthenticated(self):
         response = self.client.get(reverse("purchase_list_export"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -883,6 +897,8 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
 
+
+class TestPurchaseOptionsApi(APITestCase):
     @authenticate
     def test_get_purchase_options(self):
         """
@@ -912,6 +928,8 @@ class TestPurchaseApi(APITestCase):
         response = self.client.get(reverse("purchase_options"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+
+class TestCreateDiagnosticsFromPurchasesApi(APITestCase):
     @authenticate
     def test_create_diagnostics_from_purchases(self):
         """
