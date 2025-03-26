@@ -282,6 +282,8 @@ class Teledeclaration(models.Model):
             json_fields["satellites"] = serialized_satellites
             json_fields["satellite_canteens_count"] = canteen.satellite_canteens_count
 
+        diagnostic.populate_simplified_diagnostic_values()
+
         return TeledeclarationFactory.create(
             applicant=applicant,
             year=diagnostic.year,
@@ -292,11 +294,11 @@ class Teledeclaration(models.Model):
             diagnostic=diagnostic,
             declared_data=json_fields,
             teledeclaration_mode=teledeclaration_mode,
-            value_total_ht=0,
-            value_bio_ht_agg=0,
-            value_sustainable_ht_agg=0,
-            value_externality_performance_ht_agg=0,
-            value_egalim_others_ht_agg=0,
+            value_total_ht=diagnostic.value_total_ht,
+            value_bio_ht_agg=diagnostic.value_bio_ht,
+            value_sustainable_ht_agg=diagnostic.value_sustainable_ht,
+            value_externality_performance_ht_agg=diagnostic.value_externality_performance_ht,
+            value_egalim_others_ht_agg=diagnostic.value_egalim_others_ht,
         )
 
     @staticmethod
