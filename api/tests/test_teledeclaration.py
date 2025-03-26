@@ -529,10 +529,11 @@ class TestTeledeclarationApi(APITestCase):
         self.assertIn("value_fruits_et_legumes_local", json_teledeclaration)
 
         # Checking the aggregation
-        self.assertIn("value_sustainable_ht_agg", json_teledeclaration)
-        self.assertIn("value_egalim_others_ht_agg", json_teledeclaration)
-        self.assertIn("value_bio_ht_agg", json_teledeclaration)
-        self.assertIn("value_externality_performance_ht_agg", json_teledeclaration)
+        self.assertEqual(teledeclaration.value_total_ht, 0)
+        self.assertEqual(teledeclaration.value_sustainable_ht_agg, 0)
+        self.assertEqual(teledeclaration.value_egalim_others_ht_agg, 0)
+        self.assertEqual(teledeclaration.value_bio_ht_agg, 0)
+        self.assertEqual(teledeclaration.value_externality_performance_ht_agg, 0)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
