@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.11.4](https://github.com/betagouv/ma-cantine/compare/v2025.11.3...v2025.11.4) (2025-03-27)
+
+
+### Corrections (bugs, typos...)
+
+* **Teledeclaration:** Remove problematic and uselesss cout denrees ([#5167](https://github.com/betagouv/ma-cantine/issues/5167)) ([32b0b79](https://github.com/betagouv/ma-cantine/commit/32b0b794edf470e98ac90b1eb79c7fbabc3c283c))
+
 ## [2025.11.3](https://github.com/betagouv/ma-cantine/compare/v2025.11.2...v2025.11.3) (2025-03-27)
 
 
