@@ -73,6 +73,7 @@ def unpopulate_aggregated_fields(apps, schema_editor):
         td.value_egalim_others_ht_agg = None
         td.value_externality_performance_ht_agg = None
         
+        td.save()
 class Migration(migrations.Migration):
 
 
