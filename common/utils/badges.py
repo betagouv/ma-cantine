@@ -52,6 +52,7 @@ def badges_for_queryset(diagnostic_year_queryset):
     badge_querysets["waste"] = waste_badge_query
 
     # diversification
+    # TODO : change diversification badge attribution to be homogenous with back_end proprety "diversification_badge".
     diversification_badge_query = diagnostic_year_queryset.exclude(vegetarian_weekly_recurrence__isnull=True)
     diversification_badge_query = diversification_badge_query.exclude(vegetarian_weekly_recurrence="")
     diversification_badge_query = diversification_badge_query.exclude(
