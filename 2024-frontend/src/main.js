@@ -14,6 +14,7 @@ import WeatherWindyIcon from "mdi-icons/WeatherWindy"
 import BullhornIcon from "mdi-icons/Bullhorn"
 import LeafIcon from "mdi-icons/Leaf"
 import LoadingIcon from "mdi-icons/Loading"
+import DeleteIcon from "mdi-icons/Loading"
 // "This few lines of CSS will cause the icons to scale with any surrounding text, which can be helpful when you primarily style with CSS."
 // https://www.npmjs.com/package/vue-material-design-icons
 import "mdi-icons/styles.css"
@@ -51,6 +52,7 @@ app.component("mdi-offer", OfferIcon)
 app.component("mdi-weather-windy", WeatherWindyIcon)
 app.component("mdi-bullhorn", BullhornIcon)
 app.component("mdi-loading", LoadingIcon)
+app.component("mdi-delete", DeleteIcon)
 // TODO: get the remix icon of leaf-fill
 app.component("$leaf-fill", LeafIcon)
 
