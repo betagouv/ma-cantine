@@ -27,9 +27,6 @@ def aggregate(df):
         df = aggregate_col(df, "externality_performance", ["_performance", "_externalites"])
     except KeyError:
         pass
-    df["teledeclaration.cout_denrees"] = df.apply(
-        lambda row: row["teledeclaration.value_total_ht"] / row["canteen.yearly_meal_count"], axis=1
-    )
     return df
 
 def convert_queryset_to_df(teledeclarations):
