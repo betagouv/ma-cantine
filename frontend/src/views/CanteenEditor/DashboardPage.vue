@@ -23,7 +23,7 @@
           </p>
         </div>
         <div v-else>
-          <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} cantines qui ont télédéclaré&nbsp;:</p>
+          <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} bilans télédéclarés&nbsp;:</p>
           <v-row class="px-2">
             <v-col class="pl-0 pr-1" cols="12" sm="6" md="4">
               <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
@@ -89,7 +89,7 @@
           <h3 class="text-h6 font-weight-bold mt-10 mb-2">
             Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}
           </h3>
-          <p class="mb-8">Parmi les mêmes {{ statistics.diagnosticsCount }} cantines&nbsp;:</p>
+          <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} bilans télédéclarés&nbsp;:</p>
           <v-row class="my-8">
             <v-col cols="12" sm="6" md="5" v-for="measure in otherMeasures" :key="measure.id" class="mb-4">
               <BadgeCard :measure="measure" :percentageAchieved="statistics[measure.badgeId + 'Percent']" />
