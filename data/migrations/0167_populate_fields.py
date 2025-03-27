@@ -34,10 +34,13 @@ def aggregate(df):
 
 def convert_queryset_to_df(teledeclarations):
     df = pd.DataFrame.from_dict(teledeclarations.values())
-    df.index = df.id
-    df_json = pd.json_normalize(df["declared_data"])
-    df_json.index = df.id
-    return pd.concat([df.drop("declared_data", axis=1), df_json], axis=1)
+    if len(df):
+        df.index = df['id']
+        df_json = pd.json_normalize(df["declared_data"])
+        df_json.index = df['id']
+        return pd.concat([df.drop("declared_data", axis=1), df_json], axis=1)
+    else:
+        return pd.DataFrame()
 
 def get_value_if_valid(aggregated_values, field):
     if field in aggregated_values and aggregated_values[field] and not np.isnan(aggregated_values[field]):
@@ -46,18 +49,19 @@ def get_value_if_valid(aggregated_values, field):
 def populate_aggregated_food_fields(apps, schema_editor):
     Teledeclaration = apps.get_model('data', 'Teledeclaration')
     teledeclarations = Teledeclaration.objects.all()
-    df = convert_queryset_to_df(teledeclarations)
-    df = aggregate(df)
-    
-    for td in teledeclarations:
-        aggregated_values = df[df.id == td.id].iloc[0]
-        td.value_total_ht = get_value_if_valid(aggregated_values, 'teledeclaration.value_total_ht')
-        td.value_bio_ht_agg = get_value_if_valid(aggregated_values, 'teledeclaration.value_bio_ht') 
-        td.value_sustainable_ht_agg = get_value_if_valid(aggregated_values, 'teledeclaration.value_sustainable_ht') 
-        td.value_egalim_others_ht_agg = get_value_if_valid(aggregated_values, 'teledeclaration.value_egalim_others_ht') 
-        td.value_externality_performance_ht_agg = get_value_if_valid(aggregated_values, 'teledeclaration.value_externality_performance_ht') 
+    if teledeclarations:
+        df = convert_queryset_to_df(teledeclarations)
+        df = aggregate(df)
+        
+        for td in teledeclarations:
+            aggregated_values = df[df.id == td.id].iloc[0]
+            td.value_total_ht = get_value_if_valid(aggregated_values, 'teledeclaration.value_total_ht')
+            td.value_bio_ht_agg = get_value_if_valid(aggregated_values, 'teledeclaration.value_bio_ht') 
+            td.value_sustainable_ht_agg = get_value_if_valid(aggregated_values, 'teledeclaration.value_sustainable_ht') 
+            td.value_egalim_others_ht_agg = get_value_if_valid(aggregated_values, 'teledeclaration.value_egalim_others_ht') 
+            td.value_externality_performance_ht_agg = get_value_if_valid(aggregated_values, 'teledeclaration.value_externality_performance_ht') 
 
-        td.save()
+            td.save()
 
 def unpopulate_aggregated_fields(apps, schema_editor):
     Teledeclaration = apps.get_model('data', 'Teledeclaration')
