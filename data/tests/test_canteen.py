@@ -120,13 +120,17 @@ class TestCanteenCompletePropertyAndQuerySet(TestCase):
         )
         cls.canteen_central_serving_incomplete = CanteenFactory(
             **COMMON,
-            siret="75665621899905",
+            siret=None,  # incomplete
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
-            daily_meal_count=0,  # incomplete
+            daily_meal_count=12,
             satellite_canteens_count=1
         )
         cls.canteen_on_site = CanteenFactory(
-            **COMMON, siret="96766910375238", production_type=Canteen.ProductionType.ON_SITE, daily_meal_count=12
+            **COMMON,
+            siret=None,
+            siren_unite_legale="967669103",  # complete
+            production_type=Canteen.ProductionType.ON_SITE,
+            daily_meal_count=12
         )
         cls.canteen_on_site_incomplete = CanteenFactory(
             **COMMON,

@@ -36,6 +36,10 @@ def list_properties(queryset, property):
     return list(queryset.values_list(property, flat=True))
 
 
+def has_siret_or_siren_unite_legale_query():
+    return Q(siret__isnull=False) | Q(siren_unite_legale__isnull=False)
+
+
 def is_serving_query():
     return Q(
         production_type__in=[
@@ -60,8 +64,7 @@ def has_missing_data_query():
         | Q(city_insee_code=None)
         | Q(city_insee_code="")
         | Q(yearly_meal_count=None)
-        | Q(siret=None)
-        | Q(siret="")
+        | Q(~has_siret_or_siren_unite_legale_query())
         | Q(production_type=None)
         | Q(management_type=None)
         | Q(economic_model=None)
