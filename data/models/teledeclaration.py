@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
@@ -15,6 +16,10 @@ from data.models import AuthenticationMethodHistoricalRecords, Canteen, Diagnost
 from macantine.utils import CAMPAIGN_DATES
 
 logger = logging.getLogger(__name__)
+
+
+def canteen_has_siret_or_siren_unite_legale_query():
+    return Q(canteen_siret__isnull=False) | Q(canteen_siren_unite_legale__isnull=False)
 
 
 class CustomJSONEncoder(DjangoJSONEncoder):
@@ -39,7 +44,7 @@ class TeledeclarationQuerySet(models.QuerySet):
         return (
             self.select_related("canteen")
             .filter(canteen_id__isnull=False)
-            .filter(~models.Q(canteen_siret__in=[None, ""]) | ~models.Q(canteen_siren_unite_legale__in=[None, ""]))
+            .filter(canteen_has_siret_or_siren_unite_legale_query())
             .exclude(
                 canteen__deletion_date__range=(
                     CAMPAIGN_DATES[year]["start_date"],
