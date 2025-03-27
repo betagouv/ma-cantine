@@ -91,6 +91,10 @@ const vue2routes = [
     path: "/importer-diagnostics/:importUrlSlug",
     name: "DiagnosticImportPage",
   },
+  {
+    path: "/modifier-ma-cantine/:canteenUrlComponent/supprimer",
+    name: "CanteenDeletion",
+  },
 ]
 
 export default vue2routes
