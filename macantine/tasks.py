@@ -295,7 +295,9 @@ def fill_missing_geolocation_data_using_siret():
     if len(candidate_canteens) == 0:
         logger.info("No candidate canteens have been found. Nothing to do here...")
         return
-    for canteen in candidate_canteens:
+    for i, canteen in enumerate(candidate_canteens):
+        if i % 200 == 0:
+            time.sleep(60)
         if len(canteen.siret) == 14:
             response = {}
             response = fetch_geo_data_from_siret(canteen.siret, response)
