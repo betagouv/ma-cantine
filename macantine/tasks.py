@@ -296,7 +296,9 @@ def fill_missing_geolocation_data_using_siret():
         logger.info("No candidate canteens have been found. Nothing to do here...")
         return
     for i, canteen in enumerate(candidate_canteens):
+        logger.info(f"Traitement de la cantine {canteen.name} {canteen.siret}, appel #{i}")
         if i % 200 == 0:
+            logger.info("200 appels réalisés : Attente pendant 60 secondes...")
             time.sleep(60)
         if len(canteen.siret) == 14:
             response = {}
