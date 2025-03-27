@@ -36,6 +36,14 @@ def list_properties(queryset, property):
     return list(queryset.values_list(property, flat=True))
 
 
+def has_siret_query():
+    return Q(siret__isnull=False) & ~Q(siret="")
+
+
+def has_siren_unite_legale_query():
+    return Q(siren_unite_legale__isnull=False) & ~Q(siren_unite_legale="")
+
+
 def has_siret_or_siren_unite_legale_query():
     has_siret_query = Q(siret__isnull=False) & ~Q(siret="")
     has_siren_unite_legale_query = Q(siren_unite_legale__isnull=False) & ~Q(siren_unite_legale="")
