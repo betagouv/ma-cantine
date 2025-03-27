@@ -50,19 +50,19 @@ const goToCanteenPage = (id) => {
 <template>
   <section class="fr-grid-row fr-grid-row--bottom">
     <h1>{{ route.meta.title }}</h1>
+    <AppLoader v-if="loading" />
+    <CanteenEstablishmentForm
+      v-else-if="!loading && canteenData.id"
+      :establishment-data="canteenData"
+      :showCancelButton="true"
+      @sendForm="(payload) => saveCanteen(payload)"
+      @cancel="(id) => goToCanteenPage(canteenId)"
+    />
+    <p v-else>
+      Une erreur est survenue,
+      <AppLinkRouter :to="{ name: 'DashboardManager' }" title="revenir à la page précédente" />
+    </p>
   </section>
-  <AppLoader v-if="loading" />
-  <CanteenEstablishmentForm
-    v-else-if="!loading && canteenData.id"
-    :establishment-data="canteenData"
-    :showCancelButton="true"
-    @sendForm="(payload) => saveCanteen(payload)"
-    @cancel="(id) => goToCanteenPage(canteenId)"
-  />
-  <p v-else>
-    Une erreur est survenue,
-    <AppLinkRouter :to="{ name: 'DashboardManager' }" title="revenir à la page précédente" />
-  </p>
   <section class="fr-container fr-background-alt--red-marianne fr-p-3w fr-mt-2w fr-grid-row fr-grid-row--center">
     <div class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w">
       <h2 class="fr-h5 fr-text-default--error">
