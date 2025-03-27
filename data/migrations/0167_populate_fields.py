@@ -68,7 +68,7 @@ def unpopulate_aggregated_fields(apps, schema_editor):
     
     for td in Teledeclaration.objects.all():
         td.value_total_ht = None
-        td.value_bio_ht = None
+        td.value_bio_ht_agg = None
         td.value_sustainable_ht_agg = None
         td.value_egalim_others_ht_agg = None
         td.value_externality_performance_ht_agg = None
