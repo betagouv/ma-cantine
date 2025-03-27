@@ -1,12 +1,12 @@
 <template>
   <DsfrCallout noIcon class="mt-2">
     <h2 class="fr-text font-weight-bold mb-2 mt-2">
-      CAMPAGNE DE TELEDECLARATION 2025 : Du 7 janvier au 31 mars
+      INFORMATION IMPORTANTE :
     </h2>
     <p class="mb-0">
-      Dans votre espace cantine, remplissez votre bilan sur les données d'achat 2024 et télédéclarez vos données.
+      Maintien ouvert exceptionnel de la campagne de télédéclaration 2025 sur l'ensemble de la première semaine d'avril.
       <br />
-      Pour rappel, selon l’arrêté ministériel du 14 septembre 2022, il est obligatoire de télédéclarer ses achats.
+      Les télédéclarations seront possibles jusqu’au dimanche 6 avril 2025 inclus.
     </p>
     <v-row class="mt-4 mb-0 mx-0 align-center">
       <v-btn :to="{ name: 'PendingActions' }" color="primary" class="mb-5 mb-md-2 mr-4">
