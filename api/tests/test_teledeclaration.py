@@ -477,7 +477,14 @@ class TestTeledeclarationApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=LAST_YEAR, diagnostic_type="COMPLETE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=LAST_YEAR, diagnostic_type="COMPLETE", value_total_ht=1000, value_sustainable_ht=None
+        )
+        # Making sure we will aggregate
+        diagnostic.value_sustainable_ht = None
+        diagnostic.value_boissons_label_rouge = 10
+        diagnostic.value_boulangerie_aocaop_igp_stg = 10
+        diagnostic.save()
         payload = {"diagnosticId": diagnostic.id}
 
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -525,6 +532,14 @@ class TestTeledeclarationApi(APITestCase):
         self.assertIn("value_fruits_et_legumes_france", json_teledeclaration)
         self.assertIn("value_fruits_et_legumes_short_distribution", json_teledeclaration)
         self.assertIn("value_fruits_et_legumes_local", json_teledeclaration)
+
+        # Checking the aggregation
+        self.assertEqual(teledeclaration.value_total_ht, 1000)
+        self.assertEqual(
+            teledeclaration.value_sustainable_ht_agg,
+            json_teledeclaration["value_boissons_label_rouge"]
+            + json_teledeclaration["value_boulangerie_aocaop_igp_stg"],
+        )
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate

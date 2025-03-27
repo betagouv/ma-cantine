@@ -108,6 +108,24 @@ class Teledeclaration(models.Model):
     canteen_siret = models.TextField(null=True, blank=True)
     canteen_siren_unite_legale = models.TextField(null=True, blank=True)
 
+    value_total_ht = models.IntegerField(
+        null=True, blank=True, verbose_name="Champ value total. En cas de TD complète: ce champ est aggrégé"
+    )
+    value_bio_ht_agg = models.IntegerField(
+        null=True, blank=True, verbose_name="Champ value bio. En cas de TD complète: ce champ est aggrégé"
+    )
+    value_sustainable_ht_agg = models.IntegerField(
+        null=True, blank=True, verbose_name="Champ value Egalim. En cas de TD complète: ce champ est aggrégé"
+    )
+    value_externality_performance_ht_agg = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Champ externalité/performance. En cas de TD complète, ce champ est aggrégé",
+    )
+    value_egalim_others_ht_agg = models.IntegerField(
+        null=True, blank=True, verbose_name="Champ Autres Egalim. En cas de TD complète, ce champ est aggrégé"
+    )
+
     history = HistoricalRecords(
         bases=[
             AuthenticationMethodHistoricalRecords,
@@ -264,6 +282,8 @@ class Teledeclaration(models.Model):
             json_fields["satellites"] = serialized_satellites
             json_fields["satellite_canteens_count"] = canteen.satellite_canteens_count
 
+        diagnostic.populate_simplified_diagnostic_values()
+
         return TeledeclarationFactory.create(
             applicant=applicant,
             year=diagnostic.year,
@@ -274,6 +294,11 @@ class Teledeclaration(models.Model):
             diagnostic=diagnostic,
             declared_data=json_fields,
             teledeclaration_mode=teledeclaration_mode,
+            value_total_ht=diagnostic.value_total_ht,
+            value_bio_ht_agg=diagnostic.value_bio_ht,
+            value_sustainable_ht_agg=diagnostic.value_sustainable_ht,
+            value_externality_performance_ht_agg=diagnostic.value_externality_performance_ht,
+            value_egalim_others_ht_agg=diagnostic.value_egalim_others_ht,
         )
 
     @staticmethod
