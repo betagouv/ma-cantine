@@ -569,6 +569,12 @@ class Canteen(SoftDeletionModel):
             return True
 
     @property
+    def in_administration(self):
+        administration_sectors = Sector.objects.filter(category="administration")
+        if administration_sectors.count() and self.sectors.intersection(administration_sectors).exists():
+            return True
+
+    @property
     def lead_image(self):
         return self.images.first()
 

@@ -1253,15 +1253,17 @@ class Diagnostic(models.Model):
 
     @property
     def diversification_badge(self) -> bool | None:
-        if self.vegetarian_weekly_recurrence == Diagnostic.VegetarianMenuFrequency.DAILY:
-            return True
-        elif self.vegetarian_weekly_recurrence in [
+        has_daily_frequency = self.vegetarian_weekly_recurrence == Diagnostic.VegetarianMenuFrequency.DAILY
+        has_weekly_or_more_frequency = self.vegetarian_weekly_recurrence in [
+            Diagnostic.VegetarianMenuFrequency.DAILY,
             Diagnostic.VegetarianMenuFrequency.MID,
             Diagnostic.VegetarianMenuFrequency.HIGH,
-        ]:
-            # if the canteen is in the education sector, it can have a lower recurrence
-            if self.canteen.in_education:
-                return True
+        ]
+        # Only the canteens is in the administration sector must have a daily frequency
+        if self.canteen.in_administration and has_daily_frequency:
+            return True
+        if not self.canteen.in_administration and has_weekly_or_more_frequency:
+            return True
         if self.tunnel_diversification:
             return False
 
