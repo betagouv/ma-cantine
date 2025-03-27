@@ -35,7 +35,7 @@ class TestMigrations(TestCase):
         self.apps = executor.loader.project_state(self.migrate_to).apps
 
 
-class TagsTestCase(TestMigrations):
+class ApproFieldsTestCase(TestMigrations):
     migrate_from = "0166_historicalteledeclaration_value_bio_ht_agg_and_more"
     migrate_to = "0167_populate_fields"
 
