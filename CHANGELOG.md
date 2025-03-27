@@ -6,6 +6,27 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.11.3](https://github.com/betagouv/ma-cantine/compare/v2025.11.2...v2025.11.3) (2025-03-27)
+
+
+### Améliorations
+
+* **Modifier mon établissement:** ajoute un lien pour accéder à la page de suppression de l'établissement ([#5164](https://github.com/betagouv/ma-cantine/issues/5164)) ([67541ef](https://github.com/betagouv/ma-cantine/commit/67541efb2eed0bc94343b17fcc4375d17ec96c3e))
+* **Statistiques:** Renommer la stats 'Cantines qui ont télédéclaré' en 'Bilans télédéclarés' ([#5166](https://github.com/betagouv/ma-cantine/issues/5166)) ([e233419](https://github.com/betagouv/ma-cantine/commit/e233419b1ef2271d35be62803c3c668d0e03c827))
+* **Teledeclaration:** Ajout de champs exploitables pour les données alimentaires les plus importante ([#5159](https://github.com/betagouv/ma-cantine/issues/5159)) ([5659bbf](https://github.com/betagouv/ma-cantine/commit/5659bbff8882f57474fee3114c2f4ec0b6f03780))
+* **Télédéclaration:** prolonge la campagne de télédéclaration jusqu'au 6 avril ([#5162](https://github.com/betagouv/ma-cantine/issues/5162)) ([d4c68a7](https://github.com/betagouv/ma-cantine/commit/d4c68a773cc3fb0c2d0b5d99f93c5bbc0246c623))
+
+
+### Corrections (bugs, typos...)
+
+* **Badge menus végétariens:** modification du calcul d'obtention du badge ([#5156](https://github.com/betagouv/ma-cantine/issues/5156)) ([049e4d6](https://github.com/betagouv/ma-cantine/commit/049e4d6dd195da9d83d4363866a4204d5ef75bdf))
+
+
+### Technique
+
+* **Cantines:** Actions: gère les cantines sans siret ([#5163](https://github.com/betagouv/ma-cantine/issues/5163)) ([03da60c](https://github.com/betagouv/ma-cantine/commit/03da60c372b5a737f4f84dd13aa276a027f459a3))
+* **Cantines:** Actions: pour les cantines satellites, regarder si la CC n'a pas déjà un bilan complet ([#5160](https://github.com/betagouv/ma-cantine/issues/5160)) ([9a12368](https://github.com/betagouv/ma-cantine/commit/9a12368b794dfbcc439d67f2ebe72ee3298bd26b))
+
 ## [2025.11.2](https://github.com/betagouv/ma-cantine/compare/v2025.11.1...v2025.11.2) (2025-03-25)
 
 
