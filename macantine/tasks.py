@@ -250,7 +250,9 @@ def _get_candidate_canteens_for_code_geobot():
 
 
 def _get_candidate_canteens_for_siret_geobot():
-    return Canteen.objects.filter(city_insee_code__isnull=True, siret__isnull=False).order_by("creation_date")
+    return Canteen.objects.filter(
+        Q(city_insee_code__isnull=True) | Q(city_insee_code=""), siret__isnull=False
+    ).order_by("creation_date")
 
 
 def _fill_from_api_response(response, canteens):
