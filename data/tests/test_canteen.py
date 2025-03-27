@@ -121,6 +121,7 @@ class TestCanteenCompletePropertyAndQuerySet(TestCase):
         cls.canteen_central_serving_incomplete = CanteenFactory(
             **COMMON,
             siret=None,  # incomplete
+            siren_unite_legale=None,
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             daily_meal_count=12,
             satellite_canteens_count=1
