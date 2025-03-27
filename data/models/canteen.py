@@ -37,7 +37,9 @@ def list_properties(queryset, property):
 
 
 def has_siret_or_siren_unite_legale_query():
-    return Q(siret__isnull=False) | Q(siren_unite_legale__isnull=False)
+    has_siret_query = Q(siret__isnull=False) & ~Q(siret="")
+    has_siren_unite_legale_query = Q(siren_unite_legale__isnull=False) & ~Q(siren_unite_legale="")
+    return has_siret_query | has_siren_unite_legale_query
 
 
 def is_serving_query():
@@ -99,6 +101,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             canteen=OuterRef("pk"), sector__has_line_ministry=True
         )
         return self.annotate(requires_line_ministry=Exists(has_sector_requiring_line_ministry))
+
+    def has_siret_or_siren_unite_legale(self):
+        return self.filter(has_siret_or_siren_unite_legale_query())
 
     def has_missing_data(self):
         return self.annotate_with_requires_line_ministry().filter(has_missing_data_query())
