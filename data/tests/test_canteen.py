@@ -51,7 +51,7 @@ class TestCanteenModel(TestCase):
         self.assertEqual(qs.count(), 1, "Soft deleted canteens can be accessed in custom queryset")
 
 
-class TestCanteenQuerySet(TestCase):
+class TestCanteenVisibleQuerySet(TestCase):
     @classmethod
     def setUpTestData(cls):
         CanteenFactory(line_ministry=None, publication_status=Canteen.PublicationStatus.PUBLISHED)
@@ -87,6 +87,24 @@ class TestCanteenQuerySet(TestCase):
         qs = Canteen.objects.publicly_hidden()
         self.assertEqual(qs.count(), 1)
         self.assertEqual(qs.first(), self.canteen_published_armee)
+
+
+class TestCanteenSiretOrSirenUniteLegaleQuerySet(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        CanteenFactory(siret="75665621899905", siren_unite_legale="756656218")  # OK
+        CanteenFactory(siret="75665621899905", siren_unite_legale="")  # OK
+        CanteenFactory(siret="75665621899905", siren_unite_legale=None)  # OK
+        CanteenFactory(siret="", siren_unite_legale="756656218")  # OK
+        CanteenFactory(siret="", siren_unite_legale="")
+        CanteenFactory(siret="", siren_unite_legale=None)
+        CanteenFactory(siret=None, siren_unite_legale="756656218")  # OK
+        CanteenFactory(siret=None, siren_unite_legale="")
+        CanteenFactory(siret=None, siren_unite_legale=None)
+
+    def has_siret_or_siren_unite_legale(self):
+        self.assertEqual(Canteen.objects.count(), 9)
+        self.assertEqual(Canteen.objects.has_siret_or_siren_unite_legale().count(), 5)
 
 
 class TestCanteenCompletePropertyAndQuerySet(TestCase):
