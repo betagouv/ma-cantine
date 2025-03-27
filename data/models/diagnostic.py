@@ -20,8 +20,16 @@ from macantine.utils import CAMPAIGN_DATES
 from .canteen import Canteen
 
 
+def canteen_has_siret_query():
+    return Q(canteen__siret__isnull=False) & ~Q(canteen__siret="")
+
+
+def canteen_has_siren_unite_legale_query():
+    return Q(canteen__siren_unite_legale__isnull=False) & ~Q(canteen__siren_unite_legale="")
+
+
 def canteen_has_siret_or_siren_unite_legale_query():
-    return Q(canteen__siret__isnull=False) | Q(canteen__siren_unite_legale__isnull=False)
+    return canteen_has_siret_query() | canteen_has_siren_unite_legale_query()
 
 
 class DiagnosticQuerySet(models.QuerySet):

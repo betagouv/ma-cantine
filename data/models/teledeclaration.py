@@ -18,8 +18,16 @@ from macantine.utils import CAMPAIGN_DATES
 logger = logging.getLogger(__name__)
 
 
+def canteen_has_siret_query():
+    return Q(canteen_siret__isnull=False) & ~Q(canteen_siret="")
+
+
+def canteen_has_siren_unite_legale_query():
+    return Q(canteen_siren_unite_legale__isnull=False) & ~Q(canteen_siren_unite_legale="")
+
+
 def canteen_has_siret_or_siren_unite_legale_query():
-    return Q(canteen_siret__isnull=False) | Q(canteen_siren_unite_legale__isnull=False)
+    return canteen_has_siret_query() | canteen_has_siren_unite_legale_query()
 
 
 class CustomJSONEncoder(DjangoJSONEncoder):
