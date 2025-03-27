@@ -1041,8 +1041,8 @@ class ActionableCanteensListView(ListAPIView):
         purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk"), date__year=year)
         user_canteens = user_canteens.annotate(has_purchases_for_year=Exists(purchases_for_year))
         # prep complete diag action
-        complete_diagnostics = Diagnostic.objects.filter(pk=OuterRef("diagnostic_for_year"), value_total_ht__gt=0)
-        user_canteens = user_canteens.annotate(has_complete_diag=Exists(Subquery(complete_diagnostics)))
+        complete_diagnostics = diagnostics.filter(value_total_ht__gt=0)
+        user_canteens = user_canteens.annotate(has_complete_diagnostic_for_year=Exists(Subquery(complete_diagnostics)))
         has_cc_mode = Diagnostic.objects.filter(
             pk=OuterRef("diagnostic_for_year"),
             central_kitchen_diagnostic_mode__isnull=False,
@@ -1071,7 +1071,7 @@ class ActionableCanteensListView(ListAPIView):
                 then=Value(Canteen.Actions.PREFILL_DIAGNOSTIC),
             ),
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
-            When(has_complete_diag=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+            When(has_complete_diagnostic_for_year=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
             When((is_central_cuisine_query() & Q(has_cc_mode=False)), then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
             When(has_missing_data_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
