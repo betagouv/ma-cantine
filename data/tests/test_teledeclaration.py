@@ -3,8 +3,8 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.utils.timezone import now
 
-from data.factories import UserFactory
-from data.models import Canteen, Diagnostic, Teledeclaration
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.models import Teledeclaration
 
 year_data = now().year - 1
 mocked_campaign_dates = {
@@ -24,13 +24,13 @@ class TeledeclarationQuerySetTest(TestCase):
         """
 
         # Create canteens and diagnostics
-        self.valid_canteen_1 = Canteen.objects.create(siret="12345678901234", deletion_date=None)
-        self.valid_canteen_2 = Canteen.objects.create(siren_unite_legale="123456789", deletion_date=None)
-        self.valid_canteen_3 = Canteen.objects.create(
+        self.valid_canteen_1 = CanteenFactory(siret="12345678901234", deletion_date=None)
+        self.valid_canteen_2 = CanteenFactory(siren_unite_legale="123456789", deletion_date=None)
+        self.valid_canteen_3 = CanteenFactory(
             siret="12345678901235", siren_unite_legale="123456789", deletion_date=None
         )
-        self.invalid_canteen = Canteen.objects.create(siret="", deletion_date=None)  # siret missing
-        self.deleted_canteen = Canteen.objects.create(
+        self.invalid_canteen = CanteenFactory(siret="", deletion_date=None)  # siret missing
+        self.deleted_canteen = CanteenFactory(
             siret="56789012345678",
             deletion_date=now().replace(month=6, day=1),
         )
@@ -39,7 +39,7 @@ class TeledeclarationQuerySetTest(TestCase):
             setattr(
                 self,
                 f"valid_canteen_diagnostic_{index+1}",
-                Diagnostic.objects.create(
+                DiagnosticFactory(
                     year=year_data,
                     creation_date=now().replace(month=3, day=1),
                     canteen=canteen,
@@ -55,7 +55,7 @@ class TeledeclarationQuerySetTest(TestCase):
                 ),
             )
 
-        self.invalid_canteen_diagnostic = Diagnostic.objects.create(
+        self.invalid_canteen_diagnostic = DiagnosticFactory(
             year=year_data,
             creation_date=now().replace(month=3, day=1),
             canteen=self.invalid_canteen,
@@ -66,7 +66,7 @@ class TeledeclarationQuerySetTest(TestCase):
             self.invalid_canteen_diagnostic, applicant=UserFactory.create()
         )
 
-        self.deleted_canteen_diagnostic = Diagnostic.objects.create(
+        self.deleted_canteen_diagnostic = DiagnosticFactory(
             year=year_data,
             creation_date=now().replace(month=3, day=1),
             canteen=self.deleted_canteen,
