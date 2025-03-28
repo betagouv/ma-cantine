@@ -244,6 +244,13 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
         self.df = pd.concat([self.df.drop("declared_data", axis=1), df_json], axis=1)
 
         # Aggregate columns for complete TD - Must occur before other transformations
+        # remove already aggregated column
+        # TODO : when fixed, we can use directly the aggregated columns
+        del self.df["value_total_ht"]
+        del self.df["value_bio_ht_agg"]
+        del self.df["value_sustainable_ht_agg"]
+        del self.df["value_externality_performance_ht_agg"]
+        del self.df["value_egalim_others_ht_agg"]
         self.df = aggregate(self.df)
 
         # Add additionnal filters (that couldn't be processed at queryset)
