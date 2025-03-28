@@ -33,6 +33,18 @@ Sur le serveur dit "celery", renseigner les mêmes variables d'environnement que
 1. Mise à jour des contacts Brevo
     1. `SENDINBLUE_API_KEY= La clé API de SendInBlue`
 
+## Lancer une tâche manuellement
+1. Se connecter au serveur Celery via ssh `ssh ssh@sshgateway-clevercloud-customers.services.clever-cloud.com`
+2. `cd app_XXXX`
+3. `python manage.py <MANAGEMENT_COMMANDE>`
+
+ou, si la tâche n'est pas implémentée dans une commnde de management
+
+3. ```python
+   from macantine.tasks import <MA_TACHE>
+   <MA-TACHE>.apply()
+   ```
+
 ### Dépendances
 
 L'application Celery (Worker & Orchestrateur) doit être lié à un message broker. Dans notre cas, c'est redis
