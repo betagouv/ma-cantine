@@ -1020,10 +1020,7 @@ class ActionableCanteensListView(ListAPIView):
         # prep add satellites action
         # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
         satellites = (
-            Canteen.objects.filter(
-                central_producer_siret=OuterRef("siret"),
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            )
+            Canteen.objects.get_satellites(OuterRef("siret"))
             .order_by()
             .values("central_producer_siret")  # sets the groupBy for the aggregation
         )
