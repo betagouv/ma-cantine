@@ -183,6 +183,9 @@ export default {
     year() {
       return +this.selectedYear
     },
+    isSatellite() {
+      return this.canteen?.productionType === "site_cooked_elsewhere"
+    },
     canteenDiagnostic() {
       return this.canteen.diagnostics.find((x) => x.year === this.year)
     },
@@ -193,7 +196,7 @@ export default {
       return this.canteen.diagnostics.find((x) => x.year === this.lastYear)
     },
     centralDiagnostic() {
-      if (this.canteen.productionType === "site_cooked_elsewhere") {
+      if (this.isSatellite) {
         const ccDiag = this.canteen.centralKitchenDiagnostics?.find((x) => x.year === this.year)
         return ccDiag
       }
@@ -212,10 +215,7 @@ export default {
       return this.canteenDiagnostic
     },
     firstActionableMeasure() {
-      if (
-        this.canteen.productionType === "site_cooked_elsewhere" &&
-        this.centralDiagnostic?.centralKitchenDiagnosticMode === "APPRO"
-      ) {
+      if (this.isSatellite && this.centralDiagnostic?.centralKitchenDiagnosticMode === "APPRO") {
         return "gaspillage-alimentaire"
       }
       return "qualite-des-produits"
@@ -230,10 +230,11 @@ export default {
       return this.year === lastYear() + 1
     },
     needsData() {
-      return (
-        (!this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic)) ||
-        !this.diagnosticCanBeTeledeclared
-      )
+      return false
+      // return (
+      //   (!this.hasPurchases && (!this.approDiagnostic || !this.otherMeasuresDiagnostic)) ||
+      //   !this.diagnosticCanBeTeledeclared
+      // )
     },
     diagnosticCanBeTeledeclared() {
       return diagnosticCanBeTeledeclared(this.canteen, this.canteenDiagnostic)
