@@ -350,7 +350,12 @@ export default {
       return this.tabHeaders.map((x, index) => ({ text: x.text, value: index }))
     },
     hasActiveTeledeclaration() {
-      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+      const hasDiagnosticSubmitted = this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+      const centralDiagnosticSubmitted = this.canteen.centralKitchenDiagnostics?.filter(
+        (diag) => diag.year == this.year && diag.isTeledeclared
+      )
+      const hasCentralDiagnosticSubmitted = centralDiagnosticSubmitted?.length > 0
+      return hasDiagnosticSubmitted || hasCentralDiagnosticSubmitted
     },
     isCentralKitchen() {
       return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
