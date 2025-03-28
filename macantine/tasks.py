@@ -252,7 +252,7 @@ def _get_candidate_canteens_for_code_geobot():
 def _get_candidate_canteens_for_siret_geobot():
     return Canteen.objects.filter(
         Q(city_insee_code__isnull=True) | Q(city_insee_code=""), siret__isnull=False
-    ).order_by("creation_date")
+    ).order_by("-creation_date")
 
 
 def _fill_from_api_response(response, canteens):
@@ -297,8 +297,11 @@ def fill_missing_geolocation_data_using_siret():
         return
     for i, canteen in enumerate(candidate_canteens):
         logger.info(f"Traitement de la cantine {canteen.name} {canteen.siret}, appel #{i}")
-        if i % 200 == 0:
-            logger.info("200 appels réalisés : Attente pendant 60 secondes...")
+        if i > 1 and i % 7 == 0:
+            logger.info("7 appels réalisés maximum par seconde...")
+            time.sleep(1)
+        if i > 1 and i % 200 == 0:
+            logger.info("200 appels réalisés maximum par minute...")
             time.sleep(60)
         if len(canteen.siret) == 14:
             response = {}
