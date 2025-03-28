@@ -187,7 +187,12 @@ export default {
       return this.canteen.diagnostics.find((x) => x.year === this.year)
     },
     hasActiveTeledeclaration() {
-      return this.canteenDiagnostic?.teledeclaration?.status === "SUBMITTED"
+      const hasDiagnosticSubmitted = this.canteenDiagnostic?.teledeclaration?.status === "SUBMITTED"
+      const centralDiagnosticSubmitted = this.canteen.centralKitchenDiagnostics?.filter(
+        (diag) => diag.year === this.year && diag.isTeledeclared
+      )
+      const hasCentralDiagnosticSubmitted = centralDiagnosticSubmitted?.length > 0
+      return hasDiagnosticSubmitted || hasCentralDiagnosticSubmitted
     },
     lastYearDiagnostic() {
       return this.canteen.diagnostics.find((x) => x.year === this.lastYear)
