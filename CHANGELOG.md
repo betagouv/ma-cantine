@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.11.7](https://github.com/betagouv/ma-cantine/compare/v2025.11.6...v2025.11.7) (2025-03-28)
+
+
+### Corrections (bugs, typos...)
+
+* **Metabase:** Supprimer les nouvelles colonnes _agg lors de l'export pour ne pas créer une double aggrégation ([#5180](https://github.com/betagouv/ma-cantine/issues/5180)) ([8c1c74b](https://github.com/betagouv/ma-cantine/commit/8c1c74b0479053c486a4860e4924290facedd948))
+
 ## [2025.11.6](https://github.com/betagouv/ma-cantine/compare/v2025.11.5...v2025.11.6) (2025-03-28)
 
 
