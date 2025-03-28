@@ -1038,7 +1038,7 @@ class ActionableCanteensListView(ListAPIView):
             Q(canteen=OuterRef("central_kitchen_id")) | Q(canteen=OuterRef("pk")), year=year
         )
         user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")[:1]))
-        purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk"), date__year=year)
+        purchases_for_year = Purchase.objects.for_canteen_and_year(OuterRef("pk"), year)
         user_canteens = user_canteens.annotate(has_purchases_for_year=Exists(purchases_for_year))
         # prep complete diag action
         complete_diagnostics = diagnostics.filter(value_total_ht__gt=0)

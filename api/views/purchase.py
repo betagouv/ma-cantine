@@ -220,7 +220,7 @@ class CanteenPurchasesPercentageSummaryView(APIView):
 
         if is_canteen_manager:
             data["last_purchase_date"] = (
-                Purchase.objects.only("date").filter(canteen=canteen, date__year=year).latest("date").date
+                Purchase.objects.only("date").for_canteen_and_year(canteen, year).latest("date").date
             )
 
         return Response(PurchasePercentageSummarySerializer(data).data)
@@ -234,8 +234,8 @@ class CanteenPurchasesPercentageSummaryView(APIView):
 
 
 def canteen_summary_for_year(canteen, year):
-    purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
-        canteen=canteen, date__year=year
+    purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").for_canteen_and_year(
+        canteen, year
     )
     data = {"year": year}
     simple_diag_data(purchases, data)
@@ -253,8 +253,8 @@ def canteen_summary(canteen):
     years = [y["year"] for y in years.values()]
     for year in years:
         year_data = {"year": year}
-        purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").filter(
-            canteen=canteen, date__year=year
+        purchases = Purchase.objects.only("id", "family", "characteristics", "price_ht").for_canteen_and_year(
+            canteen, year
         )
         simple_diag_data(purchases, year_data)
         data["results"].append(year_data)
