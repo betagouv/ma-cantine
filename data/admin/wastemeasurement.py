@@ -39,7 +39,7 @@ class WasteMeasurementAdmin(SimpleHistoryAdmin):
             },
         ),
         (
-            "Excédents de préparation",
+            "Déchets alimentaires issus de la préparation",
             {
                 "fields": (
                     "preparation_total_mass",

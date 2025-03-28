@@ -205,7 +205,7 @@ class VegetarianExpe(models.Model):
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        verbose_name="Menus végétariens : Moyenne des pesées des excédents présentés aux convives et non servis",
+        verbose_name="Menus végétariens : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés",
     )
     waste_vegetarian_components_t0 = models.DecimalField(
         null=True,
@@ -221,7 +221,7 @@ class VegetarianExpe(models.Model):
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        verbose_name="Menus non-végétariens : Moyenne des pesées des excédents présentés aux convives et non servis",
+        verbose_name="Menus non-végétariens : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés",
     )
     waste_non_vegetarian_components_t0 = models.DecimalField(
         null=True,
@@ -461,7 +461,7 @@ class VegetarianExpe(models.Model):
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        verbose_name="Menus végétariens : Moyenne des pesées des excédents présentés aux convives et non servis",
+        verbose_name="Menus végétariens : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés",
     )
     waste_vegetarian_components_t1 = models.DecimalField(
         null=True,
@@ -477,7 +477,7 @@ class VegetarianExpe(models.Model):
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        verbose_name="Menus non-végétariens : Moyenne des pesées des excédents présentés aux convives et non servis",
+        verbose_name="Menus non-végétariens : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés",
     )
     waste_non_vegetarian_components_t1 = models.DecimalField(
         null=True,

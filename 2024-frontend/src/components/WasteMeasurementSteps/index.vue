@@ -28,7 +28,7 @@ const firstSteps = [
 const breakdownSteps = [
   {
     urlSlug: "preparation",
-    title: "Déchets alimentaires liés aux excédents de préparation",
+    title: "Déchets alimentaires issus de la préparation",
     component: markRaw(BreakdownBySource),
     componentData: { source: "preparation" },
   },
