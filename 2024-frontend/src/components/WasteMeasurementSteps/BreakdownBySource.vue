@@ -17,7 +17,7 @@ const sources = {
     edibleKey: "preparationEdibleMass",
     inedibleKey: "preparationInedibleMass",
     title: Constants.WasteMeasurement.preparation.title,
-    primaryLabel: "Masse de déchets alimentaires pour les excédents de préparation (en kg)",
+    primaryLabel: "Masse de déchets alimentaires issus de la préparation (en kg)",
     description:
       "Par exemple, si vous avez jeté des épluchures, des parures ou si vous avez des ingrédients excédentaires que vous ne réutiliserez pas, il s’agit d’excédents de préparation",
     edibleHelp:

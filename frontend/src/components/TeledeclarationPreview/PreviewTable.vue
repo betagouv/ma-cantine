@@ -444,7 +444,7 @@ export default {
           const leftovers = formatNumber(waste.leftoversTotalMass)
           const unserved = formatNumber(waste.unservedTotalMass)
           const preparation = formatNumber(waste.preparationTotalMass)
-          value += ` : reste assiette ${leftovers}kg, denrées présentées aux convives mais non servies ${unserved}kg, excédents de préparation dont stock ${preparation}kg`
+          value += ` : reste assiette ${leftovers}kg, denrées présentées aux convives mais non servies ${unserved}kg, déchets alimentaires issus de la préparation ${preparation}kg`
         }
         wasteMeasurements.push({ label, value })
       }

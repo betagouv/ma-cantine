@@ -42,7 +42,7 @@ export default Object.freeze({
       title: "Masse totale des déchets alimentaires relevée sur la période de mesure",
     },
     preparation: {
-      title: "Excédents de préparation dont stock",
+      title: "Déchets alimentaires issus de la préparation",
     },
     unserved: {
       title: "Denrées présentées aux convives mais non servies",

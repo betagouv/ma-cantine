@@ -273,7 +273,8 @@
                       class="body-2 grey--text text--darken-3"
                       :for="`avg-weight-preparation-leftover-${item.value}`"
                     >
-                      Si vous préparez les repas sur place : moyenne des pesées des excédents de préparation (g/convive)
+                      Si vous préparez les repas sur place : moyenne des pesées des déchets alimentaires issus de la
+                      préparation (g/convive)
                     </label>
                     <DsfrTextField
                       validate-on-blur
