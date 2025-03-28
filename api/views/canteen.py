@@ -1050,8 +1050,14 @@ class ActionableCanteensListView(ListAPIView):
                 (is_central_cuisine_query() & Q(satellite_canteens_count__gt=0) & Q(satellites_in_db_count=None)),
                 then=Value(Canteen.Actions.ADD_SATELLITES),
             ),
-            When(satellites_in_db_count__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
-            When(satellites_in_db_count__gt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
+            When(
+                is_central_cuisine_query() & Q(satellites_in_db_count__lt=F("satellite_canteens_count")),
+                then=Value(Canteen.Actions.ADD_SATELLITES),
+            ),
+            When(
+                is_central_cuisine_query() & Q(satellites_in_db_count__gt=F("satellite_canteens_count")),
+                then=Value(Canteen.Actions.ADD_SATELLITES),
+            ),
             When(
                 Q(diagnostic_for_year=None) & Q(has_purchases_for_year=True),
                 then=Value(Canteen.Actions.PREFILL_DIAGNOSTIC),
