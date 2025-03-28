@@ -78,7 +78,12 @@
           <p>Votre livreur des repas va faire le bilan pour votre établissement.</p>
         </div>
         <div v-else-if="inTeledeclarationCampaign">
-          <DataInfoBadge class="my-2" :readyToTeledeclare="readyToTeledeclare" :missingData="!readyToTeledeclare" />
+          <DataInfoBadge
+            class="my-2"
+            :readyToTeledeclare="readyToTeledeclare"
+            :missingData="!readyToTeledeclare"
+            :hasActiveTeledeclaration="hasActiveTeledeclaration"
+          />
           <div v-if="isSatelliteWithApproCentralDiagnostic">
             <p>Votre livreur des repas va déclarer les données d'approvisionnement pour votre établissement.</p>
             <p>Pour aller plus loin, vous pouvez télédéclarer les autres volets du bilan.</p>
