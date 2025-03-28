@@ -35,8 +35,8 @@ Sur le serveur dit "celery", renseigner les mêmes variables d'environnement que
 
 ## Lancer une tâche manuellement
 1. Se connecter au serveur Celery via ssh `ssh ssh@sshgateway-clevercloud-customers.services.clever-cloud.com`
-2. `cd app_XXXX`
-3. `python manage.py <MANAGEMENT_COMMANDE>`
+2. Se déplacer dans le dossier de l'app `cd app_XXXX`
+3. Lancer la commande souhaitée `python manage.py <MANAGEMENT_COMMANDE>`
 
 ou, si la tâche n'est pas implémentée dans une commnde de management
 
