@@ -383,7 +383,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
                     Diagnostic.CentralKitchenDiagnosticMode.ALL,
                     Diagnostic.CentralKitchenDiagnosticMode.APPRO,
                 ],
-            ).order_by("-id")
+            )
 
             return CentralKitchenDiagnosticSerializer(diagnostics, many=True).data
         except Canteen.DoesNotExist:

@@ -434,7 +434,9 @@ export default {
       const diag = this.canteen.diagnostics?.find((x) => +x.year === +this.year)
       this.$set(this, "diagnostic", diag)
       if (this.canteen.productionType === "site_cooked_elsewhere") {
-        const centralDiag = this.canteen.centralKitchenDiagnostics?.find((x) => +x.year === +this.year)
+        const centralDiag = this.canteen.centralKitchenDiagnostics?.find(
+          (x) => +x.year === +this.year && x.isTeledeclared
+        )
         this.$set(this, "centralDiagnostic", centralDiag)
       }
       this.initialiseMode()
