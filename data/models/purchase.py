@@ -10,6 +10,11 @@ from .canteen import Canteen
 from .softdeletionmodel import SoftDeletionModel
 
 
+class PurchaseQuerySet(models.QuerySet):
+    def for_canteen_and_year(self, canteen, year):
+        return self.filter(canteen=canteen, date__year=year)
+
+
 class Purchase(SoftDeletionModel):
     class Meta:
         verbose_name = "achat"
@@ -69,6 +74,8 @@ class Purchase(SoftDeletionModel):
         DEPARTMENT = "DEPARTMENT", "Département"
         AUTOUR_SERVICE = "AUTOUR_SERVICE", "200 km autour du lieu de service"
         AUTRE = "AUTRE", "Autre"
+
+    objects = PurchaseQuerySet.as_manager()
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
