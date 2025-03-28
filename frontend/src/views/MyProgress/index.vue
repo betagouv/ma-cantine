@@ -8,7 +8,11 @@
     />
     <v-row align="end">
       <v-col cols="12" md="9" lg="10">
-        <DataInfoBadge v-if="hasActiveTeledeclaration" class="my-2" :hasActiveTeledeclaration="true" />
+        <DataInfoBadge
+          v-if="hasActiveTeledeclaration || hasCentralSubmittedTeledeclaration"
+          :hasActiveTeledeclaration="true"
+          class="my-2"
+        />
         <DataInfoBadge
           v-else-if="inTeledeclarationCampaign"
           class="my-2"
@@ -38,7 +42,7 @@
     <v-row v-if="canteen" class="mt-5 mt-md-10">
       <v-col cols="12" md="3" lg="2" style="border-right: 1px solid #DDD;" class="fr-text-sm pt-1">
         <DsfrNativeSelect v-model="selectedYear" :items="yearOptions" class="mb-3 mt-2" />
-        <div v-if="hasActiveTeledeclaration && diagnostic">
+        <div v-if="hasActiveTeledeclaration">
           <DataInfoBadge class="my-2" :hasActiveTeledeclaration="true" />
           <p>
             Votre bilan a été télédéclaré
@@ -82,7 +86,7 @@
             class="my-2"
             :readyToTeledeclare="readyToTeledeclare"
             :missingData="!readyToTeledeclare"
-            :hasActiveTeledeclaration="hasActiveTeledeclaration"
+            :hasActiveTeledeclaration="hasCentralSubmittedTeledeclaration"
           />
           <div v-if="isSatelliteWithApproCentralDiagnostic">
             <p>Votre livreur des repas va déclarer les données d'approvisionnement pour votre établissement.</p>
@@ -355,12 +359,13 @@ export default {
       return this.tabHeaders.map((x, index) => ({ text: x.text, value: index }))
     },
     hasActiveTeledeclaration() {
-      const hasDiagnosticSubmitted = this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+    },
+    hasCentralSubmittedTeledeclaration() {
       const centralDiagnosticSubmitted = this.canteen.centralKitchenDiagnostics?.filter(
         (diag) => diag.year == this.year && diag.isTeledeclared
       )
-      const hasCentralDiagnosticSubmitted = centralDiagnosticSubmitted?.length > 0
-      return hasDiagnosticSubmitted || hasCentralDiagnosticSubmitted
+      return centralDiagnosticSubmitted?.length > 0
     },
     isCentralKitchen() {
       return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
