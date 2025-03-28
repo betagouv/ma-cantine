@@ -796,7 +796,8 @@ export default {
       ],
       waste: [
         {
-          label: "Plat principal végétarien : Moyenne des pesées des excédents présentés aux convives et non servis",
+          label:
+            "Plat principal végétarien : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés",
           htmlId: "waste-vegetarian-not-served",
           fieldName: "wasteVegetarianNotServed",
         },
@@ -807,7 +808,7 @@ export default {
         },
         {
           label:
-            "Plat principal non-végétarien : Moyenne des pesées des excédents présentés aux convives et non servis",
+            "Plat principal non-végétarien : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés",
           htmlId: "waste-non-vegetarian-not-served",
           fieldName: "wasteNonVegetarianNotServed",
         },
