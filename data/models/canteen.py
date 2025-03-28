@@ -4,7 +4,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import Exists, F, OuterRef, Q
+from django.db.models import Case, Count, Exists, F, OuterRef, Q, Subquery, When
 from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
@@ -98,8 +98,26 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def is_satellite(self):
         return self.filter(is_satellite_query())
 
+    def annotate_with_central_kitchen_id(self):
+        central_kitchen = Canteen.objects.filter(siret=OuterRef("central_producer_siret")).values("id")
+        return self.annotate(
+            central_kitchen_id=Case(When(is_satellite_query(), Subquery(central_kitchen[:1])), default=None)
+        )
+
     def get_satellites(self, central_producer_siret):
         return self.filter(is_satellite_query(), central_producer_siret=central_producer_siret)
+
+    def annotate_with_satellites_in_db_count(self):
+        # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
+        satellites = (
+            Canteen.objects.filter(central_producer_siret=OuterRef("siret"))
+            .order_by()
+            .values("central_producer_siret")
+        )  # sets the groupBy for the aggregation
+        satellites_count = satellites.annotate(count=Count("id")).values("count")
+        return self.annotate(
+            satellites_in_db_count=Case(When(is_central_cuisine_query(), then=Subquery(satellites_count)), default=0)
+        )
 
     def annotate_with_requires_line_ministry(self):
         canteen_sector_relation = apps.get_model(app_label="data", model_name="Canteen_sectors")
@@ -130,8 +148,14 @@ class CanteenManager(SoftDeletionManager):
     def is_satellite(self):
         return self.get_queryset().is_satellite()
 
+    def annotate_with_central_kitchen_id(self):
+        return self.get_queryset().annotate_with_central_kitchen_id()
+
     def get_satellites(self, central_producer_siret):
         return self.get_queryset().get_satellites(central_producer_siret)
+
+    def annotate_with_satellites_in_db_count(self):
+        return self.get_queryset().annotate_with_satellites_in_db_count()
 
     def has_missing_data(self):
         return self.get_queryset().has_missing_data()

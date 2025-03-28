@@ -112,10 +112,57 @@ class TestCanteenSatelliteQuerySet(TestCase):
         self.assertEqual(Canteen.objects.count(), 5)
         self.assertEqual(Canteen.objects.is_satellite().count(), 3)
 
+    def test_annotate_with_central_kitchen_id(self):
+        self.assertEqual(Canteen.objects.count(), 5)
+        self.assertEqual(
+            Canteen.objects.annotate_with_central_kitchen_id()
+            .filter(id=self.canteen_on_site_central_1.id)
+            .first()
+            .central_kitchen_id,
+            self.canteen_central_1.id,
+        )
+        self.assertEqual(
+            Canteen.objects.annotate_with_central_kitchen_id()
+            .filter(id=self.canteen_on_site_central_2.id)
+            .first()
+            .central_kitchen_id,
+            self.canteen_central_2.id,
+        )
+        self.assertIsNone(
+            Canteen.objects.annotate_with_central_kitchen_id()
+            .filter(id=self.canteen_central_1.id)
+            .first()
+            .central_kitchen_id
+        )
+
     def test_get_satellites(self):
         self.assertEqual(Canteen.objects.count(), 5)
         self.assertEqual(Canteen.objects.get_satellites(self.canteen_central_1.siret).count(), 1)
         self.assertEqual(Canteen.objects.get_satellites(self.canteen_central_2.siret).count(), 2)
+
+    def test_annotate_with_satellites_in_db_count(self):
+        self.assertEqual(Canteen.objects.count(), 5)
+        self.assertEqual(
+            Canteen.objects.annotate_with_satellites_in_db_count()
+            .filter(id=self.canteen_central_1.id)
+            .first()
+            .satellites_in_db_count,
+            1,
+        )
+        self.assertEqual(
+            Canteen.objects.annotate_with_satellites_in_db_count()
+            .filter(id=self.canteen_central_2.id)
+            .first()
+            .satellites_in_db_count,
+            2,
+        )
+        self.assertEqual(
+            Canteen.objects.annotate_with_satellites_in_db_count()
+            .filter(id=self.canteen_on_site_central_1.id)
+            .first()
+            .satellites_in_db_count,
+            0,
+        )
 
 
 class TestCanteenSiretOrSirenUniteLegaleQuerySet(TestCase):

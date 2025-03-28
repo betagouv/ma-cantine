@@ -10,7 +10,6 @@ from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from django.db.models import (
     Case,
-    Count,
     Exists,
     F,
     FloatField,
@@ -1018,18 +1017,8 @@ class ActionableCanteensListView(ListAPIView):
 
     def annotate_actions(queryset, year):
         # prep add satellites action
-        # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
-        satellites = (
-            Canteen.objects.get_satellites(OuterRef("siret"))
-            .order_by()
-            .values("central_producer_siret")  # sets the groupBy for the aggregation
-        )
-        central_kitchen = Canteen.objects.filter(siret=OuterRef("central_producer_siret")).values("id")
-        # count by id per central prod siret, then fetch that count
-        satellites_count = satellites.annotate(count=Count("id")).values("count")
-        user_canteens = queryset.annotate(
-            nb_satellites_in_db=Subquery(satellites_count), central_kitchen_id=Subquery(central_kitchen[:1])
-        )
+        user_canteens = queryset.annotate_with_satellites_in_db_count()
+        user_canteens = user_canteens.annotate_with_central_kitchen_id()
         # prep add diag actions
         diagnostics = Diagnostic.objects.filter(
             Q(canteen=OuterRef("central_kitchen_id")) | Q(canteen=OuterRef("pk")), year=year
@@ -1058,11 +1047,11 @@ class ActionableCanteensListView(ListAPIView):
         should_teledeclare = settings.ENABLE_TELEDECLARATION
         conditions = [
             When(
-                (is_central_cuisine_query() & Q(satellite_canteens_count__gt=0) & Q(nb_satellites_in_db=None)),
+                (is_central_cuisine_query() & Q(satellite_canteens_count__gt=0) & Q(satellites_in_db_count=None)),
                 then=Value(Canteen.Actions.ADD_SATELLITES),
             ),
-            When(nb_satellites_in_db__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
-            When(nb_satellites_in_db__gt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
+            When(satellites_in_db_count__lt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
+            When(satellites_in_db_count__gt=F("satellite_canteens_count"), then=Value(Canteen.Actions.ADD_SATELLITES)),
             When(
                 Q(diagnostic_for_year=None) & Q(has_purchases_for_year=True),
                 then=Value(Canteen.Actions.PREFILL_DIAGNOSTIC),
