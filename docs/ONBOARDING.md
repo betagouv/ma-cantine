@@ -345,6 +345,8 @@ bash ./clevercloud/test-build-with-vue3.sh
 python manage.py runserver --insecure
 ```
 
+Créer des données initiales grâce aux fixtures : `python manage.py loaddata initial_data.json`
+
 ### Lancer un déploiement
 
 Pour le déploiement en prod il faut ajouter ces variables d'env :
