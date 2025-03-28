@@ -38,7 +38,7 @@
     <v-row v-if="canteen" class="mt-5 mt-md-10">
       <v-col cols="12" md="3" lg="2" style="border-right: 1px solid #DDD;" class="fr-text-sm pt-1">
         <DsfrNativeSelect v-model="selectedYear" :items="yearOptions" class="mb-3 mt-2" />
-        <div v-if="hasActiveTeledeclaration">
+        <div v-if="hasActiveTeledeclaration && diagnostic">
           <DataInfoBadge class="my-2" :hasActiveTeledeclaration="true" />
           <p>
             Votre bilan a été télédéclaré
