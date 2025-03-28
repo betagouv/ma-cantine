@@ -6,6 +6,20 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.11.5](https://github.com/betagouv/ma-cantine/compare/v2025.11.4...v2025.11.5) (2025-03-27)
+
+
+### Améliorations
+
+* **Geobot:** Ajout de logs ([#5173](https://github.com/betagouv/ma-cantine/issues/5173)) ([aa94cc1](https://github.com/betagouv/ma-cantine/commit/aa94cc11e75c29a923fa1db94c5e3146273e9d23))
+* **Geobot:** inclut les code insee vides en plus des null pour la recherche par SIRET ([#5169](https://github.com/betagouv/ma-cantine/issues/5169)) ([153ec07](https://github.com/betagouv/ma-cantine/commit/153ec0744ba67ec395b2089994a5037daaf51f6b))
+* **Geobot:** Sleep d'une minute tous les 200 appels a l'API recherche entreprises ([#5172](https://github.com/betagouv/ma-cantine/issues/5172)) ([0c59ea3](https://github.com/betagouv/ma-cantine/commit/0c59ea36537f5b7dcc1151d8bd55b78b3378e157))
+
+
+### Technique
+
+* **Cantines:** Actions: gère les cantines sans siret (v2) ([#5171](https://github.com/betagouv/ma-cantine/issues/5171)) ([1aa25f8](https://github.com/betagouv/ma-cantine/commit/1aa25f865028915d8ab4de350627f0aaa64f045e))
+
 ## [2025.11.4](https://github.com/betagouv/ma-cantine/compare/v2025.11.3...v2025.11.4) (2025-03-27)
 
 
