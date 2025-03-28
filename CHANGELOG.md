@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.11.6](https://github.com/betagouv/ma-cantine/compare/v2025.11.5...v2025.11.6) (2025-03-28)
+
+
+### Documentation
+
+* **Celery:** Lancer une tâche manuellement ([#5175](https://github.com/betagouv/ma-cantine/issues/5175)) ([329ef4b](https://github.com/betagouv/ma-cantine/commit/329ef4b93f8a5b2107e12740c7e8994a5c56eb72))
+
 ## [2025.11.5](https://github.com/betagouv/ma-cantine/compare/v2025.11.4...v2025.11.5) (2025-03-27)
 
 
