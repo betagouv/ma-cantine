@@ -95,6 +95,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             else self.exclude(publication_status=Canteen.PublicationStatus.PUBLISHED)
         )
 
+    def is_satellite(self):
+        return self.filter(is_satellite_query())
+
     def get_satellites(self, central_producer_siret):
         return self.filter(is_satellite_query(), central_producer_siret=central_producer_siret)
 
@@ -123,6 +126,12 @@ class CanteenManager(SoftDeletionManager):
 
     def publicly_hidden(self):
         return self.get_queryset().publicly_hidden()
+
+    def is_satellite(self):
+        return self.get_queryset().is_satellite()
+
+    def get_satellites(self, central_producer_siret):
+        return self.get_queryset().get_satellites(central_producer_siret)
 
     def has_missing_data(self):
         return self.get_queryset().has_missing_data()
@@ -171,38 +180,6 @@ class Canteen(SoftDeletionModel):
         TELEDECLARE = "40_teledeclare", "Télédéclarer"
         PUBLISH = "50_publish", "Publier"
         NOTHING = "95_nothing", "Rien à faire !"
-
-    class Sectors(models.TextChoices):
-        """
-        Restaurants des prisons administration True
-        Restaurants administratifs d’Etat (RA) administration True
-        Restaurants des armées / police / gendarmerie administration True
-        Etablissements publics d’Etat (EPA ou EPIC) administration True
-        Supérieur et Universitaire education True
-        Autres structures d’enseignement education True
-        Etablissements de la PJJ social True
-        Hôpitaux health False
-        Autres établissements de soins health False
-        Restaurants inter-administratifs d’État (RIA) administration True
-        Etablissements d’enseignement agricole education False
-        Autres établissements sociaux et médico-sociaux social False
-        Autres établissements de loisirs leisure False
-        Restaurants d’entreprises enterprise False
-        Restaurants inter-entreprises enterprise False
-        Restaurants administratifs des collectivités territoriales administration False
-        Secondaire collège education False
-        Ecole primaire (maternelle et élémentaire) education False
-        Cliniques health False
-        Secondaire lycée (hors agricole) education False
-        Crèche social False
-        Autres établissements non listés autres False
-        EHPAD / maisons de retraite / foyers de personnes âgées social False
-        IME / ITEP social False
-        ESAT / Etablissements spécialisés social False
-        Centre de vacances / sportif leisure False
-        """
-
-        ADMINISTRATION_PRISONS = "administration", "Restaurants des prisons"
 
     class Ministries(models.TextChoices):
         AFFAIRES_ETRANGERES = "affaires_etrangeres", "Affaires étrangères"
