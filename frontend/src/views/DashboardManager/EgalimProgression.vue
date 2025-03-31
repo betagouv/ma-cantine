@@ -18,13 +18,6 @@
             :missingData="needsData"
             :readyToTeledeclare="readyToTeledeclare"
             :hasActiveTeledeclaration="hasActiveTeledeclaration"
-            class="mt-4"
-          />
-          <DataInfoBadge
-            :currentYear="isCurrentYear"
-            :missingData="needsData"
-            :readyToTeledeclare="readyToTeledeclare"
-            :hasActiveTeledeclaration="hasActiveTeledeclaration"
             :canteenAction="canteenAction"
             class="mt-4"
           />
