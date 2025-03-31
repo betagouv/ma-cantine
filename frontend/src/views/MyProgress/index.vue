@@ -497,6 +497,7 @@ export default {
             title: "Télédéclaration prise en compte",
             status: "success",
           })
+          this.fetchCanteenAction()
           this.updateFromServer(diagnostic)
           window.scrollTo(0, 0)
         })
@@ -518,6 +519,7 @@ export default {
           this.$store.dispatch("notify", {
             title: "Votre télédéclaration a bien été annulée",
           })
+          this.fetchCanteenAction()
           this.updateFromServer(diagnostic)
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
