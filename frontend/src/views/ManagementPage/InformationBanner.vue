@@ -13,7 +13,7 @@
         Télédéclarer mes cantines
       </v-btn>
       <v-btn :to="{ name: 'CommunityPage', hash: '#evenements' }" color="primary" outlined class="mb-5 mb-md-2 mr-4">
-        Inscrivez-vous à nos derniers Webinaires
+        Inscrivez-vous à nos derniers webinaires
       </v-btn>
       <p class="fr-text-sm mb-5 mb-md-2 mr-4">
         <a
