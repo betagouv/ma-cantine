@@ -94,9 +94,7 @@
                 <v-icon small class="black--text">{{ tab.icon }}</v-icon>
                 {{ tab.text }}
               </p>
-              <DsfrBadge v-if="tab.isCompleted" :showIcon="false" mode="SUCCESS">Complété</DsfrBadge>
-              <DsfrBadge v-else-if="tab.isRequired" :showIcon="false" mode="ERROR">À compléter (obligatoire)</DsfrBadge>
-              <DsfrBadge v-else :showIcon="false" mode="WARNING">À compléter (optionnel)</DsfrBadge>
+              <KeyMeasureBadge :diagnostic="diagnostic" :year="selectedYear" :canteen="canteen" :id="tab.id" />
             </li>
           </ul>
           <ul>
@@ -256,13 +254,13 @@
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import ProductionTypeTag from "@/components/ProductionTypeTag"
 import ProgressTab from "./ProgressTab"
-import DsfrBadge from "@/components/DsfrBadge"
 import DsfrTabsVue from "@/components/DsfrTabs"
 import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
 import DataInfoBadge from "@/components/DataInfoBadge"
+import KeyMeasureBadge from "@/components/KeyMeasureBadge"
 import {
   customDiagnosticYears,
   diagnosticYears,
@@ -273,7 +271,6 @@ import {
   missingCanteenData,
   hasSatelliteInconsistency,
   hasFinishedMeasureTunnel,
-  hasStartedMeasureTunnel,
 } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
@@ -284,13 +281,13 @@ export default {
     BreadcrumbsNav,
     ProductionTypeTag,
     ProgressTab,
-    DsfrBadge,
     DsfrTabsVue,
     DsfrNativeSelect,
     DownloadLink,
     TeledeclarationPreview,
     TeledeclarationCancelDialog,
     DataInfoBadge,
+    KeyMeasureBadge,
   },
   props: {
     canteenUrlComponent: {
@@ -328,21 +325,18 @@ export default {
           text: measure.tabText,
           title: measure.title,
           icon: measure.mdiIcon,
+          id: measure.id,
           to: { params: { measure: measure.id } },
-          isRequired: measure.id === "qualite-des-produits",
-          isCompleted: hasStartedMeasureTunnel(this.diagnostic, measure),
         }
         tabHeaders.push(item)
       }
-      const centralKitchenCompleted = !this.missingDeclarationMode && !this.hasSatelliteInconsistency
       tabHeaders.push({
         urlSlug: this.establishmentId,
         text: "Établissement",
         title: "Établissement",
         icon: "$building-fill",
+        id: "etablissement",
         to: { params: { measure: this.establishmentId } },
-        isCompleted: this.isCentralKitchen ? centralKitchenCompleted : !this.missingCanteenData,
-        isRequired: true,
       })
       return tabHeaders
     },
