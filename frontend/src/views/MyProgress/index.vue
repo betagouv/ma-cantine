@@ -94,7 +94,7 @@
                 <v-icon small class="black--text">{{ tab.icon }}</v-icon>
                 {{ tab.text }}
               </p>
-              <KeyMeasureBadge :diagnostic="diagnostic" :name="tab.name" />
+              <KeyMeasureBadge :diagnostic="diagnostic" :canteen="canteen" :name="tab.name" />
             </li>
           </ul>
           <ul>
@@ -330,7 +330,6 @@ export default {
         }
         tabHeaders.push(item)
       }
-      const centralKitchenCompleted = !this.missingDeclarationMode && !this.hasSatelliteInconsistency
       tabHeaders.push({
         urlSlug: this.establishmentId,
         text: "Établissement",
@@ -338,7 +337,6 @@ export default {
         icon: "$building-fill",
         name: "etablissement",
         to: { params: { measure: this.establishmentId } },
-        isCompleted: this.isCentralKitchen ? centralKitchenCompleted : !this.missingCanteenData,
       })
       return tabHeaders
     },

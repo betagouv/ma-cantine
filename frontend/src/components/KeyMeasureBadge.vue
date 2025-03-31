@@ -7,7 +7,7 @@
 <script>
 import DsfrBadge from "@/components/DsfrBadge"
 import keyMeasures from "@/data/key-measures.json"
-import { hasStartedMeasureTunnel } from "@/utils"
+import { missingCanteenData, hasSatelliteInconsistency, hasStartedMeasureTunnel } from "@/utils"
 
 // TODO =
 // 1 état rouge bloque la TD : à compléter
@@ -20,6 +20,7 @@ export default {
   props: {
     name: String,
     diagnostic: Object,
+    canteen: Object,
   },
   computed: {
     isRequired() {
@@ -28,13 +29,28 @@ export default {
     isCompleted() {
       return this.name === "etablissement" ? this.verifyEstablishmentCompleted() : this.verifyMeasureCompleted()
     },
+    isCentralKitchen() {
+      return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
+    },
+    missingDeclarationMode() {
+      return this.isCentralKitchen && !this.diagnostic?.centralKitchenDiagnosticMode
+    },
+    isCentralKitchenCompleted() {
+      return !this.missingDeclarationMode && !this.hasSatelliteInconsistency
+    },
+    missingCanteenData() {
+      return !this.canteen || missingCanteenData(this.canteen, this.$store.state.sectors)
+    },
+    hasSatelliteInconsistency() {
+      return !this.canteen || hasSatelliteInconsistency(this.canteen)
+    },
   },
   components: {
     DsfrBadge,
   },
   methods: {
     verifyEstablishmentCompleted() {
-      return "a"
+      return this.isCentralKitchen ? this.isCentralKitchenCompleted : !this.missingCanteenData
     },
     verifyMeasureCompleted() {
       const measure = keyMeasures.find((measure) => measure.id === this.name)
