@@ -4,13 +4,16 @@
       INFORMATION IMPORTANTE :
     </h2>
     <p class="mb-0">
-      Maintien ouvert exceptionnel de la campagne de télédéclaration 2025 sur l'ensemble de la première semaine d'avril.
+      La télédéclaration 2025 est exceptionnellement maintenue ouverte sur l'ensemble de la première semaine d'avril.
       <br />
       Les télédéclarations seront possibles jusqu’au dimanche 6 avril 2025 inclus.
     </p>
     <v-row class="mt-4 mb-0 mx-0 align-center">
       <v-btn :to="{ name: 'PendingActions' }" color="primary" class="mb-5 mb-md-2 mr-4">
         Télédéclarer mes cantines
+      </v-btn>
+      <v-btn :to="{ name: 'CommunityPage', hash: '#evenements' }" color="primary" outlined class="mb-5 mb-md-2 mr-4">
+        Inscrivez-vous à nos derniers webinaires
       </v-btn>
       <p class="fr-text-sm mb-5 mb-md-2 mr-4">
         <a
