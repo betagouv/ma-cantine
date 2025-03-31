@@ -280,8 +280,6 @@ class Teledeclaration(models.Model):
             json_fields["satellites"] = serialized_satellites
             json_fields["satellite_canteens_count"] = canteen.satellite_canteens_count
 
-        diagnostic.populate_simplified_diagnostic_values()
-
         return Teledeclaration.objects.create(
             applicant=applicant,
             year=diagnostic.year,
