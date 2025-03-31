@@ -1,6 +1,6 @@
 <template>
   <DsfrBadge v-if="tab.isCompleted" :showIcon="false" mode="SUCCESS">Complété</DsfrBadge>
-  <DsfrBadge v-else-if="tab.isRequired" :showIcon="false" mode="ERROR">À compléter (obligatoire)</DsfrBadge>
+  <DsfrBadge v-else-if="isRequired" :showIcon="false" mode="ERROR">À compléter (obligatoire)</DsfrBadge>
   <DsfrBadge v-else :showIcon="false" mode="WARNING">À compléter (optionnel)</DsfrBadge>
 </template>
 
@@ -15,9 +15,26 @@ import DsfrBadge from "@/components/DsfrBadge"
 export default {
   props: {
     tab: Object,
+    name: String,
+  },
+  computed: {
+    isRequired() {
+      return this.name === "etablissement" || this.name === "qualite-des-produits"
+    },
   },
   components: {
     DsfrBadge,
+  },
+  methods: {
+    hasCentralKitchenDeclared(measure) {
+      if (measure.badgeId !== "appro") return false
+      if (!this.isSatellite) return false
+      const teledeclaredDiag = this.canteen.centralKitchenDiagnostics.filter((diagnostic) => {
+        const isCurrentYear = diagnostic.year == this.year
+        return isCurrentYear && diagnostic.isTeledeclared
+      })
+      return teledeclaredDiag.length > 0
+    },
   },
 }
 </script>

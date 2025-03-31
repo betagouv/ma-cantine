@@ -94,7 +94,7 @@
                 <v-icon small class="black--text">{{ tab.icon }}</v-icon>
                 {{ tab.text }}
               </p>
-              <KeyMeasureBadge :tab="tab" />
+              <KeyMeasureBadge :tab="tab" :name="tab.name" />
             </li>
           </ul>
           <ul>
@@ -326,6 +326,7 @@ export default {
           text: measure.tabText,
           title: measure.title,
           icon: measure.mdiIcon,
+          name: measure.id,
           to: { params: { measure: measure.id } },
           isRequired: measure.id === "qualite-des-produits",
           isCompleted: hasStartedMeasureTunnel(this.diagnostic, measure),
@@ -338,6 +339,7 @@ export default {
         text: "Établissement",
         title: "Établissement",
         icon: "$building-fill",
+        name: "etablissement",
         to: { params: { measure: this.establishmentId } },
         isCompleted: this.isCentralKitchen ? centralKitchenCompleted : !this.missingCanteenData,
         isRequired: true,
