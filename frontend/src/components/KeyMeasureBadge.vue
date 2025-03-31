@@ -18,7 +18,7 @@ export default {
     id: String,
     diagnostic: Object,
     canteen: Object,
-    year: String,
+    year: Number,
   },
   computed: {
     isRequired() {
@@ -67,7 +67,7 @@ export default {
     hasCentralKitchenDeclared() {
       if (!this.isSatellite) return false
       const teledeclaredDiag = this.canteen.centralKitchenDiagnostics.filter((diagnostic) => {
-        const isCurrentYear = diagnostic.year == this.year
+        const isCurrentYear = diagnostic.year === this.year
         return isCurrentYear && diagnostic.isTeledeclared
       })
       return teledeclaredDiag.length > 0

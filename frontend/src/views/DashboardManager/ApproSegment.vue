@@ -19,6 +19,15 @@
         </v-icon>
         <h3 class="font-weight-bold fr-text">{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
+      <v-card-text>
+        <KeyMeasureBadge
+          class="py-0 ml-8"
+          :canteen="canteen"
+          :diagnostic="diagnostic"
+          :year="year"
+          id="qualite-des-produits"
+        />
+      </v-card-text>
       <v-card-text class="fill-height d-flex flex-column" style="position: relative;">
         <v-spacer />
         <v-card class="py-4 px-5" color="grey lighten-4">
@@ -67,12 +76,12 @@
         </v-icon>
         <h3 class="fr-text font-weight-bold">{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
-      <v-card-text v-if="!delegatedToCentralKitchen">
+      <v-card-text>
         <KeyMeasureBadge
           class="py-0 ml-8"
           :canteen="canteen"
           :diagnostic="diagnostic"
-          :year="`${year}`"
+          :year="year"
           id="qualite-des-produits"
         />
       </v-card-text>
@@ -216,11 +225,6 @@ export default {
     },
     bioPercent() {
       return this.rules.bioThreshold
-    },
-    delegatedToCentralKitchen() {
-      const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
-      const usesCentralDiag = isSatellite && this.diagnostic?.canteenId === this.canteen.centralKitchen?.id
-      return usesCentralDiag && this.diagnostic?.centralKitchenDiagnosticMode === "ALL"
     },
   },
 }
