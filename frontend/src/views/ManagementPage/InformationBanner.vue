@@ -4,7 +4,7 @@
       INFORMATION IMPORTANTE :
     </h2>
     <p class="mb-0">
-      Maintien ouvert exceptionnel de la campagne de télédéclaration 2025 sur l'ensemble de la première semaine d'avril.
+      La télédéclaration 2025 est exceptionnellement maintenue ouverte sur l'ensemble de la première semaine d'avril.
       <br />
       Les télédéclarations seront possibles jusqu’au dimanche 6 avril 2025 inclus.
     </p>
