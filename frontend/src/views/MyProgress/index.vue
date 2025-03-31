@@ -8,14 +8,14 @@
     />
     <v-row align="end">
       <v-col cols="12" md="9" lg="10">
-        <DataInfoBadge v-if="hasActiveTeledeclaration" class="my-2" :hasActiveTeledeclaration="true" />
         <DataInfoBadge
-          v-else-if="inTeledeclarationCampaign"
-          class="my-2"
-          :readyToTeledeclare="readyToTeledeclare"
+          :currentYear="+year === currentYear"
           :missingData="!readyToTeledeclare"
+          :readyToTeledeclare="readyToTeledeclare"
+          :hasActiveTeledeclaration="hasActiveTeledeclaration"
+          :canteenAction="canteenAction"
+          class="my-2"
         />
-        <DataInfoBadge v-else-if="+year >= currentYear" class="my-2" :currentYear="+year === currentYear" />
         <ProductionTypeTag v-if="canteen" :canteen="canteen" class="ml-3" />
         <h1 class="fr-h3 mt-1 mb-2" v-if="canteen">{{ canteen.name }} : Télédéclaration</h1>
         <p class="mb-0">SIRET : {{ canteen.siret || "inconnu" }}</p>
@@ -38,8 +38,15 @@
     <v-row v-if="canteen" class="mt-5 mt-md-10">
       <v-col cols="12" md="3" lg="2" style="border-right: 1px solid #DDD;" class="fr-text-sm pt-1">
         <DsfrNativeSelect v-model="selectedYear" :items="yearOptions" class="mb-3 mt-2" />
+        <DataInfoBadge
+          :currentYear="+year === currentYear"
+          :missingData="!readyToTeledeclare"
+          :readyToTeledeclare="readyToTeledeclare"
+          :hasActiveTeledeclaration="hasActiveTeledeclaration"
+          :canteenAction="canteenAction"
+          class="my-2"
+        />
         <div v-if="hasActiveTeledeclaration">
-          <DataInfoBadge class="my-2" :hasActiveTeledeclaration="true" />
           <p>
             Votre bilan a été télédéclaré
             <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
@@ -78,7 +85,6 @@
           <p>Votre livreur des repas va faire le bilan pour votre établissement.</p>
         </div>
         <div v-else-if="inTeledeclarationCampaign">
-          <DataInfoBadge class="my-2" :readyToTeledeclare="readyToTeledeclare" :missingData="!readyToTeledeclare" />
           <div v-if="isSatelliteWithApproCentralDiagnostic">
             <p>Votre livreur des repas va déclarer les données d'approvisionnement pour votre établissement.</p>
             <p>Pour aller plus loin, vous pouvez télédéclarer les autres volets du bilan.</p>
@@ -122,7 +128,6 @@
           </v-btn>
         </div>
         <div v-else-if="+year >= currentYear">
-          <DataInfoBadge class="my-2" :currentYear="+year === currentYear" />
           <p>
             Vous pouvez commencer ce bilan et le télédéclarer pendant la campagne de télédéclaration en
             {{ +year + 1 }}.
@@ -303,6 +308,7 @@ export default {
       diagnostic: null,
       centralDiagnostic: null,
       canteen: null,
+      canteenAction: null,
       years: diagnosticYears(),
       currentYear: lastYear() + 1,
       selectedYear: +this.year,
@@ -418,6 +424,17 @@ export default {
           this.$router.push({ name: "ManagementPage" })
         })
     },
+    fetchCanteenAction() {
+      if (!this.canteen || !this.year) return
+      fetch(`/api/v1/actionableCanteens/${this.canteen.id}/${this.year}`)
+        .then((response) => {
+          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+          return response.json()
+        })
+        .then((canteen) => {
+          this.canteenAction = canteen.action
+        })
+    },
     assignDiagnostic() {
       if (!this.canteen) return
       const diag = this.canteen.diagnostics?.find((x) => +x.year === +this.year)
@@ -480,6 +497,7 @@ export default {
             title: "Télédéclaration prise en compte",
             status: "success",
           })
+          this.fetchCanteenAction()
           this.updateFromServer(diagnostic)
           window.scrollTo(0, 0)
         })
@@ -501,6 +519,7 @@ export default {
           this.$store.dispatch("notify", {
             title: "Votre télédéclaration a bien été annulée",
           })
+          this.fetchCanteenAction()
           this.updateFromServer(diagnostic)
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
@@ -562,9 +581,11 @@ export default {
         this.$router.push({ params: { measure: this.tabHeaders[this.tab].urlSlug } })
     },
     year() {
+      this.fetchCanteenAction()
       this.assignDiagnostic()
     },
     canteen() {
+      this.fetchCanteenAction()
       this.assignDiagnostic()
     },
     $route() {
