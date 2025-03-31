@@ -46,7 +46,7 @@
             </v-btn>
           </div>
           <v-col cols="12" md="6" class="pt-md-0 px-0 pr-md-3">
-            <FoodWasteCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
+            <FoodWasteCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" :year="selectedYear" />
           </v-col>
           <v-col cols="12" md="6" class="pt-md-0 px-0 pl-md-3">
             <DiversificationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
