@@ -12,6 +12,9 @@
       <v-btn :to="{ name: 'PendingActions' }" color="primary" class="mb-5 mb-md-2 mr-4">
         Télédéclarer mes cantines
       </v-btn>
+      <v-btn :to="{ name: 'CommunityPage', hash: '#evenements' }" color="primary" outlined class="mb-5 mb-md-2 mr-4">
+        Inscrivez-vous à nos derniers Webinaires
+      </v-btn>
       <p class="fr-text-sm mb-5 mb-md-2 mr-4">
         <a
           href="https://894795896-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MSCF7Mdc8yfeIjMxMZr%2Fuploads%2F85J5bYm9Nd4aFRJk1pvm%2FGuide_prise_en_main_ma_cantine_janv2025.pdf?alt=media"
