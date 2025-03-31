@@ -328,7 +328,6 @@ export default {
           icon: measure.mdiIcon,
           name: measure.id,
           to: { params: { measure: measure.id } },
-          isRequired: measure.id === "qualite-des-produits",
           isCompleted: hasStartedMeasureTunnel(this.diagnostic, measure),
         }
         tabHeaders.push(item)
@@ -342,7 +341,6 @@ export default {
         name: "etablissement",
         to: { params: { measure: this.establishmentId } },
         isCompleted: this.isCentralKitchen ? centralKitchenCompleted : !this.missingCanteenData,
-        isRequired: true,
       })
       return tabHeaders
     },
