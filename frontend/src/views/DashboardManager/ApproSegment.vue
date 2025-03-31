@@ -23,7 +23,7 @@
         <KeyMeasureBadge
           class="py-0 ml-8"
           :canteen="canteen"
-          :diagnostic="diagnostic"
+          :diagnostic="canteenDiagnostic"
           :year="year"
           id="qualite-des-produits"
         />
@@ -80,7 +80,7 @@
         <KeyMeasureBadge
           class="py-0 ml-8"
           :canteen="canteen"
-          :diagnostic="diagnostic"
+          :diagnostic="canteenDiagnostic"
           :year="year"
           id="qualite-des-produits"
         />
@@ -174,6 +174,9 @@ export default {
     },
     year: {
       type: Number,
+    },
+    canteenDiagnostic: {
+      type: Object,
     },
   },
   data() {

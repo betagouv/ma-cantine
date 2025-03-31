@@ -29,6 +29,7 @@
           :lastYearDiagnostic="lastYearDiagnostic"
           :canteen="canteen"
           :year="year"
+          :canteenDiagnostic="canteenDiagnostic"
         />
       </v-col>
       <v-col cols="12" md="8">
