@@ -72,7 +72,7 @@
           class="py-0 ml-8"
           :canteen="canteen"
           :diagnostic="diagnostic"
-          :year="year"
+          :year="`${year}`"
           id="qualite-des-produits"
         />
       </v-card-text>
