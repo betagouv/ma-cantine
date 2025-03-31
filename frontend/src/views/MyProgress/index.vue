@@ -9,11 +9,12 @@
     <v-row align="end">
       <v-col cols="12" md="9" lg="10">
         <DataInfoBadge
-          class="my-2"
           :currentYear="+year === currentYear"
           :missingData="!readyToTeledeclare"
           :readyToTeledeclare="readyToTeledeclare"
           :hasActiveTeledeclaration="hasActiveTeledeclaration"
+          :canteenAction="canteenAction"
+          class="my-2"
         />
         <ProductionTypeTag v-if="canteen" :canteen="canteen" class="ml-3" />
         <h1 class="fr-h3 mt-1 mb-2" v-if="canteen">{{ canteen.name }} : Télédéclaration</h1>
@@ -38,11 +39,11 @@
       <v-col cols="12" md="3" lg="2" style="border-right: 1px solid #DDD;" class="fr-text-sm pt-1">
         <DsfrNativeSelect v-model="selectedYear" :items="yearOptions" class="mb-3 mt-2" />
         <DataInfoBadge
-          class="my-2"
           :currentYear="+year === currentYear"
           :missingData="!readyToTeledeclare"
           :readyToTeledeclare="readyToTeledeclare"
           :hasActiveTeledeclaration="hasActiveTeledeclaration"
+          class="my-2"
         />
         <div v-if="hasActiveTeledeclaration">
           <p>
@@ -306,6 +307,7 @@ export default {
       diagnostic: null,
       centralDiagnostic: null,
       canteen: null,
+      canteenAction: null,
       years: diagnosticYears(),
       currentYear: lastYear() + 1,
       selectedYear: +this.year,
@@ -419,6 +421,16 @@ export default {
             status: "error",
           })
           this.$router.push({ name: "ManagementPage" })
+        })
+    },
+    fetchCanteenAction() {
+      fetch(`/api/v1/actionableCanteens/${this.canteen.id}/${this.year}`)
+        .then((response) => {
+          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+          return response.json()
+        })
+        .then((canteen) => {
+          this.canteenAction = canteen.action
         })
     },
     assignDiagnostic() {
@@ -564,8 +576,12 @@ export default {
       if (this.$route.params.measure !== this.tabHeaders[this.tab].urlSlug)
         this.$router.push({ params: { measure: this.tabHeaders[this.tab].urlSlug } })
     },
-    year() {
-      this.assignDiagnostic()
+    year: {
+      handler() {
+        this.fetchCanteenAction()
+        this.assignDiagnostic()
+      },
+      immediate: true,
     },
     canteen() {
       this.assignDiagnostic()
