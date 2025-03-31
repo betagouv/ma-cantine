@@ -94,7 +94,7 @@
                 <v-icon small class="black--text">{{ tab.icon }}</v-icon>
                 {{ tab.text }}
               </p>
-              <KeyMeasureBadge :tab="tab" :name="tab.name" />
+              <KeyMeasureBadge :diagnostic="diagnostic" :name="tab.name" />
             </li>
           </ul>
           <ul>
@@ -271,7 +271,6 @@ import {
   missingCanteenData,
   hasSatelliteInconsistency,
   hasFinishedMeasureTunnel,
-  hasStartedMeasureTunnel,
 } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
@@ -328,7 +327,6 @@ export default {
           icon: measure.mdiIcon,
           name: measure.id,
           to: { params: { measure: measure.id } },
-          isCompleted: hasStartedMeasureTunnel(this.diagnostic, measure),
         }
         tabHeaders.push(item)
       }
