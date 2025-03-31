@@ -67,6 +67,15 @@
         </v-icon>
         <h3 class="fr-text font-weight-bold">{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
+      <v-card-text v-if="!delegatedToCentralKitchen">
+        <KeyMeasureBadge
+          class="py-0 ml-8"
+          :canteen="canteen"
+          :diagnostic="diagnostic"
+          :year="year"
+          id="qualite-des-produits"
+        />
+      </v-card-text>
       <v-card-text v-if="level" :class="`mt-n4 pl-12 py-0 ${level.colorClass}`">
         <p class="mb-0 mt-2 fr-text-xs">
           NIVEAU :
@@ -134,11 +143,12 @@
 import { hasDiagnosticApproData, lastYear, hasStartedMeasureTunnel, applicableDiagnosticRules } from "@/utils"
 import Constants from "@/constants"
 import ApproGraph from "@/components/ApproGraph"
+import KeyMeasureBadge from "@/components/KeyMeasureBadge"
 import keyMeasures from "@/data/key-measures.json"
 
 export default {
   name: "ApproSegment",
-  components: { ApproGraph },
+  components: { ApproGraph, KeyMeasureBadge },
   props: {
     purchases: {
       type: Array,
@@ -206,6 +216,11 @@ export default {
     },
     bioPercent() {
       return this.rules.bioThreshold
+    },
+    delegatedToCentralKitchen() {
+      const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
+      const usesCentralDiag = isSatellite && this.diagnostic?.canteenId === this.canteen.centralKitchen?.id
+      return usesCentralDiag && this.diagnostic?.centralKitchenDiagnosticMode === "ALL"
     },
   },
 }
