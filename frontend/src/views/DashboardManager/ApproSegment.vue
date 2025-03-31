@@ -19,6 +19,15 @@
         </v-icon>
         <h3 class="font-weight-bold fr-text">{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
+      <v-card-text>
+        <KeyMeasureBadge
+          class="py-0 ml-8"
+          :canteen="canteen"
+          :diagnostic="canteenDiagnostic"
+          :year="year"
+          id="qualite-des-produits"
+        />
+      </v-card-text>
       <v-card-text class="fill-height d-flex flex-column" style="position: relative;">
         <v-spacer />
         <v-card class="py-4 px-5" color="grey lighten-4">
@@ -67,6 +76,15 @@
         </v-icon>
         <h3 class="fr-text font-weight-bold">{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
+      <v-card-text>
+        <KeyMeasureBadge
+          class="py-0 ml-8"
+          :canteen="canteen"
+          :diagnostic="canteenDiagnostic"
+          :year="year"
+          id="qualite-des-produits"
+        />
+      </v-card-text>
       <v-card-text v-if="level" :class="`mt-n4 pl-12 py-0 ${level.colorClass}`">
         <p class="mb-0 mt-2 fr-text-xs">
           NIVEAU :
@@ -134,11 +152,12 @@
 import { hasDiagnosticApproData, lastYear, hasStartedMeasureTunnel, applicableDiagnosticRules } from "@/utils"
 import Constants from "@/constants"
 import ApproGraph from "@/components/ApproGraph"
+import KeyMeasureBadge from "@/components/KeyMeasureBadge"
 import keyMeasures from "@/data/key-measures.json"
 
 export default {
   name: "ApproSegment",
-  components: { ApproGraph },
+  components: { ApproGraph, KeyMeasureBadge },
   props: {
     purchases: {
       type: Array,
@@ -155,6 +174,9 @@ export default {
     },
     year: {
       type: Number,
+    },
+    canteenDiagnostic: {
+      type: Object,
     },
   },
   data() {
