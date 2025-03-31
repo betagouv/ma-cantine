@@ -9,7 +9,13 @@
       </h3>
     </v-card-title>
     <v-card-text v-if="!delegatedToCentralKitchen">
-      <KeyMeasureBadge class="py-0 ml-8" :canteen="canteen" :diagnostic="diagnostic" :year="year" :id="measureId" />
+      <KeyMeasureBadge
+        class="py-0 ml-8"
+        :canteen="canteen"
+        :diagnostic="diagnostic"
+        :year="`${year}`"
+        :id="measureId"
+      />
     </v-card-text>
     <v-card-text v-if="!needsData && level" :class="`mt-n4 pl-12 ${level.colorClass}`">
       <p class="mb-0 mt-2 fr-text-xs">
@@ -45,7 +51,7 @@ export default {
       type: Object,
       required: true,
     },
-    year: String,
+    year: Number,
   },
   data() {
     return {
