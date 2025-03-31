@@ -55,7 +55,7 @@
             <NoPlasticCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" :year="selectedYear" />
           </v-col>
           <v-col cols="12" md="6" class="pb-md-0 px-0 pl-md-3">
-            <InformationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" />
+            <InformationCard :diagnostic="otherMeasuresDiagnostic" :canteen="canteen" :year="selectedYear" />
           </v-col>
         </v-row>
       </v-col>
