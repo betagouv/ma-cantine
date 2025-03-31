@@ -114,15 +114,15 @@
           <template v-slot:[`item.action`]="{ item }">
             <v-fade-transition>
               <div :key="`${item.id}_${item.action}`">
-                <div v-if="item.action === '95_nothing'" class="px-3">
-                  <v-icon small class="mr-2" color="green">$checkbox-circle-fill</v-icon>
-                  <span class="caption">Rien à faire !</span>
+                <div v-if="getActionDisplay(item.action) === 'button'" class="px-3">
+                  <v-icon small class="mr-2" color="green">{{ getActionIcon(item.action) }}</v-icon>
+                  <span class="caption">{{ getActionText(item.action) }}</span>
                 </div>
                 <v-btn small outlined color="primary" :to="actionLink(item)" @click="action(item)" v-else>
                   <v-icon small class="mr-2" color="primary">
-                    {{ actions[item.action] && actions[item.action].icon }}
+                    {{ getActionIcon(item.action) }}
                   </v-icon>
-                  {{ actions[item.action] && actions[item.action].display }}
+                  {{ getActionText(item.action) }}
                   <span class="d-sr-only">{{ item.userCanView ? "" : "de" }} {{ item.name }}</span>
                 </v-btn>
               </div>
@@ -177,32 +177,49 @@ export default {
       },
       actions: {
         "10_add_satellites": {
-          display: "Ajouter des satellites",
+          text: "Ajouter des satellites",
           icon: "$community-fill",
+          display: "button",
         },
         "18_prefill_diagnostic": {
-          display: "Créer le bilan " + year,
+          text: "Créer le bilan " + year,
           icon: "$add-circle-fill",
+          display: "button",
         },
         "20_create_diagnostic": {
-          display: "Créer le bilan " + year,
+          text: "Créer le bilan " + year,
           icon: "$add-circle-fill",
+          display: "button",
         },
         "30_complete_diagnostic": {
-          display: "Compléter le bilan " + year,
+          text: "Compléter le bilan " + year,
           icon: "$edit-box-fill",
+          display: "button",
         },
         "35_fill_canteen_data": {
-          display: "Compléter les infos de la cantine",
+          text: "Compléter les infos de la cantine",
           icon: "$building-fill",
+          display: "button",
         },
         "40_teledeclare": {
-          display: "Télédéclarer",
+          text: "Télédéclarer",
           icon: "$send-plane-fill",
+          display: "button",
+        },
+        "90_nothing_satellite": {
+          text: "Rien à faire ! (à compléter par votre livreur)",
+          icon: "$checkbox-circle-fill",
+          display: "text",
+        },
+        "91_nothing_satellite_teledeclared": {
+          text: "Rien à faire ! (télédéclaré par votre livreur)",
+          icon: "$checkbox-circle-fill",
+          display: "text",
         },
         "95_nothing": {
-          display: "Rien à faire !",
+          text: "Rien à faire !",
           icon: "$checkbox-circle-fill",
+          display: "text",
         },
       },
       canteenForTD: null,
@@ -293,6 +310,15 @@ export default {
         name: "DashboardManager",
         params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
       }
+    },
+    getActionText(action) {
+      return this.actions[action] && this.actions[action].text
+    },
+    getActionIcon(action) {
+      return this.actions[action] && this.actions[action].icon
+    },
+    getActionDisplay(action) {
+      return this.actions[action] && this.actions[action].display
     },
     actionLink(canteen) {
       if (canteen.action === "10_add_satellites") {

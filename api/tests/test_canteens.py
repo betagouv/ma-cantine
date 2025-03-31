@@ -986,7 +986,6 @@ class TestCanteenApi(APITestCase):
             value_total_ht=1000,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
         )
-        Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         DiagnosticFactory.create(
             year=2021,
@@ -994,10 +993,18 @@ class TestCanteenApi(APITestCase):
             value_total_ht=1200,
         )
 
+        # cc diagnostic not teledeclared
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
         returned_canteens = response.json()["results"]
         satellite_action = next(x for x in returned_canteens if x["id"] == satellite.id)["action"]
-        self.assertEqual(satellite_action, "95_nothing")
+        self.assertEqual(satellite_action, "90_nothing_satellite")
+
+        # cc diagnostic teledeclared
+        Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        returned_canteens = response.json()["results"]
+        satellite_action = next(x for x in returned_canteens if x["id"] == satellite.id)["action"]
+        self.assertEqual(satellite_action, "91_nothing_satellite_teledeclared")
 
     @authenticate
     def test_get_canteens_with_purchases_no_diagnostics_for_year(self):

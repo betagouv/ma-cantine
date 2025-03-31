@@ -28,6 +28,11 @@ const BADGE_LIST = [
     ],
   },
   {
+    body: "Données à compléter par votre livreur",
+    mode: "NEUTRAL",
+    actions: ["90_nothing_satellite"],
+  },
+  {
     // readyToTeledeclare
     body: "Bilan à télédéclarer",
     mode: "ERROR",
@@ -37,7 +42,7 @@ const BADGE_LIST = [
     // hasActiveTeledeclaration
     body: "Bilan télédéclaré",
     mode: "SUCCESS",
-    actions: ["95_nothing"],
+    actions: ["91_nothing_satellite_teledeclared", "95_nothing"],
   },
 ]
 

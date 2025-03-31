@@ -203,6 +203,11 @@ class Canteen(SoftDeletionModel):
         FILL_CANTEEN_DATA = "35_fill_canteen_data", "Compléter les infos de la cantine"
         TELEDECLARE = "40_teledeclare", "Télédéclarer"
         PUBLISH = "50_publish", "Publier"
+        NOTHING_SATELLITE = "90_nothing_satellite", "Rien à faire (à compléter par votre livreur)"
+        NOTHING_SATELLITE_TELEDECLARED = (
+            "91_nothing_satellite_teledeclared",
+            "Rien à faire (télédéclaré par votre livreur)",
+        )
         NOTHING = "95_nothing", "Rien à faire !"
 
     class Ministries(models.TextChoices):
