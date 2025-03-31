@@ -43,6 +43,7 @@
           :missingData="!readyToTeledeclare"
           :readyToTeledeclare="readyToTeledeclare"
           :hasActiveTeledeclaration="hasActiveTeledeclaration"
+          :canteenAction="canteenAction"
           class="my-2"
         />
         <div v-if="hasActiveTeledeclaration">
