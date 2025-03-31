@@ -21,17 +21,17 @@ import { missingCanteenData, hasSatelliteInconsistency, hasStartedMeasureTunnel 
 export default {
   name: "KeyMeasureBadge",
   props: {
-    name: String,
+    id: String,
     diagnostic: Object,
     canteen: Object,
     year: String,
   },
   computed: {
     isRequired() {
-      return this.name === "etablissement" || this.name === "qualite-des-produits"
+      return this.id === "etablissement" || this.id === "qualite-des-produits"
     },
     isCompleted() {
-      return this.name === "etablissement" ? this.verifyEstablishmentCompleted() : this.verifyMeasureCompleted()
+      return this.id === "etablissement" ? this.verifyEstablishmentCompleted() : this.verifyMeasureCompleted()
     },
     isWaitingCentralKitchen() {
       return this.isAppro && this.isSatellite && !this.isCompleted
@@ -55,7 +55,7 @@ export default {
       return this.canteen?.productionType === "site_cooked_elsewhere"
     },
     isAppro() {
-      return this.name === "qualite-des-produits"
+      return this.id === "qualite-des-produits"
     },
   },
   components: {
@@ -66,7 +66,7 @@ export default {
       return this.isCentralKitchen ? this.isCentralKitchenCompleted : !this.missingCanteenData
     },
     verifyMeasureCompleted() {
-      const measure = keyMeasures.find((measure) => measure.id === this.name)
+      const measure = keyMeasures.find((measure) => measure.id === this.id)
       if (this.isAppro) return hasStartedMeasureTunnel(this.diagnostic, measure) || this.hasCentralKitchenDeclared()
       else return hasStartedMeasureTunnel(this.diagnostic, measure)
     },

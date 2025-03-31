@@ -94,7 +94,7 @@
                 <v-icon small class="black--text">{{ tab.icon }}</v-icon>
                 {{ tab.text }}
               </p>
-              <KeyMeasureBadge :diagnostic="diagnostic" :year="selectedYear" :canteen="canteen" :name="tab.name" />
+              <KeyMeasureBadge :diagnostic="diagnostic" :year="selectedYear" :canteen="canteen" :id="tab.id" />
             </li>
           </ul>
           <ul>
@@ -325,7 +325,7 @@ export default {
           text: measure.tabText,
           title: measure.title,
           icon: measure.mdiIcon,
-          name: measure.id,
+          id: measure.id,
           to: { params: { measure: measure.id } },
         }
         tabHeaders.push(item)
@@ -335,7 +335,7 @@ export default {
         text: "Établissement",
         title: "Établissement",
         icon: "$building-fill",
-        name: "etablissement",
+        id: "etablissement",
         to: { params: { measure: this.establishmentId } },
       })
       return tabHeaders
