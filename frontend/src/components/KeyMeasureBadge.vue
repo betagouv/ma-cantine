@@ -21,6 +21,7 @@ export default {
     name: String,
     diagnostic: Object,
     canteen: Object,
+    year: String,
   },
   computed: {
     isRequired() {
@@ -44,6 +45,9 @@ export default {
     hasSatelliteInconsistency() {
       return !this.canteen || hasSatelliteInconsistency(this.canteen)
     },
+    isSatellite() {
+      return this.canteen?.productionType === "site_cooked_elsewhere"
+    },
   },
   components: {
     DsfrBadge,
@@ -54,10 +58,11 @@ export default {
     },
     verifyMeasureCompleted() {
       const measure = keyMeasures.find((measure) => measure.id === this.name)
-      return hasStartedMeasureTunnel(this.diagnostic, measure)
+      const isAppro = this.name === "qualite-des-produits"
+      if (isAppro) return hasStartedMeasureTunnel(this.diagnostic, measure) || this.hasCentralKitchenDeclared()
+      else return hasStartedMeasureTunnel(this.diagnostic, measure)
     },
-    hasCentralKitchenDeclared(measure) {
-      if (measure.badgeId !== "appro") return false
+    hasCentralKitchenDeclared() {
       if (!this.isSatellite) return false
       const teledeclaredDiag = this.canteen.centralKitchenDiagnostics.filter((diagnostic) => {
         const isCurrentYear = diagnostic.year == this.year

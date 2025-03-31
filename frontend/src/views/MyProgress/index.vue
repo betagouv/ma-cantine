@@ -94,7 +94,7 @@
                 <v-icon small class="black--text">{{ tab.icon }}</v-icon>
                 {{ tab.text }}
               </p>
-              <KeyMeasureBadge :diagnostic="diagnostic" :canteen="canteen" :name="tab.name" />
+              <KeyMeasureBadge :diagnostic="diagnostic" :year="selectedYear" :canteen="canteen" :name="tab.name" />
             </li>
           </ul>
           <ul>
