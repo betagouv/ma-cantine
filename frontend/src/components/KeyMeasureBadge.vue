@@ -48,6 +48,9 @@ export default {
     isSatellite() {
       return this.canteen?.productionType === "site_cooked_elsewhere"
     },
+    isAppro() {
+      return this.name === "qualite-des-produits"
+    },
   },
   components: {
     DsfrBadge,
@@ -58,8 +61,7 @@ export default {
     },
     verifyMeasureCompleted() {
       const measure = keyMeasures.find((measure) => measure.id === this.name)
-      const isAppro = this.name === "qualite-des-produits"
-      if (isAppro) return hasStartedMeasureTunnel(this.diagnostic, measure) || this.hasCentralKitchenDeclared()
+      if (this.isAppro) return hasStartedMeasureTunnel(this.diagnostic, measure) || this.hasCentralKitchenDeclared()
       else return hasStartedMeasureTunnel(this.diagnostic, measure)
     },
     hasCentralKitchenDeclared() {
