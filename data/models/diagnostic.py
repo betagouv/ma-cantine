@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
+from django.db.models import Q
 from simple_history.models import HistoricalRecords
 
 # from data.models import Teledeclaration
@@ -17,6 +18,14 @@ from data.utils import (
 from macantine.utils import CAMPAIGN_DATES
 
 from .canteen import Canteen
+
+
+def canteen_has_siret_or_siren_unite_legale_query():
+    canteen_has_siret_query = Q(canteen__siret__isnull=False) & ~Q(canteen__siret="")
+    canteen_has_siren_unite_legale_query = Q(canteen__siren_unite_legale__isnull=False) & ~Q(
+        canteen__siren_unite_legale=""
+    )
+    return canteen_has_siret_query | canteen_has_siren_unite_legale_query
 
 
 class DiagnosticQuerySet(models.QuerySet):
@@ -39,10 +48,8 @@ class DiagnosticQuerySet(models.QuerySet):
     def canteen_for_stat(self, year):
         return (
             self.select_related("canteen")
-            .filter(
-                canteen__id__isnull=False,
-                canteen__siret__isnull=False,
-            )
+            .filter(canteen__id__isnull=False)
+            .filter(canteen_has_siret_or_siren_unite_legale_query())
             .exclude(canteen__siret="")
             .exclude(
                 canteen__deletion_date__range=(
