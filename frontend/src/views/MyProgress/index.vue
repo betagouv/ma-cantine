@@ -425,6 +425,7 @@ export default {
         })
     },
     fetchCanteenAction() {
+      if (!this.canteen || !this.year) return
       fetch(`/api/v1/actionableCanteens/${this.canteen.id}/${this.year}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
@@ -577,14 +578,12 @@ export default {
       if (this.$route.params.measure !== this.tabHeaders[this.tab].urlSlug)
         this.$router.push({ params: { measure: this.tabHeaders[this.tab].urlSlug } })
     },
-    year: {
-      handler() {
-        this.fetchCanteenAction()
-        this.assignDiagnostic()
-      },
-      immediate: true,
+    year() {
+      this.fetchCanteenAction()
+      this.assignDiagnostic()
     },
     canteen() {
+      this.fetchCanteenAction()
       this.assignDiagnostic()
     },
     $route() {

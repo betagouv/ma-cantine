@@ -316,6 +316,7 @@ export default {
       }
     },
     fetchCanteenAction() {
+      if (!this.canteen || !this.year) return
       fetch(`/api/v1/actionableCanteens/${this.canteen.id}/${this.year}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
