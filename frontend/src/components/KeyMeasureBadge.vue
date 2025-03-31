@@ -26,15 +26,20 @@ export default {
       return this.name === "etablissement" || this.name === "qualite-des-produits"
     },
     isCompleted() {
-      if (this.name === "etablissement") return "TODO"
-      const measure = keyMeasures.find((measure) => measure.id === this.name)
-      return hasStartedMeasureTunnel(this.diagnostic, measure)
+      return this.name === "etablissement" ? this.verifyEstablishmentCompleted() : this.verifyMeasureCompleted()
     },
   },
   components: {
     DsfrBadge,
   },
   methods: {
+    verifyEstablishmentCompleted() {
+      return "a"
+    },
+    verifyMeasureCompleted() {
+      const measure = keyMeasures.find((measure) => measure.id === this.name)
+      return hasStartedMeasureTunnel(this.diagnostic, measure)
+    },
     hasCentralKitchenDeclared(measure) {
       if (measure.badgeId !== "appro") return false
       if (!this.isSatellite) return false
