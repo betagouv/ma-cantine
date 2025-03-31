@@ -6,6 +6,25 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.11.7](https://github.com/betagouv/ma-cantine/compare/v2025.11.6...v2025.11.7) (2025-03-31)
+
+
+### Améliorations
+
+* **Cantines:** gérer le nouveau champ siren_unite_legale dans les TD (stats) ([#5125](https://github.com/betagouv/ma-cantine/issues/5125)) ([352c49d](https://github.com/betagouv/ma-cantine/commit/352c49de8790235360bcf8db23b272667d12ab21))
+* **Télédéclaration:** mise à jour du texte du bandeau informatif ([#5184](https://github.com/betagouv/ma-cantine/issues/5184)) ([394ee36](https://github.com/betagouv/ma-cantine/commit/394ee36317127e49b0ce2518dcfce2d050a5d242))
+
+
+### Corrections (bugs, typos...)
+
+* **Metabase:** Supprimer les nouvelles colonnes _agg lors de l'export pour ne pas créer une double aggrégation ([#5180](https://github.com/betagouv/ma-cantine/issues/5180)) ([8c1c74b](https://github.com/betagouv/ma-cantine/commit/8c1c74b0479053c486a4860e4924290facedd948))
+
+
+### Technique
+
+* **Cantines:** Nouvelle querysets pour mieux documenter les règles concernant les cantines centrales & satellites ([#5179](https://github.com/betagouv/ma-cantine/issues/5179)) ([9d45e4f](https://github.com/betagouv/ma-cantine/commit/9d45e4f1bfd99d60eefd6ee2d05451bb750f78a3))
+* **Télédéclaration:** ne plus utiliser la factory lors de la création à partir du Diagnostic ([#5183](https://github.com/betagouv/ma-cantine/issues/5183)) ([b6acf8e](https://github.com/betagouv/ma-cantine/commit/b6acf8ef95187b14d8209628e8e49d8d56dd2d80))
+
 ## [2025.11.6](https://github.com/betagouv/ma-cantine/compare/v2025.11.5...v2025.11.6) (2025-03-28)
 
 
