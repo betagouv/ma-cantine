@@ -243,8 +243,6 @@ class Teledeclaration(models.Model):
         """
         Create a teledeclaration object from a diagnostic
         """
-        from data.factories import TeledeclarationFactory  # Avoids circular import
-
         version = "14"  # Helps identify which data will be present. Use incremental int values
         # Version 14 - New Teledeclaration.canteen_siren_unite_legale field, also add the field to the canteen serialization
         # Version 13 - Add category_name in canteen sectors serializer
@@ -290,7 +288,7 @@ class Teledeclaration(models.Model):
 
         diagnostic.populate_simplified_diagnostic_values()
 
-        return TeledeclarationFactory.create(
+        return Teledeclaration.objects.create(
             applicant=applicant,
             year=diagnostic.year,
             canteen=canteen,
