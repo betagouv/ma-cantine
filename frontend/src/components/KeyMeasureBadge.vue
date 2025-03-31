@@ -12,12 +12,6 @@ import DsfrBadge from "@/components/DsfrBadge"
 import keyMeasures from "@/data/key-measures.json"
 import { missingCanteenData, hasSatelliteInconsistency, hasStartedMeasureTunnel } from "@/utils"
 
-// TODO =
-// 1 état rouge bloque la TD : à compléter
-// 1 état jaune : à compléter (optionnel)
-// 1 état gris / appro + SAT seulement :  à compléter (par livreur des repas)
-// 2 états vert : complété solo || TD par livreur des repas
-
 export default {
   name: "KeyMeasureBadge",
   props: {
