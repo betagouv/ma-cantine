@@ -18,6 +18,7 @@
             :missingData="needsData"
             :readyToTeledeclare="readyToTeledeclare"
             :hasActiveTeledeclaration="hasActiveTeledeclaration"
+            :canteenAction="canteenAction"
             class="mt-4"
           />
           <hr aria-hidden="true" role="presentation" class="my-6" />
@@ -177,6 +178,7 @@ export default {
       allowedYears: years.map((year) => ({ text: year, value: year })),
       showTeledeclarationPreview: false,
       purchasesSummary: undefined,
+      canteenAction: null,
     }
   },
   computed: {
@@ -313,6 +315,16 @@ export default {
           })
       }
     },
+    fetchCanteenAction() {
+      fetch(`/api/v1/actionableCanteens/${this.canteen.id}/${this.year}`)
+        .then((response) => {
+          if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
+          return response.json()
+        })
+        .then((canteen) => {
+          this.canteenAction = canteen.action
+        })
+    },
   },
   mounted() {
     if (this.$route.query?.year && this.diagnosticYears.indexOf(+this.$route.query.year) > -1) {
@@ -321,10 +333,14 @@ export default {
     }
   },
   watch: {
-    year() {
-      if (this.isCurrentYear && !this.purchasesSummary) {
-        this.fetchPurchasesSummary()
-      }
+    year: {
+      handler() {
+        this.fetchCanteenAction()
+        if (this.isCurrentYear && !this.purchasesSummary) {
+          this.fetchPurchasesSummary()
+        }
+      },
+      immediate: true,
     },
   },
 }

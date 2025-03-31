@@ -1,11 +1,46 @@
 <template>
-  <DsfrBadge v-if="body" :mode="mode">
-    <p class="ma-0 pa-0 text-uppercase">{{ body }}</p>
+  <DsfrBadge v-if="badge" :mode="badge.mode">
+    <p class="ma-0 pa-0 text-uppercase">{{ badge.body }}</p>
   </DsfrBadge>
   <span v-else></span>
 </template>
+
 <script>
 import DsfrBadge from "@/components/DsfrBadge"
+
+const BADGE_LIST = [
+  {
+    // currentYear
+    body: "Année en cours",
+    mode: "INFO",
+    actions: [],
+  },
+  {
+    // missingData
+    body: "Données à compléter",
+    mode: "ERROR",
+    actions: [
+      "10_add_satellites",
+      "35_fill_canteen_data",
+      "18_prefill_diagnostic",
+      "20_create_diagnostic",
+      "30_complete_diagnostic",
+    ],
+  },
+  {
+    // readyToTeledeclare
+    body: "Bilan à télédéclarer",
+    mode: "ERROR",
+    actions: ["40_teledeclare"],
+  },
+  {
+    // hasActiveTeledeclaration
+    body: "Bilan télédéclaré",
+    mode: "SUCCESS",
+    actions: ["95_nothing"],
+  },
+]
+
 export default {
   name: "DataInfoBadge",
   components: { DsfrBadge },
@@ -26,20 +61,20 @@ export default {
       default: false,
       type: Boolean,
     },
+    canteenAction: {
+      type: String,
+      default: null,
+    },
   },
   computed: {
-    body() {
-      if (this.hasActiveTeledeclaration) return "Bilan télédéclaré"
-      if (this.currentYear) return "Année en cours"
-      if (this.missingData) return "Données à compléter"
-      if (this.readyToTeledeclare) return "Bilan à télédéclarer"
+    badge() {
+      if (this.currentYear) return BADGE_LIST[0]
+      if (this.canteenAction)
+        return BADGE_LIST.find((badge) => badge.actions && badge.actions.includes(this.canteenAction))
+      if (this.hasActiveTeledeclaration) return BADGE_LIST[3]
+      if (this.missingData) return BADGE_LIST[1]
+      if (this.readyToTeledeclare) return BADGE_LIST[2]
       return null
-    },
-    mode() {
-      if (this.hasActiveTeledeclaration) return "SUCCESS"
-      else if (this.currentYear) return "INFO"
-      else if (this.missingData || this.readyToTeledeclare) return "ERROR"
-      return "INFO"
     },
   },
 }
