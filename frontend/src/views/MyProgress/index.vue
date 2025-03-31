@@ -332,6 +332,11 @@ export default {
           isRequired: measure.id === "qualite-des-produits",
           isCompleted: hasStartedMeasureTunnel(this.diagnostic, measure),
         }
+        // TODO =
+        // 1 état rouge bloque la TD : à compléter
+        // 1 état jaune : à compléter (optionnel)
+        // 1 état gris / appro + SAT seulement :  à compléter (par livreur des repas)
+        // 2 états vert : complété solo || TD par livreur des repas
         tabHeaders.push(item)
       }
       const centralKitchenCompleted = !this.missingDeclarationMode && !this.hasSatelliteInconsistency
