@@ -94,9 +94,7 @@
                 <v-icon small class="black--text">{{ tab.icon }}</v-icon>
                 {{ tab.text }}
               </p>
-              <DsfrBadge v-if="tab.isCompleted" :showIcon="false" mode="SUCCESS">Complété</DsfrBadge>
-              <DsfrBadge v-else-if="tab.isRequired" :showIcon="false" mode="ERROR">À compléter (obligatoire)</DsfrBadge>
-              <DsfrBadge v-else :showIcon="false" mode="WARNING">À compléter (optionnel)</DsfrBadge>
+              <KeyMeasureBadge :tab="tab" />
             </li>
           </ul>
           <ul>
@@ -256,13 +254,13 @@
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import ProductionTypeTag from "@/components/ProductionTypeTag"
 import ProgressTab from "./ProgressTab"
-import DsfrBadge from "@/components/DsfrBadge"
 import DsfrTabsVue from "@/components/DsfrTabs"
 import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
 import DataInfoBadge from "@/components/DataInfoBadge"
+import KeyMeasureBadge from "@/components/KeyMeasureBadge"
 import {
   customDiagnosticYears,
   diagnosticYears,
@@ -284,13 +282,13 @@ export default {
     BreadcrumbsNav,
     ProductionTypeTag,
     ProgressTab,
-    DsfrBadge,
     DsfrTabsVue,
     DsfrNativeSelect,
     DownloadLink,
     TeledeclarationPreview,
     TeledeclarationCancelDialog,
     DataInfoBadge,
+    KeyMeasureBadge,
   },
   props: {
     canteenUrlComponent: {
@@ -332,11 +330,6 @@ export default {
           isRequired: measure.id === "qualite-des-produits",
           isCompleted: hasStartedMeasureTunnel(this.diagnostic, measure),
         }
-        // TODO =
-        // 1 état rouge bloque la TD : à compléter
-        // 1 état jaune : à compléter (optionnel)
-        // 1 état gris / appro + SAT seulement :  à compléter (par livreur des repas)
-        // 2 états vert : complété solo || TD par livreur des repas
         tabHeaders.push(item)
       }
       const centralKitchenCompleted = !this.missingDeclarationMode && !this.hasSatelliteInconsistency
