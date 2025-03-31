@@ -1,5 +1,8 @@
 <template>
   <DsfrBadge v-if="isCompleted" :showIcon="false" mode="SUCCESS">Complété</DsfrBadge>
+  <DsfrBadge v-else-if="isWaitingCentralKitchen" :showIcon="false" mode="NEUTRAL">
+    À compléter (par livreur)
+  </DsfrBadge>
   <DsfrBadge v-else-if="isRequired" :showIcon="false" mode="ERROR">À compléter (obligatoire)</DsfrBadge>
   <DsfrBadge v-else :showIcon="false" mode="WARNING">À compléter (optionnel)</DsfrBadge>
 </template>
@@ -29,6 +32,9 @@ export default {
     },
     isCompleted() {
       return this.name === "etablissement" ? this.verifyEstablishmentCompleted() : this.verifyMeasureCompleted()
+    },
+    isWaitingCentralKitchen() {
+      return this.isAppro && this.isSatellite && !this.isCompleted
     },
     isCentralKitchen() {
       return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
