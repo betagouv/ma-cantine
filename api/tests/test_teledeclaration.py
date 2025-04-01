@@ -185,7 +185,7 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(
-            value_externality_performance_ht=0, canteen=canteen, year=2020, diagnostic_type="SIMPLE"
+            value_externality_performance_ht=0, canteen=canteen, year=2020, diagnostic_type="SIMPLE", value_bio_ht=20
         )
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -271,6 +271,8 @@ class TestTeledeclarationApi(APITestCase):
             json_teledeclaration["communicates_on_food_quality"],
             diagnostic.communicates_on_food_quality,
         )
+        # Test the aggregated values, as it is a SIMPLE diag, the value should match directly the non agg ones
+        self.assertEqual(teledeclaration.value_bio_ht_agg, diagnostic.value_bio_ht)
 
     @override_settings(ENABLE_TELEDECLARATION=False)
     @freeze_time("2021-01-20")
@@ -478,7 +480,11 @@ class TestTeledeclarationApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=LAST_YEAR, diagnostic_type="COMPLETE", value_total_ht=1000, value_sustainable_ht=None
+            canteen=canteen,
+            year=LAST_YEAR,
+            diagnostic_type="COMPLETE",
+            value_total_ht=1000,
+            value_sustainable_ht=None,
         )
         # Making sure we will aggregate
         diagnostic.value_sustainable_ht = None
@@ -535,6 +541,7 @@ class TestTeledeclarationApi(APITestCase):
 
         # Checking the aggregation
         self.assertEqual(teledeclaration.value_total_ht, 1000)
+        self.assertEqual(teledeclaration.value_bio_ht_agg, 0)
         self.assertEqual(
             teledeclaration.value_sustainable_ht_agg,
             json_teledeclaration["value_boissons_label_rouge"]
