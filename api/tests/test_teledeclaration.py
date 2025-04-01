@@ -271,7 +271,7 @@ class TestTeledeclarationApi(APITestCase):
             json_teledeclaration["communicates_on_food_quality"],
             diagnostic.communicates_on_food_quality,
         )
-        # Test the aggregated values, as it is a SIMPLE diag, the should match directly the non agg ones
+        # Test the aggregated values, as it is a SIMPLE diag, the value should match directly the non agg ones
         self.assertEqual(teledeclaration.value_bio_ht_agg, diagnostic.value_bio_ht)
 
     @override_settings(ENABLE_TELEDECLARATION=False)
