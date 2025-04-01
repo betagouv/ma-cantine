@@ -42,6 +42,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
     list_display = (
         "canteen_name",
         "year",
+        "diagnostic_type",
         "creation_date",
         "modification_date",
     )
