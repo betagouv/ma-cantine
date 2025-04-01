@@ -17,7 +17,7 @@ const sources = {
     edibleKey: "preparationEdibleMass",
     inedibleKey: "preparationInedibleMass",
     title: Constants.WasteMeasurement.preparation.title,
-    primaryLabel: "Masse de déchets alimentaires pour les excédents de préparation (en kg)",
+    primaryLabel: "Masse de déchets alimentaires issus de la préparation (en kg)",
     description:
       "Par exemple, si vous avez jeté des épluchures, des parures ou si vous avez des ingrédients excédentaires que vous ne réutiliserez pas, il s’agit d’excédents de préparation",
     edibleHelp:
@@ -31,7 +31,7 @@ const sources = {
     title: Constants.WasteMeasurement.unserved.title,
     primaryLabel: "Masse de déchets alimentaires pour les denrées présentées aux convives mais non servies (en kg)",
     description:
-      "Par exemple, si vous présentez en vitrine un nombre excédentaire de salades, de parts de tarte aux pommes et que ces denrées supplémentaires ne sont ni consommées ni valorisées, il s’agit d’excédents présentés aux convives et non servis",
+      "Par exemple, si vous présentez en vitrine un nombre excédentaire de salades, de parts de tarte aux pommes et que ces denrées supplémentaires ne sont ni consommées ni valorisées, il s’agit d’excédents présentés aux convives et non servis ou non valorisés",
     edibleHelp:
       "Les parties des denrées alimentaires considérées comme non comestibles incluent les os, les arrêtes, les noyaux, les trognons de pommes, les épluchures... Les parties considérées comme comestibles incluent les morceaux de viande restants, les pâtes restant dans les assiettes, le pain restant au niveau des plateaux...",
   },

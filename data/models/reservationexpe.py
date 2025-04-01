@@ -46,7 +46,7 @@ class ReservationExpe(models.Model):
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        verbose_name="Moyenne des pesées des excédents présentés aux convives et non servis (g/ convive) sur 20 déjeuners successifs",
+        verbose_name="Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés (g/ convive) sur 20 déjeuners successifs",
     )
     avg_weight_leftover_t0 = models.DecimalField(
         null=True,
@@ -70,7 +70,7 @@ class ReservationExpe(models.Model):
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        verbose_name="Moyenne des pesées des excédents de préparation (g/convive)",
+        verbose_name="Moyenne des pesées des déchets alimentaires issus de la préparation (g/convive)",
     )
     avg_weight_bread_leftover_t0 = models.DecimalField(
         null=True,
@@ -105,7 +105,7 @@ class ReservationExpe(models.Model):
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        verbose_name="Moyenne des pesées des excédents présentés aux convives et non servis (g/ convive) sur 20 déjeuners successifs",
+        verbose_name="Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés (g/ convive) sur 20 déjeuners successifs",
     )
     avg_weight_leftover_t1 = models.DecimalField(
         null=True,
@@ -129,7 +129,7 @@ class ReservationExpe(models.Model):
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        verbose_name="Moyenne des pesées des excédents de préparation (g/convive)",
+        verbose_name="Moyenne des pesées des déchets alimentaires issus de la préparation (g/convive)",
     )
     avg_weight_bread_leftover_t1 = models.DecimalField(
         null=True,
@@ -164,7 +164,7 @@ class ReservationExpe(models.Model):
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        verbose_name="Moyenne des pesées des excédents présentés aux convives et non servis (g/ convive) sur 20 déjeuners successifs",
+        verbose_name="Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés (g/ convive) sur 20 déjeuners successifs",
     )
     avg_weight_leftover_t2 = models.DecimalField(
         null=True,
@@ -188,7 +188,7 @@ class ReservationExpe(models.Model):
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(0)],
-        verbose_name="Moyenne des pesées des excédents de préparation (g/convive)",
+        verbose_name="Moyenne des pesées des déchets alimentaires issus de la préparation (g/convive)",
     )
     avg_weight_bread_leftover_t2 = models.DecimalField(
         null=True,

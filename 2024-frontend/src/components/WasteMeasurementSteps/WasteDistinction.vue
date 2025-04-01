@@ -48,7 +48,7 @@ onMounted(() => {
       <HelpText>
         <p class="fr-mb-0">
           Cela signifie procéder à des pesées séparées en fonction de la source des déchets : restes assiettes,
-          excédents présentés aux convives et non servis, et excédents de préparation.
+          excédents présentés aux convives et non servis ou non valorisés, et excédents de préparation.
         </p>
       </HelpText>
     </div>
