@@ -114,7 +114,7 @@
           <template v-slot:[`item.action`]="{ item }">
             <v-fade-transition>
               <div :key="`${item.id}_${item.action}`">
-                <div v-if="getActionDisplay(item.action) === 'button'" class="px-3">
+                <div v-if="getActionDisplay(item.action) === 'text'" class="px-3">
                   <v-icon small class="mr-2" color="green">{{ getActionIcon(item.action) }}</v-icon>
                   <span class="caption">{{ getActionText(item.action) }}</span>
                 </div>
