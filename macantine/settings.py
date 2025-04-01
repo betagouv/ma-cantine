@@ -112,6 +112,7 @@ INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + [
     "api",
     "web",
     "magicauth",
+    "django_extensions",
     "django_filters",
     "django_celery_results",
     "common",
