@@ -29,7 +29,7 @@ const BADGE_LIST = [
   },
   {
     body: "Données à compléter par votre livreur",
-    mode: "NEUTRAL",
+    mode: "WARNING",
     actions: ["90_nothing_satellite"],
   },
   {
