@@ -6,6 +6,30 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.11.8](https://github.com/betagouv/ma-cantine/compare/v2025.11.7...v2025.11.8) (2025-04-01)
+
+
+### Améliorations
+
+* **Télédéclaration:** Améliorer le wording du badge indiquant que la cantine satellite n'a rien à faire ([#5210](https://github.com/betagouv/ma-cantine/issues/5210)) ([2ae45fd](https://github.com/betagouv/ma-cantine/commit/2ae45fddcf24940ab2f279f719549a7b44527986))
+* **Télédéclaration:** Nouveau badge pour indiquer que la cantine satellite n'a rien à faire ([#5191](https://github.com/betagouv/ma-cantine/issues/5191)) ([0d8ca74](https://github.com/betagouv/ma-cantine/commit/0d8ca74ca1c46c8983d940b7808dd19ab246d09c))
+* **Tunnel:** Gaspillage: ajustement de wordings (déchets alimentaires issues de la préparation) ([#5176](https://github.com/betagouv/ma-cantine/issues/5176)) ([5360ee4](https://github.com/betagouv/ma-cantine/commit/5360ee43270f6cbec364ae45b1085e1cc28dc3a2))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration:** corrige les badges de progression de la télédéclaration ([#5186](https://github.com/betagouv/ma-cantine/issues/5186)) ([e593611](https://github.com/betagouv/ma-cantine/commit/e593611419047bbb92a6be42e2a946c77f7f5b84))
+* **Teledeclaration:** Corriger les valeurs aggrégées pour les TD simples ([#5202](https://github.com/betagouv/ma-cantine/issues/5202)) ([5b3c09c](https://github.com/betagouv/ma-cantine/commit/5b3c09cf9eb872cb5dc0e7cba3b10218f43d6a3e))
+* **Télédéclaration:** homogénéise les badges utilisés dans la page progression et la télédéclaration ([#5189](https://github.com/betagouv/ma-cantine/issues/5189)) ([1016c27](https://github.com/betagouv/ma-cantine/commit/1016c27610111d7bb001636c330417bbd53d187a))
+
+
+### Technique
+
+* **Admin:** Filtrer par diagnostic type les objets diagnostics ([#5194](https://github.com/betagouv/ma-cantine/issues/5194)) ([963a129](https://github.com/betagouv/ma-cantine/commit/963a129871e1e15f4a29b7941ecfc32d1a9b8f5f))
+* **Django:** Ajout du package django extensions ([#5192](https://github.com/betagouv/ma-cantine/issues/5192)) ([19602dc](https://github.com/betagouv/ma-cantine/commit/19602dc4451a932ccccd2117d4a11261137c3061))
+* **Tableau de bord:** récupérer le badge à l'aide de l'API actionableCanteens (au lieu de le recalculer dans le frontend) ([#5185](https://github.com/betagouv/ma-cantine/issues/5185)) ([2724c15](https://github.com/betagouv/ma-cantine/commit/2724c15aa09402a6144fbc681fe7cc5acdcd9e6a))
+* **Télédéclaration:** récupérer le badge à l'aide de l'API actionableCanteens (au lieu de le recalculer dans le frontend) ([#5190](https://github.com/betagouv/ma-cantine/issues/5190)) ([d3a0d90](https://github.com/betagouv/ma-cantine/commit/d3a0d905f2ead8a7cb96d7254a0a322586555339))
+
 ## [2025.11.7](https://github.com/betagouv/ma-cantine/compare/v2025.11.6...v2025.11.7) (2025-03-31)
 
 
