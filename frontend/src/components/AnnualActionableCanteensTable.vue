@@ -207,8 +207,8 @@ export default {
           display: "button",
         },
         "90_nothing_satellite": {
-          text: "Rien à faire ! (à compléter par votre livreur)",
-          icon: "$checkbox-circle-fill",
+          text: "En attente de la télédéclaration de votre livreur",
+          icon: "$information-fill",
           display: "text",
         },
         "91_nothing_satellite_teledeclared": {
