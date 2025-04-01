@@ -28,7 +28,7 @@ const BADGE_LIST = [
     ],
   },
   {
-    body: "Données à compléter par votre livreur",
+    body: "En attente de la télédéclaration de votre livreur",
     mode: "WARNING",
     actions: ["90_nothing_satellite"],
   },
