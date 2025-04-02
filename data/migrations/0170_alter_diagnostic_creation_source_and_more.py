@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name="creation_source",
             field=models.CharField(
                 blank=True,
-                choices=[("TUNNEL", "Tunnel"), ("API", "API"), ("IMPORT", "Import")],
+                choices=[("TUNNEL", "Tunnel"), ("API", "API"), ("IMPORT", "Import"), ("ADMIN", "Admin")],
                 max_length=255,
                 null=True,
                 verbose_name="comment est-ce que ce diagnostic à été créé ?",
@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
             name="creation_source",
             field=models.CharField(
                 blank=True,
-                choices=[("TUNNEL", "Tunnel"), ("API", "API"), ("IMPORT", "Import")],
+                choices=[("TUNNEL", "Tunnel"), ("API", "API"), ("IMPORT", "Import"), ("ADMIN", "Admin")],
                 max_length=255,
                 null=True,
                 verbose_name="comment est-ce que ce diagnostic à été créé ?",

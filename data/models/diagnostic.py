@@ -90,6 +90,7 @@ class Diagnostic(models.Model):
         TUNNEL = "TUNNEL", "Tunnel"
         API = "API", "API"
         IMPORT = "IMPORT", "Import"
+        ADMIN = "ADMIN", "Admin"
 
     class ServiceType(models.TextChoices):
         UNIQUE = "UNIQUE", "Menu unique"
