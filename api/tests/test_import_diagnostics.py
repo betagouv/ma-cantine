@@ -85,6 +85,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(diagnostic.value_fish_ht, 4)
         self.assertEqual(diagnostic.value_fish_egalim_ht, 3)
         self.assertEqual(diagnostic.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
+        self.assertEqual(diagnostic.creation_source, Diagnostic.CreationSource.IMPORT)
         self.assertIn("seconds", body)
 
     @authenticate
