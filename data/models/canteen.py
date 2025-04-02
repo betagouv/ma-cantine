@@ -128,6 +128,8 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def annotate_with_diagnostic_for_year(self, year):
         from data.models import Diagnostic
 
+        self = self.annotate_with_central_kitchen_id()
+
         diagnostics = Diagnostic.objects.filter(
             Q(canteen=OuterRef("central_kitchen_id")) | Q(canteen=OuterRef("pk")), year=year
         )
@@ -146,6 +148,8 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
     def annotate_with_td_for_year(self, year):
         from data.models import Teledeclaration
+
+        self = self.annotate_with_central_kitchen_id()
 
         tds = Teledeclaration.objects.filter(
             Q(canteen=OuterRef("pk")) | Q(canteen=OuterRef("central_kitchen_id")),
@@ -173,14 +177,14 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def annotate_with_action_for_year(self, year):
         from data.models import Diagnostic
 
+        # prep missing data action
+        self = self.annotate_with_requires_line_ministry()
         # prep add satellites action
         self = self.annotate_with_satellites_in_db_count()
         self = self.annotate_with_central_kitchen_id()
         # prep add diag actions
         self = self.annotate_with_purchases_for_year(year)
         self = self.annotate_with_diagnostic_for_year(year)
-        # prep missing data action
-        self = self.annotate_with_requires_line_ministry()
         # prep TD action
         self = self.annotate_with_td_for_year(year)
         # annotate with action
