@@ -8,18 +8,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import BadRequest, ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
-from django.db.models import (
-    Case,
-    Exists,
-    F,
-    FloatField,
-    OuterRef,
-    Q,
-    Subquery,
-    Sum,
-    Value,
-    When,
-)
+from django.db.models import FloatField, Q, Sum
 from django.db.models.functions import Cast
 from django.http import JsonResponse
 from django_filters import BaseInFilter, CharFilter
@@ -68,19 +57,7 @@ from common.api.recherche_entreprises import (
 )
 from common.utils import send_mail
 from data.department_choices import Department
-from data.models import (
-    Canteen,
-    Diagnostic,
-    ManagerInvitation,
-    Purchase,
-    Sector,
-    Teledeclaration,
-)
-from data.models.canteen import (
-    has_missing_data_query,
-    is_central_cuisine_query,
-    is_satellite_query,
-)
+from data.models import Canteen, Diagnostic, ManagerInvitation, Sector
 from data.region_choices import Region
 
 logger = logging.getLogger(__name__)
@@ -1017,85 +994,8 @@ class ActionableCanteensListView(ListAPIView):
 
     def get_queryset(self):
         year = self.request.parser_context.get("kwargs").get("year")
-        return ActionableCanteensListView.annotate_actions(self.request.user.canteens, year)
-
-    def annotate_actions(queryset, year):
-        # prep add satellites action
-        user_canteens = queryset.annotate_with_satellites_in_db_count()
-        user_canteens = user_canteens.annotate_with_central_kitchen_id()
-        # prep add diag actions
-        diagnostics = Diagnostic.objects.filter(
-            Q(canteen=OuterRef("central_kitchen_id")) | Q(canteen=OuterRef("pk")), year=year
-        )
-        user_canteens = user_canteens.annotate(diagnostic_for_year=Subquery(diagnostics.values("id")[:1]))
-        purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk"), date__year=year)
-        user_canteens = user_canteens.annotate(has_purchases_for_year=Exists(purchases_for_year))
-        # prep complete diag action
-        complete_diagnostics = diagnostics.filter(value_total_ht__gt=0)
-        user_canteens = user_canteens.annotate(has_complete_diagnostic_for_year=Exists(Subquery(complete_diagnostics)))
-        diagnostic_for_year_with_cc_mode = Diagnostic.objects.filter(
-            pk=OuterRef("diagnostic_for_year"),
-            central_kitchen_diagnostic_mode__isnull=False,
-        ).exclude(central_kitchen_diagnostic_mode="")
-        user_canteens = user_canteens.annotate(
-            diagnostic_for_year_cc_mode=Subquery(
-                diagnostic_for_year_with_cc_mode.values("central_kitchen_diagnostic_mode")[:1]
-            )
-        )
-        # prep missing data action
-        user_canteens = user_canteens.annotate_with_requires_line_ministry()
-        # prep TD action
-        tds = Teledeclaration.objects.filter(
-            Q(canteen=OuterRef("pk")) | Q(canteen=OuterRef("central_kitchen_id")),
-            year=year,
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-        )
-        user_canteens = user_canteens.annotate(has_td=Exists(Subquery(tds)))
-        # annotate with action
-        should_teledeclare = settings.ENABLE_TELEDECLARATION
-        conditions = [
-            When(
-                (is_central_cuisine_query() & Q(satellite_canteens_count__gt=0) & Q(satellites_in_db_count=None)),
-                then=Value(Canteen.Actions.ADD_SATELLITES),
-            ),
-            When(
-                is_central_cuisine_query() & Q(satellites_in_db_count__lt=F("satellite_canteens_count")),
-                then=Value(Canteen.Actions.ADD_SATELLITES),
-            ),
-            When(
-                is_central_cuisine_query() & Q(satellites_in_db_count__gt=F("satellite_canteens_count")),
-                then=Value(Canteen.Actions.ADD_SATELLITES),
-            ),
-            When(
-                is_satellite_query()
-                & Q(diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL, has_td=False),
-                then=Value(Canteen.Actions.NOTHING_SATELLITE),
-            ),
-            When(
-                is_satellite_query()
-                & Q(diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL, has_td=True),
-                then=Value(Canteen.Actions.NOTHING_SATELLITE_TELEDECLARED),
-            ),
-            When(
-                Q(diagnostic_for_year=None) & Q(has_purchases_for_year=True),
-                then=Value(Canteen.Actions.PREFILL_DIAGNOSTIC),
-            ),
-            When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
-            When(has_complete_diagnostic_for_year=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
-            When(
-                (is_central_cuisine_query() & Q(diagnostic_for_year_cc_mode=None)),
-                then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC),
-            ),
-            When(has_missing_data_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
-        ]
-        if should_teledeclare:
-            conditions.append(When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)))
-        if not settings.PUBLISH_BY_DEFAULT:
-            conditions.append(
-                When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH))
-            )
-        user_canteens = user_canteens.annotate(action=Case(*conditions, default=Value(Canteen.Actions.NOTHING)))
-        return user_canteens
+        user_canteen_queryset = self.request.user.canteens
+        return user_canteen_queryset.annotate_with_action_for_year(year)
 
 
 class ActionableCanteenRetrieveView(RetrieveAPIView):
@@ -1108,7 +1008,7 @@ class ActionableCanteenRetrieveView(RetrieveAPIView):
         year = self.request.parser_context.get("kwargs").get("year")
         canteen_id = self.request.parser_context.get("kwargs").get("pk")
         single_canteen_queryset = self.request.user.canteens.filter(id=canteen_id)
-        return ActionableCanteensListView.annotate_actions(single_canteen_queryset, year)
+        return single_canteen_queryset.annotate_with_action_for_year(year)
 
 
 class TerritoryCanteensListView(ListAPIView):

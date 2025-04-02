@@ -4,7 +4,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import Case, Count, Exists, F, OuterRef, Q, Subquery, When
+from django.db.models import Case, Count, Exists, F, OuterRef, Q, Subquery, Value, When
 from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
@@ -12,6 +12,7 @@ from simple_history.models import HistoricalRecords
 from common.utils import siret as utils_siret
 from data.department_choices import Department
 from data.fields import ChoiceArrayField
+from data.models.sector import Sector
 from data.region_choices import Region
 from data.utils import (
     get_diagnostic_lower_limit_year,
@@ -20,7 +21,6 @@ from data.utils import (
     optimize_image,
 )
 
-from .sector import Sector
 from .softdeletionmodel import (
     SoftDeletionManager,
     SoftDeletionModel,
@@ -119,6 +119,41 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             satellites_in_db_count=Case(When(is_central_cuisine_query(), then=Subquery(satellites_count)), default=0)
         )
 
+    def annotate_with_purchases_for_year(self, year):
+        from data.models import Purchase
+
+        purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk"), date__year=year)
+        return self.annotate(has_purchases_for_year=Exists(purchases_for_year))
+
+    def annotate_with_diagnostic_for_year(self, year):
+        from data.models import Diagnostic
+
+        diagnostics = Diagnostic.objects.filter(
+            Q(canteen=OuterRef("central_kitchen_id")) | Q(canteen=OuterRef("pk")), year=year
+        )
+        complete_diagnostics = diagnostics.filter(value_total_ht__gt=0)
+        diagnostic_for_year_with_cc_mode = Diagnostic.objects.filter(
+            pk=OuterRef("diagnostic_for_year"),
+            central_kitchen_diagnostic_mode__isnull=False,
+        ).exclude(central_kitchen_diagnostic_mode="")
+        return self.annotate(
+            diagnostic_for_year=Subquery(diagnostics.values("id")[:1]),
+            has_complete_diagnostic_for_year=Exists(Subquery(complete_diagnostics)),
+            diagnostic_for_year_cc_mode=Subquery(
+                diagnostic_for_year_with_cc_mode.values("central_kitchen_diagnostic_mode")[:1]
+            ),
+        )
+
+    def annotate_with_td_for_year(self, year):
+        from data.models import Teledeclaration
+
+        tds = Teledeclaration.objects.filter(
+            Q(canteen=OuterRef("pk")) | Q(canteen=OuterRef("central_kitchen_id")),
+            year=year,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+        )
+        return self.annotate(has_td=Exists(Subquery(tds)))
+
     def annotate_with_requires_line_ministry(self):
         canteen_sector_relation = apps.get_model(app_label="data", model_name="Canteen_sectors")
         has_sector_requiring_line_ministry = canteen_sector_relation.objects.filter(
@@ -134,6 +169,64 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
     def has_complete_data(self):
         return self.annotate_with_requires_line_ministry().exclude(has_missing_data_query())
+
+    def annotate_with_action_for_year(self, year):
+        from data.models import Diagnostic
+
+        # prep add satellites action
+        self = self.annotate_with_satellites_in_db_count()
+        self = self.annotate_with_central_kitchen_id()
+        # prep add diag actions
+        self = self.annotate_with_purchases_for_year(year)
+        self = self.annotate_with_diagnostic_for_year(year)
+        # prep missing data action
+        self = self.annotate_with_requires_line_ministry()
+        # prep TD action
+        self = self.annotate_with_td_for_year(year)
+        # annotate with action
+        should_teledeclare = settings.ENABLE_TELEDECLARATION
+        conditions = [
+            When(
+                (is_central_cuisine_query() & Q(satellite_canteens_count__gt=0) & Q(satellites_in_db_count=None)),
+                then=Value(Canteen.Actions.ADD_SATELLITES),
+            ),
+            When(
+                is_central_cuisine_query() & Q(satellites_in_db_count__lt=F("satellite_canteens_count")),
+                then=Value(Canteen.Actions.ADD_SATELLITES),
+            ),
+            When(
+                is_central_cuisine_query() & Q(satellites_in_db_count__gt=F("satellite_canteens_count")),
+                then=Value(Canteen.Actions.ADD_SATELLITES),
+            ),
+            When(
+                is_satellite_query()
+                & Q(diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL, has_td=False),
+                then=Value(Canteen.Actions.NOTHING_SATELLITE),
+            ),
+            When(
+                is_satellite_query()
+                & Q(diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL, has_td=True),
+                then=Value(Canteen.Actions.NOTHING_SATELLITE_TELEDECLARED),
+            ),
+            When(
+                Q(diagnostic_for_year=None) & Q(has_purchases_for_year=True),
+                then=Value(Canteen.Actions.PREFILL_DIAGNOSTIC),
+            ),
+            When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
+            When(has_complete_diagnostic_for_year=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+            When(
+                (is_central_cuisine_query() & Q(diagnostic_for_year_cc_mode=None)),
+                then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC),
+            ),
+            When(has_missing_data_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
+        ]
+        if should_teledeclare:
+            conditions.append(When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)))
+        if not settings.PUBLISH_BY_DEFAULT:
+            conditions.append(
+                When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH))
+            )
+        return self.annotate(action=Case(*conditions, default=Value(Canteen.Actions.NOTHING)))
 
 
 class CanteenManager(SoftDeletionManager):
@@ -157,11 +250,23 @@ class CanteenManager(SoftDeletionManager):
     def annotate_with_satellites_in_db_count(self):
         return self.get_queryset().annotate_with_satellites_in_db_count()
 
+    def annotate_with_purchases_for_year(self, year):
+        return self.get_queryset().annotate_with_purchases_for_year(year)
+
+    def annotate_with_diagnostic_for_year(self, year):
+        return self.get_queryset().annotate_with_diagnostic_for_year(year)
+
+    def annotate_with_td_for_year(self, year):
+        return self.get_queryset().annotate_with_td_for_year(year)
+
     def has_missing_data(self):
         return self.get_queryset().has_missing_data()
 
     def has_complete_data(self):
         return self.get_queryset().has_complete_data()
+
+    def annotate_with_action_for_year(self, year):
+        return self.get_queryset().annotate_with_action_for_year(year)
 
 
 class Canteen(SoftDeletionModel):
@@ -494,7 +599,7 @@ class Canteen(SoftDeletionModel):
         return has_diagnostics or has_central_kitchen_diagnostic
 
     def has_teledeclaration_for_year(self, year):
-        from .teledeclaration import Teledeclaration  # Circular import
+        from data.models.teledeclaration import Teledeclaration
 
         has_canteen_td = self.teledeclaration_set.filter(
             year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
@@ -607,12 +712,16 @@ class Canteen(SoftDeletionModel):
 
     @property
     def in_education(self):
+        from data.models import Sector
+
         scolaire_sectors = Sector.objects.filter(category="education")
         if scolaire_sectors.count() and self.sectors.intersection(scolaire_sectors).exists():
             return True
 
     @property
     def in_administration(self):
+        from data.models import Sector
+
         administration_sectors = Sector.objects.filter(category="administration")
         if administration_sectors.count() and self.sectors.intersection(administration_sectors).exists():
             return True
