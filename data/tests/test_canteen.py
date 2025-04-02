@@ -339,25 +339,25 @@ class TestCanteenCompletePropertyAndQuerySet(TestCase):
             central_producer_siret=None  # incomplete
         )
 
-    def test_has_complete_data_queryset(self):
+    def test_has_filled_data_queryset(self):
         self.assertEqual(Canteen.objects.count(), 8)
-        self.assertEqual(Canteen.objects.has_complete_data().count(), 4)
+        self.assertEqual(Canteen.objects.has_filled_data().count(), 4)
 
-    def test_has_complete_data_property(self):
+    def test_has_filled_data_property(self):
         for canteen in [
             self.canteen_central,
             self.canteen_central_serving,
             self.canteen_on_site,
             self.canteen_on_site_central,
         ]:
-            self.assertTrue(canteen.has_complete_data)
+            self.assertTrue(canteen.has_filled_data)
         for canteen in [
             self.canteen_central_incomplete,
             self.canteen_central_serving_incomplete,
             self.canteen_on_site_incomplete,
             self.canteen_on_site_central_incomplete,
         ]:
-            self.assertFalse(canteen.has_complete_data)
+            self.assertFalse(canteen.has_filled_data)
 
     def test_has_missing_data_queryset(self):
         self.assertEqual(Canteen.objects.count(), 8)

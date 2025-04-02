@@ -143,7 +143,7 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
 
     def get_queryset(self):
         year = self.request.parser_context.get("kwargs").get("year")
-        canteens = DiagnosticsToTeledeclareListView._get_complete_canteens(self.request.user.canteens.all())
+        canteens = DiagnosticsToTeledeclareListView._get_canteens_filled(self.request.user.canteens.all())
         diagnostics_filled = Diagnostic.objects.is_filled().filter(
             year=year, canteen__in=canteens, diagnostic_type__isnull=False
         )
@@ -157,11 +157,11 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
         return diagnostics_filled.exclude(id__in=teledeclared)
 
     @staticmethod
-    def _get_complete_canteens(canteens):
+    def _get_canteens_filled(canteens):
         # We use this method instead of the SQL based one in the views/canteen.py file because we
         # don't need all the actions. By doing this on Python we can return early without running
         # all SQL requests when not needed. We are also not interested exactly in the kind of
         # completeness, just wether or not the canteen can teledeclare.
         # Possible to have this method in the model
-        complete_canteens = [canteen for canteen in canteens if canteen.has_complete_data]
-        return complete_canteens
+        canteens_filled = [canteen for canteen in canteens if canteen.has_filled_data]
+        return canteens_filled
