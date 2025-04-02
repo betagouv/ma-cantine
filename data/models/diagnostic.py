@@ -48,6 +48,8 @@ class Diagnostic(models.Model):
 
     class CreationSource(models.TextChoices):
         TUNNEL = "TUNNEL", "Tunnel"
+        API = "API", "API"
+        IMPORT = "IMPORT", "Import"
 
     class ServiceType(models.TextChoices):
         UNIQUE = "UNIQUE", "Menu unique"
