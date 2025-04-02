@@ -22,6 +22,7 @@ class MaCantineOrderingFilter(filters.OrderingFilter):
         if ordering:
             ordering = map(make_f_object, ordering)
             queryset = queryset.order_by(*ordering)
+            queryset = queryset.distinct()  # to solve issues with duplicate/missing results
 
         return queryset
 
