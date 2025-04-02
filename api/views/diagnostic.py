@@ -163,5 +163,5 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
         # all SQL requests when not needed. We are also not interested exactly in the kind of
         # completeness, just wether or not the canteen can teledeclare.
         # Possible to have this method in the model
-        canteens_filled = [canteen for canteen in canteens if canteen.has_filled_data]
+        canteens_filled = [canteen for canteen in canteens if canteen.is_filled]
         return canteens_filled
