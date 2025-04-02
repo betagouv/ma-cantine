@@ -703,7 +703,7 @@ class TestCanteenApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
         )
         # complete diag
-        needs_to_complete_diag = CanteenFactory.create(
+        needs_to_fill_diag = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
             publication_status=Canteen.PublicationStatus.DRAFT,
             management_type=Canteen.ManagementType.DIRECT,
@@ -750,7 +750,7 @@ class TestCanteenApi(APITestCase):
         for canteen in [
             needs_last_year_diag,
             complete,
-            needs_to_complete_diag,
+            needs_to_fill_diag,
             needs_diagnostic_mode,
             needs_to_publish,
             needs_td,
@@ -764,9 +764,9 @@ class TestCanteenApi(APITestCase):
         td_diag = DiagnosticFactory.create(year=last_year, canteen=complete, value_total_ht=1000)
         Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
 
-        DiagnosticFactory.create(year=last_year, canteen=needs_to_complete_diag, value_total_ht=None)
+        DiagnosticFactory.create(year=last_year, canteen=needs_to_fill_diag, value_total_ht=None)
         # make sure the endpoint only looks at diagnostics of the year requested
-        DiagnosticFactory.create(year=last_year - 1, canteen=needs_to_complete_diag, value_total_ht=1000)
+        DiagnosticFactory.create(year=last_year - 1, canteen=needs_to_fill_diag, value_total_ht=1000)
 
         DiagnosticFactory.create(
             year=last_year, canteen=needs_diagnostic_mode, central_kitchen_diagnostic_mode=None, value_total_ht=100
@@ -798,8 +798,8 @@ class TestCanteenApi(APITestCase):
         expected_actions = [
             (needs_additional_satellites, "10_add_satellites"),
             (needs_last_year_diag, "20_create_diagnostic"),
-            (needs_to_complete_diag, "30_complete_diagnostic"),
-            (needs_diagnostic_mode, "30_complete_diagnostic"),
+            (needs_to_fill_diag, "30_fill_diagnostic"),
+            (needs_diagnostic_mode, "30_fill_diagnostic"),
             (needs_td, "40_teledeclare"),
             (needs_to_publish, "50_publish"),
             (complete, "95_nothing"),

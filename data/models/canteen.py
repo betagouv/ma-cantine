@@ -133,14 +133,14 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         diagnostics = Diagnostic.objects.filter(
             Q(canteen=OuterRef("central_kitchen_id")) | Q(canteen=OuterRef("pk")), year=year
         )
-        complete_diagnostics = diagnostics.filter(value_total_ht__gt=0)
+        diagnostics_filled = diagnostics.is_filled()
         diagnostic_for_year_with_cc_mode = Diagnostic.objects.filter(
             pk=OuterRef("diagnostic_for_year"),
             central_kitchen_diagnostic_mode__isnull=False,
         ).exclude(central_kitchen_diagnostic_mode="")
         return self.annotate(
             diagnostic_for_year=Subquery(diagnostics.values("id")[:1]),
-            has_complete_diagnostic_for_year=Exists(Subquery(complete_diagnostics)),
+            has_diagnostic_filled_for_year=Exists(Subquery(diagnostics_filled)),
             diagnostic_for_year_cc_mode=Subquery(
                 diagnostic_for_year_with_cc_mode.values("central_kitchen_diagnostic_mode")[:1]
             ),
@@ -217,10 +217,10 @@ class CanteenQuerySet(SoftDeletionQuerySet):
                 then=Value(Canteen.Actions.PREFILL_DIAGNOSTIC),
             ),
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
-            When(has_complete_diagnostic_for_year=False, then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC)),
+            When(has_diagnostic_filled_for_year=False, then=Value(Canteen.Actions.FILL_DIAGNOSTIC)),
             When(
                 (is_central_cuisine_query() & Q(diagnostic_for_year_cc_mode=None)),
-                then=Value(Canteen.Actions.COMPLETE_DIAGNOSTIC),
+                then=Value(Canteen.Actions.FILL_DIAGNOSTIC),
             ),
             When(has_missing_data_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
@@ -308,7 +308,7 @@ class Canteen(SoftDeletionModel):
         ADD_SATELLITES = "10_add_satellites", "Ajouter des satellites"
         PREFILL_DIAGNOSTIC = "18_prefill_diagnostic", "Créer et pré-remplir le diagnostic"
         CREATE_DIAGNOSTIC = "20_create_diagnostic", "Créer le diagnostic"
-        COMPLETE_DIAGNOSTIC = "30_complete_diagnostic", "Compléter le diagnostic"
+        FILL_DIAGNOSTIC = "30_fill_diagnostic", "Compléter le diagnostic"
         FILL_CANTEEN_DATA = "35_fill_canteen_data", "Compléter les infos de la cantine"
         TELEDECLARE = "40_teledeclare", "Télédéclarer"
         PUBLISH = "50_publish", "Publier"

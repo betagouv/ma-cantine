@@ -191,7 +191,7 @@ export default {
           icon: "$add-circle-fill",
           display: "button",
         },
-        "30_complete_diagnostic": {
+        "30_fill_diagnostic": {
           text: "Compléter le bilan " + year,
           icon: "$edit-box-fill",
           display: "button",

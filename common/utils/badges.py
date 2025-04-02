@@ -11,7 +11,7 @@ def badges_for_queryset(diagnostic_year_queryset):
     appro_total = diagnostic_year_queryset
     appro_total = diagnostic_year_queryset.count()
     if appro_total:
-        appro_share_query = diagnostic_year_queryset.filter(value_total_ht__gt=0)
+        appro_share_query = diagnostic_year_queryset.is_filled()
         appro_share_query = appro_share_query.annotate(
             bio_share=Cast(
                 Sum("value_bio_ht", default=0) / Sum("value_total_ht"),

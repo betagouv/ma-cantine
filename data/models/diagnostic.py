@@ -29,8 +29,8 @@ def canteen_has_siret_or_siren_unite_legale_query():
 
 
 class DiagnosticQuerySet(models.QuerySet):
-    """
-    Fetching the diagnostics for wich the data has been validated for stats"""
+    def is_filled(self):
+        return self.filter(value_total_ht__gt=0)
 
     def td_submitted_for_year(self, year):
         year = int(year)
