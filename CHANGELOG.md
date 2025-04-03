@@ -6,6 +6,18 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.11.10](https://github.com/betagouv/ma-cantine/compare/v2025.11.9...v2025.11.10) (2025-04-03)
+
+
+### Corrections (bugs, typos...)
+
+* **Teledeclaration:** Exclure les TD sans diag de la migration ([#5223](https://github.com/betagouv/ma-cantine/issues/5223)) ([3f65253](https://github.com/betagouv/ma-cantine/commit/3f65253b8eebfd510071c65893aa6b7304fa5200))
+
+
+### Technique
+
+* **Geobot:** CRON pour le lancer toutes les heures (pour corriger les cantines sans code INSEE) ([#5221](https://github.com/betagouv/ma-cantine/issues/5221)) ([2a70831](https://github.com/betagouv/ma-cantine/commit/2a70831a07f68872ad9087f4256a5bd8930007a1))
+
 ## [2025.11.9](https://github.com/betagouv/ma-cantine/compare/v2025.11.8...v2025.11.9) (2025-04-03)
 
 
