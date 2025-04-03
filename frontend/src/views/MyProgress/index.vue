@@ -82,17 +82,18 @@
           </TeledeclarationCancelDialog>
         </div>
         <div v-else-if="isSatelliteWithCompleteCentralDiagnostic">
-          <p v-if="isSatelliteWithCentralDiagnosticTeledeclared">
-            Votre livreur des repas a déclaré le bilan pour votre établissement.
+          <p>
+            Votre livreur des repas {{ isSatelliteWithCentralDiagnosticTeledeclared ? "a déclaré" : "va déclarer" }} le
+            bilan pour votre établissement.
           </p>
-          <p v-else>Votre livreur des repas va déclarer le bilan pour votre établissement.</p>
         </div>
         <div v-else-if="inTeledeclarationCampaign">
           <div v-if="isSatelliteWithApproCentralDiagnostic">
-            <p v-if="isSatelliteWithCentralDiagnosticTeledeclared">
-              Votre livreur des repas a déclaré les données d'approvisionnement pour votre établissement.
+            <p>
+              Votre livreur des repas
+              {{ isSatelliteWithCentralDiagnosticTeledeclared ? "a déclaré" : "va déclarer" }} les données
+              d'approvisionnement pour votre établissement.
             </p>
-            <p v-else>Votre livreur des repas va déclarer les données d'approvisionnement pour votre établissement.</p>
             <p>Pour aller plus loin, vous pouvez télédéclarer les autres volets du bilan.</p>
           </div>
           <ul class="progress-list">
