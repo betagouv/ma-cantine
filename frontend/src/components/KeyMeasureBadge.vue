@@ -1,8 +1,7 @@
 <template>
-  <DsfrBadge v-if="isCompleted && isAppro && isSatellite" :showIcon="false" mode="SUCCESS">
-    Complété (par votre livreur)
+  <DsfrBadge v-if="isCompleted" :showIcon="false" mode="SUCCESS">
+    {{ isAppro && isSatellite ? "Complété (par votre livreur)" : "Complété" }}
   </DsfrBadge>
-  <DsfrBadge v-else-if="isCompleted" :showIcon="false" mode="SUCCESS">Complété</DsfrBadge>
   <DsfrBadge v-else-if="isWaitingCentralKitchen" :showIcon="false" mode="NEUTRAL">
     À compléter (par votre livreur)
   </DsfrBadge>
