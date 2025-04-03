@@ -6,7 +6,6 @@ from django.db import models
 from django.db.models import Q
 from simple_history.models import HistoricalRecords
 
-# from data.models import Teledeclaration
 from data.department_choices import Department
 from data.fields import ChoiceArrayField
 from data.region_choices import Region
@@ -15,7 +14,6 @@ from data.utils import (
     get_diagnostic_upper_limit_year,
     make_optional_positive_decimal_field,
 )
-from macantine.utils import CAMPAIGN_DATES
 
 from .canteen import Canteen
 
@@ -26,51 +24,6 @@ def canteen_has_siret_or_siren_unite_legale_query():
         canteen__siren_unite_legale=""
     )
     return canteen_has_siret_query | canteen_has_siren_unite_legale_query
-
-
-class DiagnosticQuerySet(models.QuerySet):
-    def is_filled(self):
-        return self.filter(value_total_ht__gt=0)
-
-    def td_submitted_for_year(self, year):
-        year = int(year)
-        from .teledeclaration import Teledeclaration
-
-        return self.filter(
-            year=year,
-            teledeclaration__creation_date__range=(
-                CAMPAIGN_DATES[year]["teledeclaration_start_date"],
-                CAMPAIGN_DATES[year]["teledeclaration_end_date"],
-            ),
-            teledeclaration__status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-        )
-
-    def canteen_for_stat(self, year):
-        return (
-            self.select_related("canteen")
-            .filter(canteen__id__isnull=False)
-            .filter(canteen_has_siret_or_siren_unite_legale_query())
-            .exclude(canteen__siret="")
-            .exclude(
-                canteen__deletion_date__range=(
-                    CAMPAIGN_DATES[year]["teledeclaration_start_date"],
-                    CAMPAIGN_DATES[year]["teledeclaration_end_date"],
-                )
-            )
-        )
-
-    def for_stat(self, year):
-        year = int(year)
-
-        return (
-            self.canteen_for_stat(year)
-            .td_submitted_for_year(year)
-            .filter(
-                value_total_ht__isnull=False,
-                value_bio_ht__isnull=False,
-            )
-        )
-
 
 class Diagnostic(models.Model):
     class Meta:
@@ -174,8 +127,6 @@ class Diagnostic(models.Model):
     class PublicationStatus(models.TextChoices):
         DRAFT = "draft", "🔒 Non publié"
         PUBLISHED = "published", "✅ Publié"
-
-    objects = models.Manager.from_queryset(DiagnosticQuerySet)()
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
