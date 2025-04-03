@@ -111,4 +111,4 @@ class ApproFieldsTestCase(TestMigrations):
         self.assertEqual(td_simple.value_total_ht, 100)
 
         td_complete = Teledeclaration.objects.get(pk=self.td_complete.id)
-        self.assertEqual(td_complete.value_sustainable_ht_agg, 30)
+        self.assertEqual(td_complete.value_sustainable_ht_agg, 10 + 20)
