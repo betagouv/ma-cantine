@@ -78,7 +78,7 @@ def total_label_rup(diagnostic):
 
 def populate_aggregated_food_fields(apps, schema_editor):
     Teledeclaration = apps.get_model('data', 'Teledeclaration')
-    teledeclarations = Teledeclaration.objects.select_related('diagnostic').all()
+    teledeclarations = Teledeclaration.objects.select_related('diagnostic').filter(diagnostic__isnull=False)
     if teledeclarations:
         for td in teledeclarations:
             diag = td.diagnostic
