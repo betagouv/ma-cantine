@@ -2,8 +2,13 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from freezegun import freeze_time
 
-from data.factories import CanteenFactory, DiagnosticFactory
-from data.models import Canteen
+from data.factories import (
+    CanteenFactory,
+    DiagnosticFactory,
+    PurchaseFactory,
+    TeledeclarationFactory,
+)
+from data.models import Canteen, Diagnostic, Teledeclaration
 
 
 class TestCanteenModel(TestCase):
@@ -163,6 +168,92 @@ class TestCanteenSatelliteQuerySet(TestCase):
             .satellites_in_db_count,
             0,
         )
+
+
+class TestCanteenPurchaseQuerySet(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        canteen_with_purchases = CanteenFactory()
+        CanteenFactory()
+        PurchaseFactory(canteen=canteen_with_purchases, date="2024-01-01")
+        PurchaseFactory(canteen=canteen_with_purchases, date="2023-01-01")
+
+    def test_annotate_with_purchases_for_year(self):
+        self.assertEqual(Canteen.objects.count(), 2)
+        self.assertEqual(
+            Canteen.objects.annotate_with_purchases_for_year(2024).filter(has_purchases_for_year=True).count(), 1
+        )
+        self.assertEqual(
+            Canteen.objects.annotate_with_purchases_for_year(2023).filter(has_purchases_for_year=True).count(), 1
+        )
+        self.assertEqual(
+            Canteen.objects.annotate_with_purchases_for_year(2022).filter(has_purchases_for_year=True).count(), 0
+        )
+
+
+class TestCanteenDiagnosticTeledeclarationQuerySet(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        canteen_with_diagnostics = CanteenFactory()
+        CanteenFactory()
+        diagnostic_complete = DiagnosticFactory(
+            canteen=canteen_with_diagnostics,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2024,
+            value_total_ht=1000,
+        )  # complete
+        DiagnosticFactory(
+            canteen=canteen_with_diagnostics,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2023,
+            value_total_ht=None,
+        )
+        TeledeclarationFactory(
+            canteen=canteen_with_diagnostics,
+            diagnostic=diagnostic_complete,
+            year=2024,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+        )
+
+    def test_annotate_with_diagnostic_for_year(self):
+        self.assertEqual(Canteen.objects.count(), 2)
+        self.assertEqual(
+            Canteen.objects.annotate_with_diagnostic_for_year(2024).filter(diagnostic_for_year__isnull=False).count(),
+            1,
+        )
+        self.assertEqual(
+            Canteen.objects.annotate_with_diagnostic_for_year(2023).filter(diagnostic_for_year__isnull=False).count(),
+            1,
+        )
+        self.assertEqual(
+            Canteen.objects.annotate_with_diagnostic_for_year(2022).filter(diagnostic_for_year__isnull=False).count(),
+            0,
+        )
+        self.assertEqual(
+            Canteen.objects.annotate_with_diagnostic_for_year(2024)
+            .filter(has_complete_diagnostic_for_year=True)
+            .count(),
+            1,
+        )
+        self.assertEqual(
+            Canteen.objects.annotate_with_diagnostic_for_year(2023)
+            .filter(has_complete_diagnostic_for_year=True)
+            .count(),
+            0,
+        )
+        self.assertEqual(
+            Canteen.objects.annotate_with_diagnostic_for_year(2022)
+            .filter(has_complete_diagnostic_for_year=True)
+            .count(),
+            0,
+        )
+        # TODO: diagnostic_for_year_cc_mode
+
+    def test_annotate_with_td_for_year(self):
+        self.assertEqual(Canteen.objects.count(), 2)
+        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2024).filter(has_td=True).count(), 1)
+        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2023).filter(has_td=True).count(), 0)
+        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2022).filter(has_td=True).count(), 0)
 
 
 class TestCanteenSiretOrSirenUniteLegaleQuerySet(TestCase):
