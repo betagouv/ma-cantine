@@ -94,7 +94,7 @@
       v-else-if="diagnosticCanBeTeledeclared"
       class="pa-6 pb-2 pb-sm-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
     >
-      <div v-if="tunnelComplete">
+      <div v-if="tunnelFilled">
         <p class="mb-0">
           Votre bilan {{ canteenDiagnostic.year }} est complet ! Merci d’avoir pris le temps de saisir vos données !
         </p>
@@ -109,12 +109,12 @@
         </p>
       </div>
       <v-card-actions class="px-0 pt-0 pb-0 justify-center flex-wrap">
-        <v-btn v-if="!tunnelComplete" color="primary" :to="completeDiagnosticLink" class="mb-4 mb-sm-0">
+        <v-btn v-if="!tunnelFilled" color="primary" :to="diagnosticLink" class="mb-4 mb-sm-0">
           Complèter mon bilan
         </v-btn>
         <v-btn
           color="primary"
-          :outlined="!tunnelComplete"
+          :outlined="!tunnelFilled"
           @click="showTeledeclarationPreview = true"
           class="fr-text font-weight-medium mb-4 mb-sm-0"
         >
@@ -263,13 +263,13 @@ export default {
     readyToTeledeclare() {
       return readyToTeledeclare(this.canteen, this.canteenDiagnostic, this.$store.state.sectors)
     },
-    tunnelComplete() {
+    tunnelFilled() {
       return this.canteenDiagnostic && hasFinishedMeasureTunnel(this.canteenDiagnostic)
     },
     tunnelProgressMessage() {
       return "Merci d'avoir pris le temps de commencer votre bilan !"
     },
-    completeDiagnosticLink() {
+    diagnosticLink() {
       return {
         name: "MyProgress",
         params: {
