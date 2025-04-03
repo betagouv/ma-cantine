@@ -36,33 +36,69 @@ class TestMigrations(TestCase):
 
 
 class ApproFieldsTestCase(TestMigrations):
-    migrate_from = "0166_historicalteledeclaration_value_bio_ht_agg_and_more"
-    migrate_to = "0167_populate_fields"
+    migrate_from = "0169_alter_reservationexpe_avg_weight_preparation_leftover_t0_and_more"
+    migrate_to = "0170_repopulate_fields_agg"
 
     def setUpBeforeMigration(self, apps):
         Teledeclaration = apps.get_model("data", "Teledeclaration")
+        Diagnostic = apps.get_model("data", "Diagnostic")
+        Canteen = apps.get_model("data", "Canteen")
 
-        # Create a test for a simple Teledeclaration object
+        # Create a canteen
+        canteen = Canteen.objects.create(
+            name="Test Canteen",
+            siret="12345678912345",
+            city="Test City",
+            postal_code="75001",
+            yearly_meal_count=1000,
+        )
+
+        # Create a simple diagnostic
+        diag_simple = Diagnostic.objects.create(
+            canteen=canteen,
+            year=2021,
+            diagnostic_type="SIMPLE",
+            value_total_ht=100.0,
+            value_bio_ht=50.0,
+        )
+
+        # Create a teledeclaration for the simple diagnostic
         self.td_simple = Teledeclaration.objects.create(
             year=2021,
             declared_data={
-                "teledeclaration": {"diagnostic_type": "SIMPLE", "value_total_ht": 100.0, "value_bio_ht": 100.0},
-                "canteen": {"yearly_meal_count": 10.0},
+                "teledeclaration": {
+                    "diagnostic_type": "SIMPLE",
+                    "value_total_ht": 100.0,
+                    "value_bio_ht": 50.0,
+                },
+                "canteen": {"yearly_meal_count": 1000},
             },
+            diagnostic=diag_simple,
         )
-        # Create a test for a complete Teledeclaration object
+
+        # Create a complete diagnostic
+        diag_complete = Diagnostic.objects.create(
+            canteen=canteen,
+            year=2020,
+            diagnostic_type="COMPLETE",
+            value_total_ht=200.0,
+            value_boissons_label_rouge=10.0,
+            value_boulangerie_aocaop_igp_stg=20.0,
+        )
+
+        # Create a teledeclaration for the complete diagnostic
         self.td_complete = Teledeclaration.objects.create(
             year=2020,
             declared_data={
                 "teledeclaration": {
                     "diagnostic_type": "COMPLETE",
-                    "value_total_ht": 100.0,
-                    "value_bio_ht": 10.0,
-                    "value_boissons_label_rouge_ht": 10.0,
-                    "value_boulangerie_aocaop_igp_stg": 10.0,
+                    "value_total_ht": 200.0,
+                    "value_boissons_label_rouge": 10.0,
+                    "value_boulangerie_aocaop_igp_stg": 20.0,
                 },
-                "canteen": {"yearly_meal_count": 10.0},
+                "canteen": {"yearly_meal_count": 1000},
             },
+            diagnostic=diag_complete,
         )
 
     def test_migration_0166(self):
@@ -72,6 +108,7 @@ class ApproFieldsTestCase(TestMigrations):
         # Assert that the new fields exist and are populated correctly
         self.assertIsNotNone(td_simple.value_bio_ht_agg)
         self.assertIsNotNone(td_simple.value_total_ht)
+        self.assertEqual(td_simple.value_total_ht, 100)
 
         td_complete = Teledeclaration.objects.get(pk=self.td_complete.id)
-        self.assertEqual(td_complete.value_sustainable_ht_agg, 20)
+        self.assertEqual(td_complete.value_sustainable_ht_agg, 30)
