@@ -24,7 +24,7 @@ const BADGE_LIST = [
       "35_fill_canteen_data",
       "18_prefill_diagnostic",
       "20_create_diagnostic",
-      "30_complete_diagnostic",
+      "30_fill_diagnostic",
     ],
   },
   {

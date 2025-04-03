@@ -231,19 +231,19 @@ class TestCanteenDiagnosticTeledeclarationQuerySet(TestCase):
         )
         self.assertEqual(
             Canteen.objects.annotate_with_diagnostic_for_year(2024)
-            .filter(has_complete_diagnostic_for_year=True)
+            .filter(has_diagnostic_filled_for_year=True)
             .count(),
             1,
         )
         self.assertEqual(
             Canteen.objects.annotate_with_diagnostic_for_year(2023)
-            .filter(has_complete_diagnostic_for_year=True)
+            .filter(has_diagnostic_filled_for_year=True)
             .count(),
             0,
         )
         self.assertEqual(
             Canteen.objects.annotate_with_diagnostic_for_year(2022)
-            .filter(has_complete_diagnostic_for_year=True)
+            .filter(has_diagnostic_filled_for_year=True)
             .count(),
             0,
         )

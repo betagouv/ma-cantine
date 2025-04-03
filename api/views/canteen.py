@@ -211,7 +211,7 @@ def filter_by_diagnostic_params(queryset, query_params):
     appro_badge_requested = badge == "appro"
     if bio or combined or appro_badge_requested:
         publication_year = date.today().year - 1
-        qs_diag = Diagnostic.objects.filter(year=publication_year, value_total_ht__gt=0)
+        qs_diag = Diagnostic.objects.is_filled().filter(year=publication_year)
         if bio or appro_badge_requested:
             qs_diag = qs_diag.annotate(
                 bio_share=Cast(Sum("value_bio_ht", default=0) / Sum("value_total_ht"), FloatField())

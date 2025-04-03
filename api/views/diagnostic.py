@@ -144,17 +144,17 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
     def get_queryset(self):
         year = self.request.parser_context.get("kwargs").get("year")
         canteens = DiagnosticsToTeledeclareListView._get_complete_canteens(self.request.user.canteens.all())
-        complete_diagnostics = Diagnostic.objects.filter(
-            year=year, canteen__in=canteens, value_total_ht__gt=0, diagnostic_type__isnull=False
+        diagnostics_filled = Diagnostic.objects.is_filled().filter(
+            year=year, canteen__in=canteens, diagnostic_type__isnull=False
         )
         teledeclared = (
             Teledeclaration.objects.filter(
-                diagnostic__in=complete_diagnostics, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+                diagnostic__in=diagnostics_filled, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
             )
             .values_list("diagnostic__id", flat=True)
             .distinct()
         )
-        return complete_diagnostics.exclude(id__in=teledeclared)
+        return diagnostics_filled.exclude(id__in=teledeclared)
 
     @staticmethod
     def _get_complete_canteens(canteens):

@@ -26,7 +26,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     def calculate_statistics(canteens, diagnostics):
         data = {"canteen_count": canteens.count(), "diagnostics_count": diagnostics.count()}
 
-        agg = diagnostics.filter(value_total_ht__gt=0).aggregate(
+        agg = diagnostics.is_filled().aggregate(
             Sum("value_bio_ht", default=0),
             Sum("value_total_ht", default=0),
             Sum("value_sustainable_ht", default=0),
