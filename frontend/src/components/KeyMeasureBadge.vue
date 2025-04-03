@@ -12,7 +12,12 @@
 <script>
 import DsfrBadge from "@/components/DsfrBadge"
 import keyMeasures from "@/data/key-measures.json"
-import { missingCanteenData, hasSatelliteInconsistency, hasStartedMeasureTunnel } from "@/utils"
+import {
+  missingCanteenData,
+  hasSatelliteInconsistency,
+  hasStartedMeasureTunnel,
+  diagnosticCanBeTeledeclared,
+} from "@/utils"
 
 export default {
   name: "KeyMeasureBadge",
@@ -27,7 +32,9 @@ export default {
       return this.id === "etablissement" || this.id === "qualite-des-produits"
     },
     isFilled() {
-      return this.id === "etablissement" ? this.verifyEstablishmentFilled() : this.verifyMeasureFilled()
+      if (this.id === "etablissement") return this.verifyEstablishmentFilled()
+      else if (this.id === "qualite-des-produits") return this.verifyApproFilled()
+      else return this.verifyMeasureFilled()
     },
     isWaitingCentralKitchen() {
       return this.isAppro && this.isSatellite && !this.isFilled
@@ -61,10 +68,12 @@ export default {
     verifyEstablishmentFilled() {
       return this.isCentralKitchen ? this.isCentralKitchenFilled : !this.missingCanteenData
     },
+    verifyApproFilled() {
+      return diagnosticCanBeTeledeclared(this.canteen, this.diagnostic) || this.hasCentralKitchenDeclared()
+    },
     verifyMeasureFilled() {
       const measure = keyMeasures.find((measure) => measure.id === this.id)
-      if (this.isAppro) return hasStartedMeasureTunnel(this.diagnostic, measure) || this.hasCentralKitchenDeclared()
-      else return hasStartedMeasureTunnel(this.diagnostic, measure)
+      return hasStartedMeasureTunnel(this.diagnostic, measure)
     },
     hasCentralKitchenDeclared() {
       if (!this.isSatellite) return false
