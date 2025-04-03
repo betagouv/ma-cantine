@@ -89,7 +89,10 @@
         </div>
         <div v-else-if="inTeledeclarationCampaign">
           <div v-if="isSatelliteWithApproCentralDiagnostic">
-            <p>Votre livreur des repas va déclarer les données d'approvisionnement pour votre établissement.</p>
+            <p v-if="isSatelliteWithCentralDiagnosticTeledeclared">
+              Votre livreur des repas a déclaré les données d'approvisionnement pour votre établissement.
+            </p>
+            <p v-else>Votre livreur des repas va déclarer les données d'approvisionnement pour votre établissement.</p>
             <p>Pour aller plus loin, vous pouvez télédéclarer les autres volets du bilan.</p>
           </div>
           <ul class="progress-list">
