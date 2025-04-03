@@ -540,7 +540,7 @@ class TestDiagnosticsApi(APITestCase):
             daily_meal_count=12,
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
-            siret=None,  # this needs to be completed for the diag to be teledeclarable
+            siret=None,  # this needs to be filled for the diag to be teledeclarable
         )
         DiagnosticFactory.create(canteen=canteen_with_incomplete_data, year=last_year, value_total_ht=10000)
 
