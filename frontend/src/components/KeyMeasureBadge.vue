@@ -12,12 +12,7 @@
 <script>
 import DsfrBadge from "@/components/DsfrBadge"
 import keyMeasures from "@/data/key-measures.json"
-import {
-  missingCanteenData,
-  hasSatelliteInconsistency,
-  hasStartedMeasureTunnel,
-  diagnosticCanBeTeledeclared,
-} from "@/utils"
+import { missingCanteenData, hasSatelliteInconsistency, hasStartedMeasureTunnel, hasDiagnosticApproData } from "@/utils"
 
 export default {
   name: "KeyMeasureBadge",
@@ -69,7 +64,7 @@ export default {
       return this.isCentralKitchen ? this.isCentralKitchenFilled : !this.missingCanteenData
     },
     verifyApproFilled() {
-      return diagnosticCanBeTeledeclared(this.canteen, this.diagnostic) || this.hasCentralKitchenDeclared()
+      return this.diagnostic ? hasDiagnosticApproData(this.diagnostic) : this.hasCentralKitchenDeclared()
     },
     verifyMeasureFilled() {
       const measure = keyMeasures.find((measure) => measure.id === this.id)
