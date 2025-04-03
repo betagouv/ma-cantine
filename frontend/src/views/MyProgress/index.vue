@@ -82,7 +82,10 @@
           </TeledeclarationCancelDialog>
         </div>
         <div v-else-if="isSatelliteWithCompleteCentralDiagnostic">
-          <p>Votre livreur des repas va faire le bilan pour votre établissement.</p>
+          <p v-if="isSatelliteWithCentralDiagnosticTeledeclared">
+            Votre livreur des repas a déclaré le bilan pour votre établissement.
+          </p>
+          <p v-else>Votre livreur des repas va déclarer le bilan pour votre établissement.</p>
         </div>
         <div v-else-if="inTeledeclarationCampaign">
           <div v-if="isSatelliteWithApproCentralDiagnostic">
@@ -401,6 +404,9 @@ export default {
     },
     isSatelliteWithApproCentralDiagnostic() {
       return this.isSatellite && this.centralDiagnostic?.centralKitchenDiagnosticMode === "APPRO"
+    },
+    isSatelliteWithCentralDiagnosticTeledeclared() {
+      return this.centralDiagnostic.isTeledeclared
     },
     yearOptions() {
       return this.years.map((year) => ({ text: year, value: year }))
