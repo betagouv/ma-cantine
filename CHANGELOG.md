@@ -6,6 +6,29 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.11.9](https://github.com/betagouv/ma-cantine/compare/v2025.11.8...v2025.11.9) (2025-04-03)
+
+
+### Améliorations
+
+* **Fixtures:** Ajout de donnés initiales pour déploiements en local ([#5182](https://github.com/betagouv/ma-cantine/issues/5182)) ([fd9cadf](https://github.com/betagouv/ma-cantine/commit/fd9cadf0d35d8c5b287ee97b97161d462a9221de))
+* **Télédéclaration:** améliore les messages pour les cuisines satellites ([#5220](https://github.com/betagouv/ma-cantine/issues/5220)) ([3c5b129](https://github.com/betagouv/ma-cantine/commit/3c5b129560deff63a4f4e42b95b602abf75f05fb))
+* **Télédéclaration:** Améliorer encore le wording du badge indiquant que la cantine satellite n'a rien à faire ([#5211](https://github.com/betagouv/ma-cantine/issues/5211)) ([2c6d7e7](https://github.com/betagouv/ma-cantine/commit/2c6d7e7cc90ae81b569736c10969cdb89e9c1d32))
+
+
+### Corrections (bugs, typos...)
+
+* **Tableau de bord:** Vue actions: répare l'occurence de doublons ([#5214](https://github.com/betagouv/ma-cantine/issues/5214)) ([e8c5a06](https://github.com/betagouv/ma-cantine/commit/e8c5a068e2300e6ff1eb98f11aa09da08ebe9be0))
+* **Teledeclaration:** Nouvelle migration de données ([#5212](https://github.com/betagouv/ma-cantine/issues/5212)) ([8653102](https://github.com/betagouv/ma-cantine/commit/8653102c9932e1222b29af0621e952a33be78dd5))
+
+
+### Technique
+
+* **Cantines:** bouger le queryset 'annotate actions' dans le modèle ([#5215](https://github.com/betagouv/ma-cantine/issues/5215)) ([76fd144](https://github.com/betagouv/ma-cantine/commit/76fd144aeb2bc6604c6d951089e7bf537c5b3a65))
+* **Cantines:** renommer 'complete' en 'filled' pour clarifier ([#5217](https://github.com/betagouv/ma-cantine/issues/5217)) ([797e3c3](https://github.com/betagouv/ma-cantine/commit/797e3c3733ac74311c2ee7841488979b8c001b3f))
+* **Diagnostic:** continuer à renommer completed en filled ([#5219](https://github.com/betagouv/ma-cantine/issues/5219)) ([313f2a1](https://github.com/betagouv/ma-cantine/commit/313f2a102b0a097291bf66f8c6883d2f23ce75dc))
+* **Diagnostic:** Nouveau queryset is_filled. Renommer 'completed' par 'filled' pour clarifier ([#5216](https://github.com/betagouv/ma-cantine/issues/5216)) ([0791fa8](https://github.com/betagouv/ma-cantine/commit/0791fa83f4a031b8da66b0d4193652f1875e4eb9))
+
 ## [2025.11.8](https://github.com/betagouv/ma-cantine/compare/v2025.11.7...v2025.11.8) (2025-04-01)
 
 
