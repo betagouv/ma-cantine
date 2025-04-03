@@ -1,0 +1,48 @@
+[
+  {
+    "fields": {
+      "email": "manager@example.com",
+      "first_name": "Ada",
+      "last_name": "Lovelace"
+    },
+    "model": "data.user",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "city": "Paris",
+      "creation_date": "2025-01-01",
+      "managers": [
+        1
+      ],
+      "modification_date": "2025-01-01",
+      "name": "Sample Canteen",
+      "postal_code": "75001",
+      "siret": "83014132100034",
+      "yearly_meal_count": 1000
+    },
+    "model": "data.canteen",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "category": "administration",
+      "creation_date": "2025-01-01",
+      "modification_date": "2025-01-01",
+      "name": "Administration ma-cantine"
+    },
+    "model": "data.sector",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "canteen": 1,
+      "creation_date": "2025-01-01",
+      "modification_date": "2025-01-01",
+      "value_bio_ht": 200,
+      "value_total_ht": 1000
+    },
+    "model": "data.diagnostic",
+    "pk": 1
+  }
+]
