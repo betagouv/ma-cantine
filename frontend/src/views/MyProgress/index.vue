@@ -127,7 +127,7 @@
           </ul>
           <v-btn
             color="primary"
-            :disabled="!readyToTeledeclare && !hasFinishedMeasureTunnel"
+            :disabled="!readyToTeledeclare"
             @click="showTeledeclarationPreview = true"
             class="mt-3"
           >
@@ -282,7 +282,6 @@ import {
   hasDiagnosticApproData,
   missingCanteenData,
   hasSatelliteInconsistency,
-  hasFinishedMeasureTunnel,
 } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
@@ -396,9 +395,6 @@ export default {
     },
     missingDeclarationMode() {
       return this.isCentralKitchen && !this.diagnostic?.centralKitchenDiagnosticMode
-    },
-    hasFinishedMeasureTunnel() {
-      return this.diagnostic && hasFinishedMeasureTunnel(this.diagnostic)
     },
     isSatellite() {
       return this.canteen?.productionType === "site_cooked_elsewhere"
