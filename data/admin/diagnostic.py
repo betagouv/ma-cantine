@@ -292,6 +292,11 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "canteen__siren_unite_legale",
     )
 
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.creation_source = Diagnostic.CreationSource.ADMIN
+        super().save_model(request, obj, form, change)
+
     def has_change_permission(self, request, obj=None):
         return obj and not DiagnosticAdmin._has_teledeclaration(obj)
 

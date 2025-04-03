@@ -198,7 +198,9 @@ class ImportDiagnosticsView(ABC, APIView):
         diagnostic = (
             Diagnostic.objects.get(canteen=canteen, year=diagnostic_year)
             if diagnostic_exists
-            else Diagnostic(canteen_id=canteen.id, year=diagnostic_year)
+            else Diagnostic(
+                canteen_id=canteen.id, year=diagnostic_year, creation_source=Diagnostic.CreationSource.IMPORT
+            )
         )
         if diagnostic_exists:
             has_active_td = Teledeclaration.objects.filter(
