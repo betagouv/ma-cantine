@@ -1,5 +1,5 @@
 <template>
-  <DsfrBadge v-if="isCompleted" :showIcon="false" mode="SUCCESS">
+  <DsfrBadge v-if="isFilled" :showIcon="false" mode="SUCCESS">
     {{ isAppro && isSatellite ? "Complété (par votre livreur)" : "Complété" }}
   </DsfrBadge>
   <DsfrBadge v-else-if="isWaitingCentralKitchen" :showIcon="false" mode="NEUTRAL">
@@ -26,11 +26,11 @@ export default {
     isRequired() {
       return this.id === "etablissement" || this.id === "qualite-des-produits"
     },
-    isCompleted() {
-      return this.id === "etablissement" ? this.verifyEstablishmentCompleted() : this.verifyMeasureCompleted()
+    isFilled() {
+      return this.id === "etablissement" ? this.verifyEstablishmentFilled() : this.verifyMeasureFilled()
     },
     isWaitingCentralKitchen() {
-      return this.isAppro && this.isSatellite && !this.isCompleted
+      return this.isAppro && this.isSatellite && !this.isFilled
     },
     isCentralKitchen() {
       return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
@@ -38,7 +38,7 @@ export default {
     missingDeclarationMode() {
       return this.isCentralKitchen && !this.diagnostic?.centralKitchenDiagnosticMode
     },
-    isCentralKitchenCompleted() {
+    isCentralKitchenFilled() {
       return !this.missingDeclarationMode && !this.hasSatelliteInconsistency
     },
     missingCanteenData() {
@@ -58,10 +58,10 @@ export default {
     DsfrBadge,
   },
   methods: {
-    verifyEstablishmentCompleted() {
-      return this.isCentralKitchen ? this.isCentralKitchenCompleted : !this.missingCanteenData
+    verifyEstablishmentFilled() {
+      return this.isCentralKitchen ? this.isCentralKitchenFilled : !this.missingCanteenData
     },
-    verifyMeasureCompleted() {
+    verifyMeasureFilled() {
       const measure = keyMeasures.find((measure) => measure.id === this.id)
       if (this.isAppro) return hasStartedMeasureTunnel(this.diagnostic, measure) || this.hasCentralKitchenDeclared()
       else return hasStartedMeasureTunnel(this.diagnostic, measure)
