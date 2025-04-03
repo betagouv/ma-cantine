@@ -1,6 +1,15 @@
 [
   {
     "fields": {
+      "email": "manager@example.com",
+      "first_name": "Ada",
+      "last_name": "Lovelace"
+    },
+    "model": "data.user",
+    "pk": 1
+  },
+  {
+    "fields": {
       "city": "Paris",
       "creation_date": "2025-01-01",
       "managers": [
