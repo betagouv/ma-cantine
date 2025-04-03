@@ -120,6 +120,13 @@ export default {
       if (this.totalFamiliesError) fields.push(...["valueMeatPoultryHt", "valueFishHt"])
       return fields
     },
+    purchasesSummaryWithNullValues() {
+      const purchases = { ...this.purchasesSummary }
+      Object.keys(purchases).forEach((key) => {
+        purchases[key] = purchases[key] === 0 ? null : purchases[key]
+      })
+      return purchases
+    },
   },
   methods: {
     updatePayload() {
@@ -190,7 +197,7 @@ export default {
       this.$nextTick(this.$refs.totalField.validate)
     },
     autofillWithPurchases() {
-      Object.assign(this.payload, { diagnosticType: "COMPLETE" }, this.purchasesSummary)
+      Object.assign(this.payload, { diagnosticType: "COMPLETE" }, this.purchasesSummaryWithNullValues)
       this.$emit("tunnel-autofill", {
         payload: this.payload,
         message: {
