@@ -6,6 +6,18 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.11.11](https://github.com/betagouv/ma-cantine/compare/v2025.11.10...v2025.11.11) (2025-04-04)
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration:** utilise la même fonction pour le calcul du badge "complété" des approvisionnements et le bouton "Télédéclarer" ([#5226](https://github.com/betagouv/ma-cantine/issues/5226)) ([f2944b7](https://github.com/betagouv/ma-cantine/commit/f2944b7ecac2620022627916fc12aa1588f337db))
+
+
+### Documentation
+
+* **Onboarding:** Ajout de NODE_OPTIONS pour lancer le front ([#5225](https://github.com/betagouv/ma-cantine/issues/5225)) ([4bc0422](https://github.com/betagouv/ma-cantine/commit/4bc042230f5d5232cd4f6d564e814e6cfd98098e))
+
 ## [2025.11.10](https://github.com/betagouv/ma-cantine/compare/v2025.11.9...v2025.11.10) (2025-04-03)
 
 
