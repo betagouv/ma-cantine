@@ -62,15 +62,17 @@ class TeledeclarationQuerySet(models.QuerySet):
         )
 
     def for_stat(self, year):
-        return (
-            self.canteen_for_stat(year)
-            .submitted_for_year(year)
-            .select_related("diagnostic")
-            .filter(
-                diagnostic__value_total_ht__isnull=False,
-                diagnostic__value_bio_ht__isnull=False,
+        year = int(year)
+        if year in CAMPAIGN_DATES.keys():
+            return (
+                self.canteen_for_stat(year)
+                .submitted_for_year(year)
+                .select_related("diagnostic")
+                .filter(
+                    diagnostic__value_total_ht__isnull=False,
+                    diagnostic__value_bio_ht__isnull=False,
+                )
             )
-        )
 
 
 class Teledeclaration(models.Model):
