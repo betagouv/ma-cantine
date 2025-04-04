@@ -169,7 +169,7 @@
       <li><router-link :to="{ name: 'LandingPage' }">Accueil</router-link></li>
       <li><router-link :to="{ name: 'DiagnosticPage' }">Auto évaluation</router-link></li>
       <li><router-link :to="{ name: 'CanteensHome' }">Index des cantines</router-link></li>
-      <li><router-link :to="{ name: 'FaqPage' }">FAQ</router-link></li>
+      <li><router-link :to="{ name: 'FAQ' }">FAQ</router-link></li>
       <li>
         <a href="https://ma-cantine.agriculture.gouv.fr/nos-cantines/14--Cantine%20de%20Misson/">
           Exemple d'une fiche détaillée

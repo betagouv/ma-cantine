@@ -116,7 +116,7 @@ const navItems = [
     links: [
       {
         text: "Foire aux questions",
-        to: { name: "FaqPage" },
+        to: { name: "FAQ" },
       },
       {
         text: "Importer un fichier",
