@@ -586,6 +586,9 @@ const vue3Routes = [
   {
     path: "/foire-aux-questions/",
     name: "FAQ",
+    meta: {
+      title: "Foire aux questions",
+    },
     sitemapGroup: Constants.SitemapGroups.SITE,
   },
 ]
