@@ -1,10 +1,10 @@
 <script setup>
 import AppSeparator from "@/components/AppSeparator.vue"
-defineProps(["badge", "title"])
+defineProps(["badge", "title", "align"])
 </script>
 
 <template>
-  <section class="app-need-help fr-mt-4w fr-mt-lg-10w fr-grid-row fr-grid-row--center">
+  <section :class="`app-need-help fr-mt-4w fr-mt-lg-10w fr-grid-row fr-grid-row--${align}`">
     <div class="fr-col-12 fr-col-lg-8">
       <div class="app-need-help__separator fr-mb-5w">
         <AppSeparator />
