@@ -17,7 +17,7 @@ const route = useRoute()
         n'êtes pas les seuls à vous poser ces questions.
       </p>
     </div>
-    <div class="fr-hidden fr-unhidden-lg fr-col-4 fr-grid-row fr-grid-row--center">
+    <div class="fr-hidden fr-unhidden-lg fr-col-4 fr-grid-row fr-grid-row--right">
       <img src="/static/images/doodles-dsfr/primary/ReadingDoodle.png" class="faq-illustration" />
     </div>
   </section>
