@@ -1,6 +1,8 @@
 <script setup>
 import { useRoute } from "vue-router"
 import { groups } from "@/constants/questions-answers.js"
+import AppNeedHelp from "@/components/AppNeedHelp.vue"
+import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
 const route = useRoute()
 </script>
@@ -28,4 +30,11 @@ const route = useRoute()
       </DsfrAccordion>
     </DsfrAccordionsGroup>
   </section>
+  <AppNeedHelp badge="Une suggestion" title="Vous ne trouvez pas ce que vous cherchez ?">
+    <p>
+      N'hésitez pas à nous soumettre une nouvelle question, en nous contactant
+      <br />
+      <AppLinkRouter title="via notre formulaire de contact" :to="{ name: 'ContactPage' }"></AppLinkRouter>
+    </p>
+  </AppNeedHelp>
 </template>
