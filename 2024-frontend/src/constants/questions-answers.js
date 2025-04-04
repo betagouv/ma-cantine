@@ -79,7 +79,7 @@ const groups = [
   },
   {
     title: "La loi",
-    accordion: [
+    accordions: [
       {
         answer:
           "A ce jour, la loi ne prévoit pas de sanctions, ni de contrôles pour ce qui concerne l'atteinte des taux EGalim. Cependant la loi EGalim et plus récemment la Climat et Résilience, prévoient un renforcement de la transparence vis-à-vis des convives avec notamment l’obligation d’une information des convives sur leur lieu de repas, des objectifs atteints en matière de produits durables et de qualité entrant dans la composition des repas (Art. L. 230-5-3 du code rural) et d’une information des citoyens au travers un bilan statistique annuel de l’application de ces objectifs, remis au Parlement par le Gouvernement et rendu public (Article L. 230-5-1 du code rural).",
@@ -94,7 +94,7 @@ const groups = [
   },
   {
     title: "La mesure EGalim « qualité de produits »",
-    accordion: [
+    accordions: [
       {
         answer:
           "A ce jour, pour les produits issus de la démarche Bleu-Blanc-Coeur ne bénéficiant pas d’un signe ou mention « officiel » listé par la loi EGalim, il est possible de les comptabiliser, comme pour tout autre produit, dans les objectifs de la loi EGalim à condition qu’ils soient sélectionnés à l’issue d’un processus de sélection ciblant « les produits acquis selon les modalités prenant en compte les coûts imputés aux externalités environnementales tout au long de son cycle de vie » ou « les produits dont l’acquisition a été fondée principalement sur la base de leurs performances en matière de protection de l’environnement et de développement des approvisionnements directs de produits de l’agriculture ». Le recours à ces modalités de sélection relève du libre choix et de la responsabilité de l’acheteur, dans le respect du code de la commande publique.",
@@ -120,7 +120,7 @@ const groups = [
   },
   {
     title: "Transmission des données par « ma cantine »",
-    accordion: [
+    accordions: [
       {
         answer:
           "Le décret du 23 avril 2019, pris en application de la loi EGalim du 30 octobre 2018 précise que ces parts (taux EGalim) sont calculées à partir des valeurs d’achats HT des produits alimentaires. L’arrêté du 14 septembre 2022, indique que les informations à transmettre via « ma cantine » sont les valeurs d’achat (HT). Ces données permettent de réaliser le bilan statistique annuel.",
