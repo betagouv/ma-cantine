@@ -1,3 +1,8 @@
+import FAQAnswerSiretRequired from "@/components/FAQAnswerSiretRequired.vue"
+import FAQAnswerNoSiret from "@/components/FAQAnswerNoSiret.vue"
+import FAQAnswerProviderObligation from "@/components/FAQAnswerProviderObligation.vue"
+import FAQAnswerHowToSignUp from "@/components/FAQAnswerHowToSignUp.vue"
+
 const groups = [
   {
     title: "La plateforme",
@@ -23,7 +28,7 @@ const groups = [
         question: "Qui peut s’inscrire sur « ma cantine » ?",
       },
       {
-        name: "HowToSignUp",
+        component: FAQAnswerHowToSignUp,
         question: "Comment s’inscrire sur « ma cantine » ?",
       },
       {
@@ -68,12 +73,12 @@ const groups = [
     title: "Création de mon établissement",
     accordions: [
       {
-        component: "SiretRequired",
+        component: FAQAnswerSiretRequired,
         question: "Le SIRET est-il obligatoire pour créer ma cantine ?",
       },
       {
-        component: "NoSiret",
-        question: "Comment faire si je ne dispose pas de SIRET pour créer mon établissement dans ma cantine ?",
+        component: FAQAnswerNoSiret,
+        question: "Comment faire si je ne dispose pas de SIRET pour créer mon établissement dans ma cantine ?",
       },
     ],
   },
@@ -86,7 +91,7 @@ const groups = [
         question: "Comment sont vérifiées les obligations sur l’atteinte des taux EGalim en restauration collective ?",
       },
       {
-        component: "ProviderObligation",
+        component: FAQAnswerProviderObligation,
         question:
           "Mon prestataire ou délégataire refuse de me transmettre mes données d'achats. Quelles obligations pour lui ?",
       },
