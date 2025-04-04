@@ -10,6 +10,7 @@ import ImportPurchases from "@/views/ImportPurchases.vue"
 import ImportCanteens from "@/views/ImportCanteens.vue"
 import CanteenCreation from "@/views/CanteenCreation.vue"
 import CanteenModification from "@/views/CanteenModification.vue"
+import FAQ from "@/views/FAQ.vue"
 
 const vue3routes = [
   {
@@ -139,6 +140,14 @@ const vue3routes = [
         },
       },
     ],
+  },
+  {
+    path: "/foire-aux-questions",
+    name: "FAQ",
+    component: FAQ,
+    meta: {
+      title: "Foire aux questions",
+    },
   },
 ]
 
