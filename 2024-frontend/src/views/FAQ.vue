@@ -8,13 +8,18 @@ const route = useRoute()
 </script>
 
 <template>
-  <section class="fr-col-12 fr-col-md-7 fr-mb-10w">
-    <h1>{{ route.meta.title }}</h1>
-    <p>
-      Vous n'êtes pas familier avec les obligations réglementaires ? Vous vous posez des questions sur votre
-      responsabilité ? Vous avez besoin d'aide sur plusieurs aspects techniques ou légaux ? Rassurez-vous ! Vous n'êtes
-      pas les seuls à vous poser ces questions.
-    </p>
+  <section class="fr-mb-10w fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+      <h1>{{ route.meta.title }}</h1>
+      <p>
+        Vous n'êtes pas familier avec les obligations réglementaires ? Vous vous posez des questions sur votre
+        responsabilité ? Vous avez besoin d'aide sur plusieurs aspects techniques ou légaux ? Rassurez-vous ! Vous
+        n'êtes pas les seuls à vous poser ces questions.
+      </p>
+    </div>
+    <div class="fr-hidden fr-unhidden-md fr-col-4 fr-grid-row fr-grid-row--center">
+      <img src="/static/images/doodles-dsfr/primary/ReadingDoodle.png" class="faq-illustration" />
+    </div>
   </section>
   <section>
     <DsfrAccordionsGroup v-for="(group, index) in groups" :key="index" class="fr-mb-5w">
@@ -38,3 +43,9 @@ const route = useRoute()
     </p>
   </AppNeedHelp>
 </template>
+
+<style lang="scss">
+.faq-illustration {
+  width: 10rem;
+}
+</style>
