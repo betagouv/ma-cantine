@@ -8,7 +8,7 @@ const route = useRoute()
 </script>
 
 <template>
-  <section class="fr-mb-10w fr-grid-row">
+  <section class="fr-mb-4w fr-mb-md-10w fr-grid-row">
     <div class="fr-col-12 fr-col-md-8">
       <h1>{{ route.meta.title }}</h1>
       <p>
@@ -22,7 +22,7 @@ const route = useRoute()
     </div>
   </section>
   <section class="fr-grid-row fr-grid-row--center">
-    <DsfrAccordionsGroup v-for="(group, index) in groups" :key="index" class="fr-col-8 fr-mb-5w">
+    <DsfrAccordionsGroup v-for="(group, index) in groups" :key="index" class="fr-col-12 fr-col-md-8 fr-mb-5w">
       <h2 class="fr-h5">{{ group.title }}</h2>
       <DsfrAccordion
         v-for="(accordion, index) in group.accordions"

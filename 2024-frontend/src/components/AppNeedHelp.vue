@@ -4,7 +4,7 @@ defineProps(["badge", "title"])
 </script>
 
 <template>
-  <section class="app-need-help fr-mt-8w fr-grid-row fr-grid-row--center">
+  <section class="app-need-help fr-mt-4w fr-mt-md-10w fr-grid-row fr-grid-row--center">
     <div class="fr-col-12 fr-col-md-8">
       <div class="app-need-help__separator fr-mb-5w">
         <AppSeparator />
