@@ -44,7 +44,6 @@ import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
 import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
-import FaqPage from "@/views/FaqPage"
 import SiteMap from "@/views/SiteMap"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
@@ -441,15 +440,6 @@ const routes = [
     sitemapGroup: Constants.SitemapGroups.LAW,
   },
   {
-    path: "/faq/",
-    name: "FaqPage",
-    component: FaqPage,
-    meta: {
-      title: "Foire aux questions",
-    },
-    sitemapGroup: Constants.SitemapGroups.SITE,
-  },
-  {
     path: "/plan-du-site/",
     name: "SiteMap",
     component: SiteMap,
@@ -592,6 +582,11 @@ const vue3Routes = [
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent/etablissement",
     name: "CanteenForm",
+  },
+  {
+    path: "/foire-aux-questions/",
+    name: "FAQ",
+    sitemapGroup: Constants.SitemapGroups.SITE,
   },
 ]
 const VUE3_PREFIX = "/v2"
