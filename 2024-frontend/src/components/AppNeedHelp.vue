@@ -4,13 +4,13 @@ defineProps(["badge", "title"])
 </script>
 
 <template>
-  <section class="app-need-help fr-mt-4w fr-mt-md-10w fr-grid-row fr-grid-row--center">
-    <div class="fr-col-12 fr-col-md-8">
+  <section class="app-need-help fr-mt-4w fr-mt-lg-10w fr-grid-row fr-grid-row--center">
+    <div class="fr-col-12 fr-col-lg-8">
       <div class="app-need-help__separator fr-mb-5w">
         <AppSeparator />
         <DsfrBadge class="app-need-help__badge" type="none" :label="badge" />
       </div>
-      <div class="fr-pr-0 fr-pr-md-8w">
+      <div class="fr-pr-0 fr-pr-lg-8w">
         <h2>{{ title }}</h2>
         <slot />
       </div>

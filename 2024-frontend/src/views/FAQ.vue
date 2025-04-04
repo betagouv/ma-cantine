@@ -8,8 +8,8 @@ const route = useRoute()
 </script>
 
 <template>
-  <section class="fr-mb-4w fr-mb-md-10w fr-grid-row">
-    <div class="fr-col-12 fr-col-md-8">
+  <section class="fr-mb-4w fr-mb-lg-10w fr-grid-row">
+    <div class="fr-col-12 fr-col-lg-8">
       <h1>{{ route.meta.title }}</h1>
       <p>
         Vous n'êtes pas familier avec les obligations réglementaires ? Vous vous posez des questions sur votre
@@ -17,12 +17,12 @@ const route = useRoute()
         n'êtes pas les seuls à vous poser ces questions.
       </p>
     </div>
-    <div class="fr-hidden fr-unhidden-md fr-col-4 fr-grid-row fr-grid-row--center">
+    <div class="fr-hidden fr-unhidden-lg fr-col-4 fr-grid-row fr-grid-row--center">
       <img src="/static/images/doodles-dsfr/primary/ReadingDoodle.png" class="faq-illustration" />
     </div>
   </section>
   <section class="fr-grid-row fr-grid-row--center">
-    <DsfrAccordionsGroup v-for="(group, index) in groups" :key="index" class="fr-col-12 fr-col-md-8 fr-mb-5w">
+    <DsfrAccordionsGroup v-for="(group, index) in groups" :key="index" class="fr-col-12 fr-col-lg-8 fr-mb-5w">
       <h2 class="fr-h5">{{ group.title }}</h2>
       <DsfrAccordion
         v-for="(accordion, index) in group.accordions"
