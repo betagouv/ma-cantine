@@ -30,7 +30,7 @@ const route = useRoute()
         </DsfrAccordion>
       </DsfrAccordionsGroup>
     </div>
-    <div class="fr-hidden fr-unhidden-lg fr-col-4 fr-grid-row fr-grid-row--center ma-cantine--sticky">
+    <div class="fr-hidden fr-unhidden-lg fr-col-4 fr-grid-row fr-grid-row--right ma-cantine--sticky">
       <img src="/static/images/doodles-dsfr/primary/ReadingDoodle.png" class="faq__illustration" />
     </div>
   </section>
