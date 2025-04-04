@@ -64,10 +64,6 @@ const vue2routes = [
     name: "PublicCanteenStatisticsPage",
   },
   {
-    path: "/faq/",
-    name: "FaqPage",
-  },
-  {
     path: "/mon-compte",
     name: "AccountSummaryPage",
   },

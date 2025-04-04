@@ -1,5 +1,5 @@
 <template>
-  <p class="mb-0">
+  <p>
     Il faut procéder en plusieurs étapes qui sont documentées par nos webinaires :
     <a href="https://ma-cantine.agriculture.gouv.fr/webinaires/1--Cr%C3%A9er%20son%20compte%20utilisateur">
       se créer un compte

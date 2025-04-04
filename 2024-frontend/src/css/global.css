@@ -71,3 +71,11 @@ address {
 .ma-cantine--icon-xs::before {
     --icon-size: 1rem !important
 }
+
+
+/* ANIMATION */
+
+.ma-cantine--sticky {
+    position: sticky;
+    top: 1rem;
+}
