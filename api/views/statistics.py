@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from api.serializers import CanteenStatisticsSerializer
 from api.views.utils import camelize
-from data.models import Canteen, Diagnostic
+from data.models import Canteen, Teledeclaration
 
 logger = logging.getLogger(__name__)
 
@@ -51,9 +51,11 @@ class CanteenStatisticsView(APIView):
             epci_error = None
 
         canteens = self._filter_canteens(regions, departments, city_insee_codes, sector_categories)
-        diagnostics = self._filter_diagnostics(year, regions, departments, city_insee_codes, sector_categories)
+        teledeclarations = self._filter_teledeclarations(
+            year, regions, departments, city_insee_codes, sector_categories
+        )
 
-        data = self.serializer_class.calculate_statistics(canteens, diagnostics)
+        data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
         if epci_error:
             data["epci_error"] = epci_error
 
@@ -80,14 +82,15 @@ class CanteenStatisticsView(APIView):
             canteens = canteens.filter(sectors__in=[s for s in sectors if s.isdigit()])
         return canteens.distinct()
 
-    def _filter_diagnostics(self, year, regions, departments, city_insee_codes, sectors):
-        diagnostics = Diagnostic.objects.for_stat(year)
-        if city_insee_codes:
-            diagnostics = diagnostics.filter(canteen__city_insee_code__in=city_insee_codes)
-        elif departments:
-            diagnostics = diagnostics.filter(canteen__department__in=departments)
-        elif regions:
-            diagnostics = diagnostics.filter(canteen__region__in=regions)
-        if sectors:
-            diagnostics = diagnostics.filter(canteen__sectors__in=sectors)
-        return diagnostics.distinct()
+    def _filter_teledeclarations(self, year, regions, departments, city_insee_codes, sectors):
+        teledeclarations = Teledeclaration.objects.for_stat(year)
+        if teledeclarations:
+            if city_insee_codes:
+                teledeclarations = teledeclarations.filter(canteen__city_insee_code__in=city_insee_codes)
+            elif departments:
+                teledeclarations = teledeclarations.filter(canteen__department__in=departments)
+            elif regions:
+                teledeclarations = teledeclarations.filter(canteen__region__in=regions)
+            if sectors:
+                teledeclarations = teledeclarations.filter(canteen__sectors__in=sectors)
+            return teledeclarations.distinct()
