@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from "vue-router"
-import { groups } from "@/constants/faq-accordions.js"
+import { groups } from "@/constants/questions-answers.js"
 import AppRawHtml from "@/components/AppRawHtml.vue"
 
 const route = useRoute()
