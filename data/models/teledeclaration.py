@@ -37,6 +37,7 @@ class TeledeclarationQuerySet(models.QuerySet):
         return self.filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
     def for_year(self, year):
+        year = int(year)
         return self.filter(
             year=year,
             creation_date__range=(
