@@ -21,8 +21,8 @@ const route = useRoute()
       <img src="/static/images/doodles-dsfr/primary/ReadingDoodle.png" class="faq-illustration" />
     </div>
   </section>
-  <section>
-    <DsfrAccordionsGroup v-for="(group, index) in groups" :key="index" class="fr-mb-5w">
+  <section class="fr-grid-row fr-grid-row--center">
+    <DsfrAccordionsGroup v-for="(group, index) in groups" :key="index" class="fr-col-8 fr-mb-5w">
       <h2 class="fr-h5">{{ group.title }}</h2>
       <DsfrAccordion
         v-for="(accordion, index) in group.accordions"
