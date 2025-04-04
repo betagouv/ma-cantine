@@ -1,7 +1,6 @@
 <script setup>
 import { useRoute } from "vue-router"
 import { groups } from "@/constants/questions-answers.js"
-import AppRawHtml from "@/components/AppRawHtml.vue"
 
 const route = useRoute()
 </script>
@@ -24,7 +23,8 @@ const route = useRoute()
         :title="accordion.question"
         title-tag="h3"
       >
-        <AppRawHtml :html="accordion.answer" />
+        <component v-if="accordion.component" :is="accordion.component"></component>
+        <p v-else>{{ accordion.answer }}</p>
       </DsfrAccordion>
     </DsfrAccordionsGroup>
   </section>
