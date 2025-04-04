@@ -2,6 +2,7 @@ import FAQAnswerSiretRequired from "@/components/FAQAnswerSiretRequired.vue"
 import FAQAnswerNoSiret from "@/components/FAQAnswerNoSiret.vue"
 import FAQAnswerProviderObligation from "@/components/FAQAnswerProviderObligation.vue"
 import FAQAnswerHowToSignUp from "@/components/FAQAnswerHowToSignUp.vue"
+import FAQAnswerEgalimFishLabel from "@/components/FAQAnswerEgalimFishLabel.vue"
 
 const groups = [
   {
@@ -106,8 +107,7 @@ const groups = [
         question: "Les produits Bleu-Blanc-Coeur (BBC) entrent-ils dans les 50 % de produits durables et de qualité ?",
       },
       {
-        answer:
-          "La catégorie citée par la loi EGalim est « Produits issus de la pêche maritime bénéficiant de l’écolabel Pêche durable ». Le label MSC (porté par l’ONG internationale MSC) est différent de la certification par l’écolabel « Pêche Durable ». Dans le cas où un fournisseur propose des produits labellisés « MSC pêche durable » en lieu et place de produits labellisés « écolabel Pêche durable, l’acheteur, sous sa propre responsabilité et sur la base d’éléments de preuve apportés par le fournisseur, peut étudier l’équivalence, dans le respect du code de la commande publique, de produits labellisés avec la catégorie écolabel « Pêche Durable ».",
+        component: FAQAnswerEgalimFishLabel,
         question:
           "Quels sont les produits issus de la « pêche durable » qui entrent dans les 50 % de produits durables et de qualité ?",
       },
