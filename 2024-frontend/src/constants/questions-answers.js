@@ -6,7 +6,6 @@ const groups = [
         answer:
           "« ma cantine » est un service numérique opéré par le Ministère en charge de l’agriculture (MASA) avec l’appui de la Direction Interministérielle du Numérique (DINUM). Son objectif est d'accompagner la transition alimentaire des services de restauration collective, les cantines vers une alimentation et une consommation plus durable. Cette plateforme est à la fois un outil d’accompagnement pour les gestionnaires, un outil d’information pour les convives citoyens et un outil de transmission d’information vers l’administration pour le suivi de cette transition.",
         question: "Qu'est-ce que « ma cantine » ?",
-        type: "text",
       },
     ],
   },
