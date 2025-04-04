@@ -31,7 +31,7 @@ const route = useRoute()
       </DsfrAccordionsGroup>
     </div>
     <div class="fr-hidden fr-unhidden-lg fr-col-4 fr-grid-row fr-grid-row--center fr-grid-row--middle">
-      <img src="/static/images/doodles-dsfr/primary/ReadingDoodle.png" class="faq-illustration" />
+      <img src="/static/images/doodles-dsfr/primary/ReadingDoodle.png" class="faq__illustration" />
     </div>
   </section>
   <AppNeedHelp badge="Une suggestion" title="Vous ne trouvez pas ce que vous cherchez ?">
@@ -44,7 +44,9 @@ const route = useRoute()
 </template>
 
 <style lang="scss">
-.faq-illustration {
-  width: 10rem;
+.faq {
+  &__illustration {
+    width: 10rem;
+  }
 }
 </style>
