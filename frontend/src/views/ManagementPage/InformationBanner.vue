@@ -66,6 +66,7 @@ export default {
       correctionStartDate: null,
       correctionEndDate: null,
       isCorrection: false,
+      isTeledeclaration: false,
     }
   },
   mounted() {
