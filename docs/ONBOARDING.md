@@ -135,6 +135,18 @@ MAX_DAYS_HISTORICAL_RECORDS= Optionnel - Flag pour indiquer le nombre de jours p
 CSV_PURCHASE_CHUNK_LINES= Optionnel - Définit le nombre de lignes dans chaque chunk pour l'import des achats. Le choix par défaut est de 81920 ce qui représente en moyenne des chunks de 3Mb.
 ```
 
+### Dates des campagnes
+
+Elles sont définies dans le fichier `macantine.utils.CAMPAIGN_DATES`.
+
+Il est possible de les overrider (pour l'année en cours) grâce aux variables d'environment suivantes :
+```
+TELEDECLARATION_START_DATE= Optionnel (exemple : `2025-01-07`)
+TELEDECLARATION_END_DATE= Optionnel
+CORRECTION_START_DATE= Optionnel
+CORRECTION_END_DATE= Optionnel
+```
+
 ### Activer les feature flags
 
 ```
@@ -142,7 +154,6 @@ ENABLE_XP_RESERVATION= Optionnel - `True` pour activer la feature de l'expérime
 ENABLE_XP_VEGE= Optionnel - `True` pour activer la feature de l'expérimentation de l'offre quotidien de repas végétariens.
 ENABLE_TELEDECLARATION= Optionnel - `True` pour permettre les utilisateurs de télédéclarer leur diagnostic.
 TELEDECLARATION_CORRECTION_CAMPAIGN= Optionnel - `True` pour pour distinguer la campagne de TD de la campagne de corrections. Ça fait pas grande chose sans ENABLE_TELEDECLARATION.
-TELEDECLARATION_END_DATE= Optionnel - Celle-ci n'est pas exactement une feature flag mais fonctionne avec le flag précedent. Il faut indiquer une date pour la fin de la campagne de la télédéclaration (par exemple, `2024-03-15`)
 ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des gestionnaires.
 PUBLISH_BY_DEFAULT= Optionnel - `True` pour publier les cantines sauf celles qui sont identifiées autrement.
 ENABLE_VUE3= Optionnel - `True` pour rendre les nouvelles vues disponibles.
