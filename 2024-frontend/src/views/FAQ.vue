@@ -5,6 +5,7 @@ import AppNeedHelp from "@/components/AppNeedHelp.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
 const route = useRoute()
+const readingDoodleIllustration = "/static/images/doodles-dsfr/primary/ReadingDoodle.png"
 </script>
 
 <template>
@@ -31,7 +32,7 @@ const route = useRoute()
       </DsfrAccordionsGroup>
     </div>
     <div class="fr-hidden fr-unhidden-lg fr-col-4 fr-grid-row fr-grid-row--right ma-cantine--sticky">
-      <img src="/static/images/doodles-dsfr/primary/ReadingDoodle.png" class="faq__illustration" />
+      <img :src="readingDoodleIllustration" class="faq__illustration" />
     </div>
   </section>
   <AppNeedHelp badge="Une suggestion" title="Vous ne trouvez pas ce que vous cherchez ?">
