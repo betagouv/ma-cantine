@@ -1,5 +1,17 @@
 <template>
   <DsfrCallout v-if="inCorrection || inTeledeclaration" noIcon class="mt-2">
+    <div v-if="inTeledeclaration">
+      <h2 class="fr-text font-weight-bold mb-2 mt-2">
+        <span class="text-uppercase">Campagne de télédéclaration {{ year + 1 }} :</span>
+        du {{ teledeclarationStartDate }} au {{ teledeclarationEndDate }}
+      </h2>
+      <p class="mb-0">
+        Dans votre espace cantine, remplissez votre bilan sur les données d'achat {{ year }} et télédéclarez vos
+        données.
+        <br />
+        Pour rappel, selon l’arrêté ministériel du 14 septembre 2022, il est obligatoire de télédéclarer ses achats.
+      </p>
+    </div>
     <div v-if="inCorrection">
       <h2 class="fr-text font-weight-bold mb-2 mt-2">
         <span class="text-uppercase">Droit à l'erreur :</span>
@@ -63,6 +75,8 @@ export default {
   data() {
     return {
       year: lastYear(),
+      teledeclarationStartDate: null,
+      teledeclarationEndDate: null,
       correctionStartDate: null,
       correctionEndDate: null,
       inCorrection: false,
@@ -72,8 +86,10 @@ export default {
   mounted() {
     // TODO : change for api
     this.updateBanner({
-      inCorrection: true,
-      inTeledeclaration: false,
+      inCorrection: false,
+      inTeledeclaration: true,
+      teledeclarationStartDate: "2025-01-07",
+      teledeclarationEndDate: "2025-03-30",
       correctionEndDate: "2025-04-30 00:00:00+01:00",
       correctionStartDate: "2025-04-16 00:00:00+01:00",
     })
@@ -84,6 +100,8 @@ export default {
       this.inTeledeclaration = infos.inTeledeclaration
       this.correctionStartDate = this.prettifyDate(infos.correctionStartDate)
       this.correctionEndDate = this.prettifyDate(infos.correctionEndDate)
+      this.teledeclarationStartDate = this.prettifyDate(infos.teledeclarationStartDate)
+      this.teledeclarationEndDate = this.prettifyDate(infos.teledeclarationEndDate)
     },
     prettifyDate(date) {
       const dateObject = new Date(date)
