@@ -36,8 +36,8 @@ class TestMigrations(TestCase):
 
 
 class ApproFieldsTestCase(TestMigrations):
-    migrate_from = "0169_alter_reservationexpe_avg_weight_preparation_leftover_t0_and_more"
-    migrate_to = "0170_repopulate_fields_agg"
+    migrate_from = "0170_repopulate_fields_agg"
+    migrate_to = "0171_repopulate_fields_agg_null"
 
     def setUpBeforeMigration(self, apps):
         Teledeclaration = apps.get_model("data", "Teledeclaration")
@@ -101,7 +101,7 @@ class ApproFieldsTestCase(TestMigrations):
             diagnostic=diag_complete,
         )
 
-    def test_migration_0166(self):
+    def test_migration_0171(self):
         Teledeclaration = apps.get_model("data", "Teledeclaration")
         td_simple = Teledeclaration.objects.get(pk=self.td_simple.id)
 
@@ -112,3 +112,4 @@ class ApproFieldsTestCase(TestMigrations):
 
         td_complete = Teledeclaration.objects.get(pk=self.td_complete.id)
         self.assertEqual(td_complete.value_sustainable_ht_agg, 10 + 20)
+        self.assertIsNone(td_complete.value_bio_ht_agg)
