@@ -1,13 +1,16 @@
 <template>
   <DsfrCallout noIcon class="mt-2">
-    <h2 class="fr-text font-weight-bold mb-2 mt-2">
-      INFORMATION IMPORTANTE :
-    </h2>
-    <p class="mb-0">
-      La télédéclaration 2025 est exceptionnellement maintenue ouverte sur l'ensemble de la première semaine d'avril.
-      <br />
-      Les télédéclarations seront possibles jusqu’au dimanche 6 avril 2025 inclus.
-    </p>
+    <div v-if="isCorrection">
+      <h2 class="fr-text font-weight-bold mb-2 mt-2">
+        <span class="text-uppercase">Droit à l'erreur :</span>
+        du {{ correctionStartDate }} au {{ correctionEndDate }} {{ year + 1 }}
+      </h2>
+      <p class="mb-0">
+        Valable uniquement pour les établissements qui ont validé leur télé-déclaration. Depuis votre bilan, vous pouvez
+        corriger vos informations si besoin. Attention la télé-déclaration rectificative doit être déposée avant le
+        {{ correctionEndDate }}.
+      </p>
+    </div>
     <v-row class="mt-4 mb-0 mx-0 align-center">
       <v-btn :to="{ name: 'PendingActions' }" color="primary" class="mb-5 mb-md-2 mr-4">
         Télédéclarer mes cantines
