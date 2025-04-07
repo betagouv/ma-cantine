@@ -12,10 +12,16 @@
       </p>
     </div>
     <v-row class="mt-4 mb-0 mx-0 align-center">
-      <v-btn :to="{ name: 'PendingActions' }" color="primary" class="mb-5 mb-md-2 mr-4">
+      <v-btn v-if="isTeledeclaration" :to="{ name: 'PendingActions' }" color="primary" class="mb-5 mb-md-2 mr-4">
         Télédéclarer mes cantines
       </v-btn>
-      <v-btn :to="{ name: 'CommunityPage', hash: '#evenements' }" color="primary" outlined class="mb-5 mb-md-2 mr-4">
+      <v-btn
+        v-if="isTeledeclaration"
+        :to="{ name: 'CommunityPage', hash: '#evenements' }"
+        color="primary"
+        outlined
+        class="mb-5 mb-md-2 mr-4"
+      >
         Inscrivez-vous à nos derniers webinaires
       </v-btn>
       <p class="fr-text-sm mb-5 mb-md-2 mr-4">
