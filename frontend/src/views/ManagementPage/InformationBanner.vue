@@ -1,6 +1,6 @@
 <template>
   <DsfrCallout noIcon class="mt-2">
-    <div v-if="isCorrection">
+    <div v-if="inCorrection">
       <h2 class="fr-text font-weight-bold mb-2 mt-2">
         <span class="text-uppercase">Droit à l'erreur :</span>
         du {{ correctionStartDate }} au {{ correctionEndDate }} {{ year + 1 }}
@@ -12,11 +12,11 @@
       </p>
     </div>
     <v-row class="mt-4 mb-0 mx-0 align-center">
-      <v-btn v-if="isTeledeclaration" :to="{ name: 'PendingActions' }" color="primary" class="mb-5 mb-md-2 mr-4">
+      <v-btn v-if="inTeledeclaration" :to="{ name: 'PendingActions' }" color="primary" class="mb-5 mb-md-2 mr-4">
         Télédéclarer mes cantines
       </v-btn>
       <v-btn
-        v-if="isTeledeclaration"
+        v-if="inTeledeclaration"
         :to="{ name: 'CommunityPage', hash: '#evenements' }"
         color="primary"
         outlined
@@ -65,23 +65,23 @@ export default {
       year: lastYear(),
       correctionStartDate: null,
       correctionEndDate: null,
-      isCorrection: false,
-      isTeledeclaration: false,
+      inCorrection: false,
+      inTeledeclaration: false,
     }
   },
   mounted() {
     // TODO : change for api
     this.updateBanner({
-      isCorrection: true,
-      isTeledeclaration: false,
+      inCorrection: true,
+      inTeledeclaration: false,
       correctionEndDate: "2025-04-30 00:00:00+01:00",
       correctionStartDate: "2025-04-16 00:00:00+01:00",
     })
   },
   methods: {
     updateBanner(infos) {
-      this.isCorrection = infos.isCorrection
-      this.isTeledeclaration = infos.isTeledeclaration
+      this.inCorrection = infos.inCorrection
+      this.inTeledeclaration = infos.inTeledeclaration
       this.correctionStartDate = this.prettifyDate(infos.correctionStartDate)
       this.correctionEndDate = this.prettifyDate(infos.correctionEndDate)
     },
