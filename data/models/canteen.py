@@ -20,6 +20,7 @@ from data.utils import (
     get_region,
     optimize_image,
 )
+from macantine.utils import is_in_teledeclaration
 
 from .softdeletionmodel import (
     SoftDeletionManager,
@@ -188,7 +189,6 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         # prep TD action
         self = self.annotate_with_td_for_year(year)
         # annotate with action
-        should_teledeclare = settings.ENABLE_TELEDECLARATION
         conditions = [
             When(
                 (is_central_cuisine_query() & Q(satellite_canteens_count__gt=0) & Q(satellites_in_db_count=None)),
@@ -224,7 +224,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             ),
             When(has_missing_data_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
-        if should_teledeclare:
+        if is_in_teledeclaration(year):
             conditions.append(When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)))
         if not settings.PUBLISH_BY_DEFAULT:
             conditions.append(
