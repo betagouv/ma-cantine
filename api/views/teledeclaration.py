@@ -393,9 +393,11 @@ class TeledeclarationPdfView(APIView):
         return structured_data
 
 
+@extend_schema_view(
+    get=extend_schema(summary="Lister les dates des campagnes.", tags=["teledeclaration"]),
+)
 class TeledeclarationCampaignDatesView(APIView):
     include_in_documentation = True
-    required_scopes = ["teledeclaration"]
 
     def get(self, request, format=None):
         campaign_dates = []
