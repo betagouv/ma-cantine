@@ -38,8 +38,8 @@ class TeledeclarationQuerySet(models.QuerySet):
         return self.filter(
             year=year,
             creation_date__range=(
-                CAMPAIGN_DATES[year]["start_date"],
-                CAMPAIGN_DATES[year]["end_date"],
+                CAMPAIGN_DATES[year]["teledeclaration_start_date"],
+                CAMPAIGN_DATES[year]["teledeclaration_end_date"],
             ),
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
         )
@@ -51,8 +51,8 @@ class TeledeclarationQuerySet(models.QuerySet):
             .filter(canteen_has_siret_or_siren_unite_legale_query())
             .exclude(
                 canteen__deletion_date__range=(
-                    CAMPAIGN_DATES[year]["start_date"],
-                    CAMPAIGN_DATES[year]["end_date"],
+                    CAMPAIGN_DATES[year]["teledeclaration_start_date"],
+                    CAMPAIGN_DATES[year]["teledeclaration_end_date"],
                 )
             )
         )

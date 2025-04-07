@@ -39,8 +39,8 @@ class DiagnosticQuerySet(models.QuerySet):
         return self.filter(
             year=year,
             teledeclaration__creation_date__range=(
-                CAMPAIGN_DATES[year]["start_date"],
-                CAMPAIGN_DATES[year]["end_date"],
+                CAMPAIGN_DATES[year]["teledeclaration_start_date"],
+                CAMPAIGN_DATES[year]["teledeclaration_end_date"],
             ),
             teledeclaration__status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
         )
@@ -53,8 +53,8 @@ class DiagnosticQuerySet(models.QuerySet):
             .exclude(canteen__siret="")
             .exclude(
                 canteen__deletion_date__range=(
-                    CAMPAIGN_DATES[year]["start_date"],
-                    CAMPAIGN_DATES[year]["end_date"],
+                    CAMPAIGN_DATES[year]["teledeclaration_start_date"],
+                    CAMPAIGN_DATES[year]["teledeclaration_end_date"],
                 )
             )
         )
