@@ -70,7 +70,7 @@
           </p>
           <TeledeclarationCancelDialog
             v-model="cancelDialog"
-            v-if="inTeledeclarationCampaign"
+            v-if="inTeledeclarationCampaign || inCorrectionCampaign"
             @cancel="cancelTeledeclaration"
             :diagnostic="diagnostic"
           >
