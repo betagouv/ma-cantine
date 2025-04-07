@@ -956,7 +956,7 @@ class TestTeledeclarationCampaignDatesApi(APITestCase):
             with self.subTest(DATE=date_freeze["date"]):
                 with freeze_time(date_freeze["date"]):
                     response = self.client.get(
-                        reverse("retrieve_teledeclaration_campaign_date", kwargs={"year": 2024})
+                        reverse("retrieve_teledeclaration_campaign_dates", kwargs={"year": 2024})
                     )
                     self.assertEqual(response.status_code, status.HTTP_200_OK)
 
