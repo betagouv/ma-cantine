@@ -141,7 +141,7 @@ Elles sont définies dans le fichier `macantine.utils.CAMPAIGN_DATES`.
 
 Il est possible de les overrider (pour l'année en cours) grâce aux variables d'environment suivantes :
 ```
-TELEDECLARATION_START_DATE= Optionnel (exemple : `2025-01-07 00:00:00+01:00`)
+TELEDECLARATION_START_DATE= Optionnel (exemple : `2025-01-07`)
 TELEDECLARATION_END_DATE= Optionnel
 CORRECTION_START_DATE= Optionnel
 CORRECTION_END_DATE= Optionnel
