@@ -183,7 +183,7 @@ urlpatterns = {
     path(
         "campaignDates/<int:year>/",
         TeledeclarationCampaignDatesRetrieveView.as_view(),
-        name="retrieve_teledeclaration_campaign_date",
+        name="retrieve_teledeclaration_campaign_dates",
     ),
     path(
         "teledeclaration/",
