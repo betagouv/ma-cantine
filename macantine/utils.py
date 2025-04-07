@@ -24,8 +24,7 @@ CAMPAIGN_DATES = {
         "correction_end_date": datetime(2024, 6, 13, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
     2024: {
-        "teledeclaration_start_date": settings.TELEDECLARATION_START_DATE
-        or datetime(2025, 1, 7, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "teledeclaration_start_date": settings.TELEDECLARATION_START_DATE or "2025-01-07 00:00:00+01:00",
         "teledeclaration_end_date": settings.TELEDECLARATION_END_DATE
         or datetime(2025, 4, 7, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "correction_start_date": settings.CORRECTION_START_DATE
@@ -33,4 +32,7 @@ CAMPAIGN_DATES = {
         "correction_end_date": settings.CORRECTION_END_DATE
         or datetime(2025, 5, 1, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
+    # Note: au moment d'ajouter une nouvelle année :
+    # - penser à y ajouter les settings (pour override)
+    # - et enlever les settings de l'année précédente
 }
