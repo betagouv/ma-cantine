@@ -44,11 +44,43 @@
 
 <script>
 import DsfrCallout from "@/components/DsfrCallout"
+import { lastYear } from "@/utils"
 
 export default {
   name: "InformationBanner",
   components: {
     DsfrCallout,
+  },
+  data() {
+    return {
+      year: lastYear(),
+      correctionStartDate: null,
+      correctionEndDate: null,
+      isCorrection: false,
+    }
+  },
+  mounted() {
+    // TODO : change for api
+    this.updateBanner({
+      isCorrection: true,
+      isTeledeclaration: false,
+      correctionEndDate: "2025-04-30 00:00:00+01:00",
+      correctionStartDate: "2025-04-16 00:00:00+01:00",
+    })
+  },
+  methods: {
+    updateBanner(infos) {
+      this.isCorrection = infos.isCorrection
+      this.isTeledeclaration = infos.isTeledeclaration
+      this.correctionStartDate = this.prettifyDate(infos.correctionStartDate)
+      this.correctionEndDate = this.prettifyDate(infos.correctionEndDate)
+    },
+    prettifyDate(date) {
+      const dateObject = new Date(date)
+      const day = dateObject.getDate()
+      const monthName = dateObject.toLocaleString("default", { month: "long" })
+      return `${day} ${monthName}`
+    },
   },
 }
 </script>
