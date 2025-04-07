@@ -104,9 +104,7 @@ export default {
     },
     prettifyDate(date) {
       const dateObject = new Date(date)
-      const day = dateObject.getDate()
-      const monthName = dateObject.toLocaleString("default", { month: "long" })
-      return `${day} ${monthName}`
+      return dateObject.toLocaleString("default", { month: "long", day: "numeric" })
     },
   },
 }
