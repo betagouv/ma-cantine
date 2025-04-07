@@ -89,15 +89,9 @@ export default {
     }
   },
   mounted() {
-    // TODO : change for api
-    this.updateBanner({
-      inCorrection: false,
-      inTeledeclaration: true,
-      teledeclarationStartDate: "2025-01-07",
-      teledeclarationEndDate: "2025-03-30",
-      correctionEndDate: "2025-04-30 00:00:00+01:00",
-      correctionStartDate: "2025-04-16 00:00:00+01:00",
-    })
+    fetch(`/api/v1/campaignDates/${this.lastYear}`)
+      .then((response) => response.json())
+      .then((response) => this.updateBanner(response))
   },
   methods: {
     updateBanner(infos) {
