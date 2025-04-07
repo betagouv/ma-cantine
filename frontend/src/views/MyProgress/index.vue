@@ -321,7 +321,6 @@ export default {
       centralKitchenDiagnosticModes: Constants.CentralKitchenDiagnosticModes,
       centralKitchenDiagnosticMode: null,
       cancelDialog: false,
-      campaignEndDate: window.TELEDECLARATION_END_DATE ? new Date(window.TELEDECLARATION_END_DATE) : null,
       showTeledeclarationPreview: false,
       approId: "qualite-des-produits",
       establishmentId,
@@ -366,6 +365,11 @@ export default {
     },
     inTeledeclarationCampaign() {
       return window.ENABLE_TELEDECLARATION && +this.year === lastYear()
+    },
+    campaignEndDate() {
+      if (this.inTeledeclarationCampaign) return new Date(window.TELEDECLARATION_END_DATE)
+      else if (this.inCorrectionCampaign) return new Date("2025-12-31")
+      else return null
     },
     readyToTeledeclare() {
       return readyToTeledeclare(this.canteen, this.diagnostic, this.$store.state.sectors)
