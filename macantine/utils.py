@@ -18,7 +18,7 @@ def convert_date_string_to_datetime(date_string, time_start_or_end="start"):
         try:
             datetime_object = datetime.strptime(date_string, "%Y-%m-%d")
             if time_start_or_end == "end":
-                datetime_object = datetime_object.replace(hour=23, minute=59, second=59)
+                datetime_object = datetime_object.replace(hour=23, minute=59, second=59, microsecond=999999)
             datetime_object = datetime_object.replace(tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
             return datetime_object
         except ValueError:
@@ -29,35 +29,41 @@ def convert_date_string_to_datetime(date_string, time_start_or_end="start"):
 
 CAMPAIGN_DATES = {
     2021: {
-        "teledeclaration_start_date": datetime(2022, 7, 16, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        "teledeclaration_end_date": datetime(2022, 12, 4, 23, 59, 59, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "teledeclaration_start_date": datetime(2022, 7, 16, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "teledeclaration_end_date": datetime(
+            2022, 12, 4, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
+        ),
     },
     2022: {
-        "teledeclaration_start_date": datetime(2023, 2, 12, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        "teledeclaration_end_date": datetime(2023, 6, 30, 23, 59, 59, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "teledeclaration_start_date": datetime(2023, 2, 12, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "teledeclaration_end_date": datetime(
+            2023, 6, 30, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
+        ),
     },
     2023: {
-        "teledeclaration_start_date": datetime(2024, 1, 8, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        "teledeclaration_end_date": datetime(2024, 6, 11, 23, 59, 59, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        "correction_start_date": datetime(2024, 6, 3, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        "correction_end_date": datetime(2024, 6, 12, 23, 59, 59, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "teledeclaration_start_date": datetime(2024, 1, 8, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "teledeclaration_end_date": datetime(
+            2024, 6, 11, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
+        ),
+        "correction_start_date": datetime(2024, 6, 3, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "correction_end_date": datetime(2024, 6, 12, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
     },
     2024: {
         "teledeclaration_start_date": (
             convert_date_string_to_datetime(settings.TELEDECLARATION_START_DATE)
-            or datetime(2025, 1, 7, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
+            or datetime(2025, 1, 7, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
         "teledeclaration_end_date": (
             convert_date_string_to_datetime(settings.TELEDECLARATION_END_DATE, "end")
-            or datetime(2025, 4, 6, 23, 59, 59, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
+            or datetime(2025, 4, 6, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
         "correction_start_date": (
             convert_date_string_to_datetime(settings.CORRECTION_START_DATE)
-            or datetime(2025, 4, 16, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
+            or datetime(2025, 4, 16, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
         "correction_end_date": (
             convert_date_string_to_datetime(settings.CORRECTION_END_DATE, "end")
-            or datetime(2025, 4, 30, 23, 59, 59, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
+            or datetime(2025, 4, 30, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
     },
     # Note: au moment d'ajouter une nouvelle année :
