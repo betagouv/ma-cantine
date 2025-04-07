@@ -11,12 +11,14 @@ from django.utils.text import slugify
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import serializers, status
 from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from xhtml2pdf import pisa
 
 from api.permissions import IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
 from api.serializers import FullDiagnosticSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
+from macantine.utils import CAMPAIGN_DATES
 
 from .utils import camelize
 
@@ -389,3 +391,14 @@ class TeledeclarationPdfView(APIView):
             for family, display_family in family_variable_to_display.items():
                 structured_data[display_label][display_family] = teledeclaration_data[f"value_{family}_{label}"]
         return structured_data
+
+
+class TeledeclarationCampaignDatesView(APIView):
+    include_in_documentation = True
+    required_scopes = ["teledeclaration"]
+
+    def get(self, request, format=None):
+        campaign_dates = []
+        for year in CAMPAIGN_DATES.keys():
+            campaign_dates.append({"year": year, **CAMPAIGN_DATES[year]})
+        return Response(campaign_dates)
