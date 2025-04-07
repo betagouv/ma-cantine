@@ -58,7 +58,8 @@ from api.views import (
     SendCanteenNotFoundEmail,
     SubscribeNewsletter,
     TeamJoinRequestView,
-    TeledeclarationCampaignDatesView,
+    TeledeclarationCampaignDatesListView,
+    TeledeclarationCampaignDatesRetrieveView,
     TeledeclarationCancelView,
     TeledeclarationCreateView,
     TeledeclarationPdfView,
@@ -178,7 +179,12 @@ urlpatterns = {
         name="import_cc_complete_diagnostics",
     ),
     path("emailDiagnosticImportFile/", EmailDiagnosticImportFileView.as_view(), name="email_diagnostic_file"),
-    path("campaignDates/", TeledeclarationCampaignDatesView.as_view(), name="teledeclaration_campaign_dates"),
+    path("campaignDates/", TeledeclarationCampaignDatesListView.as_view(), name="list_teledeclaration_campaign_dates"),
+    path(
+        "campaignDates/<int:year>/",
+        TeledeclarationCampaignDatesRetrieveView.as_view(),
+        name="retrieve_teledeclaration_campaign_dates",
+    ),
     path(
         "teledeclaration/",
         TeledeclarationCreateView.as_view(),

@@ -4,6 +4,7 @@ from datetime import datetime
 
 import redis as r
 from django.conf import settings
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -70,3 +71,28 @@ CAMPAIGN_DATES = {
     # - penser à y ajouter les settings (pour override)
     # - et enlever les settings de l'année précédente
 }
+
+
+def is_in_teledeclaration(year):
+    """
+    Check if the current date is within the teledeclaration period for the given year.
+    """
+    now = timezone.now()
+    if year in CAMPAIGN_DATES:
+        start_date = CAMPAIGN_DATES[year]["teledeclaration_start_date"]
+        end_date = CAMPAIGN_DATES[year]["teledeclaration_end_date"]
+        return start_date <= now <= end_date
+    return False
+
+
+def is_in_correction(year):
+    """
+    Check if the current date is within the correction period for the given year.
+    """
+    now = timezone.now()
+    if year in CAMPAIGN_DATES:
+        if "correction_start_date" in CAMPAIGN_DATES[year]:
+            start_date = CAMPAIGN_DATES[year]["correction_start_date"]
+            end_date = CAMPAIGN_DATES[year]["correction_end_date"]
+            return start_date <= now <= end_date
+    return False

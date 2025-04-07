@@ -18,7 +18,7 @@ from xhtml2pdf import pisa
 from api.permissions import IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
 from api.serializers import FullDiagnosticSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
-from macantine.utils import CAMPAIGN_DATES
+from macantine.utils import CAMPAIGN_DATES, is_in_correction, is_in_teledeclaration
 
 from .utils import camelize
 
@@ -396,7 +396,7 @@ class TeledeclarationPdfView(APIView):
 @extend_schema_view(
     get=extend_schema(summary="Lister les dates des campagnes.", tags=["teledeclaration"]),
 )
-class TeledeclarationCampaignDatesView(APIView):
+class TeledeclarationCampaignDatesListView(APIView):
     include_in_documentation = True
 
     def get(self, request, format=None):
@@ -404,3 +404,21 @@ class TeledeclarationCampaignDatesView(APIView):
         for year in CAMPAIGN_DATES.keys():
             campaign_dates.append({"year": year, **CAMPAIGN_DATES[year]})
         return Response(campaign_dates)
+
+
+@extend_schema_view(
+    get=extend_schema(summary="Détails des dates de campagne pour une année donnée.", tags=["teledeclaration"]),
+)
+class TeledeclarationCampaignDatesRetrieveView(APIView):
+    include_in_documentation = True
+
+    def get(self, request, year, format=None):
+        if not CAMPAIGN_DATES.get(year):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        campaign_dates_for_year = {
+            "year": year,
+            **CAMPAIGN_DATES[year],
+            "in_teledeclaration": is_in_teledeclaration(year),
+            "in_correction": is_in_correction(year),
+        }
+        return Response(campaign_dates_for_year)
