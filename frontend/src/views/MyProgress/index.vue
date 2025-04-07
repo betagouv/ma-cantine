@@ -366,6 +366,10 @@ export default {
     inTeledeclarationCampaign() {
       return window.ENABLE_TELEDECLARATION && +this.year === lastYear()
     },
+    inCorrectionCampaign() {
+      // TODO remplir via api
+      return true
+    },
     campaignEndDate() {
       if (this.inTeledeclarationCampaign) return new Date(window.TELEDECLARATION_END_DATE)
       else if (this.inCorrectionCampaign) return new Date("2025-12-31")
