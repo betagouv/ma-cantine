@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.12.1](https://github.com/betagouv/ma-cantine/compare/v2025.12.0...v2025.12.1) (2025-04-07)
+
+
+### Corrections (bugs, typos...)
+
+* **Teledeclaration:** Ajout somme integer et null sur ligne manquante ([#5239](https://github.com/betagouv/ma-cantine/issues/5239)) ([fad0204](https://github.com/betagouv/ma-cantine/commit/fad0204bf12960c254200485b99a4541c4ee0752))
+
 ## [2025.12.0](https://github.com/betagouv/ma-cantine/compare/v2025.11.10...v2025.12.0) (2025-04-07)
 
 
