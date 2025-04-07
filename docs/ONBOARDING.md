@@ -153,7 +153,6 @@ CORRECTION_END_DATE= Optionnel
 ENABLE_XP_RESERVATION= Optionnel - `True` pour activer la feature de l'expérimentation des systèmes de réservation.
 ENABLE_XP_VEGE= Optionnel - `True` pour activer la feature de l'expérimentation de l'offre quotidien de repas végétariens.
 ENABLE_TELEDECLARATION= Optionnel - `True` pour permettre les utilisateurs de télédéclarer leur diagnostic.
-TELEDECLARATION_CORRECTION_CAMPAIGN= Optionnel - `True` pour pour distinguer la campagne de TD de la campagne de corrections. Ça fait pas grande chose sans ENABLE_TELEDECLARATION.
 ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des gestionnaires.
 PUBLISH_BY_DEFAULT= Optionnel - `True` pour publier les cantines sauf celles qui sont identifiées autrement.
 ENABLE_VUE3= Optionnel - `True` pour rendre les nouvelles vues disponibles.

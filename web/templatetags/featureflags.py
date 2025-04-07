@@ -20,11 +20,6 @@ def enable_teledeclaration():
 
 
 @register.simple_tag
-def teledeclaration_correction_campaign():
-    return getattr(settings, "TELEDECLARATION_CORRECTION_CAMPAIGN", "")
-
-
-@register.simple_tag
 def enable_dashboard():
     return getattr(settings, "ENABLE_DASHBOARD", "")
 
