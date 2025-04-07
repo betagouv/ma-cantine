@@ -16,8 +16,8 @@ from data.region_choices import Region
 year_data = now().year - 1
 mocked_campaign_dates = {
     year_data: {
-        "start_date": now().replace(month=1, day=1, hour=0, minute=0, second=0),
-        "end_date": now().replace(month=12, day=31, hour=23, minute=59, second=59),
+        "teledeclaration_start_date": now().replace(month=1, day=1, hour=0, minute=0, second=0),
+        "teledeclaration_end_date": now().replace(month=12, day=31, hour=23, minute=59, second=59),
     }
 }
 
