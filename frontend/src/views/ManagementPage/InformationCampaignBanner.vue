@@ -56,7 +56,7 @@ import DsfrCallout from "@/components/DsfrCallout"
 import { lastYear } from "@/utils"
 
 export default {
-  name: "InformationBanner",
+  name: "InformationCampaignBanner",
   components: {
     DsfrCallout,
   },
