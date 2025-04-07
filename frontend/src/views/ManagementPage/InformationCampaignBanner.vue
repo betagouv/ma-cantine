@@ -2,11 +2,11 @@
   <DsfrCallout v-if="inCorrection || inTeledeclaration" noIcon class="mt-2">
     <div v-if="inTeledeclaration">
       <h2 class="fr-text font-weight-bold mb-2 mt-2">
-        <span class="text-uppercase">Campagne de télédéclaration {{ year + 1 }} :</span>
+        <span class="text-uppercase">Campagne de télédéclaration {{ currentYear }} :</span>
         du {{ teledeclarationStartDate }} au {{ teledeclarationEndDate }}
       </h2>
       <p class="mb-0">
-        Dans votre espace cantine, remplissez votre bilan sur les données d'achat {{ year }} et télédéclarez vos
+        Dans votre espace cantine, remplissez votre bilan sur les données d'achat {{ lastYear }} et télédéclarez vos
         données.
         <br />
         Pour rappel, selon l’arrêté ministériel du 14 septembre 2022, il est obligatoire de télédéclarer ses achats.
@@ -15,7 +15,7 @@
     <div v-if="inCorrection">
       <h2 class="fr-text font-weight-bold mb-2 mt-2">
         <span class="text-uppercase">Droit à l'erreur :</span>
-        du {{ correctionStartDate }} au {{ correctionEndDate }} {{ year + 1 }}
+        du {{ correctionStartDate }} au {{ correctionEndDate }} {{ currentYear }}
       </h2>
       <p class="mb-0">
         Valable uniquement pour les établissements qui ont validé leur télé-déclaration. Depuis votre bilan, vous pouvez
@@ -72,9 +72,14 @@ export default {
   components: {
     DsfrCallout,
   },
+  computed: {
+    currentYear() {
+      return this.lastYear + 1
+    },
+  },
   data() {
     return {
-      year: lastYear(),
+      lastYear: lastYear(),
       teledeclarationStartDate: null,
       teledeclarationEndDate: null,
       correctionStartDate: null,
