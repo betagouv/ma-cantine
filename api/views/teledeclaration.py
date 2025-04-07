@@ -396,11 +396,24 @@ class TeledeclarationPdfView(APIView):
 @extend_schema_view(
     get=extend_schema(summary="Lister les dates des campagnes.", tags=["teledeclaration"]),
 )
-class TeledeclarationCampaignDatesView(APIView):
+class TeledeclarationCampaignDatesListView(APIView):
     include_in_documentation = True
 
     def get(self, request, format=None):
         campaign_dates = []
         for year in CAMPAIGN_DATES.keys():
             campaign_dates.append({"year": year, **CAMPAIGN_DATES[year]})
+        return Response(campaign_dates)
+
+
+@extend_schema_view(
+    get=extend_schema(summary="Détails des dates de campagne pour une année donnée.", tags=["teledeclaration"]),
+)
+class TeledeclarationCampaignDatesRetrieveView(APIView):
+    include_in_documentation = True
+
+    def get(self, request, year, format=None):
+        if not CAMPAIGN_DATES.get(year):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        campaign_dates = {"year": year, **CAMPAIGN_DATES[year]}
         return Response(campaign_dates)
