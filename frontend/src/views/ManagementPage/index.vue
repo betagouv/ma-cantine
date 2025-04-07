@@ -19,7 +19,7 @@
       </router-link>
     </p>
     <InformationBanner v-if="showInformationBanner" />
-    <CampaignInformationBanner />
+    <InformationCampaignBanner />
     <div v-if="canteenCount > 0" class="mt-4">
       <SuccessBanner v-if="showSuccessBanner" />
       <ActionsBanner v-else />
@@ -94,7 +94,7 @@ import PageSatisfaction from "@/components/PageSatisfaction.vue"
 import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
 import UserTools from "./UserTools"
 import InformationBanner from "./InformationBanner"
-import CampaignInformationBanner from "./CampaignInformationBanner"
+import InformationCampaignBanner from "./InformationCampaignBanner"
 import CanteenCreationDialog from "./CanteenCreationDialog"
 import ActionsBanner from "./ActionsBanner"
 import SuccessBanner from "./SuccessBanner"
@@ -113,7 +113,7 @@ export default {
     UserTools,
     PageSatisfaction,
     InformationBanner,
-    CampaignInformationBanner,
+    InformationCampaignBanner,
     ActionsBanner,
     SuccessBanner,
     CanteenCreationDialog,
