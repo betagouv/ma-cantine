@@ -6,6 +6,35 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.12.0](https://github.com/betagouv/ma-cantine/compare/v2025.11.10...v2025.12.0) (2025-04-07)
+
+
+### Nouveautés
+
+* **Dates de campaignes:** API: nouvel endpoint pour récupérer toutes les campagnes ([#5234](https://github.com/betagouv/ma-cantine/issues/5234)) ([b123a1e](https://github.com/betagouv/ma-cantine/commit/b123a1ed6d76286ebccd1d62bc9c9b821fe069ec))
+* **Foire aux questions:** mise à jour de la page et migration vers vue3 ([#5228](https://github.com/betagouv/ma-cantine/issues/5228)) ([68ff740](https://github.com/betagouv/ma-cantine/commit/68ff740a93611e8e32439a62337a2c68645f82f4))
+
+
+### Corrections (bugs, typos...)
+
+* **Dates de campagnes:** répare les quelques tests qui cassent suite à la fin de la campagne ([#5230](https://github.com/betagouv/ma-cantine/issues/5230)) ([6149e4f](https://github.com/betagouv/ma-cantine/commit/6149e4f441f81052dde0572d34717b6909b434fb))
+* **Foire aux questions:** corrige erreur lors du build dû à l'asset introuvable par vite ([#5232](https://github.com/betagouv/ma-cantine/issues/5232)) ([62b77b8](https://github.com/betagouv/ma-cantine/commit/62b77b8986b8bd6655a9948eea9db4ca104f8722))
+* **Teledeclaration:** Une somme de valeurs nulles est égale à null et non pas à 0 ([#5236](https://github.com/betagouv/ma-cantine/issues/5236)) ([d003d04](https://github.com/betagouv/ma-cantine/commit/d003d04484f3665b999d9f59b473875c4ebfa23a))
+* **Télédéclaration:** utilise la même fonction pour le calcul du badge "complété" des approvisionnements et le bouton "Télédéclarer" ([#5226](https://github.com/betagouv/ma-cantine/issues/5226)) ([f2944b7](https://github.com/betagouv/ma-cantine/commit/f2944b7ecac2620022627916fc12aa1588f337db))
+
+
+### Documentation
+
+* **Onboarding:** Ajout de NODE_OPTIONS pour lancer le front ([#5225](https://github.com/betagouv/ma-cantine/issues/5225)) ([4bc0422](https://github.com/betagouv/ma-cantine/commit/4bc042230f5d5232cd4f6d564e814e6cfd98098e))
+
+
+### Technique
+
+* **Dates de campagnes:** ajout des dates de correction pour la campagne de 2024 ([#5229](https://github.com/betagouv/ma-cantine/issues/5229)) ([0e16dd7](https://github.com/betagouv/ma-cantine/commit/0e16dd7a1c6dd37da3896cea142b4deed1d71cb6))
+* **Dates de campagnes:** basculer les end dates sur 23:59 du jour d'avant ([#5235](https://github.com/betagouv/ma-cantine/issues/5235)) ([db819a6](https://github.com/betagouv/ma-cantine/commit/db819a699b10749bbeb43d4ce7a6d351f1ab5f5f))
+* **Dates de campagnes:** enlève la variable d'env TELEDECLARATION_CORRECTION_CAMPAIGN (pas utilisée) ([#5233](https://github.com/betagouv/ma-cantine/issues/5233)) ([eab055b](https://github.com/betagouv/ma-cantine/commit/eab055bdd34676ae3a62af3ffe7406ee507f7499))
+* **Dates de campagnes:** nouvelles variables d'env pour permettre de les overrider ([#5231](https://github.com/betagouv/ma-cantine/issues/5231)) ([e226d65](https://github.com/betagouv/ma-cantine/commit/e226d6570da40a207197dc4504457f33bd7108f1))
+
 ## [2025.11.10](https://github.com/betagouv/ma-cantine/compare/v2025.11.9...v2025.11.10) (2025-04-03)
 
 
