@@ -936,3 +936,13 @@ class TestTeledeclarationApi(APITestCase):
             Teledeclaration.objects.bulk_create([teledeclaration_1, teledeclaration_2])
         except IntegrityError:
             self.fail("Should be able to have several submitted TDs for deleted canteens")
+
+
+class TestTeledeclarationCampaignDatesApi(APITestCase):
+    def test_campaign_dates_list(self):
+        response = self.client.get(reverse("teledeclaration_campaign_dates"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(len(body), 4)
+        self.assertEqual(body[-1]["year"], 2024)

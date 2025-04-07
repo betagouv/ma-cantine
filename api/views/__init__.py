@@ -64,6 +64,7 @@ from .sector import SectorListView  # noqa: F401
 from .statistics import CanteenStatisticsView  # noqa: F401
 from .subscription import SubscribeNewsletter  # noqa: F401
 from .teledeclaration import (  # noqa: F401
+    TeledeclarationCampaignDatesView,
     TeledeclarationCancelView,
     TeledeclarationCreateView,
     TeledeclarationPdfView,
