@@ -138,7 +138,7 @@ class TestCanteenStatsApi(APITestCase):
                 diag = DiagnosticFactory.create(canteen=canteen, **diagnostic_data)
                 Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
 
-        with patch("macantine.utils.CAMPAIGN_DATES", mocked_campaign_dates):
+        with patch("data.models.diagnostic.CAMPAIGN_DATES", mocked_campaign_dates):
             response = self.client.get(reverse("canteen_statistics"), {"region": "01", "year": year_data})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -159,7 +159,7 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(sector_categories[Sector.Categories.SOCIAL], 0)
 
         # can also call without location info
-        with patch("macantine.utils.CAMPAIGN_DATES", mocked_campaign_dates):
+        with patch("data.models.diagnostic.CAMPAIGN_DATES", mocked_campaign_dates):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -359,7 +359,7 @@ class TestCanteenStatsApi(APITestCase):
 
         self.assertEqual(appro_badge_qs.count(), 6)
 
-        with patch("macantine.utils.CAMPAIGN_DATES", mocked_campaign_dates):
+        with patch("data.models.diagnostic.CAMPAIGN_DATES", mocked_campaign_dates):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         body = response.json()
         # There are 3 canteens that do not meet criteria (including one for which the diag is not even created),
@@ -544,7 +544,7 @@ class TestCanteenStatsApi(APITestCase):
         )
         Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
 
-        with patch("macantine.utils.CAMPAIGN_DATES", mocked_campaign_dates):
+        with patch("data.models.diagnostic.CAMPAIGN_DATES", mocked_campaign_dates):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
