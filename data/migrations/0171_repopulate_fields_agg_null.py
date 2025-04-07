@@ -35,7 +35,7 @@ def sum_int_with_potential_null(values_to_sum):
 
 def populate_simplified_diagnostic_values(td, diag):
     td.value_bio_ht_agg = total_label_bio(diag)
-    td.value_sustainable_ht_agg = total_label_label_rouge(diag) + total_label_aocaop_igp_stg(diag)
+    td.value_sustainable_ht_agg = sum_int_with_potential_null([total_label_label_rouge(diag), total_label_aocaop_igp_stg(diag)])
     td.value_externality_performance_ht_agg = sum_int_with_potential_null([total_label_externalites(diag), total_label_performance(diag)])
     td.value_egalim_others_ht_agg = sum_int_with_potential_null(
         [
