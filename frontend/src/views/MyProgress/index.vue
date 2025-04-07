@@ -58,7 +58,7 @@
             target="_blank"
             class="mr-4"
           />
-          <p v-if="inTeledeclarationCampaign">
+          <p v-if="inTeledeclarationCampaign || inCorrectionCampaign">
             En cas d'erreur, vous pouvez modifier vos données
             <span v-if="campaignEndDate">
               jusqu’au
