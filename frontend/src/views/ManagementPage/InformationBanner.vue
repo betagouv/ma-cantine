@@ -1,27 +1,18 @@
 <template>
   <DsfrCallout noIcon class="mt-2">
-    <div v-if="inCorrection">
-      <h2 class="fr-text font-weight-bold mb-2 mt-2">
-        <span class="text-uppercase">Droit à l'erreur :</span>
-        du {{ correctionStartDate }} au {{ correctionEndDate }} {{ year + 1 }}
-      </h2>
-      <p class="mb-0">
-        Valable uniquement pour les établissements qui ont validé leur télé-déclaration. Depuis votre bilan, vous pouvez
-        corriger vos informations si besoin. Attention la télé-déclaration rectificative doit être déposée avant le
-        {{ correctionEndDate }}.
-      </p>
-    </div>
+    <h2 class="fr-text font-weight-bold mb-2 mt-2">
+      INFORMATION IMPORTANTE :
+    </h2>
+    <p class="mb-0">
+      La télédéclaration 2025 est exceptionnellement maintenue ouverte sur l'ensemble de la première semaine d'avril.
+      <br />
+      Les télédéclarations seront possibles jusqu’au dimanche 6 avril 2025 inclus.
+    </p>
     <v-row class="mt-4 mb-0 mx-0 align-center">
-      <v-btn v-if="inTeledeclaration" :to="{ name: 'PendingActions' }" color="primary" class="mb-5 mb-md-2 mr-4">
+      <v-btn :to="{ name: 'PendingActions' }" color="primary" class="mb-5 mb-md-2 mr-4">
         Télédéclarer mes cantines
       </v-btn>
-      <v-btn
-        v-if="inTeledeclaration"
-        :to="{ name: 'CommunityPage', hash: '#evenements' }"
-        color="primary"
-        outlined
-        class="mb-5 mb-md-2 mr-4"
-      >
+      <v-btn :to="{ name: 'CommunityPage', hash: '#evenements' }" color="primary" outlined class="mb-5 mb-md-2 mr-4">
         Inscrivez-vous à nos derniers webinaires
       </v-btn>
       <p class="fr-text-sm mb-5 mb-md-2 mr-4">
@@ -53,44 +44,11 @@
 
 <script>
 import DsfrCallout from "@/components/DsfrCallout"
-import { lastYear } from "@/utils"
 
 export default {
   name: "InformationBanner",
   components: {
     DsfrCallout,
-  },
-  data() {
-    return {
-      year: lastYear(),
-      correctionStartDate: null,
-      correctionEndDate: null,
-      inCorrection: false,
-      inTeledeclaration: false,
-    }
-  },
-  mounted() {
-    // TODO : change for api
-    this.updateBanner({
-      inCorrection: true,
-      inTeledeclaration: false,
-      correctionEndDate: "2025-04-30 00:00:00+01:00",
-      correctionStartDate: "2025-04-16 00:00:00+01:00",
-    })
-  },
-  methods: {
-    updateBanner(infos) {
-      this.inCorrection = infos.inCorrection
-      this.inTeledeclaration = infos.inTeledeclaration
-      this.correctionStartDate = this.prettifyDate(infos.correctionStartDate)
-      this.correctionEndDate = this.prettifyDate(infos.correctionEndDate)
-    },
-    prettifyDate(date) {
-      const dateObject = new Date(date)
-      const day = dateObject.getDate()
-      const monthName = dateObject.toLocaleString("default", { month: "long" })
-      return `${day} ${monthName}`
-    },
   },
 }
 </script>
