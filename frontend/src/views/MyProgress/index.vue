@@ -324,6 +324,9 @@ export default {
       showTeledeclarationPreview: false,
       approId: "qualite-des-produits",
       establishmentId,
+      inTeledeclarationCampaign: false,
+      inCorrectionCampaign: false,
+      campaignEndDate: null,
     }
   },
   computed: {
@@ -362,18 +365,6 @@ export default {
     },
     canteenPreviews() {
       return this.$store.state.userCanteenPreviews
-    },
-    inTeledeclarationCampaign() {
-      return window.ENABLE_TELEDECLARATION && +this.year === lastYear()
-    },
-    inCorrectionCampaign() {
-      // TODO remplir via api
-      return true
-    },
-    campaignEndDate() {
-      if (this.inTeledeclarationCampaign) return new Date(window.TELEDECLARATION_END_DATE)
-      else if (this.inCorrectionCampaign) return new Date("2025-12-31")
-      else return null
     },
     readyToTeledeclare() {
       return readyToTeledeclare(this.canteen, this.diagnostic, this.$store.state.sectors)
@@ -421,6 +412,16 @@ export default {
     },
   },
   methods: {
+    fetchCampaignDates() {
+      fetch(`/api/v1/campaignDates/${this.selectedYear}`)
+        .then((response) => response.json())
+        .then((response) => {
+          this.inTeledeclarationCampaign = response.inTeledeclaration
+          this.inCorrectionCampaign = response.inCorrection
+          if (response.inTeledeclaration) this.campaignEndDate = new Date(response.teledeclarationEndDate)
+          if (response.inCorrection) this.campaignEndDate = new Date(response.correctionEndDate)
+        })
+    },
     updateCanteen(newCanteen) {
       this.$set(this, "canteen", newCanteen)
       this.years = customDiagnosticYears(newCanteen.diagnostics)
@@ -597,10 +598,12 @@ export default {
     year() {
       this.fetchCanteenAction()
       this.assignDiagnostic()
+      this.fetchCampaignDates()
     },
     canteen() {
       this.fetchCanteenAction()
       this.assignDiagnostic()
+      this.fetchCampaignDates()
     },
     $route() {
       this.chooseTabToDisplay()
