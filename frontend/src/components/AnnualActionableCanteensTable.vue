@@ -117,6 +117,13 @@
           <template v-slot:[`item.action`]="{ item }">
             <v-fade-transition>
               <div :key="`${item.id}_${item.action}`">
+                <div v-if="getActionDisplay(item.action) === 'edit'" class="px-3">
+                  <v-icon small class="mr-2" color="primary">{{ getActionIcon(item.action) }}</v-icon>
+                  <span class="caption">
+                    {{ getActionText(item.action) }}
+                    <router-link :to="toTeledeclaration(item)">en cliquant ici</router-link>
+                  </span>
+                </div>
                 <div v-if="getActionDisplay(item.action) === 'text'" class="px-3">
                   <v-icon small class="mr-2" color="green">{{ getActionIcon(item.action) }}</v-icon>
                   <span class="caption">{{ getActionText(item.action) }}</span>
