@@ -187,24 +187,41 @@ export default {
         central: "Livreur des repas",
         central_serving: "Livreur, avec service sur place",
       },
-      actions: {
+      canteenForTD: null,
+      showTeledeclarationPreview: false,
+      showMultipleTeledeclarationPreview: false,
+      toDiagnose: [],
+      diagLoading: false,
+      diagSuccesses: [],
+      toTeledeclare: [],
+      tdIdx: 0,
+      toTeledeclareCount: null,
+      tdSuccesses: [],
+      tdFailures: [],
+      tdLoading: false,
+      canEditTeledeclaration: false,
+    }
+  },
+  computed: {
+    actions() {
+      return {
         "10_add_satellites": {
           text: "Ajouter des satellites",
           icon: "$community-fill",
           display: "button",
         },
         "18_prefill_diagnostic": {
-          text: "Créer le bilan " + year,
+          text: "Créer le bilan " + this.year,
           icon: "$add-circle-fill",
           display: "button",
         },
         "20_create_diagnostic": {
-          text: "Créer le bilan " + year,
+          text: "Créer le bilan " + this.year,
           icon: "$add-circle-fill",
           display: "button",
         },
         "30_fill_diagnostic": {
-          text: "Compléter le bilan " + year,
+          text: "Compléter le bilan " + this.year,
           icon: "$edit-box-fill",
           display: "button",
         },
@@ -228,24 +245,12 @@ export default {
           display: "empty",
         },
         "95_nothing": {
-          display: "empty",
+          icon: "$edit-fill",
+          text: "Vous pouvez modifier votre télédéclaration jusqu'à la fin de la campagne",
+          display: this.canEditTeledeclaration ? "edit" : "empty",
         },
-      },
-      canteenForTD: null,
-      showTeledeclarationPreview: false,
-      showMultipleTeledeclarationPreview: false,
-      toDiagnose: [],
-      diagLoading: false,
-      diagSuccesses: [],
-      toTeledeclare: [],
-      tdIdx: 0,
-      toTeledeclareCount: null,
-      tdSuccesses: [],
-      tdFailures: [],
-      tdLoading: false,
-    }
-  },
-  computed: {
+      }
+    },
     showPagination() {
       return this.canteenCount && this.canteenCount > this.limit
     },
