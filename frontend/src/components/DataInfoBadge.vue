@@ -34,7 +34,7 @@ const BADGE_LIST = [
   },
   {
     body: "Bilan non télédéclaré",
-    mode: "ERROR",
+    mode: "NEUTRAL",
     actions: ["45_did_not_teledeclare"],
   },
   {
