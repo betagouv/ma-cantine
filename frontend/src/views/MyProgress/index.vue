@@ -58,7 +58,7 @@
             target="_blank"
             class="mr-4"
           />
-          <p v-if="inTeledeclarationCampaign">
+          <p v-if="inTeledeclarationCampaign || inCorrectionCampaign">
             En cas d'erreur, vous pouvez modifier vos données
             <span v-if="campaignEndDate">
               jusqu’au
@@ -70,7 +70,7 @@
           </p>
           <TeledeclarationCancelDialog
             v-model="cancelDialog"
-            v-if="inTeledeclarationCampaign"
+            v-if="inTeledeclarationCampaign || inCorrectionCampaign"
             @cancel="cancelTeledeclaration"
             :diagnostic="diagnostic"
           >
@@ -321,10 +321,12 @@ export default {
       centralKitchenDiagnosticModes: Constants.CentralKitchenDiagnosticModes,
       centralKitchenDiagnosticMode: null,
       cancelDialog: false,
-      campaignEndDate: window.TELEDECLARATION_END_DATE ? new Date(window.TELEDECLARATION_END_DATE) : null,
       showTeledeclarationPreview: false,
       approId: "qualite-des-produits",
       establishmentId,
+      inTeledeclarationCampaign: false,
+      inCorrectionCampaign: false,
+      campaignEndDate: null,
     }
   },
   computed: {
@@ -363,9 +365,6 @@ export default {
     },
     canteenPreviews() {
       return this.$store.state.userCanteenPreviews
-    },
-    inTeledeclarationCampaign() {
-      return window.ENABLE_TELEDECLARATION && +this.year === lastYear()
     },
     readyToTeledeclare() {
       return readyToTeledeclare(this.canteen, this.diagnostic, this.$store.state.sectors)
@@ -413,6 +412,16 @@ export default {
     },
   },
   methods: {
+    fetchCampaignDates() {
+      fetch(`/api/v1/campaignDates/${this.selectedYear}`)
+        .then((response) => response.json())
+        .then((response) => {
+          this.inTeledeclarationCampaign = response.inTeledeclaration
+          this.inCorrectionCampaign = response.inCorrection
+          if (response.inTeledeclaration) this.campaignEndDate = new Date(response.teledeclarationEndDate)
+          if (response.inCorrection) this.campaignEndDate = new Date(response.correctionEndDate)
+        })
+    },
     updateCanteen(newCanteen) {
       this.$set(this, "canteen", newCanteen)
       this.years = customDiagnosticYears(newCanteen.diagnostics)
@@ -589,10 +598,12 @@ export default {
     year() {
       this.fetchCanteenAction()
       this.assignDiagnostic()
+      this.fetchCampaignDates()
     },
     canteen() {
       this.fetchCanteenAction()
       this.assignDiagnostic()
+      this.fetchCampaignDates()
     },
     $route() {
       this.chooseTabToDisplay()
