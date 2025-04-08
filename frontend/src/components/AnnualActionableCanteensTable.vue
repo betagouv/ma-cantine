@@ -111,6 +111,9 @@
           <template v-slot:[`item.productionType`]="{ item }">
             {{ typeDisplay[item.productionType] }}
           </template>
+          <template v-slot:[`item.badge`]="{ item }">
+            <DataInfoBadge :canteen-action="item.action" />
+          </template>
           <template v-slot:[`item.action`]="{ item }">
             <v-fade-transition>
               <div :key="`${item.id}_${item.action}`">
@@ -118,7 +121,14 @@
                   <v-icon small class="mr-2" color="green">{{ getActionIcon(item.action) }}</v-icon>
                   <span class="caption">{{ getActionText(item.action) }}</span>
                 </div>
-                <v-btn small outlined color="primary" :to="actionLink(item)" @click="action(item)" v-else>
+                <v-btn
+                  v-else-if="getActionDisplay(item.action) === 'button'"
+                  small
+                  outlined
+                  color="primary"
+                  :to="actionLink(item)"
+                  @click="action(item)"
+                >
                   <v-icon small class="mr-2" color="primary">
                     {{ getActionIcon(item.action) }}
                   </v-icon>
@@ -144,11 +154,12 @@
 
 <script>
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
+import DataInfoBadge from "@/components/DataInfoBadge"
 import { lastYear } from "@/utils"
 
 export default {
   name: "AnnualActionableCanteensTable",
-  components: { TeledeclarationPreview },
+  components: { TeledeclarationPreview, DataInfoBadge },
   data() {
     const year = lastYear()
     return {
@@ -167,6 +178,7 @@ export default {
         { text: "Nom", value: "name" },
         { text: "Siret ou Siren", value: "siret" },
         { text: "Type", value: "productionType" },
+        { text: "Statut", value: "badge" },
         { text: "Action", value: "action" },
       ],
       typeDisplay: {
@@ -207,24 +219,16 @@ export default {
           display: "button",
         },
         "45_did_not_teledeclare": {
-          text: "Rien à faire !",
-          icon: "$checkbox-circle-fill",
-          display: "text",
+          display: "empty",
         },
         "90_nothing_satellite": {
-          text: "En attente de la télédéclaration de votre livreur",
-          icon: "$information-fill",
-          display: "text",
+          display: "empty",
         },
         "91_nothing_satellite_teledeclared": {
-          text: "Rien à faire ! (télédéclaré par votre livreur)",
-          icon: "$checkbox-circle-fill",
-          display: "text",
+          display: "empty",
         },
         "95_nothing": {
-          text: "Rien à faire !",
-          icon: "$checkbox-circle-fill",
-          display: "text",
+          display: "empty",
         },
       },
       canteenForTD: null,
