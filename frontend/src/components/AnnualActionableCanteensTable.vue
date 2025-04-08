@@ -212,6 +212,7 @@ export default {
   computed: {
     actions() {
       const canEditTd = this.campaignDates.inCorrection || this.campaignDates.inTeledeclaration
+      const endEditDate = this.getEndEditDate()
       return {
         "10_add_satellites": {
           text: "Ajouter des satellites",
@@ -254,7 +255,7 @@ export default {
         },
         "95_nothing": {
           icon: "$edit-fill",
-          text: "Vous pouvez modifier votre télédéclaration jusqu'à la fin de la campagne",
+          text: `Vous pouvez modifier votre télédéclaration jusqu'au ${endEditDate} (heure de Paris)`,
           display: canEditTd ? "edit" : "empty",
         },
       }
@@ -355,6 +356,18 @@ export default {
     },
     getActionDisplay(action) {
       return this.actions[action] && this.actions[action].display
+    },
+    getEndEditDate() {
+      if (!this.campaignDates.inTeledeclaration || this.campaignDates.inCorrection) return null
+      const date = this.campaignDates.inTeledeclaration
+        ? this.campaignDates.teledeclarationEndDate
+        : this.campaignDates.correctionEndDate
+      const prettyDate = new Date(date).toLocaleDateString("fr-FR", {
+        month: "numeric",
+        year: "numeric",
+        day: "numeric",
+      })
+      return prettyDate
     },
     actionLink(canteen) {
       if (canteen.action === "10_add_satellites") {
