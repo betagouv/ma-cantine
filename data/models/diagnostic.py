@@ -13,6 +13,7 @@ from data.utils import (
     get_diagnostic_lower_limit_year,
     get_diagnostic_upper_limit_year,
     make_optional_positive_decimal_field,
+    sum_int_with_potential_null,
 )
 
 from .canteen import Canteen
@@ -24,6 +25,7 @@ def canteen_has_siret_or_siren_unite_legale_query():
         canteen__siren_unite_legale=""
     )
     return canteen_has_siret_query | canteen_has_siren_unite_legale_query
+
 
 class Diagnostic(models.Model):
     class Meta:
@@ -916,14 +918,21 @@ class Diagnostic(models.Model):
 
     def populate_simplified_diagnostic_values(self):
         self.value_bio_ht = self.total_label_bio
-        self.value_sustainable_ht = self.total_label_label_rouge + self.total_label_aocaop_igp_stg
-        self.value_externality_performance_ht = self.total_label_externalites + self.total_label_performance
-        self.value_egalim_others_ht = (
-            self.total_label_hve
-            + self.total_label_peche_durable
-            + self.total_label_rup
-            + self.total_label_commerce_equitable
-            + self.total_label_fermier
+
+        self.value_sustainable_ht = sum_int_with_potential_null(
+            [self.total_label_label_rouge, self.total_label_aocaop_igp_stg]
+        )
+        self.value_externality_performance_ht = sum_int_with_potential_null(
+            [self.total_label_externalites, self.total_label_performance]
+        )
+        self.value_egalim_others_ht = sum_int_with_potential_null(
+            [
+                self.total_label_hve,
+                self.total_label_peche_durable,
+                self.total_label_rup,
+                self.total_label_commerce_equitable,
+                self.total_label_fermier,
+            ]
         )
         total_meat_egalim = total_meat_france = total_fish_egalim = 0
         egalim_labels = [
@@ -1051,11 +1060,14 @@ class Diagnostic(models.Model):
             "autres",
         ]
         sum = 0
+        is_null = True
         for family in families:
             value = getattr(self, f"value_{family}_{label}")
-            if value:
+            if value is not None:
+                is_null = False
                 sum = sum + value
-        return sum
+        if not is_null:
+            return sum
 
     def family_sum(self, family):
         labels = [
