@@ -206,11 +206,12 @@ export default {
       tdSuccesses: [],
       tdFailures: [],
       tdLoading: false,
-      canEditTeledeclaration: false,
+      campaignDates: null,
     }
   },
   computed: {
     actions() {
+      const canEditTd = this.campaignDates.inCorrection || this.campaignDates.inTeledeclaration
       return {
         "10_add_satellites": {
           text: "Ajouter des satellites",
@@ -254,7 +255,7 @@ export default {
         "95_nothing": {
           icon: "$edit-fill",
           text: "Vous pouvez modifier votre télédéclaration jusqu'à la fin de la campagne",
-          display: this.canEditTeledeclaration ? "edit" : "empty",
+          display: canEditTd ? "edit" : "empty",
         },
       }
     },
@@ -296,9 +297,7 @@ export default {
     fetchCampaignDates() {
       fetch(`/api/v1/campaignDates/${this.year}`)
         .then((response) => response.json())
-        .then((response) => {
-          this.canEditTeledeclaration = response.inTeledeclaration || response.inCorrection
-        })
+        .then((response) => (this.campaignDates = response))
     },
     fetchCurrentPage() {
       let queryParam = `ordering=action&limit=${this.limit}&offset=${this.offset}`
