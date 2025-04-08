@@ -255,7 +255,7 @@ export default {
         },
         "95_nothing": {
           icon: "$edit-fill",
-          text: `Vous pouvez modifier votre télédéclaration jusqu'au ${endEditDate} (heure de Paris)`,
+          text: `En cas d'erreur, vous pouvez modifier vos données jusqu’au ${endEditDate} (heure de Paris)`,
           display: canEditTd ? "edit" : "empty",
         },
       }
@@ -363,8 +363,7 @@ export default {
         ? this.campaignDates.teledeclarationEndDate
         : this.campaignDates.correctionEndDate
       const prettyDate = new Date(date).toLocaleDateString("fr-FR", {
-        month: "numeric",
-        year: "numeric",
+        month: "long",
         day: "numeric",
       })
       return prettyDate
