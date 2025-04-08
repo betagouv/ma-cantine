@@ -754,9 +754,9 @@ class TestCanteenApi(APITestCase):
 
 
 class TestCanteenActionApi(APITestCase):
-    @override_settings(ENABLE_TELEDECLARATION=True)
     @override_settings(PUBLISH_BY_DEFAULT=False)
     @authenticate
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     def test_get_canteen_actions(self):
         """
         Check that this endpoint returns the user's canteens and the next action required
@@ -894,6 +894,7 @@ class TestCanteenActionApi(APITestCase):
 
     @override_settings(PUBLISH_BY_DEFAULT=True)
     @authenticate
+    @freeze_time("2024-02-01")  # during the 2023 campaign
     def test_no_canteens_to_publish(self):
         """
         When publish by default is set, don't send publication actions
@@ -921,7 +922,7 @@ class TestCanteenActionApi(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             line_ministry=Canteen.Ministries.ARMEE,
         )
-        diag_year = 2023
+        last_year = 2023
         for canteen in [
             previously_published,
             previously_draft,
@@ -930,10 +931,10 @@ class TestCanteenActionApi(APITestCase):
         ]:
             canteen.managers.add(authenticate.user)
             # give them all teledeclarations to skip to final action
-            td_diag = DiagnosticFactory.create(year=diag_year, canteen=canteen, value_total_ht=10)
+            td_diag = DiagnosticFactory.create(year=last_year, canteen=canteen, value_total_ht=10)
             Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
 
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": diag_year}) + "?ordering=name")
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}) + "?ordering=name")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
@@ -942,7 +943,6 @@ class TestCanteenActionApi(APITestCase):
         for canteen in returned_canteens:
             canteen["action"] = "95_nothing"
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_central_without_satellites_has_complete_satellites_action(self):
         """
@@ -960,8 +960,8 @@ class TestCanteenActionApi(APITestCase):
         body = response.json()
         self.assertEqual(body["results"][0]["action"], "10_add_satellites")
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     def test_get_actions_missing_data(self):
         """
         Even if the diagnostic is complete, the mandatory information on the canteen level should
@@ -978,9 +978,10 @@ class TestCanteenActionApi(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
         )
-        diagnostic = DiagnosticFactory.create(year=2021, canteen=canteen, value_total_ht=1000)
+        last_year = 2021
+        diagnostic = DiagnosticFactory.create(year=last_year, canteen=canteen, value_total_ht=1000)
         canteen.managers.add(authenticate.user)
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
 
@@ -988,7 +989,7 @@ class TestCanteenActionApi(APITestCase):
         canteen.yearly_meal_count = None
         canteen.save()
 
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
 
@@ -1000,7 +1001,7 @@ class TestCanteenActionApi(APITestCase):
         diagnostic.central_kitchen_diagnostic_mode = "APPRO"
         diagnostic.save()
 
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
 
@@ -1012,7 +1013,7 @@ class TestCanteenActionApi(APITestCase):
         canteen.satellite_canteens_count = 123
         canteen.save()
 
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "10_add_satellites")
 
@@ -1021,19 +1022,19 @@ class TestCanteenActionApi(APITestCase):
         canteen.central_producer_siret = None
         canteen.save()
 
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
 
         canteen.central_producer_siret = "75665621899905"
         canteen.save()
 
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     def test_get_actions_satellite(self):
         """
         If a satellite's CC has teledeclared there is no pending action for the satellite
@@ -1069,21 +1070,22 @@ class TestCanteenActionApi(APITestCase):
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
         )
 
+        last_year = 2021
         DiagnosticFactory.create(
-            year=2021,
+            year=last_year,
             canteen=satellite,
             value_total_ht=1200,
         )
 
         # cc diagnostic not teledeclared
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         satellite_action = next(x for x in returned_canteens if x["id"] == satellite.id)["action"]
         self.assertEqual(satellite_action, "90_nothing_satellite")
 
         # cc diagnostic teledeclared
         Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         satellite_action = next(x for x in returned_canteens if x["id"] == satellite.id)["action"]
         self.assertEqual(satellite_action, "91_nothing_satellite_teledeclared")
@@ -1114,7 +1116,6 @@ class TestCanteenActionApi(APITestCase):
         body = response.json()
         self.assertEqual(body["undiagnosedCanteensWithPurchases"], [canteen_without_diag.id])
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_filter_td_bad_sirets(self):
         """
@@ -1190,13 +1191,56 @@ class TestCanteenActionApi(APITestCase):
         self.assertEqual(body["id"], 3)
         self.assertEqual(body["action"], "20_create_diagnostic")
 
-    @override_settings(ENABLE_TELEDECLARATION=False)
     @authenticate
-    def test_omit_teledeclaraion_action(self):
+    @freeze_time("2022-01-01")  # before the 2021 campaign
+    def test_before_campaign_dates(self):
+        complete = CanteenFactory.create(
+            id=2,
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="75665621899905",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        last_year = 2021
+        complete.managers.add(authenticate.user)
+        DiagnosticFactory.create(canteen=complete, year=last_year, value_total_ht=10000)
+
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 2, "year": last_year}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], 2)
+        self.assertEqual(body["action"], "45_did_not_teledeclare")
+
+        # last_year -1
+        DiagnosticFactory.create(canteen=complete, year=last_year - 1, value_total_ht=10000)
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 2, "year": last_year - 1}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], 2)
+        self.assertEqual(body["action"], "45_did_not_teledeclare")
+
+    @authenticate
+    @freeze_time("2022-12-30")  # after the 2021 campaign
+    def test_after_campaign_dates(self):
         """
-        Check that when the ENABLE_TELEDECLARATION setting is False we don't return that type of action
+        Check that when we are after the campaign we don't return the teledeclaration action
         """
-        canteen = CanteenFactory.create(
+        canteen_td = CanteenFactory.create(
+            id=2,
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="75665621899905",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        canteen_did_not_td = CanteenFactory.create(
             id=3,
             production_type=Canteen.ProductionType.ON_SITE,
             publication_status=Canteen.PublicationStatus.PUBLISHED,
@@ -1207,14 +1251,35 @@ class TestCanteenActionApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             management_type=Canteen.ManagementType.DIRECT,
         )
-        canteen.managers.add(authenticate.user)
-        DiagnosticFactory.create(canteen=canteen, year=2021, value_total_ht=10000)
+        last_year = 2021
+        for canteen in [canteen_td, canteen_did_not_td]:
+            canteen.managers.add(authenticate.user)
+            DiagnosticFactory.create(canteen=canteen, year=last_year, value_total_ht=10000)
+        Teledeclaration.create_from_diagnostic(
+            Diagnostic.objects.get(canteen=canteen_td, year=last_year), authenticate.user
+        )
 
-        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
+        # canteen_td
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 2, "year": last_year}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], 2)
+        self.assertEqual(body["action"], "95_nothing")
+
+        # canteen_did_not_td (last_year)
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": last_year}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 3)
-        self.assertEqual(body["action"], "95_nothing")
+        self.assertEqual(body["action"], "45_did_not_teledeclare")
+
+        # canteen_did_not_td (last_year + 1)
+        DiagnosticFactory.create(canteen=canteen, year=last_year + 1, value_total_ht=10000)
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": last_year + 1}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], 3)
+        self.assertEqual(body["action"], "45_did_not_teledeclare")
 
     def test_get_retrieve_actionable_canteen_unauthenticated(self):
         """
@@ -1235,8 +1300,8 @@ class TestCanteenActionApi(APITestCase):
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     def test_get_actions_missing_line_ministry(self):
         """
         Even if the diagnostic is complete, the mandatory information on the canteen level should
@@ -1256,9 +1321,10 @@ class TestCanteenActionApi(APITestCase):
             sectors=[with_lm, without_lm],
             line_ministry=None,
         )
-        DiagnosticFactory.create(year=2021, canteen=canteen, value_total_ht=1000)
+        last_year = 2021
+        DiagnosticFactory.create(year=last_year, canteen=canteen, value_total_ht=1000)
         canteen.managers.add(authenticate.user)
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
 
@@ -1266,7 +1332,7 @@ class TestCanteenActionApi(APITestCase):
         canteen.line_ministry = Canteen.Ministries.AFFAIRES_ETRANGERES
         canteen.save()
 
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
 
@@ -1276,7 +1342,7 @@ class TestCanteenActionApi(APITestCase):
         canteen.sectors.set([without_lm])
         canteen.save()
 
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}))
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
 
