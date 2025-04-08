@@ -6,6 +6,21 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.13.0](https://github.com/betagouv/ma-cantine/compare/v2025.12.1...v2025.13.0) (2025-04-08)
+
+
+### Nouveautés
+
+* **Bandeau de communication:** mise à jour du texte pour informer sur la campagne de correction ([#5244](https://github.com/betagouv/ma-cantine/issues/5244)) ([a3d314c](https://github.com/betagouv/ma-cantine/commit/a3d314c3d1a17d3cd5d7fa52bbce4420d066db8c))
+* **Campagne de correction:** affiche le bouton de modification si la campagne de correction est ouverte ([#5243](https://github.com/betagouv/ma-cantine/issues/5243)) ([ff76a56](https://github.com/betagouv/ma-cantine/commit/ff76a56b91d9efa7052046a68f8da696374f0366))
+* **Campagne de correction:** création d'un bandeau dédié pour les campagnes de télédéclaration et de correction ([#5237](https://github.com/betagouv/ma-cantine/issues/5237)) ([0d684c0](https://github.com/betagouv/ma-cantine/commit/0d684c0bd3cd7fe969c17979bff3cbc2490b3164))
+* **Dates de campagnes:** API: nouvel endpoint pour récupérer les dates d'une campagne par son année ([#5238](https://github.com/betagouv/ma-cantine/issues/5238)) ([5c48e73](https://github.com/betagouv/ma-cantine/commit/5c48e73adb328c327f519da350d11d63dd43db05))
+
+
+### Améliorations
+
+* **Cantines:** nouveau badge 'Bilan non télédéclaré' pour indiquer que la cantine n'a pas TD (si en dehors des dates de campagne) ([#5242](https://github.com/betagouv/ma-cantine/issues/5242)) ([3dc356b](https://github.com/betagouv/ma-cantine/commit/3dc356b9cca8f50dffc47a858af072cb5d2bf426))
+
 ## [2025.12.1](https://github.com/betagouv/ma-cantine/compare/v2025.12.0...v2025.12.1) (2025-04-07)
 
 
