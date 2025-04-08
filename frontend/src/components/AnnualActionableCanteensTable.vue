@@ -125,7 +125,9 @@
                   </span>
                 </div>
                 <div v-if="getActionDisplay(item.action) === 'text'" class="px-3">
-                  <v-icon small class="mr-2" color="green">{{ getActionIcon(item.action) }}</v-icon>
+                  <v-icon v-if="getActionIcon(item.action)" small class="mr-2" color="green">
+                    {{ getActionIcon(item.action) }}
+                  </v-icon>
                   <span class="caption">{{ getActionText(item.action) }}</span>
                 </div>
                 <v-btn
@@ -251,7 +253,8 @@ export default {
           display: "empty",
         },
         "91_nothing_satellite_teledeclared": {
-          display: "empty",
+          text: "Votre livreur des repas a déclaré le bilan pour votre établissement",
+          display: "text",
         },
         "95_nothing": {
           icon: "$edit-fill",
