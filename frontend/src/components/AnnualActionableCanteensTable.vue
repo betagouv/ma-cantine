@@ -112,7 +112,7 @@
             {{ typeDisplay[item.productionType] }}
           </template>
           <template v-slot:[`item.badge`]="{ item }">
-            <p>{{ item.action }}</p>
+            <DataInfoBadge :canteen-action="item.action" />
           </template>
           <template v-slot:[`item.action`]="{ item }">
             <v-fade-transition>
@@ -147,11 +147,12 @@
 
 <script>
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
+import DataInfoBadge from "@/components/DataInfoBadge"
 import { lastYear } from "@/utils"
 
 export default {
   name: "AnnualActionableCanteensTable",
-  components: { TeledeclarationPreview },
+  components: { TeledeclarationPreview, DataInfoBadge },
   data() {
     const year = lastYear()
     return {
