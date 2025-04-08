@@ -490,6 +490,7 @@ export default {
   },
   mounted() {
     this.populateInitialParameters()
+    this.fetchCampaignDates()
     return this.fetchDiagnosticsToTeledeclare()
       .then(this.fetchCurrentPage)
       .then(this.addWatchers)
