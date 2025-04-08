@@ -20,6 +20,7 @@ from data.utils import (
     get_region,
     optimize_image,
 )
+from macantine.utils import is_in_teledeclaration
 
 from .softdeletionmodel import (
     SoftDeletionManager,
@@ -188,7 +189,6 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         # prep TD action
         self = self.annotate_with_td_for_year(year)
         # annotate with action
-        should_teledeclare = settings.ENABLE_TELEDECLARATION
         conditions = [
             When(
                 (is_central_cuisine_query() & Q(satellite_canteens_count__gt=0) & Q(satellites_in_db_count=None)),
@@ -224,8 +224,10 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             ),
             When(has_missing_data_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
-        if should_teledeclare:
+        if is_in_teledeclaration(year):
             conditions.append(When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)))
+        else:
+            conditions.append(When(has_td=False, then=Value(Canteen.Actions.DID_NOT_TELEDECLARE)))
         if not settings.PUBLISH_BY_DEFAULT:
             conditions.append(
                 When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH))
@@ -311,6 +313,7 @@ class Canteen(SoftDeletionModel):
         FILL_DIAGNOSTIC = "30_fill_diagnostic", "Compléter le diagnostic"
         FILL_CANTEEN_DATA = "35_fill_canteen_data", "Compléter les infos de la cantine"
         TELEDECLARE = "40_teledeclare", "Télédéclarer"
+        DID_NOT_TELEDECLARE = "45_did_not_teledeclare", "Non télédéclaré"
         PUBLISH = "50_publish", "Publier"
         NOTHING_SATELLITE = "90_nothing_satellite", "En attente de la télédéclaration de votre livreur"
         NOTHING_SATELLITE_TELEDECLARED = (

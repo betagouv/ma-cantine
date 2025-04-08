@@ -33,6 +33,11 @@ const BADGE_LIST = [
     actions: ["90_nothing_satellite"],
   },
   {
+    body: "Bilan non télédéclaré",
+    mode: "ERROR",
+    actions: ["45_did_not_teledeclare"],
+  },
+  {
     // readyToTeledeclare
     body: "Bilan à télédéclarer",
     mode: "ERROR",
