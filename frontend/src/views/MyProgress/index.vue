@@ -62,7 +62,8 @@
             En cas d'erreur, vous pouvez modifier vos données
             <span v-if="campaignEndDate">
               jusqu’au
-              {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }}.
+              {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }} (heure
+              de Paris).
             </span>
             <span v-else>
               jusqu’à la fin de la campagne.

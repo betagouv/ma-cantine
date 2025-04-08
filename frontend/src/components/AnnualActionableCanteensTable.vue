@@ -365,6 +365,7 @@ export default {
       const prettyDate = new Date(date).toLocaleDateString("fr-FR", {
         month: "long",
         day: "numeric",
+        year: "numeric",
       })
       return prettyDate
     },
