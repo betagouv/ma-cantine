@@ -339,6 +339,15 @@ export default {
         params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
       }
     },
+    toTeledeclaration(canteen) {
+      return {
+        name: "MyProgress",
+        params: {
+          canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen),
+          year: this.year,
+        },
+      }
+    },
     getActionText(action) {
       return this.actions[action] && this.actions[action].text
     },
