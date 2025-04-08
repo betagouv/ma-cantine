@@ -77,6 +77,7 @@ import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrNativeSelect from "@/components/DsfrNativeSelect"
 import Constants from "@/constants"
+import { lastYear } from "@/utils"
 
 export default {
   name: "CanteensPagination",
@@ -129,12 +130,12 @@ export default {
       this.searchTerm = this.$route.query.recherche || null
     },
     fetchCurrentPage() {
-      let queryParam = `limit=${this.limit}&offset=${this.offset}`
+      let queryParam = `ordering=action&limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
       if (this.filterProductionType !== "all") queryParam += `&production_type=${this.filterProductionType}`
       this.inProgress = true
 
-      return fetch(`/api/v1/canteenSummaries/?${queryParam}`)
+      return fetch(`/api/v1/actionableCanteens/${lastYear()}?${queryParam}`)
         .then((response) => {
           if (response.status < 200 || response.status >= 400) throw new Error(`Error encountered : ${response}`)
           return response.json()

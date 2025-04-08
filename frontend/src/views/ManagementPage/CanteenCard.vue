@@ -7,12 +7,7 @@
     <v-card-subtitle class="pb-0 mx-n1">
       <p class="pl-1 mb-2">SIRET : {{ canteen.siret || "inconnu" }}</p>
       <p v-if="canteen.sirenUniteLegale" class="pl-1 mb-2">SIREN de l'unité légale : {{ canteen.sirenUniteLegale }}</p>
-      <DsfrTag
-        v-if="teledeclarationIsActive && !usesCentralKitchenDiagnostics"
-        :text="teledeclarationStatus.text"
-        :color="teledeclarationStatus.color"
-        :small="true"
-      />
+      <DataInfoBadge :canteen-action="canteen.action" />
       <DsfrTag
         v-if="publicationStatusIsNotPublished"
         :text="publicationStatus.text"
@@ -36,6 +31,7 @@
 import CanteenIndicators from "@/components/CanteenIndicators"
 import ProductionTypeTag from "@/components/ProductionTypeTag"
 import DsfrTag from "@/components/DsfrTag"
+import DataInfoBadge from "@/components/DataInfoBadge"
 import { lastYear } from "@/utils"
 
 export default {
@@ -50,6 +46,7 @@ export default {
     CanteenIndicators,
     ProductionTypeTag,
     DsfrTag,
+    DataInfoBadge,
   },
   data() {
     return {
