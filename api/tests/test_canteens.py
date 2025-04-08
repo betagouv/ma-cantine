@@ -654,6 +654,86 @@ class TestCanteenApi(APITestCase):
         self.assertNotIn("mtm_medium_value", body)
 
     @authenticate
+    def test_get_central_kitchen(self):
+        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="96953195898254")
+        satellite = CanteenFactory.create(
+            central_producer_siret=central_kitchen.siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+        )
+        satellite.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": satellite.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(body["centralKitchen"]["name"], central_kitchen.name)
+        self.assertEqual(body["centralKitchen"]["id"], central_kitchen.id)
+
+    @authenticate
+    @freeze_time("2024-01-20")
+    def test_canteen_badges(self):
+        """
+        The full representation of a canteen contains the badges earned for last year
+        A badge can be True, False, or None. None = !True and the tunnel wasn't started,
+        False = !True and the tunnel was started.
+        """
+        user_canteen = CanteenFactory.create()
+        user_canteen.managers.add(authenticate.user)
+
+        DiagnosticFactory.create(
+            canteen=user_canteen,
+            year=2023,
+            # test appro badge as true
+            value_total_ht=100,
+            value_bio_ht=20,
+            value_sustainable_ht=30,
+            # test plastic badge as false
+            tunnel_plastic="something",
+            cooking_plastic_substituted=False,
+            # test vege badge as null
+            tunnel_diversification=None,
+            vegetarian_weekly_recurrence=None,
+        )
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        badges = body["badges"]
+        self.assertTrue(badges["appro"])
+        self.assertIs(badges["plastic"], False)
+        self.assertIsNone(badges["diversification"])
+
+    @authenticate
+    def test_canteen_returns_latest_diagnostic_year(self):
+        """
+        Test whether the canteen returns the latest year it has data for
+        """
+        central = CanteenFactory.create(siret="21340172201787", production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory.create(
+            central_producer_siret="21340172201787", production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+        )
+        satellite.managers.add(authenticate.user)
+
+        DiagnosticFactory.create(
+            canteen=satellite,
+            year=2021,
+            value_total_ht=100,
+            value_bio_ht=0,
+            value_sustainable_ht=30,
+        )
+        DiagnosticFactory.create(
+            canteen=central,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            year=2022,
+        )
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": satellite.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        self.assertEqual(body["badges"]["year"], 2022)
+
+    @authenticate
     def test_get_canteens_filter_production_type(self):
         user_satellite_canteen = CanteenFactory.create(production_type="site")
         user_satellite_canteen.managers.add(authenticate.user)
@@ -672,6 +752,8 @@ class TestCanteenApi(APITestCase):
         self.assertIn(user_central_cuisine.id, ids)
         self.assertIn(user_central_serving_cuisine.id, ids)
 
+
+class TestCanteenActionApi(APITestCase):
     @override_settings(ENABLE_TELEDECLARATION=True)
     @override_settings(PUBLISH_BY_DEFAULT=False)
     @authenticate
@@ -1153,21 +1235,6 @@ class TestCanteenApi(APITestCase):
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @authenticate
-    def test_get_central_kitchen(self):
-        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="96953195898254")
-        satellite = CanteenFactory.create(
-            central_producer_siret=central_kitchen.siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
-        )
-        satellite.managers.add(authenticate.user)
-
-        response = self.client.get(reverse("single_canteen", kwargs={"pk": satellite.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-
-        self.assertEqual(body["centralKitchen"]["name"], central_kitchen.name)
-        self.assertEqual(body["centralKitchen"]["id"], central_kitchen.id)
-
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_get_actions_missing_line_ministry(self):
@@ -1213,6 +1280,8 @@ class TestCanteenApi(APITestCase):
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
 
+
+class TestCanteenTerritoryApi(APITestCase):
     @authenticate
     def test_territory_canteens_list(self):
         """
@@ -1270,71 +1339,6 @@ class TestCanteenApi(APITestCase):
         """
         response = self.client.get(reverse("territory_canteens"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @authenticate
-    @freeze_time("2024-01-20")
-    def test_canteen_badges(self):
-        """
-        The full representation of a canteen contains the badges earned for last year
-        A badge can be True, False, or None. None = !True and the tunnel wasn't started,
-        False = !True and the tunnel was started.
-        """
-        user_canteen = CanteenFactory.create()
-        user_canteen.managers.add(authenticate.user)
-
-        DiagnosticFactory.create(
-            canteen=user_canteen,
-            year=2023,
-            # test appro badge as true
-            value_total_ht=100,
-            value_bio_ht=20,
-            value_sustainable_ht=30,
-            # test plastic badge as false
-            tunnel_plastic="something",
-            cooking_plastic_substituted=False,
-            # test vege badge as null
-            tunnel_diversification=None,
-            vegetarian_weekly_recurrence=None,
-        )
-
-        response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-
-        badges = body["badges"]
-        self.assertTrue(badges["appro"])
-        self.assertIs(badges["plastic"], False)
-        self.assertIsNone(badges["diversification"])
-
-    @authenticate
-    def test_canteen_returns_latest_diagnostic_year(self):
-        """
-        Test whether the canteen returns the latest year it has data for
-        """
-        central = CanteenFactory.create(siret="21340172201787", production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory.create(
-            central_producer_siret="21340172201787", production_type=Canteen.ProductionType.ON_SITE_CENTRAL
-        )
-        satellite.managers.add(authenticate.user)
-
-        DiagnosticFactory.create(
-            canteen=satellite,
-            year=2021,
-            value_total_ht=100,
-            value_bio_ht=0,
-            value_sustainable_ht=30,
-        )
-        DiagnosticFactory.create(
-            canteen=central,
-            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-            year=2022,
-        )
-
-        response = self.client.get(reverse("single_canteen", kwargs={"pk": satellite.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-
-        self.assertEqual(body["badges"]["year"], 2022)
 
 
 class TestCanteenStatusApi(APITestCase):
