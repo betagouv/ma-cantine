@@ -1,5 +1,5 @@
 <template>
-  <DsfrBadge v-if="badge" :mode="badge.mode">
+  <DsfrBadge v-if="badge" :mode="badge.mode" :show-icon="badge.mode !== 'NEUTRAL'">
     <p class="ma-0 pa-0 text-uppercase">{{ badge.body }}</p>
   </DsfrBadge>
   <span v-else></span>
