@@ -131,7 +131,7 @@
                   <span class="caption">{{ getActionText(item.action) }}</span>
                 </div>
                 <v-btn
-                  v-else-if="getActionDisplay(item.action) === 'button'"
+                  v-if="getActionDisplay(item.action) === 'button'"
                   small
                   outlined
                   color="primary"
