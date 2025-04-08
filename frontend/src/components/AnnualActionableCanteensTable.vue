@@ -213,8 +213,6 @@ export default {
   },
   computed: {
     actions() {
-      const canEditTd = this.campaignDates.inCorrection || this.campaignDates.inTeledeclaration
-      const endEditDate = this.getEndEditDate()
       return {
         "10_add_satellites": {
           text: "Ajouter des satellites",
@@ -258,10 +256,22 @@ export default {
         },
         "95_nothing": {
           icon: "$edit-fill",
-          text: `En cas d'erreur, vous pouvez modifier vos données jusqu’au ${endEditDate} (heure de Paris)`,
-          display: canEditTd ? "edit" : "empty",
+          text: `En cas d'erreur, vous pouvez modifier vos données jusqu’au ${this.lastDayToEdit} (heure de Paris)`,
+          display: this.canEditTd ? "edit" : "empty",
         },
       }
+    },
+    lastDayToEdit() {
+      if (!this.canEditTd) return null
+      const date = this.campaignDates.inTeledeclaration
+        ? this.campaignDates.teledeclarationEndDate
+        : this.campaignDates.correctionEndDate
+      const prettyDate = new Date(date).toLocaleDateString("fr-FR", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+      return prettyDate
     },
     showPagination() {
       return this.canteenCount && this.canteenCount > this.limit
@@ -301,7 +311,10 @@ export default {
     fetchCampaignDates() {
       fetch(`/api/v1/campaignDates/${this.year}`)
         .then((response) => response.json())
-        .then((response) => (this.campaignDates = response))
+        .then((response) => {
+          this.campaignDates = response
+          this.canEditTd = this.campaignDates.inCorrection || this.campaignDates.inTeledeclaration
+        })
     },
     fetchCurrentPage() {
       let queryParam = `ordering=action&limit=${this.limit}&offset=${this.offset}`
@@ -359,18 +372,6 @@ export default {
     },
     getActionDisplay(action) {
       return this.actions[action] && this.actions[action].display
-    },
-    getEndEditDate() {
-      if (!this.campaignDates.inTeledeclaration || this.campaignDates.inCorrection) return null
-      const date = this.campaignDates.inTeledeclaration
-        ? this.campaignDates.teledeclarationEndDate
-        : this.campaignDates.correctionEndDate
-      const prettyDate = new Date(date).toLocaleDateString("fr-FR", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
-      return prettyDate
     },
     actionLink(canteen) {
       if (canteen.action === "10_add_satellites") {
