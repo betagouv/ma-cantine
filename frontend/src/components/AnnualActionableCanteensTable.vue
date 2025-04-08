@@ -286,6 +286,13 @@ export default {
     populateInitialParameters() {
       this.page = this.$route.query.cantinePage ? parseInt(this.$route.query.cantinePage) : 1
     },
+    fetchCampaignDates() {
+      fetch(`/api/v1/campaignDates/${this.year}`)
+        .then((response) => response.json())
+        .then((response) => {
+          this.canEditTeledeclaration = response.inTeledeclaration || response.inCorrection
+        })
+    },
     fetchCurrentPage() {
       let queryParam = `ordering=action&limit=${this.limit}&offset=${this.offset}`
       if (this.searchTerm) queryParam += `&search=${this.searchTerm}`
