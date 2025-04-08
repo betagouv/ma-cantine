@@ -111,6 +111,9 @@
           <template v-slot:[`item.productionType`]="{ item }">
             {{ typeDisplay[item.productionType] }}
           </template>
+          <template v-slot:[`item.badge`]="{ item }">
+            <p>{{ item.action }}</p>
+          </template>
           <template v-slot:[`item.action`]="{ item }">
             <v-fade-transition>
               <div :key="`${item.id}_${item.action}`">
@@ -167,6 +170,7 @@ export default {
         { text: "Nom", value: "name" },
         { text: "Siret ou Siren", value: "siret" },
         { text: "Type", value: "productionType" },
+        { text: "Statut", value: "badge" },
         { text: "Action", value: "action" },
       ],
       typeDisplay: {
