@@ -206,6 +206,11 @@ export default {
           icon: "$send-plane-fill",
           display: "button",
         },
+        "45_did_not_teledeclare": {
+          text: "Rien à faire !",
+          icon: "$checkbox-circle-fill",
+          display: "text",
+        },
         "90_nothing_satellite": {
           text: "En attente de la télédéclaration de votre livreur",
           icon: "$information-fill",
