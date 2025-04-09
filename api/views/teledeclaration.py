@@ -18,7 +18,12 @@ from xhtml2pdf import pisa
 from api.permissions import IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
 from api.serializers import FullDiagnosticSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
-from macantine.utils import CAMPAIGN_DATES, is_in_correction, is_in_teledeclaration
+from macantine.utils import (
+    CAMPAIGN_DATES,
+    is_in_correction,
+    is_in_teledeclaration,
+    is_in_teledeclaration_or_correction,
+)
 
 from .utils import camelize
 
@@ -109,18 +114,17 @@ class TeledeclarationCancelView(APIView):
     required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
-        try:
-            if not settings.ENABLE_TELEDECLARATION:
-                raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
+        last_year = datetime.now().year - 1
 
+        try:
             teledeclaration_id = kwargs.get("pk")
             teledeclaration = Teledeclaration.objects.get(pk=teledeclaration_id)
 
-            acceptedYear = datetime.now().year - 1
-            if teledeclaration.year != acceptedYear:
-                raise PermissionDenied(
-                    f"Seules les télédéclarations pour l'année {acceptedYear} peuvent être annulées"
-                )
+            if not is_in_teledeclaration_or_correction(teledeclaration.year):
+                raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
+
+            if teledeclaration.year != last_year:
+                raise PermissionDenied(f"Seules les télédéclarations pour l'année {last_year} peuvent être annulées")
 
             if request.user not in teledeclaration.canteen.managers.all():
                 raise PermissionDenied()
