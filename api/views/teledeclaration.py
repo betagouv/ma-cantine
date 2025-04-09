@@ -63,12 +63,17 @@ class TeledeclarationCreateView(APIView):
         data = FullDiagnosticSerializer(td.diagnostic).data
         return JsonResponse(camelize(data), status=status.HTTP_201_CREATED)
 
-    def _teledeclare_diagnostic(diagnostic_id, user):
+    def _teledeclare_diagnostic(diagnostic_id, user):  # noqa: C901
+        last_year = datetime.now().year - 1
+
         try:
             diagnostic = Diagnostic.objects.get(pk=diagnostic_id)
 
-            if not is_in_teledeclaration_or_correction(diagnostic.year):
+            if not is_in_teledeclaration_or_correction():
                 raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
+
+            if diagnostic.year != last_year:
+                raise PermissionDenied(f"Seuls les diagnostics pour l'année {last_year} peuvent être créés")
 
             if user not in diagnostic.canteen.managers.all():
                 raise PermissionDenied()
@@ -122,7 +127,7 @@ class TeledeclarationCancelView(APIView):
             teledeclaration_id = kwargs.get("pk")
             teledeclaration = Teledeclaration.objects.get(pk=teledeclaration_id)
 
-            if not is_in_teledeclaration_or_correction(teledeclaration.year):
+            if not is_in_teledeclaration_or_correction():
                 raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
 
             if teledeclaration.year != last_year:
