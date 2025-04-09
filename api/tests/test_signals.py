@@ -1,4 +1,3 @@
-from django.test.utils import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework.test import APITestCase
@@ -10,14 +9,13 @@ from .utils import authenticate, get_oauth2_token
 
 
 class TestSignals(APITestCase):
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @freeze_time("2021-01-20")
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_authentication_method_created_with_website(self):
         """
         Teledeclarations created via the website should save the corresponding authentication method
         """
-        diagnostic = DiagnosticFactory.create(year=2020)
+        diagnostic = DiagnosticFactory.create(year=2021)
         diagnostic.canteen.managers.add(authenticate.user)
         payload = {"diagnosticId": diagnostic.id}
 
@@ -29,14 +27,13 @@ class TestSignals(APITestCase):
             td.history.first().authentication_method, AuthenticationMethodHistoricalRecords.AuthMethodChoices.WEBSITE
         )
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @freeze_time("2021-01-20")
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     def test_td_creation_api_blocked_for_third_party(self):
         """
-        Teledeclarations cannot be created  via a third party API
+        Teledeclarations cannot be created via a third party API
         """
         user, token = get_oauth2_token("canteen:write")
-        diagnostic = DiagnosticFactory.create(year=2020)
+        diagnostic = DiagnosticFactory.create(year=2021)
         diagnostic.canteen.managers.add(user)
         payload = {"diagnosticId": diagnostic.id}
 
