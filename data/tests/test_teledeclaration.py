@@ -1,8 +1,11 @@
 from unittest.mock import patch
 
+from django.db.utils import IntegrityError
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.utils.timezone import now
 
+from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Teledeclaration
 
@@ -92,3 +95,112 @@ class TeledeclarationQuerySetTest(TestCase):
         self.assertIn(self.valid_canteen_td_1, teledeclarations)
         self.assertNotIn(self.invalid_canteen_td, teledeclarations)  # canteen without siret
         self.assertNotIn(self.deleted_canteen_td, teledeclarations)  # canteen deleted
+
+
+class TestTeledeclarationModelConstraintsTest(TestCase):
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_diagnostic_deletion(self):
+        """
+        If the diagnostic used for the teledeclaration is deleted, the teledeclaration
+        should be cancelled
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
+
+        diagnostic.delete()
+        teledeclaration.refresh_from_db()
+        self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.CANCELLED)
+        self.assertIsNone(teledeclaration.diagnostic)
+
+    def test_one_submitted_td_constraint(self):
+        """
+        Only one TD per canteen and per year can be submitted
+        """
+        # Doesn't use the TeledeclarationFactory to escape the `clean` function validation
+        # bulk_create does not pass through the `save` method, so it allows us to test the
+        # actual constraint.
+        canteen = CanteenFactory.create()
+        diagnostic = DiagnosticFactory.create(canteen=canteen)
+        applicant = UserFactory.create()
+        teledeclaration_1 = Teledeclaration(
+            canteen=canteen,
+            year=year_data,
+            diagnostic=diagnostic,
+            applicant=applicant,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            declared_data={"foo": 1},
+        )
+        teledeclaration_2 = Teledeclaration(
+            canteen=canteen,
+            year=year_data,
+            diagnostic=diagnostic,
+            applicant=applicant,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            declared_data={"foo": 1},
+        )
+        with self.assertRaises(IntegrityError):
+            Teledeclaration.objects.bulk_create([teledeclaration_1, teledeclaration_2])
+
+    def test_several_cancelled_td_constraint(self):
+        """
+        Cancelled TDs should not influence the constraint
+        """
+        # Doesn't use the TeledeclarationFactory to escape the `clean` function validation
+        # bulk_create does not pass through the `save` method, so it allows us to test the
+        # actual constraint.
+        canteen = CanteenFactory.create()
+        diagnostic = DiagnosticFactory.create(canteen=canteen)
+        applicant = UserFactory.create()
+        teledeclaration_1 = Teledeclaration(
+            canteen=canteen,
+            year=year_data,
+            diagnostic=diagnostic,
+            applicant=applicant,
+            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
+            declared_data={"foo": 1},
+        )
+        teledeclaration_2 = Teledeclaration(
+            canteen=canteen,
+            year=year_data,
+            diagnostic=diagnostic,
+            applicant=applicant,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            declared_data={"foo": 1},
+        )
+        try:
+            Teledeclaration.objects.bulk_create([teledeclaration_1, teledeclaration_2])
+        except IntegrityError:
+            self.fail("Should be able to create a submitted TD if a cancelled one exists already")
+
+    def test_bypass_constraint_if_no_canteen(self):
+        """
+        A TD that does not have a canteen attached to it (e.g., for deleted canteens) should not be
+        considered in the constraint.
+        """
+        # Doesn't use the TeledeclarationFactory to escape the `clean` function validation
+        # bulk_create does not pass through the `save` method, so it allows us to test the
+        # actual constraint.
+        applicant = UserFactory.create()
+        teledeclaration_1 = Teledeclaration(
+            canteen=None,
+            year=year_data,
+            diagnostic=None,
+            applicant=applicant,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            declared_data={"foo": 1},
+        )
+        teledeclaration_2 = Teledeclaration(
+            canteen=None,
+            year=year_data,
+            diagnostic=None,
+            applicant=applicant,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            declared_data={"foo": 1},
+        )
+        try:
+            Teledeclaration.objects.bulk_create([teledeclaration_1, teledeclaration_2])
+        except IntegrityError:
+            self.fail("Should be able to have several submitted TDs for deleted canteens")
