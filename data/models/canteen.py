@@ -224,7 +224,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             ),
             When(has_missing_data_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
-        if is_in_teledeclaration(year):
+        if is_in_teledeclaration():
             conditions.append(When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)))
         else:
             conditions.append(When(has_td=False, then=Value(Canteen.Actions.DID_NOT_TELEDECLARE)))

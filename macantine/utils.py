@@ -73,26 +73,35 @@ CAMPAIGN_DATES = {
 }
 
 
-def is_in_teledeclaration(year):
+def is_in_teledeclaration():
     """
     Check if the current date is within the teledeclaration period for the given year.
     """
     now = timezone.now()
-    if year in CAMPAIGN_DATES:
-        start_date = CAMPAIGN_DATES[year]["teledeclaration_start_date"]
-        end_date = CAMPAIGN_DATES[year]["teledeclaration_end_date"]
+    now_campaign_year = now.year - 1
+    if now_campaign_year in CAMPAIGN_DATES:
+        start_date = CAMPAIGN_DATES[now_campaign_year]["teledeclaration_start_date"]
+        end_date = CAMPAIGN_DATES[now_campaign_year]["teledeclaration_end_date"]
         return start_date <= now <= end_date
     return False
 
 
-def is_in_correction(year):
+def is_in_correction():
     """
     Check if the current date is within the correction period for the given year.
     """
     now = timezone.now()
-    if year in CAMPAIGN_DATES:
-        if "correction_start_date" in CAMPAIGN_DATES[year]:
-            start_date = CAMPAIGN_DATES[year]["correction_start_date"]
-            end_date = CAMPAIGN_DATES[year]["correction_end_date"]
+    now_campaign_year = now.year - 1
+    if now_campaign_year in CAMPAIGN_DATES:
+        if "correction_start_date" in CAMPAIGN_DATES[now_campaign_year]:
+            start_date = CAMPAIGN_DATES[now_campaign_year]["correction_start_date"]
+            end_date = CAMPAIGN_DATES[now_campaign_year]["correction_end_date"]
             return start_date <= now <= end_date
     return False
+
+
+def is_in_teledeclaration_or_correction():
+    """
+    Check if the current date is within the teledeclaration or correction period for the given year.
+    """
+    return is_in_teledeclaration() or is_in_correction()

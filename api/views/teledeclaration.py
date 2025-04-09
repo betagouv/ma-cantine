@@ -418,7 +418,7 @@ class TeledeclarationCampaignDatesRetrieveView(APIView):
         campaign_dates_for_year = {
             "year": year,
             **CAMPAIGN_DATES[year],
-            "in_teledeclaration": is_in_teledeclaration(year),
-            "in_correction": is_in_correction(year),
+            "in_teledeclaration": is_in_teledeclaration(),
+            "in_correction": is_in_correction(),
         }
         return Response(campaign_dates_for_year)
