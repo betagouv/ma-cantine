@@ -117,12 +117,21 @@
           <template v-slot:[`item.action`]="{ item }">
             <v-fade-transition>
               <div :key="`${item.id}_${item.action}`">
-                <div v-if="getActionDisplay(item.action) === 'text'" class="px-3">
-                  <v-icon small class="mr-2" color="green">{{ getActionIcon(item.action) }}</v-icon>
+                <div v-if="getActionDisplay(item.action) === 'edit'">
+                  <v-icon small class="mr-2" color="primary">{{ getActionIcon(item.action) }}</v-icon>
+                  <span class="caption">
+                    {{ getActionText(item.action) }}
+                    <router-link :to="toTeledeclaration(item)">en cliquant ici</router-link>
+                  </span>
+                </div>
+                <div v-if="getActionDisplay(item.action) === 'text'">
+                  <v-icon v-if="getActionIcon(item.action)" small class="mr-2" color="green">
+                    {{ getActionIcon(item.action) }}
+                  </v-icon>
                   <span class="caption">{{ getActionText(item.action) }}</span>
                 </div>
                 <v-btn
-                  v-else-if="getActionDisplay(item.action) === 'button'"
+                  v-if="getActionDisplay(item.action) === 'button'"
                   small
                   outlined
                   color="primary"
@@ -187,24 +196,41 @@ export default {
         central: "Livreur des repas",
         central_serving: "Livreur, avec service sur place",
       },
-      actions: {
+      canteenForTD: null,
+      showTeledeclarationPreview: false,
+      showMultipleTeledeclarationPreview: false,
+      toDiagnose: [],
+      diagLoading: false,
+      diagSuccesses: [],
+      toTeledeclare: [],
+      tdIdx: 0,
+      toTeledeclareCount: null,
+      tdSuccesses: [],
+      tdFailures: [],
+      tdLoading: false,
+      campaignDates: null,
+    }
+  },
+  computed: {
+    actions() {
+      return {
         "10_add_satellites": {
           text: "Ajouter des satellites",
           icon: "$community-fill",
           display: "button",
         },
         "18_prefill_diagnostic": {
-          text: "Créer le bilan " + year,
+          text: "Créer le bilan " + this.year,
           icon: "$add-circle-fill",
           display: "button",
         },
         "20_create_diagnostic": {
-          text: "Créer le bilan " + year,
+          text: "Créer le bilan " + this.year,
           icon: "$add-circle-fill",
           display: "button",
         },
         "30_fill_diagnostic": {
-          text: "Compléter le bilan " + year,
+          text: "Compléter le bilan " + this.year,
           icon: "$edit-box-fill",
           display: "button",
         },
@@ -225,27 +251,28 @@ export default {
           display: "empty",
         },
         "91_nothing_satellite_teledeclared": {
-          display: "empty",
+          text: "Votre livreur des repas a déclaré le bilan pour votre établissement",
+          display: "text",
         },
         "95_nothing": {
-          display: "empty",
+          icon: "$edit-fill",
+          text: `En cas d'erreur, vous pouvez modifier vos données jusqu’au ${this.lastDayToEdit} (heure de Paris)`,
+          display: this.canEditTd ? "edit" : "empty",
         },
-      },
-      canteenForTD: null,
-      showTeledeclarationPreview: false,
-      showMultipleTeledeclarationPreview: false,
-      toDiagnose: [],
-      diagLoading: false,
-      diagSuccesses: [],
-      toTeledeclare: [],
-      tdIdx: 0,
-      toTeledeclareCount: null,
-      tdSuccesses: [],
-      tdFailures: [],
-      tdLoading: false,
-    }
-  },
-  computed: {
+      }
+    },
+    lastDayToEdit() {
+      if (!this.canEditTd) return null
+      const date = this.campaignDates.inTeledeclaration
+        ? this.campaignDates.teledeclarationEndDate
+        : this.campaignDates.correctionEndDate
+      const prettyDate = new Date(date).toLocaleDateString("fr-FR", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+      return prettyDate
+    },
     showPagination() {
       return this.canteenCount && this.canteenCount > this.limit
     },
@@ -280,6 +307,14 @@ export default {
   methods: {
     populateInitialParameters() {
       this.page = this.$route.query.cantinePage ? parseInt(this.$route.query.cantinePage) : 1
+    },
+    fetchCampaignDates() {
+      fetch(`/api/v1/campaignDates/${this.year}`)
+        .then((response) => response.json())
+        .then((response) => {
+          this.campaignDates = response
+          this.canEditTd = this.campaignDates.inCorrection || this.campaignDates.inTeledeclaration
+        })
     },
     fetchCurrentPage() {
       let queryParam = `ordering=action&limit=${this.limit}&offset=${this.offset}`
@@ -318,6 +353,15 @@ export default {
       return {
         name: "DashboardManager",
         params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
+      }
+    },
+    toTeledeclaration(canteen) {
+      return {
+        name: "MyProgress",
+        params: {
+          canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen),
+          year: this.year,
+        },
       }
     },
     getActionText(action) {
@@ -478,6 +522,7 @@ export default {
   },
   mounted() {
     this.populateInitialParameters()
+    this.fetchCampaignDates()
     return this.fetchDiagnosticsToTeledeclare()
       .then(this.fetchCurrentPage)
       .then(this.addWatchers)
