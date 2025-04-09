@@ -58,8 +58,6 @@ class TeledeclarationCreateView(APIView):
         diagnostic_id = data.get("diagnostic_id")
         if not diagnostic_id:
             raise ValidationError("diagnosticId manquant")
-        if not settings.ENABLE_TELEDECLARATION:
-            raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
 
         td = TeledeclarationCreateView._teledeclare_diagnostic(diagnostic_id, request.user)
         data = FullDiagnosticSerializer(td.diagnostic).data
@@ -68,26 +66,30 @@ class TeledeclarationCreateView(APIView):
     def _teledeclare_diagnostic(diagnostic_id, user):
         try:
             diagnostic = Diagnostic.objects.get(pk=diagnostic_id)
+
+            if not is_in_teledeclaration_or_correction(diagnostic.year):
+                raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
+
+            if user not in diagnostic.canteen.managers.all():
+                raise PermissionDenied()
+
+            try:
+                Teledeclaration.validate_diagnostic(diagnostic)
+            except DjangoValidationError as e:
+                raise TeledeclarationCreateView._parse_diagnostic_validation_error(e) from e
+
+            try:
+                td = Teledeclaration.create_from_diagnostic(diagnostic, user)
+                return td
+            except DjangoValidationError as e:
+                if hasattr(e, "message") and e.message == "Données d'approvisionnement manquantes":
+                    message = e.message
+                else:
+                    message = "Il existe déjà une télédéclaration en cours pour cette année"
+                raise ValidationError(message) from e
+
         except Diagnostic.DoesNotExist:
             raise PermissionDenied()  # in general we throw 403s not 404s
-
-        if user not in diagnostic.canteen.managers.all():
-            raise PermissionDenied()
-
-        try:
-            Teledeclaration.validate_diagnostic(diagnostic)
-        except DjangoValidationError as e:
-            raise TeledeclarationCreateView._parse_diagnostic_validation_error(e) from e
-
-        try:
-            td = Teledeclaration.create_from_diagnostic(diagnostic, user)
-            return td
-        except DjangoValidationError as e:
-            if hasattr(e, "message") and e.message == "Données d'approvisionnement manquantes":
-                message = e.message
-            else:
-                message = "Il existe déjà une télédéclaration en cours pour cette année"
-            raise ValidationError(message) from e
 
     def _parse_diagnostic_validation_error(e):
         if hasattr(e, "message"):
