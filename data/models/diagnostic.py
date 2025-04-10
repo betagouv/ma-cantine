@@ -27,6 +27,11 @@ def canteen_has_siret_or_siren_unite_legale_query():
     return canteen_has_siret_query | canteen_has_siren_unite_legale_query
 
 
+class DiagnosticQuerySet(models.QuerySet):
+    def is_filled(self):
+        return self.filter(value_total_ht__gt=0)
+
+
 class Diagnostic(models.Model):
     class Meta:
         verbose_name = "diagnostic"
@@ -129,6 +134,8 @@ class Diagnostic(models.Model):
     class PublicationStatus(models.TextChoices):
         DRAFT = "draft", "🔒 Non publié"
         PUBLISHED = "published", "✅ Publié"
+
+    objects = models.Manager.from_queryset(DiagnosticQuerySet)()
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
