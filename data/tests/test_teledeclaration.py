@@ -42,7 +42,7 @@ class TeledeclarationQuerySetTest(TestCase):
                 self,
                 f"valid_canteen_diagnostic_{index + 1}",
                 DiagnosticFactory(
-                    diagnotic_type="SIMPLE",
+                    diagnostic_type="SIMPLE",
                     year=year_data,
                     creation_date=now().replace(month=3, day=1),
                     canteen=canteen,
@@ -59,7 +59,7 @@ class TeledeclarationQuerySetTest(TestCase):
             )
 
         self.invalid_canteen_diagnostic = DiagnosticFactory(
-            diagnotic_type="SIMPLE",
+            diagnostic_type="SIMPLE",
             year=year_data,
             creation_date=now().replace(month=3, day=1),
             canteen=self.invalid_canteen,
@@ -71,7 +71,7 @@ class TeledeclarationQuerySetTest(TestCase):
         )
 
         self.deleted_canteen_diagnostic = DiagnosticFactory(
-            diagnotic_type="SIMPLE",
+            diagnostic_type="SIMPLE",
             year=year_data,
             creation_date=now().replace(month=3, day=1),
             canteen=self.deleted_canteen,
