@@ -37,7 +37,7 @@ class TestMigrations(TestCase):
 
 class ApproFieldsTestCase(TestMigrations):
     migrate_from = "0172_historicalteledeclaration_meal_price_and_more"
-    migrate_to = "0173_repopulate_fields_agg_2"
+    migrate_to = "0173_repopulate_fields_agg_meal_price"
 
     def setUpBeforeMigration(self, apps):
         Teledeclaration = apps.get_model("data", "Teledeclaration")
