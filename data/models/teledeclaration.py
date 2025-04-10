@@ -40,6 +40,14 @@ class TeledeclarationQuerySet(models.QuerySet):
     def aberrant_values(self):
         return self.exclude(meal_price__gt=20, value_total_ht__gt=1000000)
 
+    def filter_valid_diag_for_iso_purpose(self):
+        """
+        In order to stay completely identical to previous year data, we need to filter this TD
+        This TD has corrupted aggregation bio value in its diagnostic, probably due to an error at that time in the diag create
+        Now that we don't use the diag data, we are not impacted by this corrupted data
+        """
+        return self.exclude(id=13445)
+
     def for_year(self, year):
         year = int(year)
         return self.filter(
@@ -76,7 +84,8 @@ class TeledeclarationQuerySet(models.QuerySet):
                     value_bio_ht_agg__isnull=False,
                 )
                 .canteen_for_stat(year)  # Chaine de traitement n°6
-                .aberrant_values()
+                .aberrant_values()  # Chaîne de traitement
+                .filter_valid_diag_for_iso_purpose()
             )
 
 
