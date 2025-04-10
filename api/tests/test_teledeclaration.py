@@ -2,7 +2,6 @@ import datetime
 import zoneinfo
 from unittest.mock import patch
 
-from django.db.utils import IntegrityError
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -24,7 +23,7 @@ from .utils import authenticate
 LAST_YEAR = datetime.date.today().year - 1
 
 
-class TestTeledeclarationApi(APITestCase):
+class TestTeledeclarationCreateApi(APITestCase):
     def test_create_unauthenticated(self):
         """
         The creation of a teledeclaration is only available
@@ -32,15 +31,6 @@ class TestTeledeclarationApi(APITestCase):
         """
         payload = {"diagnosticId": 1}
         response = self.client.post(reverse("teledeclaration_create"), payload)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_cancel_unauthenticated(self):
-        payload = {"teledeclarationId": 1}
-        response = self.client.post(reverse("teledeclaration_create"), payload)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_generate_pdf_unauthenticated(self):
-        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": 1}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
@@ -53,25 +43,6 @@ class TestTeledeclarationApi(APITestCase):
         payload = {"diagnosticId": 1}
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @authenticate
-    def test_cancel_unexistent_teledeclaration(self):
-        """
-        A validation error is returned if the teledeclaration does not exist
-        """
-        payload = {"teledeclarationId": 1}
-        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": 1}), payload)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @authenticate
-    def test_generate_pdf_unexistent_teledeclaration(self):
-        """
-        A validation error is returned if the teledeclaration does not exist
-        """
-        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": 1}))
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
@@ -92,36 +63,6 @@ class TestTeledeclarationApi(APITestCase):
         ):
             response = self.client.post(reverse("teledeclaration_create"), payload)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @authenticate
-    def test_cancel_unauthorized(self):
-        """
-        Only managers of the canteen can cancel teledeclarations
-        """
-        manager = UserFactory.create()
-        canteen = CanteenFactory.create()
-        canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
-
-        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @authenticate
-    def test_generate_pdf_unauthorized(self):
-        """
-        Only managers of the canteen can get PDF documents
-        """
-        manager = UserFactory.create()
-        canteen = CanteenFactory.create()
-        canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
-
-        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
@@ -291,142 +232,6 @@ class TestTeledeclarationApi(APITestCase):
         response = self.client.post(reverse("teledeclaration_create"), payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @freeze_time("2021-01-14")
-    @authenticate
-    def test_cancel(self):
-        """
-        A submitted teledeclaration can be cancelled
-        """
-        user = authenticate.user
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
-
-        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
-        self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.CANCELLED)
-
-        body = response.json()
-        self.assertIsNone(body["teledeclaration"])
-
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @freeze_time("2023-01-14")
-    @authenticate
-    def test_cancel_previous_year(self):
-        """
-        A submitted teledeclaration cannot be cancelled for a previous campaign
-        """
-        user = authenticate.user
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type="SIMPLE")
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
-
-        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-        db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
-        self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
-
-    @override_settings(ENABLE_TELEDECLARATION=False)
-    @freeze_time("2023-01-14")
-    @authenticate
-    def test_cancel_out_of_campaign(self):
-        """
-        A submitted teledeclaration cannot be cancelled after the campaign
-        """
-        user = authenticate.user
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
-
-        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-        db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
-        self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
-
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @authenticate
-    def test_diagnostic_deletion(self):
-        """
-        If the diagnostic used for the teledeclaration is deleted, the teledeclaration
-        should be cancelled
-        """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
-
-        diagnostic.delete()
-        teledeclaration.refresh_from_db()
-        self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.CANCELLED)
-        self.assertIsNone(teledeclaration.diagnostic)
-
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @authenticate
-    def test_generate_pdf(self):
-        """
-        The user can get a justificatif in PDF for a teledeclaration
-        """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
-
-        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @authenticate
-    def test_generate_pdf_legacy_teledeclaration(self):
-        """
-        The user can get a justificatif in PDF for a teledeclaration
-        with minimal information
-        """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type=None)
-        teledeclaration = TeledeclarationFactory(
-            canteen=canteen,
-            diagnostic=diagnostic,
-            year=2021,
-            declared_data={
-                "year": 2021,
-                "canteen": {
-                    "name": "",
-                },
-                "applicant": {
-                    "name": "",
-                },
-                "teledeclaration": {},
-            },
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-        )
-
-        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @authenticate
-    def test_generate_pdf_central(self):
-        """
-        A central kitchen should be able to generate a PDF
-        """
-        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, daily_meal_count=345)
-        canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
-        self.assertIsNone(teledeclaration.declared_data["canteen"]["daily_meal_count"])
-
-        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
@@ -847,95 +652,186 @@ class TestTeledeclarationApi(APITestCase):
         canteen_json = teledeclaration.declared_data.get("canteen")
         self.assertEqual(canteen_json["line_ministry"], "affaires_etrangeres")
 
-    def test_one_submitted_td_constraint(self):
-        """
-        Only one TD per canteen and per year can be submitted
-        """
-        # Doesn't use the TeledeclarationFactory to escape the `clean` function validation
-        # bulk_create does not pass through the `save` method, so it allows us to test the
-        # actual constraint.
-        canteen = CanteenFactory.create()
-        diagnostic = DiagnosticFactory.create(canteen=canteen)
-        applicant = UserFactory.create()
-        teledeclaration_1 = Teledeclaration(
-            canteen=canteen,
-            year=LAST_YEAR,
-            diagnostic=diagnostic,
-            applicant=applicant,
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-            declared_data={"foo": 1},
-        )
-        teledeclaration_2 = Teledeclaration(
-            canteen=canteen,
-            year=LAST_YEAR,
-            diagnostic=diagnostic,
-            applicant=applicant,
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-            declared_data={"foo": 1},
-        )
-        with self.assertRaises(IntegrityError):
-            Teledeclaration.objects.bulk_create([teledeclaration_1, teledeclaration_2])
 
-    def test_several_cancelled_td_constraint(self):
-        """
-        Cancelled TDs should not influence the constraint
-        """
-        # Doesn't use the TeledeclarationFactory to escape the `clean` function validation
-        # bulk_create does not pass through the `save` method, so it allows us to test the
-        # actual constraint.
-        canteen = CanteenFactory.create()
-        diagnostic = DiagnosticFactory.create(canteen=canteen)
-        applicant = UserFactory.create()
-        teledeclaration_1 = Teledeclaration(
-            canteen=canteen,
-            year=LAST_YEAR,
-            diagnostic=diagnostic,
-            applicant=applicant,
-            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
-            declared_data={"foo": 1},
-        )
-        teledeclaration_2 = Teledeclaration(
-            canteen=canteen,
-            year=LAST_YEAR,
-            diagnostic=diagnostic,
-            applicant=applicant,
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-            declared_data={"foo": 1},
-        )
-        try:
-            Teledeclaration.objects.bulk_create([teledeclaration_1, teledeclaration_2])
-        except IntegrityError:
-            self.fail("Should be able to create a submitted TD if a cancelled one exists already")
+class TestTeledeclarationCancel(APITestCase):
+    def test_cancel_unauthenticated(self):
+        payload = {"teledeclarationId": 1}
+        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": 1}), payload)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_bypass_constraint_if_no_canteen(self):
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_cancel_unexistent_teledeclaration(self):
         """
-        A TD that does not have a canteen attached to it (e.g., for deleted canteens) should not be
-        considered in the constraint.
+        A validation error is returned if the teledeclaration does not exist
         """
-        # Doesn't use the TeledeclarationFactory to escape the `clean` function validation
-        # bulk_create does not pass through the `save` method, so it allows us to test the
-        # actual constraint.
-        applicant = UserFactory.create()
-        teledeclaration_1 = Teledeclaration(
-            canteen=None,
-            year=LAST_YEAR,
-            diagnostic=None,
-            applicant=applicant,
+        payload = {"teledeclarationId": 1}
+        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": 1}), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_cancel_unauthorized(self):
+        """
+        Only managers of the canteen can cancel teledeclarations
+        """
+        manager = UserFactory.create()
+        canteen = CanteenFactory.create()
+        canteen.managers.add(manager)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
+
+        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2021-01-14")
+    @authenticate
+    def test_cancel(self):
+        """
+        A submitted teledeclaration can be cancelled
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+
+        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
+        self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.CANCELLED)
+
+        body = response.json()
+        self.assertIsNone(body["teledeclaration"])
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2023-01-14")
+    @authenticate
+    def test_cancel_previous_year(self):
+        """
+        A submitted teledeclaration cannot be cancelled for a previous campaign
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+
+        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
+        self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
+
+    @override_settings(ENABLE_TELEDECLARATION=False)
+    @freeze_time("2023-01-14")
+    @authenticate
+    def test_cancel_out_of_campaign(self):
+        """
+        A submitted teledeclaration cannot be cancelled after the campaign
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+
+        response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
+        self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
+
+
+class TestTeledeclarationPdfApi(APITestCase):
+    def test_generate_pdf_unauthenticated(self):
+        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": 1}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_generate_pdf_unexistent_teledeclaration(self):
+        """
+        A validation error is returned if the teledeclaration does not exist
+        """
+        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": 1}))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_generate_pdf_unauthorized(self):
+        """
+        Only managers of the canteen can get PDF documents
+        """
+        manager = UserFactory.create()
+        canteen = CanteenFactory.create()
+        canteen.managers.add(manager)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
+
+        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_generate_pdf(self):
+        """
+        The user can get a justificatif in PDF for a teledeclaration
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
+
+        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_generate_pdf_legacy_teledeclaration(self):
+        """
+        The user can get a justificatif in PDF for a teledeclaration
+        with minimal information
+        """
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type=None)
+        teledeclaration = TeledeclarationFactory(
+            canteen=canteen,
+            diagnostic=diagnostic,
+            year=2021,
+            declared_data={
+                "year": 2021,
+                "canteen": {
+                    "name": "",
+                },
+                "applicant": {
+                    "name": "",
+                },
+                "teledeclaration": {},
+            },
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-            declared_data={"foo": 1},
         )
-        teledeclaration_2 = Teledeclaration(
-            canteen=None,
-            year=LAST_YEAR,
-            diagnostic=None,
-            applicant=applicant,
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-            declared_data={"foo": 1},
-        )
-        try:
-            Teledeclaration.objects.bulk_create([teledeclaration_1, teledeclaration_2])
-        except IntegrityError:
-            self.fail("Should be able to have several submitted TDs for deleted canteens")
+
+        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(ENABLE_TELEDECLARATION=True)
+    @authenticate
+    def test_generate_pdf_central(self):
+        """
+        A central kitchen should be able to generate a PDF
+        """
+        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, daily_meal_count=345)
+        canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
+        self.assertIsNone(teledeclaration.declared_data["canteen"]["daily_meal_count"])
+
+        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class TestTeledeclarationCampaignDatesApi(APITestCase):
