@@ -56,6 +56,8 @@ def populate_simple_values(td, diag):
     td.value_sustainable_ht_agg = diag.value_sustainable_ht
     td.value_externality_performance_ht_agg = diag.value_externality_performance_ht
     td.value_egalim_others_ht_agg = diag.value_egalim_others_ht
+    td.yearly_meal_count = 0
+    td.meal_price = 0
     return td
 
 def total_label_bio(diagnostic):
