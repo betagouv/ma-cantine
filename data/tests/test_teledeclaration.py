@@ -2,7 +2,6 @@ from unittest.mock import patch
 
 from django.db.utils import IntegrityError
 from django.test import TestCase
-from django.test.utils import override_settings
 from django.utils.timezone import now
 
 from api.tests.utils import authenticate
@@ -98,7 +97,6 @@ class TeledeclarationQuerySetTest(TestCase):
 
 
 class TestTeledeclarationModelConstraintsTest(TestCase):
-    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_diagnostic_deletion(self):
         """
@@ -107,7 +105,7 @@ class TestTeledeclarationModelConstraintsTest(TestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type="SIMPLE")
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         diagnostic.delete()

@@ -2,8 +2,8 @@ from decimal import Decimal
 
 from django.core.exceptions import BadRequest
 from django.db import transaction
-from django.test.utils import override_settings
 from django.urls import reverse
+from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -490,7 +490,7 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(diagnostic.year, 2020)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign  # but this endpoint doesn't seem to check
     @authenticate
     def test_get_diagnostics_to_td(self):
         """

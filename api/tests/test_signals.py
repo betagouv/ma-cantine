@@ -8,8 +8,8 @@ from data.models import AuthenticationMethodHistoricalRecords
 from .utils import authenticate, get_oauth2_token
 
 
+@freeze_time("2022-08-30")  # during the 2021 campaign
 class TestSignals(APITestCase):
-    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_authentication_method_created_with_website(self):
         """
@@ -27,7 +27,6 @@ class TestSignals(APITestCase):
             td.history.first().authentication_method, AuthenticationMethodHistoricalRecords.AuthMethodChoices.WEBSITE
         )
 
-    @freeze_time("2022-08-30")  # during the 2021 campaign
     def test_td_creation_api_blocked_for_third_party(self):
         """
         Teledeclarations cannot be created via a third party API

@@ -2,16 +2,14 @@ import datetime
 import filecmp
 import os
 import unittest
-import zoneinfo
 from decimal import Decimal
-from unittest.mock import patch
 
 import requests
 import requests_mock
 from django.core import mail
 from django.test.utils import override_settings
 from django.urls import reverse
-from django.utils import timezone
+from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -774,7 +772,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertIn("Camille Dupont", email.body)
         self.assertIn("Help me", email.body)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_teledeclare_diagnostics_on_import(self, mock):
         """
@@ -787,13 +785,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.save()
         self.assertEqual(Teledeclaration.objects.count(), 0)
 
-        with patch.object(
-            timezone,
-            "now",
-            return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        ):
-            with open("./api/tests/files/diagnostics/teledeclaration_simple.csv") as diag_file:
-                response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+        with open("./api/tests/files/diagnostics/teledeclaration_simple.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
         body = response.json()
         self.assertEqual(body["count"], 1)
@@ -802,7 +795,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
     # TODO: test fails for non staff users
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_error_teledeclare_diagnostics_on_import(self, mock):
         """
@@ -813,13 +806,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         user.email = "authenticate@example.com"
         user.save()
 
-        with patch.object(
-            timezone,
-            "now",
-            return_value=datetime.datetime(2020, 4, 1, 11, 00, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        ):
-            with open("./api/tests/files/diagnostics/teledeclaration_error.csv") as diag_file:
-                response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
+        with open("./api/tests/files/diagnostics/teledeclaration_error.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
 
         body = response.json()
         self.assertEqual(len(body["errors"]), 2)
@@ -829,12 +817,12 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             body["errors"][1]["message"],
-            "Champ 'année' : C'est uniquement possible de télédéclarer pour l'année 2019. Ce diagnostic est pour l'année 2020",
+            "Champ 'année' : C'est uniquement possible de télédéclarer pour l'année 2021. Ce diagnostic est pour l'année 2022",
         )
         self.assertEqual(Diagnostic.objects.count(), 0)
         self.assertEqual(Teledeclaration.objects.count(), 0)
 
-    @override_settings(ENABLE_TELEDECLARATION=False)
+    @freeze_time("2022-12-25")  # after the 2021 campaign
     @authenticate
     def test_error_teledeclare_diagnostics_on_import_not_campaign(self, mock):
         """

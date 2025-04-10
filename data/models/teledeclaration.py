@@ -1,7 +1,6 @@
 import logging
 from decimal import Decimal
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
@@ -13,7 +12,7 @@ from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
 from data.models import AuthenticationMethodHistoricalRecords, Canteen, Diagnostic
-from macantine.utils import CAMPAIGN_DATES
+from macantine.utils import CAMPAIGN_DATES, is_in_teledeclaration_or_correction
 
 logger = logging.getLogger(__name__)
 
@@ -223,7 +222,7 @@ class Teledeclaration(models.Model):
 
     @staticmethod
     def validate_diagnostic(diagnostic):
-        if not settings.ENABLE_TELEDECLARATION:
+        if not is_in_teledeclaration_or_correction():
             raise ValidationError("Ce n'est pas possible de télédéclarer hors de la période de la campagne")
         last_year = timezone.now().date().year - 1
         if diagnostic.year != last_year:
