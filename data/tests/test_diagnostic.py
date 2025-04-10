@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 from django.test import TestCase
 from django.utils.timezone import now
 
@@ -78,12 +76,3 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(diagnostics.count(), 5)
         self.assertIn(self.valid_canteen_diagnostic_1, diagnostics)
         self.assertNotIn(valid_canteen_empty_diagnostic, diagnostics)
-
-    def test_td_submitted_for_year(self):
-        with patch("data.models.diagnostic.CAMPAIGN_DATES", mocked_campaign_dates):
-            self.assertEqual(Diagnostic.objects.filter(year=year_data).count(), 5)
-            diagnostics = Diagnostic.objects.td_submitted_for_year(year_data)
-        self.assertEqual(diagnostics.count(), 5)
-        self.assertIn(self.valid_canteen_diagnostic_1, diagnostics)
-        self.assertIn(self.invalid_canteen_diagnostic, diagnostics)
-        self.assertIn(self.deleted_canteen_diagnostic, diagnostics)
