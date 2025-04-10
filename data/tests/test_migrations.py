@@ -36,8 +36,8 @@ class TestMigrations(TestCase):
 
 
 class ApproFieldsTestCase(TestMigrations):
-    migrate_from = "0171_repopulate_fields_agg_null"
-    migrate_to = "0172_repopulate_fields_agg_2"
+    migrate_from = "0172_historicalteledeclaration_meal_price_and_more"
+    migrate_to = "0173_repopulate_fields_agg_2"
 
     def setUpBeforeMigration(self, apps):
         Teledeclaration = apps.get_model("data", "Teledeclaration")
@@ -119,4 +119,5 @@ class ApproFieldsTestCase(TestMigrations):
         td_complete = Teledeclaration.objects.get(pk=self.td_complete.id)
         self.assertEqual(td_complete.value_sustainable_ht_agg, 10 + 20)
         self.assertEqual(td_complete.value_externality_performance_ht_agg, 0)
-        self.assertIsNone(td_complete.value_bio_ht_agg)
+        self.assertEqual(td_complete.value_bio_ht_agg, None)
+        self.assertEqual(td_complete.yearly_meal_count, 1000)

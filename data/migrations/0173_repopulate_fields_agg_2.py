@@ -29,11 +29,14 @@ def label_sum(diagnostic, label):
     
 def sum_int_with_potential_null(values_to_sum):
     if all(value is None for value in values_to_sum):
-        return None
+        return 0
     else:
         return sum(value for value in values_to_sum if value is not None)
 
 def populate_simplified_diagnostic_values(td, diag):
+    # Attention : pour répliquer les données officielles on doit 
+    # pour les TD simples : considérer les valeurs nulles comme nulles
+    # pour les TD complètes : considérer les valeurs nulles comme 0
     td.value_bio_ht_agg = total_label_bio(diag)
     td.value_sustainable_ht_agg = sum_int_with_potential_null([total_label_label_rouge(diag), total_label_aocaop_igp_stg(diag)])
     td.value_externality_performance_ht_agg = sum_int_with_potential_null([total_label_externalites(diag), total_label_performance(diag)])
@@ -92,6 +95,7 @@ def populate_aggregated_food_fields(apps, schema_editor):
     teledeclarations = Teledeclaration.objects.select_related('diagnostic').filter(diagnostic__isnull=False)
     if teledeclarations:
         for td in teledeclarations:
+            # Appro
             diag = td.diagnostic
             td.value_total_ht = diag.value_total_ht or 0
 
@@ -99,6 +103,13 @@ def populate_aggregated_food_fields(apps, schema_editor):
                 td = populate_simplified_diagnostic_values(td, diag)
             else:
                 td = populate_simple_values(td, diag)
+            # Yearly Meal Count
+            if 'yearly_meal_count' in td.declared_data['canteen'].keys() and td.declared_data['canteen']['yearly_meal_count']:
+                td.yearly_meal_count = td.declared_data['canteen']['yearly_meal_count']
+                td.meal_price = diag.value_total_ht / td.declared_data['canteen']['yearly_meal_count'] if diag.value_total_ht else None
+            else:
+                td.yearly_meal_count = None
+                td.meal_price = None
             td.save()
 
 def unpopulate_aggregated_fields(apps, schema_editor):
@@ -116,7 +127,7 @@ class Migration(migrations.Migration):
 
 
     dependencies = [
-        ("data", "0171_repopulate_fields_agg_null"),
+        ("data", "0172_historicalteledeclaration_meal_price_and_more"),
     ]
 
     operations = [
