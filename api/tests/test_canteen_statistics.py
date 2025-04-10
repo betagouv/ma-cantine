@@ -43,30 +43,20 @@ class TestCanteenStatsApi(APITestCase):
                     "region": "01",
                     "sectors": ["primary_school", "enterprise"],
                 },
-                "diagnostics": [
-                    {
-                        "year": year_data,
-                        "value_total_ht": 100,
-                        "value_bio_ht": 20,
-                        "value_sustainable_ht": 30,
-                        "value_externality_performance_ht": None,
-                        "value_egalim_others_ht": None,
-                        "has_waste_diagnostic": False,
-                        "waste_actions": [],
-                        "vegetarian_weekly_recurrence": Diagnostic.VegetarianMenuFrequency.DAILY,
-                        "plastic_tableware_substituted": False,
-                        "communicates_on_food_quality": False,
-                    },
-                    {
-                        "year": now().replace(year=1990).year,
-                        "value_total_ht": 100,
-                        "value_bio_ht": 100,
-                        "value_sustainable_ht": 0,
-                        "value_externality_performance_ht": 0,
-                        "value_egalim_others_ht": 0,
-                        "vegetarian_weekly_recurrence": Diagnostic.VegetarianMenuFrequency.DAILY,
-                    },
-                ],
+                "diagnostic": {
+                    "diagnostic_type": "SIMPLE",
+                    "year": year_data,
+                    "value_total_ht": 100,
+                    "value_bio_ht": 20,
+                    "value_sustainable_ht": 30,
+                    "value_externality_performance_ht": None,
+                    "value_egalim_others_ht": None,
+                    "has_waste_diagnostic": False,
+                    "waste_actions": [],
+                    "vegetarian_weekly_recurrence": Diagnostic.VegetarianMenuFrequency.DAILY,
+                    "plastic_tableware_substituted": False,
+                    "communicates_on_food_quality": False,
+                },
             },
             {
                 "description": "Should be counted in the stats",
@@ -74,25 +64,24 @@ class TestCanteenStatsApi(APITestCase):
                     "region": "01",
                     "sectors": ["primary_school", "secondary_school"],
                 },
-                "diagnostics": [
-                    {
-                        "year": year_data,
-                        "value_total_ht": 1000,
-                        "value_bio_ht": 400,
-                        "value_sustainable_ht": 500,
-                        "value_externality_performance_ht": 0,
-                        "value_egalim_others_ht": 0,
-                        "has_waste_diagnostic": True,
-                        "waste_actions": ["action1", "action2"],
-                        "has_donation_agreement": True,
-                        "vegetarian_weekly_recurrence": Diagnostic.VegetarianMenuFrequency.LOW,
-                        "cooking_plastic_substituted": True,
-                        "serving_plastic_substituted": True,
-                        "plastic_bottles_substituted": True,
-                        "plastic_tableware_substituted": True,
-                        "communicates_on_food_quality": True,
-                    },
-                ],
+                "diagnostic": {
+                    "diagnostic_type": "SIMPLE",
+                    "year": year_data,
+                    "value_total_ht": 1000,
+                    "value_bio_ht": 400,
+                    "value_sustainable_ht": 500,
+                    "value_externality_performance_ht": 0,
+                    "value_egalim_others_ht": 0,
+                    "has_waste_diagnostic": True,
+                    "waste_actions": ["action1", "action2"],
+                    "has_donation_agreement": True,
+                    "vegetarian_weekly_recurrence": Diagnostic.VegetarianMenuFrequency.LOW,
+                    "cooking_plastic_substituted": True,
+                    "serving_plastic_substituted": True,
+                    "plastic_bottles_substituted": True,
+                    "plastic_tableware_substituted": True,
+                    "communicates_on_food_quality": True,
+                },
             },
             {
                 "description": "Should not be counted in the stats as its creation date is not part of a campaign",
@@ -100,11 +89,10 @@ class TestCanteenStatsApi(APITestCase):
                     "region": "01",
                     "sectors": ["secondary_school"],
                 },
-                "diagnostics": [
-                    {
-                        "year": now().replace(year=1990).year,
-                    },
-                ],
+                "diagnostic": {
+                    "diagnostic_type": "SIMPLE",
+                    "year": now().replace(year=1990).year,
+                },
             },
             {
                 "description": "Should not be counted in the stats of the region 01",
@@ -112,36 +100,35 @@ class TestCanteenStatsApi(APITestCase):
                     "region": "03",
                     "sectors": ["social"],
                 },
-                "diagnostics": [
-                    {
-                        "year": year_data,
-                        "value_total_ht": 100,
-                        "value_bio_ht": 100,
-                        "value_sustainable_ht": 0,
-                        "value_externality_performance_ht": 0,
-                        "value_egalim_others_ht": 0,
-                        "cooking_plastic_substituted": True,
-                        "serving_plastic_substituted": True,
-                        "plastic_bottles_substituted": True,
-                        "plastic_tableware_substituted": True,
-                        "communicates_on_food_quality": True,
-                    },
-                ],
+                "diagnostic": {
+                    "diagnostic_type": "SIMPLE",
+                    "year": year_data,
+                    "value_total_ht": 100,
+                    "value_bio_ht": 100,
+                    "value_sustainable_ht": 0,
+                    "value_externality_performance_ht": 0,
+                    "value_egalim_others_ht": 0,
+                    "cooking_plastic_substituted": True,
+                    "serving_plastic_substituted": True,
+                    "plastic_bottles_substituted": True,
+                    "plastic_tableware_substituted": True,
+                    "communicates_on_food_quality": True,
+                },
             },
         ]
 
         # Create the sectors
         sector_objects = {key: SectorFactory.create(**attributes) for key, attributes in sectors.items()}
 
-        # Create the canteens and diagnostics
-        for i, case in enumerate(canteen_cases):
-            canteen_sectors = [sector_objects[sector] for sector in case["canteen"].pop("sectors")]
-            canteen = CanteenFactory.create(**case["canteen"], sectors=canteen_sectors, siret=str(i))
-            for diagnostic_data in case.get("diagnostics", []):
+        with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
+            # Create the canteens and diagnostics
+            for i, case in enumerate(canteen_cases):
+                canteen_sectors = [sector_objects[sector] for sector in case["canteen"].pop("sectors")]
+                canteen = CanteenFactory.create(**case["canteen"], sectors=canteen_sectors, siret=str(i))
+                diagnostic_data = case["diagnostic"]
                 diag = DiagnosticFactory.create(canteen=canteen, **diagnostic_data)
                 Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
 
-        with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
             response = self.client.get(reverse("canteen_statistics"), {"region": "01", "year": year_data})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -264,6 +251,7 @@ class TestCanteenStatsApi(APITestCase):
 
         # Diagnostic that should display 20% Bio and 45% other EGalim
         diag = DiagnosticFactory.create(
+            diagnostic_type="SIMPLE",
             canteen=published,
             year=year_data,
             value_total_ht=100,
