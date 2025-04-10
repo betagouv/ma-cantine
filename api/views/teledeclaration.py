@@ -78,6 +78,15 @@ class TeledeclarationCreateView(APIView):
             if user not in diagnostic.canteen.managers.all():
                 raise PermissionDenied()
 
+            # extra rule for correction campaign
+            # only allow to "edit" a teledeclaration
+            # (a teledeclaration must exist during the teledeclaration campaign)
+            if is_in_correction():
+                if not Teledeclaration.objects.for_year(last_year).filter(canteen=diagnostic.canteen).exists():
+                    raise PermissionDenied(
+                        "La campagne de correction est réservée aux cantines qui ont télédéclaré durant la campagne de télédéclaration."
+                    )
+
             try:
                 Teledeclaration.validate_diagnostic(diagnostic)
             except DjangoValidationError as e:
@@ -135,6 +144,15 @@ class TeledeclarationCancelView(APIView):
 
             if request.user not in teledeclaration.canteen.managers.all():
                 raise PermissionDenied()
+
+            # extra rule for correction campaign
+            # only allow to "edit" a teledeclaration
+            # (a teledeclaration must exist during the teledeclaration campaign)
+            if is_in_correction():
+                if not Teledeclaration.objects.for_year(last_year).filter(canteen=teledeclaration.canteen).exists():
+                    raise PermissionDenied(
+                        "La campagne de correction est réservée aux cantines qui ont télédéclaré durant la campagne de télédéclaration."
+                    )
 
             teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
             teledeclaration.save()

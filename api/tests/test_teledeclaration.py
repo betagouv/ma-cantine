@@ -98,7 +98,7 @@ class TestTeledeclarationCreateApi(APITestCase):
 
     @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
-    def test_create(self):
+    def test_create_during_campaign(self):
         """
         A teledeclaration can be created from a valid Diagnostic
         """
@@ -214,10 +214,47 @@ class TestTeledeclarationCreateApi(APITestCase):
             year=2021,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
         )
+
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
-
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_create_during_the_correction_campaign(self):
+        """
+        A teledeclaration can be created during the correction campaign
+        ONLY if a teledeclaration was already created during the campaign
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(
+            value_externality_performance_ht=0,
+            canteen=canteen,
+            year=2024,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+        )
+
+        # no teledeclaration created during the campaign
+        with freeze_time("2025-04-20"):  # during the 2024 correction campaign
+            payload = {"diagnosticId": diagnostic.id}
+            response = self.client.post(reverse("teledeclaration_create"), payload)
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # submit a teledeclaration during the campaign
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+
+        # teledeclaration created during the campaign
+        with freeze_time("2025-04-20"):  # during the 2024 correction campaign
+            # first cancel the teledeclaration (correction)
+            response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+            # then re-submit it
+            payload = {"diagnosticId": diagnostic.id}
+            response = self.client.post(reverse("teledeclaration_create"), payload)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
@@ -371,8 +408,8 @@ class TestTeledeclarationCreateApi(APITestCase):
             value_total_ht=None,  # missing
             diagnostic_type=None,
         )
-        payload = {"diagnosticId": diagnostic.id}
 
+        payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -408,7 +445,6 @@ class TestTeledeclarationCreateApi(APITestCase):
         )
 
         payload = {"diagnosticId": diagnostic.id}
-
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -448,7 +484,6 @@ class TestTeledeclarationCreateApi(APITestCase):
         )
 
         payload = {"diagnosticId": diagnostic.id}
-
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -478,8 +513,8 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, value_total_ht=100, central_kitchen_diagnostic_mode="ALL"
         )
-        payload = {"diagnosticId": diagnostic.id}
 
+        payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -619,8 +654,8 @@ class TestTeledeclarationCreateApi(APITestCase):
             year=2021,
             value_total_ht=100,
         )
-        payload = {"diagnosticId": diagnostic.id}
 
+        payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -676,7 +711,7 @@ class TestTeledeclarationCancel(APITestCase):
 
     @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
-    def test_cancel(self):
+    def test_cancel_during_campaign(self):
         """
         A submitted teledeclaration can be cancelled
         """
@@ -736,6 +771,30 @@ class TestTeledeclarationCancel(APITestCase):
 
         db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
         self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
+
+    @authenticate
+    def test_cancel_during_correction_campaign(self):
+        """
+        A submitted teledeclaration can be cancelled during the correction campaign
+        """
+        user = authenticate.user
+        canteen = CanteenFactory.create()
+        canteen.managers.add(user)
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+
+        with freeze_time("2025-04-20"):  # during the 2024 correction campaign
+            response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+            db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
+            self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.CANCELLED)
+
+            body = response.json()
+            self.assertIsNone(body["teledeclaration"])
 
 
 class TestTeledeclarationPdfApi(APITestCase):

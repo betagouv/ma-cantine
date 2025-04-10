@@ -33,15 +33,20 @@ class CustomJSONEncoder(DjangoJSONEncoder):
 
 
 class TeledeclarationQuerySet(models.QuerySet):
-    def submitted_for_year(self, year):
+    def submitted(self):
+        return self.filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED)
+
+    def for_year(self, year):
         return self.filter(
             year=year,
             creation_date__range=(
                 CAMPAIGN_DATES[year]["teledeclaration_start_date"],
                 CAMPAIGN_DATES[year]["teledeclaration_end_date"],
             ),
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
         )
+
+    def submitted_for_year(self, year):
+        return self.submitted().for_year(year)
 
     def canteen_for_stat(self, year):
         return (
