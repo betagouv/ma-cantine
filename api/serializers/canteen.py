@@ -476,28 +476,37 @@ class ManagingTeamSerializer(serializers.ModelSerializer):
 
 class CanteenActionsSerializer(serializers.ModelSerializer):
     # TODO: is it worth moving the job of fetching the specific diag required to the front?
+    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
+    publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
+    lead_image = CanteenImageSerializer()
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     action = serializers.CharField(allow_null=True)
-    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
 
     class Meta:
         model = Canteen
         fields = (
             "id",
             "name",
-            "siret",
-            "siren_unite_legale",
             "city",
-            "production_type",
+            "city_insee_code",
+            "department",
+            "region",
+            "postal_code",
+            "sectors",  # M2M
+            "line_ministry",
             "daily_meal_count",
             "yearly_meal_count",
-            "management_type",
-            "sectors",
-            "line_ministry",
             "satellite_canteens_count",
+            "siret",
+            "siren_unite_legale",
             "central_producer_siret",
-            "action",
-            "diagnostics",
+            "management_type",
+            "production_type",
+            "economic_model",
+            "publication_status",  # property
+            "lead_image",  # M2O
+            "diagnostics",  # M2O
+            "action",  # annotate
         )
         read_only_fields = fields
 
