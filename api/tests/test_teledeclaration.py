@@ -1,10 +1,4 @@
-import datetime
-import zoneinfo
-from unittest.mock import patch
-
-from django.test.utils import override_settings
 from django.urls import reverse
-from django.utils import timezone
 from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -20,8 +14,6 @@ from data.models import Canteen, Diagnostic, Teledeclaration
 
 from .utils import authenticate
 
-LAST_YEAR = datetime.date.today().year - 1
-
 
 class TestTeledeclarationCreateApi(APITestCase):
     def test_create_unauthenticated(self):
@@ -33,7 +25,6 @@ class TestTeledeclarationCreateApi(APITestCase):
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_create_unexistent_diagnostic(self):
         """
@@ -44,7 +35,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_create_unauthorized(self):
         """
@@ -53,19 +44,14 @@ class TestTeledeclarationCreateApi(APITestCase):
         manager = UserFactory.create()
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         payload = {"diagnosticId": diagnostic.id}
-
-        with patch.object(
-            timezone,
-            "now",
-            return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        ):
-            response = self.client.post(reverse("teledeclaration_create"), payload)
+        response = self.client.post(reverse("teledeclaration_create"), payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_create_missing_diagnostic_id(self):
         """
@@ -75,7 +61,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_create_incomplete_diagnostic(self):
         """
@@ -86,21 +72,14 @@ class TestTeledeclarationCreateApi(APITestCase):
         canteen = CanteenFactory.create(central_producer_siret=None)
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2020, value_total_ht=None, diagnostic_type="SIMPLE"
+            canteen=canteen, year=2021, value_total_ht=None, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
         payload = {"diagnosticId": diagnostic.id}
-
-        with patch.object(
-            timezone,
-            "now",
-            return_value=datetime.datetime(2021, 4, 1, 11, 00, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        ):
-            response = self.client.post(reverse("teledeclaration_create"), payload)
+        response = self.client.post(reverse("teledeclaration_create"), payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @freeze_time("2021-01-20")
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_create_bad_year(self):
         """
@@ -109,14 +88,15 @@ class TestTeledeclarationCreateApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create(central_producer_siret=None)
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2019, value_total_ht=100, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2019, value_total_ht=100, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @freeze_time("2021-01-20")
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_create(self):
         """
@@ -126,7 +106,11 @@ class TestTeledeclarationCreateApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(
-            value_externality_performance_ht=0, canteen=canteen, year=2020, diagnostic_type="SIMPLE", value_bio_ht=20
+            value_externality_performance_ht=0,
+            canteen=canteen,
+            year=2021,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            value_bio_ht=20,
         )
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -141,13 +125,13 @@ class TestTeledeclarationCreateApi(APITestCase):
 
         self.assertEqual(teledeclaration.diagnostic, diagnostic)
         self.assertEqual(teledeclaration.canteen, canteen)
-        self.assertEqual(teledeclaration.year, 2020)
+        self.assertEqual(teledeclaration.year, 2021)
         self.assertEqual(teledeclaration.applicant, user)
         self.assertEqual(teledeclaration.canteen_siret, canteen.siret)
         self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
         declared_data = teledeclaration.declared_data
-        self.assertEqual(declared_data["year"], 2020)
+        self.assertEqual(declared_data["year"], 2021)
 
         json_canteen = declared_data["canteen"]
         self.assertEqual(json_canteen["name"], canteen.name)
@@ -215,43 +199,47 @@ class TestTeledeclarationCreateApi(APITestCase):
         # Test the aggregated values, as it is a SIMPLE diag, the value should match directly the non agg ones
         self.assertEqual(teledeclaration.value_bio_ht_agg, diagnostic.value_bio_ht)
 
-    @override_settings(ENABLE_TELEDECLARATION=False)
-    @freeze_time("2021-01-20")
+    @freeze_time("2022-12-25")  # after the 2021 campaign
     @authenticate
-    def test_create_out_of_campaign(self):
+    def test_create_after_the_campaign(self):
         """
-        A teledeclaration cannot be created out of a TD campaign
+        A teledeclaration cannot be created after the campaign
         """
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(
-            value_externality_performance_ht=0, canteen=canteen, year=2020, diagnostic_type="SIMPLE"
+            value_externality_performance_ht=0,
+            canteen=canteen,
+            year=2021,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
         )
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_create_duplicate(self):
         """
-        We can only have one submitted teledeclaration per canteen/year
+        We can only have one submitted teledeclaration per canteen per year
         """
         user = authenticate.user
         canteen = CanteenFactory.create(siret="12345678912345")
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=LAST_YEAR, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
-    def test_no_siret(self):
+    def test_canteen_with_no_siret(self):
         """
         A few canteens don't have SIRETs - make sure teledeclarations for
         different canteens with no SIRET aren't flagged as duplicates
@@ -259,7 +247,9 @@ class TestTeledeclarationCreateApi(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create(siret="")
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=LAST_YEAR, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         payload = {"diagnosticId": diagnostic.id}
@@ -268,13 +258,13 @@ class TestTeledeclarationCreateApi(APITestCase):
 
         canteen2 = CanteenFactory.create(siret="")
         canteen2.managers.add(user)
-        diagnostic2 = DiagnosticFactory.create(canteen=canteen2, year=LAST_YEAR)
+        diagnostic2 = DiagnosticFactory.create(canteen=canteen2, year=2021)
 
         payload = {"diagnosticId": diagnostic2.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_complete_diagnostic(self):
         """
@@ -286,7 +276,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(
             canteen=canteen,
-            year=LAST_YEAR,
+            year=2021,
             diagnostic_type="COMPLETE",
             value_total_ht=1000,
             value_sustainable_ht=None,
@@ -309,13 +299,13 @@ class TestTeledeclarationCreateApi(APITestCase):
 
         self.assertEqual(teledeclaration.diagnostic, diagnostic)
         self.assertEqual(teledeclaration.canteen, canteen)
-        self.assertEqual(teledeclaration.year, LAST_YEAR)
+        self.assertEqual(teledeclaration.year, 2021)
         self.assertEqual(teledeclaration.applicant, user)
         self.assertEqual(teledeclaration.canteen_siret, canteen.siret)
         self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
         declared_data = teledeclaration.declared_data
-        self.assertEqual(declared_data["year"], LAST_YEAR)
+        self.assertEqual(declared_data["year"], 2021)
 
         json_canteen = declared_data["canteen"]
         self.assertEqual(json_canteen["name"], canteen.name)
@@ -353,9 +343,9 @@ class TestTeledeclarationCreateApi(APITestCase):
             + json_teledeclaration["value_boulangerie_aocaop_igp_stg"],
         )
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
-    def test_create_incomplete_diagnostic_central_kitchen(self):
+    def test_central_kitchen_incomplete_diagnostic(self):
         """
         A diagnostic without total value HT can be teledeclared if a central kitchen
         gave the details.
@@ -369,7 +359,7 @@ class TestTeledeclarationCreateApi(APITestCase):
 
         DiagnosticFactory.create(
             canteen=central_kitchen,
-            year=LAST_YEAR,
+            year=2021,
             value_total_ht=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
@@ -377,8 +367,8 @@ class TestTeledeclarationCreateApi(APITestCase):
 
         diagnostic = DiagnosticFactory.create(
             canteen=canteen,
-            year=LAST_YEAR,
-            value_total_ht=None,
+            year=2021,
+            value_total_ht=None,  # missing
             diagnostic_type=None,
         )
         payload = {"diagnosticId": diagnostic.id}
@@ -391,7 +381,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             teledeclaration.teledeclaration_mode, Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
         )
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_central_kitchen_contains_satellites(self):
         """
@@ -411,7 +401,7 @@ class TestTeledeclarationCreateApi(APITestCase):
 
         diagnostic = DiagnosticFactory.create(
             canteen=central_kitchen,
-            year=LAST_YEAR,
+            year=2021,
             value_total_ht=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
@@ -439,9 +429,9 @@ class TestTeledeclarationCreateApi(APITestCase):
         self.assertEqual(satellite_2_data["name"], satellite_2.name)
         self.assertEqual(satellite_2_data["siret"], satellite_2.siret)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
-    def test_create_diagnostic_without_cc_mode(self):
+    def test_central_kitchen_without_cc_mode(self):
         """
         A diagnostic made by a central kitchen cannot be teledeclared if the mode is null or blank
         """
@@ -451,10 +441,10 @@ class TestTeledeclarationCreateApi(APITestCase):
 
         diagnostic = DiagnosticFactory.create(
             canteen=central_kitchen,
-            year=LAST_YEAR,
+            year=2021,
             value_total_ht=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            central_kitchen_diagnostic_mode=None,
+            central_kitchen_diagnostic_mode=None,  # missing
         )
 
         payload = {"diagnosticId": diagnostic.id}
@@ -472,7 +462,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_does_not_contain_irrelevant_data(self):
         # We create a site canteen that contains irrelevant data "central_producer_siret" and
@@ -486,7 +476,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         )
         canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=LAST_YEAR, value_total_ht=100, central_kitchen_diagnostic_mode="ALL"
+            canteen=canteen, year=2021, value_total_ht=100, central_kitchen_diagnostic_mode="ALL"
         )
         payload = {"diagnosticId": diagnostic.id}
 
@@ -535,7 +525,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         self.assertEqual(canteen_json["daily_meal_count"], 10)
         self.assertEqual(teledeclaration.teledeclaration_mode, "SITE")
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_calculate_teledeclaration_mode(self):
         """
@@ -545,21 +535,21 @@ class TestTeledeclarationCreateApi(APITestCase):
         central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL_SERVING, siret="18704793618411")
         DiagnosticFactory.create(
             canteen=central,
-            year=LAST_YEAR,
+            year=2021,
             value_total_ht=100,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         ),
         cases = [
             {
                 "canteen": CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, siret="79300704800044"),
-                "diagnostic": DiagnosticFactory.create(year=LAST_YEAR, value_total_ht=100),
+                "diagnostic": DiagnosticFactory.create(year=2021, value_total_ht=100),
                 "expected_teledeclaration_mode": "SITE",
             },
             {
                 "canteen": CanteenFactory(
                     production_type=Canteen.ProductionType.ON_SITE_CENTRAL, siret="79300704800044"
                 ),
-                "diagnostic": DiagnosticFactory.create(year=LAST_YEAR, value_total_ht=100),
+                "diagnostic": DiagnosticFactory.create(year=2021, value_total_ht=100),
                 "expected_teledeclaration_mode": "SITE",
             },
             {
@@ -568,13 +558,13 @@ class TestTeledeclarationCreateApi(APITestCase):
                     siret="79300704800044",
                     central_producer_siret="18704793618411",
                 ),
-                "diagnostic": DiagnosticFactory.create(year=LAST_YEAR),
+                "diagnostic": DiagnosticFactory.create(year=2021),
                 "expected_teledeclaration_mode": "SATELLITE_WITHOUT_APPRO",
             },
             {
                 "canteen": CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044"),
                 "diagnostic": DiagnosticFactory.create(
-                    year=LAST_YEAR,
+                    year=2021,
                     value_total_ht=100,
                     central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
                 ),
@@ -585,7 +575,7 @@ class TestTeledeclarationCreateApi(APITestCase):
                     production_type=Canteen.ProductionType.CENTRAL_SERVING, siret="79300704800044"
                 ),
                 "diagnostic": DiagnosticFactory.create(
-                    year=LAST_YEAR,
+                    year=2021,
                     value_total_ht=100,
                     central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
                 ),
@@ -611,7 +601,7 @@ class TestTeledeclarationCreateApi(APITestCase):
                 f"Incorrect mode for canteen with prod type {canteen.production_type}",
             )
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_dynamically_include_line_ministry(self):
         sector_ministry = SectorFactory.create(has_line_ministry=True)
@@ -626,7 +616,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(
             canteen=canteen,
-            year=LAST_YEAR,
+            year=2021,
             value_total_ht=100,
         )
         payload = {"diagnosticId": diagnostic.id}
@@ -659,7 +649,6 @@ class TestTeledeclarationCancel(APITestCase):
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": 1}), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_cancel_unexistent_teledeclaration(self):
         """
@@ -669,7 +658,6 @@ class TestTeledeclarationCancel(APITestCase):
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": 1}), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_cancel_unauthorized(self):
         """
@@ -678,14 +666,15 @@ class TestTeledeclarationCancel(APITestCase):
         manager = UserFactory.create()
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @freeze_time("2021-01-14")
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_cancel(self):
         """
@@ -694,7 +683,9 @@ class TestTeledeclarationCancel(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -706,8 +697,7 @@ class TestTeledeclarationCancel(APITestCase):
         body = response.json()
         self.assertIsNone(body["teledeclaration"])
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
-    @freeze_time("2023-01-14")
+    @freeze_time("2023-03-30")  # during the 2022 campaign
     @authenticate
     def test_cancel_previous_year(self):
         """
@@ -716,7 +706,9 @@ class TestTeledeclarationCancel(APITestCase):
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -725,17 +717,18 @@ class TestTeledeclarationCancel(APITestCase):
         db_teledeclaration = Teledeclaration.objects.get(pk=teledeclaration.id)
         self.assertEqual(db_teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
-    @override_settings(ENABLE_TELEDECLARATION=False)
-    @freeze_time("2023-01-14")
+    @freeze_time("2022-12-25")  # after the 2021 campaign
     @authenticate
-    def test_cancel_out_of_campaign(self):
+    def test_cancel_after_the_campaign(self):
         """
         A submitted teledeclaration cannot be cancelled after the campaign
         """
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -750,7 +743,6 @@ class TestTeledeclarationPdfApi(APITestCase):
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": 1}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_generate_pdf_unexistent_teledeclaration(self):
         """
@@ -759,7 +751,6 @@ class TestTeledeclarationPdfApi(APITestCase):
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": 1}))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
     @authenticate
     def test_generate_pdf_unauthorized(self):
         """
@@ -768,13 +759,15 @@ class TestTeledeclarationPdfApi(APITestCase):
         manager = UserFactory.create()
         canteen = CanteenFactory.create()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_generate_pdf(self):
         """
@@ -782,13 +775,15 @@ class TestTeledeclarationPdfApi(APITestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2023-03-30")  # during the 2022 campaign
     @authenticate
     def test_generate_pdf_legacy_teledeclaration(self):
         """
@@ -818,7 +813,7 @@ class TestTeledeclarationPdfApi(APITestCase):
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @override_settings(ENABLE_TELEDECLARATION=True)
+    @freeze_time("2022-12-25")  # after the 2021 campaign
     @authenticate
     def test_generate_pdf_central(self):
         """
@@ -826,7 +821,9 @@ class TestTeledeclarationPdfApi(APITestCase):
         """
         canteen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, daily_meal_count=345)
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
         self.assertIsNone(teledeclaration.declared_data["canteen"]["daily_meal_count"])
 
