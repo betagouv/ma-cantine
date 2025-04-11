@@ -15,10 +15,6 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     sustainable_percent = serializers.IntegerField()
     diagnostics_count = serializers.IntegerField()
     approPercent = serializers.IntegerField()
-    wastePercent = serializers.IntegerField()
-    diversificationPercent = serializers.IntegerField()
-    plasticPercent = serializers.IntegerField()
-    infoPercent = serializers.IntegerField()
     sector_categories = serializers.DictField()
     epci_error = serializers.CharField(required=False)
 
@@ -52,12 +48,6 @@ class CanteenStatisticsSerializer(serializers.Serializer):
         badge_querysets = badges_for_queryset(diagnostics)
         total_diag = data["diagnostics_count"]
         data["approPercent"] = int(badge_querysets["appro"].count() / total_diag * 100) if total_diag else 0
-        data["wastePercent"] = int(badge_querysets["waste"].count() / total_diag * 100) if total_diag else 0
-        data["diversificationPercent"] = (
-            int(badge_querysets["diversification"].count() / total_diag * 100) if total_diag else 0
-        )
-        data["plasticPercent"] = int(badge_querysets["plastic"].count() / total_diag * 100) if total_diag else 0
-        data["infoPercent"] = int(badge_querysets["info"].count() / total_diag * 100) if total_diag else 0
 
         sector_categories_data = {}
         for category in Sector.Categories:
