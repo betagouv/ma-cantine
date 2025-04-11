@@ -51,19 +51,19 @@ CAMPAIGN_DATES = {
     },
     2024: {
         "teledeclaration_start_date": (
-            convert_date_string_to_datetime(settings.TELEDECLARATION_START_DATE)
+            convert_date_string_to_datetime(settings.TELEDECLARATION_START_DATE_OVERRIDE)
             or datetime(2025, 1, 7, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
         "teledeclaration_end_date": (
-            convert_date_string_to_datetime(settings.TELEDECLARATION_END_DATE, "end")
+            convert_date_string_to_datetime(settings.TELEDECLARATION_END_DATE_OVERRIDE, "end")
             or datetime(2025, 4, 6, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
         "correction_start_date": (
-            convert_date_string_to_datetime(settings.CORRECTION_START_DATE)
+            convert_date_string_to_datetime(settings.CORRECTION_START_DATE_OVERRIDE)
             or datetime(2025, 4, 16, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
         "correction_end_date": (
-            convert_date_string_to_datetime(settings.CORRECTION_END_DATE, "end")
+            convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end")
             or datetime(2025, 4, 30, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
     },
