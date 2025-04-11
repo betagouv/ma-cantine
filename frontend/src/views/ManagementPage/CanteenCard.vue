@@ -69,33 +69,8 @@ export default {
     publicationStatusIsNotPublished() {
       return this.canteen.publicationStatus !== "published"
     },
-    teledeclarationStatus() {
-      const diagnostics = this.canteen.diagnostics
-      const diagnostic = diagnostics.find((d) => d.year === this.teledeclarationYear)
-      const teledeclared = diagnostic && diagnostic.teledeclaration && diagnostic.teledeclaration.status === "SUBMITTED"
-      if (teledeclared) {
-        return {
-          color: "green lighten-4",
-          text: `Télédéclarée (${this.teledeclarationYear})`,
-        }
-      } else {
-        return {
-          color: "red lighten-4",
-          text: `Non-télédéclarée (${this.teledeclarationYear})`,
-        }
-      }
-    },
-    usesCentralKitchenDiagnostics() {
-      return (
-        this.canteen.productionType === "site_cooked_elsewhere" &&
-        this.canteen.centralKitchenDiagnostics?.find((d) => d.year === this.teledeclarationYear)
-      )
-    },
     canteenImage() {
       return this.canteen.leadImage?.image
-    },
-    teledeclarationIsActive() {
-      return window.ENABLE_TELEDECLARATION
     },
     canteenLink() {
       return {
