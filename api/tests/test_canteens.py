@@ -113,9 +113,8 @@ class TestCanteenApi(APITestCase):
             CanteenFactory.create(),
             CanteenFactory.create(),
         ]
-        user = authenticate.user
         for canteen in user_canteens:
-            canteen.managers.add(user)
+            canteen.managers.set([authenticate.user])
 
         response = self.client.get(reverse("user_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -125,7 +124,7 @@ class TestCanteenApi(APITestCase):
             self.assertTrue(any(x["id"] == user_canteen.id for x in body))
 
         for received_canteen in body:
-            self.assertEqual(received_canteen["managers"][0]["email"], user.email)
+            self.assertEqual(received_canteen["managers"][0]["email"], authenticate.user.email)
             self.assertTrue("email" in received_canteen["managerInvitations"][0])
 
         for other_canteen in other_canteens:
@@ -137,8 +136,7 @@ class TestCanteenApi(APITestCase):
         Users can access to the full representation of a single
         canteen as long as they manage it.
         """
-        user_canteen = CanteenFactory.create()
-        user_canteen.managers.add(authenticate.user)
+        user_canteen = CanteenFactory.create(managers=[authenticate.user])
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

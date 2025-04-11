@@ -78,8 +78,7 @@ class TestManagerInvitationApi(APITestCase):
         an unassociated email in the invitations table with the canteen id
         and email an invitation to sign up to the invited manager
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         payload = {"canteenId": canteen.id, "email": "  test@example.com"}
         response = self.client.post(reverse("add_manager"), payload)
         body = response.json()
