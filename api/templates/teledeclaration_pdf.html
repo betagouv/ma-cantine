@@ -136,7 +136,7 @@
         </p>
         <!-- SIMPLIFIED DECLARATION -->
         {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
-            {% if not diagnostic_type == "complète" %}
+            {% if not diagnostic_type == "détaillée" %}
             <ul>
                 <li>
                     <span>Valeur totale en HT des achats alimentaires</span> : {{ value_total_ht|floatformat:2 }} €

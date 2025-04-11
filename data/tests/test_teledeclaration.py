@@ -130,7 +130,9 @@ class TestTeledeclarationModelConstraintsTest(TestCase):
         """
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type="SIMPLE")
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         diagnostic.delete()
