@@ -6,6 +6,37 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.14.0](https://github.com/betagouv/ma-cantine/compare/v2025.13.0...v2025.14.0) (2025-04-11)
+
+
+### Nouveautés
+
+* **Tableau de bord:** affiche dans la vue liste des cantines un message pour modifier son bilan ([#5247](https://github.com/betagouv/ma-cantine/issues/5247)) ([8267983](https://github.com/betagouv/ma-cantine/commit/82679833a519a05116bf78fc8e23ca9f7eff85d1))
+* **Tableau de bord:** affiche les badges dans le tableau de actions ([#5245](https://github.com/betagouv/ma-cantine/issues/5245)) ([b854532](https://github.com/betagouv/ma-cantine/commit/b854532f1f9bd0c4c3045376f97ef64a4cd72812))
+
+
+### Améliorations
+
+* **Bandeau de communication:** mise à jour du texte pour informer sur la campagne de correction ([#5258](https://github.com/betagouv/ma-cantine/issues/5258)) ([ab53493](https://github.com/betagouv/ma-cantine/commit/ab53493608b85809487401e545c08d84786a7f50))
+* **Télédéclaration:** autoriser la TD pendant la campagne de correction (seulement si une TD a été créé pendant la campagne de TD) ([#5256](https://github.com/betagouv/ma-cantine/issues/5256)) ([3d8fb4e](https://github.com/betagouv/ma-cantine/commit/3d8fb4eb543e1dd4b0366596eb4a6646c0121f13))
+* **Télédéclaration:** utiliser les Dates de campagnes pour autoriser la création et l'annulation ([#5253](https://github.com/betagouv/ma-cantine/issues/5253)) ([59f06bc](https://github.com/betagouv/ma-cantine/commit/59f06bcba5964f8f8bb3f6db8999285f18d0e42b))
+
+
+### Corrections (bugs, typos...)
+
+* **Badge:** change la couleur du badge "Bilan non télédéclaré" de rouge à gris ([#5250](https://github.com/betagouv/ma-cantine/issues/5250)) ([ff94770](https://github.com/betagouv/ma-cantine/commit/ff9477077edea1d2d0a0bb9227d7e668e5212f13))
+* **Tableau de bord:** homogénéise le badge affiché de la cantine en vue liste ou carte ([#5248](https://github.com/betagouv/ma-cantine/issues/5248)) ([e3a6510](https://github.com/betagouv/ma-cantine/commit/e3a6510efaf55ce8daffd13869c333a64a477103))
+* **Teledeclaration:** Se baser sur les Teledeclaration et plus les Diagnostics afin d'extraire les données officielles ([#5246](https://github.com/betagouv/ma-cantine/issues/5246)) ([d96a0df](https://github.com/betagouv/ma-cantine/commit/d96a0dffbb05f045ba15e4321be8fa0504779e10))
+
+
+### Technique
+
+* **Cantines:** rajouter des champs dans CanteenActionsSerializer ([#5252](https://github.com/betagouv/ma-cantine/issues/5252)) ([281f93f](https://github.com/betagouv/ma-cantine/commit/281f93fe68efc42357b759c344b491aa51fcd489))
+* **Cantines:** supprime le composant CentralKitchenCard qui faisait doublon ([#5251](https://github.com/betagouv/ma-cantine/issues/5251)) ([a0bf24d](https://github.com/betagouv/ma-cantine/commit/a0bf24de73dac465db0bdf7a31f3e83b770b6369))
+* **Dates de campagnes:** Pas besoin de fournir l'année. Ajout de tests. ([#5254](https://github.com/betagouv/ma-cantine/issues/5254)) ([81b77b7](https://github.com/betagouv/ma-cantine/commit/81b77b7ba5d6ad5b86f47309f2bbf0bae78804f8))
+* **Statistics:** enlever certaines stats non utilisées (et fausses) ([#5257](https://github.com/betagouv/ma-cantine/issues/5257)) ([eb08548](https://github.com/betagouv/ma-cantine/commit/eb085481fe56bd3410451610495087b72939a065))
+* **Télédéclaration:** réorganise les tests (1 class par endpoint) ([#5255](https://github.com/betagouv/ma-cantine/issues/5255)) ([d30fd8c](https://github.com/betagouv/ma-cantine/commit/d30fd8cee6f844893a86ebb46cdc97a609bcf1e8))
+
 ## [2025.13.0](https://github.com/betagouv/ma-cantine/compare/v2025.12.1...v2025.13.0) (2025-04-08)
 
 
