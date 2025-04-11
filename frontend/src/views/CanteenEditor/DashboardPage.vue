@@ -17,13 +17,13 @@
         <v-row class="mt-10 mb-2 px-3 align-center">
           <h3 class="text-h6 font-weight-bold">Qualité de produits en {{ year }}</h3>
         </v-row>
-        <div v-if="statistics.diagnosticsCount === 0">
+        <div v-if="statistics.teledeclarationsCount === 0">
           <p class="mt-8 caption">
             Aucune cantine n'a renseigné des données relatives à la loi EGalim pour l'année {{ year }}.
           </p>
         </div>
         <div v-else>
-          <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} bilans télédéclarés&nbsp;:</p>
+          <p class="mb-8">Parmi les {{ statistics.teledeclarationsCount }} bilans télédéclarés&nbsp;:</p>
           <v-row class="px-2">
             <v-col class="pl-0 pr-1" cols="12" sm="6" md="4">
               <v-card class="fill-height text-center pt-4 pb-2 px-3 d-flex flex-column" outlined>
@@ -89,7 +89,7 @@
           <h3 class="text-h6 font-weight-bold mt-10 mb-2">
             Ces cantines ont aussi réalisé les mesures suivantes en {{ year }}
           </h3>
-          <p class="mb-8">Parmi les {{ statistics.diagnosticsCount }} bilans télédéclarés&nbsp;:</p>
+          <p class="mb-8">Parmi les {{ statistics.teledeclarationsCount }} bilans télédéclarés&nbsp;:</p>
           <v-row class="my-8">
             <v-col cols="12" sm="6" md="5" v-for="measure in otherMeasures" :key="measure.id" class="mb-4">
               <BadgeCard :measure="measure" :percentageAchieved="statistics[measure.badgeId + 'Percent']" />
