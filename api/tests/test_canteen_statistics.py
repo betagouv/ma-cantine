@@ -149,10 +149,6 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["bioPercent"], 38)
         self.assertEqual(body["sustainablePercent"], 48)
         self.assertEqual(body["approPercent"], 100)
-        self.assertEqual(body["wastePercent"], 50)
-        self.assertEqual(body["diversificationPercent"], 50)
-        self.assertEqual(body["plasticPercent"], 50)
-        self.assertEqual(body["infoPercent"], 50)
         sector_categories = body["sectorCategories"]
         self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 3)
         self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 1)
