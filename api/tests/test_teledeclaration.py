@@ -314,7 +314,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic = DiagnosticFactory.create(
             canteen=canteen,
             year=2021,
-            diagnostic_type="COMPLETE",
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
             value_total_ht=1000,
             value_sustainable_ht=None,
         )

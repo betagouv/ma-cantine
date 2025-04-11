@@ -2,6 +2,7 @@
 
 from django.db import migrations
 
+
 #########################################################
 # Copying functions from data.models.Diagnostic because :
 # * it can't be accessed
@@ -36,7 +37,7 @@ def sum_int_with_potential_null(values_to_sum):
 def populate_simplified_diagnostic_values(td, diag):
     # Attention : pour répliquer les données officielles on doit 
     # pour les TD simples : considérer les valeurs nulles comme nulles
-    # pour les TD complètes : considérer les valeurs nulles comme 0
+    # pour les TD détaillées : considérer les valeurs nulles comme 0
     td.value_bio_ht_agg = total_label_bio(diag)
     td.value_sustainable_ht_agg = sum_int_with_potential_null([total_label_label_rouge(diag), total_label_aocaop_igp_stg(diag)])
     td.value_externality_performance_ht_agg = sum_int_with_potential_null([total_label_externalites(diag), total_label_performance(diag)])
