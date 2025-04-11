@@ -35,6 +35,6 @@ class CanteenFactory(factory.django.DjangoModelFactory):
         if extracted:
             for manager in extracted:
                 self.managers.add(manager)
-        else:  # TODO: missing an option to create canteens without managers
+        else:
             for _ in range(random.randint(1, 2)):
                 self.managers.add(UserFactory.create())
