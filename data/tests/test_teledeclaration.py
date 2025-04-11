@@ -6,7 +6,7 @@ from django.utils.timezone import now
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Teledeclaration
+from data.models import Diagnostic, Teledeclaration
 
 year_data = now().year - 1
 mocked_campaign_dates = {
@@ -42,7 +42,7 @@ class TeledeclarationQuerySetTest(TestCase):
                 self,
                 f"valid_canteen_diagnostic_{index + 1}",
                 DiagnosticFactory(
-                    diagnostic_type="SIMPLE",
+                    diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                     year=year_data,
                     creation_date=now().replace(month=3, day=1),
                     canteen=canteen,
@@ -59,7 +59,7 @@ class TeledeclarationQuerySetTest(TestCase):
             )
 
         self.invalid_canteen_diagnostic = DiagnosticFactory(
-            diagnostic_type="SIMPLE",
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=now().replace(month=3, day=1),
             canteen=self.invalid_canteen,
@@ -71,7 +71,7 @@ class TeledeclarationQuerySetTest(TestCase):
         )
 
         self.deleted_canteen_diagnostic = DiagnosticFactory(
-            diagnostic_type="SIMPLE",
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=now().replace(month=3, day=1),
             canteen=self.deleted_canteen,

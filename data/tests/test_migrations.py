@@ -57,7 +57,7 @@ class ApproFieldsTestCase(TestMigrations):
         diag_simple = Diagnostic.objects.create(
             canteen=canteen,
             year=2021,
-            diagnostic_type="SIMPLE",
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             value_total_ht=100.0,
             value_bio_ht=50.0,
         )
@@ -67,7 +67,7 @@ class ApproFieldsTestCase(TestMigrations):
             year=2021,
             declared_data={
                 "teledeclaration": {
-                    "diagnostic_type": "SIMPLE",
+                    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
                     "value_total_ht": 100.0,
                     "value_bio_ht": 50.0,
                     "value_sustainable_ht": None,
@@ -81,7 +81,7 @@ class ApproFieldsTestCase(TestMigrations):
         diag_complete = Diagnostic.objects.create(
             canteen=canteen,
             year=2020,
-            diagnostic_type="COMPLETE",
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
             value_total_ht=200.0,
             value_boissons_label_rouge=10.0,
             value_boulangerie_aocaop_igp_stg=20.0,
@@ -94,7 +94,7 @@ class ApproFieldsTestCase(TestMigrations):
             year=2020,
             declared_data={
                 "teledeclaration": {
-                    "diagnostic_type": "COMPLETE",
+                    "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
                     "value_total_ht": 200.0,
                     "value_boissons_label_rouge": 10.0,
                     "value_boulangerie_aocaop_igp_stg": 20.0,
