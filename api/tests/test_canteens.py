@@ -41,8 +41,7 @@ class TestCanteenApi(APITestCase):
 
     def test_get_canteens_correct_token(self):
         user, token = get_oauth2_token("canteen:read")
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(managers=[user])
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.get(reverse("user_canteens"))
@@ -58,16 +57,13 @@ class TestCanteenApi(APITestCase):
         canteens (even if they are not published).
         """
         user_canteens = [
-            CanteenFactory.create(),
-            CanteenFactory.create(),
+            CanteenFactory.create(managers=[authenticate.user]),
+            CanteenFactory.create(managers=[authenticate.user]),
         ]
         _ = [
             CanteenFactory.create(),
             CanteenFactory.create(),
         ]
-        user = authenticate.user
-        for canteen in user_canteens:
-            canteen.managers.add(user)
 
         response = self.client.get(reverse("user_canteen_previews"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -79,8 +75,7 @@ class TestCanteenApi(APITestCase):
 
     def test_canteen_preview_wrong_token(self):
         user, token = get_oauth2_token("user:read")
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        CanteenFactory.create(managers=[user])
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.get(reverse("user_canteen_previews"))
@@ -88,8 +83,7 @@ class TestCanteenApi(APITestCase):
 
     def test_canteen_preview_correct_token(self):
         user, token = get_oauth2_token("canteen:read")
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(managers=[user])
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.get(reverse("user_canteen_previews"))
@@ -465,13 +459,13 @@ class TestCanteenApi(APITestCase):
         The teledeclaration information should only be visible to
         managers of the canteen
         """
-        user = authenticate.user
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
-        Teledeclaration.create_from_diagnostic(diagnostic, user, Teledeclaration.TeledeclarationStatus.CANCELLED)
+        Teledeclaration.create_from_diagnostic(
+            diagnostic, authenticate.user, Teledeclaration.TeledeclarationStatus.CANCELLED
+        )
 
-        new_teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+        new_teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
         response = self.client.get(reverse("user_canteens"))
         body = response.json().get("results")
         json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))

@@ -68,15 +68,13 @@ class TestTeledeclarationCreateApi(APITestCase):
         A diagnostic with missing total_ht information cannot be used to
         create a teledeclaration
         """
-        user = authenticate.user
-        canteen = CanteenFactory.create(central_producer_siret=None)
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(central_producer_siret=None, managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, value_total_ht=None, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
+
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
-
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @freeze_time("2022-08-30")  # during the 2021 campaign
@@ -85,15 +83,13 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         A diagnostic with a bad year cannot be used to create a teledeclaration
         """
-        user = authenticate.user
-        canteen = CanteenFactory.create(central_producer_siret=None)
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(central_producer_siret=None, managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2019, value_total_ht=100, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
+
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
-
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @freeze_time("2022-08-30")  # during the 2021 campaign
@@ -102,9 +98,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         A teledeclaration can be created from a valid Diagnostic
         """
-        user = authenticate.user
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             value_externality_performance_ht=0,
             canteen=canteen,
@@ -112,9 +106,9 @@ class TestTeledeclarationCreateApi(APITestCase):
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             value_bio_ht=20,
         )
+
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         body = response.json()
@@ -126,7 +120,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         self.assertEqual(teledeclaration.diagnostic, diagnostic)
         self.assertEqual(teledeclaration.canteen, canteen)
         self.assertEqual(teledeclaration.year, 2021)
-        self.assertEqual(teledeclaration.applicant, user)
+        self.assertEqual(teledeclaration.applicant, authenticate.user)
         self.assertEqual(teledeclaration.canteen_siret, canteen.siret)
         self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
@@ -205,9 +199,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         A teledeclaration cannot be created after the campaign
         """
-        user = authenticate.user
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             value_externality_performance_ht=0,
             canteen=canteen,
@@ -225,9 +217,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         A teledeclaration can be created during the correction campaign
         ONLY if a teledeclaration was already created during the campaign
         """
-        user = authenticate.user
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             value_externality_performance_ht=0,
             canteen=canteen,
@@ -243,7 +233,7 @@ class TestTeledeclarationCreateApi(APITestCase):
 
         # submit a teledeclaration during the campaign
         with freeze_time("2025-03-30"):  # during the 2024 campaign
-            teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+            teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         # teledeclaration created during the campaign
         with freeze_time("2025-04-20"):  # during the 2024 correction campaign
@@ -262,13 +252,11 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         We can only have one submitted teledeclaration per canteen per year
         """
-        user = authenticate.user
-        canteen = CanteenFactory.create(siret="12345678912345")
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(siret="12345678912345", managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
-        Teledeclaration.create_from_diagnostic(diagnostic, user)
+        Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -281,20 +269,17 @@ class TestTeledeclarationCreateApi(APITestCase):
         A few canteens don't have SIRETs - make sure teledeclarations for
         different canteens with no SIRET aren't flagged as duplicates
         """
-        user = authenticate.user
-        canteen = CanteenFactory.create(siret="")
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(siret="", managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
-        Teledeclaration.create_from_diagnostic(diagnostic, user)
+        Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        canteen2 = CanteenFactory.create(siret="")
-        canteen2.managers.add(user)
+        canteen2 = CanteenFactory.create(siret="", managers=[authenticate.user])
         diagnostic2 = DiagnosticFactory.create(canteen=canteen2, year=2021)
 
         payload = {"diagnosticId": diagnostic2.id}
@@ -308,9 +293,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         When doing a TD with a complete diagnostic, the adequate fields must be
         present in the teledeclaration
         """
-        user = authenticate.user
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen,
             year=2021,
@@ -337,7 +320,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         self.assertEqual(teledeclaration.diagnostic, diagnostic)
         self.assertEqual(teledeclaration.canteen, canteen)
         self.assertEqual(teledeclaration.year, 2021)
-        self.assertEqual(teledeclaration.applicant, user)
+        self.assertEqual(teledeclaration.applicant, authenticate.user)
         self.assertEqual(teledeclaration.canteen_siret, canteen.siret)
         self.assertEqual(teledeclaration.status, Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
@@ -387,12 +370,12 @@ class TestTeledeclarationCreateApi(APITestCase):
         A diagnostic without total value HT can be teledeclared if a central kitchen
         gave the details.
         """
-        user = authenticate.user
         central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044")
         canteen = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="79300704800044"
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret="79300704800044",
+            managers=[authenticate.user],
         )
-        canteen.managers.add(user)
 
         DiagnosticFactory.create(
             canteen=central_kitchen,
@@ -424,9 +407,11 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         A diagnostic from a central kitchen must contain the satellites added at that moment
         """
-        user = authenticate.user
         central_kitchen = CanteenFactory.create(
-            production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044", satellite_canteens_count=3
+            production_type=Canteen.ProductionType.CENTRAL,
+            siret="79300704800044",
+            satellite_canteens_count=3,
+            managers=[authenticate.user],
         )
         satellite_1 = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="79300704800044"
@@ -434,7 +419,6 @@ class TestTeledeclarationCreateApi(APITestCase):
         satellite_2 = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="79300704800044"
         )
-        central_kitchen.managers.add(user)
 
         diagnostic = DiagnosticFactory.create(
             canteen=central_kitchen,
@@ -471,9 +455,9 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         A diagnostic made by a central kitchen cannot be teledeclared if the mode is null or blank
         """
-        user = authenticate.user
-        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044")
-        central_kitchen.managers.add(user)
+        central_kitchen = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044", managers=[authenticate.user]
+        )
 
         diagnostic = DiagnosticFactory.create(
             canteen=central_kitchen,
@@ -508,8 +492,8 @@ class TestTeledeclarationCreateApi(APITestCase):
             satellite_canteens_count=3,
             central_producer_siret="18704793618411",
             daily_meal_count=10,
+            managers=[authenticate.user],
         )
-        canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, value_total_ht=100, central_kitchen_diagnostic_mode="ALL"
         )
@@ -647,8 +631,8 @@ class TestTeledeclarationCreateApi(APITestCase):
             satellite_canteens_count=3,
             sectors=[sector_other],
             line_ministry="affaires_etrangeres",
+            managers=[authenticate.user],
         )
-        canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(
             canteen=canteen,
             year=2021,
@@ -715,13 +699,11 @@ class TestTeledeclarationCancel(APITestCase):
         """
         A submitted teledeclaration can be cancelled
         """
-        user = authenticate.user
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -738,13 +720,11 @@ class TestTeledeclarationCancel(APITestCase):
         """
         A submitted teledeclaration cannot be cancelled for a previous campaign
         """
-        user = authenticate.user
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -758,13 +738,11 @@ class TestTeledeclarationCancel(APITestCase):
         """
         A submitted teledeclaration cannot be cancelled after the campaign
         """
-        user = authenticate.user
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -777,14 +755,12 @@ class TestTeledeclarationCancel(APITestCase):
         """
         A submitted teledeclaration can be cancelled during the correction campaign
         """
-        user = authenticate.user
-        canteen = CanteenFactory.create()
-        canteen.managers.add(user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
         with freeze_time("2025-03-30"):  # during the 2024 campaign
-            teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+            teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         with freeze_time("2025-04-20"):  # during the 2024 correction campaign
             response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -832,8 +808,7 @@ class TestTeledeclarationPdfApi(APITestCase):
         """
         The user can get a justificatif in PDF for a teledeclaration
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
@@ -849,8 +824,7 @@ class TestTeledeclarationPdfApi(APITestCase):
         The user can get a justificatif in PDF for a teledeclaration
         with minimal information
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type=None)
         teledeclaration = TeledeclarationFactory(
             canteen=canteen,
@@ -878,8 +852,9 @@ class TestTeledeclarationPdfApi(APITestCase):
         """
         A central kitchen should be able to generate a PDF
         """
-        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, daily_meal_count=345)
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL, daily_meal_count=345, managers=[authenticate.user]
+        )
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
