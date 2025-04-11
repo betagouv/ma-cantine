@@ -40,9 +40,8 @@ class TestRelationCentralSatellite(APITestCase):
             central_producer_siret=central_siret,
             production_type=Canteen.ProductionType.ON_SITE,
         )
-        user = authenticate.user
         for canteen in [central, satellite_1, not_a_satellite]:
-            canteen.managers.add(user)
+            canteen.managers.add(authenticate.user)
 
         response = self.client.get(reverse("list_create_update_satellite", kwargs={"canteen_pk": central.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -81,9 +80,8 @@ class TestRelationCentralSatellite(APITestCase):
         )
         # the following canteen should not be returned
         CanteenFactory.create()
-        user = authenticate.user
         for canteen in [central, satellite_1]:
-            canteen.managers.add(user)
+            canteen.managers.add(authenticate.user)
 
         response = self.client.get(reverse("list_create_update_satellite", kwargs={"canteen_pk": central.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -230,8 +228,9 @@ class TestRelationCentralSatellite(APITestCase):
         If the satellite already has managers, the CC managers do not get automatic access
         """
         satellite_siret = "89834106501485"
-        existing_canteen = CanteenFactory.create(siret=satellite_siret, production_type=Canteen.ProductionType.ON_SITE)
-        existing_canteen.managers.add(UserFactory.create())
+        existing_canteen = CanteenFactory.create(
+            siret=satellite_siret, production_type=Canteen.ProductionType.ON_SITE, managers=[UserFactory.create()]
+        )
         central_siret = "08376514425566"
         canteen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
         canteen.managers.add(authenticate.user)

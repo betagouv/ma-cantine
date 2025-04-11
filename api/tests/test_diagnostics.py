@@ -352,7 +352,6 @@ class TestDiagnosticsApi(APITestCase):
         diagnostic.canteen.managers.add(authenticate.user)
 
         payload = {"year": 2020}
-
         response = self.client.patch(
             reverse(
                 "diagnostic_edition",
@@ -371,7 +370,6 @@ class TestDiagnosticsApi(APITestCase):
         diagnostic.canteen.managers.add(user)
 
         payload = {"year": 2020}
-
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.patch(
             reverse(

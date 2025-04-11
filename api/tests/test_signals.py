@@ -34,8 +34,8 @@ class TestSignals(APITestCase):
         user, token = get_oauth2_token("canteen:write")
         diagnostic = DiagnosticFactory.create(year=2021)
         diagnostic.canteen.managers.add(user)
-        payload = {"diagnosticId": diagnostic.id}
 
+        payload = {"diagnosticId": diagnostic.id}
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, 403)

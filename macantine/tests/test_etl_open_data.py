@@ -122,9 +122,7 @@ class TestETLOpenData(TestCase):
         self.assertEqual(etl_canteen.len_dataset(), 0, "There shoud be an empty dataframe")
 
         # Adding data in the db
-        canteen_1 = CanteenFactory.create(siret="98648424243607")
-        canteen_1.managers.add(UserFactory.create())
-
+        canteen_1 = CanteenFactory.create(siret="98648424243607", managers=[UserFactory.create()])
         canteen_2 = CanteenFactory.create(siret="98648424243607")  # Another canteen, but without a manager
         canteen_2.managers.clear()
 
@@ -190,9 +188,8 @@ class TestETLOpenData(TestCase):
         )
 
         # Adding data in the db
-        canteen_1 = CanteenFactory.create()
-        canteen_1.managers.add(UserFactory.create())
-        canteen_2 = CanteenFactory.create()
+        canteen_1 = CanteenFactory.create(managers=[UserFactory.create()])
+        canteen_2 = CanteenFactory.create()  # Another canteen, but without a manager
         canteen_2.managers.clear()
 
         etl_canteen = ETL_OPEN_DATA_CANTEEN()
