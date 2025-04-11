@@ -18,8 +18,8 @@
         du {{ correctionStartDate }} au {{ correctionEndDate }} {{ currentYear }}
       </h2>
       <p class="mb-0">
-        Valable uniquement pour les établissements qui ont validé leur télé-déclaration. Depuis votre bilan, vous pouvez
-        corriger vos informations si besoin. Attention la télé-déclaration rectificative doit être déposée avant le
+        Valable uniquement pour les établissements qui ont validé leur télédéclaration. Depuis votre bilan, vous pouvez
+        corriger vos informations si besoin. Attention la télédéclaration rectificative doit être déposée avant le
         {{ correctionEndDate }}.
       </p>
     </div>
