@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.14.2](https://github.com/betagouv/ma-cantine/compare/v2025.14.1...v2025.14.2) (2025-04-11)
+
+
+### Corrections (bugs, typos...)
+
+* **Sur Mon Territoire:** Renommer diagnostics count en teledeleclaration count ([#5265](https://github.com/betagouv/ma-cantine/issues/5265)) ([21c9e7c](https://github.com/betagouv/ma-cantine/commit/21c9e7c3da4d250705b45a1b2b09ed1badbc7852))
+
 ## [2025.14.1](https://github.com/betagouv/ma-cantine/compare/v2025.14.0...v2025.14.1) (2025-04-11)
 
 
