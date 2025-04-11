@@ -2,6 +2,7 @@ import logging
 
 from django.db.models import Sum
 from rest_framework import serializers
+
 from common.utils.badges import badges_for_queryset
 from data.models import Sector
 
@@ -60,7 +61,7 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
         data["sustainable_percent"] = 0
 
     badge_querysets = badges_for_queryset(teledeclarations)
-    total_diag = data["diagnostics_count"]
+    total_diag = data["teledeclarations_count"]
     data["approPercent"] = int(badge_querysets["appro"].count() / total_diag * 100) if total_diag else 0
     return data
 
