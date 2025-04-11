@@ -6,6 +6,24 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.14.1](https://github.com/betagouv/ma-cantine/compare/v2025.14.0...v2025.14.1) (2025-04-11)
+
+
+### Corrections (bugs, typos...)
+
+* **Statistiques:** Filter les TD dont les valeurs totales d achats sont arrondies à 0 ([#5262](https://github.com/betagouv/ma-cantine/issues/5262)) ([f8fb98f](https://github.com/betagouv/ma-cantine/commit/f8fb98f183feee63445009640985ac984c41fdf5))
+
+
+### Documentation
+
+* **README:** mise à jour des liens. Ajout de la migration vue3 ([#5260](https://github.com/betagouv/ma-cantine/issues/5260)) ([38aa025](https://github.com/betagouv/ma-cantine/commit/38aa0256f2c52f2cca537078431dc47797050550))
+
+
+### Technique
+
+* **Dates de campagnes:** renommer les variables d'env avec OVERRIDE pour être d'avantage explicite ([#5261](https://github.com/betagouv/ma-cantine/issues/5261)) ([ceabca4](https://github.com/betagouv/ma-cantine/commit/ceabca491abe2346357970b2e50a4867f740d3bd))
+* **Tests:** Rendre déterministe des test liés à la cantines ([#5264](https://github.com/betagouv/ma-cantine/issues/5264)) ([21767dd](https://github.com/betagouv/ma-cantine/commit/21767dd09f2217efb298c280588da688b280c36f))
+
 ## [2025.14.0](https://github.com/betagouv/ma-cantine/compare/v2025.13.0...v2025.14.0) (2025-04-11)
 
 
