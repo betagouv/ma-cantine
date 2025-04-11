@@ -217,6 +217,6 @@ def make_optional_positive_decimal_field(**kwargs):
 
 def sum_int_with_potential_null(values_to_sum):
     if all(value is None for value in values_to_sum):
-        return None
+        return 0
     else:
         return sum(value for value in values_to_sum if value is not None)
