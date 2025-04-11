@@ -33,10 +33,23 @@ class CustomJSONEncoder(DjangoJSONEncoder):
 
 
 class TeledeclarationQuerySet(models.QuerySet):
+    
     def submitted(self):
         return self.filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
+    def aberrant_values(self):
+        return self.exclude(meal_price__gt=20, value_total_ht__gt=1000000)
+
+    def filter_valid_diag_for_iso_purpose(self):
+        """
+        In order to stay completely identical to previous year data, we need to filter this TD
+        This TD has corrupted aggregation bio value in its diagnostic, probably due to an error at that time in the diag create
+        Now that we don't use the diag data, we are not impacted by this corrupted data
+        """
+        return self.exclude(id=13445)
+
     def for_year(self, year):
+        year = int(year)
         return self.filter(
             year=year,
             creation_date__range=(
@@ -52,25 +65,28 @@ class TeledeclarationQuerySet(models.QuerySet):
         return (
             self.select_related("canteen")
             .filter(canteen_id__isnull=False)
-            .filter(canteen_has_siret_or_siren_unite_legale_query())
             .exclude(
                 canteen__deletion_date__range=(
                     CAMPAIGN_DATES[year]["teledeclaration_start_date"],
                     CAMPAIGN_DATES[year]["teledeclaration_end_date"],
                 )
-            )
+            )  # Chaine de traitement n°6
+            .filter(canteen_has_siret_or_siren_unite_legale_query())  # Chaine de traitement n°7
         )
 
     def for_stat(self, year):
-        return (
-            self.canteen_for_stat(year)
-            .submitted_for_year(year)
-            .select_related("diagnostic")
-            .filter(
-                diagnostic__value_total_ht__isnull=False,
-                diagnostic__value_bio_ht__isnull=False,
+        year = int(year)
+        if year in CAMPAIGN_DATES.keys():
+            return (
+                self.submitted_for_year(year)
+                .filter(
+                    ~Q(teledeclaration_mode="SATELLITE_WITHOUT_APPRO"),
+                    value_bio_ht_agg__isnull=False,
+                )
+                .canteen_for_stat(year)  # Chaine de traitement n°6
+                .aberrant_values()  # Chaîne de traitement
+                .filter_valid_diag_for_iso_purpose()
             )
-        )
 
 
 class Teledeclaration(models.Model):
@@ -135,6 +151,8 @@ class Teledeclaration(models.Model):
     value_egalim_others_ht_agg = models.IntegerField(
         null=True, blank=True, verbose_name="Champ Autres Egalim. En cas de TD complète, ce champ est aggrégé"
     )
+    yearly_meal_count = models.IntegerField(null=True, blank=True, verbose_name="Nombre de repas servis par an")
+    meal_price = models.FloatField(null=True, blank=True, verbose_name="Coût denrées")
 
     history = HistoricalRecords(
         bases=[
@@ -293,6 +311,8 @@ class Teledeclaration(models.Model):
         if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
             diagnostic.populate_simplified_diagnostic_values()
 
+        meal_price = diagnostic.value_total_ht / canteen.yearly_meal_count if canteen.yearly_meal_count else None
+
         return Teledeclaration.objects.create(
             applicant=applicant,
             year=diagnostic.year,
@@ -308,6 +328,8 @@ class Teledeclaration(models.Model):
             value_sustainable_ht_agg=diagnostic.value_sustainable_ht,
             value_externality_performance_ht_agg=diagnostic.value_externality_performance_ht,
             value_egalim_others_ht_agg=diagnostic.value_egalim_others_ht,
+            yearly_meal_count=canteen.yearly_meal_count,
+            meal_price=meal_price,
         )
 
     @staticmethod

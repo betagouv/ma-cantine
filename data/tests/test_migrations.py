@@ -36,8 +36,8 @@ class TestMigrations(TestCase):
 
 
 class ApproFieldsTestCase(TestMigrations):
-    migrate_from = "0170_repopulate_fields_agg"
-    migrate_to = "0171_repopulate_fields_agg_null"
+    migrate_from = "0172_historicalteledeclaration_meal_price_and_more"
+    migrate_to = "0173_repopulate_fields_agg_meal_price"
 
     def setUpBeforeMigration(self, apps):
         Teledeclaration = apps.get_model("data", "Teledeclaration")
@@ -70,6 +70,7 @@ class ApproFieldsTestCase(TestMigrations):
                     "diagnostic_type": "SIMPLE",
                     "value_total_ht": 100.0,
                     "value_bio_ht": 50.0,
+                    "value_sustainable_ht": None,
                 },
                 "canteen": {"yearly_meal_count": 1000},
             },
@@ -84,6 +85,8 @@ class ApproFieldsTestCase(TestMigrations):
             value_total_ht=200.0,
             value_boissons_label_rouge=10.0,
             value_boulangerie_aocaop_igp_stg=20.0,
+            value_boulangerie_externalites=0,
+            value_boissons_externalites=None,
         )
 
         # Create a teledeclaration for the complete diagnostic
@@ -95,6 +98,8 @@ class ApproFieldsTestCase(TestMigrations):
                     "value_total_ht": 200.0,
                     "value_boissons_label_rouge": 10.0,
                     "value_boulangerie_aocaop_igp_stg": 20.0,
+                    "value_boulangerie_externalites": 0,
+                    "value_boissons_externalites": None,
                 },
                 "canteen": {"yearly_meal_count": 1000},
             },
@@ -109,7 +114,10 @@ class ApproFieldsTestCase(TestMigrations):
         self.assertIsNotNone(td_simple.value_bio_ht_agg)
         self.assertIsNotNone(td_simple.value_total_ht)
         self.assertEqual(td_simple.value_total_ht, 100)
+        self.assertIsNone(td_simple.value_sustainable_ht_agg)
 
         td_complete = Teledeclaration.objects.get(pk=self.td_complete.id)
         self.assertEqual(td_complete.value_sustainable_ht_agg, 10 + 20)
-        self.assertIsNone(td_complete.value_bio_ht_agg)
+        self.assertEqual(td_complete.value_externality_performance_ht_agg, 0)
+        self.assertEqual(td_complete.value_bio_ht_agg, None)
+        self.assertEqual(td_complete.yearly_meal_count, 1000)

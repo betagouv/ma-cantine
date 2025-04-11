@@ -63,6 +63,8 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "value_sustainable_ht_agg",
         "value_externality_performance_ht_agg",
         "value_egalim_others_ht_agg",
+        "meal_price",
+        "yearly_meal_count",
         "declared_data",
         "teledeclaration_mode",
         "change_reason",
@@ -81,6 +83,8 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "value_sustainable_ht_agg",
         "value_externality_performance_ht_agg",
         "value_egalim_others_ht_agg",
+        "meal_price",
+        "yearly_meal_count",
         "declared_data",
         "teledeclaration_mode",
     )

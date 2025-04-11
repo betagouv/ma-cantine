@@ -6,7 +6,6 @@ from django.db import models
 from django.db.models import Q
 from simple_history.models import HistoricalRecords
 
-# from data.models import Teledeclaration
 from data.department_choices import Department
 from data.fields import ChoiceArrayField
 from data.region_choices import Region
@@ -14,8 +13,8 @@ from data.utils import (
     get_diagnostic_lower_limit_year,
     get_diagnostic_upper_limit_year,
     make_optional_positive_decimal_field,
+    sum_int_with_potential_null,
 )
-from macantine.utils import CAMPAIGN_DATES
 
 from .canteen import Canteen
 
@@ -31,45 +30,6 @@ def canteen_has_siret_or_siren_unite_legale_query():
 class DiagnosticQuerySet(models.QuerySet):
     def is_filled(self):
         return self.filter(value_total_ht__gt=0)
-
-    def td_submitted_for_year(self, year):
-        year = int(year)
-        from .teledeclaration import Teledeclaration
-
-        return self.filter(
-            year=year,
-            teledeclaration__creation_date__range=(
-                CAMPAIGN_DATES[year]["teledeclaration_start_date"],
-                CAMPAIGN_DATES[year]["teledeclaration_end_date"],
-            ),
-            teledeclaration__status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-        )
-
-    def canteen_for_stat(self, year):
-        return (
-            self.select_related("canteen")
-            .filter(canteen__id__isnull=False)
-            .filter(canteen_has_siret_or_siren_unite_legale_query())
-            .exclude(canteen__siret="")
-            .exclude(
-                canteen__deletion_date__range=(
-                    CAMPAIGN_DATES[year]["teledeclaration_start_date"],
-                    CAMPAIGN_DATES[year]["teledeclaration_end_date"],
-                )
-            )
-        )
-
-    def for_stat(self, year):
-        year = int(year)
-
-        return (
-            self.canteen_for_stat(year)
-            .td_submitted_for_year(year)
-            .filter(
-                value_total_ht__isnull=False,
-                value_bio_ht__isnull=False,
-            )
-        )
 
 
 class Diagnostic(models.Model):
@@ -965,14 +925,21 @@ class Diagnostic(models.Model):
 
     def populate_simplified_diagnostic_values(self):
         self.value_bio_ht = self.total_label_bio
-        self.value_sustainable_ht = self.total_label_label_rouge + self.total_label_aocaop_igp_stg
-        self.value_externality_performance_ht = self.total_label_externalites + self.total_label_performance
-        self.value_egalim_others_ht = (
-            self.total_label_hve
-            + self.total_label_peche_durable
-            + self.total_label_rup
-            + self.total_label_commerce_equitable
-            + self.total_label_fermier
+
+        self.value_sustainable_ht = sum_int_with_potential_null(
+            [self.total_label_label_rouge, self.total_label_aocaop_igp_stg]
+        )
+        self.value_externality_performance_ht = sum_int_with_potential_null(
+            [self.total_label_externalites, self.total_label_performance]
+        )
+        self.value_egalim_others_ht = sum_int_with_potential_null(
+            [
+                self.total_label_hve,
+                self.total_label_peche_durable,
+                self.total_label_rup,
+                self.total_label_commerce_equitable,
+                self.total_label_fermier,
+            ]
         )
         total_meat_egalim = total_meat_france = total_fish_egalim = 0
         egalim_labels = [
@@ -1100,11 +1067,14 @@ class Diagnostic(models.Model):
             "autres",
         ]
         sum = 0
+        is_null = True
         for family in families:
             value = getattr(self, f"value_{family}_{label}")
-            if value:
+            if value is not None:
+                is_null = False
                 sum = sum + value
-        return sum
+        if not is_null:
+            return sum
 
     def family_sum(self, family):
         labels = [
