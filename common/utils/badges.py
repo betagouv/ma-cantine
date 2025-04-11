@@ -10,7 +10,10 @@ def badges_for_queryset(teledeclaration_year_queryset):
     appro_total = teledeclaration_year_queryset
     if appro_total:
         appro_total = teledeclaration_year_queryset.count()
-        appro_share_query = teledeclaration_year_queryset.annotate(
+        appro_share_query = teledeclaration_year_queryset.filter(
+            value_total_ht__gt=0
+        )  # Avoid division by zero for TD with value_total_ht < 1, rounded t 0 when casting as int
+        appro_share_query = appro_share_query.annotate(
             bio_share=Cast(Sum("value_bio_ht_agg", default=0), FloatField())
             / Cast(Sum("value_total_ht"), FloatField())
         )
