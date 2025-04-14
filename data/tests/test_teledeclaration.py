@@ -13,6 +13,8 @@ mocked_campaign_dates = {
     year_data: {
         "teledeclaration_start_date": now().replace(month=1, day=1, hour=0, minute=0, second=0),
         "teledeclaration_end_date": now().replace(month=4, day=30, hour=23, minute=59, second=59),
+        "correction_start_date": now().replace(month=6, day=1, hour=0, minute=0, second=0),
+        "correction_end_date": now().replace(month=8, day=31, hour=23, minute=59, second=59),
     }
 }
 
@@ -34,6 +36,7 @@ class TeledeclarationQuerySetTest(TestCase):
         self.valid_canteen_3 = CanteenFactory(
             siret="12345678901235", siren_unite_legale="123456789", deletion_date=None
         )
+        self.valid_canteen_4 = CanteenFactory(siret="12345678901230", deletion_date=None)
         self.invalid_canteen = CanteenFactory(siret="", deletion_date=None)  # siret missing
         self.deleted_canteen = CanteenFactory(
             siret="56789012345678",
@@ -55,6 +58,17 @@ class TeledeclarationQuerySetTest(TestCase):
             teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant=UserFactory.create())
             setattr(self, f"valid_canteen_td_{index + 1}", teledeclaration)
 
+        self.valid_canteen_diagnostic_correction = DiagnosticFactory(
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=year_data,
+            creation_date=now().replace(month=7, day=1),
+            canteen=self.valid_canteen_4,
+            value_total_ht=1000.00,
+            value_bio_ht=200.00,
+        )
+        self.valid_correction_td = Teledeclaration.create_from_diagnostic(
+            self.valid_canteen_diagnostic_correction, applicant=UserFactory.create()
+        )
         self.invalid_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
@@ -82,7 +96,7 @@ class TeledeclarationQuerySetTest(TestCase):
     def test_submitted_for_year(self):
         with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
             teledeclarations = Teledeclaration.objects.submitted_for_year(year_data)
-        self.assertEqual(teledeclarations.count(), 5)
+        self.assertEqual(teledeclarations.count(), 6)
         self.assertIn(self.valid_canteen_td_1, teledeclarations)
         self.assertIn(self.invalid_canteen_td, teledeclarations)
         self.assertIn(self.deleted_canteen_td, teledeclarations)
@@ -90,7 +104,7 @@ class TeledeclarationQuerySetTest(TestCase):
     def test_for_stat(self):
         with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
             teledeclarations = Teledeclaration.objects.for_stat(year_data)
-        self.assertEqual(teledeclarations.count(), 3)
+        self.assertEqual(teledeclarations.count(), 4)
         self.assertIn(self.valid_canteen_td_1, teledeclarations)
         self.assertNotIn(self.invalid_canteen_td, teledeclarations)  # canteen without siret
         self.assertNotIn(self.deleted_canteen_td, teledeclarations)  # canteen deleted
