@@ -12,7 +12,7 @@ year_data = now().year - 1
 mocked_campaign_dates = {
     year_data: {
         "teledeclaration_start_date": now().replace(month=1, day=1, hour=0, minute=0, second=0),
-        "teledeclaration_end_date": now().replace(month=12, day=31, hour=23, minute=59, second=59),
+        "teledeclaration_end_date": now().replace(month=4, day=30, hour=23, minute=59, second=59),
     }
 }
 
@@ -37,7 +37,7 @@ class TeledeclarationQuerySetTest(TestCase):
         self.invalid_canteen = CanteenFactory(siret="", deletion_date=None)  # siret missing
         self.deleted_canteen = CanteenFactory(
             siret="56789012345678",
-            deletion_date=now().replace(month=6, day=1),
+            deletion_date=now().replace(month=3, day=1),
         )
 
     def _create_diagnostics_and_teledeclarations(self):
