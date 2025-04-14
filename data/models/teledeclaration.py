@@ -32,6 +32,26 @@ class CustomJSONEncoder(DjangoJSONEncoder):
         return super(CustomJSONEncoder, self).default(o)
 
 
+def in_teledeclaration_campaign_query(year):
+    year = int(year)
+    return Q(
+        creation_date__range=(
+            CAMPAIGN_DATES[year]["teledeclaration_start_date"],
+            CAMPAIGN_DATES[year]["teledeclaration_end_date"],
+        )
+    )
+
+
+def in_correction_campaign_query(year):
+    year = int(year)
+    return Q(
+        creation_date__range=(
+            CAMPAIGN_DATES[year]["correction_start_date"],
+            CAMPAIGN_DATES[year]["correction_end_date"],
+        )
+    )
+
+
 class TeledeclarationQuerySet(models.QuerySet):
 
     def submitted(self):
@@ -45,20 +65,11 @@ class TeledeclarationQuerySet(models.QuerySet):
 
     def in_campaign(self, year):
         year = int(year)
-        return self.filter(
-            Q(
-                creation_date__range=(
-                    CAMPAIGN_DATES[year]["teledeclaration_start_date"],
-                    CAMPAIGN_DATES[year]["teledeclaration_end_date"],
-                )
-            )
-            | Q(
-                creation_date__range=(
-                    CAMPAIGN_DATES[year]["correction_start_date"],
-                    CAMPAIGN_DATES[year]["correction_end_date"],
-                )
-            )
-        )
+        if year in CAMPAIGN_DATES:
+            if "correction_stat_date" in CAMPAIGN_DATES[year].keys():
+                return self.filter(in_teledeclaration_campaign_query(year) | in_correction_campaign_query(year))
+            else:
+                return self.filter(in_teledeclaration_campaign_query(year))
 
     def submitted_for_year(self, year):
         return self.submitted().in_year(year).in_campaign(year)
