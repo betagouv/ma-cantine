@@ -21,11 +21,14 @@ class TeledeclarationQuerySetTest(TestCase):
     def setUp(self):
         """
         Set up mock data for testing.
-        The date is freezed to an old date in order to have freedom to create teledeclaration with correct date
-        (using fake time direclty corrupts the QuerySet Date Range filter)
+        The date is frozen to an old date to allow creating teledeclarations with correct dates
+        (using fake time directly corrupts the QuerySet Date Range filter).
         """
+        self._create_canteens()
+        self._create_diagnostics_and_teledeclarations()
 
-        # Create canteens and diagnostics
+    def _create_canteens(self):
+        """Create canteens for testing."""
         self.valid_canteen_1 = CanteenFactory(siret="12345678901234", deletion_date=None)
         self.valid_canteen_2 = CanteenFactory(siren_unite_legale="123456789", deletion_date=None)
         self.valid_canteen_3 = CanteenFactory(
@@ -37,26 +40,20 @@ class TeledeclarationQuerySetTest(TestCase):
             deletion_date=now().replace(month=6, day=1),
         )
 
+    def _create_diagnostics_and_teledeclarations(self):
+        """Create diagnostics and teledeclarations for testing."""
         for index, canteen in enumerate([self.valid_canteen_1, self.valid_canteen_2, self.valid_canteen_3]):
-            setattr(
-                self,
-                f"valid_canteen_diagnostic_{index + 1}",
-                DiagnosticFactory(
-                    diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-                    year=year_data,
-                    creation_date=now().replace(month=3, day=1),
-                    canteen=canteen,
-                    value_total_ht=1000.00,
-                    value_bio_ht=200.00,
-                ),
+            diagnostic = DiagnosticFactory(
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                year=year_data,
+                creation_date=now().replace(month=3, day=1),
+                canteen=canteen,
+                value_total_ht=1000.00,
+                value_bio_ht=200.00,
             )
-            setattr(
-                self,
-                f"valid_canteen_td_{index + 1}",
-                Teledeclaration.create_from_diagnostic(
-                    getattr(self, f"valid_canteen_diagnostic_{index + 1}"), applicant=UserFactory.create()
-                ),
-            )
+            setattr(self, f"valid_canteen_diagnostic_{index + 1}", diagnostic)
+            teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant=UserFactory.create())
+            setattr(self, f"valid_canteen_td_{index + 1}", teledeclaration)
 
         self.invalid_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
