@@ -13,7 +13,7 @@
       <v-card-text>
         <p class="mb-0">
           L’action de correction annule la télédéclaration déjà en place pour vous permettre de modifier les valeurs de
-          votre choix. Les informations sont pré-remplis avec vos dernières données. Une fois corrigé, vous devez
+          votre choix. Les informations sont pré-remplis avec vos dernières données. Une fois corrigée, vous devez
           soumettre de nouveau votre télédéclaration conformément à l'arrêté du 14 septembre 2022.
         </p>
       </v-card-text>
