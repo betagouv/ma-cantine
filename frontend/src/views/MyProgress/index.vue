@@ -36,6 +36,7 @@
       </v-col>
     </v-row>
     <v-row v-if="canteen" class="mt-5 mt-md-10">
+      <!-- Sidebar -->
       <v-col cols="12" md="3" lg="2" style="border-right: 1px solid #DDD;" class="fr-text-sm pt-1">
         <DsfrNativeSelect v-model="selectedYear" :items="yearOptions" class="mb-3 mt-2" />
         <DataInfoBadge
@@ -88,7 +89,7 @@
             bilan pour votre établissement.
           </p>
         </div>
-        <div v-else-if="inTeledeclarationCampaign">
+        <div v-else-if="inTeledeclarationCampaign || (inCorrectionCampaign && hasCancelledTeledeclaration)">
           <div v-if="isSatelliteWithApproCentralDiagnostic">
             <p>
               Votre livreur des repas
@@ -149,6 +150,7 @@
           <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">Contactez-nous</router-link>
         </p>
       </v-col>
+      <!-- Diagnostic tabs -->
       <v-col cols="12" md="9" lg="10">
         <v-card v-if="isCentralKitchen" class="pa-6 mb-4 mr-1" style="background: #f5f5fe">
           <v-radio-group
@@ -357,6 +359,12 @@ export default {
     },
     mobileSelectItems() {
       return this.tabHeaders.map((x, index) => ({ text: x.text, value: index }))
+    },
+    hasCancelledTeledeclaration() {
+      // During the correction campaign, we allow only canteens with an existing teledeclaration to do corrections
+      // BUT the backend does not return CANCELLED teledeclarations
+      // instead we look at the canteen's action
+      return this.canteenAction === "40_teledeclare"
     },
     hasActiveTeledeclaration() {
       return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
