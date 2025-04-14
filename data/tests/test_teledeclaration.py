@@ -3,6 +3,7 @@ from unittest.mock import patch
 from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.utils.timezone import now
+from freezegun import freeze_time
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
@@ -58,6 +59,7 @@ class TeledeclarationQuerySetTest(TestCase):
             teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant=UserFactory.create())
             setattr(self, f"valid_canteen_td_{index + 1}", teledeclaration)
 
+        # Corrected TD
         self.valid_canteen_diagnostic_correction = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
@@ -66,9 +68,18 @@ class TeledeclarationQuerySetTest(TestCase):
             value_total_ht=1000.00,
             value_bio_ht=200.00,
         )
+        user_correction_campaign = UserFactory.create()
         self.valid_correction_td = Teledeclaration.create_from_diagnostic(
-            self.valid_canteen_diagnostic_correction, applicant=UserFactory.create()
+            self.valid_canteen_diagnostic_correction, applicant=user_correction_campaign
         )
+        self.valid_correction_td.status = Teledeclaration.TeledeclarationStatus.CANCELLED
+        self.valid_correction_td.save()
+
+        with freeze_time(now().replace(month=7, day=1, hour=0, minute=0, second=0)):
+            self.valid_correction_td = Teledeclaration.create_from_diagnostic(
+                self.valid_canteen_diagnostic_correction, applicant=user_correction_campaign
+            )
+
         self.invalid_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
