@@ -53,7 +53,9 @@ export default {
           color: "rgb(24, 117, 60)",
           icon: "$checkbox-fill",
         },
-        NEUTRAL: {},
+        NEUTRAL: {
+          color: "rgb(0, 0, 0)",
+        },
       },
     }
   },
