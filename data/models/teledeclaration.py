@@ -42,12 +42,19 @@ class TeledeclarationQuerySet(models.QuerySet):
 
     def for_year(self, year):
         year = int(year)
-        return self.filter(
-            year=year,
-            creation_date__range=(
-                CAMPAIGN_DATES[year]["teledeclaration_start_date"],
-                CAMPAIGN_DATES[year]["teledeclaration_end_date"],
-            ),
+        return self.filter(year=year).filter(
+            Q(
+                creation_date__range=(
+                    CAMPAIGN_DATES[year]["teledeclaration_start_date"],
+                    CAMPAIGN_DATES[year]["teledeclaration_end_date"],
+                )
+            )
+            | Q(
+                creation_date__range=(
+                    CAMPAIGN_DATES[year]["correction_start_date"],
+                    CAMPAIGN_DATES[year]["correction_end_date"],
+                )
+            )
         )
 
     def submitted_for_year(self, year):
