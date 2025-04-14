@@ -194,32 +194,46 @@ class TestCanteenPurchaseQuerySet(TestCase):
 class TestCanteenDiagnosticTeledeclarationQuerySet(TestCase):
     @classmethod
     def setUpTestData(cls):
-        canteen_with_diagnostics = CanteenFactory()
         CanteenFactory()
-        diagnostic_complete = DiagnosticFactory(
-            canteen=canteen_with_diagnostics,
+        canteen_with_diagnostic_cancelled = CanteenFactory()
+        canteen_with_diagnostic_submitted = CanteenFactory()
+        diagnostic_filled = DiagnosticFactory(
+            canteen=canteen_with_diagnostic_cancelled,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2024,
             value_total_ht=1000,
-        )  # complete
+        )  # filled
+        TeledeclarationFactory(
+            canteen=canteen_with_diagnostic_cancelled,
+            diagnostic=diagnostic_filled,
+            year=2024,
+            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
+        )
+        diagnostic_filled_and_submitted = DiagnosticFactory(
+            canteen=canteen_with_diagnostic_submitted,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2024,
+            value_total_ht=1000,
+        )  # filled & submitted
         DiagnosticFactory(
-            canteen=canteen_with_diagnostics,
+            canteen=canteen_with_diagnostic_submitted,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2023,
             value_total_ht=None,
-        )
+        )  # missing data
         TeledeclarationFactory(
-            canteen=canteen_with_diagnostics,
-            diagnostic=diagnostic_complete,
+            canteen=canteen_with_diagnostic_submitted,
+            diagnostic=diagnostic_filled_and_submitted,
             year=2024,
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
         )
 
     def test_annotate_with_diagnostic_for_year(self):
-        self.assertEqual(Canteen.objects.count(), 2)
+        self.assertEqual(Canteen.objects.count(), 3)
+        # diagnostic_for_year
         self.assertEqual(
             Canteen.objects.annotate_with_diagnostic_for_year(2024).filter(diagnostic_for_year__isnull=False).count(),
-            1,
+            2,
         )
         self.assertEqual(
             Canteen.objects.annotate_with_diagnostic_for_year(2023).filter(diagnostic_for_year__isnull=False).count(),
@@ -229,17 +243,18 @@ class TestCanteenDiagnosticTeledeclarationQuerySet(TestCase):
             Canteen.objects.annotate_with_diagnostic_for_year(2022).filter(diagnostic_for_year__isnull=False).count(),
             0,
         )
+        # has_diagnostic_filled_for_year
         self.assertEqual(
             Canteen.objects.annotate_with_diagnostic_for_year(2024)
             .filter(has_diagnostic_filled_for_year=True)
             .count(),
-            1,
+            2,
         )
         self.assertEqual(
             Canteen.objects.annotate_with_diagnostic_for_year(2023)
             .filter(has_diagnostic_filled_for_year=True)
             .count(),
-            0,
+            0,  # missing data
         )
         self.assertEqual(
             Canteen.objects.annotate_with_diagnostic_for_year(2022)
@@ -250,10 +265,15 @@ class TestCanteenDiagnosticTeledeclarationQuerySet(TestCase):
         # TODO: diagnostic_for_year_cc_mode
 
     def test_annotate_with_td_for_year(self):
-        self.assertEqual(Canteen.objects.count(), 2)
-        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2024).filter(has_td=True).count(), 1)
+        self.assertEqual(Canteen.objects.count(), 3)
+        # has_td
+        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2024).filter(has_td=True).count(), 2)
         self.assertEqual(Canteen.objects.annotate_with_td_for_year(2023).filter(has_td=True).count(), 0)
         self.assertEqual(Canteen.objects.annotate_with_td_for_year(2022).filter(has_td=True).count(), 0)
+        # has_td_submitted
+        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2024).filter(has_td_submitted=True).count(), 1)
+        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2023).filter(has_td_submitted=True).count(), 0)
+        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2022).filter(has_td_submitted=True).count(), 0)
 
 
 class TestCanteenSiretOrSirenUniteLegaleQuerySet(TestCase):
