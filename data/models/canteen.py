@@ -20,7 +20,7 @@ from data.utils import (
     get_region,
     optimize_image,
 )
-from macantine.utils import is_in_teledeclaration
+from macantine.utils import is_in_correction, is_in_teledeclaration
 
 from .softdeletionmodel import (
     SoftDeletionManager,
@@ -155,9 +155,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         tds = Teledeclaration.objects.filter(
             Q(canteen=OuterRef("pk")) | Q(canteen=OuterRef("central_kitchen_id")),
             year=year,
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
         )
-        return self.annotate(has_td=Exists(Subquery(tds)))
+        tds_submitted = tds.submitted()
+        return self.annotate(has_td=Exists(Subquery(tds)), has_td_submitted=Exists(Subquery(tds_submitted)))
 
     def annotate_with_requires_line_ministry(self):
         canteen_sector_relation = apps.get_model(app_label="data", model_name="Canteen_sectors")
@@ -204,12 +204,12 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             ),
             When(
                 is_satellite_query()
-                & Q(diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL, has_td=False),
+                & Q(diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL, has_td_submitted=False),
                 then=Value(Canteen.Actions.NOTHING_SATELLITE),
             ),
             When(
                 is_satellite_query()
-                & Q(diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL, has_td=True),
+                & Q(diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL, has_td_submitted=True),
                 then=Value(Canteen.Actions.NOTHING_SATELLITE_TELEDECLARED),
             ),
             When(
@@ -224,10 +224,14 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             ),
             When(has_missing_data_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
+        if is_in_correction():
+            conditions.append(
+                When(Q(has_td=True) & Q(has_td_submitted=False), then=Value(Canteen.Actions.TELEDECLARE))
+            )
         if is_in_teledeclaration():
-            conditions.append(When(has_td=False, then=Value(Canteen.Actions.TELEDECLARE)))
+            conditions.append(When(has_td_submitted=False, then=Value(Canteen.Actions.TELEDECLARE)))
         else:
-            conditions.append(When(has_td=False, then=Value(Canteen.Actions.DID_NOT_TELEDECLARE)))
+            conditions.append(When(has_td_submitted=False, then=Value(Canteen.Actions.DID_NOT_TELEDECLARE)))
         if not settings.PUBLISH_BY_DEFAULT:
             conditions.append(
                 When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH))
