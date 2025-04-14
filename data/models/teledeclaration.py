@@ -40,9 +40,12 @@ class TeledeclarationQuerySet(models.QuerySet):
     def aberrant_values(self):
         return self.exclude(meal_price__gt=20, value_total_ht__gt=1000000)
 
-    def for_year(self, year):
+    def in_year(self, year):
+        return self.filter(year=int(year))
+
+    def in_campaign(self, year):
         year = int(year)
-        return self.filter(year=year).filter(
+        return self.filter(
             Q(
                 creation_date__range=(
                     CAMPAIGN_DATES[year]["teledeclaration_start_date"],
@@ -58,7 +61,7 @@ class TeledeclarationQuerySet(models.QuerySet):
         )
 
     def submitted_for_year(self, year):
-        return self.submitted().for_year(year)
+        return self.submitted().in_year(year).in_campaign(year)
 
     def canteen_for_stat(self, year):
         return (
