@@ -82,7 +82,7 @@ class TeledeclarationCreateView(APIView):
             # only allow to "edit" a teledeclaration
             # (a teledeclaration must exist during the teledeclaration campaign)
             if is_in_correction():
-                if not Teledeclaration.objects.for_year(last_year).filter(canteen=diagnostic.canteen).exists():
+                if not Teledeclaration.objects.in_year(last_year).filter(canteen=diagnostic.canteen).exists():
                     raise PermissionDenied(
                         "La campagne de correction est réservée aux cantines qui ont télédéclaré durant la campagne de télédéclaration."
                     )
@@ -149,7 +149,7 @@ class TeledeclarationCancelView(APIView):
             # only allow to "edit" a teledeclaration
             # (a teledeclaration must exist during the teledeclaration campaign)
             if is_in_correction():
-                if not Teledeclaration.objects.for_year(last_year).filter(canteen=teledeclaration.canteen).exists():
+                if not Teledeclaration.objects.in_year(last_year).filter(canteen=teledeclaration.canteen).exists():
                     raise PermissionDenied(
                         "La campagne de correction est réservée aux cantines qui ont télédéclaré durant la campagne de télédéclaration."
                     )
