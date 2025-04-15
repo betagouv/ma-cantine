@@ -6,6 +6,19 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.14.3](https://github.com/betagouv/ma-cantine/compare/v2025.14.2...v2025.14.3) (2025-04-14)
+
+
+### Corrections (bugs, typos...)
+
+* **Badge:** Corrige les erreurs d'affichage du badge NEUTRAL ([#5271](https://github.com/betagouv/ma-cantine/issues/5271)) ([1750780](https://github.com/betagouv/ma-cantine/commit/1750780bf4de202bdd82e66a7a7899400efeebc3))
+* **Campagne de correction:** autoriser les cantines qui ont fait une correction à re-télédéclarer ([#5270](https://github.com/betagouv/ma-cantine/issues/5270)) ([ee175c0](https://github.com/betagouv/ma-cantine/commit/ee175c04a811e01be020652fea4843fe876506a6))
+
+
+### Technique
+
+* **Cantines:** action: mieux gérer le cas des cantines qui ont une TD avant la campagne de correction ([#5268](https://github.com/betagouv/ma-cantine/issues/5268)) ([439f56d](https://github.com/betagouv/ma-cantine/commit/439f56db1e205c24414bd22d0a394826893d6833))
+
 ## [2025.14.2](https://github.com/betagouv/ma-cantine/compare/v2025.14.1...v2025.14.2) (2025-04-11)
 
 
