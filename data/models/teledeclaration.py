@@ -32,34 +32,49 @@ class CustomJSONEncoder(DjangoJSONEncoder):
         return super(CustomJSONEncoder, self).default(o)
 
 
+def in_teledeclaration_campaign_query(year):
+    year = int(year)
+    return Q(
+        creation_date__range=(
+            CAMPAIGN_DATES[year]["teledeclaration_start_date"],
+            CAMPAIGN_DATES[year]["teledeclaration_end_date"],
+        )
+    )
+
+
+def in_correction_campaign_query(year):
+    year = int(year)
+    return Q(
+        creation_date__range=(
+            CAMPAIGN_DATES[year]["correction_start_date"],
+            CAMPAIGN_DATES[year]["correction_end_date"],
+        )
+    )
+
+
 class TeledeclarationQuerySet(models.QuerySet):
-    
+
     def submitted(self):
         return self.filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
     def aberrant_values(self):
         return self.exclude(meal_price__gt=20, value_total_ht__gt=1000000)
 
-    def filter_valid_diag_for_iso_purpose(self):
-        """
-        In order to stay completely identical to previous year data, we need to filter this TD
-        This TD has corrupted aggregation bio value in its diagnostic, probably due to an error at that time in the diag create
-        Now that we don't use the diag data, we are not impacted by this corrupted data
-        """
-        return self.exclude(id=13445)
+    def in_year(self, year):
+        return self.filter(year=int(year))
 
-    def for_year(self, year):
+    def in_campaign(self, year):
         year = int(year)
-        return self.filter(
-            year=year,
-            creation_date__range=(
-                CAMPAIGN_DATES[year]["teledeclaration_start_date"],
-                CAMPAIGN_DATES[year]["teledeclaration_end_date"],
-            ),
-        )
+        if year in CAMPAIGN_DATES:
+            if "correction_start_date" in CAMPAIGN_DATES[year].keys():
+                return self.filter(in_teledeclaration_campaign_query(year) | in_correction_campaign_query(year))
+            else:
+                return self.filter(in_teledeclaration_campaign_query(year))
+        else:
+            return self.none()
 
     def submitted_for_year(self, year):
-        return self.submitted().for_year(year)
+        return self.submitted().in_year(year).in_campaign(year)
 
     def canteen_for_stat(self, year):
         return (
@@ -85,8 +100,9 @@ class TeledeclarationQuerySet(models.QuerySet):
                 )
                 .canteen_for_stat(year)  # Chaine de traitement n°6
                 .aberrant_values()  # Chaîne de traitement
-                .filter_valid_diag_for_iso_purpose()
             )
+        else:
+            return self.none()
 
 
 class Teledeclaration(models.Model):
