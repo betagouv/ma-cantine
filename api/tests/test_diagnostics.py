@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.core.exceptions import BadRequest
 from django.db import transaction
+from django.test.utils import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
@@ -603,6 +604,77 @@ class TestDiagnosticsApi(APITestCase):
         body = response.json().get("results")
 
         self.assertEqual(body, [])
+
+    @override_settings(TELEDECLARATION_START_DATE_OVERRIDE="2025-01-01")
+    @override_settings(TELEDECLARATION_END_DATE_OVERRIDE="2025-02-01")
+    @override_settings(CORRECTION_START_DATE_OVERRIDE="2025-03-01")
+    @override_settings(CORRECTION_END_DATE_OVERRIDE="2025-04-01")
+    @freeze_time("2025-03-10")
+    @authenticate
+    def test_get_diagnostics_to_td_in_correction_campaign(self):
+        """
+        During correction campaign check that the actions endpoint includes only diagnostics cancelled,
+        and diagnostics not teledeclared during teledeclaration campaign
+        """
+        last_year = 2024
+
+        # Canteen with diag not teledeclared
+        canteen_with_diag = CanteenFactory.create(
+            name="Canteen with diag",
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="96766910375238",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        canteen_with_diag.managers.add(authenticate.user)
+        DiagnosticFactory.create(canteen=canteen_with_diag, year=last_year, value_total_ht=1000)
+
+        # Canteen with diag teledeclared
+        canteen_with_td = CanteenFactory.create(
+            name="Canteen with TD",
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="75665621899905",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        canteen_with_td.managers.add(authenticate.user)
+        diag_to_teledeclare = DiagnosticFactory.create(canteen=canteen_with_td, year=last_year, value_total_ht=10000)
+        Teledeclaration.create_from_diagnostic(diag_to_teledeclare, authenticate.user)
+
+        # Canteen with teledeclaration edited
+        canteen_with_correction = CanteenFactory.create(
+            name="Canteen with TD cancelled",
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            siret="75665621899906",
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        canteen_with_correction.managers.add(authenticate.user)
+        diag_cancelled = DiagnosticFactory.create(
+            canteen=canteen_with_correction, year=last_year, value_total_ht=10000
+        )
+        teledeclaration_cancelled = Teledeclaration.create_from_diagnostic(diag_cancelled, authenticate.user)
+        teledeclaration_cancelled.status = Teledeclaration.TeledeclarationStatus.CANCELLED
+        teledeclaration_cancelled.save()
+
+        # API
+        response = self.client.get(reverse("diagnostics_to_teledeclare", kwargs={"year": last_year}))
+        results = response.json().get("results")
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["id"], diag_cancelled.id)
+        self.assertEqual(results[0]["canteenId"], canteen_with_correction.id)
 
     # Tests for unit conversion for total_leftovers. This is because the field was first
     # made in ton but then it was decided that it is best for the users to work in kg
