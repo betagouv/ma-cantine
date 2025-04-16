@@ -139,7 +139,6 @@ import {
   lastYear,
   customDiagnosticYears,
   readyToTeledeclare,
-  diagnosticCanBeTeledeclared,
   inTeledeclarationCampaign,
   missingCanteenData,
   hasSatelliteInconsistency,
@@ -239,7 +238,7 @@ export default {
       )
     },
     diagnosticCanBeTeledeclared() {
-      return diagnosticCanBeTeledeclared(this.canteen, this.canteenDiagnostic)
+      return this.canteenAction === "40_teledeclare"
     },
     inTeledeclarationCampaign() {
       return inTeledeclarationCampaign(this.year)
