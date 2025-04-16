@@ -1,8 +1,8 @@
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.core.exceptions import BadRequest
 from django.db import transaction
-from django.test.utils import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
@@ -605,11 +605,6 @@ class TestDiagnosticsApi(APITestCase):
 
         self.assertEqual(body, [])
 
-    @override_settings(TELEDECLARATION_START_DATE_OVERRIDE="2025-01-01")
-    @override_settings(TELEDECLARATION_END_DATE_OVERRIDE="2025-02-01")
-    @override_settings(CORRECTION_START_DATE_OVERRIDE="2025-03-01")
-    @override_settings(CORRECTION_END_DATE_OVERRIDE="2025-04-01")
-    @freeze_time("2025-03-10")
     @authenticate
     def test_get_diagnostics_to_td_in_correction_campaign(self):
         """
@@ -669,9 +664,10 @@ class TestDiagnosticsApi(APITestCase):
         teledeclaration_cancelled.status = Teledeclaration.TeledeclarationStatus.CANCELLED
         teledeclaration_cancelled.save()
 
-        # API
-        response = self.client.get(reverse("diagnostics_to_teledeclare", kwargs={"year": last_year}))
-        results = response.json().get("results")
+        # API : Force correction campaign without changing dates
+        with patch("api.views.diagnostic.is_in_correction", lambda: True):
+            response = self.client.get(reverse("diagnostics_to_teledeclare", kwargs={"year": last_year}))
+            results = response.json().get("results")
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["id"], diag_cancelled.id)
         self.assertEqual(results[0]["canteenId"], canteen_with_correction.id)
