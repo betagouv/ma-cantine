@@ -226,8 +226,7 @@ class Teledeclaration(models.Model):
     def cancel_teledeclaration(sender, instance, **kwargs):
         try:
             teledeclaration = Teledeclaration.objects.get(diagnostic=instance)
-            teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
-            teledeclaration.save()
+            teledeclaration.cancel()
         except Exception:
             pass
 
@@ -390,6 +389,13 @@ class Teledeclaration(models.Model):
                 return Teledeclaration.TeledeclarationMode.CENTRAL_APPRO
 
         return Teledeclaration.TeledeclarationMode.SITE
+
+    def cancel(self):
+        """
+        Cancel the teledeclaration.
+        """
+        self.status = Teledeclaration.TeledeclarationStatus.CANCELLED
+        self.save()
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.full_clean()
