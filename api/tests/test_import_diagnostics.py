@@ -1205,8 +1205,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(diagnostic.value_total_ht, 1)
 
         # now test cancelled TD
-        teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
-        teledeclaration.save()
+        teledeclaration.cancel()
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 

@@ -44,8 +44,7 @@ class TestETLOpenData(TestCase):
         applicant = UserFactory.create()
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant)
-        teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
-        teledeclaration.save()
+        teledeclaration.cancel()
 
         etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
         etl_td.extract_dataset()

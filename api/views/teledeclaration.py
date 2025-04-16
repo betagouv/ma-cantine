@@ -154,8 +154,8 @@ class TeledeclarationCancelView(APIView):
                         "La campagne de correction est réservée aux cantines qui ont télédéclaré durant la campagne de télédéclaration."
                     )
 
-            teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
-            teledeclaration.save()
+            # all the checks avec passed, we can cancel the teledeclaration
+            teledeclaration.cancel()
 
             data = FullDiagnosticSerializer(teledeclaration.diagnostic).data
             return JsonResponse(camelize(data), status=status.HTTP_200_OK)

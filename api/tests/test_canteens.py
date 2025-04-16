@@ -1256,8 +1256,7 @@ class TestCanteenActionApi(APITestCase):
         self.assertEqual(body["action"], "95_nothing")
 
         # cancel the teledeclaration
-        teledeclaration.status = Teledeclaration.TeledeclarationStatus.CANCELLED
-        teledeclaration.save()
+        teledeclaration.cancel()
 
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 2, "year": last_year}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
