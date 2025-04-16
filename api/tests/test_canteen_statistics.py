@@ -44,7 +44,7 @@ class TestCanteenStatsApi(APITestCase):
                     "sectors": ["primary_school", "enterprise"],
                 },
                 "diagnostic": {
-                    "diagnostic_type": "SIMPLE",
+                    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
                     "year": year_data,
                     "value_total_ht": 100,
                     "value_bio_ht": 20,
@@ -65,7 +65,7 @@ class TestCanteenStatsApi(APITestCase):
                     "sectors": ["primary_school", "secondary_school"],
                 },
                 "diagnostic": {
-                    "diagnostic_type": "SIMPLE",
+                    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
                     "year": year_data,
                     "value_total_ht": 1000,
                     "value_bio_ht": 400,
@@ -90,7 +90,7 @@ class TestCanteenStatsApi(APITestCase):
                     "sectors": ["secondary_school"],
                 },
                 "diagnostic": {
-                    "diagnostic_type": "SIMPLE",
+                    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
                     "year": now().replace(year=1990).year,
                 },
             },
@@ -101,7 +101,7 @@ class TestCanteenStatsApi(APITestCase):
                     "sectors": ["social"],
                 },
                 "diagnostic": {
-                    "diagnostic_type": "SIMPLE",
+                    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
                     "year": year_data,
                     "value_total_ht": 100,
                     "value_bio_ht": 100,
@@ -258,7 +258,7 @@ class TestCanteenStatsApi(APITestCase):
 
         # Diagnostic that should display 20% Bio and 45% other EGalim
         diag = DiagnosticFactory.create(
-            diagnostic_type="SIMPLE",
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             canteen=published,
             year=year_data,
             value_total_ht=100,

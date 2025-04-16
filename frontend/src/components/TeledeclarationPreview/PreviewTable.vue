@@ -30,7 +30,7 @@
           <tr class="header">
             <td class="text-left font-weight-bold" v-if="showApproItems">
               Saisie de données d'approvisionnement :
-              {{ diagnostic.diagnosticType === "COMPLETE" ? "Complète" : "Simple" }}
+              {{ diagnostic.diagnosticType === "COMPLETE" ? "Détaillée" : "Simple" }}
             </td>
             <td class="text-left grey--text text--darken-3" colspan="2" v-if="showApproItems">
               {{ approSummary }}

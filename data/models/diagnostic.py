@@ -44,7 +44,7 @@ class Diagnostic(models.Model):
     # doesn't need an update as well, since the logic in the templates is based on the label
     class DiagnosticType(models.TextChoices):
         SIMPLE = "SIMPLE", "Télédeclaration simple"
-        COMPLETE = "COMPLETE", "Télédeclaration complète"
+        COMPLETE = "COMPLETE", "Télédeclaration détaillée"
 
     class CreationSource(models.TextChoices):
         TUNNEL = "TUNNEL", "Tunnel"

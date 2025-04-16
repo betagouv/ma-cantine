@@ -251,7 +251,7 @@ class TeledeclarationPdfView(APIView):
         return {
             **{**teledeclaration_data, **processed_diagnostic_data},
             **{
-                "diagnostic_type": "complète" if is_complete else "simplifiée",
+                "diagnostic_type": "détaillée" if is_complete else "simplifiée",
                 "year": teledeclaration.year,
                 "date": teledeclaration.creation_date,
                 "applicant": declared_data["applicant"]["name"],

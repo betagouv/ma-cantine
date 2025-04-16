@@ -151,21 +151,21 @@ class Teledeclaration(models.Model):
     canteen_siren_unite_legale = models.TextField(null=True, blank=True)
 
     value_total_ht = models.IntegerField(
-        null=True, blank=True, verbose_name="Champ value total. En cas de TD complète: ce champ est aggrégé"
+        null=True, blank=True, verbose_name="Champ value total (en cas de TD détaillée, ce champ est aggrégé)"
     )
     value_bio_ht_agg = models.IntegerField(
-        null=True, blank=True, verbose_name="Champ value bio. En cas de TD complète: ce champ est aggrégé"
+        null=True, blank=True, verbose_name="Champ value bio (en cas de TD détaillée, ce champ est aggrégé)"
     )
     value_sustainable_ht_agg = models.IntegerField(
-        null=True, blank=True, verbose_name="Champ value Egalim. En cas de TD complète: ce champ est aggrégé"
+        null=True, blank=True, verbose_name="Champ value Egalim (en cas de TD détaillée, ce champ est aggrégé)"
     )
     value_externality_performance_ht_agg = models.IntegerField(
         null=True,
         blank=True,
-        verbose_name="Champ externalité/performance. En cas de TD complète, ce champ est aggrégé",
+        verbose_name="Champ externalité/performance (en cas de TD détaillée, ce champ est aggrégé)",
     )
     value_egalim_others_ht_agg = models.IntegerField(
-        null=True, blank=True, verbose_name="Champ Autres Egalim. En cas de TD complète, ce champ est aggrégé"
+        null=True, blank=True, verbose_name="Champ Autres Egalim (en cas de TD détaillée, ce champ est aggrégé)"
     )
     yearly_meal_count = models.IntegerField(null=True, blank=True, verbose_name="Nombre de repas servis par an")
     meal_price = models.FloatField(null=True, blank=True, verbose_name="Coût denrées")
