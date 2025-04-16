@@ -241,7 +241,10 @@
                     Données télédéclarées
                   </v-btn>
                   <v-btn
-                    v-else-if="readyToTeledeclare"
+                    v-else-if="
+                      readyToTeledeclare &&
+                        (inTeledeclarationCampaign || (inCorrectionCampaign && hasCancelledTeledeclaration))
+                    "
                     color="primary"
                     @click="showTeledeclarationPreview = true"
                     class="fr-text font-weight-medium"
