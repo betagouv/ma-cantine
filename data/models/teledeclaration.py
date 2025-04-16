@@ -70,6 +70,8 @@ class TeledeclarationQuerySet(models.QuerySet):
                 return self.filter(in_teledeclaration_campaign_query(year) | in_correction_campaign_query(year))
             else:
                 return self.filter(in_teledeclaration_campaign_query(year))
+        else:
+            return self.none()
 
     def submitted_for_year(self, year):
         return self.submitted().in_year(year).in_campaign(year)
@@ -99,6 +101,8 @@ class TeledeclarationQuerySet(models.QuerySet):
                 .canteen_for_stat(year)  # Chaine de traitement n°6
                 .aberrant_values()  # Chaîne de traitement
             )
+        else:
+            return self.none()
 
 
 class Teledeclaration(models.Model):

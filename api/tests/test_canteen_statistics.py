@@ -150,6 +150,13 @@ class TestCanteenStatsApi(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        # Test a year without campaign
+        with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 100})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["teledeclarationsCount"], 0)
+
     @override_settings(PUBLISH_BY_DEFAULT=True)
     def test_publication_filter_new_rules(self):
         """
