@@ -164,7 +164,7 @@
 <script>
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import DataInfoBadge from "@/components/DataInfoBadge"
-import { lastYear } from "@/utils"
+import { lastYear, actionIsTeledeclare } from "@/utils"
 
 export default {
   name: "AnnualActionableCanteensTable",
@@ -405,7 +405,7 @@ export default {
       }
     },
     action(canteen) {
-      if (canteen.action === "40_teledeclare") {
+      if (actionIsTeledeclare(canteen.action)) {
         this.canteenForTD = canteen
         this.showTeledeclarationPreview = true
       }

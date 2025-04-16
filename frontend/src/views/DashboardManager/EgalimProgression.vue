@@ -143,6 +143,7 @@ import {
   missingCanteenData,
   hasSatelliteInconsistency,
   hasFinishedMeasureTunnel,
+  actionIsTeledeclare,
 } from "@/utils"
 import FoodWasteCard from "./FoodWasteCard"
 import DiversificationCard from "./DiversificationCard"
@@ -238,7 +239,7 @@ export default {
       )
     },
     diagnosticCanBeTeledeclared() {
-      return this.canteenAction === "40_teledeclare"
+      return actionIsTeledeclare(this.canteenAction)
     },
     inTeledeclarationCampaign() {
       return inTeledeclarationCampaign(this.year)
