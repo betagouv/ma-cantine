@@ -29,7 +29,15 @@ def canteen_has_siret_or_siren_unite_legale_query():
 
 class DiagnosticQuerySet(models.QuerySet):
     def is_filled(self):
-        return self.filter(value_total_ht__gt=0)
+        queryset = self.filter(value_total_ht__gt=0)
+        queryset = self.filter(diagnostic_type__isnull=False)
+        queryset = queryset.filter(
+            Q(value_bio_ht__gt=0)
+            | Q(value_sustainable_ht__gt=0)
+            | Q(value_externality_performance_ht__gt=0)
+            | Q(value_egalim_others_ht__gt=0)
+        )
+        return queryset
 
 
 class Diagnostic(models.Model):
