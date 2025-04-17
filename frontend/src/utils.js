@@ -680,6 +680,10 @@ export const readyToTeledeclare = (canteen, diagnostic, sectors) => {
   )
 }
 
+export const actionIsTeledeclare = (action) => {
+  return action === "40_teledeclare"
+}
+
 // for diagnostics created before the redesign launched in 2024, many null values
 // were interpreted as false. Since then, we ask for an explicit false value.
 export const diagnosticUsesNullAsFalse = (diagnostic) => {

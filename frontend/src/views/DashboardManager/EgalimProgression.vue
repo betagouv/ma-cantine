@@ -91,7 +91,7 @@
       </v-card-actions>
     </v-card>
     <v-card
-      v-else-if="diagnosticCanBeTeledeclared"
+      v-else-if="diagnosticCanBeTeledeclared && actionIsTeledeclare"
       class="pa-6 pb-2 pb-sm-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
     >
       <div v-if="tunnelFilled">
@@ -139,11 +139,12 @@ import {
   lastYear,
   customDiagnosticYears,
   readyToTeledeclare,
-  diagnosticCanBeTeledeclared,
   inTeledeclarationCampaign,
   missingCanteenData,
   hasSatelliteInconsistency,
   hasFinishedMeasureTunnel,
+  actionIsTeledeclare,
+  diagnosticCanBeTeledeclared,
 } from "@/utils"
 import FoodWasteCard from "./FoodWasteCard"
 import DiversificationCard from "./DiversificationCard"
@@ -240,6 +241,9 @@ export default {
     },
     diagnosticCanBeTeledeclared() {
       return diagnosticCanBeTeledeclared(this.canteen, this.canteenDiagnostic)
+    },
+    actionIsTeledeclare() {
+      return actionIsTeledeclare(this.canteenAction)
     },
     inTeledeclarationCampaign() {
       return inTeledeclarationCampaign(this.year)

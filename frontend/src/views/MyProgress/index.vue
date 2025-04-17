@@ -241,7 +241,7 @@
                     Données télédéclarées
                   </v-btn>
                   <v-btn
-                    v-else-if="readyToTeledeclare"
+                    v-else-if="readyToTeledeclare && actionIsTeledeclare"
                     color="primary"
                     @click="showTeledeclarationPreview = true"
                     class="fr-text font-weight-medium"
@@ -285,6 +285,7 @@ import {
   hasDiagnosticApproData,
   missingCanteenData,
   hasSatelliteInconsistency,
+  actionIsTeledeclare,
 } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
 import Constants from "@/constants"
@@ -360,11 +361,14 @@ export default {
     mobileSelectItems() {
       return this.tabHeaders.map((x, index) => ({ text: x.text, value: index }))
     },
+    actionIsTeledeclare() {
+      return actionIsTeledeclare(this.canteenAction)
+    },
     hasCancelledTeledeclaration() {
       // During the correction campaign, we allow only canteens with an existing teledeclaration to do corrections
       // BUT the backend does not return CANCELLED teledeclarations
       // instead we look at the canteen's action
-      return this.canteenAction === "40_teledeclare"
+      return this.actionIsTeledeclare
     },
     hasActiveTeledeclaration() {
       return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
