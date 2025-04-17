@@ -146,11 +146,11 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
     def get_queryset(self):
         year = self.request.parser_context.get("kwargs").get("year")
         canteens = DiagnosticsToTeledeclareListView._get_canteens_filled(self.request.user.canteens.all())
-        has_teledeclaration_submitted = Teledeclaration.objects.filter(
-            diagnostic=OuterRef("pk"), status=Teledeclaration.TeledeclarationStatus.SUBMITTED, year=year
+        has_teledeclaration_submitted = (
+            Teledeclaration.objects.filter(diagnostic=OuterRef("pk")).in_year(year).submitted()
         )
-        has_teledeclaration_cancelled = Teledeclaration.objects.filter(
-            diagnostic=OuterRef("pk"), status=Teledeclaration.TeledeclarationStatus.CANCELLED, year=year
+        has_teledeclaration_cancelled = (
+            Teledeclaration.objects.filter(diagnostic=OuterRef("pk")).in_year(year).cancelled()
         )
         diagnostics_to_teledeclare = (
             Diagnostic.objects.is_filled()
