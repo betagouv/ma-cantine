@@ -1188,7 +1188,9 @@ class TestCanteenActionApi(APITestCase):
         """
         Check that this endpoint can return the summary for a specified canteen
         """
-        canteen = CanteenFactory.create(id=3, production_type=Canteen.ProductionType.ON_SITE)
+        canteen = CanteenFactory.create(
+            id=3, production_type=Canteen.ProductionType.ON_SITE, sectors=[SectorFactory.create()]
+        )
         canteen.managers.add(authenticate.user)
 
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
@@ -1210,6 +1212,7 @@ class TestCanteenActionApi(APITestCase):
             siret="75665621899905",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            sectors=[SectorFactory.create()],
         )
         last_year = 2024
         complete.managers.add(authenticate.user)
@@ -1242,6 +1245,7 @@ class TestCanteenActionApi(APITestCase):
             siret="75665621899905",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            sectors=[SectorFactory.create()],
         )
         last_year = 2024
         complete.managers.add(authenticate.user)
@@ -1288,6 +1292,7 @@ class TestCanteenActionApi(APITestCase):
             siret="75665621899905",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            sectors=[SectorFactory.create()],
         )
         canteen_did_not_td = CanteenFactory.create(
             id=3,
@@ -1299,6 +1304,7 @@ class TestCanteenActionApi(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             management_type=Canteen.ManagementType.DIRECT,
+            sectors=[SectorFactory.create()],
         )
         last_year = 2024
         for canteen in [canteen_td, canteen_did_not_td]:
