@@ -462,22 +462,30 @@ class TestCanteenApi(APITestCase):
     @authenticate
     def test_user_canteen_teledeclaration(self):
         """
-        The teledeclaration information should only be visible to
-        managers of the canteen
+        Only submitted TDs are returned to the managers
         """
         user = authenticate.user
         canteen = CanteenFactory.create()
         canteen.managers.add(user)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
-        Teledeclaration.create_from_diagnostic(diagnostic, user, Teledeclaration.TeledeclarationStatus.CANCELLED)
 
-        new_teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+        # submit a teledeclaration
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, user)
+
         response = self.client.get(reverse("user_canteens"))
         body = response.json().get("results")
         json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))
         json_diagnostic = next(filter(lambda x: x["id"] == diagnostic.id, json_canteen["diagnostics"]))
+        self.assertEqual(json_diagnostic["teledeclaration"]["id"], teledeclaration.id)
 
-        self.assertEqual(json_diagnostic["teledeclaration"]["id"], new_teledeclaration.id)
+        # cancel the teledeclaration
+        teledeclaration.cancel()
+
+        response = self.client.get(reverse("user_canteens"))
+        body = response.json().get("results")
+        json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))
+        json_diagnostic = next(filter(lambda x: x["id"] == diagnostic.id, json_canteen["diagnostics"]))
+        self.assertIsNone(json_diagnostic["teledeclaration"])
 
     @authenticate
     def test_canteen_image_modification(self):

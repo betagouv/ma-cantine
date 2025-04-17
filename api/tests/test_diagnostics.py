@@ -470,11 +470,11 @@ class TestDiagnosticsApi(APITestCase):
         """
         diagnostic = DiagnosticFactory.create(year=2019)
         diagnostic.canteen.managers.add(authenticate.user)
-        Teledeclaration.create_from_diagnostic(
+        teledeclaration = Teledeclaration.create_from_diagnostic(
             diagnostic,
             authenticate.user,
-            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
         )
+        teledeclaration.cancel()
 
         payload = {"year": 2020}
 

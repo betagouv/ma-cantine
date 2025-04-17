@@ -276,7 +276,7 @@ class Teledeclaration(models.Model):
             raise ValidationError("Question obligatoire : Quelles données sont déclarées par cette cuisine centrale ?")
 
     @staticmethod
-    def create_from_diagnostic(diagnostic, applicant, status=None):
+    def create_from_diagnostic(diagnostic, applicant):
         """
         Create a teledeclaration object from a diagnostic
         """
@@ -287,8 +287,6 @@ class Teledeclaration(models.Model):
         # Version 11 - Requires diagnostic mode to be defined for central production types (in validate_diagnostic)
         # Version 10 - Add department and region fields
         # Version 9 - removes legacy fields: value_pat_ht, value_label_hve, value_label_rouge, value_label_aoc_igp and value_pat_ht
-
-        status = status or Teledeclaration.TeledeclarationStatus.SUBMITTED
 
         teledeclaration_mode = None
         serialized_diagnostic = None
@@ -334,7 +332,7 @@ class Teledeclaration(models.Model):
             canteen=canteen,
             canteen_siret=canteen.siret,
             canteen_siren_unite_legale=canteen.siren_unite_legale,
-            status=status,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
             diagnostic=diagnostic,
             declared_data=json_fields,
             teledeclaration_mode=teledeclaration_mode,
