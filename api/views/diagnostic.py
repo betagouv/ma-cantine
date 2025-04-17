@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
+from django.db.models import Exists, OuterRef
 from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
@@ -145,32 +146,25 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
     def get_queryset(self):
         year = self.request.parser_context.get("kwargs").get("year")
         canteens = DiagnosticsToTeledeclareListView._get_canteens_filled(self.request.user.canteens.all())
-        diagnostics_filled = Diagnostic.objects.is_filled().filter(
-            year=year,
-            canteen__in=canteens,
-            diagnostic_type__isnull=False,
+        has_teledeclaration_submitted = Teledeclaration.objects.filter(
+            diagnostic=OuterRef("pk"), status=Teledeclaration.TeledeclarationStatus.SUBMITTED, year=year
         )
-        teledeclared = (
-            Teledeclaration.objects.filter(
-                diagnostic__in=diagnostics_filled, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
-            )
-            .values_list("diagnostic__id", flat=True)
-            .distinct()
+        has_teledeclaration_cancelled = Teledeclaration.objects.filter(
+            diagnostic=OuterRef("pk"), status=Teledeclaration.TeledeclarationStatus.CANCELLED, year=year
+        )
+        diagnostics_to_teledeclare = (
+            Diagnostic.objects.is_filled()
+            .filter(year=year, canteen__in=canteens, diagnostic_type__isnull=False)
+            .annotate(has_teledeclaration_submitted=Exists(has_teledeclaration_submitted))
+            .annotate(has_teledeclaration_cancelled=Exists(has_teledeclaration_cancelled))
         )
 
-        diagnostics_to_deledeclare = diagnostics_filled.exclude(id__in=teledeclared)
+        diagnostics_to_teledeclare = diagnostics_to_teledeclare.exclude(has_teledeclaration_submitted=True)
 
         if is_in_correction():
-            cancelled = (
-                Teledeclaration.objects.filter(
-                    diagnostic__in=diagnostics_filled, status=Teledeclaration.TeledeclarationStatus.CANCELLED
-                )
-                .values_list("diagnostic__id", flat=True)
-                .distinct()
-            )
-            diagnostics_to_deledeclare = diagnostics_to_deledeclare.filter(id__in=cancelled)
+            diagnostics_to_teledeclare = diagnostics_to_teledeclare.filter(has_teledeclaration_cancelled=True)
 
-        return diagnostics_to_deledeclare
+        return diagnostics_to_teledeclare
 
     @staticmethod
     def _get_canteens_filled(canteens):
