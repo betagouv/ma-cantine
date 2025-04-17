@@ -368,7 +368,8 @@ export default {
       // During the correction campaign, we allow only canteens with an existing teledeclaration to do corrections
       // BUT the backend does not return CANCELLED teledeclarations
       // instead we look at the canteen's action
-      return this.actionIsTeledeclare
+      const possibleActions = ["40_teledeclare", "35_fill_canteen_data", "30_fill_diagnostic"]
+      return possibleActions.includes(this.canteenAction)
     },
     hasActiveTeledeclaration() {
       return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
