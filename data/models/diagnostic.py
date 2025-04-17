@@ -37,6 +37,7 @@ class DiagnosticQuerySet(models.QuerySet):
             | Q(value_externality_performance_ht__gt=0)
             | Q(value_egalim_others_ht__gt=0)
         )
+        # TODO : for complete diagnostic add required values
         return queryset
 
 
