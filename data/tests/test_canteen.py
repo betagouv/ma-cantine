@@ -385,3 +385,14 @@ class TestCanteenCompletePropertyAndQuerySet(TestCase):
     def test_has_missing_data_queryset(self):
         self.assertEqual(Canteen.objects.count(), 8)
         self.assertEqual(Canteen.objects.has_missing_data().count(), 4)
+
+    def test_sectors_is_required_field(self):
+        for canteen in [
+            self.canteen_central,
+            self.canteen_central_serving,
+            self.canteen_on_site,
+            self.canteen_on_site_central,
+        ]:
+            canteen.sectors.clear()
+            canteen.save()
+            self.assertFalse(canteen.is_filled)
