@@ -661,8 +661,7 @@ class TestDiagnosticsApi(APITestCase):
             canteen=canteen_with_correction, year=last_year, value_total_ht=10000
         )
         teledeclaration_cancelled = Teledeclaration.create_from_diagnostic(diag_cancelled, authenticate.user)
-        teledeclaration_cancelled.status = Teledeclaration.TeledeclarationStatus.CANCELLED
-        teledeclaration_cancelled.save()
+        teledeclaration_cancelled.cancel()
 
         # API : Force correction campaign without changing dates
         with patch("api.views.diagnostic.is_in_correction", lambda: True):
