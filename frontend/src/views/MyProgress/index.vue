@@ -89,7 +89,7 @@
             bilan pour votre établissement.
           </p>
         </div>
-        <div v-else-if="inTeledeclarationCampaign || (inCorrectionCampaign && hasCancelledTeledeclaration)">
+        <div v-else-if="inTeledeclarationCampaign || hasTeledeclarationToCorrect">
           <div v-if="isSatelliteWithApproCentralDiagnostic">
             <p>
               Votre livreur des repas
@@ -364,12 +364,12 @@ export default {
     actionIsTeledeclare() {
       return actionIsTeledeclare(this.canteenAction)
     },
-    hasCancelledTeledeclaration() {
+    hasTeledeclarationToCorrect() {
       // During the correction campaign, we allow only canteens with an existing teledeclaration to do corrections
       // BUT the backend does not return CANCELLED teledeclarations
       // instead we look at the canteen's action
-      const possibleActions = ["40_teledeclare", "35_fill_canteen_data"]
-      return possibleActions.includes(this.canteenAction)
+      const correctionActions = ["40_teledeclare", "35_fill_canteen_data"]
+      return this.inCorrectionCampaign && correctionActions.includes(this.canteenAction)
     },
     hasActiveTeledeclaration() {
       return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
