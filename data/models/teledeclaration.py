@@ -57,6 +57,9 @@ class TeledeclarationQuerySet(models.QuerySet):
     def submitted(self):
         return self.filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
+    def cancelled(self):
+        return self.filter(status=Teledeclaration.TeledeclarationStatus.CANCELLED)
+
     def aberrant_values(self):
         return self.exclude(meal_price__gt=20, value_total_ht__gt=1000000)
 
