@@ -6,9 +6,10 @@ from data.factories import (
     CanteenFactory,
     DiagnosticFactory,
     PurchaseFactory,
+    SectorFactory,
     TeledeclarationFactory,
 )
-from data.models import Canteen, Diagnostic, Teledeclaration
+from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 
 
 class TestCanteenModel(TestCase):
@@ -297,12 +298,14 @@ class TestCanteenSiretOrSirenUniteLegaleQuerySet(TestCase):
 class TestCanteenCompletePropertyAndQuerySet(TestCase):
     @classmethod
     def setUpTestData(cls):
+        sector = SectorFactory.create(name="Sector", category=Sector.Categories.AUTRES)
         COMMON = {
             # CanteenFactory generates: name, city_insee_code, sectors
             "yearly_meal_count": 1000,
             "publication_status": Canteen.PublicationStatus.PUBLISHED,
             "management_type": Canteen.ManagementType.DIRECT,
             "economic_model": Canteen.EconomicModel.PUBLIC,
+            "sectors": [sector],
         }
         cls.canteen_central = CanteenFactory(
             **COMMON,
