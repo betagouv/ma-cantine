@@ -38,7 +38,6 @@ class TeledeclarationQuerySetTest(TestCase):
             siret="12345678901235", siren_unite_legale="123456789", deletion_date=None
         )
         self.valid_canteen_4 = CanteenFactory(siret="12345678901230", deletion_date=None, yearly_meal_count=0)
-        # self.valid_canteen_cc = CanteenFactory(siret="12345678901231", deletion_date=None, yearly_meal_count=100, production_type=Canteen.ProductionType.CENTRAL)
         self.valid_canteen_sat = CanteenFactory(
             siret="12345678901232", deletion_date=None, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
         )
@@ -138,13 +137,19 @@ class TeledeclarationQuerySetTest(TestCase):
         self.assertNotIn(self.deleted_canteen_td, teledeclarations)  # canteen deleted
 
     def test_meal_price(self):
-        canteen_with_meal_price = Canteen.objects.filter(siret="12345678901234").first()
-        canteen_without_meal_price = Canteen.objects.filter(siret="12345678901230").first()
-        canteen_non_appro = Canteen.objects.filter(siret="12345678901232").first()
+        canteen_with_meal_price = Canteen.objects.get(siret="12345678901234")
+        canteen_without_meal_price = Canteen.objects.get(siret="12345678901230")
+        canteen_non_appro = Canteen.objects.get(siret="12345678901232")
 
-        td_with_meal_price = Teledeclaration.objects.filter(canteen=canteen_with_meal_price.id).first()
-        td_without_meal_price = Teledeclaration.objects.filter(canteen=canteen_without_meal_price.id).first()
-        td_without_appro = Teledeclaration.objects.filter(canteen=canteen_non_appro.id).first()
+        td_with_meal_price = Teledeclaration.objects.get(
+            canteen=canteen_with_meal_price.id, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+        )
+        td_without_meal_price = Teledeclaration.objects.get(
+            canteen=canteen_without_meal_price.id, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+        )
+        td_without_appro = Teledeclaration.objects.get(
+            canteen=canteen_non_appro.id, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+        )
 
         self.assertEqual(
             td_with_meal_price.meal_price,
