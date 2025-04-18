@@ -6,6 +6,23 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.14.4](https://github.com/betagouv/ma-cantine/compare/v2025.14.3...v2025.14.4) (2025-04-17)
+
+
+### Corrections (bugs, typos...)
+
+* **Campagne de correction:** corrige le nombre de télédéclarations en masse disponibles ([#5278](https://github.com/betagouv/ma-cantine/issues/5278)) ([397244f](https://github.com/betagouv/ma-cantine/commit/397244f7583599382a5a9e4165ee24059fcc8e29))
+* **Campagne de correction:** ne pas afficher les boutons "télédéclarer" si aucun bilan n'a été déclaré ([#5277](https://github.com/betagouv/ma-cantine/issues/5277)) ([554c14b](https://github.com/betagouv/ma-cantine/commit/554c14bcfdd7d159f57d21f0e0d576f3ed179a35))
+
+
+### Technique
+
+* **Campagne de correction:** Intégrer les TD crées lors de la campagne de correction dans le queryset données officielles ([#5269](https://github.com/betagouv/ma-cantine/issues/5269)) ([b03784b](https://github.com/betagouv/ma-cantine/commit/b03784b9721d04d4e73b3f4c9fb25f36c2190513))
+* **Diagnostic:** homogénéiser le nommage de COMPLETE en 'détaillée' (au lieu de 'complète') ([#5259](https://github.com/betagouv/ma-cantine/issues/5259)) ([d63a92c](https://github.com/betagouv/ma-cantine/commit/d63a92c80bf4ac4b27e142d324dc2ed4b08a98cd))
+* **Télédéclaration:** créer une méthode dédiée pour annuler une TD ([#5273](https://github.com/betagouv/ma-cantine/issues/5273)) ([70add4e](https://github.com/betagouv/ma-cantine/commit/70add4e397be86708093e7b728d3e4554a85ab8d))
+* **Télédéclaration:** la méthode create_from_diagnostic ne doit servir qu'à submit ([#5275](https://github.com/betagouv/ma-cantine/issues/5275)) ([91eebd7](https://github.com/betagouv/ma-cantine/commit/91eebd72ee697768873cd4fed21b9c686cec04f5))
+* **Télédéclaration:** Script pour re-TD une liste de cantines pour une année donnée ([#5276](https://github.com/betagouv/ma-cantine/issues/5276)) ([d10e4ca](https://github.com/betagouv/ma-cantine/commit/d10e4cab5688efe80f305e3bcedcff5cfa84b795))
+
 ## [2025.14.3](https://github.com/betagouv/ma-cantine/compare/v2025.14.2...v2025.14.3) (2025-04-14)
 
 
