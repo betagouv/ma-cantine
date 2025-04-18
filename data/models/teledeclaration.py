@@ -327,7 +327,10 @@ class Teledeclaration(models.Model):
         if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
             diagnostic.populate_simplified_diagnostic_values()
 
-        meal_price = diagnostic.value_total_ht / canteen.yearly_meal_count if canteen.yearly_meal_count else None
+        if diagnostic.value_total_ht and canteen.yearly_meal_count:
+            meal_price = diagnostic.value_total_ht / canteen.yearly_meal_count
+        else:
+            meal_price = None
 
         return Teledeclaration.objects.create(
             applicant=applicant,

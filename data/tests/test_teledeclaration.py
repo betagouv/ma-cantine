@@ -7,7 +7,7 @@ from freezegun import freeze_time
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Diagnostic, Teledeclaration
+from data.models import Canteen, Diagnostic, Teledeclaration
 
 year_data = now().year - 1
 mocked_campaign_dates = {
@@ -32,12 +32,15 @@ class TeledeclarationQuerySetTest(TestCase):
 
     def _create_canteens(self):
         """Create canteens for testing."""
-        self.valid_canteen_1 = CanteenFactory(siret="12345678901234", deletion_date=None)
+        self.valid_canteen_1 = CanteenFactory(siret="12345678901234", deletion_date=None, yearly_meal_count=100)
         self.valid_canteen_2 = CanteenFactory(siren_unite_legale="123456789", deletion_date=None)
         self.valid_canteen_3 = CanteenFactory(
             siret="12345678901235", siren_unite_legale="123456789", deletion_date=None
         )
-        self.valid_canteen_4 = CanteenFactory(siret="12345678901230", deletion_date=None)
+        self.valid_canteen_4 = CanteenFactory(siret="12345678901230", deletion_date=None, yearly_meal_count=0)
+        self.valid_canteen_sat = CanteenFactory(
+            siret="12345678901232", deletion_date=None, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+        )
         self.invalid_canteen = CanteenFactory(siret="", deletion_date=None)  # siret missing
         self.deleted_canteen = CanteenFactory(
             siret="56789012345678",
@@ -103,11 +106,24 @@ class TeledeclarationQuerySetTest(TestCase):
         self.deleted_canteen_td = Teledeclaration.create_from_diagnostic(
             self.deleted_canteen_diagnostic, applicant=UserFactory.create()
         )
+        self.canteen_sat_diagnostic = DiagnosticFactory(
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=year_data,
+            creation_date=now().replace(month=3, day=1),
+            canteen=self.valid_canteen_sat,
+            value_total_ht=None,
+            value_bio_ht=None,
+        )
+        self.canteen_sat_td = Teledeclaration.create_from_diagnostic(
+            self.canteen_sat_diagnostic, applicant=UserFactory.create()
+        )
+        self.canteen_sat_td.teledeclaration_mode = Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
+        self.canteen_sat_diagnostic.save()
 
     def test_submitted_for_year(self):
         with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
             teledeclarations = Teledeclaration.objects.submitted_for_year(year_data)
-        self.assertEqual(teledeclarations.count(), 6)
+        self.assertEqual(teledeclarations.count(), 7)
         self.assertIn(self.valid_canteen_td_1, teledeclarations)
         self.assertIn(self.invalid_canteen_td, teledeclarations)
         self.assertIn(self.deleted_canteen_td, teledeclarations)
@@ -119,6 +135,28 @@ class TeledeclarationQuerySetTest(TestCase):
         self.assertIn(self.valid_canteen_td_1, teledeclarations)
         self.assertNotIn(self.invalid_canteen_td, teledeclarations)  # canteen without siret
         self.assertNotIn(self.deleted_canteen_td, teledeclarations)  # canteen deleted
+
+    def test_meal_price(self):
+        canteen_with_meal_price = Canteen.objects.get(siret="12345678901234")
+        canteen_without_meal_price = Canteen.objects.get(siret="12345678901230")
+        canteen_non_appro = Canteen.objects.get(siret="12345678901232")
+
+        td_with_meal_price = Teledeclaration.objects.get(
+            canteen=canteen_with_meal_price.id, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+        )
+        td_without_meal_price = Teledeclaration.objects.get(
+            canteen=canteen_without_meal_price.id, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+        )
+        td_without_appro = Teledeclaration.objects.get(
+            canteen=canteen_non_appro.id, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+        )
+
+        self.assertEqual(
+            td_with_meal_price.meal_price,
+            td_with_meal_price.value_total_ht / canteen_with_meal_price.yearly_meal_count,
+        )
+        self.assertIsNone(td_without_meal_price.meal_price)
+        self.assertIsNone(td_without_appro.meal_price)
 
 
 class TestTeledeclarationModelConstraintsTest(TestCase):
