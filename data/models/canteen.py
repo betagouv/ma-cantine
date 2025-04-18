@@ -63,6 +63,7 @@ def is_central_cuisine_query():
 
 def has_missing_data_query():
     return (
+        # basic rules
         Q(name=None)
         | Q(city_insee_code=None)
         | Q(city_insee_code="")
@@ -71,14 +72,16 @@ def has_missing_data_query():
         | Q(production_type=None)
         | Q(management_type=None)
         | Q(economic_model=None)
-        | Q(sectors=None)
+        # serving-specific rules
         | Q(is_serving_query()) & (Q(daily_meal_count=None) | Q(daily_meal_count=0))
+        # satellite-specific rules
         | (is_satellite_query() & (Q(central_producer_siret=None) | Q(central_producer_siret="")))
         | (is_satellite_query() & Q(central_producer_siret=F("siret")))
+        # cc-specific rules
         | (is_central_cuisine_query() & (Q(satellite_canteens_count=None) | Q(satellite_canteens_count=0)))
-        | (
-            Q(economic_model=Canteen.EconomicModel.PUBLIC) & Q(requires_line_ministry=True) & Q(line_ministry=None)
-        )  # with annotate_with_requires_line_ministry()
+        # sectors & line_ministry (with annotate_with_requires_line_ministry)
+        | Q(sectors=None)
+        | (Q(economic_model=Canteen.EconomicModel.PUBLIC) & Q(requires_line_ministry=True) & Q(line_ministry=None))
     )
 
 
