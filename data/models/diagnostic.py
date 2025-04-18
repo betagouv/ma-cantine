@@ -145,7 +145,7 @@ class Diagnostic(models.Model):
         choices=DiagnosticType.choices,
         blank=True,
         null=True,
-        verbose_name="Type de diagnostic (simplifié, complet)",
+        verbose_name="Type de diagnostic (simplifié, détaillé)",
     )
 
     # Relevant only for central cuisines
