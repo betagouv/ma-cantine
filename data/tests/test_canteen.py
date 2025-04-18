@@ -6,9 +6,10 @@ from data.factories import (
     CanteenFactory,
     DiagnosticFactory,
     PurchaseFactory,
+    SectorFactory,
     TeledeclarationFactory,
 )
-from data.models import Canteen, Diagnostic, Teledeclaration
+from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 
 
 class TestCanteenModel(TestCase):
@@ -297,31 +298,36 @@ class TestCanteenSiretOrSirenUniteLegaleQuerySet(TestCase):
 class TestCanteenCompletePropertyAndQuerySet(TestCase):
     @classmethod
     def setUpTestData(cls):
+        sector = SectorFactory.create(name="Sector", category=Sector.Categories.AUTRES)
+        sector_line_ministry = SectorFactory(
+            name="Sector ministry", category=Sector.Categories.AUTRES, has_line_ministry=True
+        )
         COMMON = {
             # CanteenFactory generates: name, city_insee_code, sectors
             "yearly_meal_count": 1000,
             "publication_status": Canteen.PublicationStatus.PUBLISHED,
             "management_type": Canteen.ManagementType.DIRECT,
             "economic_model": Canteen.EconomicModel.PUBLIC,
+            "sectors": [sector],
         }
         cls.canteen_central = CanteenFactory(
             **COMMON,
             siret="75665621899905",
             production_type=Canteen.ProductionType.CENTRAL,
-            satellite_canteens_count=1
+            satellite_canteens_count=1,
         )
         cls.canteen_central_incomplete = CanteenFactory(
             **COMMON,
             siret="75665621899905",
             production_type=Canteen.ProductionType.CENTRAL,
-            satellite_canteens_count=0  # incomplete
+            satellite_canteens_count=0,  # incomplete
         )
         cls.canteen_central_serving = CanteenFactory(
             **COMMON,
             siret="75665621899905",
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             daily_meal_count=12,
-            satellite_canteens_count=1
+            satellite_canteens_count=1,
         )
         cls.canteen_central_serving_incomplete = CanteenFactory(
             **COMMON,
@@ -329,38 +335,53 @@ class TestCanteenCompletePropertyAndQuerySet(TestCase):
             siren_unite_legale=None,
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             daily_meal_count=12,
-            satellite_canteens_count=1
+            satellite_canteens_count=1,
         )
         cls.canteen_on_site = CanteenFactory(
             **COMMON,
             siret=None,
             siren_unite_legale="967669103",  # complete
             production_type=Canteen.ProductionType.ON_SITE,
-            daily_meal_count=12
+            daily_meal_count=12,
         )
-        cls.canteen_on_site_incomplete = CanteenFactory(
+        cls.canteen_on_site_incomplete_1 = CanteenFactory(
             **COMMON,
             siret="96766910375238",
             production_type=Canteen.ProductionType.ON_SITE,
-            daily_meal_count=0  # incomplete
+            daily_meal_count=0,  # incomplete
         )
+        cls.canteen_on_site_incomplete_2 = CanteenFactory(
+            **COMMON,
+            siret="96766910375238",
+            production_type=Canteen.ProductionType.ON_SITE,
+            daily_meal_count=12,
+        )
+        cls.canteen_on_site_incomplete_2.sectors.clear()  # incomplete
+        cls.canteen_on_site_incomplete_3 = CanteenFactory(
+            **COMMON,
+            siret="96766910375238",
+            production_type=Canteen.ProductionType.ON_SITE,
+            daily_meal_count=12,
+            line_ministry=None,  # incomplete
+        )
+        cls.canteen_on_site_incomplete_3.sectors.set([sector_line_ministry])
         cls.canteen_on_site_central = CanteenFactory(
             **COMMON,
             siret="96766910375238",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             daily_meal_count=12,
-            central_producer_siret="75665621899905"
+            central_producer_siret=cls.canteen_central.siret,
         )
         cls.canteen_on_site_central_incomplete = CanteenFactory(
             **COMMON,
             siret="96766910375238",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             daily_meal_count=12,
-            central_producer_siret=None  # incomplete
+            central_producer_siret=None,  # incomplete
         )
 
     def test_is_filled_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 8)
+        self.assertEqual(Canteen.objects.count(), 10)
         self.assertEqual(Canteen.objects.is_filled().count(), 4)
 
     def test_is_filled_property(self):
@@ -374,11 +395,13 @@ class TestCanteenCompletePropertyAndQuerySet(TestCase):
         for canteen in [
             self.canteen_central_incomplete,
             self.canteen_central_serving_incomplete,
-            self.canteen_on_site_incomplete,
+            self.canteen_on_site_incomplete_1,
+            self.canteen_on_site_incomplete_2,
+            self.canteen_on_site_incomplete_3,
             self.canteen_on_site_central_incomplete,
         ]:
             self.assertFalse(canteen.is_filled)
 
     def test_has_missing_data_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 8)
-        self.assertEqual(Canteen.objects.has_missing_data().count(), 4)
+        self.assertEqual(Canteen.objects.count(), 10)
+        self.assertEqual(Canteen.objects.has_missing_data().count(), 6)
