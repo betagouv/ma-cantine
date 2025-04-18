@@ -388,7 +388,7 @@ export default {
             measure: "qualite-des-produits",
           },
         }
-      } else if (canteen.action === "30_complete_diagnostic") {
+      } else if (canteen.action === "30_fill_diagnostic") {
         return {
           name: "MyProgress",
           params: {
