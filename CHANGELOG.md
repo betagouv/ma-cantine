@@ -6,6 +6,20 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.14.5](https://github.com/betagouv/ma-cantine/compare/v2025.14.4...v2025.14.5) (2025-04-18)
+
+
+### Corrections (bugs, typos...)
+
+* **Badge:** ajoute le champ secteurs aux champs obligatoires pour télédéclarer ([#5279](https://github.com/betagouv/ma-cantine/issues/5279)) ([164227d](https://github.com/betagouv/ma-cantine/commit/164227d5d7c6efd2982b162d7be962044ce57007))
+* **Cantines:** Actions: typo dans le nom d'une des actions ([#5283](https://github.com/betagouv/ma-cantine/issues/5283)) ([fcf478e](https://github.com/betagouv/ma-cantine/commit/fcf478e71e22eb14a7f0da24e82b640d344c30c1))
+* **Teledeclaration:** Gérer le cas des TD sans appro pour le calcul du cout denrees ([#5282](https://github.com/betagouv/ma-cantine/issues/5282)) ([9a5c039](https://github.com/betagouv/ma-cantine/commit/9a5c03994d67b66ea7e7199b626d80dd428091d2))
+
+
+### Technique
+
+* **Diagnostic:** wording: corrige un 'complet' (remplacé par 'détaillé') oublié ([#5281](https://github.com/betagouv/ma-cantine/issues/5281)) ([eac7ab0](https://github.com/betagouv/ma-cantine/commit/eac7ab0ed5dda4ae6828307faaf58298ebe6b2b9))
+
 ## [2025.14.4](https://github.com/betagouv/ma-cantine/compare/v2025.14.3...v2025.14.4) (2025-04-17)
 
 
