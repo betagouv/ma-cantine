@@ -232,9 +232,6 @@ class Teledeclaration(models.Model):
         except Exception:
             pass
 
-    def clean(self):
-        return super().clean()
-
     @staticmethod
     def should_use_central_kitchen_appro(diagnostic):
         is_satellite = diagnostic.canteen.production_type == Canteen.ProductionType.ON_SITE_CENTRAL
