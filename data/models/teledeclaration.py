@@ -53,7 +53,6 @@ def in_correction_campaign_query(year):
 
 
 class TeledeclarationQuerySet(models.QuerySet):
-
     def submitted(self):
         return self.filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED)
 
@@ -232,18 +231,6 @@ class Teledeclaration(models.Model):
             teledeclaration.cancel()
         except Exception:
             pass
-
-    def clean(self):
-        """
-        Verify there is only one submitted declaration per year/canteen
-        at any given time.
-        """
-        if self.status == self.TeledeclarationStatus.SUBMITTED:
-            duplicates = Teledeclaration.objects.filter(canteen=self.canteen, year=self.year, status=self.status)
-            message = "Il existe déjà une télédéclaration en cours pour cette année"
-            if duplicates.count() > 0:
-                raise ValidationError({"year": message})
-        return super().clean()
 
     @staticmethod
     def should_use_central_kitchen_appro(diagnostic):
