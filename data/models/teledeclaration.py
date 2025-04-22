@@ -233,21 +233,7 @@ class Teledeclaration(models.Model):
             pass
 
     def clean(self):
-        self.validate_uniqueness()
         return super().clean()
-
-    def validate_uniqueness(self):
-        """
-        Verify there is only one submitted declaration per year/canteen
-        at any given time.
-        """
-        if self.status == self.TeledeclarationStatus.SUBMITTED:
-            duplicates = Teledeclaration.objects.filter(
-                canteen=self.canteen, year=self.year, status=self.status
-            ).exclude(id=self.id)
-            message = "Il existe déjà une télédéclaration en cours pour cette année"
-            if duplicates.count() > 0:
-                raise ValidationError({"year": message})
 
     @staticmethod
     def should_use_central_kitchen_appro(diagnostic):
