@@ -17,8 +17,7 @@ class TestResourceActionsApi(APITestCase):
         cls.waste_action = WasteActionFactory()
         cls.user = UserFactory()
         cls.user_with_canteen = UserFactory()
-        cls.canteen = CanteenFactory()
-        cls.canteen.managers.add(cls.user_with_canteen)
+        cls.canteen = CanteenFactory(managers=[cls.user_with_canteen])
         cls.url = reverse("resource_action_create_or_update", kwargs={"resource_pk": cls.waste_action.id})
 
     def test_create_resource_action_error(self):
@@ -84,8 +83,9 @@ class TestCanteenResourceActionApi(APITestCase):
         cls.user = UserFactory()
         cls.user_with_canteen = UserFactory()
         cls.canteen = CanteenFactory(publication_status=Canteen.PublicationStatus.PUBLISHED)
-        cls.canteen_with_resource_action = CanteenFactory(publication_status=Canteen.PublicationStatus.PUBLISHED)
-        cls.canteen_with_resource_action.managers.add(cls.user_with_canteen)
+        cls.canteen_with_resource_action = CanteenFactory(
+            publication_status=Canteen.PublicationStatus.PUBLISHED, managers=[cls.user_with_canteen]
+        )
         ResourceActionFactory(resource=cls.waste_action_1, canteen=cls.canteen_with_resource_action, is_done=True)
         ResourceActionFactory(resource=cls.waste_action_2, canteen=cls.canteen_with_resource_action, is_favorite=True)
 

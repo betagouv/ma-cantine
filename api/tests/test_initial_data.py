@@ -65,8 +65,7 @@ class TestInitialDataApi(APITestCase):
         to thoroughly test the other keys, just making sure they are present.
         The cantine previews should also be present in this case.
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
 
         response = self.client.get(reverse("initial_data"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

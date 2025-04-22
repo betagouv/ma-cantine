@@ -560,13 +560,19 @@ class TestTeledeclarationCreateApi(APITestCase):
         ),
         cases = [
             {
-                "canteen": CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, siret="79300704800044"),
+                "canteen": CanteenFactory(
+                    production_type=Canteen.ProductionType.ON_SITE,
+                    siret="79300704800044",
+                    managers=[authenticate.user],
+                ),
                 "diagnostic": DiagnosticFactory.create(year=2021, value_total_ht=100),
                 "expected_teledeclaration_mode": "SITE",
             },
             {
                 "canteen": CanteenFactory(
-                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL, siret="79300704800044"
+                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+                    siret="79300704800044",
+                    managers=[authenticate.user],
                 ),
                 "diagnostic": DiagnosticFactory.create(year=2021, value_total_ht=100),
                 "expected_teledeclaration_mode": "SITE",
@@ -576,12 +582,17 @@ class TestTeledeclarationCreateApi(APITestCase):
                     production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                     siret="79300704800044",
                     central_producer_siret="18704793618411",
+                    managers=[authenticate.user],
                 ),
                 "diagnostic": DiagnosticFactory.create(year=2021),
                 "expected_teledeclaration_mode": "SATELLITE_WITHOUT_APPRO",
             },
             {
-                "canteen": CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044"),
+                "canteen": CanteenFactory(
+                    production_type=Canteen.ProductionType.CENTRAL,
+                    siret="79300704800044",
+                    managers=[authenticate.user],
+                ),
                 "diagnostic": DiagnosticFactory.create(
                     year=2021,
                     value_total_ht=100,
@@ -591,7 +602,9 @@ class TestTeledeclarationCreateApi(APITestCase):
             },
             {
                 "canteen": CanteenFactory(
-                    production_type=Canteen.ProductionType.CENTRAL_SERVING, siret="79300704800044"
+                    production_type=Canteen.ProductionType.CENTRAL_SERVING,
+                    siret="79300704800044",
+                    managers=[authenticate.user],
                 ),
                 "diagnostic": DiagnosticFactory.create(
                     year=2021,
@@ -605,8 +618,6 @@ class TestTeledeclarationCreateApi(APITestCase):
             canteen = case["canteen"]
             diagnostic = case["diagnostic"]
             expected_td_mode = case["expected_teledeclaration_mode"]
-
-            canteen.managers.add(authenticate.user)
             diagnostic.canteen = canteen
             diagnostic.save()
 

@@ -50,11 +50,9 @@ class TestDiagnosticsApi(APITestCase):
         When calling this API on a canteen that the user manages
         we need to provide the required field(s)
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
 
         payload = {}
-
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -65,11 +63,9 @@ class TestDiagnosticsApi(APITestCase):
         we expect a diagnostic to be created
         (minimal required fields)
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
 
         payload = {"year": 2020}
-
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -79,8 +75,7 @@ class TestDiagnosticsApi(APITestCase):
         When calling this API on a canteen that the user manages
         we expect a diagnostic to be created
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
 
         payload = {
             "year": 2020,
@@ -285,8 +280,7 @@ class TestDiagnosticsApi(APITestCase):
         Shouldn't be able to add a diagnostic with the same canteen and year
         as an existing diagnostic
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
 
         payload = {"year": 2020, "value_bio_ht": 10}
         self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
@@ -309,8 +303,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         Do not create a diagnostic where the sum of the values is > total
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
 
         payload = {
             "year": 2020,
@@ -496,7 +489,7 @@ class TestDiagnosticsApi(APITestCase):
         Check that the endpoint includes a list of diagnostics that could be teledeclared
         """
         last_year = 2021
-        no_diag = CanteenFactory.create(
+        CanteenFactory.create(  # without diag
             production_type=Canteen.ProductionType.ON_SITE,
             publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
@@ -505,6 +498,7 @@ class TestDiagnosticsApi(APITestCase):
             siret="75665621899905",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
         canteen_with_incomplete_diag = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -515,6 +509,7 @@ class TestDiagnosticsApi(APITestCase):
             siret="96766910375238",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
         DiagnosticFactory.create(canteen=canteen_with_incomplete_diag, year=last_year, value_total_ht=None)
         canteen_with_complete_diag = CanteenFactory.create(
@@ -526,6 +521,7 @@ class TestDiagnosticsApi(APITestCase):
             siret="75665621899905",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
         complete_diag = DiagnosticFactory.create(
             canteen=canteen_with_complete_diag, year=last_year, value_total_ht=10000
@@ -540,6 +536,7 @@ class TestDiagnosticsApi(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             siret=None,  # this needs to be filled for the diag to be teledeclarable
+            managers=[authenticate.user],
         )
         DiagnosticFactory.create(canteen=canteen_with_incomplete_data, year=last_year, value_total_ht=10000)
 
@@ -553,6 +550,7 @@ class TestDiagnosticsApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             siret="31285246765507",
             line_ministry=None,
+            managers=[authenticate.user],
         )
         sector = SectorFactory(has_line_ministry=True)
         canteen_without_line_ministry.sectors.set([sector])
@@ -570,19 +568,10 @@ class TestDiagnosticsApi(APITestCase):
             siret="55476895458384",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
         td_diag = DiagnosticFactory.create(canteen=canteen_with_td, year=last_year, value_total_ht=2000)
         Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
-
-        for canteen in [
-            no_diag,
-            canteen_with_incomplete_diag,
-            canteen_with_complete_diag,
-            canteen_with_incomplete_data,
-            canteen_without_line_ministry,
-            canteen_with_td,
-        ]:
-            canteen.managers.add(authenticate.user)
 
         response = self.client.get(reverse("diagnostics_to_teledeclare", kwargs={"year": last_year}))
         diagnostics = response.json().get("results")
@@ -622,8 +611,8 @@ class TestDiagnosticsApi(APITestCase):
             siret="96766910375238",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
-        canteen_with_diag.managers.add(authenticate.user)
         DiagnosticFactory.create(canteen=canteen_with_diag, year=last_year, value_total_ht=1000)
 
         # Canteen with diag teledeclared
@@ -637,8 +626,8 @@ class TestDiagnosticsApi(APITestCase):
             siret="75665621899905",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
-        canteen_with_td.managers.add(authenticate.user)
         diag_to_teledeclare = DiagnosticFactory.create(canteen=canteen_with_td, year=last_year, value_total_ht=10000)
         Teledeclaration.create_from_diagnostic(diag_to_teledeclare, authenticate.user)
 
@@ -653,8 +642,8 @@ class TestDiagnosticsApi(APITestCase):
             siret="75665621899906",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
-        canteen_with_correction.managers.add(authenticate.user)
         diag_cancelled = DiagnosticFactory.create(
             canteen=canteen_with_correction, year=last_year, value_total_ht=10000
         )
@@ -677,8 +666,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         On CREATE, total_leftovers should be converted from kg to ton
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
 
         payload = {
             "year": 2020,
@@ -698,8 +686,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         On UPDATE, total_leftovers should be converted from kg to ton
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(canteen=canteen, total_leftovers=Decimal("1.23456"))
 
         payload = {
@@ -724,8 +711,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         On UPDATE, total_leftovers should be converted from kg to ton
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(canteen=canteen, total_leftovers=Decimal("1.23456"))
 
         payload = {
@@ -751,8 +737,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         Should return reasonable error if the given value of total leftovers fails validation
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(canteen=canteen, total_leftovers=Decimal("1.23456"))
 
         payload = {
@@ -798,8 +783,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         On GET, total_leftovers should be converted from ton to kg
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         DiagnosticFactory.create(canteen=canteen, total_leftovers=Decimal("1.23456"))
         response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
         body = response.json()

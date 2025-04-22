@@ -145,8 +145,7 @@ class TestCanteenApi(APITestCase):
         The endpoint for canteen managers should return the economic data of the appro
         values - as opposed to the published endpoint which returns percentage values
         """
-        user_canteen = CanteenFactory.create()
-        user_canteen.managers.add(authenticate.user)
+        user_canteen = CanteenFactory.create(managers=[authenticate.user])
 
         DiagnosticFactory.create(
             canteen=user_canteen,
@@ -194,8 +193,7 @@ class TestCanteenApi(APITestCase):
         """
         Users can modify the canteens they manage
         """
-        canteen = CanteenFactory.create(city="Paris")
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(city="Paris", managers=[authenticate.user])
         payload = {
             "city": "Lyon",
             "siret": "21340172201787",
@@ -221,8 +219,9 @@ class TestCanteenApi(APITestCase):
         A change in the SIRET of a central cuisine must update the "central_producer_siret" of
         its satellites
         """
-        central_kitchen = CanteenFactory.create(siret="03201976246133", production_type=Canteen.ProductionType.CENTRAL)
-        central_kitchen.managers.add(authenticate.user)
+        central_kitchen = CanteenFactory.create(
+            siret="03201976246133", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
+        )
 
         satellites = [
             CanteenFactory.create(
@@ -249,8 +248,9 @@ class TestCanteenApi(APITestCase):
         """
         A central cuisine without a SIRET can add one without modifying everybody else
         """
-        central_kitchen = CanteenFactory.create(siret=None, production_type=Canteen.ProductionType.CENTRAL)
-        central_kitchen.managers.add(authenticate.user)
+        central_kitchen = CanteenFactory.create(
+            siret=None, production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
+        )
 
         other_canteens = [
             CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None),
@@ -268,8 +268,7 @@ class TestCanteenApi(APITestCase):
 
     @authenticate
     def test_soft_delete(self):
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
 
         response = self.client.delete(reverse("single_canteen", kwargs={"pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -334,8 +333,7 @@ class TestCanteenApi(APITestCase):
         me 400 with canteen name and id
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret)
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
 
         payload = {"name": "New canteen", "siret": siret}
         response = self.client.post(reverse("user_canteens"), payload)
@@ -371,10 +369,8 @@ class TestCanteenApi(APITestCase):
         me 400 with canteen name and id
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret)
-        canteen.managers.add(authenticate.user)
-        canteen_to_test = CanteenFactory.create()
-        canteen_to_test.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
+        canteen_to_test = CanteenFactory.create(managers=[authenticate.user])
 
         payload = {"siret": siret}
         response = self.client.patch(
@@ -392,8 +388,7 @@ class TestCanteenApi(APITestCase):
         A canteen modification should pass if the siret in the payload is already the canteen's siret
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret)
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
 
         payload = {"siret": siret}
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
@@ -405,8 +400,7 @@ class TestCanteenApi(APITestCase):
         A canteen modification shouldn't allow deleting a SIRET with sending blank value
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret)
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
 
         payload = {"siret": ""}
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
@@ -419,8 +413,7 @@ class TestCanteenApi(APITestCase):
         """
         A canteen modification shouldn't allow deleting a SIRET with sending null value
         """
-        canteen = CanteenFactory.create(siret="21340172201787")
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(siret="21340172201787", managers=[authenticate.user])
         payload = {
             "siret": None,
         }
@@ -439,8 +432,7 @@ class TestCanteenApi(APITestCase):
         """
         siret = "26566234910966"
         canteen = CanteenFactory.create(siret=siret)
-        canteen_to_test = CanteenFactory.create()
-        canteen_to_test.managers.add(authenticate.user)
+        canteen_to_test = CanteenFactory.create(managers=[authenticate.user])
 
         payload = {"siret": siret}
         response = self.client.patch(
@@ -484,8 +476,7 @@ class TestCanteenApi(APITestCase):
         """
         The API should allow image addition and deletion for canteen managers
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         self.assertEqual(canteen.images.count(), 0)
 
         image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
@@ -595,8 +586,8 @@ class TestCanteenApi(APITestCase):
             creation_mtm_source=None,
             creation_mtm_campaign=None,
             creation_mtm_medium=None,
+            managers=[authenticate.user],
         )
-        canteen.managers.add(authenticate.user)
         payload = {
             "name": "My canteen",
             "city": "Lyon",
@@ -617,12 +608,12 @@ class TestCanteenApi(APITestCase):
         """
         Full representation should not contain the tracking info
         """
-        canteen = CanteenFactory.create(
+        CanteenFactory.create(
             creation_mtm_source="mtm_source_value",
             creation_mtm_campaign="mtm_campaign_value",
             creation_mtm_medium="mtm_medium_value",
+            managers=[authenticate.user],
         )
-        canteen.managers.add(authenticate.user)
         response = self.client.get(reverse("user_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json().get("results")[0]
@@ -640,8 +631,8 @@ class TestCanteenApi(APITestCase):
             creation_mtm_source="mtm_source_value",
             creation_mtm_campaign="mtm_campaign_value",
             creation_mtm_medium="mtm_medium_value",
+            managers=[authenticate.user],
         )
-        user_canteen.managers.add(authenticate.user)
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -655,9 +646,10 @@ class TestCanteenApi(APITestCase):
     def test_get_central_kitchen(self):
         central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="96953195898254")
         satellite = CanteenFactory.create(
-            central_producer_siret=central_kitchen.siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+            central_producer_siret=central_kitchen.siret,
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            managers=[authenticate.user],
         )
-        satellite.managers.add(authenticate.user)
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": satellite.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -674,8 +666,7 @@ class TestCanteenApi(APITestCase):
         A badge can be True, False, or None. None = !True and the tunnel wasn't started,
         False = !True and the tunnel was started.
         """
-        user_canteen = CanteenFactory.create()
-        user_canteen.managers.add(authenticate.user)
+        user_canteen = CanteenFactory.create(managers=[authenticate.user])
 
         DiagnosticFactory.create(
             canteen=user_canteen,
@@ -708,9 +699,10 @@ class TestCanteenApi(APITestCase):
         """
         central = CanteenFactory.create(siret="21340172201787", production_type=Canteen.ProductionType.CENTRAL)
         satellite = CanteenFactory.create(
-            central_producer_siret="21340172201787", production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+            central_producer_siret="21340172201787",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            managers=[authenticate.user],
         )
-        satellite.managers.add(authenticate.user)
 
         DiagnosticFactory.create(
             canteen=satellite,
@@ -733,14 +725,12 @@ class TestCanteenApi(APITestCase):
 
     @authenticate
     def test_get_canteens_filter_production_type(self):
-        user_satellite_canteen = CanteenFactory.create(production_type="site")
-        user_satellite_canteen.managers.add(authenticate.user)
+        CanteenFactory.create(production_type="site", managers=[authenticate.user])
+        user_central_cuisine = CanteenFactory.create(production_type="central", managers=[authenticate.user])
+        user_central_serving_cuisine = CanteenFactory.create(
+            production_type="central_serving", managers=[authenticate.user]
+        )
 
-        user_central_cuisine = CanteenFactory.create(production_type="central")
-        user_central_cuisine.managers.add(authenticate.user)
-
-        user_central_serving_cuisine = CanteenFactory.create(production_type="central_serving")
-        user_central_serving_cuisine.managers.add(authenticate.user)
         response = self.client.get(f"{reverse('user_canteens')}?production_type=central,central_serving")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -770,6 +760,7 @@ class TestCanteenActionApi(APITestCase):
             siret="75665621899905",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
         # nothing to do
         complete = CanteenFactory.create(
@@ -781,6 +772,7 @@ class TestCanteenActionApi(APITestCase):
             siret="75665621899905",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
         # complete diag
         needs_to_fill_diag = CanteenFactory.create(
@@ -792,10 +784,10 @@ class TestCanteenActionApi(APITestCase):
             siret="75665621899905",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
         needs_diagnostic_mode = CanteenFactory.create(
-            production_type=Canteen.ProductionType.CENTRAL,
-            siret="75665621899905",
+            production_type=Canteen.ProductionType.CENTRAL, siret="75665621899905", managers=[authenticate.user]
         )
         # publish
         needs_to_publish = CanteenFactory.create(
@@ -807,6 +799,7 @@ class TestCanteenActionApi(APITestCase):
             siret="75665621899905",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
         # TD
         needs_td = CanteenFactory.create(
@@ -818,6 +811,7 @@ class TestCanteenActionApi(APITestCase):
             siret="75665621899905",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
         # create satellites
         central_siret = "78146469373706"
@@ -825,18 +819,9 @@ class TestCanteenActionApi(APITestCase):
             siret=central_siret,
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=3,
+            managers=[authenticate.user],
         )
         CanteenFactory.create(name="Not my canteen")
-        for canteen in [
-            needs_last_year_diag,
-            complete,
-            needs_to_fill_diag,
-            needs_diagnostic_mode,
-            needs_to_publish,
-            needs_td,
-            needs_additional_satellites,
-        ]:
-            canteen.managers.add(authenticate.user)
 
         last_year = 2021
         DiagnosticFactory.create(year=last_year - 1, canteen=needs_last_year_diag)
@@ -903,22 +888,26 @@ class TestCanteenActionApi(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             publication_status=Canteen.PublicationStatus.PUBLISHED,
             line_ministry=None,
+            managers=[authenticate.user],
         )
         previously_draft = CanteenFactory.create(
             name="supposedly draft canteen",
             production_type=Canteen.ProductionType.ON_SITE,
             publication_status=Canteen.PublicationStatus.PUBLISHED,
             line_ministry=None,
+            managers=[authenticate.user],
         )
         public_ministry = CanteenFactory.create(
             name="canteen with administration ministry",
             production_type=Canteen.ProductionType.ON_SITE,
             line_ministry=Canteen.Ministries.ADMINISTRATION_TERRITORIALE,
+            managers=[authenticate.user],
         )
         private_ministry = CanteenFactory.create(
             name="a private canteen",
             production_type=Canteen.ProductionType.ON_SITE,
             line_ministry=Canteen.Ministries.ARMEE,
+            managers=[authenticate.user],
         )
         last_year = 2023
         for canteen in [
@@ -927,7 +916,6 @@ class TestCanteenActionApi(APITestCase):
             public_ministry,
             private_ministry,
         ]:
-            canteen.managers.add(authenticate.user)
             # give them all teledeclarations to skip to final action
             td_diag = DiagnosticFactory.create(year=last_year, canteen=canteen, value_total_ht=10)
             Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
@@ -946,12 +934,12 @@ class TestCanteenActionApi(APITestCase):
         """
         Test for a bug fix. A central that doesn't have any satellites at all should get the complete satellite action.
         """
-        has_no_satellites = CanteenFactory.create(
+        CanteenFactory.create(
             siret="45467900121441",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=3,
+            managers=[authenticate.user],
         )
-        has_no_satellites.managers.add(authenticate.user)
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}) + "?ordering=action")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -975,10 +963,11 @@ class TestCanteenActionApi(APITestCase):
             siret="96766910375238",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
         last_year = 2021
         diagnostic = DiagnosticFactory.create(year=last_year, canteen=canteen, value_total_ht=1000)
-        canteen.managers.add(authenticate.user)
+
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
@@ -1047,8 +1036,8 @@ class TestCanteenActionApi(APITestCase):
             city_insee_code="69123",
             satellite_canteens_count=1,
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
-        central_kitchen.managers.add(authenticate.user)
         satellite = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             publication_status=Canteen.PublicationStatus.PUBLISHED,
@@ -1059,8 +1048,8 @@ class TestCanteenActionApi(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             central_producer_siret="96766910375238",
+            managers=[authenticate.user],
         )
-        satellite.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(
             year=2021,
             canteen=central_kitchen,
@@ -1095,13 +1084,10 @@ class TestCanteenActionApi(APITestCase):
         but have not yet created a diagnostic
         """
         year = 2023
-        canteen_without_diag = CanteenFactory.create()
-        canteen_with_diag = CanteenFactory.create()
-        canteen_without_purchases = CanteenFactory.create()
+        canteen_without_diag = CanteenFactory.create(managers=[authenticate.user])
+        canteen_with_diag = CanteenFactory.create(managers=[authenticate.user])
+        CanteenFactory.create(managers=[authenticate.user])  # canteen_without_purchases
         not_my_canteen = CanteenFactory.create()
-        canteens = [canteen_with_diag, canteen_without_diag, canteen_without_purchases]
-        for canteen in canteens:
-            canteen.managers.add(authenticate.user)
         DiagnosticFactory.create(canteen=canteen_with_diag, year=year)
         PurchaseFactory.create(canteen=canteen_without_diag, date=f"{year}-01-01")
         # add second purchase to check canteen id deduplication
@@ -1120,6 +1106,7 @@ class TestCanteenActionApi(APITestCase):
         Check that canteens with SIRET issues (no SIRET, SIRET = central_producer_siret) have complete canteen actions and not TD actions
         """
         last_year = 2021
+        # canteen not ok with diag
         canteen_with_no_siret = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
             siret=None,
@@ -1128,9 +1115,10 @@ class TestCanteenActionApi(APITestCase):
             daily_meal_count=12,
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
-        # complete diag
         DiagnosticFactory.create(canteen=canteen_with_no_siret, year=last_year, value_total_ht=10000)
+        # canteen not ok with diag
         canteen_with_bad_central_siret = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             siret="59282615314394",
@@ -1140,10 +1128,11 @@ class TestCanteenActionApi(APITestCase):
             daily_meal_count=12,
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
-        # complete diag
         DiagnosticFactory.create(canteen=canteen_with_bad_central_siret, year=last_year, value_total_ht=10000)
-        canteen_to_td = CanteenFactory.create(
+        # canteen ok without diag
+        CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
             siret="55314169703815",
             management_type=Canteen.ManagementType.DIRECT,
@@ -1151,14 +1140,8 @@ class TestCanteenActionApi(APITestCase):
             daily_meal_count=12,
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
         )
-
-        for canteen in [
-            canteen_with_no_siret,
-            canteen_with_bad_central_siret,
-            canteen_to_td,
-        ]:
-            canteen.managers.add(authenticate.user)
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         body = response.json()
@@ -1180,10 +1163,12 @@ class TestCanteenActionApi(APITestCase):
         """
         Check that this endpoint can return the summary for a specified canteen
         """
-        canteen = CanteenFactory.create(
-            id=3, production_type=Canteen.ProductionType.ON_SITE, sectors=[SectorFactory.create()]
+        CanteenFactory.create(
+            id=3,
+            production_type=Canteen.ProductionType.ON_SITE,
+            sectors=[SectorFactory.create()],
+            managers=[authenticate.user],
         )
-        canteen.managers.add(authenticate.user)
 
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": 2021}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1205,9 +1190,9 @@ class TestCanteenActionApi(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             sectors=[SectorFactory.create()],
+            managers=[authenticate.user],
         )
         last_year = 2024
-        complete.managers.add(authenticate.user)
         DiagnosticFactory.create(canteen=complete, year=last_year, value_total_ht=10000)
 
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 2, "year": last_year}))
@@ -1238,9 +1223,9 @@ class TestCanteenActionApi(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             sectors=[SectorFactory.create()],
+            managers=[authenticate.user],
         )
         last_year = 2024
-        complete.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory.create(canteen=complete, year=last_year, value_total_ht=10000)
 
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 2, "year": last_year}))
@@ -1285,6 +1270,7 @@ class TestCanteenActionApi(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             sectors=[SectorFactory.create()],
+            managers=[authenticate.user],
         )
         canteen_did_not_td = CanteenFactory.create(
             id=3,
@@ -1297,10 +1283,10 @@ class TestCanteenActionApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             management_type=Canteen.ManagementType.DIRECT,
             sectors=[SectorFactory.create()],
+            managers=[authenticate.user],
         )
         last_year = 2024
         for canteen in [canteen_td, canteen_did_not_td]:
-            canteen.managers.add(authenticate.user)
             DiagnosticFactory.create(canteen=canteen, year=last_year, value_total_ht=10000)
         Teledeclaration.create_from_diagnostic(
             Diagnostic.objects.get(canteen=canteen_td, year=last_year), authenticate.user
@@ -1367,10 +1353,10 @@ class TestCanteenActionApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             sectors=[with_lm, without_lm],
             line_ministry=None,
+            managers=[authenticate.user],
         )
         last_year = 2021
         DiagnosticFactory.create(year=last_year, canteen=canteen, value_total_ht=1000)
-        canteen.managers.add(authenticate.user)
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
@@ -1461,8 +1447,7 @@ class TestCanteenStatusApi(APITestCase):
         If checking a siret of a canteen that exists and I manage, give me canteen info
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret)
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
 
         response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

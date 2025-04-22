@@ -28,9 +28,7 @@ class TestPurchaseApi(APITestCase):
         This endpoint can only return the purchases of canteens the logged user manages
         """
         other_user = UserFactory.create()
-        other_user_canteen = CanteenFactory.create()
-        other_user_canteen.managers.add(other_user)
-
+        other_user_canteen = CanteenFactory.create(managers=[other_user])
         PurchaseFactory.create(canteen=other_user_canteen)
 
         response = self.client.get(reverse("purchase_list_create"))
@@ -43,9 +41,7 @@ class TestPurchaseApi(APITestCase):
         """
         The logged user should get the purchases that concern them
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         PurchaseFactory.create(canteen=canteen)
         PurchaseFactory.create(canteen=canteen)
 
@@ -76,8 +72,7 @@ class TestPurchaseApi(APITestCase):
         A user can only create a purchase of a canteen they manage
         """
         other_user = UserFactory.create()
-        other_user_canteen = CanteenFactory.create()
-        other_user_canteen.managers.add(other_user)
+        other_user_canteen = CanteenFactory.create(managers=[other_user])
 
         payload = {
             "date": "2022-01-13",
@@ -96,8 +91,8 @@ class TestPurchaseApi(APITestCase):
         """
         A user can create a purchase
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
+
         payload = {
             "date": "2022-01-13",
             "canteen": canteen.id,
@@ -119,8 +114,8 @@ class TestPurchaseApi(APITestCase):
         """
         A user cannot create a purchase for an nonexistent canteen
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        CanteenFactory.create(managers=[authenticate.user])
+
         payload = {
             "date": "2022-01-13",
             "canteen": "999",
@@ -154,8 +149,7 @@ class TestPurchaseApi(APITestCase):
         """
         purchase = PurchaseFactory.create()
         purchase.canteen.managers.add(authenticate.user)
-        new_canteen = CanteenFactory.create()
-        new_canteen.managers.add(authenticate.user)
+        new_canteen = CanteenFactory.create(managers=[authenticate.user])
 
         payload = {
             "id": purchase.id,
@@ -222,8 +216,7 @@ class TestPurchaseApi(APITestCase):
         Every category apart from bio should exlude bio (so bio + label rouge gets counted in bio but not label rouge)
         The categories with multiple labels on them should count items with two or more labels once
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         # For the year 2020
         # bio (+ rouge)
         PurchaseFactory.create(
@@ -312,8 +305,7 @@ class TestPurchaseApi(APITestCase):
         The three categories outside of EGalim should get the totals regardless of what other labels they have
         The category of AOC/AOP/IGP/STG should count items with two or more labels once (applicable to extended declaration)
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         d = "2020-03-01"
         # some egalim characteristics
         bio = Purchase.Characteristic.BIO
@@ -383,8 +375,7 @@ class TestPurchaseApi(APITestCase):
         """
         The totals for "viandes et volailles" must be included in the payload
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
 
         # Should be counted both on EGalim and "Provenance France"
         PurchaseFactory.create(
@@ -459,8 +450,7 @@ class TestPurchaseApi(APITestCase):
         """
         The totals for "poissons, produits de la mer et de l'aquaculture" must be included in the payload
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
 
         # Should be counted on EGalim only once
         PurchaseFactory.create(
@@ -528,6 +518,7 @@ class TestPurchaseApi(APITestCase):
     @authenticate
     def test_purchase_not_authorized(self):
         canteen = CanteenFactory.create()
+
         response = self.client.get(
             reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
         )
@@ -543,16 +534,14 @@ class TestPurchaseApi(APITestCase):
         """
         It is possible for a manager to retrieve year-on-year purchase totals for a canteen
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
 
         PurchaseFactory.create(canteen=canteen, price_ht=100, date="2020-01-01")
         PurchaseFactory.create(canteen=canteen, price_ht=50, date="2020-12-31")
         PurchaseFactory.create(canteen=canteen, price_ht=300, date="2021-01-01")
         PurchaseFactory.create(canteen=canteen, price_ht=150, date="2021-12-31")
 
-        other_canteen = CanteenFactory.create()
-        other_canteen.managers.add(authenticate.user)
+        other_canteen = CanteenFactory.create(managers=[authenticate.user])
         PurchaseFactory.create(canteen=other_canteen, price_ht=999, date="2021-01-01")
 
         response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}))
@@ -627,22 +616,22 @@ class TestPurchaseApi(APITestCase):
         Ignore ids that are: non-existant; already deleted; not managed by the user
         And delete what can be deleted
         """
-        should_delete = PurchaseFactory.create(deletion_date=None)
+        purchase_should_delete = PurchaseFactory.create(deletion_date=None)
         date = timezone.now()
-        already_deleted = PurchaseFactory.create(deletion_date=date)
-        should_delete.canteen.managers.add(authenticate.user)
-        already_deleted.canteen.managers.add(authenticate.user)
+        purchase_already_deleted = PurchaseFactory.create(deletion_date=date)
+        purchase_should_delete.canteen.managers.add(authenticate.user)
+        purchase_already_deleted.canteen.managers.add(authenticate.user)
         invalid_id = "999"
         not_mine = PurchaseFactory.create(deletion_date=None)
-        ids = [should_delete.id, already_deleted.id, invalid_id, not_mine.id]
+        ids = [purchase_should_delete.id, purchase_already_deleted.id, invalid_id, not_mine.id]
 
         response = self.client.post(reverse("delete_purchases"), {"ids": ids}, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["count"], 1)
-        should_delete.refresh_from_db()
-        self.assertIsNotNone(should_delete.deletion_date)
-        already_deleted.refresh_from_db()
-        self.assertEqual(already_deleted.deletion_date, date)
+        purchase_should_delete.refresh_from_db()
+        self.assertIsNotNone(purchase_should_delete.deletion_date)
+        purchase_already_deleted.refresh_from_db()
+        self.assertEqual(purchase_already_deleted.deletion_date, date)
         not_mine.refresh_from_db()
         self.assertIsNone(not_mine.deletion_date)
 
@@ -654,9 +643,9 @@ class TestPurchaseApi(APITestCase):
         date = timezone.now()
         purchase_1 = PurchaseFactory.create(deletion_date=date)
         purchase_2 = PurchaseFactory.create(deletion_date=date)
-        not_me = PurchaseFactory.create(deletion_date=date)
-        for p in [purchase_1, purchase_2, not_me]:
-            p.canteen.managers.add(authenticate.user)
+        purchase_not_me = PurchaseFactory.create(deletion_date=date)
+        for purchase in [purchase_1, purchase_2, purchase_not_me]:
+            purchase.canteen.managers.add(authenticate.user)
         not_my_purchase = PurchaseFactory.create(deletion_date=date)
 
         response = self.client.post(
@@ -667,17 +656,16 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(body["count"], 2)
         purchase_1.refresh_from_db()
         purchase_2.refresh_from_db()
-        not_me.refresh_from_db()
+        purchase_not_me.refresh_from_db()
         not_my_purchase.refresh_from_db()
         self.assertIsNone(purchase_1.deletion_date)
         self.assertIsNone(purchase_2.deletion_date)
-        self.assertEqual(not_me.deletion_date, date)
+        self.assertEqual(purchase_not_me.deletion_date, date)
         self.assertEqual(not_my_purchase.deletion_date, date)
 
     @authenticate
     def test_search_purchases(self):
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         PurchaseFactory.create(description="avoine", canteen=canteen)
         PurchaseFactory.create(description="tomates", canteen=canteen)
         PurchaseFactory.create(description="pommes", canteen=canteen)
@@ -706,10 +694,8 @@ class TestPurchaseApi(APITestCase):
 
     @authenticate
     def test_filter_by_canteen(self):
-        canteen = CanteenFactory.create()
-        other_canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
-        other_canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
+        other_canteen = CanteenFactory.create(managers=[authenticate.user])
         PurchaseFactory.create(description="avoine", canteen=canteen)
         PurchaseFactory.create(description="tomates", canteen=other_canteen)
         PurchaseFactory.create(description="pommes", canteen=canteen)
@@ -724,8 +710,7 @@ class TestPurchaseApi(APITestCase):
 
     @authenticate
     def test_filter_by_characteristic(self):
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         PurchaseFactory.create(description="avoine", canteen=canteen, characteristics=[Purchase.Characteristic.BIO])
         PurchaseFactory.create(
             description="tomates",
@@ -750,8 +735,7 @@ class TestPurchaseApi(APITestCase):
 
     @authenticate
     def test_filter_by_family(self):
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         PurchaseFactory.create(description="avoine", canteen=canteen, family=Purchase.Family.PRODUITS_DE_LA_MER)
         PurchaseFactory.create(description="tomates", canteen=canteen, family=Purchase.Family.PRODUITS_DE_LA_MER)
         PurchaseFactory.create(description="pommes", canteen=canteen, family=Purchase.Family.AUTRES)
@@ -763,8 +747,7 @@ class TestPurchaseApi(APITestCase):
 
     @authenticate
     def test_filter_by_date(self):
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         PurchaseFactory.create(description="avoine", canteen=canteen, date="2020-01-01")
         PurchaseFactory.create(description="tomates", canteen=canteen, date="2020-01-02")
         PurchaseFactory.create(description="pommes", canteen=canteen, date="2020-02-01")
@@ -789,10 +772,8 @@ class TestPurchaseApi(APITestCase):
         """
         Test that filter options with data are included in purchases list response
         """
-        first_canteen = CanteenFactory.create()
-        first_canteen.managers.add(authenticate.user)
-        second_canteen = CanteenFactory.create()
-        second_canteen.managers.add(authenticate.user)
+        first_canteen = CanteenFactory.create(managers=[authenticate.user])
+        second_canteen = CanteenFactory.create(managers=[authenticate.user])
         PurchaseFactory.create(
             description="avoine",
             canteen=first_canteen,
@@ -846,8 +827,7 @@ class TestPurchaseApi(APITestCase):
 
     @authenticate
     def test_excel_export(self):
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         PurchaseFactory.create(description="avoine", canteen=canteen)
         PurchaseFactory.create(description="tomates", canteen=canteen)
         PurchaseFactory.create(description="pommes", canteen=canteen)
@@ -858,8 +838,7 @@ class TestPurchaseApi(APITestCase):
 
     @authenticate
     def test_excel_export_search(self):
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         PurchaseFactory.create(description="avoine", canteen=canteen)
         PurchaseFactory.create(description="tomates", canteen=canteen)
         PurchaseFactory.create(description="pommes", canteen=canteen)
@@ -872,8 +851,7 @@ class TestPurchaseApi(APITestCase):
 
     @authenticate
     def test_excel_export_filter(self):
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         PurchaseFactory.create(family=Purchase.Family.PRODUITS_DE_LA_MER, description="avoine", canteen=canteen)
         PurchaseFactory.create(family=Purchase.Family.PRODUITS_DE_LA_MER, description="tomates", canteen=canteen)
         PurchaseFactory.create(family=Purchase.Family.AUTRES, description="pommes", canteen=canteen)
@@ -889,8 +867,7 @@ class TestPurchaseApi(APITestCase):
         A manager should be able to retrieve a list of products and providers that
         they've already entered on their own purchases
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         PurchaseFactory.create(description="avoine", canteen=canteen, provider="provider1")
         PurchaseFactory.create(description="pommes", canteen=canteen, provider="provider2")
         PurchaseFactory.create(description="pommes", canteen=canteen, provider="provider1")
@@ -918,11 +895,13 @@ class TestPurchaseApi(APITestCase):
         Given a list of canteen ids and a year, create diagnostics
         pre-filled with purchase totals for that year
         """
-        canteen_site = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
-        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL)
+        canteen_site = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user]
+        )
+        central_kitchen = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
+        )
         canteens = [canteen_site, central_kitchen]
-        for canteen in canteens:
-            canteen.managers.add(authenticate.user)
         # purchases to be included in totals
         PurchaseFactory.create(
             canteen=canteen_site,
@@ -993,12 +972,10 @@ class TestPurchaseApi(APITestCase):
         """
         Handle errors in diagnostic creation gracefully, creating what can be created
         """
-        canteen_with_diag = CanteenFactory.create()
-        canteen_without_purchases = CanteenFactory.create()
-        good_canteen = CanteenFactory.create()
+        canteen_with_diag = CanteenFactory.create(managers=[authenticate.user])
+        canteen_without_purchases = CanteenFactory.create(managers=[authenticate.user])
+        good_canteen = CanteenFactory.create(managers=[authenticate.user])
         canteens = [canteen_with_diag, canteen_without_purchases, good_canteen]
-        for canteen in canteens:
-            canteen.managers.add(authenticate.user)
         not_my_canteen = CanteenFactory.create()
 
         year = 2023
@@ -1144,8 +1121,7 @@ class TestPublicPurchasesSummaryApi(APITestCase):
         The purchases summary should return the last purchase date if the user
         is the manager of the canteen
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
 
         PurchaseFactory.create(canteen=canteen, date="2024-12-01")
         PurchaseFactory.create(canteen=canteen, date="2024-05-31")
@@ -1177,8 +1153,7 @@ class TestPublicPurchasesSummaryApi(APITestCase):
         """
         The manager of the canteen has an option to get redacted data
         """
-        canteen = CanteenFactory.create(redacted_appro_years=[2024])
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(redacted_appro_years=[2024], managers=[authenticate.user])
         PurchaseFactory.create(canteen=canteen, date="2024-01-01")
         response = self.client.get(
             reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
@@ -1191,8 +1166,7 @@ class TestPublicPurchasesSummaryApi(APITestCase):
         """
         The manager of the canteen has an option to not get redacted data
         """
-        canteen = CanteenFactory.create(redacted_appro_years=[2024])
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(redacted_appro_years=[2024], managers=[authenticate.user])
         PurchaseFactory.create(canteen=canteen, date="2024-01-01")
         response = self.client.get(
             reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
