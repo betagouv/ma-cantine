@@ -106,6 +106,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     )
     list_display = (
         "name",
+        "siret_or_siren_unite_legale_display",
         "city",
         "télédéclarée",
         "creation_date",
@@ -135,6 +136,10 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "siret",
         "siren_unite_legale",
     )
+
+    @admin.display(description="Siret (ou Siren)")
+    def siret_or_siren_unite_legale_display(self, obj):
+        return obj.siret_or_siren_unite_legale
 
     def télédéclarée(self, obj):
         active_tds = Teledeclaration.objects.filter(

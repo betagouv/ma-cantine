@@ -277,22 +277,30 @@ class TestCanteenDiagnosticTeledeclarationQuerySet(TestCase):
         self.assertEqual(Canteen.objects.annotate_with_td_for_year(2022).filter(has_td_submitted=True).count(), 0)
 
 
-class TestCanteenSiretOrSirenUniteLegaleQuerySet(TestCase):
+class TestCanteenSiretOrSirenUniteLegalePropertyOrQuerySet(TestCase):
     @classmethod
     def setUpTestData(cls):
-        CanteenFactory(siret="75665621899905", siren_unite_legale="756656218")  # OK
-        CanteenFactory(siret="75665621899905", siren_unite_legale="")  # OK
-        CanteenFactory(siret="75665621899905", siren_unite_legale=None)  # OK
-        CanteenFactory(siret="", siren_unite_legale="756656218")  # OK
-        CanteenFactory(siret="", siren_unite_legale="")
-        CanteenFactory(siret="", siren_unite_legale=None)
-        CanteenFactory(siret=None, siren_unite_legale="756656218")  # OK
-        CanteenFactory(siret=None, siren_unite_legale="")
-        CanteenFactory(siret=None, siren_unite_legale=None)
+        cls.canteen_siret_siren = CanteenFactory(siret="75665621899905", siren_unite_legale="756656218")  # OK
+        cls.canteen_siret_1 = CanteenFactory(siret="75665621899905", siren_unite_legale="")  # OK
+        cls.canteen_siret_2 = CanteenFactory(siret="75665621899905", siren_unite_legale=None)  # OK
+        cls.canteen_siren_1 = CanteenFactory(siret="", siren_unite_legale="756656218")  # OK
+        cls.canteen_none_1 = CanteenFactory(siret="", siren_unite_legale="")
+        cls.canteen_none_2 = CanteenFactory(siret="", siren_unite_legale=None)
+        cls.canteen_siren_2 = CanteenFactory(siret=None, siren_unite_legale="756656218")  # OK
+        cls.canteen_none_3 = CanteenFactory(siret=None, siren_unite_legale="")
+        cls.canteen_none_4 = CanteenFactory(siret=None, siren_unite_legale=None)
 
-    def has_siret_or_siren_unite_legale(self):
+    def has_siret_or_siren_unite_legale_queryset(self):
         self.assertEqual(Canteen.objects.count(), 9)
         self.assertEqual(Canteen.objects.has_siret_or_siren_unite_legale().count(), 5)
+
+    def test_siret_or_siren_unite_legale_property(self):
+        for canteen in [self.canteen_siret_siren, self.canteen_siret_1, self.canteen_siret_2]:
+            self.assertEqual(canteen.siret_or_siren_unite_legale, "75665621899905")
+        for canteen in [self.canteen_siren_1, self.canteen_siren_2]:
+            self.assertEqual(canteen.siret_or_siren_unite_legale, "756656218")
+        for canteen in [self.canteen_none_1, self.canteen_none_2, self.canteen_none_3, self.canteen_none_4]:
+            self.assertEqual(canteen.siret_or_siren_unite_legale, "")
 
 
 class TestCanteenCompletePropertyAndQuerySet(TestCase):
