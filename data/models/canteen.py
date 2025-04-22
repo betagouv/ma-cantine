@@ -531,6 +531,10 @@ class Canteen(SoftDeletionModel):
         return f"/nos-cantines/{self.url_slug}"
 
     @property
+    def siret_or_siren_unite_legale(self) -> str:
+        return self.siret or self.siren_unite_legale or ""
+
+    @property
     def is_serving(self):
         return self.production_type and self.production_type in [
             Canteen.ProductionType.CENTRAL_SERVING,
