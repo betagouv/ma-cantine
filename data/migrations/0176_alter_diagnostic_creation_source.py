@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
     dependencies = [
         (
             "data",
-            "0169_alter_reservationexpe_avg_weight_preparation_leftover_t0_and_more",
+            "0175_alter_diagnostic_diagnostic_type_and_more",
         ),
     ]
 
