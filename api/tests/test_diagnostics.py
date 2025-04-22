@@ -40,6 +40,7 @@ class TestDiagnosticsApi(APITestCase):
         we expect a 403
         """
         canteen = CanteenFactory.create()
+
         payload = {"year": 2020}
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -68,6 +69,32 @@ class TestDiagnosticsApi(APITestCase):
         payload = {"year": 2020}
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    @authenticate
+    def test_create_diagnostic_creation_source(self):
+        canteen = CanteenFactory.create()
+        canteen.managers.add(authenticate.user)
+
+        # from TUNNEL
+        payload = {"year": 2020, "creation_source": "TUNNEL"}
+        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
+        self.assertEqual(diagnostic.creation_source, Diagnostic.CreationSource.TUNNEL)
+
+        # defaults to API
+        payload = {"year": 2021}
+        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        diagnostic = Diagnostic.objects.get(canteen__id=canteen.id, year=2021)
+        self.assertEqual(diagnostic.creation_source, Diagnostic.CreationSource.API)
+
+        # returns a 404 if the creation_source is not valid
+        payload = {"year": 2022, "creation_source": "UNKNOWN"}
+        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
     def test_create_full_diagnostic(self):
@@ -249,6 +276,7 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(diagnostic.donation_quantity, Decimal("60.6"))
         self.assertEqual(diagnostic.communication_frequency, "YEARLY")
         self.assertTrue(diagnostic.communicates_on_food_quality)
+        self.assertEqual(diagnostic.creation_source, Diagnostic.CreationSource.API)
         self.assertEqual(diagnostic.creation_mtm_source, "mtm_source_value")
         self.assertEqual(diagnostic.creation_mtm_campaign, "mtm_campaign_value")
         self.assertEqual(diagnostic.creation_mtm_medium, "mtm_medium_value")
