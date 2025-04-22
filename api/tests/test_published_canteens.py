@@ -26,8 +26,7 @@ class TestPublishedCanteenApi(APITestCase):
         """
         Users cannot modify canteen publication status with this endpoint
         """
-        canteen = CanteenFactory.create(city="Paris")
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(city="Paris", managers=[authenticate.user])
         payload = {
             "publication_status": "published",
         }
@@ -570,8 +569,9 @@ class TestPublishedCanteenClaimApi(APITestCase):
 
     @authenticate
     def test_undo_claim_canteen(self):
-        canteen = CanteenFactory.create(claimed_by=authenticate.user, has_been_claimed=True)
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(
+            claimed_by=authenticate.user, has_been_claimed=True, managers=[authenticate.user]
+        )
 
         response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -583,8 +583,7 @@ class TestPublishedCanteenClaimApi(APITestCase):
     @authenticate
     def test_undo_claim_canteen_fails_if_not_original_claimer(self):
         other_user = UserFactory.create()
-        canteen = CanteenFactory.create(claimed_by=other_user, has_been_claimed=True)
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(claimed_by=other_user, has_been_claimed=True, managers=[authenticate.user])
 
         response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

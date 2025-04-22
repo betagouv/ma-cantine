@@ -28,8 +28,7 @@ class TestPublishCanteen(APITestCase):
         """
         Users can publish the canteens they manage and add additional notes
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         payload = {
             "publication_comments": "Hello, world!",
             "quality_comments": "Quality",
@@ -58,8 +57,9 @@ class TestPublishCanteen(APITestCase):
         Calling the unpublish endpoint moves canteens from published
         to draft, optionally updating comments
         """
-        canteen = CanteenFactory.create(publication_status="published")
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.PUBLISHED, managers=[authenticate.user]
+        )
         response = self.client.post(
             reverse("unpublish_canteen", kwargs={"pk": canteen.id}),
             {"publication_comments": "Hello, world!"},
@@ -75,11 +75,13 @@ class TestPublishCanteen(APITestCase):
         """
         Given a list of canteen ids, publish those canteens and return list of successful publication ids
         """
-        canteen_1 = CanteenFactory.create(publication_status=Canteen.PublicationStatus.DRAFT)
+        canteen_1 = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.DRAFT, managers=[authenticate.user]
+        )
         # doesn't matter initial state
-        canteen_2 = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED)
-        for canteen in [canteen_1, canteen_2]:
-            canteen.managers.add(authenticate.user)
+        canteen_2 = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.PUBLISHED, managers=[authenticate.user]
+        )
 
         payload = {"ids": [canteen_1.id, canteen_2.id]}
         response = self.client.post(reverse("publish_canteens"), payload, format="json")
@@ -135,8 +137,9 @@ class TestPublishCanteen(APITestCase):
         If there are some canteens that aren't managed by the current user, publish what can be published
         and return list of the canteens that are either non-existant or not managed by the user.
         """
-        canteen_1 = CanteenFactory.create(publication_status=Canteen.PublicationStatus.DRAFT)
-        canteen_1.managers.add(authenticate.user)
+        canteen_1 = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.DRAFT, managers=[authenticate.user]
+        )
         canteen_2 = CanteenFactory.create(publication_status=Canteen.PublicationStatus.DRAFT)
 
         payload = {"ids": [canteen_1.id, canteen_2.id, 999]}
@@ -159,8 +162,9 @@ class TestPublishCanteen(APITestCase):
         """
         Calling the unpublish endpoint when we have moved to publish by default does nothing
         """
-        canteen = CanteenFactory.create(publication_status="published")
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(
+            publication_status=Canteen.PublicationStatus.PUBLISHED, managers=[authenticate.user]
+        )
         response = self.client.post(reverse("unpublish_canteen", kwargs={"pk": canteen.id}))
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

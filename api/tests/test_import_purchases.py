@@ -220,8 +220,7 @@ class TestPurchaseImport(APITestCase):
         """
         A file should not be valid if doesn't contain a header
         """
-        canteen = CanteenFactory.create(siret="82399356058716")
-        canteen.managers.add(authenticate.user)
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_bad_no_header.csv"
@@ -243,8 +242,7 @@ class TestPurchaseImport(APITestCase):
         """
         A file should not be valid if doesn't contain a valid header
         """
-        canteen = CanteenFactory.create(siret="82399356058716")
-        canteen.managers.add(authenticate.user)
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
         # wrong header
@@ -458,8 +456,7 @@ class TestPurchaseImport(APITestCase):
         This is a smoke test - purchase import reuses diagnostics import
         More tests are with the diagnostic import tests
         """
-        canteen = CanteenFactory.create(siret="82399356058716")
-        canteen.managers.add(authenticate.user)
+        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_good_encoding_iso-8859-1.csv"

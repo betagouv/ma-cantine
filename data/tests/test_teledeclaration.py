@@ -166,8 +166,7 @@ class TestTeledeclarationModelConstraintsTest(TestCase):
         If the diagnostic used for the teledeclaration is deleted, the teledeclaration
         should be cancelled
         """
-        canteen = CanteenFactory.create()
-        canteen.managers.add(authenticate.user)
+        canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
