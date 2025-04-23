@@ -1,6 +1,7 @@
 import { verifyResponse } from "@/services/api.js"
 
 const createCanteen = (payload) => {
+  payload["creationSource"] = "TUNNEL"
   return fetch("/api/v1/canteens/", {
     method: "POST",
     headers: {

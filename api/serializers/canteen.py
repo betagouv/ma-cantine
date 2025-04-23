@@ -320,6 +320,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "economic_model",
             "reservation_expe_participant",
             "vegetarian_expe_participant",
+            "creation_source",
             "creation_mtm_source",
             "creation_mtm_campaign",
             "creation_mtm_medium",
