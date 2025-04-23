@@ -23,15 +23,13 @@ class SoftDeletionAdmin(admin.ModelAdmin):
     def delete_queryset(self, request, queryset):
         return queryset.hard_delete()
 
+    @admin.display(description="Supprimée")
     def deleted(self, obj):
         return "🗑️ Supprimée" if obj.deletion_date else ""
 
-    deleted.short_description = "Supprimée"
-
+    @admin.display(description="Statut de suppression")
     def deletion_status(self, obj):
         return "🗑️ Supprimée" if obj.deletion_date else "✔️ Active"
-
-    deletion_status.short_description = "Statut de suppression"
 
 
 class SoftDeletionHistoryAdmin(SoftDeletionAdmin, SimpleHistoryAdmin):
