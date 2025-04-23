@@ -15,6 +15,7 @@ from data.fields import ChoiceArrayField
 from data.models.sector import Sector
 from data.region_choices import Region
 from data.utils import (
+    CreationSource,
     get_diagnostic_lower_limit_year,
     get_diagnostic_upper_limit_year,
     get_region,
@@ -506,6 +507,14 @@ class Canteen(SoftDeletionModel):
     )
     creation_mtm_medium = models.TextField(
         null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
+    )
+
+    creation_source = models.CharField(
+        max_length=255,
+        choices=CreationSource.choices,
+        blank=True,
+        null=True,
+        verbose_name="comment est-ce que cette cantine à été créée ?",
     )
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
