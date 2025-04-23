@@ -28,6 +28,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # init
         print("Starting canteen soft delete task")
+        canteen_deleted_count = 0
         canteen_siret_list = options["canteen_siret_list"].split(",")
         print("SIRET in input list:", len(canteen_siret_list))
 
@@ -47,5 +48,7 @@ class Command(BaseCommand):
                 continue  # skip canteen
             # soft delete
             canteen.delete()
+            canteen_deleted_count += 1
 
         print("Done!")
+        print("Canteens deleted:", canteen_deleted_count)
