@@ -1,5 +1,4 @@
 from django import forms
-from django.conf import settings
 from django.contrib import admin
 from django.utils import timezone
 
@@ -32,30 +31,21 @@ class CanteenForm(forms.ModelForm):
         }
 
 
-class PubliclyVisibleFilter(admin.SimpleListFilter):
+class PublicationStatusFilter(admin.SimpleListFilter):
     title = "visible au public ?"
 
     parameter_name = "visible"
 
     def lookups(self, request, model_admin):
-        if settings.PUBLISH_BY_DEFAULT:
-            return (
-                ("draft", "🔒 Non visible"),
-                ("published", "✅ Public"),
-            )
-        else:
-            return (
-                ("draft", "🔒 Non publiée"),
-                ("published", "✅ Publiée"),
-            )
+        return Canteen.PublicationStatus.choices
 
     def queryset(self, request, queryset):
-        if self.value() is None:
-            return queryset
-        elif self.value() in ("draft"):
+        if self.value() == Canteen.PublicationStatus.DRAFT:
             return queryset.publicly_hidden()
-        elif self.value() in ("published"):
+        elif self.value() == Canteen.PublicationStatus.PUBLISHED:
             return queryset.publicly_visible()
+        else:
+            return queryset
 
 
 @admin.register(Canteen)
@@ -80,6 +70,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "economic_model",
         "sectors",
         "line_ministry",
+        "publication_status_display",
         "managers",
         "claimed_by",
         "has_been_claimed",
@@ -101,6 +92,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     readonly_fields = (
         "creation_date",
         "creation_source",
+        "publication_status_display",
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
@@ -116,7 +108,6 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "modification_date",
         "source_des_données",
         "management_type",
-        "visible_au_public",
         "deleted",
     )
     filter_vertical = (
@@ -124,7 +115,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "managers",
     )
     list_filter = (
-        PubliclyVisibleFilter,
+        PublicationStatusFilter,
         "management_type",
         "production_type",
         "economic_model",
@@ -159,11 +150,9 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
             return "📩 Télédéclarée (par CC)"
         return ""
 
-    def visible_au_public(self, obj):
-        if settings.PUBLISH_BY_DEFAULT:
-            return "🔒 Non visible" if obj.line_ministry == Canteen.Ministries.ARMEE else "✅ Public"
-        else:
-            return obj.get_publication_status_display()
+    @admin.display(description="Visible au public")
+    def publication_status_display(self, obj):
+        return dict(Canteen.PublicationStatus.choices).get(obj.publication_status_display_to_public)
 
     def source_des_données(self, obj):
         return obj.import_source
