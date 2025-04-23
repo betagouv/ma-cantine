@@ -371,7 +371,11 @@ class ImportDiagnosticsView(ABC, APIView):
     ):
         siret = normalise_siret(row[0])
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
-        canteen = Canteen.objects.get(siret=siret) if canteen_exists else Canteen.objects.create(siret=siret)
+        canteen = (
+            Canteen.objects.get(siret=siret)
+            if canteen_exists
+            else Canteen.objects.create(siret=siret, creation_source=CreationSource.IMPORT)
+        )
 
         if not canteen_exists:
             update_change_reason(canteen, f"Mass CSV import - canteen creation. {self.__class__.__name__[:100]}")
