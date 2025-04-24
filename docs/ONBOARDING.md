@@ -166,7 +166,7 @@ Nous gérons deux jeux de données sur data.gouv.fr, dont un jeu mis à jour ré
 Afin que l'outil **explore** de data.gouv.fr lise les dernière données, il faut mettre à jour de façon factice l'URL qui pointe vers la ressource. Pour cela, il faut renseigner ces variables d'environnement :
 
 ```
-DATAGOUV_DATASET_ID=<ID de la ressource (fichier) sur data.gouv.fr du fichier dont on souhaite mettre à jour les métadonnées. Cet ID peut être trouvé via l'API de data.gouv.fr>
+DATAGOUV_DATASET_ID=<ID du dataset sur data.gouv.fr dont on souhaite mettre à jour les métadonnées. Le dataset est l'objet comprenant les différents fichiers (csv, xlsx...). Cet ID peut être trouvé via l'API de data.gouv.fr>
 DATAGOUV_API_KEY=<Clé d'API DataGouv d'un compte ayant les droits sur le jeu>
 ```
 
