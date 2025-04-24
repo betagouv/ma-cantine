@@ -59,6 +59,7 @@ from common.utils import send_mail
 from data.department_choices import Department
 from data.models import Canteen, Diagnostic, ManagerInvitation, Sector
 from data.region_choices import Region
+from data.utils import CreationSource
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -354,7 +355,9 @@ class UserCanteensView(ListCreateAPIView):
 
     @transaction.atomic
     def perform_create(self, serializer):
-        canteen = serializer.save()
+        serializer.is_valid(raise_exception=True)
+        creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
+        canteen = serializer.save(creation_source=creation_source)
         canteen.managers.add(self.request.user)
         update_change_reason_with_auth(self, canteen)
 

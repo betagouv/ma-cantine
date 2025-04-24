@@ -10,6 +10,7 @@ from rest_framework.test import APITestCase
 
 from data.factories import SectorFactory, UserFactory
 from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation
+from data.utils import CreationSource
 
 from .utils import authenticate
 
@@ -191,9 +192,12 @@ class TestCanteenImport(APITestCase):
         """
         Should be able to import canteens
         """
+        self.assertEqual(Canteen.objects.count(), 0)
+
         file_path = "./api/tests/files/canteens/canteens_good.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 1)
         self.assertFalse(ImportFailure.objects.exists())
@@ -201,7 +205,9 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["canteens"]), 1)
         self.assertEqual(len(body["errors"]), 0)
-        self.assertEqual(Canteen.objects.first().economic_model, None)
+        canteen = Canteen.objects.first()
+        self.assertEqual(canteen.economic_model, None)
+        self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
 
     @authenticate
     def test_import_canteens_with_managers(self):

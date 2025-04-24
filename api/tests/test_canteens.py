@@ -18,6 +18,7 @@ from data.factories import (
     SectorFactory,
 )
 from data.models import Canteen, Diagnostic, Teledeclaration
+from data.utils import CreationSource
 
 from .utils import authenticate, get_oauth2_token
 
@@ -289,6 +290,34 @@ class TestCanteenApi(APITestCase):
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
         self.assertIn(authenticate.user, created_canteen.managers.all())
+
+    @authenticate
+    def test_create_canteen_creation_source(self):
+        payload = {
+            "name": "My canteen",
+            "city": "Lyon",
+            "siret": "21340172201787",
+        }
+
+        # from the app (TUNNEL)
+        response = self.client.post(reverse("user_canteens"), {**payload, "creation_source": "TUNNEL"})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        created_canteen = Canteen.objects.get(pk=body["id"])
+        self.assertEqual(created_canteen.creation_source, CreationSource.TUNNEL)
+        created_canteen.hard_delete()
+
+        # defaults to API
+        response = self.client.post(reverse("user_canteens"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        created_canteen = Canteen.objects.get(pk=body["id"])
+        self.assertEqual(created_canteen.creation_source, CreationSource.API)
+        created_canteen.hard_delete()
+
+        # returns a 404 if the creation_source is not valid
+        response = self.client.post(reverse("user_canteens"), {**payload, "creation_source": "UNKNOWN"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
     def test_create_canteen_missing_siret(self):

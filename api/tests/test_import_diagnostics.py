@@ -53,6 +53,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         the authenticated user is added as the manager,
         and a summary of the results is returned
         """
+        self.assertEqual(Canteen.objects.count(), 0)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
@@ -73,6 +76,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.economic_model, "public")
         self.assertEqual(canteen.central_producer_siret, "42126486200010")
         self.assertEqual(canteen.publication_status, Canteen.PublicationStatus.DRAFT)
+        self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
         diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
         self.assertEqual(diagnostic.year, 2020)
         self.assertEqual(diagnostic.value_total_ht, 1000)

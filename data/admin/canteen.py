@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.utils import timezone
 
 from data.models import Canteen, Teledeclaration
+from data.utils import CreationSource
 
 from .diagnostic import DiagnosticInline
 from .softdeletionadmin import SoftDeletionHistoryAdmin, SoftDeletionStatusFilter
@@ -66,6 +67,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "siret",
         "siren_unite_legale",
         "creation_date",
+        "creation_source",
         "import_source",
         "logo",
         "city",
@@ -98,6 +100,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     )
     readonly_fields = (
         "creation_date",
+        "creation_source",
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
@@ -136,6 +139,11 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "siret",
         "siren_unite_legale",
     )
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.creation_source = CreationSource.ADMIN
+        super().save_model(request, obj, form, change)
 
     @admin.display(description="Siret (ou Siren)")
     def siret_or_siren_unite_legale_display(self, obj):
