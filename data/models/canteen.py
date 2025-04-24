@@ -357,7 +357,6 @@ class Canteen(SoftDeletionModel):
         SPORT = "sport", "Sport"
         TRAVAIL = "travail", "Travail"
         OUTRE_MER = "outre_mer", "Ministère des Outre-mer"
-        AUTRE = "autre", "Autre"
 
     import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
     creation_date = models.DateTimeField(auto_now_add=True)

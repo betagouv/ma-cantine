@@ -57,7 +57,7 @@ class TestPublicCanteenPreviewsApi(APITestCase):
             CanteenFactory.create(line_ministry=Canteen.Ministries.AFFAIRES_ETRANGERES),
             CanteenFactory.create(line_ministry=None),
             CanteenFactory.create(
-                line_ministry=Canteen.Ministries.AUTRE, publication_status=Canteen.PublicationStatus.DRAFT
+                line_ministry=Canteen.Ministries.AGRICULTURE, publication_status=Canteen.PublicationStatus.DRAFT
             ),
         ]
         private_canteens = [
