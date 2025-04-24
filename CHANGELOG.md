@@ -6,6 +6,29 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.14.6](https://github.com/betagouv/ma-cantine/compare/v2025.14.5...v2025.14.6) (2025-04-24)
+
+
+### Améliorations
+
+* **Cantines:** Admin: nouvelle colonne "Siret (ou Siren)" ([#5286](https://github.com/betagouv/ma-cantine/issues/5286)) ([5348b21](https://github.com/betagouv/ma-cantine/commit/5348b21415b05a12f5ed9b578a1dbb64b3c3ce0e))
+* **Cantines:** Ministères de tutelle: supprimer l'option 'Autre' ([#5291](https://github.com/betagouv/ma-cantine/issues/5291)) ([d2e76a4](https://github.com/betagouv/ma-cantine/commit/d2e76a4949617e0fac46a9a2ad6fe5f93a28c870))
+
+
+### Corrections (bugs, typos...)
+
+* **Open-Data:** Corriger la mise à jour d'explore (NECESSITE MAJ ENV VAR) ([#5292](https://github.com/betagouv/ma-cantine/issues/5292)) ([002ffb0](https://github.com/betagouv/ma-cantine/commit/002ffb0998eaf6c24edea0b10547d2b3900074c2))
+
+
+### Technique
+
+* **Achats:** stocker la source de création (API, IMPORT, ADMIN, TUNNEL) ([#5293](https://github.com/betagouv/ma-cantine/issues/5293)) ([7fbbda2](https://github.com/betagouv/ma-cantine/commit/7fbbda2645f108d63dca4eeb4812a3ff94e43b5c))
+* **Cantines:** Script pour supprimer une liste de cantines ([#5289](https://github.com/betagouv/ma-cantine/issues/5289)) ([513833a](https://github.com/betagouv/ma-cantine/commit/513833abfc8ad6aa6b332966dabc4c0bf2c9a500))
+* **Cantines:** stocker la source de création (API, IMPORT, ADMIN, TUNNEL) ([#5290](https://github.com/betagouv/ma-cantine/issues/5290)) ([b0be3f4](https://github.com/betagouv/ma-cantine/commit/b0be3f438101724768ea27ab5d766e9888a562e4))
+* **Diagnostic:** nouvelles sources de création (API, IMPORT, ADMIN) ([#5218](https://github.com/betagouv/ma-cantine/issues/5218)) ([dfe05ce](https://github.com/betagouv/ma-cantine/commit/dfe05cea79f1bcb147db726e4736825704941c3c))
+* **Télédéclaration:** enlève le check doublonné sur l'unicité de la TD par cantine et par année ([#5285](https://github.com/betagouv/ma-cantine/issues/5285)) ([6183eb7](https://github.com/betagouv/ma-cantine/commit/6183eb79f6673fbccfad14ef3dc7c51044efc306))
+* **Tests:** Ajouter explicitement le manager lors de l'appel à CanteenFactory ([#5267](https://github.com/betagouv/ma-cantine/issues/5267)) ([77834ab](https://github.com/betagouv/ma-cantine/commit/77834abec6e9a04e9796c77c45b586b2f7404698))
+
 ## [2025.14.5](https://github.com/betagouv/ma-cantine/compare/v2025.14.4...v2025.14.5) (2025-04-18)
 
 
