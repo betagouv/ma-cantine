@@ -110,7 +110,7 @@ class Purchase(SoftDeletionModel):
         choices=CreationSource.choices,
         blank=True,
         null=True,
-        verbose_name="comment est-ce que cette achat à été créé ?",
+        verbose_name="Source de création de l'achat",
     )
 
     @property
