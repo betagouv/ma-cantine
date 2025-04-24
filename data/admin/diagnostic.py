@@ -3,6 +3,7 @@ from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
 from data.models import Diagnostic, Teledeclaration
+from data.utils import CreationSource
 
 from .teledeclaration import TeledeclarationInline
 
@@ -294,7 +295,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
 
     def save_model(self, request, obj, form, change):
         if not change:
-            obj.creation_source = Diagnostic.CreationSource.ADMIN
+            obj.creation_source = CreationSource.ADMIN
         super().save_model(request, obj, form, change)
 
     def has_change_permission(self, request, obj=None):

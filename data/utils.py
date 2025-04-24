@@ -9,6 +9,13 @@ from PIL import ExifTags
 from PIL import Image as Img
 
 
+class CreationSource(models.TextChoices):
+    TUNNEL = "TUNNEL", "Tunnel"
+    API = "API", "API"
+    IMPORT = "IMPORT", "Import"
+    ADMIN = "ADMIN", "Admin"
+
+
 def _needs_rotation(pillow_image):
     orientation_tag = next(filter(lambda x: ExifTags.TAGS[x] == "Orientation", ExifTags.TAGS), None)
     exif_data = pillow_image._getexif()

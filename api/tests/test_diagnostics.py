@@ -10,6 +10,7 @@ from rest_framework.test import APITestCase
 
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory
 from data.models import Canteen, Diagnostic, Teledeclaration
+from data.utils import CreationSource
 
 from .utils import authenticate, get_oauth2_token
 
@@ -81,7 +82,7 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
-        self.assertEqual(diagnostic.creation_source, Diagnostic.CreationSource.TUNNEL)
+        self.assertEqual(diagnostic.creation_source, CreationSource.TUNNEL)
 
         # defaults to API
         payload = {"year": 2021}
@@ -89,7 +90,7 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         diagnostic = Diagnostic.objects.get(canteen__id=canteen.id, year=2021)
-        self.assertEqual(diagnostic.creation_source, Diagnostic.CreationSource.API)
+        self.assertEqual(diagnostic.creation_source, CreationSource.API)
 
         # returns a 404 if the creation_source is not valid
         payload = {"year": 2022, "creation_source": "UNKNOWN"}
@@ -276,7 +277,7 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(diagnostic.donation_quantity, Decimal("60.6"))
         self.assertEqual(diagnostic.communication_frequency, "YEARLY")
         self.assertTrue(diagnostic.communicates_on_food_quality)
-        self.assertEqual(diagnostic.creation_source, Diagnostic.CreationSource.API)
+        self.assertEqual(diagnostic.creation_source, CreationSource.API)
         self.assertEqual(diagnostic.creation_mtm_source, "mtm_source_value")
         self.assertEqual(diagnostic.creation_mtm_campaign, "mtm_campaign_value")
         self.assertEqual(diagnostic.creation_mtm_medium, "mtm_medium_value")
