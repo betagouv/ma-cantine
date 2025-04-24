@@ -168,7 +168,7 @@ class Diagnostic(models.Model):
         choices=CreationSource.choices,
         blank=True,
         null=True,
-        verbose_name="comment est-ce que ce diagnostic à été créé ?",
+        verbose_name="Source de création du diagnostic",
     )
 
     # progress fields
