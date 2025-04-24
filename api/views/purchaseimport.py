@@ -19,6 +19,7 @@ from common.api import validata
 from common.utils import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Purchase
+from data.utils import CreationSource
 
 from .utils import camelize
 
@@ -217,6 +218,7 @@ class ImportPurchasesView(APIView):
             characteristics=characteristics,
             local_definition=local_definition,
             import_source=self.tmp_id,
+            creation_source=CreationSource.IMPORT,
         )
         purchase.full_clean()
         self.purchases.append(purchase)

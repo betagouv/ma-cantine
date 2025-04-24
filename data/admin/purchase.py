@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from data.models import Purchase
+from data.utils import CreationSource
 
 from .softdeletionadmin import SoftDeletionAdmin, SoftDeletionStatusFilter
 from .utils import get_arrayfield_list_filter
@@ -22,8 +23,9 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "invoice_file",
         "local_definition",
         "import_source",
-        "deletion_date",
+        "creation_source",
         "creation_date",
+        "deletion_date",
     )
     readonly_fields = (
         "canteen",
@@ -37,6 +39,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "invoice_file",
         "local_definition",
         "import_source",
+        "creation_source",
         "creation_date",
     )
     list_display = (
@@ -62,6 +65,11 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "import_source",
     )
     search_help_text = f"Cherche sur les champs : Cantine (SIRET), {Purchase._meta.get_field('description').verbose_name.capitalize()}, {Purchase._meta.get_field('import_source').verbose_name.capitalize()}"
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.creation_source = CreationSource.ADMIN
+        super().save_model(request, obj, form, change)
 
     def canteen_name(self, obj):
         return obj.canteen.name

@@ -16,6 +16,7 @@ from rest_framework.test import APITestCase
 from data.factories import CanteenFactory
 from data.models import ImportFailure, ImportType
 from data.models.purchase import Purchase
+from data.utils import CreationSource
 
 from .utils import authenticate
 
@@ -113,6 +114,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(purchase.local_definition, Purchase.Local.DEPARTMENT)
         # Test that the purchase import source contains the complete file digest
         self.assertIsNotNone(purchase.import_source)
+        self.assertEqual(purchase.creation_source, CreationSource.IMPORT)
         filebytes = Path("./api/tests/files/achats/purchases_good.csv").read_bytes()
         filehash_md5 = hashlib.md5(filebytes).hexdigest()
         self.assertEqual(Purchase.objects.first().import_source, filehash_md5)

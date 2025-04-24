@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from data.fields import ChoiceArrayField
+from data.utils import CreationSource
 
 from .canteen import Canteen
 from .softdeletionmodel import SoftDeletionModel
@@ -103,6 +104,14 @@ class Purchase(SoftDeletionModel):
         max_length=255, choices=Local.choices, null=True, blank=True, verbose_name="définition de local"
     )
     import_source = models.TextField(null=True, blank=True, verbose_name="source de l'import du produit")
+
+    creation_source = models.CharField(
+        max_length=255,
+        choices=CreationSource.choices,
+        blank=True,
+        null=True,
+        verbose_name="Source de création de l'achat",
+    )
 
     @property
     def readable_family(self):
