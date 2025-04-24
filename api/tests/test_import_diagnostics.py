@@ -24,6 +24,7 @@ from data.models import (
 )
 from data.models.teledeclaration import Teledeclaration
 from data.region_choices import Region
+from data.utils import CreationSource
 
 from .utils import authenticate
 
@@ -85,6 +86,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(diagnostic.value_fish_ht, 4)
         self.assertEqual(diagnostic.value_fish_egalim_ht, 3)
         self.assertEqual(diagnostic.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
+        self.assertEqual(diagnostic.creation_source, CreationSource.IMPORT)
         self.assertIn("seconds", body)
 
     @authenticate

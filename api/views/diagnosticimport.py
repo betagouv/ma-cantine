@@ -24,6 +24,7 @@ from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.diagnostic import Diagnostic
 from data.models.teledeclaration import Teledeclaration
+from data.utils import CreationSource
 
 from .canteen import AddManagerView
 from .utils import camelize
@@ -198,7 +199,7 @@ class ImportDiagnosticsView(ABC, APIView):
         diagnostic = (
             Diagnostic.objects.get(canteen=canteen, year=diagnostic_year)
             if diagnostic_exists
-            else Diagnostic(canteen_id=canteen.id, year=diagnostic_year)
+            else Diagnostic(canteen_id=canteen.id, year=diagnostic_year, creation_source=CreationSource.IMPORT)
         )
         if diagnostic_exists:
             has_active_td = Teledeclaration.objects.filter(

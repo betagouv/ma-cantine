@@ -28,6 +28,7 @@ from api.views.utils import update_change_reason_with_auth
 from common.utils import file_import, send_mail
 from data.models import Canteen, Teledeclaration
 from data.models.diagnostic import Diagnostic
+from data.utils import CreationSource
 from macantine.utils import is_in_correction
 
 logger = logging.getLogger(__name__)
@@ -57,7 +58,8 @@ class DiagnosticCreateView(CreateAPIView):
             if not IsCanteenManager().has_object_permission(self.request, self, canteen):
                 raise PermissionDenied()
             serializer.is_valid(raise_exception=True)
-            diagnostic = serializer.save(canteen=canteen)
+            creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
+            diagnostic = serializer.save(canteen=canteen, creation_source=creation_source)
             update_change_reason_with_auth(self, diagnostic)
         except ObjectDoesNotExist as e:
             logger.warning(f"Attempt to create a diagnostic from an unexistent canteen ID : {canteen_id}: \n{e}")

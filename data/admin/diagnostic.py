@@ -3,6 +3,7 @@ from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
 from data.models import Diagnostic, Teledeclaration
+from data.utils import CreationSource
 
 from .teledeclaration import TeledeclarationInline
 
@@ -48,10 +49,10 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
     )
     list_filter = ("year", "diagnostic_type")
     readonly_fields = (
+        "creation_source",
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
-        "creation_source",
         "tunnel_appro",
         "tunnel_waste",
         "tunnel_plastic",
@@ -291,6 +292,11 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "canteen__siret",
         "canteen__siren_unite_legale",
     )
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.creation_source = CreationSource.ADMIN
+        super().save_model(request, obj, form, change)
 
     def has_change_permission(self, request, obj=None):
         return obj and not DiagnosticAdmin._has_teledeclaration(obj)

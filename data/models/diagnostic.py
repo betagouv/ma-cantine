@@ -10,6 +10,7 @@ from data.department_choices import Department
 from data.fields import ChoiceArrayField
 from data.region_choices import Region
 from data.utils import (
+    CreationSource,
     get_diagnostic_lower_limit_year,
     get_diagnostic_upper_limit_year,
     make_optional_positive_decimal_field,
@@ -45,9 +46,6 @@ class Diagnostic(models.Model):
     class DiagnosticType(models.TextChoices):
         SIMPLE = "SIMPLE", "Télédeclaration simple"
         COMPLETE = "COMPLETE", "Télédeclaration détaillée"
-
-    class CreationSource(models.TextChoices):
-        TUNNEL = "TUNNEL", "Tunnel"
 
     class ServiceType(models.TextChoices):
         UNIQUE = "UNIQUE", "Menu unique"
@@ -170,7 +168,7 @@ class Diagnostic(models.Model):
         choices=CreationSource.choices,
         blank=True,
         null=True,
-        verbose_name="comment est-ce que ce diagnostic à été créé ?",
+        verbose_name="Source de création du diagnostic",
     )
 
     # progress fields
