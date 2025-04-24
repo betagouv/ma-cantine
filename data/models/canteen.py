@@ -514,7 +514,7 @@ class Canteen(SoftDeletionModel):
         choices=CreationSource.choices,
         blank=True,
         null=True,
-        verbose_name="comment est-ce que cette cantine à été créée ?",
+        verbose_name="Source de création de la cantine",
     )
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
