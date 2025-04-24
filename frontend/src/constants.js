@@ -100,7 +100,7 @@ export default Object.freeze({
       color: "deep-orange darken-4",
     },
     BOULANGERIE: {
-      text: "Boulangerie / Pâtisserie fraîches",
+      text: "Boulangerie / Pâtisserie fraîches et surgelées",
       shortText: "boulangerie / pâtisserie",
       color: "deep-purple darken-3",
     },
