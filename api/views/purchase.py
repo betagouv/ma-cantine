@@ -24,6 +24,7 @@ from api.serializers import (
     PurchaseSummarySerializer,
 )
 from data.models import Canteen, Diagnostic, Purchase
+from data.utils import CreationSource
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +133,9 @@ class PurchaseListCreateView(ListCreateAPIView):
                     f"User {self.request.user.id} attempted to create a purchase in someone else's canteen: {canteen_id}"
                 )
                 raise PermissionDenied()
-            serializer.save(canteen=canteen)
+            serializer.is_valid(raise_exception=True)
+            creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
+            serializer.save(canteen=canteen, creation_source=creation_source)
         except ObjectDoesNotExist as e:
             logger.error(
                 f"User {self.request.user.id} attempted to create a purchase in nonexistent canteen {canteen_id}"

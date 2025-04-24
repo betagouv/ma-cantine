@@ -26,6 +26,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "invoice_file",
             "local_definition",
             "import_source",
+            "creation_source",
             "created_by_import",
         )
         read_only_fields = (

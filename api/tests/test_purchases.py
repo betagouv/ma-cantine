@@ -10,6 +10,7 @@ from data.factories import (
     UserFactory,
 )
 from data.models import Canteen, Diagnostic, Purchase
+from data.utils import CreationSource
 
 from .utils import authenticate
 
@@ -108,6 +109,39 @@ class TestPurchaseApi(APITestCase):
         purchase = Purchase.objects.first()
         self.assertEqual(purchase.local_definition, Purchase.Local.AUTOUR_SERVICE)
         self.assertEqual(len(purchase.characteristics), 2)
+
+    @authenticate
+    def test_create_purchase_creation_source(self):
+        canteen = CanteenFactory.create(managers=[authenticate.user])
+
+        payload = {
+            "date": "2022-01-13",
+            "canteen": canteen.id,
+            "description": "Saumon",
+            "provider": "Test provider",
+            "family": "PRODUITS_DE_LA_MER",
+            "characteristics": ["BIO", "LOCAL"],
+            "price_ht": 15.23,
+            "local_definition": "AUTOUR_SERVICE",
+        }
+
+        # from the app (TUNNEL)
+        response = self.client.post(reverse("purchase_list_create"), {**payload, "creation_source": "TUNNEL"})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        created_purchase = Purchase.objects.get(pk=body["id"])
+        self.assertEqual(created_purchase.creation_source, CreationSource.TUNNEL)
+
+        # defaults to API
+        response = self.client.post(reverse("purchase_list_create"), payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        created_purchase = Purchase.objects.get(pk=body["id"])
+        self.assertEqual(created_purchase.creation_source, CreationSource.API)
+
+        # returns a 404 if the creation_source is not valid
+        response = self.client.post(reverse("purchase_list_create"), {**payload, "creation_source": "UNKNOWN"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
     def test_create_purchase_nonexistent_canteen(self):

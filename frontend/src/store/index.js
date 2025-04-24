@@ -608,6 +608,7 @@ export default new Vuex.Store({
     },
 
     createPurchase(context, { payload }) {
+      payload["creationSource"] = "TUNNEL"
       context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/purchases/`, {
         method: "POST",
