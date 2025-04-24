@@ -49,10 +49,10 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
     )
     list_filter = ("year", "diagnostic_type")
     readonly_fields = (
+        "creation_source",
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
-        "creation_source",
         "tunnel_appro",
         "tunnel_waste",
         "tunnel_plastic",
