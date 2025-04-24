@@ -374,13 +374,14 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
 
-        os.environ["ENVIRONMENT"] = "not-prod"
+        os.environ["DATAGOUV_DATASET_ID"] = ""
         number_of_updated_resources = update_datagouv_resources()
         self.assertIsNone(
-            number_of_updated_resources, "No resource should be updated as the environment is not production"
+            number_of_updated_resources,
+            "No resource should be updated as the environment variable DATAGOUV_DATASET_ID is not set",
         )
 
-        os.environ["ENVIRONMENT"] = "prod"
+        os.environ["DATAGOUV_DATASET_ID"] = dataset_id
         number_of_updated_resources = update_datagouv_resources()
         self.assertEqual(number_of_updated_resources, 1, "Only the csv resource should be updated")
 
