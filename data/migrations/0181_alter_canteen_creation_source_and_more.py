@@ -17,6 +17,10 @@ def migrate_creation_source_tunnel_to_app(apps, schema_editor):
     Diagnostic.objects.filter(creation_source="TUNNEL").update(creation_source="APP")
 
 
+def undo_migrate_creation_source_tunnel_to_app(apps, schema_editor):
+    pass
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -104,5 +108,5 @@ class Migration(migrations.Migration):
                 verbose_name="Source de création de l'achat",
             ),
         ),
-        migrations.RunPython(migrate_creation_source_tunnel_to_app)
+        migrations.RunPython(migrate_creation_source_tunnel_to_app, undo_migrate_creation_source_tunnel_to_app)
     ]
