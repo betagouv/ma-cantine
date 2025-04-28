@@ -561,12 +561,12 @@ function hasValue(val) {
 }
 
 export const hasStartedMeasureTunnel = (diagnostic, keyMeasure) => {
-  if (diagnostic?.creationSource === "TUNNEL") return !!diagnostic[keyMeasure.progressField]
+  if (diagnostic?.creationSource === "APP") return !!diagnostic[keyMeasure.progressField]
   return !!diagnostic
 }
 
 export const hasFinishedMeasureTunnel = (diagnostic) => {
-  if (diagnostic?.creationSource === "TUNNEL") {
+  if (diagnostic?.creationSource === "APP") {
     const measureProgressFields = ["tunnelAppro", "tunnelWaste", "tunnelDiversification", "tunnelPlastic", "tunnelInfo"]
     return measureProgressFields.every((field) => diagnostic[field] === "complet")
   }

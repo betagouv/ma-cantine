@@ -264,7 +264,6 @@ export default {
             canteenId: this.canteen.id,
             payload: {
               year: this.year,
-              creationSource: "TUNNEL",
               centralKitchenDiagnosticMode: this.centralKitchenDiagnosticMode,
             },
           })

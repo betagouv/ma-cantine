@@ -367,6 +367,7 @@ export default new Vuex.Store({
     },
 
     createDiagnostic(context, { canteenId, payload }) {
+      payload["creationSource"] = "APP"
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/canteens/${canteenId}/diagnostics/`, {
         method: "POST",
@@ -608,7 +609,7 @@ export default new Vuex.Store({
     },
 
     createPurchase(context, { payload }) {
-      payload["creationSource"] = "TUNNEL"
+      payload["creationSource"] = "APP"
       context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.LOADING)
       return fetch(`/api/v1/purchases/`, {
         method: "POST",

@@ -299,12 +299,12 @@ class TestCanteenApi(APITestCase):
             "siret": "21340172201787",
         }
 
-        # from the app (TUNNEL)
-        response = self.client.post(reverse("user_canteens"), {**payload, "creation_source": "TUNNEL"})
+        # from the APP
+        response = self.client.post(reverse("user_canteens"), {**payload, "creation_source": "APP"})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
-        self.assertEqual(created_canteen.creation_source, CreationSource.TUNNEL)
+        self.assertEqual(created_canteen.creation_source, CreationSource.APP)
         created_canteen.hard_delete()
 
         # defaults to API
