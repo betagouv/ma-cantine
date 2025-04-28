@@ -191,7 +191,7 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(affaires_etrangeres|agriculture|armee|territoires|culture|economie|jeunesse|enseignement_superieur|ecologie|transformation|interieur|justice|mer|administration_territoriale|autorites_independantes|premier_ministre|sante|sport|travail|outre_mer|autre) *$",
+        "pattern": "^ *(affaires_etrangeres|agriculture|armee|territoires|culture|economie|jeunesse|enseignement_superieur|ecologie|transformation|interieur|justice|mer|administration_territoriale|autorites_independantes|premier_ministre|sante|sport|travail) *$",
         "required": false
       },
       "description": "",
@@ -214,9 +214,7 @@
         "premier_ministre",
         "sante",
         "sport",
-        "travail",
-        "outre_mer",
-        "autre"
+        "travail"
       ],
       "example": "agriculture",
       "format": "default",
