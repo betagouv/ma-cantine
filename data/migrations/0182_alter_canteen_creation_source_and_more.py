@@ -24,7 +24,7 @@ def undo_migrate_creation_source_tunnel_to_app(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0180_alter_canteen_line_ministry_and_more"),
+        ("data", "0181_alter_diagnostic_value_boulangerie_aocaop_igp_stg_and_more"),
     ]
 
     operations = [
