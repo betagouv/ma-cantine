@@ -20,7 +20,7 @@ dotenv.load_dotenv()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "macantine.settings")
 
 app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend="django-db", include=["macantine.tasks"])
-app.worker_hijack_root_logger = False
+app.config_from_object(dict(worker_hijack_root_logger=False, result_extended=True))
 
 hourly = crontab(hour="*", minute=0, day_of_week="*")  # Every hour
 midnights = crontab(hour=0, minute=0, day_of_week="*")  # Every day at midnight
