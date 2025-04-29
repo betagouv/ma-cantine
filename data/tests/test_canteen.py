@@ -57,42 +57,58 @@ class TestCanteenModel(TestCase):
         self.assertEqual(qs.count(), 1, "Soft deleted canteens can be accessed in custom queryset")
 
 
-class TestCanteenVisibleQuerySet(TestCase):
+class TestCanteenVisibleQuerySetAndProperty(TestCase):
     @classmethod
     def setUpTestData(cls):
-        CanteenFactory(line_ministry=None, publication_status=Canteen.PublicationStatus.PUBLISHED)
+        cls.canteen_published = CanteenFactory(
+            line_ministry=None, publication_status=Canteen.PublicationStatus.PUBLISHED
+        )
         cls.canteen_published_armee = CanteenFactory(
             line_ministry=Canteen.Ministries.ARMEE, publication_status=Canteen.PublicationStatus.PUBLISHED
         )
         cls.canteen_draft = CanteenFactory(line_ministry=None, publication_status=Canteen.PublicationStatus.DRAFT)
 
     @override_settings(PUBLISH_BY_DEFAULT=False)
-    def test_publicly_visible(self):
+    def test_publicly_visible_queryset(self):
         self.assertEqual(Canteen.objects.count(), 3)
         qs = Canteen.objects.publicly_visible()
         self.assertEqual(qs.count(), 2)
         self.assertTrue(self.canteen_draft not in qs)
 
     @override_settings(PUBLISH_BY_DEFAULT=False)
-    def test_publicly_hidden(self):
+    def test_publicly_hidden_queryset(self):
         self.assertEqual(Canteen.objects.count(), 3)
         qs = Canteen.objects.publicly_hidden()
         self.assertEqual(qs.count(), 1)
         self.assertEqual(qs.first(), self.canteen_draft)
 
     @override_settings(PUBLISH_BY_DEFAULT=True)
-    def test_publicly_visible_publish_by_default(self):
+    def test_publicly_visible_queryset_publish_by_default(self):
         self.assertEqual(Canteen.objects.count(), 3)
         qs = Canteen.objects.publicly_visible()
         self.assertEqual(qs.count(), 2)
         self.assertTrue(self.canteen_published_armee not in qs)
 
     @override_settings(PUBLISH_BY_DEFAULT=True)
-    def test_publicly_hidden_publish_by_default(self):
+    def test_publicly_hidden_queryset_publish_by_default(self):
         self.assertEqual(Canteen.objects.count(), 3)
         qs = Canteen.objects.publicly_hidden()
         self.assertEqual(qs.count(), 1)
         self.assertEqual(qs.first(), self.canteen_published_armee)
+
+    @override_settings(PUBLISH_BY_DEFAULT=False)
+    def test_publication_status_display_to_public_property(self):
+        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(self.canteen_published.publication_status_display_to_public, "published")
+        self.assertEqual(self.canteen_published_armee.publication_status_display_to_public, "published")
+        self.assertEqual(self.canteen_draft.publication_status_display_to_public, "draft")
+
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    def test_publication_status_display_to_public_property_publish_by_default(self):
+        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(self.canteen_published.publication_status_display_to_public, "published")
+        self.assertEqual(self.canteen_published_armee.publication_status_display_to_public, "draft")
+        self.assertEqual(self.canteen_draft.publication_status_display_to_public, "published")
 
 
 class TestCanteenSatelliteQuerySet(TestCase):
@@ -277,7 +293,7 @@ class TestCanteenDiagnosticTeledeclarationQuerySet(TestCase):
         self.assertEqual(Canteen.objects.annotate_with_td_for_year(2022).filter(has_td_submitted=True).count(), 0)
 
 
-class TestCanteenSiretOrSirenUniteLegalePropertyOrQuerySet(TestCase):
+class TestCanteenSiretOrSirenUniteLegaleQuerySetAndProperty(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_siret_siren = CanteenFactory(siret="75665621899905", siren_unite_legale="756656218")  # OK
@@ -303,7 +319,7 @@ class TestCanteenSiretOrSirenUniteLegalePropertyOrQuerySet(TestCase):
             self.assertEqual(canteen.siret_or_siren_unite_legale, "")
 
 
-class TestCanteenCompletePropertyAndQuerySet(TestCase):
+class TestCanteenCompleteQuerySetAndProperty(TestCase):
     @classmethod
     def setUpTestData(cls):
         sector = SectorFactory.create(name="Sector", category=Sector.Categories.AUTRES)
