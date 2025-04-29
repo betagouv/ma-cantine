@@ -6,6 +6,21 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.14.7](https://github.com/betagouv/ma-cantine/compare/v2025.14.6...v2025.14.7) (2025-04-29)
+
+
+### Améliorations
+
+* **Achats:** Renomme la famille Boulangerie/Pâtisserie (ajoute 'surgelées') ([#5294](https://github.com/betagouv/ma-cantine/issues/5294)) ([f532785](https://github.com/betagouv/ma-cantine/commit/f532785ae306a15ce28091189f65a1b53152ab17))
+* **Cantines:** Admin: cacher la colonne 'Visible au public' dans la vue liste. L'afficher dans la vue détails. ([#5288](https://github.com/betagouv/ma-cantine/issues/5288)) ([989f207](https://github.com/betagouv/ma-cantine/commit/989f207e598309d3e7e1574c7b84cdf3ad6369e9))
+* **Cantines:** Ministères de tutelle: supprimer l'option 'Outre-mer' ([#5298](https://github.com/betagouv/ma-cantine/issues/5298)) ([41b5e61](https://github.com/betagouv/ma-cantine/commit/41b5e6104a35a11f7f550178ed84cffd260ca3a9))
+
+
+### Technique
+
+* **Celery:** modifier la configuration pour avoir le nom de la tâche ([#5297](https://github.com/betagouv/ma-cantine/issues/5297)) ([4b7bf88](https://github.com/betagouv/ma-cantine/commit/4b7bf88440e0d116b9871f137bc4d5f7d48e85f7))
+* **Source de création:** renommer la source TUNNEL en APP ([#5300](https://github.com/betagouv/ma-cantine/issues/5300)) ([dcc1ddd](https://github.com/betagouv/ma-cantine/commit/dcc1ddddde15b453a7b1fe52e9c5fead7d83a11d))
+
 ## [2025.14.6](https://github.com/betagouv/ma-cantine/compare/v2025.14.5...v2025.14.6) (2025-04-24)
 
 
