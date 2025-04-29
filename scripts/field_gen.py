@@ -26,7 +26,7 @@ families = [
     ("FRUITS_ET_LEGUMES", "Fruits et légumes frais et surgelés"),
     ("CHARCUTERIE", "Charcuterie"),
     ("PRODUITS_LAITIERS", "BOF (Produits laitiers, beurre et œufs)"),
-    ("BOULANGERIE", "Boulangerie/Pâtisserie fraîches"),
+    ("BOULANGERIE", "Boulangerie/Pâtisserie fraîches et surgelées"),
     ("BOISSONS", "Boissons"),
     ("AUTRES", "Autres produits frais, surgelés et d’épicerie"),
 ]
