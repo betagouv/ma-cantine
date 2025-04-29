@@ -10,10 +10,10 @@ from PIL import Image as Img
 
 
 class CreationSource(models.TextChoices):
-    TUNNEL = "TUNNEL", "Tunnel"
+    APP = "APP", "APP"
     API = "API", "API"
-    IMPORT = "IMPORT", "Import"
-    ADMIN = "ADMIN", "Admin"
+    IMPORT = "IMPORT", "IMPORT"
+    ADMIN = "ADMIN", "ADMIN"
 
 
 def _needs_rotation(pillow_image):

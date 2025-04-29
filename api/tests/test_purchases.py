@@ -125,12 +125,12 @@ class TestPurchaseApi(APITestCase):
             "local_definition": "AUTOUR_SERVICE",
         }
 
-        # from the app (TUNNEL)
-        response = self.client.post(reverse("purchase_list_create"), {**payload, "creation_source": "TUNNEL"})
+        # from the APP
+        response = self.client.post(reverse("purchase_list_create"), {**payload, "creation_source": "APP"})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_purchase = Purchase.objects.get(pk=body["id"])
-        self.assertEqual(created_purchase.creation_source, CreationSource.TUNNEL)
+        self.assertEqual(created_purchase.creation_source, CreationSource.APP)
 
         # defaults to API
         response = self.client.post(reverse("purchase_list_create"), payload)

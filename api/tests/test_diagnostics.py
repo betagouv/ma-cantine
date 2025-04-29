@@ -76,13 +76,13 @@ class TestDiagnosticsApi(APITestCase):
         canteen = CanteenFactory.create()
         canteen.managers.add(authenticate.user)
 
-        # from TUNNEL
-        payload = {"year": 2020, "creation_source": "TUNNEL"}
+        # from the APP
+        payload = {"year": 2020, "creation_source": "APP"}
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
-        self.assertEqual(diagnostic.creation_source, CreationSource.TUNNEL)
+        self.assertEqual(diagnostic.creation_source, CreationSource.APP)
 
         # defaults to API
         payload = {"year": 2021}
