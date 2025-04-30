@@ -65,6 +65,7 @@ META_FIELDS = (
     "diagnostic_type",
     "central_kitchen_diagnostic_mode",
     "is_teledeclared",
+    "is_filled",
 )
 
 CREATION_META_FIELDS = (
@@ -231,7 +232,7 @@ class FullDiagnosticSerializer(DiagnosticSerializer):
 
     class Meta:
         model = Diagnostic
-        fields = FIELDS + ("teledeclaration",) + CREATION_META_FIELDS + TUNNEL_PROGRESS_FIELDS
+        fields = FIELDS + ("teledeclaration") + CREATION_META_FIELDS + TUNNEL_PROGRESS_FIELDS
         read_only_fields = fields
 
 
