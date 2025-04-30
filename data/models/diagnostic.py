@@ -911,7 +911,7 @@ class Diagnostic(models.Model):
 
     @property
     def is_filled(self):
-        return self.value_total_ht > 0
+        return self.value_total_ht > 0 if self.value_total_ht else False
 
     def clean(self):
         self.validate_year()
