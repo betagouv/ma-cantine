@@ -266,9 +266,9 @@ export default {
           id: this.diagnostic.id,
           payload: this.payload,
         })
-        .then(() => {
+        .then((response) => {
           // if the save is successful, make sure we are showing the up to date data
-          Object.assign(this.diagnostic, this.payload)
+          Object.assign(this.diagnostic, response)
           this.bypassLeaveWarning = true
         })
         .catch((e) => {
