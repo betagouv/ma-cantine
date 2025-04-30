@@ -282,7 +282,6 @@ import {
   timeAgo,
   lastYear,
   readyToTeledeclare,
-  hasDiagnosticApproData,
   missingCanteenData,
   hasSatelliteInconsistency,
   actionIsTeledeclare,
@@ -395,10 +394,6 @@ export default {
     missingApproDiagnostic() {
       if (this.isSatelliteWithApproCentralDiagnostic) return false
       return !this.diagnostic
-    },
-    missingApproData() {
-      if (this.isSatelliteWithApproCentralDiagnostic) return false
-      return !this.diagnostic || !hasDiagnosticApproData(this.diagnostic)
     },
     missingCanteenData() {
       return !this.canteen || missingCanteenData(this.canteen, this.$store.state.sectors)
