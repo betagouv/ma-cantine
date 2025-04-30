@@ -19,7 +19,7 @@
         </v-icon>
         <h3 class="font-weight-bold fr-text">{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
-      <v-card-text>
+      <v-card-text v-if="!delegatedToCentralKitchen">
         <KeyMeasureBadge
           class="py-0 ml-8"
           :canteen="canteen"
@@ -228,6 +228,11 @@ export default {
     },
     bioPercent() {
       return this.rules.bioThreshold
+    },
+    delegatedToCentralKitchen() {
+      const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
+      const usesCentralDiag = isSatellite && this.diagnostic?.canteenId === this.canteen.centralKitchen?.id
+      return usesCentralDiag && this.diagnostic?.centralKitchenDiagnosticMode === "ALL"
     },
   },
 }
