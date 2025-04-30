@@ -909,6 +909,10 @@ class Diagnostic(models.Model):
     def is_teledeclared(self):
         return self.latest_submitted_teledeclaration is not None
 
+    @property
+    def is_filled(self):
+        return self.value_total_ht > 0
+
     def clean(self):
         self.validate_year()
 
