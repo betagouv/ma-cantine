@@ -149,7 +149,13 @@
   </div>
 </template>
 <script>
-import { hasDiagnosticApproData, lastYear, hasStartedMeasureTunnel, applicableDiagnosticRules } from "@/utils"
+import {
+  hasDiagnosticApproData,
+  lastYear,
+  hasStartedMeasureTunnel,
+  applicableDiagnosticRules,
+  delegatedToCentralKitchen,
+} from "@/utils"
 import Constants from "@/constants"
 import ApproGraph from "@/components/ApproGraph"
 import KeyMeasureBadge from "@/components/KeyMeasureBadge"
@@ -230,9 +236,7 @@ export default {
       return this.rules.bioThreshold
     },
     delegatedToCentralKitchen() {
-      const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
-      const usesCentralDiag = isSatellite && this.diagnostic?.canteenId === this.canteen.centralKitchen?.id
-      return usesCentralDiag && this.diagnostic?.centralKitchenDiagnosticMode === "ALL"
+      return delegatedToCentralKitchen(this.canteen, this.diagnostic)
     },
   },
 }

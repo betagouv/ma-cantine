@@ -32,7 +32,7 @@
 import Constants from "@/constants"
 import KeyMeasureBadge from "@/components/KeyMeasureBadge"
 import keyMeasures from "@/data/key-measures.json"
-import { hasStartedMeasureTunnel, applicableDiagnosticRules } from "@/utils"
+import { hasStartedMeasureTunnel, applicableDiagnosticRules, delegatedToCentralKitchen } from "@/utils"
 
 export default {
   name: "DiversificationCard",
@@ -96,9 +96,7 @@ export default {
       return this.diagnostic?.centralKitchenDiagnosticMode === "APPRO"
     },
     delegatedToCentralKitchen() {
-      const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
-      const usesCentralDiag = isSatellite && this.diagnostic?.canteenId === this.canteen.centralKitchen?.id
-      return usesCentralDiag && this.diagnostic?.centralKitchenDiagnosticMode === "ALL"
+      return delegatedToCentralKitchen(this.canteen, this.diagnostic)
     },
   },
 }
