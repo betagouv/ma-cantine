@@ -23,7 +23,7 @@
     "vue-i18n": "^11.0.1",
     "vue-material-design-icons": "^5.3.1",
     "vue-matomo": "^4.2.0",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.10.5",
