@@ -693,3 +693,9 @@ export const diagnosticUsesNullAsFalse = (diagnostic) => {
 export const regionDisplayName = (regionCode) => {
   return jsonRegions.find((r) => r.regionCode === regionCode).regionName
 }
+
+export const delegatedToCentralKitchen = (canteen, diagnostic) => {
+  const isSatellite = canteen.productionType === "site_cooked_elsewhere"
+  const usesCentralDiag = isSatellite && diagnostic?.canteenId === canteen.centralKitchen?.id
+  return usesCentralDiag && diagnostic?.centralKitchenDiagnosticMode === "ALL"
+}

@@ -19,7 +19,7 @@
         </v-icon>
         <h3 class="font-weight-bold fr-text">{{ keyMeasure.shortTitle }}</h3>
       </v-card-title>
-      <v-card-text>
+      <v-card-text v-if="!delegatedToCentralKitchen">
         <KeyMeasureBadge
           class="py-0 ml-8"
           :canteen="canteen"
@@ -149,7 +149,13 @@
   </div>
 </template>
 <script>
-import { hasDiagnosticApproData, lastYear, hasStartedMeasureTunnel, applicableDiagnosticRules } from "@/utils"
+import {
+  hasDiagnosticApproData,
+  lastYear,
+  hasStartedMeasureTunnel,
+  applicableDiagnosticRules,
+  delegatedToCentralKitchen,
+} from "@/utils"
 import Constants from "@/constants"
 import ApproGraph from "@/components/ApproGraph"
 import KeyMeasureBadge from "@/components/KeyMeasureBadge"
@@ -228,6 +234,9 @@ export default {
     },
     bioPercent() {
       return this.rules.bioThreshold
+    },
+    delegatedToCentralKitchen() {
+      return delegatedToCentralKitchen(this.canteen, this.diagnostic)
     },
   },
 }

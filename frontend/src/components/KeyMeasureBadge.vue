@@ -64,7 +64,8 @@ export default {
       return this.isCentralKitchen ? this.isCentralKitchenFilled : !this.missingCanteenData
     },
     verifyApproFilled() {
-      return this.diagnostic ? hasDiagnosticApproData(this.diagnostic) : this.hasCentralKitchenDeclared()
+      if (this.isSatellite) return this.hasCentralKitchenDeclared()
+      return hasDiagnosticApproData(this.diagnostic)
     },
     verifyMeasureFilled() {
       const measure = keyMeasures.find((measure) => measure.id === this.id)
