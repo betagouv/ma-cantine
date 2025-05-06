@@ -98,7 +98,7 @@ export default {
     },
     purchaseDataSourceString() {
       if (!this.purchases.length) return
-      return this.purchases[0].createdByImport ? "import en masse" : "ajout manuel"
+      return this.purchases[0].creationSource === "APP" ? "ajout manuel" : "import en masse"
     },
     purchasesDelegated() {
       return this.canteen.productionType === "site_cooked_elsewhere"
