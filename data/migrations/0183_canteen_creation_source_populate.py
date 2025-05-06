@@ -9,13 +9,29 @@ def populate_canteen_creation_source(apps, schema_editor):
     # first set of rules
     canteen_qs = Canteen.objects.filter(Q(creation_source="") | Q(creation_source__isnull=True))
     canteen_qs.annotate(import_source_length=Length("import_source")).annotate(creation_source_annotated=Case(
-        When(Q(import_source__startswith="Cuisine centrale : "), then="APP"),
-        When(Q(import_source_length__gt=0), then="IMPORT"),
+        When(Q(import_source__startswith="Cuisine centrale : "), then=Value("APP")),
+        When(Q(import_source_length__gt=0), then=Value("IMPORT")),
         default=Value(None),
     )).update(
         creation_source=F("creation_source_annotated")
     )
     # second set of rules: HistoricalCanteen
+    for canteen in canteen_qs.all():
+        canteen_first_version = canteen.history.last()
+        if not canteen.creation_source and canteen_first_version and canteen_first_version.history_type == "+":
+            if canteen_first_version.history_change_reason is None:
+                if canteen_first_version.history_user_id and canteen_first_version.history_user.is_staff:
+                    canteen.creation_source = "ADMIN"
+                    canteen.save(update_fields=["creation_source"])
+            elif canteen_first_version.history_change_reason.startswith("Mass CSV import"):
+                canteen.creation_source = "IMPORT"
+                canteen.save(update_fields=["creation_source"])
+            elif canteen_first_version.history_change_reason == "SessionAuthentication":
+                canteen.creation_source = "APP"
+                canteen.save(update_fields=["creation_source"])
+            elif canteen_first_version.history_change_reason == "OAuth2Authentication":
+                canteen.creation_source = "API"
+                canteen.save(update_fields=["creation_source"])
 
 def undo_populate_canteen_creation_source(apps, schema_editor):
     pass
