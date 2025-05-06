@@ -49,17 +49,21 @@ class TeledeclarationQuerySetTest(TestCase):
 
     def _create_diagnostics_and_teledeclarations(self):
         """Create diagnostics and teledeclarations for testing."""
+        date_in_teledeclaration_campaign = now().replace(month=3, day=1, hour=0, minute=0, second=0)
+        date_in_correction_campaign = now().replace(month=7, day=1, hour=0, minute=0, second=0)
+
         for index, canteen in enumerate([self.valid_canteen_1, self.valid_canteen_2, self.valid_canteen_3]):
             diagnostic = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data,
-                creation_date=now().replace(month=3, day=1),
+                creation_date=date_in_teledeclaration_campaign,
                 canteen=canteen,
                 value_total_ht=1000.00,
                 value_bio_ht=200.00,
             )
             setattr(self, f"valid_canteen_diagnostic_{index + 1}", diagnostic)
-            teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant=UserFactory.create())
+            with freeze_time(date_in_teledeclaration_campaign):
+                teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant=UserFactory.create())
             setattr(self, f"valid_canteen_td_{index + 1}", teledeclaration)
 
         # Corrected TD
@@ -78,7 +82,7 @@ class TeledeclarationQuerySetTest(TestCase):
         self.valid_correction_td.status = Teledeclaration.TeledeclarationStatus.CANCELLED
         self.valid_correction_td.save()
 
-        with freeze_time(now().replace(month=7, day=1, hour=0, minute=0, second=0)):
+        with freeze_time(date_in_correction_campaign):
             self.valid_correction_td = Teledeclaration.create_from_diagnostic(
                 self.valid_canteen_diagnostic_correction, applicant=user_correction_campaign
             )
@@ -86,37 +90,40 @@ class TeledeclarationQuerySetTest(TestCase):
         self.invalid_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
-            creation_date=now().replace(month=3, day=1),
+            creation_date=date_in_teledeclaration_campaign,
             canteen=self.invalid_canteen,
             value_total_ht=1000.00,
             value_bio_ht=200.00,
         )
-        self.invalid_canteen_td = Teledeclaration.create_from_diagnostic(
-            self.invalid_canteen_diagnostic, applicant=UserFactory.create()
-        )
+        with freeze_time(date_in_teledeclaration_campaign):
+            self.invalid_canteen_td = Teledeclaration.create_from_diagnostic(
+                self.invalid_canteen_diagnostic, applicant=UserFactory.create()
+            )
 
         self.deleted_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
-            creation_date=now().replace(month=3, day=1),
+            creation_date=date_in_teledeclaration_campaign,
             canteen=self.deleted_canteen,
             value_total_ht=1000.00,
             value_bio_ht=200.00,
         )
-        self.deleted_canteen_td = Teledeclaration.create_from_diagnostic(
-            self.deleted_canteen_diagnostic, applicant=UserFactory.create()
-        )
+        with freeze_time(date_in_teledeclaration_campaign):
+            self.deleted_canteen_td = Teledeclaration.create_from_diagnostic(
+                self.deleted_canteen_diagnostic, applicant=UserFactory.create()
+            )
         self.canteen_sat_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
-            creation_date=now().replace(month=3, day=1),
+            creation_date=date_in_teledeclaration_campaign,
             canteen=self.valid_canteen_sat,
             value_total_ht=None,
             value_bio_ht=None,
         )
-        self.canteen_sat_td = Teledeclaration.create_from_diagnostic(
-            self.canteen_sat_diagnostic, applicant=UserFactory.create()
-        )
+        with freeze_time(date_in_teledeclaration_campaign):
+            self.canteen_sat_td = Teledeclaration.create_from_diagnostic(
+                self.canteen_sat_diagnostic, applicant=UserFactory.create()
+            )
         self.canteen_sat_td.teledeclaration_mode = Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
         self.canteen_sat_diagnostic.save()
 
