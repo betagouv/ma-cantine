@@ -76,3 +76,18 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(diagnostics.count(), 5)
         self.assertIn(self.valid_canteen_diagnostic_1, diagnostics)
         self.assertNotIn(valid_canteen_empty_diagnostic, diagnostics)
+
+    def test_is_filled_same_as_property_value(self):
+        Diagnostic.objects.all().delete()
+        empty_diagnostic = Diagnostic.objects.create(
+            year=year_data - 1, canteen=self.valid_canteen_1, value_total_ht=None
+        )
+        filled_diagnostics_count = Diagnostic.objects.is_filled().count()
+        self.assertFalse(empty_diagnostic.is_filled)
+        self.assertEqual(filled_diagnostics_count, 0)
+        filled_diagnostic = Diagnostic.objects.create(
+            year=year_data - 1, canteen=self.valid_canteen_2, value_total_ht=1000
+        )
+        filled_diagnostics_count = Diagnostic.objects.is_filled().count()
+        self.assertTrue(filled_diagnostic.is_filled)
+        self.assertEqual(filled_diagnostics_count, 1)
