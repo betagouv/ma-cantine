@@ -77,17 +77,19 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertIn(self.valid_canteen_diagnostic_1, diagnostics)
         self.assertNotIn(valid_canteen_empty_diagnostic, diagnostics)
 
-    def test_is_filled_same_as_property_value(self):
-        Diagnostic.objects.all().delete()
-        empty_diagnostic = Diagnostic.objects.create(
-            year=year_data - 1, canteen=self.valid_canteen_1, value_total_ht=None
-        )
-        filled_diagnostics_count = Diagnostic.objects.is_filled().count()
-        self.assertFalse(empty_diagnostic.is_filled)
-        self.assertEqual(filled_diagnostics_count, 0)
-        filled_diagnostic = Diagnostic.objects.create(
-            year=year_data - 1, canteen=self.valid_canteen_2, value_total_ht=1000
-        )
-        filled_diagnostics_count = Diagnostic.objects.is_filled().count()
-        self.assertTrue(filled_diagnostic.is_filled)
-        self.assertEqual(filled_diagnostics_count, 1)
+
+class DiagnosticQuerySetAndPropertyTest(TestCase):
+
+    def setUp(self):
+        self.empty_total_diagnostic = DiagnosticFactory.create(canteen=CanteenFactory(), value_total_ht=None)
+        self.filled_total_diagnostic = DiagnosticFactory.create(canteen=CanteenFactory(), value_total_ht=1000)
+
+    def test_is_filled_queryset(self):
+        all_diagnostics = Diagnostic.objects.all()
+        diagnostics_filled = Diagnostic.objects.is_filled()
+        self.assertEqual(all_diagnostics.count(), 2)
+        self.assertEqual(diagnostics_filled.count(), 1)
+
+    def test_is_filled_property(self):
+        self.assertFalse(self.empty_total_diagnostic.is_filled)
+        self.assertTrue(self.filled_total_diagnostic.is_filled)
