@@ -83,7 +83,7 @@ class TestGeolocationBot(TestCase):
             ),
         ]
         _ = [
-            CanteenFactory.create(city=None, geolocation_bot_attempts=10, postal_code="69003"),
+            CanteenFactory.create(city=None, geolocation_bot_attempts=20, postal_code="69003"),
             CanteenFactory.create(
                 city=None,
                 geolocation_bot_attempts=0,
