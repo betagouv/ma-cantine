@@ -10,6 +10,8 @@ from .utils import COMPLETE_APPRO_FIELDS, appro_to_percentages
 
 logger = logging.getLogger(__name__)
 
+DIAGNOSTIC_TYPE_FIELD = ("diagnostic_type",)
+
 SIMPLE_APPRO_FIELDS = (
     "value_total_ht",
     "value_bio_ht",
@@ -62,7 +64,6 @@ META_FIELDS = (
     "id",
     "canteen_id",
     "year",
-    "diagnostic_type",
     "central_kitchen_diagnostic_mode",
     "is_teledeclared",
 )
@@ -81,7 +82,7 @@ TUNNEL_PROGRESS_FIELDS = (
     "tunnel_info",
 )
 
-FIELDS = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
+FIELDS = META_FIELDS + DIAGNOSTIC_TYPE_FIELD + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
 
 REQUIRED_FIELDS = ("year",)
 
@@ -162,8 +163,8 @@ class PublicDiagnosticSerializer(DiagnosticSerializer):
 class PublicApproDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + SIMPLE_APPRO_FIELDS
-        read_ony_fields = META_FIELDS + SIMPLE_APPRO_FIELDS
+        fields = META_FIELDS + DIAGNOSTIC_TYPE_FIELD + SIMPLE_APPRO_FIELDS
+        read_ony_fields = META_FIELDS + DIAGNOSTIC_TYPE_FIELD + SIMPLE_APPRO_FIELDS
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -238,22 +239,22 @@ class FullDiagnosticSerializer(DiagnosticSerializer):
 class SimpleTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + SIMPLE_APPRO_FIELDS + NON_APPRO_FIELDS
+        fields = META_FIELDS + DIAGNOSTIC_TYPE_FIELD + SIMPLE_APPRO_FIELDS + NON_APPRO_FIELDS
         read_only_fields = fields
 
 
 class CompleteTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
+        fields = META_FIELDS + DIAGNOSTIC_TYPE_FIELD + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
         read_only_fields = fields
 
 
 class ApproDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
-        read_ony_fields = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
+        fields = META_FIELDS + DIAGNOSTIC_TYPE_FIELD + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
+        read_ony_fields = META_FIELDS + DIAGNOSTIC_TYPE_FIELD + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -270,14 +271,14 @@ class ApproDeferredTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
 class SimpleApproOnlyTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + SIMPLE_APPRO_FIELDS
+        fields = META_FIELDS + DIAGNOSTIC_TYPE_FIELD + SIMPLE_APPRO_FIELDS
         read_only_fields = fields
 
 
 class CompleteApproOnlyTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + COMPLETE_APPRO_FIELDS
+        fields = META_FIELDS + DIAGNOSTIC_TYPE_FIELD + COMPLETE_APPRO_FIELDS
         read_only_fields = fields
 
 
