@@ -7,12 +7,14 @@ from data.region_choices import Region
 logger = logging.getLogger(__name__)
 
 REGIONS_LIB = {i.label.split(" - ")[1]: i.value for i in Region}
+# ADRESSE_API_DOCUMENTATION: https://adresse.data.gouv.fr/outils/api-doc/adresse
+ADRESSE_API_URL = "https://api-adresse.data.gouv.fr/search"
 
 
 def fetch_geo_data_from_api_entreprise_by_siret(response):
     try:
         location_response = requests.get(
-            f"https://api-adresse.data.gouv.fr/search/?q={response['cityInseeCode']}&citycode={response['cityInseeCode']}&type=municipality&autocomplete=1"
+            f"{ADRESSE_API_URL}/?q={response['cityInseeCode']}&citycode={response['cityInseeCode']}&type=municipality&autocomplete=1"
         )
         if location_response.ok:
             location_response = location_response.json()
