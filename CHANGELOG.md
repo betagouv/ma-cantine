@@ -6,6 +6,31 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.14.8](https://github.com/betagouv/ma-cantine/compare/v2025.14.7...v2025.14.8) (2025-05-07)
+
+
+### Corrections (bugs, typos...)
+
+* **Badges:** homogénisation de l'affichage des badges pour les CSAT avec des CC en déclaration complète ([#5302](https://github.com/betagouv/ma-cantine/issues/5302)) ([6a81163](https://github.com/betagouv/ma-cantine/commit/6a81163c409fe94234f2a3ba1acd0e65b559c7f2))
+* **Cantines:** répare la migration qui remplit l'historique du creation_source. ref [#5325](https://github.com/betagouv/ma-cantine/issues/5325) ([c9a935b](https://github.com/betagouv/ma-cantine/commit/c9a935b52daaa070d8953956e831e007554986ed))
+* **GeoBot:** Augmenter la valeur du Geolocation Bot Attempt ([#5324](https://github.com/betagouv/ma-cantine/issues/5324)) ([1762093](https://github.com/betagouv/ma-cantine/commit/17620939ea747dd8e7f4fd88d27337f9c543e1b8))
+* **Télédéclaration:** simplifie la vérification des données d'approvisionnement en utilisant l'api ([#5303](https://github.com/betagouv/ma-cantine/issues/5303)) ([6cde131](https://github.com/betagouv/ma-cantine/commit/6cde1314c2606a771461ebee429a65ed91b8eb6d))
+* **Tests:** fige les dates des tests dans une période où la télédéclaration est permise ([#5323](https://github.com/betagouv/ma-cantine/issues/5323)) ([d74121f](https://github.com/betagouv/ma-cantine/commit/d74121fac5e6880bd32cc77ef85e727f5186c6c8))
+
+
+### Documentation
+
+* **Open-Data:** Rectifier ressource -&gt; dataset ([#5295](https://github.com/betagouv/ma-cantine/issues/5295)) ([3f97334](https://github.com/betagouv/ma-cantine/commit/3f97334345124bf921b9af15d6b594f93eba6ece))
+
+
+### Technique
+
+* **Achats:** source de création: enlève une property obsolète ([#5322](https://github.com/betagouv/ma-cantine/issues/5322)) ([0d5a16e](https://github.com/betagouv/ma-cantine/commit/0d5a16e906f5524e46409640947aabe9424b0b66))
+* **Achats:** source de création: script pour remplir (une partie de) l'historique ([#5321](https://github.com/betagouv/ma-cantine/issues/5321)) ([8ba9796](https://github.com/betagouv/ma-cantine/commit/8ba9796172b798608ca2a8abf6c4ebf48be3ac19))
+* **Cantines:** source de création: script pour remplir (une partie de) l'historique ([#5325](https://github.com/betagouv/ma-cantine/issues/5325)) ([7226bc0](https://github.com/betagouv/ma-cantine/commit/7226bc0a74b54b013ff208bcc3bd30753c308a13))
+* **deps:** bump django-extensions from 3.2.3 to 4.1 ([#5314](https://github.com/betagouv/ma-cantine/issues/5314)) ([11c72cb](https://github.com/betagouv/ma-cantine/commit/11c72cb6a60346bc80dff7b6c11202a719d0f6e4))
+* **Diagnostics:** source de création: script pour remplir (une partie de) l'historique ([#5326](https://github.com/betagouv/ma-cantine/issues/5326)) ([5fd8ff2](https://github.com/betagouv/ma-cantine/commit/5fd8ff261f2a1dda822b6d72bb60b1d6604c773e))
+
 ## [2025.14.7](https://github.com/betagouv/ma-cantine/compare/v2025.14.6...v2025.14.7) (2025-04-29)
 
 
