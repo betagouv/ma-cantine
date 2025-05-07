@@ -7,6 +7,7 @@ from django.db.models.functions import Length
 
 def populate_diagnostic_creation_source(apps, schema_editor):
     Diagnostic = apps.get_model("data", "Diagnostic")
+    HistoricalDiagnostic = apps.get_model("data", "HistoricalDiagnostic")
     # first set of rules
     diagnostic_qs = Diagnostic.objects.filter(Q(creation_source="") | Q(creation_source__isnull=True))
     diagnostic_qs.annotate(creation_mtm_source_length=Length("creation_mtm_source")).annotate(creation_source_annotated=Case(
@@ -17,7 +18,7 @@ def populate_diagnostic_creation_source(apps, schema_editor):
     )
     # second set of rules: HistoricalDiagnostic
     for diagnostic in diagnostic_qs.all():
-        diagnostic_first_version = diagnostic.history.last()
+        diagnostic_first_version = HistoricalDiagnostic.objects.filter(id=diagnostic.id).last()
         if not diagnostic.creation_source and diagnostic_first_version and diagnostic_first_version.history_type == "+":
             if diagnostic_first_version.history_change_reason is None:
                 if diagnostic_first_version.history_user_id and diagnostic_first_version.history_user.is_staff:
