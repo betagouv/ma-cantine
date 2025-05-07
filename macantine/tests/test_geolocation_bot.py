@@ -41,18 +41,15 @@ class TestGeolocationBot(TestCase):
         Geolocation data should be filled with the response
         from the API
         """
-        canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003")
-        address_api_text = "id,citycode,postcode,result_citycode,result_postcode,result_city,result_context\n"
-        address_api_text += f'{canteen.id},,69003,69383,69003,Lyon,"69, Rhône, Auvergne-Rhône-Alpes"\n'
-        mock.post(self.api_url, text=address_api_text)
+        canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, city_insee_code="69383")
 
         tasks.fill_missing_geolocation_data_using_insee_code_or_postcode()
 
         canteen.refresh_from_db()
-        self.assertEqual(canteen.city, "Lyon")
+        self.assertEqual(canteen.city, "LYON 3E ARRONDISSEMENT")
         self.assertEqual(canteen.city_insee_code, "69383")
-        self.assertEqual(canteen.postal_code, "69003")
         self.assertEqual(canteen.department, "69")
+        self.assertEqual(canteen.region, "84")
         self.assertEqual(canteen.geolocation_bot_attempts, 1)
 
     def test_candidate_canteens(self, _):
@@ -83,7 +80,7 @@ class TestGeolocationBot(TestCase):
             ),
         ]
         _ = [
-            CanteenFactory.create(city=None, geolocation_bot_attempts=10, postal_code="69003"),
+            CanteenFactory.create(city=None, geolocation_bot_attempts=20, postal_code="69003"),
             CanteenFactory.create(
                 city=None,
                 geolocation_bot_attempts=0,

@@ -1,10 +1,9 @@
-import csv
 import datetime
 import logging
 import time
 
+import pandas as pd
 import redis as r
-import requests
 from django.conf import settings
 from django.core.management import call_command
 from django.core.paginator import Paginator
@@ -205,35 +204,27 @@ def _covered_by_central_kitchen(canteen):
     return False
 
 
-def _get_location_csv_string(canteens):
-    locations_csv_string = "id,citycode,postcode\n"
-    for canteen in canteens:
-        if canteen.city_insee_code and len(canteen.city_insee_code) == 5:
-            locations_csv_string += f"{canteen.id},{canteen.city_insee_code},\n"
-        elif canteen.postal_code and len(canteen.postal_code) == 5:
-            locations_csv_string += f"{canteen.id},,{canteen.postal_code}\n"
-    return locations_csv_string
+def _get_department_and_region_from_insee_code(insee_code):
+    """
+    Reads a CSV file with an index being the INSEE code of the city and returns the department and region.
 
-
-def _request_location_api_in_bulk(location_csv_string):
-    response = requests.post(
-        "https://api-adresse.data.gouv.fr/search/csv/",
-        files={
-            "data": ("locations.csv", location_csv_string),
-        },
-        data={
-            "postcode": "postcode",
-            "citycode": "citycode",
-            "result_columns": [
-                "result_citycode",
-                "result_postcode",
-                "result_city",
-                "result_context",
-            ],
-        },
-        timeout=60,
-    )
-    return response
+    :param csv_file_path: Path to the CSV file containing city data.
+    :param insee_code: The INSEE code of the city to look up.
+    :return: A tuple containing the department and region, or (None, None) if not found.
+    """
+    try:
+        csv_file_path = "data/v_commune_2025.csv"
+        city_data = pd.read_csv(csv_file_path, index_col=1)
+        if insee_code in city_data.index:
+            city_lib = city_data.loc[insee_code, "NCC"]
+            department = str(city_data.loc[insee_code, "DEP"])
+            region = str(city_data.loc[insee_code, "REG"])
+            return city_lib, department, region
+        else:
+            return None, None, None
+    except Exception as e:
+        logger.error(f"Error reading city data from CSV: {e}")
+        return None, None, None
 
 
 def _get_candidate_canteens_for_code_geobot():
@@ -255,23 +246,13 @@ def _get_candidate_canteens_for_siret_geobot():
     ).order_by("-creation_date")
 
 
-def _fill_from_api_response(response, canteens):
-    for row in csv.reader(response.text.splitlines()):
-        if row[0] == "id":
-            continue
-        if row[5] != "":  # city found, so rest of data is found
-            id = int(row[0])
-            canteen = next(filter(lambda x: x.id == id, canteens), None)
-            if not canteen:
-                logger.info(f"Geolocation Bot - response row, ID not found: {id}")
-                continue
-
-            canteen.city_insee_code = row[3]
-            canteen.postal_code = row[4]
-            canteen.city = row[5]
-            canteen.department = row[6].split(",")[0]
-            canteen.save()
-            update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE ou code postale")
+def _fill_from_insee_response(canteen):
+    city_lib, department, region = _get_department_and_region_from_insee_code(canteen.city_insee_code)
+    canteen.city = city_lib
+    canteen.region = region
+    canteen.department = department
+    canteen.save()
+    update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
 
 
 def _update_canteen_geo_data(canteen, response):
@@ -324,20 +305,8 @@ def fill_missing_geolocation_data_using_insee_code_or_postcode():
         canteens = paginator.get_page(page_number).object_list
         if len(canteens) == 0:
             continue
-        try:
-            location_csv_string = _get_location_csv_string(canteens)
-            response = _request_location_api_in_bulk(location_csv_string)
-            response.raise_for_status()
-
-            _fill_from_api_response(response, canteens)
-        except requests.exceptions.HTTPError as e:
-            logger.info(f"INSEE Geolocation Bot error: HTTPError\n{e}")
-        except requests.exceptions.ConnectionError as e:
-            logger.info(f"INSEE Geolocation Bot error: ConnectionError\n{e}")
-        except requests.exceptions.Timeout as e:
-            logger.info(f"INSEE Geolocation Bot error: Timeout\n{e}")
-        except Exception as e:
-            logger.info(f"INSEE Geolocation Bot error: Unexpected exception\n{e}")
+        for canteen in canteens:
+            _fill_from_insee_response(canteen)
 
     logger.info(f"INSEE Geolocation Bot: Ended process for {candidate_canteens.count()} canteens")
 
