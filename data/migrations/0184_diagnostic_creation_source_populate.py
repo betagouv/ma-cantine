@@ -40,7 +40,7 @@ def undo_populate_diagnostic_creation_source(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0182_alter_canteen_creation_source_and_more"),
+        ("data", "0183_canteen_creation_source_populate"),
     ]
 
     operations = [
