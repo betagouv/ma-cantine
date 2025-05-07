@@ -714,7 +714,10 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
         return obj.central_producer_siret
 
     def get_ministere_tutelle(self, obj):
-        return obj.line_ministry
+        if obj.line_ministry:
+            return Canteen.Ministries(obj.line_ministry).label
+        else:
+            return "inconnu"
 
     def get_secteur(self, obj):
         sectors = [sector.name for sector in obj.sectors.all()]
