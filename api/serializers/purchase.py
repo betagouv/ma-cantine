@@ -27,13 +27,11 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "local_definition",
             "import_source",
             "creation_source",
-            "created_by_import",
         )
         read_only_fields = (
             "id",
             "creation_date",
             "modification_date",
-            "created_by_import",
         )
 
     def create(self, validated_data):
