@@ -1,6 +1,5 @@
 import logging
 
-import requests
 from django.http import JsonResponse
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
@@ -8,6 +7,7 @@ from rest_framework.views import APIView
 
 from api.serializers import CanteenStatisticsSerializer
 from api.views.utils import camelize
+from common.api.decoupage_administratif import fetch_communes_from_epci
 from data.models import Canteen, Teledeclaration
 
 logger = logging.getLogger(__name__)
@@ -65,9 +65,8 @@ class CanteenStatisticsView(APIView):
     def _get_city_insee_codes(self, epcis):
         city_insee_codes = []
         for e in epcis:
-            response = requests.get(f"https://geo.api.gouv.fr/epcis/{e}/communes?fields=code", timeout=5)
-            response.raise_for_status()
-            city_insee_codes.extend(commune["code"] for commune in response.json())
+            response = fetch_communes_from_epci(e)
+            city_insee_codes.extend(commune["code"] for commune in response)
         return city_insee_codes
 
     def _filter_canteens(self, regions, departments, city_insee_codes, sectors):
