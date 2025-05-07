@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.14.9](https://github.com/betagouv/ma-cantine/compare/v2025.14.8...v2025.14.9) (2025-05-07)
+
+
+### Améliorations
+
+* **Metabase:** Cantines: afficher la valeur du ministère de tutelle (au lieu du champ en DB) ([#5329](https://github.com/betagouv/ma-cantine/issues/5329)) ([ba447c8](https://github.com/betagouv/ma-cantine/commit/ba447c8fa478e66087a2ab5df043af78c8fa3bcc))
+
 ## [2025.14.8](https://github.com/betagouv/ma-cantine/compare/v2025.14.7...v2025.14.8) (2025-05-07)
 
 
