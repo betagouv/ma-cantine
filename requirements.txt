@@ -82,7 +82,7 @@ jmespath==1.0.1
 jsbeautifier==1.15.1
 json5==0.9.25
 jsonschema==4.23.0
-jsonschema-specifications==2024.10.1
+jsonschema-specifications==2025.4.1
 jwcrypto==1.5.6
 kombu==5.4.2
 l18n==2021.3
