@@ -1,6 +1,7 @@
 import json
 
 import pandas as pd
+import pytest
 from django.test import TestCase
 from freezegun import freeze_time
 
@@ -12,6 +13,7 @@ from macantine.etl.analysis import (
     aggregate_col,
     compute_cout_denrees,
     get_egalim_hors_bio,
+    get_objectif_zone_geo,
 )
 from macantine.etl.utils import format_td_sector_column
 
@@ -261,3 +263,24 @@ class TestETLAnalysisTD(TestCase):
             td_complete = pd.DataFrame.from_dict(tc["data"], orient="index")
             cout_denrees = compute_cout_denrees(td_complete)
             self.assertEqual(cout_denrees.iloc[0], tc["expected_outcome"])
+
+
+@pytest.mark.parametrize(
+    "department, expected",
+    [
+        (974, "non renseigné"),  # Special case for department 974
+        ("2A", "France métropolitaine"),  # Corsica department code
+        ("2B", "France métropolitaine"),  # Corsica department code
+        (75, "France métropolitaine"),  # Metropolitan France
+        (976, "DROM (Mayotte)"),  # Mayotte
+        (971, "DROM (hors Mayotte)"),  # Guadeloupe
+        (972, "DROM (hors Mayotte)"),  # Martinique
+        (978, "DROM (hors Mayotte)"),  # Saint-Martin
+        ("nan", "non renseigné"),  # String "nan"
+        (None, "non renseigné"),  # None value
+        (pd.NA, "non renseigné"),  # Pandas NA
+        (999, "non renseigné"),  # Invalid department
+    ],
+)
+def test_get_objectif_zone_geo(department, expected):
+    assert get_objectif_zone_geo(department) == expected
