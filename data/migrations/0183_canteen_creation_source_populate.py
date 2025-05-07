@@ -6,6 +6,7 @@ from django.db.models.functions import Length
 
 def populate_canteen_creation_source(apps, schema_editor):
     Canteen = apps.get_model("data", "Canteen")
+    HistoricalCanteen = apps.get_model("data", "HistoricalCanteen")
     # first set of rules
     canteen_qs = Canteen.objects.filter(Q(creation_source="") | Q(creation_source__isnull=True))
     canteen_qs.annotate(import_source_length=Length("import_source")).annotate(creation_source_annotated=Case(
@@ -17,7 +18,7 @@ def populate_canteen_creation_source(apps, schema_editor):
     )
     # second set of rules: HistoricalCanteen
     for canteen in canteen_qs.all():
-        canteen_first_version = canteen.history.last()
+        canteen_first_version = HistoricalCanteen.objects.filter(id=canteen.id).last()
         if not canteen.creation_source and canteen_first_version and canteen_first_version.history_type == "+":
             if canteen_first_version.history_change_reason is None:
                 if canteen_first_version.history_user_id and canteen_first_version.history_user.is_staff:
