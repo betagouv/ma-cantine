@@ -367,10 +367,11 @@ class Canteen(SoftDeletionModel):
 
     city = models.TextField(null=True, blank=True, verbose_name="ville")
     city_insee_code = models.TextField(null=True, blank=True, verbose_name="Code INSEE")
-
+    postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name="code postal")
+    epci = models.CharField(null=True, blank=True, verbose_name="Code EPCI", validators=[utils_siret.validate_siren])
     department = models.TextField(null=True, blank=True, choices=Department.choices, verbose_name="département")
     region = models.TextField(null=True, blank=True, choices=Region.choices, verbose_name="région")
-    postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name="code postal")
+
     sectors = models.ManyToManyField(Sector, blank=True, verbose_name="secteurs d'activité")
     line_ministry = models.TextField(
         null=True, blank=True, choices=Ministries.choices, verbose_name="Ministère de tutelle"
