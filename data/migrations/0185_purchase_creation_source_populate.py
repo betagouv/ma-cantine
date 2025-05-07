@@ -10,7 +10,8 @@ def populate_purchase_creation_source(apps, schema_editor):
     Update only the Purchases with an empty creation_source
     """
     Purchase = apps.get_model("data", "Purchase")
-    Purchase.objects.filter(Q(creation_source="") | Q(creation_source__isnull=True)).annotate(import_source_length=Length("import_source")).annotate(
+    purchase_qs = Purchase.objects.filter(Q(creation_source="") | Q(creation_source__isnull=True))
+    purchase_qs.annotate(import_source_length=Length("import_source")).annotate(
         creation_source_annotated=Case(
             When(Q(import_source="Duplication"), then=Value("APP")),
             When(Q(import_source="Import du fichier CSV"), then=Value("IMPORT")),
