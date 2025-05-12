@@ -273,7 +273,7 @@
               :length="Math.ceil(publishedCanteenCount / limit)"
               :total-visible="5"
               v-if="publishedCanteenCount"
-              @input="pageChangedManually"
+              @input="scrollTop"
             />
           </div>
         </v-col>
@@ -778,9 +778,8 @@ export default {
     setLocation(location) {
       this.location = location
     },
-    pageChangedManually() {
-      // TODO: make this dependent on window height to avoid jumps for bigger screens
-      document.getElementById("filters-and-results").scrollIntoView({ behavior: "smooth" })
+    scrollTop() {
+      window.scrollTo(0, 0)
     },
   },
   watch: {
