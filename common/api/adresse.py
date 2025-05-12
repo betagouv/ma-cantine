@@ -46,3 +46,21 @@ def fetch_geo_data_from_api_entreprise_by_siret(response):
         logger.exception(f"Error completing location data with SIRET for city: {response['city']}")
         logger.exception(e)
     return response
+
+
+def fetch_geo_data_by_csv(csv_str, timeout=4):
+    # NB: max size of a csv file is 50 MB
+    response = requests.post(
+        ADRESSE_CSV_API_URL,
+        files={
+            "data": ("locations.csv", csv_str),
+        },
+        data={
+            "postcode": "postcode",
+            "citycode": "citycode",
+            "result_columns": ["result_citycode", "result_postcode", "result_city", "result_context"],
+        },
+        timeout=timeout,
+    )
+    response.raise_for_status()
+    return response.text

@@ -15,6 +15,7 @@ from sib_api_v3_sdk.rest import ApiException
 
 import macantine.brevo as brevo
 from api.views.utils import update_change_reason
+from common.api.adresse import fetch_geo_data_by_csv
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.models import Canteen, User
 
@@ -215,27 +216,6 @@ def _get_location_csv_string(canteens):
     return locations_csv_string
 
 
-def _request_location_api_in_bulk(location_csv_string):
-    response = requests.post(
-        "https://api-adresse.data.gouv.fr/search/csv/",
-        files={
-            "data": ("locations.csv", location_csv_string),
-        },
-        data={
-            "postcode": "postcode",
-            "citycode": "citycode",
-            "result_columns": [
-                "result_citycode",
-                "result_postcode",
-                "result_city",
-                "result_context",
-            ],
-        },
-        timeout=60,
-    )
-    return response
-
-
 def _get_candidate_canteens_for_code_geobot():
     candidate_canteens = (
         Canteen.objects.filter(Q(city=None) | Q(department=None) | Q(city_insee_code=None) | Q(postal_code=None))
@@ -256,7 +236,7 @@ def _get_candidate_canteens_for_siret_geobot():
 
 
 def _fill_from_api_response(response, canteens):
-    for row in csv.reader(response.text.splitlines()):
+    for row in csv.reader(response.splitlines()):
         if row[0] == "id":
             continue
         if row[5] != "":  # city found, so rest of data is found
@@ -326,9 +306,7 @@ def fill_missing_geolocation_data_using_insee_code_or_postcode():
             continue
         try:
             location_csv_string = _get_location_csv_string(canteens)
-            response = _request_location_api_in_bulk(location_csv_string)
-            response.raise_for_status()
-
+            response = fetch_geo_data_by_csv(location_csv_string, timeout=60)
             _fill_from_api_response(response, canteens)
         except requests.exceptions.HTTPError as e:
             logger.info(f"INSEE Geolocation Bot error: HTTPError\n{e}")

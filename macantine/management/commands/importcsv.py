@@ -1,10 +1,10 @@
 import csv
 import logging
 
-import requests
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError, transaction
 
+from common.api.adresse import fetch_geo_data_by_csv
 from data.models import Canteen, Diagnostic, ManagerInvitation
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ class Command(BaseCommand):
         filepath = options["filepath"]
         print(f"Filepath to import : {filepath}")
 
-        locations_csv_str = "siret,citycode\n"
+        locations_csv_str = "siret,citycode,postcode\n"
         canteens_by_siret = {}
 
         with open(filepath, "r") as file:
@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 created_canteen = Command._create_models(row)
                 if created_canteen:
                     canteens_by_siret[created_canteen.siret] = created_canteen
-                    locations_csv_str += f"{created_canteen.siret},{created_canteen.city_insee_code}\n"
+                    locations_csv_str += f"{created_canteen.siret},{created_canteen.city_insee_code},\n"
 
             Command._update_location_data(canteens_by_siret, locations_csv_str)
             logger.info(f"Successfully imported {len(canteens_by_siret)} canteens from CSV file {filepath}")
@@ -143,20 +143,8 @@ class Command(BaseCommand):
     @staticmethod
     def _update_location_data(canteens, locations_csv_str):
         try:
-            # NB: max size of a csv file is 50 MB
-            response = requests.post(
-                "https://api-adresse.data.gouv.fr/search/csv/",
-                files={
-                    "data": ("locations.csv", locations_csv_str),
-                },
-                data={
-                    "citycode": "citycode",
-                    "result_columns": ["result_citycode", "result_postcode", "result_city", "result_context"],
-                },
-                timeout=100,
-            )
-            response.raise_for_status()  # Raise an exception if the request failed
-            for row in csv.reader(response.text.splitlines()):
+            response = fetch_geo_data_by_csv(locations_csv_str, timeout=100)
+            for row in csv.reader(response.splitlines()):
                 if row[0] == "siret":
                     continue  # skip header
                 if row[5] != "":  # city found, so rest of data is found
