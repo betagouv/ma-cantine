@@ -50,7 +50,7 @@ from api.serializers import (
     SatelliteCanteenSerializer,
 )
 from api.views.utils import camelize, update_change_reason_with_auth
-from common.api.adresse import fetch_geo_data_from_api_entreprise_by_siret
+from common.api.adresse import fetch_geo_data_from_code
 from common.api.recherche_entreprises import (
     fetch_geo_data_from_siren,
     fetch_geo_data_from_siret,
@@ -466,7 +466,7 @@ class CanteenStatusBySiretView(APIView):
             city = response.get("city", None)
             postcode = response.get("postalCode", None)
             if city and postcode:
-                response = fetch_geo_data_from_api_entreprise_by_siret(response)
+                response = fetch_geo_data_from_code(response)
         return JsonResponse(response, status=status.HTTP_200_OK)
 
 

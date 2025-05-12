@@ -4,7 +4,7 @@ import logging
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError, transaction
 
-from common.api.adresse import fetch_geo_data_by_csv
+from common.api.adresse import fetch_geo_data_from_code_csv
 from data.models import Canteen, Diagnostic, ManagerInvitation
 
 logger = logging.getLogger(__name__)
@@ -143,7 +143,7 @@ class Command(BaseCommand):
     @staticmethod
     def _update_location_data(canteens, locations_csv_str):
         try:
-            response = fetch_geo_data_by_csv(locations_csv_str, timeout=100)
+            response = fetch_geo_data_from_code_csv(locations_csv_str, timeout=100)
             for row in csv.reader(response.splitlines()):
                 if row[0] == "siret":
                     continue  # skip header

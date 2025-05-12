@@ -15,7 +15,7 @@ from sib_api_v3_sdk.rest import ApiException
 
 import macantine.brevo as brevo
 from api.views.utils import update_change_reason
-from common.api.adresse import fetch_geo_data_by_csv
+from common.api.adresse import fetch_geo_data_from_code_csv
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.models import Canteen, User
 
@@ -306,7 +306,7 @@ def fill_missing_geolocation_data_using_insee_code_or_postcode():
             continue
         try:
             location_csv_string = _get_location_csv_string(canteens)
-            response = fetch_geo_data_by_csv(location_csv_string, timeout=60)
+            response = fetch_geo_data_from_code_csv(location_csv_string, timeout=60)
             _fill_from_api_response(response, canteens)
         except requests.exceptions.HTTPError as e:
             logger.info(f"INSEE Geolocation Bot error: HTTPError\n{e}")

@@ -18,7 +18,7 @@ from simple_history.utils import update_change_reason
 
 from api.permissions import IsAuthenticated
 from api.serializers import FullCanteenSerializer
-from common.api.adresse import fetch_geo_data_by_csv
+from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Sector
@@ -289,7 +289,7 @@ class ImportDiagnosticsView(ABC, APIView):
 
     def _update_location_data(self, locations_csv_str):
         try:
-            response = fetch_geo_data_by_csv(locations_csv_str)
+            response = fetch_geo_data_from_code_csv(locations_csv_str)
             for row in csv.reader(response.splitlines()):
                 if row[0] == "siret":
                     continue  # skip header

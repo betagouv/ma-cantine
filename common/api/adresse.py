@@ -12,7 +12,7 @@ ADRESSE_API_URL = "https://api-adresse.data.gouv.fr/search"
 ADRESSE_CSV_API_URL = "https://api-adresse.data.gouv.fr/search/csv"
 
 
-def fetch_geo_data_from_api_entreprise_by_siret(response):
+def fetch_geo_data_from_code(response):
     try:
         location_response = requests.get(
             f"{ADRESSE_API_URL}/?q={response['cityInseeCode']}&citycode={response['cityInseeCode']}&type=municipality&autocomplete=1"
@@ -48,7 +48,7 @@ def fetch_geo_data_from_api_entreprise_by_siret(response):
     return response
 
 
-def fetch_geo_data_by_csv(csv_str, timeout=4):
+def fetch_geo_data_from_code_csv(csv_str, timeout=4):
     # NB: max size of a csv file is 50 MB
     response = requests.post(
         ADRESSE_CSV_API_URL,
