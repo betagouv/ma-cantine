@@ -50,8 +50,8 @@
       "type": "string"
     },
     {
-      "description": "Code insee de l'EPCI dans laquelle se trouve la cantine",
-      "example": "50570242900793",
+      "description": "Code Insee de l'EPCI dans laquelle se trouve la cantine",
+      "example": "200040715",
       "name": "epci",
       "title": "Code Insee EPCI",
       "type": "string"

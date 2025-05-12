@@ -643,6 +643,7 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
             "siren_unite_legale",
             "code_insee_commune",
             "libelle_commune",
+            "epci",
             "departement",
             "departement_lib",
             "region",

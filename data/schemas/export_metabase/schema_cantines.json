@@ -48,6 +48,13 @@
       "type": "string"
     },
     {
+      "description": "Code Insee de l'EPCI dans laquelle se trouve la cantine",
+      "example": "200040715",
+      "name": "epci",
+      "title": "Code Insee EPCI",
+      "type": "string"
+    },
+    {
       "description": "Code Insee du département dans lequel se trouve la cantine",
       "example": "75",
       "name": "departement",
