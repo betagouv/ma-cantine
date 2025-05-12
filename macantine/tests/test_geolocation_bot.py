@@ -3,6 +3,7 @@ import json
 import requests_mock
 from django.test import TestCase
 
+from common.api.adresse import ADRESSE_CSV_API_URL
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.department_choices import Department
 from data.factories import CanteenFactory, SectorFactory, UserFactory
@@ -11,8 +12,6 @@ from macantine import tasks
 
 @requests_mock.Mocker()
 class TestGeolocationBot(TestCase):
-    api_url = "https://api-adresse.data.gouv.fr/search/csv/"
-
     def test_number_of_api_calls(self, mock):
         """
         There should be one request for every 70 canteens
@@ -27,10 +26,9 @@ class TestGeolocationBot(TestCase):
                 managers=[manager],
                 sectors=[sector],
             )
-
         address_api_text = "id,citycode,postcode,result_citycode,result_postcode,result_city,result_context\n"
         address_api_text += '21340172201787,,11111,00000,11111,Ma ville,"01,Something,Other"\n'
-        mock.post(self.api_url, text=address_api_text)
+        mock.post(ADRESSE_CSV_API_URL, text=address_api_text)
 
         tasks.fill_missing_geolocation_data_using_insee_code_or_postcode()
 
@@ -44,7 +42,7 @@ class TestGeolocationBot(TestCase):
         canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003")
         address_api_text = "id,citycode,postcode,result_citycode,result_postcode,result_city,result_context\n"
         address_api_text += f'{canteen.id},,69003,69383,69003,Lyon,"69, Rhône, Auvergne-Rhône-Alpes"\n'
-        mock.post(self.api_url, text=address_api_text)
+        mock.post(ADRESSE_CSV_API_URL, text=address_api_text)
 
         tasks.fill_missing_geolocation_data_using_insee_code_or_postcode()
 
@@ -115,7 +113,7 @@ class TestGeolocationBot(TestCase):
         canteen increases, even if the API returns an error.
         """
         canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003")
-        mock.post(self.api_url, text="", status_code=403)
+        mock.post(ADRESSE_CSV_API_URL, text="", status_code=403)
 
         tasks.fill_missing_geolocation_data_using_insee_code_or_postcode()
 

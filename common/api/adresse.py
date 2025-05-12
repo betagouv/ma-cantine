@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 REGIONS_LIB = {i.label.split(" - ")[1]: i.value for i in Region}
 # ADRESSE_API_DOCUMENTATION: https://adresse.data.gouv.fr/outils/api-doc/adresse
 ADRESSE_API_URL = "https://api-adresse.data.gouv.fr/search"
+ADRESSE_CSV_API_URL = "https://api-adresse.data.gouv.fr/search/csv"
 
 
 def fetch_geo_data_from_api_entreprise_by_siret(response):
