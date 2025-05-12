@@ -363,7 +363,7 @@ export default {
     const sectors = this.$store.state.sectors
     const user = this.$store.state.loggedUser
     return {
-      limit: 3,
+      limit: 30,
       departments: [],
       regions: [],
       sectors: [],
