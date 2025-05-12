@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import requests
 
+from common.api.decoupage_administratif import fetch_communes, fetch_epcis
 from data.models import Sector, Teledeclaration
 
 logger = logging.getLogger(__name__)
@@ -77,9 +78,7 @@ def map_communes_infos():
     commune_details = {}
     try:
         logger.info("Starting communes dl")
-        response_commune = requests.get("https://geo.api.gouv.fr/communes", timeout=50)
-        response_commune.raise_for_status()
-        communes = response_commune.json()
+        communes = fetch_communes()
         for commune in communes:
             commune_details[commune["code"]] = {}
             if "codeDepartement" in commune.keys():
@@ -97,9 +96,7 @@ def map_communes_infos():
 def map_epcis_code_name():
     try:
         epci_names = {}
-        response = requests.get("https://geo.api.gouv.fr/epcis/?fields=nom", timeout=50)
-        response.raise_for_status()
-        epcis = response.json()
+        epcis = fetch_epcis()
         for epci in epcis:
             epci_names[epci["code"]] = epci["nom"]
         return epci_names
