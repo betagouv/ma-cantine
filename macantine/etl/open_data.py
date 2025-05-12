@@ -260,6 +260,8 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.TELEDECLARATIONS, OPEN_DATA):
         self._filter_by_ministry()
         logger.info("TD campagne : Filter errors...")
         self._filter_outsiders()
+        logger.info("TD campagne : Transform choice fields...")
+        self.transform_choice_fields(prefix="canteen_")
         logger.info("TD campagne : Transform sectors...")
         self.df["canteen_sectors"] = self.transform_sectors()
         logger.info("TD Campagne : Fill geo name...")

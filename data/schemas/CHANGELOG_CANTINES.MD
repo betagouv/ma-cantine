@@ -2,6 +2,11 @@
 
 Tous les changements notables apportés aux jeux de données exposés sur data.gouv.fr vont être documentés ici.
 
+## 2025-05-12
+
+### Modification
+- La colonne 'line_ministry' renvoie maintenant le libellé complet du ministère de tutelle (au lieu du code interne)
+
 ## 2025-02-07
 
 ### Ajout
@@ -30,7 +35,6 @@ Tous les changements notables apportés aux jeux de données exposés sur data.g
 ### Ajout
 * Fichier au format parquet
 * Fichier au format xlsx
-
 
 ## 2024-02-07
 
