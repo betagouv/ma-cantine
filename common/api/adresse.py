@@ -7,12 +7,15 @@ from data.region_choices import Region
 logger = logging.getLogger(__name__)
 
 REGIONS_LIB = {i.label.split(" - ")[1]: i.value for i in Region}
+# ADRESSE_API_DOCUMENTATION: https://adresse.data.gouv.fr/outils/api-doc/adresse
+ADRESSE_API_URL = "https://api-adresse.data.gouv.fr/search"
+ADRESSE_CSV_API_URL = "https://api-adresse.data.gouv.fr/search/csv"
 
 
-def fetch_geo_data_from_api_entreprise_by_siret(response):
+def fetch_geo_data_from_code(response):
     try:
         location_response = requests.get(
-            f"https://api-adresse.data.gouv.fr/search/?q={response['cityInseeCode']}&citycode={response['cityInseeCode']}&type=municipality&autocomplete=1"
+            f"{ADRESSE_API_URL}/?q={response['cityInseeCode']}&citycode={response['cityInseeCode']}&type=municipality&autocomplete=1"
         )
         if location_response.ok:
             location_response = location_response.json()
@@ -43,3 +46,21 @@ def fetch_geo_data_from_api_entreprise_by_siret(response):
         logger.exception(f"Error completing location data with SIRET for city: {response['city']}")
         logger.exception(e)
     return response
+
+
+def fetch_geo_data_from_code_csv(csv_str, timeout=4):
+    # NB: max size of a csv file is 50 MB
+    response = requests.post(
+        ADRESSE_CSV_API_URL,
+        files={
+            "data": ("locations.csv", csv_str),
+        },
+        data={
+            "postcode": "postcode",
+            "citycode": "citycode",
+            "result_columns": ["result_citycode", "result_postcode", "result_city", "result_context"],
+        },
+        timeout=timeout,
+    )
+    response.raise_for_status()
+    return response.text

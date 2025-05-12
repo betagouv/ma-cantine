@@ -13,6 +13,7 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from common.api.adresse import ADRESSE_CSV_API_URL
 from data.department_choices import Department
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import (
@@ -102,10 +103,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         address_api_text += '21340172201787,,11111,00000,11111,Ma ville,"01,Something,Other"\n'
         address_api_text += '73282932000074,00000,,00000,11111,Ma ville,"01,Something,Other"\n'
         address_api_text += '32441387130915,00000,11111,00000,22222,Ma ville,"01,Something,Other"\n'
-        mock.post(
-            "https://api-adresse.data.gouv.fr/search/csv/",
-            text=address_api_text,
-        )
+        mock.post(ADRESSE_CSV_API_URL, text=address_api_text)
 
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_locations.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
@@ -128,10 +126,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         If the location isn't found, fail silently
         """
-        mock.post(
-            "https://api-adresse.data.gouv.fr/search/csv/",
-            text="83163531573760,00000,,,,,\n",
-        )
+        address_api_text = "83163531573760,00000,,,,,\n"
+        mock.post(ADRESSE_CSV_API_URL, text=address_api_text)
 
         with open("./api/tests/files/diagnostics/diagnostics_simple_bad_location.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
@@ -148,10 +144,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         If the address API times out, fail silently
         """
-        mock.post(
-            "https://api-adresse.data.gouv.fr/search/csv/",
-            exc=requests.exceptions.ConnectTimeout,
-        )
+        mock.post(ADRESSE_CSV_API_URL, exc=requests.exceptions.ConnectTimeout)
 
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_locations.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
@@ -198,11 +191,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         address_api_text += '21340172201787,,11111,00000,11111,Ma ville,"01,Something,Other"\n'
         address_api_text += '73282932000074,00000,,00000,11111,Ma ville,"01,Something,Other"\n'
         address_api_text += '32441387130915,07293,11111,00000,22222,Saint-Romain-de-Lerps,"01,Something,Other"\n'
+        mock.post(ADRESSE_CSV_API_URL, text=address_api_text)
 
-        mock.post(
-            "https://api-adresse.data.gouv.fr/search/csv/",
-            text=address_api_text,
-        )
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_locations.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
@@ -1298,7 +1288,7 @@ class TestImportDiagnosticsFromAPIIntegration(APITestCase):
         """
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_locations.csv") as diag_file:
             with requests_mock.Mocker() as m:
-                m.register_uri("POST", "https://api-adresse.data.gouv.fr/search/csv/", real_http=True)
+                m.register_uri("POST", ADRESSE_CSV_API_URL, real_http=True)
                 response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
