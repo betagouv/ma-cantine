@@ -306,7 +306,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
         self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_diagnostic_type)
         # Add geo data
         self.df["nbre_cantines_region"] = self.df["canteen.region"].apply(get_nbre_cantines_region)
-        self.df["objectif_zone_geo"] = self.df["canteen.region"].apply(get_objectif_zone_geo)
+        self.df["objectif_zone_geo"] = self.df["canteen.department"].apply(get_objectif_zone_geo)
         # Combine columns
         self.df["teledeclaration.value_somme_egalim_avec_bio_ht"] = self.df.apply(get_egalim_avec_bio, axis=1)
         self.df["teledeclaration.value_somme_egalim_hors_bio_ht"] = self.df.apply(get_egalim_hors_bio, axis=1)
