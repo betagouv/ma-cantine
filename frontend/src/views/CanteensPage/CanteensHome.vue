@@ -273,7 +273,7 @@
               :length="Math.ceil(publishedCanteenCount / limit)"
               :total-visible="5"
               v-if="publishedCanteenCount"
-              @input="pageChangedManually"
+              @input="scrollTop"
             />
           </div>
         </v-col>
@@ -363,7 +363,7 @@ export default {
     const sectors = this.$store.state.sectors
     const user = this.$store.state.loggedUser
     return {
-      limit: 3,
+      limit: 30,
       departments: [],
       regions: [],
       sectors: [],
@@ -778,9 +778,8 @@ export default {
     setLocation(location) {
       this.location = location
     },
-    pageChangedManually() {
-      // TODO: make this dependent on window height to avoid jumps for bigger screens
-      document.getElementById("filters-and-results").scrollIntoView({ behavior: "smooth" })
+    scrollTop() {
+      window.scrollTo(0, 0)
     },
   },
   watch: {
