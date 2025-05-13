@@ -20,7 +20,7 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
     Abstract class implementing the specifity for open data export
     """
 
-    def transform_geo_data(self, prefix=""):
+    def transform_canteen_geo_data(self, prefix=""):
         logger.info("Start fetching communes details")
         communes_infos = macantine.etl.utils.map_communes_infos()
 
@@ -178,7 +178,7 @@ class ETL_OPEN_DATA_CANTEEN(etl.CANTEENS, OPEN_DATA):
 
         logger.info("Canteens : Fill geo name...")
         start = time.time()
-        self.transform_geo_data()
+        self.transform_canteen_geo_data()
         end = time.time()
         logger.info(f"Time spent on geo data : {end - start}")
 
@@ -263,7 +263,7 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.TELEDECLARATIONS, OPEN_DATA):
         logger.info("TD campagne : Transform sectors...")
         self.df["canteen_sectors"] = self.transform_sectors()
         logger.info("TD Campagne : Fill geo name...")
-        self.transform_geo_data(prefix="canteen_")
+        self.transform_canteen_geo_data(prefix="canteen_")
 
     def _flatten_declared_data(self):
         tmp_df = pd.json_normalize(self.df["declared_data"])
