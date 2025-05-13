@@ -28,7 +28,6 @@ import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
 import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
-import PrivacyPolicy from "@/views/PrivacyPolicy"
 import ManagementPage from "@/views/ManagementPage"
 import PendingActions from "@/views/PendingActions"
 import CanteenEditor from "@/views/CanteenEditor"
@@ -277,15 +276,6 @@ const routes = [
       title: "Nouvel acteur de l'éco-système",
     },
     sitemapGroup: Constants.SitemapGroups.ACTION,
-  },
-  {
-    path: "/politique-de-confidentialite",
-    name: "PrivacyPolicy",
-    component: PrivacyPolicy,
-    meta: {
-      title: "Politique de confidentialité",
-    },
-    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/gestion",
@@ -588,6 +578,14 @@ const vue3Routes = [
     name: "FAQ",
     meta: {
       title: "Foire aux questions",
+    },
+    sitemapGroup: Constants.SitemapGroups.SITE,
+  },
+  {
+    path: "/politique-de-confidentialite",
+    name: "PrivacyPolicy",
+    meta: {
+      title: "Politique de confidentialité",
     },
     sitemapGroup: Constants.SitemapGroups.SITE,
   },
