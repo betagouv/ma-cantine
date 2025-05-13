@@ -11,7 +11,7 @@ import ImportCanteens from "@/views/ImportCanteens.vue"
 import CanteenCreation from "@/views/CanteenCreation.vue"
 import CanteenModification from "@/views/CanteenModification.vue"
 import FAQ from "@/views/FAQ.vue"
-import PrivacyPolicy from "@/views/PrivacyPolicy.vue"
+import PersonalData from "@/views/PersonalData.vue"
 
 const vue3routes = [
   {
@@ -151,11 +151,11 @@ const vue3routes = [
     },
   },
   {
-    path: "/politique-de-confidentialite",
-    name: "PrivacyPolicy",
-    component: PrivacyPolicy,
+    path: "/donnees-personnelles",
+    name: "PersonalData",
+    component: PersonalData,
     meta: {
-      title: "Politique de confidentialité",
+      title: "Données personnelles",
     },
   },
 ]

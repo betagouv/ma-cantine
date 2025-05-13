@@ -72,7 +72,7 @@ const vue2routes = [
     name: "SiteMap",
   },
   {
-    path: "/politique-de-confidentialite#cookies",
+    path: "/donnees-personnelles#cookies",
     name: "Cookies",
   },
   {

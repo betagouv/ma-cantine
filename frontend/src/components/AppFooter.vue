@@ -125,8 +125,8 @@ export default {
           to: { name: "CGU" },
         },
         {
-          text: "Politique de confidentialité",
-          to: { name: "PrivacyPolicy" },
+          text: "Données personnelles",
+          to: { name: "PersonalData" },
         },
         {
           text: "Accessibilité : partiellement conforme",

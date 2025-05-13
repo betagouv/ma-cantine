@@ -582,10 +582,10 @@ const vue3Routes = [
     sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
-    path: "/politique-de-confidentialite",
-    name: "PrivacyPolicy",
+    path: "/donnees-personnelles",
+    name: "PersonalData",
     meta: {
-      title: "Politique de confidentialité",
+      title: "Données personnelles",
     },
     sitemapGroup: Constants.SitemapGroups.SITE,
   },

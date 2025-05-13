@@ -161,7 +161,7 @@
       Le Service ne collecte que les données strictement nécessaires à sa mise en œuvre. Les données collectées incluent
       également des données à caractère personnel. Pour plus d’informations sur le traitement des données à caractère
       personnel le Visiteur est invité à se référer à la
-      <router-link :to="{ name: 'PrivacyPolicy' }">politique de confidentialité</router-link>
+      <router-link :to="{ name: 'PersonalData' }">données personnelles</router-link>
       .
     </p>
 
