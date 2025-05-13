@@ -607,6 +607,11 @@ routes.push({
 })
 
 routes.push({
+  path: "/politique-de-confidentialite",
+  redirect: { name: "PersonalData" },
+})
+
+routes.push({
   path: "/:catchAll(.*)",
   component: NotFound,
   name: "NotFound",
