@@ -1,10 +1,16 @@
 <script setup>
+import { onMounted } from "vue"
 import { useRoute } from "vue-router"
 import AppRawHTML from "@/components/AppRawHTML.vue"
+import { showContent } from "@/services/matomo.js"
 
 const route = useRoute()
 const linkCleverCloud =
   '<a href="https://www.clever-cloud.com/fr/conditions-generales-dutilisation/accord-de-traitement-des-donnees/"target="_blank">Lien vers le DPA</a>'
+
+onMounted(() => {
+  showContent()
+})
 </script>
 
 <template>
@@ -249,20 +255,24 @@ const linkCleverCloud =
       sens du RGPD et doit être entendu au sens de l'article 6-1 a) du RGPD et à la libre circulation des données.
     </p>
     <p>Cookies recensés sur Ma Cantine :</p>
-    <!-- TODO : <MatomoOptOut /> -->
     <DsfrTable
-      :headers="['Site tiers', 'Description']"
+      :headers="['Site', 'Description', 'Autorisation']"
       :rows="[
         {
           rowData: [
             'Matomo',
-            'Cookie de mesure d’audience, dans sa version exemptée de consentement préalable, telle que validée par la CNIL. Vous pouvez gérer votre cookie Matomo ci-dessous',
+            'Cookie de mesure d’audience, dans sa version exemptée de consentement préalable, telle que validée par la CNIL.',
+            {
+              component: AppRawHTML,
+              html: '<div id=\'matomo-opt-out\'></div>',
+            },
           ],
         },
         {
           rowData: [
             'Crisp',
             'Chatbot qui permet d’interagir avec les équipes de Ma Cantine pour toutes questions concernant la plateforme.',
+            'Toujours actif.',
           ],
         },
       ]"
