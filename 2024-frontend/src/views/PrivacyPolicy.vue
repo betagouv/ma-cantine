@@ -148,7 +148,7 @@ const linkCleverCloud =
         <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
       </li>
       <li>
-        par voie postale :
+        par voie postale à :
         <address>
           MINISTÈRE DE L’AGRICULTURE
           <br />
