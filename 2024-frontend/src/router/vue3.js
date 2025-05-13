@@ -11,6 +11,7 @@ import ImportCanteens from "@/views/ImportCanteens.vue"
 import CanteenCreation from "@/views/CanteenCreation.vue"
 import CanteenModification from "@/views/CanteenModification.vue"
 import FAQ from "@/views/FAQ.vue"
+import PrivacyPolicy from "@/views/PrivacyPolicy.vue"
 
 const vue3routes = [
   {
@@ -147,6 +148,14 @@ const vue3routes = [
     component: FAQ,
     meta: {
       title: "Foire aux questions",
+    },
+  },
+  {
+    path: "/politique-de-confidentialite",
+    name: "PrivacyPolicy",
+    component: PrivacyPolicy,
+    meta: {
+      title: "Politique de confidentialité",
     },
   },
 ]
