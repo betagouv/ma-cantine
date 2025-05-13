@@ -226,7 +226,7 @@
         <v-col id="results" cols="12" md="8" class="d-flex flex-column">
           <div v-if="loading" class="d-flex align-center">
             <v-progress-circular indeterminate class="align-self-center" />
-            <p class="mb-0 ml-4">Patience le chargement de la page peut prendre une dizaine de secondes</p>
+            <p class="mb-0 ml-4">Patience, le chargement de la page peut prendre une dizaine de secondes</p>
           </div>
           <div v-else class="d-flex flex-column" style="height: 100%;">
             <div class="d-flex">
