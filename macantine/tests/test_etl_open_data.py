@@ -8,7 +8,7 @@ from django.test import TestCase, override_settings
 from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
-from data.models import Teledeclaration
+from data.models import Sector, Teledeclaration
 from macantine.etl.open_data import (
     ETL_OPEN_DATA_CANTEEN,
     ETL_OPEN_DATA_TELEDECLARATIONS,
@@ -282,6 +282,15 @@ class TestETLOpenData(TestCase):
             len(canteens),
             "The new canteen should not appear as its specific sector has to remain private",
         )
+
+        # Testing the transformation of the sector name
+        canteen_with_sector = CanteenFactory.create(
+            sectors=[SectorFactory(name="School", category=Sector.Categories.EDUCATION)]
+        )
+        etl_canteen.extract_dataset()
+        etl_canteen.transform_dataset()
+        canteens = etl_canteen.get_dataset()
+        self.assertEqual(canteens[canteens.id == canteen_with_sector.id].iloc[0]["sectors"], '"[""School""]"')
 
     def test_map_communes_infos(self, mock):
         mock.get(
