@@ -20,6 +20,12 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
     Abstract class implementing the specifity for open data export
     """
 
+    def transform_canteen_choice_fields(self, prefix=""):
+        # line_ministry
+        self.df[prefix + "line_ministry"] = self.df[prefix + "line_ministry"].apply(
+            lambda x: Canteen.Ministries(x).label if (x in Canteen.Ministries) else ""
+        )
+
     def transform_canteen_geo_data(self, prefix=""):
         logger.info("Start fetching communes details")
         communes_infos = macantine.etl.utils.map_communes_infos()
@@ -176,6 +182,9 @@ class ETL_OPEN_DATA_CANTEEN(etl.CANTEENS, OPEN_DATA):
         logger.info("Canteens : Clean dataset...")
         self._clean_dataset()
 
+        logger.info("Canteens : Transform choice fields...")
+        self.transform_canteen_choice_fields()
+
         logger.info("Canteens : Fill geo name...")
         start = time.time()
         self.transform_canteen_geo_data()
@@ -261,7 +270,7 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.TELEDECLARATIONS, OPEN_DATA):
         logger.info("TD campagne : Filter errors...")
         self._filter_outsiders()
         logger.info("TD campagne : Transform choice fields...")
-        self.transform_choice_fields(prefix="canteen_")
+        self.transform_canteen_choice_fields(prefix="canteen_")
         logger.info("TD campagne : Transform sectors...")
         self.df["canteen_sectors"] = self.transform_sectors()
         logger.info("TD Campagne : Fill geo name...")

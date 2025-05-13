@@ -28,6 +28,7 @@ class TestETLOpenData(TestCase):
             department="75",
             region="11",
             sectors=[SectorFactory(name="School", category=Sector.Categories.EDUCATION)],
+            line_ministry=Canteen.Ministries.AGRICULTURE,
             managers=[cls.canteen_manager],
         )
         cls.canteen_without_manager = CanteenFactory.create(siret="75665621899905")
@@ -175,6 +176,11 @@ class TestETLOpenData(TestCase):
         self.assertEqual(
             canteens[canteens.id == self.canteen.id].iloc[0]["epci_lib"],
             "CC Communauté Lesneven Côte des Légendes",
+        )
+
+        # Check that the choice fields have been transformed
+        self.assertEqual(
+            canteens[canteens.id == self.canteen.id].iloc[0]["line_ministry"], "Agriculture, Alimentation et Forêts"
         )
 
     def test_active_on_ma_cantine(self, mock):

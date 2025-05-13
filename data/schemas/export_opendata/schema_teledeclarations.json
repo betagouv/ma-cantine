@@ -156,7 +156,7 @@
     },
     {
       "description": "Ministère de tutelle de la cantine, s'il y en a un",
-      "example": "Ministère de l'Education Nationale",
+      "example": "Éducation et Jeunesse",
       "name": "canteen_line_ministry",
       "title": "Ministère de tutelle",
       "type": "string"
