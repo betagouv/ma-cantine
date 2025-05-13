@@ -6,7 +6,6 @@ from rest_framework import serializers
 from data.department_choices import get_lib_department_from_code
 from data.models import Canteen, CanteenImage, Diagnostic, Sector
 from data.region_choices import get_lib_region_from_code
-from macantine.etl.utils import SECTEURS_SPE
 
 from .diagnostic import (
     ApproDiagnosticSerializer,
@@ -737,7 +736,7 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
         return ",".join(categories)
 
     def get_spe(self, obj):
-        if obj.sectors.filter(pk__in=SECTEURS_SPE):
+        if obj.sectors.is_spe().exists():
             return "Oui"
         else:
             return "Non"

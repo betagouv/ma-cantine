@@ -9,16 +9,9 @@ import requests
 
 from common.api.decoupage_administratif import fetch_communes, fetch_epcis
 from data.models import Sector, Teledeclaration
+from data.models.sector import SECTEURS_SPE
 
 logger = logging.getLogger(__name__)
-
-# 26 : Administration : Etablissements publics d’Etat (EPA ou EPIC)
-# 24 : Administration : Restaurants des prisons
-# 23 : Administration : Restaurants administratifs d’Etat (RA)
-# 22 : Administration : Restaurants des armées / police / gendarmerie
-# 4 : Administration : Restaurants inter-administratifs d’Etat (RIA)
-# 2 : Education : Supérieur et Universitaire
-SECTEURS_SPE = [26, 24, 23, 22, 4, 2]
 
 
 def common_members(a, b):

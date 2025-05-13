@@ -1,13 +1,23 @@
 from django.db import models
 
+# 26 : Administration : Etablissements publics d’Etat (EPA ou EPIC)
+# 24 : Administration : Restaurants des prisons
+# 23 : Administration : Restaurants administratifs d’Etat (RA)
+# 22 : Administration : Restaurants des armées / police / gendarmerie
+# 4 : Administration : Restaurants inter-administratifs d’Etat (RIA)
+# 2 : Education : Supérieur et Universitaire
+SECTEURS_SPE = [26, 24, 23, 22, 4, 2]
+
+
+class SectorQuerySet(models.QuerySet):
+    def is_spe(self):
+        return self.filter(id__in=SECTEURS_SPE)
+
 
 class Sector(models.Model):
     class Meta:
         verbose_name = "secteur d'activité"
         verbose_name_plural = "secteurs d'activité"
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
 
     class Categories(models.TextChoices):
         ADMINISTRATION = "administration", "Administration"
@@ -17,6 +27,11 @@ class Sector(models.Model):
         SOCIAL = "social", "Social / Médico-social"
         LEISURE = "leisure", "Loisirs"
         AUTRES = "autres", "Autres"
+
+    objects = models.Manager.from_queryset(SectorQuerySet)()
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
 
     name = models.TextField()
     category = models.CharField(
