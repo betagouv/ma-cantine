@@ -224,7 +224,10 @@
           </v-form>
         </v-col>
         <v-col id="results" cols="12" md="8" class="d-flex flex-column">
-          <v-progress-circular v-if="loading" indeterminate class="mt-8 align-self-center" />
+          <div v-if="loading" class="d-flex align-center">
+            <v-progress-circular indeterminate class="align-self-center" />
+            <p class="mb-0 ml-4">Patience, le chargement de la page peut prendre une dizaine de secondes</p>
+          </div>
           <div v-else class="d-flex flex-column" style="height: 100%;">
             <div class="d-flex">
               <ResultCount :count="publishedCanteenCount" class="fr-h6 mb-0" />
@@ -363,7 +366,7 @@ export default {
     const sectors = this.$store.state.sectors
     const user = this.$store.state.loggedUser
     return {
-      limit: 30,
+      limit: 15,
       departments: [],
       regions: [],
       sectors: [],
