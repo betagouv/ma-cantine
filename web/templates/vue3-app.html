@@ -65,29 +65,29 @@
     }
 
     function showContent(consent, errorMessage = null, useTracker = false) {
-      var errorBlock = '<p style="font-style: italic;">'
+      var errorBlock = '<div>'
 
       var div = document.getElementById(settings.divId)
       if (!div) {
         const warningDiv = document.createElement("div")
         var msg = 'Le div conteneur de la désinscription est introuvable : "' + settings.divId + '"'
         warningDiv.id = settings.divId + "-warning"
-        warningDiv.innerHTML = errorBlock + msg + "</p>"
+        warningDiv.innerHTML = errorBlock + msg + "</div>"
         document.body.insertBefore(warningDiv, document.body.firstChild)
         console.log(msg)
         return
       }
 
       if (!navigator || !navigator.cookieEnabled) {
-        div.innerHTML = errorBlock + settings.OptOutErrorNoCookies + "</p>"
+        div.innerHTML = errorBlock + settings.OptOutErrorNoCookies + "</div>"
         return
       }
       if (location.protocol !== "https:") {
-        div.innerHTML = errorBlock + settings.OptOutErrorNotHttps + "</p>"
+        div.innerHTML = errorBlock + settings.OptOutErrorNotHttps + "</div>"
         return
       }
       if (errorMessage !== null) {
-        div.innerHTML = errorBlock + errorMessage + "</p>"
+        div.innerHTML = errorBlock + errorMessage + "</div>"
         return
       }
       var content = ""
