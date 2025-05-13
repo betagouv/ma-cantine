@@ -224,7 +224,7 @@
           </v-form>
         </v-col>
         <v-col id="results" cols="12" md="8" class="d-flex flex-column">
-          <div v-if="loading" class="d-flex align-center mt-8">
+          <div v-if="loading" class="d-flex align-center">
             <v-progress-circular indeterminate class="align-self-center" />
             <p class="mb-0 ml-4">Patience le chargement de la page peut prendre une dizaine de secondes</p>
           </div>
