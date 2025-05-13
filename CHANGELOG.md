@@ -6,6 +6,34 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.15.0](https://github.com/betagouv/ma-cantine/compare/v2025.14.8...v2025.15.0) (2025-05-13)
+
+
+### Nouveautés
+
+* **Cantines:** nouveau champ epci ([#5333](https://github.com/betagouv/ma-cantine/issues/5333)) ([175b2c0](https://github.com/betagouv/ma-cantine/commit/175b2c00dfd9896be78c76816089694223ad3929))
+
+
+### Améliorations
+
+* **Metabase:** ajout du nouveau champ Canteen.epci dans l'export ([#5337](https://github.com/betagouv/ma-cantine/issues/5337)) ([17f1945](https://github.com/betagouv/ma-cantine/commit/17f1945206a38100a18589cb49b82c01116ea239))
+* **Metabase:** Cantines: afficher la valeur du ministère de tutelle (au lieu du champ en DB) ([#5329](https://github.com/betagouv/ma-cantine/issues/5329)) ([ba447c8](https://github.com/betagouv/ma-cantine/commit/ba447c8fa478e66087a2ab5df043af78c8fa3bcc))
+* **Recherche:** réduit le temps de chargement de la page (30 -&gt; 15) et indique aux utilisateurs une temporalité ([#5340](https://github.com/betagouv/ma-cantine/issues/5340)) ([892d00a](https://github.com/betagouv/ma-cantine/commit/892d00a791beda6dad6280407efde4860e41511a))
+
+
+### Corrections (bugs, typos...)
+
+* **Metabase:** Corriger la colonne objectif_zone_geo ([#5332](https://github.com/betagouv/ma-cantine/issues/5332)) ([6a209e4](https://github.com/betagouv/ma-cantine/commit/6a209e46cf04785b3869216c8e28a21c94833679))
+* **Recherche:** augmente le nombre de cantine renvoyées par page (3 -&gt; 30) ([#5338](https://github.com/betagouv/ma-cantine/issues/5338)) ([b7a770a](https://github.com/betagouv/ma-cantine/commit/b7a770ae71347bcc566adcf50c430f0c038886d6))
+
+
+### Technique
+
+* **API Adresse:** gérer tous les appels à l'API dans un même fichier ([#5335](https://github.com/betagouv/ma-cantine/issues/5335)) ([1202c41](https://github.com/betagouv/ma-cantine/commit/1202c412c76c62d3f69219084466f7bb2a4c6a26))
+* **API Decoupage Administratif:** nouveau fichier pour centraliser les appels à cet API externe ([#5336](https://github.com/betagouv/ma-cantine/issues/5336)) ([8e246d5](https://github.com/betagouv/ma-cantine/commit/8e246d5de107d64944a1557ab55f8b8b1c13ad5e))
+* **API Recherche Entreprise:** renvoyer aussi l'EPCI et la region ([#5334](https://github.com/betagouv/ma-cantine/issues/5334)) ([ccaed00](https://github.com/betagouv/ma-cantine/commit/ccaed001ba853f18f3579c154a201a4450e5c68d))
+* **Secteurs:** bouge le filtrage SPE dans une queryset dédiée ([#5330](https://github.com/betagouv/ma-cantine/issues/5330)) ([5d8bded](https://github.com/betagouv/ma-cantine/commit/5d8bded322fd57ebd914b6bc53b5ef6f9e5f98ef))
+
 ## [2025.14.8](https://github.com/betagouv/ma-cantine/compare/v2025.14.7...v2025.14.8) (2025-05-07)
 
 
