@@ -30,9 +30,7 @@ class TestETLOpenData(TestCase):
             sectors=[SectorFactory(name="School", category=Sector.Categories.EDUCATION)],
             managers=[cls.canteen_manager],
         )
-        cls.canteen_without_manager = CanteenFactory.create(
-            siret="75665621899905"
-        )  # Another canteen, but without a manager
+        cls.canteen_without_manager = CanteenFactory.create(siret="75665621899905")
         cls.canteen_without_manager.managers.clear()
 
     @freeze_time("2023-05-14")  # Faking time to mock creation_date
