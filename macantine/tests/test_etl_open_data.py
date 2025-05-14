@@ -119,6 +119,9 @@ class TestETLOpenData(TestCase):
         self.assertEqual(len(etl_td.get_dataset().columns), len(schema_cols), "The columns should match the schema")
 
         self.assertEqual(
+            etl_td.get_dataset().iloc[0]["canteen_line_ministry"], "", "The line_ministry should be an empty string"
+        )
+        self.assertEqual(
             etl_td.get_dataset().iloc[0]["canteen_sectors"], '"[]"', "The sectors should be an empty list"
         )
 
