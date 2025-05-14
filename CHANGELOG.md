@@ -6,6 +6,24 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.16.0](https://github.com/betagouv/ma-cantine/compare/v2025.15.0...v2025.16.0) (2025-05-14)
+
+
+### Nouveautés
+
+* **Données personnelles:** migration de la page en vue3 ([#5342](https://github.com/betagouv/ma-cantine/issues/5342)) ([717c06b](https://github.com/betagouv/ma-cantine/commit/717c06be2a60da6048b9b26ed1987c6505783f3f))
+
+
+### Améliorations
+
+* **Imports:** Cantines: utilise le libellé complet du ministère de tutelle (au lieu du nom interne) ([#5343](https://github.com/betagouv/ma-cantine/issues/5343)) ([778fabd](https://github.com/betagouv/ma-cantine/commit/778fabd3fef681c67767f6f4cbb1b99b2bb8da37))
+* **Open Data:** afficher le libellé complet du ministère de tutelle des cantines (au lieu du nom interne) ([#5339](https://github.com/betagouv/ma-cantine/issues/5339)) ([51f9134](https://github.com/betagouv/ma-cantine/commit/51f9134c0ba275111476711793fddde57fb69206))
+
+
+### Technique
+
+* **Open Data:** ajout de tests dans l'ETL ([#5341](https://github.com/betagouv/ma-cantine/issues/5341)) ([2bff8b5](https://github.com/betagouv/ma-cantine/commit/2bff8b51cad9269ae2f89c95c838aa5022118d31))
+
 ## [2025.15.0](https://github.com/betagouv/ma-cantine/compare/v2025.14.8...v2025.15.0) (2025-05-13)
 
 
