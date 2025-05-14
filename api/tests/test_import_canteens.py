@@ -310,7 +310,6 @@ class TestCanteenImport(APITestCase):
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        print(body)
 
         self.assertEqual(body["count"], 3)
         self.assertEqual(len(body["canteens"]), 3)
@@ -339,7 +338,7 @@ class TestCanteenImport(APITestCase):
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen3, email="user2@example.com"))
         self.assertEqual(canteen3.managers.count(), 0)
         self.assertEqual(canteen3.name, "Canteen update")  # updated
-        self.assertEqual(canteen3.line_ministry, Canteen.Ministries.SANTE)
+        self.assertEqual(canteen3.line_ministry, Canteen.Ministries.AGRICULTURE)
         self.assertEqual(canteen3.import_source, "Automated test")
 
         email = mail.outbox[0]

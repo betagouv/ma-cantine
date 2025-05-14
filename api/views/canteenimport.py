@@ -334,7 +334,11 @@ class ImportCanteensView(APIView):
         canteen.management_type = row[9].strip().lower()
         canteen.economic_model = row[10].strip().lower() if row[10] else None
         if self.is_admin_import:
-            canteen.line_ministry = row[12].strip() if row[12] else None
+            canteen.line_ministry = (
+                next((key for key, value in Canteen.Ministries.choices if value == row[12].strip()), None)
+                if row[12]
+                else None
+            )
             canteen.import_source = import_source
         if satellite_canteens_count:
             canteen.satellite_canteens_count = satellite_canteens_count
