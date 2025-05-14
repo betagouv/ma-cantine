@@ -5,4 +5,8 @@ const trackEvent = (params) => {
   }
 }
 
-export { trackEvent }
+const showContent = () => {
+  window.showContent(window.MatomoConsent.hasConsent())
+}
+
+export { trackEvent, showContent }

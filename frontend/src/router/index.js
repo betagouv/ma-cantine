@@ -28,7 +28,6 @@ import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
 import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
-import PrivacyPolicy from "@/views/PrivacyPolicy"
 import ManagementPage from "@/views/ManagementPage"
 import PendingActions from "@/views/PendingActions"
 import CanteenEditor from "@/views/CanteenEditor"
@@ -277,15 +276,6 @@ const routes = [
       title: "Nouvel acteur de l'éco-système",
     },
     sitemapGroup: Constants.SitemapGroups.ACTION,
-  },
-  {
-    path: "/politique-de-confidentialite",
-    name: "PrivacyPolicy",
-    component: PrivacyPolicy,
-    meta: {
-      title: "Politique de confidentialité",
-    },
-    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/gestion",
@@ -591,6 +581,14 @@ const vue3Routes = [
     },
     sitemapGroup: Constants.SitemapGroups.SITE,
   },
+  {
+    path: "/donnees-personnelles",
+    name: "PersonalData",
+    meta: {
+      title: "Données personnelles",
+    },
+    sitemapGroup: Constants.SitemapGroups.SITE,
+  },
 ]
 const VUE3_PREFIX = "/v2"
 vue3Routes.forEach((r) => {
@@ -606,6 +604,11 @@ routes.push({
 routes.push({
   path: "/nouvelle-cantine",
   redirect: { name: "CanteenCreation" },
+})
+
+routes.push({
+  path: "/politique-de-confidentialite",
+  redirect: { name: "PersonalData" },
 })
 
 routes.push({
