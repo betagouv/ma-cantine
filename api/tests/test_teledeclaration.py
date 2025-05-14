@@ -642,7 +642,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             siret="79300704800044",
             satellite_canteens_count=3,
             sectors=[sector_other],
-            line_ministry="affaires_etrangeres",
+            line_ministry=Canteen.Ministries.AFFAIRES_ETRANGERES,
             managers=[authenticate.user],
         )
         diagnostic = DiagnosticFactory.create(

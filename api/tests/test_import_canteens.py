@@ -310,6 +310,7 @@ class TestCanteenImport(APITestCase):
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        print(body)
 
         self.assertEqual(body["count"], 3)
         self.assertEqual(len(body["canteens"]), 3)

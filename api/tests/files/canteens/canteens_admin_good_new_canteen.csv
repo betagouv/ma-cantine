@@ -1,4 +1,4 @@
 siret,nom,code_insee_commune,code_postal_commune,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,gestionnaires_additionnels,admin_ministère_tutelle,admin_gestionnaires_additionnels,admin_source_donnees
-21340172201787,Canteen for two,,54460,,700,14000,Cliniques,site,conceded,public,,sante,"user1@example.com,user2@example.com",Automated test
+21340172201787,Canteen for two,,54460,,700,14000,Cliniques,site,conceded,public,,Santé et Solidarités,"user1@example.com,user2@example.com",Automated test
 73282932000074,Staff canteen,,54460,,700,14000,Cliniques,site,conceded,public,user1@example.com,,"authenticate@example.com,user2@example.com",Automated test
-82399356058716,Canteen update,,54460,,700,14000,Cliniques,site,conceded,public,,sante,"user1@example.com,user2@example.com",Automated test
+82399356058716,Canteen update,,54460,,700,14000,Cliniques,site,conceded,public,,"Agriculture, Alimentation et Forêts","user1@example.com,user2@example.com",Automated test
