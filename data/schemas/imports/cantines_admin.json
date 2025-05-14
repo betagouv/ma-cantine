@@ -191,7 +191,7 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(Affaires étrangères|Agriculture, Alimentation et Forêts|Armées|Cohésion des territoires - Relations avec les collectivités territoriales|Culture|Économie et finances|Éducation et Jeunesse|Enseignement supérieur et Recherche|Environnement|Fonction Publiques|Intérieur et Outre-mer|Justice|Mer|Préfecture - Administration Territoriale de l'État (ATE)|Présidence de la république - Autorités indépendantes (AAI, API)|Services du Premier Ministre|Santé et Solidarités|Sport|Travail) *$",
+        "pattern": "^ *(Affaires étrangères|Agriculture, Alimentation et Forêts|Armées|Cohésion des territoires - Relations avec les collectivités territoriales|Culture|Économie et finances|Éducation et Jeunesse|Enseignement supérieur et Recherche|Environnement|Fonction Publiques|Intérieur et Outre-mer|Justice|Mer|Préfecture - Administration Territoriale de l'État \\(ATE\\)|Présidence de la république - Autorités indépendantes \\(AAI, API\\)|Services du Premier Ministre|Santé et Solidarités|Sport|Travail) *$",
         "required": false
       },
       "description": "",
