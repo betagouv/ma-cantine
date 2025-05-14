@@ -8,7 +8,7 @@ from django.test import TestCase, override_settings
 from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
-from data.models import Sector, Teledeclaration
+from data.models import Canteen, Sector, Teledeclaration
 from macantine.etl.open_data import (
     ETL_OPEN_DATA_CANTEEN,
     ETL_OPEN_DATA_TELEDECLARATIONS,
@@ -18,14 +18,28 @@ from macantine.etl.utils import map_communes_infos, update_datagouv_resources
 
 @requests_mock.Mocker()
 class TestETLOpenData(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_manager = UserFactory.create()
+        cls.canteen = CanteenFactory.create(
+            name="Cantine",
+            siret="11007001800012",
+            city_insee_code="29021",
+            department="75",
+            region="11",
+            sectors=[SectorFactory(name="School", category=Sector.Categories.EDUCATION)],
+            managers=[cls.canteen_manager],
+        )
+        cls.canteen_without_manager = CanteenFactory.create(
+            siret="75665621899905"
+        )  # Another canteen, but without a manager
+        cls.canteen_without_manager.managers.clear()
 
     @freeze_time("2023-05-14")  # Faking time to mock creation_date
     def test_td_range_years(self, mock):
         """
         Only teledeclarations that occurred during one specific teledeclaration campaign should be extracted
         """
-        canteen = CanteenFactory.create(siret="98648424243607")
-        applicant = UserFactory.create()
         test_cases = [
             {"name": "Ignore years out of range", "year": 1990, "expected_outcome": 0},
             {"name": "Returns TDs for year in range", "year": 2022, "expected_outcome": 1},
@@ -33,17 +47,15 @@ class TestETLOpenData(TestCase):
 
         for tc in test_cases:
             etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(tc["year"])
-            diagnostic = DiagnosticFactory.create(canteen=canteen, year=tc["year"], diagnostic_type=None)
-            Teledeclaration.create_from_diagnostic(diagnostic, applicant)
+            diagnostic = DiagnosticFactory.create(canteen=self.canteen, year=tc["year"], diagnostic_type=None)
+            Teledeclaration.create_from_diagnostic(diagnostic, self.canteen_manager)
             etl_td.extract_dataset()
             self.assertEqual(etl_td.len_dataset(), tc["expected_outcome"])
 
     @freeze_time("2023-05-14")  # Faking time to mock creation_date
     def test_ignore_cancelled_tds(self, mock):
-        canteen = CanteenFactory.create(siret="98648424243607")
-        applicant = UserFactory.create()
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, diagnostic_type=None)
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant)
+        diagnostic = DiagnosticFactory.create(canteen=self.canteen, year=2022, diagnostic_type=None)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, self.canteen_manager)
         teledeclaration.cancel()
 
         etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
@@ -121,20 +133,15 @@ class TestETLOpenData(TestCase):
         etl_canteen = ETL_OPEN_DATA_CANTEEN()
         self.assertEqual(etl_canteen.len_dataset(), 0, "There shoud be an empty dataframe")
 
-        # Adding data in the db
-        canteen_1 = CanteenFactory.create(siret="98648424243607", managers=[UserFactory.create()])
-        canteen_2 = CanteenFactory.create(siret="98648424243607")  # Another canteen, but without a manager
-        canteen_2.managers.clear()
-
         etl_canteen.extract_dataset()
         self.assertEqual(len(etl_canteen.df.id.unique()), 2, "There should be two different canteens")
 
         # Checking the deletion
-        canteen_1.delete()
+        self.canteen.delete()
         etl_canteen.extract_dataset()
         self.assertEqual(len(etl_canteen.df.id.unique()), 1, "There should be one canteen less after soft deletion")
 
-        canteen_2.hard_delete()
+        self.canteen_without_manager.hard_delete()
         etl_canteen = ETL_OPEN_DATA_CANTEEN()
         etl_canteen.extract_dataset()
         self.assertEqual(etl_canteen.len_dataset(), 0, "There should be one canteen less after hard deletion")
@@ -155,9 +162,6 @@ class TestETLOpenData(TestCase):
         )
 
         etl_canteen = ETL_OPEN_DATA_CANTEEN()
-        canteen_1 = CanteenFactory(
-            name="Cantine", siret="11007001800012", city_insee_code="29021", department="75", region="11"
-        )
 
         etl_canteen.extract_dataset()
         etl_canteen.transform_dataset()
@@ -167,11 +171,11 @@ class TestETLOpenData(TestCase):
         self.assertEqual(len(canteens.columns), len(schema_cols), "The columns should match the schema.")
 
         # Checking that the geo data has been fetched from the city insee code
-        self.assertEqual(canteens[canteens.id == canteen_1.id]["epci"][0], "242900793")
+        self.assertEqual(canteens[canteens.id == self.canteen.id].iloc[0]["epci"], "242900793")
 
         # Check that the names of the region and departments are fetched from the code
         self.assertEqual(
-            canteens[canteens.id == canteen_1.id]["epci_lib"][0],
+            canteens[canteens.id == self.canteen.id].iloc[0]["epci_lib"],
             "CC Communauté Lesneven Côte des Légendes",
         )
 
@@ -187,22 +191,17 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
 
-        # Adding data in the db
-        canteen_1 = CanteenFactory.create(managers=[UserFactory.create()])
-        canteen_2 = CanteenFactory.create()  # Another canteen, but without a manager
-        canteen_2.managers.clear()
-
         etl_canteen = ETL_OPEN_DATA_CANTEEN()
         etl_canteen.extract_dataset()
         etl_canteen.transform_dataset()
         canteens = etl_canteen.get_dataset()
 
         self.assertTrue(
-            canteens[canteens.id == canteen_1.id].iloc[0]["active_on_ma_cantine"],
+            canteens[canteens.id == self.canteen.id].iloc[0]["active_on_ma_cantine"],
             "The canteen should be active because there is at least one manager",
         )
         self.assertFalse(
-            canteens[canteens.id == canteen_2.id].iloc[0]["active_on_ma_cantine"],
+            canteens[canteens.id == self.canteen_without_manager.id].iloc[0]["active_on_ma_cantine"],
             "The canteen should not be active because there no manager",
         )
 
@@ -255,42 +254,24 @@ class TestETLOpenData(TestCase):
 
         etl_canteen = ETL_OPEN_DATA_CANTEEN()
 
-        # Adding data in the db
-        canteen = CanteenFactory(sectors=[])
+        canteen_without_sector = CanteenFactory(sectors=[])
+        CanteenFactory.create(sectors=[SectorFactory.create(id=22)])  # should be filtered out
 
-        etl_canteen.extract_dataset()
-
-        try:
-            etl_canteen.transform_dataset()
-        except Exception:
-            self.fail(
-                "The extraction should not fail if one column is completely empty. In this case, there is no sector"
-            )
-        canteens = etl_canteen.get_dataset()
-        self.assertEqual(
-            canteens[canteens.id == canteen.id].iloc[0]["sectors"], '"[]"', "The sectors should be an empty list"
-        )
-
-        # Testing the filtering of canteens from sector 22
-        len_dataset_without_sector_22 = len(canteens)
-        CanteenFactory.create(sectors=[SectorFactory.create(id=22)])
         etl_canteen.extract_dataset()
         etl_canteen.transform_dataset()
         canteens = etl_canteen.get_dataset()
+
         self.assertEqual(
-            len_dataset_without_sector_22,
-            len(canteens),
+            canteens[canteens.id == canteen_without_sector.id].iloc[0]["sectors"],
+            '"[]"',
+            "The sectors should be an empty list",
+        )
+        self.assertEqual(
+            Canteen.objects.count(),
+            len(canteens) + 1,  # canteen with sector 22 should be filtered out
             "The new canteen should not appear as its specific sector has to remain private",
         )
-
-        # Testing the transformation of the sector name
-        canteen_with_sector = CanteenFactory.create(
-            sectors=[SectorFactory(name="School", category=Sector.Categories.EDUCATION)]
-        )
-        etl_canteen.extract_dataset()
-        etl_canteen.transform_dataset()
-        canteens = etl_canteen.get_dataset()
-        self.assertEqual(canteens[canteens.id == canteen_with_sector.id].iloc[0]["sectors"], '"[""School""]"')
+        self.assertEqual(canteens[canteens.id == self.canteen.id].iloc[0]["sectors"], '"[""School""]"')
 
     def test_map_communes_infos(self, mock):
         mock.get(
@@ -326,18 +307,15 @@ class TestETLOpenData(TestCase):
         self.assertEqual(communes_details["01001"]["department"], "01")
         self.assertEqual(communes_details["01001"]["region"], "84")
         self.assertEqual(communes_details["01001"]["epci"], "200069193")
-
         self.assertNotIn("epci", communes_details["01002"].keys(), "Not all cities are part of an EPCI")
 
     @freeze_time("2023-05-14")  # Faking date to check new url
     def test_update_ressource(self, mock):
         dataset_id = "expected_dataset_id"
         os.environ["DATAGOUV_DATASET_ID"] = dataset_id
-
         api_key = "expected_api_key"
         os.environ["DATAGOUV_API_KEY"] = api_key
         expected_header = {"X-API-KEY": api_key}
-
         ressource_id = "expected_resource_id"
 
         mock.get(
