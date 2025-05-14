@@ -34,7 +34,9 @@ CANTEEN_ADMIN_SCHEMA_FILE_PATH = "data/schemas/imports/cantines_admin.json"
 CANTEEN_SCHEMA_URL = (
     f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_SCHEMA_FILE_PATH}"
 )
-CANTEEN_ADMIN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/raphodn/backend-canteen-import-line-ministry-label/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
+CANTEEN_ADMIN_SCHEMA_URL = (
+    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
+)
 
 
 class ImportCanteensView(APIView):
