@@ -19,14 +19,15 @@ class TestCanteenSchema(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.schema = json.load(open("data/schemas/imports/cantines.json"))
+        cls.schema_admin = json.load(open("data/schemas/imports/cantines_admin.json"))
 
-    def get_pattern(self, field_name):
-        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == field_name), None)
-        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
+    def get_pattern(self, schema, field_name):
+        field_index = next((i for i, f in enumerate(schema["fields"]) if f["name"] == field_name), None)
+        pattern = schema["fields"][field_index]["constraints"]["pattern"]
         return pattern
 
     def test_secteurs_regex(self):
-        pattern = self.get_pattern("secteurs")
+        pattern = self.get_pattern(self.schema, "secteurs")
         for VALUE_OK in [
             "Crèche",
             " Cliniques ",
@@ -43,7 +44,7 @@ class TestCanteenSchema(TestCase):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_code_insee_commune_regex(self):
-        pattern = self.get_pattern("code_insee_commune")
+        pattern = self.get_pattern(self.schema, "code_insee_commune")
         for VALUE_OK in ["2A215", "54318"]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
@@ -52,7 +53,7 @@ class TestCanteenSchema(TestCase):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_code_postal_commune_regex(self):
-        pattern = self.get_pattern("code_postal_commune")
+        pattern = self.get_pattern(self.schema, "code_postal_commune")
         for VALUE_OK in ["75000"]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
@@ -61,7 +62,7 @@ class TestCanteenSchema(TestCase):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_type_production_regex(self):
-        pattern = self.get_pattern("type_production")
+        pattern = self.get_pattern(self.schema, "type_production")
         for VALUE_OK in [
             "central",
             "central_serving",
@@ -78,7 +79,7 @@ class TestCanteenSchema(TestCase):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_type_gestion_regex(self):
-        pattern = self.get_pattern("type_gestion")
+        pattern = self.get_pattern(self.schema, "type_gestion")
         for VALUE_OK in [
             "conceded",
             " conceded",
@@ -96,7 +97,7 @@ class TestCanteenSchema(TestCase):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_modele_economique_regex(self):
-        pattern = self.get_pattern("modèle_économique")
+        pattern = self.get_pattern(self.schema, "modèle_économique")
         for VALUE_OK in [
             "public",
             " public",
@@ -110,6 +111,19 @@ class TestCanteenSchema(TestCase):
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
         for VALUE_NOT_OK in ["modèle économique inconnu", "", "PUBLIC", "     "]:
+            with self.subTest(VALUE=VALUE_NOT_OK):
+                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+
+    def test_admin_ministere_tutelle_regex(self):
+        pattern = self.get_pattern(self.schema_admin, "admin_ministère_tutelle")
+        for VALUE_OK in [
+            "Agriculture, Alimentation et Forêts",
+            " Santé et Solidarités",
+            "Préfecture - Administration Territoriale de l'État (ATE) ",
+        ]:
+            with self.subTest(VALUE=VALUE_OK):
+                self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["agriculture", "     "]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
@@ -338,7 +352,7 @@ class TestCanteenImport(APITestCase):
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen3, email="user2@example.com"))
         self.assertEqual(canteen3.managers.count(), 0)
         self.assertEqual(canteen3.name, "Canteen update")  # updated
-        self.assertEqual(canteen3.line_ministry, Canteen.Ministries.SANTE)
+        self.assertEqual(canteen3.line_ministry, Canteen.Ministries.AGRICULTURE)
         self.assertEqual(canteen3.import_source, "Automated test")
 
         email = mail.outbox[0]
