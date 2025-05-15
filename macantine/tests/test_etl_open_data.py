@@ -25,6 +25,7 @@ class TestETLOpenData(TestCase):
             name="Cantine",
             siret="11007001800012",
             city_insee_code="29021",
+            epci="242900793",
             department="75",
             region="11",
             sectors=[SectorFactory(name="School", category=Sector.Categories.EDUCATION)],

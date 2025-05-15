@@ -38,10 +38,9 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
             self.df["canteen_region"] = self.df["canteen_city_insee_code"].apply(
                 lambda x: macantine.etl.utils.fetch_commune_detail(x, communes_infos, "region")
             )
-
-        self.df[prefix + "epci"] = self.df[prefix + "city_insee_code"].apply(
-            lambda x: macantine.etl.utils.fetch_commune_detail(x, communes_infos, "epci")
-        )
+            self.df["canteen_epci"] = self.df["canteen_city_insee_code"].apply(
+                lambda x: macantine.etl.utils.fetch_commune_detail(x, communes_infos, "epci")
+            )
 
         epcis_names = macantine.etl.utils.map_epcis_code_name()
         self.df[prefix + "epci_lib"] = self.df[prefix + "epci"].apply(
