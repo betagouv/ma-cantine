@@ -713,35 +713,31 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
     def get_nbre_repas_an(self, obj):
         return obj.yearly_meal_count
 
-    def get_modele_economique(self, obj):
-        if obj.economic_model:
-            return Canteen.EconomicModel(obj.economic_model).label
-        else:
-            return "inconnu"
-
-    def get_type_gestion(self, obj):
-        if obj.management_type:
-            return Canteen.ManagementType(obj.management_type).label
-        else:
-            return "inconnu"
-
-    def get_type_production(self, obj):
-        if obj.production_type:
-            return Canteen.ProductionType(obj.production_type).label
-        else:
-            return "inconnu"
-
     def get_nombre_satellites(self, obj):
         return obj.satellite_canteens_count
 
     def get_siret_cuisine_centrale(self, obj):
         return obj.central_producer_siret
 
+    def get_modele_economique(self, obj):
+        if obj.economic_model:
+            return Canteen.EconomicModel(obj.economic_model).label
+        return None
+
+    def get_type_gestion(self, obj):
+        if obj.management_type:
+            return Canteen.ManagementType(obj.management_type).label
+        return None
+
+    def get_type_production(self, obj):
+        if obj.production_type:
+            return Canteen.ProductionType(obj.production_type).label
+        return None
+
     def get_ministere_tutelle(self, obj):
         if obj.line_ministry:
             return Canteen.Ministries(obj.line_ministry).label
-        else:
-            return "inconnu"
+        return None
 
     def get_secteur(self, obj):
         sectors = [sector.name for sector in obj.sectors.all()]
