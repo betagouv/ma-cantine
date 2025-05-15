@@ -33,6 +33,9 @@ class TestETLOpenData(TestCase):
             region_lib="Auvergne-Rhône-Alpes",
             sectors=[SectorFactory(name="School", category=Sector.Categories.EDUCATION)],
             line_ministry=Canteen.Ministries.AGRICULTURE,
+            management_type=Canteen.ManagementType.DIRECT,
+            production_type=Canteen.ProductionType.ON_SITE,
+            economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[cls.canteen_manager],
         )
         cls.canteen_without_manager = CanteenFactory.create(siret="75665621899905")
@@ -176,19 +179,19 @@ class TestETLOpenData(TestCase):
         # Check the schema matching
         self.assertEqual(len(canteens.columns), len(schema_cols), "The columns should match the schema.")
 
-        # Checking that the geo data has been fetched from the city insee code
-        self.assertEqual(canteens[canteens.id == self.canteen.id].iloc[0]["epci"], "200040715")
+        canteen = canteens[canteens.id == self.canteen.id].iloc[0]
+        self.assertEqual(canteen["epci"], "200040715")
+        self.assertEqual(canteen["epci_lib"], "Grenoble-Alpes-Métropole")
+        self.assertEqual(canteen["line_ministry"], "Agriculture, Alimentation et Forêts")
+        self.assertEqual(canteen["management_type"], "direct")
+        self.assertEqual(canteen["production_type"], "site")
+        self.assertEqual(canteen["economic_model"], "public")
 
-        # Check that the names of the region and departments are fetched from the code
-        self.assertEqual(
-            canteens[canteens.id == self.canteen.id].iloc[0]["epci_lib"],
-            "Grenoble-Alpes-Métropole",
-        )
-
-        # Check that the choice fields have been transformed
-        self.assertEqual(
-            canteens[canteens.id == self.canteen.id].iloc[0]["line_ministry"], "Agriculture, Alimentation et Forêts"
-        )
+        canteen_without_manager = canteens[canteens.id == self.canteen_without_manager.id].iloc[0]
+        self.assertEqual(canteen_without_manager["line_ministry"], "")
+        self.assertEqual(canteen_without_manager["management_type"], None)
+        self.assertEqual(canteen_without_manager["production_type"], None)
+        self.assertEqual(canteen_without_manager["economic_model"], None)
 
     def test_active_on_ma_cantine(self, mock):
         mock.get(
