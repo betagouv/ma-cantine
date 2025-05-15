@@ -6,7 +6,7 @@ from django.test import TestCase
 from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
-from data.models import Teledeclaration
+from data.models import Canteen, Teledeclaration
 from macantine.etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
     ETL_ANALYSIS_TELEDECLARATIONS,
@@ -19,16 +19,28 @@ from macantine.etl.utils import format_td_sector_column
 
 
 class TestETLAnalysisCanteen(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.sector = SectorFactory.create(id=1, name="Sector factory", category="Category factory")
+        cls.canteen_1 = CanteenFactory(
+            name="Cantine",
+            siret="11007001800012",
+            city_insee_code="29021",
+            department="29",
+            region="53",
+            sectors=[cls.sector],
+            line_ministry=Canteen.Ministries.AGRICULTURE,
+            management_type=Canteen.ManagementType.DIRECT,
+            production_type=Canteen.ProductionType.ON_SITE,
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
+        cls.canteen_2 = CanteenFactory(sectors=[cls.sector])
 
     def test_transformed_dataset_match_schema(self):
         etl = ETL_ANALYSIS_CANTEEN()
-        SectorFactory.create(id=1, name="Sector factory", category="Category factory")
-
         schema = json.load(open("data/schemas/export_metabase/schema_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
-        canteen_1 = CanteenFactory(
-            name="Cantine", siret="11007001800012", city_insee_code="29021", department="29", region="53", sectors=[1]
-        )
+
         etl.extract_dataset()
         etl.transform_dataset()
         canteens = etl.df
@@ -44,15 +56,24 @@ class TestETLAnalysisCanteen(TestCase):
         )
 
         # Check the generated columns
-        first_canteen = canteens[canteens.id == canteen_1.id].iloc[0]
-        self.assertEqual(first_canteen["departement_lib"], "Finistère")
-        self.assertEqual(first_canteen["region_lib"], "Bretagne")
-        self.assertEqual(first_canteen["secteur"], "Sector factory")
-        self.assertEqual(first_canteen["spe"], "Non")
+        canteen_1 = canteens[canteens.id == self.canteen_1.id].iloc[0]
+        self.assertEqual(canteen_1["departement_lib"], "Finistère")
+        self.assertEqual(canteen_1["region_lib"], "Bretagne")
+        self.assertEqual(canteen_1["secteur"], "Sector factory")
+        self.assertEqual(canteen_1["ministere_tutelle"], "Agriculture, Alimentation et Forêts")
+        self.assertEqual(canteen_1["type_gestion"], "Directe")
+        self.assertEqual(canteen_1["type_production"], "Cantine qui produit les repas sur place")
+        self.assertEqual(canteen_1["modele_economique"], "Public")
+        self.assertEqual(canteen_1["spe"], "Non")
+
+        canteen_2 = canteens[canteens.id == self.canteen_2.id].iloc[0]
+        self.assertEqual(canteen_2["ministere_tutelle"], None)
+        self.assertEqual(canteen_2["type_gestion"], None)
+        self.assertEqual(canteen_2["type_production"], None)
+        self.assertEqual(canteen_2["modele_economique"], None)
 
 
 class TestETLAnalysisTD(TestCase):
-
     def test_extraction_teledeclaration(self):
         """
         Only teledeclarations that occurred during teledeclaration campaigns should be extracted
