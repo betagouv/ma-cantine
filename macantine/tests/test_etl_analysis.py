@@ -27,7 +27,13 @@ class TestETLAnalysisCanteen(TestCase):
         schema = json.load(open("data/schemas/export_metabase/schema_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
         canteen_1 = CanteenFactory(
-            name="Cantine", siret="11007001800012", city_insee_code="29021", department="29", region="53", sectors=[1]
+            name="Cantine",
+            siret="11007001800012",
+            city_insee_code="29021",
+            epci="242900793",
+            department="29",
+            region="53",
+            sectors=[1],
         )
         etl.extract_dataset()
         etl.transform_dataset()
@@ -45,7 +51,10 @@ class TestETLAnalysisCanteen(TestCase):
 
         # Check the generated columns
         first_canteen = canteens[canteens.id == canteen_1.id].iloc[0]
+        self.assertEqual(first_canteen["epci"], "242900793")
+        self.assertEqual(first_canteen["departement"], "29")
         self.assertEqual(first_canteen["departement_lib"], "Finistère")
+        self.assertEqual(first_canteen["region"], "53")
         self.assertEqual(first_canteen["region_lib"], "Bretagne")
         self.assertEqual(first_canteen["secteur"], "Sector factory")
         self.assertEqual(first_canteen["spe"], "Non")
