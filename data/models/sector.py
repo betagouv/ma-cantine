@@ -9,11 +9,6 @@ from django.db import models
 SECTEURS_SPE = [26, 24, 23, 22, 4, 2]
 
 
-class SectorQuerySet(models.QuerySet):
-    def is_spe(self):
-        return self.filter(id__in=SECTEURS_SPE)
-
-
 class Sector(models.Model):
     class Meta:
         verbose_name = "secteur d'activité"
@@ -27,8 +22,6 @@ class Sector(models.Model):
         SOCIAL = "social", "Social / Médico-social"
         LEISURE = "leisure", "Loisirs"
         AUTRES = "autres", "Autres"
-
-    objects = models.Manager.from_queryset(SectorQuerySet)()
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
