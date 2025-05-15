@@ -258,7 +258,8 @@ def _update_canteen_geo_data(canteen, response):
             canteen.city_insee_code = response["cityInseeCode"]
             canteen.postal_code = response["postalCode"]
             canteen.city = response["city"]
-            canteen.epci = response["epci"]
+            if "epci" in response.keys():
+                canteen.epci = response["epci"]
             canteen.save()
             update_change_reason(canteen, "Données de localisation MAJ par bot, via SIRET")
             logger.info(f"Canteen info has been updated. Canteen name : {canteen.name}")
