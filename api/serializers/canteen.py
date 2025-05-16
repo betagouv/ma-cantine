@@ -639,8 +639,6 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
     libelle_commune = serializers.SerializerMethodField()
     departement = serializers.SerializerMethodField()
     departement_lib = serializers.SerializerMethodField()
-    region = serializers.SerializerMethodField()
-    region_lib = serializers.SerializerMethodField()
     nbre_repas_jour = serializers.SerializerMethodField()
     nbre_repas_an = serializers.SerializerMethodField()
     modele_economique = serializers.SerializerMethodField()
@@ -700,8 +698,8 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
     def get_departement(self, obj):
         return obj.department
 
-    def get_region(self, obj):
-        return obj.region
+    def get_departement_lib(self, obj):
+        return obj.department_lib
 
     def get_date_creation(self, obj):
         return obj.creation_date.strftime('"%Y-%m-%d"')
