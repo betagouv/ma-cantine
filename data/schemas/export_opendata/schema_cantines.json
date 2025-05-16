@@ -58,7 +58,7 @@
     },
     {
       "description": "Libellé de l'EPCI dans laquelle se trouve la cantine",
-      "example": "CC Communauté Lesneven Côte des Légendes",
+      "example": "Grenoble-Alpes-Métropole",
       "name": "epci_lib",
       "title": "Libellé EPCI",
       "type": "string"
