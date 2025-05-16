@@ -70,7 +70,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis",
             text=json.dumps(""),
             status_code=200,
         )
@@ -158,7 +158,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis",
             text=json.dumps([{"nom": "CC Communauté Lesneven Côte des Légendes", "code": "242900793"}]),
             status_code=200,
         )
@@ -193,7 +193,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis",
             text=json.dumps(""),
             status_code=200,
         )
@@ -220,7 +220,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis",
             text=json.dumps(""),
             status_code=200,
         )
@@ -254,7 +254,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis",
             text=json.dumps(""),
             status_code=200,
         )
