@@ -16,7 +16,7 @@ def fetch_communes():
 
 
 def fetch_epcis():
-    response = requests.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis/?fields=nom", timeout=50)
+    response = requests.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis", timeout=50)
     response.raise_for_status()
     return response.json()
 

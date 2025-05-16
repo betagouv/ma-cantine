@@ -1,0 +1,1256 @@
+code,nom,departements,regions,population
+200000172,CC Faucigny - Glières,74,84,28363
+200000438,CC du Pays de Pontchâteau St-Gildas-des-Bois,44,52,36662
+200000545,CC des Portes de Romilly sur Seine,10,44,18846
+200000628,CC Rhône Lez Provence,84,93,24385
+200000800,CC Coeur de Sologne,41,24,10230
+200000925,CC de la Plaine Dijonnaise,21,27,22152
+200000933,CC Sauldre et Sologne,18,24,14335
+200004802,CC du Pays de Fayence,83,93,29769
+200005932,CC des Portes de Sologne,45,24,15654
+200005957,CC de la Région de Rambervillers,88,44,12833
+200006682,"CA Beaune, Côte et Sud - Communauté Beaune-Chagny-Nolay","21,71",27,50592
+200006716,CC du Nogentais,10,44,16366
+200006930,CC du Haut Allier Margeride,48,76,5167
+200006971,CC du Perche,28,24,17971
+200007052,CC de la Marche Berrichonne,36,24,5504
+200007177,CC Pays de Nérondes,18,24,4644
+200010650,CA du Grand Dole,39,27,54697
+200010700,CA Caux Seine Agglo,76,28,77968
+200011773,CA Annemasse-Les Voirons-Agglomération,74,84,95155
+200011781,CC Portes du Berry entre Loire et Val d'Aubois,18,24,9478
+200013050,CC Sauer-Pechelbronn,67,44,17281
+200015162,CC de l'Oriente,2B,94,6173
+200016905,CC du Pays de Lamastre,07,84,6678
+200017341,CC Lodévois et Larzac,34,76,14824
+200017846,CA Étampois Sud Essonne,91,11,55848
+200018083,CC de Desvres-Samer,62,32,23138
+200018166,CC Le Grésivaudan,38,84,103196
+200018406,CC du Romorantinais et du Monestois,41,24,33921
+200018521,CC du Val de Bouzanne,36,24,5969
+200022986,CC du Grand Pic Saint-Loup,34,76,51217
+200023075,CC du Pays de Maîche,25,27,18577
+200023125,CC Les Portes Briardes Entre Villes et Forêts,77,11,46241
+200023240,CC Pays de Nemours,77,11,29774
+200023299,CC Coeur de Tarentaise,73,84,9098
+200023307,CA du Grand Villeneuvois,47,75,47899
+200023372,CC de la Vallée de Chamonix-Mont-Blanc,74,84,13759
+200023414,Métropole Rouen Normandie,76,28,500703
+200023620,CC de la Gascogne Toulousaine,32,76,17060
+200023737,CA du Grand Cahors,46,76,42094
+200023778,CA du Pays de Saint-Gilles-Croix-de-Vie,85,52,53176
+200023794,CC de Blaye,33,75,20458
+200023919,CC Gâtinais Val de Loing,77,11,18432
+200026573,CC Haut-Jura Saint-Claude,39,27,19431
+200027027,CC Arc Sud Bretagne,56,53,29113
+200027076,CC Arnon Boischaut Cher,18,24,7855
+200027100,CC Méditerranée Porte des Maures,83,93,46540
+200027183,CU Perpignan Méditerranée Métropole,66,76,277926
+200027217,CC Sarlat-Périgord Noir,24,75,16168
+200027308,CC d'Auberive Vingeanne et Montsaugeonnais,52,44,8097
+200029734,CC des 4B Sud Charente,16,75,19940
+200029999,CC Rives de l'Ain - Pays du Cerdon,01,84,14873
+200030195,Métropole Nice Côte d'Azur,06,93,568596
+200030385,CA de Blois ''Agglopolys'',41,24,106574
+200030435,CC d'Aire-sur-l'Adour,"32,40","75,76",12922
+200030526,CC du Ried de Marckolsheim,"67,68",44,20664
+200030633,CA du Caudrésis et du Catésis,59,32,63265
+200030658,CC du Trièves,38,84,10338
+200030674,CA Val de Garonne Agglomération,47,75,60690
+200032514,CC Berry-Loire-Vauvise,18,24,5427
+200033025,CA de Bar-le-Duc - Sud Meuse,55,44,33485
+200033090,CC Plaines et Monts de France,77,11,25662
+200033116,CC Cluses-Arve et Montagnes,74,84,47034
+200033173,CC de la Haute Vallée de Chevreuse,78,11,25225
+200033181,CA Chartres Métropole,28,24,136921
+200033298,CC des Coëvrons,53,52,26746
+200033579,CU d'Arras,62,32,109781
+200033827,CC de Fium'Orbu Castellu,2B,94,13280
+200033868,CC des Ballons des Hautes-Vosges,88,44,14503
+200034023,CC Tarn-Agout,"31,81",76,29922
+200034031,CC des Monts d'Alban et du Villefranchois,81,76,6360
+200034049,CC Centre Tarn,81,76,11276
+200034056,CC du Lautrécois et du Pays d'Agout,81,76,14303
+200034064,CC du Cordais et du Causse (4 C),81,76,5381
+200034098,CC des Montagnes du Giffre,74,84,12136
+200034130,CC Gally Mauldre,78,11,22529
+200034197,CC de Montaigne Montravel et Gurson,24,75,11859
+200034205,CC de la Costa Verde,2B,94,10939
+200034270,CC du Pays de Barr,67,44,23882
+200034379,CC Pays d'Uzès,30,76,30894
+200034411,CC du Piémont Cévenol,30,76,22529
+200034601,CC Causses Aigoual Cévennes,30,76,5391
+200034635,CC du Kochersberg,67,44,26637
+200034692,CA du Gard Rhodanien,30,76,75893
+200034700,CA Durance-Lubéron-Verdon Agglomération,"04,83",93,63654
+200034718,"CC de Vitry, Champagne et Der",51,44,23412
+200034726,CC Bastides de Lomagne,32,76,11318
+200034825,CA du Grand Guéret,23,75,28450
+200034833,CC des Bastides Dordogne-Périgord,24,75,18601
+200034874,CC Côtes de Meuse Woëvre,55,44,6011
+200034882,CC Pays du Mont-Blanc,74,84,44954
+200034957,CC du Frontonnais,31,76,28757
+200035087,CA Terre de Provence,13,93,60440
+200035103,CC de la Vallée de la Haute Sarthe,61,28,7531
+200035111,CC des Sources de l'Orne,61,28,11960
+200035129,CC de Cèze Cévennes,"07,30","76,84",19141
+200035137,CC Marche Occitane - Val d'Anglin,36,24,6517
+200035202,CC Charlieu-Belmont,42,84,23400
+200035319,CA Estérel Côte d'Azur Agglomération,83,93,121390
+200035327,CC Cazals-Salviac,46,76,5432
+200035442,CC du Sud Artois,62,32,26936
+200035533,CC du Grand Saint Emilionnais,33,75,14033
+200035541,CC des Landes d'Armagnac,40,75,10743
+200035632,CC Armagnac Adour,32,76,6568
+200035707,CC Piège Lauragais Malepère,11,76,16299
+200035715,CA Carcassonne Agglo,11,76,114411
+200035723,CC Ventoux Sud,"26,84","84,93",9595
+200035731,CA Roannais Agglomération,42,84,101851
+200035756,CC Astarac Arros en Gascogne,32,76,7171
+200035764,CC de la Beauce Loirétaine,45,24,16991
+200035772,CC du Pays du Saintois,54,44,14229
+200035814,CA Flers Agglo,61,28,52509
+200035848,CC du Châtillonnais en Berry,36,24,5638
+200035855,CC Castelnaudary Lauragais Audois,11,76,27777
+200035863,"CC Région Lézignanaise, Corbières et Minervois",11,76,33313
+200035970,CC Vexin Centre,95,11,25137
+200036069,CC du Pays de Mortagne-au-Perche,61,28,13515
+200036077,CC du Golfe de Saint-Tropez,83,93,57965
+200036135,CC Coeur de France,18,24,18225
+200036150,CC des Hauts du Val de Saône,70,27,8373
+200036465,CC de Thann-Cernay,68,44,37567
+200036473,"CA ""Saintes - Grandes Rives - L'Agglo""",17,75,60600
+200036499,CC de Marana-Golo,2B,94,25474
+200036523,CC des Bastides en Haut Agenais Périgord,47,75,17015
+200036549,CC Val de Gray,70,27,20109
+200037059,CC de la Haute Somme (Combles - Péronne - Roisel),80,32,26454
+200037133,CC du Provinois,77,11,34302
+200038958,CC de la Pieve de l'Ornano et du Taravo,2A,94,13293
+200038990,CC de Saint-Méen Montauban,35,53,27350
+200039022,CA Vitré Communauté,35,53,82956
+200039055,CC Ouche et Montagne,21,27,11273
+200039063,"CC Forêts, Seine et Suzon",21,27,7054
+200039204,CC de Lacq-Orthez,64,75,52957
+200039519,CC du Quercy Blanc,46,76,7704
+200039642,CC Le Tonnerrois en Bourgogne,89,27,15138
+200039709,CC du Serein,89,27,7043
+200039758,"CC Avallon, Vézelay, Morvan",89,27,18488
+200039808,CC des Gorges de l'Ardèche,07,84,15681
+200039824,CC Ardèche des Sources et Volcans,07,84,9752
+200039832,CC Pays des Vans en Cévennes,07,84,9536
+200039857,CA du Pays de Grasse,06,93,101897
+200039865,Metz Métropole,57,44,230314
+200039907,CC du Sud Messin,57,44,17033
+200039915,CA Cannes Pays de Lérins,06,93,156338
+200039931,CC Alpes d'Azur,06,93,10015
+200039949,CC Rives de Moselle,57,44,53122
+200040038,CC Saône Doubs Bresse,71,27,12073
+200040095,CC Isle Vern Salembre en Périgord,24,75,18912
+200040111,CC Coeur de Chartreuse,"38,73",84,17165
+200040137,CC des Lacs de Champagne,10,44,8976
+200040178,CC de l'Outre-Forêt,67,44,16194
+200040202,CC Provence Verdon,83,93,22923
+200040210,CC Lacs et Gorges du Verdon,83,93,8984
+200040244,CA du Bocage Bressuirais,79,75,74140
+200040251,CC Bassée-Montois,77,11,23165
+200040277,CA Agglo du Pays de Dreux,"27,28","24,28",116484
+200040293,CC du Clunisois,71,27,14020
+200040350,CC Bugey Sud,01,84,34086
+200040384,CC Isle Double Landais,24,75,12546
+200040392,CA Le Grand Périgueux,24,75,104933
+200040400,CC du Périgord Ribéracois,24,75,19449
+200040418,CC du Pays de Serres en Quercy,82,76,8386
+200040426,CC du Val de l'Oise,02,32,15838
+200040442,CA Luberon Monts de Vaucluse,84,93,55163
+200040459,CA Montélimar Agglomération,26,84,68756
+200040475,CC LBN Communauté,72,52,17824
+200040491,CC Porte de Dromardèche,"07,26",84,47996
+200040509,CC du Crestois et de Pays de Saillans Coeur de Drôme,26,84,16118
+200040558,CC Écueillé-Valençay,36,24,10933
+200040566,CA de l'Ouest Rhodanien,69,84,50935
+200040574,CC Beaujolais Pierres Dorées,69,84,56155
+200040590,CA Villefranche Beaujolais Saône,"01,69",84,73717
+200040624,CC Pays d'Apt-Luberon,"04,84",93,28347
+200040657,CC de la Matheysine,38,84,19010
+200040681,CC Enclave des Papes - Pays de Grignan,"26,84","84,93",22626
+200040715,Grenoble-Alpes-Métropole,38,84,449509
+200040764,CC du Sud Corse,2A,94,21779
+200040772,CC du Perche et Haut Vendômois,41,24,9155
+200040798,CC Val Vanoise,73,84,9045
+200040814,CC Briance Sud Haute Vienne,87,75,9158
+200040830,CC du Pays de Fénelon,24,75,9728
+200040889,CC de Portes Sud Périgord,24,75,8450
+200040905,CC Carmausin-Ségala,81,76,30115
+200040947,CA Coeur de Flandre,59,32,102562
+200040954,CC des Hauts de Flandre,59,32,53525
+200041010,CC Coeur de Savoie,73,84,37780
+200041051,CC Vallée de la Dordogne et Forêt Bessède,24,75,8965
+200041150,CC Terrassonnais Haut Périgord Noir,24,75,22161
+200041168,CC de la Vallée de l'Homme,24,75,15989
+200041283,CC de la Plaine du Rhin,67,44,18379
+200041317,CA du Niortais,79,75,123389
+200041325,CC du Pays Rhénan,67,44,37259
+200041333,CC de Parthenay-Gâtine,79,75,36926
+200041366,CC Rhône Crussol,07,84,34874
+200041416,CC Airvaudais-Val du Thouet,79,75,6913
+200041440,CC de Domme- Villefranche du Périgord,24,75,8552
+200041465,CC Val Eyrieux,07,84,12291
+200041499,CC Aunis Atlantique,17,75,32371
+200041515,CC du Bassin de Pont-à-Mousson,54,44,40203
+200041523,CC de la Haute Saintonge,17,75,68842
+200041556,CC Portes de la Creuse en Marche,23,75,6630
+200041572,CC Dronne et Belle,24,75,11393
+200041614,CC Aunis Sud,17,75,33181
+200041622,CC Ardennes Thiérache,08,44,9464
+200041630,CA Ardenne Métropole,08,44,120380
+200041689,CC Vals de Saintonge Communauté,17,75,52430
+200041721,CC de la Haute Comté,70,27,16798
+200041762,CA Rochefort Océan,17,75,64956
+200041853,CC du Pays de Montbozon et du Chanois,70,27,6661
+200041861,CC du Triangle Vert,70,27,10976
+200041879,CC Terres de Saône,70,27,13103
+200041887,CC du Val Marnaysien,"25,70",27,14652
+200041960,CC Pévèle-Carembault,59,32,98918
+200041994,CC Haut Val de Sèvre,79,75,30618
+200042000,CC Bruyères-Vallons des Vosges,88,44,14808
+200042174,CA Lorient Agglomération,56,53,208113
+200042182,CC du Mont des Avaloirs,53,52,15531
+200042190,CA de la Porte du Hainaut,59,32,158351
+200042372,CC des Coteaux Arrats Gimone,32,76,10784
+200042414,CC Bresse Revermont 71,71,27,10001
+200042463,CC de la Montagne Noire,11,76,5972
+200042497,CC Dombes Saône Vallée,01,84,40893
+200042604,"CC de Granville, Terre et Mer",50,28,45480
+200042620,CC de la Région de Suippes,51,44,7765
+200042646,CC Grand Orb Communauté de Communes en Languedoc,34,76,19955
+200042653,CC Sud-Hérault,34,76,18369
+200042703,CC de l'Argonne Champenoise,51,44,11667
+200042729,CC de la Baie du Cotentin,50,28,22962
+200042901,CC Drôme Sud Provence,26,84,43119
+200042935,CA Haut-Bugey Agglomération,01,84,63653
+200042943,CC du Cap Corse,2B,94,6607
+200042992,CC Perthois-Bocage et Der,51,44,5542
+200043016,CC Val de Charente,16,75,13776
+200043065,CC du Val d'Amboise,37,24,28569
+200043081,"CC Chinon, Vienne et Loire",37,24,23735
+200043123,CC Auray Quiberon Terre Atlantique,56,53,91034
+200043156,CC du Pays Rethélois,08,44,30021
+200043172,CA du Bassin de Brive,19,75,108611
+200043263,CC Coeur de l'Avesnois,59,32,28870
+200043321,CC du Pays de Mormal,59,32,48132
+200043354,CC de Villedieu Intercom,50,28,15676
+200043396,CA Maubeuge Val de Sambre,59,32,122909
+200043404,CC du Sud Avesnois,59,32,24414
+200043438,CC de la Moivre à la Coole,51,44,9374
+200043495,CA du Pays de Laon,02,32,41771
+200043602,"CC des Albères, de la Côte Vermeille et de l'Illibéris",66,76,57632
+200043628,CC des Vallées du Clain,86,75,27158
+200043693,CC Terre Lorraine du Longuyonnais,54,44,15334
+200043776,CC Pyrénées audoises,11,76,13522
+200043974,CC du Sud Gironde,33,75,39775
+200043982,CC du Bazadais,33,75,15905
+200043990,CC Vallons de Haute-Bretagne Communauté,35,53,45066
+200044014,CC Creuse Grand Sud,23,75,11509
+200044030,CC des 7 Vallées,62,32,29425
+200044048,CC Osartis Marquion,62,32,42814
+200044253,CC du Bassin de Joinville en Champagne,52,44,12196
+200044394,CC du Réolais en Sud Gironde,33,75,24011
+200044469,CC du Pays de Mirepoix,09,76,10584
+200044618,CA Douaisis Agglo,59,32,148901
+200046977,Métropole de Lyon,69,84,1433613
+200048551,CC du Pays de Craon,53,52,28594
+200049187,CA du Grand Verdun,55,44,27113
+200049211,CC Conflent-Canigó,66,76,20918
+200049484,CC Berry Grand Sud,18,24,11437
+200054781,Métropole du Grand Paris,"75,91,92,93,94,95",11,7115576
+200054807,Métropole d'Aix-Marseille-Provence,"13,83,84",93,1922626
+200055481,CC Beauce Val de Loire,41,24,19658
+200055655,CA Roissy Pays de France,"77,95",11,362933
+200055887,CC Mayenne Communauté,53,52,36612
+200056232,CA Communauté Paris-Saclay,91,11,319695
+200056380,CA Plaine Vallée,95,11,186216
+200057859,CA Coeur d'Essonne Agglomération,91,11,208019
+200057958,CA Paris - Vallée de la Marne,77,11,232536
+200058360,CC Entre Beauce et Perche,28,24,21164
+200058477,CA Val d'Yerres Val de Seine,91,11,177954
+200058485,CA Val Parisis,95,11,288829
+200058519,CA Saint Germain Boucles de Seine,"78,95",11,341547
+200058782,CA de Saint Quentin en Yvelines,78,11,233591
+200059228,CA Grand Paris Sud Seine Essonne Sénart,"77,91",11,361024
+200059392,CC Bièvre Isère,38,84,56117
+200059400,CC Porte Océane du Limousin,87,75,25686
+200059889,CU Grand Paris Seine et Oise,78,11,433255
+200060010,CA Mauges Communauté,49,52,122374
+200065563,CC Normandie-Cabourg-Pays d'Auge,14,28,31566
+200065589,CC Val ès Dunes,14,28,20565
+200065597,CU Caen la Mer,14,28,277248
+200065647,CA Pays de Montbéliard Agglomération,25,27,139232
+200065787,CC de Pont-Audemer / Val de Risle,27,28,32563
+200065886,CA Loire Forez Agglomération (LFA),42,84,112261
+200065894,CC de Forez-Est,42,84,64654
+200065928,CA Lannion-Trégor Communauté,22,53,100877
+200066009,CA Mulhouse Alsace Agglomération,68,44,272950
+200066017,CC Lieuvin Pays d'Auge,27,28,20316
+200066025,CC Alsace Rhin Brisach,68,44,34031
+200066033,CC Sud Alsace Largue,68,44,22331
+200066041,CC Sundgau,68,44,47603
+200066058,CA Saint-Louis Agglomération,68,44,84055
+200066108,CC des Portes de Meuse,55,44,16003
+200066116,CC Argonne-Meuse,55,44,6879
+200066124,CA Gaillac-Graulhet,81,76,76216
+200066132,CC du Pays de Stenay et du Val Dunois,55,44,9430
+200066140,CC de l'Aire à l'Argonne,55,44,6382
+200066157,CC de Commercy - Void - Vaucouleurs,55,44,21952
+200066165,CC Val de Meuse - Voie Sacrée,55,44,8882
+200066173,CC de Damvillers Spincourt,55,44,8036
+200066223,CC Arize Lèze,09,76,11064
+200066231,CC des Portes d'Ariège Pyrénées,09,76,40642
+200066280,CC du Pithiverais,45,24,29093
+200066322,CC Terres des Confluences,82,76,42367
+200066330,CC Terres du Haut Berry,18,24,25976
+200066348,CC du Minervois au Caroux,34,76,14372
+200066355,CA Sète Agglopôle Méditerranée,34,76,129982
+200066363,CC de la Haute Ariège,09,76,7149
+200066371,CC Causses et Vallée de la Dordogne,46,76,45320
+200066389,CA Saint-Lô Agglo,50,28,76674
+200066405,CC Roumois Seine,"27,76",28,41773
+200066413,CC Intercom Bernay Terres de Normandie,27,28,54314
+200066462,CC Interco Normandie Sud Eure,"27,28","24,28",37606
+200066512,CC Élan Limousin Avenir Nature,87,75,27459
+200066520,CC Ouest Limousin,87,75,11370
+200066553,CC du Haut-Languedoc,"34,81",76,7954
+200066561,CC Sidobre Vals et Plateaux,81,76,12437
+200066587,CC des Monts du Lyonnais,"42,69",84,35237
+200066603,CC du Pays de Lubersac-Pompadour,19,75,6785
+200066637,CC Hautes Terres,15,84,11118
+200066645,CC Vézère-Monédières-Millesources,19,75,5691
+200066652,CC Grand Sud Tarn-et-Garonne,82,76,43301
+200066660,CC de Saint-Flour,15,84,23264
+200066678,CC de la Châtaigneraie Cantalienne,15,84,21099
+200066710,CC Cingal-Suisse Normande,14,28,23506
+200066728,CC Vallées de l'Orne et de l'Odon,14,28,26436
+200066744,CC Haute-Corrèze Communauté,"19,23",75,31994
+200066751,CC Xaintrie Val'Dordogne,19,75,11120
+200066769,CC Midi Corrézien,19,75,13215
+200066777,CC Ploërmel Communauté,56,53,42842
+200066785,CC de l'Oust à Brocéliande,56,53,39885
+200066793,CA du Grand Annecy,74,84,211259
+200066801,CC Isigny-Omaha Intercom,14,28,26420
+200066819,CC du Volvestre,31,76,30806
+200066827,CC du Pays de Honfleur-Beuzeville,"14,27",28,27103
+200066835,CC de Sézanne-Sud Ouest Marnais,51,44,20917
+200066850,CC des Paysages de la Champagne,51,44,20721
+200066868,CC Presqu'île de Crozon-Aulne maritime,29,53,22603
+200066876,CA de Châlons-en-Champagne,51,44,78298
+200066884,CC Quercy Vert-Aveyron,82,76,21707
+200066892,CC de Vendeuvre-Soulaines,10,44,7359
+200066918,CA Alès Agglomération,30,76,135747
+200066926,CA Grand Auch Coeur de Gascogne,32,76,39498
+200066975,CC Senlis Sud Oise,60,32,25012
+200067023,CC Coutances Mer et Bocage,50,28,47755
+200067031,CC Côte Ouest Centre Manche,50,28,22194
+200067049,CC Spelunca-Liamone,2A,94,7815
+200067064,CC Decazeville Communauté,12,76,17928
+200067072,CC Haut-Léon Communauté,29,53,31706
+200067080,CC Chablis Villages et Terroirs,89,27,14638
+200067106,CA du Pays Basque,64,75,325721
+200067114,CA de l'Auxerrois,89,27,68012
+200067122,CC du Pays de Lafrançaise,82,76,11246
+200067130,CC de Puisaye-Forterre,"58,89",27,33562
+200067155,"CC Saint Affricain, Roquefort, Sept Vallons",12,76,13444
+200067163,"CC Monts, Rance et Rougier",12,76,6323
+200067171,"CC Aubrac, Carladez et Viadène",12,76,9928
+200067189,CC Creuse Sud Ouest,23,75,13483
+200067197,CC Monts d'Arrée Communauté,29,53,7765
+200067205,CA du Cotentin,50,28,178684
+200067213,CU du Grand Reims,51,44,297492
+200067239,CC des Luys en Béarn,64,75,29307
+200067247,CC Pleyben-Châteaulin-Porzay,29,53,22863
+200067254,CA Pau Béarn Pyrénées,64,75,166794
+200067262,CC du Haut Béarn,64,75,32038
+200067288,CC du Béarn des Gaves,64,75,17547
+200067296,CC du Nord Est Béarn,64,75,34830
+200067304,CC Serein et Armance,89,27,23421
+200067320,CC Serre-Ponçon Val d'Avance,"04,05",93,7859
+200067346,CA Pornic Agglo Pays de Retz,44,52,69252
+200067361,CC Grand-Figeac,"12,46",76,43924
+200067379,CC Côtes de Champagne et Val de Saulx,51,44,11385
+200067429,CC Haut Nivernais - Val d'Yonne,"58,89",27,11845
+200067437,CA Provence-Alpes-Agglomération,04,93,48726
+200067445,CC Buëch-Dévoluy,05,93,9597
+200067452,CC du Guillestrois et du Queyras,05,93,7955
+200067460,CC Loudéac Communauté - Bretagne Centre,22,53,51811
+200067478,CC Comtal Lot et Truyère,12,76,19930
+200067486,CC Bouzonvillois-Trois Frontières,57,44,24154
+200067502,CA Saint-Avold Synergie,57,44,51750
+200067544,CC Creuse Confluence,23,75,16479
+200067551,CA Thonon Agglomération,74,84,94873
+200067593,CC Marche et Combraille en Aquitaine,23,75,13041
+200067627,CC Billom Communauté,63,84,26098
+200067635,CA Clisson Sèvre et Maine Agglo,44,52,57167
+200067643,CC Meurthe Mortagne Moselle,54,44,16456
+200067650,CC Houve - Pays Boulageois,57,44,22769
+200067668,"CC de la Cléry, du Betz et de l'Ouanne","45,89","24,27",20042
+200067676,CC Canaux et Forêts en Gâtinais,45,24,27348
+200067684,"CA Epernay, Coteaux et Plaine de Champagne",51,44,46800
+200067692,CC Tannay-Brinon-Corbigny,58,27,9394
+200067700,CC Sud Nivernais,58,27,19771
+200067742,CC Serre-Ponçon,"04,05",93,16945
+200067759,CC Vallées et Plateau d'Ardenne,08,44,23974
+200067767,CC du Royans-Vercors,26,84,9733
+200067783,CC de Hanau-La Petite Pierre,67,44,26172
+200067791,CA L'Agglo Foix-Varilhes,09,76,32542
+200067817,CC Saône-Beaujolais,69,84,45642
+200067825,CA Gap-Tallard-Durance,"04,05",93,50743
+200067841,CC de l'Alsace Bossue,67,44,23966
+200067866,CC Sèvre et Loire,44,52,49940
+200067874,CA de Haguenau,67,44,99129
+200067882,CC Bazois Loire Morvan,58,27,15029
+200067890,CC Morvan Sommets et Grands Lacs,58,27,12039
+200067908,CC Amognes Coeur du Nivernais,58,27,8527
+200067916,CC Coeur de Loire,58,27,25204
+200067924,CC du Canton d'Erstein,67,44,49088
+200067932,CA Golfe du Morbihan - Vannes Agglomération,56,53,177719
+200067940,CC Couserans-Pyrénées,09,76,30003
+200067957,CC Haut Chemin - Pays de Pange,57,44,19286
+200067965,CA de la Région de Compiègne et de la Basse Automne,60,32,83708
+200067973,CC Thelloise,60,32,61730
+200067981,CA Guingamp-Paimpol Agglomération de l'Armor à l'Argoat,22,53,73835
+200067999,CA du Beauvaisis,60,32,103404
+200068005,CC de l'Oise Picarde,60,32,20939
+200068047,CA Creil Sud Oise,60,32,89897
+200068070,CC Loue-Lison,25,27,25269
+200068088,CC Les Bertranges,"18,58","24,27",19625
+200068096,CC Champsaur-Valgaudemar,05,93,11528
+200068104,CA de la Provence Verte,83,93,103248
+200068112,CC du Pays de Saverne,67,44,35675
+200068120,CA Quimper Bretagne Occidentale,29,53,102574
+200068146,CC Sarrebourg Moselle Sud,57,44,45143
+200068229,CC des Baronnies en Drôme Provençale,26,84,20753
+200068278,CC Berry Loire Puisaye,45,24,17525
+200068294,CC des Deux Vallées Vertes,25,27,15608
+200068369,CC de Mirecourt Dompaire,88,44,18441
+200068377,CC de la Porte des Vosges Méridionales,88,44,29017
+200068435,CC Coeur du Perche,61,28,11057
+200068443,CC Andaine - Passais,61,28,12837
+200068450,CC Terres d'Argentan Interco,61,28,33374
+200068468,CC des Pays de L'Aigle,61,28,24985
+200068484,CC des Causses à l'Aubrac,12,76,14487
+200068500,CA de Cambrai,59,32,80469
+200068534,CC Terroir de Caux,76,28,37763
+200068542,CC Les Balcons du Dauphiné,38,84,78705
+200068559,CC de l'Ouest Vosgien,"52,88",44,22986
+200068567,CC Les Vals du Dauphiné,38,84,64457
+200068625,"CC Alpes-Provence-Verdon ""Sources de lumière""",04,93,11417
+200068641,CA Le Muretain Agglo,31,76,129300
+200068658,CA de Chaumont,52,44,43665
+200068666,CA du Grand Saint-Dizier Der et Vallées,"51,52",44,55597
+200068674,CA Grand Lac,73,84,79849
+200068682,CC Terre d'Eau,88,44,17043
+200068757,CA d'Epinal,88,44,110099
+200068765,CC du Sisteronais-Buëch,"04,05,26","84,93",25482
+200068773,CC des Vosges côté Sud Ouest,88,44,11564
+200068781,CA Valence Romans Agglo,26,84,224841
+200068799,CC Intercom de la Vire au Noireau,14,28,46187
+200068807,CC du Bassin Auterivain Haut-Garonnais,31,76,34207
+200068815,CC Coeur de Garonne,31,76,35091
+200068831,CC Pays Ségali Communauté,12,76,18318
+200068856,CC des Hauts du Perche,61,28,7882
+200068864,CC de la Mossig et du Vignoble,67,44,24826
+200068872,CC Éguzon - Argenton - Vallée de la Creuse,36,24,19302
+200068880,CC Champagne Boischauts,36,24,9691
+200068914,CC La Rochefoucauld Porte du Périgord,16,75,21882
+200068922,CC du Confluent et des Coteaux de Prayssas,47,75,17768
+200068930,CC Fumel Vallée du Lot,47,75,24601
+200068948,CC Albret Communauté,47,75,25866
+200068955,CC Anjou Loir et Sarthe,49,52,28260
+200068963,CC Maine Coeur de Sarthe,72,52,21871
+200068989,CA Dinan Agglomération,22,53,104442
+200068997,CA Arlysère,73,84,61836
+200069003,CC du Barséquanais en Champagne,10,44,18320
+200069029,CA des Deux Baies en Montreuillois,62,32,65084
+200069037,CA du Pays de Saint-Omer,62,32,104320
+200069052,CA Grand Belfort,90,27,101451
+200069060,CC des Vosges du Sud,90,27,15046
+200069086,CC Leff Armor Communauté,22,53,32064
+200069094,CC Isle et Crempse en Périgord,24,75,14475
+200069102,CC Randon - Margeride,48,76,5201
+200069110,CA du Grand Chambéry,73,84,141091
+200069128,CC Mont Lozère,"30,48",76,5827
+200069136,CC des Cévennes au Mont Lozère,48,76,5101
+200069144,CC des Hautes Terres de l'Aubrac,48,76,4973
+200069151,CC Gorges Causses Cévennes,48,76,6928
+200069169,CC Dômes Sancy Artense,63,84,12591
+200069177,CC Mond'Arverne Communauté,63,84,41032
+200069185,CC des Terres d'Apcher-Margeride-Aubrac,48,76,10484
+200069193,CC de la Dombes,01,84,40570
+200069227,CC Pays Fort Sancerrois Val de Loire,18,24,18143
+200069235,CC du Haut Pays du Montreuillois,62,32,15742
+200069250,CA Troyes Champagne Métropole,10,44,175540
+200069268,CC Aubrac Lot Causses Tarn,48,76,7884
+200069300,CA Tarbes-Lourdes-Pyrénées,65,76,127612
+200069383,CC Ouest Aveyron Communauté,"12,46",76,27244
+200069391,CA Lamballe Terre et Mer,22,53,69087
+200069409,CA Saint-Brieuc Armor Agglomération,22,53,154023
+200069417,CC Pays d'Orthe et Arrigans,40,75,24363
+200069425,CA Mont-Saint-Michel-Normandie,50,28,87390
+200069433,CC de Vezouze en Piémont,54,44,11483
+200069441,CC du Pays de Bitche,57,44,33184
+200069458,CC des Vallées d'Auge et du Merlerault,61,28,14184
+200069482,CC des Campagnes de l'Artois,62,32,33290
+200069516,CC Seulles Terre et Mer,14,28,17577
+200069524,CC Pré-Bocage Intercom,14,28,24984
+200069532,CA Lisieux Normandie,14,28,72683
+200069540,CC Norge et Tille,21,27,16671
+200069565,CC des Lacs et Montagnes du Haut-Doubs,25,27,16727
+200069581,CC Convergence Garonne,33,75,32781
+200069599,CC Rurales de l'Entre-Deux-Mers,33,75,16615
+200069615,CC Bresse Haute Seille,39,27,19149
+200069623,CC Champagnole Nozeroy Jura,39,27,22936
+200069631,CC Terres de Chalosse,40,75,18276
+200069649,CC Chalosse Tursan,40,75,26170
+200069656,CC Coeur Haute Lande,40,75,16305
+200069664,CC Meuse Rognon,52,44,10352
+200069672,CC du Ternois,"62,80",32,37150
+200069698,CC Mâconnais - Tournugeois,71,27,15906
+200069722,CC Interrégionale Aumale - Blangy-sur-Bresle,"76,80","28,32",21244
+200069730,CC des Quatre Rivières en Bray,"27,76",28,28632
+200069748,CC Val de Gâtine,79,75,21570
+200069755,CC Mellois en Poitou,79,75,46490
+200069763,CC du Haut Poitou,86,75,41934
+200069821,CA Fécamp Caux Littoral Agglomération,76,28,38162
+200069839,CC de la Côte d'Albâtre,76,28,27520
+200069847,CC Plateau de Caux,76,28,21314
+200069854,CU du Grand Poitiers,86,75,196849
+200069912,CC des Forêts du Perche,28,24,7700
+200069953,CC des Portes Euréliennes d'Ile de France,28,24,48698
+200069961,CC du Grand Châteaudun,28,24,39734
+200069995,CC Médoc Coeur de Presqu'île,33,75,30896
+200070035,CC du Civraisien en Poitou,86,75,26737
+200070043,CC Vienne et Gartempe,86,75,38694
+200070068,CC Bray-Eawy,76,28,24882
+200070092,CA du Libournais,33,75,93359
+200070100,CC du Val de Sully,45,24,24081
+200070118,CC Val de Saône Centre,01,84,21022
+200070126,CC Seine et Aube,10,44,10213
+200070142,CC Lyons Andelle,27,28,20594
+200070159,CC Coeur de Beauce,28,24,24406
+200070167,CC Terres de Perche,28,24,14116
+200070183,CC des Terres du Val de Loire,"41,45",24,50078
+200070233,CA Terres de Montaigu,85,52,50547
+200070282,CC Lavalette Tude Dronne,16,75,17477
+200070290,CC Coeur du Pays Haut,"54,55",44,23280
+200070308,CA Mâconnais Beaujolais Agglomération,"01,71","27,84",79589
+200070316,"CC Entre Arroux, Loire et Somme",71,27,21615
+200070324,CC du Territoire de Lunéville à Baccarat,54,44,40609
+200070332,CC des Savoir-Faire,"52,70","27,44",15054
+200070340,CC Haute Maurienne Vanoise,73,84,8435
+200070365,CC Corbières Salanque Méditerranée,"11,66",76,25195
+200070373,CC Loir-Lucé-Bercé,72,52,23207
+200070407,CA Agglo Pays d'Issoire,63,84,56681
+200070431,CC Saint-Marcellin Vercors Isère Communauté,38,84,45048
+200070449,CC Inter-Caux-Vexin,76,28,55948
+200070464,CC Coeur de Maurienne Arvan,73,84,14302
+200070506,CC Pays de Nexon Monts de Chalus,87,75,13133
+200070514,CA du Grand Cognac,16,75,69065
+200070530,CC du Grand Autunois Morvan,71,27,35106
+200070548,CC Brionnais Sud Bourgogne,71,27,14950
+200070555,CC de la Veyle,01,84,23254
+200070563,CC Terres Touloises,54,44,44293
+200070571,CC Coeur de Berry,18,24,6878
+200070589,CC de Seille et Grand Couronné,54,44,18955
+200070647,CA Bergeracoise,24,75,61551
+200070662,CC Bretagne Porte de Loire Communauté,35,53,32801
+200070670,CC du Pays de Dol et de la Baie du Mont Saint-Michel,35,53,23907
+200070688,CC Couesnon Marches de Bretagne,35,53,21947
+200070712,CC Thiers Dore et Montagne,63,84,36767
+200070720,CC Médoc Atlantique,33,75,28306
+200070738,CC Mad et Moselle,"54,57",44,19144
+200070746,CA Sarreguemines Confluences,"57,67",44,63122
+200070753,CA Riom Limagne et Volcans,63,84,68319
+200070761,CC Ambert Livradois Forez,63,84,27596
+200070779,CC Brie des Rivières et Châteaux,77,11,40561
+200070787,CC du Plateau de Lannemezan,65,76,17673
+200070795,CC du Pays de Trie et du Magnoac,65,76,6772
+200070803,CC des Coteaux du Val d'Arros,65,76,11143
+200070811,CC Pyrénées Vallées des Gaves,65,76,15144
+200070829,CC Neste Barousse,65,76,7354
+200070845,CC Orne Lorraine Confluences,54,44,52850
+200070852,CC Usses et Rhône,"01,74",84,21475
+200070894,CC de Gevrey-Chambertin et de Nuits-Saint-Georges,21,27,29589
+200070902,CC Auxonne Pontailler Val de Saône,21,27,23448
+200070910,CC Tille et Venelle,21,27,4933
+200070928,CC Terre de Picardie,80,32,17997
+200070936,CC Ponthieu-Marquenterre,80,32,32650
+200070944,CC du Vimeu,80,32,22234
+200070951,CC du Territoire Nord Picardie,80,32,30818
+200070969,CC Avre Luce Noye,80,32,21536
+200070977,CC du Grand Roye,80,32,25268
+200070985,CC de l'Est de la Somme,"02,80",32,19688
+200070993,CA de la Baie de Somme,80,32,47779
+200071017,CC des Terres d'Auxois,21,27,15602
+200071025,CC Haute-Provence - Pays de Banon,04,93,10059
+200071033,CC Jabron-Lure-Vançon-Durance,"04,26","84,93",5393
+200071041,CC du Chaourçois et du Val d'Armance,10,44,10293
+200071058,CC Les Avant-Monts,34,76,27969
+200071066,CA de Saint-Dié-des-Vosges,"54,88",44,72973
+200071074,CC Les Portes de l'Ile de France,78,11,23147
+200071082,CA Montluçon Communauté,03,84,59380
+200071116,CA ECLA  (Espace Communautaire Lons Agglomération),39,27,34210
+200071140,CA Moulins Communauté,"03,58","27,84",64246
+200071165,CA Les Sables d'Olonne Agglomération,85,52,58531
+200071173,CC du Pays Arnay Liernais,21,27,7000
+200071181,CC Somme Sud-Ouest,80,32,38045
+200071199,CC Plaine Limagne,63,84,21410
+200071207,CC de Pouilly-en-Auxois / Bligny-sur-Ouche,21,27,8777
+200071215,CC Chavanon Combrailles et Volcans,63,84,12657
+200071223,CC Nièvre et Somme,80,32,27719
+200071298,CC des Terres du Lauragais,31,76,42195
+200071314,CC des Hauts-Tolosans,31,76,35996
+200071363,CA Vichy Communauté,03,84,84566
+200071371,CC Bresse et Saône,01,84,25700
+200071389,CC Saint-Pourçain Sioule Limagne,03,84,33672
+200071405,CC Ardèche Rhône Coiron,07,84,23067
+200071413,CA Privas Centre Ardèche,07,84,44163
+200071454,CA Evreux Portes de Normandie,27,28,112285
+200071470,CC Entr'Allier Besbre et Loire,03,84,24322
+200071496,CC du Bocage Bourbonnais,03,84,13654
+200071504,CC des Collines du Perche Normand,61,28,11894
+200071512,CC Commentry Montmarault Néris Communauté,03,84,25346
+200071520,CC Domfront Tinchebray Interco,61,28,15782
+200071538,CC Terres de Bresse,71,27,22711
+200071546,CC Sud Retz Atlantique,44,52,25607
+200071553,CC Loire Layon Aubance,49,52,57176
+200071579,CC Bresse Louhannaise Intercom',71,27,28331
+200071587,CC Loches Sud Touraine,37,24,50822
+200071595,"CC Arbois, Poligny, Salins, Coeur du Jura",39,27,21429
+200071629,CC Challans-Gois Communauté,85,52,50705
+200071645,CC Saint Cyr Mère Boitier entre Charolais et Mâconnais,71,27,8058
+200071652,CC du Pays Fertois et du Bocage Carrougien,61,28,4822
+200071678,CA Cholet Agglomération,49,52,104711
+200071751,CA du Bassin de Bourg-en-Bresse,01,84,135794
+200071769,CC Picardie des Châteaux,02,32,16677
+200071777,"CC d'Arcis, Mailly, Ramerupt",10,44,11802
+200071785,CA Chauny Tergnier La Fère,02,32,54316
+200071819,CC du Périgord Nontronnais,24,75,15184
+200071827,CA du Grand Angoulême,16,75,142458
+200071843,CC du Vexin Normand,27,28,33174
+200071850,CC du Pithiverais-Gâtinais,45,24,25581
+200071868,CC des Vallées du Haut-Anjou,49,52,36469
+200071876,CA Saumur Val de Loire,49,52,98152
+200071884,CC Le Grand Charolais,"03,71","27,84",39454
+200071892,CA du Saint-Quentinois,02,32,79327
+200071900,CC Vendée Grand Littoral,85,52,36360
+200071918,CC du Pays de Saint-Fulgent - Les Essarts,85,52,29052
+200071926,CC du Limouxin,11,76,27873
+200071934,CC du Pays de Fontenay-Vendée,85,52,35727
+200071942,CC Haut Limousin en Marche,87,75,22394
+200071967,CC Pays d'Evian Vallée d'Abondance,74,84,42979
+200071983,CC Thiérache Sambre et Oise,02,32,16396
+200071991,CC Retz en Valois,02,32,28939
+200072007,CC Montagne d'Ardèche,07,84,4819
+200072015,CA Annonay Rhône Agglo,07,84,50326
+200072023,CC Coeur de Charente,16,75,22006
+200072031,CA de la Région de Château-Thierry,02,32,54077
+200072049,CC de Charente Limousine,16,75,35187
+200072056,CC Porte du Jura,39,27,10520
+200072064,CC Val-de-Cher-Controis,41,24,46974
+200072072,CA Territoires Vendômois,41,24,52136
+200072080,CC du Pays de Saint-Eloy,63,84,15464
+200072098,CC Combrailles Sioule et Morge,63,84,19861
+200072106,CC Adour Madiran,"64,65","75,76",23958
+200072130,CA du Pays de Meaux,77,11,110552
+200072304,CC Vallée de l'Ubaye - Serre-Ponçon,04,93,7620
+200072312,CA Seine Normandie Agglomération,27,28,82981
+200072320,CC Val de Gers,32,76,9783
+200072346,CA du Pays de Fontainebleau,77,11,69205
+200072452,CA Fougères Agglomération,35,53,56226
+200072460,"CA de Béthune-Bruay, Artois-Lys Romane",62,32,275736
+200072478,CC Pays d'Opale,62,32,25182
+200072544,CC des Deux Morin,77,11,26471
+200072635,CC Pyrénées Haut Garonnaises,31,76,15379
+200072643,CC Coeur et Coteaux du Comminges,31,76,44243
+200072650,CC Touraine Vallée de l'Indre,37,24,54651
+200072668,CC Touraine Val de Vienne,37,24,24681
+200072676,CC Maine Saosnois,"61,72","28,52",27476
+200072684,CC Le Gesnois Bilurien,72,52,30265
+200072692,CC des Vallées de la Braye et de l'Anille,72,52,14775
+200072700,CC Haute Sarthe Alpes Mancelles,72,52,22528
+200072718,CC de la Champagne Conlinoise et du Pays de Sillé,72,52,17914
+200072726,CC Châteaubriant-Derval,44,52,44697
+200072734,CC Estuaire et Sillon,44,52,41096
+200072825,CC Mirebellois et Fontenois,21,27,12549
+200072874,CC Val Briard,77,11,29261
+200072882,CC de Vie et Boulogne,85,52,46344
+200072981,CC Touraine Ouest Val de Loire,37,24,33284
+200072999,CC du Grand Langres,52,44,20701
+200073013,CC Carnelle Pays-de-France,95,11,33539
+200073096,CA Arche Agglo,"07,26",84,59079
+200073104,CC de l'Ile-Rousse - Balagne,2B,94,10982
+200073112,CC Sud Sarthe,72,52,22583
+200073120,CC Nebbiu - Conca d'Oro,2B,94,7783
+200073138,CC Pasquale Paoli,2B,94,6117
+200073146,CC Cagire Garonne Salat,31,76,17807
+200073161,CC Touraine-Est Vallées,37,24,41162
+200073237,CC de Gâtine-Racan,37,24,22444
+200073245,CC du Bassin d'Aubenas,07,84,40748
+200073252,CC de la Castagniccia-Casinca,2B,94,13304
+200073260,CC Sud Vendée Littoral,85,52,55649
+200073344,CA Rambouillet Territoires,78,11,79818
+200073393,CC des Rives du Haut Allier,43,84,16416
+200073401,CC Mézenc-Loire-Meygal,43,84,11429
+200073419,CA du Puy-en-Velay,43,84,82819
+200073427,CC Marches du Velay-Rochebaron,43,84,31339
+200077014,CA Vienne Condrieu,"38,69",84,94864
+200083392,CA Laval Agglomération,53,52,114872
+200084952,CU Le Havre Seine Métropole,76,28,266929
+200085728,CC Brioude Sud Auvergne,43,84,16706
+200085751,CC Entre Bièvre et Rhône,38,84,69968
+200089456,CA Seine-Eure,27,28,102892
+200090504,CA Coulommiers Pays de Brie,77,11,95640
+200090561,CC Vierzon-Sologne-Berry,18,24,38153
+200090579,CC Terre d'Émeraude Communauté,39,27,24295
+200090751,CA Grand Calais Terres et Mers,62,32,98913
+200093201,Métropole Européenne de Lille,59,32,1194040
+200096634,CC des Hautes Vosges,88,44,20854
+200096642,CC Gérardmer Hautes Vosges,88,44,13990
+200096675,CC Baud Communauté,56,53,16419
+200096683,CC Centre Morbihan Communauté,56,53,27003
+200096956,CA Agglomération d'Agen,47,75,101727
+240100610,CC de la Côtière à Montluel,01,84,25504
+240100750,CA du Pays de Gex,01,84,104770
+240100800,CC de Miribel et du Plateau,01,84,25161
+240100883,CC de la Plaine de l'Ain,01,84,82840
+240100891,CC Terre Valserhône (CCTV),01,84,21657
+240200444,CC de la Thiérache du Centre,02,32,25752
+240200469,CC du Pays de la Serre,02,32,14372
+240200477,CA GrandSoissons Agglomération,02,32,52447
+240200493,CC du Pays du Vermandois,02,32,30859
+240200501,CC du Val de l'Aisne,02,32,20284
+240200519,CC du Canton d'Oulchy-le-Château,02,32,5536
+240200576,CC de la Champagne Picarde,02,32,20858
+240200584,CC du Canton de Charly-sur-Marne,02,32,15339
+240200592,CC du Chemin des Dames,02,32,5501
+240200600,CC des Trois Rivières,02,32,20540
+240200634,CC des Portes de la Thiérache,02,32,6651
+240300491,CC du Pays de Lapalisse,03,84,8460
+240300558,CC du Pays de Tronçais,03,84,7431
+240300566,CC du Val de Cher,03,84,5461
+240300657,CC du Pays d'Huriel,03,84,7332
+240400440,CC Pays Forcalquier et Montagne de Lure,04,93,9996
+240500439,CC du Briançonnais,05,93,18947
+240500462,CC du Pays des Ecrins,05,93,6582
+240600551,CA de la Riviera Française,06,93,72316
+240600585,CA de Sophia Antipolis,06,93,183991
+240600593,CC du Pays des Paillons,06,93,21426
+240700302,CC du Pays Beaume-Drobie,07,84,9170
+240700617,CC Val de Ligne,07,84,6048
+240700716,CC du Val d'Ay,07,84,5879
+240700815,CC Berg et Coiron,07,84,7981
+240700864,CC du Rhône aux Gorges de l'Ardèche,07,84,19145
+240800821,"CC Ardenne, Rives de Meuse",08,44,25753
+240800847,CC des Portes du Luxembourg,08,44,19472
+240800862,CC des Crêtes Préardennaises,08,44,21654
+240800920,CC de l'Argonne Ardennaise,08,44,16486
+240900431,CC du Pays de Tarascon,09,76,8581
+240900464,CC du Pays d'Olmes,09,76,14774
+241000223,"CC Forêts, Lacs, Terres en Champagne",10,44,6811
+241000405,CC de la Région de Bar sur Aube,10,44,10543
+241000447,CC du Pays d'Othe,10,44,7548
+241000488,CC de l'Orvin et de l'Ardusson,10,44,8459
+241100593,CA Le Grand Narbonne,11,76,133006
+241200187,CA Rodez Agglomération,12,76,56303
+241200542,CC du Réquistanais,12,76,5187
+241200567,CC de Millau Grands Causses,"12,48",76,29374
+241200625,CC du Pays Rignacois,12,76,5579
+241200641,CC Conques-Marcillac,12,76,12143
+241200658,CC du Pays de Salars,12,76,8004
+241200674,CC du Plateau de Montbazens,12,76,6206
+241200765,CC de Lévézou Pareloup,12,76,5332
+241200807,CC Aveyron Bas Ségala Viaur,12,76,5573
+241200906,CC Larzac et Vallées,12,76,6730
+241200914,CC de la Muse et des Raspes du Tarn,12,76,5413
+241300375,CC Vallée des Baux-Alpilles (CC VBA),13,93,27706
+241300417,CA d'Arles-Crau-Camargue-Montagnette,13,93,84680
+241400415,CC Coeur Côte Fleurie,14,28,20687
+241400514,CC du Pays de Falaise,14,28,27374
+241400555,CC de Bayeux Intercom,14,28,29939
+241400860,CC Coeur de Nacre,14,28,24161
+241400878,CC Terre d'Auge,14,28,19801
+241500230,CA du Bassin d'Aurillac,15,84,54226
+241500255,CC du Pays Gentiane,15,84,6495
+241500271,CC du Pays de Mauriac,15,84,6552
+241501055,CC Sumène - Artense,15,84,8201
+241501089,CC Cère et Goul en Carladès,15,84,4997
+241501139,CC du Pays de Salers,15,84,8416
+241600303,CC du Rouillacais,16,75,9812
+241700434,CA de La Rochelle,17,75,181057
+241700459,CC de l'Ile de Ré,17,75,17891
+241700517,CC Coeur de Saintonge,17,75,17765
+241700624,CC de l'Ile d'Oléron,17,75,22518
+241700632,CC de Gémozac et de la Saintonge Viticole,17,75,14806
+241700640,CA Royan Atlantique,17,75,86221
+241700699,CC du Bassin de Marennes,17,75,15522
+241800374,CC la Septaine,18,24,10794
+241800424,CC le Dunois,18,24,7132
+241800432,CC les Trois Provinces,18,24,5025
+241800457,CC FerCher,18,24,11296
+241800507,CA Bourges Plus,18,24,102172
+241900133,CC de Ventadour - Egletons - Monédières,19,75,10212
+241927201,CA Tulle Agglo,19,75,43550
+241927243,CC du Pays d'Uzerche,19,75,10599
+242000354,CA de Bastia,2B,94,61920
+242000495,CC de l'Alta Rocca,2A,94,8795
+242000503,CC Celavu-Prunelli,2A,94,9246
+242010056,CA du Pays Ajaccien,2A,94,92766
+242010130,CC du Sartenais Valinco Taravo,2A,94,12351
+242020071,CC du Centre Corse,2B,94,10014
+242020105,CC de Calvi Balagne,2B,94,12638
+242100154,CC des Vallées de la Tille et de l'Ignon,21,27,13659
+242100410,Dijon Métropole,21,27,258630
+242101434,CC du Pays Châtillonnais,21,27,19533
+242101442,CC de Saulieu-Morvan,21,27,5227
+242101459,CC du Pays d'Alésia et de la Seine,21,27,7352
+242101491,CC du Montbardois,21,27,10144
+242101509,CC Rives de Saône,21,27,20587
+242200715,CC du Kreiz-Breizh (CCKB),22,53,18400
+242300135,CC du Pays Sostranien,23,75,10203
+242320000,CC de Bénévent Grand Bourg,23,75,6785
+242320109,CC du Pays Dunois,23,75,6979
+242400752,CC Périgord-Limousin,24,75,14078
+242400935,CC du Pays de Saint Aulaye,24,75,6688
+242401024,CC Isle-Loue-Auvézère en Périgord,24,75,13805
+242500320,CC Entre Doubs et Loue,25,27,8255
+242500338,CC du Grand Pontarlier,25,27,28580
+242500361,CU Grand Besançon Métropole,25,27,198387
+242504116,CC du Val de Morteau,25,27,21035
+242504181,CC des Portes du Haut-Doubs,25,27,26872
+242504355,CC du Plateau de Russey,25,27,7007
+242504371,CC du Pays de Sancey-Belleherbe,25,27,5520
+242504447,CC du Doubs Baumois,25,27,16135
+242504488,CC Altitude 800,25,27,6675
+242504496,CC du Plateau de Frasne et du Val de Drugeon,25,27,6356
+242600252,CC du Val de Drôme en Biovallée,26,84,31033
+242600492,CC Dieulefit-Bourdeaux,26,84,9592
+242600534,CC du Diois,26,84,12081
+242700276,CC du Pays de Conches,27,28,18141
+242700607,CC du Pays du Neubourg,27,28,22537
+242852465,CC du Bonnevalais,28,24,12203
+242900074,CC du Pays d'Iroise,29,53,50017
+242900314,Brest Métropole,29,53,213403
+242900553,CC du Pays des Abers,29,53,42029
+242900561,CC de Haute Cornouaille,29,53,14917
+242900629,CC Cap Sizun - Pointe du Raz,29,53,15313
+242900645,CC Douarnenez Communauté,29,53,18412
+242900660,CC du Pays Fouesnantais,29,53,29273
+242900694,CA Quimperlé Communauté,29,53,56977
+242900702,CC du Pays Bigouden Sud,29,53,38259
+242900710,CC du Haut Pays Bigouden,29,53,18622
+242900744,CC Poher Communauté,"22,29",53,15416
+242900751,CC du Pays de Landivisiau,29,53,33667
+242900769,CA Concarneau Cornouaille Agglomération,29,53,52012
+242900793,CC Communauté Lesneven Côte des Légendes,29,53,27619
+242900801,CA du Pays de Landerneau-Daoulas,29,53,49868
+242900835,CA Morlaix Communauté,29,53,65507
+243000270,CC du Pays Viganais,30,76,10025
+243000296,CC du Pays de Sommières,30,76,24802
+243000569,"CC Rhony, Vistre, Vidourle",30,76,28710
+243000585,CC Beaucaire Terre d'Argence,30,76,31587
+243000593,CC de Petite Camargue,30,76,28263
+243000643,CA de Nîmes Métropole,30,76,261624
+243000650,CC Terre de Camargue,30,76,20871
+243000684,CC du Pont du Gard,30,76,23624
+243100518,Toulouse Métropole,31,76,832348
+243100567,CC Aux sources du Canal du Midi,"11,31,81",76,21764
+243100633,CA du Sicoval,31,76,83758
+243100732,CC des Coteaux du Girou,31,76,23257
+243100773,CC Val'Aïgo,31,76,18513
+243100781,CC Le Grand Ouest Toulousain,31,76,49059
+243100815,CC des Coteaux Bellevue,31,76,21371
+243200391,CC de la Lomagne Gersoise,32,76,19309
+243200409,CC du Bas Armagnac,32,76,8714
+243200417,CC de la Tenarèze,32,76,14327
+243200425,CC Coeur d'Astarac en Gascogne,32,76,7720
+243200458,CC du Grand Armagnac,32,76,13441
+243200508,CC Bastides et Vallons du Gers,32,76,6969
+243200599,CC du Saves,32,76,9849
+243200607,CC Artagnan de Fezensac,32,76,6953
+243300316,Bordeaux Métropole,33,75,843738
+243300563,CA Bassin d'Arcachon Sud (COBAS),33,75,69892
+243300811,CC de l'Estuaire,33,75,16099
+243301165,CC Jalle-Eau-Bourde,33,75,32295
+243301181,CC Latitude Nord Gironde,33,75,21630
+243301215,CC du Créonnais,33,75,18263
+243301223,CC du Grand Cubzaguais,33,75,37566
+243301249,CC Les Rives de la Laurence,33,75,28873
+243301264,CC de Montesquieu,33,75,47276
+243301355,CC les Coteaux Bordelais,33,75,22075
+243301371,CC du Pays Foyen,"24,33",75,16540
+243301389,CC Médullienne,33,75,22484
+243301397,CC du Fronsadais,33,75,17712
+243301405,CC du Val de l'Eyre,33,75,22418
+243301439,CC des Portes de l'Entre-Deux-Mers,33,75,22414
+243301447,CC Médoc Estuaire,33,75,30654
+243301454,CC Castillon/Pujols,"24,33",75,19047
+243301504,CA du Bassin d'Arcachon Nord (COBAN),33,75,72703
+243400017,Montpellier Méditerranée Métropole,34,76,516657
+243400355,CC du Clermontais,34,76,28964
+243400470,CA du Pays de l'Or,34,76,45624
+243400488,CC la Domitienne,34,76,29221
+243400520,CA Lunel Agglo,34,76,51919
+243400694,CC Vallée de l'Hérault,34,76,41749
+243400736,CC des Cévennes Gangeoises et Suménoises,"30,34",76,12727
+243400769,CA de Béziers-Méditerranée,34,76,131383
+243400819,CA Hérault-Méditerranée,34,76,82000
+243500139,Rennes Métropole,35,53,473973
+243500550,CC Montfort Communauté,35,53,26422
+243500618,CC Brocéliande Communauté,35,53,18987
+243500634,CC Roche aux Fées Communauté,35,53,27025
+243500659,CC Pays de Châteaugiron Communauté,35,53,27986
+243500667,CC Val d'Ille-Aubigné,35,53,38971
+243500725,CC Côte d'Emeraude,"22,35",53,28799
+243500733,CC Bretagne Romantique,35,53,36515
+243500741,CA Redon Agglomération,"35,44,56","52,53",67121
+243500774,CC Liffré-Cormier Communauté,35,53,28241
+243500782,CA du Pays de Saint Malo Agglomération,35,53,86484
+243600202,CC Chabris - Pays de Bazelle,36,24,6185
+243600236,CC du Pays d'Issoudun,"18,36",24,18778
+243600293,CC Levroux Boischaut Champagne,36,24,6162
+243600301,CC Val de l'Indre - Brenne,36,24,13242
+243600319,CC Brenne - Val de Creuse,36,24,17565
+243600327,CA Châteauroux Métropole,36,24,72566
+243600343,CC Coeur de Brenne,36,24,4659
+243600350,CC de la Châtre et Sainte-Sévère,36,24,16134
+243700499,CC du Castelrenaudais,37,24,16011
+243700754,Tours Métropole Val de Loire,37,24,299019
+243700820,CC Autour de Chenonceaux Bléré-Val de Cher,37,24,21948
+243800604,CA Porte de l'Isère (CAPI),38,84,111450
+243800745,CC de l'Oisans,38,84,10172
+243800935,CC Lyon-Saint-Exupéry en Dauphiné,38,84,29944
+243800984,CA du Pays Voironnais,38,84,96688
+243801024,CC du Massif du Vercors,38,84,11997
+243801073,CC de Bièvre Est,38,84,23032
+243801255,CC Collines Isère Nord Communauté,38,84,25455
+243900354,CC de la Station des Rousses-Haut Jura,39,27,7300
+243900420,CC du Val d'Amour,39,27,9054
+243900479,CC Haut-Jura Arcade Communauté,39,27,9097
+243900560,CC Jura Nord,39,27,11804
+243900610,CC la Grandvallière,39,27,5406
+243901089,CC de la Plaine Jurassienne,39,27,9077
+244000543,CC de Mimizan,40,75,12927
+244000659,CC du Seignanx,40,75,29658
+244000675,CA du Grand Dax,40,75,58036
+244000691,CC du Pays Morcenais,40,75,9434
+244000766,CC du Pays Tarusate,40,75,18074
+244000774,CC du Pays de Villeneuve en Armagnac Landais,40,75,6249
+244000808,CA Mont de Marsan Agglomération,40,75,56042
+244000824,CC du Pays Grenadois,40,75,7713
+244000857,CC Côte Landes Nature,40,75,12672
+244000865,CC Maremne Adour Côte Sud,40,75,71315
+244000873,CC des Grands Lacs,40,75,32874
+244000881,CC Coteaux et Vallées des Luys,40,75,7647
+244100293,CC des Collines du Perche,41,24,5885
+244100780,CC de la Sologne des Etangs,41,24,8651
+244100798,CC du Grand Chambord,41,24,20640
+244100806,CC de la Sologne des Rivières,41,24,10404
+244200614,CC des Vals d'Aix et Isable,42,84,5943
+244200622,CC des Monts du Pilat,42,84,15463
+244200630,CC du Pays Entre Loire et Rhône,42,84,14105
+244200770,Saint-Étienne Métropole,42,84,407700
+244200820,CC du Pays d'Urfé,42,84,5104
+244200895,CC du Pilat Rhodanien,42,84,16953
+244300307,CC Haut Pays du Velay,43,84,8025
+244301016,CC des Sucs,43,84,18332
+244301099,CC Auzon Communauté,43,84,9348
+244301107,CC du Haut Lignon,43,84,8151
+244301123,CC des Pays de Cayres et de Pradelles,43,84,5148
+244301131,CC Loire et Semène,43,84,20448
+244400404,Nantes Métropole,44,52,683981
+244400438,CC Grand Lieu Communauté,44,52,42037
+244400453,CC du Pays de Blain,44,52,16858
+244400503,CC d'Erdre et Gesvres,44,52,68096
+244400537,CC de Nozay,44,52,16406
+244400552,CC du Pays d'Ancenis,"44,49",52,69666
+244400586,CC du Sud Estuaire,44,52,31126
+244400610,CA de la Presqu'île de Guérande Atlantique (Cap Atlantique),"44,56","52,53",77687
+244400644,CA de la Région Nazairienne et de l'Estuaire (CARENE),44,52,131317
+244500203,CA Montargoise et Rives du Loing (AME),45,24,62989
+244500211,CC Giennoises,45,24,24145
+244500419,CC des Quatre Vallées,45,24,17270
+244500427,CC des Loges,45,24,43246
+244500468,Orléans Métropole,45,24,293673
+244500484,CC de la Forêt,45,24,17601
+244500542,CC de la Plaine du Nord Loiret,45,24,6719
+244600433,CC de la Vallée du Lot et du Vignoble,46,76,14516
+244600482,CC Quercy - Bouriane,46,76,10247
+244600532,CC du Pays de Lalbenque-Limogne,46,76,8886
+244600573,CC du Causse de Labastide Murat,46,76,3915
+244700449,CC du Pays de Duras,47,75,5730
+244700464,CC du Pays de Lauzun,47,75,10362
+244701355,CC des Coteaux et Landes de Gascogne,47,75,12590
+244701405,CC Lot et Tolzac,47,75,7426
+244800405,CC Coeur de Lozère,48,76,15635
+244800470,CC du Gévaudan,48,76,9658
+244900015,CU Angers Loire Métropole,49,52,308806
+244900809,CC Anjou Bleu Communauté,49,52,34526
+244900882,CC Baugeois Vallée,49,52,34608
+245100615,CC de la Grande Vallée de la Marne,51,44,14171
+245100888,CC de la Brie Champenoise,51,44,7533
+245100979,CC du Sud Marnais,51,44,5834
+245200597,CC des Trois Forêts,52,44,7295
+245300223,CC du Pays de Meslay-Grez,53,52,13832
+245300355,CC de l'Ernée,53,52,20342
+245300389,CC du Bocage Mayennais,53,52,18256
+245300447,CC du Pays de Château-Gontier,53,52,29934
+245400171,CC Moselle et Madon,54,44,28192
+245400189,CC des Pays du Sel et du Vermois,54,44,28698
+245400262,CA Grand Longwy Agglomération,54,44,63645
+245400510,CC du Pays de Colombey et du Sud Toulois,"54,88",44,11235
+245400601,CC du Bassin de Pompey,54,44,39626
+245400676,Métropole du Grand Nancy,54,44,258208
+245400759,CC du Pays du Sanon,54,44,5795
+245500327,CC du Sammiellois,55,44,8219
+245501176,CC du Territoire de Fresnes-en-Woëvre,55,44,4801
+245501184,CC du Pays de Revigny-sur-Ornain,55,44,6821
+245501242,CC du Pays d'Étain,55,44,7443
+245501259,CC du Pays de Montmédy,55,44,6860
+245600440,CC Blavet Bellevue Océan,56,53,18567
+245600465,CC de Belle Ile en Mer,56,53,5594
+245614383,CC Questembert Communauté,56,53,24396
+245614417,CC Roi Morvan Communauté,56,53,25059
+245614433,CC Pontivy Communauté,"22,56",53,46032
+245700133,CC du District Urbain de Faulquemont (DUF),57,44,24038
+245700372,CA de Forbach Porte de France,57,44,75399
+245700398,CC de Freyming-Merlebach,57,44,31361
+245700695,CC de Cattenom et Environs,57,44,27687
+245700950,CC du Pays de Phalsbourg,57,44,17096
+245701164,CC du Warndt,57,44,17369
+245701206,CC du Saulnois,57,44,28102
+245701222,CA du Val de Fensch,57,44,70898
+245701271,CC du Pays Orne Moselle,57,44,52783
+245701354,CC de l'Arc Mosellan,57,44,35812
+245701362,CA Portes de France-Thionville,57,44,84449
+245701404,CC du Pays Haut Val d'Alzette,"54,57",44,29465
+245801063,CC Loire et Allier,58,27,4978
+245804406,CA de Nevers,58,27,67408
+245804497,CC du Nivernais Bourbonnais,58,27,5176
+245900428,CU de Dunkerque,59,32,192635
+245900758,CC Flandre Lys,"59,62",32,40142
+245901038,CC du Pays Solesmois,59,32,14568
+245901152,CA Coeur d'Ostrevent,59,32,70247
+245901160,CA Valenciennes Métropole,59,32,191885
+246000129,CC du Liancourtois,60,32,23878
+246000376,CC du Clermontois,60,32,37784
+246000566,CC du Plateau Picard,60,32,29684
+246000582,CC des Sablons,60,32,38502
+246000707,CC du Vexin-Thelle,60,32,20561
+246000749,CC des Lisières de l'Oise,60,32,15940
+246000756,CC du Pays Noyonnais,60,32,31879
+246000764,CC de l'Aire Cantilienne,60,32,44820
+246000772,CC des Deux Vallées,60,32,22569
+246000848,CC de la Picardie Verte,60,32,32134
+246000855,CC du Pays des Sources,60,32,22141
+246000871,CC du Pays de Valois,60,32,55394
+246000897,CC de la Plaine d'Estrées,60,32,18167
+246000913,CC du Pays de Bray,60,32,18144
+246000921,CC des Pays d'Oise et d'Halatte,60,32,34438
+246100390,CC du Val d'Orne,61,28,5618
+246100663,CU d'Alençon,"61,72","28,52",55405
+246200299,CA d'Hénin-Carvin,62,32,126133
+246200364,CA de Lens - Liévin,62,32,242591
+246200380,CC de la Terre des Deux Caps,62,32,22375
+246200729,CA du Boulonnais,62,32,112463
+246200844,CC de la Région d'Audruicq,62,32,28187
+246201016,CC du Pays de Lumbres,62,32,24135
+246300701,Clermont Auvergne Métropole,63,84,296677
+246300966,CC du Massif du Sancy,"15,63",84,9576
+246301097,CC Entre Dore et Allier,63,84,19687
+246400337,CC de la Vallée d'Ossau,64,75,9728
+246401756,CC Pays de Nay,"64,65","75,76",28877
+246500482,CC de la Haute-Bigorre,65,76,16510
+246500573,CC Aure Louron,65,76,6961
+246600282,CC Sud-Roussillon,66,76,25386
+246600373,CC du Vallespir,66,76,20490
+246600399,CC Pyrénées Cerdagne,66,76,8709
+246600415,CC Roussillon-Conflent,66,76,17036
+246600423,CC Agly Fenouillèdes,66,76,6284
+246600449,CC des Aspres,66,76,22955
+246600464,CC Pyrénées Catalanes,66,76,5951
+246600548,CC du Haut Vallespir,66,76,9814
+246700306,CC de la Vallée de la Bruche,67,44,20517
+246700488,Eurométropole de Strasbourg,67,44,517386
+246700744,CC des Portes de Rosheim,67,44,18395
+246700777,CC de la Vallée de Villé,67,44,10771
+246700843,CC de la Basse-Zorn,67,44,17802
+246700926,CC du Pays de Wissembourg,67,44,15749
+246700959,CC du Pays de la Zorn,67,44,16195
+246700967,CC de Sélestat,67,44,37404
+246701064,CC de la Région de Molsheim-Mutzig,67,44,40929
+246701080,CC du Pays de Sainte-Odile,67,44,19552
+246701098,CC du Pays de Niederbronn-les-Bains,67,44,23291
+246800205,CC de la Vallée de Saint-Amarin,68,44,11976
+246800395,CC du Val d'Argent,68,44,9133
+246800445,CC du Centre du Haut-Rhin,68,44,16348
+246800494,"CC du Pays de Rouffach, Vignobles et Châteaux",68,44,12891
+246800551,CC de la Vallée de Kaysersberg,68,44,16043
+246800569,CC de la Région de Guebwiller,68,44,38172
+246800577,CC du Pays de Ribeauvillé,68,44,18133
+246800585,CC de la Vallée de Munster,68,44,16258
+246800676,CC de la Vallée de la Doller et du Soultzbach,68,44,15914
+246800726,CA Colmar Agglomération,68,44,113600
+246900575,CC de l'Est Lyonnais (CCEL),69,84,42457
+246900625,CC du Pays de l'Arbresle (CCPA),69,84,38945
+246900724,CC des Vallons du Lyonnais (CCVL),69,84,32088
+246900740,CC du Pays Mornantais (COPAMO),69,84,29758
+246900757,CC de la Vallée du Garon (CCVG),69,84,32435
+246900765,CC du Pays de l'Ozon,69,84,27623
+247000011,CA de Vesoul,70,27,32339
+247000367,CC des Combes,70,27,7541
+247000623,CC des Quatre Rivières,70,27,9437
+247000664,CC du Pays de Lure,70,27,19128
+247000698,CC des Monts de Gy,70,27,6143
+247000706,CC du Pays Riolais,70,27,13266
+247000714,CC du Pays de Villersexel,"25,70",27,7726
+247000722,CC du Pays d'Héricourt,"25,70",27,20925
+247000755,CC du Pays de Luxeuil,70,27,14856
+247000821,CC Rahin et Chérimont,70,27,11627
+247000854,CC des 1000 étangs,70,27,8471
+247100290,CU Le Creusot Montceau-les-Mines,71,27,90474
+247100589,CA Le Grand Chalon,71,27,113440
+247100639,CC de Marcigny,71,27,5999
+247100647,CC Bresse Nord Intercom',71,27,6544
+247103765,CC Entre Saône et Grosne,71,27,11101
+247103864,CC de Semur en Brionnais,71,27,5206
+247104094,CC Sud Côte Chalonnaise,71,27,11540
+247200090,CC du Pays Sabolien,"53,72",52,28326
+247200132,CU Le Mans Métropole,72,52,209651
+247200348,CC du Pays Fléchois,72,52,27049
+247200421,CC du Sud Est Manceau,72,52,17929
+247200447,CC Orée de Bercé - Belinois,72,52,19472
+247200629,CC du Val de Sarthe,72,52,30404
+247200686,CC du Pays de l'Huisne Sarthoise,72,52,28362
+247300015,CC des Vallées d'Aigueblanche,73,84,7069
+247300254,CC de Haute-Tarentaise,73,84,15557
+247300262,CC de Yenne,73,84,7416
+247300361,CC du Canton de La Chambre,73,84,7389
+247300452,CC Maurienne Galibier,73,84,5399
+247300528,CC Val Guiers,73,84,12493
+247300668,CC du Lac d'Aiguebelette (CCLA),73,84,6312
+247300676,CC Porte de Maurienne,73,84,7104
+247300817,CC Les Versants d'Aime,73,84,9677
+247400047,CC de la Vallée Verte,74,84,8424
+247400112,CC du Pays de Cruseilles,74,84,17208
+247400567,CC Fier et Usses,74,84,16252
+247400583,CC Arve et Salève,74,84,20437
+247400617,CC des Vallées de Thônes,74,84,18737
+247400666,CC des Quatre Rivières,74,84,20046
+247400682,CC du Haut Chablais,74,84,12864
+247400690,CC du Genevois,74,84,49025
+247400724,CC du Pays Rochois,74,84,29529
+247400740,CC Rumilly Terre de Savoie,74,84,33198
+247400773,CC des Sources du Lac d'Annecy,74,84,15338
+247600505,CC Campagne-de-Caux,76,28,15021
+247600588,CC des Villes Soeurs,"76,80","28,32",35612
+247600604,CC de Londinières,76,28,5192
+247600620,CC Yvetot Normandie,76,28,26348
+247600646,CC Caux - Austreberthe,76,28,25137
+247600729,CC Falaises du Talou,76,28,23553
+247600786,CA de la Région Dieppoise,76,28,46229
+247700032,CC Moret Seine et Loing,77,11,39247
+247700057,CA Melun Val de Seine,77,11,139112
+247700065,CC du Pays de l'Ourcq,77,11,17365
+247700107,CC Pays de Montereau,77,11,45085
+247700339,CA Val d'Europe Agglomération,77,11,53598
+247700594,CA Marne et Gondoire,77,11,110064
+247700644,CC l'Orée de la Brie,"77,91",11,28829
+247700701,CC Brie Nangissienne,77,11,28330
+247800550,CC du Pays Houdanais (CCPH),"28,78","11,24",30287
+247800584,CA Versailles Grand Parc (CAVGP),"78,91",11,268563
+247800618,CC Coeur d'Yvelines,78,11,51560
+247900798,CC du Thouarsais,79,75,35369
+248000499,CC du Val de Somme,80,32,26501
+248000531,CA Amiens Métropole,80,32,182854
+248000747,CC du Pays du Coquelicot,80,32,27909
+248100158,CC du Sor et de l'Agout,81,76,23206
+248100430,CA de Castres Mazamet,81,76,78974
+248100497,CC Val 81,81,76,5559
+248100737,CA de l'Albigeois (C2A),81,76,84183
+248100745,CC Thoré Montagne Noire,81,76,5057
+248200016,CC des Deux Rives,"32,47,82","75,76",19013
+248200057,CC du Quercy Caussadais,82,76,20434
+248200065,CC de la Lomagne Tarn-et-Garonnaise,82,76,10003
+248200099,CA Grand Montauban,82,76,81397
+248200107,CC du Quercy Rouergue et des Gorges de l'Aveyron,"81,82",76,7848
+248300394,CA Sud Sainte Baume,83,93,65199
+248300410,CC de la Vallée du Gapeau,83,93,32961
+248300493,CA Dracénie Provence Verdon Agglomération,83,93,113515
+248300543,Métropole Toulon-Provence-Méditerranée,83,93,449782
+248300550,CC Coeur du Var,83,93,45824
+248400053,CA Ventoux-Comtat-Venaissin (COVE),84,93,72174
+248400160,CC Aygues-Ouvèze en Provence (CCAOP),84,93,20252
+248400236,CC Pays d'Orange en Provence,84,93,45401
+248400251,CA du Grand Avignon (COGA),"30,84","76,93",198133
+248400285,CC Territoriale Sud-Luberon,84,93,25719
+248400293,CA des Sorgues du Comtat,84,93,51024
+248400319,CC du Pays des Sorgues et des Monts de Vaucluse,84,93,34163
+248400335,CC Vaison Ventoux,"26,84","84,93",16792
+248500191,CC de l'Ile de Noirmoutier,85,52,9270
+248500258,CC Océan Marais de Monts,85,52,20203
+248500340,CC Pays de Chantonnay,85,52,23216
+248500415,CC du Pays de la Châtaigneraie,85,52,15605
+248500464,CC du Pays de Pouzauges,85,52,23242
+248500530,CC du Pays des Achards,85,52,20174
+248500563,"CC Vendée, Sèvre, Autise",85,52,16191
+248500589,CA La Roche-sur-Yon - Agglomération,85,52,98488
+248500621,CC du Pays des Herbiers,85,52,30742
+248500662,CC du Pays de Mortagne,85,52,28234
+248600413,CA Grand Châtellerault,86,75,82964
+248600447,CC du Pays Loudunais,86,75,24352
+248700189,CC du Pays de Saint Yrieix,"19,87",75,12161
+248719262,CC Gartempe - Saint Pardoux,87,75,5115
+248719288,CC du Val de Vienne,87,75,16305
+248719312,CU Limoges Métropole,87,75,207147
+248719338,CC Briance-Combade,87,75,5380
+248719353,CC des Portes de Vassivière,87,75,5698
+248719361,CC de Noblat,87,75,11745
+248900334,CA du Grand Sénonais,89,27,59911
+248900383,CC de l'Agglomération Migennoise,89,27,14353
+248900524,CC de l'Aillantais en Bourgogne,89,27,10116
+248900664,CC de la Vanne et du Pays d'Othe,89,27,8609
+248900748,CC du Gâtinais en Bourgogne,89,27,17619
+248900896,CC Yonne Nord,89,27,24434
+248900938,CC du Jovinien,89,27,20500
+249000241,CC du Sud Territoire,90,27,23585
+249100074,CC du Pays de Limours (CCPL),91,11,27290
+249100157,CC des 2 Vallées,91,11,18701
+249100546,CC du Val d'Essonne (CCVE),91,11,62746
+249100553,CC Entre Juine et Renarde (CCEJR),91,11,27947
+249100595,CC le Dourdannais en Hurepoix (CCDH),91,11,26697
+249500109,CA de Cergy-Pontoise,"78,95",11,217763
+249500430,CC Sausseron Impressionnistes,95,11,19049
+249500455,CC de la Vallée de l'Oise et des Trois Forêts,95,11,39681
+249500489,CC du Haut Val d'Oise,95,11,40950
+249500513,CC du Vexin-Val de Seine,95,11,16545
+200018653,CA CAP Excellence,971,01,97558
+200027548,CC des Savanes,973,03,29113
+200041507,CA La Riviéra du Levant,971,01,66218
+200041788,CA du Pays Nord Martinique,972,02,95658
+200044691,CA du Nord Grande Terre,971,01,56792
+200050532,CC de Petite-Terre,976,06,29273
+200059871,CC du Centre-Ouest,976,06,50020
+200060457,CA de Dembeni / Mamoudzou,976,06,87285
+200060465,CA du Grand Nord de Mayotte,976,06,59042
+200060473,CC du Sud,976,06,30898
+249710047,CC de Marie-Galante,971,01,10422
+249710062,CA du Nord Basse-Terre,971,01,77475
+249710070,CA Grand Sud Caraïbe,971,01,75104
+249720053,CA de l'Espace Sud de la Martinique,972,02,115038
+249720061,CA du Centre de la Martinique,972,02,150323
+249730037,CC de l'Ouest Guyanais,973,03,98344
+249730045,CA du Centre Littoral,973,03,152190
+249730052,CC de l'Est Guyanais,973,03,8735
+249740077,CA CIVIS (Communauté Intercommunale des Villes Solidaires),974,04,183641
+249740085,CA du Sud,974,04,133164
+249740093,CA Intercommunale de la Réunion Est (CIREST),974,04,128965
+249740101,CA Territoire de la Côte Ouest (TCO),974,04,218990
+249740119,CA Intercommunale du Nord de la Réunion (CINOR),974,04,216588
