@@ -154,8 +154,6 @@ class ETL_OPEN_DATA_CANTEEN(etl.CANTEENS, OPEN_DATA):
             "active_on_ma_cantine",
             "department_lib",
             "region_lib",
-            "epci",
-            "epci_lib",
             "declaration_donnees_2021",
             "declaration_donnees_2022",
             "declaration_donnees_2023",
