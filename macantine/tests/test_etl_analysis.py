@@ -27,7 +27,14 @@ class TestETLAnalysisCanteen(TestCase):
         schema = json.load(open("data/schemas/export_metabase/schema_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
         canteen_1 = CanteenFactory(
-            name="Cantine", siret="11007001800012", city_insee_code="29021", department="29", region="53", sectors=[1]
+            name="Cantine",
+            siret="11007001800012",
+            city_insee_code="29021",
+            department="29",
+            department_lib="Finistère",
+            region="53",
+            region_lib="Bretagne",
+            sectors=[1],
         )
         etl.extract_dataset()
         etl.transform_dataset()

@@ -3,9 +3,7 @@ import logging
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
-from data.department_choices import get_lib_department_from_code
 from data.models import Canteen, CanteenImage, Diagnostic, Sector
-from data.region_choices import get_lib_region_from_code
 
 from .diagnostic import (
     ApproDiagnosticSerializer,
@@ -121,7 +119,9 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "epci",
             "epci_lib",
             "department",
+            "department_lib",
             "region",
+            "region_lib",
             "sectors",
             "daily_meal_count",
             "production_type",
@@ -163,7 +163,9 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "epci",
             "epci_lib",
             "department",
+            "department_lib",
             "region",
+            "region_lib",
             "sectors",
             "daily_meal_count",
             "production_type",
@@ -209,7 +211,9 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
             "epci",
             "epci_lib",
             "department",
+            "department_lib",
             "region",
+            "region_lib",
             "sectors",
             "daily_meal_count",
             "yearly_meal_count",
@@ -274,7 +278,11 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 
         read_only_fields = (
             "id",
+            "epci",
+            "epci_lib",
+            "department_lib",
             "region",
+            "region_lib",
             "managers",
             "manager_invitations",
             "publication_status",
@@ -296,7 +304,9 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "epci",
             "epci_lib",
             "department",
+            "department_lib",
             "region",
+            "region_lib",
             "sectors",
             "central_kitchen_diagnostics",
             "line_ministry",
@@ -418,7 +428,9 @@ class CanteenSummarySerializer(serializers.ModelSerializer):
             "epci",
             "epci_lib",
             "department",
+            "department_lib",
             "region",
+            "region_lib",
             "sectors",
             "daily_meal_count",
             "yearly_meal_count",
@@ -503,7 +515,9 @@ class CanteenActionsSerializer(serializers.ModelSerializer):
             "epci",
             "epci_lib",
             "department",
+            "department_lib",
             "region",
+            "region_lib",
             "sectors",  # M2M
             "line_ministry",
             "daily_meal_count",
@@ -565,7 +579,9 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
             # "epci",
             # "epci_lib",
             "department",
+            # "department_lib",
             "region",
+            # "region_lib",
             "sectors",
             "line_ministry",
             "daily_meal_count",
@@ -623,8 +639,6 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
     libelle_commune = serializers.SerializerMethodField()
     departement = serializers.SerializerMethodField()
     departement_lib = serializers.SerializerMethodField()
-    region = serializers.SerializerMethodField()
-    region_lib = serializers.SerializerMethodField()
     nbre_repas_jour = serializers.SerializerMethodField()
     nbre_repas_an = serializers.SerializerMethodField()
     modele_economique = serializers.SerializerMethodField()
@@ -685,13 +699,7 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
         return obj.department
 
     def get_departement_lib(self, obj):
-        return get_lib_department_from_code(obj.department)
-
-    def get_region(self, obj):
-        return obj.region
-
-    def get_region_lib(self, obj):
-        return get_lib_region_from_code(obj.region)
+        return obj.department_lib
 
     def get_date_creation(self, obj):
         return obj.creation_date.strftime('"%Y-%m-%d"')

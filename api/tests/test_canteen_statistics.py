@@ -225,12 +225,12 @@ class TestCanteenStatsApi(APITestCase):
         """
         Test that the right subset of regions and departments 'in use' by canteens are returned
         """
-        CanteenFactory.create(department=Department.aisne)
-        CanteenFactory.create(department=Department.ain)
+        CanteenFactory.create(department=Department.aisne, department_lib=Department.aisne.label)
+        CanteenFactory.create(department=Department.ain, department_lib=Department.ain.label)
         # set region directly
-        CanteenFactory.create(region=Region.guadeloupe, department=None)
+        CanteenFactory.create(region=Region.guadeloupe, region_lib=Region.guadeloupe.label, department=None)
         # create extra to check that list returned doesn't contain duplicates
-        CanteenFactory.create(department=Department.aisne)
+        CanteenFactory.create(department=Department.aisne, department_lib=Department.aisne.label)
         CanteenFactory.create(department="999")  # not a department, checking None on region
         CanteenFactory.create(region="", department="")  # checking exlusion of blank strings
 

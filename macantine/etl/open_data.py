@@ -152,8 +152,6 @@ class ETL_OPEN_DATA_CANTEEN(etl.CANTEENS, OPEN_DATA):
         self.canteens_col_from_db = all_canteens_col
         for col_processed in [
             "active_on_ma_cantine",
-            "department_lib",
-            "region_lib",
             "declaration_donnees_2021",
             "declaration_donnees_2022",
             "declaration_donnees_2023",
