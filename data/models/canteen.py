@@ -18,6 +18,7 @@ from data.utils import (
     CreationSource,
     get_diagnostic_lower_limit_year,
     get_diagnostic_upper_limit_year,
+    get_region,
     optimize_image,
 )
 from macantine.utils import is_in_correction, is_in_teledeclaration
@@ -528,6 +529,8 @@ class Canteen(SoftDeletionModel):
         max_image_size = 1024
         if self.logo:
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
+        if self.department:
+            self.region = self._get_region()
         super(Canteen, self).save(force_insert, force_update, using, update_fields)
 
     @property
@@ -658,6 +661,9 @@ class Canteen(SoftDeletionModel):
         self.diversification_comments = data.get("diversification_comments")
         self.plastics_comments = data.get("plastics_comments")
         self.information_comments = data.get("information_comments")
+
+    def _get_region(self):
+        return get_region(self.department)
 
     @cached_property
     def appro_diagnostics(self):
