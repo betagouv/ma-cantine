@@ -19,6 +19,7 @@ from common.api.adresse import fetch_geo_data_from_code_csv
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from common.utils import siret as utils_siret
 from data.models import Canteen, User
+from macantine.etl.utils import fetch_epci_name, map_epcis_code_name
 
 from .celery import app
 from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS
@@ -233,6 +234,14 @@ def _get_candidate_canteens_for_siret_geobot():
     return Canteen.objects.filter(siret__isnull=False).has_city_insee_code_missing().order_by("-creation_date")
 
 
+def _get_candidate_canteens_for_libelle_geobot():
+    return Canteen.objects.filter(
+        Q(department__isnull=False, department_lib__isnull=True)
+        | Q(region__isnull=False, region_lib__isnull=True)
+        | Q(epci__isnull=False, epci_lib__isnull=True)
+    ).order_by("-creation_date")
+
+
 def _fill_from_api_response(response, canteens):
     for row in csv.reader(response.splitlines()):
         if row[0] == "id":
@@ -334,6 +343,46 @@ def fill_missing_geolocation_data_using_insee_code_or_postcode():
             logger.info(f"INSEE Geolocation Bot error: Unexpected exception\n{e}")
 
     logger.info(f"INSEE Geolocation Bot: Fixed {counter}/{candidate_canteens.count()} canteens")
+
+
+@app.task()
+def fill_missing_geolocation_libelle_data():
+    """
+    Input: Canteens with department or region or epci, but no _lib equivalent
+    Processing: use our internal geo mappings
+    Output: Fill canteen's department_lib, region_lib & epci_lib fields
+    """
+    candidate_canteens = _get_candidate_canteens_for_libelle_geobot()
+    logger.info(f"Libellé Geolocation Bot: about to fix {candidate_canteens.count()} canteens")
+    counter = 0
+
+    if len(candidate_canteens) == 0:
+        logger.info("No candidate canteens have been found. Nothing to do here...")
+        return
+
+    # fetch all the EPCI via API
+    epcis_names = map_epcis_code_name()
+
+    for i, canteen in enumerate(candidate_canteens):
+        update = False
+        if canteen.department and not canteen.department_lib:
+            canteen.department_lib = canteen.get_department_display()
+            if canteen.department_lib:
+                update = True
+        if canteen.region and not canteen.region_lib:
+            canteen.region_lib = canteen.get_region_display()
+            if canteen.region_lib:
+                update = True
+        if canteen.epci and not canteen.epci_lib:
+            canteen.epci_lib = fetch_epci_name(canteen.epci, epcis_names)
+            if canteen.epci_lib:
+                update = True
+        if update:
+            canteen.save()
+            update_change_reason(canteen, "Données de localisation MAJ par bot, via mapping des libellés")
+            counter += 1
+
+    logger.info(f"Libellé Geolocation Bot: Fixed {counter}/{candidate_canteens.count()} canteens")
 
 
 @app.task()

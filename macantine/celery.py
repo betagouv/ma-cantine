@@ -23,6 +23,7 @@ app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend="django-db", in
 app.config_from_object(dict(worker_hijack_root_logger=False, result_extended=True))
 
 hourly = crontab(hour="*", minute=0, day_of_week="*")  # Every hour
+hourly_5 = crontab(hour="*", minute="5", day_of_week="*")  # Every hour at 5 minutes past
 midnights = crontab(hour=0, minute=0, day_of_week="*")  # Every day at midnight
 daily_week = crontab(hour=10, minute=0, day_of_week="1-5")  # Monday to Friday 10AM
 nightly = crontab(hour=4, minute=0, day_of_week="*")  # Every day at 4AM
@@ -50,6 +51,10 @@ app.conf.beat_schedule = {
     "fill_missing_geolocation_data_using_siret": {
         "task": "macantine.tasks.fill_missing_geolocation_data_using_siret",
         "schedule": hourly,
+    },
+    "fill_missing_geolocation_libelle_data": {
+        "task": "macantine.tasks.fill_missing_geolocation_libelle_data",
+        "schedule": hourly_5,
     },
     "delete_old_historical_records": {
         "task": "macantine.tasks.delete_old_historical_records",
