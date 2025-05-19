@@ -5,6 +5,7 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Q
 from PIL import ExifTags
 from PIL import Image as Img
 
@@ -14,6 +15,10 @@ class CreationSource(models.TextChoices):
     API = "API", "API"
     IMPORT = "IMPORT", "IMPORT"
     ADMIN = "ADMIN", "ADMIN"
+
+
+def has_charfield_missing_query(field_name):
+    return Q(**{f"{field_name}__isnull": True}) | Q(**{f"{field_name}": ""})
 
 
 def _needs_rotation(pillow_image):

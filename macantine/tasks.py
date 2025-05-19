@@ -19,6 +19,7 @@ from common.api.adresse import fetch_geo_data_from_code_csv
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from common.utils import siret as utils_siret
 from data.models import Canteen, User
+from data.utils import has_charfield_missing_query
 
 from .celery import app
 from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS
@@ -220,7 +221,12 @@ def _get_location_csv_string(canteens):
 def _get_candidate_canteens_for_insee_code_geobot():
     return (
         Canteen.objects.has_city_insee_code()
-        .filter(Q(city=None) | Q(postal_code=None) | Q(department=None) | Q(region=None))
+        .filter(
+            has_charfield_missing_query("city")
+            | has_charfield_missing_query("postal_code")
+            | has_charfield_missing_query("department")
+            | has_charfield_missing_query("region")
+        )
         .filter(geolocation_bot_attempts__lt=20)
         .annotate(city_insee_code_len=Length("city_insee_code"))
         .filter(city_insee_code_len=5)
@@ -229,7 +235,7 @@ def _get_candidate_canteens_for_insee_code_geobot():
 
 
 def _get_candidate_canteens_for_siret_geobot():
-    return Canteen.objects.filter(siret__isnull=False).has_city_insee_code_missing().order_by("-creation_date")
+    return Canteen.objects.has_siret().has_city_insee_code_missing().order_by("-creation_date")
 
 
 def _fill_from_api_response(response, canteens):
