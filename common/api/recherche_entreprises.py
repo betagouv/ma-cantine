@@ -67,9 +67,9 @@ def fetch_geo_data_from_siren(siren, response):
                 response["cityInseeCode"] = etablissement["commune"]
                 response["postalCode"] = etablissement["code_postal"]
                 response["city"] = etablissement["libelle_commune"]
+                response["epci"] = etablissement["epci"]
                 response["department"] = etablissement["departement"]
                 response["region"] = etablissement["region"]
-                response["epci"] = etablissement["epci"]
                 return response
             except KeyError as e:
                 logger.error(
@@ -117,9 +117,9 @@ def fetch_geo_data_from_siret(siret, response):
                 response["cityInseeCode"] = etablissement["commune"]
                 response["postalCode"] = etablissement["code_postal"]
                 response["city"] = etablissement["libelle_commune"]
+                response["epci"] = etablissement["epci"]
                 # response["department"] = etablissement["departement"]  # not in response
                 response["region"] = etablissement["region"]
-                response["epci"] = etablissement["epci"]
                 return response
             except KeyError as e:
                 logger.error(
