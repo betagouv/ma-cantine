@@ -24,7 +24,6 @@ from data.models import (
     ManagerInvitation,
 )
 from data.models.teledeclaration import Teledeclaration
-from data.region_choices import Region
 from data.utils import CreationSource
 
 from .utils import authenticate
@@ -113,7 +112,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.city_insee_code, "00000")
         self.assertEqual(canteen.city, "Ma ville")
         self.assertEqual(canteen.department, Department.ain)
-        self.assertEqual(canteen.region, Region.auvergne_rhone_alpes)
+        self.assertEqual(canteen.region, None)  # geo bot will fill it later
         canteen = Canteen.objects.get(siret="73282932000074")
         self.assertEqual(canteen.postal_code, "11111")
         # Given both a city code and postcode, use citycode only to find location
