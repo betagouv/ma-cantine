@@ -31,21 +31,20 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
         communes_infos = macantine.etl.utils.map_communes_infos()
 
         if "campagne_td" in self.dataset_name:
-            # Get department and region as most of TD doesnt have this info
+            # Get canteen geo data as most of TD don't have this info
             self.df["canteen_department"] = self.df["canteen_city_insee_code"].apply(
                 lambda x: macantine.etl.utils.fetch_commune_detail(x, communes_infos, "department")
             )
             self.df["canteen_region"] = self.df["canteen_city_insee_code"].apply(
                 lambda x: macantine.etl.utils.fetch_commune_detail(x, communes_infos, "region")
             )
-            self.df["canteen_epci"] = self.df["canteen_city_insee_code"].apply(
+            self.df["canteen_epci"] = self.df["canteen_epci"].apply(
                 lambda x: macantine.etl.utils.fetch_commune_detail(x, communes_infos, "epci")
             )
-
-        epcis_names = macantine.etl.utils.map_epcis_code_name()
-        self.df[prefix + "epci_lib"] = self.df[prefix + "epci"].apply(
-            lambda x: macantine.etl.utils.fetch_epci_name(x, epcis_names)
-        )
+            epcis_names = macantine.etl.utils.map_epcis_code_name()
+            self.df["canteen_epci_lib"] = self.df["canteen_epci"].apply(
+                lambda x: macantine.etl.utils.fetch_epci_name(x, epcis_names)
+            )
 
         logger.info("Start filling geo_name")
         self.fill_geo_names(prefix)

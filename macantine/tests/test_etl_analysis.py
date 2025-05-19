@@ -30,7 +30,8 @@ class TestETLAnalysisCanteen(TestCase):
             name="Cantine",
             siret="11007001800012",
             city_insee_code="29021",
-            epci="242900793",
+            epci="200040715",
+            epci_lib="Grenoble-Alpes-Métropole",
             department="29",
             department_lib="Finistère",
             region="53",
@@ -53,7 +54,8 @@ class TestETLAnalysisCanteen(TestCase):
 
         # Check the generated columns
         first_canteen = canteens[canteens.id == canteen_1.id].iloc[0]
-        self.assertEqual(first_canteen["epci"], "242900793")
+        self.assertEqual(first_canteen["epci"], "200040715")
+        self.assertEqual(first_canteen["epci_lib"], "Grenoble-Alpes-Métropole")
         self.assertEqual(first_canteen["departement"], "29")
         self.assertEqual(first_canteen["departement_lib"], "Finistère")
         self.assertEqual(first_canteen["region"], "53")
