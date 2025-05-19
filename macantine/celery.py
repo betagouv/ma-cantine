@@ -23,11 +23,12 @@ app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend="django-db", in
 app.config_from_object(dict(worker_hijack_root_logger=False, result_extended=True))
 
 hourly = crontab(hour="*", minute=0, day_of_week="*")  # Every hour
-hourly_5 = crontab(hour="*", minute="5", day_of_week="*")  # Every hour at 5 minutes past
 midnights = crontab(hour=0, minute=0, day_of_week="*")  # Every day at midnight
 daily_week = crontab(hour=10, minute=0, day_of_week="1-5")  # Monday to Friday 10AM
-nightly = crontab(hour=4, minute=0, day_of_week="*")  # Every day at 4AM
-nightly_week = crontab(hour=3, minute=0, day_of_week="1-5")  # Monday to Friday 3AM
+nightly_2 = crontab(hour=2, minute=0, day_of_week="*")  # Every day at 2AM
+nightly_2_10 = crontab(hour=2, minute=10, day_of_week="*")  # Every day at 2:10AM
+nightly_3_week = crontab(hour=3, minute=0, day_of_week="1-5")  # Monday to Friday 3AM
+nightly_4 = crontab(hour=4, minute=0, day_of_week="*")  # Every day at 4AM
 weekly = crontab(hour=4, minute=0, day_of_week=6)  # Saturday 4AM
 every_minute = crontab(minute="*/1")  # For testing purposes
 
@@ -44,25 +45,25 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.no_diagnostic_first_reminder",
         "schedule": daily_week,
     },
-    "fill_missing_geolocation_data_using_insee_code_or_postcode": {
-        "task": "macantine.tasks.fill_missing_geolocation_data_using_insee_code_or_postcode",
-        "schedule": nightly,
-    },
     "fill_missing_geolocation_data_using_siret": {
         "task": "macantine.tasks.fill_missing_geolocation_data_using_siret",
         "schedule": hourly,
     },
+    "fill_missing_geolocation_data_using_insee_code_or_postcode": {
+        "task": "macantine.tasks.fill_missing_geolocation_data_using_insee_code_or_postcode",
+        "schedule": nightly_2,
+    },
     "fill_missing_geolocation_libelle_data": {
         "task": "macantine.tasks.fill_missing_geolocation_libelle_data",
-        "schedule": hourly_5,
+        "schedule": nightly_2_10,
     },
     "delete_old_historical_records": {
         "task": "macantine.tasks.delete_old_historical_records",
-        "schedule": nightly,
+        "schedule": nightly_4,
     },
     "export_datasets": {
         "task": "macantine.tasks.continous_datasets_export",
-        "schedule": nightly_week,
+        "schedule": nightly_3_week,
     },
     "update_brevo_contacts": {
         "task": "macantine.tasks.update_brevo_contacts",
