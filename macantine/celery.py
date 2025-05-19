@@ -26,6 +26,7 @@ hourly = crontab(hour="*", minute=0, day_of_week="*")  # Every hour
 midnights = crontab(hour=0, minute=0, day_of_week="*")  # Every day at midnight
 daily_week = crontab(hour=10, minute=0, day_of_week="1-5")  # Monday to Friday 10AM
 nightly_2 = crontab(hour=2, minute=0, day_of_week="*")  # Every day at 2AM
+nightly_2_5 = crontab(hour=2, minute=5, day_of_week="*")  # Every day at 2:05AM
 nightly_2_10 = crontab(hour=2, minute=10, day_of_week="*")  # Every day at 2:10AM
 nightly_3_week = crontab(hour=3, minute=0, day_of_week="1-5")  # Monday to Friday 3AM
 nightly_4 = crontab(hour=4, minute=0, day_of_week="*")  # Every day at 4AM
@@ -52,6 +53,10 @@ app.conf.beat_schedule = {
     "fill_missing_geolocation_data_using_insee_code_or_postcode": {
         "task": "macantine.tasks.fill_missing_geolocation_data_using_insee_code_or_postcode",
         "schedule": nightly_2,
+    },
+    "fill_missing_geolocation_epci_data_using_insee_code": {
+        "task": "macantine.tasks.fill_missing_geolocation_epci_data_using_insee_code",
+        "schedule": nightly_2_5,
     },
     "fill_missing_geolocation_libelle_data": {
         "task": "macantine.tasks.fill_missing_geolocation_libelle_data",

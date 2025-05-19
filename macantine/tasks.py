@@ -19,7 +19,12 @@ from common.api.adresse import fetch_geo_data_from_code_csv
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from common.utils import siret as utils_siret
 from data.models import Canteen, User
-from macantine.etl.utils import fetch_epci_name, map_epcis_code_name
+from macantine.etl.utils import (
+    fetch_commune_detail,
+    fetch_epci_name,
+    map_communes_infos,
+    map_epcis_code_name,
+)
 
 from .celery import app
 from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS
@@ -234,6 +239,14 @@ def _get_candidate_canteens_for_siret_geobot():
     return Canteen.objects.filter(siret__isnull=False).has_city_insee_code_missing().order_by("-creation_date")
 
 
+def _get_candidate_canteens_for_epci_geobot():
+    return (
+        Canteen.objects.has_postal_code_or_city_insee_code()
+        .filter(Q(epci=None) | Q(epci=""))
+        .order_by("-creation_date")
+    )
+
+
 def _get_candidate_canteens_for_libelle_geobot():
     return Canteen.objects.filter(
         Q(department__isnull=False, department_lib__isnull=True)
@@ -267,8 +280,6 @@ def _update_canteen_geo_data(canteen, response):
             canteen.city_insee_code = response["cityInseeCode"]
             canteen.postal_code = response["postalCode"]
             canteen.city = response["city"]
-            if "epci" in response.keys():
-                canteen.epci = response["epci"]
             canteen.save()
             update_change_reason(canteen, "Données de localisation MAJ par bot, via SIRET")
             logger.info(f"Canteen info has been updated. Canteen name : {canteen.name}")
@@ -282,7 +293,7 @@ def fill_missing_geolocation_data_using_siret():
     """
     Input: Canteens with siret but no city_insee_code
     Processing: API Recherche Entreprises
-    Output: Fill canteen's city_insee_code, postal_code, city & epci fields
+    Output: Fill canteen's city_insee_code, postal_code & city fields
     """
     candidate_canteens = _get_candidate_canteens_for_siret_geobot()
     logger.info(f"Siret Geolocation Bot: about to fix {candidate_canteens.count()} canteens")
@@ -346,6 +357,35 @@ def fill_missing_geolocation_data_using_insee_code_or_postcode():
 
 
 @app.task()
+def fill_missing_geolocation_epci_data_using_insee_code():
+    """
+    Input: Canteens with city_insee_code, but no epci
+    Processing: API Découpage Administratif
+    Output: Fill canteen's epci field (if found)
+    """
+    candidate_canteens = _get_candidate_canteens_for_epci_geobot()
+    logger.info(f"EPCI Geolocation Bot: about to fix {candidate_canteens.count()} canteens")
+    counter = 0
+
+    if len(candidate_canteens) == 0:
+        logger.info("No candidate canteens have been found. Nothing to do here...")
+        return
+
+    # fetch all the communes and their corrsponding epci via API
+    communes_details = map_communes_infos()
+
+    for i, canteen in enumerate(candidate_canteens):
+        if not canteen.epci:
+            canteen.epci = fetch_commune_detail(canteen.city_insee_code, communes_details, "epci")
+            if canteen.epci:
+                canteen.save()
+                update_change_reason(canteen, "Données de localisation (epci) MAJ par bot, via code INSEE")
+                counter += 1
+
+    logger.info(f"EPCI Geolocation Bot: Fixed {counter}/{candidate_canteens.count()} canteens")
+
+
+@app.task()
 def fill_missing_geolocation_libelle_data():
     """
     Input: Canteens with department or region or epci, but no _lib equivalent
@@ -360,7 +400,7 @@ def fill_missing_geolocation_libelle_data():
         logger.info("No candidate canteens have been found. Nothing to do here...")
         return
 
-    # fetch all the EPCI via API
+    # fetch all the epci via API
     epcis_names = map_epcis_code_name()
 
     for i, canteen in enumerate(candidate_canteens):
