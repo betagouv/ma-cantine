@@ -23,12 +23,14 @@ class TestETLOpenData(TestCase):
         cls.canteen_manager = UserFactory.create()
         cls.canteen = CanteenFactory.create(
             name="Cantine",
-            siret="11007001800012",
-            city_insee_code="29021",
+            siret="19382111300027",
+            city_insee_code="38185",
             epci="200040715",
             epci_lib="Grenoble-Alpes-Métropole",
-            department="75",
-            region="11",
+            department="38",
+            department_lib="Isère",
+            region="84",
+            region_lib="Auvergne-Rhône-Alpes",
             sectors=[SectorFactory(name="School", category=Sector.Categories.EDUCATION)],
             line_ministry=Canteen.Ministries.AGRICULTURE,
             managers=[cls.canteen_manager],
@@ -156,12 +158,12 @@ class TestETLOpenData(TestCase):
 
         mock.get(
             "https://geo.api.gouv.fr/communes",
-            text=json.dumps([{"code": "29021", "codeEpci": "242900793"}]),
+            text=json.dumps([{"code": "38185", "codeEpci": "200040715"}]),
             status_code=200,
         )
         mock.get(
             "https://geo.api.gouv.fr/epcis/?fields=nom",
-            text=json.dumps([{"nom": "CC Communauté Lesneven Côte des Légendes", "code": "242900793"}]),
+            text=json.dumps([{"nom": "Grenoble-Alpes-Métropole", "code": "200040715"}]),
             status_code=200,
         )
 
@@ -175,12 +177,12 @@ class TestETLOpenData(TestCase):
         self.assertEqual(len(canteens.columns), len(schema_cols), "The columns should match the schema.")
 
         # Checking that the geo data has been fetched from the city insee code
-        self.assertEqual(canteens[canteens.id == self.canteen.id].iloc[0]["epci"], "242900793")
+        self.assertEqual(canteens[canteens.id == self.canteen.id].iloc[0]["epci"], "200040715")
 
         # Check that the names of the region and departments are fetched from the code
         self.assertEqual(
             canteens[canteens.id == self.canteen.id].iloc[0]["epci_lib"],
-            "CC Communauté Lesneven Côte des Légendes",
+            "Grenoble-Alpes-Métropole",
         )
 
         # Check that the choice fields have been transformed
