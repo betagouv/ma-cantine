@@ -64,6 +64,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "city_insee_code",
         "postal_code",
         "epci",
+        "epci_lib",
         "department",
         "region",
         "daily_meal_count",
@@ -93,6 +94,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     )
     readonly_fields = (
         "epci",
+        "epci_lib",
         "region",
         "creation_date",
         "creation_source",
