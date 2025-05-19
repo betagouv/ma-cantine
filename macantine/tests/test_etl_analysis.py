@@ -28,12 +28,14 @@ class TestETLAnalysisCanteen(TestCase):
         schema_cols = [i["name"] for i in schema["fields"]]
         canteen_1 = CanteenFactory(
             name="Cantine",
-            siret="11007001800012",
-            city_insee_code="29021",
-            department="29",
-            department_lib="Finistère",
-            region="53",
-            region_lib="Bretagne",
+            siret="19382111300027",
+            city_insee_code="38185",
+            epci="200040715",
+            epci_lib="Grenoble-Alpes-Métropole",
+            department="38",
+            department_lib="Isère",
+            region="84",
+            region_lib="Auvergne-Rhône-Alpes",
             sectors=[1],
         )
         etl.extract_dataset()
@@ -52,8 +54,12 @@ class TestETLAnalysisCanteen(TestCase):
 
         # Check the generated columns
         first_canteen = canteens[canteens.id == canteen_1.id].iloc[0]
-        self.assertEqual(first_canteen["departement_lib"], "Finistère")
-        self.assertEqual(first_canteen["region_lib"], "Bretagne")
+        self.assertEqual(first_canteen["epci"], "200040715")
+        self.assertEqual(first_canteen["epci_lib"], "Grenoble-Alpes-Métropole")
+        self.assertEqual(first_canteen["departement"], "38")
+        self.assertEqual(first_canteen["departement_lib"], "Isère")
+        self.assertEqual(first_canteen["region"], "84")
+        self.assertEqual(first_canteen["region_lib"], "Auvergne-Rhône-Alpes")
         self.assertEqual(first_canteen["secteur"], "Sector factory")
         self.assertEqual(first_canteen["spe"], "Non")
 
