@@ -44,6 +44,10 @@ def has_siret_or_siren_unite_legale_query():
     return has_siret_query | has_siren_unite_legale_query
 
 
+def has_city_insee_code_query():
+    return Q(city_insee_code__isnull=False) & ~Q(city_insee_code="")
+
+
 def is_serving_query():
     return Q(
         production_type__in=[
@@ -174,11 +178,11 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def has_siret_or_siren_unite_legale(self):
         return self.filter(has_siret_or_siren_unite_legale_query())
 
-    def has_postal_code_or_city_insee_code(self):
-        return self.filter(Q(postal_code__isnull=False) | Q(city_insee_code__isnull=False))
+    def has_city_insee_code(self):
+        return self.filter(has_city_insee_code_query())
 
     def has_city_insee_code_missing(self):
-        return self.filter(Q(city_insee_code__isnull=True) | Q(city_insee_code=""))
+        return self.exclude(has_city_insee_code_query())
 
     def has_missing_data(self):
         return self.annotate_with_requires_line_ministry().filter(has_missing_data_query())
@@ -280,8 +284,8 @@ class CanteenManager(SoftDeletionManager):
     def annotate_with_td_for_year(self, year):
         return self.get_queryset().annotate_with_td_for_year(year)
 
-    def has_postal_code_or_city_insee_code(self):
-        return self.get_queryset().has_postal_code_or_city_insee_code()
+    def has_city_insee_code(self):
+        return self.get_queryset().has_city_insee_code()
 
     def has_city_insee_code_missing(self):
         return self.get_queryset().has_city_insee_code_missing()

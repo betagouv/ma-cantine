@@ -43,8 +43,8 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.no_diagnostic_first_reminder",
         "schedule": daily_week,
     },
-    "fill_missing_geolocation_data_using_insee_code_or_postcode": {
-        "task": "macantine.tasks.fill_missing_geolocation_data_using_insee_code_or_postcode",
+    "fill_missing_geolocation_data_using_insee_code": {
+        "task": "macantine.tasks.fill_missing_geolocation_data_using_insee_code",
         "schedule": nightly,
     },
     "fill_missing_geolocation_data_using_siret": {
