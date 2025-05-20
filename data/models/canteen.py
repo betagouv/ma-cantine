@@ -19,6 +19,7 @@ from data.utils import (
     get_diagnostic_lower_limit_year,
     get_diagnostic_upper_limit_year,
     get_region,
+    has_charfield_missing_query,
     optimize_image,
 )
 from macantine.utils import is_in_correction, is_in_teledeclaration
@@ -39,13 +40,9 @@ def list_properties(queryset, property):
 
 
 def has_siret_or_siren_unite_legale_query():
-    has_siret_query = Q(siret__isnull=False) & ~Q(siret="")
-    has_siren_unite_legale_query = Q(siren_unite_legale__isnull=False) & ~Q(siren_unite_legale="")
+    has_siret_query = ~has_charfield_missing_query("siret")
+    has_siren_unite_legale_query = ~has_charfield_missing_query("siren_unite_legale")
     return has_siret_query | has_siren_unite_legale_query
-
-
-def has_city_insee_code_query():
-    return Q(city_insee_code__isnull=False) & ~Q(city_insee_code="")
 
 
 def is_serving_query():
@@ -70,8 +67,7 @@ def has_missing_data_query():
     return (
         # basic rules
         Q(name=None)
-        | Q(city_insee_code=None)
-        | Q(city_insee_code="")
+        | has_charfield_missing_query("city_insee_code")
         | Q(yearly_meal_count=None)
         | Q(~has_siret_or_siren_unite_legale_query())
         | Q(production_type=None)
@@ -80,7 +76,7 @@ def has_missing_data_query():
         # serving-specific rules
         | Q(is_serving_query()) & (Q(daily_meal_count=None) | Q(daily_meal_count=0))
         # satellite-specific rules
-        | (is_satellite_query() & (Q(central_producer_siret=None) | Q(central_producer_siret="")))
+        | (is_satellite_query() & has_charfield_missing_query("central_producer_siret"))
         | (is_satellite_query() & Q(central_producer_siret=F("siret")))
         # cc-specific rules
         | (is_central_cuisine_query() & (Q(satellite_canteens_count=None) | Q(satellite_canteens_count=0)))
@@ -175,14 +171,17 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         )
         return self.annotate(requires_line_ministry=Exists(has_sector_requiring_line_ministry))
 
+    def has_siret(self):
+        return self.exclude(has_charfield_missing_query("siret"))
+
     def has_siret_or_siren_unite_legale(self):
         return self.filter(has_siret_or_siren_unite_legale_query())
 
     def has_city_insee_code(self):
-        return self.filter(has_city_insee_code_query())
+        return self.exclude(has_charfield_missing_query("city_insee_code"))
 
     def has_city_insee_code_missing(self):
-        return self.exclude(has_city_insee_code_query())
+        return self.filter(has_charfield_missing_query("city_insee_code"))
 
     def has_missing_data(self):
         return self.annotate_with_requires_line_ministry().filter(has_missing_data_query())
@@ -283,6 +282,9 @@ class CanteenManager(SoftDeletionManager):
 
     def annotate_with_td_for_year(self, year):
         return self.get_queryset().annotate_with_td_for_year(year)
+
+    def has_siret(self):
+        return self.get_queryset().has_siret()
 
     def has_city_insee_code(self):
         return self.get_queryset().has_city_insee_code()
