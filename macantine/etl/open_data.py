@@ -9,6 +9,7 @@ from django.core.files.storage import default_storage
 from django.db.models import Q
 
 import macantine.etl.utils
+from common.api.decoupage_administratif import map_communes_infos, map_epcis_code_name
 from data.models import Canteen
 from macantine.etl import etl
 from macantine.etl.etl import logger
@@ -28,7 +29,7 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
 
     def transform_canteen_geo_data(self, prefix=""):
         logger.info("Start fetching communes details")
-        communes_infos = macantine.etl.utils.map_communes_infos()
+        communes_infos = map_communes_infos()
 
         if "campagne_td" in self.dataset_name:
             # Get canteen geo data as most of TD don't have this info
@@ -41,7 +42,7 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
             self.df["canteen_epci"] = self.df["canteen_epci"].apply(
                 lambda x: macantine.etl.utils.fetch_commune_detail(x, communes_infos, "epci")
             )
-            epcis_names = macantine.etl.utils.map_epcis_code_name()
+            epcis_names = map_epcis_code_name()
             self.df["canteen_epci_lib"] = self.df["canteen_epci"].apply(
                 lambda x: macantine.etl.utils.fetch_epci_name(x, epcis_names)
             )

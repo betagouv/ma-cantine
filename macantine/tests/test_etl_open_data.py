@@ -7,13 +7,14 @@ from django.core.files.storage import default_storage
 from django.test import TestCase, override_settings
 from freezegun import freeze_time
 
+from common.api.decoupage_administratif import map_communes_infos
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import Canteen, Sector, Teledeclaration
 from macantine.etl.open_data import (
     ETL_OPEN_DATA_CANTEEN,
     ETL_OPEN_DATA_TELEDECLARATIONS,
 )
-from macantine.etl.utils import map_communes_infos, update_datagouv_resources
+from macantine.etl.utils import update_datagouv_resources
 
 
 @requests_mock.Mocker()

@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import requests
 
-from common.api.decoupage_administratif import fetch_communes, fetch_epcis
 from data.models import Sector, Teledeclaration
 from data.models.sector import SECTEURS_SPE
 
@@ -62,40 +61,6 @@ def update_datagouv_resources():
         logger.exception(e)
     except Exception as e:
         logger.exception(e)
-
-
-def map_communes_infos():
-    """
-    Create a dict that maps cities with their EPCI code
-    """
-    commune_details = {}
-    try:
-        logger.info("Starting communes dl")
-        communes = fetch_communes()
-        for commune in communes:
-            commune_details[commune["code"]] = {}
-            if "codeDepartement" in commune.keys():
-                commune_details[commune["code"]]["department"] = commune["codeDepartement"]
-            if "codeRegion" in commune.keys():
-                commune_details[commune["code"]]["region"] = commune["codeRegion"]
-            if "codeEpci" in commune.keys():
-                commune_details[commune["code"]]["epci"] = commune["codeEpci"]
-    except requests.exceptions.HTTPError as e:
-        logger.info(e)
-        return None
-    return commune_details
-
-
-def map_epcis_code_name():
-    try:
-        epci_names = {}
-        epcis = fetch_epcis()
-        for epci in epcis:
-            epci_names[epci["code"]] = epci["nom"]
-        return epci_names
-    except requests.exceptions.HTTPError as e:
-        logger.info(e)
-        return {}
 
 
 def map_canteens_td(year):
