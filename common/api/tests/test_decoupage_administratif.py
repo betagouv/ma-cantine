@@ -6,6 +6,7 @@ import requests_mock
 from common.api.decoupage_administratif import (
     DECOUPAGE_ADMINISTRATIF_API_URL,
     map_communes_infos,
+    map_epcis_code_name,
 )
 
 
@@ -49,3 +50,18 @@ class TestDecoupageAdministratifAPI(unittest.TestCase):
         self.assertEqual(communes_details["01001"]["epci"], "200069193")
         self.assertEqual(communes_details["01002"]["city"], "L'Abergement-de-Varey")
         self.assertIsNone(communes_details["01002"]["epci"])  # Not all cities are part of an EPCI
+
+    def test_map_epcis_code_name(self, mock):
+        mock.get(
+            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom",
+            text=json.dumps(
+                [
+                    {"nom": "CC Faucigny - Glières", "code": "200000172"},
+                    {"nom": "CC du Pays de Pontchâteau St-Gildas-des-Bois", "code": "200000438"},
+                ]
+            ),
+        )
+        epci_names = map_epcis_code_name()
+        self.assertEqual(len(epci_names), 2)
+        self.assertEqual(epci_names["200000172"], "CC Faucigny - Glières")
+        self.assertEqual(epci_names["200000438"], "CC du Pays de Pontchâteau St-Gildas-des-Bois")

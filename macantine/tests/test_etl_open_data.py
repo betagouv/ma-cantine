@@ -74,7 +74,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis?fields=nom",
             text=json.dumps(""),
             status_code=200,
         )
@@ -162,7 +162,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis?fields=nom",
             text=json.dumps([{"nom": "Grenoble-Alpes-Métropole", "code": "200040715"}]),
             status_code=200,
         )
@@ -197,7 +197,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis?fields=nom",
             text=json.dumps(""),
             status_code=200,
         )
@@ -224,7 +224,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis?fields=nom",
             text=json.dumps(""),
             status_code=200,
         )
@@ -258,7 +258,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis?fields=nom",
             text=json.dumps(""),
             status_code=200,
         )
