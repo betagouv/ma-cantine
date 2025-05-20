@@ -1,13 +1,10 @@
-import csv
 import datetime
 import logging
 import time
 
 import redis as r
-import requests
 from django.conf import settings
 from django.core.management import call_command
-from django.core.paginator import Paginator
 from django.db.models import F, Q
 from django.db.models.functions import Length
 from django.utils import timezone
@@ -15,7 +12,7 @@ from sib_api_v3_sdk.rest import ApiException
 
 import macantine.brevo as brevo
 from api.views.utils import update_change_reason
-from common.api.adresse import fetch_geo_data_from_code_csv
+from common.api.decoupage_administratif import map_communes_infos, map_epcis_code_name
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from common.utils import siret as utils_siret
 from data.models import Canteen, User
@@ -225,7 +222,11 @@ def _get_candidate_canteens_for_insee_code_geobot():
             has_charfield_missing_query("city")
             | has_charfield_missing_query("postal_code")
             | has_charfield_missing_query("department")
+            | has_charfield_missing_query("department_lib")
             | has_charfield_missing_query("region")
+            | has_charfield_missing_query("region_lib")
+            | has_charfield_missing_query("epci")
+            | has_charfield_missing_query("epci_lib")
         )
         .filter(geolocation_bot_attempts__lt=20)
         .annotate(city_insee_code_len=Length("city_insee_code"))
@@ -238,33 +239,12 @@ def _get_candidate_canteens_for_siret_geobot():
     return Canteen.objects.has_siret().has_city_insee_code_missing().order_by("-creation_date")
 
 
-def _fill_from_api_response(response, canteens):
-    for row in csv.reader(response.splitlines()):
-        if row[0] == "id":
-            continue
-        if row[5] != "":  # city found, so rest of data is found
-            id = int(row[0])
-            canteen = next(filter(lambda x: x.id == id, canteens), None)
-            if not canteen:
-                logger.info(f"INSEE Geolocation Bot - response row, ID not found: {id}")
-                continue
-
-            canteen.postal_code = row[4]
-            canteen.city = row[5]
-            canteen.department = row[6].split(",")[0]  # e.g. "80, Somme, Hauts-de-France"
-            # canteen.region will be filled in the save() method
-            canteen.save()
-            update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
-
-
-def _update_canteen_geo_data(canteen, response):
+def _update_canteen_geo_data_from_siret(canteen, response):
     try:
         if "cityInseeCode" in response.keys():
             canteen.city_insee_code = response["cityInseeCode"]
             canteen.postal_code = response["postalCode"]
             canteen.city = response["city"]
-            if "epci" in response.keys():
-                canteen.epci = response["epci"]
             canteen.save()
             update_change_reason(canteen, "Données de localisation MAJ par bot, via SIRET")
             logger.info(f"Canteen info has been updated. Canteen name : {canteen.name}")
@@ -278,7 +258,7 @@ def fill_missing_geolocation_data_using_siret():
     """
     Input: Canteens with siret but no city_insee_code
     Processing: API Recherche Entreprises
-    Output: Fill canteen's city_insee_code, postal_code, city & epci fields
+    Output: Fill canteen's city_insee_code, postal_code & city fields
     """
     candidate_canteens = _get_candidate_canteens_for_siret_geobot()
     logger.info(f"Siret Geolocation Bot: about to fix {candidate_canteens.count()} canteens")
@@ -293,7 +273,7 @@ def fill_missing_geolocation_data_using_siret():
             response = {}
             response = fetch_geo_data_from_siret(canteen.siret, response)
             if response:
-                _update_canteen_geo_data(canteen, response)
+                _update_canteen_geo_data_from_siret(canteen, response)
                 counter += 1
         # time.sleeps to avoid API rate limit
         if i > 1 and i % 7 == 0:
@@ -307,36 +287,54 @@ def fill_missing_geolocation_data_using_siret():
 
 
 @app.task()
-def fill_missing_geolocation_data_using_insee_code():
+def fill_missing_geolocation_data_using_insee_code():  # noqa C901
     """
-    Input: Canteens with city_insee_code, but no postal_code or city or department or region
-    Processing: API Adresse (via csv batch)
-    Output: Fill canteen's postal_code, city, department & region fields
+    Input: Canteens with city_insee_code, but no postal_code or city or epci or department or region
+    Processing: API Découpage Administratif
+    Output: Fill canteen's postal_code, city, epci, department & region fields
     """
     candidate_canteens = _get_candidate_canteens_for_insee_code_geobot()
     candidate_canteens.update(geolocation_bot_attempts=F("geolocation_bot_attempts") + 1)
-    paginator = Paginator(candidate_canteens, 70)
     logger.info(f"INSEE Geolocation Bot: about to fix {candidate_canteens.count()} canteens")
     counter = 0
 
-    # Carry out the CSV
-    for page_number in paginator:
-        canteens = paginator.get_page(page_number).object_list
-        if len(canteens) == 0:
-            continue
-        try:
-            location_csv_string = _get_location_csv_string(canteens)
-            response = fetch_geo_data_from_code_csv(location_csv_string, timeout=60)
-            _fill_from_api_response(response, canteens)
+    if len(candidate_canteens) == 0:
+        logger.info("No candidate canteens have been found. Nothing to do here...")
+        return
+
+    # fetch geo data from API Découpage Administratif
+    communes_details = map_communes_infos()
+    epcis_names = map_epcis_code_name()
+
+    for i, canteen in enumerate(candidate_canteens):
+        update = False
+        if not canteen.postal_code:
+            canteen.postal_code = communes_details[canteen.city_insee_code]["postal_code_list"][0]
+            update = True
+        if not canteen.city:
+            canteen.city = communes_details[canteen.city_insee_code]["city"]
+            update = True
+        if not canteen.epci:
+            canteen.epci = communes_details[canteen.city_insee_code]["epci"]
+        if canteen.epci and not canteen.epci_lib and canteen.epci in epcis_names:
+            canteen.epci_lib = epcis_names[canteen.epci]
+            update = True
+        if not canteen.department:
+            canteen.department = communes_details[canteen.city_insee_code]["department"]
+            update = True
+        if canteen.department and not canteen.department_lib:
+            canteen.department_lib = canteen.get_department_display()
+            update = True
+        if not canteen.region:
+            canteen.region = communes_details[canteen.city_insee_code]["region"]
+            update = True
+        if canteen.region and not canteen.region_lib:
+            canteen.region_lib = canteen.get_region_display()
+            update = True
+        if update:
+            canteen.save()
+            update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
             counter += 1
-        except requests.exceptions.HTTPError as e:
-            logger.info(f"INSEE Geolocation Bot error: HTTPError\n{e}")
-        except requests.exceptions.ConnectionError as e:
-            logger.info(f"INSEE Geolocation Bot error: ConnectionError\n{e}")
-        except requests.exceptions.Timeout as e:
-            logger.info(f"INSEE Geolocation Bot error: Timeout\n{e}")
-        except Exception as e:
-            logger.info(f"INSEE Geolocation Bot error: Unexpected exception\n{e}")
 
     logger.info(f"INSEE Geolocation Bot: Fixed {counter}/{candidate_canteens.count()} canteens")
 
