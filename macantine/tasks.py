@@ -217,14 +217,13 @@ def _get_location_csv_string(canteens):
     return locations_csv_string
 
 
-def _get_candidate_canteens_for_code_geobot():
+def _get_candidate_canteens_for_insee_code_geobot():
     return (
-        Canteen.objects.has_postal_code_or_city_insee_code()
-        .filter(Q(city=None) | Q(department=None) | Q(city_insee_code=None) | Q(postal_code=None))
+        Canteen.objects.has_city_insee_code()
+        .filter(Q(city=None) | Q(postal_code=None) | Q(department=None) | Q(region=None))
         .filter(geolocation_bot_attempts__lt=20)
-        .annotate(postal_code_len=Length("postal_code"))
         .annotate(city_insee_code_len=Length("city_insee_code"))
-        .filter(Q(postal_code_len=5) | Q(city_insee_code_len=5))
+        .filter(city_insee_code_len=5)
         .order_by("creation_date")
     )
 
@@ -244,12 +243,12 @@ def _fill_from_api_response(response, canteens):
                 logger.info(f"INSEE Geolocation Bot - response row, ID not found: {id}")
                 continue
 
-            canteen.city_insee_code = row[3]
             canteen.postal_code = row[4]
             canteen.city = row[5]
             canteen.department = row[6].split(",")[0]  # e.g. "80, Somme, Hauts-de-France"
+            # canteen.region will be filled in the save() method
             canteen.save()
-            update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE ou code postale")
+            update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
 
 
 def _update_canteen_geo_data(canteen, response):
@@ -302,13 +301,13 @@ def fill_missing_geolocation_data_using_siret():
 
 
 @app.task()
-def fill_missing_geolocation_data_using_insee_code_or_postcode():
+def fill_missing_geolocation_data_using_insee_code():
     """
-    Input: Canteens with postal_code or city_insee_code, but no city or department
+    Input: Canteens with city_insee_code, but no postal_code or city or department or region
     Processing: API Adresse (via csv batch)
-    Output: Fill canteen's city & department fields
+    Output: Fill canteen's postal_code, city, department & region fields
     """
-    candidate_canteens = _get_candidate_canteens_for_code_geobot()
+    candidate_canteens = _get_candidate_canteens_for_insee_code_geobot()
     candidate_canteens.update(geolocation_bot_attempts=F("geolocation_bot_attempts") + 1)
     paginator = Paginator(candidate_canteens, 70)
     logger.info(f"INSEE Geolocation Bot: about to fix {candidate_canteens.count()} canteens")

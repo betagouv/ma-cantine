@@ -22,7 +22,7 @@ class TestGeolocationBot(TestCase):
             CanteenFactory.create(
                 city=None,
                 geolocation_bot_attempts=0,
-                postal_code="69003",
+                city_insee_code="69383",
                 managers=[manager],
                 sectors=[sector],
             )
@@ -30,7 +30,7 @@ class TestGeolocationBot(TestCase):
         address_api_text += '21340172201787,,11111,00000,11111,Ma ville,"01,Something,Other"\n'
         mock.post(ADRESSE_CSV_API_URL, text=address_api_text)
 
-        tasks.fill_missing_geolocation_data_using_insee_code_or_postcode()
+        tasks.fill_missing_geolocation_data_using_insee_code()
 
         self.assertEqual(mock.call_count, 2)
 
@@ -39,26 +39,27 @@ class TestGeolocationBot(TestCase):
         Geolocation data should be filled with the response
         from the API
         """
-        canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003")
+        canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, city_insee_code="69383")
         address_api_text = "id,citycode,postcode,result_citycode,result_postcode,result_city,result_context\n"
         address_api_text += f'{canteen.id},,69003,69383,69003,Lyon,"69, Rhône, Auvergne-Rhône-Alpes"\n'
         mock.post(ADRESSE_CSV_API_URL, text=address_api_text)
 
-        tasks.fill_missing_geolocation_data_using_insee_code_or_postcode()
+        tasks.fill_missing_geolocation_data_using_insee_code()
 
         canteen.refresh_from_db()
         self.assertEqual(canteen.city, "Lyon")
         self.assertEqual(canteen.city_insee_code, "69383")
-        self.assertEqual(canteen.postal_code, "69003")
-        self.assertEqual(canteen.department, "69")
+        self.assertEqual(canteen.postal_code, "69003")  # filled
+        self.assertEqual(canteen.department, "69")  # filled
+        self.assertEqual(canteen.region, "84")  # filled
         self.assertEqual(canteen.geolocation_bot_attempts, 1)
 
     def test_candidate_canteens(self, _):
         """
-        Only canteens with either postal code or INSEE code
+        Only canteens with INSEE code
         that have not been queried more than ten times
         are considered candidates.
-        Data that we want to recover is: city, department, INSEE, postal code
+        Data that we want to recover is: city, postal code, department, region
         """
         candidate_canteens = [
             CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003", city_insee_code="69383"),
@@ -72,6 +73,8 @@ class TestGeolocationBot(TestCase):
                 postal_code=None,
                 city_insee_code="69883",
             ),
+        ]
+        _ = [
             CanteenFactory.create(
                 department=Department.ain,
                 city="Une ville",
@@ -79,8 +82,6 @@ class TestGeolocationBot(TestCase):
                 postal_code="69003",
                 city_insee_code=None,
             ),
-        ]
-        _ = [
             CanteenFactory.create(city=None, geolocation_bot_attempts=20, postal_code="69003"),
             CanteenFactory.create(
                 city=None,
@@ -101,8 +102,8 @@ class TestGeolocationBot(TestCase):
                 postal_code=None,
             ),
         ]
-        result = list(tasks._get_candidate_canteens_for_code_geobot())
-        self.assertEqual(len(result), 4)
+        result = list(tasks._get_candidate_canteens_for_insee_code_geobot())
+        self.assertEqual(len(result), 3)
         for canteen in candidate_canteens:
             match = list(filter(lambda x: x.id == canteen.id, result))
             self.assertEqual(len(match), 1)
@@ -112,10 +113,10 @@ class TestGeolocationBot(TestCase):
         On every attempt, the geolocation bot count of the
         canteen increases, even if the API returns an error.
         """
-        canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003")
+        canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, city_insee_code="69883")
         mock.post(ADRESSE_CSV_API_URL, text="", status_code=403)
 
-        tasks.fill_missing_geolocation_data_using_insee_code_or_postcode()
+        tasks.fill_missing_geolocation_data_using_insee_code()
 
         canteen.refresh_from_db()
         self.assertEqual(canteen.geolocation_bot_attempts, 1)
