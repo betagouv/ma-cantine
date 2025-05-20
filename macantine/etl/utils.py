@@ -169,26 +169,6 @@ def filter_empty_values(df: pd.DataFrame, col_name) -> pd.DataFrame:
     return df.dropna(subset=col_name)
 
 
-def fetch_commune_detail(code_insee_commune, commune_details, geo_detail_type):
-    """
-    Provide EPCI code/ Department code/ Region code for a city, given the insee code of the city
-    """
-    if (
-        code_insee_commune
-        and code_insee_commune in commune_details.keys()
-        and geo_detail_type in commune_details[code_insee_commune].keys()
-    ):
-        return commune_details[code_insee_commune][geo_detail_type]
-
-
-def fetch_epci_name(code_insee_epci, epcis_names):
-    """
-    Provide EPCI code for an epci, given its insee code
-    """
-    if code_insee_epci and code_insee_epci in epcis_names.keys():
-        return epcis_names[code_insee_epci]
-
-
 def format_geo_name(geo_code: int, geo_names: Dict[int, str]):
     """
     Format the name of a region or department from its code
