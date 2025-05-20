@@ -7,7 +7,7 @@ from common.api.recherche_entreprises import fetch_geo_data_from_siret
 
 
 @patch("common.utils.siret.is_valid_length_siret", return_value=True)
-class TestFetchGeoDataFromSiret(unittest.TestCase):
+class TestRechercheEntrepriseAPI(unittest.TestCase):
 
     @patch("requests.get")
     def test_fetch_geo_data_from_siret_success(self, mock_get, mock_is_valid_length_siret):
