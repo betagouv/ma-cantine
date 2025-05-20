@@ -29,9 +29,9 @@ def fetch_communes_from_epci(epci):
 
 def map_communes_infos():
     """
-    Create a dict that maps cities with their name/department/region/epci
+    Create a dict that maps cities with their name/postal_code/department/region/epci
     Input: a list of communes. {"nom":"L'Abergement-Clémenciat","code":"01001","codeDepartement":"01","siren":"210100012","codeEpci":"200069193","codeRegion":"84","codesPostaux":["01400"],"population":859}
-    Output: a dict with the commune's insee code as pivot. {"01001": {"city": "L'Abergement-Clémenciat", "department": "01", "region": "84", "epci": "200069193"}}
+    Output: a dict with the commune's insee code as pivot. {"01001": {"city": "L'Abergement-Clémenciat", "postal_code_list": ["01400"], "department": "01", "region": "84", "epci": "200069193"}}
     """
     commune_details = {}
     try:
@@ -39,6 +39,7 @@ def map_communes_infos():
         for commune in communes:
             commune_details[commune["code"]] = {}
             commune_details[commune["code"]]["city"] = commune.get("nom", None)
+            commune_details[commune["code"]]["postal_code_list"] = commune.get("codesPostaux", [])
             commune_details[commune["code"]]["department"] = commune.get("codeDepartement", None)
             commune_details[commune["code"]]["region"] = commune.get("codeRegion", None)
             commune_details[commune["code"]]["epci"] = commune.get("codeEpci", None)

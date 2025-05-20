@@ -42,7 +42,10 @@ class TestDecoupageAdministratifAPI(unittest.TestCase):
         communes_details = map_communes_infos()
         self.assertEqual(len(communes_details), 2)
         self.assertCountEqual(list(communes_details.keys()), ["01001", "01002"])
+        self.assertEqual(communes_details["01001"]["city"], "L'Abergement-Clémenciat")
+        self.assertEqual(communes_details["01001"]["postal_code_list"], ["01400"])
         self.assertEqual(communes_details["01001"]["department"], "01")
         self.assertEqual(communes_details["01001"]["region"], "84")
         self.assertEqual(communes_details["01001"]["epci"], "200069193")
+        self.assertEqual(communes_details["01002"]["city"], "L'Abergement-de-Varey")
         self.assertIsNone(communes_details["01002"]["epci"])  # Not all cities are part of an EPCI
