@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import requests
 
-from common.api.decoupage_administratif import fetch_communes, fetch_epcis
 from data.models import Sector, Teledeclaration
 from data.models.sector import SECTEURS_SPE
 
@@ -62,40 +61,6 @@ def update_datagouv_resources():
         logger.exception(e)
     except Exception as e:
         logger.exception(e)
-
-
-def map_communes_infos():
-    """
-    Create a dict that maps cities with their EPCI code
-    """
-    commune_details = {}
-    try:
-        logger.info("Starting communes dl")
-        communes = fetch_communes()
-        for commune in communes:
-            commune_details[commune["code"]] = {}
-            if "codeDepartement" in commune.keys():
-                commune_details[commune["code"]]["department"] = commune["codeDepartement"]
-            if "codeRegion" in commune.keys():
-                commune_details[commune["code"]]["region"] = commune["codeRegion"]
-            if "codeEpci" in commune.keys():
-                commune_details[commune["code"]]["epci"] = commune["codeEpci"]
-    except requests.exceptions.HTTPError as e:
-        logger.info(e)
-        return None
-    return commune_details
-
-
-def map_epcis_code_name():
-    try:
-        epci_names = {}
-        epcis = fetch_epcis()
-        for epci in epcis:
-            epci_names[epci["code"]] = epci["nom"]
-        return epci_names
-    except requests.exceptions.HTTPError as e:
-        logger.info(e)
-        return {}
 
 
 def map_canteens_td(year):
@@ -202,26 +167,6 @@ def filter_empty_values(df: pd.DataFrame, col_name) -> pd.DataFrame:
     Filtering out the teledeclarations for wich a certain field is empty
     """
     return df.dropna(subset=col_name)
-
-
-def fetch_commune_detail(code_insee_commune, commune_details, geo_detail_type):
-    """
-    Provide EPCI code/ Department code/ Region code for a city, given the insee code of the city
-    """
-    if (
-        code_insee_commune
-        and code_insee_commune in commune_details.keys()
-        and geo_detail_type in commune_details[code_insee_commune].keys()
-    ):
-        return commune_details[code_insee_commune][geo_detail_type]
-
-
-def fetch_epci_name(code_insee_epci, epcis_names):
-    """
-    Provide EPCI code for an epci, given its insee code
-    """
-    if code_insee_epci and code_insee_epci in epcis_names.keys():
-        return epcis_names[code_insee_epci]
 
 
 def format_geo_name(geo_code: int, geo_names: Dict[int, str]):

@@ -13,7 +13,7 @@ from macantine.etl.open_data import (
     ETL_OPEN_DATA_CANTEEN,
     ETL_OPEN_DATA_TELEDECLARATIONS,
 )
-from macantine.etl.utils import map_communes_infos, update_datagouv_resources
+from macantine.etl.utils import update_datagouv_resources
 
 
 @requests_mock.Mocker()
@@ -74,7 +74,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis?fields=nom",
             text=json.dumps(""),
             status_code=200,
         )
@@ -162,7 +162,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis?fields=nom",
             text=json.dumps([{"nom": "Grenoble-Alpes-Métropole", "code": "200040715"}]),
             status_code=200,
         )
@@ -197,7 +197,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis?fields=nom",
             text=json.dumps(""),
             status_code=200,
         )
@@ -224,7 +224,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis?fields=nom",
             text=json.dumps(""),
             status_code=200,
         )
@@ -258,7 +258,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.get(
-            "https://geo.api.gouv.fr/epcis/?fields=nom",
+            "https://geo.api.gouv.fr/epcis?fields=nom",
             text=json.dumps(""),
             status_code=200,
         )
@@ -283,42 +283,6 @@ class TestETLOpenData(TestCase):
             "The new canteen should not appear as its specific sector has to remain private",
         )
         self.assertEqual(canteens[canteens.id == self.canteen.id].iloc[0]["sectors"], '"[""School""]"')
-
-    def test_map_communes_infos(self, mock):
-        mock.get(
-            "https://geo.api.gouv.fr/communes",
-            text=json.dumps(
-                [
-                    {
-                        "nom": "L'Abergement-Clémenciat",
-                        "code": "01001",
-                        "codeDepartement": "01",
-                        "siren": "210100012",
-                        "codeEpci": "200069193",
-                        "codeRegion": "84",
-                        "codesPostaux": ["01400"],
-                        "population": "832",
-                    },
-                    {
-                        "nom": "L'Abergement-de-Varey",
-                        "code": "01002",
-                        "codeDepartement": "01",
-                        "siren": "210100020",
-                        "codeRegion": "84",
-                        "codesPostaux": ["01640"],
-                        "population": "267",
-                    },
-                ]
-            ),
-        )
-
-        communes_details = map_communes_infos()
-        self.assertEqual(len(communes_details), 2)
-        self.assertCountEqual(list(communes_details.keys()), ["01001", "01002"])
-        self.assertEqual(communes_details["01001"]["department"], "01")
-        self.assertEqual(communes_details["01001"]["region"], "84")
-        self.assertEqual(communes_details["01001"]["epci"], "200069193")
-        self.assertNotIn("epci", communes_details["01002"].keys(), "Not all cities are part of an EPCI")
 
     @freeze_time("2023-05-14")  # Faking date to check new url
     def test_update_ressource(self, mock):
