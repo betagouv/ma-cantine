@@ -12,10 +12,17 @@ from sib_api_v3_sdk.rest import ApiException
 
 import macantine.brevo as brevo
 from api.views.utils import update_change_reason
-from common.api.decoupage_administratif import map_communes_infos, map_epcis_code_name
+from common.api.decoupage_administratif import (
+    fetch_commune_detail,
+    fetch_epci_name,
+    map_communes_infos,
+    map_epcis_code_name,
+)
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from common.utils import siret as utils_siret
+from data.department_choices import get_lib_department_from_code
 from data.models import Canteen, User
+from data.region_choices import get_lib_region_from_code
 from data.utils import has_charfield_missing_query
 
 from .celery import app
@@ -311,28 +318,31 @@ def fill_missing_geolocation_data_using_insee_code():  # noqa C901
         # geo fields
         if canteen.city_insee_code in communes_details:
             if not canteen.postal_code:
-                canteen.postal_code = communes_details[canteen.city_insee_code]["postal_code_list"][0]
-                update = True
+                postal_code_list = fetch_commune_detail(canteen.city_insee_code, communes_details, "postal_code_list")
+                if postal_code_list:
+                    canteen.postal_code = postal_code_list[0]
+                    update = True
             if not canteen.city:
-                canteen.city = communes_details[canteen.city_insee_code]["city"]
+                canteen.city = fetch_commune_detail(canteen.city_insee_code, communes_details, "city")
                 update = True
             if not canteen.epci:
-                canteen.epci = communes_details[canteen.city_insee_code]["epci"]
+                canteen.epci = fetch_commune_detail(canteen.city_insee_code, communes_details, "epci")
+                update = True
             if not canteen.department:
-                canteen.department = communes_details[canteen.city_insee_code]["department"]
+                canteen.department = fetch_commune_detail(canteen.city_insee_code, communes_details, "department")
                 update = True
             if not canteen.region:
-                canteen.region = communes_details[canteen.city_insee_code]["region"]
+                canteen.region = fetch_commune_detail(canteen.city_insee_code, communes_details, "region")
                 update = True
         # geo lib fields
         if canteen.epci and not canteen.epci_lib and canteen.epci in epcis_names:
-            canteen.epci_lib = epcis_names[canteen.epci]
+            canteen.epci_lib = fetch_epci_name(canteen.epci, epcis_names)
             update = True
         if canteen.department and not canteen.department_lib:
-            canteen.department_lib = canteen.get_department_display()
+            canteen.department_lib = get_lib_department_from_code(canteen.department)
             update = True
         if canteen.region and not canteen.region_lib:
-            canteen.region_lib = canteen.get_region_display()
+            canteen.region_lib = get_lib_region_from_code(canteen.region)
             update = True
         if update:
             canteen.save()
