@@ -9,6 +9,20 @@ logger = logging.getLogger(__name__)
 DECOUPAGE_ADMINISTRATIF_API_URL = "https://geo.api.gouv.fr"
 
 
+# https://fr.wikipedia.org/wiki/Arrondissements_de_Paris
+PARIS_INSEE_CODE_FROM_API = "75056"
+PARIS_INSEE_CODE_PREFIX = "750"
+PARIS_ARRONDISSEMENT_COUNT = 20
+# https://fr.wikipedia.org/wiki/Arrondissements_de_Lyon
+LYON_INSEE_CODE_FROM_API = "69123"
+LYON_INSEE_CODE_PREFIX = "693"
+LYON_ARRONDISSEMENT_COUNT = 9
+# https://fr.wikipedia.org/wiki/Secteurs_et_arrondissements_de_Marseille
+MARSEILLE_INSEE_CODE_FROM_API = "13055"
+MARSEILLE_INSEE_CODE_PREFIX = "132"
+MARSEILLE_ARRONDISSEMENT_COUNT = 16
+
+
 def fetch_communes():
     response = requests.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes", timeout=50)
     response.raise_for_status()
@@ -43,6 +57,17 @@ def map_communes_infos():
             commune_details[commune["code"]]["department"] = commune.get("codeDepartement", None)
             commune_details[commune["code"]]["region"] = commune.get("codeRegion", None)
             commune_details[commune["code"]]["epci"] = commune.get("codeEpci", None)
+        # add missing arrondissements of Paris, Lyon and Marseille
+        for city in ["PARIS", "LYON", "MARSEILLE"]:
+            city_details_from_api = commune_details.get(eval(f"{city}_INSEE_CODE_FROM_API"))
+            if city_details_from_api:
+                for i in range(1, eval(f"{city}_ARRONDISSEMENT_COUNT") + 1):
+                    city_arrondissement_insee_code = f"{eval(f'{city}_INSEE_CODE_PREFIX')}{i:02}"
+                    city_arrondissement_postal_code = city_details_from_api["postal_code_list"][0][:-2] + f"{i:02}"
+                    commune_details[city_arrondissement_insee_code] = {
+                        **city_details_from_api,
+                        "postal_code_list": [city_arrondissement_postal_code],
+                    }
     except requests.exceptions.HTTPError as e:
         logger.info(e)
     return commune_details
