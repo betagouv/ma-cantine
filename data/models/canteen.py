@@ -388,6 +388,8 @@ class Canteen(SoftDeletionModel):
     postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name="code postal")
     epci = models.CharField(null=True, blank=True, verbose_name="Code EPCI", validators=[utils_siret.validate_siren])
     epci_lib = models.TextField(null=True, blank=True, verbose_name="nom EPCI")
+    pat = models.CharField(null=True, blank=True, verbose_name="Code PAT")
+    pat_lib = models.TextField(null=True, blank=True, verbose_name="nom PAT")
     department = models.TextField(null=True, blank=True, choices=Department.choices, verbose_name="département")
     department_lib = models.TextField(null=True, blank=True, verbose_name="nom du département")
     region = models.TextField(null=True, blank=True, choices=Region.choices, verbose_name="région")
