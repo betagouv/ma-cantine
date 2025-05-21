@@ -3,7 +3,7 @@ import json
 import requests_mock
 from django.test import TestCase
 
-from common.api.adresse import ADRESSE_CSV_API_URL
+from common.api.decoupage_administratif import DECOUPAGE_ADMINISTRATIF_API_URL
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.department_choices import Department
 from data.factories import CanteenFactory, SectorFactory, UserFactory
@@ -11,10 +11,10 @@ from macantine import tasks
 
 
 @requests_mock.Mocker()
-class TestGeolocationBot(TestCase):
+class TestGeolocationUsingInseeCodeBot(TestCase):
     def test_number_of_api_calls(self, mock):
         """
-        There should be one request for every 70 canteens
+        There should be one request for every canteens
         """
         manager = UserFactory.create()  # Avoids integrity errors from user creation
         sector = SectorFactory.create()
@@ -26,9 +26,8 @@ class TestGeolocationBot(TestCase):
                 managers=[manager],
                 sectors=[sector],
             )
-        address_api_text = "id,citycode,postcode,result_citycode,result_postcode,result_city,result_context\n"
-        address_api_text += '21340172201787,,11111,00000,11111,Ma ville,"01,Something,Other"\n'
-        mock.post(ADRESSE_CSV_API_URL, text=address_api_text)
+        mock.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes", text=json.dumps([]))
+        mock.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom", text=json.dumps([]))
 
         tasks.fill_missing_geolocation_data_using_insee_code()
 
@@ -39,19 +38,53 @@ class TestGeolocationBot(TestCase):
         Geolocation data should be filled with the response
         from the API
         """
-        canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, city_insee_code="69383")
-        address_api_text = "id,citycode,postcode,result_citycode,result_postcode,result_city,result_context\n"
-        address_api_text += f'{canteen.id},,69003,69383,69003,Lyon,"69, Rhône, Auvergne-Rhône-Alpes"\n'
-        mock.post(ADRESSE_CSV_API_URL, text=address_api_text)
+        canteen = CanteenFactory.create(city_insee_code="38185", city=None, geolocation_bot_attempts=0)
+
+        mock.get(
+            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes",
+            text=json.dumps(
+                [
+                    {
+                        "nom": "Grenoble",
+                        "code": "38185",
+                        "codeDepartement": "38",
+                        "siren": "213801855",
+                        "codeEpci": "200040715",
+                        "codeRegion": "84",
+                        "codesPostaux": ["38000", "38100"],
+                        "population": 156389,
+                    }
+                ]
+            ),
+        )
+        mock.get(
+            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom",
+            text=json.dumps(
+                [
+                    {
+                        "nom": "Grenoble-Alpes-Métropole",
+                        "code": "200040715",
+                        "codesDepartements": ["38"],
+                        "codesRegions": ["84"],
+                        "population": 449509,
+                    }
+                ]
+            ),
+        )
 
         tasks.fill_missing_geolocation_data_using_insee_code()
 
         canteen.refresh_from_db()
-        self.assertEqual(canteen.city, "Lyon")
-        self.assertEqual(canteen.city_insee_code, "69383")
-        self.assertEqual(canteen.postal_code, "69003")  # filled
-        self.assertEqual(canteen.department, "69")  # filled
+        self.assertEqual(canteen.geolocation_bot_attempts, 1)  # incremented
+        self.assertEqual(canteen.city, "Grenoble")
+        self.assertEqual(canteen.city_insee_code, "38185")
+        self.assertEqual(canteen.postal_code, "38000")  # filled
+        self.assertEqual(canteen.department, "38")  # filled
+        self.assertEqual(canteen.department_lib, "Isère")  # filled
         self.assertEqual(canteen.region, "84")  # filled
+        self.assertEqual(canteen.region_lib, "Auvergne-Rhône-Alpes")  # filled
+        self.assertEqual(canteen.epci, "200040715")  # filled
+        self.assertEqual(canteen.epci_lib, "Grenoble-Alpes-Métropole")  # filled
         self.assertEqual(canteen.geolocation_bot_attempts, 1)
 
     def test_candidate_canteens(self, _):
@@ -102,7 +135,9 @@ class TestGeolocationBot(TestCase):
                 postal_code=None,
             ),
         ]
+
         result = list(tasks._get_candidate_canteens_for_insee_code_geobot())
+
         self.assertEqual(len(result), 3)
         for canteen in candidate_canteens:
             match = list(filter(lambda x: x.id == canteen.id, result))
@@ -114,7 +149,8 @@ class TestGeolocationBot(TestCase):
         canteen increases, even if the API returns an error.
         """
         canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, city_insee_code="69883")
-        mock.post(ADRESSE_CSV_API_URL, text="", status_code=403)
+        mock.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes", text="", status_code=403)
+        mock.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom", text=json.dumps([]), status_code=403)
 
         tasks.fill_missing_geolocation_data_using_insee_code()
 
@@ -123,7 +159,7 @@ class TestGeolocationBot(TestCase):
 
 
 @requests_mock.Mocker()
-class TestGeolocationWithSiretBot(TestCase):
+class TestGeolocationBotUsingSiret(TestCase):
     api_url = "https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&q="
 
     def test_candidate_canteens(self, _):
