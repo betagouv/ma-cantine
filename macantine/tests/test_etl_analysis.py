@@ -6,7 +6,7 @@ from django.test import TestCase
 from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
-from data.models import Teledeclaration
+from data.models import Canteen, Teledeclaration
 from macantine.etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
     ETL_ANALYSIS_TELEDECLARATIONS,
@@ -26,7 +26,7 @@ class TestETLAnalysisCanteen(TestCase):
 
         schema = json.load(open("data/schemas/export_metabase/schema_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
-        canteen_1 = CanteenFactory(
+        canteen = CanteenFactory(
             name="Cantine",
             siret="19382111300027",
             city_insee_code="38185",
@@ -53,7 +53,7 @@ class TestETLAnalysisCanteen(TestCase):
         )
 
         # Check the generated columns
-        first_canteen = canteens[canteens.id == canteen_1.id].iloc[0]
+        first_canteen = canteens[canteens.id == canteen.id].iloc[0]
         self.assertEqual(first_canteen["epci"], "200040715")
         self.assertEqual(first_canteen["epci_lib"], "Grenoble-Alpes-Métropole")
         self.assertEqual(first_canteen["departement"], "38")
@@ -77,14 +77,6 @@ class TestETLAnalysisTD(TestCase):
 
         test_cases = [
             {
-                "date_mocked": "1991-01-14",
-                "year": 1990,
-                "canteen": canteen,
-                "delete_canteen": False,
-                "expected_outcome": "no_extraction",
-                "msg": "Outside any campaign date",
-            },
-            {
                 "date_mocked": "2023-05-14",
                 "year": 2022,
                 "canteen": canteen,
@@ -93,12 +85,12 @@ class TestETLAnalysisTD(TestCase):
                 "msg": "Valid",
             },
             {
-                "date_mocked": "2024-02-14",
-                "year": 2023,
+                "date_mocked": "1991-01-14",
+                "year": 1990,
                 "canteen": canteen,
-                "delete_canteen": True,
+                "delete_canteen": False,
                 "expected_outcome": "no_extraction",
-                "msg": "Canteen deleted during campaign",
+                "msg": "Outside any campaign date",
             },
             {
                 "date_mocked": "2024-02-14",
@@ -107,6 +99,14 @@ class TestETLAnalysisTD(TestCase):
                 "delete_canteen": False,
                 "expected_outcome": "no_extraction",
                 "msg": "Canteen without a siret",
+            },
+            {
+                "date_mocked": "2024-02-14",
+                "year": 2023,
+                "canteen": canteen,
+                "delete_canteen": True,
+                "expected_outcome": "no_extraction",
+                "msg": "Canteen deleted during campaign",
             },
         ]
         for tc in test_cases:
@@ -118,9 +118,9 @@ class TestETLAnalysisTD(TestCase):
 
             etl_stats.extract_dataset()
             if tc["expected_outcome"] == "extraction":
-                self.assertEqual(len(etl_stats.df[etl_stats.df.id == td.id]), 1)
+                self.assertEqual(len(etl_stats.df[etl_stats.df.id == td.id]), 1, tc["msg"])
             else:
-                self.assertEqual(len(etl_stats.df[etl_stats.df.id == td.id]), 0)
+                self.assertEqual(len(etl_stats.df[etl_stats.df.id == td.id]), 0, tc["msg"])
 
     def test_get_egalim_hors_bio(self):
         data = {
@@ -276,6 +276,45 @@ class TestETLAnalysisTD(TestCase):
             td_complete = pd.DataFrame.from_dict(tc["data"], orient="index")
             cout_denrees = compute_cout_denrees(td_complete)
             self.assertEqual(cout_denrees.iloc[0], tc["expected_outcome"])
+
+    @freeze_time("2025-01-10")  # during the 2021 campaign
+    def test_flatten_central_kitchen(self):
+
+        CanteenFactory(id=1, production_type=Canteen.ProductionType.ON_SITE, siret="12345678901234")
+        central_canteen = CanteenFactory(id=2, production_type=Canteen.ProductionType.CENTRAL, siret="98765432109876")
+        sat_1 = CanteenFactory(
+            id=3,
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            siret="00771412406031",
+            central_producer_siret="98765432109876",
+        )
+        sat_2 = CanteenFactory(
+            id=4,
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            siret="56714724854889",
+            central_producer_siret="98765432109876",
+        )
+        # Create a DataFrame to simulate the data for serving and central kitchens
+        data = {
+            "id": [1, 2],
+            "siret": ["12345678901234", "98765432109876"],
+            "production_type": [Canteen.ProductionType.ON_SITE, Canteen.ProductionType.CENTRAL],
+            "satellites": [None, ["11111111111111", "22222222222222"]],
+            "value_total_ht": [10, 10],
+            "value_bio_ht": [1, 1],
+            "value_sustainable_ht": [0, 0],
+        }
+        df = pd.DataFrame(data)
+        etl = ETL_ANALYSIS_TELEDECLARATIONS()
+        etl.df = df
+        etl.flatten_central_kitchen_to_satellites()
+        flattened_data = etl.df
+        # Assertions for serving canteen
+        self.assertEqual(len(flattened_data[flattened_data.siret == sat_1.siret]), 1)
+        self.assertEqual(len(flattened_data[flattened_data.siret == sat_2.siret]), 1)
+
+        # Assertions for central kitchen
+        self.assertEqual(len(flattened_data[flattened_data.siret == central_canteen.siret]), 0)
 
 
 @pytest.mark.parametrize(

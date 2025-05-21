@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 
 from api.views.canteen import MetabaseListView
+from data.models import Canteen
 from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
 from macantine.utils import CAMPAIGN_DATES
@@ -227,6 +228,63 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
         self.schema = json.load(open("data/schemas/export_metabase/schema_teledeclarations.json"))
         self.columns = [field["name"] for field in self.schema["fields"]]
 
+    def update_from_central_to_satellite(self, central_kitchen_row, satellite, satellites_count):
+        """
+        Takes a row from a dataframe for a central kitchen and convert it to one of its satellite
+        """
+        satellite_row = central_kitchen_row
+        satellite_row["canteen_id"] = satellite.id
+        satellite_row["name"] = satellite.name
+        satellite_row["siret"] = satellite.siret
+        satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
+        satellite_row["central_producer_siret"] = central_kitchen_row["siret"]
+        satellite_row["satellites"] = None
+        for appro_field in [
+            "daily_meal_count",
+            "yearly_meal_count",
+            "value_total_ht",
+            "value_bio_ht",
+            "value_somme_egalim_avec_bio_ht",
+            "value_sustainable_ht",
+            "value_externality_performance_ht",
+            "value_egalim_others_ht",
+            "value_meat_poultry_ht",
+            "value_fish_ht",
+            "value_meat_poultry_egalim_ht",
+            "value_fish_egalim_ht",
+            "value_meat_poultry_france_ht",
+            "value_meat_and_fish_ht",
+            "value_meat_and_fish_egalim_ht",
+        ]:
+            if appro_field in satellite_row.keys():
+                satellite_row[appro_field] = central_kitchen_row[appro_field] / satellites_count
+        return satellite_row
+
+    def flatten_central_kitchen_to_satellites(self):
+        """
+        Flatten central kitchen data to satellite canteens.
+        For each central kitchen, distribute its data to its satellite canteens.
+        """
+        # Filter central kitchens
+        df_central = self.df[self.df["production_type"] == Canteen.ProductionType.CENTRAL]
+
+        # Iterate over central kitchens
+        for index, central_row in df_central.iterrows():
+            # Get satellite canteens linked to the central kitchen
+            satellites = Canteen.objects.get_satellites(central_row["siret"])
+            if not satellites:
+                continue
+
+            satellites_count = len(satellites)
+            # Distribute central kitchen data to satellite canteens
+            for satellite in satellites:
+                self.df.loc[satellite] = self.update_from_central_to_satellite(
+                    central_row, satellite, satellites_count
+                )
+
+        # Remove central kitchens from the dataset
+        self.df = self.df[self.df["production_type"] != Canteen.ProductionType.CENTRAL]
+
     def transform_dataset(self):
         if self.df.empty:
             logger.warning("Dataset is empty. Skipping transformation")
@@ -297,6 +355,9 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
         self.df.columns = self.df.columns.str.replace("city_insee_code", "code_insee_commune")
 
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
+
+        # 1 line = 1 canteen
+        self.df = self.flatten_central_kitchen_to_satellites()
 
     def compute_miscellaneous_columns(self):
         # Canteen
