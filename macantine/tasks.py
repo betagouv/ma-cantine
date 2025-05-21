@@ -212,16 +212,6 @@ def _covered_by_central_kitchen(canteen):
     return False
 
 
-def _get_location_csv_string(canteens):
-    locations_csv_string = "id,citycode,postcode\n"
-    for canteen in canteens:
-        if canteen.city_insee_code and len(canteen.city_insee_code) == 5:
-            locations_csv_string += f"{canteen.id},{canteen.city_insee_code},\n"
-        elif canteen.postal_code and len(canteen.postal_code) == 5:
-            locations_csv_string += f"{canteen.id},,{canteen.postal_code}\n"
-    return locations_csv_string
-
-
 def _get_candidate_canteens_for_insee_code_geobot():
     return (
         Canteen.objects.has_city_insee_code()
@@ -250,6 +240,7 @@ def _update_canteen_geo_data_from_siret(canteen, response):
     try:
         if "cityInseeCode" in response.keys():
             canteen.city_insee_code = response["cityInseeCode"]
+            # TODO: remove this, leave it to the other geo bot
             canteen.postal_code = response["postalCode"]
             canteen.city = response["city"]
             canteen.save()
