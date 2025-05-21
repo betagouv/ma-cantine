@@ -308,25 +308,28 @@ def fill_missing_geolocation_data_using_insee_code():  # noqa C901
 
     for i, canteen in enumerate(candidate_canteens):
         update = False
-        if not canteen.postal_code:
-            canteen.postal_code = communes_details[canteen.city_insee_code]["postal_code_list"][0]
-            update = True
-        if not canteen.city:
-            canteen.city = communes_details[canteen.city_insee_code]["city"]
-            update = True
-        if not canteen.epci:
-            canteen.epci = communes_details[canteen.city_insee_code]["epci"]
+        # geo fields
+        if canteen.city_insee_code in communes_details:
+            if not canteen.postal_code:
+                canteen.postal_code = communes_details[canteen.city_insee_code]["postal_code_list"][0]
+                update = True
+            if not canteen.city:
+                canteen.city = communes_details[canteen.city_insee_code]["city"]
+                update = True
+            if not canteen.epci:
+                canteen.epci = communes_details[canteen.city_insee_code]["epci"]
+            if not canteen.department:
+                canteen.department = communes_details[canteen.city_insee_code]["department"]
+                update = True
+            if not canteen.region:
+                canteen.region = communes_details[canteen.city_insee_code]["region"]
+                update = True
+        # geo lib fields
         if canteen.epci and not canteen.epci_lib and canteen.epci in epcis_names:
             canteen.epci_lib = epcis_names[canteen.epci]
             update = True
-        if not canteen.department:
-            canteen.department = communes_details[canteen.city_insee_code]["department"]
-            update = True
         if canteen.department and not canteen.department_lib:
             canteen.department_lib = canteen.get_department_display()
-            update = True
-        if not canteen.region:
-            canteen.region = communes_details[canteen.city_insee_code]["region"]
             update = True
         if canteen.region and not canteen.region_lib:
             canteen.region_lib = canteen.get_region_display()
