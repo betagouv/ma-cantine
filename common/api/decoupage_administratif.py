@@ -10,7 +10,9 @@ DECOUPAGE_ADMINISTRATIF_API_URL = "https://geo.api.gouv.fr"
 
 
 def fetch_communes():
-    response = requests.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes", timeout=50)
+    response = requests.get(
+        f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes?type=arrondissement-municipal,commune-actuelle", timeout=50
+    )
     response.raise_for_status()
     return response.json()
 
