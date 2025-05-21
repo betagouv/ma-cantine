@@ -282,6 +282,9 @@ class TestETLAnalysisTD(TestCase):
 
         CanteenFactory(id=1, production_type=Canteen.ProductionType.ON_SITE, siret="12345678901234")
         central_canteen = CanteenFactory(id=2, production_type=Canteen.ProductionType.CENTRAL, siret="98765432109876")
+        central_serving_kitchen = CanteenFactory(
+            id=10, production_type=Canteen.ProductionType.CENTRAL_SERVING, siret="90024458823706"
+        )
         sat_1 = CanteenFactory(
             id=3,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -294,15 +297,25 @@ class TestETLAnalysisTD(TestCase):
             siret="56714724854889",
             central_producer_siret="98765432109876",
         )
+        sat_3 = CanteenFactory(
+            id=11,
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            siret="84592605164503",
+            central_producer_siret="90024458823706",
+        )
         # Create a DataFrame to simulate the data for serving and central kitchens
         data = {
-            "id": [1, 2],
-            "siret": ["12345678901234", "98765432109876"],
-            "production_type": [Canteen.ProductionType.ON_SITE, Canteen.ProductionType.CENTRAL],
-            "satellites": [None, ["11111111111111", "22222222222222"]],
-            "value_total_ht": [10, 10],
-            "value_bio_ht": [1, 1],
-            "value_sustainable_ht": [0, 0],
+            "id": [1, 2, 10],
+            "siret": ["12345678901234", "98765432109876", "90024458823706"],
+            "production_type": [
+                Canteen.ProductionType.ON_SITE,
+                Canteen.ProductionType.CENTRAL,
+                Canteen.ProductionType.CENTRAL_SERVING,
+            ],
+            "satellites": [None, ["98765432109876", "98765432109876"], ["90024458823706"]],
+            "value_total_ht": [10, 10, 10],
+            "value_bio_ht": [1, 1, 1],
+            "value_sustainable_ht": [0, 0, 0],
         }
         df = pd.DataFrame(data)
         etl = ETL_ANALYSIS_TELEDECLARATIONS()
@@ -315,6 +328,10 @@ class TestETLAnalysisTD(TestCase):
 
         # Assertions for central kitchen
         self.assertEqual(len(flattened_data[flattened_data.siret == central_canteen.siret]), 0)
+
+        # Assertions for central serving kitchen
+        self.assertEqual(len(flattened_data[flattened_data.siret == central_serving_kitchen.siret]), 1)
+        self.assertEqual(len(flattened_data[flattened_data.siret == sat_3.siret]), 1)
 
 
 @pytest.mark.parametrize(

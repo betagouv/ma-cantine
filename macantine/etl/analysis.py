@@ -228,10 +228,11 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
         self.schema = json.load(open("data/schemas/export_metabase/schema_teledeclarations.json"))
         self.columns = [field["name"] for field in self.schema["fields"]]
 
-    def update_from_central_to_satellite(self, central_kitchen_row, satellite, satellites_count):
+    def create_satellite_row_from_central_kitchen(self, central_kitchen_row, satellite, satellites_count):
         """
         Takes a row from a dataframe for a central kitchen and convert it to one of its satellite
         """
+        # TODO : Ajouter données géographiques du satellite
         satellite_row = central_kitchen_row
         satellite_row["canteen_id"] = satellite.id
         satellite_row["name"] = satellite.name
@@ -239,6 +240,11 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
         satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
         satellite_row["central_producer_siret"] = central_kitchen_row["siret"]
         satellite_row["satellites"] = None
+        satellite_row = self.split_values_for_each_satellite(central_kitchen_row, satellites_count)
+        return satellite_row
+
+    def split_values_for_each_satellite(self, central_kitchen_row, satellites_count):
+        updated_row = central_kitchen_row.copy()
         for appro_field in [
             "daily_meal_count",
             "yearly_meal_count",
@@ -256,9 +262,9 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
             "value_meat_and_fish_ht",
             "value_meat_and_fish_egalim_ht",
         ]:
-            if appro_field in satellite_row.keys():
-                satellite_row[appro_field] = central_kitchen_row[appro_field] / satellites_count
-        return satellite_row
+            if appro_field in central_kitchen_row.keys():
+                updated_row[appro_field] = central_kitchen_row[appro_field] / satellites_count
+        return central_kitchen_row
 
     def flatten_central_kitchen_to_satellites(self):
         """
@@ -266,7 +272,10 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
         For each central kitchen, distribute its data to its satellite canteens.
         """
         # Filter central kitchens
-        df_central = self.df[self.df["production_type"] == Canteen.ProductionType.CENTRAL]
+        df_central = self.df[
+            (self.df["production_type"] == Canteen.ProductionType.CENTRAL)
+            | (self.df["production_type"] == Canteen.ProductionType.CENTRAL_SERVING)
+        ]
 
         # Iterate over central kitchens
         for index, central_row in df_central.iterrows():
@@ -276,9 +285,13 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
                 continue
 
             satellites_count = len(satellites)
+            if central_row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING:
+                satellites_count += 1
+                self.df.loc[index] = self.split_values_for_each_satellite(central_row, satellites_count)
+
             # Distribute central kitchen data to satellite canteens
             for satellite in satellites:
-                self.df.loc[satellite] = self.update_from_central_to_satellite(
+                self.df.loc[satellite] = self.create_satellite_row_from_central_kitchen(
                     central_row, satellite, satellites_count
                 )
 
