@@ -357,10 +357,21 @@ def export_datasets(datasets: dict):
         logger.info(f"Starting {key} dataset extraction")
         etl.extract_dataset()
         etl.transform_dataset()
-        etl.load_dataset()
+        # etl.load_dataset()
 
 
-def manual_datasets_export():
+def datasets_export_analysis_td():
+    """
+    Export the Teledeclarations datasets for Metabase
+    """
+    logger.info("Starting manual datasets export")
+    datasets = {
+        "td_analyses": ETL_ANALYSIS_TELEDECLARATIONS(),
+    }
+    export_datasets(datasets)
+
+
+def datasets_export_opendata_td():
     """
     Export the Teledeclarations datasets for data.gouv.fr
     This datasets are updated every year by adding a new campaign
@@ -370,7 +381,28 @@ def manual_datasets_export():
         "campagne teledeclaration 2021": ETL_OPEN_DATA_TELEDECLARATIONS(2021),
         "campagne teledeclaration 2022": ETL_OPEN_DATA_TELEDECLARATIONS(2022),
         "campagne teledeclaration 2023": ETL_OPEN_DATA_TELEDECLARATIONS(2023),
-        "td_analyses": ETL_ANALYSIS_TELEDECLARATIONS(),
+    }
+    export_datasets(datasets)
+
+
+def datasets_export_opendata_canteens():
+    """
+    Export regulary and automatically datasets that are updated contiously
+    """
+    logger.info("Starting datasets extractions")
+    datasets = {
+        "cantines": ETL_OPEN_DATA_CANTEEN(),
+    }
+    export_datasets(datasets)
+
+
+def datasets_export_analysis_canteens():
+    """
+    Export regulary and automatically datasets that are updated contiously
+    """
+    logger.info("Starting datasets extractions")
+    datasets = {
+        "cantines_analyses": ETL_ANALYSIS_CANTEEN(),
     }
     export_datasets(datasets)
 
@@ -380,9 +412,5 @@ def continous_datasets_export():
     """
     Export regulary and automatically datasets that are updated contiously
     """
-    logger.info("Starting datasets extractions")
-    datasets = {
-        "cantines": ETL_OPEN_DATA_CANTEEN(),
-        "cantines_analyses": ETL_ANALYSIS_CANTEEN(),
-    }
-    export_datasets(datasets)
+    datasets_export_analysis_canteens()
+    datasets_export_analysis_canteens()
