@@ -1,12 +1,9 @@
 import logging
-import os
-from datetime import date
 from typing import Dict
 
 import datacompy
 import numpy as np
 import pandas as pd
-import requests
 
 from data.models import Sector, Teledeclaration
 from data.models.sector import SECTEURS_SPE
@@ -26,43 +23,6 @@ def get_ratio(row, valueKey, totalKey):
         return 100 * row[tdValueKey] / row[tdTotalKey]
     else:
         return np.nan
-
-
-def update_datagouv_resources():
-    """
-    Updating the URL of the different resources dsiplayed on data.gouv.fr in order to force their cache reload and display the correct update dates
-    Returns : Number of updated resources
-    """
-    dataset_id = os.getenv("DATAGOUV_DATASET_ID", "")
-    api_key = os.getenv("DATAGOUV_API_KEY", "")
-    if not (dataset_id and api_key):
-        logger.warning("Datagouv resource update : API key or dataset id incorrect values")
-        return
-
-    header = {"X-API-KEY": api_key}
-    try:
-        response = requests.get(f"https://www.data.gouv.fr/api/1/datasets/{dataset_id}", headers=header)
-        response.raise_for_status()
-        resources = response.json()["resources"]
-        count_updated_resources = 0
-        for resource in resources:
-            if resource["format"] in ["xlsx", "csv"]:
-                today = date.today()
-                updated_url = resource["url"].split("?v=")[0] + "?v=" + today.strftime("%Y%m%d")
-                response = requests.put(
-                    f'https://www.data.gouv.fr/api/1/datasets/{dataset_id}/resources/{resource["id"]}',
-                    headers=header,
-                    json={"url": updated_url},
-                )
-                response.raise_for_status()
-                count_updated_resources += 1
-        logger.info(f"{count_updated_resources} datagouv's ressources have been updated")
-        return count_updated_resources
-    except requests.HTTPError as e:
-        logger.error(f"Datagouv resource update : Error while updating dataset : {dataset_id}")
-        logger.exception(e)
-    except Exception as e:
-        logger.exception(e)
 
 
 def map_canteens_td(year):
