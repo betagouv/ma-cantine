@@ -116,7 +116,7 @@ class TELEDECLARATIONS(EXTRACTOR):
         * an avg meal cost > 20 €
         """
         mask = (self.df["teledeclaration.value_total_ht"] > 1000000) & (
-            self.df["teledeclaration.value_total_ht"] / self.df["canteen.yearly_meal_count"] > 20
+            self.df["teledeclaration.value_total_ht"] / self.df["yearly_meal_count"] > 20
         )
         self.df = self.df[~mask]
 
