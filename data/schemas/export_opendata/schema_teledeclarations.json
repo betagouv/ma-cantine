@@ -53,7 +53,7 @@
       "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine ayant télédéclaré",
       "example": "78542453200014",
       "name": "canteen_siret",
-      "title": "Identifiant de",
+      "title": "Siret",
       "type": "string"
     },
     {
@@ -74,19 +74,19 @@
       "description": "Code insee de la commune dans laquelle se trouve la cantine",
       "example": "29456",
       "name": "canteen_city_insee_code",
-      "title": "Conde Insee Commune",
+      "title": "Code Insee Commune",
       "type": "string"
     },
     {
-      "description": "Code insee de l'EPCI dans laquelle se trouve la cantine",
-      "example": "50570242900793",
+      "description": "Code Insee de l'EPCI dans laquelle se trouve la cantine",
+      "example": "200040715",
       "name": "canteen_epci",
       "title": "Code Insee EPCI",
       "type": "string"
     },
     {
       "description": "Libellé de l'EPCI dans laquelle se trouve la cantine",
-      "example": "CC Communauté Lesneven Côte des Légendes",
+      "example": "Grenoble-Alpes-Métropole",
       "name": "canteen_epci_lib",
       "title": "Libellé EPCI",
       "type": "string"
@@ -106,14 +106,14 @@
       "type": "string"
     },
     {
-      "description": "Code Insee de la région dans lequel se trouve la cantine",
+      "description": "Code Insee de la région dans laquelle se trouve la cantine",
       "example": "53",
       "name": "canteen_region",
-      "title": "Code Département",
+      "title": "Code Région",
       "type": "string"
     },
     {
-      "description": "Libellé de la région dans lequel se trouve la cantine",
+      "description": "Libellé de la région dans laquelle se trouve la cantine",
       "example": "Bretagne",
       "name": "canteen_region_lib",
       "title": "Région libellé",
