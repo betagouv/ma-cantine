@@ -326,10 +326,10 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
         """
         if versionning:
             logger.info(
-                f"Loading {len(self.df)} objects in db. Version {self.extracted_table_name + '_' + datetime.today().strftime('%Y-%m-%d')}"
+                f"Loading {len(self.df)} objects in db. Version {self.extracted_table_name + '_' + datetime.today().strftime('%Y_%m_%d')}"
             )
             self.warehouse.insert_dataframe(
-                self.df, self.extracted_table_name + "_" + datetime.today().strftime("%Y-%m-%d")
+                self.df, self.extracted_table_name + "_" + datetime.today().strftime("%Y_%m_%d")
             )
         else:
             super().load_dataset()
