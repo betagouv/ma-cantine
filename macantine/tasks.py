@@ -360,7 +360,7 @@ def export_datasets(datasets: dict):
         etl.load_dataset()
 
 
-def datasets_export_opendata_td():
+def manual_datasets_export():
     """
     Export the Teledeclarations datasets for data.gouv.fr
     This datasets are updated every year by adding a new campaign
@@ -370,17 +370,6 @@ def datasets_export_opendata_td():
         "campagne teledeclaration 2021": ETL_OPEN_DATA_TELEDECLARATIONS(2021),
         "campagne teledeclaration 2022": ETL_OPEN_DATA_TELEDECLARATIONS(2022),
         "campagne teledeclaration 2023": ETL_OPEN_DATA_TELEDECLARATIONS(2023),
-    }
-    export_datasets(datasets)
-
-
-def datasets_export_analysis_td():
-    """
-    Export the Teledeclarations datasets for data.gouv.fr
-    This datasets are updated every year by adding a new campaign
-    """
-    logger.info("Starting manual datasets export")
-    datasets = {
         "td_analyses": ETL_ANALYSIS_TELEDECLARATIONS(),
     }
     export_datasets(datasets)

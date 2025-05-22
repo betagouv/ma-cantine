@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from macantine.tasks import datasets_export_analysis_td
+from macantine.tasks import manual_datasets_export
 
 
 class Command(BaseCommand):
@@ -9,4 +9,4 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
-        datasets_export_analysis_td()
+        manual_datasets_export()
