@@ -1,7 +1,5 @@
 from django.db import models
 
-DEPARTMENT_WITHOUT_REGION_LIST = ["977", "978", "984", "986", "987", "988"]
-
 
 def get_lib_department_from_code(department: str) -> str:
     if department and (department in Department):
@@ -117,3 +115,4 @@ class Department(models.TextChoices):
     wallis_et_futuna = "986", "986 - Wallis-et-Futuna"
     polynesie_francaise = "987", "987 - Polynésie Française"
     nouvelle_caledonie = "988", "988 - Nouvelle Calédonie"
+    ile_de_clipperton = "989", "989 - Île de Clipperton"
