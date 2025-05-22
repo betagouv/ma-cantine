@@ -6,6 +6,33 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.17.0](https://github.com/betagouv/ma-cantine/compare/v2025.16.0...v2025.17.0) (2025-05-21)
+
+
+### Nouveautés
+
+* **Cantines:** nouveau champ epci_lib pour stocker le libellé de l'EPCI ([#5349](https://github.com/betagouv/ma-cantine/issues/5349)) ([afe6996](https://github.com/betagouv/ma-cantine/commit/afe6996b629c4cae0f792586eee8ffd3ae4bedb3))
+* **Cantines:** nouveau champs department_lib & region_lib pour stocker le libellé des Départements & Régions ([#5351](https://github.com/betagouv/ma-cantine/issues/5351)) ([ad36314](https://github.com/betagouv/ma-cantine/commit/ad363148438b13d4315c113cbf4c951bea52d130))
+* **Geo Bot:** Cantines: remplir les nouveaux champs grâce à l'API Découpage Administratif ([#5358](https://github.com/betagouv/ma-cantine/issues/5358)) ([7bf6716](https://github.com/betagouv/ma-cantine/commit/7bf67161552f1460fdb38239da50d51926630b68))
+
+
+### Améliorations
+
+* **Geo Bot:** Cantines: prendre seulement le code INSEE comme pivot (ignorer le code postal) ([#5354](https://github.com/betagouv/ma-cantine/issues/5354)) ([c558096](https://github.com/betagouv/ma-cantine/commit/c55809600b2768e1a2d00cc2a53a282e6390b57a))
+* **Geo Bot:** Cantines: récupérer l'epci si il est manquant ([#5348](https://github.com/betagouv/ma-cantine/issues/5348)) ([05e8020](https://github.com/betagouv/ma-cantine/commit/05e8020c1aacdb6a16d4e2ed4311a1fdf0a1c236))
+
+
+### Corrections (bugs, typos...)
+
+* **Geo Bot:** change la requête pour inclure les codes INSEE des arrondissements des villes de Paris, Lyon & Marseille ([#5361](https://github.com/betagouv/ma-cantine/issues/5361)) ([a355c73](https://github.com/betagouv/ma-cantine/commit/a355c7344617eaabfeb774997def28fc5ff0ea06))
+
+
+### Technique
+
+* **API Decoupage Administratif:** bouger la logique de transformation vers un seul fichier ([#5357](https://github.com/betagouv/ma-cantine/issues/5357)) ([995e76a](https://github.com/betagouv/ma-cantine/commit/995e76a4d3e0b5cb875df2b278e8abf0d523d624))
+* **Geo Bot:** Cantines: mieux filtrer sur les champs manquants à remplir ([#5355](https://github.com/betagouv/ma-cantine/issues/5355)) ([b3e3880](https://github.com/betagouv/ma-cantine/commit/b3e3880de8c179545fe9cd36b2140daf540e17d8))
+* **Open Data:** utiliser les nouveaux champ Canteen epci & epci_lib au lieu de le récupérer via API ([#5347](https://github.com/betagouv/ma-cantine/issues/5347)) ([951338c](https://github.com/betagouv/ma-cantine/commit/951338cf17279e49a8c36ac7f3b724a59091852d))
+
 ## [2025.16.0](https://github.com/betagouv/ma-cantine/compare/v2025.15.0...v2025.16.0) (2025-05-14)
 
 
