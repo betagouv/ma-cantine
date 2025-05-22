@@ -6,6 +6,23 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.18.0](https://github.com/betagouv/ma-cantine/compare/v2025.17.0...v2025.18.0) (2025-05-22)
+
+
+### Nouveautés
+
+* **ETL:** Commande de comparaison de deux versions d'un jeu de données ([#5367](https://github.com/betagouv/ma-cantine/issues/5367)) ([0fc255a](https://github.com/betagouv/ma-cantine/commit/0fc255a8e02e5b1eac90387fa0ec09d61a699720))
+
+
+### Améliorations
+
+* **ETL:** Versionner le jeu de données analysis des TD ([#5364](https://github.com/betagouv/ma-cantine/issues/5364)) ([c60afc2](https://github.com/betagouv/ma-cantine/commit/c60afc2810101b8bab2872f2c2f3342a376b5ee2))
+
+
+### Corrections (bugs, typos...)
+
+* **Geo Bot:** certains départements n'ont pas de régions (e.g. 988) ([#5366](https://github.com/betagouv/ma-cantine/issues/5366)) ([acf476f](https://github.com/betagouv/ma-cantine/commit/acf476f83b9ee3dfcd9a00d19b0558df3a47cdb9))
+
 ## [2025.17.0](https://github.com/betagouv/ma-cantine/compare/v2025.16.0...v2025.17.0) (2025-05-21)
 
 
