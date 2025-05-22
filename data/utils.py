@@ -208,6 +208,14 @@ def get_region(department_code):
         "973": "03",
         "974": "04",
         "976": "06",
+        "975": "975",
+        "977": "977",
+        "978": "978",
+        "984": "984",
+        "986": "986",
+        "987": "987",
+        "988": "988",
+        "989": "989",
     }
     if department_code and department_code in code_department_to_region:
         return code_department_to_region[department_code]
