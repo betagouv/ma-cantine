@@ -65,6 +65,8 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "postal_code",
         "epci",
         "epci_lib",
+        "pat",
+        "pat_lib",
         "department",
         "department_lib",
         "region",
@@ -97,6 +99,8 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     readonly_fields = (
         "epci",
         "epci_lib",
+        "pat",
+        "pat_lib",
         "department",
         "department_lib",
         "region",
