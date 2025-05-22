@@ -2,6 +2,7 @@ import json
 import logging
 import re
 import time
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -318,6 +319,20 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
         self.df["ratio_bio"] = self.df.apply(get_ratio_bio, axis=1)
         self.df["ratio_egalim_avec_bio"] = self.df.apply(get_ratio_egalim_avec_bio, axis=1)
         self.df["ratio_egalim_sans_bio"] = self.df.apply(get_ratio_egalim_sans_bio, axis=1)
+
+    def load_dataset(self, versionning=True):
+        """
+        Load in database with versionning. This function is called by a manually launched task
+        """
+        if versionning:
+            logger.info(
+                f"Loading {len(self.df)} objects in db. Version {self.extracted_table_name + '_' + datetime.today().strftime('%Y_%m_%d')}"
+            )
+            self.warehouse.insert_dataframe(
+                self.df, self.extracted_table_name + "_" + datetime.today().strftime("%Y_%m_%d")
+            )
+        else:
+            super().load_dataset()
 
 
 class ETL_ANALYSIS_CANTEEN(etl.CANTEENS, ANALYSIS):

@@ -370,6 +370,7 @@ def manual_datasets_export():
         "campagne teledeclaration 2021": ETL_OPEN_DATA_TELEDECLARATIONS(2021),
         "campagne teledeclaration 2022": ETL_OPEN_DATA_TELEDECLARATIONS(2022),
         "campagne teledeclaration 2023": ETL_OPEN_DATA_TELEDECLARATIONS(2023),
+        "td_analyses": ETL_ANALYSIS_TELEDECLARATIONS(),
     }
     export_datasets(datasets)
 
@@ -383,6 +384,5 @@ def continous_datasets_export():
     datasets = {
         "cantines": ETL_OPEN_DATA_CANTEEN(),
         "cantines_analyses": ETL_ANALYSIS_CANTEEN(),
-        "td_analyses": ETL_ANALYSIS_TELEDECLARATIONS(),
     }
     export_datasets(datasets)
