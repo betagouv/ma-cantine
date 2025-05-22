@@ -3,12 +3,14 @@ import os
 from datetime import date
 from typing import Dict
 
+import datacompy
 import numpy as np
 import pandas as pd
 import requests
 
 from data.models import Sector, Teledeclaration
 from data.models.sector import SECTEURS_SPE
+from macantine.etl.data_ware_house import DataWareHouse
 
 logger = logging.getLogger(__name__)
 
@@ -231,3 +233,18 @@ def filter_dataframe_with_schema_cols(df, schema: Dict):
     df = df.loc[:, ~df.columns.duplicated()].copy()
     df = df[columns]
     return df
+
+
+def compare_datasets(table_version_A, table_version_B):
+    """
+    Prints an evaluation report that compares two versions of a dataset stored in the data-warehouse.
+    """
+    warehouse = DataWareHouse()
+
+    print("\n###### Evaluation Report #######\n")
+    print(f"Version A: {table_version_A} \n")
+    print(f"Version B: {table_version_B} \n")
+    dfA = warehouse.read_dataframe(table_version_A)
+    dfB = warehouse.read_dataframe(table_version_B)
+    compare = datacompy.Compare(dfA, dfB, on_index=True)
+    print(compare.report())

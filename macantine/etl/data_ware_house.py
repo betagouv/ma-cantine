@@ -1,5 +1,6 @@
 import os
 
+import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import URL, create_engine
 
@@ -23,3 +24,6 @@ class DataWareHouse:
 
     def insert_dataframe(self, dataframe, table, dtype=None):
         dataframe.to_sql(name=table, con=self.engine, if_exists="replace", index=False, dtype=dtype)
+
+    def read_dataframe(self, table_name):
+        return pd.read_sql(sql=table_name, index_col="id", con=self.engine)
