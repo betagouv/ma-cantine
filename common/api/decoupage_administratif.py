@@ -2,6 +2,8 @@ import logging
 
 import requests
 
+from data.department_choices import DEPARTMENT_WITHOUT_REGION_LIST
+
 logger = logging.getLogger(__name__)
 
 
@@ -43,7 +45,10 @@ def map_communes_infos():
             commune_details[commune["code"]]["city"] = commune.get("nom", None)
             commune_details[commune["code"]]["postal_code_list"] = commune.get("codesPostaux", [])
             commune_details[commune["code"]]["department"] = commune.get("codeDepartement", None)
-            commune_details[commune["code"]]["region"] = commune.get("codeRegion", None)
+            region = commune.get("codeRegion", None)
+            commune_details[commune["code"]]["region"] = (
+                region if region not in DEPARTMENT_WITHOUT_REGION_LIST else None
+            )
             commune_details[commune["code"]]["epci"] = commune.get("codeEpci", None)
     except requests.exceptions.HTTPError as e:
         logger.info(e)

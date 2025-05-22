@@ -1,8 +1,10 @@
 from django.db import models
 
+DEPARTMENT_WITHOUT_REGION_LIST = ["977", "978", "984", "986", "987", "988"]
+
 
 def get_lib_department_from_code(department: str) -> str:
-    if department:
+    if department and (department in Department):
         return Department(department).label.split(" - ")[1]
 
 

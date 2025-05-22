@@ -2,7 +2,7 @@ from django.db import models
 
 
 def get_lib_region_from_code(region: str) -> str:
-    if region:
+    if region and (region in Region):
         return Region(region).label.split(" - ")[1]
 
 
