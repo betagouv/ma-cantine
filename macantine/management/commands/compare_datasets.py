@@ -12,14 +12,14 @@ class Command(BaseCommand):
             dest="dataset_A",
             type=str,
             required=True,
-            help="The name of the table in the Datawarehouse that stores the version A of the dataset to compare",
+            help="The name of the table in the Datawarehouse that stores the version A of the dataset to compare (ex: teledeclaration_2025_11_12)",
         )
         parser.add_argument(
             "--version-B",
             dest="dataset_B",
             type=str,
             required=True,
-            help="The name of the table in the Datawarehouse that stores the version A of the dataset to compare",
+            help="The name of the table in the Datawarehouse that stores the version B of the dataset to compare (ex: teledeclaration_2025_10_11)",
         )
 
     def handle(self, *args, **options):
