@@ -1,13 +1,12 @@
 import json
 import logging
 import re
-import time
 from datetime import datetime
 
 import numpy as np
 import pandas as pd
 
-from api.views.canteen import MetabaseListView
+from api.views.canteen import CanteenAnalysisListView
 from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
 from macantine.utils import CAMPAIGN_DATES
@@ -335,7 +334,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
             super().load_dataset()
 
 
-class ETL_ANALYSIS_CANTEEN(etl.CANTEENS, ANALYSIS):
+class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
     """
     Create a dataset for analysis in a Data Warehouse
     * Extract data from prod
@@ -352,16 +351,7 @@ class ETL_ANALYSIS_CANTEEN(etl.CANTEENS, ANALYSIS):
         self.extracted_table_name = "canteens"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/export_metabase/schema_cantines.json"))
-
-    def extract_dataset(self):
-        start = time.time()
-        open_data_view = MetabaseListView()
-        queryset = open_data_view.get_queryset()
-        serializer = open_data_view.get_serializer_class()
-        canteens = serializer(queryset, many=True).data
-        self.df = pd.DataFrame(canteens)
-        end = time.time()
-        logger.info(f"Time spent on canteens extraction : {end - start}")
+        self.view = CanteenAnalysisListView
 
     def transform_dataset(self):
         # Calling this method is still needed to respect the structure of the code
