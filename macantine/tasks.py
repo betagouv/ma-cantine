@@ -314,17 +314,25 @@ def fill_missing_geolocation_data_using_insee_code():  # noqa C901
                     canteen.postal_code = postal_code_list[0]
                     update = True
             if not canteen.city:
-                canteen.city = fetch_commune_detail(canteen.city_insee_code, communes_details, "city")
-                update = True
+                city = fetch_commune_detail(canteen.city_insee_code, communes_details, "city")
+                if city:
+                    canteen.city = city
+                    update = True
             if not canteen.epci:
-                canteen.epci = fetch_commune_detail(canteen.city_insee_code, communes_details, "epci")
-                update = True
+                epci = fetch_commune_detail(canteen.city_insee_code, communes_details, "epci")
+                if epci:
+                    canteen.epci = epci
+                    update = True
             if not canteen.department:
-                canteen.department = fetch_commune_detail(canteen.city_insee_code, communes_details, "department")
-                update = True
+                department = fetch_commune_detail(canteen.city_insee_code, communes_details, "department")
+                if department:
+                    canteen.department = department
+                    update = True
             if not canteen.region:
-                canteen.region = fetch_commune_detail(canteen.city_insee_code, communes_details, "region")
-                update = True
+                region = fetch_commune_detail(canteen.city_insee_code, communes_details, "region")
+                if region:
+                    canteen.region = region
+                    update = True
         # geo lib fields
         if canteen.epci and not canteen.epci_lib and canteen.epci in epcis_names:
             canteen.epci_lib = fetch_epci_name(canteen.epci, epcis_names)
@@ -335,6 +343,7 @@ def fill_missing_geolocation_data_using_insee_code():  # noqa C901
         if canteen.region and not canteen.region_lib:
             canteen.region_lib = get_lib_region_from_code(canteen.region)
             update = True
+        # save
         if update:
             canteen.save()
             update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
