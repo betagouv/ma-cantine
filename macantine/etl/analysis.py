@@ -334,7 +334,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
             super().load_dataset()
 
 
-class ETL_ANALYSIS_CANTEEN(etl.CANTEENS, ANALYSIS):
+class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
     """
     Create a dataset for analysis in a Data Warehouse
     * Extract data from prod
