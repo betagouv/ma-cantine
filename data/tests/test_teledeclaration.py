@@ -135,9 +135,9 @@ class TeledeclarationQuerySetTest(TestCase):
         self.assertIn(self.invalid_canteen_td, teledeclarations)
         self.assertIn(self.deleted_canteen_td, teledeclarations)
 
-    def test_for_stat(self):
+    def test_valid_td_by_year(self):
         with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
-            teledeclarations = Teledeclaration.objects.for_stat(year_data)
+            teledeclarations = Teledeclaration.objects.valid_td_by_year(year_data)
         self.assertEqual(teledeclarations.count(), 4)
         self.assertIn(self.valid_canteen_td_1, teledeclarations)
         self.assertNotIn(self.invalid_canteen_td, teledeclarations)  # canteen without siret

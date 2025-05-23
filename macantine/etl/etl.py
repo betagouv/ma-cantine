@@ -13,7 +13,6 @@ from data.department_choices import Department
 from data.models import Canteen, Teledeclaration
 from data.region_choices import Region
 from macantine.etl.utils import common_members, filter_empty_values, format_geo_name
-from macantine.utils import CAMPAIGN_DATES
 
 logger = logging.getLogger(__name__)
 
@@ -131,12 +130,9 @@ class TELEDECLARATIONS(EXTRACTOR):
 
     def extract_dataset(self) -> pd.DataFrame:
         self.df = pd.DataFrame()
-        for year in self.years:
-            if year in CAMPAIGN_DATES.keys():
-                df_year = pd.DataFrame(Teledeclaration.objects.for_stat(year).values())
-                self.df = pd.concat([self.df, df_year])
-            else:
-                logger.warning(f"TD dataset does not exist for year : {year}")
+        self.df = pd.DataFrame(Teledeclaration.objects.historical_valid_td(self.years).values())
+        if not len(self.df):
+            logger.warning(f"TD dataset does not exist for years : {self.years}")
         if self.df.empty:
             logger.warning("Dataset is empty. Creating an empty dataframe with columns from the schema")
             self.df = pd.DataFrame(columns=self.columns)
