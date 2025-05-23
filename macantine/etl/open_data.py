@@ -18,7 +18,7 @@ from common.api.decoupage_administratif import (
 from data.models import Canteen
 from macantine.etl import etl
 from macantine.etl.etl import logger
-from macantine.etl.utils import extract_sectors
+from macantine.etl.utils import common_members, extract_sectors
 
 
 class OPEN_DATA(etl.TRANSFORMER_LOADER):
@@ -139,7 +139,7 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
             logger.error(f"Error saving validated data: {e}")
 
 
-class ETL_OPEN_DATA_CANTEEN(etl.CANTEENS, OPEN_DATA):
+class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
     def __init__(self):
         super().__init__()
         self.dataset_name = "registre_cantines"
@@ -148,6 +148,21 @@ class ETL_OPEN_DATA_CANTEEN(etl.CANTEENS, OPEN_DATA):
         self.columns = [field["name"] for field in self.schema["fields"]]
         self.canteens = None
         self.exclude_filter = Q(sectors__id=22) | Q(line_ministry="armee")  # Filtering out the police / army sectors
+
+    def extract_dataset(self):
+        start = time.time()
+        canteens = Canteen.objects.all()
+        if self.exclude_filter:
+            canteens = Canteen.objects.exclude(self.exclude_filter)
+        if canteens.count() == 0:
+            self.df = pd.DataFrame(columns=self.columns)
+        else:
+            # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
+            columns_model = [field.name for field in Canteen._meta.get_fields()]
+            columns_to_extract = common_members(self.columns, columns_model)
+            self.df = pd.DataFrame(canteens.values(*columns_to_extract))
+        end = time.time()
+        logger.info(f"Time spent on canteens extraction : {end - start}")
 
     def transform_dataset(self):
         all_canteens_col = [i["name"] for i in self.schema["fields"]]
