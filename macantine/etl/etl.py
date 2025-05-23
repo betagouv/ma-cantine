@@ -10,9 +10,9 @@ import requests
 from django.core.files.storage import default_storage
 
 from data.department_choices import Department
-from data.models import Canteen, Teledeclaration
+from data.models import Teledeclaration
 from data.region_choices import Region
-from macantine.etl.utils import common_members, filter_empty_values, format_geo_name
+from macantine.etl.utils import filter_empty_values, format_geo_name
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +27,7 @@ class ETL(ABC):
         self.schema = None
         self.schema_url = ""
         self.dataset_name = ""
+        self.view = None
 
     def fill_geo_names(self, prefix=""):
         """
@@ -87,9 +88,16 @@ class ETL(ABC):
 
 
 class EXTRACTOR(ETL):
-    @abstractmethod
+
     def extract_dataset(self):
-        pass
+        start = time.time()
+        view = self.view()
+        queryset = view.get_queryset()
+        serializer = view.get_serializer_class()
+        data = serializer(queryset, many=True).data
+        self.df = pd.DataFrame(data)
+        end = time.time()
+        logger.info(f"Time spent on {self.dataset_name} extraction : {end - start}")
 
 
 class TRANSFORMER_LOADER(ETL):
@@ -136,25 +144,3 @@ class TELEDECLARATIONS(EXTRACTOR):
         if self.df.empty:
             logger.warning("Dataset is empty. Creating an empty dataframe with columns from the schema")
             self.df = pd.DataFrame(columns=self.columns)
-
-
-class CANTEENS(EXTRACTOR):
-    def __init__(self):
-        super().__init__()
-        self.exclude_filter = None
-        self.columns = []
-
-    def extract_dataset(self):
-        start = time.time()
-        canteens = Canteen.objects.all()
-        if self.exclude_filter:
-            canteens = Canteen.objects.exclude(self.exclude_filter)
-        if canteens.count() == 0:
-            self.df = pd.DataFrame(columns=self.columns)
-        else:
-            # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
-            columns_model = [field.name for field in Canteen._meta.get_fields()]
-            columns_to_extract = common_members(self.columns, columns_model)
-            self.df = pd.DataFrame(canteens.values(*columns_to_extract))
-        end = time.time()
-        logger.info(f"Time spent on canteens extraction : {end - start}")
