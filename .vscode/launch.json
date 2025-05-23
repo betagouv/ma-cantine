@@ -62,7 +62,7 @@
       "stopOnEntry": false,
       "python": "${workspaceFolder}/venv/bin/python",
       "program": "${workspaceFolder}/manage.py",
-      "args": ["export_dataset"],
+      "args": ["export_dataset", "--dataset", "2"],
       "justMyCode": false,
       "django": true
     }
