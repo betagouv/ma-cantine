@@ -82,7 +82,7 @@ class CanteenStatisticsView(APIView):
         return canteens.distinct()
 
     def _filter_teledeclarations(self, year, regions, departments, city_insee_codes, sectors):
-        teledeclarations = Teledeclaration.objects.for_stat(year)
+        teledeclarations = Teledeclaration.objects.valid_td_by_year(year)
         if teledeclarations:
             if city_insee_codes:
                 teledeclarations = teledeclarations.filter(canteen__city_insee_code__in=city_insee_codes)
