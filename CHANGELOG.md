@@ -6,6 +6,18 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.18.1](https://github.com/betagouv/ma-cantine/compare/v2025.18.0...v2025.18.1) (2025-05-23)
+
+
+### Améliorations
+
+* **ETL:** Affiner le scope des fonctions d'export ([#5374](https://github.com/betagouv/ma-cantine/issues/5374)) ([c366fcf](https://github.com/betagouv/ma-cantine/commit/c366fcf9b06d264caaa64616aa2f6d372d55f3fe))
+
+
+### Corrections (bugs, typos...)
+
+* **ETL:** Vérifier existence colonne pour calcul cout denrees ([#5370](https://github.com/betagouv/ma-cantine/issues/5370)) ([3124ed1](https://github.com/betagouv/ma-cantine/commit/3124ed11f950296cf519db2ac04bc295b6f29807))
+
 ## [2025.18.0](https://github.com/betagouv/ma-cantine/compare/v2025.17.0...v2025.18.0) (2025-05-22)
 
 
