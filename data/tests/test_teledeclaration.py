@@ -10,13 +10,20 @@ from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Teledeclaration
 
 year_data = now().year - 1
+last_year_data = year_data - 1
 mocked_campaign_dates = {
+    last_year_data: {
+        "teledeclaration_start_date": now().replace(year=year_data - 1, month=1, day=1, hour=0, minute=0, second=0),
+        "teledeclaration_end_date": now().replace(year=year_data - 1, month=4, day=30, hour=23, minute=59, second=59),
+        "correction_start_date": now().replace(year=year_data - 1, month=6, day=1, hour=0, minute=0, second=0),
+        "correction_end_date": now().replace(year=year_data - 1, month=8, day=31, hour=23, minute=59, second=59),
+    },
     year_data: {
         "teledeclaration_start_date": now().replace(month=1, day=1, hour=0, minute=0, second=0),
         "teledeclaration_end_date": now().replace(month=4, day=30, hour=23, minute=59, second=59),
         "correction_start_date": now().replace(month=6, day=1, hour=0, minute=0, second=0),
         "correction_end_date": now().replace(month=8, day=31, hour=23, minute=59, second=59),
-    }
+    },
 }
 
 
@@ -50,6 +57,9 @@ class TeledeclarationQuerySetTest(TestCase):
     def _create_diagnostics_and_teledeclarations(self):
         """Create diagnostics and teledeclarations for testing."""
         date_in_teledeclaration_campaign = now().replace(month=3, day=1, hour=0, minute=0, second=0)
+        date_in_last_teledeclaration_campaign = now().replace(
+            year=year_data - 1, month=3, day=1, hour=0, minute=0, second=0
+        )
         date_in_correction_campaign = now().replace(month=7, day=1, hour=0, minute=0, second=0)
 
         for index, canteen in enumerate([self.valid_canteen_1, self.valid_canteen_2, self.valid_canteen_3]):
@@ -61,10 +71,23 @@ class TeledeclarationQuerySetTest(TestCase):
                 value_total_ht=1000.00,
                 value_bio_ht=200.00,
             )
+            diagnostic_last_year = DiagnosticFactory(
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                year=last_year_data,
+                creation_date=date_in_last_teledeclaration_campaign,
+                canteen=canteen,
+                value_total_ht=1000.00,
+                value_bio_ht=200.00,
+            )
             setattr(self, f"valid_canteen_diagnostic_{index + 1}", diagnostic)
             with freeze_time(date_in_teledeclaration_campaign):
                 teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant=UserFactory.create())
             setattr(self, f"valid_canteen_td_{index + 1}", teledeclaration)
+
+            with freeze_time(date_in_last_teledeclaration_campaign):
+                teledeclaration = Teledeclaration.create_from_diagnostic(
+                    diagnostic_last_year, applicant=UserFactory.create()
+                )
 
         # Corrected TD
         self.valid_canteen_diagnostic_correction = DiagnosticFactory(
@@ -143,19 +166,26 @@ class TeledeclarationQuerySetTest(TestCase):
         self.assertNotIn(self.invalid_canteen_td, teledeclarations)  # canteen without siret
         self.assertNotIn(self.deleted_canteen_td, teledeclarations)  # canteen deleted
 
+    def test_historical_valid_td(self):
+        with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
+            teledeclarations = Teledeclaration.objects.historical_valid_td(mocked_campaign_dates.keys())
+        self.assertEqual(teledeclarations.count(), 7)
+
     def test_meal_price(self):
         canteen_with_meal_price = Canteen.objects.get(siret="12345678901234")
         canteen_without_meal_price = Canteen.objects.get(siret="12345678901230")
         canteen_non_appro = Canteen.objects.get(siret="12345678901232")
 
         td_with_meal_price = Teledeclaration.objects.get(
-            canteen=canteen_with_meal_price.id, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+            canteen=canteen_with_meal_price.id, status=Teledeclaration.TeledeclarationStatus.SUBMITTED, year=year_data
         )
         td_without_meal_price = Teledeclaration.objects.get(
-            canteen=canteen_without_meal_price.id, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+            canteen=canteen_without_meal_price.id,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+            year=year_data,
         )
         td_without_appro = Teledeclaration.objects.get(
-            canteen=canteen_non_appro.id, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+            canteen=canteen_non_appro.id, status=Teledeclaration.TeledeclarationStatus.SUBMITTED, year=year_data
         )
 
         self.assertEqual(
