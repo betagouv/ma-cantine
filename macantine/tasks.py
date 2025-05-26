@@ -240,9 +240,6 @@ def _update_canteen_geo_data_from_siret(canteen, response):
     try:
         if "cityInseeCode" in response.keys():
             canteen.city_insee_code = response["cityInseeCode"]
-            # TODO: remove this, leave it to the other geo bot
-            canteen.postal_code = response["postalCode"]
-            canteen.city = response["city"]
             canteen.save()
             update_change_reason(canteen, "Données de localisation MAJ par bot, via SIRET")
             logger.info(f"Canteen info has been updated. Canteen name : {canteen.name}")
