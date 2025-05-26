@@ -9,6 +9,7 @@ from django.core.files.storage import default_storage
 from django.db.models import Q
 
 import macantine.etl.utils
+from api.views.teledeclaration import TeledeclarationOpenDataListView
 from common.api.decoupage_administratif import (
     fetch_commune_detail,
     fetch_epci_name,
@@ -225,6 +226,7 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self.dataset_name = f"campagne_td_{year}"
         self.schema = json.load(open("data/schemas/export_opendata/schema_teledeclarations.json"))
         self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/export_opendata/schema_teledeclarations.json"
+        self.view = TeledeclarationOpenDataListView
 
         self.categories_to_aggregate = {
             "bio": ["_bio"],

@@ -18,7 +18,11 @@ from rest_framework.views import APIView
 from xhtml2pdf import pisa
 
 from api.permissions import IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
-from api.serializers import FullDiagnosticSerializer, TeledeclarationAnalysisSerializer
+from api.serializers import (
+    FullDiagnosticSerializer,
+    TeledeclarationAnalysisSerializer,
+    TeledeclarationOpenDataSerializer,
+)
 from data.models import Canteen, Diagnostic, Teledeclaration
 from macantine.utils import (
     CAMPAIGN_DATES,
@@ -472,3 +476,12 @@ class TeledeclarationAnalysisListView(ListAPIView):
 
     def get_queryset(self):
         return Teledeclaration.objects.historical_valid_td(CAMPAIGN_DATES.keys())
+
+
+class TeledeclarationOpenDataListView(ListAPIView):
+    serializer_class = TeledeclarationOpenDataSerializer
+    filter_backends = [django_filters.DjangoFilterBackend]
+    ordering_fields = ["creation_date"]
+
+    def get_queryset(self, year):
+        return Teledeclaration.objects.valid_td_by_year(year)

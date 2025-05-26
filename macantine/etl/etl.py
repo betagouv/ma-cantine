@@ -92,7 +92,10 @@ class EXTRACTOR(ETL):
     def extract_dataset(self):
         start = time.time()
         view = self.view()
-        queryset = view.get_queryset()
+        if hasattr(self, "year"):
+            queryset = view.get_queryset(self.year)
+        else:
+            queryset = view.get_queryset()
         serializer = view.get_serializer_class()
         data = serializer(queryset, many=True).data
         self.df = pd.DataFrame(data)
