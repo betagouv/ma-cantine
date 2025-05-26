@@ -6,7 +6,7 @@ from django.test import TestCase
 from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
-from data.models import Teledeclaration
+from data.models import Canteen, Teledeclaration
 from macantine.etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
     ETL_ANALYSIS_TELEDECLARATIONS,
@@ -19,14 +19,10 @@ from macantine.etl.utils import format_td_sector_column
 
 
 class TestETLAnalysisCanteen(TestCase):
-
-    def test_transformed_dataset_match_schema(self):
-        etl = ETL_ANALYSIS_CANTEEN()
-        SectorFactory.create(id=1, name="Sector factory", category="Category factory")
-
-        schema = json.load(open("data/schemas/export_metabase/schema_cantines.json"))
-        schema_cols = [i["name"] for i in schema["fields"]]
-        canteen_1 = CanteenFactory(
+    @classmethod
+    def setUpTestData(cls):
+        cls.sector = SectorFactory.create(id=1, name="Sector factory", category="Category factory")
+        cls.canteen_1 = CanteenFactory(
             name="Cantine",
             siret="19382111300027",
             city_insee_code="38185",
@@ -36,8 +32,18 @@ class TestETLAnalysisCanteen(TestCase):
             department_lib="Isère",
             region="84",
             region_lib="Auvergne-Rhône-Alpes",
-            sectors=[1],
+            sectors=[cls.sector],
+            line_ministry=Canteen.Ministries.AGRICULTURE,
+            management_type=Canteen.ManagementType.DIRECT,
+            production_type=Canteen.ProductionType.ON_SITE,
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
+        cls.canteen_2 = CanteenFactory(sectors=[cls.sector])
+
+    def test_transformed_dataset_match_schema(self):
+        etl = ETL_ANALYSIS_CANTEEN()
+        schema = json.load(open("data/schemas/export_metabase/schema_cantines.json"))
+        schema_cols = [i["name"] for i in schema["fields"]]
         etl.extract_dataset()
         etl.transform_dataset()
         canteens = etl.df
@@ -53,19 +59,28 @@ class TestETLAnalysisCanteen(TestCase):
         )
 
         # Check the generated columns
-        first_canteen = canteens[canteens.id == canteen_1.id].iloc[0]
-        self.assertEqual(first_canteen["epci"], "200040715")
-        self.assertEqual(first_canteen["epci_lib"], "Grenoble-Alpes-Métropole")
-        self.assertEqual(first_canteen["departement"], "38")
-        self.assertEqual(first_canteen["departement_lib"], "Isère")
-        self.assertEqual(first_canteen["region"], "84")
-        self.assertEqual(first_canteen["region_lib"], "Auvergne-Rhône-Alpes")
-        self.assertEqual(first_canteen["secteur"], "Sector factory")
-        self.assertEqual(first_canteen["spe"], "Non")
+        canteen_1 = canteens[canteens.id == self.canteen_1.id].iloc[0]
+        self.assertEqual(canteen_1["epci"], "200040715")
+        self.assertEqual(canteen_1["epci_lib"], "Grenoble-Alpes-Métropole")
+        self.assertEqual(canteen_1["departement"], "38")
+        self.assertEqual(canteen_1["departement_lib"], "Isère")
+        self.assertEqual(canteen_1["region"], "84")
+        self.assertEqual(canteen_1["region_lib"], "Auvergne-Rhône-Alpes")
+        self.assertEqual(canteen_1["secteur"], "Sector factory")
+        self.assertEqual(canteen_1["ministere_tutelle"], "Agriculture, Alimentation et Forêts")
+        self.assertEqual(canteen_1["type_gestion"], "Directe")
+        self.assertEqual(canteen_1["type_production"], "Cantine qui produit les repas sur place")
+        self.assertEqual(canteen_1["modele_economique"], "Public")
+        self.assertEqual(canteen_1["spe"], "Non")
+
+        canteen_2 = canteens[canteens.id == self.canteen_2.id].iloc[0]
+        self.assertEqual(canteen_2["ministere_tutelle"], None)
+        self.assertEqual(canteen_2["type_gestion"], None)
+        self.assertEqual(canteen_2["type_production"], None)
+        self.assertEqual(canteen_2["modele_economique"], None)
 
 
 class TestETLAnalysisTD(TestCase):
-
     def test_extraction_teledeclaration(self):
         """
         Only teledeclarations that occurred during teledeclaration campaigns should be extracted

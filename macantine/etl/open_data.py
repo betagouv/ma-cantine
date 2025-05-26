@@ -29,7 +29,7 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
     def transform_canteen_choice_fields(self, prefix=""):
         # line_ministry
         self.df[prefix + "line_ministry"] = self.df[prefix + "line_ministry"].apply(
-            lambda x: Canteen.Ministries(x).label if (x in Canteen.Ministries) else ""
+            lambda x: Canteen.Ministries(x).label if (x in Canteen.Ministries) else None
         )
 
     def transform_canteen_geo_data(self, prefix=""):
