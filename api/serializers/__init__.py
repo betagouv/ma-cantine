@@ -38,7 +38,7 @@ from .partnertype import PartnerTypeSerializer  # noqa: F401
 from .blogpost import BlogPostSerializer  # noqa: F401
 from .password import PasswordSerializer  # noqa: F401
 from .managerinvitation import ManagerInvitationSerializer  # noqa: F401
-from .teledeclaration import ShortTeledeclarationSerializer  # noqa: F401
+from .teledeclaration import ShortTeledeclarationSerializer, TeledeclarationAnalysisSerializer  # noqa: F401
 from .purchase import (  # noqa: F401
     PurchaseSerializer,
     PurchaseSummarySerializer,

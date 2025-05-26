@@ -13,3 +13,15 @@ class ShortTeledeclarationSerializer(serializers.ModelSerializer):
             "status",
         )
         read_only_fields = fields
+
+
+class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Teledeclaration
+        fields = (
+            "id",
+            "creation_date",
+            "modification_date",
+            "status",
+        )
+        read_only_fields = fields
