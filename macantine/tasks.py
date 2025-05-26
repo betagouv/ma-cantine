@@ -281,7 +281,9 @@ def fill_missing_geolocation_data_using_siret():
             logger.info("200 appels réalisés maximum par minute...")
             time.sleep(60)
 
-    logger.info(f"Siret Geolocation Bot: Fixed {counter}/{candidate_canteens.count()} canteens")
+    result = f"Fixed {counter}/{candidate_canteens.count()} canteens"
+    logger.info(f"Siret Geolocation Bot: {result}")
+    return result
 
 
 @app.task()
@@ -349,7 +351,9 @@ def fill_missing_geolocation_data_using_insee_code():  # noqa C901
             update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
             counter += 1
 
-    logger.info(f"INSEE Geolocation Bot: Fixed {counter}/{candidate_canteens.count()} canteens")
+    result = f"Fixed {counter}/{candidate_canteens.count()} canteens"
+    logger.info(f"INSEE Geolocation Bot: Fixed {result}")
+    return result
 
 
 @app.task()
