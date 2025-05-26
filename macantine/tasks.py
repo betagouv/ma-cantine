@@ -253,7 +253,7 @@ def fill_missing_geolocation_data_using_siret():
     """
     Input: Canteens with siret but no city_insee_code
     Processing: API Recherche Entreprises
-    Output: Fill canteen's city_insee_code, postal_code & city fields
+    Output: Fill canteen's city_insee_code field
     """
     candidate_canteens = _get_candidate_canteens_for_siret_geobot()
     logger.info(f"Siret Geolocation Bot: found {candidate_canteens.count()} canteens")

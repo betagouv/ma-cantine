@@ -248,4 +248,4 @@ class TestGeolocationBotUsingSiret(TestCase):
 
         canteen.refresh_from_db()
         self.assertEqual(canteen.city_insee_code, city_insee_code)
-        self.assertEqual(canteen.postal_code, code_postal)
+        self.assertEqual(canteen.postal_code, None)  # will be filled by the other geo bot
