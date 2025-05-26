@@ -236,16 +236,20 @@ def _get_candidate_canteens_for_siret_to_insee_code_bot():
     return Canteen.objects.has_siret().has_city_insee_code_missing().order_by("-creation_date")
 
 
-def _update_canteen_geo_data_from_siret(canteen, response):
-    try:
-        if "cityInseeCode" in response.keys():
-            canteen.city_insee_code = response["cityInseeCode"]
-            canteen.save()
-            update_change_reason(canteen, "Données de localisation MAJ par bot, via SIRET")
-            logger.info(f"Canteen info has been updated. Canteen name : {canteen.name}")
-    except Exception as e:
-        logger.error(f"Unable to update canteen info for canteen : {canteen.name}")
-        logger.error(e)
+def _update_canteen_geo_data_from_siret(canteen):
+    if utils_siret.is_valid_length_siret(canteen.siret):
+        response = fetch_geo_data_from_siret(canteen.siret)
+        if response:
+            try:
+                if "cityInseeCode" in response.keys():
+                    canteen.city_insee_code = response["cityInseeCode"]
+                    canteen.save()
+                    update_change_reason(canteen, "Code Insee MAJ par bot, via SIRET")
+                    logger.info(f"Canteen info has been updated. Canteen name : {canteen.name}")
+                    return True
+            except Exception as e:
+                logger.error(f"Unable to update canteen info for canteen : {canteen.name}")
+                logger.error(e)
 
 
 @app.task()
@@ -262,14 +266,12 @@ def fill_missing_insee_code_using_siret():
     if len(candidate_canteens) == 0:
         logger.info("No candidate canteens have been found. Nothing to do here...")
         return
+
     for i, canteen in enumerate(candidate_canteens):
         logger.info(f"Traitement de la cantine {canteen.name} {canteen.siret}, appel #{i}")
-        if utils_siret.is_valid_length_siret(canteen.siret):
-            response = {}
-            response = fetch_geo_data_from_siret(canteen.siret, response)
-            if response:
-                _update_canteen_geo_data_from_siret(canteen, response)
-                counter += 1
+        updated = _update_canteen_geo_data_from_siret(canteen)
+        if updated:
+            counter += 1
         # time.sleeps to avoid API rate limit
         if i > 1 and i % 7 == 0:
             logger.info("7 appels réalisés maximum par seconde...")
@@ -283,8 +285,61 @@ def fill_missing_insee_code_using_siret():
     return result
 
 
+def _update_canteen_geo_data_from_insee_code(canteen, communes_details=None, epcis_names=None):  # noqa C901
+    # fetch geo data from API Découpage Administratif
+    if not communes_details:
+        communes_details = map_communes_infos()
+    if not epcis_names:
+        epcis_names = map_epcis_code_name()
+
+    update = False
+    # geo fields
+    if canteen.city_insee_code in communes_details:
+        if not canteen.postal_code:
+            postal_code_list = fetch_commune_detail(canteen.city_insee_code, communes_details, "postal_code_list")
+            postal_code = postal_code_list[0] if postal_code_list else None
+            if postal_code_list:
+                canteen.postal_code = postal_code
+                update = True
+        if not canteen.city:
+            city = fetch_commune_detail(canteen.city_insee_code, communes_details, "city")
+            if city:
+                canteen.city = city
+                update = True
+        if not canteen.epci:
+            epci = fetch_commune_detail(canteen.city_insee_code, communes_details, "epci")
+            if epci:
+                canteen.epci = epci
+                update = True
+        if not canteen.department:
+            department = fetch_commune_detail(canteen.city_insee_code, communes_details, "department")
+            if department:
+                canteen.department = department
+                update = True
+        if not canteen.region:
+            region = fetch_commune_detail(canteen.city_insee_code, communes_details, "region")
+            if region:
+                canteen.region = region
+                update = True
+    # geo lib fields
+    if canteen.epci and not canteen.epci_lib and canteen.epci in epcis_names:
+        canteen.epci_lib = fetch_epci_name(canteen.epci, epcis_names)
+        update = True
+    if canteen.department and not canteen.department_lib:
+        canteen.department_lib = get_lib_department_from_code(canteen.department)
+        update = True
+    if canteen.region and not canteen.region_lib:
+        canteen.region_lib = get_lib_region_from_code(canteen.region)
+        update = True
+    # save
+    if update:
+        canteen.save()
+        update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
+        return True
+
+
 @app.task()
-def fill_missing_geolocation_data_using_insee_code():  # noqa C901
+def fill_missing_geolocation_data_using_insee_code():
     """
     Input: Canteens with city_insee_code, but no postal_code or city or epci or department or region
     Processing: API Découpage Administratif
@@ -304,48 +359,8 @@ def fill_missing_geolocation_data_using_insee_code():  # noqa C901
     epcis_names = map_epcis_code_name()
 
     for i, canteen in enumerate(candidate_canteens):
-        update = False
-        # geo fields
-        if canteen.city_insee_code in communes_details:
-            if not canteen.postal_code:
-                postal_code_list = fetch_commune_detail(canteen.city_insee_code, communes_details, "postal_code_list")
-                if postal_code_list:
-                    canteen.postal_code = postal_code_list[0]
-                    update = True
-            if not canteen.city:
-                city = fetch_commune_detail(canteen.city_insee_code, communes_details, "city")
-                if city:
-                    canteen.city = city
-                    update = True
-            if not canteen.epci:
-                epci = fetch_commune_detail(canteen.city_insee_code, communes_details, "epci")
-                if epci:
-                    canteen.epci = epci
-                    update = True
-            if not canteen.department:
-                department = fetch_commune_detail(canteen.city_insee_code, communes_details, "department")
-                if department:
-                    canteen.department = department
-                    update = True
-            if not canteen.region:
-                region = fetch_commune_detail(canteen.city_insee_code, communes_details, "region")
-                if region:
-                    canteen.region = region
-                    update = True
-        # geo lib fields
-        if canteen.epci and not canteen.epci_lib and canteen.epci in epcis_names:
-            canteen.epci_lib = fetch_epci_name(canteen.epci, epcis_names)
-            update = True
-        if canteen.department and not canteen.department_lib:
-            canteen.department_lib = get_lib_department_from_code(canteen.department)
-            update = True
-        if canteen.region and not canteen.region_lib:
-            canteen.region_lib = get_lib_region_from_code(canteen.region)
-            update = True
-        # save
-        if update:
-            canteen.save()
-            update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
+        updated = _update_canteen_geo_data_from_insee_code(canteen, communes_details, epcis_names)
+        if updated:
             counter += 1
 
     result = f"Updated {counter}/{candidate_canteens.count()} canteens"
