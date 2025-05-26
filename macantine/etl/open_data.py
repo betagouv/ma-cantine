@@ -217,7 +217,7 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
         logger.info(f"Time spent on campaign participations : {end - start}")
 
 
-class ETL_OPEN_DATA_TELEDECLARATIONS(etl.TELEDECLARATIONS, OPEN_DATA):
+class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
     def __init__(self, year: int):
         super().__init__()
         self.years = [year]
@@ -272,8 +272,6 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.TELEDECLARATIONS, OPEN_DATA):
         if "central_kitchen_siret" in self.df.columns:
             self.df["canteen.central_kitchen_siret"] = self.df["central_kitchen_siret"]
 
-        logger.info("TD campagne : Add additionnal filters (that couldn't be processed at queryset)")
-        self.filter_teledeclarations()
         logger.info("TD campagne : Clean dataset...")
         self._clean_dataset()
         logger.info("TD campagne : Format the decimals...")

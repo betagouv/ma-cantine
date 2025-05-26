@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 
 from api.views.canteen import CanteenAnalysisListView
+from api.views.teledeclaration import TeledeclarationAnalysisListView
 from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
 from macantine.utils import CAMPAIGN_DATES
@@ -211,7 +212,7 @@ class ANALYSIS(etl.TRANSFORMER_LOADER):
         self.df = self.df.drop_duplicates(subset=["id"])
 
 
-class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
+class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
     """
     Create a dataset for analysis in a Data Warehouse
     * Extract data from prod
@@ -226,6 +227,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/export_metabase/schema_teledeclarations.json"))
         self.columns = [field["name"] for field in self.schema["fields"]]
+        self.view = TeledeclarationAnalysisListView
 
     def transform_dataset(self):
         if self.df.empty:
@@ -252,9 +254,6 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.TELEDECLARATIONS):
         del self.df["value_externality_performance_ht_agg"]
         del self.df["value_egalim_others_ht_agg"]
         self.df = aggregate(self.df)
-
-        # Add additionnal filters (that couldn't be processed at queryset)
-        self.filter_teledeclarations()
 
         self.compute_miscellaneous_columns()
 

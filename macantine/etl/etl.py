@@ -10,9 +10,8 @@ import requests
 from django.core.files.storage import default_storage
 
 from data.department_choices import Department
-from data.models import Teledeclaration
 from data.region_choices import Region
-from macantine.etl.utils import filter_empty_values, format_geo_name
+from macantine.etl.utils import format_geo_name
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +26,7 @@ class ETL(ABC):
         self.schema = None
         self.schema_url = ""
         self.dataset_name = ""
+        self.columns = []
         self.view = None
 
     def fill_geo_names(self, prefix=""):
@@ -96,6 +96,9 @@ class EXTRACTOR(ETL):
         serializer = view.get_serializer_class()
         data = serializer(queryset, many=True).data
         self.df = pd.DataFrame(data)
+        if self.df.empty:
+            logger.warning("Dataset is empty. Creating an empty dataframe with columns from the schema")
+            self.df = pd.DataFrame(columns=self.columns)
         end = time.time()
         logger.info(f"Time spent on {self.dataset_name} extraction : {end - start}")
 
@@ -108,39 +111,3 @@ class TRANSFORMER_LOADER(ETL):
     @abstractmethod
     def load_dataset(self):
         pass
-
-
-class TELEDECLARATIONS(EXTRACTOR):
-    def __init__(self):
-        self.years = []
-        self.columns = []
-
-    def filter_aberrant_td(self):
-        """
-        Filtering out the teledeclarations that :
-        *  products > 1 million €
-        AND
-        * an avg meal cost > 20 €
-        """
-        if "canteen.yearly_meal_count" in self.df.columns:
-            mask = (self.df["teledeclaration.value_total_ht"] > 1000000) & (
-                self.df["teledeclaration.value_total_ht"] / self.df["canteen.yearly_meal_count"] > 20
-            )
-            self.df = self.df[~mask]
-
-    def filter_teledeclarations(self):
-        """
-        Filter teledeclarations for empty values."""
-
-        self.df = filter_empty_values(self.df, col_name="teledeclaration.value_total_ht")
-        self.df = filter_empty_values(self.df, col_name="teledeclaration.value_bio_ht")
-        self.filter_aberrant_td()
-
-    def extract_dataset(self) -> pd.DataFrame:
-        self.df = pd.DataFrame()
-        self.df = pd.DataFrame(Teledeclaration.objects.historical_valid_td(self.years).values())
-        if not len(self.df):
-            logger.warning(f"TD dataset does not exist for years : {self.years}")
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe with columns from the schema")
-            self.df = pd.DataFrame(columns=self.columns)
