@@ -18,11 +18,15 @@ from rest_framework.views import APIView
 from xhtml2pdf import pisa
 
 from api.permissions import IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
+<<<<<<< HEAD
 from api.serializers import (
     FullDiagnosticSerializer,
     TeledeclarationAnalysisSerializer,
     TeledeclarationOpenDataSerializer,
 )
+=======
+from api.serializers import FullDiagnosticSerializer, TeledeclarationAnalysisSerializer
+>>>>>>> 77b28798d (Create view and serializer)
 from data.models import Canteen, Diagnostic, Teledeclaration
 from macantine.utils import (
     CAMPAIGN_DATES,
