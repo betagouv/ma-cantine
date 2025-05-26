@@ -34,3 +34,21 @@ On stock actuellement en dure la liste des départements ([data/department_choic
     * grâce à une tâche asynchrone
     * `fill_missing_geolocation_data_using_insee_code()`
     * fréquence : toutes les nuits
+
+## FAQ
+
+### Pourquoi stocker les libellés ?
+
+* Pour éviter de devoir stocker l'ensemble des données et faire des mapping à la volée
+* Pour avoir les même données disponibles partout (App, Admin, Metabase, Open Data)
+
+### Pourquoi stocker les départements et les régions, mais pas les communes et les epcis ?
+
+* Choix historique
+* Parce que ça ne change pas souvent
+* Pas besoin d'appel API pour récupérer le libellé
+* Il y a un mapping entre départements et régions
+
+### Comment gérer la MAJ annuelle des communes et EPCI ?
+
+à compléter
