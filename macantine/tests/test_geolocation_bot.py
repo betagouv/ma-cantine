@@ -26,8 +26,37 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
                 managers=[manager],
                 sectors=[sector],
             )
-        mock.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes", text=json.dumps([]))
-        mock.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom", text=json.dumps([]))
+        mock.get(
+            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes",
+            text=json.dumps(
+                [
+                    {
+                        "nom": "Grenoble",
+                        "code": "38185",
+                        "codeDepartement": "38",
+                        "siren": "213801855",
+                        "codeEpci": "200040715",
+                        "codeRegion": "84",
+                        "codesPostaux": ["38000", "38100"],
+                        "population": 156389,
+                    }
+                ]
+            ),
+        )
+        mock.get(
+            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom",
+            text=json.dumps(
+                [
+                    {
+                        "nom": "Grenoble-Alpes-Métropole",
+                        "code": "200040715",
+                        "codesDepartements": ["38"],
+                        "codesRegions": ["84"],
+                        "population": 449509,
+                    }
+                ]
+            ),
+        )
 
         tasks.fill_missing_geolocation_data_using_insee_code()
 
@@ -207,7 +236,7 @@ class TestGeolocationBotUsingSiret(TestCase):
             ),
             status_code=200,
         )
-        response = fetch_geo_data_from_siret(candidate_canteen.siret, {})
+        response = fetch_geo_data_from_siret(candidate_canteen.siret)
         self.assertEquals(response["cityInseeCode"], city_insee_code)
 
     def test_geolocation_with_siret_data_filled(self, mock):
