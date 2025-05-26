@@ -126,7 +126,7 @@ class TestETLOpenData(TestCase):
         self.assertEqual(len(etl_td.get_dataset().columns), len(schema_cols), "The columns should match the schema")
 
         self.assertEqual(
-            etl_td.get_dataset().iloc[0]["canteen_line_ministry"], "", "The line_ministry should be an empty string"
+            etl_td.get_dataset().iloc[0]["canteen_line_ministry"], None, "The line_ministry should be empty"
         )
         self.assertEqual(
             etl_td.get_dataset().iloc[0]["canteen_sectors"], '"[]"', "The sectors should be an empty list"
@@ -188,7 +188,7 @@ class TestETLOpenData(TestCase):
         self.assertEqual(canteen["economic_model"], "public")
 
         canteen_without_manager = canteens[canteens.id == self.canteen_without_manager.id].iloc[0]
-        self.assertEqual(canteen_without_manager["line_ministry"], "")
+        self.assertEqual(canteen_without_manager["line_ministry"], None)
         self.assertEqual(canteen_without_manager["management_type"], None)
         self.assertEqual(canteen_without_manager["production_type"], None)
         self.assertEqual(canteen_without_manager["economic_model"], None)
