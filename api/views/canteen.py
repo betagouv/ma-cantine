@@ -1054,7 +1054,7 @@ class CanteenMinistriesView(APIView):
         return Response(ministries)
 
 
-class MetabaseListView(ListAPIView):
+class CanteenAnalysisListView(ListAPIView):
     serializer_class = CanteenMetabaseSerializer
     filter_backends = [django_filters.DjangoFilterBackend]
     ordering_fields = ["creation_date"]
