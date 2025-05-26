@@ -91,7 +91,7 @@ class TeledeclarationQuerySet(models.QuerySet):
             .filter(canteen_has_siret_or_siren_unite_legale_query())  # Chaine de traitement n°7
         )
 
-    def for_stat(self, year):
+    def valid_td_by_year(self, year):
         year = int(year)
         if year in CAMPAIGN_DATES.keys():
             return (
@@ -105,6 +105,12 @@ class TeledeclarationQuerySet(models.QuerySet):
             )
         else:
             return self.none()
+
+    def historical_valid_td(self, years: list):
+        results = self.none()
+        for year in years:
+            results = results | self.valid_td_by_year(year)
+        return results
 
 
 class Teledeclaration(models.Model):
