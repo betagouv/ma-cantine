@@ -460,7 +460,7 @@ class CanteenStatusBySiretView(APIView):
         siret = request.parser_context.get("kwargs").get("siret")
         response = get_cantine_from_siret(siret, request) or {}
         if not response:
-            response = fetch_geo_data_from_siret(siret, response)
+            response = fetch_geo_data_from_siret(siret)
             if not response:
                 return Response(None, status=status.HTTP_204_NO_CONTENT)
             city = response.get("city", None)
