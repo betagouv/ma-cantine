@@ -259,7 +259,7 @@ def fill_missing_geolocation_data_using_siret():
     Output: Fill canteen's city_insee_code, postal_code & city fields
     """
     candidate_canteens = _get_candidate_canteens_for_siret_geobot()
-    logger.info(f"Siret Geolocation Bot: about to fix {candidate_canteens.count()} canteens")
+    logger.info(f"Siret Geolocation Bot: found {candidate_canteens.count()} canteens")
     counter = 0
 
     if len(candidate_canteens) == 0:
@@ -281,7 +281,7 @@ def fill_missing_geolocation_data_using_siret():
             logger.info("200 appels réalisés maximum par minute...")
             time.sleep(60)
 
-    result = f"Fixed {counter}/{candidate_canteens.count()} canteens"
+    result = f"Updated {counter}/{candidate_canteens.count()} canteens"
     logger.info(f"Siret Geolocation Bot: {result}")
     return result
 
@@ -295,7 +295,7 @@ def fill_missing_geolocation_data_using_insee_code():  # noqa C901
     """
     candidate_canteens = _get_candidate_canteens_for_insee_code_geobot()
     candidate_canteens.update(geolocation_bot_attempts=F("geolocation_bot_attempts") + 1)
-    logger.info(f"INSEE Geolocation Bot: about to fix {candidate_canteens.count()} canteens")
+    logger.info(f"INSEE Geolocation Bot: found {candidate_canteens.count()} canteens")
     counter = 0
 
     if len(candidate_canteens) == 0:
@@ -351,8 +351,8 @@ def fill_missing_geolocation_data_using_insee_code():  # noqa C901
             update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
             counter += 1
 
-    result = f"Fixed {counter}/{candidate_canteens.count()} canteens"
-    logger.info(f"INSEE Geolocation Bot: Fixed {result}")
+    result = f"Updated {counter}/{candidate_canteens.count()} canteens"
+    logger.info(f"INSEE Geolocation Bot: {result}")
     return result
 
 
