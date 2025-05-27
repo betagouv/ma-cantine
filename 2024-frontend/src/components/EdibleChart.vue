@@ -6,16 +6,22 @@ const props = defineProps(["measurement"])
 
 const measurementComputedValues = computed(() => {
   const m = props.measurement
-  const edibleTotalMass = getSum([m.preparationEdibleMass, m.unservedEdibleMass, m.leftoversEdibleMass])
-  const inedibleTotalMass = getSum([m.preparationInedibleMass, m.unservedInedibleMass, m.leftoversInedibleMass])
+  const edibleMass = [m.preparationEdibleMass, m.unservedEdibleMass, m.leftoversEdibleMass]
+  const edibleTotalMass = getSum(edibleMass)
+  const edibleIsEmpty = edibleMass.every((value) => value === "" || value === null)
+  const inedibleMass = [m.preparationInedibleMass, m.unservedInedibleMass, m.leftoversInedibleMass]
+  const inedibleTotalMass = getSum(inedibleMass)
+  const inedibleIsEmpty = inedibleMass.every((value) => value === "" || value === null)
   return {
     edible: {
       totalMass: edibleTotalMass,
       percentage: getPercentage(edibleTotalMass, m.totalMass),
+      isEmpty: edibleIsEmpty,
     },
     inedible: {
       totalMass: inedibleTotalMass,
       percentage: getPercentage(inedibleTotalMass, m.totalMass),
+      isEmpty: inedibleIsEmpty,
     },
   }
 })
