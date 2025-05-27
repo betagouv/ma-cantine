@@ -82,30 +82,35 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         return obj.canteen_siret
 
     def get_name(self, obj):
-        return obj.declared_data["canteen"]["name"]
+        if "name" in obj.declared_data["canteen"].keys():
+            return obj.declared_data["canteen"]["name"]
 
     def get_daily_meal_count(self, obj):
-        daily_meal_count = obj.declared_data["canteen"]["daily_meal_count"]
-        return int(daily_meal_count) if daily_meal_count else None
+        if "daily_meal_count" in obj.declared_data["canteen"].keys():
+            daily_meal_count = obj.declared_data["canteen"]["daily_meal_count"]
+            return int(daily_meal_count) if daily_meal_count else None
 
     def get_yearly_meal_count(self, obj):
-        yearly_meal_count = obj.declared_data["canteen"]["yearly_meal_count"]
-        return int(yearly_meal_count) if yearly_meal_count else None
+        if "yearly_meal_count" in obj.declared_data["canteen"].keys():
+            yearly_meal_count = obj.declared_data["canteen"]["yearly_meal_count"]
+            return int(yearly_meal_count) if yearly_meal_count else None
 
     def get_management_type(self, obj):
-        value = obj.declared_data["canteen"]["management_type"]
-        if value == "direct":
-            return "A) directe"
-        elif value == "conceded":
-            return "B) concédée"
-        else:
-            return "C) non renseigné"
+        if "management_type" in obj.declared_data["canteen"]:
+            value = obj.declared_data["canteen"]["management_type"]
+            if value == "direct":
+                return "A) directe"
+            elif value == "conceded":
+                return "B) concédée"
+            else:
+                return "C) non renseigné"
 
     def get_production_type(self, obj):
-        return obj.declared_data["canteen"]["production_type"]
+        if "production_type" in obj.declared_data["canteen"]:
+            return obj.declared_data["canteen"]["production_type"]
 
     def get_cuisine_centrale(self, obj):
-        value = obj.declared_data["canteen"]["production_type"]
+        value = self.get_production_type(obj)
         if value in ["site", "site_cooked_elsewhere"]:
             return "B) non"
         elif value in ["central", "central_serving"]:
@@ -114,58 +119,67 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             return "C) non renseigné"
 
     def get_central_producer_siret(self, obj):
-        return obj.declared_data["canteen"]["central_producer_siret"]
+        if "central_producer_siret" in obj.declared_data["canteen"]:
+            return obj.declared_data["canteen"]["central_producer_siret"]
 
     def get_modele_economique(self, obj):
-        value = obj.declared_data["canteen"]["economic_model"]
-        if value == "private":
-            return "A) privé"
-        elif value == "public":
-            return "B) public"
-        else:
-            return "C) non renseigné"
+        if "economic_model" in obj.declared_data["canteen"]:
+            value = obj.declared_data["canteen"]["economic_model"]
+            if value == "private":
+                return "A) privé"
+            elif value == "public":
+                return "B) public"
+            else:
+                return "C) non renseigné"
 
     def get_secteur(self, obj):
-        sectors = obj.declared_data["canteen"]["sectors"]
-        if len(sectors) > 1:
-            return "Secteurs multiples"
-        elif len(sectors) == 1:
-            return sectors[0]["name"]
-        else:
-            return None
+        if "sectors" in obj.declared_data["canteen"]:
+            sectors = obj.declared_data["canteen"]["sectors"]
+            if len(sectors) > 1:
+                return "Secteurs multiples"
+            elif len(sectors) == 1:
+                return sectors[0]["name"]
+            else:
+                return None
 
     def get_categorie(self, obj):
-        sectors = obj.declared_data["canteen"]["sectors"]
-        if len(sectors) > 1:
-            return "Catégories multiples"
-        elif len(sectors) == 1:
-            return sectors[0]["category"]
-        else:
-            return None
+        if "sectors" in obj.declared_data["canteen"]:
+            category = obj.declared_data["canteen"]["sectors"]
+            if len(category) > 1:
+                return "Catégories multiples"
+            elif len(category) == 1:
+                return category[0]["category"]
+            else:
+                return None
 
     def get_satellite_canteens_count(self, obj):
-        satellite_canteens_count = obj.declared_data["canteen"]["satellite_canteens_count"]
-        return int(satellite_canteens_count) if satellite_canteens_count else None
+        if "satellite_canteens_count" in obj.declared_data["canteen"]:
+            satellite_canteens_count = obj.declared_data["canteen"]["satellite_canteens_count"]
+            return int(satellite_canteens_count) if satellite_canteens_count else None
 
     def get_departement(self, obj):
-        return obj.declared_data["canteen"]["department"]
+        if "department" in obj.declared_data.keys():
+            return obj.declared_data["canteen"]["department"]
 
     def get_code_insee_commune(self, obj):
-        return obj.declared_data["canteen"]["city_insee_code"]
+        if "city_insee_code" in obj.declared_data["canteen"]:
+            return obj.declared_data["canteen"]["city_insee_code"]
 
     def get_lib_departement(self, obj):
-        department = obj.declared_data["canteen"]["department"]
+        department = self.get_departement(obj)
         return Department(department).label.split(" - ")[1].lstrip() if department else None
 
     def get_region(self, obj):
-        return obj.declared_data["canteen"]["region"]
+        if "region" in obj.declared_data.keys():
+            return obj.declared_data["canteen"]["region"]
 
     def get_lib_region(self, obj):
-        region = obj.declared_data["canteen"]["region"]
+        region = self.get_region(obj)
         return Region(region).label.split(" - ")[1].lstrip() if region else None
 
     def get_line_ministry(self, obj):
-        return obj.declared_data["canteen"]["line_ministry"]
+        if "line_ministry" in obj.declared_data["canteen"]:
+            return obj.declared_data["canteen"]["line_ministry"]
 
 
 class TeledeclarationOpenDataSerializer(serializers.ModelSerializer):
