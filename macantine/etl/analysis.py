@@ -45,7 +45,7 @@ def get_egalim_hors_bio(row):
     """
     egalim_hors_bio = 0
     for categ in ["externality_performance", "sustainable", "egalim_others"]:
-        value_categ = row[f"value_{categ}_ht_agg"] if row[f"value_{categ}_ht_agg"] >= 0 else 0
+        value_categ = row[f"value_{categ}_ht"] if row[f"value_{categ}_ht"] >= 0 else 0
         egalim_hors_bio += value_categ
     return egalim_hors_bio
 
@@ -55,11 +55,11 @@ def get_egalim_avec_bio(row):
 
 
 def get_meat_and_fish(row):
-    return row["teledeclaration.value_meat_poultry_ht"] + row["teledeclaration.value_fish_ht"]
+    return row["value_meat_poultry_ht"] + row["value_fish_ht"]
 
 
 def get_meat_and_fish_egalim(row):
-    return row["teledeclaration.value_meat_poultry_egalim_ht"] + row["teledeclaration.value_fish_egalim_ht"]
+    return row["value_meat_poultry_egalim_ht"] + row["value_fish_egalim_ht"]
 
 
 def get_nbre_cantines_region(region: int):
@@ -125,16 +125,16 @@ def aggregate_col(df, categ, sub_categ):
     return df
 
 
-def aggregate(df):
-    df = aggregate_col(df, "bio", ["_bio"])
-    df = aggregate_col(df, "sustainable", ["_sustainable", "_label_rouge", "_aocaop_igp_stg"])
-    df = aggregate_col(
-        df,
-        "egalim_others",
-        ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
-    )
-    df = aggregate_col(df, "externality_performance", ["_performance", "_externalites"])
-    return df
+# def aggregate(df):
+#     df = aggregate_col(df, "bio", ["_bio"])
+#     df = aggregate_col(df, "sustainable", ["_sustainable", "_label_rouge", "_aocaop_igp_stg"])
+#     df = aggregate_col(
+#         df,
+#         "egalim_others",
+#         ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
+#     )
+#     df = aggregate_col(df, "externality_performance", ["_performance", "_externalites"])
+#     return df
 
 
 class ANALYSIS(etl.TRANSFORMER_LOADER):

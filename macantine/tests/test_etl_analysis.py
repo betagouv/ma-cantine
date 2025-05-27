@@ -141,14 +141,14 @@ class TestETLAnalysisTD(TestCase):
         data = {
             "0": {
                 "canteen_id": 1,
-                "teledeclaration.value_externality_performance_ht": 10,
-                "teledeclaration.value_sustainable_ht": 10,
-                "teledeclaration.value_egalim_others_ht": 10,
+                "value_externality_performance_ht": 10,
+                "value_sustainable_ht": 10,
+                "value_egalim_others_ht": 10,
             },
             "1": {
                 "canteen_id": 1,
-                "teledeclaration.value_externality_performance_ht": 10,
-                "teledeclaration.value_sustainable_ht": 10,
+                "value_externality_performance_ht": 10,
+                "value_sustainable_ht": 10,
             },
         }
         df = pd.DataFrame.from_dict(data, orient="index")
