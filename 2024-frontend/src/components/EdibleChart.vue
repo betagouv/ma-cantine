@@ -4,14 +4,16 @@ import { formatNumber, getSum, getPercentage } from "@/utils"
 
 const props = defineProps(["measurement"])
 
+const isEmpty = (value) => value === "" || value === null
+
 const measurementComputedValues = computed(() => {
   const m = props.measurement
   const edibleMass = [m.preparationEdibleMass, m.unservedEdibleMass, m.leftoversEdibleMass]
   const edibleTotalMass = getSum(edibleMass)
-  const edibleIsEmpty = edibleMass.every((value) => value === "" || value === null)
+  const edibleIsEmpty = edibleMass.every(isEmpty)
   const inedibleMass = [m.preparationInedibleMass, m.unservedInedibleMass, m.leftoversInedibleMass]
   const inedibleTotalMass = getSum(inedibleMass)
-  const inedibleIsEmpty = inedibleMass.every((value) => value === "" || value === null)
+  const inedibleIsEmpty = inedibleMass.every(isEmpty)
   return {
     edible: {
       totalMass: edibleTotalMass,
