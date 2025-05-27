@@ -122,15 +122,6 @@ def check_column_matches_substring(df, sub_categ: str):
             raise KeyError
 
 
-def compute_cout_denrees(df):
-    return df.apply(
-        lambda row: (
-            (row["teledeclaration.value_total_ht"] / row["yearly_meal_count"]) if row["yearly_meal_count"] > 0 else -1
-        ),
-        axis=1,
-    )
-
-
 def aggregate_col(df, categ, sub_categ):
     """
     Aggregating into a new column all the values of a category for complete TD
@@ -152,7 +143,6 @@ def aggregate(df):
         ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
     )
     df = aggregate_col(df, "externality_performance", ["_performance", "_externalites"])
-    df["teledeclaration.cout_denrees"] = compute_cout_denrees(df)
     return df
 
 

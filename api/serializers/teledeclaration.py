@@ -23,10 +23,12 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     siret = serializers.SerializerMethodField()
     daily_meal_count = serializers.SerializerMethodField()
     yearly_meal_count = serializers.SerializerMethodField()
+    cout_denrees = serializers.SerializerMethodField()
     management_type = serializers.SerializerMethodField()
     production_type = serializers.SerializerMethodField()
     modele_economique = serializers.SerializerMethodField()
     cuisine_centrale = serializers.SerializerMethodField()
+    diagnostic_type = serializers.SerializerMethodField()
     central_producer_siret = serializers.SerializerMethodField()
     secteur = serializers.SerializerMethodField()
     categorie = serializers.SerializerMethodField()
@@ -48,11 +50,13 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "name",
             "daily_meal_count",
             "yearly_meal_count",
+            "cout_denrees",
             "management_type",
             "production_type",
             "cuisine_centrale",
-            "central_producer_siret",
             "modele_economique",
+            "central_producer_siret",
+            "diagnostic_type",
             "secteur",
             "categorie",
             "satellite_canteens_count",
@@ -220,6 +224,10 @@ class TeledeclarationOpenDataSerializer(serializers.ModelSerializer):
         yearly_meal_count = obj.declared_data["canteen"]["yearly_meal_count"]
         return int(yearly_meal_count) if yearly_meal_count else None
 
+    def get_cout_denrees(self, obj):
+        yearly_meal_count = self.get_yearly_meal_count(obj)
+        return obj.value_total_ht / yearly_meal_count if yearly_meal_count and yearly_meal_count > 0 else -1
+
     def get_management_type(self, obj):
         value = obj.declared_data["canteen"]["management_type"]
         if value == "direct":
@@ -250,6 +258,15 @@ class TeledeclarationOpenDataSerializer(serializers.ModelSerializer):
             return "A) privé"
         elif value == "public":
             return "B) public"
+        else:
+            return "C) non renseigné"
+
+    def get_diagnostic_type(self, obj):
+        value = obj.declared_data["teledeclaration"]["diagnostic_type"]
+        if value == "COMPLETE":
+            return "A) détaillée"
+        elif value == "SIMPLE":
+            return "B) simple"
         else:
             return "C) non renseigné"
 
