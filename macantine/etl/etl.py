@@ -92,7 +92,7 @@ class EXTRACTOR(ETL):
     def extract_dataset(self):
         start = time.time()
         view = self.view()
-        if hasattr(self, "year"):
+        if hasattr(self, "year"):  # For Analysis Telececlarations
             queryset = view.get_queryset(self.year)
         else:
             queryset = view.get_queryset()
