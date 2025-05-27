@@ -37,7 +37,7 @@ const measurementChartValues = computed(() => {
 })
 
 const showChart = computed(
-  () => measurementComputedValues.value.edible.totalMass && measurementComputedValues.value.inedible.totalMass
+  () => !measurementComputedValues.value.edible.isEmpty && !measurementComputedValues.value.inedible.isEmpty
 )
 
 const displayOption = ref("chart")
