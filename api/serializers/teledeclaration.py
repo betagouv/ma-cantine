@@ -154,13 +154,15 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         return obj.declared_data["canteen"]["city_insee_code"]
 
     def get_lib_departement(self, obj):
-        return Department(obj.declared_data["canteen"]["department"]).label.split(" - ")[1].lstrip()
+        department = obj.declared_data["canteen"]["department"]
+        return Department(department).label.split(" - ")[1].lstrip() if department else None
 
     def get_region(self, obj):
         return obj.declared_data["canteen"]["region"]
 
     def get_lib_region(self, obj):
-        return Region(obj.declared_data["canteen"]["region"]).label.split(" - ")[1].lstrip()
+        region = obj.declared_data["canteen"]["region"]
+        return Region(region).label.split(" - ")[1].lstrip() if region else None
 
     def get_line_ministry(self, obj):
         return obj.declared_data["canteen"]["line_ministry"]
