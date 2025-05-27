@@ -37,15 +37,6 @@ ESTIMATED_NUMBER_CANTEENS_REGION = {
 }
 
 
-def get_diagnostic_type(value):
-    if value == "COMPLETE":
-        return "A) détaillée"
-    elif value == "SIMPLE":
-        return "B) simple"
-    else:
-        return "C) non renseigné"
-
-
 def get_egalim_hors_bio(row):
     """
     Aggregating egalim values.
@@ -54,13 +45,13 @@ def get_egalim_hors_bio(row):
     """
     egalim_hors_bio = 0
     for categ in ["externality_performance", "sustainable", "egalim_others"]:
-        value_categ = row[f"teledeclaration.value_{categ}_ht"] if row[f"teledeclaration.value_{categ}_ht"] >= 0 else 0
+        value_categ = row[f"value_{categ}_ht_agg"] if row[f"value_{categ}_ht_agg"] >= 0 else 0
         egalim_hors_bio += value_categ
     return egalim_hors_bio
 
 
 def get_egalim_avec_bio(row):
-    return row["teledeclaration.value_bio_ht"] + get_egalim_hors_bio(row)
+    return row["value_bio_ht_agg"] + get_egalim_hors_bio(row)
 
 
 def get_meat_and_fish(row):
@@ -205,6 +196,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
 
         # Making sure those fields now come from the serializer by dropping them in the decalared_data field
         df_json = df_json[df_json.columns.drop(list(df_json.filter(regex="canteen.")))]
+        df_json = df_json[df_json.columns.drop(list(df_json.filter(regex="teledeclaration.")))]
 
         df_json.index = self.df.id
         self.df = self.df.loc[~self.df.index.duplicated(keep="first")]
@@ -213,12 +205,12 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         # Aggregate columns for complete TD - Must occur before other transformations
         # remove already aggregated column
         # TODO : when fixed, we can use directly the aggregated columns
-        del self.df["value_total_ht"]
-        del self.df["value_bio_ht_agg"]
-        del self.df["value_sustainable_ht_agg"]
-        del self.df["value_externality_performance_ht_agg"]
-        del self.df["value_egalim_others_ht_agg"]
-        self.df = aggregate(self.df)
+        # del self.df["value_total_ht"]
+        # del self.df["value_bio_ht_agg"]
+        # del self.df["value_sustainable_ht_agg"]
+        # del self.df["value_externality_performance_ht_agg"]
+        # del self.df["value_egalim_others_ht_agg"]
+        # self.df = aggregate(self.df)
 
         self.compute_miscellaneous_columns()
 
@@ -242,16 +234,14 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
     def compute_miscellaneous_columns(self):
-        # Canteen
-        self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_diagnostic_type)
         # Add geo data
         self.df["nbre_cantines_region"] = self.df["region"].apply(get_nbre_cantines_region)
         self.df["objectif_zone_geo"] = self.df["departement"].apply(get_objectif_zone_geo)
         # Combine columns
-        self.df["teledeclaration.value_somme_egalim_avec_bio_ht"] = self.df.apply(get_egalim_avec_bio, axis=1)
-        self.df["teledeclaration.value_somme_egalim_hors_bio_ht"] = self.df.apply(get_egalim_hors_bio, axis=1)
-        self.df["teledeclaration.value_meat_and_fish_ht"] = self.df.apply(get_meat_and_fish, axis=1)
-        self.df["teledeclaration.value_meat_and_fish_egalim_ht"] = self.df.apply(get_meat_and_fish_egalim, axis=1)
+        self.df["value_somme_egalim_avec_bio_ht"] = self.df.apply(get_egalim_avec_bio, axis=1)
+        self.df["value_somme_egalim_hors_bio_ht"] = self.df.apply(get_egalim_hors_bio, axis=1)
+        self.df["value_meat_and_fish_ht"] = self.df.apply(get_meat_and_fish, axis=1)
+        self.df["value_meat_and_fish_egalim_ht"] = self.df.apply(get_meat_and_fish_egalim, axis=1)
         # Calcul ratio
         self.df["ratio_egalim_fish"] = self.df.apply(get_ratio_egalim_fish, axis=1)
         self.df["ratio_egalim_meat_poultry"] = self.df.apply(get_ratio_egalim_meat_poultry, axis=1)
