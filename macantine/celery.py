@@ -47,8 +47,8 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.fill_missing_geolocation_data_using_insee_code",
         "schedule": nightly,
     },
-    "fill_missing_geolocation_data_using_siret": {
-        "task": "macantine.tasks.fill_missing_geolocation_data_using_siret",
+    "fill_missing_insee_code_using_siret": {
+        "task": "macantine.tasks.fill_missing_insee_code_using_siret",
         "schedule": hourly,
     },
     "delete_old_historical_records": {

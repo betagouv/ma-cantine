@@ -232,7 +232,7 @@ def _get_candidate_canteens_for_insee_code_geobot():
     )
 
 
-def _get_candidate_canteens_for_siret_geobot():
+def _get_candidate_canteens_for_siret_to_insee_code_bot():
     return Canteen.objects.has_siret().has_city_insee_code_missing().order_by("-creation_date")
 
 
@@ -240,9 +240,6 @@ def _update_canteen_geo_data_from_siret(canteen, response):
     try:
         if "cityInseeCode" in response.keys():
             canteen.city_insee_code = response["cityInseeCode"]
-            # TODO: remove this, leave it to the other geo bot
-            canteen.postal_code = response["postalCode"]
-            canteen.city = response["city"]
             canteen.save()
             update_change_reason(canteen, "Données de localisation MAJ par bot, via SIRET")
             logger.info(f"Canteen info has been updated. Canteen name : {canteen.name}")
@@ -252,14 +249,14 @@ def _update_canteen_geo_data_from_siret(canteen, response):
 
 
 @app.task()
-def fill_missing_geolocation_data_using_siret():
+def fill_missing_insee_code_using_siret():
     """
     Input: Canteens with siret but no city_insee_code
     Processing: API Recherche Entreprises
-    Output: Fill canteen's city_insee_code, postal_code & city fields
+    Output: Fill canteen's city_insee_code field
     """
-    candidate_canteens = _get_candidate_canteens_for_siret_geobot()
-    logger.info(f"Siret Geolocation Bot: found {candidate_canteens.count()} canteens")
+    candidate_canteens = _get_candidate_canteens_for_siret_to_insee_code_bot()
+    logger.info(f"Siret to insee_code Bot: found {candidate_canteens.count()} canteens")
     counter = 0
 
     if len(candidate_canteens) == 0:
@@ -282,7 +279,7 @@ def fill_missing_geolocation_data_using_siret():
             time.sleep(60)
 
     result = f"Updated {counter}/{candidate_canteens.count()} canteens"
-    logger.info(f"Siret Geolocation Bot: {result}")
+    logger.info(f"Siret to insee_code Bot: {result}")
     return result
 
 
