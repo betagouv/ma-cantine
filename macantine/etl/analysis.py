@@ -37,33 +37,6 @@ ESTIMATED_NUMBER_CANTEENS_REGION = {
 }
 
 
-def get_management_type(value):
-    if value == "direct":
-        return "A) directe"
-    elif value == "conceded":
-        return "B) concédée"
-    else:
-        return "C) non renseigné"
-
-
-def get_cuisine_centrale(value):
-    if value in ["site", "site_cooked_elsewhere"]:
-        return "B) non"
-    elif value in ["central", "central_serving"]:
-        return "A) oui"
-    else:
-        return "C) non renseigné"
-
-
-def get_economic_model(value):
-    if value == "private":
-        return "A) privé"
-    elif value == "public":
-        return "B) public"
-    else:
-        return "C) non renseigné"
-
-
 def get_diagnostic_type(value):
     if value == "COMPLETE":
         return "A) détaillée"
@@ -152,9 +125,7 @@ def check_column_matches_substring(df, sub_categ: str):
 def compute_cout_denrees(df):
     return df.apply(
         lambda row: (
-            (row["teledeclaration.value_total_ht"] / row["canteen.yearly_meal_count"])
-            if row["canteen.yearly_meal_count"] > 0
-            else -1
+            (row["teledeclaration.value_total_ht"] / row["yearly_meal_count"]) if row["yearly_meal_count"] > 0 else -1
         ),
         axis=1,
     )
@@ -241,6 +212,10 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         df_json = pd.json_normalize(self.df["declared_data"])
         del df_json["year"]
         del df_json["canteen.id"]
+
+        # Making sure those fields now come from the serializer by dropping them in the decalared_data field
+        df_json = df_json[df_json.columns.drop(list(df_json.filter(regex="canteen.")))]
+
         df_json.index = self.df.id
         self.df = self.df.loc[~self.df.index.duplicated(keep="first")]
         self.df = pd.concat([self.df.drop("declared_data", axis=1), df_json], axis=1)
@@ -257,16 +232,6 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
 
         self.compute_miscellaneous_columns()
 
-        # Convert types
-        self.df["daily_meal_count"] = pd.to_numeric(self.df["canteen.daily_meal_count"], errors="coerce")
-        self.df["yearly_meal_count"] = pd.to_numeric(self.df["canteen.yearly_meal_count"], errors="coerce")
-        self.df["satellite_canteens_count"] = pd.to_numeric(
-            self.df["canteen.satellite_canteens_count"], errors="coerce"
-        )
-
-        logger.info("Start filling geo_name")
-        self.fill_geo_names(prefix="canteen.")
-
         # Fill campaign participation
         logger.info("TD : Fill campaign participations...")
         for year in CAMPAIGN_DATES.keys():
@@ -274,38 +239,25 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
             col_name_campaign = f"declaration_{year}"
             self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
 
-        # Extract the sector names and categories
-        logger.info("TD : Extract sectors...")
-        self.df[["secteur", "catégorie"]] = self.df.apply(
-            lambda x: utils.format_td_sector_column(x, "canteen.sectors"), axis=1, result_type="expand"
-        )
-
         # Rename columns
         self.df = self.df.rename(
             columns={
                 "teledeclaration.id": "id",
                 "diagnostic_id": "diagnostic_id",
-                "canteen.region_lib": "canteen.lib_region",
-                "canteen.department_lib": "canteen.lib_department",
             }
         )
         self.df.columns = self.df.columns.str.replace("teledeclaration.", "")
-        self.df.columns = self.df.columns.str.replace("canteen.", "")
         self.df.columns = self.df.columns.str.replace("applicant.", "")
-        self.df.columns = self.df.columns.str.replace("department", "departement")
         self.df.columns = self.df.columns.str.replace("city_insee_code", "code_insee_commune")
 
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
     def compute_miscellaneous_columns(self):
         # Canteen
-        self.df["management_type"] = self.df["canteen.management_type"].apply(get_management_type)
-        self.df["cuisine_centrale"] = self.df["canteen.production_type"].apply(get_cuisine_centrale)
-        self.df["modele_economique"] = self.df["canteen.economic_model"].apply(get_economic_model)
         self.df["diagnostic_type"] = self.df["teledeclaration.diagnostic_type"].apply(get_diagnostic_type)
         # Add geo data
-        self.df["nbre_cantines_region"] = self.df["canteen.region"].apply(get_nbre_cantines_region)
-        self.df["objectif_zone_geo"] = self.df["canteen.department"].apply(get_objectif_zone_geo)
+        self.df["nbre_cantines_region"] = self.df["region"].apply(get_nbre_cantines_region)
+        self.df["objectif_zone_geo"] = self.df["departement"].apply(get_objectif_zone_geo)
         # Combine columns
         self.df["teledeclaration.value_somme_egalim_avec_bio_ht"] = self.df.apply(get_egalim_avec_bio, axis=1)
         self.df["teledeclaration.value_somme_egalim_hors_bio_ht"] = self.df.apply(get_egalim_hors_bio, axis=1)
