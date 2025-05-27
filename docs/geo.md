@@ -26,14 +26,16 @@ On stock actuellement en dure la liste des départements ([data/department_choic
 
 ## Comment ça marche ?
 
-* Si la cantine a son champ `city_insee_code` manquant, on tente de le récupérer grâce à sont Siret
+* Si la cantine n'a pas de code Insee (champ `city_insee_code` vide), on tente de le récupérer grâce à sont Siret
     * grâce à une tâche asynchrone
-    * `fill_missing_geolocation_data_using_siret()`
+    * `fill_missing_insee_code_using_siret()`
     * fréquence : toutes les heures
+    * API : Recherche Entreprises
 * Pour les cantines avec `city_insee_code`, mais dont au moins un des champs géographiques est manquante, on tente de les compléter
     * grâce à une tâche asynchrone
     * `fill_missing_geolocation_data_using_insee_code()`
     * fréquence : toutes les nuits
+    * API : Découpage Administratif
 
 ## FAQ
 
@@ -52,3 +54,7 @@ On stock actuellement en dure la liste des départements ([data/department_choic
 ### Comment gérer la MAJ annuelle des communes et EPCI ?
 
 à compléter
+
+### Et les PAT ?
+
+à venir
