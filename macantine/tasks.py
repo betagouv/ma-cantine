@@ -398,24 +398,24 @@ def datasets_export_opendata_td():
     export_datasets(datasets)
 
 
-def datasets_export_opendata_canteens():
-    """
-    Export regulary and automatically datasets that are updated contiously
-    """
-    logger.info("Starting datasets extractions")
-    datasets = {
-        "cantines": ETL_OPEN_DATA_CANTEEN(),
-    }
-    export_datasets(datasets)
-
-
 def datasets_export_analysis_canteens():
     """
-    Export regulary and automatically datasets that are updated contiously
+    Export the Teledeclarations datasets for Metabase
     """
     logger.info("Starting datasets extractions")
     datasets = {
         "cantines_analyses": ETL_ANALYSIS_CANTEEN(),
+    }
+    export_datasets(datasets)
+
+
+def datasets_export_opendata_canteens():
+    """
+    Export the Canteens datasets for data.gouv.fr
+    """
+    logger.info("Starting datasets extractions")
+    datasets = {
+        "cantines": ETL_OPEN_DATA_CANTEEN(),
     }
     export_datasets(datasets)
 
@@ -426,4 +426,4 @@ def continous_datasets_export():
     Export regulary and automatically datasets that are updated contiously
     """
     datasets_export_analysis_canteens()
-    datasets_export_analysis_canteens()
+    datasets_export_opendata_canteens()
