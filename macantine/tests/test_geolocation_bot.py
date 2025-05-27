@@ -171,7 +171,7 @@ class TestGeolocationBotUsingSiret(TestCase):
             CanteenFactory.create(city_insee_code=29890),
             CanteenFactory.create(city_insee_code=None, siret=None),
         ]
-        result = list(tasks._get_candidate_canteens_for_siret_geobot())
+        result = list(tasks._get_candidate_canteens_for_siret_to_insee_code_bot())
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].id, candidate_canteen.id)
 
@@ -244,8 +244,8 @@ class TestGeolocationBotUsingSiret(TestCase):
             status_code=200,
         )
 
-        tasks.fill_missing_geolocation_data_using_siret()
+        tasks.fill_missing_insee_code_using_siret()
 
         canteen.refresh_from_db()
         self.assertEqual(canteen.city_insee_code, city_insee_code)
-        self.assertEqual(canteen.postal_code, None)  # will be filled by the other geo bot
+        self.assertEqual(canteen.postal_code, None)  # will be filled by the geo bot
