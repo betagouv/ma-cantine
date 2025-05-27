@@ -62,7 +62,7 @@
       "type": "string"
     },
     {
-      "name": "catégorie",
+      "name": "categorie",
       "type": "string"
     },
     {

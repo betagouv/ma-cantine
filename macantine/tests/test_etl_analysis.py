@@ -269,7 +269,7 @@ class TestETLAnalysisTD(TestCase):
                     "0": {
                         "id": 1,
                         "teledeclaration.value_total_ht": 1,
-                        "canteen.yearly_meal_count": 1,
+                        "yearly_meal_count": 1,
                     }
                 },
                 "expected_outcome": 1,
@@ -280,7 +280,7 @@ class TestETLAnalysisTD(TestCase):
                     "0": {
                         "id": 1,
                         "teledeclaration.value_total_ht": 1,
-                        "canteen.yearly_meal_count": 0,
+                        "yearly_meal_count": 0,
                     }
                 },
                 "expected_outcome": -1,
