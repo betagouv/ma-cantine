@@ -40,6 +40,16 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     lib_region = serializers.SerializerMethodField()
     line_ministry = serializers.SerializerMethodField()
 
+    # Data related to the appro
+    value_bio_ht = serializers.SerializerMethodField()
+    value_sustainable_ht = serializers.SerializerMethodField()
+    value_externality_performance_ht = serializers.SerializerMethodField()
+    value_egalim_others_ht = serializers.SerializerMethodField()
+    value_meat_poultry_ht = serializers.SerializerMethodField()
+    value_meat_poultry_egalim_ht = serializers.SerializerMethodField()
+    value_fish_ht = serializers.SerializerMethodField()
+    value_fish_egalim_ht = serializers.SerializerMethodField()
+
     class Meta:
         model = Teledeclaration
         fields = (
@@ -69,15 +79,19 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "year",
             "siret",
             "canteen_siren_unite_legale",
-            "value_total_ht",
-            "value_bio_ht_agg",
-            "value_sustainable_ht_agg",
-            "value_externality_performance_ht_agg",
-            "value_egalim_others_ht_agg",
             "status",
             "applicant_id",
             "diagnostic_id",
             "teledeclaration_mode",
+            "value_total_ht",
+            "value_bio_ht",
+            "value_sustainable_ht",
+            "value_externality_performance_ht",
+            "value_egalim_others_ht",
+            "value_meat_poultry_ht",
+            "value_meat_poultry_egalim_ht",
+            "value_fish_ht",
+            "value_fish_egalim_ht",
         )
         read_only_fields = fields
 
@@ -123,6 +137,10 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             return "A) oui"
         else:
             return "C) non renseigné"
+
+    def get_diagnostic_type(self, obj):
+        if "diagnostic_type" in obj.declared_data["canteen"]:
+            return obj.declared_data["canteen"]["diagnostic_type"]
 
     def get_central_producer_siret(self, obj):
         if "central_producer_siret" in obj.declared_data["canteen"]:
@@ -186,6 +204,30 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     def get_line_ministry(self, obj):
         if "line_ministry" in obj.declared_data["canteen"]:
             return obj.declared_data["canteen"]["line_ministry"]
+
+    def get_value_bio_ht(self, obj):
+        return obj.value_bio_ht_agg
+
+    def get_value_sustainable_ht(self, obj):
+        return obj.value_sustainable_ht_agg
+
+    def get_value_externality_performance_ht(self, obj):
+        return obj.value_externality_performance_ht_agg
+
+    def get_value_egalim_others_ht(self, obj):
+        return obj.value_egalim_others_ht_agg
+
+    def get_value_meat_poultry_ht(self, obj):
+        return obj.diagnostic.value_meat_poultry_ht
+
+    def get_value_meat_poultry_egalim_ht(self, obj):
+        return obj.diagnostic.value_meat_poultry_egalim_ht
+
+    def get_value_fish_ht(self, obj):
+        return obj.diagnostic.value_fish_ht
+
+    def get_value_fish_egalim_ht(self, obj):
+        return obj.diagnostic.value_fish_egalim_ht
 
 
 class TeledeclarationOpenDataSerializer(serializers.ModelSerializer):
