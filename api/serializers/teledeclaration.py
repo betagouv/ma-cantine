@@ -31,8 +31,8 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     secteur = serializers.SerializerMethodField()
     categorie = serializers.SerializerMethodField()
     satellite_canteens_count = serializers.SerializerMethodField()
-    departement = serializers.SerializerMethodField()
     code_insee_commune = serializers.SerializerMethodField()
+    departement = serializers.SerializerMethodField()
     lib_departement = serializers.SerializerMethodField()
     region = serializers.SerializerMethodField()
     lib_region = serializers.SerializerMethodField()
@@ -157,13 +157,13 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             satellite_canteens_count = obj.declared_data["canteen"]["satellite_canteens_count"]
             return int(satellite_canteens_count) if satellite_canteens_count else None
 
-    def get_departement(self, obj):
-        if "department" in obj.declared_data.keys():
-            return obj.declared_data["canteen"]["department"]
-
     def get_code_insee_commune(self, obj):
         if "city_insee_code" in obj.declared_data["canteen"]:
             return obj.declared_data["canteen"]["city_insee_code"]
+
+    def get_departement(self, obj):
+        if "department" in obj.declared_data.keys():
+            return obj.declared_data["canteen"]["department"]
 
     def get_lib_departement(self, obj):
         department = self.get_departement(obj)
