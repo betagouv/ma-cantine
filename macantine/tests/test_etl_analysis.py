@@ -5,13 +5,13 @@ import pytest
 from django.test import TestCase
 from freezegun import freeze_time
 
+from api.serializers.teledeclaration import TeledeclarationAnalysisSerializer
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import Canteen, Teledeclaration
 from macantine.etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
     ETL_ANALYSIS_TELEDECLARATIONS,
     aggregate_col,
-    compute_cout_denrees,
     get_egalim_hors_bio,
     get_objectif_zone_geo,
 )
@@ -266,31 +266,35 @@ class TestETLAnalysisTD(TestCase):
             {
                 "name": "Valid cout denrees",
                 "data": {
-                    "0": {
-                        "id": 1,
-                        "teledeclaration.value_total_ht": 1,
-                        "yearly_meal_count": 1,
-                    }
+                    "value_total_ht": 1,
+                    "yearly_meal_count": 1,
                 },
                 "expected_outcome": 1,
             },
             {
                 "name": "Invalid cout denrees",
                 "data": {
-                    "0": {
-                        "id": 1,
-                        "teledeclaration.value_total_ht": 1,
-                        "yearly_meal_count": 0,
-                    }
+                    "value_total_ht": 1,
+                    "yearly_meal_count": 0,
                 },
                 "expected_outcome": -1,
             },
         ]
 
         for tc in test_cases:
-            td_complete = pd.DataFrame.from_dict(tc["data"], orient="index")
-            cout_denrees = compute_cout_denrees(td_complete)
-            self.assertEqual(cout_denrees.iloc[0], tc["expected_outcome"])
+            canteen = CanteenFactory(yearly_meal_count=tc["data"]["yearly_meal_count"])
+            diag = DiagnosticFactory.create(canteen=canteen, value_total_ht=tc["data"]["value_total_ht"])
+            teledeclaration = Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
+
+            self.serializer_data = {
+                "yearly_meal_count": tc["data"]["yearly_meal_count"],
+                "value_total_ht": tc["data"]["value_total_ht"],
+            }
+
+            self.serializer = TeledeclarationAnalysisSerializer(instance=teledeclaration)
+            data = self.serializer.data
+
+            self.assertEqual(data["cout_denrees"], tc["expected_outcome"])
 
 
 @pytest.mark.parametrize(
