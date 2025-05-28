@@ -4,18 +4,26 @@ import { formatNumber, getSum, getPercentage } from "@/utils"
 
 const props = defineProps(["measurement"])
 
+const isEmpty = (value) => value === "" || value === null
+
 const measurementComputedValues = computed(() => {
   const m = props.measurement
-  const edibleTotalMass = getSum([m.preparationEdibleMass, m.unservedEdibleMass, m.leftoversEdibleMass])
-  const inedibleTotalMass = getSum([m.preparationInedibleMass, m.unservedInedibleMass, m.leftoversInedibleMass])
+  const edibleMass = [m.preparationEdibleMass, m.unservedEdibleMass, m.leftoversEdibleMass]
+  const edibleTotalMass = getSum(edibleMass)
+  const edibleIsEmpty = edibleMass.every(isEmpty)
+  const inedibleMass = [m.preparationInedibleMass, m.unservedInedibleMass, m.leftoversInedibleMass]
+  const inedibleTotalMass = getSum(inedibleMass)
+  const inedibleIsEmpty = inedibleMass.every(isEmpty)
   return {
     edible: {
       totalMass: edibleTotalMass,
       percentage: getPercentage(edibleTotalMass, m.totalMass),
+      isEmpty: edibleIsEmpty,
     },
     inedible: {
       totalMass: inedibleTotalMass,
       percentage: getPercentage(inedibleTotalMass, m.totalMass),
+      isEmpty: inedibleIsEmpty,
     },
   }
 })
@@ -31,7 +39,7 @@ const measurementChartValues = computed(() => {
 })
 
 const showChart = computed(
-  () => measurementComputedValues.value.edible.totalMass && measurementComputedValues.value.inedible.totalMass
+  () => !measurementComputedValues.value.edible.isEmpty && !measurementComputedValues.value.inedible.isEmpty
 )
 
 const displayOption = ref("chart")
