@@ -475,7 +475,7 @@ class TeledeclarationAnalysisListView(ListAPIView):
     ordering_fields = ["creation_date"]
 
     def get_queryset(self):
-        return Teledeclaration.objects.historical_valid_td(CAMPAIGN_DATES.keys())[:100]
+        return Teledeclaration.objects.historical_valid_td(CAMPAIGN_DATES.keys())
 
 
 class TeledeclarationOpenDataListView(ListAPIView):
