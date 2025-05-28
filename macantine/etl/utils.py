@@ -12,17 +12,22 @@ from macantine.etl.data_ware_house import DataWareHouse
 logger = logging.getLogger(__name__)
 
 
+def sum_int_and_none(values_to_sum: list):
+    values_to_sum = [x or 0 for x in values_to_sum]
+    sum_ = np.sum(values_to_sum)
+    if not sum_:
+        pass
+    return sum_
+
+
 def common_members(a, b):
     return set(a) & set(b)
 
 
-def get_ratio(row, valueKey, totalKey):
-    tdTotalKey = f"teledeclaration.{totalKey}"
-    tdValueKey = f"teledeclaration.{valueKey}"
-    if row[tdTotalKey] > 0 and row[tdValueKey] >= 0:
-        return 100 * row[tdValueKey] / row[tdTotalKey]
-    else:
-        return np.nan
+def compute_ratio(valueKey, totalKey):
+    if totalKey and valueKey:
+        if totalKey > 0 and valueKey >= 0:
+            return 100 * valueKey / totalKey
 
 
 def map_canteens_td(year):

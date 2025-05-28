@@ -3,6 +3,7 @@ from rest_framework import serializers
 from data.department_choices import Department
 from data.models import Teledeclaration
 from data.region_choices import Region
+from macantine.etl import utils
 
 
 class ShortTeledeclarationSerializer(serializers.ModelSerializer):
@@ -49,6 +50,15 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     value_meat_poultry_egalim_ht = serializers.SerializerMethodField()
     value_fish_ht = serializers.SerializerMethodField()
     value_fish_egalim_ht = serializers.SerializerMethodField()
+    value_somme_egalim_avec_bio_ht = serializers.SerializerMethodField()
+    value_somme_egalim_hors_bio_ht = serializers.SerializerMethodField()
+    value_meat_and_fish_ht = serializers.SerializerMethodField()
+    value_meat_and_fish_egalim_ht = serializers.SerializerMethodField()
+    ratio_egalim_fish = serializers.SerializerMethodField()
+    ratio_egalim_meat_poultry = serializers.SerializerMethodField()
+    ratio_bio = serializers.SerializerMethodField()
+    ratio_egalim_avec_bio = serializers.SerializerMethodField()
+    ratio_egalim_sans_bio = serializers.SerializerMethodField()
 
     class Meta:
         model = Teledeclaration
@@ -92,6 +102,15 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "value_meat_poultry_egalim_ht",
             "value_fish_ht",
             "value_fish_egalim_ht",
+            "value_somme_egalim_avec_bio_ht",
+            "value_somme_egalim_hors_bio_ht",
+            "value_meat_and_fish_ht",
+            "value_meat_and_fish_egalim_ht",
+            "ratio_egalim_fish",
+            "ratio_egalim_meat_poultry",
+            "ratio_bio",
+            "ratio_egalim_avec_bio",
+            "ratio_egalim_sans_bio",
         )
         read_only_fields = fields
 
@@ -228,6 +247,39 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
 
     def get_value_fish_egalim_ht(self, obj):
         return obj.diagnostic.value_fish_egalim_ht
+
+    def get_value_somme_egalim_avec_bio_ht(self, obj):
+        return utils.sum_int_and_none([self.get_value_somme_egalim_hors_bio_ht(obj), self.get_value_bio_ht(obj)])
+
+    def get_value_somme_egalim_hors_bio_ht(self, obj):
+        return utils.sum_int_and_none(
+            [
+                self.get_value_externality_performance_ht(obj),
+                self.get_value_sustainable_ht(obj),
+                self.get_value_egalim_others_ht(obj),
+            ]
+        )
+
+    def get_value_meat_and_fish_ht(self, obj):
+        return utils.sum_int_and_none([self.get_value_meat_poultry_ht(obj), self.get_value_fish_ht(obj)])
+
+    def get_value_meat_and_fish_egalim_ht(self, obj):
+        return utils.sum_int_and_none([self.get_value_meat_poultry_egalim_ht(obj), self.get_value_fish_egalim_ht(obj)])
+
+    def get_ratio_egalim_fish(self, obj):
+        return utils.compute_ratio(self.get_value_fish_egalim_ht(obj), self.get_value_fish_ht(obj))
+
+    def get_ratio_egalim_meat_poultry(self, obj):
+        return utils.compute_ratio(self.get_value_meat_poultry_egalim_ht(obj), self.get_value_meat_poultry_ht(obj))
+
+    def get_ratio_bio(self, obj):
+        return utils.compute_ratio(self.get_value_bio_ht(obj), obj.value_total_ht)
+
+    def get_ratio_egalim_avec_bio(self, obj):
+        return utils.compute_ratio(self.get_value_somme_egalim_avec_bio_ht(obj), obj.value_total_ht)
+
+    def get_ratio_egalim_sans_bio(self, obj):
+        return utils.compute_ratio(self.get_value_somme_egalim_hors_bio_ht(obj), obj.value_total_ht)
 
 
 class TeledeclarationOpenDataSerializer(serializers.ModelSerializer):

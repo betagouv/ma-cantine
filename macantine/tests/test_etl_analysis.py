@@ -7,12 +7,11 @@ from freezegun import freeze_time
 
 from api.serializers.teledeclaration import TeledeclarationAnalysisSerializer
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
-from data.models import Canteen, Teledeclaration
+from data.models import Canteen, Diagnostic, Teledeclaration
 from macantine.etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
     ETL_ANALYSIS_TELEDECLARATIONS,
     aggregate_col,
-    get_egalim_hors_bio,
     get_objectif_zone_geo,
 )
 from macantine.etl.utils import format_td_sector_column
@@ -137,24 +136,56 @@ class TestETLAnalysisTD(TestCase):
             else:
                 self.assertEqual(len(etl_stats.df[etl_stats.df.id == td.id]), 0)
 
-    def test_get_egalim_hors_bio(self):
-        data = {
-            "0": {
-                "canteen_id": 1,
-                "value_externality_performance_ht": 10,
-                "value_sustainable_ht": 10,
-                "value_egalim_others_ht": 10,
+    def test_get_egalim_sans_bio(self):
+        test_cases = [
+            {
+                "name": "1",
+                "data": {
+                    "value_total_ht": 100,
+                    "value_bio_ht_agg": 0,
+                    "value_externality_performance_ht_agg": 10,
+                    "value_sustainable_ht_agg": 10,
+                    "value_egalim_others_ht_agg": 10,
+                },
+                "expected_outcome": 30,
             },
-            "1": {
-                "canteen_id": 1,
-                "value_externality_performance_ht": 10,
-                "value_sustainable_ht": 10,
+            {
+                "name": "2",
+                "data": {
+                    "value_total_ht": 100,
+                    "value_bio_ht_agg": 0,
+                    "value_externality_performance_ht_agg": 10,
+                    "value_sustainable_ht_agg": 10,
+                    "value_egalim_others_ht_agg": None,
+                },
+                "expected_outcome": 20,
             },
-        }
-        df = pd.DataFrame.from_dict(data, orient="index")
-        df["value_somme_egalim_hors_bio_ht"] = df.apply(get_egalim_hors_bio, axis=1)
-        self.assertEqual(df.iloc[0]["value_somme_egalim_hors_bio_ht"], 30)
-        self.assertEqual(df.iloc[1]["value_somme_egalim_hors_bio_ht"], 20)
+        ]
+
+        for tc in test_cases:
+            canteen = CanteenFactory()
+            diag = DiagnosticFactory.create(
+                canteen=canteen,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                value_total_ht=tc["data"]["value_total_ht"],
+                value_bio_ht=tc["data"]["value_bio_ht_agg"],
+                value_sustainable_ht=tc["data"]["value_sustainable_ht_agg"],
+                value_externality_performance_ht=tc["data"]["value_externality_performance_ht_agg"],
+                value_egalim_others_ht=tc["data"]["value_egalim_others_ht_agg"],
+            )
+            teledeclaration = Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
+
+            self.serializer_data = {
+                "value_total_ht": tc["data"]["value_total_ht"],
+                "value_bio_ht": tc["data"]["value_bio_ht_agg"],
+                "value_externality_performance_ht": tc["data"]["value_externality_performance_ht_agg"],
+                "value_sustainable_ht": tc["data"]["value_sustainable_ht_agg"],
+                "value_egalim_others_ht": tc["data"]["value_egalim_others_ht_agg"],
+            }
+
+            self.serializer = TeledeclarationAnalysisSerializer(instance=teledeclaration)
+            data = self.serializer.data
+            self.assertEqual(int(data["ratio_egalim_sans_bio"]), tc["expected_outcome"])
 
     def test_aggregate_col(self):
         test_cases = [
