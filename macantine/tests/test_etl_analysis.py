@@ -12,9 +12,8 @@ from macantine.etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
     ETL_ANALYSIS_TELEDECLARATIONS,
     aggregate_col,
-    get_objectif_zone_geo,
 )
-from macantine.etl.utils import format_td_sector_column
+from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
 
 
 class TestETLAnalysisCanteen(TestCase):

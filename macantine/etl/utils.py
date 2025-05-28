@@ -11,13 +11,54 @@ from macantine.etl.data_ware_house import DataWareHouse
 
 logger = logging.getLogger(__name__)
 
+# Source : query Resytal dec 2023
+ESTIMATED_NUMBER_CANTEENS_REGION = {
+    1: 625,
+    2: 554,
+    3: 161,
+    4: 900,
+    6: 203,
+    11: 13235,
+    24: 4171,
+    27: 3623,
+    28: 4360,
+    32: 7061,
+    44: 7324,
+    52: 4545,
+    53: 4279,
+    75: 8854,
+    76: 7336,
+    84: 10842,
+    93: 5991,
+    94: 395,
+}
+
+
+def get_nbre_cantines_region(region: int):
+    if region in ESTIMATED_NUMBER_CANTEENS_REGION.keys():
+        return ESTIMATED_NUMBER_CANTEENS_REGION[region]
+    else:
+        return np.nan
+
+
+def get_objectif_zone_geo(department: int):
+    if department and department != "nan" and not pd.isna(department):
+        # Dealing with two string codes
+        if department == "2A" or department == "2B":
+            return "France métropolitaine"
+        department = int(department)
+        if department >= 1 and department <= 95:
+            return "France métropolitaine"
+        elif department == 976:
+            return "DROM (Mayotte)"
+        elif department >= 971 and department <= 978:
+            return "DROM (hors Mayotte)"
+    return "non renseigné"
+
 
 def sum_int_and_none(values_to_sum: list):
     values_to_sum = [x or 0 for x in values_to_sum]
-    sum_ = np.sum(values_to_sum)
-    if not sum_:
-        pass
-    return sum_
+    return int(np.sum(values_to_sum))
 
 
 def common_members(a, b):
