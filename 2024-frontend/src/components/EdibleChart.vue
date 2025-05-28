@@ -4,7 +4,7 @@ import { formatNumber, getSum, getPercentage } from "@/utils"
 
 const props = defineProps(["measurement"])
 
-const isEmpty = (value) => value === "" || value === null
+const isEmpty = (value) => value === "" || value === null || value === undefined
 
 const measurementComputedValues = computed(() => {
   const m = props.measurement
