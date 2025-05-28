@@ -39,6 +39,8 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     lib_departement = serializers.SerializerMethodField()
     region = serializers.SerializerMethodField()
     lib_region = serializers.SerializerMethodField()
+    nbre_cantines_region = serializers.SerializerMethodField()
+    objectif_zone_geo = serializers.SerializerMethodField()
     line_ministry = serializers.SerializerMethodField()
 
     # Data related to the appro
@@ -47,6 +49,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     value_externality_performance_ht = serializers.SerializerMethodField()
     value_egalim_others_ht = serializers.SerializerMethodField()
     value_meat_poultry_ht = serializers.SerializerMethodField()
+    value_meat_poultry_france_ht = serializers.SerializerMethodField()
     value_meat_poultry_egalim_ht = serializers.SerializerMethodField()
     value_fish_ht = serializers.SerializerMethodField()
     value_fish_egalim_ht = serializers.SerializerMethodField()
@@ -54,11 +57,22 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     value_somme_egalim_hors_bio_ht = serializers.SerializerMethodField()
     value_meat_and_fish_ht = serializers.SerializerMethodField()
     value_meat_and_fish_egalim_ht = serializers.SerializerMethodField()
+    vegetarian_weekly_recurrence = serializers.SerializerMethodField()
+    vegetarian_menu_type = serializers.SerializerMethodField()
     ratio_egalim_fish = serializers.SerializerMethodField()
     ratio_egalim_meat_poultry = serializers.SerializerMethodField()
     ratio_bio = serializers.SerializerMethodField()
     ratio_egalim_avec_bio = serializers.SerializerMethodField()
     ratio_egalim_sans_bio = serializers.SerializerMethodField()
+
+    # Data related to the applicant
+    email = serializers.SerializerMethodField()
+
+    # Data related to the campaign
+    declaration_2021 = serializers.SerializerMethodField()
+    declaration_2022 = serializers.SerializerMethodField()
+    declaration_2023 = serializers.SerializerMethodField()
+    declaration_2024 = serializers.SerializerMethodField()
 
     class Meta:
         model = Teledeclaration
@@ -85,6 +99,8 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "lib_departement",
             "region",
             "lib_region",
+            "nbre_cantines_region",
+            "objectif_zone_geo",
             "line_ministry",
             "year",
             "siret",
@@ -99,6 +115,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "value_externality_performance_ht",
             "value_egalim_others_ht",
             "value_meat_poultry_ht",
+            "value_meat_poultry_france_ht",
             "value_meat_poultry_egalim_ht",
             "value_fish_ht",
             "value_fish_egalim_ht",
@@ -106,11 +123,18 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "value_somme_egalim_hors_bio_ht",
             "value_meat_and_fish_ht",
             "value_meat_and_fish_egalim_ht",
+            "vegetarian_weekly_recurrence",
+            "vegetarian_menu_type",
             "ratio_egalim_fish",
             "ratio_egalim_meat_poultry",
             "ratio_bio",
             "ratio_egalim_avec_bio",
             "ratio_egalim_sans_bio",
+            "email",
+            "declaration_2021",
+            "declaration_2022",
+            "declaration_2023",
+            "declaration_2024",
         )
         read_only_fields = fields
 
@@ -220,6 +244,12 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         region = self.get_region(obj)
         return Region(region).label.split(" - ")[1].lstrip() if region else None
 
+    def get_nbre_cantines_region(self, obj):
+        return utils.get_nbre_cantines_region(self.get_region(obj))
+
+    def get_objectif_zone_geo(self, obj):
+        return utils.get_objectif_zone_geo(self.get_departement(obj))
+
     def get_line_ministry(self, obj):
         if "line_ministry" in obj.declared_data["canteen"]:
             return obj.declared_data["canteen"]["line_ministry"]
@@ -238,6 +268,9 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
 
     def get_value_meat_poultry_ht(self, obj):
         return obj.diagnostic.value_meat_poultry_ht
+
+    def get_value_meat_poultry_france_ht(self, obj):
+        return obj.diagnostic.value_meat_poultry_france_ht
 
     def get_value_meat_poultry_egalim_ht(self, obj):
         return obj.diagnostic.value_meat_poultry_egalim_ht
@@ -266,6 +299,14 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     def get_value_meat_and_fish_egalim_ht(self, obj):
         return utils.sum_int_and_none([self.get_value_meat_poultry_egalim_ht(obj), self.get_value_fish_egalim_ht(obj)])
 
+    def get_vegetarian_weekly_recurrence(self, obj):
+        if "vegetarian_weekly_recurrence" in obj.declared_data["teledeclaration"]:
+            return obj.declared_data["teledeclaration"]["vegetarian_weekly_recurrence"]
+
+    def get_vegetarian_menu_type(self, obj):
+        if "vegetarian_menu_type" in obj.declared_data["teledeclaration"]:
+            return obj.declared_data["teledeclaration"]["vegetarian_menu_type"]
+
     def get_ratio_egalim_fish(self, obj):
         return utils.compute_ratio(self.get_value_fish_egalim_ht(obj), self.get_value_fish_ht(obj))
 
@@ -280,6 +321,22 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
 
     def get_ratio_egalim_sans_bio(self, obj):
         return utils.compute_ratio(self.get_value_somme_egalim_hors_bio_ht(obj), obj.value_total_ht)
+
+    def get_email(self, obj):
+        if "email" in obj.declared_data["applicant"]:
+            return obj.declared_data["applicant"]["email"]
+
+    def get_declaration_2021(self, obj):
+        return Teledeclaration.objects.filter(canteen_id=obj.canteen.id, year=2021).exists()
+
+    def get_declaration_2022(self, obj):
+        return Teledeclaration.objects.filter(canteen_id=obj.canteen.id, year=2022).exists()
+
+    def get_declaration_2023(self, obj):
+        return Teledeclaration.objects.filter(canteen_id=obj.canteen.id, year=2023).exists()
+
+    def get_declaration_2024(self, obj):
+        return Teledeclaration.objects.filter(canteen_id=obj.canteen.id, year=2024).exists()
 
 
 class TeledeclarationOpenDataSerializer(serializers.ModelSerializer):
