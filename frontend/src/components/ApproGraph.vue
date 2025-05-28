@@ -153,8 +153,9 @@ export default {
     },
     bioPercentage() {
       const percentage =
-        Math.round(this.diagnostic.percentageValueBioHt * 100) ||
-        getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt, true)
+        this.diagnostic.percentageValueBioHt >= 0
+          ? Math.round(this.diagnostic.percentageValueBioHt * 100)
+          : getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt, true)
       return this.isTruthyOrZero(percentage) ? percentage : "—"
     },
     sustainablePercentage() {
