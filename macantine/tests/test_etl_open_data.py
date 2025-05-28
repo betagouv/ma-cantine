@@ -7,13 +7,13 @@ from django.core.files.storage import default_storage
 from django.test import TestCase, override_settings
 from freezegun import freeze_time
 
+from common.api.datagouv import update_dataset_resources
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import Canteen, Sector, Teledeclaration
 from macantine.etl.open_data import (
     ETL_OPEN_DATA_CANTEEN,
     ETL_OPEN_DATA_TELEDECLARATIONS,
 )
-from macantine.etl.utils import update_datagouv_resources
 
 
 @requests_mock.Mocker()
@@ -290,11 +290,10 @@ class TestETLOpenData(TestCase):
     @freeze_time("2023-05-14")  # Faking date to check new url
     def test_update_ressource(self, mock):
         dataset_id = "expected_dataset_id"
-        os.environ["DATAGOUV_DATASET_ID"] = dataset_id
         api_key = "expected_api_key"
         os.environ["DATAGOUV_API_KEY"] = api_key
         expected_header = {"X-API-KEY": api_key}
-        ressource_id = "expected_resource_id"
+        resource_id = "expected_resource_id"
 
         mock.get(
             f"https://www.data.gouv.fr/api/1/datasets/{dataset_id}",
@@ -306,7 +305,9 @@ class TestETLOpenData(TestCase):
         )
 
         os.environ["ENVIRONMENT"] = "prod"
-        number_of_updated_resources = update_datagouv_resources()
+
+        # 404 error
+        number_of_updated_resources = update_dataset_resources(dataset_id)
         self.assertIsNone(number_of_updated_resources)
 
         mock.get(
@@ -331,7 +332,7 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
         mock.put(
-            f"https://www.data.gouv.fr/api/1/datasets/{dataset_id}/resources/{ressource_id}",
+            f"https://www.data.gouv.fr/api/1/datasets/{dataset_id}/resources/{resource_id}",
             headers=expected_header,
             json={
                 "url": "https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim-prod/media/open_data/registre_cantines.xlsx?v=230514"
@@ -339,15 +340,14 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
 
-        os.environ["DATAGOUV_DATASET_ID"] = ""
-        number_of_updated_resources = update_datagouv_resources()
+        # empty dataset_id
+        number_of_updated_resources = update_dataset_resources(dataset_id="")
         self.assertIsNone(
-            number_of_updated_resources,
-            "No resource should be updated as the environment variable DATAGOUV_DATASET_ID is not set",
+            number_of_updated_resources, "No resource should be updated as the parameter dataset_id is not set"
         )
 
-        os.environ["DATAGOUV_DATASET_ID"] = dataset_id
-        number_of_updated_resources = update_datagouv_resources()
+        # with dataset_id
+        number_of_updated_resources = update_dataset_resources(dataset_id)
         self.assertEqual(number_of_updated_resources, 1, "Only the csv resource should be updated")
 
     @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")

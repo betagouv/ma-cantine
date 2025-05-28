@@ -10,6 +10,7 @@ from django.db.models import Q
 
 import macantine.etl.utils
 from api.views.teledeclaration import TeledeclarationOpenDataListView
+from common.api.datagouv import update_dataset_resources
 from common.api.decoupage_administratif import (
     fetch_commune_detail,
     fetch_epci_name,
@@ -135,7 +136,8 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
             self._load_data_parquet(filepath)
             self._load_data_xlsx(filepath)
 
-            macantine.etl.utils.update_datagouv_resources()
+            dataset_id = os.getenv("DATAGOUV_DATASET_ID", "")
+            update_dataset_resources(dataset_id)
         except Exception as e:
             logger.error(f"Error saving validated data: {e}")
 
