@@ -17,7 +17,7 @@ def get_dataset(dataset_id):
         response.raise_for_status()
         return response.json()
     except requests.HTTPError as e:
-        logger.error(f"Datagouv dataset get : Error while getting dataset : {dataset_id}")
+        logger.error(f"Datagouv dataset get: Error while getting dataset: {dataset_id}")
         logger.exception(e)
     except Exception as e:
         logger.exception(e)
@@ -30,7 +30,7 @@ def get_dataset_resource(dataset_id, resource_id):
         return response.json()
     except requests.HTTPError as e:
         logger.error(
-            f"Datagouv dataset resource get : Error while getting dataset resource : {dataset_id} / {resource_id}"
+            f"Datagouv dataset resource get: Error while getting dataset resource: {dataset_id} / {resource_id}"
         )
         logger.exception(e)
     except Exception as e:
@@ -38,14 +38,15 @@ def get_dataset_resource(dataset_id, resource_id):
 
 
 def update_dataset_resources(dataset_id):
+    """
+    Updating the URL of the different resources displayed on data.gouv.fr in order to force their cache reload and display the correct update dates
+    Returns: Number of updated resources
+    """
     DATAGOUV_API_KEY = os.getenv("DATAGOUV_API_KEY", "")
     DATAGOUV_API_HEADER = {"X-API-KEY": DATAGOUV_API_KEY}
-    """
-    Updating the URL of the different resources dsiplayed on data.gouv.fr in order to force their cache reload and display the correct update dates
-    Returns : Number of updated resources
-    """
+
     if not (dataset_id and DATAGOUV_API_KEY):
-        logger.warning("Datagouv resource update : API key or dataset id incorrect values")
+        logger.warning("Datagouv resource update: API key or dataset id incorrect values")
         return
 
     try:
@@ -66,7 +67,7 @@ def update_dataset_resources(dataset_id):
         logger.info(f"{count_updated_resources} datagouv's ressources have been updated")
         return count_updated_resources
     except requests.HTTPError as e:
-        logger.error(f"Datagouv resource update : Error while updating dataset : {dataset_id}")
+        logger.error(f"Datagouv resource update: Error while updating dataset: {dataset_id}")
         logger.exception(e)
     except Exception as e:
         logger.exception(e)

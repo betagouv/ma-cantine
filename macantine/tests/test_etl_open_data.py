@@ -343,8 +343,7 @@ class TestETLOpenData(TestCase):
         # empty dataset_id
         number_of_updated_resources = update_dataset_resources(dataset_id="")
         self.assertIsNone(
-            number_of_updated_resources,
-            "No resource should be updated as the environment variable DATAGOUV_DATASET_ID is not set",
+            number_of_updated_resources, "No resource should be updated as the parameter dataset_id is not set"
         )
 
         # with dataset_id
