@@ -6,6 +6,43 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.18.1](https://github.com/betagouv/ma-cantine/compare/v2025.18.0...v2025.18.1) (2025-05-28)
+
+
+### Améliorations
+
+* **ETL:** Affiner le scope des fonctions d'export ([#5374](https://github.com/betagouv/ma-cantine/issues/5374)) ([c366fcf](https://github.com/betagouv/ma-cantine/commit/c366fcf9b06d264caaa64616aa2f6d372d55f3fe))
+* **Metabase:** Cantines: ne plus renvoyer 'inconnu' quand le champ est vide (modele eco, type gestion, type prod, min tutelle) ([#5345](https://github.com/betagouv/ma-cantine/issues/5345)) ([2965066](https://github.com/betagouv/ma-cantine/commit/2965066b1fbd1062024c9e2a9317fde6e2cd6858))
+
+
+### Corrections (bugs, typos...)
+
+* **ETL:** corrige une typo dans la tâche d'export quotidien ([#5382](https://github.com/betagouv/ma-cantine/issues/5382)) ([1c9ef28](https://github.com/betagouv/ma-cantine/commit/1c9ef2841d66ce67504176186cec4fedd63a6715))
+* **ETL:** Vérifier existence colonne pour calcul cout denrees ([#5370](https://github.com/betagouv/ma-cantine/issues/5370)) ([3124ed1](https://github.com/betagouv/ma-cantine/commit/3124ed11f950296cf519db2ac04bc295b6f29807))
+* **Gaspillage alimentaire:** corrige condition pour une valeur vide ([#5387](https://github.com/betagouv/ma-cantine/issues/5387)) ([7f4b09a](https://github.com/betagouv/ma-cantine/commit/7f4b09a2913b85b8b61bd538630fc6f0094b2b63))
+* **Gaspillage alimentaire:** le graphique "part de comestible" ne s'affiche pas si un des totaux mesuré est égale à zéro ([#5385](https://github.com/betagouv/ma-cantine/issues/5385)) ([d7ba37c](https://github.com/betagouv/ma-cantine/commit/d7ba37cb0fa116180f5428ffea91105083cc309a))
+* **Geo Bot:** rajoute les départements et régions d'outre-mer manquants ([#5369](https://github.com/betagouv/ma-cantine/issues/5369)) ([eca431a](https://github.com/betagouv/ma-cantine/commit/eca431adb6d63beb4919307d3016d27668873c93))
+* **Synthèse approvisionnement:** la valeur bio est renseignée à vide au lieu de zéro ([#5386](https://github.com/betagouv/ma-cantine/issues/5386)) ([880455e](https://github.com/betagouv/ma-cantine/commit/880455eae2c24ac92447b9e6b7b0eb1cd2eafd39))
+
+
+### Documentation
+
+* **Geo Bot:** documenter comment nous gérons les données géographiques ([#5377](https://github.com/betagouv/ma-cantine/issues/5377)) ([21f3f7f](https://github.com/betagouv/ma-cantine/commit/21f3f7f33feb3a41abf6c5063cfea75a5e0ab27d))
+* **Open Data:** corrige quelques typos dans la doc du schéma ([#5372](https://github.com/betagouv/ma-cantine/issues/5372)) ([2a58141](https://github.com/betagouv/ma-cantine/commit/2a5814167f31a4e07fd216f46fd8986fd767906f))
+
+
+### Technique
+
+* **DataGouv:** fichier dédié pour intéragir avec l'API ([#5363](https://github.com/betagouv/ma-cantine/issues/5363)) ([c26cee6](https://github.com/betagouv/ma-cantine/commit/c26cee67a7187d681de13e9ce6c940165e34767c))
+* **ETL:** Factoriser la méthode extract_dataset()  ([#5376](https://github.com/betagouv/ma-cantine/issues/5376)) ([9c40c6e](https://github.com/betagouv/ma-cantine/commit/9c40c6ee9202bfdc3e786a6e879c09f2dcdeadc2))
+* **ETL:** Remplacer l'extraction des requêtes TD par queryset/serializer au lieu de pandas ([#5378](https://github.com/betagouv/ma-cantine/issues/5378)) ([9bc7593](https://github.com/betagouv/ma-cantine/commit/9bc7593bfaea1200f789b257e2652eb2a709ef9f))
+* **ETL:** Transférer la transformation des colonnes caractéristiques cantines dans le serializer AnalysisTeledeclaration ([#5383](https://github.com/betagouv/ma-cantine/issues/5383)) ([53dad12](https://github.com/betagouv/ma-cantine/commit/53dad12c22b5bacd6c4f813b433b289e8990f2cb))
+* **ETL:** Utilisation d'un queryset à la place de pandas pour recuperer les TD historiques ([#5375](https://github.com/betagouv/ma-cantine/issues/5375)) ([6b6cfa2](https://github.com/betagouv/ma-cantine/commit/6b6cfa2e1013621432439161ee2e13789a421c19))
+* **Geo Bot:** avoir les résultats des tâches dans l'admin ([#5381](https://github.com/betagouv/ma-cantine/issues/5381)) ([172851a](https://github.com/betagouv/ma-cantine/commit/172851a254c2887a5e2a693a08f6acb37a40c4ed))
+* **Geo Bot:** bouger la logique dans une fonction dédiée pour pouvoir l'appeler d'ailleurs ([#5380](https://github.com/betagouv/ma-cantine/issues/5380)) ([82f024d](https://github.com/betagouv/ma-cantine/commit/82f024d9e56a8a8f8706273ce68a3a89350ff16c))
+* **Geo Bot:** évite de sauvegarder la cantine si aucun changement n'a été effectué ([#5371](https://github.com/betagouv/ma-cantine/issues/5371)) ([b7acbe3](https://github.com/betagouv/ma-cantine/commit/b7acbe313e2dbfff1bd0006af4ead52044d4d998))
+* **Geo Bot:** récupérer seulement le code Insee à partir du Siret ([#5379](https://github.com/betagouv/ma-cantine/issues/5379)) ([52a5934](https://github.com/betagouv/ma-cantine/commit/52a593490b6ffa49c6edae43d7682d3bda5f725c))
+
 ## [2025.18.0](https://github.com/betagouv/ma-cantine/compare/v2025.17.0...v2025.18.0) (2025-05-22)
 
 
