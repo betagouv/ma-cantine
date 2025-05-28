@@ -824,7 +824,7 @@ class TestTeledeclarationPdfApi(APITestCase):
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
-        teledeclaration = Teledeclaration.an_diagnostic(diagnostic, authenticate.user)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
