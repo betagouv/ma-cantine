@@ -37,31 +37,6 @@ ESTIMATED_NUMBER_CANTEENS_REGION = {
 }
 
 
-def get_egalim_hors_bio(row):
-    """
-    Aggregating egalim values.
-    Processing of empty values : As decided for analysis, if there are empty values, we convert them to zeros
-    in order to avoid losing too many lines (this doesn't apply to value_bio_ht and value_total_ht, for which we filter out the empty values)
-    """
-    egalim_hors_bio = 0
-    for categ in ["externality_performance", "sustainable", "egalim_others"]:
-        value_categ = row[f"value_{categ}_ht"] if row[f"value_{categ}_ht"] >= 0 else 0
-        egalim_hors_bio += value_categ
-    return egalim_hors_bio
-
-
-def get_egalim_avec_bio(row):
-    return row["value_bio_ht_agg"] + get_egalim_hors_bio(row)
-
-
-def get_meat_and_fish(row):
-    return row["value_meat_poultry_ht"] + row["value_fish_ht"]
-
-
-def get_meat_and_fish_egalim(row):
-    return row["value_meat_poultry_egalim_ht"] + row["value_fish_egalim_ht"]
-
-
 def get_nbre_cantines_region(region: int):
     if region in ESTIMATED_NUMBER_CANTEENS_REGION.keys():
         return ESTIMATED_NUMBER_CANTEENS_REGION[region]
@@ -84,26 +59,6 @@ def get_objectif_zone_geo(department: int):
     return "non renseigné"
 
 
-def get_ratio_egalim_fish(row):
-    return utils.get_ratio(row, "value_fish_egalim_ht", "value_fish_ht")
-
-
-def get_ratio_egalim_meat_poultry(row):
-    return utils.get_ratio(row, "value_meat_poultry_egalim_ht", "value_meat_poultry_ht")
-
-
-def get_ratio_bio(row):
-    return utils.get_ratio(row, "value_bio_ht", "value_total_ht")
-
-
-def get_ratio_egalim_avec_bio(row):
-    return utils.get_ratio(row, "value_somme_egalim_avec_bio_ht", "value_total_ht")
-
-
-def get_ratio_egalim_sans_bio(row):
-    return utils.get_ratio(row, "value_somme_egalim_hors_bio_ht", "value_total_ht")
-
-
 def check_column_matches_substring(df, sub_categ: str):
     for substring in sub_categ:
         pattern = rf".*{re.escape(substring)}.*"
@@ -123,18 +78,6 @@ def aggregate_col(df, categ, sub_categ):
         axis=1, numeric_only=True, skipna=True, min_count=1
     )
     return df
-
-
-# def aggregate(df):
-#     df = aggregate_col(df, "bio", ["_bio"])
-#     df = aggregate_col(df, "sustainable", ["_sustainable", "_label_rouge", "_aocaop_igp_stg"])
-#     df = aggregate_col(
-#         df,
-#         "egalim_others",
-#         ["_egalim_others", "_hve", "_peche_durable", "_rup", "_fermier", "_commerce_equitable"],
-#     )
-#     df = aggregate_col(df, "externality_performance", ["_performance", "_externalites"])
-#     return df
 
 
 class ANALYSIS(etl.TRANSFORMER_LOADER):
@@ -237,17 +180,6 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         # Add geo data
         self.df["nbre_cantines_region"] = self.df["region"].apply(get_nbre_cantines_region)
         self.df["objectif_zone_geo"] = self.df["departement"].apply(get_objectif_zone_geo)
-        # Combine columns
-        self.df["value_somme_egalim_avec_bio_ht"] = self.df.apply(get_egalim_avec_bio, axis=1)
-        self.df["value_somme_egalim_hors_bio_ht"] = self.df.apply(get_egalim_hors_bio, axis=1)
-        self.df["value_meat_and_fish_ht"] = self.df.apply(get_meat_and_fish, axis=1)
-        self.df["value_meat_and_fish_egalim_ht"] = self.df.apply(get_meat_and_fish_egalim, axis=1)
-        # Calcul ratio
-        self.df["ratio_egalim_fish"] = self.df.apply(get_ratio_egalim_fish, axis=1)
-        self.df["ratio_egalim_meat_poultry"] = self.df.apply(get_ratio_egalim_meat_poultry, axis=1)
-        self.df["ratio_bio"] = self.df.apply(get_ratio_bio, axis=1)
-        self.df["ratio_egalim_avec_bio"] = self.df.apply(get_ratio_egalim_avec_bio, axis=1)
-        self.df["ratio_egalim_sans_bio"] = self.df.apply(get_ratio_egalim_sans_bio, axis=1)
 
     def load_dataset(self, versionning=True):
         """
