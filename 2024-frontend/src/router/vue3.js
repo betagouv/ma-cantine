@@ -18,7 +18,7 @@ import PersonalData from "@/views/PersonalData.vue"
 import SiteMap from "@/views/SiteMap.vue"
 
 /* Sitemap section id */
-const { diag, action } = sectionId
+const { diag, action, site } = sectionId
 
 /* Routes */
 const vue3routes = [
@@ -72,6 +72,7 @@ const vue3routes = [
     component: LegalNotices,
     meta: {
       title: "Mentions légales",
+      siteMap: site,
     },
   },
   {
@@ -80,6 +81,7 @@ const vue3routes = [
     component: AccessibilityDeclaration,
     meta: {
       title: "Déclaration d'accessibilité",
+      siteMap: site,
     },
   },
   {
@@ -88,6 +90,7 @@ const vue3routes = [
     component: CGU,
     meta: {
       title: "Conditions générales d'utilisation",
+      siteMap: site,
     },
   },
   {
@@ -96,6 +99,7 @@ const vue3routes = [
     component: ContactPage,
     meta: {
       title: "Contactez-nous",
+      siteMap: site,
     },
   },
   {
@@ -160,6 +164,7 @@ const vue3routes = [
     component: FAQ,
     meta: {
       title: "Foire aux questions",
+      siteMap: site,
     },
   },
   {
@@ -168,6 +173,7 @@ const vue3routes = [
     component: PersonalData,
     meta: {
       title: "Données personnelles",
+      siteMap: site,
     },
   },
   {

@@ -49,9 +49,20 @@ const actionContent = () => {
   }
 }
 
+const siteContent = () => {
+  const siteVue2Pages = vue2routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.site : false))
+  const siteVue3Pages = vue3routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.site : false))
+
+  return {
+    title: "Informations sur le site",
+    pages: [...siteVue2Pages, ...siteVue3Pages],
+  }
+}
+
 sections.push(lawContent())
 sections.push(diagContent())
 sections.push(actionContent())
+sections.push(siteContent())
 </script>
 
 <template>
