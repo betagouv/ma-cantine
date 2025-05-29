@@ -25,8 +25,8 @@ const canUserAccessPage = (route) => {
 const sections = []
 
 const lawContent = () => {
-  const lawVue2Pages = vue2routes.filter((route) => routeIsInSection(route, sectionId.law))
-  const lawVue3Pages = vue3routes.filter((route) => routeIsInSection(route, sectionId.law))
+  const vue2pages = vue2routes.filter((route) => routeIsInSection(route, sectionId.law))
+  const vue3pages = vue3routes.filter((route) => routeIsInSection(route, sectionId.law))
   const keyMeasuresPages = keyMeasures.map((x) => ({
     name: "KeyMeasurePage",
     params: { id: x.id },
@@ -37,45 +37,37 @@ const lawContent = () => {
 
   return {
     title: "S'informer sur les lois",
-    pages: [...lawVue2Pages, ...lawVue3Pages, ...keyMeasuresPages],
+    pages: [...vue2pages, ...vue3pages, ...keyMeasuresPages],
   }
 }
 
 const diagContent = () => {
-  const diagVue2Pages = vue2routes.filter(
-    (route) => routeIsInSection(route, sectionId.diag) && canUserAccessPage(route)
-  )
-  const diagVue3Pages = vue3routes.filter(
-    (route) => routeIsInSection(route, sectionId.diag) && canUserAccessPage(route)
-  )
+  const vue2Pages = vue2routes.filter((route) => routeIsInSection(route, sectionId.diag) && canUserAccessPage(route))
+  const vue3Pages = vue3routes.filter((route) => routeIsInSection(route, sectionId.diag) && canUserAccessPage(route))
 
   return {
     title: "Se diagnostiquer",
-    pages: [...diagVue2Pages, ...diagVue3Pages],
+    pages: [...vue2Pages, ...vue3Pages],
   }
 }
 
 const actionContent = () => {
-  const actionVue2Pages = vue2routes.filter(
-    (route) => routeIsInSection(route, sectionId.action) && canUserAccessPage(route)
-  )
-  const actionVue3Pages = vue3routes.filter(
-    (route) => routeIsInSection(route, sectionId.action) && canUserAccessPage(route)
-  )
+  const vue2Pages = vue2routes.filter((route) => routeIsInSection(route, sectionId.action) && canUserAccessPage(route))
+  const vue3Pages = vue3routes.filter((route) => routeIsInSection(route, sectionId.action) && canUserAccessPage(route))
 
   return {
     title: "Améliorer votre offre",
-    pages: [...actionVue2Pages, ...actionVue3Pages],
+    pages: [...vue2Pages, ...vue3Pages],
   }
 }
 
 const siteContent = () => {
-  const siteVue2Pages = vue2routes.filter((route) => routeIsInSection(route, sectionId.site))
-  const siteVue3Pages = vue3routes.filter((route) => routeIsInSection(route, sectionId.site))
+  const vue2Pages = vue2routes.filter((route) => routeIsInSection(route, sectionId.site))
+  const vue3Pages = vue3routes.filter((route) => routeIsInSection(route, sectionId.site))
 
   return {
     title: "Informations sur le site",
-    pages: [...siteVue2Pages, ...siteVue3Pages],
+    pages: [...vue2Pages, ...vue3Pages],
   }
 }
 
