@@ -45,9 +45,21 @@ const diagContent = () => {
   const vue2Pages = vue2routes.filter((route) => routeIsInSection(route, sectionId.diag) && canUserAccessPage(route))
   const vue3Pages = vue3routes.filter((route) => routeIsInSection(route, sectionId.diag) && canUserAccessPage(route))
 
+  const loginPages = []
+  if (!store.loggedUser) {
+    loginPages.push({
+      path: "/creer-mon-compte",
+      meta: { title: "Créer mon compte" },
+    })
+    loginPages.push({
+      path: "/s-identifier",
+      meta: { title: "S'identifier" },
+    })
+  }
+
   return {
     title: "Se diagnostiquer",
-    pages: [...vue2Pages, ...vue3Pages],
+    pages: [...vue2Pages, ...vue3Pages, ...loginPages],
   }
 }
 
