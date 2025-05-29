@@ -129,6 +129,10 @@ export default {
           to: { name: "PersonalData" },
         },
         {
+          text: "Gestion des cookies",
+          to: { name: "PersonalData", hash: "#cookies" },
+        },
+        {
           text: "Accessibilité : partiellement conforme",
           to: { name: "AccessibilityDeclaration" },
         },
