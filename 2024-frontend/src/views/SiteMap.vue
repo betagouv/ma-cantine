@@ -11,7 +11,25 @@ import vue3routes from "@/router/vue3.js"
 const route = useRoute()
 const store = useRootStore()
 
-/* Verifications */
+/* Pages not present in the router */
+const keyMeasuresPages = keyMeasures.map((x) => ({
+  name: "KeyMeasurePage",
+  params: { id: x.id },
+  meta: { title: x.title },
+}))
+
+const loginPages = [
+  {
+    path: "/creer-mon-compte",
+    meta: { title: "Créer mon compte" },
+  },
+  {
+    path: "/s-identifier",
+    meta: { title: "S'identifier" },
+  },
+]
+
+/* Get pages from vue2 and vue3 routers */
 const routeIsInSection = (route, sectionName) => {
   return route?.meta?.siteMap === sectionName
 }
@@ -21,72 +39,32 @@ const canUserAccessPage = (route) => {
   return true
 }
 
+const getPages = (sectionId) => {
+  const vue2pages = vue2routes.filter((route) => routeIsInSection(route, sectionId) && canUserAccessPage(route))
+  const vue3pages = vue3routes.filter((route) => routeIsInSection(route, sectionId) && canUserAccessPage(route))
+
+  return [...vue2pages, ...vue3pages]
+}
+
 /* Generate section's content */
-const sections = []
-
-const lawContent = () => {
-  const vue2pages = vue2routes.filter((route) => routeIsInSection(route, sectionId.law))
-  const vue3pages = vue3routes.filter((route) => routeIsInSection(route, sectionId.law))
-  const keyMeasuresPages = keyMeasures.map((x) => ({
-    name: "KeyMeasurePage",
-    params: { id: x.id },
-    meta: {
-      title: x.title,
-    },
-  }))
-
-  return {
+const sections = [
+  {
     title: "S'informer sur les lois",
-    pages: [...vue2pages, ...vue3pages, ...keyMeasuresPages],
-  }
-}
-
-const diagContent = () => {
-  const vue2Pages = vue2routes.filter((route) => routeIsInSection(route, sectionId.diag) && canUserAccessPage(route))
-  const vue3Pages = vue3routes.filter((route) => routeIsInSection(route, sectionId.diag) && canUserAccessPage(route))
-
-  const loginPages = []
-  if (!store.loggedUser) {
-    loginPages.push({
-      path: "/creer-mon-compte",
-      meta: { title: "Créer mon compte" },
-    })
-    loginPages.push({
-      path: "/s-identifier",
-      meta: { title: "S'identifier" },
-    })
-  }
-
-  return {
+    pages: [...getPages(sectionId.law), ...keyMeasuresPages],
+  },
+  {
     title: "Se diagnostiquer",
-    pages: [...vue2Pages, ...vue3Pages, ...loginPages],
-  }
-}
-
-const actionContent = () => {
-  const vue2Pages = vue2routes.filter((route) => routeIsInSection(route, sectionId.action) && canUserAccessPage(route))
-  const vue3Pages = vue3routes.filter((route) => routeIsInSection(route, sectionId.action) && canUserAccessPage(route))
-
-  return {
+    pages: store.loggedUser ? getPages(sectionId.diag) : [...getPages(sectionId.diag), ...loginPages],
+  },
+  {
     title: "Améliorer votre offre",
-    pages: [...vue2Pages, ...vue3Pages],
-  }
-}
-
-const siteContent = () => {
-  const vue2Pages = vue2routes.filter((route) => routeIsInSection(route, sectionId.site))
-  const vue3Pages = vue3routes.filter((route) => routeIsInSection(route, sectionId.site))
-
-  return {
+    pages: getPages(sectionId.action),
+  },
+  {
     title: "Informations sur le site",
-    pages: [...vue2Pages, ...vue3Pages],
-  }
-}
-
-sections.push(lawContent())
-sections.push(diagContent())
-sections.push(actionContent())
-sections.push(siteContent())
+    pages: getPages(sectionId.site),
+  },
+]
 </script>
 
 <template>
