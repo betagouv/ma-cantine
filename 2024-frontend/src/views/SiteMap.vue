@@ -67,7 +67,7 @@ sections.push(siteContent())
 
 <template>
   <h1>{{ route.meta.title }}</h1>
-  <div class="fr-grid-row">
+  <div class="fr-grid-row fr-grid-row--gutters">
     <section v-for="section in sections" :key="section.title" class="fr-col-6">
       <h2>{{ section.title }}</h2>
       <ul>
