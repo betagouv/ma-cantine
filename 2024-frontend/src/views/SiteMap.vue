@@ -12,9 +12,13 @@ const route = useRoute()
 /* Generate section's content */
 const sections = []
 
+const routeInSection = (route, sectionName) => {
+  return route.meta ? route.meta.siteMap === sectionName : false
+}
+
 const lawContent = () => {
-  const lawVue2Pages = vue2routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.law : false))
-  const lawVue3Pages = vue3routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.law : false))
+  const lawVue2Pages = vue2routes.filter((route) => routeInSection(route, sectionId.law))
+  const lawVue3Pages = vue3routes.filter((route) => routeInSection(route, sectionId.law))
   const keyMeasuresPages = keyMeasures.map((x) => ({
     name: "KeyMeasurePage",
     params: { id: x.id },
@@ -30,8 +34,8 @@ const lawContent = () => {
 }
 
 const diagContent = () => {
-  const diagVue2Pages = vue2routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.diag : false))
-  const diagVue3Pages = vue3routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.diag : false))
+  const diagVue2Pages = vue2routes.filter((route) => routeInSection(route, sectionId.diag))
+  const diagVue3Pages = vue3routes.filter((route) => routeInSection(route, sectionId.diag))
 
   return {
     title: "Se diagnostiquer",
@@ -40,8 +44,8 @@ const diagContent = () => {
 }
 
 const actionContent = () => {
-  const actionVue2Pages = vue2routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.action : false))
-  const actionVue3Pages = vue3routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.action : false))
+  const actionVue2Pages = vue2routes.filter((route) => routeInSection(route, sectionId.action))
+  const actionVue3Pages = vue3routes.filter((route) => routeInSection(route, sectionId.action))
 
   return {
     title: "Améliorer votre offre",
@@ -50,8 +54,8 @@ const actionContent = () => {
 }
 
 const siteContent = () => {
-  const siteVue2Pages = vue2routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.site : false))
-  const siteVue3Pages = vue3routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.site : false))
+  const siteVue2Pages = vue2routes.filter((route) => routeInSection(route, sectionId.site))
+  const siteVue3Pages = vue3routes.filter((route) => routeInSection(route, sectionId.site))
 
   return {
     title: "Informations sur le site",
