@@ -43,7 +43,6 @@ import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
 import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
-import SiteMap from "@/views/SiteMap"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
 import TerritoryCanteens from "@/views/TerritoryCanteens"
@@ -430,14 +429,6 @@ const routes = [
     sitemapGroup: Constants.SitemapGroups.LAW,
   },
   {
-    path: "/plan-du-site/",
-    name: "SiteMap",
-    component: SiteMap,
-    meta: {
-      title: "Plan du site",
-    },
-  },
-  {
     path: "/statistiques-plateforme/",
     name: "ImpactMeasuresPage",
     component: ImpactMeasuresPage,
@@ -588,6 +579,10 @@ const vue3Routes = [
       title: "Données personnelles",
     },
     sitemapGroup: Constants.SitemapGroups.SITE,
+  },
+  {
+    path: "/plan-du-site/",
+    name: "SiteMap",
   },
 ]
 const VUE3_PREFIX = "/v2"
