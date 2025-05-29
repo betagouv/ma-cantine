@@ -18,7 +18,7 @@ import PersonalData from "@/views/PersonalData.vue"
 import SiteMap from "@/views/SiteMap.vue"
 
 /* Sitemap section id */
-const { diag } = sectionId
+const { diag, action } = sectionId
 
 /* Routes */
 const vue3routes = [
@@ -63,6 +63,7 @@ const vue3routes = [
     component: DeveloperAPI,
     meta: {
       title: "Développement et APIs",
+      siteMap: action,
     },
   },
   {
@@ -132,6 +133,7 @@ const vue3routes = [
       authenticationRequired: true,
       title: "Ajouter une cantine",
       breadcrumbs: [{ to: { name: "ManagementPage" }, title: "Mon tableau de bord" }],
+      siteMap: action,
     },
   },
   {

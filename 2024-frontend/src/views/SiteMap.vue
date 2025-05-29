@@ -39,8 +39,19 @@ const diagContent = () => {
   }
 }
 
+const actionContent = () => {
+  const actionVue2Pages = vue2routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.action : false))
+  const actionVue3Pages = vue3routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.action : false))
+
+  return {
+    title: "Améliorer votre offre",
+    pages: [...actionVue2Pages, ...actionVue3Pages],
+  }
+}
+
 sections.push(lawContent())
 sections.push(diagContent())
+sections.push(actionContent())
 </script>
 
 <template>

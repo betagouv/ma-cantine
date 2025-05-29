@@ -1,5 +1,5 @@
 import { sectionId } from "@/constants/site-map.js"
-const { law, diag } = sectionId
+const { law, diag, action } = sectionId
 
 const vue2routes = [
   {
@@ -65,10 +65,26 @@ const vue2routes = [
   {
     path: "/acteurs-de-l-eco-systeme",
     name: "PartnersHome",
+    meta: {
+      title: "Acteurs de l'éco-système",
+      siteMap: action,
+    },
+  },
+  {
+    path: "/nouveau-acteur-de-l-ecosysteme",
+    name: "NewPartner",
+    meta: {
+      title: "Nouvel acteur de l'éco-système",
+      siteMap: action,
+    },
   },
   {
     path: "/creation-affiche",
     name: "GeneratePosterPage",
+    meta: {
+      title: "Affiche convives",
+      siteMap: action,
+    },
   },
   {
     path: "/communaute",
@@ -97,6 +113,10 @@ const vue2routes = [
   {
     path: "/trouver-une-cantine",
     name: "CanteenSearchLanding",
+    meta: {
+      title: "Trouver une cantine",
+      siteMap: action,
+    },
   },
   {
     path: "/statistiques-regionales",
@@ -117,6 +137,10 @@ const vue2routes = [
   {
     path: "/actions-anti-gaspi",
     name: "WasteActionsHome",
+    meta: {
+      title: "Actions anti-gaspi",
+      siteMap: action,
+    },
   },
   {
     path: "/importer-diagnostics/:importUrlSlug",
