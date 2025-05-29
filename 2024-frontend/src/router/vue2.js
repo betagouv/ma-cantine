@@ -150,6 +150,14 @@ const vue2routes = [
     path: "/modifier-ma-cantine/:canteenUrlComponent/supprimer",
     name: "CanteenDeletion",
   },
+  {
+    path: "/actions-en-attente",
+    name: "PendingActions",
+    meta: {
+      title: "Actions en attente",
+      siteMap: diag,
+    },
+  },
 ]
 
 export default vue2routes
