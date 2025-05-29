@@ -12,6 +12,7 @@ import CanteenCreation from "@/views/CanteenCreation.vue"
 import CanteenModification from "@/views/CanteenModification.vue"
 import FAQ from "@/views/FAQ.vue"
 import PersonalData from "@/views/PersonalData.vue"
+import SiteMap from "@/views/SiteMap.vue"
 
 const vue3routes = [
   {
@@ -156,6 +157,14 @@ const vue3routes = [
     component: PersonalData,
     meta: {
       title: "Données personnelles",
+    },
+  },
+  {
+    path: "/plan-du-site",
+    name: "SiteMap",
+    component: SiteMap,
+    meta: {
+      title: "Plan du site",
     },
   },
 ]

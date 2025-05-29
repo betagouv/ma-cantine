@@ -68,10 +68,6 @@ const vue2routes = [
     name: "AccountSummaryPage",
   },
   {
-    path: "/plan-du-site/",
-    name: "SiteMap",
-  },
-  {
     path: "/donnees-personnelles#cookies",
     name: "Cookies",
   },
