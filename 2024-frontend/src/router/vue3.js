@@ -1,3 +1,6 @@
+import { sectionId } from "@/constants/site-map.js"
+
+/* Components */
 import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel.vue"
 import WasteMeasurements from "@/views/WasteMeasurements.vue"
 import ImportSelection from "@/views/ImportSelection.vue"
@@ -12,7 +15,12 @@ import CanteenCreation from "@/views/CanteenCreation.vue"
 import CanteenModification from "@/views/CanteenModification.vue"
 import FAQ from "@/views/FAQ.vue"
 import PersonalData from "@/views/PersonalData.vue"
+import SiteMap from "@/views/SiteMap.vue"
 
+/* Sitemap section id */
+const { diag, action, site } = sectionId
+
+/* Routes */
 const vue3routes = [
   {
     path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
@@ -46,6 +54,7 @@ const vue3routes = [
     meta: {
       title: "Importer des données",
       authenticationRequired: true,
+      siteMap: diag,
     },
   },
   {
@@ -54,6 +63,7 @@ const vue3routes = [
     component: DeveloperAPI,
     meta: {
       title: "Développement et APIs",
+      siteMap: action,
     },
   },
   {
@@ -62,6 +72,7 @@ const vue3routes = [
     component: LegalNotices,
     meta: {
       title: "Mentions légales",
+      siteMap: site,
     },
   },
   {
@@ -70,6 +81,7 @@ const vue3routes = [
     component: AccessibilityDeclaration,
     meta: {
       title: "Déclaration d'accessibilité",
+      siteMap: site,
     },
   },
   {
@@ -78,6 +90,7 @@ const vue3routes = [
     component: CGU,
     meta: {
       title: "Conditions générales d'utilisation",
+      siteMap: site,
     },
   },
   {
@@ -86,6 +99,7 @@ const vue3routes = [
     component: ContactPage,
     meta: {
       title: "Contactez-nous",
+      siteMap: site,
     },
   },
   {
@@ -122,6 +136,7 @@ const vue3routes = [
       authenticationRequired: true,
       title: "Ajouter une cantine",
       breadcrumbs: [{ to: { name: "ManagementPage" }, title: "Mon tableau de bord" }],
+      siteMap: action,
     },
   },
   {
@@ -148,6 +163,7 @@ const vue3routes = [
     component: FAQ,
     meta: {
       title: "Foire aux questions",
+      siteMap: site,
     },
   },
   {
@@ -156,6 +172,15 @@ const vue3routes = [
     component: PersonalData,
     meta: {
       title: "Données personnelles",
+      siteMap: site,
+    },
+  },
+  {
+    path: "/plan-du-site",
+    name: "SiteMap",
+    component: SiteMap,
+    meta: {
+      title: "Plan du site",
     },
   },
 ]

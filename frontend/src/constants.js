@@ -408,20 +408,6 @@ export default Object.freeze({
       value: "OTHER",
     },
   ],
-  SitemapGroups: {
-    LAW: {
-      label: "S'informer sur les lois",
-    },
-    DIAG: {
-      label: "Se diagnostiquer",
-    },
-    ACTION: {
-      label: "Améliorer votre offre",
-    },
-    SITE: {
-      label: "Informations sur le site",
-    },
-  },
   DiagnosticImportLevels: [
     {
       key: "SIMPLE",

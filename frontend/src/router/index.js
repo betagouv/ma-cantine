@@ -43,13 +43,11 @@ import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
 import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
-import SiteMap from "@/views/SiteMap"
 import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
 import TerritoryCanteens from "@/views/TerritoryCanteens"
 import VideoTutorial from "@/views/VideoTutorial"
 import MyProgress from "@/views/MyProgress"
-import Constants from "@/constants"
 
 Vue.use(VueRouter)
 
@@ -87,7 +85,6 @@ const routes = [
           authenticationRequired: true,
           title: "Mon compte",
         },
-        sitemapGroup: Constants.SitemapGroups.SITE,
       },
       {
         path: "mot-de-passe",
@@ -119,7 +116,6 @@ const routes = [
     beforeEnter: (_to, _from, next) => {
       store.state.loggedUser ? next({ name: "ManagementPage" }) : next()
     },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/creation-affiche",
@@ -128,7 +124,6 @@ const routes = [
     meta: {
       title: "Affiche convives",
     },
-    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/mesures-phares",
@@ -172,7 +167,6 @@ const routes = [
     meta: {
       title: "Trouver une cantine",
     },
-    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     // if you change this path, update the visitor view count logic in the publication widget
@@ -212,7 +206,6 @@ const routes = [
         meta: {
           title: "Blog",
         },
-        sitemapGroup: Constants.SitemapGroups.LAW,
       },
       {
         path: ":id",
@@ -233,7 +226,6 @@ const routes = [
         meta: {
           title: "Actions anti-gaspi",
         },
-        sitemapGroup: Constants.SitemapGroups.ACTION,
       },
       {
         path: ":id",
@@ -258,7 +250,6 @@ const routes = [
         meta: {
           title: "Acteurs de l'éco-système",
         },
-        sitemapGroup: Constants.SitemapGroups.ACTION,
       },
       {
         path: ":partnerUrlComponent",
@@ -275,7 +266,6 @@ const routes = [
     meta: {
       title: "Nouvel acteur de l'éco-système",
     },
-    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/gestion",
@@ -294,7 +284,6 @@ const routes = [
       title: "Actions en attente",
       authenticationRequired: true,
     },
-    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent",
@@ -378,7 +367,6 @@ const routes = [
     meta: {
       title: "Sur mon territoire",
     },
-    sitemapGroup: Constants.SitemapGroups.LAW,
   },
   {
     path: "/mes-achats",
@@ -388,7 +376,6 @@ const routes = [
       title: "Mes achats",
       authenticationRequired: true,
     },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/mes-achats/:id",
@@ -408,7 +395,6 @@ const routes = [
       title: "Nouvel achat",
       authenticationRequired: true,
     },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/synthese-achats",
@@ -418,7 +404,6 @@ const routes = [
       title: "Synthèse des achats",
       authenticationRequired: true,
     },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/communaute/",
@@ -426,15 +411,6 @@ const routes = [
     component: CommunityPage,
     meta: {
       title: "Webinaires",
-    },
-    sitemapGroup: Constants.SitemapGroups.LAW,
-  },
-  {
-    path: "/plan-du-site/",
-    name: "SiteMap",
-    component: SiteMap,
-    meta: {
-      title: "Plan du site",
     },
   },
   {
@@ -444,7 +420,6 @@ const routes = [
     meta: {
       title: "Mesures de notre impact",
     },
-    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/webinaires/:webinaireUrlComponent",
@@ -463,7 +438,6 @@ const routes = [
     beforeEnter: (_to, _from, next) => {
       store.state.loggedUser?.isElectedOfficial ? next() : next({ name: "ManagementPage" })
     },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
 ]
 
@@ -503,59 +477,35 @@ const vue3Routes = [
     path: "/importer-des-donnees",
     name: "DiagnosticsImporter",
     meta: {
-      title: "Importer vos données",
       authenticationRequired: true,
     },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/developpement-et-apis",
     name: "DeveloperAPI",
-    meta: {
-      title: "Développement et APIs",
-    },
-    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/mentions-legales",
     name: "LegalNotices",
-    meta: {
-      title: "Mentions Légales",
-    },
-    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/accessibilite",
     name: "AccessibilityDeclaration",
-    meta: {
-      title: "Déclaration d'accessibilité",
-    },
-    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/cgu",
     name: "CGU",
-    meta: {
-      title: "Conditions générales d'utilisation",
-    },
-    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/contact",
     name: "ContactPage",
-    meta: {
-      title: "Contactez-nous",
-    },
-    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/importer-des-donnees/achats",
     name: "ImportPurchases",
     meta: {
-      title: "Importer des achats",
       authenticationRequired: true,
     },
-    sitemapGroup: Constants.SitemapGroups.DIAG,
   },
   {
     path: "/importer-des-donnees/cantines",
@@ -564,10 +514,6 @@ const vue3Routes = [
   {
     path: "/ajouter-une-cantine",
     name: "CanteenCreation",
-    meta: {
-      title: "Ajouter une cantine",
-    },
-    sitemapGroup: Constants.SitemapGroups.ACTION,
   },
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent/etablissement",
@@ -576,18 +522,14 @@ const vue3Routes = [
   {
     path: "/foire-aux-questions/",
     name: "FAQ",
-    meta: {
-      title: "Foire aux questions",
-    },
-    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/donnees-personnelles",
     name: "PersonalData",
-    meta: {
-      title: "Données personnelles",
-    },
-    sitemapGroup: Constants.SitemapGroups.SITE,
+  },
+  {
+    path: "/plan-du-site/",
+    name: "SiteMap",
   },
 ]
 const VUE3_PREFIX = "/v2"
