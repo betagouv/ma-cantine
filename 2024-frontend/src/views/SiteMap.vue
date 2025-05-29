@@ -1,4 +1,5 @@
 <script setup>
+import { useRootStore } from "@/stores/root"
 import { useRoute } from "vue-router"
 import { sectionId } from "@/constants/site-map.js"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
@@ -8,17 +9,24 @@ import vue3routes from "@/router/vue3.js"
 
 /* Setup */
 const route = useRoute()
+const store = useRootStore()
+
+/* Verifications */
+const routeIsInSection = (route, sectionName) => {
+  return route?.meta?.siteMap === sectionName
+}
+
+const userCanAccessPage = (route) => {
+  if (route?.meta?.authenticationRequired && !store.loggedUser) return false
+  return true
+}
 
 /* Generate section's content */
 const sections = []
 
-const routeInSection = (route, sectionName) => {
-  return route.meta ? route.meta.siteMap === sectionName : false
-}
-
 const lawContent = () => {
-  const lawVue2Pages = vue2routes.filter((route) => routeInSection(route, sectionId.law))
-  const lawVue3Pages = vue3routes.filter((route) => routeInSection(route, sectionId.law))
+  const lawVue2Pages = vue2routes.filter((route) => routeIsInSection(route, sectionId.law))
+  const lawVue3Pages = vue3routes.filter((route) => routeIsInSection(route, sectionId.law))
   const keyMeasuresPages = keyMeasures.map((x) => ({
     name: "KeyMeasurePage",
     params: { id: x.id },
@@ -34,8 +42,12 @@ const lawContent = () => {
 }
 
 const diagContent = () => {
-  const diagVue2Pages = vue2routes.filter((route) => routeInSection(route, sectionId.diag))
-  const diagVue3Pages = vue3routes.filter((route) => routeInSection(route, sectionId.diag))
+  const diagVue2Pages = vue2routes.filter(
+    (route) => routeIsInSection(route, sectionId.diag) && userCanAccessPage(route)
+  )
+  const diagVue3Pages = vue3routes.filter(
+    (route) => routeIsInSection(route, sectionId.diag) && userCanAccessPage(route)
+  )
 
   return {
     title: "Se diagnostiquer",
@@ -44,8 +56,12 @@ const diagContent = () => {
 }
 
 const actionContent = () => {
-  const actionVue2Pages = vue2routes.filter((route) => routeInSection(route, sectionId.action))
-  const actionVue3Pages = vue3routes.filter((route) => routeInSection(route, sectionId.action))
+  const actionVue2Pages = vue2routes.filter(
+    (route) => routeIsInSection(route, sectionId.action) && userCanAccessPage(route)
+  )
+  const actionVue3Pages = vue3routes.filter(
+    (route) => routeIsInSection(route, sectionId.action) && userCanAccessPage(route)
+  )
 
   return {
     title: "Améliorer votre offre",
@@ -54,8 +70,8 @@ const actionContent = () => {
 }
 
 const siteContent = () => {
-  const siteVue2Pages = vue2routes.filter((route) => routeInSection(route, sectionId.site))
-  const siteVue3Pages = vue3routes.filter((route) => routeInSection(route, sectionId.site))
+  const siteVue2Pages = vue2routes.filter((route) => routeIsInSection(route, sectionId.site))
+  const siteVue3Pages = vue3routes.filter((route) => routeIsInSection(route, sectionId.site))
 
   return {
     title: "Informations sur le site",

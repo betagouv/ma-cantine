@@ -28,6 +28,7 @@ const vue2routes = [
     meta: {
       title: "Mes achats",
       siteMap: diag,
+      authenticationRequired: true,
     },
   },
   {
@@ -36,6 +37,7 @@ const vue2routes = [
     meta: {
       title: "Nouvel achat",
       siteMap: diag,
+      authenticationRequired: true,
     },
   },
   {
@@ -44,6 +46,7 @@ const vue2routes = [
     meta: {
       title: "Synthèse des achats",
       siteMap: diag,
+      authenticationRequired: true,
     },
   },
   {
@@ -108,6 +111,7 @@ const vue2routes = [
     meta: {
       title: "Les cantines de mon territoire",
       siteMap: diag,
+      authenticationRequired: true,
     },
   },
   {
@@ -156,6 +160,7 @@ const vue2routes = [
     meta: {
       title: "Actions en attente",
       siteMap: diag,
+      authenticationRequired: true,
     },
   },
 ]
