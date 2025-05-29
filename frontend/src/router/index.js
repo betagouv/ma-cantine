@@ -477,50 +477,33 @@ const vue3Routes = [
     path: "/importer-des-donnees",
     name: "DiagnosticsImporter",
     meta: {
-      title: "Importer vos données",
       authenticationRequired: true,
     },
   },
   {
     path: "/developpement-et-apis",
     name: "DeveloperAPI",
-    meta: {
-      title: "Développement et APIs",
-    },
   },
   {
     path: "/mentions-legales",
     name: "LegalNotices",
-    meta: {
-      title: "Mentions Légales",
-    },
   },
   {
     path: "/accessibilite",
     name: "AccessibilityDeclaration",
-    meta: {
-      title: "Déclaration d'accessibilité",
-    },
   },
   {
     path: "/cgu",
     name: "CGU",
-    meta: {
-      title: "Conditions générales d'utilisation",
-    },
   },
   {
     path: "/contact",
     name: "ContactPage",
-    meta: {
-      title: "Contactez-nous",
-    },
   },
   {
     path: "/importer-des-donnees/achats",
     name: "ImportPurchases",
     meta: {
-      title: "Importer des achats",
       authenticationRequired: true,
     },
   },
@@ -531,9 +514,6 @@ const vue3Routes = [
   {
     path: "/ajouter-une-cantine",
     name: "CanteenCreation",
-    meta: {
-      title: "Ajouter une cantine",
-    },
   },
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent/etablissement",
@@ -542,16 +522,10 @@ const vue3Routes = [
   {
     path: "/foire-aux-questions/",
     name: "FAQ",
-    meta: {
-      title: "Foire aux questions",
-    },
   },
   {
     path: "/donnees-personnelles",
     name: "PersonalData",
-    meta: {
-      title: "Données personnelles",
-    },
   },
   {
     path: "/plan-du-site/",
