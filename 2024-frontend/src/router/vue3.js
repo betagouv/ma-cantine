@@ -113,7 +113,6 @@ const vue3routes = [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
         { to: { name: "ImportSelection" }, title: "Importer des données" },
       ],
-      siteMap: diag,
     },
   },
   {
