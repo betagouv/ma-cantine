@@ -12,7 +12,7 @@ const descText =
     :a11yComplianceLink="{ name: 'AccessibilityDeclaration' }"
     :legalLink="{ name: 'LegalNotices' }"
     :personalDataLink="{ name: 'PersonalData' }"
-    :cookiesLink="{ name: 'Cookies' }"
+    :cookiesLink="{ name: 'PersonalData', hash: '#cookies' }"
     :afterMandatoryLinks="[
       { text: 'Conditions générales d\'utilisation', to: { name: 'CGU' } },
       { text: 'Plan du site', to: { name: 'SiteMap' } },

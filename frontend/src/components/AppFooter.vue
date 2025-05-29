@@ -117,20 +117,24 @@ export default {
     return {
       bottomLinks: [
         {
-          text: "Mentions légales",
-          to: { name: "LegalNotices" },
+          text: "Accessibilité : partiellement conforme",
+          to: { name: "AccessibilityDeclaration" },
         },
         {
-          text: "Conditions générales",
-          to: { name: "CGU" },
+          text: "Mentions légales",
+          to: { name: "LegalNotices" },
         },
         {
           text: "Données personnelles",
           to: { name: "PersonalData" },
         },
         {
-          text: "Accessibilité : partiellement conforme",
-          to: { name: "AccessibilityDeclaration" },
+          text: "Gestion des cookies",
+          to: { name: "PersonalData", hash: "#cookies" },
+        },
+        {
+          text: "Conditions générales",
+          to: { name: "CGU" },
         },
         {
           text: "Plan du site",
