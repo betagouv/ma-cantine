@@ -16,7 +16,7 @@ const routeIsInSection = (route, sectionName) => {
   return route?.meta?.siteMap === sectionName
 }
 
-const userCanAccessPage = (route) => {
+const canUserAccessPage = (route) => {
   if (route?.meta?.authenticationRequired && !store.loggedUser) return false
   return true
 }
@@ -43,10 +43,10 @@ const lawContent = () => {
 
 const diagContent = () => {
   const diagVue2Pages = vue2routes.filter(
-    (route) => routeIsInSection(route, sectionId.diag) && userCanAccessPage(route)
+    (route) => routeIsInSection(route, sectionId.diag) && canUserAccessPage(route)
   )
   const diagVue3Pages = vue3routes.filter(
-    (route) => routeIsInSection(route, sectionId.diag) && userCanAccessPage(route)
+    (route) => routeIsInSection(route, sectionId.diag) && canUserAccessPage(route)
   )
 
   return {
@@ -57,10 +57,10 @@ const diagContent = () => {
 
 const actionContent = () => {
   const actionVue2Pages = vue2routes.filter(
-    (route) => routeIsInSection(route, sectionId.action) && userCanAccessPage(route)
+    (route) => routeIsInSection(route, sectionId.action) && canUserAccessPage(route)
   )
   const actionVue3Pages = vue3routes.filter(
-    (route) => routeIsInSection(route, sectionId.action) && userCanAccessPage(route)
+    (route) => routeIsInSection(route, sectionId.action) && canUserAccessPage(route)
   )
 
   return {
