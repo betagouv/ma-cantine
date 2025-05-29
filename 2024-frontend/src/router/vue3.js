@@ -1,3 +1,6 @@
+import { sectionId } from "@/constants/site-map.js"
+
+/* Components */
 import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel.vue"
 import WasteMeasurements from "@/views/WasteMeasurements.vue"
 import ImportSelection from "@/views/ImportSelection.vue"
@@ -14,6 +17,10 @@ import FAQ from "@/views/FAQ.vue"
 import PersonalData from "@/views/PersonalData.vue"
 import SiteMap from "@/views/SiteMap.vue"
 
+/* Sitemap section id */
+const { diag } = sectionId
+
+/* Routes */
 const vue3routes = [
   {
     path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
@@ -47,6 +54,7 @@ const vue3routes = [
     meta: {
       title: "Importer des données",
       authenticationRequired: true,
+      siteMap: diag,
     },
   },
   {
@@ -100,6 +108,7 @@ const vue3routes = [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
         { to: { name: "ImportSelection" }, title: "Importer des données" },
       ],
+      siteMap: diag,
     },
   },
   {

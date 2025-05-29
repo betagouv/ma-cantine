@@ -29,8 +29,18 @@ const lawContent = () => {
   }
 }
 
-sections.push(lawContent())
+const diagContent = () => {
+  const diagVue2Pages = vue2routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.diag : false))
+  const diagVue3Pages = vue3routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.diag : false))
 
+  return {
+    title: "Se diagnostiquer",
+    pages: [...diagVue2Pages, ...diagVue3Pages],
+  }
+}
+
+sections.push(lawContent())
+sections.push(diagContent())
 </script>
 
 <template>

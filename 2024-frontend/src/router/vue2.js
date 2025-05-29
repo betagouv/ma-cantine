@@ -1,5 +1,5 @@
 import { sectionId } from "@/constants/site-map.js"
-const { law } = sectionId
+const { law, diag } = sectionId
 
 const vue2routes = [
   {
@@ -25,10 +25,34 @@ const vue2routes = [
   {
     path: "/mes-achats",
     name: "PurchasesHome",
+    meta: {
+      title: "Mes achats",
+      siteMap: diag,
+    },
+  },
+  {
+    path: "/nouvel-achat/",
+    name: "NewPurchase",
+    meta: {
+      title: "Nouvel achat",
+      siteMap: diag,
+    },
+  },
+  {
+    path: "/synthese-achats",
+    name: "PurchasesSummary",
+    meta: {
+      title: "Synthèse des achats",
+      siteMap: diag,
+    },
   },
   {
     path: "/diagnostic",
     name: "DiagnosticPage",
+    meta: {
+      title: "M'auto-évaluer",
+      siteMap: diag,
+    },
   },
   {
     path: "/nos-cantines",
@@ -65,6 +89,10 @@ const vue2routes = [
   {
     path: "/les-cantines-de-mon-territoire",
     name: "TerritoryCanteens",
+    meta: {
+      title: "Les cantines de mon territoire",
+      siteMap: diag,
+    },
   },
   {
     path: "/trouver-une-cantine",
