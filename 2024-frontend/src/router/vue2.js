@@ -1,3 +1,6 @@
+import { sectionId } from "@/constants/site-map.js"
+const { law } = sectionId
+
 const vue2routes = [
   {
     path: "/",
@@ -46,10 +49,18 @@ const vue2routes = [
   {
     path: "/communaute",
     name: "CommunityPage",
+    title: "Webinaires",
+    meta: {
+      siteMap: law,
+    },
   },
   {
     path: "/blog",
     name: "BlogsHome",
+    title: "Blog",
+    meta: {
+      siteMap: law,
+    },
   },
   {
     path: "/les-cantines-de-mon-territoire",
@@ -62,6 +73,10 @@ const vue2routes = [
   {
     path: "/statistiques-regionales",
     name: "PublicCanteenStatisticsPage",
+    title: "Sur mon territoire",
+    meta: {
+      siteMap: law,
+    },
   },
   {
     path: "/mon-compte",

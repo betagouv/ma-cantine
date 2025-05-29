@@ -12,6 +12,23 @@ const route = useRoute()
 /* Generate section's content */
 const sections = []
 
+const lawContent = () => {
+  const lawVue2Pages = vue2routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.law : false))
+  const lawVue3Pages = vue3routes.filter((route) => (route.meta ? route.meta.siteMap === sectionId.law : false))
+  const keyMeasuresPages = keyMeasures.map((x) => ({
+    name: "KeyMeasurePage",
+    params: { id: x.id },
+    title: x.title,
+  }))
+
+  return {
+    title: "S'informer sur les lois",
+    pages: [...lawVue2Pages, ...lawVue3Pages, ...keyMeasuresPages],
+  }
+}
+
+sections.push(lawContent())
+
 </script>
 
 <template>
@@ -20,7 +37,7 @@ const sections = []
     <section v-for="section in sections" :key="section.title" class="fr-col-6">
       <h2>{{ section.title }}</h2>
       <ul>
-        <li v-for="page in section.pages">
+        <li v-for="page in section.pages" :key="page.title">
           <AppLinkRouter :title="page.title" :to="page" />
         </li>
       </ul>
