@@ -49,16 +49,16 @@ const vue2routes = [
   {
     path: "/communaute",
     name: "CommunityPage",
-    title: "Webinaires",
     meta: {
+      title: "Webinaires",
       siteMap: law,
     },
   },
   {
     path: "/blog",
     name: "BlogsHome",
-    title: "Blog",
     meta: {
+      title: "Blog",
       siteMap: law,
     },
   },
@@ -73,8 +73,8 @@ const vue2routes = [
   {
     path: "/statistiques-regionales",
     name: "PublicCanteenStatisticsPage",
-    title: "Sur mon territoire",
     meta: {
+      title: "Sur mon territoire",
       siteMap: law,
     },
   },

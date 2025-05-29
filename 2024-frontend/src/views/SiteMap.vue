@@ -18,7 +18,9 @@ const lawContent = () => {
   const keyMeasuresPages = keyMeasures.map((x) => ({
     name: "KeyMeasurePage",
     params: { id: x.id },
-    title: x.title,
+    meta: {
+      title: x.title,
+    },
   }))
 
   return {
@@ -37,8 +39,8 @@ sections.push(lawContent())
     <section v-for="section in sections" :key="section.title" class="fr-col-6">
       <h2>{{ section.title }}</h2>
       <ul>
-        <li v-for="page in section.pages" :key="page.title">
-          <AppLinkRouter :title="page.title" :to="page" />
+        <li v-for="page in section.pages" :key="page.name">
+          <AppLinkRouter :title="page.meta.title" :to="page" />
         </li>
       </ul>
     </section>
