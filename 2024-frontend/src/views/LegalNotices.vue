@@ -1,5 +1,9 @@
+<script setup>
+import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
+</script>
+
 <template>
-  <div class="fr-col-12">
+  <LayoutOneColumn>
     <h1>Mentions légales</h1>
     <section>
       <h2>Éditeur de la Plateforme</h2>
@@ -78,5 +82,5 @@
         .
       </p>
     </section>
-  </div>
+  </LayoutOneColumn>
 </template>

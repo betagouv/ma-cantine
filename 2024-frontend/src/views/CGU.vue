@@ -1,5 +1,9 @@
+<script setup>
+import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
+</script>
+
 <template>
-  <div class="fr-col-12">
+  <LayoutOneColumn>
     <h1 class="fr-h1">
       Conditions générales d'utilisation de « ma cantine »
     </h1>
@@ -277,5 +281,5 @@
         .
       </li>
     </ul>
-  </div>
+  </LayoutOneColumn>
 </template>

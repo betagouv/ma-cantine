@@ -1,5 +1,9 @@
+<script setup>
+import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
+</script>
+
 <template>
-  <div class="fr-col-12">
+  <LayoutOneColumn>
     <h1 class="my-6 fr-h1">Déclaration d'accessibilité</h1>
     <p>Cette page n'est pas une page d'aide.</p>
     <p>
@@ -236,5 +240,5 @@
         Libre réponse 71120 75342 Paris CEDEX 07
       </li>
     </ul>
-  </div>
+  </LayoutOneColumn>
 </template>
