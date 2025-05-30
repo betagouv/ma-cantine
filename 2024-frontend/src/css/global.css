@@ -26,6 +26,19 @@ address {
     padding-left: 0;
 }
 
+/* STICKY */
+.ma-cantine--sticky__container {
+    position: relative !important;
+    overflow: initial !important;
+}
+
+.ma-cantine--sticky__bottom {
+    position: sticky !important;
+    top: 90vh;
+    z-index: 1;
+}
+
+
 /* TABLE */
 @media (min-width: 768px) {
 
