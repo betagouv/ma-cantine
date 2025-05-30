@@ -12,7 +12,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       L'utilisation du Service est gratuite et facultative sauf pour les déclarations obligatoires prévues par les
       dispositions du code rural et de la pêche maritime (articles L. 230-5 à L. 230-5-2 et R. 230-30-4).
     </p>
-    <h2 class="fr-h2">
+    <h2>
       1 - Présentation
     </h2>
     <p>
@@ -46,7 +46,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       </li>
     </ul>
 
-    <h2 class="fr-h2">2 – Définitions</h2>
+    <h2>2 – Définitions</h2>
     <p>« Visiteur » est toute personne qui consulte ou utilise le Service.</p>
     <p>« Gestionnaire » est toute personne qui ouvre un compte sur le Service.</p>
     <p>
@@ -58,9 +58,9 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       finalités.
     </p>
 
-    <h2 class="fr-h2">3 - Fonctionnalités</h2>
+    <h2>3 - Fonctionnalités</h2>
 
-    <h3 class="fr-h3">3.1 Visiteurs</h3>
+    <h3>3.1 Visiteurs</h3>
     <p>Tout Visiteur peut accéder au Service sans inscription.</p>
 
     <p>Le Visiteur peut :</p>
@@ -82,11 +82,11 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       </li>
     </ul>
 
-    <h3 class="fr-h3">3.2 Gestionnaire de RC</h3>
+    <h3>3.2 Gestionnaire de RC</h3>
 
     <p>En plus des fonctionnalités Visiteur, chaque Gestionnaire de cantine dispose des fonctionnalités suivantes :</p>
 
-    <h4 class="fr-h4">1) Création d’un compte gestionnaire</h4>
+    <h4>1) Création d’un compte gestionnaire</h4>
     <p>
       Tout gestionnaire RC crée un compte en saisissant ses nom, prénom, courrier électronique, numéro de téléphone, nom
       d’utilisateur et numéro de SIRET.
@@ -97,7 +97,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
     </p>
     <p>Tout gestionnaire peut supprimer son compte via les paramètres de son compte.</p>
 
-    <h4 class="fr-h4">2) Gestion des établissements de RC</h4>
+    <h4>2) Gestion des établissements de RC</h4>
     <p>
       Depuis son espace de gestion, le Gestionnaire peut ajouter d’autres établissements de RC soit en renseignant un
       numéro de SIRET propre à l’établissement, soit lorsqu’il ne dispose pas d’un tel numéro de SIRET en se rattachant
@@ -122,10 +122,10 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       en est faite notamment en matière de confidentialité des données.
     </p>
 
-    <h4 class="fr-h4">3) Positionner son établissement par rapport aux objectifs des lois EGalim</h4>
+    <h4>3) Positionner son établissement par rapport aux objectifs des lois EGalim</h4>
     <p>Chaque Gestionnaire peut comparer son établissement de RC par rapport aux objectifs des lois EGalim.</p>
 
-    <h4 class="fr-h4">4) Télédéclaration</h4>
+    <h4>4) Télédéclaration</h4>
     <p>
       Chaque Gestionnaire procède à ses télédéclarations selon les dispositions prévues par le code rural et de la pêche
       maritime et les lois EGalim.
@@ -139,7 +139,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       concerné.
     </p>
 
-    <h4 class="fr-h4">5) Référencement de mon établissement en ligne</h4>
+    <h4>5) Référencement de mon établissement en ligne</h4>
     <p>
       Dès lors qu’un établissement est créée sur la plateforme, ses informations administratives et ses taux EGalim sont
       visibles publiquement sur l’onglet « nos cantines publiées » et sur le site data.gouv.fr.
@@ -150,14 +150,14 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       alimentaire, diversification des protéines, substitution plastique, information convives).
     </p>
 
-    <h4 class="fr-h4">6) Outil de suivi de ses achats</h4>
+    <h4>6) Outil de suivi de ses achats</h4>
     <p>
       Les Gestionnaires peuvent ajouter leurs achats dans un tableau mis à disposition sur la plateforme. La complétion
       du tableau permet aux Gestionnaires de voir la répartition des achats en fonction des différentes familles de
       produit, ainsi que le pourcentage en lien avec les lois EGalim.
     </p>
 
-    <h2 class="fr-h2">4 - Traitement des données personnelles</h2>
+    <h2>4 - Traitement des données personnelles</h2>
     <p>
       Le Service ne collecte que les données strictement nécessaires à sa mise en œuvre. Les données collectées incluent
       également des données à caractère personnel. Pour plus d’informations sur le traitement des données à caractère
@@ -166,7 +166,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       .
     </p>
 
-    <h2 class="fr-h2">5 – Inscription à l’infolettre</h2>
+    <h2>5 – Inscription à l’infolettre</h2>
     <p>La création d’un compte implique l’inscription automatique à l’infolettre « ma cantine ».</p>
     <p>
       Cette inscription est révocable à tout moment, soit en vous désabonnant à réception du courriel, ou en nous
@@ -174,7 +174,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <a rel="noopener" href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
     </p>
 
-    <h2 class="fr-h2">6 - Statistiques et diffusion sur data.gouv.fr</h2>
+    <h2>6 - Statistiques et diffusion sur data.gouv.fr</h2>
     <p>Les données récoltées dans le cadre du téléservice servent au pilotage de la politique publique.</p>
     <p>
       Conformément aux dispositions des articles L. 230-5-1 et R. 230-30-4 du Code rural, les données recueillies par
@@ -187,9 +187,9 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       plateforme sur le site de data.gouv.fr
     </p>
 
-    <h2 class="fr-h2">7 - Engagements et responsabilité</h2>
+    <h2>7 - Engagements et responsabilité</h2>
 
-    <h3 class="fr-h3">Visiteur</h3>
+    <h3>Visiteur</h3>
     <p>
       Le Visiteur s’engage à respecter les présentes CGU et leurs éventuelles modifications ainsi que la législation en
       vigueur.
@@ -206,7 +206,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       poursuites devant les juridictions compétentes.
     </p>
 
-    <h3 class="fr-h3">Gestionnaire</h3>
+    <h3>Gestionnaire</h3>
 
     <p>
       Le titulaire d’un compte s’engage à respecter les présentes CGU ainsi que leurs éventuelles modifications ou de
@@ -230,7 +230,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       déposer que les seuls documents et informations demandées par le Service.
     </p>
 
-    <h3 class="fr-h3">L’Editeur</h3>
+    <h3>L’Editeur</h3>
 
     <p>
       Le Service est développé conformément à l’état de l’art. Toutefois, il n’est pas garanti qu’il soit exempt
@@ -248,13 +248,13 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       qui pourraient être engagées à son encontre.
     </p>
 
-    <h2 class="fr-h2">8 – Code source</h2>
+    <h2>8 – Code source</h2>
     <p>
       Le Service a été développé sous licence MIT, le code est disponible à l’adresse suivante :
       <a rel="noopener" href="https://github.com/betagouv/ma-cantine">https://github.com/betagouv/ma-cantine</a>
     </p>
 
-    <h2 class="fr-h2">9 – Modification et évolution du Service</h2>
+    <h2>9 – Modification et évolution du Service</h2>
     <p>
       Les termes des présentes conditions d’utilisation peuvent être modifiés ou complétés à tout moment, sans préavis,
       en fonction des modifications apportées au Service, de l’évolution de la législation ou pour tout autre motif jugé
@@ -265,7 +265,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       régulièrement à cette rubrique pour vérifier les conditions générales en vigueur.
     </p>
 
-    <h2 class="fr-h2">10 - Nous contacter</h2>
+    <h2>10 - Nous contacter</h2>
     <ul>
       <li>
         Difficultés techniques :
