@@ -44,7 +44,6 @@ import PurchasePage from "@/views/PurchasePage"
 import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
 import SiteMap from "@/views/SiteMap"
-import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
 import TerritoryCanteens from "@/views/TerritoryCanteens"
 import VideoTutorial from "@/views/VideoTutorial"
@@ -436,15 +435,6 @@ const routes = [
     meta: {
       title: "Plan du site",
     },
-  },
-  {
-    path: "/statistiques-plateforme/",
-    name: "ImpactMeasuresPage",
-    component: ImpactMeasuresPage,
-    meta: {
-      title: "Mesures de notre impact",
-    },
-    sitemapGroup: Constants.SitemapGroups.SITE,
   },
   {
     path: "/webinaires/:webinaireUrlComponent",

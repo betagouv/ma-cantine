@@ -53,11 +53,7 @@
               disponibilité de la plateforme
               <v-icon small color="grey darken-3" class="ml-1">mdi-open-in-new</v-icon>
             </a>
-            ,
-            <router-link :to="{ name: 'ImpactMeasuresPage' }" class="grey--text text--darken-3">
-              mesures de notre impact
-            </router-link>
-            , et
+            et
             <a
               :href="`https://stats.beta.gouv.fr/index.php?idSite=${matomoId}`"
               class="grey--text text--darken-3"
