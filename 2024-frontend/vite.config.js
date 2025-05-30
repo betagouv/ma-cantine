@@ -3,7 +3,6 @@ import { fileURLToPath, URL } from "node:url"
 import { defineConfig } from "vite"
 import vue from "@vitejs/plugin-vue"
 import vueDevTools from "vite-plugin-vue-devtools"
-import { djangoVitePlugin } from "django-vite-plugin"
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,10 +16,6 @@ export default defineConfig({
       },
     }),
     vueDevTools(),
-    djangoVitePlugin({
-      input: ["src/main.js"],
-      root: "../",
-    }),
   ],
   resolve: {
     alias: [
