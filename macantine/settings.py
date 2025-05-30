@@ -101,7 +101,6 @@ INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + [
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
     "django.contrib.postgres",
-    "django_vite_plugin",
     "webpack_loader",
     "rest_framework",
     "oauth2_provider",
@@ -312,11 +311,6 @@ WEBPACK_LOADER = {
         "BUNDLE_DIR_NAME": "/bundles/",
         "STATS_FILE": os.path.join(FRONTEND_DIR, "dist/webpack-stats.json"),
     }
-}
-
-DJANGO_VITE_PLUGIN = {
-    "DEV_MODE": DEBUG_FRONT,
-    "BUILD_DIR": "build",
 }
 
 # Email
