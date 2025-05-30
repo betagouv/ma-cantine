@@ -2,7 +2,6 @@
 {% load analytics %}
 {% load environment %}
 {% load featureflags %}
-{% load vite %}
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -253,9 +252,6 @@
   <script type="module" src="{% static 'dsfr/dist/dsfr.module.min.js' %}"></script>
   <script src="{% static 'dsfr/charts/PieChart/pie-chart.umd.js' %}"></script>
   <link rel="stylesheet" href="{% static 'dsfr/charts/PieChart/pie-chart.css' %}">
-
-  {% vite %}
-  {% vite '2024-frontend/src/main.js' %}
 </head>
 
 <body>
