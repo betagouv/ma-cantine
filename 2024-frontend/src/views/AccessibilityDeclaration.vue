@@ -4,13 +4,13 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
 
 <template>
   <LayoutOneColumn>
-    <h1 class="my-6 fr-h1">Déclaration d'accessibilité</h1>
+    <h1>Déclaration d'accessibilité</h1>
     <p>Cette page n'est pas une page d'aide.</p>
     <p>
       Elle vise à présenter nos engagements en matière d'accessibilité numérique puis à définir le niveau de conformité
       de ce présent site à la réglementation et aux référentiels en vigueur.
     </p>
-    <h2 class="fr-h2">Qu'est-ce que l'accessibilité numérique ?</h2>
+    <h2>Qu'est-ce que l'accessibilité numérique ?</h2>
     <p>
       L'accessibilité numérique est un ensemble de règles et de bonnes pratiques qui couvrent notamment les aspects
       fonctionnels, graphiques, techniques et éditoriaux.
@@ -34,7 +34,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <li>Consulter les vidéos et les contenus audio à l'aide de sous-titres et/ou de transcriptions.</li>
       <li>Etc.</li>
     </ul>
-    <h2 class="fr-h2">Engagements d'accessibilité numérique</h2>
+    <h2>Engagements d'accessibilité numérique</h2>
     <p>
       Le Ministère de l'Agriculture et de la Souveraineté alimentaire s'engage à rendre accessibles ses sites web
       (internet, intranet et extranet), ses applications mobiles, ses progiciels et son mobilier urbain numérique
@@ -53,18 +53,18 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       </li>
     </ul>
     -->
-    <h2 class="fr-h2">Déclaration de non-conformité au RGAA</h2>
+    <h2>Déclaration de non-conformité au RGAA</h2>
     <p>
       Cette déclaration s'applique au site « ma-cantine.agriculture.gouv.fr ».
     </p>
-    <h3 class="fr-h3">
+    <h3>
       État de conformité
     </h3>
     <p>
       Ce présent site est partiellement conforme avec le RGAA (Référentiel Général d'Amélioration de l'Accessibilité) -
       version 4.1.2 en raison des non-conformités énumérées ci-après.
     </p>
-    <h3 class="fr-h3">
+    <h3>
       Résultats des tests
     </h3>
     <p>
@@ -73,10 +73,10 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       société Ideance révèle que, sur l'échantillon, le taux de conformité global est de 70,5%. (Obtenu en divisant le
       nombre de critères conformes par le nombre de critères applicables.)
     </p>
-    <h3 class="fr-h3">
+    <h3>
       Contenus non accessibles
     </h3>
-    <h4 class="fr-h4">
+    <h4>
       Non-conformités
     </h4>
     <p>
@@ -112,7 +112,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <li>13.1 - Des limites de temps modifiant le contenu ne sont pas contrôlables.</li>
       <li>13.3 - Des documents bureautiques en téléchargement ne possèdent pas de version accessible.</li>
     </ul>
-    <h4 class="fr-h4">
+    <h4>
       Contenus non soumis à l'obligation d'accessibilité
     </h4>
     <p>
@@ -127,13 +127,13 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
       .
     </p>
-    <h3 class="fr-h3">
+    <h3>
       Établissement de cette déclaration
     </h3>
     <p>
       Cette déclaration a été établie le 27/07/2023 puis mise à jour le 07/08/2024 à la suite d'un contre audit.
     </p>
-    <h4 class="fr-h4">
+    <h4>
       Technologies utilisées pour la réalisation du site
     </h4>
     <ul>
@@ -145,7 +145,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <li>CSS</li>
       <li>JavaScript</li>
     </ul>
-    <h4 class="fr-h4">
+    <h4>
       Environnement de test
     </h4>
     <p>
@@ -157,7 +157,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <li>Safari et VoiceOver (macOS 13.4)</li>
       <li>Safari et VoiceOver (iOS 16.5)</li>
     </ul>
-    <h4 class="fr-h4">
+    <h4>
       Outils pour évaluer l'accessibilité
     </h4>
     <ul>
@@ -166,7 +166,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <li>Outils de développement Firefox</li>
       <li>Web Developer (extension Firefox)</li>
     </ul>
-    <h4 class="fr-h4">
+    <h4>
       Pages du site ayant fait l'objet de la vérification de conformité
     </h4>
     <ul>
@@ -187,7 +187,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <li><router-link :to="{ name: 'SiteMap' }">Plan du site</router-link></li>
       <li><router-link :to="{ name: 'AccessibilityDeclaration' }">Accessibilité</router-link></li>
     </ul>
-    <h3 class="fr-h3">
+    <h3>
       Plan d'action
     </h3>
     <p>
@@ -202,7 +202,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       </a>
       .
     </p>
-    <h3 class="fr-h3">
+    <h3>
       Retour d'information et contact
     </h3>
     <p>
@@ -222,7 +222,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       </li>
       <li>Écrivez-nous par voie postale à l'adresse suivante : 20 avenue de Ségur, 75007, Paris</li>
     </ul>
-    <h3 class="fr-h3">
+    <h3>
       Voies de recours
     </h3>
     <p>
