@@ -1,11 +1,9 @@
 <script setup>
 import { onMounted } from "vue"
-import { useRoute } from "vue-router"
+import { showContent } from "@/services/matomo.js"
 import AppRawHTML from "@/components/AppRawHTML.vue"
 import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
-import { showContent } from "@/services/matomo.js"
 
-const route = useRoute()
 const linkCleverCloud =
   '<a href="https://www.clever-cloud.com/fr/conditions-generales-dutilisation/accord-de-traitement-des-donnees/"target="_blank">Lien vers le DPA</a>'
 
@@ -16,7 +14,6 @@ onMounted(() => {
 
 <template>
   <LayoutOneColumn>
-    <h1>{{ route.meta.title }}</h1>
     <section>
       <h2>
         1 - Qui est responsable de traitement ?

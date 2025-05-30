@@ -4,7 +4,6 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
 
 <template>
   <LayoutOneColumn>
-    <h1>Déclaration d'accessibilité</h1>
     <p>Cette page n'est pas une page d'aide.</p>
     <p>
       Elle vise à présenter nos engagements en matière d'accessibilité numérique puis à définir le niveau de conformité

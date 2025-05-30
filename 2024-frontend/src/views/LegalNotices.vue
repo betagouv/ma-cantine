@@ -4,7 +4,6 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
 
 <template>
   <LayoutOneColumn>
-    <h1>Mentions légales</h1>
     <section>
       <h2>Éditeur de la Plateforme</h2>
       <p>

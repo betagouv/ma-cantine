@@ -4,9 +4,6 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
 
 <template>
   <LayoutOneColumn>
-    <h1 class="fr-h1">
-      Conditions générales d'utilisation de « ma cantine »
-    </h1>
     <p>
       Les présentes conditions d’utilisation (CGU) sont mises en œuvre conformément à l’article L. 112-9 du code des
       relations entre le public et l’administration. Elles s’imposent de plein droit aux Visiteurs avec ou sans compte.
