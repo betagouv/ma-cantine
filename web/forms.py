@@ -36,7 +36,7 @@ class RegisterUserForm(UserCreationForm):
         )
 
     def __init__(self, *args, **kwargs):
-        super(RegisterUserForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.label_suffix = ""
         self.fields["first_name"].widget.attrs.update({"placeholder": "Agnès", "autocomplete": "given-name"})
         self.fields["last_name"].widget.attrs.update({"placeholder": "Dufresne", "autocomplete": "family-name"})
@@ -82,7 +82,7 @@ class RegisterUserForm(UserCreationForm):
         return phone_number
 
     def save(self, commit=True):
-        user = super(RegisterUserForm, self).save(commit=False)
+        user = super().save(commit=False)
         user.email = get_user_model().objects.normalize_email(self.cleaned_data.get("email"))
 
         if commit:
@@ -110,7 +110,7 @@ def _clean_username(form):
 
 class LoginUserForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
-        super(LoginUserForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.error_messages["invalid_login"] = (
             "Saisissez un nom d'utilisateur ou adresse électronique et un mot de passe valides. Remarquez que chacun de ces champs est sensible à la casse (différenciation des majuscules/minuscules)."
         )

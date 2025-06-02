@@ -52,6 +52,6 @@ class TestCommunityEventAPI(APITestCase):
 
         self.assertEqual(len(body), 3)
         # community_events should be returned in ascending start date order
-        self.assertEquals(body[0]["id"], upcoming_community_events[1].id)
-        self.assertEquals(body[1]["id"], upcoming_community_events[2].id)
-        self.assertEquals(body[2]["id"], upcoming_community_events[0].id)
+        self.assertEqual(body[0]["id"], upcoming_community_events[1].id)
+        self.assertEqual(body[1]["id"], upcoming_community_events[2].id)
+        self.assertEqual(body[2]["id"], upcoming_community_events[0].id)

@@ -269,7 +269,7 @@ REST_FRAMEWORK = {
 }
 
 # Reading doc API and load it in the swagger
-with open(BASE_DIR / "docs/api.html", "r") as f:
+with open(BASE_DIR / "docs/api.html") as f:
     doc_api = f.read()
 
 

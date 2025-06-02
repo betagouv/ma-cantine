@@ -29,7 +29,7 @@ class CustomJSONEncoder(DjangoJSONEncoder):
     def default(self, o):
         if isinstance(o, Decimal):
             return float(o)
-        return super(CustomJSONEncoder, self).default(o)
+        return super().default(o)
 
 
 def in_teledeclaration_campaign_query(year):
