@@ -110,7 +110,7 @@ class TeledeclarationQuerySet(models.QuerySet):
         results = self.none()
         for year in years:
             results = results | self.valid_td_by_year(year)
-        return results
+        return results.prefetch_related("diagnostic", "canteen", "applicant")
 
 
 class Teledeclaration(models.Model):
