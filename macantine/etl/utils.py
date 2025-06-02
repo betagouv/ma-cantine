@@ -1,4 +1,5 @@
 import logging
+import warnings
 from typing import Dict
 
 import datacompy
@@ -9,6 +10,7 @@ from data.models import Sector, Teledeclaration
 from data.models.sector import SECTEURS_SPE
 from macantine.etl.data_ware_house import DataWareHouse
 
+warnings.filterwarnings("ignore", message="SparkPandasCompare currently only supports Numpy < 2")  # Needed for the CI
 logger = logging.getLogger(__name__)
 
 # Source : query Resytal dec 2023
