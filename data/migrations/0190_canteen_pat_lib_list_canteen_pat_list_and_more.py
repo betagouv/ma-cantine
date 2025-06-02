@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 default=list,
                 size=None,
-                verbose_name="codes EPCI",
+                verbose_name="codes PAT",
             ),
         ),
         migrations.AddField(
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 default=list,
                 size=None,
-                verbose_name="codes EPCI",
+                verbose_name="codes PAT",
             ),
         ),
     ]
