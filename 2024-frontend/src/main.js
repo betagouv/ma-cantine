@@ -1,6 +1,8 @@
 /* Vue chore */
+import App from "./App.vue"
 import { createApp } from "vue"
 import { createPinia } from "pinia"
+import { router } from "./router"
 
 /* DSFR */
 import "@gouvfr/dsfr/dist/utility/utility.main.min.css" // Classes utilitaires
@@ -28,10 +30,7 @@ import "mdi-icons/styles.css"
 import "./css/reset.css"
 import "./css/global.css"
 
-/* App */
-import App from "./App.vue"
-import { router } from "./router"
-
+/* Create App */
 const app = createApp(App)
 app.use(VueDsfr)
 app.use(createPinia())
