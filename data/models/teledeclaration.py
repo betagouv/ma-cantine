@@ -110,7 +110,33 @@ class TeledeclarationQuerySet(models.QuerySet):
         results = self.none()
         for year in years:
             results = results | self.valid_td_by_year(year)
-        return results.prefetch_related("diagnostic", "canteen", "applicant")
+        return results.prefetch_related("diagnostic", "applicant")[:100]
+
+    def historical_valid_flatten_td(self, years: list):
+        """
+        Returns all valid TD under the format 1 line = 1 canteen
+        """
+        results = []
+        for obj in self.historical_valid_td(years):
+            if obj.declared_data["canteen"]["production_type"] == Canteen.ProductionType.CENTRAL:
+                for satellite in obj.declared_data["satellites"]:
+                    satellite_td = obj
+                    try:
+                        satellite_td.canteen = Canteen.objects.get(pk=satellite["id"])
+                        declared_data = obj.declared_data
+                        declared_data["teledeclaration"]["value_total_ht"] = declared_data["teledeclaration"][
+                            "value_total_ht"
+                        ] / len(satellite["yearly_meal_count"])
+                        satellite_td.declared_data = declared_data
+                    except Canteen.DoesNotExist:
+                        satellite_td.canteen = None
+                    except TypeError:
+                        satellite_td.declared_data = declared_data  # todo : gérer ce cas proprement
+
+                    results.append(satellite_td)
+            else:
+                results.append(obj)
+        return results
 
 
 class Teledeclaration(models.Model):
