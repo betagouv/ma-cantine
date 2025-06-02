@@ -238,7 +238,7 @@ def datetimes_to_str(df):
 def filter_dataframe_with_schema_cols(df, schema: Dict):
     columns = [i["name"] for i in schema["fields"]]
     df = df.loc[:, ~df.columns.duplicated()].copy()
-    df = df[columns]
+    df = df[columns + ["tmp_satellites"]]
     return df
 
 

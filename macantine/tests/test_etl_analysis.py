@@ -326,6 +326,46 @@ class TestETLAnalysisTD(TestCase):
 
             self.assertEqual(data["cout_denrees"], tc["expected_outcome"])
 
+    def test_flatten_td(self):
+        data = {
+            "id": {2: 1, 3: 2},
+            "year": {2: 2024, 3: 2024},
+            "canteen_id": {2: 14, 3: 15},
+            "name": {2: "Cantine A", 3: "Cantine B"},
+            "siret": {2: "siretA", 3: "siretB"},
+            "daily_meal_count": {2: 38.0, 3: None},
+            "yearly_meal_count": {2: 10, 3: 100},
+            "production_type": {2: "site", 3: "central"},
+            "cuisine_centrale": {2: "B) non", 3: "A) oui"},
+            "central_producer_siret": {2: None, 3: None},
+            "diagnostic_type": {2: None, 3: None},
+            "satellite_canteens_count": {2: None, 3: 206.0},
+            "value_total_ht": {2: 100, 3: 1000},
+            "tmp_satellites": {
+                2: None,
+                3: [
+                    {
+                        "id": 3,
+                        "name": "PANTIN JAURES MATER",
+                        "siret": "21930055500196",
+                        "yearly_meal_count": 60,
+                    },
+                    {
+                        "id": 4,
+                        "name": "PANTIN JAURES ELEM",
+                        "siret": "21930055500188",
+                        "yearly_meal_count": 40,
+                    },
+                ],
+            },
+        }
+
+        etl = ETL_ANALYSIS_TELEDECLARATIONS()
+        etl.df = pd.DataFrame.from_dict(data)
+        etl.transform_dataset()
+        self.assertEqual(len(etl.df[etl.df.id == 2]), 0)
+        self.assertEqual(etl.df[etl.df.id == 3].iloc[0].value_total_ht, 600)
+
 
 @pytest.mark.parametrize(
     "department, expected",
@@ -338,7 +378,7 @@ class TestETLAnalysisTD(TestCase):
         (971, "DROM (hors Mayotte)"),  # Guadeloupe
         (972, "DROM (hors Mayotte)"),  # Martinique
         (978, "DROM (hors Mayotte)"),  # Saint-Martin
-        ("nan", "non renseigné"),  # String "nan"
+        ("None", "non renseigné"),  # String "None"
         (None, "non renseigné"),  # None value
         (pd.NA, "non renseigné"),  # Pandas NA
         (999, "non renseigné"),  # Invalid department
