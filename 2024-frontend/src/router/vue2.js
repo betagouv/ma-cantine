@@ -135,10 +135,6 @@ const vue2routes = [
     name: "AccountSummaryPage",
   },
   {
-    path: "/donnees-personnelles#cookies",
-    name: "Cookies",
-  },
-  {
     path: "/actions-anti-gaspi",
     name: "WasteActionsHome",
     meta: {

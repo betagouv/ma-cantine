@@ -43,7 +43,6 @@ import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
 import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
-import ImpactMeasuresPage from "@/views/ImpactMeasuresPage"
 import DashboardManager from "@/views/DashboardManager"
 import TerritoryCanteens from "@/views/TerritoryCanteens"
 import VideoTutorial from "@/views/VideoTutorial"
@@ -411,14 +410,6 @@ const routes = [
     component: CommunityPage,
     meta: {
       title: "Webinaires",
-    },
-  },
-  {
-    path: "/statistiques-plateforme/",
-    name: "ImpactMeasuresPage",
-    component: ImpactMeasuresPage,
-    meta: {
-      title: "Mesures de notre impact",
     },
   },
   {
