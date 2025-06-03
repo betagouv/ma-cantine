@@ -22,41 +22,48 @@ Vous pouvez installer en local ou utiliser l'environnement [Docker](./docker.md)
 
 ### À installer localement
 
-- [Python3](https://www.python.org/downloads/) (de préference 3.11)
-- [pip](https://pip.pypa.io/en/stable/installing/) (souvent installé avec Python)
-- [vitrualenv](https://virtualenv.pypa.io/en/stable/installation.html) (optionnel)
+- [uv](https://docs.astral.sh/uv/)
 - [Node et npm](https://nodejs.org/en/download/)
 - [Postgres](https://www.postgresql.org/download/)
 - [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 - [pre-commit](https://pypi.org/project/pre-commit/)
 
-### Création d'un environnement Python3 virtualenv
+### Python
+
+Pour installer Python 3 il est possible de passer par uv :
+
+```
+uv python install [version]
+
+```
+
+> On utilise idéalement la version 3.11
+
+### Création d'un environnement virtuel
 
 Pour commencer, c'est recommandé de créer un environnement virtuel avec Python3.
 
-### avec Python venv
-
 ```
-python -m venv venv
-source ./venv/bin/activate
-```
-
-### Avec virtualenv
-
-```
-virtualenv -p python3 venv
-source ./venv/bin/activate
+uv venv
+source .venv/bin/activate
 ```
 
 ### Installer les dépendances du backend
 
-Les dépendances du backend se trouvent dans `requirements.txt`. Pour les installer :
+Les dépendances du backend se trouvent dans `pyproject.toml`, pour les installer dans l'environnement virtuel :
 
 ```
-pip install -r requirements.txt
+uv sync
 ```
 
-Si vous rencontrez un problème avec `psycopg2`, installez `psycopg2-binary` à la place.
+> Si vous rencontrez un problème avec `psycopg2`, installez `psycopg2-binary` à la place.
+
+Pour ajouter / supprimer une dépendance :
+
+```
+uv add xxx
+uv remove xxx
+```
 
 ### Installer les dépendances du frontend
 
