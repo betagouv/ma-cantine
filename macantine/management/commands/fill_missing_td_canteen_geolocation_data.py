@@ -1,6 +1,7 @@
 import logging
 
 from django.core.management.base import BaseCommand
+from simple_history.utils import update_change_reason
 
 from common.api.decoupage_administratif import fetch_commune_detail, map_communes_infos
 from data.models import Teledeclaration
@@ -43,5 +44,8 @@ class Command(BaseCommand):
                         )
                         td.declared_data = td_declared_data
                         td.save()
+                        update_change_reason(
+                            td, "Command to fill declared_data.canteen missing geo data (department and region)"
+                        )
             if i > 0 and i % 200 == 0:
                 logger.info(f"Step 3: Updated {i} TDs with missing canteen geo data")
