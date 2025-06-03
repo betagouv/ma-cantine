@@ -38,6 +38,12 @@ jobs:
           uv sync --locked
 
       - name: Collect static files
+        env:
+          SECRET: test
+          ALLOWED_HOSTS: localhost
+          REDIS_URL: redis://localhost:6379/0
+          STATICFILES_STORAGE: django.contrib.staticfiles.storage.StaticFilesStorage
+          DEFAULT_FILE_STORAGE: django.core.files.storage.FileSystemStorage
         run: |
           uv run python manage.py collectstatic --noinput
 
@@ -88,12 +94,6 @@ jobs:
 
       - name: Vue 3 build
         working-directory: ./
-        env:
-          SECRET: test
-          ALLOWED_HOSTS: localhost
-          REDIS_URL: redis://localhost:6379/0
-          STATICFILES_STORAGE: django.contrib.staticfiles.storage.StaticFilesStorage
-          DEFAULT_FILE_STORAGE: django.core.files.storage.FileSystemStorage
         run: |
           cd ./2024-frontend
           npm install
