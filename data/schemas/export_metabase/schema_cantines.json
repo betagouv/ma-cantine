@@ -34,15 +34,15 @@
         "pattern": "^([013-9]\\d|2[AB1-9])\\d{3}$",
         "required": false
       },
-      "description": "Le code INSEE de la commune dans laquelle la cantine se trouve.",
-      "example": "75105",
+      "description": "Code Insee de la commune dans laquelle se trouve la cantine",
+      "example": "38185",
       "name": "code_insee_commune",
       "title": "Code Insee Commune",
       "type": "string"
     },
     {
       "description": "Libellé de la commune dans laquelle se trouve la cantine",
-      "example": "Paris",
+      "example": "Grenoble",
       "name": "libelle_commune",
       "title": "Libellé commune",
       "type": "string"
@@ -62,29 +62,43 @@
       "type": "string"
     },
     {
+      "description": "Liste des ID des PAT dans lesquels se trouve la cantine",
+      "example": "1294,1295",
+      "name": "pat_liste",
+      "title": "ID PAT (liste)",
+      "type": "string"
+    },
+    {
+      "description": "Liste des libellés des PAT dans lesquels se trouve la cantine",
+      "example": "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
+      "name": "pat_lib_liste",
+      "title": "Libellé PAT (liste)",
+      "type": "string"
+    },
+    {
       "description": "Code Insee du département dans lequel se trouve la cantine",
-      "example": "75",
+      "example": "38",
       "name": "departement",
       "title": "Code Département",
       "type": "string"
     },
     {
       "description": "Libellé du département dans lequel se trouve la cantine",
-      "example": "Paris",
+      "example": "Isère",
       "name": "departement_lib",
       "title": "Département Libellé",
       "type": "string"
     },
     {
       "description": "Code Insee de la région dans lequel se trouve la cantine",
-      "example": "11",
+      "example": "84",
       "name": "region",
       "title": "Code Région",
       "type": "string"
     },
     {
       "description": "Libellé de la région dans lequel se trouve la cantine",
-      "example": "Île-de-France",
+      "example": "Auvergne-Rhône-Alpes",
       "name": "region_lib",
       "title": "Région libellé",
       "type": "string"

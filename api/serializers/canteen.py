@@ -653,6 +653,8 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
     nom = serializers.SerializerMethodField()
     code_insee_commune = serializers.SerializerMethodField()
     libelle_commune = serializers.SerializerMethodField()
+    pat_liste = serializers.SerializerMethodField()
+    pat_lib_liste = serializers.SerializerMethodField()
     departement = serializers.SerializerMethodField()
     departement_lib = serializers.SerializerMethodField()
     nbre_repas_jour = serializers.SerializerMethodField()
@@ -681,6 +683,8 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
             "libelle_commune",
             "epci",
             "epci_lib",
+            "pat_liste",
+            "pat_lib_liste",
             "departement",
             "departement_lib",
             "region",
@@ -710,6 +714,12 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
 
     def get_libelle_commune(self, obj):
         return obj.city
+
+    def get_pat_liste(self, obj):
+        return ",".join(obj.pat_list)
+
+    def get_pat_lib_liste(self, obj):
+        return ",".join(obj.pat_lib_list)
 
     def get_departement(self, obj):
         return obj.department
