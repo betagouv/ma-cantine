@@ -395,7 +395,7 @@ class TestETLAnalysisTD(TestCase):
         (971, "DROM (hors Mayotte)"),  # Guadeloupe
         (972, "DROM (hors Mayotte)"),  # Martinique
         (978, "DROM (hors Mayotte)"),  # Saint-Martin
-        ("None", "non renseigné"),  # String "None"
+        ("nan", "non renseigné"),  # String "nan"
         (None, "non renseigné"),  # None value
         (pd.NA, "non renseigné"),  # Pandas NA
         (999, "non renseigné"),  # Invalid department
