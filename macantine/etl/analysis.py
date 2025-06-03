@@ -106,7 +106,10 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         Split rows of central kitchen into a row for each satellite
         """
         for index, row in self.df.iterrows():
-            if row["production_type"] == Canteen.ProductionType.CENTRAL:
+            if (
+                row["production_type"] == Canteen.ProductionType.CENTRAL
+                or row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING
+            ):
                 for satellite in row["tmp_satellites"]:
                     satellite_row = row.copy()
                     satellite_row["id"] = satellite["id"]
@@ -114,9 +117,26 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                     satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
                     satellite_row["siret"] = satellite["siret"]
                     satellite_row["yearly_meal_count"] = satellite["yearly_meal_count"]
+                    satellite_row = self.split_appro_values(index, satellite_row, len(row["tmp_satellites"]))
                     self.df = pd.concat([self.df, pd.DataFrame(satellite_row).T])
-            # Delete lines of central kitchen
-            self.df = self.df[self.df.production_type != Canteen.ProductionType.CENTRAL]
+
+            # if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING:
+            #     self.df = self.split_appro_values(index, row)
+        # Delete lines of central kitchen
+        self.df = self.df[self.df.production_type != Canteen.ProductionType.CENTRAL]
+
+    def split_appro_values(self, index, row, nbre_satellites):
+        """
+        Divide numerical values of a central kitchen to split into satellites
+        """
+        appro_columns = [col_appro for col_appro in self.columns if "value" in col_appro]
+        for appro_column in appro_columns:
+            try:
+                row[appro_column] = row[appro_column] / nbre_satellites
+                # self.df.at[index, appro_column] = row[appro_column] * 0
+            except KeyError:
+                logging.warning("Column not found while splitting numerical value from central kitchen to satellites")
+        return row
 
 
 class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):

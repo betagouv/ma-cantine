@@ -362,9 +362,10 @@ class TestETLAnalysisTD(TestCase):
 
         etl = ETL_ANALYSIS_TELEDECLARATIONS()
         etl.df = pd.DataFrame.from_dict(data)
-        etl.transform_dataset()
-        self.assertEqual(len(etl.df[etl.df.id == 2]), 0)
-        self.assertEqual(etl.df[etl.df.id == 3].iloc[0].value_total_ht, 600)
+        etl.flatten_central_kitchen_td()
+        self.assertEqual(len(etl.df[etl.df.id == 2]), 0)  # Central kitchen filtered out
+        self.assertEqual(len(etl.df[etl.df.id == 3]), 1)  # Satellite created
+        self.assertEqual(etl.df[etl.df.id == 3].iloc[0].value_total_ht, 500)
 
 
 @pytest.mark.parametrize(
