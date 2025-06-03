@@ -111,3 +111,14 @@ def map_pat_list_to_communes_insee_code():
     except requests.HTTPError as e:
         logger.info(e)
     return pat_mapping
+
+
+def fetch_commune_pat_list(code_insee_commune, pat_mapping, geo_detail_type):
+    """
+    Provide List of PAT city, given the insee code of the city
+    """
+    if code_insee_commune and code_insee_commune in pat_mapping.keys():
+        if geo_detail_type == "id":
+            return [pat["pat"] for pat in pat_mapping[code_insee_commune]]
+        elif geo_detail_type == "lib":
+            return [pat["pat_lib"] for pat in pat_mapping[code_insee_commune]]
