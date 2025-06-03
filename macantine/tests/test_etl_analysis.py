@@ -326,6 +326,67 @@ class TestETLAnalysisTD(TestCase):
 
             self.assertEqual(data["cout_denrees"], tc["expected_outcome"])
 
+    def test_geo_columns(self):
+        canteen_with_geo_data = CanteenFactory.create(
+            department="38",
+            department_lib="Isère",
+            region="84",
+            region_lib="Auvergne-Rhône-Alpes",
+            epci="200040715",
+            epci_lib="Grenoble-Alpes-Métropole",
+        )
+        diag = DiagnosticFactory.create(canteen=canteen_with_geo_data)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
+
+        self.serializer = TeledeclarationAnalysisSerializer(instance=teledeclaration)
+        data = self.serializer.data
+
+        self.assertEqual(data["departement"], "38")
+        self.assertEqual(data["lib_departement"], "Isère")
+        self.assertEqual(data["region"], "84")
+        self.assertEqual(data["lib_region"], "Auvergne-Rhône-Alpes")
+
+        canteen_half_geo_data = CanteenFactory.create(
+            department="38",
+            department_lib=None,
+            region="84",
+            region_lib=None,
+            epci="200040715",
+            epci_lib=None,
+        )
+        diag_half_geo = DiagnosticFactory.create(canteen=canteen_half_geo_data)
+        teledeclaration_half_geo = Teledeclaration.create_from_diagnostic(
+            diag_half_geo, applicant=UserFactory.create()
+        )
+
+        self.serializer_half_geo = TeledeclarationAnalysisSerializer(instance=teledeclaration_half_geo)
+        data = self.serializer_half_geo.data
+
+        self.assertEqual(data["departement"], "38")
+        self.assertEqual(data["lib_departement"], "Isère")  # filled with the serializer
+        self.assertEqual(data["region"], "84")
+        self.assertEqual(data["lib_region"], "Auvergne-Rhône-Alpes")  # filled with the serializer
+
+        canteen_without_geo_data = CanteenFactory.create(
+            department=None,
+            department_lib=None,
+            region=None,
+            region_lib=None,
+            epci=None,
+            epci_lib=None,
+        )
+        diag_without_geo = DiagnosticFactory.create(canteen=canteen_without_geo_data)
+        teledeclaration_without_geo = Teledeclaration.create_from_diagnostic(
+            diag_without_geo, applicant=UserFactory.create()
+        )
+        self.serializer_without_geo = TeledeclarationAnalysisSerializer(instance=teledeclaration_without_geo)
+        data_no_geo = self.serializer_without_geo.data
+
+        self.assertEqual(data_no_geo["departement"], None)
+        self.assertEqual(data_no_geo["lib_departement"], None)
+        self.assertEqual(data_no_geo["region"], None)
+        self.assertEqual(data_no_geo["lib_region"], None)
+
     def test_flatten_td(self):
         data = {
             "id": {2: 1, 3: 2, 4: 3},

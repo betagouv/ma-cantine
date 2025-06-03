@@ -146,16 +146,16 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         return obj.canteen_siret
 
     def get_name(self, obj):
-        if "name" in obj.declared_data["canteen"].keys():
+        if "name" in obj.declared_data["canteen"]:
             return obj.declared_data["canteen"]["name"]
 
     def get_daily_meal_count(self, obj):
-        if "daily_meal_count" in obj.declared_data["canteen"].keys():
+        if "daily_meal_count" in obj.declared_data["canteen"]:
             daily_meal_count = obj.declared_data["canteen"]["daily_meal_count"]
             return int(daily_meal_count) if daily_meal_count else None
 
     def get_yearly_meal_count(self, obj):
-        if "yearly_meal_count" in obj.declared_data["canteen"].keys():
+        if "yearly_meal_count" in obj.declared_data["canteen"]:
             yearly_meal_count = obj.declared_data["canteen"]["yearly_meal_count"]
             return int(yearly_meal_count) if yearly_meal_count else None
 
@@ -233,7 +233,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             return obj.declared_data["canteen"]["city_insee_code"]
 
     def get_departement(self, obj):
-        if "department" in obj.declared_data.keys():
+        if "department" in obj.declared_data["canteen"]:
             return obj.declared_data["canteen"]["department"]
 
     def get_lib_departement(self, obj):
@@ -241,7 +241,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         return Department(department).label.split(" - ")[1].lstrip() if department else None
 
     def get_region(self, obj):
-        if "region" in obj.declared_data.keys():
+        if "region" in obj.declared_data["canteen"]:
             return obj.declared_data["canteen"]["region"]
 
     def get_lib_region(self, obj):
