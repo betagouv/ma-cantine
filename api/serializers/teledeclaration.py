@@ -74,6 +74,9 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     declaration_2023 = serializers.SerializerMethodField()
     declaration_2024 = serializers.SerializerMethodField()
 
+    # Data related to the satellites, necessary to flatten the dataset
+    tmp_satellites = serializers.SerializerMethodField()
+
     class Meta:
         model = Teledeclaration
         fields = (
@@ -135,6 +138,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "declaration_2022",
             "declaration_2023",
             "declaration_2024",
+            "tmp_satellites",
         )
         read_only_fields = fields
 
@@ -337,6 +341,10 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
 
     def get_declaration_2024(self, obj):
         return Teledeclaration.objects.filter(canteen_id=obj.canteen.id, year=2024).exists()
+
+    def get_tmp_satellites(self, obj):
+        if "satellites" in obj.declared_data:
+            return obj.declared_data["satellites"]
 
 
 class TeledeclarationOpenDataSerializer(serializers.ModelSerializer):

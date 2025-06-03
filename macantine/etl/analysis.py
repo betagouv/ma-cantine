@@ -3,8 +3,11 @@ import logging
 import re
 from datetime import datetime
 
+import pandas as pd
+
 from api.views.canteen import CanteenAnalysisListView
 from api.views.teledeclaration import TeledeclarationAnalysisListView
+from data.models import Canteen
 from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
 from macantine.utils import CAMPAIGN_DATES
@@ -81,7 +84,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         if self.df.empty:
             logger.warning("Dataset is empty. Skipping transformation")
             return
-
+        self.flatten_central_kitchen_td()
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
     def load_dataset(self, versionning=True):
@@ -97,6 +100,51 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
             )
         else:
             super().load_dataset()
+
+    def flatten_central_kitchen_td(self):
+        """
+        Split rows of central kitchen into a row for each satellite
+        """
+        self.df = self.df.set_index("id", drop=False)
+        for _, row in self.df.iterrows():
+            if (
+                row["production_type"] == Canteen.ProductionType.CENTRAL
+                or row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING
+            ):
+                nbre_satellites = (
+                    len(row["tmp_satellites"]) + 1
+                    if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING
+                    else len(row["tmp_satellites"])
+                )
+
+                if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING:
+                    self.df.loc[row["id"]] = self.split_appro_values(row, nbre_satellites)
+
+                for satellite in row["tmp_satellites"]:
+                    satellite_row = row.copy()
+                    satellite_row["canteen_id"] = satellite["id"]
+                    satellite_row["name"] = satellite["name"]
+                    satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
+                    satellite_row["siret"] = satellite["siret"]
+                    satellite_row["satellite_canteens_count"] = 0
+                    satellite_row["yearly_meal_count"] = satellite["yearly_meal_count"]
+                    satellite_row = self.split_appro_values(satellite_row, nbre_satellites)
+                    self.df = pd.concat([self.df, pd.DataFrame(satellite_row).T])
+
+        # Delete lines of central kitchen
+        self.df = self.df[self.df.production_type != Canteen.ProductionType.CENTRAL]
+
+    def split_appro_values(self, row, nbre_satellites):
+        """
+        Divide numerical values of a central kitchen to split into satellites
+        """
+        appro_columns = [col_appro for col_appro in self.columns if "value" in col_appro]
+        for appro_column in appro_columns:
+            if appro_column in row and row[appro_column] and nbre_satellites:
+                row[appro_column] = row[appro_column] / nbre_satellites
+            else:
+                row[appro_column] = None
+        return row
 
 
 class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
