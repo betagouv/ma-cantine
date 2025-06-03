@@ -25,7 +25,7 @@ class Command(BaseCommand):
         locations_csv_str = "siret,citycode,postcode\n"
         canteens_by_siret = {}
 
-        with open(filepath, "r") as file:
+        with open(filepath) as file:
             dialect = csv.Sniffer().sniff(file.read(1024))
             file.seek(0)
             reader = csv.reader(file, dialect)

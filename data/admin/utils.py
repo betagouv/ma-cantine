@@ -17,7 +17,7 @@ class ArrayFieldListFilter(admin.SimpleListFilter):
 
     def __init__(self, request, params, model, model_admin):
         self._choices = model._meta.get_field(self.parameter_name).base_field.choices
-        super(ArrayFieldListFilter, self).__init__(request, params, model, model_admin)
+        super().__init__(request, params, model, model_admin)
 
     def lookups(self, request, model_admin):
         """ "Returns a list of tuples:

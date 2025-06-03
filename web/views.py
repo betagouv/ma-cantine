@@ -33,7 +33,7 @@ class WidgetView(TemplateView):
 
     @xframe_options_exempt
     def get(self, request, *args, **kwargs):
-        return super(WidgetView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -77,7 +77,7 @@ class RegisterUserView(FormView):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return HttpResponseRedirect("/")
-        return super(RegisterUserView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.save()
