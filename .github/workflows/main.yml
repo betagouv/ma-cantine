@@ -42,7 +42,6 @@ jobs:
           uv run python manage.py collectstatic --noinput
 
       - name: Test Django
-        skip: true
         env:
           DEBUG: True
           SECRET: test
