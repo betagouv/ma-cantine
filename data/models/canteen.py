@@ -3,6 +3,7 @@ from urllib.parse import quote
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import Case, Count, Exists, F, OuterRef, Q, Subquery, Value, When
 from django.utils import timezone
@@ -388,6 +389,8 @@ class Canteen(SoftDeletionModel):
     postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name="code postal")
     epci = models.CharField(null=True, blank=True, verbose_name="Code EPCI", validators=[utils_siret.validate_siren])
     epci_lib = models.TextField(null=True, blank=True, verbose_name="nom EPCI")
+    pat_list = ArrayField(base_field=models.CharField(), blank=True, default=list, verbose_name="codes PAT")
+    pat_lib_list = ArrayField(base_field=models.CharField(), blank=True, default=list, verbose_name="noms PAT")
     department = models.TextField(null=True, blank=True, choices=Department.choices, verbose_name="département")
     department_lib = models.TextField(null=True, blank=True, verbose_name="nom du département")
     region = models.TextField(null=True, blank=True, choices=Region.choices, verbose_name="région")
