@@ -330,7 +330,7 @@ class TestETLAnalysisTD(TestCase):
         data = {
             "id": {2: 1, 3: 2, 4: 3},
             "year": {2: 2024, 3: 2024, 4: 2024},
-            "canteen_id": {2: 14, 3: 15, 4: 16},
+            "canteen_id": {2: 1, 3: 2, 4: 3},
             "name": {2: "Cantine A", 3: "Cantine B", 4: "Cantine C"},
             "siret": {2: "siretA", 3: "siretB", 4: "siretC"},
             "daily_meal_count": {2: 38.0, 3: None, 4: None},
@@ -377,11 +377,11 @@ class TestETLAnalysisTD(TestCase):
         etl = ETL_ANALYSIS_TELEDECLARATIONS()
         etl.df = pd.DataFrame.from_dict(data)
         etl.flatten_central_kitchen_td()
-        self.assertEqual(len(etl.df[etl.df.id == 2]), 0)  # Central kitchen filtered out
-        self.assertEqual(len(etl.df[etl.df.id == 20]), 1)  # Satellite created
-        self.assertEqual(etl.df[etl.df.id == 20].iloc[0].value_total_ht, 500)  # Appro value split
-        self.assertEqual(len(etl.df[etl.df.id == 3]), 1)  # Central kitchen filtered out
-        self.assertEqual(etl.df[etl.df.id == 3].iloc[0].value_total_ht, 500)  # Appro value split
+        self.assertEqual(len(etl.df[etl.df.canteen_id == 2]), 0)  # Central kitchen filtered out
+        self.assertEqual(len(etl.df[etl.df.canteen_id == 20]), 1)  # Satellite created
+        self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].value_total_ht, 500)  # Appro value split
+        self.assertEqual(len(etl.df[etl.df.canteen_id == 3]), 1)  # Central kitchen filtered out
+        self.assertEqual(etl.df[etl.df.canteen_id == 3].iloc[0].value_total_ht, 500)  # Appro value split
 
 
 @pytest.mark.parametrize(
