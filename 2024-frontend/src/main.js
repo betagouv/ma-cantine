@@ -1,13 +1,20 @@
+/* Vue chore */
+import App from "./App.vue"
 import { createApp } from "vue"
 import { createPinia } from "pinia"
-import "@gouvfr/dsfr/dist/core/core.main.min.css" // Le CSS minimal du DSFR
-import "@gouvfr/dsfr/dist/component/component.main.min.css" // Styles de tous les composants du DSFR
-import "@gouvfr/dsfr/dist/utility/utility.main.min.css" // Classes utilitaires : les composants de VueDsfr en ont besoin
-import "@gouvminint/vue-dsfr/styles" // Les styles propres aux composants de VueDsfr
+import { router } from "./router"
+
+/* DSFR */
+import "@gouvfr/dsfr/dist/utility/utility.main.min.css" // Classes utilitaires
+import "@gouvfr/dsfr/dist/dsfr.min.css" // Import des styles du DSFR
+import "@gouvminint/vue-dsfr/styles" // Import des styles globaux propre à VueDSFR
 import VueDsfr from "@gouvminint/vue-dsfr" // Import (par défaut) de la bibliothèque
+
+/* Plugins */
 import i18n from "./i18n.js"
 import VueMatomo from "vue-matomo"
 
+/* Icons */
 import FoodAppleIcon from "mdi-icons/FoodApple"
 import OfferIcon from "mdi-icons/Offer"
 import WeatherWindyIcon from "mdi-icons/WeatherWindy"
@@ -19,19 +26,18 @@ import DeleteIcon from "mdi-icons/Loading"
 // https://www.npmjs.com/package/vue-material-design-icons
 import "mdi-icons/styles.css"
 
+/* Global CSS custom */
 import "./css/reset.css"
 import "./css/global.css"
 
-import App from "./App.vue"
-import { router } from "./router"
-
+/* Create App */
 const app = createApp(App)
-
 app.use(VueDsfr)
 app.use(createPinia())
 app.use(router)
 app.use(i18n)
 
+/* Matomo Tracking */
 if (window.MATOMO_ID) {
   app.use(VueMatomo, {
     host: "https://stats.beta.gouv.fr",
@@ -46,7 +52,10 @@ if (window.MATOMO_ID) {
   })
 }
 
-// deciding to keep same naming convention as previously used with Vue2 and vuetify
+/*
+  Icons reusable components
+  deciding to keep same naming convention as previously used with Vue2 and vuetify
+*/
 app.component("mdi-food-apple", FoodAppleIcon)
 app.component("mdi-offer", OfferIcon)
 app.component("mdi-weather-windy", WeatherWindyIcon)

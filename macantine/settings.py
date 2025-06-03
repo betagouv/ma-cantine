@@ -302,9 +302,6 @@ FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/dist/"),
     os.path.join(BASE_DIR, "build/"),
-    ("dsfr/icons", BASE_DIR / "2024-frontend/node_modules/@gouvfr/dsfr/dist/icons"),
-    ("dsfr/charts", BASE_DIR / "2024-frontend/node_modules/@gouvfr/dsfr-chart"),
-    ("dsfr/dist", BASE_DIR / "2024-frontend/node_modules/@gouvfr/dsfr/dist"),
 ]
 WEBPACK_LOADER = {
     "DEFAULT": {
