@@ -122,10 +122,11 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
 
                 for satellite in row["tmp_satellites"]:
                     satellite_row = row.copy()
-                    satellite_row["id"] = satellite["id"]
+                    satellite_row["canteen_id"] = satellite["id"]
                     satellite_row["name"] = satellite["name"]
                     satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
                     satellite_row["siret"] = satellite["siret"]
+                    satellite_row["satellite_canteens_count"] = 0
                     satellite_row["yearly_meal_count"] = satellite["yearly_meal_count"]
                     satellite_row = self.split_appro_values(satellite_row, nbre_satellites)
                     self.df = pd.concat([self.df, pd.DataFrame(satellite_row).T])
@@ -139,10 +140,10 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         """
         appro_columns = [col_appro for col_appro in self.columns if "value" in col_appro]
         for appro_column in appro_columns:
-            try:
+            if appro_column in row and row[appro_column] and nbre_satellites:
                 row[appro_column] = row[appro_column] / nbre_satellites
-            except KeyError:
-                logging.warning("Column not found while splitting numerical value from central kitchen to satellites")
+            else:
+                row[appro_column] = None
         return row
 
 
