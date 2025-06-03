@@ -68,7 +68,7 @@ Faker==27.0.0
 fastparquet==2024.5.0
 filelock==3.15.4
 filetype==1.2.0
-freezegun==1.5.1
+freezegun==1.5.2
 fsspec==2024.9.0
 html-tag-names==0.1.2
 html-void-elements==0.1.0
