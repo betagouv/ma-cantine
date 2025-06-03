@@ -6,6 +6,36 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.19.0](https://github.com/betagouv/ma-cantine/compare/v2025.18.1...v2025.19.0) (2025-06-03)
+
+
+### Nouveautés
+
+* **Cantines:** nouveaux champs pour stocker le nom et l'id des PAT ([#5362](https://github.com/betagouv/ma-cantine/issues/5362)) ([94c5e56](https://github.com/betagouv/ma-cantine/commit/94c5e563f01383c6a771279adfe9f10ed8b59e40))
+* **DataGouv:** méthode pour récupérer les PAT depuis l'API ([#5365](https://github.com/betagouv/ma-cantine/issues/5365)) ([3a9b0dd](https://github.com/betagouv/ma-cantine/commit/3a9b0ddbb4657b7602f31b128fc60267b4440ac0))
+* **Plan du site:** migration de la page vers vue3 ([#5389](https://github.com/betagouv/ma-cantine/issues/5389)) ([d7492c5](https://github.com/betagouv/ma-cantine/commit/d7492c5d032fd0c65e573f177d7de8c712c78a4c))
+* **Télédéclaration:** 1 TD par cantine ([#5403](https://github.com/betagouv/ma-cantine/issues/5403)) ([f37b951](https://github.com/betagouv/ma-cantine/commit/f37b951d13099b74ca20d1217fbc7653f361a9dc))
+
+
+### Améliorations
+
+* **ETL:** Ajout prefetch sur le queryset ([#5401](https://github.com/betagouv/ma-cantine/issues/5401)) ([4a746f2](https://github.com/betagouv/ma-cantine/commit/4a746f23a9e8677ce39e63976b60134b7129475a))
+* **Pages du footer:** homogénéise l'affichage entre les pages ([#5391](https://github.com/betagouv/ma-cantine/issues/5391)) ([bb6e3fa](https://github.com/betagouv/ma-cantine/commit/bb6e3fa732edb7a761550a71ecb27f7eabfac52b))
+* **Télédéclaration:** pour 2021 et 2022, enrichir les cantines de leur département & région ([#5405](https://github.com/betagouv/ma-cantine/issues/5405)) ([08f81ec](https://github.com/betagouv/ma-cantine/commit/08f81ec287f88e2bcedbcc5243da4828d9c379a1))
+
+
+### Corrections (bugs, typos...)
+
+* **Gestion des cookies:** corrige les liens cassés ou non présents dans les footer ([#5388](https://github.com/betagouv/ma-cantine/issues/5388)) ([eddbc48](https://github.com/betagouv/ma-cantine/commit/eddbc48af0776c809032c78d4917abb3b9392d92))
+* **Mesures de notre impact:** supprime la page obsolète ([#5390](https://github.com/betagouv/ma-cantine/issues/5390)) ([8ce35ec](https://github.com/betagouv/ma-cantine/commit/8ce35ec6fa1e09c892ce410a228e66b1ef8fb467))
+
+
+### Technique
+
+* **ETL:** Suite transfert de transform() pour TeledeclarationAnalysis ([#5384](https://github.com/betagouv/ma-cantine/issues/5384)) ([a336e33](https://github.com/betagouv/ma-cantine/commit/a336e3396fcac651dbfa79e168d69925c6d8b314))
+* **Pre-commit:** mise à jour des plugins utilisés pour les vérifications ([#5400](https://github.com/betagouv/ma-cantine/issues/5400)) ([0bb8875](https://github.com/betagouv/ma-cantine/commit/0bb8875d67b40523afe9677dfdd3c4c2742dde05))
+* **Vue3:** mise à jour des packages ([#5404](https://github.com/betagouv/ma-cantine/issues/5404)) ([bbcd5f1](https://github.com/betagouv/ma-cantine/commit/bbcd5f183c2e91611d104b48d85a45f8e7f21104))
+
 ## [2025.18.1](https://github.com/betagouv/ma-cantine/compare/v2025.18.0...v2025.18.1) (2025-05-28)
 
 
