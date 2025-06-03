@@ -66,14 +66,14 @@
     {
       "description": "Liste des ID des PAT dans lesquels se trouve la cantine",
       "example": "1294,1295",
-      "name": "pat_liste",
+      "name": "pat_list",
       "title": "ID PAT (liste)",
       "type": "string"
     },
     {
       "description": "Liste des libellés des PAT dans lesquels se trouve la cantine",
       "example": "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
-      "name": "pat_lib_liste",
+      "name": "pat_lib_list",
       "title": "Libellé PAT (liste)",
       "type": "string"
     },

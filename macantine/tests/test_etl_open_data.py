@@ -27,6 +27,11 @@ class TestETLOpenData(TestCase):
             city_insee_code="38185",
             epci="200040715",
             epci_lib="Grenoble-Alpes-Métropole",
+            pat_list=["1294", "1295"],
+            pat_lib_list=[
+                "PAT du Département de l'Isère",
+                "Projet Alimentaire inter Territorial de la Grande région grenobloise",
+            ],
             department="38",
             department_lib="Isère",
             region="84",
@@ -182,6 +187,11 @@ class TestETLOpenData(TestCase):
         canteen = canteens[canteens.id == self.canteen.id].iloc[0]
         self.assertEqual(canteen["epci"], "200040715")
         self.assertEqual(canteen["epci_lib"], "Grenoble-Alpes-Métropole")
+        self.assertEqual(canteen["pat_list"], "1294,1295")
+        self.assertEqual(
+            canteen["pat_lib_list"],
+            "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
+        )
         self.assertEqual(canteen["line_ministry"], "Agriculture, Alimentation et Forêts")
         self.assertEqual(canteen["management_type"], "direct")
         self.assertEqual(canteen["production_type"], "site")
