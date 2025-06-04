@@ -1,6 +1,5 @@
 from unittest.mock import patch
 
-import requests_mock
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils.timezone import now
@@ -277,8 +276,7 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["bioPercent"], 20)
         self.assertEqual(body["sustainablePercent"], 45)
 
-    @requests_mock.Mocker()
-    def test_epci(self, mock):
+    def test_epci(self):
         """
         Test that can get canteens with cities that are in EPCIs requested
         """
