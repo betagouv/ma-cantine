@@ -21,6 +21,36 @@ mocked_campaign_dates = {
 
 
 class TestCanteenStatsApi(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.sector_school = SectorFactory.create(name="School", category=Sector.Categories.EDUCATION)
+        cls.sector_enterprise = SectorFactory.create(name="Enterprise", category=Sector.Categories.ENTERPRISE)
+        cls.sector_social = SectorFactory.create(name="Social", category=None)
+        CanteenFactory.create(
+            city_insee_code="12345",
+            epci="1",
+            pat_list=["1"],
+            department="01",
+            region="84",
+            sectors=[cls.sector_school],
+        )
+        CanteenFactory.create(
+            city_insee_code="67890",
+            epci="1",
+            pat_list=["1", "2"],
+            department="02",
+            region="32",
+            sectors=[cls.sector_enterprise],
+        )
+        CanteenFactory.create(
+            city_insee_code="11223",
+            epci="2",
+            pat_list=["2"],
+            sectors=[cls.sector_enterprise, cls.sector_social, cls.sector_school],
+        )
+        CanteenFactory.create(city_insee_code="11224", epci="2", pat_list=["2"], sectors=[cls.sector_social])
+        CanteenFactory.create(city_insee_code="00000", epci=None, sectors=None)
+
     @override_settings(PUBLISH_BY_DEFAULT=False)
     def test_canteen_statistics(self):
         """
@@ -179,31 +209,10 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
 
-    def test_canteen_stats_by_departments(self):
-        department = "01"
-        department_2 = "02"
-        CanteenFactory.create(department=department, publication_status=Canteen.PublicationStatus.PUBLISHED.value)
-        CanteenFactory.create(department=department_2, publication_status=Canteen.PublicationStatus.PUBLISHED.value)
-
-        response = self.client.get(
-            reverse("canteen_statistics"), {"department": [department, department_2], "year": year_data}
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        body = response.json()
-        self.assertEqual(body["canteenCount"], 2)
-
     def test_canteen_stats_by_sectors(self):
-        school = SectorFactory.create(name="School", category=Sector.Categories.EDUCATION)
-        enterprise = SectorFactory.create(name="Enterprise", category=Sector.Categories.ENTERPRISE)
-        social = SectorFactory.create(name="Social", category=None)
-        CanteenFactory.create(sectors=[school])
-        CanteenFactory.create(sectors=[enterprise])
-        CanteenFactory.create(sectors=[enterprise, social, school])
-        CanteenFactory.create(sectors=[social])
-
         response = self.client.get(
-            reverse("canteen_statistics"), {"sectors": [school.id, enterprise.id], "year": year_data}
+            reverse("canteen_statistics"),
+            {"sectors": [self.sector_school.id, self.sector_enterprise.id], "year": year_data},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -250,29 +259,39 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["bioPercent"], 20)
         self.assertEqual(body["sustainablePercent"], 45)
 
-    def test_filter_by_epci(self):
-        """
-        Test that can get canteens with cities that are in EPCIs requested
-        """
-        # test multiple cities for 1 epci
-        CanteenFactory.create(
-            city_insee_code="12345", epci="1", publication_status=Canteen.PublicationStatus.PUBLISHED
-        )
-        CanteenFactory.create(
-            city_insee_code="67890", epci="1", publication_status=Canteen.PublicationStatus.PUBLISHED
-        )
-        # 'belongs to' epci 2
-        CanteenFactory.create(
-            city_insee_code="11223", epci="2", publication_status=Canteen.PublicationStatus.PUBLISHED
-        )
-        CanteenFactory.create(
-            city_insee_code="11224", epci="2", publication_status=Canteen.PublicationStatus.PUBLISHED
-        )
-        # shouldn't be included
-        CanteenFactory.create(
-            city_insee_code="00000", epci=None, publication_status=Canteen.PublicationStatus.PUBLISHED
-        )
+    def test_without_filters(self):
+        # without year
+        response = self.client.get(reverse("canteen_statistics"))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # with year
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 5)
 
+    def test_filter_by_region(self):
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": ["84"]})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 1)
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": ["84", "32"]})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 2)
+
+    def test_filter_by_department(self):
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "department": ["01"]})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 1)
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "department": ["01", "02"]})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 2)
+
+    def test_filter_by_epci(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "epci": ["1"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -284,25 +303,6 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["canteenCount"], 4)
 
     def test_filter_by_pat(self):
-        # test multiple cities for 1 pat
-        CanteenFactory.create(
-            city_insee_code="12345", pat_list=["1"], publication_status=Canteen.PublicationStatus.PUBLISHED
-        )
-        CanteenFactory.create(
-            city_insee_code="67890", pat_list=["1", "2"], publication_status=Canteen.PublicationStatus.PUBLISHED
-        )
-        # 'belongs to' pat 2
-        CanteenFactory.create(
-            city_insee_code="11223", pat_list=["2"], publication_status=Canteen.PublicationStatus.PUBLISHED
-        )
-        CanteenFactory.create(
-            city_insee_code="11224", pat_list=["2"], publication_status=Canteen.PublicationStatus.PUBLISHED
-        )
-        # shouldn't be included
-        CanteenFactory.create(
-            city_insee_code="00000", pat_list=[], publication_status=Canteen.PublicationStatus.PUBLISHED
-        )
-
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "pat": ["1"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -332,7 +332,7 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["canteenCount"], 5 + 3)
 
 
 class TestCanteenLocationsApi(APITestCase):
