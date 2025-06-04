@@ -72,29 +72,25 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
-
       - name: Vue 2 install
         working-directory: ./frontend
         env:
           NODE_OPTIONS: --openssl-legacy-provider
         run: |
           npm install
-
       - name: Vue 2 build
         working-directory: ./frontend
         env:
           NODE_OPTIONS: --openssl-legacy-provider
         run: |
           npm run build --if-present
-
       - name: Vue 2 test
         working-directory: ./frontend
         run: |
           npm run test
 
       - name: Vue 3 build
-        working-directory: ./
+        working-directory: ./2024-frontend
         run: |
-          cd ./2024-frontend
           npm install
           npm run build --if-present
