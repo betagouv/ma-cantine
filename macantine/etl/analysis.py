@@ -106,15 +106,15 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         Split rows of central kitchen into a row for each satellite
         """
         self.df = self.df.set_index("id", drop=False)
+        satellite_rows = []
+
         for _, row in self.df.iterrows():
-            if (
-                row["production_type"] == Canteen.ProductionType.CENTRAL
-                or row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING
-            ):
-                nbre_satellites = (
-                    len(row["tmp_satellites"]) + 1
-                    if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING
-                    else len(row["tmp_satellites"])
+            if row["production_type"] in {
+                Canteen.ProductionType.CENTRAL,
+                Canteen.ProductionType.CENTRAL_SERVING,
+            }:
+                nbre_satellites = len(row["tmp_satellites"]) + (
+                    1 if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING else 0
                 )
 
                 if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING:
@@ -122,14 +122,22 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
 
                 for satellite in row["tmp_satellites"]:
                     satellite_row = row.copy()
-                    satellite_row["canteen_id"] = satellite["id"]
-                    satellite_row["name"] = satellite["name"]
-                    satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
-                    satellite_row["siret"] = satellite["siret"]
-                    satellite_row["satellite_canteens_count"] = 0
-                    satellite_row["yearly_meal_count"] = satellite["yearly_meal_count"]
+                    satellite_row.update(
+                        {
+                            "canteen_id": satellite["id"],
+                            "name": satellite["name"],
+                            "production_type": Canteen.ProductionType.ON_SITE_CENTRAL,
+                            "siret": satellite["siret"],
+                            "satellite_canteens_count": 0,
+                            "yearly_meal_count": satellite["yearly_meal_count"],
+                        }
+                    )
                     satellite_row = self.split_appro_values(satellite_row, nbre_satellites)
-                    self.df = pd.concat([self.df, pd.DataFrame(satellite_row).T])
+                    satellite_rows.append(satellite_row)
+
+        # Append all new rows at once
+        if satellite_rows:
+            self.df = pd.concat([self.df, pd.DataFrame(satellite_rows)], ignore_index=True)
 
         # Delete lines of central kitchen
         self.df = self.df[self.df.production_type != Canteen.ProductionType.CENTRAL]
