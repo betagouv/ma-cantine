@@ -57,14 +57,18 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-install-project --no-dev
 
 
-# Switch to the non-privileged user to run the application.
-USER appuser
 # Copy the source code into the container.
 COPY . .
 
 # Installing separately from its dependencies allows optimal layer caching
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev
+
+# Copy again source code after installing projet dependencies
+COPY . .
+
+# Switch to the non-privileged user to run the application.
+USER appuser
 
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
