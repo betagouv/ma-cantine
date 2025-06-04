@@ -471,6 +471,12 @@ class Canteen(SoftDeletionModel):
         verbose_name="Secteur économique",
     )
 
+    # Teledeclaration info
+    teledeclared_2021 = models.BooleanField(null=True, blank=True, verbose_name="a télédéclarée ses données de 2021")
+    teledeclared_2022 = models.BooleanField(null=True, blank=True, verbose_name="a télédéclarée ses données de 2022")
+    teledeclared_2023 = models.BooleanField(null=True, blank=True, verbose_name="a télédéclarée ses données de 2023")
+    teledeclared_2024 = models.BooleanField(null=True, blank=True, verbose_name="a télédéclarée ses données de 2024")
+
     logo = models.ImageField(null=True, blank=True, verbose_name="Logo")
 
     # Publication things
