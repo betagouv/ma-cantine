@@ -21,6 +21,10 @@ def has_charfield_missing_query(field_name):
     return Q(**{f"{field_name}__isnull": True}) | Q(**{f"{field_name}": ""}) | Q(**{f"{field_name}": None})
 
 
+def has_arrayfield_missing_query(field_name):
+    return Q(**{f"{field_name}__isnull": True}) | Q(**{f"{field_name}": []}) | Q(**{f"{field_name}": None})
+
+
 def _needs_rotation(pillow_image):
     orientation_tag = next(filter(lambda x: ExifTags.TAGS[x] == "Orientation", ExifTags.TAGS), None)
     exif_data = pillow_image._getexif()
