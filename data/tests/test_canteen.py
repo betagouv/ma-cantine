@@ -27,6 +27,16 @@ class TestCanteenModel(TestCase):
             for siren_unite_legale in ["", None, "756 656 218"]:
                 CanteenFactory.create(siret=siret, siren_unite_legale=siren_unite_legale)
 
+    def test_canteen_properties(self):
+        canteen_1 = CanteenFactory(
+            sectors=[SectorFactory.create(name="Sector 1")], line_ministry=Canteen.Ministries.CULTURE
+        )
+        canteen_2 = CanteenFactory()
+
+        # is_spe
+        self.assertTrue(canteen_1.is_spe)
+        self.assertFalse(canteen_2.is_spe)
+
     @freeze_time("2024-01-20")
     def test_appro_and_service_diagnostics_in_past_ordered_year_desc(self):
         canteen = CanteenFactory.create()

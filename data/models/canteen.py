@@ -606,6 +606,10 @@ class Canteen(SoftDeletionModel):
             return self.central_kitchen.diagnostic_set.filter(central_kitchen_diagnostic_mode__isnull=False)
 
     @property
+    def is_spe(self) -> bool:
+        return bool(self.line_ministry)
+
+    @property
     def can_be_claimed(self):
         return not self.managers.exists()
 

@@ -774,10 +774,7 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
         return ",".join(categories)
 
     def get_spe(self, obj):
-        if obj.sectors.is_spe().exists():
-            return "Oui"
-        else:
-            return "Non"
+        return "Oui" if obj.is_spe else "Non"
 
     def get_adresses_gestionnaires(self, obj):
         emails = [manager.email for manager in obj.managers.all()]
