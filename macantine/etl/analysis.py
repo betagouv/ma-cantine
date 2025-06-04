@@ -117,9 +117,6 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                     1 if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING else 0
                 )
 
-                if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING:
-                    self.df.loc[row["id"]] = self.split_appro_values(row, nbre_satellites)
-
                 for satellite in row["tmp_satellites"]:
                     satellite_row = row.copy()
                     satellite_row.update(
@@ -134,6 +131,9 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                     )
                     satellite_row = self.split_appro_values(satellite_row, nbre_satellites)
                     satellite_rows.append(satellite_row)
+
+                if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING:
+                    self.df.loc[row["id"]] = self.split_appro_values(row, nbre_satellites)
 
         # Append all new rows at once
         if satellite_rows:
