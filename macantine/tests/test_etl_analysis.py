@@ -443,6 +443,7 @@ class TestETLAnalysisTD(TestCase):
         self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].value_total_ht, 500)  # Appro value split
         self.assertEqual(len(etl.df[etl.df.canteen_id == 3]), 1)  # Central kitchen filtered out
         self.assertEqual(etl.df[etl.df.canteen_id == 3].iloc[0].value_total_ht, 500)  # Appro value split
+        self.assertEqual(etl.df[etl.df.canteen_id == 30].iloc[0].value_total_ht, 500)  # Appro value split
 
 
 @pytest.mark.parametrize(
