@@ -69,13 +69,14 @@ class TestETLAnalysisCanteen(TestCase):
         self.assertEqual(canteen_1["type_gestion"], "Directe")
         self.assertEqual(canteen_1["type_production"], "Cantine qui produit les repas sur place")
         self.assertEqual(canteen_1["modele_economique"], "Public")
-        self.assertEqual(canteen_1["spe"], "Non")
+        self.assertEqual(canteen_1["spe"], "Oui")  # because line_ministry is set
 
         canteen_2 = canteens[canteens.id == self.canteen_2.id].iloc[0]
         self.assertEqual(canteen_2["ministere_tutelle"], None)
         self.assertEqual(canteen_2["type_gestion"], None)
         self.assertEqual(canteen_2["type_production"], None)
         self.assertEqual(canteen_2["modele_economique"], None)
+        self.assertEqual(canteen_2["spe"], "Non")
 
 
 class TestETLAnalysisTD(TestCase):
