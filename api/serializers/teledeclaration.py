@@ -59,6 +59,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     value_meat_and_fish_egalim_ht = serializers.SerializerMethodField()
     vegetarian_weekly_recurrence = serializers.SerializerMethodField()
     vegetarian_menu_type = serializers.SerializerMethodField()
+    service_type = serializers.SerializerMethodField()
     ratio_egalim_fish = serializers.SerializerMethodField()
     ratio_egalim_meat_poultry = serializers.SerializerMethodField()
     ratio_bio = serializers.SerializerMethodField()
@@ -122,6 +123,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "value_meat_and_fish_egalim_ht",
             "vegetarian_weekly_recurrence",
             "vegetarian_menu_type",
+            "service_type",
             "ratio_egalim_fish",
             "ratio_egalim_meat_poultry",
             "ratio_bio",
@@ -300,6 +302,10 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     def get_vegetarian_menu_type(self, obj):
         if "vegetarian_menu_type" in obj.declared_data["teledeclaration"]:
             return obj.declared_data["teledeclaration"]["vegetarian_menu_type"]
+
+    def get_service_type(self, obj):
+        if "service_type" in obj.declared_data["teledeclaration"]:
+            return obj.declared_data["teledeclaration"]["service_type"]
 
     def get_ratio_egalim_fish(self, obj):
         return utils.compute_ratio(self.get_value_fish_egalim_ht(obj), self.get_value_fish_ht(obj))
