@@ -195,18 +195,6 @@
     {
       "name": "vegetarian_menu_type",
       "type": "string"
-    },
-    {
-      "name": "declaration_2021",
-      "type": "string"
-    },
-    {
-      "name": "declaration_2022",
-      "type": "string"
-    },
-    {
-      "name": "declaration_2023",
-      "type": "string"
     }
   ],
   "format": "csv",
