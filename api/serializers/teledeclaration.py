@@ -68,12 +68,6 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     # Data related to the applicant
     email = serializers.SerializerMethodField()
 
-    # Data related to the campaign
-    declaration_2021 = serializers.SerializerMethodField()
-    declaration_2022 = serializers.SerializerMethodField()
-    declaration_2023 = serializers.SerializerMethodField()
-    declaration_2024 = serializers.SerializerMethodField()
-
     # Data related to the satellites, necessary to flatten the dataset
     tmp_satellites = serializers.SerializerMethodField()
 
@@ -134,10 +128,6 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "ratio_egalim_avec_bio",
             "ratio_egalim_sans_bio",
             "email",
-            "declaration_2021",
-            "declaration_2022",
-            "declaration_2023",
-            "declaration_2024",
             "tmp_satellites",
         )
         read_only_fields = fields
@@ -329,18 +319,6 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     def get_email(self, obj):
         if "email" in obj.declared_data["applicant"]:
             return obj.declared_data["applicant"]["email"]
-
-    def get_declaration_2021(self, obj):
-        return Teledeclaration.objects.filter(canteen_id=obj.canteen.id, year=2021).exists()
-
-    def get_declaration_2022(self, obj):
-        return Teledeclaration.objects.filter(canteen_id=obj.canteen.id, year=2022).exists()
-
-    def get_declaration_2023(self, obj):
-        return Teledeclaration.objects.filter(canteen_id=obj.canteen.id, year=2023).exists()
-
-    def get_declaration_2024(self, obj):
-        return Teledeclaration.objects.filter(canteen_id=obj.canteen.id, year=2024).exists()
 
     def get_tmp_satellites(self, obj):
         if "satellites" in obj.declared_data:
