@@ -73,7 +73,6 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     teledeclarations_count = serializers.IntegerField()
     approPercent = serializers.IntegerField()
     sector_categories = serializers.DictField()
-    epci_error = serializers.CharField(required=False)
 
     @staticmethod
     def calculate_statistics(canteens, teledeclarations):
