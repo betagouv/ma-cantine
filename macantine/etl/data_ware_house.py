@@ -23,7 +23,7 @@ class DataWareHouse:
         )
 
     def insert_dataframe(self, dataframe, table, dtype=None):
-        dataframe.to_sql(name=table, con=self.engine, if_exists="replace", index=False, dtype=dtype)
+        dataframe.to_sql(name=table, con=self.engine, if_exists="replace", index=False, dtype=dtype, chunksize=1000)
 
     def read_dataframe(self, table_name):
         return pd.read_sql(sql=table_name, index_col="id", con=self.engine)
