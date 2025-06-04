@@ -189,15 +189,15 @@
       "type": "float"
     },
     {
+      "name": "service_type",
+      "type": "string"
+    },
+    {
       "name": "vegetarian_weekly_recurrence",
       "type": "string"
     },
     {
       "name": "vegetarian_menu_type",
-      "type": "string"
-    },
-    {
-      "name": "service_type",
       "type": "string"
     }
   ],
