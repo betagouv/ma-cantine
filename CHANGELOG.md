@@ -6,6 +6,33 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.20.0](https://github.com/betagouv/ma-cantine/compare/v2025.19.0...v2025.20.0) (2025-06-04)
+
+
+### Nouveautés
+
+* **Geo Bot:** ajouter la liste des PAT aux cantines correspondantes ([#5409](https://github.com/betagouv/ma-cantine/issues/5409)) ([a0e0e9b](https://github.com/betagouv/ma-cantine/commit/a0e0e9bc57b1ecfa1ab3cb4cbadafb4dba90111f))
+
+
+### Améliorations
+
+* **ETL:** Ajout du champ service type ([#5415](https://github.com/betagouv/ma-cantine/issues/5415)) ([9715549](https://github.com/betagouv/ma-cantine/commit/97155497cc5b9066095fe1b06ff92b14f99a9086))
+* **ETL:** Ajouts des lignes en base par chunks pour éviter les timeout ([#5417](https://github.com/betagouv/ma-cantine/issues/5417)) ([7e071d8](https://github.com/betagouv/ma-cantine/commit/7e071d8eda4a11021c70fc0fae639aa395ebd9b6))
+* **Metabase:** Cantines: ajout des nouveaux champs pat_list & pat_lib_list dans l'export ([#5410](https://github.com/betagouv/ma-cantine/issues/5410)) ([d32a547](https://github.com/betagouv/ma-cantine/commit/d32a5474bb689e6a7cf674cbc7c1a2a086cc6ebd))
+* **Open Data:** Cantines: ajout des nouveaux champs pat_list & pat_lib_list dans l'export ([#5411](https://github.com/betagouv/ma-cantine/issues/5411)) ([97b6a26](https://github.com/betagouv/ma-cantine/commit/97b6a26c4f62786e1ead8bd7cdee2b9cead128e2))
+
+
+### Corrections (bugs, typos...)
+
+* **ETL:** Corriger les valeurs alimentaires des satellites des cc central serving ([#5420](https://github.com/betagouv/ma-cantine/issues/5420)) ([57edf83](https://github.com/betagouv/ma-cantine/commit/57edf83f7a0ffd36b81d8612aa565ac9a7425bfd))
+* **Télédéclaration:** répare la façon dont on va chercher certaines infos géographiques ([#5406](https://github.com/betagouv/ma-cantine/issues/5406)) ([891111b](https://github.com/betagouv/ma-cantine/commit/891111b2dc196ca5c1070b4dd60dfc65cbac6f09))
+
+
+### Technique
+
+* **ETL:** Concat toutes les lignes des satellites dans le dataframe en une fois ([#5412](https://github.com/betagouv/ma-cantine/issues/5412)) ([342d512](https://github.com/betagouv/ma-cantine/commit/342d512c82c09a0aa5d54462c44fd70d7f4e6d6f))
+* **ETL:** Supprimer les colonnes campagnes_&lt;ANNEE&gt; ([#5413](https://github.com/betagouv/ma-cantine/issues/5413)) ([5760552](https://github.com/betagouv/ma-cantine/commit/5760552aecff30c88d1a382cbe8d688d0915244b))
+
 ## [2025.19.0](https://github.com/betagouv/ma-cantine/compare/v2025.18.1...v2025.19.0) (2025-06-03)
 
 
