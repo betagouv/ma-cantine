@@ -30,21 +30,21 @@
     },
     {
       "description": "Ville dans laquelle se trouve la cantine",
-      "example": "Marigny-Le-Lozon",
+      "example": "Grenoble",
       "name": "city",
       "title": "Ville",
       "type": "string"
     },
     {
       "description": "Code Insee de la ville dans laquelle se trouve la cantine",
-      "example": "50292",
+      "example": "38185",
       "name": "city_insee_code",
       "title": "Code Insee ville",
       "type": "string"
     },
     {
       "description": "Code postal de la ville dans laquelle se trouve la cantine",
-      "example": "50570",
+      "example": "38000",
       "name": "postal_code",
       "title": "Code postal",
       "type": "string"
@@ -64,29 +64,43 @@
       "type": "string"
     },
     {
+      "description": "Liste des ID des PAT dans lesquels se trouve la cantine",
+      "example": "1294,1295",
+      "name": "pat_list",
+      "title": "ID PAT (liste)",
+      "type": "string"
+    },
+    {
+      "description": "Liste des libellés des PAT dans lesquels se trouve la cantine",
+      "example": "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
+      "name": "pat_lib_list",
+      "title": "Libellé PAT (liste)",
+      "type": "string"
+    },
+    {
       "description": "Code Insee du département dans lequel se trouve la cantine",
-      "example": "29",
+      "example": "38",
       "name": "department",
       "title": "Code Département",
       "type": "string"
     },
     {
       "description": "Libellé du département dans lequel se trouve la cantine",
-      "example": "Finistère",
+      "example": "Isère",
       "name": "department_lib",
       "title": "Département Libellé",
       "type": "string"
     },
     {
       "description": "Code Insee de la région dans lequel se trouve la cantine",
-      "example": "53",
+      "example": "84",
       "name": "region",
       "title": "Code Région",
       "type": "string"
     },
     {
       "description": "Libellé de la région dans lequel se trouve la cantine",
-      "example": "Bretagne",
+      "example": "Auvergne-Rhône-Alpes",
       "name": "region_lib",
       "title": "Région libellé",
       "type": "string"
