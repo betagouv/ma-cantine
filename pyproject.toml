@@ -114,7 +114,7 @@ dependencies = [
     "pluggy==1.5.0",
     "pre-commit==4.0.1",
     "prompt-toolkit==3.0.47",
-    "psycopg2==2.9.9",
+    "psycopg2-binary>=2.9.10",
     "py==1.11.0",
     "pycparser==2.22",
     "pyhanko==0.25.1",

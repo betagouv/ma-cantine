@@ -56,8 +56,6 @@ Les dépendances du backend se trouvent dans `pyproject.toml`, pour les installe
 uv sync
 ```
 
-> Si vous rencontrez un problème avec `psycopg2`, installez `psycopg2-binary` à la place.
-
 Pour ajouter / supprimer une dépendance :
 
 ```
