@@ -106,7 +106,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         Split rows of central kitchen into a row for each satellite
         """
         self.df = self.df.set_index("id", drop=False)
-        new_rows = []
+        satellite_rows = []
 
         for _, row in self.df.iterrows():
             if row["production_type"] in {
@@ -133,11 +133,11 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                         }
                     )
                     satellite_row = self.split_appro_values(satellite_row, nbre_satellites)
-                    new_rows.append(satellite_row)
+                    satellite_rows.append(satellite_row)
 
         # Append all new rows at once
-        if new_rows:
-            self.df = pd.concat([self.df, pd.DataFrame(new_rows)], ignore_index=True)
+        if satellite_rows:
+            self.df = pd.concat([self.df, pd.DataFrame(satellite_rows)], ignore_index=True)
 
         # Delete lines of central kitchen
         self.df = self.df[self.df.production_type != Canteen.ProductionType.CENTRAL]
