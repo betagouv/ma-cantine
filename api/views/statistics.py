@@ -23,20 +23,18 @@ class CanteenStatisticsView(APIView):
     @extend_schema(
         parameters=[
             OpenApiParameter(name="year", type=str, description="Filter by year of declared data", required=True),
-            OpenApiParameter(name="regions", type=str, description="Filter by regions, using their INSEE code"),
-            OpenApiParameter(
-                name="departments", type=str, description="Filter by departments, using their INSEE code"
-            ),
-            OpenApiParameter(name="epcis", type=str, description="Filter by EPCIS, using their INSEE code"),
-            OpenApiParameter(name="sector_categories", type=int, description="Filter by sectors, using their id"),
+            OpenApiParameter(name="region", type=str, description="Filter by regions, using their INSEE code"),
+            OpenApiParameter(name="department", type=str, description="Filter by departments, using their INSEE code"),
+            OpenApiParameter(name="epci", type=str, description="Filter by EPCIs, using their INSEE code"),
+            OpenApiParameter(name="sectors", type=int, description="Filter by sectors, using their id"),
         ]
     )
     def get(self, request):
         year = request.query_params.get("year")
         regions = request.query_params.getlist("region")
         departments = request.query_params.getlist("department")
-        sector_categories = request.query_params.getlist("sectors")
         epcis = request.query_params.getlist("epci")
+        sectors = request.query_params.getlist("sectors")
 
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
@@ -50,10 +48,8 @@ class CanteenStatisticsView(APIView):
         else:
             epci_error = None
 
-        canteens = self._filter_canteens(regions, departments, city_insee_codes, sector_categories)
-        teledeclarations = self._filter_teledeclarations(
-            year, regions, departments, city_insee_codes, sector_categories
-        )
+        canteens = self._filter_canteens(regions, departments, city_insee_codes, sectors)
+        teledeclarations = self._filter_teledeclarations(year, regions, departments, city_insee_codes, sectors)
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
         if epci_error:
