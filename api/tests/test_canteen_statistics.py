@@ -276,7 +276,7 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["bioPercent"], 20)
         self.assertEqual(body["sustainablePercent"], 45)
 
-    def test_epci(self):
+    def test_filter_by_epci(self):
         """
         Test that can get canteens with cities that are in EPCIs requested
         """
@@ -299,9 +299,43 @@ class TestCanteenStatsApi(APITestCase):
             city_insee_code="00000", epci=None, publication_status=Canteen.PublicationStatus.PUBLISHED
         )
 
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "epci": ["1"]})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 2)
+
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "epci": ["1", "2"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 4)
 
+    def test_filter_by_pat(self):
+        # test multiple cities for 1 pat
+        CanteenFactory.create(
+            city_insee_code="12345", pat_list=["1"], publication_status=Canteen.PublicationStatus.PUBLISHED
+        )
+        CanteenFactory.create(
+            city_insee_code="67890", pat_list=["1", "2"], publication_status=Canteen.PublicationStatus.PUBLISHED
+        )
+        # 'belongs to' pat 2
+        CanteenFactory.create(
+            city_insee_code="11223", pat_list=["2"], publication_status=Canteen.PublicationStatus.PUBLISHED
+        )
+        CanteenFactory.create(
+            city_insee_code="11224", pat_list=["2"], publication_status=Canteen.PublicationStatus.PUBLISHED
+        )
+        # shouldn't be included
+        CanteenFactory.create(
+            city_insee_code="00000", pat_list=[], publication_status=Canteen.PublicationStatus.PUBLISHED
+        )
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "pat": ["1"]})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 2)
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "pat": ["1", "2"]})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)
 
