@@ -189,6 +189,10 @@
       "type": "float"
     },
     {
+      "name": "service_type",
+      "type": "string"
+    },
+    {
       "name": "vegetarian_weekly_recurrence",
       "type": "string"
     },
