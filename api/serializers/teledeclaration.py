@@ -43,6 +43,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     nbre_cantines_region = serializers.SerializerMethodField()
     objectif_zone_geo = serializers.SerializerMethodField()
     line_ministry = serializers.SerializerMethodField()
+    spe = serializers.SerializerMethodField()
 
     # Data related to the appro
     value_bio_ht = serializers.SerializerMethodField()
@@ -103,6 +104,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "nbre_cantines_region",
             "objectif_zone_geo",
             "line_ministry",
+            "spe",
             "year",
             "status",
             "applicant_id",
@@ -253,6 +255,10 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     def get_line_ministry(self, obj):
         if "line_ministry" in obj.declared_data["canteen"]:
             return obj.declared_data["canteen"]["line_ministry"]
+
+    def get_spe(self, obj):
+        line_ministry = self.get_line_ministry(obj)
+        return "Oui" if line_ministry else "Non"
 
     def get_value_bio_ht(self, obj):
         return obj.value_bio_ht_agg
