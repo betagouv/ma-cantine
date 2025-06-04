@@ -25,7 +25,7 @@ class CanteenStatisticsView(APIView):
             OpenApiParameter(name="year", type=str, description="Filter by year of declared data", required=True),
             OpenApiParameter(name="region", type=str, description="Filter by regions, using their INSEE code"),
             OpenApiParameter(name="department", type=str, description="Filter by departments, using their INSEE code"),
-            OpenApiParameter(name="epci", type=str, description="Filter by EPCIS, using their INSEE code"),
+            OpenApiParameter(name="epci", type=str, description="Filter by EPCIs, using their INSEE code"),
             OpenApiParameter(name="sectors", type=int, description="Filter by sectors, using their id"),
         ]
     )
