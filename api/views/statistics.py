@@ -7,7 +7,6 @@ from rest_framework.views import APIView
 
 from api.serializers import CanteenStatisticsSerializer
 from api.views.utils import camelize
-from common.api.decoupage_administratif import fetch_communes_from_epci
 from data.models import Canteen, Teledeclaration
 
 logger = logging.getLogger(__name__)
@@ -39,36 +38,18 @@ class CanteenStatisticsView(APIView):
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            city_insee_codes = self._get_city_insee_codes(epcis)
-        except Exception as e:
-            logger.warning(f"Error when fetching INSEE codes for EPCI for canteen stats: {str(e)}")
-            city_insee_codes = None
-            epci_error = "Une erreur est survenue"
-        else:
-            epci_error = None
-
-        canteens = self._filter_canteens(regions, departments, city_insee_codes, sectors)
-        teledeclarations = self._filter_teledeclarations(year, regions, departments, city_insee_codes, sectors)
+        canteens = self._filter_canteens(regions, departments, epcis, sectors)
+        teledeclarations = self._filter_teledeclarations(year, regions, departments, epcis, sectors)
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
-        if epci_error:
-            data["epci_error"] = epci_error
 
         serializer = self.serializer_class(data)
         return JsonResponse(camelize(serializer.data), status=status.HTTP_200_OK)
 
-    def _get_city_insee_codes(self, epcis):
-        city_insee_codes = []
-        for e in epcis:
-            response = fetch_communes_from_epci(e)
-            city_insee_codes.extend(commune["code"] for commune in response)
-        return city_insee_codes
-
-    def _filter_canteens(self, regions, departments, city_insee_codes, sectors):
+    def _filter_canteens(self, regions, departments, epcis, sectors):
         canteens = Canteen.objects
-        if city_insee_codes:
-            canteens = canteens.filter(city_insee_code__in=city_insee_codes)
+        if epcis:
+            canteens = canteens.filter(epci__in=epcis)
         elif departments:
             canteens = canteens.filter(department__in=departments)
         elif regions:
@@ -77,11 +58,11 @@ class CanteenStatisticsView(APIView):
             canteens = canteens.filter(sectors__in=[s for s in sectors if s.isdigit()])
         return canteens.distinct()
 
-    def _filter_teledeclarations(self, year, regions, departments, city_insee_codes, sectors):
+    def _filter_teledeclarations(self, year, regions, departments, epcis, sectors):
         teledeclarations = Teledeclaration.objects.valid_td_by_year(year)
         if teledeclarations:
-            if city_insee_codes:
-                teledeclarations = teledeclarations.filter(canteen__city_insee_code__in=city_insee_codes)
+            if epcis:
+                teledeclarations = teledeclarations.filter(canteen__epci__in=epcis)
             elif departments:
                 teledeclarations = teledeclarations.filter(canteen__department__in=departments)
             elif regions:
