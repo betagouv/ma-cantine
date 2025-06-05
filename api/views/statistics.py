@@ -54,9 +54,9 @@ class CanteenStatisticsView(APIView):
             canteens = canteens.filter(epci__in=epcis)
         if pats:
             canteens = canteens.filter(pat_list__overlap=pats)
-        elif departments:
+        if departments:
             canteens = canteens.filter(department__in=departments)
-        elif regions:
+        if regions:
             canteens = canteens.filter(region__in=regions)
         if sectors:
             canteens = canteens.filter(sectors__in=[s for s in sectors if s.isdigit()])
@@ -69,9 +69,9 @@ class CanteenStatisticsView(APIView):
                 teledeclarations = teledeclarations.filter(canteen__epci__in=epcis)
             if pats:
                 teledeclarations = teledeclarations.filter(canteen__pat_list__overlap=pats)
-            elif departments:
+            if departments:
                 teledeclarations = teledeclarations.filter(canteen__department__in=departments)
-            elif regions:
+            if regions:
                 teledeclarations = teledeclarations.filter(canteen__region__in=regions)
             if sectors:
                 teledeclarations = teledeclarations.filter(canteen__sectors__in=sectors)
