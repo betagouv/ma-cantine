@@ -406,7 +406,7 @@ def export_datasets(datasets: dict):
 
 def datasets_export_analysis_td():
     """
-    Export the Teledeclarations datasets for Metabase
+    Export the Teledeclarations datasets for analysis (Metabase)
     """
     logger.info("Starting manual datasets export")
     datasets = {
@@ -431,7 +431,7 @@ def datasets_export_opendata_td():
 
 def datasets_export_analysis_canteens():
     """
-    Export the Teledeclarations datasets for Metabase
+    Export the Teledeclarations datasets for analysis (Metabase)
     """
     logger.info("Starting datasets extractions")
     datasets = {

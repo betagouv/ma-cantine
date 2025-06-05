@@ -76,7 +76,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         self.years = CAMPAIGN_DATES.keys()
         self.extracted_table_name = "teledeclarations"
         self.warehouse = DataWareHouse()
-        self.schema = json.load(open("data/schemas/export_metabase/schema_teledeclarations.json"))
+        self.schema = json.load(open("data/schemas/export_analysis/schema_teledeclarations.json"))
         self.columns = [field["name"] for field in self.schema["fields"]]
         self.view = TeledeclarationAnalysisListView
 
@@ -171,7 +171,7 @@ class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
         super().__init__()
         self.extracted_table_name = "canteens"
         self.warehouse = DataWareHouse()
-        self.schema = json.load(open("data/schemas/export_metabase/schema_cantines.json"))
+        self.schema = json.load(open("data/schemas/export_analysis/schema_cantines.json"))
         self.view = CanteenAnalysisListView
 
     def transform_dataset(self):

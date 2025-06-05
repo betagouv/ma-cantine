@@ -40,7 +40,7 @@ class TestETLAnalysisCanteen(TestCase):
 
     def test_transformed_dataset_match_schema(self):
         etl = ETL_ANALYSIS_CANTEEN()
-        schema = json.load(open("data/schemas/export_metabase/schema_cantines.json"))
+        schema = json.load(open("data/schemas/export_analysis/schema_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
         etl.extract_dataset()
         etl.transform_dataset()

@@ -37,7 +37,7 @@ from api.permissions import (
 )
 from api.serializers import (
     CanteenActionsSerializer,
-    CanteenMetabaseSerializer,
+    CanteenAnalysisSerializer,
     CanteenPreviewSerializer,
     CanteenStatusSerializer,
     CanteenSummarySerializer,
@@ -1055,7 +1055,7 @@ class CanteenMinistriesView(APIView):
 
 
 class CanteenAnalysisListView(ListAPIView):
-    serializer_class = CanteenMetabaseSerializer
+    serializer_class = CanteenAnalysisSerializer
     filter_backends = [django_filters.DjangoFilterBackend]
     ordering_fields = ["creation_date"]
 
