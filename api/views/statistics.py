@@ -5,6 +5,7 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.views import APIView
 
+from api.filters.statistics import StatisticsFilterSet
 from api.serializers import CanteenStatisticsSerializer
 from api.views.utils import camelize
 from data.models import Canteen, Teledeclaration
@@ -16,8 +17,10 @@ logger = logging.getLogger(__name__)
     summary="Récapitulatif statistique des données de ma-cantine",
 )
 class CanteenStatisticsView(APIView):
-    include_in_documentation = True
+    queryset = Canteen.objects.all()
     serializer_class = CanteenStatisticsSerializer
+    filterset_class = StatisticsFilterSet
+    include_in_documentation = True
 
     @extend_schema(
         parameters=[
