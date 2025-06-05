@@ -6,6 +6,35 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.21.0](https://github.com/betagouv/ma-cantine/compare/v2025.20.0...v2025.21.0) (2025-06-05)
+
+
+### Nouveautés
+
+* **API Stats:** nouveau filtre par PAT(s) ([#5423](https://github.com/betagouv/ma-cantine/issues/5423)) ([cd3e523](https://github.com/betagouv/ma-cantine/commit/cd3e5232d94f7215eab6a77336607b181680751d))
+
+
+### Améliorations
+
+* **API Stats:** mieux documenter la possibilité de faire des filtres multiples ([#5419](https://github.com/betagouv/ma-cantine/issues/5419)) ([69190cd](https://github.com/betagouv/ma-cantine/commit/69190cd17f490b2bba1d1b69a13173bf2b41e609))
+* **API Stats:** simplifier la façon de filter par EPCI(s) ([#5422](https://github.com/betagouv/ma-cantine/issues/5422)) ([1a8bbe7](https://github.com/betagouv/ma-cantine/commit/1a8bbe7e0ff60f9fbdea0f81299b539250d7bbdd))
+* **ETL:** Ajout champ SIREN unite legale ([#5428](https://github.com/betagouv/ma-cantine/issues/5428)) ([2a772b1](https://github.com/betagouv/ma-cantine/commit/2a772b19fae5cbb7153acfd396c0778ca0a5218a))
+
+
+### Corrections (bugs, typos...)
+
+* **API Stats:** typo sur le nom des filtres dans la doc ([#5418](https://github.com/betagouv/ma-cantine/issues/5418)) ([9a6ba6d](https://github.com/betagouv/ma-cantine/commit/9a6ba6d0857cc3ba45da26f3cf0ee8d897824840))
+* **Cantines:** basculer la notion de SPE sur les line_ministry au lieu des sectors ([#5346](https://github.com/betagouv/ma-cantine/issues/5346)) ([8285e4d](https://github.com/betagouv/ma-cantine/commit/8285e4da46277f14191de998a7c083639d8f5431))
+* **ETL:** Changer en int le selector de l'argument dans la commande ([#5432](https://github.com/betagouv/ma-cantine/issues/5432)) ([932718a](https://github.com/betagouv/ma-cantine/commit/932718a44dd1e1ba6550376da4073004196d9b83))
+* **Header:** corrige l'affichage étiré du logo dans le header sur safari ([#5431](https://github.com/betagouv/ma-cantine/issues/5431)) ([6deaac2](https://github.com/betagouv/ma-cantine/commit/6deaac220eca90521a2df02d0aaf8c8c77fd2ce5))
+* **Metabase:** répare les tests suite aux modifs sur le calcul du champ SPE ([#5425](https://github.com/betagouv/ma-cantine/issues/5425)) ([59ad0a7](https://github.com/betagouv/ma-cantine/commit/59ad0a7b5ca05be40c635d6e4f39019ff1713906))
+
+
+### Technique
+
+* **API Stats:** réorganise un peu les tests ([#5427](https://github.com/betagouv/ma-cantine/issues/5427)) ([c648617](https://github.com/betagouv/ma-cantine/commit/c648617ed05977590a1edae0afee84e1a2904026))
+* **Metabase:** homogénéise le nommage à Analysis ([#5429](https://github.com/betagouv/ma-cantine/issues/5429)) ([c6f681d](https://github.com/betagouv/ma-cantine/commit/c6f681d44b319ff25e40e27e9e1429beef6fac21))
+
 ## [2025.20.0](https://github.com/betagouv/ma-cantine/compare/v2025.19.0...v2025.20.0) (2025-06-04)
 
 
