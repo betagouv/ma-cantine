@@ -26,6 +26,10 @@
       "type": "string"
     },
     {
+      "name": "siren_unite_legale",
+      "type": "string"
+    },
+    {
       "name": "daily_meal_count",
       "type": "integer"
     },
