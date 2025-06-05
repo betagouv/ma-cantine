@@ -161,9 +161,9 @@ const navItemsForUser = computed(() => {
 <template>
   <DsfrHeader
     :logo-text
-    operatorImgSrc="/static/images/ma-cantine-logo-light.jpg"
+    operatorImgSrc="/static/images/ma-cantine-logo-light.svg"
     operatorImgAlt="ma cantine"
-    operatorImgStyle="height: 65px;"
+    operatorImgStyle="max-width: 15rem"
     :quickLinks
   >
     <template #mainnav>
