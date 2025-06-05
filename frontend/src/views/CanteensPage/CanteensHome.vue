@@ -139,7 +139,7 @@
                         'active-filter-label': !!filters.min_portion_bio.value || !!filters.min_portion_combined.value,
                       }"
                     >
-                      Dans les assiettes, part minimum de...
+                      En {{ lastYear }} la part minimum de...
                     </legend>
                     <div class="d-flex mt-1">
                       <DsfrTextField
@@ -321,7 +321,7 @@
 import PublishedCanteenCard from "./PublishedCanteenCard"
 import jsonDepartments from "@/departments.json"
 import jsonRegions from "@/regions.json"
-import { getObjectDiff, sectorsSelectList } from "@/utils"
+import { getObjectDiff, sectorsSelectList, lastYear } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
 import badges from "@/badges"
@@ -374,6 +374,7 @@ export default {
       publishedCanteenCount: null,
       page: null,
       searchTerm: null,
+      lastYear: lastYear(),
       filters: {
         department: {
           param: "departement",
