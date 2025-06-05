@@ -1408,6 +1408,30 @@ class TestCanteenActionApi(APITestCase):
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
 
+    @freeze_time("2025-01-01")
+    @authenticate
+    def test_search_canteen_by_name(self):
+        name_searched = "Ma cantine à trouver"
+        year = 2025
+        canteen_searched = CanteenFactory.create(
+            name=name_searched,
+            managers=[authenticate.user],
+        )
+        CanteenFactory.create(
+            managers=[authenticate.user],
+        )
+        CanteenFactory.create(
+            name=name_searched,
+            managers=[],
+        )
+
+        response = self.client.get(
+            reverse("list_actionable_canteens", kwargs={"year": year}), {"search": name_searched}
+        )
+        returned_canteens = response.json()["results"]
+        self.assertEqual(len(returned_canteens), 1)
+        self.assertEqual(returned_canteens[0]["id"], canteen_searched.id)
+
 
 class TestCanteenTerritoryApi(APITestCase):
     @authenticate
