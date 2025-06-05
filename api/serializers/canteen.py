@@ -649,7 +649,7 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
         )
 
 
-class CanteenMetabaseSerializer(serializers.ModelSerializer):
+class CanteenAnalysisSerializer(serializers.ModelSerializer):
     nom = serializers.SerializerMethodField()
     code_insee_commune = serializers.SerializerMethodField()
     libelle_commune = serializers.SerializerMethodField()
