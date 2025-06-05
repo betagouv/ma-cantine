@@ -989,6 +989,7 @@ class ActionableCanteensListView(ListAPIView):
     pagination_class = CanteenActionsPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
+        UnaccentSearchFilter,
         MaCantineOrderingFilter,
     ]
     search_fields = ["name"]
