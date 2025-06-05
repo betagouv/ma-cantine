@@ -22,6 +22,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     # Data related to the canteen
     name = serializers.SerializerMethodField()
     siret = serializers.SerializerMethodField()
+    siren_unite_legale = serializers.SerializerMethodField()
     daily_meal_count = serializers.SerializerMethodField()
     yearly_meal_count = serializers.SerializerMethodField()
     cout_denrees = serializers.SerializerMethodField()
@@ -80,6 +81,8 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "creation_date",
             "canteen_id",
             "name",
+            "siret",
+            "siren_unite_legale",
             "daily_meal_count",
             "yearly_meal_count",
             "cout_denrees",
@@ -101,8 +104,6 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "objectif_zone_geo",
             "line_ministry",
             "year",
-            "siret",
-            "canteen_siren_unite_legale",
             "status",
             "applicant_id",
             "diagnostic_id",
@@ -134,12 +135,15 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
-    def get_siret(self, obj):
-        return obj.canteen_siret
-
     def get_name(self, obj):
         if "name" in obj.declared_data["canteen"]:
             return obj.declared_data["canteen"]["name"]
+
+    def get_siret(self, obj):
+        return obj.canteen_siret
+
+    def get_siren_unite_legale(self, obj):
+        return obj.canteen_siren_unite_legale
 
     def get_daily_meal_count(self, obj):
         if "daily_meal_count" in obj.declared_data["canteen"]:
