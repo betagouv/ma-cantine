@@ -22,11 +22,15 @@ class CanteenStatisticsView(APIView):
     @extend_schema(
         parameters=[
             OpenApiParameter(name="year", type=str, description="Filter by year of declared data", required=True),
-            OpenApiParameter(name="region", type=str, description="Filter by regions, using their INSEE code"),
-            OpenApiParameter(name="department", type=str, description="Filter by departments, using their INSEE code"),
-            OpenApiParameter(name="epci", type=str, description="Filter by EPCIs, using their INSEE code"),
-            OpenApiParameter(name="pat", type=str, description="Filter by PATs, using their internal id"),
-            OpenApiParameter(name="sectors", type=int, description="Filter by sectors, using their internal id"),
+            OpenApiParameter(
+                name="region", type=str, many=True, description="Filter by region(s), using their Insee code"
+            ),
+            OpenApiParameter(
+                name="department", type=str, many=True, description="Filter by department(s), using their Insee code"
+            ),
+            OpenApiParameter(name="epci", type=str, many=True, description="Filter by EPCI(s), using their Insee code"),
+            OpenApiParameter(name="pat", type=str, description="Filter by PAT(s), using their id"),
+            OpenApiParameter(name="sectors", type=int, many=True, description="Filter by sector(s), using their internal id"),
         ]
     )
     def get(self, request):
