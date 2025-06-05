@@ -339,6 +339,32 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)
 
+    def test_filter_by_commune(self):
+        CanteenFactory.create(city_insee_code="12345", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        CanteenFactory.create(city_insee_code="67890", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        # 'belongs to' epci 2
+        CanteenFactory.create(city_insee_code="11223", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        CanteenFactory.create(city_insee_code="11224", publication_status=Canteen.PublicationStatus.PUBLISHED)
+        # shouldn't be included
+        CanteenFactory.create(
+            city_insee_code="00000", epci=None, publication_status=Canteen.PublicationStatus.PUBLISHED
+        )
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 5)
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "commune": ["12345"]})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 1)
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "commune": ["12345", "11223"]})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 2)
+
     @override_settings(PUBLISH_BY_DEFAULT=True)
     def test_published_canteen_count(self):
         """

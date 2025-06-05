@@ -22,10 +22,11 @@ class CanteenStatisticsView(APIView):
     @extend_schema(
         parameters=[
             OpenApiParameter(name="year", type=str, description="Filter by year of declared data", required=True),
-            OpenApiParameter(name="region", type=str, description="Filter by regions, using their INSEE code"),
-            OpenApiParameter(name="department", type=str, description="Filter by departments, using their INSEE code"),
-            OpenApiParameter(name="epci", type=str, description="Filter by EPCIs, using their INSEE code"),
+            OpenApiParameter(name="region", type=str, description="Filter by regions, using their Insee code"),
+            OpenApiParameter(name="department", type=str, description="Filter by departments, using their Insee code"),
+            OpenApiParameter(name="epci", type=str, description="Filter by EPCIs, using their Insee code"),
             OpenApiParameter(name="pat", type=str, description="Filter by PATs, using their internal id"),
+            OpenApiParameter(name="commune", type=str, description="Filter by cities, using their Insee code"),
             OpenApiParameter(name="sectors", type=int, description="Filter by sectors, using their internal id"),
         ]
     )
@@ -35,21 +36,24 @@ class CanteenStatisticsView(APIView):
         departments = request.query_params.getlist("department")
         epcis = request.query_params.getlist("epci")
         pats = request.query_params.getlist("pat")
+        cities = request.query_params.getlist("commune")
         sectors = request.query_params.getlist("sectors")
 
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
 
-        canteens = self._filter_canteens(regions, departments, epcis, pats, sectors)
-        teledeclarations = self._filter_teledeclarations(year, regions, departments, epcis, pats, sectors)
+        canteens = self._filter_canteens(regions, departments, epcis, pats, cities, sectors)
+        teledeclarations = self._filter_teledeclarations(year, regions, departments, epcis, pats, cities, sectors)
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
 
         serializer = self.serializer_class(data)
         return JsonResponse(camelize(serializer.data), status=status.HTTP_200_OK)
 
-    def _filter_canteens(self, regions, departments, epcis, pats, sectors):
+    def _filter_canteens(self, regions, departments, epcis, pats, cities, sectors):
         canteens = Canteen.objects
+        if cities:
+            canteens = canteens.filter(city_insee_code__in=cities)
         if epcis:
             canteens = canteens.filter(epci__in=epcis)
         if pats:
@@ -62,9 +66,11 @@ class CanteenStatisticsView(APIView):
             canteens = canteens.filter(sectors__in=[s for s in sectors if s.isdigit()])
         return canteens.distinct()
 
-    def _filter_teledeclarations(self, year, regions, departments, epcis, pats, sectors):
+    def _filter_teledeclarations(self, year, regions, departments, epcis, pats, cities, sectors):
         teledeclarations = Teledeclaration.objects.valid_td_by_year(year)
         if teledeclarations:
+            if cities:
+                teledeclarations = teledeclarations.filter(canteen__city_insee_code__in=cities)
             if epcis:
                 teledeclarations = teledeclarations.filter(canteen__epci__in=epcis)
             if pats:
