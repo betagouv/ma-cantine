@@ -999,9 +999,6 @@ class ActionableCanteensListView(ListAPIView):
     def get_queryset(self):
         year = self.request.parser_context.get("kwargs").get("year")
         user_canteen_queryset = self.request.user.canteens
-        search = self.request.query_params.get("search")
-        if search:
-            user_canteen_queryset = user_canteen_queryset.filter(name__icontains=search)
         return user_canteen_queryset.annotate_with_action_for_year(year)
 
 
