@@ -434,6 +434,13 @@ class TestPublicCanteenSearchApi(APITestCase):
         guadeloupe_canteen = CanteenFactory.create(
             publication_status=Canteen.PublicationStatus.PUBLISHED, region=Region.guadeloupe, name="Guadeloupe"
         )
+        good_canteen_with_siren = CanteenFactory.create(
+            publication_status="published",
+            name="Siren",
+            region=Region.auvergne_rhone_alpes,
+            siret="",
+            siren_unite_legale="123456789",
+        )
 
         publication_year = date.today().year - 1
 
@@ -509,59 +516,75 @@ class TestPublicCanteenSearchApi(APITestCase):
             value_externality_performance_ht=None,
             value_egalim_others_ht=0,
         )
+        DiagnosticFactory.create(
+            canteen=good_canteen_with_siren,
+            year=publication_year,
+            value_total_ht=100,
+            value_bio_ht=30,
+            value_sustainable_ht=10,
+            value_externality_performance_ht=10,
+            value_egalim_others_ht=10,
+        )
+
         url = f"{reverse('published_canteens')}?min_portion_bio={0.2}"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 2)
+        self.assertEqual(len(results), 3)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
         self.assertIn("Satellite", result_names)
+        self.assertIn("Siren", result_names)
 
         url = f"{reverse('published_canteens')}?min_portion_combined={0.5}"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 5)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
         self.assertIn("Satellite", result_names)
+        self.assertIn("Siren", result_names)
         self.assertIn("Wasabi", result_names)
         self.assertIn("Umami", result_names)
 
         url = f"{reverse('published_canteens')}?min_portion_bio={0.1}&min_portion_combined={0.5}"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 3)
+        self.assertEqual(len(results), 4)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
         self.assertIn("Satellite", result_names)
+        self.assertIn("Siren", result_names)
         self.assertIn("Wasabi", result_names)
 
         url = f"{reverse('published_canteens')}?badge=appro"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 3)
+        self.assertEqual(len(results), 4)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
         self.assertIn("Satellite", result_names)
+        self.assertIn("Siren", result_names)
         self.assertIn("Guadeloupe", result_names)
 
         # if both badge and thresholds specified, return the results that match the most strict threshold
         url = f"{reverse('published_canteens')}?badge=appro&min_portion_combined={0.01}"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 3)
+        self.assertEqual(len(results), 4)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
         self.assertIn("Satellite", result_names)
+        self.assertIn("Siren", result_names)
         self.assertIn("Guadeloupe", result_names)
 
         url = f"{reverse('published_canteens')}?badge=appro&min_portion_combined={0.5}"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 2)
+        self.assertEqual(len(results), 3)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
         self.assertIn("Satellite", result_names)
+        self.assertIn("Siren", result_names)
 
     def test_pagination_departments(self):
         CanteenFactory.create(publication_status="published", department="75", name="Shiso")
