@@ -1,7 +1,7 @@
 cd frontend/
-npm run serve &
+npm run serve:ossl-legacy &
 cd ..
 cd 2024-frontend/
 npm run dev &
 cd ..
-python3 manage.py runserver
+uv run python manage.py runserver
