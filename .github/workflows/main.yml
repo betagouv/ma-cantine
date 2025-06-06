@@ -82,7 +82,11 @@ jobs:
           npm run test
 
       - name: Vue 3 build
-        working-directory: ./2024-frontend
+        env:
+          SECRET: test
+          ALLOWED_HOSTS: localhost
+          REDIS_URL: redis://localhost:6379/0
+          STATICFILES_STORAGE: django.contrib.staticfiles.storage.StaticFilesStorage
+          DEFAULT_FILE_STORAGE: django.core.files.storage.FileSystemStorage
         run: |
-          npm install
-          npm run build --if-present
+          uv run python manage.py buildnpmvue3
