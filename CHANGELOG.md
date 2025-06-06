@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.21.1](https://github.com/betagouv/ma-cantine/compare/v2025.21.0...v2025.21.1) (2025-06-06)
+
+
+### Corrections (bugs, typos...)
+
+* **Tableau de bord:** corrige la recherche par nom de cantine ([#5430](https://github.com/betagouv/ma-cantine/issues/5430)) ([55f382b](https://github.com/betagouv/ma-cantine/commit/55f382bd06723a12ecda34729eca27b22e28e002))
+
 ## [2025.21.0](https://github.com/betagouv/ma-cantine/compare/v2025.20.0...v2025.21.0) (2025-06-05)
 
 
