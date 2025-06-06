@@ -28,24 +28,14 @@ jobs:
           python-version: "3.11"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v3
+        uses: astral-sh/setup-uv@v6
         with:
-          enable-cache: true
           version: "latest"
+          enable-cache: true
 
       - name: Install dependencies
         run: |
-          uv sync --locked
-
-      - name: Collect static files
-        env:
-          SECRET: test
-          ALLOWED_HOSTS: localhost
-          REDIS_URL: redis://localhost:6379/0
-          STATICFILES_STORAGE: django.contrib.staticfiles.storage.StaticFilesStorage
-          DEFAULT_FILE_STORAGE: django.core.files.storage.FileSystemStorage
-        run: |
-          uv run python manage.py collectstatic --noinput
+          uv sync
 
       - name: Test Django
         env:
@@ -67,23 +57,25 @@ jobs:
         run: |
           uv run python manage.py test
 
-      - uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
+
       - name: Vue 2 install
         working-directory: ./frontend
         env:
           NODE_OPTIONS: --openssl-legacy-provider
         run: |
           npm install
+
       - name: Vue 2 build
         working-directory: ./frontend
         env:
           NODE_OPTIONS: --openssl-legacy-provider
         run: |
           npm run build --if-present
+
       - name: Vue 2 test
         working-directory: ./frontend
         run: |
