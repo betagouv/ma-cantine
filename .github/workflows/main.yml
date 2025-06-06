@@ -22,7 +22,7 @@ jobs:
           redis version: "5"
           number of databases: 5
 
-      - name: Setup Python
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -33,7 +33,7 @@ jobs:
           version: "latest"
           enable-cache: true
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           uv sync
 
