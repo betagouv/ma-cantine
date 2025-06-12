@@ -6,6 +6,15 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.21.1](https://github.com/betagouv/ma-cantine/compare/v2025.21.0...v2025.21.1) (2025-06-12)
+
+
+### Corrections (bugs, typos...)
+
+* **API Stats:** améliore la documentation du filtre PAT ([#5439](https://github.com/betagouv/ma-cantine/issues/5439)) ([99d650e](https://github.com/betagouv/ma-cantine/commit/99d650e37b503ca1144f841878ae46942a460d39))
+* **Imports:** Cantines: corrige le format SIRET du fichier d'exemple ([#5441](https://github.com/betagouv/ma-cantine/issues/5441)) ([a82275e](https://github.com/betagouv/ma-cantine/commit/a82275e8213e97a8a5aa91558f221aed593ca9db))
+* **Tableau de bord:** corrige la recherche par nom de cantine ([#5430](https://github.com/betagouv/ma-cantine/issues/5430)) ([55f382b](https://github.com/betagouv/ma-cantine/commit/55f382bd06723a12ecda34729eca27b22e28e002))
+
 ## [2025.21.0](https://github.com/betagouv/ma-cantine/compare/v2025.20.0...v2025.21.0) (2025-06-05)
 
 
