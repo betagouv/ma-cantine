@@ -401,7 +401,7 @@ def export_datasets(datasets: dict):
         logger.info(f"Starting {key} dataset extraction")
         etl.extract_dataset()
         etl.transform_dataset()
-        # etl.load_dataset()
+        etl.load_dataset()
 
 
 def datasets_export_analysis_td():
