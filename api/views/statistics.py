@@ -28,9 +28,13 @@ class CanteenStatisticsView(APIView):
             OpenApiParameter(
                 name="department", type=str, many=True, description="Filter by department(s), using their Insee code"
             ),
-            OpenApiParameter(name="epci", type=str, many=True, description="Filter by EPCI(s), using their Insee code"),
-            OpenApiParameter(name="pat", type=str, description="Filter by PAT(s), using their id"),
-            OpenApiParameter(name="sectors", type=int, many=True, description="Filter by sector(s), using their internal id"),
+            OpenApiParameter(
+                name="epci", type=str, many=True, description="Filter by EPCI(s), using their Insee code"
+            ),
+            OpenApiParameter(name="pat", type=str, many=True, description="Filter by PAT(s), using their id"),
+            OpenApiParameter(
+                name="sectors", type=int, many=True, description="Filter by sector(s), using their internal id"
+            ),
         ]
     )
     def get(self, request):
