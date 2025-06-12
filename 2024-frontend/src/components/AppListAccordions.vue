@@ -1,4 +1,8 @@
 <script setup>
+/**
+  This component is useful to easily create multiple DsfrAccordionsGroup
+  with a v-for, and have an unique and independant model.
+*/
 defineProps(["group"])
 const model = defineModel()
 </script>
