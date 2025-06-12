@@ -3,7 +3,7 @@ import { useRoute } from "vue-router"
 import { groups } from "@/constants/questions-answers.js"
 import AppNeedHelp from "@/components/AppNeedHelp.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
-import FAQAccordionsList from "@/components/FAQAccordionsList.vue"
+import AppListAccordions from "@/components/AppListAccordions.vue"
 
 const route = useRoute()
 const readingDoodleIllustration = "/static/images/doodles-dsfr/primary/ReadingDoodle.png"
@@ -19,7 +19,7 @@ const readingDoodleIllustration = "/static/images/doodles-dsfr/primary/ReadingDo
   </section>
   <section class="fr-grid-row fr-grid-row--top fr-mb-4w fr-mb-md-10w">
     <div class="fr-col-12 fr-col-lg-8">
-      <FAQAccordionsList v-for="(group, index) in groups" :key="index" :group="group" />
+      <AppListAccordions v-for="(group, index) in groups" :key="index" :group="group" />
     </div>
     <div class="fr-hidden fr-unhidden-lg fr-col-4 fr-grid-row fr-grid-row--right ma-cantine--sticky">
       <img :src="readingDoodleIllustration" class="faq__illustration" />
