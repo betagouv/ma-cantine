@@ -74,6 +74,7 @@
       "type": "integer"
     },
     {
+      "description": "Spécifie si les données ont été déclarées par une cuisine centrale",
       "name": "genere_par_cuisine_centrale",
       "type": "boolean"
     },
