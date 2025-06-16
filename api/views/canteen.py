@@ -992,7 +992,7 @@ class ActionableCanteensListView(ListAPIView):
         UnaccentSearchFilter,
         MaCantineOrderingFilter,
     ]
-    search_fields = ["name"]
+    search_fields = ["name", "siret", "siren_unite_legale"]
     ordering_fields = ["name", "production_type", "action", "modification_date"]
     ordering = "modification_date"
 
