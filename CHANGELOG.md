@@ -6,6 +6,31 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.21.1](https://github.com/betagouv/ma-cantine/compare/v2025.21.0...v2025.21.1) (2025-06-16)
+
+
+### Améliorations
+
+* **ETL:** Ajout colonne mode de télédéclaration dans Analysis TD ([#5445](https://github.com/betagouv/ma-cantine/issues/5445)) ([e4a4074](https://github.com/betagouv/ma-cantine/commit/e4a4074e9c7161bd82e0d8bab8da0f4b3df2abee))
+
+
+### Corrections (bugs, typos...)
+
+* **API Stats:** améliore la documentation du filtre PAT ([#5439](https://github.com/betagouv/ma-cantine/issues/5439)) ([99d650e](https://github.com/betagouv/ma-cantine/commit/99d650e37b503ca1144f841878ae46942a460d39))
+* **ETL:** Corriger le champ diagnostic_type ([#5444](https://github.com/betagouv/ma-cantine/issues/5444)) ([bbd81fa](https://github.com/betagouv/ma-cantine/commit/bbd81fac9ba4fb402ee45d4c09e54b511d92249c))
+* **ETL:** Ne pas filtrer les cantines sur le secteur armee/police/gendarmerie pour export open-data des cantines ([#5443](https://github.com/betagouv/ma-cantine/issues/5443)) ([b3f1ae6](https://github.com/betagouv/ma-cantine/commit/b3f1ae661bc38567dc715763ecd18a9587ec9b42))
+* **ETL:** remet une ligne commentée qui empêchait l'export ([#5440](https://github.com/betagouv/ma-cantine/issues/5440)) ([79352e3](https://github.com/betagouv/ma-cantine/commit/79352e3bbcbeb66dfc8cd9e9d63b750111761807))
+* **Foire aux questions:** corrige les accordéons qui ne s'ouvrent plus ([#5442](https://github.com/betagouv/ma-cantine/issues/5442)) ([84c9569](https://github.com/betagouv/ma-cantine/commit/84c9569e61e89816d05c87317f9bd7450412a751))
+* **Imports:** Cantines: corrige le format SIRET du fichier d'exemple ([#5441](https://github.com/betagouv/ma-cantine/issues/5441)) ([a82275e](https://github.com/betagouv/ma-cantine/commit/a82275e8213e97a8a5aa91558f221aed593ca9db))
+* **Tableau de bord:** corrige la recherche par nom de cantine ([#5430](https://github.com/betagouv/ma-cantine/issues/5430)) ([55f382b](https://github.com/betagouv/ma-cantine/commit/55f382bd06723a12ecda34729eca27b22e28e002))
+* **Tableau de bord:** permet de rechercher une cantine par numéro siret ou siren uniquement en vue carte ([#5436](https://github.com/betagouv/ma-cantine/issues/5436)) ([4bd4a67](https://github.com/betagouv/ma-cantine/commit/4bd4a67b446d4bb7bb6d689917b6993167f191f1))
+* **Trouver une cantine:** corrige le filtre par donnée d'approvisionnement ([#5434](https://github.com/betagouv/ma-cantine/issues/5434)) ([5aeb6e3](https://github.com/betagouv/ma-cantine/commit/5aeb6e335ecbd1ecc95ec6d751265f900522e47e))
+
+
+### Technique
+
+* **deps:** bump freezegun from 1.5.1 to 1.5.2 ([#5392](https://github.com/betagouv/ma-cantine/issues/5392)) ([d1d94c2](https://github.com/betagouv/ma-cantine/commit/d1d94c27328e51121e998f408f8b1e3b1964f03d))
+
 ## [2025.21.0](https://github.com/betagouv/ma-cantine/compare/v2025.20.0...v2025.21.0) (2025-06-05)
 
 
