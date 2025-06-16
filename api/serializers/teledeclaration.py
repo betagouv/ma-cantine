@@ -43,6 +43,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     nbre_cantines_region = serializers.SerializerMethodField()
     objectif_zone_geo = serializers.SerializerMethodField()
     line_ministry = serializers.SerializerMethodField()
+    genere_par_cuisine_centrale = serializers.SerializerMethodField()
 
     # Data related to the appro
     value_bio_ht = serializers.SerializerMethodField()
@@ -95,6 +96,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "secteur",
             "categorie",
             "satellite_canteens_count",
+            "genere_par_cuisine_centrale",
             "code_insee_commune",
             "departement",
             "lib_departement",
@@ -107,7 +109,6 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "status",
             "applicant_id",
             "diagnostic_id",
-            "teledeclaration_mode",
             "value_total_ht",
             "value_bio_ht",
             "value_sustainable_ht",
@@ -223,6 +224,12 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         if "satellite_canteens_count" in obj.declared_data["canteen"]:
             satellite_canteens_count = obj.declared_data["canteen"]["satellite_canteens_count"]
             return int(satellite_canteens_count) if satellite_canteens_count else None
+
+    def get_genere_par_cuisine_centrale(self, obj):
+        return (
+            obj.teledeclaration_mode == Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
+            or obj.teledeclaration_mode == Teledeclaration.TeledeclarationMode.CENTRAL_APPRO
+        )
 
     def get_code_insee_commune(self, obj):
         if "city_insee_code" in obj.declared_data["canteen"]:
