@@ -59,7 +59,7 @@ from common.utils import send_mail
 from data.department_choices import Department
 from data.models import Canteen, Diagnostic, ManagerInvitation, Sector
 from data.region_choices import Region
-from data.utils import CreationSource
+from data.utils import CreationSource, has_charfield_missing_query
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -249,7 +249,7 @@ def filter_by_diagnostic_params(queryset, query_params):
                 )
             ).distinct()
         canteen_ids = qs_diag.values_list("canteen", flat=True)
-        canteen_sirets = qs_diag.exclude(Q(canteen__siret="") | Q(canteen__siret__isnull=True)).values_list(
+        canteen_sirets = qs_diag.exclude(has_charfield_missing_query("canteen__siret")).values_list(
             "canteen__siret", flat=True
         )
         queryset = queryset.exclude(redacted_appro_years__contains=[publication_year])
