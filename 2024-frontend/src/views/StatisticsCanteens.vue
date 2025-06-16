@@ -25,6 +25,7 @@ const pictoDocument = "/static/images/picto-dsfr/document.svg"
       <li class="fr-col-12 fr-col-sm-6">
         <DsfrTile
           titleTag="p"
+          class="statistics-canteens__force-title-download-vertical"
           title="Rapport de la campagne 2024"
           description="Application et des objectifs d’approvisionnements fixés à la restauration collective."
           to="/#"
@@ -49,7 +50,7 @@ const pictoDocument = "/static/images/picto-dsfr/document.svg"
 
 <style lang="scss">
 .statistics-canteens {
-  &__title-download {
+  &__force-title-download-vertical {
     align-items: center !important;
     flex-direction: column !important;
     justify-content: center !important;
@@ -61,6 +62,11 @@ const pictoDocument = "/static/images/picto-dsfr/document.svg"
 
     .fr-tile__header {
       margin-right: 0 !important;
+      margin-bottom: 1rem !important;
+    }
+
+    .fr-tile__pictogram {
+      height: 3.5rem !important;
     }
   }
 }
