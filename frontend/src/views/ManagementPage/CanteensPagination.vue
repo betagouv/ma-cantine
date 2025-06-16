@@ -8,7 +8,7 @@
               hide-details="auto"
               ref="search"
               v-model="searchTerm"
-              placeholder="Recherche par nom ou SIRET de l'établissement ou SIREN de l'unité légale"
+              placeholder="Recherche par nom, SIRET de l'établissement ou SIREN de l'unité légale"
               clearable
               @clear="clearSearch"
               @search="search"
