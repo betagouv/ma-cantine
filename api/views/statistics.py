@@ -44,6 +44,7 @@ class CanteenStatisticsView(APIView):
         epcis = request.query_params.getlist("epci")
         pats = request.query_params.getlist("pat")
         sectors = request.query_params.getlist("sectors")
+        sectors = [s for s in sectors if s.isdigit()]
 
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
@@ -67,7 +68,7 @@ class CanteenStatisticsView(APIView):
         if regions:
             canteens = canteens.filter(region__in=regions)
         if sectors:
-            canteens = canteens.filter(sectors__in=[s for s in sectors if s.isdigit()])
+            canteens = canteens.filter(sectors__in=sectors)
         return canteens.distinct()
 
     def _filter_teledeclarations(self, year, regions, departments, epcis, pats, sectors):
