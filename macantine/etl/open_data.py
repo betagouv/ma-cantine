@@ -155,7 +155,7 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
         self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/export_opendata/schema_cantines.json"
         self.columns = [field["name"] for field in self.schema["fields"]]
         self.canteens = None
-        self.exclude_filter = Q(sectors__id=22) | Q(line_ministry="armee")  # Filtering out the police / army sectors
+        self.exclude_filter = Q(line_ministry="armee")
 
     def extract_dataset(self):
         start = time.time()
