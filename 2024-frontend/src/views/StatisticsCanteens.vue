@@ -7,7 +7,7 @@ const pictoDocument = "/static/images/picto-dsfr/document.svg"
 
 <template>
   <section class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
-    <div class="fr-col-6">
+    <div class="fr-col-12 fr-col-lg-6">
       <h1>{{ route.meta.title }}</h1>
       <p>
         Pour la restauration collective, la loi EGalim, complétée par la loi Climat et Résilience, a défini des
@@ -21,8 +21,8 @@ const pictoDocument = "/static/images/picto-dsfr/document.svg"
         posuere consectetur est at lobortis. Aenean lacinia bibendum nulla sed consectetur.
       </p>
     </div>
-    <ul class="fr-col-5 fr-col-offset-1 fr-grid-row fr-grid-row--gutters ma-cantine--unstyled-list">
-      <li class="fr-col-6">
+    <ul class="fr-col-12 fr-col-lg-5 fr-col-offset-lg-1 fr-grid-row fr-grid-row--gutters ma-cantine--unstyled-list">
+      <li class="fr-col-12 fr-col-sm-6">
         <DsfrTile
           class="statistics-canteens__title-download"
           title="Bilan statistique 2024"
@@ -33,7 +33,7 @@ const pictoDocument = "/static/images/picto-dsfr/document.svg"
           small
         />
       </li>
-      <li class="fr-col-6">
+      <li class="fr-col-12 fr-col-sm-6">
         <DsfrTile
           title="Consulter data.gouv.fr"
           description="Données du Ministère de l'Agriculture et de l'Alimentation"
@@ -53,6 +53,10 @@ const pictoDocument = "/static/images/picto-dsfr/document.svg"
     flex-direction: column !important;
     justify-content: center !important;
     text-align: center !important;
+
+    .fr-tile__content {
+      align-items: center !important;
+    }
 
     .fr-tile__header {
       margin-right: 0 !important;
