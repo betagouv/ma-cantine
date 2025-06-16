@@ -3,6 +3,7 @@ import { useRoute } from "vue-router"
 import { groups } from "@/constants/questions-answers.js"
 import AppNeedHelp from "@/components/AppNeedHelp.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
+import AppMultipleAccordionsGroup from "@/components/AppMultipleAccordionsGroup.vue"
 
 const route = useRoute()
 const readingDoodleIllustration = "/static/images/doodles-dsfr/primary/ReadingDoodle.png"
@@ -18,18 +19,7 @@ const readingDoodleIllustration = "/static/images/doodles-dsfr/primary/ReadingDo
   </section>
   <section class="fr-grid-row fr-grid-row--top fr-mb-4w fr-mb-md-10w">
     <div class="fr-col-12 fr-col-lg-8">
-      <DsfrAccordionsGroup v-for="(group, index) in groups" :key="index" class="fr-mb-5w">
-        <h2 class="fr-h5">{{ group.title }}</h2>
-        <DsfrAccordion
-          v-for="(accordion, index) in group.accordions"
-          :key="index"
-          :title="accordion.question"
-          title-tag="h3"
-        >
-          <component v-if="accordion.component" :is="accordion.component"></component>
-          <p v-else>{{ accordion.answer }}</p>
-        </DsfrAccordion>
-      </DsfrAccordionsGroup>
+      <AppMultipleAccordionsGroup v-for="(group, index) in groups" :key="index" :group="group" />
     </div>
     <div class="fr-hidden fr-unhidden-lg fr-col-4 fr-grid-row fr-grid-row--right ma-cantine--sticky">
       <img :src="readingDoodleIllustration" class="faq__illustration" />
