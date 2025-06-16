@@ -24,6 +24,7 @@ const pictoDocument = "/static/images/picto-dsfr/document.svg"
     <ul class="fr-col-12 fr-col-lg-5 fr-col-offset-lg-1 fr-grid-row fr-grid-row--gutters ma-cantine--unstyled-list">
       <li class="fr-col-12 fr-col-sm-6">
         <DsfrTile
+          titleTag="p"
           title="Rapport de la campagne 2024"
           description="Application et des objectifs d’approvisionnements fixés à la restauration collective."
           to="/#"
@@ -34,6 +35,7 @@ const pictoDocument = "/static/images/picto-dsfr/document.svg"
       </li>
       <li class="fr-col-12 fr-col-sm-6">
         <DsfrTile
+          titleTag="p"
           title="Consulter data.gouv.fr"
           description="Données du Ministère de l'Agriculture et de l'Alimentation"
           to="https://www.data.gouv.fr/fr/organizations/ministere-de-l-agriculture-de-l-agroalimentaire-et-de-la-foret/"
