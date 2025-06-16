@@ -1,9 +1,12 @@
 DOCKER-RUN = docker compose run -e TERM --rm --entrypoint=""
 
-.PHONY: build up down sh static
+.PHONY: build build-server up down sh static
 
 build:
 	docker compose build
+
+build-server:
+	docker compose -f 'compose.yaml' up -d --build 'server'
 
 up:
 	docker compose up
