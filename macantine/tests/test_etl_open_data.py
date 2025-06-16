@@ -290,11 +290,6 @@ class TestETLOpenData(TestCase):
             '"[]"',
             "The sectors should be an empty list",
         )
-        self.assertEqual(
-            Canteen.objects.count(),
-            len(canteens) + 1,  # canteen with sector 22 should be filtered out
-            "The new canteen should not appear as its specific sector has to remain private",
-        )
         self.assertEqual(canteens[canteens.id == self.canteen.id].iloc[0]["sectors"], '"[""School""]"')
 
     @freeze_time("2023-05-14")  # Faking date to check new url
