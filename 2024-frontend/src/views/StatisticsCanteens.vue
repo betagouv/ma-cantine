@@ -24,8 +24,7 @@ const pictoDocument = "/static/images/picto-dsfr/document.svg"
     <ul class="fr-col-12 fr-col-lg-5 fr-col-offset-lg-1 fr-grid-row fr-grid-row--gutters ma-cantine--unstyled-list">
       <li class="fr-col-12 fr-col-sm-6">
         <DsfrTile
-          class="statistics-canteens__title-download"
-          title="Bilan statistique 2024"
+          title="Rapport de la campagne 2024"
           description="Application et des objectifs d’approvisionnements fixés à la restauration collective."
           to="/#"
           :imgSrc="pictoDocument"
