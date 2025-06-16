@@ -74,6 +74,10 @@
       "type": "integer"
     },
     {
+      "name": "genere_par_cuisine_centrale",
+      "type": "boolean"
+    },
+    {
       "name": "departement",
       "type": "string"
     },
