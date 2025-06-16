@@ -182,8 +182,8 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             return "C) non renseigné"
 
     def get_diagnostic_type(self, obj):
-        if "diagnostic_type" in obj.declared_data["canteen"]:
-            return obj.declared_data["canteen"]["diagnostic_type"]
+        if "diagnostic_type" in obj.declared_data["teledeclaration"]:
+            return obj.declared_data["teledeclaration"]["diagnostic_type"]
 
     def get_central_producer_siret(self, obj):
         if "central_producer_siret" in obj.declared_data["canteen"]:
