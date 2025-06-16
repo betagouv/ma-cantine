@@ -51,6 +51,13 @@ class TestCanteenStatsApi(APITestCase):
         CanteenFactory.create(city_insee_code="11224", epci="2", pat_list=["2"], sectors=[cls.sector_social])
         CanteenFactory.create(city_insee_code="00000", epci=None, sectors=None)
 
+    def test_query_count(self):
+        self.assertEqual(Canteen.objects.count(), 5)
+        with self.assertNumQueries(10):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            # {'canteenCount': 5, 'bioPercent': 0, 'sustainablePercent': 0, 'teledeclarationsCount': 0, 'approPercent': 0, 'sectorCategories': {'administration': 0, 'enterprise': 2, 'education': 2, 'health': 0, 'social': 0, 'leisure': 0, 'autres': 0, 'inconnu': 3}}
+
     @override_settings(PUBLISH_BY_DEFAULT=False)
     def test_canteen_statistics(self):
         """
