@@ -16,6 +16,7 @@ import CanteenModification from "@/views/CanteenModification.vue"
 import FAQ from "@/views/FAQ.vue"
 import PersonalData from "@/views/PersonalData.vue"
 import SiteMap from "@/views/SiteMap.vue"
+import StatisticsCanteens from "@/views/StatisticsCanteens.vue"
 
 /* Sitemap section id */
 const { diag, action, site } = sectionId
@@ -181,6 +182,14 @@ const vue3routes = [
     component: SiteMap,
     meta: {
       title: "Plan du site",
+    },
+  },
+  {
+    path: "/statistiques-cantines",
+    name: "StatisticsCanteens",
+    component: StatisticsCanteens,
+    meta: {
+      title: "Statistiques cantines (nom à revoir)",
     },
   },
 ]
