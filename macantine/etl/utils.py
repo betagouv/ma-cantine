@@ -69,7 +69,7 @@ def common_members(a, b):
 def compute_ratio(valueKey, totalKey):
     if totalKey and valueKey:
         if totalKey > 0 and valueKey >= 0:
-            return 100 * valueKey / totalKey
+            return float(100 * valueKey / totalKey)
 
 
 def map_canteens_td(year):

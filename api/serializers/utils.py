@@ -162,3 +162,7 @@ COMPLETE_APPRO_FIELDS = (
     "value_boissons_local",
     "value_autres_local",
 )
+
+
+def float_or_none(value):
+    return float(value) if value else None
