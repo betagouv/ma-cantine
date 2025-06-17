@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from data.department_choices import Department
-from data.models import Teledeclaration
+from data.models import Diagnostic, Teledeclaration
 from data.region_choices import Region
 from macantine.etl import utils
 
@@ -184,7 +184,12 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
 
     def get_diagnostic_type(self, obj):
         if "diagnostic_type" in obj.declared_data["teledeclaration"]:
-            return obj.declared_data["teledeclaration"]["diagnostic_type"]
+            return (
+                obj.declared_data["teledeclaration"]["diagnostic_type"]
+                if obj.declared_data["teledeclaration"]["diagnostic_type"]
+                and obj.declared_data["teledeclaration"]["diagnostic_type"] != ""
+                else Diagnostic.DiagnosticType.SIMPLE
+            )
 
     def get_central_producer_siret(self, obj):
         if "central_producer_siret" in obj.declared_data["canteen"]:
