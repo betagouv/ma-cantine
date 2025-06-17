@@ -229,6 +229,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         return (
             obj.teledeclaration_mode == Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
             or obj.teledeclaration_mode == Teledeclaration.TeledeclarationMode.CENTRAL_APPRO
+            or obj.teledeclaration_mode == Teledeclaration.TeledeclarationMode.CENTRAL_ALL
         )
 
     def get_code_insee_commune(self, obj):
