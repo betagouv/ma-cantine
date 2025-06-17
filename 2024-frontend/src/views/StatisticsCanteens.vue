@@ -2,7 +2,7 @@
 import { useRoute } from "vue-router"
 const route = useRoute()
 const pictoDataVisualization = "/static/images/picto-dsfr/data-visualization.svg"
-const pictoDocument = "/static/images/picto-dsfr/document.svg"
+const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const pictoDocument = "/static/images/picto-dsfr/document.svg"
           title="Rapport de la campagne 2024"
           description="Application et des objectifs d’approvisionnements fixés à la restauration collective."
           to="/#"
-          :imgSrc="pictoDocument"
+          :imgSrc="pictoDocuments"
           :download="true"
           small
         />
