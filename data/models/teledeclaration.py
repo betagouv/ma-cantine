@@ -230,6 +230,14 @@ class Teledeclaration(models.Model):
         blank=True,
     )
 
+    @property
+    def is_declared_by_cc(self):
+        return self.teledeclaration_mode and self.teledeclaration_mode in [
+            Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO,
+            Teledeclaration.TeledeclarationMode.CENTRAL_APPRO,
+            Teledeclaration.TeledeclarationMode.CENTRAL_ALL,
+        ]
+
     @receiver(pre_delete, sender=Diagnostic)
     def cancel_teledeclaration(sender, instance, **kwargs):
         try:

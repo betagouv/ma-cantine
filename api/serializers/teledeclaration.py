@@ -226,10 +226,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             return int(satellite_canteens_count) if satellite_canteens_count else None
 
     def get_genere_par_cuisine_centrale(self, obj):
-        return (
-            obj.teledeclaration_mode == Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
-            or obj.teledeclaration_mode == Teledeclaration.TeledeclarationMode.CENTRAL_APPRO
-        )
+        return obj.is_declared_by_cc
 
     def get_code_insee_commune(self, obj):
         if "city_insee_code" in obj.declared_data["canteen"]:
