@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from api.serializers.utils import float_or_none
 from data.department_choices import Department
 from data.models import Teledeclaration
 from data.region_choices import Region
@@ -271,19 +272,19 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         return obj.value_egalim_others_ht_agg
 
     def get_value_meat_poultry_ht(self, obj):
-        return obj.diagnostic.value_meat_poultry_ht
+        return float_or_none(obj.diagnostic.value_meat_poultry_ht)
 
     def get_value_meat_poultry_france_ht(self, obj):
-        return obj.diagnostic.value_meat_poultry_france_ht
+        return float_or_none(obj.diagnostic.value_meat_poultry_france_ht)
 
     def get_value_meat_poultry_egalim_ht(self, obj):
-        return obj.diagnostic.value_meat_poultry_egalim_ht
+        return float_or_none(obj.diagnostic.value_meat_poultry_egalim_ht)
 
     def get_value_fish_ht(self, obj):
-        return obj.diagnostic.value_fish_ht
+        return float_or_none(obj.diagnostic.value_fish_ht)
 
     def get_value_fish_egalim_ht(self, obj):
-        return obj.diagnostic.value_fish_egalim_ht
+        return float_or_none(obj.diagnostic.value_fish_egalim_ht)
 
     def get_value_somme_egalim_avec_bio_ht(self, obj):
         return utils.sum_int_and_none([self.get_value_somme_egalim_hors_bio_ht(obj), self.get_value_bio_ht(obj)])
