@@ -1,5 +1,8 @@
+import json
+
 from django import forms
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 from simple_history.admin import SimpleHistoryAdmin
 
 from data.models import Teledeclaration
@@ -65,7 +68,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "value_egalim_others_ht_agg",
         "meal_price",
         "yearly_meal_count",
-        "declared_data",
+        "declared_data_pretty",
         "teledeclaration_mode",
         "change_reason",
     )
@@ -85,7 +88,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "value_egalim_others_ht_agg",
         "meal_price",
         "yearly_meal_count",
-        "declared_data",
+        "declared_data_pretty",
         "teledeclaration_mode",
     )
     search_fields = (
@@ -95,6 +98,10 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "applicant__username",
         "applicant__email",
     )
+
+    def declared_data_pretty(self, obj):
+        data = json.dumps(obj.declared_data, indent=2)
+        return mark_safe(f"<pre>{data}</pre>")
 
     def canteen_name(self, obj):
         return obj.declared_data["canteen"]["name"]
