@@ -1,6 +1,6 @@
 import logging
 
-from django.db.models import Count, Sum
+from django.db.models import Sum
 from rest_framework import serializers
 
 from common.utils.badges import badges_for_queryset
@@ -18,11 +18,7 @@ def calculate_statistics_canteens(canteens, data):
     if canteens:
         # stats per sector categories (group by)
         data["sector_categories"] = {}
-        canteen_count_per_sector_categories = (
-            canteens.values("sectors__category")
-            .annotate(count=Count("id", distinct=True))
-            .order_by("sectors__category")
-        )
+        canteen_count_per_sector_categories = canteens.group_and_count_by_field("sectors__category")
         for category in Sector.Categories:
             data["sector_categories"][category] = next(
                 (

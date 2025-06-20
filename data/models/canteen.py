@@ -190,6 +190,16 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def is_filled(self):
         return self.annotate_with_requires_line_ministry().exclude(has_missing_data_query())
 
+    def group_and_count_by_field(self, field):
+        """
+        https://docs.djangoproject.com/en/5.2/topics/db/aggregation/#values
+        Example:
+        - Input: 4 canteens: 3 with management_type 'direct', 1 with 'conceded'
+        - Usage: group_and_count_by_field('management_type')
+        - Output: [{'management_type': 'direct', 'count': 3}, {'management_type': 'conceded', 'count': 1}]
+        """
+        return self.values(field).annotate(count=Count("id", distinct=True)).order_by("-count")
+
     def annotate_with_action_for_year(self, year):
         from data.models import Diagnostic
 
@@ -298,6 +308,9 @@ class CanteenManager(SoftDeletionManager):
 
     def is_filled(self):
         return self.get_queryset().is_filled()
+
+    def group_and_count_by_field(self, field):
+        return self.get_queryset().group_and_count_by_field(field)
 
     def annotate_with_action_for_year(self, year):
         return self.get_queryset().annotate_with_action_for_year(year)
