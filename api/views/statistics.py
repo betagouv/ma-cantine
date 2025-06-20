@@ -35,6 +35,13 @@ class CanteenStatisticsView(APIView):
             OpenApiParameter(
                 name="sectors", type=int, many=True, description="Filter by sector(s), using their internal id"
             ),
+            OpenApiParameter(
+                name="production_type",
+                type=str,
+                many=True,
+                description="Filter by production type(s)",
+                enum=Canteen.ProductionType,
+            ),
         ]
     )
     def get(self, request):
@@ -45,19 +52,22 @@ class CanteenStatisticsView(APIView):
         pats = request.query_params.getlist("pat")
         sectors = request.query_params.getlist("sectors")
         sectors = [s for s in sectors if s.isdigit()]
+        production_types = request.query_params.getlist("production_type")
 
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
 
-        canteens = self._filter_canteens(regions, departments, epcis, pats, sectors)
-        teledeclarations = self._filter_teledeclarations(year, regions, departments, epcis, pats, sectors)
+        canteens = self._filter_canteens(regions, departments, epcis, pats, sectors, production_types)
+        teledeclarations = self._filter_teledeclarations(
+            year, regions, departments, epcis, pats, sectors, production_types
+        )
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
 
         serializer = self.serializer_class(data)
         return JsonResponse(camelize(serializer.data), status=status.HTTP_200_OK)
 
-    def _filter_canteens(self, regions, departments, epcis, pats, sectors):
+    def _filter_canteens(self, regions, departments, epcis, pats, sectors, production_types):
         canteens = Canteen.objects
         if epcis:
             canteens = canteens.filter(epci__in=epcis)
@@ -69,9 +79,11 @@ class CanteenStatisticsView(APIView):
             canteens = canteens.filter(region__in=regions)
         if sectors:
             canteens = canteens.filter(sectors__in=sectors)
+        if production_types:
+            canteens = canteens.filter(production_type__in=production_types)
         return canteens.distinct()
 
-    def _filter_teledeclarations(self, year, regions, departments, epcis, pats, sectors):
+    def _filter_teledeclarations(self, year, regions, departments, epcis, pats, sectors, production_types):
         teledeclarations = Teledeclaration.objects.valid_td_by_year(year)
         if teledeclarations:
             if epcis:
@@ -84,4 +96,6 @@ class CanteenStatisticsView(APIView):
                 teledeclarations = teledeclarations.filter(canteen__region__in=regions)
             if sectors:
                 teledeclarations = teledeclarations.filter(canteen__sectors__in=sectors)
+            if production_types:
+                teledeclarations = teledeclarations.filter(canteen__production_type__in=production_types)
             return teledeclarations.distinct()
