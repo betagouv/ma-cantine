@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
@@ -904,6 +906,62 @@ class TestTeledeclarationCampaignDatesApi(APITestCase):
                     self.assertEqual(body["year"], 2024)
                     self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])
                     self.assertEqual(body["inCorrection"], date_freeze["in_correction"])
+
+    def test_satellite_and_central_kitchen_teledeclarations(self):
+        """
+        Test that both satellite and central kitchen teledeclarations appear in the database.
+        """
+        year_data = 2024
+
+        central_kitchen = CanteenFactory(
+            siret="12345678901234",
+            production_type=Canteen.ProductionType.CENTRAL,
+            yearly_meal_count=1000,
+        )
+        satellite_canteen = CanteenFactory(
+            siret="56789012345678",
+            production_type=Canteen.ProductionType.ON_SITE,
+            central_producer_siret=central_kitchen.siret,
+            yearly_meal_count=500,
+        )
+
+        date_in_teledeclaration_campaign = datetime(year=2024, month=1, day=15)
+
+        # Create diagnostic for satellite canteen
+        satellite_diagnostic = DiagnosticFactory(
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=year_data,
+            creation_date=date_in_teledeclaration_campaign,
+            canteen=satellite_canteen,
+            value_total_ht=500.00,
+            value_bio_ht=100.00,
+        )
+        with freeze_time(date_in_teledeclaration_campaign):
+            satellite_td = Teledeclaration.create_from_diagnostic(satellite_diagnostic, applicant=UserFactory.create())
+
+        # Create diagnostic for central kitchen
+        central_diagnostic = DiagnosticFactory(
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=year_data,
+            creation_date=date_in_teledeclaration_campaign,
+            canteen=central_kitchen,
+            value_total_ht=1000.00,
+            value_bio_ht=200.00,
+        )
+        with freeze_time(date_in_teledeclaration_campaign):
+            central_td = Teledeclaration.create_from_diagnostic(central_diagnostic, applicant=UserFactory.create())
+
+        # Assert both teledeclarations exist in the database
+        teledeclarations = Teledeclaration.objects.filter(year=year_data)
+        self.assertEqual(teledeclarations.count(), 2)
+        self.assertIn(satellite_td, teledeclarations)
+        self.assertIn(central_td, teledeclarations)
+
+        # Assert satellite teledeclaration is linked to the satellite canteen
+        self.assertEqual(satellite_td.canteen, satellite_canteen)
+
+        # Assert central kitchen teledeclaration is linked to the central kitchen
+        self.assertEqual(central_td.canteen, central_kitchen)
 
 
 class TeledeclarationAnalysisSerializerTest(APITestCase):
