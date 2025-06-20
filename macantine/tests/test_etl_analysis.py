@@ -80,6 +80,7 @@ class TestETLAnalysisCanteen(TestCase):
 
 
 class TestETLAnalysisTD(TestCase):
+
     def test_extraction_teledeclaration(self):
         """
         Only teledeclarations that occurred during teledeclaration campaigns should be extracted
@@ -445,6 +446,38 @@ class TestETLAnalysisTD(TestCase):
         self.assertEqual(len(etl.df[etl.df.canteen_id == 3]), 1)  # Central kitchen filtered out
         self.assertEqual(etl.df[etl.df.canteen_id == 3].iloc[0].value_total_ht, 500)  # Appro value split
         self.assertEqual(etl.df[etl.df.canteen_id == 30].iloc[0].value_total_ht, 500)  # Appro value split
+
+    def test_delete_duplicates_cc_csat_with_duplicates(self):
+
+        etl_instance = ETL_ANALYSIS_TELEDECLARATIONS()
+        etl_instance.df = pd.DataFrame(
+            {
+                "canteen_id": [1, 1, 2],
+                "year": [2023, 2023, 2023],
+                "production_type": [
+                    Canteen.ProductionType.CENTRAL,
+                    Canteen.ProductionType.ON_SITE_CENTRAL,
+                    Canteen.ProductionType.ON_SITE_CENTRAL,
+                ],
+                "other_column": [10, 20, 30],
+            }
+        )
+        etl_instance.delete_duplicates_cc_csat()
+        assert len(etl_instance.df) == 2
+        assert etl_instance.df.iloc[0]["production_type"] == Canteen.ProductionType.CENTRAL
+
+    def test_delete_duplicates_cc_csat_no_duplicates(self):
+        etl_instance = ETL_ANALYSIS_TELEDECLARATIONS()
+        etl_instance.df = pd.DataFrame(
+            {
+                "canteen_id": [1, 2],
+                "year": [2023, 2023],
+                "production_type": [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.ON_SITE_CENTRAL],
+                "other_column": [10, 20],
+            }
+        )
+        etl_instance.delete_duplicates_cc_csat()
+        assert len(etl_instance.df) == 2
 
 
 @pytest.mark.parametrize(
