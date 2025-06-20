@@ -6,6 +6,33 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.22.0](https://github.com/betagouv/ma-cantine/compare/v2025.21.1...v2025.22.0) (2025-06-20)
+
+
+### Nouveautés
+
+* **Statistiques des cantines:** création de la future page de statistiques en vue3 ([#5447](https://github.com/betagouv/ma-cantine/issues/5447)) ([b381a2e](https://github.com/betagouv/ma-cantine/commit/b381a2e5eda45026c95e3984151633cca1930402))
+
+
+### Améliorations
+
+* **Admin:** Pretty json pour le champ declared_data dans Teledeclaration 🔥 ([#5456](https://github.com/betagouv/ma-cantine/issues/5456)) ([7882cc2](https://github.com/betagouv/ma-cantine/commit/7882cc24c12009c41f2c25cdec3318bec02c0169))
+* **API Stats:** optimise le calcul du nombre de cantines par catégorie de secteur ([#5448](https://github.com/betagouv/ma-cantine/issues/5448)) ([b5216b4](https://github.com/betagouv/ma-cantine/commit/b5216b4ed20215878fc0434294e6813b9b22266d))
+* **ETL:** Convertir les valeurs numériques issues du champ declared_data en float ([#5455](https://github.com/betagouv/ma-cantine/issues/5455)) ([1d97c99](https://github.com/betagouv/ma-cantine/commit/1d97c993bf953d2e963533333d12a60232bddead))
+* **ETL:** Remplir les champs vides de diagnostic_type par la valeur SIMPLE ([#5452](https://github.com/betagouv/ma-cantine/issues/5452)) ([e570cac](https://github.com/betagouv/ma-cantine/commit/e570cac0052e402394902d3ea76fdef8361f58a4))
+
+
+### Corrections (bugs, typos...)
+
+* **ETL:** Corriger col genere_par_cuisine_centrale ([#5451](https://github.com/betagouv/ma-cantine/issues/5451)) ([89ed13c](https://github.com/betagouv/ma-cantine/commit/89ed13ce831ae26d5d313012ea953fe39932bc28))
+* **ETL:** Suppression doublons TD CC & CSAT ([#5459](https://github.com/betagouv/ma-cantine/issues/5459)) ([2242bf3](https://github.com/betagouv/ma-cantine/commit/2242bf364231a65954c3c5ea8cc9335de3a6c424))
+* **Statistiques des cantines:** corrige l'affichage du pictogramme dans la tuile téléchargement ([#5454](https://github.com/betagouv/ma-cantine/issues/5454)) ([0144d1a](https://github.com/betagouv/ma-cantine/commit/0144d1a9ebc49cc438ce437ffedce9477fecc551))
+
+
+### Technique
+
+* **API Stats:** réorganise un peu les tests ([#5446](https://github.com/betagouv/ma-cantine/issues/5446)) ([4c930ea](https://github.com/betagouv/ma-cantine/commit/4c930ea8477734725af0d96b4d7ba87d0a2770b6))
+
 ## [2025.21.1](https://github.com/betagouv/ma-cantine/compare/v2025.21.0...v2025.21.1) (2025-06-16)
 
 
