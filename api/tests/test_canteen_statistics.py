@@ -33,6 +33,7 @@ class TestCanteenStatsApi(APITestCase):
             department="01",
             region="84",
             sectors=[cls.sector_school],
+            management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.CENTRAL,
         )
         CanteenFactory.create(
@@ -42,6 +43,7 @@ class TestCanteenStatsApi(APITestCase):
             department="02",
             region="32",
             sectors=[cls.sector_enterprise],
+            management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
         )
         CanteenFactory.create(
@@ -49,6 +51,7 @@ class TestCanteenStatsApi(APITestCase):
             epci="2",
             pat_list=["2"],
             sectors=[cls.sector_enterprise, cls.sector_social, cls.sector_school],
+            management_type=Canteen.ManagementType.CONCEDED,
             production_type=Canteen.ProductionType.ON_SITE,
         )
         CanteenFactory.create(
@@ -56,9 +59,12 @@ class TestCanteenStatsApi(APITestCase):
             epci="2",
             pat_list=["2"],
             sectors=[cls.sector_social],
+            management_type=Canteen.ManagementType.CONCEDED,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
         )
-        CanteenFactory.create(city_insee_code="00000", epci=None, sectors=None, production_type=None)
+        CanteenFactory.create(
+            city_insee_code="00000", epci=None, sectors=None, management_type=None, production_type=None
+        )
 
     def test_query_count(self):
         self.assertEqual(Canteen.objects.count(), 5)
@@ -342,6 +348,18 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 2)
         self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 2)
         self.assertEqual(sector_categories["inconnu"], 0)  # because we filtered on sectors beforehand...
+
+    def test_filter_by_management_type(self):
+        response = self.client.get(
+            reverse("canteen_statistics"),
+            {
+                "year": year_data,
+                "management_type": [Canteen.ManagementType.DIRECT],
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 2)
 
     def test_filter_by_production_type(self):
         response = self.client.get(
