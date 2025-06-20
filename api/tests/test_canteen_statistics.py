@@ -35,6 +35,7 @@ class TestCanteenStatsApi(APITestCase):
             sectors=[cls.sector_school],
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.CENTRAL,
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         CanteenFactory.create(
             city_insee_code="67890",
@@ -45,6 +46,7 @@ class TestCanteenStatsApi(APITestCase):
             sectors=[cls.sector_enterprise],
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         CanteenFactory.create(
             city_insee_code="11223",
@@ -53,6 +55,7 @@ class TestCanteenStatsApi(APITestCase):
             sectors=[cls.sector_enterprise, cls.sector_social, cls.sector_school],
             management_type=Canteen.ManagementType.CONCEDED,
             production_type=Canteen.ProductionType.ON_SITE,
+            economic_model=Canteen.EconomicModel.PRIVATE,
         )
         CanteenFactory.create(
             city_insee_code="11224",
@@ -61,9 +64,15 @@ class TestCanteenStatsApi(APITestCase):
             sectors=[cls.sector_social],
             management_type=Canteen.ManagementType.CONCEDED,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            economic_model=Canteen.EconomicModel.PRIVATE,
         )
         CanteenFactory.create(
-            city_insee_code="00000", epci=None, sectors=None, management_type=None, production_type=None
+            city_insee_code="00000",
+            epci=None,
+            sectors=None,
+            management_type=None,
+            production_type=None,
+            economic_model=None,
         )
 
     def test_query_count(self):
@@ -367,6 +376,18 @@ class TestCanteenStatsApi(APITestCase):
             {
                 "year": year_data,
                 "production_type": [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING],
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 2)
+
+    def test_filter_by_economic_model(self):
+        response = self.client.get(
+            reverse("canteen_statistics"),
+            {
+                "year": year_data,
+                "economic_model": [Canteen.EconomicModel.PUBLIC],
             },
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
