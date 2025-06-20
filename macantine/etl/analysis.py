@@ -136,19 +136,14 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                 nbre_satellites = len(row["tmp_satellites"]) + (
                     1 if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING else 0
                 )
-
                 for satellite in row["tmp_satellites"]:
                     satellite_row = row.copy()
-                    satellite_row.update(
-                        {
-                            "canteen_id": satellite["id"],
-                            "name": satellite["name"],
-                            "production_type": Canteen.ProductionType.ON_SITE_CENTRAL,
-                            "siret": satellite["siret"],
-                            "satellite_canteens_count": 0,
-                            "yearly_meal_count": satellite["yearly_meal_count"],
-                        }
-                    )
+                    satellite_row["canteen_id"] = satellite["id"]
+                    satellite_row["name"] = satellite["name"]
+                    satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
+                    satellite_row["siret"] = satellite["siret"]
+                    satellite_row["satellite_canteens_count"] = 0
+                    satellite_row["yearly_meal_count"] = satellite["yearly_meal_count"]
                     satellite_row = self.split_appro_values(satellite_row, nbre_satellites)
                     satellite_rows.append(satellite_row)
 
