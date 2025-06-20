@@ -51,6 +51,12 @@ class TestCanteenStatsApi(APITestCase):
         CanteenFactory.create(city_insee_code="11224", epci="2", pat_list=["2"], sectors=[cls.sector_social])
         CanteenFactory.create(city_insee_code="00000", epci=None, sectors=None)
 
+    def test_query_count(self):
+        self.assertEqual(Canteen.objects.count(), 5)
+        with self.assertNumQueries(10):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     @override_settings(PUBLISH_BY_DEFAULT=False)
     def test_canteen_statistics(self):
         """
@@ -158,7 +164,7 @@ class TestCanteenStatsApi(APITestCase):
                 diag = DiagnosticFactory.create(canteen=canteen, **diagnostic_data)
                 Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
 
-            response = self.client.get(reverse("canteen_statistics"), {"region": "01", "year": year_data})
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "01"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -172,6 +178,7 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 3)
         self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 1)
         self.assertEqual(sector_categories[Sector.Categories.SOCIAL], 0)
+        self.assertEqual(sector_categories["inconnu"], 0)
 
         # can also call without location info
         with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
@@ -203,31 +210,32 @@ class TestCanteenStatsApi(APITestCase):
             publication_status=Canteen.PublicationStatus.DRAFT,
         )
 
-        response = self.client.get(reverse("canteen_statistics"), {"region": region, "year": year_data})
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": region})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
 
-    def test_canteen_stats_by_sectors(self):
-        response = self.client.get(
-            reverse("canteen_statistics"),
-            {"sectors": [self.sector_school.id, self.sector_enterprise.id], "year": year_data},
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    def test_published_canteen_count(self):
+        """
+        The summary published canteen count should be the sum of all canteens not with ARMEE
+        """
+        CanteenFactory.create(
+            line_ministry=Canteen.Ministries.AGRICULTURE,
+            publication_status=Canteen.PublicationStatus.DRAFT,
         )
+        CanteenFactory.create(line_ministry=None)
+        CanteenFactory.create(
+            line_ministry=Canteen.Ministries.ARMEE,
+            publication_status=Canteen.PublicationStatus.PUBLISHED,
+        )
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["canteenCount"], 3)
-        sector_categories = body["sectorCategories"]
-        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 2)
-        self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 2)
-        self.assertEqual(sector_categories["inconnu"], 1)
-
-    def test_canteen_stats_missing_data(self):
-        response = self.client.get(reverse("canteen_statistics"), {"region": "01"})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        response = self.client.get(reverse("canteen_statistics"), {"department": "01"})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(body["canteenCount"], 5 + 3)
 
     def test_stats_simple_diagnostic(self):
         """
@@ -259,7 +267,7 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["bioPercent"], 20)
         self.assertEqual(body["sustainablePercent"], 45)
 
-    def test_without_filters(self):
+    def test_filter_by_year_mandatory(self):
         # without year
         response = self.client.get(reverse("canteen_statistics"))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -313,26 +321,18 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)
 
-    @override_settings(PUBLISH_BY_DEFAULT=True)
-    def test_published_canteen_count(self):
-        """
-        The summary published canteen count should be the sum of all canteens not with ARMEE
-        """
-        CanteenFactory.create(
-            line_ministry=Canteen.Ministries.AGRICULTURE,
-            publication_status=Canteen.PublicationStatus.DRAFT,
+    def test_canteen_stats_by_sectors(self):
+        response = self.client.get(
+            reverse("canteen_statistics"),
+            {"year": year_data, "sectors": [self.sector_school.id, self.sector_enterprise.id]},
         )
-        CanteenFactory.create(line_ministry=None)
-        CanteenFactory.create(
-            line_ministry=Canteen.Ministries.ARMEE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
-        )
-
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         body = response.json()
-        self.assertEqual(body["canteenCount"], 5 + 3)
+        self.assertEqual(body["canteenCount"], 3)
+        sector_categories = body["sectorCategories"]
+        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 2)
+        self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 2)
+        self.assertEqual(sector_categories["inconnu"], 1)
 
 
 class TestCanteenLocationsApi(APITestCase):
