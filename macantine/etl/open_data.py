@@ -177,10 +177,6 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
         self.canteens_col_from_db = all_canteens_col
         for col_processed in [
             "active_on_ma_cantine",
-            "declaration_donnees_2021",
-            "declaration_donnees_2022",
-            "declaration_donnees_2023",
-            "declaration_donnees_2024_en_cours",
         ]:
             self.canteens_col_from_db.remove(col_processed)
 
@@ -214,18 +210,6 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
         self.transform_canteen_geo_data()
         end = time.time()
         logger.info(f"Time spent on geo data : {end - start}")
-
-        logger.info("Canteens : Fill campaign participations...")
-        start = time.time()
-        for year in [2021, 2022, 2023, 2024]:
-            campaign_participation = macantine.etl.utils.map_canteens_td(year)
-            if year == 2024:
-                col_name_campaign = f"declaration_donnees_{year}_en_cours"
-            else:
-                col_name_campaign = f"declaration_donnees_{year}"
-            self.df[col_name_campaign] = self.df["id"].apply(lambda x: x in campaign_participation)
-        end = time.time()
-        logger.info(f"Time spent on campaign participations : {end - start}")
 
 
 class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
