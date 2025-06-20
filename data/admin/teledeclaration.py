@@ -68,7 +68,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "value_egalim_others_ht_agg",
         "meal_price",
         "yearly_meal_count",
-        "pretty_declared_data",
+        "declared_data_pretty",
         "teledeclaration_mode",
         "change_reason",
     )
@@ -88,7 +88,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "value_egalim_others_ht_agg",
         "meal_price",
         "yearly_meal_count",
-        "pretty_declared_data",
+        "declared_data_pretty",
         "teledeclaration_mode",
     )
     search_fields = (
@@ -99,7 +99,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "applicant__email",
     )
 
-    def pretty_declared_data(self, obj):
+    def declared_data_pretty(self, obj):
         data = json.dumps(obj.declared_data, indent=2)
         return mark_safe(f"<pre>{data}</pre>")
 
