@@ -85,6 +85,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
             logger.warning("Dataset is empty. Skipping transformation")
             return
         self.flatten_central_kitchen_td()
+        self.delete_duplicates_cc_csat()
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
     def load_dataset(self, versionning=True):
@@ -100,6 +101,25 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
             )
         else:
             super().load_dataset()
+
+    def delete_duplicates_cc_csat(self):
+        """
+        Remove duplicate rows for central kitchens and their satellites based on unique identifiers.
+        Keep the row where production type is central kitchen if duplicates exist.
+        """
+        if "canteen_id" in self.df.columns and "production_type" in self.df.columns:
+            self.df = self.df.sort_values(
+                by=["production_type"],
+                key=lambda col: col.map(
+                    lambda x: x in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]
+                ),
+                ascending=False,
+            )
+            self.df = self.df.drop_duplicates(subset=["canteen_id", "year"], keep="first")
+        else:
+            logger.warning(
+                "Required columns 'canteen_id' or 'production_type' not found in dataframe. Skipping duplicate removal."
+            )
 
     def flatten_central_kitchen_td(self):
         """
