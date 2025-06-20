@@ -53,7 +53,7 @@ class TestCanteenStatsApi(APITestCase):
 
     def test_query_count(self):
         self.assertEqual(Canteen.objects.count(), 5)
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(3):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -321,7 +321,7 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)
 
-    def test_canteen_stats_by_sectors(self):
+    def test_filter_by_sectors(self):
         response = self.client.get(
             reverse("canteen_statistics"),
             {"year": year_data, "sectors": [self.sector_school.id, self.sector_enterprise.id]},
@@ -332,7 +332,7 @@ class TestCanteenStatsApi(APITestCase):
         sector_categories = body["sectorCategories"]
         self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 2)
         self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 2)
-        self.assertEqual(sector_categories["inconnu"], 1)
+        self.assertEqual(sector_categories["inconnu"], 0)  # because we filtered on sectors beforehand...
 
 
 class TestCanteenLocationsApi(APITestCase):

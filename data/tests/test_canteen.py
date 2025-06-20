@@ -329,7 +329,7 @@ class TestCanteenSiretOrSirenUniteLegaleQuerySetAndProperty(TestCase):
 class TestCanteenCompleteQuerySetAndProperty(TestCase):
     @classmethod
     def setUpTestData(cls):
-        sector = SectorFactory.create(name="Sector", category=Sector.Categories.AUTRES)
+        sector = SectorFactory.create(name="Sector", category=Sector.Categories.ADMINISTRATION)
         sector_line_ministry = SectorFactory(
             name="Sector ministry", category=Sector.Categories.AUTRES, has_line_ministry=True
         )
@@ -436,3 +436,76 @@ class TestCanteenCompleteQuerySetAndProperty(TestCase):
     def test_has_missing_data_queryset(self):
         self.assertEqual(Canteen.objects.count(), 10)
         self.assertEqual(Canteen.objects.has_missing_data().count(), 6)
+
+
+class TestCanteenAggregateQuerySet(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        sector = SectorFactory.create(name="Sector", category=Sector.Categories.ADMINISTRATION)
+        sector_line_ministry = SectorFactory(
+            name="Sector ministry", category=Sector.Categories.AUTRES, has_line_ministry=True
+        )
+        cls.canteen_central = CanteenFactory(
+            siret="75665621899905",
+            management_type=Canteen.ManagementType.DIRECT,
+            production_type=Canteen.ProductionType.CENTRAL,
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            satellite_canteens_count=1,
+            sectors=[sector],
+        )
+        cls.canteen_central_serving = CanteenFactory(
+            siret="75665621899905",
+            management_type=Canteen.ManagementType.DIRECT,
+            production_type=Canteen.ProductionType.CENTRAL_SERVING,
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            daily_meal_count=12,
+            satellite_canteens_count=1,
+            sectors=[sector],
+        )
+        cls.canteen_on_site = CanteenFactory(
+            siret=None,
+            siren_unite_legale="967669103",
+            management_type=Canteen.ManagementType.DIRECT,
+            production_type=Canteen.ProductionType.ON_SITE,
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            daily_meal_count=12,
+            sectors=[sector],
+        )
+        cls.canteen_on_site_central = CanteenFactory(
+            siret="96766910375238",
+            management_type=Canteen.ManagementType.CONCEDED,
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            economic_model=Canteen.EconomicModel.PRIVATE,
+            daily_meal_count=12,
+            central_producer_siret=cls.canteen_central.siret,
+            sectors=[sector_line_ministry],
+        )
+
+    def test_group_and_count_by_field(self):
+        self.assertEqual(Canteen.objects.count(), 4)
+        # group by production_type
+        result = Canteen.objects.group_and_count_by_field("management_type")
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]["management_type"], Canteen.ManagementType.DIRECT)
+        self.assertEqual(result[0]["count"], 3)
+        self.assertEqual(result[1]["management_type"], Canteen.ManagementType.CONCEDED)
+        self.assertEqual(result[1]["count"], 1)
+        # group by production_type
+        result = Canteen.objects.group_and_count_by_field("production_type")
+        self.assertEqual(len(result), 4)
+        self.assertEqual(result[0]["production_type"], Canteen.ProductionType.CENTRAL)
+        self.assertEqual(result[0]["count"], 1)
+        # group by economic_model
+        result = Canteen.objects.group_and_count_by_field("economic_model")
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]["economic_model"], Canteen.EconomicModel.PUBLIC)
+        self.assertEqual(result[0]["count"], 3)
+        self.assertEqual(result[1]["economic_model"], Canteen.EconomicModel.PRIVATE)
+        self.assertEqual(result[1]["count"], 1)
+        # group by sectors__category
+        result = Canteen.objects.group_and_count_by_field("sectors__category")
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]["sectors__category"], Sector.Categories.ADMINISTRATION)
+        self.assertEqual(result[0]["count"], 3)
+        self.assertEqual(result[1]["sectors__category"], Sector.Categories.AUTRES)
+        self.assertEqual(result[1]["count"], 1)
