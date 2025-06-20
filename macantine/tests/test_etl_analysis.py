@@ -431,7 +431,7 @@ class TestETLAnalysisTD(TestCase):
                         "id": 31,
                         "name": "SATELLITE 2",
                         "siret": "31930055500456",
-                        "yearly_meal_count": 80,
+                        "yearly_meal_count": None,
                     },
                 ],
             },
@@ -446,6 +446,7 @@ class TestETLAnalysisTD(TestCase):
         self.assertEqual(len(etl.df[etl.df.canteen_id == 3]), 1)  # Central kitchen filtered out
         self.assertEqual(etl.df[etl.df.canteen_id == 3].iloc[0].value_total_ht, 500)  # Appro value split
         self.assertEqual(etl.df[etl.df.canteen_id == 30].iloc[0].value_total_ht, 500)  # Appro value split
+        self.assertIs(pd.isna(etl.df[etl.df.canteen_id == 31].iloc[0].yearly_meal_count), True)
 
     def test_delete_duplicates_cc_csat_with_duplicates(self):
 
