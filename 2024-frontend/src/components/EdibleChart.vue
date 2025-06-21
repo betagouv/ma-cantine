@@ -76,6 +76,7 @@ const displayOption = ref("chart")
         :x="measurementChartValues.x"
         :y="measurementChartValues.y"
         color='["green-bourgeon", "orange-terre-battue"]'
+        unitTooltip="kg"
       />
     </div>
     <div v-else-if="displayOption === 'text'">
