@@ -339,13 +339,13 @@ class Canteen(SoftDeletionModel):
         ON_SITE = "site", "Cantine qui produit les repas sur place"
         ON_SITE_CENTRAL = "site_cooked_elsewhere", "Cantine qui sert des repas preparés par une cuisine centrale"
 
-    class PublicationStatus(models.TextChoices):
-        DRAFT = "draft", "🔒 Non publié"
-        PUBLISHED = "published", "✅ Publié"
-
     class EconomicModel(models.TextChoices):
         PUBLIC = "public", "Public"
         PRIVATE = "private", "Privé"
+
+    class PublicationStatus(models.TextChoices):
+        DRAFT = "draft", "🔒 Non publié"
+        PUBLISHED = "published", "✅ Publié"
 
     class Actions(models.TextChoices):
         ADD_SATELLITES = "10_add_satellites", "Ajouter des satellites"
@@ -463,9 +463,6 @@ class Canteen(SoftDeletionModel):
         blank=True,
         verbose_name="mode de production",
     )
-
-    logo = models.ImageField(null=True, blank=True, verbose_name="Logo")
-
     economic_model = models.CharField(
         max_length=50,
         choices=EconomicModel.choices,
@@ -473,6 +470,8 @@ class Canteen(SoftDeletionModel):
         blank=True,
         verbose_name="Secteur économique",
     )
+
+    logo = models.ImageField(null=True, blank=True, verbose_name="Logo")
 
     # Publication things
     publication_status = models.CharField(
