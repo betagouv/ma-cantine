@@ -3,6 +3,7 @@ from rest_framework import serializers
 from api.serializers.utils import float_or_none
 from data.department_choices import Department
 from data.models import Diagnostic, Teledeclaration
+from data.models.sector import Sector
 from data.region_choices import Region
 from macantine.etl import utils
 
@@ -222,7 +223,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             if len(category) > 1:
                 return "Catégories multiples"
             elif len(category) == 1:
-                return category[0]["category"]
+                return Sector.Categories(category[0]["category"]).label
             else:
                 return None
 
