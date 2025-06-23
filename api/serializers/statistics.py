@@ -52,6 +52,17 @@ def calculate_statistics_canteens(canteens, data):
     data["production_types"]["inconnu"] = next(
         (item["count"] for item in canteen_count_per_production_type if item["production_type"] is None), 0
     )
+    # stats per economic_model (group by)
+    data["economic_models"] = {}
+    canteen_count_per_economic_model = canteens.group_and_count_by_field("economic_model")
+    for economic_model in Canteen.EconomicModel:
+        data["economic_models"][economic_model] = next(
+            (item["count"] for item in canteen_count_per_economic_model if item["economic_model"] == economic_model),
+            0,
+        )
+    data["economic_models"]["inconnu"] = next(
+        (item["count"] for item in canteen_count_per_economic_model if item["economic_model"] is None), 0
+    )
     return data
 
 
