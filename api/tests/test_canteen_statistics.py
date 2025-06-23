@@ -33,6 +33,7 @@ class TestCanteenStatsApi(APITestCase):
             department="01",
             region="84",
             sectors=[cls.sector_school],
+            production_type=Canteen.ProductionType.CENTRAL,
         )
         CanteenFactory.create(
             city_insee_code="67890",
@@ -41,15 +42,23 @@ class TestCanteenStatsApi(APITestCase):
             department="02",
             region="32",
             sectors=[cls.sector_enterprise],
+            production_type=Canteen.ProductionType.CENTRAL_SERVING,
         )
         CanteenFactory.create(
             city_insee_code="11223",
             epci="2",
             pat_list=["2"],
             sectors=[cls.sector_enterprise, cls.sector_social, cls.sector_school],
+            production_type=Canteen.ProductionType.ON_SITE,
         )
-        CanteenFactory.create(city_insee_code="11224", epci="2", pat_list=["2"], sectors=[cls.sector_social])
-        CanteenFactory.create(city_insee_code="00000", epci=None, sectors=None)
+        CanteenFactory.create(
+            city_insee_code="11224",
+            epci="2",
+            pat_list=["2"],
+            sectors=[cls.sector_social],
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        )
+        CanteenFactory.create(city_insee_code="00000", epci=None, sectors=None, production_type=None)
 
     def test_query_count(self):
         self.assertEqual(Canteen.objects.count(), 5)
@@ -333,6 +342,18 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 2)
         self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 2)
         self.assertEqual(sector_categories["inconnu"], 0)  # because we filtered on sectors beforehand...
+
+    def test_filter_by_production_type(self):
+        response = self.client.get(
+            reverse("canteen_statistics"),
+            {
+                "year": year_data,
+                "production_type": [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING],
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 2)
 
 
 class TestCanteenLocationsApi(APITestCase):
