@@ -115,6 +115,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     sector_categories = serializers.DictField()
     management_types = serializers.DictField()
     production_types = serializers.DictField()
+    economic_models = serializers.DictField()
 
     @staticmethod
     def calculate_statistics(canteens, teledeclarations):
