@@ -103,6 +103,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     approPercent = serializers.IntegerField()
     sector_categories = serializers.DictField()
     management_types = serializers.DictField()
+    production_types = serializers.DictField()
 
     @staticmethod
     def calculate_statistics(canteens, teledeclarations):
