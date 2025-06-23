@@ -73,6 +73,7 @@ class TestCanteenStatsApi(APITestCase):
             management_type=None,
             production_type=None,
             economic_model=None,
+            line_ministry=Canteen.Ministries.ARMEE,
         )
 
     def test_query_count(self):
@@ -80,6 +81,8 @@ class TestCanteenStatsApi(APITestCase):
         with self.assertNumQueries(3):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            self.assertEqual(body["canteenCount"], 4)  # canteen_army filtered out
 
     @override_settings(PUBLISH_BY_DEFAULT=False)
     def test_canteen_statistics(self):
