@@ -375,9 +375,9 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["canteenCount"], 2)
         production_types = body["productionTypes"]
         self.assertEqual(production_types[Canteen.ProductionType.CENTRAL], 1)
-        self.assertEqual(production_types[Canteen.ProductionType.CENTRAL_SERVING], 1)
+        self.assertEqual(production_types["centralServing"], 1)  # Canteen.ProductionType.CENTRAL_SERVING
         self.assertEqual(production_types[Canteen.ProductionType.ON_SITE], 0)
-        self.assertEqual(production_types[Canteen.ProductionType.ON_SITE_CENTRAL], 0)
+        self.assertEqual(production_types["siteCookedElsewhere"], 0)  # Canteen.ProductionType.ON_SITE_CENTRAL
         self.assertEqual(production_types["inconnu"], 0)
 
     def test_filter_by_economic_model(self):
