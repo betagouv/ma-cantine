@@ -10,27 +10,18 @@ logger = logging.getLogger(__name__)
 
 
 def calculate_statistics_canteens(canteens, data):
-    if canteens:
-        nbre_canteens = canteens.count()
-    else:
-        nbre_canteens = 0
-    data["canteen_count"] = nbre_canteens
-    if canteens:
-        # stats per sector categories (group by)
-        data["sector_categories"] = {}
-        canteen_count_per_sector_categories = canteens.group_and_count_by_field("sectors__category")
-        for category in Sector.Categories:
-            data["sector_categories"][category] = next(
-                (
-                    item["count"]
-                    for item in canteen_count_per_sector_categories
-                    if item["sectors__category"] == category
-                ),
-                0,
-            )
-            data["sector_categories"]["inconnu"] = next(
-                (item["count"] for item in canteen_count_per_sector_categories if item["sectors__category"] is None), 0
-            )
+    data["canteen_count"] = canteens.count()
+    # stats per sector categories (group by)
+    data["sector_categories"] = {}
+    canteen_count_per_sector_categories = canteens.group_and_count_by_field("sectors__category")
+    for category in Sector.Categories:
+        data["sector_categories"][category] = next(
+            (item["count"] for item in canteen_count_per_sector_categories if item["sectors__category"] == category),
+            0,
+        )
+        data["sector_categories"]["inconnu"] = next(
+            (item["count"] for item in canteen_count_per_sector_categories if item["sectors__category"] is None), 0
+        )
     return data
 
 
