@@ -166,3 +166,14 @@ COMPLETE_APPRO_FIELDS = (
 
 def float_or_none(value):
     return float(value) if value else None
+
+
+def match_sector_values(value):
+    return (
+        value.replace("etablissements", "établissements")
+        .replace("médicaux", "médico")
+        .replace("Lycée", "lycée")
+        .replace("Etat", "État")
+        .replace("/", " / ")
+        .replace("/ ", " / ")
+    )

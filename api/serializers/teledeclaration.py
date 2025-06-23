@@ -223,7 +223,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             if len(category) > 1:
                 return "Catégories multiples"
             elif len(category) == 1:
-                return Sector.Categories(category[0]["category"]).label
+                return utils.match_sector_values(Sector.Categories(category[0]["category"]).label)
             else:
                 return None
 
