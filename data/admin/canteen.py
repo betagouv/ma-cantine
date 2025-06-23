@@ -122,6 +122,8 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "siret_or_siren_unite_legale_display",
         "city",
         "télédéclarée",
+        "central_producer_siret",
+        "production_type",
         "creation_date",
         "modification_date",
         "source_des_données",
@@ -143,11 +145,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "department",
         "import_source",
     )
-    search_fields = (
-        "name",
-        "siret",
-        "siren_unite_legale",
-    )
+    search_fields = ("name", "siret", "siren_unite_legale", "central_producer_siret")
 
     def save_model(self, request, obj, form, change):
         if not change:
