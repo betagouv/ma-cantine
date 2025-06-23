@@ -174,10 +174,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     def satellites_display(self, obj):
         satellites_list = ""
         for satellite in obj.satellites:
-            satellites_list = (
-                satellites_list
-                + f"<a href='/admin/data/canteen/{satellite.id}/change'>{satellite.name} - {satellite.siret_or_siren_unite_legale}</a><br/>"
-            )
+            satellites_list += f"<a href='/admin/data/canteen/{satellite.id}/change'>{satellite.name} - {satellite.siret_or_siren_unite_legale}</a><br/>"
         return format_html(satellites_list)
 
     def source_des_données(self, obj):
