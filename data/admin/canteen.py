@@ -175,12 +175,13 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
 class CanteenInline(admin.TabularInline):
     model = Canteen.managers.through
-    readonly_fields = ("canteen", "active")
+    readonly_fields = ("active",)
+    fields = ("canteen",)
     extra = 0
     verbose_name_plural = "Cantines gérées"
 
     def has_add_permission(self, request, obj):
-        return False
+        return True
 
     @admin.display(description="Est active")
     def active(self, obj):
