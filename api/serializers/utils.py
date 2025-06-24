@@ -169,11 +169,15 @@ def float_or_none(value):
 
 
 def match_sector_values(value):
+    "In order to match historical and actual sector values"
     return (
         value.replace("etablissements", "établissements")
-        .replace("médicaux", "médico")
+        .replace("médicaux ", "médico-")
         .replace("Lycée", "lycée")
         .replace("Etat", "État")
+        .replace("établissements spécialisés", "Etablissements spécialisés")
         .replace("/", " / ")
         .replace("/ ", " / ")
+        .replace("   ", " ")
+        .replace("  ", " ")
     )

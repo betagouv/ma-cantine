@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.serializers.utils import float_or_none
+from api.serializers.utils import float_or_none, match_sector_values
 from data.department_choices import Department
 from data.models import Diagnostic, Teledeclaration
 from data.models.sector import Sector
@@ -213,7 +213,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             if len(sectors) > 1:
                 return "Secteurs multiples"
             elif len(sectors) == 1:
-                return sectors[0]["name"]
+                return match_sector_values(sectors[0]["name"])
             else:
                 return None
 
@@ -223,7 +223,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             if len(category) > 1:
                 return "Catégories multiples"
             elif len(category) == 1:
-                return utils.match_sector_values(Sector.Categories(category[0]["category"]).label)
+                return Sector.Categories(category[0]["category"]).label
             else:
                 return None
 
