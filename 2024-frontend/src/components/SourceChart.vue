@@ -21,12 +21,17 @@ const measurementPercentageValues = computed(() => {
 
 const measurementGraphValues = computed(() => {
   return {
-    y: JSON.stringify([
+    y: JSON.stringify([[
       props.measurement.preparationTotalMass,
       props.measurement.unservedTotalMass,
       props.measurement.leftoversTotalMass,
-    ]),
-    x: JSON.stringify([
+    ]]),
+    x: JSON.stringify([[
+      Constants.WasteMeasurement.preparation.title,
+      Constants.WasteMeasurement.unserved.title,
+      Constants.WasteMeasurement.leftovers.title,
+    ]]),
+    name: JSON.stringify([
       Constants.WasteMeasurement.preparation.title,
       Constants.WasteMeasurement.unserved.title,
       Constants.WasteMeasurement.leftovers.title,
@@ -64,10 +69,10 @@ const displayOption = ref("chart")
     </div>
     <div v-if="displayOption === 'chart'" class="fr-py-2w fr-pr-8w">
       <pie-chart
-        :name="measurementGraphValues.x"
+        :name="measurementGraphValues.name"
         :x="measurementGraphValues.x"
         :y="measurementGraphValues.y"
-        color='["blue-ecume", "yellow-moutarde", "pink-tuile"]'
+        unit-tooltip="%"
       ></pie-chart>
     </div>
     <div v-else-if="displayOption === 'text'">
