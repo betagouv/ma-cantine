@@ -1,6 +1,6 @@
 import logging
 
-from django.db.models import Sum
+from django.db.models import Count, Sum
 from rest_framework import serializers
 
 from common.utils.badges import badges_for_queryset
@@ -10,8 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 def calculate_statistics_canteens(canteens, data):
+    # count
     data["canteen_count"] = canteens.count()
-    # stats: group by & count some fields
+    # group by
     GROUP_BY_FIELDS = [
         ("sectors__category", Sector.Categories, "sector_categories"),
         ("management_type", Canteen.ManagementType, "management_types"),
@@ -33,42 +34,39 @@ def calculate_statistics_canteens(canteens, data):
 
 
 def calculate_statistics_teledeclarations(teledeclarations, data):
-    if teledeclarations:
-        nbre_teledeclarations = teledeclarations.count()
-    else:
-        nbre_teledeclarations = 0
-    data["teledeclarations_count"] = nbre_teledeclarations
-
-    if nbre_teledeclarations:
-        agg = teledeclarations.aggregate(
-            Sum("value_bio_ht_agg", default=0),
-            Sum("value_total_ht", default=0),
-            Sum("value_sustainable_ht_agg", default=0),
-            Sum("value_externality_performance_ht_agg", default=0),
-            Sum("value_egalim_others_ht_agg", default=0),
-        )
-
-        if agg["value_total_ht__sum"] > 0:
-            data["bio_percent"] = round(100 * agg["value_bio_ht_agg__sum"] / agg["value_total_ht__sum"])
-            data["sustainable_percent"] = round(
-                100
-                * (
-                    agg["value_sustainable_ht_agg__sum"]
-                    + agg["value_externality_performance_ht_agg__sum"]
-                    + agg["value_egalim_others_ht_agg__sum"]
-                )
-                / agg["value_total_ht__sum"]
+    # aggregate
+    agg = teledeclarations.aggregate(
+        Count("id"),
+        Sum("value_bio_ht_agg", default=0),
+        Sum("value_total_ht", default=0),
+        Sum("value_sustainable_ht_agg", default=0),
+        Sum("value_externality_performance_ht_agg", default=0),
+        Sum("value_egalim_others_ht_agg", default=0),
+    )
+    # count
+    data["teledeclarations_count"] = agg["id__count"]
+    # percent of bio, sustainable & appro
+    if agg["value_total_ht__sum"] > 0:
+        data["bio_percent"] = round(100 * agg["value_bio_ht_agg__sum"] / agg["value_total_ht__sum"])
+        data["sustainable_percent"] = round(
+            100
+            * (
+                agg["value_sustainable_ht_agg__sum"]
+                + agg["value_externality_performance_ht_agg__sum"]
+                + agg["value_egalim_others_ht_agg__sum"]
             )
-        else:
-            data["bio_percent"] = 0
-            data["sustainable_percent"] = 0
+            / agg["value_total_ht__sum"]
+        )
     else:
         data["bio_percent"] = 0
         data["sustainable_percent"] = 0
-
     badge_querysets = badges_for_queryset(teledeclarations)
-    total_diag = data["teledeclarations_count"]
-    data["approPercent"] = int(badge_querysets["appro"].count() / total_diag * 100) if total_diag else 0
+    data["approPercent"] = (
+        int(badge_querysets["appro"].count() / data["teledeclarations_count"] * 100)
+        if data["teledeclarations_count"]
+        else 0
+    )
+    # return
     return data
 
 

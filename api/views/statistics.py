@@ -32,7 +32,9 @@ class CanteenStatisticsView(APIView):
                 name="epci", type=str, many=True, description="Filter by EPCI(s), using their Insee code"
             ),
             OpenApiParameter(name="pat", type=str, many=True, description="Filter by PAT(s), using their id"),
-            OpenApiParameter(name="city", type=str, many=True, description="Filter by city(ies), using their Insee code"),
+            OpenApiParameter(
+                name="city", type=str, many=True, description="Filter by city(ies), using their Insee code"
+            ),
             OpenApiParameter(
                 name="sectors", type=int, many=True, description="Filter by sector(s), using their internal id"
             ),
@@ -79,7 +81,16 @@ class CanteenStatisticsView(APIView):
             regions, departments, epcis, pats, cities, sectors, management_types, production_types, economic_models
         )
         teledeclarations = self._filter_teledeclarations(
-            year, regions, departments, epcis, pats, cities, sectors, management_types, production_types, economic_models
+            year,
+            regions,
+            departments,
+            epcis,
+            pats,
+            cities,
+            sectors,
+            management_types,
+            production_types,
+            economic_models,
         )
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
@@ -112,26 +123,35 @@ class CanteenStatisticsView(APIView):
         return canteens.distinct()
 
     def _filter_teledeclarations(
-        self, year, regions, departments, epcis, pats, cities, sectors, management_types, production_types, economic_models
+        self,
+        year,
+        regions,
+        departments,
+        epcis,
+        pats,
+        cities,
+        sectors,
+        management_types,
+        production_types,
+        economic_models,
     ):
         teledeclarations = Teledeclaration.objects.publicly_visible().valid_td_by_year(year)
-        if teledeclarations:
-            if cities:
-                teledeclarations = teledeclarations.filter(canteen__city_insee_code__in=cities)
-            if pats:
-                teledeclarations = teledeclarations.filter(canteen__pat_list__overlap=pats)
-            if epcis:
-                teledeclarations = teledeclarations.filter(canteen__epci__in=epcis)
-            if departments:
-                teledeclarations = teledeclarations.filter(canteen__department__in=departments)
-            if regions:
-                teledeclarations = teledeclarations.filter(canteen__region__in=regions)
-            if sectors:
-                teledeclarations = teledeclarations.filter(canteen__sectors__in=sectors)
-            if management_types:
-                teledeclarations = teledeclarations.filter(canteen__management_type__in=management_types)
-            if production_types:
-                teledeclarations = teledeclarations.filter(canteen__production_type__in=production_types)
-            if economic_models:
-                teledeclarations = teledeclarations.filter(canteen__economic_model__in=economic_models)
-            return teledeclarations.distinct()
+        if cities:
+            teledeclarations = teledeclarations.filter(canteen__city_insee_code__in=cities)
+        if pats:
+            teledeclarations = teledeclarations.filter(canteen__pat_list__overlap=pats)
+        if epcis:
+            teledeclarations = teledeclarations.filter(canteen__epci__in=epcis)
+        if departments:
+            teledeclarations = teledeclarations.filter(canteen__department__in=departments)
+        if regions:
+            teledeclarations = teledeclarations.filter(canteen__region__in=regions)
+        if sectors:
+            teledeclarations = teledeclarations.filter(canteen__sectors__in=sectors)
+        if management_types:
+            teledeclarations = teledeclarations.filter(canteen__management_type__in=management_types)
+        if production_types:
+            teledeclarations = teledeclarations.filter(canteen__production_type__in=production_types)
+        if economic_models:
+            teledeclarations = teledeclarations.filter(canteen__economic_model__in=economic_models)
+        return teledeclarations.distinct()
