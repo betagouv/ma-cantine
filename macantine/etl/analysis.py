@@ -143,12 +143,11 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                     satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
                     satellite_row["siret"] = satellite["siret"]
                     satellite_row["satellite_canteens_count"] = 0
-                    satellite_row["yearly_meal_count"] = satellite["yearly_meal_count"]
-                    satellite_row = self.split_appro_values(satellite_row, nbre_satellites)
+                    satellite_row = self.split_cc_values(satellite_row, nbre_satellites)
                     satellite_rows.append(satellite_row)
 
                 if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING:
-                    self.df.loc[row["id"]] = self.split_appro_values(row, nbre_satellites)
+                    self.df.loc[row["id"]] = self.split_cc_values(row, nbre_satellites)
 
         # Append all new rows at once
         if satellite_rows:
@@ -157,16 +156,16 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         # Delete lines of central kitchen
         self.df = self.df[self.df.production_type != Canteen.ProductionType.CENTRAL]
 
-    def split_appro_values(self, row, nbre_satellites):
+    def split_cc_values(self, row, nbre_satellites):
         """
         Divide numerical values of a central kitchen to split into satellites
         """
         appro_columns = [col_appro for col_appro in self.columns if "value" in col_appro]
-        for appro_column in appro_columns:
-            if appro_column in row and row[appro_column] and nbre_satellites:
-                row[appro_column] = row[appro_column] / nbre_satellites
+        for col in appro_columns + ["yearly_meal_count"]:
+            if col in row and row[col] and nbre_satellites:
+                row[col] = row[col] / nbre_satellites
             else:
-                row[appro_column] = None
+                row[col] = None
         return row
 
 

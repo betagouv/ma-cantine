@@ -397,7 +397,7 @@ class TestETLAnalysisTD(TestCase):
             "name": {2: "Cantine A", 3: "Cantine B", 4: "Cantine C"},
             "siret": {2: "siretA", 3: "siretB", 4: "siretC"},
             "daily_meal_count": {2: 38.0, 3: None, 4: None},
-            "yearly_meal_count": {2: 10, 3: 100, 4: 200},
+            "yearly_meal_count": {2: 10, 3: 100, 4: 300},
             "production_type": {2: "site", 3: "central", 4: "central_serving"},
             "cuisine_centrale": {2: "B) non", 3: "A) oui", 4: "A) oui"},
             "central_producer_siret": {2: None, 3: None, 4: None},
@@ -446,7 +446,7 @@ class TestETLAnalysisTD(TestCase):
         self.assertEqual(len(etl.df[etl.df.canteen_id == 3]), 1)  # Central kitchen filtered out
         self.assertEqual(etl.df[etl.df.canteen_id == 3].iloc[0].value_total_ht, 500)  # Appro value split
         self.assertEqual(etl.df[etl.df.canteen_id == 30].iloc[0].value_total_ht, 500)  # Appro value split
-        self.assertIs(pd.isna(etl.df[etl.df.canteen_id == 31].iloc[0].yearly_meal_count), True)
+        self.assertEqual(etl.df[etl.df.canteen_id == 31].iloc[0].yearly_meal_count, 300 / 3)
 
     def test_delete_duplicates_cc_csat_with_duplicates(self):
 
