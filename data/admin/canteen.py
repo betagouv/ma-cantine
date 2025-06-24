@@ -151,6 +151,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "siren_unite_legale__istartswith",
         "central_producer_siret__istartswith",
     )
+    search_help_text = 'La recherche est faite sur les champs : siret + siren + siret de la cuisine centrale si la valeur "commence par la recherche" ; sur le nom si la valeur "contient la recherche"'
 
     def save_model(self, request, obj, form, change):
         if not change:
