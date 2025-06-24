@@ -11,58 +11,24 @@ logger = logging.getLogger(__name__)
 
 def calculate_statistics_canteens(canteens, data):
     data["canteen_count"] = canteens.count()
-    # stats per sector categories (group by)
-    data["sector_categories"] = {}
-    canteen_count_per_sector_categories = canteens.group_and_count_by_field("sectors__category")
-    for category in Sector.Categories:
-        data["sector_categories"][category] = next(
-            (item["count"] for item in canteen_count_per_sector_categories if item["sectors__category"] == category),
-            0,
+    # stats: group by & count some fields
+    GROUP_BY_FIELDS = [
+        ("sectors__category", Sector.Categories, "sector_categories"),
+        ("management_type", Canteen.ManagementType, "management_types"),
+        ("production_type", Canteen.ProductionType, "production_types"),
+        ("economic_model", Canteen.EconomicModel, "economic_models"),
+    ]
+    for field_name_input, field_enum, field_name_output in GROUP_BY_FIELDS:
+        data[field_name_output] = {}
+        canteen_count_per_field = canteens.group_and_count_by_field(field_name_input)
+        for field_enum_value in field_enum:
+            data[field_name_output][field_enum_value] = next(
+                (item["count"] for item in canteen_count_per_field if item[field_name_input] == field_enum_value), 0
+            )
+        data[field_name_output]["inconnu"] = next(
+            (item["count"] for item in canteen_count_per_field if item[field_name_input] in ["", None]), 0
         )
-    data["sector_categories"]["inconnu"] = next(
-        (item["count"] for item in canteen_count_per_sector_categories if item["sectors__category"] in ["", None]), 0
-    )
-    # stats per management_type (group by)
-    data["management_types"] = {}
-    canteen_count_per_management_type = canteens.group_and_count_by_field("management_type")
-    for management_type in Canteen.ManagementType:
-        data["management_types"][management_type] = next(
-            (
-                item["count"]
-                for item in canteen_count_per_management_type
-                if item["management_type"] == management_type
-            ),
-            0,
-        )
-    data["management_types"]["inconnu"] = next(
-        (item["count"] for item in canteen_count_per_management_type if item["management_type"] in ["", None]), 0
-    )
-    # stats per production_type (group by)
-    data["production_types"] = {}
-    canteen_count_per_production_type = canteens.group_and_count_by_field("production_type")
-    for production_type in Canteen.ProductionType:
-        data["production_types"][production_type] = next(
-            (
-                item["count"]
-                for item in canteen_count_per_production_type
-                if item["production_type"] == production_type
-            ),
-            0,
-        )
-    data["production_types"]["inconnu"] = next(
-        (item["count"] for item in canteen_count_per_production_type if item["production_type"] in ["", None]), 0
-    )
-    # stats per economic_model (group by)
-    data["economic_models"] = {}
-    canteen_count_per_economic_model = canteens.group_and_count_by_field("economic_model")
-    for economic_model in Canteen.EconomicModel:
-        data["economic_models"][economic_model] = next(
-            (item["count"] for item in canteen_count_per_economic_model if item["economic_model"] == economic_model),
-            0,
-        )
-    data["economic_models"]["inconnu"] = next(
-        (item["count"] for item in canteen_count_per_economic_model if item["economic_model"] in ["", None]), 0
-    )
+    # return
     return data
 
 
