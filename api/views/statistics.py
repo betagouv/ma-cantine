@@ -88,7 +88,7 @@ class CanteenStatisticsView(APIView):
     def _filter_canteens(
         self, regions, departments, epcis, pats, sectors, management_types, production_types, economic_models
     ):
-        canteens = Canteen.objects
+        canteens = Canteen.objects.publicly_visible()
         if epcis:
             canteens = canteens.filter(epci__in=epcis)
         if pats:
@@ -110,7 +110,7 @@ class CanteenStatisticsView(APIView):
     def _filter_teledeclarations(
         self, year, regions, departments, epcis, pats, sectors, management_types, production_types, economic_models
     ):
-        teledeclarations = Teledeclaration.objects.valid_td_by_year(year)
+        teledeclarations = Teledeclaration.objects.publicly_visible().valid_td_by_year(year)
         if teledeclarations:
             if epcis:
                 teledeclarations = teledeclarations.filter(canteen__epci__in=epcis)

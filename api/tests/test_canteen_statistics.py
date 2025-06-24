@@ -20,6 +20,7 @@ mocked_campaign_dates = {
 }
 
 
+@override_settings(PUBLISH_BY_DEFAULT=True)
 class TestCanteenStatsApi(APITestCase):
     @classmethod
     def setUpTestData(cls):
@@ -73,6 +74,7 @@ class TestCanteenStatsApi(APITestCase):
             management_type=None,
             production_type=None,
             economic_model=None,
+            line_ministry=Canteen.Ministries.ARMEE,
         )
 
     def test_query_count(self):
@@ -183,7 +185,12 @@ class TestCanteenStatsApi(APITestCase):
             # Create the canteens and diagnostics
             for i, case in enumerate(canteen_cases):
                 canteen_sectors = [sector_objects[sector] for sector in case["canteen"].pop("sectors")]
-                canteen = CanteenFactory.create(**case["canteen"], sectors=canteen_sectors, siret=str(i))
+                canteen = CanteenFactory.create(
+                    **case["canteen"],
+                    sectors=canteen_sectors,
+                    siret=str(i),
+                    publication_status=Canteen.PublicationStatus.PUBLISHED
+                )
                 diagnostic_data = case["diagnostic"]
                 diag = DiagnosticFactory.create(canteen=canteen, **diagnostic_data)
                 Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
@@ -217,50 +224,6 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["teledeclarationsCount"], 0)
 
-    @override_settings(PUBLISH_BY_DEFAULT=True)
-    def test_publication_filter_new_rules(self):
-        """
-        When canteens are published by default, test that the publication count is filtered on ministry
-        """
-        region = "01"
-
-        CanteenFactory.create(
-            region=region,
-            publication_status=Canteen.PublicationStatus.DRAFT,
-        )
-        CanteenFactory.create(
-            region=region,
-            line_ministry=Canteen.Ministries.ARMEE,
-            publication_status=Canteen.PublicationStatus.DRAFT,
-        )
-
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": region})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        body = response.json()
-        self.assertEqual(body["canteenCount"], 2)
-
-    @override_settings(PUBLISH_BY_DEFAULT=True)
-    def test_published_canteen_count(self):
-        """
-        The summary published canteen count should be the sum of all canteens not with ARMEE
-        """
-        CanteenFactory.create(
-            line_ministry=Canteen.Ministries.AGRICULTURE,
-            publication_status=Canteen.PublicationStatus.DRAFT,
-        )
-        CanteenFactory.create(line_ministry=None)
-        CanteenFactory.create(
-            line_ministry=Canteen.Ministries.ARMEE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
-        )
-
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        body = response.json()
-        self.assertEqual(body["canteenCount"], 5 + 3)
-
     def test_stats_simple_diagnostic(self):
         """
         The endpoint must take into consideration the simplified diagnostic
@@ -291,6 +254,15 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["bioPercent"], 20)
         self.assertEqual(body["sustainablePercent"], 45)
 
+    def test_filter_out_armee(self):
+        # Database
+        self.assertEqual(Canteen.objects.count(), 5)
+        # API endpoint
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 4)  # canteen_armee filtered out
+
     def test_filter_by_year_mandatory(self):
         # without year
         response = self.client.get(reverse("canteen_statistics"))
@@ -299,7 +271,7 @@ class TestCanteenStatsApi(APITestCase):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 5)
+        self.assertEqual(body["canteenCount"], 4)
 
     def test_filter_by_region(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": ["84"]})
