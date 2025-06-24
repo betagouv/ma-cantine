@@ -30,11 +30,12 @@ const measurementComputedValues = computed(() => {
 
 const measurementChartValues = computed(() => {
   return {
-    y: JSON.stringify([
+    y: JSON.stringify([[
       measurementComputedValues.value.edible.totalMass,
       measurementComputedValues.value.inedible.totalMass,
-    ]),
-    x: JSON.stringify(["Comestible", "Non-comestible"]),
+    ]]),
+    x: JSON.stringify([["Comestible", "Non-comestible"]]),
+    name: JSON.stringify(["Comestible", "Non-comestible"]),
   }
 })
 
@@ -72,10 +73,10 @@ const displayOption = ref("chart")
     </div>
     <div v-if="displayOption === 'chart'" class="fr-py-2w fr-pr-8w">
       <pie-chart
-        :name="measurementChartValues.x"
+        :name="measurementChartValues.name"
         :x="measurementChartValues.x"
         :y="measurementChartValues.y"
-        color='["green-bourgeon", "orange-terre-battue"]'
+        unit-tooltip="%"
       />
     </div>
     <div v-else-if="displayOption === 'text'">
