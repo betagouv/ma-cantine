@@ -4,7 +4,7 @@ from django.db.models import Sum
 from rest_framework import serializers
 
 from common.utils.badges import badges_for_queryset
-from data.models import Sector
+from data.models import Canteen, Sector
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,22 @@ def calculate_statistics_canteens(canteens, data):
             0,
         )
     data["sector_categories"]["inconnu"] = next(
-        (item["count"] for item in canteen_count_per_sector_categories if item["sectors__category"] is None), 0
+        (item["count"] for item in canteen_count_per_sector_categories if item["sectors__category"] in ["", None]), 0
+    )
+    # stats per management_type (group by)
+    data["management_types"] = {}
+    canteen_count_per_management_type = canteens.group_and_count_by_field("management_type")
+    for management_type in Canteen.ManagementType:
+        data["management_types"][management_type] = next(
+            (
+                item["count"]
+                for item in canteen_count_per_management_type
+                if item["management_type"] == management_type
+            ),
+            0,
+        )
+    data["management_types"]["inconnu"] = next(
+        (item["count"] for item in canteen_count_per_management_type if item["management_type"] in ["", None]), 0
     )
     return data
 
@@ -72,6 +87,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     teledeclarations_count = serializers.IntegerField()
     approPercent = serializers.IntegerField()
     sector_categories = serializers.DictField()
+    management_types = serializers.DictField()
 
     @staticmethod
     def calculate_statistics(canteens, teledeclarations):

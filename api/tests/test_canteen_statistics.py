@@ -79,7 +79,7 @@ class TestCanteenStatsApi(APITestCase):
 
     def test_query_count(self):
         self.assertEqual(Canteen.objects.count(), 5)
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -357,6 +357,10 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
+        management_types = body["managementTypes"]
+        self.assertEqual(management_types[Canteen.ManagementType.DIRECT], 2)
+        self.assertEqual(management_types[Canteen.ManagementType.CONCEDED], 0)
+        self.assertEqual(management_types["inconnu"], 0)
 
     def test_filter_by_production_type(self):
         response = self.client.get(
