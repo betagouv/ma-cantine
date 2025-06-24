@@ -317,6 +317,22 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)
 
+    def test_filter_by_city(self):
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 4)
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "city": ["12345"]})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 1)
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "city": ["12345", "11223"]})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 2)
+
     def test_filter_by_sectors(self):
         response = self.client.get(
             reverse("canteen_statistics"),

@@ -32,6 +32,7 @@ class CanteenStatisticsView(APIView):
                 name="epci", type=str, many=True, description="Filter by EPCI(s), using their Insee code"
             ),
             OpenApiParameter(name="pat", type=str, many=True, description="Filter by PAT(s), using their id"),
+            OpenApiParameter(name="city", type=str, many=True, description="Filter by city(ies), using their Insee code"),
             OpenApiParameter(
                 name="sectors", type=int, many=True, description="Filter by sector(s), using their internal id"
             ),
@@ -64,6 +65,7 @@ class CanteenStatisticsView(APIView):
         departments = request.query_params.getlist("department")
         epcis = request.query_params.getlist("epci")
         pats = request.query_params.getlist("pat")
+        cities = request.query_params.getlist("city")
         sectors = request.query_params.getlist("sectors")
         sectors = [s for s in sectors if s.isdigit()]
         management_types = request.query_params.getlist("management_type")
@@ -74,10 +76,10 @@ class CanteenStatisticsView(APIView):
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
 
         canteens = self._filter_canteens(
-            regions, departments, epcis, pats, sectors, management_types, production_types, economic_models
+            regions, departments, epcis, pats, cities, sectors, management_types, production_types, economic_models
         )
         teledeclarations = self._filter_teledeclarations(
-            year, regions, departments, epcis, pats, sectors, management_types, production_types, economic_models
+            year, regions, departments, epcis, pats, cities, sectors, management_types, production_types, economic_models
         )
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
@@ -86,13 +88,15 @@ class CanteenStatisticsView(APIView):
         return JsonResponse(camelize(serializer.data), status=status.HTTP_200_OK)
 
     def _filter_canteens(
-        self, regions, departments, epcis, pats, sectors, management_types, production_types, economic_models
+        self, regions, departments, epcis, pats, cities, sectors, management_types, production_types, economic_models
     ):
         canteens = Canteen.objects.publicly_visible()
-        if epcis:
-            canteens = canteens.filter(epci__in=epcis)
+        if cities:
+            canteens = canteens.filter(city_insee_code__in=cities)
         if pats:
             canteens = canteens.filter(pat_list__overlap=pats)
+        if epcis:
+            canteens = canteens.filter(epci__in=epcis)
         if departments:
             canteens = canteens.filter(department__in=departments)
         if regions:
@@ -108,14 +112,16 @@ class CanteenStatisticsView(APIView):
         return canteens.distinct()
 
     def _filter_teledeclarations(
-        self, year, regions, departments, epcis, pats, sectors, management_types, production_types, economic_models
+        self, year, regions, departments, epcis, pats, cities, sectors, management_types, production_types, economic_models
     ):
         teledeclarations = Teledeclaration.objects.publicly_visible().valid_td_by_year(year)
         if teledeclarations:
-            if epcis:
-                teledeclarations = teledeclarations.filter(canteen__epci__in=epcis)
+            if cities:
+                teledeclarations = teledeclarations.filter(canteen__city_insee_code__in=cities)
             if pats:
                 teledeclarations = teledeclarations.filter(canteen__pat_list__overlap=pats)
+            if epcis:
+                teledeclarations = teledeclarations.filter(canteen__epci__in=epcis)
             if departments:
                 teledeclarations = teledeclarations.filter(canteen__department__in=departments)
             if regions:
