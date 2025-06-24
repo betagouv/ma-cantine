@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.utils import timezone
+from django.utils.html import format_html
 
 from data.models import Canteen, Teledeclaration
 from data.utils import CreationSource
@@ -74,6 +75,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "daily_meal_count",
         "yearly_meal_count",
         "satellite_canteens_count",
+        "satellites_display",
         "economic_model",
         "sectors",
         "line_ministry",
@@ -113,12 +115,15 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "creation_mtm_medium",
         "claimed_by",
         "has_been_claimed",
+        "satellites_display",
     )
     list_display = (
         "name",
         "siret_or_siren_unite_legale_display",
         "city",
         "télédéclarée",
+        "central_producer_siret",
+        "production_type",
         "creation_date",
         "modification_date",
         "source_des_données",
@@ -140,11 +145,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "department",
         "import_source",
     )
-    search_fields = (
-        "name",
-        "siret",
-        "siren_unite_legale",
-    )
+    search_fields = ("name", "siret", "siren_unite_legale", "central_producer_siret")
 
     def save_model(self, request, obj, form, change):
         if not change:
@@ -168,6 +169,13 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     @admin.display(description="Visible au public")
     def publication_status_display(self, obj):
         return dict(Canteen.PublicationStatus.choices).get(obj.publication_status_display_to_public)
+
+    @admin.display(description="Cantines satellites")
+    def satellites_display(self, obj):
+        satellites_list = ""
+        for satellite in obj.satellites:
+            satellites_list += f"<a href='/admin/data/canteen/{satellite.id}/change'>{satellite.name} - {satellite.siret_or_siren_unite_legale}</a><br/>"
+        return format_html(satellites_list)
 
     def source_des_données(self, obj):
         return obj.import_source
