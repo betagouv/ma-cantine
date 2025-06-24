@@ -175,8 +175,10 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
 class CanteenInline(admin.TabularInline):
     model = Canteen.managers.through
-    readonly_fields = ("active",)
-    fields = ("canteen",)
+    readonly_fields = (
+        "canteen",
+        "active",
+    )
     extra = 0
     verbose_name_plural = "Cantines gérées"
 
