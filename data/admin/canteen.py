@@ -175,15 +175,16 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
 class CanteenInline(admin.TabularInline):
     model = Canteen.managers.through
-    readonly_fields = (
-        "canteen",
-        "active",
-    )
+    readonly_fields = ("canteen", "active", "help")
     extra = 0
     verbose_name_plural = "Cantines gérées"
 
     def has_add_permission(self, request, obj):
         return True
+
+    @admin.display(description="Gestionnaire")
+    def help(self, obj):
+        return "Pour vous supprimer des gestionnaire de la cantine cochez la case."
 
     @admin.display(description="Est active")
     def active(self, obj):
