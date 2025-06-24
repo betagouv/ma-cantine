@@ -62,96 +62,48 @@ class CanteenStatisticsView(APIView):
         ]
     )
     def get(self, request):
+        """
+        Get statistical summary of canteens and teledeclarations, filtered by query parameters.
+        """
         year = request.query_params.get("year")
-        regions = request.query_params.getlist("region")
-        departments = request.query_params.getlist("department")
-        epcis = request.query_params.getlist("epci")
-        pats = request.query_params.getlist("pat")
-        cities = request.query_params.getlist("city")
-        sectors = request.query_params.getlist("sectors")
-        sectors = [s for s in sectors if s.isdigit()]
-        management_types = request.query_params.getlist("management_type")
-        production_types = request.query_params.getlist("production_type")
-        economic_models = request.query_params.getlist("economic_model")
-
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
 
-        canteens = self._filter_canteens(
-            regions, departments, epcis, pats, cities, sectors, management_types, production_types, economic_models
-        )
-        teledeclarations = self._filter_teledeclarations(
-            year,
-            regions,
-            departments,
-            epcis,
-            pats,
-            cities,
-            sectors,
-            management_types,
-            production_types,
-            economic_models,
-        )
+        filters = self._extract_query_filters(request)
+
+        canteen_qs = Canteen.objects.publicly_visible()
+        canteens = self._apply_query_filters(canteen_qs, filters)
+
+        teledeclaration_qs = Teledeclaration.objects.publicly_visible().valid_td_by_year(year)
+        teledeclarations = self._apply_query_filters(teledeclaration_qs, filters, prefix="canteen__")
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
-
         serializer = self.serializer_class(data)
         return JsonResponse(camelize(serializer.data), status=status.HTTP_200_OK)
 
-    def _filter_canteens(
-        self, regions, departments, epcis, pats, cities, sectors, management_types, production_types, economic_models
-    ):
-        canteens = Canteen.objects.publicly_visible()
-        if cities:
-            canteens = canteens.filter(city_insee_code__in=cities)
-        if pats:
-            canteens = canteens.filter(pat_list__overlap=pats)
-        if epcis:
-            canteens = canteens.filter(epci__in=epcis)
-        if departments:
-            canteens = canteens.filter(department__in=departments)
-        if regions:
-            canteens = canteens.filter(region__in=regions)
-        if sectors:
-            canteens = canteens.filter(sectors__in=sectors)
-        if management_types:
-            canteens = canteens.filter(management_type__in=management_types)
-        if production_types:
-            canteens = canteens.filter(production_type__in=production_types)
-        if economic_models:
-            canteens = canteens.filter(economic_model__in=economic_models)
-        return canteens.distinct()
+    def _extract_query_filters(self, request):
+        """
+        Extract and clean filter parameters from the request.
+        """
+        sectors = [s for s in request.query_params.getlist("sectors") if str(s).isdigit()]
+        return {
+            "region__in": request.query_params.getlist("region"),
+            "department__in": request.query_params.getlist("department"),
+            "epci__in": request.query_params.getlist("epci"),
+            "pat_list__overlap": request.query_params.getlist("pat"),
+            "city_insee_code__in": request.query_params.getlist("city"),
+            "sectors__in": sectors,
+            "management_type__in": request.query_params.getlist("management_type"),
+            "production_type__in": request.query_params.getlist("production_type"),
+            "economic_model__in": request.query_params.getlist("economic_model"),
+        }
 
-    def _filter_teledeclarations(
-        self,
-        year,
-        regions,
-        departments,
-        epcis,
-        pats,
-        cities,
-        sectors,
-        management_types,
-        production_types,
-        economic_models,
-    ):
-        teledeclarations = Teledeclaration.objects.publicly_visible().valid_td_by_year(year)
-        if cities:
-            teledeclarations = teledeclarations.filter(canteen__city_insee_code__in=cities)
-        if pats:
-            teledeclarations = teledeclarations.filter(canteen__pat_list__overlap=pats)
-        if epcis:
-            teledeclarations = teledeclarations.filter(canteen__epci__in=epcis)
-        if departments:
-            teledeclarations = teledeclarations.filter(canteen__department__in=departments)
-        if regions:
-            teledeclarations = teledeclarations.filter(canteen__region__in=regions)
-        if sectors:
-            teledeclarations = teledeclarations.filter(canteen__sectors__in=sectors)
-        if management_types:
-            teledeclarations = teledeclarations.filter(canteen__management_type__in=management_types)
-        if production_types:
-            teledeclarations = teledeclarations.filter(canteen__production_type__in=production_types)
-        if economic_models:
-            teledeclarations = teledeclarations.filter(canteen__economic_model__in=economic_models)
-        return teledeclarations.distinct()
+    def _apply_query_filters(self, queryset, filters, prefix=""):
+        """
+        Apply filters to a queryset. If prefix is given, it is prepended to each filter key.
+        """
+        for key, value in filters.items():
+            if value:
+                filter_key = f"{prefix}{key}" if prefix else key
+                queryset = queryset.filter(**{filter_key: value})
+        return queryset.distinct()
