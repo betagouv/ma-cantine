@@ -79,7 +79,7 @@ class TestCanteenStatsApi(APITestCase):
 
     def test_query_count(self):
         self.assertEqual(Canteen.objects.count(), 5)
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -373,6 +373,12 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
+        production_types = body["productionTypes"]
+        self.assertEqual(production_types[Canteen.ProductionType.CENTRAL], 1)
+        self.assertEqual(production_types["centralServing"], 1)  # Canteen.ProductionType.CENTRAL_SERVING
+        self.assertEqual(production_types[Canteen.ProductionType.ON_SITE], 0)
+        self.assertEqual(production_types["siteCookedElsewhere"], 0)  # Canteen.ProductionType.ON_SITE_CENTRAL
+        self.assertEqual(production_types["inconnu"], 0)
 
     def test_filter_by_economic_model(self):
         response = self.client.get(
