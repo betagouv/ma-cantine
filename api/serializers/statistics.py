@@ -19,9 +19,9 @@ def calculate_statistics_canteens(canteens, data):
             (item["count"] for item in canteen_count_per_sector_categories if item["sectors__category"] == category),
             0,
         )
-        data["sector_categories"]["inconnu"] = next(
-            (item["count"] for item in canteen_count_per_sector_categories if item["sectors__category"] is None), 0
-        )
+    data["sector_categories"]["inconnu"] = next(
+        (item["count"] for item in canteen_count_per_sector_categories if item["sectors__category"] is None), 0
+    )
     return data
 
 
