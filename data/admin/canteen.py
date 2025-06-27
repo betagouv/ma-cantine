@@ -184,7 +184,7 @@ class CanteenInline(admin.TabularInline):
 
     @admin.display(description="Gestionnaire")
     def help(self, obj):
-        return "Pour vous supprimer des gestionnaire de la cantine cochez la case."
+        return "Pour retirer le gestionnaire de la cantine cochez la case, puis sauvegardez la modification."
 
     @admin.display(description="Est active")
     def active(self, obj):
