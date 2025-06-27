@@ -10,6 +10,10 @@ import "@gouvfr/dsfr/dist/dsfr.min.css" // Import des styles du DSFR
 import "@gouvminint/vue-dsfr/styles" // Import des styles globaux propre à VueDSFR
 import VueDsfr from "@gouvminint/vue-dsfr" // Import (par défaut) de la bibliothèque
 
+/* DSFR Chart */
+import "@gouvfr/dsfr-chart"
+import "@gouvfr/dsfr-chart/css"
+
 /* Plugins */
 import i18n from "./i18n.js"
 import VueMatomo from "vue-matomo"
