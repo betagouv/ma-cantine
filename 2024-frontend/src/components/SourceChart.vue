@@ -72,7 +72,7 @@ const displayOption = ref("chart")
         :name="measurementGraphValues.name"
         :x="measurementGraphValues.x"
         :y="measurementGraphValues.y"
-        unit-tooltip="%"
+        unit-tooltip="kg"
       ></pie-chart>
     </div>
     <div v-else-if="displayOption === 'text'">

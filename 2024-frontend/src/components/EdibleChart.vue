@@ -76,7 +76,7 @@ const displayOption = ref("chart")
         :name="measurementChartValues.name"
         :x="measurementChartValues.x"
         :y="measurementChartValues.y"
-        unit-tooltip="%"
+        unit-tooltip="kg"
       />
     </div>
     <div v-else-if="displayOption === 'text'">
