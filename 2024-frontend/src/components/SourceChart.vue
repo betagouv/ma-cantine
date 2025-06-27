@@ -54,7 +54,7 @@ const displayOption = ref("chart")
           label="Choix d'affichage"
           :options="[
             {
-              label: 'Graph',
+              label: 'Graphe',
               value: 'chart',
             },
             {
