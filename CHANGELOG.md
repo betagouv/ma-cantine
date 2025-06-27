@@ -6,6 +6,24 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.23.1](https://github.com/betagouv/ma-cantine/compare/v2025.23.0...v2025.23.1) (2025-06-27)
+
+
+### Améliorations
+
+* **Admin:** améliore la recherche dans la page des cantines ([#5479](https://github.com/betagouv/ma-cantine/issues/5479)) ([78eb4fb](https://github.com/betagouv/ma-cantine/commit/78eb4fb5495c647af14c97d66b755ece5db66bd2))
+* **Admin:** facilite la suppression d'un lien cantine - gestionnaire ([#5477](https://github.com/betagouv/ma-cantine/issues/5477)) ([266eca6](https://github.com/betagouv/ma-cantine/commit/266eca68928b1666b36b87f416a5286d63468a79))
+
+
+### Corrections (bugs, typos...)
+
+* **Gaspillage alimentaire:** corrige l'affichage des vues graphiques ([#5480](https://github.com/betagouv/ma-cantine/issues/5480)) ([4504226](https://github.com/betagouv/ma-cantine/commit/4504226bf3af35bdd749f4941beda8cc960250a5))
+
+
+### Technique
+
+* **API Stats:** gros refactoring sur la view et le serializer ([#5478](https://github.com/betagouv/ma-cantine/issues/5478)) ([5069ea2](https://github.com/betagouv/ma-cantine/commit/5069ea21ba6a9b3e2d1640401667229a353e1378))
+
 ## [2025.23.0](https://github.com/betagouv/ma-cantine/compare/v2025.22.0...v2025.23.0) (2025-06-24)
 
 
