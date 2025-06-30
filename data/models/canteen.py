@@ -578,7 +578,7 @@ class Canteen(SoftDeletionModel):
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
         if self.department:
             self.region = self._get_region()
-        super().save(force_insert, force_update, using, update_fields)
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
     @property
     def url_slug(self):
@@ -823,4 +823,4 @@ class CanteenImage(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.image = optimize_image(self.image, self.image.name)
-        super().save(force_insert, force_update, using, update_fields)
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)

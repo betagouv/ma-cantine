@@ -136,7 +136,7 @@ class User(AbstractUser):
         max_avatar_size = 640
         if self.avatar:
             self.avatar = optimize_image(self.avatar, self.avatar.name, max_avatar_size)
-        super().save(force_insert, force_update, using, update_fields)
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
     def __str__(self):
         return f"{self.get_full_name()} ({self.username})"

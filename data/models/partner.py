@@ -109,7 +109,7 @@ class Partner(models.Model):
         max_image_size = 1600
         if self.image:
             self.image = optimize_image(self.image, self.image.name, max_image_size)
-        super().save(force_insert, force_update, using, update_fields)
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
     def __str__(self):
         return f'Partenaire "{self.name}"'
