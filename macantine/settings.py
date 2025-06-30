@@ -17,7 +17,6 @@ from pathlib import Path
 
 import dotenv  # noqa
 import sentry_sdk
-from botocore.client import Config as BotoConfig
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -240,10 +239,6 @@ if default_file_storage == "storages.backends.s3.S3Storage":
     AWS_STORAGE_BUCKET_NAME = os.getenv("CELLAR_BUCKET_NAME")
     AWS_LOCATION = "media"
     AWS_QUERYSTRING_AUTH = False
-    AWS_S3_CLIENT_CONFIG = BotoConfig(
-        request_checksum_calculation="when_required",
-        response_checksum_validation="when_required",
-    )
 
 MEDIA_ROOT = os.getenv("MEDIA_ROOT", os.path.join(BASE_DIR, "media"))
 MEDIA_URL = "/media/"
