@@ -417,7 +417,7 @@ pillow-heif==0.18.0
     #   willow
 pip==25.1.1
     # via pipdeptree
-pipdeptree==2.23.4
+pipdeptree==2.26.1
     # via ma-cantine
 platformdirs==4.3.6
     # via

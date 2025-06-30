@@ -1559,7 +1559,7 @@ requires-dist = [
     { name = "pathspec", specifier = "==0.12.1" },
     { name = "pillow", specifier = "==10.4.0" },
     { name = "pillow-heif", specifier = "==0.18.0" },
-    { name = "pipdeptree", specifier = "==2.23.4" },
+    { name = "pipdeptree", specifier = "==2.26.1" },
     { name = "platformdirs", specifier = "==4.3.6" },
     { name = "pluggy", specifier = "==1.5.0" },
     { name = "pre-commit", specifier = "==4.0.1" },
@@ -1868,15 +1868,15 @@ wheels = [
 
 [[package]]
 name = "pipdeptree"
-version = "2.23.4"
+version = "2.26.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "packaging" },
     { name = "pip" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/66/b6/389a1148d7b1bc5638d4e9b2d60390f8cfb4c30e34cff68165cbd9a29e75/pipdeptree-2.23.4.tar.gz", hash = "sha256:8a9e7ceee623d1cb2839b6802c26dd40959d31ecaa1468d32616f7082658f135", size = 39945, upload-time = "2024-09-17T22:37:48.471Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/74/ef/9158ee3b28274667986d39191760c988a2de22c6321be1262e21c8a19ccf/pipdeptree-2.26.1.tar.gz", hash = "sha256:92a8f37ab79235dacb46af107e691a1309ca4a429315ba2a1df97d1cd56e27ac", size = 41024, upload-time = "2025-04-20T03:27:42.489Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/81/a8/9d946c041fab819596f48cd50ea444e08496ffd7d8f5f3194ff204bd21ab/pipdeptree-2.23.4-py3-none-any.whl", hash = "sha256:6a4b4f45bb4a27a440702747636b98e4b88369c00396a840266d536fc6804b6f", size = 32236, upload-time = "2024-09-17T22:37:45.595Z" },
+    { url = "https://files.pythonhosted.org/packages/b9/a5/f9f143b420e53a296869636d1c3bdc144be498ca3136a113f52b53ea2b02/pipdeptree-2.26.1-py3-none-any.whl", hash = "sha256:3849d62a2ed641256afac3058c4f9b85ac4a47e9d8c991ee17a8f3d230c5cffb", size = 32802, upload-time = "2025-04-20T03:27:40.413Z" },
 ]
 
 [[package]]
