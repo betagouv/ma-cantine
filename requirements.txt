@@ -271,7 +271,7 @@ filetype==1.2.0
     # via
     #   ma-cantine
     #   willow
-freezegun==1.5.1
+freezegun==1.5.2
     # via ma-cantine
 fsspec==2024.9.0
     # via
@@ -530,7 +530,7 @@ reportlab==4.2.2
     #   ma-cantine
     #   svglib
     #   xhtml2pdf
-requests==2.32.3
+requests==2.32.4
     # via
     #   django-anymail
     #   django-oauth-toolkit

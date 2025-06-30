@@ -80,6 +80,7 @@ repos:
     rev: v1.4.2
     hooks:
       - id: python-safety-dependencies-check
+        files: requirements.txt
 
   # BASH
   - repo: https://github.com/bemeurer/beautysh.git
