@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.23.2](https://github.com/betagouv/ma-cantine/compare/v2025.23.1...v2025.23.2) (2025-06-30)
+
+
+### Technique
+
+* **uv:** ajoute uv comme gestionnaire de dépendances pour Python ([#5437](https://github.com/betagouv/ma-cantine/issues/5437)) ([696f02e](https://github.com/betagouv/ma-cantine/commit/696f02ea12e536e5ccf7a21fe6006ed52e0f2476))
+
 ## [2025.23.1](https://github.com/betagouv/ma-cantine/compare/v2025.23.0...v2025.23.1) (2025-06-27)
 
 
