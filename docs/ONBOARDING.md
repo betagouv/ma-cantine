@@ -27,6 +27,7 @@ Vous pouvez installer en local ou utiliser l'environnement [Docker](./docker.md)
 - [Postgres](https://www.postgresql.org/download/)
 - [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 - [pre-commit](https://pypi.org/project/pre-commit/)
+- [virtualenv](https://virtualenv.pypa.io/en/stable/installation.html) (optionnel)
 
 ### Python
 
