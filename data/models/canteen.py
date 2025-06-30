@@ -190,6 +190,16 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def is_filled(self):
         return self.annotate_with_requires_line_ministry().exclude(has_missing_data_query())
 
+    def group_and_count_by_field(self, field):
+        """
+        https://docs.djangoproject.com/en/5.2/topics/db/aggregation/#values
+        Example:
+        - Input: 4 canteens: 3 with management_type 'direct', 1 with 'conceded'
+        - Usage: group_and_count_by_field('management_type')
+        - Output: [{'management_type': 'direct', 'count': 3}, {'management_type': 'conceded', 'count': 1}]
+        """
+        return self.values(field).annotate(count=Count("id", distinct=True)).order_by("-count")
+
     def annotate_with_action_for_year(self, year):
         from data.models import Diagnostic
 
@@ -299,6 +309,9 @@ class CanteenManager(SoftDeletionManager):
     def is_filled(self):
         return self.get_queryset().is_filled()
 
+    def group_and_count_by_field(self, field):
+        return self.get_queryset().group_and_count_by_field(field)
+
     def annotate_with_action_for_year(self, year):
         return self.get_queryset().annotate_with_action_for_year(year)
 
@@ -326,13 +339,13 @@ class Canteen(SoftDeletionModel):
         ON_SITE = "site", "Cantine qui produit les repas sur place"
         ON_SITE_CENTRAL = "site_cooked_elsewhere", "Cantine qui sert des repas preparés par une cuisine centrale"
 
-    class PublicationStatus(models.TextChoices):
-        DRAFT = "draft", "🔒 Non publié"
-        PUBLISHED = "published", "✅ Publié"
-
     class EconomicModel(models.TextChoices):
         PUBLIC = "public", "Public"
         PRIVATE = "private", "Privé"
+
+    class PublicationStatus(models.TextChoices):
+        DRAFT = "draft", "🔒 Non publié"
+        PUBLISHED = "published", "✅ Publié"
 
     class Actions(models.TextChoices):
         ADD_SATELLITES = "10_add_satellites", "Ajouter des satellites"
@@ -450,9 +463,6 @@ class Canteen(SoftDeletionModel):
         blank=True,
         verbose_name="mode de production",
     )
-
-    logo = models.ImageField(null=True, blank=True, verbose_name="Logo")
-
     economic_model = models.CharField(
         max_length=50,
         choices=EconomicModel.choices,
@@ -460,6 +470,8 @@ class Canteen(SoftDeletionModel):
         blank=True,
         verbose_name="Secteur économique",
     )
+
+    logo = models.ImageField(null=True, blank=True, verbose_name="Logo")
 
     # Publication things
     publication_status = models.CharField(
@@ -604,6 +616,10 @@ class Canteen(SoftDeletionModel):
     def central_kitchen_diagnostics(self):
         if self.central_kitchen:
             return self.central_kitchen.diagnostic_set.filter(central_kitchen_diagnostic_mode__isnull=False)
+
+    @property
+    def is_spe(self) -> bool:
+        return bool(self.line_ministry)
 
     @property
     def can_be_claimed(self):

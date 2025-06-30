@@ -1,6 +1,7 @@
 import logging
 from decimal import Decimal
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
@@ -111,6 +112,13 @@ class TeledeclarationQuerySet(models.QuerySet):
         for year in years:
             results = results | self.valid_td_by_year(year)
         return results.select_related("diagnostic")
+
+    def publicly_visible(self):
+        return (
+            self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
+            if settings.PUBLISH_BY_DEFAULT
+            else self.filter(canteen__publication_status=Canteen.PublicationStatus.PUBLISHED)
+        )
 
 
 class Teledeclaration(models.Model):
@@ -229,6 +237,14 @@ class Teledeclaration(models.Model):
         null=True,
         blank=True,
     )
+
+    @property
+    def is_declared_by_cc(self):
+        return self.teledeclaration_mode and self.teledeclaration_mode in [
+            Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO,
+            Teledeclaration.TeledeclarationMode.CENTRAL_APPRO,
+            Teledeclaration.TeledeclarationMode.CENTRAL_ALL,
+        ]
 
     @receiver(pre_delete, sender=Diagnostic)
     def cancel_teledeclaration(sender, instance, **kwargs):

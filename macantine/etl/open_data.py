@@ -28,11 +28,16 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
     Abstract class implementing the specifity for open data export
     """
 
-    def transform_canteen_choice_fields(self, prefix=""):
+    def transform_canteen_choicefields(self, prefix=""):
         # line_ministry
         self.df[prefix + "line_ministry"] = self.df[prefix + "line_ministry"].apply(
             lambda x: Canteen.Ministries(x).label if (x in Canteen.Ministries) else None
         )
+
+    def transform_canteen_arrayfields(self, prefix=""):
+        # pat_list & pat_lib_list
+        self.df[prefix + "pat_list"] = self.df[prefix + "pat_list"].apply(lambda x: ",".join(x))
+        self.df[prefix + "pat_lib_list"] = self.df[prefix + "pat_lib_list"].apply(lambda x: ",".join(x))
 
     def transform_canteen_geo_data(self, prefix=""):
         logger.info("Start fetching communes details")
@@ -150,7 +155,7 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
         self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/export_opendata/schema_cantines.json"
         self.columns = [field["name"] for field in self.schema["fields"]]
         self.canteens = None
-        self.exclude_filter = Q(sectors__id=22) | Q(line_ministry="armee")  # Filtering out the police / army sectors
+        self.exclude_filter = Q(line_ministry="armee")
 
     def extract_dataset(self):
         start = time.time()
@@ -198,8 +203,11 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
         logger.info("Canteens : Clean dataset...")
         self._clean_dataset()
 
-        logger.info("Canteens : Transform choice fields...")
-        self.transform_canteen_choice_fields()
+        logger.info("Canteens : Transform ChoiceFields...")
+        self.transform_canteen_choicefields()
+
+        logger.info("Canteens : Transform ArrayFields...")
+        self.transform_canteen_arrayfields()
 
         logger.info("Canteens : Fill geo name...")
         start = time.time()
@@ -284,8 +292,8 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self._filter_by_ministry()
         logger.info("TD campagne : Filter errors...")
         self._filter_outsiders()
-        logger.info("TD campagne : Transform choice fields...")
-        self.transform_canteen_choice_fields(prefix="canteen_")
+        logger.info("TD campagne : Transform ChoiceFields...")
+        self.transform_canteen_choicefields(prefix="canteen_")
         logger.info("TD campagne : Transform sectors...")
         self.df["canteen_sectors"] = self.transform_sectors()
         logger.info("TD Campagne : Fill geo name...")

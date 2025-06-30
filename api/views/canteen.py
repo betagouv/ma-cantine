@@ -37,7 +37,7 @@ from api.permissions import (
 )
 from api.serializers import (
     CanteenActionsSerializer,
-    CanteenMetabaseSerializer,
+    CanteenAnalysisSerializer,
     CanteenPreviewSerializer,
     CanteenStatusSerializer,
     CanteenSummarySerializer,
@@ -59,7 +59,7 @@ from common.utils import send_mail
 from data.department_choices import Department
 from data.models import Canteen, Diagnostic, ManagerInvitation, Sector
 from data.region_choices import Region
-from data.utils import CreationSource
+from data.utils import CreationSource, has_charfield_missing_query
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -249,7 +249,9 @@ def filter_by_diagnostic_params(queryset, query_params):
                 )
             ).distinct()
         canteen_ids = qs_diag.values_list("canteen", flat=True)
-        canteen_sirets = qs_diag.values_list("canteen__siret", flat=True)
+        canteen_sirets = qs_diag.exclude(has_charfield_missing_query("canteen__siret")).values_list(
+            "canteen__siret", flat=True
+        )
         queryset = queryset.exclude(redacted_appro_years__contains=[publication_year])
         return queryset.filter(Q(id__in=canteen_ids) | Q(central_producer_siret__in=canteen_sirets))
     return queryset
@@ -989,9 +991,10 @@ class ActionableCanteensListView(ListAPIView):
     pagination_class = CanteenActionsPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
+        UnaccentSearchFilter,
         MaCantineOrderingFilter,
     ]
-    search_fields = ["name"]
+    search_fields = ["name", "siret", "siren_unite_legale"]
     ordering_fields = ["name", "production_type", "action", "modification_date"]
     ordering = "modification_date"
 
@@ -1055,7 +1058,7 @@ class CanteenMinistriesView(APIView):
 
 
 class CanteenAnalysisListView(ListAPIView):
-    serializer_class = CanteenMetabaseSerializer
+    serializer_class = CanteenAnalysisSerializer
     filter_backends = [django_filters.DjangoFilterBackend]
     ordering_fields = ["creation_date"]
 

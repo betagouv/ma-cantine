@@ -1,7 +1,6 @@
-from unittest.mock import patch
-
 from django.db.utils import IntegrityError
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.utils.timezone import now
 from freezegun import freeze_time
 
@@ -9,60 +8,39 @@ from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Teledeclaration
 
-year_data = now().year - 1
-last_year_data = year_data - 1
-mocked_campaign_dates = {
-    last_year_data: {
-        "teledeclaration_start_date": now().replace(year=year_data - 1, month=1, day=1, hour=0, minute=0, second=0),
-        "teledeclaration_end_date": now().replace(year=year_data - 1, month=4, day=30, hour=23, minute=59, second=59),
-        "correction_start_date": now().replace(year=year_data - 1, month=6, day=1, hour=0, minute=0, second=0),
-        "correction_end_date": now().replace(year=year_data - 1, month=8, day=31, hour=23, minute=59, second=59),
-    },
-    year_data: {
-        "teledeclaration_start_date": now().replace(month=1, day=1, hour=0, minute=0, second=0),
-        "teledeclaration_end_date": now().replace(month=4, day=30, hour=23, minute=59, second=59),
-        "correction_start_date": now().replace(month=6, day=1, hour=0, minute=0, second=0),
-        "correction_end_date": now().replace(month=8, day=31, hour=23, minute=59, second=59),
-    },
-}
+year_data = 2024
+date_in_teledeclaration_campaign = "2025-03-30"
+date_in_correction_campaign = "2025-04-20"
+date_in_last_teledeclaration_campaign = "2024-02-01"
 
 
 class TeledeclarationQuerySetTest(TestCase):
-    def setUp(self):
-        """
-        Set up mock data for testing.
-        The date is frozen to an old date to allow creating teledeclarations with correct dates
-        (using fake time directly corrupts the QuerySet Date Range filter).
-        """
-        self._create_canteens()
-        self._create_diagnostics_and_teledeclarations()
-
-    def _create_canteens(self):
+    @classmethod
+    def setUpTestData(cls):
         """Create canteens for testing."""
-        self.valid_canteen_1 = CanteenFactory(siret="12345678901234", deletion_date=None, yearly_meal_count=100)
-        self.valid_canteen_2 = CanteenFactory(siren_unite_legale="123456789", deletion_date=None)
-        self.valid_canteen_3 = CanteenFactory(
+        cls.valid_canteen_1 = CanteenFactory(siret="12345678901234", deletion_date=None, yearly_meal_count=100)
+        cls.valid_canteen_2 = CanteenFactory(siren_unite_legale="123456789", deletion_date=None)
+        cls.valid_canteen_3 = CanteenFactory(
             siret="12345678901235", siren_unite_legale="123456789", deletion_date=None
         )
-        self.valid_canteen_4 = CanteenFactory(siret="12345678901230", deletion_date=None, yearly_meal_count=0)
-        self.valid_canteen_sat = CanteenFactory(
+        cls.valid_canteen_4 = CanteenFactory(siret="12345678901230", deletion_date=None, yearly_meal_count=0)
+        cls.valid_canteen_sat = CanteenFactory(
             siret="12345678901232", deletion_date=None, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
         )
-        self.invalid_canteen = CanteenFactory(siret="", deletion_date=None)  # siret missing
-        self.deleted_canteen = CanteenFactory(
+        cls.valid_canteen_5_armee = CanteenFactory(
+            siret="12345678901233",
+            line_ministry=Canteen.Ministries.ARMEE,
+        )
+        cls.invalid_canteen = CanteenFactory(siret="", deletion_date=None)  # siret missing
+        cls.deleted_canteen = CanteenFactory(
             siret="56789012345678",
             deletion_date=now().replace(month=3, day=1),
         )
 
-    def _create_diagnostics_and_teledeclarations(self):
         """Create diagnostics and teledeclarations for testing."""
-        date_in_teledeclaration_campaign = now().replace(month=3, day=1, hour=0, minute=0, second=0)
-        date_in_last_teledeclaration_campaign = now().replace(
-            year=year_data - 1, month=3, day=1, hour=0, minute=0, second=0
-        )
-        date_in_correction_campaign = now().replace(month=7, day=1, hour=0, minute=0, second=0)
-
-        for index, canteen in enumerate([self.valid_canteen_1, self.valid_canteen_2, self.valid_canteen_3]):
+        for index, canteen in enumerate(
+            [cls.valid_canteen_1, cls.valid_canteen_2, cls.valid_canteen_3, cls.valid_canteen_5_armee]
+        ):
             diagnostic = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data,
@@ -73,16 +51,16 @@ class TeledeclarationQuerySetTest(TestCase):
             )
             diagnostic_last_year = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-                year=last_year_data,
+                year=year_data - 1,
                 creation_date=date_in_last_teledeclaration_campaign,
                 canteen=canteen,
                 value_total_ht=1000.00,
                 value_bio_ht=200.00,
             )
-            setattr(self, f"valid_canteen_diagnostic_{index + 1}", diagnostic)
+            setattr(cls, f"valid_canteen_diagnostic_{index + 1}", diagnostic)
             with freeze_time(date_in_teledeclaration_campaign):
                 teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant=UserFactory.create())
-            setattr(self, f"valid_canteen_td_{index + 1}", teledeclaration)
+            setattr(cls, f"valid_canteen_td_{index + 1}", teledeclaration)
 
             with freeze_time(date_in_last_teledeclaration_campaign):
                 teledeclaration = Teledeclaration.create_from_diagnostic(
@@ -90,86 +68,91 @@ class TeledeclarationQuerySetTest(TestCase):
                 )
 
         # Corrected TD
-        self.valid_canteen_diagnostic_correction = DiagnosticFactory(
+        cls.valid_canteen_diagnostic_correction = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=now().replace(month=7, day=1),
-            canteen=self.valid_canteen_4,
+            canteen=cls.valid_canteen_4,
             value_total_ht=1000.00,
             value_bio_ht=200.00,
         )
         user_correction_campaign = UserFactory.create()
-        self.valid_correction_td = Teledeclaration.create_from_diagnostic(
-            self.valid_canteen_diagnostic_correction, applicant=user_correction_campaign
+        cls.valid_correction_td = Teledeclaration.create_from_diagnostic(
+            cls.valid_canteen_diagnostic_correction, applicant=user_correction_campaign
         )
-        self.valid_correction_td.status = Teledeclaration.TeledeclarationStatus.CANCELLED
-        self.valid_correction_td.save()
+        cls.valid_correction_td.status = Teledeclaration.TeledeclarationStatus.CANCELLED
+        cls.valid_correction_td.save()
 
         with freeze_time(date_in_correction_campaign):
-            self.valid_correction_td = Teledeclaration.create_from_diagnostic(
-                self.valid_canteen_diagnostic_correction, applicant=user_correction_campaign
+            cls.valid_correction_td = Teledeclaration.create_from_diagnostic(
+                cls.valid_canteen_diagnostic_correction, applicant=user_correction_campaign
             )
 
-        self.invalid_canteen_diagnostic = DiagnosticFactory(
+        cls.invalid_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
-            canteen=self.invalid_canteen,
+            canteen=cls.invalid_canteen,
             value_total_ht=1000.00,
             value_bio_ht=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            self.invalid_canteen_td = Teledeclaration.create_from_diagnostic(
-                self.invalid_canteen_diagnostic, applicant=UserFactory.create()
+            cls.invalid_canteen_td = Teledeclaration.create_from_diagnostic(
+                cls.invalid_canteen_diagnostic, applicant=UserFactory.create()
             )
 
-        self.deleted_canteen_diagnostic = DiagnosticFactory(
+        cls.deleted_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
-            canteen=self.deleted_canteen,
+            canteen=cls.deleted_canteen,
             value_total_ht=1000.00,
             value_bio_ht=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            self.deleted_canteen_td = Teledeclaration.create_from_diagnostic(
-                self.deleted_canteen_diagnostic, applicant=UserFactory.create()
+            cls.deleted_canteen_td = Teledeclaration.create_from_diagnostic(
+                cls.deleted_canteen_diagnostic, applicant=UserFactory.create()
             )
-        self.canteen_sat_diagnostic = DiagnosticFactory(
+        cls.canteen_sat_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
-            canteen=self.valid_canteen_sat,
+            canteen=cls.valid_canteen_sat,
             value_total_ht=None,
             value_bio_ht=None,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            self.canteen_sat_td = Teledeclaration.create_from_diagnostic(
-                self.canteen_sat_diagnostic, applicant=UserFactory.create()
+            cls.canteen_sat_td = Teledeclaration.create_from_diagnostic(
+                cls.canteen_sat_diagnostic, applicant=UserFactory.create()
             )
-        self.canteen_sat_td.teledeclaration_mode = Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
-        self.canteen_sat_diagnostic.save()
+        cls.canteen_sat_td.teledeclaration_mode = Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
+        cls.canteen_sat_diagnostic.save()
 
+    @freeze_time("2025-03-30")
     def test_submitted_for_year(self):
-        with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
-            teledeclarations = Teledeclaration.objects.submitted_for_year(year_data)
-        self.assertEqual(teledeclarations.count(), 7)
+        teledeclarations = Teledeclaration.objects.submitted_for_year(year_data)
+        self.assertEqual(teledeclarations.count(), 8)
         self.assertIn(self.valid_canteen_td_1, teledeclarations)
         self.assertIn(self.invalid_canteen_td, teledeclarations)
         self.assertIn(self.deleted_canteen_td, teledeclarations)
-
-    def test_valid_td_by_year(self):
-        with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
-            teledeclarations = Teledeclaration.objects.valid_td_by_year(year_data)
+        teledeclarations = Teledeclaration.objects.submitted_for_year(year_data - 1)
         self.assertEqual(teledeclarations.count(), 4)
+
+    @freeze_time("2025-03-30")
+    def test_valid_td_by_year(self):
+        teledeclarations = Teledeclaration.objects.valid_td_by_year(year_data)
+        self.assertEqual(teledeclarations.count(), 5)
         self.assertIn(self.valid_canteen_td_1, teledeclarations)
         self.assertNotIn(self.invalid_canteen_td, teledeclarations)  # canteen without siret
         self.assertNotIn(self.deleted_canteen_td, teledeclarations)  # canteen deleted
 
     def test_historical_valid_td(self):
-        with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
-            teledeclarations = Teledeclaration.objects.historical_valid_td(mocked_campaign_dates.keys())
-        self.assertEqual(teledeclarations.count(), 7)
+        teledeclarations = Teledeclaration.objects.historical_valid_td([year_data])
+        self.assertEqual(teledeclarations.count(), 5)
+        teledeclarations = Teledeclaration.objects.historical_valid_td([year_data - 1])
+        self.assertEqual(teledeclarations.count(), 4)
+        teledeclarations = Teledeclaration.objects.historical_valid_td([year_data, year_data - 1])
+        self.assertEqual(teledeclarations.count(), 5 + 4)
 
     def test_meal_price(self):
         canteen_with_meal_price = Canteen.objects.get(siret="12345678901234")
@@ -194,6 +177,11 @@ class TeledeclarationQuerySetTest(TestCase):
         )
         self.assertIsNone(td_without_meal_price.meal_price)
         self.assertIsNone(td_without_appro.meal_price)
+
+    @override_settings(PUBLISH_BY_DEFAULT=True)
+    def test_publicly_visible(self):
+        self.assertEqual(Teledeclaration.objects.count(), 13)
+        self.assertEqual(Teledeclaration.objects.publicly_visible().count(), 11)  # 2 belong to canteen_army
 
 
 class TestTeledeclarationModelConstraintsTest(TestCase):

@@ -40,7 +40,7 @@ class TestETLAnalysisCanteen(TestCase):
 
     def test_transformed_dataset_match_schema(self):
         etl = ETL_ANALYSIS_CANTEEN()
-        schema = json.load(open("data/schemas/export_metabase/schema_cantines.json"))
+        schema = json.load(open("data/schemas/export_analysis/schema_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
         etl.extract_dataset()
         etl.transform_dataset()
@@ -69,16 +69,18 @@ class TestETLAnalysisCanteen(TestCase):
         self.assertEqual(canteen_1["type_gestion"], "Directe")
         self.assertEqual(canteen_1["type_production"], "Cantine qui produit les repas sur place")
         self.assertEqual(canteen_1["modele_economique"], "Public")
-        self.assertEqual(canteen_1["spe"], "Non")
+        self.assertEqual(canteen_1["spe"], "Oui")  # because line_ministry is set
 
         canteen_2 = canteens[canteens.id == self.canteen_2.id].iloc[0]
         self.assertEqual(canteen_2["ministere_tutelle"], None)
         self.assertEqual(canteen_2["type_gestion"], None)
         self.assertEqual(canteen_2["type_production"], None)
         self.assertEqual(canteen_2["modele_economique"], None)
+        self.assertEqual(canteen_2["spe"], "Non")
 
 
 class TestETLAnalysisTD(TestCase):
+
     def test_extraction_teledeclaration(self):
         """
         Only teledeclarations that occurred during teledeclaration campaigns should be extracted
@@ -326,6 +328,67 @@ class TestETLAnalysisTD(TestCase):
 
             self.assertEqual(data["cout_denrees"], tc["expected_outcome"])
 
+    def test_geo_columns(self):
+        canteen_with_geo_data = CanteenFactory.create(
+            department="38",
+            department_lib="Isère",
+            region="84",
+            region_lib="Auvergne-Rhône-Alpes",
+            epci="200040715",
+            epci_lib="Grenoble-Alpes-Métropole",
+        )
+        diag = DiagnosticFactory.create(canteen=canteen_with_geo_data)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
+
+        self.serializer = TeledeclarationAnalysisSerializer(instance=teledeclaration)
+        data = self.serializer.data
+
+        self.assertEqual(data["departement"], "38")
+        self.assertEqual(data["lib_departement"], "Isère")
+        self.assertEqual(data["region"], "84")
+        self.assertEqual(data["lib_region"], "Auvergne-Rhône-Alpes")
+
+        canteen_half_geo_data = CanteenFactory.create(
+            department="38",
+            department_lib=None,
+            region="84",
+            region_lib=None,
+            epci="200040715",
+            epci_lib=None,
+        )
+        diag_half_geo = DiagnosticFactory.create(canteen=canteen_half_geo_data)
+        teledeclaration_half_geo = Teledeclaration.create_from_diagnostic(
+            diag_half_geo, applicant=UserFactory.create()
+        )
+
+        self.serializer_half_geo = TeledeclarationAnalysisSerializer(instance=teledeclaration_half_geo)
+        data = self.serializer_half_geo.data
+
+        self.assertEqual(data["departement"], "38")
+        self.assertEqual(data["lib_departement"], "Isère")  # filled with the serializer
+        self.assertEqual(data["region"], "84")
+        self.assertEqual(data["lib_region"], "Auvergne-Rhône-Alpes")  # filled with the serializer
+
+        canteen_without_geo_data = CanteenFactory.create(
+            department=None,
+            department_lib=None,
+            region=None,
+            region_lib=None,
+            epci=None,
+            epci_lib=None,
+        )
+        diag_without_geo = DiagnosticFactory.create(canteen=canteen_without_geo_data)
+        teledeclaration_without_geo = Teledeclaration.create_from_diagnostic(
+            diag_without_geo, applicant=UserFactory.create()
+        )
+        self.serializer_without_geo = TeledeclarationAnalysisSerializer(instance=teledeclaration_without_geo)
+        data_no_geo = self.serializer_without_geo.data
+
+        self.assertEqual(data_no_geo["departement"], None)
+        self.assertEqual(data_no_geo["lib_departement"], None)
+        self.assertEqual(data_no_geo["region"], None)
+        self.assertEqual(data_no_geo["lib_region"], None)
+
     def test_flatten_td(self):
         data = {
             "id": {2: 1, 3: 2, 4: 3},
@@ -334,7 +397,7 @@ class TestETLAnalysisTD(TestCase):
             "name": {2: "Cantine A", 3: "Cantine B", 4: "Cantine C"},
             "siret": {2: "siretA", 3: "siretB", 4: "siretC"},
             "daily_meal_count": {2: 38.0, 3: None, 4: None},
-            "yearly_meal_count": {2: 10, 3: 100, 4: 200},
+            "yearly_meal_count": {2: 10, 3: 100, 4: 300},
             "production_type": {2: "site", 3: "central", 4: "central_serving"},
             "cuisine_centrale": {2: "B) non", 3: "A) oui", 4: "A) oui"},
             "central_producer_siret": {2: None, 3: None, 4: None},
@@ -368,7 +431,7 @@ class TestETLAnalysisTD(TestCase):
                         "id": 31,
                         "name": "SATELLITE 2",
                         "siret": "31930055500456",
-                        "yearly_meal_count": 80,
+                        "yearly_meal_count": None,
                     },
                 ],
             },
@@ -382,6 +445,40 @@ class TestETLAnalysisTD(TestCase):
         self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].value_total_ht, 500)  # Appro value split
         self.assertEqual(len(etl.df[etl.df.canteen_id == 3]), 1)  # Central kitchen filtered out
         self.assertEqual(etl.df[etl.df.canteen_id == 3].iloc[0].value_total_ht, 500)  # Appro value split
+        self.assertEqual(etl.df[etl.df.canteen_id == 30].iloc[0].value_total_ht, 500)  # Appro value split
+        self.assertEqual(etl.df[etl.df.canteen_id == 31].iloc[0].yearly_meal_count, 300 / 3)
+
+    def test_delete_duplicates_cc_csat_with_duplicates(self):
+
+        etl_instance = ETL_ANALYSIS_TELEDECLARATIONS()
+        etl_instance.df = pd.DataFrame(
+            {
+                "canteen_id": [1, 1, 2],
+                "year": [2023, 2023, 2023],
+                "production_type": [
+                    Canteen.ProductionType.CENTRAL,
+                    Canteen.ProductionType.ON_SITE_CENTRAL,
+                    Canteen.ProductionType.ON_SITE_CENTRAL,
+                ],
+                "other_column": [10, 20, 30],
+            }
+        )
+        etl_instance.delete_duplicates_cc_csat()
+        assert len(etl_instance.df) == 2
+        assert etl_instance.df.iloc[0]["production_type"] == Canteen.ProductionType.CENTRAL
+
+    def test_delete_duplicates_cc_csat_no_duplicates(self):
+        etl_instance = ETL_ANALYSIS_TELEDECLARATIONS()
+        etl_instance.df = pd.DataFrame(
+            {
+                "canteen_id": [1, 2],
+                "year": [2023, 2023],
+                "production_type": [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.ON_SITE_CENTRAL],
+                "other_column": [10, 20],
+            }
+        )
+        etl_instance.delete_duplicates_cc_csat()
+        assert len(etl_instance.df) == 2
 
 
 @pytest.mark.parametrize(

@@ -1,0 +1,218 @@
+{
+  "encoding": "utf-8",
+  "fields": [
+    {
+      "name": "id",
+      "type": "integer"
+    },
+    {
+      "name": "year",
+      "type": "integer"
+    },
+    {
+      "name": "creation_date",
+      "type": "string"
+    },
+    {
+      "name": "canteen_id",
+      "type": "integer"
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "siret",
+      "type": "string"
+    },
+    {
+      "name": "siren_unite_legale",
+      "type": "string"
+    },
+    {
+      "name": "daily_meal_count",
+      "type": "integer"
+    },
+    {
+      "name": "yearly_meal_count",
+      "type": "integer"
+    },
+    {
+      "name": "management_type",
+      "type": "string"
+    },
+    {
+      "name": "production_type",
+      "type": "string"
+    },
+    {
+      "name": "cuisine_centrale",
+      "type": "string"
+    },
+    {
+      "name": "central_producer_siret",
+      "type": "integer"
+    },
+    {
+      "name": "diagnostic_type",
+      "type": "string"
+    },
+    {
+      "name": "modele_economique",
+      "type": "string"
+    },
+    {
+      "name": "secteur",
+      "type": "string"
+    },
+    {
+      "name": "categorie",
+      "type": "string"
+    },
+    {
+      "name": "satellite_canteens_count",
+      "type": "integer"
+    },
+    {
+      "description": "Spécifie si les données ont été déclarées par une cuisine centrale",
+      "name": "genere_par_cuisine_centrale",
+      "type": "boolean"
+    },
+    {
+      "name": "departement",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^([013-9]\\d|2[AB1-9])\\d{3}$",
+        "required": false
+      },
+      "description": "Le code INSEE de la commune dans laquelle la cantine se trouve.",
+      "example": "75105",
+      "name": "code_insee_commune",
+      "title": "Code Insee Commune",
+      "type": "string"
+    },
+    {
+      "name": "lib_departement",
+      "type": "string"
+    },
+    {
+      "name": "region",
+      "type": "integer"
+    },
+    {
+      "name": "lib_region",
+      "type": "string"
+    },
+    {
+      "name": "nbre_cantines_region",
+      "type": "integer"
+    },
+    {
+      "name": "objectif_zone_geo",
+      "type": "string"
+    },
+    {
+      "name": "line_ministry",
+      "type": "string"
+    },
+    {
+      "name": "email",
+      "type": "string"
+    },
+    {
+      "name": "value_total_ht",
+      "type": "float"
+    },
+    {
+      "name": "value_bio_ht",
+      "type": "float"
+    },
+    {
+      "name": "value_somme_egalim_avec_bio_ht",
+      "type": "float"
+    },
+    {
+      "name": "value_somme_egalim_hors_bio_ht",
+      "type": "float"
+    },
+    {
+      "name": "value_sustainable_ht",
+      "type": "float"
+    },
+    {
+      "name": "value_externality_performance_ht",
+      "type": "float"
+    },
+    {
+      "name": "value_egalim_others_ht",
+      "type": "float"
+    },
+    {
+      "name": "value_meat_poultry_ht",
+      "type": "float"
+    },
+    {
+      "name": "value_fish_ht",
+      "type": "float"
+    },
+    {
+      "name": "value_meat_poultry_egalim_ht",
+      "type": "float"
+    },
+    {
+      "name": "value_fish_egalim_ht",
+      "type": "float"
+    },
+    {
+      "name": "value_meat_poultry_france_ht",
+      "type": "float"
+    },
+    {
+      "name": "value_meat_and_fish_ht",
+      "type": "float"
+    },
+    {
+      "name": "value_meat_and_fish_egalim_ht",
+      "type": "float"
+    },
+    {
+      "name": "ratio_egalim_fish",
+      "type": "float"
+    },
+    {
+      "name": "ratio_egalim_meat_poultry",
+      "type": "float"
+    },
+    {
+      "name": "ratio_bio",
+      "type": "float"
+    },
+    {
+      "name": "ratio_egalim_avec_bio",
+      "type": "float"
+    },
+    {
+      "name": "ratio_egalim_sans_bio",
+      "type": "float"
+    },
+    {
+      "name": "service_type",
+      "type": "string"
+    },
+    {
+      "name": "vegetarian_weekly_recurrence",
+      "type": "string"
+    },
+    {
+      "name": "vegetarian_menu_type",
+      "type": "string"
+    }
+  ],
+  "format": "csv",
+  "mediatype": "text/csv",
+  "scheme": "file",
+  "title": "Schéma du modèle de données d'analyse",
+  "type": "table"
+}

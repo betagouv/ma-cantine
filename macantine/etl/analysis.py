@@ -76,7 +76,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         self.years = CAMPAIGN_DATES.keys()
         self.extracted_table_name = "teledeclarations"
         self.warehouse = DataWareHouse()
-        self.schema = json.load(open("data/schemas/export_metabase/schema_teledeclarations.json"))
+        self.schema = json.load(open("data/schemas/export_analysis/schema_teledeclarations.json"))
         self.columns = [field["name"] for field in self.schema["fields"]]
         self.view = TeledeclarationAnalysisListView
 
@@ -85,6 +85,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
             logger.warning("Dataset is empty. Skipping transformation")
             return
         self.flatten_central_kitchen_td()
+        self.delete_duplicates_cc_csat()
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
     def load_dataset(self, versionning=True):
@@ -101,25 +102,40 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         else:
             super().load_dataset()
 
+    def delete_duplicates_cc_csat(self):
+        """
+        Remove duplicate rows for central kitchens and their satellites based on unique identifiers.
+        Keep the row where production type is central kitchen if duplicates exist.
+        """
+        if "canteen_id" in self.df.columns and "production_type" in self.df.columns:
+            self.df = self.df.sort_values(
+                by=["production_type"],
+                key=lambda col: col.map(
+                    lambda x: x in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]
+                ),
+                ascending=False,
+            )
+            self.df = self.df.drop_duplicates(subset=["canteen_id", "year"], keep="first")
+        else:
+            logger.warning(
+                "Required columns 'canteen_id' or 'production_type' not found in dataframe. Skipping duplicate removal."
+            )
+
     def flatten_central_kitchen_td(self):
         """
         Split rows of central kitchen into a row for each satellite
         """
         self.df = self.df.set_index("id", drop=False)
+        satellite_rows = []
+
         for _, row in self.df.iterrows():
-            if (
-                row["production_type"] == Canteen.ProductionType.CENTRAL
-                or row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING
-            ):
-                nbre_satellites = (
-                    len(row["tmp_satellites"]) + 1
-                    if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING
-                    else len(row["tmp_satellites"])
+            if row["production_type"] in {
+                Canteen.ProductionType.CENTRAL,
+                Canteen.ProductionType.CENTRAL_SERVING,
+            }:
+                nbre_satellites = len(row["tmp_satellites"]) + (
+                    1 if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING else 0
                 )
-
-                if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING:
-                    self.df.loc[row["id"]] = self.split_appro_values(row, nbre_satellites)
-
                 for satellite in row["tmp_satellites"]:
                     satellite_row = row.copy()
                     satellite_row["canteen_id"] = satellite["id"]
@@ -127,23 +143,29 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                     satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
                     satellite_row["siret"] = satellite["siret"]
                     satellite_row["satellite_canteens_count"] = 0
-                    satellite_row["yearly_meal_count"] = satellite["yearly_meal_count"]
-                    satellite_row = self.split_appro_values(satellite_row, nbre_satellites)
-                    self.df = pd.concat([self.df, pd.DataFrame(satellite_row).T])
+                    satellite_row = self.split_cc_values(satellite_row, nbre_satellites)
+                    satellite_rows.append(satellite_row)
+
+                if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING:
+                    self.df.loc[row["id"]] = self.split_cc_values(row, nbre_satellites)
+
+        # Append all new rows at once
+        if satellite_rows:
+            self.df = pd.concat([self.df, pd.DataFrame(satellite_rows)], ignore_index=True)
 
         # Delete lines of central kitchen
         self.df = self.df[self.df.production_type != Canteen.ProductionType.CENTRAL]
 
-    def split_appro_values(self, row, nbre_satellites):
+    def split_cc_values(self, row, nbre_satellites):
         """
         Divide numerical values of a central kitchen to split into satellites
         """
         appro_columns = [col_appro for col_appro in self.columns if "value" in col_appro]
-        for appro_column in appro_columns:
-            if appro_column in row and row[appro_column] and nbre_satellites:
-                row[appro_column] = row[appro_column] / nbre_satellites
+        for col in appro_columns + ["yearly_meal_count"]:
+            if col in row and row[col] and nbre_satellites:
+                row[col] = row[col] / nbre_satellites
             else:
-                row[appro_column] = None
+                row[col] = None
         return row
 
 
@@ -163,7 +185,7 @@ class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
         super().__init__()
         self.extracted_table_name = "canteens"
         self.warehouse = DataWareHouse()
-        self.schema = json.load(open("data/schemas/export_metabase/schema_cantines.json"))
+        self.schema = json.load(open("data/schemas/export_analysis/schema_cantines.json"))
         self.view = CanteenAnalysisListView
 
     def transform_dataset(self):

@@ -1,7 +1,9 @@
 from rest_framework import serializers
 
+from api.serializers.utils import float_or_none, match_sector_values
 from data.department_choices import Department
-from data.models import Teledeclaration
+from data.models import Diagnostic, Teledeclaration
+from data.models.sector import Sector
 from data.region_choices import Region
 from macantine.etl import utils
 
@@ -22,6 +24,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     # Data related to the canteen
     name = serializers.SerializerMethodField()
     siret = serializers.SerializerMethodField()
+    siren_unite_legale = serializers.SerializerMethodField()
     daily_meal_count = serializers.SerializerMethodField()
     yearly_meal_count = serializers.SerializerMethodField()
     cout_denrees = serializers.SerializerMethodField()
@@ -42,6 +45,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     nbre_cantines_region = serializers.SerializerMethodField()
     objectif_zone_geo = serializers.SerializerMethodField()
     line_ministry = serializers.SerializerMethodField()
+    genere_par_cuisine_centrale = serializers.SerializerMethodField()
 
     # Data related to the appro
     value_bio_ht = serializers.SerializerMethodField()
@@ -57,6 +61,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     value_somme_egalim_hors_bio_ht = serializers.SerializerMethodField()
     value_meat_and_fish_ht = serializers.SerializerMethodField()
     value_meat_and_fish_egalim_ht = serializers.SerializerMethodField()
+    service_type = serializers.SerializerMethodField()
     vegetarian_weekly_recurrence = serializers.SerializerMethodField()
     vegetarian_menu_type = serializers.SerializerMethodField()
     ratio_egalim_fish = serializers.SerializerMethodField()
@@ -67,12 +72,6 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
 
     # Data related to the applicant
     email = serializers.SerializerMethodField()
-
-    # Data related to the campaign
-    declaration_2021 = serializers.SerializerMethodField()
-    declaration_2022 = serializers.SerializerMethodField()
-    declaration_2023 = serializers.SerializerMethodField()
-    declaration_2024 = serializers.SerializerMethodField()
 
     # Data related to the satellites, necessary to flatten the dataset
     tmp_satellites = serializers.SerializerMethodField()
@@ -85,6 +84,8 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "creation_date",
             "canteen_id",
             "name",
+            "siret",
+            "siren_unite_legale",
             "daily_meal_count",
             "yearly_meal_count",
             "cout_denrees",
@@ -97,6 +98,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "secteur",
             "categorie",
             "satellite_canteens_count",
+            "genere_par_cuisine_centrale",
             "code_insee_commune",
             "departement",
             "lib_departement",
@@ -106,12 +108,9 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "objectif_zone_geo",
             "line_ministry",
             "year",
-            "siret",
-            "canteen_siren_unite_legale",
             "status",
             "applicant_id",
             "diagnostic_id",
-            "teledeclaration_mode",
             "value_total_ht",
             "value_bio_ht",
             "value_sustainable_ht",
@@ -126,6 +125,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "value_somme_egalim_hors_bio_ht",
             "value_meat_and_fish_ht",
             "value_meat_and_fish_egalim_ht",
+            "service_type",
             "vegetarian_weekly_recurrence",
             "vegetarian_menu_type",
             "ratio_egalim_fish",
@@ -134,28 +134,27 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "ratio_egalim_avec_bio",
             "ratio_egalim_sans_bio",
             "email",
-            "declaration_2021",
-            "declaration_2022",
-            "declaration_2023",
-            "declaration_2024",
             "tmp_satellites",
         )
         read_only_fields = fields
 
+    def get_name(self, obj):
+        if "name" in obj.declared_data["canteen"]:
+            return obj.declared_data["canteen"]["name"]
+
     def get_siret(self, obj):
         return obj.canteen_siret
 
-    def get_name(self, obj):
-        if "name" in obj.declared_data["canteen"].keys():
-            return obj.declared_data["canteen"]["name"]
+    def get_siren_unite_legale(self, obj):
+        return obj.canteen_siren_unite_legale
 
     def get_daily_meal_count(self, obj):
-        if "daily_meal_count" in obj.declared_data["canteen"].keys():
+        if "daily_meal_count" in obj.declared_data["canteen"]:
             daily_meal_count = obj.declared_data["canteen"]["daily_meal_count"]
             return int(daily_meal_count) if daily_meal_count else None
 
     def get_yearly_meal_count(self, obj):
-        if "yearly_meal_count" in obj.declared_data["canteen"].keys():
+        if "yearly_meal_count" in obj.declared_data["canteen"]:
             yearly_meal_count = obj.declared_data["canteen"]["yearly_meal_count"]
             return int(yearly_meal_count) if yearly_meal_count else None
 
@@ -186,8 +185,13 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             return "C) non renseigné"
 
     def get_diagnostic_type(self, obj):
-        if "diagnostic_type" in obj.declared_data["canteen"]:
-            return obj.declared_data["canteen"]["diagnostic_type"]
+        if "diagnostic_type" in obj.declared_data["teledeclaration"]:
+            return (
+                obj.declared_data["teledeclaration"]["diagnostic_type"]
+                if obj.declared_data["teledeclaration"]["diagnostic_type"]
+                and obj.declared_data["teledeclaration"]["diagnostic_type"] != ""
+                else Diagnostic.DiagnosticType.SIMPLE
+            )
 
     def get_central_producer_siret(self, obj):
         if "central_producer_siret" in obj.declared_data["canteen"]:
@@ -209,7 +213,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             if len(sectors) > 1:
                 return "Secteurs multiples"
             elif len(sectors) == 1:
-                return sectors[0]["name"]
+                return match_sector_values(sectors[0]["name"])
             else:
                 return None
 
@@ -219,7 +223,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             if len(category) > 1:
                 return "Catégories multiples"
             elif len(category) == 1:
-                return category[0]["category"]
+                return Sector.Categories(category[0]["category"]).label if category[0]["category"] else None
             else:
                 return None
 
@@ -228,12 +232,15 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             satellite_canteens_count = obj.declared_data["canteen"]["satellite_canteens_count"]
             return int(satellite_canteens_count) if satellite_canteens_count else None
 
+    def get_genere_par_cuisine_centrale(self, obj):
+        return obj.is_declared_by_cc
+
     def get_code_insee_commune(self, obj):
         if "city_insee_code" in obj.declared_data["canteen"]:
             return obj.declared_data["canteen"]["city_insee_code"]
 
     def get_departement(self, obj):
-        if "department" in obj.declared_data.keys():
+        if "department" in obj.declared_data["canteen"]:
             return obj.declared_data["canteen"]["department"]
 
     def get_lib_departement(self, obj):
@@ -241,7 +248,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         return Department(department).label.split(" - ")[1].lstrip() if department else None
 
     def get_region(self, obj):
-        if "region" in obj.declared_data.keys():
+        if "region" in obj.declared_data["canteen"]:
             return obj.declared_data["canteen"]["region"]
 
     def get_lib_region(self, obj):
@@ -271,19 +278,19 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         return obj.value_egalim_others_ht_agg
 
     def get_value_meat_poultry_ht(self, obj):
-        return obj.diagnostic.value_meat_poultry_ht
+        return float_or_none(obj.diagnostic.value_meat_poultry_ht)
 
     def get_value_meat_poultry_france_ht(self, obj):
-        return obj.diagnostic.value_meat_poultry_france_ht
+        return float_or_none(obj.diagnostic.value_meat_poultry_france_ht)
 
     def get_value_meat_poultry_egalim_ht(self, obj):
-        return obj.diagnostic.value_meat_poultry_egalim_ht
+        return float_or_none(obj.diagnostic.value_meat_poultry_egalim_ht)
 
     def get_value_fish_ht(self, obj):
-        return obj.diagnostic.value_fish_ht
+        return float_or_none(obj.diagnostic.value_fish_ht)
 
     def get_value_fish_egalim_ht(self, obj):
-        return obj.diagnostic.value_fish_egalim_ht
+        return float_or_none(obj.diagnostic.value_fish_egalim_ht)
 
     def get_value_somme_egalim_avec_bio_ht(self, obj):
         return utils.sum_int_and_none([self.get_value_somme_egalim_hors_bio_ht(obj), self.get_value_bio_ht(obj)])
@@ -302,6 +309,10 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
 
     def get_value_meat_and_fish_egalim_ht(self, obj):
         return utils.sum_int_and_none([self.get_value_meat_poultry_egalim_ht(obj), self.get_value_fish_egalim_ht(obj)])
+
+    def get_service_type(self, obj):
+        if "service_type" in obj.declared_data["teledeclaration"]:
+            return obj.declared_data["teledeclaration"]["service_type"]
 
     def get_vegetarian_weekly_recurrence(self, obj):
         if "vegetarian_weekly_recurrence" in obj.declared_data["teledeclaration"]:
@@ -329,18 +340,6 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     def get_email(self, obj):
         if "email" in obj.declared_data["applicant"]:
             return obj.declared_data["applicant"]["email"]
-
-    def get_declaration_2021(self, obj):
-        return Teledeclaration.objects.filter(canteen_id=obj.canteen.id, year=2021).exists()
-
-    def get_declaration_2022(self, obj):
-        return Teledeclaration.objects.filter(canteen_id=obj.canteen.id, year=2022).exists()
-
-    def get_declaration_2023(self, obj):
-        return Teledeclaration.objects.filter(canteen_id=obj.canteen.id, year=2023).exists()
-
-    def get_declaration_2024(self, obj):
-        return Teledeclaration.objects.filter(canteen_id=obj.canteen.id, year=2024).exists()
 
     def get_tmp_satellites(self, obj):
         if "satellites" in obj.declared_data:

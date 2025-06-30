@@ -6,6 +6,200 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.23.1](https://github.com/betagouv/ma-cantine/compare/v2025.23.0...v2025.23.1) (2025-06-27)
+
+
+### Améliorations
+
+* **Admin:** améliore la recherche dans la page des cantines ([#5479](https://github.com/betagouv/ma-cantine/issues/5479)) ([78eb4fb](https://github.com/betagouv/ma-cantine/commit/78eb4fb5495c647af14c97d66b755ece5db66bd2))
+* **Admin:** facilite la suppression d'un lien cantine - gestionnaire ([#5477](https://github.com/betagouv/ma-cantine/issues/5477)) ([266eca6](https://github.com/betagouv/ma-cantine/commit/266eca68928b1666b36b87f416a5286d63468a79))
+
+
+### Corrections (bugs, typos...)
+
+* **Gaspillage alimentaire:** corrige l'affichage des vues graphiques ([#5480](https://github.com/betagouv/ma-cantine/issues/5480)) ([4504226](https://github.com/betagouv/ma-cantine/commit/4504226bf3af35bdd749f4941beda8cc960250a5))
+
+
+### Technique
+
+* **API Stats:** gros refactoring sur la view et le serializer ([#5478](https://github.com/betagouv/ma-cantine/issues/5478)) ([5069ea2](https://github.com/betagouv/ma-cantine/commit/5069ea21ba6a9b3e2d1640401667229a353e1378))
+
+## [2025.23.0](https://github.com/betagouv/ma-cantine/compare/v2025.22.0...v2025.23.0) (2025-06-24)
+
+
+### Nouveautés
+
+* **API Stats:** nouveau filtre par commune(s) ([#5424](https://github.com/betagouv/ma-cantine/issues/5424)) ([d867f65](https://github.com/betagouv/ma-cantine/commit/d867f655f2d770234d80b12c0e4cba50f98104f9))
+* **API Stats:** nouvelles stats avec la répartition du nombre de cantines par mode de gestion ([#5469](https://github.com/betagouv/ma-cantine/issues/5469)) ([1ccafb5](https://github.com/betagouv/ma-cantine/commit/1ccafb5a724811df414a27a22f58e6b9735aeddb))
+* **API Stats:** nouvelles stats avec la répartition du nombre de cantines par mode de production ([#5472](https://github.com/betagouv/ma-cantine/issues/5472)) ([047d7be](https://github.com/betagouv/ma-cantine/commit/047d7befd2fd8f56082e3e1a68044fe0c313cf64))
+* **API Stats:** nouvelles stats avec la répartition du nombre de cantines par secteur économique ([#5473](https://github.com/betagouv/ma-cantine/issues/5473)) ([4913509](https://github.com/betagouv/ma-cantine/commit/491350941d860f2a289fa83e6399a22b6704306d))
+
+
+### Améliorations
+
+* **Admin:** ajoute les liens des cantines satellites depuis la page de la cuisine centrale ([#5471](https://github.com/betagouv/ma-cantine/issues/5471)) ([cafaa57](https://github.com/betagouv/ma-cantine/commit/cafaa57d87c26cd116904ca62b3b142fb45902d8))
+* **API Stats:** Filter les cantines rattachées au ministère de tutelle ARMEE ([#5468](https://github.com/betagouv/ma-cantine/issues/5468)) ([5f0ae80](https://github.com/betagouv/ma-cantine/commit/5f0ae80e4a8939f8a605f428b00f2746d07c51d3))
+* **ETL:** Réconcilier les noms historiques et actuels des secteurs ([#5475](https://github.com/betagouv/ma-cantine/issues/5475)) ([c9ba00e](https://github.com/betagouv/ma-cantine/commit/c9ba00e0d451b5d5ba80216762a23ffba346148d))
+
+
+### Corrections (bugs, typos...)
+
+* **ETL:** Utiliser le yearly meal count de la cc ([#5470](https://github.com/betagouv/ma-cantine/issues/5470)) ([5881437](https://github.com/betagouv/ma-cantine/commit/58814377bdae3f7d23da089809dbd03a68e2570a))
+
+
+### Documentation
+
+* Ajoute 3 documents (Gitbook &gt; Guide d'aide) ([#5476](https://github.com/betagouv/ma-cantine/issues/5476)) ([89305ee](https://github.com/betagouv/ma-cantine/commit/89305ee12428fc72459bb76daed44144e6f6f376))
+* **API:** Clarifier l'accessibilité des endpoint publics/privés ([#5465](https://github.com/betagouv/ma-cantine/issues/5465)) ([8a52ed2](https://github.com/betagouv/ma-cantine/commit/8a52ed2adf6d5e8061370ae4070a9aa7ce0777ca))
+
+
+### Technique
+
+* **deps:** bump requests from 2.32.3 to 2.32.4 ([#5438](https://github.com/betagouv/ma-cantine/issues/5438)) ([2a427dc](https://github.com/betagouv/ma-cantine/commit/2a427dcda865ea47786bb5e53601ca66511251b2))
+* **Télédéclarations:** Nouveau queryset publicly_visible. Ajout de tests ([#5467](https://github.com/betagouv/ma-cantine/issues/5467)) ([887ba5b](https://github.com/betagouv/ma-cantine/commit/887ba5bf1e87fa59c25f8d5545021b2ac519a248))
+
+## [2025.22.0](https://github.com/betagouv/ma-cantine/compare/v2025.21.1...v2025.22.0) (2025-06-23)
+
+
+### Nouveautés
+
+* **API Stats:** nouveau filtre par mode(s) de gestion ([#5463](https://github.com/betagouv/ma-cantine/issues/5463)) ([4309a8b](https://github.com/betagouv/ma-cantine/commit/4309a8b547d71b5952cedff8899a45cdcaa5bd1e))
+* **API Stats:** nouveau filtre par mode(s) de production ([#5462](https://github.com/betagouv/ma-cantine/issues/5462)) ([c62612c](https://github.com/betagouv/ma-cantine/commit/c62612c0c132c52d219959586297815affe48129))
+* **API Stats:** nouveau filtre par secteur(s) économique ([#5464](https://github.com/betagouv/ma-cantine/issues/5464)) ([838dfe2](https://github.com/betagouv/ma-cantine/commit/838dfe2c447dd8261e198300916eda7bc9de682a))
+* **Statistiques des cantines:** création de la future page de statistiques en vue3 ([#5447](https://github.com/betagouv/ma-cantine/issues/5447)) ([b381a2e](https://github.com/betagouv/ma-cantine/commit/b381a2e5eda45026c95e3984151633cca1930402))
+
+
+### Améliorations
+
+* **Admin:** Pretty json pour le champ declared_data dans Teledeclaration 🔥 ([#5456](https://github.com/betagouv/ma-cantine/issues/5456)) ([7882cc2](https://github.com/betagouv/ma-cantine/commit/7882cc24c12009c41f2c25cdec3318bec02c0169))
+* **API Stats:** optimise le calcul du nombre de cantines par catégorie de secteur ([#5448](https://github.com/betagouv/ma-cantine/issues/5448)) ([b5216b4](https://github.com/betagouv/ma-cantine/commit/b5216b4ed20215878fc0434294e6813b9b22266d))
+* **ETL:** Convertir les valeurs numériques issues du champ declared_data en float ([#5455](https://github.com/betagouv/ma-cantine/issues/5455)) ([1d97c99](https://github.com/betagouv/ma-cantine/commit/1d97c993bf953d2e963533333d12a60232bddead))
+* **ETL:** Remplir les champs vides de diagnostic_type par la valeur SIMPLE ([#5452](https://github.com/betagouv/ma-cantine/issues/5452)) ([e570cac](https://github.com/betagouv/ma-cantine/commit/e570cac0052e402394902d3ea76fdef8361f58a4))
+
+
+### Corrections (bugs, typos...)
+
+* **ETL:** Corriger col genere_par_cuisine_centrale ([#5451](https://github.com/betagouv/ma-cantine/issues/5451)) ([89ed13c](https://github.com/betagouv/ma-cantine/commit/89ed13ce831ae26d5d313012ea953fe39932bc28))
+* **ETL:** Les valeurs yearly_meal_count vides des satelittes étaient remplacées par la valeur de la CC  ([#5461](https://github.com/betagouv/ma-cantine/issues/5461)) ([84f027e](https://github.com/betagouv/ma-cantine/commit/84f027ee4d4d83fafaf7fed94110292b7274bfc2))
+* **ETL:** Suppression doublons TD CC & CSAT ([#5459](https://github.com/betagouv/ma-cantine/issues/5459)) ([2242bf3](https://github.com/betagouv/ma-cantine/commit/2242bf364231a65954c3c5ea8cc9335de3a6c424))
+* **Statistiques des cantines:** corrige l'affichage du pictogramme dans la tuile téléchargement ([#5454](https://github.com/betagouv/ma-cantine/issues/5454)) ([0144d1a](https://github.com/betagouv/ma-cantine/commit/0144d1a9ebc49cc438ce437ffedce9477fecc551))
+
+
+### Technique
+
+* **API Stats:** réorganise un peu les tests ([#5446](https://github.com/betagouv/ma-cantine/issues/5446)) ([4c930ea](https://github.com/betagouv/ma-cantine/commit/4c930ea8477734725af0d96b4d7ba87d0a2770b6))
+
+## [2025.21.1](https://github.com/betagouv/ma-cantine/compare/v2025.21.0...v2025.21.1) (2025-06-16)
+
+
+### Améliorations
+
+* **ETL:** Ajout colonne mode de télédéclaration dans Analysis TD ([#5445](https://github.com/betagouv/ma-cantine/issues/5445)) ([e4a4074](https://github.com/betagouv/ma-cantine/commit/e4a4074e9c7161bd82e0d8bab8da0f4b3df2abee))
+
+
+### Corrections (bugs, typos...)
+
+* **API Stats:** améliore la documentation du filtre PAT ([#5439](https://github.com/betagouv/ma-cantine/issues/5439)) ([99d650e](https://github.com/betagouv/ma-cantine/commit/99d650e37b503ca1144f841878ae46942a460d39))
+* **ETL:** Corriger le champ diagnostic_type ([#5444](https://github.com/betagouv/ma-cantine/issues/5444)) ([bbd81fa](https://github.com/betagouv/ma-cantine/commit/bbd81fac9ba4fb402ee45d4c09e54b511d92249c))
+* **ETL:** Ne pas filtrer les cantines sur le secteur armee/police/gendarmerie pour export open-data des cantines ([#5443](https://github.com/betagouv/ma-cantine/issues/5443)) ([b3f1ae6](https://github.com/betagouv/ma-cantine/commit/b3f1ae661bc38567dc715763ecd18a9587ec9b42))
+* **ETL:** remet une ligne commentée qui empêchait l'export ([#5440](https://github.com/betagouv/ma-cantine/issues/5440)) ([79352e3](https://github.com/betagouv/ma-cantine/commit/79352e3bbcbeb66dfc8cd9e9d63b750111761807))
+* **Foire aux questions:** corrige les accordéons qui ne s'ouvrent plus ([#5442](https://github.com/betagouv/ma-cantine/issues/5442)) ([84c9569](https://github.com/betagouv/ma-cantine/commit/84c9569e61e89816d05c87317f9bd7450412a751))
+* **Imports:** Cantines: corrige le format SIRET du fichier d'exemple ([#5441](https://github.com/betagouv/ma-cantine/issues/5441)) ([a82275e](https://github.com/betagouv/ma-cantine/commit/a82275e8213e97a8a5aa91558f221aed593ca9db))
+* **Tableau de bord:** corrige la recherche par nom de cantine ([#5430](https://github.com/betagouv/ma-cantine/issues/5430)) ([55f382b](https://github.com/betagouv/ma-cantine/commit/55f382bd06723a12ecda34729eca27b22e28e002))
+* **Tableau de bord:** permet de rechercher une cantine par numéro siret ou siren uniquement en vue carte ([#5436](https://github.com/betagouv/ma-cantine/issues/5436)) ([4bd4a67](https://github.com/betagouv/ma-cantine/commit/4bd4a67b446d4bb7bb6d689917b6993167f191f1))
+* **Trouver une cantine:** corrige le filtre par donnée d'approvisionnement ([#5434](https://github.com/betagouv/ma-cantine/issues/5434)) ([5aeb6e3](https://github.com/betagouv/ma-cantine/commit/5aeb6e335ecbd1ecc95ec6d751265f900522e47e))
+
+
+### Technique
+
+* **deps:** bump freezegun from 1.5.1 to 1.5.2 ([#5392](https://github.com/betagouv/ma-cantine/issues/5392)) ([d1d94c2](https://github.com/betagouv/ma-cantine/commit/d1d94c27328e51121e998f408f8b1e3b1964f03d))
+
+## [2025.21.0](https://github.com/betagouv/ma-cantine/compare/v2025.20.0...v2025.21.0) (2025-06-05)
+
+
+### Nouveautés
+
+* **API Stats:** nouveau filtre par PAT(s) ([#5423](https://github.com/betagouv/ma-cantine/issues/5423)) ([cd3e523](https://github.com/betagouv/ma-cantine/commit/cd3e5232d94f7215eab6a77336607b181680751d))
+
+
+### Améliorations
+
+* **API Stats:** mieux documenter la possibilité de faire des filtres multiples ([#5419](https://github.com/betagouv/ma-cantine/issues/5419)) ([69190cd](https://github.com/betagouv/ma-cantine/commit/69190cd17f490b2bba1d1b69a13173bf2b41e609))
+* **API Stats:** simplifier la façon de filter par EPCI(s) ([#5422](https://github.com/betagouv/ma-cantine/issues/5422)) ([1a8bbe7](https://github.com/betagouv/ma-cantine/commit/1a8bbe7e0ff60f9fbdea0f81299b539250d7bbdd))
+* **ETL:** Ajout champ SIREN unite legale ([#5428](https://github.com/betagouv/ma-cantine/issues/5428)) ([2a772b1](https://github.com/betagouv/ma-cantine/commit/2a772b19fae5cbb7153acfd396c0778ca0a5218a))
+
+
+### Corrections (bugs, typos...)
+
+* **API Stats:** typo sur le nom des filtres dans la doc ([#5418](https://github.com/betagouv/ma-cantine/issues/5418)) ([9a6ba6d](https://github.com/betagouv/ma-cantine/commit/9a6ba6d0857cc3ba45da26f3cf0ee8d897824840))
+* **Cantines:** basculer la notion de SPE sur les line_ministry au lieu des sectors ([#5346](https://github.com/betagouv/ma-cantine/issues/5346)) ([8285e4d](https://github.com/betagouv/ma-cantine/commit/8285e4da46277f14191de998a7c083639d8f5431))
+* **ETL:** Changer en int le selector de l'argument dans la commande ([#5432](https://github.com/betagouv/ma-cantine/issues/5432)) ([932718a](https://github.com/betagouv/ma-cantine/commit/932718a44dd1e1ba6550376da4073004196d9b83))
+* **Header:** corrige l'affichage étiré du logo dans le header sur safari ([#5431](https://github.com/betagouv/ma-cantine/issues/5431)) ([6deaac2](https://github.com/betagouv/ma-cantine/commit/6deaac220eca90521a2df02d0aaf8c8c77fd2ce5))
+* **Metabase:** répare les tests suite aux modifs sur le calcul du champ SPE ([#5425](https://github.com/betagouv/ma-cantine/issues/5425)) ([59ad0a7](https://github.com/betagouv/ma-cantine/commit/59ad0a7b5ca05be40c635d6e4f39019ff1713906))
+
+
+### Technique
+
+* **API Stats:** réorganise un peu les tests ([#5427](https://github.com/betagouv/ma-cantine/issues/5427)) ([c648617](https://github.com/betagouv/ma-cantine/commit/c648617ed05977590a1edae0afee84e1a2904026))
+* **Metabase:** homogénéise le nommage à Analysis ([#5429](https://github.com/betagouv/ma-cantine/issues/5429)) ([c6f681d](https://github.com/betagouv/ma-cantine/commit/c6f681d44b319ff25e40e27e9e1429beef6fac21))
+
+## [2025.20.0](https://github.com/betagouv/ma-cantine/compare/v2025.19.0...v2025.20.0) (2025-06-04)
+
+
+### Nouveautés
+
+* **Geo Bot:** ajouter la liste des PAT aux cantines correspondantes ([#5409](https://github.com/betagouv/ma-cantine/issues/5409)) ([a0e0e9b](https://github.com/betagouv/ma-cantine/commit/a0e0e9bc57b1ecfa1ab3cb4cbadafb4dba90111f))
+
+
+### Améliorations
+
+* **ETL:** Ajout du champ service type ([#5415](https://github.com/betagouv/ma-cantine/issues/5415)) ([9715549](https://github.com/betagouv/ma-cantine/commit/97155497cc5b9066095fe1b06ff92b14f99a9086))
+* **ETL:** Ajouts des lignes en base par chunks pour éviter les timeout ([#5417](https://github.com/betagouv/ma-cantine/issues/5417)) ([7e071d8](https://github.com/betagouv/ma-cantine/commit/7e071d8eda4a11021c70fc0fae639aa395ebd9b6))
+* **Metabase:** Cantines: ajout des nouveaux champs pat_list & pat_lib_list dans l'export ([#5410](https://github.com/betagouv/ma-cantine/issues/5410)) ([d32a547](https://github.com/betagouv/ma-cantine/commit/d32a5474bb689e6a7cf674cbc7c1a2a086cc6ebd))
+* **Open Data:** Cantines: ajout des nouveaux champs pat_list & pat_lib_list dans l'export ([#5411](https://github.com/betagouv/ma-cantine/issues/5411)) ([97b6a26](https://github.com/betagouv/ma-cantine/commit/97b6a26c4f62786e1ead8bd7cdee2b9cead128e2))
+
+
+### Corrections (bugs, typos...)
+
+* **ETL:** Corriger les valeurs alimentaires des satellites des cc central serving ([#5420](https://github.com/betagouv/ma-cantine/issues/5420)) ([57edf83](https://github.com/betagouv/ma-cantine/commit/57edf83f7a0ffd36b81d8612aa565ac9a7425bfd))
+* **Télédéclaration:** répare la façon dont on va chercher certaines infos géographiques ([#5406](https://github.com/betagouv/ma-cantine/issues/5406)) ([891111b](https://github.com/betagouv/ma-cantine/commit/891111b2dc196ca5c1070b4dd60dfc65cbac6f09))
+
+
+### Technique
+
+* **ETL:** Concat toutes les lignes des satellites dans le dataframe en une fois ([#5412](https://github.com/betagouv/ma-cantine/issues/5412)) ([342d512](https://github.com/betagouv/ma-cantine/commit/342d512c82c09a0aa5d54462c44fd70d7f4e6d6f))
+* **ETL:** Supprimer les colonnes campagnes_&lt;ANNEE&gt; ([#5413](https://github.com/betagouv/ma-cantine/issues/5413)) ([5760552](https://github.com/betagouv/ma-cantine/commit/5760552aecff30c88d1a382cbe8d688d0915244b))
+
+## [2025.19.0](https://github.com/betagouv/ma-cantine/compare/v2025.18.1...v2025.19.0) (2025-06-03)
+
+
+### Nouveautés
+
+* **Cantines:** nouveaux champs pour stocker le nom et l'id des PAT ([#5362](https://github.com/betagouv/ma-cantine/issues/5362)) ([94c5e56](https://github.com/betagouv/ma-cantine/commit/94c5e563f01383c6a771279adfe9f10ed8b59e40))
+* **DataGouv:** méthode pour récupérer les PAT depuis l'API ([#5365](https://github.com/betagouv/ma-cantine/issues/5365)) ([3a9b0dd](https://github.com/betagouv/ma-cantine/commit/3a9b0ddbb4657b7602f31b128fc60267b4440ac0))
+* **Plan du site:** migration de la page vers vue3 ([#5389](https://github.com/betagouv/ma-cantine/issues/5389)) ([d7492c5](https://github.com/betagouv/ma-cantine/commit/d7492c5d032fd0c65e573f177d7de8c712c78a4c))
+* **Télédéclaration:** 1 TD par cantine ([#5403](https://github.com/betagouv/ma-cantine/issues/5403)) ([f37b951](https://github.com/betagouv/ma-cantine/commit/f37b951d13099b74ca20d1217fbc7653f361a9dc))
+
+
+### Améliorations
+
+* **ETL:** Ajout prefetch sur le queryset ([#5401](https://github.com/betagouv/ma-cantine/issues/5401)) ([4a746f2](https://github.com/betagouv/ma-cantine/commit/4a746f23a9e8677ce39e63976b60134b7129475a))
+* **Pages du footer:** homogénéise l'affichage entre les pages ([#5391](https://github.com/betagouv/ma-cantine/issues/5391)) ([bb6e3fa](https://github.com/betagouv/ma-cantine/commit/bb6e3fa732edb7a761550a71ecb27f7eabfac52b))
+* **Télédéclaration:** pour 2021 et 2022, enrichir les cantines de leur département & région ([#5405](https://github.com/betagouv/ma-cantine/issues/5405)) ([08f81ec](https://github.com/betagouv/ma-cantine/commit/08f81ec287f88e2bcedbcc5243da4828d9c379a1))
+
+
+### Corrections (bugs, typos...)
+
+* **Gestion des cookies:** corrige les liens cassés ou non présents dans les footer ([#5388](https://github.com/betagouv/ma-cantine/issues/5388)) ([eddbc48](https://github.com/betagouv/ma-cantine/commit/eddbc48af0776c809032c78d4917abb3b9392d92))
+* **Mesures de notre impact:** supprime la page obsolète ([#5390](https://github.com/betagouv/ma-cantine/issues/5390)) ([8ce35ec](https://github.com/betagouv/ma-cantine/commit/8ce35ec6fa1e09c892ce410a228e66b1ef8fb467))
+
+
+### Technique
+
+* **ETL:** Suite transfert de transform() pour TeledeclarationAnalysis ([#5384](https://github.com/betagouv/ma-cantine/issues/5384)) ([a336e33](https://github.com/betagouv/ma-cantine/commit/a336e3396fcac651dbfa79e168d69925c6d8b314))
+* **Pre-commit:** mise à jour des plugins utilisés pour les vérifications ([#5400](https://github.com/betagouv/ma-cantine/issues/5400)) ([0bb8875](https://github.com/betagouv/ma-cantine/commit/0bb8875d67b40523afe9677dfdd3c4c2742dde05))
+* **Vue3:** mise à jour des packages ([#5404](https://github.com/betagouv/ma-cantine/issues/5404)) ([bbcd5f1](https://github.com/betagouv/ma-cantine/commit/bbcd5f183c2e91611d104b48d85a45f8e7f21104))
+
 ## [2025.18.1](https://github.com/betagouv/ma-cantine/compare/v2025.18.0...v2025.18.1) (2025-05-28)
 
 

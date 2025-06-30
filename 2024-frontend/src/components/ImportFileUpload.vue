@@ -13,7 +13,7 @@ const emit = defineEmits(["success"])
 const props = defineProps(["apiUrl", "eventMatomo"])
 
 /* Data */
-const pictoDocument = "/static/images/picto-dsfr/document.svg"
+const pictoDocument = "/static/images/picto-dsfr/document-add.svg"
 
 /* Upload */
 const isProcessingFile = ref(false)

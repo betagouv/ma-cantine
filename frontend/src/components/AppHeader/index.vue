@@ -21,7 +21,7 @@
           :aria-description="chipInfo && `environnement ${chipInfo.text}`"
         >
           <img src="/static/images/Marianne-2025.jpg" height="100" alt="" />
-          <img v-if="$vuetify.breakpoint.smAndUp" src="/static/images/ma-cantine-logo-light.jpg" height="65" alt="" />
+          <img v-if="$vuetify.breakpoint.smAndUp" src="/static/images/ma-cantine-logo-light.svg" height="65" alt="" />
           <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
             {{ chipInfo.text }}
           </v-chip>

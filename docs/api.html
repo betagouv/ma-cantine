@@ -9,7 +9,10 @@ Cette API permet de s'interfacer à l'application ma-cantine afin de réaliser l
 Les schémas des modèles de données sont disponibles en bas de page. Vous y retrouverez notamment la liste des <b>champs du volet approvisionnement</b> (approDiagnostic).
 </p>
 
-<h2>Autorisation</h2>
+<h2>Autorisation 🔓</h2>
+
+* Les endpoints avec un cadenas <b>ouvert</b> nécessitent une autorisation. Ils sont destinés aux gestionnaires de cantines.
+* Les endpoints avec un cadenas <b>fermé</b> ne nécessitent pas d'autorisation (ex: canteenStatistics). Ils sont accessibles par tous.
 
 <p>
 L'API est protégé par le protocole d'autorisation OAuth2 (voir <a href="https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow">documentation du procotole</a> et <a href="https://django-oauth-toolkit.readthedocs.io/en/latest/">documentation du package Django OAuth Toolkit Documentation</a>). Afin d'obtenir une autorisation, il faut :

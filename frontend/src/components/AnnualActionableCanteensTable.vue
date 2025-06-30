@@ -521,6 +521,7 @@ export default {
     },
   },
   mounted() {
+    this.clearSearch()
     this.populateInitialParameters()
     this.fetchCampaignDates()
     return this.fetchDiagnosticsToTeledeclare()

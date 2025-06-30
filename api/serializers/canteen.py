@@ -649,10 +649,12 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
         )
 
 
-class CanteenMetabaseSerializer(serializers.ModelSerializer):
+class CanteenAnalysisSerializer(serializers.ModelSerializer):
     nom = serializers.SerializerMethodField()
     code_insee_commune = serializers.SerializerMethodField()
     libelle_commune = serializers.SerializerMethodField()
+    pat_liste = serializers.SerializerMethodField()
+    pat_lib_liste = serializers.SerializerMethodField()
     departement = serializers.SerializerMethodField()
     departement_lib = serializers.SerializerMethodField()
     nbre_repas_jour = serializers.SerializerMethodField()
@@ -681,6 +683,8 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
             "libelle_commune",
             "epci",
             "epci_lib",
+            "pat_liste",
+            "pat_lib_liste",
             "departement",
             "departement_lib",
             "region",
@@ -710,6 +714,12 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
 
     def get_libelle_commune(self, obj):
         return obj.city
+
+    def get_pat_liste(self, obj):
+        return ",".join(obj.pat_list)
+
+    def get_pat_lib_liste(self, obj):
+        return ",".join(obj.pat_lib_list)
 
     def get_departement(self, obj):
         return obj.department
@@ -764,10 +774,7 @@ class CanteenMetabaseSerializer(serializers.ModelSerializer):
         return ",".join(categories)
 
     def get_spe(self, obj):
-        if obj.sectors.is_spe().exists():
-            return "Oui"
-        else:
-            return "Non"
+        return "Oui" if obj.is_spe else "Non"
 
     def get_adresses_gestionnaires(self, obj):
         emails = [manager.email for manager in obj.managers.all()]

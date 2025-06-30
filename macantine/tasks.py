@@ -12,6 +12,10 @@ from sib_api_v3_sdk.rest import ApiException
 
 import macantine.brevo as brevo
 from api.views.utils import update_change_reason
+from common.api.datagouv import (
+    fetch_commune_pat_list,
+    map_pat_list_to_communes_insee_code,
+)
 from common.api.decoupage_administratif import (
     fetch_commune_detail,
     fetch_epci_name,
@@ -23,7 +27,7 @@ from common.utils import siret as utils_siret
 from data.department_choices import get_lib_department_from_code
 from data.models import Canteen, User
 from data.region_choices import get_lib_region_from_code
-from data.utils import has_charfield_missing_query
+from data.utils import has_arrayfield_missing_query, has_charfield_missing_query
 
 from .celery import app
 from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS
@@ -218,12 +222,14 @@ def _get_candidate_canteens_for_insee_code_geobot():
         .filter(
             has_charfield_missing_query("city")
             | has_charfield_missing_query("postal_code")
+            | has_charfield_missing_query("epci")
+            | has_charfield_missing_query("epci_lib")
+            | has_arrayfield_missing_query("pat_list")
+            | has_arrayfield_missing_query("pat_lib_list")
             | has_charfield_missing_query("department")
             | has_charfield_missing_query("department_lib")
             | has_charfield_missing_query("region")
             | has_charfield_missing_query("region_lib")
-            | has_charfield_missing_query("epci")
-            | has_charfield_missing_query("epci_lib")
         )
         .filter(geolocation_bot_attempts__lt=20)
         .annotate(city_insee_code_len=Length("city_insee_code"))
@@ -285,12 +291,16 @@ def fill_missing_insee_code_using_siret():
     return result
 
 
-def _update_canteen_geo_data_from_insee_code(canteen, communes_details=None, epcis_names=None):  # noqa C901
-    # fetch geo data from API Découpage Administratif
+def _update_canteen_geo_data_from_insee_code(  # noqa C901
+    canteen, communes_details=None, epcis_names=None, pat_mapping=None
+):
+    # fetch geo data from API Découpage Administratif & DataGouv
     if not communes_details:
         communes_details = map_communes_infos()
     if not epcis_names:
         epcis_names = map_epcis_code_name()
+    if not pat_mapping:
+        pat_mapping = map_pat_list_to_communes_insee_code()
 
     update = False
     # geo fields
@@ -311,6 +321,11 @@ def _update_canteen_geo_data_from_insee_code(canteen, communes_details=None, epc
             if epci:
                 canteen.epci = epci
                 update = True
+        if not canteen.pat_list:
+            pat_list = fetch_commune_pat_list(canteen.city_insee_code, pat_mapping, "id")
+            if pat_list:
+                canteen.pat_list = pat_list
+                update = True
         if not canteen.department:
             department = fetch_commune_detail(canteen.city_insee_code, communes_details, "department")
             if department:
@@ -324,6 +339,9 @@ def _update_canteen_geo_data_from_insee_code(canteen, communes_details=None, epc
     # geo lib fields
     if canteen.epci and not canteen.epci_lib and canteen.epci in epcis_names:
         canteen.epci_lib = fetch_epci_name(canteen.epci, epcis_names)
+        update = True
+    if canteen.pat_list and not canteen.pat_lib_list:
+        canteen.pat_lib_list = fetch_commune_pat_list(canteen.city_insee_code, pat_mapping, "lib")
         update = True
     if canteen.department and not canteen.department_lib:
         canteen.department_lib = get_lib_department_from_code(canteen.department)
@@ -354,12 +372,13 @@ def fill_missing_geolocation_data_using_insee_code():
         logger.info("No candidate canteens have been found. Nothing to do here...")
         return
 
-    # fetch geo data from API Découpage Administratif
+    # fetch geo data from API Découpage Administratif & DataGouv
     communes_details = map_communes_infos()
     epcis_names = map_epcis_code_name()
+    pat_mapping = map_pat_list_to_communes_insee_code()
 
     for i, canteen in enumerate(candidate_canteens):
-        updated = _update_canteen_geo_data_from_insee_code(canteen, communes_details, epcis_names)
+        updated = _update_canteen_geo_data_from_insee_code(canteen, communes_details, epcis_names, pat_mapping)
         if updated:
             counter += 1
 
@@ -382,12 +401,12 @@ def export_datasets(datasets: dict):
         logger.info(f"Starting {key} dataset extraction")
         etl.extract_dataset()
         etl.transform_dataset()
-        # etl.load_dataset()
+        etl.load_dataset()
 
 
 def datasets_export_analysis_td():
     """
-    Export the Teledeclarations datasets for Metabase
+    Export the Teledeclarations datasets for analysis (Metabase)
     """
     logger.info("Starting manual datasets export")
     datasets = {
@@ -412,7 +431,7 @@ def datasets_export_opendata_td():
 
 def datasets_export_analysis_canteens():
     """
-    Export the Teledeclarations datasets for Metabase
+    Export the Teledeclarations datasets for analysis (Metabase)
     """
     logger.info("Starting datasets extractions")
     datasets = {

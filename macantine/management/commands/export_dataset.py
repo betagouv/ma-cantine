@@ -15,7 +15,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--dataset",
             dest="export_type",
-            type=str,
+            type=int,
             required=True,
             help="Choose the type of dataset you want to extract \n 1. Cantines (opendata)\n 2. Cantines (Metabase)\n 3. Ensemble des TD (Metabase)\n 4. TD par années (opendata)",
         )

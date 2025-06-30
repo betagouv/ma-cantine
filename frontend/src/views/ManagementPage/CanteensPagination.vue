@@ -8,7 +8,7 @@
               hide-details="auto"
               ref="search"
               v-model="searchTerm"
-              placeholder="Recherche par nom ou SIRET de l'établissement"
+              placeholder="Recherche par nom, SIRET de l'établissement ou SIREN de l'unité légale"
               clearable
               @clear="clearSearch"
               @search="search"
@@ -31,6 +31,11 @@
     <v-sheet fluid height="200" v-if="inProgress">
       <v-progress-circular indeterminate style="left: 50%; top: 50%"></v-progress-circular>
     </v-sheet>
+    <v-row v-if="visibleCanteens.length === 0">
+      <v-col cols="12">
+        <p>Aucune cantine trouvée pour la recherche : {{ searchTerm }}</p>
+      </v-col>
+    </v-row>
     <v-row v-else>
       <v-col cols="12" sm="6" md="4" height="100%" v-for="canteen in visibleCanteens" :key="`canteen-${canteen.id}`">
         <CanteenCard :canteen="canteen" class="fill-height" />

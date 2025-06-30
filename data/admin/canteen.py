@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.utils import timezone
+from django.utils.html import format_html
 
 from data.models import Canteen, Teledeclaration
 from data.utils import CreationSource
@@ -74,6 +75,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "daily_meal_count",
         "yearly_meal_count",
         "satellite_canteens_count",
+        "satellites_display",
         "economic_model",
         "sectors",
         "line_ministry",
@@ -113,12 +115,15 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "creation_mtm_medium",
         "claimed_by",
         "has_been_claimed",
+        "satellites_display",
     )
     list_display = (
         "name",
         "siret_or_siren_unite_legale_display",
         "city",
         "télédéclarée",
+        "central_producer_siret",
+        "production_type",
         "creation_date",
         "modification_date",
         "source_des_données",
@@ -142,9 +147,11 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     )
     search_fields = (
         "name",
-        "siret",
-        "siren_unite_legale",
+        "siret__istartswith",
+        "siren_unite_legale__istartswith",
+        "central_producer_siret__istartswith",
     )
+    search_help_text = "La recherche est faite sur les champs : nom de la cantine, siret, siren de l'unité légale, siret de la cuisine centrale."
 
     def save_model(self, request, obj, form, change):
         if not change:
@@ -169,18 +176,30 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     def publication_status_display(self, obj):
         return dict(Canteen.PublicationStatus.choices).get(obj.publication_status_display_to_public)
 
+    @admin.display(description="Cantines satellites")
+    def satellites_display(self, obj):
+        satellites_list = ""
+        for satellite in obj.satellites:
+            satellites_list += f"<a href='/admin/data/canteen/{satellite.id}/change'>{satellite.name} - {satellite.siret_or_siren_unite_legale}</a><br/>"
+        return format_html(satellites_list)
+
     def source_des_données(self, obj):
         return obj.import_source
 
 
 class CanteenInline(admin.TabularInline):
     model = Canteen.managers.through
-    readonly_fields = ("canteen", "active")
+    readonly_fields = ("canteen", "active", "help")
     extra = 0
     verbose_name_plural = "Cantines gérées"
 
     def has_add_permission(self, request, obj):
-        return False
+        return True
 
+    @admin.display(description="Gestionnaire")
+    def help(self, obj):
+        return "Pour retirer le gestionnaire de la cantine cochez la case, puis sauvegardez la modification."
+
+    @admin.display(description="Est active")
     def active(self, obj):
         return "🗑️ Supprimée par l'utilisateur" if obj.canteen.deletion_date else "✔️"

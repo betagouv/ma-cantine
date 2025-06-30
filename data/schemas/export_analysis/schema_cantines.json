@@ -1,0 +1,213 @@
+{
+  "encoding": "utf-8",
+  "fields": [
+    {
+      "example": "1143",
+      "name": "id",
+      "type": "integer"
+    },
+    {
+      "example": "Ecole Jean Jaurès",
+      "name": "nom",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^[0-9]{14}$",
+        "required": true
+      },
+      "example": "11007001800012",
+      "name": "siret",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^[0-9]{9}$",
+        "required": false
+      },
+      "example": "110070018",
+      "name": "siren_unite_legale",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^([013-9]\\d|2[AB1-9])\\d{3}$",
+        "required": false
+      },
+      "description": "Code Insee de la commune dans laquelle se trouve la cantine",
+      "example": "38185",
+      "name": "code_insee_commune",
+      "title": "Code Insee Commune",
+      "type": "string"
+    },
+    {
+      "description": "Libellé de la commune dans laquelle se trouve la cantine",
+      "example": "Grenoble",
+      "name": "libelle_commune",
+      "title": "Libellé commune",
+      "type": "string"
+    },
+    {
+      "description": "Code Insee de l'EPCI dans laquelle se trouve la cantine",
+      "example": "200040715",
+      "name": "epci",
+      "title": "Code Insee EPCI",
+      "type": "string"
+    },
+    {
+      "description": "Libellé de l'EPCI dans laquelle se trouve la cantine",
+      "example": "Grenoble-Alpes-Métropole",
+      "name": "epci_lib",
+      "title": "Libellé EPCI",
+      "type": "string"
+    },
+    {
+      "description": "Liste des ID des PAT dans lesquels se trouve la cantine",
+      "example": "1294,1295",
+      "name": "pat_liste",
+      "title": "ID PAT (liste)",
+      "type": "string"
+    },
+    {
+      "description": "Liste des libellés des PAT dans lesquels se trouve la cantine",
+      "example": "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
+      "name": "pat_lib_liste",
+      "title": "Libellé PAT (liste)",
+      "type": "string"
+    },
+    {
+      "description": "Code Insee du département dans lequel se trouve la cantine",
+      "example": "38",
+      "name": "departement",
+      "title": "Code Département",
+      "type": "string"
+    },
+    {
+      "description": "Libellé du département dans lequel se trouve la cantine",
+      "example": "Isère",
+      "name": "departement_lib",
+      "title": "Département Libellé",
+      "type": "string"
+    },
+    {
+      "description": "Code Insee de la région dans lequel se trouve la cantine",
+      "example": "84",
+      "name": "region",
+      "title": "Code Région",
+      "type": "string"
+    },
+    {
+      "description": "Libellé de la région dans lequel se trouve la cantine",
+      "example": "Auvergne-Rhône-Alpes",
+      "name": "region_lib",
+      "title": "Région libellé",
+      "type": "string"
+    },
+    {
+      "example": "2024-01-27",
+      "name": "date_creation",
+      "title": "Date création",
+      "type": "date"
+    },
+    {
+      "example": "2024-02-17",
+      "name": "date_modification",
+      "title": "Date modification",
+      "type": "date"
+    },
+    {
+      "description": "Nombre de repas servis, en moyenne, par jour dans la cantine",
+      "example": "100",
+      "name": "nbre_repas_jour",
+      "title": "Nombre de repas par jour",
+      "type": "integer"
+    },
+    {
+      "description": "Nombre de repas servis, en moyenne, par an dans la cantine",
+      "example": "20000",
+      "name": "nbre_repas_an",
+      "title": "Nombre de repas par an",
+      "type": "integer"
+    },
+    {
+      "description": "Modèle économique de la cantine. Il existe 2 types différents : public (cantine publique), private (cantine privée).",
+      "example": "public",
+      "name": "modele_economique",
+      "title": "Modèle Economique",
+      "type": "string"
+    },
+    {
+      "description": "Gestionnaire de la cantine. La cantine peut être gérée directement ('direct') ou de manière concédée ('conceded'). Si de manière concédée, la délégation peut être totale ou partielle.",
+      "example": "conceded",
+      "name": "type_gestion",
+      "title": "Type de Gestion/Management",
+      "type": "string"
+    },
+    {
+      "description": "Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ 'nombre_satellites' renseigne le nombre de cantines satellites.",
+      "example": "central",
+      "name": "type_production",
+      "title": "Type de Production",
+      "type": "string"
+    },
+    {
+      "description": "Nombre de cantines satellites pour une cantine qui produit les repas sur place",
+      "example": "0",
+      "name": "nombre_satellites",
+      "title": "Nombre de cantines satellites",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "pattern": "^[0-9]{14}$"
+      },
+      "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine ayant produit les repas",
+      "example": "34784885147362",
+      "name": "siret_cuisine_centrale",
+      "title": "SIRET de la cantine centrale",
+      "type": "string"
+    },
+    {
+      "description": "Ministère de tutelle de la cantine, s'il y en a un",
+      "example": "Ministère de l'Education Nationale",
+      "name": "ministere_tutelle",
+      "title": "Ministère de tutelle",
+      "type": "string"
+    },
+    {
+      "description": "Secteur d'activité de l'établissement",
+      "example": "Restaurants administratifs des collectivités territoriales",
+      "name": "secteur",
+      "title": "Secteur",
+      "type": "string"
+    },
+    {
+      "description": "Catégorie du secteur d'activité de l'établissement",
+      "example": "Administration",
+      "name": "categorie",
+      "title": "Catégorie",
+      "type": "string"
+    },
+    {
+      "description": "Etablissement concerné par la politique prioritaire du gouvernement sur les services public écoresponsables",
+      "example": "true",
+      "name": "spe",
+      "title": "Service Public Ecoresponsable",
+      "type": "boolean"
+    },
+    {
+      "description": "Adresses mél des gestionnaires",
+      "example": "gestionnaire1@example.com, gestionnaire2@example.com",
+      "format": "default",
+      "name": "adresses_gestionnaires",
+      "title": "Adresses mél des gestionnaires (adresses mél)",
+      "type": "string"
+    }
+  ],
+  "format": "csv",
+  "mediatype": "text/csv",
+  "name": "dark_query_cantines",
+  "path": "dark_query_cantines.csv",
+  "scheme": "file",
+  "type": "table"
+}
