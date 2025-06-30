@@ -167,7 +167,7 @@ dependencies = [
     "wcwidth==0.2.13",
     "webencodings==0.5.1",
     "willow==1.9.0",
-    "wrapt==1.17.0",
+    "wrapt==1.17.2",
     "xhtml2pdf==0.2.16",
 ]
 
