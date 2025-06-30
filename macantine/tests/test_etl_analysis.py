@@ -1,5 +1,6 @@
 import json
 
+import numpy as np
 import pandas as pd
 import pytest
 from django.test import TestCase
@@ -404,6 +405,7 @@ class TestETLAnalysisTD(TestCase):
             "diagnostic_type": {2: None, 3: None, 4: None},
             "satellite_canteens_count": {2: None, 3: 206.0, 4: 2},
             "value_total_ht": {2: 100, 3: 1000, 4: 1500},
+            "value_bio_ht": {2: None, 3: 100, 4: 0},
             "tmp_satellites": {
                 2: None,
                 3: [
@@ -447,6 +449,10 @@ class TestETLAnalysisTD(TestCase):
         self.assertEqual(etl.df[etl.df.canteen_id == 3].iloc[0].value_total_ht, 500)  # Appro value split
         self.assertEqual(etl.df[etl.df.canteen_id == 30].iloc[0].value_total_ht, 500)  # Appro value split
         self.assertEqual(etl.df[etl.df.canteen_id == 31].iloc[0].yearly_meal_count, 300 / 3)
+        self.assertTrue(np.isnan(etl.df[etl.df.canteen_id == 1].iloc[0].value_bio_ht))  # Nulls are processed as nulls
+        self.assertEqual(
+            etl.df[etl.df.canteen_id == 3].iloc[0].value_bio_ht, 0
+        )  # Zeros are processed as zeros and not nulls
 
     def test_delete_duplicates_cc_csat_with_duplicates(self):
 
