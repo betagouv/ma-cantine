@@ -34,6 +34,17 @@ repos:
       - id: pretty-format-json
         args: [--autofix, --no-ensure-ascii]
 
+  # UV
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.7.9
+    hooks:
+      - id: uv-lock
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.7.11
+    hooks:
+      - id: uv-export
+        args: ["--no-hashes", "--output-file=requirements.txt"]
+
   # PYTHON
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
@@ -69,6 +80,7 @@ repos:
     rev: v1.4.2
     hooks:
       - id: python-safety-dependencies-check
+        files: requirements.txt
 
   # BASH
   - repo: https://github.com/bemeurer/beautysh.git

@@ -7,8 +7,11 @@
 # Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
 
 ARG PYTHON_VERSION=3.11
-# slim is based on Debian
-FROM python:${PYTHON_VERSION}-slim as base
+# Use a Python image with uv pre-installed
+FROM ghcr.io/astral-sh/uv:python${PYTHON_VERSION}-bookworm-slim as base
+
+# Install the project into `/app`
+WORKDIR /app
 
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -17,7 +20,14 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # the application crashes without emitting any logs due to buffering.
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app
+# Enable bytecode compilation
+ENV UV_COMPILE_BYTECODE=1
+
+# Copy from the cache instead of linking since it's a mounted volume
+ENV UV_LINK_MODE=copy
+
+# Fix error : failed to create directory `/nonexistent/.cache/uv`: Permission denied (os error 13)
+ENV UV_PROJECT_ENVIRONMENT=/usr/local
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
@@ -40,22 +50,33 @@ RUN apt-get update && \
 # i had a problem accessing github.com. When I followed https://docs.docker.com/desktop/get-started/#credentials-management-for-linux-users
 # and restarted the problem was resolved
 
-# Download dependencies as a separate step to take advantage of Docker's caching.
-# Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
-# Leverage a bind mount to requirements.txt to avoid having to copy them into
-# into this layer.
-RUN --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=bind,source=requirements.txt,target=requirements.txt \
-    python -m pip install -r requirements.txt
+# Install the project's dependencies using the lockfile and settings
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project --no-dev
 
-# Switch to the non-privileged user to run the application.
-USER appuser
 
 # Copy the source code into the container.
 COPY . .
 
+# Installing separately from its dependencies allows optimal layer caching
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-dev
+
+# Copy again source code after installing projet dependencies
+COPY . .
+
+# Switch to the non-privileged user to run the application.
+USER appuser
+
+# Place executables in the environment at the front of the path
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Reset the entrypoint, don't invoke `uv`
+ENTRYPOINT []
+
 # Expose the port that the application listens on.
 EXPOSE 8000
 
-# Run the application.
 CMD [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
