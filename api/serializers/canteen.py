@@ -702,6 +702,10 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
             "secteur",
             "categorie",
             "spe",
+            "declaration_donnees_2021",
+            "declaration_donnees_2022",
+            "declaration_donnees_2023",
+            "declaration_donnees_2024",
             "adresses_gestionnaires",
         )
         read_only_fields = fields

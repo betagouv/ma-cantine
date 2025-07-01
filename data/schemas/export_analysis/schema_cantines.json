@@ -196,6 +196,30 @@
       "type": "boolean"
     },
     {
+      "example": "true",
+      "name": "declaration_donnees_2021",
+      "title": "A déclaré en 2022 ses données de 2021",
+      "type": "boolean"
+    },
+    {
+      "example": "true",
+      "name": "declaration_donnees_2022",
+      "title": "A déclaré en 2023 ses données de 2022",
+      "type": "boolean"
+    },
+    {
+      "example": "true",
+      "name": "declaration_donnees_2023",
+      "title": "A déclaré en 2024 ses données de 2023",
+      "type": "boolean"
+    },
+    {
+      "example": "true",
+      "name": "declaration_donnees_2024",
+      "title": "A déclaré en 2025 ses données de 2024",
+      "type": "boolean"
+    },
+    {
       "description": "Adresses mél des gestionnaires",
       "example": "gestionnaire1@example.com, gestionnaire2@example.com",
       "format": "default",
