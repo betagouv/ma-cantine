@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = "Fill canteen teledeclared_YEAR field"
+    help = "Fill canteen declaration_donnees_YEAR field"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -21,8 +21,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         year = options["year"]
-        logger.info(f"Start task: fill_canteen_teledeclared_year_field for year {year}")
-        field_name = f"teledeclared_{year}"
+        logger.info(f"Start task: fill_canteen_declaration_donnees_year_field for year {year}")
+        field_name = f"declaration_donnees_{year}"
 
         # Step 1: reset the field for all the canteens
         Canteen.objects.all().update(**{field_name: None})
