@@ -11,7 +11,6 @@ from .canteen import (  # noqa: F401
     PublicCanteenPreviewView,
     PublishedCanteenSingleView,
     PublishedCanteensView,
-    PublishManyCanteensView,
     RemoveManagerView,
     RetrieveUpdateUserCanteenView,
     SatelliteListCreateView,
