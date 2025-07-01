@@ -169,7 +169,6 @@ ENABLE_XP_RESERVATION= Optionnel - `True` pour activer la feature de l'expérime
 ENABLE_XP_VEGE= Optionnel - `True` pour activer la feature de l'expérimentation de l'offre quotidien de repas végétariens.
 ENABLE_TELEDECLARATION= Optionnel - `True` pour permettre les utilisateurs de télédéclarer leur diagnostic.
 ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des gestionnaires.
-PUBLISH_BY_DEFAULT= Optionnel - `True` pour publier les cantines sauf celles qui sont identifiées autrement.
 ENABLE_VUE3= Optionnel - `True` pour rendre les nouvelles vues disponibles.
 ENABLE_WASTE_MEASUREMENTS= Optionnel - `True` pour rendre l'outil évaluation gaspillage alimentaire disponible
 SHOW_MANAGEMENT_INFORMATION_BANNER= Optionnel - `True` pour afficher une bannière dans la page d'accueil du tableau de bord

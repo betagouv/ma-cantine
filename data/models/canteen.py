@@ -1,7 +1,6 @@
 from urllib.parse import quote
 
 from django.apps import apps
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -89,18 +88,10 @@ def has_missing_data_query():
 
 class CanteenQuerySet(SoftDeletionQuerySet):
     def publicly_visible(self):
-        return (
-            self.exclude(line_ministry=Canteen.Ministries.ARMEE)
-            if settings.PUBLISH_BY_DEFAULT
-            else self.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
-        )
+        return self.exclude(line_ministry=Canteen.Ministries.ARMEE)
 
     def publicly_hidden(self):
-        return (
-            self.filter(line_ministry=Canteen.Ministries.ARMEE)
-            if settings.PUBLISH_BY_DEFAULT
-            else self.exclude(publication_status=Canteen.PublicationStatus.PUBLISHED)
-        )
+        return self.filter(line_ministry=Canteen.Ministries.ARMEE)
 
     def is_satellite(self):
         return self.filter(is_satellite_query())
@@ -257,10 +248,6 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             conditions.append(When(has_td_submitted=False, then=Value(Canteen.Actions.TELEDECLARE)))
         else:
             conditions.append(When(has_td_submitted=False, then=Value(Canteen.Actions.DID_NOT_TELEDECLARE)))
-        if not settings.PUBLISH_BY_DEFAULT:
-            conditions.append(
-                When(publication_status=Canteen.PublicationStatus.DRAFT, then=Value(Canteen.Actions.PUBLISH))
-            )
         return self.annotate(action=Case(*conditions, default=Value(Canteen.Actions.NOTHING)))
 
 
@@ -696,22 +683,12 @@ class Canteen(SoftDeletionModel):
 
     @property
     def publication_status_display_to_public(self):
-        if not settings.PUBLISH_BY_DEFAULT:
-            return self.publication_status
         if self.line_ministry == Canteen.Ministries.ARMEE:
             return Canteen.PublicationStatus.DRAFT
         return Canteen.PublicationStatus.PUBLISHED
 
     def __str__(self):
         return f'Cantine "{self.name}"'
-
-    def update_publication_comments(self, data):
-        self.publication_comments = data.get("publication_comments")
-        self.quality_comments = data.get("quality_comments")
-        self.waste_comments = data.get("waste_comments")
-        self.diversification_comments = data.get("diversification_comments")
-        self.plastics_comments = data.get("plastics_comments")
-        self.information_comments = data.get("information_comments")
 
     def _get_region(self):
         return get_region(self.department)

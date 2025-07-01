@@ -38,7 +38,6 @@ from api.views import (
     PartnerTypeListView,
     PartnerView,
     PublicCanteenPreviewView,
-    PublishCanteenView,
     PublishedCanteenSingleView,
     PublishedCanteensView,
     PublishManyCanteensView,
@@ -66,7 +65,6 @@ from api.views import (
     TerritoryCanteensListView,
     UndoClaimCanteenView,
     UnlinkSatelliteView,
-    UnpublishCanteenView,
     UpdateUserView,
     UserCanteenPreviews,
     UserCanteenSummaries,
@@ -99,16 +97,6 @@ urlpatterns = {
     path("canteenSummaries/", UserCanteenSummaries.as_view(), name="user_canteens_summaries"),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
     path("canteens/<int:pk>", RetrieveUpdateUserCanteenView.as_view(), name="single_canteen"),
-    path(
-        "canteens/<int:pk>/publish",
-        PublishCanteenView.as_view(),
-        name="publish_canteen",
-    ),
-    path(
-        "canteens/<int:pk>/unpublish",
-        UnpublishCanteenView.as_view(),
-        name="unpublish_canteen",
-    ),
     path(
         "canteens/<int:canteen_pk>/diagnostics/",
         DiagnosticCreateView.as_view(),

@@ -1,7 +1,6 @@
 import logging
 from decimal import Decimal
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
@@ -114,11 +113,7 @@ class TeledeclarationQuerySet(models.QuerySet):
         return results.select_related("diagnostic")
 
     def publicly_visible(self):
-        return (
-            self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
-            if settings.PUBLISH_BY_DEFAULT
-            else self.filter(canteen__publication_status=Canteen.PublicationStatus.PUBLISHED)
-        )
+        return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
 
 
 class Teledeclaration(models.Model):
