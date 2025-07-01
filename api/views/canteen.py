@@ -499,64 +499,6 @@ def get_cantine_list_from_siren_unite_legale(siren, request):
         return camelize(CanteenStatusSerializer(canteens, many=True, context={"request": request}).data)
 
 
-class PublishCanteenView(APIView):
-    permission_classes = [IsAuthenticated]
-    required_scopes = ["canteen"]
-
-    def post(self, request, *args, **kwargs):
-        if settings.PUBLISH_BY_DEFAULT:
-            raise BadRequest("Cannot publish canteen")
-        try:
-            data = request.data
-            canteen_id = kwargs.get("pk")
-            canteen = Canteen.objects.get(pk=canteen_id)
-            if request.user not in canteen.managers.all():
-                raise PermissionDenied()
-
-            is_draft = canteen.publication_status == Canteen.PublicationStatus.DRAFT
-
-            if is_draft:
-                canteen.publication_status = Canteen.PublicationStatus.PUBLISHED
-
-            canteen.update_publication_comments(data)
-            canteen.save()
-            update_change_reason_with_auth(self, canteen)
-            serialized_canteen = FullCanteenSerializer(canteen).data
-            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
-
-        except Canteen.DoesNotExist:
-            raise ValidationError("La cantine spécifiée n'existe pas")
-
-
-class UnpublishCanteenView(APIView):
-    permission_classes = [IsAuthenticated]
-    required_scopes = ["canteen"]
-
-    def post(self, request, *args, **kwargs):
-        if settings.PUBLISH_BY_DEFAULT:
-            raise BadRequest("Cannot unpublish canteen")
-        try:
-            data = request.data
-            canteen_id = kwargs.get("pk")
-            canteen = Canteen.objects.get(pk=canteen_id)
-            if request.user not in canteen.managers.all():
-                raise PermissionDenied()
-
-            is_not_draft = canteen.publication_status != Canteen.PublicationStatus.DRAFT
-
-            if is_not_draft:
-                canteen.publication_status = Canteen.PublicationStatus.DRAFT
-
-            canteen.update_publication_comments(data)
-            canteen.save()
-            update_change_reason_with_auth(self, canteen)
-            serialized_canteen = FullCanteenSerializer(canteen).data
-            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
-
-        except Canteen.DoesNotExist:
-            raise ValidationError("La cantine spécifiée n'existe pas")
-
-
 def _respond_with_team(canteen):
     data = ManagingTeamSerializer(canteen).data
     return JsonResponse(camelize(data), status=status.HTTP_200_OK)
