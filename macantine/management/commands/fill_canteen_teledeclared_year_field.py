@@ -24,15 +24,27 @@ class Command(BaseCommand):
         logger.info(f"Start task : fill_canteen_teledeclared_year_field for year {year}")
         field_name = f"teledeclared_{year}"
 
-        # Reset the field for all canteens
+        # Step 1: reset the field for all canteens
         Canteen.objects.all().update(**{field_name: None})
 
-        # Update the field for canteens that have a teledeclaration for the specified year
+        # Step 2: find the canteens that have a teledeclaration for the specified year
+        # v1: filter only on the canteen_id of Teledeclarations
         teledeclarations = Teledeclaration.objects.submitted_for_year(year)
         canteens_with_teledeclarations = teledeclarations.values_list("canteen_id", flat=True).distinct()
+        # v2: filter on the canteen_id & declared_data (satellites) of Teledeclarations
+        teledeclarations = Teledeclaration.objects.submitted_for_year(year).values("canteen_id", "declared_data")
+        canteens_with_teledeclarations = []
+        for td in teledeclarations:
+            canteens_with_teledeclarations.append(td["canteen_id"])
+            if "satellites" in td["declared_data"]:
+                for satellite in td["declared_data"]["satellites"]:
+                    canteens_with_teledeclarations.append(satellite["id"])
+
+        # Step 3: update the field
         Canteen.objects.filter(id__in=canteens_with_teledeclarations).update(**{field_name: True})
         Canteen.objects.exclude(**{field_name: True}).update(**{field_name: False})
 
+        # Done!
         logger.info(
             f"Task completed: {Canteen.objects.filter(**{field_name: True}).count()} canteens teledeclared for year {year}"
         )
