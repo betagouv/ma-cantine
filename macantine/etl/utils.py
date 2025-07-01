@@ -5,7 +5,7 @@ from typing import Dict
 import numpy as np
 import pandas as pd
 
-from data.models import Sector, Teledeclaration
+from data.models import Sector
 from data.models.sector import SECTEURS_SPE
 from macantine.etl.data_ware_house import DataWareHouse
 
@@ -70,23 +70,6 @@ def compute_ratio(valueKey, totalKey):
     if totalKey and valueKey:
         if totalKey > 0 and valueKey >= 0:
             return float(100 * valueKey / totalKey)
-
-
-def map_canteens_td(year):
-    """
-    Populate mapper for a given year. The mapper indicates if one canteen has participated in campaign
-    """
-    # Check and fetch Teledeclaration data from the database
-    tds = Teledeclaration.objects.submitted_for_year(year).values("canteen_id", "declared_data")
-
-    # Populate the mapper for the given year
-    participation = []
-    for td in tds:
-        participation.append(td["canteen_id"])
-        if "satellites" in td["declared_data"]:
-            for satellite in td["declared_data"]["satellites"]:
-                participation.append(satellite["id"])
-    return participation
 
 
 def format_td_sector_column(row: pd.Series, sector_col_name: str):
