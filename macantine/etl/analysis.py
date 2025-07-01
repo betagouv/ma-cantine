@@ -162,7 +162,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         """
         appro_columns = [col_appro for col_appro in self.columns if "value" in col_appro]
         for col in appro_columns + ["yearly_meal_count"]:
-            if col in row and row[col] and nbre_satellites:
+            if col in row and nbre_satellites:
                 row[col] = row[col] / nbre_satellites
             else:
                 row[col] = None
