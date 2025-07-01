@@ -396,7 +396,6 @@ class TestPublicCanteenSearchApi(APITestCase):
         self.assertEqual(results[2]["name"], "Wasabi")
         self.assertEqual(results[3]["name"], "Shiso")
 
-    @override_settings(PUBLISH_BY_DEFAULT=False)
     def test_filter_appro_values(self):
         """
         Should be able to filter by bio %, sustainable %, combined % based on last year's diagnostic

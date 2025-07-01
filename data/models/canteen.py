@@ -342,7 +342,6 @@ class Canteen(SoftDeletionModel):
         FILL_CANTEEN_DATA = "35_fill_canteen_data", "Compléter les infos de la cantine"
         TELEDECLARE = "40_teledeclare", "Télédéclarer"
         DID_NOT_TELEDECLARE = "45_did_not_teledeclare", "Non télédéclaré"
-        PUBLISH = "50_publish", "Publier"
         NOTHING_SATELLITE = "90_nothing_satellite", "En attente de la télédéclaration de votre livreur"
         NOTHING_SATELLITE_TELEDECLARED = (
             "91_nothing_satellite_teledeclared",
