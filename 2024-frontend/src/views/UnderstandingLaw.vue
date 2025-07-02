@@ -43,7 +43,7 @@ const iframeUrl = ref(null)
 
   &__iframe {
     width: 100%;
-    min-height: 80vh;
+    min-height: 100vh; // Trick to hide the bottom of the page included chatbox
   }
 
   &__modal {
