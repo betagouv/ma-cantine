@@ -816,18 +816,6 @@ class TestCanteenActionApi(APITestCase):
         needs_diagnostic_mode = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL, siret="75665621899905", managers=[authenticate.user]
         )
-        # publish
-        needs_to_publish = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.DRAFT,
-            management_type=Canteen.ManagementType.DIRECT,
-            yearly_meal_count=1000,
-            daily_meal_count=12,
-            siret="75665621899905",
-            city_insee_code="69123",
-            economic_model=Canteen.EconomicModel.PUBLIC,
-            managers=[authenticate.user],
-        )
         # TD
         needs_td = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -864,9 +852,6 @@ class TestCanteenActionApi(APITestCase):
             year=last_year, canteen=needs_diagnostic_mode, central_kitchen_diagnostic_mode=None, value_total_ht=100
         )
 
-        td_diag = DiagnosticFactory.create(year=last_year, canteen=needs_to_publish, value_total_ht=10)
-        Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
-
         DiagnosticFactory.create(year=last_year, canteen=needs_td, value_total_ht=100)
 
         # has a diagnostic but this canteen registered only two of three satellites
@@ -885,7 +870,7 @@ class TestCanteenActionApi(APITestCase):
 
         body = response.json()
         returned_canteens = body["results"]
-        self.assertEqual(len(returned_canteens), 7)
+        self.assertEqual(len(returned_canteens), 6)
 
         expected_actions = [
             (needs_additional_satellites, "10_add_satellites"),
@@ -893,7 +878,6 @@ class TestCanteenActionApi(APITestCase):
             (needs_to_fill_diag, "30_fill_diagnostic"),
             (needs_diagnostic_mode, "30_fill_diagnostic"),
             (needs_td, "40_teledeclare"),
-            (needs_to_publish, "50_publish"),
             (complete, "95_nothing"),
         ]
         for index, (canteen, action) in zip(range(len(expected_actions)), expected_actions):

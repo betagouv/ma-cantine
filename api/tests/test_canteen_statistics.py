@@ -1,5 +1,4 @@
 from django.core.cache import cache
-from django.test.utils import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
@@ -14,7 +13,6 @@ year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
 
 
-@override_settings(PUBLISH_BY_DEFAULT=True)
 class TestCanteenStatsApi(APITestCase):
     @classmethod
     def setUpTestData(cls):
@@ -80,7 +78,6 @@ class TestCanteenStatsApi(APITestCase):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @override_settings(PUBLISH_BY_DEFAULT=False)
     def test_canteen_statistics(self):
         """
         This public endpoint returns some summary statistics for a region and a location
