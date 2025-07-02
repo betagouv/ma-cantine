@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from "vue"
 import { useRootStore } from "@/stores/root"
-import keyMeasures from "@/data/key-measures.json"
 
 const store = useRootStore()
 
@@ -88,22 +87,8 @@ const navItems = [
     ],
   },
   {
-    title: "Comprendre mes obligations",
-    // TODO: get active()
-    links: [
-      ...keyMeasures.map((x) => ({
-        text: x.shortTitle,
-        to: { name: "KeyMeasurePage", params: { id: x.id } },
-      })),
-      ...[
-        {
-          text: "Pour aller plus loin",
-          to: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-          target: "_blank",
-          rel: "noopener external",
-        },
-      ],
-    ],
+    text: "Comprendre mes obligations",
+    to: { name: "UnderstandingLaw" },
   },
   {
     title: "Aide",
