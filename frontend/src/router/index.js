@@ -492,6 +492,10 @@ const vue3Routes = [
       title: "Mon tableau de bord",
     },
   },
+  {
+    path: "/comprendre-mes-obligations",
+    name: "UnderstandingLaw",
+  },
 ]
 const VUE3_PREFIX = "/v2"
 vue3Routes.forEach((r) => {

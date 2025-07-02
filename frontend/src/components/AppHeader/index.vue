@@ -200,7 +200,6 @@
 </template>
 
 <script>
-import keyMeasures from "@/data/key-measures.json"
 import LogoutButton from "./LogoutButton"
 import SkipLinks from "./SkipLinks"
 
@@ -276,20 +275,7 @@ export default {
         },
         {
           text: "Comprendre mes obligations",
-          children: [
-            ...keyMeasures.map((x) => ({
-              text: x.shortTitle,
-              to: { name: "KeyMeasurePage", params: { id: x.id } },
-            })),
-            ...[
-              {
-                text: "Pour aller plus loin",
-                href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-                target: "_blank",
-                rel: "noopener external",
-              },
-            ],
-          ],
+          to: { name: "UnderstandingLaw" },
         },
         {
           text: "Aide",
