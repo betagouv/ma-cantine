@@ -237,6 +237,11 @@ class TestCanteenStatsApi(APITestCase):
             value_sustainable_ht=15,
             value_externality_performance_ht=15,
             value_egalim_others_ht=15,
+            value_meat_poultry_ht=200,
+            value_meat_poultry_egalim_ht=100,
+            value_meat_poultry_france_ht=50,
+            value_fish_ht=10,
+            value_fish_egalim_ht=8,
         )
         with freeze_time(date_in_teledeclaration_campaign):
             Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
@@ -249,6 +254,9 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["bioPercent"], 20)
         self.assertEqual(body["sustainablePercent"], 45)
         self.assertEqual(body["egalimPercent"], 65)  # 20 + 45
+        self.assertEqual(body["meatEgalimPercent"], 50)
+        self.assertEqual(body["meatFrancePercent"], 25)
+        self.assertEqual(body["fishEgalimPercent"], 80)
         self.assertEqual(body["approPercent"], 100)
 
     def test_filter_out_armee(self):
