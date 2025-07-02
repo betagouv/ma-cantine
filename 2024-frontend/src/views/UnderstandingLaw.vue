@@ -22,6 +22,7 @@ const iframeUrl = ref(null)
       <DsfrTile
         class="understanding-law__tile"
         :title="tile.title"
+        titleTag="h2"
         :imgSrc="tile.imgSrc"
         :details="tile.details"
         :to="tile.to"
