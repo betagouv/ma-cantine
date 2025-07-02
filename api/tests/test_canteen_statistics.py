@@ -189,7 +189,7 @@ class TestCanteenStatsApi(APITestCase):
                     **case["canteen"],
                     sectors=canteen_sectors,
                     siret=str(i),
-                    publication_status=Canteen.PublicationStatus.PUBLISHED
+                    publication_status=Canteen.PublicationStatus.PUBLISHED,
                 )
                 diagnostic_data = case["diagnostic"]
                 diag = DiagnosticFactory.create(canteen=canteen, **diagnostic_data)
@@ -198,7 +198,6 @@ class TestCanteenStatsApi(APITestCase):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "01"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         body = response.json()
         self.assertEqual(body["canteenCount"], 3)
         self.assertEqual(body["teledeclarationsCount"], 2)
@@ -214,7 +213,6 @@ class TestCanteenStatsApi(APITestCase):
         # can also call without location info
         with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Test a year without campaign
@@ -251,8 +249,11 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
+        self.assertEqual(body["canteenCount"], 4 + 1)
+        self.assertEqual(body["teledeclarationsCount"], 1)
         self.assertEqual(body["bioPercent"], 20)
         self.assertEqual(body["sustainablePercent"], 45)
+        self.assertEqual(body["approPercent"], 100)
 
     def test_filter_out_armee(self):
         # Database
