@@ -45,7 +45,7 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
     )
     # count
     data["teledeclarations_count"] = agg["id__count"]
-    # percent of bio, sustainable & appro
+    # percent of bio, sustainable, egalim (bio + sustainable) & appro
     if agg["value_total_ht__sum"] > 0:
         data["bio_percent"] = round(100 * agg["value_bio_ht_agg__sum"] / agg["value_total_ht__sum"])
         data["sustainable_percent"] = round(
@@ -60,6 +60,7 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
     else:
         data["bio_percent"] = 0
         data["sustainable_percent"] = 0
+    data["egalim_percent"] = data["bio_percent"] + data["sustainable_percent"]
     badge_querysets = badges_for_queryset(teledeclarations)
     data["appro_percent"] = (
         int(badge_querysets["appro"].count() / data["teledeclarations_count"] * 100)
@@ -81,6 +82,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     teledeclarations_count = serializers.IntegerField()
     bio_percent = serializers.IntegerField()
     sustainable_percent = serializers.IntegerField()
+    egalim_percent = serializers.IntegerField()
     appro_percent = serializers.IntegerField()
 
     @staticmethod

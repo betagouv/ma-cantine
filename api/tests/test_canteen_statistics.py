@@ -199,6 +199,7 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["teledeclarationsCount"], 2)
         self.assertEqual(body["bioPercent"], 38)
         self.assertEqual(body["sustainablePercent"], 48)
+        self.assertEqual(body["egalimPercent"], 86)
         self.assertEqual(body["approPercent"], 100)
         sector_categories = body["sectorCategories"]
         self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 3)
@@ -247,6 +248,7 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["teledeclarationsCount"], 1)
         self.assertEqual(body["bioPercent"], 20)
         self.assertEqual(body["sustainablePercent"], 45)
+        self.assertEqual(body["egalimPercent"], 65)
         self.assertEqual(body["approPercent"], 100)
 
     def test_filter_out_armee(self):
