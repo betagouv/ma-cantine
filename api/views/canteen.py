@@ -68,9 +68,7 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 class PublishedCanteenSingleView(RetrieveAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
-
-    def get_queryset(self):
-        return Canteen.objects.publicly_visible()
+    queryset = Canteen.objects.publicly_visible()
 
 
 class ProductionTypeInFilter(BaseInFilter, CharFilter):
@@ -256,6 +254,7 @@ def filter_by_diagnostic_params(queryset, query_params):
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenPreviewSerializer
+    queryset = Canteen.objects.publicly_visible()
     pagination_class = PublishedCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -267,9 +266,6 @@ class PublishedCanteensView(ListAPIView):
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
     filterset_class = PublishedCanteenFilterSet
 
-    def get_queryset(self):
-        return Canteen.objects.publicly_visible()
-
     def filter_queryset(self, queryset):
         new_queryset = filter_by_diagnostic_params(queryset, self.request.query_params)
         return super().filter_queryset(new_queryset)
@@ -278,7 +274,7 @@ class PublishedCanteensView(ListAPIView):
 class PublicCanteenPreviewView(RetrieveAPIView):
     model = Canteen
     serializer_class = PublicCanteenPreviewSerializer
-    queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
+    queryset = Canteen.objects.publicly_visible()
 
 
 class UserCanteensFilterSet(django_filters.FilterSet):
@@ -807,7 +803,6 @@ class SatelliteListCreateView(ListCreateAPIView):
         "name",
         "siret",
         "daily_meal_count",
-        "publication_status",
     ]
 
     def get_queryset(self):

@@ -780,7 +780,6 @@ class TestCanteenActionApi(APITestCase):
         # create diag (has one for 2020)
         needs_last_year_diag = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.DRAFT,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -792,7 +791,6 @@ class TestCanteenActionApi(APITestCase):
         # nothing to do
         complete = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -804,7 +802,6 @@ class TestCanteenActionApi(APITestCase):
         # complete diag
         needs_to_fill_diag = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.DRAFT,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -819,7 +816,6 @@ class TestCanteenActionApi(APITestCase):
         # TD
         needs_td = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -913,7 +909,6 @@ class TestCanteenActionApi(APITestCase):
         # First a case in which the canteen is complete
         canteen = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -985,7 +980,6 @@ class TestCanteenActionApi(APITestCase):
         """
         central_kitchen = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -997,7 +991,6 @@ class TestCanteenActionApi(APITestCase):
         )
         satellite = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=10,
             daily_meal_count=2,
@@ -1139,7 +1132,6 @@ class TestCanteenActionApi(APITestCase):
         complete = CanteenFactory.create(
             id=2,
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -1172,7 +1164,6 @@ class TestCanteenActionApi(APITestCase):
         complete = CanteenFactory.create(
             id=2,
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -1219,7 +1210,6 @@ class TestCanteenActionApi(APITestCase):
         canteen_td = CanteenFactory.create(
             id=2,
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -1232,7 +1222,6 @@ class TestCanteenActionApi(APITestCase):
         canteen_did_not_td = CanteenFactory.create(
             id=3,
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             yearly_meal_count="123",
             daily_meal_count="12",
             siret="75665621899905",
@@ -1301,7 +1290,6 @@ class TestCanteenActionApi(APITestCase):
         without_lm = SectorFactory.create(has_line_ministry=False)
         canteen = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -1352,12 +1340,8 @@ class TestCanteenTerritoryApi(APITestCase):
         user.save()
 
         # Create canteens
-        published_canteen = CanteenFactory.create(
-            department="01", publication_status=Canteen.PublicationStatus.PUBLISHED
-        )
-        unpublished_canteen = CanteenFactory.create(
-            department="02", publication_status=Canteen.PublicationStatus.DRAFT
-        )
+        canteen_01 = CanteenFactory.create(department="01")
+        canteen_02 = CanteenFactory.create(department="02")
         out_of_place_canteen = CanteenFactory.create(department="03")
 
         # Make request
@@ -1368,8 +1352,8 @@ class TestCanteenTerritoryApi(APITestCase):
         self.assertEqual(len(body), 2)
         ids = list(map(lambda x: x["id"], body))
 
-        self.assertIn(published_canteen.id, ids)
-        self.assertIn(unpublished_canteen.id, ids)
+        self.assertIn(canteen_01.id, ids)
+        self.assertIn(canteen_02.id, ids)
         self.assertNotIn(out_of_place_canteen.id, ids)
 
     @authenticate
