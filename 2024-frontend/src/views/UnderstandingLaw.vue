@@ -48,7 +48,7 @@ const iframeUrl = ref(null)
 
   &__modal {
     .fr-modal__body {
-      overflow: hidden;
+      overflow: hidden; // Avoid double scroll bar in modal
     }
   }
 }
