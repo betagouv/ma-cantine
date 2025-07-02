@@ -2,6 +2,7 @@
 import { ref } from "vue"
 import { useRoute } from "vue-router"
 import { tiles } from "@/constants/understanding-law.js"
+import AppNeedHelp from "@/components/AppNeedHelp.vue"
 
 const route = useRoute()
 const iframeUrl = ref(null)
@@ -16,7 +17,7 @@ const iframeUrl = ref(null)
       id dolor id nibh ultricies vehicula ut id elit. Maecenas sed diam eget risus varius blandit sit amet non magna.
     </p>
   </section>
-  <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--center fr-grid-row--gutters">
+  <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--center fr-grid-row--gutters fr-my-10w">
     <li v-for="(tile, index) in tiles" :key="index" class="fr-col-4">
       <DsfrTile
         class="understanding-law__tile"
@@ -31,6 +32,13 @@ const iframeUrl = ref(null)
   <DsfrModal class="understanding-law__modal" :opened="iframeUrl" size="xl" @close="iframeUrl = null">
     <iframe :src="iframeUrl"></iframe>
   </DsfrModal>
+  <AppNeedHelp badge="Besoin d'aide" align="center" title="Vous ne trouvez pas ce que vous chercher ?">
+    <p>
+      Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+      Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+    </p>
+    <a href="https://ma-cantine.crisp.help/fr/" target="_blank">Accéder à notre centre de ressources</a>
+  </AppNeedHelp>
 </template>
 
 <style lang="scss">
