@@ -3,20 +3,12 @@ import { useRootStore } from "@/stores/root"
 import { useRoute } from "vue-router"
 import { sectionId } from "@/constants/site-map.js"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
-import keyMeasures from "@/data/key-measures.json"
 import vue2routes from "@/router/vue2.js"
 import vue3routes from "@/router/vue3.js"
 
 /* Setup */
 const route = useRoute()
 const store = useRootStore()
-
-/* Pages not present in the router */
-const keyMeasuresPages = keyMeasures.map((x) => ({
-  name: "KeyMeasurePage",
-  params: { id: x.id },
-  meta: { title: x.title },
-}))
 
 const loginPages = [
   {
@@ -50,7 +42,7 @@ const getPages = (sectionId) => {
 const sections = [
   {
     title: "S'informer sur les lois",
-    pages: [...getPages(sectionId.law), ...keyMeasuresPages],
+    pages: [...getPages(sectionId.law)],
   },
   {
     title: "Se diagnostiquer",
