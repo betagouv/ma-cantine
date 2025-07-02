@@ -522,6 +522,10 @@ const vue3Routes = [
     path: "/plan-du-site/",
     name: "SiteMap",
   },
+  {
+    path: "/comprendre-mes-obligations",
+    name: "UnderstandingLaw",
+  },
 ]
 const VUE3_PREFIX = "/v2"
 vue3Routes.forEach((r) => {
