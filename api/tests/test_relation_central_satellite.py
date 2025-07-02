@@ -74,14 +74,12 @@ class TestRelationCentralSatellite(APITestCase):
         )
         satellite_1 = CanteenFactory.create(
             central_producer_siret=central_siret,
-            publication_status=Canteen.PublicationStatus.DRAFT,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             managers=[authenticate.user],
         )
         # although user does not have mgmt rights on this, can get same data
         CanteenFactory.create(
             central_producer_siret=central_siret,
-            publication_status=Canteen.PublicationStatus.DRAFT,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
         )
         # the following canteen should not be returned
@@ -145,7 +143,6 @@ class TestRelationCentralSatellite(APITestCase):
         self.assertEqual(satellite.sectors.count(), 2)
         self.assertIn(school, satellite.sectors.all())
         self.assertIn(enterprise, satellite.sectors.all())
-        self.assertEqual(satellite.publication_status, Canteen.PublicationStatus.PUBLISHED)
         self.assertEqual(satellite.import_source, "Cuisine centrale : 08376514425566")
         self.assertEqual(satellite.central_producer_siret, central_siret)
         self.assertEqual(satellite.production_type, Canteen.ProductionType.ON_SITE_CENTRAL)

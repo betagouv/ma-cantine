@@ -64,6 +64,8 @@ class MediaListSerializer(serializers.ListSerializer):
 
 
 class MinimalCanteenSerializer(serializers.ModelSerializer):
+    publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
+
     class Meta:
         model = Canteen
         read_only_fields = (

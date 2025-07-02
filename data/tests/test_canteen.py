@@ -66,31 +66,25 @@ class TestCanteenModel(TestCase):
 class TestCanteenVisibleQuerySetAndProperty(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_published = CanteenFactory(
-            line_ministry=None, publication_status=Canteen.PublicationStatus.PUBLISHED
-        )
-        cls.canteen_published_armee = CanteenFactory(
-            line_ministry=Canteen.Ministries.ARMEE, publication_status=Canteen.PublicationStatus.PUBLISHED
-        )
-        cls.canteen_draft = CanteenFactory(line_ministry=None, publication_status=Canteen.PublicationStatus.DRAFT)
+        cls.canteen = CanteenFactory(line_ministry=None)
+        cls.canteen_armee = CanteenFactory(line_ministry=Canteen.Ministries.ARMEE)
 
     def test_publicly_visible_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(Canteen.objects.count(), 2)
         qs = Canteen.objects.publicly_visible()
-        self.assertEqual(qs.count(), 2)
+        self.assertEqual(qs.count(), 1)
         self.assertTrue(self.canteen_published_armee not in qs)
 
     def test_publicly_hidden_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(Canteen.objects.count(), 2)
         qs = Canteen.objects.publicly_hidden()
         self.assertEqual(qs.count(), 1)
         self.assertEqual(qs.first(), self.canteen_published_armee)
 
     def test_publication_status_display_to_public_property(self):
-        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(self.canteen_published.publication_status_display_to_public, "published")
         self.assertEqual(self.canteen_published_armee.publication_status_display_to_public, "draft")
-        self.assertEqual(self.canteen_draft.publication_status_display_to_public, "published")
 
 
 class TestCanteenSatelliteQuerySet(TestCase):

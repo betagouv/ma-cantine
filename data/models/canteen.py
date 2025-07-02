@@ -474,12 +474,6 @@ class Canteen(SoftDeletionModel):
     logo = models.ImageField(null=True, blank=True, verbose_name="Logo")
 
     # Publication things
-    publication_status = models.CharField(
-        max_length=50,
-        choices=PublicationStatus.choices,
-        default="draft",
-        verbose_name="état de publication",
-    )
     redacted_appro_years = ChoiceArrayField(
         base_field=models.IntegerField(choices=get_diagnostic_year_choices),
         default=list,
