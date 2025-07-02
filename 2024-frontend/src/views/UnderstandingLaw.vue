@@ -1,8 +1,10 @@
 <script setup>
+import { ref } from "vue"
 import { useRoute } from "vue-router"
 import { tiles } from "@/constants/understanding-law.js"
 
 const route = useRoute()
+const iframeUrl = ref(null)
 </script>
 
 <template>
@@ -22,9 +24,13 @@ const route = useRoute()
         :imgSrc="tile.imgSrc"
         :details="tile.details"
         :to="tile.to"
+        @click.prevent="iframeUrl = tile.to"
       />
     </li>
   </ul>
+  <DsfrModal :opened="iframeUrl" size="xl" class="understanding-law__modal" @close="iframeUrl = null">
+    <iframe :src="iframeUrl" class="understanding-law__iframe"></iframe>
+  </DsfrModal>
 </template>
 
 <style lang="scss">
@@ -32,6 +38,17 @@ const route = useRoute()
   &__tile {
     .fr-tile__pictogram {
       overflow: visible;
+    }
+  }
+
+  &__iframe {
+    width: 100%;
+    min-height: 80vh;
+  }
+
+  &__modal {
+    .fr-modal__body {
+      overflow: hidden;
     }
   }
 }
