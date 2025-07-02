@@ -2,7 +2,6 @@ import datetime
 import os
 from datetime import date
 
-from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
@@ -16,39 +15,6 @@ CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestPublicCanteenPreviewsApi(APITestCase):
-    @override_settings(PUBLISH_BY_DEFAULT=False)
-    def test_deprecated_get_published_canteens(self):
-        """
-        Only published canteens with public data should be
-        returned from this call
-        """
-        published_canteens = [
-            CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value),
-            CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value),
-        ]
-        private_canteens = [
-            CanteenFactory.create(),
-            CanteenFactory.create(publication_status=Canteen.PublicationStatus.DRAFT.value),
-        ]
-        response = self.client.get(reverse("published_canteens"))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        body = response.json()
-        self.assertEqual(body.get("count"), 2)
-
-        results = body.get("results", [])
-
-        for published_canteen in published_canteens:
-            self.assertTrue(any(x["id"] == published_canteen.id for x in results))
-
-        for private_canteen in private_canteens:
-            self.assertFalse(any(x["id"] == private_canteen.id for x in results))
-
-        for received_canteen in results:
-            self.assertFalse("managers" in received_canteen)
-            self.assertFalse("managerInvitations" in received_canteen)
-
-    @override_settings(PUBLISH_BY_DEFAULT=True)
     def test_get_published_canteens(self):
         """
         All canteens except with line ministry ARMEE should be public, regardless of publication status
@@ -563,10 +529,12 @@ class TestPublicCanteenSearchApi(APITestCase):
             value_egalim_others_ht=0,
         )
 
+        self.assertEqual(Canteen.objects.count(), 13)
+
         url = f"{reverse('published_canteens')}?min_portion_bio={0.2}"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 3)
+        self.assertEqual(len(results), 5)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
         self.assertIn("Satellite", result_names)
@@ -575,7 +543,7 @@ class TestPublicCanteenSearchApi(APITestCase):
         url = f"{reverse('published_canteens')}?min_portion_combined={0.5}"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 5)
+        self.assertEqual(len(results), 7)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
         self.assertIn("Satellite", result_names)
@@ -586,7 +554,7 @@ class TestPublicCanteenSearchApi(APITestCase):
         url = f"{reverse('published_canteens')}?min_portion_bio={0.1}&min_portion_combined={0.5}"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 6)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
         self.assertIn("Satellite", result_names)
@@ -596,7 +564,7 @@ class TestPublicCanteenSearchApi(APITestCase):
         url = f"{reverse('published_canteens')}?badge=appro"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 6)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
         self.assertIn("Satellite", result_names)
@@ -607,7 +575,7 @@ class TestPublicCanteenSearchApi(APITestCase):
         url = f"{reverse('published_canteens')}?badge=appro&min_portion_combined={0.01}"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 6)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
         self.assertIn("Satellite", result_names)
@@ -617,7 +585,7 @@ class TestPublicCanteenSearchApi(APITestCase):
         url = f"{reverse('published_canteens')}?badge=appro&min_portion_combined={0.5}"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 3)
+        self.assertEqual(len(results), 5)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
         self.assertIn("Satellite", result_names)
@@ -626,7 +594,7 @@ class TestPublicCanteenSearchApi(APITestCase):
         url = f"{reverse('published_canteens')}?min_portion_bio={0.001}"
         response = self.client.get(url)
         results = response.json().get("results", [])
-        self.assertEqual(len(results), 7)
+        self.assertEqual(len(results), 9)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Cantine avec bilan mais siret vide", result_names)
         self.assertIn("Cantine avec bilan mais siret null", result_names)
@@ -680,7 +648,6 @@ class TestPublicCanteenSearchApi(APITestCase):
         self.assertIn(enterprise.id, body.get("sectors"))
         self.assertIn(administration.id, body.get("sectors"))
 
-    @override_settings(PUBLISH_BY_DEFAULT=True)
     def test_pagination_sectors(self):
         """
         The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector

@@ -1,7 +1,6 @@
 import os
 
 from django.core.files import File
-from django.test import override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -19,7 +18,6 @@ from .utils import authenticate
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
-@override_settings(PUBLISH_BY_DEFAULT=False)
 class TestPublishedCanteenApi(APITestCase):
     @authenticate
     def test_canteen_publication_fields_read_only(self):
@@ -54,7 +52,7 @@ class TestPublishedCanteenApi(APITestCase):
         """
         private_canteen = CanteenFactory.create(publication_status="draft")
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": private_canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_badges_in_single_published_canteen(self):
         """
@@ -495,7 +493,6 @@ class TestPublishedCanteenApi(APITestCase):
         self.assertEqual(len(body.get("serviceDiagnostics")), 2)
 
 
-@override_settings(PUBLISH_BY_DEFAULT=True)
 class TestPublicCanteenApi(APITestCase):
     def test_get_single_published_canteen(self):
         """
