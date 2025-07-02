@@ -17,22 +17,24 @@ const iframeUrl = ref(null)
       id dolor id nibh ultricies vehicula ut id elit. Maecenas sed diam eget risus varius blandit sit amet non magna.
     </p>
   </section>
-  <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--center fr-grid-row--gutters fr-my-5w fr-mb-8w">
-    <li v-for="(tile, index) in tiles" :key="index" class="fr-col-12 fr-col-md-4">
-      <DsfrTile
-        class="understanding-law__tile"
-        :title="tile.title"
-        titleTag="h2"
-        :imgSrc="tile.imgSrc"
-        :details="tile.details"
-        :to="tile.to"
-        @click.prevent="iframeUrl = tile.to"
-      />
-    </li>
-  </ul>
-  <DsfrModal class="understanding-law__modal" :opened="iframeUrl" size="xl" @close="iframeUrl = null">
-    <iframe :src="iframeUrl"></iframe>
-  </DsfrModal>
+  <section>
+    <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--center fr-grid-row--gutters fr-my-5w fr-mb-8w">
+      <li v-for="(tile, index) in tiles" :key="index" class="fr-col-12 fr-col-md-4">
+        <DsfrTile
+          class="understanding-law__tile"
+          :title="tile.title"
+          titleTag="h2"
+          :imgSrc="tile.imgSrc"
+          :details="tile.details"
+          :to="tile.to"
+          @click.prevent="iframeUrl = tile.to"
+        />
+      </li>
+    </ul>
+    <DsfrModal class="understanding-law__modal" :opened="iframeUrl" size="xl" @close="iframeUrl = null">
+      <iframe :src="iframeUrl"></iframe>
+    </DsfrModal>
+  </section>
   <AppNeedHelp badge="Besoin d'aide" align="center" title="Vous ne trouvez pas ce que vous chercher ?">
     <p>
       Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
