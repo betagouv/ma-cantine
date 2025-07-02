@@ -28,8 +28,8 @@ const iframeUrl = ref(null)
       />
     </li>
   </ul>
-  <DsfrModal :opened="iframeUrl" size="xl" class="understanding-law__modal" @close="iframeUrl = null">
-    <iframe :src="iframeUrl" class="understanding-law__iframe"></iframe>
+  <DsfrModal class="understanding-law__modal" :opened="iframeUrl" size="xl" @close="iframeUrl = null">
+    <iframe :src="iframeUrl"></iframe>
   </DsfrModal>
 </template>
 
@@ -41,14 +41,18 @@ const iframeUrl = ref(null)
     }
   }
 
-  &__iframe {
-    width: 100%;
-    min-height: 100vh; // Trick to hide the bottom of the page included chatbox
-  }
-
+  /* To improve iframe readability :
+    - prevent double scroll area
+    - hide bottom crisp article already visible in our app
+    */
   &__modal {
     .fr-modal__body {
-      overflow: hidden; // Avoid double scroll bar in modal
+      overflow: hidden;
+    }
+
+    iframe {
+      width: 100%;
+      min-height: 100vh;
     }
   }
 }
