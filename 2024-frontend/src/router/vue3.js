@@ -20,7 +20,7 @@ import StatisticsCanteens from "@/views/StatisticsCanteens.vue"
 import UnderstandingLaw from "@/views/UnderstandingLaw.vue"
 
 /* Sitemap section id */
-const { diag, action, site } = sectionId
+const { diag, action, site, law } = sectionId
 
 /* Routes */
 const vue3routes = [
@@ -199,6 +199,7 @@ const vue3routes = [
     component: UnderstandingLaw,
     meta: {
       title: "Comprendre mes obligations",
+      siteMap: law,
     },
   },
 ]
