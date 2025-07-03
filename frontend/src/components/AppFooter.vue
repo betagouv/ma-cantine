@@ -114,7 +114,7 @@ export default {
       bottomLinks: [
         {
           text: "Accessibilité : partiellement conforme",
-          to: { name: "AccessibilityDeclaration" },
+          to: { name: "Accessibilite" },
         },
         {
           text: "Mentions légales",

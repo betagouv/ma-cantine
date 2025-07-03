@@ -31,7 +31,7 @@
       </p>
       <p class="mb-0">
         Pour plus d'informations consultez notre
-        <router-link :to="{ name: 'AccessibilityDeclaration' }">déclaration d'accessibilité</router-link>
+        <router-link :to="{ name: 'Accessibilite' }">déclaration d'accessibilité</router-link>
       </p>
     </v-alert>
     <p v-else class="mt-4 text-right">

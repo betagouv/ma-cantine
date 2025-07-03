@@ -6,7 +6,7 @@ import WasteMeasurements from "@/views/WasteMeasurements.vue"
 import ImportSelection from "@/views/ImportSelection.vue"
 import DeveloperAPI from "@/views/DeveloperAPI.vue"
 import LegalNotices from "@/views/LegalNotices.vue"
-import AccessibilityDeclaration from "@/views/AccessibilityDeclaration.vue"
+import Accessibilite from "@/views/Accessibilite.vue"
 import CGU from "@/views/CGU.vue"
 import ContactPage from "@/views/ContactPage.vue"
 import ImportPurchases from "@/views/ImportPurchases.vue"
@@ -78,8 +78,8 @@ const vue3routes = [
   },
   {
     path: "/accessibilite",
-    name: "AccessibilityDeclaration",
-    component: AccessibilityDeclaration,
+    name: "Accessibilite",
+    component: Accessibilite,
     meta: {
       title: "Déclaration d'accessibilité",
       siteMap: site,

@@ -481,7 +481,7 @@ const vue3Routes = [
   },
   {
     path: "/accessibilite",
-    name: "AccessibilityDeclaration",
+    name: "Accessibilite",
   },
   {
     path: "/cgu",

@@ -9,7 +9,7 @@ const descText =
   <DsfrFooter
     :logo-text
     a11yCompliance="partiellement conforme"
-    :a11yComplianceLink="{ name: 'AccessibilityDeclaration' }"
+    :a11yComplianceLink="{ name: 'Accessibilite' }"
     :legalLink="{ name: 'LegalNotices' }"
     :personalDataLink="{ name: 'PersonalData' }"
     :cookiesLink="{ name: 'PersonalData', hash: '#cookies' }"
