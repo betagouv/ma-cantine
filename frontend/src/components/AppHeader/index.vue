@@ -304,7 +304,7 @@ export default {
             },
             {
               text: "Importer un fichier",
-              to: { name: "DiagnosticsImporter" },
+              to: { name: "GestionnaireImports" },
             },
             {
               text: "Contactez-nous",

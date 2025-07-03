@@ -466,9 +466,9 @@ const vue3Routes = [
   },
   {
     path: "/importer-des-donnees",
-    name: "DiagnosticsImporter",
+    name: "GestionnaireImports",
     meta: {
-      authenticationRequired: true,
+      title: "Importer des données",
     },
   },
   {
@@ -494,9 +494,6 @@ const vue3Routes = [
   {
     path: "/importer-des-donnees/achats",
     name: "GestionnaireImportsAchat",
-    meta: {
-      authenticationRequired: true,
-    },
   },
   {
     path: "/importer-des-donnees/cantines",

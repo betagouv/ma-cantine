@@ -33,7 +33,7 @@ const quizSteps = [
     title: "Cantines",
     question: "Est-ce que vos cantines sont déjà existantes sur la plateforme ma cantine ? ",
   },
-  { key: "GestionnaireImportsAchat", title: "Achats", question: "Souhaitez-vous importer des achats ?" },
+  { key: "importPurchases", title: "Achats", question: "Souhaitez-vous importer des achats ?" },
   {
     key: "importDiagnostics",
     title: "Bilans",

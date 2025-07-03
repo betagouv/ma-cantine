@@ -3,7 +3,7 @@ import { sectionId } from "@/constants/site-map.js"
 /* Components */
 import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel.vue"
 import WasteMeasurements from "@/views/WasteMeasurements.vue"
-import ImportSelection from "@/views/ImportSelection.vue"
+import GestionnaireImports from "@/views/GestionnaireImports.vue"
 import Developpeurs from "@/views/Developpeurs.vue"
 import LegalNotices from "@/views/LegalNotices.vue"
 import Accessibilite from "@/views/Accessibilite.vue"
@@ -50,8 +50,8 @@ const vue3routes = [
   },
   {
     path: "/importer-des-donnees",
-    name: "ImportSelection",
-    component: ImportSelection,
+    name: "GestionnaireImports",
+    component: GestionnaireImports,
     meta: {
       title: "Importer des données",
       authenticationRequired: true,
@@ -112,7 +112,7 @@ const vue3routes = [
       authenticationRequired: true,
       breadcrumbs: [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
-        { to: { name: "ImportSelection" }, title: "Importer des données" },
+        { to: { name: "GestionnaireImports" }, title: "Importer des données" },
       ],
     },
   },
@@ -125,7 +125,7 @@ const vue3routes = [
       authenticationRequired: true,
       breadcrumbs: [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
-        { to: { name: "ImportSelection" }, title: "Importer des données" },
+        { to: { name: "GestionnaireImports" }, title: "Importer des données" },
       ],
     },
   },
