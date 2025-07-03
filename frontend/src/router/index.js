@@ -286,7 +286,7 @@ const routes = [
   },
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent",
-    name: "CanteenModification",
+    name: "GestionnaireCantineModifier",
     props: true,
     component: CanteenEditor,
     redirect: { name: "CanteenForm" },

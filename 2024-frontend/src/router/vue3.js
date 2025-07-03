@@ -12,7 +12,7 @@ import ContactPage from "@/views/ContactPage.vue"
 import ImportPurchases from "@/views/ImportPurchases.vue"
 import ImportCanteens from "@/views/ImportCanteens.vue"
 import GestionnaireCantineAjouter from "@/views/GestionnaireCantineAjouter.vue"
-import CanteenModification from "@/views/CanteenModification.vue"
+import GestionnaireCantineModifier from "@/views/GestionnaireCantineModifier.vue"
 import FAQ from "@/views/FAQ.vue"
 import PersonalData from "@/views/PersonalData.vue"
 import SiteMap from "@/views/SiteMap.vue"
@@ -145,8 +145,8 @@ const vue3routes = [
     children: [
       {
         path: "etablissement",
-        name: "CanteenModification",
-        component: CanteenModification,
+        name: "GestionnaireCantineModifier",
+        component: GestionnaireCantineModifier,
         meta: {
           authenticationRequired: true,
           title: "Modifier mon établissement",
