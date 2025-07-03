@@ -37,8 +37,8 @@ const iframeUrl = ref(null)
   </section>
   <AppNeedHelp badge="Besoin d'aide" align="center" title="Vous ne trouvez pas ce que vous chercher ?">
     <p>
-      Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
-      Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+      Découvrez notre documentation complète qui centralise les ressources, contenus videos, documents, témoignages,
+      articles, recettes, etc. Pour les acteurs et actrices de la restauration collective.
     </p>
     <a href="https://ma-cantine.crisp.help/fr/" target="_blank">Accéder à notre centre de ressources</a>
   </AppNeedHelp>
