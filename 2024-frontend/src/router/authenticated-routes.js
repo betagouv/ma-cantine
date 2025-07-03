@@ -5,9 +5,9 @@ import GestionnaireCantineAjouter from "@/views/GestionnaireCantineAjouter.vue"
 import GestionnaireCantineModifier from "@/views/GestionnaireCantineModifier.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
-import GestionnaireImports from "@/views/GestionnaireImports.vue"
-import GestionnaireImportsAchat from "@/views/GestionnaireImportsAchat.vue"
-import GestionnaireImportsCantine from "@/views/GestionnaireImportsCantine.vue"
+import GestionnaireImport from "@/views/GestionnaireImport.vue"
+import GestionnaireImportAchats from "@/views/GestionnaireImportAchats.vue"
+import GestionnaireImportCantines from "@/views/GestionnaireImportCantines.vue"
 
 /* Sitemap section id */
 const { diag, action } = sectionId
@@ -39,8 +39,8 @@ const routes = [
   },
   {
     path: "/importer-des-donnees",
-    name: "GestionnaireImports",
-    component: GestionnaireImports,
+    name: "GestionnaireImport",
+    component: GestionnaireImport,
     meta: {
       title: "Importer des données",
       siteMap: diag,
@@ -48,25 +48,25 @@ const routes = [
   },
   {
     path: "/importer-des-donnees/achats",
-    name: "GestionnaireImportsAchat",
-    component: GestionnaireImportsAchat,
+    name: "GestionnaireImportAchats",
+    component: GestionnaireImportAchats,
     meta: {
       title: "Importer des achats",
       breadcrumbs: [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
-        { to: { name: "GestionnaireImports" }, title: "Importer des données" },
+        { to: { name: "GestionnaireImport" }, title: "Importer des données" },
       ],
     },
   },
   {
     path: "/importer-des-donnees/cantines",
-    name: "GestionnaireImportsCantine",
-    component: GestionnaireImportsCantine,
+    name: "GestionnaireImportCantines",
+    component: GestionnaireImportCantines,
     meta: {
       title: "Importer des cantines",
       breadcrumbs: [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
-        { to: { name: "GestionnaireImports" }, title: "Importer des données" },
+        { to: { name: "GestionnaireImport" }, title: "Importer des données" },
       ],
     },
   },
