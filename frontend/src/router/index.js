@@ -493,7 +493,7 @@ const vue3Routes = [
   },
   {
     path: "/importer-des-donnees/achats",
-    name: "ImportPurchases",
+    name: "GestionnaireImportsAchat",
     meta: {
       authenticationRequired: true,
     },
@@ -531,7 +531,7 @@ routes.push(...vue3Routes)
 
 routes.push({
   path: "/importer-achats",
-  redirect: { name: "ImportPurchases" },
+  redirect: { name: "GestionnaireImportsAchat" },
 })
 
 routes.push({
