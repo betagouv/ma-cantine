@@ -529,6 +529,37 @@ routes.push({
 })
 
 routes.push({
+  path: "/mesures-phares/qualite-des-produits",
+  redirect: { name: "UnderstandingLaw" },
+})
+
+routes.push({
+  path: "/mesures-phares/gaspillage-alimentaire",
+  redirect: { name: "UnderstandingLaw" },
+})
+
+routes.push({
+  path: "/mesures-phares/menus-vegetariens",
+  redirect: { name: "UnderstandingLaw" },
+})
+
+routes.push({
+  path: "/mesures-phares/interdiction-du-plastique",
+  redirect: { name: "UnderstandingLaw" },
+})
+
+routes.push({
+  path: "/mesures-phares/information-des-usagers",
+  redirect: { name: "UnderstandingLaw" },
+})
+
+// Old url visible on google
+routes.push({
+  path: "/mesures-phares/diversification-des-menus",
+  redirect: { name: "UnderstandingLaw" },
+})
+
+routes.push({
   path: "/:catchAll(.*)",
   component: NotFound,
   name: "NotFound",
