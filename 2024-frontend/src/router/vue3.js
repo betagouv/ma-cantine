@@ -15,7 +15,7 @@ import GestionnaireCantineAjouter from "@/views/GestionnaireCantineAjouter.vue"
 import GestionnaireCantineModifier from "@/views/GestionnaireCantineModifier.vue"
 import FoireAuxQuestions from "@/views/FoireAuxQuestions.vue"
 import DonneesPersonnelles from "@/views/DonneesPersonnelles.vue"
-import SiteMap from "@/views/SiteMap.vue"
+import PlanDuSite from "@/views/PlanDuSite.vue"
 import StatisticsCanteens from "@/views/StatisticsCanteens.vue"
 
 /* Sitemap section id */
@@ -178,8 +178,8 @@ const vue3routes = [
   },
   {
     path: "/plan-du-site",
-    name: "SiteMap",
-    component: SiteMap,
+    name: "PlanDuSite",
+    component: PlanDuSite,
     meta: {
       title: "Plan du site",
     },

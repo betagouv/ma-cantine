@@ -134,7 +134,7 @@ export default {
         },
         {
           text: "Plan du site",
-          to: { name: "SiteMap" },
+          to: { name: "PlanDuSite" },
         },
       ],
       govLinks: ["legifrance.gouv.fr", "gouvernement.fr", "service-public.fr", "data.gouv.fr"],

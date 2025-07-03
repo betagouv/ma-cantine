@@ -15,7 +15,7 @@ const descText =
     :cookiesLink="{ name: 'DonneesPersonnelles', hash: '#cookies' }"
     :afterMandatoryLinks="[
       { text: 'Conditions générales d\'utilisation', to: { name: 'CGU' } },
-      { text: 'Plan du site', to: { name: 'SiteMap' } },
+      { text: 'Plan du site', to: { name: 'PlanDuSite' } },
     ]"
     :desc-text
     licenceTo="https://github.com/betagouv/ma-cantine/blob/staging/LICENSE"

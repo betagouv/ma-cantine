@@ -517,7 +517,7 @@ const vue3Routes = [
   },
   {
     path: "/plan-du-site/",
-    name: "SiteMap",
+    name: "PlanDuSite",
   },
 ]
 const VUE3_PREFIX = "/v2"
