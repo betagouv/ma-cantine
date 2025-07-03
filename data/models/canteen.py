@@ -567,7 +567,7 @@ class Canteen(SoftDeletionModel):
         verbose_name="Source de création de la cantine",
     )
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(self, **kwargs):
         # cleanup some fields
         if self.siret:
             self.siret = utils_siret.normalise_siret(self.siret)
@@ -578,7 +578,7 @@ class Canteen(SoftDeletionModel):
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
         if self.department:
             self.region = self._get_region()
-        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+        super().save(**kwargs)
 
     @property
     def url_slug(self):
@@ -821,6 +821,6 @@ class CanteenImage(models.Model):
         verbose_name="texte alternatif pour les utilisateurs qui voient pas l'image",
     )
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(self, **kwargs):
         self.image = optimize_image(self.image, self.image.name)
-        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+        super().save(**kwargs)
