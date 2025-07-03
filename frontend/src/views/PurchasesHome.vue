@@ -317,7 +317,7 @@
           <v-divider aria-hidden="true" role="presentation"></v-divider>
         </div>
         <v-spacer></v-spacer>
-        <v-btn text color="primary" :to="{ name: 'ImportCanteens' }">
+        <v-btn text color="primary" :to="{ name: 'GestionnaireImportsCantine' }">
           <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
           Créer plusieurs cantines depuis un fichier
         </v-btn>

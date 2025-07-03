@@ -8,7 +8,7 @@ importTypes.push({
   key: "CANTEENS",
   title: "Importer des cantines",
   help: "Vous voulez créer ou mettre à jour des cantines",
-  to: { name: "ImportCanteens" },
+  to: { name: "GestionnaireImportsCantine" },
 })
 Object.values(Constants.DiagnosticImportLevels).forEach((level) => {
   level.to = { name: "DiagnosticImportPage", params: { importUrlSlug: level.urlSlug } }

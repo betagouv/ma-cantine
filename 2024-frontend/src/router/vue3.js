@@ -10,7 +10,7 @@ import Accessibilite from "@/views/Accessibilite.vue"
 import CGU from "@/views/CGU.vue"
 import Contact from "@/views/Contact.vue"
 import ImportPurchases from "@/views/ImportPurchases.vue"
-import ImportCanteens from "@/views/ImportCanteens.vue"
+import GestionnaireImportsCantine from "@/views/GestionnaireImportsCantine.vue"
 import GestionnaireCantineAjouter from "@/views/GestionnaireCantineAjouter.vue"
 import GestionnaireCantineModifier from "@/views/GestionnaireCantineModifier.vue"
 import FoireAuxQuestions from "@/views/FoireAuxQuestions.vue"
@@ -118,8 +118,8 @@ const vue3routes = [
   },
   {
     path: "/importer-des-donnees/cantines",
-    name: "ImportCanteens",
-    component: ImportCanteens,
+    name: "GestionnaireImportsCantine",
+    component: GestionnaireImportsCantine,
     meta: {
       title: "Importer des cantines",
       authenticationRequired: true,

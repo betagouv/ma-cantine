@@ -355,7 +355,7 @@ const routes = [
     component: DiagnosticImportPage,
     props: true,
     beforeEnter: (to, _from, next) => {
-      if (to.params.importUrlSlug === "cantines-seules") next({ name: "ImportCanteens" })
+      if (to.params.importUrlSlug === "cantines-seules") next({ name: "GestionnaireImportsCantine" })
       else next()
     },
   },
@@ -500,7 +500,7 @@ const vue3Routes = [
   },
   {
     path: "/importer-des-donnees/cantines",
-    name: "ImportCanteens",
+    name: "GestionnaireImportsCantine",
   },
   {
     path: "/ajouter-une-cantine",
