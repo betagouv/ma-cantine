@@ -7,7 +7,7 @@
     <p v-if="hasDepartments">Établissements dans {{ departmentsString }}</p>
     <p v-else>
       Votre profil n'a pas encore été assigné un territoire. Veuillez
-      <router-link :to="{ name: 'ContactPage' }">nous contacter</router-link>
+      <router-link :to="{ name: 'Contact' }">nous contacter</router-link>
       afin d'afficher les établissements correspondant à votre territoire.
     </p>
     <v-data-table
@@ -32,7 +32,7 @@
     </v-data-table>
     <p class="body-2 mt-2 mb-0" v-if="hasDepartments">
       Pour mettre à jour vos départements ou signaler une erreur, veuillez
-      <router-link :to="{ name: 'ContactPage' }">nous contacter</router-link>
+      <router-link :to="{ name: 'Contact' }">nous contacter</router-link>
       .
     </p>
   </div>

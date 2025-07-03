@@ -308,7 +308,7 @@ export default {
             },
             {
               text: "Contactez-nous",
-              to: { name: "ContactPage" },
+              to: { name: "Contact" },
             },
             {
               text: "Documentation",

@@ -489,7 +489,7 @@ const vue3Routes = [
   },
   {
     path: "/contact",
-    name: "ContactPage",
+    name: "Contact",
   },
   {
     path: "/importer-des-donnees/achats",

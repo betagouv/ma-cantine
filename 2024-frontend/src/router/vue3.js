@@ -8,7 +8,7 @@ import DeveloperAPI from "@/views/DeveloperAPI.vue"
 import LegalNotices from "@/views/LegalNotices.vue"
 import Accessibilite from "@/views/Accessibilite.vue"
 import CGU from "@/views/CGU.vue"
-import ContactPage from "@/views/ContactPage.vue"
+import Contact from "@/views/Contact.vue"
 import ImportPurchases from "@/views/ImportPurchases.vue"
 import ImportCanteens from "@/views/ImportCanteens.vue"
 import GestionnaireCantineAjouter from "@/views/GestionnaireCantineAjouter.vue"
@@ -96,8 +96,8 @@ const vue3routes = [
   },
   {
     path: "/contact",
-    name: "ContactPage",
-    component: ContactPage,
+    name: "Contact",
+    component: Contact,
     meta: {
       title: "Contactez-nous",
       siteMap: site,

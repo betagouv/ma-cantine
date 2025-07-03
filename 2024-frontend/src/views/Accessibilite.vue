@@ -187,7 +187,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
           </a>
         </li>
         <li><router-link :to="{ name: 'CommunityPage' }">Page entraide/communauté</router-link></li>
-        <li><router-link :to="{ name: 'ContactPage' }">Contact</router-link></li>
+        <li><router-link :to="{ name: 'Contact' }">Contact</router-link></li>
         <li><router-link :to="{ name: 'LegalNotices' }">Mentions légales</router-link></li>
         <li><a href="/s-identifier">Authentification</a></li>
         <li><a href="/creer-mon-compte">Création d'un compte</a></li>
@@ -219,7 +219,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <ul>
         <li>
           Envoyez-nous un message via notre
-          <router-link :to="{ name: 'ContactPage' }">formulaire de contact</router-link>
+          <router-link :to="{ name: 'Contact' }">formulaire de contact</router-link>
           .
         </li>
         <li>

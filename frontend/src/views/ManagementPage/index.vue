@@ -169,7 +169,7 @@ export default {
             {
               text: "Nous contacter",
               to: {
-                name: "ContactPage",
+                name: "Contact",
               },
             },
           ],
