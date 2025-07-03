@@ -1,6 +1,8 @@
 import logging
 
-from django.db.models import Count, Sum
+from django.db.models import Count, FloatField, Sum
+from django.db.models.fields.json import KT
+from django.db.models.functions import Cast
 from rest_framework import serializers
 
 from common.utils.badges import badges_for_queryset
@@ -35,17 +37,36 @@ def calculate_statistics_canteens(canteens, data):
 
 def calculate_statistics_teledeclarations(teledeclarations, data):
     # aggregate
-    agg = teledeclarations.aggregate(
+    agg = teledeclarations.annotate(
+        value_meat_poultry_ht=Cast(
+            KT("declared_data__teledeclaration__value_meat_poultry_ht"), output_field=FloatField()
+        ),
+        value_meat_poultry_egalim_ht=Cast(
+            KT("declared_data__teledeclaration__value_meat_poultry_egalim_ht"), output_field=FloatField()
+        ),
+        value_meat_poultry_france_ht=Cast(
+            KT("declared_data__teledeclaration__value_meat_poultry_france_ht"), output_field=FloatField()
+        ),
+        value_fish_ht=Cast(KT("declared_data__teledeclaration__value_fish_ht"), output_field=FloatField()),
+        value_fish_egalim_ht=Cast(
+            KT("declared_data__teledeclaration__value_fish_egalim_ht"), output_field=FloatField()
+        ),
+    ).aggregate(
         Count("id"),
         Sum("value_bio_ht_agg", default=0),
         Sum("value_total_ht", default=0),
         Sum("value_sustainable_ht_agg", default=0),
         Sum("value_externality_performance_ht_agg", default=0),
         Sum("value_egalim_others_ht_agg", default=0),
+        Sum("value_meat_poultry_ht", default=0),
+        Sum("value_meat_poultry_egalim_ht", default=0),
+        Sum("value_meat_poultry_france_ht", default=0),
+        Sum("value_fish_ht", default=0),
+        Sum("value_fish_egalim_ht", default=0),
     )
     # count
     data["teledeclarations_count"] = agg["id__count"]
-    # percent of bio, sustainable, egalim (bio + sustainable) & appro
+    # percent of bio, sustainable & egalim (bio + sustainable)
     if agg["value_total_ht__sum"] > 0:
         data["bio_percent"] = round(100 * agg["value_bio_ht_agg__sum"] / agg["value_total_ht__sum"])
         data["sustainable_percent"] = round(
@@ -61,6 +82,23 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
         data["bio_percent"] = 0
         data["sustainable_percent"] = 0
     data["egalim_percent"] = data["bio_percent"] + data["sustainable_percent"]  # same denominator
+    # percent of meat egalim & france
+    if agg["value_meat_poultry_ht__sum"] > 0:
+        data["meat_egalim_percent"] = round(
+            100 * agg["value_meat_poultry_egalim_ht__sum"] / agg["value_meat_poultry_ht__sum"]
+        )
+        data["meat_france_percent"] = round(
+            100 * agg["value_meat_poultry_france_ht__sum"] / agg["value_meat_poultry_ht__sum"]
+        )
+    else:
+        data["meat_egalim_percent"] = 0
+        data["meat_france_percent"] = 0
+    # percent of fish egalim
+    if agg["value_fish_ht__sum"] > 0:
+        data["fish_egalim_percent"] = round(100 * agg["value_fish_egalim_ht__sum"] / agg["value_fish_ht__sum"])
+    else:
+        data["fish_egalim_percent"] = 0
+    # percent of appro
     badge_querysets = badges_for_queryset(teledeclarations)
     data["appro_percent"] = (
         int(badge_querysets["appro"].count() / data["teledeclarations_count"] * 100)
@@ -83,6 +121,9 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     bio_percent = serializers.IntegerField()
     sustainable_percent = serializers.IntegerField()
     egalim_percent = serializers.IntegerField()
+    meat_egalim_percent = serializers.IntegerField()
+    meat_france_percent = serializers.IntegerField()
+    fish_egalim_percent = serializers.IntegerField()
     appro_percent = serializers.IntegerField()
 
     @staticmethod
