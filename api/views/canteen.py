@@ -803,6 +803,7 @@ class SatelliteListCreateView(ListCreateAPIView):
         "name",
         "siret",
         "daily_meal_count",
+        "publication_status",
     ]
 
     def get_queryset(self):

@@ -17,20 +17,16 @@ CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 class TestPublicCanteenPreviewsApi(APITestCase):
     def test_get_published_canteens(self):
         """
-        All canteens except with line ministry ARMEE should be public, regardless of publication status
+        All canteens except with line ministry ARMEE should be public
         """
         published_canteens = [
-            CanteenFactory.create(line_ministry=Canteen.Ministries.AFFAIRES_ETRANGERES),
-            CanteenFactory.create(line_ministry=None),
-            CanteenFactory.create(
-                line_ministry=Canteen.Ministries.AGRICULTURE, publication_status=Canteen.PublicationStatus.DRAFT
-            ),
+            CanteenFactory(line_ministry=Canteen.Ministries.AFFAIRES_ETRANGERES),
+            CanteenFactory(line_ministry=None),
+            CanteenFactory(line_ministry=Canteen.Ministries.AGRICULTURE),
         ]
         private_canteens = [
-            CanteenFactory.create(line_ministry=Canteen.Ministries.ARMEE),
-            CanteenFactory.create(
-                line_ministry=Canteen.Ministries.ARMEE, publication_status=Canteen.PublicationStatus.PUBLISHED
-            ),
+            CanteenFactory(line_ministry=Canteen.Ministries.ARMEE),
+            CanteenFactory(line_ministry=Canteen.Ministries.ARMEE),
         ]
         response = self.client.get(reverse("published_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -54,19 +50,10 @@ class TestPublicCanteenPreviewsApi(APITestCase):
         """
         Should be able to get the public summary data for a single published canteen
         """
-        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED)
+        canteen = CanteenFactory()
 
         response = self.client.get(reverse("single_public_canteen_preview", kwargs={"pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_fail_to_get_single_private_canteen_preview(self):
-        """
-        Should not be able to get the public summary data for a single private canteen
-        """
-        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.DRAFT)
-
-        response = self.client.get(reverse("single_public_canteen_preview", kwargs={"pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_fail_to_get_non_existant_canteen_preview(self):
         """
@@ -79,8 +66,8 @@ class TestPublicCanteenPreviewsApi(APITestCase):
         """
         Should get summary data in a public preview
         """
-        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED)
-        DiagnosticFactory.create(
+        canteen = CanteenFactory()
+        DiagnosticFactory(
             canteen=canteen, year=timezone.now().date().year - 1
         )  # year must be in the past, otherwise canteen.appro_diagnostics is empty
 
@@ -104,10 +91,10 @@ class TestPublicCanteenPreviewsApi(APITestCase):
 
 class TestPublicCanteenSearchApi(APITestCase):
     def test_search_single_result(self):
-        CanteenFactory.create(publication_status="published", name="Shiso")
-        CanteenFactory.create(publication_status="published", name="Wasabi")
-        CanteenFactory.create(publication_status="published", name="Mochi")
-        CanteenFactory.create(publication_status="published", name="Umami")
+        CanteenFactory(name="Shiso")
+        CanteenFactory(name="Wasabi")
+        CanteenFactory(name="Mochi")
+        CanteenFactory(name="Umami")
 
         search_term = "mochi"
         response = self.client.get(f"{reverse('published_canteens')}?search={search_term}")
@@ -119,8 +106,8 @@ class TestPublicCanteenSearchApi(APITestCase):
         self.assertEqual(results[0].get("name"), "Mochi")
 
     def test_search_accented_result(self):
-        CanteenFactory.create(publication_status="published", name="Wakamé")
-        CanteenFactory.create(publication_status="published", name="Shiitaké")
+        CanteenFactory(name="Wakamé")
+        CanteenFactory(name="Shiitaké")
 
         search_term = "wakame"
         response = self.client.get(f"{reverse('published_canteens')}?search={search_term}")
@@ -132,10 +119,10 @@ class TestPublicCanteenSearchApi(APITestCase):
         self.assertEqual(results[0].get("name"), "Wakamé")
 
     def test_search_multiple_results(self):
-        CanteenFactory.create(publication_status="published", name="Sudachi")
-        CanteenFactory.create(publication_status="published", name="Wasabi")
-        CanteenFactory.create(publication_status="published", name="Mochi")
-        CanteenFactory.create(publication_status="published", name="Umami")
+        CanteenFactory(name="Sudachi")
+        CanteenFactory(name="Wasabi")
+        CanteenFactory(name="Mochi")
+        CanteenFactory(name="Umami")
 
         search_term = "chi"
         response = self.client.get(f"{reverse('published_canteens')}?search={search_term}")
@@ -150,10 +137,10 @@ class TestPublicCanteenSearchApi(APITestCase):
         self.assertIn("Sudachi", result_names)
 
     def test_meal_count_filter(self):
-        CanteenFactory.create(publication_status="published", daily_meal_count=10, name="Shiso")
-        CanteenFactory.create(publication_status="published", daily_meal_count=15, name="Wasabi")
-        CanteenFactory.create(publication_status="published", daily_meal_count=20, name="Mochi")
-        CanteenFactory.create(publication_status="published", daily_meal_count=25, name="Umami")
+        CanteenFactory(daily_meal_count=10, name="Shiso")
+        CanteenFactory(daily_meal_count=15, name="Wasabi")
+        CanteenFactory(daily_meal_count=20, name="Mochi")
+        CanteenFactory(daily_meal_count=25, name="Umami")
 
         # Only "Shiso" is between 9 and 11 meal count
         min_meal_count = 9
@@ -203,10 +190,10 @@ class TestPublicCanteenSearchApi(APITestCase):
         self.assertEqual(results[0].get("name"), "Umami")
 
     def test_department_filter(self):
-        CanteenFactory.create(publication_status="published", department="69", name="Shiso")
-        CanteenFactory.create(publication_status="published", department="10", name="Wasabi")
-        CanteenFactory.create(publication_status="published", department="75", name="Mochi")
-        CanteenFactory.create(publication_status="published", department="31", name="Umami")
+        CanteenFactory(department="69", name="Shiso")
+        CanteenFactory(department="10", name="Wasabi")
+        CanteenFactory(department="75", name="Mochi")
+        CanteenFactory(department="31", name="Umami")
 
         url = f"{reverse('published_canteens')}?department=69"
         response = self.client.get(url)
@@ -218,10 +205,10 @@ class TestPublicCanteenSearchApi(APITestCase):
         school = SectorFactory.create(name="School")
         enterprise = SectorFactory.create(name="Enterprise")
         social = SectorFactory.create(name="Social")
-        CanteenFactory.create(publication_status="published", sectors=[school], name="Shiso")
-        CanteenFactory.create(publication_status="published", sectors=[enterprise], name="Wasabi")
-        CanteenFactory.create(publication_status="published", sectors=[social], name="Mochi")
-        CanteenFactory.create(publication_status="published", sectors=[school, social], name="Umami")
+        CanteenFactory(sectors=[school], name="Shiso")
+        CanteenFactory(sectors=[enterprise], name="Wasabi")
+        CanteenFactory(sectors=[social], name="Mochi")
+        CanteenFactory(sectors=[school, social], name="Umami")
 
         url = f"{reverse('published_canteens')}?sectors={school.id}"
         response = self.client.get(url)
@@ -252,25 +239,21 @@ class TestPublicCanteenSearchApi(APITestCase):
         Optionally sort by name, modification date, number of meals
         """
         CanteenFactory.create(
-            publication_status="published",
             daily_meal_count=200,
             name="Shiso",
             creation_date=(timezone.now() - datetime.timedelta(days=10)),
         )
         CanteenFactory.create(
-            publication_status="published",
             daily_meal_count=100,
             name="Wasabi",
             creation_date=(timezone.now() - datetime.timedelta(days=8)),
         )
         last_modified = CanteenFactory.create(
-            publication_status="published",
             daily_meal_count=300,
             name="Mochi",
             creation_date=(timezone.now() - datetime.timedelta(days=6)),
         )
         CanteenFactory.create(
-            publication_status="published",
             daily_meal_count=150,
             name="Umami",
             creation_date=(timezone.now() - datetime.timedelta(days=4)),
@@ -320,25 +303,21 @@ class TestPublicCanteenSearchApi(APITestCase):
         In meal count, "null" values should be placed first
         """
         CanteenFactory.create(
-            publication_status="published",
             daily_meal_count=None,
             name="Shiso",
             creation_date=(timezone.now() - datetime.timedelta(days=10)),
         )
         CanteenFactory.create(
-            publication_status="published",
             daily_meal_count=0,
             name="Wasabi",
             creation_date=(timezone.now() - datetime.timedelta(days=8)),
         )
         CanteenFactory.create(
-            publication_status="published",
             daily_meal_count=1,
             name="Mochi",
             creation_date=(timezone.now() - datetime.timedelta(days=6)),
         )
         CanteenFactory.create(
-            publication_status="published",
             daily_meal_count=2,
             name="Umami",
             creation_date=(timezone.now() - datetime.timedelta(days=4)),
@@ -367,61 +346,41 @@ class TestPublicCanteenSearchApi(APITestCase):
         Should be able to filter by bio %, sustainable %, combined % based on last year's diagnostic
         and based on the rules for their region
         """
-        good_canteen = CanteenFactory.create(
-            publication_status="published", name="Shiso", region=Region.auvergne_rhone_alpes
-        )
+        good_canteen = CanteenFactory.create(name="Shiso", region=Region.auvergne_rhone_alpes)
         central = CanteenFactory.create(
-            publication_status="draft",
             name="Central",
             region=Region.auvergne_rhone_alpes,
             production_type=Canteen.ProductionType.CENTRAL,
             siret="22730656663081",
         )
         CanteenFactory.create(
-            publication_status="published",
             name="Satellite",
             region=Region.auvergne_rhone_alpes,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret="22730656663081",
         )
-        medium_canteen = CanteenFactory.create(
-            publication_status="published", name="Wasabi", region=Region.auvergne_rhone_alpes
-        )
-        sustainable_canteen = CanteenFactory.create(
-            publication_status="published", name="Umami", region=Region.auvergne_rhone_alpes
-        )
-        bad_canteen = CanteenFactory.create(
-            publication_status="published", name="Mochi", region=Region.auvergne_rhone_alpes
-        )
-        secretly_good_canteen = CanteenFactory.create(
-            publication_status="draft", name="Secret", region=Region.auvergne_rhone_alpes
-        )
-        guadeloupe_canteen = CanteenFactory.create(
-            publication_status=Canteen.PublicationStatus.PUBLISHED, region=Region.guadeloupe, name="Guadeloupe"
-        )
+        medium_canteen = CanteenFactory.create(name="Wasabi", region=Region.auvergne_rhone_alpes)
+        sustainable_canteen = CanteenFactory.create(name="Umami", region=Region.auvergne_rhone_alpes)
+        bad_canteen = CanteenFactory.create(name="Mochi", region=Region.auvergne_rhone_alpes)
+        secretly_good_canteen = CanteenFactory.create(name="Secret", region=Region.auvergne_rhone_alpes)
+        guadeloupe_canteen = CanteenFactory.create(region=Region.guadeloupe, name="Guadeloupe")
         good_canteen_with_siren = CanteenFactory.create(
-            publication_status="published",
             name="Siren",
             region=Region.auvergne_rhone_alpes,
             siret="",
             siren_unite_legale="123456789",
         )
         good_canteen_empty_siret = CanteenFactory.create(
-            publication_status="published",
             name="Cantine avec bilan mais siret vide",
             siret="",
         )
-        good_canteen_siret_none = CanteenFactory.create(
-            publication_status="published", name="Cantine avec bilan mais siret null", siret=None
-        )
+        good_canteen_siret_none = CanteenFactory.create(name="Cantine avec bilan mais siret null", siret=None)
         CanteenFactory.create(
-            publication_status="published",
             name="Cantine sans bilan avec siret cuisine centrale vide",
             siret="12345678937462",
             central_producer_siret="",
         )
         CanteenFactory.create(
-            publication_status="published",
             name="Cantine sans bilan avec siret cuisine centrale null",
             siret="12345678937463",
             central_producer_siret=None,
@@ -602,10 +561,10 @@ class TestPublicCanteenSearchApi(APITestCase):
         self.assertNotIn("Cantine sans bilan avec siret cuisine centrale null", result_names)
 
     def test_pagination_departments(self):
-        CanteenFactory.create(publication_status="published", department="75", name="Shiso")
-        CanteenFactory.create(publication_status="published", department="75", name="Wasabi")
-        CanteenFactory.create(publication_status="published", department="69", name="Mochi")
-        CanteenFactory.create(publication_status="published", department=None, name="Umami")
+        CanteenFactory(department="75", name="Shiso")
+        CanteenFactory(department="75", name="Wasabi")
+        CanteenFactory(department="69", name="Mochi")
+        CanteenFactory(department=None, name="Umami")
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
@@ -625,10 +584,10 @@ class TestPublicCanteenSearchApi(APITestCase):
         administration = SectorFactory.create(name="Administration")
         # unused sectors shouldn't show up as an option
         SectorFactory.create(name="Unused")
-        CanteenFactory.create(publication_status="published", sectors=[school, enterprise], name="Shiso")
-        CanteenFactory.create(publication_status="published", sectors=[school], name="Wasabi")
-        CanteenFactory.create(publication_status="published", sectors=[school], name="Mochi")
-        CanteenFactory.create(publication_status="published", sectors=[administration], name="Umami")
+        CanteenFactory(sectors=[school, enterprise], name="Shiso")
+        CanteenFactory(sectors=[school], name="Wasabi")
+        CanteenFactory(sectors=[school], name="Mochi")
+        CanteenFactory(sectors=[administration], name="Umami")
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
@@ -682,8 +641,8 @@ class TestPublicCanteenSearchApi(APITestCase):
         self.assertIn(administration.id, body.get("sectors"))
 
     def test_pagination_management_types(self):
-        CanteenFactory.create(publication_status="published", management_type="conceded", name="Shiso")
-        CanteenFactory.create(publication_status="published", management_type=None, name="Wasabi")
+        CanteenFactory(management_type="conceded", name="Shiso")
+        CanteenFactory(management_type=None, name="Wasabi")
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
@@ -693,11 +652,9 @@ class TestPublicCanteenSearchApi(APITestCase):
         self.assertIn("conceded", body.get("managementTypes"))
 
     def test_get_canteens_filter_production_type(self):
-        site_canteen = CanteenFactory.create(publication_status="published", production_type="site")
-        central_cuisine = CanteenFactory.create(publication_status="published", production_type="central")
-        central_serving_cuisine = CanteenFactory.create(
-            publication_status="published", production_type="central_serving"
-        )
+        site_canteen = CanteenFactory(production_type="site")
+        central_cuisine = CanteenFactory(production_type="central")
+        central_serving_cuisine = CanteenFactory.create(production_type="central_serving")
 
         response = self.client.get(f"{reverse('published_canteens')}?production_type=central,central_serving")
         self.assertEqual(response.status_code, status.HTTP_200_OK)

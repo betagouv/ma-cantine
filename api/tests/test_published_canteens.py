@@ -38,7 +38,7 @@ class TestPublishedCanteenApi(APITestCase):
         """
         private_canteen = CanteenFactory(line_ministry=Canteen.Ministries.ARMEE)
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": private_canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_canteen_image_serialization(self):

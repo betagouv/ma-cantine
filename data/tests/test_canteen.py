@@ -73,18 +73,18 @@ class TestCanteenVisibleQuerySetAndProperty(TestCase):
         self.assertEqual(Canteen.objects.count(), 2)
         qs = Canteen.objects.publicly_visible()
         self.assertEqual(qs.count(), 1)
-        self.assertTrue(self.canteen_published_armee not in qs)
+        self.assertTrue(self.canteen_armee not in qs)
 
     def test_publicly_hidden_queryset(self):
         self.assertEqual(Canteen.objects.count(), 2)
         qs = Canteen.objects.publicly_hidden()
         self.assertEqual(qs.count(), 1)
-        self.assertEqual(qs.first(), self.canteen_published_armee)
+        self.assertEqual(qs.first(), self.canteen_armee)
 
     def test_publication_status_display_to_public_property(self):
         self.assertEqual(Canteen.objects.count(), 2)
-        self.assertEqual(self.canteen_published.publication_status_display_to_public, "published")
-        self.assertEqual(self.canteen_published_armee.publication_status_display_to_public, "draft")
+        self.assertEqual(self.canteen.publication_status_display_to_public, "published")
+        self.assertEqual(self.canteen_armee.publication_status_display_to_public, "draft")
 
 
 class TestCanteenSatelliteQuerySet(TestCase):
@@ -305,7 +305,6 @@ class TestCanteenCompleteQuerySetAndProperty(TestCase):
         COMMON = {
             # CanteenFactory generates: name, city_insee_code, sectors
             "yearly_meal_count": 1000,
-            "publication_status": Canteen.PublicationStatus.PUBLISHED,
             "management_type": Canteen.ManagementType.DIRECT,
             "economic_model": Canteen.EconomicModel.PUBLIC,
             "sectors": [sector],
