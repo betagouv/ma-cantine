@@ -16,7 +16,7 @@ import GestionnaireCantineModifier from "@/views/GestionnaireCantineModifier.vue
 import FoireAuxQuestions from "@/views/FoireAuxQuestions.vue"
 import DonneesPersonnelles from "@/views/DonneesPersonnelles.vue"
 import PlanDuSite from "@/views/PlanDuSite.vue"
-import StatisticsCanteens from "@/views/StatisticsCanteens.vue"
+import Observatoire from "@/views/Observatoire.vue"
 
 /* Sitemap section id */
 const { diag, action, site } = sectionId
@@ -185,11 +185,11 @@ const vue3routes = [
     },
   },
   {
-    path: "/statistiques-cantines",
-    name: "StatisticsCanteens",
-    component: StatisticsCanteens,
+    path: "/observatoire",
+    name: "Observatoire",
+    component: Observatoire,
     meta: {
-      title: "Statistiques cantines (nom à revoir)",
+      title: "Observatoire",
     },
   },
 ]
