@@ -1,22 +1,24 @@
 import { sectionId } from "@/constants/site-map.js"
 
-/* Components */
-import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
-import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
-import GestionnaireImport from "@/views/GestionnaireImport.vue"
-import Developpeurs from "@/views/Developpeurs.vue"
-import MentionsLegales from "@/views/MentionsLegales.vue"
+/* Non-authenticated users */
 import Accessibilite from "@/views/Accessibilite.vue"
 import ConditionsGeneralesUtilisation from "@/views/ConditionsGeneralesUtilisation.vue"
 import Contact from "@/views/Contact.vue"
-import GestionnaireImportAchats from "@/views/GestionnaireImportAchats.vue"
-import GestionnaireImportCantines from "@/views/GestionnaireImportCantines.vue"
+import Developpeurs from "@/views/Developpeurs.vue"
+import DonneesPersonnelles from "@/views/DonneesPersonnelles.vue"
+import FoireAuxQuestions from "@/views/FoireAuxQuestions.vue"
+import MentionsLegales from "@/views/MentionsLegales.vue"
+import Observatoire from "@/views/Observatoire.vue"
+import PlanDuSite from "@/views/PlanDuSite.vue"
+
+/* Authenticated users */
 import GestionnaireCantineAjouter from "@/views/GestionnaireCantineAjouter.vue"
 import GestionnaireCantineModifier from "@/views/GestionnaireCantineModifier.vue"
-import FoireAuxQuestions from "@/views/FoireAuxQuestions.vue"
-import DonneesPersonnelles from "@/views/DonneesPersonnelles.vue"
-import PlanDuSite from "@/views/PlanDuSite.vue"
-import Observatoire from "@/views/Observatoire.vue"
+import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
+import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
+import GestionnaireImports from "@/views/GestionnaireImports.vue"
+import GestionnaireImportsAchat from "@/views/GestionnaireImportsAchat.vue"
+import GestionnaireImportsCantine from "@/views/GestionnaireImportsCantine.vue"
 
 /* Sitemap section id */
 const { diag, action, site } = sectionId
