@@ -477,7 +477,7 @@ const vue3Routes = [
   },
   {
     path: "/mentions-legales",
-    name: "LegalNotices",
+    name: "MentionsLegales",
   },
   {
     path: "/accessibilite",

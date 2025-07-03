@@ -5,7 +5,7 @@ import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel.vue"
 import WasteMeasurements from "@/views/WasteMeasurements.vue"
 import GestionnaireImports from "@/views/GestionnaireImports.vue"
 import Developpeurs from "@/views/Developpeurs.vue"
-import LegalNotices from "@/views/LegalNotices.vue"
+import MentionsLegales from "@/views/MentionsLegales.vue"
 import Accessibilite from "@/views/Accessibilite.vue"
 import CGU from "@/views/CGU.vue"
 import Contact from "@/views/Contact.vue"
@@ -69,8 +69,8 @@ const vue3routes = [
   },
   {
     path: "/mentions-legales",
-    name: "LegalNotices",
-    component: LegalNotices,
+    name: "MentionsLegales",
+    component: MentionsLegales,
     meta: {
       title: "Mentions légales",
       siteMap: site,

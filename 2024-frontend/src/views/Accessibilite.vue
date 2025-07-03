@@ -188,7 +188,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
         </li>
         <li><router-link :to="{ name: 'CommunityPage' }">Page entraide/communauté</router-link></li>
         <li><router-link :to="{ name: 'Contact' }">Contact</router-link></li>
-        <li><router-link :to="{ name: 'LegalNotices' }">Mentions légales</router-link></li>
+        <li><router-link :to="{ name: 'MentionsLegales' }">Mentions légales</router-link></li>
         <li><a href="/s-identifier">Authentification</a></li>
         <li><a href="/creer-mon-compte">Création d'un compte</a></li>
         <li><router-link :to="{ name: 'SiteMap' }">Plan du site</router-link></li>

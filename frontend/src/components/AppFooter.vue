@@ -118,7 +118,7 @@ export default {
         },
         {
           text: "Mentions légales",
-          to: { name: "LegalNotices" },
+          to: { name: "MentionsLegales" },
         },
         {
           text: "Données personnelles",
