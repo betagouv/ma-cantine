@@ -2,7 +2,7 @@ import { sectionId } from "@/constants/site-map.js"
 
 /* Components */
 import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel.vue"
-import WasteMeasurements from "@/views/WasteMeasurements.vue"
+import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireImports from "@/views/GestionnaireImports.vue"
 import Developpeurs from "@/views/Developpeurs.vue"
 import MentionsLegales from "@/views/MentionsLegales.vue"
@@ -36,8 +36,8 @@ const vue3routes = [
   },
   {
     path: "/gaspillage-alimentaire/:canteenUrlComponent",
-    name: "WasteMeasurements",
-    component: WasteMeasurements,
+    name: "GestionnaireGaspillageAlimentaire",
+    component: GestionnaireGaspillageAlimentaire,
     props: (route) => ({ ...route.params }),
     meta: {
       title: "Déchets alimentaires",

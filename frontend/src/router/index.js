@@ -458,7 +458,7 @@ if (window.ENABLE_DASHBOARD) {
 const vue3Routes = [
   {
     path: "/gaspillage-alimentaire/:canteenUrlComponent",
-    name: "WasteMeasurements",
+    name: "GestionnaireGaspillageAlimentaire",
   },
   {
     path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
