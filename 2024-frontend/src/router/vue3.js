@@ -17,9 +17,10 @@ import FAQ from "@/views/FAQ.vue"
 import PersonalData from "@/views/PersonalData.vue"
 import SiteMap from "@/views/SiteMap.vue"
 import StatisticsCanteens from "@/views/StatisticsCanteens.vue"
+import UnderstandingLaw from "@/views/UnderstandingLaw.vue"
 
 /* Sitemap section id */
-const { diag, action, site } = sectionId
+const { diag, action, site, law } = sectionId
 
 /* Routes */
 const vue3routes = [
@@ -190,6 +191,15 @@ const vue3routes = [
     component: StatisticsCanteens,
     meta: {
       title: "Statistiques cantines (nom à revoir)",
+    },
+  },
+  {
+    path: "/comprendre-mes-obligations",
+    name: "UnderstandingLaw",
+    component: UnderstandingLaw,
+    meta: {
+      title: "Comprendre mes obligations",
+      siteMap: law,
     },
   },
 ]

@@ -3,7 +3,7 @@
     <p>
       Votre établissement, quelque soit son secteur d’activité, est déjà soumis à un certain nombre d’obligations pour
       réduire l'utilisation du plastique. D'autres obligations sont à venir. Pour en savoir plus,
-      <router-link :to="{ name: 'KeyMeasurePage', params: { id: 'interdiction-du-plastique' } }">
+      <router-link :to="{ name: 'UnderstandingLaw' }">
         notre page dédiée.
       </router-link>
     </p>

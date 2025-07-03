@@ -6,7 +6,6 @@ import ManagerLanding from "@/views/ManagerLanding"
 import DiagnosticPage from "@/views/DiagnosticPage"
 import KeyMeasuresPage from "@/views/KeyMeasuresPage"
 import KeyMeasuresHome from "@/views/KeyMeasuresPage/KeyMeasuresHome"
-import KeyMeasurePage from "@/views/KeyMeasuresPage/KeyMeasurePage"
 import GeneratePosterPage from "@/views/GeneratePosterPage"
 import CanteensPage from "@/views/CanteensPage"
 import CanteenWidget from "@/views/CanteensPage/CanteenWidget"
@@ -140,19 +139,10 @@ const routes = [
         beforeEnter: (route, _, next) => {
           store.state.loggedUser
             ? next({
-                name: "KeyMeasurePage",
-                params: {
-                  id: "qualite-des-produits",
-                },
+                name: "UnderstandingLaw",
               })
             : next()
         },
-      },
-      {
-        path: ":id",
-        name: "KeyMeasurePage",
-        component: KeyMeasurePage,
-        props: true,
       },
     ],
     meta: {
@@ -522,6 +512,10 @@ const vue3Routes = [
     path: "/plan-du-site/",
     name: "SiteMap",
   },
+  {
+    path: "/comprendre-mes-obligations",
+    name: "UnderstandingLaw",
+  },
 ]
 const VUE3_PREFIX = "/v2"
 vue3Routes.forEach((r) => {
@@ -542,6 +536,37 @@ routes.push({
 routes.push({
   path: "/politique-de-confidentialite",
   redirect: { name: "PersonalData" },
+})
+
+routes.push({
+  path: "/mesures-phares/qualite-des-produits",
+  redirect: { name: "UnderstandingLaw" },
+})
+
+routes.push({
+  path: "/mesures-phares/gaspillage-alimentaire",
+  redirect: { name: "UnderstandingLaw" },
+})
+
+routes.push({
+  path: "/mesures-phares/menus-vegetariens",
+  redirect: { name: "UnderstandingLaw" },
+})
+
+routes.push({
+  path: "/mesures-phares/interdiction-du-plastique",
+  redirect: { name: "UnderstandingLaw" },
+})
+
+routes.push({
+  path: "/mesures-phares/information-des-usagers",
+  redirect: { name: "UnderstandingLaw" },
+})
+
+// Old url visible on google
+routes.push({
+  path: "/mesures-phares/diversification-des-menus",
+  redirect: { name: "UnderstandingLaw" },
 })
 
 routes.push({
