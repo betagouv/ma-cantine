@@ -6,7 +6,6 @@ import ManagerLanding from "@/views/ManagerLanding"
 import DiagnosticPage from "@/views/DiagnosticPage"
 import KeyMeasuresPage from "@/views/KeyMeasuresPage"
 import KeyMeasuresHome from "@/views/KeyMeasuresPage/KeyMeasuresHome"
-import KeyMeasurePage from "@/views/KeyMeasuresPage/KeyMeasurePage"
 import GeneratePosterPage from "@/views/GeneratePosterPage"
 import CanteensPage from "@/views/CanteensPage"
 import CanteenWidget from "@/views/CanteensPage/CanteenWidget"
@@ -135,19 +134,10 @@ const routes = [
         beforeEnter: (route, _, next) => {
           store.state.loggedUser
             ? next({
-                name: "KeyMeasurePage",
-                params: {
-                  id: "qualite-des-produits",
-                },
+                name: "UnderstandingLaw",
               })
             : next()
         },
-      },
-      {
-        path: ":id",
-        name: "KeyMeasurePage",
-        component: KeyMeasurePage,
-        props: true,
       },
     ],
     meta: {

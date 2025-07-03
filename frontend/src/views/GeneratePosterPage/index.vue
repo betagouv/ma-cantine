@@ -18,10 +18,7 @@
       territoriaux entrant dans la composition des repas servis dans votre restaurant. Cette information est obtenue à
       partir de vos données annuelles d’achat.
     </p>
-    <router-link
-      :to="{ name: 'KeyMeasurePage', params: { id: 'information-des-usagers' } }"
-      class="text-decoration-underline primary--text text-body-2"
-    >
+    <router-link :to="{ name: 'UnderstandingLaw' }" class="text-decoration-underline primary--text text-body-2">
       En savoir plus sur la mesure
     </router-link>
 
