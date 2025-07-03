@@ -1,11 +1,9 @@
 <script setup>
-import { ref } from "vue"
 import { useRoute } from "vue-router"
 import { tiles } from "@/constants/understanding-law.js"
 import AppNeedHelp from "@/components/AppNeedHelp.vue"
 
 const route = useRoute()
-const iframeUrl = ref(null)
 </script>
 
 <template>
@@ -27,13 +25,9 @@ const iframeUrl = ref(null)
           :imgSrc="tile.imgSrc"
           :details="tile.details"
           :to="tile.to"
-          @click.prevent="iframeUrl = tile.to"
         />
       </li>
     </ul>
-    <DsfrModal class="understanding-law__modal" :opened="iframeUrl" size="xl" @close="iframeUrl = null">
-      <iframe :src="iframeUrl"></iframe>
-    </DsfrModal>
   </section>
   <AppNeedHelp badge="Besoin d'aide" align="center" title="Vous ne trouvez pas ce que vous chercher ?">
     <p>
@@ -49,21 +43,6 @@ const iframeUrl = ref(null)
   &__tile {
     .fr-tile__pictogram {
       overflow: visible;
-    }
-  }
-
-  /* To improve iframe readability :
-    - prevent double scroll area
-    - hide bottom crisp article already visible in our app
-    */
-  &__modal {
-    .fr-modal__body {
-      overflow: hidden;
-    }
-
-    iframe {
-      width: 100%;
-      min-height: 100vh;
     }
   }
 }
