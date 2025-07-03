@@ -61,7 +61,7 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
         data["bio_percent"] = 0
         data["sustainable_percent"] = 0
     badge_querysets = badges_for_queryset(teledeclarations)
-    data["approPercent"] = (
+    data["appro_percent"] = (
         int(badge_querysets["appro"].count() / data["teledeclarations_count"] * 100)
         if data["teledeclarations_count"]
         else 0
@@ -71,19 +71,21 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
 
 
 class CanteenStatisticsSerializer(serializers.Serializer):
+    # canteen stats
     canteen_count = serializers.IntegerField()
-    bio_percent = serializers.IntegerField()
-    sustainable_percent = serializers.IntegerField()
-    teledeclarations_count = serializers.IntegerField()
-    approPercent = serializers.IntegerField()
     sector_categories = serializers.DictField()
     management_types = serializers.DictField()
     production_types = serializers.DictField()
     economic_models = serializers.DictField()
+    # teledeclaration stats
+    teledeclarations_count = serializers.IntegerField()
+    bio_percent = serializers.IntegerField()
+    sustainable_percent = serializers.IntegerField()
+    appro_percent = serializers.IntegerField()
 
     @staticmethod
     def calculate_statistics(canteens, teledeclarations):
         data = {}
-        data = calculate_statistics_teledeclarations(teledeclarations, data)
         data = calculate_statistics_canteens(canteens, data)
+        data = calculate_statistics_teledeclarations(teledeclarations, data)
         return data
