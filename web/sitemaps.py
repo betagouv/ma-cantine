@@ -61,31 +61,7 @@ class WebSitemap(Sitemap):
             {"location": "/diagnostic", "changefreq": "yearly", "priority": 0.3},
             {"location": "/creation-affiche", "changefreq": "yearly", "priority": 0.4},
             {"location": "/mesures-phares", "changefreq": "yearly", "priority": 0.3},
-            {
-                "location": "/mesures-phares/qualite-des-produits",
-                "changefreq": "yearly",
-                "priority": 0.4,
-            },
-            {
-                "location": "/mesures-phares/gaspillage-alimentaire",
-                "changefreq": "yearly",
-                "priority": 0.4,
-            },
-            {
-                "location": "/mesures-phares/menus-vegetariens",
-                "changefreq": "yearly",
-                "priority": 0.4,
-            },
-            {
-                "location": "/mesures-phares/interdiction-du-plastique",
-                "changefreq": "yearly",
-                "priority": 0.4,
-            },
-            {
-                "location": "/mesures-phares/information-des-usagers",
-                "changefreq": "yearly",
-                "priority": 0.4,
-            },
+            {"location": "/comprendre-mes-obligations", "changefreq": "yearly", "priority": 0.3},
             {"location": "/nos-cantines", "changefreq": "weekly", "priority": 0.5},
             {"location": "/mentions-legales", "changefreq": "yearly", "priority": 0.2},
             {"location": "/cgu", "changefreq": "yearly", "priority": 0.2},
