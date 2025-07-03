@@ -485,7 +485,7 @@ const vue3Routes = [
   },
   {
     path: "/cgu",
-    name: "CGU",
+    name: "ConditionsGeneralesUtilisation",
   },
   {
     path: "/contact",

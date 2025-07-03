@@ -14,7 +14,7 @@ const descText =
     :personalDataLink="{ name: 'DonneesPersonnelles' }"
     :cookiesLink="{ name: 'DonneesPersonnelles', hash: '#cookies' }"
     :afterMandatoryLinks="[
-      { text: 'Conditions générales d\'utilisation', to: { name: 'CGU' } },
+      { text: 'Conditions générales d\'utilisation', to: { name: 'ConditionsGeneralesUtilisation' } },
       { text: 'Plan du site', to: { name: 'PlanDuSite' } },
     ]"
     :desc-text

@@ -130,7 +130,7 @@ export default {
         },
         {
           text: "Conditions générales",
-          to: { name: "CGU" },
+          to: { name: "ConditionsGeneralesUtilisation" },
         },
         {
           text: "Plan du site",

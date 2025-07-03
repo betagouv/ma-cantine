@@ -7,7 +7,7 @@ import GestionnaireImports from "@/views/GestionnaireImports.vue"
 import Developpeurs from "@/views/Developpeurs.vue"
 import MentionsLegales from "@/views/MentionsLegales.vue"
 import Accessibilite from "@/views/Accessibilite.vue"
-import CGU from "@/views/CGU.vue"
+import ConditionsGeneralesUtilisation from "@/views/ConditionsGeneralesUtilisation.vue"
 import Contact from "@/views/Contact.vue"
 import GestionnaireImportsAchat from "@/views/GestionnaireImportsAchat.vue"
 import GestionnaireImportsCantine from "@/views/GestionnaireImportsCantine.vue"
@@ -87,8 +87,8 @@ const vue3routes = [
   },
   {
     path: "/cgu",
-    name: "CGU",
-    component: CGU,
+    name: "ConditionsGeneralesUtilisation",
+    component: ConditionsGeneralesUtilisation,
     meta: {
       title: "Conditions générales d'utilisation",
       siteMap: site,
