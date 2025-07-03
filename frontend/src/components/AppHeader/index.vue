@@ -300,7 +300,7 @@ export default {
           children: [
             {
               text: "Foire aux questions",
-              to: { name: "FAQ" },
+              to: { name: "FoireAuxQuestions" },
             },
             {
               text: "Importer un fichier",

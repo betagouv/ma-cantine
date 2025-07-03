@@ -13,7 +13,7 @@ import ImportPurchases from "@/views/ImportPurchases.vue"
 import ImportCanteens from "@/views/ImportCanteens.vue"
 import GestionnaireCantineAjouter from "@/views/GestionnaireCantineAjouter.vue"
 import GestionnaireCantineModifier from "@/views/GestionnaireCantineModifier.vue"
-import FAQ from "@/views/FAQ.vue"
+import FoireAuxQuestions from "@/views/FoireAuxQuestions.vue"
 import PersonalData from "@/views/PersonalData.vue"
 import SiteMap from "@/views/SiteMap.vue"
 import StatisticsCanteens from "@/views/StatisticsCanteens.vue"
@@ -160,8 +160,8 @@ const vue3routes = [
   },
   {
     path: "/foire-aux-questions",
-    name: "FAQ",
-    component: FAQ,
+    name: "FoireAuxQuestions",
+    component: FoireAuxQuestions,
     meta: {
       title: "Foire aux questions",
       siteMap: site,

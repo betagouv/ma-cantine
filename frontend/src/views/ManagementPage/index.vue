@@ -163,7 +163,7 @@ export default {
             {
               text: "Consulter la FAQ",
               to: {
-                name: "FAQ",
+                name: "FoireAuxQuestions",
               },
             },
             {

@@ -512,7 +512,7 @@ const vue3Routes = [
   },
   {
     path: "/foire-aux-questions/",
-    name: "FAQ",
+    name: "FoireAuxQuestions",
   },
   {
     path: "/donnees-personnelles",
