@@ -186,7 +186,6 @@ class TestCanteenStatsApi(APITestCase):
                     **case["canteen"],
                     sectors=canteen_sectors,
                     siret=str(i),
-                    publication_status=Canteen.PublicationStatus.PUBLISHED,
                 )
                 diagnostic_data = case["diagnostic"]
                 diag = DiagnosticFactory.create(canteen=canteen, **diagnostic_data)
@@ -226,9 +225,7 @@ class TestCanteenStatsApi(APITestCase):
         The endpoint must take into consideration the simplified diagnostic
         fields for EGalim stats
         """
-        published = CanteenFactory.create(
-            publication_status=Canteen.PublicationStatus.PUBLISHED.value, siret="75665621899905"
-        )
+        published = CanteenFactory.create(siret="75665621899905")
 
         # Diagnostic that should display 20% Bio and 45% other EGalim
         diag = DiagnosticFactory.create(

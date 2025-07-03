@@ -76,7 +76,6 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.management_type, "conceded")
         self.assertEqual(canteen.economic_model, "public")
         self.assertEqual(canteen.central_producer_siret, "42126486200010")
-        self.assertEqual(canteen.publication_status, Canteen.PublicationStatus.DRAFT)
         self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
         diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
         self.assertEqual(diagnostic.year, 2020)
