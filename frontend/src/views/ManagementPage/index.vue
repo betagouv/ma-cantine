@@ -42,7 +42,7 @@
       <div v-if="showListView">
         <p>Actions en attente en {{ year }}</p>
         <AnnualActionableCanteensTable v-on:canteen-count="canteenCount = $event" />
-        <v-btn large color="primary" outlined :to="{ name: 'CanteenCreation' }">
+        <v-btn large color="primary" outlined :to="{ name: 'GestionnaireCantineAjouter' }">
           <v-icon class="mr-2">mdi-plus</v-icon>
           Ajouter une cantine
         </v-btn>

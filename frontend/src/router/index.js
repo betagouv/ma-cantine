@@ -504,7 +504,7 @@ const vue3Routes = [
   },
   {
     path: "/ajouter-une-cantine",
-    name: "CanteenCreation",
+    name: "GestionnaireCantineAjouter",
   },
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent/etablissement",
@@ -536,7 +536,7 @@ routes.push({
 
 routes.push({
   path: "/nouvelle-cantine",
-  redirect: { name: "CanteenCreation" },
+  redirect: { name: "GestionnaireCantineAjouter" },
 })
 
 routes.push({

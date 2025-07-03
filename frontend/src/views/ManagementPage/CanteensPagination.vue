@@ -46,7 +46,7 @@
           outlined
           min-height="220"
           height="80%"
-          :to="{ name: 'CanteenCreation' }"
+          :to="{ name: 'GestionnaireCantineAjouter' }"
         >
           <v-icon size="100" class="primary--text">mdi-plus</v-icon>
           <v-card-text class="font-weight-bold pt-0 text-center primary--text text-body-1">

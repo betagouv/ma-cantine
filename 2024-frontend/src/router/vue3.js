@@ -11,7 +11,7 @@ import CGU from "@/views/CGU.vue"
 import ContactPage from "@/views/ContactPage.vue"
 import ImportPurchases from "@/views/ImportPurchases.vue"
 import ImportCanteens from "@/views/ImportCanteens.vue"
-import CanteenCreation from "@/views/CanteenCreation.vue"
+import GestionnaireCantineAjouter from "@/views/GestionnaireCantineAjouter.vue"
 import CanteenModification from "@/views/CanteenModification.vue"
 import FAQ from "@/views/FAQ.vue"
 import PersonalData from "@/views/PersonalData.vue"
@@ -131,8 +131,8 @@ const vue3routes = [
   },
   {
     path: "/ajouter-une-cantine",
-    name: "CanteenCreation",
-    component: CanteenCreation,
+    name: "GestionnaireCantineAjouter",
+    component: GestionnaireCantineAjouter,
     meta: {
       authenticationRequired: true,
       title: "Ajouter une cantine",

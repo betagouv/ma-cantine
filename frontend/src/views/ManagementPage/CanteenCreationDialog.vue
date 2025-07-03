@@ -13,7 +13,7 @@
           v-for="organization in organizations"
           :key="organization.id"
           class="text-left mb-4"
-          :to="{ name: 'CanteenCreation' }"
+          :to="{ name: 'GestionnaireCantineAjouter' }"
         >
           <v-card-title>
             <h2 class="fr-h6 mb-0">{{ organization.label }}</h2>
@@ -23,7 +23,7 @@
           </v-card-text>
         </v-card>
         <v-divider aria-hidden="true" role="presentation" class="mb-4"></v-divider>
-        <v-card outlined class="text-left mb-4" :to="{ name: 'CanteenCreation' }">
+        <v-card outlined class="text-left mb-4" :to="{ name: 'GestionnaireCantineAjouter' }">
           <v-card-title><h2 class="fr-h6 mb-0">Créer un autre établissement</h2></v-card-title>
         </v-card>
       </div>
