@@ -29,12 +29,13 @@ const route = useRoute()
       </li>
     </ul>
   </section>
-  <AppNeedHelp badge="Besoin d'aide" align="center" title="Vous ne trouvez pas ce que vous chercher ?">
-    <p>
-      Découvrez notre documentation complète qui centralise les ressources, contenus videos, documents, témoignages,
-      articles, recettes, etc. Pour les acteurs et actrices de la restauration collective.
+  <AppNeedHelp badge="En savoir plus" align="center" title="Pour les acteurs de la restauration collective">
+    <p class="fr-mb-0">
+      Retrouvez des ressources, contenus videos, documents, témoignages, articles, recettes,
+      <a href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/" target="_blank">sur notre documentation</a>
+      . Pour toute question, consultez
+      <a href="https://ma-cantine.crisp.help/fr/" target="_blank">notre centre d'aide</a>
     </p>
-    <a href="https://ma-cantine.crisp.help/fr/" target="_blank">Accéder à notre centre de ressources</a>
   </AppNeedHelp>
 </template>
 
