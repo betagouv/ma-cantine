@@ -122,11 +122,11 @@ export default {
         },
         {
           text: "Données personnelles",
-          to: { name: "PersonalData" },
+          to: { name: "DonneesPersonnelles" },
         },
         {
           text: "Gestion des cookies",
-          to: { name: "PersonalData", hash: "#cookies" },
+          to: { name: "DonneesPersonnelles", hash: "#cookies" },
         },
         {
           text: "Conditions générales",

@@ -513,7 +513,7 @@ const vue3Routes = [
   },
   {
     path: "/donnees-personnelles",
-    name: "PersonalData",
+    name: "DonneesPersonnelles",
   },
   {
     path: "/plan-du-site/",
@@ -538,7 +538,7 @@ routes.push({
 
 routes.push({
   path: "/politique-de-confidentialite",
-  redirect: { name: "PersonalData" },
+  redirect: { name: "DonneesPersonnelles" },
 })
 
 routes.push({

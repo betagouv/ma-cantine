@@ -11,8 +11,8 @@ const descText =
     a11yCompliance="partiellement conforme"
     :a11yComplianceLink="{ name: 'Accessibilite' }"
     :legalLink="{ name: 'MentionsLegales' }"
-    :personalDataLink="{ name: 'PersonalData' }"
-    :cookiesLink="{ name: 'PersonalData', hash: '#cookies' }"
+    :personalDataLink="{ name: 'DonneesPersonnelles' }"
+    :cookiesLink="{ name: 'DonneesPersonnelles', hash: '#cookies' }"
     :afterMandatoryLinks="[
       { text: 'Conditions générales d\'utilisation', to: { name: 'CGU' } },
       { text: 'Plan du site', to: { name: 'SiteMap' } },

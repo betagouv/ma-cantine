@@ -14,7 +14,7 @@ import GestionnaireImportsCantine from "@/views/GestionnaireImportsCantine.vue"
 import GestionnaireCantineAjouter from "@/views/GestionnaireCantineAjouter.vue"
 import GestionnaireCantineModifier from "@/views/GestionnaireCantineModifier.vue"
 import FoireAuxQuestions from "@/views/FoireAuxQuestions.vue"
-import PersonalData from "@/views/PersonalData.vue"
+import DonneesPersonnelles from "@/views/DonneesPersonnelles.vue"
 import SiteMap from "@/views/SiteMap.vue"
 import StatisticsCanteens from "@/views/StatisticsCanteens.vue"
 
@@ -169,8 +169,8 @@ const vue3routes = [
   },
   {
     path: "/donnees-personnelles",
-    name: "PersonalData",
-    component: PersonalData,
+    name: "DonneesPersonnelles",
+    component: DonneesPersonnelles,
     meta: {
       title: "Données personnelles",
       siteMap: site,
