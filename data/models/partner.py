@@ -105,11 +105,11 @@ class Partner(models.Model):
     def url_path(self):
         return f"/acteurs-de-l-eco-systeme/{self.url_slug}"
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(self, **kwargs):
         max_image_size = 1600
         if self.image:
             self.image = optimize_image(self.image, self.image.name, max_image_size)
-        super().save(force_insert, force_update, using, update_fields)
+        super().save(**kwargs)
 
     def __str__(self):
         return f'Partenaire "{self.name}"'
