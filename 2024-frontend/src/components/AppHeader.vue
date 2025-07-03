@@ -120,7 +120,7 @@ const navItems = [
       },
       {
         text: "Importer un fichier",
-        to: { name: "GestionnaireImports" },
+        to: { name: "GestionnaireImport" },
       },
       {
         text: "Contactez-nous",

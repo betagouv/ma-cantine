@@ -46,7 +46,7 @@
           <v-icon class="mr-2">mdi-plus</v-icon>
           Ajouter une cantine
         </v-btn>
-        <v-btn large text color="primary" :to="{ name: 'GestionnaireImportsCantine' }">
+        <v-btn large text color="primary" :to="{ name: 'GestionnaireImportCantines' }">
           <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
           Créer plusieurs cantines depuis un fichier
         </v-btn>

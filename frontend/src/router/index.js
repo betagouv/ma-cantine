@@ -355,7 +355,7 @@ const routes = [
     component: DiagnosticImportPage,
     props: true,
     beforeEnter: (to, _from, next) => {
-      if (to.params.importUrlSlug === "cantines-seules") next({ name: "GestionnaireImportsCantine" })
+      if (to.params.importUrlSlug === "cantines-seules") next({ name: "GestionnaireImportCantines" })
       else next()
     },
   },
@@ -466,7 +466,7 @@ const vue3Routes = [
   },
   {
     path: "/importer-des-donnees",
-    name: "GestionnaireImports",
+    name: "GestionnaireImport",
     meta: {
       title: "Importer des données",
     },
@@ -493,11 +493,11 @@ const vue3Routes = [
   },
   {
     path: "/importer-des-donnees/achats",
-    name: "GestionnaireImportsAchat",
+    name: "GestionnaireImportAchats",
   },
   {
     path: "/importer-des-donnees/cantines",
-    name: "GestionnaireImportsCantine",
+    name: "GestionnaireImportCantines",
   },
   {
     path: "/ajouter-une-cantine",
@@ -528,7 +528,7 @@ routes.push(...vue3Routes)
 
 routes.push({
   path: "/importer-achats",
-  redirect: { name: "GestionnaireImportsAchat" },
+  redirect: { name: "GestionnaireImportAchats" },
 })
 
 routes.push({

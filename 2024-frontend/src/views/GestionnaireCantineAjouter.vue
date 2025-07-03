@@ -74,7 +74,7 @@ const addNewCanteen = (name) => {
       </li>
       <li>
         <AppLinkRouter
-          :to="{ name: 'GestionnaireImportsCantine' }"
+          :to="{ name: 'GestionnaireImportCantines' }"
           title="Créer plusieurs établissements via un fichier d’import"
         />
       </li>

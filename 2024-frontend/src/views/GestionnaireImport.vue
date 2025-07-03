@@ -8,7 +8,7 @@ importTypes.push({
   key: "CANTEENS",
   title: "Importer des cantines",
   help: "Vous voulez créer ou mettre à jour des cantines",
-  to: { name: "GestionnaireImportsCantine" },
+  to: { name: "GestionnaireImportCantine" },
 })
 Object.values(Constants.DiagnosticImportLevels).forEach((level) => {
   level.to = { name: "DiagnosticImportPage", params: { importUrlSlug: level.urlSlug } }
@@ -22,7 +22,7 @@ importTypes.push({
   key: "PURCHASES",
   title: "Importer des achats",
   help: "Vous voulez importer des données d'achat pour des cantines existantes",
-  to: { name: "GestionnaireImportsAchat" },
+  to: { name: "GestionnaireImportAchat" },
 })
 
 const activeAccordion = ref("")
