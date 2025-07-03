@@ -1,6 +1,5 @@
 from unittest.mock import patch
 
-from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils.timezone import now
 from rest_framework import status
@@ -20,7 +19,6 @@ mocked_campaign_dates = {
 }
 
 
-@override_settings(PUBLISH_BY_DEFAULT=True)
 class TestCanteenStatsApi(APITestCase):
     @classmethod
     def setUpTestData(cls):
@@ -83,7 +81,6 @@ class TestCanteenStatsApi(APITestCase):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @override_settings(PUBLISH_BY_DEFAULT=False)
     def test_canteen_statistics(self):
         """
         This public endpoint returns some summary statistics for a region and a location
@@ -189,7 +186,7 @@ class TestCanteenStatsApi(APITestCase):
                     **case["canteen"],
                     sectors=canteen_sectors,
                     siret=str(i),
-                    publication_status=Canteen.PublicationStatus.PUBLISHED
+                    publication_status=Canteen.PublicationStatus.PUBLISHED,
                 )
                 diagnostic_data = case["diagnostic"]
                 diag = DiagnosticFactory.create(canteen=canteen, **diagnostic_data)

@@ -158,7 +158,6 @@ class CanteenActionsPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
     undiagnosed_canteens_with_purchases = []
-    canteens_to_publish = []
     has_pending_actions = False
 
     def paginate_queryset(self, queryset, request, view=None):
@@ -166,8 +165,6 @@ class CanteenActionsPagination(LimitOffsetPagination):
             "pk", flat=True
         )
         self.undiagnosed_canteens_with_purchases = set(filter(lambda x: x, undiagnosed_canteens_with_purchases))
-        canteens_to_publish = queryset.filter(action=Canteen.Actions.PUBLISH).values_list("pk", flat=True)
-        self.canteens_to_publish = set(filter(lambda x: x, canteens_to_publish))
         self.has_pending_actions = queryset.exclude(action=Canteen.Actions.NOTHING).exists()
         return super().paginate_queryset(queryset, request, view)
 
@@ -180,7 +177,6 @@ class CanteenActionsPagination(LimitOffsetPagination):
                     ("previous", self.get_previous_link()),
                     ("results", data),
                     ("undiagnosed_canteens_with_purchases", self.undiagnosed_canteens_with_purchases),
-                    ("canteens_to_publish", self.canteens_to_publish),
                     ("has_pending_actions", self.has_pending_actions),
                 ]
             )
@@ -287,38 +283,6 @@ class PublicCanteenPreviewView(RetrieveAPIView):
 
 class UserCanteensFilterSet(django_filters.FilterSet):
     production_type = ProductionTypeInFilter(field_name="production_type")
-
-
-class PublishManyCanteensView(APIView):
-    """
-    This view allows mass publishing of canteens
-    """
-
-    permission_classes = [IsAuthenticated]
-    required_scopes = ["canteen"]
-
-    def post(self, request):
-        data = request.data
-        canteen_ids = data.get("ids")
-        if not canteen_ids or not isinstance(canteen_ids, list):
-            raise BadRequest()
-
-        canteens = []
-        bad_canteens = []
-        for id in canteen_ids:
-            try:
-                canteen = Canteen.objects.get(pk=id)
-                if canteen.managers.filter(pk=request.user.id).exists():
-                    canteens.append(canteen)
-                else:
-                    bad_canteens.append(id)
-            except Canteen.DoesNotExist:
-                bad_canteens.append(id)
-        for canteen in canteens:
-            canteen.publication_status = Canteen.PublicationStatus.PUBLISHED
-            canteen.save()
-            update_change_reason_with_auth(self, canteen)
-        return JsonResponse({"ids": canteen_ids, "unknown_ids": bad_canteens}, status=status.HTTP_200_OK)
 
 
 @extend_schema_view(
@@ -497,64 +461,6 @@ def get_cantine_list_from_siren_unite_legale(siren, request):
     if siren:
         canteens = Canteen.objects.filter(siren_unite_legale=siren).order_by("name")
         return camelize(CanteenStatusSerializer(canteens, many=True, context={"request": request}).data)
-
-
-class PublishCanteenView(APIView):
-    permission_classes = [IsAuthenticated]
-    required_scopes = ["canteen"]
-
-    def post(self, request, *args, **kwargs):
-        if settings.PUBLISH_BY_DEFAULT:
-            raise BadRequest("Cannot publish canteen")
-        try:
-            data = request.data
-            canteen_id = kwargs.get("pk")
-            canteen = Canteen.objects.get(pk=canteen_id)
-            if request.user not in canteen.managers.all():
-                raise PermissionDenied()
-
-            is_draft = canteen.publication_status == Canteen.PublicationStatus.DRAFT
-
-            if is_draft:
-                canteen.publication_status = Canteen.PublicationStatus.PUBLISHED
-
-            canteen.update_publication_comments(data)
-            canteen.save()
-            update_change_reason_with_auth(self, canteen)
-            serialized_canteen = FullCanteenSerializer(canteen).data
-            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
-
-        except Canteen.DoesNotExist:
-            raise ValidationError("La cantine spécifiée n'existe pas")
-
-
-class UnpublishCanteenView(APIView):
-    permission_classes = [IsAuthenticated]
-    required_scopes = ["canteen"]
-
-    def post(self, request, *args, **kwargs):
-        if settings.PUBLISH_BY_DEFAULT:
-            raise BadRequest("Cannot unpublish canteen")
-        try:
-            data = request.data
-            canteen_id = kwargs.get("pk")
-            canteen = Canteen.objects.get(pk=canteen_id)
-            if request.user not in canteen.managers.all():
-                raise PermissionDenied()
-
-            is_not_draft = canteen.publication_status != Canteen.PublicationStatus.DRAFT
-
-            if is_not_draft:
-                canteen.publication_status = Canteen.PublicationStatus.DRAFT
-
-            canteen.update_publication_comments(data)
-            canteen.save()
-            update_change_reason_with_auth(self, canteen)
-            serialized_canteen = FullCanteenSerializer(canteen).data
-            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
-
-        except Canteen.DoesNotExist:
-            raise ValidationError("La cantine spécifiée n'existe pas")
 
 
 def _respond_with_team(canteen):
