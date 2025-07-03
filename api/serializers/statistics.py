@@ -60,7 +60,7 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
     else:
         data["bio_percent"] = 0
         data["sustainable_percent"] = 0
-    data["egalim_percent"] = data["bio_percent"] + data["sustainable_percent"]
+    data["egalim_percent"] = data["bio_percent"] + data["sustainable_percent"]  # same denominator
     badge_querysets = badges_for_queryset(teledeclarations)
     data["appro_percent"] = (
         int(badge_querysets["appro"].count() / data["teledeclarations_count"] * 100)
