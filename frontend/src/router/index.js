@@ -462,7 +462,7 @@ const vue3Routes = [
   },
   {
     path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
-    name: "WasteMeasurementTunnel",
+    name: "GestionnaireGaspillageAlimentaireModifier",
   },
   {
     path: "/importer-des-donnees",

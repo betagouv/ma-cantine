@@ -212,7 +212,7 @@
         <li v-for="m in measurements" :key="m.id">
           <router-link
             :to="{
-              name: 'WasteMeasurementTunnel',
+              name: 'GestionnaireGaspillageAlimentaireModifier',
               params: { canteenUrlComponent, id: m.id },
               query: { return: href },
             }"
@@ -227,7 +227,7 @@
           color="primary"
           :outlined="!measurements || !!measurements.length"
           :to="{
-            name: 'WasteMeasurementTunnel',
+            name: 'GestionnaireGaspillageAlimentaireModifier',
             params: { canteenUrlComponent },
             query: { return: href },
           }"
