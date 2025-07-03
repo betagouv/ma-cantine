@@ -32,12 +32,12 @@ const measurementChoices = computed(() => {
 })
 
 const newMeasurementRoute = {
-  name: "WasteMeasurementTunnel",
+  name: "GestionnaireGaspillageAlimentaireModifier",
   params: { canteenUrlComponent: props.canteenUrlComponent },
 }
 
 const measurementTunnel = computed(() => ({
-  name: "WasteMeasurementTunnel",
+  name: "GestionnaireGaspillageAlimentaireModifier",
   params: {
     canteenUrlComponent: props.canteenUrlComponent,
     id: displayMeasurement.value.id,

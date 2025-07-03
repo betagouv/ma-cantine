@@ -15,7 +15,7 @@
             <v-icon>mdi-plus</v-icon>
             Ajouter un produit
           </v-btn>
-          <v-btn text color="primary" :to="{ name: 'ImportPurchases' }" class="px-0 px-md-2 my-3">
+          <v-btn text color="primary" :to="{ name: 'GestionnaireImportAchats' }" class="px-0 px-md-2 my-3">
             <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
             Créer plusieurs achats depuis un fichier
           </v-btn>
@@ -301,7 +301,7 @@
           outlined
           min-height="220"
           height="80%"
-          :to="{ name: 'CanteenCreation' }"
+          :to="{ name: 'GestionnaireCantineAjouter' }"
         >
           <v-icon size="100" class="primary--text">mdi-plus</v-icon>
           <v-card-text class="font-weight-bold pt-0 text-center primary--text">
@@ -317,7 +317,7 @@
           <v-divider aria-hidden="true" role="presentation"></v-divider>
         </div>
         <v-spacer></v-spacer>
-        <v-btn text color="primary" :to="{ name: 'ImportCanteens' }">
+        <v-btn text color="primary" :to="{ name: 'GestionnaireImportCantines' }">
           <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
           Créer plusieurs cantines depuis un fichier
         </v-btn>

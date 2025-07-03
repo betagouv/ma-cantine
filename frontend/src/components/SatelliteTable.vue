@@ -250,7 +250,7 @@ export default {
     satelliteLink(satellite) {
       if (satellite.userCanView) {
         return {
-          name: "CanteenModification",
+          name: "GestionnaireCantineModifier",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(satellite) },
         }
       }

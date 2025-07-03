@@ -3,7 +3,7 @@ import AppFormSendInquiry from "@/components/AppFormSendInquiry.vue"
 
 const links = [
   {
-    to: { name: "FAQ" },
+    to: { name: "FoireAuxQuestions" },
     title: "Foire aux questions",
   },
   {

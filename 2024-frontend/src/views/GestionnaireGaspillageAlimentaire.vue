@@ -21,7 +21,7 @@ const canteen = computed(() => {
 })
 
 const newMeasurementRoute = {
-  name: "WasteMeasurementTunnel",
+  name: "GestionnaireGaspillageAlimentaireModifier",
   params: { canteenUrlComponent: props.canteenUrlComponent },
 }
 

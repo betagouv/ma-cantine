@@ -15,7 +15,7 @@ const quickLinks = computed(() => {
   }
   // TODO: logout action
   if (store.loggedUser.isDev) {
-    const apis = { to: { name: "DeveloperAPI" }, label: "Développement et APIs" }
+    const apis = { to: { name: "Developpeurs" }, label: "Développement et APIs" }
     return [apis]
   }
   const mesCantines = { to: { name: "ManagementPage" }, label: "Mon tableau de bord" }
@@ -116,15 +116,15 @@ const navItems = [
     links: [
       {
         text: "Foire aux questions",
-        to: { name: "FAQ" },
+        to: { name: "FoireAuxQuestions" },
       },
       {
         text: "Importer un fichier",
-        to: { name: "ImportSelection" },
+        to: { name: "GestionnaireImport" },
       },
       {
         text: "Contactez-nous",
-        to: { name: "ContactPage" },
+        to: { name: "Contact" },
       },
       {
         text: "Documentation",

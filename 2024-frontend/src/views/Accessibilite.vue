@@ -180,19 +180,19 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
         <li><router-link :to="{ name: 'LandingPage' }">Accueil</router-link></li>
         <li><router-link :to="{ name: 'DiagnosticPage' }">Auto évaluation</router-link></li>
         <li><router-link :to="{ name: 'CanteensHome' }">Index des cantines</router-link></li>
-        <li><router-link :to="{ name: 'FAQ' }">FAQ</router-link></li>
+        <li><router-link :to="{ name: 'FoireAuxQuestions' }">Foire aux questions</router-link></li>
         <li>
           <a href="https://ma-cantine.agriculture.gouv.fr/nos-cantines/14--Cantine%20de%20Misson/">
             Exemple d'une fiche détaillée
           </a>
         </li>
         <li><router-link :to="{ name: 'CommunityPage' }">Page entraide/communauté</router-link></li>
-        <li><router-link :to="{ name: 'ContactPage' }">Contact</router-link></li>
-        <li><router-link :to="{ name: 'LegalNotices' }">Mentions légales</router-link></li>
+        <li><router-link :to="{ name: 'Contact' }">Contact</router-link></li>
+        <li><router-link :to="{ name: 'MentionsLegales' }">Mentions légales</router-link></li>
         <li><a href="/s-identifier">Authentification</a></li>
         <li><a href="/creer-mon-compte">Création d'un compte</a></li>
-        <li><router-link :to="{ name: 'SiteMap' }">Plan du site</router-link></li>
-        <li><router-link :to="{ name: 'AccessibilityDeclaration' }">Accessibilité</router-link></li>
+        <li><router-link :to="{ name: 'PlanDuSite' }">Plan du site</router-link></li>
+        <li><router-link :to="{ name: 'Accessibilite' }">Accessibilité</router-link></li>
       </ul>
       <h3>
         Plan d'action
@@ -219,7 +219,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <ul>
         <li>
           Envoyez-nous un message via notre
-          <router-link :to="{ name: 'ContactPage' }">formulaire de contact</router-link>
+          <router-link :to="{ name: 'Contact' }">formulaire de contact</router-link>
           .
         </li>
         <li>

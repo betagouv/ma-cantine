@@ -5,7 +5,7 @@
     </h2>
     <p class="text-body-2">
       Utilisez le formulaire en dessous pour ajouter des satellites un après l'autre. Sinon, utilisez notre
-      <router-link :to="{ name: 'DiagnosticsImporter' }">outil d'import des cantines et diagnostics</router-link>
+      <router-link :to="{ name: 'GestionnaireImport' }">outil d'import des cantines et diagnostics</router-link>
       si vous avez les données en format CSV.
     </p>
     <v-card outlined>

@@ -25,7 +25,7 @@
               class="mr-2"
               outlined
               color="primary"
-              :to="{ name: 'WasteMeasurements', params: { canteenUrlComponent } }"
+              :to="{ name: 'GestionnaireGaspillageAlimentaire', params: { canteenUrlComponent } }"
             >
               Compléter l'évaluation
             </v-btn>

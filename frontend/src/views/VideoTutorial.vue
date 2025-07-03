@@ -26,17 +26,17 @@
     <v-alert v-if="accessibilityProblem" type="info" outlined class="my-4">
       <p>
         {{ accessibilityProblem }} Si vous en avez besoin, contactez-nous avec notre
-        <router-link :to="{ name: 'ContactPage' }">formulaire de contact</router-link>
+        <router-link :to="{ name: 'Contact' }">formulaire de contact</router-link>
         pour prioriser l'accessibilité de ce contenu.
       </p>
       <p class="mb-0">
         Pour plus d'informations consultez notre
-        <router-link :to="{ name: 'AccessibilityDeclaration' }">déclaration d'accessibilité</router-link>
+        <router-link :to="{ name: 'Accessibilite' }">déclaration d'accessibilité</router-link>
       </p>
     </v-alert>
     <p v-else class="mt-4 text-right">
       Question, problème ?
-      <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">Contactez-nous</router-link>
+      <router-link :to="{ name: 'Contact' }" class="grey--text text--darken-4">Contactez-nous</router-link>
     </p>
     <div v-if="suggestedVideos && suggestedVideos.length > 0" class="mt-6">
       <h2 class="text-h6 mb-4">Autres webinaires</h2>

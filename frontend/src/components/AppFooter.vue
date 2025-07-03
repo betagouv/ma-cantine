@@ -114,27 +114,27 @@ export default {
       bottomLinks: [
         {
           text: "Accessibilité : partiellement conforme",
-          to: { name: "AccessibilityDeclaration" },
+          to: { name: "Accessibilite" },
         },
         {
           text: "Mentions légales",
-          to: { name: "LegalNotices" },
+          to: { name: "MentionsLegales" },
         },
         {
           text: "Données personnelles",
-          to: { name: "PersonalData" },
+          to: { name: "DonneesPersonnelles" },
         },
         {
           text: "Gestion des cookies",
-          to: { name: "PersonalData", hash: "#cookies" },
+          to: { name: "DonneesPersonnelles", hash: "#cookies" },
         },
         {
           text: "Conditions générales",
-          to: { name: "CGU" },
+          to: { name: "ConditionsGeneralesUtilisation" },
         },
         {
           text: "Plan du site",
-          to: { name: "SiteMap" },
+          to: { name: "PlanDuSite" },
         },
       ],
       govLinks: ["legifrance.gouv.fr", "gouvernement.fr", "service-public.fr", "data.gouv.fr"],

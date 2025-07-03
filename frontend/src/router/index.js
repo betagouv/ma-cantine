@@ -286,7 +286,7 @@ const routes = [
   },
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent",
-    name: "CanteenModification",
+    name: "GestionnaireCantineModifier",
     props: true,
     component: CanteenEditor,
     redirect: { name: "CanteenForm" },
@@ -355,7 +355,7 @@ const routes = [
     component: DiagnosticImportPage,
     props: true,
     beforeEnter: (to, _from, next) => {
-      if (to.params.importUrlSlug === "cantines-seules") next({ name: "ImportCanteens" })
+      if (to.params.importUrlSlug === "cantines-seules") next({ name: "GestionnaireImportCantines" })
       else next()
     },
   },
@@ -458,53 +458,50 @@ if (window.ENABLE_DASHBOARD) {
 const vue3Routes = [
   {
     path: "/gaspillage-alimentaire/:canteenUrlComponent",
-    name: "WasteMeasurements",
+    name: "GestionnaireGaspillageAlimentaire",
   },
   {
     path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
-    name: "WasteMeasurementTunnel",
+    name: "GestionnaireGaspillageAlimentaireModifier",
   },
   {
     path: "/importer-des-donnees",
-    name: "DiagnosticsImporter",
+    name: "GestionnaireImport",
     meta: {
-      authenticationRequired: true,
+      title: "Importer des données",
     },
   },
   {
     path: "/developpement-et-apis",
-    name: "DeveloperAPI",
+    name: "Developpeurs",
   },
   {
     path: "/mentions-legales",
-    name: "LegalNotices",
+    name: "MentionsLegales",
   },
   {
     path: "/accessibilite",
-    name: "AccessibilityDeclaration",
+    name: "Accessibilite",
   },
   {
     path: "/cgu",
-    name: "CGU",
+    name: "ConditionsGeneralesUtilisation",
   },
   {
     path: "/contact",
-    name: "ContactPage",
+    name: "Contact",
   },
   {
     path: "/importer-des-donnees/achats",
-    name: "ImportPurchases",
-    meta: {
-      authenticationRequired: true,
-    },
+    name: "GestionnaireImportAchats",
   },
   {
     path: "/importer-des-donnees/cantines",
-    name: "ImportCanteens",
+    name: "GestionnaireImportCantines",
   },
   {
     path: "/ajouter-une-cantine",
-    name: "CanteenCreation",
+    name: "GestionnaireCantineAjouter",
   },
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent/etablissement",
@@ -512,15 +509,15 @@ const vue3Routes = [
   },
   {
     path: "/foire-aux-questions/",
-    name: "FAQ",
+    name: "FoireAuxQuestions",
   },
   {
     path: "/donnees-personnelles",
-    name: "PersonalData",
+    name: "DonneesPersonnelles",
   },
   {
     path: "/plan-du-site/",
-    name: "SiteMap",
+    name: "PlanDuSite",
   },
 ]
 const VUE3_PREFIX = "/v2"
@@ -531,17 +528,17 @@ routes.push(...vue3Routes)
 
 routes.push({
   path: "/importer-achats",
-  redirect: { name: "ImportPurchases" },
+  redirect: { name: "GestionnaireImportAchats" },
 })
 
 routes.push({
   path: "/nouvelle-cantine",
-  redirect: { name: "CanteenCreation" },
+  redirect: { name: "GestionnaireCantineAjouter" },
 })
 
 routes.push({
   path: "/politique-de-confidentialite",
-  redirect: { name: "PersonalData" },
+  redirect: { name: "DonneesPersonnelles" },
 })
 
 routes.push({
@@ -571,7 +568,7 @@ function chooseAuthorisedRoute(to, from, next) {
       })
   } else {
     if (to.meta.home && store.state.loggedUser && !store.state.loggedUser.isDev) next({ name: "ManagementPage" })
-    else if (to.meta.home && store.state.loggedUser && store.state.loggedUser.isDev) next({ name: "DeveloperAPI" })
+    else if (to.meta.home && store.state.loggedUser && store.state.loggedUser.isDev) next({ name: "Developpeurs" })
     else if (to.meta.home) next({ name: "LandingPage" })
     else if (!to.meta.authenticationRequired || store.state.loggedUser) next()
     else window.location.href = `/s-identifier?next=${to.path}`

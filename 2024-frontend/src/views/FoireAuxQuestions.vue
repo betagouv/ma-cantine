@@ -29,7 +29,7 @@ const readingDoodleIllustration = "/static/images/doodles-dsfr/primary/ReadingDo
     <p>
       N'hésitez pas à nous soumettre une nouvelle question, en nous contactant
       <br />
-      <AppLinkRouter title="via notre formulaire de contact" :to="{ name: 'ContactPage' }"></AppLinkRouter>
+      <AppLinkRouter title="via notre formulaire de contact" :to="{ name: 'Contact' }"></AppLinkRouter>
     </p>
   </AppNeedHelp>
 </template>

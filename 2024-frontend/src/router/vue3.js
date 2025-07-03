@@ -1,22 +1,22 @@
 import { sectionId } from "@/constants/site-map.js"
 
 /* Components */
-import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel.vue"
-import WasteMeasurements from "@/views/WasteMeasurements.vue"
-import ImportSelection from "@/views/ImportSelection.vue"
-import DeveloperAPI from "@/views/DeveloperAPI.vue"
-import LegalNotices from "@/views/LegalNotices.vue"
-import AccessibilityDeclaration from "@/views/AccessibilityDeclaration.vue"
-import CGU from "@/views/CGU.vue"
-import ContactPage from "@/views/ContactPage.vue"
-import ImportPurchases from "@/views/ImportPurchases.vue"
-import ImportCanteens from "@/views/ImportCanteens.vue"
-import CanteenCreation from "@/views/CanteenCreation.vue"
-import CanteenModification from "@/views/CanteenModification.vue"
-import FAQ from "@/views/FAQ.vue"
-import PersonalData from "@/views/PersonalData.vue"
-import SiteMap from "@/views/SiteMap.vue"
-import StatisticsCanteens from "@/views/StatisticsCanteens.vue"
+import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
+import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
+import GestionnaireImport from "@/views/GestionnaireImport.vue"
+import Developpeurs from "@/views/Developpeurs.vue"
+import MentionsLegales from "@/views/MentionsLegales.vue"
+import Accessibilite from "@/views/Accessibilite.vue"
+import ConditionsGeneralesUtilisation from "@/views/ConditionsGeneralesUtilisation.vue"
+import Contact from "@/views/Contact.vue"
+import GestionnaireImportAchats from "@/views/GestionnaireImportAchats.vue"
+import GestionnaireImportCantines from "@/views/GestionnaireImportCantines.vue"
+import GestionnaireCantineAjouter from "@/views/GestionnaireCantineAjouter.vue"
+import GestionnaireCantineModifier from "@/views/GestionnaireCantineModifier.vue"
+import FoireAuxQuestions from "@/views/FoireAuxQuestions.vue"
+import DonneesPersonnelles from "@/views/DonneesPersonnelles.vue"
+import PlanDuSite from "@/views/PlanDuSite.vue"
+import Observatoire from "@/views/Observatoire.vue"
 
 /* Sitemap section id */
 const { diag, action, site } = sectionId
@@ -25,8 +25,8 @@ const { diag, action, site } = sectionId
 const vue3routes = [
   {
     path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
-    name: "WasteMeasurementTunnel",
-    component: WasteMeasurementTunnel,
+    name: "GestionnaireGaspillageAlimentaireModifier",
+    component: GestionnaireGaspillageAlimentaireModifier,
     props: (route) => ({ ...route.query, ...route.params }),
     meta: {
       title: "Évaluation déchets alimentaires",
@@ -36,8 +36,8 @@ const vue3routes = [
   },
   {
     path: "/gaspillage-alimentaire/:canteenUrlComponent",
-    name: "WasteMeasurements",
-    component: WasteMeasurements,
+    name: "GestionnaireGaspillageAlimentaire",
+    component: GestionnaireGaspillageAlimentaire,
     props: (route) => ({ ...route.params }),
     meta: {
       title: "Déchets alimentaires",
@@ -50,8 +50,8 @@ const vue3routes = [
   },
   {
     path: "/importer-des-donnees",
-    name: "ImportSelection",
-    component: ImportSelection,
+    name: "GestionnaireImport",
+    component: GestionnaireImport,
     meta: {
       title: "Importer des données",
       authenticationRequired: true,
@@ -60,8 +60,8 @@ const vue3routes = [
   },
   {
     path: "/developpement-et-apis",
-    name: "DeveloperAPI",
-    component: DeveloperAPI,
+    name: "Developpeurs",
+    component: Developpeurs,
     meta: {
       title: "Développement et APIs",
       siteMap: action,
@@ -69,8 +69,8 @@ const vue3routes = [
   },
   {
     path: "/mentions-legales",
-    name: "LegalNotices",
-    component: LegalNotices,
+    name: "MentionsLegales",
+    component: MentionsLegales,
     meta: {
       title: "Mentions légales",
       siteMap: site,
@@ -78,8 +78,8 @@ const vue3routes = [
   },
   {
     path: "/accessibilite",
-    name: "AccessibilityDeclaration",
-    component: AccessibilityDeclaration,
+    name: "Accessibilite",
+    component: Accessibilite,
     meta: {
       title: "Déclaration d'accessibilité",
       siteMap: site,
@@ -87,8 +87,8 @@ const vue3routes = [
   },
   {
     path: "/cgu",
-    name: "CGU",
-    component: CGU,
+    name: "ConditionsGeneralesUtilisation",
+    component: ConditionsGeneralesUtilisation,
     meta: {
       title: "Conditions générales d'utilisation",
       siteMap: site,
@@ -96,8 +96,8 @@ const vue3routes = [
   },
   {
     path: "/contact",
-    name: "ContactPage",
-    component: ContactPage,
+    name: "Contact",
+    component: Contact,
     meta: {
       title: "Contactez-nous",
       siteMap: site,
@@ -105,34 +105,34 @@ const vue3routes = [
   },
   {
     path: "/importer-des-donnees/achats",
-    name: "ImportPurchases",
-    component: ImportPurchases,
+    name: "GestionnaireImportAchats",
+    component: GestionnaireImportAchats,
     meta: {
       title: "Importer des achats",
       authenticationRequired: true,
       breadcrumbs: [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
-        { to: { name: "ImportSelection" }, title: "Importer des données" },
+        { to: { name: "GestionnaireImport" }, title: "Importer des données" },
       ],
     },
   },
   {
     path: "/importer-des-donnees/cantines",
-    name: "ImportCanteens",
-    component: ImportCanteens,
+    name: "GestionnaireImportCantines",
+    component: GestionnaireImportCantines,
     meta: {
       title: "Importer des cantines",
       authenticationRequired: true,
       breadcrumbs: [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
-        { to: { name: "ImportSelection" }, title: "Importer des données" },
+        { to: { name: "GestionnaireImport" }, title: "Importer des données" },
       ],
     },
   },
   {
     path: "/ajouter-une-cantine",
-    name: "CanteenCreation",
-    component: CanteenCreation,
+    name: "GestionnaireCantineAjouter",
+    component: GestionnaireCantineAjouter,
     meta: {
       authenticationRequired: true,
       title: "Ajouter une cantine",
@@ -145,8 +145,8 @@ const vue3routes = [
     children: [
       {
         path: "etablissement",
-        name: "CanteenModification",
-        component: CanteenModification,
+        name: "GestionnaireCantineModifier",
+        component: GestionnaireCantineModifier,
         meta: {
           authenticationRequired: true,
           title: "Modifier mon établissement",
@@ -160,8 +160,8 @@ const vue3routes = [
   },
   {
     path: "/foire-aux-questions",
-    name: "FAQ",
-    component: FAQ,
+    name: "FoireAuxQuestions",
+    component: FoireAuxQuestions,
     meta: {
       title: "Foire aux questions",
       siteMap: site,
@@ -169,8 +169,8 @@ const vue3routes = [
   },
   {
     path: "/donnees-personnelles",
-    name: "PersonalData",
-    component: PersonalData,
+    name: "DonneesPersonnelles",
+    component: DonneesPersonnelles,
     meta: {
       title: "Données personnelles",
       siteMap: site,
@@ -178,18 +178,18 @@ const vue3routes = [
   },
   {
     path: "/plan-du-site",
-    name: "SiteMap",
-    component: SiteMap,
+    name: "PlanDuSite",
+    component: PlanDuSite,
     meta: {
       title: "Plan du site",
     },
   },
   {
-    path: "/statistiques-cantines",
-    name: "StatisticsCanteens",
-    component: StatisticsCanteens,
+    path: "/observatoire",
+    name: "Observatoire",
+    component: Observatoire,
     meta: {
-      title: "Statistiques cantines (nom à revoir)",
+      title: "Observatoire",
     },
   },
 ]

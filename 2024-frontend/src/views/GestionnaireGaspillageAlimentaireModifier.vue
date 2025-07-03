@@ -137,7 +137,7 @@ const returnHref = ref(route.query?.return)
 
 const quit = () => {
   if (returnHref.value) document.location.href = returnHref.value
-  else router.push({ name: "WasteMeasurements" })
+  else router.push({ name: "GestionnaireGaspillageAlimentaire" })
 }
 
 let v$
