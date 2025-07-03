@@ -370,7 +370,7 @@ export default {
       }
       const logout = { logout: true }
       if (this.loggedUser.isDev) {
-        const apis = { to: { name: "DeveloperAPI" }, text: "Développement et APIs" }
+        const apis = { to: { name: "Developpeurs" }, text: "Développement et APIs" }
         return [apis, logout]
       }
       const mesCantines = { to: { name: "ManagementPage" }, text: "Mon tableau de bord" }

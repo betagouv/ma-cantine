@@ -4,7 +4,7 @@ import { sectionId } from "@/constants/site-map.js"
 import WasteMeasurementTunnel from "@/views/WasteMeasurementTunnel.vue"
 import WasteMeasurements from "@/views/WasteMeasurements.vue"
 import ImportSelection from "@/views/ImportSelection.vue"
-import DeveloperAPI from "@/views/DeveloperAPI.vue"
+import Developpeurs from "@/views/Developpeurs.vue"
 import LegalNotices from "@/views/LegalNotices.vue"
 import Accessibilite from "@/views/Accessibilite.vue"
 import CGU from "@/views/CGU.vue"
@@ -60,8 +60,8 @@ const vue3routes = [
   },
   {
     path: "/developpement-et-apis",
-    name: "DeveloperAPI",
-    component: DeveloperAPI,
+    name: "Developpeurs",
+    component: Developpeurs,
     meta: {
       title: "Développement et APIs",
       siteMap: action,

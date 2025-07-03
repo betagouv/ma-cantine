@@ -473,7 +473,7 @@ const vue3Routes = [
   },
   {
     path: "/developpement-et-apis",
-    name: "DeveloperAPI",
+    name: "Developpeurs",
   },
   {
     path: "/mentions-legales",
@@ -571,7 +571,7 @@ function chooseAuthorisedRoute(to, from, next) {
       })
   } else {
     if (to.meta.home && store.state.loggedUser && !store.state.loggedUser.isDev) next({ name: "ManagementPage" })
-    else if (to.meta.home && store.state.loggedUser && store.state.loggedUser.isDev) next({ name: "DeveloperAPI" })
+    else if (to.meta.home && store.state.loggedUser && store.state.loggedUser.isDev) next({ name: "Developpeurs" })
     else if (to.meta.home) next({ name: "LandingPage" })
     else if (!to.meta.authenticationRequired || store.state.loggedUser) next()
     else window.location.href = `/s-identifier?next=${to.path}`

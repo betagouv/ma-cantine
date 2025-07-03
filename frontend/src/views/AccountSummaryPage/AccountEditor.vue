@@ -196,7 +196,7 @@ export default {
         .dispatch("updateProfile", { payload })
         .then(() => {
           this.bypassLeaveWarning = true
-          const nextRoute = this.$store.state.loggedUser.isDev ? { name: "DeveloperAPI" } : { name: "ManagementPage" }
+          const nextRoute = this.$store.state.loggedUser.isDev ? { name: "Developpeurs" } : { name: "ManagementPage" }
           this.$router.push(nextRoute).then(() => {
             this.$store.dispatch("notify", {
               title: "Mise à jour prise en compte",

@@ -15,7 +15,7 @@ const quickLinks = computed(() => {
   }
   // TODO: logout action
   if (store.loggedUser.isDev) {
-    const apis = { to: { name: "DeveloperAPI" }, label: "Développement et APIs" }
+    const apis = { to: { name: "Developpeurs" }, label: "Développement et APIs" }
     return [apis]
   }
   const mesCantines = { to: { name: "ManagementPage" }, label: "Mon tableau de bord" }
