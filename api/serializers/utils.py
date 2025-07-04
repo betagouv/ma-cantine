@@ -164,8 +164,11 @@ COMPLETE_APPRO_FIELDS = (
 )
 
 
-def float_or_none(value):
-    return float(value) if value else None
+def safe_to_float(value):
+    try:
+        return float(value) if value is not None else None
+    except (ValueError, TypeError):
+        return None
 
 
 def match_sector_values(value):
