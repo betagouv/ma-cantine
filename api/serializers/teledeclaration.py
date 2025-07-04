@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.serializers.utils import float_or_none, match_sector_values
+from api.serializers.utils import match_sector_values, safe_to_float
 from data.department_choices import Department
 from data.models import Diagnostic, Teledeclaration
 from data.models.sector import Sector
@@ -278,19 +278,19 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         return obj.value_egalim_others_ht_agg
 
     def get_value_meat_poultry_ht(self, obj):
-        return float_or_none(obj.diagnostic.value_meat_poultry_ht)
+        return safe_to_float(obj.diagnostic.value_meat_poultry_ht)
 
     def get_value_meat_poultry_france_ht(self, obj):
-        return float_or_none(obj.diagnostic.value_meat_poultry_france_ht)
+        return safe_to_float(obj.diagnostic.value_meat_poultry_france_ht)
 
     def get_value_meat_poultry_egalim_ht(self, obj):
-        return float_or_none(obj.diagnostic.value_meat_poultry_egalim_ht)
+        return safe_to_float(obj.diagnostic.value_meat_poultry_egalim_ht)
 
     def get_value_fish_ht(self, obj):
-        return float_or_none(obj.diagnostic.value_fish_ht)
+        return safe_to_float(obj.diagnostic.value_fish_ht)
 
     def get_value_fish_egalim_ht(self, obj):
-        return float_or_none(obj.diagnostic.value_fish_egalim_ht)
+        return safe_to_float(obj.diagnostic.value_fish_egalim_ht)
 
     def get_value_somme_egalim_avec_bio_ht(self, obj):
         return utils.sum_int_and_none([self.get_value_somme_egalim_hors_bio_ht(obj), self.get_value_bio_ht(obj)])
