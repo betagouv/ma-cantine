@@ -221,28 +221,18 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Media and file storage
-default_file_storage = os.getenv("DEFAULT_FILE_STORAGE")
+AWS_ACCESS_KEY_ID = os.getenv("CELLAR_KEY")
+AWS_SECRET_ACCESS_KEY = os.getenv("CELLAR_SECRET")
+AWS_S3_ENDPOINT_URL = os.getenv("CELLAR_HOST")
+AWS_STORAGE_BUCKET_NAME = os.getenv("CELLAR_BUCKET_NAME")
+AWS_LOCATION = "media"
+AWS_QUERYSTRING_AUTH = False
 
-STORAGES = {
-    "default": {
-        "BACKEND": default_file_storage,
-    },
-    "staticfiles": {
-        "BACKEND": os.getenv("STATICFILES_STORAGE"),
-    },
-}
-
-if default_file_storage == "storages.backends.s3.S3Storage":
-    AWS_ACCESS_KEY_ID = os.getenv("CELLAR_KEY")
-    AWS_SECRET_ACCESS_KEY = os.getenv("CELLAR_SECRET")
-    AWS_S3_ENDPOINT_URL = os.getenv("CELLAR_HOST")
-    AWS_STORAGE_BUCKET_NAME = os.getenv("CELLAR_BUCKET_NAME")
-    AWS_LOCATION = "media"
-    AWS_QUERYSTRING_AUTH = False
-
+DEFAULT_FILE_STORAGE = os.getenv("DEFAULT_FILE_STORAGE")
 MEDIA_ROOT = os.getenv("MEDIA_ROOT", os.path.join(BASE_DIR, "media"))
 MEDIA_URL = "/media/"
 
+STATICFILES_STORAGE = os.getenv("STATICFILES_STORAGE")
 SESSION_COOKIE_AGE = 31536000
 SESSION_COOKIE_SECURE = os.getenv("SECURE") == "True"
 SESSION_COOKIE_HTTPONLY = True

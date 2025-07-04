@@ -132,11 +132,11 @@ class User(AbstractUser):
         verbose_name="Nombre d'établissements gérés par l'utilisateur",
     )
 
-    def save(self, **kwargs):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         max_avatar_size = 640
         if self.avatar:
             self.avatar = optimize_image(self.avatar, self.avatar.name, max_avatar_size)
-        super().save(**kwargs)
+        super().save(force_insert, force_update, using, update_fields)
 
     def __str__(self):
         return f"{self.get_full_name()} ({self.username})"
