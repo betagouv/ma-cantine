@@ -754,9 +754,7 @@ class SatellitesPagination(LimitOffsetPagination):
     satellites_to_publish = []
 
     def paginate_queryset(self, queryset, request, view=None):
-        unpublished_satellites = queryset.filter(publication_status=Canteen.PublicationStatus.DRAFT).only(
-            "pk", "managers"
-        )
+        unpublished_satellites = queryset.publicly_hidden().only("pk", "managers")
         self.unpublished_count = unpublished_satellites.count()
         self.satellites_to_publish = []
         for satellite in unpublished_satellites:
@@ -803,7 +801,6 @@ class SatelliteListCreateView(ListCreateAPIView):
         "name",
         "siret",
         "daily_meal_count",
-        "publication_status",
     ]
 
     def get_queryset(self):
@@ -930,7 +927,7 @@ class TerritoryCanteensListView(ListAPIView):
         MaCantineOrderingFilter,
     ]
     search_fields = ["name", "siret"]
-    ordering_fields = ["name", "city", "siret", "daily_meal_count", "publication_status"]
+    ordering_fields = ["name", "city", "siret", "daily_meal_count"]
 
     def get_queryset(self):
         departments = self.request.user.departments

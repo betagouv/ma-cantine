@@ -5,8 +5,6 @@ import requests
 import sib_api_v3_sdk
 from django.conf import settings
 
-from data.models import Canteen
-
 logger = logging.getLogger(__name__)
 
 configuration = sib_api_v3_sdk.Configuration()
@@ -37,9 +35,7 @@ def user_to_brevo_payload(user, bulk=True):
     def missing_td_for_year(year, user):
         return user.canteens.exists() and any(not x.has_teledeclaration_for_year(year) for x in user.canteens.all())
 
-    missing_publications = (
-        has_canteens and user.canteens.filter(publication_status=Canteen.PublicationStatus.DRAFT).exists()
-    )
+    missing_publications = has_canteens and user.canteens.publicly_hidden().exists()
 
     dict_attributes = {
         "MA_CANTINE_DATE_INSCRIPTION": date_joined.strftime("%Y-%m-%d"),
