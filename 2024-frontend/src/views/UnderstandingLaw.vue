@@ -10,9 +10,9 @@ const route = useRoute()
   <section class="fr-col-12 fr-col-md-7 fr-mb-5w">
     <h1>{{ route.meta.title }}</h1>
     <p class="fr-mb-0">
-      Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Vestibulum id
-      ligula porta felis euismod semper. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Nullam
-      id dolor id nibh ultricies vehicula ut id elit. Maecenas sed diam eget risus varius blandit sit amet non magna.
+      La restauration collective se doit de respecter les obligations de la loi EGalim ainsi que la loi Climat et
+      Résilience. En fonction des typologies des cantines il y a des spécificités à respecter. La documentation
+      ci-dessous vous aide dans leur mise en place.
     </p>
   </section>
   <section>
