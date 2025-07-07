@@ -826,7 +826,6 @@ class SatelliteListCreateView(ListCreateAPIView):
 
                 satellite = new_satellite.save(
                     central_producer_siret=canteen.siret,
-                    publication_status=Canteen.PublicationStatus.PUBLISHED,
                     import_source=f"Cuisine centrale : {canteen.siret}",
                     production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 )

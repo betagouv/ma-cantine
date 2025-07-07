@@ -206,6 +206,7 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
+        read_only_fields = ("publication_status",)
         fields = (
             "id",
             "name",
@@ -249,7 +250,10 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
-        read_only_fields = ("id",)
+        read_only_fields = (
+            "id",
+            "publication_status",
+        )
         fields = (
             "id",
             "name",
@@ -257,6 +261,7 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
             "daily_meal_count",
             "sectors",
             "user_can_view",
+            "publication_status",
         )
 
     def get_user_can_view(self, obj):

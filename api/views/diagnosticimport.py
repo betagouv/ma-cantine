@@ -660,6 +660,7 @@ class CCImportMixin:
             row,
             import_source,
             manager_emails,
+            None,
             satellite_canteens_count,
         )
 
