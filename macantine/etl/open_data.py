@@ -130,8 +130,8 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
     def load_dataset(self):
         filepath = f"open_data/{self.dataset_name}"
         if (
-            os.environ.get("STATICFILES_STORAGE") == "dstorages.backends.s3boto3.S3StaticStorage"
-            and os.environ.get("DEFAULT_FILE_STORAGE") == "storages.backends.s3boto3.S3Boto3Storage"
+            os.environ.get("STATICFILES_STORAGE") == "storages.backends.s3.S3Storage"
+            and os.environ.get("DEFAULT_FILE_STORAGE") == "storages.backends.s3.S3Storage"
         ):
             if not self.is_valid():
                 logger.error(f"The dataset {self.name} is invalid and therefore will not be exported to s3")
