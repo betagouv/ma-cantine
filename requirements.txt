@@ -255,7 +255,7 @@ et-xmlfile==1.1.0
     #   openpyxl
 exceptiongroup==1.2.2
     # via ma-cantine
-factory-boy==3.3.1
+factory-boy==3.3.3
     # via ma-cantine
 faker==27.0.0
     # via
