@@ -143,7 +143,7 @@ dependencies = [
     "s3transfer==0.10.4",
     "sentry-sdk==2.10.0",
     "sib-api-v3-sdk==7.6.0",
-    "six==1.16.0",
+    "six==1.17.0",
     "soupsieve==2.5",
     "sqlalchemy==2.0.35",
     "sqlparse==0.5.3",
