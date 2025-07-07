@@ -255,7 +255,7 @@ et-xmlfile==1.1.0
     #   openpyxl
 exceptiongroup==1.2.2
     # via ma-cantine
-factory-boy==3.3.1
+factory-boy==3.3.3
     # via ma-cantine
 faker==27.0.0
     # via
@@ -417,7 +417,7 @@ pillow-heif==0.18.0
     #   willow
 pip==25.1.1
     # via pipdeptree
-pipdeptree==2.23.4
+pipdeptree==2.26.1
     # via ma-cantine
 platformdirs==4.3.6
     # via
@@ -554,7 +554,7 @@ sentry-sdk==2.10.0
     # via ma-cantine
 sib-api-v3-sdk==7.6.0
     # via ma-cantine
-six==1.16.0
+six==1.17.0
     # via
     #   cssbeautifier
     #   html5lib
@@ -663,7 +663,7 @@ willow==1.9.0
     # via
     #   ma-cantine
     #   wagtail
-wrapt==1.17.0
+wrapt==1.17.2
     # via
     #   deprecated
     #   ma-cantine

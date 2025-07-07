@@ -243,8 +243,8 @@ class TestETLOpenData(TestCase):
         )
         etl_canteen = ETL_OPEN_DATA_CANTEEN()
 
-        canteen_has_declared_within_campaign = CanteenFactory.create()
-        canteen_has_not_declared = CanteenFactory.create()
+        canteen_has_declared_within_campaign = CanteenFactory(declaration_donnees_2022=True)
+        canteen_has_not_declared = CanteenFactory(declaration_donnees_2022=False)
         applicant = UserFactory.create()
         diagnostic_2022 = DiagnosticFactory.create(
             canteen=canteen_has_declared_within_campaign, year=2022, diagnostic_type=None
@@ -256,12 +256,12 @@ class TestETLOpenData(TestCase):
         self.assertEqual(
             canteens[canteens.id == canteen_has_declared_within_campaign.id].iloc[0]["declaration_donnees_2022"],
             True,
-            "The canteen has participated in the campain",
+            "The canteen has participated in the campaign",
         )
         self.assertEqual(
             canteens[canteens.id == canteen_has_not_declared.id].iloc[0]["declaration_donnees_2022"],
             False,
-            "The canteen hasn't participated in the campain",
+            "The canteen hasn't participated in the campaign",
         )
 
     def test_transformation_canteens_sectors(self, mock):

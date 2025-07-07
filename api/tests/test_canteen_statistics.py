@@ -1,8 +1,6 @@
-from unittest.mock import patch
-
 from django.test.utils import override_settings
 from django.urls import reverse
-from django.utils.timezone import now
+from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -11,13 +9,8 @@ from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, Use
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 from data.region_choices import Region
 
-year_data = now().year - 1
-mocked_campaign_dates = {
-    year_data: {
-        "teledeclaration_start_date": now().replace(month=1, day=1, hour=0, minute=0, second=0),
-        "teledeclaration_end_date": now().replace(month=12, day=31, hour=23, minute=59, second=59),
-    }
-}
+year_data = 2024
+date_in_teledeclaration_campaign = "2025-03-30"
 
 
 @override_settings(PUBLISH_BY_DEFAULT=True)
@@ -107,6 +100,7 @@ class TestCanteenStatsApi(APITestCase):
                 "diagnostic": {
                     "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
                     "year": year_data,
+                    "creation_date": date_in_teledeclaration_campaign,
                     "value_total_ht": 100,
                     "value_bio_ht": 20,
                     "value_sustainable_ht": 30,
@@ -128,6 +122,7 @@ class TestCanteenStatsApi(APITestCase):
                 "diagnostic": {
                     "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
                     "year": year_data,
+                    "creation_date": date_in_teledeclaration_campaign,
                     "value_total_ht": 1000,
                     "value_bio_ht": 400,
                     "value_sustainable_ht": 500,
@@ -152,7 +147,8 @@ class TestCanteenStatsApi(APITestCase):
                 },
                 "diagnostic": {
                     "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
-                    "year": now().replace(year=1990).year,
+                    "year": 1990,
+                    "creation_date": "1990-01-01",
                 },
             },
             {
@@ -164,6 +160,7 @@ class TestCanteenStatsApi(APITestCase):
                 "diagnostic": {
                     "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
                     "year": year_data,
+                    "creation_date": date_in_teledeclaration_campaign,
                     "value_total_ht": 100,
                     "value_bio_ht": 100,
                     "value_sustainable_ht": 0,
@@ -181,29 +178,28 @@ class TestCanteenStatsApi(APITestCase):
         # Create the sectors
         sector_objects = {key: SectorFactory.create(**attributes) for key, attributes in sectors.items()}
 
-        with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
-            # Create the canteens and diagnostics
-            for i, case in enumerate(canteen_cases):
-                canteen_sectors = [sector_objects[sector] for sector in case["canteen"].pop("sectors")]
-                canteen = CanteenFactory.create(
-                    **case["canteen"],
-                    sectors=canteen_sectors,
-                    siret=str(i),
-                    publication_status=Canteen.PublicationStatus.PUBLISHED
-                )
-                diagnostic_data = case["diagnostic"]
-                diag = DiagnosticFactory.create(canteen=canteen, **diagnostic_data)
+        # Create the canteens and diagnostics
+        for i, case in enumerate(canteen_cases):
+            canteen_sectors = [sector_objects[sector] for sector in case["canteen"].pop("sectors")]
+            canteen = CanteenFactory.create(
+                **case["canteen"],
+                sectors=canteen_sectors,
+                siret=str(i),
+                publication_status=Canteen.PublicationStatus.PUBLISHED,
+            )
+            diagnostic_data = case["diagnostic"]
+            diag = DiagnosticFactory.create(canteen=canteen, **diagnostic_data)
+            with freeze_time(date_in_teledeclaration_campaign):
                 Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
 
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "01"})
-
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "01"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         body = response.json()
         self.assertEqual(body["canteenCount"], 3)
         self.assertEqual(body["teledeclarationsCount"], 2)
         self.assertEqual(body["bioPercent"], 38)
         self.assertEqual(body["sustainablePercent"], 48)
+        self.assertEqual(body["egalimPercent"], 86)  # 38 + 48
         self.assertEqual(body["approPercent"], 100)
         sector_categories = body["sectorCategories"]
         self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 3)
@@ -212,14 +208,11 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(sector_categories["inconnu"], 0)
 
         # can also call without location info
-        with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
-
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Test a year without campaign
-        with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 100})
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 100})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["teledeclarationsCount"], 0)
@@ -238,21 +231,25 @@ class TestCanteenStatsApi(APITestCase):
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             canteen=published,
             year=year_data,
+            creation_date=date_in_teledeclaration_campaign,
             value_total_ht=100,
             value_bio_ht=20,
             value_sustainable_ht=15,
             value_externality_performance_ht=15,
             value_egalim_others_ht=15,
         )
-        Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
+        with freeze_time(date_in_teledeclaration_campaign):
+            Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
 
-        with patch("data.models.teledeclaration.CAMPAIGN_DATES", mocked_campaign_dates):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         body = response.json()
+        self.assertEqual(body["canteenCount"], 4 + 1)
+        self.assertEqual(body["teledeclarationsCount"], 1)
         self.assertEqual(body["bioPercent"], 20)
         self.assertEqual(body["sustainablePercent"], 45)
+        self.assertEqual(body["egalimPercent"], 65)  # 20 + 45
+        self.assertEqual(body["approPercent"], 100)
 
     def test_filter_out_armee(self):
         # Database
