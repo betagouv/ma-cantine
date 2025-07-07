@@ -663,7 +663,7 @@ willow==1.9.0
     # via
     #   ma-cantine
     #   wagtail
-wrapt==1.17.0
+wrapt==1.17.2
     # via
     #   deprecated
     #   ma-cantine
