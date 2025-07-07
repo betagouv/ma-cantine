@@ -6,6 +6,44 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.24.0](https://github.com/betagouv/ma-cantine/compare/v2025.23.2...v2025.24.0) (2025-07-07)
+
+
+### Nouveautés
+
+* **Cantines:** nouveaux champs declaration_donnees_YEAR pour stocker l'info si la cantine a télédéclarée pour cette année là ([#5416](https://github.com/betagouv/ma-cantine/issues/5416)) ([a7b431f](https://github.com/betagouv/ma-cantine/commit/a7b431ffe58709399b6758d33f246c4acbe9e47d))
+
+
+### Améliorations
+
+* **API Stats:** TD: renvoyer le taux egalim des achats (somme de bio + durable) ([#5504](https://github.com/betagouv/ma-cantine/issues/5504)) ([d9b736c](https://github.com/betagouv/ma-cantine/commit/d9b736cf75c8cdfcfaf6e7a6f6077513583482b7))
+* **Cantines:** Commande pour remplir le champ declaration_donnees_YEAR ([#5450](https://github.com/betagouv/ma-cantine/issues/5450)) ([976bd77](https://github.com/betagouv/ma-cantine/commit/976bd771482223b1290d65c9748ac671e032e593))
+* **Django:** Préparer la migration vers Django 5.1 en corrigeant les éléments dépréciés ([#5485](https://github.com/betagouv/ma-cantine/issues/5485)) ([b9dc65a](https://github.com/betagouv/ma-cantine/commit/b9dc65aa43c089ed23c683c7e7000a910678e197))
+* **Metabase:** Cantines: ajout des nouveaux champs declaration_donnees_YEAR dans l'export ([#5449](https://github.com/betagouv/ma-cantine/issues/5449)) ([bc0399b](https://github.com/betagouv/ma-cantine/commit/bc0399b58507a9aaaa37f5824174c5b0f08e01c5))
+* **Open Data:** Cantines: maj des champs declaration_donnees_YEAR dans l'export ([#5460](https://github.com/betagouv/ma-cantine/issues/5460)) ([790d68e](https://github.com/betagouv/ma-cantine/commit/790d68e223362bc37259db100f55ec14de78f20d))
+
+
+### Corrections (bugs, typos...)
+
+* **ETL:** Maintenir les valeurs égales à 0 au lieu de les transformer en null ([#5484](https://github.com/betagouv/ma-cantine/issues/5484)) ([f2015c2](https://github.com/betagouv/ma-cantine/commit/f2015c24219e000a77e390da66abfc372fffc2fa))
+* **ETL:** Ne plus ecraser les valeurs égales à 0 par None pour les champs issus du declared data ([#5511](https://github.com/betagouv/ma-cantine/issues/5511)) ([a685327](https://github.com/betagouv/ma-cantine/commit/a685327df7b6188d14ea98aebe2a1354860b827c))
+
+
+### Technique
+
+* **API Stats:** TD: petit ménage avant d'ajouter de nouvelles stats ([#5503](https://github.com/betagouv/ma-cantine/issues/5503)) ([235da94](https://github.com/betagouv/ma-cantine/commit/235da940d59dc49265c120dd077c9e0c991291ef))
+* **deps-dev:** bump @vitejs/plugin-vue in /2024-frontend ([7503985](https://github.com/betagouv/ma-cantine/commit/75039852ca76340583db4b2f593241844e8ec98d))
+* **deps-dev:** bump eslint from 9.28.0 to 9.30.0 in /2024-frontend ([aeaabc4](https://github.com/betagouv/ma-cantine/commit/aeaabc4b3945a9919731a722779024ce5ffb5b0a))
+* **deps:** bump factory-boy from 3.3.1 to 3.3.3 ([#5487](https://github.com/betagouv/ma-cantine/issues/5487)) ([0ad0469](https://github.com/betagouv/ma-cantine/commit/0ad0469bdd6a4c214b1e9347ea46325f5adf47d2))
+* **deps:** bump pinia from 3.0.2 to 3.0.3 in /2024-frontend ([7db4cd9](https://github.com/betagouv/ma-cantine/commit/7db4cd9c6eeb1def09f6bc2b51ff22354aa48b65))
+* **deps:** bump pipdeptree from 2.23.4 to 2.26.1 ([#5492](https://github.com/betagouv/ma-cantine/issues/5492)) ([ba9a14a](https://github.com/betagouv/ma-cantine/commit/ba9a14ab476c8fa0f4c28ab3837133f2beadbad1))
+* **deps:** bump six from 1.16.0 to 1.17.0 ([#5497](https://github.com/betagouv/ma-cantine/issues/5497)) ([fc641c8](https://github.com/betagouv/ma-cantine/commit/fc641c864434579cc3ce93e641f87071f8520260))
+* **deps:** bump vue-i18n from 11.1.5 to 11.1.7 in /2024-frontend ([#5488](https://github.com/betagouv/ma-cantine/issues/5488)) ([d041d96](https://github.com/betagouv/ma-cantine/commit/d041d964e7f35c13411be309820f4420f4efee65))
+* **deps:** bump wrapt from 1.17.0 to 1.17.2 ([#5491](https://github.com/betagouv/ma-cantine/issues/5491)) ([1889436](https://github.com/betagouv/ma-cantine/commit/188943670cf4e139a92f2b7ca0e75ff01b83f03f))
+* **Storage:** ATTENTION CHANGEMENT VARENV CC Uniformiser la variable du storage backend S3 ([#5513](https://github.com/betagouv/ma-cantine/issues/5513)) ([ab9fcfe](https://github.com/betagouv/ma-cantine/commit/ab9fcfed48e7e02353c9d154696c2c70bac45365))
+* **Tests:** enlever les warning '_date received a naive datetime' ([#5512](https://github.com/betagouv/ma-cantine/issues/5512)) ([c0c90a5](https://github.com/betagouv/ma-cantine/commit/c0c90a5eaf4387673304ee7a954ea26121096046))
+* **Tests:** enlever les warning 'min_value should be a Decimal instance' ([#5514](https://github.com/betagouv/ma-cantine/issues/5514)) ([0e7cbfa](https://github.com/betagouv/ma-cantine/commit/0e7cbfa221d8ab6af8fd7243d058930c86a090d4))
+
 ## [2025.23.2](https://github.com/betagouv/ma-cantine/compare/v2025.23.1...v2025.23.2) (2025-06-30)
 
 
