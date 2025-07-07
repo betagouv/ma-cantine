@@ -750,17 +750,6 @@ class UndoClaimCanteenView(APIView):
 class SatellitesPagination(LimitOffsetPagination):
     default_limit = 10
     max_limit = 40
-    unpublished_count = None
-    satellites_to_publish = []
-
-    def paginate_queryset(self, queryset, request, view=None):
-        unpublished_satellites = queryset.publicly_hidden().only("pk", "managers")
-        self.unpublished_count = unpublished_satellites.count()
-        self.satellites_to_publish = []
-        for satellite in unpublished_satellites:
-            if satellite.managers.filter(pk=request.user.pk).exists():
-                self.satellites_to_publish.append(satellite.id)
-        return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
         return Response(
@@ -770,8 +759,6 @@ class SatellitesPagination(LimitOffsetPagination):
                     ("next", self.get_next_link()),
                     ("previous", self.get_previous_link()),
                     ("results", data),
-                    ("unpublished_count", self.unpublished_count),
-                    ("satellites_to_publish", self.satellites_to_publish),
                 ]
             )
         )
