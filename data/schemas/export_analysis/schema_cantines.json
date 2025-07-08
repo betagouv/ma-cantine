@@ -175,6 +175,13 @@
       "type": "string"
     },
     {
+      "description": "Etablissement concerné par la politique prioritaire du gouvernement sur les services public écoresponsables",
+      "example": "Oui",
+      "name": "spe",
+      "title": "Service Public Ecoresponsable",
+      "type": "string"
+    },
+    {
       "description": "Secteur d'activité de l'établissement",
       "example": "Restaurants administratifs des collectivités territoriales",
       "name": "secteur",
@@ -187,13 +194,6 @@
       "name": "categorie",
       "title": "Catégorie",
       "type": "string"
-    },
-    {
-      "description": "Etablissement concerné par la politique prioritaire du gouvernement sur les services public écoresponsables",
-      "example": "true",
-      "name": "spe",
-      "title": "Service Public Ecoresponsable",
-      "type": "boolean"
     },
     {
       "example": "true",

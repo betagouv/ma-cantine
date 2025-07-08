@@ -578,7 +578,6 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
     sectors = SectorSerializer(many=True, read_only=True)
     central_producer_siret = serializers.SerializerMethodField(read_only=True)
     satellite_canteens_count = serializers.SerializerMethodField(read_only=True)
-    line_ministry = serializers.SerializerMethodField(read_only=True)
     daily_meal_count = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -622,10 +621,6 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
             return None
         return obj.satellite_canteens_count
 
-    def get_line_ministry(self, obj):
-        concerned_sectors = obj.sectors.filter(has_line_ministry=True)
-        return obj.line_ministry if len(concerned_sectors) > 0 else None
-
     def get_daily_meal_count(self, obj):
         if obj.production_type == Canteen.ProductionType.CENTRAL:
             return None
@@ -665,9 +660,9 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
     nombre_satellites = serializers.SerializerMethodField()
     siret_cuisine_centrale = serializers.SerializerMethodField()
     ministere_tutelle = serializers.SerializerMethodField()
+    spe = serializers.SerializerMethodField()
     secteur = serializers.SerializerMethodField()
     categorie = serializers.SerializerMethodField()
-    spe = serializers.SerializerMethodField()
     date_creation = serializers.SerializerMethodField()
     date_modification = serializers.SerializerMethodField()
     adresses_gestionnaires = serializers.SerializerMethodField()
@@ -699,9 +694,9 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
             "nombre_satellites",
             "siret_cuisine_centrale",
             "ministere_tutelle",
+            "spe",
             "secteur",
             "categorie",
-            "spe",
             "declaration_donnees_2021",
             "declaration_donnees_2022",
             "declaration_donnees_2023",
@@ -769,6 +764,9 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
             return Canteen.Ministries(obj.line_ministry).label
         return None
 
+    def get_spe(self, obj):
+        return "Oui" if obj.is_spe else "Non"
+
     def get_secteur(self, obj):
         sectors = [sector.name for sector in obj.sectors.all()]
         return ",".join(sectors)
@@ -776,9 +774,6 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
     def get_categorie(self, obj):
         categories = [sector.category for sector in obj.sectors.all()]
         return ",".join(categories)
-
-    def get_spe(self, obj):
-        return "Oui" if obj.is_spe else "Non"
 
     def get_adresses_gestionnaires(self, obj):
         emails = [manager.email for manager in obj.managers.all()]

@@ -390,6 +390,31 @@ class TestETLAnalysisTD(TestCase):
         self.assertEqual(data_no_geo["region"], None)
         self.assertEqual(data_no_geo["lib_region"], None)
 
+    def test_line_ministry_and_spe(self):
+        canteen_with_line_ministry = CanteenFactory.create(line_ministry=Canteen.Ministries.AGRICULTURE)
+        diag = DiagnosticFactory.create(canteen=canteen_with_line_ministry)
+        teledeclaration = Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
+
+        self.serializer = TeledeclarationAnalysisSerializer(instance=teledeclaration)
+        data = self.serializer.data
+
+        self.assertEqual(data["line_ministry"], Canteen.Ministries.AGRICULTURE)
+        self.assertEqual(data["spe"], "Oui")
+
+        canteen_without_line_ministry = CanteenFactory.create(line_ministry=None)
+        diag_without_line_ministry = DiagnosticFactory.create(canteen=canteen_without_line_ministry)
+        teledeclaration_without_line_ministry = Teledeclaration.create_from_diagnostic(
+            diag_without_line_ministry, applicant=UserFactory.create()
+        )
+
+        self.serializer_without_line_ministry = TeledeclarationAnalysisSerializer(
+            instance=teledeclaration_without_line_ministry
+        )
+        data_without_line_ministry = self.serializer_without_line_ministry.data
+
+        self.assertEqual(data_without_line_ministry["line_ministry"], None)
+        self.assertEqual(data_without_line_ministry["spe"], "Non")
+
     def test_flatten_td(self):
         data = {
             "id": {2: 1, 3: 2, 4: 3},

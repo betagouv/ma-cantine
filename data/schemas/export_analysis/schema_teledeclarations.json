@@ -118,6 +118,13 @@
       "type": "string"
     },
     {
+      "description": "Etablissement concerné par la politique prioritaire du gouvernement sur les services public écoresponsables",
+      "example": "Oui",
+      "name": "spe",
+      "title": "Service Public Ecoresponsable",
+      "type": "string"
+    },
+    {
       "name": "email",
       "type": "string"
     },

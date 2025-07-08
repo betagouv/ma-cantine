@@ -635,15 +635,14 @@ class TestTeledeclarationCreateApi(APITestCase):
 
     @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
-    def test_dynamically_include_line_ministry(self):
+    def test_line_ministry_does_not_depend_on_sector_anymore(self):
         sector_ministry = SectorFactory.create(has_line_ministry=True)
-        sector_other = SectorFactory.create(has_line_ministry=False)
         canteen = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             siret="79300704800044",
             satellite_canteens_count=3,
-            sectors=[sector_other],
-            line_ministry=Canteen.Ministries.AFFAIRES_ETRANGERES,
+            sectors=[sector_ministry],
+            line_ministry=None,
             managers=[authenticate.user],
         )
         diagnostic = DiagnosticFactory.create(
@@ -663,7 +662,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         # If we add the sector_ministry we should have the line_ministry in the canteen
         teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic).delete()
 
-        canteen.sectors.add(sector_ministry)
+        canteen.line_ministry = Canteen.Ministries.AFFAIRES_ETRANGERES
         canteen.save()
         payload = {"diagnosticId": diagnostic.id}
 

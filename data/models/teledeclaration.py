@@ -292,7 +292,8 @@ class Teledeclaration(models.Model):
         """
         Create a teledeclaration object from a diagnostic
         """
-        version = "14"  # Helps identify which data will be present. Use incremental int values
+        version = "15"  # Helps identify which data will be present. Use incremental int values
+        # Version 15 - Changed how we store the canteen's line_ministry
         # Version 14 - New Teledeclaration.canteen_siren_unite_legale field, also add the field to the canteen serialization
         # Version 13 - Add category_name in canteen sectors serializer
         # Version 12 - New Diagnostic service_type field (and stop filling vegetarian_menu_type)
