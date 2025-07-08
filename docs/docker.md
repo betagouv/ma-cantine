@@ -24,8 +24,8 @@ python manage.py createsuperuser
 Pour faciliter l'utilisation quotidienne avec docker, un fichier makefile regroupe les raccourcis :
 
 ```sh
-make build
-make up
+make docker-build
+make docker-up
 ```
 
 Voir le [Makefile](../Makefile) pour des commandes utiles.
