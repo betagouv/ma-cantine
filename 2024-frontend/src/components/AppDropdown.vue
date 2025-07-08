@@ -1,0 +1,57 @@
+<script setup>
+import { computed, ref, useTemplateRef } from "vue"
+import { onClickOutside } from "@vueuse/core"
+import {} from "vue"
+defineProps(["label"])
+
+/* Icon */
+const isOpened = ref(false)
+const icon = computed(() => {
+  const direction = isOpened.value ? "up" : "down"
+  return `fr-icon-arrow-${direction}-s-line`
+})
+
+/* Click outside */
+const opener = useTemplateRef("opener")
+const content = useTemplateRef("content")
+const closeDropdown = () => {
+  isOpened.value = false
+}
+onClickOutside(content, closeDropdown, { ignore: [opener] })
+</script>
+
+<template>
+  <div class="app-dropdow">
+    <DsfrButton
+      class="app-dropdow__opener"
+      tertiary
+      :label="label"
+      :icon="icon"
+      icon-right
+      @click="isOpened = !isOpened"
+      ref="opener"
+    />
+    <div v-show="isOpened" class="app-dropdow__content" ref="content">
+      <div class="fr-p-2w fr-mt-2w fr-card">
+        <slot></slot>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="scss">
+.app-dropdow {
+  position: relative;
+
+  &__content {
+    z-index: 9;
+    position: absolute;
+    bottom: 0;
+    transform: translateY(100%);
+
+    *:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+</style>
