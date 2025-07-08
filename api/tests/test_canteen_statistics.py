@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.test.utils import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
@@ -392,6 +393,34 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(economic_models[Canteen.EconomicModel.PUBLIC], 2)
         self.assertEqual(economic_models[Canteen.EconomicModel.PRIVATE], 0)
         self.assertEqual(economic_models["inconnu"], 0)
+
+    def test_cache_mechanism(self):
+        cache.clear()
+        # first time: no cache
+        self.assertEqual(Canteen.objects.count(), 5)
+        with self.assertNumQueries(7):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # second time: cache hit
+        with self.assertNumQueries(0):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # another year: no cache
+        with self.assertNumQueries(7):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 1})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # another year again: cache hit
+        with self.assertNumQueries(0):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 1})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # another year with different filters: no cache
+        with self.assertNumQueries(7):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "01"})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # another year with different filters: still no cache
+        with self.assertNumQueries(7):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "01"})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class TestCanteenLocationsApi(APITestCase):

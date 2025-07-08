@@ -1,8 +1,7 @@
 import logging
 
+from django.core.cache import cache
 from django.http import JsonResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.views import APIView
@@ -63,7 +62,6 @@ class CanteenStatisticsView(APIView):
             ),
         ]
     )
-    @method_decorator(cache_page(60 * 60 * 24))  # Cache for 24 hours
     def get(self, request):
         """
         Get statistical summary of canteens and teledeclarations, filtered by query parameters.
@@ -71,6 +69,13 @@ class CanteenStatisticsView(APIView):
         year = request.query_params.get("year")
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # cache mechanism: only for requests with only the year parameter
+        if len(request.query_params) == 1:
+            cache_key = f"canteen_statistics_{year}"
+            cached_data = cache.get(cache_key)
+            if cached_data:
+                return JsonResponse(cached_data, status=status.HTTP_200_OK)
 
         filters = self._extract_query_filters(request)
 
@@ -82,6 +87,11 @@ class CanteenStatisticsView(APIView):
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
         serializer = self.serializer_class(data)
+
+        # cache mechanism: store the result if it was not cached
+        if len(request.query_params) == 1:
+            cache.set(cache_key, serializer.data, timeout=60 * 60 * 24)
+
         return JsonResponse(camelize(serializer.data), status=status.HTTP_200_OK)
 
     def _extract_query_filters(self, request):
