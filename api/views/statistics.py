@@ -13,6 +13,10 @@ from data.models import Canteen, Teledeclaration
 logger = logging.getLogger(__name__)
 
 
+CACHE_KEY_PREFIX = "canteen_statistics"
+CACHE_TIMEOUT = 60 * 60 * 24  # 24 hours
+
+
 @extend_schema(
     summary="Récapitulatif statistique des données de ma-cantine",
 )
@@ -70,9 +74,9 @@ class CanteenStatisticsView(APIView):
         if not year:
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # cache mechanism: only for requests with only the year parameter
+        # cache mechanism: only for requests with just the year parameter
         if len(request.query_params) == 1:
-            cache_key = f"canteen_statistics_{year}"
+            cache_key = f"{CACHE_KEY_PREFIX}_{year}"
             cached_data = cache.get(cache_key)
             if cached_data:
                 return JsonResponse(cached_data, status=status.HTTP_200_OK)
@@ -88,9 +92,11 @@ class CanteenStatisticsView(APIView):
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
         serializer = self.serializer_class(data)
 
-        # cache mechanism: store the result if it was not cached
+        # cache mechanism: store the result if it was not cached (only for requests with just the year parameter)
         if len(request.query_params) == 1:
-            cache.set(cache_key, serializer.data, timeout=60 * 60 * 24)
+            cache_key = f"{CACHE_KEY_PREFIX}_{year}"
+            if not cache.get(cache_key):
+                cache.set(cache_key, camelize(serializer.data), timeout=CACHE_TIMEOUT)
 
         return JsonResponse(camelize(serializer.data), status=status.HTTP_200_OK)
 

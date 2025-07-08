@@ -71,6 +71,9 @@ class TestCanteenStatsApi(APITestCase):
             line_ministry=Canteen.Ministries.ARMEE,
         )
 
+    def setUp(self):
+        cache.clear()  # clear cache before each test
+
     def test_query_count(self):
         self.assertEqual(Canteen.objects.count(), 5)
         with self.assertNumQueries(7):
@@ -395,7 +398,6 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(economic_models["inconnu"], 0)
 
     def test_cache_mechanism(self):
-        cache.clear()
         # first time: no cache
         self.assertEqual(Canteen.objects.count(), 5)
         with self.assertNumQueries(7):
