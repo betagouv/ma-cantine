@@ -1,4 +1,5 @@
 import canteenCharacteristics from "@/constants/canteen-establishment-form-options.js"
+import sectorsService from "@/services/sectors"
 
 const getYearsOptions = () => {
   const startYear = 2020
@@ -39,4 +40,19 @@ const getCharacteristicsOptions = () => {
   }
   return characteristicsOptions
 }
-export { getYearsOptions, getCharacteristicsOptions }
+
+const getSectorsOptions = async () => {
+  const sectorsBackend = await sectorsService.getSectors()
+  const sectorsOptions = []
+  sectorsBackend.forEach((sector) => {
+    const option = {
+      id: sector.id,
+      label: `${sector.categoryName} - ${sector.name}`,
+      value: sector.id,
+    }
+    sectorsOptions.push(option)
+  })
+  return sectorsOptions
+}
+
+export { getYearsOptions, getCharacteristicsOptions, getSectorsOptions }
