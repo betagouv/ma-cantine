@@ -275,7 +275,7 @@ export default {
         },
         {
           text: "Comprendre mes obligations",
-          to: { name: "UnderstandingLaw" },
+          to: { name: "ComprendreMesObligations" },
         },
         {
           text: "Aide",

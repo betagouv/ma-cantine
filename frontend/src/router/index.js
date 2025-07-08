@@ -134,7 +134,7 @@ const routes = [
         beforeEnter: (route, _, next) => {
           store.state.loggedUser
             ? next({
-                name: "UnderstandingLaw",
+                name: "ComprendreMesObligations",
               })
             : next()
         },
@@ -484,7 +484,7 @@ const vue3Routes = [
   },
   {
     path: "/comprendre-mes-obligations",
-    name: "UnderstandingLaw",
+    name: "ComprendreMesObligations",
   },
 ]
 const VUE3_PREFIX = "/v2"
@@ -530,33 +530,33 @@ routes.push({
 
 routes.push({
   path: "/mesures-phares/qualite-des-produits",
-  redirect: { name: "UnderstandingLaw" },
+  redirect: { name: "ComprendreMesObligations" },
 })
 
 routes.push({
   path: "/mesures-phares/gaspillage-alimentaire",
-  redirect: { name: "UnderstandingLaw" },
+  redirect: { name: "ComprendreMesObligations" },
 })
 
 routes.push({
   path: "/mesures-phares/menus-vegetariens",
-  redirect: { name: "UnderstandingLaw" },
+  redirect: { name: "ComprendreMesObligations" },
 })
 
 routes.push({
   path: "/mesures-phares/interdiction-du-plastique",
-  redirect: { name: "UnderstandingLaw" },
+  redirect: { name: "ComprendreMesObligations" },
 })
 
 routes.push({
   path: "/mesures-phares/information-des-usagers",
-  redirect: { name: "UnderstandingLaw" },
+  redirect: { name: "ComprendreMesObligations" },
 })
 
 // Old url visible on google
 routes.push({
   path: "/mesures-phares/diversification-des-menus",
-  redirect: { name: "UnderstandingLaw" },
+  redirect: { name: "ComprendreMesObligations" },
 })
 
 routes.push({

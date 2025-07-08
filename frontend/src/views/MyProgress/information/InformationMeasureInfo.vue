@@ -3,7 +3,7 @@
     <p>
       Les gestionnaires de cantines doivent informer leurs usagers et convives sur la qualité alimentaire (au sens
       EGalim) et nutritionnelle des repas servis. Pour en savoir plus sur cette mesure,
-      <router-link :to="{ name: 'UnderstandingLaw' }">
+      <router-link :to="{ name: 'ComprendreMesObligations' }">
         notre page dédiée.
       </router-link>
     </p>

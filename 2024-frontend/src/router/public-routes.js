@@ -2,6 +2,7 @@ import { sectionId } from "@/constants/site-map.js"
 
 /* Components */
 import Accessibilite from "@/views/Accessibilite.vue"
+import ComprendreMesObligations from "@/views/ComprendreMesObligations.vue"
 import ConditionsGeneralesUtilisation from "@/views/ConditionsGeneralesUtilisation.vue"
 import Contact from "@/views/Contact.vue"
 import Developpeurs from "@/views/Developpeurs.vue"
@@ -94,6 +95,14 @@ const routes = [
     meta: {
       title: "Observatoire EGalim en restauration collective",
       siteMap: law
+    },
+  },
+  {
+    path: "/comprendre-mes-obligations",
+    name: "ComprendreMesObligations",
+    component: ComprendreMesObligations,
+    meta: {
+      title: "ComprendreMesObligations",
     },
   },
 ]
