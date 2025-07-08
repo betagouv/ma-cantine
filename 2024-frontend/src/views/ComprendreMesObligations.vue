@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from "vue-router"
-import { tiles } from "@/constants/understanding-law.js"
+import { tiles } from "@/constants/crisp-tiles.js"
 import AppNeedHelp from "@/components/AppNeedHelp.vue"
 
 const route = useRoute()
@@ -19,12 +19,12 @@ const route = useRoute()
     <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--center fr-grid-row--gutters fr-my-5w fr-mb-8w">
       <li v-for="(tile, index) in tiles" :key="index" class="fr-col-12 fr-col-md-4">
         <DsfrTile
-          class="understanding-law__tile"
           :title="tile.title"
           titleTag="h2"
           :imgSrc="tile.imgSrc"
           :details="tile.details"
           :to="tile.to"
+          class="ma-cantine--tile-no-overflow"
         />
       </li>
     </ul>
@@ -38,13 +38,3 @@ const route = useRoute()
     </p>
   </AppNeedHelp>
 </template>
-
-<style lang="scss">
-.understanding-law {
-  &__tile {
-    .fr-tile__pictogram {
-      overflow: visible;
-    }
-  }
-}
-</style>
