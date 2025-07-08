@@ -32,7 +32,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
       ref="opener"
     />
     <div v-show="isOpened" class="app-dropdow__content" ref="content">
-      <div class="fr-p-2w fr-mt-2w fr-card">
+      <div class="app-dropdow__scrollable fr-p-2w fr-mt-1v fr-card">
         <slot></slot>
       </div>
     </div>
@@ -48,10 +48,16 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
     position: absolute;
     bottom: 0;
     transform: translateY(100%);
+    max-width: 30rem;
 
     *:last-child {
       margin-bottom: 0 !important;
     }
+  }
+
+  &__scrollable {
+    max-height: 25rem;
+    overflow: scroll;
   }
 }
 </style>
