@@ -64,14 +64,23 @@ uv add xxx
 uv remove xxx
 ```
 
-### Installer les dépendances du frontend
+### Installer les dépendances *des* frontends
 
 On utilise les dernières versions LTS de `node` et `npm`.
 
-L'application frontend se trouve sous `/frontend`. Pour installer les dépendances :
+/!\ Il y a actuellement 2 applications frontend côte à côte.
+
+L'application frontend Vue2 se trouve sous `/frontend`. Pour installer les dépendances :
 
 ```
 cd frontend
+npm install
+```
+
+L'application frontend Vue3 se trouve sous `/2024-frontend`. Pour installer les dépendances :
+
+```
+cd 2024-frontend
 npm install
 ```
 
@@ -266,7 +275,7 @@ Sur VSCode, ces tests peuvent être debuggés avec la configuration "Python: Tes
 
 ### Vue2
 
-Il faut d'abord se placer sur "/frontend", ensuite la commande pour lancer les tests VueJS est :
+Il faut d'abord se placer sur `/frontend`, ensuite la commande pour lancer les tests VueJS est :
 
 ```
 cd frontend
