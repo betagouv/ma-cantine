@@ -42,11 +42,11 @@
       <div v-if="showListView">
         <p>Actions en attente en {{ year }}</p>
         <AnnualActionableCanteensTable v-on:canteen-count="canteenCount = $event" />
-        <v-btn large color="primary" outlined :to="{ name: 'CanteenCreation' }">
+        <v-btn large color="primary" outlined :to="{ name: 'GestionnaireCantineAjouter' }">
           <v-icon class="mr-2">mdi-plus</v-icon>
           Ajouter une cantine
         </v-btn>
-        <v-btn large text color="primary" :to="{ name: 'ImportCanteens' }">
+        <v-btn large text color="primary" :to="{ name: 'GestionnaireImportCantines' }">
           <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
           Créer plusieurs cantines depuis un fichier
         </v-btn>
@@ -163,13 +163,13 @@ export default {
             {
               text: "Consulter la FAQ",
               to: {
-                name: "FAQ",
+                name: "FoireAuxQuestions",
               },
             },
             {
               text: "Nous contacter",
               to: {
-                name: "ContactPage",
+                name: "Contact",
               },
             },
           ],

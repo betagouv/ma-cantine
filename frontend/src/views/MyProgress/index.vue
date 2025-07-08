@@ -147,7 +147,7 @@
         </div>
         <p class="mt-4">
           Question, problème ?
-          <router-link :to="{ name: 'ContactPage' }" class="grey--text text--darken-4">Contactez-nous</router-link>
+          <router-link :to="{ name: 'Contact' }" class="grey--text text--darken-4">Contactez-nous</router-link>
         </p>
       </v-col>
       <!-- Diagnostic tabs -->

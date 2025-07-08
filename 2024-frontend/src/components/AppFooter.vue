@@ -9,13 +9,13 @@ const descText =
   <DsfrFooter
     :logo-text
     a11yCompliance="partiellement conforme"
-    :a11yComplianceLink="{ name: 'AccessibilityDeclaration' }"
-    :legalLink="{ name: 'LegalNotices' }"
-    :personalDataLink="{ name: 'PersonalData' }"
-    :cookiesLink="{ name: 'PersonalData', hash: '#cookies' }"
+    :a11yComplianceLink="{ name: 'Accessibilite' }"
+    :legalLink="{ name: 'MentionsLegales' }"
+    :personalDataLink="{ name: 'DonneesPersonnelles' }"
+    :cookiesLink="{ name: 'DonneesPersonnelles', hash: '#cookies' }"
     :afterMandatoryLinks="[
-      { text: 'Conditions générales d\'utilisation', to: { name: 'CGU' } },
-      { text: 'Plan du site', to: { name: 'SiteMap' } },
+      { text: 'Conditions générales d\'utilisation', to: { name: 'ConditionsGeneralesUtilisation' } },
+      { text: 'Plan du site', to: { name: 'PlanDuSite' } },
     ]"
     :desc-text
     licenceTo="https://github.com/betagouv/ma-cantine/blob/staging/LICENSE"

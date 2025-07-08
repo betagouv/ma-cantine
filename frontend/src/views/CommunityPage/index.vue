@@ -108,7 +108,7 @@ export default {
           title: "Trouver des acteurs de l'éco-système",
         },
         {
-          to: { name: "FAQ" },
+          to: { name: "FoireAuxQuestions" },
           title: "Foire aux questions",
         },
         {
