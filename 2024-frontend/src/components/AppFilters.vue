@@ -1,26 +1,58 @@
 <script setup>
-import { ref } from "vue"
-import { getYearsOptions, getCharacteristicsOptions } from "@/services/filters"
+import { ref, computed } from "vue"
+import { getYearsOptions, getCharacteristicsOptions, getSectorsOptions } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
 /* Display */
 const props = defineProps(["filters"])
 const displayYearFilter = ref(props.filters.includes("years"))
 const displayCharacteristicsFilter = ref(props.filters.includes("characteristics"))
+const displaySectorsFilter = ref(props.filters.includes("sectors"))
 
 /* Otions */
 const yearsOptions = ref(getYearsOptions())
 const characteristicsOptions = ref(getCharacteristicsOptions())
+const allSectorsOptions = ref([])
+getSectorsOptions().then((response) => {
+  allSectorsOptions.value = response
+})
+
+/* Search sectors */
+const sectorsOptions = computed(() => {
+  if (allSectorsOptions.value.length === 0) return []
+  if (searchSectorsString.value === "") return allSectorsOptions.value
+  const searchedSectors = allSectorsOptions.value.filter((sector) => {
+    const sectorLabel = sector.label.toLowerCase()
+    const stringSearched = searchSectorsString.value.toLowerCase()
+    return sectorLabel.indexOf(stringSearched) >= 0
+  })
+  return searchedSectors
+})
+const updateSearch = (string) => {
+  searchSectorsString.value = string
+}
 
 /* Models */
 const yearModel = ref("")
 const economicModel = ref("")
 const managementType = ref("")
 const productionType = ref([])
+const sectors = ref([])
+const searchSectorsString = ref("")
 </script>
 
 <template>
   <ul class="ma-cantine--unstyled-list">
+    <li v-if="displaySectorsFilter">
+      <AppDropdown label="Secteurs">
+        <DsfrSearchBar
+          :modelValue="searchSectorsString"
+          placeholder="Rechercher un secteur"
+          @update:modelValue="updateSearch"
+        />
+        <DsfrCheckboxSet :modelValue="sectors" :options="sectorsOptions" small />
+      </AppDropdown>
+    </li>
     <li v-if="displayCharacteristicsFilter">
       <AppDropdown label="Caractéristiques">
         <DsfrRadioButtonSet

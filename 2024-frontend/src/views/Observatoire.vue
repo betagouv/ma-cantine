@@ -5,7 +5,7 @@ import AppFilters from "@/components/AppFilters.vue"
 const route = useRoute()
 const pictoDataVisualization = "/static/images/picto-dsfr/data-visualization.svg"
 const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
-const pageFilters = ["years", "characteristics"]
+const pageFilters = ["years", "characteristics", "sectors"]
 </script>
 
 <template>
