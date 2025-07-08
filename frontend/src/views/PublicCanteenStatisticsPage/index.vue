@@ -204,7 +204,7 @@
               </p>
             </v-card-text>
             <v-card-actions class="px-1">
-              <router-link :to="{ name: 'UnderstandingLaw' }" class="text-body-2">
+              <router-link :to="{ name: 'ComprendreMesObligations' }" class="text-body-2">
                 La mesure
               </router-link>
             </v-card-actions>

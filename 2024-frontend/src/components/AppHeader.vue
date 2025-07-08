@@ -94,7 +94,7 @@ const navItems = [
   },
   {
     text: "Comprendre mes obligations",
-    to: { name: "UnderstandingLaw" },
+    to: { name: "ComprendreMesObligations" },
   },
   {
     title: "Aide",
