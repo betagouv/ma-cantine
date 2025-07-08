@@ -6,7 +6,6 @@ import ManagerLanding from "@/views/ManagerLanding"
 import DiagnosticPage from "@/views/DiagnosticPage"
 import KeyMeasuresPage from "@/views/KeyMeasuresPage"
 import KeyMeasuresHome from "@/views/KeyMeasuresPage/KeyMeasuresHome"
-import KeyMeasurePage from "@/views/KeyMeasuresPage/KeyMeasurePage"
 import GeneratePosterPage from "@/views/GeneratePosterPage"
 import CanteensPage from "@/views/CanteensPage"
 import CanteenWidget from "@/views/CanteensPage/CanteenWidget"
@@ -140,19 +139,10 @@ const routes = [
         beforeEnter: (route, _, next) => {
           store.state.loggedUser
             ? next({
-                name: "KeyMeasurePage",
-                params: {
-                  id: "qualite-des-produits",
-                },
+                name: "ComprendreMesObligations",
               })
             : next()
         },
-      },
-      {
-        path: ":id",
-        name: "KeyMeasurePage",
-        component: KeyMeasurePage,
-        props: true,
       },
     ],
     meta: {
@@ -519,6 +509,10 @@ const vue3Routes = [
     path: "/plan-du-site/",
     name: "PlanDuSite",
   },
+  {
+    path: "/comprendre-mes-obligations",
+    name: "ComprendreMesObligations",
+  },
 ]
 const VUE3_PREFIX = "/v2"
 vue3Routes.forEach((r) => {
@@ -539,6 +533,37 @@ routes.push({
 routes.push({
   path: "/politique-de-confidentialite",
   redirect: { name: "DonneesPersonnelles" },
+})
+
+routes.push({
+  path: "/mesures-phares/qualite-des-produits",
+  redirect: { name: "ComprendreMesObligations" },
+})
+
+routes.push({
+  path: "/mesures-phares/gaspillage-alimentaire",
+  redirect: { name: "ComprendreMesObligations" },
+})
+
+routes.push({
+  path: "/mesures-phares/menus-vegetariens",
+  redirect: { name: "ComprendreMesObligations" },
+})
+
+routes.push({
+  path: "/mesures-phares/interdiction-du-plastique",
+  redirect: { name: "ComprendreMesObligations" },
+})
+
+routes.push({
+  path: "/mesures-phares/information-des-usagers",
+  redirect: { name: "ComprendreMesObligations" },
+})
+
+// Old url visible on google
+routes.push({
+  path: "/mesures-phares/diversification-des-menus",
+  redirect: { name: "ComprendreMesObligations" },
 })
 
 routes.push({
