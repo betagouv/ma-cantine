@@ -211,9 +211,9 @@
       "type": "boolean"
     },
     {
-      "description": "A télédéclaré ses données lors de la campagne 2024 (portant sur les données 2024). Cette campagne est encore en cours. Les données peuvent donc évoluer",
+      "description": "A télédéclaré ses données lors de la campagne 2024 (portant sur les données 2024)",
       "example": "true",
-      "name": "declaration_donnees_2024_en_cours",
+      "name": "declaration_donnees_2024",
       "title": "A déclaré en 2025 ses données de 2024",
       "type": "boolean"
     },
