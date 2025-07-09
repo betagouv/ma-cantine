@@ -56,7 +56,7 @@ const searchSectorsString = ref("")
         </AppDropdown>
       </li>
       <li v-if="displayCharacteristicsFilter" class="fr-mr-1v">
-        <AppDropdown label="Caractéristiques">
+        <AppDropdown label="Caractéristiques des cantines">
           <DsfrCheckboxSet
             legend="Types d’établissement :"
             :modelValue="economicModel"
