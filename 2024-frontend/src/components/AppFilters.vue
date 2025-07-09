@@ -42,10 +42,26 @@ const searchSectorsString = ref("")
 </script>
 
 <template>
-  <div class="fr-grid-row fr-grid-row--left fr-grid-row--middle">
-    <p class="fr-mb-0 fr-mr-2w">Filtrer par :</p>
+  <div class="app-filters">
+    <p class="app-filters__title fr-mb-0">Filtrer par :</p>
     <ul class="ma-cantine--unstyled-list fr-grid-row">
-      <li v-if="displaySectorsFilter" class="fr-mr-1v">
+      <li class="fr-mr-1w">
+        <AppDropdown label="Régions"></AppDropdown>
+      </li>
+      <li class="fr-mr-1w">
+        <AppDropdown label="Départements"></AppDropdown>
+      </li>
+      <li class="fr-mr-1w">
+        <AppDropdown label="EPCI"></AppDropdown>
+      </li>
+      <li class="fr-mr-1w">
+        <AppDropdown label="PAT"></AppDropdown>
+      </li>
+      <li class="fr-mr-1w">
+        <AppDropdown label="Communes"></AppDropdown>
+      </li>
+      <li class="fr-hidden fr-unhidden-md fr-col-12"></li>
+      <li v-if="displaySectorsFilter" class="fr-mr-1w">
         <AppDropdown label="Secteurs">
           <DsfrSearchBar
             :modelValue="searchSectorsString"
@@ -55,7 +71,7 @@ const searchSectorsString = ref("")
           <DsfrCheckboxSet :modelValue="sectors" :options="sectorsOptions" small />
         </AppDropdown>
       </li>
-      <li v-if="displayCharacteristicsFilter" class="fr-mr-1v">
+      <li v-if="displayCharacteristicsFilter" class="fr-mr-1w">
         <AppDropdown label="Caractéristiques des cantines">
           <DsfrCheckboxSet
             legend="Types d’établissement :"
@@ -80,7 +96,7 @@ const searchSectorsString = ref("")
           />
         </AppDropdown>
       </li>
-      <li v-if="displayYearFilter" class="fr-mr-1v">
+      <li v-if="displayYearFilter" class="fr-mr-1w">
         <AppDropdown label="Années" class="size-small">
           <DsfrRadioButtonSet :modelValue="yearModel" :options="yearsOptions" small />
         </AppDropdown>
@@ -88,3 +104,21 @@ const searchSectorsString = ref("")
     </ul>
   </div>
 </template>
+
+<style lang="scss">
+.app-filters {
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+  flex-direction: column;
+  gap: 1rem;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+
+  &__title {
+    flex-shrink: 0;
+  }
+}
+</style>
