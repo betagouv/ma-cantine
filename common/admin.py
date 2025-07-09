@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from common.cache.models import Cache
+from common.models import Cache
 
 
 @admin.register(Cache)
