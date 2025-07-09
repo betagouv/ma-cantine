@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed } from "vue"
+import { computedAsync } from "@vueuse/core"
 import { getYearsOptions, getCharacteristicsOptions, getSectorsOptions } from "@/services/filters"
+import openDataService from "@/services/openData"
 import AppDropdown from "@/components/AppDropdown.vue"
 
 /* Display */
@@ -8,6 +10,16 @@ const props = defineProps(["filters"])
 const displayYearFilter = ref(props.filters.includes("years"))
 const displayCharacteristicsFilter = ref(props.filters.includes("characteristics"))
 const displaySectorsFilter = ref(props.filters.includes("sectors"))
+const displayCitiesFilter = ref(props.filters.includes("cities"))
+
+/* Models */
+const yearModel = ref("")
+const economicModel = ref([])
+const managementType = ref([])
+const productionType = ref([])
+const sectors = ref([])
+const searchSectors = ref("")
+const searchCities = ref("")
 
 /* Otions */
 const yearsOptions = ref(getYearsOptions())
@@ -28,17 +40,19 @@ const sectorsOptions = computed(() => {
   })
   return searchedSectors
 })
-const updateSearch = (string) => {
-  searchSectors.value = string
-}
 
-/* Models */
-const yearModel = ref("")
-const economicModel = ref([])
-const managementType = ref([])
-const productionType = ref([])
-const sectors = ref([])
-const searchSectors = ref("")
+/* Cities */
+const citiesOptions = computedAsync(async () => {
+  const response = await openDataService.findCitiesWithNameAutocompletion(searchCities.value)
+  const citiesCheckboxes = response.map((city) => {
+    return {
+      label: `${city.nom} (${city.codeDepartement})`,
+      value: city.code,
+      id: city.code,
+    }
+  })
+  return citiesCheckboxes
+})
 </script>
 
 <template>
@@ -57,8 +71,15 @@ const searchSectors = ref("")
       <li class="fr-mr-1w">
         <AppDropdown label="PAT"></AppDropdown>
       </li>
-      <li class="fr-mr-1w">
-        <AppDropdown label="Communes"></AppDropdown>
+      <li v-if="displayCitiesFilter" class="fr-mr-1w">
+        <AppDropdown label="Communes">
+          <DsfrSearchBar
+            :modelValue="searchCities"
+            placeholder="Rechercher une commune"
+            @update:modelValue="($event) => (searchCities = $event)"
+          />
+          <DsfrCheckboxSet :modelValue="sectors" :options="citiesOptions" small />
+        </AppDropdown>
       </li>
       <li class="fr-hidden fr-unhidden-md fr-col-12"></li>
       <li v-if="displaySectorsFilter" class="fr-mr-1w">
@@ -66,7 +87,7 @@ const searchSectors = ref("")
           <DsfrSearchBar
             :modelValue="searchSectors"
             placeholder="Rechercher un secteur"
-            @update:modelValue="updateSearch"
+            @update:modelValue="($event) => (searchSectors = $event)"
           />
           <DsfrCheckboxSet :modelValue="sectors" :options="sectorsOptions" small />
         </AppDropdown>
