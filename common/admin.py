@@ -7,7 +7,7 @@ from common.models import Cache
 class CacheAdmin(admin.ModelAdmin):
     list_display = ("cache_key", "expires")
     search_fields = ("cache_key",)
-    readonly_fields = ("cache_key", "expires")
+    fields = ("cache_key", "value", "expires")
 
     def has_add_permission(self, request):
         return False

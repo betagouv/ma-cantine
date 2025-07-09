@@ -12,6 +12,8 @@ from data.region_choices import Region
 
 year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
+CACHE_GET_QUERY_COUNT = 1
+CACHE_SET_QUERY_COUNT = 7
 
 
 @override_settings(PUBLISH_BY_DEFAULT=True)
@@ -76,7 +78,7 @@ class TestCanteenStatsApi(APITestCase):
 
     def test_query_count(self):
         self.assertEqual(Canteen.objects.count(), 5)
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(7 + CACHE_SET_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -400,19 +402,19 @@ class TestCanteenStatsApi(APITestCase):
     def test_cache_mechanism(self):
         # first time: no cache
         self.assertEqual(Canteen.objects.count(), 5)
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(7 + CACHE_SET_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # second time: cache hit
-        with self.assertNumQueries(0):
+        with self.assertNumQueries(0 + CACHE_GET_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # another year: no cache
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(7 + CACHE_SET_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 1})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # another year again: cache hit
-        with self.assertNumQueries(0):
+        with self.assertNumQueries(0 + CACHE_GET_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 1})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # another year with different filters: no cache
