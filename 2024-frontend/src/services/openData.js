@@ -6,4 +6,10 @@ const findCitiesFromPostalCode = (postcode) => {
     .catch((error) => error)
 }
 
-export default { findCitiesFromPostalCode }
+const findCitiesWithNameAutocompletion = (name) => {
+  return fetch(`${apiGeo}communes?nom=${name}&limit=10`)
+    .then((response) => response.json())
+    .catch((error) => error)
+}
+
+export default { findCitiesFromPostalCode, findCitiesWithNameAutocompletion }
