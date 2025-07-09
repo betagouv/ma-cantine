@@ -48,7 +48,6 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
     position: absolute;
     bottom: 0;
     transform: translateY(100%);
-    max-width: 30rem;
 
     *:last-child {
       margin-bottom: 0 !important;
@@ -56,8 +55,15 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
   }
 
   &__scrollable {
+    width: 25rem;
     max-height: 25rem;
-    overflow: scroll;
+    overflow-y: scroll;
+  }
+
+  &.size-small {
+    .app-dropdow__scrollable {
+      width: auto;
+    }
   }
 }
 </style>

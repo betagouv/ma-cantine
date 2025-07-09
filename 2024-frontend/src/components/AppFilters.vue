@@ -42,45 +42,48 @@ const searchSectorsString = ref("")
 </script>
 
 <template>
-  <ul class="ma-cantine--unstyled-list">
-    <li v-if="displaySectorsFilter">
-      <AppDropdown label="Secteurs">
-        <DsfrSearchBar
-          :modelValue="searchSectorsString"
-          placeholder="Rechercher un secteur"
-          @update:modelValue="updateSearch"
-        />
-        <DsfrCheckboxSet :modelValue="sectors" :options="sectorsOptions" small />
-      </AppDropdown>
-    </li>
-    <li v-if="displayCharacteristicsFilter">
-      <AppDropdown label="Caractéristiques">
-        <DsfrRadioButtonSet
-          legend="Type d’établissement"
-          :modelValue="economicModel"
-          :options="characteristicsOptions.economicModel"
-          small
-          inline
-        />
-        <DsfrRadioButtonSet
-          legend="Mode de gestion"
-          :modelValue="managementType"
-          :options="characteristicsOptions.managementType"
-          small
-          inline
-        />
-        <DsfrCheckboxSet
-          legend="Modes de production"
-          :modelValue="productionType"
-          :options="characteristicsOptions.productionType"
-          small
-        />
-      </AppDropdown>
-    </li>
-    <li v-if="displayYearFilter">
-      <AppDropdown label="Années">
-        <DsfrRadioButtonSet :modelValue="yearModel" :options="yearsOptions" small />
-      </AppDropdown>
-    </li>
-  </ul>
+  <div class="fr-grid-row fr-grid-row--left fr-grid-row--middle">
+    <p class="fr-mb-0 fr-mr-2w">Filtrer par :</p>
+    <ul class="ma-cantine--unstyled-list fr-grid-row">
+      <li v-if="displaySectorsFilter" class="fr-mr-1v">
+        <AppDropdown label="Secteurs">
+          <DsfrSearchBar
+            :modelValue="searchSectorsString"
+            placeholder="Rechercher un secteur"
+            @update:modelValue="updateSearch"
+          />
+          <DsfrCheckboxSet :modelValue="sectors" :options="sectorsOptions" small />
+        </AppDropdown>
+      </li>
+      <li v-if="displayCharacteristicsFilter" class="fr-mr-1v">
+        <AppDropdown label="Caractéristiques">
+          <DsfrRadioButtonSet
+            legend="Type d’établissement"
+            :modelValue="economicModel"
+            :options="characteristicsOptions.economicModel"
+            small
+            inline
+          />
+          <DsfrRadioButtonSet
+            legend="Mode de gestion"
+            :modelValue="managementType"
+            :options="characteristicsOptions.managementType"
+            small
+            inline
+          />
+          <DsfrCheckboxSet
+            legend="Modes de production"
+            :modelValue="productionType"
+            :options="characteristicsOptions.productionType"
+            small
+          />
+        </AppDropdown>
+      </li>
+      <li v-if="displayYearFilter" class="fr-mr-1v">
+        <AppDropdown label="Années" class="size-small">
+          <DsfrRadioButtonSet :modelValue="yearModel" :options="yearsOptions" small />
+        </AppDropdown>
+      </li>
+    </ul>
+  </div>
 </template>
