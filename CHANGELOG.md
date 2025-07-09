@@ -6,6 +6,25 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.24.1](https://github.com/betagouv/ma-cantine/compare/v2025.24.0...v2025.24.1) (2025-07-09)
+
+
+### Améliorations
+
+* **Metabase:** ajoute le champ spe dans les exports TD ([#5426](https://github.com/betagouv/ma-cantine/issues/5426)) ([1b04bb9](https://github.com/betagouv/ma-cantine/commit/1b04bb9fe224d98758fa2bc7e45cd98c7e2cf246))
+
+
+### Documentation
+
+* mise à jour de la doc Vue3 et Makefile ([#5515](https://github.com/betagouv/ma-cantine/issues/5515)) ([3a772ea](https://github.com/betagouv/ma-cantine/commit/3a772ead81f0296bc77f93221eaea9fce1988cf3))
+
+
+### Technique
+
+* **API Stats:** mettre en place un cache pour accélérer le chargement de la page (sans filtre sélectionné) ([#5482](https://github.com/betagouv/ma-cantine/issues/5482)) ([30f5a15](https://github.com/betagouv/ma-cantine/commit/30f5a153fc5b2d32c1e748dcb6571546e018990d))
+* **deps:** Maj Django 5.0.1 -&gt; Django 5.1.0 ([#5501](https://github.com/betagouv/ma-cantine/issues/5501)) ([c6ee0d3](https://github.com/betagouv/ma-cantine/commit/c6ee0d3b8b64f815b9ab18404ceaf26dfb2e52ba))
+* **Vue 3:** renomme les pages ([#5508](https://github.com/betagouv/ma-cantine/issues/5508)) ([f9d1175](https://github.com/betagouv/ma-cantine/commit/f9d1175f143bb6f40168b074df0f6e73dd7293ce))
+
 ## [2025.24.0](https://github.com/betagouv/ma-cantine/compare/v2025.23.2...v2025.24.0) (2025-07-07)
 
 
