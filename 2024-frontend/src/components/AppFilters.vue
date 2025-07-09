@@ -20,16 +20,16 @@ getSectorsOptions().then((response) => {
 /* Search sectors */
 const sectorsOptions = computed(() => {
   if (allSectorsOptions.value.length === 0) return []
-  if (searchSectorsString.value === "") return allSectorsOptions.value
+  if (searchSectors.value === "") return allSectorsOptions.value
   const searchedSectors = allSectorsOptions.value.filter((sector) => {
     const sectorLabel = sector.label.toLowerCase()
-    const stringSearched = searchSectorsString.value.toLowerCase()
+    const stringSearched = searchSectors.value.toLowerCase()
     return sectorLabel.indexOf(stringSearched) >= 0
   })
   return searchedSectors
 })
 const updateSearch = (string) => {
-  searchSectorsString.value = string
+  searchSectors.value = string
 }
 
 /* Models */
@@ -38,7 +38,7 @@ const economicModel = ref([])
 const managementType = ref([])
 const productionType = ref([])
 const sectors = ref([])
-const searchSectorsString = ref("")
+const searchSectors = ref("")
 </script>
 
 <template>
@@ -64,7 +64,7 @@ const searchSectorsString = ref("")
       <li v-if="displaySectorsFilter" class="fr-mr-1w">
         <AppDropdown label="Secteurs">
           <DsfrSearchBar
-            :modelValue="searchSectorsString"
+            :modelValue="searchSectors"
             placeholder="Rechercher un secteur"
             @update:modelValue="updateSearch"
           />
