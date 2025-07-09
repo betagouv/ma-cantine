@@ -34,8 +34,8 @@ const updateSearch = (string) => {
 
 /* Models */
 const yearModel = ref("")
-const economicModel = ref("")
-const managementType = ref("")
+const economicModel = ref([])
+const managementType = ref([])
 const productionType = ref([])
 const sectors = ref([])
 const searchSectorsString = ref("")
@@ -57,25 +57,26 @@ const searchSectorsString = ref("")
       </li>
       <li v-if="displayCharacteristicsFilter" class="fr-mr-1v">
         <AppDropdown label="Caractéristiques">
-          <DsfrRadioButtonSet
-            legend="Type d’établissement"
+          <DsfrCheckboxSet
+            legend="Types d’établissement :"
             :modelValue="economicModel"
             :options="characteristicsOptions.economicModel"
             small
             inline
           />
-          <DsfrRadioButtonSet
-            legend="Mode de gestion"
+          <DsfrCheckboxSet
+            legend="Modes de gestion :"
             :modelValue="managementType"
             :options="characteristicsOptions.managementType"
             small
             inline
           />
           <DsfrCheckboxSet
-            legend="Modes de production"
+            legend="Modes de production :"
             :modelValue="productionType"
             :options="characteristicsOptions.productionType"
             small
+            inline
           />
         </AppDropdown>
       </li>

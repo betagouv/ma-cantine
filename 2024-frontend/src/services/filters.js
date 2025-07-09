@@ -19,19 +19,22 @@ const getYearsOptions = () => {
 const getCharacteristicsOptions = () => {
   const economicModelOptions = canteenCharacteristics.economicModel.map((option) => {
     option.hint = ""
-    option.name = "economicModel"
+    option.id = option.value
     return option
   })
 
   const managementTypeOptions = canteenCharacteristics.managementType.map((option) => {
     option.name = "managementType"
-    return option
-  })
-
-  const productionTypeOptions = canteenCharacteristics.productionType.map((option) => {
     option.id = option.value
     return option
   })
+
+  const productionTypeOptions = [
+    { label: "Site", value: "site", id: "site" },
+    { label: "Satellite", value: "site_cooked_elsewhere", id: "site_cooked_elsewhere" },
+    { label: "Centrale", value: "central", id: "central" },
+    { label: "Centrale et site", value: "central_serving", id: "central_serving" },
+  ]
 
   const characteristicsOptions = {
     economicModel: economicModelOptions,
