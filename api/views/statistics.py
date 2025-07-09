@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 CACHE_KEY_PREFIX = "canteen_statistics"
-CACHE_TIMEOUT = 60 * 60 * 24  # 24 hours
+CACHE_TIMEOUT = 60 * 60 * 24  # 24 hours  # TODO: reduce?
 
 
 @extend_schema(
@@ -75,7 +75,8 @@ class CanteenStatisticsView(APIView):
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
 
         # cache mechanism: only for requests with just the year parameter
-        if len(request.query_params) == 1:
+        # TODO: refactor to a dedicated cache config file?
+        if len(request.query_params) == 1 and year:
             cache_key = f"{CACHE_KEY_PREFIX}_{year}"
             cached_data = cache.get(cache_key)
             if cached_data:
@@ -93,7 +94,7 @@ class CanteenStatisticsView(APIView):
         serializer = self.serializer_class(data)
 
         # cache mechanism: store the result if it was not cached (only for requests with just the year parameter)
-        if len(request.query_params) == 1:
+        if len(request.query_params) == 1 and year:
             cache_key = f"{CACHE_KEY_PREFIX}_{year}"
             if not cache.get(cache_key):
                 cache.set(cache_key, camelize(serializer.data), timeout=CACHE_TIMEOUT)
