@@ -1,5 +1,6 @@
 import canteenCharacteristics from "@/constants/canteen-establishment-form-options.js"
 import sectorsService from "@/services/sectors"
+import communes from "@/data/communes.json"
 
 const getYearsOptions = () => {
   const startYear = 2020
@@ -58,4 +59,30 @@ const getSectorsOptions = async () => {
   return sectorsOptions
 }
 
-export { getYearsOptions, getCharacteristicsOptions, getSectorsOptions }
+const cleanString = (string) => {
+  // TODO à améliorer et compléter
+  return string
+    .toLowerCase()
+    .replaceAll("-", " ")
+    .replaceAll("'", " ")
+}
+
+const getCitiesOptionFromSearch = (search) => {
+  const cleanSearch = cleanString(search)
+
+  const filteredCities = communes.filter((city) => {
+    const cleanName = cleanString(city.nom)
+    return cleanName.startsWith(cleanSearch)
+  })
+  const firstTenCities = filteredCities.slice(0, 9)
+  const options = firstTenCities.map((city) => {
+    return {
+      label: city.nom,
+      value: city.code,
+      id: city.code,
+    }
+  })
+  return options
+}
+
+export { getYearsOptions, getCharacteristicsOptions, getSectorsOptions, getCitiesOptionFromSearch }
