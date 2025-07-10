@@ -10,6 +10,9 @@ DECOUPAGE_ADMINISTRATIF_API_URL = "https://geo.api.gouv.fr"
 
 
 def fetch_communes():
+    """
+    Fields returned: nom, code (codeDepartement, siren, codeEpci, codeRegion, codesPostaux, population)
+    """
     response = requests.get(
         f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes?type=arrondissement-municipal,commune-actuelle", timeout=50
     )
@@ -18,24 +21,36 @@ def fetch_communes():
 
 
 def fetch_epcis():
+    """
+    Fields returned: nom, code (codesDepartements, codesRegions, population)
+    """
     response = requests.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom", timeout=50)
     response.raise_for_status()
     return response.json()
 
 
 def fetch_communes_from_epci(epci):
+    """
+    Fields returned: nom, code (codeDepartement, siren, codeEpci, codeRegion, codePostaux, population)
+    """
     response = requests.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis/{epci}/communes?fields=code", timeout=5)
     response.raise_for_status()
     return response.json()
 
 
 def fetch_departements():
+    """
+    Fields returned: nom, code, codeRegion
+    """
     response = requests.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/departements?zone=metro,drom,com", timeout=5)
     response.raise_for_status()
     return response.json()
 
 
 def fetch_regions():
+    """
+    Fields returned: nom, code
+    """
     response = requests.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/regions?zone=metro,drom,com", timeout=5)
     response.raise_for_status()
     return response.json()
