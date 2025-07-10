@@ -87,6 +87,27 @@ class TestCanteenVisibleQuerySetAndProperty(TestCase):
         self.assertEqual(self.canteen_armee.publication_status_display_to_public, "draft")
 
 
+class TestCanteenForYearQuerySet(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        with freeze_time("2021-01-01"):  # before the first campaign
+            cls.canteen_2021 = CanteenFactory()
+        with freeze_time("2023-03-30"):  # during the 2022 campaign
+            cls.canteen_2023 = CanteenFactory()
+        with freeze_time("2024-02-01"):  # during the 2023 campaign
+            cls.canteen_2024 = CanteenFactory()
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            cls.canteen_2025 = CanteenFactory()
+        with freeze_time("2025-06-01"):  # after the 2024 campaign end date
+            cls.canteen_2025_2 = CanteenFactory()
+
+    def test_for_year(self):
+        self.assertEqual(Canteen.objects.for_year(2022).count(), 2)
+        self.assertEqual(Canteen.objects.for_year(2023).count(), 3)
+        self.assertEqual(Canteen.objects.for_year(2024).count(), 4)
+        self.assertEqual(Canteen.objects.for_year(2025).count(), 5)
+
+
 class TestCanteenSatelliteQuerySet(TestCase):
     @classmethod
     def setUpTestData(cls):

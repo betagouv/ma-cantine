@@ -22,7 +22,7 @@ from data.utils import (
     has_charfield_missing_query,
     optimize_image,
 )
-from macantine.utils import is_in_correction, is_in_teledeclaration
+from macantine.utils import CAMPAIGN_DATES, is_in_correction, is_in_teledeclaration
 
 from .softdeletionmodel import (
     SoftDeletionManager,
@@ -92,6 +92,22 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
     def publicly_hidden(self):
         return self.filter(line_ministry=Canteen.Ministries.ARMEE)
+
+    def for_year(self, year):
+        """
+        Return canteens created up until a given year.
+        Depends on the end_date of the CAMPAIGN_DATES for the year.
+        """
+        year = int(year)
+        this_year = timezone.now().date().year
+        if year >= this_year:
+            return self.all()
+        else:
+            if year in CAMPAIGN_DATES.keys():
+                end_date = CAMPAIGN_DATES[year]["teledeclaration_end_date"]
+                return self.filter(creation_date__lte=end_date)
+            else:
+                return self.none()
 
     def is_satellite(self):
         return self.filter(is_satellite_query())
@@ -259,6 +275,9 @@ class CanteenManager(SoftDeletionManager):
 
     def publicly_hidden(self):
         return self.get_queryset().publicly_hidden()
+
+    def for_year(self, year):
+        return self.get_queryset().for_year(year)
 
     def is_satellite(self):
         return self.get_queryset().is_satellite()
