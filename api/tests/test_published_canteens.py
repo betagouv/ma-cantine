@@ -19,57 +19,33 @@ CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestPublishedCanteenApi(APITestCase):
-    @authenticate
-    def test_canteen_publication_fields_read_only(self):
-        """
-        Users cannot modify canteen publication status with this endpoint
-        """
-        canteen = CanteenFactory.create(city="Paris", managers=[authenticate.user])
-        payload = {
-            "publication_status": "published",
-        }
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        persisted_canteen = Canteen.objects.get(pk=canteen.id)
-        self.assertEqual(persisted_canteen.publication_status, Canteen.PublicationStatus.DRAFT.value)
-
     def test_get_single_published_canteen(self):
         """
         We are able to get a single published canteen.
         """
-        published_canteen = CanteenFactory.create(publication_status="published")
+        published_canteen = CanteenFactory()
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": published_canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
         self.assertEqual(body.get("id"), published_canteen.id)
+        self.assertIn("badges", body)
 
     def test_get_single_unpublished_canteen(self):
         """
-        A 404 is raised if we try to get a sinlge published canteen
+        A 404 is raised if we try to get a single published canteen
         that has not been published by the manager.
         """
-        private_canteen = CanteenFactory.create(publication_status="draft")
+        private_canteen = CanteenFactory(line_ministry=Canteen.Ministries.ARMEE)
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": private_canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_get_badges_in_single_published_canteen(self):
-        """
-        Expect to get badge info in response
-        """
-        published_canteen = CanteenFactory.create(publication_status="published")
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": published_canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertIn("badges", body)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_canteen_image_serialization(self):
         """
         A canteen with images should serialize those images
         """
-        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
+        canteen = CanteenFactory()
         image_names = [
             "test-image-1.jpg",
             "test-image-2.jpg",
@@ -92,14 +68,13 @@ class TestPublishedCanteenApi(APITestCase):
 
     def test_satellite_published(self):
         central_siret = "22730656663081"
-        central_kitchen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory.create(
+        central_kitchen = CanteenFactory(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory(
             central_producer_siret=central_siret,
-            publication_status="published",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
         )
 
-        diagnostic = DiagnosticFactory.create(
+        diagnostic = DiagnosticFactory(
             canteen=central_kitchen,
             year=2020,
             value_total_ht=1200,
@@ -123,14 +98,13 @@ class TestPublishedCanteenApi(APITestCase):
 
     def test_satellite_published_without_bio(self):
         central_siret = "22730656663081"
-        central_kitchen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory.create(
+        central_kitchen = CanteenFactory(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory(
             central_producer_siret=central_siret,
-            publication_status="published",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
         )
 
-        diagnostic = DiagnosticFactory.create(
+        diagnostic = DiagnosticFactory(
             canteen=central_kitchen,
             year=2020,
             value_total_ht=1200,
@@ -160,7 +134,6 @@ class TestPublishedCanteenApi(APITestCase):
         central_kitchen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
         satellite = CanteenFactory.create(
             central_producer_siret=central_siret,
-            publication_status="published",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
         )
 
@@ -189,7 +162,6 @@ class TestPublishedCanteenApi(APITestCase):
         central_kitchen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
         satellite = CanteenFactory.create(
             central_producer_siret=central_siret,
-            publication_status="published",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
         )
 
@@ -236,10 +208,7 @@ class TestPublishedCanteenApi(APITestCase):
         """
         The published endpoint should not contain the real economic data, only percentages.
         """
-        canteen = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE,
-            publication_status="published",
-        )
+        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
 
         DiagnosticFactory.create(
             canteen=canteen,
@@ -284,7 +253,6 @@ class TestPublishedCanteenApi(APITestCase):
         canteen = CanteenFactory.create(
             siret=central_siret,
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status="published",
         )
 
         DiagnosticFactory.create(
@@ -314,7 +282,6 @@ class TestPublishedCanteenApi(APITestCase):
         """
         canteen = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status="published",
             redacted_appro_years=[2020, 2021, 2023],
         )
 
@@ -350,19 +317,16 @@ class TestPublishedCanteenApi(APITestCase):
         fully_redacted_satellite = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
-            publication_status="published",
             redacted_appro_years=[2022, 2023],
         )
         partially_redacted_satellite = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
-            publication_status="published",
             redacted_appro_years=[2022],
         )
         other_satellite = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
-            publication_status="published",
             redacted_appro_years=[],
         )
 
@@ -395,12 +359,10 @@ class TestPublishedCanteenApi(APITestCase):
             siret="96766910375238",
             production_type=Canteen.ProductionType.CENTRAL,
             redacted_appro_years=[2023],
-            publication_status="published",
         )
         satellite = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
-            publication_status="published",
             redacted_appro_years=[],
         )
 
@@ -425,7 +387,6 @@ class TestPublishedCanteenApi(APITestCase):
         satellite = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
-            publication_status="published",
         )
 
         DiagnosticFactory.create(canteen=satellite, year=2021)
@@ -462,7 +423,6 @@ class TestPublishedCanteenApi(APITestCase):
         satellite = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
-            publication_status="published",
             redacted_appro_years=[2023],
         )
 
@@ -479,7 +439,7 @@ class TestPublishedCanteenApi(APITestCase):
         """
         A teledeclared diagnostic cannot be redacted
         """
-        canteen = CanteenFactory.create(publication_status="published", redacted_appro_years=[2022, 2023])
+        canteen = CanteenFactory.create(redacted_appro_years=[2022, 2023])
 
         DiagnosticFactory.create(canteen=canteen, year=2022)
         diagnostic = DiagnosticFactory.create(canteen=canteen, year=2023)
@@ -498,9 +458,7 @@ class TestPublicCanteenApi(APITestCase):
         """
         All canteens are published except those with line_ministry of ARMEE
         """
-        published_canteen = CanteenFactory.create(
-            publication_status=Canteen.PublicationStatus.DRAFT, line_ministry=None
-        )
+        published_canteen = CanteenFactory.create(line_ministry=None)
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": published_canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -511,17 +469,14 @@ class TestPublicCanteenApi(APITestCase):
         """
         Canteens with a line ministry of ARMEE are not available publicly, regardless of publication status
         """
-        private_canteen = CanteenFactory.create(
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
-            line_ministry=Canteen.Ministries.ARMEE,
-        )
+        private_canteen = CanteenFactory.create(line_ministry=Canteen.Ministries.ARMEE)
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": private_canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class TestPublishedCanteenClaimApi(APITestCase):
     def test_canteen_claim_value(self):
-        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
+        canteen = CanteenFactory()
 
         # The factory creates canteens with managers
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
@@ -536,7 +491,7 @@ class TestPublishedCanteenClaimApi(APITestCase):
 
     @authenticate
     def test_canteen_claim_request(self):
-        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.DRAFT)
+        canteen = CanteenFactory()
         canteen.managers.clear()
 
         response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
@@ -553,7 +508,7 @@ class TestPublishedCanteenClaimApi(APITestCase):
 
     @authenticate
     def test_canteen_claim_request_fails_when_already_claimed(self):
-        canteen = CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED.value)
+        canteen = CanteenFactory()
         self.assertGreater(canteen.managers.count(), 0)
         user = authenticate.user
         self.assertFalse(canteen.managers.filter(id=user.id).exists())

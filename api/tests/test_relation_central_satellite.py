@@ -62,37 +62,6 @@ class TestRelationCentralSatellite(APITestCase):
         satellite_2_result = next(canteen for canteen in body if canteen["id"] == satellite_2.id)
         self.assertEqual(satellite_2_result["siret"], satellite_2.siret)
 
-    @authenticate
-    def test_get_satellites_with_publication_info(self):
-        """
-        Test that a list of the ids of the publishable satellites, and a count of unpublished
-        satellites is returned with the satellite list
-        """
-        central_siret = "22730656663081"
-        central = CanteenFactory.create(
-            siret=central_siret, production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
-        )
-        satellite_1 = CanteenFactory.create(
-            central_producer_siret=central_siret,
-            publication_status=Canteen.PublicationStatus.DRAFT,
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            managers=[authenticate.user],
-        )
-        # although user does not have mgmt rights on this, can get same data
-        CanteenFactory.create(
-            central_producer_siret=central_siret,
-            publication_status=Canteen.PublicationStatus.DRAFT,
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-        )
-        # the following canteen should not be returned
-        CanteenFactory.create()
-
-        response = self.client.get(reverse("list_create_update_satellite", kwargs={"canteen_pk": central.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["unpublishedCount"], 2)
-        self.assertEqual(body["satellitesToPublish"], [satellite_1.id])
-
     def test_create_satellite_unauthenticated(self):
         """
         Shouldn't be able to create satellites if not logged in
@@ -145,7 +114,6 @@ class TestRelationCentralSatellite(APITestCase):
         self.assertEqual(satellite.sectors.count(), 2)
         self.assertIn(school, satellite.sectors.all())
         self.assertIn(enterprise, satellite.sectors.all())
-        self.assertEqual(satellite.publication_status, Canteen.PublicationStatus.PUBLISHED)
         self.assertEqual(satellite.import_source, "Cuisine centrale : 08376514425566")
         self.assertEqual(satellite.central_producer_siret, central_siret)
         self.assertEqual(satellite.production_type, Canteen.ProductionType.ON_SITE_CENTRAL)

@@ -520,7 +520,6 @@ class TestDiagnosticsApi(APITestCase):
         last_year = 2021
         CanteenFactory.create(  # without diag
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -531,7 +530,6 @@ class TestDiagnosticsApi(APITestCase):
         )
         canteen_with_incomplete_diag = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -543,7 +541,6 @@ class TestDiagnosticsApi(APITestCase):
         DiagnosticFactory.create(canteen=canteen_with_incomplete_diag, year=last_year, value_total_ht=None)
         canteen_with_complete_diag = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -558,7 +555,6 @@ class TestDiagnosticsApi(APITestCase):
 
         canteen_with_incomplete_data = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -571,7 +567,6 @@ class TestDiagnosticsApi(APITestCase):
 
         canteen_without_line_ministry = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -590,7 +585,6 @@ class TestDiagnosticsApi(APITestCase):
         DiagnosticFactory.create(canteen=canteen_with_complete_diag, year=last_year - 1, value_total_ht=10000)
         canteen_with_td = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -633,7 +627,6 @@ class TestDiagnosticsApi(APITestCase):
         canteen_with_diag = CanteenFactory.create(
             name="Canteen with diag",
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -648,7 +641,6 @@ class TestDiagnosticsApi(APITestCase):
         canteen_with_td = CanteenFactory.create(
             name="Canteen with TD",
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
@@ -664,7 +656,6 @@ class TestDiagnosticsApi(APITestCase):
         canteen_with_correction = CanteenFactory.create(
             name="Canteen with TD cancelled",
             production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,

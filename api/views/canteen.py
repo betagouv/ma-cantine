@@ -68,9 +68,7 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 class PublishedCanteenSingleView(RetrieveAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
-
-    def get_queryset(self):
-        return Canteen.objects.publicly_visible()
+    queryset = Canteen.objects.publicly_visible()
 
 
 class ProductionTypeInFilter(BaseInFilter, CharFilter):
@@ -256,6 +254,7 @@ def filter_by_diagnostic_params(queryset, query_params):
 class PublishedCanteensView(ListAPIView):
     model = Canteen
     serializer_class = PublicCanteenPreviewSerializer
+    queryset = Canteen.objects.publicly_visible()
     pagination_class = PublishedCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -267,9 +266,6 @@ class PublishedCanteensView(ListAPIView):
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
     filterset_class = PublishedCanteenFilterSet
 
-    def get_queryset(self):
-        return Canteen.objects.publicly_visible()
-
     def filter_queryset(self, queryset):
         new_queryset = filter_by_diagnostic_params(queryset, self.request.query_params)
         return super().filter_queryset(new_queryset)
@@ -278,7 +274,7 @@ class PublishedCanteensView(ListAPIView):
 class PublicCanteenPreviewView(RetrieveAPIView):
     model = Canteen
     serializer_class = PublicCanteenPreviewSerializer
-    queryset = Canteen.objects.filter(publication_status=Canteen.PublicationStatus.PUBLISHED)
+    queryset = Canteen.objects.publicly_visible()
 
 
 class UserCanteensFilterSet(django_filters.FilterSet):
@@ -754,19 +750,6 @@ class UndoClaimCanteenView(APIView):
 class SatellitesPagination(LimitOffsetPagination):
     default_limit = 10
     max_limit = 40
-    unpublished_count = None
-    satellites_to_publish = []
-
-    def paginate_queryset(self, queryset, request, view=None):
-        unpublished_satellites = queryset.filter(publication_status=Canteen.PublicationStatus.DRAFT).only(
-            "pk", "managers"
-        )
-        self.unpublished_count = unpublished_satellites.count()
-        self.satellites_to_publish = []
-        for satellite in unpublished_satellites:
-            if satellite.managers.filter(pk=request.user.pk).exists():
-                self.satellites_to_publish.append(satellite.id)
-        return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
         return Response(
@@ -776,8 +759,6 @@ class SatellitesPagination(LimitOffsetPagination):
                     ("next", self.get_next_link()),
                     ("previous", self.get_previous_link()),
                     ("results", data),
-                    ("unpublished_count", self.unpublished_count),
-                    ("satellites_to_publish", self.satellites_to_publish),
                 ]
             )
         )
@@ -807,7 +788,6 @@ class SatelliteListCreateView(ListCreateAPIView):
         "name",
         "siret",
         "daily_meal_count",
-        "publication_status",
     ]
 
     def get_queryset(self):
@@ -846,7 +826,6 @@ class SatelliteListCreateView(ListCreateAPIView):
 
                 satellite = new_satellite.save(
                     central_producer_siret=canteen.siret,
-                    publication_status=Canteen.PublicationStatus.PUBLISHED,
                     import_source=f"Cuisine centrale : {canteen.siret}",
                     production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 )
@@ -934,7 +913,7 @@ class TerritoryCanteensListView(ListAPIView):
         MaCantineOrderingFilter,
     ]
     search_fields = ["name", "siret"]
-    ordering_fields = ["name", "city", "siret", "daily_meal_count", "publication_status"]
+    ordering_fields = ["name", "city", "siret", "daily_meal_count"]
 
     def get_queryset(self):
         departments = self.request.user.departments

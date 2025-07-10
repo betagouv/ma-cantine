@@ -64,6 +64,8 @@ class MediaListSerializer(serializers.ListSerializer):
 
 
 class MinimalCanteenSerializer(serializers.ModelSerializer):
+    publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
+
     class Meta:
         model = Canteen
         read_only_fields = (
@@ -204,6 +206,7 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
+        read_only_fields = ("publication_status",)
         fields = (
             "id",
             "name",
@@ -247,7 +250,10 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
-        read_only_fields = ("id",)
+        read_only_fields = (
+            "id",
+            "publication_status",
+        )
         fields = (
             "id",
             "name",

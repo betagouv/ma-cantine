@@ -5,7 +5,7 @@ from data.models import BlogPost, Canteen, Partner
 
 class CanteenSitemap(Sitemap):
     def items(self):
-        return Canteen.objects.filter(publication_status="published").order_by("id")
+        return Canteen.objects.all().order_by("id")
 
     def location(self, obj):
         return obj.url_path

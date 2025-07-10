@@ -650,7 +650,6 @@ class CCImportMixin:
         self,
         row,
         import_source,
-        publication_status,
         manager_emails,
         satellite_canteens_count=None,
     ):
@@ -660,8 +659,8 @@ class CCImportMixin:
         return super()._update_or_create_canteen(
             row,
             import_source,
-            publication_status,
             manager_emails,
+            None,
             satellite_canteens_count,
         )
 

@@ -45,7 +45,6 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2023"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2022"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), False)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), False)
 
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
@@ -70,28 +69,6 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2022"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), True)
-
-    @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
-    @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
-    def test_user_has_published_canteen(self, batch_update_mock, create_contact_mock):
-        user = UserFactory.create()
-        CanteenFactory.create(publication_status=Canteen.PublicationStatus.PUBLISHED, managers=[user])
-
-        tasks.update_brevo_contacts()
-        create_contact_mock.assert_called_once()
-        batch_update_mock.assert_not_called()
-
-        payload = create_contact_mock.call_args[0][0]
-        attributes = payload.attributes
-        self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2023"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2022"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), False)
 
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
@@ -116,7 +93,6 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2022"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), True)
 
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
@@ -157,7 +133,6 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2022"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), False)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), True)
 
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
@@ -196,7 +171,6 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2022"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), True)
 
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
@@ -252,4 +226,3 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2022"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), False)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_PUBLICATION"), True)
