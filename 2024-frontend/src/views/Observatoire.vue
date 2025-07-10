@@ -5,7 +5,6 @@ import AppFilters from "@/components/AppFilters.vue"
 const route = useRoute()
 const pictoDataVisualization = "/static/images/picto-dsfr/data-visualization.svg"
 const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
-const filters = ["years", "characteristics", "sectors", "cities"]
 </script>
 
 <template>
@@ -51,7 +50,7 @@ const filters = ["years", "characteristics", "sectors", "cities"]
   </section>
   <section class="fr-mt-5w">
     <h2 class="fr-h5">Retrouver les chiffres clés sur votre territoire</h2>
-    <AppFilters :filters="filters" />
+    <AppFilters />
   </section>
 </template>
 
