@@ -4,7 +4,6 @@ from unittest import mock
 
 import requests
 import requests_mock
-from django.test.utils import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
@@ -771,7 +770,6 @@ class TestCanteenApi(APITestCase):
 
 
 class TestCanteenActionApi(APITestCase):
-    @override_settings(PUBLISH_BY_DEFAULT=False)
     @authenticate
     @freeze_time("2022-08-30")  # during the 2021 campaign
     def test_get_canteen_actions(self):
@@ -818,18 +816,6 @@ class TestCanteenActionApi(APITestCase):
         needs_diagnostic_mode = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL, siret="75665621899905", managers=[authenticate.user]
         )
-        # publish
-        needs_to_publish = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.DRAFT,
-            management_type=Canteen.ManagementType.DIRECT,
-            yearly_meal_count=1000,
-            daily_meal_count=12,
-            siret="75665621899905",
-            city_insee_code="69123",
-            economic_model=Canteen.EconomicModel.PUBLIC,
-            managers=[authenticate.user],
-        )
         # TD
         needs_td = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -866,9 +852,6 @@ class TestCanteenActionApi(APITestCase):
             year=last_year, canteen=needs_diagnostic_mode, central_kitchen_diagnostic_mode=None, value_total_ht=100
         )
 
-        td_diag = DiagnosticFactory.create(year=last_year, canteen=needs_to_publish, value_total_ht=10)
-        Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
-
         DiagnosticFactory.create(year=last_year, canteen=needs_td, value_total_ht=100)
 
         # has a diagnostic but this canteen registered only two of three satellites
@@ -887,7 +870,7 @@ class TestCanteenActionApi(APITestCase):
 
         body = response.json()
         returned_canteens = body["results"]
-        self.assertEqual(len(returned_canteens), 7)
+        self.assertEqual(len(returned_canteens), 6)
 
         expected_actions = [
             (needs_additional_satellites, "10_add_satellites"),
@@ -895,7 +878,6 @@ class TestCanteenActionApi(APITestCase):
             (needs_to_fill_diag, "30_fill_diagnostic"),
             (needs_diagnostic_mode, "30_fill_diagnostic"),
             (needs_td, "40_teledeclare"),
-            (needs_to_publish, "50_publish"),
             (complete, "95_nothing"),
         ]
         for index, (canteen, action) in zip(range(len(expected_actions)), expected_actions):
@@ -903,60 +885,6 @@ class TestCanteenActionApi(APITestCase):
             self.assertEqual(returned_canteens[index]["action"], action)
             self.assertIn("sectors", returned_canteens[index])
         self.assertTrue(body["hasPendingActions"])
-
-    @override_settings(PUBLISH_BY_DEFAULT=True)
-    @authenticate
-    @freeze_time("2024-02-01")  # during the 2023 campaign
-    def test_no_canteens_to_publish(self):
-        """
-        When publish by default is set, don't send publication actions
-        """
-        # make them all on site to avoid having to create satellites
-        previously_published = CanteenFactory.create(
-            name="published canteen",
-            production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
-            line_ministry=None,
-            managers=[authenticate.user],
-        )
-        previously_draft = CanteenFactory.create(
-            name="supposedly draft canteen",
-            production_type=Canteen.ProductionType.ON_SITE,
-            publication_status=Canteen.PublicationStatus.PUBLISHED,
-            line_ministry=None,
-            managers=[authenticate.user],
-        )
-        public_ministry = CanteenFactory.create(
-            name="canteen with administration ministry",
-            production_type=Canteen.ProductionType.ON_SITE,
-            line_ministry=Canteen.Ministries.ADMINISTRATION_TERRITORIALE,
-            managers=[authenticate.user],
-        )
-        private_ministry = CanteenFactory.create(
-            name="a private canteen",
-            production_type=Canteen.ProductionType.ON_SITE,
-            line_ministry=Canteen.Ministries.ARMEE,
-            managers=[authenticate.user],
-        )
-        last_year = 2023
-        for canteen in [
-            previously_published,
-            previously_draft,
-            public_ministry,
-            private_ministry,
-        ]:
-            # give them all teledeclarations to skip to final action
-            td_diag = DiagnosticFactory.create(year=last_year, canteen=canteen, value_total_ht=10)
-            Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
-
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}) + "?ordering=name")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        body = response.json()
-        self.assertEqual(len(body["canteensToPublish"]), 0)
-        returned_canteens = body["results"]
-        for canteen in returned_canteens:
-            canteen["action"] = "95_nothing"
 
     @authenticate
     def test_central_without_satellites_has_complete_satellites_action(self):

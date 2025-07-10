@@ -1,6 +1,5 @@
 from django.db.utils import IntegrityError
 from django.test import TestCase
-from django.test.utils import override_settings
 from django.utils.timezone import now
 from freezegun import freeze_time
 
@@ -178,7 +177,6 @@ class TeledeclarationQuerySetTest(TestCase):
         self.assertIsNone(td_without_meal_price.meal_price)
         self.assertIsNone(td_without_appro.meal_price)
 
-    @override_settings(PUBLISH_BY_DEFAULT=True)
     def test_publicly_visible(self):
         self.assertEqual(Teledeclaration.objects.count(), 13)
         self.assertEqual(Teledeclaration.objects.publicly_visible().count(), 11)  # 2 belong to canteen_army

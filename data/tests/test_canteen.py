@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.test.utils import override_settings
 from freezegun import freeze_time
 
 from data.factories import (
@@ -75,43 +74,19 @@ class TestCanteenVisibleQuerySetAndProperty(TestCase):
         )
         cls.canteen_draft = CanteenFactory(line_ministry=None, publication_status=Canteen.PublicationStatus.DRAFT)
 
-    @override_settings(PUBLISH_BY_DEFAULT=False)
     def test_publicly_visible_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 3)
-        qs = Canteen.objects.publicly_visible()
-        self.assertEqual(qs.count(), 2)
-        self.assertTrue(self.canteen_draft not in qs)
-
-    @override_settings(PUBLISH_BY_DEFAULT=False)
-    def test_publicly_hidden_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 3)
-        qs = Canteen.objects.publicly_hidden()
-        self.assertEqual(qs.count(), 1)
-        self.assertEqual(qs.first(), self.canteen_draft)
-
-    @override_settings(PUBLISH_BY_DEFAULT=True)
-    def test_publicly_visible_queryset_publish_by_default(self):
         self.assertEqual(Canteen.objects.count(), 3)
         qs = Canteen.objects.publicly_visible()
         self.assertEqual(qs.count(), 2)
         self.assertTrue(self.canteen_published_armee not in qs)
 
-    @override_settings(PUBLISH_BY_DEFAULT=True)
-    def test_publicly_hidden_queryset_publish_by_default(self):
+    def test_publicly_hidden_queryset(self):
         self.assertEqual(Canteen.objects.count(), 3)
         qs = Canteen.objects.publicly_hidden()
         self.assertEqual(qs.count(), 1)
         self.assertEqual(qs.first(), self.canteen_published_armee)
 
-    @override_settings(PUBLISH_BY_DEFAULT=False)
     def test_publication_status_display_to_public_property(self):
-        self.assertEqual(Canteen.objects.count(), 3)
-        self.assertEqual(self.canteen_published.publication_status_display_to_public, "published")
-        self.assertEqual(self.canteen_published_armee.publication_status_display_to_public, "published")
-        self.assertEqual(self.canteen_draft.publication_status_display_to_public, "draft")
-
-    @override_settings(PUBLISH_BY_DEFAULT=True)
-    def test_publication_status_display_to_public_property_publish_by_default(self):
         self.assertEqual(Canteen.objects.count(), 3)
         self.assertEqual(self.canteen_published.publication_status_display_to_public, "published")
         self.assertEqual(self.canteen_published_armee.publication_status_display_to_public, "draft")
