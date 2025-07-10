@@ -83,6 +83,23 @@ def update_dataset_resources(dataset_id):
         logger.exception(e)
 
 
+def get_pat_list():
+    """
+    Fetch PAT list from data.gouv.fr
+    Returns: a list of PATs
+    """
+    pat_list = []
+    try:
+        pat_dataset_resource = get_dataset_resource(PAT_DATAGOUV_DATASET_ID, PAT_DATAGOUV_RESOURCE_ID)
+        response = requests.get(pat_dataset_resource["url"])
+        response.raise_for_status()
+        reader = csv.DictReader(response.iter_lines(decode_unicode=True), delimiter=";")
+        pat_list = list(reader)
+    except requests.HTTPError as e:
+        logger.info(e)
+    return pat_list
+
+
 def map_pat_list_to_communes_insee_code():
     """
     Create a dict that maps Insee codes with their PAT
@@ -91,12 +108,7 @@ def map_pat_list_to_communes_insee_code():
     """
     pat_mapping = {}
     try:
-        pat_list = []
-        pat_dataset_resource = get_dataset_resource(PAT_DATAGOUV_DATASET_ID, PAT_DATAGOUV_RESOURCE_ID)
-        response = requests.get(pat_dataset_resource["url"])
-        response.raise_for_status()
-        reader = csv.DictReader(response.iter_lines(decode_unicode=True), delimiter=";")
-        pat_list = list(reader)
+        pat_list = get_pat_list()
         for pat in pat_list:
             pat_city_insee_code_list = [
                 insee_code for insee_code in pat["communes_code_insee"].split(",") if insee_code
