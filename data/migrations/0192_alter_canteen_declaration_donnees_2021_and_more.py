@@ -14,56 +14,56 @@ class Migration(migrations.Migration):
             model_name="canteen",
             name="declaration_donnees_2021",
             field=models.BooleanField(
-                default=False, verbose_name="a télédéclarée ses données de 2021"
+                default=False, verbose_name="a télédéclaré ses données de 2021"
             ),
         ),
         migrations.AlterField(
             model_name="canteen",
             name="declaration_donnees_2022",
             field=models.BooleanField(
-                default=False, verbose_name="a télédéclarée ses données de 2022"
+                default=False, verbose_name="a télédéclaré ses données de 2022"
             ),
         ),
         migrations.AlterField(
             model_name="canteen",
             name="declaration_donnees_2023",
             field=models.BooleanField(
-                default=False, verbose_name="a télédéclarée ses données de 2023"
+                default=False, verbose_name="a télédéclaré ses données de 2023"
             ),
         ),
         migrations.AlterField(
             model_name="canteen",
             name="declaration_donnees_2024",
             field=models.BooleanField(
-                default=False, verbose_name="a télédéclarée ses données de 2024"
+                default=False, verbose_name="a télédéclaré ses données de 2024"
             ),
         ),
         migrations.AlterField(
             model_name="historicalcanteen",
             name="declaration_donnees_2021",
             field=models.BooleanField(
-                default=False, verbose_name="a télédéclarée ses données de 2021"
+                default=False, verbose_name="a télédéclaré ses données de 2021"
             ),
         ),
         migrations.AlterField(
             model_name="historicalcanteen",
             name="declaration_donnees_2022",
             field=models.BooleanField(
-                default=False, verbose_name="a télédéclarée ses données de 2022"
+                default=False, verbose_name="a télédéclaré ses données de 2022"
             ),
         ),
         migrations.AlterField(
             model_name="historicalcanteen",
             name="declaration_donnees_2023",
             field=models.BooleanField(
-                default=False, verbose_name="a télédéclarée ses données de 2023"
+                default=False, verbose_name="a télédéclaré ses données de 2023"
             ),
         ),
         migrations.AlterField(
             model_name="historicalcanteen",
             name="declaration_donnees_2024",
             field=models.BooleanField(
-                default=False, verbose_name="a télédéclarée ses données de 2024"
+                default=False, verbose_name="a télédéclaré ses données de 2024"
             ),
         ),
     ]
