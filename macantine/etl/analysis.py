@@ -148,7 +148,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                     satellite_row["siret"] = satellite["siret"]
                     satellite_row["satellite_canteens_count"] = 0
 
-                    sectors_dict = satellite["sectors"] if "sectors" in satellite else {}
+                    sectors_dict = satellite["sectors"] if "sectors" in satellite else []
                     satellite_row["secteur"] = extract_sector_from_dict_sectors(sectors_dict)
                     satellite_row["categorie"] = extract_category_from_dict_sectors(sectors_dict)
 
