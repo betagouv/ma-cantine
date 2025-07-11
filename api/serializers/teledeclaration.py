@@ -1,9 +1,12 @@
 from rest_framework import serializers
 
-from api.serializers.utils import match_sector_values, safe_to_float
+from api.serializers.utils import (
+    extract_category_from_dict_sectors,
+    extract_sector_from_dict_sectors,
+    safe_to_float,
+)
 from data.department_choices import Department
 from data.models import Diagnostic, Teledeclaration
-from data.models.sector import Sector
 from data.region_choices import Region
 from macantine.etl import utils
 
@@ -212,22 +215,12 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     def get_secteur(self, obj):
         if "sectors" in obj.declared_data["canteen"]:
             sectors = obj.declared_data["canteen"]["sectors"]
-            if len(sectors) > 1:
-                return "Secteurs multiples"
-            elif len(sectors) == 1:
-                return match_sector_values(sectors[0]["name"])
-            else:
-                return None
+            return extract_sector_from_dict_sectors(sectors)
 
     def get_categorie(self, obj):
         if "sectors" in obj.declared_data["canteen"]:
-            category = obj.declared_data["canteen"]["sectors"]
-            if len(category) > 1:
-                return "Catégories multiples"
-            elif len(category) == 1:
-                return Sector.Categories(category[0]["category"]).label if category[0]["category"] else None
-            else:
-                return None
+            categories = obj.declared_data["canteen"]["sectors"]
+            return extract_category_from_dict_sectors(categories)
 
     def get_satellite_canteens_count(self, obj):
         if "satellite_canteens_count" in obj.declared_data["canteen"]:
