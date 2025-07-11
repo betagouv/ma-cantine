@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.utils import timezone
 from django.utils.html import format_html
 
-from data.models import Canteen, Teledeclaration
+from data.models import Canteen
 from data.utils import CreationSource
 
 from .diagnostic import DiagnosticInline
@@ -180,14 +180,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
     @admin.display(description=f"Télédéclarée ({last_year})")
     def télédéclarée(self, obj):
-        if getattr(obj, f"declaration_donnees_{last_year}"):
-            if obj.teledeclaration_set.filter(
-                year=last_year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
-            ).exists():
-                return "📩 Télédéclarée"
-            else:
-                return "📩 Télédéclarée (par CC)"
-        return ""
+        return obj.declaration_donnees_year_display(last_year)
 
     @admin.display(description="Visible au public")
     def publication_status_display(self, obj):
