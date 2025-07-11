@@ -666,6 +666,18 @@ class Canteen(SoftDeletionModel):
         )
         return has_canteen_td or has_central_kitchen_td
 
+    def get_declaration_donnees_year_display(self, year):
+        from data.models.teledeclaration import Teledeclaration
+
+        if getattr(self, f"declaration_donnees_{year}"):
+            if self.teledeclaration_set.filter(
+                year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+            ).exists():
+                return "📩 Télédéclarée"
+            else:
+                return "📩 Télédéclarée (par CC)"
+        return ""
+
     @property
     def publication_status_display_to_public(self):
         if self.line_ministry == Canteen.Ministries.ARMEE:
