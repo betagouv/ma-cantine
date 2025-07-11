@@ -3,6 +3,7 @@ import sectorsService from "@/services/sectors"
 import communes from "@/data/communes.json"
 import pats from "@/data/pats.json"
 import epcis from "@/data/epcis.json"
+import departements from "@/data/departements.json"
 
 const getYearsOptions = () => {
   const startYear = 2020
@@ -120,6 +121,13 @@ const getEPCIOptionsFromSearch = (search) => {
   return options
 }
 
+const getDepartmentsOptions = () => {
+  const options = departements.map((department) => {
+    return { label: `${department.nom} (${department.code})`, value: department.code, id: department.code }
+  })
+  return options
+}
+
 export {
   getYearsOptions,
   getCharacteristicsOptions,
@@ -127,4 +135,5 @@ export {
   getCitiesOptionsFromSearch,
   getPATOptionsFromSearch,
   getEPCIOptionsFromSearch,
+  getDepartmentsOptions,
 }
