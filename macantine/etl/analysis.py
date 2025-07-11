@@ -5,6 +5,10 @@ from datetime import datetime
 
 import pandas as pd
 
+from api.serializers.utils import (
+    extract_category_from_dict_sectors,
+    extract_sector_from_dict_sectors,
+)
 from api.views.canteen import CanteenAnalysisListView
 from api.views.teledeclaration import TeledeclarationAnalysisListView
 from data.models import Canteen
@@ -143,6 +147,11 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                     satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
                     satellite_row["siret"] = satellite["siret"]
                     satellite_row["satellite_canteens_count"] = 0
+
+                    sectors_dict = satellite["sectors"] if "sectors" in satellite else {}
+                    satellite_row["secteur"] = extract_sector_from_dict_sectors(sectors_dict)
+                    satellite_row["categorie"] = extract_category_from_dict_sectors(sectors_dict)
+
                     satellite_row = self.split_cc_values(satellite_row, nbre_satellites)
                     satellite_rows.append(satellite_row)
 
