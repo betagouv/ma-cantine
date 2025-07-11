@@ -3,7 +3,6 @@
 # https://stackoverflow.com/a/44113124
 
 
-from django.core.management import call_command
 from django.db import migrations
 
 # Reset the SQL sequence of the data_wasteaction table
