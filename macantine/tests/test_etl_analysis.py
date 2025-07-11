@@ -439,7 +439,7 @@ class TestETLAnalysisTD(TestCase):
                         "name": "SAT 1",
                         "siret": "21930055500196",
                         "yearly_meal_count": 60,
-                        "sectors": [{}, {}],
+                        "sectors": [{"Secteur A"}, {"Secteur B"}],
                     },
                     {
                         "id": 21,
