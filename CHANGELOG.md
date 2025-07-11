@@ -6,6 +6,27 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.24.2](https://github.com/betagouv/ma-cantine/compare/v2025.24.1...v2025.24.2) (2025-07-11)
+
+
+### Améliorations
+
+* **API Stats:** TD: renvoyer le taux de viande egalim, viande france & aquaculture egalim ([#5506](https://github.com/betagouv/ma-cantine/issues/5506)) ([d806ecd](https://github.com/betagouv/ma-cantine/commit/d806ecdddb472ff7e9119417dd8500a2e11a8520))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** initialiser les nouveaux champs declaration_donnees_YEAR à False pour les nouvelles cantines ([#5519](https://github.com/betagouv/ma-cantine/issues/5519)) ([2242979](https://github.com/betagouv/ma-cantine/commit/2242979d06ee09c3d2a2452e8b0c43b002aedc9d))
+* **Open Data:** TD: renomme declaration_donnees_2024_en_cours en declaration_donnees_2024 ([#5517](https://github.com/betagouv/ma-cantine/issues/5517)) ([c8fa897](https://github.com/betagouv/ma-cantine/commit/c8fa8971d658210680909a5989a49ab0972ff117))
+
+
+### Technique
+
+* **Cantines:** enlever le code obsolète lié à la logique "publication" (PUBLISH_BY_DEFAULT) ([#5502](https://github.com/betagouv/ma-cantine/issues/5502)) ([7df379e](https://github.com/betagouv/ma-cantine/commit/7df379e1148fd40abb665dd05d329e3cf0dcaada))
+* **Cantines:** enlever le code obsolète lié à la logique publication (champ DB publication_status) ([#5507](https://github.com/betagouv/ma-cantine/issues/5507)) ([d7cd50f](https://github.com/betagouv/ma-cantine/commit/d7cd50f9ec06a06fb88fbb09e8618f1e87cbb55a))
+* créer la table de cache avec une migration ([#5525](https://github.com/betagouv/ma-cantine/issues/5525)) ([5d98215](https://github.com/betagouv/ma-cantine/commit/5d98215fe431858f1bd43df628ce39b3ac4f7dbe))
+* stocker le cache en DB au lieu de mémoire ([#5518](https://github.com/betagouv/ma-cantine/issues/5518)) ([1a5ef8e](https://github.com/betagouv/ma-cantine/commit/1a5ef8e54fa44682e9a64222a03cc37782e0ccd8))
+
 ## [2025.24.1](https://github.com/betagouv/ma-cantine/compare/v2025.24.0...v2025.24.1) (2025-07-09)
 
 
