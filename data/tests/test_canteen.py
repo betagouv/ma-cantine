@@ -36,6 +36,54 @@ class TestCanteenModel(TestCase):
         self.assertTrue(canteen_1.is_spe)
         self.assertFalse(canteen_2.is_spe)
 
+    def test_canteen_get_declaration_donnees_year_display(self):
+        canteen_with_diagnostic_cancelled = CanteenFactory(declaration_donnees_2024=False)
+        canteen_with_diagnostic_submitted = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, declaration_donnees_2024=True
+        )
+        canteen_satellite_with_central_diagnostic_submitted = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=canteen_with_diagnostic_submitted.siret,
+            declaration_donnees_2024=True,
+        )
+        diagnostic_filled = DiagnosticFactory(
+            canteen=canteen_with_diagnostic_cancelled,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2024,
+            value_total_ht=1000,
+        )  # filled
+        TeledeclarationFactory(
+            canteen=canteen_with_diagnostic_cancelled,
+            diagnostic=diagnostic_filled,
+            year=2024,
+            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
+        )
+        diagnostic_filled_and_submitted = DiagnosticFactory(
+            canteen=canteen_with_diagnostic_submitted,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2024,
+            value_total_ht=1000,
+        )  # filled & submitted
+        TeledeclarationFactory(
+            canteen=canteen_with_diagnostic_submitted,
+            diagnostic=diagnostic_filled_and_submitted,
+            year=2024,
+            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+        )
+        self.assertEqual(canteen_with_diagnostic_cancelled.get_declaration_donnees_year_display(2023), "")
+        self.assertEqual(canteen_with_diagnostic_cancelled.get_declaration_donnees_year_display(2024), "")
+        self.assertEqual(canteen_with_diagnostic_submitted.get_declaration_donnees_year_display(2023), "")
+        self.assertEqual(
+            canteen_with_diagnostic_submitted.get_declaration_donnees_year_display(2024), "📩 Télédéclarée"
+        )
+        self.assertEqual(
+            canteen_satellite_with_central_diagnostic_submitted.get_declaration_donnees_year_display(2023), ""
+        )
+        self.assertEqual(
+            canteen_satellite_with_central_diagnostic_submitted.get_declaration_donnees_year_display(2024),
+            "📩 Télédéclarée (par CC)",
+        )
+
     @freeze_time("2024-01-20")
     def test_appro_and_service_diagnostics_in_past_ordered_year_desc(self):
         canteen = CanteenFactory.create()
