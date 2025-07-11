@@ -5,7 +5,7 @@ from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Teledeclaration
 
 
-class FixturesTest(TestCase):
+class FillMissingTDCanteenGeolocationDataCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_with_geo_data = CanteenFactory.create(

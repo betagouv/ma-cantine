@@ -6,7 +6,7 @@ from data.factories import (
     DiagnosticFactory,
     PurchaseFactory,
     SectorFactory,
-    TeledeclarationFactory,
+    UserFactory,
 )
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 
@@ -196,30 +196,23 @@ class TestCanteenDiagnosticTeledeclarationQuerySet(TestCase):
             year=2024,
             value_total_ht=1000,
         )  # filled
-        TeledeclarationFactory(
-            canteen=canteen_with_diagnostic_cancelled,
-            diagnostic=diagnostic_filled,
-            year=2024,
-            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
-        )
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            td_to_cancel = Teledeclaration.create_from_diagnostic(diagnostic_filled, applicant=UserFactory())
+            td_to_cancel.cancel()
         diagnostic_filled_and_submitted = DiagnosticFactory(
             canteen=canteen_with_diagnostic_submitted,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2024,
             value_total_ht=1000,
         )  # filled & submitted
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            Teledeclaration.create_from_diagnostic(diagnostic_filled_and_submitted, applicant=UserFactory())
         DiagnosticFactory(
             canteen=canteen_with_diagnostic_submitted,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2023,
             value_total_ht=None,
         )  # missing data
-        TeledeclarationFactory(
-            canteen=canteen_with_diagnostic_submitted,
-            diagnostic=diagnostic_filled_and_submitted,
-            year=2024,
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-        )
 
     def test_annotate_with_diagnostic_for_year(self):
         self.assertEqual(Canteen.objects.count(), 3)
