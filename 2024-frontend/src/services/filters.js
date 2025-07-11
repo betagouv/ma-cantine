@@ -67,7 +67,7 @@ const cleanString = (string) => {
     .replaceAll("'", " ")
 }
 
-const getCitiesOptionFromSearch = (search) => {
+const getCitiesOptionsFromSearch = (search) => {
   const cleanSearch = cleanString(search)
 
   const filteredCities = communes.filter((city) => {
@@ -77,7 +77,7 @@ const getCitiesOptionFromSearch = (search) => {
   const firstTenCities = filteredCities.slice(0, 9)
   const options = firstTenCities.map((city) => {
     return {
-      label: city.nom,
+      label: `${city.nom} (${city.codeDepartement})`,
       value: city.code,
       id: city.code,
     }
@@ -85,4 +85,4 @@ const getCitiesOptionFromSearch = (search) => {
   return options
 }
 
-export { getYearsOptions, getCharacteristicsOptions, getSectorsOptions, getCitiesOptionFromSearch }
+export { getYearsOptions, getCharacteristicsOptions, getSectorsOptions, getCitiesOptionsFromSearch }
