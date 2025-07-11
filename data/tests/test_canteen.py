@@ -39,7 +39,10 @@ class TestCanteenModel(TestCase):
     def test_canteen_get_declaration_donnees_year_display(self):
         canteen_with_diagnostic_cancelled = CanteenFactory(declaration_donnees_2024=False)
         canteen_with_diagnostic_submitted = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, declaration_donnees_2024=True
+            siret="75665621899905",
+            production_type=Canteen.ProductionType.CENTRAL,
+            satellite_canteens_count=1,
+            declaration_donnees_2024=True,
         )
         canteen_satellite_with_central_diagnostic_submitted = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -52,24 +55,18 @@ class TestCanteenModel(TestCase):
             year=2024,
             value_total_ht=1000,
         )  # filled
-        TeledeclarationFactory(
-            canteen=canteen_with_diagnostic_cancelled,
-            diagnostic=diagnostic_filled,
-            year=2024,
-            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
-        )
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            td_to_cancel = Teledeclaration.create_from_diagnostic(diagnostic_filled, applicant=UserFactory())
+            td_to_cancel.cancel()
         diagnostic_filled_and_submitted = DiagnosticFactory(
             canteen=canteen_with_diagnostic_submitted,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2024,
             value_total_ht=1000,
         )  # filled & submitted
-        TeledeclarationFactory(
-            canteen=canteen_with_diagnostic_submitted,
-            diagnostic=diagnostic_filled_and_submitted,
-            year=2024,
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-        )
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            Teledeclaration.create_from_diagnostic(diagnostic_filled_and_submitted, applicant=UserFactory())
+
         self.assertEqual(canteen_with_diagnostic_cancelled.get_declaration_donnees_year_display(2023), "")
         self.assertEqual(canteen_with_diagnostic_cancelled.get_declaration_donnees_year_display(2024), "")
         self.assertEqual(canteen_with_diagnostic_submitted.get_declaration_donnees_year_display(2023), "")
