@@ -243,6 +243,13 @@ if default_file_storage == "storages.backends.s3.S3Storage":
 MEDIA_ROOT = os.getenv("MEDIA_ROOT", os.path.join(BASE_DIR, "media"))
 MEDIA_URL = "/media/"
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "cache",
+    }
+}
+
 SESSION_COOKIE_AGE = 31536000
 SESSION_COOKIE_SECURE = os.getenv("SECURE") == "True"
 SESSION_COOKIE_HTTPONLY = True
