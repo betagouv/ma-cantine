@@ -4,6 +4,7 @@ import communes from "@/data/communes.json"
 import pats from "@/data/pats.json"
 import epcis from "@/data/epcis.json"
 import departements from "@/data/departements.json"
+import regions from "@/data/regions.json"
 
 const getYearsOptions = () => {
   const startYear = 2020
@@ -128,6 +129,18 @@ const getDepartmentsOptions = () => {
   return options
 }
 
+const getRegionsOptions = () => {
+  const regionsSortedByName = regions.sort((regionBefore, regionAfter) => {
+    if (regionBefore.nom < regionAfter.nom) return -1
+    else if (regionBefore.nom > regionAfter.nom) return 1
+    else return 0
+  })
+  const options = regionsSortedByName.map((region) => {
+    return { label: region.nom, value: region.code, id: region.code }
+  })
+  return options
+}
+
 export {
   getYearsOptions,
   getCharacteristicsOptions,
@@ -136,4 +149,5 @@ export {
   getPATOptionsFromSearch,
   getEPCIOptionsFromSearch,
   getDepartmentsOptions,
+  getRegionsOptions,
 }
