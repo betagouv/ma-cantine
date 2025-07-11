@@ -6,14 +6,14 @@ import AppDropdown from "@/components/AppDropdown.vue"
 const departementsSelected = ref([])
 
 /* Get departments */
-const sectors = ref(getDepartmentsOptions())
+const departments = ref(getDepartmentsOptions())
 
 /* Search */
 const search = ref("")
 const options = computed(() => {
-  if (sectors.value.length === 0) return []
-  if (search.value === "") return sectors.value
-  const searchedDepartments = sectors.value.filter((sector) => {
+  if (departments.value.length === 0) return []
+  if (search.value === "") return departments.value
+  const searchedDepartments = departments.value.filter((sector) => {
     const sectorLabel = sector.label.toLowerCase()
     const stringSearched = search.value.toLowerCase()
     return sectorLabel.indexOf(stringSearched) >= 0
