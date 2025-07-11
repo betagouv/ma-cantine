@@ -17,7 +17,7 @@ const options = computed(() => {
   <AppDropdown label="PAT">
     <DsfrSearchBar
       :modelValue="search"
-      placeholder="Rechercher une commune"
+      placeholder="Rechercher un PAT"
       @update:modelValue="($event) => (search = $event)"
     />
     <DsfrCheckboxSet :modelValue="selectedPAT" :options="options" small />
