@@ -9,6 +9,8 @@ from data.utils import CreationSource
 from .diagnostic import DiagnosticInline
 from .softdeletionadmin import SoftDeletionHistoryAdmin, SoftDeletionStatusFilter
 
+last_year = timezone.now().date().year - 1
+
 
 class CanteenForm(forms.ModelForm):
     class Meta:
@@ -118,6 +120,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "declaration_donnees_2022",
         "declaration_donnees_2023",
         "declaration_donnees_2024",
+        "télédéclarée",
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
@@ -129,7 +132,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "name",
         "siret_or_siren_unite_legale_display",
         "city",
-        "télédéclarée",  # TODO: replace with "declaration_donnees_2024"
+        "télédéclarée",
         "central_producer_siret",
         "production_type",
         "creation_date",
@@ -161,6 +164,11 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     )
     search_help_text = "La recherche est faite sur les champs : nom de la cantine, siret, siren de l'unité légale, siret de la cuisine centrale."
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.prefetch_related("teledeclaration_set")
+        return qs
+
     def save_model(self, request, obj, form, change):
         if not change:
             obj.creation_source = CreationSource.ADMIN
@@ -170,14 +178,15 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     def siret_or_siren_unite_legale_display(self, obj):
         return obj.siret_or_siren_unite_legale
 
+    @admin.display(description=f"Télédéclarée ({last_year})")
     def télédéclarée(self, obj):
-        active_tds = Teledeclaration.objects.filter(
-            year=(timezone.now().year - 1), status=Teledeclaration.TeledeclarationStatus.SUBMITTED
-        )
-        if active_tds.filter(canteen=obj).exists():
-            return "📩 Télédéclarée"
-        if obj.central_kitchen and active_tds.filter(canteen=obj.central_kitchen).exists():
-            return "📩 Télédéclarée (par CC)"
+        if getattr(obj, f"declaration_donnees_{last_year}"):
+            if obj.teledeclaration_set.filter(
+                year=last_year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
+            ).exists():
+                return "📩 Télédéclarée"
+            else:
+                return "📩 Télédéclarée (par CC)"
         return ""
 
     @admin.display(description="Visible au public")
