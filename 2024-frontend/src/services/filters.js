@@ -2,6 +2,7 @@ import canteenCharacteristics from "@/constants/canteen-establishment-form-optio
 import sectorsService from "@/services/sectors"
 import communes from "@/data/communes.json"
 import pats from "@/data/pats.json"
+import epcis from "@/data/epcis.json"
 
 const getYearsOptions = () => {
   const startYear = 2020
@@ -102,10 +103,28 @@ const getPATOptionsFromSearch = (search) => {
   return options
 }
 
+const getEPCIOptionsFromSearch = (search) => {
+  const cleanSearch = cleanString(search)
+  const filteredEPCI = epcis.filter((project) => {
+    const cleanName = cleanString(project.nom)
+    return cleanName.indexOf(cleanSearch) >= 0
+  })
+  const firstTenPAT = filteredEPCI.slice(0, 9)
+  const options = firstTenPAT.map((project) => {
+    return {
+      label: project.nom,
+      value: project.code,
+      id: project.code,
+    }
+  })
+  return options
+}
+
 export {
   getYearsOptions,
   getCharacteristicsOptions,
   getSectorsOptions,
   getCitiesOptionsFromSearch,
   getPATOptionsFromSearch,
+  getEPCIOptionsFromSearch,
 }
