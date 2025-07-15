@@ -131,12 +131,11 @@ const getEPCIOptionsFromSearch = (search) => {
 const getDepartmentsOptionsFromSearch = (search) => {
   let departmentsList = departements
   if (search) {
-    const filteredDepartments = departmentsList.filter((department) => {
+    const stringSearched = search.toLowerCase()
+    departmentsList = departmentsList.filter((department) => {
       const departmentName = department.nom.toLowerCase()
-      const stringSearched = search.toLowerCase()
       return departmentName.indexOf(stringSearched) >= 0
     })
-    departmentsList = filteredDepartments
   }
   return departmentsList.map((department) => {
     return { label: `${department.nom} (${department.code})`, value: department.code, id: department.code }
@@ -146,12 +145,11 @@ const getDepartmentsOptionsFromSearch = (search) => {
 const getRegionsOptionsFromSearch = (search) => {
   let regionList = regionsSortedByName
   if (search) {
-    const filteredRegions = regionList.filter((region) => {
+    const stringSearched = search.toLowerCase()
+    regionList = regionList.filter((region) => {
       const name = region.nom.toLowerCase()
-      const stringSearched = search.toLowerCase()
       return name.indexOf(stringSearched) >= 0
     })
-    regionList = filteredRegions
   }
   return regionList.map((region) => {
     return { label: region.nom, value: region.code, id: region.code }
