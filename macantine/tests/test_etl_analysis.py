@@ -439,6 +439,7 @@ class TestETLAnalysisTD(TestCase):
                         "name": "SAT 1",
                         "siret": "21930055500196",
                         "yearly_meal_count": 60,
+                        "sectors": [{"Secteur A"}, {"Secteur B"}],
                     },
                     {
                         "id": 21,
@@ -470,6 +471,7 @@ class TestETLAnalysisTD(TestCase):
         self.assertEqual(len(etl.df[etl.df.canteen_id == 2]), 0)  # Central kitchen filtered out
         self.assertEqual(len(etl.df[etl.df.canteen_id == 20]), 1)  # Satellite created
         self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].value_total_ht, 500)  # Appro value split
+        self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].secteur, "Secteurs multiples")  # Appro value split
         self.assertEqual(len(etl.df[etl.df.canteen_id == 3]), 1)  # Central kitchen filtered out
         self.assertEqual(etl.df[etl.df.canteen_id == 3].iloc[0].value_total_ht, 500)  # Appro value split
         self.assertEqual(etl.df[etl.df.canteen_id == 30].iloc[0].value_total_ht, 500)  # Appro value split
