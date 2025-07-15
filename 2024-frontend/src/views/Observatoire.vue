@@ -25,9 +25,12 @@ const filtersList = computed(() => filterStore.getAllSelected())
       <li class="fr-col-12 fr-col-sm-6">
         <DsfrTile
           titleTag="p"
-          title="Accéder à data.gouv.fr"
-          to="https://www.data.gouv.fr/fr/organizations/ministere-de-l-agriculture-de-l-agroalimentaire-et-de-la-foret/"
-          :imgSrc="pictoDataVisualization"
+          class="observatoire__force-title-download-vertical"
+          title="Rapport de la campagne 2024"
+          description="Application et des objectifs d’approvisionnements fixés à la restauration collective."
+          to="/#"
+          :imgSrc="pictoDocuments"
+          :download="true"
           small
         />
       </li>
@@ -66,7 +69,7 @@ const filtersList = computed(() => filterStore.getAllSelected())
 </template>
 
 <style lang="scss">
-.statistics-canteens {
+.observatoire {
   &__force-title-download-vertical {
     align-items: center !important;
     flex-direction: column !important;
