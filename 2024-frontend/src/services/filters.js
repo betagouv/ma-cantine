@@ -1,5 +1,6 @@
 import canteenCharacteristics from "@/constants/canteen-establishment-form-options.js"
 import sectorsService from "@/services/sectors"
+import stringsService from "@/services/strings"
 import communes from "@/data/communes.json"
 import pats from "@/data/pats.json"
 import epcis from "@/data/epcis.json"
@@ -69,20 +70,8 @@ const getSectorsOptions = async () => {
   return sectorsOptions
 }
 
-const cleanString = (string) => {
-  // TODO à améliorer et compléter
-  return string
-    .toLowerCase()
-    .replaceAll("-", " ")
-    .replaceAll("'", " ")
-}
-
 const getCitiesOptionsFromSearch = (search) => {
-  const cleanSearch = cleanString(search)
-  const filteredCities = communes.filter((city) => {
-    const cleanName = cleanString(city.nom)
-    return cleanName.startsWith(cleanSearch)
-  })
+  const filteredCities = communes.filter((city) => stringsService.checkIfStartsWith(city.nom, search))
   const firstTenCities = filteredCities.slice(0, 9)
   const options = firstTenCities.map((city) => {
     return {
@@ -95,34 +84,26 @@ const getCitiesOptionsFromSearch = (search) => {
 }
 
 const getPATOptionsFromSearch = (search) => {
-  const cleanSearch = cleanString(search)
-  const filteredPats = pats.filter((project) => {
-    const cleanName = cleanString(project.nom)
-    return cleanName.indexOf(cleanSearch) >= 0
-  })
+  const filteredPats = pats.filter((pat) => stringsService.checkIfContains(pat.nom, search))
   const firstTenPAT = filteredPats.slice(0, 9)
-  const options = firstTenPAT.map((project) => {
+  const options = firstTenPAT.map((pat) => {
     return {
-      label: project.nom,
-      value: project.code,
-      id: project.code,
+      label: pat.nom,
+      value: pat.code,
+      id: pat.code,
     }
   })
   return options
 }
 
 const getEPCIOptionsFromSearch = (search) => {
-  const cleanSearch = cleanString(search)
-  const filteredEPCI = epcis.filter((project) => {
-    const cleanName = cleanString(project.nom)
-    return cleanName.indexOf(cleanSearch) >= 0
-  })
-  const firstTenPAT = filteredEPCI.slice(0, 9)
-  const options = firstTenPAT.map((project) => {
+  const filteredEPCI = epcis.filter((epci) => stringsService.checkIfContains(epci.nom, search))
+  const firstTenEPCI = filteredEPCI.slice(0, 9)
+  const options = firstTenEPCI.map((epci) => {
     return {
-      label: project.nom,
-      value: project.code,
-      id: project.code,
+      label: epci.nom,
+      value: epci.code,
+      id: epci.code,
     }
   })
   return options
@@ -131,11 +112,7 @@ const getEPCIOptionsFromSearch = (search) => {
 const getDepartmentsOptionsFromSearch = (search) => {
   let departmentsList = departements
   if (search) {
-    const stringSearched = search.toLowerCase()
-    departmentsList = departmentsList.filter((department) => {
-      const departmentName = department.nom.toLowerCase()
-      return departmentName.indexOf(stringSearched) >= 0
-    })
+    departmentsList = departmentsList.filter((department) => stringsService.checkIfStartsWith(department.nom, search))
   }
   return departmentsList.map((department) => {
     return { label: `${department.nom} (${department.code})`, value: department.code, id: department.code }
@@ -145,11 +122,7 @@ const getDepartmentsOptionsFromSearch = (search) => {
 const getRegionsOptionsFromSearch = (search) => {
   let regionList = regionsSortedByName
   if (search) {
-    const stringSearched = search.toLowerCase()
-    regionList = regionList.filter((region) => {
-      const name = region.nom.toLowerCase()
-      return name.indexOf(stringSearched) >= 0
-    })
+    regionList = regionList.filter((region) => stringsService.checkIfStartsWith(region.nom, search))
   }
   return regionList.map((region) => {
     return { label: region.nom, value: region.code, id: region.code }
