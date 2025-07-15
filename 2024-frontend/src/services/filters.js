@@ -110,21 +110,19 @@ const getEPCIOptionsFromSearch = (search) => {
 }
 
 const getDepartmentsOptionsFromSearch = (search) => {
-  let departmentsList = departements
-  if (search) {
-    departmentsList = departmentsList.filter((department) => stringsService.checkIfStartsWith(department.nom, search))
-  }
-  return departmentsList.map((department) => {
+  const departmentsOptions = search
+    ? departements.filter((department) => stringsService.checkIfStartsWith(department.nom, search))
+    : departements
+  return departmentsOptions.map((department) => {
     return { label: `${department.nom} (${department.code})`, value: department.code, id: department.code }
   })
 }
 
 const getRegionsOptionsFromSearch = (search) => {
-  let regionList = regionsSortedByName
-  if (search) {
-    regionList = regionList.filter((region) => stringsService.checkIfStartsWith(region.nom, search))
-  }
-  return regionList.map((region) => {
+  const regionsOptions = search
+    ? regionsSortedByName.filter((region) => stringsService.checkIfStartsWith(region.nom, search))
+    : regionsSortedByName
+  return regionsOptions.map((region) => {
     return { label: region.nom, value: region.code, id: region.code }
   })
 }
