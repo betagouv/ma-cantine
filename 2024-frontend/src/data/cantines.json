@@ -1,0 +1,46 @@
+{
+  "economicModel": [
+    {
+      "hint": "Tout restaurant sous la responsabilité d’une personne morale de droit public, qu’il soit opéré en gestion directe ou en gestion concédée (notamment avec une société de restauration collective privée). Restaurant sous la responsabilité directe ou indirecte (via association de gestion) d’une structure publique d’État (administration centrale, services déconcentrés et opérateurs dont établissements publics), d’une collectivité (commune, EPCI, département, région), ou de la fonction publique hospitalière.  ",
+      "label": "Public",
+      "value": "public"
+    },
+    {
+      "hint": "Restaurant sous la responsabilité d’une structure privée : entreprise, association (hors associations de gestion d’un restaurant de structure publique), établissement scolaire privé, etc.",
+      "label": "Privé",
+      "value": "private"
+    }
+  ],
+  "managementType": [
+    {
+      "label": "Directe",
+      "value": "direct"
+    },
+    {
+      "label": "Concédée",
+      "value": "conceded"
+    }
+  ],
+  "productionType": [
+    {
+      "hint": "Produit sur place les repas qu'il sert à ses convives",
+      "label": "Site",
+      "value": "site"
+    },
+    {
+      "hint": "Sert des repas préparés par un autre établissement",
+      "label": "Satellite",
+      "value": "site_cooked_elsewhere"
+    },
+    {
+      "hint": "Livre des repas mais n'a pas de lieu de service en propre",
+      "label": "Centrale",
+      "value": "central"
+    },
+    {
+      "hint": "Livre des repas et accueille aussi des convives sur place",
+      "label": "Centrale et site",
+      "value": "central_serving"
+    }
+  ]
+}
