@@ -6,6 +6,12 @@ import epcis from "@/data/epcis.json"
 import departements from "@/data/departements.json"
 import regions from "@/data/regions.json"
 
+const regionsSortedByName = regions.sort((regionBefore, regionAfter) => {
+  if (regionBefore.nom < regionAfter.nom) return -1
+  else if (regionBefore.nom > regionAfter.nom) return 1
+  else return 0
+})
+
 const getYearsOptions = () => {
   const startYear = 2020
   const endYear = new Date().getFullYear()
@@ -137,16 +143,19 @@ const getDepartmentsOptionsFromSearch = (search) => {
   })
 }
 
-const getRegionsOptions = () => {
-  const regionsSortedByName = regions.sort((regionBefore, regionAfter) => {
-    if (regionBefore.nom < regionAfter.nom) return -1
-    else if (regionBefore.nom > regionAfter.nom) return 1
-    else return 0
-  })
-  const options = regionsSortedByName.map((region) => {
+const getRegionsOptionsFromSearch = (search) => {
+  let regionList = regionsSortedByName
+  if (search) {
+    const filteredRegions = regionList.filter((region) => {
+      const name = region.nom.toLowerCase()
+      const stringSearched = search.toLowerCase()
+      return name.indexOf(stringSearched) >= 0
+    })
+    regionList = filteredRegions
+  }
+  return regionList.map((region) => {
     return { label: region.nom, value: region.code, id: region.code }
   })
-  return options
 }
 
 export {
@@ -157,5 +166,5 @@ export {
   getPATOptionsFromSearch,
   getEPCIOptionsFromSearch,
   getDepartmentsOptionsFromSearch,
-  getRegionsOptions,
+  getRegionsOptionsFromSearch,
 }
