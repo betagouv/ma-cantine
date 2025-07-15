@@ -8,7 +8,7 @@ const options = ref(getYearsOptions())
 </script>
 
 <template>
-  <AppDropdown label="Années" class="size-small">
+  <AppDropdown label="Années">
     <DsfrRadioButtonSet :modelValue="selectedYear" :options="options" small />
   </AppDropdown>
 </template>

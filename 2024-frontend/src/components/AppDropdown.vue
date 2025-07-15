@@ -59,11 +59,5 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
     max-height: 25rem;
     overflow-y: scroll;
   }
-
-  &.size-small {
-    .app-dropdow__scrollable {
-      width: auto;
-    }
-  }
 }
 </style>

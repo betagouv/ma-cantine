@@ -10,10 +10,10 @@ const getYearsOptions = () => {
   const startYear = 2020
   const endYear = new Date().getFullYear()
   const yearsOptions = []
-  for (let i = startYear; i <= endYear; i++) {
+  for (let i = endYear; i >= startYear; i--) {
     const yearInfo = {
       name: "year",
-      label: i,
+      label: `Année ${i} (télédéclarée en ${i + 1})`,
       value: i,
     }
     yearsOptions.push(yearInfo)
