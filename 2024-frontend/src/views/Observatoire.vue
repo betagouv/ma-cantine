@@ -1,11 +1,15 @@
 <script setup>
+import { computed } from "vue"
 import { useRoute } from "vue-router"
+import { useFiltersStore } from "@/stores/filters"
 import AppFilters from "@/components/AppFilters.vue"
 
 const route = useRoute()
+const filterStore = useFiltersStore()
 const pictoDataVisualization = "/static/images/picto-dsfr/data-visualization.svg"
 const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
 const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024.pdf"
+const filtersList = computed(() => filterStore.getAllSelected())
 </script>
 
 <template>
@@ -43,6 +47,21 @@ const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024
   <section class="fr-mt-5w">
     <h2 class="fr-h5">Retrouver les chiffres clés sur votre territoire</h2>
     <AppFilters />
+  </section>
+  <section>
+    <div>
+      <p>Chiffres clés pour la recherche :</p>
+      <div>
+        <DsfrTag
+          v-for="(filter, index) in filtersList"
+          :key="index"
+          :label="filter.value"
+          class="fr-tag--dismiss"
+          tagName="button"
+          @click="filterStore.update(filter.name, '')"
+        />
+      </div>
+    </div>
   </section>
 </template>
 
