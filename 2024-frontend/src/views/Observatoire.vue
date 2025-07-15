@@ -51,19 +51,30 @@ const filtersList = computed(() => filterStore.getAllSelected())
     <h2 class="fr-h5">Retrouver les chiffres clés sur votre territoire</h2>
     <AppFilters />
   </section>
-  <section>
-    <div>
-      <p>Chiffres clés pour la recherche :</p>
-      <div>
+  <section class="observatoire__result ma-cantine--sticky__container fr-mt-4w fr-py-4w">
+    <div class="ma-cantine--sticky__top fr-grid-row fr-grid-row--middle">
+      <div class="fr-col-10 fr-grid-row fr-grid-row--middle">
+        <p class="fr-mb-0 fr-pr-1w">Chiffres clés pour la recherche :</p>
         <DsfrTag
           v-for="(filter, index) in filtersList"
           :key="index"
           :label="filter.value"
-          class="fr-tag--dismiss"
+          class="fr-tag--dismiss fr-mr-1w"
           tagName="button"
           @click="filterStore.update(filter.name, '')"
         />
       </div>
+      <div class="fr-col-2">
+        <DsfrButton tertiary label="Modifier les filtres" icon="fr-icon-filter-fill" />
+      </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div style="height: 100vh">
+      Contenu
     </div>
   </section>
 </template>
@@ -87,6 +98,19 @@ const filtersList = computed(() => filterStore.getAllSelected())
 
     .fr-tile__pictogram {
       height: 3.5rem !important;
+    }
+  }
+
+  &__result {
+    &::before {
+      z-index: -1;
+      content: "";
+      background-color: var(--background-alt-blue-france);
+      position: absolute;
+      top: 0;
+      left: calc((100vw - 100%) / 2 * -1);
+      width: 100vw;
+      height: 100%;
     }
   }
 }
