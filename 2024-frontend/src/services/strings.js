@@ -1,5 +1,4 @@
-const onlyAlphaNumericChars = (string) => {
-  // TODO à améliorer et compléter
+const removeSpecialChars = (string) => {
   return string
     .toLowerCase()
     .replaceAll("-", " ")
@@ -9,15 +8,15 @@ const onlyAlphaNumericChars = (string) => {
 }
 
 const checkIfStartsWith = (string, search) => {
-  const cleanString = onlyAlphaNumericChars(string)
-  const cleanSearch = onlyAlphaNumericChars(search)
+  const cleanString = removeSpecialChars(string)
+  const cleanSearch = removeSpecialChars(search)
   return cleanString.startsWith(cleanSearch)
 }
 
 const checkIfContains = (string, search) => {
-  const cleanString = onlyAlphaNumericChars(string)
-  const cleanSearch = onlyAlphaNumericChars(search)
+  const cleanString = removeSpecialChars(string)
+  const cleanSearch = removeSpecialChars(search)
   return cleanString.indexOf(cleanSearch) >= 0
 }
 
-export default { onlyAlphaNumericChars, checkIfStartsWith, checkIfContains }
+export default { removeSpecialChars, checkIfStartsWith, checkIfContains }
