@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue"
+import { useTemplateRef, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useFiltersStore } from "@/stores/filters"
 import AppFilters from "@/components/AppFilters.vue"
@@ -10,6 +10,11 @@ const pictoDataVisualization = "/static/images/picto-dsfr/data-visualization.svg
 const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
 const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024.pdf"
 const filtersList = computed(() => filterStore.getAllSelected())
+const filtersRef = useTemplateRef("filters-ref")
+
+const scrollToFilters = () => {
+  filtersRef.value.scrollIntoView({ behavior: "smooth" })
+}
 </script>
 
 <template>
@@ -47,12 +52,12 @@ const filtersList = computed(() => filterStore.getAllSelected())
       </li>
     </ul>
   </section>
-  <section class="fr-mt-5w">
+  <section class="fr-pt-5w" ref="filters-ref">
     <h2 class="fr-h5">Retrouver les chiffres clés sur votre territoire</h2>
     <AppFilters />
   </section>
-  <section class="observatoire__result ma-cantine--sticky__container fr-mt-4w fr-py-4w">
-    <div class="ma-cantine--sticky__top fr-grid-row fr-grid-row--middle">
+  <section class="observatoire__result ma-cantine--sticky__container fr-mt-4w fr-pb-4w">
+    <div class="ma-cantine--sticky__top fr-grid-row fr-grid-row--middle fr-pt-4w fr-background-alt--blue-france">
       <div class="fr-col-10 fr-grid-row fr-grid-row--middle">
         <p class="fr-mb-0 fr-pr-1w">Chiffres clés pour la recherche :</p>
         <DsfrTag
@@ -65,7 +70,7 @@ const filtersList = computed(() => filterStore.getAllSelected())
         />
       </div>
       <div class="fr-col-2">
-        <DsfrButton tertiary label="Modifier les filtres" icon="fr-icon-filter-fill" />
+        <DsfrButton tertiary label="Modifier les filtres" icon="fr-icon-filter-fill" @click="scrollToFilters()" />
       </div>
     </div>
     <br />
