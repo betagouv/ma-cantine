@@ -24,6 +24,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
   <div class="app-dropdow">
     <DsfrButton
       class="app-dropdow__opener"
+      :class="{ hover: isOpened }"
       tertiary
       :label="label"
       :icon="icon"
@@ -42,6 +43,12 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
 <style lang="scss">
 .app-dropdow {
   position: relative;
+
+  &__opener {
+    &.hover {
+      background-color: var(--hover-tint);
+    }
+  }
 
   &__content {
     z-index: 9;
