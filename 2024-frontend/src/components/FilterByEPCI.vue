@@ -4,7 +4,7 @@ import { getEPCIOptionsFromSearch } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
 /* Model */
-const selectedEPCI = ref([])
+const EPCISelected = ref([])
 
 /* Search */
 const search = ref("")
@@ -20,6 +20,6 @@ const options = computed(() => {
       placeholder="Rechercher un EPCI"
       @update:modelValue="($event) => (search = $event)"
     />
-    <DsfrCheckboxSet :modelValue="selectedEPCI" :options="options" small />
+    <DsfrCheckboxSet :modelValue="EPCISelected" :options="options" small />
   </AppDropdown>
 </template>
