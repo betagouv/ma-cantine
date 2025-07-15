@@ -31,7 +31,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
       @click="isOpened = !isOpened"
       ref="opener"
     />
-    <div v-show="isOpened" class="app-dropdow__content" ref="content">
+    <div v-if="isOpened" class="app-dropdow__content" ref="content">
       <div class="app-dropdow__scrollable fr-p-2w fr-mt-1v fr-card">
         <slot></slot>
       </div>
