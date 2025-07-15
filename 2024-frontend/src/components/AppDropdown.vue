@@ -1,7 +1,6 @@
 <script setup>
 import { computed, ref, useTemplateRef } from "vue"
 import { onClickOutside } from "@vueuse/core"
-import {} from "vue"
 defineProps(["label"])
 
 /* Icon */
