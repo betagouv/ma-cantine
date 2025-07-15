@@ -4,6 +4,8 @@ const onlyAlphaNumericChars = (string) => {
     .toLowerCase()
     .replaceAll("-", " ")
     .replaceAll("'", " ")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
 }
 
 const checkIfStartsWith = (string, search) => {
