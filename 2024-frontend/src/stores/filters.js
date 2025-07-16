@@ -21,8 +21,7 @@ const useStoreFilters = defineStore("filters", () => {
     params[name] = value
   }
   function remove(name, value) {
-    if (value === "") params[name] = ""
-    else params[name] = params[name].filter((element) => element.value !== value)
+    params[name] = value === "" ? "" : params[name].filter((element) => element.value !== value)
   }
 
   /* Action to get a filter parameters values */
