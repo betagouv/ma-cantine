@@ -126,7 +126,7 @@ const getRegionsOptionsFromSearch = (search) => {
     ? regionsSortedByName.filter((region) => stringsService.checkIfStartsWith(region.nom, search))
     : regionsSortedByName
   return regionsOptions.map((region) => {
-    return { label: region.nom, value: region.code, id: region.code }
+    return { label: region.nom, value: { value: region.code, name: region.nom }, id: region.code }
   })
 }
 

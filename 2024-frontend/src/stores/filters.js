@@ -9,6 +9,7 @@ const useStoreFilters = defineStore("filters", () => {
     economicModel: [],
     managementType: [],
     productionType: [],
+    regions: [],
   })
 
   /* Actions to update filters parameters */
@@ -42,6 +43,11 @@ const useStoreFilters = defineStore("filters", () => {
     if (params.sectors.length > 0) {
       params.sectors.forEach((sector) => {
         list.push({ name: "sectors", value: sector.value, label: sector.name })
+      })
+    }
+    if (params.regions.length > 0) {
+      params.regions.forEach((region) => {
+        list.push({ name: "regions", value: region.value, label: region.name })
       })
     }
     return list
