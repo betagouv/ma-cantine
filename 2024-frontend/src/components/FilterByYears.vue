@@ -5,7 +5,7 @@ import { getYearsOptions } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
 const filterStore = useFiltersStore()
-const yearSelected = computed(() => filterStore.year)
+const yearSelected = computed(() => filterStore.params.year)
 const options = ref(getYearsOptions())
 const updateFilter = (value) => {
   filterStore.add("year", value)

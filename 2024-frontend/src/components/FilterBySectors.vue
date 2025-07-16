@@ -25,7 +25,7 @@ const options = computed(() => {
 
 /* Select sector */
 const filterStore = useFiltersStore()
-const sectorsSelected = computed(() => filterStore.sectors)
+const sectorsSelected = computed(() => filterStore.params.sectors)
 const updateFilter = (value) => {
   filterStore.add("sectors", value)
 }

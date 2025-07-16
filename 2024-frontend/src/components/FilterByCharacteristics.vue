@@ -4,9 +4,9 @@ import { useFiltersStore } from "@/stores/filters"
 import { getCharacteristicsOptions } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
-const economicModel = computed(() => filterStore.economicModel)
-const managementType = computed(() => filterStore.managementType)
-const productionType = computed(() => filterStore.productionType)
+const economicModel = computed(() => filterStore.params.economicModel)
+const managementType = computed(() => filterStore.params.managementType)
+const productionType = computed(() => filterStore.params.productionType)
 const options = ref(getCharacteristicsOptions())
 
 const filterStore = useFiltersStore()
