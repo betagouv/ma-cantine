@@ -105,7 +105,7 @@ const getEPCIOptionsFromSearch = (search) => {
   const options = firstTenEPCI.map((epci) => {
     return {
       label: epci.nom,
-      value: epci.code,
+      value: { value: epci.code, name: epci.nom },
       id: epci.code,
     }
   })
