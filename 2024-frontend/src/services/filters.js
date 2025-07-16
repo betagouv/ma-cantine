@@ -35,17 +35,19 @@ const getCharacteristicsOptions = () => {
   const economicModelOptions = cantines.economicModel.map((option) => {
     option.hint = ""
     option.id = option.value
+    option.value = { value: option.value, name: option.label }
     return option
   })
 
   const managementTypeOptions = cantines.managementType.map((option) => {
     option.name = "managementType"
     option.id = option.value
+    option.value = { value: option.value, name: option.label }
     return option
   })
 
   const productionTypeOptions = cantines.productionType.map((option) => {
-    return { label: option.label, value: option.value, id: option.value }
+    return { label: option.label, value: { value: option.value, name: option.label }, id: option.value }
   })
 
   const characteristicsOptions = {
