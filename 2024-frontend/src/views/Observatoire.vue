@@ -3,6 +3,7 @@ import { useRoute } from "vue-router"
 const route = useRoute()
 const pictoDataVisualization = "/static/images/picto-dsfr/data-visualization.svg"
 const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
+const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024.pdf"
 </script>
 
 <template>
@@ -29,7 +30,7 @@ const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
           titleTag="p"
           class="statistics-canteens__force-title-download-vertical"
           title="Télécharger le rapport annuel 2024"
-          to="/#"
+          :to="documentRapport"
           :imgSrc="pictoDocuments"
           :download="true"
           small
