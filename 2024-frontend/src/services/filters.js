@@ -117,7 +117,11 @@ const getDepartmentsOptionsFromSearch = (search) => {
     ? departements.filter((department) => stringsService.checkIfStartsWith(department.nom, search))
     : departements
   return departmentsOptions.map((department) => {
-    return { label: `${department.nom} (${department.code})`, value: department.code, id: department.code }
+    return {
+      label: `${department.nom} (${department.code})`,
+      value: { value: department.code, name: department.nom },
+      id: department.code,
+    }
   })
 }
 

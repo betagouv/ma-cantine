@@ -2,7 +2,7 @@ import { defineStore } from "pinia"
 import { reactive } from "vue"
 
 const useStoreFilters = defineStore("filters", () => {
-  /* Filters paramters to send to api */
+  /* Filters parameters to send to api */
   const params = reactive({
     year: new Date().getFullYear(),
     sectors: [],
@@ -10,6 +10,7 @@ const useStoreFilters = defineStore("filters", () => {
     managementType: [],
     productionType: [],
     regions: [],
+    departements: [],
   })
 
   /* Actions to update filters parameters */
@@ -48,6 +49,11 @@ const useStoreFilters = defineStore("filters", () => {
     if (params.regions.length > 0) {
       params.regions.forEach((region) => {
         list.push({ name: "regions", value: region.value, label: region.name })
+      })
+    }
+    if (params.departements.length > 0) {
+      params.departements.forEach((departement) => {
+        list.push({ name: "departements", value: departement.value, label: departement.name })
       })
     }
     return list
