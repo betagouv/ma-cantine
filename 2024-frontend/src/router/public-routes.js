@@ -92,7 +92,7 @@ const routes = [
     name: "Observatoire",
     component: Observatoire,
     meta: {
-      title: "Observatoire",
+      title: "Observatoire EGalim en restauration collective",
     },
   },
 ]
