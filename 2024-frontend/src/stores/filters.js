@@ -25,6 +25,11 @@ const useStoreFilters = defineStore("filters", () => {
     else params[name] = params[name].filter((element) => element.value !== value)
   }
 
+  /* Action to get a filter parameters values */
+  function get(name) {
+    return name === "year" ? params.year : [...params[name]]
+  }
+
   /* Action to get all parameters with non empty */
   function getFilled() {
     const list = []
@@ -77,7 +82,7 @@ const useStoreFilters = defineStore("filters", () => {
     return list
   }
 
-  return { add, remove, getFilled, params }
+  return { add, remove, getFilled, get }
 })
 
 export { useStoreFilters }

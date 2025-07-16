@@ -5,7 +5,7 @@ import { getSectorsOptions } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
 const storeFilters = useStoreFilters()
-const sectorsSelected = computed(() => storeFilters.params.sectors)
+const sectorsSelected = computed(() => storeFilters.get("sectors"))
 
 /* Get sectors */
 const sectors = ref([])

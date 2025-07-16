@@ -5,7 +5,7 @@ import { getEPCIOptionsFromSearch } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
 const storeFilters = useStoreFilters()
-const EPCISelected = computed(() => storeFilters.params.epcis)
+const EPCISelected = computed(() => storeFilters.get("epcis"))
 
 /* Search */
 const search = ref("")

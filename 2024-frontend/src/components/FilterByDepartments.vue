@@ -6,7 +6,7 @@ import AppDropdown from "@/components/AppDropdown.vue"
 
 const departments = ref(getDepartmentsOptionsFromSearch())
 const storeFilters = useStoreFilters()
-const departmentsSelected = computed(() => storeFilters.params.departments)
+const departmentsSelected = computed(() => storeFilters.get("departments"))
 
 /* Search */
 const search = ref("")

@@ -5,7 +5,7 @@ import { getPATOptionsFromSearch } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
 const storeFilters = useStoreFilters()
-const PATSelected = computed(() => storeFilters.params.pats)
+const PATSelected = computed(() => storeFilters.get("pats"))
 
 /* Search */
 const search = ref("")

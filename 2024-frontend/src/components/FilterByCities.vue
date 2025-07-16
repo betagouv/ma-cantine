@@ -5,7 +5,7 @@ import { getCitiesOptionsFromSearch } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
 const storeFilters = useStoreFilters()
-const citiesSelected = computed(() => storeFilters.params.cities)
+const citiesSelected = computed(() => storeFilters.get("cities"))
 
 /* Search */
 const search = ref("")

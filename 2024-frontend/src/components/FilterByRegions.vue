@@ -6,7 +6,7 @@ import AppDropdown from "@/components/AppDropdown.vue"
 
 const regions = ref(getRegionsOptionsFromSearch())
 const storeFilters = useStoreFilters()
-const regionsSelected = computed(() => storeFilters.params.regions)
+const regionsSelected = computed(() => storeFilters.get("regions"))
 
 /* Search */
 const search = ref("")

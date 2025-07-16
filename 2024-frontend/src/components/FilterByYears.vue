@@ -6,7 +6,7 @@ import AppDropdown from "@/components/AppDropdown.vue"
 
 const options = ref(getYearsOptions())
 const storeFilters = useStoreFilters()
-const yearSelected = computed(() => storeFilters.params.year)
+const yearSelected = computed(() => storeFilters.get("year"))
 </script>
 
 <template>
