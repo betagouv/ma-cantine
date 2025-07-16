@@ -9,7 +9,7 @@ const filterStore = useFiltersStore()
 const pictoDataVisualization = "/static/images/picto-dsfr/data-visualization.svg"
 const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
 const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024.pdf"
-const filtersList = computed(() => filterStore.getAllSelected())
+const filtersList = computed(() => filterStore.getFilled())
 const filtersRef = useTemplateRef("filters-ref")
 
 const scrollToFilters = () => {

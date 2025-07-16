@@ -20,8 +20,8 @@ const useFiltersStore = defineStore("filters", () => {
     else params[name] = params[name].filter((element) => element.value !== value)
   }
 
-  /* Actions */
-  function getAllSelected() {
+  /* Action to get all parameters with non empty */
+  function getFilled() {
     const list = []
     if (params.year !== "") list.push({ name: "year", value: "", label: params.year })
     if (params.economicModel.length > 0) {
@@ -47,7 +47,7 @@ const useFiltersStore = defineStore("filters", () => {
     return list
   }
 
-  return { add, remove, getAllSelected, params }
+  return { add, remove, getFilled, params }
 })
 
 export { useFiltersStore }
