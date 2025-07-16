@@ -13,7 +13,7 @@ const yearSelected = computed(() => storeFilters.params.year)
   <AppDropdown label="Années">
     <DsfrRadioButtonSet
       :modelValue="yearSelected"
-      @update:modelValue="storeFilters.add('year', value)"
+      @update:modelValue="storeFilters.add('year', $event)"
       :options="options"
       small
     />

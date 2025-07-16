@@ -21,7 +21,7 @@ const options = computed(() => {
     <DsfrSearchBar v-model="search" placeholder="Rechercher un département" />
     <DsfrCheckboxSet
       :modelValue="departementsSelected"
-      @update:modelValue="storeFilters.add('departements', value)"
+      @update:modelValue="storeFilters.add('departements', $event)"
       :options="options"
       small
     />

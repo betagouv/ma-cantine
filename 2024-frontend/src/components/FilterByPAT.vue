@@ -19,7 +19,7 @@ const options = computed(() => {
     <DsfrSearchBar v-model="search" placeholder="Rechercher un PAT" />
     <DsfrCheckboxSet
       :modelValue="PATSelected"
-      @update:modelValue="storeFilters.add('pats', value)"
+      @update:modelValue="storeFilters.add('pats', $event)"
       :options="options"
       small
     />
