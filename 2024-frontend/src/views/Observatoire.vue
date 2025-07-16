@@ -1,15 +1,13 @@
 <script setup>
-import { useTemplateRef, computed } from "vue"
+import { useTemplateRef } from "vue"
 import { useRoute } from "vue-router"
-import { useStoreFilters } from "@/stores/filters"
 import AppFilters from "@/components/AppFilters.vue"
+import ObservatoryResultsFilters from "@/components/ObservatoryResultsFilters.vue"
 
 const route = useRoute()
-const storeFilters = useStoreFilters()
 const pictoDataVisualization = "/static/images/picto-dsfr/data-visualization.svg"
 const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
 const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024.pdf"
-const filtersList = computed(() => storeFilters.getFilled())
 const filtersRef = useTemplateRef("filters-ref")
 
 const scrollToFilters = () => {
@@ -53,23 +51,8 @@ const scrollToFilters = () => {
     <h2 class="fr-h5">Retrouver les chiffres clés sur votre territoire</h2>
     <AppFilters />
   </section>
-  <section class="observatoire__result ma-cantine--sticky__container fr-mt-4w fr-pb-4w">
-    <div class="ma-cantine--sticky__top fr-grid-row fr-grid-row--middle fr-pt-4w fr-background-alt--blue-france">
-      <div class="fr-col-10 fr-grid-row fr-grid-row--middle">
-        <p class="fr-mb-0 fr-pr-1w">Chiffres clés pour la recherche :</p>
-        <DsfrTag
-          v-for="(filter, index) in filtersList"
-          :key="index"
-          :label="filter.label"
-          class="fr-tag--dismiss fr-mr-1w"
-          tagName="button"
-          @click="storeFilters.remove(filter.name, filter.value)"
-        />
-      </div>
-      <div class="fr-col-2">
-        <DsfrButton tertiary label="Modifier les filtres" icon="fr-icon-filter-fill" @click="scrollToFilters()" />
-      </div>
-    </div>
+  <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pb-4w">
+    <ObservatoryResultsFilters @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
     <br />
     <br />
     <br />
@@ -103,7 +86,7 @@ const scrollToFilters = () => {
     }
   }
 
-  &__result {
+  &__results {
     &::before {
       z-index: -1;
       content: "";
