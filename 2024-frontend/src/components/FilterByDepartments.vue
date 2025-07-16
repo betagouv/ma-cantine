@@ -6,7 +6,7 @@ import AppDropdown from "@/components/AppDropdown.vue"
 
 const departments = ref(getDepartmentsOptionsFromSearch())
 const storeFilters = useStoreFilters()
-const departementsSelected = computed(() => storeFilters.params.departements)
+const departmentsSelected = computed(() => storeFilters.params.departments)
 
 /* Search */
 const search = ref("")
@@ -20,8 +20,8 @@ const options = computed(() => {
   <AppDropdown label="Département">
     <DsfrSearchBar v-model="search" placeholder="Rechercher un département" />
     <DsfrCheckboxSet
-      :modelValue="departementsSelected"
-      @update:modelValue="storeFilters.add('departements', $event)"
+      :modelValue="departmentsSelected"
+      @update:modelValue="storeFilters.add('departments', $event)"
       :options="options"
       small
     />

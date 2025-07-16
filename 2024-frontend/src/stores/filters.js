@@ -10,7 +10,7 @@ const useStoreFilters = defineStore("filters", () => {
     managementType: [],
     productionType: [],
     regions: [],
-    departements: [],
+    departments: [],
     epcis: [],
     pats: [],
     cities: [],
@@ -54,9 +54,9 @@ const useStoreFilters = defineStore("filters", () => {
         list.push({ name: "regions", value: region.value, label: region.label })
       })
     }
-    if (params.departements.length > 0) {
-      params.departements.forEach((departement) => {
-        list.push({ name: "departements", value: departement.value, label: departement.label })
+    if (params.departments.length > 0) {
+      params.departments.forEach((department) => {
+        list.push({ name: "departments", value: department.value, label: department.label })
       })
     }
     if (params.epcis.length > 0) {
