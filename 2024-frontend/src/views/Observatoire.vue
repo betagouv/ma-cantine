@@ -30,19 +30,16 @@ const scrollToFilters = () => {
       <li class="fr-col-12 fr-col-sm-6">
         <DsfrTile
           titleTag="p"
-          class="observatoire__force-title-download-vertical"
-          title="Rapport de la campagne 2024"
-          description="Application et des objectifs d’approvisionnements fixés à la restauration collective."
-          to="/#"
-          :imgSrc="pictoDocuments"
-          :download="true"
+          title="Accéder à data.gouv.fr"
+          to="https://www.data.gouv.fr/fr/organizations/ministere-de-l-agriculture-de-l-agroalimentaire-et-de-la-foret/"
+          :imgSrc="pictoDataVisualization"
           small
         />
       </li>
       <li class="fr-col-12 fr-col-sm-6">
         <DsfrTile
           titleTag="p"
-          class="statistics-canteens__force-title-download-vertical"
+          class="observatoire__force-title-download-vertical"
           title="Télécharger le rapport annuel 2024"
           :to="documentRapport"
           :imgSrc="pictoDocuments"
