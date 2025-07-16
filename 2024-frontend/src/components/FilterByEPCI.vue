@@ -15,11 +15,7 @@ const options = computed(() => {
 </script>
 <template>
   <AppDropdown label="EPCI">
-    <DsfrSearchBar
-      :modelValue="search"
-      placeholder="Rechercher un EPCI"
-      @update:modelValue="($event) => (search = $event)"
-    />
+    <DsfrSearchBar v-model="search" placeholder="Rechercher un EPCI" />
     <DsfrCheckboxSet :modelValue="EPCISelected" :options="options" small />
   </AppDropdown>
 </template>

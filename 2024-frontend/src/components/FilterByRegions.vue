@@ -18,11 +18,7 @@ const options = computed(() => {
 
 <template>
   <AppDropdown label="Régions">
-    <DsfrSearchBar
-      :modelValue="search"
-      placeholder="Rechercher une région"
-      @update:modelValue="($event) => (search = $event)"
-    />
+    <DsfrSearchBar v-model="search" placeholder="Rechercher une région" />
     <DsfrCheckboxSet :modelValue="regionsSelected" :options="options" small />
   </AppDropdown>
 </template>
