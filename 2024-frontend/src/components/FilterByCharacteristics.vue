@@ -8,11 +8,7 @@ const economicModel = computed(() => storeFilters.params.economicModel)
 const managementType = computed(() => storeFilters.params.managementType)
 const productionType = computed(() => storeFilters.params.productionType)
 const options = ref(getCharacteristicsOptions())
-
 const storeFilters = useStoreFilters()
-const updateFilter = (name, value) => {
-  storeFilters.add(name, value)
-}
 </script>
 
 <template>
@@ -20,7 +16,7 @@ const updateFilter = (name, value) => {
     <DsfrCheckboxSet
       legend="Types d’établissement :"
       :modelValue="economicModel"
-      @update:modelValue="updateFilter('economicModel', $event)"
+      @update:modelValue="storeFilters.add('economicModel', $event)"
       :options="options.economicModel"
       small
       inline
@@ -28,7 +24,7 @@ const updateFilter = (name, value) => {
     <DsfrCheckboxSet
       legend="Modes de gestion :"
       :modelValue="managementType"
-      @update:modelValue="updateFilter('managementType', $event)"
+      @update:modelValue="storeFilters.add('managementType', $event)"
       :options="options.managementType"
       small
       inline
@@ -36,7 +32,7 @@ const updateFilter = (name, value) => {
     <DsfrCheckboxSet
       legend="Modes de production :"
       :modelValue="productionType"
-      @update:modelValue="updateFilter('productionType', $event)"
+      @update:modelValue="storeFilters.add('productionType', $event)"
       :options="options.productionType"
       small
       inline

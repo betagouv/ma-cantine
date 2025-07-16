@@ -4,6 +4,9 @@ import { useStoreFilters } from "@/stores/filters"
 import { getSectorsOptions } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
+const storeFilters = useStoreFilters()
+const sectorsSelected = computed(() => storeFilters.params.sectors)
+
 /* Get sectors */
 const sectors = ref([])
 getSectorsOptions().then((response) => {
@@ -22,13 +25,6 @@ const options = computed(() => {
   })
   return searchedSectors
 })
-
-/* Select sector */
-const storeFilters = useStoreFilters()
-const sectorsSelected = computed(() => storeFilters.params.sectors)
-const updateFilter = (value) => {
-  storeFilters.add("sectors", value)
-}
 </script>
 
 <template>
@@ -38,6 +34,11 @@ const updateFilter = (value) => {
       placeholder="Rechercher un secteur"
       @update:modelValue="($event) => (search = $event)"
     />
-    <DsfrCheckboxSet :modelValue="sectorsSelected" @update:modelValue="updateFilter" :options="options" small />
+    <DsfrCheckboxSet
+      :modelValue="sectorsSelected"
+      @update:modelValue="storeFilters.add('sectors', $event)"
+      :options="options"
+      small
+    />
   </AppDropdown>
 </template>
