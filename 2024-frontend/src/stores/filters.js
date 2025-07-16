@@ -12,6 +12,7 @@ const useStoreFilters = defineStore("filters", () => {
     regions: [],
     departements: [],
     epcis: [],
+    pats: [],
   })
 
   /* Actions to update filters parameters */
@@ -60,6 +61,11 @@ const useStoreFilters = defineStore("filters", () => {
     if (params.epcis.length > 0) {
       params.epcis.forEach((epci) => {
         list.push({ name: "epcis", value: epci.value, label: epci.name })
+      })
+    }
+    if (params.pats.length > 0) {
+      params.pats.forEach((pat) => {
+        list.push({ name: "pats", value: pat.value, label: pat.name })
       })
     }
     return list

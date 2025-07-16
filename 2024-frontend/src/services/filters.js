@@ -92,7 +92,7 @@ const getPATOptionsFromSearch = (search) => {
   const options = firstTenPAT.map((pat) => {
     return {
       label: pat.nom,
-      value: pat.code,
+      value: { value: pat.code, name: pat.nom },
       id: pat.code,
     }
   })
