@@ -1,7 +1,7 @@
 import { defineStore } from "pinia"
 import { reactive } from "vue"
 
-const useFiltersStore = defineStore("filters", () => {
+const useStoreFilters = defineStore("filters", () => {
   /* Filters paramters to send to api */
   const params = reactive({
     year: new Date().getFullYear(),
@@ -50,4 +50,4 @@ const useFiltersStore = defineStore("filters", () => {
   return { add, remove, getFilled, params }
 })
 
-export { useFiltersStore }
+export { useStoreFilters }

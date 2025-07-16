@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from "vue"
-import { useFiltersStore } from "@/stores/filters"
+import { useStoreFilters } from "@/stores/filters"
 import { getSectorsOptions } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
@@ -24,10 +24,10 @@ const options = computed(() => {
 })
 
 /* Select sector */
-const filterStore = useFiltersStore()
-const sectorsSelected = computed(() => filterStore.params.sectors)
+const storeFilters = useStoreFilters()
+const sectorsSelected = computed(() => storeFilters.params.sectors)
 const updateFilter = (value) => {
-  filterStore.add("sectors", value)
+  storeFilters.add("sectors", value)
 }
 </script>
 

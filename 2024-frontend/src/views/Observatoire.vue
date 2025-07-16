@@ -1,15 +1,15 @@
 <script setup>
 import { useTemplateRef, computed } from "vue"
 import { useRoute } from "vue-router"
-import { useFiltersStore } from "@/stores/filters"
+import { useStoreFilters } from "@/stores/filters"
 import AppFilters from "@/components/AppFilters.vue"
 
 const route = useRoute()
-const filterStore = useFiltersStore()
+const storeFilters = useStoreFilters()
 const pictoDataVisualization = "/static/images/picto-dsfr/data-visualization.svg"
 const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
 const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024.pdf"
-const filtersList = computed(() => filterStore.getFilled())
+const filtersList = computed(() => storeFilters.getFilled())
 const filtersRef = useTemplateRef("filters-ref")
 
 const scrollToFilters = () => {
@@ -63,7 +63,7 @@ const scrollToFilters = () => {
           :label="filter.label"
           class="fr-tag--dismiss fr-mr-1w"
           tagName="button"
-          @click="filterStore.remove(filter.name, filter.value)"
+          @click="storeFilters.remove(filter.name, filter.value)"
         />
       </div>
       <div class="fr-col-2">

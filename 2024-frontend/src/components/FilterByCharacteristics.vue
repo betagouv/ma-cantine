@@ -1,17 +1,17 @@
 <script setup>
 import { ref, computed } from "vue"
-import { useFiltersStore } from "@/stores/filters"
+import { useStoreFilters } from "@/stores/filters"
 import { getCharacteristicsOptions } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
-const economicModel = computed(() => filterStore.params.economicModel)
-const managementType = computed(() => filterStore.params.managementType)
-const productionType = computed(() => filterStore.params.productionType)
+const economicModel = computed(() => storeFilters.params.economicModel)
+const managementType = computed(() => storeFilters.params.managementType)
+const productionType = computed(() => storeFilters.params.productionType)
 const options = ref(getCharacteristicsOptions())
 
-const filterStore = useFiltersStore()
+const storeFilters = useStoreFilters()
 const updateFilter = (name, value) => {
-  filterStore.add(name, value)
+  storeFilters.add(name, value)
 }
 </script>
 

@@ -1,14 +1,14 @@
 <script setup>
 import { ref, computed } from "vue"
-import { useFiltersStore } from "@/stores/filters"
+import { useStoreFilters } from "@/stores/filters"
 import { getYearsOptions } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
-const filterStore = useFiltersStore()
-const yearSelected = computed(() => filterStore.params.year)
+const storeFilters = useStoreFilters()
+const yearSelected = computed(() => storeFilters.params.year)
 const options = ref(getYearsOptions())
 const updateFilter = (value) => {
-  filterStore.add("year", value)
+  storeFilters.add("year", value)
 }
 </script>
 
