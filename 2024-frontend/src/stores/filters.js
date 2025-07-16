@@ -31,54 +31,16 @@ const useStoreFilters = defineStore("filters", () => {
 
   /* Action to get all parameters with non empty */
   function getFilled() {
-    const list = []
-    if (params.year !== "") list.push({ name: "year", value: "", label: params.year })
-    if (params.economicModel.length > 0) {
-      params.economicModel.forEach((economicModel) => {
-        list.push({ name: "economicModel", value: economicModel.value, label: economicModel.label })
-      })
-    }
-    if (params.managementType.length > 0) {
-      params.managementType.forEach((managementType) => {
-        list.push({ name: "managementType", value: managementType.value, label: managementType.label })
-      })
-    }
-    if (params.productionType.length > 0) {
-      params.productionType.forEach((productionType) => {
-        list.push({ name: "productionType", value: productionType.value, label: productionType.label })
-      })
-    }
-    if (params.sectors.length > 0) {
-      params.sectors.forEach((sector) => {
-        list.push({ name: "sectors", value: sector.value, label: sector.label })
-      })
-    }
-    if (params.regions.length > 0) {
-      params.regions.forEach((region) => {
-        list.push({ name: "regions", value: region.value, label: region.label })
-      })
-    }
-    if (params.departments.length > 0) {
-      params.departments.forEach((department) => {
-        list.push({ name: "departments", value: department.value, label: department.label })
-      })
-    }
-    if (params.epcis.length > 0) {
-      params.epcis.forEach((epci) => {
-        list.push({ name: "epcis", value: epci.value, label: epci.label })
-      })
-    }
-    if (params.pats.length > 0) {
-      params.pats.forEach((pat) => {
-        list.push({ name: "pats", value: pat.value, label: pat.label })
-      })
-    }
-    if (params.cities.length > 0) {
-      params.cities.forEach((city) => {
-        list.push({ name: "cities", value: city.value, label: city.label })
-      })
-    }
-    return list
+    const filledParams = []
+    Object.keys(params).forEach((key) => {
+      if (key === "year" && params.year !== "") filledParams.push({ name: "year", value: "", label: params.year })
+      else if (params[key].length > 0) {
+        params[key].forEach((option) => {
+          filledParams.push({ name: key, value: option.value, label: option.label })
+        })
+      }
+    })
+    return filledParams
   }
 
   return { add, remove, getFilled, get }
