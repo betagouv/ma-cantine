@@ -6,6 +6,19 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.25.0](https://github.com/betagouv/ma-cantine/compare/v2025.24.2...v2025.25.0) (2025-07-16)
+
+
+### Nouveautés
+
+* **Observatoire:** affichage des filtres ([#5528](https://github.com/betagouv/ma-cantine/issues/5528)) ([9b9ab99](https://github.com/betagouv/ma-cantine/commit/9b9ab9989901a7f3fd2a98a6ff0c2ca17adc0df1))
+* **Observatoire:** ajoute les contenus de l'en-tête de page ([#5530](https://github.com/betagouv/ma-cantine/issues/5530)) ([ca6a3e8](https://github.com/betagouv/ma-cantine/commit/ca6a3e8e31f875596fca5b325e0cd169f52148c8))
+
+
+### Améliorations
+
+* **ETL:** Extraire les secteurs/categories depuis declared_data ([#5523](https://github.com/betagouv/ma-cantine/issues/5523)) ([cfdc8f2](https://github.com/betagouv/ma-cantine/commit/cfdc8f20f318fdcbfa9ccd323d4fd0c15362e65f))
+
 ## [2025.24.2](https://github.com/betagouv/ma-cantine/compare/v2025.24.1...v2025.24.2) (2025-07-11)
 
 
