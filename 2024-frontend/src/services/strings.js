@@ -3,8 +3,8 @@ const removeSpecialChars = (string) => {
     .toLowerCase()
     .replaceAll("-", " ")
     .replaceAll("'", " ")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .normalize("NFD") // Convert string to unicode normalize : needed for accent replacement
+    .replace(/[\u0300-\u036f]/g, "") // Remove accents : all chars between unicode U+0300 to U+036F
 }
 
 const checkIfStartsWith = (string, search) => {
