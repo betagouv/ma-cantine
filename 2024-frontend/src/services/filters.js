@@ -34,20 +34,18 @@ const getYearsOptions = () => {
 const getCharacteristicsOptions = () => {
   const economicModelOptions = cantines.economicModel.map((option) => {
     option.hint = ""
-    option.id = option.value
     option.value = { value: option.value, name: option.label }
     return option
   })
 
   const managementTypeOptions = cantines.managementType.map((option) => {
     option.name = "managementType"
-    option.id = option.value
     option.value = { value: option.value, name: option.label }
     return option
   })
 
   const productionTypeOptions = cantines.productionType.map((option) => {
-    return { label: option.label, value: { value: option.value, name: option.label }, id: option.value }
+    return { label: option.label, value: { value: option.value, name: option.label } }
   })
 
   const characteristicsOptions = {
@@ -64,7 +62,6 @@ const getSectorsOptions = async () => {
   sectorsBackend.forEach((sector) => {
     const label = `${sector.categoryName} - ${sector.name}`
     const option = {
-      id: sector.id,
       label: label,
       value: { value: sector.id, name: label },
     }
@@ -81,7 +78,6 @@ const getCitiesOptionsFromSearch = (search) => {
     return {
       label,
       value: { value: city.code, name: label },
-      id: city.code,
     }
   })
   return options
@@ -94,7 +90,6 @@ const getPATOptionsFromSearch = (search) => {
     return {
       label: pat.nom,
       value: { value: pat.code, name: pat.nom },
-      id: pat.code,
     }
   })
   return options
@@ -107,7 +102,6 @@ const getEPCIOptionsFromSearch = (search) => {
     return {
       label: epci.nom,
       value: { value: epci.code, name: epci.nom },
-      id: epci.code,
     }
   })
   return options
@@ -121,7 +115,6 @@ const getDepartmentsOptionsFromSearch = (search) => {
     return {
       label: `${department.nom} (${department.code})`,
       value: { value: department.code, name: department.nom },
-      id: department.code,
     }
   })
 }
@@ -131,7 +124,7 @@ const getRegionsOptionsFromSearch = (search) => {
     ? regionsSortedByName.filter((region) => stringsService.checkIfStartsWith(region.nom, search))
     : regionsSortedByName
   return regionsOptions.map((region) => {
-    return { label: region.nom, value: { value: region.code, name: region.nom }, id: region.code }
+    return { label: region.nom, value: { value: region.code, name: region.nom } }
   })
 }
 
