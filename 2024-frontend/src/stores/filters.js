@@ -31,47 +31,47 @@ const useStoreFilters = defineStore("filters", () => {
     if (params.year !== "") list.push({ name: "year", value: "", label: params.year })
     if (params.economicModel.length > 0) {
       params.economicModel.forEach((economicModel) => {
-        list.push({ name: "economicModel", value: economicModel.value, label: economicModel.name })
+        list.push({ name: "economicModel", value: economicModel.value, label: economicModel.label })
       })
     }
     if (params.managementType.length > 0) {
       params.managementType.forEach((managementType) => {
-        list.push({ name: "managementType", value: managementType.value, label: managementType.name })
+        list.push({ name: "managementType", value: managementType.value, label: managementType.label })
       })
     }
     if (params.productionType.length > 0) {
       params.productionType.forEach((productionType) => {
-        list.push({ name: "productionType", value: productionType.value, label: productionType.name })
+        list.push({ name: "productionType", value: productionType.value, label: productionType.label })
       })
     }
     if (params.sectors.length > 0) {
       params.sectors.forEach((sector) => {
-        list.push({ name: "sectors", value: sector.value, label: sector.name })
+        list.push({ name: "sectors", value: sector.value, label: sector.label })
       })
     }
     if (params.regions.length > 0) {
       params.regions.forEach((region) => {
-        list.push({ name: "regions", value: region.value, label: region.name })
+        list.push({ name: "regions", value: region.value, label: region.label })
       })
     }
     if (params.departements.length > 0) {
       params.departements.forEach((departement) => {
-        list.push({ name: "departements", value: departement.value, label: departement.name })
+        list.push({ name: "departements", value: departement.value, label: departement.label })
       })
     }
     if (params.epcis.length > 0) {
       params.epcis.forEach((epci) => {
-        list.push({ name: "epcis", value: epci.value, label: epci.name })
+        list.push({ name: "epcis", value: epci.value, label: epci.label })
       })
     }
     if (params.pats.length > 0) {
       params.pats.forEach((pat) => {
-        list.push({ name: "pats", value: pat.value, label: pat.name })
+        list.push({ name: "pats", value: pat.value, label: pat.label })
       })
     }
     if (params.cities.length > 0) {
       params.cities.forEach((city) => {
-        list.push({ name: "cities", value: city.value, label: city.name })
+        list.push({ name: "cities", value: city.value, label: city.label })
       })
     }
     return list
