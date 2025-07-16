@@ -1,5 +1,7 @@
 <script setup>
 import { useRoute } from "vue-router"
+import AppFilters from "@/components/AppFilters.vue"
+
 const route = useRoute()
 const pictoDataVisualization = "/static/images/picto-dsfr/data-visualization.svg"
 const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
@@ -37,6 +39,10 @@ const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024
         />
       </li>
     </ul>
+  </section>
+  <section class="fr-mt-5w">
+    <h2 class="fr-h5">Retrouver les chiffres clés sur votre territoire</h2>
+    <AppFilters />
   </section>
 </template>
 
