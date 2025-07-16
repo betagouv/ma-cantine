@@ -8,7 +8,7 @@ const filterStore = useFiltersStore()
 const yearSelected = computed(() => filterStore.year)
 const options = ref(getYearsOptions())
 const updateFilter = (value) => {
-  filterStore.update("year", value)
+  filterStore.add("year", value)
 }
 </script>
 

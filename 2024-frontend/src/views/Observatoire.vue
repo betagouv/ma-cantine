@@ -63,10 +63,10 @@ const scrollToFilters = () => {
         <DsfrTag
           v-for="(filter, index) in filtersList"
           :key="index"
-          :label="filter.value"
+          :label="filter.label"
           class="fr-tag--dismiss fr-mr-1w"
           tagName="button"
-          @click="filterStore.update(filter.name, '')"
+          @click="filterStore.remove(filter.name, filter.value)"
         />
       </div>
       <div class="fr-col-2">

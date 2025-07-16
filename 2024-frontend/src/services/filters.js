@@ -60,10 +60,11 @@ const getSectorsOptions = async () => {
   const sectorsBackend = await sectorsService.getSectors()
   const sectorsOptions = []
   sectorsBackend.forEach((sector) => {
+    const label = `${sector.categoryName} - ${sector.name}`
     const option = {
       id: sector.id,
-      label: `${sector.categoryName} - ${sector.name}`,
-      value: sector.id,
+      label: label,
+      value: { value: sector.id, name: label },
     }
     sectorsOptions.push(option)
   })

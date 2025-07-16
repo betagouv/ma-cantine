@@ -1,9 +1,8 @@
 <script setup>
 import { ref, computed } from "vue"
+import { useFiltersStore } from "@/stores/filters"
 import { getSectorsOptions } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
-
-const sectorsSelected = ref([])
 
 /* Get sectors */
 const sectors = ref([])
@@ -23,11 +22,22 @@ const options = computed(() => {
   })
   return searchedSectors
 })
+
+/* Select sector */
+const filterStore = useFiltersStore()
+const sectorsSelected = computed(() => filterStore.sectors)
+const updateFilter = (value) => {
+  filterStore.add("sectors", value)
+}
 </script>
 
 <template>
   <AppDropdown label="Secteurs">
-    <DsfrSearchBar v-model="search" placeholder="Rechercher un secteur" />
-    <DsfrCheckboxSet :modelValue="sectorsSelected" :options="options" small />
+    <DsfrSearchBar
+      :modelValue="search"
+      placeholder="Rechercher un secteur"
+      @update:modelValue="($event) => (search = $event)"
+    />
+    <DsfrCheckboxSet :modelValue="sectorsSelected" @update:modelValue="updateFilter" :options="options" small />
   </AppDropdown>
 </template>
