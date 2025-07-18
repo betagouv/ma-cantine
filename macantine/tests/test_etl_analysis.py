@@ -486,19 +486,20 @@ class TestETLAnalysisTD(TestCase):
         etl_instance = ETL_ANALYSIS_TELEDECLARATIONS()
         etl_instance.df = pd.DataFrame(
             {
+                "id": [10, 20, 30],
                 "canteen_id": [1, 1, 2],
                 "year": [2023, 2023, 2023],
-                "production_type": [
-                    Canteen.ProductionType.CENTRAL,
-                    Canteen.ProductionType.ON_SITE_CENTRAL,
-                    Canteen.ProductionType.ON_SITE_CENTRAL,
+                "genere_par_cuisine_centrale": [
+                    True,
+                    False,
+                    True,
                 ],
                 "other_column": [10, 20, 30],
             }
         )
         etl_instance.delete_duplicates_cc_csat()
         assert len(etl_instance.df) == 2
-        assert etl_instance.df.iloc[0]["production_type"] == Canteen.ProductionType.CENTRAL
+        assert etl_instance.df.iloc[0]["id"] == 10
 
     def test_delete_duplicates_cc_csat_no_duplicates(self):
         etl_instance = ETL_ANALYSIS_TELEDECLARATIONS()
@@ -506,7 +507,7 @@ class TestETLAnalysisTD(TestCase):
             {
                 "canteen_id": [1, 2],
                 "year": [2023, 2023],
-                "production_type": [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.ON_SITE_CENTRAL],
+                "genere_par_cuisine_centrale": [False, True],
                 "other_column": [10, 20],
             }
         )
