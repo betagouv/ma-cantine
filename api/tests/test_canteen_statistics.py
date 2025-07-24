@@ -11,7 +11,7 @@ from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 from data.region_choices import Region
 
 year_data = 2024
-date_in_teledeclaration_campaign = "2025-03-30"
+date_in_2024_teledeclaration_campaign = "2025-03-30"
 STATS_ENDPOINT_QUERY_COUNT = 7
 
 
@@ -23,8 +23,9 @@ class TestCanteenStatsApi(APITestCase):
         cls.sector_enterprise = SectorFactory(name="Enterprise", category=Sector.Categories.ENTERPRISE)
         cls.sector_social = SectorFactory(name="Social", category=Sector.Categories.SOCIAL)
         cls.sector_other = SectorFactory(name="Other", category=None)
-        with freeze_time(date_in_teledeclaration_campaign):
+        with freeze_time(date_in_2024_teledeclaration_campaign):
             canteen_1 = CanteenFactory(
+                siret="21010034300016",
                 city_insee_code="01034",
                 epci="1",
                 pat_list=["1"],
@@ -52,6 +53,7 @@ class TestCanteenStatsApi(APITestCase):
             )
             Teledeclaration.create_from_diagnostic(canteen_diagnostic_1, applicant=UserFactory())
             canteen_2 = CanteenFactory(
+                siret="75665621899905",
                 city_insee_code="69123",
                 epci="1",
                 pat_list=["1", "2"],
@@ -83,6 +85,7 @@ class TestCanteenStatsApi(APITestCase):
             )
             Teledeclaration.create_from_diagnostic(canteen_diagnostic_2, applicant=UserFactory())
             canteen_3 = CanteenFactory(
+                siret="11007001800012",
                 city_insee_code="38185",
                 epci="2",
                 pat_list=["2"],
@@ -110,6 +113,7 @@ class TestCanteenStatsApi(APITestCase):
             )
             Teledeclaration.create_from_diagnostic(canteen_diagnostic_3, applicant=UserFactory())
             CanteenFactory(
+                siret="21590350100017",
                 city_insee_code="59350",
                 epci="3",
                 pat_list=["3"],
@@ -122,6 +126,7 @@ class TestCanteenStatsApi(APITestCase):
             )
         with freeze_time("1990-01-01"):
             canteen_5 = CanteenFactory(
+                siret="12345678937462",
                 city_insee_code="00002",
                 epci=None,
                 sectors=None,
@@ -152,55 +157,47 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 3)
-        self.assertEqual(body["teledeclarationsCount"], 2)
-        self.assertEqual(body["bioPercent"], 38)
-        self.assertEqual(body["sustainablePercent"], 48)
-        self.assertEqual(body["egalimPercent"], 86)  # 38 + 48
+        self.assertEqual(body["teledeclarationsCount"], 3)
+        self.assertEqual(body["bioPercent"], 43)
+        self.assertEqual(body["sustainablePercent"], 44)
+        self.assertEqual(body["egalimPercent"], 87)  # 43 + 44
         self.assertEqual(body["approPercent"], 100)
         sector_categories = body["sectorCategories"]
-        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 3)
-        self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 1)
-        self.assertEqual(sector_categories[Sector.Categories.SOCIAL], 0)
+        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 2)
+        self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 2)
+        self.assertEqual(sector_categories[Sector.Categories.SOCIAL], 1)
         self.assertEqual(sector_categories["inconnu"], 0)
-
-        # can also call without location info
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Test a year without campaign
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 100})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["teledeclarationsCount"], 0)
 
     def test_stats_simple_diagnostic(self):
         """
         The endpoint must take into consideration the simplified diagnostic
         fields for EGalim stats
         """
-        published = CanteenFactory(siret="75665621899905")
+        past_year = 2021
+        date_in_2022_teledeclaration_campaign = "2022-08-30"
 
-        # Diagnostic that should display 20% Bio and 45% other EGalim
-        diag = DiagnosticFactory(
-            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            canteen=published,
-            year=year_data,
-            creation_date=date_in_teledeclaration_campaign,
-            value_total_ht=100,
-            value_bio_ht=20,
-            value_sustainable_ht=15,
-            value_externality_performance_ht=15,
-            value_egalim_others_ht=15,
-            value_meat_poultry_ht=200,
-            value_meat_poultry_egalim_ht=100,
-            value_meat_poultry_france_ht=50,
-            value_fish_ht=10,
-            value_fish_egalim_ht=8,
-        )
-        with freeze_time(date_in_teledeclaration_campaign):
-            Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory())
+        with freeze_time(date_in_2022_teledeclaration_campaign):
+            canteen = CanteenFactory(siret="75665621899905")
+            # Diagnostic that should display 20% Bio and 45% other EGalim
+            canteen_diagnostic = DiagnosticFactory(
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                canteen=canteen,
+                year=past_year,
+                creation_date=date_in_2022_teledeclaration_campaign,
+                value_total_ht=100,
+                value_bio_ht=20,
+                value_sustainable_ht=15,
+                value_externality_performance_ht=15,
+                value_egalim_others_ht=15,
+                value_meat_poultry_ht=200,
+                value_meat_poultry_egalim_ht=100,
+                value_meat_poultry_france_ht=50,
+                value_fish_ht=10,
+                value_fish_egalim_ht=8,
+            )
+            Teledeclaration.create_from_diagnostic(canteen_diagnostic, applicant=UserFactory())
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        response = self.client.get(reverse("canteen_statistics"), {"year": past_year})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 4 + 1)
@@ -231,6 +228,11 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)
+        # year without campaign
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 100})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["teledeclarationsCount"], 0)
 
     def test_filter_by_region(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": ["84"]})
@@ -370,11 +372,11 @@ class TestCanteenStatsApi(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # another year with different filters: no cache
         with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "01"})
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "84"})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # another year with different filters: still no cache
         with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "01"})
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "84"})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
