@@ -94,7 +94,11 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         return self.filter(line_ministry=Canteen.Ministries.ARMEE)
 
     def created_before_year_campaign_end_date(self, year):
-        return self.filter(creation_date__lte=CAMPAIGN_DATES[year]["teledeclaration_end_date"])
+        if year in CAMPAIGN_DATES.keys():
+            return self.filter(creation_date__lte=CAMPAIGN_DATES[year]["teledeclaration_end_date"])
+        elif year >= timezone.now().year:
+            return self  # all the cantines
+        return self.none()
 
     def is_satellite(self):
         return self.filter(is_satellite_query())

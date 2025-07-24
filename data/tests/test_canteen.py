@@ -101,8 +101,10 @@ class TestCanteenCreatedBeforeQuerySet(TestCase):
 
     def test_created_before_year_campaign_end_date(self):
         self.assertEqual(Canteen.objects.count(), 4)
+        self.assertEqual(Canteen.objects.created_before_year_campaign_end_date(1990).count(), 0)
         self.assertEqual(Canteen.objects.created_before_year_campaign_end_date(2023).count(), 0)
         self.assertEqual(Canteen.objects.created_before_year_campaign_end_date(2024).count(), 2)
+        self.assertEqual(Canteen.objects.created_before_year_campaign_end_date(2025).count(), 4)
 
 
 class TestCanteenSatelliteQuerySet(TestCase):
