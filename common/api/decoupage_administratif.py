@@ -11,7 +11,7 @@ DECOUPAGE_ADMINISTRATIF_API_URL = "https://geo.api.gouv.fr"
 
 def fetch_communes():
     """
-    Fields returned: nom, code (codeDepartement, siren, codeEpci, codeRegion, codesPostaux, population)
+    Fields returned: nom, code, codeDepartement, siren, codeEpci, codeRegion, codesPostaux, population
     """
     response = requests.get(
         f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes?type=arrondissement-municipal,commune-actuelle", timeout=50
@@ -24,7 +24,7 @@ def fetch_epcis():
     """
     Fields returned: nom, code (codesDepartements, codesRegions, population)
     """
-    response = requests.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom", timeout=50)
+    response = requests.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom,code", timeout=50)
     response.raise_for_status()
     return response.json()
 
@@ -33,7 +33,7 @@ def fetch_communes_from_epci(epci):
     """
     Fields returned: nom, code (codeDepartement, siren, codeEpci, codeRegion, codePostaux, population)
     """
-    response = requests.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis/{epci}/communes?fields=code", timeout=5)
+    response = requests.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis/{epci}/communes?fields=nom,code", timeout=5)
     response.raise_for_status()
     return response.json()
 
