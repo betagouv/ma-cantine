@@ -10,20 +10,23 @@ import FilterByRegions from "@/components/FilterByRegions.vue"
 </script>
 
 <template>
-  <div class="observatory-filters">
-    <p class="observatory-filters__title fr-mb-0">Filtrer par :</p>
-    <div class="fr-grid-row">
-      <FilterByRegions class="fr-mr-1v fr-mb-1v" />
-      <FilterByDepartments class="fr-mr-1v fr-mb-1v" />
-      <FilterByEPCI class="fr-mr-1v fr-mb-1v" />
-      <FilterByPAT class="fr-mr-1v fr-mb-1v" />
-      <FilterByCities class="fr-mr-1v fr-mb-1v" />
-      <div class="fr-col-12 fr-hidden fr-unhidden-md"></div>
-      <FilterBySectors class="fr-mr-1v fr-mb-1v" />
-      <FilterByCharacteristics class="fr-mr-1v fr-mb-1v" />
-      <FilterByYears class="fr-mr-1v fr-mb-1v" />
+  <section class="fr-pt-5w">
+    <h2 class="fr-h5">Retrouver les chiffres clés sur votre territoire</h2>
+    <div class="observatory-filters">
+      <p class="observatory-filters__title fr-mb-0">Filtrer par :</p>
+      <div class="fr-grid-row">
+        <FilterByRegions class="fr-mr-1v fr-mb-1v" />
+        <FilterByDepartments class="fr-mr-1v fr-mb-1v" />
+        <FilterByEPCI class="fr-mr-1v fr-mb-1v" />
+        <FilterByPAT class="fr-mr-1v fr-mb-1v" />
+        <FilterByCities class="fr-mr-1v fr-mb-1v" />
+        <div class="fr-col-12 fr-hidden fr-unhidden-md"></div>
+        <FilterBySectors class="fr-mr-1v fr-mb-1v" />
+        <FilterByCharacteristics class="fr-mr-1v fr-mb-1v" />
+        <FilterByYears class="fr-mr-1v fr-mb-1v" />
+      </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <style lang="scss">

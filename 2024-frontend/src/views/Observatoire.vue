@@ -13,10 +13,7 @@ const scrollToFilters = () => {
 
 <template>
   <ObservatoryHero />
-  <section class="fr-pt-5w" ref="filters-ref">
-    <h2 class="fr-h5">Retrouver les chiffres clés sur votre territoire</h2>
-    <ObservatoryFilters />
-  </section>
+  <ObservatoryFilters ref="filters-ref" />
   <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pb-4w">
     <ObservatoryResultsFilters @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
     <DsfrNotice
