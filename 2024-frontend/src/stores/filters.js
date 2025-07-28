@@ -17,7 +17,7 @@ const useStoreFilters = defineStore("filters", () => {
   })
 
   /* Actions to update filters parameters */
-  function add(name, value) {
+  function set(name, value) {
     params[name] = value
   }
   function remove(name, value) {
@@ -43,7 +43,7 @@ const useStoreFilters = defineStore("filters", () => {
     return filledParams
   }
 
-  return { add, remove, getFilled, get }
+  return { set, remove, getFilled, get }
 })
 
 export { useStoreFilters }

@@ -19,7 +19,7 @@ const options = computed(() => {
     <DsfrSearchBar v-model="search" placeholder="Rechercher un EPCI" />
     <DsfrCheckboxSet
       :modelValue="EPCISelected"
-      @update:modelValue="storeFilters.add('epcis', $event)"
+      @update:modelValue="storeFilters.set('epcis', $event)"
       :options="options"
       small
     />

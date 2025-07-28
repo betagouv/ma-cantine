@@ -16,7 +16,7 @@ const storeFilters = useStoreFilters()
     <DsfrCheckboxSet
       legend="Types d’établissement :"
       :modelValue="economicModel"
-      @update:modelValue="storeFilters.add('economicModel', $event)"
+      @update:modelValue="storeFilters.set('economicModel', $event)"
       :options="options.economicModel"
       small
       inline
@@ -24,7 +24,7 @@ const storeFilters = useStoreFilters()
     <DsfrCheckboxSet
       legend="Modes de gestion :"
       :modelValue="managementType"
-      @update:modelValue="storeFilters.add('managementType', $event)"
+      @update:modelValue="storeFilters.set('managementType', $event)"
       :options="options.managementType"
       small
       inline
@@ -32,7 +32,7 @@ const storeFilters = useStoreFilters()
     <DsfrCheckboxSet
       legend="Modes de production :"
       :modelValue="productionType"
-      @update:modelValue="storeFilters.add('productionType', $event)"
+      @update:modelValue="storeFilters.set('productionType', $event)"
       :options="options.productionType"
       small
       inline
