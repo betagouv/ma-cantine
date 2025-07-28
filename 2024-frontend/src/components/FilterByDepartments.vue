@@ -17,7 +17,7 @@ const options = computed(() => {
 </script>
 
 <template>
-  <FilterByBase label="Département">
+  <FilterByBase label="Départements">
     <DsfrSearchBar v-model="search" placeholder="Rechercher un département" />
     <DsfrCheckboxSet
       :modelValue="departmentsSelected"
