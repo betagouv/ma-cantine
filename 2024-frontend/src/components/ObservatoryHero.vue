@@ -29,7 +29,7 @@ const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024
       <li class="fr-col-12 fr-col-sm-6">
         <DsfrTile
           titleTag="p"
-          class="observatoire__force-title-download-vertical"
+          class="observatory-hero__force-title-download-vertical"
           title="Télécharger le rapport annuel 2024"
           :to="documentRapport"
           :imgSrc="pictoDocuments"
@@ -40,3 +40,25 @@ const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024
     </ul>
   </section>
 </template>
+
+<style lang="scss">
+.observatory-hero__force-title-download-vertical {
+  align-items: center !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  text-align: center !important;
+
+  .fr-tile__content {
+    align-items: center !important;
+  }
+
+  .fr-tile__header {
+    margin-right: 0 !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .fr-tile__pictogram {
+    height: 3.5rem !important;
+  }
+}
+</style>
