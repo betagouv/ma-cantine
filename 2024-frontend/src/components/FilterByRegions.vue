@@ -1,12 +1,12 @@
 <script setup>
 import { ref, computed } from "vue"
+import { useStoreFilters } from "@/stores/filters"
 import { getRegionsOptionsFromSearch } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
-const regionsSelected = ref([])
-
-/* Get regions */
 const regions = ref(getRegionsOptionsFromSearch())
+const storeFilters = useStoreFilters()
+const regionsSelected = computed(() => storeFilters.get("regions"))
 
 /* Search */
 const search = ref("")
@@ -19,6 +19,11 @@ const options = computed(() => {
 <template>
   <AppDropdown label="Régions">
     <DsfrSearchBar v-model="search" placeholder="Rechercher une région" />
-    <DsfrCheckboxSet :modelValue="regionsSelected" :options="options" small />
+    <DsfrCheckboxSet
+      :modelValue="regionsSelected"
+      @update:modelValue="storeFilters.set('regions', $event)"
+      :options="options"
+      small
+    />
   </AppDropdown>
 </template>

@@ -1,10 +1,11 @@
 <script setup>
 import { ref, computed } from "vue"
+import { useStoreFilters } from "@/stores/filters"
 import { getEPCIOptionsFromSearch } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
-/* Model */
-const EPCISelected = ref([])
+const storeFilters = useStoreFilters()
+const EPCIsSelected = computed(() => storeFilters.get("epcis"))
 
 /* Search */
 const search = ref("")
@@ -16,6 +17,11 @@ const options = computed(() => {
 <template>
   <AppDropdown label="EPCI">
     <DsfrSearchBar v-model="search" placeholder="Rechercher un EPCI" />
-    <DsfrCheckboxSet :modelValue="EPCISelected" :options="options" small />
+    <DsfrCheckboxSet
+      :modelValue="EPCIsSelected"
+      @update:modelValue="storeFilters.set('epcis', $event)"
+      :options="options"
+      small
+    />
   </AppDropdown>
 </template>

@@ -1,10 +1,11 @@
 <script setup>
 import { ref, computed } from "vue"
+import { useStoreFilters } from "@/stores/filters"
 import { getPATOptionsFromSearch } from "@/services/filters"
 import AppDropdown from "@/components/AppDropdown.vue"
 
-/* Model */
-const PATSelected = ref([])
+const storeFilters = useStoreFilters()
+const PATsSelected = computed(() => storeFilters.get("pats"))
 
 /* Search */
 const search = ref("")
@@ -16,6 +17,11 @@ const options = computed(() => {
 <template>
   <AppDropdown label="PAT">
     <DsfrSearchBar v-model="search" placeholder="Rechercher un PAT" />
-    <DsfrCheckboxSet :modelValue="PATSelected" :options="options" small />
+    <DsfrCheckboxSet
+      :modelValue="PATsSelected"
+      @update:modelValue="storeFilters.set('pats', $event)"
+      :options="options"
+      small
+    />
   </AppDropdown>
 </template>

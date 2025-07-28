@@ -1,11 +1,18 @@
 <script setup>
+import { useTemplateRef } from "vue"
 import { useRoute } from "vue-router"
 import AppFilters from "@/components/AppFilters.vue"
+import ObservatoryResultsFilters from "@/components/ObservatoryResultsFilters.vue"
 
 const route = useRoute()
 const pictoDataVisualization = "/static/images/picto-dsfr/data-visualization.svg"
 const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
 const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024.pdf"
+const filtersRef = useTemplateRef("filters-ref")
+
+const scrollToFilters = () => {
+  filtersRef.value.scrollIntoView({ behavior: "smooth" })
+}
 </script>
 
 <template>
@@ -30,7 +37,7 @@ const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024
       <li class="fr-col-12 fr-col-sm-6">
         <DsfrTile
           titleTag="p"
-          class="statistics-canteens__force-title-download-vertical"
+          class="observatoire__force-title-download-vertical"
           title="Télécharger le rapport annuel 2024"
           :to="documentRapport"
           :imgSrc="pictoDocuments"
@@ -40,14 +47,18 @@ const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024
       </li>
     </ul>
   </section>
-  <section class="fr-mt-5w">
+  <section class="fr-pt-5w" ref="filters-ref">
     <h2 class="fr-h5">Retrouver les chiffres clés sur votre territoire</h2>
     <AppFilters />
+  </section>
+  <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pb-4w">
+    <ObservatoryResultsFilters @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
+    <div style="height: 100vh"></div>
   </section>
 </template>
 
 <style lang="scss">
-.statistics-canteens {
+.observatoire {
   &__force-title-download-vertical {
     align-items: center !important;
     flex-direction: column !important;
@@ -65,6 +76,19 @@ const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024
 
     .fr-tile__pictogram {
       height: 3.5rem !important;
+    }
+  }
+
+  &__results {
+    &::before {
+      z-index: -1;
+      content: "";
+      background-color: var(--background-alt-blue-france);
+      position: absolute;
+      top: 0;
+      left: calc((100vw - 100%) / 2 * -1);
+      width: 100vw;
+      height: 100%;
     }
   }
 }
