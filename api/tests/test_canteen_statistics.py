@@ -200,7 +200,7 @@ class TestCanteenStatsApi(APITestCase):
         response = self.client.get(reverse("canteen_statistics"), {"year": past_year})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 4 + 1)
+        self.assertEqual(body["canteenCount"], 1)  # canteens created in 2024 are not returned
         self.assertEqual(body["teledeclarationsCount"], 1)
         self.assertEqual(body["bioPercent"], 20)
         self.assertEqual(body["sustainablePercent"], 45)

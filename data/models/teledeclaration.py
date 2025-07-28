@@ -67,7 +67,7 @@ class TeledeclarationQuerySet(models.QuerySet):
 
     def in_campaign(self, year):
         year = int(year)
-        if year in CAMPAIGN_DATES:
+        if year in CAMPAIGN_DATES.keys():
             if "correction_start_date" in CAMPAIGN_DATES[year].keys():
                 return self.filter(in_teledeclaration_campaign_query(year) | in_correction_campaign_query(year))
             else:
