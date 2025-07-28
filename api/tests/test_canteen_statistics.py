@@ -11,242 +11,193 @@ from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 from data.region_choices import Region
 
 year_data = 2024
-date_in_teledeclaration_campaign = "2025-03-30"
-STATS_ENDPOINT_QUERY_COUNT = 7
+date_in_2024_teledeclaration_campaign = "2025-03-30"
+STATS_ENDPOINT_QUERY_COUNT = 8
 
 
 class TestCanteenStatsApi(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sector_school = SectorFactory.create(name="School", category=Sector.Categories.EDUCATION)
-        cls.sector_enterprise = SectorFactory.create(name="Enterprise", category=Sector.Categories.ENTERPRISE)
-        cls.sector_social = SectorFactory.create(name="Social", category=None)
-        CanteenFactory.create(
-            city_insee_code="12345",
-            epci="1",
-            pat_list=["1"],
-            department="01",
-            region="84",
-            sectors=[cls.sector_school],
-            management_type=Canteen.ManagementType.DIRECT,
-            production_type=Canteen.ProductionType.CENTRAL,
-            economic_model=Canteen.EconomicModel.PUBLIC,
-        )
-        CanteenFactory.create(
-            city_insee_code="67890",
-            epci="1",
-            pat_list=["1", "2"],
-            department="02",
-            region="32",
-            sectors=[cls.sector_enterprise],
-            management_type=Canteen.ManagementType.DIRECT,
-            production_type=Canteen.ProductionType.CENTRAL_SERVING,
-            economic_model=Canteen.EconomicModel.PUBLIC,
-        )
-        CanteenFactory.create(
-            city_insee_code="11223",
-            epci="2",
-            pat_list=["2"],
-            sectors=[cls.sector_enterprise, cls.sector_social, cls.sector_school],
-            management_type=Canteen.ManagementType.CONCEDED,
-            production_type=Canteen.ProductionType.ON_SITE,
-            economic_model=Canteen.EconomicModel.PRIVATE,
-        )
-        CanteenFactory.create(
-            city_insee_code="11224",
-            epci="2",
-            pat_list=["2"],
-            sectors=[cls.sector_social],
-            management_type=Canteen.ManagementType.CONCEDED,
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            economic_model=Canteen.EconomicModel.PRIVATE,
-        )
-        CanteenFactory.create(
-            city_insee_code="00000",
-            epci=None,
-            sectors=None,
-            management_type=None,
-            production_type=None,
-            economic_model=None,
-            line_ministry=Canteen.Ministries.ARMEE,
-        )
+        cls.sector_education_primary = SectorFactory(name="Primary", category=Sector.Categories.EDUCATION)
+        cls.sector_education_secondary = SectorFactory(name="Secondary", category=Sector.Categories.EDUCATION)
+        cls.sector_enterprise = SectorFactory(name="Enterprise", category=Sector.Categories.ENTERPRISE)
+        cls.sector_social = SectorFactory(name="Social", category=Sector.Categories.SOCIAL)
+        cls.sector_other = SectorFactory(name="Other", category=None)
+        with freeze_time(date_in_2024_teledeclaration_campaign):
+            canteen_1 = CanteenFactory(
+                siret="21010034300016",
+                city_insee_code="01034",
+                epci="1",
+                pat_list=["1"],
+                department="01",
+                region="84",
+                sectors=[cls.sector_education_primary],
+                management_type=Canteen.ManagementType.DIRECT,
+                production_type=Canteen.ProductionType.CENTRAL,
+                economic_model=Canteen.EconomicModel.PUBLIC,
+            )
+            canteen_diagnostic_1 = DiagnosticFactory(
+                canteen=canteen_1,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                year=year_data,
+                value_total_ht=100,
+                value_bio_ht=20,
+                value_sustainable_ht=30,
+                value_externality_performance_ht=None,
+                value_egalim_others_ht=None,
+                has_waste_diagnostic=False,
+                waste_actions=[],
+                vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.DAILY,
+                plastic_tableware_substituted=False,
+                communicates_on_food_quality=False,
+            )
+            Teledeclaration.create_from_diagnostic(canteen_diagnostic_1, applicant=UserFactory())
+            canteen_2 = CanteenFactory(
+                siret="75665621899905",
+                city_insee_code="69123",
+                epci="1",
+                pat_list=["1", "2"],
+                department="69",
+                region="84",
+                sectors=[cls.sector_enterprise],
+                management_type=Canteen.ManagementType.DIRECT,
+                production_type=Canteen.ProductionType.CENTRAL_SERVING,
+                economic_model=Canteen.EconomicModel.PUBLIC,
+            )
+            canteen_diagnostic_2 = DiagnosticFactory(
+                canteen=canteen_2,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                year=year_data,
+                value_total_ht=1000,
+                value_bio_ht=400,
+                value_sustainable_ht=500,
+                value_externality_performance_ht=0,
+                value_egalim_others_ht=0,
+                has_waste_diagnostic=True,
+                waste_actions=["action1", "action2"],
+                has_donation_agreement=True,
+                vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.LOW,
+                cooking_plastic_substituted=True,
+                serving_plastic_substituted=True,
+                plastic_bottles_substituted=True,
+                plastic_tableware_substituted=True,
+                communicates_on_food_quality=True,
+            )
+            Teledeclaration.create_from_diagnostic(canteen_diagnostic_2, applicant=UserFactory())
+            canteen_3 = CanteenFactory(
+                siret="11007001800012",
+                city_insee_code="38185",
+                epci="2",
+                pat_list=["2"],
+                department="38",
+                region="84",
+                sectors=[cls.sector_enterprise, cls.sector_social, cls.sector_education_primary],
+                management_type=Canteen.ManagementType.CONCEDED,
+                production_type=Canteen.ProductionType.ON_SITE,
+                economic_model=Canteen.EconomicModel.PRIVATE,
+            )
+            canteen_diagnostic_3 = DiagnosticFactory(
+                canteen=canteen_3,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                year=year_data,
+                value_total_ht=100,
+                value_bio_ht=100,
+                value_sustainable_ht=0,
+                value_externality_performance_ht=0,
+                value_egalim_others_ht=0,
+                cooking_plastic_substituted=True,
+                serving_plastic_substituted=True,
+                plastic_bottles_substituted=True,
+                plastic_tableware_substituted=True,
+                communicates_on_food_quality=True,
+            )
+            Teledeclaration.create_from_diagnostic(canteen_diagnostic_3, applicant=UserFactory())
+            CanteenFactory(
+                siret="21590350100017",
+                city_insee_code="59350",
+                epci="3",
+                pat_list=["3"],
+                department="59",
+                region="32",
+                sectors=[cls.sector_social],
+                management_type=Canteen.ManagementType.CONCEDED,
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+                economic_model=Canteen.EconomicModel.PRIVATE,
+            )
+        with freeze_time("1990-01-01"):
+            canteen_5 = CanteenFactory(
+                siret="12345678937462",
+                city_insee_code="00002",
+                epci=None,
+                sectors=None,
+                management_type=None,
+                production_type=None,
+                economic_model=None,
+                line_ministry=Canteen.Ministries.ARMEE,
+            )
+            canteen_diagnostic_5 = DiagnosticFactory(
+                canteen=canteen_5,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                year=1990,
+            )
+            Teledeclaration.create_from_diagnostic(canteen_diagnostic_5, applicant=UserFactory())
 
     def setUp(self):
         cache.clear()  # clear cache before each test
 
     def test_query_count(self):
         self.assertEqual(Canteen.objects.count(), 5)
+        self.assertEqual(Teledeclaration.objects.count(), 4)
         with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT + CACHE_GET_QUERY_COUNT + CACHE_SET_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_canteen_statistics(self):
-        """
-        This public endpoint returns some summary statistics for a region and a location
-        """
-        # create 5 canteens (3 in region of interest), 1 unpublished
-        # Test case definitions
-        sectors = {
-            "primary_school": {"name": "Primary", "category": Sector.Categories.EDUCATION},
-            "secondary_school": {"name": "Secondary", "category": Sector.Categories.EDUCATION},
-            "enterprise": {"name": "Enterprise", "category": Sector.Categories.ENTERPRISE},
-            "social": {"name": "Social", "category": Sector.Categories.SOCIAL},
-        }
-
-        canteen_cases = [
-            {
-                "description": "First diag should be counted",
-                "canteen": {
-                    "region": "01",
-                    "sectors": ["primary_school", "enterprise"],
-                },
-                "diagnostic": {
-                    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
-                    "year": year_data,
-                    "creation_date": date_in_teledeclaration_campaign,
-                    "value_total_ht": 100,
-                    "value_bio_ht": 20,
-                    "value_sustainable_ht": 30,
-                    "value_externality_performance_ht": None,
-                    "value_egalim_others_ht": None,
-                    "has_waste_diagnostic": False,
-                    "waste_actions": [],
-                    "vegetarian_weekly_recurrence": Diagnostic.VegetarianMenuFrequency.DAILY,
-                    "plastic_tableware_substituted": False,
-                    "communicates_on_food_quality": False,
-                },
-            },
-            {
-                "description": "Should be counted in the stats",
-                "canteen": {
-                    "region": "01",
-                    "sectors": ["primary_school", "secondary_school"],
-                },
-                "diagnostic": {
-                    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
-                    "year": year_data,
-                    "creation_date": date_in_teledeclaration_campaign,
-                    "value_total_ht": 1000,
-                    "value_bio_ht": 400,
-                    "value_sustainable_ht": 500,
-                    "value_externality_performance_ht": 0,
-                    "value_egalim_others_ht": 0,
-                    "has_waste_diagnostic": True,
-                    "waste_actions": ["action1", "action2"],
-                    "has_donation_agreement": True,
-                    "vegetarian_weekly_recurrence": Diagnostic.VegetarianMenuFrequency.LOW,
-                    "cooking_plastic_substituted": True,
-                    "serving_plastic_substituted": True,
-                    "plastic_bottles_substituted": True,
-                    "plastic_tableware_substituted": True,
-                    "communicates_on_food_quality": True,
-                },
-            },
-            {
-                "description": "Should not be counted in the stats as its creation date is not part of a campaign",
-                "canteen": {
-                    "region": "01",
-                    "sectors": ["secondary_school"],
-                },
-                "diagnostic": {
-                    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
-                    "year": 1990,
-                    "creation_date": "1990-01-01",
-                },
-            },
-            {
-                "description": "Should not be counted in the stats of the region 01",
-                "canteen": {
-                    "region": "03",
-                    "sectors": ["social"],
-                },
-                "diagnostic": {
-                    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
-                    "year": year_data,
-                    "creation_date": date_in_teledeclaration_campaign,
-                    "value_total_ht": 100,
-                    "value_bio_ht": 100,
-                    "value_sustainable_ht": 0,
-                    "value_externality_performance_ht": 0,
-                    "value_egalim_others_ht": 0,
-                    "cooking_plastic_substituted": True,
-                    "serving_plastic_substituted": True,
-                    "plastic_bottles_substituted": True,
-                    "plastic_tableware_substituted": True,
-                    "communicates_on_food_quality": True,
-                },
-            },
-        ]
-
-        # Create the sectors
-        sector_objects = {key: SectorFactory.create(**attributes) for key, attributes in sectors.items()}
-
-        # Create the canteens and diagnostics
-        for i, case in enumerate(canteen_cases):
-            canteen_sectors = [sector_objects[sector] for sector in case["canteen"].pop("sectors")]
-            canteen = CanteenFactory.create(
-                **case["canteen"],
-                sectors=canteen_sectors,
-                siret=str(i)
-            )
-            diagnostic_data = case["diagnostic"]
-            diag = DiagnosticFactory.create(canteen=canteen, **diagnostic_data)
-            with freeze_time(date_in_teledeclaration_campaign):
-                Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
-
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "01"})
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "84"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 3)
-        self.assertEqual(body["teledeclarationsCount"], 2)
-        self.assertEqual(body["bioPercent"], 38)
-        self.assertEqual(body["sustainablePercent"], 48)
-        self.assertEqual(body["egalimPercent"], 86)  # 38 + 48
+        self.assertEqual(body["teledeclarationsCount"], 3)
+        self.assertEqual(body["bioPercent"], 43)
+        self.assertEqual(body["sustainablePercent"], 44)
+        self.assertEqual(body["egalimPercent"], 87)  # 43 + 44
         self.assertEqual(body["approPercent"], 100)
         sector_categories = body["sectorCategories"]
-        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 3)
-        self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 1)
-        self.assertEqual(sector_categories[Sector.Categories.SOCIAL], 0)
+        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 2)
+        self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 2)
+        self.assertEqual(sector_categories[Sector.Categories.SOCIAL], 1)
         self.assertEqual(sector_categories["inconnu"], 0)
-
-        # can also call without location info
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Test a year without campaign
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 100})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["teledeclarationsCount"], 0)
 
     def test_stats_simple_diagnostic(self):
         """
         The endpoint must take into consideration the simplified diagnostic
         fields for EGalim stats
         """
-        published = CanteenFactory.create(siret="75665621899905")
+        past_year = 2021
+        date_in_2022_teledeclaration_campaign = "2022-08-30"
 
-        # Diagnostic that should display 20% Bio and 45% other EGalim
-        diag = DiagnosticFactory.create(
-            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            canteen=published,
-            year=year_data,
-            creation_date=date_in_teledeclaration_campaign,
-            value_total_ht=100,
-            value_bio_ht=20,
-            value_sustainable_ht=15,
-            value_externality_performance_ht=15,
-            value_egalim_others_ht=15,
-            value_meat_poultry_ht=200,
-            value_meat_poultry_egalim_ht=100,
-            value_meat_poultry_france_ht=50,
-            value_fish_ht=10,
-            value_fish_egalim_ht=8,
-        )
-        with freeze_time(date_in_teledeclaration_campaign):
-            Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
+        with freeze_time(date_in_2022_teledeclaration_campaign):
+            canteen = CanteenFactory(siret="75665621899905")
+            # Diagnostic that should display 20% Bio and 45% other EGalim
+            canteen_diagnostic = DiagnosticFactory(
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                canteen=canteen,
+                year=past_year,
+                creation_date=date_in_2022_teledeclaration_campaign,
+                value_total_ht=100,
+                value_bio_ht=20,
+                value_sustainable_ht=15,
+                value_externality_performance_ht=15,
+                value_egalim_others_ht=15,
+                value_meat_poultry_ht=200,
+                value_meat_poultry_egalim_ht=100,
+                value_meat_poultry_france_ht=50,
+                value_fish_ht=10,
+                value_fish_egalim_ht=8,
+            )
+            Teledeclaration.create_from_diagnostic(canteen_diagnostic, applicant=UserFactory())
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        response = self.client.get(reverse("canteen_statistics"), {"year": past_year})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 4 + 1)
@@ -277,17 +228,22 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)
+        # year without campaign
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 100})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["teledeclarationsCount"], 0)
 
     def test_filter_by_region(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": ["84"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 1)
+        self.assertEqual(body["canteenCount"], 3)
 
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": ["84", "32"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["canteenCount"], 3 + 1)
 
     def test_filter_by_department(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "department": ["01"]})
@@ -295,10 +251,10 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 1)
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "department": ["01", "02"]})
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "department": ["01", "38"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["canteenCount"], 1 + 1)
 
     def test_filter_by_epci(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "epci": ["1"]})
@@ -309,7 +265,7 @@ class TestCanteenStatsApi(APITestCase):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "epci": ["1", "2"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 4)
+        self.assertEqual(body["canteenCount"], 2 + 1)
 
     def test_filter_by_pat(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "pat": ["1"]})
@@ -320,28 +276,23 @@ class TestCanteenStatsApi(APITestCase):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "pat": ["1", "2"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 4)
+        self.assertEqual(body["canteenCount"], 2 + 1)
 
     def test_filter_by_city(self):
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["canteenCount"], 4)
-
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "city": ["12345"]})
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "city": ["01034"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 1)
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "city": ["12345", "11223"]})
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "city": ["01034", "38185"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["canteenCount"], 1 + 1)
 
     def test_filter_by_sectors(self):
         response = self.client.get(
             reverse("canteen_statistics"),
-            {"year": year_data, "sectors": [self.sector_school.id, self.sector_enterprise.id]},
+            {"year": year_data, "sectors": [self.sector_education_primary.id, self.sector_enterprise.id]},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -411,21 +362,21 @@ class TestCanteenStatsApi(APITestCase):
         with self.assertNumQueries(0 + CACHE_GET_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # another year: no cache
-        with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT + CACHE_GET_QUERY_COUNT + CACHE_SET_QUERY_COUNT):
+        # another year: no cache (1 less query because no TDs during this year)
+        with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT - 1 + CACHE_GET_QUERY_COUNT + CACHE_SET_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 1})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # another year again: cache hit
         with self.assertNumQueries(0 + CACHE_GET_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 1})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # another year with different filters: no cache
+        # same year, but with extra filters: no cache
         with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "01"})
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "84"})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # another year with different filters: still no cache
+        # same year, but with extra filters: still no cache
         with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "01"})
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "84"})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
@@ -434,14 +385,14 @@ class TestCanteenLocationsApi(APITestCase):
         """
         Test that the right subset of regions and departments 'in use' by canteens are returned
         """
-        CanteenFactory.create(department=Department.aisne, department_lib=Department.aisne.label)
-        CanteenFactory.create(department=Department.ain, department_lib=Department.ain.label)
+        CanteenFactory(department=Department.aisne, department_lib=Department.aisne.label)
+        CanteenFactory(department=Department.ain, department_lib=Department.ain.label)
         # set region directly
-        CanteenFactory.create(region=Region.guadeloupe, region_lib=Region.guadeloupe.label, department=None)
+        CanteenFactory(region=Region.guadeloupe, region_lib=Region.guadeloupe.label, department=None)
         # create extra to check that list returned doesn't contain duplicates
-        CanteenFactory.create(department=Department.aisne, department_lib=Department.aisne.label)
-        CanteenFactory.create(department="999")  # not a department, checking None on region
-        CanteenFactory.create(region="", department="")  # checking exlusion of blank strings
+        CanteenFactory(department=Department.aisne, department_lib=Department.aisne.label)
+        CanteenFactory(department="999")  # not a department, checking None on region
+        CanteenFactory(region="", department="")  # checking exlusion of blank strings
 
         response = self.client.get(reverse("canteen_locations"))
 
