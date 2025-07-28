@@ -20,9 +20,9 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
 </script>
 
 <template>
-  <div class="app-dropdow">
+  <div class="filter-by-base">
     <DsfrButton
-      class="app-dropdow__opener"
+      class="filter-by-base__opener"
       :class="{ hover: isOpened }"
       tertiary
       :label="label"
@@ -31,8 +31,8 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
       @click="isOpened = !isOpened"
       ref="opener"
     />
-    <div v-if="isOpened" class="app-dropdow__content" ref="content">
-      <div class="app-dropdow__scrollable fr-p-2w fr-mt-1v fr-card">
+    <div v-if="isOpened" class="filter-by-base__content" ref="content">
+      <div class="filter-by-base__scrollable fr-p-2w fr-mt-1v fr-card">
         <slot></slot>
       </div>
     </div>
@@ -40,7 +40,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
 </template>
 
 <style lang="scss">
-.app-dropdow {
+.filter-by-base {
   position: relative;
 
   &__opener {

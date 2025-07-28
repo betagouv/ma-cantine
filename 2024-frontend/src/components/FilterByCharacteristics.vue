@@ -2,7 +2,7 @@
 import { ref, computed } from "vue"
 import { useStoreFilters } from "@/stores/filters"
 import { getCharacteristicsOptions } from "@/services/filters"
-import AppDropdown from "@/components/AppDropdown.vue"
+import FilterByBase from "@/components/FilterByBase.vue"
 
 const economicModel = computed(() => storeFilters.get("economicModel"))
 const managementType = computed(() => storeFilters.get("managementType"))
@@ -12,7 +12,7 @@ const storeFilters = useStoreFilters()
 </script>
 
 <template>
-  <AppDropdown label="Caractéristiques">
+  <FilterByBase label="Caractéristiques">
     <DsfrCheckboxSet
       legend="Types d’établissement :"
       :modelValue="economicModel"
@@ -37,5 +37,5 @@ const storeFilters = useStoreFilters()
       small
       inline
     />
-  </AppDropdown>
+  </FilterByBase>
 </template>

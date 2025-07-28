@@ -2,7 +2,7 @@
 import { ref, computed } from "vue"
 import { useStoreFilters } from "@/stores/filters"
 import { getCitiesOptionsFromSearch } from "@/services/filters"
-import AppDropdown from "@/components/AppDropdown.vue"
+import FilterByBase from "@/components/FilterByBase.vue"
 
 const storeFilters = useStoreFilters()
 const citiesSelected = computed(() => storeFilters.get("cities"))
@@ -15,7 +15,7 @@ const options = computed(() => {
 })
 </script>
 <template>
-  <AppDropdown label="Communes">
+  <FilterByBase label="Communes">
     <DsfrSearchBar v-model="search" placeholder="Rechercher une commune" />
     <DsfrCheckboxSet
       :modelValue="citiesSelected"
@@ -23,5 +23,5 @@ const options = computed(() => {
       :options="options"
       small
     />
-  </AppDropdown>
+  </FilterByBase>
 </template>
