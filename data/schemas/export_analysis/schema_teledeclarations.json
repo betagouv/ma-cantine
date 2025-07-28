@@ -215,6 +215,10 @@
     {
       "name": "vegetarian_menu_type",
       "type": "string"
+    },
+    {
+      "name": "creation_source",
+      "type": "string"
     }
   ],
   "format": "csv",
