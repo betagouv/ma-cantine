@@ -3,20 +3,13 @@ import logging
 from django.db.models import Count, FloatField, Sum
 from django.db.models.fields.json import KT
 from django.db.models.functions import Cast
+from django.utils import timezone
 from rest_framework import serializers
 
 from common.utils.badges import badges_for_queryset
 from data.models import Canteen, Sector
 
 logger = logging.getLogger(__name__)
-
-
-def generate_notes():
-    data = {}
-    data["canteen_count_armee"] = (
-        "Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
-    )
-    return data
 
 
 def calculate_statistics_canteens(canteens, data):
@@ -139,7 +132,18 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     @staticmethod
     def calculate_statistics(canteens, teledeclarations):
         data = {}
-        data["notes"] = generate_notes()
         data = calculate_statistics_canteens(canteens, data)
         data = calculate_statistics_teledeclarations(teledeclarations, data)
+        return data
+
+    @staticmethod
+    def generate_notes(year):
+        data = {}
+        data["canteen_count_armee"] = (
+            "Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
+        )
+        if year == timezone.now().year:
+            data["current_year"] = (
+                "Les données 2024 collectées durant la campagne 2025 seront disponibles d'ici la fin d'année (dès lors que le rapport statistique sera remis au le parlement)."
+            )
         return data
