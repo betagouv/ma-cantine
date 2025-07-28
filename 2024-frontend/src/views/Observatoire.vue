@@ -1,5 +1,7 @@
 <script setup>
-import { useTemplateRef } from "vue"
+import { ref, watchEffect, useTemplateRef } from "vue"
+import { useStoreFilters } from "@/stores/filters"
+import statisticsService from "@/services/statistics"
 import ObservatoryHero from "@/components/ObservatoryHero.vue"
 import ObservatoryFilters from "@/components/ObservatoryFilters.vue"
 import ObservatoryResultsFilters from "@/components/ObservatoryResultsFilters.vue"
@@ -9,6 +11,15 @@ const filtersRef = useTemplateRef("filters-ref")
 const scrollToFilters = () => {
   filtersRef.value.scrollIntoView({ behavior: "smooth" })
 }
+
+/* Get stats */
+const storeFilters = useStoreFilters()
+const filtersParams = storeFilters.getAll()
+const stats = ref()
+watchEffect(async () => {
+  const newStats = await statisticsService.getStatistics(filtersParams)
+  stats.value = newStats
+})
 </script>
 
 <template>
