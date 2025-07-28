@@ -4,8 +4,8 @@ import ObservatoryHero from "@/components/ObservatoryHero.vue"
 import ObservatoryFilters from "@/components/ObservatoryFilters.vue"
 import ObservatoryResultsFilters from "@/components/ObservatoryResultsFilters.vue"
 
+/* Back to filters */
 const filtersRef = useTemplateRef("filters-ref")
-
 const scrollToFilters = () => {
   filtersRef.value.scrollIntoView({ behavior: "smooth" })
 }
