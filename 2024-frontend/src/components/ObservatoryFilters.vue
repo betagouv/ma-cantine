@@ -10,8 +10,8 @@ import FilterByRegions from "@/components/FilterByRegions.vue"
 </script>
 
 <template>
-  <div class="app-filters">
-    <p class="app-filters__title fr-mb-0">Filtrer par :</p>
+  <div class="observatory-filters">
+    <p class="observatory-filters__title fr-mb-0">Filtrer par :</p>
     <div class="fr-grid-row">
       <FilterByRegions class="fr-mr-1v fr-mb-1v" />
       <FilterByDepartments class="fr-mr-1v fr-mb-1v" />
@@ -27,7 +27,7 @@ import FilterByRegions from "@/components/FilterByRegions.vue"
 </template>
 
 <style lang="scss">
-.app-filters {
+.observatory-filters {
   display: flex;
   justify-content: flex-start;
   align-items: baseline;

@@ -1,7 +1,7 @@
 <script setup>
 import { useTemplateRef } from "vue"
 import { useRoute } from "vue-router"
-import AppFilters from "@/components/AppFilters.vue"
+import ObservatoryFilters from "@/components/ObservatoryFilters.vue"
 import ObservatoryResultsFilters from "@/components/ObservatoryResultsFilters.vue"
 
 const route = useRoute()
@@ -49,7 +49,7 @@ const scrollToFilters = () => {
   </section>
   <section class="fr-pt-5w" ref="filters-ref">
     <h2 class="fr-h5">Retrouver les chiffres clés sur votre territoire</h2>
-    <AppFilters />
+    <ObservatoryFilters />
   </section>
   <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pb-4w">
     <ObservatoryResultsFilters @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
