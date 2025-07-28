@@ -3,8 +3,8 @@ import FilterByYears from "@/components/FilterByYears.vue"
 import FilterByCharacteristics from "@/components/FilterByCharacteristics.vue"
 import FilterBySectors from "@/components/FilterBySectors.vue"
 import FilterByCities from "@/components/FilterByCities.vue"
-import FilterByPAT from "@/components/FilterByPAT.vue"
-import FilterByEPCI from "@/components/FilterByEPCI.vue"
+import FilterByPATs from "@/components/FilterByPATs.vue"
+import FilterByEPCIs from "@/components/FilterByEPCIs.vue"
 import FilterByDepartments from "@/components/FilterByDepartments.vue"
 import FilterByRegions from "@/components/FilterByRegions.vue"
 </script>
@@ -17,8 +17,8 @@ import FilterByRegions from "@/components/FilterByRegions.vue"
       <div class="fr-grid-row">
         <FilterByRegions class="fr-mr-1v fr-mb-1v" />
         <FilterByDepartments class="fr-mr-1v fr-mb-1v" />
-        <FilterByEPCI class="fr-mr-1v fr-mb-1v" />
-        <FilterByPAT class="fr-mr-1v fr-mb-1v" />
+        <FilterByEPCIs class="fr-mr-1v fr-mb-1v" />
+        <FilterByPATs class="fr-mr-1v fr-mb-1v" />
         <FilterByCities class="fr-mr-1v fr-mb-1v" />
         <FilterBySectors class="fr-mr-1v fr-mb-1v" />
         <FilterByCharacteristics class="fr-mr-1v fr-mb-1v" />
