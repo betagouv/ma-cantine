@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, useTemplateRef } from "vue"
 import { onClickOutside } from "@vueuse/core"
+import { useWindowSize } from "@vueuse/core"
 defineProps(["label"])
 
 /* Icon */
@@ -8,6 +9,15 @@ const isOpened = ref(false)
 const icon = computed(() => {
   const direction = isOpened.value ? "up" : "down"
   return `fr-icon-arrow-${direction}-s-line`
+})
+
+/* Dropdow alignment */
+const { width } = useWindowSize()
+const filterRef = useTemplateRef("filter-ref")
+const dropdownAlign = computed(() => {
+  const maxLeftPosition = width.value - 400 // 400px = 25rem
+  const boundingRect = filterRef.value.getBoundingClientRect()
+  return boundingRect.left < maxLeftPosition ? "left" : "right"
 })
 
 /* Click outside */
@@ -20,9 +30,9 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
 </script>
 
 <template>
-  <div class="app-dropdow">
+  <div class="filter-by-base" ref="filter-ref">
     <DsfrButton
-      class="app-dropdow__opener"
+      class="filter-by-base__opener"
       :class="{ hover: isOpened }"
       tertiary
       :label="label"
@@ -31,8 +41,8 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
       @click="isOpened = !isOpened"
       ref="opener"
     />
-    <div v-if="isOpened" class="app-dropdow__content" ref="content">
-      <div class="app-dropdow__scrollable fr-p-2w fr-mt-1v fr-card">
+    <div v-if="isOpened" :class="`filter-by-base__content filter-by-base__content--${dropdownAlign}`" ref="content">
+      <div class="filter-by-base__scrollable fr-p-2w fr-mt-1v fr-card">
         <slot></slot>
       </div>
     </div>
@@ -40,7 +50,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
 </template>
 
 <style lang="scss">
-.app-dropdow {
+.filter-by-base {
   position: relative;
 
   &__opener {
@@ -54,6 +64,14 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
     position: absolute;
     bottom: 0;
     transform: translateY(100%);
+
+    &--left {
+      left: 0;
+    }
+
+    &--right {
+      right: 0;
+    }
 
     *:last-child {
       margin-bottom: 0 !important;

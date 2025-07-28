@@ -2,7 +2,7 @@
 import { ref, computed } from "vue"
 import { useStoreFilters } from "@/stores/filters"
 import { getPATOptionsFromSearch } from "@/services/filters"
-import AppDropdown from "@/components/AppDropdown.vue"
+import FilterByBase from "@/components/FilterByBase.vue"
 
 const storeFilters = useStoreFilters()
 const PATsSelected = computed(() => storeFilters.get("pats"))
@@ -15,7 +15,7 @@ const options = computed(() => {
 })
 </script>
 <template>
-  <AppDropdown label="PAT">
+  <FilterByBase label="PAT">
     <DsfrSearchBar v-model="search" placeholder="Rechercher un PAT" />
     <DsfrCheckboxSet
       :modelValue="PATsSelected"
@@ -23,5 +23,5 @@ const options = computed(() => {
       :options="options"
       small
     />
-  </AppDropdown>
+  </FilterByBase>
 </template>
