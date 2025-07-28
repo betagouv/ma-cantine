@@ -45,7 +45,7 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
             ),
         )
         mock.get(
-            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom",
+            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis",
             text=json.dumps(
                 [
                     {
@@ -90,7 +90,7 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
             ),
         )
         mock.get(
-            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom",
+            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis",
             text=json.dumps(
                 [
                     {
@@ -187,7 +187,7 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
         canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, city_insee_code="69883")
 
         mock.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes", text="", status_code=403)
-        mock.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom", text=json.dumps([]), status_code=403)
+        mock.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom,code", text=json.dumps([]), status_code=403)
         mock_get_pat_dataset_resource(mock, success=False)
         mock_get_pat_csv(mock, success=False)
 

@@ -62,7 +62,7 @@ class TestDecoupageAdministratifAPI(unittest.TestCase):
 
     def test_map_epcis_code_name(self, mock):
         mock.get(
-            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom",
+            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom,code",
             text=json.dumps(
                 [
                     {"nom": "CC Faucigny - Glières", "code": "200000172"},
