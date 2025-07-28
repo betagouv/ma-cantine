@@ -11,6 +11,14 @@ from data.models import Canteen, Sector
 logger = logging.getLogger(__name__)
 
 
+def generate_notes():
+    data = {}
+    data["canteen_count_armee"] = (
+        "Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
+    )
+    return data
+
+
 def calculate_statistics_canteens(canteens, data):
     # count
     data["canteen_count"] = canteens.count()
@@ -125,10 +133,13 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     meat_france_percent = serializers.IntegerField()
     fish_egalim_percent = serializers.IntegerField()
     appro_percent = serializers.IntegerField()
+    # notes
+    notes = serializers.DictField()
 
     @staticmethod
     def calculate_statistics(canteens, teledeclarations):
         data = {}
+        data["notes"] = generate_notes()
         data = calculate_statistics_canteens(canteens, data)
         data = calculate_statistics_teledeclarations(teledeclarations, data)
         return data
