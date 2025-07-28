@@ -77,6 +77,10 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     # Data related to the applicant
     email = serializers.SerializerMethodField()
 
+    # Metadata
+    creation_source = serializers.SerializerMethodField()
+
+    # Extra
     # Data related to the satellites, necessary to flatten the dataset
     tmp_satellites = serializers.SerializerMethodField()
 
@@ -140,6 +144,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "ratio_egalim_sans_bio",
             "email",
             "tmp_satellites",
+            "creation_source",
         )
         read_only_fields = fields
 
@@ -343,6 +348,9 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     def get_tmp_satellites(self, obj):
         if "satellites" in obj.declared_data:
             return obj.declared_data["satellites"]
+
+    def get_creation_source(self, obj):
+        return obj.diagnostic.creation_source
 
 
 class TeledeclarationOpenDataSerializer(serializers.ModelSerializer):
