@@ -53,14 +53,7 @@ const scrollToFilters = () => {
   </section>
   <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pb-4w">
     <ObservatoryResultsFilters @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <div style="height: 100vh">
-      Contenu
-    </div>
+    <div style="height: 100vh"></div>
   </section>
 </template>
 
