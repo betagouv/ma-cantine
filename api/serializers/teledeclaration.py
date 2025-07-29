@@ -50,6 +50,10 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     line_ministry = serializers.SerializerMethodField()
     spe = serializers.SerializerMethodField()
     genere_par_cuisine_centrale = serializers.SerializerMethodField()
+    declaration_donnees_2021 = serializers.SerializerMethodField()
+    declaration_donnees_2022 = serializers.SerializerMethodField()
+    declaration_donnees_2023 = serializers.SerializerMethodField()
+    declaration_donnees_2024 = serializers.SerializerMethodField()
 
     # Data related to the appro
     value_bio_ht = serializers.SerializerMethodField()
@@ -116,6 +120,10 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "objectif_zone_geo",
             "line_ministry",
             "spe",
+            "declaration_donnees_2021",
+            "declaration_donnees_2022",
+            "declaration_donnees_2023",
+            "declaration_donnees_2024",
             "year",
             "status",
             "applicant_id",
@@ -268,6 +276,18 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     def get_spe(self, obj):
         line_ministry = self.get_line_ministry(obj)
         return "Oui" if line_ministry else "Non"
+
+    def get_declaration_donnees_2021(self, obj):
+        return obj.canteen.declaration_donnees_2021
+
+    def get_declaration_donnees_2022(self, obj):
+        return obj.canteen.declaration_donnees_2022
+
+    def get_declaration_donnees_2023(self, obj):
+        return obj.canteen.declaration_donnees_2023
+
+    def get_declaration_donnees_2024(self, obj):
+        return obj.canteen.declaration_donnees_2024
 
     def get_value_bio_ht(self, obj):
         return obj.value_bio_ht_agg

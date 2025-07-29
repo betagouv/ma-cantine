@@ -110,7 +110,7 @@ class TeledeclarationQuerySet(models.QuerySet):
         results = self.none()
         for year in years:
             results = results | self.valid_td_by_year(year)
-        return results.select_related("diagnostic")
+        return results.select_related("canteen", "diagnostic")
 
     def publicly_visible(self):
         return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
