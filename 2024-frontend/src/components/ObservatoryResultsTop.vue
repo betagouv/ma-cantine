@@ -1,8 +1,14 @@
 <script setup>
-import { computed } from "vue"
+import { ref, computed, watch } from "vue"
+import { useStoreFilters } from "@/stores/filters"
 
 /* Props */
 const props = defineProps(["canteensCount", "teledeclarationsCount"])
+
+/* Filters */
+const storeFilters = useStoreFilters()
+const filtersParams = storeFilters.getAll()
+
 
 /* Teledeclaration */
 const percent = computed(() => Math.round(props.teledeclarationsCount / props.canteensCount))
@@ -12,6 +18,39 @@ const teledeclarationTitle = computed(() =>
 
 /* Tile */
 const titleImgSrc = "/static/images/picto-dsfr/school.svg"
+const tileQuery = ref({})
+
+watch(filtersParams, () => {
+  const params = {}
+  if (filtersParams.sectors.length > 0) params.secteurs = filtersParams.sectors.map((item) => item.value)
+  if (filtersParams.cities.length > 0) params.commune = filtersParams.cities.map((item) => item.value)
+  if (filtersParams.departments.length > 0) params.departement = filtersParams.departments.map((item) => item.value)
+  if (filtersParams.regions.length > 0) params.region = filtersParams.regions.map((item) => item.value)
+  if (filtersParams.managementType.length > 0) {
+    let isDirect = false
+    let isConceded = false
+    filtersParams.managementType.forEach((item) => {
+      if (item.value === "direct") isDirect = true
+      if (item.value === "conceded") isConceded = true
+    })
+    if (isDirect && !isConceded) params.modeDeGestion = "direct"
+    if (isConceded && !isDirect) params.modeDeGestion = "conceded"
+    // if (isDirect && isConceded) no filter to send
+  }
+  if (filtersParams.productionType.length > 0) {
+    let isCentral = false
+    let isSite = false
+    filtersParams.productionType.forEach((item) => {
+      if (item.value === "central" || item.value === "central_serving") isCentral = true
+      if (item.value === "site" || item.value === "site_cooked_elsewhere") isSite = true
+    })
+    if (isCentral && !isSite) params.typeEtablissement = ["central,central_serving"]
+    if (isSite && !isCentral) params.typeEtablissement = ["site,site_cooked_elsewhere"]
+    // if (isSite && isCentral) no filter to send
+  }
+
+  tileQuery.value = params
+})
 </script>
 <template>
   <ul class="observatory-results-top ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters">
@@ -40,6 +79,7 @@ const titleImgSrc = "/static/images/picto-dsfr/school.svg"
         title="Voir les cantines"
         description="Retrouvez les cantines correspondantes à votre recherche"
         details="Aller à la page “Trouver une cantine”"
+        :to="{ name: 'CanteensHome', query: tileQuery }"
       />
     </li>
   </ul>
