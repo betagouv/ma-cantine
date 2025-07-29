@@ -27,6 +27,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         scope = options["scope"]
 
+        # TODO: order by name?
+        # TODO: add timestamp in filename?
+
         if scope == "region":
             region_list = fetch_regions()
             # no need to filter, already contains only the code and name
@@ -80,7 +83,6 @@ class Command(BaseCommand):
                 }
                 for city in city_list
             ]
-            # TODO: order by name
             # export to JSON file
             with open(f"{scope}.json", "w", encoding="utf-8") as f:
                 json.dump(city_list_filtered, f, ensure_ascii=False, indent=4)
