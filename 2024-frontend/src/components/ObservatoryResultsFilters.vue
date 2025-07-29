@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useStoreFilters } from "@/stores/filters"
 
 const storeFilters = useStoreFilters()
-const filtersList = computed(() => storeFilters.getFilled())
+const filtersList = computed(() => storeFilters.getSelection())
 </script>
 
 <template>
