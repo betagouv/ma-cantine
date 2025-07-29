@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 {
                     "code": department["code"],
                     "nom": department["nom"],
-                    "codeRegion": department["codeRegion"],
+                    # "codeRegion": department["codeRegion"],
                 }
                 for department in department_list
             ]
@@ -76,7 +76,7 @@ class Command(BaseCommand):
                     "code": city["code"],
                     "nom": city["nom"],
                     "codeDepartement": city["codeDepartement"],
-                    "codeRegion": city["codeRegion"],
+                    # "codeRegion": city["codeRegion"],
                 }
                 for city in city_list
             ]
