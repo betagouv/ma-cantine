@@ -9,9 +9,13 @@ import pats from "@/data/pats.json"
 import epcis from "@/data/epcis.json"
 import departements from "@/data/departements.json"
 import regions from "@/data/regions.json"
+
+/* Clean dataset */
 const regionsSortedByName = regions.sort((regionBefore, regionAfter) => {
-  if (regionBefore.nom < regionAfter.nom) return -1
-  else if (regionBefore.nom > regionAfter.nom) return 1
+  const cleanedRegionBeforeName = stringsService.removeSpecialChars(regionBefore.nom)
+  const cleanedRegionAfterName = stringsService.removeSpecialChars(regionAfter.nom)
+  if (cleanedRegionBeforeName < cleanedRegionAfterName) return -1
+  else if (cleanedRegionBeforeName > cleanedRegionAfterName) return 1
   else return 0
 })
 
