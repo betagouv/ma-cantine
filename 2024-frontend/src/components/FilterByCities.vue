@@ -5,7 +5,7 @@ import { getCitiesOptionsFromSearch } from "@/services/filters"
 import FilterByBase from "@/components/FilterByBase.vue"
 
 const storeFilters = useStoreFilters()
-const citiesSelected = computed(() => storeFilters.get("cities"))
+const citiesSelected = computed(() => storeFilters.getParam("cities"))
 
 /* Search */
 const search = ref("")

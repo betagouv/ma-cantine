@@ -6,7 +6,7 @@ import FilterByBase from "@/components/FilterByBase.vue"
 
 const options = ref(getYearsOptions())
 const storeFilters = useStoreFilters()
-const yearSelected = computed(() => storeFilters.get("year"))
+const yearSelected = computed(() => storeFilters.getParam("year"))
 </script>
 
 <template>

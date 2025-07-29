@@ -5,7 +5,7 @@ import { getEPCIOptionsFromSearch } from "@/services/filters"
 import FilterByBase from "@/components/FilterByBase.vue"
 
 const storeFilters = useStoreFilters()
-const EPCIsSelected = computed(() => storeFilters.get("epcis"))
+const EPCIsSelected = computed(() => storeFilters.getParam("epcis"))
 
 /* Search */
 const search = ref("")

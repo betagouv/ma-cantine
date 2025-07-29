@@ -5,7 +5,7 @@ const useStoreFilters = defineStore("filters", () => {
   /* Default filter */
   const currentYear = new Date().getFullYear()
 
-  /* Filters parameters to send to api */
+  /* Filters parameters */
   const params = reactive({
     year: currentYear,
     sectors: [],
@@ -19,10 +19,10 @@ const useStoreFilters = defineStore("filters", () => {
     cities: [],
   })
 
-  /* User filter selection ordered preserved */
+  /* Filters selection with user order preserved */
   const selection = ref([{ name: "year", value: currentYear, label: currentYear }])
 
-  /* Actions to update filters parameters */
+  /* Actions to update filters params */
   function set(name, value) {
     updateSelection(name, value)
     params[name] = value
@@ -33,13 +33,12 @@ const useStoreFilters = defineStore("filters", () => {
     removeFromSelection(name, value)
   }
 
-  /* Action to get a filter parameters values */
-  function get(name) {
+  /* Action to get filter params values */
+  function getParam(name) {
     return name === "year" ? params.year : [...params[name]]
   }
 
-  /* Action to get all filters */
-  function getAll() {
+  function getAllParams() {
     return params
   }
 
@@ -79,7 +78,7 @@ const useStoreFilters = defineStore("filters", () => {
     return selection.value
   }
 
-  return { set, remove, getSelection, get, getAll }
+  return { set, remove, getSelection, getParam, getAllParams }
 })
 
 export { useStoreFilters }

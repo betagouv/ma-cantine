@@ -6,7 +6,7 @@ import FilterByBase from "@/components/FilterByBase.vue"
 
 const departments = ref(getDepartmentsOptionsFromSearch())
 const storeFilters = useStoreFilters()
-const departmentsSelected = computed(() => storeFilters.get("departments"))
+const departmentsSelected = computed(() => storeFilters.getParam("departments"))
 
 /* Search */
 const search = ref("")

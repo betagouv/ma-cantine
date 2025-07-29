@@ -14,7 +14,7 @@ const scrollToFilters = () => {
 
 /* Get stats */
 const storeFilters = useStoreFilters()
-const filtersParams = storeFilters.getAll()
+const filtersParams = storeFilters.getAllParams()
 const stats = ref()
 watchEffect(async () => {
   const newStats = await statisticsService.getStatistics(filtersParams)
