@@ -2,9 +2,12 @@ import { defineStore } from "pinia"
 import { reactive } from "vue"
 
 const useStoreFilters = defineStore("filters", () => {
+  /* Setup */
+  const currentYear = new Date().getFullYear()
+
   /* Filters parameters to send to api */
   const params = reactive({
-    year: new Date().getFullYear(),
+    year: [{ value: currentYear, label: currentYear }],
     sectors: [],
     economicModel: [],
     managementType: [],
@@ -21,12 +24,12 @@ const useStoreFilters = defineStore("filters", () => {
     params[name] = value
   }
   function remove(name, value) {
-    params[name] = value === "" ? "" : params[name].filter((element) => element.value !== value)
+    params[name] = params[name].filter((element) => element.value !== value)
   }
 
   /* Action to get a filter parameters values */
   function get(name) {
-    return name === "year" ? params.year : [...params[name]]
+    return params[name]
   }
 
   /* Action to get all filters */
@@ -38,8 +41,7 @@ const useStoreFilters = defineStore("filters", () => {
   function getFilled() {
     const filledParams = []
     Object.keys(params).forEach((key) => {
-      if (key === "year" && params.year !== "") filledParams.push({ name: "year", value: "", label: params.year })
-      else if (params[key].length > 0) {
+      if (params[key].length > 0) {
         params[key].forEach((option) => {
           filledParams.push({ name: key, value: option.value, label: option.label })
         })
