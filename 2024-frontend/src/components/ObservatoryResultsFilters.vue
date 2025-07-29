@@ -63,6 +63,10 @@ onUnmounted(() => {
     flex-direction: row;
     justify-content: space-between;
     align-items: baseline;
+
+    &.small {
+      align-items: center;
+    }
   }
 
   &__title {
