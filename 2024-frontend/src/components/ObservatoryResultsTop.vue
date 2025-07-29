@@ -15,7 +15,7 @@ const titleImgSrc = "/static/images/picto-dsfr/school.svg"
 </script>
 <template>
   <ul class="observatory-results-top ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters">
-    <li class="fr-col-4">
+    <li class="fr-col-12 fr-col-lg-4">
       <div class="observatory-results-top__card fr-card fr-p-4w">
         <p class="fr-h5 fr-mb-1w">{{ canteensCount }}</p>
         <p class="fr-mb-2w">Nombre de cantines</p>
@@ -26,14 +26,14 @@ const titleImgSrc = "/static/images/picto-dsfr/school.svg"
         </p>
       </div>
     </li>
-    <li class="fr-col-4">
+    <li class="fr-col-12 fr-col-lg-4">
       <div class="observatory-results-top__card fr-card fr-p-4w">
         <p class="fr-h5 fr-mb-1w">{{ teledeclarationsCount }}</p>
         <p class="fr-mb-2w">{{ teledeclarationTitle }}</p>
         <p class="fr-text--xs fr-mb-0">Soit un pourcentage de {{ percent }}%</p>
       </div>
     </li>
-    <li class="fr-col-4">
+    <li class="fr-col-12 fr-col-lg-4">
       <DsfrTile
         :imgSrc="titleImgSrc"
         :horizontal="true"
