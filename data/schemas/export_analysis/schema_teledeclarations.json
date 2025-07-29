@@ -241,6 +241,30 @@
       "type": "string"
     },
     {
+      "name": "diag_gaspi",
+      "type": "boolean"
+    },
+    {
+      "name": "plan_action_gaspi",
+      "type": "boolean"
+    },
+    {
+      "name": "freq_actions_gaspi",
+      "type": "string"
+    },
+    {
+      "name": "qte_totale_dechets",
+      "type": "integer"
+    },
+    {
+      "name": "qte_repas_dechets",
+      "type": "integer"
+    },
+    {
+      "name": "convention_dons_gaspi",
+      "type": "boolean"
+    },
+    {
       "name": "creation_source",
       "type": "string"
     }
