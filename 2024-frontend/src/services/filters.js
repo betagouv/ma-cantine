@@ -111,7 +111,7 @@ const getEPCIOptionsFromSearch = (search) => {
 
 const getDepartmentsOptionsFromSearch = (search) => {
   const departmentsOptions = search
-    ? departements.filter((department) => stringsService.checkIfStartsWith(department.nom, search))
+    ? departements.filter((department) => stringsService.checkIfContains(department.nom, search))
     : departements
   return departmentsOptions.map((department) => {
     return {
@@ -123,7 +123,7 @@ const getDepartmentsOptionsFromSearch = (search) => {
 
 const getRegionsOptionsFromSearch = (search) => {
   const regionsOptions = search
-    ? regionsSortedByName.filter((region) => stringsService.checkIfStartsWith(region.nom, search))
+    ? regionsSortedByName.filter((region) => stringsService.checkIfContains(region.nom, search))
     : regionsSortedByName
   return regionsOptions.map((region) => {
     return { label: region.nom, value: { value: region.code, label: region.nom } }
