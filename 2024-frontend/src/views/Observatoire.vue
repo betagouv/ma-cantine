@@ -32,7 +32,11 @@ watchEffect(async () => {
       class="fr-my-2w"
       title="Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
     />
-    <ObservatoryResultsTop :canteensCount="stats.canteenCount" :teledeclarationsCount="stats.teledeclarationsCount" />
+    <ObservatoryResultsTop
+      v-if="stats"
+      :canteensCount="stats.canteenCount"
+      :teledeclarationsCount="stats.teledeclarationsCount"
+    />
     <pre>{{ stats }}</pre>
   </section>
 </template>
