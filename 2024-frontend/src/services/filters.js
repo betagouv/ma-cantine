@@ -111,7 +111,11 @@ const getEPCIOptionsFromSearch = (search) => {
 
 const getDepartmentsOptionsFromSearch = (search) => {
   const departmentsOptions = search
-    ? departements.filter((department) => stringsService.checkIfContains(department.nom, search))
+    ? departements.filter(
+        (department) =>
+          stringsService.checkIfContains(department.nom, search) ||
+          stringsService.checkIfStartsWith(department.code, search)
+      )
     : departements
   return departmentsOptions.map((department) => {
     return {
