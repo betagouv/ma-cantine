@@ -7,9 +7,9 @@ const filtersList = computed(() => storeFilters.getFilled())
 </script>
 
 <template>
-  <div class="observatory-results-filters ma-cantine--sticky__top fr-pt-4w fr-background-alt--blue-france">
+  <div class="observatory-results-filters ma-cantine--sticky__top fr-py-2w fr-background-alt--blue-france">
     <p class="observatory-results-filters__title fr-mb-0">Chiffres clés pour la recherche :</p>
-    <ul class="observatory-results-filters__list ma-cantine--unstyled-list">
+    <ul class="observatory-results-filters__list ma-cantine--unstyled-list fr-my-0">
       <li v-for="(filter, index) in filtersList" :key="index" class="r-mr-1w">
         <DsfrTag
           @click="storeFilters.remove(filter.name, filter.value)"

@@ -25,7 +25,7 @@ watchEffect(async () => {
 <template>
   <ObservatoryHero />
   <ObservatoryFilters ref="observatory-filters" />
-  <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pb-4w">
+  <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pt-2w fr-pb-4w">
     <ObservatoryResultsFilters @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
     <DsfrNotice
       class="fr-my-2w"
