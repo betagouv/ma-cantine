@@ -1,14 +1,25 @@
 <script setup>
-import { useTemplateRef } from "vue"
+import { ref, watchEffect, useTemplateRef } from "vue"
+import { useStoreFilters } from "@/stores/filters"
+import statisticsService from "@/services/statistics"
 import ObservatoryHero from "@/components/ObservatoryHero.vue"
 import ObservatoryFilters from "@/components/ObservatoryFilters.vue"
 import ObservatoryResultsFilters from "@/components/ObservatoryResultsFilters.vue"
 
+/* Back to filters */
 const filtersRef = useTemplateRef("filters-ref")
-
 const scrollToFilters = () => {
   filtersRef.value.scrollIntoView({ behavior: "smooth" })
 }
+
+/* Get stats */
+const storeFilters = useStoreFilters()
+const filtersParams = storeFilters.getAll()
+const stats = ref()
+watchEffect(async () => {
+  const newStats = await statisticsService.getStatistics(filtersParams)
+  stats.value = newStats
+})
 </script>
 
 <template>
@@ -20,7 +31,7 @@ const scrollToFilters = () => {
       class="fr-my-2w"
       title="Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
     />
-    <div style="height: 100vh"></div>
+    <pre>{{ stats }}</pre>
   </section>
 </template>
 
