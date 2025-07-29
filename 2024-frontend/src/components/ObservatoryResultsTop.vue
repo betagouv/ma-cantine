@@ -9,6 +9,14 @@ const props = defineProps(["canteensCount", "teledeclarationsCount"])
 const storeFilters = useStoreFilters()
 const filtersParams = storeFilters.getAll()
 
+/* Canteen */
+const nowYear = new Date().getFullYear()
+const filterYear = computed(() => storeFilters.get("year"))
+const canteenDescription = computed(() => {
+  return filterYear.value >= nowYear
+    ? "Nombre de cantines créées à ce jour"
+    : `Nombre de cantines créées depuis la fiin de la campagne de télédéclaration ${filterYear.value}`
+})
 
 /* Teledeclaration */
 const percent = computed(() => Math.round(props.teledeclarationsCount / props.canteensCount))
@@ -58,11 +66,7 @@ watch(filtersParams, () => {
       <div class="observatory-results-top__card fr-card fr-p-4w">
         <p class="fr-h5 fr-mb-1w">{{ canteensCount }}</p>
         <p class="fr-mb-2w">Nombre de cantines</p>
-        <p class="fr-text--xs fr-mb-0">
-          Au {date du jour} si avant fin de TD
-          <br />
-          Au {fin de campagne} 2025 si après fin TD
-        </p>
+        <p class="fr-text--xs fr-mb-0">{{ canteenDescription }}</p>
       </div>
     </li>
     <li class="fr-col-12 fr-col-lg-4">
@@ -92,6 +96,7 @@ watch(filtersParams, () => {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
   }
 }
 </style>
