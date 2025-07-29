@@ -13,9 +13,10 @@ const filtersParams = storeFilters.getAll()
 const nowYear = new Date().getFullYear()
 const filterYear = computed(() => storeFilters.get("year"))
 const canteenDescription = computed(() => {
-  return filterYear.value >= nowYear
-    ? "Nombre de cantines créées à ce jour"
-    : `Nombre de cantines créées depuis la fiin de la campagne de télédéclaration ${filterYear.value}`
+  const endSentend =
+    filterYear.value >= nowYear ? "à ce jour" : `à la fin de la campagne de télédéclaration ${filterYear.value}`
+  const startSentend = props.canteensCount <= 1 ? "Nombre de cantine créée" : "Nombre de cantines créées"
+  return `${startSentend} ${endSentend}`
 })
 
 /* Teledeclaration */
