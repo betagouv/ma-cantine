@@ -180,7 +180,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
     @admin.display(description=f"Télédéclarée ({last_year})")
     def télédéclarée(self, obj):
-        return obj.declaration_donnees_year_display(last_year)
+        return obj.get_declaration_donnees_year_display(last_year)
 
     @admin.display(description="Visible au public")
     def publication_status_display(self, obj):
