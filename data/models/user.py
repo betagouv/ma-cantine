@@ -132,6 +132,9 @@ class User(AbstractUser):
         verbose_name="Nombre d'établissements gérés par l'utilisateur",
     )
 
+    # Django fields
+    # last_login, date_joined, is_active, is_staff, is_superuser
+
     def save(self, **kwargs):
         max_avatar_size = 640
         if self.avatar:
