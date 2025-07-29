@@ -59,16 +59,6 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 1rem;
 
-  @media (min-width: 768px) {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: baseline;
-
-    &.small {
-      align-items: center;
-    }
-  }
-
   &__title {
     flex-shrink: 0;
   }
@@ -95,20 +85,37 @@ onUnmounted(() => {
   }
 
   &.small {
-    .observatory-results-filters {
-      &__scrollable {
-        max-height: 2rem;
-        overflow-x: scroll;
-      }
+    align-items: center;
 
-      &__list {
-        flex-wrap: nowrap;
-        width: fit-content;
+    .observatory-results-filters {
+      &__scrollable,
+      &__title {
+        display: none;
       }
 
       &__button {
         display: inline-flex !important;
-        flex-shrink: 0;
+        align-self: flex-end;
+      }
+    }
+  }
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+
+    &.small {
+      .observatory-results-filters {
+        &__title {
+          display: initial;
+        }
+
+        &__scrollable {
+          max-height: 2rem;
+          overflow-x: scroll;
+          display: flex;
+        }
       }
     }
   }
