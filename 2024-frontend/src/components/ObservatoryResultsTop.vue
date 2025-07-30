@@ -29,7 +29,7 @@ const teledeclarationTitle = computed(() =>
 const tileImgSrc = "/static/images/picto-dsfr/school.svg"
 const tileQuery = ref({})
 
-watch(filtersParams, () => {
+const transformFiltersToQuery = () => {
   const params = {}
   if (filtersParams.sectors.length > 0) params.secteurs = filtersParams.sectors.map((item) => item.value)
   if (filtersParams.cities.length > 0) params.commune = filtersParams.cities.map((item) => item.value)
@@ -57,8 +57,11 @@ watch(filtersParams, () => {
     if (isSite && !isCentral) params.typeEtablissement = ["site,site_cooked_elsewhere"]
     // if (isSite && isCentral) no filter to send
   }
+  return params
+}
 
-  tileQuery.value = params
+watch(filtersParams, () => {
+  tileQuery.value = transformFiltersToQuery()
 })
 </script>
 <template>
