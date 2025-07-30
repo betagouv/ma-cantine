@@ -26,7 +26,7 @@ const teledeclarationTitle = computed(() =>
 )
 
 /* Tile */
-const titleImgSrc = "/static/images/picto-dsfr/school.svg"
+const tileImgSrc = "/static/images/picto-dsfr/school.svg"
 const tileQuery = ref({})
 
 watch(filtersParams, () => {
@@ -79,7 +79,7 @@ watch(filtersParams, () => {
     </li>
     <li class="fr-col-12 fr-col-lg-4">
       <DsfrTile
-        :imgSrc="titleImgSrc"
+        :imgSrc="tileImgSrc"
         :horizontal="true"
         title="Voir les cantines"
         description="Retrouvez les cantines correspondantes à votre recherche"
