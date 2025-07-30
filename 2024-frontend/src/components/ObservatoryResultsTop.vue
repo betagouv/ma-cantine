@@ -7,7 +7,7 @@ const props = defineProps(["canteensCount", "teledeclarationsCount"])
 
 /* Filters */
 const storeFilters = useStoreFilters()
-const filtersParams = storeFilters.getAll()
+const filtersParams = storeFilters.getAllParams()
 
 /* Canteen */
 const canteenTitle = computed(() => {
