@@ -34,12 +34,14 @@ CAMPAIGN_DATES = {
         "teledeclaration_end_date": datetime(
             2022, 12, 4, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
         ),
+        "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/Rapport_Bilan_Statistique_EGALIM_2022.pdf",
     },
     2022: {
         "teledeclaration_start_date": datetime(2023, 2, 12, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "teledeclaration_end_date": datetime(
             2023, 6, 30, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
         ),
+        "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/Rapport_Bilan_Statistique_EGALIM_2023.pdf",
     },
     2023: {
         "teledeclaration_start_date": datetime(2024, 1, 8, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
@@ -48,6 +50,7 @@ CAMPAIGN_DATES = {
         ),
         "correction_start_date": datetime(2024, 6, 3, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "correction_end_date": datetime(2024, 6, 12, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/Rapport_Bilan_Statistique_EGALIM_2024.pdf",
     },
     2024: {
         "teledeclaration_start_date": (
@@ -66,6 +69,7 @@ CAMPAIGN_DATES = {
             convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end")
             or datetime(2025, 4, 30, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
+        "rapport_parlement_url": None,  # not published yet
     },
     # Note: au moment d'ajouter une nouvelle année :
     # - penser à y ajouter les settings (pour override)
