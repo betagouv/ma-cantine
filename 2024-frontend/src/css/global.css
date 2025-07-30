@@ -93,8 +93,13 @@ address {
 
 
 /* ANIMATION */
-
 .ma-cantine--sticky {
     position: sticky;
     top: 1rem;
+}
+
+
+/* TITLE */
+.ma-cantine--tile-no-overflow .fr-tile__pictogram{
+   overflow: visible;
 }
