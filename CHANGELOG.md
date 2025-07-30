@@ -6,6 +6,45 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.25.0](https://github.com/betagouv/ma-cantine/compare/v2025.24.2...v2025.25.0) (2025-07-30)
+
+
+### Nouveautés
+
+* **API Stats:** le nombre de cantines est maintenant filtré par leur année de création ([#5536](https://github.com/betagouv/ma-cantine/issues/5536)) ([4048df9](https://github.com/betagouv/ma-cantine/commit/4048df9b97c5d3ad6f0f10de2a8d15dd14309be1))
+* **Bilans annuels:** héberge les bilans annuels sur l'application  ([#5549](https://github.com/betagouv/ma-cantine/issues/5549)) ([6e549fc](https://github.com/betagouv/ma-cantine/commit/6e549fc30c9b74f77a56d2509f0cdc486869c438))
+* **Cantines:** nouveau queryset pour filtrer par année de création (à la date de fin de la campagne) ([#5535](https://github.com/betagouv/ma-cantine/issues/5535)) ([c355ee9](https://github.com/betagouv/ma-cantine/commit/c355ee97f643b94dd2082a469121273268aa42a6))
+* **Observatoire:** affichage des filtres ([#5528](https://github.com/betagouv/ma-cantine/issues/5528)) ([9b9ab99](https://github.com/betagouv/ma-cantine/commit/9b9ab9989901a7f3fd2a98a6ff0c2ca17adc0df1))
+* **Observatoire:** affiche le bandeau d'information des armées ([#5539](https://github.com/betagouv/ma-cantine/issues/5539)) ([db9ad5f](https://github.com/betagouv/ma-cantine/commit/db9ad5fd01c1af2dcbea6a0e3f5d7a45520666b0))
+* **Observatoire:** affiche les filtres sélectionnés ([#5538](https://github.com/betagouv/ma-cantine/issues/5538)) ([7b5b682](https://github.com/betagouv/ma-cantine/commit/7b5b682efafc3368a73f952e29784bb0753beded))
+* **Observatoire:** affiche nombre de cantines, nombre de télédéclarations et le lien pour retrouver les cantines ([#5546](https://github.com/betagouv/ma-cantine/issues/5546)) ([8133ced](https://github.com/betagouv/ma-cantine/commit/8133ced6eff20ee9c7067b2946de5d64fcffeff0))
+* **Observatoire:** ajoute les contenus de l'en-tête de page ([#5530](https://github.com/betagouv/ma-cantine/issues/5530)) ([ca6a3e8](https://github.com/betagouv/ma-cantine/commit/ca6a3e8e31f875596fca5b325e0cd169f52148c8))
+* **Observatoire:** connecte les filtres à l'API ([#5543](https://github.com/betagouv/ma-cantine/issues/5543)) ([57df665](https://github.com/betagouv/ma-cantine/commit/57df665fff6fb802a2f211c3c713dc87427c6417))
+
+
+### Améliorations
+
+* **Cantines:** Admin: utiliser declaration_donnees_YEAR pour la colonne 'Télédéclarée' ([#5524](https://github.com/betagouv/ma-cantine/issues/5524)) ([1b06b60](https://github.com/betagouv/ma-cantine/commit/1b06b604650a8fb6837533873116e93c3a94bb1b))
+* **ETL:** Ajout des champs declaration_campagne_YEAR dans TD analysis ([#5529](https://github.com/betagouv/ma-cantine/issues/5529)) ([0d66ed8](https://github.com/betagouv/ma-cantine/commit/0d66ed8551ced1944b78f0525c55675cdb5f493c))
+* **ETL:** Extraire les secteurs/categories depuis declared_data ([#5523](https://github.com/betagouv/ma-cantine/issues/5523)) ([cfdc8f2](https://github.com/betagouv/ma-cantine/commit/cfdc8f20f318fdcbfa9ccd323d4fd0c15362e65f))
+* **ETL:** TD analysis: Ajout du champ creation_source (à partir du Diagnostic) ([#5540](https://github.com/betagouv/ma-cantine/issues/5540)) ([95f4526](https://github.com/betagouv/ma-cantine/commit/95f452613cf6b491286f360c4e1b080a4b623190))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** Admin: typo qui provoquait une erreur pour l'affichage de 'Télédéclarée' ([#5545](https://github.com/betagouv/ma-cantine/issues/5545)) ([30b8d5c](https://github.com/betagouv/ma-cantine/commit/30b8d5cc8d25382b1a9b93d110d019c3dc822ba5))
+* **Cantines:** répare la commande qui remplit le champ declaration_donnees_YEAR (suite à la valeur par défaut à False) + ajout de tests ([#5526](https://github.com/betagouv/ma-cantine/issues/5526)) ([59ebf46](https://github.com/betagouv/ma-cantine/commit/59ebf4678249e69d08aba9bd4c0831bd6672a136))
+* **ETL:** Enlever la TD d'un satellite en cas de doublon avec cuisine centrale ([#5533](https://github.com/betagouv/ma-cantine/issues/5533)) ([471d6eb](https://github.com/betagouv/ma-cantine/commit/471d6eb91fd9f3755226ecb9ad0662c095355bc0))
+* **Observatoire:** différents correctifs et améliorations sur le comportement des filtres ([#5548](https://github.com/betagouv/ma-cantine/issues/5548)) ([bc52229](https://github.com/betagouv/ma-cantine/commit/bc522296cc6824411c9a73cbb1782c9de641ff22))
+* **Observatoire:** petits correctifs sur l'affichage des filtres et refactoring du code ([#5541](https://github.com/betagouv/ma-cantine/issues/5541)) ([6565c2e](https://github.com/betagouv/ma-cantine/commit/6565c2ead2b6f119cc8c828af611ba9476dda0d3))
+* **Utilisateur:** Admin: mettre le champ last_login en lecture-seule ([#5544](https://github.com/betagouv/ma-cantine/issues/5544)) ([38b8086](https://github.com/betagouv/ma-cantine/commit/38b8086e394b967e85512566f6206a11beae819f))
+
+
+### Technique
+
+* **API Stats:** Réorganise un peu les tests ([#5537](https://github.com/betagouv/ma-cantine/issues/5537)) ([99a9d53](https://github.com/betagouv/ma-cantine/commit/99a9d534b51b289db65cae3c83361d92b81af8c2))
+* **Geo:** script pour générer la liste des régions, départements, pat, epci et communes en fichier JSON ([#5521](https://github.com/betagouv/ma-cantine/issues/5521)) ([9eb6a4a](https://github.com/betagouv/ma-cantine/commit/9eb6a4ab43cefb6b4d8ce4d8c50e055e895a845e))
+
 ## [2025.24.2](https://github.com/betagouv/ma-cantine/compare/v2025.24.1...v2025.24.2) (2025-07-11)
 
 
