@@ -4,9 +4,9 @@ import { useStoreFilters } from "@/stores/filters"
 import { getCharacteristicsOptions } from "@/services/filters"
 import FilterByBase from "@/components/FilterByBase.vue"
 
-const economicModel = computed(() => storeFilters.get("economicModel"))
-const managementType = computed(() => storeFilters.get("managementType"))
-const productionType = computed(() => storeFilters.get("productionType"))
+const economicModel = computed(() => storeFilters.getParam("economicModel"))
+const managementType = computed(() => storeFilters.getParam("managementType"))
+const productionType = computed(() => storeFilters.getParam("productionType"))
 const options = ref(getCharacteristicsOptions())
 const storeFilters = useStoreFilters()
 </script>

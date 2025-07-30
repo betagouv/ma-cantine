@@ -1,4 +1,5 @@
 <script setup>
+import { useTemplateRef } from "vue"
 import FilterByYears from "@/components/FilterByYears.vue"
 import FilterByCharacteristics from "@/components/FilterByCharacteristics.vue"
 import FilterBySectors from "@/components/FilterBySectors.vue"
@@ -7,10 +8,13 @@ import FilterByPATs from "@/components/FilterByPATs.vue"
 import FilterByEPCIs from "@/components/FilterByEPCIs.vue"
 import FilterByDepartments from "@/components/FilterByDepartments.vue"
 import FilterByRegions from "@/components/FilterByRegions.vue"
+
+const anchor = useTemplateRef("anchor")
+defineExpose({ anchor })
 </script>
 
 <template>
-  <section class="observatory-filters fr-pt-5w">
+  <section class="observatory-filters fr-pt-5w" ref="anchor">
     <h2 class="fr-h5">Retrouver les chiffres clés sur votre territoire</h2>
     <div class="observatory-filters__container">
       <p class="observatory-filters__title fr-mb-0">Filtrer par :</p>

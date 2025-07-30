@@ -5,7 +5,7 @@ import { getSectorsOptions } from "@/services/filters"
 import FilterByBase from "@/components/FilterByBase.vue"
 
 const storeFilters = useStoreFilters()
-const sectorsSelected = computed(() => storeFilters.get("sectors"))
+const sectorsSelected = computed(() => storeFilters.getParam("sectors"))
 
 /* Get sectors */
 const sectors = ref([])

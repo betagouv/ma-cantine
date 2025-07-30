@@ -5,7 +5,7 @@ import { getPATOptionsFromSearch } from "@/services/filters"
 import FilterByBase from "@/components/FilterByBase.vue"
 
 const storeFilters = useStoreFilters()
-const PATsSelected = computed(() => storeFilters.get("pats"))
+const PATsSelected = computed(() => storeFilters.getParam("pats"))
 
 /* Search */
 const search = ref("")

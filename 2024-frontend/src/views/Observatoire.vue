@@ -7,14 +7,14 @@ import ObservatoryFilters from "@/components/ObservatoryFilters.vue"
 import ObservatoryResultsFilters from "@/components/ObservatoryResultsFilters.vue"
 
 /* Back to filters */
-const filtersRef = useTemplateRef("filters-ref")
+const observatoryFilters = useTemplateRef("observatory-filters")
 const scrollToFilters = () => {
-  filtersRef.value.scrollIntoView({ behavior: "smooth" })
+  observatoryFilters.value.anchor.scrollIntoView({ behavior: "smooth" })
 }
 
 /* Get stats */
 const storeFilters = useStoreFilters()
-const filtersParams = storeFilters.getAll()
+const filtersParams = storeFilters.getAllParams()
 const stats = ref()
 watchEffect(async () => {
   const newStats = await statisticsService.getStatistics(filtersParams)
@@ -24,8 +24,8 @@ watchEffect(async () => {
 
 <template>
   <ObservatoryHero />
-  <ObservatoryFilters ref="filters-ref" />
-  <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pb-4w">
+  <ObservatoryFilters ref="observatory-filters" />
+  <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pt-2w fr-pb-4w">
     <ObservatoryResultsFilters @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
     <DsfrNotice
       class="fr-my-2w"

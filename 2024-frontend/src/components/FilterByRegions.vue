@@ -6,7 +6,7 @@ import FilterByBase from "@/components/FilterByBase.vue"
 
 const regions = ref(getRegionsOptionsFromSearch())
 const storeFilters = useStoreFilters()
-const regionsSelected = computed(() => storeFilters.get("regions"))
+const regionsSelected = computed(() => storeFilters.getParam("regions"))
 
 /* Search */
 const search = ref("")

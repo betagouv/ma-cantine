@@ -9,9 +9,13 @@ import pats from "@/data/pats.json"
 import epcis from "@/data/epcis.json"
 import departements from "@/data/departements.json"
 import regions from "@/data/regions.json"
+
+/* Clean dataset */
 const regionsSortedByName = regions.sort((regionBefore, regionAfter) => {
-  if (regionBefore.nom < regionAfter.nom) return -1
-  else if (regionBefore.nom > regionAfter.nom) return 1
+  const cleanedRegionBeforeName = stringsService.removeSpecialChars(regionBefore.nom)
+  const cleanedRegionAfterName = stringsService.removeSpecialChars(regionAfter.nom)
+  if (cleanedRegionBeforeName < cleanedRegionAfterName) return -1
+  else if (cleanedRegionBeforeName > cleanedRegionAfterName) return 1
   else return 0
 })
 
@@ -111,7 +115,11 @@ const getEPCIOptionsFromSearch = (search) => {
 
 const getDepartmentsOptionsFromSearch = (search) => {
   const departmentsOptions = search
-    ? departements.filter((department) => stringsService.checkIfStartsWith(department.nom, search))
+    ? departements.filter(
+        (department) =>
+          stringsService.checkIfContains(department.nom, search) ||
+          stringsService.checkIfStartsWith(department.code, search)
+      )
     : departements
   return departmentsOptions.map((department) => {
     return {
@@ -123,7 +131,7 @@ const getDepartmentsOptionsFromSearch = (search) => {
 
 const getRegionsOptionsFromSearch = (search) => {
   const regionsOptions = search
-    ? regionsSortedByName.filter((region) => stringsService.checkIfStartsWith(region.nom, search))
+    ? regionsSortedByName.filter((region) => stringsService.checkIfContains(region.nom, search))
     : regionsSortedByName
   return regionsOptions.map((region) => {
     return { label: region.nom, value: { value: region.code, label: region.nom } }
