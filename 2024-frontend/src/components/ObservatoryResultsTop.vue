@@ -16,7 +16,7 @@ const canteenTitle = computed(() => {
 
 /* Teledeclaration */
 const teledeclarationTitle = computed(() =>
-  props.teledeclarationsCount <= 1 ? "site télédéclaré" : "sites télédéclarés"
+  props.teledeclarationsCount <= 1 ? "Site télédéclaré" : "Sites télédéclarés"
 )
 
 /* Tile */
