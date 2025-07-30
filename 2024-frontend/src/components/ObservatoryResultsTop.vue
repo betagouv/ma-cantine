@@ -10,17 +10,11 @@ const storeFilters = useStoreFilters()
 const filtersParams = storeFilters.getAll()
 
 /* Canteen */
-const nowYear = new Date().getFullYear()
-const filterYear = computed(() => storeFilters.get("year"))
-const canteenDescription = computed(() => {
-  const endSentend =
-    filterYear.value >= nowYear ? "à ce jour" : `à la fin de la campagne de télédéclaration ${filterYear.value}`
-  const startSentend = props.canteensCount <= 1 ? "Nombre de cantine créée" : "Nombre de cantines créées"
-  return `${startSentend} ${endSentend}`
+const canteenTitle = computed(() => {
+  return props.canteensCount <= 1 ? "Cantine inscrite sur la plateforme" : "Cantines inscrites sur la plateforme"
 })
 
 /* Teledeclaration */
-const percent = computed(() => Math.round(props.teledeclarationsCount / props.canteensCount))
 const teledeclarationTitle = computed(() =>
   props.teledeclarationsCount <= 1 ? "site télédéclaré" : "sites télédéclarés"
 )
@@ -69,15 +63,15 @@ watch(filtersParams, () => {
     <li class="fr-col-12 fr-col-lg-4">
       <div class="observatory-results-top__card fr-card fr-p-4w">
         <p class="fr-h5 fr-mb-1w">{{ canteensCount }}</p>
-        <p class="fr-mb-2w">Nombre de cantines</p>
-        <p class="fr-text--xs fr-mb-0">{{ canteenDescription }}</p>
+        <p class="fr-mb-2w">{{ canteenTitle }}</p>
+        <p class="fr-text--xs fr-mb-0"></p>
       </div>
     </li>
     <li class="fr-col-12 fr-col-lg-4">
       <div class="observatory-results-top__card fr-card fr-p-4w">
         <p class="fr-h5 fr-mb-1w">{{ teledeclarationsCount }}</p>
         <p class="fr-mb-2w">{{ teledeclarationTitle }}</p>
-        <p class="fr-text--xs fr-mb-0">Soit un pourcentage de {{ percent }}%</p>
+        <p class="fr-text--xs fr-mb-0"></p>
       </div>
     </li>
     <li class="fr-col-12 fr-col-lg-4">
