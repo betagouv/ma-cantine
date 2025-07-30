@@ -1,10 +1,10 @@
 <script setup>
 import { computed } from "vue"
-const props = defineProps(["code"])
+const props = defineProps(["error"])
 
 const description = computed(() => {
-  if (props.code === "noYear") return "vous devez sélectionner une année"
-  if (props.code === "noFilter") return "aucun filtre sélectionné"
+  if (props.error === "noYear") return "vous devez sélectionner une année"
+  if (props.error === "noFilter") return "aucun filtre sélectionné"
   return "veuillez recharger la page pour renouveller votre recherche, si l'erreur persiste contactez-nous."
 })
 </script>

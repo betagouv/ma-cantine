@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, watchEffect, useTemplateRef } from "vue"
+import { ref, watchEffect, useTemplateRef } from "vue"
 import { useStoreFilters } from "@/stores/filters"
 import statisticsService from "@/services/statistics"
 import ObservatoryHero from "@/components/ObservatoryHero.vue"
@@ -20,25 +20,24 @@ const filtersParams = storeFilters.getAllParams()
 
 /* Stats */
 const stats = ref()
-const statsError = reactive({ status: false })
+const statsError = ref()
 
 const setStatsError = () => {
   const hasNoFilter = storeFilters.getSelection().length === 0
   const hasNoYear = !storeFilters.getParam("year")
-  statsError.status = true
-  statsError.code = "other"
-  if (hasNoFilter) statsError.code = "noFilter"
-  else if (hasNoYear) statsError.code = "noYear"
+  statsError.value = "other"
+  if (hasNoFilter) statsError.value = "noFilter"
+  else if (hasNoYear) statsError.value = "noYear"
 }
 
-const resetStats = () => {
+const resetStatsValue = () => {
   stats.value = null
-  statsError.status = false
+  statsError.value = null
 }
 
 /* Watch filters */
 watchEffect(async () => {
-  resetStats()
+  resetStatsValue()
   const newStats = await statisticsService.getStatistics(filtersParams)
   if (!newStats) setStatsError()
   else stats.value = newStats
@@ -50,7 +49,7 @@ watchEffect(async () => {
   <ObservatoryFilters ref="observatory-filters" />
   <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pt-2w fr-pb-4w">
     <ObservatoryResultsFilters @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
-    <ObservatoryResultsError v-if="statsError.status" :code="statsError.code" />
+    <ObservatoryResultsError v-if="statsError" :error="statsError" />
     <DsfrNotice
       v-if="stats"
       class="fr-my-2w"
