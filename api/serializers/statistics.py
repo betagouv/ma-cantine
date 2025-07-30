@@ -3,12 +3,11 @@ import logging
 from django.db.models import Count, FloatField, Sum
 from django.db.models.fields.json import KT
 from django.db.models.functions import Cast
-from django.utils import timezone
 from rest_framework import serializers
 
 from common.utils.badges import badges_for_queryset
 from data.models import Canteen, Sector
-from macantine.utils import CAMPAIGN_DATES
+from macantine.utils import get_canteen_created_before_year_campaign_end_date
 
 logger = logging.getLogger(__name__)
 
@@ -140,18 +139,10 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     @staticmethod
     def generate_notes(year):
         data = {}
-        data["canteen_count_armee"] = (
+        data["warnings"] = [
             "Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
-        )
-        if year in CAMPAIGN_DATES.keys():
-            if timezone.now() < CAMPAIGN_DATES[year]["teledeclaration_start_date"]:
-                data["canteen_count_limit"] = f"Au {timezone.now().strftime('%d/%m/%Y')}"
-            else:
-                data["canteen_count_limit"] = (
-                    f"Au {CAMPAIGN_DATES[year]['teledeclaration_end_date'].strftime('%d/%m/%Y')}"
-                )
-        if year >= timezone.now().year - 1:
-            data["current_year"] = (
-                "Les données 2024 collectées durant la campagne 2025 seront disponibles d'ici la fin d'année (dès lors que le rapport statistique sera remis au le parlement)."
-            )
+        ]
+        canteen_created_before_date = get_canteen_created_before_year_campaign_end_date(year)
+        if canteen_created_before_date:
+            data["canteen_count_description"] = f"Au {canteen_created_before_date.strftime('%-d %B %Y')}"
         return data
