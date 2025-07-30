@@ -69,7 +69,7 @@ CAMPAIGN_DATES = {
             convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end")
             or datetime(2025, 4, 30, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
-        "rapport_parlement_url": "",  # not published yet
+        "rapport_parlement_url": None,  # not published yet
     },
     # Note: au moment d'ajouter une nouvelle année :
     # - penser à y ajouter les settings (pour override)
