@@ -61,6 +61,7 @@ watchEffect(async () => {
       :canteensCount="stats.canteenCount"
       :teledeclarationsCount="stats.teledeclarationsCount"
     />
+    <pre>{{ stats }}</pre>
   </section>
 </template>
 
