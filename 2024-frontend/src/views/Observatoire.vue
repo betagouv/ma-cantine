@@ -5,6 +5,7 @@ import statisticsService from "@/services/statistics"
 import ObservatoryHero from "@/components/ObservatoryHero.vue"
 import ObservatoryFilters from "@/components/ObservatoryFilters.vue"
 import ObservatoryResultsFilters from "@/components/ObservatoryResultsFilters.vue"
+import ObservatoryResultsTop from "@/components/ObservatoryResultsTop.vue"
 
 /* Back to filters */
 const observatoryFilters = useTemplateRef("observatory-filters")
@@ -30,6 +31,11 @@ watchEffect(async () => {
     <DsfrNotice
       class="fr-my-2w"
       title="Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
+    />
+    <ObservatoryResultsTop
+      v-if="stats"
+      :canteensCount="stats.canteenCount"
+      :teledeclarationsCount="stats.teledeclarationsCount"
     />
     <pre>{{ stats }}</pre>
   </section>
