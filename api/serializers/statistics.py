@@ -1,3 +1,4 @@
+import locale
 import logging
 
 from django.db.models import Count, FloatField, Sum
@@ -144,5 +145,6 @@ class CanteenStatisticsSerializer(serializers.Serializer):
         ]
         canteen_created_before_date = get_year_campaign_end_date_or_today_date(year)
         if canteen_created_before_date:
+            locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
             data["canteen_count_description"] = f"Au {canteen_created_before_date.strftime('%-d %B %Y')}"
         return data
