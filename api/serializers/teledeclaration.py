@@ -374,27 +374,27 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
 
     def get_action_gaspi_inscription(self, obj):
         if "waste_actions" in obj.declared_data["teledeclaration"]:
-            return "INSCRIPTION" in obj.declared_data["teledeclaration"]["waste_actions"]
+            return Diagnostic.WasteActions.INSCRIPTION in obj.declared_data["teledeclaration"]["waste_actions"]
 
     def get_action_gaspi_sensibilisation(self, obj):
         if "waste_actions" in obj.declared_data["teledeclaration"]:
-            return "AWARENESS" in obj.declared_data["teledeclaration"]["waste_actions"]
+            return Diagnostic.WasteActions.AWARENESS in obj.declared_data["teledeclaration"]["waste_actions"]
 
     def get_action_gaspi_formation(self, obj):
         if "waste_actions" in obj.declared_data["teledeclaration"]:
-            return "TRAINING" in obj.declared_data["teledeclaration"]["waste_actions"]
+            return Diagnostic.WasteActions.TRAINING in obj.declared_data["teledeclaration"]["waste_actions"]
 
     def get_action_gaspi_distribution(self, obj):
         if "waste_actions" in obj.declared_data["teledeclaration"]:
-            return "DISTRIBUTION" in obj.declared_data["teledeclaration"]["waste_actions"]
+            return Diagnostic.WasteActions.DISTRIBUTION in obj.declared_data["teledeclaration"]["waste_actions"]
 
     def get_action_gaspi_portions(self, obj):
         if "waste_actions" in obj.declared_data["teledeclaration"]:
-            return "PORTIONS" in obj.declared_data["teledeclaration"]["waste_actions"]
+            return Diagnostic.WasteActions.PORTIONS in obj.declared_data["teledeclaration"]["waste_actions"]
 
     def get_action_gaspi_reutilisation(self, obj):
         if "waste_actions" in obj.declared_data["teledeclaration"]:
-            return "REUSE" in obj.declared_data["teledeclaration"]["waste_actions"]
+            return Diagnostic.WasteActions.REUSE in obj.declared_data["teledeclaration"]["waste_actions"]
 
     def get_ratio_egalim_fish(self, obj):
         return utils.compute_ratio(self.get_value_fish_egalim_ht(obj), self.get_value_fish_ht(obj))
