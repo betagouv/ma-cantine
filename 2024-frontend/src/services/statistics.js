@@ -25,7 +25,11 @@ const filtersToQuery = (filters) => {
 
 const getStatistics = (filters) => {
   const query = filtersToQuery(filters)
-  return fetch(`/api/v1/canteenStatistics/${query}`, { method: "GET" }).then(verifyResponse)
+  return fetch(`/api/v1/canteenStatistics/${query}`, { method: "GET" })
+    .then(verifyResponse)
+    .catch((e) => {
+      console.error("ERROR /canteenStatistics/ :", e)
+    })
 }
 
 export default { getStatistics }

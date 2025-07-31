@@ -65,7 +65,7 @@ const useStoreFilters = defineStore("filters", () => {
       name === "year"
         ? selection.value.findIndex((element) => element.name === "year")
         : selection.value.findIndex((element) => element.name === name && element.value === value)
-    selection.value.splice(indexToRemove, 1)
+    if (indexToRemove >= 0) selection.value.splice(indexToRemove, 1)
   }
 
   function updateSelection(name, value) {
