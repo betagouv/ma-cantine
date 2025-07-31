@@ -37,6 +37,7 @@ watchEffect(async () => {
       v-if="stats"
       :canteensCount="stats.canteenCount"
       :teledeclarationsCount="stats.teledeclarationsCount"
+      class="fr-mb-3w"
     />
     <ObservatoryResultsPurchases />
     <pre>{{ stats }}</pre>
