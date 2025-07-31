@@ -249,19 +249,27 @@
       "type": "boolean"
     },
     {
-      "name": "freq_actions_gaspi",
-      "type": "string"
+      "name": "action_gaspi_inscription",
+      "type": "boolean"
     },
     {
-      "name": "qte_totale_dechets",
-      "type": "integer"
+      "name": "action_gaspi_sensibilisation",
+      "type": "boolean"
     },
     {
-      "name": "qte_repas_dechets",
-      "type": "integer"
+      "name": "action_gaspi_formation",
+      "type": "boolean"
     },
     {
-      "name": "convention_dons_gaspi",
+      "name": "action_gaspi_distribution",
+      "type": "boolean"
+    },
+    {
+      "name": "action_gaspi_portions",
+      "type": "boolean"
+    },
+    {
+      "name": "action_gaspi_reutilisation",
       "type": "boolean"
     },
     {
