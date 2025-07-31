@@ -1,3 +1,4 @@
+import locale
 import logging
 
 from django.db.models import Count, FloatField, Sum
@@ -7,6 +8,7 @@ from rest_framework import serializers
 
 from common.utils.badges import badges_for_queryset
 from data.models import Canteen, Sector
+from macantine.utils import get_year_campaign_end_date_or_today_date
 
 logger = logging.getLogger(__name__)
 
@@ -125,10 +127,24 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     meat_france_percent = serializers.IntegerField()
     fish_egalim_percent = serializers.IntegerField()
     appro_percent = serializers.IntegerField()
+    # notes
+    notes = serializers.DictField()
 
     @staticmethod
     def calculate_statistics(canteens, teledeclarations):
         data = {}
         data = calculate_statistics_canteens(canteens, data)
         data = calculate_statistics_teledeclarations(teledeclarations, data)
+        return data
+
+    @staticmethod
+    def generate_notes(year):
+        data = {}
+        data["warnings"] = [
+            "Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
+        ]
+        canteen_created_before_date = get_year_campaign_end_date_or_today_date(year)
+        if canteen_created_before_date:
+            locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
+            data["canteen_count_description"] = f"Au {canteen_created_before_date.strftime('%-d %B %Y')}"
         return data

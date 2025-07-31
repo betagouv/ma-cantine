@@ -109,3 +109,13 @@ def is_in_teledeclaration_or_correction():
     Check if the current date is within the teledeclaration or correction period.
     """
     return is_in_teledeclaration() or is_in_correction()
+
+
+def get_year_campaign_end_date_or_today_date(year):
+    year = int(year)
+    if year in CAMPAIGN_DATES.keys():
+        return CAMPAIGN_DATES[year]["teledeclaration_end_date"]
+    elif year >= timezone.now().year:
+        return timezone.now()
+    else:
+        return None

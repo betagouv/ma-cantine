@@ -352,6 +352,17 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(economic_models[Canteen.EconomicModel.PRIVATE], 0)
         self.assertEqual(economic_models["inconnu"], 0)
 
+    def test_notes(self):
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 4)
+        self.assertEqual(body["teledeclarationsCount"], 3)
+        self.assertEqual(len(body["notes"]["warnings"]), 1)
+        self.assertEqual(
+            body["notes"]["canteenCountDescription"], "Au 6 avril 2025"
+        )  # dernier jour de la campagne 2024
+
     def test_cache_mechanism(self):
         # first time: no cache
         self.assertEqual(Canteen.objects.count(), 5)

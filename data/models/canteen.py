@@ -22,7 +22,11 @@ from data.utils import (
     has_charfield_missing_query,
     optimize_image,
 )
-from macantine.utils import CAMPAIGN_DATES, is_in_correction, is_in_teledeclaration
+from macantine.utils import (
+    get_year_campaign_end_date_or_today_date,
+    is_in_correction,
+    is_in_teledeclaration,
+)
 
 from .softdeletionmodel import (
     SoftDeletionManager,
@@ -94,11 +98,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         return self.filter(line_ministry=Canteen.Ministries.ARMEE)
 
     def created_before_year_campaign_end_date(self, year):
-        year = int(year)
-        if year in CAMPAIGN_DATES.keys():
-            return self.filter(creation_date__lte=CAMPAIGN_DATES[year]["teledeclaration_end_date"])
-        elif year >= timezone.now().year:
-            return self  # all the cantines
+        canteen_created_before_date = get_year_campaign_end_date_or_today_date(year)
+        if canteen_created_before_date:
+            return self.filter(creation_date__lt=canteen_created_before_date)
         return self.none()
 
     def is_satellite(self):

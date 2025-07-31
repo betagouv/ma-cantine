@@ -27,6 +27,10 @@ jobs:
         with:
           python-version: "3.11"
 
+      # needed for strftime in French
+      - name: Install Apt Packages
+        run: sudo apt-get install -qq language-pack-fr
+
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:

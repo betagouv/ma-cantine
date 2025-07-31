@@ -91,6 +91,7 @@ class CanteenStatisticsView(APIView):
         teledeclarations = self._apply_query_filters(teledeclaration_qs, filters, prefix="canteen__")
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
+        data["notes"] = self.serializer_class.generate_notes(year)
         serializer = self.serializer_class(data)
 
         # cache mechanism: store the result if it was not cached (only for requests with just the year parameter)

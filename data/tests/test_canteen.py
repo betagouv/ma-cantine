@@ -141,7 +141,7 @@ class TestCanteenCreatedBeforeQuerySet(TestCase):
             CanteenFactory()
         with freeze_time("2025-04-20"):  # during the 2024 correction campaign
             CanteenFactory()
-        with freeze_time("2025-12-30"):  # after the 2024 campaign
+        with freeze_time("2025-06-30"):  # after the 2024 campaign
             CanteenFactory()
 
     def test_created_before_year_campaign_end_date(self):
