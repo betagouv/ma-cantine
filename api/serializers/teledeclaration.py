@@ -78,6 +78,16 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     ratio_egalim_avec_bio = serializers.SerializerMethodField()
     ratio_egalim_sans_bio = serializers.SerializerMethodField()
 
+    # Data related to the waste (gaspillage)
+    diag_gaspi = serializers.SerializerMethodField()
+    plan_action_gaspi = serializers.SerializerMethodField()
+    action_gaspi_inscription = serializers.SerializerMethodField()
+    action_gaspi_sensibilisation = serializers.SerializerMethodField()
+    action_gaspi_formation = serializers.SerializerMethodField()
+    action_gaspi_distribution = serializers.SerializerMethodField()
+    action_gaspi_portions = serializers.SerializerMethodField()
+    action_gaspi_reutilisation = serializers.SerializerMethodField()
+
     # Data related to the applicant
     email = serializers.SerializerMethodField()
 
@@ -145,6 +155,14 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "service_type",
             "vegetarian_weekly_recurrence",
             "vegetarian_menu_type",
+            "diag_gaspi",
+            "plan_action_gaspi",
+            "action_gaspi_inscription",
+            "action_gaspi_sensibilisation",
+            "action_gaspi_formation",
+            "action_gaspi_distribution",
+            "action_gaspi_portions",
+            "action_gaspi_reutilisation",
             "ratio_egalim_fish",
             "ratio_egalim_meat_poultry",
             "ratio_bio",
@@ -345,6 +363,38 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     def get_vegetarian_menu_type(self, obj):
         if "vegetarian_menu_type" in obj.declared_data["teledeclaration"]:
             return obj.declared_data["teledeclaration"]["vegetarian_menu_type"]
+
+    def get_diag_gaspi(self, obj):
+        if "has_waste_diagnostic" in obj.declared_data["teledeclaration"]:
+            return obj.declared_data["teledeclaration"]["has_waste_diagnostic"]
+
+    def get_plan_action_gaspi(self, obj):
+        if "has_waste_plan" in obj.declared_data["teledeclaration"]:
+            return obj.declared_data["teledeclaration"]["has_waste_plan"]
+
+    def get_action_gaspi_inscription(self, obj):
+        if "waste_actions" in obj.declared_data["teledeclaration"]:
+            return Diagnostic.WasteActions.INSCRIPTION in obj.declared_data["teledeclaration"]["waste_actions"]
+
+    def get_action_gaspi_sensibilisation(self, obj):
+        if "waste_actions" in obj.declared_data["teledeclaration"]:
+            return Diagnostic.WasteActions.AWARENESS in obj.declared_data["teledeclaration"]["waste_actions"]
+
+    def get_action_gaspi_formation(self, obj):
+        if "waste_actions" in obj.declared_data["teledeclaration"]:
+            return Diagnostic.WasteActions.TRAINING in obj.declared_data["teledeclaration"]["waste_actions"]
+
+    def get_action_gaspi_distribution(self, obj):
+        if "waste_actions" in obj.declared_data["teledeclaration"]:
+            return Diagnostic.WasteActions.DISTRIBUTION in obj.declared_data["teledeclaration"]["waste_actions"]
+
+    def get_action_gaspi_portions(self, obj):
+        if "waste_actions" in obj.declared_data["teledeclaration"]:
+            return Diagnostic.WasteActions.PORTIONS in obj.declared_data["teledeclaration"]["waste_actions"]
+
+    def get_action_gaspi_reutilisation(self, obj):
+        if "waste_actions" in obj.declared_data["teledeclaration"]:
+            return Diagnostic.WasteActions.REUSE in obj.declared_data["teledeclaration"]["waste_actions"]
 
     def get_ratio_egalim_fish(self, obj):
         return utils.compute_ratio(self.get_value_fish_egalim_ht(obj), self.get_value_fish_ht(obj))

@@ -241,6 +241,38 @@
       "type": "string"
     },
     {
+      "name": "diag_gaspi",
+      "type": "boolean"
+    },
+    {
+      "name": "plan_action_gaspi",
+      "type": "boolean"
+    },
+    {
+      "name": "action_gaspi_inscription",
+      "type": "boolean"
+    },
+    {
+      "name": "action_gaspi_sensibilisation",
+      "type": "boolean"
+    },
+    {
+      "name": "action_gaspi_formation",
+      "type": "boolean"
+    },
+    {
+      "name": "action_gaspi_distribution",
+      "type": "boolean"
+    },
+    {
+      "name": "action_gaspi_portions",
+      "type": "boolean"
+    },
+    {
+      "name": "action_gaspi_reutilisation",
+      "type": "boolean"
+    },
+    {
       "name": "creation_source",
       "type": "string"
     }
