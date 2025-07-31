@@ -6,10 +6,10 @@ const storeFilters = useStoreFilters()
 const filtersList = computed(() => storeFilters.getSelection())
 
 /* Change styles depending on scroll */
-const filtersResults = useTemplateRef("observatory-results-filters")
+const filtersSelectedHtml = useTemplateRef("filters-selected-html")
 const displaySmallFilters = ref(false)
 const scroll = () => {
-  const bounding = filtersResults.value.getBoundingClientRect()
+  const bounding = filtersSelectedHtml.value.getBoundingClientRect()
   const isStickToTop = bounding.top <= 0
   if (isStickToTop && !displaySmallFilters.value) displaySmallFilters.value = true
   if (!isStickToTop && displaySmallFilters.value) displaySmallFilters.value = false
@@ -26,14 +26,14 @@ onUnmounted(() => {
 
 <template>
   <div
-    ref="observatory-results-filters"
-    class="observatory-results-filters ma-cantine--sticky__top fr-py-2w fr-background-alt--blue-france"
+    ref="filters-selected-html"
+    class="observatory-filters-selected ma-cantine--sticky__top fr-py-2w fr-background-alt--blue-france"
     :class="{ small: displaySmallFilters }"
   >
-    <p class="observatory-results-filters__title fr-mb-0">Chiffres clés pour la recherche :</p>
-    <div class="observatory-results-filters__scrollable">
-      <ul class="observatory-results-filters__list ma-cantine--unstyled-list fr-my-0">
-        <li v-for="(filter, index) in filtersList" :key="index" class="observatory-results-filters__item">
+    <p class="observatory-filters-selected__title fr-mb-0">Chiffres clés pour la recherche :</p>
+    <div class="observatory-filters-selected__scrollable">
+      <ul class="observatory-filters-selected__list ma-cantine--unstyled-list fr-my-0">
+        <li v-for="(filter, index) in filtersList" :key="index" class="observatory-filters-selected__item">
           <DsfrTag
             @click="storeFilters.remove(filter.name, filter.value)"
             :label="filter.label"
@@ -44,7 +44,7 @@ onUnmounted(() => {
       </ul>
     </div>
     <DsfrButton
-      class="observatory-results-filters__button"
+      class="observatory-filters-selected__button"
       tertiary
       label="Modifier les filtres"
       icon="fr-icon-filter-fill"
@@ -54,7 +54,7 @@ onUnmounted(() => {
 </template>
 
 <style lang="scss">
-.observatory-results-filters {
+.observatory-filters-selected {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -87,7 +87,7 @@ onUnmounted(() => {
   &.small {
     align-items: center;
 
-    .observatory-results-filters {
+    .observatory-filters-selected {
       &__scrollable,
       &__title {
         display: none;
@@ -106,7 +106,7 @@ onUnmounted(() => {
     align-items: baseline;
 
     &.small {
-      .observatory-results-filters {
+      .observatory-filters-selected {
         &__title {
           display: initial;
         }
