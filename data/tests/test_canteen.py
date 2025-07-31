@@ -141,7 +141,7 @@ class TestCanteenCreatedBeforeQuerySet(TestCase):
             CanteenFactory()
         with freeze_time("2025-04-20"):  # during the 2024 correction campaign
             CanteenFactory()
-        with freeze_time("2025-12-30"):  # after the 2024 campaign
+        with freeze_time("2025-06-30"):  # after the 2024 campaign
             CanteenFactory()
 
     def test_created_before_year_campaign_end_date(self):
@@ -149,7 +149,7 @@ class TestCanteenCreatedBeforeQuerySet(TestCase):
         self.assertEqual(Canteen.objects.created_before_year_campaign_end_date(1990).count(), 0)
         self.assertEqual(Canteen.objects.created_before_year_campaign_end_date(2023).count(), 0)
         self.assertEqual(Canteen.objects.created_before_year_campaign_end_date(2024).count(), 2)
-        self.assertEqual(Canteen.objects.created_before_year_campaign_end_date(2025).count(), 3)
+        self.assertEqual(Canteen.objects.created_before_year_campaign_end_date(2025).count(), 4)
 
 
 class TestCanteenSatelliteQuerySet(TestCase):
