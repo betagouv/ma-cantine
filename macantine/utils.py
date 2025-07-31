@@ -107,7 +107,7 @@ def is_in_teledeclaration_or_correction():
     return is_in_teledeclaration() or is_in_correction()
 
 
-def get_canteen_created_before_year_campaign_end_date(year):
+def get_year_campaign_end_date_or_today_date(year):
     year = int(year)
     if year in CAMPAIGN_DATES.keys():
         return CAMPAIGN_DATES[year]["teledeclaration_end_date"]

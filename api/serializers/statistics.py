@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 from common.utils.badges import badges_for_queryset
 from data.models import Canteen, Sector
-from macantine.utils import get_canteen_created_before_year_campaign_end_date
+from macantine.utils import get_year_campaign_end_date_or_today_date
 
 logger = logging.getLogger(__name__)
 
@@ -142,7 +142,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
         data["warnings"] = [
             "Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
         ]
-        canteen_created_before_date = get_canteen_created_before_year_campaign_end_date(year)
+        canteen_created_before_date = get_year_campaign_end_date_or_today_date(year)
         if canteen_created_before_date:
             data["canteen_count_description"] = f"Au {canteen_created_before_date.strftime('%-d %B %Y')}"
         return data
