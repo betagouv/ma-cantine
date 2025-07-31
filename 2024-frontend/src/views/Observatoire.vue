@@ -6,8 +6,8 @@ import ObservatoryHero from "@/components/ObservatoryHero.vue"
 import ObservatoryFilters from "@/components/ObservatoryFilters.vue"
 import ObservatoryResultsFilters from "@/components/ObservatoryResultsFilters.vue"
 import ObservatoryResultsTop from "@/components/ObservatoryResultsTop.vue"
+import ObservatoryPurchases from "@/components/ObservatoryPurchases.vue"
 import ObservatoryResultsError from "@/components/ObservatoryResultsError.vue"
-import ObservatoryResultsPurchases from "@/components/ObservatoryResultsPurchases.vue"
 
 /* Back to filters */
 const observatoryFilters = useTemplateRef("observatory-filters")
@@ -62,7 +62,7 @@ watchEffect(async () => {
       :teledeclarationsCount="stats.teledeclarationsCount"
       class="fr-mb-3w"
     />
-    <ObservatoryResultsPurchases />
+    <ObservatoryPurchases />
     <pre>{{ stats }}</pre>
   </section>
 </template>
