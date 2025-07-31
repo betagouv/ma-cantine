@@ -6,7 +6,7 @@ from api.serializers.utils import (
     safe_to_float,
 )
 from data.department_choices import Department
-from data.models import Diagnostic, Teledeclaration, WasteMeasurement
+from data.models import Diagnostic, Teledeclaration
 from data.region_choices import Region
 from macantine.etl import utils
 
@@ -81,10 +81,6 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     # Data related to the waste (gaspillage)
     diag_gaspi = serializers.SerializerMethodField()
     plan_action_gaspi = serializers.SerializerMethodField()
-    freq_actions_gaspi = serializers.SerializerMethodField()
-    qte_totale_dechets = serializers.SerializerMethodField()
-    qte_repas_dechets = serializers.SerializerMethodField()
-    convention_dons_gaspi = serializers.SerializerMethodField()
 
     # Data related to the applicant
     email = serializers.SerializerMethodField()
@@ -155,10 +151,6 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "vegetarian_menu_type",
             "diag_gaspi",
             "plan_action_gaspi",
-            "freq_actions_gaspi",
-            "qte_totale_dechets",
-            "qte_repas_dechets",
-            "convention_dons_gaspi",
             "ratio_egalim_fish",
             "ratio_egalim_meat_poultry",
             "ratio_bio",
@@ -361,22 +353,12 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             return obj.declared_data["teledeclaration"]["vegetarian_menu_type"]
 
     def get_diag_gaspi(self, obj):
-        return WasteMeasurement.objects.filter(canteen_id=obj.canteen_id, period_start_date__year=obj.year).exists()
+        if "has_waste_diagnostic" in obj.declared_data["teledeclaration"]:
+            return obj.declared_data["teledeclaration"]["has_waste_diagnostic"]
 
     def get_plan_action_gaspi(self, obj):
-        return 1
-
-    def get_freq_actions_gaspi(self, obj):
-        return 1
-
-    def get_qte_totale_dechets(self, obj):
-        return 1
-
-    def get_qte_repas_dechets(self, obj):
-        return 1
-
-    def get_convention_dons_gaspi(self, obj):
-        return 1
+        if "has_waste_plan" in obj.declared_data["teledeclaration"]:
+            return obj.declared_data["teledeclaration"]["has_waste_plan"]
 
     def get_ratio_egalim_fish(self, obj):
         return utils.compute_ratio(self.get_value_fish_egalim_ht(obj), self.get_value_fish_ht(obj))
