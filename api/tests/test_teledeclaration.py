@@ -945,6 +945,7 @@ class TeledeclarationAnalysisSerializerTest(APITestCase):
     def test_get_actions_gaspi(self):
         all_actions = [choice for choice, _ in Diagnostic.WasteActions.choices]
         test_cases = [
+            (None, {action: False for action in all_actions}),
             ([], {action: False for action in all_actions}),
             (
                 [Diagnostic.WasteActions.INSCRIPTION],
