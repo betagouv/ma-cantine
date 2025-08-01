@@ -6,6 +6,31 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.26.0](https://github.com/betagouv/ma-cantine/compare/v2025.25.0...v2025.26.0) (2025-08-01)
+
+
+### Nouveautés
+
+* **Observatoire:** affiche un message d'erreur si pas de filtres ([#5553](https://github.com/betagouv/ma-cantine/issues/5553)) ([1cbab5a](https://github.com/betagouv/ma-cantine/commit/1cbab5a38ee1f8adc587b079c24c53e687bad474))
+* **Observatoire:** création du bloc pour afficher les graphiques des produits durables et de qualité ([#5556](https://github.com/betagouv/ma-cantine/issues/5556)) ([2815c6b](https://github.com/betagouv/ma-cantine/commit/2815c6b1e8e079d33f996901e86a4795bcfad3f6))
+
+
+### Améliorations
+
+* **API Stats:** mettre de la documentation sous forme de notes dans la réponse API (cas des armée, canteen_count date) ([#5542](https://github.com/betagouv/ma-cantine/issues/5542)) ([500f731](https://github.com/betagouv/ma-cantine/commit/500f7314a488b782dd4ef1085c3535295bc1f251))
+* **Dates de campagne:** ajout du lien vers le rapport annuel ([#5552](https://github.com/betagouv/ma-cantine/issues/5552)) ([b829a43](https://github.com/betagouv/ma-cantine/commit/b829a43eadf1ac89af3b5b785b2b841001310d8a))
+* **Metabase:** Ajouts des champs gaspis dans l'extraction des Teledeclarations ([#5547](https://github.com/betagouv/ma-cantine/issues/5547)) ([da36d1d](https://github.com/betagouv/ma-cantine/commit/da36d1df5147c01c391c41501ca405a7fdfc889e))
+
+
+### Corrections (bugs, typos...)
+
+* **Observatoire:** corrige l'affichage des 3 premiers blocs des résultats ([#5550](https://github.com/betagouv/ma-cantine/issues/5550)) ([a0e8eda](https://github.com/betagouv/ma-cantine/commit/a0e8eda2225f68119a04a977b246362670616c6e))
+
+
+### Technique
+
+* **Observatoire:** renomme les composants ([#5557](https://github.com/betagouv/ma-cantine/issues/5557)) ([65acb74](https://github.com/betagouv/ma-cantine/commit/65acb742c8b766de43cbcd5bcc1b0886503ed1cb))
+
 ## [2025.25.0](https://github.com/betagouv/ma-cantine/compare/v2025.24.2...v2025.25.0) (2025-07-30)
 
 
