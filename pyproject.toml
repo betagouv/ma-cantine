@@ -157,7 +157,7 @@ dependencies = [
     "tqdm==4.67.0",
     "typing-extensions==4.12.2",
     "tzdata==2024.2",
-    "tzlocal==5.2",
+    "tzlocal==5.3.1",
     "uritemplate==4.1.1",
     "uritools==4.0.3",
     "urllib3==2.2.3",
