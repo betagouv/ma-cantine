@@ -4,9 +4,9 @@ import { useStoreFilters } from "@/stores/filters"
 import statisticsService from "@/services/statistics"
 import ObservatoryHero from "@/components/ObservatoryHero.vue"
 import ObservatoryFilters from "@/components/ObservatoryFilters.vue"
-import ObservatoryResultsFilters from "@/components/ObservatoryResultsFilters.vue"
-import ObservatoryResultsTop from "@/components/ObservatoryResultsTop.vue"
-import ObservatoryResultsError from "@/components/ObservatoryResultsError.vue"
+import ObservatoryFiltersSelected from "@/components/ObservatoryFiltersSelected.vue"
+import ObservatoryNumbers from "@/components/ObservatoryNumbers.vue"
+import ObservatoryError from "@/components/ObservatoryError.vue"
 import ObservatoryPurchases from "@/components/ObservatoryPurchases.vue"
 
 /* Back to filters */
@@ -49,14 +49,14 @@ watchEffect(async () => {
   <ObservatoryHero />
   <ObservatoryFilters ref="observatory-filters" />
   <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pt-2w fr-pb-4w">
-    <ObservatoryResultsFilters @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
-    <ObservatoryResultsError v-if="statsError" :error="statsError" />
+    <ObservatoryFiltersSelected @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
+    <ObservatoryError v-if="statsError" :error="statsError" />
     <DsfrNotice
       v-if="stats"
       class="fr-my-2w"
       title="Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
     />
-    <ObservatoryResultsTop
+    <ObservatoryNumbers
       v-if="stats"
       :canteensCount="stats.canteenCount"
       :teledeclarationsCount="stats.teledeclarationsCount"
