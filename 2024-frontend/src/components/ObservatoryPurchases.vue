@@ -2,6 +2,7 @@
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import keyMeasures from "@/data/key-measures.json"
+import GraphQualityBio from "@/components/GraphQualityBio.vue"
 
 const approBadge = "/static/images/badges/appro.svg"
 const keyMeasureId = keyMeasures[0].id
@@ -14,5 +15,9 @@ const keyMeasureId = keyMeasures[0].id
       de qualité dans la famille de denrées “viandes et poissons“.
       <AppLinkRouter :to="{ name: 'KeyMeasurePage', params: { id: keyMeasureId } }" title="En savoir plus sur la loi" />
     </ObservatoryBadgeTitle>
+    <div>
+      <h3 class="fr-h6 fr-mb-2w">1. Produits durable et de qualité dont les produits bio</h3>
+      <GraphQualityBio />
+    </div>
   </div>
 </template>
