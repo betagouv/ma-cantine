@@ -122,7 +122,7 @@ cryptography==43.0.1
     #   ma-cantine
     #   pyhanko
     #   pyhanko-certvalidator
-cssbeautifier==1.15.1
+cssbeautifier==1.15.4
     # via
     #   djlint
     #   ma-cantine
