@@ -1,9 +1,23 @@
+<script setup>
+defineProps(["objectives"])
+</script>
+
 <template>
   <div class="graph-quality-bio">
     <div class="graph-quality-bio__objectives-container">
-      <p class="fr-mb-0">Objectif EGalim</p>
-      <p class="graph-quality-bio__objectif" style="position: absolute; top: 0; left: 20%">20%</p>
-      <p class="graph-quality-bio__objectif" style="position: absolute; top: 0; left: 50%">50%</p>
+      <p class="fr-text--sm ma-cantine--bold fr-mb-0">Objectif EGalim</p>
+      <p
+        class="graph-quality-bio__objectif fr-text--sm ma-cantine--bold"
+        :style="`position: absolute; top: 0; left: ${objectives.bio}`"
+      >
+        {{ objectives.bio }}
+      </p>
+      <p
+        class="graph-quality-bio__objectif fr-text--sm ma-cantine--bold"
+        :style="`position: absolute; top: 0; left: ${objectives.quality}`"
+      >
+        {{ objectives.quality }}
+      </p>
     </div>
     <div class="graph-quality-bio__bars-container">
       <div class="graph-quality-bio__bar filled" style="width: 35%"></div>
@@ -21,7 +35,6 @@
 </template>
 
 <style lang="scss">
-// Objectifs sur petits écrans ?
 .graph-quality-bio {
   display: flex;
   flex-direction: column;
@@ -38,10 +51,12 @@
     &::before {
       content: "";
       height: calc(3rem + 1rem); // size bar + mb
-      width: 2px;
-      background-color: black;
+      border-width: 1px;
+      border-style: dashed;
+      border-color: black;
       position: absolute;
       bottom: 0;
+      left: 0;
       transform: translateY(100%);
     }
   }
