@@ -4,7 +4,7 @@ defineProps(["objectives"])
 
 <template>
   <div class="graph-quality-bio">
-    <div class="graph-quality-bio__objectives-container">
+    <div class="graph-quality-bio__objectives-container fr-mb-2w">
       <p class="fr-text--sm ma-cantine--bold fr-mb-0">Objectif EGalim</p>
       <p
         class="graph-quality-bio__objectif fr-text--sm ma-cantine--bold"
@@ -35,6 +35,7 @@ defineProps(["objectives"])
 </template>
 
 <style lang="scss">
+$graphHeight: 3rem;
 .graph-quality-bio {
   display: flex;
   flex-direction: column;
@@ -44,13 +45,12 @@ defineProps(["objectives"])
   &__objectives-container {
     z-index: 1;
     position: relative;
-    margin-bottom: 1rem;
   }
 
   &__objectif {
     &::before {
       content: "";
-      height: calc(3rem + 1rem); // size bar + mb
+      height: calc($graphHeight + 1rem);
       border-width: 1px;
       border-style: dashed;
       border-color: black;
@@ -64,7 +64,7 @@ defineProps(["objectives"])
   &__bars-container {
     position: relative;
     border: solid 1px green;
-    height: 3rem;
+    height: $graphHeight;
     margin-bottom: 2rem;
   }
 
