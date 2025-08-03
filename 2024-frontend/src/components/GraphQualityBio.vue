@@ -19,17 +19,13 @@ defineProps(["objectives", "results"])
         {{ objectives.quality }}
       </p>
     </div>
-    <div class="graph-quality-bio__bars-container">
+    <div class="graph-quality-bio__bars-container fr-mb-2w">
       <div class="graph-quality-bio__bar filled" :style="`width: ${results.quality}`"></div>
       <div class="graph-quality-bio__bar dashed" :style="`width: ${results.bio}`"></div>
     </div>
     <div class="graph-quality-bio__legend-container">
-      <p class="graph-quality-bio__legend dashed">
-        bio et en conversion bio
-      </p>
-      <p class="graph-quality-bio__legend filled">
-        durables et de qualité dont bio
-      </p>
+      <p class="graph-quality-bio__legend dashed">bio et en conversion bio ({{ results.bio }})</p>
+      <p class="graph-quality-bio__legend filled">durables et de qualité dont bio ({{ results.quality }})</p>
     </div>
   </div>
 </template>
@@ -38,6 +34,20 @@ defineProps(["objectives", "results"])
 $graphHeight: 3rem;
 $bioColor: var(--green-emeraude-sun-425-moon-753);
 $qualityColor: var(--green-emeraude-main-632);
+$legendSquareSize: 1rem;
+$legendDashSize: calc($legendSquareSize / 5);
+
+@function getDashedBackground($size: 0.25rem) {
+  $dashSize: $size;
+  $doubleDashSize: $dashSize * 2;
+  @return repeating-linear-gradient(
+    to left,
+    $bioColor,
+    $bioColor $dashSize,
+    transparent $dashSize,
+    transparent $doubleDashSize
+  );
+}
 
 .graph-quality-bio {
   display: flex;
@@ -68,7 +78,6 @@ $qualityColor: var(--green-emeraude-main-632);
     position: relative;
     border: solid 1px $bioColor;
     height: $graphHeight;
-    margin-bottom: 2rem;
   }
 
   &__bar {
@@ -78,15 +87,7 @@ $qualityColor: var(--green-emeraude-main-632);
     height: 100%;
 
     &.dashed {
-      $dashSize: 0.25rem;
-      $doubleDashSize: $dashSize * 2;
-      background: repeating-linear-gradient(
-        to left,
-        $bioColor,
-        $bioColor $dashSize,
-        transparent $dashSize,
-        transparent $doubleDashSize
-      );
+      background: getDashedBackground();
     }
 
     &.filled {
@@ -96,37 +97,40 @@ $qualityColor: var(--green-emeraude-main-632);
 
   &__legend-container {
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
   }
 
   &__legend {
-    padding-left: 2rem;
+    padding-left: 1.5rem;
     position: relative;
 
     &:before {
       content: "";
       position: absolute;
-      top: 50%;
       left: 0;
-      width: 1rem;
-      height: 1rem;
-      background-color: inherit;
+      top: 50%;
       transform: translateY(-50%);
+      width: $legendSquareSize;
+      height: $legendSquareSize;
+      border-style: solid;
+      border-width: 1px 0;
     }
 
-    &.ashed {
-      color: blue;
+    &.dashed {
+      color: $bioColor;
 
       &:before {
-        background-color: blue;
+        border-color: $bioColor;
+        background: getDashedBackground($legendDashSize);
       }
     }
 
     &.filled {
-      color: aqua;
+      color: $qualityColor;
 
       &:before {
-        background-color: aqua;
+        border-color: $qualityColor;
+        background-color: $qualityColor;
       }
     }
   }
