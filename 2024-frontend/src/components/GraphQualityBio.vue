@@ -1,5 +1,5 @@
 <script setup>
-defineProps(["objectives"])
+defineProps(["objectives", "results"])
 </script>
 
 <template>
@@ -20,11 +20,11 @@ defineProps(["objectives"])
       </p>
     </div>
     <div class="graph-quality-bio__bars-container">
-      <div class="graph-quality-bio__bar filled" style="width: 35%"></div>
-      <div class="graph-quality-bio__bar ashed" style="width: 16%"></div>
+      <div class="graph-quality-bio__bar filled" :style="`width: ${results.quality}`"></div>
+      <div class="graph-quality-bio__bar dashed" :style="`width: ${results.bio}`"></div>
     </div>
     <div class="graph-quality-bio__legend-container">
-      <p class="graph-quality-bio__legend ashed">
+      <p class="graph-quality-bio__legend dashed">
         bio et en conversion bio
       </p>
       <p class="graph-quality-bio__legend filled">
@@ -36,6 +36,9 @@ defineProps(["objectives"])
 
 <style lang="scss">
 $graphHeight: 3rem;
+$bioColor: var(--green-emeraude-sun-425-moon-753);
+$qualityColor: var(--green-emeraude-main-632);
+
 .graph-quality-bio {
   display: flex;
   flex-direction: column;
@@ -63,7 +66,7 @@ $graphHeight: 3rem;
 
   &__bars-container {
     position: relative;
-    border: solid 1px green;
+    border: solid 1px $bioColor;
     height: $graphHeight;
     margin-bottom: 2rem;
   }
@@ -74,13 +77,20 @@ $graphHeight: 3rem;
     top: 0;
     height: 100%;
 
-    &.ashed {
-      background: blue;
-      opacity: 0.5;
+    &.dashed {
+      $dashSize: 0.25rem;
+      $doubleDashSize: $dashSize * 2;
+      background: repeating-linear-gradient(
+        to left,
+        $bioColor,
+        $bioColor $dashSize,
+        transparent $dashSize,
+        transparent $doubleDashSize
+      );
     }
 
     &.filled {
-      background: aqua;
+      background: $qualityColor;
     }
   }
 
