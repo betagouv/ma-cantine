@@ -1,16 +1,9 @@
 <script setup>
-import { computed } from "vue"
-const props = defineProps(["objectives", "results", "legends"])
-
-const hasAllValues = computed(() => {
-  const hasObjectives = props.objectives.length > 0
-  const hasResults = props.results.length > 0
-  return hasObjectives && hasResults
-})
+defineProps(["objectives", "results", "legends"])
 </script>
 
 <template>
-  <p v-if="!hasAllValues">
+  <p v-if="results.length === 0">
     Une erreur est survenue lors de l'affichage du graphique, veuillez recharger la page et si l'erreur persiste
     contactez-nous.
   </p>
