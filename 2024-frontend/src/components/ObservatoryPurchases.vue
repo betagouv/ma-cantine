@@ -30,7 +30,7 @@ const hasSustainable = computed(() => props.sustainable !== null && props.sustai
           { name: '50%', value: 50 },
           { name: '20%', value: 20 },
         ]"
-        :stats="[60, 30]"
+        :stats="[bio, sustainable]"
         :legends="['durables et de qualité dont bio', 'bio et en conversion bio']"
       />
       <p v-else>
