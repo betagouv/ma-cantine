@@ -134,10 +134,6 @@ class Diagnostic(models.Model):
         EGG = "EGG", "D’œufs"
         READYMADE = "READYMADE", "Plats prêts à l'emploi"
 
-    class PublicationStatus(models.TextChoices):
-        DRAFT = "draft", "🔒 Non publié"
-        PUBLISHED = "published", "✅ Publié"
-
     objects = models.Manager.from_queryset(DiagnosticQuerySet)()
 
     creation_date = models.DateTimeField(auto_now_add=True)
