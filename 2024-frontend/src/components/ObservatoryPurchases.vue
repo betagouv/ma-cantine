@@ -1,7 +1,7 @@
 <script setup>
+import keyMeasures from "@/data/key-measures.json"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
-import keyMeasures from "@/data/key-measures.json"
 import ObservatoryGraphSustainableAndBio from "@/components/ObservatoryGraphSustainableAndBio.vue"
 
 defineProps(["stats"])
