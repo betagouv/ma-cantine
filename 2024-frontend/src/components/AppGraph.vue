@@ -3,7 +3,9 @@ import { computed } from "vue"
 const props = defineProps(["valuesToVerify", "description"])
 
 const displayGraph = computed(() => {
-  const incorrectValues = props.valuesToVerify.filter((value) => value === null || value === undefined)
+  const incorrectValues = props.valuesToVerify.filter(
+    (value) => value === null || value === undefined || value === false
+  )
   return incorrectValues.length === 0
 })
 </script>
