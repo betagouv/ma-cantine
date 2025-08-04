@@ -21,7 +21,7 @@ const keyMeasureId = keyMeasures[0].id
       <h3 class="fr-h6 fr-mb-2w">1. Produits durable et de qualité dont les produits bio</h3>
       <GraphGauge
         :objectives="[50, 20]"
-        :results="[33, 5]"
+        :stats="[33, 5]"
         :legends="['bio et en conversion bio', 'durables et de qualité dont bio']"
       />
     </div>
