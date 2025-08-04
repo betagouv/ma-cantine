@@ -1,33 +1,46 @@
 <script setup>
-defineProps(["objectives", "results"])
+import { computed } from "vue"
+const props = defineProps(["objectives", "results"])
+
+const checkValue = (value) => {
+  return value !== null && value !== false && value !== undefined
+}
+
+const hasValues = computed(() => {
+  const hasObjectifBio = checkValue(props.objectives.bio)
+  const hasObjectifQuality = checkValue(props.objectives.quality)
+  const hasResultBio = checkValue(props.results.bio)
+  const hasResultQuality = checkValue(props.results.quality)
+  return hasObjectifBio && hasObjectifQuality && hasResultBio && hasResultQuality
+})
 </script>
 
 <template>
-  <div class="graph-quality-bio">
+  <div v-if="hasValues" class="graph-quality-bio">
     <div class="graph-quality-bio__objectives-container fr-mt-6w fr-mt-md-3w">
       <p class="graph-quality-bio__objectif graph-quality-bio__objectif--title fr-text--sm ma-cantine--bold">
         Objectif EGalim
       </p>
       <p
         class="graph-quality-bio__objectif graph-quality-bio__objectif--marker fr-text--sm ma-cantine--bold"
-        :style="`left: ${objectives.bio}`"
+        :style="`left: ${objectives.bio}%`"
       >
-        {{ objectives.bio }}
+        {{ objectives.bio }}%
       </p>
       <p
         class="graph-quality-bio__objectif graph-quality-bio__objectif--marker fr-text--sm ma-cantine--bold"
-        :style="`left: ${objectives.quality}`"
+        :style="`left: ${objectives.quality}%`"
       >
-        {{ objectives.quality }}
+        {{ objectives.quality }}%
       </p>
     </div>
     <div class="graph-quality-bio__bars-container">
-      <div class="graph-quality-bio__bar filled" :style="`width: ${results.quality}`"></div>
-      <div class="graph-quality-bio__bar dashed" :style="`width: ${results.bio}`"></div>
+      <div class="graph-quality-bio__bar filled" :style="`width: ${results.quality}%`"></div>
+      <div class="graph-quality-bio__bar dashed" :style="`width: ${results.bio}%`"></div>
     </div>
     <div class="graph-quality-bio__legends-container fr-mt-2w">
-      <p class="graph-quality-bio__legend dashed">bio et en conversion bio ({{ results.bio }})</p>
-      <p class="graph-quality-bio__legend filled">durables et de qualité dont bio ({{ results.quality }})</p>
+      <p class="graph-quality-bio__legend dashed">bio et en conversion bio ({{ results.bio }}%)</p>
+      <p class="graph-quality-bio__legend filled">durables et de qualité dont bio ({{ results.quality }}%)</p>
     </div>
   </div>
 </template>
