@@ -62,7 +62,7 @@ watchEffect(async () => {
       :teledeclarationsCount="stats.teledeclarationsCount"
       class="fr-mb-3w"
     />
-    <ObservatoryPurchases v-if="stats" :bio="stats.bioPercent" :sustainable="stats.sustainablePercent" />
+    <ObservatoryPurchases v-if="stats" :stats="stats" />
     <pre>{{ stats }}</pre>
   </section>
 </template>

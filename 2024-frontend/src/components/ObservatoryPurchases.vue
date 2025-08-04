@@ -5,14 +5,17 @@ import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import keyMeasures from "@/data/key-measures.json"
 import GraphGauge from "@/components/GraphGauge.vue"
 
-const props = defineProps(["bio", "sustainable"])
+const props = defineProps(["stats"])
 
+/* Description */
 const approBadge = "/static/images/badges/appro.svg"
 const keyMeasureId = keyMeasures[0].id
 
 /* Verify stats */
-const hasBio = computed(() => props.bio !== null && props.bio !== undefined)
-const hasSustainable = computed(() => props.sustainable !== null && props.sustainable !== undefined)
+const hasBio = computed(() => props.stats.bioPercent !== null && props.stats.bioPercent !== undefined)
+const hasSustainable = computed(
+  () => props.stats.sustainablePercent !== null && props.stats.sustainablePercent !== undefined
+)
 </script>
 
 <template>
@@ -30,7 +33,7 @@ const hasSustainable = computed(() => props.sustainable !== null && props.sustai
           { name: '50%', value: 50 },
           { name: '20%', value: 20 },
         ]"
-        :stats="[bio, sustainable]"
+        :stats="[stats.sustainablePercent, stats.bioPercent]"
         :legends="['durables et de qualité dont bio', 'bio et en conversion bio']"
       />
       <p v-else>
