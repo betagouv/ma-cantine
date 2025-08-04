@@ -4,7 +4,7 @@ defineProps(["objectives", "stats", "legends"])
 
 <template>
   <div class="graph-gauge">
-    <div class="graph-gauge__objectives-container fr-mt-3w">
+    <div v-if="objectives" class="graph-gauge__objectives-container fr-mt-6w">
       <p class="graph-gauge__objectif graph-gauge__objectif--title fr-text--sm ma-cantine--bold">
         Objectif EGalim
       </p>
