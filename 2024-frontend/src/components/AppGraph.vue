@@ -2,7 +2,6 @@
 import { computed } from "vue"
 const props = defineProps(["valuesToVerify", "description"])
 
-/* Verifications */
 const displayGraph = computed(() => {
   const incorrectValues = props.valuesToVerify.filter((value) => value === null || value === undefined)
   return incorrectValues.length === 0
