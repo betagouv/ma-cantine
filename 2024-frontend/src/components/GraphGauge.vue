@@ -12,9 +12,9 @@ defineProps(["objectives", "stats", "legends"])
         v-for="objectif in objectives"
         :key="objectif"
         class="graph-gauge__objectif graph-gauge__objectif--marker fr-text--sm ma-cantine--bold"
-        :style="`left: ${objectif}%`"
+        :style="`left: ${objectif.value}%`"
       >
-        {{ objectif }}%
+        {{ objectif.name }}
       </p>
     </div>
     <div class="graph-gauge__bars-container">

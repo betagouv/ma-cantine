@@ -26,8 +26,11 @@ const hasSustainable = computed(() => props.sustainable !== null && props.sustai
       <h3 class="fr-h6 fr-mb-2w">1. Produits durable et de qualité dont les produits bio</h3>
       <GraphGauge
         v-if="hasBio && hasSustainable"
-        :objectives="[50, 20]"
-        :stats="[sustainable, bio]"
+        :objectives="[
+          { name: '50%', value: 20 },
+          { name: '20%', value: 50 },
+        ]"
+        :stats="[60, 30]"
         :legends="['durables et de qualité dont bio', 'bio et en conversion bio']"
       />
       <p v-else>
