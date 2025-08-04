@@ -40,7 +40,7 @@ $qualityColor: var(--green-emeraude-main-632);
 $legendSquareSize: 1rem;
 $legendDashSize: calc($legendSquareSize / 5);
 
-@function getDashedBackground($size: 0.25rem) {
+@function getDashedBackground($size: 0.5rem) {
   $dashSize: $size;
   $doubleDashSize: $dashSize * 2;
   @return repeating-linear-gradient(
@@ -129,7 +129,7 @@ $legendDashSize: calc($legendSquareSize / 5);
 
   .dashed {
     &.graph-quality-bio__bar {
-      background: getDashedBackground($legendDashSize);
+      background: getDashedBackground();
     }
 
     &.graph-quality-bio__legend {
