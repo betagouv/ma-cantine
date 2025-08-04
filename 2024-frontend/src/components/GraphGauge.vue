@@ -1,5 +1,11 @@
 <script setup>
-defineProps(["objectives", "stats", "legends"])
+import { computed } from "vue"
+const props = defineProps(["objectives", "stats", "legends"])
+
+const statsDifferenceIsSmall = computed(() => {
+  if (props.stats.length > 1) return Math.abs(props.stats[1] - props.stats[0]) < 10
+  return false
+})
 </script>
 
 <template>
@@ -19,8 +25,11 @@ defineProps(["objectives", "stats", "legends"])
       </p>
     </div>
     <div class="graph-gauge__bars-container">
-      <div v-for="stat in stats" :key="stat" class="graph-gauge__bar" :style="`width: ${stat}%`">
-        <p class="graph-gauge__stat fr-mb-0 ma-cantine--bold fr-text--sm fr-px-1w" :class="{ outside: stat < 10 }">
+      <div v-for="(stat, index) in stats" :key="stat" class="graph-gauge__bar" :style="`width: ${stat}%`">
+        <p
+          class="graph-gauge__stat fr-mb-0 ma-cantine--bold fr-text--sm fr-px-1w"
+          :class="{ outside: stat < 10 || (statsDifferenceIsSmall && index === 0) }"
+        >
           {{ stat }}%
         </p>
       </div>
