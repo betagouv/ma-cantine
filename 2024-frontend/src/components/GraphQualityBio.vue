@@ -6,16 +6,10 @@ defineProps(["objectives", "results"])
   <div class="graph-quality-bio">
     <div class="graph-quality-bio__objectives-container fr-mb-2w">
       <p class="fr-text--sm ma-cantine--bold fr-mb-0">Objectif EGalim</p>
-      <p
-        class="graph-quality-bio__objectif fr-text--sm ma-cantine--bold"
-        :style="`position: absolute; top: 0; left: ${objectives.bio}`"
-      >
+      <p class="graph-quality-bio__objectif fr-text--sm ma-cantine--bold" :style="`left: ${objectives.bio}`">
         {{ objectives.bio }}
       </p>
-      <p
-        class="graph-quality-bio__objectif fr-text--sm ma-cantine--bold"
-        :style="`position: absolute; top: 0; left: ${objectives.quality}`"
-      >
+      <p class="graph-quality-bio__objectif fr-text--sm ma-cantine--bold" :style="`left: ${objectives.quality}`">
         {{ objectives.quality }}
       </p>
     </div>
@@ -61,6 +55,9 @@ $legendDashSize: calc($legendSquareSize / 5);
   }
 
   &__objectif {
+    position: absolute;
+    top: 0;
+
     &::before {
       content: "";
       height: calc($graphHeight + 1rem);
@@ -84,15 +81,7 @@ $legendDashSize: calc($legendSquareSize / 5);
     position: absolute;
     left: 0;
     top: 0;
-    height: 100%;
-
-    &.dashed {
-      background: getDashedBackground();
-    }
-
-    &.filled {
-      background: $qualityColor;
-    }
+    bottom: 0;
   }
 
   &__legend-container {
@@ -115,19 +104,30 @@ $legendDashSize: calc($legendSquareSize / 5);
       border-style: solid;
       border-width: 1px 0;
     }
+  }
 
-    &.dashed {
+  .dashed {
+    &.graph-quality-bio__bar {
+      background: getDashedBackground($legendDashSize);
+    }
+
+    &.graph-quality-bio__legend {
       color: $bioColor;
-
       &:before {
+        background-color: transparent;
         border-color: $bioColor;
         background: getDashedBackground($legendDashSize);
       }
     }
+  }
 
-    &.filled {
+  .filled {
+    &.graph-quality-bio__bar {
+      background: $qualityColor;
+    }
+
+    &.graph-quality-bio__legend {
       color: $qualityColor;
-
       &:before {
         border-color: $qualityColor;
         background-color: $qualityColor;
