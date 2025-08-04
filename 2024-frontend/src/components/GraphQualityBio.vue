@@ -25,7 +25,7 @@ defineProps(["objectives", "results"])
       <div class="graph-quality-bio__bar filled" :style="`width: ${results.quality}`"></div>
       <div class="graph-quality-bio__bar dashed" :style="`width: ${results.bio}`"></div>
     </div>
-    <div class="graph-quality-bio__legend-container fr-mt-2w">
+    <div class="graph-quality-bio__legends-container fr-mt-2w">
       <p class="graph-quality-bio__legend dashed">bio et en conversion bio ({{ results.bio }})</p>
       <p class="graph-quality-bio__legend filled">durables et de qualité dont bio ({{ results.quality }})</p>
     </div>
@@ -104,7 +104,7 @@ $legendDashSize: calc($legendSquareSize / 5);
     bottom: 0;
   }
 
-  &__legend-container {
+  &__legends-container {
     display: flex;
     gap: 2rem;
   }
