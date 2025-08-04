@@ -2,7 +2,7 @@
 import keyMeasures from "@/data/key-measures.json"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
-import ObservatoryGraphSustainableAndBio from "@/components/ObservatoryGraphSustainableAndBio.vue"
+import ObservatoryGraphSustainable from "@/components/ObservatoryGraphSustainable.vue"
 
 defineProps(["stats"])
 const approBadge = "/static/images/badges/appro.svg"
@@ -17,7 +17,7 @@ const keyMeasureId = keyMeasures[0].id
       <AppLinkRouter :to="{ name: 'KeyMeasurePage', params: { id: keyMeasureId } }" title="En savoir plus sur la loi" />
     </ObservatoryBadgeTitle>
     <div>
-      <ObservatoryGraphSustainableAndBio :stats="stats" />
+      <ObservatoryGraphSustainable :stats="stats" />
     </div>
   </div>
 </template>
