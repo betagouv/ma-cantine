@@ -23,7 +23,9 @@ const keyMeasureId = keyMeasures[0].id
       <h3 class="fr-h6 fr-mb-2w">1. Produits durable et de qualité dont les produits bio</h3>
       <AppGraph
         :valuesToVerify="[stats.sustainablePercent, stats.bioPercent]"
-        description="Donec id elit non mi porta gravida at eget metus."
+        :description="
+          `Taux durables et de qualité dont bio : ${stats.sustainablePercent}%. Taux bio et en conversion bio : ${stats.bioPercent}%`
+        "
       >
         <GraphGauge
           :objectives="[
