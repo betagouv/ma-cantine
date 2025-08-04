@@ -19,7 +19,11 @@ defineProps(["objectives", "stats", "legends"])
       </p>
     </div>
     <div class="graph-gauge__bars-container">
-      <div v-for="stat in stats" :key="stat" class="graph-gauge__bar" :style="`width: ${stat}%`"></div>
+      <div v-for="stat in stats" :key="stat" class="graph-gauge__bar" :style="`width: ${stat}%`">
+        <p class="graph-gauge__stat fr-mb-0 ma-cantine--bold fr-text--sm fr-px-1w" :class="{ outside: stat < 10 }">
+          {{ stat }}%
+        </p>
+      </div>
     </div>
     <div class="graph-gauge__legends-container fr-mt-2w">
       <p v-for="(legend, index) in legends" :key="legend" class="graph-gauge__legend">
@@ -106,13 +110,27 @@ $legendDashSize: calc($legendSquareSize / 5);
     left: 0;
     top: 0;
     bottom: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 
     &:first-child {
       background-color: $fillColor;
+      color: $fillColor;
     }
 
     &:nth-child(2) {
       background: getDashedBackground();
+      color: $dashColor;
+    }
+  }
+
+  &__stat {
+    color: white;
+
+    &.outside {
+      transform: translateX(100%);
+      color: inherit;
     }
   }
 
