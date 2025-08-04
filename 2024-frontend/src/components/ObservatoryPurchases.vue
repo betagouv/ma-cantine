@@ -2,7 +2,7 @@
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import keyMeasures from "@/data/key-measures.json"
-import GraphQualityBio from "@/components/GraphQualityBio.vue"
+import GraphGauge from "@/components/GraphGauge.vue"
 
 defineProps(["bio", "sustainable"])
 
@@ -19,7 +19,7 @@ const keyMeasureId = keyMeasures[0].id
     </ObservatoryBadgeTitle>
     <div>
       <h3 class="fr-h6 fr-mb-2w">1. Produits durable et de qualité dont les produits bio</h3>
-      <GraphQualityBio :objectives="{ quality: 50, bio: 20 }" :results="{ quality: sustainable, bio: bio }" />
+      <GraphGauge :objectives="{ quality: 50, bio: 20 }" :results="{ quality: sustainable, bio: bio }" />
     </div>
   </div>
 </template>

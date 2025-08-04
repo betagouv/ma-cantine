@@ -20,10 +20,10 @@ const hasAllValues = computed(() => {
     Une erreur est survenue lors de l'affichage du graphique, veuillez recharger la page et si l'erreur persiste
     contactez-nous.
   </p>
-  <div v-else class="graph-quality-bio">
-    <div class="graph-quality-bio__objectives-container fr-mt-3w">
+  <div v-else class="graph-gauge">
+    <div class="graph-gauge__objectives-container fr-mt-3w">
       <p
-        class="graph-quality-bio__objectif graph-quality-bio__objectif--title fr-text--sm ma-cantine--bold"
+        class="graph-gauge__objectif graph-gauge__objectif--title fr-text--sm ma-cantine--bold"
         :class="{
           right: objectives.bio < 20,
         }"
@@ -31,25 +31,25 @@ const hasAllValues = computed(() => {
         Objectif EGalim
       </p>
       <p
-        class="graph-quality-bio__objectif graph-quality-bio__objectif--marker fr-text--sm ma-cantine--bold"
+        class="graph-gauge__objectif graph-gauge__objectif--marker fr-text--sm ma-cantine--bold"
         :style="`left: ${objectives.bio}%`"
       >
         {{ objectives.bio }}%
       </p>
       <p
-        class="graph-quality-bio__objectif graph-quality-bio__objectif--marker fr-text--sm ma-cantine--bold"
+        class="graph-gauge__objectif graph-gauge__objectif--marker fr-text--sm ma-cantine--bold"
         :style="`left: ${objectives.quality}%`"
       >
         {{ objectives.quality }}%
       </p>
     </div>
-    <div class="graph-quality-bio__bars-container">
-      <div class="graph-quality-bio__bar filled" :style="`width: ${results.quality}%`"></div>
-      <div class="graph-quality-bio__bar dashed" :style="`width: ${results.bio}%`"></div>
+    <div class="graph-gauge__bars-container">
+      <div class="graph-gauge__bar filled" :style="`width: ${results.quality}%`"></div>
+      <div class="graph-gauge__bar dashed" :style="`width: ${results.bio}%`"></div>
     </div>
-    <div class="graph-quality-bio__legends-container fr-mt-2w">
-      <p class="graph-quality-bio__legend dashed">bio et en conversion bio ({{ results.bio }}%)</p>
-      <p class="graph-quality-bio__legend filled">durables et de qualité dont bio ({{ results.quality }}%)</p>
+    <div class="graph-gauge__legends-container fr-mt-2w">
+      <p class="graph-gauge__legend dashed">bio et en conversion bio ({{ results.bio }}%)</p>
+      <p class="graph-gauge__legend filled">durables et de qualité dont bio ({{ results.quality }}%)</p>
     </div>
   </div>
 </template>
@@ -74,7 +74,7 @@ $legendDashSize: calc($legendSquareSize / 5);
   );
 }
 
-.graph-quality-bio {
+.graph-gauge {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -156,11 +156,11 @@ $legendDashSize: calc($legendSquareSize / 5);
   }
 
   .dashed {
-    &.graph-quality-bio__bar {
+    &.graph-gauge__bar {
       background: getDashedBackground();
     }
 
-    &.graph-quality-bio__legend {
+    &.graph-gauge__legend {
       color: $bioColor;
       &:before {
         background-color: transparent;
@@ -171,11 +171,11 @@ $legendDashSize: calc($legendSquareSize / 5);
   }
 
   .filled {
-    &.graph-quality-bio__bar {
+    &.graph-gauge__bar {
       background: $qualityColor;
     }
 
-    &.graph-quality-bio__legend {
+    &.graph-gauge__legend {
       color: $qualityColor;
       &:before {
         border-color: $qualityColor;
