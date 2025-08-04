@@ -27,7 +27,7 @@ const hasSustainable = computed(() => props.sustainable !== null && props.sustai
       <GraphGauge
         v-if="hasBio && hasSustainable"
         :objectives="[50, 20]"
-        :stats="[33, 5]"
+        :stats="[sustainable, bio]"
         :legends="['durables et de qualité dont bio', 'bio et en conversion bio']"
       />
       <p v-else>
