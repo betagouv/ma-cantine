@@ -100,7 +100,7 @@ $legendDashSize: calc($legendSquareSize / 5);
       background-color: $fillColor;
     }
 
-    &:last-child {
+    &:nth-child(2) {
       background: getDashedBackground();
     }
   }
@@ -134,7 +134,7 @@ $legendDashSize: calc($legendSquareSize / 5);
       }
     }
 
-    &:last-child {
+    &:nth-child(2) {
       color: $dashColor;
       &:before {
         background-color: transparent;
