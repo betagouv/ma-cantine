@@ -5,8 +5,6 @@ import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import ObservatoryGraphSustainableAndBio from "@/components/ObservatoryGraphSustainableAndBio.vue"
 
 defineProps(["stats"])
-
-/* Description */
 const approBadge = "/static/images/badges/appro.svg"
 const keyMeasureId = keyMeasures[0].id
 </script>
