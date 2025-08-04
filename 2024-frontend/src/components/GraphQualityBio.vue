@@ -34,6 +34,7 @@ defineProps(["objectives", "results"])
 
 <style lang="scss">
 $graphHeight: 3rem;
+$objectivesHeight: 1rem;
 $bioColor: var(--green-emeraude-sun-425-moon-753);
 $qualityColor: var(--green-emeraude-main-632);
 $legendSquareSize: 1rem;
@@ -60,7 +61,7 @@ $legendDashSize: calc($legendSquareSize / 5);
   &__objectives-container {
     z-index: 1;
     position: relative;
-    height: 1rem;
+    height: $objectivesHeight;
   }
 
   &__objectif {
@@ -79,7 +80,7 @@ $legendDashSize: calc($legendSquareSize / 5);
     &--marker {
       &::before {
         content: "";
-        height: calc($graphHeight + 1rem);
+        height: calc($graphHeight + $objectivesHeight);
         border-width: 1px;
         border-style: dashed;
         border-color: black;
