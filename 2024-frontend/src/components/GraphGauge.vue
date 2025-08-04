@@ -1,11 +1,12 @@
 <script setup>
-import { computed } from "vue"
 const props = defineProps(["objectives", "stats", "legends"])
 
-const statsDifferenceIsSmall = computed(() => {
-  if (props.stats.length > 1) return Math.abs(props.stats[1] - props.stats[0]) < 10
-  return false
-})
+const checkOutside = (index) => {
+  const minValue = 5
+  const hasManyValue = props.stats.length > 1
+  if (hasManyValue) return Math.abs(props.stats[1] - props.stats[0]) < minValue && index === 0
+  else props.stats[index] < minValue
+}
 </script>
 
 <template>
@@ -28,7 +29,7 @@ const statsDifferenceIsSmall = computed(() => {
       <div v-for="(stat, index) in stats" :key="stat" class="graph-gauge__bar" :style="`width: ${stat}%`">
         <p
           class="graph-gauge__stat fr-mb-0 ma-cantine--bold fr-text--sm fr-px-1w"
-          :class="{ outside: stat < 10 || (statsDifferenceIsSmall && index === 0) }"
+          :class="{ outside: checkOutside(index) }"
         >
           {{ stat }}%
         </p>
