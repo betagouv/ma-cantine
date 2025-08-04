@@ -8,6 +8,7 @@ from simple_history.models import HistoricalRecords
 
 from data.department_choices import Department
 from data.fields import ChoiceArrayField
+from data.models import Canteen
 from data.region_choices import Region
 from data.utils import (
     CreationSource,
@@ -16,8 +17,6 @@ from data.utils import (
     make_optional_positive_decimal_field,
     sum_int_with_potential_null,
 )
-
-from .canteen import Canteen
 
 
 def canteen_has_siret_or_siren_unite_legale_query():
@@ -29,6 +28,9 @@ def canteen_has_siret_or_siren_unite_legale_query():
 
 
 class DiagnosticQuerySet(models.QuerySet):
+    def submitted(self):
+        return self.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+
     def is_filled(self):
         return self.filter(value_total_ht__gt=0)
 
@@ -41,11 +43,23 @@ class Diagnostic(models.Model):
             models.UniqueConstraint(fields=["canteen", "year"], name="annual_diagnostic"),
         ]
 
+    class DiagnosticStatus(models.TextChoices):
+        DRAFT = "DRAFT", "Brouillon"
+        SUBMITTED = "SUBMITTED", "Télédéclaré"
+        # CANCELLED = "CANCELLED", "Annulé"
+
     # NB: if the label of the choice changes, double check that the teledeclaration PDF
     # doesn't need an update as well, since the logic in the templates is based on the label
     class DiagnosticType(models.TextChoices):
         SIMPLE = "SIMPLE", "Télédeclaration simple"
         COMPLETE = "COMPLETE", "Télédeclaration détaillée"
+
+    class CentralKitchenDiagnosticMode(models.TextChoices):
+        APPRO = (
+            "APPRO",
+            "Ce diagnostic concerne les données d'approvisionnement de toutes les cantines satellites",
+        )
+        ALL = "ALL", "Ce diagnostic concerne toutes les données des cantines satellites"
 
     class ServiceType(models.TextChoices):
         UNIQUE = "UNIQUE", "Menu unique"
@@ -122,22 +136,35 @@ class Diagnostic(models.Model):
         EGG = "EGG", "D’œufs"
         READYMADE = "READYMADE", "Plats prêts à l'emploi"
 
-    class CentralKitchenDiagnosticMode(models.TextChoices):
-        APPRO = (
-            "APPRO",
-            "Ce diagnostic concerne les données d'approvisionnement de toutes les cantines satellites",
-        )
-        ALL = "ALL", "Ce diagnostic concerne toutes les données des cantines satellites"
-
-    class PublicationStatus(models.TextChoices):
-        DRAFT = "draft", "🔒 Non publié"
-        PUBLISHED = "published", "✅ Publié"
-
     objects = models.Manager.from_queryset(DiagnosticQuerySet)()
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()
+
+    canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
+
+    year = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="année",
+    )
+
+    status = models.CharField(
+        max_length=255,
+        choices=DiagnosticStatus.choices,
+        default=DiagnosticStatus.DRAFT,
+        verbose_name="status",
+    )
+
+    creation_source = models.CharField(
+        max_length=255,
+        choices=CreationSource.choices,
+        blank=True,
+        null=True,
+        verbose_name="Source de création du diagnostic",
+    )
+
     diagnostic_type = models.CharField(
         max_length=255,
         choices=DiagnosticType.choices,
@@ -153,22 +180,6 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="seulement pertinent pour les cuisines centrales : Quelles données sont déclarées par cette cuisine centrale ?",
-    )
-
-    canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
-
-    year = models.IntegerField(
-        null=True,
-        blank=True,
-        verbose_name="année",
-    )
-
-    creation_source = models.CharField(
-        max_length=255,
-        choices=CreationSource.choices,
-        blank=True,
-        null=True,
-        verbose_name="Source de création du diagnostic",
     )
 
     # progress fields
