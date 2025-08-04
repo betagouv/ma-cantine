@@ -52,6 +52,13 @@ class Diagnostic(models.Model):
         SIMPLE = "SIMPLE", "Télédeclaration simple"
         COMPLETE = "COMPLETE", "Télédeclaration détaillée"
 
+    class CentralKitchenDiagnosticMode(models.TextChoices):
+        APPRO = (
+            "APPRO",
+            "Ce diagnostic concerne les données d'approvisionnement de toutes les cantines satellites",
+        )
+        ALL = "ALL", "Ce diagnostic concerne toutes les données des cantines satellites"
+
     class ServiceType(models.TextChoices):
         UNIQUE = "UNIQUE", "Menu unique"
         MULTIPLE_SELF = "MULTIPLE_SELF", "Choix multiple en libre-service"
@@ -127,13 +134,6 @@ class Diagnostic(models.Model):
         EGG = "EGG", "D’œufs"
         READYMADE = "READYMADE", "Plats prêts à l'emploi"
 
-    class CentralKitchenDiagnosticMode(models.TextChoices):
-        APPRO = (
-            "APPRO",
-            "Ce diagnostic concerne les données d'approvisionnement de toutes les cantines satellites",
-        )
-        ALL = "ALL", "Ce diagnostic concerne toutes les données des cantines satellites"
-
     class PublicationStatus(models.TextChoices):
         DRAFT = "draft", "🔒 Non publié"
         PUBLISHED = "published", "✅ Publié"
@@ -143,22 +143,6 @@ class Diagnostic(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()
-    diagnostic_type = models.CharField(
-        max_length=255,
-        choices=DiagnosticType.choices,
-        blank=True,
-        null=True,
-        verbose_name="Type de diagnostic (simplifié, détaillé)",
-    )
-
-    # Relevant only for central cuisines
-    central_kitchen_diagnostic_mode = models.CharField(
-        max_length=255,
-        choices=CentralKitchenDiagnosticMode.choices,
-        blank=True,
-        null=True,
-        verbose_name="seulement pertinent pour les cuisines centrales : Quelles données sont déclarées par cette cuisine centrale ?",
-    )
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
 
@@ -181,6 +165,23 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Source de création du diagnostic",
+    )
+
+    diagnostic_type = models.CharField(
+        max_length=255,
+        choices=DiagnosticType.choices,
+        blank=True,
+        null=True,
+        verbose_name="Type de diagnostic (simplifié, détaillé)",
+    )
+
+    # Relevant only for central cuisines
+    central_kitchen_diagnostic_mode = models.CharField(
+        max_length=255,
+        choices=CentralKitchenDiagnosticMode.choices,
+        blank=True,
+        null=True,
+        verbose_name="seulement pertinent pour les cuisines centrales : Quelles données sont déclarées par cette cuisine centrale ?",
     )
 
     # progress fields
