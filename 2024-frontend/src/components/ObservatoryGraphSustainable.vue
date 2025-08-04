@@ -19,9 +19,8 @@ const legends = ["durables et de qualité dont bio", "bio et en conversion bio"]
 /* Function to generate descriptions */
 const getFiltersDescription = () => {
   const selected = storeFilters.getSelection().map((item) => item.label)
-  const name = selected.length <= 1 ? "le filtre" : "les filtres"
   const list = selected.join(", ")
-  return `Pour la recherche avec ${name} : ${list}`
+  return `Pour la recherche ${list}`
 }
 const getResultsDescription = () => {
   const resultWithObjectif = []
@@ -35,7 +34,7 @@ const getResultsDescription = () => {
 const description = computed(() => {
   const filtersDescription = getFiltersDescription()
   const resultsDescription = getResultsDescription()
-  return `${filtersDescription}. Les résultats du graphique "${title}" sont : ${resultsDescription}`
+  return `${filtersDescription}, les résultats du graphique "${title}" sont : ${resultsDescription}.`
 })
 </script>
 
