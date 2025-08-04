@@ -10,7 +10,7 @@ const checkOutside = (index) => {
 </script>
 
 <template>
-  <div class="graph-gauge fr-my-7w">
+  <div class="graph-gauge fr-mt-7w fr-mb-3w">
     <div v-if="objectives" class="graph-gauge__objectives-container">
       <p class="graph-gauge__objectif graph-gauge__objectif--title fr-text--sm ma-cantine--bold">
         Objectif EGalim
