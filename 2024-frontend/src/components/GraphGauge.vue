@@ -11,8 +11,9 @@ defineProps(["objectives", "stats", "legends"])
       <p
         v-for="objectif in objectives"
         :key="objectif"
-        class="graph-gauge__objectif graph-gauge__objectif--marker fr-text--sm ma-cantine--bold"
         :style="`left: ${objectif.value}%`"
+        class="graph-gauge__objectif graph-gauge__objectif--marker fr-text--sm ma-cantine--bold"
+        :class="{ alignRight: objectif.value === 100 }"
       >
         {{ objectif.name }}
       </p>
@@ -80,6 +81,16 @@ $legendDashSize: calc($legendSquareSize / 5);
         bottom: 0;
         left: 0;
         transform: translateY(100%);
+      }
+
+      &.alignRight {
+        transform: translateY(-100%) translateX(-100%);
+        width: 10rem;
+        text-align: right;
+        &::before {
+          right: 0;
+          left: auto;
+        }
       }
     }
   }
