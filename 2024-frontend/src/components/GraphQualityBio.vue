@@ -3,7 +3,7 @@ import { computed } from "vue"
 const props = defineProps(["objectives", "results"])
 
 const checkValue = (value) => {
-  return value !== null && value !== false && value !== undefined
+  return value !== null && value !== false && value !== undefined && typeof value !== String
 }
 
 const hasAllValues = computed(() => {
