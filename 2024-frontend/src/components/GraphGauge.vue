@@ -1,13 +1,9 @@
 <script setup>
-defineProps(["objectives", "results", "legends"])
+defineProps(["objectives", "stats", "legends"])
 </script>
 
 <template>
-  <p v-if="results.length === 0">
-    Une erreur est survenue lors de l'affichage du graphique, veuillez recharger la page et si l'erreur persiste
-    contactez-nous.
-  </p>
-  <div v-else class="graph-gauge">
+  <div class="graph-gauge">
     <div class="graph-gauge__objectives-container fr-mt-3w">
       <p
         class="graph-gauge__objectif graph-gauge__objectif--title fr-text--sm ma-cantine--bold"
