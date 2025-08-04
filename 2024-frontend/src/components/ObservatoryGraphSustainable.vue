@@ -1,7 +1,7 @@
 <script setup>
 import { computed, reactive } from "vue"
 import { useStoreFilters } from "@/stores/filters"
-import AppGraph from "@/components/AppGraph.vue"
+import GraphBase from "@/components/GraphBase.vue"
 import GraphGauge from "@/components/GraphGauge.vue"
 
 const props = defineProps(["stats"])
@@ -41,7 +41,7 @@ const description = computed(() => {
 
 <template>
   <h3 class="fr-h6 fr-mb-2w">1. {{ title }}</h3>
-  <AppGraph :valuesToVerify="results" :description="description">
+  <GraphBase :valuesToVerify="results" :description="description">
     <GraphGauge :objectives="objectives" :stats="results" :legends="legends" />
-  </AppGraph>
+  </GraphBase>
 </template>
