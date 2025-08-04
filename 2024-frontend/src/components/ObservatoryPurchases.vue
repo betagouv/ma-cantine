@@ -1,9 +1,8 @@
 <script setup>
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
-import AppGraph from "@/components/AppGraph.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import keyMeasures from "@/data/key-measures.json"
-import GraphGauge from "@/components/GraphGauge.vue"
+import ObservatoryGraphSustainableAndBio from "@/components/ObservatoryGraphSustainableAndBio.vue"
 
 defineProps(["stats"])
 
@@ -20,22 +19,7 @@ const keyMeasureId = keyMeasures[0].id
       <AppLinkRouter :to="{ name: 'KeyMeasurePage', params: { id: keyMeasureId } }" title="En savoir plus sur la loi" />
     </ObservatoryBadgeTitle>
     <div>
-      <h3 class="fr-h6 fr-mb-2w">1. Produits durable et de qualité dont les produits bio</h3>
-      <AppGraph
-        :valuesToVerify="[stats.sustainablePercent, stats.bioPercent]"
-        :description="
-          `Taux durables et de qualité dont bio : ${stats.sustainablePercent}%. Taux bio et en conversion bio : ${stats.bioPercent}%`
-        "
-      >
-        <GraphGauge
-          :objectives="[
-            { name: '50%', value: 50 },
-            { name: '20%', value: 20 },
-          ]"
-          :stats="[stats.sustainablePercent, stats.bioPercent]"
-          :legends="['durables et de qualité dont bio', 'bio et en conversion bio']"
-        />
-      </AppGraph>
+      <ObservatoryGraphSustainableAndBio :stats="stats" />
     </div>
   </div>
 </template>
