@@ -4,6 +4,19 @@ from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Diagnostic
 
 
+class DiagnosticQuerySetTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.diagnostic_empty_draft = DiagnosticFactory.create(canteen=CanteenFactory(), value_total_ht=None)
+        cls.diagnostic_filled_submitted = DiagnosticFactory.create(
+            canteen=CanteenFactory(), value_total_ht=1000, status=Diagnostic.DiagnosticStatus.SUBMITTED
+        )
+
+    def test_submitted_queryset(self):
+        self.assertEqual(Diagnostic.objects.all().count(), 2)
+        self.assertEqual(Diagnostic.objects.submitted().count(), 1)
+
+
 class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):

@@ -6,8 +6,8 @@ from django.db import migrations
 def populate_diagnostic_source(apps, schema_editor):
     Diagnostic = apps.get_model("data", "Diagnostic")
     Teledeclaration = apps.get_model("data", "Teledeclaration")
-    diagnostic_submitted_id_list = Teledeclaration.objects.filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED).values_list("diagnostic_id", flat=True)
-    Diagnostic.objects.filter(id__in=diagnostic_submitted_id_list).update(source=Diagnostic.DiagnosticSource.SUBMITTED)
+    diagnostic_submitted_id_list = Teledeclaration.objects.filter(status="SUBMITTED").values_list("diagnostic_id", flat=True)
+    Diagnostic.objects.filter(id__in=diagnostic_submitted_id_list).update(status="SUBMITTED")
 
 
 def undo_populate_diagnostic_source(apps, schema_editor):

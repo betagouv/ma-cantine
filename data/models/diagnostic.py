@@ -8,6 +8,7 @@ from simple_history.models import HistoricalRecords
 
 from data.department_choices import Department
 from data.fields import ChoiceArrayField
+from data.models import Canteen
 from data.region_choices import Region
 from data.utils import (
     CreationSource,
@@ -16,8 +17,6 @@ from data.utils import (
     make_optional_positive_decimal_field,
     sum_int_with_potential_null,
 )
-
-from .canteen import Canteen
 
 
 def canteen_has_siret_or_siren_unite_legale_query():
@@ -29,6 +28,9 @@ def canteen_has_siret_or_siren_unite_legale_query():
 
 
 class DiagnosticQuerySet(models.QuerySet):
+    def submitted(self):
+        return self.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+
     def is_filled(self):
         return self.filter(value_total_ht__gt=0)
 
