@@ -5,6 +5,8 @@ import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import keyMeasures from "@/data/key-measures.json"
 import GraphGauge from "@/components/GraphGauge.vue"
 
+defineProps(["stats"])
+
 /* Description */
 const approBadge = "/static/images/badges/appro.svg"
 const keyMeasureId = keyMeasures[0].id
