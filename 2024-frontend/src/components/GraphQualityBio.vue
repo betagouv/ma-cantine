@@ -17,8 +17,13 @@ const hasValues = computed(() => {
 
 <template>
   <div v-if="hasValues" class="graph-quality-bio">
-    <div class="graph-quality-bio__objectives-container fr-mt-6w fr-mt-md-3w">
-      <p class="graph-quality-bio__objectif graph-quality-bio__objectif--title fr-text--sm ma-cantine--bold">
+    <div class="graph-quality-bio__objectives-container fr-mt-3w">
+      <p
+        class="graph-quality-bio__objectif graph-quality-bio__objectif--title fr-text--sm ma-cantine--bold"
+        :class="{
+          right: objectives.bio < 20,
+        }"
+      >
         Objectif EGalim
       </p>
       <p
@@ -85,8 +90,14 @@ $legendDashSize: calc($legendSquareSize / 5);
     &--title {
       left: 0;
 
+      &.right {
+        left: auto;
+        right: 0;
+      }
+
       @media (max-width: 768px) {
-        transform: translateY(-200%);
+        left: auto;
+        right: 0;
       }
     }
 

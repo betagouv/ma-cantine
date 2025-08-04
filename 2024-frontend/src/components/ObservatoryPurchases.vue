@@ -17,7 +17,7 @@ const keyMeasureId = keyMeasures[0].id
     </ObservatoryBadgeTitle>
     <div>
       <h3 class="fr-h6 fr-mb-2w">1. Produits durable et de qualité dont les produits bio</h3>
-      <GraphQualityBio :objectives="{ quality: 100, bio: 50 }" :results="{ quality: 80, bio: 40 }" />
+      <GraphQualityBio :objectives="{ quality: 50, bio: 20 }" :results="{ quality: 80, bio: 40 }" />
     </div>
   </div>
 </template>
