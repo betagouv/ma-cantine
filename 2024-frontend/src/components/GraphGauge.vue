@@ -9,8 +9,8 @@ const statsDifferenceIsSmall = computed(() => {
 </script>
 
 <template>
-  <div class="graph-gauge">
-    <div v-if="objectives" class="graph-gauge__objectives-container fr-mt-6w">
+  <div class="graph-gauge fr-my-7w">
+    <div v-if="objectives" class="graph-gauge__objectives-container">
       <p class="graph-gauge__objectif graph-gauge__objectif--title fr-text--sm ma-cantine--bold">
         Objectif EGalim
       </p>
@@ -35,7 +35,7 @@ const statsDifferenceIsSmall = computed(() => {
       </div>
     </div>
     <div class="graph-gauge__legends-container fr-mt-2w">
-      <p v-for="legend in legends" :key="legend" class="graph-gauge__legend">
+      <p v-for="legend in legends" :key="legend" class="graph-gauge__legend fr-mb-0">
         {{ legend }}
       </p>
     </div>
