@@ -1,17 +1,11 @@
 <script setup>
 import { computed } from "vue"
-const props = defineProps(["objectives", "results"])
-
-const checkValue = (value) => {
-  return value !== null && value !== false && value !== undefined && typeof value !== String
-}
+const props = defineProps(["objectives", "results", "legends"])
 
 const hasAllValues = computed(() => {
-  const hasObjectifBio = checkValue(props.objectives.bio)
-  const hasObjectifQuality = checkValue(props.objectives.quality)
-  const hasResultBio = checkValue(props.results.bio)
-  const hasResultQuality = checkValue(props.results.quality)
-  return hasObjectifBio && hasObjectifQuality && hasResultBio && hasResultQuality
+  const hasObjectives = props.objectives.length > 0
+  const hasResults = props.results.length > 0
+  return hasObjectives && hasResults
 })
 </script>
 

@@ -19,7 +19,11 @@ const keyMeasureId = keyMeasures[0].id
     </ObservatoryBadgeTitle>
     <div>
       <h3 class="fr-h6 fr-mb-2w">1. Produits durable et de qualité dont les produits bio</h3>
-      <GraphGauge :objectives="{ quality: 50, bio: 20 }" :results="{ quality: sustainable, bio: bio }" />
+      <GraphGauge
+        :objectives="[50, 20]"
+        :results="[33, 5]"
+        :legends="['bio et en conversion bio', 'durables et de qualité dont bio']"
+      />
     </div>
   </div>
 </template>
