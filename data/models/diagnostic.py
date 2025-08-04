@@ -41,6 +41,11 @@ class Diagnostic(models.Model):
             models.UniqueConstraint(fields=["canteen", "year"], name="annual_diagnostic"),
         ]
 
+    class DiagnosticStatus(models.TextChoices):
+        DRAFT = "DRAFT", "Brouillon"
+        SUBMITTED = "SUBMITTED", "Télédéclaré"
+        # CANCELLED = "CANCELLED", "Annulé"
+
     # NB: if the label of the choice changes, double check that the teledeclaration PDF
     # doesn't need an update as well, since the logic in the templates is based on the label
     class DiagnosticType(models.TextChoices):
@@ -161,6 +166,13 @@ class Diagnostic(models.Model):
         null=True,
         blank=True,
         verbose_name="année",
+    )
+
+    status = models.CharField(
+        max_length=255,
+        choices=DiagnosticStatus.choices,
+        default=DiagnosticStatus.DRAFT,
+        verbose_name="status",
     )
 
     creation_source = models.CharField(
