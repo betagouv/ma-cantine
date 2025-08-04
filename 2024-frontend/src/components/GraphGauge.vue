@@ -5,34 +5,42 @@ defineProps(["objectives", "stats", "legends"])
 <template>
   <div class="graph-gauge">
     <div class="graph-gauge__objectives-container fr-mt-3w">
-      <p
-        class="graph-gauge__objectif graph-gauge__objectif--title fr-text--sm ma-cantine--bold"
-        :class="{
-          right: objectives.bio < 20,
-        }"
-      >
+      <p class="graph-gauge__objectif graph-gauge__objectif--title fr-text--sm ma-cantine--bold">
         Objectif EGalim
       </p>
       <p
+        v-for="(objectif, index) in objectives"
+        :key="index"
+        :style="`left: ${objectif}%`"
         class="graph-gauge__objectif graph-gauge__objectif--marker fr-text--sm ma-cantine--bold"
-        :style="`left: ${objectives.bio}%`"
       >
-        {{ objectives.bio }}%
-      </p>
-      <p
-        class="graph-gauge__objectif graph-gauge__objectif--marker fr-text--sm ma-cantine--bold"
-        :style="`left: ${objectives.quality}%`"
-      >
-        {{ objectives.quality }}%
+        {{ objectif }}%
       </p>
     </div>
     <div class="graph-gauge__bars-container">
-      <div class="graph-gauge__bar filled" :style="`width: ${results.quality}%`"></div>
-      <div class="graph-gauge__bar dashed" :style="`width: ${results.bio}%`"></div>
+      <div
+        v-for="(stat, index) in stats"
+        :key="index"
+        class="graph-gauge__bar"
+        :class="{
+          filled: index === 0,
+          dashed: index === 1,
+        }"
+        :style="`width: ${stat}%`"
+      ></div>
     </div>
     <div class="graph-gauge__legends-container fr-mt-2w">
-      <p class="graph-gauge__legend dashed">bio et en conversion bio ({{ results.bio }}%)</p>
-      <p class="graph-gauge__legend filled">durables et de qualité dont bio ({{ results.quality }}%)</p>
+      <p
+        v-for="(legend, index) in legends"
+        :key="index"
+        class="graph-gauge__legend"
+        :class="{
+          filled: index === 0,
+          dashed: index === 1,
+        }"
+      >
+        {{ legend }} ({{ stats[index] }}%)
+      </p>
     </div>
   </div>
 </template>
@@ -76,16 +84,6 @@ $legendDashSize: calc($legendSquareSize / 5);
 
     &--title {
       left: 0;
-
-      &.right {
-        left: auto;
-        right: 0;
-      }
-
-      @media (max-width: 768px) {
-        left: auto;
-        right: 0;
-      }
     }
 
     &--marker {
