@@ -26,8 +26,8 @@ defineProps(["objectives", "stats", "legends"])
       </div>
     </div>
     <div class="graph-gauge__legends-container fr-mt-2w">
-      <p v-for="(legend, index) in legends" :key="legend" class="graph-gauge__legend">
-        {{ legend }} ({{ stats[index] }}%)
+      <p v-for="legend in legends" :key="legend" class="graph-gauge__legend">
+        {{ legend }}
       </p>
     </div>
   </div>
