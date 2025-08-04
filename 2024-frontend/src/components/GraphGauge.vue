@@ -9,36 +9,19 @@ defineProps(["objectives", "stats", "legends"])
         Objectif EGalim
       </p>
       <p
-        v-for="(objectif, index) in objectives"
-        :key="index"
-        :style="`left: ${objectif}%`"
+        v-for="objectif in objectives"
+        :key="objectif"
         class="graph-gauge__objectif graph-gauge__objectif--marker fr-text--sm ma-cantine--bold"
+        :style="`left: ${objectif}%`"
       >
         {{ objectif }}%
       </p>
     </div>
     <div class="graph-gauge__bars-container">
-      <div
-        v-for="(stat, index) in stats"
-        :key="index"
-        class="graph-gauge__bar"
-        :class="{
-          filled: index === 0,
-          dashed: index === 1,
-        }"
-        :style="`width: ${stat}%`"
-      ></div>
+      <div v-for="stat in stats" :key="stat" class="graph-gauge__bar" :style="`width: ${stat}%`"></div>
     </div>
     <div class="graph-gauge__legends-container fr-mt-2w">
-      <p
-        v-for="(legend, index) in legends"
-        :key="index"
-        class="graph-gauge__legend"
-        :class="{
-          filled: index === 0,
-          dashed: index === 1,
-        }"
-      >
+      <p v-for="(legend, index) in legends" :key="legend" class="graph-gauge__legend">
         {{ legend }} ({{ stats[index] }}%)
       </p>
     </div>
@@ -48,8 +31,8 @@ defineProps(["objectives", "stats", "legends"])
 <style lang="scss">
 $graphHeight: 3rem;
 $objectivesHeight: 1rem;
-$bioColor: var(--green-emeraude-sun-425-moon-753);
-$qualityColor: var(--green-emeraude-main-632);
+$dashColor: var(--green-emeraude-sun-425-moon-753);
+$fillColor: var(--green-emeraude-main-632);
 $legendSquareSize: 1rem;
 $legendDashSize: calc($legendSquareSize / 5);
 
@@ -58,8 +41,8 @@ $legendDashSize: calc($legendSquareSize / 5);
   $doubleDashSize: $dashSize * 2;
   @return repeating-linear-gradient(
     to left,
-    $bioColor,
-    $bioColor $dashSize,
+    $dashColor,
+    $dashColor $dashSize,
     transparent $dashSize,
     transparent $doubleDashSize
   );
@@ -103,7 +86,7 @@ $legendDashSize: calc($legendSquareSize / 5);
 
   &__bars-container {
     position: relative;
-    border: solid 1px $bioColor;
+    border: solid 1px $dashColor;
     height: $graphHeight;
   }
 
@@ -112,6 +95,14 @@ $legendDashSize: calc($legendSquareSize / 5);
     left: 0;
     top: 0;
     bottom: 0;
+
+    &:first-child {
+      background-color: $fillColor;
+    }
+
+    &:last-child {
+      background: getDashedBackground();
+    }
   }
 
   &__legends-container {
@@ -134,33 +125,21 @@ $legendDashSize: calc($legendSquareSize / 5);
       border-style: solid;
       border-width: 1px 0;
     }
-  }
 
-  .dashed {
-    &.graph-gauge__bar {
-      background: getDashedBackground();
-    }
-
-    &.graph-gauge__legend {
-      color: $bioColor;
+    &:first-child {
+      color: $fillColor;
       &:before {
-        background-color: transparent;
-        border-color: $bioColor;
-        background: getDashedBackground($legendDashSize);
+        border-color: $fillColor;
+        background-color: $fillColor;
       }
     }
-  }
 
-  .filled {
-    &.graph-gauge__bar {
-      background: $qualityColor;
-    }
-
-    &.graph-gauge__legend {
-      color: $qualityColor;
+    &:last-child {
+      color: $dashColor;
       &:before {
-        border-color: $qualityColor;
-        background-color: $qualityColor;
+        background-color: transparent;
+        border-color: $dashColor;
+        background: getDashedBackground($legendDashSize);
       }
     }
   }
