@@ -4,20 +4,28 @@ defineProps(["objectives", "results"])
 
 <template>
   <div class="graph-quality-bio">
-    <div class="graph-quality-bio__objectives-container fr-mb-2w">
-      <p class="fr-text--sm ma-cantine--bold fr-mb-0">Objectif EGalim</p>
-      <p class="graph-quality-bio__objectif fr-text--sm ma-cantine--bold" :style="`left: ${objectives.bio}`">
+    <div class="graph-quality-bio__objectives-container fr-mt-6w fr-mt-md-3w">
+      <p class="graph-quality-bio__objectif graph-quality-bio__objectif--title fr-text--sm ma-cantine--bold">
+        Objectif EGalim
+      </p>
+      <p
+        class="graph-quality-bio__objectif graph-quality-bio__objectif--marker fr-text--sm ma-cantine--bold"
+        :style="`left: ${objectives.bio}`"
+      >
         {{ objectives.bio }}
       </p>
-      <p class="graph-quality-bio__objectif fr-text--sm ma-cantine--bold" :style="`left: ${objectives.quality}`">
+      <p
+        class="graph-quality-bio__objectif graph-quality-bio__objectif--marker fr-text--sm ma-cantine--bold"
+        :style="`left: ${objectives.quality}`"
+      >
         {{ objectives.quality }}
       </p>
     </div>
-    <div class="graph-quality-bio__bars-container fr-mb-2w">
+    <div class="graph-quality-bio__bars-container">
       <div class="graph-quality-bio__bar filled" :style="`width: ${results.quality}`"></div>
       <div class="graph-quality-bio__bar dashed" :style="`width: ${results.bio}`"></div>
     </div>
-    <div class="graph-quality-bio__legend-container">
+    <div class="graph-quality-bio__legend-container fr-mt-2w">
       <p class="graph-quality-bio__legend dashed">bio et en conversion bio ({{ results.bio }})</p>
       <p class="graph-quality-bio__legend filled">durables et de qualité dont bio ({{ results.quality }})</p>
     </div>
@@ -52,22 +60,34 @@ $legendDashSize: calc($legendSquareSize / 5);
   &__objectives-container {
     z-index: 1;
     position: relative;
+    height: 1rem;
   }
 
   &__objectif {
     position: absolute;
     top: 0;
+    transform: translateY(-100%);
 
-    &::before {
-      content: "";
-      height: calc($graphHeight + 1rem);
-      border-width: 1px;
-      border-style: dashed;
-      border-color: black;
-      position: absolute;
-      bottom: 0;
+    &--title {
       left: 0;
-      transform: translateY(100%);
+
+      @media (max-width: 768px) {
+        transform: translateY(-200%);
+      }
+    }
+
+    &--marker {
+      &::before {
+        content: "";
+        height: calc($graphHeight + 1rem);
+        border-width: 1px;
+        border-style: dashed;
+        border-color: black;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        transform: translateY(100%);
+      }
     }
   }
 
