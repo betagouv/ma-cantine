@@ -28,7 +28,7 @@ const hasSustainable = computed(() => props.sustainable !== null && props.sustai
         v-if="hasBio && hasSustainable"
         :objectives="[50, 20]"
         :stats="[33, 5]"
-        :legends="['bio et en conversion bio', 'durables et de qualité dont bio']"
+        :legends="['durables et de qualité dont bio', 'bio et en conversion bio']"
       />
       <p v-else>
         Une erreur est survenue lors de l'affichage du graphique, veuillez recharger la page et si l'erreur persiste
