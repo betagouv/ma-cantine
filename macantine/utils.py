@@ -28,6 +28,13 @@ def convert_date_string_to_datetime(date_string, time_start_or_end="start"):
     return None
 
 
+# TODO: improve (depends on the year & region)
+EGALIM_OBJECTIVES = {
+    "bio_percent": 20,
+    "sustainable_percent": 50,
+}
+
+
 CAMPAIGN_DATES = {
     2021: {
         "teledeclaration_start_date": datetime(2022, 7, 16, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),

@@ -8,7 +8,7 @@ from rest_framework import serializers
 
 from common.utils.badges import badges_for_queryset
 from data.models import Canteen, Sector
-from macantine.utils import get_year_campaign_end_date_or_today_date
+from macantine.utils import EGALIM_OBJECTIVES, get_year_campaign_end_date_or_today_date
 
 logger = logging.getLogger(__name__)
 
@@ -120,9 +120,11 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     economic_models = serializers.DictField()
     # teledeclaration stats
     teledeclarations_count = serializers.IntegerField()
-    bio_percent = serializers.IntegerField()
-    sustainable_percent = serializers.IntegerField()
-    egalim_percent = serializers.IntegerField()
+    bio_percent = serializers.IntegerField(label="Part des achats bio dans les achats alimentaires de l'année")
+    sustainable_percent = serializers.IntegerField(
+        label="Part des achats durables (hors bio) dans les achats alimentaires de l'année"
+    )
+    egalim_percent = serializers.IntegerField(label="Part des achats EGalim dans les achats alimentaires de l'année")
     meat_egalim_percent = serializers.IntegerField()
     meat_france_percent = serializers.IntegerField()
     fish_egalim_percent = serializers.IntegerField()
@@ -147,4 +149,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
         if canteen_created_before_date:
             locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
             data["canteen_count_description"] = f"Au {canteen_created_before_date.strftime('%-d %B %Y')}"
+        # egalim objectives
+        data["bio_percent_egalim_objective"] = EGALIM_OBJECTIVES["bio_percent"]
+        data["sustainable_percent_egalim_objective"] = EGALIM_OBJECTIVES["sustainable_percent"]
         return data
