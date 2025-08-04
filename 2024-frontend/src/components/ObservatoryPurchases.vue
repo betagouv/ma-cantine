@@ -1,21 +1,13 @@
 <script setup>
-import { computed } from "vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
+import AppGraph from "@/components/AppGraph.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import keyMeasures from "@/data/key-measures.json"
 import GraphGauge from "@/components/GraphGauge.vue"
 
-const props = defineProps(["stats"])
-
 /* Description */
 const approBadge = "/static/images/badges/appro.svg"
 const keyMeasureId = keyMeasures[0].id
-
-/* Verify stats */
-const hasBio = computed(() => props.stats.bioPercent !== null && props.stats.bioPercent !== undefined)
-const hasSustainable = computed(
-  () => props.stats.sustainablePercent !== null && props.stats.sustainablePercent !== undefined
-)
 </script>
 
 <template>
@@ -27,19 +19,19 @@ const hasSustainable = computed(
     </ObservatoryBadgeTitle>
     <div>
       <h3 class="fr-h6 fr-mb-2w">1. Produits durable et de qualité dont les produits bio</h3>
-      <GraphGauge
-        v-if="hasBio && hasSustainable"
-        :objectives="[
-          { name: '50%', value: 50 },
-          { name: '20%', value: 20 },
-        ]"
-        :stats="[stats.sustainablePercent, stats.bioPercent]"
-        :legends="['durables et de qualité dont bio', 'bio et en conversion bio']"
-      />
-      <p v-else>
-        Une erreur est survenue lors de l'affichage du graphique, veuillez recharger la page et si l'erreur persiste
-        contactez-nous.
-      </p>
+      <AppGraph
+        :valuesToVerify="[stats.sustainablePercent, stats.bioPercent]"
+        description="Donec id elit non mi porta gravida at eget metus."
+      >
+        <GraphGauge
+          :objectives="[
+            { name: '50%', value: 50 },
+            { name: '20%', value: 20 },
+          ]"
+          :stats="[stats.sustainablePercent, stats.bioPercent]"
+          :legends="['durables et de qualité dont bio', 'bio et en conversion bio']"
+        />
+      </AppGraph>
     </div>
   </div>
 </template>
