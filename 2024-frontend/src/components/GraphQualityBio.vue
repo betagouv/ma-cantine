@@ -6,7 +6,7 @@ const checkValue = (value) => {
   return value !== null && value !== false && value !== undefined
 }
 
-const hasValues = computed(() => {
+const hasAllValues = computed(() => {
   const hasObjectifBio = checkValue(props.objectives.bio)
   const hasObjectifQuality = checkValue(props.objectives.quality)
   const hasResultBio = checkValue(props.results.bio)
@@ -16,7 +16,11 @@ const hasValues = computed(() => {
 </script>
 
 <template>
-  <div v-if="hasValues" class="graph-quality-bio">
+  <p v-if="!hasAllValues">
+    Une erreur est survenue lors de l'affichage du graphique, veuillez recharger la page et si l'erreur persiste
+    contactez-nous.
+  </p>
+  <div v-else class="graph-quality-bio">
     <div class="graph-quality-bio__objectives-container fr-mt-3w">
       <p
         class="graph-quality-bio__objectif graph-quality-bio__objectif--title fr-text--sm ma-cantine--bold"
