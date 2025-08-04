@@ -1,9 +1,12 @@
 <script setup>
 import { computed, reactive } from "vue"
+import { useStoreFilters } from "@/stores/filters"
 import AppGraph from "@/components/AppGraph.vue"
 import GraphGauge from "@/components/GraphGauge.vue"
 
 const props = defineProps(["stats"])
+const storeFilters = useStoreFilters()
+const title = "Produits durable et de qualité dont les produits bio"
 
 /* Graph properties */
 const objectives = [
@@ -13,18 +16,31 @@ const objectives = [
 const results = reactive([props.stats.sustainablePercent, props.stats.bioPercent])
 const legends = ["durables et de qualité dont bio", "bio et en conversion bio"]
 
+/* Function to generate descriptions */
+const getFiltersDescription = () => {
+  const selected = storeFilters.getSelection().map((item) => item.label)
+  const name = selected.length <= 1 ? "le filtre" : "les filtres"
+  const list = selected.join(", ")
+  return `Pour la recherche avec ${name} : ${list}`
+}
+const getResultsDescription = () => {
+  const resultWithObjectif = []
+  for (let i = 0; i < results.length; i++) {
+    resultWithObjectif.push(`objectif "${legends[i]}" fixé à ${objectives[0].value}% le résultat est ${results[0]}%`)
+  }
+  return resultWithObjectif.join(", ")
+}
+
 /* Graph description */
 const description = computed(() => {
-  let sentence = ""
-  for (let i = 0; i < results.length; i++) {
-    sentence += `Pour l'objectif "${legends[i]}" fixé à ${objectives[0].value}% le résultat est ${results[0]}%. `
-  }
-  return sentence
+  const filtersDescription = getFiltersDescription()
+  const resultsDescription = getResultsDescription()
+  return `${filtersDescription}. Les résultats du graphique "${title}" sont : ${resultsDescription}`
 })
 </script>
 
 <template>
-  <h3 class="fr-h6 fr-mb-2w">1. Produits durable et de qualité dont les produits bio</h3>
+  <h3 class="fr-h6 fr-mb-2w">1. {{ title }}</h3>
   <AppGraph :valuesToVerify="results" :description="description">
     <GraphGauge :objectives="objectives" :stats="results" :legends="legends" />
   </AppGraph>
