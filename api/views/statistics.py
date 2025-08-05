@@ -92,6 +92,7 @@ class CanteenStatisticsView(APIView):
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
         data["notes"] = self.serializer_class.generate_notes(year)
+        data = self.serializer_class.hide_data_if_report_not_published(data, year)
         serializer = self.serializer_class(data)
 
         # cache mechanism: store the result if it was not cached (only for requests with just the year parameter)
