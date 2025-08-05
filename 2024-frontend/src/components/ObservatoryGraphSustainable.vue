@@ -6,7 +6,7 @@ import GraphGauge from "@/components/GraphGauge.vue"
 
 const props = defineProps(["egalimPercent", "bioPercent"])
 const storeFilters = useStoreFilters()
-const title = "Produits durable et de qualité dont les produits bio"
+const title = "Produits durables et de qualité dont les produits bio"
 
 /* Graph properties */
 const objectives = [

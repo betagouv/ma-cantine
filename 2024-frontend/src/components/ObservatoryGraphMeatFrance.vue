@@ -6,7 +6,7 @@ import GraphGauge from "@/components/GraphGauge.vue"
 
 const props = defineProps(["meatFrancePercent"])
 const storeFilters = useStoreFilters()
-const title = "Pourcentage des viandes origine France"
+const title = "Viandes d'origine France"
 const stats = reactive([props.meatFrancePercent])
 
 /* Function to generate description */

@@ -6,7 +6,7 @@ import GraphGauge from "@/components/GraphGauge.vue"
 
 const props = defineProps(["meatPercent", "fishPercent"])
 const storeFilters = useStoreFilters()
-const title = "Viandes et volailles + produits d’aquacultures"
+const title = "Viandes, volailles et produits d’aquacultures"
 
 /* Graph properties */
 const objectives = [
