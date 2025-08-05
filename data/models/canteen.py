@@ -49,6 +49,14 @@ def has_siret_or_siren_unite_legale_query():
     return has_siret_query | has_siren_unite_legale_query
 
 
+def is_central_query():
+    return Q(production_type=Canteen.ProductionType.CENTRAL)
+
+
+def is_central_cuisine_query():
+    return Q(production_type__in=[Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING])
+
+
 def is_serving_query():
     return Q(
         production_type__in=[
@@ -61,10 +69,6 @@ def is_serving_query():
 
 def is_satellite_query():
     return Q(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
-
-
-def is_central_cuisine_query():
-    return Q(production_type__in=[Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING])
 
 
 def has_missing_data_query():
@@ -102,6 +106,12 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         if canteen_created_before_date:
             return self.filter(creation_date__lt=canteen_created_before_date)
         return self.none()
+
+    def exclude_central(self):
+        return self.exclude(is_central_query())
+
+    def exclude_central_cuisine(self):
+        return self.exclude(is_central_cuisine_query())
 
     def is_satellite(self):
         return self.filter(is_satellite_query())
@@ -272,6 +282,12 @@ class CanteenManager(SoftDeletionManager):
 
     def created_before_year_campaign_end_date(self, year):
         return self.get_queryset().created_before_year_campaign_end_date(year)
+
+    def exclude_central(self):
+        return self.get_queryset().exclude_central()
+
+    def exclude_central_cuisine(self):
+        return self.get_queryset().exclude_central_cuisine()
 
     def is_satellite(self):
         return self.get_queryset().is_satellite()
