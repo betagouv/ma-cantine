@@ -71,8 +71,10 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
         Sum("value_fish_ht", default=0),
         Sum("value_fish_egalim_ht", default=0),
     )
+    badge_querysets = badges_for_queryset(teledeclarations)
     # count
     data["teledeclarations_count"] = agg["id__count"]
+    data["egalim_teledeclaration_count"] = badge_querysets["appro"].count()
     # percent of bio, sustainable & egalim (bio + sustainable)
     if agg["value_total_ht__sum"] > 0:
         data["bio_percent"] = round(100 * agg["value_bio_ht_agg__sum"] / agg["value_total_ht__sum"])
@@ -106,9 +108,8 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
     else:
         data["fish_egalim_percent"] = 0
     # percent of appro
-    badge_querysets = badges_for_queryset(teledeclarations)
     data["appro_percent"] = (
-        int(100 * badge_querysets["appro"].count() / data["teledeclarations_count"])
+        int(100 * data["egalim_teledeclaration_count"] / data["teledeclarations_count"])
         if data["teledeclarations_count"]
         else 0
     )
@@ -118,6 +119,7 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
 
 class CanteenStatisticsSerializer(serializers.Serializer):
     FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED = [
+        "egalim_teledeclaration_count",
         "bio_percent",
         "sustainable_percent",
         "egalim_percent",
@@ -135,7 +137,10 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     production_types = serializers.DictField()
     economic_models = serializers.DictField()
     # teledeclaration stats
-    teledeclarations_count = serializers.IntegerField()
+    teledeclarations_count = serializers.IntegerField(label="Nombre de télédéclarations")
+    egalim_teledeclaration_count = serializers.IntegerField(
+        label="Nombre de télédéclarations qui ont atteint les objectifs EGalim"
+    )
     bio_percent = serializers.IntegerField(label="Part des achats bio dans les achats alimentaires de l'année")
     sustainable_percent = serializers.IntegerField(
         label="Part des achats durables (hors bio) dans les achats alimentaires de l'année"

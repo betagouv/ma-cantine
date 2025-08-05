@@ -158,6 +158,7 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 3)
         self.assertEqual(body["teledeclarationsCount"], 3)
+        self.assertEqual(body["egalimTeledeclarationCount"], 3)
         self.assertEqual(body["bioPercent"], 43)
         self.assertEqual(body["sustainablePercent"], 44)
         self.assertEqual(body["egalimPercent"], 87)  # 43 + 44
