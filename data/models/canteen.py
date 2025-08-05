@@ -107,11 +107,11 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             return self.filter(creation_date__lt=canteen_created_before_date)
         return self.none()
 
+    def is_central(self):
+        return self.filter(is_central_query())
+
     def exclude_central(self):
         return self.exclude(is_central_query())
-
-    def exclude_central_cuisine(self):
-        return self.exclude(is_central_cuisine_query())
 
     def is_satellite(self):
         return self.filter(is_satellite_query())
@@ -283,11 +283,11 @@ class CanteenManager(SoftDeletionManager):
     def created_before_year_campaign_end_date(self, year):
         return self.get_queryset().created_before_year_campaign_end_date(year)
 
+    def is_central(self):
+        return self.get_queryset().is_central()
+
     def exclude_central(self):
         return self.get_queryset().exclude_central()
-
-    def exclude_central_cuisine(self):
-        return self.get_queryset().exclude_central_cuisine()
 
     def is_satellite(self):
         return self.get_queryset().is_satellite()

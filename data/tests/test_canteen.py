@@ -172,13 +172,13 @@ class TestCanteenCentralAndSatelliteQuerySet(TestCase):
         )
         cls.canteen_central_serving_1 = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL_SERVING)
 
+    def test_is_central(self):
+        self.assertEqual(Canteen.objects.count(), 6)
+        self.assertEqual(Canteen.objects.is_central().count(), 2)
+
     def test_exclude_central(self):
         self.assertEqual(Canteen.objects.count(), 6)
         self.assertEqual(Canteen.objects.exclude_central().count(), 4)
-
-    def test_exclude_central_cuisine(self):
-        self.assertEqual(Canteen.objects.count(), 6)
-        self.assertEqual(Canteen.objects.exclude_central_cuisine().count(), 3)
 
     def test_is_satellite(self):
         self.assertEqual(Canteen.objects.count(), 6)
