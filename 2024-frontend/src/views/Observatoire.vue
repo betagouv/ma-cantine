@@ -9,6 +9,7 @@ import ObservatoryNumbers from "@/components/ObservatoryNumbers.vue"
 import ObservatoryError from "@/components/ObservatoryError.vue"
 import ObservatoryPurchases from "@/components/ObservatoryPurchases.vue"
 import ObservatoryWarnings from "@/components/ObservatoryWarnings.vue"
+import ObservatoryHideStats from "@/components/ObservatoryHideStats.vue"
 
 /* Back to filters */
 const observatoryFilters = useTemplateRef("observatory-filters")
@@ -23,6 +24,7 @@ const filtersParams = storeFilters.getAllParams()
 /* Stats */
 const stats = ref()
 const statsError = ref()
+const statsHidden = ref()
 
 const setStatsError = () => {
   const hasNoFilter = storeFilters.getSelection().length === 0
@@ -32,9 +34,15 @@ const setStatsError = () => {
   else if (hasNoYear) statsError.value = "noYear"
 }
 
+const setStatsSuccess = (newStats) => {
+  stats.value = newStats
+  statsHidden.value = newStats.notes.campaignNotFound || newStats.notes.reportNotPublished
+}
+
 const resetStatsValue = () => {
   stats.value = null
   statsError.value = null
+  statsHidden.value = true
 }
 
 /* Watch filters */
@@ -42,7 +50,7 @@ watchEffect(async () => {
   resetStatsValue()
   const newStats = await statisticsService.getStatistics(filtersParams)
   if (!newStats) setStatsError()
-  else stats.value = newStats
+  else setStatsSuccess(newStats)
 })
 </script>
 
@@ -60,7 +68,12 @@ watchEffect(async () => {
       :teledeclarationsCount="stats.teledeclarationsCount"
       class="fr-mb-3w"
     />
-    <ObservatoryPurchases v-if="stats" :stats="stats" />
+    <ObservatoryPurchases v-if="!statsHidden" :stats="stats" />
+    <ObservatoryHideStats
+      v-if="stats && statsHidden"
+      :reportNotPublished="stats.notes.reportNotPublished"
+      :campaignNotFound="stats.notes.campaignNotFound"
+    />
     <pre>{{ stats }}</pre>
   </section>
 </template>
