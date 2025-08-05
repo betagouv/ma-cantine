@@ -4,6 +4,7 @@ import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import ObservatoryGraphSustainable from "@/components/ObservatoryGraphSustainable.vue"
 import ObservatoryGraphFishMeat from "@/components/ObservatoryGraphFishMeat.vue"
+import ObservatoryGraphMeatFrance from "@/components/ObservatoryGraphMeatFrance.vue"
 
 defineProps(["stats"])
 const approBadge = "/static/images/badges/appro.svg"
@@ -23,6 +24,9 @@ const keyMeasureId = keyMeasures[0].id
       </li>
       <li class="observatory-purchases__graphic">
         <ObservatoryGraphFishMeat :meatPercent="stats.meatEgalimPercent" :fishPercent="stats.fishEgalimPercent" />
+      </li>
+      <li class="observatory-purchases__graphic">
+        <ObservatoryGraphMeatFrance :meatFrancePercent="stats.meatFrancePercent" />
       </li>
     </ol>
   </div>
