@@ -4,13 +4,19 @@ import { useStoreFilters } from "@/stores/filters"
 import GraphBase from "@/components/GraphBase.vue"
 import GraphGauge from "@/components/GraphGauge.vue"
 
-const props = defineProps(["egalimPercent", "bioPercent"])
+const props = defineProps(["egalimPercent", "egalimObjective", "bioPercent", "bioObjective"])
 const storeFilters = useStoreFilters()
 const title = "Produits durables et de qualité dont les produits bio"
-const objectives = [
-  { name: "50%", value: 50 },
-  { name: "20%", value: 20 },
-]
+const objectives = reactive([
+  {
+    name: props.egalimObjective ? `${props.egalimObjective}%` : "50%",
+    value: props.egalimObjective || 50,
+  },
+  {
+    name: props.bioObjective ? `${props.bioObjective}%` : "20%",
+    value: props.bioObjective || 20,
+  },
+])
 const stats = reactive([props.egalimPercent, props.bioPercent])
 const legends = ["durables et de qualité dont bio", "bio et en conversion bio"]
 
