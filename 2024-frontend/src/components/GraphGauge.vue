@@ -5,7 +5,7 @@ const checkOutside = (index) => {
   const minValue = 5
   const checkStatsDifference = props.stats.length > 1
   if (checkStatsDifference) return Math.abs(props.stats[1] - props.stats[0]) < minValue && index === 0
-  else props.stats[index] < minValue
+  else return props.stats[index] < minValue
 }
 </script>
 
