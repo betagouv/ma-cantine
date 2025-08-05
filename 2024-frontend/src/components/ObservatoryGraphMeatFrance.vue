@@ -9,7 +9,7 @@ const storeFilters = useStoreFilters()
 const title = "Pourcentage des viandes origine France"
 const stats = reactive([props.meatFrancePercent])
 
-/* Function to generate descriptions */
+/* Function to generate description */
 const getFiltersDescription = () => {
   const selected = storeFilters.getSelection().map((item) => item.label)
   const list = selected.join(", ")
