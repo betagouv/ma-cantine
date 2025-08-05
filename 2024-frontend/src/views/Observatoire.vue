@@ -9,7 +9,6 @@ import ObservatoryNumbers from "@/components/ObservatoryNumbers.vue"
 import ObservatoryError from "@/components/ObservatoryError.vue"
 import ObservatoryPurchases from "@/components/ObservatoryPurchases.vue"
 import ObservatoryWarnings from "@/components/ObservatoryWarnings.vue"
-import ObservatoryHideStats from "@/components/ObservatoryHideStats.vue"
 
 /* Back to filters */
 const observatoryFilters = useTemplateRef("observatory-filters")
@@ -36,7 +35,7 @@ const setStatsError = () => {
 
 const setStatsSuccess = (newStats) => {
   stats.value = newStats
-  statsHidden.value = newStats.notes.campaignNotFound || newStats.notes.reportNotPublished
+  statsHidden.value = newStats.notes.campaignInfo
 }
 
 const resetStatsValue = () => {
@@ -69,11 +68,7 @@ watchEffect(async () => {
       class="fr-mb-3w"
     />
     <ObservatoryPurchases v-if="!statsHidden" :stats="stats" />
-    <ObservatoryHideStats
-      v-if="stats && statsHidden"
-      :reportNotPublished="stats.notes.reportNotPublished"
-      :campaignNotFound="stats.notes.campaignNotFound"
-    />
+    <DsfrHighlight v-if="stats && statsHidden" :text="stats.notes.campaignInfo" class="fr-col-12 fr-col-md-8 fr-ml-0" />
     <pre>{{ stats }}</pre>
   </section>
 </template>
