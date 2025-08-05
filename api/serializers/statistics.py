@@ -14,10 +14,8 @@ logger = logging.getLogger(__name__)
 
 
 def calculate_statistics_canteens(canteens, data):
-    # qs
-    canteens_without_central = canteens.exclude_central()
     # count
-    data["canteen_count"] = canteens_without_central.count()
+    data["canteen_count"] = canteens.count()
     # group by
     GROUP_BY_FIELDS = [
         ("sectors__category", Sector.Categories, "sector_categories"),
@@ -27,7 +25,7 @@ def calculate_statistics_canteens(canteens, data):
     ]
     for field_name_input, field_enum, field_name_output in GROUP_BY_FIELDS:
         data[field_name_output] = {}
-        canteen_count_per_field = canteens_without_central.group_and_count_by_field(field_name_input)
+        canteen_count_per_field = canteens.group_and_count_by_field(field_name_input)
         for field_enum_value in field_enum:
             data[field_name_output][field_enum_value] = next(
                 (item["count"] for item in canteen_count_per_field if item[field_name_input] == field_enum_value), 0
@@ -39,11 +37,9 @@ def calculate_statistics_canteens(canteens, data):
     return data
 
 
-def calculate_statistics_central_kitchens(canteens, data):
-    # qs
-    canteens_central = canteens.is_central()
+def calculate_statistics_central_kitchens(central_kitchens, data):
     # count
-    data["central_kitchen_count"] = canteens_central.count()
+    data["central_kitchen_count"] = central_kitchens.count()
     # return
     return data
 
@@ -146,10 +142,10 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     notes = serializers.DictField()
 
     @staticmethod
-    def calculate_statistics(canteens, teledeclarations):
+    def calculate_statistics(canteens, central_kitchens, teledeclarations):
         data = {}
         data = calculate_statistics_canteens(canteens, data)
-        data = calculate_statistics_central_kitchens(canteens, data)
+        data = calculate_statistics_central_kitchens(central_kitchens, data)
         data = calculate_statistics_teledeclarations(teledeclarations, data)
         return data
 
