@@ -4,7 +4,7 @@ import { useStoreFilters } from "@/stores/filters"
 import GraphBase from "@/components/GraphBase.vue"
 import GraphGauge from "@/components/GraphGauge.vue"
 
-const props = defineProps(["stats"])
+const props = defineProps(["sustainablePercent", "bioPercent"])
 const storeFilters = useStoreFilters()
 const title = "Produits durable et de qualité dont les produits bio"
 
@@ -13,7 +13,7 @@ const objectives = [
   { name: "50%", value: 50 },
   { name: "20%", value: 20 },
 ]
-const results = reactive([props.stats.sustainablePercent, props.stats.bioPercent])
+const results = reactive([props.sustainablePercent, props.bioPercent])
 const legends = ["durables et de qualité dont bio", "bio et en conversion bio"]
 
 /* Function to generate descriptions */

@@ -17,7 +17,7 @@ const keyMeasureId = keyMeasures[0].id
       <AppLinkRouter :to="{ name: 'KeyMeasurePage', params: { id: keyMeasureId } }" title="En savoir plus sur la loi" />
     </ObservatoryBadgeTitle>
     <div>
-      <ObservatoryGraphSustainable :stats="stats" />
+      <ObservatoryGraphSustainable :bioPercent="stats.bioPercent" :sustainablePercent="stats.sustainablePercent" />
     </div>
   </div>
 </template>
