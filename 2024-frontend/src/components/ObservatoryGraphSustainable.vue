@@ -25,7 +25,7 @@ const getFiltersDescription = () => {
 const getResultsDescription = () => {
   const resultWithObjectif = []
   for (let i = 0; i < stats.length; i++) {
-    resultWithObjectif.push(`objectif "${legends[i]}" fixé à ${objectives[0].value}% le résultat est ${stats[0]}%`)
+    resultWithObjectif.push(`objectif "${legends[i]}" fixé à ${objectives[i].value}% le résultat est ${stats[i]}%`)
   }
   return resultWithObjectif.join(", ")
 }
