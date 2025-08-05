@@ -13,7 +13,7 @@ const objectives = [
   { name: "50%", value: 50 },
   { name: "20%", value: 20 },
 ]
-const results = reactive([props.sustainablePercent, props.bioPercent])
+const stats = reactive([props.sustainablePercent, props.bioPercent])
 const legends = ["durables et de qualité dont bio", "bio et en conversion bio"]
 
 /* Function to generate descriptions */
@@ -24,8 +24,8 @@ const getFiltersDescription = () => {
 }
 const getResultsDescription = () => {
   const resultWithObjectif = []
-  for (let i = 0; i < results.length; i++) {
-    resultWithObjectif.push(`objectif "${legends[i]}" fixé à ${objectives[0].value}% le résultat est ${results[0]}%`)
+  for (let i = 0; i < stats.length; i++) {
+    resultWithObjectif.push(`objectif "${legends[i]}" fixé à ${objectives[0].value}% le résultat est ${stats[0]}%`)
   }
   return resultWithObjectif.join(", ")
 }
@@ -40,7 +40,7 @@ const description = computed(() => {
 
 <template>
   <h3 class="fr-h6 fr-mb-2w">1. {{ title }}</h3>
-  <GraphBase :valuesToVerify="results" :description="description">
-    <GraphGauge :objectives="objectives" :stats="results" :legends="legends" />
+  <GraphBase :valuesToVerify="stats" :description="description">
+    <GraphGauge :objectives="objectives" :stats="stats" :legends="legends" />
   </GraphBase>
 </template>
