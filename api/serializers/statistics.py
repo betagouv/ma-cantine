@@ -37,6 +37,13 @@ def calculate_statistics_canteens(canteens, data):
     return data
 
 
+def calculate_statistics_central_kitchens(central_kitchens, data):
+    # count
+    data["central_kitchen_count"] = central_kitchens.count()
+    # return
+    return data
+
+
 def calculate_statistics_teledeclarations(teledeclarations, data):
     # aggregate
     agg = teledeclarations.annotate(
@@ -113,11 +120,13 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
 
 class CanteenStatisticsSerializer(serializers.Serializer):
     # canteen stats
-    canteen_count = serializers.IntegerField()
+    canteen_count = serializers.IntegerField(label="Nombre de cantines")
     sector_categories = serializers.DictField()
     management_types = serializers.DictField()
     production_types = serializers.DictField()
     economic_models = serializers.DictField()
+    # central kitchen stats
+    central_kitchen_count = serializers.IntegerField(label="Nombre de livreurs de repas")
     # teledeclaration stats
     teledeclarations_count = serializers.IntegerField()
     bio_percent = serializers.IntegerField(label="Part des achats bio dans les achats alimentaires de l'année")
@@ -133,9 +142,10 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     notes = serializers.DictField()
 
     @staticmethod
-    def calculate_statistics(canteens, teledeclarations):
+    def calculate_statistics(canteens, central_kitchens, teledeclarations):
         data = {}
         data = calculate_statistics_canteens(canteens, data)
+        data = calculate_statistics_central_kitchens(central_kitchens, data)
         data = calculate_statistics_teledeclarations(teledeclarations, data)
         return data
 

@@ -84,13 +84,18 @@ class CanteenStatisticsView(APIView):
 
         filters = self._extract_query_filters(request)
 
-        canteen_qs = Canteen.objects.publicly_visible().created_before_year_campaign_end_date(year)
+        canteen_qs = Canteen.objects.publicly_visible().exclude_central().created_before_year_campaign_end_date(year)
         canteens = self._apply_query_filters(canteen_qs, filters)
+
+        central_kitchen_qs = (
+            Canteen.objects.publicly_visible().is_central().created_before_year_campaign_end_date(year)
+        )
+        central_kitchens = self._apply_query_filters(central_kitchen_qs, filters)
 
         teledeclaration_qs = Teledeclaration.objects.publicly_visible().valid_td_by_year(year)
         teledeclarations = self._apply_query_filters(teledeclaration_qs, filters, prefix="canteen__")
 
-        data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
+        data = self.serializer_class.calculate_statistics(canteens, central_kitchens, teledeclarations)
         data["notes"] = self.serializer_class.generate_notes(year)
         serializer = self.serializer_class(data)
 
