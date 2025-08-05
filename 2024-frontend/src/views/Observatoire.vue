@@ -52,7 +52,7 @@ watchEffect(async () => {
   <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pt-2w fr-pb-4w">
     <ObservatoryFiltersSelected @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
     <ObservatoryError v-if="statsError" :error="statsError" />
-    <ObservatoryWarnings v-if="stats.notes.warnings.length > 0" :warnings="stats.notes.warnings" />
+    <ObservatoryWarnings v-if="stats && stats.notes.warnings.length > 0" :warnings="stats.notes.warnings" />
     <ObservatoryNumbers
       v-if="stats"
       :canteensCount="stats.canteenCount"
