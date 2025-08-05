@@ -14,8 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 def calculate_statistics_canteens(canteens, data):
+    # qs
+    canteens_without_central = canteens.exclude_central()
     # count
-    data["canteen_count"] = canteens.count()
+    data["canteen_count"] = canteens_without_central.count()
     # group by
     GROUP_BY_FIELDS = [
         ("sectors__category", Sector.Categories, "sector_categories"),
@@ -25,7 +27,7 @@ def calculate_statistics_canteens(canteens, data):
     ]
     for field_name_input, field_enum, field_name_output in GROUP_BY_FIELDS:
         data[field_name_output] = {}
-        canteen_count_per_field = canteens.group_and_count_by_field(field_name_input)
+        canteen_count_per_field = canteens_without_central.group_and_count_by_field(field_name_input)
         for field_enum_value in field_enum:
             data[field_name_output][field_enum_value] = next(
                 (item["count"] for item in canteen_count_per_field if item[field_name_input] == field_enum_value), 0
@@ -33,6 +35,15 @@ def calculate_statistics_canteens(canteens, data):
         data[field_name_output]["inconnu"] = next(
             (item["count"] for item in canteen_count_per_field if item[field_name_input] in ["", None]), 0
         )
+    # return
+    return data
+
+
+def calculate_statistics_central_kitchens(canteens, data):
+    # qs
+    canteens_central = canteens.is_central()
+    # count
+    data["central_kitchen_count"] = canteens_central.count()
     # return
     return data
 
@@ -113,11 +124,13 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
 
 class CanteenStatisticsSerializer(serializers.Serializer):
     # canteen stats
-    canteen_count = serializers.IntegerField()
+    canteen_count = serializers.IntegerField(label="Nombre de cantines")
     sector_categories = serializers.DictField()
     management_types = serializers.DictField()
     production_types = serializers.DictField()
     economic_models = serializers.DictField()
+    # central kitchen stats
+    central_kitchen_count = serializers.IntegerField(label="Nombre de livreurs de repas")
     # teledeclaration stats
     teledeclarations_count = serializers.IntegerField()
     bio_percent = serializers.IntegerField(label="Part des achats bio dans les achats alimentaires de l'année")
@@ -136,6 +149,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     def calculate_statistics(canteens, teledeclarations):
         data = {}
         data = calculate_statistics_canteens(canteens, data)
+        data = calculate_statistics_central_kitchens(canteens, data)
         data = calculate_statistics_teledeclarations(teledeclarations, data)
         return data
 

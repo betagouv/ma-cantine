@@ -12,7 +12,7 @@ from data.region_choices import Region
 
 year_data = 2024
 date_in_2024_teledeclaration_campaign = "2025-03-30"
-STATS_ENDPOINT_QUERY_COUNT = 8
+STATS_ENDPOINT_QUERY_COUNT = 9
 
 
 class TestCanteenStatsApi(APITestCase):
@@ -156,14 +156,15 @@ class TestCanteenStatsApi(APITestCase):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "84"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["centralKitchenCount"], 1)
         self.assertEqual(body["teledeclarationsCount"], 3)
         self.assertEqual(body["bioPercent"], 43)
         self.assertEqual(body["sustainablePercent"], 44)
         self.assertEqual(body["egalimPercent"], 87)  # 43 + 44
         self.assertEqual(body["approPercent"], 100)
         sector_categories = body["sectorCategories"]
-        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 2)
+        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 1)
         self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 2)
         self.assertEqual(sector_categories[Sector.Categories.SOCIAL], 1)
         self.assertEqual(sector_categories["inconnu"], 0)
@@ -177,7 +178,7 @@ class TestCanteenStatsApi(APITestCase):
         date_in_2022_teledeclaration_campaign = "2022-08-30"
 
         with freeze_time(date_in_2022_teledeclaration_campaign):
-            canteen = CanteenFactory(siret="75665621899905")
+            canteen = CanteenFactory(siret="75665621899905", production_type=Canteen.ProductionType.CENTRAL_SERVING)
             # Diagnostic that should display 20% Bio and 45% other EGalim
             canteen_diagnostic = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -217,7 +218,9 @@ class TestCanteenStatsApi(APITestCase):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 4)  # canteen_armee filtered out
+        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["centralKitchenCount"], 1)
+        self.assertEqual(body["teledeclarationsCount"], 3)
 
     def test_filter_by_year_mandatory(self):
         # without year
@@ -227,78 +230,118 @@ class TestCanteenStatsApi(APITestCase):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 4)
+        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["centralKitchenCount"], 1)
+        self.assertEqual(body["teledeclarationsCount"], 3)
         # year without campaign
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 100})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        self.assertEqual(body["canteenCount"], 0)
+        self.assertEqual(body["centralKitchenCount"], 0)
         self.assertEqual(body["teledeclarationsCount"], 0)
 
     def test_filter_by_region(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": ["84"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 3)
-
+        self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["centralKitchenCount"], 1)
+        self.assertEqual(body["teledeclarationsCount"], 3)
+        # multiple: OR
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": ["84", "32"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 3 + 1)
+        self.assertEqual(body["canteenCount"], 2 + 1)
+        self.assertEqual(body["centralKitchenCount"], 1 + 0)
+        self.assertEqual(body["teledeclarationsCount"], 3 + 0)
 
     def test_filter_by_department(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "department": ["01"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 1)
-
+        self.assertEqual(body["canteenCount"], 0)
+        self.assertEqual(body["centralKitchenCount"], 1)
+        self.assertEqual(body["teledeclarationsCount"], 1)
+        # multiple: OR
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "department": ["01", "38"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 1 + 1)
+        self.assertEqual(body["canteenCount"], 0 + 1)
+        self.assertEqual(body["centralKitchenCount"], 1 + 0)
+        self.assertEqual(body["teledeclarationsCount"], 1 + 1)
 
     def test_filter_by_epci(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "epci": ["1"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 2)
-
+        self.assertEqual(body["canteenCount"], 1)
+        self.assertEqual(body["centralKitchenCount"], 1)
+        self.assertEqual(body["teledeclarationsCount"], 2)
+        # multiple: OR
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "epci": ["1", "2"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 2 + 1)
+        self.assertEqual(body["canteenCount"], 1 + 1)
+        self.assertEqual(body["centralKitchenCount"], 1 + 0)
+        self.assertEqual(body["teledeclarationsCount"], 2 + 1)
 
     def test_filter_by_pat(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "pat": ["1"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 2)
-
+        self.assertEqual(body["canteenCount"], 1)
+        self.assertEqual(body["centralKitchenCount"], 1)
+        self.assertEqual(body["teledeclarationsCount"], 2)
+        # multiple: OR
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "pat": ["1", "2"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 2 + 1)
+        self.assertEqual(body["canteenCount"], 1 + 1)
+        self.assertEqual(body["centralKitchenCount"], 1 + 0)
+        self.assertEqual(body["teledeclarationsCount"], 2 + 1)
 
     def test_filter_by_city(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "city": ["01034"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 1)
-
+        self.assertEqual(body["canteenCount"], 0)
+        self.assertEqual(body["centralKitchenCount"], 1)
+        self.assertEqual(body["teledeclarationsCount"], 1)
+        # multiple: OR
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "city": ["01034", "38185"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 1 + 1)
+        self.assertEqual(body["canteenCount"], 0 + 1)
+        self.assertEqual(body["centralKitchenCount"], 1 + 0)
+        self.assertEqual(body["teledeclarationsCount"], 1 + 1)
 
     def test_filter_by_sectors(self):
+        response = self.client.get(
+            reverse("canteen_statistics"),
+            {"year": year_data, "sectors": [self.sector_education_primary.id]},
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 1)
+        self.assertEqual(body["centralKitchenCount"], 1)
+        self.assertEqual(body["teledeclarationsCount"], 2)
+        sector_categories = body["sectorCategories"]
+        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 1)
+        self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 0)
+        self.assertEqual(sector_categories["inconnu"], 0)  # because we filtered on sectors beforehand...
+        # multiple: OR
         response = self.client.get(
             reverse("canteen_statistics"),
             {"year": year_data, "sectors": [self.sector_education_primary.id, self.sector_enterprise.id]},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["canteenCount"], 1 + 1)
+        self.assertEqual(body["centralKitchenCount"], 1 + 0)
+        self.assertEqual(body["teledeclarationsCount"], 2 + 1)
         sector_categories = body["sectorCategories"]
-        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 2)
+        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 1)
         self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 2)
         self.assertEqual(sector_categories["inconnu"], 0)  # because we filtered on sectors beforehand...
 
@@ -312,10 +355,29 @@ class TestCanteenStatsApi(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["canteenCount"], 1)
+        self.assertEqual(body["centralKitchenCount"], 1)
+        self.assertEqual(body["teledeclarationsCount"], 2)
         management_types = body["managementTypes"]
-        self.assertEqual(management_types[Canteen.ManagementType.DIRECT], 2)
+        self.assertEqual(management_types[Canteen.ManagementType.DIRECT], 1)
         self.assertEqual(management_types[Canteen.ManagementType.CONCEDED], 0)
+        self.assertEqual(management_types["inconnu"], 0)
+        # multiple: OR
+        response = self.client.get(
+            reverse("canteen_statistics"),
+            {
+                "year": year_data,
+                "management_type": [Canteen.ManagementType.DIRECT, Canteen.ManagementType.CONCEDED],
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 1 + 2)
+        self.assertEqual(body["centralKitchenCount"], 1 + 0)
+        self.assertEqual(body["teledeclarationsCount"], 2 + 1)
+        management_types = body["managementTypes"]
+        self.assertEqual(management_types[Canteen.ManagementType.DIRECT], 1)
+        self.assertEqual(management_types[Canteen.ManagementType.CONCEDED], 2)
         self.assertEqual(management_types["inconnu"], 0)
 
     def test_filter_by_production_type(self):
@@ -323,14 +385,33 @@ class TestCanteenStatsApi(APITestCase):
             reverse("canteen_statistics"),
             {
                 "year": year_data,
-                "production_type": [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING],
+                "production_type": [Canteen.ProductionType.CENTRAL_SERVING],
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 1)
+        self.assertEqual(body["centralKitchenCount"], 0)
+        self.assertEqual(body["teledeclarationsCount"], 2)
+        production_types = body["productionTypes"]
+        self.assertEqual(production_types[Canteen.ProductionType.CENTRAL], 0)
+        self.assertEqual(production_types["centralServing"], 1)  # Canteen.ProductionType.CENTRAL_SERVING
+        self.assertEqual(production_types[Canteen.ProductionType.ON_SITE], 0)
+        self.assertEqual(production_types["siteCookedElsewhere"], 0)  # Canteen.ProductionType.ON_SITE_CENTRAL
+        self.assertEqual(production_types["inconnu"], 0)
+        # multiple: OR
+        response = self.client.get(
+            reverse("canteen_statistics"),
+            {
+                "year": year_data,
+                "production_type": [Canteen.ProductionType.CENTRAL_SERVING, Canteen.ProductionType.ON_SITE],
             },
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
         production_types = body["productionTypes"]
-        self.assertEqual(production_types[Canteen.ProductionType.CENTRAL], 1)
+        self.assertEqual(production_types[Canteen.ProductionType.CENTRAL], 0)
         self.assertEqual(production_types["centralServing"], 1)  # Canteen.ProductionType.CENTRAL_SERVING
         self.assertEqual(production_types[Canteen.ProductionType.ON_SITE], 0)
         self.assertEqual(production_types["siteCookedElsewhere"], 0)  # Canteen.ProductionType.ON_SITE_CENTRAL
@@ -346,17 +427,37 @@ class TestCanteenStatsApi(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["canteenCount"], 1)
+        self.assertEqual(body["centralKitchenCount"], 1)
+        self.assertEqual(body["teledeclarationsCount"], 2)
         economic_models = body["economicModels"]
-        self.assertEqual(economic_models[Canteen.EconomicModel.PUBLIC], 2)
+        self.assertEqual(economic_models[Canteen.EconomicModel.PUBLIC], 1)
         self.assertEqual(economic_models[Canteen.EconomicModel.PRIVATE], 0)
+        self.assertEqual(economic_models["inconnu"], 0)
+        # multiple: OR
+        response = self.client.get(
+            reverse("canteen_statistics"),
+            {
+                "year": year_data,
+                "economic_model": [Canteen.EconomicModel.PUBLIC, Canteen.EconomicModel.PRIVATE],
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["centralKitchenCount"], 1)
+        self.assertEqual(body["teledeclarationsCount"], 3)
+        economic_models = body["economicModels"]
+        self.assertEqual(economic_models[Canteen.EconomicModel.PUBLIC], 1)
+        self.assertEqual(economic_models[Canteen.EconomicModel.PRIVATE], 2)
         self.assertEqual(economic_models["inconnu"], 0)
 
     def test_notes(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 4)
+        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["centralKitchenCount"], 1)
         self.assertEqual(body["teledeclarationsCount"], 3)
         self.assertEqual(len(body["notes"]["warnings"]), 1)
         self.assertEqual(
