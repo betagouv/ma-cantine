@@ -21,7 +21,7 @@ const regionsSortedByName = regions.sort((regionBefore, regionAfter) => {
 
 /* Exported functions */
 const getYearsOptions = () => {
-  const startYear = 2020
+  const startYear = 2021
   const endYear = new Date().getFullYear()
   const yearsOptions = []
   for (let i = endYear; i >= startYear; i--) {
