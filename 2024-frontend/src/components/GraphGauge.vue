@@ -35,7 +35,7 @@ const checkOutside = (index) => {
         </p>
       </div>
     </div>
-    <div class="graph-gauge__legends-container fr-mt-2w">
+    <div v-if="legends" class="graph-gauge__legends-container fr-mt-2w">
       <p v-for="legend in legends" :key="legend" class="graph-gauge__legend fr-mb-0">
         {{ legend }}
       </p>
