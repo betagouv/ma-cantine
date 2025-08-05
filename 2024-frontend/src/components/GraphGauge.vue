@@ -10,7 +10,7 @@ const checkOutside = (index) => {
 </script>
 
 <template>
-  <div class="graph-gauge fr-mt-7w fr-mb-3w">
+  <div class="graph-gauge fr-mb-3w" :class="{ 'fr-mt-7w': objectives, 'fr-mt-4w': !objectives }">
     <div v-if="objectives" class="graph-gauge__objectives-container">
       <p class="graph-gauge__objectif graph-gauge__objectif--title fr-text--sm ma-cantine--bold">
         Objectif EGalim
@@ -35,7 +35,7 @@ const checkOutside = (index) => {
         </p>
       </div>
     </div>
-    <div class="graph-gauge__legends-container fr-mt-2w">
+    <div v-if="legends" class="graph-gauge__legends-container fr-mt-2w">
       <p v-for="legend in legends" :key="legend" class="graph-gauge__legend fr-mb-0">
         {{ legend }}
       </p>

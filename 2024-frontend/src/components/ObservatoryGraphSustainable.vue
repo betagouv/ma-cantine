@@ -6,9 +6,7 @@ import GraphGauge from "@/components/GraphGauge.vue"
 
 const props = defineProps(["egalimPercent", "bioPercent"])
 const storeFilters = useStoreFilters()
-const title = "Produits durable et de qualité dont les produits bio"
-
-/* Graph properties */
+const title = "Produits durables et de qualité dont les produits bio"
 const objectives = [
   { name: "50%", value: 50 },
   { name: "20%", value: 20 },
@@ -16,25 +14,20 @@ const objectives = [
 const stats = reactive([props.egalimPercent, props.bioPercent])
 const legends = ["durables et de qualité dont bio", "bio et en conversion bio"]
 
-/* Function to generate descriptions */
-const getFiltersDescription = () => {
-  const selected = storeFilters.getSelection().map((item) => item.label)
-  const list = selected.join(", ")
-  return `Pour la recherche ${list}`
-}
+/* Description */
 const getResultsDescription = () => {
   const resultWithObjectif = []
   for (let i = 0; i < stats.length; i++) {
-    resultWithObjectif.push(`objectif "${legends[i]}" fixé à ${objectives[i].value}% le résultat est ${stats[i]}%`)
+    resultWithObjectif.push(
+      `pour l'objectif "${legends[i]}" fixé à ${objectives[i].value}% le résultat est ${stats[i]}%`
+    )
   }
   return resultWithObjectif.join(", ")
 }
-
-/* Graph description */
 const description = computed(() => {
-  const filtersDescription = getFiltersDescription()
-  const resultsDescription = getResultsDescription()
-  return `${filtersDescription}, les résultats du graphique "${title}" sont : ${resultsDescription}.`
+  const filters = storeFilters.getSelectionLabels()
+  const results = getResultsDescription()
+  return `Pour la recherche ${filters}, le pourcentage de "${title}" est : ${results}.`
 })
 </script>
 
