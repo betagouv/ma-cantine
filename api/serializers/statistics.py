@@ -151,5 +151,5 @@ class CanteenStatisticsSerializer(serializers.Serializer):
             data["canteen_count_description"] = f"Au {canteen_created_before_date.strftime('%-d %B %Y')}"
         # egalim objectives
         data["bio_percent_egalim_objective"] = EGALIM_OBJECTIVES["bio_percent"]
-        data["sustainable_percent_egalim_objective"] = EGALIM_OBJECTIVES["sustainable_percent"]
+        data["egalim_percent_egalim_objective"] = EGALIM_OBJECTIVES["egalim_percent"]
         return data
