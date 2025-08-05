@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
-from django.db.models import F, Q
+from django.db.models import F, Q, Sum
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
@@ -116,13 +116,16 @@ class TeledeclarationQuerySet(models.QuerySet):
         return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
 
     def with_appro_percent_stats(self):
+        """
+        Note: we use Sum/default instead of F to better manage None values.
+        """
         return self.annotate(
-            bio_percent=100 * F("value_bio_ht_agg") / F("value_total_ht"),
-            value_egalim_ht_agg=F("value_bio_ht_agg")
-            + F("value_sustainable_ht_agg")
-            + F("value_externality_performance_ht_agg")
-            + F("value_egalim_others_ht_agg"),
-            egalim_percent=100 * F("value_egalim_ht_agg") / F("value_total_ht"),
+            bio_percent=100 * Sum("value_bio_ht_agg", default=0) / Sum("value_total_ht", default=0),
+            value_egalim_ht_agg=Sum("value_bio_ht_agg", default=0)
+            + Sum("value_sustainable_ht_agg", default=0)
+            + Sum("value_externality_performance_ht_agg", default=0)
+            + Sum("value_egalim_others_ht_agg", default=0),
+            egalim_percent=100 * F("value_egalim_ht_agg") / Sum("value_total_ht", default=0),
         )
 
 
