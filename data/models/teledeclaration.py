@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
-from django.db.models import Q
+from django.db.models import F, Q
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
@@ -114,6 +114,16 @@ class TeledeclarationQuerySet(models.QuerySet):
 
     def publicly_visible(self):
         return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
+
+    def with_appro_percent_stats(self):
+        return self.annotate(
+            bio_percent=100 * F("value_bio_ht_agg") / F("value_total_ht"),
+            value_egalim_ht_agg=F("value_bio_ht_agg")
+            + F("value_sustainable_ht_agg")
+            + F("value_externality_performance_ht_agg")
+            + F("value_egalim_others_ht_agg"),
+            egalim_percent=100 * F("value_egalim_ht_agg") / F("value_total_ht"),
+        )
 
 
 class Teledeclaration(models.Model):
