@@ -8,6 +8,7 @@ import ObservatoryFiltersSelected from "@/components/ObservatoryFiltersSelected.
 import ObservatoryNumbers from "@/components/ObservatoryNumbers.vue"
 import ObservatoryError from "@/components/ObservatoryError.vue"
 import ObservatoryPurchases from "@/components/ObservatoryPurchases.vue"
+import ObservatoryWarnings from "@/components/ObservatoryWarnings.vue"
 
 /* Back to filters */
 const observatoryFilters = useTemplateRef("observatory-filters")
@@ -51,18 +52,17 @@ watchEffect(async () => {
   <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pt-2w fr-pb-4w">
     <ObservatoryFiltersSelected @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
     <ObservatoryError v-if="statsError" :error="statsError" />
-    <DsfrNotice
-      v-if="stats"
-      class="fr-my-2w"
-      title="Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
-    />
-    <ObservatoryNumbers
-      v-if="stats"
-      :canteensCount="stats.canteenCount"
-      :teledeclarationsCount="stats.teledeclarationsCount"
-      class="fr-mb-3w"
-    />
-    <ObservatoryPurchases v-if="stats" :stats="stats" />
+    <template v-if="stats">
+      <ObservatoryWarnings :warnings="stats.notes.warnings" />
+      <ObservatoryNumbers
+        :canteensCount="stats.canteenCount"
+        :canteensDescription="stats.notes.canteenCountDescription"
+        :teledeclarationsCount="stats.teledeclarationsCount"
+        class="fr-mb-3w"
+      />
+      <ObservatoryPurchases v-if="stats.egalimPercent !== null" :stats="stats" />
+      <DsfrHighlight v-else :text="stats.notes.campaignInfo" class="fr-col-12 fr-col-md-8 fr-ml-0" />
+    </template>
     <pre>{{ stats }}</pre>
   </section>
 </template>

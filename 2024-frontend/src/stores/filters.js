@@ -3,11 +3,11 @@ import { ref, reactive } from "vue"
 
 const useStoreFilters = defineStore("filters", () => {
   /* Default filter */
-  const currentYear = new Date().getFullYear()
+  const lastYear = new Date().getFullYear() - 1
 
   /* Filters parameters */
   const params = reactive({
-    year: currentYear,
+    year: lastYear,
     sectors: [],
     economicModel: [],
     managementType: [],
@@ -20,7 +20,7 @@ const useStoreFilters = defineStore("filters", () => {
   })
 
   /* Filters selection with user order preserved */
-  const selection = ref([{ name: "year", value: currentYear, label: currentYear }])
+  const selection = ref([{ name: "year", value: lastYear, label: lastYear }])
 
   /* Actions to update filters params */
   function set(name, value) {

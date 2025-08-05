@@ -20,7 +20,12 @@ const keyMeasureId = keyMeasures[0].id
     </ObservatoryBadgeTitle>
     <ol class="observatory-purchases__list-graphic ma-cantine--unstyled-list">
       <li class="observatory-purchases__graphic">
-        <ObservatoryGraphSustainable :bioPercent="stats.bioPercent" :egalimPercent="stats.egalimPercent" />
+        <ObservatoryGraphSustainable
+          :bioPercent="stats.bioPercent"
+          :egalimPercent="stats.egalimPercent"
+          :bioObjective="stats.notes.bioPercentObjective"
+          :egalimObjective="stats.notes.egalimPercentObjective"
+        />
       </li>
       <li class="observatory-purchases__graphic">
         <ObservatoryGraphFishMeat :meatPercent="stats.meatEgalimPercent" :fishPercent="stats.fishEgalimPercent" />

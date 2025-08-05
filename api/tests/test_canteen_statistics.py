@@ -229,28 +229,28 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)
         self.assertEqual(body["teledeclarationsCount"], 3)
+        self.assertFalse("campaignInfo" in body["notes"])
         # year without campaign (past)
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 100})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 0)
         self.assertEqual(body["teledeclarationsCount"], None)
+        self.assertTrue("campaignInfo" in body["notes"])
         # year without campaign (future)
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data + 100})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)
         self.assertEqual(body["teledeclarationsCount"], None)
-        self.assertTrue("campaignNotFound" in body["notes"])
-        self.assertFalse("reportNotPublished" in body["notes"])
+        self.assertTrue("campaignInfo" in body["notes"])
         # year with campaign but report not published yet
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data + 1})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)
         self.assertEqual(body["teledeclarationsCount"], 0)
-        self.assertFalse("campaignNotFound" in body["notes"])
-        self.assertTrue("reportNotPublished" in body["notes"])
+        self.assertTrue("campaignInfo" in body["notes"])
 
     def test_filter_by_region(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": ["84"]})
@@ -380,7 +380,7 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(
             body["notes"]["canteenCountDescription"], "Au 11 juin 2024"
         )  # dernier jour de la campagne 2024
-        self.assertFalse("reportNotPublished" in body["notes"])
+        self.assertFalse("campaignInfo" in body["notes"])
 
     def test_cache_mechanism(self):
         # first time: no cache
