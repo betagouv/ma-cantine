@@ -15,9 +15,7 @@ const canteenTitle = computed(() => {
 })
 
 /* Teledeclaration */
-const teledeclarationTitle = computed(() =>
-  props.teledeclarationsCount <= 1 ? "Site télédéclaré" : "Sites télédéclarés"
-)
+const teledeclarationTitle = computed(() => (props.teledeclarationsCount <= 1 ? "Télédéclaration" : "Télédéclarations"))
 
 /* Tile */
 const tileImgSrc = "/static/images/picto-dsfr/school.svg"
