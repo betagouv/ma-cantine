@@ -180,13 +180,13 @@ class CanteenStatisticsSerializer(serializers.Serializer):
                 data[field] = None
             data["notes"][
                 "campaign_not_found"
-            ] = f"Aucune campagne de télédéclaration trouvée pour l'année {year}. Veuillez vérifier l'année saisie."
+            ] = f"La campagne de télédéclaration pour l'année {year} n'a pas encore commencée, les données seront disponibles dès {year + 1}."
         elif not CAMPAIGN_DATES[year].get("rapport_parlement_url"):
             for field in CanteenStatisticsSerializer.FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED:
                 data[field] = None
             data["notes"][
                 "report_not_published"
-            ] = f"Le détail des données de {year} télédéclarées durant la campagne {year+1} seront disponibles d'ici la fin d'année dès lors que le rapport statistique sera validé par le parlement."
+            ] = f"Le détail des données de {year} télédéclarées durant la campagne {year + 1} seront disponibles d'ici la fin d'année dès lors que le rapport statistique sera validé par le parlement."
         else:
             pass  # report is published, do not hide data
         return data
