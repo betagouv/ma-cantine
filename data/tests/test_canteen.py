@@ -167,7 +167,7 @@ class TestCanteenCentralAndSatelliteQuerySet(TestCase):
         cls.canteen_on_site_central_2 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=cls.canteen_central_2.siret
         )
-        cls.canteen_on_site_central_2 = CanteenFactory(
+        cls.canteen_on_site_central_3 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=cls.canteen_central_2.siret
         )
         cls.canteen_central_serving_1 = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL_SERVING)
