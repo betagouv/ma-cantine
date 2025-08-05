@@ -8,8 +8,6 @@ const props = defineProps(["meatFrancePercent"])
 const storeFilters = useStoreFilters()
 const title = "Viandes d'origine France"
 const stats = reactive([props.meatFrancePercent])
-
-/* Graph description */
 const description = computed(() => {
   const filters = storeFilters.getSelectionLabels()
   return `Pour la recherche ${filters}, le pourcentage de "${title}" est : ${stats[0]}%.`

@@ -7,15 +7,11 @@ import GraphGauge from "@/components/GraphGauge.vue"
 const props = defineProps(["meatPercent", "fishPercent"])
 const storeFilters = useStoreFilters()
 const title = "Viandes, volailles et produits d’aquacultures"
-
-/* Graph properties */
 const objectives = [
   { name: "60%", value: 60 },
   { name: "100% pour les restaurants d’état", value: 100 },
 ]
 const stats = reactive([props.meatPercent + props.fishPercent])
-
-/* Graph description */
 const description = computed(() => {
   const filters = storeFilters.getSelectionLabels()
   return `Pour la recherche ${filters}, le pourcentage de "${title}" avec un objectif fixé à ${objectives[0].name} et ${objectives[1].name} est : ${stats[0]}%.`

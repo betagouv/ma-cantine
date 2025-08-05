@@ -7,8 +7,6 @@ import GraphGauge from "@/components/GraphGauge.vue"
 const props = defineProps(["egalimPercent", "bioPercent"])
 const storeFilters = useStoreFilters()
 const title = "Produits durables et de qualité dont les produits bio"
-
-/* Graph properties */
 const objectives = [
   { name: "50%", value: 50 },
   { name: "20%", value: 20 },
@@ -16,6 +14,7 @@ const objectives = [
 const stats = reactive([props.egalimPercent, props.bioPercent])
 const legends = ["durables et de qualité dont bio", "bio et en conversion bio"]
 
+/* Description */
 const getResultsDescription = () => {
   const resultWithObjectif = []
   for (let i = 0; i < stats.length; i++) {
@@ -25,8 +24,6 @@ const getResultsDescription = () => {
   }
   return resultWithObjectif.join(", ")
 }
-
-/* Graph description */
 const description = computed(() => {
   const filters = storeFilters.getSelectionLabels()
   const results = getResultsDescription()
