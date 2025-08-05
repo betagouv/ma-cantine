@@ -223,11 +223,12 @@ class TestCanteenStatsApi(APITestCase):
         # without year: 400
         response = self.client.get(reverse("canteen_statistics"))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # with valid year
+        # year with campaign and report published
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)
+        self.assertEqual(body["teledeclarationsCount"], 3)
         # year without campaign (past)
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 100})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -247,7 +248,7 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)
-        self.assertEqual(body["teledeclarationsCount"], None)
+        self.assertEqual(body["teledeclarationsCount"], 0)
         self.assertFalse("campaignNotFound" in body["notes"])
         self.assertTrue("reportNotPublished" in body["notes"])
 

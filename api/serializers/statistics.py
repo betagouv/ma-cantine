@@ -117,7 +117,6 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
 
 class CanteenStatisticsSerializer(serializers.Serializer):
     FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED = [
-        "teledeclarations_count",
         "bio_percent",
         "sustainable_percent",
         "egalim_percent",
@@ -126,6 +125,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
         "fish_egalim_percent",
         "appro_percent",
     ]
+    FIELDS_TO_HIDE_IF_CAMPAIGN_NOT_FOUND = ["teledeclarations_count"] + FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED
 
     # canteen stats
     canteen_count = serializers.IntegerField()
@@ -176,7 +176,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
         """
         year = int(year)
         if year not in CAMPAIGN_DATES.keys():
-            for field in CanteenStatisticsSerializer.FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED:
+            for field in CanteenStatisticsSerializer.FIELDS_TO_HIDE_IF_CAMPAIGN_NOT_FOUND:
                 data[field] = None
             data["notes"][
                 "campaign_not_found"
