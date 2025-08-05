@@ -39,7 +39,7 @@ const description = computed(() => {
 
 <template>
   <h3 class="fr-h6 fr-mb-2w">{{ title }}</h3>
-  <GraphBase :valuesToVerify="stats" :description="description">
+  <GraphBase :valuesToVerify="[egalimPercent, bioPercent, egalimObjective, bioObjective]" :description="description">
     <GraphGauge :objectives="objectives" :stats="stats" :legends="legends" />
   </GraphBase>
 </template>
