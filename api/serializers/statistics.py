@@ -182,17 +182,17 @@ class CanteenStatisticsSerializer(serializers.Serializer):
             # TODO: ajouter le cas où la campagne de TD n'a pas commencé mais dont on connait les dates
             if year >= timezone.now().year:
                 data["notes"][
-                    "campaign_not_found"
+                    "campaign_info"
                 ] = f"La campagne de télédéclaration pour l'année {year} n'a pas encore commencée, les données seront disponibles en {year + 1}."
             else:
                 data["notes"][
-                    "campaign_not_found"
+                    "campaign_info"
                 ] = f"Aucune campagne de télédéclaration trouvée pour l'année {year}. Veuillez vérifier l'année saisie."
         elif not CAMPAIGN_DATES[year].get("rapport_parlement_url"):
             for field in CanteenStatisticsSerializer.FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED:
                 data[field] = None
             data["notes"][
-                "report_not_published"
+                "campaign_info"
             ] = f"Le détail des données de {year} télédéclarées durant la campagne {year + 1} seront disponibles d'ici la fin d'année dès lors que le rapport statistique sera validé par le parlement."
         else:
             pass  # report is published, do not hide data
