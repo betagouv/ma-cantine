@@ -9,12 +9,12 @@ const storeFilters = useStoreFilters()
 const title = "Produits durables et de qualité dont les produits bio"
 const objectives = reactive([
   {
-    name: props.egalimObjective ? `${props.egalimObjective}%` : "50%",
-    value: props.egalimObjective || 50,
+    name: `${props.egalimObjective}%`,
+    value: props.egalimObjective,
   },
   {
-    name: props.bioObjective ? `${props.bioObjective}%` : "20%",
-    value: props.bioObjective || 20,
+    name: `${props.bioObjective}%`,
+    value: props.bioObjective,
   },
 ])
 const stats = reactive([props.egalimPercent, props.bioPercent])
