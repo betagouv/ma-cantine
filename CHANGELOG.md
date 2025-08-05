@@ -6,6 +6,43 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.26.0](https://github.com/betagouv/ma-cantine/compare/v2025.25.0...v2025.26.0) (2025-08-05)
+
+
+### Nouveautés
+
+* **Observatoire:** affiche un message d'erreur si pas de filtres ([#5553](https://github.com/betagouv/ma-cantine/issues/5553)) ([1cbab5a](https://github.com/betagouv/ma-cantine/commit/1cbab5a38ee1f8adc587b079c24c53e687bad474))
+* **Observatoire:** ajout d'une description au graphique produit de qualité dont bio ([#5573](https://github.com/betagouv/ma-cantine/issues/5573)) ([00dab60](https://github.com/betagouv/ma-cantine/commit/00dab60d44848232e6f4be7f162dda2dcb594fc5))
+* **Observatoire:** ajout du graphique des viandes origine France ([#5578](https://github.com/betagouv/ma-cantine/issues/5578)) ([e992cc0](https://github.com/betagouv/ma-cantine/commit/e992cc034d63821773f1514b7957de35809fd28b))
+* **Observatoire:** ajoute le graphique des viandes et poissons EGalim ([#5577](https://github.com/betagouv/ma-cantine/issues/5577)) ([b5e31f2](https://github.com/betagouv/ma-cantine/commit/b5e31f2f0c443308fe8164f3996d3af89e8024b3))
+* **Observatoire:** création du bloc pour afficher les graphiques des produits durables et de qualité ([#5556](https://github.com/betagouv/ma-cantine/issues/5556)) ([2815c6b](https://github.com/betagouv/ma-cantine/commit/2815c6b1e8e079d33f996901e86a4795bcfad3f6))
+* **Observatoire:** intégration et redesign du graphique "Produits durables et de qualité" en jauge ([#5570](https://github.com/betagouv/ma-cantine/issues/5570)) ([f397dde](https://github.com/betagouv/ma-cantine/commit/f397ddee4790a4cdd80dd90ca373ec35cf2de929))
+* **Observatoire:** intègre les notes renvoyées par l'api ([#5581](https://github.com/betagouv/ma-cantine/issues/5581)) ([afac570](https://github.com/betagouv/ma-cantine/commit/afac570572af47f9cc8fed94837266639de6c92d))
+
+
+### Améliorations
+
+* **API Stats:** mettre de la documentation sous forme de notes dans la réponse API (cas des armée, canteen_count date) ([#5542](https://github.com/betagouv/ma-cantine/issues/5542)) ([500f731](https://github.com/betagouv/ma-cantine/commit/500f7314a488b782dd4ef1085c3535295bc1f251))
+* **API Stats:** ne pas renvoyer les stats détaillées TD si le rapport pour l'année en cours n'a pas été publié ([#5580](https://github.com/betagouv/ma-cantine/issues/5580)) ([4383f41](https://github.com/betagouv/ma-cantine/commit/4383f410df5f06cb9c6af95cef563a870d339f81))
+* **API Stats:** renvoyer les objectifs EGalim sous forme de notes ([#5572](https://github.com/betagouv/ma-cantine/issues/5572)) ([b16ae97](https://github.com/betagouv/ma-cantine/commit/b16ae9734a4502ca3b58ed825bcadd782b8d52d5))
+* **Cantines:** nouveau queryset pour exclure facilement les livreurs de repas (avec ou sans convives) ([#5574](https://github.com/betagouv/ma-cantine/issues/5574)) ([fcc3103](https://github.com/betagouv/ma-cantine/commit/fcc3103d3f106e60ed2b88ce7b650041307ab85a))
+* **Dates de campagne:** ajout du lien vers le rapport annuel ([#5552](https://github.com/betagouv/ma-cantine/issues/5552)) ([b829a43](https://github.com/betagouv/ma-cantine/commit/b829a43eadf1ac89af3b5b785b2b841001310d8a))
+* **Diagnostic:** nouveau champ pour stocker le status [#1](https://github.com/betagouv/ma-cantine/issues/1)TD1site ([#5571](https://github.com/betagouv/ma-cantine/issues/5571)) ([3fa62e5](https://github.com/betagouv/ma-cantine/commit/3fa62e51f87df641d503a907d95287281ec1a708))
+* **Metabase:** Ajouts des champs gaspis dans l'extraction des Teledeclarations ([#5547](https://github.com/betagouv/ma-cantine/issues/5547)) ([da36d1d](https://github.com/betagouv/ma-cantine/commit/da36d1df5147c01c391c41501ca405a7fdfc889e))
+
+
+### Corrections (bugs, typos...)
+
+* **ETL:** Gestions des valeurs None pour l'Analysis TD ([#5558](https://github.com/betagouv/ma-cantine/issues/5558)) ([1c34aca](https://github.com/betagouv/ma-cantine/commit/1c34acafd799f485227e62e3f1ec2afc6a7f27ed))
+* **Observatoire:** améliorations diverses ([#5579](https://github.com/betagouv/ma-cantine/issues/5579)) ([2d41acb](https://github.com/betagouv/ma-cantine/commit/2d41acb282744e92a82a22dac763c8277fbb42a9))
+* **Observatoire:** corrige l'affichage des 3 premiers blocs des résultats ([#5550](https://github.com/betagouv/ma-cantine/issues/5550)) ([a0e8eda](https://github.com/betagouv/ma-cantine/commit/a0e8eda2225f68119a04a977b246362670616c6e))
+* **Observatoire:** le chiffre des pourcentages de produits de durables inclu le bio ([#5575](https://github.com/betagouv/ma-cantine/issues/5575)) ([ccd65a4](https://github.com/betagouv/ma-cantine/commit/ccd65a4424ece83842494f35546331e84fff19cd))
+
+
+### Technique
+
+* **Observatoire:** renomme les composants ([#5557](https://github.com/betagouv/ma-cantine/issues/5557)) ([65acb74](https://github.com/betagouv/ma-cantine/commit/65acb742c8b766de43cbcd5bcc1b0886503ed1cb))
+
 ## [2025.25.0](https://github.com/betagouv/ma-cantine/compare/v2025.24.2...v2025.25.0) (2025-07-30)
 
 
