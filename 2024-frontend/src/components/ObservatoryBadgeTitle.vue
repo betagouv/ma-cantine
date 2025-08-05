@@ -10,7 +10,7 @@ defineProps(["image", "title", "color"])
         {{ title }}
       </h2>
     </div>
-    <p class="fr-pl-9w fr-col-8">
+    <p class="fr-pl-9w fr-col-12 fr-col-md-8">
       <slot></slot>
     </p>
   </div>
