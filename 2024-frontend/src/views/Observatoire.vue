@@ -23,7 +23,6 @@ const filtersParams = storeFilters.getAllParams()
 /* Stats */
 const stats = ref()
 const statsError = ref()
-const statsHidden = ref()
 
 const setStatsError = () => {
   const hasNoFilter = storeFilters.getSelection().length === 0
@@ -33,15 +32,9 @@ const setStatsError = () => {
   else if (hasNoYear) statsError.value = "noYear"
 }
 
-const setStatsSuccess = (newStats) => {
-  stats.value = newStats
-  statsHidden.value = newStats.notes.campaignInfo
-}
-
 const resetStatsValue = () => {
   stats.value = null
   statsError.value = null
-  statsHidden.value = true
 }
 
 /* Watch filters */
@@ -49,7 +42,7 @@ watchEffect(async () => {
   resetStatsValue()
   const newStats = await statisticsService.getStatistics(filtersParams)
   if (!newStats) setStatsError()
-  else setStatsSuccess(newStats)
+  else stats.value = newStats
 })
 </script>
 
@@ -59,16 +52,17 @@ watchEffect(async () => {
   <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pt-2w fr-pb-4w">
     <ObservatoryFiltersSelected @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
     <ObservatoryError v-if="statsError" :error="statsError" />
-    <ObservatoryWarnings v-if="stats && stats.notes.warnings.length > 0" :warnings="stats.notes.warnings" />
-    <ObservatoryNumbers
-      v-if="stats"
-      :canteensCount="stats.canteenCount"
-      :canteensDescription="stats.notes.canteenCountDescription"
-      :teledeclarationsCount="stats.teledeclarationsCount"
-      class="fr-mb-3w"
-    />
-    <ObservatoryPurchases v-if="!statsHidden" :stats="stats" />
-    <DsfrHighlight v-if="stats && statsHidden" :text="stats.notes.campaignInfo" class="fr-col-12 fr-col-md-8 fr-ml-0" />
+    <template v-if="stats">
+      <ObservatoryWarnings :warnings="stats.notes.warnings" />
+      <ObservatoryNumbers
+        :canteensCount="stats.canteenCount"
+        :canteensDescription="stats.notes.canteenCountDescription"
+        :teledeclarationsCount="stats.teledeclarationsCount"
+        class="fr-mb-3w"
+      />
+      <ObservatoryPurchases v-if="stats.egalimPercent !== null" :stats="stats" />
+      <DsfrHighlight v-else :text="stats.notes.campaignInfo" class="fr-col-12 fr-col-md-8 fr-ml-0" />
+    </template>
     <pre>{{ stats }}</pre>
   </section>
 </template>
