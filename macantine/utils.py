@@ -31,7 +31,7 @@ def convert_date_string_to_datetime(date_string, time_start_or_end="start"):
 # TODO: improve (depends on the year & region)
 EGALIM_OBJECTIVES = {
     "bio_percent": 20,
-    "sustainable_percent": 50,
+    "egalim_percent": 50,
 }
 
 
