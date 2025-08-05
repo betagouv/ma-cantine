@@ -78,7 +78,11 @@ const useStoreFilters = defineStore("filters", () => {
     return selection.value
   }
 
-  return { set, remove, getSelection, getParam, getAllParams }
+  function getSelectionLabels() {
+    return selection.value.map((item) => item.label).join(", ")
+  }
+
+  return { set, remove, getSelection, getSelectionLabels, getParam, getAllParams }
 })
 
 export { useStoreFilters }

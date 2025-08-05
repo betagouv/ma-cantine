@@ -9,17 +9,10 @@ const storeFilters = useStoreFilters()
 const title = "Viandes d'origine France"
 const stats = reactive([props.meatFrancePercent])
 
-/* Function to generate description */
-const getFiltersDescription = () => {
-  const selected = storeFilters.getSelection().map((item) => item.label)
-  const list = selected.join(", ")
-  return `Pour la recherche ${list}`
-}
-
 /* Graph description */
 const description = computed(() => {
-  const filtersDescription = getFiltersDescription()
-  return `${filtersDescription}, le pourcentage de "${title}" est : ${stats[0]}%.`
+  const filters = storeFilters.getSelectionLabels()
+  return `Pour la recherche ${filters}, le pourcentage de "${title}" est : ${stats[0]}%.`
 })
 </script>
 <template>

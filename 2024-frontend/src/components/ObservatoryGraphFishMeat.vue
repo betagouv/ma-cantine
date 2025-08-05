@@ -15,18 +15,10 @@ const objectives = [
 ]
 const stats = reactive([props.meatPercent + props.fishPercent])
 
-/* Function to generate descriptions */
-const getFiltersDescription = () => {
-  const selected = storeFilters.getSelection().map((item) => item.label)
-  const list = selected.join(", ")
-  return `Pour la recherche ${list}`
-}
-
 /* Graph description */
 const description = computed(() => {
-  const filtersDescription = getFiltersDescription()
-  const resultsDescription = `avec un objectif fixé à ${objectives[0].name} et ${objectives[1].name} est : ${stats[0]}%`
-  return `${filtersDescription}, le pourcentage de "${title}" ${resultsDescription}.`
+  const filters = storeFilters.getSelectionLabels()
+  return `Pour la recherche ${filters}, le pourcentage de "${title}" avec un objectif fixé à ${objectives[0].name} et ${objectives[1].name} est : ${stats[0]}%.`
 })
 </script>
 

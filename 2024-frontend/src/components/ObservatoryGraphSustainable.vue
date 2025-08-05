@@ -16,12 +16,6 @@ const objectives = [
 const stats = reactive([props.egalimPercent, props.bioPercent])
 const legends = ["durables et de qualité dont bio", "bio et en conversion bio"]
 
-/* Function to generate descriptions */
-const getFiltersDescription = () => {
-  const selected = storeFilters.getSelection().map((item) => item.label)
-  const list = selected.join(", ")
-  return `Pour la recherche ${list}`
-}
 const getResultsDescription = () => {
   const resultWithObjectif = []
   for (let i = 0; i < stats.length; i++) {
@@ -34,9 +28,9 @@ const getResultsDescription = () => {
 
 /* Graph description */
 const description = computed(() => {
-  const filtersDescription = getFiltersDescription()
-  const resultsDescription = getResultsDescription()
-  return `${filtersDescription}, le pourcentage de "${title}" est : ${resultsDescription}.`
+  const filters = storeFilters.getSelectionLabels()
+  const results = getResultsDescription()
+  return `Pour la recherche ${filters}, le pourcentage de "${title}" est : ${results}.`
 })
 </script>
 
