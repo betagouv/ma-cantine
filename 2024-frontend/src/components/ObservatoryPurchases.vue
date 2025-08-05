@@ -32,6 +32,9 @@ const keyMeasureId = keyMeasures[0].id
 .observatory-purcharses {
   &__list-graphic {
     counter-reset: number;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
   }
 
   &__graphic {
