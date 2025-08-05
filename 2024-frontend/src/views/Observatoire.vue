@@ -8,6 +8,7 @@ import ObservatoryFiltersSelected from "@/components/ObservatoryFiltersSelected.
 import ObservatoryNumbers from "@/components/ObservatoryNumbers.vue"
 import ObservatoryError from "@/components/ObservatoryError.vue"
 import ObservatoryPurchases from "@/components/ObservatoryPurchases.vue"
+import ObservatoryWarnings from "@/components/ObservatoryWarnings.vue"
 
 /* Back to filters */
 const observatoryFilters = useTemplateRef("observatory-filters")
@@ -51,11 +52,7 @@ watchEffect(async () => {
   <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pt-2w fr-pb-4w">
     <ObservatoryFiltersSelected @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
     <ObservatoryError v-if="statsError" :error="statsError" />
-    <DsfrNotice
-      v-if="stats"
-      class="fr-my-2w"
-      title="Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
-    />
+    <ObservatoryWarnings v-if="stats.notes.warnings.length > 0" :warnings="stats.notes.warnings" />
     <ObservatoryNumbers
       v-if="stats"
       :canteensCount="stats.canteenCount"
