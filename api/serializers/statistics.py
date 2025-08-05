@@ -8,7 +8,11 @@ from rest_framework import serializers
 
 from common.utils.badges import badges_for_queryset
 from data.models import Canteen, Sector
-from macantine.utils import EGALIM_OBJECTIVES, get_year_campaign_end_date_or_today_date
+from macantine.utils import (
+    CAMPAIGN_DATES,
+    EGALIM_OBJECTIVES,
+    get_year_campaign_end_date_or_today_date,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +116,17 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
 
 
 class CanteenStatisticsSerializer(serializers.Serializer):
+    FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED = [
+        "teledeclarations_count",
+        "bio_percent",
+        "sustainable_percent",
+        "egalim_percent",
+        "meat_egalim_percent",
+        "meat_france_percent",
+        "fish_egalim_percent",
+        "appro_percent",
+    ]
+
     # canteen stats
     canteen_count = serializers.IntegerField()
     sector_categories = serializers.DictField()
@@ -152,4 +167,26 @@ class CanteenStatisticsSerializer(serializers.Serializer):
         # egalim objectives
         data["bio_percent_objective"] = EGALIM_OBJECTIVES["bio_percent"]
         data["egalim_percent_objective"] = EGALIM_OBJECTIVES["egalim_percent"]
+        return data
+
+    @staticmethod
+    def hide_data_if_report_not_published(data, year):
+        """
+        Hide data if the report for the given year is not published yet.
+        """
+        year = int(year)
+        if year not in CAMPAIGN_DATES.keys():
+            for field in CanteenStatisticsSerializer.FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED:
+                data[field] = None
+            data["notes"][
+                "campaign_not_found"
+            ] = f"Aucune campagne de télédéclaration trouvée pour l'année {year}. Veuillez vérifier l'année saisie."
+        elif not CAMPAIGN_DATES[year].get("rapport_parlement_url"):
+            for field in CanteenStatisticsSerializer.FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED:
+                data[field] = None
+            data["notes"][
+                "report_not_published"
+            ] = f"Le détail des données de {year} télédéclarées durant la campagne {year+1} seront disponibles d'ici la fin d'année dès lors que le rapport statistique sera validé par le parlement."
+        else:
+            pass  # report is published, do not hide data
         return data

@@ -10,8 +10,8 @@ from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, Use
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 from data.region_choices import Region
 
-year_data = 2024
-date_in_2024_teledeclaration_campaign = "2025-03-30"
+year_data = 2023
+date_in_2023_teledeclaration_campaign = "2024-04-01"  # during the 2023 campaign
 STATS_ENDPOINT_QUERY_COUNT = 8
 
 
@@ -23,7 +23,7 @@ class TestCanteenStatsApi(APITestCase):
         cls.sector_enterprise = SectorFactory(name="Enterprise", category=Sector.Categories.ENTERPRISE)
         cls.sector_social = SectorFactory(name="Social", category=Sector.Categories.SOCIAL)
         cls.sector_other = SectorFactory(name="Other", category=None)
-        with freeze_time(date_in_2024_teledeclaration_campaign):
+        with freeze_time(date_in_2023_teledeclaration_campaign):
             canteen_1 = CanteenFactory(
                 siret="21010034300016",
                 city_insee_code="01034",
@@ -219,20 +219,37 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)  # canteen_armee filtered out
 
-    def test_filter_by_year_mandatory(self):
-        # without year
+    def test_filter_by_year(self):
+        # without year: 400
         response = self.client.get(reverse("canteen_statistics"))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # with year
+        # with valid year
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 4)
-        # year without campaign
+        # year without campaign (past)
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 100})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["teledeclarationsCount"], 0)
+        self.assertEqual(body["canteenCount"], 0)
+        self.assertEqual(body["teledeclarationsCount"], None)
+        # year without campaign (future)
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data + 100})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 4)
+        self.assertEqual(body["teledeclarationsCount"], None)
+        self.assertTrue("campaignNotFound" in body["notes"])
+        self.assertFalse("reportNotPublished" in body["notes"])
+        # year with campaign but report not published yet
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data + 1})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 4)
+        self.assertEqual(body["teledeclarationsCount"], None)
+        self.assertFalse("campaignNotFound" in body["notes"])
+        self.assertTrue("reportNotPublished" in body["notes"])
 
     def test_filter_by_region(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": ["84"]})
@@ -360,8 +377,9 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["teledeclarationsCount"], 3)
         self.assertEqual(len(body["notes"]["warnings"]), 1)
         self.assertEqual(
-            body["notes"]["canteenCountDescription"], "Au 6 avril 2025"
+            body["notes"]["canteenCountDescription"], "Au 11 juin 2024"
         )  # dernier jour de la campagne 2024
+        self.assertFalse("reportNotPublished" in body["notes"])
 
     def test_cache_mechanism(self):
         # first time: no cache
