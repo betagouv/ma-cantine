@@ -11,17 +11,17 @@ const keyMeasureId = keyMeasures[0].id
 </script>
 
 <template>
-  <div class="observatory-purcharses fr-card fr-p-4w">
+  <div class="observatory-purchases fr-card fr-p-4w">
     <ObservatoryBadgeTitle class="fr-mb-3w" :image="approBadge" color="#f44336" title="Produits durables et de qualité">
       Distribuer 50% de produits de qualité dont 20% de produits bio et distribuer au moins 60 % de produits durables et
       de qualité dans la famille de denrées “viandes et poissons“.
       <AppLinkRouter :to="{ name: 'KeyMeasurePage', params: { id: keyMeasureId } }" title="En savoir plus sur la loi" />
     </ObservatoryBadgeTitle>
-    <ol class="observatory-purcharses__list-graphic ma-cantine--unstyled-list">
-      <li class="observatory-purcharses__graphic">
+    <ol class="observatory-purchases__list-graphic ma-cantine--unstyled-list">
+      <li class="observatory-purchases__graphic">
         <ObservatoryGraphSustainable :bioPercent="stats.bioPercent" :egalimPercent="stats.egalimPercent" />
       </li>
-      <li class="observatory-purcharses__graphic">
+      <li class="observatory-purchases__graphic">
         <ObservatoryGraphFishMeat :meatPercent="stats.meatEgalimPercent" :fishPercent="stats.fishEgalimPercent" />
       </li>
     </ol>
@@ -29,7 +29,7 @@ const keyMeasureId = keyMeasures[0].id
 </template>
 
 <style lang="scss">
-.observatory-purcharses {
+.observatory-purchases {
   &__list-graphic {
     counter-reset: number;
     display: flex;
