@@ -19,7 +19,7 @@ const getFiltersDescription = () => {
 /* Graph description */
 const description = computed(() => {
   const filtersDescription = getFiltersDescription()
-  return `${filtersDescription}, le résultat du graphique "${title}" est : ${stats[0]}%.`
+  return `${filtersDescription}, le pourcentage de "${title}" est : ${stats[0]}%.`
 })
 </script>
 <template>

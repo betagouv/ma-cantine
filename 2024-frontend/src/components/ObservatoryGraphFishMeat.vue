@@ -26,7 +26,7 @@ const getFiltersDescription = () => {
 const description = computed(() => {
   const filtersDescription = getFiltersDescription()
   const resultsDescription = `avec un objectif fixé à ${objectives[0].name} et ${objectives[1].name} est : ${stats[0]}%`
-  return `${filtersDescription}, le résultat du graphique "${title}" ${resultsDescription}.`
+  return `${filtersDescription}, le pourcentage de "${title}" ${resultsDescription}.`
 })
 </script>
 

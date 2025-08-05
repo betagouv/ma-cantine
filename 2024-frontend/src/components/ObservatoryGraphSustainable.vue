@@ -25,7 +25,9 @@ const getFiltersDescription = () => {
 const getResultsDescription = () => {
   const resultWithObjectif = []
   for (let i = 0; i < stats.length; i++) {
-    resultWithObjectif.push(`objectif "${legends[i]}" fixé à ${objectives[i].value}% le résultat est ${stats[i]}%`)
+    resultWithObjectif.push(
+      `pour l'objectif "${legends[i]}" fixé à ${objectives[i].value}% le résultat est ${stats[i]}%`
+    )
   }
   return resultWithObjectif.join(", ")
 }
@@ -34,7 +36,7 @@ const getResultsDescription = () => {
 const description = computed(() => {
   const filtersDescription = getFiltersDescription()
   const resultsDescription = getResultsDescription()
-  return `${filtersDescription}, les résultats du graphique "${title}" sont : ${resultsDescription}.`
+  return `${filtersDescription}, le pourcentage de "${title}" est : ${resultsDescription}.`
 })
 </script>
 
