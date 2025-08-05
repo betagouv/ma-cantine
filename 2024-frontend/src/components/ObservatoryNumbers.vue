@@ -3,7 +3,7 @@ import { ref, computed, watch } from "vue"
 import { useStoreFilters } from "@/stores/filters"
 
 /* Props */
-const props = defineProps(["canteensCount", "teledeclarationsCount"])
+const props = defineProps(["canteensCount", "canteensDescription", "teledeclarationsCount"])
 
 /* Filters */
 const storeFilters = useStoreFilters()
@@ -64,7 +64,7 @@ watch(filtersParams, () => {
       <div class="observatory-numbers__card fr-card fr-p-4w">
         <p class="fr-h5 fr-mb-1w">{{ canteensCount }}</p>
         <p class="fr-mb-2w">{{ canteenTitle }}</p>
-        <p class="fr-text--xs fr-mb-0"></p>
+        <p class="fr-text--xs fr-mb-0">{{ canteensDescription }}</p>
       </div>
     </li>
     <li class="fr-col-12 fr-col-lg-4">

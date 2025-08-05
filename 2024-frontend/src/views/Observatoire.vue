@@ -59,6 +59,7 @@ watchEffect(async () => {
     <ObservatoryNumbers
       v-if="stats"
       :canteensCount="stats.canteenCount"
+      :canteensDescription="stats.notes.canteenCountDescription"
       :teledeclarationsCount="stats.teledeclarationsCount"
       class="fr-mb-3w"
     />
