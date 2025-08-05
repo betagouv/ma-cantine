@@ -4,6 +4,7 @@ import logging
 from django.db.models import Count, FloatField, Sum
 from django.db.models.fields.json import KT
 from django.db.models.functions import Cast
+from django.utils import timezone
 from rest_framework import serializers
 
 from common.utils.badges import badges_for_queryset
@@ -178,9 +179,15 @@ class CanteenStatisticsSerializer(serializers.Serializer):
         if year not in CAMPAIGN_DATES.keys():
             for field in CanteenStatisticsSerializer.FIELDS_TO_HIDE_IF_CAMPAIGN_NOT_FOUND:
                 data[field] = None
-            data["notes"][
-                "campaign_not_found"
-            ] = f"La campagne de télédéclaration pour l'année {year} n'a pas encore commencée, les données seront disponibles dès {year + 1}."
+            # TODO: ajouter le cas où la campagne de TD n'a pas commencé mais dont on connait les dates
+            if year >= timezone.now().year:
+                data["notes"][
+                    "campaign_not_found"
+                ] = f"La campagne de télédéclaration pour l'année {year} n'a pas encore commencée, les données seront disponibles en {year + 1}."
+            else:
+                data["notes"][
+                    "campaign_not_found"
+                ] = f"Aucune campagne de télédéclaration trouvée pour l'année {year}. Veuillez vérifier l'année saisie."
         elif not CAMPAIGN_DATES[year].get("rapport_parlement_url"):
             for field in CanteenStatisticsSerializer.FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED:
                 data[field] = None
