@@ -3,6 +3,7 @@ import keyMeasures from "@/data/key-measures.json"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import ObservatoryGraphSustainable from "@/components/ObservatoryGraphSustainable.vue"
+import ObservatoryGraphFishMeat from "@/components/ObservatoryGraphFishMeat.vue"
 
 defineProps(["stats"])
 const approBadge = "/static/images/badges/appro.svg"
@@ -18,6 +19,10 @@ const keyMeasureId = keyMeasures[0].id
     </ObservatoryBadgeTitle>
     <div>
       <ObservatoryGraphSustainable :bioPercent="stats.bioPercent" :egalimPercent="stats.egalimPercent" />
+      <ObservatoryGraphFishMeat
+        :meatEgalimPercent="stats.meatEgalimPercent"
+        :fishEgalimPercent="stats.fishEgalimPercent"
+      />
     </div>
   </div>
 </template>
