@@ -4,6 +4,7 @@ import GraphPie from "@/components/GraphPie.vue"
 import cantines from "@/data/cantines.json"
 
 const props = defineProps(["productionTypes", "canteensCount"])
+const title = "Mode de production"
 const counts = computed(() => Object.values(props.productionTypes))
 const legends = computed(() => {
   const legends = []
@@ -19,5 +20,8 @@ const legends = computed(() => {
 </script>
 
 <template>
-  <GraphPie :counts="counts" :total="canteensCount" :legends="legends" />
+  <h3 class="fr-h6 fr-mb-2w">{{ title }}</h3>
+  <GraphBase :valuesToVerify="[...counts, canteensCount]">
+    <GraphPie :counts="counts" :total="canteensCount" :legends="legends" />
+  </GraphBase>
 </template>
