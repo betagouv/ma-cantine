@@ -1,6 +1,6 @@
 <script setup>
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
-import GraphPie from "@/components/GraphPie.vue"
+import ObservatoryGraphProduction from "@/components/ObservatoryGraphProduction.vue"
 defineProps(["stats"])
 
 const canteenBadge = "/static/images/badges/canteen.svg"
@@ -18,14 +18,7 @@ const canteenBadge = "/static/images/badges/canteen.svg"
       leur bilan annuel de l'année précédente.
     </ObservatoryBadgeTitle>
     <div>
-      <GraphPie
-        :counts="[205, 110, 5000]"
-        :legends="[
-          'Nullam quis risus eget urna mollis ornare vel eu leo.',
-          'Nullam quis risus eget us ornare vel eu leo.',
-          'Nullam quis risus eget.',
-        ]"
-      />
+      <ObservatoryGraphProduction :productionTypes="stats.productionTypes" :canteensCount="stats.canteenCount" />
     </div>
   </div>
 </template>
