@@ -41,7 +41,7 @@ address {
     content: initial;
 }
 
-.ma-cantine--ordered-list h3::before {
+.ma-cantine--ordered-list li > *:first-child:before {
     content: counter(number) ".";
     margin-right: 0.5rem;
 }
