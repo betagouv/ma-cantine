@@ -19,7 +19,7 @@ const canteenBadge = "/static/images/badges/canteen.svg"
     </ObservatoryBadgeTitle>
     <div>
       <GraphPie
-        :stats="[25, 70, 5]"
+        :counts="[205, 110, 5000]"
         :legends="[
           'Nullam quis risus eget urna mollis ornare vel eu leo.',
           'Nullam quis risus eget us ornare vel eu leo.',

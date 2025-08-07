@@ -1,41 +1,50 @@
 <script setup>
 import { computed } from "vue"
 
-const props = defineProps(["stats", "legends"])
+const props = defineProps(["counts", "legends"])
 const colors = ["#A94645", "#C3992A", "#695240"]
-const statsOrderedDesc = computed(() => {
-  const unsortedArray = [...props.stats]
-  const sortedArray = unsortedArray.sort((first, second) => {
-    if (second < first) return -1
-    else if (second > first) return 1
-    else return 0
-  })
-  return sortedArray
+
+const total = computed(() => {
+  const allValues = [...props.counts]
+  return allValues.reduce((accumulator, currentValue) => accumulator + currentValue)
 })
 
-const findLegend = (value) => {
-  const unorderedIndex = props.stats.indexOf(value)
-  return props.legends[unorderedIndex]
-}
+const stats = computed(() => {
+  const unsortedStats = []
+  for (let i = 0; i < props.counts.length; i++) {
+    const stat = {
+      percent: Math.round((props.counts[i] / total.value) * 100),
+      legend: props.legends[i],
+      count: props.counts[i],
+    }
+    unsortedStats.push(stat)
+  }
+  const descStats = unsortedStats.sort((first, second) => {
+    if (second.count < first.count) return -1
+    else if (second.count > first.count) return 1
+    else return 0
+  })
+  return descStats
+})
 
-const generateBackground = () => {
+const background = computed(() => {
   const slices = []
-  for (let i = 0; i < statsOrderedDesc.value.length; i++) {
-    const previousValue = i === 0 ? 0 : statsOrderedDesc.value[i - 1]
-    const currentValue = statsOrderedDesc.value[i]
+  for (let i = 0; i < stats.value.length; i++) {
+    const previousValue = i === 0 ? 0 : stats.value[i - 1].percent
+    const currentValue = stats.value[i].percent
     const color = colors[i]
     slices.push(`${color} ${previousValue}% ${previousValue + currentValue}%`)
   }
   return `conic-gradient(${slices.join(",")})`
-}
+})
 </script>
 <template>
   <div class="graph-pie">
-    <div class="graph-pie__circle" :style="`background: ${generateBackground()}`"></div>
+    <div class="graph-pie__circle" :style="`background: ${background}`"></div>
     <div class="graph-pie__legends-container">
-      <div v-for="(value, index) in statsOrderedDesc" :key="index" class="graph-pie__legend fr-mb-2w">
-        <p class="fr-h6 fr-mb-1w">{{ value }}%</p>
-        <p class="fr-mb-0">{{ findLegend(value) }}</p>
+      <div v-for="stat in stats" :key="stat" class="graph-pie__legend fr-mb-2w">
+        <p class="fr-h6 fr-mb-1w">{{ stat.percent }}%</p>
+        <p class="fr-mb-0">Soit {{ stat.count }} cantines {{ stat.legend }}</p>
       </div>
     </div>
   </div>
