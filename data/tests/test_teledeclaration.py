@@ -16,7 +16,6 @@ date_in_last_teledeclaration_campaign = "2024-02-01"
 class TeledeclarationQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        """Create canteens for testing."""
         cls.valid_canteen_1 = CanteenFactory(siret="12345678901234", deletion_date=None, yearly_meal_count=100)
         cls.valid_canteen_2 = CanteenFactory(siren_unite_legale="123456789", deletion_date=None)
         cls.valid_canteen_3 = CanteenFactory(
@@ -36,7 +35,6 @@ class TeledeclarationQuerySetTest(TestCase):
             deletion_date=now().replace(month=3, day=1),
         )
 
-        """Create diagnostics and teledeclarations for testing."""
         for index, canteen in enumerate(
             [cls.valid_canteen_1, cls.valid_canteen_2, cls.valid_canteen_3, cls.valid_canteen_5_armee]
         ):
@@ -74,6 +72,9 @@ class TeledeclarationQuerySetTest(TestCase):
             canteen=cls.valid_canteen_4,
             value_total_ht=1000.00,
             value_bio_ht=200.00,
+            value_sustainable_ht=100.00,
+            value_externality_performance_ht=100.00,
+            value_egalim_others_ht=100.00,
         )
         user_correction_campaign = UserFactory.create()
         cls.valid_correction_td = Teledeclaration.create_from_diagnostic(
@@ -180,6 +181,12 @@ class TeledeclarationQuerySetTest(TestCase):
     def test_publicly_visible(self):
         self.assertEqual(Teledeclaration.objects.count(), 13)
         self.assertEqual(Teledeclaration.objects.publicly_visible().count(), 11)  # 2 belong to canteen_army
+
+    def test_with_appro_percent_stats(self):
+        teledeclarations = Teledeclaration.objects.with_appro_percent_stats()
+        td_1 = teledeclarations.get(id=self.valid_correction_td.id)
+        self.assertEqual(td_1.bio_percent, 20)
+        self.assertEqual(td_1.egalim_percent, 50)
 
 
 class TestTeledeclarationModelConstraintsTest(TestCase):

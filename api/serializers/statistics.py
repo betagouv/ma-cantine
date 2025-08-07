@@ -108,7 +108,7 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
     # percent of appro
     badge_querysets = badges_for_queryset(teledeclarations)
     data["appro_percent"] = (
-        int(badge_querysets["appro"].count() / data["teledeclarations_count"] * 100)
+        int(100 * badge_querysets["appro"].count() / data["teledeclarations_count"])
         if data["teledeclarations_count"]
         else 0
     )
