@@ -9,6 +9,7 @@ import ObservatoryNumbers from "@/components/ObservatoryNumbers.vue"
 import ObservatoryError from "@/components/ObservatoryError.vue"
 import ObservatoryPurchases from "@/components/ObservatoryPurchases.vue"
 import ObservatoryWarnings from "@/components/ObservatoryWarnings.vue"
+import ObservatoryCanteens from "@/components/ObservatoryCanteens.vue"
 
 /* Back to filters */
 const observatoryFilters = useTemplateRef("observatory-filters")
@@ -60,7 +61,10 @@ watchEffect(async () => {
         :teledeclarationsCount="stats.teledeclarationsCount"
         class="fr-mb-3w"
       />
-      <ObservatoryPurchases v-if="stats.egalimPercent !== null" :stats="stats" />
+      <template v-if="stats.egalimPercent !== null">
+        <ObservatoryPurchases :stats="stats" class="fr-card fr-mb-4w fr-p-5w fr-px-md-6w fr-pt-md-8w fr-pb-md-6w" />
+        <ObservatoryCanteens :stats="stats" class="fr-card fr-p-5w fr-px-md-6w fr-pt-md-8w fr-pb-md-6w" />
+      </template>
       <DsfrHighlight v-else :text="stats.notes.campaignInfo" class="fr-col-12 fr-col-md-8 fr-ml-0" />
     </template>
     <pre>{{ stats }}</pre>
