@@ -5,19 +5,16 @@ const props = defineProps(["counts", "percents", "legends"])
 const colors = ["#A94645", "#C3992A", "134CB6A", "#FFCA00", "#695240"]
 
 const stats = computed(() => {
-  const unsortedStats = []
+  const formattedStats = []
   for (let i = 0; i < props.percents.length; i++) {
-    const percent = props.percents[i]
-    if (percent !== 0) {
-      const stat = {
-        percent: percent,
-        legend: props.legends[i],
-        count: props.counts[i],
-      }
-      unsortedStats.push(stat)
+    const stat = {
+      percent: props.percents[i],
+      legend: props.legends[i],
+      count: props.counts[i],
     }
+    formattedStats.push(stat)
   }
-  const descStats = unsortedStats.sort((first, second) => {
+  const descStats = formattedStats.sort((first, second) => {
     if (second.count < first.count) return -1
     else if (second.count > first.count) return 1
     else return 0

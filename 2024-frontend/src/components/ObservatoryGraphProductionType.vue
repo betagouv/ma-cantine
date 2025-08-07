@@ -10,34 +10,38 @@ const storeFilters = useStoreFilters()
 const title = "Mode de production"
 
 /* Calculate graph props */
-const counts = computed(() => Object.values(props.productionTypes))
-const legends = computed(() => {
-  const legends = []
+const graph = computed(() => {
   const productionTypesNames = Object.keys(props.productionTypes)
-  for (let i = 0; i < productionTypesNames.length; i++) {
-    const value = productionTypesNames[i]
-    const index = cantines.productionType.findIndex((element) => element.apiName === value)
-    const legend = index > -1 ? cantines.productionType[index].hint : "Inconnu"
-    legends.push(legend)
-  }
-  return legends
-})
-const percents = computed(() => {
+  const counts = []
+  const legends = []
   const percents = []
-  for (let i = 0; i < counts.value.length; i++) {
-    const percent = Math.round((counts.value[i] / props.canteensCount) * 100)
-    percents.push(percent)
+  for (let i = 0; i < productionTypesNames.length; i++) {
+    const productionType = productionTypesNames[i]
+    const isEmpty = props.productionTypes[productionType] === 0
+    if (!isEmpty) {
+      const count = props.productionTypes[productionType]
+      const percent = Math.round((count / props.canteensCount) * 100)
+      const index = cantines.productionType.findIndex((element) => element.apiName === productionType)
+      const legend = index > -1 ? cantines.productionType[index].hint : "Inconnu"
+      percents.push(percent)
+      counts.push(count)
+      legends.push(legend)
+    }
   }
-  return percents
+  return {
+    counts,
+    legends,
+    percents,
+  }
 })
 
 /* Description */
 const getResultsDescription = () => {
   const results = []
-  for (let i = 0; i < counts.value.length; i++) {
-    const canteenCounts = counts.value[i]
+  for (let i = 0; i < graph.value.counts.length; i++) {
+    const canteenCounts = graph.value.counts[i]
     const canteen = canteenCounts > 1 ? "cantines" : "cantine"
-    results.push(`${percents.value[i]}% "${legends.value[i]}", soit ${counts.value[i]} ${canteen}`)
+    results.push(`${graph.value.percents[i]}% "${graph.value.legends[i]}" soit ${graph.value.counts[i]} ${canteen}`)
   }
   return results.join(", ")
 }
@@ -50,7 +54,7 @@ const description = computed(() => {
 
 <template>
   <h3 class="fr-h6 fr-mb-2w">{{ title }}</h3>
-  <GraphBase :valuesToVerify="[...counts, canteensCount]" :description="description">
-    <GraphPie :percents="percents" :counts="counts" :legends="legends" />
+  <GraphBase :valuesToVerify="[]" :description="description">
+    <GraphPie :percents="graph.percents" :counts="graph.counts" :legends="graph.legends" />
   </GraphBase>
 </template>
