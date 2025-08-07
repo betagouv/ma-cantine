@@ -21,7 +21,7 @@ const keyMeasureId = keyMeasures[0].id
     </ObservatoryBadgeTitle>
     <ol class="observatory-purchases__list-graphic ma-cantine--unstyled-list">
       <li class="observatory-purchases__graphic">
-        <ObservatoryGraphEgalim :percent="stats.approPercent" />
+        <ObservatoryGraphEgalim :approPercent="stats.approPercent" />
       </li>
       <li class="observatory-purchases__graphic">
         <ObservatoryGraphSustainable
