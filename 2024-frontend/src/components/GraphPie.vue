@@ -1,13 +1,13 @@
 <script setup>
 import { computed } from "vue"
 
-const props = defineProps(["counts", "legends", "total"])
+const props = defineProps(["counts", "percents", "legends"])
 const colors = ["#A94645", "#C3992A", "134CB6A", "#FFCA00", "#695240"]
 
 const stats = computed(() => {
   const unsortedStats = []
-  for (let i = 0; i < props.counts.length; i++) {
-    const percent = Math.round((props.counts[i] / props.total) * 100)
+  for (let i = 0; i < props.percents.length; i++) {
+    const percent = props.percents[i]
     if (percent !== 0) {
       const stat = {
         percent: percent,

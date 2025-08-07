@@ -17,11 +17,19 @@ const legends = computed(() => {
   }
   return legends
 })
+const percents = computed(() => {
+  const percents = []
+  for (let i = 0; i < counts.value.length; i++) {
+    const percent = Math.round((counts.value[i] / props.canteensCount) * 100)
+    percents.push(percent)
+  }
+  return percents
+})
 </script>
 
 <template>
   <h3 class="fr-h6 fr-mb-2w">{{ title }}</h3>
   <GraphBase :valuesToVerify="[...counts, canteensCount]">
-    <GraphPie :counts="counts" :total="canteensCount" :legends="legends" />
+    <GraphPie :percents="percents" :counts="counts" :legends="legends" />
   </GraphBase>
 </template>
