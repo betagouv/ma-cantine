@@ -198,22 +198,24 @@ class PublishedCanteenFilterSet(django_filters.FilterSet):
 
 
 def filter_by_diagnostic_params(queryset, query_params):
-    bio = query_params.get("min_portion_bio")
-    combined = query_params.get("min_portion_combined")
-    badge = query_params.get("badge")
-    appro_badge_requested = badge == "appro"
-    if bio or combined or appro_badge_requested:
+    param_bio_rate = query_params.get("min_portion_bio")
+    param_combined_rate = query_params.get("min_portion_combined")
+    param_badge = query_params.get("badge")
+    appro_badge_requested = param_badge == "appro"
+    if param_bio_rate or param_combined_rate or appro_badge_requested:
         publication_year = date.today().year - 1
         qs_diag = Diagnostic.objects.is_filled().filter(year=publication_year)
-        if bio or appro_badge_requested:
+        if param_bio_rate or appro_badge_requested:
             qs_diag = qs_diag.annotate(
-                bio_percent=Cast(Sum("value_bio_ht", default=0) / Sum("value_total_ht"), FloatField())
+                bio_percent=100 * Cast(Sum("value_bio_ht", default=0) / Sum("value_total_ht"), FloatField())
             )
-            if bio:
-                qs_diag = qs_diag.filter(bio_percent__gte=bio)
-        if combined or appro_badge_requested:
+            if param_bio_rate:
+                print("in param_bio")
+                qs_diag = qs_diag.filter(bio_percent__gte=100 * float(param_bio_rate))
+        if param_combined_rate or appro_badge_requested:
             qs_diag = qs_diag.annotate(
-                egalim_percent=Cast(
+                egalim_percent=100
+                * Cast(
                     (
                         Sum("value_bio_ht", default=0)
                         + Sum("value_sustainable_ht", default=0)
@@ -224,8 +226,8 @@ def filter_by_diagnostic_params(queryset, query_params):
                     FloatField(),
                 )
             )
-            if combined:
-                qs_diag = qs_diag.filter(egalim_percent__gte=combined)
+            if param_combined_rate:
+                qs_diag = qs_diag.filter(egalim_percent__gte=100 * float(param_combined_rate))
         if appro_badge_requested:
             qs_diag = qs_diag.egalim_objectives_reached().distinct()
         canteen_ids = qs_diag.values_list("canteen", flat=True)

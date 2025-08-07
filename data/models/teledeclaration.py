@@ -124,12 +124,12 @@ class TeledeclarationQuerySet(models.QuerySet):
         Note: we use Sum/default instead of F to better manage None values.
         """
         return self.annotate(
-            bio_percent=100 * Sum("value_bio_ht_agg", default=0) / Sum("value_total_ht", default=0),
+            bio_percent=100 * Sum("value_bio_ht_agg", default=0) / Sum("value_total_ht"),
             value_egalim_ht_agg=Sum("value_bio_ht_agg", default=0)
             + Sum("value_sustainable_ht_agg", default=0)
             + Sum("value_externality_performance_ht_agg", default=0)
             + Sum("value_egalim_others_ht_agg", default=0),
-            egalim_percent=100 * F("value_egalim_ht_agg") / Sum("value_total_ht", default=0),
+            egalim_percent=100 * F("value_egalim_ht_agg") / Sum("value_total_ht"),
         )
 
     def egalim_objectives_reached(self):
