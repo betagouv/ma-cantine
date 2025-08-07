@@ -210,7 +210,6 @@ def filter_by_diagnostic_params(queryset, query_params):
                 bio_percent=100 * Cast(Sum("value_bio_ht", default=0) / Sum("value_total_ht"), FloatField())
             )
             if param_bio_rate:
-                print("in param_bio")
                 qs_diag = qs_diag.filter(bio_percent__gte=100 * float(param_bio_rate))
         if param_combined_rate or appro_badge_requested:
             qs_diag = qs_diag.annotate(

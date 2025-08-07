@@ -48,6 +48,14 @@ EGALIM_OBJECTIVES = {
 }
 
 
+def get_egalim_group(region_list):
+    if region_list and len(region_list):
+        for group_name, details in EGALIM_OBJECTIVES.items():
+            if any(region in details["region_list"] for region in region_list):
+                return group_name
+    return "hexagone"  # default
+
+
 CAMPAIGN_DATES = {
     2021: {
         "teledeclaration_start_date": datetime(2022, 7, 16, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),

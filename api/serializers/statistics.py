@@ -156,7 +156,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
         return data
 
     @staticmethod
-    def generate_notes(year):
+    def generate_notes(year, egalim_group):
         data = {}
         data["warnings"] = [
             "Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
@@ -166,8 +166,9 @@ class CanteenStatisticsSerializer(serializers.Serializer):
             locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
             data["canteen_count_description"] = f"Au {canteen_created_before_date.strftime('%-d %B %Y')}"
         # egalim objectives
-        data["bio_percent_objective"] = EGALIM_OBJECTIVES["hexagone"]["bio_percent"]
-        data["egalim_percent_objective"] = EGALIM_OBJECTIVES["hexagone"]["egalim_percent"]
+        data["egalim_group"] = egalim_group
+        data["bio_percent_objective"] = EGALIM_OBJECTIVES[egalim_group]["bio_percent"]
+        data["egalim_percent_objective"] = EGALIM_OBJECTIVES[egalim_group]["egalim_percent"]
         return data
 
     @staticmethod
