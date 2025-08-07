@@ -13,7 +13,7 @@ const canteenBadge = "/static/images/badges/canteen.svg"
       color="#000090"
       title="Les restaurants collectifs du territoire"
     >
-      Tous les restaurants collectifs on l'obligation de s'inscrire sur ma cantine et de télédéclarer, chaque année,
+      Tous les restaurants collectifs ont l'obligation de s'inscrire sur ma cantine et de télédéclarer, chaque année,
       leur bilan annuel de l'année précédente.
     </ObservatoryBadgeTitle>
   </div>
