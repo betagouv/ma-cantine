@@ -26,6 +26,27 @@ address {
     padding-left: 0;
 }
 
+.ma-cantine--ordered-list {
+    counter-reset: number;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+}
+
+.ma-cantine--ordered-list li {
+    counter-increment: number;
+
+}
+.ma-cantine--ordered-list li::marker {
+    content: initial;
+}
+
+.ma-cantine--ordered-list h3::before {
+    content: counter(number) ".";
+    margin-right: 0.5rem;
+}
+
+
 /* STICKY */
 .ma-cantine--sticky__container {
     position: relative !important;
