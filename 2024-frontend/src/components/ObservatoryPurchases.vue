@@ -5,6 +5,7 @@ import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import ObservatoryGraphSustainable from "@/components/ObservatoryGraphSustainable.vue"
 import ObservatoryGraphFishMeat from "@/components/ObservatoryGraphFishMeat.vue"
 import ObservatoryGraphMeatFrance from "@/components/ObservatoryGraphMeatFrance.vue"
+import ObservatoryGraphEgalim from "@/components/ObservatoryGraphEgalim.vue"
 
 defineProps(["stats"])
 const approBadge = "/static/images/badges/appro.svg"
@@ -19,6 +20,9 @@ const keyMeasureId = keyMeasures[0].id
       <AppLinkRouter :to="{ name: 'KeyMeasurePage', params: { id: keyMeasureId } }" title="En savoir plus sur la loi" />
     </ObservatoryBadgeTitle>
     <ol class="observatory-purchases__list-graphic ma-cantine--unstyled-list">
+      <li class="observatory-purchases__graphic">
+        <ObservatoryGraphEgalim :percent="stats.approPercent" />
+      </li>
       <li class="observatory-purchases__graphic">
         <ObservatoryGraphSustainable
           :bioPercent="stats.bioPercent"
