@@ -12,7 +12,11 @@ from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
 from data.models import AuthenticationMethodHistoricalRecords, Canteen, Diagnostic
-from macantine.utils import CAMPAIGN_DATES, is_in_teledeclaration_or_correction
+from macantine.utils import (
+    CAMPAIGN_DATES,
+    EGALIM_OBJECTIVES,
+    is_in_teledeclaration_or_correction,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -126,6 +130,29 @@ class TeledeclarationQuerySet(models.QuerySet):
             + Sum("value_externality_performance_ht_agg", default=0)
             + Sum("value_egalim_others_ht_agg", default=0),
             egalim_percent=100 * F("value_egalim_ht_agg") / Sum("value_total_ht", default=0),
+        )
+
+    def egalim_objectives_reached(self):
+        return self.filter(
+            Q(
+                bio_percent__gte=EGALIM_OBJECTIVES["hexagone"]["bio_percent"],
+                egalim_percent__gte=EGALIM_OBJECTIVES["hexagone"]["egalim_percent"],
+            )
+            | Q(
+                canteen__region__in=EGALIM_OBJECTIVES["groupe_1"]["region_list"],
+                bio_percent__gte=EGALIM_OBJECTIVES["groupe_1"]["bio_percent"],
+                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_1"]["egalim_percent"],
+            )
+            | Q(
+                canteen__region__in=EGALIM_OBJECTIVES["groupe_2"]["region_list"],
+                bio_percent__gte=EGALIM_OBJECTIVES["groupe_2"]["bio_percent"],
+                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_2"]["egalim_percent"],
+            )
+            | Q(
+                canteen__region__in=EGALIM_OBJECTIVES["groupe_3"]["region_list"],
+                bio_percent__gte=EGALIM_OBJECTIVES["groupe_3"]["bio_percent"],
+                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_3"]["egalim_percent"],
+            )
         )
 
 
