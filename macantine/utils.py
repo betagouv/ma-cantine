@@ -28,10 +28,17 @@ def convert_date_string_to_datetime(date_string, time_start_or_end="start"):
     return None
 
 
-# TODO: improve (depends on the year & region)
+# https://ma-cantine.agriculture.gouv.fr/blog/16/
+# TODO: improve (depends on the year)
+# groupe 0 : hexagone
+# groupe 1 : Guadeloupe, Guyane, Martinique, La Réunion, Saint-Martin
+# groupe 2 : Mayotte
+# groupe 3 : Saint-Pierre-et-Miquelon
 EGALIM_OBJECTIVES = {
-    "bio_percent": 20,
-    "egalim_percent": 50,
+    "hexagone": {"bio_percent": 20, "egalim_percent": 50},
+    "groupe_1": {"bio_percent": 5, "egalim_percent": 20},
+    "groupe_2": {"bio_percent": 2, "egalim_percent": 5},
+    "groupe_3": {"bio_percent": 10, "egalim_percent": 30},
 }
 
 

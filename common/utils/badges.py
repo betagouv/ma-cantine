@@ -18,8 +18,8 @@ def badges_for_queryset(teledeclaration_year_queryset):
         # should have a group 3 with Saint-Pierre-et-Miquelon
         badge_querysets["appro"] = teledeclaration_year_queryset.filter(
             Q(
-                bio_percent__gte=EGALIM_OBJECTIVES["bio_percent"],
-                egalim_percent__gte=EGALIM_OBJECTIVES["egalim_percent"],
+                bio_percent__gte=EGALIM_OBJECTIVES["hexagone"]["bio_percent"],
+                egalim_percent__gte=EGALIM_OBJECTIVES["hexagone"]["egalim_percent"],
             )
             | Q(canteen__region__in=group_1, bio_percent__gte=5, egalim_percent__gte=20)
             | Q(canteen__department=Department.saint_martin, bio_percent__gte=5, egalim_percent__gte=20)
