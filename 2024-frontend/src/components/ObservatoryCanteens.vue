@@ -1,5 +1,6 @@
 <script setup>
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
+import GraphPie from "@/components/GraphPie.vue"
 defineProps(["stats"])
 
 const canteenBadge = "/static/images/badges/canteen.svg"
@@ -16,5 +17,8 @@ const canteenBadge = "/static/images/badges/canteen.svg"
       Tous les restaurants collectifs ont l'obligation de s'inscrire sur ma cantine et de télédéclarer, chaque année,
       leur bilan annuel de l'année précédente.
     </ObservatoryBadgeTitle>
+    <div>
+      <GraphPie :stats="[25, 70, 5]" />
+    </div>
   </div>
 </template>
