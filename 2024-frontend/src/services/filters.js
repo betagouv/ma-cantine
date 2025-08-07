@@ -49,9 +49,11 @@ const getCharacteristicsOptions = () => {
   })
 
   const productionTypeOptions = cantines.productionType.map((option) => {
-    option.hint = ""
-    option.value = { value: option.value, label: option.label }
-    return option
+    const newOption = {
+      value: { value: option.value, label: option.label },
+      label: option.label,
+    }
+    return newOption
   })
 
   const characteristicsOptions = {
