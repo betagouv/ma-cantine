@@ -37,7 +37,7 @@ const background = computed(() => {
 })
 </script>
 <template>
-  <div class="graph-pie">
+  <div class="graph-pie fr-mt-4w fr-mb-3w">
     <div class="graph-pie__circle" :style="`background: ${background}`"></div>
     <div class="graph-pie__legends-container">
       <div v-for="stat in stats" :key="stat" class="graph-pie__legend fr-mb-2w">
