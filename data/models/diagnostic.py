@@ -6,10 +6,8 @@ from django.db import models
 from django.db.models import Q
 from simple_history.models import HistoricalRecords
 
-from data.department_choices import Department
 from data.fields import ChoiceArrayField
 from data.models import Canteen
-from data.region_choices import Region
 from data.utils import (
     CreationSource,
     get_diagnostic_lower_limit_year,
@@ -17,6 +15,7 @@ from data.utils import (
     make_optional_positive_decimal_field,
     sum_int_with_potential_null,
 )
+from macantine.utils import EGALIM_OBJECTIVES
 
 
 def canteen_has_siret_or_siren_unite_legale_query():
@@ -33,6 +32,29 @@ class DiagnosticQuerySet(models.QuerySet):
 
     def is_filled(self):
         return self.filter(value_total_ht__gt=0)
+
+    def egalim_objectives_reached(self):
+        return self.filter(
+            Q(
+                bio_percent__gte=EGALIM_OBJECTIVES["hexagone"]["bio_percent"],
+                egalim_percent__gte=EGALIM_OBJECTIVES["hexagone"]["egalim_percent"],
+            )
+            | Q(
+                canteen__region__in=EGALIM_OBJECTIVES["groupe_1"]["region_list"],
+                bio_percent__gte=EGALIM_OBJECTIVES["groupe_1"]["bio_percent"],
+                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_1"]["egalim_percent"],
+            )
+            | Q(
+                canteen__region__in=EGALIM_OBJECTIVES["groupe_2"]["region_list"],
+                bio_percent__gte=EGALIM_OBJECTIVES["groupe_2"]["bio_percent"],
+                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_2"]["egalim_percent"],
+            )
+            | Q(
+                canteen__region__in=EGALIM_OBJECTIVES["groupe_3"]["region_list"],
+                bio_percent__gte=EGALIM_OBJECTIVES["groupe_3"]["bio_percent"],
+                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_3"]["egalim_percent"],
+            )
+        )
 
 
 class Diagnostic(models.Model):
@@ -1202,33 +1224,28 @@ class Diagnostic(models.Model):
     def appro_badge(self) -> bool | None:
         total = self.value_total_ht
         if total:
-            bio_share = (self.value_bio_ht or 0) / total
-            combined_share = (
+            bio_percent = (self.value_bio_ht or 0) / total
+            egalim_percent = (
                 (self.value_bio_ht or 0)
                 + (self.value_sustainable_ht or 0)
                 + (self.value_externality_performance_ht or 0)
                 + (self.value_egalim_others_ht or 0)
             ) / total
 
-            bio_threshold = 20
-            combined_threshold = 50
-            group_1_regions = [Region.guadeloupe, Region.martinique, Region.guyane, Region.la_reunion]
-            group_2_regions = [Region.mayotte]
-            if self.canteen.region in group_1_regions or self.canteen.department == Department.saint_martin:
-                # group 1
-                bio_threshold = 5
-                combined_threshold = 20
-            elif self.canteen.region in group_2_regions:
-                # group 2
-                bio_threshold = 2
-                combined_threshold = 5
-            elif self.canteen.department == Department.saint_pierre_et_miquelon:
-                # group 3
-                bio_threshold = 1
-                combined_threshold = 3
+            bio_threshold = EGALIM_OBJECTIVES["hexagone"]["bio_percent"]
+            combined_threshold = EGALIM_OBJECTIVES["hexagone"]["egalim_percent"]
+            if self.canteen.region in EGALIM_OBJECTIVES["groupe_1"]["region_list"]:
+                bio_threshold = EGALIM_OBJECTIVES["groupe_1"]["bio_percent"]
+                combined_threshold = EGALIM_OBJECTIVES["groupe_1"]["egalim_percent"]
+            elif self.canteen.region in EGALIM_OBJECTIVES["groupe_2"]["region_list"]:
+                bio_threshold = EGALIM_OBJECTIVES["groupe_2"]["bio_percent"]
+                combined_threshold = EGALIM_OBJECTIVES["groupe_2"]["egalim_percent"]
+            elif self.canteen.region in EGALIM_OBJECTIVES["groupe_3"]["region_list"]:
+                bio_threshold = EGALIM_OBJECTIVES["groupe_3"]["bio_percent"]
+                combined_threshold = EGALIM_OBJECTIVES["groupe_3"]["egalim_percent"]
 
             # * 100 to get around floating point errors when we are on the cusp
-            if bio_share * 100 >= bio_threshold and combined_share * 100 >= combined_threshold:
+            if bio_percent * 100 >= bio_threshold and egalim_percent * 100 >= combined_threshold:
                 return True
         if self.tunnel_appro:
             return False
