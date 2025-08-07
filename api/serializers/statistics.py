@@ -166,8 +166,8 @@ class CanteenStatisticsSerializer(serializers.Serializer):
             locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
             data["canteen_count_description"] = f"Au {canteen_created_before_date.strftime('%-d %B %Y')}"
         # egalim objectives
-        data["bio_percent_objective"] = EGALIM_OBJECTIVES["bio_percent"]
-        data["egalim_percent_objective"] = EGALIM_OBJECTIVES["egalim_percent"]
+        data["bio_percent_objective"] = EGALIM_OBJECTIVES["hexagone"]["bio_percent"]
+        data["egalim_percent_objective"] = EGALIM_OBJECTIVES["hexagone"]["egalim_percent"]
         return data
 
     @staticmethod

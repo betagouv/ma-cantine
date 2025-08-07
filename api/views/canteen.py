@@ -56,9 +56,7 @@ from common.api.recherche_entreprises import (
     fetch_geo_data_from_siret,
 )
 from common.utils import send_mail
-from data.department_choices import Department
 from data.models import Canteen, Diagnostic, ManagerInvitation, Sector
-from data.region_choices import Region
 from data.utils import CreationSource, has_charfield_missing_query
 
 logger = logging.getLogger(__name__)
@@ -200,22 +198,24 @@ class PublishedCanteenFilterSet(django_filters.FilterSet):
 
 
 def filter_by_diagnostic_params(queryset, query_params):
-    bio = query_params.get("min_portion_bio")
-    combined = query_params.get("min_portion_combined")
-    badge = query_params.get("badge")
-    appro_badge_requested = badge == "appro"
-    if bio or combined or appro_badge_requested:
+    param_bio_rate = query_params.get("min_portion_bio")
+    param_combined_rate = query_params.get("min_portion_combined")
+    param_badge = query_params.get("badge")
+    appro_badge_requested = param_badge == "appro"
+    if param_bio_rate or param_combined_rate or appro_badge_requested:
         publication_year = date.today().year - 1
         qs_diag = Diagnostic.objects.is_filled().filter(year=publication_year)
-        if bio or appro_badge_requested:
+        if param_bio_rate or appro_badge_requested:
             qs_diag = qs_diag.annotate(
-                bio_share=Cast(Sum("value_bio_ht", default=0) / Sum("value_total_ht"), FloatField())
+                bio_percent=100 * Cast(Sum("value_bio_ht", default=0) / Sum("value_total_ht"), FloatField())
             )
-            if bio:
-                qs_diag = qs_diag.filter(bio_share__gte=bio)
-        if combined or appro_badge_requested:
+            if param_bio_rate:
+                print("in param_bio")
+                qs_diag = qs_diag.filter(bio_percent__gte=100 * float(param_bio_rate))
+        if param_combined_rate or appro_badge_requested:
             qs_diag = qs_diag.annotate(
-                combined_share=Cast(
+                egalim_percent=100
+                * Cast(
                     (
                         Sum("value_bio_ht", default=0)
                         + Sum("value_sustainable_ht", default=0)
@@ -226,22 +226,10 @@ def filter_by_diagnostic_params(queryset, query_params):
                     FloatField(),
                 )
             )
-            if combined:
-                qs_diag = qs_diag.filter(combined_share__gte=combined)
+            if param_combined_rate:
+                qs_diag = qs_diag.filter(egalim_percent__gte=100 * float(param_combined_rate))
         if appro_badge_requested:
-            group_1 = [Region.guadeloupe, Region.martinique, Region.guyane, Region.la_reunion]
-            group_2 = [Region.mayotte]
-            qs_diag = qs_diag.filter(
-                Q(combined_share__gte=0.5, bio_share__gte=0.2)
-                | Q(canteen__region__in=group_1, combined_share__gte=0.2, bio_share__gte=0.05)
-                | Q(canteen__department=Department.saint_martin, combined_share__gte=0.2, bio_share__gte=0.05)
-                | Q(canteen__region__in=group_2, combined_share__gte=0.05, bio_share__gte=0.02)
-                | Q(
-                    canteen__department=Department.saint_pierre_et_miquelon,
-                    combined_share__gte=0.3,
-                    bio_share__gte=0.1,
-                )
-            ).distinct()
+            qs_diag = qs_diag.egalim_objectives_reached().distinct()
         canteen_ids = qs_diag.values_list("canteen", flat=True)
         canteen_sirets = qs_diag.exclude(has_charfield_missing_query("canteen__siret")).values_list(
             "canteen__siret", flat=True

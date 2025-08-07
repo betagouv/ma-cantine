@@ -6,6 +6,8 @@ import redis as r
 from django.conf import settings
 from django.utils import timezone
 
+from data.region_choices import Region
+
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
@@ -28,10 +30,21 @@ def convert_date_string_to_datetime(date_string, time_start_or_end="start"):
     return None
 
 
-# TODO: improve (depends on the year & region)
+# https://ma-cantine.agriculture.gouv.fr/blog/16/
+# TODO: improve (depends on the year)
+# groupe 0 : hexagone
+# groupe 1 : Guadeloupe, Guyane, Martinique, La Réunion, Saint-Martin
+# groupe 2 : Mayotte
+# groupe 3 : Saint-Pierre-et-Miquelon
 EGALIM_OBJECTIVES = {
-    "bio_percent": 20,
-    "egalim_percent": 50,
+    "hexagone": {"region_list": [], "bio_percent": 20, "egalim_percent": 50},
+    "groupe_1": {
+        "region_list": [Region.guadeloupe, Region.martinique, Region.guyane, Region.la_reunion, Region.saint_martin],
+        "bio_percent": 5,
+        "egalim_percent": 20,
+    },
+    "groupe_2": {"region_list": [Region.mayotte], "bio_percent": 2, "egalim_percent": 5},
+    "groupe_3": {"region_list": [Region.saint_pierre_et_miquelon], "bio_percent": 10, "egalim_percent": 30},
 }
 
 
