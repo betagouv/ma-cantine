@@ -18,7 +18,14 @@ const canteenBadge = "/static/images/badges/canteen.svg"
       leur bilan annuel de l'année précédente.
     </ObservatoryBadgeTitle>
     <div>
-      <GraphPie :stats="[25, 70, 5]" />
+      <GraphPie
+        :stats="[25, 70, 5]"
+        :legends="[
+          'Nullam quis risus eget urna mollis ornare vel eu leo.',
+          'Nullam quis risus eget us ornare vel eu leo.',
+          'Nullam quis risus eget.',
+        ]"
+      />
     </div>
   </div>
 </template>
