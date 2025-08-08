@@ -1,11 +1,13 @@
 {
   "economicModel": [
     {
+      "apiName": "public",
       "hint": "Tout restaurant sous la responsabilité d’une personne morale de droit public, qu’il soit opéré en gestion directe ou en gestion concédée (notamment avec une société de restauration collective privée). Restaurant sous la responsabilité directe ou indirecte (via association de gestion) d’une structure publique d’État (administration centrale, services déconcentrés et opérateurs dont établissements publics), d’une collectivité (commune, EPCI, département, région), ou de la fonction publique hospitalière.  ",
       "label": "Public",
       "value": "public"
     },
     {
+      "apiName": "private",
       "hint": "Restaurant sous la responsabilité d’une structure privée : entreprise, association (hors associations de gestion d’un restaurant de structure publique), établissement scolaire privé, etc.",
       "label": "Privé",
       "value": "private"

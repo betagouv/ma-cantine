@@ -1,7 +1,44 @@
 <script setup>
-defineProps(["economicModels", "canteensCount"])
+import { computed } from "vue"
+import GraphPie from "@/components/GraphPie.vue"
+import GraphBase from "@/components/GraphBase.vue"
+import cantines from "@/data/cantines.json"
+
+const props = defineProps(["economicModels", "canteensCount"])
 const title = "Type d'établissement"
+
+/* Calculate graph props */
+const graph = computed(() => {
+  const economicModelsNames = Object.keys(props.economicModels)
+  const legends = []
+  const percents = []
+  for (let i = 0; i < economicModelsNames.length; i++) {
+    const economicModel = economicModelsNames[i]
+    const isEmpty = props.economicModels[economicModel] === 0
+    if (!isEmpty) {
+      const count = props.economicModels[economicModel]
+      const percent = Math.round((count / props.canteensCount) * 100)
+      const index = cantines.economicModel.findIndex((element) => element.apiName === economicModel)
+      const canteen = count > 1 ? "cantines" : "cantine"
+      const type = index > -1 ? `Établissement ${cantines.economicModel[index].label.toLowerCase()}` : "Inconnu"
+      const legend = `${type} soit ${count} ${canteen}`
+      percents.push(percent)
+      legends.push(legend)
+    }
+  }
+  if (percents.length === 0) {
+    percents.push(100)
+    legends.push("Inconnu")
+  }
+  return {
+    legends,
+    percents,
+  }
+})
 </script>
 <template>
   <h3 class="fr-h6 fr-mb-2w">{{ title }}</h3>
+  <GraphBase :valuesToVerify="graph.percents">
+    <GraphPie :percents="graph.percents" :legends="graph.legends" />
+  </GraphBase>
 </template>
