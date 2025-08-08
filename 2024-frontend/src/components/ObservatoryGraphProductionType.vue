@@ -54,7 +54,7 @@ const description = computed(() => {
 
 <template>
   <h3 class="fr-h6 fr-mb-2w">{{ title }}</h3>
-  <GraphBase :valuesToVerify="[]" :description="description">
+  <GraphBase :valuesToVerify="graph.percents" :description="description">
     <GraphPie :percents="graph.percents" :counts="graph.counts" :legends="graph.legends" />
   </GraphBase>
 </template>
