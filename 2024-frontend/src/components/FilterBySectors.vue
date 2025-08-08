@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue"
+import { ref, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import { getSectorsOptions } from "@/services/filters"
@@ -11,6 +11,10 @@ const route = useRoute()
 
 /* Get sectors */
 const sectors = ref([])
+getSectorsOptions().then((response) => {
+  sectors.value = response
+  updateParamsFromQuery(response)
+})
 
 /* Search */
 const search = ref("")
@@ -25,18 +29,15 @@ const options = computed(() => {
   return searchedSectors
 })
 
-/* Save from url while waiting for sectors */
-onMounted(() => {
-  const query = route.query
-  getSectorsOptions().then((response) => {
-    sectors.value = response
-    if (query.sectors) {
-      const hasMultipleValues = typeof query.sectors !== "string"
-      const sectorsId = hasMultipleValues ? query.sectors.map((value) => Number(value)) : [Number(query.sectors)]
-      storeFilters.setFromQuery("sectors", sectorsId, response)
-    }
-  })
-})
+/* Prefill filters from query */
+const query = route.query
+const updateParamsFromQuery = (allSectors) => {
+  if (query.sectors) {
+    const hasMultipleValues = typeof query.sectors !== "string"
+    const sectorsId = hasMultipleValues ? query.sectors.map((value) => Number(value)) : [Number(query.sectors)]
+    storeFilters.setFromQuery("sectors", sectorsId, allSectors)
+  }
+}
 </script>
 
 <template>

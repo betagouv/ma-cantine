@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue"
+import { ref, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import { getPATOptionsFromSearch } from "@/services/filters"
@@ -16,12 +16,10 @@ const options = computed(() => {
   return getPATOptionsFromSearch(search.value)
 })
 
-/* Select from url */
-onMounted(() => {
-  const query = route.query
-  const allPATs = getPATOptionsFromSearch()
-  if (query.pats) storeFilters.setFromQuery("pats", query.pats, allPATs)
-})
+/* Prefill filters from query */
+const query = route.query
+const allPATs = getPATOptionsFromSearch()
+if (query.pats) storeFilters.setFromQuery("pats", query.pats, allPATs)
 </script>
 <template>
   <FilterByBase label="PAT">

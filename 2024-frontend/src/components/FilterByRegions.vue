@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue"
+import { ref, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import { getRegionsOptionsFromSearch } from "@/services/filters"
@@ -17,12 +17,10 @@ const options = computed(() => {
   return getRegionsOptionsFromSearch(search.value)
 })
 
-/* Select from url */
-onMounted(() => {
-  const query = route.query
-  const allRegions = getRegionsOptionsFromSearch()
-  if (query.regions) storeFilters.setFromQuery("regions", query.regions, allRegions)
-})
+/* Prefill filters from query */
+const query = route.query
+const allRegions = getRegionsOptionsFromSearch()
+if (query.regions) storeFilters.setFromQuery("regions", query.regions, allRegions)
 </script>
 
 <template>

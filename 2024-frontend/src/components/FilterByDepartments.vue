@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue"
+import { ref, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import { getDepartmentsOptionsFromSearch } from "@/services/filters"
@@ -17,12 +17,10 @@ const options = computed(() => {
   return getDepartmentsOptionsFromSearch(search.value)
 })
 
-/* Select from url */
-onMounted(() => {
-  const query = route.query
-  const allDepartments = getDepartmentsOptionsFromSearch()
-  if (query.departments) storeFilters.setFromQuery("departments", query.departments, allDepartments)
-})
+/* Prefill filters from query */
+const query = route.query
+const allDepartments = getDepartmentsOptionsFromSearch()
+if (query.departments) storeFilters.setFromQuery("departments", query.departments, allDepartments)
 </script>
 
 <template>

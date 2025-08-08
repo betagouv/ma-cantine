@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue"
+import { ref, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import { getEPCIOptionsFromSearch } from "@/services/filters"
@@ -16,12 +16,10 @@ const options = computed(() => {
   return getEPCIOptionsFromSearch(search.value)
 })
 
-/* Select from url */
-onMounted(() => {
-  const query = route.query
-  const allEPCIs = getEPCIOptionsFromSearch()
-  if (query.epcis) storeFilters.setFromQuery("epcis", query.epcis, allEPCIs)
-})
+/* Prefill filters from query */
+const query = route.query
+const allEPCIs = getEPCIOptionsFromSearch()
+if (query.epcis) storeFilters.setFromQuery("epcis", query.epcis, allEPCIs)
 </script>
 <template>
   <FilterByBase label="EPCI">

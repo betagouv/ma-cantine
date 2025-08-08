@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue"
+import { ref, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import { getCitiesOptionsFromSearch } from "@/services/filters"
@@ -16,12 +16,10 @@ const options = computed(() => {
   return getCitiesOptionsFromSearch(search.value)
 })
 
-/* Select from url */
-onMounted(() => {
-  const query = route.query
-  const allCities = getCitiesOptionsFromSearch()
-  if (query.cities) storeFilters.setFromQuery("cities", query.cities, allCities)
-})
+/* Prefill filters from query */
+const query = route.query
+const allCities = getCitiesOptionsFromSearch()
+if (query.cities) storeFilters.setFromQuery("cities", query.cities, allCities)
 </script>
 <template>
   <FilterByBase label="Communes">

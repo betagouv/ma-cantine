@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue"
+import { ref, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import { getYearsOptions } from "@/services/filters"
@@ -10,11 +10,9 @@ const storeFilters = useStoreFilters()
 const yearSelected = computed(() => storeFilters.getParam("year"))
 const route = useRoute()
 
-/* Select from url */
-onMounted(() => {
-  const query = route.query
-  if (query.year) storeFilters.set("year", Number(query.year))
-})
+/* Prefill filters from query */
+const query = route.query
+if (query.year) storeFilters.set("year", Number(query.year))
 </script>
 
 <template>

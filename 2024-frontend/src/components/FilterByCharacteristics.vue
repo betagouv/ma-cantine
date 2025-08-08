@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue"
+import { ref, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import { getCharacteristicsOptions } from "@/services/filters"
@@ -12,15 +12,13 @@ const options = ref(getCharacteristicsOptions())
 const storeFilters = useStoreFilters()
 const route = useRoute()
 
-/* Select from url */
-onMounted(() => {
-  const query = route.query
-  if (query.economicModel) storeFilters.setFromQuery("economicModel", query.economicModel, options.value.economicModel)
-  if (query.managementType)
-    storeFilters.setFromQuery("managementType", query.managementType, options.value.managementType)
-  if (query.productionType)
-    storeFilters.setFromQuery("productionType", query.productionType, options.value.productionType)
-})
+/* Prefill filters from query */
+const query = route.query
+if (query.economicModel) storeFilters.setFromQuery("economicModel", query.economicModel, options.value.economicModel)
+if (query.managementType)
+  storeFilters.setFromQuery("managementType", query.managementType, options.value.managementType)
+if (query.productionType)
+  storeFilters.setFromQuery("productionType", query.productionType, options.value.productionType)
 </script>
 
 <template>
