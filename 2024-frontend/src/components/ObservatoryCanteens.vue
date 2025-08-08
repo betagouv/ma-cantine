@@ -1,6 +1,7 @@
 <script setup>
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import ObservatoryGraphProductionType from "@/components/ObservatoryGraphProductionType.vue"
+import ObservatoryGraphEconomicModel from "@/components/ObservatoryGraphEconomicModel.vue"
 
 defineProps(["stats"])
 const canteenBadge = "/static/images/badges/canteen.svg"
@@ -20,6 +21,9 @@ const canteenBadge = "/static/images/badges/canteen.svg"
     <ol class="ma-cantine--ordered-list ma-cantine--unstyled-list">
       <li>
         <ObservatoryGraphProductionType :productionTypes="stats.productionTypes" :canteensCount="stats.canteenCount" />
+      </li>
+      <li>
+        <ObservatoryGraphEconomicModel :economicModels="stats.economicModels" :canteensCount="stats.canteenCount" />
       </li>
     </ol>
   </div>
