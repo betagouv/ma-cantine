@@ -82,7 +82,18 @@ const useStoreFilters = defineStore("filters", () => {
     return selection.value.map((item) => item.label).join(", ")
   }
 
-  /* Action to get params readable for url query */
+  /* Actions for sharing params and query */
+  function setFromQuery(name, query, options) {
+    const valuesInQuery = []
+    const hasMultipleValue = typeof query !== "string"
+    const params = hasMultipleValue ? query : [query]
+    for (let i = 0; i < params.length; i++) {
+      const index = options.findIndex((option) => option.value.value === params[i])
+      valuesInQuery.push(options[index].value)
+      set(name, valuesInQuery)
+    }
+  }
+
   function getQueryParams() {
     const keys = Object.keys(params)
     let query = {}
@@ -95,7 +106,7 @@ const useStoreFilters = defineStore("filters", () => {
     return query
   }
 
-  return { set, remove, getSelection, getSelectionLabels, getParam, getAllParams, getQueryParams }
+  return { set, remove, getSelection, getSelectionLabels, getParam, getAllParams, getQueryParams, setFromQuery }
 })
 
 export { useStoreFilters }
