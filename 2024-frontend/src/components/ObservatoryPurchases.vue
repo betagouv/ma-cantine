@@ -19,11 +19,11 @@ const keyMeasureId = keyMeasures[0].id
       de qualité dans la famille de denrées “viandes et poissons“.
       <AppLinkRouter :to="{ name: 'KeyMeasurePage', params: { id: keyMeasureId } }" title="En savoir plus sur la loi" />
     </ObservatoryBadgeTitle>
-    <ol class="observatory-purchases__list-graphic ma-cantine--unstyled-list">
-      <li class="observatory-purchases__graphic">
+    <ol class="ma-cantine--ordered-list ma-cantine--unstyled-list">
+      <li>
         <ObservatoryGraphEgalim :approPercent="stats.approPercent" />
       </li>
-      <li class="observatory-purchases__graphic">
+      <li>
         <ObservatoryGraphSustainable
           :bioPercent="stats.bioPercent"
           :egalimPercent="stats.egalimPercent"
@@ -31,36 +31,12 @@ const keyMeasureId = keyMeasures[0].id
           :egalimObjective="stats.notes.egalimPercentObjective"
         />
       </li>
-      <li class="observatory-purchases__graphic">
+      <li>
         <ObservatoryGraphFishMeat :meatPercent="stats.meatEgalimPercent" :fishPercent="stats.fishEgalimPercent" />
       </li>
-      <li class="observatory-purchases__graphic">
+      <li>
         <ObservatoryGraphMeatFrance :meatFrancePercent="stats.meatFrancePercent" />
       </li>
     </ol>
   </div>
 </template>
-
-<style lang="scss">
-.observatory-purchases {
-  &__list-graphic {
-    counter-reset: number;
-    display: flex;
-    flex-direction: column;
-    gap: 4rem;
-  }
-
-  &__graphic {
-    counter-increment: number;
-
-    &::marker {
-      content: initial;
-    }
-
-    h3::before {
-      content: counter(number) ".";
-      margin-right: 0.5rem;
-    }
-  }
-}
-</style>
