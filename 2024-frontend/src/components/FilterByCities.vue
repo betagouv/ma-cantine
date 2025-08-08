@@ -1,17 +1,26 @@
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, onMounted } from "vue"
+import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import { getCitiesOptionsFromSearch } from "@/services/filters"
 import FilterByBase from "@/components/FilterByBase.vue"
 
 const storeFilters = useStoreFilters()
 const citiesSelected = computed(() => storeFilters.getParam("cities"))
+const route = useRoute()
 
 /* Search */
 const search = ref("")
 const options = computed(() => {
   if (search.value.length === 0) return []
   return getCitiesOptionsFromSearch(search.value)
+})
+
+/* Select from url */
+onMounted(() => {
+  const query = route.query
+  const allCities = getCitiesOptionsFromSearch()
+  if (query.cities) storeFilters.setFromQuery("cities", query.cities, allCities)
 })
 </script>
 <template>

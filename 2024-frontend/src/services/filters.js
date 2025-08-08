@@ -79,9 +79,10 @@ const getSectorsOptions = async () => {
 }
 
 const getCitiesOptionsFromSearch = (search) => {
-  const filteredCities = communes.filter((city) => stringsService.checkIfStartsWith(city.nom, search))
-  const firstTenCities = filteredCities.slice(0, 9)
-  const options = firstTenCities.map((city) => {
+  const cities = search
+    ? communes.filter((city) => stringsService.checkIfStartsWith(city.nom, search)).slice(0, 9)
+    : communes
+  const options = cities.map((city) => {
     const label = `${city.nom} (${city.codeDepartement})`
     return {
       label,
