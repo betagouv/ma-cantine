@@ -2,7 +2,7 @@
 import { computed } from "vue"
 
 const props = defineProps(["percents", "legends"])
-const colors = ["#A94645", "#C3992A", "134CB6A", "#FFCA00", "#695240"]
+const colors = ["#A94645", "#C3992A", "#695240", "#FFCA00", "#34CB6A", "#FF9575", "#297254", "#CE614A"]
 
 const stats = computed(() => {
   const formattedStats = []
@@ -23,11 +23,13 @@ const stats = computed(() => {
 
 const background = computed(() => {
   const slices = []
+  let previousValue = 0
   for (let i = 0; i < stats.value.length; i++) {
-    const previousValue = i === 0 ? 0 : stats.value[i - 1].percent
     const currentValue = stats.value[i].percent
+    const nextValue = previousValue + currentValue
     const color = colors[i]
-    slices.push(`${color} ${previousValue}% ${previousValue + currentValue}%`)
+    slices.push(`${color} ${previousValue}% ${nextValue}%`)
+    previousValue = nextValue
   }
   return `conic-gradient(${slices.join(",")})`
 })
