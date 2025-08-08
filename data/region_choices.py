@@ -33,3 +33,20 @@ class Region(models.TextChoices):
     polynesie_francaise = "987", "987 - Polynésie Française"
     nouvelle_caledonie = "988", "988 - Nouvelle Calédonie"
     ile_de_clipperton = "989", "989 - Île de Clipperton"
+
+
+REGION_HEXAGONE_LIST = [
+    Region.ile_de_france,
+    Region.centre_val_de_loire,
+    Region.bourgogne_franche_comte,
+    Region.normandie,
+    Region.hauts_de_france,
+    Region.grand_est,
+    Region.pays_de_la_loire,
+    Region.bretagne,
+    Region.nouvelle_aquitaine,
+    Region.occitanie,
+    Region.auvergne_rhone_alpes,
+    Region.provence_alpes_cote_d_azur,
+    Region.corse,
+]

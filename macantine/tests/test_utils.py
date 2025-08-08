@@ -1,11 +1,27 @@
 from django.test import TestCase
 from freezegun import freeze_time
 
+from data.region_choices import Region
 from macantine.utils import (
+    get_egalim_group,
     is_in_correction,
     is_in_teledeclaration,
     is_in_teledeclaration_or_correction,
 )
+
+
+class TestEgalimObjectives(TestCase):
+    def test_get_egalim_group(self):
+        self.assertEqual(get_egalim_group([Region.bretagne]), "hexagone")
+        self.assertEqual(get_egalim_group([Region.guadeloupe]), "groupe_1")
+        self.assertEqual(get_egalim_group([Region.mayotte]), "groupe_2")
+        self.assertEqual(get_egalim_group([Region.saint_pierre_et_miquelon]), "groupe_3")
+        self.assertEqual(get_egalim_group([Region.bretagne, Region.guadeloupe]), "hexagone")
+        self.assertEqual(get_egalim_group([Region.guadeloupe, Region.bretagne]), "hexagone")
+        self.assertEqual(get_egalim_group([Region.guadeloupe, Region.martinique]), "groupe_1")
+        self.assertEqual(get_egalim_group([Region.guadeloupe, Region.mayotte]), "groupe_1")
+        self.assertEqual(get_egalim_group([]), "hexagone")
+        self.assertEqual(get_egalim_group(None), "hexagone")
 
 
 class TestCampaignDates(TestCase):
