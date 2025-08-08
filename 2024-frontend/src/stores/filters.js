@@ -82,7 +82,31 @@ const useStoreFilters = defineStore("filters", () => {
     return selection.value.map((item) => item.label).join(", ")
   }
 
-  return { set, remove, getSelection, getSelectionLabels, getParam, getAllParams }
+  /* Actions for sharing params and query */
+  function setFromQuery(name, query, options) {
+    const valuesInQuery = []
+    const hasMultipleValue = typeof query !== "string"
+    const params = hasMultipleValue ? query : [query]
+    for (let i = 0; i < params.length; i++) {
+      const index = options.findIndex((option) => option.value.value === params[i])
+      valuesInQuery.push(options[index].value)
+      set(name, valuesInQuery)
+    }
+  }
+
+  function getQueryParams() {
+    const keys = Object.keys(params)
+    let query = {}
+    for (let i = 0; i < keys.length; i++) {
+      const name = keys[i]
+      const isYear = name === "year"
+      const value = params[name]
+      query[name] = isYear ? value : value.map((element) => element.value)
+    }
+    return query
+  }
+
+  return { set, remove, getSelection, getSelectionLabels, getParam, getAllParams, getQueryParams, setFromQuery }
 })
 
 export { useStoreFilters }
