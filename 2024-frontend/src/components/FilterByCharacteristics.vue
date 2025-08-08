@@ -12,6 +12,7 @@ const options = ref(getCharacteristicsOptions())
 const storeFilters = useStoreFilters()
 const route = useRoute()
 
+/* Select from url */
 onMounted(() => {
   const query = route.query
   if (query.economicModel) storeFilters.setFromQuery("economicModel", query.economicModel, options.value.economicModel)
