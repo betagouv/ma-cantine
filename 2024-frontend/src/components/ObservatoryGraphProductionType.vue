@@ -12,7 +12,6 @@ const title = "Mode de production"
 /* Calculate graph props */
 const graph = computed(() => {
   const productionTypesNames = Object.keys(props.productionTypes)
-  const counts = []
   const legends = []
   const percents = []
   for (let i = 0; i < productionTypesNames.length; i++) {
@@ -22,14 +21,14 @@ const graph = computed(() => {
       const count = props.productionTypes[productionType]
       const percent = Math.round((count / props.canteensCount) * 100)
       const index = cantines.productionType.findIndex((element) => element.apiName === productionType)
-      const legend = index > -1 ? cantines.productionType[index].hint : "Inconnu"
+      const canteen = count > 1 ? "cantines" : "cantine"
+      const type = index > -1 ? cantines.productionType[index].hint : "Inconnu"
+      const legend = `${type} soit ${count} ${canteen}`
       percents.push(percent)
-      counts.push(count)
       legends.push(legend)
     }
   }
   return {
-    counts,
     legends,
     percents,
   }
@@ -38,10 +37,8 @@ const graph = computed(() => {
 /* Description */
 const getResultsDescription = () => {
   const results = []
-  for (let i = 0; i < graph.value.counts.length; i++) {
-    const canteenCounts = graph.value.counts[i]
-    const canteen = canteenCounts > 1 ? "cantines" : "cantine"
-    results.push(`${graph.value.percents[i]}% "${graph.value.legends[i]}" soit ${graph.value.counts[i]} ${canteen}`)
+  for (let i = 0; i < graph.value.percents.length; i++) {
+    results.push(`${graph.value.percents[i]}% ${graph.value.legends[i]}`)
   }
   return results.join(", ")
 }
@@ -55,6 +52,6 @@ const description = computed(() => {
 <template>
   <h3 class="fr-h6 fr-mb-2w">{{ title }}</h3>
   <GraphBase :valuesToVerify="graph.percents" :description="description">
-    <GraphPie :percents="graph.percents" :counts="graph.counts" :legends="graph.legends" />
+    <GraphPie :percents="graph.percents" :legends="graph.legends" />
   </GraphBase>
 </template>

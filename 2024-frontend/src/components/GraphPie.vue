@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue"
 
-const props = defineProps(["counts", "percents", "legends"])
+const props = defineProps(["percents", "legends"])
 const colors = ["#A94645", "#C3992A", "134CB6A", "#FFCA00", "#695240"]
 
 const stats = computed(() => {
@@ -10,13 +10,12 @@ const stats = computed(() => {
     const stat = {
       percent: props.percents[i],
       legend: props.legends[i],
-      count: props.counts[i],
     }
     formattedStats.push(stat)
   }
   const descStats = formattedStats.sort((first, second) => {
-    if (second.count < first.count) return -1
-    else if (second.count > first.count) return 1
+    if (second.percent < first.percent) return -1
+    else if (second.percent > first.percent) return 1
     else return 0
   })
   return descStats
@@ -39,7 +38,7 @@ const background = computed(() => {
     <div class="graph-pie__legends-container">
       <div v-for="stat in stats" :key="stat" class="graph-pie__legend fr-mb-2w">
         <p class="fr-h6 fr-mb-1w">{{ stat.percent }}%</p>
-        <p class="fr-mb-0">{{ stat.legend }}, soit {{ stat.count }} {{ stat.count > 1 ? "cantines" : "cantine" }}</p>
+        <p class="fr-mb-0">{{ stat.legend }}</p>
       </div>
     </div>
   </div>
