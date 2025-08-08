@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue"
 
-const props = defineProps(["percents", "legends"])
+const props = defineProps(["percents", "legends", "alignment"])
 const colors = ["#A94645", "#C3992A", "#695240", "#FFCA00", "#34CB6A", "#FF9575", "#297254", "#CE614A"]
 
 const stats = computed(() => {
@@ -37,8 +37,8 @@ const background = computed(() => {
 <template>
   <div class="graph-pie fr-mt-4w fr-mb-3w">
     <div class="graph-pie__circle" :style="`background: ${background}`"></div>
-    <div>
-      <div v-for="(stat, i) in stats" :key="stat" class="graph-pie__legend fr-mb-2w">
+    <div :class="`graph-pie__legends-container graph-pie__legends-container--${alignment || 'vertical'}`">
+      <div v-for="(stat, i) in stats" :key="stat" class="graph-pie__legend">
         <div class="graph-pie__color fr-mr-1w" :style="`background-color: ${colors[i]}`"></div>
         <div>
           <p class="fr-h6 fr-mb-0">{{ stat.percent }}%</p>
@@ -66,6 +66,18 @@ const background = computed(() => {
     height: 10rem;
     border-radius: 100%;
     overflow: hidden;
+  }
+
+  &__legends-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+
+    &--horizontal {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
   }
 
   &__legend {

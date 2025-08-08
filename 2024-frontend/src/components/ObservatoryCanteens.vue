@@ -27,10 +27,10 @@ const canteenBadge = "/static/images/badges/canteen.svg"
       <li class="fr-col-12 fr-col-md-6 fr-mb-4w">
         <ObservatoryGraphManagementType :managementTypes="stats.managementTypes" :canteensCount="stats.canteenCount" />
       </li>
-      <li class="fr-col-12 fr-col-md-6 fr-mb-4w">
+      <li class="fr-col-12 fr-mb-4w">
         <ObservatoryGraphProductionType :productionTypes="stats.productionTypes" :canteensCount="stats.canteenCount" />
       </li>
-      <li class="fr-col-12 fr-col-md-6 fr-mb-4w">
+      <li class="fr-col-12 fr-mb-4w">
         <ObservatoryGraphSectors :sectorCategories="stats.sectorCategories" :canteensCount="stats.canteenCount" />
       </li>
     </ol>
