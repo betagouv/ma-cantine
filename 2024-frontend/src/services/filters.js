@@ -105,9 +105,10 @@ const getPATOptionsFromSearch = (search) => {
 }
 
 const getEPCIOptionsFromSearch = (search) => {
-  const filteredEPCI = epcis.filter((epci) => stringsService.checkIfContains(epci.nom, search))
-  const firstTenEPCI = filteredEPCI.slice(0, 9)
-  const options = firstTenEPCI.map((epci) => {
+  const epcisOptions = search
+    ? epcis.filter((epci) => stringsService.checkIfContains(epci.nom, search)).slice(0, 9)
+    : epcis
+  const options = epcisOptions.map((epci) => {
     return {
       label: epci.nom,
       value: { value: epci.code, label: epci.nom },
