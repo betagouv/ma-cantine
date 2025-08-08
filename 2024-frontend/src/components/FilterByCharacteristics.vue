@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, onMounted } from "vue"
+import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import { getCharacteristicsOptions } from "@/services/filters"
 import FilterByBase from "@/components/FilterByBase.vue"
@@ -9,6 +10,16 @@ const managementType = computed(() => storeFilters.getParam("managementType"))
 const productionType = computed(() => storeFilters.getParam("productionType"))
 const options = ref(getCharacteristicsOptions())
 const storeFilters = useStoreFilters()
+const route = useRoute()
+
+onMounted(() => {
+  const query = route.query
+  if (query.economicModel) storeFilters.setFromQuery("economicModel", query.economicModel, options.value.economicModel)
+  if (query.managementType)
+    storeFilters.setFromQuery("managementType", query.managementType, options.value.managementType)
+  if (query.productionType)
+    storeFilters.setFromQuery("productionType", query.productionType, options.value.productionType)
+})
 </script>
 
 <template>
