@@ -38,9 +38,12 @@ const background = computed(() => {
   <div class="graph-pie fr-mt-4w fr-mb-3w">
     <div class="graph-pie__circle" :style="`background: ${background}`"></div>
     <div>
-      <div v-for="stat in stats" :key="stat" class="fr-mb-2w">
-        <p class="fr-h6 fr-mb-0">{{ stat.percent }}%</p>
-        <p class="fr-mb-0">{{ stat.legend }}</p>
+      <div v-for="(stat, i) in stats" :key="stat" class="graph-pie__legend fr-mb-2w">
+        <div class="graph-pie__color fr-mr-1w" :style="`background-color: ${colors[i]}`"></div>
+        <div>
+          <p class="fr-h6 fr-mb-0">{{ stat.percent }}%</p>
+          <p class="fr-mb-0">{{ stat.legend }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -63,6 +66,15 @@ const background = computed(() => {
     height: 10rem;
     border-radius: 100%;
     overflow: hidden;
+  }
+
+  &__legend {
+    display: flex;
+  }
+
+  &__color {
+    width: 0.5rem;
+    flex-shrink: 0;
   }
 }
 </style>
