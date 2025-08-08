@@ -42,7 +42,7 @@ const graph = computed(() => {
 const getResultsDescription = () => {
   const results = []
   for (let i = 0; i < graph.value.percents.length; i++) {
-    results.push(`${graph.value.percents[i]}% ${graph.value.legends[i]}`)
+    results.push(`${graph.value.percents[i]}% ${graph.value.legends[i].toLocaleLowerCase()}`)
   }
   return results.join(", ")
 }
