@@ -28,9 +28,6 @@ address {
 
 .ma-cantine--ordered-list {
     counter-reset: number;
-    display: flex;
-    flex-direction: column;
-    gap: 4rem;
 }
 
 .ma-cantine--ordered-list li {
