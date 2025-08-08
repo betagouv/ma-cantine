@@ -15,10 +15,12 @@
   ],
   "managementType": [
     {
+      "apiName": "direct",
       "label": "Directe",
       "value": "direct"
     },
     {
+      "apiName": "conceded",
       "label": "Concédée",
       "value": "conceded"
     }
