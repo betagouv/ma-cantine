@@ -3,6 +3,7 @@ import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import ObservatoryGraphProductionType from "@/components/ObservatoryGraphProductionType.vue"
 import ObservatoryGraphEconomicModel from "@/components/ObservatoryGraphEconomicModel.vue"
 import ObservatoryGraphManagementType from "@/components/ObservatoryGraphManagementType.vue"
+import ObservatoryGraphSectors from "@/components/ObservatoryGraphSectors.vue"
 
 defineProps(["stats"])
 const canteenBadge = "/static/images/badges/canteen.svg"
@@ -28,6 +29,9 @@ const canteenBadge = "/static/images/badges/canteen.svg"
       </li>
       <li class="fr-col-12 fr-col-md-6 fr-mb-4w">
         <ObservatoryGraphManagementType :managementTypes="stats.managementTypes" :canteensCount="stats.canteenCount" />
+      </li>
+      <li class="fr-col-12 fr-col-md-6 fr-mb-4w">
+        <ObservatoryGraphSectors :sectorCategories="stats.sectorCategories" :canteensCount="stats.canteenCount" />
       </li>
     </ol>
   </div>

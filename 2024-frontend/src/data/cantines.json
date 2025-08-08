@@ -50,5 +50,14 @@
       "label": "Centrale et site",
       "value": "central_serving"
     }
-  ]
+  ],
+  "sectorCategorie": {
+    "administration": "Administration",
+    "autres": "Autres",
+    "education": "Enseignement",
+    "enterprise": "Entreprise",
+    "health": "Santé",
+    "leisure": "Loisirs",
+    "social": "Social / Médico-social"
+  }
 }

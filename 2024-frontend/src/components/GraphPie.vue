@@ -2,7 +2,7 @@
 import { computed } from "vue"
 
 const props = defineProps(["percents", "legends"])
-const colors = ["#A94645", "#C3992A", "134CB6A", "#FFCA00", "#695240"]
+const colors = ["#A94645", "#C3992A", "#695240", "#FFCA00", "#34CB6A", "#FF9575", "#297254", "#CE614A"]
 
 const stats = computed(() => {
   const formattedStats = []
@@ -23,11 +23,13 @@ const stats = computed(() => {
 
 const background = computed(() => {
   const slices = []
+  let previousValue = 0
   for (let i = 0; i < stats.value.length; i++) {
-    const previousValue = i === 0 ? 0 : stats.value[i - 1].percent
     const currentValue = stats.value[i].percent
+    const nextValue = previousValue + currentValue
     const color = colors[i]
-    slices.push(`${color} ${previousValue}% ${previousValue + currentValue}%`)
+    slices.push(`${color} ${previousValue}% ${nextValue}%`)
+    previousValue = nextValue
   }
   return `conic-gradient(${slices.join(",")})`
 })
@@ -35,7 +37,7 @@ const background = computed(() => {
 <template>
   <div class="graph-pie fr-mt-4w fr-mb-3w">
     <div class="graph-pie__circle" :style="`background: ${background}`"></div>
-    <div class="graph-pie__legends-container">
+    <div>
       <div v-for="stat in stats" :key="stat" class="fr-mb-2w">
         <p class="fr-h6 fr-mb-0">{{ stat.percent }}%</p>
         <p class="fr-mb-0">{{ stat.legend }}</p>
@@ -52,7 +54,6 @@ const background = computed(() => {
   align-items: flex-start;
 
   @media (min-width: 768px) {
-    align-items: center;
     flex-direction: row;
   }
 
@@ -62,12 +63,6 @@ const background = computed(() => {
     height: 10rem;
     border-radius: 100%;
     overflow: hidden;
-  }
-
-  &__legends-container {
-    @media (min-width: 768px) {
-      align-self: center;
-    }
   }
 }
 </style>
