@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watchEffect, useTemplateRef } from "vue"
+import { useRouter } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import statisticsService from "@/services/statistics"
 import ObservatoryHero from "@/components/ObservatoryHero.vue"
@@ -38,8 +39,16 @@ const resetStatsValue = () => {
   statsError.value = null
 }
 
+/* Router */
+const router = useRouter()
+const updateRouter = () => {
+  const queryParam = storeFilters.getQueryParams()
+  router.replace({ query: queryParam })
+}
+
 /* Watch filters */
 watchEffect(async () => {
+  updateRouter()
   resetStatsValue()
   const newStats = await statisticsService.getStatistics(filtersParams)
   if (!newStats) setStatsError()

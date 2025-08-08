@@ -82,7 +82,20 @@ const useStoreFilters = defineStore("filters", () => {
     return selection.value.map((item) => item.label).join(", ")
   }
 
-  return { set, remove, getSelection, getSelectionLabels, getParam, getAllParams }
+  /* Action to get params readable for url query */
+  function getQueryParams() {
+    const keys = Object.keys(params)
+    let query = {}
+    for (let i = 0; i < keys.length; i++) {
+      const name = keys[i]
+      const isYear = name === "year"
+      const value = params[name]
+      query[name] = isYear ? value : value.map((element) => element.value)
+    }
+    return query
+  }
+
+  return { set, remove, getSelection, getSelectionLabels, getParam, getAllParams, getQueryParams }
 })
 
 export { useStoreFilters }
