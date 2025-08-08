@@ -6,7 +6,7 @@ import redis as r
 from django.conf import settings
 from django.utils import timezone
 
-from data.region_choices import Region
+from data.region_choices import REGION_HEXAGONE_LIST, Region
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -37,17 +37,30 @@ def convert_date_string_to_datetime(date_string, time_start_or_end="start"):
 # groupe 2 : Mayotte
 # groupe 3 : Saint-Pierre-et-Miquelon
 EGALIM_OBJECTIVES = {
-    "hexagone": {"region_list": [], "bio_percent": 20, "egalim_percent": 50},
+    "hexagone": {
+        "region_list": REGION_HEXAGONE_LIST
+        + [
+            Region.saint_barthelemy,
+            Region.terres_australes_et_antarctiques_francaises,
+            Region.wallis_et_futuna,
+            Region.polynesie_francaise,
+            Region.nouvelle_caledonie,
+            Region.ile_de_clipperton,
+        ],
+        "bio_percent": 20,
+        "egalim_percent": 50,
+    },
     "groupe_1": {
         "region_list": [Region.guadeloupe, Region.martinique, Region.guyane, Region.la_reunion, Region.saint_martin],
         "bio_percent": 5,
         "egalim_percent": 20,
     },
-    "groupe_2": {"region_list": [Region.mayotte], "bio_percent": 2, "egalim_percent": 5},
     "groupe_3": {"region_list": [Region.saint_pierre_et_miquelon], "bio_percent": 10, "egalim_percent": 30},
+    "groupe_2": {"region_list": [Region.mayotte], "bio_percent": 2, "egalim_percent": 5},
 }
 
 
+# TODO: prendre en compte les department, epci, pat & city_insee_code
 def get_egalim_group(region_list):
     if region_list and len(region_list):
         for group_name, details in EGALIM_OBJECTIVES.items():

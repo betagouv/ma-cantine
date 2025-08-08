@@ -16,6 +16,10 @@ class TestEgalimObjectives(TestCase):
         self.assertEqual(get_egalim_group([Region.guadeloupe]), "groupe_1")
         self.assertEqual(get_egalim_group([Region.mayotte]), "groupe_2")
         self.assertEqual(get_egalim_group([Region.saint_pierre_et_miquelon]), "groupe_3")
+        self.assertEqual(get_egalim_group([Region.bretagne, Region.guadeloupe]), "hexagone")
+        # self.assertEqual(get_egalim_group([Region.guadeloupe, Region.bretagne]), "hexagone")
+        self.assertEqual(get_egalim_group([Region.guadeloupe, Region.martinique]), "groupe_1")
+        self.assertEqual(get_egalim_group([Region.guadeloupe, Region.mayotte]), "groupe_1")
         self.assertEqual(get_egalim_group([]), "hexagone")
         self.assertEqual(get_egalim_group(None), "hexagone")
 
