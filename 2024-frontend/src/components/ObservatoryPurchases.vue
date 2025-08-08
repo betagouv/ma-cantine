@@ -20,10 +20,10 @@ const keyMeasureId = keyMeasures[0].id
       <AppLinkRouter :to="{ name: 'KeyMeasurePage', params: { id: keyMeasureId } }" title="En savoir plus sur la loi" />
     </ObservatoryBadgeTitle>
     <ol class="ma-cantine--ordered-list ma-cantine--unstyled-list">
-      <li>
+      <li class="fr-mb-8w">
         <ObservatoryGraphEgalim :approPercent="stats.approPercent" />
       </li>
-      <li>
+      <li class="fr-mb-8w">
         <ObservatoryGraphSustainable
           :bioPercent="stats.bioPercent"
           :egalimPercent="stats.egalimPercent"
@@ -31,7 +31,7 @@ const keyMeasureId = keyMeasures[0].id
           :egalimObjective="stats.notes.egalimPercentObjective"
         />
       </li>
-      <li>
+      <li class="fr-mb-8w">
         <ObservatoryGraphFishMeat :meatPercent="stats.meatEgalimPercent" :fishPercent="stats.fishEgalimPercent" />
       </li>
       <li>
