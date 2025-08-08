@@ -28,6 +28,10 @@ const graph = computed(() => {
       legends.push(legend)
     }
   }
+  if (percents.length === 0) {
+    percents.push(100)
+    legends.push("Inconnu")
+  }
   return {
     legends,
     percents,
