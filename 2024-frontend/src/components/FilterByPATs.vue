@@ -1,17 +1,26 @@
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, onMounted } from "vue"
+import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import { getPATOptionsFromSearch } from "@/services/filters"
 import FilterByBase from "@/components/FilterByBase.vue"
 
 const storeFilters = useStoreFilters()
 const PATsSelected = computed(() => storeFilters.getParam("pats"))
+const route = useRoute()
 
 /* Search */
 const search = ref("")
 const options = computed(() => {
   if (search.value.length === 0) return []
   return getPATOptionsFromSearch(search.value)
+})
+
+/* Select from url */
+onMounted(() => {
+  const query = route.query
+  const allPATs = getPATOptionsFromSearch()
+  if (query.pats) storeFilters.setFromQuery("pats", query.pats, allPATs)
 })
 </script>
 <template>

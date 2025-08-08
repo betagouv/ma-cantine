@@ -93,9 +93,8 @@ const getCitiesOptionsFromSearch = (search) => {
 }
 
 const getPATOptionsFromSearch = (search) => {
-  const filteredPats = pats.filter((pat) => stringsService.checkIfContains(pat.nom, search))
-  const firstTenPAT = filteredPats.slice(0, 9)
-  const options = firstTenPAT.map((pat) => {
+  const patsOptions = search ? pats.filter((pat) => stringsService.checkIfContains(pat.nom, search)).slice(0, 9) : pats
+  const options = patsOptions.map((pat) => {
     return {
       label: pat.nom,
       value: { value: pat.code, label: pat.nom },
