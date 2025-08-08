@@ -11,6 +11,7 @@ import ObservatoryError from "@/components/ObservatoryError.vue"
 import ObservatoryPurchases from "@/components/ObservatoryPurchases.vue"
 import ObservatoryWarnings from "@/components/ObservatoryWarnings.vue"
 import ObservatoryCanteens from "@/components/ObservatoryCanteens.vue"
+import ObservatoryShare from "@/components/ObservatoryShare.vue"
 
 /* Back to filters */
 const observatoryFilters = useTemplateRef("observatory-filters")
@@ -81,6 +82,7 @@ watchEffect(async () => {
       </template>
       <DsfrHighlight v-else :text="stats.notes.campaignInfo" class="fr-col-12 fr-col-md-8 fr-ml-0" />
     </template>
+    <ObservatoryShare />
   </section>
 </template>
 
