@@ -37,7 +37,7 @@ const background = computed(() => {
 <template>
   <div class="graph-pie fr-mt-4w fr-mb-3w">
     <div class="graph-pie__circle" :style="`background: ${background}`"></div>
-    <div class="graph-pie__legends-container">
+    <div>
       <div v-for="stat in stats" :key="stat" class="fr-mb-2w">
         <p class="fr-h6 fr-mb-0">{{ stat.percent }}%</p>
         <p class="fr-mb-0">{{ stat.legend }}</p>
@@ -54,7 +54,6 @@ const background = computed(() => {
   align-items: flex-start;
 
   @media (min-width: 768px) {
-    align-items: center;
     flex-direction: row;
   }
 
@@ -64,12 +63,6 @@ const background = computed(() => {
     height: 10rem;
     border-radius: 100%;
     overflow: hidden;
-  }
-
-  &__legends-container {
-    @media (min-width: 768px) {
-      align-self: center;
-    }
   }
 }
 </style>
