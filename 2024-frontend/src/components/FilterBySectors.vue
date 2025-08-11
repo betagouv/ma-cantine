@@ -1,16 +1,19 @@
 <script setup>
 import { ref, computed } from "vue"
+import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import { getSectorsOptions } from "@/services/filters"
 import FilterByBase from "@/components/FilterByBase.vue"
 
 const storeFilters = useStoreFilters()
 const sectorsSelected = computed(() => storeFilters.getParam("sectors"))
+const route = useRoute()
 
 /* Get sectors */
 const sectors = ref([])
 getSectorsOptions().then((response) => {
   sectors.value = response
+  updateParamsFromQuery(response)
 })
 
 /* Search */
@@ -25,6 +28,16 @@ const options = computed(() => {
   })
   return searchedSectors
 })
+
+/* Prefill filters from query */
+const query = route.query
+const updateParamsFromQuery = (allSectors) => {
+  if (query.sectors) {
+    const hasMultipleValues = typeof query.sectors !== "string"
+    const sectorsId = hasMultipleValues ? query.sectors.map((value) => Number(value)) : [Number(query.sectors)]
+    storeFilters.setFromQuery("sectors", sectorsId, allSectors)
+  }
+}
 </script>
 
 <template>
