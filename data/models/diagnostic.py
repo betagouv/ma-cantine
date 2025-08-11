@@ -163,7 +163,7 @@ class Diagnostic(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords(excluded_fields=["canteen_snapshot"])
+    history = HistoricalRecords()
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
 
@@ -934,8 +934,7 @@ class Diagnostic(models.Model):
 
     # Télédéclaration
     canteen_snapshot = models.JSONField(
-        blank=True,
-        null=True,
+        default=dict,
         verbose_name="cantine (copie au moment de la télédéclaration)",
         encoder=CustomJSONEncoder,
     )

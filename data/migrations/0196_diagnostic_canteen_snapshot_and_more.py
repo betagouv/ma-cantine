@@ -15,9 +15,8 @@ class Migration(migrations.Migration):
             model_name="diagnostic",
             name="canteen_snapshot",
             field=models.JSONField(
-                blank=True,
                 encoder=data.utils.CustomJSONEncoder,
-                null=True,
+                default=dict,
                 verbose_name="cantine (copie au moment de la télédéclaration)",
             ),
         ),
@@ -25,9 +24,8 @@ class Migration(migrations.Migration):
             model_name="historicaldiagnostic",
             name="canteen_snapshot",
             field=models.JSONField(
-                blank=True,
                 encoder=data.utils.CustomJSONEncoder,
-                null=True,
+                default=dict,
                 verbose_name="cantine (copie au moment de la télédéclaration)",
             ),
         ),
