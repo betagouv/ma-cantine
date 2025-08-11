@@ -54,7 +54,7 @@ const background = computed(() => {
   display: flex;
   gap: 2rem;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
 
   @media (min-width: 768px) {
     flex-direction: row;
@@ -71,6 +71,7 @@ const background = computed(() => {
   &__legends-container {
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
     gap: 2rem;
     width: 100%;
 
