@@ -97,14 +97,16 @@ watchEffect(async () => {
 <style lang="scss">
 .observatoire {
   &__results {
+    $marginLeft: calc((100vw - 100%) / 2);
+
     &::before {
       z-index: -1;
       content: "";
       background-color: var(--background-alt-blue-france);
       position: absolute;
       top: 0;
-      left: calc((100vw - 100%) / 2 * -1);
-      width: 100vw;
+      left: calc($marginLeft * -1);
+      width: calc(100% + $marginLeft * 2);
       height: 100%;
     }
   }
