@@ -163,7 +163,7 @@ class Diagnostic(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords()
+    history = HistoricalRecords(excluded_fields=["canteen_snapshot"])
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
 
