@@ -1,28 +1,17 @@
 <script setup>
 import { ref } from "vue"
-import { useStoreFilters } from "@/stores/filters.js"
-import AppCode from "@/components/AppCode.vue"
 
-const opened = ref(false)
-const iconShare = "fr-icon-share-line"
-const storeFilters = useStoreFilters()
-const selectedFilters = storeFilters.getSelectionLabels()
-const url = ref()
+const icon = ref("fr-icon-clipboard-line")
+const label = ref("Copier l’url de la recherche")
 
-const openModal = () => {
-  opened.value = true
-  url.value = window.location.href
+const copyUrl = () => {
+  label.value = "Copié dans le presse-papier"
+  icon.value = "fr-icon-check-line"
+  navigator.clipboard.writeText(window.location.href)
 }
 </script>
 <template>
-  <div class="fr-grid-row fr-grid-row--right">
-    <DsfrButton label="Copier l’url de la recherche" secondary :icon="iconShare" @click="openModal" />
+  <div class="fr-mt-4w fr-grid-row fr-grid-row--right">
+    <DsfrButton :label="label" secondary :icon="icon" @click="copyUrl" />
   </div>
-  <DsfrModal title="Copier l’url de la recherche" :opened="opened" :icon="iconShare" @close="opened = false">
-    <template #default>
-      <p>Pour partager les chiffres clés de votre recherche : {{ selectedFilters }}</p>
-      <p class="ma-cantine--bold fr-mb-1w">Copier l'url :</p>
-      <AppCode :content="url" />
-    </template>
-  </DsfrModal>
 </template>
