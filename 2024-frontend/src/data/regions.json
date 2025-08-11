@@ -1,25 +1,5 @@
 [
   {
-    "code": "01",
-    "nom": "Guadeloupe"
-  },
-  {
-    "code": "02",
-    "nom": "Martinique"
-  },
-  {
-    "code": "03",
-    "nom": "Guyane"
-  },
-  {
-    "code": "04",
-    "nom": "La Réunion"
-  },
-  {
-    "code": "06",
-    "nom": "Mayotte"
-  },
-  {
     "code": "11",
     "nom": "Île-de-France"
   },
@@ -70,5 +50,57 @@
   {
     "code": "94",
     "nom": "Corse"
+  },
+  {
+    "code": "01",
+    "nom": "Guadeloupe"
+  },
+  {
+    "code": "02",
+    "nom": "Martinique"
+  },
+  {
+    "code": "03",
+    "nom": "Guyane"
+  },
+  {
+    "code": "04",
+    "nom": "La Réunion"
+  },
+  {
+    "code": "06",
+    "nom": "Mayotte"
+  },
+  {
+    "code": "975",
+    "nom": "Saint-Pierre-et-Miquelon"
+  },
+  {
+    "code": "977",
+    "nom": "Saint-Barthélemy"
+  },
+  {
+    "code": "978",
+    "nom": "Saint-Martin"
+  },
+  {
+    "code": "984",
+    "nom": "Terres australes et antarctiques françaises"
+  },
+  {
+    "code": "986",
+    "nom": "Wallis et Futuna"
+  },
+  {
+    "code": "987",
+    "nom": "Polynésie française"
+  },
+  {
+    "code": "988",
+    "nom": "Nouvelle-Calédonie"
+  },
+  {
+    "code": "989",
+    "nom": "Île de Clipperton"
   }
 ]
