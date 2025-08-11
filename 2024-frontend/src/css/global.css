@@ -20,6 +20,15 @@ address {
     text-align: center;
 }
 
+/* LINK */
+.ma-cantine--unstyled-link[target="_blank"] {
+    background-image: initial;
+}
+
+.ma-cantine--unstyled-link[target="_blank"]:after {
+    content: initial
+}
+
 /* LIST */
 .ma-cantine--unstyled-list {
     list-style: none;
