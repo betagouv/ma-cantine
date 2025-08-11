@@ -1,5 +1,6 @@
 <script setup>
-import { ref, watchEffect, useTemplateRef } from "vue"
+import { onMounted, ref, useTemplateRef, watchEffect } from "vue"
+import { useRouter } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
 import statisticsService from "@/services/statistics"
 import ObservatoryHero from "@/components/ObservatoryHero.vue"
@@ -10,6 +11,7 @@ import ObservatoryError from "@/components/ObservatoryError.vue"
 import ObservatoryPurchases from "@/components/ObservatoryPurchases.vue"
 import ObservatoryWarnings from "@/components/ObservatoryWarnings.vue"
 import ObservatoryCanteens from "@/components/ObservatoryCanteens.vue"
+import ObservatoryShare from "@/components/ObservatoryShare.vue"
 import AppJeDonneMonAvis from "@/components/AppJeDonneMonAvis.vue"
 
 /* Back to filters */
@@ -39,12 +41,25 @@ const resetStatsValue = () => {
   statsError.value = null
 }
 
+/* Router */
+const router = useRouter()
+const hasMount = ref(false)
+const updateRouter = () => {
+  const queryParam = storeFilters.getQueryParams()
+  router.replace({ query: queryParam })
+}
+onMounted(() => {
+  hasMount.value = true
+})
+
 /* Watch filters */
 watchEffect(async () => {
+  updateRouter()
   resetStatsValue()
   const newStats = await statisticsService.getStatistics(filtersParams)
   if (!newStats) setStatsError()
   else stats.value = newStats
+  if (hasMount.value) updateRouter()
 })
 </script>
 
@@ -68,6 +83,7 @@ watchEffect(async () => {
       </template>
       <DsfrHighlight v-else :text="stats.notes.campaignInfo" class="fr-col-12 fr-col-md-8 fr-ml-0" />
     </template>
+    <ObservatoryShare />
   </section>
   <AppJeDonneMonAvis url="https://jedonnemonavis.numerique.gouv.fr/Demarches/3661?button=3940">
     <p class="fr-mb-0">

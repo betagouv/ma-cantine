@@ -79,9 +79,10 @@ const getSectorsOptions = async () => {
 }
 
 const getCitiesOptionsFromSearch = (search) => {
-  const filteredCities = communes.filter((city) => stringsService.checkIfStartsWith(city.nom, search))
-  const firstTenCities = filteredCities.slice(0, 9)
-  const options = firstTenCities.map((city) => {
+  const cities = search
+    ? communes.filter((city) => stringsService.checkIfStartsWith(city.nom, search)).slice(0, 9)
+    : communes
+  const options = cities.map((city) => {
     const label = `${city.nom} (${city.codeDepartement})`
     return {
       label,
@@ -92,9 +93,8 @@ const getCitiesOptionsFromSearch = (search) => {
 }
 
 const getPATOptionsFromSearch = (search) => {
-  const filteredPats = pats.filter((pat) => stringsService.checkIfContains(pat.nom, search))
-  const firstTenPAT = filteredPats.slice(0, 9)
-  const options = firstTenPAT.map((pat) => {
+  const patsOptions = search ? pats.filter((pat) => stringsService.checkIfContains(pat.nom, search)).slice(0, 9) : pats
+  const options = patsOptions.map((pat) => {
     return {
       label: pat.nom,
       value: { value: pat.code, label: pat.nom },
@@ -104,9 +104,10 @@ const getPATOptionsFromSearch = (search) => {
 }
 
 const getEPCIOptionsFromSearch = (search) => {
-  const filteredEPCI = epcis.filter((epci) => stringsService.checkIfContains(epci.nom, search))
-  const firstTenEPCI = filteredEPCI.slice(0, 9)
-  const options = firstTenEPCI.map((epci) => {
+  const epcisOptions = search
+    ? epcis.filter((epci) => stringsService.checkIfContains(epci.nom, search)).slice(0, 9)
+    : epcis
+  const options = epcisOptions.map((epci) => {
     return {
       label: epci.nom,
       value: { value: epci.code, label: epci.nom },

@@ -1,7 +1,7 @@
 [
   {
     "code": "200000172",
-    "nom": "CC Faucigny-Glières"
+    "nom": "CC Faucigny - Glières"
   },
   {
     "code": "200000438",
@@ -49,7 +49,7 @@
   },
   {
     "code": "200006930",
-    "nom": "CC du Haut Allier"
+    "nom": "CC du Haut Allier Margeride"
   },
   {
     "code": "200006971",
@@ -97,7 +97,7 @@
   },
   {
     "code": "200017846",
-    "nom": "CA Etampois Sud Essonne"
+    "nom": "CA Étampois Sud Essonne"
   },
   {
     "code": "200018083",
@@ -397,7 +397,7 @@
   },
   {
     "code": "200035442",
-    "nom": "CC du Sud-Artois"
+    "nom": "CC du Sud Artois"
   },
   {
     "code": "200035533",
@@ -461,7 +461,7 @@
   },
   {
     "code": "200036069",
-    "nom": "CC du Pays de Mortagne au Perche"
+    "nom": "CC du Pays de Mortagne-au-Perche"
   },
   {
     "code": "200036077",
@@ -481,7 +481,7 @@
   },
   {
     "code": "200036473",
-    "nom": "CA de Saintes"
+    "nom": "CA \"Saintes - Grandes Rives - L'Agglo\""
   },
   {
     "code": "200036499",
@@ -657,7 +657,7 @@
   },
   {
     "code": "200040475",
-    "nom": "CC Loué - Brûlon - Noyen"
+    "nom": "CC LBN Communauté"
   },
   {
     "code": "200040491",
@@ -669,7 +669,7 @@
   },
   {
     "code": "200040558",
-    "nom": "CC Ecueillé-Valençay"
+    "nom": "CC Écueillé-Valençay"
   },
   {
     "code": "200040566",
@@ -693,7 +693,7 @@
   },
   {
     "code": "200040681",
-    "nom": "CC Enclave des Papes-Pays de Grignan"
+    "nom": "CC Enclave des Papes - Pays de Grignan"
   },
   {
     "code": "200040715",
@@ -729,7 +729,7 @@
   },
   {
     "code": "200040947",
-    "nom": "CC de Flandre Intérieure"
+    "nom": "CA Coeur de Flandre"
   },
   {
     "code": "200040954",
@@ -893,7 +893,7 @@
   },
   {
     "code": "200042646",
-    "nom": "CC Grand Orb communauté de communes en Languedoc"
+    "nom": "CC Grand Orb Communauté de Communes en Languedoc"
   },
   {
     "code": "200042653",
@@ -913,7 +913,7 @@
   },
   {
     "code": "200042935",
-    "nom": "CA Haut - Bugey Agglomération"
+    "nom": "CA Haut-Bugey Agglomération"
   },
   {
     "code": "200042943",
@@ -929,7 +929,7 @@
   },
   {
     "code": "200043065",
-    "nom": "CC du Val d Amboise"
+    "nom": "CC du Val d'Amboise"
   },
   {
     "code": "200043081",
@@ -941,7 +941,7 @@
   },
   {
     "code": "200043156",
-    "nom": "CC du Pays Réthelois"
+    "nom": "CC du Pays Rethélois"
   },
   {
     "code": "200043172",
@@ -1089,7 +1089,7 @@
   },
   {
     "code": "200058360",
-    "nom": "CC entre Beauce et Perche"
+    "nom": "CC Entre Beauce et Perche"
   },
   {
     "code": "200058477",
@@ -1169,7 +1169,7 @@
   },
   {
     "code": "200066025",
-    "nom": "CC Pays Rhin - Brisach"
+    "nom": "CC Alsace Rhin Brisach"
   },
   {
     "code": "200066033",
@@ -1269,7 +1269,7 @@
   },
   {
     "code": "200066512",
-    "nom": "CC Elan Limousin Avenir Nature"
+    "nom": "CC Élan Limousin Avenir Nature"
   },
   {
     "code": "200066520",
@@ -1277,7 +1277,7 @@
   },
   {
     "code": "200066553",
-    "nom": "CC des Monts de Lacaune et de la Montagne du Haut Languedoc"
+    "nom": "CC du Haut-Languedoc"
   },
   {
     "code": "200066561",
@@ -1301,7 +1301,7 @@
   },
   {
     "code": "200066652",
-    "nom": "CC Grand Sud Tarn et Garonne"
+    "nom": "CC Grand Sud Tarn-et-Garonne"
   },
   {
     "code": "200066660",
@@ -1425,7 +1425,7 @@
   },
   {
     "code": "200067122",
-    "nom": "CC Coteaux et Plaines du Pays Lafrançaisain"
+    "nom": "CC du Pays de Lafrançaise"
   },
   {
     "code": "200067130",
@@ -1505,7 +1505,7 @@
   },
   {
     "code": "200067429",
-    "nom": "CC Haut Nivernais-Val d'Yonne"
+    "nom": "CC Haut Nivernais - Val d'Yonne"
   },
   {
     "code": "200067437",
@@ -1561,7 +1561,7 @@
   },
   {
     "code": "200067650",
-    "nom": "CC Houve-Pays Boulageois"
+    "nom": "CC Houve - Pays Boulageois"
   },
   {
     "code": "200067668",
@@ -1601,7 +1601,7 @@
   },
   {
     "code": "200067791",
-    "nom": "CA Pays Foix-Varilhes"
+    "nom": "CA L'Agglo Foix-Varilhes"
   },
   {
     "code": "200067817",
@@ -1653,7 +1653,7 @@
   },
   {
     "code": "200067957",
-    "nom": "CC Haut Chemin-Pays de Pange"
+    "nom": "CC Haut Chemin - Pays de Pange"
   },
   {
     "code": "200067965",
@@ -1737,7 +1737,7 @@
   },
   {
     "code": "200068450",
-    "nom": "CC Argentan Intercom"
+    "nom": "CC Terres d'Argentan Interco"
   },
   {
     "code": "200068468",
@@ -1781,7 +1781,7 @@
   },
   {
     "code": "200068666",
-    "nom": "CA de Saint-Dizier Der et Blaise"
+    "nom": "CA du Grand Saint-Dizier Der et Vallées"
   },
   {
     "code": "200068674",
@@ -1833,7 +1833,7 @@
   },
   {
     "code": "200068872",
-    "nom": "CC Eguzon - Argenton - Vallée de la Creuse"
+    "nom": "CC Éguzon - Argenton - Vallée de la Creuse"
   },
   {
     "code": "200068880",
@@ -1841,7 +1841,7 @@
   },
   {
     "code": "200068914",
-    "nom": "CC La Rochefoucauld porte du Périgord"
+    "nom": "CC La Rochefoucauld Porte du Périgord"
   },
   {
     "code": "200068922",
@@ -2021,7 +2021,7 @@
   },
   {
     "code": "200069599",
-    "nom": "CC rurales de l'Entre-Deux-Mers"
+    "nom": "CC Rurales de l'Entre-Deux-Mers"
   },
   {
     "code": "200069615",
@@ -2057,11 +2057,11 @@
   },
   {
     "code": "200069722",
-    "nom": "CC interrégionale Aumale - Blangy-sur-Bresle"
+    "nom": "CC Interrégionale Aumale - Blangy-sur-Bresle"
   },
   {
     "code": "200069730",
-    "nom": "CC des 4 rivières"
+    "nom": "CC des Quatre Rivières en Bray"
   },
   {
     "code": "200069748",
@@ -2073,7 +2073,7 @@
   },
   {
     "code": "200069763",
-    "nom": "CC du Haut-Poitou"
+    "nom": "CC du Haut Poitou"
   },
   {
     "code": "200069821",
@@ -2085,7 +2085,7 @@
   },
   {
     "code": "200069847",
-    "nom": "CC Plateau de Caux-Doudeville-Yerville"
+    "nom": "CC Plateau de Caux"
   },
   {
     "code": "200069854",
@@ -2117,7 +2117,7 @@
   },
   {
     "code": "200070068",
-    "nom": "CC Communauté Bray-Eawy"
+    "nom": "CC Bray-Eawy"
   },
   {
     "code": "200070092",
@@ -2201,7 +2201,7 @@
   },
   {
     "code": "200070449",
-    "nom": "CC inter-Caux-Vexin"
+    "nom": "CC Inter-Caux-Vexin"
   },
   {
     "code": "200070464",
@@ -2361,7 +2361,7 @@
   },
   {
     "code": "200071025",
-    "nom": "CC Haute-Provence-Pays de Banon"
+    "nom": "CC Haute-Provence - Pays de Banon"
   },
   {
     "code": "200071033",
@@ -2413,7 +2413,7 @@
   },
   {
     "code": "200071207",
-    "nom": "CC de Pouilly en Auxois/Bligny sur Ouche"
+    "nom": "CC de Pouilly-en-Auxois / Bligny-sur-Ouche"
   },
   {
     "code": "200071215",
@@ -2513,7 +2513,7 @@
   },
   {
     "code": "200071678",
-    "nom": "CA Agglomération du Choletais"
+    "nom": "CA Cholet Agglomération"
   },
   {
     "code": "200071751",
@@ -2597,7 +2597,7 @@
   },
   {
     "code": "200072007",
-    "nom": "CC de la Montagne d'Ardèche"
+    "nom": "CC Montagne d'Ardèche"
   },
   {
     "code": "200072015",
@@ -2773,7 +2773,7 @@
   },
   {
     "code": "200073237",
-    "nom": "CC de Gâtine et Choisilles - Pays de Racan"
+    "nom": "CC de Gâtine-Racan"
   },
   {
     "code": "200073245",
@@ -2889,7 +2889,7 @@
   },
   {
     "code": "240100891",
-    "nom": "CC du Pays Bellegardien (CCPB)"
+    "nom": "CC Terre Valserhône (CCTV)"
   },
   {
     "code": "240200444",
@@ -2913,7 +2913,7 @@
   },
   {
     "code": "240200519",
-    "nom": "CC du Canton d'Oulchy le Château"
+    "nom": "CC du Canton d'Oulchy-le-Château"
   },
   {
     "code": "240200576",
@@ -2921,7 +2921,7 @@
   },
   {
     "code": "240200584",
-    "nom": "CC du Canton de Charly sur Marne"
+    "nom": "CC du Canton de Charly-sur-Marne"
   },
   {
     "code": "240200592",
@@ -3241,7 +3241,7 @@
   },
   {
     "code": "242101442",
-    "nom": "CC de Saulieu"
+    "nom": "CC de Saulieu-Morvan"
   },
   {
     "code": "242101459",
@@ -3285,7 +3285,7 @@
   },
   {
     "code": "242500320",
-    "nom": "CC de Montbenoit"
+    "nom": "CC Entre Doubs et Loue"
   },
   {
     "code": "242500338",
@@ -3321,7 +3321,7 @@
   },
   {
     "code": "242504496",
-    "nom": "CC du Plateau de Frasne et du Val de Drugeon (CFD)"
+    "nom": "CC du Plateau de Frasne et du Val de Drugeon"
   },
   {
     "code": "242600252",
@@ -3449,7 +3449,7 @@
   },
   {
     "code": "243100567",
-    "nom": "CC Lauragais Revel Sorezois"
+    "nom": "CC Aux sources du Canal du Midi"
   },
   {
     "code": "243100633",
@@ -3533,7 +3533,7 @@
   },
   {
     "code": "243301249",
-    "nom": "CC Les rives de la Laurence"
+    "nom": "CC Les Rives de la Laurence"
   },
   {
     "code": "243301264",
@@ -3573,7 +3573,7 @@
   },
   {
     "code": "243301504",
-    "nom": "CA du Bassin d'Arcachon Nord"
+    "nom": "CA du Bassin d'Arcachon Nord (COBAN)"
   },
   {
     "code": "243400017",
@@ -3593,7 +3593,7 @@
   },
   {
     "code": "243400520",
-    "nom": "CC du Pays de Lunel"
+    "nom": "CA Lunel Agglo"
   },
   {
     "code": "243400694",
@@ -3665,7 +3665,7 @@
   },
   {
     "code": "243600293",
-    "nom": "CC de la Région de Levroux"
+    "nom": "CC Levroux Boischaut Champagne"
   },
   {
     "code": "243600301",
@@ -3697,7 +3697,7 @@
   },
   {
     "code": "243700820",
-    "nom": "CC de Bléré Val de Cher"
+    "nom": "CC Autour de Chenonceaux Bléré-Val de Cher"
   },
   {
     "code": "243800604",
@@ -3725,7 +3725,7 @@
   },
   {
     "code": "243801255",
-    "nom": "CC COLLines Isère Nord Communauté"
+    "nom": "CC Collines Isère Nord Communauté"
   },
   {
     "code": "243900354",
@@ -3829,7 +3829,7 @@
   },
   {
     "code": "244200770",
-    "nom": "Saint-Etienne Métropole"
+    "nom": "Saint-Étienne Métropole"
   },
   {
     "code": "244200820",
@@ -3841,7 +3841,7 @@
   },
   {
     "code": "244300307",
-    "nom": "CC du Pays de Montfaucon"
+    "nom": "CC Haut Pays du Velay"
   },
   {
     "code": "244301016",
@@ -3873,7 +3873,7 @@
   },
   {
     "code": "244400453",
-    "nom": "CC de la Région de Blain"
+    "nom": "CC du Pays de Blain"
   },
   {
     "code": "244400503",
@@ -3893,7 +3893,7 @@
   },
   {
     "code": "244400610",
-    "nom": "CA de la Presqu'île de Guérande Atlantique (CAP ATLANTIQUE)"
+    "nom": "CA de la Presqu'île de Guérande Atlantique (Cap Atlantique)"
   },
   {
     "code": "244400644",
@@ -4045,15 +4045,15 @@
   },
   {
     "code": "245501176",
-    "nom": "CC du Territoire de Fresnes en Woëvre"
+    "nom": "CC du Territoire de Fresnes-en-Woëvre"
   },
   {
     "code": "245501184",
-    "nom": "CC du Pays de Revigny sur Ornain"
+    "nom": "CC du Pays de Revigny-sur-Ornain"
   },
   {
     "code": "245501242",
-    "nom": "CC du Pays d'Etain"
+    "nom": "CC du Pays d'Étain"
   },
   {
     "code": "245501259",
@@ -4061,7 +4061,7 @@
   },
   {
     "code": "245600440",
-    "nom": "CC de Blavet Bellevue Océan"
+    "nom": "CC Blavet Bellevue Océan"
   },
   {
     "code": "245600465",
@@ -4153,7 +4153,7 @@
   },
   {
     "code": "245901152",
-    "nom": "CC Coeur d'Ostrevent (CCCO)"
+    "nom": "CA Coeur d'Ostrevent"
   },
   {
     "code": "245901160",
@@ -4493,7 +4493,7 @@
   },
   {
     "code": "247200090",
-    "nom": "CC Communauté de communes du Pays Sabolien"
+    "nom": "CC du Pays Sabolien"
   },
   {
     "code": "247200132",
@@ -4581,7 +4581,7 @@
   },
   {
     "code": "247400682",
-    "nom": "CC du Haut-Chablais"
+    "nom": "CC du Haut Chablais"
   },
   {
     "code": "247400690",
@@ -4597,7 +4597,7 @@
   },
   {
     "code": "247400773",
-    "nom": "CC des sources du lac d'Annecy"
+    "nom": "CC des Sources du Lac d'Annecy"
   },
   {
     "code": "247600505",
@@ -4757,7 +4757,7 @@
   },
   {
     "code": "248400236",
-    "nom": "CC du Pays Réuni d'Orange"
+    "nom": "CC Pays d'Orange en Provence"
   },
   {
     "code": "248400251",
@@ -4809,7 +4809,7 @@
   },
   {
     "code": "248500589",
-    "nom": "CA La Roche sur Yon - Agglomération"
+    "nom": "CA La Roche-sur-Yon - Agglomération"
   },
   {
     "code": "248500621",
