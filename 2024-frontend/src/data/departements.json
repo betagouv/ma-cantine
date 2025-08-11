@@ -77,11 +77,11 @@
   },
   {
     "code": "21",
-    "nom": "Côte-d'or"
+    "nom": "Côte-d'Or"
   },
   {
     "code": "22",
-    "nom": "Côtes-d'armor"
+    "nom": "Côtes-d'Armor"
   },
   {
     "code": "23",
@@ -381,7 +381,7 @@
   },
   {
     "code": "95",
-    "nom": "Val-d'oise"
+    "nom": "Val-d'Oise"
   },
   {
     "code": "971",
@@ -400,12 +400,12 @@
     "nom": "La Réunion"
   },
   {
-    "code": "975",
-    "nom": "Saint-Pierre-et-Miquelon"
-  },
-  {
     "code": "976",
     "nom": "Mayotte"
+  },
+  {
+    "code": "975",
+    "nom": "Saint-Pierre-et-Miquelon"
   },
   {
     "code": "977",
@@ -421,14 +421,18 @@
   },
   {
     "code": "986",
-    "nom": "Wallis-et-Futuna"
+    "nom": "Wallis et Futuna"
   },
   {
     "code": "987",
-    "nom": "Polynésie Française"
+    "nom": "Polynésie française"
   },
   {
     "code": "988",
-    "nom": "Nouvelle Calédonie"
+    "nom": "Nouvelle-Calédonie"
+  },
+  {
+    "code": "989",
+    "nom": "Île de Clipperton"
   }
 ]
