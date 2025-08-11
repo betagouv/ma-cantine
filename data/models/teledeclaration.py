@@ -1,9 +1,7 @@
 import logging
-from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import F, Q, Sum
 from django.db.models.signals import pre_delete
@@ -12,6 +10,7 @@ from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
 from data.models import AuthenticationMethodHistoricalRecords, Canteen, Diagnostic
+from data.utils import CustomJSONEncoder
 from macantine.utils import (
     CAMPAIGN_DATES,
     EGALIM_OBJECTIVES,
@@ -27,13 +26,6 @@ def canteen_has_siret_or_siren_unite_legale_query():
         canteen_siren_unite_legale=""
     )
     return canteen_has_siret_query | canteen_has_siren_unite_legale_query
-
-
-class CustomJSONEncoder(DjangoJSONEncoder):
-    def default(self, o):
-        if isinstance(o, Decimal):
-            return float(o)
-        return super().default(o)
 
 
 def in_teledeclaration_campaign_query(year):

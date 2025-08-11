@@ -3,6 +3,7 @@ from decimal import Decimal
 from io import BytesIO
 
 from django.core.files.base import ContentFile
+from django.core.serializers.json import DjangoJSONEncoder
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
@@ -15,6 +16,13 @@ class CreationSource(models.TextChoices):
     API = "API", "API"
     IMPORT = "IMPORT", "IMPORT"
     ADMIN = "ADMIN", "ADMIN"
+
+
+class CustomJSONEncoder(DjangoJSONEncoder):
+    def default(self, o):
+        if isinstance(o, Decimal):
+            return float(o)
+        return super().default(o)
 
 
 def has_charfield_missing_query(field_name):
