@@ -6,6 +6,39 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.27.0](https://github.com/betagouv/ma-cantine/compare/v2025.26.0...v2025.27.0) (2025-08-11)
+
+
+### Nouveautés
+
+* **Observatoire:** affiche le graphique Mode de production ([#5591](https://github.com/betagouv/ma-cantine/issues/5591)) ([dc59097](https://github.com/betagouv/ma-cantine/commit/dc59097f486d5955044cad6d25992fed844acd37))
+* **Observatoire:** ajout du bouton "Copier l'url" ([#5596](https://github.com/betagouv/ma-cantine/issues/5596)) ([dbbc2a4](https://github.com/betagouv/ma-cantine/commit/dbbc2a4f7c79f29d4e4a28f79f47b29246dc45f9))
+* **Observatoire:** ajout du module "Je donne mon avis" ([#5597](https://github.com/betagouv/ma-cantine/issues/5597)) ([b0a60dd](https://github.com/betagouv/ma-cantine/commit/b0a60dd5f11b80935ffae947e49e3597e3c1718c))
+* **Observatoire:** ajoute le graphique des secteurs ([#5593](https://github.com/betagouv/ma-cantine/issues/5593)) ([c4d19d5](https://github.com/betagouv/ma-cantine/commit/c4d19d569405533422136f32446b90985c556063))
+* **Observatoire:** ajoute le graphique du nombre de télédéclarations qui ont réussi l'objectif EGalim ([#5585](https://github.com/betagouv/ma-cantine/issues/5585)) ([2a92602](https://github.com/betagouv/ma-cantine/commit/2a9260250c04691c0ab226f402e124376ef43de6))
+* **Observatoire:** ajoute les graphiques "type d'établissement" et "mode de gestion" à la page ([#5592](https://github.com/betagouv/ma-cantine/issues/5592)) ([14d8e7d](https://github.com/betagouv/ma-cantine/commit/14d8e7d21ed6aa490e6a199bf0c6d5106a511b70))
+* **Observatoire:** ajouter dans l'url les filtres sélectionnés ([#5595](https://github.com/betagouv/ma-cantine/issues/5595)) ([0bb1cc0](https://github.com/betagouv/ma-cantine/commit/0bb1cc0bb001483a58e2fbe3d85990adacefbe91))
+* **Observatoire:** création du bloc pour afficher les graphiques des cantines ([#5587](https://github.com/betagouv/ma-cantine/issues/5587)) ([9e28b2c](https://github.com/betagouv/ma-cantine/commit/9e28b2ca2d90fb5fa90ba4e50a377528119340c3))
+
+
+### Améliorations
+
+* **Admin:** permet la suppression du cache depuis l'admin ([#5586](https://github.com/betagouv/ma-cantine/issues/5586)) ([8296442](https://github.com/betagouv/ma-cantine/commit/829644258c8f48aeda2d0e47f0ea47cc55c3628b))
+* **API Stats:** renvoyer les objectifs EGalim DROM si une region correspond ([#5590](https://github.com/betagouv/ma-cantine/issues/5590)) ([e5bb9d4](https://github.com/betagouv/ma-cantine/commit/e5bb9d47796ed2eb4ae63cd93e7c93a531440cbc))
+
+
+### Corrections (bugs, typos...)
+
+* **CI:** répare la récuparation du language-pack-fr pour les tests ([#5584](https://github.com/betagouv/ma-cantine/issues/5584)) ([3935a1f](https://github.com/betagouv/ma-cantine/commit/3935a1f265a8a48f4161e398d336033a24293dfb))
+* **Observatoire:** améliore l'affichage des graphiques des cantines ([#5594](https://github.com/betagouv/ma-cantine/issues/5594)) ([cd7ac50](https://github.com/betagouv/ma-cantine/commit/cd7ac50f982198e428dd1bac8dd3435a1d2a487f))
+* **Observatoire:** mise à jour des jeux de données géographiques ([#5598](https://github.com/betagouv/ma-cantine/issues/5598)) ([f0f53c5](https://github.com/betagouv/ma-cantine/commit/f0f53c5d4558e6d53f1636bb26d168531b5c38e9))
+
+
+### Technique
+
+* **Objectifs EGalim:** enrichir l'objet EGALIM_OBJECTIVES avec les chiffres des DROM ([#5589](https://github.com/betagouv/ma-cantine/issues/5589)) ([7bbaf00](https://github.com/betagouv/ma-cantine/commit/7bbaf0051340be5563641f6e7c016c1e2bae06c8))
+* **Télédéclaration:** déplacer le queryset pourcentage bio & egalim des achats dans le modèle + tests ([#5582](https://github.com/betagouv/ma-cantine/issues/5582)) ([d4a7579](https://github.com/betagouv/ma-cantine/commit/d4a7579379544cd4f6eb3b8e93f474d2b0ee9f5c))
+
 ## [2025.26.0](https://github.com/betagouv/ma-cantine/compare/v2025.25.0...v2025.26.0) (2025-08-05)
 
 
