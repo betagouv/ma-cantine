@@ -88,6 +88,10 @@ onUnmounted(() => {
     align-items: center;
 
     .observatory-filters-selected {
+      &__list {
+        flex-shrink: 0;
+      }
+
       &__scrollable,
       &__title {
         display: none;
