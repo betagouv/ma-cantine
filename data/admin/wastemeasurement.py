@@ -72,7 +72,7 @@ class WasteMeasurementAdmin(SimpleHistoryAdmin):
             },
         ),
         (
-            "Meta données",
+            "Metadonnées",
             {
                 "fields": (
                     "creation_date",

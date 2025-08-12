@@ -44,12 +44,13 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "canteen_name",
         "year",
         "diagnostic_type",
+        "status",
         "creation_date",
         "modification_date",
     )
-    list_filter = ("year", "diagnostic_type")
+    list_filter = ("year", "diagnostic_type", "status", "creation_source")
     readonly_fields = (
-        "creation_source",
+        "status",
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
@@ -58,6 +59,9 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "tunnel_plastic",
         "tunnel_diversification",
         "tunnel_info",
+        "creation_source",
+        "creation_date",
+        "modification_date",
     )
     raw_id_fields = ("canteen",)
 
@@ -68,9 +72,9 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 "fields": (
                     "canteen",
                     "year",
-                    "creation_source",
                     "diagnostic_type",
                     "central_kitchen_diagnostic_mode",
+                    "status",
                 )
             },
         ),
@@ -285,13 +289,28 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 )
             },
         ),
+        (
+            "Metadonnées",
+            {
+                "fields": (
+                    "creation_source",
+                    "creation_date",
+                    "modification_date",
+                )
+            },
+        ),
     )
-
     search_fields = (
         "canteen__name",
         "canteen__siret",
         "canteen__siren_unite_legale",
     )
+    search_help_text = "La recherche est faite sur les champs : nom de la cantine, siret, siren de l'unité légale"
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.prefetch_related("canteen")
+        return qs
 
     def save_model(self, request, obj, form, change):
         if not change:
