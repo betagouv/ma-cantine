@@ -293,6 +293,11 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "canteen__siren_unite_legale",
     )
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.prefetch_related("canteen")
+        return qs
+
     def save_model(self, request, obj, form, change):
         if not change:
             obj.creation_source = CreationSource.ADMIN
