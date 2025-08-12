@@ -48,9 +48,9 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "creation_date",
         "modification_date",
     )
-    list_filter = ("year", "diagnostic_type", "status")
+    list_filter = ("year", "diagnostic_type", "status", "creation_source")
     readonly_fields = (
-        "creation_source",
+        "status",
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
@@ -59,6 +59,9 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "tunnel_plastic",
         "tunnel_diversification",
         "tunnel_info",
+        "creation_source",
+        "creation_date",
+        "modification_date",
     )
     raw_id_fields = ("canteen",)
 
@@ -69,9 +72,9 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 "fields": (
                     "canteen",
                     "year",
-                    "creation_source",
                     "diagnostic_type",
                     "central_kitchen_diagnostic_mode",
+                    "status",
                 )
             },
         ),
@@ -283,6 +286,16 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                     "value_boulangerie_local",
                     "value_boissons_local",
                     "value_autres_local",
+                )
+            },
+        ),
+        (
+            "Metadonnées",
+            {
+                "fields": (
+                    "creation_source",
+                    "creation_date",
+                    "modification_date",
                 )
             },
         ),
