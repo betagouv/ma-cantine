@@ -6,84 +6,16 @@ from rest_framework import serializers
 from data.models import Diagnostic
 
 from .teledeclaration import ShortTeledeclarationSerializer
-from .utils import COMPLETE_APPRO_FIELDS, appro_to_percentages
+from .utils import appro_to_percentages
 
 logger = logging.getLogger(__name__)
 
-SIMPLE_APPRO_FIELDS = (
-    "value_total_ht",
-    "value_bio_ht",
-    "value_sustainable_ht",
-    "value_externality_performance_ht",
-    "value_egalim_others_ht",
-    "value_meat_poultry_ht",
-    "value_meat_poultry_egalim_ht",
-    "value_meat_poultry_france_ht",
-    "value_fish_ht",
-    "value_fish_egalim_ht",
+FIELDS = (
+    Diagnostic.META_FIELDS
+    + Diagnostic.SIMPLE_APPRO_FIELDS
+    + Diagnostic.COMPLETE_APPRO_FIELDS
+    + Diagnostic.NON_APPRO_FIELDS
 )
-
-NON_APPRO_FIELDS = (
-    "has_waste_diagnostic",
-    "has_waste_plan",
-    "waste_actions",
-    "other_waste_action",
-    "has_donation_agreement",
-    "has_waste_measures",
-    "total_leftovers",
-    "duration_leftovers_measurement",
-    "bread_leftovers",
-    "served_leftovers",
-    "unserved_leftovers",
-    "side_leftovers",
-    "donation_frequency",
-    "donation_quantity",
-    "donation_food_type",
-    "other_waste_comments",
-    "has_diversification_plan",
-    "diversification_plan_actions",
-    "service_type",
-    "vegetarian_weekly_recurrence",
-    "vegetarian_menu_type",
-    "vegetarian_menu_bases",
-    "cooking_plastic_substituted",
-    "serving_plastic_substituted",
-    "plastic_bottles_substituted",
-    "plastic_tableware_substituted",
-    "communication_supports",
-    "other_communication_support",
-    "communication_support_url",
-    "communicates_on_food_plan",
-    "communicates_on_food_quality",
-    "communication_frequency",
-)
-
-META_FIELDS = (
-    "id",
-    "canteen_id",
-    "year",
-    "diagnostic_type",
-    "central_kitchen_diagnostic_mode",
-    "is_teledeclared",
-    "is_filled",
-)
-
-CREATION_META_FIELDS = (
-    "creation_date",
-    "modification_date",
-    "creation_source",
-)
-
-TUNNEL_PROGRESS_FIELDS = (
-    "tunnel_appro",
-    "tunnel_waste",
-    "tunnel_plastic",
-    "tunnel_diversification",
-    "tunnel_info",
-)
-
-FIELDS = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
-
 REQUIRED_FIELDS = ("year",)
 
 
@@ -143,9 +75,9 @@ class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
         representation = super().to_representation(instance)
         representation = appro_to_percentages(representation, instance)
         if instance.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
-            [representation.pop(field, "") for field in NON_APPRO_FIELDS]
+            [representation.pop(field, "") for field in Diagnostic.NON_APPRO_FIELDS]
         if instance.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
-            [representation.pop(field, "") for field in COMPLETE_APPRO_FIELDS]
+            [representation.pop(field, "") for field in Diagnostic.COMPLETE_APPRO_FIELDS]
         return representation
 
 
@@ -163,8 +95,8 @@ class PublicDiagnosticSerializer(DiagnosticSerializer):
 class PublicApproDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + SIMPLE_APPRO_FIELDS
-        read_ony_fields = META_FIELDS + SIMPLE_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS
+        read_only_fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -174,24 +106,15 @@ class PublicApproDiagnosticSerializer(DiagnosticSerializer):
 class PublicServiceDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + NON_APPRO_FIELDS
-        read_ony_fields = META_FIELDS + NON_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS + Diagnostic.NON_APPRO_FIELDS
+        read_only_fields = Diagnostic.META_FIELDS + Diagnostic.NON_APPRO_FIELDS
 
 
 class ManagerDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         read_only_fields = ("id",)
-        fields = (
-            FIELDS
-            + (
-                "creation_mtm_source",
-                "creation_mtm_campaign",
-                "creation_mtm_medium",
-            )
-            + CREATION_META_FIELDS
-            + TUNNEL_PROGRESS_FIELDS
-        )
+        fields = FIELDS + Diagnostic.MTM_FIELDS + Diagnostic.CREATION_META_FIELDS + Diagnostic.TUNNEL_PROGRESS_FIELDS
 
     def __init__(self, *args, **kwargs):
         action = kwargs.pop("action", None)
@@ -200,9 +123,8 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
             for field in REQUIRED_FIELDS:
                 self.fields[field].required = True
         else:
-            self.fields.pop("creation_mtm_source")
-            self.fields.pop("creation_mtm_campaign")
-            self.fields.pop("creation_mtm_medium")
+            for field in Diagnostic.MTM_FIELDS:
+                self.fields.pop(field)
 
     def validate(self, data):
         total = self.return_value(self, data, "value_total_ht")
@@ -232,29 +154,29 @@ class FullDiagnosticSerializer(DiagnosticSerializer):
 
     class Meta:
         model = Diagnostic
-        fields = FIELDS + ("teledeclaration",) + CREATION_META_FIELDS + TUNNEL_PROGRESS_FIELDS
+        fields = FIELDS + ("teledeclaration",) + Diagnostic.CREATION_META_FIELDS + Diagnostic.TUNNEL_PROGRESS_FIELDS
         read_only_fields = fields
 
 
 class SimpleTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + SIMPLE_APPRO_FIELDS + NON_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS + Diagnostic.NON_APPRO_FIELDS
         read_only_fields = fields
 
 
 class CompleteTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + COMPLETE_APPRO_FIELDS + NON_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS + Diagnostic.NON_APPRO_FIELDS
         read_only_fields = fields
 
 
 class ApproDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
-        read_ony_fields = META_FIELDS + SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS
+        read_only_fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -264,21 +186,21 @@ class ApproDiagnosticSerializer(DiagnosticSerializer):
 class ApproDeferredTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + NON_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS + Diagnostic.NON_APPRO_FIELDS
         read_only_fields = fields
 
 
 class SimpleApproOnlyTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + SIMPLE_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS
         read_only_fields = fields
 
 
 class CompleteApproOnlyTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
-        fields = META_FIELDS + COMPLETE_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS
         read_only_fields = fields
 
 
