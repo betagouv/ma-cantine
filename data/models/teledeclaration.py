@@ -3,7 +3,7 @@ import logging
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import F, Q, Sum
+from django.db.models import F, Func, IntegerField, Q, Sum
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
@@ -106,6 +106,13 @@ class TeledeclarationQuerySet(models.QuerySet):
 
     def publicly_visible(self):
         return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
+
+    def with_satellites_count(self):
+        return self.annotate(
+            satellites_count=Func(
+                "declared_data__satellites", function="jsonb_array_length", output_field=IntegerField()
+            )
+        )
 
     def with_appro_percent_stats(self):
         """
