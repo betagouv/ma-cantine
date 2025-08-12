@@ -933,6 +933,11 @@ class Diagnostic(models.Model):
     ]
 
     # Télédéclaration
+    teledeclaration_submitted_date = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name="date de télédéclaration",
+    )
     canteen_snapshot = models.JSONField(
         blank=True,
         null=True,
