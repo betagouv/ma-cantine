@@ -933,7 +933,7 @@ class Diagnostic(models.Model):
     ]
 
     # Télédéclaration
-    teledeclaration_submitted_date = models.DateTimeField(
+    teledeclaration_date = models.DateTimeField(
         blank=True,
         null=True,
         verbose_name="date de télédéclaration",
@@ -953,7 +953,7 @@ class Diagnostic(models.Model):
 
     @property
     def latest_submitted_teledeclaration(self):
-        submitted_teledeclarations = self.teledeclaration_set.filter(status="SUBMITTED")
+        submitted_teledeclarations = self.teledeclaration_set.submitted()
         if submitted_teledeclarations.count() == 0:
             return None
         return submitted_teledeclarations.order_by("-creation_date").first()

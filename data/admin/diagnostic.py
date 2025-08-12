@@ -62,7 +62,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "tunnel_plastic",
         "tunnel_diversification",
         "tunnel_info",
-        "teledeclaration_submitted_date",
+        "teledeclaration_date",
         "canteen_snapshot_pretty",
         "applicant_snapshot_pretty",
         "creation_source",
@@ -297,7 +297,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         ),
         (
             "Télédéclaration",
-            {"fields": ("teledeclaration_submitted_date", "canteen_snapshot_pretty", "applicant_snapshot_pretty")},
+            {"fields": ("teledeclaration_date", "canteen_snapshot_pretty", "applicant_snapshot_pretty")},
         ),
         (
             "Metadonnées",

@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="diagnostic",
-            name="teledeclaration_submitted_date",
+            name="teledeclaration_date",
             field=models.DateTimeField(
                 blank=True,
                 null=True,
@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="historicaldiagnostic",
-            name="teledeclaration_submitted_date",
+            name="teledeclaration_date",
             field=models.DateTimeField(
                 blank=True,
                 null=True,
