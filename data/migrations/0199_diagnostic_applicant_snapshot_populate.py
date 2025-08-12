@@ -9,7 +9,7 @@ def populate_diagnostic_applicant_snapshot(apps, schema_editor):
     for teledeclaration in Teledeclaration.objects.filter(status="SUBMITTED"):
         try:
             diagnostic = Diagnostic.objects.get(id=teledeclaration.diagnostic_id)
-            applicant_snapshot = teledeclaration.declared_data.get("canteen")
+            applicant_snapshot = teledeclaration.declared_data.get("applicant")
             if applicant_snapshot:
                 diagnostic.applicant_snapshot = applicant_snapshot
                 diagnostic.save(update_fields=["applicant_snapshot"])
