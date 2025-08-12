@@ -10,6 +10,7 @@ from data.fields import ChoiceArrayField
 from data.models import Canteen
 from data.utils import (
     CreationSource,
+    CustomJSONEncoder,
     get_diagnostic_lower_limit_year,
     get_diagnostic_upper_limit_year,
     make_optional_positive_decimal_field,
@@ -162,7 +163,7 @@ class Diagnostic(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords()
+    history = HistoricalRecords(excluded_fields=["canteen_snapshot"])
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
 
@@ -930,6 +931,14 @@ class Diagnostic(models.Model):
         "value_boissons_local",
         "value_autres_local",
     ]
+
+    # Télédéclaration
+    canteen_snapshot = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name="cantine (copie au moment de la télédéclaration)",
+        encoder=CustomJSONEncoder,
+    )
 
     @property
     def latest_submitted_teledeclaration(self):
