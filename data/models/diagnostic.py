@@ -221,6 +221,14 @@ class Diagnostic(models.Model):
         "value_boulangerie_rup",
         "value_boissons_rup",
         "value_autres_rup",
+        "value_viandes_volailles_commerce_equitable",
+        "value_produits_de_la_mer_commerce_equitable",
+        "value_fruits_et_legumes_commerce_equitable",
+        "value_charcuterie_commerce_equitable",
+        "value_produits_laitiers_commerce_equitable",
+        "value_boulangerie_commerce_equitable",
+        "value_boissons_commerce_equitable",
+        "value_autres_commerce_equitable",
         "value_viandes_volailles_fermier",
         "value_produits_de_la_mer_fermier",
         "value_fruits_et_legumes_fermier",
@@ -237,14 +245,6 @@ class Diagnostic(models.Model):
         "value_boulangerie_externalites",
         "value_boissons_externalites",
         "value_autres_externalites",
-        "value_viandes_volailles_commerce_equitable",
-        "value_produits_de_la_mer_commerce_equitable",
-        "value_fruits_et_legumes_commerce_equitable",
-        "value_charcuterie_commerce_equitable",
-        "value_produits_laitiers_commerce_equitable",
-        "value_boulangerie_commerce_equitable",
-        "value_boissons_commerce_equitable",
-        "value_autres_commerce_equitable",
         "value_viandes_volailles_performance",
         "value_produits_de_la_mer_performance",
         "value_fruits_et_legumes_performance",
@@ -289,7 +289,7 @@ class Diagnostic(models.Model):
 
     COMPLETE_APPRO_FIELDS = ["value_total_ht", "value_meat_poultry_ht", "value_fish_ht"] + COMPLETE_FIELDS
 
-    NON_APPRO_FIELDS = (
+    NON_APPRO_FIELDS = [
         "has_waste_diagnostic",
         "has_waste_plan",
         "waste_actions",
@@ -322,7 +322,7 @@ class Diagnostic(models.Model):
         "communicates_on_food_plan",
         "communicates_on_food_quality",
         "communication_frequency",
-    )
+    ]
 
     META_FIELDS = [
         "id",
@@ -820,6 +820,30 @@ class Diagnostic(models.Model):
     value_autres_rup = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Région ultrapériphérique",
     )
+    value_viandes_volailles_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Viandes et volailles fraîches et surgelées, Commerce équitable",
+    )
+    value_produits_de_la_mer_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Produits aquatiques frais et surgelés, Commerce équitable",
+    )
+    value_fruits_et_legumes_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Fruits et légumes frais et surgelés, Commerce équitable",
+    )
+    value_charcuterie_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Charcuterie, Commerce équitable",
+    )
+    value_produits_laitiers_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Commerce équitable",
+    )
+    value_boulangerie_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Commerce équitable",
+    )
+    value_boissons_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Boissons, Commerce équitable",
+    )
+    value_autres_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Commerce équitable",
+    )
     value_viandes_volailles_fermier = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Fermier",
     )
@@ -867,30 +891,6 @@ class Diagnostic(models.Model):
     )
     value_autres_externalites = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
-    )
-    value_viandes_volailles_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Viandes et volailles fraîches et surgelées, Commerce équitable",
-    )
-    value_produits_de_la_mer_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Commerce équitable",
-    )
-    value_fruits_et_legumes_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Fruits et légumes frais et surgelés, Commerce équitable",
-    )
-    value_charcuterie_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Charcuterie, Commerce équitable",
-    )
-    value_produits_laitiers_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="BOF (Produits laitiers, beurre et œufs), Commerce équitable",
-    )
-    value_boulangerie_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Commerce équitable",
-    )
-    value_boissons_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Boissons, Commerce équitable",
-    )
-    value_autres_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Commerce équitable",
     )
     value_viandes_volailles_performance = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale",

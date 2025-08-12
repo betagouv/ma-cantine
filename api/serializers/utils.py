@@ -23,16 +23,16 @@ def appro_to_percentages(representation, instance, remove_values=True):
         if value is not None:
             representation[f"percentage_{field}"] = value / fish_total
 
-    appro_field = (
+    appro_fields = [
         "value_total_ht",
         "value_bio_ht",
         "value_sustainable_ht",
         "value_externality_performance_ht",
         "value_egalim_others_ht",
-    ) + Diagnostic.COMPLETE_APPRO_FIELDS  # meat and fish totals included in COMPLETE
+    ] + Diagnostic.COMPLETE_APPRO_FIELDS  # meat and fish totals included in COMPLETE
     total = representation.get("value_total_ht")
 
-    for field in appro_field:
+    for field in appro_fields:
         new_field_name = f"percentage_{field}"
         if total and representation.get(field) is not None:
             representation[new_field_name] = representation[field] / total
