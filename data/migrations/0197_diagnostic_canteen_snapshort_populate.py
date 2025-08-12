@@ -19,7 +19,7 @@ def populate_diagnostic_canteen_snapshot(apps, schema_editor):
 
 def undo_populate_diagnostic_canteen_snapshot(apps, schema_editor):
     Diagnostic = apps.get_model("data", "Diagnostic")
-    Diagnostic.objects.all().update(canteen_snapshot=dict())
+    Diagnostic.objects.all().update(canteen_snapshot=None)
 
 
 class Migration(migrations.Migration):
