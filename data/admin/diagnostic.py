@@ -286,12 +286,12 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             },
         ),
     )
-
     search_fields = (
         "canteen__name",
         "canteen__siret",
         "canteen__siren_unite_legale",
     )
+    search_help_text = "La recherche est faite sur les champs : nom de la cantine, siret, siren de l'unité légale"
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
