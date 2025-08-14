@@ -15,23 +15,23 @@ date_in_last_teledeclaration_campaign = "2024-02-01"
 class DiagnosticQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.valid_canteen_1 = CanteenFactory(siret="12345678901234", deletion_date=None, yearly_meal_count=100)
-        cls.valid_canteen_2 = CanteenFactory(siren_unite_legale="123456789", deletion_date=None)
+        cls.valid_canteen_1 = CanteenFactory(siret="12345678901234", yearly_meal_count=100)
+        cls.valid_canteen_2 = CanteenFactory(siren_unite_legale="123456789", yearly_meal_count=100)
         cls.valid_canteen_3 = CanteenFactory(
-            siret="12345678901235", siren_unite_legale="123456789", deletion_date=None
+            siret="12345678901235", siren_unite_legale="123456789", yearly_meal_count=100
         )
-        cls.valid_canteen_4 = CanteenFactory(siret="12345678901230", deletion_date=None, yearly_meal_count=0)
+        cls.valid_canteen_4 = CanteenFactory(siret="12345678901230", yearly_meal_count=0)
         cls.valid_canteen_sat = CanteenFactory(
-            siret="12345678901232", deletion_date=None, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+            siret="12345678901232", production_type=Canteen.ProductionType.ON_SITE_CENTRAL
         )
         cls.valid_canteen_5_armee = CanteenFactory(
-            siret="12345678901233",
-            line_ministry=Canteen.Ministries.ARMEE,
+            siret="12345678901233", line_ministry=Canteen.Ministries.ARMEE, yearly_meal_count=100
         )
-        cls.invalid_canteen = CanteenFactory(siret="", deletion_date=None)  # siret missing
+        cls.invalid_canteen = CanteenFactory(siret="", yearly_meal_count=100)  # siret missing
         cls.deleted_canteen = CanteenFactory(
             siret="56789012345678",
-            deletion_date=timezone.now() - timezone.timedelta(days=30),
+            yearly_meal_count=100,
+            deletion_date=timezone.now() - timezone.timedelta(days=30),  # soft deleted
         )
 
         for index, canteen in enumerate(
@@ -59,6 +59,20 @@ class DiagnosticQuerySetTest(TestCase):
                 diagnostic_last_year.teledeclare()
             setattr(cls, f"valid_canteen_diagnostic_{index + 1}", diagnostic)
 
+        cls.valid_canteen_diagnostic_4 = DiagnosticFactory(
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=year_data,
+            creation_date=date_in_teledeclaration_campaign,
+            canteen=cls.valid_canteen_4,
+            value_total_ht=1000.00,
+            value_bio_ht=200.00,
+            value_sustainable_ht=100.00,
+            value_externality_performance_ht=100.00,
+            value_egalim_others_ht=100.00,
+        )
+        with freeze_time(date_in_teledeclaration_campaign):
+            cls.valid_canteen_diagnostic_4.teledeclare()
+
         cls.invalid_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
@@ -69,6 +83,7 @@ class DiagnosticQuerySetTest(TestCase):
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.invalid_canteen_diagnostic.teledeclare()
+
         cls.deleted_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
@@ -81,22 +96,31 @@ class DiagnosticQuerySetTest(TestCase):
             cls.deleted_canteen_diagnostic.teledeclare()
 
     def test_teledeclared_for_year(self):
-        teledeclarations = Diagnostic.objects.teledeclared_for_year(year_data)
-        self.assertEqual(teledeclarations.count(), 6)
-        self.assertIn(self.valid_canteen_diagnostic_1, teledeclarations)
-        self.assertIn(self.invalid_canteen_diagnostic, teledeclarations)
-        self.assertIn(self.deleted_canteen_diagnostic, teledeclarations)
-        teledeclarations = Diagnostic.objects.teledeclared_for_year(year_data - 1)
-        self.assertEqual(teledeclarations.count(), 4)
+        self.assertEqual(Diagnostic.objects.count(), 11)
+        diagnostics = Diagnostic.objects.teledeclared_for_year(year_data)
+        self.assertEqual(diagnostics.count(), 7)
+        self.assertIn(self.valid_canteen_diagnostic_1, diagnostics)
+        self.assertIn(self.invalid_canteen_diagnostic, diagnostics)
+        self.assertIn(self.deleted_canteen_diagnostic, diagnostics)
+        diagnostics = Diagnostic.objects.teledeclared_for_year(year_data - 1)
+        self.assertEqual(diagnostics.count(), 4)
 
-    def test_aberrant_values(self):
-        self.assertEqual(Diagnostic.objects.count(), 10)
-        print(Diagnostic.objects.with_meal_price().first().__dict__)
-        self.assertEqual(Diagnostic.objects.aberrant_values().count(), 1)
+    def test_with_meal_price(self):
+        self.assertEqual(Diagnostic.objects.count(), 11)
+        diagnostics = Diagnostic.objects.with_meal_price()
+        self.assertEqual(diagnostics.count(), 11)
+        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_1.id).canteen_yearly_meal_count, 100)
+        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_1.id).meal_price, 10.0)
+        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_4.id).canteen_yearly_meal_count, 0)
+        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_4.id).meal_price, None)
+
+    def test_exclude_aberrant_values(self):
+        self.assertEqual(Diagnostic.objects.count(), 11)
+        self.assertEqual(Diagnostic.objects.exclude_aberrant_values().count(), 10)  # 1 aberrant
 
     def test_publicly_visible(self):
-        self.assertEqual(Diagnostic.objects.count(), 10)
-        self.assertEqual(Diagnostic.objects.publicly_visible().count(), 8)  # 2 belong to canteen_army
+        self.assertEqual(Diagnostic.objects.count(), 11)
+        self.assertEqual(Diagnostic.objects.publicly_visible().count(), 9)  # 2 belong to canteen_army
 
 
 class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):

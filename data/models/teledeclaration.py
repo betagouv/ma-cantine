@@ -55,7 +55,7 @@ class TeledeclarationQuerySet(models.QuerySet):
     def cancelled(self):
         return self.filter(status=Teledeclaration.TeledeclarationStatus.CANCELLED)
 
-    def aberrant_values(self):
+    def exclude_aberrant_values(self):
         return self.exclude(meal_price__gt=20, value_total_ht__gt=1000000)
 
     def in_year(self, year):
@@ -97,7 +97,7 @@ class TeledeclarationQuerySet(models.QuerySet):
                     value_bio_ht_agg__isnull=False,
                 )
                 .canteen_for_stat(year)  # Chaine de traitement n°6
-                .aberrant_values()  # Chaîne de traitement
+                .exclude_aberrant_values()  # Chaîne de traitement
             )
         else:
             return self.none()
