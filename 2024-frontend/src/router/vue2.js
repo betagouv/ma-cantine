@@ -123,14 +123,6 @@ const vue2routes = [
     },
   },
   {
-    path: "/statistiques-regionales",
-    name: "PublicCanteenStatisticsPage",
-    meta: {
-      title: "Sur mon territoire",
-      siteMap: law,
-    },
-  },
-  {
     path: "/mon-compte",
     name: "AccountSummaryPage",
   },

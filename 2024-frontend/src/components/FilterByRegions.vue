@@ -21,6 +21,7 @@ const options = computed(() => {
 const query = route.query
 const allRegions = getRegionsOptionsFromSearch()
 if (query.regions) storeFilters.setFromQuery("regions", query.regions, allRegions)
+if (query.region) storeFilters.setFromQuery("regions", query.region, allRegions) // Redirect from vue2
 </script>
 
 <template>

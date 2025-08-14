@@ -82,8 +82,8 @@ const navItems = [
         to: { name: "CanteenSearchLanding" },
       },
       {
-        text: "Sur mon territoire",
-        to: { name: "PublicCanteenStatisticsPage" },
+        text: "Observatoire EGalim",
+        to: { name: "Observatoire" },
       },
       {
         text: "Indicateurs clés",

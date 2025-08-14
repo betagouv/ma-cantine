@@ -38,7 +38,6 @@ import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import DiagnosticImportPage from "@/views/DiagnosticsImporter/DiagnosticImportPage"
-import PublicCanteenStatisticsPage from "@/views/PublicCanteenStatisticsPage"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
 import PurchasesSummary from "@/views/PurchasesSummary"
@@ -360,14 +359,6 @@ const routes = [
     },
   },
   {
-    path: "/statistiques-regionales",
-    name: "PublicCanteenStatisticsPage",
-    component: PublicCanteenStatisticsPage,
-    meta: {
-      title: "Sur mon territoire",
-    },
-  },
-  {
     path: "/mes-achats",
     name: "PurchasesHome",
     component: PurchasesHome,
@@ -519,6 +510,10 @@ const vue3Routes = [
     path: "/plan-du-site/",
     name: "PlanDuSite",
   },
+  {
+    path: "/observatoire",
+    name: "Observatoire",
+  },
 ]
 const VUE3_PREFIX = "/v2"
 vue3Routes.forEach((r) => {
@@ -539,6 +534,11 @@ routes.push({
 routes.push({
   path: "/politique-de-confidentialite",
   redirect: { name: "DonneesPersonnelles" },
+})
+
+routes.push({
+  path: "/statistiques-regionales",
+  redirect: { name: "Observatoire" },
 })
 
 routes.push({
