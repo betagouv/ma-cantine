@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue"
 import { useStoreFilters } from "@/stores/filters"
+import stringsService from "@/services/strings"
 import GraphBase from "@/components/GraphBase.vue"
 import GraphGauge from "@/components/GraphGauge.vue"
 
@@ -9,7 +10,8 @@ const storeFilters = useStoreFilters()
 const title = "Télédéclarations qui ont atteint l'objectif EGalim"
 const description = computed(() => {
   const filters = storeFilters.getSelectionLabels()
-  return `Pour la recherche ${filters}, le pourcentage de "${title}" est : ${props.approPercent}%.`
+  const percent = stringsService.prettyPercent(props.approPercent)
+  return `Pour la recherche ${filters}, le pourcentage de "${title}" est : ${percent}.`
 })
 </script>
 

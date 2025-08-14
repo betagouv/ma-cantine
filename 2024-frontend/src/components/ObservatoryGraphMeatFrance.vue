@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, computed } from "vue"
 import { useStoreFilters } from "@/stores/filters"
+import stringsService from "@/services/strings"
 import GraphBase from "@/components/GraphBase.vue"
 import GraphGauge from "@/components/GraphGauge.vue"
 
@@ -10,7 +11,8 @@ const title = "Viandes d'origine France"
 const stats = reactive([props.meatFrancePercent])
 const description = computed(() => {
   const filters = storeFilters.getSelectionLabels()
-  return `Pour la recherche ${filters}, le pourcentage de "${title}" est : ${stats[0]}%.`
+  const percent = stringsService.prettyPercent(stats[0])
+  return `Pour la recherche ${filters}, le pourcentage de "${title}" est : ${percent}.`
 })
 </script>
 <template>

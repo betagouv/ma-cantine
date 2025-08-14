@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue"
 import { useStoreFilters } from "@/stores/filters"
+import stringsService from "@/services/strings"
 import GraphPie from "@/components/GraphPie.vue"
 import GraphBase from "@/components/GraphBase.vue"
 import cantines from "@/data/cantines.json"
@@ -42,7 +43,8 @@ const graph = computed(() => {
 const getResultsDescription = () => {
   const results = []
   for (let i = 0; i < graph.value.percents.length; i++) {
-    results.push(`${graph.value.percents[i]}% ${graph.value.legends[i].toLocaleLowerCase()}`)
+    const percent = stringsService.prettyPercent(graph.value.percents[i])
+    results.push(`${percent} ${graph.value.legends[i].toLocaleLowerCase()}`)
   }
   return results.join(", ")
 }
