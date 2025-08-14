@@ -28,11 +28,11 @@ def canteen_has_siret_or_siren_unite_legale_query():
 
 
 class DiagnosticQuerySet(models.QuerySet):
-    def teledeclared(self):
-        return self.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED)
-
     def is_filled(self):
         return self.filter(value_total_ht__gt=0)
+
+    def teledeclared(self):
+        return self.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED)
 
     def egalim_objectives_reached(self):
         return self.filter(
@@ -952,12 +952,12 @@ class Diagnostic(models.Model):
     )
 
     @property
-    def is_teledeclared(self):
-        return self.status == Diagnostic.DiagnosticStatus.SUBMITTED
-
-    @property
     def is_filled(self):
         return self.value_total_ht > 0 if self.value_total_ht else False
+
+    @property
+    def is_teledeclared(self):
+        return self.status == Diagnostic.DiagnosticStatus.SUBMITTED
 
     @property
     def latest_submitted_teledeclaration(self):
