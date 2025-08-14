@@ -114,7 +114,9 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         read_only_fields = ("id",)
-        fields = FIELDS + Diagnostic.MTM_FIELDS + Diagnostic.CREATION_META_FIELDS + Diagnostic.TUNNEL_PROGRESS_FIELDS
+        fields = (
+            FIELDS + Diagnostic.MATOMO_FIELDS + Diagnostic.CREATION_META_FIELDS + Diagnostic.TUNNEL_PROGRESS_FIELDS
+        )
 
     def __init__(self, *args, **kwargs):
         action = kwargs.pop("action", None)
@@ -123,7 +125,7 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
             for field in REQUIRED_FIELDS:
                 self.fields[field].required = True
         else:
-            for field in Diagnostic.MTM_FIELDS:
+            for field in Diagnostic.MATOMO_FIELDS:
                 self.fields.pop(field)
 
     def validate(self, data):

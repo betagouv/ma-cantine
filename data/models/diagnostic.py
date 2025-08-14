@@ -340,7 +340,7 @@ class Diagnostic(models.Model):
         "creation_source",
     ]
 
-    MTM_FIELDS = [
+    MATOMO_FIELDS = [
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
