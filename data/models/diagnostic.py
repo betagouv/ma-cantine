@@ -16,7 +16,27 @@ from data.utils import (
     make_optional_positive_decimal_field,
     sum_int_with_potential_null,
 )
-from macantine.utils import EGALIM_OBJECTIVES
+from macantine.utils import CAMPAIGN_DATES, EGALIM_OBJECTIVES
+
+
+def in_teledeclaration_campaign_query(year):
+    year = int(year)
+    return Q(
+        teledeclaration_date__range=(
+            CAMPAIGN_DATES[year]["teledeclaration_start_date"],
+            CAMPAIGN_DATES[year]["teledeclaration_end_date"],
+        )
+    )
+
+
+def in_correction_campaign_query(year):
+    year = int(year)
+    return Q(
+        teledeclaration_date__range=(
+            CAMPAIGN_DATES[year]["correction_start_date"],
+            CAMPAIGN_DATES[year]["correction_end_date"],
+        )
+    )
 
 
 def canteen_has_siret_or_siren_unite_legale_query():
@@ -33,6 +53,25 @@ class DiagnosticQuerySet(models.QuerySet):
 
     def teledeclared(self):
         return self.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+
+    def in_year(self, year):
+        return self.filter(year=int(year))
+
+    def in_campaign(self, year):
+        year = int(year)
+        if year in CAMPAIGN_DATES.keys():
+            if "correction_start_date" in CAMPAIGN_DATES[year].keys():
+                return self.filter(in_teledeclaration_campaign_query(year) | in_correction_campaign_query(year))
+            else:
+                return self.filter(in_teledeclaration_campaign_query(year))
+        else:
+            return self.none()
+
+    def teledeclared_for_year(self, year):
+        return self.teledeclared().in_year(year).in_campaign(year)
+
+    def publicly_visible(self):
+        return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
 
     def egalim_objectives_reached(self):
         return self.filter(
