@@ -272,8 +272,6 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self._clean_dataset()
         logger.info("TD campagne : Format the decimals...")
         self._format_decimals(["teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"])
-        logger.info("TD campagne : Filter by ministry...")
-        self._filter_by_ministry()
         logger.info("TD campagne : Filter errors...")
         self._filter_outsiders()
         logger.info("TD campagne : Transform ChoiceFields...")
@@ -312,11 +310,3 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         if self.year == 2022:
             td_with_errors = [9656, 8037]
             self.df = self.df[~self.df["id"].isin(td_with_errors)]
-
-    def _filter_by_ministry(self):
-        """
-        Filtering the ministry of Armees so they do not appear publicly
-        """
-        canteens_to_filter = Canteen.objects.filter(line_ministry="armee")
-        canteens_id_to_filter = [canteen.id for canteen in canteens_to_filter]
-        self.df = self.df[~self.df["canteen_id"].isin(canteens_id_to_filter)]
