@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
-from django.db.models import F, Q, Sum
+from django.db.models import Q
 from simple_history.models import HistoricalRecords
 
 from data.fields import ChoiceArrayField
@@ -22,7 +22,7 @@ from macantine.utils import CAMPAIGN_DATES, EGALIM_OBJECTIVES
 def in_teledeclaration_campaign_query(year):
     year = int(year)
     return Q(
-        creation_date__range=(
+        teledeclaration_date__range=(
             CAMPAIGN_DATES[year]["teledeclaration_start_date"],
             CAMPAIGN_DATES[year]["teledeclaration_end_date"],
         )
@@ -32,7 +32,7 @@ def in_teledeclaration_campaign_query(year):
 def in_correction_campaign_query(year):
     year = int(year)
     return Q(
-        creation_date__range=(
+        teledeclaration_date__range=(
             CAMPAIGN_DATES[year]["correction_start_date"],
             CAMPAIGN_DATES[year]["correction_end_date"],
         )
@@ -54,12 +54,6 @@ class DiagnosticQuerySet(models.QuerySet):
     def teledeclared(self):
         return self.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED)
 
-    def with_meal_price(self):
-        return self.annotate(meal_price=F("value_total_ht") / F("canteen__meal_count"))
-
-    def aberrant_values(self):
-        return self.with_meal_price().exclude(meal_price__gt=20, value_total_ht__gt=1000000)
-
     def in_year(self, year):
         return self.filter(year=int(year))
 
@@ -76,55 +70,8 @@ class DiagnosticQuerySet(models.QuerySet):
     def teledeclared_for_year(self, year):
         return self.teledeclared().in_year(year).in_campaign(year)
 
-    def canteen_for_stat(self, year):
-        return (
-            self.select_related("canteen")
-            .filter(canteen_id__isnull=False)
-            .exclude(
-                canteen__deletion_date__range=(
-                    CAMPAIGN_DATES[year]["teledeclaration_start_date"],
-                    CAMPAIGN_DATES[year]["teledeclaration_end_date"],
-                )
-            )  # Chaine de traitement n°6
-            .filter(canteen_has_siret_or_siren_unite_legale_query())  # Chaine de traitement n°7
-        )
-
-    def valid_td_by_year(self, year):
-        year = int(year)
-        if year in CAMPAIGN_DATES.keys():
-            return (
-                self.teledeclared_for_year(year)
-                .filter(
-                    ~Q(teledeclaration_mode="SATELLITE_WITHOUT_APPRO"),
-                    value_bio_ht_agg__isnull=False,
-                )
-                .canteen_for_stat(year)  # Chaine de traitement n°6
-                .aberrant_values()  # Chaîne de traitement
-            )
-        else:
-            return self.none()
-
-    def historical_valid_td(self, years: list):
-        results = self.none()
-        for year in years:
-            results = results | self.valid_td_by_year(year)
-        return results.select_related("canteen")
-
     def publicly_visible(self):
         return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
-
-    def with_appro_percent_stats(self):
-        """
-        Note: we use Sum/default instead of F to better manage None values.
-        """
-        return self.annotate(
-            bio_percent=100 * Sum("value_bio_ht_agg", default=0) / Sum("value_total_ht"),
-            value_egalim_ht_agg=Sum("value_bio_ht_agg", default=0)
-            + Sum("value_sustainable_ht_agg", default=0)
-            + Sum("value_externality_performance_ht_agg", default=0)
-            + Sum("value_egalim_others_ht_agg", default=0),
-            egalim_percent=100 * F("value_egalim_ht_agg") / Sum("value_total_ht"),
-        )
 
     def egalim_objectives_reached(self):
         return self.filter(
