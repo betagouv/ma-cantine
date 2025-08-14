@@ -118,6 +118,7 @@ onUnmounted(() => {
         &__scrollable {
           max-height: 2rem;
           overflow-x: scroll;
+          overflow-y: hidden;
           display: flex;
         }
       }
