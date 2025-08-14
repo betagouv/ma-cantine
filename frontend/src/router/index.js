@@ -537,6 +537,11 @@ routes.push({
 })
 
 routes.push({
+  path: "/statistiques-regionales",
+  redirect: { name: "Observatoire" },
+})
+
+routes.push({
   path: "/:catchAll(.*)",
   component: NotFound,
   name: "NotFound",
