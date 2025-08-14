@@ -50,7 +50,7 @@ const router = useRouter()
 const hasMount = ref(false)
 const updateRouter = () => {
   const queryParam = storeFilters.getQueryParams()
-  router.replace({ query: queryParam })
+  router.replace({ query: queryParam, params: { keepScrollPosition: true }})
 }
 onMounted(() => {
   hasMount.value = true
