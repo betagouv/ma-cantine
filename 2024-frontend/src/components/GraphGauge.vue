@@ -1,4 +1,5 @@
 <script setup>
+import stringsService from "@/services/strings"
 const props = defineProps(["objectives", "stats", "legends"])
 
 const checkOutside = (index) => {
@@ -28,7 +29,7 @@ const checkOutside = (index) => {
           class="graph-gauge__stat fr-mb-0 ma-cantine--bold fr-text--sm fr-px-1w"
           :class="{ outside: checkOutside(index) }"
         >
-          {{ stat }}%
+          {{ stringsService.prettyPercent(stat) }}
         </p>
       </div>
     </div>
