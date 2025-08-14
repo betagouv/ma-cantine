@@ -12,7 +12,7 @@ import Observatoire from "@/views/Observatoire.vue"
 import PlanDuSite from "@/views/PlanDuSite.vue"
 
 /* Sitemap section id */
-const { action, site } = sectionId
+const { action, site, law } = sectionId
 
 /* Routes */
 const routes = [
@@ -93,6 +93,7 @@ const routes = [
     component: Observatoire,
     meta: {
       title: "Observatoire EGalim en restauration collective",
+      siteMap: law
     },
   },
 ]
