@@ -19,6 +19,7 @@ defineExpose({ anchor })
     <div class="observatory-filters__container">
       <p class="observatory-filters__title fr-mb-0">Filtrer par :</p>
       <div class="fr-grid-row">
+        <FilterByYears class="fr-mr-1v fr-mb-1v" />
         <FilterByRegions class="fr-mr-1v fr-mb-1v" />
         <FilterByDepartments class="fr-mr-1v fr-mb-1v" />
         <FilterByEPCIs class="fr-mr-1v fr-mb-1v" />
@@ -26,7 +27,6 @@ defineExpose({ anchor })
         <FilterByCities class="fr-mr-1v fr-mb-1v" />
         <FilterBySectors class="fr-mr-1v fr-mb-1v" />
         <FilterByCharacteristics class="fr-mr-1v fr-mb-1v" />
-        <FilterByYears class="fr-mr-1v fr-mb-1v" />
       </div>
     </div>
   </section>

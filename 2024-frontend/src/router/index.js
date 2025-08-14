@@ -17,6 +17,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to) {
+    if (to.params.keepScrollPosition) return to
     const scrollTo = to.hash || "#app"
     const scrollTop = to.params.scrollTop || 0
     return { el: scrollTo, top: scrollTop }

@@ -50,7 +50,7 @@ const router = useRouter()
 const hasMount = ref(false)
 const updateRouter = () => {
   const queryParam = storeFilters.getQueryParams()
-  router.replace({ query: queryParam })
+  router.replace({ query: queryParam, params: { keepScrollPosition: true }})
 }
 onMounted(() => {
   hasMount.value = true
@@ -83,11 +83,11 @@ watchEffect(async () => {
           :canteensCount="stats.canteenCount"
           :canteensDescription="stats.notes.canteenCountDescription"
           :teledeclarationsCount="stats.teledeclarationsCount"
-          class="fr-mb-3w"
+          class="fr-mb-1w"
         />
         <template v-if="stats.egalimPercent !== null">
-          <ObservatoryPurchases :stats="stats" class="fr-card fr-mb-4w fr-p-5w fr-px-md-6w fr-pt-md-8w fr-pb-md-6w" />
-          <ObservatoryCanteens :stats="stats" class="fr-card fr-p-5w fr-px-md-6w fr-pt-md-8w fr-pb-md-6w" />
+          <ObservatoryPurchases :stats="stats" class="fr-card fr-p-4w fr-p-md-8w fr-mb-2w " />
+          <ObservatoryCanteens :stats="stats" class="fr-card fr-p-4w fr-p-md-8w" />
         </template>
         <DsfrHighlight v-else :text="stats.notes.campaignInfo" class="fr-col-12 fr-col-md-8 fr-ml-0" />
       </template>
