@@ -53,9 +53,13 @@ const transformFiltersToQuery = () => {
   return params
 }
 
-watch(filtersParams, () => {
-  tileQuery.value = transformFiltersToQuery()
-})
+watch(
+  filtersParams,
+  () => {
+    tileQuery.value = transformFiltersToQuery()
+  },
+  { immediate: true }
+)
 </script>
 <template>
   <ul class="observatory-numbers ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters">
