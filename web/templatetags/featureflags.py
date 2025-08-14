@@ -32,3 +32,8 @@ def enable_waste_measurements():
 @register.simple_tag
 def show_management_information_banner():
     return getattr(settings, "SHOW_MANAGEMENT_INFORMATION_BANNER", "")
+
+
+@register.simple_tag
+def show_je_donne_mon_avis():
+    return getattr(settings, "SHOW_JE_DONNE_MON_AVIS", "")
