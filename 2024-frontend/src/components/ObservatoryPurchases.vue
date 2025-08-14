@@ -17,7 +17,7 @@ const keyMeasureId = keyMeasures[0].id
   <div class="observatory-purchases">
     <ObservatoryBadgeTitle class="fr-mb-8w" :image="approBadge" color="#f44336" title="Produits durables et de qualité">
       Distribuer {{ stringsService.prettyPercent(50) }} de produits de qualité dont {{ stringsService.prettyPercent(20) }} de produits bio et distribuer au moins {{ stringsService.prettyPercent(60) }} de produits durables et
-      de qualité dans la famille de denrées “viandes et poissons“.
+      de qualité dans la famille de denrées "viandes et poissons".
       <AppLinkRouter :to="{ name: 'KeyMeasurePage', params: { id: keyMeasureId } }" title="En savoir plus sur la loi" />
     </ObservatoryBadgeTitle>
     <ol class="ma-cantine--ordered-list ma-cantine--unstyled-list">
