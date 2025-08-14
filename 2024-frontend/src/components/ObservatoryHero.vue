@@ -4,7 +4,6 @@ import { useRoute } from "vue-router"
 const route = useRoute()
 const pictoDataVisualization = "/static/images/picto-dsfr/data-visualization.svg"
 const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
-const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024.pdf"
 </script>
 
 <template>
@@ -29,11 +28,9 @@ const documentRapport = "/static/documents/Rapport_Bilan_Statistique_EGALIM_2024
       <li class="fr-col-12 fr-col-sm-6">
         <DsfrTile
           titleTag="p"
-          class="observatory-hero__force-title-download-vertical"
-          title="Télécharger le rapport annuel 2024"
-          :to="documentRapport"
+          title="Accéder aux bilans statistique EGalim annuels"
+          to="https://ma-cantine.crisp.help/fr/article/rapports-bilans-statistiques-egalim-de-la-restauration-collective-18z8ru0/"
           :imgSrc="pictoDocuments"
-          :download="true"
           small
         />
       </li>
