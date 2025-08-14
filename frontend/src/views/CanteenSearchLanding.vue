@@ -11,7 +11,7 @@
         <p>
           Vous cherchez plutôt des données à l’échelle d’une région ou département ?
           <br />
-          <router-link :to="{ name: 'PublicCanteenStatisticsPage' }">
+          <router-link :to="{ name: 'Observatoire' }">
             Consulter les statistiques de votre collectivité (régions et départements)
           </router-link>
         </p>

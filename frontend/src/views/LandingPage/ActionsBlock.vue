@@ -34,7 +34,7 @@
     <li :class="{ 'col-12 col-md-4': true, 'right-border': $vuetify.breakpoint.mdAndUp }">
       <v-card
         outlined
-        :to="{ name: 'PublicCanteenStatisticsPage' }"
+        :to="{ name: 'Observatoire' }"
         class="fill-height pa-4 d-flex flex-column hover-transition dsfr mt-n6"
       >
         <v-img
