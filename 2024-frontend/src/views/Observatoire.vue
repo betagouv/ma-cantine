@@ -13,6 +13,7 @@ import ObservatoryWarnings from "@/components/ObservatoryWarnings.vue"
 import ObservatoryCanteens from "@/components/ObservatoryCanteens.vue"
 import ObservatoryShare from "@/components/ObservatoryShare.vue"
 import AppJeDonneMonAvis from "@/components/AppJeDonneMonAvis.vue"
+import AppLoader from "@/components/AppLoader.vue"
 
 /* Back to filters */
 const observatoryFilters = useTemplateRef("observatory-filters")
@@ -73,7 +74,7 @@ watchEffect(async () => {
   <ObservatoryFilters ref="observatory-filters" />
   <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pt-2w fr-pb-4w">
     <ObservatoryFiltersSelected @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
-    <pre v-if="isLoading">{{ isLoading }}</pre>
+    <AppLoader v-if="isLoading"/>
     <ObservatoryError v-if="statsError" :error="statsError" />
     <template v-if="stats">
       <ObservatoryWarnings :warnings="stats.notes.warnings" />
