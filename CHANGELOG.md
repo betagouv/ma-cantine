@@ -6,6 +6,40 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.28.0](https://github.com/betagouv/ma-cantine/compare/v2025.27.0...v2025.28.0) (2025-08-14)
+
+
+### Nouveautés
+
+* **Observatoire:** indique le chargement des données ([#5612](https://github.com/betagouv/ma-cantine/issues/5612)) ([29c4749](https://github.com/betagouv/ma-cantine/commit/29c4749b76e4d24542287eb2b8b3ee23f0903212))
+* **Observatoire:** remplace l'ancienne url par la nouvelle ([#5619](https://github.com/betagouv/ma-cantine/issues/5619)) ([d33f018](https://github.com/betagouv/ma-cantine/commit/d33f018a331605d85bd3da33211d1279109af4cc))
+
+
+### Améliorations
+
+* **Diagnostic:** nouveau champ pour stocker la date au moment de la TD [1TD1site] ([#5601](https://github.com/betagouv/ma-cantine/issues/5601)) ([06035d9](https://github.com/betagouv/ma-cantine/commit/06035d990ab39531b0e17f678ed5e3589b9b54c0))
+* **Diagnostic:** nouveau champ pour stocker un snapshot de la cantine au moment de la TD [1TD1site] ([#5599](https://github.com/betagouv/ma-cantine/issues/5599)) ([ccf04fb](https://github.com/betagouv/ma-cantine/commit/ccf04fb6fb887452223f9376acced6d8e383b7ed))
+* **Diagnostic:** nouveau champ pour stocker un snapshot du demandeur au moment de la TD [1TD1site] ([#5600](https://github.com/betagouv/ma-cantine/issues/5600)) ([43ad4cc](https://github.com/betagouv/ma-cantine/commit/43ad4cc22353834df616e87576be61e69cbb0821))
+* **Observatoire:** améliore l'affichage du bloc "Je donne mon avis" ([#5610](https://github.com/betagouv/ma-cantine/issues/5610)) ([f26be51](https://github.com/betagouv/ma-cantine/commit/f26be517146976900a6604685ea5d9df96c403a7))
+
+
+### Corrections (bugs, typos...)
+
+* **Observatoire:** change l'affichage de "Objectif EGalim" ([#5614](https://github.com/betagouv/ma-cantine/issues/5614)) ([e83499d](https://github.com/betagouv/ma-cantine/commit/e83499dcaeda25819464902c428958343b3277f6))
+* **Observatoire:** change la tuile pour accéder aux rapports ([#5611](https://github.com/betagouv/ma-cantine/issues/5611)) ([7dde305](https://github.com/betagouv/ma-cantine/commit/7dde3056b3415fa0ca4e5750675cff50630a610d))
+* **Observatoire:** corrections de wordings ([#5615](https://github.com/betagouv/ma-cantine/issues/5615)) ([5896c5b](https://github.com/betagouv/ma-cantine/commit/5896c5ba07502d987ab9cee61a7f0cd9df801bc6))
+* **Observatoire:** divers correctifs ([#5608](https://github.com/betagouv/ma-cantine/issues/5608)) ([48b879d](https://github.com/betagouv/ma-cantine/commit/48b879d8df76ab02b34da93cd86c219ae1d60704))
+* **Observatoire:** petites corrections de style ([#5616](https://github.com/betagouv/ma-cantine/issues/5616)) ([031be0f](https://github.com/betagouv/ma-cantine/commit/031be0f6cb49000c4ca6e13882d78e3076e8de71))
+
+
+### Technique
+
+* **Diagnostic:** dupliquer (et adapter) les queryset depuis Teledeclaration vers Diagnostic (1/3) ([#5613](https://github.com/betagouv/ma-cantine/issues/5613)) ([58abbd6](https://github.com/betagouv/ma-cantine/commit/58abbd6771d566a5dce25580499ddc5d964fcc46))
+* **Diagnostic:** quelques petites améliorations admin (vitesse, nouveau champ status) ([#5603](https://github.com/betagouv/ma-cantine/issues/5603)) ([e3dcfe7](https://github.com/betagouv/ma-cantine/commit/e3dcfe76094294d6cb8c662158dbfe1c749d66b5))
+* **Diagnostic:** ramener la liste des champs séralizés au niveau du modèle ([#5602](https://github.com/betagouv/ma-cantine/issues/5602)) ([83ba1ad](https://github.com/betagouv/ma-cantine/commit/83ba1ad8c27b041e395ff8cec44b066c86bdeb71))
+* **Diagnostic:** se référer au status pour savoir si il a été télédéclaré ([#5609](https://github.com/betagouv/ma-cantine/issues/5609)) ([aa93f5d](https://github.com/betagouv/ma-cantine/commit/aa93f5d3e6e470a930ecd4acb0a5523a10d8f199))
+* **ETL:** Open Data: filter les cantines armées dans la queryset au lieu de pandas ([#5606](https://github.com/betagouv/ma-cantine/issues/5606)) ([42b2d2f](https://github.com/betagouv/ma-cantine/commit/42b2d2f68a77db04ba5b3126688f4526541293c2))
+
 ## [2025.27.0](https://github.com/betagouv/ma-cantine/compare/v2025.26.0...v2025.27.0) (2025-08-11)
 
 
