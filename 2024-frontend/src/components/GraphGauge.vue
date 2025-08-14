@@ -192,8 +192,7 @@ $legendDashSize: calc($legendSquareSize / 5);
         border-bottom-width: 0;
         border-left-width: 0;
         border-top-width: 0;
-        border-bottom-width: 2px;
-        height: 1px
+        border-right-width: 2px;
       }
     }
   }
