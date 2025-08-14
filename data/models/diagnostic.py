@@ -3,8 +3,10 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
-from django.db.models import Q
 from django.utils import timezone
+from django.db.models import F, IntegerField, Q
+from django.db.models.fields.json import KT
+from django.db.models.functions import Cast
 from simple_history.models import HistoricalRecords
 
 from data.fields import ChoiceArrayField
@@ -70,6 +72,14 @@ class DiagnosticQuerySet(models.QuerySet):
 
     def teledeclared_for_year(self, year):
         return self.teledeclared().in_year(year).in_campaign(year)
+
+    def with_meal_price(self):
+        return self.annotate(
+            canteen_yearly_meal_count=Cast(KT("canteen_snapshot__yearly_meal_count"), output_field=IntegerField())
+        ).annotate(meal_price=F("value_total_ht") / F("canteen_yearly_meal_count"))
+
+    def aberrant_values(self):
+        return self.with_meal_price().exclude(meal_price__gt=20, value_total_ht__gt=1000000)
 
     def publicly_visible(self):
         return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)

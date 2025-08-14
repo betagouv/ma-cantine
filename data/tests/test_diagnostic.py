@@ -74,13 +74,12 @@ class DiagnosticQuerySetTest(TestCase):
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.deleted_canteen,
-            value_total_ht=1000.00,
+            value_total_ht=1000001.00,  # aberrant
             value_bio_ht=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.deleted_canteen_diagnostic.teledeclare()
 
-    @freeze_time(date_in_teledeclaration_campaign)
     def test_teledeclared_for_year(self):
         teledeclarations = Diagnostic.objects.teledeclared_for_year(year_data)
         self.assertEqual(teledeclarations.count(), 6)
@@ -89,6 +88,11 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertIn(self.deleted_canteen_diagnostic, teledeclarations)
         teledeclarations = Diagnostic.objects.teledeclared_for_year(year_data - 1)
         self.assertEqual(teledeclarations.count(), 4)
+
+    def test_aberrant_values(self):
+        self.assertEqual(Diagnostic.objects.count(), 10)
+        print(Diagnostic.objects.with_meal_price().first().__dict__)
+        self.assertEqual(Diagnostic.objects.aberrant_values().count(), 1)
 
     def test_publicly_visible(self):
         self.assertEqual(Diagnostic.objects.count(), 10)
