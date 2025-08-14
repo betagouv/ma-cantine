@@ -86,7 +86,7 @@ watchEffect(async () => {
     <ObservatoryShare />
   </section>
   <AppJeDonneMonAvis
-    url="https://jedonnemonavis.numerique.gouv.fr/Demarches/3661?button=3940"
+    url="https://jedonnemonavis.numerique.gouv.fr/Demarches/3661?button=3947"
     title=" Qu'avez-vous penser de la page Observatoire ?"
   />
 </template>
