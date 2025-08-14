@@ -172,7 +172,7 @@ class Diagnostic(models.Model):
         "value_fish_egalim_ht",
     ]
 
-    COMPLETE_FIELDS = [
+    APPRO_FIELDS = [
         "value_viandes_volailles_bio",
         "value_produits_de_la_mer_bio",
         "value_fruits_et_legumes_bio",
@@ -287,7 +287,7 @@ class Diagnostic(models.Model):
         "value_autres_local",
     ]
 
-    COMPLETE_APPRO_FIELDS = ["value_total_ht", "value_meat_poultry_ht", "value_fish_ht"] + COMPLETE_FIELDS
+    COMPLETE_APPRO_FIELDS = ["value_total_ht", "value_meat_poultry_ht", "value_fish_ht"] + APPRO_FIELDS
 
     NON_APPRO_FIELDS = [
         "has_waste_diagnostic",
