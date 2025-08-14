@@ -28,7 +28,7 @@ const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
       <li class="fr-col-12 fr-col-sm-6">
         <DsfrTile
           titleTag="p"
-          title="Accéder aux bilans statistique EGalim annuels"
+          title="Accéder aux bilans statistiques EGalim"
           to="https://ma-cantine.crisp.help/fr/article/rapports-bilans-statistiques-egalim-de-la-restauration-collective-18z8ru0/"
           :imgSrc="pictoDocuments"
           small
