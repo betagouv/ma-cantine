@@ -587,7 +587,7 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
             values_dict["value_total_ht"] = Decimal(row[value_idx].strip().replace(",", "."))
         except InvalidOperation:
             raise ValidationError({"value_total_ht": "Ce champ ne peut pas être vide."})
-        for value in ["value_meat_poultry_ht", "value_fish_ht", *Diagnostic.complete_fields]:
+        for value in ["value_meat_poultry_ht", "value_fish_ht", *Diagnostic.APPRO_FIELDS]:
             try:
                 value_idx = value_idx + 1
                 if row[value_idx]:

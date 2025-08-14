@@ -159,6 +159,201 @@ class Diagnostic(models.Model):
         EGG = "EGG", "D’œufs"
         READYMADE = "READYMADE", "Plats prêts à l'emploi"
 
+    SIMPLE_APPRO_FIELDS = [
+        "value_total_ht",
+        "value_bio_ht",
+        "value_sustainable_ht",
+        "value_externality_performance_ht",
+        "value_egalim_others_ht",
+        "value_meat_poultry_ht",
+        "value_meat_poultry_egalim_ht",
+        "value_meat_poultry_france_ht",
+        "value_fish_ht",
+        "value_fish_egalim_ht",
+    ]
+
+    APPRO_FIELDS = [
+        "value_viandes_volailles_bio",
+        "value_produits_de_la_mer_bio",
+        "value_fruits_et_legumes_bio",
+        "value_charcuterie_bio",
+        "value_produits_laitiers_bio",
+        "value_boulangerie_bio",
+        "value_boissons_bio",
+        "value_autres_bio",
+        "value_viandes_volailles_label_rouge",
+        "value_produits_de_la_mer_label_rouge",
+        "value_fruits_et_legumes_label_rouge",
+        "value_charcuterie_label_rouge",
+        "value_produits_laitiers_label_rouge",
+        "value_boulangerie_label_rouge",
+        "value_boissons_label_rouge",
+        "value_autres_label_rouge",
+        "value_viandes_volailles_aocaop_igp_stg",
+        "value_produits_de_la_mer_aocaop_igp_stg",
+        "value_fruits_et_legumes_aocaop_igp_stg",
+        "value_charcuterie_aocaop_igp_stg",
+        "value_produits_laitiers_aocaop_igp_stg",
+        "value_boulangerie_aocaop_igp_stg",
+        "value_boissons_aocaop_igp_stg",
+        "value_autres_aocaop_igp_stg",
+        "value_viandes_volailles_hve",
+        "value_produits_de_la_mer_hve",
+        "value_fruits_et_legumes_hve",
+        "value_charcuterie_hve",
+        "value_produits_laitiers_hve",
+        "value_boulangerie_hve",
+        "value_boissons_hve",
+        "value_autres_hve",
+        "value_viandes_volailles_peche_durable",
+        "value_produits_de_la_mer_peche_durable",
+        "value_fruits_et_legumes_peche_durable",
+        "value_charcuterie_peche_durable",
+        "value_produits_laitiers_peche_durable",
+        "value_boulangerie_peche_durable",
+        "value_boissons_peche_durable",
+        "value_autres_peche_durable",
+        "value_viandes_volailles_rup",
+        "value_produits_de_la_mer_rup",
+        "value_fruits_et_legumes_rup",
+        "value_charcuterie_rup",
+        "value_produits_laitiers_rup",
+        "value_boulangerie_rup",
+        "value_boissons_rup",
+        "value_autres_rup",
+        "value_viandes_volailles_commerce_equitable",
+        "value_produits_de_la_mer_commerce_equitable",
+        "value_fruits_et_legumes_commerce_equitable",
+        "value_charcuterie_commerce_equitable",
+        "value_produits_laitiers_commerce_equitable",
+        "value_boulangerie_commerce_equitable",
+        "value_boissons_commerce_equitable",
+        "value_autres_commerce_equitable",
+        "value_viandes_volailles_fermier",
+        "value_produits_de_la_mer_fermier",
+        "value_fruits_et_legumes_fermier",
+        "value_charcuterie_fermier",
+        "value_produits_laitiers_fermier",
+        "value_boulangerie_fermier",
+        "value_boissons_fermier",
+        "value_autres_fermier",
+        "value_viandes_volailles_externalites",
+        "value_produits_de_la_mer_externalites",
+        "value_fruits_et_legumes_externalites",
+        "value_charcuterie_externalites",
+        "value_produits_laitiers_externalites",
+        "value_boulangerie_externalites",
+        "value_boissons_externalites",
+        "value_autres_externalites",
+        "value_viandes_volailles_performance",
+        "value_produits_de_la_mer_performance",
+        "value_fruits_et_legumes_performance",
+        "value_charcuterie_performance",
+        "value_produits_laitiers_performance",
+        "value_boulangerie_performance",
+        "value_boissons_performance",
+        "value_autres_performance",
+        "value_viandes_volailles_non_egalim",
+        "value_produits_de_la_mer_non_egalim",
+        "value_fruits_et_legumes_non_egalim",
+        "value_charcuterie_non_egalim",
+        "value_produits_laitiers_non_egalim",
+        "value_boulangerie_non_egalim",
+        "value_boissons_non_egalim",
+        "value_autres_non_egalim",
+        "value_viandes_volailles_france",
+        "value_produits_de_la_mer_france",
+        "value_fruits_et_legumes_france",
+        "value_charcuterie_france",
+        "value_produits_laitiers_france",
+        "value_boulangerie_france",
+        "value_boissons_france",
+        "value_autres_france",
+        "value_viandes_volailles_short_distribution",
+        "value_produits_de_la_mer_short_distribution",
+        "value_fruits_et_legumes_short_distribution",
+        "value_charcuterie_short_distribution",
+        "value_produits_laitiers_short_distribution",
+        "value_boulangerie_short_distribution",
+        "value_boissons_short_distribution",
+        "value_autres_short_distribution",
+        "value_viandes_volailles_local",
+        "value_produits_de_la_mer_local",
+        "value_fruits_et_legumes_local",
+        "value_charcuterie_local",
+        "value_produits_laitiers_local",
+        "value_boulangerie_local",
+        "value_boissons_local",
+        "value_autres_local",
+    ]
+
+    COMPLETE_APPRO_FIELDS = ["value_total_ht", "value_meat_poultry_ht", "value_fish_ht"] + APPRO_FIELDS
+
+    NON_APPRO_FIELDS = [
+        "has_waste_diagnostic",
+        "has_waste_plan",
+        "waste_actions",
+        "other_waste_action",
+        "has_donation_agreement",
+        "has_waste_measures",
+        "total_leftovers",
+        "duration_leftovers_measurement",
+        "bread_leftovers",
+        "served_leftovers",
+        "unserved_leftovers",
+        "side_leftovers",
+        "donation_frequency",
+        "donation_quantity",
+        "donation_food_type",
+        "other_waste_comments",
+        "has_diversification_plan",
+        "diversification_plan_actions",
+        "service_type",
+        "vegetarian_weekly_recurrence",
+        "vegetarian_menu_type",
+        "vegetarian_menu_bases",
+        "cooking_plastic_substituted",
+        "serving_plastic_substituted",
+        "plastic_bottles_substituted",
+        "plastic_tableware_substituted",
+        "communication_supports",
+        "other_communication_support",
+        "communication_support_url",
+        "communicates_on_food_plan",
+        "communicates_on_food_quality",
+        "communication_frequency",
+    ]
+
+    META_FIELDS = [
+        "id",
+        "canteen_id",
+        "year",
+        "diagnostic_type",
+        "central_kitchen_diagnostic_mode",
+        "is_teledeclared",
+        "is_filled",
+    ]
+
+    CREATION_META_FIELDS = [
+        "creation_date",
+        "modification_date",
+        "creation_source",
+    ]
+
+    MATOMO_FIELDS = [
+        "creation_mtm_source",
+        "creation_mtm_campaign",
+        "creation_mtm_medium",
+    ]
+
+    TUNNEL_PROGRESS_FIELDS = [
+        "tunnel_appro",
+        "tunnel_waste",
+        "tunnel_plastic",
+        "tunnel_diversification",
+        "tunnel_info",
+    ]
+
     objects = models.Manager.from_queryset(DiagnosticQuerySet)()
 
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -625,6 +820,30 @@ class Diagnostic(models.Model):
     value_autres_rup = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Région ultrapériphérique",
     )
+    value_viandes_volailles_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Viandes et volailles fraîches et surgelées, Commerce équitable",
+    )
+    value_produits_de_la_mer_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Produits aquatiques frais et surgelés, Commerce équitable",
+    )
+    value_fruits_et_legumes_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Fruits et légumes frais et surgelés, Commerce équitable",
+    )
+    value_charcuterie_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Charcuterie, Commerce équitable",
+    )
+    value_produits_laitiers_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Commerce équitable",
+    )
+    value_boulangerie_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Commerce équitable",
+    )
+    value_boissons_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Boissons, Commerce équitable",
+    )
+    value_autres_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Commerce équitable",
+    )
     value_viandes_volailles_fermier = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Fermier",
     )
@@ -672,30 +891,6 @@ class Diagnostic(models.Model):
     )
     value_autres_externalites = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
-    )
-    value_viandes_volailles_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Viandes et volailles fraîches et surgelées, Commerce équitable",
-    )
-    value_produits_de_la_mer_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Commerce équitable",
-    )
-    value_fruits_et_legumes_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Fruits et légumes frais et surgelés, Commerce équitable",
-    )
-    value_charcuterie_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Charcuterie, Commerce équitable",
-    )
-    value_produits_laitiers_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="BOF (Produits laitiers, beurre et œufs), Commerce équitable",
-    )
-    value_boulangerie_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Commerce équitable",
-    )
-    value_boissons_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Boissons, Commerce équitable",
-    )
-    value_autres_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Commerce équitable",
     )
     value_viandes_volailles_performance = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale",
@@ -817,120 +1012,6 @@ class Diagnostic(models.Model):
     value_autres_local = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Produit local",
     )
-    complete_fields = [
-        "value_viandes_volailles_bio",
-        "value_produits_de_la_mer_bio",
-        "value_fruits_et_legumes_bio",
-        "value_charcuterie_bio",
-        "value_produits_laitiers_bio",
-        "value_boulangerie_bio",
-        "value_boissons_bio",
-        "value_autres_bio",
-        "value_viandes_volailles_label_rouge",
-        "value_produits_de_la_mer_label_rouge",
-        "value_fruits_et_legumes_label_rouge",
-        "value_charcuterie_label_rouge",
-        "value_produits_laitiers_label_rouge",
-        "value_boulangerie_label_rouge",
-        "value_boissons_label_rouge",
-        "value_autres_label_rouge",
-        "value_viandes_volailles_aocaop_igp_stg",
-        "value_produits_de_la_mer_aocaop_igp_stg",
-        "value_fruits_et_legumes_aocaop_igp_stg",
-        "value_charcuterie_aocaop_igp_stg",
-        "value_produits_laitiers_aocaop_igp_stg",
-        "value_boulangerie_aocaop_igp_stg",
-        "value_boissons_aocaop_igp_stg",
-        "value_autres_aocaop_igp_stg",
-        "value_viandes_volailles_hve",
-        "value_produits_de_la_mer_hve",
-        "value_fruits_et_legumes_hve",
-        "value_charcuterie_hve",
-        "value_produits_laitiers_hve",
-        "value_boulangerie_hve",
-        "value_boissons_hve",
-        "value_autres_hve",
-        "value_viandes_volailles_peche_durable",
-        "value_produits_de_la_mer_peche_durable",
-        "value_fruits_et_legumes_peche_durable",
-        "value_charcuterie_peche_durable",
-        "value_produits_laitiers_peche_durable",
-        "value_boulangerie_peche_durable",
-        "value_boissons_peche_durable",
-        "value_autres_peche_durable",
-        "value_viandes_volailles_rup",
-        "value_produits_de_la_mer_rup",
-        "value_fruits_et_legumes_rup",
-        "value_charcuterie_rup",
-        "value_produits_laitiers_rup",
-        "value_boulangerie_rup",
-        "value_boissons_rup",
-        "value_autres_rup",
-        "value_viandes_volailles_commerce_equitable",
-        "value_produits_de_la_mer_commerce_equitable",
-        "value_fruits_et_legumes_commerce_equitable",
-        "value_charcuterie_commerce_equitable",
-        "value_produits_laitiers_commerce_equitable",
-        "value_boulangerie_commerce_equitable",
-        "value_boissons_commerce_equitable",
-        "value_autres_commerce_equitable",
-        "value_viandes_volailles_fermier",
-        "value_produits_de_la_mer_fermier",
-        "value_fruits_et_legumes_fermier",
-        "value_charcuterie_fermier",
-        "value_produits_laitiers_fermier",
-        "value_boulangerie_fermier",
-        "value_boissons_fermier",
-        "value_autres_fermier",
-        "value_viandes_volailles_externalites",
-        "value_produits_de_la_mer_externalites",
-        "value_fruits_et_legumes_externalites",
-        "value_charcuterie_externalites",
-        "value_produits_laitiers_externalites",
-        "value_boulangerie_externalites",
-        "value_boissons_externalites",
-        "value_autres_externalites",
-        "value_viandes_volailles_performance",
-        "value_produits_de_la_mer_performance",
-        "value_fruits_et_legumes_performance",
-        "value_charcuterie_performance",
-        "value_produits_laitiers_performance",
-        "value_boulangerie_performance",
-        "value_boissons_performance",
-        "value_autres_performance",
-        "value_viandes_volailles_non_egalim",
-        "value_produits_de_la_mer_non_egalim",
-        "value_fruits_et_legumes_non_egalim",
-        "value_charcuterie_non_egalim",
-        "value_produits_laitiers_non_egalim",
-        "value_boulangerie_non_egalim",
-        "value_boissons_non_egalim",
-        "value_autres_non_egalim",
-        "value_viandes_volailles_france",
-        "value_produits_de_la_mer_france",
-        "value_fruits_et_legumes_france",
-        "value_charcuterie_france",
-        "value_produits_laitiers_france",
-        "value_boulangerie_france",
-        "value_boissons_france",
-        "value_autres_france",
-        "value_viandes_volailles_short_distribution",
-        "value_produits_de_la_mer_short_distribution",
-        "value_fruits_et_legumes_short_distribution",
-        "value_charcuterie_short_distribution",
-        "value_produits_laitiers_short_distribution",
-        "value_boulangerie_short_distribution",
-        "value_boissons_short_distribution",
-        "value_autres_short_distribution",
-        "value_viandes_volailles_local",
-        "value_produits_de_la_mer_local",
-        "value_fruits_et_legumes_local",
-        "value_charcuterie_local",
-        "value_produits_laitiers_local",
-        "value_boulangerie_local",
-        "value_boissons_local",
-        "value_autres_local",
-    ]
 
     # Télédéclaration
     teledeclaration_date = models.DateTimeField(
