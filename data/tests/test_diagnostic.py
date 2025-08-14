@@ -43,19 +43,19 @@ class DiagnosticQuerySetTest(TestCase):
                 canteen=canteen,
                 value_total_ht=1000.00,
                 value_bio_ht=200.00,
-                status=Diagnostic.DiagnosticStatus.SUBMITTED,
-                teledeclaration_date=date_in_teledeclaration_campaign,
             )
-            DiagnosticFactory(
+            with freeze_time(date_in_teledeclaration_campaign):
+                diagnostic.teledeclare()
+            diagnostic_last_year = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data - 1,
                 creation_date=date_in_last_teledeclaration_campaign,
                 canteen=canteen,
                 value_total_ht=1000.00,
                 value_bio_ht=200.00,
-                status=Diagnostic.DiagnosticStatus.SUBMITTED,
-                teledeclaration_date=date_in_last_teledeclaration_campaign,
             )
+            with freeze_time(date_in_last_teledeclaration_campaign):
+                diagnostic_last_year.teledeclare()
             setattr(cls, f"valid_canteen_diagnostic_{index + 1}", diagnostic)
 
         cls.invalid_canteen_diagnostic = DiagnosticFactory(
@@ -65,9 +65,9 @@ class DiagnosticQuerySetTest(TestCase):
             canteen=cls.invalid_canteen,
             value_total_ht=1000.00,
             value_bio_ht=200.00,
-            status=Diagnostic.DiagnosticStatus.SUBMITTED,
-            teledeclaration_date=date_in_teledeclaration_campaign,
         )
+        with freeze_time(date_in_teledeclaration_campaign):
+            cls.invalid_canteen_diagnostic.teledeclare()
         cls.deleted_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
@@ -75,9 +75,9 @@ class DiagnosticQuerySetTest(TestCase):
             canteen=cls.deleted_canteen,
             value_total_ht=1000.00,
             value_bio_ht=200.00,
-            status=Diagnostic.DiagnosticStatus.SUBMITTED,
-            teledeclaration_date=date_in_teledeclaration_campaign,
         )
+        with freeze_time(date_in_teledeclaration_campaign):
+            cls.deleted_canteen_diagnostic.teledeclare()
 
     @freeze_time("2025-03-30")
     def test_teledeclared_for_year(self):

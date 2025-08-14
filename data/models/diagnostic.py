@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
 from data.fields import ChoiceArrayField
@@ -1432,3 +1433,27 @@ class Diagnostic(models.Model):
             return True
         if self.tunnel_info:
             return False
+
+    def teledeclare(self):
+        """
+        Teledeclare the diagnostic
+        """
+        if self.is_teledeclared:
+            raise ValidationError("Ce diagnostic a déjà été télédéclaré.")
+        if not self.is_filled:
+            raise ValidationError("Ce diagnostic n'est pas rempli.")
+
+        from api.serializers import CanteenTeledeclarationSerializer
+
+        # canteen data
+        serialized_canteen = CanteenTeledeclarationSerializer(self.canteen).data
+        self.canteen_snapshot = serialized_canteen
+
+        # TODO: canteen satellites snapshot, applicant_snapshot
+
+        # metadata
+        self.status = Diagnostic.DiagnosticStatus.SUBMITTED
+        self.teledeclaration_date = timezone.now()
+
+        # save
+        self.save()
