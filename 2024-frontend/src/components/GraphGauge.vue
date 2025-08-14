@@ -12,14 +12,11 @@ const checkOutside = (index) => {
 <template>
   <div class="graph-gauge fr-mb-3w" :class="{ 'fr-mt-7w': objectives, 'fr-mt-4w': !objectives }">
     <div v-if="objectives" class="graph-gauge__objectives-container">
-      <p class="graph-gauge__objectif graph-gauge__objectif--title fr-text--sm ma-cantine--bold">
-        Objectif EGalim
-      </p>
       <p
         v-for="objectif in objectives"
         :key="objectif"
         :style="`left: ${objectif.value}%`"
-        class="graph-gauge__objectif graph-gauge__objectif--marker fr-text--sm ma-cantine--bold"
+        class="graph-gauge__objectif fr-text--sm ma-cantine--bold"
         :class="{ alignRight: objectif.value === 100 }"
       >
         {{ objectif.name }}
@@ -35,9 +32,12 @@ const checkOutside = (index) => {
         </p>
       </div>
     </div>
-    <div v-if="legends" class="graph-gauge__legends-container fr-mt-2w">
+    <div v-if="legends || objectives" class="graph-gauge__legends-container fr-mt-2w">
       <p v-for="legend in legends" :key="legend" class="graph-gauge__legend fr-mb-0">
         {{ legend }}
+      </p>
+      <p v-if="objectives" class="graph-gauge__legend graph-gauge__legend--objectif fr-mb-0">
+        objectifs EGalim
       </p>
     </div>
   </div>
@@ -48,6 +48,7 @@ $graphHeight: 3rem;
 $objectivesHeight: 1rem;
 $dashColor: var(--green-emeraude-sun-425-moon-753);
 $fillColor: var(--green-emeraude-main-632);
+$objectifColor: black;
 $legendSquareSize: 1rem;
 $legendDashSize: calc($legendSquareSize / 5);
 
@@ -80,31 +81,25 @@ $legendDashSize: calc($legendSquareSize / 5);
     top: 0;
     transform: translateY(-100%);
 
-    &--title {
+    &::before {
+      content: "";
+      height: calc($graphHeight + $objectivesHeight);
+      border-width: 1px;
+      border-style: dashed;
+      border-color: $objectifColor;
+      position: absolute;
+      bottom: 0;
       left: 0;
+      transform: translateY(100%);
     }
 
-    &--marker {
+    &.alignRight {
+      transform: translateY(-100%) translateX(-100%);
+      width: 10rem;
+      text-align: right;
       &::before {
-        content: "";
-        height: calc($graphHeight + $objectivesHeight);
-        border-width: 1px;
-        border-style: dashed;
-        border-color: black;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        transform: translateY(100%);
-      }
-
-      &.alignRight {
-        transform: translateY(-100%) translateX(-100%);
-        width: 10rem;
-        text-align: right;
-        &::before {
-          right: 0;
-          left: auto;
-        }
+        right: 0;
+        left: auto;
       }
     }
   }
@@ -146,7 +141,13 @@ $legendDashSize: calc($legendSquareSize / 5);
 
   &__legends-container {
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
+    flex-direction: column;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      gap: 2rem;
+    }
   }
 
   &__legend {
@@ -165,7 +166,7 @@ $legendDashSize: calc($legendSquareSize / 5);
       border-width: 1px 0;
     }
 
-    &:first-child {
+    &:first-child:not(.graph-gauge__legend--objectif) {
       color: $fillColor;
       &:before {
         border-color: $fillColor;
@@ -173,12 +174,25 @@ $legendDashSize: calc($legendSquareSize / 5);
       }
     }
 
-    &:nth-child(2) {
+    &:nth-child(2):not(.graph-gauge__legend--objectif) {
       color: $dashColor;
       &:before {
         background-color: transparent;
         border-color: $dashColor;
         background: getDashedBackground($legendDashSize);
+      }
+    }
+
+    &--objectif {
+      color: $objectifColor;
+      &:before {
+        background-color: transparent;
+        border-color: $objectifColor;
+        border-style: dashed;
+        border-bottom-width: 0;
+        border-left-width: 0;
+        border-top-width: 0;
+        border-right-width: 2px;
       }
     }
   }
