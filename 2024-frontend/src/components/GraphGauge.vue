@@ -141,7 +141,13 @@ $legendDashSize: calc($legendSquareSize / 5);
 
   &__legends-container {
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
+    flex-direction: column;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      gap: 2rem;
+    }
   }
 
   &__legend {
@@ -159,7 +165,6 @@ $legendDashSize: calc($legendSquareSize / 5);
       border-style: solid;
       border-width: 1px 0;
     }
-
 
     &:first-child:not(.graph-gauge__legend--objectif) {
       color: $fillColor;
