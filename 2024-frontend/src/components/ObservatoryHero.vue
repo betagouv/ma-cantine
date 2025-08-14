@@ -37,25 +37,3 @@ const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
     </ul>
   </section>
 </template>
-
-<style lang="scss">
-.observatory-hero__force-title-download-vertical {
-  align-items: center !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  text-align: center !important;
-
-  .fr-tile__content {
-    align-items: center !important;
-  }
-
-  .fr-tile__header {
-    margin-right: 0 !important;
-    margin-bottom: 1rem !important;
-  }
-
-  .fr-tile__pictogram {
-    height: 3.5rem !important;
-  }
-}
-</style>
