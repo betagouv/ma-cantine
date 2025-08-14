@@ -75,22 +75,24 @@ watchEffect(async () => {
   <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pt-2w fr-pb-4w">
     <ObservatoryFiltersSelected @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
     <AppLoader v-if="isLoading"/>
-    <ObservatoryError v-if="statsError" :error="statsError" />
-    <template v-if="stats">
-      <ObservatoryWarnings :warnings="stats.notes.warnings" />
-      <ObservatoryNumbers
-        :canteensCount="stats.canteenCount"
-        :canteensDescription="stats.notes.canteenCountDescription"
-        :teledeclarationsCount="stats.teledeclarationsCount"
-        class="fr-mb-3w"
-      />
-      <template v-if="stats.egalimPercent !== null">
-        <ObservatoryPurchases :stats="stats" class="fr-card fr-mb-4w fr-p-5w fr-px-md-6w fr-pt-md-8w fr-pb-md-6w" />
-        <ObservatoryCanteens :stats="stats" class="fr-card fr-p-5w fr-px-md-6w fr-pt-md-8w fr-pb-md-6w" />
+    <template v-else>
+      <ObservatoryError v-if="statsError" :error="statsError" />
+      <template v-if="stats">
+        <ObservatoryWarnings :warnings="stats.notes.warnings" />
+        <ObservatoryNumbers
+          :canteensCount="stats.canteenCount"
+          :canteensDescription="stats.notes.canteenCountDescription"
+          :teledeclarationsCount="stats.teledeclarationsCount"
+          class="fr-mb-3w"
+        />
+        <template v-if="stats.egalimPercent !== null">
+          <ObservatoryPurchases :stats="stats" class="fr-card fr-mb-4w fr-p-5w fr-px-md-6w fr-pt-md-8w fr-pb-md-6w" />
+          <ObservatoryCanteens :stats="stats" class="fr-card fr-p-5w fr-px-md-6w fr-pt-md-8w fr-pb-md-6w" />
+        </template>
+        <DsfrHighlight v-else :text="stats.notes.campaignInfo" class="fr-col-12 fr-col-md-8 fr-ml-0" />
       </template>
-      <DsfrHighlight v-else :text="stats.notes.campaignInfo" class="fr-col-12 fr-col-md-8 fr-ml-0" />
+      <ObservatoryShare />
     </template>
-    <ObservatoryShare />
   </section>
   <AppJeDonneMonAvis url="https://jedonnemonavis.numerique.gouv.fr/Demarches/3661?button=3940">
     <p class="fr-mb-0">
