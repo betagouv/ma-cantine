@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue"
+import stringsService from "@/services/strings"
 
 const props = defineProps(["percents", "legends", "alignment"])
 const colors = ["#A94645", "#C3992A", "#695240", "#FFCA00", "#34CB6A", "#FF9575", "#297254", "#CE614A"]
@@ -41,7 +42,7 @@ const background = computed(() => {
       <div v-for="(stat, i) in stats" :key="stat" class="graph-pie__legend">
         <div class="graph-pie__color fr-mr-1w" :style="`background-color: ${colors[i]}`"></div>
         <div>
-          <p class="fr-h6 fr-mb-0">{{ stat.percent }}%</p>
+          <p class="fr-h6 fr-mb-0">{{ stringsService.prettyPercent(stat.percent) }}</p>
           <p class="fr-mb-0">{{ stat.legend }}</p>
         </div>
       </div>

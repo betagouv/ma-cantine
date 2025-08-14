@@ -1,6 +1,7 @@
 <script setup>
 import { computed, reactive } from "vue"
 import { useStoreFilters } from "@/stores/filters"
+import stringsService from "@/services/strings"
 import GraphBase from "@/components/GraphBase.vue"
 import GraphGauge from "@/components/GraphGauge.vue"
 
@@ -9,11 +10,11 @@ const storeFilters = useStoreFilters()
 const title = "Produits durables et de qualité dont les produits bio"
 const objectives = reactive([
   {
-    name: `${props.egalimObjective}%`,
+    name: stringsService.prettyPercent(props.egalimObjective),
     value: props.egalimObjective,
   },
   {
-    name: `${props.bioObjective}%`,
+    name: stringsService.prettyPercent(props.bioObjective),
     value: props.bioObjective,
   },
 ])
@@ -24,8 +25,10 @@ const legends = ["durables et de qualité dont bio", "bio et en conversion bio"]
 const getResultsDescription = () => {
   const resultWithObjectif = []
   for (let i = 0; i < stats.length; i++) {
+    const objectifPercent = stringsService.prettyPercent(objectives[i].value)
+    const resultPercent = stringsService.prettyPercent(stats[i])
     resultWithObjectif.push(
-      `pour l'objectif "${legends[i]}" fixé à ${objectives[i].value}% le résultat est ${stats[i]}%`
+      `pour l'objectif "${legends[i]}" fixé à ${objectifPercent} le résultat est ${resultPercent}`
     )
   }
   return resultWithObjectif.join(", ")

@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue"
 import { useStoreFilters } from "@/stores/filters"
+import stringsService from "@/services/strings"
 import GraphPie from "@/components/GraphPie.vue"
 import GraphBase from "@/components/GraphBase.vue"
 import cantines from "@/data/cantines.json"
@@ -21,7 +22,7 @@ const graph = computed(() => {
       const count = props.sectorCategories[sectorCategorie]
       const percent = Math.round((count / props.canteensCount) * 100)
       const canteen = count > 1 ? "cantines" : "cantine"
-      const type = cantines.sectorCategorie[sectorCategorie] || "Inconnu"
+      const type = cantines.sectorCategorie[sectorCategorie] || "Non renseigné"
       const legend = `${type} soit ${count} ${canteen}`
       percents.push(percent)
       legends.push(legend)
@@ -29,7 +30,7 @@ const graph = computed(() => {
   }
   if (percents.length === 0) {
     percents.push(100)
-    legends.push("Inconnu")
+    legends.push("Non renseigné")
   }
   return {
     legends,
@@ -41,7 +42,8 @@ const graph = computed(() => {
 const getResultsDescription = () => {
   const results = []
   for (let i = 0; i < graph.value.percents.length; i++) {
-    results.push(`${graph.value.percents[i]}% ${graph.value.legends[i].toLocaleLowerCase()}`)
+    const percent = stringsService.prettyPercent(graph.value.percents[i])
+    results.push(`${percent} ${graph.value.legends[i].toLocaleLowerCase()}`)
   }
   return results.join(", ")
 }

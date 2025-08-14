@@ -19,4 +19,8 @@ const checkIfContains = (string, search) => {
   return cleanString.indexOf(cleanSearch) >= 0
 }
 
-export default { removeSpecialChars, checkIfStartsWith, checkIfContains }
+const prettyPercent = (number) => {
+  return `${number}${'\u00a0'}%`
+}
+
+export default { removeSpecialChars, checkIfStartsWith, checkIfContains, prettyPercent }
