@@ -10,7 +10,7 @@ const storeFilters = useStoreFilters()
 const title = "Viandes, volailles et produits d’aquaculture"
 const objectives = [
   { name: stringsService.prettyPercent(60), value: 60 },
-  { name: `${stringsService.prettyPercent(100)} pour les restaurants d’état`, value: 100 },
+  { name: `${stringsService.prettyPercent(100)} pour les restaurants d'État`, value: 100 },
 ]
 const stats = reactive([props.meatPercent + props.fishPercent])
 const description = computed(() => {
