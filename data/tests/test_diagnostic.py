@@ -12,9 +12,9 @@ class DiagnosticQuerySetTest(TestCase):
             canteen=CanteenFactory(), value_total_ht=1000, status=Diagnostic.DiagnosticStatus.SUBMITTED
         )
 
-    def test_submitted_queryset(self):
+    def test_teledeclared_queryset(self):
         self.assertEqual(Diagnostic.objects.all().count(), 2)
-        self.assertEqual(Diagnostic.objects.submitted().count(), 1)
+        self.assertEqual(Diagnostic.objects.teledeclared().count(), 1)
 
 
 class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
