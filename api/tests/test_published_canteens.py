@@ -442,7 +442,7 @@ class TestPublishedCanteenApi(APITestCase):
         canteen = CanteenFactory.create(redacted_appro_years=[2022, 2023])
 
         DiagnosticFactory.create(canteen=canteen, year=2022)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2023)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2023, status=Diagnostic.DiagnosticStatus.SUBMITTED)
         TeledeclarationFactory.create(
             diagnostic=diagnostic, status=Teledeclaration.TeledeclarationStatus.SUBMITTED, declared_data={"foo": "bar"}
         )
