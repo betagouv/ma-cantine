@@ -1,9 +1,10 @@
 <script setup>
 defineProps(["url", "title"])
+const show = window.SHOW_JE_DONNE_MON_AVIS
 </script>
 
 <template>
-  <section class="fr-card fr-my-5w fr-p-5w">
+  <section v-if="show" class="fr-card fr-my-5w fr-p-5w">
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
       <div class="fr-col-12 fr-col-md-6">
         <h6 class="fr-mb-1w">{{ title }}</h6>
