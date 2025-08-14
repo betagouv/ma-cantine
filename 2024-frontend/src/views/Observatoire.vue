@@ -83,10 +83,10 @@ watchEffect(async () => {
           :canteensCount="stats.canteenCount"
           :canteensDescription="stats.notes.canteenCountDescription"
           :teledeclarationsCount="stats.teledeclarationsCount"
-          class="fr-mb-3w"
+          class="fr-mb-1w"
         />
         <template v-if="stats.egalimPercent !== null">
-          <ObservatoryPurchases :stats="stats" class="fr-card fr-p-4w fr-p-md-8w fr-mb-4w " />
+          <ObservatoryPurchases :stats="stats" class="fr-card fr-p-4w fr-p-md-8w fr-mb-2w " />
           <ObservatoryCanteens :stats="stats" class="fr-card fr-p-4w fr-p-md-8w" />
         </template>
         <DsfrHighlight v-else :text="stats.notes.campaignInfo" class="fr-col-12 fr-col-md-8 fr-ml-0" />
