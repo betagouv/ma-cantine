@@ -86,8 +86,8 @@ watchEffect(async () => {
           class="fr-mb-3w"
         />
         <template v-if="stats.egalimPercent !== null">
-          <ObservatoryPurchases :stats="stats" class="fr-card fr-p-4w fr-p-lg-8w fr-mb-4w " />
-          <ObservatoryCanteens :stats="stats" class="fr-card fr-p-4w fr-p-lg-8w" />
+          <ObservatoryPurchases :stats="stats" class="fr-card fr-p-4w fr-p-md-8w fr-mb-4w " />
+          <ObservatoryCanteens :stats="stats" class="fr-card fr-p-4w fr-p-md-8w" />
         </template>
         <DsfrHighlight v-else :text="stats.notes.campaignInfo" class="fr-col-12 fr-col-md-8 fr-ml-0" />
       </template>
