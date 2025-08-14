@@ -21,7 +21,7 @@ const graph = computed(() => {
       const count = props.sectorCategories[sectorCategorie]
       const percent = Math.round((count / props.canteensCount) * 100)
       const canteen = count > 1 ? "cantines" : "cantine"
-      const type = cantines.sectorCategorie[sectorCategorie] || "Inconnu"
+      const type = cantines.sectorCategorie[sectorCategorie] || "Non renseigné"
       const legend = `${type} soit ${count} ${canteen}`
       percents.push(percent)
       legends.push(legend)
@@ -29,7 +29,7 @@ const graph = computed(() => {
   }
   if (percents.length === 0) {
     percents.push(100)
-    legends.push("Inconnu")
+    legends.push("Non renseigné")
   }
   return {
     legends,

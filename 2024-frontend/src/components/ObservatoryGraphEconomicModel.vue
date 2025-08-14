@@ -22,7 +22,7 @@ const graph = computed(() => {
       const percent = Math.round((count / props.canteensCount) * 100)
       const index = cantines.economicModel.findIndex((element) => element.apiName === economicModel)
       const canteen = count > 1 ? "cantines" : "cantine"
-      const type = index > -1 ? `Établissement ${cantines.economicModel[index].label.toLowerCase()}` : "Inconnu"
+      const type = index > -1 ? `Établissement ${cantines.economicModel[index].label.toLowerCase()}` : "Non renseigné"
       const legend = `${type} soit ${count} ${canteen}`
       percents.push(percent)
       legends.push(legend)
@@ -30,7 +30,7 @@ const graph = computed(() => {
   }
   if (percents.length === 0) {
     percents.push(100)
-    legends.push("Inconnu")
+    legends.push("Non renseigné")
   }
   return {
     legends,
