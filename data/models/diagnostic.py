@@ -1470,18 +1470,28 @@ class Diagnostic(models.Model):
         """
         Teledeclare the diagnostic
         """
+        # TODO: check if now() is during a campaign
+
         if self.is_teledeclared:
             raise ValidationError("Ce diagnostic a déjà été télédéclaré.")
         if not self.is_filled:
             raise ValidationError("Ce diagnostic n'est pas rempli.")
 
-        from api.serializers import CanteenTeledeclarationSerializer
+        from api.serializers import (
+            CanteenTeledeclarationSerializer,
+            SatelliteTeledeclarationSerializer,
+        )
 
         # canteen data
         serialized_canteen = CanteenTeledeclarationSerializer(self.canteen).data
         self.canteen_snapshot = serialized_canteen
 
-        # TODO: canteen satellites snapshot, applicant_snapshot
+        # satellites data
+        if self.canteen.is_central_cuisine:
+            serialized_satellites = [SatelliteTeledeclarationSerializer(x).data for x in self.canteen.satellites]
+            self.satellites_snapshot = serialized_satellites
+
+        # TODO: applicant_snapshot
 
         # metadata
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED

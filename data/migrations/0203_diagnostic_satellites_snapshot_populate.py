@@ -25,7 +25,7 @@ def undo_populate_diagnostic_satellites_snapshot(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0196_diagnostic_satellites_snapshot_and_more"),
+        ("data", "0202_diagnostic_satellites_snapshot_and_more"),
     ]
 
     operations = [

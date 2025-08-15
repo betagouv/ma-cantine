@@ -166,6 +166,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
     @freeze_time(date_in_teledeclaration_campaign)
     def test_teledeclare(self):
         self.assertIsNone(self.diagnostic.canteen_snapshot)
+        self.assertIsNone(self.diagnostic.satellites_snapshot)
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
         self.assertIsNone(self.diagnostic.teledeclaration_date)
         with self.assertRaises(ValidationError):  # diagnostic not filled
@@ -176,6 +177,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         # teledeclare
         self.diagnostic.teledeclare()
         self.assertIsNotNone(self.diagnostic.canteen_snapshot)
+        self.assertIsNone(self.diagnostic.satellites_snapshot)
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
         # try to teledeclare again
