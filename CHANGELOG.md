@@ -6,6 +6,20 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.28.1](https://github.com/betagouv/ma-cantine/compare/v2025.28.0...v2025.28.1) (2025-08-15)
+
+
+### Améliorations
+
+* **Diagnostic:** nouvelle méthode pour télédéclarer (modifie le status, date, snapshots) [1TD1Site] ([#5618](https://github.com/betagouv/ma-cantine/issues/5618)) ([fadc8ce](https://github.com/betagouv/ma-cantine/commit/fadc8ce5a614fbbc5df867258b3bf3fa00a65792))
+
+
+### Technique
+
+* **Canteen:** renommer le queryset is_filled en filled ([#5622](https://github.com/betagouv/ma-cantine/issues/5622)) ([74b422c](https://github.com/betagouv/ma-cantine/commit/74b422c3e4b0660817c1664da0e39b011aa2d38d))
+* **Diagnostic:** dupliquer (et adapter) les queryset depuis Teledeclaration vers Diagnostic (2/3) [1TD1Site] ([#5617](https://github.com/betagouv/ma-cantine/issues/5617)) ([1773404](https://github.com/betagouv/ma-cantine/commit/177340495c887fad889fcf53e36adc167ba3c9ae))
+* **Diagnostic:** renommer le queryset is_filled en filled ([#5621](https://github.com/betagouv/ma-cantine/issues/5621)) ([e984eaf](https://github.com/betagouv/ma-cantine/commit/e984eaf6e4dd77bc7723cb41919e02a30b27e663))
+
 ## [2025.28.0](https://github.com/betagouv/ma-cantine/compare/v2025.27.0...v2025.28.0) (2025-08-14)
 
 
