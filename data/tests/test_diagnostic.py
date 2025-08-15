@@ -20,7 +20,7 @@ class DiagnosticQuerySetTest(TestCase):
         cls.valid_canteen_3 = CanteenFactory(
             siret="12345678901235", siren_unite_legale="123456789", yearly_meal_count=100
         )
-        cls.valid_canteen_4 = CanteenFactory(siret="12345678901230", yearly_meal_count=0)
+        cls.valid_canteen_4 = CanteenFactory(siret="12345678901230", yearly_meal_count=0)  # not aberrant
         cls.valid_canteen_sat = CanteenFactory(
             siret="12345678901232", production_type=Canteen.ProductionType.ON_SITE_CENTRAL
         )
@@ -89,7 +89,7 @@ class DiagnosticQuerySetTest(TestCase):
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.deleted_canteen,
-            value_total_ht=1000001.00,  # aberrant
+            value_total_ht=1000001.00,  # aberrant (and meal_price > 20)
             value_bio_ht=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
