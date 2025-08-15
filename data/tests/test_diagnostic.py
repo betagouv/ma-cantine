@@ -160,8 +160,12 @@ class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
 class DiagnosticModelTeledeclareMethodTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen = CanteenFactory()
-        cls.diagnostic = DiagnosticFactory(canteen=cls.canteen, year=year_data, value_total_ht=0)
+        cls.canteen_central = CanteenFactory(siret="12345678901234", production_type=Canteen.ProductionType.CENTRAL)
+        cls.canteen_sat = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=cls.canteen_central.siret,
+        )
+        cls.diagnostic = DiagnosticFactory(canteen=cls.canteen_central, year=year_data, value_total_ht=0)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_teledeclare(self):
@@ -177,7 +181,10 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         # teledeclare
         self.diagnostic.teledeclare()
         self.assertIsNotNone(self.diagnostic.canteen_snapshot)
-        self.assertIsNone(self.diagnostic.satellites_snapshot)
+        self.assertEqual(self.diagnostic.canteen_snapshot["id"], self.canteen_central.id)
+        self.assertIsNotNone(self.diagnostic.satellites_snapshot)
+        self.assertEqual(len(self.diagnostic.satellites_snapshot), 1)
+        self.assertEqual(self.diagnostic.satellites_snapshot[0]["id"], self.canteen_sat.id)
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
         # try to teledeclare again
