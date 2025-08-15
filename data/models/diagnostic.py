@@ -51,7 +51,7 @@ def canteen_has_siret_or_siren_unite_legale_query():
 
 
 class DiagnosticQuerySet(models.QuerySet):
-    def is_filled(self):
+    def filled(self):
         return self.filter(value_total_ht__gt=0)
 
     def teledeclared(self):

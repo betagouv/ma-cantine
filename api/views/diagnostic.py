@@ -155,7 +155,7 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
             Teledeclaration.objects.filter(diagnostic=OuterRef("pk")).in_year(year).cancelled()
         )
         diagnostics_to_teledeclare = (
-            Diagnostic.objects.is_filled()
+            Diagnostic.objects.filled()
             .filter(year=year, canteen__in=canteens, diagnostic_type__isnull=False)
             .annotate(has_teledeclaration_submitted=Exists(has_teledeclaration_submitted))
             .annotate(has_teledeclaration_cancelled=Exists(has_teledeclaration_cancelled))
