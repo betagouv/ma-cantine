@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
 from freezegun import freeze_time
@@ -79,7 +80,7 @@ class DiagnosticQuerySetTest(TestCase):
         with freeze_time(date_in_teledeclaration_campaign):
             cls.deleted_canteen_diagnostic.teledeclare()
 
-    @freeze_time("2025-03-30")
+    @freeze_time(date_in_teledeclaration_campaign)
     def test_teledeclared_for_year(self):
         teledeclarations = Diagnostic.objects.teledeclared_for_year(year_data)
         self.assertEqual(teledeclarations.count(), 6)
@@ -126,3 +127,29 @@ class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
         self.assertFalse(self.diagnostic_empty_draft.is_teledeclared)
         self.assertFalse(self.diagnostic_filled_draft.is_teledeclared)
         self.assertTrue(self.diagnostic_filled_submitted.is_teledeclared)
+
+
+class DiagnosticModelTeledeclareMethodTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        cls.diagnostic = DiagnosticFactory(canteen=cls.canteen, year=year_data, value_total_ht=0)
+
+    @freeze_time(date_in_teledeclaration_campaign)
+    def test_teledeclare(self):
+        self.assertIsNone(self.diagnostic.canteen_snapshot)
+        self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
+        self.assertIsNone(self.diagnostic.teledeclaration_date)
+        with self.assertRaises(ValidationError):  # diagnostic not filled
+            self.diagnostic.teledeclare()
+        # fill the diagnostic
+        self.diagnostic.value_total_ht = 1000
+        self.diagnostic.save()
+        # teledeclare
+        self.diagnostic.teledeclare()
+        self.assertIsNotNone(self.diagnostic.canteen_snapshot)
+        self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
+        self.assertIsNotNone(self.diagnostic.teledeclaration_date)
+        # try to teledeclare again
+        with self.assertRaises(ValidationError):
+            self.diagnostic.teledeclare()
