@@ -198,7 +198,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def has_missing_data(self):
         return self.annotate_with_requires_line_ministry().filter(has_missing_data_query())
 
-    def is_filled(self):
+    def filled(self):
         return self.annotate_with_requires_line_ministry().exclude(has_missing_data_query())
 
     def group_and_count_by_field(self, field):
@@ -322,8 +322,8 @@ class CanteenManager(SoftDeletionManager):
     def has_missing_data(self):
         return self.get_queryset().has_missing_data()
 
-    def is_filled(self):
-        return self.get_queryset().is_filled()
+    def filled(self):
+        return self.get_queryset().filled()
 
     def group_and_count_by_field(self, field):
         return self.get_queryset().group_and_count_by_field(field)

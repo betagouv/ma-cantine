@@ -446,9 +446,9 @@ class TestCanteenCompleteQuerySetAndProperty(TestCase):
             central_producer_siret=None,  # incomplete
         )
 
-    def test_is_filled_queryset(self):
+    def test_filled_queryset(self):
         self.assertEqual(Canteen.objects.count(), 10)
-        self.assertEqual(Canteen.objects.is_filled().count(), 4)
+        self.assertEqual(Canteen.objects.filled().count(), 4)
 
     def test_is_filled_property(self):
         for canteen in [
