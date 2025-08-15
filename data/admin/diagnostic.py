@@ -64,6 +64,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "tunnel_info",
         "teledeclaration_date",
         "canteen_snapshot_pretty",
+        "satellites_snapshot_pretty",
         "applicant_snapshot_pretty",
         "creation_source",
         "creation_date",
@@ -297,7 +298,14 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         ),
         (
             "Télédéclaration",
-            {"fields": ("teledeclaration_date", "canteen_snapshot_pretty", "applicant_snapshot_pretty")},
+            {
+                "fields": (
+                    "teledeclaration_date",
+                    "canteen_snapshot_pretty",
+                    "satellites_snapshot_pretty",
+                    "applicant_snapshot_pretty",
+                )
+            },
         ),
         (
             "Metadonnées",
@@ -341,6 +349,12 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         return mark_safe(f"<pre>{data}</pre>")
 
     canteen_snapshot_pretty.short_description = Diagnostic._meta.get_field("canteen_snapshot").verbose_name
+
+    def satellites_snapshot_pretty(self, obj):
+        data = json.dumps(obj.satellites_snapshot, indent=2)
+        return mark_safe(f"<pre>{data}</pre>")
+
+    satellites_snapshot_pretty.short_description = Diagnostic._meta.get_field("satellites_snapshot").verbose_name
 
     def applicant_snapshot_pretty(self, obj):
         data = json.dumps(obj.applicant_snapshot, indent=2)
