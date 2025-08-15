@@ -151,7 +151,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         diagnostics = Diagnostic.objects.filter(
             Q(canteen=OuterRef("central_kitchen_id")) | Q(canteen=OuterRef("pk")), year=year
         )
-        diagnostics_filled = diagnostics.is_filled()
+        diagnostics_filled = diagnostics.filled()
         diagnostic_for_year_with_cc_mode = Diagnostic.objects.filter(
             pk=OuterRef("diagnostic_for_year"),
             central_kitchen_diagnostic_mode__isnull=False,

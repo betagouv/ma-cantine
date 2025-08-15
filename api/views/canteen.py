@@ -204,7 +204,7 @@ def filter_by_diagnostic_params(queryset, query_params):
     appro_badge_requested = param_badge == "appro"
     if param_bio_rate or param_combined_rate or appro_badge_requested:
         publication_year = date.today().year - 1
-        qs_diag = Diagnostic.objects.is_filled().filter(year=publication_year)
+        qs_diag = Diagnostic.objects.filled().in_year(publication_year)
         if param_bio_rate or appro_badge_requested:
             qs_diag = qs_diag.annotate(
                 bio_percent=100 * Cast(Sum("value_bio_ht", default=0) / Sum("value_total_ht"), FloatField())
