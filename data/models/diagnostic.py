@@ -424,7 +424,7 @@ class Diagnostic(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords(excluded_fields=["canteen_snapshot", "applicant_snapshot"])
+    history = HistoricalRecords(excluded_fields=["canteen_snapshot", "satellites_snapshot", "applicant_snapshot"])
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
 
@@ -1091,6 +1091,12 @@ class Diagnostic(models.Model):
         verbose_name="cantine (copie au moment de la télédéclaration)",
         encoder=CustomJSONEncoder,
     )
+    satellites_snapshot = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name="satellites (copie au moment de la télédéclaration)",
+        encoder=CustomJSONEncoder,
+    )
     applicant_snapshot = models.JSONField(
         blank=True,
         null=True,
@@ -1464,18 +1470,28 @@ class Diagnostic(models.Model):
         """
         Teledeclare the diagnostic
         """
+        # TODO: check if now() is during a campaign
+
         if self.is_teledeclared:
             raise ValidationError("Ce diagnostic a déjà été télédéclaré.")
         if not self.is_filled:
             raise ValidationError("Ce diagnostic n'est pas rempli.")
 
-        from api.serializers import CanteenTeledeclarationSerializer
+        from api.serializers import (
+            CanteenTeledeclarationSerializer,
+            SatelliteTeledeclarationSerializer,
+        )
 
         # canteen data
         serialized_canteen = CanteenTeledeclarationSerializer(self.canteen).data
         self.canteen_snapshot = serialized_canteen
 
-        # TODO: canteen satellites snapshot, applicant_snapshot
+        # satellites data
+        if self.canteen.is_central_cuisine:
+            serialized_satellites = [SatelliteTeledeclarationSerializer(x).data for x in self.canteen.satellites]
+            self.satellites_snapshot = serialized_satellites
+
+        # TODO: applicant_snapshot
 
         # metadata
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED
