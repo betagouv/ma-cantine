@@ -10,12 +10,22 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     help = "Generate diagnostics of CSAT by splitting diagnostics of central kitchens"
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--year",
+            dest="year",
+            type=int,
+            required=True,
+            help="Year of the teledeclaration campaign to process",
+        )
+
     def handle(self, *args, **options):
+        year = options["year"] | 2024
         logger.info("Start task: generate diagnostics for satellite kitchens using central kitchen's diagnostics")
 
         # Step 1: get all valid diagnostics for CC
-        diagnostics_cc = Diagnostic.objects.teledeclared_for_year.filter(
-            central_kitchen_diagnostic_mode__is_null=False
+        diagnostics_cc = Diagnostic.objects.teledeclared_for_year(year=year).filter(
+            central_kitchen_diagnostic_mode__isnull=False
         )
 
         # Step 2: Fetch the satellites of the diag's central kitchen
