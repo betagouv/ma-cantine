@@ -45,6 +45,18 @@ class GenerateCsatDiagnosticsCommandTest(TestCase):
             status=Diagnostic.DiagnosticStatus.SUBMITTED,
             teledeclaration_date="2025-01-15",
             central_kitchen_diagnostic_mode="Not null",
+            generated_from_central_kitchen_diagnostic=False,
+        )
+        # Create a diagnostic for the sat 1
+        self.cc_diag = Diagnostic.objects.create(
+            canteen=self.satellite1,
+            year=2024,
+            value_total_ht=100,
+            value_bio_ht=20,
+            status=Diagnostic.DiagnosticStatus.SUBMITTED,
+            teledeclaration_date="2025-01-15",
+            creation_source="Sat",
+            generated_from_central_kitchen_diagnostic=False,
         )
         # Create a diagnostic for the kitchen
         self.cc_diag = Diagnostic.objects.create(
@@ -54,13 +66,18 @@ class GenerateCsatDiagnosticsCommandTest(TestCase):
             value_bio_ht=20,
             status=Diagnostic.DiagnosticStatus.SUBMITTED,
             teledeclaration_date="2025-01-15",
+            generated_from_central_kitchen_diagnostic=False,
         )
 
     def test_command_creates_satellite_diagnostics_with_split_appro(self):
         call_command("generate_csat_diagnostics", year=2024)
         # There should be a diagnostic for each satellite
-        sat1_diag = Diagnostic.objects.filter(canteen=self.satellite1, year=2024).first()
-        sat2_diag = Diagnostic.objects.filter(canteen=self.satellite2, year=2024).first()
+        sat1_diag = Diagnostic.objects.filter(
+            canteen=self.satellite1, year=2024, status=Diagnostic.DiagnosticStatus.SUBMITTED
+        ).first()
+        sat2_diag = Diagnostic.objects.filter(
+            canteen=self.satellite2, year=2024, status=Diagnostic.DiagnosticStatus.SUBMITTED
+        ).first()
         self.assertIsNotNone(sat1_diag)
         self.assertIsNotNone(sat2_diag)
         # The appro values should be split equally (1000/2, 200/2)

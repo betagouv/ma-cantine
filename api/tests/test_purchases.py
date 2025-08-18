@@ -1013,7 +1013,7 @@ class TestPurchaseApi(APITestCase):
         not_my_canteen = CanteenFactory.create()
 
         year = 2023
-        DiagnosticFactory.create(canteen=canteen_with_diag, year=year)
+        DiagnosticFactory.create(canteen=canteen_with_diag, year=year, generated_from_central_kitchen_diagnostic=False)
         PurchaseFactory.create(canteen=good_canteen, date=f"{year}-01-01", price_ht=100)
         PurchaseFactory.create(canteen=canteen_with_diag, date=f"{year}-01-01", price_ht=666)
         PurchaseFactory.create(canteen=not_my_canteen, date=f"{year}-01-01", price_ht=666)

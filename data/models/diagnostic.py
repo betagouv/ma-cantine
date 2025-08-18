@@ -180,13 +180,15 @@ class Diagnostic(models.Model):
         verbose_name = "diagnostic"
         verbose_name_plural = "diagnostics"
         constraints = [
-            models.UniqueConstraint(fields=["canteen", "year"], name="annual_diagnostic"),
+            models.UniqueConstraint(
+                fields=["canteen", "year", "generated_from_central_kitchen_diagnostic"], name="annual_diagnostic"
+            ),
         ]
 
     class DiagnosticStatus(models.TextChoices):
         DRAFT = "DRAFT", "Brouillon"
         SUBMITTED = "SUBMITTED", "Télédéclaré"
-        # CANCELLED = "CANCELLED", "Annulé"
+        OVERRIDEN_BY_CC = "OVERRIDEN_BY_CC", "Ecrasé par la cuisine centrale"
 
     # NB: if the label of the choice changes, double check that the teledeclaration PDF
     # doesn't need an update as well, since the logic in the templates is based on the label
@@ -474,6 +476,7 @@ class Diagnostic(models.Model):
         "creation_date",
         "modification_date",
         "creation_source",
+        "generated_from_central_kitchen_diagnostic",
     ]
 
     MATOMO_FIELDS = [
@@ -534,6 +537,13 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="seulement pertinent pour les cuisines centrales : Quelles données sont déclarées par cette cuisine centrale ?",
+    )
+
+    # Relevant only for satellites
+    generated_from_central_kitchen_diagnostic = models.BooleanField(
+        verbose_name="seulement pertinent pour les satellites : A été automatiquement généré depuis le bilan de la cuisine centrale",
+        blank=True,
+        null=True,
     )
 
     # progress fields

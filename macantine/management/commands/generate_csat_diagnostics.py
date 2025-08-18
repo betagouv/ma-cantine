@@ -57,6 +57,8 @@ class Command(BaseCommand):
                 sat_diag = diag
                 sat_diag.pk = None
                 sat_diag.canteen = satellite
+                sat_diag.creation_source = "Generated from CC diag"
+                sat_diag.generated_from_central_kitchen_diagnostic = True
 
                 # Step 5: Update the appro values
                 for field in fields:
@@ -64,6 +66,14 @@ class Command(BaseCommand):
 
                 sat_diag.save()
                 logger.info(f"Task: Diag for canteen : {satellite.name} has been saved")
+
+                # Step 6 : Archive the potential diag created by the satellite itself
+                diag_to_archive = Diagnostic.objects.filter(
+                    canteen=satellite, year=year, generated_from_central_kitchen_diagnostic=False
+                ).first()
+                if diag_to_archive:
+                    diag_to_archive.status = Diagnostic.DiagnosticStatus.OVERRIDEN_BY_CC
+                    diag_to_archive.save()
 
         # Done!
         logger.info("Task completed")
