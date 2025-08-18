@@ -242,7 +242,7 @@ const showCheckboxManyDelivery = computed(() => Number(form.satelliteCanteensCou
 const showCheckboxNoSiret = computed(() => form.hasSiret === "no-siret")
 const showCitySelector = computed(() => form.hasSiret === "no-siret")
 
-const resetDynamicInputValues = () => {
+const changeProductionMode = () => {
   form.satelliteCanteensCount = null
   form.centralProducerSiret = null
   form.dailyMealCount = null
@@ -337,7 +337,7 @@ const validateForm = (action) => {
           v-model="form.productionType"
           :options="productionTypeOptions"
           :error-message="formatError(v$.productionType)"
-          @change="resetDynamicInputValues"
+          @change="changeProductionMode"
         />
         <div v-if="showCentralProducerSiret" class="canteen-establishment-form__central-producer-siret">
           <DsfrInputGroup
