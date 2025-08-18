@@ -313,59 +313,7 @@ const validateForm = (action) => {
   >
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
       <fieldset class="fr-mb-4w canteen-establishment-form__reduce-margin-bottom">
-        <legend class="fr-h5 fr-mb-2w">1. SIRET</legend>
-        <DsfrRadioButtonSet
-          v-model="form.hasSiret"
-          legend="Avez-vous un numéro SIRET ?"
-          :error-message="formatError(v$.hasSiret)"
-          :options="options.hasSiret"
-          @update:modelValue="changeHasSiret()"
-        />
-        <CanteenEstablishmentSearch
-          v-if="form.hasSiret"
-          :key="forceRerender"
-          @select="(canteenInfos) => selectEstablishment(canteenInfos)"
-          :error-required="formatError(v$.siret) || formatError(v$.sirenUniteLegale)"
-          :has-siret="form.hasSiret === 'has-siret'"
-          :establishment-data="prefillEstablishment"
-        />
-      </fieldset>
-      <fieldset class="fr-mb-4w">
-        <legend class="fr-h5 fr-mb-2w">2. Coordonnées</legend>
-        <DsfrInputGroup
-          v-model="form.name"
-          label="Nom de la cantine *"
-          :label-visible="true"
-          hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
-          :error-message="formatError(v$.name)"
-        />
-        <div v-if="showCitySelector" class="fr-grid-row fr-grid-row--gutters">
-          <div class="fr-col-12 fr-col-md-6">
-            <DsfrInputGroup
-              v-model="form.postalCode"
-              label="Code postal *"
-              hint="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
-              :label-visible="true"
-              :error-message="formatError(v$.postalCode)"
-              @update:modelValue="changePostal()"
-            />
-          </div>
-          <div class="fr-col-12 fr-col-md-6">
-            <DsfrSelect
-              class="fr-mb-0"
-              v-model="form.citySelector"
-              label="Ville *"
-              description="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
-              :label-visible="true"
-              :error-message="emptyCity || formatError(v$.citySelector)"
-              :options="citiesOptions"
-              @update:modelValue="selectCity()"
-            />
-          </div>
-        </div>
-      </fieldset>
-      <fieldset class="fr-mb-4w canteen-establishment-form__reduce-margin-bottom">
-        <legend class="fr-h5 fr-mb-2w">3. Caractéristiques</legend>
+        <legend class="fr-h5 fr-mb-2w">1. Caractéristiques</legend>
         <DsfrRadioButtonSet
           legend="Type d’établissement *"
           v-model="form.economicModel"
@@ -406,6 +354,58 @@ const validateForm = (action) => {
           :label-visible="true"
           :error-message="formatError(v$.satelliteCanteensCount)"
         />
+      </fieldset>
+      <fieldset class="fr-mb-4w canteen-establishment-form__reduce-margin-bottom">
+        <legend class="fr-h5 fr-mb-2w">2. Établissement</legend>
+        <DsfrRadioButtonSet
+          v-model="form.hasSiret"
+          legend="Avez-vous un numéro SIRET ?"
+          :error-message="formatError(v$.hasSiret)"
+          :options="options.hasSiret"
+          @update:modelValue="changeHasSiret()"
+        />
+        <CanteenEstablishmentSearch
+          v-if="form.hasSiret"
+          :key="forceRerender"
+          @select="(canteenInfos) => selectEstablishment(canteenInfos)"
+          :error-required="formatError(v$.siret) || formatError(v$.sirenUniteLegale)"
+          :has-siret="form.hasSiret === 'has-siret'"
+          :establishment-data="prefillEstablishment"
+        />
+      </fieldset>
+      <fieldset class="fr-mb-4w">
+        <legend class="fr-h5 fr-mb-2w">3. Coordonnées</legend>
+        <DsfrInputGroup
+          v-model="form.name"
+          label="Nom de la cantine *"
+          :label-visible="true"
+          hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
+          :error-message="formatError(v$.name)"
+        />
+        <div v-if="showCitySelector" class="fr-grid-row fr-grid-row--gutters">
+          <div class="fr-col-12 fr-col-md-6">
+            <DsfrInputGroup
+              v-model="form.postalCode"
+              label="Code postal *"
+              hint="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
+              :label-visible="true"
+              :error-message="formatError(v$.postalCode)"
+              @update:modelValue="changePostal()"
+            />
+          </div>
+          <div class="fr-col-12 fr-col-md-6">
+            <DsfrSelect
+              class="fr-mb-0"
+              v-model="form.citySelector"
+              label="Ville *"
+              description="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
+              :label-visible="true"
+              :error-message="emptyCity || formatError(v$.citySelector)"
+              :options="citiesOptions"
+              @update:modelValue="selectCity()"
+            />
+          </div>
+        </div>
       </fieldset>
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
