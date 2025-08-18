@@ -356,7 +356,7 @@ const validateForm = (action) => {
         />
       </fieldset>
       <fieldset class="fr-mb-4w canteen-establishment-form__reduce-margin-bottom">
-        <legend class="fr-h5 fr-mb-2w">2. SIRET</legend>
+        <legend class="fr-h5 fr-mb-2w">2. Identification</legend>
         <DsfrRadioButtonSet
           v-model="form.hasSiret"
           legend="Avez-vous un numéro SIRET ?"
