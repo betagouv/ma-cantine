@@ -18,6 +18,11 @@ const emit = defineEmits(["sendForm", "cancel"])
 
 /* Siret */
 const prefillEstablishment = ref(props.establishmentData)
+const hasSiretOptions = computed(() => {
+  let siretOptionWithDisabled = options.hasSiret
+  siretOptionWithDisabled[1].disabled = form.productionType === "central" || form.productionType === "central_serving"
+  return siretOptionWithDisabled
+})
 
 const changeHasSiret = () => {
   form.siret = null
@@ -241,6 +246,7 @@ const resetDynamicInputValues = () => {
   form.satelliteCanteensCount = null
   form.centralProducerSiret = null
   form.dailyMealCount = null
+  forceRerender.value++
 }
 
 /* Fields verification */
@@ -360,8 +366,9 @@ const validateForm = (action) => {
         <DsfrRadioButtonSet
           v-model="form.hasSiret"
           legend="Avez-vous un numéro SIRET ?"
+          :key="forceRerender"
           :error-message="formatError(v$.hasSiret)"
-          :options="options.hasSiret"
+          :options="hasSiretOptions"
           @update:modelValue="changeHasSiret()"
         />
         <CanteenEstablishmentSearch
