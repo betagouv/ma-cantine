@@ -32,22 +32,35 @@ class Command(BaseCommand):
         for diag in diagnostics_cc:
             satellites = diag.canteen.satellites
             nbre_satellites = (
-                len(satellites) + 1 if diag.canteen.production_type == "Canteen.ProductionType.CENTRAL_SERVING" else 0
+                len(satellites) + 1
+                if diag.canteen.production_type == "Canteen.ProductionType.CENTRAL_SERVING"
+                else len(satellites)
             )
+            if not nbre_satellites > 0:
+                logger.error("Task fail: A central kitchen has 0 satellites. Cannot update the appro fields")
+                return
 
-            # Step 3 : Create the satellite diag by duplicating the CC diag
+            # Step 3 : Compute the updated appro fields
+            if diag.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
+                fields = Diagnostic.SIMPLE_APPRO_FIELDS
+            else:
+                fields = Diagnostic.COMPLETE_APPRO_FIELDS
+            updated_appro_fields = {}
+            for field in fields:
+                try:
+                    updated_appro_fields[field] = getattr(diag, field) / nbre_satellites
+                except TypeError:
+                    updated_appro_fields[field] = None
+
+            # Step 4: Create the satellite diag by duplicating the CC diag
             for satellite in satellites:
-                sat_diag = diag.copy()
+                sat_diag = diag
                 sat_diag.pk = None
                 sat_diag.canteen = satellite
 
-                # Step 4 : Update the appro fields
-                if diag.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
-                    fields = Diagnostic.SIMPLE_APPRO_FIELDS
-                else:
-                    fields = Diagnostic.COMPLETE_APPRO_FIELDS
+                # Step 5: Update the appro values
                 for field in fields:
-                    setattr(sat_diag, field, getattr(diag, field) / nbre_satellites)
+                    setattr(sat_diag, field, updated_appro_fields[field])
 
                 sat_diag.save()
                 logger.info(f"Task: Diag for canteen : {satellite.name} has been saved")
