@@ -71,7 +71,7 @@ sectorsService.getSectors().then((sectors) => {
   for (let i = 0; i < sectors.length; i++) {
     const sector = sectors[i]
     const { name, id, categoryName, hasLineMinistry } = sector
-    options.push({ name: `${categoryName} - ${name}`, sectorId: id, hasLineMinistry })
+    options.push({ name: name, sectorId: id, hasLineMinistry, hint: categoryName })
   }
   const optionsSortedAlphabetically = options.sort((sectorBefore, sectorAfter) => {
     if (sectorBefore.name < sectorAfter.name) return -1
@@ -420,7 +420,14 @@ const validateForm = (action) => {
           @update:modelValue="resetLineMinistry()"
           :filtering-keys="['name']"
           :error-message="formatError(v$.sectors)"
-        />
+        >
+          <template #checkbox-label="{ option }">
+            <div>
+              <p class="fr-mb-0">{{ option.name }}</p>
+              <p class="fr-mb-0 fr-hint-text">{{ option.hint }}</p>
+            </div>
+          </template>
+        </DsfrMultiselect>
         <DsfrSelect
           v-if="showLineMinistry"
           v-model="form.lineMinistry"
