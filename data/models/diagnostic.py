@@ -242,6 +242,13 @@ class Diagnostic(models.Model):
         "value_fish_egalim_ht",
     ]
 
+    AGGREGATED_APPRO_FIELDS = [
+        "value_bio_ht_agg",
+        "value_sustainable_ht_agg",
+        "value_externality_performance_ht_agg",
+        "value_egalim_others_ht_agg",
+    ]
+
     APPRO_FIELDS = [
         "value_viandes_volailles_bio",
         "value_produits_de_la_mer_bio",
