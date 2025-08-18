@@ -745,6 +745,11 @@ class Diagnostic(models.Model):
         verbose_name="mtm_medium du lien tracké lors de la création",
     )
 
+    # aggregated values
+    value_bio_ht_agg = make_optional_positive_decimal_field(
+        verbose_name="Bio - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
+    )
+
     # detailed values
     value_viandes_volailles_bio = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Bio",
@@ -1311,7 +1316,9 @@ class Diagnostic(models.Model):
 
     @property
     def total_label_bio(self):
-        return self.label_sum("bio")
+        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            return self.label_sum("bio")
+        return self.value_bio_ht
 
     @property
     def total_label_label_rouge(self):
@@ -1496,6 +1503,9 @@ class Diagnostic(models.Model):
             self.satellites_snapshot = serialized_satellites
 
         # TODO: applicant_snapshot
+
+        # aggregated data
+        self.value_bio_ht_agg = self.total_label_bio
 
         # metadata
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED
