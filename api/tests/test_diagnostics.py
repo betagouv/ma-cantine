@@ -107,6 +107,7 @@ class TestDiagnosticsApi(APITestCase):
 
         payload = {
             "year": 2020,
+            "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
             "value_bio_ht": 1000,
             "value_sustainable_ht": 3000,
             "value_total_ht": 10000,
