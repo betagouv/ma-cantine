@@ -35,7 +35,7 @@ def undo_populate_diagnostic_value_ht_agg_fields(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0202_diagnostic_value_ht_agg_fields"),
+        ("data", "0204_diagnostic_value_ht_agg_fields"),
     ]
 
     operations = [
