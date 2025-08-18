@@ -250,6 +250,8 @@ const changeProductionMode = () => {
   form.satelliteCanteensCount = null
   form.centralProducerSiret = null
   form.dailyMealCount = null
+  form.sectors = []
+  form.lineMinistry = null
   forceRerender.value++
 }
 
