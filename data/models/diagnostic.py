@@ -749,6 +749,15 @@ class Diagnostic(models.Model):
     value_bio_ht_agg = make_optional_positive_decimal_field(
         verbose_name="Bio - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
+    value_sustainable_ht_agg = make_optional_positive_decimal_field(
+        verbose_name="Produits SIQO (hors bio) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
+    )
+    value_externality_performance_ht_agg = make_optional_positive_decimal_field(
+        verbose_name="Externalité/performance - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)",
+    )
+    value_egalim_others_ht_agg = make_optional_positive_decimal_field(
+        verbose_name="Autres achats EGalim - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
+    )
 
     # detailed values
     value_viandes_volailles_bio = make_optional_positive_decimal_field(
@@ -1141,23 +1150,11 @@ class Diagnostic(models.Model):
         return super().clean()
 
     def populate_simplified_diagnostic_values(self):
-        self.value_bio_ht = self.total_label_bio
+        self.value_bio_ht = self.total_bio
+        self.value_sustainable_ht = self.total_sustainable
+        self.value_externality_performance_ht = self.total_externality_performance
+        self.value_egalim_others_ht = self.total_egalim_others
 
-        self.value_sustainable_ht = sum_int_with_potential_null(
-            [self.total_label_label_rouge, self.total_label_aocaop_igp_stg]
-        )
-        self.value_externality_performance_ht = sum_int_with_potential_null(
-            [self.total_label_externalites, self.total_label_performance]
-        )
-        self.value_egalim_others_ht = sum_int_with_potential_null(
-            [
-                self.total_label_hve,
-                self.total_label_peche_durable,
-                self.total_label_rup,
-                self.total_label_commerce_equitable,
-                self.total_label_fermier,
-            ]
-        )
         total_meat_egalim = total_meat_france = total_fish_egalim = 0
         egalim_labels = [
             "bio",
@@ -1315,10 +1312,40 @@ class Diagnostic(models.Model):
         return sum
 
     @property
-    def total_label_bio(self):
+    def total_bio(self):
         if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-            return self.label_sum("bio")
+            return self.total_label_bio
         return self.value_bio_ht
+
+    @property
+    def total_sustainable(self):
+        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            return sum_int_with_potential_null([self.total_label_label_rouge, self.total_label_aocaop_igp_stg])
+        return self.value_sustainable_ht
+
+    @property
+    def total_externality_performance(self):
+        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            return sum_int_with_potential_null([self.total_label_externalites, self.total_label_performance])
+        return self.value_externality_performance_ht
+
+    @property
+    def total_egalim_others(self):
+        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            return sum_int_with_potential_null(
+                [
+                    self.total_label_hve,
+                    self.total_label_peche_durable,
+                    self.total_label_rup,
+                    self.total_label_commerce_equitable,
+                    self.total_label_fermier,
+                ]
+            )
+        return self.value_egalim_others_ht
+
+    @property
+    def total_label_bio(self):
+        return self.label_sum("bio")
 
     @property
     def total_label_label_rouge(self):
@@ -1505,7 +1532,10 @@ class Diagnostic(models.Model):
         # TODO: applicant_snapshot
 
         # aggregated data
-        self.value_bio_ht_agg = self.total_label_bio
+        self.value_bio_ht_agg = self.total_bio
+        self.value_sustainable_ht_agg = self.total_sustainable
+        self.value_externality_performance_ht_agg = self.total_externality_performance
+        self.value_egalim_others_ht_agg = self.total_egalim_others
 
         # metadata
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED

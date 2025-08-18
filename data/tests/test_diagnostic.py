@@ -189,6 +189,9 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         # fill the diagnostic
         self.diagnostic.value_total_ht = 1000
         self.diagnostic.value_bio_ht = 200
+        self.diagnostic.value_sustainable_ht = 100
+        self.diagnostic.value_externality_performance_ht = 100
+        self.diagnostic.value_egalim_others_ht = 100
         self.diagnostic.save()
         # teledeclare
         self.diagnostic.teledeclare()
@@ -198,6 +201,9 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertEqual(len(self.diagnostic.satellites_snapshot), 1)
         self.assertEqual(self.diagnostic.satellites_snapshot[0]["id"], self.canteen_sat.id)
         self.assertEqual(self.diagnostic.value_bio_ht_agg, 200)
+        self.assertEqual(self.diagnostic.value_sustainable_ht_agg, 100)
+        self.assertEqual(self.diagnostic.value_externality_performance_ht_agg, 100)
+        self.assertEqual(self.diagnostic.value_egalim_others_ht_agg, 100)
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
         # try to teledeclare again
