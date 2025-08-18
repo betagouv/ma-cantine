@@ -19,7 +19,11 @@ from data.utils import (
     make_optional_positive_decimal_field,
     sum_int_with_potential_null,
 )
-from macantine.utils import CAMPAIGN_DATES, EGALIM_OBJECTIVES
+from macantine.utils import (
+    CAMPAIGN_DATES,
+    EGALIM_OBJECTIVES,
+    is_in_teledeclaration_or_correction,
+)
 
 
 def in_teledeclaration_campaign_query(year):
@@ -1470,12 +1474,12 @@ class Diagnostic(models.Model):
         """
         Teledeclare the diagnostic
         """
-        # TODO: check if now() is during a campaign
-
+        if not is_in_teledeclaration_or_correction():
+            raise ValidationError("Ce n'est pas possible de télédéclarer hors de la période de la campagne")
         if self.is_teledeclared:
-            raise ValidationError("Ce diagnostic a déjà été télédéclaré.")
+            raise ValidationError("Ce diagnostic a déjà été télédéclaré")
         if not self.is_filled:
-            raise ValidationError("Ce diagnostic n'est pas rempli.")
+            raise ValidationError("Ce diagnostic n'est pas rempli")
 
         from api.serializers import (
             CanteenTeledeclarationSerializer,
