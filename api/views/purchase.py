@@ -413,7 +413,12 @@ class DiagnosticsFromPurchasesView(APIView):
                 continue
             if canteen.is_groupe:
                 values_dict["central_kitchen_diagnostic_mode"] = Diagnostic.CentralKitchenDiagnosticMode.APPRO
-            diagnostic = Diagnostic(canteen=canteen, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, **values_dict)
+            diagnostic = Diagnostic(
+                canteen=canteen,
+                diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+                **values_dict,
+                generated_from_central_kitchen_diagnostic=False,
+            )
             try:
                 diagnostic.full_clean()
             except ValidationError:

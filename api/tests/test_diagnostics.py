@@ -344,17 +344,17 @@ class DiagnosticCreateApiTest(APITestCase):
     @authenticate
     def test_create_duplicate_diagnostic(self):
         """
-        Shouldn't be able to add a diagnostic with the same canteen and year
+        Shouldn't be able to add a diagnostic with the same canteen, year and value for generated_from_central_kitchen_diagnostic"
         as an existing diagnostic
         """
         canteen = CanteenFactory(managers=[authenticate.user])
 
-        payload = {"year": 2020, "valeur_bio": 10}
+        payload = {"year": 2020, "generated_from_central_kitchen_diagnostic": False, "value_bio_ht": 10}
         self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
 
         try:
             with transaction.atomic():
-                payload = {"year": 2020, "valeur_bio": 1000}
+                payload = {"year": 2020, "generated_from_central_kitchen_diagnostic": False, "value_bio_ht": 1000}
                 response = self.client.post(
                     reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}),
                     payload,
