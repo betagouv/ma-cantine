@@ -110,10 +110,6 @@ class DiagnosticQuerySet(models.QuerySet):
         """
         return self.annotate(
             bio_percent=100 * Sum("value_bio_ht_agg", default=0) / Sum("value_total_ht"),
-            value_egalim_ht_agg=Sum("value_bio_ht_agg", default=0)
-            + Sum("value_sustainable_ht_agg", default=0)
-            + Sum("value_externality_performance_ht_agg", default=0)
-            + Sum("value_egalim_others_ht_agg", default=0),
             egalim_percent=100 * F("value_egalim_ht_agg") / Sum("value_total_ht"),
         )
 
