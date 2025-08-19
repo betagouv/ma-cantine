@@ -168,12 +168,12 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         cls.diagnostic = DiagnosticFactory(canteen=cls.canteen_central, year=year_data, value_total_ht=0)
 
     @freeze_time(date_in_last_teledeclaration_campaign)
-    def test_teledeclare_outside_of_campaign(self):
+    def test_cannot_teledeclare_a_diagnostic_outside_of_campaign(self):
         with self.assertRaises(ValidationError):
             self.diagnostic.teledeclare()
 
     @freeze_time(date_in_teledeclaration_campaign)
-    def test_teledeclare_diagnostic_not_filled(self):
+    def test_cannot_teledeclare_a_diagnostic_not_filled(self):
         self.assertEqual(self.diagnostic.value_total_ht, 0)
         with self.assertRaises(ValidationError):
             self.diagnostic.teledeclare()
@@ -212,12 +212,12 @@ class DiagnosticModelCancelMethodTest(TestCase):
         cls.diagnostic = DiagnosticFactory(canteen=cls.canteen_central, year=year_data, value_total_ht=1000)
 
     @freeze_time(date_in_last_teledeclaration_campaign)
-    def test_cancel_outside_of_campaign(self):
+    def test_cannot_cancel_a_diagnostic_outside_of_campaign(self):
         with self.assertRaises(ValidationError):
             self.diagnostic.cancel()
 
     @freeze_time(date_in_teledeclaration_campaign)
-    def test_cancel_diagnostic_not_teledeclared(self):
+    def test_cannot_cancel_a_diagnostic_not_teledeclared(self):
         with self.assertRaises(ValidationError):
             self.diagnostic.cancel()
 
