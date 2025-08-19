@@ -165,7 +165,12 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=cls.canteen_central.siret,
         )
-        cls.diagnostic = DiagnosticFactory(canteen=cls.canteen_central, year=year_data, value_total_ht=0)
+        cls.diagnostic = DiagnosticFactory(
+            canteen=cls.canteen_central,
+            year=year_data,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            value_total_ht=0,
+        )
 
     @freeze_time(date_in_last_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_outside_of_campaign(self):
@@ -186,6 +191,10 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertIsNone(self.diagnostic.teledeclaration_date)
         # fill the diagnostic
         self.diagnostic.value_total_ht = 1000
+        self.diagnostic.value_bio_ht = 200
+        self.diagnostic.value_sustainable_ht = 100
+        self.diagnostic.value_externality_performance_ht = 100
+        self.diagnostic.value_egalim_others_ht = 100
         self.diagnostic.save()
         # teledeclare
         self.diagnostic.teledeclare()
@@ -194,6 +203,11 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertIsNotNone(self.diagnostic.satellites_snapshot)
         self.assertEqual(len(self.diagnostic.satellites_snapshot), 1)
         self.assertEqual(self.diagnostic.satellites_snapshot[0]["id"], self.canteen_sat.id)
+        self.assertEqual(self.diagnostic.value_bio_ht_agg, 200)
+        self.assertEqual(self.diagnostic.value_sustainable_ht_agg, 100)
+        self.assertEqual(self.diagnostic.value_externality_performance_ht_agg, 100)
+        self.assertEqual(self.diagnostic.value_egalim_others_ht_agg, 100)
+        self.assertEqual(self.diagnostic.value_egalim_ht_agg, 500)
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
         # try to teledeclare again
