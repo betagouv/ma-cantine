@@ -544,6 +544,7 @@ class Diagnostic(models.Model):
         verbose_name="seulement pertinent pour les satellites : A été automatiquement généré depuis le bilan de la cuisine centrale",
         blank=True,
         null=True,
+        default=False,
     )
 
     # progress fields
