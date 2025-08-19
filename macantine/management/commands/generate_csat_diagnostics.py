@@ -3,6 +3,7 @@ import logging
 from django.core.management.base import BaseCommand
 
 from data.models import Diagnostic
+from macantine.utils import distribute_appro_values_between_satellites
 
 logger = logging.getLogger(__name__)
 
@@ -45,12 +46,8 @@ class Command(BaseCommand):
                 fields = Diagnostic.SIMPLE_APPRO_FIELDS
             else:
                 fields = Diagnostic.COMPLETE_APPRO_FIELDS
-            updated_appro_fields = {}
-            for field in fields:
-                try:
-                    updated_appro_fields[field] = getattr(diag, field) / nbre_satellites
-                except TypeError:
-                    updated_appro_fields[field] = None
+
+            updated_appro_fields = distribute_appro_values_between_satellites(diag, fields, nbre_satellites)
 
             # Step 4: Create the satellite diag by duplicating the CC diag
             for satellite in satellites:
