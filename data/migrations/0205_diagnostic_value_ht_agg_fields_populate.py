@@ -8,6 +8,7 @@ VALUE_HT_AGG_FIELDS = [
     "value_sustainable_ht_agg",
     "value_externality_performance_ht_agg",
     "value_egalim_others_ht_agg",
+    # "value_egalim_ht_agg"  # sum of the others
 ]
 
 
@@ -21,7 +22,8 @@ def populate_diagnostic_value_ht_agg_fields(apps, schema_editor):
                 value = getattr(teledeclaration, field)
                 if value:
                     setattr(diagnostic, field, value)
-            diagnostic.save(update_fields=VALUE_HT_AGG_FIELDS)
+            diagnostic.value_egalim_ht_agg = sum(getattr(diagnostic, field) or 0 for field in VALUE_HT_AGG_FIELDS)
+            diagnostic.save(update_fields=VALUE_HT_AGG_FIELDS + ["value_egalim_ht_agg"])
         except Diagnostic.DoesNotExist:
             continue
 

@@ -166,7 +166,10 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
             central_producer_siret=cls.canteen_central.siret,
         )
         cls.diagnostic = DiagnosticFactory(
-            canteen=cls.canteen_central, year=year_data, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, value_total_ht=0
+            canteen=cls.canteen_central,
+            year=year_data,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            value_total_ht=0,
         )
 
     @freeze_time(date_in_last_teledeclaration_campaign)
@@ -204,6 +207,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertEqual(self.diagnostic.value_sustainable_ht_agg, 100)
         self.assertEqual(self.diagnostic.value_externality_performance_ht_agg, 100)
         self.assertEqual(self.diagnostic.value_egalim_others_ht_agg, 100)
+        self.assertEqual(self.diagnostic.value_egalim_ht_agg, 500)
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
         # try to teledeclare again

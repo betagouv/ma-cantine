@@ -61,6 +61,18 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
+            model_name="diagnostic",
+            name="value_egalim_ht_agg",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=2,
+                max_digits=20,
+                null=True,
+                validators=[django.core.validators.MinValueValidator(Decimal("0"))],
+                verbose_name="EGalim (Bio + Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)",
+            ),
+        ),
+        migrations.AddField(
             model_name="historicaldiagnostic",
             name="value_bio_ht_agg",
             field=models.DecimalField(
@@ -106,6 +118,18 @@ class Migration(migrations.Migration):
                 null=True,
                 validators=[django.core.validators.MinValueValidator(Decimal("0"))],
                 verbose_name="Autres achats EGalim - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)",
+            ),
+        ),
+        migrations.AddField(
+            model_name="historicaldiagnostic",
+            name="value_egalim_ht_agg",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=2,
+                max_digits=20,
+                null=True,
+                validators=[django.core.validators.MinValueValidator(Decimal("0"))],
+                verbose_name="EGalim (Bio + Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)",
             ),
         ),
     ]
