@@ -2,7 +2,7 @@ import logging
 
 from django.core.management.base import BaseCommand
 
-from data.models import Diagnostic
+from data.models import Canteen, Diagnostic
 from macantine.utils import distribute_appro_values_between_satellites
 
 logger = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ class Command(BaseCommand):
             satellites = diag.canteen.satellites
             nbre_satellites = (
                 len(satellites) + 1
-                if diag.canteen.production_type == "Canteen.ProductionType.CENTRAL_SERVING"
+                if diag.canteen.production_type == Canteen.ProductionType.CENTRAL_SERVING
                 else len(satellites)
             )
             if not nbre_satellites > 0:
