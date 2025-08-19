@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 logger.error("Task fail: A central kitchen has 0 satellites. Cannot update the appro fields")
                 return
 
-            # Step 3 : Compute the updated appro fields
+            # Step 3: Compute the updated appro fields
             if diag.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
                 fields = Diagnostic.SIMPLE_APPRO_FIELDS
             else:
