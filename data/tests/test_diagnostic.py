@@ -168,12 +168,12 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         cls.diagnostic = DiagnosticFactory(canteen=cls.canteen_central, year=year_data, value_total_ht=0)
 
     @freeze_time(date_in_last_teledeclaration_campaign)
-    def test_teledeclare_outside_of_campaign(self):
+    def test_cannot_teledeclare_a_diagnostic_outside_of_campaign(self):
         with self.assertRaises(ValidationError):
             self.diagnostic.teledeclare()
 
     @freeze_time(date_in_teledeclaration_campaign)
-    def test_teledeclare_diagnostic_not_filled(self):
+    def test_cannot_teledeclare_a_diagnostic_not_filled(self):
         self.assertEqual(self.diagnostic.value_total_ht, 0)
         with self.assertRaises(ValidationError):
             self.diagnostic.teledeclare()
@@ -199,3 +199,35 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         # try to teledeclare again
         with self.assertRaises(ValidationError):
             self.diagnostic.teledeclare()
+
+
+class DiagnosticModelCancelMethodTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_central = CanteenFactory(siret="12345678901234", production_type=Canteen.ProductionType.CENTRAL)
+        cls.canteen_sat = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=cls.canteen_central.siret,
+        )
+        cls.diagnostic = DiagnosticFactory(canteen=cls.canteen_central, year=year_data, value_total_ht=1000)
+
+    @freeze_time(date_in_last_teledeclaration_campaign)
+    def test_cannot_cancel_a_diagnostic_outside_of_campaign(self):
+        with self.assertRaises(ValidationError):
+            self.diagnostic.cancel()
+
+    @freeze_time(date_in_teledeclaration_campaign)
+    def test_cannot_cancel_a_diagnostic_not_teledeclared(self):
+        with self.assertRaises(ValidationError):
+            self.diagnostic.cancel()
+
+    @freeze_time(date_in_teledeclaration_campaign)
+    def test_cancel(self):
+        # teledeclare the diagnostic
+        self.diagnostic.teledeclare()
+        self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
+        self.assertIsNotNone(self.diagnostic.teledeclaration_date)
+        # cancel
+        self.diagnostic.cancel()
+        self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
+        self.assertIsNone(self.diagnostic.teledeclaration_date)

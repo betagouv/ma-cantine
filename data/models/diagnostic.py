@@ -1503,3 +1503,19 @@ class Diagnostic(models.Model):
 
         # save
         self.save()
+
+    def cancel(self):
+        """
+        Cancel the teledeclared diagnostic
+        """
+        if not is_in_teledeclaration_or_correction():
+            raise ValidationError(
+                "Ce n'est pas possible d'annuler une télédéclaration hors de la période de la campagne"
+            )
+        if not self.is_teledeclared:
+            raise ValidationError("Ce diagnostic doit avoir été télédéclaré")
+
+        self.status = Diagnostic.DiagnosticStatus.DRAFT
+        self.teledeclaration_date = None
+
+        self.save()
