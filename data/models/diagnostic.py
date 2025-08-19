@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
-from django.db.models import Case, F, IntegerField, Q, When
+from django.db.models import Case, F, IntegerField, Q, Sum, When
 from django.db.models.fields.json import KT
 from django.db.models.functions import Cast
 from django.utils import timezone
@@ -103,6 +103,15 @@ class DiagnosticQuerySet(models.QuerySet):
 
     def publicly_visible(self):
         return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
+
+    def with_appro_percent_stats(self):
+        """
+        Note: we use Sum/default instead of F to better manage None values.
+        """
+        return self.annotate(
+            bio_percent=100 * Sum("value_bio_ht_agg", default=0) / Sum("value_total_ht"),
+            egalim_percent=100 * F("value_egalim_ht_agg") / Sum("value_total_ht"),
+        )
 
     def egalim_objectives_reached(self):
         return self.filter(

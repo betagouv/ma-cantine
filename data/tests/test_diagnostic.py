@@ -122,6 +122,14 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(Diagnostic.objects.count(), 11)
         self.assertEqual(Diagnostic.objects.publicly_visible().count(), 9)  # 2 belong to canteen_army
 
+    def test_with_appro_percent_stats(self):
+        self.assertEqual(Diagnostic.objects.count(), 11)
+        diagnostics = Diagnostic.objects.with_appro_percent_stats()
+        self.assertEqual(diagnostics.count(), 11)
+        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_4.id).bio_percent, 20)
+        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_4.id).value_egalim_ht_agg, 500)
+        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_4.id).egalim_percent, 50)
+
 
 class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
     @classmethod
