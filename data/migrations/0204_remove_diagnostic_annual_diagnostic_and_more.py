@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0201_diagnostic_teledeclaration_date_populate"),
+        ("data", "0203_diagnostic_satellites_snapshot_populate"),
     ]
 
     operations = [
