@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         year = options["year"] | 2024
-        logger.info("Start task: generate diagnostics for satellite kitchens using central kitchen's diagnostics")
+        logger.info("Start task: generate diagnostics for satellite canteens using central kitchen's diagnostics")
 
         # Step 1: get all valid diagnostics for CC
         diagnostics_cc = Diagnostic.objects.teledeclared_for_year(year=year).filter(
