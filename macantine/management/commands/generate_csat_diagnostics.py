@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
         # Step 2: Fetch the satellites of the diag's central kitchen
         for diag in diagnostics_cc:
-            satellites = diag.canteen.satellites
+            satellites = diag.satellites_snapshot
             nbre_satellites = (
                 len(satellites) + 1
                 if diag.canteen.production_type == Canteen.ProductionType.CENTRAL_SERVING
@@ -53,7 +53,10 @@ class Command(BaseCommand):
             for satellite in satellites:
                 sat_diag = diag
                 sat_diag.pk = None
-                sat_diag.canteen = satellite
+
+                satellite_history = Canteen.history.as_of(diag.creation_date).get(pk=satellite["id"])
+                sat_diag.canteen = satellite_history
+
                 sat_diag.creation_source = "Generated from CC diag"
                 sat_diag.generated_from_central_kitchen_diagnostic = True
 
@@ -62,11 +65,11 @@ class Command(BaseCommand):
                     setattr(sat_diag, field, updated_appro_fields[field])
 
                 sat_diag.save()
-                logger.info(f"Task: Diag for canteen : {satellite.name} has been saved")
+                logger.info(f"Task: Diag for canteen : {satellite['name']} has been saved")
 
                 # Step 6 : Archive the potential diag created by the satellite itself
                 diag_to_archive = Diagnostic.objects.filter(
-                    canteen=satellite, year=year, generated_from_central_kitchen_diagnostic=False
+                    canteen__id=satellite_history.id, year=year, generated_from_central_kitchen_diagnostic=False
                 ).first()
                 if diag_to_archive:
                     diag_to_archive.status = Diagnostic.DiagnosticStatus.OVERRIDEN_BY_CC
