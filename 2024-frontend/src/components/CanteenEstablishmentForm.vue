@@ -54,10 +54,7 @@ const selectEstablishment = (canteenInfos) => {
 }
 
 /* Production type */
-const centralProductionTypeSelected = computed(() => {
-  const centralProductionTypes = ["central", "central_serving"]
-  return centralProductionTypes.includes(form.productionType)
-})
+const isCentral = computed(() => form.productionType === "central")
 const productionTypeOptions = computed(() => {
   const isDisabled = form.hasSiret === "no-siret"
   const hint = isDisabled
@@ -423,7 +420,7 @@ const validateForm = (action) => {
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
         <DsfrMultiselect
-          v-if="!centralProductionTypeSelected"
+          v-if="!isCentral"
           v-model="form.sectors"
           label="Secteurs *"
           labelVisible
@@ -451,7 +448,7 @@ const validateForm = (action) => {
           :options="lineMinistryOptions"
           :error-message="formatError(v$.lineMinistry)"
         />
-        <p v-if="centralProductionTypeSelected" class="fr-mb-0">Concerne uniquement les cantines recevant des convives</p>
+        <p v-if="isCentral" class="fr-mb-0">Concerne uniquement les cantines recevant des convives</p>
       </fieldset>
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">5. Nombre de repas</legend>
