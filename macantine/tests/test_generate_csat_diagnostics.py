@@ -8,6 +8,7 @@ class GenerateCsatDiagnosticsCommandTest(TestCase):
     def setUp(self):
         # Create a central kitchen
         self.central_kitchen = Canteen.objects.create(
+            id=1,
             name="Central Kitchen",
             siret="11111111111111",
             yearly_meal_count=1000,
@@ -15,6 +16,7 @@ class GenerateCsatDiagnosticsCommandTest(TestCase):
         )
         # Create two satellites
         self.satellite1 = Canteen.objects.create(
+            id=2,
             name="Satellite 1",
             siret="22222222222222",
             yearly_meal_count=500,
@@ -22,6 +24,7 @@ class GenerateCsatDiagnosticsCommandTest(TestCase):
             central_producer_siret=self.central_kitchen.siret,
         )
         self.satellite2 = Canteen.objects.create(
+            id=3,
             name="Satellite 2",
             siret="33333333333333",
             yearly_meal_count=500,
@@ -46,6 +49,7 @@ class GenerateCsatDiagnosticsCommandTest(TestCase):
             teledeclaration_date="2025-01-15",
             central_kitchen_diagnostic_mode="Not null",
             generated_from_central_kitchen_diagnostic=False,
+            satellites_snapshot=[{"id": 2, "name": "Satellite 1"}, {"id": 3, "name": "Satellite 2"}],
         )
         # Create a diagnostic for the sat 1
         self.cc_diag = Diagnostic.objects.create(
