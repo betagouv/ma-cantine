@@ -257,6 +257,7 @@ const dailyMealRequired = computed(() => form.productionType !== "central")
 const yearlyMealMinValue = computed(() => form.dailyMealCount || 1)
 const siretIsRequired = computed(() => form.hasSiret === "has-siret")
 const sirenIsRequired = computed(() => form.hasSiret === "no-siret")
+const sectorsAreRequired = computed(() => form.productionType !== "central")
 
 const rules = {
   name: { required },
@@ -273,7 +274,7 @@ const rules = {
   economicModel: { required },
   managementType: { required },
   productionType: { required },
-  sectors: { required },
+  sectors: { required: requiredIf(sectorsAreRequired) },
   lineMinistry: { required: requiredIf(showLineMinistry) },
   dailyMealCount: {
     required: requiredIf(dailyMealRequired),
