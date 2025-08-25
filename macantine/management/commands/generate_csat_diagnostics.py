@@ -24,7 +24,7 @@ class Command(BaseCommand):
         year = options["year"] | 2024
         logger.info("Start task: generate diagnostics for satellite canteens using central kitchen's diagnostics")
 
-        # Step 1: get all valid diagnostics for CC
+        # Fetch all valid diagnostics for CC
         diagnostics_cc = Diagnostic.objects.teledeclared_for_year(year=year).filter(
             canteen_snapshot__production_type__in=[
                 Canteen.ProductionType.CENTRAL,
@@ -32,51 +32,62 @@ class Command(BaseCommand):
             ]
         )
 
-        # Step 2: Fetch the satellites of the diag's central kitchen
+        # Loop on the diagnostics of the central kitchens
         for diag in diagnostics_cc:
-            satellites = diag.satellites_snapshot
-            nbre_satellites = (
-                len(satellites) + 1
-                if diag.canteen_snapshot["production_type"] == Canteen.ProductionType.CENTRAL_SERVING
-                else len(satellites)
-            )
-            if not nbre_satellites > 0:
-                logger.error("Task fail: A central kitchen has 0 satellites. Cannot update the appro fields")
-                return
-
-            # Step 3: Compute the updated appro fields
             if diag.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
                 fields = Diagnostic.SIMPLE_APPRO_FIELDS
             else:
                 fields = Diagnostic.COMPLETE_APPRO_FIELDS
 
-            updated_appro_fields = distribute_appro_values_between_satellites(diag, fields, nbre_satellites)
+            satellites = diag.satellites_snapshot
+            updated_appro_fields = {}
+            if diag.canteen_snapshot["production_type"] == Canteen.ProductionType.CENTRAL:
+                updated_appro_fields = distribute_appro_values_between_satellites(diag, fields, len(satellites))
+            elif diag.canteen_snapshot["production_type"] == Canteen.ProductionType.CENTRAL_SERVING:
+                updated_appro_fields = distribute_appro_values_between_satellites(diag, fields, len(satellites) + 1)
+                cc_asof_date_extraction = Canteen.history.as_of(diag.creation_date).get(pk=diag.canteen_snapshot["id"])
+                create_new_diag_from_cc(diag, cc_asof_date_extraction, fields, updated_appro_fields)
+            else:
+                logger.error(
+                    f"Task fail: Shoud only loop over central kitchen diagnostics. Detected a production type : {diag.canteen_snapshot["production_type"]}"
+                )
+                return
 
-            # Step 4: Create the satellite diag by duplicating the CC diag
+            if not len(satellites) > 0:
+                logger.error("Task fail: A central kitchen has 0 satellites. Cannot update the appro fields")
+                return
+
             for satellite in satellites:
-                sat_diag = diag
-                sat_diag.pk = None
-
-                satellite_history = Canteen.history.as_of(diag.creation_date).get(pk=satellite["id"])
-                sat_diag.canteen = satellite_history
-
-                sat_diag.creation_source = "Generated from CC diag"
-                sat_diag.generated_from_central_kitchen_diagnostic = True
-
-                # Step 5: Update the appro values
-                for field in fields:
-                    setattr(sat_diag, field, updated_appro_fields[field])
-
-                sat_diag.save()
-                logger.info(f"Task: Diag for canteen : {satellite['name']} has been saved")
-
-                # Step 6 : Archive the potential diag created by the satellite itself
-                diag_to_archive = Diagnostic.objects.filter(
-                    canteen__id=satellite_history.id, year=year, generated_from_central_kitchen_diagnostic=False
-                ).first()
-                if diag_to_archive:
-                    diag_to_archive.status = Diagnostic.DiagnosticStatus.OVERRIDEN_BY_CC
-                    diag_to_archive.save()
+                satellite_asof_date_extraction = Canteen.history.as_of(diag.creation_date).get(pk=satellite["id"])
+                create_new_diag_from_cc(diag, satellite_asof_date_extraction, fields, updated_appro_fields)
+                archive_satellite_diag(satellite_asof_date_extraction, year)
 
         # Done!
         logger.info("Task completed")
+
+
+def create_new_diag_from_cc(diag, canteen_asof_date_extraction, fields, updated_appro_fields, central_serving=False):
+    new_diag = diag
+    new_diag.pk = None
+
+    if not central_serving:
+        new_diag.canteen = canteen_asof_date_extraction
+
+    new_diag.creation_source = "Generated from CC diag"
+    new_diag.generated_from_central_kitchen_diagnostic = True
+
+    for field in fields:
+        setattr(new_diag, field, updated_appro_fields[field])
+
+    new_diag.save()
+    logger.info(f"Task: Diag for canteen : {canteen_asof_date_extraction.name} has been saved")
+
+
+def archive_satellite_diag(satellite_asof_date_extraction, year):
+    diag_to_archive = Diagnostic.objects.filter(
+        canteen__id=satellite_asof_date_extraction.id, year=year, generated_from_central_kitchen_diagnostic=False
+    ).first()
+    if diag_to_archive:
+        diag_to_archive.status = Diagnostic.DiagnosticStatus.OVERRIDEN_BY_CC
+        diag_to_archive.save()
+        logger.info(f"Task: A diag of the satellite : {satellite_asof_date_extraction.name} has been archived")
