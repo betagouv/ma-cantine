@@ -19,6 +19,7 @@ from data.utils import (
     get_diagnostic_lower_limit_year,
     get_diagnostic_upper_limit_year,
     get_region,
+    has_arrayfield_missing_query,
     has_charfield_missing_query,
     optimize_image,
 )
@@ -82,14 +83,16 @@ def has_missing_data_query():
         | Q(management_type=None)
         | Q(economic_model=None)
         # serving-specific rules
-        | Q(is_serving_query()) & (Q(daily_meal_count=None) | Q(daily_meal_count=0))
+        | (
+            is_serving_query()
+            & (has_arrayfield_missing_query("sectors") | Q(daily_meal_count=None) | Q(daily_meal_count=0))
+        )
         # satellite-specific rules
         | (is_satellite_query() & has_charfield_missing_query("central_producer_siret"))
         | (is_satellite_query() & Q(central_producer_siret=F("siret")))
         # cc-specific rules
         | (is_central_cuisine_query() & (Q(satellite_canteens_count=None) | Q(satellite_canteens_count=0)))
-        # sectors & line_ministry (with annotate_with_requires_line_ministry)
-        | (is_serving_query() & Q(sectors=None))
+        # line_ministry (with annotate_with_requires_line_ministry)
         | (Q(economic_model=Canteen.EconomicModel.PUBLIC) & Q(requires_line_ministry=True) & Q(line_ministry=None))
     )
 
