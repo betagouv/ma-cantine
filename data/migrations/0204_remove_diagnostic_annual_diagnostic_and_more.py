@@ -18,9 +18,7 @@ class Migration(migrations.Migration):
             model_name="diagnostic",
             name="generated_from_central_kitchen_diagnostic",
             field=models.BooleanField(
-                blank=True,
                 default=False,
-                null=True,
                 verbose_name="seulement pertinent pour les satellites : A été automatiquement généré depuis le bilan de la cuisine centrale",
             ),
         ),
@@ -28,9 +26,7 @@ class Migration(migrations.Migration):
             model_name="historicaldiagnostic",
             name="generated_from_central_kitchen_diagnostic",
             field=models.BooleanField(
-                blank=True,
                 default=False,
-                null=True,
                 verbose_name="seulement pertinent pour les satellites : A été automatiquement généré depuis le bilan de la cuisine centrale",
             ),
         ),
