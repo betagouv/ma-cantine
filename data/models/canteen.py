@@ -89,7 +89,7 @@ def has_missing_data_query():
         # cc-specific rules
         | (is_central_cuisine_query() & (Q(satellite_canteens_count=None) | Q(satellite_canteens_count=0)))
         # sectors & line_ministry (with annotate_with_requires_line_ministry)
-        | Q(sectors=None)
+        | (is_serving_query() & Q(sectors=None))
         | (Q(economic_model=Canteen.EconomicModel.PUBLIC) & Q(requires_line_ministry=True) & Q(line_ministry=None))
     )
 
