@@ -1,5 +1,5 @@
 const getFields = async (schemaFile) => {
-  const url = `https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/${schemaFile}`
+  const url = `https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/charline-l/create-canteen-central-no-sectors/data/schemas/imports/${schemaFile}`
   return await fetch(url)
     .then((response) => response.json())
     .then((json) => json.fields)
