@@ -36,17 +36,46 @@ class TestCampaignDates(TestCase):
             self.assertFalse(is_in_correction())
             self.assertTrue(is_in_teledeclaration_or_correction())
 
+        with freeze_time("2025-03-30"):  # during the campaign
+            self.assertTrue(is_in_teledeclaration())
+            self.assertFalse(is_in_correction())
+            self.assertTrue(is_in_teledeclaration_or_correction())
+            # test a diagnostic with the correct year
+            self.assertTrue(is_in_teledeclaration(2024))
+            self.assertFalse(is_in_correction(2024))
+            self.assertTrue(is_in_teledeclaration_or_correction(2024))
+            # diagnostic in the future
+            self.assertFalse(is_in_teledeclaration(2025))
+            self.assertFalse(is_in_correction(2025))
+            self.assertFalse(is_in_teledeclaration_or_correction(2025))
+            # diagnostic in the past
+            self.assertFalse(is_in_teledeclaration(2023))
+            self.assertFalse(is_in_correction(2023))
+            self.assertFalse(is_in_teledeclaration_or_correction(2023))
+
         with freeze_time("2025-04-06"):  # last day of campaign
             self.assertTrue(is_in_teledeclaration())
             self.assertFalse(is_in_correction())
             self.assertTrue(is_in_teledeclaration_or_correction())
 
-        with freeze_time("2025-04-07"):  # after campaign
+        with freeze_time("2025-04-07"):  # after campaign (and not yet in correction)
             self.assertFalse(is_in_teledeclaration())
             self.assertFalse(is_in_correction())
             self.assertFalse(is_in_teledeclaration_or_correction())
 
-        with freeze_time("2025-04-20"):  # middle of correction campaign
+        with freeze_time("2025-04-20"):  # during the correction campaign
             self.assertFalse(is_in_teledeclaration())
             self.assertTrue(is_in_correction())
             self.assertTrue(is_in_teledeclaration_or_correction())
+            # test a diagnostic with the correct year
+            self.assertFalse(is_in_teledeclaration(2024))
+            self.assertTrue(is_in_correction(2024))
+            self.assertTrue(is_in_teledeclaration_or_correction(2024))
+            # diagnostic in the future
+            self.assertFalse(is_in_teledeclaration(2025))
+            self.assertFalse(is_in_correction(2025))
+            self.assertFalse(is_in_teledeclaration_or_correction(2025))
+            # diagnostic in the past
+            self.assertFalse(is_in_teledeclaration(2023))
+            self.assertFalse(is_in_correction(2023))
+            self.assertFalse(is_in_teledeclaration_or_correction(2023))
