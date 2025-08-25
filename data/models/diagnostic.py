@@ -1575,13 +1575,11 @@ class Diagnostic(models.Model):
         uses_central_kitchen_appro = self._should_use_central_kitchen_appro()
         if uses_central_kitchen_appro:
             return Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
-
         if self.canteen.is_central_cuisine:
             if self.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.ALL:
                 return Diagnostic.TeledeclarationMode.CENTRAL_ALL
             if self.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
                 return Diagnostic.TeledeclarationMode.CENTRAL_APPRO
-
         return Diagnostic.TeledeclarationMode.SITE
 
     def teledeclare(self):
@@ -1643,5 +1641,6 @@ class Diagnostic(models.Model):
 
         self.status = Diagnostic.DiagnosticStatus.DRAFT
         self.teledeclaration_date = None
+        self.teledeclaration_mode = None
 
         self.save()
