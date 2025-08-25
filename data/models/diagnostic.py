@@ -542,8 +542,6 @@ class Diagnostic(models.Model):
     # Relevant only for satellites
     generated_from_central_kitchen_diagnostic = models.BooleanField(
         verbose_name="seulement pertinent pour les satellites : A été automatiquement généré depuis le bilan de la cuisine centrale",
-        blank=True,
-        null=True,
         default=False,
     )
 
