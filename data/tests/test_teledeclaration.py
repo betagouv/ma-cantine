@@ -128,7 +128,6 @@ class TeledeclarationQuerySetTest(TestCase):
         cls.canteen_sat_td.teledeclaration_mode = Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
         cls.canteen_sat_diagnostic.save()
 
-    @freeze_time("2025-03-30")
     def test_submitted_for_year(self):
         teledeclarations = Teledeclaration.objects.submitted_for_year(year_data)
         self.assertEqual(teledeclarations.count(), 8)
@@ -138,7 +137,6 @@ class TeledeclarationQuerySetTest(TestCase):
         teledeclarations = Teledeclaration.objects.submitted_for_year(year_data - 1)
         self.assertEqual(teledeclarations.count(), 4)
 
-    @freeze_time("2025-03-30")
     def test_valid_td_by_year(self):
         teledeclarations = Teledeclaration.objects.valid_td_by_year(year_data)
         self.assertEqual(teledeclarations.count(), 5)

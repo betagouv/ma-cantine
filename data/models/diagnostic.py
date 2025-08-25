@@ -114,6 +114,27 @@ class DiagnosticQuerySet(models.QuerySet):
             .filter(canteen_has_siret_or_siren_unite_legale_query())  # Chaine de traitement n°7
         )
 
+    def valid_td_by_year(self, year):
+        year = int(year)
+        if year in CAMPAIGN_DATES.keys():
+            return (
+                self.teledeclared_for_year(year)
+                .filter(
+                    ~Q(teledeclaration_mode="SATELLITE_WITHOUT_APPRO"),
+                    value_bio_ht_agg__isnull=False,
+                )
+                .canteen_for_stat(year)  # Chaine de traitement n°6
+                .exclude_aberrant_values()  # Chaîne de traitement
+            )
+        else:
+            return self.none()
+
+    def historical_valid_td(self, years: list):
+        results = self.none()
+        for year in years:
+            results = results | self.valid_td_by_year(year)
+        return results.select_related("canteen")
+
     def publicly_visible(self):
         return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
 
