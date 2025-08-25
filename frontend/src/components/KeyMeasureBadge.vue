@@ -41,7 +41,7 @@ export default {
       return this.isCentralKitchen && !this.diagnostic?.centralKitchenDiagnosticMode
     },
     isCentralKitchenFilled() {
-      return !this.missingDeclarationMode && !this.hasSatelliteInconsistency && !this.missingCanteenData
+      return !this.missingDeclarationMode && !this.hasSatelliteInconsistency
     },
     missingCanteenData() {
       return !this.canteen || missingCanteenData(this.canteen, this.$store.state.sectors)

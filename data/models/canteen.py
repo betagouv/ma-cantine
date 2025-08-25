@@ -89,7 +89,7 @@ def has_missing_data_query():
         # cc-specific rules
         | (is_central_cuisine_query() & (Q(satellite_canteens_count=None) | Q(satellite_canteens_count=0)))
         # sectors & line_ministry (with annotate_with_requires_line_ministry)
-        | (is_serving_query() & Q(sectors=None))
+        | Q(sectors=None)
         | (Q(economic_model=Canteen.EconomicModel.PUBLIC) & Q(requires_line_ministry=True) & Q(line_ministry=None))
     )
 
@@ -654,7 +654,7 @@ class Canteen(SoftDeletionModel):
         )
         # serving-specific rules
         if is_filled and self.is_serving:
-            is_filled = bool(self.daily_meal_count) and self.sectors.exists()
+            is_filled = bool(self.daily_meal_count)
         # satellite-specific rules
         if is_filled and self.is_satellite:
             is_filled = bool(self.central_producer_siret and self.central_producer_siret != self.siret)
@@ -666,7 +666,9 @@ class Canteen(SoftDeletionModel):
                 is_filled = (
                     Canteen.objects.filter(central_producer_siret=self.siret).count() == self.satellite_canteens_count
                 )
-        # line_ministry
+        # sectors & line_ministry
+        if is_filled:
+            is_filled = self.sectors.exists()
         if is_filled and self.sectors.filter(has_line_ministry=True).exists():
             is_filled = bool(self.line_ministry)
         return is_filled

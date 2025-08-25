@@ -592,25 +592,26 @@ export const missingCanteenData = (canteen, sectors) => {
   // basic canteen fields
   // TODO: what location data do we require at minimum?
   const requiredFields = ["name", "cityInseeCode", "productionType", "managementType"] // "economicModel" ??
-  const missingFieldLambda = (f) => !canteen[f] || canteen[f].length === 0
+  const missingFieldLambda = (f) => !canteen[f]
   const missingSharedRequiredData = requiredFields.some(missingFieldLambda)
   if (missingSharedRequiredData) return true
 
   // sectors checks
+  if (!canteen.sectors || !canteen.sectors.length) return true
   if (lineMinistryRequired(canteen, sectors) && !canteen.lineMinistry) return true
 
   // production type specific checks
   const yearlyMealCountKey = "yearlyMealCount"
-  const onSiteFields = ["dailyMealCount", yearlyMealCountKey, "sectors"]
+  const onSiteFields = ["dailyMealCount", yearlyMealCountKey]
   const centralKitchenFields = [yearlyMealCountKey, "satelliteCanteensCount"]
   const satelliteFields = ["centralProducerSiret"]
 
   if (canteen.productionType === "central") {
     return centralKitchenFields.some(missingFieldLambda)
   } else if (canteen.productionType === "central_serving") {
-    return centralKitchenFields.some(missingFieldLambda) || onSiteFields.some(missingFieldLambda)
+    return centralKitchenFields.some(missingFieldLambda) && onSiteFields.some(missingFieldLambda)
   } else if (canteen.productionType === "site_cooked_elsewhere") {
-    return onSiteFields.some(missingFieldLambda) || satelliteFields.some(missingFieldLambda)
+    return onSiteFields.some(missingFieldLambda) && satelliteFields.some(missingFieldLambda)
   } else if (canteen.productionType === "site") {
     return onSiteFields.some(missingFieldLambda)
   }
