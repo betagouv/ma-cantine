@@ -101,6 +101,19 @@ class DiagnosticQuerySet(models.QuerySet):
         """
         return self.with_meal_price().exclude(meal_price__gt=20, value_total_ht__gt=1000000)
 
+    def canteen_for_stat(self, year):
+        return (
+            self.select_related("canteen")
+            .exclude(canteen_id__isnull=True)
+            .exclude(
+                canteen__deletion_date__range=(
+                    CAMPAIGN_DATES[year]["teledeclaration_start_date"],
+                    CAMPAIGN_DATES[year]["teledeclaration_end_date"],
+                )
+            )  # Chaine de traitement n°6
+            .filter(canteen_has_siret_or_siren_unite_legale_query())  # Chaine de traitement n°7
+        )
+
     def publicly_visible(self):
         return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
 
