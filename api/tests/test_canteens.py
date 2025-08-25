@@ -799,6 +799,18 @@ class TestCanteenActionApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
+        central_no_sectors_siret = "98032330938461"
+        complete_central_no_sectors = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=365,
+            siret=central_no_sectors_siret,
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
+            satellite_canteens_count=1,
+            sectors=[],
+        )
         # complete diag
         needs_to_fill_diag = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -839,6 +851,16 @@ class TestCanteenActionApi(APITestCase):
 
         td_diag = DiagnosticFactory.create(year=last_year, canteen=complete, value_total_ht=1000)
         Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
+        td_diag_central_no_sectors = DiagnosticFactory.create(
+            year=last_year,
+            canteen=complete_central_no_sectors,
+            value_total_ht=1000,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+        )
+        Teledeclaration.create_from_diagnostic(td_diag_central_no_sectors, authenticate.user)
+        CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_no_sectors_siret
+        )
 
         DiagnosticFactory.create(year=last_year, canteen=needs_to_fill_diag, value_total_ht=None)
         # make sure the endpoint only looks at diagnostics of the year requested
@@ -866,7 +888,7 @@ class TestCanteenActionApi(APITestCase):
 
         body = response.json()
         returned_canteens = body["results"]
-        self.assertEqual(len(returned_canteens), 6)
+        self.assertEqual(len(returned_canteens), 7)
 
         expected_actions = [
             (needs_additional_satellites, "10_add_satellites"),
@@ -875,6 +897,7 @@ class TestCanteenActionApi(APITestCase):
             (needs_diagnostic_mode, "30_fill_diagnostic"),
             (needs_td, "40_teledeclare"),
             (complete, "95_nothing"),
+            (complete_central_no_sectors, "95_nothing"),
         ]
         for index, (canteen, action) in zip(range(len(expected_actions)), expected_actions):
             self.assertEqual(returned_canteens[index]["id"], canteen.id)
