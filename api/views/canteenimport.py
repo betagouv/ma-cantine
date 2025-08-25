@@ -280,7 +280,7 @@ class ImportCanteensView(APIView):
                         "central_producer_siret": "Le SIRET de la cuisine centrale doit être différent de celui de la cantine"
                     }
                 )
-        if row[8] == Canteen.ProductionType.CENTRAL and not row[7]:
+        if row[8] != Canteen.ProductionType.CENTRAL and not row[7]:
             raise ValidationError(
                 {
                     "sectors": f"Ce champ ne peut pas être vide si le type de production est {Canteen.ProductionType.CENTRAL}."
