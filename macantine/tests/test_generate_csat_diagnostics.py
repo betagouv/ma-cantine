@@ -14,9 +14,17 @@ class GenerateCsatDiagnosticsCommandTest(TestCase):
             yearly_meal_count=1000,
             production_type=Canteen.ProductionType.CENTRAL,
         )
+        # Create a central serving kitchen
+        self.central_serving_kitchen = Canteen.objects.create(
+            id=2,
+            name="Central Serving Kitchen",
+            siret="11111111111110",
+            yearly_meal_count=100,
+            production_type=Canteen.ProductionType.CENTRAL_SERVING,
+        )
         # Create two satellites
         self.satellite1 = Canteen.objects.create(
-            id=2,
+            id=11,
             name="Satellite 1",
             siret="22222222222222",
             yearly_meal_count=500,
@@ -24,7 +32,7 @@ class GenerateCsatDiagnosticsCommandTest(TestCase):
             central_producer_siret=self.central_kitchen.siret,
         )
         self.satellite2 = Canteen.objects.create(
-            id=3,
+            id=12,
             name="Satellite 2",
             siret="33333333333333",
             yearly_meal_count=500,
@@ -49,7 +57,20 @@ class GenerateCsatDiagnosticsCommandTest(TestCase):
             status=Diagnostic.DiagnosticStatus.SUBMITTED,
             teledeclaration_date="2025-01-15",
             generated_from_central_kitchen_diagnostic=False,
-            satellites_snapshot=[{"id": 2, "name": "Satellite 1"}, {"id": 3, "name": "Satellite 2"}],
+            satellites_snapshot=[{"id": 11, "name": "Satellite 1"}, {"id": 12, "name": "Satellite 2"}],
+        )
+        # Create a diagnostic for the central serving kitchen
+        self.cc_diag = Diagnostic.objects.create(
+            canteen=self.central_serving_kitchen,
+            canteen_snapshot={"id": 2, "production_type": Canteen.ProductionType.CENTRAL_SERVING},
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2024,
+            value_total_ht=1000,
+            value_bio_ht=200,
+            status=Diagnostic.DiagnosticStatus.SUBMITTED,
+            teledeclaration_date="2025-01-15",
+            generated_from_central_kitchen_diagnostic=False,
+            satellites_snapshot=[],
         )
         # Create a diagnostic for the sat 1
         self.cc_diag = Diagnostic.objects.create(
@@ -63,7 +84,7 @@ class GenerateCsatDiagnosticsCommandTest(TestCase):
             creation_source="Sat",
             generated_from_central_kitchen_diagnostic=False,
         )
-        # Create a diagnostic for the kitchen
+        # Create a diagnostic for the on site canteen
         self.cc_diag = Diagnostic.objects.create(
             canteen=self.kitchen,
             canteen_snapshot={"production_type": Canteen.ProductionType.ON_SITE_CENTRAL},
@@ -108,3 +129,16 @@ class GenerateCsatDiagnosticsCommandTest(TestCase):
     def test_command_does_not_edit_on_site_kitchen(self):
         call_command("generate_csat_diagnostics", year=2024)
         self.assertTrue(Diagnostic.objects.filter(canteen=self.kitchen, year=2024).exists())
+
+    def test_command_create_a_central_serving_diag(self):
+        call_command("generate_csat_diagnostics", year=2024)
+        self.assertTrue(
+            Diagnostic.objects.filter(
+                canteen=self.central_serving_kitchen, year=2024, generated_from_central_kitchen_diagnostic=True
+            ).exists()
+        )
+        self.assertTrue(
+            Diagnostic.objects.filter(
+                canteen=self.central_serving_kitchen, year=2024, generated_from_central_kitchen_diagnostic=False
+            ).exists()
+        )
