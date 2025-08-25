@@ -41,19 +41,20 @@ class GenerateCsatDiagnosticsCommandTest(TestCase):
         # Create a diagnostic for the central kitchen
         self.cc_diag = Diagnostic.objects.create(
             canteen=self.central_kitchen,
+            canteen_snapshot={"production_type": Canteen.ProductionType.CENTRAL},
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2024,
             value_total_ht=1000,
             value_bio_ht=200,
             status=Diagnostic.DiagnosticStatus.SUBMITTED,
             teledeclaration_date="2025-01-15",
-            central_kitchen_diagnostic_mode="Not null",
             generated_from_central_kitchen_diagnostic=False,
             satellites_snapshot=[{"id": 2, "name": "Satellite 1"}, {"id": 3, "name": "Satellite 2"}],
         )
         # Create a diagnostic for the sat 1
         self.cc_diag = Diagnostic.objects.create(
             canteen=self.satellite1,
+            canteen_snapshot={"production_type": Canteen.ProductionType.ON_SITE_CENTRAL},
             year=2024,
             value_total_ht=100,
             value_bio_ht=20,
@@ -65,6 +66,7 @@ class GenerateCsatDiagnosticsCommandTest(TestCase):
         # Create a diagnostic for the kitchen
         self.cc_diag = Diagnostic.objects.create(
             canteen=self.kitchen,
+            canteen_snapshot={"production_type": Canteen.ProductionType.ON_SITE_CENTRAL},
             year=2024,
             value_total_ht=100,
             value_bio_ht=20,
