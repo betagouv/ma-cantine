@@ -825,6 +825,16 @@ class TestCanteenActionApi(APITestCase):
         needs_diagnostic_mode = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL, siret="75665621899905", managers=[authenticate.user]
         )
+        # complete establishement
+        needs_sectors = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            management_type=Canteen.ManagementType.DIRECT,
+            daily_meal_count=1,
+            yearly_meal_count=365,
+            siret="37856520465586",
+            managers=[authenticate.user],
+            sectors=[],
+        )
         # TD
         needs_td = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -872,6 +882,8 @@ class TestCanteenActionApi(APITestCase):
 
         DiagnosticFactory.create(year=last_year, canteen=needs_td, value_total_ht=100)
 
+        DiagnosticFactory.create(year=last_year, canteen=needs_sectors, value_total_ht=100)
+
         # has a diagnostic but this canteen registered only two of three satellites
         DiagnosticFactory.create(year=last_year, canteen=needs_additional_satellites, value_total_ht=100)
         CanteenFactory.create(
@@ -888,13 +900,14 @@ class TestCanteenActionApi(APITestCase):
 
         body = response.json()
         returned_canteens = body["results"]
-        self.assertEqual(len(returned_canteens), 7)
+        self.assertEqual(len(returned_canteens), 8)
 
         expected_actions = [
             (needs_additional_satellites, "10_add_satellites"),
             (needs_last_year_diag, "20_create_diagnostic"),
             (needs_to_fill_diag, "30_fill_diagnostic"),
             (needs_diagnostic_mode, "30_fill_diagnostic"),
+            (needs_sectors, "35_fill_canteen_data"),
             (needs_td, "40_teledeclare"),
             (complete, "95_nothing"),
             (complete_central_no_sectors, "95_nothing"),
