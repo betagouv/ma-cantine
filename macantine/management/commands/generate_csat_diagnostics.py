@@ -34,10 +34,11 @@ class Command(BaseCommand):
 
         # Loop on the diagnostics of the central kitchens
         for diag in diagnostics_cc:
+            fields = Diagnostic.AGGREGATED_APPRO_FIELDS
             if diag.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
-                fields = Diagnostic.SIMPLE_APPRO_FIELDS
+                fields += Diagnostic.SIMPLE_APPRO_FIELDS
             else:
-                fields = Diagnostic.COMPLETE_APPRO_FIELDS
+                fields += Diagnostic.COMPLETE_APPRO_FIELDS
 
             satellites = diag.satellites_snapshot
             nbre_satellites = len(satellites)
