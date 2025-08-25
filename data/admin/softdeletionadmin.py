@@ -18,11 +18,11 @@ class SoftDeletionAdmin(admin.ModelAdmin):
         return qs
 
     def delete_model(self, request, obj):
-        # obj.hard_delete()
+        # Note: it used to call obj.hard_delete()
         obj.delete()
 
     def delete_queryset(self, request, queryset):
-        # return queryset.hard_delete()
+        # Note: it used to return queryset.hard_delete()
         return queryset.delete()
 
     @admin.display(description="Supprimée")
