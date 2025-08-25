@@ -1540,6 +1540,8 @@ class Diagnostic(models.Model):
         """
         if not is_in_teledeclaration_or_correction():
             raise ValidationError("Ce n'est pas possible de télédéclarer hors de la période de la campagne")
+        if not is_in_teledeclaration_or_correction(self.year):
+            raise ValidationError("Ce diagnostic n'est pas dans la bonne année de télédéclaration")
         if self.is_teledeclared:
             raise ValidationError("Ce diagnostic a déjà été télédéclaré")
         if not self.is_filled:
@@ -1583,6 +1585,8 @@ class Diagnostic(models.Model):
             raise ValidationError(
                 "Ce n'est pas possible d'annuler une télédéclaration hors de la période de la campagne"
             )
+        if not is_in_teledeclaration_or_correction(self.year):
+            raise ValidationError("Ce diagnostic n'est pas dans la bonne année de télédéclaration")
         if not self.is_teledeclared:
             raise ValidationError("Ce diagnostic doit avoir été télédéclaré")
 
