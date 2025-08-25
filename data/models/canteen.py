@@ -19,8 +19,8 @@ from data.utils import (
     get_diagnostic_lower_limit_year,
     get_diagnostic_upper_limit_year,
     get_region,
-    has_arrayfield_missing_query,
     has_charfield_missing_query,
+    has_relatedfield_missing_query,
     optimize_image,
 )
 from macantine.utils import (
@@ -85,7 +85,7 @@ def has_missing_data_query():
         # serving-specific rules
         | (
             is_serving_query()
-            & (has_arrayfield_missing_query("sectors") | Q(daily_meal_count=None) | Q(daily_meal_count=0))
+            & (has_relatedfield_missing_query("sectors") | Q(daily_meal_count=None) | Q(daily_meal_count=0))
         )
         # satellite-specific rules
         | (is_satellite_query() & has_charfield_missing_query("central_producer_siret"))
