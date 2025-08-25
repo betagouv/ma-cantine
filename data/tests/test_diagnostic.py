@@ -105,6 +105,21 @@ class DiagnosticQuerySetTest(TestCase):
         diagnostics = Diagnostic.objects.teledeclared_for_year(year_data - 1)
         self.assertEqual(diagnostics.count(), 4)
 
+    def test_valid_td_by_year(self):
+        diagnostics = Diagnostic.objects.valid_td_by_year(year_data)
+        self.assertEqual(diagnostics.count(), 5)
+        self.assertIn(self.valid_canteen_diagnostic_1, diagnostics)
+        self.assertNotIn(self.invalid_canteen_diagnostic, diagnostics)  # canteen without siret
+        self.assertNotIn(self.deleted_canteen_diagnostic, diagnostics)  # canteen deleted
+
+    def test_historical_valid_td(self):
+        diagnostics = Diagnostic.objects.historical_valid_td([year_data])
+        self.assertEqual(diagnostics.count(), 5)
+        diagnostics = Diagnostic.objects.historical_valid_td([year_data - 1])
+        self.assertEqual(diagnostics.count(), 4)
+        diagnostics = Diagnostic.objects.historical_valid_td([year_data, year_data - 1])
+        self.assertEqual(diagnostics.count(), 5 + 4)
+
     def test_with_meal_price(self):
         self.assertEqual(Diagnostic.objects.count(), 11)
         diagnostics = Diagnostic.objects.with_meal_price()
