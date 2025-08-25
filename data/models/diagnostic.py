@@ -238,6 +238,18 @@ class Diagnostic(models.Model):
         EGG = "EGG", "D’œufs"
         READYMADE = "READYMADE", "Plats prêts à l'emploi"
 
+    class TeledeclarationMode(models.TextChoices):
+        SATELLITE_WITHOUT_APPRO = (
+            "SATELLITE_WITHOUT_APPRO",
+            "Cantine satellite dont les données d'appro sont déclarées par la cuisine centrale",
+        )
+        CENTRAL_APPRO = "CENTRAL_APPRO", "Cuisine centrale déclarant les données d'appro pour ses cuisines satellites"
+        CENTRAL_ALL = (
+            "CENTRAL_ALL",
+            "Cuisine centrale déclarant toutes les données EGalim pour ses cuisines satellites",
+        )
+        SITE = "SITE", "Cantine déclarant ses propres données"
+
     SIMPLE_APPRO_FIELDS = [
         "value_total_ht",
         "value_bio_ht",
@@ -1121,6 +1133,17 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="date de télédéclaration",
+    )
+    # a TD can use SATELLITE_WITHOUT_APPRO mode, as well as have some appro data of its own if,
+    # for example, the manager of the satellite canteen started completing a diagnostic and then the
+    # central kitchen decided to declare for its satellites.
+    # We are leaving it up to the team to interpret the data in this case.
+    teledeclaration_mode = models.CharField(
+        max_length=255,
+        choices=TeledeclarationMode.choices,
+        verbose_name="mode de télédéclaration",
+        null=True,
+        blank=True,
     )
     canteen_snapshot = models.JSONField(
         blank=True,
