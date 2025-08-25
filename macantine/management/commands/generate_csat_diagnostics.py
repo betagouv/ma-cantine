@@ -26,7 +26,10 @@ class Command(BaseCommand):
 
         # Step 1: get all valid diagnostics for CC
         diagnostics_cc = Diagnostic.objects.teledeclared_for_year(year=year).filter(
-            central_kitchen_diagnostic_mode__isnull=False
+            canteen_snapshot__production_type__in=[
+                Canteen.ProductionType.CENTRAL,
+                Canteen.ProductionType.CENTRAL_SERVING,
+            ]
         )
 
         # Step 2: Fetch the satellites of the diag's central kitchen
@@ -34,7 +37,7 @@ class Command(BaseCommand):
             satellites = diag.satellites_snapshot
             nbre_satellites = (
                 len(satellites) + 1
-                if diag.canteen.production_type == Canteen.ProductionType.CENTRAL_SERVING
+                if diag.canteen_snapshot["production_type"] == Canteen.ProductionType.CENTRAL_SERVING
                 else len(satellites)
             )
             if not nbre_satellites > 0:
