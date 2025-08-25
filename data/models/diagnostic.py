@@ -1557,6 +1557,33 @@ class Diagnostic(models.Model):
         if self.tunnel_info:
             return False
 
+    def _should_use_central_kitchen_appro(self):
+        if self.canteen.is_satellite and self.canteen.central_producer_siret:
+            try:
+                central_kitchen = Canteen.objects.get(siret=self.canteen.central_producer_siret)
+                existing_diagnostic = central_kitchen.diagnostic_set.get(year=self.year)
+                handles_satellite_data = existing_diagnostic.central_kitchen_diagnostic_mode in [
+                    Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+                    Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                ]
+                return central_kitchen.is_central_cuisine and handles_satellite_data
+            except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned, Diagnostic.DoesNotExist):
+                pass
+        return False
+
+    def _get_teledeclaration_mode(self):
+        uses_central_kitchen_appro = self._should_use_central_kitchen_appro()
+        if uses_central_kitchen_appro:
+            return Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
+
+        if self.canteen.is_central_cuisine:
+            if self.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.ALL:
+                return Diagnostic.TeledeclarationMode.CENTRAL_ALL
+            if self.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
+                return Diagnostic.TeledeclarationMode.CENTRAL_APPRO
+
+        return Diagnostic.TeledeclarationMode.SITE
+
     def teledeclare(self):
         """
         Teledeclare the diagnostic
@@ -1596,6 +1623,7 @@ class Diagnostic(models.Model):
         # metadata
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED
         self.teledeclaration_date = timezone.now()
+        self.teledeclaration_mode = self._get_teledeclaration_mode()
 
         # save
         self.save()
