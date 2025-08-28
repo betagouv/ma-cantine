@@ -58,7 +58,9 @@ class Command(BaseCommand):
             elif production_type == Canteen.ProductionType.CENTRAL_SERVING:
                 nbre_satellites += 1
                 updated_appro_fields = distribute_appro_values_between_satellites(diag, fields, nbre_satellites)
-                create_new_diag_from_cc(diag, diag.canteen_snapshot["id"], fields, updated_appro_fields)
+                create_new_diag_from_cc(
+                    diag, diag.canteen_snapshot["id"], fields, updated_appro_fields, central_serving=True
+                )
             else:
                 logger.error(
                     f"Task fail: Shoud only loop over central kitchen diagnostics. Detected a production type : {production_type}"
