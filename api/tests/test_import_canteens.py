@@ -417,9 +417,7 @@ class TestCanteenImport(APITestCase):
         self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         errors = body["errors"]
-        error_message = (
-            "Champ 'secteurs d'activité' : Ce champ ne peut pas être vide si le type de production est central."
-        )
+        error_message = "Champ 'secteurs d'activité' : Ce champ ne peut pas être vide sauf pour les cantines avec le type de production central."
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(errors), 3, errors)

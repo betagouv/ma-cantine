@@ -279,7 +279,7 @@ class ImportCanteensView(APIView):
         if row[8] != Canteen.ProductionType.CENTRAL and not row[7]:
             raise ValidationError(
                 {
-                    "sectors": f"Ce champ ne peut pas être vide si le type de production est {Canteen.ProductionType.CENTRAL}."
+                    "sectors": f"Ce champ ne peut pas être vide sauf pour les cantines avec le type de production {Canteen.ProductionType.CENTRAL}."
                 }
             )
 
