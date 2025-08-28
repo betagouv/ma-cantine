@@ -1616,7 +1616,7 @@ class Diagnostic(models.Model):
                 return Diagnostic.TeledeclarationMode.CENTRAL_APPRO
         return Diagnostic.TeledeclarationMode.SITE
 
-    def teledeclare(self):
+    def teledeclare(self, applicant):
         """
         Teledeclare the diagnostic
         """
@@ -1643,7 +1643,12 @@ class Diagnostic(models.Model):
             serialized_satellites = [SatelliteTeledeclarationSerializer(x).data for x in self.canteen.satellites]
             self.satellites_snapshot = serialized_satellites
 
-        # TODO: applicant_snapshot
+        # applicant data
+        self.applicant_snapshot = {
+            "id": applicant.id,
+            "name": applicant.get_full_name(),
+            "email": applicant.email,
+        }
 
         # aggregated data
         self.value_bio_ht_agg = self.total_bio

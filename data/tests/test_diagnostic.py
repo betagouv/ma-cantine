@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.utils import timezone
 from freezegun import freeze_time
 
-from data.factories import CanteenFactory, DiagnosticFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic
 
 year_data = 2024
@@ -46,7 +46,7 @@ class DiagnosticQuerySetTest(TestCase):
                 value_bio_ht=200.00,
             )
             with freeze_time(date_in_teledeclaration_campaign):
-                diagnostic.teledeclare()
+                diagnostic.teledeclare(applicant=UserFactory())
             diagnostic_last_year = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data - 1,
@@ -56,7 +56,7 @@ class DiagnosticQuerySetTest(TestCase):
                 value_bio_ht=200.00,
             )
             with freeze_time(date_in_last_teledeclaration_campaign):
-                diagnostic_last_year.teledeclare()
+                diagnostic_last_year.teledeclare(applicant=UserFactory())
             setattr(cls, f"valid_canteen_diagnostic_{index + 1}", diagnostic)
 
         cls.valid_canteen_diagnostic_4 = DiagnosticFactory(
@@ -71,7 +71,7 @@ class DiagnosticQuerySetTest(TestCase):
             value_egalim_others_ht=100.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.valid_canteen_diagnostic_4.teledeclare()
+            cls.valid_canteen_diagnostic_4.teledeclare(applicant=UserFactory())
 
         cls.invalid_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -82,7 +82,7 @@ class DiagnosticQuerySetTest(TestCase):
             value_bio_ht=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.invalid_canteen_diagnostic.teledeclare()
+            cls.invalid_canteen_diagnostic.teledeclare(applicant=UserFactory())
 
         cls.deleted_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -93,7 +93,7 @@ class DiagnosticQuerySetTest(TestCase):
             value_bio_ht=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.deleted_canteen_diagnostic.teledeclare()
+            cls.deleted_canteen_diagnostic.teledeclare(applicant=UserFactory())
 
     def test_teledeclared_for_year(self):
         self.assertEqual(Diagnostic.objects.count(), 11)
@@ -199,13 +199,13 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
     @freeze_time(date_in_last_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_outside_of_campaign(self):
         with self.assertRaises(ValidationError):
-            self.diagnostic.teledeclare()
+            self.diagnostic.teledeclare(applicant=UserFactory())
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_not_filled(self):
         self.assertEqual(self.diagnostic.value_total_ht, 0)
         with self.assertRaises(ValidationError):
-            self.diagnostic.teledeclare()
+            self.diagnostic.teledeclare(applicant=UserFactory())
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_teledeclare(self):
@@ -221,7 +221,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.diagnostic.value_egalim_others_ht = 100
         self.diagnostic.save()
         # teledeclare
-        self.diagnostic.teledeclare()
+        self.diagnostic.teledeclare(applicant=UserFactory())
         self.assertIsNotNone(self.diagnostic.canteen_snapshot)
         self.assertEqual(self.diagnostic.canteen_snapshot["id"], self.canteen_central.id)
         self.assertIsNotNone(self.diagnostic.satellites_snapshot)
@@ -237,7 +237,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertEqual(self.diagnostic.teledeclaration_mode, Diagnostic.TeledeclarationMode.CENTRAL_ALL)
         # try to teledeclare again
         with self.assertRaises(ValidationError):
-            self.diagnostic.teledeclare()
+            self.diagnostic.teledeclare(applicant=UserFactory())
 
 
 class DiagnosticModelCancelMethodTest(TestCase):
