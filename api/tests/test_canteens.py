@@ -809,7 +809,7 @@ class TestCanteenActionApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
             satellite_canteens_count=1,
-            sectors=[],
+            sectors=None,
         )
         # complete diag
         needs_to_fill_diag = CanteenFactory.create(
@@ -833,7 +833,7 @@ class TestCanteenActionApi(APITestCase):
             yearly_meal_count=365,
             siret="37856520465586",
             managers=[authenticate.user],
-            sectors=[],
+            sectors=None,
         )
         # TD
         needs_td = CanteenFactory.create(
