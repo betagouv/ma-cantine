@@ -29,23 +29,17 @@ const prefillFields = () => {
   canteen.status = "selected"
   canteen.siren = props.establishmentData.sirenUniteLegale
   canteen.siret = props.establishmentData.siret
-  if (props.hasSiret) {
-    canteen.city = props.establishmentData.city
-    canteen.department = props.establishmentData.department
-    canteen.name = props.establishmentData.name
-  } else {
-    canteensService.canteenStatus("siren", props.establishmentData.sirenUniteLegale).then((response) => {
-      canteen.name = response.name
-      canteen.city = props.establishmentData.city
-    })
-  }
+  canteen.city = props.establishmentData.city
+  canteen.department = props.establishmentData.department
+  canteen.name = props.establishmentData.name
 }
+
 if (props.establishmentData) prefillFields()
 else initFields()
 
 /* Search */
 const search = ref("")
-const errorNotFound = ref()
+const errorNotFound = ref("")
 const errorMessage = computed(() => {
   if (errorNotFound.value) return errorNotFound.value
   if (props.errorRequired && !canteen.found) return props.errorRequired
