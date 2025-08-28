@@ -234,11 +234,11 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         logger.info("TD campagne : Flatten declared data...")
         self.df = self._flatten_declared_data()
 
-        self.df["teledeclaration_ratio_bio"] = (
-            self.df["teledeclaration.value_bio_ht_agg"] / self.df["teledeclaration.value_total_ht"]
-        )
+        self.df["teledeclaration_ratio_bio"] = self.df["value_bio_ht_agg"] / self.df["teledeclaration.value_total_ht"]
         self.df["teledeclaration_ratio_egalim_hors_bio"] = (
-            self.df["teledeclaration.value_sustainable_ht_agg"] + self.df["teledeclaration.value_externality_performance_ht_agg"] + self.df["teledeclaration.value_egalim_others_ht_agg"] / self.df["teledeclaration.value_total_ht"]
+            self.df["value_sustainable_ht_agg"]
+            + self.df["value_externality_performance_ht_agg"]
+            + self.df["value_egalim_others_ht_agg"] / self.df["teledeclaration.value_total_ht"]
         )
 
         # Renaming to match schema
