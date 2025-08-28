@@ -377,12 +377,12 @@ const validateForm = (action) => {
         <CanteenEstablishmentSearch
           v-if="form.hasSiret && form.hasSiret === 'has-siret'"
           :key="forceRerender"
-          @select="(canteenInfos) => selectEstablishment(canteenInfos)"
           :error-required="formatError(v$.siret)"
-          :establishment-data="prefillEstablishment"
+          :card-prefill="prefillEstablishment"
           searchName="SIRET"
-          label="Mon établissement"
-          placeholder="Tapez votre n° SIRET"
+          input-label="Mon établissement"
+          search-placeholder="Tapez votre n° SIRET"
+          @select="(canteenInfos) => selectEstablishment(canteenInfos)"
         >
           <template #description>
             <p class="fr-hint-text">
@@ -395,12 +395,12 @@ const validateForm = (action) => {
         <CanteenEstablishmentSearch
           v-if="form.hasSiret && form.hasSiret === 'no-siret'"
           :key="forceRerender"
-          @select="(canteenInfos) => selectEstablishment(canteenInfos)"
           :error-required="formatError(v$.sirenUniteLegale)"
-          :establishment-data="prefillEstablishment"
+          :card-prefill="prefillEstablishment"
+          input-label="Mon unité légale de rattachement"
           searchName="SIREN"
-          label="Mon unité légale de rattachement"
-          placeholder="Tapez le n° SIREN de l’unité légale"
+          search-placeholder="Tapez le n° SIREN de l’unité légale"
+          @select="(canteenInfos) => selectEstablishment(canteenInfos)"
         >
           <template #description>
             <p class="fr-hint-text">

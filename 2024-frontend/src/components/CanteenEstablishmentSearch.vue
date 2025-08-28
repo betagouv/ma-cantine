@@ -5,7 +5,7 @@ import canteensService from "@/services/canteens.js"
 import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Props */
-const props = defineProps(["searchName", "label", "placeholder", "errorRequired", "establishmentData"])
+const props = defineProps(["searchName", "inputLabel", "searchPlaceholder", "errorRequired", "cardPrefill"])
 const store = useRootStore()
 const hasSelected = ref(false)
 
@@ -27,14 +27,14 @@ const prefillFields = () => {
   hasSelected.value = true
   canteen.found = true
   canteen.status = "selected"
-  canteen.siren = props.establishmentData.sirenUniteLegale
-  canteen.siret = props.establishmentData.siret
-  canteen.city = props.establishmentData.city
-  canteen.department = props.establishmentData.department
-  canteen.name = props.establishmentData.name
+  canteen.siren = props.cardPrefill.sirenUniteLegale
+  canteen.siret = props.cardPrefill.siret
+  canteen.city = props.cardPrefill.city
+  canteen.department = props.cardPrefill.department
+  canteen.name = props.cardPrefill.name
 }
 
-if (props.establishmentData) prefillFields()
+if (props.cardPrefill) prefillFields()
 else initFields()
 
 /* Search */
@@ -115,7 +115,7 @@ const unselectCanteen = () => {
 
 <template>
   <div class="canteen-establishment-search">
-    <p class="fr-mb-0">{{ label }} *</p>
+    <p class="fr-mb-0">{{ inputLabel }} *</p>
     <slot name="description"></slot>
     <DsfrInputGroup :error-message="errorMessage">
       <template #default>
@@ -123,7 +123,7 @@ const unselectCanteen = () => {
           v-if="!hasSelected"
           v-model="search"
           button-text="Rechercher"
-          :placeholder="placeholder"
+          :placeholder="searchPlaceholder"
           label="Rechercher un établissement"
           :large="true"
           @search="searchByNumber()"
