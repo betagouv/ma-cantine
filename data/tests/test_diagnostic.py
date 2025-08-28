@@ -269,7 +269,7 @@ class DiagnosticModelCancelMethodTest(TestCase):
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cancel(self):
         # teledeclare the diagnostic
-        self.diagnostic.teledeclare()
+        self.diagnostic.teledeclare(applicant=UserFactory())
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
         self.assertIsNotNone(self.diagnostic.teledeclaration_mode)
