@@ -1,6 +1,8 @@
 import logging
+from copy import deepcopy
 
 from django.core.management.base import BaseCommand
+from django.db.utils import IntegrityError
 
 from data.models import Canteen, Diagnostic
 from macantine.utils import distribute_appro_values_between_satellites
@@ -77,7 +79,7 @@ class Command(BaseCommand):
 
 
 def create_new_diag_from_cc(diag, canteen_id, fields, updated_appro_fields, central_serving=False):
-    new_diag = diag
+    new_diag = deepcopy(diag)
     new_diag.pk = None
 
     if not central_serving:
@@ -99,9 +101,13 @@ def create_new_diag_from_cc(diag, canteen_id, fields, updated_appro_fields, cent
 
     for field in fields:
         setattr(new_diag, field, updated_appro_fields[field])
-
-    new_diag.save()
-    logger.info(f"Task: Diag for canteen : {canteen_asof_date_extraction.id} has been saved")
+    try:
+        new_diag.save()
+    except IntegrityError:
+        logger.error(
+            f"Task error : Cannot save generated diagnostic as it would create a duplicate. Diag Id : {diag.id} / Canteen Id : {canteen_id}"
+        )
+    logger.info(f"Task: Diag for canteen : {canteen_id} has been saved")
 
 
 def archive_satellite_diag(canteen_id, year):
