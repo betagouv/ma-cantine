@@ -12,6 +12,10 @@ VALUE_HT_AGG_FIELDS = [
 
 
 def populate_diagnostic_value_ht_agg_fields(apps, schema_editor):
+    """
+    v2 de la migration précédente (0205_diagnostic_value_ht_agg_fields_populate)
+    Seule modif: on accepte les valeurs égales à 0 (ligne 26)
+    """
     Diagnostic = apps.get_model("data", "Diagnostic")
     Teledeclaration = apps.get_model("data", "Teledeclaration")
     for teledeclaration in Teledeclaration.objects.filter(status="SUBMITTED"):
