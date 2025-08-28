@@ -29,6 +29,8 @@ class TestCanteenSchema(TestCase):
     def test_secteurs_regex(self):
         pattern = self.get_pattern(self.schema, "secteurs")
         for VALUE_OK in [
+            "",
+            " ",
             "Crèche",
             " Cliniques ",
             "Cliniques+Crèche",
