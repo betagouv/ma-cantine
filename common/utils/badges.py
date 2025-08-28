@@ -1,7 +1,7 @@
 def badges_for_queryset(teledeclaration_year_queryset):
     badge_querysets = {}
     if teledeclaration_year_queryset:
-        # Avoid division by zero for TD with value_total_ht < 1, rounded to 0 when casting as int
+        # Avoid division by zero
         teledeclaration_year_queryset = teledeclaration_year_queryset.filter(value_total_ht__gt=0)
         # Calculate the percent of bio & egalim
         teledeclaration_year_queryset = teledeclaration_year_queryset.with_appro_percent_stats()

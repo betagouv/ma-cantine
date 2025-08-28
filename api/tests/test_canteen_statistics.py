@@ -6,8 +6,8 @@ from rest_framework.test import APITestCase
 
 from common.cache.utils import CACHE_GET_QUERY_COUNT, CACHE_SET_QUERY_COUNT
 from data.department_choices import Department
-from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
-from data.models import Canteen, Diagnostic, Sector, Teledeclaration
+from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory
+from data.models import Canteen, Diagnostic, Sector
 from data.region_choices import Region
 
 year_data = 2023
@@ -51,7 +51,7 @@ class TestCanteenStatsApi(APITestCase):
                 plastic_tableware_substituted=False,
                 communicates_on_food_quality=False,
             )
-            Teledeclaration.create_from_diagnostic(canteen_diagnostic_1, applicant=UserFactory())
+            canteen_diagnostic_1.teledeclare()
             canteen_2 = CanteenFactory(
                 siret="75665621899905",
                 city_insee_code="69123",
@@ -83,7 +83,7 @@ class TestCanteenStatsApi(APITestCase):
                 plastic_tableware_substituted=True,
                 communicates_on_food_quality=True,
             )
-            Teledeclaration.create_from_diagnostic(canteen_diagnostic_2, applicant=UserFactory())
+            canteen_diagnostic_2.teledeclare()
             canteen_3 = CanteenFactory(
                 siret="11007001800012",
                 city_insee_code="38185",
@@ -111,7 +111,7 @@ class TestCanteenStatsApi(APITestCase):
                 plastic_tableware_substituted=True,
                 communicates_on_food_quality=True,
             )
-            Teledeclaration.create_from_diagnostic(canteen_diagnostic_3, applicant=UserFactory())
+            canteen_diagnostic_3.teledeclare()
             CanteenFactory(
                 siret="21590350100017",
                 city_insee_code="59350",
@@ -135,19 +135,19 @@ class TestCanteenStatsApi(APITestCase):
                 economic_model=None,
                 line_ministry=Canteen.Ministries.ARMEE,
             )
-            canteen_diagnostic_5 = DiagnosticFactory(
+            DiagnosticFactory(
                 canteen=canteen_5,
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=1990,
             )
-            Teledeclaration.create_from_diagnostic(canteen_diagnostic_5, applicant=UserFactory())
 
     def setUp(self):
         cache.clear()  # clear cache before each test
 
     def test_query_count(self):
         self.assertEqual(Canteen.objects.count(), 5)
-        self.assertEqual(Teledeclaration.objects.count(), 4)
+        self.assertEqual(Diagnostic.objects.count(), 4)
+        self.assertEqual(Diagnostic.objects.teledeclared().count(), 3)
         with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT + CACHE_GET_QUERY_COUNT + CACHE_SET_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -195,7 +195,7 @@ class TestCanteenStatsApi(APITestCase):
                 value_fish_ht=10,
                 value_fish_egalim_ht=8,
             )
-            Teledeclaration.create_from_diagnostic(canteen_diagnostic, applicant=UserFactory())
+            canteen_diagnostic.teledeclare()
 
         response = self.client.get(reverse("canteen_statistics"), {"year": past_year})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
