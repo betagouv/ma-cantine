@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0205_diagnostic_value_ht_agg_fields_populate"),
+        ("data", "0206_diagnostic_value_ht_agg_fields_populate_fix"),
     ]
 
     operations = [

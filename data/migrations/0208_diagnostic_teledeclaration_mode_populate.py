@@ -25,7 +25,7 @@ def undo_populate_diagnostic_teledeclaration_mode(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0206_diagnostic_teledeclaration_mode_and_more"),
+        ("data", "0207_diagnostic_teledeclaration_mode_and_more"),
     ]
 
     operations = [
