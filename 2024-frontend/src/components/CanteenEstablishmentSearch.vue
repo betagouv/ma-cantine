@@ -5,7 +5,7 @@ import canteensService from "@/services/canteens.js"
 import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Props */
-const props = defineProps(["searchName", "label", "placeholder", "errorRequired", "hasSiret", "establishmentData"])
+const props = defineProps(["searchName", "label", "placeholder", "errorRequired", "establishmentData"])
 const store = useRootStore()
 const hasSelected = ref(false)
 
