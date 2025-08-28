@@ -368,20 +368,48 @@ const validateForm = (action) => {
         <legend class="fr-h5 fr-mb-2w">2. Identification de l’établissement</legend>
         <DsfrRadioButtonSet
           v-model="form.hasSiret"
-          legend="Avez-vous un numéro SIRET ?"
+          legend="Avez-vous un numéro SIRET ? *"
           :key="forceRerender"
           :error-message="formatError(v$.hasSiret)"
           :options="hasSiretOptions"
           @update:modelValue="changeHasSiret()"
         />
         <CanteenEstablishmentSearch
-          v-if="form.hasSiret"
+          v-if="form.hasSiret && form.hasSiret === 'has-siret'"
           :key="forceRerender"
           @select="(canteenInfos) => selectEstablishment(canteenInfos)"
-          :error-required="formatError(v$.siret) || formatError(v$.sirenUniteLegale)"
-          :has-siret="form.hasSiret === 'has-siret'"
+          :error-required="formatError(v$.siret)"
           :establishment-data="prefillEstablishment"
-        />
+          searchName="SIRET"
+          label="Mon établissement"
+          placeholder="Tapez votre n° SIRET"
+        >
+          <template #description>
+            <p class="fr-hint-text">
+              Nous utilisons le site
+              <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">annuaire-des-entreprises</a>
+              afin de retrouver les informations de votre établissement
+            </p>
+          </template>
+        </CanteenEstablishmentSearch>
+        <CanteenEstablishmentSearch
+          v-if="form.hasSiret && form.hasSiret === 'no-siret'"
+          :key="forceRerender"
+          @select="(canteenInfos) => selectEstablishment(canteenInfos)"
+          :error-required="formatError(v$.sirenUniteLegale)"
+          :establishment-data="prefillEstablishment"
+          searchName="SIREN"
+          label="Mon unité légale de rattachement"
+          placeholder="Tapez le n° SIREN de l’unité légale"
+        >
+          <template #description>
+            <p class="fr-hint-text">
+              Nous utilisons le site
+              <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">annuaire-des-entreprises</a>
+              afin de retrouver les informations de votre unité légale de rattachement
+            </p>
+          </template>
+        </CanteenEstablishmentSearch>
       </fieldset>
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">3. Coordonnées</legend>

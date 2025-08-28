@@ -5,17 +5,8 @@ import canteensService from "@/services/canteens.js"
 import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Props */
-const props = defineProps(["errorRequired", "hasSiret", "establishmentData"])
-
-/* Store */
+const props = defineProps(["searchName", "label", "placeholder", "errorRequired", "hasSiret", "establishmentData"])
 const store = useRootStore()
-
-/* Content */
-const numberName = computed(() => (props.hasSiret ? "SIRET" : "SIREN"))
-const title = computed(() => (props.hasSiret ? "Mon établissement" : "Mon unité légale de rattachement"))
-const establishment = computed(() => (props.hasSiret ? "votre établissement" : "l'établissement"))
-const placeholder = computed(() => (props.hasSiret ? "Tapez votre n° SIRET" : "Tapez le n° SIREN de l’unité légale"))
-const label = computed(() => `Rechercher un établissement par son numéro ${numberName.value}`)
 const hasSelected = ref(false)
 
 /* Canteen fields */
@@ -58,24 +49,22 @@ const errorNotFound = ref()
 const errorMessage = computed(() => {
   if (errorNotFound.value) return errorNotFound.value
   if (props.errorRequired && !canteen.found) return props.errorRequired
-  if (props.errorRequired && canteen.found && props.hasSiret) return "Vous devez sélectionner un établissement"
-  if (props.errorRequired && canteen.found && !props.hasSiret)
-    return "Vous devez sélectionner ou créer un établissement"
-  else return ""
+  if (props.errorRequired && canteen.found) return "Vous devez sélectionner un établissement dans la liste ci-dessous"
+  return ""
 })
 const searchByNumber = () => {
   const cleanNumber = search.value.replaceAll(" ", "")
   if (cleanNumber.length === 0) return
   initFields()
   errorNotFound.value = ""
-  const searchBy = numberName.value.toLowerCase()
+  const searchBy = props.searchName.toLowerCase()
   canteensService
     .canteenStatus(searchBy, cleanNumber)
     .then((response) => {
       switch (true) {
         case response.length === 0:
           canteen.found = false
-          errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro ${numberName.value} « ${cleanNumber} » ne correspond à aucun établissement`
+          errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro ${props.searchName} « ${cleanNumber} » ne correspond à aucun établissement`
           break
         case !response.id && !response.siren:
           canteen.found = true
@@ -132,12 +121,8 @@ const unselectCanteen = () => {
 
 <template>
   <div class="canteen-establishment-search">
-    <p class="fr-mb-0">{{ title }} *</p>
-    <p class="fr-hint-text">
-      Nous utilisons le site
-      <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">annuaire-des-entreprises</a>
-      afin de retrouver les informations de {{ establishment }}.
-    </p>
+    <p class="fr-mb-0">{{ label }} *</p>
+    <slot name="description"></slot>
     <DsfrInputGroup :error-message="errorMessage">
       <template #default>
         <DsfrSearchBar
@@ -145,7 +130,7 @@ const unselectCanteen = () => {
           v-model="search"
           button-text="Rechercher"
           :placeholder="placeholder"
-          :label="label"
+          label="Rechercher un établissement"
           :large="true"
           @search="searchByNumber()"
         />
@@ -164,7 +149,7 @@ const unselectCanteen = () => {
       @select="selectCanteen()"
     />
     <p v-if="canteen.found && !hasSelected" class="fr-text--xs fr-mb-0 fr-mt-1w ma-cantine--text-center">
-      Ce n’est pas le bon établissement ? Refaites une recherche via le bon numéro {{ numberName }}, ou trouvez
+      Ce n’est pas le bon établissement ? Refaites une recherche, ou trouvez
       l’information dans
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
     </p>
