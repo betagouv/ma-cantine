@@ -2,7 +2,7 @@
 import { ref, reactive, computed } from "vue"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens.js"
-// import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
+import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Props */
 const props = defineProps(["errorRequired"])
@@ -17,6 +17,8 @@ const initFields = () => {
   canteen.status = null
   canteen.name = null
   canteen.siret = null
+  canteen.city = null
+  canteen.department = null
 }
 initFields()
 
@@ -64,20 +66,24 @@ const searchByNumber = () => {
 const saveCanteenInfos = (response) => {
   canteen.name = response.name
   canteen.siret = response.siret
+  canteen.city = response.city
+  canteen.department = response.department
 }
 
 /* Select canteen */
 // const emit = defineEmits(["select"])
-// const selectCanteen = () => {
-//   hasSelected.value = true
-//   canteen.status = "selected"
-//   emit("select", canteen)
-// }
+const selectCanteen = () => {
+  hasSelected.value = true
+  canteen.status = "selected"
+  console.log('SELECT')
+  // emit("select", canteen)
+}
 // const unselectCanteen = () => {
 //   hasSelected.value = false
 //   search.value = ""
 //   initFields()
-//   emit("select", canteen)
+//   console.log('UNSELECT')
+//   // emit("select", canteen)
 // }
 </script>
 
@@ -101,20 +107,15 @@ const saveCanteenInfos = (response) => {
         />
       </template>
     </DsfrInputGroup>
-    <!--
-      <CanteenEstablishmentCard
+    <CanteenEstablishmentCard
       v-if="canteen.found"
       :name="canteen.name"
       :siret="canteen.siret"
-      :siren="canteen.siren"
+      :status="canteen.status"
       :city="canteen.city"
       :department="canteen.department"
-      :status="canteen.status"
-      :id="canteen.id"
-      :linked-canteens="canteen.linkedCanteens"
       @select="selectCanteen()"
-      />
-    -->
+    />
     <p v-if="canteen.found && !hasSelected" class="fr-text--xs fr-mb-0 fr-mt-1w ma-cantine--text-center">
       Ce n’est pas le bon établissement ? Refaites une recherche via le bon numéro SIRET, ou trouvez
       l’information dans
