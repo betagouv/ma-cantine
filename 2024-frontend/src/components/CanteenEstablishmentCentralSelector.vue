@@ -54,11 +54,10 @@ const searchByNumber = () => {
           break
         case response.id && centralProductionTypes.includes(response.productionType):
           canteen.found = true
-          canteen.status = "select-central"
+          canteen.status = "can-be-central"
           break
       }
       if (canteen.found) saveCanteenInfos(response)
-      console.log("canteen", canteen)
     })
     .catch((e) => store.notifyServerError(e))
 }
@@ -71,20 +70,19 @@ const saveCanteenInfos = (response) => {
 }
 
 /* Select canteen */
-// const emit = defineEmits(["select"])
+const emit = defineEmits(["select"])
 const selectCanteen = () => {
   hasSelected.value = true
   canteen.status = "selected"
   console.log('SELECT')
-  // emit("select", canteen)
+  emit("select", canteen)
 }
-// const unselectCanteen = () => {
-//   hasSelected.value = false
-//   search.value = ""
-//   initFields()
-//   console.log('UNSELECT')
-//   // emit("select", canteen)
-// }
+const unselectCanteen = () => {
+  hasSelected.value = false
+  search.value = ""
+  initFields()
+  emit("select", canteen)
+}
 </script>
 
 <template>
@@ -121,7 +119,6 @@ const selectCanteen = () => {
       l’information dans
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
     </p>
-    <!--
     <DsfrButton
       v-if="hasSelected"
       tertiary
@@ -131,7 +128,6 @@ const selectCanteen = () => {
       class="canteen-establishment-search__back fr-mt-1w"
       @click="unselectCanteen()"
     />
-    -->
   </div>
 </template>
 

@@ -34,7 +34,15 @@ const linkedCanteensLabel = computed(() => {
         </li>
       </ul>
     </div>
-    <div v-if="status === 'can-be-linked'" class="fr-mt-1w">
+    <div v-if="status === 'can-be-central'" class="fr-grid-row fr-grid-row--center fr-mt-1w">
+      <DsfrButton
+        label="Sélectionner ce livreur de repas"
+        icon="fr-icon-add-circle-fill"
+        secondary
+        @click="$emit('select')"
+      />
+    </div>
+    <div v-else-if="status === 'can-be-linked'" class="fr-mt-1w">
       <div v-if="linkedCanteens.length > 0" class="fr-mb-2w">
         <DsfrBadge type="warning" :label="linkedCanteensLabel" />
         <AppSeparator class="fr-my-1w" />
