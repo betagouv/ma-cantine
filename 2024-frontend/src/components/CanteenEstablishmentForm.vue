@@ -291,13 +291,6 @@ const rules = {
   satelliteCanteensCount: { required: requiredIf(showSatelliteCanteensCount), integer, minValue: minValue(1) },
   centralProducerSiret: {
     required: requiredIf(showCentralProducerSiret),
-    notSameSiret: helpers.withMessage(
-      "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine",
-      (value) => sirenIsRequired.value || value !== form.siret
-    ),
-    integer,
-    minLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", minLength(14)),
-    maxLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", maxLength(14)),
   },
   oneDelivery: {
     beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxOneDelivery.value || value),
