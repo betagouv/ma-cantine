@@ -9,7 +9,8 @@ import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import openDataService from "@/services/openData.js"
 import options from "@/constants/canteen-establishment-form-options"
-import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
+import CanteenEstablishmentSearchCreateSiret from "@/components/CanteenEstablishmentSearchCreateSiret.vue"
+import CanteenEstablishmentSearchCreateSiren from "@/components/CanteenEstablishmentSearchCreateSiren.vue"
 
 /* Data */
 const store = useRootStore()
@@ -374,7 +375,7 @@ const validateForm = (action) => {
           :options="hasSiretOptions"
           @update:modelValue="changeHasSiret()"
         />
-        <CanteenEstablishmentSearch
+        <CanteenEstablishmentSearchCreateSiret
           v-if="form.hasSiret && form.hasSiret === 'has-siret'"
           :key="forceRerender"
           :error-required="formatError(v$.siret)"
@@ -391,8 +392,8 @@ const validateForm = (action) => {
               afin de retrouver les informations de votre établissement
             </p>
           </template>
-        </CanteenEstablishmentSearch>
-        <CanteenEstablishmentSearch
+        </CanteenEstablishmentSearchCreateSiret>
+        <CanteenEstablishmentSearchCreateSiren
           v-if="form.hasSiret && form.hasSiret === 'no-siret'"
           :key="forceRerender"
           :error-required="formatError(v$.sirenUniteLegale)"
@@ -409,7 +410,7 @@ const validateForm = (action) => {
               afin de retrouver les informations de votre unité légale de rattachement
             </p>
           </template>
-        </CanteenEstablishmentSearch>
+        </CanteenEstablishmentSearchCreateSiren>
       </fieldset>
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">3. Coordonnées</legend>
