@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.11"
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -426,14 +426,17 @@ wheels = [
 
 [[package]]
 name = "cssbeautifier"
-version = "1.15.1"
+version = "1.15.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "editorconfig" },
     { name = "jsbeautifier" },
     { name = "six" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e5/66/9bfd2d69fb4479d38439076132a620972939f7949015563dce5e61d29a8b/cssbeautifier-1.15.1.tar.gz", hash = "sha256:9f7064362aedd559c55eeecf6b6bed65e05f33488dcbe39044f0403c26e1c006", size = 25673, upload-time = "2024-02-16T16:15:14.048Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f7/01/fdf41c1e5f93d359681976ba10410a04b299d248e28ecce1d4e88588dde4/cssbeautifier-1.15.4.tar.gz", hash = "sha256:9bb08dc3f64c101a01677f128acf01905914cf406baf87434dcde05b74c0acf5", size = 25376, upload-time = "2025-02-27T17:53:51.341Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/63/51/ef6c5628e46092f0a54c7cee69acc827adc6b6aab57b55d344fefbdf28f1/cssbeautifier-1.15.4-py3-none-any.whl", hash = "sha256:78c84d5e5378df7d08622bbd0477a1abdbd209680e95480bf22f12d5701efc98", size = 123667, upload-time = "2025-02-27T17:53:43.594Z" },
+]
 
 [[package]]
 name = "cssselect2"
@@ -1482,7 +1485,7 @@ requires-dist = [
     { name = "colorama", specifier = "==0.4.6" },
     { name = "cramjam", specifier = "==2.8.3" },
     { name = "cryptography", specifier = "==43.0.1" },
-    { name = "cssbeautifier", specifier = "==1.15.1" },
+    { name = "cssbeautifier", specifier = "==1.15.4" },
     { name = "cssselect2", specifier = "==0.7.0" },
     { name = "datacompy", specifier = "==0.16.7" },
     { name = "defusedxml", specifier = "==0.7.1" },
