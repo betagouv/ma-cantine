@@ -87,7 +87,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "has_been_claimed",
         "management_type",
         "production_type",
-        "central_producer_siret",
+        "central_canteen",
         "declaration_donnees_2021",
         "declaration_donnees_2022",
         "declaration_donnees_2023",
@@ -133,7 +133,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "siret_or_siren_unite_legale_display",
         "city",
         "télédéclarée",
-        "central_producer_siret",
+        "central_canteen",
         "production_type",
         "creation_date",
         "modification_date",
@@ -160,9 +160,8 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "name",
         "siret__istartswith",
         "siren_unite_legale__istartswith",
-        "central_producer_siret__istartswith",
     )
-    search_help_text = "La recherche est faite sur les champs : nom de la cantine, siret, siren de l'unité légale, siret de la cuisine centrale."
+    search_help_text = "La recherche est faite sur les champs : nom de la cantine, siret, siren de l'unité légale."
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
