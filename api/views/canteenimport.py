@@ -31,8 +31,12 @@ logger = logging.getLogger(__name__)
 
 CANTEEN_SCHEMA_FILE_PATH = "data/schemas/imports/cantines.json"
 CANTEEN_ADMIN_SCHEMA_FILE_PATH = "data/schemas/imports/cantines_admin.json"
-CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/charline-l/create-canteen-central-no-sectors/{CANTEEN_SCHEMA_FILE_PATH}"
-CANTEEN_ADMIN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/charline-l/create-canteen-central-no-sectors/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
+CANTEEN_SCHEMA_URL = (
+    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_SCHEMA_FILE_PATH}"
+)
+CANTEEN_ADMIN_SCHEMA_URL = (
+    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
+)
 
 
 class ImportCanteensView(APIView):
