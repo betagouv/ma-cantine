@@ -74,14 +74,13 @@ const emit = defineEmits(["select"])
 const selectCanteen = () => {
   hasSelected.value = true
   canteen.status = "selected"
-  console.log('SELECT')
-  emit("select", canteen)
+  emit("select", canteen.siret)
 }
 const unselectCanteen = () => {
   hasSelected.value = false
   search.value = ""
   initFields()
-  emit("select", canteen)
+  emit("select", "")
 }
 </script>
 
