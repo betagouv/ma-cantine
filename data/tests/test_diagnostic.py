@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.utils import timezone
 from freezegun import freeze_time
 
-from data.factories import CanteenFactory, DiagnosticFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic
 
 year_data = 2024
@@ -46,7 +46,7 @@ class DiagnosticQuerySetTest(TestCase):
                 value_bio_ht=200.00,
             )
             with freeze_time(date_in_teledeclaration_campaign):
-                diagnostic.teledeclare()
+                diagnostic.teledeclare(applicant=UserFactory())
             diagnostic_last_year = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data - 1,
@@ -56,7 +56,7 @@ class DiagnosticQuerySetTest(TestCase):
                 value_bio_ht=200.00,
             )
             with freeze_time(date_in_last_teledeclaration_campaign):
-                diagnostic_last_year.teledeclare()
+                diagnostic_last_year.teledeclare(applicant=UserFactory())
             setattr(cls, f"valid_canteen_diagnostic_{index + 1}", diagnostic)
 
         cls.valid_canteen_diagnostic_4 = DiagnosticFactory(
@@ -71,7 +71,7 @@ class DiagnosticQuerySetTest(TestCase):
             value_egalim_others_ht=100.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.valid_canteen_diagnostic_4.teledeclare()
+            cls.valid_canteen_diagnostic_4.teledeclare(applicant=UserFactory())
 
         cls.invalid_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -82,7 +82,7 @@ class DiagnosticQuerySetTest(TestCase):
             value_bio_ht=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.invalid_canteen_diagnostic.teledeclare()
+            cls.invalid_canteen_diagnostic.teledeclare(applicant=UserFactory())
 
         cls.deleted_canteen_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -93,7 +93,7 @@ class DiagnosticQuerySetTest(TestCase):
             value_bio_ht=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.deleted_canteen_diagnostic.teledeclare()
+            cls.deleted_canteen_diagnostic.teledeclare(applicant=UserFactory())
 
     def test_teledeclared_for_year(self):
         self.assertEqual(Diagnostic.objects.count(), 11)
@@ -183,6 +183,7 @@ class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
 class DiagnosticModelTeledeclareMethodTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.user = UserFactory()
         cls.canteen_central = CanteenFactory(siret="12345678901234", production_type=Canteen.ProductionType.CENTRAL)
         cls.canteen_sat = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -199,18 +200,19 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
     @freeze_time(date_in_last_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_outside_of_campaign(self):
         with self.assertRaises(ValidationError):
-            self.diagnostic.teledeclare()
+            self.diagnostic.teledeclare(applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_not_filled(self):
         self.assertEqual(self.diagnostic.value_total_ht, 0)
         with self.assertRaises(ValidationError):
-            self.diagnostic.teledeclare()
+            self.diagnostic.teledeclare(applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_teledeclare(self):
         self.assertIsNone(self.diagnostic.canteen_snapshot)
         self.assertIsNone(self.diagnostic.satellites_snapshot)
+        self.assertIsNone(self.diagnostic.applicant_snapshot)
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
         self.assertIsNone(self.diagnostic.teledeclaration_date)
         # fill the diagnostic
@@ -221,12 +223,14 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.diagnostic.value_egalim_others_ht = 100
         self.diagnostic.save()
         # teledeclare
-        self.diagnostic.teledeclare()
+        self.diagnostic.teledeclare(applicant=self.user)
         self.assertIsNotNone(self.diagnostic.canteen_snapshot)
         self.assertEqual(self.diagnostic.canteen_snapshot["id"], self.canteen_central.id)
         self.assertIsNotNone(self.diagnostic.satellites_snapshot)
         self.assertEqual(len(self.diagnostic.satellites_snapshot), 1)
         self.assertEqual(self.diagnostic.satellites_snapshot[0]["id"], self.canteen_sat.id)
+        self.assertIsNotNone(self.diagnostic.applicant_snapshot)
+        self.assertEqual(self.diagnostic.applicant_snapshot["email"], self.user.email)
         self.assertEqual(self.diagnostic.value_bio_ht_agg, 200)
         self.assertEqual(self.diagnostic.value_sustainable_ht_agg, 100)
         self.assertEqual(self.diagnostic.value_externality_performance_ht_agg, 100)
@@ -237,7 +241,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertEqual(self.diagnostic.teledeclaration_mode, Diagnostic.TeledeclarationMode.CENTRAL_ALL)
         # try to teledeclare again
         with self.assertRaises(ValidationError):
-            self.diagnostic.teledeclare()
+            self.diagnostic.teledeclare(applicant=UserFactory())
 
 
 class DiagnosticModelCancelMethodTest(TestCase):
@@ -269,7 +273,7 @@ class DiagnosticModelCancelMethodTest(TestCase):
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cancel(self):
         # teledeclare the diagnostic
-        self.diagnostic.teledeclare()
+        self.diagnostic.teledeclare(applicant=UserFactory())
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
         self.assertIsNotNone(self.diagnostic.teledeclaration_mode)
