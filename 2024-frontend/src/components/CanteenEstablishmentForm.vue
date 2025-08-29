@@ -10,6 +10,7 @@ import sectorsService from "@/services/sectors"
 import openDataService from "@/services/openData.js"
 import options from "@/constants/canteen-establishment-form-options"
 import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
+import CanteenEstablishmentCentralSelector from "@/components/CanteenEstablishmentCentralSelector.vue"
 
 /* Data */
 const store = useRootStore()
@@ -68,6 +69,13 @@ const productionTypeOptions = computed(() => {
   optionsWithDisabled[indexCentralServingType].hint = hint
   return optionsWithDisabled
 })
+
+/* Central */
+const selectCentralSiret = (siret) => {
+  console.log('BEFORE', form.centralProducerSiret)
+  form.centralProducerSiret = siret
+  console.log('AFTER', form.centralProducerSiret)
+}
 
 /* Sectors */
 const sectorsOptions = ref([])
@@ -342,18 +350,11 @@ const validateForm = (action) => {
           :error-message="formatError(v$.productionType)"
           @change="changeProductionMode"
         />
-        <div v-if="showCentralProducerSiret" class="canteen-establishment-form__central-producer-siret">
-          <DsfrInputGroup
-            v-model="form.centralProducerSiret"
-            label="SIRET du livreur *"
-            :label-visible="true"
-            :error-message="formatError(v$.centralProducerSiret)"
-          />
-          <p class="fr-hint-text fr-mb-0">
-            Vous ne le connaissez pas ? Trouvez-le avec
-            <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
-          </p>
-        </div>
+        <CanteenEstablishmentCentralSelector
+          v-if="showCentralProducerSiret"
+          @select="(siret) => selectCentralSiret(siret)"
+          :error-required="formatError(v$.centralProducerSiret)"
+        />
         <DsfrInputGroup
           v-if="showSatelliteCanteensCount"
           v-model="form.satelliteCanteensCount"
@@ -568,12 +569,6 @@ const validateForm = (action) => {
       .fr-fieldset__element:last-child {
         margin-bottom: 0 !important;
       }
-    }
-  }
-
-  &__central-producer-siret {
-    .fr-input-group {
-      margin-bottom: 0.25rem !important;
     }
   }
 }
