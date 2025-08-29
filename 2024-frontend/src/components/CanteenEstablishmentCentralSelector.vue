@@ -108,8 +108,8 @@ const unselectCanteen = () => {
           v-if="!hasSelected"
           v-model="search"
           button-text="Rechercher"
-          placeholder="Tapez le n° SIRET du livreur"
-          label="Rechercher un livreur par son numéro SIRET"
+          placeholder="Tapez le n° SIRET du livreur de repas"
+          label="Rechercher un livreur de repas par son numéro SIRET"
           :large="true"
           @search="searchByNumber()"
         />
