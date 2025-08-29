@@ -463,6 +463,13 @@ class Canteen(SoftDeletionModel):
         verbose_name="siret de la cuisine centrale",
         validators=[utils_siret.validate_siret],
     )
+    central_canteen = models.ForeignKey(
+        "self",
+        blank=True,
+        null=True,
+        verbose_name="Cantine centrale",
+        on_delete=models.SET_NULL,
+    )
     management_type = models.CharField(
         max_length=255,
         choices=ManagementType.choices,
