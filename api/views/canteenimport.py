@@ -31,12 +31,8 @@ logger = logging.getLogger(__name__)
 
 CANTEEN_SCHEMA_FILE_PATH = "data/schemas/imports/cantines.json"
 CANTEEN_ADMIN_SCHEMA_FILE_PATH = "data/schemas/imports/cantines_admin.json"
-CANTEEN_SCHEMA_URL = (
-    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_SCHEMA_FILE_PATH}"
-)
-CANTEEN_ADMIN_SCHEMA_URL = (
-    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
-)
+CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/charline-l/create-canteen-central-no-sectors/{CANTEEN_SCHEMA_FILE_PATH}"
+CANTEEN_ADMIN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/charline-l/create-canteen-central-no-sectors/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
 
 
 class ImportCanteensView(APIView):
@@ -280,6 +276,12 @@ class ImportCanteensView(APIView):
                         "central_producer_siret": "Le SIRET de la cuisine centrale doit être différent de celui de la cantine"
                     }
                 )
+        if row[8] != Canteen.ProductionType.CENTRAL and not row[7]:
+            raise ValidationError(
+                {
+                    "sectors": f"Ce champ ne peut pas être vide sauf pour les cantines avec le type de production {Canteen.ProductionType.CENTRAL}."
+                }
+            )
 
     def _get_manager_emails_to_notify(self, row):
         try:

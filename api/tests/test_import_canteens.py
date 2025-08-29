@@ -29,6 +29,8 @@ class TestCanteenSchema(TestCase):
     def test_secteurs_regex(self):
         pattern = self.get_pattern(self.schema, "secteurs")
         for VALUE_OK in [
+            "",
+            " ",
             "Crèche",
             " Cliniques ",
             "Cliniques+Crèche",
@@ -403,3 +405,38 @@ class TestCanteenImport(APITestCase):
 
         body = response.json()
         self.assertEqual(body["errors"], [])
+
+    @authenticate
+    def test_empty_sectors(self):
+        """
+        Sectors are required if canteen production_type is site, site_cooked_elsewhere, central_serving
+        """
+        file_path = "./api/tests/files/canteens/canteen_bad_empty_sectors.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
+        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        body = response.json()
+        errors = body["errors"]
+        error_message = "Champ 'secteurs d'activité' : Ce champ ne peut pas être vide sauf pour les cantines avec le type de production central."
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(errors), 3, errors)
+        self.assertEqual(errors[0]["message"], error_message)
+        self.assertEqual(errors[1]["message"], error_message)
+        self.assertEqual(errors[2]["message"], error_message)
+
+    @authenticate
+    def test_empty_sectors_central_canteen(self):
+        """
+        Sectors are not required if canteen production_type is central
+        """
+        file_path = "./api/tests/files/canteens/canteen_good_empty_sectors.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 1)
+        canteen_created = Canteen.objects.first()
+        self.assertEqual(canteen_created.production_type, "central")
+        self.assertEqual(canteen_created.sectors.count(), 0)

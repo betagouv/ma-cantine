@@ -242,10 +242,12 @@ const showCheckboxManyDelivery = computed(() => Number(form.satelliteCanteensCou
 const showCheckboxNoSiret = computed(() => form.hasSiret === "no-siret")
 const showCitySelector = computed(() => form.hasSiret === "no-siret")
 
-const resetDynamicInputValues = () => {
+const changeProductionMode = () => {
   form.satelliteCanteensCount = null
   form.centralProducerSiret = null
   form.dailyMealCount = null
+  form.sectors = []
+  form.lineMinistry = null
   forceRerender.value++
 }
 
@@ -255,6 +257,7 @@ const dailyMealRequired = computed(() => form.productionType !== "central")
 const yearlyMealMinValue = computed(() => form.dailyMealCount || 1)
 const siretIsRequired = computed(() => form.hasSiret === "has-siret")
 const sirenIsRequired = computed(() => form.hasSiret === "no-siret")
+const sectorsAreRequired = computed(() => form.productionType !== "central")
 
 const rules = {
   name: { required },
@@ -271,7 +274,7 @@ const rules = {
   economicModel: { required },
   managementType: { required },
   productionType: { required },
-  sectors: { required },
+  sectors: { required: requiredIf(sectorsAreRequired) },
   lineMinistry: { required: requiredIf(showLineMinistry) },
   dailyMealCount: {
     required: requiredIf(dailyMealRequired),
@@ -337,7 +340,7 @@ const validateForm = (action) => {
           v-model="form.productionType"
           :options="productionTypeOptions"
           :error-message="formatError(v$.productionType)"
-          @change="resetDynamicInputValues"
+          @change="changeProductionMode"
         />
         <div v-if="showCentralProducerSiret" class="canteen-establishment-form__central-producer-siret">
           <DsfrInputGroup
@@ -417,6 +420,7 @@ const validateForm = (action) => {
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
         <DsfrMultiselect
+          v-if="form.productionType !== 'central'"
           v-model="form.sectors"
           label="Secteurs *"
           labelVisible
@@ -435,6 +439,7 @@ const validateForm = (action) => {
             </div>
           </template>
         </DsfrMultiselect>
+        <p v-else class="fr-mb-0">Concerne uniquement les cantines recevant des convives</p>
         <DsfrSelect
           v-if="showLineMinistry"
           v-model="form.lineMinistry"
