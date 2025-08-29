@@ -6,6 +6,40 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.28.1](https://github.com/betagouv/ma-cantine/compare/v2025.28.0...v2025.28.1) (2025-08-29)
+
+
+### Améliorations
+
+* **Diagnostic:** dans la méthode pour télédéclarer, ajouter le paramètre applicant [1TD1Site] ([#5644](https://github.com/betagouv/ma-cantine/issues/5644)) ([a70035f](https://github.com/betagouv/ma-cantine/commit/a70035f563e47d1f9f3de979aaaca80ab8df17e0))
+* **Diagnostic:** dans la méthode pour télédéclarer, vérifier qu'on est en campagne [1TD1Site] ([#5630](https://github.com/betagouv/ma-cantine/issues/5630)) ([8da0c4c](https://github.com/betagouv/ma-cantine/commit/8da0c4ccfc5f01f6fa01601a0fdbb93ac380d77f))
+* **Diagnostic:** nouveau champ pour stocker le mode de télédéclaration au moment de la TD [1TD1site] ([#5636](https://github.com/betagouv/ma-cantine/issues/5636)) ([eab404d](https://github.com/betagouv/ma-cantine/commit/eab404d30a64e4c70f4bfe695939dd2a3cf28f87))
+* **Diagnostic:** nouveau champ pour stocker un snapshot des satellites au moment de la TD [1TD1site] ([#5623](https://github.com/betagouv/ma-cantine/issues/5623)) ([c4a8b27](https://github.com/betagouv/ma-cantine/commit/c4a8b27a66cf707fadd1b5b71494f412911e9729))
+* **Diagnostic:** nouveaux champs pour stocker la valeurs annuelles totales (aggrégées si TD détaillée) [1TD1Site] ([#5625](https://github.com/betagouv/ma-cantine/issues/5625)) ([801f895](https://github.com/betagouv/ma-cantine/commit/801f8950d38ff19abbba05335bcc428ca7b99d52))
+* **Diagnostic:** nouvelle méthode pour annuler une télédéclaration [1TD1Site] ([#5631](https://github.com/betagouv/ma-cantine/issues/5631)) ([3769602](https://github.com/betagouv/ma-cantine/commit/3769602897550d06c59e9c2391b094d3ed42c7a7))
+* **Diagnostic:** nouvelle méthode pour télédéclarer (modifie le status, date, snapshots) [1TD1Site] ([#5618](https://github.com/betagouv/ma-cantine/issues/5618)) ([fadc8ce](https://github.com/betagouv/ma-cantine/commit/fadc8ce5a614fbbc5df867258b3bf3fa00a65792))
+
+
+### Corrections (bugs, typos...)
+
+* **Création cantine:** changement de wording ([#5632](https://github.com/betagouv/ma-cantine/issues/5632)) ([132358d](https://github.com/betagouv/ma-cantine/commit/132358da66edb72b0156f646cd80fa5f80964825))
+* **Création de cantine:** clarifie le sélecteur multiple des secteurs ([#5624](https://github.com/betagouv/ma-cantine/issues/5624)) ([c982cfb](https://github.com/betagouv/ma-cantine/commit/c982cfbf4209c5918f0a5a0b86b53635ecfcbaed))
+* **Création de cantine:** empêche un livreur de repas de s'enregistrer via SIREN ([#5628](https://github.com/betagouv/ma-cantine/issues/5628)) ([6b18cd8](https://github.com/betagouv/ma-cantine/commit/6b18cd890a7f0b997b86e313718495f844552bd2))
+* **Création de cantine:** ré-organisation du formulaire ([#5626](https://github.com/betagouv/ma-cantine/issues/5626)) ([9de8751](https://github.com/betagouv/ma-cantine/commit/9de8751fce115822f29df99123ebe11ede8a377e))
+* **Diagnostic:** autoriser seulement les bilans de l'année correspondant à la campagne de télédéclarer [1TD1site] ([#5637](https://github.com/betagouv/ma-cantine/issues/5637)) ([e00d719](https://github.com/betagouv/ma-cantine/commit/e00d71902d9f5d53ffe63f14e842b4b158a77dc3))
+* **Diagnostic:** corrige la migration des valeurs des nouveaux champs qui stockent les valeurs annuelles totales ([#5640](https://github.com/betagouv/ma-cantine/issues/5640)) ([811fe11](https://github.com/betagouv/ma-cantine/commit/811fe1118b43d9740ee23bc94d185f59255135bf))
+* **Diagnostic:** corrige une migration qui ajoutait l'historisation de satellites_snapshot (pas besoin) [1TD1Site] ([#5645](https://github.com/betagouv/ma-cantine/issues/5645)) ([6797ab0](https://github.com/betagouv/ma-cantine/commit/6797ab0eab246c3cfd7ccf7b1b0fc8a9bd517217))
+
+
+### Technique
+
+* **Canteen:** renommer le queryset is_filled en filled ([#5622](https://github.com/betagouv/ma-cantine/issues/5622)) ([74b422c](https://github.com/betagouv/ma-cantine/commit/74b422c3e4b0660817c1664da0e39b011aa2d38d))
+* **Diagnostic:** dupliquer (et adapter) les queryset depuis Teledeclaration vers Diagnostic (2/3) [1TD1Site] ([#5617](https://github.com/betagouv/ma-cantine/issues/5617)) ([1773404](https://github.com/betagouv/ma-cantine/commit/177340495c887fad889fcf53e36adc167ba3c9ae))
+* **Diagnostic:** dupliquer (et adapter) les queryset depuis Teledeclaration vers Diagnostic (3/4) [1TD1Site] ([#5629](https://github.com/betagouv/ma-cantine/issues/5629)) ([5217ee9](https://github.com/betagouv/ma-cantine/commit/5217ee94c87ef8551b2dc30aad75b8ec3f20ba23))
+* **Diagnostic:** dupliquer (et adapter) les queryset depuis Teledeclaration vers Diagnostic (4/4) [1TD1Site] ([#5635](https://github.com/betagouv/ma-cantine/issues/5635)) ([db2d573](https://github.com/betagouv/ma-cantine/commit/db2d57331950873400b1211e4b1853cbe96bf37a))
+* **Diagnostic:** renommer le queryset is_filled en filled ([#5621](https://github.com/betagouv/ma-cantine/issues/5621)) ([e984eaf](https://github.com/betagouv/ma-cantine/commit/e984eaf6e4dd77bc7723cb41919e02a30b27e663))
+* enlève Quentin de la liste des auto-reviewers ([#5646](https://github.com/betagouv/ma-cantine/issues/5646)) ([78ee56f](https://github.com/betagouv/ma-cantine/commit/78ee56f5af918f8afcf88d7ccd9cfb19421933fa))
+
 ## [2025.28.0](https://github.com/betagouv/ma-cantine/compare/v2025.27.0...v2025.28.0) (2025-08-14)
 
 
