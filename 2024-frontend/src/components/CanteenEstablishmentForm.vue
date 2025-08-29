@@ -72,9 +72,7 @@ const productionTypeOptions = computed(() => {
 
 /* Central */
 const selectCentralSiret = (siret) => {
-  console.log('BEFORE', form.centralProducerSiret)
   form.centralProducerSiret = siret
-  console.log('AFTER', form.centralProducerSiret)
 }
 
 /* Sectors */
