@@ -345,6 +345,7 @@ const validateForm = (action) => {
           v-if="showCentralProducerSiret"
           @select="(siret) => selectCentralSiret(siret)"
           :error-required="formatError(v$.centralProducerSiret)"
+          :establishment-data="prefillEstablishment"
         />
         <DsfrInputGroup
           v-if="showSatelliteCanteensCount"

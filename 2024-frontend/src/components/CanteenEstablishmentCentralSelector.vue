@@ -5,7 +5,7 @@ import canteensService from "@/services/canteens.js"
 import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Props */
-const props = defineProps(["errorRequired"])
+const props = defineProps(['errorRequired', 'establishmentData'])
 const store = useRootStore()
 const hasSelected = ref(false)
 const centralProductionTypes = ['central', 'central_serving']
@@ -20,7 +20,18 @@ const initFields = () => {
   canteen.city = null
   canteen.department = null
 }
-initFields()
+const prefillFields = () => {
+  canteen.found = true
+  canteen.status = 'selected'
+  hasSelected.value = true
+  canteensService
+    .canteenStatus('siret', props.establishmentData.centralProducerSiret)
+    .then((response) => {
+      saveCanteenInfos(response)
+    })
+}
+if (props.establishmentData) prefillFields()
+else initFields()
 
 /* Search */
 const search = ref("")
