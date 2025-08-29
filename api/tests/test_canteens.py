@@ -799,6 +799,18 @@ class TestCanteenActionApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
+        central_no_sectors_siret = "98032330938461"
+        complete_central_no_sectors = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL,
+            management_type=Canteen.ManagementType.DIRECT,
+            yearly_meal_count=365,
+            siret=central_no_sectors_siret,
+            city_insee_code="69123",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
+            satellite_canteens_count=1,
+            sectors=None,
+        )
         # complete diag
         needs_to_fill_diag = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -812,6 +824,16 @@ class TestCanteenActionApi(APITestCase):
         )
         needs_diagnostic_mode = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL, siret="75665621899905", managers=[authenticate.user]
+        )
+        # complete establishement
+        needs_sectors = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE,
+            management_type=Canteen.ManagementType.DIRECT,
+            daily_meal_count=1,
+            yearly_meal_count=365,
+            siret="37856520465586",
+            managers=[authenticate.user],
+            sectors=None,
         )
         # TD
         needs_td = CanteenFactory.create(
@@ -839,6 +861,16 @@ class TestCanteenActionApi(APITestCase):
 
         td_diag = DiagnosticFactory.create(year=last_year, canteen=complete, value_total_ht=1000)
         Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
+        td_diag_central_no_sectors = DiagnosticFactory.create(
+            year=last_year,
+            canteen=complete_central_no_sectors,
+            value_total_ht=1000,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+        )
+        Teledeclaration.create_from_diagnostic(td_diag_central_no_sectors, authenticate.user)
+        CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_no_sectors_siret
+        )
 
         DiagnosticFactory.create(year=last_year, canteen=needs_to_fill_diag, value_total_ht=None)
         # make sure the endpoint only looks at diagnostics of the year requested
@@ -849,6 +881,8 @@ class TestCanteenActionApi(APITestCase):
         )
 
         DiagnosticFactory.create(year=last_year, canteen=needs_td, value_total_ht=100)
+
+        DiagnosticFactory.create(year=last_year, canteen=needs_sectors, value_total_ht=100)
 
         # has a diagnostic but this canteen registered only two of three satellites
         DiagnosticFactory.create(year=last_year, canteen=needs_additional_satellites, value_total_ht=100)
@@ -866,15 +900,17 @@ class TestCanteenActionApi(APITestCase):
 
         body = response.json()
         returned_canteens = body["results"]
-        self.assertEqual(len(returned_canteens), 6)
+        self.assertEqual(len(returned_canteens), 8)
 
         expected_actions = [
             (needs_additional_satellites, "10_add_satellites"),
             (needs_last_year_diag, "20_create_diagnostic"),
             (needs_to_fill_diag, "30_fill_diagnostic"),
             (needs_diagnostic_mode, "30_fill_diagnostic"),
+            (needs_sectors, "35_fill_canteen_data"),
             (needs_td, "40_teledeclare"),
             (complete, "95_nothing"),
+            (complete_central_no_sectors, "95_nothing"),
         ]
         for index, (canteen, action) in zip(range(len(expected_actions)), expected_actions):
             self.assertEqual(returned_canteens[index]["id"], canteen.id)

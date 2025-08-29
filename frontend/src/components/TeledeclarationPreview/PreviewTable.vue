@@ -149,10 +149,8 @@ export default {
         })
       if (this.showDailyMealCount)
         items.push({ value: this.canteen.dailyMealCount, label: "Nombre moyen de couverts par jour", isNumber: true })
-      items = items.concat([
-        { value: this.canteen.yearlyMealCount, label: "Nombre total de couverts par an", isNumber: true },
-        { value: this.sectors, label: "Secteurs d'activité" },
-      ])
+      items.push({ value: this.canteen.yearlyMealCount, label: "Nombre total de couverts par an", isNumber: true })
+      if (this.showSectors) items.push({ value: this.sectors, label: "Secteurs d'activité" })
       if (this.showMinistryField)
         items.push({
           value: ministryDetail ? ministryDetail.text : "",
@@ -568,6 +566,9 @@ export default {
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
+    },
+    showSectors() {
+      return this.canteen.productionType !== "central"
     },
     showSatelliteCanteensCount() {
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
