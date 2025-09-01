@@ -285,6 +285,7 @@ class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
             # value fields
             "teledeclaration_ratio_bio",
             "teledeclaration_ratio_egalim_hors_bio",
+            "teledeclaration_ratio_egalim",
         )
         read_only_fields = fields
 
@@ -293,3 +294,6 @@ class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
 
     def get_teledeclaration_ratio_egalim_hors_bio(self, obj):
         return obj.value_egalim_hors_bio_ht_agg / obj.value_total_ht
+
+    def get_teledeclaration_ratio_egalim(self, obj):
+        return obj.value_egalim_ht_agg / obj.value_total_ht
