@@ -24,4 +24,5 @@
 |canteen_sectors (Secteurs)|liste|Liste définissant les secteurs d'activités concernés par le télédéclaration. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).|["{'id': 12, 'name': 'Ecole primaire (maternelle et élémentaire)', 'category': 'education', 'has_line_ministry': false}"]||
 |canteen_line_ministry (Ministère de tutelle)|chaîne de caractères|Ministère de tutelle de la cantine, s'il y en a un|Ministère de l'Education Nationale||
 |teledeclaration_ratio_bio (Télédéclaration Ratio Bio)|nombre réel|Part des achats bio dans les achats alimentaires de l'année (ratio basé sur le montant des achats en € HT)|0.1||
-|teledeclaration_ratio_egalim_hors_bio (Télédéclaration Ratio EGalim)|nombre réel|Part des achats EGalim dans les achats alimentaires de l'année|0.3||
+|teledeclaration_ratio_egalim_hors_bio (Télédéclaration Ratio Durable (hors bio))|nombre réel|Part des achats durables (hors bio) dans les achats alimentaires de l'année (ratio basé sur le montant des achats en € HT)|0.3||
+|teledeclaration_ratio_egalim (Télédéclaration Ratio EGalim)|nombre réel|Part des achats durables dans les achats alimentaires de l'année (ratio basé sur le montant des achats en € HT)|0.4||
