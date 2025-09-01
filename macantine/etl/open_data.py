@@ -240,6 +240,9 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
             + self.df["value_externality_performance_ht_agg"].fillna(0)
             + self.df["value_egalim_others_ht_agg"].fillna(0)
         ) / self.df["teledeclaration.value_total_ht"]
+        self.df["teledeclaration_ratio_egalim"] = (
+            self.df["teledeclaration_ratio_bio"] + self.df["teledeclaration_ratio_egalim_hors_bio"]
+        )
 
         # Renaming to match schema
         if "teledeclaration.diagnostic_type" in self.df.columns:
@@ -250,7 +253,9 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         logger.info("TD campagne : Clean dataset...")
         self._clean_dataset()
         logger.info("TD campagne : Format the decimals...")
-        self._format_decimals(["teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"])
+        self._format_decimals(
+            ["teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio", "teledeclaration_ratio_egalim"]
+        )
         logger.info("TD campagne : Filter errors...")
         self._filter_outsiders()
         logger.info("TD campagne : Transform ChoiceFields...")
