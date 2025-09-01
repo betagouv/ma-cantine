@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 
 from common.cache.utils import CACHE_GET_QUERY_COUNT, CACHE_SET_QUERY_COUNT
 from data.department_choices import Department
-from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory
+from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector
 from data.region_choices import Region
 
@@ -51,7 +51,7 @@ class TestCanteenStatsApi(APITestCase):
                 plastic_tableware_substituted=False,
                 communicates_on_food_quality=False,
             )
-            canteen_diagnostic_1.teledeclare()
+            canteen_diagnostic_1.teledeclare(applicant=UserFactory())
             canteen_2 = CanteenFactory(
                 siret="75665621899905",
                 city_insee_code="69123",
@@ -83,7 +83,7 @@ class TestCanteenStatsApi(APITestCase):
                 plastic_tableware_substituted=True,
                 communicates_on_food_quality=True,
             )
-            canteen_diagnostic_2.teledeclare()
+            canteen_diagnostic_2.teledeclare(applicant=UserFactory())
             canteen_3 = CanteenFactory(
                 siret="11007001800012",
                 city_insee_code="38185",
@@ -111,7 +111,7 @@ class TestCanteenStatsApi(APITestCase):
                 plastic_tableware_substituted=True,
                 communicates_on_food_quality=True,
             )
-            canteen_diagnostic_3.teledeclare()
+            canteen_diagnostic_3.teledeclare(applicant=UserFactory())
             CanteenFactory(
                 siret="21590350100017",
                 city_insee_code="59350",
@@ -195,7 +195,7 @@ class TestCanteenStatsApi(APITestCase):
                 value_fish_ht=10,
                 value_fish_egalim_ht=8,
             )
-            canteen_diagnostic.teledeclare()
+            canteen_diagnostic.teledeclare(applicant=UserFactory())
 
         response = self.client.get(reverse("canteen_statistics"), {"year": past_year})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
