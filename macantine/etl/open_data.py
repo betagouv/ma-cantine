@@ -18,7 +18,6 @@ from common.api.decoupage_administratif import (
     map_epcis_code_name,
 )
 from data.models import Canteen
-from data.utils import sum_int_with_potential_null
 from macantine.etl import etl
 from macantine.etl.etl import logger
 from macantine.etl.utils import common_members, extract_sectors
@@ -237,15 +236,10 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
 
         self.df["teledeclaration_ratio_bio"] = self.df["value_bio_ht_agg"] / self.df["teledeclaration.value_total_ht"]
         self.df["teledeclaration_ratio_egalim_hors_bio"] = (
-            sum_int_with_potential_null(
-                [
-                    self.df["value_sustainable_ht_agg"],
-                    self.df["value_externality_performance_ht_agg"],
-                    self.df["value_egalim_others_ht_agg"],
-                ]
-            )
-            / self.df["teledeclaration.value_total_ht"]
-        )
+            self.df["value_sustainable_ht_agg"].fillna(0)
+            + self.df["value_externality_performance_ht_agg"].fillna(0)
+            + self.df["value_egalim_others_ht_agg"].fillna(0)
+        ) / self.df["teledeclaration.value_total_ht"]
 
         # Renaming to match schema
         if "teledeclaration.diagnostic_type" in self.df.columns:
