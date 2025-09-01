@@ -115,7 +115,7 @@ cramjam==2.8.3
     # via
     #   fastparquet
     #   ma-cantine
-cryptography==43.0.1
+cryptography==44.0.1
     # via
     #   authlib
     #   jwcrypto
