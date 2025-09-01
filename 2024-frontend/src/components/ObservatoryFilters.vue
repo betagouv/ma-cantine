@@ -18,7 +18,7 @@ defineExpose({ anchor })
     <h2 class="fr-h5">Retrouver les chiffres clés sur votre territoire</h2>
     <div class="observatory-filters__container">
       <p class="observatory-filters__title fr-mb-0">Filtrer par :</p>
-      <div class="fr-grid-row">
+      <div class="observatory-filters__list fr-grid-row">
         <FilterByYears class="fr-mr-1v fr-mb-1v" />
         <FilterByRegions class="fr-mr-1v fr-mb-1v" />
         <FilterByDepartments class="fr-mr-1v fr-mb-1v" />
@@ -40,6 +40,14 @@ defineExpose({ anchor })
     align-items: baseline;
     flex-direction: column;
     gap: 1rem;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+    }
+  }
+
+  &__list {
+    flex-direction: column;
 
     @media (min-width: 768px) {
       flex-direction: row;
