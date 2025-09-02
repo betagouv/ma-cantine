@@ -63,14 +63,18 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
     z-index: 9;
     position: absolute;
     bottom: 0;
+    left: 0;
     transform: translateY(100%);
 
-    &--left {
-      left: 0;
-    }
-
-    &--right {
-      right: 0;
+    @media (min-width: 768px) {
+      &--right {
+        right: 0;
+        left: auto;
+      }
+      &--left {
+        left: 0;
+        right: auto;
+      }
     }
 
     *:last-child {
@@ -79,9 +83,13 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
   }
 
   &__scrollable {
-    width: 25rem;
-    max-height: 25rem;
     overflow-y: scroll;
+    width: calc(100vw - 2rem);
+    max-height: 25rem;
+
+    @media (min-width: 768px) {
+      width: 25rem;
+    }
   }
 }
 </style>
