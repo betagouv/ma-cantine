@@ -221,24 +221,6 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self.schema = json.load(open("data/schemas/export_opendata/schema_teledeclarations.json"))
         self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/export_opendata/schema_teledeclarations.json"
         self.view = TeledeclarationOpenDataListView
-
-        self.categories_to_aggregate = {
-            "bio": ["_bio"],
-            "sustainable": ["_sustainable", "_label_rouge", "_aocaop_igp_stg"],
-            "egalim_others": [
-                "_egalim_others",
-                "_hve",
-                "_peche_durable",
-                "_rup",
-                "_fermier",
-                "_commerce_equitable",
-            ],
-            "externality_performance": [
-                "_externality_performance",
-                "_performance",
-                "_externalites",
-            ],
-        }
         self.df = None
 
     def transform_sectors(self) -> pd.Series:
@@ -252,15 +234,12 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         logger.info("TD campagne : Flatten declared data...")
         self.df = self._flatten_declared_data()
 
-        logger.info("TD campagne : Aggregate appro data for complete TD...")
-        self._aggregate_complete_td()
-
-        self.df["teledeclaration_ratio_bio"] = (
-            self.df["teledeclaration.value_bio_ht"] / self.df["teledeclaration.value_total_ht"]
-        )
+        self.df["teledeclaration_ratio_bio"] = self.df["value_bio_ht_agg"] / self.df["teledeclaration.value_total_ht"]
         self.df["teledeclaration_ratio_egalim_hors_bio"] = (
-            self.df["teledeclaration.value_sustainable_ht"] / self.df["teledeclaration.value_total_ht"]
-        )
+            self.df["value_sustainable_ht_agg"].fillna(0)
+            + self.df["value_externality_performance_ht_agg"].fillna(0)
+            + self.df["value_egalim_others_ht_agg"].fillna(0)
+        ) / self.df["teledeclaration.value_total_ht"]
 
         # Renaming to match schema
         if "teledeclaration.diagnostic_type" in self.df.columns:
@@ -285,19 +264,6 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         tmp_df = pd.json_normalize(self.df["declared_data"])
         self.df = pd.concat([self.df.drop("declared_data", axis=1), tmp_df], axis=1)
         return self.df
-
-    def _aggregation_col(self, categ="bio", sub_categ=["_bio"]):
-        pattern = "|".join(sub_categ)
-        self.df[f"teledeclaration.value_{categ}_ht"] = self.df.filter(regex=pattern).sum(
-            axis=1, numeric_only=True, skipna=True, min_count=1
-        )
-
-    def _aggregate_complete_td(self):
-        """
-        Aggregate the columns of a complete TD for an appro category if the total value of this category is not specified.
-        """
-        for categ, elements_in_categ in self.categories_to_aggregate.items():
-            self._aggregation_col(categ, elements_in_categ)
 
     def _filter_null_values(self):
         "We have decided not take into accounts the TD where the value total or the value bio are null"
