@@ -307,6 +307,9 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic.value_sustainable_ht = None
         diagnostic.value_boissons_label_rouge = 10
         diagnostic.value_boulangerie_aocaop_igp_stg = 10
+        diagnostic.value_viandes_volailles_performance = 10
+        diagnostic.value_produits_de_la_mer_performance = 10
+        diagnostic.value_viandes_volailles_france = 5
         diagnostic.save()
         payload = {"diagnosticId": diagnostic.id}
 
@@ -364,6 +367,9 @@ class TestTeledeclarationCreateApi(APITestCase):
             json_teledeclaration["value_boissons_label_rouge"]
             + json_teledeclaration["value_boulangerie_aocaop_igp_stg"],
         )
+        self.assertEqual(teledeclaration.value_meat_poultry_egalim_ht_agg, 10)
+        self.assertEqual(teledeclaration.value_meat_poultry_france_ht_agg, 5)
+        self.assertEqual(teledeclaration.value_fish_egalim_ht_agg, 10)
 
     @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate

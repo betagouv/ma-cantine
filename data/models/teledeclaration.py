@@ -193,6 +193,7 @@ class Teledeclaration(models.Model):
     canteen_siret = models.TextField(null=True, blank=True)
     canteen_siren_unite_legale = models.TextField(null=True, blank=True)
 
+    # aggregated values
     value_total_ht = models.IntegerField(
         null=True, blank=True, verbose_name="Champ value total (en cas de TD détaillée, ce champ est aggrégé)"
     )
@@ -210,6 +211,23 @@ class Teledeclaration(models.Model):
     value_egalim_others_ht_agg = models.IntegerField(
         null=True, blank=True, verbose_name="Champ Autres Egalim (en cas de TD détaillée, ce champ est aggrégé)"
     )
+    value_meat_poultry_egalim_ht_agg = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Champ viandes et volailles fraiches ou surgelées Egalim (en cas de TD détaillée, ce champ est aggrégé)",
+    )
+    value_meat_poultry_france_ht_agg = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Champ viandes et volailles fraiches ou surgelées France (en cas de TD détaillée, ce champ est aggrégé)",
+    )
+    value_fish_egalim_ht_agg = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Champ poissons et produits aquatiques Egalim (en cas de TD détaillée, ce champ est aggrégé)",
+    )
+
+    # other values
     yearly_meal_count = models.IntegerField(null=True, blank=True, verbose_name="Nombre de repas servis par an")
     meal_price = models.FloatField(null=True, blank=True, verbose_name="Coût denrées")
 
@@ -384,6 +402,9 @@ class Teledeclaration(models.Model):
             value_sustainable_ht_agg=diagnostic.value_sustainable_ht,
             value_externality_performance_ht_agg=diagnostic.value_externality_performance_ht,
             value_egalim_others_ht_agg=diagnostic.value_egalim_others_ht,
+            value_meat_poultry_egalim_ht_agg=diagnostic.value_meat_poultry_egalim_ht,
+            value_meat_poultry_france_ht_agg=diagnostic.value_meat_poultry_france_ht,
+            value_fish_egalim_ht_agg=diagnostic.value_fish_egalim_ht,
             yearly_meal_count=canteen.yearly_meal_count,
             meal_price=meal_price,
         )
