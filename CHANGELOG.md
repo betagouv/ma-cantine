@@ -6,6 +6,35 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.29.0](https://github.com/betagouv/ma-cantine/compare/v2025.28.1...v2025.29.0) (2025-09-02)
+
+
+### Nouveautés
+
+* **Création de cantine:** autorise la télédéclaration pour les cantines centrales sans secteur ([#5642](https://github.com/betagouv/ma-cantine/issues/5642)) ([8a7df34](https://github.com/betagouv/ma-cantine/commit/8a7df340d3d57f4c994fe0b6565c2a56ddbb2cae))
+* **Creation de cantine:** les secteurs ne sont pas obligatoires pour les cuisines centrales ([#5638](https://github.com/betagouv/ma-cantine/issues/5638)) ([91904d2](https://github.com/betagouv/ma-cantine/commit/91904d27bcc922483893bad1fcc0fe3a75e27358))
+
+
+### Corrections (bugs, typos...)
+
+* **Creation de cantine:** changement url schemas imports ([#5639](https://github.com/betagouv/ma-cantine/issues/5639)) ([1623c7a](https://github.com/betagouv/ma-cantine/commit/1623c7a2345a10ad0832377fc1f0f1c161ab9474))
+* **Observatoire:** corrige l'affichage des filtres sur mobile ([#5652](https://github.com/betagouv/ma-cantine/issues/5652)) ([6145e4b](https://github.com/betagouv/ma-cantine/commit/6145e4b928b7f4400bfb91ee79199f6d9bb024e6))
+* **Open Data:** Répare le calcul de la colonne teledeclaration_ratio_egalim_hors_bio ([#5641](https://github.com/betagouv/ma-cantine/issues/5641)) ([2312480](https://github.com/betagouv/ma-cantine/commit/23124803977f8c4310b42a2f37938f38f6867f15))
+
+
+### Technique
+
+* **deps-dev:** bump eslint from 9.30.0 to 9.32.0 in /2024-frontend ([0b6e3ae](https://github.com/betagouv/ma-cantine/commit/0b6e3aea60820ec12f16bcb526180915589292fc))
+* **deps-dev:** bump vite from 6.3.5 to 7.0.6 in /2024-frontend ([998ccd4](https://github.com/betagouv/ma-cantine/commit/998ccd45a31af7e658d8ce8e9bd68d6dabaed5b7))
+* **deps:** bump @gouvminint/vue-dsfr in /2024-frontend ([2e60603](https://github.com/betagouv/ma-cantine/commit/2e60603e288d0d17615875328540bcb93bb5c075))
+* **deps:** bump @intlify/core-base and vue-i18n in /2024-frontend ([4d850b6](https://github.com/betagouv/ma-cantine/commit/4d850b65ab72d20ae4751aa1d944ed3be87ec9c2))
+* **deps:** bump @vueuse/core from 13.3.0 to 13.6.0 in /2024-frontend ([7aab924](https://github.com/betagouv/ma-cantine/commit/7aab92427f88c161cd26a3ee0c565e502720b4f5))
+* **deps:** bump cssbeautifier from 1.15.1 to 1.15.4 ([8ca73a4](https://github.com/betagouv/ma-cantine/commit/8ca73a4c1c93b83ce25bc9ca4beff1e7c6d69fc2))
+* **deps:** bump django from 5.1.0 to 5.1.10 ([05e790d](https://github.com/betagouv/ma-cantine/commit/05e790d4818f190fca45fd38d922256db8e51a3f))
+* **deps:** bump pipdeptree from 2.26.1 to 2.28.0 ([#5566](https://github.com/betagouv/ma-cantine/issues/5566)) ([04edc91](https://github.com/betagouv/ma-cantine/commit/04edc91068651726fcb0a2a10b4ff734d8832595))
+* **deps:** bump vue from 3.5.16 to 3.5.18 in /2024-frontend ([422055b](https://github.com/betagouv/ma-cantine/commit/422055b41cf6e20622a6eeb82b8532bc7299d436))
+* **deps:** Retour en arrière version incompatible avec django-vite-plugin ([#5649](https://github.com/betagouv/ma-cantine/issues/5649)) ([12a0930](https://github.com/betagouv/ma-cantine/commit/12a093061dff59cc293b85f203074b4af9896ddb))
+
 ## [2025.28.1](https://github.com/betagouv/ma-cantine/compare/v2025.28.0...v2025.28.1) (2025-08-29)
 
 
