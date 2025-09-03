@@ -1230,40 +1230,9 @@ class Diagnostic(models.Model):
         self.value_sustainable_ht = self.total_sustainable
         self.value_externality_performance_ht = self.total_externality_performance
         self.value_egalim_others_ht = self.total_egalim_others
-
-        total_meat_egalim = total_meat_france = total_fish_egalim = 0
-        egalim_labels = [
-            "bio",
-            "label_rouge",
-            "aocaop_igp_stg",
-            "hve",
-            "peche_durable",
-            "rup",
-            "fermier",
-            "externalites",
-            "commerce_equitable",
-            "performance",
-        ]
-        for label in egalim_labels:
-            family = "viandes_volailles"
-            # need to do or 0 and not give a default value because the value can be explicitly set to None
-            total_meat_egalim = total_meat_egalim + (getattr(self, f"value_{family}_{label}") or 0)
-
-            family = "produits_de_la_mer"
-            total_fish_egalim = total_fish_egalim + (getattr(self, f"value_{family}_{label}") or 0)
-
-        france_labels = [
-            "france",
-            "short_distribution",
-            "local",
-        ]
-        for label in france_labels:
-            family = "viandes_volailles"
-            total_meat_france = total_meat_france + (getattr(self, f"value_{family}_{label}") or 0)
-
-        self.value_meat_poultry_egalim_ht = total_meat_egalim
-        self.value_meat_poultry_france_ht = total_meat_france
-        self.value_fish_egalim_ht = total_fish_egalim
+        self.value_meat_poultry_egalim_ht = self.total_meat_egalim
+        self.value_meat_poultry_france_ht = self.total_meat_france
+        self.value_fish_egalim_ht = self.total_fish_egalim
 
     def validate_year(self):
         if self.year is None:
@@ -1366,6 +1335,19 @@ class Diagnostic(models.Model):
         if not is_null:
             return sum
 
+    def french_label_sum(self, family):
+        labels = [
+            "france",
+            "short_distribution",
+            "local",
+        ]
+        sum = 0
+        for label in labels:
+            value = getattr(self, f"value_{family}_{label}")
+            if value:
+                sum = sum + value
+        return sum
+
     def family_sum(self, family):
         labels = [
             "bio",
@@ -1379,6 +1361,26 @@ class Diagnostic(models.Model):
             "commerce_equitable",
             "performance",
             "non_egalim",
+        ]
+        sum = 0
+        for label in labels:
+            value = getattr(self, f"value_{family}_{label}")
+            if value:
+                sum = sum + value
+        return sum
+
+    def family_egalim_sum(self, family):
+        labels = [
+            "bio",
+            "label_rouge",
+            "aocaop_igp_stg",
+            "hve",
+            "peche_durable",
+            "rup",
+            "fermier",
+            "externalites",
+            "commerce_equitable",
+            "performance",
         ]
         sum = 0
         for label in labels:
@@ -1429,6 +1431,24 @@ class Diagnostic(models.Model):
                 self.total_egalim_others,
             ]
         )
+
+    @property
+    def total_meat_egalim(self):
+        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            return self.family_egalim_sum("viandes_volailles")
+        return self.value_meat_poultry_egalim_ht
+
+    @property
+    def total_meat_france(self):
+        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            return self.french_label_sum("viandes_volailles")
+        return self.value_meat_poultry_france_ht
+
+    @property
+    def total_fish_egalim(self):
+        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            return self.family_egalim_sum("produits_de_la_mer")
+        return self.value_fish_egalim_ht
 
     @property
     def total_label_bio(self):
