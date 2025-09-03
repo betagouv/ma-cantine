@@ -1,9 +1,7 @@
 import locale
 import logging
 
-from django.db.models import Count, FloatField, Sum
-from django.db.models.fields.json import KT
-from django.db.models.functions import Cast
+from django.db.models import Count, F, Sum
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -45,19 +43,11 @@ def calculate_statistics_canteens(canteens, data):
 def calculate_statistics_teledeclarations(teledeclarations, data):
     # aggregate
     agg = teledeclarations.annotate(
-        value_meat_poultry_ht=Cast(
-            KT("declared_data__teledeclaration__value_meat_poultry_ht"), output_field=FloatField()
-        ),
-        value_meat_poultry_egalim_ht=Cast(
-            KT("declared_data__teledeclaration__value_meat_poultry_egalim_ht"), output_field=FloatField()
-        ),
-        value_meat_poultry_france_ht=Cast(
-            KT("declared_data__teledeclaration__value_meat_poultry_france_ht"), output_field=FloatField()
-        ),
-        value_fish_ht=Cast(KT("declared_data__teledeclaration__value_fish_ht"), output_field=FloatField()),
-        value_fish_egalim_ht=Cast(
-            KT("declared_data__teledeclaration__value_fish_egalim_ht"), output_field=FloatField()
-        ),
+        value_meat_poultry_ht=F("diagnostic__value_meat_poultry_ht"),
+        value_meat_poultry_egalim_ht=F("diagnostic__value_meat_poultry_egalim_ht"),
+        value_meat_poultry_france_ht=F("diagnostic__value_meat_poultry_france_ht"),
+        value_fish_ht=F("diagnostic__value_fish_ht"),
+        value_fish_egalim_ht=F("diagnostic__value_fish_egalim_ht"),
     ).aggregate(
         Count("id"),
         Sum("value_bio_ht_agg", default=0),

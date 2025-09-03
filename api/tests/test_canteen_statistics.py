@@ -168,7 +168,7 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(sector_categories[Sector.Categories.SOCIAL], 1)
         self.assertEqual(sector_categories["inconnu"], 0)
 
-    def test_stats_simple_diagnostic(self):
+    def test_stats_diagnostic_simple(self):
         """
         The endpoint must take into consideration the simplified diagnostic
         fields for EGalim stats
@@ -203,7 +203,49 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["canteenCount"], 1)  # canteens created in 2024 are not returned
         self.assertEqual(body["teledeclarationsCount"], 1)
         self.assertEqual(body["bioPercent"], 20)
-        self.assertEqual(body["sustainablePercent"], 45)
+        self.assertEqual(body["sustainablePercent"], 45)  # 15 + 15 + 15
+        self.assertEqual(body["egalimPercent"], 65)  # 20 + 45
+        self.assertEqual(body["meatEgalimPercent"], 50)
+        self.assertEqual(body["meatFrancePercent"], 25)
+        self.assertEqual(body["fishEgalimPercent"], 80)
+        self.assertEqual(body["approPercent"], 100)
+
+    def test_stats_diagnostic_complete(self):
+        """
+        The endpoint must take into consideration the complete diagnostic
+        fields for EGalim stats
+        """
+        past_year = 2021
+        date_in_2022_teledeclaration_campaign = "2022-08-30"
+
+        with freeze_time(date_in_2022_teledeclaration_campaign):
+            canteen = CanteenFactory(siret="75665621899905")
+            # Diagnostic that should display 20% Bio and 45% other EGalim
+            canteen_diagnostic = DiagnosticFactory(
+                diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+                canteen=canteen,
+                year=past_year,
+                creation_date=date_in_2022_teledeclaration_campaign,
+                value_total_ht=100,
+                value_viandes_volailles_bio=20,  # value_bio_ht
+                value_produits_de_la_mer_label_rouge=15,  # value_sustainable_ht
+                value_fruits_et_legumes_externalites=15,  # value_externality_performance_ht
+                value_charcuterie_hve=15,  # value_egalim_others_ht
+                value_meat_poultry_ht=200,
+                value_meat_poultry_egalim_ht=100,
+                value_meat_poultry_france_ht=50,
+                value_fish_ht=10,
+                value_fish_egalim_ht=8,
+            )
+            Teledeclaration.create_from_diagnostic(canteen_diagnostic, applicant=UserFactory())
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": past_year})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 1)  # canteens created in 2024 are not returned
+        self.assertEqual(body["teledeclarationsCount"], 1)
+        self.assertEqual(body["bioPercent"], 20)
+        self.assertEqual(body["sustainablePercent"], 45)  # 15 + 15 + 15
         self.assertEqual(body["egalimPercent"], 65)  # 20 + 45
         self.assertEqual(body["meatEgalimPercent"], 50)
         self.assertEqual(body["meatFrancePercent"], 25)
