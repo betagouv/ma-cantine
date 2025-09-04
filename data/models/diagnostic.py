@@ -91,7 +91,7 @@ class DiagnosticQuerySet(models.QuerySet):
         Dans le cas particulier où le nombre de repas annuel n'est pas renseigné,
         nous laissons la TD même si la valeur alimentaire est > 1 million d'€)
         """
-        return self.with_meal_price().exclude(meal_price__gt=20, value_total_ht__gt=1000000)
+        return self.with_meal_price().exclude(meal_price__isnull=False, meal_price__gt=20, value_total_ht__gt=1000000)
 
     def canteen_not_deleted_during_campaign(self, year):
         year = int(year)
