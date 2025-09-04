@@ -258,7 +258,7 @@ export default {
       const satelliteCount = this.canteen.satelliteCanteensCount
       const declared = satelliteCount === 1 ? `une cantine` : `${satelliteCount} cantines`
       const dbCount = this.canteen.satellites?.length
-      const dbString = dbCount === 1 ? "une cantine associée" : `${dbCount} cantines associées`
+      const dbString = dbCount <= 1 ? `${dbCount} cantine associée` : `${dbCount} cantines associées`
       return (
         `Vous avez déclaré que votre établissement livrait des repas à ${declared}, ` +
         `mais nous comptons ${dbString} à votre établissement dans notre base de données.`
