@@ -39,8 +39,12 @@
             <span class="font-weight-medium">{{ canteenMgmt }}</span>
           </p>
           <br />
-          <p v-if="canteen.productionType !== 'central'" class="mb-0">
-            Couverts par jour :
+          <p class="mb-0">
+            <span v-if="canteen.productionType === 'central'">Couverts livrés par jour :</span>
+            <span v-else-if="canteen.productionType === 'central_serving'">
+              Couverts par jour (y compris livrés) :
+            </span>
+            <span v-else>Couverts par jour :</span>
             <span class="font-weight-medium">{{ canteen.dailyMealCount || "Non renseigné" }}</span>
           </p>
           <p class="mb-0">
