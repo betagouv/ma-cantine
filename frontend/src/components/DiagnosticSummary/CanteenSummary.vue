@@ -99,7 +99,7 @@
         <h3 class="fr-h6">Mes satellites</h3>
         <p class="fr-text-sm mb-1 d-flex align-center" :class="{ 'dark-orange': hasSatelliteInconsistency }">
           <v-icon v-if="hasSatelliteInconsistency" small class="mr-1 dark-orange">$alert-line</v-icon>
-          {{ satelliteCountSentence }}
+          {{ satelliteCountEmpty }}
         </p>
       </v-col>
       <v-col cols="12" md="8">
@@ -178,7 +178,7 @@ export default {
     hasSatelliteInconsistency() {
       return hasSatelliteInconsistency(this.canteen)
     },
-    satelliteCountSentence() {
+    satelliteCountEmpty() {
       const satPluralize = this.canteen.satelliteCanteensCount > 1 ? "satellites" : "satellite"
       const fillPluralize = this.canteen.satellites.length > 1 ? "renseignés" : "renseigné"
       return `${this.canteen.satellites.length} sur ${this.canteen.satelliteCanteensCount} ${satPluralize} ${fillPluralize}`
