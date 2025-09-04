@@ -599,6 +599,18 @@ MAX_DAYS_HISTORICAL_RECORDS = (
 )
 
 # Wagtail CMS
+# https://docs.wagtail.org/en/stable/
+# ------------------------------------------------------------------------------
 WAGTAIL_SITE_NAME = "ma-cantine"
 # WAGTAILADMIN_BASE_URL # Declare if null URL in notification emails
 WAGTAILDOCS_EXTENSIONS = ["csv", "docx", "key", "odt", "pdf", "pptx", "rtf", "txt", "xlsx", "zip"]
+
+
+# Django-extensions
+# https://django-extensions.readthedocs.io
+# ------------------------------------------------------------------------------
+SHELL_PLUS = "ipython"
+SHELL_PLUS_POST_IMPORTS = [
+    "from datetime import datetime, date",
+    "from collections import Counter",
+]

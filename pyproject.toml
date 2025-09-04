@@ -85,6 +85,7 @@ dependencies = [
     "idna==3.10",
     "inflection==0.5.1",
     "iniconfig==2.0.0",
+    "ipython>=9.5.0",
     "isort==5.13.2",
     "jmespath==1.0.1",
     "jsbeautifier==1.15.1",
