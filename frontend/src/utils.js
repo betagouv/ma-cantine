@@ -566,9 +566,8 @@ export const getCharacteristicFromField = (fieldName, fieldPrefix, tdGroup) => {
 
 export const hasSatelliteInconsistency = (canteen) => {
   if (!canteen || !canteen.isCentralCuisine) return false
-  if (!canteen.satelliteCanteensCount) return true
-  if (!canteen.satellites) return true
-  return canteen.satelliteCanteensCount !== canteen.satellites.length
+  if (!canteen.satellites || canteen.satellites.length === 0) return true
+  return false
 }
 
 export const siretOrSirenUniteLegaleRequired = (canteen) => {
