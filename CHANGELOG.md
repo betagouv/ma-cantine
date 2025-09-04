@@ -6,6 +6,24 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.30.0](https://github.com/betagouv/ma-cantine/compare/v2025.29.0...v2025.30.0) (2025-09-04)
+
+
+### Nouveautés
+
+* **Observatoire:** ajout du lien pour comprendre le calcul des chiffres ([#5660](https://github.com/betagouv/ma-cantine/issues/5660)) ([76f6457](https://github.com/betagouv/ma-cantine/commit/76f64574b94bbd251f23e9211cda6abe6f067f07))
+
+
+### Corrections (bugs, typos...)
+
+* **API Stats:** Corrige les taux de viande egalim, viande france & aquaculture egalim (pour les diagnostics détaillés) ([#5658](https://github.com/betagouv/ma-cantine/issues/5658)) ([c6c1c89](https://github.com/betagouv/ma-cantine/commit/c6c1c89ce3ac9076d5a684125ff32c2cf01f25a5))
+
+
+### Technique
+
+* **Diagnostic:** clarifie le queryset valid_td_by_year ([#5656](https://github.com/betagouv/ma-cantine/issues/5656)) ([a54765a](https://github.com/betagouv/ma-cantine/commit/a54765a3ffa2db1bab0e51a4b1955682bc171ee6))
+* **Django:** installe ipython + basculer le shell_plus dessus ([#5659](https://github.com/betagouv/ma-cantine/issues/5659)) ([7ce7432](https://github.com/betagouv/ma-cantine/commit/7ce7432ea0f7048c218098e263a1bb26efa38fe7))
+
 ## [2025.29.0](https://github.com/betagouv/ma-cantine/compare/v2025.28.1...v2025.29.0) (2025-09-02)
 
 
