@@ -601,8 +601,9 @@ export const missingCanteenData = (canteen, sectors) => {
 
   // production type specific checks
   const yearlyMealCountKey = "yearlyMealCount"
-  const onSiteFields = ["dailyMealCount", yearlyMealCountKey, "sectors"]
-  const centralKitchenFields = [yearlyMealCountKey, "satelliteCanteensCount"]
+  const dailyMealCountKey = "dailyMealCount"
+  const onSiteFields = [dailyMealCountKey, yearlyMealCountKey, "sectors"]
+  const centralKitchenFields = [dailyMealCountKey, yearlyMealCountKey, "satelliteCanteensCount"]
   const satelliteFields = ["centralProducerSiret"]
 
   if (canteen.productionType === "central") {
