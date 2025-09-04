@@ -113,16 +113,6 @@
             </li>
           </ul>
           <ul>
-            <li v-if="hasSatelliteInconsistency" class="mb-1">
-              <router-link
-                :to="{
-                  name: 'SatelliteManagement',
-                  params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-                }"
-              >
-                Mettre à jour vos satellites
-              </router-link>
-            </li>
             <li v-if="missingDeclarationMode">
               Choisir comment les données sont saisis pour vos satellites
             </li>
@@ -283,7 +273,6 @@ import {
   lastYear,
   readyToTeledeclare,
   missingCanteenData,
-  hasSatelliteInconsistency,
   actionIsTeledeclare,
 } from "@/utils"
 import keyMeasures from "@/data/key-measures.json"
@@ -397,9 +386,6 @@ export default {
     },
     missingCanteenData() {
       return !this.canteen || missingCanteenData(this.canteen, this.$store.state.sectors)
-    },
-    hasSatelliteInconsistency() {
-      return !this.canteen || hasSatelliteInconsistency(this.canteen)
     },
     missingDeclarationMode() {
       return this.isCentralKitchen && !this.diagnostic?.centralKitchenDiagnosticMode
