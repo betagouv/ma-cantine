@@ -75,15 +75,10 @@
       </v-card-actions>
     </v-card>
     <v-card
-      v-else-if="hasSatelliteInconsistency"
+      v-else-if="inTeledeclarationCampaign && hasSatelliteInconsistency"
       class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
     >
-      <p>
-        {{ satelliteInconsistencyMessage }}
-        <span v-if="inTeledeclarationCampaign">
-          Veuillez corriger le divergence avant télédéclarer.
-        </span>
-      </p>
+      <p>{{ satelliteInconsistencyMessage }} Veuillez ajouter vos satellites avant télédéclarer.</p>
       <v-card-actions class="px-0 pt-0 pb-0 justify-center">
         <v-btn :to="{ name: 'SatelliteManagement' }" color="primary" class="fr-text font-weight-medium">
           Gérer mes satellites
