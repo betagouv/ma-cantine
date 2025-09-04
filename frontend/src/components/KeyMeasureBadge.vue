@@ -12,7 +12,7 @@
 <script>
 import DsfrBadge from "@/components/DsfrBadge"
 import keyMeasures from "@/data/key-measures.json"
-import { missingCanteenData, hasSatelliteInconsistency, hasStartedMeasureTunnel, hasDiagnosticApproData } from "@/utils"
+import { missingCanteenData, hasStartedMeasureTunnel, hasDiagnosticApproData } from "@/utils"
 
 export default {
   name: "KeyMeasureBadge",
@@ -41,13 +41,10 @@ export default {
       return this.isCentralKitchen && !this.diagnostic?.centralKitchenDiagnosticMode
     },
     isCentralKitchenFilled() {
-      return !this.missingDeclarationMode && !this.hasSatelliteInconsistency && !this.missingCanteenData
+      return !this.missingDeclarationMode && !this.missingCanteenData
     },
     missingCanteenData() {
       return !this.canteen || missingCanteenData(this.canteen, this.$store.state.sectors)
-    },
-    hasSatelliteInconsistency() {
-      return !this.canteen || hasSatelliteInconsistency(this.canteen)
     },
     isSatellite() {
       return this.canteen?.productionType === "site_cooked_elsewhere"
