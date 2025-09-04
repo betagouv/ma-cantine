@@ -564,13 +564,6 @@ export const getCharacteristicFromField = (fieldName, fieldPrefix, tdGroup) => {
   return getCharacteristicFromFieldSuffix(fieldSuffix, tdGroup)
 }
 
-export const hasSatelliteInconsistency = (canteen) => {
-  if (!canteen || !canteen.isCentralCuisine) return false
-  if (!canteen.satelliteCanteensCount) return true
-  if (!canteen.satellites) return true
-  return canteen.satelliteCanteensCount !== canteen.satellites.length
-}
-
 export const siretOrSirenUniteLegaleRequired = (canteen) => {
   return !!canteen.siret && !!canteen.siren_unite_legale
 }
@@ -649,11 +642,7 @@ export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
 }
 
 export const readyToTeledeclare = (canteen, diagnostic, sectors) => {
-  return (
-    diagnosticCanBeTeledeclared(canteen, diagnostic) &&
-    !hasSatelliteInconsistency(canteen) &&
-    !missingCanteenData(canteen, sectors)
-  )
+  return diagnosticCanBeTeledeclared(canteen, diagnostic) && !missingCanteenData(canteen, sectors)
 }
 
 export const actionIsTeledeclare = (action) => {
