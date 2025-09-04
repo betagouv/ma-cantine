@@ -75,22 +75,6 @@
       </v-card-actions>
     </v-card>
     <v-card
-      v-else-if="hasSatelliteInconsistency"
-      class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
-    >
-      <p>
-        {{ satelliteInconsistencyMessage }}
-        <span v-if="inTeledeclarationCampaign">
-          Veuillez corriger le divergence avant télédéclarer.
-        </span>
-      </p>
-      <v-card-actions class="px-0 pt-0 pb-0 justify-center">
-        <v-btn :to="{ name: 'SatelliteManagement' }" color="primary" class="fr-text font-weight-medium">
-          Gérer mes satellites
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-    <v-card
       v-else-if="diagnosticCanBeTeledeclared && actionIsTeledeclare"
       class="pa-6 pb-2 pb-sm-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
     >
@@ -141,7 +125,6 @@ import {
   readyToTeledeclare,
   inTeledeclarationCampaign,
   missingCanteenData,
-  hasSatelliteInconsistency,
   hasFinishedMeasureTunnel,
   actionIsTeledeclare,
   diagnosticCanBeTeledeclared,
@@ -250,19 +233,6 @@ export default {
     },
     missingCanteenData() {
       return missingCanteenData(this.canteen, this.$store.state.sectors)
-    },
-    hasSatelliteInconsistency() {
-      return hasSatelliteInconsistency(this.canteen)
-    },
-    satelliteInconsistencyMessage() {
-      const satelliteCount = this.canteen.satelliteCanteensCount
-      const declared = satelliteCount === 1 ? `une cantine` : `${satelliteCount} cantines`
-      const dbCount = this.canteen.satellites?.length
-      const dbString = dbCount === 1 ? "une cantine associée" : `${dbCount} cantines associées`
-      return (
-        `Vous avez déclaré que votre établissement livrait des repas à ${declared}, ` +
-        `mais nous comptons ${dbString} à votre établissement dans notre base de données.`
-      )
     },
     readyToTeledeclare() {
       return readyToTeledeclare(this.canteen, this.canteenDiagnostic, this.$store.state.sectors)
