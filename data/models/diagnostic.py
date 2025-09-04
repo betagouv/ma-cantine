@@ -86,10 +86,10 @@ class DiagnosticQuerySet(models.QuerySet):
         """
         Ici nous supprimons les TD dont les déclarations paraissent erronées et sont impactantes.
         Sont supprimées, les TD dont :
-        - Valeur d'achat alimentaires > 1 million d'euros ET
-        - Coût denrées > 20 €
+        - Coût denrées existe et > 20 euros ET
+        - Valeur d'achat alimentaires > 1 million d'euros
         Dans le cas particulier où le nombre de repas annuel n'est pas renseigné,
-        nous laissons la TD même si la valeur alimentaire est > 1 million d'€)
+        nous laissons la TD même si la valeur alimentaire est > 1 million d'euros)
         """
         return self.with_meal_price().exclude(meal_price__isnull=False, meal_price__gt=20, value_total_ht__gt=1000000)
 
