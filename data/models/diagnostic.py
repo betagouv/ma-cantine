@@ -119,10 +119,8 @@ class DiagnosticQuerySet(models.QuerySet):
         if year in CAMPAIGN_DATES.keys():
             return (
                 self.teledeclared_for_year(year)
-                .filter(
-                    ~Q(teledeclaration_mode="SATELLITE_WITHOUT_APPRO"),
-                    value_bio_ht_agg__isnull=False,
-                )
+                .exclude(teledeclaration_mode="SATELLITE_WITHOUT_APPRO")
+                .filter(value_bio_ht_agg__isnull=False)
                 .canteen_for_stat(year)  # Chaine de traitement n°6
                 .exclude_aberrant_values()  # Chaîne de traitement
             )
