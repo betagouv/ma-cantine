@@ -8,6 +8,7 @@ import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import openDataService from "@/services/openData.js"
+import arraysService from "@/services/arrays.js"
 import options from "@/constants/canteen-establishment-form-options"
 import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
 
@@ -56,16 +57,16 @@ const selectEstablishment = (canteenInfos) => {
 /* Production type */
 const productionTypeOptions = computed(() => {
   const isDisabled = form.hasSiret === "no-siret"
-  const hint = isDisabled
+  const disabledHint = isDisabled
     ? "Ce mode de production n'est pas disponible pour les établissements rattachés à une unité légale"
-    : ""
-  const optionsWithDisabled = [...options.productionType]
+    : false
+  const optionsWithDisabled = arraysService.createCopy(options.productionType)
   const indexCentralType = optionsWithDisabled.findIndex((option) => option.value === "central")
   const indexCentralServingType = optionsWithDisabled.findIndex((option) => option.value === "central_serving")
   optionsWithDisabled[indexCentralType].disabled = isDisabled
-  optionsWithDisabled[indexCentralType].hint = hint
+  optionsWithDisabled[indexCentralType].hint = disabledHint || optionsWithDisabled[indexCentralType].hint
   optionsWithDisabled[indexCentralServingType].disabled = isDisabled
-  optionsWithDisabled[indexCentralServingType].hint = hint
+  optionsWithDisabled[indexCentralServingType].hint = disabledHint || optionsWithDisabled[indexCentralType].hint
   return optionsWithDisabled
 })
 
