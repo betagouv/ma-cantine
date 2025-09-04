@@ -156,7 +156,9 @@ class DiagnosticQuerySetTest(TestCase):
 
     def test_exclude_aberrant_values(self):
         self.assertEqual(Diagnostic.objects.count(), 11)
-        self.assertEqual(Diagnostic.objects.exclude_aberrant_values().count(), 10)  # 1 aberrant
+        diagnostics = Diagnostic.objects.exclude_aberrant_values()
+        self.assertEqual(diagnostics.count(), 10)
+        self.assertNotIn(self.deleted_canteen_diagnostic, diagnostics)
 
     def test_publicly_visible(self):
         self.assertEqual(Diagnostic.objects.count(), 11)
