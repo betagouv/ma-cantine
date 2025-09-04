@@ -11,7 +11,7 @@
     >
       <p class="mb-0 d-flex">
         <v-icon small v-if="hasSatelliteInconsistency" class="mr-1 dark-orange">$alert-line</v-icon>
-        {{ satelliteCount }} sur {{ canteen.satelliteCanteensCount }} satellites renseignés
+        {{ satelliteCount }} sur {{ canteen.satelliteCanteensCount }} satellites renseigné
       </p>
     </v-card-text>
     <v-spacer v-if="satellites.length" />
