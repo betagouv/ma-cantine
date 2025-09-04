@@ -237,7 +237,7 @@ class TestCanteenStatsApi(APITestCase):
                 value_fish_ht=10,
                 value_fish_egalim_ht=8,
             )
-            Teledeclaration.create_from_diagnostic(canteen_diagnostic, applicant=UserFactory())
+            canteen_diagnostic.teledeclare(applicant=UserFactory())
 
         response = self.client.get(reverse("canteen_statistics"), {"year": past_year})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
