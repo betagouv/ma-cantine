@@ -100,10 +100,6 @@
         <p class="fr-text-sm mb-1">
           {{ canteen.satellites.length }} sur {{ canteen.satelliteCanteensCount }} satellites renseignés
         </p>
-        <p v-if="inTeledeclarationCampaign && hasSatelliteInconsistency" class="fr-text-sm mb-0 d-flex align-center">
-          <v-icon color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
-          Pour télédéclarer le bilan de {{ lastYear }}, le nombre déclaré et le nombre renseigné doivent être les mêmes.
-        </p>
       </v-col>
       <v-col cols="12" md="8">
         <v-data-table
@@ -128,7 +124,7 @@
 
 <script>
 import Constants from "@/constants"
-import { lastYear, sectorDisplayString, hasSatelliteInconsistency, lineMinistryRequired } from "@/utils"
+import { lastYear, sectorDisplayString, lineMinistryRequired } from "@/utils"
 
 export default {
   name: "CanteenSummary",
@@ -177,12 +173,6 @@ export default {
     },
     isSatellite() {
       return this.canteen?.productionType === "site_cooked_elsewhere"
-    },
-    inTeledeclarationCampaign() {
-      return window.ENABLE_TELEDECLARATION
-    },
-    hasSatelliteInconsistency() {
-      return hasSatelliteInconsistency(this.canteen)
     },
   },
 }
