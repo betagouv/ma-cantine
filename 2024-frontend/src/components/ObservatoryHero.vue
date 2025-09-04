@@ -15,9 +15,14 @@ const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
         qualité des produits entrant dans la composition des repas servis en restauration collective.
       </p>
       <p>
-        Ces chiffres sont rendus publics tous les ans après la publication du rapport parlementaire et sont accessibles
-        via la plateforme. Pour comprendre comment sont calculés ces chiffres
-        <a href="#" target="_blank">consulter notre article explicatif</a>
+        Ces chiffres sont rendus publics tous les ans après la publication du rapport parlementaire. Pour comprendre
+        comment sont calculés les chiffres et leurs spécificités,
+        <a
+          href="https://incubateur-masa.notion.site/A-propos-de-l-observatoire-EGalim-en-restauration-collective-262de24614be800d8924eb83901def36"
+          target="_blank"
+        >
+          consulter notre article explicatif
+        </a>
         .
       </p>
     </div>
