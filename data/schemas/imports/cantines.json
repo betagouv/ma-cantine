@@ -66,7 +66,7 @@
       "constraints": {
         "required": true
       },
-      "description": "",
+      "description": "Y compris les couverts livrés.",
       "example": "300",
       "format": "default",
       "name": "nombre_repas_jour",
