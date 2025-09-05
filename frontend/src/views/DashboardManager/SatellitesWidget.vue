@@ -11,7 +11,7 @@
     >
       <p class="mb-0 d-flex">
         <v-icon small v-if="hasSatelliteInconsistency" class="mr-1 dark-orange">$alert-line</v-icon>
-        {{ satelliteCount }} sur {{ canteen.satelliteCanteensCount }} satellites renseignés
+        {{ satelliteCountEmpty }}
       </p>
     </v-card-text>
     <v-spacer v-if="satellites.length" />
@@ -74,6 +74,11 @@ export default {
   computed: {
     hasSatelliteInconsistency() {
       return hasSatelliteInconsistency(this.canteen)
+    },
+    satelliteCountEmpty() {
+      const satPluralize = this.canteen.satelliteCanteensCount > 1 ? "satellites" : "satellite"
+      const fillPluralize = this.canteen.satellites.length > 1 ? "renseignés" : "renseigné"
+      return `${this.canteen.satellites.length} sur ${this.canteen.satelliteCanteensCount} ${satPluralize} ${fillPluralize}`
     },
   },
   methods: {
