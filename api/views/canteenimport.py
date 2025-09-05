@@ -255,6 +255,7 @@ class ImportCanteensView(APIView):
     def _add_error(errors, message, code=400):
         errors.append({"message": message, "code": code})
 
+    # test complexe
     @staticmethod
     def _validate_canteen(row):
         if not normalise_siret(row[0]).isdigit():
