@@ -877,6 +877,7 @@ class TestCanteenActionApi(APITestCase):
             siret="78146469373706",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=3,
+            daily_meal_count=12,
             managers=[authenticate.user],
         )
         CanteenFactory.create(name="Not my canteen")
