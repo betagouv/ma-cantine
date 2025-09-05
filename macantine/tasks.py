@@ -425,6 +425,7 @@ def datasets_export_opendata_td():
         "campagne teledeclaration 2021": ETL_OPEN_DATA_TELEDECLARATIONS(2021),
         "campagne teledeclaration 2022": ETL_OPEN_DATA_TELEDECLARATIONS(2022),
         "campagne teledeclaration 2023": ETL_OPEN_DATA_TELEDECLARATIONS(2023),
+        # "campagne teledeclaration 2024": ETL_OPEN_DATA_TELEDECLARATIONS(2024),  # wait for report to be published
     }
     export_datasets(datasets)
 
