@@ -255,7 +255,6 @@ class ImportCanteensView(APIView):
     def _add_error(errors, message, code=400):
         errors.append({"message": message, "code": code})
 
-    # test complexe
     @staticmethod
     def _validate_canteen(row):
         if not normalise_siret(row[0]).isdigit():
@@ -268,7 +267,7 @@ class ImportCanteensView(APIView):
             raise ValidationError({"yearly_meal_count": "Ce champ ne peut pas être vide."})
         if not row[6].strip().isdigit():
             raise ValidationError({"yearly_meal_count": f"La valeur « {row[6]} » doit être un nombre entier."})
-        elif not row[2] and not row[3]:
+        if not row[2] and not row[3]:
             raise ValidationError(
                 {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
             )
@@ -281,12 +280,15 @@ class ImportCanteensView(APIView):
                         "central_producer_siret": "Le SIRET de la cuisine centrale doit être différent de celui de la cantine"
                     }
                 )
-        if row[8] != Canteen.ProductionType.CENTRAL and not row[7]:
-            raise ValidationError(
-                {
-                    "sectors": f"Ce champ ne peut pas être vide sauf pour les cantines avec le type de production {Canteen.ProductionType.CENTRAL}."
-                }
-            )
+        if row[8] != Canteen.ProductionType.CENTRAL:
+            if not row[7]:
+                raise ValidationError(
+                    {
+                        "sectors": f"Ce champ ne peut pas être vide sauf pour les cantines avec le type de production {Canteen.ProductionType.CENTRAL}."
+                    }
+                )
+            if row[7].count("+") > 2:
+                raise ValidationError({"sectors": "Ce champ ne peut avoir plus de 3 valeurs."})
 
     def _get_manager_emails_to_notify(self, row):
         try:
