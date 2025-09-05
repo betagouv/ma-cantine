@@ -6,6 +6,14 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.31.0](https://github.com/betagouv/ma-cantine/compare/v2025.30.0...v2025.31.0) (2025-09-05)
+
+
+### Nouveautés
+
+* **Création de cantine:** ajout du champ "nombre de repas par jour" pour les cuisines centrales ([#5662](https://github.com/betagouv/ma-cantine/issues/5662)) ([e835eda](https://github.com/betagouv/ma-cantine/commit/e835eda51c8e01cdcb997ae207ff29da4a580988))
+* **Création de cantine:** ajoute une description dans le sélecteur de mode de production pour les cuisines centrales ([#5664](https://github.com/betagouv/ma-cantine/issues/5664)) ([621fc02](https://github.com/betagouv/ma-cantine/commit/621fc0218381bc99b6ce0dd8d3073a2e2811b27a))
+
 ## [2025.30.0](https://github.com/betagouv/ma-cantine/compare/v2025.29.0...v2025.30.0) (2025-09-04)
 
 
