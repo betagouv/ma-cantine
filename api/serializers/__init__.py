@@ -31,6 +31,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticAndCanteenSerializer,
     PublicApproDiagnosticSerializer,
     PublicServiceDiagnosticSerializer,
+    DiagnosticOpenDataSerializer,
 )
 from .wastemeasurement import WasteMeasurementSerializer  # noqa: F401
 from .sector import SectorSerializer  # noqa: F401

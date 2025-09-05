@@ -61,7 +61,7 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
         self.fill_geo_names(prefix)
 
     def _clean_dataset(self):
-        columns = [i["name"].replace("canteen_", "canteen.") for i in self.schema["fields"]]
+        columns = [i["name"] for i in self.schema["fields"]]
 
         self.df = self.df.loc[:, ~self.df.columns.duplicated()]
 
@@ -242,8 +242,6 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         # Renaming to match schema
         if "diagnostic_type" in self.df.columns:
             self.df["teledeclaration_type"] = self.df["diagnostic_type"]
-        if "central_kitchen_siret" in self.df.columns:
-            self.df["canteen.central_kitchen_siret"] = self.df["central_kitchen_siret"]
 
         logger.info("TD campagne : Clean dataset...")
         self._clean_dataset()
