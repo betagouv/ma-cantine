@@ -256,13 +256,6 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         logger.info("TD Campagne : Fill geo name...")
         self.transform_canteen_geo_data(prefix="canteen_")
 
-    def _filter_null_values(self):
-        """
-        We have decided not take into accounts the TD where the value total or the value bio are null
-        # TODO: probably duplicate with queryset (valid_td_by_year)
-        """
-        self.df = self.df[~self.df["teledeclaration_ratio_bio"].isnull()]
-
     def _filter_outsiders(self):
         """
         For the campaign 2023, after analyses, we decided to exclude two TD because their value were impossible
