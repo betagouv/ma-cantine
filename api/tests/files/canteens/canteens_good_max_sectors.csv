@@ -1,0 +1,4 @@
+siret,nom,code_insee_commune,code_postal_commune,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,gestionnaires_additionnels
+25499308030993,Canteen 1 sector,,54460,,700,14000,Cliniques,site,conceded,,
+08214804418498,Canteen 2 sectors,,54460,,700,14000,Cliniques+Hôpitaux,site,conceded,,
+62148990349419,Canteen 3 sectors,,54460,,700,14000,Cliniques+Hôpitaux+Crèche,site,conceded,,

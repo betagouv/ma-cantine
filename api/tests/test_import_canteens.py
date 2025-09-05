@@ -141,6 +141,7 @@ class TestCanteenImport(APITestCase):
     def setUpTestData(cls):
         SectorFactory.create(name="Cliniques")
         SectorFactory.create(name="Hôpitaux")
+        SectorFactory.create(name="Crèche")
 
     def test_unauthenticated_import_call(self):
         """
@@ -440,3 +441,39 @@ class TestCanteenImport(APITestCase):
         canteen_created = Canteen.objects.first()
         self.assertEqual(canteen_created.production_type, "central")
         self.assertEqual(canteen_created.sectors.count(), 0)
+
+    @authenticate
+    def test_more_three_sectors(self):
+        """
+        Canteen can't have more than 3 sectors
+        """
+        file_path = "./api/tests/files/canteens/canteen_bad_max_sectors.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
+        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(errors), 1, errors)
+        self.assertEqual(
+            errors[0]["message"], "Champ 'secteurs d'activité' : Ce champ ne peut avoir plus de 3 valeurs."
+        )
+
+    @authenticate
+    def test_less_or_equal_three_sectors(self):
+        """
+        Canteen can have 3 sectors or less
+        """
+        file_path = "./api/tests/files/canteens/canteens_good_max_sectors.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 3)
+        self.assertEqual(len(body["canteens"]), 3)
+        self.assertEqual(len(errors), 0)
+        self.assertEqual(Canteen.objects.count(), 3)
