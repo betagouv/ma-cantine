@@ -231,19 +231,17 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         return sectors
 
     def transform_dataset(self):
-        logger.info("TD campagne : Flatten declared data...")
-        self.df = self._flatten_declared_data()
-
-        self.df["teledeclaration_ratio_bio"] = self.df["value_bio_ht_agg"] / self.df["teledeclaration.value_total_ht"]
+        # Compute teledeclaration_ratio_bio & teledeclaration_ratio_egalim_hors_bio
+        self.df["teledeclaration_ratio_bio"] = self.df["value_bio_ht_agg"] / self.df["value_total_ht"]
         self.df["teledeclaration_ratio_egalim_hors_bio"] = (
             self.df["value_sustainable_ht_agg"].fillna(0)
             + self.df["value_externality_performance_ht_agg"].fillna(0)
             + self.df["value_egalim_others_ht_agg"].fillna(0)
-        ) / self.df["teledeclaration.value_total_ht"]
+        ) / self.df["value_total_ht"]
 
         # Renaming to match schema
-        if "teledeclaration.diagnostic_type" in self.df.columns:
-            self.df["teledeclaration_type"] = self.df["teledeclaration.diagnostic_type"]
+        if "diagnostic_type" in self.df.columns:
+            self.df["teledeclaration_type"] = self.df["diagnostic_type"]
         if "central_kitchen_siret" in self.df.columns:
             self.df["canteen.central_kitchen_siret"] = self.df["central_kitchen_siret"]
 
@@ -260,18 +258,17 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         logger.info("TD Campagne : Fill geo name...")
         self.transform_canteen_geo_data(prefix="canteen_")
 
-    def _flatten_declared_data(self):
-        tmp_df = pd.json_normalize(self.df["declared_data"])
-        self.df = pd.concat([self.df.drop("declared_data", axis=1), tmp_df], axis=1)
-        return self.df
-
     def _filter_null_values(self):
-        "We have decided not take into accounts the TD where the value total or the value bio are null"
+        """
+        We have decided not take into accounts the TD where the value total or the value bio are null
+        # TODO: probably duplicate with queryset (valid_td_by_year)
+        """
         self.df = self.df[~self.df["teledeclaration_ratio_bio"].isnull()]
 
     def _filter_outsiders(self):
         """
         For the campaign 2023, after analyses, we decided to exclude two TD because their value were impossible
+        # TODO: bring this to the queryset? (exclude_aberrant_values)
         """
         if self.year == 2022:
             td_with_errors = [9656, 8037]
