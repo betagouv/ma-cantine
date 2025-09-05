@@ -1005,6 +1005,15 @@ class TestCanteenActionApi(APITestCase):
         canteen.production_type = Canteen.ProductionType.CENTRAL
         canteen.satellite_canteens_count = None
         canteen.save()
+        canteen_sat = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            management_type=Canteen.ManagementType.DIRECT,
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            central_producer_siret=canteen.siret,
+            managers=[authenticate.user],
+        )
         diagnostic.central_kitchen_diagnostic_mode = "APPRO"
         diagnostic.save()
 
@@ -1017,6 +1026,7 @@ class TestCanteenActionApi(APITestCase):
         diagnostic.save()
 
         # Central kitchens with missing satellites should return the add satellite action
+        canteen_sat.delete()
         canteen.satellite_canteens_count = 123
         canteen.save()
 
