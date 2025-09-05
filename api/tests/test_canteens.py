@@ -822,8 +822,12 @@ class TestCanteenActionApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
+        central_siret = "75665621899908"
         needs_diagnostic_mode = CanteenFactory.create(
-            production_type=Canteen.ProductionType.CENTRAL, siret="75665621899905", managers=[authenticate.user]
+            production_type=Canteen.ProductionType.CENTRAL, siret=central_siret, managers=[authenticate.user]
+        )
+        CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
         )
         # complete establishement
         needs_sectors = CanteenFactory.create(
@@ -855,9 +859,8 @@ class TestCanteenActionApi(APITestCase):
             managers=[authenticate.user],
         )
         # create satellites
-        central_siret = "78146469373706"
         needs_additional_satellites = CanteenFactory.create(
-            siret=central_siret,
+            siret="78146469373706",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=3,
             managers=[authenticate.user],
@@ -894,14 +897,8 @@ class TestCanteenActionApi(APITestCase):
 
         DiagnosticFactory.create(year=last_year, canteen=needs_daily_meal_count, value_total_ht=100)
 
-        # has a diagnostic but this canteen registered only two of three satellites
+        # has a diagnostic but this canteen did not registered any satellites
         DiagnosticFactory.create(year=last_year, canteen=needs_additional_satellites, value_total_ht=100)
-        CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
-        )
-        CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
-        )
 
         response = self.client.get(
             reverse("list_actionable_canteens", kwargs={"year": last_year}) + "?ordering=action,modification_date"
