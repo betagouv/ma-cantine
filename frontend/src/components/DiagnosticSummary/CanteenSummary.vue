@@ -54,7 +54,7 @@
           <v-icon color="primary" x-large>$restaurant-line</v-icon>
         </div>
         <div class="mt-n1">
-          <div v-if="hasSite">
+          <div>
             <p class="my-0 fr-text-sm grey--text text--darken-1">Nombre moyen de couverts par jour</p>
             <p class="my-0">
               {{ canteen.dailyMealCount ? parseInt(canteen.dailyMealCount).toLocaleString("fr-FR") : "—" }}

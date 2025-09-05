@@ -76,13 +76,14 @@ def has_missing_data_query():
         # basic rules
         Q(name=None)
         | has_charfield_missing_query("city_insee_code")
-        | Q(yearly_meal_count=None)
+        | (Q(yearly_meal_count=None) | Q(yearly_meal_count=0))
+        | (Q(daily_meal_count=None) | Q(daily_meal_count=0))
         | Q(~has_siret_or_siren_unite_legale_query())
         | Q(production_type=None)
         | Q(management_type=None)
         | Q(economic_model=None)
         # serving-specific rules
-        | (is_serving_query() & (Q(sectors=None) | Q(daily_meal_count=None) | Q(daily_meal_count=0)))
+        | (is_serving_query() & (Q(sectors=None)))
         # satellite-specific rules
         | (is_satellite_query() & has_charfield_missing_query("central_producer_siret"))
         | (is_satellite_query() & Q(central_producer_siret=F("siret")))
@@ -645,6 +646,7 @@ class Canteen(SoftDeletionModel):
         is_filled = (
             bool(self.name)
             and bool(self.city_insee_code)
+            and bool(self.daily_meal_count)
             and bool(self.yearly_meal_count)
             and bool(self.siret or self.siren_unite_legale)
             and bool(self.production_type)
@@ -653,7 +655,7 @@ class Canteen(SoftDeletionModel):
         )
         # serving-specific rules
         if is_filled and self.is_serving:
-            is_filled = bool(self.daily_meal_count) and self.sectors.exists()
+            is_filled = self.sectors.exists()
         # satellite-specific rules
         if is_filled and self.is_satellite:
             is_filled = bool(self.central_producer_siret and self.central_producer_siret != self.siret)

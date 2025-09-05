@@ -220,7 +220,6 @@ if (props.establishmentData) prefillFields()
 else resetFields()
 
 /* Dynamic Inputs */
-const hideDailyMealCount = computed(() => form.productionType === "central")
 const showCentralProducerSiret = computed(() => form.productionType === "site_cooked_elsewhere")
 const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
@@ -245,7 +244,6 @@ const showCitySelector = computed(() => form.hasSiret === "no-siret")
 const changeProductionMode = () => {
   form.satelliteCanteensCount = null
   form.centralProducerSiret = null
-  form.dailyMealCount = null
   form.sectors = []
   form.lineMinistry = null
   forceRerender.value++
@@ -253,7 +251,6 @@ const changeProductionMode = () => {
 
 /* Fields verification */
 const { required, integer, minValue, requiredIf, minLength, maxLength } = useValidators()
-const dailyMealRequired = computed(() => form.productionType !== "central")
 const yearlyMealMinValue = computed(() => form.dailyMealCount || 1)
 const siretIsRequired = computed(() => form.hasSiret === "has-siret")
 const sirenIsRequired = computed(() => form.hasSiret === "no-siret")
@@ -276,11 +273,7 @@ const rules = {
   productionType: { required },
   sectors: { required: requiredIf(sectorsAreRequired) },
   lineMinistry: { required: requiredIf(showLineMinistry) },
-  dailyMealCount: {
-    required: requiredIf(dailyMealRequired),
-    integer,
-    minValue: minValue(1),
-  },
+  dailyMealCount: { required, integer, minValue: minValue(1) },
   yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
   satelliteCanteensCount: { required: requiredIf(showSatelliteCanteensCount), integer, minValue: minValue(1) },
   centralProducerSiret: {
@@ -455,14 +448,9 @@ const validateForm = (action) => {
         <div class="fr-grid-row fr-grid-row--gutters">
           <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
-              :class="{
-                hide: hideDailyMealCount,
-              }"
               v-model="form.dailyMealCount"
-              :label="hideDailyMealCount ? 'Par jour' : 'Par jour *'"
+              label="Par jour *"
               :label-visible="true"
-              :disabled="hideDailyMealCount"
-              :hint="hideDailyMealCount ? 'Concerne uniquement les cantines recevant des convives' : ''"
               type="number"
               :error-message="formatError(v$.dailyMealCount)"
             />

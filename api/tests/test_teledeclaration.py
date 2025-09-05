@@ -526,7 +526,6 @@ class TestTeledeclarationCreateApi(APITestCase):
         self.assertEqual(canteen_json["satellite_canteens_count"], 3)
         self.assertIsNone(canteen_json["central_producer_siret"])
         self.assertIsNone(teledeclaration.declared_data["central_kitchen_siret"])
-        self.assertIsNone(canteen_json["daily_meal_count"])
         self.assertEqual(teledeclaration.teledeclaration_mode, "CENTRAL_ALL")
 
         # If we change its type to satellite we should get the central_producer_siret
@@ -871,7 +870,6 @@ class TestTeledeclarationPdfApi(APITestCase):
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
-        self.assertIsNone(teledeclaration.declared_data["canteen"]["daily_meal_count"])
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

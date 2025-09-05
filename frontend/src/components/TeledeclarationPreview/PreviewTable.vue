@@ -147,8 +147,7 @@ export default {
           label: "Nombre de cantines à qui je fournis des repas",
           isNumber: true,
         })
-      if (this.showDailyMealCount)
-        items.push({ value: this.canteen.dailyMealCount, label: "Nombre moyen de couverts par jour", isNumber: true })
+      items.push({ value: this.canteen.dailyMealCount, label: "Nombre moyen de couverts par jour", isNumber: true })
       items.push({ value: this.canteen.yearlyMealCount, label: "Nombre total de couverts par an", isNumber: true })
       if (this.showSectors) items.push({ value: this.sectors, label: "Secteurs d'activité" })
       if (this.showMinistryField)
@@ -572,9 +571,6 @@ export default {
     },
     showSatelliteCanteensCount() {
       return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
-    },
-    showDailyMealCount() {
-      return this.canteen.productionType && this.canteen.productionType !== "central"
     },
     showMinistryField() {
       const sectors = sectorsSelectList(this.$store.state.sectors)

@@ -75,7 +75,7 @@ export default {
       return this.canteen.isCentralCuisine ? this.canteen.satelliteCanteensCount : undefined
     },
     hasDailyMealCount() {
-      return this.canteen.dailyMealCount && this.canteen.productionType !== "central"
+      return this.canteen.dailyMealCount
     },
     managementType() {
       return Constants.ManagementTypes.find((type) => type.value === this.canteen.managementType)?.text
