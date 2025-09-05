@@ -217,3 +217,66 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
         from .canteen import FullCanteenSerializer
 
         return FullCanteenSerializer(obj.canteen).data
+
+
+class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
+    canteen_siret = serializers.CharField(source="canteen_snapshot.siret", read_only=True)
+    canteen_name = serializers.CharField(source="canteen_snapshot.name", read_only=True)
+    canteen_central_kitchen_siret = serializers.CharField(
+        source="canteen_snapshot.central_kitchen_siret", read_only=True
+    )
+    canteen_city_insee_code = serializers.CharField(source="canteen_snapshot.city_insee_code", read_only=True)
+    canteen_epci = serializers.CharField(source="canteen_snapshot.epci", read_only=True)
+    canteen_epci_lib = serializers.CharField(source="canteen_snapshot.epci_lib", read_only=True)
+    canteen_department = serializers.CharField(source="canteen_snapshot.department", read_only=True)
+    canteen_department_lib = serializers.CharField(source="canteen_snapshot.department_lib", read_only=True)
+    canteen_region = serializers.CharField(source="canteen_snapshot.region", read_only=True)
+    canteen_region_lib = serializers.CharField(source="canteen_snapshot.region_lib", read_only=True)
+    canteen_satellite_canteens_count = serializers.IntegerField(
+        source="canteen_snapshot.satellite_canteens_count", read_only=True
+    )
+    canteen_economic_model = serializers.CharField(source="canteen_snapshot.economic_model", read_only=True)
+    canteen_management_type = serializers.CharField(source="canteen_snapshot.management_type", read_only=True)
+    canteen_production_type = serializers.CharField(source="canteen_snapshot.production_type", read_only=True)
+    canteen_sectors = serializers.ListField(source="canteen_snapshot.sectors", read_only=True)
+    canteen_line_ministry = serializers.CharField(source="canteen_snapshot.line_ministry", read_only=True)
+
+    class Meta:
+        model = Diagnostic
+        fields = (
+            "id",
+            "diagnostic_type",  # will be renamed to teledeclaration_type
+            "teledeclaration_mode",
+            "teledeclaration_date",
+            "year",
+            # TODO: "version",
+            # application fields
+            # TODO: "applicant_id",
+            # canteen fields
+            "canteen_id",
+            "canteen_siret",
+            "canteen_name",
+            "canteen_central_kitchen_siret",
+            "canteen_city_insee_code",
+            "canteen_epci",
+            "canteen_epci_lib",
+            "canteen_department",
+            "canteen_department_lib",
+            "canteen_region",
+            "canteen_region_lib",
+            "canteen_satellite_canteens_count",
+            "canteen_economic_model",
+            "canteen_management_type",
+            "canteen_production_type",
+            "canteen_sectors",
+            "canteen_line_ministry",
+            # value fields (need to compute teledeclaration_ratio_bio & teledeclaration_ratio_egalim_hors_bio)
+            "value_total_ht",
+            "value_bio_ht_agg",
+            "value_sustainable_ht_agg",
+            "value_externality_performance_ht_agg",
+            "value_egalim_others_ht_agg",
+            # "teledeclaration_ratio_bio",  # will be computed
+            # "teledeclaration_ratio_egalim_hors_bio"  # will be computed
+        )
+        read_only_fields = fields
