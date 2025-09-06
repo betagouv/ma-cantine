@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
@@ -1174,6 +1175,13 @@ class Diagnostic(models.Model):
         max_length=255,
         choices=TeledeclarationMode.choices,
         verbose_name="mode de télédéclaration",
+        null=True,
+        blank=True,
+    )
+    applicant = models.ForeignKey(
+        get_user_model(),
+        verbose_name="déclarant",
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
