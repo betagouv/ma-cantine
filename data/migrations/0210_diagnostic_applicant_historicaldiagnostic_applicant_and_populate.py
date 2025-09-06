@@ -5,6 +5,25 @@ from django.conf import settings
 from django.db import migrations, models
 
 
+def populate_diagnostic_applicant(apps, schema_editor):
+    Diagnostic = apps.get_model("data", "Diagnostic")
+    Teledeclaration = apps.get_model("data", "Teledeclaration")
+    for teledeclaration in Teledeclaration.objects.filter(status="SUBMITTED"):
+        try:
+            diagnostic = Diagnostic.objects.get(id=teledeclaration.diagnostic_id)
+            applicant = teledeclaration.applicant
+            if applicant:
+                diagnostic.applicant = applicant
+                diagnostic.save(update_fields=["applicant"])
+        except Diagnostic.DoesNotExist:
+            continue
+
+
+def undo_populate_diagnostic_applicant(apps, schema_editor):
+    Diagnostic = apps.get_model("data", "Diagnostic")
+    Diagnostic.objects.all().update(applicant=None)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -36,4 +55,5 @@ class Migration(migrations.Migration):
                 verbose_name="déclarant",
             ),
         ),
+        migrations.RunPython(populate_diagnostic_applicant, undo_populate_diagnostic_applicant),
     ]
