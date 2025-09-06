@@ -240,6 +240,45 @@ class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
         self.assertTrue(self.diagnostic_filled_submitted.is_teledeclared)
 
 
+class DiagnosticModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen_central = CanteenFactory(siret="12345678901234", production_type=Canteen.ProductionType.CENTRAL)
+        cls.canteen_sat = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=cls.canteen_central.siret,
+        )
+        cls.diagnostic = DiagnosticFactory(
+            canteen=cls.canteen_central,
+            year=year_data,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            value_total_ht=1000,
+            value_bio_ht=200,
+        )
+
+    def test_delete_canteen(self):
+        self.assertIsNotNone(self.diagnostic.canteen)
+        # soft delete
+        self.canteen_central.delete()
+        self.diagnostic.refresh_from_db()
+        self.assertIsNotNone(self.diagnostic.canteen)
+        # hard delete
+        self.canteen_central.hard_delete()
+        self.diagnostic.refresh_from_db()
+        self.assertIsNone(self.diagnostic.canteen)
+
+    def test_delete_applicant(self):
+        with freeze_time(date_in_teledeclaration_campaign):
+            self.diagnostic.teledeclare(applicant=self.user)
+        self.assertIsNotNone(self.diagnostic.applicant)
+        # delete
+        self.user.delete()
+        self.diagnostic.refresh_from_db()
+        self.assertIsNone(self.diagnostic.applicant)
+
+
 class DiagnosticModelTeledeclareMethodTest(TestCase):
     @classmethod
     def setUpTestData(cls):
