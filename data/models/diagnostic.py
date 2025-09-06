@@ -46,14 +46,6 @@ def in_correction_campaign_query(year):
     )
 
 
-def canteen_has_siret_or_siren_unite_legale_query():
-    canteen_has_siret_query = Q(canteen__siret__isnull=False) & ~Q(canteen__siret="")
-    canteen_has_siren_unite_legale_query = Q(canteen__siren_unite_legale__isnull=False) & ~Q(
-        canteen__siren_unite_legale=""
-    )
-    return canteen_has_siret_query | canteen_has_siren_unite_legale_query
-
-
 class DiagnosticQuerySet(models.QuerySet):
     def filled(self):
         return self.filter(value_total_ht__gt=0)
@@ -101,17 +93,30 @@ class DiagnosticQuerySet(models.QuerySet):
         """
         return self.with_meal_price().exclude(meal_price__gt=20, value_total_ht__gt=1000000)
 
+    def canteen_not_deleted_during_campaign(self, year):
+        year = int(year)
+        return self.exclude(
+            canteen__deletion_date__range=(
+                CAMPAIGN_DATES[year]["teledeclaration_start_date"],
+                CAMPAIGN_DATES[year]["teledeclaration_end_date"],
+            )
+        )
+
+    def canteen_has_siret_or_siren_unite_legale(self):
+        return self.annotate(
+            canteen_siret=F("canteen_snapshot__siret"),
+            canteen_siren_unite_legale=F("canteen_snapshot__siren_unite_legale"),
+        ).filter(
+            ~Q(canteen_siret=None) & ~Q(canteen_siret="")
+            | ~Q(canteen_siren_unite_legale=None) & ~Q(canteen_siren_unite_legale="")
+        )
+
     def canteen_for_stat(self, year):
         return (
             self.select_related("canteen")
             .exclude(canteen_id__isnull=True)
-            .exclude(
-                canteen__deletion_date__range=(
-                    CAMPAIGN_DATES[year]["teledeclaration_start_date"],
-                    CAMPAIGN_DATES[year]["teledeclaration_end_date"],
-                )
-            )  # Chaine de traitement n°6
-            .filter(canteen_has_siret_or_siren_unite_legale_query())  # Chaine de traitement n°7
+            .canteen_not_deleted_during_campaign(year)  # Chaîne de traitement n°6
+            .canteen_has_siret_or_siren_unite_legale()  # Chaîne de traitement n°7
         )
 
     def valid_td_by_year(self, year):
@@ -120,9 +125,9 @@ class DiagnosticQuerySet(models.QuerySet):
             return (
                 self.teledeclared_for_year(year)
                 .exclude(teledeclaration_mode="SATELLITE_WITHOUT_APPRO")
-                .filter(value_bio_ht_agg__isnull=False)
-                .canteen_for_stat(year)  # Chaine de traitement n°6
-                .exclude_aberrant_values()  # Chaîne de traitement
+                .filter(value_bio_ht_agg__isnull=False)  # Chaîne de traitement n°5
+                .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
+                .exclude_aberrant_values()  # Chaîne de traitement n°8
             )
         else:
             return self.none()
