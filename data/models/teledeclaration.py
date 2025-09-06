@@ -20,12 +20,6 @@ from macantine.utils import (
 logger = logging.getLogger(__name__)
 
 
-def canteen_has_siret_or_siren_unite_legale_query():
-    canteen_has_siret_query = ~Q(canteen_siret=None) & ~Q(canteen_siret="")
-    canteen_has_siren_unite_legale_query = ~Q(canteen_siren_unite_legale=None) & ~Q(canteen_siren_unite_legale="")
-    return canteen_has_siret_query | canteen_has_siren_unite_legale_query
-
-
 def in_teledeclaration_campaign_query(year):
     year = int(year)
     return Q(

@@ -46,20 +46,6 @@ def in_correction_campaign_query(year):
     )
 
 
-def canteen_has_siret_or_siren_unite_legale_query():
-    # canteen_has_siret_query = Q(canteen__siret__isnull=False) & ~Q(canteen__siret="")
-    # canteen_has_siren_unite_legale_query = Q(canteen__siren_unite_legale__isnull=False) & ~Q(
-    #     canteen__siren_unite_legale=""
-    # )
-    # canteen_has_siret_query = Q(canteen_snapshot__siret__isnull=False) & ~Q(canteen_snapshot__siret="")
-    # canteen_has_siren_unite_legale_query = Q(canteen_snapshot__siren_unite_legale__isnull=False) & ~Q(
-    #     canteen_snapshot__siren_unite_legale=""
-    # )
-    canteen_has_siret_query = ~Q(canteen_siret=None) & ~Q(canteen_siret="")
-    canteen_has_siren_unite_legale_query = ~Q(canteen_siren_unite_legale=None) & ~Q(canteen_siren_unite_legale="")
-    return canteen_has_siret_query | canteen_has_siren_unite_legale_query
-
-
 class DiagnosticQuerySet(models.QuerySet):
     def filled(self):
         return self.filter(value_total_ht__gt=0)
@@ -82,12 +68,6 @@ class DiagnosticQuerySet(models.QuerySet):
 
     def teledeclared_for_year(self, year):
         return self.teledeclared().in_year(year).in_campaign(year)
-
-    def with_canteen_siret_and_siren_unite_legale(self):
-        return self.annotate(
-            canteen_siret=F("canteen_snapshot__siret"),
-            canteen_siren_unite_legale=F("canteen_snapshot__siren_unite_legale"),
-        )
 
     def with_meal_price(self):
         """
