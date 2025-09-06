@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
@@ -1177,6 +1178,13 @@ class Diagnostic(models.Model):
         null=True,
         blank=True,
     )
+    applicant = models.ForeignKey(
+        get_user_model(),
+        verbose_name="déclarant",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     canteen_snapshot = models.JSONField(
         blank=True,
         null=True,
@@ -1642,6 +1650,7 @@ class Diagnostic(models.Model):
             self.satellites_snapshot = serialized_satellites
 
         # applicant data
+        self.applicant = applicant
         self.applicant_snapshot = {
             "id": applicant.id,
             "name": applicant.get_full_name(),
@@ -1649,6 +1658,7 @@ class Diagnostic(models.Model):
         }
 
         # aggregated data
+        # TODO: compute on save() instead
         self.value_bio_ht_agg = self.total_bio
         self.value_sustainable_ht_agg = self.total_sustainable
         self.value_externality_performance_ht_agg = self.total_externality_performance
@@ -1677,6 +1687,7 @@ class Diagnostic(models.Model):
             raise ValidationError("Ce diagnostic doit avoir été télédéclaré")
 
         self.status = Diagnostic.DiagnosticStatus.DRAFT
+        self.applicant = None
         self.teledeclaration_date = None
         self.teledeclaration_mode = None
 
