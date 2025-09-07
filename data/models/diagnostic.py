@@ -1168,20 +1168,25 @@ class Diagnostic(models.Model):
 
     # Télédéclaration
     teledeclaration_date = models.DateTimeField(
+        verbose_name="date de télédéclaration",
         blank=True,
         null=True,
-        verbose_name="date de télédéclaration",
     )
     # a TD can use SATELLITE_WITHOUT_APPRO mode, as well as have some appro data of its own if,
     # for example, the manager of the satellite canteen started completing a diagnostic and then the
     # central kitchen decided to declare for its satellites.
     # We are leaving it up to the team to interpret the data in this case.
     teledeclaration_mode = models.CharField(
+        verbose_name="mode de télédéclaration",
         max_length=255,
         choices=TeledeclarationMode.choices,
-        verbose_name="mode de télédéclaration",
         null=True,
         blank=True,
+    )
+    teledeclaration_version = models.IntegerField(
+        verbose_name="version de la télédéclaration",
+        blank=True,
+        null=True,
     )
     applicant = models.ForeignKey(
         get_user_model(),
@@ -1191,21 +1196,21 @@ class Diagnostic(models.Model):
         blank=True,
     )
     canteen_snapshot = models.JSONField(
+        verbose_name="cantine (copie au moment de la télédéclaration)",
         blank=True,
         null=True,
-        verbose_name="cantine (copie au moment de la télédéclaration)",
         encoder=CustomJSONEncoder,
     )
     satellites_snapshot = models.JSONField(
+        verbose_name="satellites (copie au moment de la télédéclaration)",
         blank=True,
         null=True,
-        verbose_name="satellites (copie au moment de la télédéclaration)",
         encoder=CustomJSONEncoder,
     )
     applicant_snapshot = models.JSONField(
+        verbose_name="déclarant (copie au moment de la télédéclaration)",
         blank=True,
         null=True,
-        verbose_name="déclarant (copie au moment de la télédéclaration)",
         encoder=CustomJSONEncoder,
     )
 
@@ -1674,6 +1679,7 @@ class Diagnostic(models.Model):
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED
         self.teledeclaration_date = timezone.now()
         self.teledeclaration_mode = self._get_teledeclaration_mode()
+        self.teledeclaration_version = 15
 
         # save
         self.save()
@@ -1695,5 +1701,6 @@ class Diagnostic(models.Model):
         self.applicant = None
         self.teledeclaration_date = None
         self.teledeclaration_mode = None
+        self.teledeclaration_version = None
 
         self.save()

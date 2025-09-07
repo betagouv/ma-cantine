@@ -64,6 +64,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "tunnel_info",
         "teledeclaration_date",
         "teledeclaration_mode",
+        "teledeclaration_version",
         "applicant",
         "canteen_snapshot_pretty",
         "satellites_snapshot_pretty",
@@ -304,6 +305,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 "fields": (
                     "teledeclaration_date",
                     "teledeclaration_mode",
+                    "teledeclaration_version",
                     "applicant",
                     "canteen_snapshot_pretty",
                     "satellites_snapshot_pretty",
