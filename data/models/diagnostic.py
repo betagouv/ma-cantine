@@ -23,6 +23,7 @@ from data.utils import (
 from macantine.utils import (
     CAMPAIGN_DATES,
     EGALIM_OBJECTIVES,
+    TELEDECLARATION_CURRENT_VERSION,
     is_in_teledeclaration_or_correction,
 )
 
@@ -1696,7 +1697,7 @@ class Diagnostic(models.Model):
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED
         self.teledeclaration_date = timezone.now()
         self.teledeclaration_mode = self._get_teledeclaration_mode()
-        self.teledeclaration_version = 15
+        self.teledeclaration_version = TELEDECLARATION_CURRENT_VERSION
 
         # save
         self.save()
