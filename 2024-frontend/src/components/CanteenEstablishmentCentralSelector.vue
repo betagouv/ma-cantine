@@ -28,7 +28,7 @@ const prefillFields = () => {
     saveCanteenInfos(response)
   })
 }
-if (props.establishmentData) prefillFields()
+if (props.establishmentData.centralProducerSiret) prefillFields()
 else initFields()
 
 /* Search */
