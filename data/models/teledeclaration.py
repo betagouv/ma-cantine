@@ -48,7 +48,7 @@ class TeledeclarationQuerySet(models.QuerySet):
         return self.filter(status=Teledeclaration.TeledeclarationStatus.CANCELLED)
 
     def exclude_aberrant_values(self):
-        return self.exclude(meal_price__gt=20, value_total_ht__gt=1000000)
+        return self.exclude(meal_price__isnull=False, meal_price__gt=20, value_total_ht__gt=1000000)
 
     def in_year(self, year):
         return self.filter(year=int(year))
