@@ -9,7 +9,7 @@ def populate_diagnostic_teledeclaration_version(apps, schema_editor):
     for teledeclaration in Teledeclaration.objects.filter(status="SUBMITTED"):
         try:
             diagnostic = Diagnostic.objects.get(id=teledeclaration.diagnostic_id)
-            teledeclaration_version = teledeclaration.declared_data.get("teledeclaration_version")
+            teledeclaration_version = teledeclaration.declared_data.get("version")
             if teledeclaration_version:
                 diagnostic.teledeclaration_version = int(teledeclaration_version)
                 diagnostic.save(update_fields=["teledeclaration_version"])
