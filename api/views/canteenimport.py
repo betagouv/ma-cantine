@@ -256,7 +256,7 @@ class ImportCanteensView(APIView):
         errors.append({"message": message, "code": code})
 
     @staticmethod
-    def _validate_canteen(row):
+    def _validate_canteen(row):  # noqa C901
         if not normalise_siret(row[0]).isdigit():
             raise ValidationError({"siret": "Le SIRET doit être composé des chiffres"})
         if not row[5]:
