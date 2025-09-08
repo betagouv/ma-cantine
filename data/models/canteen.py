@@ -83,7 +83,7 @@ def has_missing_data_query():
         | Q(management_type=None)
         | Q(economic_model=None)
         # serving-specific rules (with annotate_with_sectors_count)
-        | (is_serving_query() & (Q(sectors__count__isnull=True) | Q(sectors__count__gt=3)))
+        | (is_serving_query() & (Q(sectors__count=0) | Q(sectors__count__gt=3)))
         # satellite-specific rules
         | (is_satellite_query() & has_charfield_missing_query("central_producer_siret"))
         | (is_satellite_query() & Q(central_producer_siret=F("siret")))
