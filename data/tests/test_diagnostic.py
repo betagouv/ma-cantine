@@ -99,11 +99,23 @@ class DiagnosticQuerySetTest(TestCase):
         with freeze_time(date_in_teledeclaration_campaign):
             cls.deleted_canteen_diagnostic.teledeclare(applicant=UserFactory())
 
+    def test_canteen_not_deleted_during_campaign(self):
+        self.assertEqual(Diagnostic.objects.count(), 11)
+        diagnostics = Diagnostic.objects.canteen_not_deleted_during_campaign(year_data)
+        self.assertEqual(diagnostics.count(), 10)
+        self.assertNotIn(self.deleted_canteen_diagnostic, diagnostics)
+
+    def test_canteen_has_siret_or_siren_unite_legale(self):
+        self.assertEqual(Diagnostic.objects.count(), 11)
+        diagnostics = Diagnostic.objects.canteen_has_siret_or_siren_unite_legale()
+        self.assertEqual(diagnostics.count(), 10)
+        self.assertNotIn(self.invalid_canteen_diagnostic, diagnostics)
+
     def test_canteen_for_stat(self):
         self.assertEqual(Diagnostic.objects.count(), 11)
         diagnostics = Diagnostic.objects.canteen_for_stat(year_data)
         self.assertEqual(diagnostics.count(), 9)
-        self.assertNotIn(self.invalid_canteen_diagnostic, diagnostics)  # canteen without siret
+        self.assertNotIn(self.invalid_canteen_diagnostic, diagnostics)  # canteen without siret/siren
         self.assertNotIn(self.deleted_canteen_diagnostic, diagnostics)  # canteen deleted during campaign
 
     def test_teledeclared_for_year(self):
@@ -121,7 +133,7 @@ class DiagnosticQuerySetTest(TestCase):
         diagnostics = Diagnostic.objects.valid_td_by_year(year_data)
         self.assertEqual(diagnostics.count(), 5)
         self.assertIn(self.valid_canteen_diagnostic_1, diagnostics)
-        self.assertNotIn(self.invalid_canteen_diagnostic, diagnostics)  # canteen without siret
+        self.assertNotIn(self.invalid_canteen_diagnostic, diagnostics)  # canteen without siret/siren
         self.assertNotIn(self.deleted_canteen_diagnostic, diagnostics)  # canteen deleted during campaign
 
     def test_historical_valid_td(self):
