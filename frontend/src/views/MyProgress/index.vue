@@ -123,6 +123,16 @@
                 Mettre à jour vos satellites
               </router-link>
             </li>
+            <li v-if="missingCanteenData" class="mb-1">
+              <router-link
+                :to="{
+                  name: 'GestionnaireCantineModifier',
+                  params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                }"
+              >
+                Mettre à jour votre établissement
+              </router-link>
+            </li>
             <li v-if="missingDeclarationMode">
               Choisir comment les données sont saisis pour vos satellites
             </li>
