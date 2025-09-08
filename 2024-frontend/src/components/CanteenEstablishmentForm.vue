@@ -11,6 +11,7 @@ import openDataService from "@/services/openData.js"
 import arraysService from "@/services/arrays.js"
 import options from "@/constants/canteen-establishment-form-options"
 import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
+import CanteenEstablishmentCentralSelector from "@/components/CanteenEstablishmentCentralSelector.vue"
 
 /* Data */
 const store = useRootStore()
@@ -69,6 +70,11 @@ const productionTypeOptions = computed(() => {
   optionsWithDisabled[indexCentralServingType].hint = disabledHint || optionsWithDisabled[indexCentralType].hint
   return optionsWithDisabled
 })
+
+/* Central */
+const selectCentralSiret = (siret) => {
+  form.centralProducerSiret = siret
+}
 
 /* Sectors */
 const sectorsOptions = ref([])
@@ -279,13 +285,6 @@ const rules = {
   satelliteCanteensCount: { required: requiredIf(showSatelliteCanteensCount), integer, minValue: minValue(1) },
   centralProducerSiret: {
     required: requiredIf(showCentralProducerSiret),
-    notSameSiret: helpers.withMessage(
-      "Le numéro SIRET du livreur ne peut pas être le même que celui de la cantine",
-      (value) => sirenIsRequired.value || value !== form.siret
-    ),
-    integer,
-    minLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", minLength(14)),
-    maxLength: helpers.withMessage("Le numéro SIRET doit contenir 14 caractères", maxLength(14)),
   },
   oneDelivery: {
     beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxOneDelivery.value || value),
@@ -336,18 +335,12 @@ const validateForm = (action) => {
           :error-message="formatError(v$.productionType)"
           @change="changeProductionMode"
         />
-        <div v-if="showCentralProducerSiret" class="canteen-establishment-form__central-producer-siret">
-          <DsfrInputGroup
-            v-model="form.centralProducerSiret"
-            label="SIRET du livreur *"
-            :label-visible="true"
-            :error-message="formatError(v$.centralProducerSiret)"
-          />
-          <p class="fr-hint-text fr-mb-0">
-            Vous ne le connaissez pas ? Trouvez-le avec
-            <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
-          </p>
-        </div>
+        <CanteenEstablishmentCentralSelector
+          v-if="showCentralProducerSiret"
+          @select="(siret) => selectCentralSiret(siret)"
+          :error-required="formatError(v$.centralProducerSiret)"
+          :establishment-data="prefillEstablishment"
+        />
         <DsfrInputGroup
           v-if="showSatelliteCanteensCount"
           v-model="form.satelliteCanteensCount"
@@ -557,12 +550,6 @@ const validateForm = (action) => {
       .fr-fieldset__element:last-child {
         margin-bottom: 0 !important;
       }
-    }
-  }
-
-  &__central-producer-siret {
-    .fr-input-group {
-      margin-bottom: 0.25rem !important;
     }
   }
 }
