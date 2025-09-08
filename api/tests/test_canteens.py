@@ -920,7 +920,7 @@ class TestCanteenActionApi(APITestCase):
 
         DiagnosticFactory.create(year=last_year, canteen=needs_daily_meal_count, value_total_ht=100)
 
-        # has a diagnostic but this canteen did not registered any satellites
+        # has a diagnostic but this canteen did not register any satellites
         DiagnosticFactory.create(year=last_year, canteen=needs_additional_satellites, value_total_ht=100)
 
         response = self.client.get(
