@@ -46,3 +46,9 @@ class FillCanteenDeclarationDonneesYearFieldCommandTest(TestCase):
         self.assertFalse(self.canteen_with_diagnostic_cancelled.declaration_donnees_2024)
         self.assertTrue(self.canteen_with_diagnostic_submitted.declaration_donnees_2024)
         self.assertTrue(self.canteen_satellite_with_central_diagnostic_submitted.declaration_donnees_2024)
+
+    def test_test_fill_canteen_declaration_donnees_year_field_for_canteen_with_deletion_date(self):
+        self.canteen_with_diagnostic_submitted.delete()
+        call_command("fill_canteen_declaration_donnees_year_field", year=2024)
+        self.canteen_with_diagnostic_submitted.refresh_from_db()
+        self.assertTrue(self.canteen_with_diagnostic_submitted.declaration_donnees_2024)
