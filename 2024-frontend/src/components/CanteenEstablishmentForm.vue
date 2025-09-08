@@ -278,7 +278,13 @@ const rules = {
   economicModel: { required },
   managementType: { required },
   productionType: { required },
-  sectors: { required: requiredIf(sectorsAreRequired) },
+  sectors: {
+    required: requiredIf(sectorsAreRequired),
+    maxThree: helpers.withMessage(
+      "Vous ne pouvez pas sélectionner plus de 3 secteurs",
+      (sectors) => sectors.length <= 3
+    ),
+  },
   lineMinistry: { required: requiredIf(showLineMinistry) },
   dailyMealCount: { required, integer, minValue: minValue(1) },
   yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
@@ -411,6 +417,7 @@ const validateForm = (action) => {
           v-model="form.sectors"
           label="Secteurs *"
           labelVisible
+          hint="3 secteurs maximum"
           :options="sectorsOptions"
           search
           id-key="sectorId"
