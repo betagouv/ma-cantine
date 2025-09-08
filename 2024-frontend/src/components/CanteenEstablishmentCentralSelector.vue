@@ -21,11 +21,13 @@ const initFields = () => {
   canteen.department = null
 }
 const prefillFields = () => {
-  canteen.found = true
-  canteen.status = "selected"
-  hasSelected.value = true
   canteensService.canteenStatus("siret", props.establishmentData.centralProducerSiret).then((response) => {
-    saveCanteenInfos(response)
+    if (response) {
+      saveCanteenInfos(response)
+      canteen.found = true
+      canteen.status = "selected"
+      hasSelected.value = true
+    }
   })
 }
 if (props.establishmentData.centralProducerSiret) prefillFields()
