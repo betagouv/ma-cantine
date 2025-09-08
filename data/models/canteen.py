@@ -227,7 +227,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         # annotate with action
         conditions = [
             When(
-                is_central_cuisine_query() & Q(satellites_in_db_count=0),
+                is_central_cuisine_query() & Q(satellites_in_db_count=None),
                 then=Value(Canteen.Actions.ADD_SATELLITES),
             ),
             When(
