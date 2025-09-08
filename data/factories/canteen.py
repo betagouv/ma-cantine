@@ -25,7 +25,7 @@ class CanteenFactory(factory.django.DjangoModelFactory):
             for sector in extracted:
                 self.sectors.add(sector)
         else:
-            for _ in range(random.randint(1, 4)):
+            for _ in range(random.randint(1, 3)):
                 self.sectors.add(SectorFactory.create())
 
     @factory.post_generation
