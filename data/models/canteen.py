@@ -199,10 +199,14 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         return self.filter(has_charfield_missing_query("city_insee_code"))
 
     def has_missing_data(self):
-        return self.annotate_with_requires_line_ministry().filter(has_missing_data_query())
+        return (
+            self.annotate_with_requires_line_ministry().annotate_with_sectors_count().filter(has_missing_data_query())
+        )
 
     def filled(self):
-        return self.annotate_with_requires_line_ministry().exclude(has_missing_data_query())
+        return (
+            self.annotate_with_requires_line_ministry().annotate_with_sectors_count().exclude(has_missing_data_query())
+        )
 
     def group_and_count_by_field(self, field):
         """
