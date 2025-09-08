@@ -5,10 +5,10 @@ import canteensService from "@/services/canteens.js"
 import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Props */
-const props = defineProps(['errorRequired', 'establishmentData'])
+const props = defineProps(["errorRequired", "establishmentData"])
 const store = useRootStore()
 const hasSelected = ref(false)
-const centralProductionTypes = ['central', 'central_serving']
+const centralProductionTypes = ["central", "central_serving"]
 
 /* Canteen fields */
 const canteen = reactive({})
@@ -22,13 +22,11 @@ const initFields = () => {
 }
 const prefillFields = () => {
   canteen.found = true
-  canteen.status = 'selected'
+  canteen.status = "selected"
   hasSelected.value = true
-  canteensService
-    .canteenStatus('siret', props.establishmentData.centralProducerSiret)
-    .then((response) => {
-      saveCanteenInfos(response)
-    })
+  canteensService.canteenStatus("siret", props.establishmentData.centralProducerSiret).then((response) => {
+    saveCanteenInfos(response)
+  })
 }
 if (props.establishmentData) prefillFields()
 else initFields()
@@ -48,14 +46,14 @@ const searchByNumber = () => {
   initFields()
   errorNotFound.value = ""
   canteensService
-    .canteenStatus('siret', cleanNumber)
+    .canteenStatus("siret", cleanNumber)
     .then((response) => {
       switch (true) {
         case response.length === 0:
           canteen.found = false
           errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro SIRET « ${cleanNumber} » ne correspond à aucun établissement`
           break
-        case !response.id :
+        case !response.id:
           canteen.found = false
           errorNotFound.value = `Le livreur de repas avec le numéro SIRET « ${cleanNumber} » n’est pas encore inscrit sur la plateforme, veuillez vous rapprocher de cet établissement pour aller plus loin`
           break
@@ -125,8 +123,7 @@ const unselectCanteen = () => {
       @select="selectCanteen()"
     />
     <p v-if="canteen.found && !hasSelected" class="fr-text--xs fr-mb-0 fr-mt-1w ma-cantine--text-center">
-      Ce n’est pas le bon établissement ? Refaites une recherche via le bon numéro SIRET, ou trouvez
-      l’information dans
+      Ce n’est pas le bon établissement ? Refaites une recherche via le bon numéro SIRET, ou trouvez l’information dans
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
     </p>
     <DsfrButton
