@@ -17,20 +17,24 @@ date_in_last_teledeclaration_campaign = "2024-02-01"
 class DiagnosticQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.valid_canteen_1 = CanteenFactory(siret="12345678901234", yearly_meal_count=100)
-        cls.valid_canteen_2 = CanteenFactory(siren_unite_legale="123456789", yearly_meal_count=100)
-        cls.valid_canteen_3 = CanteenFactory(
+        cls.canteen_valid_1 = CanteenFactory(siret="12345678901234", yearly_meal_count=100)
+        cls.canteen_valid_2 = CanteenFactory(siren_unite_legale="123456789", yearly_meal_count=100)
+        cls.canteen_valid_3 = CanteenFactory(
             siret="12345678901235", siren_unite_legale="123456789", yearly_meal_count=100
         )
-        cls.valid_canteen_4 = CanteenFactory(siret="12345678901230", yearly_meal_count=0)  # not aberrant
-        cls.valid_canteen_sat = CanteenFactory(
+        cls.canteen_valid_4 = CanteenFactory(siret="12345678901236", yearly_meal_count=0)  # not aberrant
+        cls.canteen_valid_5 = CanteenFactory(siret="12345678901237", yearly_meal_count=None)  # not aberrant
+        cls.canteen_valid_sat = CanteenFactory(
             siret="12345678901232", production_type=Canteen.ProductionType.ON_SITE_CENTRAL
         )
-        cls.valid_canteen_5_armee = CanteenFactory(
+        cls.canteen_valid_6_armee = CanteenFactory(
             siret="12345678901233", line_ministry=Canteen.Ministries.ARMEE, yearly_meal_count=100
         )
-        cls.invalid_canteen = CanteenFactory(siret="", yearly_meal_count=100)  # siret missing
-        cls.deleted_canteen = CanteenFactory(
+        cls.canteen_missing_siret = CanteenFactory(siret="", yearly_meal_count=100)  # siret missing
+        cls.canteen_meal_price_aberrant = CanteenFactory(siret="12345678901238", yearly_meal_count=100)
+        cls.canteen_value_total_ht_aberrant = CanteenFactory(siret="12345678901239", yearly_meal_count=100000)
+        cls.canteen_aberrant = CanteenFactory(siret="12345678901240", yearly_meal_count=100)
+        cls.canteen_deleted = CanteenFactory(
             siret="56789012345678",
             yearly_meal_count=100,
             deletion_date=timezone.make_aware(
@@ -39,7 +43,14 @@ class DiagnosticQuerySetTest(TestCase):
         )
 
         for index, canteen in enumerate(
-            [cls.valid_canteen_1, cls.valid_canteen_2, cls.valid_canteen_3, cls.valid_canteen_5_armee]
+            [
+                cls.canteen_valid_1,
+                cls.canteen_valid_2,
+                cls.canteen_valid_3,
+                cls.canteen_valid_4,
+                cls.canteen_valid_5,
+                cls.canteen_valid_6_armee,
+            ]
         ):
             diagnostic = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -48,6 +59,9 @@ class DiagnosticQuerySetTest(TestCase):
                 canteen=canteen,
                 value_total_ht=1000.00,
                 value_bio_ht=200.00,
+                value_sustainable_ht=100.00,
+                value_externality_performance_ht=100.00,
+                value_egalim_others_ht=100.00,
             )
             with freeze_time(date_in_teledeclaration_campaign):
                 diagnostic.teledeclare(applicant=UserFactory())
@@ -61,116 +75,135 @@ class DiagnosticQuerySetTest(TestCase):
             )
             with freeze_time(date_in_last_teledeclaration_campaign):
                 diagnostic_last_year.teledeclare(applicant=UserFactory())
-            setattr(cls, f"valid_canteen_diagnostic_{index + 1}", diagnostic)
+            setattr(cls, f"diagnostic_canteen_valid_{index + 1}", diagnostic)
 
-        cls.valid_canteen_diagnostic_4 = DiagnosticFactory(
+        cls.diagnostic_canteen_missing_siret = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
-            canteen=cls.valid_canteen_4,
-            value_total_ht=1000.00,
-            value_bio_ht=200.00,
-            value_sustainable_ht=100.00,
-            value_externality_performance_ht=100.00,
-            value_egalim_others_ht=100.00,
-        )
-        with freeze_time(date_in_teledeclaration_campaign):
-            cls.valid_canteen_diagnostic_4.teledeclare(applicant=UserFactory())
-
-        cls.invalid_canteen_diagnostic = DiagnosticFactory(
-            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            year=year_data,
-            creation_date=date_in_teledeclaration_campaign,
-            canteen=cls.invalid_canteen,
+            canteen=cls.canteen_missing_siret,
             value_total_ht=1000.00,
             value_bio_ht=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.invalid_canteen_diagnostic.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_missing_siret.teledeclare(applicant=UserFactory())
 
-        cls.deleted_canteen_diagnostic = DiagnosticFactory(
+        cls.diagnostic_canteen_meal_price_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
-            canteen=cls.deleted_canteen,
-            value_total_ht=1000001.00,  # aberrant (and meal_price > 20)
+            canteen=cls.canteen_meal_price_aberrant,
+            value_total_ht=1000000.00,  # meal_price > 20
             value_bio_ht=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.deleted_canteen_diagnostic.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_meal_price_aberrant.teledeclare(applicant=UserFactory())
+
+        cls.diagnostic_canteen_value_total_ht_aberrant = DiagnosticFactory(
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=year_data,
+            creation_date=date_in_teledeclaration_campaign,
+            canteen=cls.canteen_value_total_ht_aberrant,
+            value_total_ht=1000001.00,  # aberrant but meal_price < 20
+            value_bio_ht=200.00,
+        )
+        with freeze_time(date_in_teledeclaration_campaign):
+            cls.diagnostic_canteen_value_total_ht_aberrant.teledeclare(applicant=UserFactory())
+
+        cls.diagnostic_canteen_aberrant = DiagnosticFactory(
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=year_data,
+            creation_date=date_in_teledeclaration_campaign,
+            canteen=cls.canteen_aberrant,
+            value_total_ht=1000001.00,  # aberrant AND meal_price > 20
+            value_bio_ht=200.00,
+        )
+        with freeze_time(date_in_teledeclaration_campaign):
+            cls.diagnostic_canteen_aberrant.teledeclare(applicant=UserFactory())
+
+        cls.diagnostic_canteen_deleted = DiagnosticFactory(
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=year_data,
+            creation_date=date_in_teledeclaration_campaign,
+            canteen=cls.canteen_deleted,
+            value_total_ht=1000.00,
+            value_bio_ht=200.00,
+        )
+        with freeze_time(date_in_teledeclaration_campaign):
+            cls.diagnostic_canteen_deleted.teledeclare(applicant=UserFactory())
 
     def test_canteen_not_deleted_during_campaign(self):
-        self.assertEqual(Diagnostic.objects.count(), 11)
+        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.canteen_not_deleted_during_campaign(year_data)
-        self.assertEqual(diagnostics.count(), 10)
-        self.assertNotIn(self.deleted_canteen_diagnostic, diagnostics)
+        self.assertEqual(diagnostics.count(), 16)
+        self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)
 
     def test_canteen_has_siret_or_siren_unite_legale(self):
-        self.assertEqual(Diagnostic.objects.count(), 11)
+        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.canteen_has_siret_or_siren_unite_legale()
-        self.assertEqual(diagnostics.count(), 10)
-        self.assertNotIn(self.invalid_canteen_diagnostic, diagnostics)
+        self.assertEqual(diagnostics.count(), 16)
+        self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)
 
     def test_canteen_for_stat(self):
-        self.assertEqual(Diagnostic.objects.count(), 11)
+        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.canteen_for_stat(year_data)
-        self.assertEqual(diagnostics.count(), 9)
-        self.assertNotIn(self.invalid_canteen_diagnostic, diagnostics)  # canteen without siret/siren
-        self.assertNotIn(self.deleted_canteen_diagnostic, diagnostics)  # canteen deleted during campaign
+        self.assertEqual(diagnostics.count(), 15)
+        self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)  # canteen without siret/siren
+        self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)  # canteen deleted during campaign
 
     def test_teledeclared_for_year(self):
-        self.assertEqual(Diagnostic.objects.count(), 11)
+        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.teledeclared_for_year(year_data)
-        self.assertEqual(diagnostics.count(), 7)
-        self.assertIn(self.valid_canteen_diagnostic_1, diagnostics)
-        self.assertIn(self.invalid_canteen_diagnostic, diagnostics)
-        self.assertIn(self.deleted_canteen_diagnostic, diagnostics)
+        self.assertEqual(diagnostics.count(), 11)
+        self.assertIn(self.diagnostic_canteen_valid_1, diagnostics)
+        self.assertIn(self.diagnostic_canteen_missing_siret, diagnostics)
+        self.assertIn(self.diagnostic_canteen_deleted, diagnostics)
         diagnostics = Diagnostic.objects.teledeclared_for_year(year_data - 1)
-        self.assertEqual(diagnostics.count(), 4)
+        self.assertEqual(diagnostics.count(), 6)
 
     def test_valid_td_by_year(self):
-        self.assertEqual(Diagnostic.objects.count(), 11)
+        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.valid_td_by_year(year_data)
-        self.assertEqual(diagnostics.count(), 5)
-        self.assertIn(self.valid_canteen_diagnostic_1, diagnostics)
-        self.assertNotIn(self.invalid_canteen_diagnostic, diagnostics)  # canteen without siret/siren
-        self.assertNotIn(self.deleted_canteen_diagnostic, diagnostics)  # canteen deleted during campaign
+        self.assertEqual(diagnostics.count(), 8)
+        self.assertIn(self.diagnostic_canteen_valid_1, diagnostics)
+        self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)  # canteen without siret/siren
+        self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)  # canteen deleted during campaign
 
     def test_historical_valid_td(self):
-        self.assertEqual(Diagnostic.objects.count(), 11)
+        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.historical_valid_td([year_data])
-        self.assertEqual(diagnostics.count(), 5)
+        self.assertEqual(diagnostics.count(), 8)
         diagnostics = Diagnostic.objects.historical_valid_td([year_data - 1])
-        self.assertEqual(diagnostics.count(), 4)
+        self.assertEqual(diagnostics.count(), 6)
         diagnostics = Diagnostic.objects.historical_valid_td([year_data, year_data - 1])
-        self.assertEqual(diagnostics.count(), 5 + 4)
+        self.assertEqual(diagnostics.count(), 8 + 6)
 
     def test_with_meal_price(self):
-        self.assertEqual(Diagnostic.objects.count(), 11)
+        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.with_meal_price()
-        self.assertEqual(diagnostics.count(), 11)
-        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_1.id).canteen_yearly_meal_count, 100)
-        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_1.id).meal_price, 10.0)
-        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_4.id).canteen_yearly_meal_count, 0)
-        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_4.id).meal_price, None)
+        self.assertEqual(diagnostics.count(), 17)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_1.id).canteen_yearly_meal_count, 100)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_1.id).meal_price, 10.0)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).canteen_yearly_meal_count, 0)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).meal_price, None)
 
     def test_exclude_aberrant_values(self):
-        self.assertEqual(Diagnostic.objects.count(), 11)
+        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.exclude_aberrant_values()
-        self.assertEqual(diagnostics.count(), 10)
-        self.assertNotIn(self.deleted_canteen_diagnostic, diagnostics)
+        self.assertEqual(diagnostics.count(), 16)
+        self.assertNotIn(self.diagnostic_canteen_aberrant, diagnostics)
 
     def test_publicly_visible(self):
-        self.assertEqual(Diagnostic.objects.count(), 11)
-        self.assertEqual(Diagnostic.objects.publicly_visible().count(), 9)  # 2 belong to canteen_army
+        self.assertEqual(Diagnostic.objects.count(), 17)
+        self.assertEqual(Diagnostic.objects.publicly_visible().count(), 15)  # 2 belong to canteen_army
 
     def test_with_appro_percent_stats(self):
-        self.assertEqual(Diagnostic.objects.count(), 11)
+        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.with_appro_percent_stats()
-        self.assertEqual(diagnostics.count(), 11)
-        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_4.id).bio_percent, 20)
-        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_4.id).value_egalim_ht_agg, 500)
-        self.assertEqual(diagnostics.get(id=self.valid_canteen_diagnostic_4.id).egalim_percent, 50)
+        self.assertEqual(diagnostics.count(), 17)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).bio_percent, 20)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).value_egalim_ht_agg, 500)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).egalim_percent, 50)
 
 
 class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
