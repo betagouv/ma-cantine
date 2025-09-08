@@ -898,13 +898,13 @@ class TestCanteenActionApi(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_no_sectors_siret
         )
 
-        td_diag_central_whit_one_sat = DiagnosticFactory.create(
+        td_diag_central_with_one_sat = DiagnosticFactory.create(
             year=last_year,
             canteen=complete_central_with_diff_sat_count,
             value_total_ht=1000,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
-        Teledeclaration.create_from_diagnostic(td_diag_central_whit_one_sat, authenticate.user)
+        Teledeclaration.create_from_diagnostic(td_diag_central_with_one_sat, authenticate.user)
 
         DiagnosticFactory.create(year=last_year, canteen=needs_to_fill_diag, value_total_ht=None)
         # make sure the endpoint only looks at diagnostics of the year requested
