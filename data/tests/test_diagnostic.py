@@ -270,6 +270,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_teledeclare(self):
+        self.assertIsNone(self.diagnostic.applicant)
         self.assertIsNone(self.diagnostic.canteen_snapshot)
         self.assertIsNone(self.diagnostic.satellites_snapshot)
         self.assertIsNone(self.diagnostic.applicant_snapshot)
@@ -284,6 +285,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.diagnostic.save()
         # teledeclare
         self.diagnostic.teledeclare(applicant=self.user)
+        self.assertEqual(self.diagnostic.applicant, self.user)
         self.assertIsNotNone(self.diagnostic.canteen_snapshot)
         self.assertEqual(self.diagnostic.canteen_snapshot["id"], self.canteen_central.id)
         self.assertIsNotNone(self.diagnostic.satellites_snapshot)
@@ -335,10 +337,12 @@ class DiagnosticModelCancelMethodTest(TestCase):
         # teledeclare the diagnostic
         self.diagnostic.teledeclare(applicant=UserFactory())
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
+        self.assertIsNotNone(self.diagnostic.applicant)
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
         self.assertIsNotNone(self.diagnostic.teledeclaration_mode)
         # cancel
         self.diagnostic.cancel()
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
+        self.assertIsNone(self.diagnostic.applicant)
         self.assertIsNone(self.diagnostic.teledeclaration_date)
         self.assertIsNone(self.diagnostic.teledeclaration_mode)
