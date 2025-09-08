@@ -97,12 +97,9 @@
     <v-row v-if="canteen.isCentralCuisine">
       <v-col cols="12" class="pb-0">
         <h3 class="fr-h6">Mes satellites</h3>
-        <p class="fr-text-sm mb-1">
-          {{ canteen.satellites.length }} sur {{ canteen.satelliteCanteensCount }} satellites renseignés
-        </p>
-        <p v-if="inTeledeclarationCampaign && hasSatelliteInconsistency" class="fr-text-sm mb-0 d-flex align-center">
-          <v-icon color="amber darken-3" class="mr-1">$error-warning-line</v-icon>
-          Pour télédéclarer le bilan de {{ lastYear }}, le nombre déclaré et le nombre renseigné doivent être les mêmes.
+        <p class="fr-text-sm mb-1 d-flex align-center" :class="{ 'dark-orange': hasSatelliteInconsistency }">
+          <v-icon v-if="hasSatelliteInconsistency" small class="mr-1 dark-orange">$alert-line</v-icon>
+          {{ satelliteCountEmpty }}
         </p>
       </v-col>
       <v-col cols="12" md="8">
@@ -178,11 +175,13 @@ export default {
     isSatellite() {
       return this.canteen?.productionType === "site_cooked_elsewhere"
     },
-    inTeledeclarationCampaign() {
-      return window.ENABLE_TELEDECLARATION
-    },
     hasSatelliteInconsistency() {
       return hasSatelliteInconsistency(this.canteen)
+    },
+    satelliteCountEmpty() {
+      const satPluralize = this.canteen.satelliteCanteensCount > 1 ? "satellites" : "satellite"
+      const fillPluralize = this.canteen.satellites.length > 1 ? "renseignés" : "renseigné"
+      return `${this.canteen.satellites.length} sur ${this.canteen.satelliteCanteensCount} ${satPluralize} ${fillPluralize}`
     },
   },
 }

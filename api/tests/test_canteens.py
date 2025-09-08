@@ -811,6 +811,20 @@ class TestCanteenActionApi(APITestCase):
             satellite_canteens_count=1,
             sectors=None,
         )
+        central_with_one_sat_siret = "98032330938462"
+        complete_central_with_diff_sat_count = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL,
+            management_type=Canteen.ManagementType.DIRECT,
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            yearly_meal_count=365,
+            siret=central_with_one_sat_siret,
+            managers=[authenticate.user],
+            satellite_canteens_count=10,
+            sectors=None,
+        )
+        CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_with_one_sat_siret
+        )
         # complete diag
         needs_to_fill_diag = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -822,8 +836,12 @@ class TestCanteenActionApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
+        central_siret = "75665621899908"
         needs_diagnostic_mode = CanteenFactory.create(
-            production_type=Canteen.ProductionType.CENTRAL, siret="75665621899905", managers=[authenticate.user]
+            production_type=Canteen.ProductionType.CENTRAL, siret=central_siret, managers=[authenticate.user]
+        )
+        CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
         )
         # complete establishement
         needs_sectors = CanteenFactory.create(
@@ -855,11 +873,11 @@ class TestCanteenActionApi(APITestCase):
             managers=[authenticate.user],
         )
         # create satellites
-        central_siret = "78146469373706"
         needs_additional_satellites = CanteenFactory.create(
-            siret=central_siret,
+            siret="78146469373706",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=3,
+            daily_meal_count=12,
             managers=[authenticate.user],
         )
         CanteenFactory.create(name="Not my canteen")
@@ -880,6 +898,14 @@ class TestCanteenActionApi(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_no_sectors_siret
         )
 
+        td_diag_central_with_one_sat = DiagnosticFactory.create(
+            year=last_year,
+            canteen=complete_central_with_diff_sat_count,
+            value_total_ht=1000,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+        )
+        Teledeclaration.create_from_diagnostic(td_diag_central_with_one_sat, authenticate.user)
+
         DiagnosticFactory.create(year=last_year, canteen=needs_to_fill_diag, value_total_ht=None)
         # make sure the endpoint only looks at diagnostics of the year requested
         DiagnosticFactory.create(year=last_year - 1, canteen=needs_to_fill_diag, value_total_ht=1000)
@@ -894,14 +920,8 @@ class TestCanteenActionApi(APITestCase):
 
         DiagnosticFactory.create(year=last_year, canteen=needs_daily_meal_count, value_total_ht=100)
 
-        # has a diagnostic but this canteen registered only two of three satellites
+        # has a diagnostic but this canteen did not register any satellites
         DiagnosticFactory.create(year=last_year, canteen=needs_additional_satellites, value_total_ht=100)
-        CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
-        )
-        CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_siret
-        )
 
         response = self.client.get(
             reverse("list_actionable_canteens", kwargs={"year": last_year}) + "?ordering=action,modification_date"
@@ -910,7 +930,7 @@ class TestCanteenActionApi(APITestCase):
 
         body = response.json()
         returned_canteens = body["results"]
-        self.assertEqual(len(returned_canteens), 9)
+        self.assertEqual(len(returned_canteens), 10)
 
         expected_actions = [
             (needs_additional_satellites, "10_add_satellites"),
@@ -922,6 +942,7 @@ class TestCanteenActionApi(APITestCase):
             (needs_td, "40_teledeclare"),
             (complete, "95_nothing"),
             (complete_central_no_sectors, "95_nothing"),
+            (complete_central_with_diff_sat_count, "95_nothing"),
         ]
         for index, (canteen, action) in zip(range(len(expected_actions)), expected_actions):
             self.assertEqual(returned_canteens[index]["id"], canteen.id)
@@ -984,6 +1005,15 @@ class TestCanteenActionApi(APITestCase):
         canteen.production_type = Canteen.ProductionType.CENTRAL
         canteen.satellite_canteens_count = None
         canteen.save()
+        canteen_sat = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            management_type=Canteen.ManagementType.DIRECT,
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            yearly_meal_count=1000,
+            daily_meal_count=12,
+            central_producer_siret=canteen.siret,
+            managers=[authenticate.user],
+        )
         diagnostic.central_kitchen_diagnostic_mode = "APPRO"
         diagnostic.save()
 
@@ -996,6 +1026,7 @@ class TestCanteenActionApi(APITestCase):
         diagnostic.save()
 
         # Central kitchens with missing satellites should return the add satellite action
+        canteen_sat.delete()
         canteen.satellite_canteens_count = 123
         canteen.save()
 

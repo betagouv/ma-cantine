@@ -75,14 +75,13 @@
       </v-card-actions>
     </v-card>
     <v-card
-      v-else-if="hasSatelliteInconsistency"
+      v-else-if="inTeledeclarationCampaign && hasSatelliteInconsistency"
       class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
     >
       <p>
         {{ satelliteInconsistencyMessage }}
-        <span v-if="inTeledeclarationCampaign">
-          Veuillez corriger le divergence avant télédéclarer.
-        </span>
+        <br />
+        Veuillez ajouter vos satellites avant télédéclarer.
       </p>
       <v-card-actions class="px-0 pt-0 pb-0 justify-center">
         <v-btn :to="{ name: 'SatelliteManagement' }" color="primary" class="fr-text font-weight-medium">
@@ -257,12 +256,7 @@ export default {
     satelliteInconsistencyMessage() {
       const satelliteCount = this.canteen.satelliteCanteensCount
       const declared = satelliteCount === 1 ? `une cantine` : `${satelliteCount} cantines`
-      const dbCount = this.canteen.satellites?.length
-      const dbString = dbCount === 1 ? "une cantine associée" : `${dbCount} cantines associées`
-      return (
-        `Vous avez déclaré que votre établissement livrait des repas à ${declared}, ` +
-        `mais nous comptons ${dbString} à votre établissement dans notre base de données.`
-      )
+      return `Vous avez déclaré que votre établissement livrait des repas à ${declared} mais aucune n'a été enregistrée.`
     },
     readyToTeledeclare() {
       return readyToTeledeclare(this.canteen, this.canteenDiagnostic, this.$store.state.sectors)
