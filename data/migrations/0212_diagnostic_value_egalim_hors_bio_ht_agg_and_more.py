@@ -5,6 +5,22 @@ from decimal import Decimal
 from django.db import migrations, models
 
 
+def populate_diagnostic_value_egalim_hors_bio_ht_agg(apps, schema_editor):
+    Diagnostic = apps.get_model("data", "Diagnostic")
+    for diagnostic in Diagnostic.objects.all():
+        if diagnostic.value_bio_ht_agg is not None or diagnostic.value_egalim_ht_agg is not None:
+            value_egalim_ht_agg = (diagnostic.value_egalim_ht_agg or 0) + (diagnostic.value_bio_ht_agg or 0)
+            diagnostic.value_egalim_hors_bio_ht_agg = value_egalim_ht_agg
+            diagnostic.save(update_fields=["value_egalim_hors_bio_ht_agg"])
+
+
+
+def undo_populate_diagnostic_value_egalim_hors_bio_ht_agg(apps, schema_editor):
+    Diagnostic = apps.get_model("data", "Diagnostic")
+    Diagnostic.objects.all().update(value_egalim_hors_bio_ht_agg=None)
+
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -39,4 +55,5 @@ class Migration(migrations.Migration):
                 verbose_name="EGalim (Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)",
             ),
         ),
+        migrations.RunPython(populate_diagnostic_value_egalim_hors_bio_ht_agg, undo_populate_diagnostic_value_egalim_hors_bio_ht_agg),
     ]
