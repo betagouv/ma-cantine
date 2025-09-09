@@ -276,6 +276,8 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertIsNone(self.diagnostic.applicant_snapshot)
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
         self.assertIsNone(self.diagnostic.teledeclaration_date)
+        self.assertIsNone(self.diagnostic.teledeclaration_mode)
+        self.assertIsNone(self.diagnostic.teledeclaration_version)
         # fill the diagnostic
         self.diagnostic.value_total_ht = 1000
         self.diagnostic.value_bio_ht = 200
@@ -301,6 +303,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
         self.assertEqual(self.diagnostic.teledeclaration_mode, Diagnostic.TeledeclarationMode.CENTRAL_ALL)
+        self.assertEqual(self.diagnostic.teledeclaration_version, 15)
         # try to teledeclare again
         with self.assertRaises(ValidationError):
             self.diagnostic.teledeclare(applicant=UserFactory())
@@ -340,9 +343,11 @@ class DiagnosticModelCancelMethodTest(TestCase):
         self.assertIsNotNone(self.diagnostic.applicant)
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
         self.assertIsNotNone(self.diagnostic.teledeclaration_mode)
+        self.assertIsNotNone(self.diagnostic.teledeclaration_version)
         # cancel
         self.diagnostic.cancel()
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
         self.assertIsNone(self.diagnostic.applicant)
         self.assertIsNone(self.diagnostic.teledeclaration_date)
         self.assertIsNone(self.diagnostic.teledeclaration_mode)
+        self.assertIsNone(self.diagnostic.teledeclaration_version)
