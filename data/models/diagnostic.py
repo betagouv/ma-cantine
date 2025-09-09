@@ -1231,6 +1231,14 @@ class Diagnostic(models.Model):
         return self.status == Diagnostic.DiagnosticStatus.SUBMITTED
 
     @property
+    def is_teledeclared_by_cc(self):
+        return self.teledeclaration_mode and self.teledeclaration_mode in [
+            Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO,
+            Diagnostic.TeledeclarationMode.CENTRAL_APPRO,
+            Diagnostic.TeledeclarationMode.CENTRAL_ALL,
+        ]
+
+    @property
     def latest_submitted_teledeclaration(self):
         submitted_teledeclarations = self.teledeclaration_set.submitted()
         if submitted_teledeclarations.count() == 0:
