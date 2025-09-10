@@ -169,6 +169,12 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         qs = qs.prefetch_related("teledeclaration_set")
         return qs
 
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if "delete_selected" in actions:
+            del actions["delete_selected"]
+        return actions
+
     def save_model(self, request, obj, form, change):
         if not change:
             obj.creation_source = CreationSource.ADMIN
