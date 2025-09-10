@@ -82,8 +82,8 @@ def has_missing_data_query():
         | Q(production_type=None)
         | Q(management_type=None)
         | Q(economic_model=None)
-        # serving-specific rules
-        | (is_serving_query() & (Q(sectors=None)))
+        # serving-specific rules (with annotate_with_sectors_count)
+        | (is_serving_query() & (Q(sectors__count=0) | Q(sectors__count__gt=3)))
         # satellite-specific rules
         | (is_satellite_query() & has_charfield_missing_query("central_producer_siret"))
         | (is_satellite_query() & Q(central_producer_siret=F("siret")))
@@ -183,6 +183,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         )
         return self.annotate(requires_line_ministry=Exists(has_sector_requiring_line_ministry))
 
+    def annotate_with_sectors_count(self):
+        return self.annotate(Count("sectors"))
+
     def has_siret(self):
         return self.exclude(has_charfield_missing_query("siret"))
 
@@ -196,10 +199,14 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         return self.filter(has_charfield_missing_query("city_insee_code"))
 
     def has_missing_data(self):
-        return self.annotate_with_requires_line_ministry().filter(has_missing_data_query())
+        return (
+            self.annotate_with_requires_line_ministry().annotate_with_sectors_count().filter(has_missing_data_query())
+        )
 
     def filled(self):
-        return self.annotate_with_requires_line_ministry().exclude(has_missing_data_query())
+        return (
+            self.annotate_with_requires_line_ministry().annotate_with_sectors_count().exclude(has_missing_data_query())
+        )
 
     def group_and_count_by_field(self, field):
         """
@@ -216,6 +223,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
         # prep missing data action
         self = self.annotate_with_requires_line_ministry()
+        self = self.annotate_with_sectors_count()
         # prep add satellites action
         self = self.annotate_with_satellites_in_db_count()
         self = self.annotate_with_central_kitchen_id()
