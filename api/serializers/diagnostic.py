@@ -220,11 +220,12 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
 
 
 class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
-    canteen_siret = serializers.CharField(source="canteen_snapshot.siret", read_only=True)
     canteen_name = serializers.CharField(source="canteen_snapshot.name", read_only=True)
+    canteen_siret = serializers.CharField(source="canteen_snapshot.siret", read_only=True)
+    canteen_siren_unite_legale = serializers.CharField(source="canteen_snapshot.siren_unite_legale", read_only=True)
     canteen_central_kitchen_siret = serializers.CharField(
-        source="canteen_snapshot.central_kitchen_siret", read_only=True
-    )
+        source="canteen_snapshot.central_producer_siret", read_only=True
+    )  # incohérence dans le nom du champ
     canteen_city_insee_code = serializers.CharField(source="canteen_snapshot.city_insee_code", read_only=True)
     canteen_epci = serializers.CharField(source="canteen_snapshot.epci", read_only=True)
     canteen_epci_lib = serializers.CharField(source="canteen_snapshot.epci_lib", read_only=True)
@@ -254,8 +255,9 @@ class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
             # TODO: "applicant_id",
             # canteen fields
             "canteen_id",
-            "canteen_siret",
             "canteen_name",
+            "canteen_siret",
+            "canteen_siren_unite_legale",
             "canteen_central_kitchen_siret",
             "canteen_city_insee_code",
             "canteen_epci",
