@@ -174,6 +174,9 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
             obj.creation_source = CreationSource.ADMIN
         super().save_model(request, obj, form, change)
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     @admin.display(description="Siret (ou Siren)")
     def siret_or_siren_unite_legale_display(self, obj):
         return obj.siret_or_siren_unite_legale
@@ -205,6 +208,9 @@ class CanteenInline(admin.TabularInline):
 
     def has_add_permission(self, request, obj):
         return True
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     @admin.display(description="Gestionnaire")
     def help(self, obj):
