@@ -4,6 +4,7 @@ from decimal import Decimal, InvalidOperation
 from rest_framework import serializers
 
 from data.models import Diagnostic
+from macantine.etl import utils
 
 from .teledeclaration import ShortTeledeclarationSerializer
 from .utils import appro_to_percentages
@@ -220,6 +221,10 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
 
 
 class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
+    diagnostic_type = serializers.CharField(source="teledeclaration_type", read_only=True)  # TODO: avoid renaming?
+    creation_date = serializers.DateTimeField(source="teledeclaration_date", read_only=True)  # TODO: avoid renaming?
+    version = serializers.CharField(source="teledeclaration_version", read_only=True)  # TODO: avoid renaming?
+
     canteen_name = serializers.CharField(source="canteen_snapshot.name", read_only=True)
     canteen_siret = serializers.CharField(source="canteen_snapshot.siret", read_only=True)
     canteen_siren_unite_legale = serializers.CharField(source="canteen_snapshot.siren_unite_legale", read_only=True)
@@ -242,17 +247,22 @@ class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
     canteen_sectors = serializers.ListField(source="canteen_snapshot.sectors", read_only=True)
     canteen_line_ministry = serializers.CharField(source="canteen_snapshot.line_ministry", read_only=True)
 
+    teledeclaration_ratio_bio = serializers.SerializerMethodField(read_only=True)  # TODO: compute & store in DB?
+    teledeclaration_ratio_egalim_hors_bio = serializers.SerializerMethodField(
+        read_only=True
+    )  # TODO: compute & store in DB?
+
     class Meta:
         model = Diagnostic
         fields = (
             "id",
-            "diagnostic_type",  # will be renamed to teledeclaration_type
+            "diagnostic_type",
             "teledeclaration_mode",
-            "teledeclaration_date",
+            "creation_date",
             "year",
-            # TODO: "version",
-            # application fields
-            # TODO: "applicant_id",
+            "version",
+            # applicant fields
+            "applicant_id",
             # canteen fields
             "canteen_id",
             "canteen_name",
@@ -272,13 +282,23 @@ class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
             "canteen_production_type",
             "canteen_sectors",
             "canteen_line_ministry",
-            # value fields (need to compute teledeclaration_ratio_bio & teledeclaration_ratio_egalim_hors_bio)
-            "value_total_ht",
-            "value_bio_ht_agg",
-            "value_sustainable_ht_agg",
-            "value_externality_performance_ht_agg",
-            "value_egalim_others_ht_agg",
-            # "teledeclaration_ratio_bio",  # will be computed
-            # "teledeclaration_ratio_egalim_hors_bio"  # will be computed
+            # value fields
+            "teledeclaration_ratio_bio",
+            "teledeclaration_ratio_egalim_hors_bio",
         )
         read_only_fields = fields
+
+    def get_teledeclaration_ratio_bio(self, obj):
+        return obj.value_bio_ht_agg / obj.value_total_ht
+
+    def get_teledeclaration_ratio_egalim_hors_bio(self, obj):
+        return (
+            utils.sum_int_and_none(
+                [
+                    obj.value_sustainable_ht_agg,
+                    obj.value_externality_performance_ht_agg,
+                    obj.value_egalim_others_ht_agg,
+                ]
+            )
+            / obj.value_total_ht
+        )
