@@ -92,16 +92,13 @@ class TestETLOpenData(TestCase):
 
         self.assertEqual(len(etl_td.get_dataset().columns), len(schema_cols), "The columns should match the schema")
         self.assertEqual(etl_td.len_dataset(), 1, "Only 1 TD in the 2022 campaign")
-        # self.assertEqual(etl_td.get_dataset().iloc[0]["applicant_id"], self.user_manager.id)
+        self.assertEqual(etl_td.get_dataset().iloc[0]["applicant_id"], self.user_manager.id)
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_siret"], "19382111300027")
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_name"], "Cantine")
-        self.assertEqual(str(etl_td.get_dataset().iloc[0]["canteen_central_kitchen_siret"]), "nan")
+        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_central_kitchen_siret"], None)
         self.assertEqual(str(etl_td.get_dataset().iloc[0]["canteen_satellite_canteens_count"]), "<NA>")
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_sectors"], '"[""School""]"')
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_line_ministry"], "Agriculture, Alimentation et Forêts")
-        # self.assertEqual(
-        #     etl_td.get_dataset().iloc[0]["canteen_sectors"], '"[]"', "The sectors should be an empty list"
-        # )
         self.assertGreater(
             etl_td.get_dataset().iloc[0]["teledeclaration_ratio_bio"],
             0,

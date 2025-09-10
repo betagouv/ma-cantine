@@ -231,18 +231,6 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         return sectors
 
     def transform_dataset(self):
-        # Compute teledeclaration_ratio_bio & teledeclaration_ratio_egalim_hors_bio
-        self.df["teledeclaration_ratio_bio"] = self.df["value_bio_ht_agg"] / self.df["value_total_ht"]
-        self.df["teledeclaration_ratio_egalim_hors_bio"] = (
-            self.df["value_sustainable_ht_agg"].fillna(0)
-            + self.df["value_externality_performance_ht_agg"].fillna(0)
-            + self.df["value_egalim_others_ht_agg"].fillna(0)
-        ) / self.df["value_total_ht"]
-
-        # Renaming to match schema
-        if "diagnostic_type" in self.df.columns:
-            self.df["teledeclaration_type"] = self.df["diagnostic_type"]
-
         logger.info("TD campagne : Clean dataset...")
         self._clean_dataset()
         logger.info("TD campagne : Format the decimals...")
