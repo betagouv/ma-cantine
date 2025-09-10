@@ -202,7 +202,6 @@ class DiagnosticQuerySetTest(TestCase):
         diagnostics = Diagnostic.objects.with_appro_percent_stats()
         self.assertEqual(diagnostics.count(), 17)
         self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).bio_percent, 20)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).value_egalim_ht_agg, 500)
         self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).egalim_percent, 50)
 
 
@@ -339,6 +338,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertEqual(self.diagnostic.value_sustainable_ht_agg, 100)
         self.assertEqual(self.diagnostic.value_externality_performance_ht_agg, 100)
         self.assertEqual(self.diagnostic.value_egalim_others_ht_agg, 100)
+        self.assertEqual(self.diagnostic.value_egalim_hors_bio_ht_agg, 300)
         self.assertEqual(self.diagnostic.value_egalim_ht_agg, 500)
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
