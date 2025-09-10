@@ -24,6 +24,9 @@ class ShortTeledeclarationSerializer(serializers.ModelSerializer):
 
 
 class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
+    # Metadata
+    creation_source = serializers.SerializerMethodField()
+
     # Data related to the canteen
     name = serializers.SerializerMethodField()
     siret = serializers.SerializerMethodField()
@@ -49,7 +52,6 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     objectif_zone_geo = serializers.SerializerMethodField()
     line_ministry = serializers.SerializerMethodField()
     spe = serializers.SerializerMethodField()
-    genere_par_cuisine_centrale = serializers.SerializerMethodField()
     declaration_donnees_2021 = serializers.SerializerMethodField()
     declaration_donnees_2022 = serializers.SerializerMethodField()
     declaration_donnees_2023 = serializers.SerializerMethodField()
@@ -91,12 +93,10 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
     # Data related to the applicant
     email = serializers.SerializerMethodField()
 
-    # Metadata
-    creation_source = serializers.SerializerMethodField()
-
     # Extra
     # Data related to the satellites, necessary to flatten the dataset
     tmp_satellites = serializers.SerializerMethodField()
+    genere_par_cuisine_centrale = serializers.SerializerMethodField()
 
     class Meta:
         model = Teledeclaration
@@ -104,6 +104,7 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "id",
             "declared_data",
             "creation_date",
+            "creation_source",
             "canteen_id",
             "name",
             "siret",
@@ -120,7 +121,6 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "secteur",
             "categorie",
             "satellite_canteens_count",
-            "genere_par_cuisine_centrale",
             "code_insee_commune",
             "departement",
             "lib_departement",
@@ -170,9 +170,12 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
             "ratio_egalim_sans_bio",
             "email",
             "tmp_satellites",
-            "creation_source",
+            "genere_par_cuisine_centrale",
         )
         read_only_fields = fields
+
+    def get_creation_source(self, obj):
+        return obj.diagnostic.creation_source
 
     def get_name(self, obj):
         if "name" in obj.declared_data["canteen"]:
@@ -257,9 +260,6 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         if "satellite_canteens_count" in obj.declared_data["canteen"]:
             satellite_canteens_count = obj.declared_data["canteen"]["satellite_canteens_count"]
             return int(satellite_canteens_count) if satellite_canteens_count else None
-
-    def get_genere_par_cuisine_centrale(self, obj):
-        return obj.is_declared_by_cc
 
     def get_code_insee_commune(self, obj):
         if "city_insee_code" in obj.declared_data["canteen"]:
@@ -439,8 +439,8 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
         if "satellites" in obj.declared_data:
             return obj.declared_data["satellites"]
 
-    def get_creation_source(self, obj):
-        return obj.diagnostic.creation_source
+    def get_genere_par_cuisine_centrale(self, obj):
+        return obj.is_declared_by_cc
 
 
 class TeledeclarationOpenDataSerializer(serializers.ModelSerializer):
