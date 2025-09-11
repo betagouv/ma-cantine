@@ -28,7 +28,7 @@ const saveCanteen = (props) => {
       const redirect = canteenCreated.id && action === "go-to-canteen-page"
       const isCentral = centralType.includes(form.productionType)
       if (!canteenCreated.id) store.notifyServerError()
-      if (stayOnCreationPage) addNewCanteen(canteenCreated.name)
+      if (stayOnCreationPage) resetForm(canteenCreated.name)
       if (redirect && !isCentral) goToNewCanteenPage(canteenCreated.id)
       if (redirect && isCentral) goToSatellitesPage(canteenCreated.id)
     })
@@ -53,7 +53,7 @@ const goToSatellitesPage = (id) => {
   })
 }
 
-const addNewCanteen = (name) => {
+const resetForm = (name) => {
   store.notify({ message: `Cantine ${name} créée avec succès.` })
   window.scrollTo(0, 0)
   forceRerender.value++
