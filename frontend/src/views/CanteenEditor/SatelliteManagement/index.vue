@@ -21,19 +21,16 @@
         @satellitesLoaded="updateSatellitesCount"
         allowUnlinking
       />
-      <v-divider aria-hidden="true" role="presentation" class="my-8"></v-divider>
-      <AddSatellite :canteen="canteen" @satelliteAdded="fetchSatellites" />
     </div>
   </div>
 </template>
 
 <script>
 import SatelliteTable from "@/components/SatelliteTable"
-import AddSatellite from "./AddSatellite"
 
 export default {
   name: "SatelliteManagement",
-  components: { SatelliteTable, AddSatellite },
+  components: { SatelliteTable },
   props: {
     originalCanteen: Object,
   },

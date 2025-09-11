@@ -830,19 +830,6 @@ export default new Vuex.Store({
       return fetch(`/api/v1/canteens/${canteenId}/undoClaim/`, { method: "POST", headers }).then(verifyResponse)
     },
 
-    addSatellite(context, { id, payload }) {
-      return fetch(`/api/v1/canteens/${id}/satellites/`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(payload),
-      }).then((response) => {
-        return response.json().then((jsonResponse) => {
-          if (response.status < 200 || response.status >= 400) throw new Error(jsonResponse.detail)
-          return jsonResponse
-        })
-      })
-    },
-
     setShowWebinaireBanner(context, showWebinaireBanner) {
       context.commit("SET_SHOW_WEBINAIRE_BANNER", showWebinaireBanner)
     },
