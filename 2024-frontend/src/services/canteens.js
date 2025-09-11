@@ -53,6 +53,20 @@ const updateCanteen = (payload, id) => {
     .catch((e) => e)
 }
 
+const addSatellite = (payload, id) => {
+  return fetch(`/api/v1/canteens/${id}/satellites/`, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 const claimCanteen = (id) => {
   return fetch(`/api/v1/canteens/${id}/claim/`, {
     method: "POST",
@@ -79,4 +93,12 @@ const teamJoinRequest = (id, userInfos) => {
     .catch((e) => e)
 }
 
-export default { createCanteen, canteenStatus, fetchCanteen, updateCanteen, claimCanteen, teamJoinRequest }
+export default {
+  createCanteen,
+  canteenStatus,
+  fetchCanteen,
+  updateCanteen,
+  claimCanteen,
+  teamJoinRequest,
+  addSatellite,
+}

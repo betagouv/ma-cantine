@@ -1,6 +1,7 @@
 <script setup>
 import { useRoute } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen"
+import canteensService from "@/services/canteens"
 import CanteenEstablishmentForm from "@/components/CanteenEstablishmentForm.vue"
 
 const route = useRoute()
@@ -8,7 +9,9 @@ const canteenStore = useStoreCanteen()
 canteenStore.setUrlComponent(route.params.canteenUrlComponent)
 
 const saveCanteen = (payload) => {
-  console.log("payload", payload)
+  canteensService.addSatellite(payload.form, canteenStore.id).then((response) => {
+    console.log("response", response)
+  })
 }
 </script>
 
