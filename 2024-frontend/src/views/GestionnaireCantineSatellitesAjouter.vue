@@ -9,7 +9,7 @@ canteenStore.setUrlComponent(route.params.canteenUrlComponent)
 
 <template>
   <section>
-    <h1 class="fr-col-8">
+    <h1 class="fr-col-12 fr-col-md-8">
       {{ route.meta.title }}
       <br />
       à la cantine centrale {{ canteenStore.name }}
