@@ -71,7 +71,7 @@ const routes = [
     },
   },
   {
-    path: "/cantine/ajouter-une-cantine",
+    path: "/cantine/ajouter",
     name: "GestionnaireCantineAjouter",
     component: GestionnaireCantineAjouter,
     meta: {
@@ -84,7 +84,7 @@ const routes = [
     path: "/cantine/:canteenUrlComponent/",
     children: [
       {
-        path: "modifier-mon-etablissement",
+        path: "modifier",
         name: "GestionnaireCantineModifier",
         component: GestionnaireCantineModifier,
         meta: {
