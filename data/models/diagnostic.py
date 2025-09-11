@@ -496,7 +496,7 @@ class Diagnostic(models.Model):
     modification_date = models.DateTimeField(auto_now=True)
     history = HistoricalRecords(excluded_fields=["canteen_snapshot", "satellites_snapshot", "applicant_snapshot"])
 
-    canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
+    canteen = models.ForeignKey(Canteen, on_delete=models.SET_NULL, null=True, verbose_name="cantine")
 
     year = models.IntegerField(
         null=True,
