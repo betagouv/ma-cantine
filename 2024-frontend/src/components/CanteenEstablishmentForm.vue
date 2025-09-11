@@ -523,7 +523,11 @@ const validateForm = (action) => {
         <DsfrButton
           v-if="showCreateButton"
           :disabled="isSaving"
-          label="Enregistrer et créer un nouvel établissement"
+          :label="
+            addSatellite
+              ? 'Enregistrer et créer une nouvelle cantine satellite'
+              : 'Enregistrer et créer un nouvel établissement'
+          "
           secondary
           class="fr-mb-1v fr-mr-1v"
           @click="validateForm('stay-on-creation-page')"
