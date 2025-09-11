@@ -12,6 +12,7 @@
         </span>
         <span v-else-if="satelliteCanteensCount !== satelliteCount">Vous en avez renseigné {{ satelliteCount }}.</span>
       </p>
+      <router-link :to="{ name: 'GestionnaireCantineSatellitesAjouter' }">Ajouter une cantine satellite</router-link>
       <SatelliteTable
         ref="satelliteTable"
         :canteen="canteen"

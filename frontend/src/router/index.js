@@ -499,6 +499,10 @@ const vue3Routes = [
     name: "CanteenForm",
   },
   {
+    path: "/gestion/cantines/:canteenUrlComponent/satellites/ajouter",
+    name: "GestionnaireCantineSatellitesAjouter",
+  },
+  {
     path: "/foire-aux-questions/",
     name: "FoireAuxQuestions",
   },
