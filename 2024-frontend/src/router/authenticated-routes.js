@@ -14,6 +14,7 @@ const { diag, action } = sectionId
 
 /* Routes */
 const routes = [
+  // TODO: refactor "GaspillageAlimentaire" path
   {
     path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
     name: "GestionnaireGaspillageAlimentaireModifier",
