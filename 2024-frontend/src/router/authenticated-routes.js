@@ -38,7 +38,7 @@ const routes = [
     },
   },
   {
-    path: "/importer-des-donnees",
+    path: "/gestion/imports",
     name: "GestionnaireImport",
     component: GestionnaireImport,
     meta: {
@@ -47,7 +47,7 @@ const routes = [
     },
   },
   {
-    path: "/importer-des-donnees/achats",
+    path: "/gestion/imports/achats",
     name: "GestionnaireImportAchats",
     component: GestionnaireImportAchats,
     meta: {
@@ -59,7 +59,7 @@ const routes = [
     },
   },
   {
-    path: "/importer-des-donnees/cantines",
+    path: "/gestion/imports/cantines",
     name: "GestionnaireImportCantines",
     component: GestionnaireImportCantines,
     meta: {

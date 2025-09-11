@@ -456,7 +456,7 @@ const vue3Routes = [
     name: "GestionnaireGaspillageAlimentaireModifier",
   },
   {
-    path: "/importer-des-donnees",
+    path: "/gestion/imports",
     name: "GestionnaireImport",
     meta: {
       title: "Importer des données",
@@ -483,11 +483,11 @@ const vue3Routes = [
     name: "Contact",
   },
   {
-    path: "/importer-des-donnees/achats",
+    path: "/gestion/imports/achats",
     name: "GestionnaireImportAchats",
   },
   {
-    path: "/importer-des-donnees/cantines",
+    path: "/gestion/imports/cantines",
     name: "GestionnaireImportCantines",
   },
   {
