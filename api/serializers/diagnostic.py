@@ -261,6 +261,7 @@ class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
             "creation_date",
             "year",
             "version",
+            "teledeclaration_id",
             # applicant fields
             "applicant_id",
             # canteen fields
