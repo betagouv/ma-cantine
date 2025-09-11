@@ -6,6 +6,39 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.31.0](https://github.com/betagouv/ma-cantine/compare/v2025.30.0...v2025.31.0) (2025-09-11)
+
+
+### Nouveautés
+
+* **Création de cantine:** ajout du champ "nombre de repas par jour" pour les cuisines centrales ([#5662](https://github.com/betagouv/ma-cantine/issues/5662)) ([e835eda](https://github.com/betagouv/ma-cantine/commit/e835eda51c8e01cdcb997ae207ff29da4a580988))
+* **Création de cantine:** ajoute une description dans le sélecteur de mode de production pour les cuisines centrales ([#5664](https://github.com/betagouv/ma-cantine/issues/5664)) ([621fc02](https://github.com/betagouv/ma-cantine/commit/621fc0218381bc99b6ce0dd8d3073a2e2811b27a))
+* **Création de cantine:** ajoute une limite de 3 secteurs maximum ([#5668](https://github.com/betagouv/ma-cantine/issues/5668)) ([74cbb82](https://github.com/betagouv/ma-cantine/commit/74cbb82a48f62b099361205e03ed3a39b669c82f))
+* **Création de cantine:** le champ SIRET du livreur devient un sélecteur ([#5650](https://github.com/betagouv/ma-cantine/issues/5650)) ([2af9ef5](https://github.com/betagouv/ma-cantine/commit/2af9ef5102c7d043500d0c586fdaa03924f4a501))
+* **Open Data:** stocker les fichiers csv dans Github ([#5681](https://github.com/betagouv/ma-cantine/issues/5681)) ([64c2ce0](https://github.com/betagouv/ma-cantine/commit/64c2ce0ced6fe8f6d3fab439631f462494c63b16))
+* **Télédéclaration:** autorise une cantine centrale à télédéclarer dès que une cantine SAT lui est rattaché ([#5666](https://github.com/betagouv/ma-cantine/issues/5666)) ([edc1b6d](https://github.com/betagouv/ma-cantine/commit/edc1b6dd8fde99ebccde43a43c98e9888ad8cb6e))
+* **Télédéclaration:** bloque la télédéclaration pour les cantines sites ayant plus de 3 secteurs ([#5675](https://github.com/betagouv/ma-cantine/issues/5675)) ([8c288e0](https://github.com/betagouv/ma-cantine/commit/8c288e0e80a18d33cb49d2e6c97fea2c65f3d432))
+
+
+### Améliorations
+
+* **Admin:** Cantines & Achats: changer le comportement du bouton Supprimer (soft delete au lieu de hard delete) ([#5296](https://github.com/betagouv/ma-cantine/issues/5296)) ([d9341bb](https://github.com/betagouv/ma-cantine/commit/d9341bb1b8cfd1ba824b3b0d4d5d881b54b4cae1))
+* **Admin:** Cantines: cacher le bouton Supprimer ([#5683](https://github.com/betagouv/ma-cantine/issues/5683)) ([9d3d311](https://github.com/betagouv/ma-cantine/commit/9d3d3115e5a91debb705d5c745fe33d6a5f3746f))
+* **Diagnostic:** nouveau champ pour stocker la version au moment de la TD [1TD1site] ([#5672](https://github.com/betagouv/ma-cantine/issues/5672)) ([5d95bb0](https://github.com/betagouv/ma-cantine/commit/5d95bb010bfbd20ebb68bcc50d2ecb2c3e5b17e4))
+* **Diagnostic:** nouveau champ pour stocker le déclarant au moment de la TD [1TD1site] ([#5670](https://github.com/betagouv/ma-cantine/issues/5670)) ([6c3f600](https://github.com/betagouv/ma-cantine/commit/6c3f600837e476cac0cb322489bbe6334e1f6d02))
+
+
+### Corrections (bugs, typos...)
+
+* **Diagnostic:** si une cantine est supprimée, ne plus supprimer ses bilans [1TD1Site] ([#5671](https://github.com/betagouv/ma-cantine/issues/5671)) ([03addc3](https://github.com/betagouv/ma-cantine/commit/03addc31f47a8616c2210e4b8d4cae4ec861d2e1))
+* **Teledeclaration:** petit fix sur le filtre des valeurs aberrantes [1TD1Site] ([#5663](https://github.com/betagouv/ma-cantine/issues/5663)) ([121f65c](https://github.com/betagouv/ma-cantine/commit/121f65c02c6096151164974f3f9e83d660937bbf))
+
+
+### Technique
+
+* **deps:** corrige la différence de version de vite ([#5680](https://github.com/betagouv/ma-cantine/issues/5680)) ([18c1b04](https://github.com/betagouv/ma-cantine/commit/18c1b04c151c6d8c176e8b65327dc3a4f976ee73))
+* **Diagnostic:** filtre cantine avec siret ou siren_unite_legale: utiliser canteen_snapshot [1TD1Site] ([#5669](https://github.com/betagouv/ma-cantine/issues/5669)) ([521d548](https://github.com/betagouv/ma-cantine/commit/521d54865a276b3b43a4a17fc47e44b95094ffd2))
+
 ## [2025.30.0](https://github.com/betagouv/ma-cantine/compare/v2025.29.0...v2025.30.0) (2025-09-04)
 
 
