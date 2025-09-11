@@ -491,11 +491,11 @@ const vue3Routes = [
     name: "GestionnaireImportCantines",
   },
   {
-    path: "/cantine/ajouter",
+    path: "/gestion/cantines/ajouter",
     name: "GestionnaireCantineAjouter",
   },
   {
-    path: "/cantine/:canteenUrlComponent/modifier",
+    path: "/gestion/cantines/:canteenUrlComponent/modifier",
     name: "CanteenForm",
   },
   {

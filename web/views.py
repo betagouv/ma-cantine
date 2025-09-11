@@ -94,7 +94,7 @@ class RegisterUserView(FormView):
                 self.success_url = "/v2/developpement-et-apis"
             else:
                 has_canteens = not self.request.user.is_anonymous and self.request.user.canteens.count() > 0
-                self.success_url = reverse_lazy("app") if has_canteens else "/v2/cantine/ajouter"
+                self.success_url = reverse_lazy("app") if has_canteens else "/v2/gestion/cantines/ajouter"
             return super().form_valid(form)
 
 
