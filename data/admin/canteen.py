@@ -169,10 +169,19 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         qs = qs.prefetch_related("teledeclaration_set")
         return qs
 
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if "delete_selected" in actions:
+            del actions["delete_selected"]
+        return actions
+
     def save_model(self, request, obj, form, change):
         if not change:
             obj.creation_source = CreationSource.ADMIN
         super().save_model(request, obj, form, change)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     @admin.display(description="Siret (ou Siren)")
     def siret_or_siren_unite_legale_display(self, obj):
@@ -205,6 +214,9 @@ class CanteenInline(admin.TabularInline):
 
     def has_add_permission(self, request, obj):
         return True
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     @admin.display(description="Gestionnaire")
     def help(self, obj):
