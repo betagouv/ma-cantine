@@ -102,7 +102,7 @@ const routes = [
         name: "GestionnaireCantineSatellitesAjouter",
         component: GestionnaireCantineSatellitesAjouter,
         meta: {
-          title: "Ajouter un satellite",
+          title: "Ajouter une cantine satellite",
           breadcrumbs: [
             { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
             { to: { name: "DashboardManager" }, useCanteenName: true },
