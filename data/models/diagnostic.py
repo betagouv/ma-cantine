@@ -1188,6 +1188,11 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
     )
+    teledeclaration_id = models.IntegerField(
+        verbose_name="ancien identifiant de la télédéclaration (concerne la période 2021-2024)",
+        blank=True,
+        null=True,
+    )
     applicant = models.ForeignKey(
         get_user_model(),
         verbose_name="déclarant",
