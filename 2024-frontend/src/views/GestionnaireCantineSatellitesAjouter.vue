@@ -4,14 +4,22 @@ import { useStoreCanteen } from "@/stores/canteen"
 import canteensService from "@/services/canteens"
 import CanteenEstablishmentForm from "@/components/CanteenEstablishmentForm.vue"
 
+/* Router */
 const route = useRoute()
+
+/* Stores */
 const canteenStore = useStoreCanteen()
 canteenStore.setUrlComponent(route.params.canteenUrlComponent)
 
-const saveCanteen = (payload) => {
-  canteensService.addSatellite(payload.form, canteenStore.id).then((response) => {
-    console.log("response", response)
-  })
+/* API */
+const saveSatellite = (props) => {
+  const { form, action } = props
+  canteensService
+    .addSatellite(form, canteenStore.id)
+    .then((canteenCreated) => {
+      console.log("canteenCreated", canteenCreated)
+      console.log("action", action)
+    })
 }
 </script>
 
@@ -27,6 +35,6 @@ const saveCanteen = (payload) => {
     :showCreateButton="true"
     :addSatellite="true"
     :key="forceRerender"
-    @sendForm="(payload) => saveCanteen(payload)"
+    @sendForm="(payload) => saveSatellite(payload)"
   />
 </template>
