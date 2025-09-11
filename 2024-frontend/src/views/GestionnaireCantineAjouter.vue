@@ -13,16 +13,13 @@ const router = useRouter()
 const store = useRootStore()
 
 /* Save canteen */
-const isSaving = ref(false)
 const forceRerender = ref(0)
 
 const saveCanteen = (props) => {
   const { form, action } = props
-  isSaving.value = true
   canteensService
     .createCanteen(form)
     .then((canteenCreated) => {
-      isSaving.value = false
       const centralType = ["central", "central_serving"]
       const stayOnCreationPage = canteenCreated.id && action === "stay-on-creation-page"
       const redirect = canteenCreated.id && action === "go-to-canteen-page"
@@ -34,7 +31,6 @@ const saveCanteen = (props) => {
     })
     .catch((e) => {
       store.notifyServerError(e)
-      isSaving.value = false
     })
 }
 
