@@ -444,12 +444,15 @@ class TeledeclarationAnalysisSerializer(serializers.ModelSerializer):
 
 
 class TeledeclarationOpenDataSerializer(serializers.ModelSerializer):
+    teledeclaration_id = serializers.IntegerField(source="id", read_only=True)
+
     class Meta:
         model = Teledeclaration
         fields = (
             "id",
             "year",
             "creation_date",
+            "teledeclaration_id",
             "canteen_id",
             "declared_data",
             "canteen_siret",
