@@ -71,7 +71,7 @@ const routes = [
     },
   },
   {
-    path: "/ajouter-une-cantine",
+    path: "/cantine/ajouter-une-cantine",
     name: "GestionnaireCantineAjouter",
     component: GestionnaireCantineAjouter,
     meta: {
