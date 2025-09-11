@@ -81,10 +81,10 @@ const routes = [
     },
   },
   {
-    path: "/modifier-ma-cantine/:canteenUrlComponent",
+    path: "/cantine/:canteenUrlComponent/",
     children: [
       {
-        path: "etablissement",
+        path: "modifier-mon-etablissement",
         name: "GestionnaireCantineModifier",
         component: GestionnaireCantineModifier,
         meta: {
