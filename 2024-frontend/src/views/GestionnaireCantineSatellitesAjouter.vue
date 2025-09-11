@@ -22,6 +22,7 @@ const saveCanteen = (payload) => {
   </section>
   <CanteenEstablishmentForm
     :showCreateButton="true"
+    :addSatellite="true"
     :key="forceRerender"
     @sendForm="(payload) => saveCanteen(payload)"
   />
