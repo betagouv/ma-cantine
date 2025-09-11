@@ -1,10 +1,15 @@
 <script setup>
 import { useRoute } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen"
+import CanteenEstablishmentForm from "@/components/CanteenEstablishmentForm.vue"
 
 const route = useRoute()
 const canteenStore = useStoreCanteen()
 canteenStore.setUrlComponent(route.params.canteenUrlComponent)
+
+const saveCanteen = (payload) => {
+  console.log("payload", payload)
+}
 </script>
 
 <template>
@@ -15,4 +20,9 @@ canteenStore.setUrlComponent(route.params.canteenUrlComponent)
       à la cantine centrale {{ canteenStore.name }}
     </h1>
   </section>
+  <CanteenEstablishmentForm
+    :showCreateButton="true"
+    :key="forceRerender"
+    @sendForm="(payload) => saveCanteen(payload)"
+  />
 </template>
