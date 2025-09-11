@@ -284,7 +284,7 @@ const routes = [
     },
   },
   {
-    path: "/cantine/:canteenUrlComponent/modifier",
+    path: "/modifier-ma-cantine/:canteenUrlComponent",
     name: "GestionnaireCantineModifier",
     props: true,
     component: CanteenEditor,
