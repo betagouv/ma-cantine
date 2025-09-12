@@ -229,7 +229,7 @@ class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
     canteen_siren_unite_legale = serializers.CharField(source="canteen_snapshot.siren_unite_legale", read_only=True)
     canteen_central_kitchen_siret = serializers.CharField(
         source="canteen_snapshot.central_producer_siret", read_only=True
-    )  # incohérence dans le nom du champ
+    )  # TODO: avoid renaming?
     canteen_city_insee_code = serializers.CharField(source="canteen_snapshot.city_insee_code", read_only=True)
     canteen_epci = serializers.CharField(source="canteen_snapshot.epci", read_only=True)
     canteen_epci_lib = serializers.CharField(source="canteen_snapshot.epci_lib", read_only=True)
@@ -250,6 +250,7 @@ class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
     teledeclaration_ratio_egalim_hors_bio = serializers.SerializerMethodField(
         read_only=True
     )  # TODO: compute & store in DB?
+    teledeclaration_ratio_egalim = serializers.SerializerMethodField(read_only=True)  # TODO: compute & store in DB?
 
     class Meta:
         model = Diagnostic
