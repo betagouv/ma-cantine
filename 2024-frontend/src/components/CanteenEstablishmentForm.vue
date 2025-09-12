@@ -15,7 +15,7 @@ import CanteenEstablishmentCentralSelector from "@/components/CanteenEstablishme
 
 /* Data */
 const store = useRootStore()
-const props = defineProps(["establishmentData", "showCreateButton", "showCancelButton"])
+const props = defineProps(["establishmentData", "showCreateButton", "showCancelButton", "addSatellite"])
 const emit = defineEmits(["sendForm", "cancel"])
 
 /* Siret */
@@ -227,7 +227,7 @@ if (props.establishmentData) prefillFields()
 else resetFields()
 
 /* Dynamic Inputs */
-const showCentralProducerSiret = computed(() => form.productionType === "site_cooked_elsewhere")
+const showCentralProducerSiret = computed(() => form.productionType === "site_cooked_elsewhere" && !props.addSatellite)
 const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
 )
@@ -258,6 +258,7 @@ const changeProductionMode = () => {
 
 /* Fields verification */
 const { required, integer, minValue, requiredIf, minLength, maxLength } = useValidators()
+const productionTypeRequired = computed(() => !props.addSatellite)
 const yearlyMealMinValue = computed(() => form.dailyMealCount || 1)
 const siretIsRequired = computed(() => form.hasSiret === "has-siret")
 const sirenIsRequired = computed(() => form.hasSiret === "no-siret")
@@ -277,7 +278,7 @@ const rules = {
   },
   economicModel: { required },
   managementType: { required },
-  productionType: { required },
+  productionType: { required: requiredIf(productionTypeRequired) },
   sectors: {
     required: requiredIf(sectorsAreRequired),
     maxThree: helpers.withMessage(
@@ -335,6 +336,7 @@ const validateForm = (action) => {
           :error-message="formatError(v$.managementType)"
         />
         <DsfrRadioButtonSet
+          v-show="!addSatellite"
           legend="Mode de production *"
           v-model="form.productionType"
           :options="productionTypeOptions"

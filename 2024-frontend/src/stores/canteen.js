@@ -12,7 +12,7 @@ const useStoreCanteen = defineStore("canteen", () => {
     name.value = value.split("--")[1]
   }
 
-  return { setUrlComponent, name }
+  return { setUrlComponent, name, id }
 })
 
 export { useStoreCanteen }
