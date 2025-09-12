@@ -3,6 +3,7 @@ import { ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens"
+import urlService from "@/services/urls"
 import AppRessources from "@/components/AppRessources.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import CanteenEstablishmentForm from "@/components/CanteenEstablishmentForm.vue"
@@ -26,8 +27,8 @@ const saveCanteen = (props) => {
       const isCentral = centralType.includes(form.productionType)
       if (!canteenCreated.id) store.notifyServerError()
       if (stayOnCreationPage) resetForm(canteenCreated.name)
-      if (redirect && !isCentral) goToNewCanteenPage(canteenCreated.id)
-      if (redirect && isCentral) goToSatellitesPage(canteenCreated.id)
+      if (redirect && !isCentral) goToNewCanteenPage(canteenCreated)
+      if (redirect && isCentral) goToSatellitesPage(canteenCreated)
     })
     .catch((e) => {
       store.notifyServerError(e)
@@ -35,17 +36,19 @@ const saveCanteen = (props) => {
 }
 
 /* After canteen is saved */
-const goToNewCanteenPage = (id) => {
+const goToNewCanteenPage = (canteen) => {
+  const canteenUrl = urlService.getCanteenUrl(canteen)
   router.replace({
     name: "DashboardManager",
-    params: { canteenUrlComponent: id },
+    params: { canteenUrlComponent: canteenUrl },
   })
 }
 
-const goToSatellitesPage = (id) => {
+const goToSatellitesPage = (canteen) => {
+  const canteenUrl = urlService.getCanteenUrl(canteen)
   router.replace({
     name: "SatelliteManagement",
-    params: { canteenUrlComponent: id },
+    params: { canteenUrlComponent: canteenUrl },
   })
 }
 
