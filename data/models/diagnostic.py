@@ -824,6 +824,9 @@ class Diagnostic(models.Model):
     value_egalim_others_ht_agg = make_optional_positive_decimal_field(
         verbose_name="Autres achats EGalim - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
+    value_egalim_hors_bio_ht_agg = make_optional_positive_decimal_field(
+        verbose_name="EGalim (Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
+    )
     value_egalim_ht_agg = make_optional_positive_decimal_field(
         verbose_name="EGalim (Bio + Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
@@ -1441,13 +1444,21 @@ class Diagnostic(models.Model):
         return self.value_egalim_others_ht
 
     @property
+    def total_egalim_hors_bio(self):
+        return sum_int_with_potential_null(
+            [
+                self.total_sustainable,
+                self.total_externality_performance,
+                self.total_egalim_others,
+            ]
+        )
+
+    @property
     def total_egalim(self):
         return sum_int_with_potential_null(
             [
                 self.total_bio,
-                self.total_sustainable,
-                self.total_externality_performance,
-                self.total_egalim_others,
+                self.total_egalim_hors_bio,
             ]
         )
 
@@ -1678,7 +1689,8 @@ class Diagnostic(models.Model):
         self.value_sustainable_ht_agg = self.total_sustainable
         self.value_externality_performance_ht_agg = self.total_externality_performance
         self.value_egalim_others_ht_agg = self.total_egalim_others
-        self.value_egalim_ht_agg = self.total_egalim  # sum of the 4 above
+        self.value_egalim_hors_bio_ht_agg = self.total_egalim_hors_bio
+        self.value_egalim_ht_agg = self.total_egalim  # total_bio + total_egalim_hors_bio
 
         # metadata
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED
