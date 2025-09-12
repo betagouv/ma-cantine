@@ -4,14 +4,25 @@
       <h1 class="font-weight-black text-h4 my-4">
         Vos cantines satellites
       </h1>
-      <p v-if="satelliteCount !== null">
-        Cet établissement livre des repas
-        {{ satelliteCanteensCount > 1 ? `à ${satelliteCanteensCount} cantines` : "à une cantine" }}.
-        <span v-if="satelliteCount === 0">
-          Vous n'avez ajouté aucune cantine satellite.
-        </span>
-        <span v-else-if="satelliteCanteensCount !== satelliteCount">Vous en avez renseigné {{ satelliteCount }}.</span>
-      </p>
+      <v-row align="center">
+        <v-col>
+          <p v-if="satelliteCount !== null" class="mb-0">
+            Cet établissement livre des repas
+            {{ satelliteCanteensCount > 1 ? `à ${satelliteCanteensCount} cantines` : "à une cantine" }}.
+            <span v-if="satelliteCount === 0">
+              Vous n'avez ajouté aucune cantine satellite.
+            </span>
+            <span v-else-if="satelliteCanteensCount !== satelliteCount">
+              Vous en avez renseigné {{ satelliteCount }}.
+            </span>
+          </p>
+        </v-col>
+        <v-col class="text-end">
+          <v-btn color="primary" class="mt-5 mb-5" :to="{ name: 'GestionnaireCantineSatellitesAjouter' }">
+            Ajouter une cantine satellite
+          </v-btn>
+        </v-col>
+      </v-row>
       <SatelliteTable
         ref="satelliteTable"
         :canteen="canteen"
@@ -21,19 +32,16 @@
         @satellitesLoaded="updateSatellitesCount"
         allowUnlinking
       />
-      <v-divider aria-hidden="true" role="presentation" class="my-8"></v-divider>
-      <AddSatellite :canteen="canteen" @satelliteAdded="fetchSatellites" />
     </div>
   </div>
 </template>
 
 <script>
 import SatelliteTable from "@/components/SatelliteTable"
-import AddSatellite from "./AddSatellite"
 
 export default {
   name: "SatelliteManagement",
-  components: { SatelliteTable, AddSatellite },
+  components: { SatelliteTable },
   props: {
     originalCanteen: Object,
   },
