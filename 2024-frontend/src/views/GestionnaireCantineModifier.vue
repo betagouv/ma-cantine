@@ -16,7 +16,8 @@ const store = useRootStore()
 /* Get establishemnt infos */
 const canteenData = ref({})
 const loading = ref(true)
-const canteenId = route.params.canteenUrlComponent.split("--")[0]
+const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
+
 canteenService
   .fetchCanteen(canteenId)
   .then((response) => {
