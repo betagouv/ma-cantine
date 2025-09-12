@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
     dependencies = [
         (
             "data",
-            "0211_diagnostic_teledeclaration_version_historicaldiagnostic_teledeclaration_version_and_populate",
+            "0213_diagnostic_teledeclaration_id_historical_diagnostic_teledeclaration_id_and_populate",
         ),
     ]
 
