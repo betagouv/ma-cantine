@@ -25,7 +25,7 @@ const saveSatellite = (props) => {
     .addSatellite(form, canteenId.value)
     .then((canteenCreated) => {
       if (canteenCreated.id && action === "stay-on-creation-page") resetForm(canteenCreated.name)
-      else if (canteenCreated.id && action === "go-to-canteen-page") goToNewCanteenPage(canteenCreated.id)
+      else if (canteenCreated.id && action === "go-to-canteen-page") goToNewCanteenPage(canteenCreated)
       else store.notifyServerError()
     })
     .catch((e) => {
@@ -34,10 +34,11 @@ const saveSatellite = (props) => {
 }
 
 /* After canteen is saved */
-const goToNewCanteenPage = (id) => {
+const goToNewCanteenPage = (canteen) => {
+  const canteenUrl = urlService.getCanteenUrl(canteen)
   router.replace({
     name: "DashboardManager",
-    params: { canteenUrlComponent: id },
+    params: { canteenUrlComponent: canteenUrl },
   })
 }
 
