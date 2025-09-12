@@ -24,7 +24,7 @@ const saveSatellite = (props) => {
   canteensService
     .addSatellite(form, canteenStore.id)
     .then((canteenCreated) => {
-      if (canteenCreated.id && action === "stay-on-creation-page") addNewCanteen(canteenCreated.name)
+      if (canteenCreated.id && action === "stay-on-creation-page") resetForm(canteenCreated.name)
       else if (canteenCreated.id && action === "go-to-canteen-page") goToNewCanteenPage(canteenCreated.id)
       else store.notifyServerError()
     })
@@ -41,7 +41,7 @@ const goToNewCanteenPage = (id) => {
   })
 }
 
-const addNewCanteen = (name) => {
+const resetForm = (name) => {
   store.notify({ message: `Cantine ${name} créée avec succès.` })
   window.scrollTo(0, 0)
   forceRerender.value++

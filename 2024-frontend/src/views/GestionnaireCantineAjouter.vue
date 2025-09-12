@@ -13,23 +13,24 @@ const router = useRouter()
 const store = useRootStore()
 
 /* Save canteen */
-const isSaving = ref(false)
 const forceRerender = ref(0)
 
 const saveCanteen = (props) => {
   const { form, action } = props
-  isSaving.value = true
   canteensService
     .createCanteen(form)
     .then((canteenCreated) => {
-      isSaving.value = false
-      if (canteenCreated.id && action === "stay-on-creation-page") addNewCanteen(canteenCreated.name)
-      else if (canteenCreated.id && action === "go-to-canteen-page") goToNewCanteenPage(canteenCreated.id)
-      else store.notifyServerError()
+      const centralType = ["central", "central_serving"]
+      const stayOnCreationPage = canteenCreated.id && action === "stay-on-creation-page"
+      const redirect = canteenCreated.id && action === "go-to-canteen-page"
+      const isCentral = centralType.includes(form.productionType)
+      if (!canteenCreated.id) store.notifyServerError()
+      if (stayOnCreationPage) resetForm(canteenCreated.name)
+      if (redirect && !isCentral) goToNewCanteenPage(canteenCreated.id)
+      if (redirect && isCentral) goToSatellitesPage(canteenCreated.id)
     })
     .catch((e) => {
       store.notifyServerError(e)
-      isSaving.value = false
     })
 }
 
@@ -41,7 +42,14 @@ const goToNewCanteenPage = (id) => {
   })
 }
 
-const addNewCanteen = (name) => {
+const goToSatellitesPage = (id) => {
+  router.replace({
+    name: "SatelliteManagement",
+    params: { canteenUrlComponent: id },
+  })
+}
+
+const resetForm = (name) => {
   store.notify({ message: `Cantine ${name} créée avec succès.` })
   window.scrollTo(0, 0)
   forceRerender.value++
