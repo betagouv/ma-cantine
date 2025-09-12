@@ -223,9 +223,6 @@ const prefillFields = () => {
   })
 }
 
-if (props.establishmentData) prefillFields()
-else resetFields()
-
 /* Dynamic Inputs */
 const showCentralProducerSiret = computed(() => form.productionType === "site_cooked_elsewhere")
 const showSatelliteCanteensCount = computed(
@@ -313,6 +310,12 @@ const validateForm = (action) => {
   if (v$.value.$invalid) return
   emit("sendForm", { form: form, action: action })
 }
+
+/* Form fields initialisation */
+if (props.establishmentData) {
+  prefillFields()
+  v$.value.$validate()
+} else resetFields()
 </script>
 
 <template>
