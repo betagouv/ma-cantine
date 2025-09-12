@@ -16,12 +16,13 @@ const store = useRootStore()
 /* Component */
 const forceRerender = ref(0)
 const canteenName = computed(() => urlService.getCanteenName(route.params.canteenUrlComponent))
+const canteenId = computed(() => urlService.getCanteenId(route.params.canteenUrlComponent))
 
 /* API */
 const saveSatellite = (props) => {
   const { form, action } = props
   canteensService
-    .addSatellite(form, canteenStore.id)
+    .addSatellite(form, canteenId.value)
     .then((canteenCreated) => {
       if (canteenCreated.id && action === "stay-on-creation-page") resetForm(canteenCreated.name)
       else if (canteenCreated.id && action === "go-to-canteen-page") goToNewCanteenPage(canteenCreated.id)
