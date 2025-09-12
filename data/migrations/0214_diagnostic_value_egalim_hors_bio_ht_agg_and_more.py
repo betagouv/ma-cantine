@@ -9,8 +9,8 @@ def populate_diagnostic_value_egalim_hors_bio_ht_agg(apps, schema_editor):
     Diagnostic = apps.get_model("data", "Diagnostic")
     for diagnostic in Diagnostic.objects.all():
         if diagnostic.value_bio_ht_agg is not None or diagnostic.value_egalim_ht_agg is not None:
-            value_egalim_ht_agg = (diagnostic.value_egalim_ht_agg or 0) + (diagnostic.value_bio_ht_agg or 0)
-            diagnostic.value_egalim_hors_bio_ht_agg = value_egalim_ht_agg
+            value_egalim_hors_bio_ht_agg = (diagnostic.value_egalim_ht_agg or 0) - (diagnostic.value_bio_ht_agg or 0)
+            diagnostic.value_egalim_hors_bio_ht_agg = value_egalim_hors_bio_ht_agg
             diagnostic.save(update_fields=["value_egalim_hors_bio_ht_agg"])
 
 
