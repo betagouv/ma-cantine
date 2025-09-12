@@ -4,6 +4,7 @@ from decimal import Decimal, InvalidOperation
 from rest_framework import serializers
 
 from data.models import Diagnostic
+from macantine.etl import utils
 
 from .teledeclaration import ShortTeledeclarationSerializer
 from .utils import appro_to_percentages
@@ -217,3 +218,88 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
         from .canteen import FullCanteenSerializer
 
         return FullCanteenSerializer(obj.canteen).data
+
+
+class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
+    diagnostic_type = serializers.CharField(source="teledeclaration_type", read_only=True)  # TODO: avoid renaming?
+    creation_date = serializers.DateTimeField(source="teledeclaration_date", read_only=True)  # TODO: avoid renaming?
+    version = serializers.CharField(source="teledeclaration_version", read_only=True)  # TODO: avoid renaming?
+
+    canteen_name = serializers.CharField(source="canteen_snapshot.name", read_only=True)
+    canteen_siret = serializers.CharField(source="canteen_snapshot.siret", read_only=True)
+    canteen_siren_unite_legale = serializers.CharField(source="canteen_snapshot.siren_unite_legale", read_only=True)
+    canteen_central_kitchen_siret = serializers.CharField(
+        source="canteen_snapshot.central_producer_siret", read_only=True
+    )  # incohérence dans le nom du champ
+    canteen_city_insee_code = serializers.CharField(source="canteen_snapshot.city_insee_code", read_only=True)
+    canteen_epci = serializers.CharField(source="canteen_snapshot.epci", read_only=True)
+    canteen_epci_lib = serializers.CharField(source="canteen_snapshot.epci_lib", read_only=True)
+    canteen_department = serializers.CharField(source="canteen_snapshot.department", read_only=True)
+    canteen_department_lib = serializers.CharField(source="canteen_snapshot.department_lib", read_only=True)
+    canteen_region = serializers.CharField(source="canteen_snapshot.region", read_only=True)
+    canteen_region_lib = serializers.CharField(source="canteen_snapshot.region_lib", read_only=True)
+    canteen_satellite_canteens_count = serializers.IntegerField(
+        source="canteen_snapshot.satellite_canteens_count", read_only=True
+    )
+    canteen_economic_model = serializers.CharField(source="canteen_snapshot.economic_model", read_only=True)
+    canteen_management_type = serializers.CharField(source="canteen_snapshot.management_type", read_only=True)
+    canteen_production_type = serializers.CharField(source="canteen_snapshot.production_type", read_only=True)
+    canteen_sectors = serializers.ListField(source="canteen_snapshot.sectors", read_only=True)
+    canteen_line_ministry = serializers.CharField(source="canteen_snapshot.line_ministry", read_only=True)
+
+    teledeclaration_ratio_bio = serializers.SerializerMethodField(read_only=True)  # TODO: compute & store in DB?
+    teledeclaration_ratio_egalim_hors_bio = serializers.SerializerMethodField(
+        read_only=True
+    )  # TODO: compute & store in DB?
+
+    class Meta:
+        model = Diagnostic
+        fields = (
+            "id",
+            "diagnostic_type",
+            "teledeclaration_mode",
+            "creation_date",
+            "year",
+            "version",
+            "teledeclaration_id",
+            # applicant fields
+            "applicant_id",
+            # canteen fields
+            "canteen_id",
+            "canteen_name",
+            "canteen_siret",
+            "canteen_siren_unite_legale",
+            "canteen_central_kitchen_siret",
+            "canteen_city_insee_code",
+            "canteen_epci",
+            "canteen_epci_lib",
+            "canteen_department",
+            "canteen_department_lib",
+            "canteen_region",
+            "canteen_region_lib",
+            "canteen_satellite_canteens_count",
+            "canteen_economic_model",
+            "canteen_management_type",
+            "canteen_production_type",
+            "canteen_sectors",
+            "canteen_line_ministry",
+            # value fields
+            "teledeclaration_ratio_bio",
+            "teledeclaration_ratio_egalim_hors_bio",
+        )
+        read_only_fields = fields
+
+    def get_teledeclaration_ratio_bio(self, obj):
+        return obj.value_bio_ht_agg / obj.value_total_ht
+
+    def get_teledeclaration_ratio_egalim_hors_bio(self, obj):
+        return (
+            utils.sum_int_and_none(
+                [
+                    obj.value_sustainable_ht_agg,
+                    obj.value_externality_performance_ht_agg,
+                    obj.value_egalim_others_ht_agg,
+                ]
+            )
+            / obj.value_total_ht
+        )

@@ -19,9 +19,9 @@ from xhtml2pdf import pisa
 
 from api.permissions import IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
 from api.serializers import (
+    DiagnosticOpenDataSerializer,
     FullDiagnosticSerializer,
     TeledeclarationAnalysisSerializer,
-    TeledeclarationOpenDataSerializer,
 )
 from data.models import Canteen, Diagnostic, Teledeclaration
 from macantine.utils import (
@@ -479,9 +479,9 @@ class TeledeclarationAnalysisListView(ListAPIView):
 
 
 class TeledeclarationOpenDataListView(ListAPIView):
-    serializer_class = TeledeclarationOpenDataSerializer
+    serializer_class = DiagnosticOpenDataSerializer
     filter_backends = [django_filters.DjangoFilterBackend]
     ordering_fields = ["creation_date"]
 
     def get_queryset(self, year):
-        return Teledeclaration.objects.publicly_visible().valid_td_by_year(year).order_by("creation_date")
+        return Diagnostic.objects.publicly_visible().valid_td_by_year(year).order_by("teledeclaration_date")

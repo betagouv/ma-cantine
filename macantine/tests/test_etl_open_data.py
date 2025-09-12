@@ -9,7 +9,7 @@ from freezegun import freeze_time
 
 from common.api.datagouv import update_dataset_resources
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
-from data.models import Canteen, Sector, Teledeclaration
+from data.models import Canteen, Sector
 from macantine.etl.open_data import (
     ETL_OPEN_DATA_CANTEEN,
     ETL_OPEN_DATA_TELEDECLARATIONS,
@@ -20,7 +20,8 @@ from macantine.etl.open_data import (
 class TestETLOpenData(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_manager = UserFactory.create()
+        cls.sector_school = SectorFactory(name="School", category=Sector.Categories.EDUCATION)
+        cls.user_manager = UserFactory.create()
         cls.canteen = CanteenFactory.create(
             name="Cantine",
             siret="19382111300027",
@@ -36,46 +37,41 @@ class TestETLOpenData(TestCase):
             department_lib="Isère",
             region="84",
             region_lib="Auvergne-Rhône-Alpes",
-            sectors=[SectorFactory(name="School", category=Sector.Categories.EDUCATION)],
+            sectors=[cls.sector_school],
             line_ministry=Canteen.Ministries.AGRICULTURE,
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
-            managers=[cls.canteen_manager],
+            managers=[cls.user_manager],
         )
+        with freeze_time("2023-05-14"):  # during the 2022 campaign
+            diagnostic = DiagnosticFactory.create(canteen=cls.canteen, year=2022, diagnostic_type=None)
+            diagnostic.teledeclare(cls.user_manager)
+        with freeze_time("2024-04-01"):  # during the 2023 campaign
+            diagnostic = DiagnosticFactory.create(canteen=cls.canteen, year=2023, diagnostic_type=None)
+            diagnostic.teledeclare(cls.user_manager)
+            diagnostic.cancel()  # will not appear in the exports
+        with freeze_time("2025-04-20"):  # after the 2024 campaign
+            diagnostic = DiagnosticFactory.create(canteen=cls.canteen, year=2024, diagnostic_type=None)
+            diagnostic.teledeclare(cls.user_manager)
+
         cls.canteen_without_manager = CanteenFactory.create(siret="75665621899905")
         cls.canteen_without_manager.managers.clear()
 
-    @freeze_time("2023-05-14")  # Faking time to mock creation_date
     def test_td_range_years(self, mock):
         """
         Only teledeclarations that occurred during one specific teledeclaration campaign should be extracted
         """
-        test_cases = [
-            {"name": "Ignore years out of range", "year": 1990, "expected_outcome": 0},
-            {"name": "Returns TDs for year in range", "year": 2022, "expected_outcome": 1},
-        ]
-
-        for tc in test_cases:
-            etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(tc["year"])
-            diagnostic = DiagnosticFactory.create(canteen=self.canteen, year=tc["year"], diagnostic_type=None)
-            Teledeclaration.create_from_diagnostic(diagnostic, self.canteen_manager)
-            etl_td.extract_dataset()
-            self.assertEqual(etl_td.len_dataset(), tc["expected_outcome"])
-
-    @freeze_time("2023-05-14")  # Faking time to mock creation_date
-    def test_ignore_cancelled_tds(self, mock):
-        diagnostic = DiagnosticFactory.create(canteen=self.canteen, year=2022, diagnostic_type=None)
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, self.canteen_manager)
-        teledeclaration.cancel()
-
         etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
         etl_td.extract_dataset()
-        self.assertEqual(etl_td.len_dataset(), 0, "The list should be empty as the only td has the CANCELLED status")
+        self.assertEqual(etl_td.len_dataset(), 1, "Only 1 TD in the 2022 campaign")
 
-    @freeze_time("2023-05-14")  # Faking time to mock creation_date
+    def test_ignore_cancelled_tds(self, mock):
+        etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2023)
+        etl_td.extract_dataset()
+        self.assertEqual(etl_td.len_dataset(), 0, "The only TD in the 2023 campaign has the CANCELLED status")
+
     def test_transform_teledeclaration(self, mock):
-
         mock.get(
             "https://geo.api.gouv.fr/communes",
             text=json.dumps(""),
@@ -87,60 +83,22 @@ class TestETLOpenData(TestCase):
             status_code=200,
         )
 
-        td = {
-            "id": 1,
-            "declared_data": {
-                "year": 2022,
-                "canteen": {
-                    "id": 1,
-                    "name": "Papa rayon lien.",
-                    "yearly_meal_count": 1000,
-                    "sectors": [],
-                },
-                "version": "10",
-                "applicant": {"name": "Lucie Lévêque", "email": "clairemarion@example.net"},
-                "teledeclaration": {
-                    "id": 1,
-                    "year": 2022,
-                    "canteen_id": 1,
-                    "value_bio_ht": 1537.0,
-                    "value_total_ht": 7627.0,
-                    "value_externality_performance_ht": 60,
-                    "value_sustainable_ht": 50,
-                },
-                "central_kitchen_siret": None,
-            },
-            "value_bio_ht_agg": 1537.0,
-            "value_externality_performance_ht_agg": 60,
-            "value_sustainable_ht_agg": 50,
-            "value_egalim_others_ht_agg": 0,
-            "creation_date": pd.Timestamp("2023-05-14 00:00:00+0000", tz="UTC"),
-            "modification_date": pd.Timestamp("2023-05-14 00:00:00+0000", tz="UTC"),
-            "year": 2022,
-            "canteen_siret": None,
-            "status": "SUBMITTED",
-            "applicant_id": 3,
-            "canteen_id": 1,
-            "diagnostic_id": 1,
-            "teledeclaration_mode": "SITE",
-        }
-
         schema = json.load(open("data/schemas/export_opendata/schema_teledeclarations.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
 
         etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
-        etl_td.df = pd.DataFrame.from_dict(td, orient="index").T
-
+        etl_td.extract_dataset()
         etl_td.transform_dataset()
+
         self.assertEqual(len(etl_td.get_dataset().columns), len(schema_cols), "The columns should match the schema")
-
-        self.assertEqual(
-            etl_td.get_dataset().iloc[0]["canteen_line_ministry"], None, "The line_ministry should be empty"
-        )
-        self.assertEqual(
-            etl_td.get_dataset().iloc[0]["canteen_sectors"], '"[]"', "The sectors should be an empty list"
-        )
-
+        self.assertEqual(etl_td.len_dataset(), 1, "Only 1 TD in the 2022 campaign")
+        self.assertEqual(etl_td.get_dataset().iloc[0]["applicant_id"], self.user_manager.id)
+        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_siret"], "19382111300027")
+        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_name"], "Cantine")
+        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_central_kitchen_siret"], None)
+        self.assertEqual(str(etl_td.get_dataset().iloc[0]["canteen_satellite_canteens_count"]), "<NA>")
+        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_sectors"], '"[""School""]"')
+        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_line_ministry"], "Agriculture, Alimentation et Forêts")
         self.assertGreater(
             etl_td.get_dataset().iloc[0]["teledeclaration_ratio_bio"],
             0,
@@ -233,7 +191,7 @@ class TestETLOpenData(TestCase):
             "The canteen should not be active because there no manager",
         )
 
-    @freeze_time("2023-05-14")  # Faking time to mock creation_date
+    @freeze_time("2023-05-14")  # during the 2022 campaign
     def test_campaign_participation(self, mock):
         mock.get(
             "https://geo.api.gouv.fr/communes",
@@ -253,7 +211,7 @@ class TestETLOpenData(TestCase):
         diagnostic_2022 = DiagnosticFactory.create(
             canteen=canteen_has_declared_within_campaign, year=2022, diagnostic_type=None
         )
-        _ = Teledeclaration.create_from_diagnostic(diagnostic_2022, applicant)
+        diagnostic_2022.teledeclare(applicant)
         etl_canteen.extract_dataset()
         etl_canteen.transform_dataset()
         canteens = etl_canteen.get_dataset()
@@ -296,7 +254,7 @@ class TestETLOpenData(TestCase):
         )
         self.assertEqual(canteens[canteens.id == self.canteen.id].iloc[0]["sectors"], '"[""School""]"')
 
-    @freeze_time("2023-05-14")  # Faking date to check new url
+    @freeze_time("2023-05-14")  # during the 2022 campaign
     def test_update_ressource(self, mock):
         dataset_id = "expected_dataset_id"
         api_key = "expected_api_key"
