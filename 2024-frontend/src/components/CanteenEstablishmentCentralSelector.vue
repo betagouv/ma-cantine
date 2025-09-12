@@ -30,7 +30,7 @@ const prefillFields = () => {
     }
   })
 }
-if (props.establishmentData.centralProducerSiret) prefillFields()
+if (props.establishmentData?.centralProducerSiret) prefillFields()
 else initFields()
 
 /* Search */
