@@ -3,6 +3,7 @@ import { sectionId } from "@/constants/site-map.js"
 /* Components */
 import GestionnaireCantineAjouter from "@/views/GestionnaireCantineAjouter.vue"
 import GestionnaireCantineModifier from "@/views/GestionnaireCantineModifier.vue"
+import GestionnaireCantineSatellitesAjouter from "@/views/GestionnaireCantineSatellitesAjouter.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
 import GestionnaireImport from "@/views/GestionnaireImport.vue"
@@ -93,6 +94,19 @@ const routes = [
           breadcrumbs: [
             { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
             { to: { name: "DashboardManager" }, useCanteenName: true },
+          ],
+        },
+      },
+      {
+        path: "satellites/ajouter",
+        name: "GestionnaireCantineSatellitesAjouter",
+        component: GestionnaireCantineSatellitesAjouter,
+        meta: {
+          title: "Ajouter une cantine satellite",
+          breadcrumbs: [
+            { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+            { to: { name: "DashboardManager" }, useCanteenName: true },
+            { to: { name: "SatelliteManagement" }, title: "Gérer mes satellites" },
           ],
         },
       },
