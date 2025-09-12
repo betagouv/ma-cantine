@@ -6,6 +6,37 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.32.0](https://github.com/betagouv/ma-cantine/compare/v2025.31.0...v2025.32.0) (2025-09-12)
+
+
+### Nouveautés
+
+* **Création cantine:** redirige la cantine centrale vers la page de gestion des satellites après sa création ([#5687](https://github.com/betagouv/ma-cantine/issues/5687)) ([2d5d17b](https://github.com/betagouv/ma-cantine/commit/2d5d17ba3485bf19133eb18358aa05ebd77e1337))
+* **Création satellite:** ajout du formulaire ([#5685](https://github.com/betagouv/ma-cantine/issues/5685)) ([d1614c4](https://github.com/betagouv/ma-cantine/commit/d1614c4739fefa9328821c567e6b34e14873e28c))
+* **Création satellites:** nouvelle page vue3 ([#5684](https://github.com/betagouv/ma-cantine/issues/5684)) ([c37eea0](https://github.com/betagouv/ma-cantine/commit/c37eea0f89981382959d216aeab50202547fd33a))
+* **Création satellite:** suppression de l'ancien formulaire ([#5689](https://github.com/betagouv/ma-cantine/issues/5689)) ([fe6f4a9](https://github.com/betagouv/ma-cantine/commit/fe6f4a9f62f06a077949efe5b6cf078e2c0d7ff4))
+* **Modification cantine:** vérifie les champs au pré-remplissage ([#5694](https://github.com/betagouv/ma-cantine/issues/5694)) ([8d2cb27](https://github.com/betagouv/ma-cantine/commit/8d2cb2708858a4a19114823a02b4540186dc60a8))
+
+
+### Améliorations
+
+* **Diagnostic:** nouveau champ pour stocker l'ID historique de la TD [1TD1site] ([#5686](https://github.com/betagouv/ma-cantine/issues/5686)) ([677a5d3](https://github.com/betagouv/ma-cantine/commit/677a5d3c646e2f9d984b338f508b65e998a15861))
+* **Noms des pages:** organise la structure des urls des pages d'une cantine ([#5682](https://github.com/betagouv/ma-cantine/issues/5682)) ([d9d8ae6](https://github.com/betagouv/ma-cantine/commit/d9d8ae68488473e92e3698b7e32a34a05bbfbbd4))
+* **Open Data:** nouvelle colonne teledeclaration_id ([#5691](https://github.com/betagouv/ma-cantine/issues/5691)) ([bee6bec](https://github.com/betagouv/ma-cantine/commit/bee6bec12e7140144bac2b3f033cdc47fec8d191))
+* **Open Data:** ordonner les exports par date de télédéclaration ([#5690](https://github.com/betagouv/ma-cantine/issues/5690)) ([1f61ece](https://github.com/betagouv/ma-cantine/commit/1f61eced3ce8e16e847eb8599a926d82120d38af))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** corrige les urls de redirection lors de la création d'une cantine ([#5693](https://github.com/betagouv/ma-cantine/issues/5693)) ([209cdd0](https://github.com/betagouv/ma-cantine/commit/209cdd00f9e5917ddd7fb44139359b73a946e541))
+* **Création de cantine:** correction bug d'affichage du sélecteur de la cantine centrale ([#5692](https://github.com/betagouv/ma-cantine/issues/5692)) ([ea2e8af](https://github.com/betagouv/ma-cantine/commit/ea2e8af0de1ed2eb69c877a4cda9c7821358c82f))
+
+
+### Technique
+
+* **API Stats:** calculer les statistiques sur le modèle Diagnostic au lieu de Teledeclaration [1TD1Site] ([#5643](https://github.com/betagouv/ma-cantine/issues/5643)) ([098439b](https://github.com/betagouv/ma-cantine/commit/098439b8d39ca6460eb74b37ac92e42ac83c5cc4))
+* **Open Data:** extraire les données à partir de la table Diagnostic au lieu de Teledeclaration [1TD1Site] ([#5667](https://github.com/betagouv/ma-cantine/issues/5667)) ([47bb432](https://github.com/betagouv/ma-cantine/commit/47bb4321031bb3873ffbd9287597898278dcbc09))
+
 ## [2025.31.0](https://github.com/betagouv/ma-cantine/compare/v2025.30.0...v2025.31.0) (2025-09-11)
 
 
