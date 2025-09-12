@@ -58,7 +58,7 @@ const goToCanteenPage = (canteen) => {
       :establishment-data="canteenData"
       :showCancelButton="true"
       @sendForm="(payload) => saveCanteen(payload)"
-      @cancel="(id) => goToCanteenPage(canteenId)"
+      @cancel="goToCanteenPage(canteenData)"
     />
     <p v-else>
       Une erreur est survenue,
