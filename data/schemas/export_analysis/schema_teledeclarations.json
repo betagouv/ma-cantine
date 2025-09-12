@@ -217,6 +217,8 @@
       "type": "float"
     },
     {
+      "description": "Part des achats bio dans les achats alimentaires de l'année (ratio basé sur le montant des achats en € HT)",
+      "example": 10.1,
       "name": "ratio_bio",
       "type": "float"
     },

@@ -234,7 +234,9 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         logger.info("TD campagne : Clean dataset...")
         self._clean_dataset()
         logger.info("TD campagne : Format the decimals...")
-        self._format_decimals(["teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"])
+        self._format_decimals(
+            ["teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio", "teledeclaration_ratio_egalim"]
+        )
         logger.info("TD campagne : Filter errors...")
         self._filter_outsiders()
         logger.info("TD campagne : Transform ChoiceFields...")

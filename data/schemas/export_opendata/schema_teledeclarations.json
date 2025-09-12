@@ -184,14 +184,21 @@
       "example": 0.1,
       "name": "teledeclaration_ratio_bio",
       "title": "Télédéclaration Ratio Bio",
-      "type": "number"
+      "type": "float"
     },
     {
-      "description": "Part des achats EGalim dans les achats alimentaires de l'année",
+      "description": "Part des achats durables (hors bio) dans les achats alimentaires de l'année (ratio basé sur le montant des achats en € HT)",
       "example": 0.3,
       "name": "teledeclaration_ratio_egalim_hors_bio",
+      "title": "Télédéclaration Ratio Durable (hors bio)",
+      "type": "float"
+    },
+    {
+      "description": "Part des achats EGalim dans les achats alimentaires de l'année (ratio basé sur le montant des achats en € HT)",
+      "example": 0.3,
+      "name": "teledeclaration_ratio_egalim",
       "title": "Télédéclaration Ratio EGalim",
-      "type": "number"
+      "type": "float"
     }
   ],
   "title": "Schéma des télédéclarations d'achats alimentaires pour la restauration collective"
