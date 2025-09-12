@@ -1,9 +1,9 @@
 <script setup>
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import { useStoreCanteen } from "@/stores/canteen"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens"
+import urlService from "@/services/urls"
 import CanteenEstablishmentForm from "@/components/CanteenEstablishmentForm.vue"
 
 /* Router */
@@ -11,21 +11,21 @@ const route = useRoute()
 const router = useRouter()
 
 /* Stores */
-const canteenStore = useStoreCanteen()
-canteenStore.setUrlComponent(route.params.canteenUrlComponent)
 const store = useRootStore()
 
-/* Render */
+/* Component */
 const forceRerender = ref(0)
+const canteenName = computed(() => urlService.getCanteenName(route.params.canteenUrlComponent))
+const canteenId = computed(() => urlService.getCanteenId(route.params.canteenUrlComponent))
 
 /* API */
 const saveSatellite = (props) => {
   const { form, action } = props
   canteensService
-    .addSatellite(form, canteenStore.id)
+    .addSatellite(form, canteenId.value)
     .then((canteenCreated) => {
       if (canteenCreated.id && action === "stay-on-creation-page") resetForm(canteenCreated.name)
-      else if (canteenCreated.id && action === "go-to-canteen-page") goToNewCanteenPage(canteenCreated.id)
+      else if (canteenCreated.id && action === "go-to-canteen-page") goToNewCanteenPage(canteenCreated)
       else store.notifyServerError()
     })
     .catch((e) => {
@@ -34,10 +34,11 @@ const saveSatellite = (props) => {
 }
 
 /* After canteen is saved */
-const goToNewCanteenPage = (id) => {
+const goToNewCanteenPage = (canteen) => {
+  const canteenUrl = urlService.getCanteenUrl(canteen)
   router.replace({
     name: "DashboardManager",
-    params: { canteenUrlComponent: id },
+    params: { canteenUrlComponent: canteenUrl },
   })
 }
 
@@ -53,7 +54,7 @@ const resetForm = (name) => {
     <h1 class="fr-col-12 fr-col-md-8">
       {{ route.meta.title }}
       <br />
-      à la cantine centrale {{ canteenStore.name }}
+      à la cantine centrale {{ canteenName }}
     </h1>
   </section>
   <CanteenEstablishmentForm

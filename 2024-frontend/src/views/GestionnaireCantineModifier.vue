@@ -3,6 +3,7 @@ import { ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
+import urlService from "@/services/urls"
 import CanteenEstablishmentForm from "@/components/CanteenEstablishmentForm.vue"
 import AppLoader from "@/components/AppLoader.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
@@ -15,7 +16,8 @@ const store = useRootStore()
 /* Get establishemnt infos */
 const canteenData = ref({})
 const loading = ref(true)
-const canteenId = route.params.canteenUrlComponent.split("--")[0]
+const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
+
 canteenService
   .fetchCanteen(canteenId)
   .then((response) => {
@@ -32,17 +34,18 @@ const saveCanteen = (props) => {
   canteenService
     .updateCanteen(form, canteenId)
     .then((response) => {
-      if (response.id) goToCanteenPage(response.id)
+      if (response.id) goToCanteenPage(response)
       else store.notifyServerError()
     })
     .catch((e) => store.notifyServerError(e))
 }
 
 /* After canteen is saved */
-const goToCanteenPage = (id) => {
+const goToCanteenPage = (canteen) => {
+  const canteenUrl = urlService.getCanteenUrl(canteen)
   router.replace({
     name: "DashboardManager",
-    params: { canteenUrlComponent: id },
+    params: { canteenUrlComponent: canteenUrl },
   })
 }
 </script>
@@ -56,7 +59,7 @@ const goToCanteenPage = (id) => {
       :establishment-data="canteenData"
       :showCancelButton="true"
       @sendForm="(payload) => saveCanteen(payload)"
-      @cancel="(id) => goToCanteenPage(canteenId)"
+      @cancel="goToCanteenPage(canteenData)"
     />
     <p v-else>
       Une erreur est survenue,
