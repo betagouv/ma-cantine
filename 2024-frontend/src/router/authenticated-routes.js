@@ -14,6 +14,7 @@ const { diag, action } = sectionId
 
 /* Routes */
 const routes = [
+  // TODO: refactor "GaspillageAlimentaire" path
   {
     path: "/evaluation-gaspillage-alimentaire/:canteenUrlComponent/:id?",
     name: "GestionnaireGaspillageAlimentaireModifier",
@@ -38,7 +39,7 @@ const routes = [
     },
   },
   {
-    path: "/importer-des-donnees",
+    path: "/gestion/imports",
     name: "GestionnaireImport",
     component: GestionnaireImport,
     meta: {
@@ -47,7 +48,7 @@ const routes = [
     },
   },
   {
-    path: "/importer-des-donnees/achats",
+    path: "/gestion/imports/achats",
     name: "GestionnaireImportAchats",
     component: GestionnaireImportAchats,
     meta: {
@@ -59,7 +60,7 @@ const routes = [
     },
   },
   {
-    path: "/importer-des-donnees/cantines",
+    path: "/gestion/imports/cantines",
     name: "GestionnaireImportCantines",
     component: GestionnaireImportCantines,
     meta: {
@@ -71,7 +72,7 @@ const routes = [
     },
   },
   {
-    path: "/ajouter-une-cantine",
+    path: "/gestion/cantines/ajouter",
     name: "GestionnaireCantineAjouter",
     component: GestionnaireCantineAjouter,
     meta: {
@@ -81,10 +82,10 @@ const routes = [
     },
   },
   {
-    path: "/modifier-ma-cantine/:canteenUrlComponent",
+    path: "/gestion/cantines/:canteenUrlComponent/",
     children: [
       {
-        path: "etablissement",
+        path: "modifier",
         name: "GestionnaireCantineModifier",
         component: GestionnaireCantineModifier,
         meta: {
