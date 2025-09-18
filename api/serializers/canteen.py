@@ -833,7 +833,7 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
         return ""
 
     def get_sectors(self, obj):
-        return [sector.name for sector in obj.sectors.all()]
+        return ", ".join([sector.name for sector in obj.sectors.all()])
 
     def get_active_on_ma_cantine(self, obj):
         return obj.managers.exists()
