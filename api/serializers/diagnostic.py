@@ -290,7 +290,7 @@ class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_canteen_sectors(self, obj):
-        return [sector["name"] for sector in obj.canteen_snapshot["sectors"]]
+        return ", ".join([sector["name"] for sector in obj.canteen_snapshot.get("sectors", [])])
 
     def get_teledeclaration_ratio_bio(self, obj):
         return obj.value_bio_ht_agg / obj.value_total_ht

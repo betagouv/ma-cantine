@@ -223,13 +223,6 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self.view = TeledeclarationOpenDataListView
         self.df = None
 
-    def transform_sectors(self) -> pd.Series:
-        sectors = self.df["canteen_sectors"]
-        if not sectors.isnull().all():
-            sectors = sectors.apply(lambda x: list(map(lambda y: macantine.etl.utils.format_sector(y), x)))
-            sectors = sectors.apply(macantine.etl.utils.format_list)
-        return sectors
-
     def transform_dataset(self):
         logger.info("TD campagne : Clean dataset...")
         self._clean_dataset()
@@ -239,8 +232,6 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self._filter_outsiders()
         logger.info("TD campagne : Transform ChoiceFields...")
         self.transform_canteen_choicefields(prefix="canteen_")
-        logger.info("TD campagne : Transform sectors...")
-        self.df["canteen_sectors"] = self.transform_sectors()
         logger.info("TD Campagne : Fill geo name...")
         self.transform_canteen_geo_data(prefix="canteen_")
 
