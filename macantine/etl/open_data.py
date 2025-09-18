@@ -6,9 +6,9 @@ from io import BytesIO
 
 import pandas as pd
 from django.core.files.storage import default_storage
-from django.db.models import Q
 
 import macantine.etl.utils
+from api.views.canteen import CanteenOpenDataListView
 from api.views.teledeclaration import TeledeclarationOpenDataListView
 from common.api.datagouv import update_dataset_resources
 from common.api.decoupage_administratif import (
@@ -20,7 +20,6 @@ from common.api.decoupage_administratif import (
 from data.models import Canteen
 from macantine.etl import etl
 from macantine.etl.etl import logger
-from macantine.etl.utils import common_members, extract_sectors
 
 
 class OPEN_DATA(etl.TRANSFORMER_LOADER):
@@ -154,48 +153,9 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
         self.schema = json.load(open("data/schemas/export_opendata/schema_cantines.json"))
         self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/export_opendata/schema_cantines.json"
         self.columns = [field["name"] for field in self.schema["fields"]]
-        self.canteens = None
-        self.exclude_filter = Q(line_ministry="armee")
-
-    def extract_dataset(self):
-        start = time.time()
-        canteens = Canteen.objects.all()
-        if self.exclude_filter:
-            canteens = Canteen.objects.exclude(self.exclude_filter)
-        if canteens.count() == 0:
-            self.df = pd.DataFrame(columns=self.columns)
-        else:
-            # Creating a dataframe with all canteens. The canteens can have multiple lines if they have multiple sectors
-            columns_model = [field.name for field in Canteen._meta.get_fields()]
-            columns_to_extract = common_members(self.columns, columns_model)
-            self.df = pd.DataFrame(canteens.values(*columns_to_extract))
-        end = time.time()
-        logger.info(f"Time spent on canteens extraction : {end - start}")
+        self.view = CanteenOpenDataListView
 
     def transform_dataset(self):
-        all_canteens_col = [i["name"] for i in self.schema["fields"]]
-        self.canteens_col_from_db = all_canteens_col
-        for col_processed in [
-            "active_on_ma_cantine",
-        ]:
-            self.canteens_col_from_db.remove(col_processed)
-
-        # Adding the active_on_ma_cantine column
-        start = time.time()
-        non_active_canteens = Canteen.objects.filter(managers=None).values_list("id", flat=True)
-        end = time.time()
-        logger.info(f"Time spent on active canteens : {end - start}")
-        self.df["active_on_ma_cantine"] = self.df["id"].apply(lambda x: x not in non_active_canteens)
-
-        logger.info("Canteens : Extract sectors...")
-        self.df = extract_sectors(self.df, extract_spe=False, split_category_and_sector=False, only_one_value=False)
-
-        bucket_url = os.environ.get("CELLAR_HOST")
-        bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
-
-        if "logo" in self.df.columns:
-            self.df["logo"] = self.df["logo"].apply(lambda x: f"{bucket_url}/{bucket_name}/media/{x}" if x else "")
-
         logger.info("Canteens : Clean dataset...")
         self._clean_dataset()
 

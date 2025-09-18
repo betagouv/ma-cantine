@@ -1,4 +1,5 @@
 import logging
+import os
 
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
@@ -779,3 +780,60 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
     def get_adresses_gestionnaires(self, obj):
         emails = [manager.email for manager in obj.managers.all()]
         return ",".join(emails)
+
+
+class CanteenOpenDataSerializer(serializers.ModelSerializer):
+    logo = serializers.SerializerMethodField(read_only=True)
+    sectors = serializers.SerializerMethodField(read_only=True)
+    active_on_ma_cantine = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Canteen
+        fields = (
+            "id",
+            "name",
+            "siret",
+            "siren_unite_legale",
+            "city",
+            "city_insee_code",
+            "postal_code",
+            "epci",
+            "epci_lib",
+            "pat_list",
+            "pat_lib_list",
+            "department",
+            "department_lib",
+            "region",
+            "region_lib",
+            "economic_model",
+            "management_type",
+            "production_type",
+            "satellite_canteens_count",
+            "central_producer_siret",
+            "creation_date",
+            "daily_meal_count",
+            "yearly_meal_count",
+            "line_ministry",
+            "modification_date",
+            "logo",
+            "sectors",
+            "declaration_donnees_2021",
+            "declaration_donnees_2022",
+            "declaration_donnees_2023",
+            "declaration_donnees_2024",
+            "active_on_ma_cantine",
+        )
+
+    def get_logo(self, obj):
+        bucket_url = os.environ.get("CELLAR_HOST")
+        bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
+
+        if obj.logo:
+            return f"{bucket_url}/{bucket_name}/media/{obj.logo}"
+        return ""
+
+    def get_sectors(self, obj):
+        return [sector.name for sector in obj.sectors.all()]
+
+    def get_active_on_ma_cantine(self, obj):
+        return obj.managers.exists()

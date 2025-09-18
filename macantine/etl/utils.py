@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 
 from data.models import Sector
-from data.models.sector import SECTEURS_SPE
 from macantine.etl.data_ware_house import DataWareHouse
 
 warnings.filterwarnings("ignore", message="SparkPandasCompare currently only supports Numpy < 2")  # Needed for the CI
@@ -62,10 +61,6 @@ def sum_int_and_none(values_to_sum: list):
     return int(np.sum(values_to_sum))
 
 
-def common_members(a, b):
-    return set(a) & set(b)
-
-
 def compute_ratio(valueKey, totalKey):
     if totalKey and valueKey:
         if totalKey > 0 and valueKey >= 0:
@@ -84,59 +79,6 @@ def format_td_sector_column(row: pd.Series, sector_col_name: str):
         elif len(x) == 1:
             return x[0]["name"], x[0]["category"]
     return np.nan, np.nan
-
-
-def extract_sectors(
-    df: pd.DataFrame, extract_spe: bool, split_category_and_sector: bool, only_one_value: bool
-) -> pd.DataFrame:
-    """
-    This function processes the 'sectors' data in the input DataFrame by:
-    1. Mapping each sector to its corresponding value.
-    2. Aggregating sectors per canteen (one row per canteen).
-    3. Merging the aggregated sector information back into the original DataFrame.
-
-    Args:
-    - df (pd.DataFrame): The input DataFrame that contains canteen data, including a 'sectors' column.
-    - extract_spe (boolean): Add the 'spe' column that indicates if the canteen is part of Secteur Public Ecoresponsable
-    - split_category_and_sector (boolean):
-    - only_one_value (boolean):
-
-    Returns:
-    - pd.DataFrame: The updated DataFrame with the sectors aggregated per canteen.
-    """
-
-    sector_mapping = map_sectors()
-    if extract_spe:
-        df["spe"] = df["sectors"].apply(lambda x: True if x in SECTEURS_SPE else False)
-        aggregated_sectors_spe = df.groupby("id")["spe"].max()
-        df = df.drop(columns=["spe"])
-        df = df.merge(aggregated_sectors_spe, on="id")
-
-    if split_category_and_sector:
-        df["categories"] = df["sectors"].apply(lambda sector: fetch_category(sector, sector_mapping))
-        if only_one_value:
-            aggregated_categories = (
-                df.groupby("id")["categories"]
-                .apply(list)
-                .apply(lambda x: format_list_to_single_value(x, "Catégories"))
-            )
-        else:
-            aggregated_categories = df.groupby("id")["categories"].apply(list).apply(format_list)
-        df = df.drop(columns=["categories"])
-        df = df.merge(aggregated_categories, on="id")
-
-    df["sectors"] = df["sectors"].apply(lambda sector: fetch_sector(sector, sector_mapping))
-    if only_one_value:
-        aggregated_sectors = (
-            df.groupby("id")["sectors"].apply(list).apply(lambda x: format_list_to_single_value(x, "Secteurs"))
-        )
-    else:
-        aggregated_sectors = df.groupby("id")["sectors"].apply(list).apply(format_list)
-
-    df = df.drop(columns=["sectors"])
-    df = df.merge(aggregated_sectors, on="id")
-
-    return df
 
 
 def map_sectors():

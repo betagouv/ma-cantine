@@ -38,6 +38,7 @@ from api.permissions import (
 from api.serializers import (
     CanteenActionsSerializer,
     CanteenAnalysisSerializer,
+    CanteenOpenDataSerializer,
     CanteenPreviewSerializer,
     CanteenStatusSerializer,
     CanteenSummarySerializer,
@@ -936,3 +937,10 @@ class CanteenAnalysisListView(ListAPIView):
 
     def get_queryset(self):
         return Canteen.objects.prefetch_related("sectors", "managers")
+
+
+class CanteenOpenDataListView(ListAPIView):
+    serializer_class = CanteenOpenDataSerializer
+
+    def get_queryset(self):
+        return Canteen.objects.prefetch_related("sectors", "managers").publicly_visible()
