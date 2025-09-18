@@ -4,7 +4,6 @@ from decimal import Decimal, InvalidOperation
 from rest_framework import serializers
 
 from data.models import Diagnostic
-from macantine.etl import utils
 
 from .teledeclaration import ShortTeledeclarationSerializer
 from .utils import appro_to_percentages
@@ -293,13 +292,4 @@ class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
         return obj.value_bio_ht_agg / obj.value_total_ht
 
     def get_teledeclaration_ratio_egalim_hors_bio(self, obj):
-        return (
-            utils.sum_int_and_none(
-                [
-                    obj.value_sustainable_ht_agg,
-                    obj.value_externality_performance_ht_agg,
-                    obj.value_egalim_others_ht_agg,
-                ]
-            )
-            / obj.value_total_ht
-        )
+        return obj.value_egalim_hors_bio_ht_agg / obj.value_total_ht
