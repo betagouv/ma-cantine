@@ -8,6 +8,7 @@ from django.db.models import Case, Count, Exists, F, OuterRef, Q, Subquery, Valu
 from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
+from simple_history.utils import update_change_reason
 
 from common.utils import siret as utils_siret
 from data.department_choices import Department
@@ -737,6 +738,7 @@ class Canteen(SoftDeletionModel):
         self.region_lib = None
         self.geolocation_bot_attempts = 0
         self.save()
+        update_change_reason(self, "Reset geo fields")
 
     @cached_property
     def appro_diagnostics(self):
