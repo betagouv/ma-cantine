@@ -404,9 +404,9 @@ def export_datasets(datasets: dict):
         etl.load_dataset()
 
 
-def datasets_export_analysis_td():
+def export_dataset_td_analysis():
     """
-    Export the Teledeclarations datasets for analysis (Metabase)
+    Export the Teledeclaration datasets for analysis (Metabase)
     """
     logger.info("Starting manual datasets export")
     datasets = {
@@ -415,9 +415,9 @@ def datasets_export_analysis_td():
     export_datasets(datasets)
 
 
-def datasets_export_opendata_td():
+def export_dataset_td_opendata():
     """
-    Export the Teledeclarations datasets for data.gouv.fr
+    Export the Teledeclaration datasets for opendata (data.gouv.fr) (1 per year)
     This datasets are updated every year by adding a new campaign
     """
     logger.info("Starting manual datasets export")
@@ -430,9 +430,9 @@ def datasets_export_opendata_td():
     export_datasets(datasets)
 
 
-def datasets_export_analysis_canteens():
+def export_dataset_canteen_analysis():
     """
-    Export the Teledeclarations datasets for analysis (Metabase)
+    Export the Canteen datasets for analysis (Metabase)
     """
     logger.info("Starting datasets extractions")
     datasets = {
@@ -441,21 +441,12 @@ def datasets_export_analysis_canteens():
     export_datasets(datasets)
 
 
-def datasets_export_opendata_canteens():
+def export_dataset_canteen_opendata():
     """
-    Export the Canteens datasets for data.gouv.fr
+    Export the Canteen datasets for opendata (data.gouv.fr)
     """
     logger.info("Starting datasets extractions")
     datasets = {
         "cantines": ETL_OPEN_DATA_CANTEEN(),
     }
     export_datasets(datasets)
-
-
-@app.task()
-def continous_datasets_export():
-    """
-    Export regulary and automatically datasets that are updated contiously
-    """
-    datasets_export_analysis_canteens()
-    datasets_export_opendata_canteens()
